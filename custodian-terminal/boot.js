@@ -14,7 +14,6 @@ const bootLines = [
   "",
   "CUSTODIAN NODE — ONLINE",
   "STATUS: DEGRADED",
-  "AUTHORITY: RESIDUAL",
   "",
   "> Running integrity check…",
   "> Memory blocks: 12% intact",
