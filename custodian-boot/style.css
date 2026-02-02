@@ -1,0 +1,42 @@
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  color: #c8ffcc;
+  font-family: "Courier New", monospace;
+}
+
+#boot-screen {
+  padding: 24px;
+  height: 100%;
+}
+
+#terminal {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.flicker {
+  animation: flicker 0.15s linear;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+#base-screen {
+  position: fixed;
+  inset: 0;
+  background: #0b0f0b;
+  color: #e6ffe6;
+}
+
+.overlay {
+  padding: 32px;
+}
