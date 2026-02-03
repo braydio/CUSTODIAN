@@ -1,8 +1,8 @@
-from core.entities import Enemy
-from core.sectors import Sector
-from core.enums import EnemyType, SectorType
-from core.defenses import Turret
-from core.assault import resolve_assault
+from game.simulations.assault.core.assault import resolve_assault
+from game.simulations.assault.core.defenses import Turret
+from game.simulations.assault.core.entities import Enemy
+from game.simulations.assault.core.enums import EnemyType, SectorType
+from game.simulations.assault.core.sectors import Sector
 
 terminal = Sector("Terminal", SectorType.PERIPHERAL)
 terminal.defenses.append(Turret(damage=5))
