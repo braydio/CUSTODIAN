@@ -141,7 +141,7 @@ def _build_sector_filter(tags=None, min_damage=None, max_power=None):
 EVENT_ARCHETYPES = [
     {
         "key": "perimeter_probe",
-        "min_threat": 0.5,
+        "min_threat": 0.2,
         "weight": 4,
         "cooldown": 12,
         "tags": {"gate", "approach", "perimeter"},
@@ -151,7 +151,7 @@ EVENT_ARCHETYPES = [
     },
     {
         "key": "sabotage_charge",
-        "min_threat": 1.8,
+        "min_threat": 1.2,
         "weight": 3,
         "cooldown": 18,
         "tags": {"maintenance", "yard", "hangar", "service"},
@@ -172,7 +172,7 @@ EVENT_ARCHETYPES = [
     },
     {
         "key": "power_brownout",
-        "min_threat": 2.2,
+        "min_threat": 1.6,
         "weight": 2,
         "cooldown": 20,
         "tags": {"power", "maintenance", "terminal"},
@@ -182,7 +182,7 @@ EVENT_ARCHETYPES = [
     },
     {
         "key": "structural_fatigue",
-        "min_threat": 2.8,
+        "min_threat": 2.2,
         "weight": 2,
         "cooldown": 24,
         "tags": {"hangar", "maintenance", "yard"},
@@ -193,7 +193,7 @@ EVENT_ARCHETYPES = [
     },
     {
         "key": "coolant_leak",
-        "min_threat": 3.2,
+        "min_threat": 2.6,
         "weight": 2,
         "cooldown": 26,
         "tags": {"fuel", "power", "hangar"},
@@ -223,7 +223,7 @@ EVENT_ARCHETYPES = [
     },
     {
         "key": "sensor_jam",
-        "min_threat": 2.5,
+        "min_threat": 2.0,
         "weight": 2,
         "cooldown": 20,
         "tags": {"radar", "sensor", "tower"},
@@ -233,7 +233,7 @@ EVENT_ARCHETYPES = [
     },
     {
         "key": "signal_blackout",
-        "min_threat": 3.8,
+        "min_threat": 3.2,
         "weight": 1,
         "cooldown": 34,
         "tags": {"command", "radar", "sensor", "tower"},

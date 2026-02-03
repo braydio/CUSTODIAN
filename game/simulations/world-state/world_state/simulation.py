@@ -12,8 +12,14 @@ def simulate_world(ticks=300, tick_delay=0.05):
     print(
         "Hostile profile: "
         f"{profile['label']} | Ideology: {profile['ideology']} | "
-        f"Tech: {profile['tech_expression']}\n"
+        f"Tech: {profile['tech_expression']}"
     )
+    print(
+        "Doctrine: "
+        f"{profile['doctrine']} | Aggression: {profile['aggression']} | "
+        f"Signature: {profile['signature']}"
+    )
+    print(f"Primary target: {profile['target_priority']}\n")
 
     for _ in range(ticks):
         advance_time(state)
