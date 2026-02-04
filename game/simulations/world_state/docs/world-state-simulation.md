@@ -14,6 +14,8 @@ This simulation models a fortified command post under escalating pressure. It fo
   - `ambient_threat`: slow, always-rising pressure.
   - `assault_timer`: hidden countdown to a major assault.
   - `in_major_assault`: whether a large assault is active.
+  - `player_location`: current sector name for the operator.
+  - `in_command_center`: derived flag for Command Center authority checks.
   - `faction_profile`: ideology + form + tech expression for procedural events.
   - `sectors`: dictionary of `SectorState` by name.
 - `SectorState`

@@ -82,7 +82,7 @@ class GameState:
         self.ambient_threat = 0.0
         self.assault_timer = None
         self.in_major_assault = False
-        self.player_present = True
+        self.player_location = "Command Center"
 ```
 
 ### Step 2: Advance time every tick
