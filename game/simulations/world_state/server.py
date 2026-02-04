@@ -14,6 +14,11 @@ from flask import (
     stream_with_context,
 )
 
+from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.terminal.commands import CommandResult
+from game.simulations.world_state.terminal.parser import parse_input
+from game.simulations.world_state.terminal.processor import process_command
+
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 SIM_PATH = os.path.join(APP_ROOT, "sandbox_world.py")
 
@@ -22,6 +27,7 @@ app = Flask(__name__)
 HISTORY_LIMIT = 2000
 history = deque(maxlen=HISTORY_LIMIT)
 current_process = None
+command_state = GameState()
 
 
 def _coerce_delay(raw, default=0.2):
@@ -75,6 +81,24 @@ def _stream_world_state(delay):
         print("[server] stream closed", flush=True)
 
 
+def _command_result_payload(result: CommandResult) -> dict:
+    """Convert a CommandResult into a JSON-ready payload.
+
+    Args:
+        result: Structured command result to serialize.
+
+    Returns:
+        Dict with required keys and optional lists when present.
+    """
+
+    payload = {"ok": result.ok, "text": result.text}
+    if result.lines:
+        payload["lines"] = result.lines
+    if result.warnings:
+        payload["warnings"] = result.warnings
+    return payload
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -105,6 +129,29 @@ def resume():
     except OSError:
         return jsonify({"status": "error"}), 500
     return jsonify({"status": "resumed"})
+
+
+@app.route("/command", methods=["POST"])
+def command():
+    """Execute a terminal command and return a CommandResult payload."""
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        result = CommandResult(ok=False, text="Command required.")
+        return jsonify(_command_result_payload(result)), 400
+
+    command_text = payload.get("command")
+    if not isinstance(command_text, str) or not command_text.strip():
+        result = CommandResult(ok=False, text="Command required.")
+        return jsonify(_command_result_payload(result)), 400
+
+    parsed = parse_input(command_text)
+    result = process_command(command_state, parsed)
+    if result is None:
+        result = CommandResult(ok=False, text="Command required.")
+        return jsonify(_command_result_payload(result)), 400
+
+    return jsonify(_command_result_payload(result))
 
 
 @app.route("/stream")
