@@ -89,3 +89,13 @@ From this directory:
 ```bash
 python sandbox_world.py
 ```
+
+### Phase 1 Terminal
+
+Phase 1 uses a deterministic terminal loop with manual time advancement.
+
+```bash
+WORLD_STATE_MODE=repl python sandbox_world.py
+```
+
+Use `WORLD_STATE_MODE=sim` to run the autonomous loop.
