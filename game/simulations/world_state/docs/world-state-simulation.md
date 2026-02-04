@@ -43,7 +43,7 @@ This simulation models a fortified command post under escalating pressure. It fo
 
 1. Advance time and escalate ambient threat.
 2. Run ambient events based on sector state and global threat.
-3. Tick or start a major assault timer.
+3. Tick or start a major assault timer (handled in `step_world`).
 4. If assault starts, resolve it against the weakest sectors.
 5. Periodically print snapshots for visibility.
 

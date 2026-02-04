@@ -17,6 +17,7 @@ from .config import (
     ASSAULT_TIMER_WEAK_DAMAGE_MULT,
 )
 
+
 def maybe_start_assault_timer(state):
     if state.assault_timer is None and not state.in_major_assault:
         base = random.randint(ASSAULT_TIMER_BASE_MIN, ASSAULT_TIMER_BASE_MAX)
