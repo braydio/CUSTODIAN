@@ -59,6 +59,8 @@ Entry point:
 python game/simulations/world_state/sandbox_world.py
 ```
 
+Write commands in the terminal loop require Command Center authority.
+
 Docs:
 
 - `docs/README.md`
