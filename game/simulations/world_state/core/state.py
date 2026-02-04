@@ -36,30 +36,37 @@ class GameState:
     """Shared world-state container for the simulation."""
 
     def __init__(self):
+        """Initialize the world-state simulation state."""
+
         self.time = 0
         self.ambient_threat = 0.0
         self.assault_timer = None
         self.in_major_assault = False
+
+        # Player state
         self.player_location = "Command Center"
         self.current_assault = None
 
+        # World progression
         self.assault_count = 0
         self.event_cooldowns = defaultdict(int)
         self.faction_profile = build_faction_profile()
         self.event_catalog = None
         self.global_effects = {}
 
+        # Sector states
         self.sectors = {name: SectorState(name) for name in SECTORS}
 
     @property
     def in_command_center(self) -> bool:
         """Return True when the operator is in the Command Center."""
-
         return self.player_location == "Command Center"
 
     def weakest_sectors(self, n=2):
         return sorted(
-            self.sectors.values(), key=lambda s: s.damage + s.alertness, reverse=True
+            self.sectors.values(),
+            key=lambda s: s.damage + s.alertness,
+            reverse=True,
         )[:n]
 
     def __str__(self):
