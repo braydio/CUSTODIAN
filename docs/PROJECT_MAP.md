@@ -4,7 +4,7 @@
 
 * Post-apocalyptic spacer tech world
 * Complete collapse of information systems
-* You are a last relic of a forgtoten institution, **The Custodian**, preserving and reconstructing knowledge
+* You are a last relic of a forgotten institution, **The Custodian**, preserving and reconstructing knowledge
 * Victory is **survival + reconstruction**, not extermination
 * Enemies are driven by **ideology, scarcity, and misunderstanding**
 
@@ -343,4 +343,3 @@ You now have:
 * Explicit loss rules
 * A coherent command vs field tension
 * Systems that can be simulated and coded
-

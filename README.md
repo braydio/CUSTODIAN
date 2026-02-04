@@ -61,10 +61,12 @@ python game/simulations/world_state/sandbox_world.py
 
 Docs:
 
+- `docs/README.md`
 - `docs/Broad_Overview_Design_Rules.md`
 - `docs/SystemDesign.md`
 - `docs/PROJECT_MAP.md`
 - `game/simulations/world_state/docs/world-state-simulation.md`
+- `docs/ROADMAP.md`
 
 Key files:
 
@@ -91,11 +93,13 @@ Key files:
 
 ## Documentation Map
 
+- `docs/README.md`: documentation index and usage notes.
 - `docs/Broad_Overview_Design_Rules.md`: core fantasy, procedural generation logic, campaign arc.
 - `docs/SystemDesign.md`: systems breakdown and implementation priorities.
 - `docs/PROJECT_MAP.md`: tutorial campaign layout and sector rules.
 - `docs/CommandCenter.md`: command center behavior and tactical role.
 - `docs/Tutorial_Details.md`: tutorial-specific sequencing.
+- `docs/ROADMAP.md`: future development plan with next steps.
 
 ## Tone & Style
 
