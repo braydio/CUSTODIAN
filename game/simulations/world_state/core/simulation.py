@@ -5,7 +5,26 @@ from .events import maybe_trigger_event
 from .state import GameState, advance_time
 
 
+def step_world(state: GameState, tick_delay: float = 0.0) -> None:
+    """Advance the world simulation by a single tick.
+
+    Args:
+        state: Mutable simulation state to advance.
+        tick_delay: Delay passed to assault resolution for pacing.
+    """
+
+    advance_time(state)
+    maybe_trigger_event(state)
+
+    if state.current_assault is None:
+        maybe_start_assault_timer(state)
+        tick_assault_timer(state)
+    else:
+        resolve_assault(state, tick_delay=tick_delay)
+
+
 def sandbox_world(ticks=300, tick_delay=0.05):
+    """Run the autonomous world simulation loop."""
     state = GameState()
     print("World simulation started.\n")
     profile = state.faction_profile
@@ -22,14 +41,7 @@ def sandbox_world(ticks=300, tick_delay=0.05):
     print(f"Primary target: {profile['target_priority']}\n")
 
     for _ in range(ticks):
-        advance_time(state)
-        maybe_trigger_event(state)
-
-        if state.current_assault is None:
-            maybe_start_assault_timer(state)
-            tick_assault_timer(state)
-        else:
-            resolve_assault(state, tick_delay=tick_delay)
+        step_world(state, tick_delay=tick_delay)
 
         if state.time % 25 == 0:
             print("\n[Snapshot]")
