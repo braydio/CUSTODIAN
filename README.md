@@ -66,6 +66,7 @@ Docs:
 - `docs/SystemDesign.md`
 - `docs/PROJECT_MAP.md`
 - `game/simulations/world_state/docs/world-state-simulation.md`
+- `game/simulations/world_state/docs/terminal-repl.md`
 - `docs/ROADMAP.md`
 
 Key files:
