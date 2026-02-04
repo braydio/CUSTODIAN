@@ -29,5 +29,28 @@ def run_repl() -> None:
             print("Terminal closed.")
             break
         result = process_command(state, parsed)
-        if isinstance(result, CommandResult) and result.message:
-            print(result.message)
+        if isinstance(result, CommandResult):
+            output = _render_result(result)
+            if output:
+                print(output)
+
+
+def _render_result(result: CommandResult) -> str:
+    """Format a CommandResult for terminal display.
+
+    Args:
+        result: Structured result from command processing.
+
+    Returns:
+        String payload for display.
+    """
+
+    lines = []
+    if result.text:
+        lines.append(result.text)
+    if result.lines:
+        lines.extend(result.lines)
+    if result.warnings:
+        lines.append("Warnings:")
+        lines.extend(f"- {warning}" for warning in result.warnings)
+    return "\n".join(lines)

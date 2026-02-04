@@ -14,7 +14,7 @@ This folder contains design, campaign, and system references for the CUSTODIAN p
 ## Simulation Docs
 
 - `game/simulations/world_state/docs/world-state-simulation.md`: world-state simulation layout, core state model, event flow, and tuning knobs.
-- `game/simulations/world_state/docs/terminal-repl.md`: Phase 1 terminal loop and command reference.
+- `game/simulations/world_state/docs/terminal-repl.md`: Phase 1 terminal loop and command reference (help, status, contacts, profile, sectors, sector, go, wait).
 
 ## Conventions
 
