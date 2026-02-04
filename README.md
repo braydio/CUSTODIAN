@@ -94,6 +94,21 @@ Key files:
 - `game/simulations/assault/core/autopilot.py`
 - `game/simulations/assault/data/`
 
+### Custodian Terminal UI
+
+Static terminal UI prototype with the boot sequence and minimal command echo.
+
+Entry point:
+
+```bash
+open custodian-terminal/index.html
+```
+
+Key files:
+
+- `custodian-terminal/boot.js`
+- `custodian-terminal/terminal.js`
+
 ## Documentation Map
 
 - `docs/README.md`: documentation index and usage notes.
