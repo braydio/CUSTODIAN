@@ -106,7 +106,8 @@ def handle_status(state: GameState, parsed: ParsedCommand) -> CommandResult:
     lines = [
         f"Time={state.time} Threat={state.ambient_threat:.2f}",
         f"Assault={assault_state} Timer={timer_text}",
-        f"Control={'local' if state.player_present else 'remote'}",
+        f"Location={state.player_location}",
+        f"Authority={'command' if state.in_command_center else 'field'}",
     ]
     return CommandResult(ok=True, message="\n".join(lines))
 

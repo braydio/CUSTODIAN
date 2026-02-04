@@ -18,6 +18,9 @@ def process_command(
 
     Returns:
         CommandResult if a command was executed, otherwise None.
+
+    Notes:
+        Write commands require Command Center authority.
     """
 
     if parsed is None:
@@ -27,7 +30,10 @@ def process_command(
     if command is None:
         return CommandResult(ok=False, message="Unknown command. Use 'help'.")
 
-    if command.authority == "write" and not state.player_present:
-        return CommandResult(ok=False, message="Write authority denied.")
+    if command.authority == "write" and not state.in_command_center:
+        return CommandResult(
+            ok=False,
+            message="Write authority denied. Command Center required.",
+        )
 
     return command.handler(state, parsed)

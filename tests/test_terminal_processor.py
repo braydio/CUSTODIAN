@@ -18,14 +18,14 @@ def test_process_command_unknown() -> None:
 
 def test_process_command_write_denied() -> None:
     state = GameState()
-    state.player_present = False
+    state.player_location = "Fuel Depot"
     parsed = ParsedCommand(raw="advance 1", verb="advance", args=["1"], flags={})
 
     result = process_command(state, parsed)
 
     assert result is not None
     assert result.ok is False
-    assert "denied" in result.message.casefold()
+    assert "command center" in result.message.casefold()
 
 
 def test_process_command_read_ok() -> None:
@@ -37,3 +37,4 @@ def test_process_command_read_ok() -> None:
     assert result is not None
     assert result.ok is True
     assert "time=" in result.message.casefold()
+    assert "location=command center" in result.message.casefold()
