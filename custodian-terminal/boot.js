@@ -32,10 +32,22 @@ const bootLines = [
   "Initializing Custodian interface…"
 ];
 
+const terminalController = window.CustodianTerminal;
+
+/**
+ * Pause for a set duration.
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/**
+ * Type out a single boot line to the terminal.
+ * @param {string} text
+ * @returns {Promise<void>}
+ */
 function typeLine(text) {
   return new Promise(resolve => {
     let i = 0;
@@ -63,7 +75,13 @@ function typeLine(text) {
   });
 }
 
+/**
+ * Play the boot sequence before handing off to command mode.
+ * @returns {Promise<void>}
+ */
 async function runBoot() {
+  terminalController.setInputEnabled(false);
+
   for (const line of bootLines) {
     await typeLine(line);
     terminal.classList.add("flicker");
@@ -72,17 +90,15 @@ async function runBoot() {
   }
 
   await sleep(800);
-  enterCommandMode();
-}
-
-function enterCommandMode() {
-  terminal.textContent += "\n--- COMMAND INTERFACE ACTIVE ---\n";
-  terminal.textContent += "Awaiting directives.\n\n";
-  terminal.scrollTop = terminal.scrollHeight;
-
+  terminalController.syncBufferFromDom();
+  terminalController.startCommandMode();
   setTimeout(simulateTelemetry, 1500);
 }
 
+/**
+ * Append periodic telemetry lines after boot.
+ * @returns {void}
+ */
 function simulateTelemetry() {
   const messages = [
     "[ SENSOR ] Movement detected near Security Gate.",
@@ -99,8 +115,7 @@ function simulateTelemetry() {
       return;
     }
 
-    terminal.textContent += messages[i] + "\n";
-    terminal.scrollTop = terminal.scrollHeight;
+    terminalController.appendLine(messages[i]);
 
     alertSound.volume = 0.3;
     alertSound.play().catch(() => {});
@@ -110,4 +125,3 @@ function simulateTelemetry() {
 }
 
 runBoot();
-
