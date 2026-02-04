@@ -3,6 +3,7 @@ from game.simulations.assault.core.defenses import Turret
 from game.simulations.assault.core.enums import SectorType
 from game.simulations.assault.core.sectors import Sector
 
+
 def build_tactical_sectors(assault):
     sectors = []
     for sector_state in assault.target_sectors:
