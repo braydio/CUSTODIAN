@@ -144,3 +144,20 @@ Run `python game/simulations/world_state/sandbox_world.py` and confirm:
 - Sudden incidents.
 - Assaults emerging naturally.
 - Qualitative status messages only.
+
+## World-State Command Endpoint
+
+The world-state server exposes a simple POST endpoint for command execution.
+
+Endpoint: `POST /command`
+
+JSON request:
+
+- `command`: string input.
+
+JSON response (CommandResult):
+
+- `ok`: bool.
+- `text`: primary output.
+- `lines`: optional list of lines.
+- `warnings`: optional list.
