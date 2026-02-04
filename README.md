@@ -112,4 +112,10 @@ Key files:
 
 ## Testing & Validation
 
-No automated tests yet. When noting validation, describe the manual run (for example, “ran `python game/simulations/world_state/sandbox_world.py` and reviewed output”).
+Automated tests cover the world-state terminal logic. Run them with:
+
+```bash
+python -m pytest game/simulations/world_state/tests
+```
+
+When noting validation, describe the manual run (for example, “ran `python game/simulations/world_state/sandbox_world.py` and reviewed output”).
