@@ -22,3 +22,7 @@ This folder contains design, campaign, and system references for the CUSTODIAN p
 - Tone: operational, perimeter-defense language; terse, grounded output.
 - Scope: build systems first in text simulations; visuals and 3D presentation are deferred until the simulation loop is stable.
 - Design north star: reconstruction and knowledge preservation over extermination.
+
+## Testing
+
+- World-state terminal tests: `python -m pytest game/simulations/world_state/tests`

@@ -108,8 +108,6 @@ def handle_status(state: GameState, parsed: ParsedCommand) -> CommandResult:
 
     assault_state = "active" if state.in_major_assault else "idle"
     timer_text = "none" if state.assault_timer is None else str(state.assault_timer)
-    control = "local" if state.player_present else "remote"
-    location = state.current_sector if state.player_present else "unknown"
     lines = [
         f"Assault={assault_state} Timer={timer_text}",
         f"Location={state.player_location}",
@@ -117,7 +115,10 @@ def handle_status(state: GameState, parsed: ParsedCommand) -> CommandResult:
     ]
     return CommandResult(
         ok=True,
-        text=f"Time={state.time} Threat={state.ambient_threat:.2f}",
+        text=(
+            f"Time={state.time} Threat={state.ambient_threat:.2f} "
+            f"Location={state.player_location}"
+        ),
         lines=lines,
     )
 
@@ -177,8 +178,7 @@ def handle_go(state: GameState, parsed: ParsedCommand) -> CommandResult:
     sector_name, error = resolve_sector_name(raw_sector, SECTORS)
     if error:
         return CommandResult(ok=False, text=error)
-    state.player_present = True
-    state.current_sector = sector_name
+    state.player_location = sector_name
     return CommandResult(ok=True, text=f"Relocated to {sector_name}.")
 
 
