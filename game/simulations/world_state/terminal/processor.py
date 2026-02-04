@@ -33,7 +33,7 @@ def process_command(
     if command.authority == "write" and not state.in_command_center:
         return CommandResult(
             ok=False,
-            message="Write authority denied. Command Center required.",
+            text="Write authority denied. Command Center required.",
         )
 
     return command.handler(state, parsed)
