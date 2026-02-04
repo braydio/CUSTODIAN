@@ -39,6 +39,7 @@ class GameState:
         self.assault_timer = None
         self.in_major_assault = False
         self.player_present = True
+        self.current_assault = None
 
         self.assault_count = 0
         self.event_cooldowns = defaultdict(int)

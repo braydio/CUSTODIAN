@@ -4,9 +4,8 @@ This simulation models a fortified command post under escalating pressure. It fo
 
 ## Layout
 
-- `game/simulations/world-state/simulate-world.py` is the entry point.
-- `game/simulations/world-state/world_state/` contains the modular simulation logic.
-- `simulate-world-v2.py` and `simulate-world-v3.py` are earlier single-file experiments kept for reference.
+- `game/simulations/world_state/sandbox_world.py` is the entry point.
+- `game/simulations/world_state/core/` contains the modular simulation logic.
 
 ## Core State
 
@@ -77,7 +76,7 @@ Major assaults occur after a countdown influenced by damage in weak sectors. Whi
 
 ## Tuning Notes
 
-- Tuning values live in `world_state/config.py` so designers can adjust pacing without editing logic.
+- Tuning values live in `game/simulations/world_state/core/config.py` so designers can adjust pacing without editing logic.
 - Increase `AMBIENT_THREAT_GROWTH` to tighten the loop.
 - Adjust event `cooldown` and `weight` in `events.py` to shift pacing.
 - Alter `ASSAULT_TIMER_*` and `ASSAULT_DURATION_*` values to make assaults rarer or more frequent.
@@ -88,5 +87,5 @@ Major assaults occur after a countdown influenced by damage in weak sectors. Whi
 From this directory:
 
 ```bash
-python simulate-world.py
+python sandbox_world.py
 ```

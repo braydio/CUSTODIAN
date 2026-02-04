@@ -313,7 +313,7 @@ If you skip this and jump to recon mechanics, you’ll be debugging “vibes” 
 When you can run:
 
 ```bash
-python simulate_world.py
+python sandbox_world.py
 ```
 
 and see:

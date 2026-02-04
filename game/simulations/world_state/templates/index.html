@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Custodian — World State Feed</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+    :root {
+      color-scheme: light;
+      --bg-top: #0f1d1a;
+      --bg-mid: #122728;
+      --bg-bottom: #1b2f2b;
+      --panel: #112321;
+      --panel-accent: #2b4a45;
+      --panel-border: #2c4f49;
+      --text: #d6e2dc;
+      --muted: #9db2a8;
+      --accent: #f4c95d;
+      --danger: #f07a5d;
+      --glow: rgba(244, 201, 93, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, var(--bg-top), var(--bg-mid) 40%, var(--bg-bottom) 100%);
+      color: var(--text);
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.03),
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      mix-blend-mode: soft-light;
+      opacity: 0.35;
+    }
+
+    header {
+      padding: 28px clamp(20px, 4vw, 48px) 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .title h1 {
+      font-size: clamp(24px, 3vw, 32px);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .title span {
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    button {
+      border: 1px solid var(--panel-border);
+      background: linear-gradient(140deg, var(--panel), #162b28);
+      color: var(--text);
+      padding: 10px 16px;
+      font-family: "IBM Plex Mono", "Courier New", monospace;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 0 18px var(--glow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 24px var(--glow);
+    }
+
+    button.stop {
+      border-color: rgba(240, 122, 93, 0.6);
+      box-shadow: 0 0 18px rgba(240, 122, 93, 0.25);
+    }
+
+    main {
+      flex: 1;
+      padding: 24px clamp(20px, 4vw, 48px) 32px;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .panel {
+      background: linear-gradient(160deg, rgba(17, 35, 33, 0.9), rgba(21, 42, 39, 0.9));
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .feed {
+      font-family: "IBM Plex Mono", "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      max-height: 65vh;
+      overflow-y: auto;
+      padding-right: 8px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .snapshot {
+      font-family: "IBM Plex Mono", "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      background: rgba(10, 20, 19, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 180px;
+    }
+
+    .snapshot-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .snapshot-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(10, 20, 19, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .chip.urgent {
+      border-color: rgba(240, 122, 93, 0.6);
+      color: var(--danger);
+    }
+
+    .chip.signal {
+      border-color: rgba(244, 201, 93, 0.5);
+      color: var(--accent);
+    }
+
+    .sector-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .sector-row {
+      display: grid;
+      grid-template-columns: minmax(140px, 1.2fr) repeat(3, minmax(70px, 0.8fr));
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: rgba(8, 16, 15, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      align-items: center;
+    }
+
+    .sector-row span {
+      font-size: 12px;
+    }
+
+    .sector-name {
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .metric {
+      text-align: right;
+      color: var(--muted);
+    }
+
+    .metric strong {
+      color: var(--text);
+    }
+
+    .entry {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(10, 20, 19, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .entry.event {
+      border-color: rgba(244, 201, 93, 0.45);
+      box-shadow: inset 0 0 20px rgba(244, 201, 93, 0.05);
+    }
+
+    .entry.alert {
+      border-color: rgba(240, 122, 93, 0.5);
+      box-shadow: inset 0 0 20px rgba(240, 122, 93, 0.08);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #8bd17c;
+      box-shadow: 0 0 10px rgba(139, 209, 124, 0.6);
+    }
+
+    .status-dot.off {
+      background: #f07a5d;
+      box-shadow: 0 0 10px rgba(240, 122, 93, 0.6);
+    }
+
+    @media (max-width: 900px) {
+      main {
+        padding: 18px;
+        grid-template-columns: 1fr;
+      }
+
+      .feed {
+        max-height: 60vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+  <header>
+    <div class="title">
+      <span>Custodian / Command Feed</span>
+      <h1>World State Telemetry</h1>
+    </div>
+    <div class="controls">
+      <button id="start">Start Stream</button>
+      <button id="stop" class="stop">Stop Stream</button>
+      <button id="pause">Pause</button>
+      <button id="resume">Resume</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Main Feed</h2>
+      <div class="status">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Idle</span>
+      </div>
+      <div class="feed" id="feed"></div>
+    </section>
+    <section class="panel">
+      <h2>Latest Snapshot</h2>
+      <div class="snapshot" id="snapshot">Awaiting snapshot...</div>
+    </section>
+    <section class="panel">
+      <h2>Assault Log</h2>
+      <div class="feed" id="assaultFeed"></div>
+    </section>
+  </main>
+
+  <script>
+    const feed = document.getElementById("feed");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+    const startButton = document.getElementById("start");
+    const stopButton = document.getElementById("stop");
+    const pauseButton = document.getElementById("pause");
+    const resumeButton = document.getElementById("resume");
+    const assaultFeed = document.getElementById("assaultFeed");
+    const snapshot = document.getElementById("snapshot");
+
+    let source = null;
+    let inSnapshot = false;
+    let snapshotBuffer = [];
+    let lastMessageAt = null;
+    let heartbeatTimer = null;
+
+    const addEntry = (text) => {
+      const entry = document.createElement("div");
+      entry.className = "entry";
+      if (text.startsWith("[Event]") || text.includes("Consequence")) {
+        entry.classList.add("event");
+      }
+      if (text.includes("ASSAULT") || text.includes("Warning")) {
+        entry.classList.add("alert");
+      }
+      entry.textContent = text;
+      feed.appendChild(entry);
+      if (feed.childElementCount > 6) {
+        feed.scrollTop = feed.scrollHeight;
+      }
+    };
+
+    const addAssaultEntry = (text) => {
+      const entry = document.createElement("div");
+      entry.className = "entry alert";
+      entry.textContent = text;
+      assaultFeed.appendChild(entry);
+      if (assaultFeed.childElementCount > 6) {
+        assaultFeed.scrollTop = assaultFeed.scrollHeight;
+      }
+    };
+
+    const updateSnapshot = () => {
+      if (!snapshotBuffer.length) {
+        return;
+      }
+      const headerLine = snapshotBuffer[0] || "";
+      const headerMatch = headerLine.match(/Time=(\d+)\s+Threat=([0-9.]+)(?:\s+GlobalFX=(.*))?/);
+      const timeValue = headerMatch ? headerMatch[1] : "--";
+      const threatValue = headerMatch ? headerMatch[2] : "--";
+      const globalFx = headerMatch && headerMatch[3] ? headerMatch[3].split(",").map((fx) => fx.trim()) : [];
+
+      const sectorLines = snapshotBuffer.slice(1).filter(Boolean);
+      const sectorRows = sectorLines
+        .map((line) => {
+          const match = line.match(/^(.*):\s+DMG=([0-9.]+)\s+ALERT=([0-9.]+)\s+PWR=([0-9.]+)/);
+          if (!match) {
+            return "";
+          }
+          const [, name, dmg, alert, pwr] = match;
+          return `
+            <div class="sector-row">
+              <span class="sector-name">${name}</span>
+              <span class="metric">DMG <strong>${dmg}</strong></span>
+              <span class="metric">ALRT <strong>${alert}</strong></span>
+              <span class="metric">PWR <strong>${pwr}</strong></span>
+            </div>
+          `;
+        })
+        .join("");
+
+      const fxChips = globalFx
+        .filter(Boolean)
+        .map((fx) => `<span class="chip signal">${fx}</span>`)
+        .join("");
+
+      snapshot.innerHTML = `
+        <div class="snapshot-grid">
+          <div class="snapshot-header">
+            <span class="chip">Time ${timeValue}</span>
+            <span class="chip ${parseFloat(threatValue) > 6 ? "urgent" : ""}">Threat ${threatValue}</span>
+            ${fxChips}
+          </div>
+          <div class="sector-list">
+            ${sectorRows || '<span class="metric">No sector data yet.</span>'}
+          </div>
+        </div>
+      `;
+      snapshotBuffer = [];
+    };
+
+    const isAssaultStartStop = (text) =>
+      text.includes("MAJOR ASSAULT BEGINS") || text.includes("ASSAULT REPULSED");
+
+    const isAssaultLine = (text) =>
+      text.startsWith("[Assault]") ||
+      text.includes("MAJOR ASSAULT BEGINS") ||
+      text.includes("ASSAULT REPULSED") ||
+      text.includes("Warning");
+
+    const isAmbientEvent = (text) =>
+      text.startsWith("[Event]") || text.includes("Consequence");
+
+    const setStatus = (isLive, text) => {
+      statusDot.classList.toggle("off", !isLive);
+      statusText.textContent = text;
+    };
+
+    const startHeartbeat = () => {
+      if (heartbeatTimer) {
+        return;
+      }
+      heartbeatTimer = setInterval(() => {
+        if (!lastMessageAt) {
+          return;
+        }
+        const seconds = Math.floor((Date.now() - lastMessageAt) / 1000);
+        if (source) {
+          statusText.textContent = `Live • ${seconds}s since last update`;
+        }
+      }, 1000);
+    };
+
+    const stopHeartbeat = () => {
+      if (!heartbeatTimer) {
+        return;
+      }
+      clearInterval(heartbeatTimer);
+      heartbeatTimer = null;
+    };
+
+    const startStream = async () => {
+      if (source) {
+        return;
+      }
+      if (!feed.childElementCount) {
+        try {
+          const response = await fetch("/history");
+          if (response.ok) {
+            const lines = await response.json();
+            lines.forEach((line) => addEntry(line));
+          }
+        } catch (error) {
+          // Non-fatal: history is optional.
+        }
+      }
+      setStatus(true, "Connecting...");
+      source = new EventSource("/stream?delay=0.2");
+
+      source.onopen = () => {
+        lastMessageAt = Date.now();
+        setStatus(true, "Live");
+        startHeartbeat();
+      };
+      source.onmessage = (event) => {
+        const data = event.data ?? "";
+        lastMessageAt = Date.now();
+
+        if (data === "[Snapshot]") {
+          inSnapshot = true;
+          snapshotBuffer = [];
+          return;
+        }
+
+        if (inSnapshot) {
+          if (data.trim() === "") {
+            inSnapshot = false;
+            updateSnapshot();
+            return;
+          }
+          snapshotBuffer.push(data.trim());
+          return;
+        }
+
+        if (isAssaultLine(data)) {
+          addAssaultEntry(data);
+          if (isAssaultStartStop(data)) {
+            addEntry(data);
+          }
+          return;
+        }
+
+        if (isAmbientEvent(data)) {
+          addEntry(data);
+        }
+      };
+      source.onerror = () => {
+        setStatus(false, "Disconnected");
+        source.close();
+        source = null;
+        stopHeartbeat();
+      };
+    };
+
+    const stopStream = () => {
+      if (source) {
+        source.close();
+        source = null;
+      }
+      setStatus(false, "Stopped");
+      stopHeartbeat();
+    };
+
+    startButton.addEventListener("click", startStream);
+    stopButton.addEventListener("click", stopStream);
+    pauseButton.addEventListener("click", async () => {
+      try {
+        await fetch("/pause", { method: "POST" });
+        setStatus(true, "Paused");
+      } catch (error) {
+        setStatus(false, "Pause failed");
+      }
+    });
+    resumeButton.addEventListener("click", async () => {
+      try {
+        await fetch("/resume", { method: "POST" });
+        lastMessageAt = Date.now();
+        setStatus(true, "Live");
+      } catch (error) {
+        setStatus(false, "Resume failed");
+      }
+    });
+  </script>
+</body>
+</html>

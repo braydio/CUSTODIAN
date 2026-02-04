@@ -5,7 +5,7 @@ from .events import maybe_trigger_event
 from .state import GameState, advance_time
 
 
-def simulate_world(ticks=300, tick_delay=0.05):
+def sandbox_world(ticks=300, tick_delay=0.05):
     state = GameState()
     print("World simulation started.\n")
     profile = state.faction_profile
@@ -25,7 +25,7 @@ def simulate_world(ticks=300, tick_delay=0.05):
         advance_time(state)
         maybe_trigger_event(state)
 
-        if not state.in_major_assault:
+        if state.current_assault is None:
             maybe_start_assault_timer(state)
             tick_assault_timer(state)
         else:
