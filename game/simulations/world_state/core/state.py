@@ -33,12 +33,17 @@ class SectorState:
 
 
 class GameState:
+    """Container for mutable simulation state."""
+
     def __init__(self):
+        """Initialize the world-state simulation state."""
+
         self.time = 0
         self.ambient_threat = 0.0
         self.assault_timer = None
         self.in_major_assault = False
         self.player_present = True
+        self.current_sector = "Command Center"
         self.current_assault = None
 
         self.assault_count = 0

@@ -25,9 +25,9 @@ def process_command(
 
     command = get_command(parsed.verb)
     if command is None:
-        return CommandResult(ok=False, message="Unknown command. Use 'help'.")
+        return CommandResult(ok=False, text="Unknown command. Use 'help'.")
 
     if command.authority == "write" and not state.player_present:
-        return CommandResult(ok=False, message="Write authority denied.")
+        return CommandResult(ok=False, text="Write authority denied.")
 
     return command.handler(state, parsed)
