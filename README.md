@@ -59,6 +59,16 @@ Entry point:
 python game/simulations/world_state/sandbox_world.py
 ```
 
+Optional server entry point:
+
+```bash
+python game/simulations/world_state/server.py
+```
+
+Server endpoint:
+
+- `POST /command` with JSON `{ "command": "<string>" }` returns a CommandResult payload.
+
 Write commands in the terminal loop require Command Center authority.
 
 Docs:
