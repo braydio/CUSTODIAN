@@ -56,7 +56,7 @@ Models ambient threat, sector instability, and periodic major assaults. Events a
 Entry point:
 
 ```bash
-python game/simulations/world-state/simulate-world.py
+python game/simulations/world_state/sandbox_world.py
 ```
 
 Docs:
@@ -64,14 +64,14 @@ Docs:
 - `docs/Broad_Overview_Design_Rules.md`
 - `docs/SystemDesign.md`
 - `docs/PROJECT_MAP.md`
-- `game/simulations/world-state/docs/world-state-simulation.md`
+- `game/simulations/world_state/docs/world-state-simulation.md`
 
 Key files:
 
-- `game/simulations/world-state/world_state/config.py`
-- `game/simulations/world-state/world_state/events.py`
-- `game/simulations/world-state/world_state/assaults.py`
-- `game/simulations/world-state/world_state/state.py`
+- `game/simulations/world_state/core/config.py`
+- `game/simulations/world_state/core/events.py`
+- `game/simulations/world_state/core/assaults.py`
+- `game/simulations/world_state/core/state.py`
 
 ### Assault Simulation
 
@@ -80,7 +80,7 @@ Focused assault-resolution prototype and data packs.
 Entry point:
 
 ```bash
-python game/simulations/assault/simulate_assault.py
+python game/simulations/assault/sandbox_assault.py
 ```
 
 Key files:
@@ -105,4 +105,4 @@ Key files:
 
 ## Testing & Validation
 
-No automated tests yet. When noting validation, describe the manual run (for example, “ran `python game/simulations/world-state/simulate-world.py` and reviewed output”).
+No automated tests yet. When noting validation, describe the manual run (for example, “ran `python game/simulations/world_state/sandbox_world.py` and reviewed output”).
