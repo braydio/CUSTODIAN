@@ -27,3 +27,4 @@ Use `WORLD_STATE_MODE=sim` to run the legacy autonomous loop.
 
 - Phase 1 uses manual advancement only. `wait` steps the full world simulation each tick, including ambient events and assaults.
 - Sector matching resolves exact names first, then unique prefixes, then unique contains matches.
+- Write commands require Command Center authority.

@@ -19,14 +19,16 @@ def test_process_command_unknown() -> None:
 
 def test_process_command_write_denied() -> None:
     state = GameState()
-    state.player_present = False
+    # Move operator out of the Command Center
+    state.player_location = "Fuel Depot"
+
     parsed = ParsedCommand(raw="wait 1", verb="wait", args=["1"], flags={})
 
     result = process_command(state, parsed)
 
     assert result is not None
     assert result.ok is False
-    assert "denied" in result.text.casefold()
+    assert "command center" in result.text.casefold()
 
 
 def test_process_command_read_ok() -> None:
@@ -38,6 +40,7 @@ def test_process_command_read_ok() -> None:
     assert result is not None
     assert result.ok is True
     assert "time=" in result.text.casefold()
+    assert "location=command center" in result.text.casefold()
 
 
 def test_process_command_wait_steps_world(monkeypatch) -> None:
@@ -48,6 +51,7 @@ def test_process_command_wait_steps_world(monkeypatch) -> None:
         calls["count"] += 1
 
     monkeypatch.setattr(commands, "step_world", step_stub)
+
     parsed = ParsedCommand(raw="wait 3", verb="wait", args=["3"], flags={})
 
     result = process_command(state, parsed)
@@ -66,4 +70,4 @@ def test_process_command_go_sets_location() -> None:
 
     assert result is not None
     assert result.ok is True
-    assert state.current_sector == "Service Tunnels"
+    assert state.player_location == "Service Tunnels"

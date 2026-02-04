@@ -112,7 +112,8 @@ def handle_status(state: GameState, parsed: ParsedCommand) -> CommandResult:
     location = state.current_sector if state.player_present else "unknown"
     lines = [
         f"Assault={assault_state} Timer={timer_text}",
-        f"Control={control} Location={location}",
+        f"Location={state.player_location}",
+        f"Authority={'command' if state.in_command_center else 'field'}",
     ]
     return CommandResult(
         ok=True,
