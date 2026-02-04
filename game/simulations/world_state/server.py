@@ -84,6 +84,7 @@ def index():
 def history_feed():
     return jsonify(list(history))
 
+
 @app.route("/pause", methods=["POST"])
 def pause():
     if current_process is None or current_process.poll() is not None:

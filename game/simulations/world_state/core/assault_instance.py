@@ -125,6 +125,7 @@ class AssaultInstance:
         enemy_type = type_map.get(group["enemy_type"], EnemyType.RAIDER)
         name = f"{group['label']} {index}"
         return Enemy(name, enemy_type, group["hp"], group["morale"], sector)
+
     def __str__(self):
         sector_names = ", ".join(s.name for s in self.target_sectors)
         return (
