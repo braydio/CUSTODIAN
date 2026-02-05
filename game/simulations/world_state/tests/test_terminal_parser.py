@@ -1,64 +1,19 @@
-"""Tests for terminal parsing and sector name resolution."""
+"""Tests for terminal command parsing."""
 
-from game.simulations.world_state.core.config import SECTORS
-from game.simulations.world_state.terminal.parser import (
-    parse_input,
-    resolve_sector_name,
-)
+from game.simulations.world_state.terminal.parser import parse_input
 
 
-def test_parse_input_quotes_flags_casefold() -> None:
-    """Ensure parsing honors quotes, flags, and casefolding."""
+def test_parse_input_uppercases_verb_and_preserves_args() -> None:
+    """Parser should normalize verb and preserve positional args."""
 
-    parsed = parse_input('WAIT "2" --mode=fast -v')
+    parsed = parse_input('wait "north gate"')
 
     assert parsed is not None
-    assert parsed.verb == "wait"
-    assert parsed.args == ["2"]
-    assert parsed.flags == {"mode": "fast", "v": "true"}
+    assert parsed.verb == "WAIT"
+    assert parsed.args == ["north gate"]
 
 
-def test_parse_input_casefolds_verbs() -> None:
-    """Verify verbs are casefolded during parsing."""
+def test_parse_input_returns_none_for_empty_text() -> None:
+    """Parser should ignore empty command lines."""
 
-    parsed = parse_input("StAtUs")
-
-    assert parsed is not None
-    assert parsed.verb == "status"
-
-
-def test_resolve_sector_name_exact() -> None:
-    """Exact sector name matches should resolve cleanly."""
-
-    name, error = resolve_sector_name("Goal Sector", SECTORS)
-
-    assert error is None
-    assert name == "Goal Sector"
-
-
-def test_resolve_sector_name_prefix() -> None:
-    """Prefix matches should resolve when unambiguous."""
-
-    name, error = resolve_sector_name("maint", SECTORS)
-
-    assert error is None
-    assert name == "Maintenance Yard"
-
-
-def test_resolve_sector_name_contains() -> None:
-    """Contains matches should resolve when unambiguous."""
-
-    name, error = resolve_sector_name("tower", SECTORS)
-
-    assert error is None
-    assert name == "Radar / Control Tower"
-
-
-def test_resolve_sector_name_ambiguous() -> None:
-    """Ambiguous matches should return an error."""
-
-    name, error = resolve_sector_name("hangar", SECTORS)
-
-    assert name is None
-    assert error is not None
-    assert "ambiguous" in error.casefold()
+    assert parse_input("   ") is None

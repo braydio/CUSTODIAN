@@ -1,31 +1,35 @@
-"""Tests for command result contracts and output discipline."""
+"""Tests for locked terminal command contracts."""
 
 from game.simulations.world_state.core.state import GameState
-from game.simulations.world_state.terminal.commands import CommandResult, get_command
-from game.simulations.world_state.terminal.parser import ParsedCommand
+from game.simulations.world_state.terminal.processor import process_command
 
 
-def test_command_handlers_return_results_and_do_not_print(capsys) -> None:
-    """All command handlers should return CommandResult without printing."""
+def test_help_output_matches_locked_contract() -> None:
+    """HELP should return exactly the locked command list."""
 
     state = GameState()
-    command_args = {
-        "status": [],
-        "sectors": [],
-        "power": [],
-        "wait": ["1"],
-    }
 
-    for name, args in command_args.items():
-        command = get_command(name)
+    result = process_command(state, "HELP")
 
-        assert command is not None
+    assert result.ok is True
+    assert result.lines == [
+        "AVAILABLE COMMANDS:",
+        "- STATUS   View current situation",
+        "- WAIT     Advance time",
+        "- HELP     Show this list",
+    ]
 
-        parsed = ParsedCommand(raw=name, verb=name, args=args, flags={})
-        result = command.handler(state, parsed)
 
-        assert isinstance(result, CommandResult)
+def test_status_output_contains_locked_sections() -> None:
+    """STATUS output should provide required headers and sector rows."""
 
-        captured = capsys.readouterr()
-        assert captured.out == ""
-        assert captured.err == ""
+    state = GameState()
+
+    result = process_command(state, "STATUS")
+
+    assert result.ok is True
+    assert result.lines[0].startswith("TIME: ")
+    assert result.lines[1].startswith("THREAT: ")
+    assert result.lines[2].startswith("ASSAULT: ")
+    assert result.lines[4] == "SECTORS:"
+    assert result.lines[5].startswith("- Command Center: ")

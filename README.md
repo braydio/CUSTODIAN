@@ -90,10 +90,9 @@ python game/simulations/world_state/server.py
 
 Server endpoint:
 
-- `POST /command` with JSON `{ "command": "<string>" }` returns a CommandResult payload.
+- `POST /command` with JSON `{ "raw": "<string>" }` returns `{ "ok": bool, "lines": string[] }`.
 
-Write commands in the terminal loop require Command Center authority.
-Terminal commands: `status`, `sectors`, `power`, `wait`.
+Phase 1 terminal commands: `STATUS`, `WAIT`, `HELP`.
 
 Docs:
 
@@ -127,6 +126,23 @@ Key files:
 - `game/simulations/assault/core/assault.py`
 - `game/simulations/assault/core/autopilot.py`
 - `game/simulations/assault/data/`
+
+### Custodian Terminal UI
+
+Static terminal UI prototype with boot sequence and live command loop integration.
+
+Entry point:
+
+```bash
+python game/simulations/world_state/server.py
+```
+
+Then visit `http://localhost:7557/`.
+
+Key files:
+
+- `custodian-terminal/boot.js`
+- `custodian-terminal/terminal.js`
 
 ## Documentation Map
 

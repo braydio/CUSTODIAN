@@ -11,10 +11,9 @@
   const tutorialFeedLines = [
     "",
     "--- TUTORIAL FEED ---",
-    "STATUS: Confirm system health and active alerts.",
-    "SECTORS: Review integrity and contact reports.",
-    "POWER: Inspect routing and reserve draw.",
-    "WAIT: Advance time to receive telemetry.",
+    "STATUS: View current situation.",
+    "WAIT: Advance time by one tick.",
+    "HELP: Review available commands.",
     "",
     "--- END FEED ---",
   ];
@@ -80,11 +79,30 @@
   }
 
   /**
-   * Handle submitted commands and echo them back.
-   * @param {SubmitEvent} event
-   * @returns {void}
+   * Submit a command to the backend command endpoint.
+   * @param {string} raw
+   * @returns {Promise<{ok: boolean, lines: string[]}>}
    */
-  function handleSubmit(event) {
+  async function submitCommand(raw) {
+    const response = await fetch("/command", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ raw }),
+    });
+
+    const payload = await response.json();
+    return {
+      ok: Boolean(payload.ok),
+      lines: Array.isArray(payload.lines) ? payload.lines : [],
+    };
+  }
+
+  /**
+   * Handle submitted commands and display backend responses.
+   * @param {SubmitEvent} event
+   * @returns {Promise<void>}
+   */
+  async function handleSubmit(event) {
     event.preventDefault();
     if (!state.inputEnabled) {
       return;
@@ -95,9 +113,21 @@
       return;
     }
 
-    appendLine(`> ${command}`);
-    appendLine(`ECHO: ${command}`);
+    appendLine(`> ${command.toUpperCase()}`);
     inputField.value = "";
+
+    setInputEnabled(false);
+    try {
+      const result = await submitCommand(command);
+      appendLines(result.lines);
+    } catch (_error) {
+      appendLines([
+        "COMMAND LINK FAILED.",
+        "VERIFY SERVER AND RETRY.",
+      ]);
+    } finally {
+      setInputEnabled(true);
+    }
   }
 
   /**
@@ -126,10 +156,11 @@
     setInputEnabled(true);
   }
 
-  inputForm.addEventListener("submit", handleSubmit);
+  inputForm.addEventListener("submit", (event) => {
+    handleSubmit(event);
+  });
   setInputEnabled(false);
 
-  // TODO: Add automated UI tests for tutorial feed timing and input unlock once a JS harness exists.
   window.CustodianTerminal = {
     appendLine,
     appendLines,
