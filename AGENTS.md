@@ -31,10 +31,14 @@ This repository contains lightweight prototypes for a defense-oriented simulatio
 
 - When adding docs for a simulation, place them in a `docs/` subdir next to the Python entry point.
 - Keep docs concise with bullets and short paragraphs.
-- The canonical AI context bundle lives in `docs/_ai_context/` and must be reviewed every session.
-  - Update `CURRENT_STATE.md` every session.
-  - Keep all files relevant, timely, and accurate within their scope; do not omit important context.
-  - Treat this folder as the authoritative snapshot exported for external review.
+- The canonical AI context bundle lives in `docs/_ai_context/` and must be reviewed at the start of every session.
+- Read `CURRENT_STATE.md` first and treat it as authoritative.
+- Update `CURRENT_STATE.md` only when code, behavior, or locked decisions changed.
+- Keep tracking files relevant, timely, and accurate within their scope; do not omit important context.
+- Do not add speculative plans, future ideas, or TODOs to tracking files.
+- Append design or architecture changes to `DEVLOG.md` with a date, once per session.
+- If code structure, entry points, naming, or behavior drift from documentation, update the tracking docs before proceeding.
+- Treat `docs/_ai_context/` as the snapshot exported for external review.
 - Update this `AGENTS.md` periodically as needed to keep its guidance current.
 
 ## Recent Entrypoints
@@ -64,3 +68,10 @@ This repository contains lightweight prototypes for a defense-oriented simulatio
 - If refactoring, keep entry points stable.
 - Keep sector naming aligned with root docs (Command Center + Goal Sector, plus the eight tutorial peripheral sectors).
 - Prefer `rg` for searches in this repo.
+
+## Non-Goals
+
+- Premature optimization.
+- Engine selection.
+- UI expansion beyond the terminal interface.
+- Adding systems not explicitly requested.
