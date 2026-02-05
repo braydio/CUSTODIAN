@@ -67,6 +67,46 @@ The player should only see qualitative state, not timers:
 
 This keeps uncertainty without unfairness.
 
+## Terminal Boot-to-Operations Handoff
+
+The terminal UI is the primary player-facing entry point once command transport is wired.
+
+- Server boots and starts an SSE stream.
+- Client renders scripted boot lines in order.
+- Input remains locked during boot output.
+- Input unlocks only after boot completion marker.
+- After unlock, commands route to the authoritative world-state command endpoint.
+
+Design intent:
+
+- Keep boot deterministic and readable.
+- Prevent operator input before system readiness.
+- Make the world-state backend the source of truth for all command effects.
+
+## Command Transport Contract
+
+Transport between terminal UI and backend follows a strict boundary.
+
+Request:
+
+- Endpoint: `POST /command`
+- Content-Type: `application/json`
+- Body: `{ "command": "<string>" }`
+
+Response (CommandResult):
+
+- `ok` (bool): command accepted and executed.
+- `text` (string): primary operator-facing line.
+- `lines` (optional list[string]): additional ordered output lines.
+- `warnings` (optional list[string]): non-fatal warnings.
+
+Contract rules:
+
+- Backend owns parsing, authority checks, and simulation stepping.
+- Frontend does not infer state changes from local echo.
+- Output remains terse, operational, and ASCII-safe.
+- Unknown or unauthorized commands return `ok=false` with actionable text.
+
 ## Implementation Order (Do This First)
 
 Do not add recon gameplay, ambient enemies, or real-time ticks yet. Build the clock and pressure model in text first.
