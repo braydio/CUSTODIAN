@@ -10,12 +10,13 @@ def run_repl() -> None:
     """Start the deterministic operator loop.
 
     The loop reads commands, processes them immediately, and prints the
-    result without background ticking.
+    result without background ticking. The available command set is
+    status, sectors, power, and wait.
     """
 
     state = GameState()
     print("World-state terminal online.")
-    print("Type 'help' for command list. 'quit' to exit.")
+    print("Commands: status, sectors, power, wait. 'quit' to exit.")
     while True:
         try:
             raw = input("> ")

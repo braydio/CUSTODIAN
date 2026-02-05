@@ -10,11 +10,11 @@ from game.simulations.world_state.terminal.parser import (
 def test_parse_input_quotes_flags_casefold() -> None:
     """Ensure parsing honors quotes, flags, and casefolding."""
 
-    parsed = parse_input('GO "Command Center" --mode=fast -v')
+    parsed = parse_input('WAIT "2" --mode=fast -v')
 
     assert parsed is not None
-    assert parsed.verb == "go"
-    assert parsed.args == ["command center"]
+    assert parsed.verb == "wait"
+    assert parsed.args == ["2"]
     assert parsed.flags == {"mode": "fast", "v": "true"}
 
 
