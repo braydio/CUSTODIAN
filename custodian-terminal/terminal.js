@@ -6,83 +6,103 @@
   const state = {
     buffer: [],
     inputEnabled: false,
+    cursorVisible: false,
+    liveInput: "",
   };
 
-  const tutorialFeedLines = [
+  const systemLogLines = [
     "",
-    "--- TUTORIAL FEED ---",
-    "STATUS: View current situation.",
-    "WAIT: Advance time by one tick.",
-    "HELP: Review available commands.",
+    "--- SYSTEM LOG ---",
+    "Residual command index recovered.",
+    "Directive access granted.",
     "",
-    "--- END FEED ---",
+    "AVAILABLE DIRECTIVES:",
+    "- STATUS",
+    "- WAIT",
+    "- HELP",
+    "",
   ];
 
-  /**
-   * Rebuild the output buffer from the current terminal text.
-   * @returns {void}
-   */
+  /* =========================
+     Buffer + Rendering
+     ========================= */
+
   function syncBufferFromDom() {
     const rawText = terminal.textContent;
     state.buffer = rawText ? rawText.split("\n") : [];
   }
 
-  /**
-   * Render the buffer to the terminal display.
-   * @returns {void}
-   */
   function render() {
     terminal.textContent = state.buffer.join("\n");
     terminal.scrollTop = terminal.scrollHeight;
   }
 
-  /**
-   * Append a single line to the output buffer.
-   * @param {string} line
-   * @returns {void}
-   */
   function appendLine(line) {
     state.buffer.push(line);
     render();
   }
 
-  /**
-   * Append multiple lines to the output buffer.
-   * @param {string[]} lines
-   * @returns {void}
-   */
   function appendLines(lines) {
     lines.forEach((line) => appendLine(line));
   }
 
-  /**
-   * Pause for a set duration.
-   * @param {number} ms
-   * @returns {Promise<void>}
-   */
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  /**
-   * Enable or disable terminal input.
-   * @param {boolean} enabled
-   * @returns {void}
-   */
+  /* =========================
+     Live Input + Cursor
+     ========================= */
+
+  function renderLiveLine() {
+    if (!state.inputEnabled) return;
+
+    // Remove existing live line
+    const last = state.buffer[state.buffer.length - 1];
+    if (last && last.startsWith("> ")) {
+      state.buffer.pop();
+    }
+
+    const cursor = state.cursorVisible ? "_" : "";
+    state.buffer.push(`> ${state.liveInput}${cursor}`);
+    render();
+  }
+
+  // Blink cursor
+  setInterval(() => {
+    if (!state.inputEnabled) return;
+    state.cursorVisible = !state.cursorVisible;
+    renderLiveLine();
+  }, 650);
+
+  inputField.addEventListener("input", () => {
+    if (!state.inputEnabled) return;
+    state.liveInput = inputField.value.toUpperCase();
+    renderLiveLine();
+  });
+
+  /* =========================
+     Input Enable / Disable
+     ========================= */
+
   function setInputEnabled(enabled) {
     state.inputEnabled = enabled;
     inputField.disabled = !enabled;
     inputForm.classList.toggle("disabled", !enabled);
+
     if (enabled) {
       inputField.focus();
+      state.cursorVisible = true;
+      renderLiveLine();
+    } else {
+      state.cursorVisible = false;
     }
   }
 
-  /**
-   * Submit a command to the backend command endpoint.
-   * @param {string} raw
-   * @returns {Promise<{ok: boolean, lines: string[]}>}
-   */
+  /* =========================
+     Backend Communication
+     ========================= */
+
   async function submitCommand(raw) {
     const response = await fetch("/command", {
       method: "POST",
@@ -97,30 +117,35 @@
     };
   }
 
-  /**
-   * Handle submitted commands and display backend responses.
-   * @param {SubmitEvent} event
-   * @returns {Promise<void>}
-   */
+  /* =========================
+     Command Handling
+     ========================= */
+
   async function handleSubmit(event) {
     event.preventDefault();
-    if (!state.inputEnabled) {
-      return;
-    }
+    if (!state.inputEnabled) return;
 
     const command = inputField.value.trim();
-    if (!command) {
-      return;
+    if (!command) return;
+
+    // Remove live line
+    const last = state.buffer[state.buffer.length - 1];
+    if (last && last.startsWith("> ")) {
+      state.buffer.pop();
     }
 
     appendLine(`> ${command.toUpperCase()}`);
+
     inputField.value = "";
+    state.liveInput = "";
+    state.cursorVisible = false;
 
     setInputEnabled(false);
+
     try {
       const result = await submitCommand(command);
       appendLines(result.lines);
-    } catch (_error) {
+    } catch {
       appendLines([
         "COMMAND LINK FAILED.",
         "VERIFY SERVER AND RETRY.",
@@ -130,22 +155,22 @@
     }
   }
 
-  /**
-   * Play the scripted tutorial feed before unlocking input.
-   * @returns {Promise<void>}
-   */
-  async function runTutorialFeed() {
+  /* =========================
+     SYSTEM LOG
+     ========================= */
+
+  async function runSystemLog() {
     setInputEnabled(false);
-    for (const line of tutorialFeedLines) {
+    for (const line of systemLogLines) {
       appendLine(line);
       await sleep(350);
     }
   }
 
-  /**
-   * Switch the terminal into command mode.
-   * @returns {void}
-   */
+  /* =========================
+     Command Mode
+     ========================= */
+
   function startCommandMode() {
     appendLines([
       "",
@@ -156,9 +181,11 @@
     setInputEnabled(true);
   }
 
-  inputForm.addEventListener("submit", (event) => {
-    handleSubmit(event);
-  });
+  /* =========================
+     Wiring
+     ========================= */
+
+  inputForm.addEventListener("submit", handleSubmit);
   setInputEnabled(false);
 
   window.CustodianTerminal = {
@@ -166,7 +193,8 @@
     appendLines,
     setInputEnabled,
     startCommandMode,
-    runTutorialFeed,
+    runSystemLog,
     syncBufferFromDom,
   };
 })();
+
