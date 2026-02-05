@@ -1,39 +1,49 @@
 """Command processor for the world-state terminal."""
 
-from typing import Optional
+from collections.abc import Callable
 
 from game.simulations.world_state.core.state import GameState
-from game.simulations.world_state.terminal.commands import CommandResult, get_command
-from game.simulations.world_state.terminal.parser import ParsedCommand
+from game.simulations.world_state.terminal.commands import (
+    cmd_help,
+    cmd_status,
+    cmd_wait,
+)
+from game.simulations.world_state.terminal.parser import parse_input
+from game.simulations.world_state.terminal.result import CommandResult
+
+Handler = Callable[[GameState], list[str]]
 
 
-def process_command(
-    state: GameState, parsed: Optional[ParsedCommand]
-) -> Optional[CommandResult]:
-    """Apply a parsed command to the game state.
+COMMAND_HANDLERS: dict[str, Handler] = {
+    "STATUS": cmd_status,
+    "WAIT": cmd_wait,
+    "HELP": lambda _state: cmd_help(),
+}
+
+
+def process_command(state: GameState, raw: str) -> CommandResult:
+    """Parse and dispatch a command against a mutable game state.
 
     Args:
-        state: Current game state.
-        parsed: Parsed command, or None for empty input.
+        state: Long-lived world-state instance.
+        raw: Raw terminal input line.
 
     Returns:
-        CommandResult if a command was executed, otherwise None for empty input.
-
-    Notes:
-        Write commands require Command Center authority.
+        Phase 1 command result payload.
     """
 
+    parsed = parse_input(raw)
     if parsed is None:
-        return None
-
-    command = get_command(parsed.verb)
-    if command is None:
-        return CommandResult(ok=False, text="Unknown command.")
-
-    if command.authority == "write" and not state.in_command_center:
         return CommandResult(
-            ok=False,
-            text="Write authority denied. Command Center required.",
+            ok=False, lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]
         )
 
-    return command.handler(state, parsed)
+    handler = COMMAND_HANDLERS.get(parsed.verb)
+    if handler is None:
+        return CommandResult(
+            ok=False, lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]
+        )
+
+    # Phase 1 authority model: all commands are allowed.
+    lines = handler(state)
+    return CommandResult(ok=True, lines=lines)

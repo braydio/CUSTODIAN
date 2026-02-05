@@ -15,9 +15,8 @@ from flask import (
 )
 
 from game.simulations.world_state.core.state import GameState
-from game.simulations.world_state.terminal.commands import CommandResult
-from game.simulations.world_state.terminal.parser import parse_input
 from game.simulations.world_state.terminal.processor import process_command
+from game.simulations.world_state.terminal.result import CommandResult
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 SIM_PATH = os.path.join(APP_ROOT, "sandbox_world.py")
@@ -82,21 +81,9 @@ def _stream_world_state(delay):
 
 
 def _command_result_payload(result: CommandResult) -> dict:
-    """Convert a CommandResult into a JSON-ready payload.
+    """Convert a CommandResult into the locked API payload."""
 
-    Args:
-        result: Structured command result to serialize.
-
-    Returns:
-        Dict with required keys and optional lists when present.
-    """
-
-    payload = {"ok": result.ok, "text": result.text}
-    if result.lines:
-        payload["lines"] = result.lines
-    if result.warnings:
-        payload["warnings"] = result.warnings
-    return payload
+    return {"ok": result.ok, "lines": result.lines}
 
 
 @app.route("/")
@@ -133,24 +120,18 @@ def resume():
 
 @app.route("/command", methods=["POST"])
 def command():
-    """Execute a terminal command and return a CommandResult payload."""
+    """Execute a terminal command and return a Phase 1 response."""
 
     payload = request.get_json(silent=True)
-    if not isinstance(payload, dict):
-        result = CommandResult(ok=False, text="Command required.")
-        return jsonify(_command_result_payload(result)), 400
+    raw = payload.get("raw") if isinstance(payload, dict) else None
+    if not isinstance(raw, str) or not raw.strip():
+        result = CommandResult(
+            ok=False,
+            lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."],
+        )
+        return jsonify(_command_result_payload(result))
 
-    command_text = payload.get("command")
-    if not isinstance(command_text, str) or not command_text.strip():
-        result = CommandResult(ok=False, text="Command required.")
-        return jsonify(_command_result_payload(result)), 400
-
-    parsed = parse_input(command_text)
-    result = process_command(command_state, parsed)
-    if result is None:
-        result = CommandResult(ok=False, text="Command required.")
-        return jsonify(_command_result_payload(result)), 400
-
+    result = process_command(command_state, raw)
     return jsonify(_command_result_payload(result))
 
 
