@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Gentle reminder after commits.
+
+cat <<'MSG'
+Post-commit reminder:
+Did this commit change behavior or decisions? If yes, update docs/_ai_context/DEVLOG.md.
+MSG
+
+exit 0

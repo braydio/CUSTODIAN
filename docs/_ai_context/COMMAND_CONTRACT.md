@@ -1,45 +1,35 @@
-# COMMAND CONTRACT - CUSTODIAN
+# COMMAND CONTRACT — CUSTODIAN
 
 ## Status
-- Locked for Phase 1 and implemented end-to-end.
+- Partially implemented in Python (parser + commands + processor + REPL).
+- Not wired to the terminal UI or webserver yet.
 
 ## Transport
-- Client: `custodian-terminal/terminal.js`.
-- Server: `game/simulations/world_state/server.py`.
+- Client: `custodian-terminal/terminal.js` (local echo only).
+- Server: `custodian-terminal/server.py` (command endpoint not implemented yet).
 
-## Request Shape
-- Method: `POST`
-- Path: `/command`
-- JSON body:
-  - `raw`: string (raw user command line)
+## Request Shape (Proposed)
+- Method: `POST`.
+- Path: `/command`.
+- JSON body fields: `command` (string raw input), `timestamp` (ISO 8601 client time), `session_id` (string optional).
 
-## Response Shape
-- JSON body:
-  - `ok`: boolean
-  - `lines`: string[]
+## Response Shape (Proposed)
+- JSON body fields: `ok` (boolean), `text` (primary line), `lines` (string[] optional), `warnings` (string[] optional), `error` (string or null), `authority` (residual | denied | command_center, optional).
 
-## Command Grammar
-- Single-line commands.
-- Command verb is case-insensitive.
-- Phase 1 command set:
-  - `STATUS`
-  - `WAIT`
-  - `HELP`
+## Command Grammar (Current Python)
+- Single-line commands, case-insensitive keyword first.
+- Quoted args supported; flags use `--flag` or `--flag=value`.
+- Examples: `STATUS`, `SECTORS`, `POWER`, `WAIT [ticks]`.
+- Phase 1 design lock (historical): `STATUS`, `WAIT`, `HELP` only (see `docs/_ai_context/ARCHITECTURE.md`).
 
-## Locked Error Semantics
-- Unknown command:
-  - `ok=false`
-  - `lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]`
+## Authority Rules (Current Python)
+- Read commands permitted anywhere.
+- Write commands require Command Center authority.
+- Denied actions return `ok=false` with a one-line reason.
 
-- Reserved phrasing for future authority denial:
-  - `COMMAND DENIED.`
-  - `COMMAND CENTER REQUIRED.`
-
-## Locked HELP Output
-- `AVAILABLE COMMANDS:`
-- `- STATUS   View current situation`
-- `- WAIT     Advance time`
-- `- HELP     Show this list`
+## Error Semantics (Current Python)
+- Unknown command: `ok=false`, `text="Unknown command."`
+- Invalid args: `ok=false` with a terse reason (e.g., ticks must be positive).
 
 ## Notes
 - `WAIT` advances simulation by exactly one tick.
