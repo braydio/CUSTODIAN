@@ -43,11 +43,22 @@ This simulation models a fortified command post under escalating pressure. It fo
 
 ## Simulation Flow
 
-1. Advance time and escalate ambient threat.
-2. Run ambient events based on sector state and global threat.
-3. Tick or start a major assault timer (handled in `step_world`).
-4. If assault starts, resolve it against the weakest sectors.
-5. Periodically print snapshots for visibility.
+1. Accept one operator command.
+2. Validate authority and parse intent.
+3. Execute command action.
+4. Advance world by one step when command semantics require time (`wait`, movement, and other time-bearing commands).
+5. Return a `CommandResult` payload for terminal rendering.
+
+## Command-Driven Stepping
+
+The world-state loop is command-driven in terminal mode.
+
+- No hidden background stepping while input is idle.
+- Each accepted time-bearing command advances exactly one simulation step.
+- Read-only commands may return state without advancing time.
+- Major assault timers and ambient events resolve during the step, not during idle UI time.
+
+This keeps pacing deterministic, debuggable, and aligned with explicit operator intent.
 
 ## Events (Procedural)
 
