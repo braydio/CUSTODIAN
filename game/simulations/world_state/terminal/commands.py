@@ -1,15 +1,12 @@
 """Command registry and handlers for the world-state terminal."""
 
 from dataclasses import dataclass
-from typing import Callable, Dict, Iterable, List, Optional
+from typing import Callable, Dict, List, Optional
 
-from game.simulations.world_state.core.state import GameState, SectorState
 from game.simulations.world_state.core.config import SECTORS
 from game.simulations.world_state.core.simulation import step_world
-from game.simulations.world_state.terminal.parser import (
-    ParsedCommand,
-    resolve_sector_name,
-)
+from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.terminal.parser import ParsedCommand
 
 
 @dataclass(frozen=True)
@@ -74,37 +71,8 @@ def get_command(name: str) -> Optional[Command]:
     return COMMANDS.get(name)
 
 
-def list_commands() -> Iterable[Command]:
-    """Return all registered commands sorted by name."""
-
-    return [COMMANDS[name] for name in sorted(COMMANDS)]
-
-
-def _format_sector(sector: SectorState) -> str:
-    """Format a single sector line for display."""
-
-    effects = ", ".join(sector.effects.keys())
-    effect_text = f" FX={effects}" if effects else ""
-    return (
-        f"{sector.name}: "
-        f"DMG={sector.damage:.2f} "
-        f"ALERT={sector.alertness:.2f} "
-        f"PWR={sector.power:.2f}"
-        f"{effect_text}"
-    )
-
-
-def handle_help(state: GameState, parsed: ParsedCommand) -> CommandResult:
-    """Return a help list of all available commands."""
-
-    lines = []
-    for command in list_commands():
-        lines.append(f"- {command.usage}: {command.description}")
-    return CommandResult(ok=True, text="Available commands:", lines=lines)
-
-
 def handle_status(state: GameState, parsed: ParsedCommand) -> CommandResult:
-    """Return a terse summary of the current world state."""
+    """Return a terse summary of current world state."""
 
     assault_state = "active" if state.in_major_assault else "idle"
     timer_text = "none" if state.assault_timer is None else str(state.assault_timer)
@@ -129,57 +97,14 @@ def handle_sectors(state: GameState, parsed: ParsedCommand) -> CommandResult:
     return CommandResult(ok=True, text="Sectors:", lines=list(SECTORS))
 
 
-def handle_sector(state: GameState, parsed: ParsedCommand) -> CommandResult:
-    """Return the status line for a specific sector."""
+def handle_power(state: GameState, parsed: ParsedCommand) -> CommandResult:
+    """Report sector power status."""
 
-    if not parsed.args:
-        return CommandResult(ok=False, text="Sector name required.")
-    raw_sector = " ".join(parsed.args)
-    sector_name, error = resolve_sector_name(raw_sector, SECTORS)
-    if error:
-        return CommandResult(ok=False, text=error)
-    sector = state.sectors[sector_name]
-    return CommandResult(ok=True, text=_format_sector(sector))
-
-
-def handle_contacts(state: GameState, parsed: ParsedCommand) -> CommandResult:
-    """Return the known contact summary."""
-
-    profile = state.faction_profile
-    lines = [
-        (
-            "Hostile: "
-            f"{profile['label']} | Ideology: {profile['ideology']} | "
-            f"Tech: {profile['tech_expression']}"
-        ),
-        "Friendly: none",
-    ]
-    return CommandResult(ok=True, text="Known contacts:", lines=lines)
-
-
-def handle_profile(state: GameState, parsed: ParsedCommand) -> CommandResult:
-    """Return the hostile profile summary."""
-
-    profile = state.faction_profile
-    lines = [
-        f"{profile['label']} | Ideology: {profile['ideology']} | Tech: {profile['tech_expression']}",
-        f"Doctrine: {profile['doctrine']} | Aggression: {profile['aggression']} | Signature: {profile['signature']}",
-        f"Primary target: {profile['target_priority']}",
-    ]
-    return CommandResult(ok=True, text="Hostile profile:", lines=lines)
-
-
-def handle_go(state: GameState, parsed: ParsedCommand) -> CommandResult:
-    """Move operator presence to a named sector."""
-
-    if not parsed.args:
-        return CommandResult(ok=False, text="Sector name required.")
-    raw_sector = " ".join(parsed.args)
-    sector_name, error = resolve_sector_name(raw_sector, SECTORS)
-    if error:
-        return CommandResult(ok=False, text=error)
-    state.player_location = sector_name
-    return CommandResult(ok=True, text=f"Relocated to {sector_name}.")
+    lines = []
+    for name in SECTORS:
+        sector = state.sectors[name]
+        lines.append(f"{sector.name}: PWR={sector.power:.2f}")
+    return CommandResult(ok=True, text="Power status:", lines=lines)
 
 
 def handle_wait(state: GameState, parsed: ParsedCommand) -> CommandResult:
@@ -205,38 +130,11 @@ def register_default_commands() -> None:
 
     register_command(
         Command(
-            name="help",
-            authority="read",
-            handler=handle_help,
-            usage="help",
-            description="List available commands.",
-        )
-    )
-    register_command(
-        Command(
             name="status",
             authority="read",
             handler=handle_status,
             usage="status",
             description="Show the current world status.",
-        )
-    )
-    register_command(
-        Command(
-            name="profile",
-            authority="read",
-            handler=handle_profile,
-            usage="profile",
-            description="Show the hostile profile summary.",
-        )
-    )
-    register_command(
-        Command(
-            name="contacts",
-            authority="read",
-            handler=handle_contacts,
-            usage="contacts",
-            description="Show known contact summaries.",
         )
     )
     register_command(
@@ -250,20 +148,11 @@ def register_default_commands() -> None:
     )
     register_command(
         Command(
-            name="sector",
+            name="power",
             authority="read",
-            handler=handle_sector,
-            usage="sector <name>",
-            description="Inspect a specific sector.",
-        )
-    )
-    register_command(
-        Command(
-            name="go",
-            authority="write",
-            handler=handle_go,
-            usage="go <sector>",
-            description="Move operator presence to a sector.",
+            handler=handle_power,
+            usage="power",
+            description="Show sector power levels.",
         )
     )
     register_command(

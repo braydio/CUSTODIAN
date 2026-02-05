@@ -60,14 +60,3 @@ def test_process_command_wait_steps_world(monkeypatch) -> None:
     assert result.ok is True
     assert calls["count"] == 3
     assert "waited" in result.text.casefold()
-
-
-def test_process_command_go_sets_location() -> None:
-    state = GameState()
-    parsed = ParsedCommand(raw="go service", verb="go", args=["service"], flags={})
-
-    result = process_command(state, parsed)
-
-    assert result is not None
-    assert result.ok is True
-    assert state.player_location == "Service Tunnels"

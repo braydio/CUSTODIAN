@@ -10,13 +10,9 @@ def test_command_handlers_return_results_and_do_not_print(capsys) -> None:
 
     state = GameState()
     command_args = {
-        "help": [],
         "status": [],
-        "profile": [],
-        "contacts": [],
         "sectors": [],
-        "sector": ["command center"],
-        "go": ["command center"],
+        "power": [],
         "wait": ["1"],
     }
 
