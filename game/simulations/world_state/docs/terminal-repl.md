@@ -1,25 +1,32 @@
-# World-State Terminal (Phase 1)
+# World-State Terminal REPL (Phase 1)
 
-Phase 1 adds a deterministic terminal loop for manual control. There is no background ticking; the operator advances time explicitly.
+Phase 1 is a deterministic command loop:
 
-## Entry Point
+`BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS`
 
-From repo root:
-
-```bash
-WORLD_STATE_MODE=repl python game/simulations/world_state/sandbox_world.py
-```
-
-Use `WORLD_STATE_MODE=sim` to run the legacy autonomous loop.
+The world advances only when the operator runs `WAIT`.
 
 ## Commands
 
-- `status`: show time, threat, and assault status.
-- `sectors`: list all sectors.
-- `power`: show sector power status.
-- `wait [ticks]`: advance the simulation by the specified ticks.
+- `STATUS`
+  - Prints:
+    - `TIME`
+    - `THREAT` bucket (`LOW`, `ELEVATED`, `HIGH`, `CRITICAL`)
+    - `ASSAULT` (`NONE`, `PENDING`, `ACTIVE`)
+    - sector list with one-word state (`STABLE`, `ALERT`, `DAMAGED`, `COMPROMISED`)
+  - Does not advance time.
 
-## Notes
+- `WAIT`
+  - Advances the simulation by exactly one tick.
+  - Output starts with `TIME ADVANCED.`
+  - Additional lines are only emitted for meaningful changes (`[EVENT]`, `[WARNING]`, assault begin/end markers).
 
-- Phase 1 uses manual advancement only. `wait` steps the full world simulation each tick, including ambient events and assaults.
-- Write commands require Command Center authority.
+- `HELP`
+  - Prints the locked command list.
+
+## Error Output
+
+Unknown command response:
+
+- `UNKNOWN COMMAND.`
+- `TYPE HELP FOR AVAILABLE COMMANDS.`

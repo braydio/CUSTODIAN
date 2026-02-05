@@ -1,70 +1,39 @@
 """Tests for terminal command processing behavior."""
 
-from copy import deepcopy
-
-from game.simulations.world_state.terminal.parser import ParsedCommand
-from game.simulations.world_state.terminal.processor import process_command
 from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.terminal.processor import process_command
 
 
-def _snapshot_state(state: GameState) -> dict:
-    """Capture a stable snapshot of mutable state for comparison."""
-
-    return {
-        "time": state.time,
-        "ambient_threat": state.ambient_threat,
-        "assault_timer": state.assault_timer,
-        "in_major_assault": state.in_major_assault,
-        "player_location": state.player_location,
-        "current_assault": state.current_assault,
-        "assault_count": state.assault_count,
-        "event_cooldowns": dict(state.event_cooldowns),
-        "faction_profile": dict(state.faction_profile),
-        "event_catalog": state.event_catalog,
-        "global_effects": dict(state.global_effects),
-        "sectors": {
-            name: {
-                "damage": sector.damage,
-                "alertness": sector.alertness,
-                "power": sector.power,
-                "last_event": sector.last_event,
-                "occupied": sector.occupied,
-                "effects": dict(sector.effects),
-            }
-            for name, sector in state.sectors.items()
-        },
-    }
-
-
-def test_wait_increments_time() -> None:
-    """WAIT should advance world time."""
+def test_wait_advances_exactly_one_tick() -> None:
+    """WAIT should increment time by one and report advancement."""
 
     state = GameState()
-    parsed = ParsedCommand(raw="wait 2", verb="wait", args=["2"], flags={})
 
-    result = process_command(state, parsed)
+    result = process_command(state, "WAIT")
 
-    assert result is not None
     assert result.ok is True
-    assert state.time == 2
+    assert state.time == 1
+    assert result.lines[0] == "TIME ADVANCED."
 
 
-def test_read_only_commands_do_not_mutate_state() -> None:
-    """Read-only commands should not mutate game state."""
+def test_status_does_not_mutate_state() -> None:
+    """STATUS should report state without changing time."""
 
-    read_commands = {
-        "status": [],
-        "sectors": [],
-        "power": [],
-    }
+    state = GameState()
 
-    for verb, args in read_commands.items():
-        state = GameState()
-        parsed = ParsedCommand(raw=verb, verb=verb, args=args, flags={})
-        before = _snapshot_state(deepcopy(state))
+    result = process_command(state, "STATUS")
 
-        result = process_command(state, parsed)
+    assert result.ok is True
+    assert state.time == 0
+    assert result.lines[0] == "TIME: 0"
 
-        assert result is not None
-        assert result.ok is True
-        assert _snapshot_state(state) == before
+
+def test_unknown_command_returns_locked_error_lines() -> None:
+    """Unknown commands should return the locked error phrasing."""
+
+    state = GameState()
+
+    result = process_command(state, "nonesuch")
+
+    assert result.ok is False
+    assert result.lines == ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]

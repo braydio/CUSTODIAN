@@ -1,42 +1,46 @@
-# COMMAND CONTRACT — CUSTODIAN
+# COMMAND CONTRACT - CUSTODIAN
 
 ## Status
-- Draft. Not implemented end-to-end.
+- Locked for Phase 1 and implemented end-to-end.
 
 ## Transport
-- Client: `custodian-terminal/terminal.js` (submit handler).
-- Server: `custodian-terminal/server.py` (to be added).
+- Client: `custodian-terminal/terminal.js`.
+- Server: `game/simulations/world_state/server.py`.
 
-## Request Shape (Proposed)
+## Request Shape
 - Method: `POST`
 - Path: `/command`
 - JSON body:
-  - `command`: string (raw user input)
-  - `timestamp`: ISO 8601 string (client time)
-  - `session_id`: string (optional)
+  - `raw`: string (raw user command line)
 
-## Response Shape (Proposed)
+## Response Shape
 - JSON body:
   - `ok`: boolean
-  - `lines`: string[] (terminal lines to append)
-  - `error`: string | null
-  - `authority`: "residual" | "denied" | "command_center" (optional)
+  - `lines`: string[]
 
-## Command Grammar (Proposed)
-- Single-line commands, case-insensitive keyword first.
-- Examples:
-  - `HELP`
+## Command Grammar
+- Single-line commands.
+- Command verb is case-insensitive.
+- Phase 1 command set:
   - `STATUS`
-  - `WAIT [ticks]`
+  - `WAIT`
+  - `HELP`
 
-## Authority Rules (Proposed)
-- Read-only commands permitted anywhere.
-- Write commands require Command Center authority.
-- Denied actions return `ok=false` with a one-line reason.
+## Locked Error Semantics
+- Unknown command:
+  - `ok=false`
+  - `lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]`
 
-## Error Semantics (Proposed)
-- Unknown command: `ok=false`, `error="unknown-command"`, `lines=["Unrecognized command."]`
-- Malformed arguments: `ok=false`, `error="invalid-args"`, `lines=["Invalid arguments."]`
+- Reserved phrasing for future authority denial:
+  - `COMMAND DENIED.`
+  - `COMMAND CENTER REQUIRED.`
+
+## Locked HELP Output
+- `AVAILABLE COMMANDS:`
+- `- STATUS   View current situation`
+- `- WAIT     Advance time`
+- `- HELP     Show this list`
 
 ## Notes
-- This contract must be kept in sync between JS and Python implementations.
+- `WAIT` advances simulation by exactly one tick.
+- `STATUS` never advances time.
