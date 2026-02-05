@@ -9,3 +9,11 @@
 Not done:
 - No command endpoint wired yet.
 - No backend command handling implemented.
+
+## 2026-02-05
+- Locked and implemented Phase 1 terminal command loop contract.
+- Switched command API to `POST /command` with request `{raw}` and response `{ok, lines}`.
+- Reworked terminal command processing to STATUS/WAIT/HELP only.
+- Added locked STATUS format and one-tick WAIT behavior with minimal meaningful output.
+- Wired terminal UI submit path to backend command endpoint and transcript rendering.
+- Updated world-state terminal tests and command contract documentation to match locked behavior.

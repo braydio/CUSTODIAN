@@ -153,11 +153,9 @@ Endpoint: `POST /command`
 
 JSON request:
 
-- `command`: string input.
+- `raw`: string input.
 
-JSON response (CommandResult):
+JSON response:
 
 - `ok`: bool.
-- `text`: primary output.
-- `lines`: optional list of lines.
-- `warnings`: optional list.
+- `lines`: list of terminal lines.
