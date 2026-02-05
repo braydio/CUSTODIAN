@@ -3,6 +3,7 @@
 ## Time
 - The world simulation advances by explicit ticks.
 - No hidden background ticking outside the world simulation loop.
+- Terminal command loop advances time only via `wait`.
 
 ## State
 - `GameState` is the authoritative container for world-state data.
