@@ -112,8 +112,10 @@ Static terminal UI prototype with the boot sequence and minimal command echo.
 Entry point:
 
 ```bash
-open custodian-terminal/index.html
+python custodian-terminal/server.py
 ```
+
+Then visit `http://localhost:7331/`.
 
 Key files:
 
