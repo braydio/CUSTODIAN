@@ -17,7 +17,7 @@ def process_command(
         parsed: Parsed command, or None for empty input.
 
     Returns:
-        CommandResult if a command was executed, otherwise None.
+        CommandResult if a command was executed, otherwise None for empty input.
 
     Notes:
         Write commands require Command Center authority.
@@ -28,7 +28,7 @@ def process_command(
 
     command = get_command(parsed.verb)
     if command is None:
-        return CommandResult(ok=False, text="Unknown command. Use 'help'.")
+        return CommandResult(ok=False, text="Unknown command.")
 
     if command.authority == "write" and not state.in_command_center:
         return CommandResult(

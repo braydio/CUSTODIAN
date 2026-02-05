@@ -14,17 +14,12 @@ Use `WORLD_STATE_MODE=sim` to run the legacy autonomous loop.
 
 ## Commands
 
-- `help`: show all commands and usage.
 - `status`: show time, threat, and assault status.
-- `contacts`: show known contact summaries.
-- `profile`: show the hostile profile summary.
 - `sectors`: list all sectors.
-- `sector <name>`: inspect a single sector (use quotes for multi-word names).
-- `go <sector>`: move operator presence to a sector.
+- `power`: show sector power status.
 - `wait [ticks]`: advance the simulation by the specified ticks.
 
 ## Notes
 
 - Phase 1 uses manual advancement only. `wait` steps the full world simulation each tick, including ambient events and assaults.
-- Sector matching resolves exact names first, then unique prefixes, then unique contains matches.
 - Write commands require Command Center authority.
