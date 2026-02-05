@@ -49,6 +49,29 @@ Repeat until campaign objective achieved or lost
 
 ## Simulations
 
+### Custodian Terminal UI (Primary Once Wired)
+
+Terminal UI is the primary operator entry point once backend command transport is fully wired.
+
+Entry point:
+
+```bash
+python custodian-terminal/server.py
+```
+
+Then visit `http://localhost:7331/`.
+
+Current status:
+
+- Boot stream and terminal shell rendering are active.
+- Authoritative command transport is in-progress.
+
+Key files:
+
+- `custodian-terminal/server.py`
+- `custodian-terminal/boot.js`
+- `custodian-terminal/terminal.js`
+
 ### World-State Simulation
 
 Models ambient threat, sector instability, and periodic major assaults. Events are procedural but remain consistent with the theme by generating a hostile profile (ideology + form + tech expression) and building an event catalog around it.
