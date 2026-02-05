@@ -7,6 +7,7 @@ This repository contains lightweight prototypes for a defense-oriented simulatio
 - `game/simulations/`
   - `world_state/` world simulation prototypes.
   - `assault/` assault simulation modules and JSON data.
+- `custodian-terminal/` terminal UI server, client shell modules, and boot stream handling.
 - `docs/` root design docs and campaign logic.
 - `frameworks/` instruction packs (if present).
 - `scripts/` helper scripts.
@@ -19,6 +20,27 @@ This repository contains lightweight prototypes for a defense-oriented simulatio
 - Modular code lives in `game/simulations/world_state/core/`.
 - Docs live in `game/simulations/world_state/docs/`.
 - Tuning knobs are centralized in `game/simulations/world_state/core/config.py` (preferred place for pacing tweaks).
+
+## Terminal Module Guidance
+
+- Keep terminal server transport logic in `custodian-terminal/server.py`.
+- Keep boot stream sequencing in `custodian-terminal/boot.js`.
+- Keep terminal I/O rendering and submit wiring in `custodian-terminal/terminal.js`.
+- Avoid mixing command authority rules into frontend modules; authority stays backend-side.
+
+## Output Contract Guidance
+
+- Command transport contract is `POST /command` with JSON `{ "command": "<string>" }`.
+- Backend response shape is `CommandResult` with `ok`, `text`, optional `lines`, optional `warnings`.
+- `text` is the single primary operator line; `lines` appends ordered detail.
+- Keep output concise, operational, and ASCII-safe.
+
+## Boot Handoff Guidance
+
+- Input remains locked during boot stream playback.
+- Input unlock occurs only after explicit boot completion signal.
+- After unlock, all terminal commands route through the backend transport.
+- Do not treat local echo as authoritative state.
 
 ## Coding Style
 
@@ -51,7 +73,7 @@ This repository contains lightweight prototypes for a defense-oriented simulatio
 ## Testing & Validation
 
 - No formal automated tests yet.
-- When documenting validation, state the manual action (e.g., “ran `python sandbox_world.py` and reviewed output”).
+- When documenting validation, state the manual action (e.g., "ran `python sandbox_world.py` and reviewed output").
 
 ## Safety & Secrets
 
