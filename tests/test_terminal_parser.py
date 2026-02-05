@@ -8,10 +8,10 @@ from game.simulations.world_state.terminal.parser import (
 
 
 def test_parse_input_with_quotes_and_flags() -> None:
-    parsed = parse_input('sector "Security Gate / Checkpoint" --verbose')
+    parsed = parse_input('status "Security Gate / Checkpoint" --verbose')
 
     assert parsed is not None
-    assert parsed.verb == "sector"
+    assert parsed.verb == "status"
     assert parsed.args == ["security gate / checkpoint"]
     assert parsed.flags == {"verbose": "true"}
 

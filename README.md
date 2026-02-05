@@ -70,6 +70,7 @@ Server endpoint:
 - `POST /command` with JSON `{ "command": "<string>" }` returns a CommandResult payload.
 
 Write commands in the terminal loop require Command Center authority.
+Terminal commands: `status`, `sectors`, `power`, `wait`.
 
 Docs:
 

@@ -49,31 +49,13 @@ def test_wait_increments_time() -> None:
     assert state.time == 2
 
 
-def test_go_updates_player_location() -> None:
-    """GO should update player location."""
-
-    state = GameState()
-    parsed = ParsedCommand(
-        raw="go maintenance", verb="go", args=["maintenance"], flags={}
-    )
-
-    result = process_command(state, parsed)
-
-    assert result is not None
-    assert result.ok is True
-    assert state.player_location == "Maintenance Yard"
-
-
 def test_read_only_commands_do_not_mutate_state() -> None:
     """Read-only commands should not mutate game state."""
 
     read_commands = {
-        "help": [],
         "status": [],
-        "profile": [],
-        "contacts": [],
         "sectors": [],
-        "sector": ["command center"],
+        "power": [],
     }
 
     for verb, args in read_commands.items():
