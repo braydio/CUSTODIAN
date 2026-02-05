@@ -91,6 +91,7 @@ async function runBoot() {
 
   await sleep(800);
   terminalController.syncBufferFromDom();
+  await terminalController.runTutorialFeed();
   terminalController.startCommandMode();
   setTimeout(simulateTelemetry, 1500);
 }
