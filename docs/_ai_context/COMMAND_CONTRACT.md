@@ -5,15 +5,18 @@
 - Not wired to the terminal UI or webserver yet.
 
 ## Transport
-- Client: `custodian-terminal/terminal.js` (local echo only).
-- Server: `custodian-terminal/server.py` (command endpoint not implemented yet).
+- Client: `custodian-terminal/terminal.js` (posts to `/command`).
+- Server: `custodian-terminal/streaming-server.py` (command endpoint not implemented yet).
 
-## Request Shape (Proposed)
+## Request Shape (Current UI)
 - Method: `POST`.
 - Path: `/command`.
-- JSON body fields: `command` (string raw input), `timestamp` (ISO 8601 client time), `session_id` (string optional).
+- JSON body fields: `raw` (string raw input).
 
-## Response Shape (Proposed)
+## Response Shape (Current UI Expectation)
+- JSON body fields: `ok` (boolean), `lines` (string[]).
+
+## Response Shape (Server Proposal)
 - JSON body fields: `ok` (boolean), `text` (primary line), `lines` (string[] optional), `warnings` (string[] optional), `error` (string or null), `authority` (residual | denied | command_center, optional).
 
 ## Command Grammar (Current Python)

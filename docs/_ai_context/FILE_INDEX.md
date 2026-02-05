@@ -9,10 +9,10 @@
 - `game/simulations/world_state/server.py` — world-state SSE stream server.
 - `game/simulations/assault/core/assault.py` — assault resolution logic.
 - `custodian-terminal/index.html` — terminal UI shell.
-- `custodian-terminal/boot.js` — boot sequence + SSE hookup.
+- `custodian-terminal/boot.js` — boot sequence + system log + command-mode handoff (local; no SSE).
 - `custodian-terminal/server-streaming-boot.js` — boot sequence variant with SSE hookup.
 - `custodian-terminal/terminal.js` — terminal buffer + input handling.
 - `custodian-terminal/server.py` — static server + boot stream endpoint.
-- `custodian-terminal/streaming-server.py` — alternate static server + boot stream endpoint.
+- `custodian-terminal/streaming-server.py` — static server + boot stream endpoint.
 - `.githooks/` — local git hooks (pre-commit, commit-msg, post-commit).
 - `tests/` — pytest suite for world-state stepping and terminal commands.

@@ -92,7 +92,7 @@ async function runBoot() {
 
   await sleep(800);
   terminalController.syncBufferFromDom();
-  await terminalController.runTutorialFeed();
+  await terminalController.runSystemLog();
   terminalController.startCommandMode();
 }
 
