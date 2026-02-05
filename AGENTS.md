@@ -31,6 +31,18 @@ This repository contains lightweight prototypes for a defense-oriented simulatio
 
 - When adding docs for a simulation, place them in a `docs/` subdir next to the Python entry point.
 - Keep docs concise with bullets and short paragraphs.
+- The canonical AI context bundle lives in `docs/_ai_context/` and must be reviewed every session.
+  - Update `CURRENT_STATE.md` every session.
+  - Keep all files relevant, timely, and accurate within their scope; do not omit important context.
+  - Treat this folder as the authoritative snapshot exported for external review.
+- Update this `AGENTS.md` periodically as needed to keep its guidance current.
+
+## Recent Entrypoints
+
+- World sim runner: `game/run.py` (adds repo root to `sys.path` for any CWD).
+- World sim standalone: `game/simulations/world_state/sandbox_world.py` (`sandbox_*` replaces `simulate_*`).
+- Assault sim standalone: `game/simulations/assault/sandbox_assault.py`.
+- Terminal UI server: `custodian-terminal/server.py` (SSE boot stream for remote viewing).
 
 ## Main Docs Summary
 
