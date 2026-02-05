@@ -1,7 +1,7 @@
 # CURRENT STATE — CUSTODIAN
 
 ## Code Status
-- Terminal UI boot sequence implemented (JS). Local echo command input only.
+- Terminal UI boot sequence implemented (JS). Tutorial feed runs before input unlock; local echo command input only.
 - World-state simulation spine implemented (Python). Procedural events + assault timer active.
 - Assault simulation prototype implemented (Python), standalone runner.
 - Terminal webserver added for remote viewing (Flask + SSE boot stream).

@@ -8,6 +8,17 @@
     inputEnabled: false,
   };
 
+  const tutorialFeedLines = [
+    "",
+    "--- TUTORIAL FEED ---",
+    "STATUS: Confirm system health and active alerts.",
+    "SECTORS: Review integrity and contact reports.",
+    "POWER: Inspect routing and reserve draw.",
+    "WAIT: Advance time to receive telemetry.",
+    "",
+    "--- END FEED ---",
+  ];
+
   /**
    * Rebuild the output buffer from the current terminal text.
    * @returns {void}
@@ -46,6 +57,15 @@
   }
 
   /**
+   * Pause for a set duration.
+   * @param {number} ms
+   * @returns {Promise<void>}
+   */
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
    * Enable or disable terminal input.
    * @param {boolean} enabled
    * @returns {void}
@@ -81,6 +101,18 @@
   }
 
   /**
+   * Play the scripted tutorial feed before unlocking input.
+   * @returns {Promise<void>}
+   */
+  async function runTutorialFeed() {
+    setInputEnabled(false);
+    for (const line of tutorialFeedLines) {
+      appendLine(line);
+      await sleep(350);
+    }
+  }
+
+  /**
    * Switch the terminal into command mode.
    * @returns {void}
    */
@@ -97,12 +129,13 @@
   inputForm.addEventListener("submit", handleSubmit);
   setInputEnabled(false);
 
-  // TODO: Add automated UI tests for terminal input and echo once a JS harness exists.
+  // TODO: Add automated UI tests for tutorial feed timing and input unlock once a JS harness exists.
   window.CustodianTerminal = {
     appendLine,
     appendLines,
     setInputEnabled,
     startCommandMode,
+    runTutorialFeed,
     syncBufferFromDom,
   };
 })();
