@@ -11,6 +11,7 @@
 - Updated terminal boot flow: `boot.js` now appends a system log and unlocks command mode; terminal input submits to `/command` and renders lines or failure messages (UI only; backend endpoint not implemented yet).
 - Added alternate boot script `custodian-terminal/server-streaming-boot.js` for SSE boot streaming.
 - Implemented `/command` in `custodian-terminal/streaming-server.py` using a persistent `GameState` and the terminal command processor.
+- Added unified entrypoint `python -m game` with `--ui`/`--sim`/`--repl` modes and updated README entrypoints.
 
 Not done:
 - No backend `/command` endpoint wired yet.

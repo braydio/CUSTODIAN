@@ -56,7 +56,7 @@ Terminal UI is the primary operator entry point once backend command transport i
 Entry point:
 
 ```bash
-python custodian-terminal/server.py
+python -m game --ui
 ```
 
 Then visit `http://localhost:7331/`.
@@ -64,11 +64,11 @@ Then visit `http://localhost:7331/`.
 Current status:
 
 - Boot stream and terminal shell rendering are active.
-- Authoritative command transport is in-progress.
+- Command transport is wired via `POST /command`.
 
 Key files:
 
-- `custodian-terminal/server.py`
+- `custodian-terminal/streaming-server.py`
 - `custodian-terminal/boot.js`
 - `custodian-terminal/terminal.js`
 
@@ -79,7 +79,7 @@ Models ambient threat, sector instability, and periodic major assaults. Events a
 Entry point:
 
 ```bash
-python game/simulations/world_state/sandbox_world.py
+python -m game --sim
 ```
 
 Optional server entry point:
@@ -135,7 +135,7 @@ Static terminal UI prototype with boot sequence and live command loop integratio
 Entry point:
 
 ```bash
-python game/simulations/world_state/server.py
+python -m game --ui
 ```
 
 Then visit `http://localhost:7557/`.
@@ -166,7 +166,7 @@ Key files:
 Automated tests cover the world-state terminal logic. Run them with:
 
 ```bash
-python -m pytest game/simulations/world_state/tests
+python -m pytest
 ```
 
-When noting validation, describe the manual run (for example, “ran `python game/simulations/world_state/sandbox_world.py` and reviewed output”).
+When noting validation, describe the manual run (for example, “ran `python -m game --sim` and reviewed output”).
