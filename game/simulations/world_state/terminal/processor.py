@@ -32,34 +32,42 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         raw: Raw terminal input line.
 
     Returns:
-        Phase 1 command result payload.
+        Command result payload with primary text and optional detail lines.
     """
 
     parsed = parse_input(raw)
     if parsed is None:
         return CommandResult(
-            ok=False, lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]
+            ok=False,
+            text="UNKNOWN COMMAND.",
+            lines=["TYPE HELP FOR AVAILABLE COMMANDS."],
         )
 
     if state.is_failed and parsed.verb not in FAILURE_RESET_COMMANDS:
         return CommandResult(
             ok=False,
-            lines=[
-                state.failure_reason or "SESSION FAILED.",
-                "REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED.",
-            ],
+            text=state.failure_reason or "SESSION FAILED.",
+            lines=["REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED."],
         )
 
     if parsed.verb in FAILURE_RESET_COMMANDS:
         reset_game_state(state)
-        return CommandResult(ok=True, lines=["SYSTEM REBOOTED.", "SESSION READY."])
+        return CommandResult(
+            ok=True,
+            text="SYSTEM REBOOTED.",
+            lines=["SESSION READY."],
+        )
 
     handler = COMMAND_HANDLERS.get(parsed.verb)
     if handler is None:
         return CommandResult(
-            ok=False, lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]
+            ok=False,
+            text="UNKNOWN COMMAND.",
+            lines=["TYPE HELP FOR AVAILABLE COMMANDS."],
         )
 
     # Phase 1 authority model: all commands are allowed.
     lines = handler(state)
-    return CommandResult(ok=True, lines=lines)
+    primary_line = lines[0] if lines else "COMMAND EXECUTED."
+    detail_lines = lines[1:] if len(lines) > 1 else None
+    return CommandResult(ok=True, text=primary_line, lines=detail_lines)

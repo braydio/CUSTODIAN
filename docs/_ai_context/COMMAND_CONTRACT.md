@@ -10,10 +10,12 @@
 ## Request Shape (Current UI)
 - Method: `POST`.
 - Path: `/command`.
-- JSON body fields: `raw` (string raw input).
+- Canonical JSON body field: `command` (string raw input).
+- Backward-compatible fallback: `raw` (string) is accepted temporarily.
 
 ## Response Shape (Current)
-- JSON body fields: `ok` (boolean), `lines` (string[]).
+- JSON body fields: `ok` (boolean), `text` (string primary line).
+- Optional JSON body fields: `lines` (string[] ordered detail), `warnings` (string[] non-fatal warnings).
 
 ## Command Grammar (Current Python)
 - Single-line commands, case-insensitive keyword first.

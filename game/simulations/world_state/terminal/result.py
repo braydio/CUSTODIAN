@@ -1,7 +1,7 @@
 """Terminal command result contract."""
 
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 
 @dataclass(frozen=True)
@@ -10,8 +10,12 @@ class CommandResult:
 
     Attributes:
         ok: Whether the command executed successfully.
-        lines: Ordered terminal lines to print.
+        text: Primary operator-facing terminal line.
+        lines: Optional ordered detail lines to print after ``text``.
+        warnings: Optional warning lines for non-fatal conditions.
     """
 
     ok: bool
-    lines: List[str]
+    text: str
+    lines: Optional[List[str]] = None
+    warnings: Optional[List[str]] = None
