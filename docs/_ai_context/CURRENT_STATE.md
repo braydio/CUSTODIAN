@@ -9,6 +9,7 @@
 - Terminal webserver available via `custodian-terminal/streaming-server.py` (Flask + SSE boot stream + `/command`). `server-streaming-boot.js` mirrors the boot flow with SSE hookup; `boot.js` currently runs the local boot sequence + system log.
 - Git hooks added for doc/secret hygiene: `pre-commit`, `commit-msg`, `post-commit` (enable via `git config core.hooksPath .githooks`).
 - Unit tests exist for world-state step logic and terminal parsing/processing.
+- World-state terminal now supports a hard failure mode when the Command Center is breached; terminal accepts only reset/reboot until session reset.
 
 ## Implemented vs Stubbed
 - Implemented: boot sequence rendering, system log lines, terminal input + submit flow, command POST transport, `/command` endpoint, world-state ticks, assault resolution, terminal command parsing + processing in Python.
