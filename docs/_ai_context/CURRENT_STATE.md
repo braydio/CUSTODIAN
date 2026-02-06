@@ -3,10 +3,11 @@
 ## Code Status
 - Terminal UI boot sequence implemented (JS). Boot now runs and then appends a system log before unlocking input. Commands are POSTed to `/command` and responses appended (transport wired end-to-end).
 - World-state simulation spine implemented (Python). Procedural events + assault timer active.
-- World-state terminal command stack implemented in Python (parser, processor, commands, REPL), not wired to the UI yet.
+- World-state terminal command stack implemented in Python (parser, processor, commands, REPL) and wired to the UI via `/command`.
 - Standalone REPL exists at `game/simulations/world_state/terminal/repl.py`.
 - Assault simulation prototype implemented (Python), standalone runner.
 - Terminal webserver available via `custodian-terminal/streaming-server.py` (Flask + SSE boot stream + `/command`). `server-streaming-boot.js` mirrors the boot flow with SSE hookup; `boot.js` currently runs the local boot sequence + system log.
+- Unified entrypoint added: `python -m game` with `--ui` (default), `--sim`, and `--repl`.
 - Git hooks added for doc/secret hygiene: `pre-commit`, `commit-msg`, `post-commit` (enable via `git config core.hooksPath .githooks`).
 - Unit tests exist for world-state step logic and terminal parsing/processing.
 - World-state terminal now supports a hard failure mode when the Command Center is breached; terminal accepts only reset/reboot until session reset.
