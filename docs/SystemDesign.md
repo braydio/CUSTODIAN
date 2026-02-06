@@ -176,6 +176,28 @@ If you implement time and pressure first:
 - Power acquisition feels meaningful.
 - The base feels alive even in text.
 
+## Phase 1 Terminal Contract
+
+Phase 1 is a deterministic terminal interface. The contract is:
+
+- One command in, one response out.
+- No background ticking while the operator is in control.
+- Command handlers return a structured result with success state and a single text payload.
+- Commands are parsed with shell-style quoting for multi-word sector names.
+
+The terminal loop owns input/output. Command handlers mutate the game state and
+return a `CommandResult` payload for display.
+
+### Authority Model
+
+Authority is enforced at command dispatch:
+
+- Read authority: inspection-only commands available from any sector.
+- Write authority: state-mutating commands that require Command Center presence.
+
+The Command Center gate is a hard boundary. When the operator is not in the
+Command Center, write commands return a denial message and do not mutate state.
+
 ## Validation Target
 
 Run `python game/simulations/world_state/sandbox_world.py` and confirm:
