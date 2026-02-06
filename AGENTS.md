@@ -90,10 +90,10 @@ This repository contains lightweight prototypes for a defense-oriented simulatio
 - If refactoring, keep entry points stable.
 - Keep sector naming aligned with root docs (Command Center + Goal Sector, plus the eight tutorial peripheral sectors).
 - Prefer `rg` for searches in this repo.
-
-## Non-Goals
-
-- Premature optimization.
-- Engine selection.
-- UI expansion beyond the terminal interface.
-- Adding systems not explicitly requested.
+- Terminal module layout (world_state):
+  - `game/simulations/world_state/terminal/parser.py` handles input normalization, tokenization, and sector name resolution.
+  - `game/simulations/world_state/terminal/commands.py` defines command specs and `CommandResult` payloads.
+  - `game/simulations/world_state/terminal/processor.py` enforces authority and dispatches handlers.
+  - `game/simulations/world_state/terminal/repl.py` owns I/O and prints `CommandResult.message`.
+- Command-result contract: handlers return `CommandResult(ok, message)` and should not print directly.
+- `step_world` usage: keep autonomous ticking inside `game/simulations/world_state/core/simulation.py` and avoid calling it from the Phase 1 terminal loop.

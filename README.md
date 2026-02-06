@@ -88,12 +88,17 @@ Optional server entry point:
 python game/simulations/world_state/server.py
 ```
 
-Server endpoint:
+Phase 1 adds a command-driven terminal loop for deterministic control:
 
-- `POST /command` with canonical JSON `{ "command": "<string>" }` returns `{ "ok": bool, "text": string, "lines"?: string[], "warnings"?: string[] }` (`raw` is accepted temporarily for compatibility).
+```bash
+WORLD_STATE_MODE=repl python game/simulations/world_state/sandbox_world.py
+```
 
-Phase 1 terminal commands: `STATUS`, `WAIT`, `HELP`.
-Failure mode: Command Center breach terminates the active session; only `RESET` or `REBOOT` recover to a fresh state.
+Usage notes:
+
+- Use `help` to list commands and usage.
+- Write commands (for example, `advance`) require Command Center authority.
+- Use quotes for multi-word sector names (for example, `sector "Fuel Depot"`).
 
 Docs:
 
