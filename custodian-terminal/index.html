@@ -17,13 +17,18 @@
   <div id="terminal-container">
     <pre id="terminal"></pre>
 
+    <form id="terminal-input-form" autocomplete="off">
+      <span id="terminal-prompt">&gt;</span>
+      <input id="terminal-input" type="text" spellcheck="false" disabled />
+    </form>
+
     <div id="status-bar">
       <span>AUTHORITY: RESIDUAL</span>
       <span>MANDATE: ACTIVE</span>
     </div>
   </div>
 
+  <script src="terminal.js"></script>
   <script src="boot.js"></script>
 </body>
 </html>
-

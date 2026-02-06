@@ -1,39 +1,73 @@
 """Command processor for the world-state terminal."""
 
-from typing import Optional
+from collections.abc import Callable
 
-from game.simulations.world_state.core.state import GameState
-from game.simulations.world_state.terminal.commands import CommandResult, get_command
-from game.simulations.world_state.terminal.parser import ParsedCommand
+from game.simulations.world_state.core.state import GameState, reset_game_state
+from game.simulations.world_state.terminal.commands import (
+    cmd_help,
+    cmd_status,
+    cmd_wait,
+)
+from game.simulations.world_state.terminal.parser import parse_input
+from game.simulations.world_state.terminal.result import CommandResult
+
+Handler = Callable[[GameState], list[str]]
 
 
-def process_command(
-    state: GameState, parsed: Optional[ParsedCommand]
-) -> Optional[CommandResult]:
-    """Apply a parsed command to the game state.
+FAILURE_RESET_COMMANDS = {"REBOOT", "RESET"}
+
+
+COMMAND_HANDLERS: dict[str, Handler] = {
+    "STATUS": cmd_status,
+    "WAIT": cmd_wait,
+    "HELP": lambda _state: cmd_help(),
+}
+
+
+def process_command(state: GameState, raw: str) -> CommandResult:
+    """Parse and dispatch a command against a mutable game state.
 
     Args:
-        state: Current game state.
-        parsed: Parsed command, or None for empty input.
+        state: Long-lived world-state instance.
+        raw: Raw terminal input line.
 
     Returns:
-        CommandResult if a command was executed, otherwise None.
-
-    Notes:
-        Write commands require Command Center authority.
+        Command result payload with primary text and optional detail lines.
     """
 
+    parsed = parse_input(raw)
     if parsed is None:
-        return None
-
-    command = get_command(parsed.verb)
-    if command is None:
-        return CommandResult(ok=False, message="Unknown command. Use 'help'.")
-
-    if command.authority == "write" and not state.in_command_center:
         return CommandResult(
             ok=False,
-            message="Write authority denied. Command Center required.",
+            text="UNKNOWN COMMAND.",
+            lines=["TYPE HELP FOR AVAILABLE COMMANDS."],
         )
 
-    return command.handler(state, parsed)
+    if state.is_failed and parsed.verb not in FAILURE_RESET_COMMANDS:
+        return CommandResult(
+            ok=False,
+            text=state.failure_reason or "SESSION FAILED.",
+            lines=["REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED."],
+        )
+
+    if parsed.verb in FAILURE_RESET_COMMANDS:
+        reset_game_state(state)
+        return CommandResult(
+            ok=True,
+            text="SYSTEM REBOOTED.",
+            lines=["SESSION READY."],
+        )
+
+    handler = COMMAND_HANDLERS.get(parsed.verb)
+    if handler is None:
+        return CommandResult(
+            ok=False,
+            text="UNKNOWN COMMAND.",
+            lines=["TYPE HELP FOR AVAILABLE COMMANDS."],
+        )
+
+    # Phase 1 authority model: all commands are allowed.
+    lines = handler(state)
+    primary_line = lines[0] if lines else "COMMAND EXECUTED."
+    detail_lines = lines[1:] if len(lines) > 1 else None
+    return CommandResult(ok=True, text=primary_line, lines=detail_lines)
