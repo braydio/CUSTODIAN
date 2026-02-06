@@ -1,0 +1,170 @@
+
+const terminal = document.getElementById("terminal");
+
+const hum = document.getElementById("hum");
+const relay = document.getElementById("relay");
+const alertSound = document.getElementById("alert");
+
+hum.volume = 0.15;
+hum.play().catch(() => { /* browser requires user interaction */ });
+
+const bootLines = [
+  "[ SYSTEM POWER: UNSTABLE ]",
+  "[ AUXILIARY POWER ROUTED ]",
+  "",
+  "CUSTODIAN NODE — ONLINE",
+  "STATUS: DEGRADED",
+  "",
+  "> Running integrity check…",
+  "> Memory blocks: 12% intact",
+  "> Long-range comms: OFFLINE",
+  "> Archive uplink: OFFLINE",
+  "> Automated defense grid: PARTIAL",
+  "",
+  "DIRECTIVE FOUND",
+  "RETENTION MANDATE — ACTIVE",
+  "",
+  "WARNING:",
+  "Issuing authority presumed defunct.",
+  "",
+  "Residual Authority accepted.",
+  "",
+  "Initializing Custodian interface…"
+];
+
+const terminalController = window.CustodianTerminal;
+
+/**
+ * Pause for a set duration.
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Type out a single boot line to the terminal.
+ * @param {string} text
+ * @returns {Promise<void>}
+ */
+function typeLine(text) {
+  return new Promise(resolve => {
+    let i = 0;
+
+    relay.currentTime = 0;
+    relay.volume = 0.25;
+    relay.play().catch(() => {});
+
+    if (text.includes("WARNING")) {
+      alertSound.volume = 0.4;
+      alertSound.play().catch(() => {});
+    }
+
+    const interval = setInterval(() => {
+      terminal.textContent += text[i] || "";
+      i++;
+
+      if (i >= text.length) {
+        clearInterval(interval);
+        terminal.textContent += "\n";
+        terminal.scrollTop = terminal.scrollHeight;
+        resolve();
+      }
+    }, 18 + Math.random() * 25);
+  });
+}
+
+/**
+ * Stream boot lines from the server if available.
+ * @returns {Promise<boolean>}
+ */
+function streamBootFromServer() {
+  return new Promise((resolve) => {
+    let hasData = false;
+    let done = false;
+
+    const source = new EventSource("/stream/boot");
+
+    source.onmessage = (event) => {
+      hasData = true;
+      terminalController.appendLine(event.data);
+      terminal.classList.add("flicker");
+      setTimeout(() => terminal.classList.remove("flicker"), 120);
+    };
+
+    source.addEventListener("done", () => {
+      done = true;
+      source.close();
+      resolve(true);
+    });
+
+    source.onerror = () => {
+      if (!hasData && !done) {
+        source.close();
+        resolve(false);
+      }
+    };
+
+    setTimeout(() => {
+      if (!hasData && !done) {
+        source.close();
+        resolve(false);
+      }
+    }, 800);
+  });
+}
+
+/**
+ * Play the boot sequence before handing off to command mode.
+ * @returns {Promise<void>}
+ */
+async function runBoot() {
+  terminalController.setInputEnabled(false);
+
+  const streamed = await streamBootFromServer();
+  if (!streamed) {
+    for (const line of bootLines) {
+      await typeLine(line);
+      terminal.classList.add("flicker");
+      setTimeout(() => terminal.classList.remove("flicker"), 120);
+      await sleep(200 + Math.random() * 300);
+    }
+  }
+
+  await sleep(800);
+  terminalController.syncBufferFromDom();
+  terminalController.startCommandMode();
+  setTimeout(simulateTelemetry, 1500);
+}
+
+/**
+ * Append periodic telemetry lines after boot.
+ * @returns {void}
+ */
+function simulateTelemetry() {
+  const messages = [
+    "[ SENSOR ] Movement detected near Security Gate.",
+    "[ POWER ] Output stable at 83%.",
+    "[ DEFENSE ] Turret A responding.",
+    "[ ALERT ] Ideological markers detected.",
+    "[ SENSOR ] Multiple hostiles converging."
+  ];
+
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i >= messages.length) {
+      clearInterval(interval);
+      return;
+    }
+
+    terminalController.appendLine(messages[i]);
+
+    alertSound.volume = 0.3;
+    alertSound.play().catch(() => {});
+
+    i++;
+  }, 2500);
+}
+
+runBoot();

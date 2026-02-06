@@ -1,0 +1,30 @@
+#!/bin/sh
+
+set -e
+
+# Block commits that include forbidden files or directories.
+forbidden_pattern='^(auth\.json|internal_storage\.json|history\.jsonl|olddauth\.json|shell_snapshots/|log/)$'
+
+staged_paths=$(git diff --cached --name-only)
+if [ -n "$staged_paths" ]; then
+  forbidden_match=$(printf "%s\n" "$staged_paths" | grep -E "$forbidden_pattern" || true)
+  if [ -n "$forbidden_match" ]; then
+    echo "Commit blocked: forbidden files or directories staged." >&2
+    echo "Remove these paths from the commit:" >&2
+    echo "$forbidden_match" >&2
+    exit 1
+  fi
+fi
+
+# Optional warning: untracked, unignored files under log/, sessions/, shell_snapshots/.
+warn_dirs="log sessions shell_snapshots"
+if [ -n "$warn_dirs" ]; then
+  untracked=$(git ls-files -o --exclude-standard $warn_dirs 2>/dev/null || true)
+  if [ -n "$untracked" ]; then
+    echo "Warning: untracked files exist under log/, sessions/, or shell_snapshots/." >&2
+    echo "Consider adding them to .gitignore or removing them:" >&2
+    echo "$untracked" >&2
+  fi
+fi
+
+exit 0

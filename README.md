@@ -49,6 +49,29 @@ Repeat until campaign objective achieved or lost
 
 ## Simulations
 
+### Custodian Terminal UI (Primary Once Wired)
+
+Terminal UI is the primary operator entry point once backend command transport is fully wired.
+
+Entry point:
+
+```bash
+python -m game --ui
+```
+
+Then visit `http://localhost:7331/`.
+
+Current status:
+
+- Boot stream and terminal shell rendering are active.
+- Command transport is wired via `POST /command`.
+
+Key files:
+
+- `custodian-terminal/streaming-server.py`
+- `custodian-terminal/boot.js`
+- `custodian-terminal/terminal.js`
+
 ### World-State Simulation
 
 Models ambient threat, sector instability, and periodic major assaults. Events are procedural but remain consistent with the theme by generating a hostile profile (ideology + form + tech expression) and building an event catalog around it.
@@ -56,7 +79,13 @@ Models ambient threat, sector instability, and periodic major assaults. Events a
 Entry point:
 
 ```bash
-python game/simulations/world_state/sandbox_world.py
+python -m game --sim
+```
+
+Optional server entry point:
+
+```bash
+python game/simulations/world_state/server.py
 ```
 
 Phase 1 adds a command-driven terminal loop for deterministic control:
@@ -104,6 +133,23 @@ Key files:
 - `game/simulations/assault/core/autopilot.py`
 - `game/simulations/assault/data/`
 
+### Custodian Terminal UI
+
+Static terminal UI prototype with boot sequence and live command loop integration.
+
+Entry point:
+
+```bash
+python -m game --ui
+```
+
+Then visit `http://localhost:7557/`.
+
+Key files:
+
+- `custodian-terminal/boot.js`
+- `custodian-terminal/terminal.js`
+
 ## Documentation Map
 
 - `docs/README.md`: documentation index and usage notes.
@@ -122,4 +168,10 @@ Key files:
 
 ## Testing & Validation
 
-No automated tests yet. When noting validation, describe the manual run (for example, “ran `python game/simulations/world_state/sandbox_world.py` and reviewed output”).
+Automated tests cover the world-state terminal logic. Run them with:
+
+```bash
+python -m pytest
+```
+
+When noting validation, describe the manual run (for example, “ran `python -m game --sim` and reviewed output”).

@@ -14,6 +14,10 @@ from flask import (
     stream_with_context,
 )
 
+from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.terminal.processor import process_command
+from game.simulations.world_state.terminal.result import CommandResult
+
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 SIM_PATH = os.path.join(APP_ROOT, "sandbox_world.py")
 
@@ -22,6 +26,7 @@ app = Flask(__name__)
 HISTORY_LIMIT = 2000
 history = deque(maxlen=HISTORY_LIMIT)
 current_process = None
+command_state = GameState()
 
 
 def _coerce_delay(raw, default=0.2):
@@ -75,6 +80,17 @@ def _stream_world_state(delay):
         print("[server] stream closed", flush=True)
 
 
+def _command_result_payload(result: CommandResult) -> dict:
+    """Convert a CommandResult into the command API payload."""
+
+    payload = {"ok": result.ok, "text": result.text}
+    if result.lines:
+        payload["lines"] = result.lines
+    if result.warnings:
+        payload["warnings"] = result.warnings
+    return payload
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -105,6 +121,32 @@ def resume():
     except OSError:
         return jsonify({"status": "error"}), 500
     return jsonify({"status": "resumed"})
+
+
+@app.route("/command", methods=["POST"])
+def command():
+    """Execute a terminal command from POSTed JSON payload."""
+
+    payload = request.get_json(silent=True)
+    raw = None
+    if isinstance(payload, dict):
+        canonical = payload.get("command")
+        fallback = payload.get("raw")
+        if isinstance(canonical, str):
+            raw = canonical
+        elif isinstance(fallback, str):
+            raw = fallback
+
+    if not isinstance(raw, str) or not raw.strip():
+        result = CommandResult(
+            ok=False,
+            text="UNKNOWN COMMAND.",
+            lines=["TYPE HELP FOR AVAILABLE COMMANDS."],
+        )
+        return jsonify(_command_result_payload(result))
+
+    result = process_command(command_state, raw)
+    return jsonify(_command_result_payload(result))
 
 
 @app.route("/stream")
