@@ -22,3 +22,7 @@ Not done:
 - Updated `step_world` and terminal `WAIT` behavior to emit explicit final failure lines and stop normal progression after failure.
 - Updated terminal processor failure lockout so only `RESET`/`REBOOT` are accepted while failed.
 - Extended world-state terminal tests to cover failure trigger, finality, and reboot-required behavior.
+- Updated world-state `/command` contract to canonical `{command}` request key with temporary `{raw}` fallback.
+- Expanded terminal `CommandResult` and server serialization to emit `ok`, primary `text`, and optional `lines`/`warnings`.
+- Updated terminal frontend submit/render flow and world-state command endpoint tests for the canonical request/response schema.
+

@@ -12,7 +12,8 @@ def test_process_command_unknown() -> None:
     result = process_command(state, "unknown")
 
     assert result.ok is False
-    assert result.lines == ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]
+    assert result.text == "UNKNOWN COMMAND."
+    assert result.lines == ["TYPE HELP FOR AVAILABLE COMMANDS."]
 
 
 def test_process_command_status() -> None:
@@ -23,7 +24,7 @@ def test_process_command_status() -> None:
     result = process_command(state, "status")
 
     assert result.ok is True
-    assert result.lines[0].startswith("TIME: ")
+    assert result.text.startswith("TIME: ")
 
 
 def test_process_command_wait_steps_world() -> None:
@@ -35,4 +36,4 @@ def test_process_command_wait_steps_world() -> None:
 
     assert result.ok is True
     assert state.time == 1
-    assert result.lines[0] == "TIME ADVANCED."
+    assert result.text == "TIME ADVANCED."
