@@ -90,7 +90,7 @@ python game/simulations/world_state/server.py
 
 Server endpoint:
 
-- `POST /command` with JSON `{ "raw": "<string>" }` returns `{ "ok": bool, "lines": string[] }`.
+- `POST /command` with canonical JSON `{ "command": "<string>" }` returns `{ "ok": bool, "text": string, "lines"?: string[], "warnings"?: string[] }` (`raw` is accepted temporarily for compatibility).
 
 Phase 1 terminal commands: `STATUS`, `WAIT`, `HELP`.
 Failure mode: Command Center breach terminates the active session; only `RESET` or `REBOOT` recover to a fresh state.

@@ -73,10 +73,19 @@ def stream_boot():
 
 @app.route("/command", methods=["POST"])
 def command():
+    """Execute a command from canonical request JSON."""
+
     payload = request.get_json(silent=True) or {}
-    raw = payload.get("raw", "")
+    command = payload.get("command")
+    raw = command if isinstance(command, str) else payload.get("raw", "")
     result = process_command(state, raw)
-    return jsonify({"ok": bool(result.ok), "lines": result.lines})
+
+    response = {"ok": bool(result.ok), "text": result.text}
+    if result.lines:
+        response["lines"] = result.lines
+    if result.warnings:
+        response["warnings"] = result.warnings
+    return jsonify(response)
 
 
 if __name__ == "__main__":
