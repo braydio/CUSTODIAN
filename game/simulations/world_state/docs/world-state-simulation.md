@@ -1,11 +1,12 @@
 # World State Simulation
 
-This simulation models a fortified command post under escalating pressure. It focuses on ambient tension, sector damage, and periodic major assaults. Output text stays grounded in operational, perimeter-defense language consistent with the theme of the game and the reconstruction-first campaign logic.
+This simulation models a fortified command post under escalating pressure. It focuses on ambient tension, sector damage, and periodic major assaults. Output text stays grounded in operational, perimeter-defense language consistent with the theme of the game and reconstruction-first campaign logic.
 
 ## Layout
 
 - `game/simulations/world_state/sandbox_world.py` is the entry point.
-- `game/simulations/world_state/core/` contains the modular simulation logic.
+- `game/simulations/world_state/core/` contains modular simulation logic.
+- `game/simulations/world_state/terminal/` contains parser, commands, processor, and REPL wiring.
 
 ## Core State
 
@@ -46,9 +47,9 @@ This simulation models a fortified command post under escalating pressure. It fo
 ## Simulation Flow
 
 1. Accept one operator command.
-2. Validate authority and parse intent.
+2. Parse command intent.
 3. Execute command action.
-4. Advance world by one step when command semantics require time (`wait`, movement, and other time-bearing commands).
+4. Advance world by one step only when command semantics require time (`WAIT`).
 5. Return a `CommandResult` payload for terminal rendering.
 
 ## Command-Driven Stepping
@@ -57,41 +58,23 @@ The world-state loop is command-driven in terminal mode.
 
 - No hidden background stepping while input is idle.
 - Each accepted time-bearing command advances exactly one simulation step.
-- Read-only commands may return state without advancing time.
-- Major assault timers and ambient events resolve during the step, not during idle UI time.
+- Read-only commands return state without advancing time.
+- Major assault timers and ambient events resolve during step execution, not during idle UI time.
 
 This keeps pacing deterministic, debuggable, and aligned with explicit operator intent.
 
-## Phase 1 Terminal Clock
+## Terminal Command Set (Current)
 
-Phase 1 uses a step-based clock. The operator advances time explicitly, one
-tick at a time, and there is no background ticking. The `advance` command calls
-the same `advance_time` function as the autonomous loop but does not trigger
-events or assaults to keep control deterministic.
+- `STATUS`: high-level board view of time, threat bucket, assault phase, and sector summary.
+- `WAIT`: advance exactly one tick and emit concise change lines.
+- `HELP`: list available commands.
+- `RESET` / `REBOOT`: recovery commands accepted while failed.
 
 ## Command Parser
 
-The Phase 1 terminal parser normalizes input by trimming and casefolding it,
-then tokenizes with shell-style quotes. This allows multi-word sector names to
-be passed as a single argument. Flags use `--flag=value`, `--flag`, or `-f`
-forms and are stored separately from positional arguments.
-
-Sector name resolution prefers exact match, then unique prefixes, then unique
-contains matches. Ambiguous matches return a clear error listing candidates.
-
-## Core Command List
-
-Read authority commands:
-
-- `help`: list all commands and usage.
-- `status`: show time, threat, assault state, location, and authority.
-- `profile`: show the hostile profile summary.
-- `sectors`: list all sectors.
-- `sector <name>`: show a single sector status line.
-
-Write authority commands:
-
-- `advance [ticks]`: advance time by the requested ticks.
+The Phase 1 terminal parser trims raw input, tokenizes using shell-style quotes,
+and normalizes the command verb to uppercase. This keeps command dispatch
+case-insensitive while preserving straightforward argument handling.
 
 ## Events (Procedural)
 
@@ -118,7 +101,7 @@ The world enters a terminal failure state when the Command Center is breached.
 
 - Breach threshold is configured in `core/config.py` as `COMMAND_CENTER_BREACH_DAMAGE`.
 - Once failed, normal world progression stops.
-- Terminal mode accepts only reset/reboot recovery commands until a session reset occurs.
+- Terminal mode accepts only reset/reboot recovery commands until session reset occurs.
 
 ## Assaults
 
