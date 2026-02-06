@@ -59,3 +59,28 @@ def test_step_world_resolves_assault_when_active(monkeypatch) -> None:
     assert calls["start"] == 0
     assert calls["tick"] == 0
     assert resolved["tick_delay"] == 0.3
+
+
+def test_step_world_skips_progress_when_failed(monkeypatch) -> None:
+    """Failed sessions should not advance or call downstream systems."""
+
+    state = GameState()
+    state.is_failed = True
+    calls = {"advance": 0, "event": 0, "start": 0, "tick": 0, "resolve": 0}
+
+    def record(name):
+        def _inner(*args, **kwargs):
+            calls[name] += 1
+
+        return _inner
+
+    monkeypatch.setattr(simulation, "advance_time", record("advance"))
+    monkeypatch.setattr(simulation, "maybe_trigger_event", record("event"))
+    monkeypatch.setattr(simulation, "maybe_start_assault_timer", record("start"))
+    monkeypatch.setattr(simulation, "tick_assault_timer", record("tick"))
+    monkeypatch.setattr(simulation, "resolve_assault", record("resolve"))
+
+    transitioned = simulation.step_world(state)
+
+    assert transitioned is False
+    assert calls == {"advance": 0, "event": 0, "start": 0, "tick": 0, "resolve": 0}

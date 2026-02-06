@@ -1,5 +1,6 @@
 """Tests for locked terminal command contracts."""
 
+from game.simulations.world_state.core.config import COMMAND_CENTER_BREACH_DAMAGE
 from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.terminal.processor import process_command
 
@@ -33,3 +34,32 @@ def test_status_output_contains_locked_sections() -> None:
     assert result.lines[2].startswith("ASSAULT: ")
     assert result.lines[4] == "SECTORS:"
     assert result.lines[5].startswith("- Command Center: ")
+
+
+def test_wait_failure_lines_are_explicit_and_final() -> None:
+    """WAIT should return final failure lines when Command Center is breached."""
+
+    state = GameState()
+    state.sectors["Command Center"].damage = COMMAND_CENTER_BREACH_DAMAGE
+
+    result = process_command(state, "WAIT")
+
+    assert result.ok is True
+    assert result.lines == [
+        "TIME ADVANCED.",
+        "COMMAND CENTER BREACHED.",
+        "SESSION TERMINATED.",
+    ]
+
+
+def test_reboot_alias_is_accepted_in_failure_mode() -> None:
+    """REBOOT should be accepted as a failure recovery command."""
+
+    state = GameState()
+    state.sectors["Command Center"].damage = COMMAND_CENTER_BREACH_DAMAGE
+    process_command(state, "WAIT")
+
+    result = process_command(state, "REBOOT")
+
+    assert result.ok is True
+    assert result.lines == ["SYSTEM REBOOTED.", "SESSION READY."]
