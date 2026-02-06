@@ -49,6 +49,37 @@ This simulation models a fortified command post under escalating pressure. It fo
 4. If assault starts, resolve it against the weakest sectors.
 5. Periodically print snapshots for visibility.
 
+## Phase 1 Terminal Clock
+
+Phase 1 uses a step-based clock. The operator advances time explicitly, one
+tick at a time, and there is no background ticking. The `advance` command calls
+the same `advance_time` function as the autonomous loop but does not trigger
+events or assaults to keep control deterministic.
+
+## Command Parser
+
+The Phase 1 terminal parser normalizes input by trimming and casefolding it,
+then tokenizes with shell-style quotes. This allows multi-word sector names to
+be passed as a single argument. Flags use `--flag=value`, `--flag`, or `-f`
+forms and are stored separately from positional arguments.
+
+Sector name resolution prefers exact match, then unique prefixes, then unique
+contains matches. Ambiguous matches return a clear error listing candidates.
+
+## Core Command List
+
+Read authority commands:
+
+- `help`: list all commands and usage.
+- `status`: show time, threat, assault state, location, and authority.
+- `profile`: show the hostile profile summary.
+- `sectors`: list all sectors.
+- `sector <name>`: show a single sector status line.
+
+Write authority commands:
+
+- `advance [ticks]`: advance time by the requested ticks.
+
 ## Events (Procedural)
 
 Ambient events are generated from an event catalog derived from a hostile profile:
