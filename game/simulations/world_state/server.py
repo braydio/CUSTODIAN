@@ -81,9 +81,14 @@ def _stream_world_state(delay):
 
 
 def _command_result_payload(result: CommandResult) -> dict:
-    """Convert a CommandResult into the locked API payload."""
+    """Convert a CommandResult into the command API payload."""
 
-    return {"ok": result.ok, "lines": result.lines}
+    payload = {"ok": result.ok, "text": result.text}
+    if result.lines:
+        payload["lines"] = result.lines
+    if result.warnings:
+        payload["warnings"] = result.warnings
+    return payload
 
 
 @app.route("/")
@@ -120,14 +125,23 @@ def resume():
 
 @app.route("/command", methods=["POST"])
 def command():
-    """Execute a terminal command and return a Phase 1 response."""
+    """Execute a terminal command from POSTed JSON payload."""
 
     payload = request.get_json(silent=True)
-    raw = payload.get("raw") if isinstance(payload, dict) else None
+    raw = None
+    if isinstance(payload, dict):
+        canonical = payload.get("command")
+        fallback = payload.get("raw")
+        if isinstance(canonical, str):
+            raw = canonical
+        elif isinstance(fallback, str):
+            raw = fallback
+
     if not isinstance(raw, str) or not raw.strip():
         result = CommandResult(
             ok=False,
-            lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."],
+            text="UNKNOWN COMMAND.",
+            lines=["TYPE HELP FOR AVAILABLE COMMANDS."],
         )
         return jsonify(_command_result_payload(result))
 

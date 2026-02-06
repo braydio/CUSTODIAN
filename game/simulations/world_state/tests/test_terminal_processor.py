@@ -14,7 +14,7 @@ def test_wait_advances_exactly_one_tick() -> None:
 
     assert result.ok is True
     assert state.time == 1
-    assert result.lines[0] == "TIME ADVANCED."
+    assert result.text == "TIME ADVANCED."
 
 
 def test_status_does_not_mutate_state() -> None:
@@ -26,7 +26,7 @@ def test_status_does_not_mutate_state() -> None:
 
     assert result.ok is True
     assert state.time == 0
-    assert result.lines[0] == "TIME: 0"
+    assert result.text == "TIME: 0"
 
 
 def test_unknown_command_returns_locked_error_lines() -> None:
@@ -37,7 +37,8 @@ def test_unknown_command_returns_locked_error_lines() -> None:
     result = process_command(state, "nonesuch")
 
     assert result.ok is False
-    assert result.lines == ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]
+    assert result.text == "UNKNOWN COMMAND."
+    assert result.lines == ["TYPE HELP FOR AVAILABLE COMMANDS."]
 
 
 def test_failure_mode_locks_non_reset_commands() -> None:
@@ -52,10 +53,8 @@ def test_failure_mode_locks_non_reset_commands() -> None:
     assert wait_result.ok is True
     assert wait_result.lines[-2:] == ["COMMAND CENTER BREACHED.", "SESSION TERMINATED."]
     assert status_result.ok is False
-    assert status_result.lines == [
-        "COMMAND CENTER BREACHED.",
-        "REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED.",
-    ]
+    assert status_result.text == "COMMAND CENTER BREACHED."
+    assert status_result.lines == ["REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED."]
 
 
 def test_reset_command_restores_session_after_failure() -> None:
@@ -68,7 +67,8 @@ def test_reset_command_restores_session_after_failure() -> None:
     result = process_command(state, "RESET")
 
     assert result.ok is True
-    assert result.lines == ["SYSTEM REBOOTED.", "SESSION READY."]
+    assert result.text == "SYSTEM REBOOTED."
+    assert result.lines == ["SESSION READY."]
     assert state.is_failed is False
     assert state.failure_reason is None
     assert state.time == 0

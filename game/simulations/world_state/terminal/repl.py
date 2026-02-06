@@ -23,5 +23,10 @@ def run_repl() -> None:
             break
 
         result = process_command(state, raw)
-        for line in result.lines:
-            print(line)
+        print(result.text)
+        if result.lines:
+            for line in result.lines:
+                print(line)
+        if result.warnings:
+            for warning in result.warnings:
+                print(warning)

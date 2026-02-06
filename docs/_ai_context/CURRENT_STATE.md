@@ -1,7 +1,7 @@
 # CURRENT STATE — CUSTODIAN
 
 ## Code Status
-- Terminal UI boot sequence implemented (JS). Boot now runs and then appends a system log before unlocking input. Commands are POSTed to `/command` and responses appended (transport wired end-to-end).
+- Terminal UI boot sequence implemented (JS). Boot now runs and then appends a system log before unlocking input. Commands are POSTed to `/command` using canonical `{command}` payloads and responses append `text` plus optional `lines`.
 - World-state simulation spine implemented (Python). Procedural events + assault timer active.
 - World-state terminal command stack implemented in Python (parser, processor, commands, REPL) and wired to the UI via `/command`.
 - Standalone REPL exists at `game/simulations/world_state/terminal/repl.py`.
@@ -32,5 +32,4 @@
 
 ## Next Tasks
 1. Decide whether `boot.js` or `server-streaming-boot.js` is canonical and remove/rename the other to reduce confusion.
-2. Align command response shape if you want richer payloads beyond `{ok, lines}`.
-3. Run a manual terminal flow check (boot -> system log -> STATUS/WAIT/HELP).
+2. Run a manual terminal flow check (boot -> system log -> STATUS/WAIT/HELP).

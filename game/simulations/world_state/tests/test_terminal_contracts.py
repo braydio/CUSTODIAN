@@ -13,8 +13,8 @@ def test_help_output_matches_locked_contract() -> None:
     result = process_command(state, "HELP")
 
     assert result.ok is True
+    assert result.text == "AVAILABLE COMMANDS:"
     assert result.lines == [
-        "AVAILABLE COMMANDS:",
         "- STATUS   View current situation",
         "- WAIT     Advance time",
         "- HELP     Show this list",
@@ -29,11 +29,11 @@ def test_status_output_contains_locked_sections() -> None:
     result = process_command(state, "STATUS")
 
     assert result.ok is True
-    assert result.lines[0].startswith("TIME: ")
-    assert result.lines[1].startswith("THREAT: ")
-    assert result.lines[2].startswith("ASSAULT: ")
-    assert result.lines[4] == "SECTORS:"
-    assert result.lines[5].startswith("- Command Center: ")
+    assert result.text.startswith("TIME: ")
+    assert result.lines[0].startswith("THREAT: ")
+    assert result.lines[1].startswith("ASSAULT: ")
+    assert result.lines[3] == "SECTORS:"
+    assert result.lines[4].startswith("- Command Center: ")
 
 
 def test_wait_failure_lines_are_explicit_and_final() -> None:
@@ -45,11 +45,8 @@ def test_wait_failure_lines_are_explicit_and_final() -> None:
     result = process_command(state, "WAIT")
 
     assert result.ok is True
-    assert result.lines == [
-        "TIME ADVANCED.",
-        "COMMAND CENTER BREACHED.",
-        "SESSION TERMINATED.",
-    ]
+    assert result.text == "TIME ADVANCED."
+    assert result.lines == ["COMMAND CENTER BREACHED.", "SESSION TERMINATED."]
 
 
 def test_reboot_alias_is_accepted_in_failure_mode() -> None:
@@ -62,4 +59,5 @@ def test_reboot_alias_is_accepted_in_failure_mode() -> None:
     result = process_command(state, "REBOOT")
 
     assert result.ok is True
-    assert result.lines == ["SYSTEM REBOOTED.", "SESSION READY."]
+    assert result.text == "SYSTEM REBOOTED."
+    assert result.lines == ["SESSION READY."]

@@ -103,17 +103,20 @@
      Backend Communication
      ========================= */
 
-  async function submitCommand(raw) {
+  async function submitCommand(command) {
     const response = await fetch("/command", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ raw }),
+      body: JSON.stringify({ command }),
     });
 
     const payload = await response.json();
+    const text = typeof payload.text === "string" ? payload.text : "";
+    const lines = Array.isArray(payload.lines) ? payload.lines : [];
+    const warnings = Array.isArray(payload.warnings) ? payload.warnings : [];
     return {
       ok: Boolean(payload.ok),
-      lines: Array.isArray(payload.lines) ? payload.lines : [],
+      lines: text ? [text, ...lines, ...warnings] : [...lines, ...warnings],
     };
   }
 
