@@ -14,3 +14,10 @@
 Not done:
 - No backend `/command` endpoint wired yet.
 - No server-side command handling integrated with the terminal UI.
+
+
+## 2026-02-06
+- Added world-state failure latch (`is_failed`, `failure_reason`) triggered by Command Center breach threshold.
+- Updated `step_world` and terminal `WAIT` behavior to emit explicit final failure lines and stop normal progression after failure.
+- Updated terminal processor failure lockout so only `RESET`/`REBOOT` are accepted while failed.
+- Extended world-state terminal tests to cover failure trigger, finality, and reboot-required behavior.

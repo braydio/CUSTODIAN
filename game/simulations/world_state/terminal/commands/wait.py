@@ -30,15 +30,25 @@ def _latest_event_line(state: GameState, before_time: int) -> str | None:
     return f"[EVENT] {latest_name} in {latest_sector}."
 
 
+def _failure_lines(state: GameState) -> list[str]:
+    """Build terminal final lines for failure mode."""
+
+    reason = state.failure_reason or "SESSION FAILED."
+    return [reason, "SESSION TERMINATED."]
+
+
 def cmd_wait(state: GameState) -> list[str]:
     """Advance the world simulation by exactly one tick."""
+
+    if state.is_failed:
+        return _failure_lines(state)
 
     before_time = state.time
     was_assault_active = state.in_major_assault or state.current_assault is not None
     previous_timer = state.assault_timer
 
     with redirect_stdout(io.StringIO()):
-        step_world(state)
+        became_failed = step_world(state)
 
     lines = ["TIME ADVANCED."]
 
@@ -51,6 +61,10 @@ def cmd_wait(state: GameState) -> list[str]:
         lines.append("=== MAJOR ASSAULT BEGINS ===")
     elif was_assault_active and not is_assault_active:
         lines.append("=== ASSAULT REPULSED ===")
+
+    if became_failed:
+        lines.extend(_failure_lines(state))
+        return lines
 
     current_timer = state.assault_timer
     if (

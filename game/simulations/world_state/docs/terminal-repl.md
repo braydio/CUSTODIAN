@@ -30,3 +30,14 @@ Unknown command response:
 
 - `UNKNOWN COMMAND.`
 - `TYPE HELP FOR AVAILABLE COMMANDS.`
+
+
+## Failure Lockdown
+
+- Command Center breach now places the session in failure mode.
+- Breach criteria: Command Center damage reaches the configured threshold (`COMMAND_CENTER_BREACH_DAMAGE`).
+- `WAIT` returns explicit final lines when breach occurs:
+  - `COMMAND CENTER BREACHED.`
+  - `SESSION TERMINATED.`
+- While failed, normal commands are locked.
+- Only `RESET` or `REBOOT` are accepted to start a fresh session in-process.

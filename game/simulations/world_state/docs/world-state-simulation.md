@@ -17,6 +17,8 @@ This simulation models a fortified command post under escalating pressure. It fo
   - `player_location`: current sector name for the operator.
   - `in_command_center`: derived flag for Command Center authority checks.
   - `faction_profile`: ideology + form + tech expression for procedural events.
+  - `is_failed`: terminal failure latch after Command Center breach.
+  - `failure_reason`: locked operator-facing reason for failure mode.
   - `sectors`: dictionary of `SectorState` by name.
 - `SectorState`
   - `damage`: persistent wear on a sector.
@@ -78,6 +80,14 @@ Each event has:
 - Optional persistent effects that decay over time but remain across ticks.
 
 This keeps events consistent with the theme while still procedural and lightweight.
+
+## Failure Conditions
+
+The world enters a terminal failure state when the Command Center is breached.
+
+- Breach threshold is configured in `core/config.py` as `COMMAND_CENTER_BREACH_DAMAGE`.
+- Once failed, normal world progression stops.
+- Terminal mode accepts only reset/reboot recovery commands until a session reset occurs.
 
 ## Assaults
 
