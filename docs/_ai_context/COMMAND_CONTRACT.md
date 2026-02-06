@@ -1,23 +1,19 @@
 # COMMAND CONTRACT — CUSTODIAN
 
 ## Status
-- Partially implemented in Python (parser + commands + processor + REPL).
-- Not wired to the terminal UI or webserver yet.
+- Implemented end-to-end for Phase 1 commands via `/command`.
 
 ## Transport
 - Client: `custodian-terminal/terminal.js` (posts to `/command`).
-- Server: `custodian-terminal/streaming-server.py` (command endpoint not implemented yet).
+- Server: `custodian-terminal/streaming-server.py` (holds persistent `GameState`).
 
 ## Request Shape (Current UI)
 - Method: `POST`.
 - Path: `/command`.
 - JSON body fields: `raw` (string raw input).
 
-## Response Shape (Current UI Expectation)
+## Response Shape (Current)
 - JSON body fields: `ok` (boolean), `lines` (string[]).
-
-## Response Shape (Server Proposal)
-- JSON body fields: `ok` (boolean), `text` (primary line), `lines` (string[] optional), `warnings` (string[] optional), `error` (string or null), `authority` (residual | denied | command_center, optional).
 
 ## Command Grammar (Current Python)
 - Single-line commands, case-insensitive keyword first.

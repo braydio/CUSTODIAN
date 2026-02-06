@@ -1,0 +1,200 @@
+
+(() => {
+  const terminal = document.getElementById("terminal");
+  const inputForm = document.getElementById("terminal-input-form");
+  const inputField = document.getElementById("terminal-input");
+
+  const state = {
+    buffer: [],
+    inputEnabled: false,
+    cursorVisible: false,
+    liveInput: "",
+  };
+
+  const systemLogLines = [
+    "",
+    "--- SYSTEM LOG ---",
+    "Residual command index recovered.",
+    "Directive access granted.",
+    "",
+    "AVAILABLE DIRECTIVES:",
+    "- STATUS",
+    "- WAIT",
+    "- HELP",
+    "",
+  ];
+
+  /* =========================
+     Buffer + Rendering
+     ========================= */
+
+  function syncBufferFromDom() {
+    const rawText = terminal.textContent;
+    state.buffer = rawText ? rawText.split("\n") : [];
+  }
+
+  function render() {
+    terminal.textContent = state.buffer.join("\n");
+    terminal.scrollTop = terminal.scrollHeight;
+  }
+
+  function appendLine(line) {
+    state.buffer.push(line);
+    render();
+  }
+
+  function appendLines(lines) {
+    lines.forEach((line) => appendLine(line));
+  }
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /* =========================
+     Live Input + Cursor
+     ========================= */
+
+  function renderLiveLine() {
+    if (!state.inputEnabled) return;
+
+    // Remove existing live line
+    const last = state.buffer[state.buffer.length - 1];
+    if (last && last.startsWith("> ")) {
+      state.buffer.pop();
+    }
+
+    const cursor = state.cursorVisible ? "_" : "";
+    state.buffer.push(`> ${state.liveInput}${cursor}`);
+    render();
+  }
+
+  // Blink cursor
+  setInterval(() => {
+    if (!state.inputEnabled) return;
+    state.cursorVisible = !state.cursorVisible;
+    renderLiveLine();
+  }, 650);
+
+  inputField.addEventListener("input", () => {
+    if (!state.inputEnabled) return;
+    state.liveInput = inputField.value.toUpperCase();
+    renderLiveLine();
+  });
+
+  /* =========================
+     Input Enable / Disable
+     ========================= */
+
+  function setInputEnabled(enabled) {
+    state.inputEnabled = enabled;
+    inputField.disabled = !enabled;
+    inputForm.classList.toggle("disabled", !enabled);
+
+    if (enabled) {
+      inputField.focus();
+      state.cursorVisible = true;
+      renderLiveLine();
+    } else {
+      state.cursorVisible = false;
+    }
+  }
+
+  /* =========================
+     Backend Communication
+     ========================= */
+
+  async function submitCommand(raw) {
+    const response = await fetch("/command", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ raw }),
+    });
+
+    const payload = await response.json();
+    return {
+      ok: Boolean(payload.ok),
+      lines: Array.isArray(payload.lines) ? payload.lines : [],
+    };
+  }
+
+  /* =========================
+     Command Handling
+     ========================= */
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (!state.inputEnabled) return;
+
+    const command = inputField.value.trim();
+    if (!command) return;
+
+    // Remove live line
+    const last = state.buffer[state.buffer.length - 1];
+    if (last && last.startsWith("> ")) {
+      state.buffer.pop();
+    }
+
+    appendLine(`> ${command.toUpperCase()}`);
+
+    inputField.value = "";
+    state.liveInput = "";
+    state.cursorVisible = false;
+
+    setInputEnabled(false);
+
+    try {
+      const result = await submitCommand(command);
+      appendLines(result.lines);
+    } catch {
+      appendLines([
+        "COMMAND LINK FAILED.",
+        "VERIFY SERVER AND RETRY.",
+      ]);
+    } finally {
+      setInputEnabled(true);
+    }
+  }
+
+  /* =========================
+     SYSTEM LOG
+     ========================= */
+
+  async function runSystemLog() {
+    setInputEnabled(false);
+    for (const line of systemLogLines) {
+      appendLine(line);
+      await sleep(350);
+    }
+  }
+
+  /* =========================
+     Command Mode
+     ========================= */
+
+  function startCommandMode() {
+    appendLines([
+      "",
+      "--- COMMAND INTERFACE ACTIVE ---",
+      "Awaiting directives.",
+      "",
+    ]);
+    setInputEnabled(true);
+  }
+
+  /* =========================
+     Wiring
+     ========================= */
+
+  inputForm.addEventListener("submit", handleSubmit);
+  setInputEnabled(false);
+
+  window.CustodianTerminal = {
+    appendLine,
+    appendLines,
+    setInputEnabled,
+    startCommandMode,
+    runSystemLog,
+    syncBufferFromDom,
+  };
+})();

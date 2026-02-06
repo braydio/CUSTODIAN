@@ -10,6 +10,7 @@
 - Archived the Phase 1 terminal design lock from `NEXT_FEATURES.md` into `docs/_ai_context/ARCHITECTURE.md` with divergence notes.
 - Updated terminal boot flow: `boot.js` now appends a system log and unlocks command mode; terminal input submits to `/command` and renders lines or failure messages (UI only; backend endpoint not implemented yet).
 - Added alternate boot script `custodian-terminal/server-streaming-boot.js` for SSE boot streaming.
+- Implemented `/command` in `custodian-terminal/streaming-server.py` using a persistent `GameState` and the terminal command processor.
 
 Not done:
 - No backend `/command` endpoint wired yet.
