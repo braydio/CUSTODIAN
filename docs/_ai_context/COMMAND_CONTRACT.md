@@ -1,37 +1,48 @@
 # COMMAND CONTRACT — CUSTODIAN
 
 ## Status
-- Implemented end-to-end for Phase 1 commands via `/command`.
+- Implemented end-to-end between terminal frontend and backend command processor.
 
 ## Transport
-- Client: `custodian-terminal/terminal.js` (posts to `/command`).
-- Server: `custodian-terminal/streaming-server.py` (holds persistent `GameState`).
+- Client submit path: `custodian-terminal/terminal.js` posts commands to `/command`.
+- Server handler: `custodian-terminal/streaming-server.py` parses request JSON, dispatches to `process_command`, and serializes `CommandResult`.
 
-## Request Shape (Current UI)
-- Method: `POST`.
-- Path: `/command`.
-- Canonical JSON body field: `command` (string raw input).
-- Backward-compatible fallback: `raw` (string) is accepted temporarily.
+## Request Shape
+- Method: `POST`
+- Path: `/command`
+- Canonical JSON body: `{ "command": "<string>" }`
+- Temporary fallback JSON body: `{ "raw": "<string>" }`
 
-## Response Shape (Current)
-- JSON body fields: `ok` (boolean), `text` (string primary line).
-- Optional JSON body fields: `lines` (string[] ordered detail), `warnings` (string[] non-fatal warnings).
+Notes:
+- Empty or whitespace input is treated as unknown command.
+- Command verb parsing is case-insensitive; frontend currently uppercases local input rendering.
 
-## Command Grammar (Current Python)
-- Single-line commands, case-insensitive keyword first.
-- Quoted args supported; flags use `--flag` or `--flag=value`.
-- Examples: `STATUS`, `SECTORS`, `POWER`, `WAIT [ticks]`.
-- Phase 1 design lock (historical): `STATUS`, `WAIT`, `HELP` only (see `docs/_ai_context/ARCHITECTURE.md`).
+## Response Shape
+- `ok` (boolean): command acceptance/execution status.
+- `text` (string): single primary operator-facing line.
+- `lines` (optional string[]): ordered detail lines appended after `text`.
+- `warnings` (optional string[]): non-fatal warning lines.
 
-## Authority Rules (Current Python)
-- Read commands permitted anywhere.
-- Write commands require Command Center authority.
-- Denied actions return `ok=false` with a one-line reason.
+## Implemented Command Set
+- `STATUS`: read-only snapshot (`TIME`, `THREAT`, `ASSAULT`, `SECTORS`).
+- `WAIT`: advances simulation by exactly one tick and returns concise event/assault/failure lines when applicable.
+- `HELP`: returns command list.
+- `RESET` / `REBOOT`: accepted in processor for failure recovery and state reset.
 
-## Error Semantics (Current Python)
-- Unknown command: `ok=false`, `text="Unknown command."`
-- Invalid args: `ok=false` with a terse reason (e.g., ticks must be positive).
+## Failure and Error Semantics
+- Unknown/invalid command line:
+  - `ok=false`
+  - `text="UNKNOWN COMMAND."`
+  - `lines=["TYPE HELP FOR AVAILABLE COMMANDS."]`
+- Failure lockout (Command Center breached):
+  - Non-reset verbs return `ok=false`
+  - `text` set to failure reason (`COMMAND CENTER BREACHED.` when latched by simulation)
+  - `lines=["REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED."]`
+- `RESET` or `REBOOT` during lockout return:
+  - `ok=true`
+  - `text="SYSTEM REBOOTED."`
+  - `lines=["SESSION READY."]`
 
-## Notes
-- `WAIT` advances simulation by exactly one tick.
-- `STATUS` never advances time.
+## Runtime Notes
+- Backend state is process-local and persistent while the Flask server process is running.
+- Endpoint does not perform auth in current prototype scope.
