@@ -2,16 +2,22 @@ import time
 
 from .assaults import maybe_start_assault_timer, resolve_assault, tick_assault_timer
 from .events import maybe_trigger_event
-from .state import GameState, advance_time
+from .state import GameState, advance_time, check_failure
 
 
-def step_world(state: GameState, tick_delay: float = 0.0) -> None:
+def step_world(state: GameState, tick_delay: float = 0.0) -> bool:
     """Advance the world simulation by a single tick.
 
     Args:
         state: Mutable simulation state to advance.
         tick_delay: Delay passed to assault resolution for pacing.
+
+    Returns:
+        True when this step transitions into a terminal failure state.
     """
+
+    if state.is_failed:
+        return False
 
     advance_time(state)
     maybe_trigger_event(state)
@@ -21,6 +27,8 @@ def step_world(state: GameState, tick_delay: float = 0.0) -> None:
         tick_assault_timer(state)
     else:
         resolve_assault(state, tick_delay=tick_delay)
+
+    return check_failure(state)
 
 
 def sandbox_world(ticks=300, tick_delay=0.05):

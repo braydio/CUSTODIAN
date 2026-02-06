@@ -4,6 +4,7 @@ from .config import (
     ALERTNESS_DECAY,
     ALERTNESS_FROM_DAMAGE,
     AMBIENT_THREAT_GROWTH,
+    COMMAND_CENTER_BREACH_DAMAGE,
     SECTORS,
 )
 from .effects import apply_global_effects, apply_sector_effects
@@ -42,6 +43,8 @@ class GameState:
         self.ambient_threat = 0.0
         self.assault_timer = None
         self.in_major_assault = False
+        self.is_failed = False
+        self.failure_reason = None
 
         # Player state
         self.player_location = "Command Center"
@@ -81,7 +84,43 @@ class GameState:
         return "\n".join(lines)
 
 
-def advance_time(state, delta=1):
+def check_failure(state: GameState) -> bool:
+    """Mark the simulation as failed when Command Center breach criteria are met.
+
+    Args:
+        state: Mutable simulation state to inspect.
+
+    Returns:
+        True when this call transitions the state into failure mode.
+    """
+
+    if state.is_failed:
+        return False
+
+    command_center = state.sectors["Command Center"]
+    if command_center.damage < COMMAND_CENTER_BREACH_DAMAGE:
+        return False
+
+    state.is_failed = True
+    state.failure_reason = "COMMAND CENTER BREACHED."
+    return True
+
+
+def reset_game_state(state: GameState) -> None:
+    """Reset a mutable game state instance to a fresh session baseline.
+
+    Args:
+        state: Existing state instance to reset in place.
+    """
+
+    fresh_state = GameState()
+    state.__dict__.clear()
+    state.__dict__.update(fresh_state.__dict__)
+
+
+def advance_time(state: GameState, delta: int = 1) -> None:
+    """Advance global and sector clocks by the given tick count."""
+
     state.time += delta
     state.ambient_threat += AMBIENT_THREAT_GROWTH * delta
     apply_global_effects(state)
