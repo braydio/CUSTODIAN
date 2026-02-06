@@ -1,18 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
 ## Code Status
-- Terminal UI boot sequence implemented (JS). Boot now runs and then appends a system log before unlocking input. Commands are POSTed to `/command` and responses appended (transport wired on the UI side only).
+- Terminal UI boot sequence implemented (JS). Boot now runs and then appends a system log before unlocking input. Commands are POSTed to `/command` and responses appended (transport wired end-to-end).
 - World-state simulation spine implemented (Python). Procedural events + assault timer active.
 - World-state terminal command stack implemented in Python (parser, processor, commands, REPL), not wired to the UI yet.
 - Standalone REPL exists at `game/simulations/world_state/terminal/repl.py`.
 - Assault simulation prototype implemented (Python), standalone runner.
-- Terminal webserver available via `custodian-terminal/streaming-server.py` (Flask + SSE boot stream). `server-streaming-boot.js` mirrors the boot flow with SSE hookup; `boot.js` currently runs the local boot sequence + system log.
+- Terminal webserver available via `custodian-terminal/streaming-server.py` (Flask + SSE boot stream + `/command`). `server-streaming-boot.js` mirrors the boot flow with SSE hookup; `boot.js` currently runs the local boot sequence + system log.
 - Git hooks added for doc/secret hygiene: `pre-commit`, `commit-msg`, `post-commit` (enable via `git config core.hooksPath .githooks`).
 - Unit tests exist for world-state step logic and terminal parsing/processing.
 
 ## Implemented vs Stubbed
-- Implemented: boot sequence rendering, system log lines, terminal input + submit flow, command POST transport (UI), world-state ticks, assault resolution, terminal command parsing + processing in Python.
-- Stubbed: backend `/command` endpoint in terminal server, authoritative command responses to UI.
+- Implemented: boot sequence rendering, system log lines, terminal input + submit flow, command POST transport, `/command` endpoint, world-state ticks, assault resolution, terminal command parsing + processing in Python.
+- Stubbed: authoritative command responses beyond the Phase 1 set, tighter error handling, and any auth gating.
 - Note: current Python terminal commands include `status`, `sectors`, `power`, `wait` with authority gating; this diverges from the Phase 1 `STATUS/WAIT/HELP` lock described in `docs/_ai_context/ARCHITECTURE.md`.
 
 ## Locked Decisions
@@ -29,6 +29,6 @@
 - None.
 
 ## Next Tasks
-1. Implement `/command` in the terminal server and wire it to the Python terminal command processor.
-2. Decide whether `boot.js` or `server-streaming-boot.js` is canonical and remove/rename the other to reduce confusion.
-3. Align COMMAND_CONTRACT.md with the actual transport shape once the server endpoint exists.
+1. Decide whether `boot.js` or `server-streaming-boot.js` is canonical and remove/rename the other to reduce confusion.
+2. Align command response shape if you want richer payloads beyond `{ok, lines}`.
+3. Run a manual terminal flow check (boot -> system log -> STATUS/WAIT/HELP).

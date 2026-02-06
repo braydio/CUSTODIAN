@@ -1,11 +1,15 @@
 import os
 import random
 import time
-from flask import Flask, Response, send_from_directory
+from flask import Flask, Response, jsonify, request, send_from_directory
+
+from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.terminal.processor import process_command
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__, static_folder=None)
+state = GameState()
 
 BOOT_LINES = [
     "[ SYSTEM POWER: UNSTABLE ]",
@@ -65,6 +69,14 @@ def static_files(filename):
 def stream_boot():
     delay = _coerce_delay(os.getenv("BOOT_DELAY", None))
     return Response(_stream_boot(delay), mimetype="text/event-stream")
+
+
+@app.route("/command", methods=["POST"])
+def command():
+    payload = request.get_json(silent=True) or {}
+    raw = payload.get("raw", "")
+    result = process_command(state, raw)
+    return jsonify({"ok": bool(result.ok), "lines": result.lines})
 
 
 if __name__ == "__main__":

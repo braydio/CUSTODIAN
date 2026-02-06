@@ -7,5 +7,5 @@ Text-only terminal UI prototype for the custodian interface. The boot sequence r
 - Boot lines render with the existing type-in effect, then a system log prints before command mode.
 - The terminal module tracks a buffered history and appends command/response transcript lines.
 - System log introduces `STATUS`, `WAIT`, and `HELP` before input unlock.
-- Prompt input posts to `POST /command` with `{raw}` and appends returned `lines` (server endpoint not implemented yet).
+- Prompt input posts to `POST /command` with `{raw}` and appends returned `lines` (served by `custodian-terminal/streaming-server.py`).
 - Prompt interaction stays minimal by design and remains inside the terminal frame.

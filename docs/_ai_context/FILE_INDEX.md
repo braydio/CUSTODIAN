@@ -13,6 +13,6 @@
 - `custodian-terminal/server-streaming-boot.js` — boot sequence variant with SSE hookup.
 - `custodian-terminal/terminal.js` — terminal buffer + input handling.
 - `custodian-terminal/server.py` — static server + boot stream endpoint.
-- `custodian-terminal/streaming-server.py` — static server + boot stream endpoint.
+- `custodian-terminal/streaming-server.py` — static server + boot stream + `/command` endpoint.
 - `.githooks/` — local git hooks (pre-commit, commit-msg, post-commit).
 - `tests/` — pytest suite for world-state stepping and terminal commands.
