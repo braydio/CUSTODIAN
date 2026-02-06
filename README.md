@@ -59,7 +59,17 @@ Entry point:
 python game/simulations/world_state/sandbox_world.py
 ```
 
-Write commands in the terminal loop require Command Center authority.
+Phase 1 adds a command-driven terminal loop for deterministic control:
+
+```bash
+WORLD_STATE_MODE=repl python game/simulations/world_state/sandbox_world.py
+```
+
+Usage notes:
+
+- Use `help` to list commands and usage.
+- Write commands (for example, `advance`) require Command Center authority.
+- Use quotes for multi-word sector names (for example, `sector "Fuel Depot"`).
 
 Docs:
 
