@@ -1,5 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
+- `game/__main__.py` — unified entrypoint (`python -m game`).
 - `game/run.py` — main world simulation entry point.
 - `game/simulations/world_state/core/simulation.py` — world-state tick loop (`sandbox_world`).
 - `game/simulations/world_state/core/state.py` — `GameState` and time progression.
