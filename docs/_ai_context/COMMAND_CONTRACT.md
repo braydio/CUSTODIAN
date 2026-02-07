@@ -25,7 +25,7 @@ Notes:
 
 ## Implemented Command Set
 - `STATUS`: read-only snapshot (`TIME`, `THREAT`, `ASSAULT`, `SECTORS`).
-- `WAIT`: advances simulation by exactly one tick and returns concise event/assault/failure lines when applicable.
+- `WAIT`: advances simulation by exactly one tick and returns concise event/assault/failure lines when applicable; otherwise returns one terse `[PRESSURE]` fallback line.
 - `HELP`: returns command list.
 - `RESET` / `REBOOT`: accepted in processor for failure recovery and state reset.
 
