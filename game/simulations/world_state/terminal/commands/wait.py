@@ -43,18 +43,20 @@ def _quiet_tick_line(state: GameState) -> str:
     if state.in_major_assault or state.current_assault is not None:
         return "[PRESSURE] ASSAULT ACTIVE."
 
+    threat_line = "THREAT STABLE"
+    if state.ambient_threat >= 3.5:
+        threat_line = "THREAT ELEVATED"
+    elif state.ambient_threat >= 1.5:
+        threat_line = "THREAT RISING"
+
     if state.assault_timer is not None:
         if state.assault_timer <= 6:
-            return "[PRESSURE] ASSAULT IMMINENT."
+            return f"[PRESSURE] ASSAULT IMMINENT; {threat_line}."
         if state.assault_timer <= 18:
-            return "[PRESSURE] ASSAULT BUILDING."
-        return "[PRESSURE] ASSAULT TRACKED."
+            return f"[PRESSURE] ASSAULT BUILDING; {threat_line}."
+        return f"[PRESSURE] ASSAULT TRACKED; {threat_line}."
 
-    if state.ambient_threat >= 3.5:
-        return "[PRESSURE] THREAT ELEVATED."
-    if state.ambient_threat >= 1.5:
-        return "[PRESSURE] THREAT RISING."
-    return "[PRESSURE] PERIMETER STABLE."
+    return f"[PRESSURE] {threat_line}."
 
 
 def cmd_wait(state: GameState) -> list[str]:

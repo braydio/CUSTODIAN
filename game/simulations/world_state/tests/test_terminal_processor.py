@@ -96,8 +96,8 @@ def test_wait_quiet_tick_emits_pressure_line(monkeypatch) -> None:
     assert result.text == "TIME ADVANCED."
     assert result.lines is not None
     assert len(result.lines) == 1
-    assert result.lines[0] == "[PRESSURE] ASSAULT BUILDING."
-    assert len(result.lines[0]) <= 40
+    assert result.lines[0] == "[PRESSURE] ASSAULT BUILDING; THREAT RISING."
+    assert len(result.lines[0]) <= 60
 
 
 def test_wait_quiet_tick_pressure_line_has_no_empty_entries(monkeypatch) -> None:
@@ -119,5 +119,5 @@ def test_wait_quiet_tick_pressure_line_has_no_empty_entries(monkeypatch) -> None
     result = process_command(state, "WAIT")
 
     assert result.ok is True
-    assert result.lines == ["[PRESSURE] PERIMETER STABLE."]
+    assert result.lines == ["[PRESSURE] THREAT STABLE."]
     assert all(line.strip() for line in result.lines)
