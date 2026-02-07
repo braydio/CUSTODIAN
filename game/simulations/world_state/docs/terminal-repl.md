@@ -9,9 +9,10 @@ The world advances only when the operator runs `WAIT`.
 ## Transport Contract (UI Path)
 
 - Terminal UI submits commands to `POST /command` as JSON `{ "command": "<string>" }`.
-- Backend accepts temporary legacy `{ "raw": "<string>" }` fallback.
+- Backend still accepts legacy `{ "raw": "<string>" }` fallback.
 - Backend returns JSON with `ok`, `text`, optional `lines`, optional `warnings`.
 - `text` is the primary line; `lines` append ordered detail for terminal display.
+- Backend-owned `GameState` is authoritative for command results.
 
 ## Commands
 
@@ -32,6 +33,10 @@ The world advances only when the operator runs `WAIT`.
 - `HELP`
   - Prints available command list.
 
+- `RESET` / `REBOOT`
+  - Reinitialize the in-process world state.
+  - Primarily used for recovery after failure lockout.
+
 ## Error Output
 
 Unknown command response:
@@ -47,7 +52,7 @@ Unknown command response:
   - `COMMAND CENTER BREACHED.`
   - `SESSION TERMINATED.`
 - While failed, normal commands are locked.
-- Only `RESET` or `REBOOT` are accepted to start a fresh in-process session.
+- Only `RESET` or `REBOOT` are accepted until session reset.
 - Recovery response is:
   - `SYSTEM REBOOTED.`
   - `SESSION READY.`
