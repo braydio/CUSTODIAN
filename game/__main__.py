@@ -18,7 +18,7 @@ def _repo_root() -> Path:
 def _run_ui() -> None:
     """Launch the terminal UI server."""
 
-    server_path = _repo_root() / "custodian-terminal" / "streaming-server.py"
+    server_path = _repo_root() / "custodian-terminal" / "server.py"
     subprocess.run([sys.executable, str(server_path)], check=True)
 
 

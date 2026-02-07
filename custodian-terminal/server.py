@@ -1,7 +1,15 @@
 import os
 import random
+import sys
 import time
+from pathlib import Path
+
 from flask import Flask, Response, jsonify, request, send_from_directory
+
+# Ensure repo root is on sys.path when running directly.
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.terminal.processor import process_command

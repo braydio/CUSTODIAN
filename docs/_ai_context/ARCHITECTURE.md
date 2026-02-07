@@ -34,7 +34,7 @@
 - World sim standalone: `game/simulations/world_state/sandbox_world.py`.
 - World-state terminal REPL: `game/simulations/world_state/terminal/repl.py`.
 - Assault sim standalone: `game/simulations/assault/sandbox_assault.py`.
-- Terminal UI server: `custodian-terminal/streaming-server.py`.
+- Terminal UI server: `custodian-terminal/server.py`.
 
 ## Notes
 - This file should only change when architectural decisions are locked or revised.
