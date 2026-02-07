@@ -12,20 +12,21 @@
 - Operational, perimeter-defense language with terse output.
 
 ## Authority Model
-- Authority is location-based (Command Center presence) rather than flags.
+- Authority is location-based (COMMAND sector presence) rather than flags.
 
 ## Time Model
 - Time advances by explicit ticks; avoid hidden background time in the world simulation.
 
 ## Phase 1 Terminal Design Lock (Historical Plan)
 - Rationale: build a deterministic, command-driven loop before any map UI to avoid UI creep and ensure a playable spine.
-- Loop invariant: `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS -> ...` (world only moves on `WAIT`).
-- Phase 1 command set: `STATUS`, `WAIT`, `HELP` only (no aliases).
+- Loop invariant: `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS -> ...` (world only moves on `WAIT`/`WAIT 10X`).
+- Phase 1 command set: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HELP` only (no aliases).
 - `STATUS` output rules: ASCII, all caps, no recommendations; fields: TIME, THREAT bucket, ASSAULT state, sector list with one-word state; never advances time.
 - `WAIT` output rules: advance exactly one tick; minimal output only; no full status dump; may emit event/warning/assault lines.
+- `WAIT 10X` output rules: advance exactly ten ticks; summarize events, warnings, assault transitions, and failure lines without full status dumps.
 - Error phrasing reserved: `UNKNOWN COMMAND. TYPE HELP FOR AVAILABLE COMMANDS.` and `COMMAND DENIED. COMMAND CENTER REQUIRED.`
-- Map UI deferred; when added it must be a projection of `STATUS` and never advance time.
-- Acceptance criteria: boot completes, `STATUS` and `WAIT` work, time advances only via `WAIT`, `STATUS` reflects changes.
+- Map UI now exists as a read-only projection of `STATUS` via `/snapshot` and never advances time.
+- Acceptance criteria: boot completes, `STATUS` and `WAIT`/`WAIT 10X` work, time advances only via `WAIT`/`WAIT 10X`, `STATUS` reflects changes.
 - Current code diverges (extra commands + authority gating); treat this as a reference spec, not current behavior.
 
 ## Canonical Entrypoints

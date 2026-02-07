@@ -20,6 +20,8 @@
     "AVAILABLE DIRECTIVES:",
     "- STATUS",
     "- WAIT",
+    "- WAIT 10X",
+    "- FOCUS",
     "- HELP",
     "",
   ];

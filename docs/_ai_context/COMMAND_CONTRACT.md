@@ -8,14 +8,13 @@
 
 ## Transport
 - Client submit path: `custodian-terminal/terminal.js` posts JSON commands to `/command`.
-- UI server handler: `custodian-terminal/server.py` parses request JSON, dispatches to `process_command`, and serializes `CommandResult`.
+- UI server handler: `custodian-terminal/server.py` parses request JSON, dispatches to `process_command`, and returns `{ok, lines}`.
 - World-state server handler: `game/simulations/world_state/server.py` exposes the same payload contract and processing path.
 
 ## Request Shape
 - Method: `POST`
 - Path: `/command`
-- Canonical JSON body: `{ "command": "<string>" }`
-- Compatibility fallback: `{ "raw": "<string>" }`
+- JSON body: `{ "raw": "<string>" }`
 
 Validation behavior:
 - Canonical path is string `command` input from the browser terminal.
@@ -24,9 +23,7 @@ Validation behavior:
 
 ## Response Shape
 - `ok` (boolean): command acceptance/execution status.
-- `text` (string): single primary operator-facing line.
-- `lines` (optional string[]): ordered detail lines appended after `text`.
-- `warnings` (optional string[]): non-fatal warning lines.
+- `lines` (string[]): ordered terminal lines (primary line first).
 
 ## Implemented Command Set
 - `STATUS`
@@ -40,6 +37,14 @@ Validation behavior:
   - Advances simulation by exactly one tick.
   - Primary line: `TIME ADVANCED.`
   - Optional detail lines for meaningful changes (`[EVENT]`, `[WARNING]`, assault start/end markers, failure termination lines).
+- `WAIT 10X`
+  - Advances simulation by ten ticks.
+  - Primary line: `TIME ADVANCED x10.`
+  - Detail lines summarize events, warnings, assault transitions, and failure termination lines seen during the burst.
+- `FOCUS <SECTOR_ID>`
+  - Sets the focused sector by ID (for example `FOCUS POWER`).
+  - Returns confirmation line: `[FOCUS SET] <SECTOR_NAME>`
+  - Does not advance time.
 - `HELP`
   - Returns locked operator-facing command list (`STATUS`, `WAIT`, `HELP`).
 - `RESET` / `REBOOT`
@@ -50,14 +55,16 @@ Validation behavior:
 ## Failure and Error Semantics
 - Unknown/invalid command line:
   - `ok=false`
-  - `text="UNKNOWN COMMAND."`
-  - `lines=["TYPE HELP FOR AVAILABLE COMMANDS."]`
-- Failure lockout (Command Center breached):
-  - Non-reset verbs return `ok=false`
-  - `text` set to latched failure reason (typically `COMMAND CENTER BREACHED.`)
-  - `lines=["REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED."]`
+  - `lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]`
+- Failure lockout (COMMAND breached):
+  - `ok=false`
+  - `lines=["COMMAND BREACHED.", "SESSION TERMINATED."]`
 
 ## Runtime Notes
 - Backend authority is server-side (`process_command` mutates server-owned `GameState`).
 - State is process-local and persistent while Flask process is running.
 - Endpoint currently has no authentication in prototype scope.
+
+## Snapshot Endpoint (Read-Only)
+- `GET /snapshot` returns the canonical `GameState.snapshot()` payload.
+- Used for UI projections (sector map) and does not mutate state.

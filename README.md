@@ -33,21 +33,18 @@ Repeat until campaign objective achieved or lost
 - Objective: rebuild a ship to reach the Archive Hub.
 - Persistence: knowledge and schematics persist; materials and construction are fragile.
 
-## Base Form Factor (Tutorial)
+## Base Form Factor (Phase 1)
 
-- Static, asymmetrical outpost with 10 sectors.
-- Two critical sectors:
-  - Command Center (tactical control when present; loss = battle lost)
-  - Goal Sector (campaign objective; loss = campaign failure)
-- Eight peripheral sectors:
-  - Main Terminal
-  - Security Gate / Checkpoint
-  - Hangar A
-  - Hangar B
-  - Fuel Depot
-  - Radar / Control Tower
-  - Service Tunnels
-  - Maintenance Yard
+- Static, asymmetrical outpost with 8 sectors.
+- Canonical layout sectors:
+  - COMMAND (tactical control when present; loss = battle lost)
+  - COMMS
+  - DEFENSE GRID
+  - POWER
+  - ARCHIVE (campaign objective; loss = campaign failure)
+  - STORAGE
+  - HANGAR
+  - GATEWAY
 
 ## Simulations
 

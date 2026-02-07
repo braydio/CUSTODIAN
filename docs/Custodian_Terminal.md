@@ -4,8 +4,9 @@ Text-only terminal UI prototype for the custodian interface. The boot sequence r
 
 ## Behavior Notes
 
-- Boot lines render with a type-in effect plus audio cues (hum + relay + beep + alert), then a system log prints before command mode.
+- Boot lines render with a type-in effect plus audio cues (hum + relay + beep + alert + power_cycle), then a system log prints before command mode.
 - The terminal module tracks a buffered history and appends command/response transcript lines.
-- System log introduces `STATUS`, `WAIT`, and `HELP` before input unlock.
-- Prompt input posts to `POST /command` with `{command}` (accepts `{raw}` fallback) and appends returned `lines` (served by `custodian-terminal/server.py`).
+- System log introduces `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, and `HELP` before input unlock.
+- Prompt input posts to `POST /command` with `{raw}` and appends returned `lines` (served by `custodian-terminal/server.py`).
+- Sector map UI is a read-only projection fetched from `GET /snapshot` after state-changing commands (`WAIT`, `RESET`, `REBOOT`).
 - Prompt interaction stays minimal by design and remains inside the terminal frame.

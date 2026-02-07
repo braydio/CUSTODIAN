@@ -88,7 +88,7 @@ This repository contains lightweight prototypes for a defense-oriented simulatio
 
 - Preserve existing tone and theme in event text.
 - If refactoring, keep entry points stable.
-- Keep sector naming aligned with root docs (Command Center + Goal Sector, plus the eight tutorial peripheral sectors).
+- Keep sector naming aligned with Phase 1 layout (COMMAND, COMMS, DEFENSE GRID, POWER, ARCHIVE, STORAGE, HANGAR, GATEWAY).
 - Prefer `rg` for searches in this repo.
 - Terminal module layout (world_state):
   - `game/simulations/world_state/terminal/parser.py` handles input normalization, tokenization, and sector name resolution.

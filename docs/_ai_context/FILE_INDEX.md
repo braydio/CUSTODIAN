@@ -12,6 +12,8 @@
 - `custodian-terminal/index.html` — terminal UI shell.
 - `custodian-terminal/boot.js` — boot sequence + system log + SSE fallback + audio base.
 - `custodian-terminal/terminal.js` — terminal buffer + input handling.
-- `custodian-terminal/server.py` — static server + boot stream + `/command` endpoint.
+- `custodian-terminal/sector-map.js` — sector map projection renderer.
+- `custodian-terminal/sector_layout.js` — canonical Phase 1 layout metadata for map rendering.
+- `custodian-terminal/server.py` — static server + boot stream + `/command` + `/snapshot`.
 - `.githooks/` — local git hooks (pre-commit, commit-msg, post-commit).
 - `tests/` — pytest suite for world-state stepping and terminal commands.

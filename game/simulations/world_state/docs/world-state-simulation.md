@@ -8,8 +8,8 @@ This prototype models pressure on a static command post. The terminal layer is c
 - Core logic: `game/simulations/world_state/core/`
 - Terminal stack: `game/simulations/world_state/terminal/`
 - Flask command endpoints:
-  - `custodian-terminal/streaming-server.py` (UI server path with `/stream/boot` and `/command`)
-  - `game/simulations/world_state/server.py` (world-state server module with `/stream` and `/command`)
+  - `custodian-terminal/streaming-server.py` (UI server path)
+  - `game/simulations/world_state/server.py` (world-state server module)
 
 ## Core State Model
 
@@ -21,7 +21,7 @@ This prototype models pressure on a static command post. The terminal layer is c
   - `player_location`: current sector name.
   - `in_command_center`: derived location flag.
   - `faction_profile`: ideology + form + technology expression.
-  - `is_failed`: terminal failure latch after Command Center breach.
+  - `is_failed`: terminal failure latch after COMMAND breach.
   - `failure_reason`: locked operator-facing failure reason.
   - `sectors`: dictionary of `SectorState` by name.
 - `SectorState`
@@ -32,33 +32,29 @@ This prototype models pressure on a static command post. The terminal layer is c
   - `effects`: lingering sector conditions.
   - `global_effects`: campaign-level conditions.
 
-## Sectors (Tutorial Set)
+## Sectors (Phase 1 Layout)
 
-- Critical
-  - Command Center
-  - Goal Sector
-- Peripheral
-  - Main Terminal
-  - Security Gate / Checkpoint
-  - Hangar A
-  - Hangar B
-  - Fuel Depot
-  - Radar / Control Tower
-  - Service Tunnels
-  - Maintenance Yard
+- COMMAND
+- COMMS
+- DEFENSE GRID
+- POWER
+- ARCHIVE
+- STORAGE
+- HANGAR
+- GATEWAY
 
 ## Simulation Flow (Terminal Mode)
 
 1. Accept one operator command.
 2. Parse and normalize command intent.
 3. Execute command action.
-4. Advance world by one step only when command semantics require time (`WAIT`).
+4. Advance world by one step only when command semantics require time (`WAIT`, `WAIT 10X`).
 5. Return `CommandResult` payload (`ok`, `text`, optional `lines`, optional `warnings`).
 
 ## Command-Driven Stepping
 
 - No hidden background stepping while input is idle.
-- Each accepted time-bearing command advances exactly one simulation step.
+- Each accepted time-bearing command advances one or more simulation steps.
 - Read-only commands return state without advancing time.
 - Major assault timers and ambient events resolve during step execution.
 
@@ -67,7 +63,9 @@ This keeps pacing deterministic and aligned with explicit operator intent.
 ## Terminal Command Set (Current)
 
 - `STATUS`: high-level board view of time, threat bucket, assault phase, and sector summary.
-- `WAIT`: advance exactly one tick and emit concise change lines, including a terse pressure/threat fallback when no event or assault-transition line occurs.
+- `WAIT`: advance exactly one tick and emit concise change lines, including a terse pressure fallback when no event/assault transition occurs.
+- `WAIT 10X`: advance ten ticks and summarize events, warnings, assault transitions, and failure lines seen during the burst.
+- `FOCUS <SECTOR_ID>`: reallocate attention to a sector ID (for example `FOCUS POWER`) without advancing time.
 - `HELP`: list available commands.
 - `RESET` / `REBOOT`: reset in-process state (required during failure lockout).
 
@@ -87,7 +85,7 @@ Each event defines `min_threat`, `cooldown`, `sector_filter`, and `weight`, with
 
 ## Failure Conditions
 
-Terminal failure latches when Command Center damage reaches `COMMAND_CENTER_BREACH_DAMAGE`.
+Terminal failure latches when COMMAND damage reaches `COMMAND_CENTER_BREACH_DAMAGE`.
 
 - Once failed, normal command progression is locked.
 - Only `RESET` / `REBOOT` are accepted for recovery.

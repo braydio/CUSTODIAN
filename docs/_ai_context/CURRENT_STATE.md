@@ -1,24 +1,22 @@
 # CURRENT STATE — CUSTODIAN
 
 ## Code Status
-- Terminal UI boot sequence is implemented in `custodian-terminal/boot.js`, and command submit/render transport is implemented in `custodian-terminal/terminal.js`.
-- Primary terminal UI webserver is `custodian-terminal/server.py` (static asset serving, SSE boot stream via `/stream/boot`, and `/command`).
-- World-state server module `game/simulations/world_state/server.py` also exposes `/command` (plus `/stream`) and is covered by endpoint tests.
-- World-state simulation spine is implemented with procedural events, assault timing, and a Command Center breach failure latch.
-- World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`), and backend dispatch remains authoritative.
+- Terminal UI boot sequence is implemented in `custodian-terminal/boot.js` with power-cycle audio and SSE fallback; command submit/render transport in `custodian-terminal/terminal.js`, and the sector map projection in `custodian-terminal/sector-map.js` using `custodian-terminal/sector_layout.js`.
+- Primary terminal UI webserver is `custodian-terminal/server.py` (static asset serving, SSE boot stream via `/stream/boot`, plus `/command` and `/snapshot`).
+- World-state server module `game/simulations/world_state/server.py` also exposes `/command`, `/snapshot` (plus `/stream`).
+- World-state simulation spine is implemented with procedural events, assault timing, and a COMMAND breach failure latch.
+- Phase 1.5 asymmetry is active: sector roles influence threat growth, assault damage, warnings, and event frequency.
+- World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`).
 - Unified entrypoint is available at `python -m game` with `--ui` (default), `--sim`, and `--repl`.
-- Automated tests exist for parser/processor behavior, simulation stepping, terminal contracts, and `/command` endpoint behavior.
+- Automated tests exist for parser/processor behavior and simulation stepping.
 - Git hooks for docs/secret hygiene exist; enable via `git config core.hooksPath .githooks`.
 
 ## Terminal Command Surface (Implemented)
-- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `HELP`.
+- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HELP`.
 - Failure-recovery commands: `RESET`, `REBOOT`.
-  - In failure mode, only `RESET`/`REBOOT` are accepted.
-  - Outside failure mode, `RESET`/`REBOOT` still reset the in-process `GameState`.
 - Unknown or invalid command input returns:
   - `ok=false`
-  - `text="UNKNOWN COMMAND."`
-  - `lines=["TYPE HELP FOR AVAILABLE COMMANDS."]`
+  - `lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]`
 
 ## `/command` Contract (Implemented)
 - Request: `POST /command` with canonical JSON key `{ "command": "<string>" }`.
@@ -28,21 +26,23 @@
   - `custodian-terminal/streaming-server.py` forwards canonical/fallback values directly to `process_command`; expected path is string command input from `terminal.js`.
 - Success and failure payload shape is:
   - `ok` (bool)
-  - `text` (primary line)
-  - optional `lines` (ordered detail lines)
-  - optional `warnings` (non-fatal warning lines)
+  - `lines` (string[]; primary line first)
 - Runtime model: Flask server process keeps a persistent in-memory `GameState` across requests.
 
 ## Locked Decisions
 - Terminal-first interface with terse, operational output.
-- World time advances only on explicit time-bearing commands (`WAIT`) in terminal mode.
+- World time advances only on explicit time-bearing commands (`WAIT`, `WAIT 10X`) in terminal mode.
 - `STATUS` remains a high-level board view (time, threat bucket, assault state, sector statuses).
 - Command processor is backend-authoritative; frontend local echo is display-only.
 
 ## Flexible Areas
 - Exact phrasing of non-contract detail lines (`[EVENT]`, `[WARNING]`, assault begin/end markers).
 - Timing and pressure tuning in `core/config.py` and event weights/cooldowns in `events.py`.
-- Retirement timing for legacy `{raw}` fallback once all clients are migrated.
 
 ## In Progress
-- None.
+- Phase 2 assault outcomes (clean/damage/breach/strategic loss/failure) now applied during assault resolution.
+
+## Next Tasks
+1. Add deterministic seed coverage for assault outcomes and threat progression.
+2. Tune outcome thresholds (damage deltas and penetration mapping).
+3. Run a manual terminal flow check (boot -> system log -> STATUS/FOCUS/WAIT/WAIT 10X/HELP).
