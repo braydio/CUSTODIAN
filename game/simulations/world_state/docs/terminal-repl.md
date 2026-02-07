@@ -26,7 +26,8 @@ The world advances only when the operator runs `WAIT`.
 - `WAIT`
   - Advances the simulation by exactly one tick.
   - Output starts with `TIME ADVANCED.`
-  - Additional lines are emitted only for meaningful changes (`[EVENT]`, `[WARNING]`, assault begin/end markers, or failure lines).
+  - Additional lines are emitted for meaningful changes (`[EVENT]`, `[WARNING]`, assault begin/end markers, or failure lines).
+  - If no event/assault transition occurred, one terse `[PRESSURE]` line is emitted to preserve situational awareness.
 
 - `HELP`
   - Prints available command list.
