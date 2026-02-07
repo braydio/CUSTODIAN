@@ -2,12 +2,14 @@
 
 ## Status
 - Implemented end-to-end between terminal frontend and backend command processor.
-- `/command` is active and used by the browser terminal command path.
+- `/command` is live on both Flask server surfaces used in prototypes:
+  - `custodian-terminal/streaming-server.py` (UI webserver)
+  - `game/simulations/world_state/server.py` (world-state server module)
 
 ## Transport
-- Client submit path: `custodian-terminal/terminal.js` posts JSON commands to `/command`.
-- UI server handler: `custodian-terminal/streaming-server.py` parses request JSON, dispatches to `process_command`, and serializes `CommandResult`.
-- World-state server handler: `game/simulations/world_state/server.py` exposes the same payload contract and processing path.
+- Client submit path: `custodian-terminal/terminal.js` posts JSON commands to `/command` using `{ "command": "<string>" }`.
+- UI server handler: `custodian-terminal/streaming-server.py` reads `command` first, then legacy `raw`, dispatches to `process_command`, and serializes `CommandResult`.
+- World-state server handler: `game/simulations/world_state/server.py` reads `command` first, then legacy `raw`, validates non-empty string input, dispatches to `process_command`, and serializes `CommandResult`.
 
 ## Request Shape
 - Method: `POST`
@@ -16,7 +18,8 @@
 - Compatibility fallback: `{ "raw": "<string>" }`
 
 Validation behavior:
-- Missing/empty/non-string command input resolves to unknown-command output.
+- Canonical path is string `command` input from the browser terminal.
+- `game/simulations/world_state/server.py` maps missing/empty/non-string input to unknown-command output.
 - Parser trims whitespace and normalizes verb casing server-side.
 
 ## Response Shape
@@ -38,7 +41,7 @@ Validation behavior:
   - Primary line: `TIME ADVANCED.`
   - Optional detail lines for meaningful changes (`[EVENT]`, `[WARNING]`, assault start/end markers, failure termination lines).
 - `HELP`
-  - Returns locked command list for Phase 1.
+  - Returns locked operator-facing command list (`STATUS`, `WAIT`, `HELP`).
 - `RESET` / `REBOOT`
   - Reset in-memory `GameState` and return:
     - `text="SYSTEM REBOOTED."`

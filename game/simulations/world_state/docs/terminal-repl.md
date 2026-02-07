@@ -9,7 +9,7 @@ The world advances only when the operator runs `WAIT`.
 ## Transport Contract (UI Path)
 
 - Terminal UI submits commands to `POST /command` as JSON `{ "command": "<string>" }`.
-- Backend still accepts legacy `{ "raw": "<string>" }` fallback.
+- Backend handlers still accept legacy `{ "raw": "<string>" }` fallback for compatibility.
 - Backend returns JSON with `ok`, `text`, optional `lines`, optional `warnings`.
 - `text` is the primary line; `lines` append ordered detail for terminal display.
 - Backend-owned `GameState` is authoritative for command results.
@@ -31,7 +31,7 @@ The world advances only when the operator runs `WAIT`.
   - If no event/assault transition occurred, one terse `[PRESSURE]` line is emitted to preserve situational awareness.
 
 - `HELP`
-  - Prints available command list.
+  - Prints locked operator-facing command list (`STATUS`, `WAIT`, `HELP`).
 
 - `RESET` / `REBOOT`
   - Reinitialize the in-process world state.

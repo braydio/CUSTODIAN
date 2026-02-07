@@ -21,3 +21,9 @@
 - Extended world-state terminal tests to cover failure trigger, failure finality, and reboot-required behavior.
 - Reconciled AI context docs to current implementation state: removed stale unwired `/command` assumptions, documented live endpoint contract/command set, and aligned cross-references in docs.
 - Verified no `AGENTS_ADDENDUM.md` remains in repo scope, so no addendum carryover items remain to prune.
+
+## 2026-02-07
+- Revalidated AI context docs against current implementation of both `/command` Flask handlers and terminal processor behavior.
+- Updated contract documentation to reflect active endpoint behavior, current command set semantics, and authoritative backend dispatch model.
+- Updated cross-references in docs index and world-state docs so `/command` behavior descriptions match live code paths.
+- Confirmed no `AGENTS_ADDENDUM.md` exists in repository scope, so no completed addendum items remain to prune or archive.
