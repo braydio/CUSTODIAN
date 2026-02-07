@@ -1,29 +1,27 @@
-SECTORS = [
-    "Command Center",
-    "Goal Sector",
-    "Main Terminal",
-    "Security Gate / Checkpoint",
-    "Hangar A",
-    "Hangar B",
-    "Fuel Depot",
-    "Radar / Control Tower",
-    "Service Tunnels",
-    "Maintenance Yard",
+SECTOR_DEFS = [
+    {"id": "CM", "name": "COMMS"},
+    {"id": "DF", "name": "DEFENSE GRID"},
+    {"id": "CC", "name": "COMMAND"},
+    {"id": "PW", "name": "POWER"},
+    {"id": "AR", "name": "ARCHIVE"},
+    {"id": "ST", "name": "STORAGE"},
+    {"id": "HG", "name": "HANGAR"},
+    {"id": "GS", "name": "GATEWAY"},
 ]
 
-CRITICAL_SECTORS = {"Command Center", "Goal Sector"}
+SECTORS = [sector["name"] for sector in SECTOR_DEFS]
+
+CRITICAL_SECTORS = {"COMMAND", "ARCHIVE"}
 
 SECTOR_TAGS = {
-    "Command Center": {"command", "critical", "control", "data"},
-    "Goal Sector": {"goal", "critical", "construction"},
-    "Main Terminal": {"terminal", "data", "infrastructure"},
-    "Security Gate / Checkpoint": {"gate", "approach", "perimeter"},
-    "Hangar A": {"hangar", "approach", "open"},
-    "Hangar B": {"hangar", "collapsed", "ambush"},
-    "Fuel Depot": {"fuel", "hazard", "power"},
-    "Radar / Control Tower": {"radar", "sensor", "tower"},
-    "Service Tunnels": {"tunnels", "service", "infrastructure"},
-    "Maintenance Yard": {"maintenance", "yard", "scrap"},
+    "COMMAND": {"command", "critical", "authority", "control"},
+    "COMMS": {"comms", "info", "sensor"},
+    "DEFENSE GRID": {"defense", "mitigation", "perimeter"},
+    "POWER": {"power", "amplifier", "hazard"},
+    "ARCHIVE": {"archive", "goal", "knowledge", "critical"},
+    "STORAGE": {"storage", "buffer", "infrastructure"},
+    "HANGAR": {"hangar", "egress", "approach"},
+    "GATEWAY": {"gateway", "ingress", "approach"},
 }
 
 # Tuning knobs (keep simple so designers can tweak without code changes elsewhere)
@@ -46,6 +44,13 @@ ASSAULT_DURATION_MAX = 30
 ASSAULT_DAMAGE_PER_TICK = 0.2
 ASSAULT_ALERTNESS_PER_TICK = 0.3
 ASSAULT_THREAT_PER_TICK = 0.1
+
+# Phase 1.5 asymmetric modifiers (keep subtle)
+POWER_THREAT_MULT = 1.2
+DEFENSE_ASSAULT_DAMAGE_MULT = 1.25
+HANGAR_EVENT_CHANCE_BONUS = 0.05
+GATEWAY_ASSAULT_TIMER_ACCEL = 1
+STORAGE_DECAY_MULT = 0.5
 
 # Terminal loss-state threshold.
 COMMAND_CENTER_BREACH_DAMAGE = 2.0
