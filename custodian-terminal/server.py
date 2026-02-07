@@ -44,7 +44,7 @@ BOOT_LINES = [
 ]
 
 
-def _coerce_delay(raw, default=0.25):
+def _coerce_delay(raw, default=0.35):
     try:
         delay = float(raw)
     except (TypeError, ValueError):
@@ -84,16 +84,26 @@ def command():
     """Execute a command from canonical request JSON."""
 
     payload = request.get_json(silent=True) or {}
-    command = payload.get("command")
-    raw = command if isinstance(command, str) else payload.get("raw", "")
+    raw = payload.get("raw", "")
     result = process_command(state, raw)
 
-    response = {"ok": bool(result.ok), "text": result.text}
+    lines = []
+    if result.text:
+        lines.append(result.text)
     if result.lines:
-        response["lines"] = result.lines
+        lines.extend(result.lines)
     if result.warnings:
-        response["warnings"] = result.warnings
+        lines.extend(result.warnings)
+
+    response = {"ok": bool(result.ok), "lines": lines}
     return jsonify(response)
+
+
+@app.get("/snapshot")
+def snapshot():
+    """Return a read-only world-state snapshot for UI projection."""
+
+    return jsonify(state.snapshot())
 
 
 if __name__ == "__main__":
