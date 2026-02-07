@@ -8,8 +8,8 @@ This prototype models pressure on a static command post. The terminal layer is c
 - Core logic: `game/simulations/world_state/core/`
 - Terminal stack: `game/simulations/world_state/terminal/`
 - Flask command endpoints:
-  - `custodian-terminal/streaming-server.py` (UI server path)
-  - `game/simulations/world_state/server.py` (world-state server module)
+  - `custodian-terminal/streaming-server.py` (UI server path with `/stream/boot` and `/command`)
+  - `game/simulations/world_state/server.py` (world-state server module with `/stream` and `/command`)
 
 ## Core State Model
 
