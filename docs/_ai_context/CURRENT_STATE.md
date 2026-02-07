@@ -3,11 +3,11 @@
 ## Code Status
 - Terminal UI boot sequence is implemented in `custodian-terminal/boot.js`, and command submit/render transport is implemented in `custodian-terminal/terminal.js`.
 - Primary terminal UI webserver is `custodian-terminal/streaming-server.py` (static asset serving, SSE boot stream via `/stream/boot`, and `/command`).
-- World-state server module `game/simulations/world_state/server.py` also exposes `/command` (plus `/stream`) and is covered by endpoint tests.
+- World-state server module `game/simulations/world_state/server.py` also exposes `/command` (plus `/stream`, `/history`, `/pause`, `/resume`) and has endpoint tests for canonical command transport behavior.
 - World-state simulation spine is implemented with procedural events, assault timing, and a Command Center breach failure latch.
-- World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`).
+- World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`), and backend dispatch remains authoritative.
 - Unified entrypoint is available at `python -m game` with `--ui` (default), `--sim`, and `--repl`.
-- Automated tests exist for parser/processor behavior, simulation stepping, terminal contracts, and `/command` endpoint behavior.
+- Automated tests exist for parser/processor behavior, simulation stepping, terminal contracts, and world-state `/command` endpoint behavior.
 
 ## Terminal Command Surface (Implemented)
 - Accepted operator commands in normal operation: `STATUS`, `WAIT`, `HELP`.
@@ -21,8 +21,10 @@
 
 ## `/command` Contract (Implemented)
 - Request: `POST /command` with canonical JSON key `{ "command": "<string>" }`.
-- Compatibility fallback: `{ "raw": "<string>" }` is still accepted.
-- Empty, missing, or non-string command input resolves to the same unknown-command payload.
+- Compatibility fallback: `{ "raw": "<string>" }` is still accepted by both Flask handlers.
+- Input validation differs by endpoint today:
+  - `game/simulations/world_state/server.py` explicitly maps missing/empty/non-string input to the unknown-command payload.
+  - `custodian-terminal/streaming-server.py` forwards canonical/fallback values directly to `process_command`; expected path is string command input from `terminal.js`.
 - Success and failure payload shape is:
   - `ok` (bool)
   - `text` (primary line)

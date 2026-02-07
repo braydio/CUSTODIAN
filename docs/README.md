@@ -14,13 +14,13 @@ This folder contains design, campaign, and system references for the CUSTODIAN p
 ## Simulation Docs
 
 - `game/simulations/world_state/docs/world-state-simulation.md`: world-state simulation layout, core state model, event flow, command-driven stepping, and terminal failure behavior.
-- `game/simulations/world_state/docs/terminal-repl.md`: Phase 1 terminal loop, `/command` transport contract, command reference (`STATUS`, `WAIT`, `HELP`), and reset flow (`RESET`/`REBOOT`).
+- `game/simulations/world_state/docs/terminal-repl.md`: Phase 1 terminal loop, live `/command` transport contract, command reference (`STATUS`, `WAIT`, `HELP`), and failure recovery flow (`RESET`/`REBOOT`).
 - `docs/Custodian_Terminal.md`: terminal UI prototype notes for the custodian interface.
 
 ## AI Context Snapshot
 
 - `docs/_ai_context/CURRENT_STATE.md`: current implementation snapshot and locked/flexible decisions.
-- `docs/_ai_context/COMMAND_CONTRACT.md`: canonical `/command` request/response and command semantics.
+- `docs/_ai_context/COMMAND_CONTRACT.md`: current `/command` request/response contract across both Flask server surfaces and command semantics.
 - `docs/_ai_context/DEVLOG.md`: architecture and behavior change log.
 
 ## Conventions

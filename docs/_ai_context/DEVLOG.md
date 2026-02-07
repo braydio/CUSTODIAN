@@ -25,3 +25,7 @@
 ## 2026-02-07
 - Refined `WAIT` quiet-tick fallback output to include a compact secondary threat signal alongside assault-pressure state, keeping `TIME ADVANCED.` as the primary line.
 - Expanded terminal processor tests to lock quiet-tick fallback behavior for non-empty, concise, contract-compliant detail lines.
+- Revalidated AI context docs against current implementation of both `/command` Flask handlers and terminal processor behavior.
+- Updated contract documentation to reflect active endpoint behavior, current command set semantics, and authoritative backend dispatch model.
+- Updated cross-references in docs index and world-state docs so `/command` behavior descriptions match live code paths.
+- Confirmed no `AGENTS_ADDENDUM.md` exists in repository scope, so no completed addendum items remain to prune or archive.
