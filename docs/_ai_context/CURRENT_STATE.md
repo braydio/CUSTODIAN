@@ -2,12 +2,13 @@
 
 ## Code Status
 - Terminal UI boot sequence is implemented in `custodian-terminal/boot.js`, and command submit/render transport is implemented in `custodian-terminal/terminal.js`.
-- Primary terminal UI webserver is `custodian-terminal/streaming-server.py` (static asset serving, SSE boot stream via `/stream/boot`, and `/command`).
-- World-state server module `game/simulations/world_state/server.py` also exposes `/command` (plus `/stream`, `/history`, `/pause`, `/resume`) and has endpoint tests for canonical command transport behavior.
+- Primary terminal UI webserver is `custodian-terminal/server.py` (static asset serving, SSE boot stream via `/stream/boot`, and `/command`).
+- World-state server module `game/simulations/world_state/server.py` also exposes `/command` (plus `/stream`) and is covered by endpoint tests.
 - World-state simulation spine is implemented with procedural events, assault timing, and a Command Center breach failure latch.
 - World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`), and backend dispatch remains authoritative.
 - Unified entrypoint is available at `python -m game` with `--ui` (default), `--sim`, and `--repl`.
-- Automated tests exist for parser/processor behavior, simulation stepping, terminal contracts, and world-state `/command` endpoint behavior.
+- Automated tests exist for parser/processor behavior, simulation stepping, terminal contracts, and `/command` endpoint behavior.
+- Git hooks for docs/secret hygiene exist; enable via `git config core.hooksPath .githooks`.
 
 ## Terminal Command Surface (Implemented)
 - Accepted operator commands in normal operation: `STATUS`, `WAIT`, `HELP`.

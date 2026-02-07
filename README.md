@@ -68,7 +68,7 @@ Current status:
 
 Key files:
 
-- `custodian-terminal/streaming-server.py`
+- `custodian-terminal/server.py`
 - `custodian-terminal/boot.js`
 - `custodian-terminal/terminal.js`
 

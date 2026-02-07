@@ -7,9 +7,9 @@
   - `game/simulations/world_state/server.py` (world-state server module)
 
 ## Transport
-- Client submit path: `custodian-terminal/terminal.js` posts JSON commands to `/command` using `{ "command": "<string>" }`.
-- UI server handler: `custodian-terminal/streaming-server.py` reads `command` first, then legacy `raw`, dispatches to `process_command`, and serializes `CommandResult`.
-- World-state server handler: `game/simulations/world_state/server.py` reads `command` first, then legacy `raw`, validates non-empty string input, dispatches to `process_command`, and serializes `CommandResult`.
+- Client submit path: `custodian-terminal/terminal.js` posts JSON commands to `/command`.
+- UI server handler: `custodian-terminal/server.py` parses request JSON, dispatches to `process_command`, and serializes `CommandResult`.
+- World-state server handler: `game/simulations/world_state/server.py` exposes the same payload contract and processing path.
 
 ## Request Shape
 - Method: `POST`
