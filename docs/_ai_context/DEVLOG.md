@@ -21,3 +21,7 @@
 - Extended world-state terminal tests to cover failure trigger, failure finality, and reboot-required behavior.
 - Reconciled AI context docs to current implementation state: removed stale unwired `/command` assumptions, documented live endpoint contract/command set, and aligned cross-references in docs.
 - Verified no `AGENTS_ADDENDUM.md` remains in repo scope, so no addendum carryover items remain to prune.
+
+## 2026-02-07
+- Refined `WAIT` quiet-tick fallback output to include a compact secondary threat signal alongside assault-pressure state, keeping `TIME ADVANCED.` as the primary line.
+- Expanded terminal processor tests to lock quiet-tick fallback behavior for non-empty, concise, contract-compliant detail lines.
