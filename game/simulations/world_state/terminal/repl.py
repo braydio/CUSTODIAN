@@ -9,7 +9,7 @@ def run_repl() -> None:
 
     state = GameState()
     print("WORLD-STATE TERMINAL ONLINE.")
-    print("COMMANDS: STATUS, WAIT, HELP. TYPE QUIT TO EXIT.")
+    print("COMMANDS: STATUS, WAIT, WAIT 10X, FOCUS, HELP. TYPE QUIT TO EXIT.")
 
     while True:
         try:
@@ -23,10 +23,12 @@ def run_repl() -> None:
             break
 
         result = process_command(state, raw)
-        print(result.text)
+        lines = []
+        if result.text:
+            lines.append(result.text)
         if result.lines:
-            for line in result.lines:
-                print(line)
+            lines.extend(result.lines)
         if result.warnings:
-            for warning in result.warnings:
-                print(warning)
+            lines.extend(result.warnings)
+        for line in lines:
+            print(line)

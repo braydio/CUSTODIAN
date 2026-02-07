@@ -86,6 +86,9 @@ def cmd_wait(state: GameState) -> list[str]:
         had_assault_transition = True
     elif was_assault_active and not is_assault_active:
         lines.append("=== ASSAULT REPULSED ===")
+        if state.last_assault_lines:
+            lines.extend(state.last_assault_lines)
+            state.last_assault_lines = []
         had_assault_transition = True
 
     if became_failed:
@@ -96,12 +99,59 @@ def cmd_wait(state: GameState) -> list[str]:
         lines.append(_quiet_tick_line(state))
 
     current_timer = state.assault_timer
+    warning_window = 6
+    comms = state.sectors.get("COMMS")
+    if comms and comms.damage >= 1.0:
+        warning_window = 2
     if (
         previous_timer is not None
         and current_timer is not None
-        and previous_timer > 6
-        and 0 < current_timer <= 6
+        and previous_timer > warning_window
+        and 0 < current_timer <= warning_window
     ):
         lines.append("[WARNING] Hostile coordination detected.")
+
+    return lines
+
+
+def cmd_wait_ticks(state: GameState, ticks: int) -> list[str]:
+    """Advance the world simulation by multiple ticks."""
+
+    if ticks <= 1:
+        return cmd_wait(state)
+
+    advanced = 0
+    notable_lines: list[str] = []
+    last_pressure: str | None = None
+
+    for _ in range(ticks):
+        tick_lines = cmd_wait(state)
+        advanced += 1
+
+        if not tick_lines:
+            if state.is_failed:
+                break
+            continue
+
+        payload = tick_lines[1:] if tick_lines[0] == "TIME ADVANCED." else tick_lines
+
+        if state.is_failed:
+            notable_lines.extend(payload)
+            break
+
+        for line in payload:
+            if line.startswith("[PRESSURE]"):
+                last_pressure = line
+            else:
+                notable_lines.append(line)
+
+        if state.is_failed:
+            break
+
+    lines = [f"TIME ADVANCED x{advanced}."]
+    if notable_lines:
+        lines.extend(notable_lines)
+    elif last_pressure:
+        lines.append(last_pressure)
 
     return lines

@@ -8,5 +8,7 @@ def cmd_help() -> list[str]:
         "AVAILABLE COMMANDS:",
         "- STATUS   View current situation",
         "- WAIT     Advance time",
+        "- WAIT 10X Advance time by ten ticks",
+        "- FOCUS    Reallocate attention to a sector",
         "- HELP     Show this list",
     ]

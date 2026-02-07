@@ -37,3 +37,40 @@ def test_process_command_wait_steps_world() -> None:
     assert result.ok is True
     assert state.time == 1
     assert result.text == "TIME ADVANCED."
+
+
+def test_process_command_focus_sets_sector() -> None:
+    """FOCUS should set focused sector without advancing time."""
+
+    state = GameState()
+
+    result = process_command(state, "FOCUS POWER")
+
+    assert result.ok is True
+    assert result.text == "[FOCUS SET] POWER"
+    assert state.time == 0
+    assert state.focused_sector == "PW"
+
+
+def test_process_command_wait_10x_steps_world(monkeypatch) -> None:
+    """WAIT 10X should advance ten ticks and summarize output."""
+
+    state = GameState()
+
+    def _quiet_step(local_state: GameState) -> bool:
+        local_state.time += 1
+        local_state.ambient_threat = 0.4
+        local_state.assault_timer = None
+        return False
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.wait.step_world",
+        _quiet_step,
+    )
+
+    result = process_command(state, "WAIT 10X")
+
+    assert result.ok is True
+    assert state.time == 10
+    assert result.text == "TIME ADVANCED x10."
+    assert result.lines == ["[PRESSURE] PERIMETER STABLE."]
