@@ -8,9 +8,9 @@ def build_tactical_sectors(assault):
     sectors = []
     for sector_state in assault.target_sectors:
         sector_type = SectorType.PERIPHERAL
-        if sector_state.name == "Command Center":
+        if sector_state.name == "COMMAND":
             sector_type = SectorType.COMMAND
-        elif sector_state.name == "Goal Sector":
+        elif sector_state.name == "ARCHIVE":
             sector_type = SectorType.GOAL
         sector = Sector(sector_state.name, sector_type)
         sector.defenses.append(Turret(damage=5))

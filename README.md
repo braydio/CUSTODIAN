@@ -7,7 +7,9 @@ Lightweight game simulation prototypes centered on a sole survivor defending a s
 - You are the last relic of a lost institution, custodian to a static command post.
 - Information systems are gone; history is fragmented.
 - Enemies are driven by ideology, scarcity, and misunderstanding.
-- Victory is survival and reconstruction of physical artifacts and lost knowledge.
+- Victory is survival & reconstruction of physical artifacts and lost knowledge.
+- Campaign victories unlock < item > in the Hub.
+- Victories provide a reward bonus styled after the campaign's procedurally generated target goal
 
 ## High-Level Loop
 

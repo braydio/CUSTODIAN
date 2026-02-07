@@ -6,6 +6,7 @@ from .config import (
     EVENT_CHANCE_BASE,
     EVENT_CHANCE_MAX,
     EVENT_CHANCE_PER_THREAT,
+    HANGAR_EVENT_CHANCE_BONUS,
     SECTOR_TAGS,
 )
 from .effects import add_global_effect, add_sector_effect
@@ -323,16 +324,23 @@ def maybe_trigger_event(state):
     if not candidates:
         return
 
-    chance = min(
-        EVENT_CHANCE_BASE + state.ambient_threat * EVENT_CHANCE_PER_THREAT,
-        EVENT_CHANCE_MAX,
-    )
+    chance = EVENT_CHANCE_BASE + state.ambient_threat * EVENT_CHANCE_PER_THREAT
+    hangar = state.sectors.get("HANGAR")
+    if hangar and hangar.damage >= 1.0:
+        chance += HANGAR_EVENT_CHANCE_BONUS
+    chance = min(chance, EVENT_CHANCE_MAX)
     if random.random() > chance:
         return
 
     weighted = []
     for event, sector in candidates:
-        weighted.extend([(event, sector)] * event.weight)
+        weight = event.weight
+        if state.focused_sector:
+            if sector.id == state.focused_sector:
+                weight = max(1, int(weight * 0.6))
+            else:
+                weight = max(1, int(weight * 1.1))
+        weighted.extend([(event, sector)] * weight)
 
     event, sector = random.choice(weighted)
 
