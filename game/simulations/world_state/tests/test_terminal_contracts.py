@@ -17,6 +17,8 @@ def test_help_output_matches_locked_contract() -> None:
     assert result.lines == [
         "- STATUS   View current situation",
         "- WAIT     Advance time",
+        "- WAIT 10X Advance time by ten ticks",
+        "- FOCUS    Reallocate attention to a sector",
         "- HELP     Show this list",
     ]
 
@@ -33,27 +35,27 @@ def test_status_output_contains_locked_sections() -> None:
     assert result.lines[0].startswith("THREAT: ")
     assert result.lines[1].startswith("ASSAULT: ")
     assert result.lines[3] == "SECTORS:"
-    assert result.lines[4].startswith("- Command Center: ")
+    assert result.lines[4].startswith("- COMMAND: ")
 
 
 def test_wait_failure_lines_are_explicit_and_final() -> None:
-    """WAIT should return final failure lines when Command Center is breached."""
+    """WAIT should return final failure lines when COMMAND is breached."""
 
     state = GameState()
-    state.sectors["Command Center"].damage = COMMAND_CENTER_BREACH_DAMAGE
+    state.sectors["COMMAND"].damage = COMMAND_CENTER_BREACH_DAMAGE
 
     result = process_command(state, "WAIT")
 
     assert result.ok is True
     assert result.text == "TIME ADVANCED."
-    assert result.lines == ["COMMAND CENTER BREACHED.", "SESSION TERMINATED."]
+    assert result.lines == ["COMMAND BREACHED.", "SESSION TERMINATED."]
 
 
 def test_reboot_alias_is_accepted_in_failure_mode() -> None:
     """REBOOT should be accepted as a failure recovery command."""
 
     state = GameState()
-    state.sectors["Command Center"].damage = COMMAND_CENTER_BREACH_DAMAGE
+    state.sectors["COMMAND"].damage = COMMAND_CENTER_BREACH_DAMAGE
     process_command(state, "WAIT")
 
     result = process_command(state, "REBOOT")
