@@ -1,5 +1,16 @@
 # DEVLOG — CUSTODIAN
 
+## 2026-02-07
+- Added `WAIT 10X` support to advance ten ticks with summarized output.
+- Removed obsolete `NEXT_FEATURES.md` now that Phase 1 plan is realized.
+- Added `GameState.snapshot()` and `/snapshot` endpoints for read-only UI projection.
+- Implemented sector map UI that updates only after state-changing commands.
+- Added `RESET`/`REBOOT` handling in the terminal processor and slowed/enhanced boot audio cadence.
+- Updated Phase 1 sector layout to the canonical 8-sector set with IDs and map positioning.
+- Removed `docs/PHASE_I_FINALIZATION.md` after implementing its Phase 1 requirements.
+- Implemented Phase 1.5 asymmetry and `FOCUS` command, plus associated map layout updates.
+- Removed `docs/PHASE_1.5_BUILD.md` after implementing Phase 1.5 requirements.
+
 ## 2026-02-05
 - Added terminal webserver `custodian-terminal/server.py` with SSE boot stream.
 - Renamed `simulate_*` entrypoints to `sandbox_*` and updated references.
@@ -7,18 +18,23 @@
 - Added world-state terminal command stack (parser, processor, command registry, REPL) with read/write authority gating.
 - Added `step_world` helper and pytest coverage for world-state stepping and terminal commands.
 - Added git hooks for docs/secret hygiene: `pre-commit` (block forbidden files, warn on untracked logs), `commit-msg` (docs check with [no-docs] override), `post-commit` (DEVLOG nudge).
-- Archived the Phase 1 terminal design lock from `NEXT_FEATURES.md` into `docs/_ai_context/ARCHITECTURE.md` with divergence notes.
+- Archived the Phase 1 terminal design lock from the former `NEXT_FEATURES.md` into `docs/_ai_context/ARCHITECTURE.md` with divergence notes.
 - Updated terminal boot flow: `boot.js` appends a system log and unlocks command mode; terminal input submits to `/command` and renders lines or failure messages.
 - Implemented `/command` in `custodian-terminal/server.py` using a persistent `GameState` and the terminal command processor.
 - Added unified entrypoint `python -m game` with `--ui`/`--sim`/`--repl` modes and updated README entrypoints.
 - Fixed `custodian-terminal/server.py` to add the repo root to `sys.path` so `python -m game --ui` can import `game`.
 - Renamed boot and server files to canonical `boot.js` and `server.py`.
+- Aligned `/command` contract to `{raw}` request and `{ok, lines}` response across UI and servers.
+- Removed reset/reboot command mutations to keep state changes inside `step_world`.
+- Implemented Phase 2 assault outcomes (clean defense, damage, breach, strategic loss, command center breach) with outcome messaging.
+- Tightened terminal cursor cadence and suppressed cursor during active typing.
+- Added power-cycle boot audio hook (power_cycle.mp3) and wired it into boot start.
 - Expanded terminal boot audio base (hum + relay + beep + alert) with policy-safe unlock and one-shot helpers.
 
 ## 2026-02-06
 - Updated terminal boot flow integration so UI command submit/render path uses backend `CommandResult` payloads (`ok`, `text`, optional `lines`/`warnings`).
 - Standardized world-state `/command` request handling on canonical `{command}` with temporary `{raw}` fallback.
-- Added world-state failure latch (`is_failed`, `failure_reason`) on Command Center breach threshold.
+- Added world-state failure latch (`is_failed`, `failure_reason`) on COMMAND breach threshold.
 - Updated `step_world` and terminal `WAIT` behavior to emit final failure lines and halt normal progression after breach.
 - Updated terminal processor lockout so only `RESET`/`REBOOT` are accepted while failed.
 - Extended world-state terminal tests to cover failure trigger, failure finality, and reboot-required behavior.

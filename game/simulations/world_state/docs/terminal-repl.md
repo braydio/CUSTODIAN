@@ -4,7 +4,7 @@ Phase 1 is a deterministic command loop:
 
 `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS`
 
-The world advances only when the operator runs `WAIT`.
+The world advances only when the operator runs `WAIT` or `WAIT 10X`.
 
 ## Transport Contract (UI Path)
 
@@ -29,6 +29,14 @@ The world advances only when the operator runs `WAIT`.
   - Output starts with `TIME ADVANCED.`
   - Additional lines are emitted for meaningful changes (`[EVENT]`, `[WARNING]`, assault begin/end markers, or failure lines).
   - If no event/assault transition occurred, one terse `[PRESSURE]` line is emitted to preserve situational awareness.
+- `WAIT 10X`
+  - Advances the simulation by ten ticks.
+  - Output starts with `TIME ADVANCED x10.`
+  - Detail lines summarize events, warnings, assault transitions, and failure termination lines seen during the burst.
+- `FOCUS <SECTOR_ID>`
+  - Sets the focused sector by ID (for example `FOCUS POWER`).
+  - Focus persists until changed or an assault resolves.
+  - Does not advance time.
 
 - `HELP`
   - Prints locked operator-facing command list (`STATUS`, `WAIT`, `HELP`).
@@ -46,10 +54,10 @@ Unknown command response:
 
 ## Failure Lockdown
 
-- Command Center breach places the session in failure mode.
-- Breach criteria: Command Center damage reaches configured threshold (`COMMAND_CENTER_BREACH_DAMAGE`).
+- COMMAND breach places the session in failure mode.
+- Breach criteria: COMMAND damage reaches configured threshold (`COMMAND_CENTER_BREACH_DAMAGE`).
 - `WAIT` returns explicit final lines when breach occurs:
-  - `COMMAND CENTER BREACHED.`
+  - `COMMAND BREACHED.`
   - `SESSION TERMINATED.`
 - While failed, normal commands are locked.
 - Only `RESET` or `REBOOT` are accepted until session reset.
