@@ -10,6 +10,7 @@
 
 ## Terminal Command Surface (Implemented)
 - Accepted operator commands: `STATUS`, `WAIT`, `HELP`.
+- `WAIT` always starts with `TIME ADVANCED.` and now adds either event/assault transition detail or a single terse `[PRESSURE]` fallback line on quiet ticks.
 - Failure-recovery commands: `RESET`, `REBOOT` (accepted only after failure lockout, both trigger in-process state reset).
 - Unknown commands return `ok=false` with `UNKNOWN COMMAND.` and `TYPE HELP FOR AVAILABLE COMMANDS.`
 

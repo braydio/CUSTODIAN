@@ -72,3 +72,52 @@ def test_reset_command_restores_session_after_failure() -> None:
     assert state.is_failed is False
     assert state.failure_reason is None
     assert state.time == 0
+
+
+def test_wait_quiet_tick_emits_pressure_line(monkeypatch) -> None:
+    """WAIT should emit a concise pressure line when no event or assault transition occurs."""
+
+    state = GameState()
+
+    def _quiet_step(local_state: GameState) -> bool:
+        local_state.time += 1
+        local_state.ambient_threat = 1.8
+        local_state.assault_timer = 17
+        return False
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.wait.step_world",
+        _quiet_step,
+    )
+
+    result = process_command(state, "WAIT")
+
+    assert result.ok is True
+    assert result.text == "TIME ADVANCED."
+    assert result.lines is not None
+    assert len(result.lines) == 1
+    assert result.lines[0] == "[PRESSURE] ASSAULT BUILDING."
+    assert len(result.lines[0]) <= 40
+
+
+def test_wait_quiet_tick_pressure_line_has_no_empty_entries(monkeypatch) -> None:
+    """WAIT quiet-tick fallback detail should be non-empty and terse."""
+
+    state = GameState()
+
+    def _quiet_step(local_state: GameState) -> bool:
+        local_state.time += 1
+        local_state.ambient_threat = 0.4
+        local_state.assault_timer = None
+        return False
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.wait.step_world",
+        _quiet_step,
+    )
+
+    result = process_command(state, "WAIT")
+
+    assert result.ok is True
+    assert result.lines == ["[PRESSURE] PERIMETER STABLE."]
+    assert all(line.strip() for line in result.lines)

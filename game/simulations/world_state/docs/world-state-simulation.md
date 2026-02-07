@@ -66,7 +66,7 @@ This keeps pacing deterministic, debuggable, and aligned with explicit operator 
 ## Terminal Command Set (Current)
 
 - `STATUS`: high-level board view of time, threat bucket, assault phase, and sector summary.
-- `WAIT`: advance exactly one tick and emit concise change lines.
+- `WAIT`: advance exactly one tick and emit concise change lines, including a terse pressure fallback when no event/assault transition occurs.
 - `HELP`: list available commands.
 - `RESET` / `REBOOT`: recovery commands accepted while failed.
 
