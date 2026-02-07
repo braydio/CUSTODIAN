@@ -19,4 +19,5 @@
 - Updated `step_world` and terminal `WAIT` behavior to emit final failure lines and halt normal progression after breach.
 - Updated terminal processor lockout so only `RESET`/`REBOOT` are accepted while failed.
 - Extended world-state terminal tests to cover failure trigger, failure finality, and reboot-required behavior.
-- Added WAIT quiet-tick fallback signaling with a single terse `[PRESSURE]` line when no event/assault transition occurs, plus terminal tests for fallback contract compliance.
+- Reconciled AI context docs to current implementation state: removed stale unwired `/command` assumptions, documented live endpoint contract/command set, and aligned cross-references in docs.
+- Verified no `AGENTS_ADDENDUM.md` remains in repo scope, so no addendum carryover items remain to prune.

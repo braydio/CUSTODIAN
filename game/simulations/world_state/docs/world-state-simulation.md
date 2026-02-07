@@ -1,33 +1,36 @@
-# World State Simulation
+# World-State Simulation
 
-This simulation models a fortified command post under escalating pressure. It focuses on ambient tension, sector damage, and periodic major assaults. Output text stays grounded in operational, perimeter-defense language consistent with the theme of the game and reconstruction-first campaign logic.
+This prototype models pressure on a static command post. The terminal layer is command-driven and backend-authoritative.
 
 ## Layout
 
-- `game/simulations/world_state/sandbox_world.py` is the entry point.
-- `game/simulations/world_state/core/` contains modular simulation logic.
-- `game/simulations/world_state/terminal/` contains parser, commands, processor, and REPL wiring.
+- Entry point: `game/simulations/world_state/sandbox_world.py`
+- Core logic: `game/simulations/world_state/core/`
+- Terminal stack: `game/simulations/world_state/terminal/`
+- Flask command endpoints:
+  - `custodian-terminal/streaming-server.py` (UI server path)
+  - `game/simulations/world_state/server.py` (world-state server module)
 
-## Core State
+## Core State Model
 
 - `GameState`
-  - `time`: abstract ticks.
-  - `ambient_threat`: slow, always-rising pressure.
-  - `assault_timer`: hidden countdown to a major assault.
-  - `in_major_assault`: whether a large assault is active.
-  - `player_location`: current sector name for the operator.
-  - `in_command_center`: derived flag for Command Center authority checks.
-  - `faction_profile`: ideology + form + tech expression for procedural events.
+  - `time`: current tick.
+  - `ambient_threat`: global pressure scalar.
+  - `assault_timer`: hidden countdown to major assault.
+  - `in_major_assault`: whether major assault is active.
+  - `player_location`: current sector name.
+  - `in_command_center`: derived location flag.
+  - `faction_profile`: ideology + form + technology expression.
   - `is_failed`: terminal failure latch after Command Center breach.
-  - `failure_reason`: locked operator-facing reason for failure mode.
+  - `failure_reason`: locked operator-facing failure reason.
   - `sectors`: dictionary of `SectorState` by name.
 - `SectorState`
-  - `damage`: persistent wear on a sector.
-  - `alertness`: volatility that rises with damage and decays slowly.
-  - `power`: availability in that sector.
-  - `occupied`: whether hostiles were present this tick.
-  - `effects`: lingering sector conditions applied by events.
-  - `global_effects`: campaign-level conditions applied by events.
+  - `damage`: persistent wear.
+  - `alertness`: volatility that rises with pressure and decays slowly.
+  - `power`: local power availability.
+  - `occupied`: whether hostiles are present this tick.
+  - `effects`: lingering sector conditions.
+  - `global_effects`: campaign-level conditions.
 
 ## Sectors (Tutorial Set)
 
@@ -44,80 +47,64 @@ This simulation models a fortified command post under escalating pressure. It fo
   - Service Tunnels
   - Maintenance Yard
 
-## Simulation Flow
+## Simulation Flow (Terminal Mode)
 
 1. Accept one operator command.
-2. Parse command intent.
+2. Parse and normalize command intent.
 3. Execute command action.
 4. Advance world by one step only when command semantics require time (`WAIT`).
-5. Return a `CommandResult` payload for terminal rendering.
+5. Return `CommandResult` payload (`ok`, `text`, optional `lines`, optional `warnings`).
 
 ## Command-Driven Stepping
-
-The world-state loop is command-driven in terminal mode.
 
 - No hidden background stepping while input is idle.
 - Each accepted time-bearing command advances exactly one simulation step.
 - Read-only commands return state without advancing time.
-- Major assault timers and ambient events resolve during step execution, not during idle UI time.
+- Major assault timers and ambient events resolve during step execution.
 
-This keeps pacing deterministic, debuggable, and aligned with explicit operator intent.
+This keeps pacing deterministic and aligned with explicit operator intent.
 
 ## Terminal Command Set (Current)
 
 - `STATUS`: high-level board view of time, threat bucket, assault phase, and sector summary.
 - `WAIT`: advance exactly one tick and emit concise change lines, including a terse pressure fallback when no event/assault transition occurs.
 - `HELP`: list available commands.
-- `RESET` / `REBOOT`: recovery commands accepted while failed.
+- `RESET` / `REBOOT`: reset in-process state (required during failure lockout).
 
 ## Command Parser
 
-The Phase 1 terminal parser trims raw input, tokenizes using shell-style quotes,
-and normalizes the command verb to uppercase. This keeps command dispatch
-case-insensitive while preserving straightforward argument handling.
+The parser trims raw input, tokenizes using shell-style quotes, and normalizes the command verb to uppercase.
 
 ## Events (Procedural)
 
-Ambient events are generated from an event catalog derived from a hostile profile:
+Ambient events come from a catalog derived from hostile profile dimensions:
 
-- Ideology (why they attack)
-- Form (what they are)
-- Technology expression (how they fight)
+- ideology (why they attack)
+- form (what they are)
+- technology expression (how they fight)
 
-Each event has:
-
-- `min_threat`: the global threat needed to trigger.
-- `cooldown`: per-sector cooldown (in ticks).
-- `sector_filter`: tag-driven eligibility for specific sectors.
-- `weight`: relative chance once eligible.
-- Optional `chains` to print secondary consequences.
-- Optional persistent effects that decay over time but remain across ticks.
-
-This keeps events consistent with the theme while still procedural and lightweight.
+Each event defines `min_threat`, `cooldown`, `sector_filter`, and `weight`, with optional consequence chains and persistent effects.
 
 ## Failure Conditions
 
-The world enters a terminal failure state when the Command Center is breached.
+Terminal failure latches when Command Center damage reaches `COMMAND_CENTER_BREACH_DAMAGE`.
 
-- Breach threshold is configured in `core/config.py` as `COMMAND_CENTER_BREACH_DAMAGE`.
-- Once failed, normal world progression stops.
-- Terminal mode accepts only reset/reboot recovery commands until session reset occurs.
+- Once failed, normal command progression is locked.
+- Only `RESET` / `REBOOT` are accepted for recovery.
 
-## Assaults
+## Assault Behavior
 
-Major assaults occur after a countdown influenced by damage in weak sectors. While active, the assault:
+Major assaults are countdown-driven and influenced by vulnerable sector damage.
 
-- Increases ambient threat.
-- Adds damage and alertness to targeted sectors.
-- Ends after a short randomized duration.
+- Assaults increase ambient threat.
+- Assaults apply additional damage and alertness to targeted sectors.
+- Assaults end after a short randomized duration.
 
 ## Tuning Notes
 
-- Tuning values live in `game/simulations/world_state/core/config.py` so designers can adjust pacing without editing logic.
-- Increase `AMBIENT_THREAT_GROWTH` to tighten the loop.
-- Adjust event `cooldown` and `weight` in `events.py` to shift pacing.
-- Alter `ASSAULT_TIMER_*` and `ASSAULT_DURATION_*` values to make assaults rarer or more frequent.
-- Keep event text terse and operational to preserve the tone.
+- Primary tuning lives in `game/simulations/world_state/core/config.py`.
+- Event pacing can be shifted by event `cooldown` and `weight` values.
+- Keep output terse and operational.
 
 ## Run It
 
@@ -128,8 +115,6 @@ python sandbox_world.py
 ```
 
 ### Phase 1 Terminal
-
-Phase 1 uses a deterministic terminal loop with manual time advancement.
 
 ```bash
 WORLD_STATE_MODE=repl python sandbox_world.py
