@@ -19,3 +19,4 @@
 - Updated `step_world` and terminal `WAIT` behavior to emit final failure lines and halt normal progression after breach.
 - Updated terminal processor lockout so only `RESET`/`REBOOT` are accepted while failed.
 - Extended world-state terminal tests to cover failure trigger, failure finality, and reboot-required behavior.
+- Added WAIT quiet-tick fallback signaling with a single terse `[PRESSURE]` line when no event/assault transition occurs, plus terminal tests for fallback contract compliance.
