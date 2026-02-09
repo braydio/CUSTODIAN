@@ -10,5 +10,6 @@ def cmd_help() -> list[str]:
         "- WAIT     Advance time",
         "- WAIT 10X Advance time by ten ticks",
         "- FOCUS    Reallocate attention to a sector",
+        "- HARDEN   Reinforce systems against impact",
         "- HELP     Show this list",
     ]

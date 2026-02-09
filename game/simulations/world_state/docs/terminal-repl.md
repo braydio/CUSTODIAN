@@ -8,10 +8,9 @@ The world advances only when the operator runs `WAIT` or `WAIT 10X`.
 
 ## Transport Contract (UI Path)
 
-- Terminal UI submits commands to `POST /command` as JSON `{ "command": "<string>" }`.
-- Backend handlers still accept legacy `{ "raw": "<string>" }` fallback for compatibility.
-- Backend returns JSON with `ok`, `text`, optional `lines`, optional `warnings`.
-- `text` is the primary line; `lines` append ordered detail for terminal display.
+- Terminal UI submits commands to `POST /command` as JSON `{ "raw": "<string>" }`.
+- Backend returns JSON with `ok` and `lines`.
+- `lines` are ordered for terminal display (primary line first).
 - Backend-owned `GameState` is authoritative for command results.
 
 ## Commands
@@ -21,6 +20,8 @@ The world advances only when the operator runs `WAIT` or `WAIT 10X`.
     - `TIME`
     - `THREAT` bucket (`LOW`, `ELEVATED`, `HIGH`, `CRITICAL`)
     - `ASSAULT` (`NONE`, `PENDING`, `ACTIVE`)
+    - optional `SYSTEM POSTURE` (`HARDENED` or `FOCUSED (<SECTOR>)`)
+    - optional `ARCHIVE LOSSES` (`<count>/<limit>`)
     - sector list with one-word state (`STABLE`, `ALERT`, `DAMAGED`, `COMPROMISED`)
   - Does not advance time.
 
@@ -37,9 +38,13 @@ The world advances only when the operator runs `WAIT` or `WAIT 10X`.
   - Sets the focused sector by ID (for example `FOCUS POWER`).
   - Focus persists until changed or an assault resolves.
   - Does not advance time.
+- `HARDEN`
+  - Hardens systems to compress assault damage into fewer sectors.
+  - Clears any active focus and resets after an assault resolves.
+  - Does not advance time.
 
 - `HELP`
-  - Prints locked operator-facing command list (`STATUS`, `WAIT`, `HELP`).
+  - Prints available command list.
 
 - `RESET` / `REBOOT`
   - Reinitialize the in-process world state.
@@ -57,8 +62,11 @@ Unknown command response:
 - COMMAND breach places the session in failure mode.
 - Breach criteria: COMMAND damage reaches configured threshold (`COMMAND_CENTER_BREACH_DAMAGE`).
 - `WAIT` returns explicit final lines when breach occurs:
-  - `COMMAND BREACHED.`
+  - `COMMAND CENTER LOST`
   - `SESSION TERMINATED.`
+- ARCHIVE loss also places the session in failure mode once the loss limit is reached.
+- Failure reason for ARCHIVE loss:
+  - `ARCHIVAL INTEGRITY LOST`
 - While failed, normal commands are locked.
 - Only `RESET` or `REBOOT` are accepted until session reset.
 - Recovery response is:

@@ -4,9 +4,11 @@
 - `game/run.py` — main world simulation entry point.
 - `game/simulations/world_state/core/simulation.py` — world-state tick loop (`sandbox_world`).
 - `game/simulations/world_state/core/state.py` — `GameState` and time progression.
+- `game/simulations/world_state/core/hub.py` — hub/campaign schemas, offer generation, recon, and hub mutation rules.
 - `game/simulations/world_state/core/events.py` — ambient event generation.
 - `game/simulations/world_state/core/assaults.py` — assault timing + lifecycle.
 - `game/simulations/world_state/terminal/` — command parser, processor, registry, and REPL.
+- `game/simulations/world_state/terminal/commands/harden.py` — HARDEN command handler.
 - `game/simulations/world_state/server.py` — world-state SSE stream server.
 - `game/simulations/assault/core/assault.py` — assault resolution logic.
 - `custodian-terminal/index.html` — terminal UI shell.

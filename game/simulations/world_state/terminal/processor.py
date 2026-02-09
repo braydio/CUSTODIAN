@@ -5,6 +5,7 @@ from collections.abc import Callable
 from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.terminal.commands import (
     cmd_focus,
+    cmd_harden,
     cmd_help,
     cmd_reset,
     cmd_status,
@@ -74,10 +75,6 @@ def process_command(state: GameState, raw: str) -> CommandResult:
             lines=["REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED."],
         )
 
-    handler = COMMAND_HANDLERS.get(parsed.verb)
-    if handler is None:
-        return _unknown_command()
-
     if parsed.verb == "WAIT":
         ticks = _parse_wait_ticks(parsed.args)
         if ticks is None:
@@ -88,14 +85,29 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         return CommandResult(ok=True, text=primary_line, lines=detail_lines)
 
     if parsed.verb == "FOCUS":
-        if len(parsed.args) != 1:
-            return _unknown_command()
+        if len(parsed.args) == 0:
+            return CommandResult(ok=False, text="FOCUS REQUIRES SECTOR ID.")
+        if len(parsed.args) > 1:
+            return CommandResult(ok=False, text="USE QUOTES FOR MULTI-WORD SECTOR.")
         lines = cmd_focus(state, parsed.args[0])
         if lines[:2] == ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]:
             return _unknown_command()
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return CommandResult(ok=True, text=primary_line, lines=detail_lines)
+    if parsed.verb == "HARDEN":
+        if parsed.args:
+            return _unknown_command()
+        lines = cmd_harden(state)
+        if lines[:2] == ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]:
+            return _unknown_command()
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return CommandResult(ok=True, text=primary_line, lines=detail_lines)
+
+    handler = COMMAND_HANDLERS.get(parsed.verb)
+    if handler is None:
+        return _unknown_command()
 
     # Phase 1 authority model: all commands are allowed.
     lines = handler(state)

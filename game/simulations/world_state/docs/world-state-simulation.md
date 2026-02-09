@@ -24,6 +24,9 @@ This prototype models pressure on a static command post. The terminal layer is c
   - `is_failed`: terminal failure latch after COMMAND breach.
   - `failure_reason`: locked operator-facing failure reason.
   - `sectors`: dictionary of `SectorState` by name.
+  - `focused_sector`: optional focus sector ID (cleared after assault).
+  - `hardened`: posture flag that compresses assault damage (cleared after assault).
+  - `archive_losses`: persistent counter of ARCHIVE damage transitions.
 - `SectorState`
   - `damage`: persistent wear.
   - `alertness`: volatility that rises with pressure and decays slowly.
@@ -66,6 +69,7 @@ This keeps pacing deterministic and aligned with explicit operator intent.
 - `WAIT`: advance exactly one tick and emit concise change lines, including a terse pressure fallback when no event/assault transition occurs.
 - `WAIT 10X`: advance ten ticks and summarize events, warnings, assault transitions, and failure lines seen during the burst.
 - `FOCUS <SECTOR_ID>`: reallocate attention to a sector ID (for example `FOCUS POWER`) without advancing time.
+- `HARDEN`: reduce the number of sectors hit in the next assault and concentrate damage into higher-risk sectors.
 - `HELP`: list available commands.
 - `RESET` / `REBOOT`: reset in-process state (required during failure lockout).
 
@@ -86,6 +90,7 @@ Each event defines `min_threat`, `cooldown`, `sector_filter`, and `weight`, with
 ## Failure Conditions
 
 Terminal failure latches when COMMAND damage reaches `COMMAND_CENTER_BREACH_DAMAGE`.
+Terminal failure also latches when ARCHIVE loss count reaches `ARCHIVE_LOSS_LIMIT`.
 
 - Once failed, normal command progression is locked.
 - Only `RESET` / `REBOOT` are accepted for recovery.

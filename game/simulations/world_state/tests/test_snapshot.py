@@ -13,6 +13,10 @@ def test_snapshot_shape_and_defaults() -> None:
     assert snapshot["threat"] == "LOW"
     assert snapshot["assault"] == "NONE"
     assert snapshot["failed"] is False
+    assert snapshot["focused_sector"] is None
+    assert snapshot["hardened"] is False
+    assert snapshot["archive_losses"] == 0
+    assert snapshot["archive_limit"] > 0
 
     sectors = snapshot["sectors"]
     assert len(sectors) > 0

@@ -1,7 +1,13 @@
+
 (() => {
   const terminal = document.getElementById("terminal");
+  const terminalContainer = document.getElementById("terminal-container");
   const inputForm = document.getElementById("terminal-input-form");
   const inputField = document.getElementById("terminal-input");
+  const outputIndicator = document.getElementById("new-output-indicator");
+  const idleTip = document.getElementById("idle-tip");
+
+  const keyClick = document.getElementById("keyClick");
 
   const state = {
     buffer: [],
@@ -10,24 +16,30 @@
     liveInput: "",
     typingActive: false,
     mapHintShown: false,
+    userAtBottom: true,
+    idleTimer: null,
   };
 
   const CURSOR_IDLE_MS = 420;
+  const SCROLL_THRESHOLD = 8;
+  const IDLE_TIP_MS = 5000;
 
-  const systemLogLines = [
-    "",
-    "--- SYSTEM LOG ---",
-    "Residual command index recovered.",
-    "Directive access granted.",
-    "",
-    "AVAILABLE DIRECTIVES:",
-    "- STATUS",
-    "- WAIT",
-    "- WAIT 10X",
-    "- FOCUS",
-    "- HELP",
-    "",
-  ];
+  let lastKeyClickAt = 0;
+  const KEY_CLICK_MIN_INTERVAL = 28;
+
+  function playKeyClick() {
+    if (!keyClick) return;
+    const now = performance.now();
+    if (now - lastKeyClickAt < KEY_CLICK_MIN_INTERVAL) return;
+    lastKeyClickAt = now;
+
+    try {
+      keyClick.currentTime = 0;
+      keyClick.volume = 0.05 + Math.random() * 0.03;
+      keyClick.playbackRate = 0.95 + Math.random() * 0.1;
+      keyClick.play().catch(() => {});
+    } catch {}
+  }
 
   function syncBufferFromDom() {
     state.buffer = terminal.textContent
@@ -35,24 +47,110 @@
       : [];
   }
 
-  function render() {
-    terminal.textContent = state.buffer.join("\n");
-    terminal.scrollTop = terminal.scrollHeight;
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
-  function appendLine(line) {
-    state.buffer.push(line);
+  function classifyLine(line) {
+    if (line.startsWith("[EVENT]")) return "event";
+    if (line.startsWith("[WARNING]")) return "warning";
+    if (line.startsWith("[ASSAULT]") || line.startsWith("=== ASSAULT")) {
+      return "assault";
+    }
+    if (line.startsWith("[FOCUS SET]") || line.startsWith("[HARDENING")) {
+      return "intent";
+    }
+    return "";
+  }
+
+  function render() {
+    const shouldScroll = state.userAtBottom;
+    const previousScrollTop = terminal.scrollTop;
+
+    terminal.innerHTML = state.buffer
+      .map((line) => {
+        const cls = classifyLine(line);
+        const safe = line ? escapeHtml(line) : "&nbsp;";
+        const className = cls ? `terminal-line ${cls}` : "terminal-line";
+        return `<div class="${className}">${safe}</div>`;
+      })
+      .join("");
+
+    if (shouldScroll) {
+      terminal.scrollTop = terminal.scrollHeight;
+      outputIndicator?.classList.remove("visible");
+    } else {
+      terminal.scrollTop = previousScrollTop;
+    }
+  }
+
+  function normalizeAssaultSpacing(lines, lastLine) {
+    const output = [];
+    let inAssault = false;
+    const isAssault = (line) =>
+      line.startsWith("[ASSAULT]") || line.startsWith("=== ASSAULT");
+
+    for (const line of lines) {
+      const assaultLine = isAssault(line);
+      if (assaultLine && !inAssault) {
+        const previous = output.length ? output[output.length - 1] : lastLine;
+        if (previous && previous !== "") output.push("");
+        inAssault = true;
+      }
+      if (!assaultLine && inAssault) {
+        if (line === "") {
+          if (!output.length || output.at(-1) !== "") output.push("");
+          inAssault = false;
+          continue;
+        }
+        if (output.length && output.at(-1) !== "") output.push("");
+        inAssault = false;
+      }
+      output.push(line);
+    }
+
+    if (inAssault && output.at(-1) !== "") output.push("");
+    return output;
+  }
+
+  function scheduleIdleTip() {
+    if (!state.inputEnabled) return;
+    if (state.idleTimer) clearTimeout(state.idleTimer);
+    idleTip?.classList.remove("visible");
+    state.idleTimer = setTimeout(() => {
+      if (state.inputEnabled) idleTip?.classList.add("visible");
+    }, IDLE_TIP_MS);
+  }
+
+  function hideIdleTip() {
+    if (state.idleTimer) clearTimeout(state.idleTimer);
+    idleTip?.classList.remove("visible");
+  }
+
+  function clearBuffer() {
+    state.buffer = [];
     render();
   }
 
+  function appendLine(line) {
+    appendLines([line]);
+  }
+
   function appendLines(lines) {
-    lines.forEach(appendLine);
+    const lastLine = state.buffer.at(-1);
+    state.buffer.push(...normalizeAssaultSpacing(lines, lastLine));
+    render();
+    if (!state.userAtBottom) outputIndicator?.classList.add("visible");
   }
 
   function renderLiveLine() {
     if (!state.inputEnabled) return;
-    const last = state.buffer[state.buffer.length - 1];
-    if (last && last.startsWith("> ")) state.buffer.pop();
+    hideIdleTip();
+    const last = state.buffer.at(-1);
+    if (last?.startsWith("> ")) state.buffer.pop();
     const cursor = state.cursorVisible && !state.typingActive ? "_" : "";
     state.buffer.push(`> ${state.liveInput}${cursor}`);
     render();
@@ -66,14 +164,24 @@
 
   inputField.addEventListener("input", () => {
     if (!state.inputEnabled) return;
+    playKeyClick();
+
     state.typingActive = true;
     state.liveInput = inputField.value.toUpperCase();
     renderLiveLine();
+    scheduleIdleTip();
 
     clearTimeout(state._typingTimer);
     state._typingTimer = setTimeout(() => {
       state.typingActive = false;
     }, 220);
+  });
+
+  inputField.addEventListener("keydown", (e) => {
+    if (!state.inputEnabled) return;
+    if (e.key.length === 1 || e.key === "Backspace" || e.key === "Enter") {
+      playKeyClick();
+    }
   });
 
   function setInputEnabled(enabled) {
@@ -84,8 +192,10 @@
       inputField.focus();
       state.cursorVisible = true;
       renderLiveLine();
+      scheduleIdleTip();
     } else {
       state.cursorVisible = false;
+      hideIdleTip();
     }
   }
 
@@ -103,30 +213,34 @@
   }
 
   async function fetchSnapshot() {
-    const res = await fetch("/snapshot");
-    return res.json();
+    return fetch("/snapshot").then((r) => r.json());
   }
 
-  function shouldRefreshMap(command, ok) {
+  function shouldRefreshSnapshot(command, ok) {
     if (!ok) return false;
-    const normalized = command.trim().toUpperCase();
-    if (!normalized) return false;
-    const verb = normalized.split(/\s+/)[0];
-    return verb === "WAIT" || verb === "RESET" || verb === "REBOOT";
+    const verb = command.trim().toUpperCase().split(/\s+/)[0];
+    return ["WAIT", "RESET", "REBOOT", "FOCUS", "HARDEN"].includes(verb);
   }
 
-  async function refreshMap() {
+  function updateCommsPresentation(snapshot) {
+    const comms = snapshot.sectors?.find((s) => s.id === "CM");
+    const status = comms?.status || "STABLE";
+    terminalContainer.classList.toggle("comms-alert", status === "ALERT");
+    terminalContainer.classList.toggle("comms-damaged", status === "DAMAGED");
+    terminalContainer.classList.toggle("comms-compromised", status === "COMPROMISED");
+  }
+
+  async function refreshSnapshot() {
     if (!window.CustodianSectorMap) return;
     try {
       const snapshot = await fetchSnapshot();
       window.CustodianSectorMap.renderSectorMap(snapshot);
+      updateCommsPresentation(snapshot);
       if (!state.mapHintShown) {
         appendLine("[MAP UPDATED]");
         state.mapHintShown = true;
       }
-    } catch {
-      // Map projection failures should not block terminal flow.
-    }
+    } catch {}
   }
 
   async function handleSubmit(e) {
@@ -136,8 +250,8 @@
     const cmd = inputField.value.trim();
     if (!cmd) return;
 
-    const last = state.buffer[state.buffer.length - 1];
-    if (last && last.startsWith("> ")) state.buffer.pop();
+    hideIdleTip();
+    if (state.buffer.at(-1)?.startsWith("> ")) state.buffer.pop();
 
     appendLine(`> ${cmd.toUpperCase()}`);
     inputField.value = "";
@@ -148,21 +262,11 @@
     try {
       const result = await submitCommand(cmd);
       appendLines(result.lines);
-      if (shouldRefreshMap(cmd, result.ok)) {
-        await refreshMap();
-      }
+      if (shouldRefreshSnapshot(cmd, result.ok)) await refreshSnapshot();
     } catch {
       appendLines(["COMMAND LINK FAILED.", "VERIFY SERVER AND RETRY."]);
     } finally {
       setInputEnabled(true);
-    }
-  }
-
-  async function runSystemLog() {
-    setInputEnabled(false);
-    for (const line of systemLogLines) {
-      appendLine(line);
-      await new Promise((r) => setTimeout(r, 350));
     }
   }
 
@@ -171,20 +275,28 @@
       "",
       "--- COMMAND INTERFACE ACTIVE ---",
       "Awaiting directives.",
-      "",
     ]);
     setInputEnabled(true);
   }
 
   inputForm.addEventListener("submit", handleSubmit);
-  setInputEnabled(false);
+  inputField.addEventListener("keydown", () => {
+    if (state.inputEnabled) scheduleIdleTip();
+  });
+  terminal.addEventListener("scroll", () => {
+    const atBottom =
+      terminal.scrollTop + terminal.clientHeight >=
+      terminal.scrollHeight - SCROLL_THRESHOLD;
+    state.userAtBottom = atBottom;
+    if (atBottom) outputIndicator?.classList.remove("visible");
+  });
 
   window.CustodianTerminal = {
     appendLine,
     appendLines,
+    clearBuffer,
     setInputEnabled,
     startCommandMode,
-    runSystemLog,
     syncBufferFromDom,
   };
 })();

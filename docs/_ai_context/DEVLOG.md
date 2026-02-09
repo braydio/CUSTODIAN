@@ -1,6 +1,20 @@
 # DEVLOG — CUSTODIAN
 
+## 2026-02-09 # {NOTE FOR CODEX}
+- CODEX OVER HERE! READ THIS!
+- Hi it's Brayden. I want you to put move the contents of docs/INFORMATION_FIDELITY.md to somewhere persistent so that the style of (in-game) information degradation is a persistent design theme. Also thanks for all your hard work. Brayden out.
+
+## 2026-02-09
+- Implemented hub/campaign schemas with offer generation, recon refinement, and hub mutation rules.
+
 ## 2026-02-07
+- Implemented HARDEN posture and updated FOCUS to bias assault target selection only.
+- Added ARCHIVE loss counter/threshold and STATUS posture/loss reporting.
+- Added system panel + terminal feed formatting and comms-based UI degradation.
+
+## 2026-02-08
+- Reconciled campaign contract language: contracts are interface commitments, scenarios are hub-surfaced proposals, rewards are hub mutations justified by context.
+- Current focus: finalize the Hub ↔ Campaign scaffolding by defining campaign offer generation, recon-based information refinement, and a strict outcome-to-hub mutation contract before expanding gameplay systems.
 - Added `WAIT 10X` support to advance ten ticks with summarized output.
 - Removed obsolete `NEXT_FEATURES.md` now that Phase 1 plan is realized.
 - Added `GameState.snapshot()` and `/snapshot` endpoints for read-only UI projection.

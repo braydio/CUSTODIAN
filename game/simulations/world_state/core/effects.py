@@ -24,11 +24,8 @@ def add_global_effect(state, key, severity, decay=0.02):
 
 def apply_sector_effects(state, sector):
     to_remove = []
-    focus_mult = 1.0
-    if state.focused_sector:
-        focus_mult = 0.85 if sector.id == state.focused_sector else 1.05
     for key, data in sector.effects.items():
-        severity = data["severity"] * focus_mult
+        severity = data["severity"]
         if key == "power_drain":
             sector.power = max(0.2, sector.power - 0.02 * severity)
         elif key == "structural_fatigue":

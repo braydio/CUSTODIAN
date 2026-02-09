@@ -1,10 +1,11 @@
 # CURRENT STATE — CUSTODIAN
 
 ## Code Status
-- Terminal UI boot sequence is implemented in `custodian-terminal/boot.js` with power-cycle audio and SSE fallback; command submit/render transport in `custodian-terminal/terminal.js`, and the sector map projection in `custodian-terminal/sector-map.js` using `custodian-terminal/sector_layout.js`.
+- Terminal UI boot sequence is implemented in `custodian-terminal/boot.js` with power-cycle audio and SSE fallback; command submit/render transport in `custodian-terminal/terminal.js`, and the sector map + system panel projections in `custodian-terminal/sector-map.js` using `custodian-terminal/sector_layout.js`.
 - Primary terminal UI webserver is `custodian-terminal/server.py` (static asset serving, SSE boot stream via `/stream/boot`, plus `/command` and `/snapshot`).
 - World-state server module `game/simulations/world_state/server.py` also exposes `/command`, `/snapshot` (plus `/stream`).
-- World-state simulation spine is implemented with procedural events, assault timing, and a COMMAND breach failure latch.
+- World-state simulation spine is implemented with procedural events, assault timing, and COMMAND/ARCHIVE failure latches.
+- Hub scaffolding exists in `game/simulations/world_state/core/hub.py` with offer generation, recon refinement, and hub mutation rules.
 - Phase 1.5 asymmetry is active: sector roles influence threat growth, assault damage, warnings, and event frequency.
 - World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`).
 - Unified entrypoint is available at `python -m game` with `--ui` (default), `--sim`, and `--repl`.
@@ -12,7 +13,7 @@
 - Git hooks for docs/secret hygiene exist; enable via `git config core.hooksPath .githooks`.
 
 ## Terminal Command Surface (Implemented)
-- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HELP`.
+- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HARDEN`, `HELP`.
 - Failure-recovery commands: `RESET`, `REBOOT`.
 - Unknown or invalid command input returns:
   - `ok=false`
@@ -32,7 +33,7 @@
 ## Locked Decisions
 - Terminal-first interface with terse, operational output.
 - World time advances only on explicit time-bearing commands (`WAIT`, `WAIT 10X`) in terminal mode.
-- `STATUS` remains a high-level board view (time, threat bucket, assault state, sector statuses).
+- `STATUS` remains a high-level board view (time, threat bucket, assault state, posture, archive losses, sector statuses).
 - Command processor is backend-authoritative; frontend local echo is display-only.
 
 ## Flexible Areas
@@ -40,9 +41,4 @@
 - Timing and pressure tuning in `core/config.py` and event weights/cooldowns in `events.py`.
 
 ## In Progress
-- Phase 2 assault outcomes (clean/damage/breach/strategic loss/failure) now applied during assault resolution.
-
-## Next Tasks
-1. Add deterministic seed coverage for assault outcomes and threat progression.
-2. Tune outcome thresholds (damage deltas and penetration mapping).
-3. Run a manual terminal flow check (boot -> system log -> STATUS/FOCUS/WAIT/WAIT 10X/HELP).
+- None.

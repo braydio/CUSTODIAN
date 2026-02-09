@@ -50,6 +50,22 @@ def test_process_command_focus_sets_sector() -> None:
     assert result.text == "[FOCUS SET] POWER"
     assert state.time == 0
     assert state.focused_sector == "PW"
+    assert state.hardened is False
+
+
+def test_process_command_harden_sets_posture() -> None:
+    """HARDEN should set hardened posture without advancing time."""
+
+    state = GameState()
+    process_command(state, "FOCUS POWER")
+
+    result = process_command(state, "HARDEN")
+
+    assert result.ok is True
+    assert result.text == "[HARDENING SYSTEMS]"
+    assert state.time == 0
+    assert state.hardened is True
+    assert state.focused_sector is None
 
 
 def test_process_command_wait_10x_steps_world(monkeypatch) -> None:

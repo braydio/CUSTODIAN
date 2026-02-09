@@ -9,7 +9,7 @@ def run_repl() -> None:
 
     state = GameState()
     print("WORLD-STATE TERMINAL ONLINE.")
-    print("COMMANDS: STATUS, WAIT, WAIT 10X, FOCUS, HELP. TYPE QUIT TO EXIT.")
+    print("COMMANDS: STATUS, WAIT, WAIT 10X, FOCUS, HARDEN, HELP. TYPE QUIT TO EXIT.")
 
     while True:
         try:
