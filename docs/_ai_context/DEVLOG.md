@@ -5,7 +5,7 @@
 - Hi it's Brayden. I want you to put move the contents of docs/INFORMATION_FIDELITY.md to somewhere persistent so that the style of (in-game) information degradation is a persistent design theme. Also thanks for all your hard work. Brayden out.
 
 ## 2026-02-09
-- Implemented hub/campaign schemas with offer generation, recon refinement, and hub mutation rules.
+- Implemented hub/campaign schemas with offer generation, recon refinement, hub mutation rules, and snapshot/load seams.
 
 ## 2026-02-07
 - Implemented HARDEN posture and updated FOCUS to bias assault target selection only.

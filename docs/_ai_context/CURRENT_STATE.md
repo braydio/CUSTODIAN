@@ -5,7 +5,7 @@
 - Primary terminal UI webserver is `custodian-terminal/server.py` (static asset serving, SSE boot stream via `/stream/boot`, plus `/command` and `/snapshot`).
 - World-state server module `game/simulations/world_state/server.py` also exposes `/command`, `/snapshot` (plus `/stream`).
 - World-state simulation spine is implemented with procedural events, assault timing, and COMMAND/ARCHIVE failure latches.
-- Hub scaffolding exists in `game/simulations/world_state/core/hub.py` with offer generation, recon refinement, and hub mutation rules.
+- Hub scaffolding exists in `game/simulations/world_state/core/hub.py` with offer generation, recon refinement, hub mutation rules, and snapshot/load seams.
 - Phase 1.5 asymmetry is active: sector roles influence threat growth, assault damage, warnings, and event frequency.
 - World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`).
 - Unified entrypoint is available at `python -m game` with `--ui` (default), `--sim`, and `--repl`.
