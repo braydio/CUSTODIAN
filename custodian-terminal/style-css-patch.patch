@@ -1,0 +1,23 @@
+
+diff --git a/style.css b/style.css
+index c2e87ad..e73bd42 100644
+--- a/style.css
++++ b/style.css
+@@ -140,12 +140,16 @@
+ #side-panel {
+-  flex: 1 1 35%;
+-  min-width: 260px;
+-  background: #050805;
+-  color: #b6f3b8;
+-  display: flex;
+-  flex-direction: column;
++  flex: 1 1 35%;
++  min-width: 280px;
++
++  background: #050805;
++  color: #b6f3b8;
++
++  display: flex;
++  flex-direction: column;
+ }
+

@@ -2,7 +2,7 @@
 
 ## Core Fantasy (North Star)
 
-You are the last mechanitor, maintaining a static command post in a collapsed interstellar civilization. Information systems are gone. History is fragmented. Factions fight over myths, scraps, and half-understood tech. You do not win by killing them all. You win by preserving, reconstructing, and defending knowledge.
+You are the last Custodian, maintaining a static command post in a collapsed interstellar civilization. Information systems are gone. History is fragmented. Factions fight over myths, scraps, and half-understood tech. You do not win by killing them all. You win by preserving, reconstructing, and defending knowledge.
 
 ## Why This Theme Works Mechanically
 
@@ -44,7 +44,7 @@ Core systems:
 - Fabrication: converts materials into defenses. Advanced fabrication requires knowledge.
 - Defense Grid: walls, turrets, drone bays, shield emitters. Defenses degrade or malfunction.
 - Data Core: stores recovered knowledge. Losing it is catastrophic but not instant-fail.
-- Automation: the mechanitor's strength. The base functions when you are absent.
+- Automation: the Custodian's strength. The base functions when you are absent.
 
 Key rule: infrastructure is vulnerable. You defend capabilities, not hit points.
 
@@ -141,7 +141,7 @@ Start with:
 - 1x Fabricator
 - 1x Power Bank
 - 1x Basic Defense
-- The mechanitor
+- The Custodian
 
 This forces expeditions immediately and keeps early assaults personal. The base should feel like it will not survive long without intervention.
 
@@ -151,7 +151,7 @@ This forces expeditions immediately and keeps early assaults personal. The base 
 - Can engage enemies directly, repair defenses, reroute systems, trigger emergency abilities.
 - If downed: base continues autonomously; some systems become unavailable; you reconstitute after the assault (costly, not free).
 
-Campaign does not end when the mechanitor goes down. Loss reduces agency, not existence.
+Campaign does not end when the Custodian goes down. Loss reduces agency, not existence.
 
 ## Recon and Gathering (Concrete)
 
