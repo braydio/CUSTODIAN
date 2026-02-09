@@ -9,13 +9,20 @@ This global context file details the relationship between the persistent Hub Wor
 
 # 0. Canonical Structure (Locked)
 
+## Terminology (Normalized)
+
+- Contract: the interface object that formalizes the Custodian's operational commitment.
+- Scenario: a generated configuration bundle surfaced by the hub.
+- Campaign: an instantiated transient world created from a scenario.
+- Reward: a hub mutation (unlock, capability, archive entry), justified by accumulated context.
+
 ## Two Worlds, Two Timescales
 
 ### 1. **The Hub (Persistent World)**
 
 * Exists across campaigns
 * Accumulates *meta-progress*
-* Generates campaign offers
+* Surfaces campaign scenario proposals
 * Is the only place where permanence exists
 
 ### 2. **Campaign World (Transient World)**
@@ -36,7 +43,7 @@ This distinction is critical and correct.
 
 ```
 HUB
- ├─ generate campaign scenarios
+ ├─ generate campaign scenario proposals
  ├─ player selects scenario
  └─ ACCEPT → instantiate CampaignWorld
 
@@ -61,7 +68,7 @@ This replaces the idea of “worsening conditions over time” with something *c
 
 ## Campaign Scenario Definition
 
-A scenario is a **contract**, not a level.
+A scenario is a **contract interface**, not a social fiction.
 
 ### Scenario Fields (Spec)
 
@@ -172,7 +179,7 @@ These exist **only inside the active campaign**.
 
 They are:
 
-* tools to *complete this contract*
+* tools to complete the operational commitment
 * not progression in themselves
 
 ### Expedition Loot Types (Locked)

@@ -54,3 +54,4 @@ STORAGE_DECAY_MULT = 0.5
 
 # Terminal loss-state threshold.
 COMMAND_CENTER_BREACH_DAMAGE = 2.0
+ARCHIVE_LOSS_LIMIT = 3

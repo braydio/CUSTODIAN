@@ -20,7 +20,7 @@
 ## Phase 1 Terminal Design Lock (Historical Plan)
 - Rationale: build a deterministic, command-driven loop before any map UI to avoid UI creep and ensure a playable spine.
 - Loop invariant: `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS -> ...` (world only moves on `WAIT`/`WAIT 10X`).
-- Phase 1 command set: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HELP` only (no aliases).
+- Phase 1 command set: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HARDEN`, `HELP` only (no aliases).
 - `STATUS` output rules: ASCII, all caps, no recommendations; fields: TIME, THREAT bucket, ASSAULT state, sector list with one-word state; never advances time.
 - `WAIT` output rules: advance exactly one tick; minimal output only; no full status dump; may emit event/warning/assault lines.
 - `WAIT 10X` output rules: advance exactly ten ticks; summarize events, warnings, assault transitions, and failure lines without full status dumps.

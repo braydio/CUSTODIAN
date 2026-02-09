@@ -1,7 +1,10 @@
 """Tests for terminal command processing behavior."""
 
-from game.simulations.world_state.core.config import COMMAND_CENTER_BREACH_DAMAGE
-from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.core.config import (
+    ARCHIVE_LOSS_LIMIT,
+    COMMAND_CENTER_BREACH_DAMAGE,
+)
+from game.simulations.world_state.core.state import GameState, check_failure
 from game.simulations.world_state.terminal.processor import process_command
 
 
@@ -64,6 +67,22 @@ def test_focus_sets_sector_without_advancing_time() -> None:
     assert result.text == "[FOCUS SET] POWER"
     assert state.time == 0
     assert state.focused_sector == "PW"
+    assert state.hardened is False
+
+
+def test_harden_sets_posture_without_advancing_time() -> None:
+    """HARDEN should set hardened posture and clear focus."""
+
+    state = GameState()
+    process_command(state, "FOCUS POWER")
+
+    result = process_command(state, "HARDEN")
+
+    assert result.ok is True
+    assert result.text == "[HARDENING SYSTEMS]"
+    assert state.time == 0
+    assert state.hardened is True
+    assert state.focused_sector is None
 
 
 def test_unknown_command_returns_locked_error_lines() -> None:
@@ -88,9 +107,9 @@ def test_failure_mode_locks_non_reset_commands() -> None:
     status_result = process_command(state, "STATUS")
 
     assert wait_result.ok is True
-    assert wait_result.lines[-2:] == ["COMMAND BREACHED.", "SESSION TERMINATED."]
+    assert wait_result.lines[-2:] == ["COMMAND CENTER LOST", "SESSION TERMINATED."]
     assert status_result.ok is False
-    assert status_result.text == "COMMAND BREACHED."
+    assert status_result.text == "COMMAND CENTER LOST"
     assert status_result.lines == ["REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED."]
 
 
@@ -158,3 +177,24 @@ def test_wait_quiet_tick_pressure_line_has_no_empty_entries(monkeypatch) -> None
     assert result.ok is True
     assert result.lines == ["[PRESSURE] THREAT STABLE."]
     assert all(line.strip() for line in result.lines)
+
+
+def test_archive_loss_triggers_failure(monkeypatch) -> None:
+    """Archive loss threshold should trigger failure on the next tick."""
+
+    state = GameState()
+    state.archive_losses = ARCHIVE_LOSS_LIMIT
+
+    def _failure_step(local_state: GameState) -> bool:
+        local_state.time += 1
+        return check_failure(local_state)
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.wait.step_world",
+        _failure_step,
+    )
+
+    result = process_command(state, "WAIT")
+
+    assert result.ok is True
+    assert result.lines == ["ARCHIVAL INTEGRITY LOST", "SESSION TERMINATED."]

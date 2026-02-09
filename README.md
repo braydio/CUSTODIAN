@@ -2,23 +2,29 @@
 
 Lightweight game simulation prototypes centered on a sole survivor defending a static command post in a collapsed interstellar civilization. The campaign goal is reconstruction and knowledge preservation over extermination.
 
+> CUSTODIAN is not about winning campaigns.
+> It is about deciding what must be known before it disappears forever.
+
 ## Core
 
 - You are the last relic of a lost institution, custodian to a static command post.
 - Information systems are gone; history is fragmented.
 - Enemies are driven by ideology, scarcity, and misunderstanding.
 - Victory is survival & reconstruction of physical artifacts and lost knowledge.
-- Campaign victories unlock < item > in the Hub.
-- Victories provide a reward bonus styled after the campaign's procedurally generated target goal
+- Campaign victories unlock hub capabilities, archive entries, and scenario access.
+- Rewards are justified by accumulated context, not raw power.
+- Campaigns are contracts as an interface (self-authored commitments), not social jobs.
 
 ## High-Level Loop
 
 ```
-Recon / Expedition
+Accept Campaign Contract
+        ↓
+Procedurally Generated Command Post
+        ↓
+Fortify / Mount Expeditions
         ↓
 Return with knowledge + materials
-        ↓
-Build / reinforce base sectors
         ↓
 Assault (defense under pressure)
         ↓
@@ -27,11 +33,12 @@ Repair, recover, adapt
 Repeat until campaign objective achieved or lost
 ```
 
-## Campaign Structure (Tutorial)
+## Campaign & Hub Model
 
-- Setting: destroyed military airfield on the home planet.
-- Objective: rebuild a ship to reach the Archive Hub.
-- Persistence: knowledge and schematics persist; materials and construction are fragile.
+- Hub is a persistent operational archive that accumulates knowledge and unlocks capability.
+- Campaigns are instantiated from hub-surfaced scenario proposals.
+- Recon is hub-side refinement: reduces uncertainty without revealing outcomes.
+- Campaign outcomes are the only allowed hub mutation input.
 
 ## Base Form Factor (Phase 1)
 
@@ -63,7 +70,8 @@ Then visit `http://localhost:7331/`.
 Current status:
 
 - Boot stream and terminal shell rendering are active.
-- Command transport is wired via `POST /command`.
+- Command transport is wired via `POST /command` with `{ "raw": "<string>" }`.
+- `/snapshot` provides read-only UI projection data.
 
 Key files:
 
@@ -95,9 +103,9 @@ WORLD_STATE_MODE=repl python game/simulations/world_state/sandbox_world.py
 
 Usage notes:
 
-- Use `help` to list commands and usage.
-- Write commands (for example, `advance`) require Command Center authority.
-- Use quotes for multi-word sector names (for example, `sector "Fuel Depot"`).
+- Use `HELP` to list commands and usage.
+- Commands: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS <SECTOR>`, `HARDEN`, `HELP`, `RESET`, `REBOOT`.
+- Use quotes for multi-word sectors (for example, `FOCUS "DEFENSE GRID"`).
 
 Docs:
 
@@ -132,22 +140,13 @@ Key files:
 - `game/simulations/assault/core/autopilot.py`
 - `game/simulations/assault/data/`
 
-### Custodian Terminal UI
+### Hub & Campaign Scaffolding
 
-Static terminal UI prototype with boot sequence and live command loop integration.
+Deterministic schemas, offer generation, recon refinement, and hub mutation rules.
 
-Entry point:
+Key file:
 
-```bash
-python -m game --ui
-```
-
-Then visit `http://localhost:7557/`.
-
-Key files:
-
-- `custodian-terminal/boot.js`
-- `custodian-terminal/terminal.js`
+- `game/simulations/world_state/core/hub.py`
 
 ## Documentation Map
 

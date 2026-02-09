@@ -50,29 +50,52 @@ def tick_assault_timer(state):
         start_assault(state)
 
 
+def _eligible_assault_targets(state):
+    return [sector for sector in state.sectors.values() if sector.damage < 2.0]
+
+
+def _select_focus_targets(state, count: int):
+    eligible = _eligible_assault_targets(state)
+    if not eligible:
+        return []
+
+    focused = state.focused_sector
+    weights = []
+    for sector in eligible:
+        weights.append(0.25 if focused and sector.id == focused else 1.0)
+
+    targets = []
+    pool = list(zip(eligible, weights))
+    while pool and len(targets) < count:
+        sectors, sector_weights = zip(*pool)
+        chosen = random.choices(sectors, weights=sector_weights, k=1)[0]
+        targets.append(chosen)
+        pool = [(sector, weight) for sector, weight in pool if sector is not chosen]
+
+    return targets
+
+
+def _select_hardened_targets(state, count: int):
+    eligible = _eligible_assault_targets(state)
+    if not eligible:
+        return []
+    eligible.sort(key=lambda s: s.damage + s.alertness, reverse=True)
+    return eligible[:count]
+
+
 def start_assault(state):
     state.in_major_assault = True
     state.assault_timer = None
     state.assault_count += 1
 
-    targets = state.weakest_sectors(3)
-    if state.focused_sector:
-        focused = next(
-            (sector for sector in targets if sector.id == state.focused_sector),
-            None,
-        )
-        if focused:
-            replacements = [
-                sector
-                for sector in state.sectors.values()
-                if sector not in targets and sector.id != state.focused_sector
-            ]
-            if replacements:
-                replacements.sort(
-                    key=lambda s: s.damage + s.alertness, reverse=True
-                )
-                targets.remove(focused)
-                targets.append(replacements[0])
+    target_count = 3
+    if state.hardened:
+        target_count = max(1, target_count - 1)
+
+    if state.hardened:
+        targets = _select_hardened_targets(state, target_count)
+    else:
+        targets = _select_focus_targets(state, target_count)
 
     assault = AssaultInstance(
         faction_profile=state.faction_profile,
@@ -94,6 +117,7 @@ def resolve_assault(state, tick_delay=0.05):
     assault.duration_ticks = duration
     target_names = {sector.name for sector in assault.target_sectors}
     pre_damage = {sector.name: sector.damage for sector in assault.target_sectors}
+    archive_pre_damage = state.sectors["ARCHIVE"].damage
 
     def on_tick(sectors, tick):
         assault.tick()
@@ -108,13 +132,7 @@ def resolve_assault(state, tick_delay=0.05):
             if world_sector is None:
                 continue
             print(f"[Assault] Fighting in {world_sector.name}")
-            damage_mult = defense_mult
-            if state.focused_sector:
-                if world_sector.id == state.focused_sector:
-                    damage_mult *= 0.7
-                else:
-                    damage_mult *= 1.1
-            world_sector.damage += ASSAULT_DAMAGE_PER_TICK * damage_mult
+            world_sector.damage += ASSAULT_DAMAGE_PER_TICK * defense_mult
             world_sector.alertness += ASSAULT_ALERTNESS_PER_TICK
             state.ambient_threat += ASSAULT_THREAT_PER_TICK
 
@@ -126,7 +144,7 @@ def resolve_assault(state, tick_delay=0.05):
     state.current_assault = None
     state.in_major_assault = False
     state.focused_sector = None
-    state.focused_sector = None
+    state.hardened = False
 
     outcome = AssaultOutcome(
         threat_budget=assault.threat_budget,
@@ -144,6 +162,10 @@ def resolve_assault(state, tick_delay=0.05):
 
     message = _apply_assault_outcome(state, assault, outcome, assault_damage, target_names)
     state.last_assault_lines = [message] if message else []
+
+    archive_post_damage = state.sectors["ARCHIVE"].damage
+    if archive_pre_damage < 1.0 and archive_post_damage >= 1.0:
+        state.archive_losses += 1
 
     print(outcome)
     print("\n=== ASSAULT REPULSED ===\n")

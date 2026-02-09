@@ -6,8 +6,12 @@ html, body {
   height: 100%;
   background: black;
   color: #c8ffcc;
-  font-family: "Courier New", monospace;
+  font-family: "IBM Plex Mono", "JetBrains Mono", "Courier New", monospace;
 }
+
+/* =========================
+   APP LAYOUT
+   ========================= */
 
 #app-shell {
   display: flex;
@@ -21,16 +25,85 @@ html, body {
   min-width: 320px;
   height: 100%;
   border-right: 1px solid #132513;
+  position: relative;
 }
+
+/* =========================
+   TERMINAL
+   ========================= */
 
 #terminal {
   flex: 1;
   padding: 24px;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.45;
   white-space: pre-wrap;
   overflow-y: auto;
+  scrollbar-color: #1f3b1f #050805;
+  scrollbar-width: thin;
 }
+
+#terminal::-webkit-scrollbar { width: 10px; }
+#terminal::-webkit-scrollbar-track { background: #050805; }
+#terminal::-webkit-scrollbar-thumb {
+  background-color: #1f3b1f;
+  border-radius: 8px;
+  border: 2px solid #050805;
+}
+#terminal::-webkit-scrollbar-thumb:hover { background-color: #2c5a2c; }
+
+.terminal-line { display: block; }
+
+.terminal-line { display: block; }
+
+.terminal-line.event { color: #9fd99f; }
+.terminal-line.warning { color: #e1c577; font-weight: 600; }
+.terminal-line.assault { color: #f0a1a1; font-weight: 600; }
+.terminal-line.intent { color: #b6f3b8; }
+
+/* =========================
+   COMMS DEGRADATION (TERMINAL)
+   ========================= */
+
+#terminal-container.comms-alert #terminal { opacity: 0.95; }
+#terminal-container.comms-damaged #terminal { opacity: 0.85; }
+
+#terminal-container.comms-compromised #terminal {
+  opacity: 0.75;
+  text-shadow: 0 0 6px rgba(120, 220, 140, 0.25);
+}
+
+#new-output-indicator {
+  position: absolute;
+  right: 24px;
+  top: 18px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: #b6f3b8;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+#new-output-indicator.visible { opacity: 0.7; }
+
+#idle-tip {
+  position: absolute;
+  left: 24px;
+  bottom: 52px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: #9fd99f;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+#idle-tip.visible { opacity: 0.6; }
+
+/* =========================
+   INPUT + STATUS
+   ========================= */
 
 #terminal-input-form {
   display: flex;
@@ -40,23 +113,19 @@ html, body {
   font-size: 14px;
 }
 
-#terminal-prompt {
-  color: #9fd99f;
-}
+#terminal-prompt { color: #9fd99f; }
 
 #terminal-input {
   flex: 1;
   background: transparent;
   border: none;
   color: #c8ffcc;
-  font-family: "Courier New", monospace;
+  font-family: inherit;
   font-size: 14px;
   outline: none;
 }
 
-#terminal-input-form.disabled {
-  opacity: 0.5;
-}
+#terminal-input-form.disabled { opacity: 0.5; }
 
 #status-bar {
   display: flex;
@@ -68,43 +137,62 @@ html, body {
   color: #9fd99f;
 }
 
-#sector-map {
+/* =========================
+   SIDE PANEL
+   ========================= */
+
+#side-panel {
   flex: 1 1 35%;
   min-width: 260px;
-  padding: 20px;
   background: #050805;
-  color: #b6f3b8;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+}
+
+/* =========================
+   SECTOR MAP
+   ========================= */
+
+#sector-map {
+  padding: 20px;
+  border-bottom: 1px solid #132513;
 }
 
 .sector-map-header {
   font-size: 12px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   color: #8ac28f;
+  margin-bottom: 4px;
 }
 
 .sector-map-meta {
-  font-size: 12px;
+  font-size: 11px;
   color: #6aa56f;
+  margin-bottom: 14px;
 }
 
+/* asymmetry cue */
 .sector-map-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-auto-rows: 58px;
-  gap: 10px;
+  grid-auto-rows: 62px;
+  gap: 12px;
 }
+
+/* =========================
+   SECTOR CARDS
+   ========================= */
 
 .sector-card {
   border: 1px solid #1a2f1a;
   padding: 10px;
-  background: #071007;
+  background:
+    linear-gradient(180deg, #071007, #050b05);
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-height: 58px;
+  justify-content: space-between;
+  min-height: 62px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .sector-name {
@@ -114,13 +202,15 @@ html, body {
 
 .sector-status {
   font-size: 11px;
-  letter-spacing: 0.08em;
-  color: #93c796;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
 }
 
-.sector-card.stable {
-  border-color: #1f3b1f;
-}
+/* =========================
+   SECTOR STATES
+   ========================= */
+
+.sector-card.stable { border-color: #1f3b1f; }
 
 .sector-card.alert {
   border-color: #745b18;
@@ -137,17 +227,96 @@ html, body {
   background: #1c0707;
 }
 
-.sector-card.alert .sector-status {
-  color: #d8b66a;
+.sector-card.alert .sector-status { color: #d8b66a; }
+.sector-card.damaged .sector-status { color: #e39a9a; }
+.sector-card.compromised .sector-status { color: #f0a1a1; }
+
+/* =========================
+   ROLES (SUBTLE, NOT LOUD)
+   ========================= */
+
+.sector-card.role-authority {
+  border-width: 2px;
 }
 
-.sector-card.damaged .sector-status {
-  color: #e39a9a;
+.sector-card.role-amplifier,
+.sector-card.role-mitigation {
+  box-shadow: inset 0 0 6px rgba(98, 180, 110, 0.15);
 }
 
-.sector-card.compromised .sector-status {
-  color: #f0a1a1;
+.sector-card.role-goal { opacity: 0.85; }
+.sector-card.role-egress,
+.sector-card.role-ingress { opacity: 0.8; }
+
+.sector-card.recent-hit {
+  border-color: #f0a1a1;
+  box-shadow: 0 0 10px rgba(240, 161, 161, 0.35);
 }
+
+/* =========================
+   MAP DEGRADATION
+   ========================= */
+
+.map-degraded { opacity: 0.92; }
+.map-damaged { opacity: 0.8; }
+.map-compromised { opacity: 0.7; }
+.map-failed { opacity: 0.45; }
+
+/* =========================
+   SYSTEM DASHBOARD
+   ========================= */
+
+#system-panel {
+  padding: 14px 20px 18px;
+  background: linear-gradient(
+    to bottom,
+    rgba(6, 12, 7, 0.96),
+    rgba(4, 8, 5, 0.99)
+  );
+  border-top: 1px solid #132513;
+
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a7d9ab;
+}
+
+#system-panel::before {
+  content: "SYSTEM STATUS";
+  display: block;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: #6aa56f;
+  border-bottom: 1px solid #132513;
+}
+
+.system-panel-line {
+  white-space: pre;
+  padding: 2px 0;
+  opacity: 0.92;
+}
+
+.system-panel-line:not(:last-child) {
+  border-bottom: 1px dotted rgba(30, 60, 35, 0.25);
+}
+
+/* degradation semantics */
+
+#system-panel.panel-degraded { opacity: 0.82; }
+#system-panel.panel-compromised {
+  opacity: 0.65;
+  text-shadow: 0 0 4px rgba(140, 220, 160, 0.25);
+}
+#system-panel.panel-failed {
+  opacity: 0.45;
+  filter: blur(0.35px) saturate(0.7);
+}
+
+/* =========================
+   FX
+   ========================= */
 
 .flicker {
   animation: flicker 0.15s linear;
@@ -159,11 +328,12 @@ html, body {
   100% { opacity: 0.8; }
 }
 
-@media (max-width: 900px) {
-  #app-shell {
-    flex-direction: column;
-  }
+/* =========================
+   RESPONSIVE
+   ========================= */
 
+@media (max-width: 900px) {
+  #app-shell { flex-direction: column; }
   #terminal-container {
     border-right: none;
     border-bottom: 1px solid #132513;

@@ -128,6 +128,45 @@ function playAlertPulse() {
   });
 }
 
+function clearTerminalAnimated(durationMs = 5000) {
+  return new Promise((resolve) => {
+    const text = terminal.innerText || terminal.textContent || "";
+    const total = text.length;
+    if (!total) {
+      resolve();
+      return;
+    }
+
+    const start = performance.now();
+    let lastRemaining = total;
+    let lastClickRemaining = total;
+    const clickStride = 12;
+
+    function tick(now) {
+      const elapsed = now - start;
+      const progress = Math.min(1, elapsed / durationMs);
+      const remaining = Math.ceil(total * (1 - progress));
+      if (remaining !== lastRemaining) {
+        terminal.textContent = text.slice(0, remaining);
+        terminal.scrollTop = terminal.scrollHeight;
+        if (lastClickRemaining - remaining >= clickStride || remaining <= 0) {
+          lastClickRemaining = remaining;
+        }
+        lastRemaining = remaining;
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        terminal.textContent = "";
+        resolve();
+      }
+    }
+
+    requestAnimationFrame(tick);
+  });
+}
+
 function isWarningLine(text) {
   const t = text.toUpperCase();
   return (
@@ -230,7 +269,7 @@ function typeLine(text) {
         clearInterval(interval);
 
         if (text && Math.random() < 0.35) {
-          playOneShot(relay, { volume: 0.14, rateJitter: 0.03 });
+          playOneShot(relay, { volume: 0.06, rateJitter: 0.03 });
         }
 
         terminal.textContent += "\n";
@@ -305,25 +344,54 @@ async function runBoot() {
 
   const streamed = await streamBootFromServer();
   if (!streamed) {
-    for (const line of bootLines) {
+    const pauseSteps = [1000, 2000, 3000];
+    const pauseStart = Math.max(0, bootLines.length - pauseSteps.length);
+    for (let i = 0; i < bootLines.length; i += 1) {
+      const line = bootLines[i];
       await typeLine(line);
       terminal.classList.add("flicker");
       setTimeout(() => terminal.classList.remove("flicker"), 120);
-      await sleep(linePauseMs(line));
+      if (i >= pauseStart) {
+        await sleep(pauseSteps[i - pauseStart]);
+      } else {
+        await sleep(linePauseMs(line));
+      }
     }
   }
 
   await sleep(900);
-  terminalController.syncBufferFromDom();
-  await terminalController.runSystemLog();
+  if (timingRelay) {
+    timingRelay.loop = true;
+    timingRelay.volume = 0.18;
+    timingRelay.currentTime = 0;
+    timingRelay.play().catch(() => {});
+    fadeOut(timingRelay, 4000, 7000, 0.18);
+    setTimeout(() => {
+      timingRelay.pause();
+      timingRelay.currentTime = 0;
+    }, 7000);
+  }
+  
+  await clearTerminalAnimated(5000);
+  terminalController.clearBuffer();
 
-  playOneShot(beep, { volume: 0.09, rateJitter: 0.01 });
-  setTimeout(() => {
-    playOneShot(beep, { volume: 0.09, rateJitter: 0.01 });
-  }, 500);
+  await sleep(240);
 
+  // Render initial map snapshot BEFORE command mode
+  try {
+    const snapshot = await fetch("/snapshot").then((r) => r.json());
+    if (window.CustodianSectorMap) {
+      window.CustodianSectorMap.renderSectorMap(snapshot);
+    }
+    terminalController.appendLine("[MAP UPDATED]");
+  } catch {
+    terminalController.appendLine("[MAP STATUS UNKNOWN]");
+  }
+
+  // Enter command mode
   terminalController.startCommandMode();
   playHddSpinOnce();
+
 }
 
 runBoot();

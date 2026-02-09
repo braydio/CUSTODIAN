@@ -16,11 +16,13 @@
   <audio id="fourBeep" src="sounds/4-beep.mp3"></audio>
   <audio id="hddSpin" src="sounds/hdd-spin-normalized.mp3"></audio>
   <audio id="alert" src="sounds/alert.mp3"></audio>
+  <audio id="keyClick" src="sounds/key_click_tuned.mp3"></audio>
 
   <div id="app-shell">
-    <!-- TERMINAL -->
     <div id="terminal-container">
       <pre id="terminal"></pre>
+      <div id="new-output-indicator">NEW OUTPUT</div>
+      <div id="idle-tip">TYPE HELP FOR AVAILABLE COMMANDS</div>
 
       <form id="terminal-input-form" autocomplete="off">
         <span id="terminal-prompt">&gt;</span>
@@ -33,8 +35,10 @@
       </div>
     </div>
 
-    <!-- SECTOR MAP -->
-    <div id="sector-map"></div>
+    <div id="side-panel">
+      <div id="sector-map"></div>
+      <div id="system-panel"></div>
+    </div>
   </div>
 
   <script src="sector_layout.js"></script>

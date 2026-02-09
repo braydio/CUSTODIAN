@@ -334,13 +334,7 @@ def maybe_trigger_event(state):
 
     weighted = []
     for event, sector in candidates:
-        weight = event.weight
-        if state.focused_sector:
-            if sector.id == state.focused_sector:
-                weight = max(1, int(weight * 0.6))
-            else:
-                weight = max(1, int(weight * 1.1))
-        weighted.extend([(event, sector)] * weight)
+        weighted.extend([(event, sector)] * event.weight)
 
     event, sector = random.choice(weighted)
 

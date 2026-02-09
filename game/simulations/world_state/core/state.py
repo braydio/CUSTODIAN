@@ -4,6 +4,7 @@ from .config import (
     ALERTNESS_DECAY,
     ALERTNESS_FROM_DAMAGE,
     AMBIENT_THREAT_GROWTH,
+    ARCHIVE_LOSS_LIMIT,
     COMMAND_CENTER_BREACH_DAMAGE,
     POWER_THREAT_MULT,
     STORAGE_DECAY_MULT,
@@ -66,7 +67,8 @@ class GameState:
         self.player_location = "COMMAND"
         self.current_assault = None
         self.focused_sector = None
-        self.archive_compromised = False
+        self.hardened = False
+        self.archive_losses = 0
 
         # World progression
         self.assault_count = 0
@@ -122,6 +124,10 @@ class GameState:
             "assault": self.assault_state(),
             "sectors": sectors,
             "failed": self.is_failed,
+            "focused_sector": self.focused_sector,
+            "hardened": self.hardened,
+            "archive_losses": self.archive_losses,
+            "archive_limit": ARCHIVE_LOSS_LIMIT,
         }
 
     @property
@@ -163,10 +169,14 @@ def check_failure(state: GameState) -> bool:
 
     command_center = state.sectors["COMMAND"]
     if command_center.damage < COMMAND_CENTER_BREACH_DAMAGE:
-        return False
+        if state.archive_losses < ARCHIVE_LOSS_LIMIT:
+            return False
 
     state.is_failed = True
-    state.failure_reason = "COMMAND BREACHED."
+    if command_center.damage >= COMMAND_CENTER_BREACH_DAMAGE:
+        state.failure_reason = "COMMAND CENTER LOST"
+    else:
+        state.failure_reason = "ARCHIVAL INTEGRITY LOST"
     return True
 
 
@@ -204,6 +214,3 @@ def advance_time(state: GameState, delta: int = 1) -> None:
             sector.alertness += sector.damage * ALERTNESS_FROM_DAMAGE * STORAGE_DECAY_MULT
         sector.alertness = max(0.0, sector.alertness - ALERTNESS_DECAY)
         sector.occupied = False
-
-    archive_sector = state.sectors.get("ARCHIVE")
-    state.archive_compromised = bool(archive_sector and archive_sector.damage >= 1.0)

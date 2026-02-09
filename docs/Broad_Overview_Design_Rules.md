@@ -72,6 +72,7 @@ Persists:
 - Starting base layouts.
 
 You do not get stronger. You get more informed. This prevents power creep and keeps early assaults meaningful.
+Unlocks exist, but they are justified by accumulated context, not raw success.
 
 ## Enemy Generation Rules (Ideology > Form > Tech)
 
