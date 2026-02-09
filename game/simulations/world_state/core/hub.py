@@ -16,11 +16,11 @@ _DIFFICULTY_WEIGHTS = {
 }
 
 _DIFFICULTY_DESCRIPTORS = [
-    (0.0, 0.2, "MARGINAL"),
-    (0.2, 0.4, "HAZARDOUS"),
-    (0.4, 0.6, "SEVERE"),
-    (0.6, 0.8, "EXTREME"),
-    (0.8, 999.0, "CATASTROPHIC"),
+    (0.0, 0.2, "LOW CONFIDENCE OPERATION"),
+    (0.2, 0.4, "UNSTABLE CONDITIONS"),
+    (0.4, 0.6, "HIGH RISK ENGAGEMENT"),
+    (0.6, 0.8, "SEVERE OPERATIONAL COMPLEXITY"),
+    (0.8, 999.0, "EXTINCTION-LEVEL UNKNOWN"),
 ]
 
 _BIOMES = [
@@ -202,14 +202,40 @@ class CampaignScenario:
 
 
 @dataclass
+class SecondaryVictories:
+    achieved: list[str]
+    failed: list[str]
+
+
+@dataclass
+class Losses:
+    archive_loss: int
+    structural_loss: bool
+
+
+@dataclass
+class ExtractedArtifacts:
+    type_tags: list[str]
+    integrity_scores: list[float]
+
+
+@dataclass
+class DerivedInsights:
+    inferred_tech_lineages: list[str]
+    historical_estimates: dict
+    region_id: str
+    difficulty_descriptor: str
+
+
+@dataclass
 class CampaignOutcome:
     scenario_id: UUID
     result: str
     primary_victory_completion: float
-    secondary_victories: dict
-    losses: dict
-    extracted_artifacts: dict
-    derived_insights: dict
+    secondary_victories: SecondaryVictories
+    losses: Losses
+    extracted_artifacts: ExtractedArtifacts
+    derived_insights: DerivedInsights
     seed: int
 
 
@@ -238,6 +264,62 @@ class HubState:
     unlocked_victory_modifiers: set[str] = field(default_factory=set)
     knowledge_archive: list[ArchiveEntry] = field(default_factory=list)
     campaign_history: list[CampaignRecord] = field(default_factory=list)
+
+    def snapshot(self) -> dict:
+        return {
+            "seed": self.seed,
+            "capability_flags": dict(self.capability_flags),
+            "unlocked_scenario_archetypes": sorted(self.unlocked_scenario_archetypes),
+            "unlocked_victory_modifiers": sorted(self.unlocked_victory_modifiers),
+            "knowledge_archive": [
+                {
+                    "category": entry.category,
+                    "confidence": entry.confidence,
+                    "notes": entry.notes,
+                }
+                for entry in self.knowledge_archive
+            ],
+            "campaign_history": [
+                {
+                    "scenario_id": str(record.scenario_id),
+                    "region_id": record.region_id,
+                    "outcome": record.outcome,
+                    "difficulty_descriptor": record.difficulty_descriptor,
+                    "timestamp": record.timestamp,
+                    "notes": record.notes,
+                }
+                for record in self.campaign_history
+            ],
+        }
+
+    @classmethod
+    def from_snapshot(cls, data: dict) -> "HubState":
+        hub = cls(
+            seed=int(data.get("seed", 0)),
+            capability_flags=dict(data.get("capability_flags", {})),
+            unlocked_scenario_archetypes=set(data.get("unlocked_scenario_archetypes", [])),
+            unlocked_victory_modifiers=set(data.get("unlocked_victory_modifiers", [])),
+        )
+        hub.knowledge_archive = [
+            ArchiveEntry(
+                category=entry.get("category", "UNKNOWN"),
+                confidence=entry.get("confidence", "PARTIAL"),
+                notes=entry.get("notes", {}),
+            )
+            for entry in data.get("knowledge_archive", [])
+        ]
+        hub.campaign_history = [
+            CampaignRecord(
+                scenario_id=UUID(record.get("scenario_id", str(_SCENARIO_NAMESPACE))),
+                region_id=record.get("region_id", "UNKNOWN"),
+                outcome=record.get("outcome", "UNKNOWN"),
+                difficulty_descriptor=record.get("difficulty_descriptor", "UNKNOWN"),
+                timestamp=int(record.get("timestamp", 0)),
+                notes=record.get("notes", {}),
+            )
+            for record in data.get("campaign_history", [])
+        ]
+        return hub
 
 
 @dataclass
@@ -460,6 +542,14 @@ def generate_campaign_offer(hub: HubState, seed: int) -> CampaignScenario:
     return _mask_unknown_fields(_generate_full_scenario(hub, seed))
 
 
+def generate_campaign_offers(hub: HubState, seed: int, count: int = 3) -> list[CampaignScenario]:
+    rng = Random(seed)
+    offers = []
+    for _ in range(max(1, count)):
+        offers.append(generate_campaign_offer(hub, rng.randint(1, 1_000_000)))
+    return offers
+
+
 def apply_recon(hub: HubState, scenario: CampaignScenario) -> CampaignScenario:
     recon_depth = int(hub.capability_flags.get("recon_depth", 0))
     if recon_depth <= 0 or not scenario.uncertainty.unknown_fields:
@@ -546,7 +636,7 @@ def apply_recon(hub: HubState, scenario: CampaignScenario) -> CampaignScenario:
 
 
 def _reward_archetype_from_outcome(outcome: CampaignOutcome) -> str:
-    tags = [tag.upper() for tag in outcome.extracted_artifacts.get("type_tags", [])]
+    tags = [tag.upper() for tag in outcome.extracted_artifacts.type_tags]
     if any("BIO" in tag for tag in tags):
         return "BIOLOGICAL DATA"
     if any("SCHEMATIC" in tag for tag in tags):
@@ -601,28 +691,28 @@ def apply_campaign_outcome(hub: HubState, outcome: CampaignOutcome) -> HubState:
             )
 
     elif outcome.result == "FAILURE":
-        loss = int(outcome.losses.get("archive_loss", 0))
+        loss = int(outcome.losses.archive_loss)
         hub.capability_flags["archive_loss_tolerance"] = max(
             0, hub.capability_flags.get("archive_loss_tolerance", 0) - loss
         )
 
     elif outcome.result == "ABANDONED":
-        loss = int(outcome.losses.get("archive_loss", 0))
+        loss = int(outcome.losses.archive_loss)
         hub.capability_flags["archive_loss_tolerance"] = max(
             0, hub.capability_flags.get("archive_loss_tolerance", 0) - loss
         )
 
-    if outcome.secondary_victories.get("achieved"):
-        secondary_value = len(outcome.secondary_victories["achieved"]) * 0.5 * primary_completion
+    if outcome.secondary_victories.achieved:
+        secondary_value = len(outcome.secondary_victories.achieved) * 0.5 * primary_completion
         if secondary_value >= 0.5:
             hub.capability_flags["subvictory_detection"] = True
 
     hub.campaign_history.append(
         CampaignRecord(
             scenario_id=outcome.scenario_id,
-            region_id=outcome.derived_insights.get("region_id", "UNKNOWN"),
+            region_id=outcome.derived_insights.region_id,
             outcome=outcome.result,
-            difficulty_descriptor=outcome.derived_insights.get("difficulty_descriptor", "UNKNOWN"),
+            difficulty_descriptor=outcome.derived_insights.difficulty_descriptor,
             timestamp=int(time()),
             notes={"secondary_value": primary_completion},
         )
