@@ -1,0 +1,27 @@
+Directory Tree Mapping
+[33m/home/braydenchaffee/Projects/CUSTODIAN/docs[0m
+├── _ai_context
+│   ├── AI_CONTEXT.md
+│   ├── ARCHITECTURE.md
+│   ├── COMMAND_CONTRACT.md
+│   ├── CURRENT_STATE.md
+│   ├── DEVLOG.md
+│   ├── FILE_INDEX.md
+│   ├── ROADMAP.md
+│   └── SIMULATION_RULES.md
+├── Broad_Overview_Design_Rules.md
+├── CommandCenter.md
+├── CONTRACTS_AND_HUB.md
+├── Custodian_Terminal.md
+├── feature_planning
+│   ├── FOCUS.md
+│   ├── HARDEN.md
+│   ├── UI_ENHANCEMENT_DRAFT.md
+│   └── UI_ENHANCEMENT.md
+├── GLOBAL_CONTEXT.md
+├── nvim
+├── PROJECT_MAP.md
+├── README.md
+├── ROADMAP.md
+├── SystemDesign.md
+└── Tutorial_Details.md

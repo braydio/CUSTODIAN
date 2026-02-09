@@ -1,0 +1,2918 @@
+=== Broad_Overview_Design_Rules.md ===
+# Broad Overview and Design Rules
+
+## Core Fantasy (North Star)
+
+You are the last mechanitor, maintaining a static command post in a collapsed interstellar civilization. Information systems are gone. History is fragmented. Factions fight over myths, scraps, and half-understood tech. You do not win by killing them all. You win by preserving, reconstructing, and defending knowledge.
+
+## Why This Theme Works Mechanically
+
+Post-apoc + spacer tech + Foundation-like ideas create procedural permission:
+
+- Enemies can vary wildly without feeling random.
+- Tech levels can regress, hybridize, or mutate.
+- Ideology can matter as much as biology.
+- Knowledge is the scarce resource.
+
+This lets you generate who attacks, why they attack, and how they attack without hand-authoring factions.
+
+## Campaign Goal
+
+Reconstruction, not domination. End campaigns when enough truth is recovered, not when enemies are gone.
+
+Examples of long-term objectives:
+
+- Rebuild a lost star map.
+- Reactivate a dormant network.
+- Restore an archive AI.
+- Assemble a transmission that can outlast you.
+
+## Progression Pillars (Three Tracks)
+
+### 1) Knowledge (Primary Progress)
+
+- Fragments of history, science, culture, and technology.
+- Unlocks systems and changes enemy behavior.
+- Knowledge is not XP. It changes what exists in the world.
+
+### 2) Infrastructure (Base Growth)
+
+Physical manifestation of recovered knowledge. Infrastructure answers: "What can my command post now sustain?"
+
+Core systems:
+
+- Power: reactors, scavenged generators, unstable relic tech. Scarcity creates tradeoffs.
+- Fabrication: converts materials into defenses. Advanced fabrication requires knowledge.
+- Defense Grid: walls, turrets, drone bays, shield emitters. Defenses degrade or malfunction.
+- Data Core: stores recovered knowledge. Losing it is catastrophic but not instant-fail.
+- Automation: the mechanitor's strength. The base functions when you are absent.
+
+Key rule: infrastructure is vulnerable. You defend capabilities, not hit points.
+
+### 3) Capability / Doctrine (How You Play)
+
+Personal progression via rules, not stats. Examples:
+
+- "Turrets may operate without line-of-sight."
+- "Drones can self-sacrifice to delay enemies."
+- "You may reroute power mid-assault."
+- "One structure per assault may auto-repair."
+
+Unlocked via knowledge synthesis, not leveling.
+
+## Meta-Progression Hub
+
+An archive between campaigns that persists outside any single base.
+
+Persists:
+
+- Discovered truths (canon unlocks).
+- New enemy archetypes (yes, even threats persist).
+- Global doctrines.
+- New expedition biomes.
+- Starting base layouts.
+
+You do not get stronger. You get more informed. This prevents power creep and keeps early assaults meaningful.
+Unlocks exist, but they are justified by accumulated context, not raw success.
+
+## Enemy Generation Rules (Ideology > Form > Tech)
+
+Enemies are generated in layers:
+
+1. Ideology (why they attack)
+   - Preservationists (want your data)
+   - Iconoclasts (destroy old tech)
+   - Cult mechanists (worship broken machines)
+   - Expansionists (resource hunger)
+
+2. Form (what they are)
+   - Humans
+   - Post-humans
+   - Bio-engineered remnants
+   - Autonomous warforms
+   - Hybrid scavenger constructs
+
+3. Technology expression (how they fight)
+   - Crude kinetic weapons
+   - Ritualized tech misuse
+   - Reverse-engineered relics
+   - Elegant but fragile systems
+
+This yields enemies that feel authored without lore dumps.
+
+## Assaults Are Arguments
+
+An assault is a faction saying: "Your way of preserving the past is wrong."
+
+Mechanically:
+
+- They counter what you rely on.
+- They exploit weaknesses your base has revealed.
+- They adapt over time.
+
+Examples:
+
+- Overuse shields leads to EMP cultists.
+- Overuse drones leads to signal-jammers.
+- Overuse walls leads to burrowers and sappers.
+
+## Base Form Factor (Lock This)
+
+A static base for a campaign is the correct call. It creates attachment, long-term planning, and meaningful loss. You are anchored. The world comes to you.
+
+Winning hybrid: sectorized static outpost.
+
+- Fixed footprint.
+- Divided into sectors (rooms/zones) connected by chokepoints and corridors.
+- Outside terrain matters.
+- You place systems, not infinite walls.
+- Enemies attack from directions, not arbitrary tiles.
+
+Concrete base rules:
+
+- Core sector plus 4-6 peripheral sectors (tutorial uses 10 total).
+- Each sector has entry points, power capacity, defense slots.
+- You cannot expand infinitely.
+- You can reinforce, reroute, or abandon sectors.
+
+## Initial Base Layout (Strong Starting State)
+
+Start with:
+
+- 1x Fabricator
+- 1x Power Bank
+- 1x Basic Defense
+- The mechanitor
+
+This forces expeditions immediately and keeps early assaults personal. The base should feel like it will not survive long without intervention.
+
+## Mechanitor as Combatant (Soft Fail)
+
+- Powerful but fragile.
+- Can engage enemies directly, repair defenses, reroute systems, trigger emergency abilities.
+- If downed: base continues autonomously; some systems become unavailable; you reconstitute after the assault (costly, not free).
+
+Campaign does not end when the mechanitor goes down. Loss reduces agency, not existence.
+
+## Recon and Gathering (Concrete)
+
+Early expeditions should be:
+
+- Short (3-5 minutes)
+- Close to base
+- Low enemy density
+- High information yield
+
+Activities:
+
+- Scan wreckage
+- Recover loose materials
+- Activate dormant sensors
+- Fight small patrols
+- Discover faction presence
+
+Outputs:
+
+- Scrap (fabrication fuel)
+- Power components
+- Sensor data
+- Threat indicators
+
+You are learning where danger will come from.
+
+## First 30-60 Minutes (Tutorial Flow)
+
+1. Campaign start: drop pods, brief scan, power bank online, fabricator partial, one automated turret.
+2. Establish sensors: perimeter sensors, motion scanners, signal intercepts. Until this is done, assaults are unpredictable.
+3. Initial recon expeditions: 2-3 short trips, light resistance, learn who is nearby.
+4. Base reinforcement: add one defense, upgrade power, reinforce a weak angle.
+5. First assault: small wave, tests one axis, survivable, teaches positioning and repair.
+6. Loop begins: recon, build, assault, repair, learn.
+
+## Failure and Pressure
+
+Failure should hurt but not end the campaign immediately.
+
+- Lose a wing of the base.
+- Corrupt stored knowledge.
+- Force a doctrine reset.
+- Lock a tech branch.
+
+Campaign ends when the core archive is destroyed or the reconstruction goal is completed.
+
+## Campaign Arc
+
+1. Stabilization: weak base, small assaults, scraps of truth.
+2. Escalation: factions specialize, assaults become targeted, base identity solidifies.
+3. Revelation: truths contradict assumptions, enemies shift behavior, endgame objective emerges.
+4. Final pressure: sustained assaults, permanent tradeoffs, last reconstruction push.
+
+## Presentation and Scope
+
+Start with 3D presentation and 2.5D gameplay.
+
+- Isometric or fixed camera.
+- No free-look at first.
+- Grid or sector placement.
+- Readability over realism.
+
+Avoid early:
+
+- Full physics.
+- Free camera.
+- Complex pathing.
+
+## What Persists vs Resets
+
+- Lose: resources, ship progress, peripheral sectors.
+- Keep: knowledge, schematics, doctrines.
+
+Matter is fragile. Knowledge endures.
+
+## Decisions to Lock Next
+
+Pick one in each category to unblock implementation:
+
+1. Base form factor: circular outpost, linear facility, or asymmetric ruin.
+2. First reconstruction objective type: archive, network, AI, or defense system.
+3. Early combat lethality: arcade, tactical, or lethal-but-forgiving.
+
+
+
+=== CommandCenter.md ===
+
+# Command Center: Power Routing & Awareness System
+
+## Core design principle (lock this)
+
+> **The Command Center does not make you stronger.
+> It makes you faster, smarter, and less wasteful.**
+
+Everything you proposed fits that perfectly.
+
+---
+
+## 1. Power as a hard, visible constraint (excellent call)
+
+### Global rule
+
+* Total available power is **insufficient to run all systems at once**
+* Every defense, sensor, and utility draws power
+* Power is **not abstract** — it’s a routed resource
+
+This immediately creates:
+
+* Tradeoffs
+* Planning
+* Failure modes that feel fair
+
+---
+
+## 2. Power routing modes (this is the heart of it)
+
+### A. Command Center routing (strategic control)
+
+**Only available while physically in the Command Center**
+
+From the console, you can:
+
+* Instantly:
+
+  * Power on/off systems
+  * Reroute power between sectors
+  * Prioritize systems (defense > sensors > fabrication, etc.)
+* See:
+
+  * Exact power draw
+  * System readiness
+  * Time-to-online (if applicable)
+
+This is **zero friction**, by design.
+
+> Flicking switches is the *reward* for staying in command.
+
+---
+
+### B. Field power manipulation (tactical, costly)
+
+When **not** in the Command Center:
+
+* You **cannot reroute global power**
+* You **can**:
+
+  * Physically power down a module using your multitool
+  * Carry a **limited personal power buffer**
+  * Use that buffer to power up **one module at a time**
+
+This is brilliant because it creates:
+
+* Travel cost
+* Opportunity cost
+* Risk
+
+#### Field rules (clean & fair)
+
+* Powering down a module:
+
+  * Takes time
+  * Requires proximity
+  * May expose you to danger
+* Powering up a module in the field:
+
+  * Uses your personal buffer
+  * Buffer is limited
+  * Only supports basic functionality
+* To restore full capacity:
+
+  * The system must be powered normally
+  * Or you must return to Command Center
+
+This means:
+
+> You can **patch problems**, not optimize the base from the field.
+
+Exactly right.
+
+---
+
+## 3. Autopilot + Power interaction (important clarity)
+
+Autopilot behavior remains unchanged **except**:
+
+* Autopilot only activates **powered systems**
+* It will:
+
+  * Use what’s online
+  * Never reroute or rebalance power
+* If a sector loses power:
+
+  * Defenses there go dark
+  * Autopilot does not compensate
+
+This reinforces:
+
+> Power routing *is* command authority.
+
+---
+
+## 4. Awareness: Field map vs Command view (excellent asymmetry)
+
+This is one of the strongest ideas you’ve introduced.
+
+---
+
+### Field map (imperfect, inferred)
+
+When on foot, you have access to a **sector map overlay**:
+
+You see:
+
+* Sector boundaries
+* Rough hostile count (e.g. “few / several / many”)
+* Enemy **activity state**, not position:
+
+  * Entering
+  * Moving through
+  * Lollygagging
+  * Vandalizing
+  * Stealing
+  * Indexing (iconoclast behavior)
+
+You do **not** see:
+
+* Exact positions
+* Facing
+* Health
+* Ammo
+* Micro-behaviors
+
+This creates uncertainty and forces judgment calls.
+
+---
+
+### Command Center view (true intelligence)
+
+From the Command Center, you get:
+
+* Live enemy positions within sectors
+* Movement vectors
+* Health state (approximate)
+* Activity timelines
+* Zone dwell predictions
+* Power and defense coverage overlays
+
+This makes the Command Center feel like:
+
+> A god’s-eye view earned through positioning, not menus.
+
+And crucially:
+
+> Leaving it **hurts**.
+
+---
+
+## 5. How this creates real decisions (example)
+
+Your earlier hypothetical becomes *actual gameplay*:
+
+> You see raiders pushing the gate
+> Iconoclasts are indexing the turret wreck
+> Zealots are wandering into the fuel depot
+
+From the Command Center:
+
+* You cut power to fuel depot traps (save power)
+* You power the gate barricade
+* You delay turret activation to let zealots thin themselves
+
+Then:
+
+* You leave command
+* Autopilot locks in those choices
+* You physically sprint to the lobby to repair a turret
+* Meanwhile, something changes elsewhere
+
+That’s *strategy under pressure*, not APM.
+
+---
+
+## 6. Failure tolerance (you handled this well)
+
+Because:
+
+* Autopilot is competent
+* Field tools exist
+* Power buffers exist
+
+You never create a “wrong choice = instant loss” situation.
+
+Instead:
+
+> Wrong choices become **expensive**, not fatal.
+
+That’s the correct difficulty curve.
+
+---
+
+## 7. Minimal tuning suggestions (small, safe)
+
+Only two guardrails to add later (not now):
+
+1. **Power routing cooldown**
+
+   * Prevent flickering abuse
+2. **Personal buffer recharge delay**
+
+   * Prevent infinite field juggling
+
+Neither are required for the tutorial.
+
+---
+
+## 8. Command Center Abilities — Final List (Tutorial)
+
+Lock these in:
+
+1. **Live tactical intelligence**
+2. **Instant global power routing**
+3. **Defense activation timing**
+4. **Target prioritization**
+5. **Power budgeting & load shedding**
+
+That’s more than enough.
+
+---
+
+## Verdict (no hedging)
+
+This system is:
+
+* Cohesive
+* Thematic
+* Mechanically deep
+* Readable
+* Totally implementable
+
+Most importantly:
+
+> It makes *where you stand* matter more than what you click.
+
+That’s rare and very good design.
+
+---
+
+## Next step (this is the real fork)
+
+You’re now at a point where one choice shapes *everything* downstream.
+
+Pick **one** to lock next:
+
+1. **Power numbers**
+
+   * How many systems can be live early?
+2. **Command Center action economy**
+
+   * Cooldowns vs attention vs limits
+3. **Personal power buffer**
+
+   * Size, recharge, emergency use
+
+Any one of these turns this into a concrete prototype spec.
+
+
+
+=== CONTRACTS_AND_HUB.md ===
+
+
+---
+
+## First: lock the *ontological truth* of the universe
+
+Before guilds, before contracts-as-social-fiction, before recon mechanics, you need to answer one question:
+
+> **Who asserts that a campaign exists?**
+
+Not who *offers* it.
+Who asserts its **reality**.
+
+There are only three coherent answers.
+
+---
+
+## Option A — External Authority (Guild / Faction / Network)
+
+**Model**
+
+* Campaigns are “contracts” issued by an external organization.
+* Recon is intelligence gathering.
+* Rewards are payments / access / favors.
+
+**What this implies**
+
+* You are not alone.
+* The universe still has institutions.
+* Knowledge is transactional.
+* The hub is an outpost or terminal node.
+
+**What this breaks**
+
+* Your terminal-first austerity
+* The “final custodian” tone
+* The sense of epistemic decay
+
+This model tends to drift toward:
+
+> “mission select screen with lore”
+
+It is coherent, but it is **not aligned** with your current architecture or tone.
+
+---
+
+## Option B — Autonomous Universe (Signals, Drift, Residual Systems)
+
+**Model**
+
+* Campaigns are *detected*, not offered.
+* Recon is signal interpretation.
+* Rewards are recovered truths.
+* No one is assigning you tasks.
+
+**What this implies**
+
+* The universe still *moves*, but blindly.
+* Campaign worlds exist whether you go or not.
+* You are reacting to entropy.
+
+This aligns better, but still has a problem:
+
+> Who decides *which* campaigns are actionable?
+
+You still need a selector.
+
+---
+
+## Option C — The Custodian As the Selector (Correct for You)
+
+This is the one your docs already imply.
+
+### Canonical truth (reconciled)
+
+> **Campaigns are contracts as an interface, not as a social fiction.**
+
+The Custodian is:
+
+* alone
+* institutional memory
+* archivist, not agent
+* trying to keep the universe *legible*
+
+Campaigns are not “jobs”.
+They are **self-authored operational commitments**.
+
+---
+
+## Lock this in (this matters)
+
+### The hub is **not** a place of commerce or coordination.
+
+The hub is:
+
+> A persistent operational archive
+> where the Custodian decides
+> *what is worth knowing next*.
+
+You are not staying sane by “staying busy”.
+You are staying sane by **maintaining coherence**.
+
+That’s the tone you’re circling.
+
+---
+
+## Now: what is the hub *mechanically*?
+
+Strip away narrative for a second.
+
+### The hub is a **knowledge state machine**.
+
+It tracks:
+
+```text
+- What is known
+- What is suspected
+- What is irretrievably lost
+- What patterns appear to repeat
+```
+
+Not power. Not resources. Not currency.
+
+Those “persistent bonuses” are not buffs.
+They are **interpretive leverage** that unlocks capability and choice.
+
+---
+
+## What does a successful campaign actually return?
+
+You said it correctly already:
+
+> artifact, knowledge, schematic, lost tech
+
+But those are *surface forms*.
+
+Mechanically, every campaign returns one of two things:
+
+### 1. A **Concrete Recovery**
+
+* A device
+* A process
+* A material fact
+
+### 2. A **Contextual Revelation**
+
+* Who made it
+* Why it exists
+* What came before / after
+* Whether it was understood by those who used it
+
+These two together form a **Hub Knowledge Node**.
+
+---
+
+## Hub Knowledge Nodes (this is the real currency)
+
+Think in terms of nodes, not items.
+
+```python
+KnowledgeNode:
+  category        # biotech, propulsion, governance, cognition, warfare
+  origin          # civilization / era / unknown
+  confidence      # inferred, partial, confirmed
+  implications    # what this recontextualizes
+```
+
+This is how:
+
+> “How long has it been there?”
+> “Is that a long time compared to others?”
+
+…becomes mechanically meaningful.
+
+Time is *relative* across campaign worlds.
+The hub is the only place where **comparative time exists**.
+
+---
+
+## So how do campaign offers actually appear?
+
+Not as offers from people.
+
+### Campaigns are **structured scenario proposals**
+
+Each campaign proposal is:
+
+> A generated scenario bundle
+> surfaced by the hub
+> to resolve a gap in understanding.
+
+Example (not text, but structure):
+
+```text
+KNOWN:
+- Multiple worlds show evidence of rapid genetic divergence.
+UNKNOWN:
+- Whether divergence was intentional or environmental.
+HYPOTHESIS:
+- A shared biotech precursor may exist.
+```
+
+That hypothesis spawns **campaign archetypes**.
+
+---
+
+## Campaign archetypes (important)
+
+These are *not* locations.
+They are **investigative shapes**.
+
+Examples:
+
+* **Recovery**: something intact exists
+* **Excavation**: fragments remain
+* **Containment**: something is still active
+* **Observation**: the system is ongoing
+* **Interdiction**: prevent further loss
+
+Each archetype constrains:
+
+* sector layout tendencies
+* threat behavior
+* failure consequences
+* reward types
+
+This is where procedural generation lives safely.
+
+---
+
+## What is recon, then?
+
+Recon is **hub-side refinement**, not scouting.
+
+Recon does **not** happen in campaign worlds.
+It happens in the hub as a scenario refinement pass.
+
+Recon answers:
+
+* How confident is this hypothesis?
+* What kind of failure is likely?
+* What kind of knowledge is at stake?
+
+Mechanically, recon:
+
+```text
+- Narrows unknown ranges
+- Reveals one categorical truth
+- Reduces surprise, not danger
+```
+
+Recon never guarantees safety.
+It only reduces *misinterpretation*.
+
+---
+
+## “How can a campaign mutate the hub if we don’t know what it is?”
+
+This is the core question — and the answer is the heart of the game.
+
+### You never fully know.
+
+Campaign outcomes mutate the hub in **three ways**, regardless of success:
+
+1. **Add knowledge**
+2. **Invalidate hypotheses**
+3. **Mark irretrievable loss**
+
+Even a failure tells you something *can no longer be known*.
+
+That’s why archive loss is existential.
+
+---
+
+## Persistent bonuses reframed correctly
+
+Those “bonuses” are not:
+
+* damage boosts
+* survival buffs
+* power scaling
+
+They are things like:
+
+* improved classification
+* earlier recognition of patterns
+* reduced ambiguity in future STATUS reports
+* access to new archetypes of questions
+
+In other words:
+
+> The universe becomes more legible, not safer.
+
+---
+
+## Answering your direct questions cleanly
+
+> **How do we get campaign offers?**
+
+The hub surfaces **scenario proposals** based on gaps in accumulated knowledge.
+
+> **Is the hub world populated?**
+
+No. Presence undermines the premise.
+Any “voices” should be residual systems, not actors.
+
+> **Are we alone?**
+
+Yes — functionally and institutionally.
+That loneliness is not narrative flavor; it is a design constraint.
+
+> **Is recon autonomous or gameplay?**
+
+Recon is a **hub action** that trades *time / attention* for *clarity*.
+It refines categories, not stats.
+
+> **How do we know outcomes before doing the campaign?**
+
+You don’t.
+You only know **what kind of truth is at stake**.
+
+---
+
+## The key lock-in (write this somewhere)
+
+> CUSTODIAN is not about winning campaigns.
+> It is about deciding **what must be known before it disappears forever**.
+
+Everything you’ve built so far supports this.
+Nothing needs to be undone.
+
+---
+
+## What to do next (still scaffolding)
+
+If you want the *right* next step, it is not implementation.
+
+It is to write **one short spec**:
+
+> **Hub Knowledge Model & Campaign Hypothesis Spec**
+
+That doc should define:
+
+* KnowledgeNode types
+* Hypothesis generation rules
+* Archetype list (small)
+* What recon can and cannot reveal
+
+No prose. No lore. Just structure.
+
+If you want, I can draft that spec cleanly next.
+
+
+
+=== Custodian_Terminal.md ===
+# Custodian Terminal UI
+
+Text-only terminal UI prototype for the custodian interface. The boot sequence runs from `custodian-terminal/boot.js`, while `custodian-terminal/terminal.js` owns command input, transcript rendering, and backend command submission. Input stays disabled through boot and the system log, then unlocks when command mode is active.
+
+## Behavior Notes
+
+- Boot lines render with a type-in effect plus audio cues (hum + relay + beep + alert + power_cycle), then a system log prints before command mode.
+- The terminal module tracks a buffered history and appends command/response transcript lines.
+- System log introduces `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HARDEN`, and `HELP` before input unlock.
+- Prompt input posts to `POST /command` with `{raw}` and appends returned `lines` (served by `custodian-terminal/server.py`).
+- Sector map UI is a read-only projection fetched from `GET /snapshot` after state-changing commands (`WAIT`, `RESET`, `REBOOT`).
+- System panel mirrors snapshot metadata (time, threat, assault, posture, archive losses) without replacing `STATUS`.
+- Prompt interaction stays minimal by design and remains inside the terminal frame.
+
+
+
+=== GLOBAL_CONTEXT.md ===
+This global context file details the relationship between the persistent Hub World and the transient Campaign Worlds
+
+1. **States the structure precisely** (to make sure we lock it correctly)
+2. **Designates the systems that sit inside that structure** (scenarios, rewards, partial success)
+3. **Describes a concrete implementation roadmap** that fits your existing engine without blowing it up
+
+
+---
+
+# 0. Canonical Structure (Locked)
+
+## Terminology (Normalized)
+
+- Contract: the interface object that formalizes the Custodian's operational commitment.
+- Scenario: a generated configuration bundle surfaced by the hub.
+- Campaign: an instantiated transient world created from a scenario.
+- Reward: a hub mutation (unlock, capability, archive entry), justified by accumulated context.
+
+## Two Worlds, Two Timescales
+
+### 1. **The Hub (Persistent World)**
+
+* Exists across campaigns
+* Accumulates *meta-progress*
+* Surfaces campaign scenario proposals
+* Is the only place where permanence exists
+
+### 2. **Campaign World (Transient World)**
+
+* One per accepted campaign
+* Has its own base, sectors, threats, rules
+* Is **discarded** on completion / failure / abandonment
+* Cannot be revisited
+
+> The campaign world is *expendable*.
+> The hub world is *historical*.
+
+This distinction is critical and correct.
+
+---
+
+## State Transitions (Authoritative)
+
+```
+HUB
+ ├─ generate campaign scenario proposals
+ ├─ player selects scenario
+ └─ ACCEPT → instantiate CampaignWorld
+
+CAMPAIGN WORLD
+ ├─ run expeditions
+ ├─ collect loot / progress victory condition
+ ├─ WIN | LOSE | ABANDON
+ └─ RETURN → apply rewards → destroy campaign state
+
+HUB (mutated)
+```
+
+There is **no free travel**.
+There is **no shared map**.
+There is **no rollback**.
+
+---
+
+# 1. Campaign Scenarios (Procedural, Rated, Selectable)
+
+This replaces the idea of “worsening conditions over time” with something *cleaner*.
+
+## Campaign Scenario Definition
+
+A scenario is a **contract interface**, not a social fiction.
+
+### Scenario Fields (Spec)
+
+```python
+CampaignScenario:
+  id
+  difficulty_rating        # e.g. 1–5, descriptive not numeric-only
+  biome / setting
+  core_threat_type
+  victory_condition
+  constraints              # modifiers / rules
+  reward_profile           # types + ranges
+```
+
+### Difficulty ≠ Linear Punishment
+
+Difficulty controls:
+
+* enemy density / aggression
+* expedition risk
+* resource scarcity
+* victory condition complexity
+
+But:
+
+* you *choose* it
+* higher difficulty → higher *potential* rewards
+* not all rewards are strictly better
+
+This gives **agency without power creep**.
+
+---
+
+## Victory Conditions (Procedural but Typed)
+
+Victory conditions should be **structured templates**, not bespoke logic.
+
+Examples:
+
+* **Stabilization**
+
+  * hold key sectors for X ticks
+* **Recovery**
+
+  * extract N artifacts of type Y
+* **Neutralization**
+
+  * eliminate / suppress threat source
+* **Containment**
+
+  * prevent escalation beyond threshold
+
+Each campaign rolls:
+
+* 1 primary condition
+* 0–2 modifiers (time pressure, attrition, hidden info)
+
+---
+
+# 2. Rewards: Two Categories, Cleanly Separated
+
+This is the most important correction you made, and it’s right.
+
+---
+
+## A. Campaign Rewards (Hub-Persistent)
+
+These are granted **only at campaign resolution**.
+
+They:
+
+* unlock things at the Hub
+* permanently modify future possibilities
+* are *the real progression*
+
+### Campaign Reward Types
+
+These should be **thematically tied to the victory condition**.
+
+Examples:
+
+#### 1. Hub Unlocks
+
+* new scenario archetypes
+* new difficulty tiers
+* new victory condition templates
+
+#### 2. Meta-Upgrades
+
+* increased campaign slot count
+* better scenario intel before acceptance
+* reduced penalties for abandonment
+
+#### 3. Archive / Knowledge Entries
+
+* unlock lore
+* unlock *interpretive context* for future scenarios
+* affect final evaluation / ending
+
+> These rewards answer:
+> **“What does the Hub learn from this campaign?”**
+
+---
+
+## B. Expedition Loot (Campaign-Scoped)
+
+These exist **only inside the active campaign**.
+
+They are:
+
+* tools to complete the operational commitment
+* not progression in themselves
+
+### Expedition Loot Types (Locked)
+
+1. **Upgrades (Campaign-Only)**
+
+   * defense improvements
+   * efficiency boosts
+   * local tech
+   * discarded at campaign end
+
+2. **Consumables**
+
+   * emergency reroutes
+   * temporary suppressions
+   * one-time rescues
+
+3. **Victory Condition Advancement Items**
+
+   * keys
+   * data fragments
+   * control nodes
+   * partial objectives
+
+These are **procedurally themed** to the campaign.
+
+---
+
+# 3. Partial Success / Incomplete Victories (Both Levels)
+
+This is where your design gets teeth without cruelty.
+
+---
+
+## A. Campaign-Level Partial Victory
+
+Campaigns do **not** need binary outcomes.
+
+### Resolution States
+
+* **Complete Victory**
+
+  * full hub rewards
+* **Partial Victory**
+
+  * reduced or altered hub rewards
+* **Failure**
+
+  * no reward, but *recorded*
+* **Abandonment**
+
+  * penalties, but sometimes strategic
+
+### Example
+
+Victory condition: *Recover 3 Archives*
+
+* Recovered 3 → full reward
+* Recovered 2 → partial reward
+* Recovered 1 → minor unlock
+* Recovered 0 → failure
+
+This encourages:
+
+* cutting losses
+* tactical withdrawal
+* risk assessment
+
+---
+
+## B. Expedition-Level Partial Completion
+
+Same logic, smaller scale.
+
+An expedition might:
+
+* retrieve a damaged artifact
+* lose part of the payload
+* extract intel but not material
+
+Which then feeds into:
+
+* partial progress toward campaign victory
+* degraded rewards
+* new constraints
+
+---
+
+# 4. How This Fits Your Existing Engine (Important)
+
+You do **not** need to rewrite what you’ve built.
+
+### What Changes
+
+* `GameState` becomes **CampaignState**
+* Hub gets its own **HubState**
+* CampaignState is instantiated *from* HubState
+* On resolution:
+
+  * produce a `CampaignOutcome`
+  * apply it to HubState
+  * discard CampaignState
+
+### What Stays the Same
+
+* terminal command processing
+* deterministic ticks
+* assault logic
+* expedition logic
+* transient bases / sectors
+
+This is a **layering change**, not a rewrite.
+
+---
+
+# 5. Concrete Roadmap (Ordered, Buildable)
+
+## Phase 1 — Structural Split
+
+* Introduce `HubState`
+* Wrap current world sim as `CampaignState`
+* Implement accept / resolve flow (no rewards yet)
+
+## Phase 2 — Scenario Generator
+
+* Implement `CampaignScenario` templates
+* Difficulty-based parameter scaling
+* Scenario selection UI (terminal list)
+
+## Phase 3 — Campaign Rewards
+
+* Add Hub unlocks
+* Add persistent capability flags
+* Track campaign history
+
+## Phase 4 — Partial Victory System
+
+* Resolution grading
+* Reward scaling
+* Abandonment rules
+
+## Phase 5 — Thematic Procedural Rewards
+
+* Tie reward profiles to victory conditions
+* Add incomplete / degraded artifacts
+* Let the Hub remember *how* you won
+
+---
+
+# 6. Why This Is Strong (Reality Check)
+
+This structure gives you:
+
+* **Finite, winnable arcs** (campaigns)
+* **Long-term meaning** (hub persistence)
+* **Procedural replayability without grind**
+* **Failure that still informs history**
+* **A natural endgame** (Hub saturation / closure)
+
+And — most importantly —
+
+> The player is not accumulating power.
+> They are accumulating *context*.
+
+That’s rare, and it fits your tone perfectly.
+
+---
+
+If you want next, the best follow-up would be one of:
+
+* a formal `CampaignScenario` + `CampaignOutcome` data model
+* terminal command flow for accepting / abandoning campaigns
+* or a concrete tutorial campaign (airfield) rewritten using this structure as the template
+
+This is no longer fuzzy. You’ve got a real game shape now.
+
+
+
+=== nvim ===
+
+This document is intentionally **non-poetic** and **implementation-forward**.
+
+---
+
+# Hub and Campaign Canonical Model — CUSTODIAN
+
+## Status
+
+**Canonical.**
+This document defines the authoritative relationship between the Hub World and Campaign Worlds and supersedes conflicting interpretations in earlier design drafts.
+
+If any other document disagrees with this model, **this document wins** unless explicitly revised.
+
+---
+
+## 1. Core Premise
+
+CUSTODIAN operates on a **two-layer world model**:
+
+* A **persistent Hub World** that accumulates history, knowledge, and long-term capability.
+* A series of **transient Campaign Worlds** that are instantiated, resolved, and destroyed.
+
+The player’s role is not to accumulate power directly, but to **formalize intent**, **execute operations**, and **preserve context** across an increasingly fragmented universe.
+
+---
+
+## 2. The Hub World (Persistent)
+
+### Definition
+
+The **Hub** is the only persistent world state in the game.
+
+It represents:
+
+* the Custodian’s operational continuity
+* accumulated historical knowledge
+* unlocked capabilities and future possibility space
+
+The Hub does **not** simulate combat, movement, or geography in the same way as campaigns.
+
+The Hub **exists outside time pressure**.
+
+---
+
+### Responsibilities of the Hub
+
+The Hub is responsible for:
+
+1. **Generating Campaign Offers**
+2. **Storing Persistent Outcomes**
+3. **Unlocking Future Possibilities**
+4. **Providing Context for Interpretation**
+
+The Hub does **not**:
+
+* issue quests as a social actor
+* contain NPC factions offering jobs
+* act as an economy or marketplace
+
+---
+
+### Hub State (Conceptual)
+
+```python
+HubState:
+  known_archetypes
+  unlocked_scenarios
+  difficulty_access
+  historical_records
+  interpretive_context
+  capability_flags
+  campaign_history
+```
+
+These fields represent **access, knowledge, and classification**, not raw stat increases.
+
+---
+
+## 3. Campaign Worlds (Transient)
+
+### Definition
+
+A **Campaign World** is a fully instantiated, self-contained simulation created from a selected scenario.
+
+Each campaign:
+
+* has its own base layout
+* has its own sectors and threats
+* operates under time pressure
+* is destroyed on resolution
+
+Campaign Worlds are **disposable by design**.
+
+> The campaign world is expendable.
+> The hub world is historical.
+
+---
+
+### Campaign State (Conceptual)
+
+```python
+CampaignState:
+  scenario_id
+  difficulty
+  victory_condition
+  constraints
+  world_map
+  sectors
+  threats
+  time
+  expedition_state
+  local_upgrades
+```
+
+Campaign state is **never merged** back into the Hub directly.
+
+Only **outcomes** propagate.
+
+---
+
+## 4. Campaign Offers (Canonical Interpretation)
+
+### Structural Truth
+
+Campaign offers are **contracts as an interface**, not as a social fiction.
+
+They are:
+
+* generated by the Hub
+* selected by the player
+* formal commitments to an operation
+
+They are **not**:
+
+* issued by guilds
+* requested by NPCs
+* commercial jobs
+
+---
+
+### Narrative Interpretation
+
+The Custodian is alone.
+
+Campaigns are **self-authored operational assertions**:
+
+* “This is worth investigating.”
+* “This is worth preserving.”
+* “This threat must be contained.”
+
+The “contract” exists to:
+
+* formalize intent
+* bound scope
+* define success conditions
+
+---
+
+### Campaign Scenario Definition
+
+```python
+CampaignScenario:
+  id
+  difficulty_rating        # descriptive tier
+  biome / setting
+  core_threat_type
+  victory_condition
+  constraints
+  reward_profile
+```
+
+---
+
+## 5. Recon (Pre-Campaign Refinement)
+
+### Role of Recon
+
+Recon is a **Hub-side process** that refines understanding of a campaign scenario *before* instantiation.
+
+Recon:
+
+* reduces uncertainty
+* reveals categories, not specifics
+* informs risk assessment
+
+Recon does **not**:
+
+* guarantee outcomes
+* trivialize difficulty
+* remove danger
+
+---
+
+### Recon Output Examples
+
+* Threat classification confidence
+* Likely victory condition type
+* Expected loss vectors
+* Reward category hints
+
+Recon modifies **metadata**, not the simulation itself.
+
+---
+
+## 6. Campaign Resolution and Outcomes
+
+Campaigns resolve into **graded outcomes**, not binary success/failure.
+
+### Resolution States
+
+* **Complete Victory**
+* **Partial Victory**
+* **Failure**
+* **Abandonment**
+
+All resolutions are **recorded**.
+
+Only some yield rewards.
+
+---
+
+### Campaign Outcome Object
+
+```python
+CampaignOutcome:
+  resolution_type
+  objectives_completed
+  objectives_failed
+  artifacts_recovered
+  losses_sustained
+  degradation
+```
+
+---
+
+## 7. Rewards and Persistence (Critical Distinction)
+
+### A. Campaign Rewards (Hub-Persistent)
+
+These are applied **only on campaign resolution**.
+
+They mutate the Hub by:
+
+* unlocking new scenario archetypes
+* expanding difficulty access
+* enabling new victory condition templates
+* adding historical or interpretive records
+
+They represent:
+
+> **What the Hub now understands or can attempt next.**
+
+They are **not** raw stat buffs.
+
+---
+
+### B. Expedition Loot (Campaign-Scoped)
+
+These exist **only within an active campaign**.
+
+Types:
+
+1. Campaign-only upgrades
+2. Consumables
+3. Victory condition advancement items
+
+All are discarded at campaign end.
+
+---
+
+## 8. Partial Success (Both Levels)
+
+### Campaign-Level Partial Victory
+
+Campaigns reward **degree of completion**, not perfection.
+
+Example:
+
+* Recover 3/3 archives → full reward
+* Recover 2/3 → partial unlock
+* Recover 1/3 → minimal record
+* Recover 0 → failure
+
+Partial success:
+
+* encourages withdrawal
+* rewards judgment
+* preserves narrative continuity
+
+---
+
+### Expedition-Level Partial Completion
+
+Individual expeditions may:
+
+* retrieve damaged artifacts
+* lose payload
+* gain intel without material
+
+These feed into campaign-level outcomes.
+
+---
+
+## 9. State Transitions (Authoritative)
+
+```
+HUB
+ ├─ generate campaign scenarios
+ ├─ recon (optional refinement)
+ ├─ player selects scenario
+ └─ ACCEPT → instantiate CampaignWorld
+
+CAMPAIGN WORLD
+ ├─ expeditions
+ ├─ assaults
+ ├─ progress victory condition
+ ├─ WIN | PARTIAL | FAIL | ABANDON
+ └─ RETURN → produce CampaignOutcome → destroy CampaignState
+
+HUB (mutated)
+```
+
+There is:
+
+* no free travel
+* no shared map
+* no rollback
+
+---
+
+## 10. Implementation Alignment
+
+### Required Structural Mapping
+
+* `GameState` → **CampaignState**
+* Introduce `HubState`
+* Campaign instantiation consumes a `CampaignScenario`
+* Campaign resolution produces a `CampaignOutcome`
+* HubState applies outcome and persists changes
+
+---
+
+### What Does Not Change
+
+* Terminal command loop
+* Deterministic ticks
+* Assault resolution logic
+* World-state simulation structure
+
+This is a **layering change**, not a rewrite.
+
+---
+
+## 11. Design North Star (Locked)
+
+The player does not accumulate power.
+
+The player accumulates:
+
+* context
+* classification
+* tolerance
+* foresight
+
+Victory is not domination.
+
+Victory is **preservation with understanding**.
+
+---
+
+## 12. End of Document
+
+This document defines the **canonical relationship** between the Hub and Campaign Worlds.
+
+All future systems (Recon, Campaign Offers, Rewards, Endgame) must align with this model.
+
+If ambiguity arises, **this model is the reference point**.
+
+
+
+=== PROJECT_MAP.md ===
+# PROJECT MAP — “Airfield Campaign (Tutorial)”
+
+## 1. Core Fantasy (Locked)
+
+* Post-apocalyptic spacer tech world
+* Complete collapse of information systems
+* You are a last relic of a forgotten institution, **The Custodian**, preserving and reconstructing knowledge
+* Victory is **survival + reconstruction**, not extermination
+* Enemies are driven by **ideology, scarcity, and misunderstanding**
+
+---
+
+## 2. High-Level Game Loop (Locked)
+
+```
+Recon / Expedition
+        ↓
+Return with knowledge + materials
+        ↓
+Build / reinforce base sectors
+        ↓
+Assault (defense under pressure)
+        ↓
+Repair, recover, adapt
+        ↓
+Repeat until campaign objective achieved or lost
+```
+
+Campaign progress is **knowledge-driven**, not stat-driven.
+
+---
+
+## 3. Campaign Structure (Tutorial)
+
+### Campaign Premise
+
+* Starts on **home planet**
+* Setting: **Destroyed military airfield**
+* Primary objective: **Rebuild a ship** to reach the Archive Hub
+* World remains hostile even after escape
+
+### Persistence Rules
+
+* **Knowledge & schematics persist**
+* **Resources & construction progress are fragile**
+* Losing battles sets back material progress, not identity
+
+---
+
+## 4. Base Form Factor (Locked)
+
+### Base Type
+
+* **Static, asymmetrical outpost**
+* Inspired by a **destroyed military airfield**
+* Large footprint → travel time matters
+* Sectorized, not free-form wall building
+
+### Total Sectors (Tutorial)
+
+* **10 total sectors**
+
+  * **2 Critical**
+  * **8 Peripheral**
+
+---
+
+## 5. Critical Sectors (Hard Rules)
+
+### C1 — Command Center
+
+**Role**
+
+* Bridge, comms, security monitors
+* Full tactical intelligence & control ONLY here
+
+**Player Capabilities (When Present)**
+
+* Enemy monitoring (HP state, ammo state, preparedness)
+* Precise defense activation & timing
+* Target prioritization
+* Power routing & overrides
+
+**Autopilot When Absent**
+
+* Base operates with dumb, reactive logic
+
+**Loss Condition**
+
+* If Command Center is overrun or destroyed
+  → **Immediate Battle Lost**
+  → Campaign continues with setbacks
+
+---
+
+### C2 — Goal Sector
+
+**Role**
+
+* Ship construction / reconstruction objective
+* Does NOT provide combat benefit early
+
+**Rules**
+
+* Cannot be abandoned
+* Cannot be rebuilt if destroyed
+
+**Loss Condition**
+
+* Loss = **Campaign Failure**
+
+---
+
+## 6. Peripheral Sectors (Tutorial Set)
+
+(Names may change, structure is locked)
+
+* Main Terminal (near Command)
+* Security Gate / Checkpoint (primary ingress)
+* Hangar A (open, long sightlines)
+* Hangar B (collapsed, ambush routes)
+* Fuel Depot (radiation + explosive hazard)
+* Radar / Control Tower (sensor value, long travel)
+* Service Tunnels (internal shortcuts, sabotage risk)
+* Maintenance Yard (scrap-heavy, far)
+
+**Key Principle**
+
+* You cannot be everywhere
+* Movement = opportunity cost
+* Command presence vs field presence is a constant tradeoff
+
+---
+
+## 7. Custodian (Player Unit)
+
+### Combat Loadout (Tutorial)
+
+* **One melee weapon**
+* **One ranged OR deployable**
+
+  * Not both at once
+
+### On-Foot Capabilities
+
+* Fight enemies directly
+* Repair damaged systems
+* Deploy limited auxiliary defenses
+* Manually trigger systems
+* Draw enemy aggro
+
+### Health & Loss States
+
+* HP reaches zero = **soft loss**
+
+  * Base continues defending
+  * You lose field agency
+* If downed in a **critical sector**
+
+  * **Battle Lost**
+
+---
+
+## 8. Autopilot System (Fully Specified)
+
+### Scope
+
+* Operates **per sector**
+* No cross-sector coordination
+
+### Activation Rules
+
+* If ≥1 enemy in sector → defenses activate
+* If no enemies → defenses disengage
+
+### What Autopilot DOES
+
+* Turrets fire when line-of-sight exists
+* Mines auto-arm
+* Barriers deploy
+* Environmental traps trigger
+* Engages all enemies that enter
+* Never allows enemies to pass unchallenged
+
+### What Autopilot NEVER Does
+
+* No prediction
+* No delayed activation
+* No target prioritization
+* No pre-arming
+* No movement or pursuit
+* No action without enemies present
+
+### Targeting Priority
+
+1. First enemy in sector
+2. Closest visible threat
+3. No threat evaluation
+
+Autopilot is **reliable but dumb** by design.
+
+---
+
+## 9. First Assault — Threat Composition (Locked)
+
+### Total Threat Budget
+
+* **100 Threat Points**
+* Enemies arrive in **phases**, not all at once
+
+---
+
+### Group A — Religious Zealots (30 TP)
+
+* Trio of wanderers (≈20 TP total)
+* One “holy man” (≈10 TP)
+* Melee only, blunt damage
+* Poor awareness, trigger traps
+* Unpredictable, loud, distracting
+
+**Design Role**
+
+* Teach traps
+* Teach target prioritization
+* Low lethality, high chaos
+
+---
+
+### Group B — Iconoclasts (30 TP)
+
+* 2 units (≈15 TP each)
+* Poorly maintained firearms
+* Cautious, observant
+* Avoid traps when possible
+* Interact with cons, schematics, knowledge
+
+**Design Role**
+
+* Teach non-combat threats
+* Teach command-center intel value
+* Cause delayed harm (theft, sabotage)
+
+---
+
+### Group C — Raiders (40 TP)
+
+* 4–6 units
+* Firearms + makeshift melee
+* Moderate coordination
+* Opportunistic looting
+* Mental state variance
+
+**Design Role**
+
+* Baseline combat threat
+* Sustained pressure
+* Multi-zone engagement
+
+---
+
+## 10. Assault Pacing & Spawn Logic
+
+### Spawn Triggers
+
+Next group’s spawn timer begins when:
+
+* Previous group crosses into base
+  **OR**
+* Any enemy from previous group is downed
+
+### Timing
+
+* Semi-random within bounded windows
+* Escalation tied to player success, not clock
+
+---
+
+## 11. Morale System (Locked Concept)
+
+* Each group has morale tied to its threat points
+* Morale decreases via:
+
+  * Unit deaths
+  * Leader death
+  * Trap/environmental damage
+
+### Retreat Condition
+
+* Morale < threshold → group attempts to flee
+
+---
+
+## 12. Victory & Failure Conditions
+
+### Battle Victory
+
+* All enemies neutralized
+  **OR**
+* Remaining enemies retreat
+
+### Battle Loss
+
+* Command Center destroyed
+* Custodian downed in critical sector
+
+### Campaign Loss
+
+* Goal Sector destroyed
+
+---
+
+## 13. Design Pillars (Implicit but Clear)
+
+* Knowledge > Materials
+* Information = power
+* Presence has a cost
+* Enemies have intent
+* Autopilot is safety, not strategy
+* Player mastery = prediction, not reflex
+
+---
+
+## 14. What Is NOT Designed Yet (Intentionally)
+
+* Morale math formulas
+* Command Center action economy
+* Post-assault damage persistence
+* Upgrades beyond tutorial
+* Later factions / non-human enemies
+* Hub meta-progression details
+
+These are **correctly deferred**.
+
+---
+
+## Bottom Line
+
+You now have:
+
+* A complete tutorial campaign
+* A fully specified first assault
+* Clear base topology
+* Explicit loss rules
+* A coherent command vs field tension
+* Systems that can be simulated and coded
+
+
+
+=== README.md ===
+# Documentation Index
+
+This folder contains design, campaign, and system references for the CUSTODIAN prototypes. Use this index to navigate the current design intent and implementation priorities.
+
+## Start Here
+
+- `docs/Broad_Overview_Design_Rules.md`: core fantasy, progression tracks, enemy generation rules, campaign arc, and scope boundaries.
+- `docs/SystemDesign.md`: system boundaries, time/pressure model, and implementation order for the simulation layer.
+- `docs/PROJECT_MAP.md`: tutorial campaign structure, base topology, and first assault spec (locked for now).
+- `docs/CommandCenter.md`: command center capabilities, power routing, and awareness asymmetry.
+- `docs/Tutorial_Details.md`: first assault teaching goals and pacing refinements.
+- `docs/ROADMAP.md`: next steps and staged development plan.
+
+## Simulation Docs
+
+- `game/simulations/world_state/docs/world-state-simulation.md`: world-state simulation layout, core state model, event flow, command-driven stepping, and terminal failure behavior.
+- `game/simulations/world_state/docs/terminal-repl.md`: Phase 1 terminal loop, `/command` transport contract, command reference (`STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HARDEN`, `HELP`), and reset flow (`RESET`/`REBOOT`).
+- `docs/Custodian_Terminal.md`: terminal UI prototype notes for the custodian interface.
+
+## AI Context Snapshot
+
+- `docs/_ai_context/CURRENT_STATE.md`: current implementation snapshot and locked/flexible decisions.
+- `docs/_ai_context/COMMAND_CONTRACT.md`: canonical `/command` request/response and command semantics.
+- `docs/_ai_context/DEVLOG.md`: architecture and behavior change log.
+
+## Conventions
+
+- Tone: operational, perimeter-defense language; terse, grounded output.
+- Scope: build systems first in text simulations; visuals and 3D presentation are deferred until the simulation loop is stable.
+- Design north star: reconstruction and knowledge preservation over extermination.
+
+## Testing
+
+- World-state terminal tests: `python -m pytest game/simulations/world_state/tests`
+
+
+
+=== ROADMAP.md ===
+# Roadmap
+
+This roadmap focuses on simulation-first development. Each phase ends with a text-mode prototype that can be evaluated quickly and iterated in code before any engine work.
+
+## Guiding Constraints
+
+- Keep the base static and sectorized.
+- Preserve the command-center vs field asymmetry.
+- Maintain knowledge-first progression and reconstruction goals.
+- Avoid premature 3D scope; 2.5D presentation can wait.
+
+## Phase 1: World-State Loop (Now)
+
+Goal: a stable, readable text simulation of ambient pressure and assaults.
+
+### Deliverables
+
+- `GameState` with time, ambient threat, assault timer, faction profile, and sector states.
+- Event catalog driven by ideology/form/tech expression.
+- Ambient event ticking with cooldowns and sector filters.
+- Assault trigger and resolution against weak sectors.
+- Snapshot output that is terse and operational.
+
+### Exit Criteria
+
+- Running `python game/simulations/world_state/sandbox_world.py` produces:
+  - Quiet stretches.
+  - Escalation feels earned.
+  - Assaults occur without explicit timers.
+  - Sector damage and alertness have visible impact.
+
+## Phase 2: Assault Resolution Prototype
+
+Goal: connect assaults to clear outcomes and data-driven enemy groups.
+
+### Deliverables
+
+- Assault group composition data (threat points, roles, behavior tags).
+- Morale rules wired to assault resolution.
+- Sector defense effectiveness model (power, alertness, damage).
+- Loss conditions applied to Command Center and Goal Sector.
+
+### Exit Criteria
+
+- Assaults are repeatable and tuneable.
+- Threat composition produces different outcomes with the same base layout.
+
+## Phase 3: Command Center + Power Routing
+
+Goal: model the command-center advantage and power scarcity in simulation output.
+
+### Deliverables
+
+- Power budget and routing model across sectors.
+- Command Center actions that alter power priorities.
+- Field limitations (no global reroute, only local toggles).
+- Autopilot behavior uses only powered systems.
+
+### Exit Criteria
+
+- Output shows meaningful tradeoffs from being in or out of Command Center.
+- Power loss produces predictable, fair failure modes.
+
+## Phase 4: Recon & Knowledge Progression
+
+Goal: connect recon runs to knowledge, power cells, and faction escalation.
+
+### Deliverables
+
+- Recon state machine (depart, field, return).
+- Knowledge fragments and synthesis unlocks.
+- Strategic power cell recovery loop.
+- Campaign goal templates seeded per run.
+
+### Exit Criteria
+
+- Recon runs meaningfully alter ambient threat, assault timing, and unlocks.
+- Knowledge changes future enemies and available systems.
+
+## Phase 5: Tutorial Campaign Pass
+
+Goal: lock a teachable, semi-scripted first campaign.
+
+### Deliverables
+
+- Tutorial pacing tied to the first assault spec.
+- Sector rules and travel time implications.
+- Mission objectives for rebuild-to-escape.
+
+### Exit Criteria
+
+- A full tutorial run can be simulated end-to-end in text.
+
+## Phase 6: Presentation Prototype (Optional)
+
+Goal: experiment with 2.5D visualization without altering core logic.
+
+### Deliverables
+
+- Isometric or fixed-camera rendering stub.
+- Readable sector overlays and event output.
+
+### Exit Criteria
+
+- Visual layer consumes the same simulation outputs.
+
+## Open Questions (Resolve Before Phase 4)
+
+- Final base form factor choice (sectorized static outpost is preferred).
+- First reconstruction objective type (archive, network, AI, or defense system).
+- Early combat lethality target (tactical, lethal-but-forgiving, or arcade).
+
+
+
+=== SystemDesign.md ===
+# System Design (Simulation First)
+
+This project is not a wave-defense game. It is a pressure-based survival simulation. The design hinges on continuous time, uncertainty, and asymmetric information.
+
+## Time Layers
+
+The loop is defined by three overlapping time layers:
+
+1. Ambient time: always running.
+2. Assault time: high-intensity spikes.
+3. Field time: player absence and risk transfer.
+
+Battles do not have clean boundaries. Threat is continuous. Safety is inferred, not guaranteed.
+
+## Five Core Systems
+
+### A) Power as a Campaign Resource
+
+Power is more than moment-to-moment energy. It is a victory requirement and a persistent bottleneck.
+
+Two kinds of power:
+
+- Operational power: moment-to-moment use (turrets, traps, barriers).
+- Strategic power capacity: power cells/generators that determine how many systems can exist.
+
+Strategic power is accumulated and protected, not spent.
+
+### B) Field Power Cells (Forcing Recon)
+
+Power cells:
+
+- Exist in the world.
+- Are procedurally placed after the tutorial.
+- Must be repaired, extracted, and installed.
+- Cannot be fabricated at base.
+
+This keeps recon relevant in the late game.
+
+### C) Ambient Threat (Always-On Pressure)
+
+A hidden scalar that rises over time and faster when:
+
+- You expand power.
+- You complete recon runs.
+- You defeat assaults decisively.
+
+Ambient threat manifests as solo attackers, small groups, saboteurs, and environmental hazards. These are not assaults. They are the world pressing in.
+
+### D) Major Assaults (Gated, Not Scripted)
+
+Major assaults:
+
+- Are triggered by a hidden assault timer.
+- Start the moment you return from recon.
+- Do not stop if you leave again.
+- Lock down safe recon and consume resources.
+
+Key rule: recon runs trigger assaults, and assaults gate recon runs.
+
+### E) "Quiet Enough" State (Soft Feedback)
+
+The player should only see qualitative state, not timers:
+
+- "Tense"
+- "Unstable"
+- "Quiet enough"
+
+This keeps uncertainty without unfairness.
+
+## Terminal Boot-to-Operations Handoff
+
+The terminal UI is the primary player-facing entry point once command transport is wired.
+
+- Server boots and starts an SSE stream.
+- Client renders scripted boot lines in order.
+- Input remains locked during boot output.
+- Input unlocks only after boot completion marker.
+- After unlock, commands route to the authoritative world-state command endpoint.
+
+Design intent:
+
+- Keep boot deterministic and readable.
+- Prevent operator input before system readiness.
+- Make the world-state backend the source of truth for all command effects.
+
+## Command Transport Contract
+
+Transport between terminal UI and backend follows a strict boundary.
+
+Request:
+
+- Endpoint: `POST /command`
+- Content-Type: `application/json`
+- Body: `{ "command": "<string>" }`
+
+Response (CommandResult):
+
+- `ok` (bool): command accepted and executed.
+- `text` (string): primary operator-facing line.
+- `lines` (optional list[string]): additional ordered output lines.
+- `warnings` (optional list[string]): non-fatal warnings.
+
+Contract rules:
+
+- Backend owns parsing, authority checks, and simulation stepping.
+- Frontend does not infer state changes from local echo.
+- Output remains terse, operational, and ASCII-safe.
+- Unknown or unauthorized commands return `ok=false` with actionable text.
+
+## Implementation Order (Do This First)
+
+Do not add recon gameplay, ambient enemies, or real-time ticks yet. Build the clock and pressure model in text first.
+
+### Step 1: Add a global GameState
+
+Single source of truth:
+
+```python
+class GameState:
+    def __init__(self):
+        self.time = 0
+        self.ambient_threat = 0.0
+        self.assault_timer = None
+        self.in_major_assault = False
+        self.player_location = "Command Center"
+```
+
+### Step 2: Advance time every tick
+
+```python
+def advance_time(state, delta=1):
+    state.time += delta
+    state.ambient_threat += 0.01 * delta
+```
+
+### Step 3: Implement ambient events only
+
+```python
+def maybe_trigger_ambient_event(state):
+    if state.ambient_threat > 5 and random.random() < 0.1:
+        print("Ambient event: lone scavenger enters the perimeter")
+```
+
+### Step 4: Add the hidden assault timer
+
+```python
+def maybe_start_assault_timer(state):
+    if state.assault_timer is None:
+        state.assault_timer = random.randint(30, 60)
+```
+
+```python
+def tick_assault_timer(state):
+    if state.assault_timer is not None:
+        state.assault_timer -= 1
+        if state.assault_timer <= 0:
+            state.in_major_assault = True
+```
+
+Do not print the timer. Only print when the assault starts.
+
+### Step 5: Gate recon with state, not UI
+
+```python
+def can_go_on_recon(state):
+    return not state.in_major_assault and state.ambient_threat < THRESHOLD
+```
+
+## Why This Ordering Matters
+
+If you implement time and pressure first:
+
+- Ambient events stop feeling random.
+- Assaults feel earned.
+- Recon feels dangerous.
+- Power acquisition feels meaningful.
+- The base feels alive even in text.
+
+## Phase 1 Terminal Contract
+
+Phase 1 is a deterministic terminal interface. The contract is:
+
+- One command in, one response out.
+- No background ticking while the operator is in control.
+- Command handlers return a structured result with success state and a single text payload.
+- Commands are parsed with shell-style quoting for multi-word sector names.
+
+The terminal loop owns input/output. Command handlers mutate the game state and
+return a `CommandResult` payload for display.
+
+### Authority Model
+
+Authority is enforced at command dispatch:
+
+- Read authority: inspection-only commands available from any sector.
+- Write authority: state-mutating commands that require Command Center presence.
+
+The Command Center gate is a hard boundary. When the operator is not in the
+Command Center, write commands return a denial message and do not mutate state.
+
+## Validation Target
+
+Run `python game/simulations/world_state/sandbox_world.py` and confirm:
+
+- Quiet stretches.
+- Sudden incidents.
+- Assaults emerging naturally.
+- Qualitative status messages only.
+
+## World-State Command Endpoint
+
+The world-state server exposes a simple POST endpoint for command execution.
+
+Endpoint: `POST /command`
+
+JSON request:
+
+- `raw`: string input.
+
+JSON response:
+
+- `ok`: bool.
+- `lines`: list of terminal lines.
+
+
+
+=== Tutorial_Details.md ===
+This is **not too ambitious**. It’s actually _well-scoped_ and, more importantly, **teachable**. What you’ve written already encodes multiple systems lessons without tutorials or text popups.
+
+What I’ll do below is:
+
+- Validate what works (most of it)
+- Tighten numbers & behaviors so it’s implementable
+- Flag only the _real_ risks (there are a couple)
+- Turn this into a **clean First Assault Spec** Codex could build from
+
+I will _not_ dilute your intent.
+
+---
+
+# First Assault Script — Refined but faithful
+
+### Total threat budget
+
+Let’s formalize what you already implied:
+
+- **Total Threat Points (TP): 100**
+- Enemies spawn in **phases**, not waves
+- Arrival windows overlap slightly (chaos, not TD lanes)
+
+This makes tuning and simulation easy.
+
+---
+
+## Enemy Group A — Religious Zealots (30 TP)
+
+You nailed this group. They are _teaching enemies_.
+
+### Composition
+
+- **Trio of wanderers**
+  - 20 TP total (≈6–7 TP each)
+  - Melee only (blunt)
+
+- **One “holy man”**
+  - 10 TP
+  - Unpredictable, aggressive, low effectiveness
+
+### Behavior profile
+
+- Poor threat assessment
+- Low situational awareness
+- Trigger traps frequently
+- Stop to “interact” with machinery
+- Path poorly, split up easily
+
+### Design purpose
+
+They exist to teach:
+
+- Trap effectiveness
+- Enemy variance
+- That not all hostiles are tactically dangerous
+
+💡 **Important adjustment (small but critical):**
+Make the holy man **draw attention** (loud, erratic), even if weak.
+This teaches target prioritization _without punishment_.
+
+---
+
+## Enemy Group B — Iconoclasts (30 TP)
+
+This is your _systems pressure_ group.
+
+### Composition
+
+- **2 units**
+- ~15 TP each
+
+### Equipment
+
+- Poorly maintained firearms
+- Minimal melee competency
+- Low ammo reserves (visible in Command Center)
+
+### Behavior profile
+
+- Move cautiously
+- Avoid obvious traps
+- Interact with:
+  - Consoles
+  - Schematics
+  - Storage
+
+- Will **delay** to confiscate or tag items
+
+### Design purpose
+
+They teach:
+
+- That enemies have **goals besides killing**
+- That lollygagging can be _more dangerous_ than rushing
+- Why Command Center intel matters
+
+💡 Adjustment:
+If uninterrupted, they should **cause delayed damage**, not immediate loss
+(e.g., stolen schematics = slower future build, not instant failure).
+
+---
+
+## Enemy Group C — Raiders (40 TP)
+
+This is your _threat baseline_.
+
+### Composition
+
+- 4–6 raiders depending on tuning
+- Mix of:
+  - Firearms
+  - Makeshift melee
+
+### Behavior profile
+
+- Moderate coordination
+- Opportunistic looting
+- Will trigger some traps, avoid others
+- Can panic or overextend
+
+### Design purpose
+
+They teach:
+
+- Sustained pressure
+- Multi-zone threats
+- That “average” enemies are still dangerous
+
+💡 Good call on mental state variance.
+Keep it subtle (timing, accuracy), not RNG spikes.
+
+---
+
+# Assault pacing (this matters)
+
+**Do not spawn all groups at once.**
+
+Recommended flow:
+
+1. Zealots enter first (noise, chaos)
+2. Raiders follow shortly after (pressure)
+3. Iconoclasts arrive last (intentional, surgical)
+
+This creates:
+
+- Early confidence
+- Mid-fight distraction
+- Late-fight consequences
+
+That’s _excellent teaching design_.
+
+---
+
+# Command Center Abilities — These are STRONG but correct
+
+Your instinct to make the Command Center a _force multiplier_ is spot-on. The key is **friction**, not nerfs.
+
+---
+
+## Ability 1: Enemy Monitoring (Perfect)
+
+This is a **huge differentiator** and totally justified by theme.
+
+### When in Command Center:
+
+You see:
+
+- Enemy HP (approximate, not exact)
+- Ammo state (low / medium / critical)
+- Preparedness (focused / distracted / erratic)
+- ETA per zone
+- Estimated dwell time in zone
+
+### When NOT in Command Center:
+
+- No numbers
+- Only visual/audio cues
+- You must infer threat
+
+This creates:
+
+> Knowledge vs presence
+> Vision vs action
+
+That’s _excellent_ tension.
+
+💡 Implementation note:
+Use **ranges / states**, not exact values.
+This keeps it readable and avoids spreadsheet feel.
+
+---
+
+## Ability 2: Complete System Control (Strong, but needs guardrails)
+
+You’re absolutely right conceptually. Here’s how to keep it sane.
+
+### In Command Center ONLY:
+
+You can:
+
+- Manually activate/deactivate defenses
+- Delay activation (ambush timing)
+- Target specific enemies
+- Arm/disarm traps selectively
+- Reroute power priorities
+
+### Autopilot behavior:
+
+- Turrets fire on sight
+- Traps arm immediately
+- No target prioritization
+- No timing tricks
+
+This creates _real_ tradeoffs:
+
+> Be present on the battlefield
+> OR
+> Be omniscient at the console
+
+💡 Important constraint (to avoid over-optimization):
+**Command actions have cooldowns or attention cost.**
+Not timers — _focus_. You can’t micromanage everything at once.
+
+---
+
+## Your example scenarios are GOOD (not hypothetical)
+
+> Leave landmine disarmed for zealots, arm for iconoclasts
+> Focus turrets on grenade carrier
+> Let fools wander, punish planners
+
+These are **exactly** the kinds of “I feel smart” moments you want.
+
+The key rule:
+
+> The player must _predict_, not react instantly.
+
+Which you’ve already designed.
+
+---
+
+# Loss & learning balance (sanity check)
+
+Your first assault, as designed:
+
+- Is survivable without Command Center mastery
+- Is _cleanly_ improved by Command Center mastery
+- Punishes neglect, not curiosity
+- Teaches enemy intent differentiation
+
+That’s ideal tutorial design.
+
+---
+
+# The only real risks (and how to avoid them)
+
+### ❌ Risk 1: Too much micromanagement
+
+**Fix:**
+Limit number of simultaneous command overrides.
+
+### ❌ Risk 2: Player always camping Command Center
+
+**Fix:**
+Make some threats require _physical presence_
+(e.g., manual repairs, on-site interrupts).
+
+### ❌ Risk 3: Analysis paralysis
+
+**Fix:**
+Default autopilot should be “good enough,” not terrible.
+
+---
+
+# Verdict (straight talk)
+
+This is **not shortsighted**.
+It’s **disciplined, thematic, and mechanically teachable**.
+
+You’ve designed:
+
+- A believable first assault
+- A meaningful command-vs-field tension
+- Enemies with intent, not just HP bars
+
+This is exactly the level of detail where **Codex can now implement systems**, not just stubs.
+
+---
+
+## Next step (choose one — both are ready)
+
+1. **Formalize autopilot logic**
+   - How it prioritizes
+   - What it never does
+
+2. **Write the First Assault state machine**
+   - Spawn timing
+   - Escalation triggers
+   - Victory/failure evaluation
+
+
+This is **good system design**, not hand-wavy. It’s also *implementable as written*. What I’ll do is:
+
+* Sanity-check each rule (no silent failures)
+* Tighten language so it becomes a **formal spec**
+* Flag exactly **one** place where you should slightly loosen things later (not now)
+* End with a clean, Codex-ready definition
+
+I’m not going to add new mechanics unless they fix a real problem.
+
+---
+
+## Autopilot Logic — Validation & Refinement
+
+Your core philosophy is correct:
+
+> **Autopilot is competent, literal, and dumb.**
+> It enforces safety, not cleverness.
+
+That is *exactly* what you want to teach the Command Center’s value.
+
+Let’s lock it.
+
+---
+
+### Autopilot Activation Rules (clean)
+
+Autopilot operates **per sector**, independently.
+
+**When an enemy enters a sector:**
+
+* All defenses in that sector activate immediately
+* No hesitation, no prediction
+
+**When no enemies are present:**
+
+* All defenses in that sector disengage
+* No idle scanning, no pre-arming
+
+This creates a very readable mental model:
+
+> *“If they’re here, it fights. If not, it sleeps.”*
+
+Good.
+
+---
+
+### Autopilot Capabilities (what it WILL do)
+
+In an active sector, autopilot:
+
+* Fires turrets when line-of-sight is available
+* Auto-arms mines
+* Deploys retractable barriers
+* Triggers environmental traps (gas, electrified floors, etc.)
+* Engages **every** enemy that enters
+* Continues engaging as long as enemies remain
+
+**Important:**
+
+> Autopilot *never* allows enemies to pass through a defended sector unchallenged.
+
+This makes defenses feel reliable and removes “why didn’t it shoot?” frustration.
+
+---
+
+### Autopilot Limitations (what it NEVER does)
+
+This is where your design really shines.
+
+Autopilot:
+
+* ❌ Never predicts enemy movement
+* ❌ Never delays activation for timing
+* ❌ Never prioritizes high-value targets
+* ❌ Never coordinates across sectors
+* ❌ Never moves units or power
+* ❌ Never pre-arms traps
+* ❌ Never pursues enemies leaving the sector
+
+It is **reactive only**.
+
+That makes the Command Center feel like *strategic intelligence*, not a cheat mode.
+
+---
+
+### Targeting Priority (correct as-is)
+
+Autopilot targeting rules:
+
+1. First enemy to enter sector
+2. Closest visible threat
+3. No threat evaluation beyond proximity
+
+This is intentionally dumb, and that’s good.
+
+You already noted:
+
+> *(can be upgraded)*
+
+Perfect. Leave it dumb for the tutorial.
+
+---
+
+## Spawn Timing — This is solid and teachable
+
+Your trigger logic is smart because it ties **player success to escalation**, not a fixed clock.
+
+### Group activation rules
+
+A new enemy group begins its spawn countdown when **either**:
+
+* The previous group crosses its barrier / transient zone into the base
+  **OR**
+* An enemy from the previous group is downed
+
+This ensures:
+
+* Aggression accelerates escalation
+* Passive defense delays pressure
+* No “wait out the wave” cheese
+
+Good.
+
+---
+
+### Spawn timing variability
+
+* Countdown is **semi-random within a bounded window**
+* Not predictable to the second
+* Predictable *in principle*
+
+This preserves tension without unfair spikes.
+
+---
+
+## Morale & Retreat — Excellent call
+
+This is an *advanced design choice* and absolutely correct.
+
+### Morale definition
+
+* Each group has a **morale pool**
+* Directly tied to its initial threat points
+* Morale decreases when:
+
+  * Units die
+  * Leaders fall
+  * Environmental damage occurs
+  * Traps trigger successfully
+
+### Retreat condition
+
+* When morale < threshold:
+
+  * Group attempts to disengage
+  * They flee via available exits
+  * They may abandon wounded or equipment
+
+This teaches:
+
+> You don’t need to kill everyone to win.
+
+That aligns *perfectly* with your campaign thesis.
+
+---
+
+## Victory Conditions — Locked
+
+A battle ends when:
+
+* All enemies are neutralized
+  **OR**
+* Remaining enemies retreat successfully
+
+This is clean, readable, and fair.
+
+---
+
+## One small refinement (do NOT implement yet)
+
+I’ll flag this now so it doesn’t blindside you later:
+
+> **Autopilot never idling is correct for the tutorial, but later you may want a “degraded” state.**
+
+Example (future only):
+
+* Damaged turrets misfire
+* Power shortages delay activation
+* Sabotage causes brief gaps
+
+**Do not add this now.**
+Just design so it’s *possible* later.
+
+Your current rules are perfect for onboarding.
+
+---
+
+## Autopilot — Codex-Ready Spec (concise)
+
+You could hand this verbatim to Codex:
+
+> **Autopilot operates per sector.**
+>
+> When at least one hostile unit is present in a sector, all defensive systems in that sector activate immediately. Turrets fire on visible targets, traps arm and trigger automatically, and barriers deploy. Autopilot never delays, predicts, or prioritizes targets; it engages the closest available hostile using first-come-first-served logic.
+>
+> Autopilot never allows hostiles to traverse a sector without engagement. It never activates defenses when no hostiles are present, never coordinates across sectors, and never repositions systems or power. When hostiles leave the sector, defenses disengage immediately.
+>
+> Autopilot does not evaluate threat value, ammunition, morale, or objectives.
+
+That’s a *rock-solid* baseline.
+
+---
+
+## Verdict (straight talk)
+
+* This is **not overdesigned**
+* It is **extremely teachable**
+* It creates **natural mastery progression**
+* It avoids UI bloat
+* It respects player intelligence
+
+You’re now past the “design vibes” stage.
+You are writing **systems that can ship**.
+
+---
+
+## Next lock-in (choose one)
+
+You’re ready for one of these:
+
+1. **Morale math**
+
+   * Exact morale decay rules
+   * Leader effects
+2. **Command Center action economy**
+
+   * How many overrides per minute
+   * Attention / cooldown model
+3. **Post-assault resolution**
+
+   * What damage persists
+   * What gets repaired automatically
+
+Say the word, and we’ll pin it down cleanly.
+
+
+
+
