@@ -1,397 +1,366 @@
-const terminal = document.getElementById("terminal");
 
-const hum = document.getElementById("hum");
-const relay = document.getElementById("relay");
-const beep = document.getElementById("beep");
-const timingRelay = document.getElementById("timingRelay");
-const fourBeep = document.getElementById("fourBeep");
-const hddSpin = document.getElementById("hddSpin");
-const alertSound = document.getElementById("alert");
+(() => {
+  const terminal = document.getElementById("terminal");
 
-const terminalController = window.CustodianTerminal;
+  const hum = document.getElementById("hum");
+  const relay = document.getElementById("relay");
+  const beep = document.getElementById("beep");
+  const timingRelay = document.getElementById("timingRelay");
+  const fourBeep = document.getElementById("fourBeep");
+  const hddSpin = document.getElementById("hddSpin");
 
-/* =========================
-   Audio: policy-safe init
-   ========================= */
+  const alertPulseA = document.getElementById("alertPulseA");
+  const alertPulseB = document.getElementById("alertPulseB");
 
-let audioReady = false;
+  const terminalController = window.CustodianTerminal;
 
-function tryStartHum() {
-  hum.volume = 0.15;
-  hum.play().then(() => {
-    audioReady = true;
-  }).catch(() => {});
-}
+  const BOOT_PAUSES = {
+    INITIAL: 1000,
+    PRE_FINAL: 2000,
+    FINAL: 3000,
+  };
 
-tryStartHum();
+  /* =========================
+     Audio: policy-safe init
+     ========================= */
 
-function unlockAudioOnce() {
-  if (audioReady) return;
+  let audioReady = false;
+
+  function tryStartHum() {
+    if (!hum) return;
+    hum.volume = 0.15;
+    hum.play().then(() => {
+      audioReady = true;
+    }).catch(() => {});
+  }
+
   tryStartHum();
-  [relay, timingRelay, fourBeep, hddSpin, beep, alertSound].forEach((el) => {
-    try {
-      el.volume = 0.0;
-      el.currentTime = 0;
-      el.play().then(() => el.pause()).catch(() => {});
-    } catch {}
-  });
-  audioReady = true;
-  window.removeEventListener("pointerdown", unlockAudioOnce);
-  window.removeEventListener("keydown", unlockAudioOnce);
-}
-window.addEventListener("pointerdown", unlockAudioOnce, { once: true });
-window.addEventListener("keydown", unlockAudioOnce, { once: true });
 
-/* =========================
-   Audio: one-shot helper
-   ========================= */
+  function unlockAudioOnce() {
+    if (audioReady) return;
+    tryStartHum();
 
-function playOneShot(el, { volume = 0.2, rateJitter = 0.03, restart = true } = {}) {
-  if (!el) return;
-  const a = el.cloneNode(true);
-  a.volume = volume;
-  a.playbackRate = 1 + (Math.random() * 2 - 1) * rateJitter;
-  if (restart) {
+    [
+      relay,
+      timingRelay,
+      fourBeep,
+      hddSpin,
+      beep,
+      alertPulseA,
+      alertPulseB,
+    ].forEach((el) => {
+      if (!el) return;
+      try {
+        el.volume = 0.0;
+        el.currentTime = 0;
+        el.play().then(() => el.pause()).catch(() => {});
+      } catch {}
+    });
+
+    audioReady = true;
+    window.removeEventListener("pointerdown", unlockAudioOnce);
+    window.removeEventListener("keydown", unlockAudioOnce);
+  }
+
+  window.addEventListener("pointerdown", unlockAudioOnce, { once: true });
+  window.addEventListener("keydown", unlockAudioOnce, { once: true });
+
+  /* =========================
+     Audio helpers
+     ========================= */
+
+  function playTimingRelayTransition({
+    volume = 0.18,
+    holdMs = 5000,
+    fadeMs = 4000,
+  } = {}) {
+    if (!timingRelay) return;
+
+    timingRelay.loop = true;
+    timingRelay.currentTime = 0;
+    timingRelay.volume = volume;
+
+    timingRelay.play().catch(() => {});
+
+    // Start fade after hold
+    setTimeout(() => {
+      const start = performance.now();
+      const startVol = volume;
+
+      function fade(now) {
+        const t = Math.min(1, (now - start) / fadeMs);
+        timingRelay.volume = Math.max(0, startVol * (1 - t));
+
+        if (t < 1) {
+          requestAnimationFrame(fade);
+        } else {
+          timingRelay.pause();
+          timingRelay.currentTime = 0;
+        }
+      }
+
+      requestAnimationFrame(fade);
+    }, holdMs);
+  }
+  
+  function playOneShot(el, { volume = 0.2, rateJitter = 0.03 } = {}) {
+    if (!el) return;
+    const a = el.cloneNode(true);
+    a.volume = volume;
+    a.playbackRate = 1 + (Math.random() * 2 - 1) * rateJitter;
     a.currentTime = 0;
-  }
-  a.play().catch(() => {});
-}
-
-let alertPulseCooldown = 0;
-
-function playSingleShot(el, { volume = 0.2, rate = 1.0 } = {}) {
-  if (!el) return;
-  el.volume = volume;
-  try {
-    el.currentTime = 0;
-    el.playbackRate = rate;
-    el.play().catch(() => {});
-  } catch {}
-}
-
-function fadeOut(el, startMs, endMs, startVolume) {
-  const start = performance.now() + startMs;
-  const end = performance.now() + endMs;
-  const initial = typeof startVolume === "number" ? startVolume : el.volume || 0.2;
-
-  function tick(now) {
-    if (now < start) {
-      requestAnimationFrame(tick);
-      return;
-    }
-    const t = Math.min(1, (now - start) / (end - start));
-    el.volume = Math.max(0, initial * (1 - t));
-    if (t < 1) {
-      requestAnimationFrame(tick);
-    }
+    a.play().catch(() => {});
   }
 
-  requestAnimationFrame(tick);
-}
-
-function playRelaySequence() {
-  if (timingRelay) {
-    playSingleShot(timingRelay, { volume: 0.18 });
-    fadeOut(timingRelay, 2000, 5000, 0.18);
+  function playSingleShot(el, { volume = 0.2 } = {}) {
+    if (!el) return;
+    try {
+      el.volume = volume;
+      el.currentTime = 0;
+      el.play().catch(() => {});
+    } catch {}
   }
-  if (fourBeep) {
-    setTimeout(() => {
-      playSingleShot(fourBeep, { volume: 0.18 });
-    }, 1000);
-  }
-}
 
-function playHddSpinOnce() {
-  if (!hddSpin) return;
-  hddSpin.loop = false;
-  hddSpin.volume = 0.12;
-  hddSpin.currentTime = 0;
-  hddSpin.play().catch(() => {});
-  fadeOut(hddSpin, 8000, 14000, 0.12);
-}
-
-function playAlertPulse() {
-  const now = performance.now();
-  if (now < alertPulseCooldown) return;
-  const pulseRate = 1.0;
-  const timings = [0, 1500, 3000].map((t) => t / pulseRate);
-  alertPulseCooldown = now + 3600 / pulseRate;
-  const sequence = [
-    { el: alertSound, delay: timings[0], volume: 0.2, rate: 1.0 },
-    { el: alertSound, delay: timings[1], volume: 0.18, rate: 1.0 },
-    { el: alertSound, delay: timings[2], volume: 0.18, rate: 1.0 },
-  ];
-  sequence.forEach(({ el, delay, volume, rate }) => {
-    setTimeout(() => {
-      playSingleShot(el || alertSound, { volume, rate });
-    }, delay);
-  });
-}
-
-function clearTerminalAnimated(durationMs = 5000) {
-  return new Promise((resolve) => {
-    const text = terminal.innerText || terminal.textContent || "";
-    const total = text.length;
-    if (!total) {
-      resolve();
-      return;
-    }
-
-    const start = performance.now();
-    let lastRemaining = total;
-    let lastClickRemaining = total;
-    const clickStride = 12;
+  function fadeOut(el, startMs, endMs, startVolume) {
+    if (!el) return;
+    const start = performance.now() + startMs;
+    const end = performance.now() + endMs;
+    const initial = startVolume ?? el.volume ?? 0.2;
 
     function tick(now) {
-      const elapsed = now - start;
-      const progress = Math.min(1, elapsed / durationMs);
-      const remaining = Math.ceil(total * (1 - progress));
-      if (remaining !== lastRemaining) {
-        terminal.textContent = text.slice(0, remaining);
-        terminal.scrollTop = terminal.scrollHeight;
-        if (lastClickRemaining - remaining >= clickStride || remaining <= 0) {
-          lastClickRemaining = remaining;
-        }
-        lastRemaining = remaining;
-      }
-
-      if (progress < 1) {
-        requestAnimationFrame(tick);
-      } else {
-        terminal.textContent = "";
-        resolve();
-      }
+      if (now < start) return requestAnimationFrame(tick);
+      const t = Math.min(1, (now - start) / (end - start));
+      el.volume = Math.max(0, initial * (1 - t));
+      if (t < 1) requestAnimationFrame(tick);
     }
 
     requestAnimationFrame(tick);
-  });
-}
-
-function isWarningLine(text) {
-  const t = text.toUpperCase();
-  return (
-    t.includes("WARNING") ||
-    t.includes("ALERT") ||
-    t.includes("DEGRADED") ||
-    t.includes("OFFLINE") ||
-    t.includes("UNSTABLE")
-  );
-}
-
-function isSystemNoiseLine(text) {
-  const t = text.toUpperCase();
-  return t.startsWith("[") || t.startsWith(">") || t.includes("STATUS");
-}
-
-function isDirectiveLine(text) {
-  const t = text.toUpperCase();
-  return t.includes("DIRECTIVE") || t.includes("MANDATE") || t.includes("AUTHORITY");
-}
-
-function linePauseMs(text) {
-  if (!text) {
-    return 320 + Math.random() * 420;
   }
-  if (isWarningLine(text)) {
-    return 520 + Math.random() * 520;
-  }
-  if (isDirectiveLine(text)) {
-    return 380 + Math.random() * 420;
-  }
-  if (isSystemNoiseLine(text)) {
-    return 240 + Math.random() * 320;
-  }
-  return 200 + Math.random() * 280;
-}
 
-/* =========================
-   Boot text
-   ========================= */
+  /* =========================
+     HUM DIP (final pause)
+     ========================= */
 
-const bootLines = [
-  "[ SYSTEM POWER: UNSTABLE ]",
-  "[ AUXILIARY POWER ROUTED ]",
-  "",
-  "CUSTODIAN NODE - ONLINE",
-  "STATUS: DEGRADED",
-  "",
-  "> Running integrity check...",
-  "> Memory blocks: 12% intact",
-  "> Long-range comms: OFFLINE",
-  "> Archive uplink: INACCESSIBLE",
-  "> Automated defense grid: PARTIAL",
-  "",
-  "DIRECTIVE FOUND",
-  "RETENTION MANDATE - ACTIVE",
-  "",
-  "WARNING:",
-  "Issuing authority presumed defunct.",
-  "",
-  "Residual Authority accepted.",
-  "",
-  "Initializing Custodian interface...",
-];
+  function dipHum({
+    from = 0.15,
+    to = 0.06,
+    downMs = 600,
+    holdMs = 1200,
+    upMs = 800,
+  } = {}) {
+    if (!hum) return;
 
-/**
- * Pause for a set duration.
- * @param {number} ms
- * @returns {Promise<void>}
- */
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+    const t0 = performance.now();
+    hum.volume = from;
 
-/**
- * Type out a single boot line to the terminal, with realistic audio cadence.
- * @param {string} text
- * @returns {Promise<void>}
- */
-function typeLine(text) {
-  return new Promise((resolve) => {
-    let i = 0;
+    function step(now) {
+      const dt = now - t0;
 
-    if (text && isWarningLine(text)) {
-      playAlertPulse();
-      hum.volume = 0.18;
-      setTimeout(() => (hum.volume = 0.15), 500);
-    } else if (text && isSystemNoiseLine(text) && Math.random() < 0.35) {
-      playOneShot(beep, { volume: 0.08, rateJitter: 0.02 });
+      if (dt < downMs) {
+        hum.volume = from - (from - to) * (dt / downMs);
+      } else if (dt < downMs + holdMs) {
+        hum.volume = to;
+      } else if (dt < downMs + holdMs + upMs) {
+        const t = (dt - downMs - holdMs) / upMs;
+        hum.volume = to + (from - to) * t;
+      } else {
+        hum.volume = from;
+        return;
+      }
+
+      requestAnimationFrame(step);
     }
 
-    const baseDelay = 22 + Math.random() * 32;
-
-    const interval = setInterval(() => {
-      const ch = text[i] || "";
-      terminal.textContent += ch;
-      i += 1;
-
-      if (i >= text.length) {
-        clearInterval(interval);
-
-        if (text && Math.random() < 0.35) {
-          playOneShot(relay, { volume: 0.06, rateJitter: 0.03 });
-        }
-
-        terminal.textContent += "\n";
-        terminal.scrollTop = terminal.scrollHeight;
-        resolve();
-      }
-    }, baseDelay + Math.random() * 22);
-  });
-}
-
-function appendStreamedLine(text) {
-  if (text && isWarningLine(text)) {
-    playAlertPulse();
-    hum.volume = 0.18;
-    setTimeout(() => (hum.volume = 0.15), 500);
-  } else if (text && isSystemNoiseLine(text) && Math.random() < 0.35) {
-    playOneShot(beep, { volume: 0.08, rateJitter: 0.02 });
+    requestAnimationFrame(step);
   }
-  terminalController.appendLine(text);
-  terminal.classList.add("flicker");
-  setTimeout(() => terminal.classList.remove("flicker"), 120);
-}
 
-/**
- * Stream boot lines from the server if available.
- * @returns {Promise<boolean>}
- */
-function streamBootFromServer() {
-  return new Promise((resolve) => {
-    let hasData = false;
-    let done = false;
+  /* =========================
+     Alert pulses
+     ========================= */
 
-    const source = new EventSource("/stream/boot");
+  let alertPulseCooldown = 0;
 
-    source.onmessage = (event) => {
-      hasData = true;
-      appendStreamedLine(event.data);
-    };
+  function playAlertPulse() {
+    const now = performance.now();
+    if (now < alertPulseCooldown) return;
+    alertPulseCooldown = now + 3600;
 
-    source.addEventListener("done", () => {
-      done = true;
-      source.close();
-      resolve(true);
+    [
+      { el: alertPulseA, delay: 0,   volume: 0.22 },
+      { el: alertPulseB, delay: 420, volume: 0.20 },
+      { el: alertPulseA, delay: 860, volume: 0.18 },
+    ].forEach(({ el, delay, volume }) => {
+      setTimeout(() => playSingleShot(el, { volume }), delay);
     });
+  }
 
-    source.onerror = () => {
-      if (!hasData && !done) {
-        source.close();
-        resolve(false);
+  /* =========================
+     Mechanical ambience
+     ========================= */
+
+  function playRelaySequence() {
+    if (timingRelay) {
+      playSingleShot(timingRelay, { volume: 0.18 });
+      fadeOut(timingRelay, 2000, 5000, 0.18);
+    }
+    if (fourBeep) {
+      setTimeout(() => playSingleShot(fourBeep, { volume: 0.18 }), 1000);
+    }
+  }
+
+  function playHddSpinOnce() {
+    if (!hddSpin) return;
+    hddSpin.loop = false;
+    hddSpin.volume = 0.12;
+    hddSpin.currentTime = 0;
+    hddSpin.play().catch(() => {});
+    fadeOut(hddSpin, 8000, 14000, 0.12);
+  }
+
+  /* =========================
+     Clear terminal (UNCHANGED)
+     ========================= */
+
+  function clearTerminalAnimated(durationMs = 5000) {
+    return new Promise((resolve) => {
+      const text = terminal.textContent || "";
+      const total = text.length;
+      if (!total) return resolve();
+
+      const start = performance.now();
+
+      function tick(now) {
+        const progress = Math.min(1, (now - start) / durationMs);
+        const remaining = Math.ceil(total * (1 - progress));
+        terminal.textContent = text.slice(0, remaining);
+        terminal.scrollTop = terminal.scrollHeight;
+        if (progress < 1) requestAnimationFrame(tick);
+        else {
+          terminal.textContent = "";
+          resolve();
+        }
       }
-    };
 
-    setTimeout(() => {
-      if (!hasData && !done) {
-        source.close();
-        resolve(false);
-      }
-    }, 800);
-  });
-}
+      requestAnimationFrame(tick);
+    });
+  }
 
-/**
- * Boot sequence before handing off to command mode.
- * @returns {Promise<void>}
- */
-async function runBoot() {
-  terminalController.setInputEnabled(false);
+  /* =========================
+     Line classification
+     ========================= */
 
-  playOneShot(relay, { volume: 0.2, rateJitter: 0.04 });
-  playRelaySequence();
-  await sleep(420);
+  function isWarningLine(t = "") {
+    t = t.toUpperCase();
+    return t.includes("WARNING") || t.includes("DEGRADED") || t.includes("OFFLINE");
+  }
 
-  const streamed = await streamBootFromServer();
-  if (!streamed) {
-    const pauseSteps = [1000, 2000, 3000];
-    const pauseStart = Math.max(0, bootLines.length - pauseSteps.length);
-    for (let i = 0; i < bootLines.length; i += 1) {
+  function isFinalBootLine(t = "") {
+    return t.toUpperCase().includes("INITIALIZING CUSTODIAN INTERFACE");
+  }
+
+  function isPreFinalBootLine(_, i, lines) {
+    return isFinalBootLine(lines[i + 1]);
+  }
+
+  function linePauseMs(text, index, lines) {
+    if (index === 0) return BOOT_PAUSES.INITIAL;
+    if (isPreFinalBootLine(text, index, lines)) return BOOT_PAUSES.PRE_FINAL;
+    if (isFinalBootLine(text)) return BOOT_PAUSES.FINAL;
+    return 160 + Math.random() * 220;
+  }
+
+  /* =========================
+     Boot text
+     ========================= */
+
+  const bootLines = [
+    "[ SYSTEM POWER: UNSTABLE ]",
+    "[ AUXILIARY POWER ROUTED ]",
+    "",
+    "CUSTODIAN NODE - ONLINE",
+    "STATUS: DEGRADED",
+    "",
+    "> Running integrity check...",
+    "> Memory blocks: 12% intact",
+    "> Long-range comms: OFFLINE",
+    "> Archive uplink: INACCESSIBLE",
+    "> Automated defense grid: PARTIAL",
+    "",
+    "DIRECTIVE FOUND",
+    "RETENTION MANDATE - ACTIVE",
+    "",
+    "WARNING:",
+    "Issuing authority presumed defunct.",
+    "",
+    "Residual Authority accepted.",
+    "",
+    "Initializing Custodian interface...",
+  ];
+
+  function sleep(ms) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  /* =========================
+     Typing logic
+     ========================= */
+
+  function typeLine(text) {
+    return new Promise((resolve) => {
+      let i = 0;
+
+      if (isWarningLine(text)) playAlertPulse();
+      if (Math.random() < 0.25) playOneShot(beep, { volume: 0.06 });
+
+      const interval = setInterval(() => {
+        terminal.textContent += text[i++] || "";
+        if (i >= text.length) {
+          clearInterval(interval);
+          terminal.textContent += "\n";
+          terminal.scrollTop = terminal.scrollHeight;
+          if (Math.random() < 0.3) playOneShot(relay, { volume: 0.06 });
+          resolve();
+        }
+      }, 10 + Math.random() * 12);
+    });
+  }
+
+  /* =========================
+     Boot sequence
+     ========================= */
+
+  async function runBoot() {
+    terminalController.setInputEnabled(false);
+
+    playOneShot(relay, { volume: 0.18 });
+    playRelaySequence();
+    await sleep(400);
+
+    for (let i = 0; i < bootLines.length; i++) {
       const line = bootLines[i];
       await typeLine(line);
+
+      if (isFinalBootLine(line)) dipHum();
+
       terminal.classList.add("flicker");
       setTimeout(() => terminal.classList.remove("flicker"), 120);
-      if (i >= pauseStart) {
-        await sleep(pauseSteps[i - pauseStart]);
-      } else {
-        await sleep(linePauseMs(line));
-      }
+
+      await sleep(linePauseMs(line, i, bootLines));
     }
+
+    playTimingRelayTransition({
+      volume: 0.18,
+      holdMs: 5000,
+      fadeMs: 4000,
+    });
+
+    await clearTerminalAnimated(5000);
+    terminalController.clearBuffer();
+
+    terminalController.startCommandMode();
+    playHddSpinOnce();
   }
 
-  await sleep(900);
-  if (timingRelay) {
-    timingRelay.loop = true;
-    timingRelay.volume = 0.18;
-    timingRelay.currentTime = 0;
-    timingRelay.play().catch(() => {});
-    fadeOut(timingRelay, 4000, 7000, 0.18);
-    setTimeout(() => {
-      timingRelay.pause();
-      timingRelay.currentTime = 0;
-    }, 7000);
-  }
-  
-  await clearTerminalAnimated(5000);
-  terminalController.clearBuffer();
+  runBoot();
+})();
 
-  await sleep(240);
-
-  // Render initial map snapshot BEFORE command mode
-  try {
-    const snapshot = await fetch("/snapshot").then((r) => r.json());
-    if (window.CustodianSectorMap) {
-      window.CustodianSectorMap.renderSectorMap(snapshot);
-    }
-    terminalController.appendLine("[MAP UPDATED]");
-  } catch {
-    terminalController.appendLine("[MAP STATUS UNKNOWN]");
-  }
-
-  // Enter command mode
-  terminalController.startCommandMode();
-  playHddSpinOnce();
-
-}
-
-runBoot();

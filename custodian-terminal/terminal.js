@@ -117,6 +117,7 @@
   }
 
   function scheduleIdleTip() {
+    console.log("[TERMINAL] scheduleIdleTip")
     if (!state.inputEnabled) return;
     if (state.idleTimer) clearTimeout(state.idleTimer);
     idleTip?.classList.remove("visible");
@@ -148,7 +149,6 @@
 
   function renderLiveLine() {
     if (!state.inputEnabled) return;
-    hideIdleTip();
     const last = state.buffer.at(-1);
     if (last?.startsWith("> ")) state.buffer.pop();
     const cursor = state.cursorVisible && !state.typingActive ? "_" : "";
@@ -185,6 +185,7 @@
   });
 
   function setInputEnabled(enabled) {
+    console.log("[TERMINAL] setInputEnabled:", enabled);
     state.inputEnabled = enabled;
     inputField.disabled = !enabled;
     inputForm.classList.toggle("disabled", !enabled);
@@ -270,14 +271,20 @@
     }
   }
 
+  
   function startCommandMode() {
+    console.log("[TERMINAL] startCommandMode()")
     appendLines([
       "",
       "--- COMMAND INTERFACE ACTIVE ---",
       "Awaiting directives.",
     ]);
+
     setInputEnabled(true);
+    console.log("[ TERMINAL ] enabling input");
+    scheduleIdleTip();
   }
+
 
   inputForm.addEventListener("submit", handleSubmit);
   inputField.addEventListener("keydown", () => {
