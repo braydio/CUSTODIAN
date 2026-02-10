@@ -91,14 +91,12 @@ Request:
 
 - Endpoint: `POST /command`
 - Content-Type: `application/json`
-- Body: `{ "command": "<string>" }`
+- Body: `{ "raw": "<string>" }`
 
-Response (CommandResult):
+Response (terminal payload):
 
 - `ok` (bool): command accepted and executed.
-- `text` (string): primary operator-facing line.
-- `lines` (optional list[string]): additional ordered output lines.
-- `warnings` (optional list[string]): non-fatal warnings.
+- `lines` (list[string]): ordered terminal lines (primary line first).
 
 Contract rules:
 
@@ -106,6 +104,11 @@ Contract rules:
 - Frontend does not infer state changes from local echo.
 - Output remains terse, operational, and ASCII-safe.
 - Unknown or unauthorized commands return `ok=false` with actionable text.
+
+Snapshot:
+
+- Endpoint: `GET /snapshot`
+- Returns read-only world-state projection for UI panels and map.
 
 ## Implementation Order (Do This First)
 
@@ -122,7 +125,7 @@ class GameState:
         self.ambient_threat = 0.0
         self.assault_timer = None
         self.in_major_assault = False
-        self.player_location = "Command Center"
+        self.player_location = "COMMAND"
 ```
 
 ### Step 2: Advance time every tick
@@ -182,7 +185,7 @@ Phase 1 is a deterministic terminal interface. The contract is:
 
 - One command in, one response out.
 - No background ticking while the operator is in control.
-- Command handlers return a structured result with success state and a single text payload.
+- Command handlers return a structured result with success state and ordered lines.
 - Commands are parsed with shell-style quoting for multi-word sector names.
 
 The terminal loop owns input/output. Command handlers mutate the game state and
@@ -192,11 +195,8 @@ return a `CommandResult` payload for display.
 
 Authority is enforced at command dispatch:
 
-- Read authority: inspection-only commands available from any sector.
-- Write authority: state-mutating commands that require Command Center presence.
-
-The Command Center gate is a hard boundary. When the operator is not in the
-Command Center, write commands return a denial message and do not mutate state.
+- Phase 1 allows all commands.
+- Authority gating is deferred until later phases.
 
 ## Validation Target
 
@@ -221,3 +221,236 @@ JSON response:
 
 - `ok`: bool.
 - `lines`: list of terminal lines.
+
+
+
+## Data Structures, Information Rules, Post-Assault
+
+### Locked Decisions
+
+The following decisions are treated as intent, not suggestion:
+
+* **Damage is structure-level**, not sector-level
+* **Sectors are an aggregate view**, derived from their contained structures
+* **Clean defenses are possible but rare**, and usually imply low-value threats
+* **Autopilot repair exists but starts at zero effectiveness**
+* **Time alone does not worsen damage**
+* **Damage worsens only via actors** (enemies, ambient events)
+* **Repairs are actions that consume time + resources**
+* **Repairs can occur during assaults, but are physical and risky**
+* **No permanent losses short of campaign failure**
+* **Information fidelity applies to damage visibility**
+* **“Post-assault” is a state, not a timer**
+* **Player emotion target**: cost + urgency
+
+Everything below assumes this.
+
+---
+
+## 1. Core Concept: Post-Assault Is Not a Phase
+
+**Important lock:**
+
+> There is no special “post-assault mode.”
+
+Instead:
+
+* Assault **ends**
+* World continues
+* Damage persists
+* Pressure only resumes when the player leaves (expedition trigger later)
+
+This avoids artificial pacing and fits your hub/campaign model.
+
+---
+
+## 2. Damage Model (Structure-Level)
+
+## 2.1 Structure State Machine (Canonical)
+
+Each structure (turret, trap, power relay, sensor, fabricator, etc.) exists in exactly one state:
+
+```text
+OPERATIONAL
+DAMAGED
+OFFLINE
+DESTROYED
+```
+
+### State semantics
+
+* **OPERATIONAL**
+
+  * Full function
+* **DAMAGED**
+
+  * Reduced effectiveness
+  * Slower response / lower output
+* **OFFLINE**
+
+  * Non-functional
+  * Can be repaired
+* **DESTROYED**
+
+  * Exists physically but cannot function
+  * Requires reconstruction (not repair)
+  * Cannot auto-repair
+
+This gives you a **repair gradient**, not a binary switch.
+
+---
+
+## 2.2 Sector State (Derived, Not Stored)
+
+Sector state is computed from structures first, with existing sector
+metrics as a fallback. Phase 1 rule:
+
+- If a sector has any non-operational structure, its status is `DAMAGED`.
+- If all structures are operational (or no structures exist yet), use the
+  existing sector status label.
+
+This keeps the sector view readable while routing damage through the
+structure model.
+
+---
+
+## 3. Assault Outcomes → Damage Application
+
+When an assault resolves, exactly **one outcome** is selected (already exists conceptually).
+
+## 3.1 Outcome → Damage Rules
+
+### A. Repelled Cleanly
+
+* No structures move to a worse state
+* Minor wear may exist internally but not modeled yet
+
+### B. Repelled With Damage
+
+* 1–N structures move:
+
+  * OPERATIONAL → DAMAGED
+  * DAMAGED → OFFLINE
+
+### C. Partial Breach
+
+* Structures in breached sectors may:
+
+  * Move directly to OFFLINE or DESTROYED
+* Increased chance of COMMS degradation
+
+### D. Strategic Loss
+
+* High-value structures targeted
+* DESTROYED becomes likely
+
+### E. Failure (COMMAND / ARCHIVE)
+
+* Existing failure latch behavior applies
+
+**Key rule:**
+Damage is applied **once**, atomically, at assault resolution.
+No hidden ticking afterward.
+
+---
+
+## 4. Autopilot Auto-Repair (Baseline)
+
+Autopilot repair is **not implemented** in Phase 1. Treat effectiveness as
+`0` until a later unlock exists. This avoids hidden healing and preserves
+urgency.
+
+---
+
+## 5. Player Repair Actions (Phase 1)
+
+## 5.1 Repair Verb
+
+```text
+REPAIR <STRUCTURE_ID>
+```
+
+Rules:
+
+* Starts a timed repair task tracked in `active_repairs`.
+* Progress advances on `WAIT` ticks.
+* Reconstruction (`DESTROYED → OFFLINE`) is blocked during active assault.
+* No location or resource gating yet.
+
+---
+
+## 5.2 Repair Transitions
+
+| From      | To          | Allowed | Notes                     |
+| --------- | ----------- | ------- | ------------------------- |
+| DAMAGED   | OPERATIONAL | Yes     | Fast                      |
+| OFFLINE   | DAMAGED     | Yes     | Slower                    |
+| DESTROYED | OFFLINE     | Yes     | Costly, slow              |
+| DESTROYED | OPERATIONAL | No      | Must pass through OFFLINE |
+
+This enforces recovery cost without permanence.
+
+---
+
+## 6. Repairs During Assault
+
+Repairs can be started during an active assault. Reconstruction
+(`DESTROYED → OFFLINE`) is blocked while an assault is active.
+
+---
+
+## 7. Reconstruction Boundary
+
+* **Repair** restores existing structures.
+* **Reconstruction** (`DESTROYED → OFFLINE`) is allowed only when not under
+  active assault.
+
+---
+
+## 8. Information Visibility (COMMS-Dependent)
+
+Damage visibility follows **information degradation rules**.
+
+## 8.1 Full COMMS
+
+* Exact structure states visible
+* Sector state accurate
+
+## 8.2 Degraded COMMS
+
+* Sector shows:
+
+  * “ACTIVITY DETECTED”
+  * “MULTIPLE FAILURES”
+* Individual structure damage may be hidden
+
+This makes post-assault triage meaningful.
+
+---
+
+## 9. When Is the World “Safe” Again?
+
+Your clarification locks this cleanly:
+
+* There is **no assault countdown**
+* New major assaults are triggered by **expeditions**
+* Therefore:
+
+  * Player has time to repair
+  * But repairing delays progress toward victory
+
+This creates **strategic urgency**, not time pressure.
+
+---
+
+## 10. Player Experience Outcome (Validated)
+
+After first assault, the player should see:
+
+* Broken or degraded systems
+* Reduced defensive capability
+* Clear repair affordances
+* No instant death spiral
+* A strong “I need to fix this now” impulse
+
+---

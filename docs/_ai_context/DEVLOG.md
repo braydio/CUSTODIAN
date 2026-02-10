@@ -1,5 +1,10 @@
 # DEVLOG — CUSTODIAN
 
+## 2026-02-10
+- Added structure damage scaffolding with timed repairs, plus the `REPAIR` command and repair progression tests.
+- Shifted assault outcomes to degrade structures at resolution and tightened status report degradation to match COMMS fidelity rules.
+- Cleaned and aligned `docs/SystemDesign.md` and AI context docs with the current structure/repair implementation.
+
 ## 2026-02-09 # {NOTE FOR CODEX}
 - CODEX OVER HERE! READ THIS!
 - Hi it's Brayden. I want you to put move the contents of docs/INFORMATION_FIDELITY.md to somewhere persistent so that the style of (in-game) information degradation is a persistent design theme. Also thanks for all your hard work. Brayden out.

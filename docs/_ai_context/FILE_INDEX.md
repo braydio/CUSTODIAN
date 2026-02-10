@@ -7,8 +7,11 @@
 - `game/simulations/world_state/core/hub.py` — hub/campaign schemas, offer generation, recon, and hub mutation rules.
 - `game/simulations/world_state/core/events.py` — ambient event generation.
 - `game/simulations/world_state/core/assaults.py` — assault timing + lifecycle.
+- `game/simulations/world_state/core/structures.py` — structure damage model scaffolding.
+- `game/simulations/world_state/core/repairs.py` — repair task timing and progression.
 - `game/simulations/world_state/terminal/` — command parser, processor, registry, and REPL.
 - `game/simulations/world_state/terminal/commands/harden.py` — HARDEN command handler.
+- `game/simulations/world_state/terminal/commands/repair.py` — REPAIR command handler.
 - `game/simulations/world_state/server.py` — world-state SSE stream server.
 - `game/simulations/assault/core/assault.py` — assault resolution logic.
 - `custodian-terminal/index.html` — terminal UI shell.
@@ -19,3 +22,4 @@
 - `custodian-terminal/server.py` — static server + boot stream + `/command` + `/snapshot`.
 - `.githooks/` — local git hooks (pre-commit, commit-msg, post-commit).
 - `tests/` — pytest suite for world-state stepping and terminal commands.
+- `tests/test_repairs.py` — repair progression tests.
