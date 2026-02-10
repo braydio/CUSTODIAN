@@ -109,6 +109,13 @@
           ? "[NO SIGNAL]"
           : sector.status;
 
+      if (commsStatus === "STABLE") {
+        const structure = document.createElement("div");
+        structure.className = "sector-structure-id";
+        structure.textContent = `${entry.id}_CORE`;
+        card.appendChild(structure);
+      }
+
       if (
         lastSnapshot &&
         STATUS_SEVERITY[sector.status] >
@@ -138,4 +145,3 @@
 
   window.CustodianSectorMap = { renderSectorMap };
 })();
-

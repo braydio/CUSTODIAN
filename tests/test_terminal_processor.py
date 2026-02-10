@@ -1,6 +1,7 @@
 """Tests for terminal command processing."""
 
 from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.core.structures import StructureState
 from game.simulations.world_state.terminal.processor import process_command
 
 
@@ -118,3 +119,19 @@ def test_process_command_scavenge_advances_time_and_materials(monkeypatch) -> No
     assert state.materials == 2
     assert result.text == "[SCAVENGE] OPERATION COMPLETE."
     assert result.lines == ["[RESOURCE GAIN] +2 MATERIALS"]
+
+
+def test_repair_reissue_reports_status() -> None:
+    """REPAIR issued during active repair should return a status line."""
+
+    state = GameState()
+    structure = state.structures["CC_CORE"]
+    structure.state = StructureState.DAMAGED
+    state.materials = 3
+
+    start = process_command(state, "REPAIR CC_CORE")
+    status = process_command(state, "REPAIR CC_CORE")
+
+    assert start.ok is True
+    assert status.ok is True
+    assert status.text.startswith("[REPAIR] IN PROGRESS:")
