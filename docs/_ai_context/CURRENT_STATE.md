@@ -35,6 +35,7 @@
 - World time advances only on explicit time-bearing commands (`WAIT`, `WAIT 10X`) in terminal mode.
 - `STATUS` remains a high-level board view (time, threat bucket, assault state, posture, archive losses, sector statuses).
 - `STATUS` output degrades with COMMS fidelity (FULL/ALERT/DAMAGED/COMPROMISED).
+- `WAIT`/`WAIT 10X` output now follows the information degradation spec (event/warning + optional interpretive line, fidelity-gated summaries).
 - Command processor is backend-authoritative; frontend local echo is display-only.
 
 ## Flexible Areas
