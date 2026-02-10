@@ -7,6 +7,7 @@ from game.simulations.world_state.terminal.commands import (
     cmd_focus,
     cmd_harden,
     cmd_help,
+    cmd_repair,
     cmd_reset,
     cmd_status,
     cmd_wait,
@@ -101,6 +102,15 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         lines = cmd_harden(state)
         if lines[:2] == ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]:
             return _unknown_command()
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return CommandResult(ok=True, text=primary_line, lines=detail_lines)
+    if parsed.verb == "REPAIR":
+        if len(parsed.args) == 0:
+            return CommandResult(ok=False, text="REPAIR REQUIRES STRUCTURE ID.")
+        if len(parsed.args) > 1:
+            return CommandResult(ok=False, text="USE QUOTES FOR MULTI-WORD STRUCTURE.")
+        lines = cmd_repair(state, parsed.args[0])
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return CommandResult(ok=True, text=primary_line, lines=detail_lines)

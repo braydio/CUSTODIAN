@@ -7,7 +7,6 @@ from ..assault_outcome import AssaultOutcome
 
 from .config import (
     ASSAULT_ALERTNESS_PER_TICK,
-    ASSAULT_DAMAGE_PER_TICK,
     ASSAULT_DURATION_MAX,
     ASSAULT_DURATION_MIN,
     ASSAULT_THREAT_PER_TICK,
@@ -116,7 +115,6 @@ def resolve_assault(state, tick_delay=0.05):
     duration = random.randint(ASSAULT_DURATION_MIN, ASSAULT_DURATION_MAX)
     assault.duration_ticks = duration
     target_names = {sector.name for sector in assault.target_sectors}
-    pre_damage = {sector.name: sector.damage for sector in assault.target_sectors}
     archive_pre_damage = state.sectors["ARCHIVE"].damage
 
     def on_tick(sectors, tick):
@@ -132,7 +130,6 @@ def resolve_assault(state, tick_delay=0.05):
             if world_sector is None:
                 continue
             print(f"[Assault] Fighting in {world_sector.name}")
-            world_sector.damage += ASSAULT_DAMAGE_PER_TICK * defense_mult
             world_sector.alertness += ASSAULT_ALERTNESS_PER_TICK
             state.ambient_threat += ASSAULT_THREAT_PER_TICK
 
@@ -155,12 +152,7 @@ def resolve_assault(state, tick_delay=0.05):
         remaining=summary["remaining"],
     )
 
-    assault_damage = sum(
-        max(0.0, sector.damage - pre_damage.get(sector.name, 0.0))
-        for sector in assault.target_sectors
-    )
-
-    message = _apply_assault_outcome(state, assault, outcome, assault_damage, target_names)
+    message = _apply_assault_outcome(state, assault, outcome, target_names)
     state.last_assault_lines = [message] if message else []
 
     archive_post_damage = state.sectors["ARCHIVE"].damage
@@ -172,7 +164,7 @@ def resolve_assault(state, tick_delay=0.05):
     return outcome
 
 
-def _apply_assault_outcome(state, assault, outcome, assault_damage, target_names):
+def _apply_assault_outcome(state, assault, outcome, target_names):
     """Apply post-assault consequences and return the primary outcome line."""
 
     # Outcome selection
@@ -181,26 +173,31 @@ def _apply_assault_outcome(state, assault, outcome, assault_damage, target_names
         command_center.damage = max(command_center.damage, COMMAND_CENTER_BREACH_DAMAGE)
         return "[ASSAULT] COMMAND BREACHED."
 
-    if outcome.penetration == "none" and assault_damage < 0.5:
+    if outcome.penetration == "none" and outcome.intensity == "low":
         state.ambient_threat += 0.2
         for sector in assault.target_sectors:
             sector.alertness *= 0.85
         return "[ASSAULT] DEFENSES HELD. ENEMY WITHDREW."
 
     if outcome.penetration == "none":
-        for sector in assault.target_sectors:
-            sector.damage += 0.6
-            sector.alertness += 0.4
+        for structure in state.structures.values():
+            if structure.sector in target_names:
+                structure.degrade()
         return "[ASSAULT] ENEMY REPULSED. INFRASTRUCTURE DAMAGE REPORTED."
 
     if outcome.penetration == "partial":
+        for structure in state.structures.values():
+            if structure.sector in target_names:
+                structure.degrade()
         target = assault.target_sectors[0]
-        target.damage = max(target.damage, 2.0)
         target.alertness += 1.0
         add_sector_effect(target, "sensor_blackout", severity=1.0, decay=0.02)
         return "[ASSAULT] BREACH CONTAINED. SECTOR CONTROL DEGRADED."
 
     # Severe penetration but not command center breach -> strategic loss
+    for structure in state.structures.values():
+        if structure.sector in target_names:
+            structure.degrade()
     target = assault.target_sectors[0]
     target.power = max(0.2, target.power - 0.2)
     add_global_effect(state, "signal_interference", severity=1.0, decay=0.0)
