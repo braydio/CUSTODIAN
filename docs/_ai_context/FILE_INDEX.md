@@ -21,5 +21,6 @@
 - `custodian-terminal/sector_layout.js` — canonical Phase 1 layout metadata for map rendering.
 - `custodian-terminal/server.py` — static server + boot stream + `/command` + `/snapshot`.
 - `.githooks/` — local git hooks (pre-commit, commit-msg, post-commit).
+- `docs/INFORMATION_DEGRADATION.md` — canonical STATUS/WAIT information degradation rules.
 - `tests/` — pytest suite for world-state stepping and terminal commands.
 - `tests/test_repairs.py` — repair progression tests.
