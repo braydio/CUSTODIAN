@@ -34,6 +34,9 @@ def start_repair(state, structure_id: str) -> str:
     if not structure:
         return "UNKNOWN STRUCTURE."
 
+    if structure.id in state.active_repairs:
+        return "REPAIR ALREADY IN PROGRESS."
+
     if structure.state == StructureState.OPERATIONAL:
         return "STRUCTURE DOES NOT REQUIRE REPAIR."
 

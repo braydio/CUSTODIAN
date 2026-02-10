@@ -206,6 +206,13 @@ html, body {
   opacity: 0.85;
 }
 
+.sector-structure-id {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: #6aa56f;
+  opacity: 0.75;
+}
+
 /* =========================
    SECTOR STATES
    ========================= */

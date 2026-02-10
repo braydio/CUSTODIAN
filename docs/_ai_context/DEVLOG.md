@@ -7,6 +7,7 @@
 - Reworked WAIT/WAIT 10X output to follow the revised information degradation spec with fidelity-gated event and summary lines.
 - Consolidated STATUS/WAIT information degradation rules into `docs/INFORMATION_DEGRADATION.md`.
 - Added Phase 1 materials economy: materials in state/snapshot, STATUS resources block, SCAVENGE command, and repair material gating.
+- Added structure IDs to STATUS and sector map when COMMS is stable, plus repair-in-progress feedback on reissue.
 
 ## 2026-02-09 # {NOTE FOR CODEX}
 - CODEX OVER HERE! READ THIS!

@@ -97,15 +97,16 @@ def cmd_status(state: GameState) -> list[str]:
         "",
         "SECTORS:",
     ])
-    for sector in snapshot["sectors"]:
-        lines.append(f"{sector['name']}: {sector['status']}")
-        if comms_status == "STABLE" and sector["status"] == "DAMAGED":
-            damaged_structures = [
+        for sector in snapshot["sectors"]:
+            lines.append(f"{sector['name']}: {sector['status']}")
+        if comms_status == "STABLE":
+            sector_structures = [
                 s
                 for s in state.structures.values()
                 if s.sector == sector["name"]
-                and s.state != StructureState.OPERATIONAL
             ]
-            for structure in damaged_structures:
-                lines.append(f"    * {structure.name}: {structure.state.value}")
+            for structure in sector_structures:
+                lines.append(
+                    f"    * {structure.id} {structure.name}: {structure.state.value}"
+                )
     return lines

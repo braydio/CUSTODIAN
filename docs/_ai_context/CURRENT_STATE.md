@@ -8,7 +8,7 @@
 - Hub scaffolding exists in `game/simulations/world_state/core/hub.py` with offer generation, recon refinement, hub mutation rules, and snapshot/load seams.
 - Phase 1.5 asymmetry is active: sector roles influence threat growth, assault damage, warnings, and event frequency.
 - World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`).
-- Structure-level damage scaffolding exists (`core/structures.py`) with timed repairs (`core/repairs.py`), driven by `REPAIR`, `WAIT`, and materials economy.
+- Structure-level damage scaffolding exists (`core/structures.py`) with timed repairs (`core/repairs.py`), driven by `REPAIR`, `WAIT`, and the materials economy (status-aware repair reissue).
 - Unified entrypoint is available at `python -m game` with `--ui` (default), `--sim`, and `--repl`.
 - Automated tests exist for parser/processor behavior and simulation stepping.
 - Git hooks for docs/secret hygiene exist; enable via `git config core.hooksPath .githooks`.
