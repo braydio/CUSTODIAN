@@ -44,9 +44,12 @@ def _parse_wait_ticks(args: list[str]) -> int | None:
     if not token.endswith("X"):
         return None
     count_text = token[:-1]
-    if count_text != "10":
+    if not count_text.isdigit():
         return None
-    return 10
+    count = int(count_text)
+    if count <= 0:
+        return None
+    return count
 
 
 def process_command(state: GameState, raw: str) -> CommandResult:
