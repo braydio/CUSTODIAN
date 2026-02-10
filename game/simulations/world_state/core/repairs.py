@@ -47,7 +47,10 @@ def tick_repairs(state) -> list[str]:
 
     lines = []
     for sid in completed:
-        structure = state.structures[sid]
+        structure = state.structures.get(sid)
+        if not structure:
+            del state.active_repairs[sid]
+            continue
         if structure.state == StructureState.DESTROYED:
             structure.state = StructureState.OFFLINE
         elif structure.state == StructureState.OFFLINE:
