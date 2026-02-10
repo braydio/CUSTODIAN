@@ -11,6 +11,7 @@ def cmd_status(state: GameState) -> list[str]:
     comms_status = state.sectors["COMMS"].status_label()
     snapshot = state.snapshot()
     focus_lookup = {sector["id"]: sector["name"] for sector in SECTOR_DEFS}
+    resources = snapshot.get("resources", {})
     if comms_status == "COMPROMISED":
         lines = [
             "TIME: ??",
@@ -18,6 +19,9 @@ def cmd_status(state: GameState) -> list[str]:
             "ASSAULT: NO SIGNAL",
             "",
             "ARCHIVE STATUS: NO SIGNAL",
+            "",
+            "RESOURCES:",
+            f"- MATERIALS: {resources.get('materials', 0)}",
             "",
             "SECTORS:",
         ]
@@ -40,6 +44,11 @@ def cmd_status(state: GameState) -> list[str]:
         lines.append("ARCHIVE STATUS: DEGRADED")
         lines.extend([
             "",
+            "RESOURCES:",
+            f"- MATERIALS: {resources.get('materials', 0)}",
+        ])
+        lines.extend([
+            "",
             "SECTORS:",
         ])
         for sector in snapshot["sectors"]:
@@ -54,6 +63,11 @@ def cmd_status(state: GameState) -> list[str]:
         lines.append("SYSTEM POSTURE: FOCUSED")
         loss_floor = state.archive_losses if state.archive_losses > 0 else 0
         lines.append(f"ARCHIVE LOSSES: {loss_floor}+")
+        lines.extend([
+            "",
+            "RESOURCES:",
+            f"- MATERIALS: {resources.get('materials', 0)}",
+        ])
         lines.extend([
             "",
             "SECTORS:",
@@ -74,6 +88,11 @@ def cmd_status(state: GameState) -> list[str]:
         posture = "ACTIVE"
     lines.append(f"SYSTEM POSTURE: {posture}")
     lines.append(f"ARCHIVE LOSSES: {state.archive_losses}/{ARCHIVE_LOSS_LIMIT}")
+    lines.extend([
+        "",
+        "RESOURCES:",
+        f"- MATERIALS: {resources.get('materials', 0)}",
+    ])
     lines.extend([
         "",
         "SECTORS:",

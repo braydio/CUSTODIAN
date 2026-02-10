@@ -7,6 +7,12 @@ REPAIR_TICKS = {
     StructureState.DESTROYED: 6,
 }
 
+REPAIR_COSTS = {
+    StructureState.DAMAGED: 1,
+    StructureState.OFFLINE: 2,
+    StructureState.DESTROYED: 4,
+}
+
 
 def start_repair(state, structure_id: str) -> str:
     if not structure_id:
@@ -34,6 +40,11 @@ def start_repair(state, structure_id: str) -> str:
     if state.in_major_assault and structure.state == StructureState.DESTROYED:
         return "RECONSTRUCTION NOT POSSIBLE DURING ASSAULT."
 
+    cost = REPAIR_COSTS.get(structure.state, 0)
+    if state.materials < cost:
+        return "REPAIR FAILED: INSUFFICIENT MATERIALS."
+
+    state.materials -= cost
     state.active_repairs[structure_id] = REPAIR_TICKS[structure.state]
     return f"REPAIR STARTED: {structure.name}"
 

@@ -12,6 +12,7 @@
 - `game/simulations/world_state/terminal/` — command parser, processor, registry, and REPL.
 - `game/simulations/world_state/terminal/commands/harden.py` — HARDEN command handler.
 - `game/simulations/world_state/terminal/commands/repair.py` — REPAIR command handler.
+- `game/simulations/world_state/terminal/commands/scavenge.py` — SCAVENGE command handler.
 - `game/simulations/world_state/server.py` — world-state SSE stream server.
 - `game/simulations/assault/core/assault.py` — assault resolution logic.
 - `custodian-terminal/index.html` — terminal UI shell.

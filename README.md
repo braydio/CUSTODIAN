@@ -104,7 +104,7 @@ WORLD_STATE_MODE=repl python game/simulations/world_state/sandbox_world.py
 Usage notes:
 
 - Use `HELP` to list commands and usage.
-- Commands: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS <SECTOR>`, `HARDEN`, `REPAIR <STRUCTURE>`, `HELP`, `RESET`, `REBOOT`.
+- Commands: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS <SECTOR>`, `HARDEN`, `REPAIR <STRUCTURE>`, `SCAVENGE`, `HELP`, `RESET`, `REBOOT`.
 - Use quotes for multi-word sectors (for example, `FOCUS "DEFENSE GRID"`).
 
 Docs:
