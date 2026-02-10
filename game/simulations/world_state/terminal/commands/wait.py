@@ -3,6 +3,7 @@
 from contextlib import redirect_stdout
 import io
 
+from game.simulations.world_state.core.repairs import tick_repairs
 from game.simulations.world_state.core.simulation import step_world
 from game.simulations.world_state.core.state import GameState
 
@@ -71,6 +72,7 @@ def cmd_wait(state: GameState) -> list[str]:
 
     with redirect_stdout(io.StringIO()):
         became_failed = step_world(state)
+        repair_lines = tick_repairs(state)
 
     lines = ["TIME ADVANCED."]
 
@@ -90,10 +92,15 @@ def cmd_wait(state: GameState) -> list[str]:
             lines.extend(state.last_assault_lines)
             state.last_assault_lines = []
         had_assault_transition = True
+        if repair_lines:
+            lines.extend(repair_lines)
 
     if became_failed:
         lines.extend(_failure_lines(state))
         return lines
+
+    if repair_lines and not had_assault_transition:
+        lines.extend(repair_lines)
 
     if not has_event_update and not had_assault_transition:
         lines.append(_quiet_tick_line(state))

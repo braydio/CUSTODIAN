@@ -2,29 +2,91 @@
 
 from game.simulations.world_state.core.config import ARCHIVE_LOSS_LIMIT, SECTOR_DEFS
 from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.core.structures import StructureState
 
 
 def cmd_status(state: GameState) -> list[str]:
     """Build the locked STATUS report output."""
 
+    comms_status = state.sectors["COMMS"].status_label()
     snapshot = state.snapshot()
     focus_lookup = {sector["id"]: sector["name"] for sector in SECTOR_DEFS}
+    if comms_status == "COMPROMISED":
+        lines = [
+            "TIME: ??",
+            "THREAT: UNKNOWN",
+            "ASSAULT: NO SIGNAL",
+            "",
+            "ARCHIVE STATUS: NO SIGNAL",
+            "",
+            "SECTORS:",
+        ]
+        for sector in snapshot["sectors"]:
+            status = "NO DATA" if sector["name"] != "COMMS" else "COMPROMISED"
+            lines.append(f"{sector['name']}: {status}")
+        return lines
+
     lines = [
         f"TIME: {snapshot['time']}",
         f"THREAT: {snapshot['threat']}",
         f"ASSAULT: {snapshot['assault']}",
+        "",
     ]
+
+    if comms_status == "DAMAGED":
+        lines[1] = "THREAT: ELEVATED"
+        lines[2] = "ASSAULT: UNKNOWN"
+        lines.append("SYSTEM POSTURE: ACTIVE")
+        lines.append("ARCHIVE STATUS: DEGRADED")
+        lines.extend([
+            "",
+            "SECTORS:",
+        ])
+        for sector in snapshot["sectors"]:
+            status = "STABLE"
+            if sector["status"] in {"ALERT", "DAMAGED", "COMPROMISED"}:
+                status = "ACTIVITY DETECTED"
+            lines.append(f"{sector['name']}: {status}")
+        return lines
+
+    if comms_status == "ALERT":
+        lines[2] = "ASSAULT: UNSTABLE"
+        lines.append("SYSTEM POSTURE: FOCUSED")
+        loss_floor = state.archive_losses if state.archive_losses > 0 else 0
+        lines.append(f"ARCHIVE LOSSES: {loss_floor}+")
+        lines.extend([
+            "",
+            "SECTORS:",
+        ])
+        for sector in snapshot["sectors"]:
+            status = sector["status"]
+            if status == "DAMAGED":
+                status = "UNSTABLE"
+            lines.append(f"{sector['name']}: {status}")
+        return lines
+
     if state.hardened:
-        lines.append("SYSTEM POSTURE: HARDENED")
+        posture = "HARDENED"
     elif state.focused_sector:
         focused_name = focus_lookup.get(state.focused_sector, "UNKNOWN")
-        lines.append(f"SYSTEM POSTURE: FOCUSED ({focused_name})")
-    if state.archive_losses > 0:
-        lines.append(f"ARCHIVE LOSSES: {state.archive_losses}/{ARCHIVE_LOSS_LIMIT}")
+        posture = f"FOCUSED ({focused_name})"
+    else:
+        posture = "ACTIVE"
+    lines.append(f"SYSTEM POSTURE: {posture}")
+    lines.append(f"ARCHIVE LOSSES: {state.archive_losses}/{ARCHIVE_LOSS_LIMIT}")
     lines.extend([
         "",
         "SECTORS:",
     ])
     for sector in snapshot["sectors"]:
-        lines.append(f"- {sector['name']}: {sector['status']}")
+        lines.append(f"{sector['name']}: {sector['status']}")
+        if comms_status == "STABLE" and sector["status"] == "DAMAGED":
+            damaged_structures = [
+                s
+                for s in state.structures.values()
+                if s.sector == sector["name"]
+                and s.state != StructureState.OPERATIONAL
+            ]
+            for structure in damaged_structures:
+                lines.append(f"    * {structure.name}: {structure.state.value}")
     return lines

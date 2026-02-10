@@ -1,0 +1,60 @@
+from .structures import StructureState
+
+
+REPAIR_TICKS = {
+    StructureState.DAMAGED: 2,
+    StructureState.OFFLINE: 4,
+    StructureState.DESTROYED: 6,
+}
+
+
+def start_repair(state, structure_id: str) -> str:
+    if not structure_id:
+        return "REPAIR REQUIRES STRUCTURE ID."
+
+    structure = state.structures.get(structure_id)
+    if not structure:
+        normalized = structure_id.strip().upper()
+        for candidate in state.structures.values():
+            if candidate.id.upper() == normalized:
+                structure = candidate
+                break
+            if candidate.name.upper() == normalized:
+                structure = candidate
+                break
+            if candidate.name.split()[0].upper() == normalized:
+                structure = candidate
+                break
+    if not structure:
+        return "UNKNOWN STRUCTURE."
+
+    if structure.state == StructureState.OPERATIONAL:
+        return "STRUCTURE DOES NOT REQUIRE REPAIR."
+
+    if state.in_major_assault and structure.state == StructureState.DESTROYED:
+        return "RECONSTRUCTION NOT POSSIBLE DURING ASSAULT."
+
+    state.active_repairs[structure_id] = REPAIR_TICKS[structure.state]
+    return f"REPAIR STARTED: {structure.name}"
+
+
+def tick_repairs(state) -> list[str]:
+    completed = []
+    for sid in list(state.active_repairs.keys()):
+        state.active_repairs[sid] -= 1
+        if state.active_repairs[sid] <= 0:
+            completed.append(sid)
+
+    lines = []
+    for sid in completed:
+        structure = state.structures[sid]
+        if structure.state == StructureState.DESTROYED:
+            structure.state = StructureState.OFFLINE
+        elif structure.state == StructureState.OFFLINE:
+            structure.state = StructureState.DAMAGED
+        elif structure.state == StructureState.DAMAGED:
+            structure.state = StructureState.OPERATIONAL
+        del state.active_repairs[sid]
+        lines.append(f"REPAIR COMPLETE: {structure.name}")
+
+    return lines
