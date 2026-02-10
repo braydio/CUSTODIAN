@@ -99,13 +99,13 @@ def test_process_command_scavenge_advances_time_and_materials(monkeypatch) -> No
     state = GameState()
     state.materials = 0
 
-    def _step(local_state: GameState) -> bool:
+    def _cmd_wait(local_state: GameState) -> list[str]:
         local_state.time += 1
-        return False
+        return ["TIME ADVANCED."]
 
     monkeypatch.setattr(
-        "game.simulations.world_state.terminal.commands.scavenge.step_world",
-        _step,
+        "game.simulations.world_state.terminal.commands.scavenge.cmd_wait",
+        _cmd_wait,
     )
     monkeypatch.setattr(
         "game.simulations.world_state.terminal.commands.scavenge.random.randint",
