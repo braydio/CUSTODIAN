@@ -63,6 +63,7 @@ class GameState:
         self.is_failed = False
         self.failure_reason = None
         self.last_assault_lines = []
+        self.materials = 3
 
         # Player state
         self.player_location = "COMMAND"
@@ -147,6 +148,7 @@ class GameState:
             "hardened": self.hardened,
             "archive_losses": self.archive_losses,
             "archive_limit": ARCHIVE_LOSS_LIMIT,
+            "resources": {"materials": self.materials},
         }
 
     @property

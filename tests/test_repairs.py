@@ -16,3 +16,17 @@ def test_structure_repair_progression() -> None:
     tick_repairs(state)
 
     assert structure.state == StructureState.OPERATIONAL
+
+
+def test_repair_requires_materials() -> None:
+    state = GameState()
+    state.materials = 0
+    structure = Structure("T2", "Test Relay", "POWER")
+    structure.state = StructureState.DAMAGED
+    state.structures[structure.id] = structure
+
+    result = start_repair(state, "T2")
+
+    assert result == "REPAIR FAILED: INSUFFICIENT MATERIALS."
+    assert state.active_repairs == {}
+    assert structure.state == StructureState.DAMAGED

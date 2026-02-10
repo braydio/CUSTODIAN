@@ -21,6 +21,7 @@ def test_help_output_matches_locked_contract() -> None:
         "- FOCUS    Reallocate attention to a sector",
         "- HARDEN   Reinforce systems against impact",
         "- REPAIR   Begin structure repair",
+        "- SCAVENGE Recover materials",
         "- HELP     Show this list",
     ]
 

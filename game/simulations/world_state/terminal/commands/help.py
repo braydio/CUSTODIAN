@@ -12,5 +12,6 @@ def cmd_help() -> list[str]:
         "- FOCUS    Reallocate attention to a sector",
         "- HARDEN   Reinforce systems against impact",
         "- REPAIR   Begin structure repair",
+        "- SCAVENGE Recover materials",
         "- HELP     Show this list",
     ]

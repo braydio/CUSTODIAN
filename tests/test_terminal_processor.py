@@ -90,3 +90,31 @@ def test_process_command_wait_10x_steps_world(monkeypatch) -> None:
     assert state.time == 10
     assert result.text == "TIME ADVANCED x10."
     assert result.lines == ["", "[SUMMARY]", "- THREAT ESCALATED"]
+
+
+def test_process_command_scavenge_advances_time_and_materials(monkeypatch) -> None:
+    """SCAVENGE should advance time and grant materials."""
+
+    state = GameState()
+    state.materials = 0
+
+    def _step(local_state: GameState) -> bool:
+        local_state.time += 1
+        return False
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.scavenge.step_world",
+        _step,
+    )
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.scavenge.random.randint",
+        lambda _min, _max: 2,
+    )
+
+    result = process_command(state, "SCAVENGE")
+
+    assert result.ok is True
+    assert state.time == 3
+    assert state.materials == 2
+    assert result.text == "[SCAVENGE] OPERATION COMPLETE."
+    assert result.lines == ["[RESOURCE GAIN] +2 MATERIALS"]

@@ -9,6 +9,7 @@ from game.simulations.world_state.terminal.commands import (
     cmd_help,
     cmd_repair,
     cmd_reset,
+    cmd_scavenge,
     cmd_status,
     cmd_wait,
     cmd_wait_ticks,
@@ -111,6 +112,13 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         if len(parsed.args) > 1:
             return CommandResult(ok=False, text="USE QUOTES FOR MULTI-WORD STRUCTURE.")
         lines = cmd_repair(state, parsed.args[0])
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return CommandResult(ok=True, text=primary_line, lines=detail_lines)
+    if parsed.verb == "SCAVENGE":
+        if parsed.args:
+            return _unknown_command()
+        lines = cmd_scavenge(state)
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return CommandResult(ok=True, text=primary_line, lines=detail_lines)
