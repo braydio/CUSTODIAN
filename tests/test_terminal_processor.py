@@ -89,4 +89,4 @@ def test_process_command_wait_10x_steps_world(monkeypatch) -> None:
     assert result.ok is True
     assert state.time == 10
     assert result.text == "TIME ADVANCED x10."
-    assert result.lines == ["[PRESSURE] PERIMETER STABLE."]
+    assert result.lines == ["", "[SUMMARY]", "- THREAT ESCALATED"]

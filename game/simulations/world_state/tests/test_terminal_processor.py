@@ -41,7 +41,7 @@ def test_wait_10x_advances_ten_ticks(monkeypatch) -> None:
     assert result.ok is True
     assert state.time == 10
     assert result.text == "TIME ADVANCED x10."
-    assert result.lines == ["[PRESSURE] PERIMETER STABLE."]
+    assert result.lines == ["", "[SUMMARY]", "- THREAT ESCALATED"]
 
 
 def test_status_does_not_mutate_state() -> None:
@@ -131,7 +131,7 @@ def test_reset_command_restores_session_after_failure() -> None:
 
 
 def test_wait_quiet_tick_emits_pressure_line(monkeypatch) -> None:
-    """WAIT should emit a concise pressure line when no event or assault transition occurs."""
+    """WAIT should emit only the primary line when no event or signal occurs."""
 
     state = GameState()
 
@@ -150,14 +150,11 @@ def test_wait_quiet_tick_emits_pressure_line(monkeypatch) -> None:
 
     assert result.ok is True
     assert result.text == "TIME ADVANCED."
-    assert result.lines is not None
-    assert len(result.lines) == 1
-    assert result.lines[0] == "[PRESSURE] ASSAULT BUILDING; THREAT RISING."
-    assert len(result.lines[0]) <= 60
+    assert result.lines is None
 
 
 def test_wait_quiet_tick_pressure_line_has_no_empty_entries(monkeypatch) -> None:
-    """WAIT quiet-tick fallback detail should be non-empty and terse."""
+    """WAIT quiet-tick fallback should emit only the primary line."""
 
     state = GameState()
 
@@ -175,8 +172,7 @@ def test_wait_quiet_tick_pressure_line_has_no_empty_entries(monkeypatch) -> None
     result = process_command(state, "WAIT")
 
     assert result.ok is True
-    assert result.lines == ["[PRESSURE] THREAT STABLE."]
-    assert all(line.strip() for line in result.lines)
+    assert result.lines is None
 
 
 def test_archive_loss_triggers_failure(monkeypatch) -> None:

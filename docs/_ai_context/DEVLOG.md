@@ -4,6 +4,7 @@
 - Added structure damage scaffolding with timed repairs, plus the `REPAIR` command and repair progression tests.
 - Shifted assault outcomes to degrade structures at resolution and tightened status report degradation to match COMMS fidelity rules.
 - Cleaned and aligned `docs/SystemDesign.md` and AI context docs with the current structure/repair implementation.
+- Reworked WAIT/WAIT 10X output to follow the revised information degradation spec with fidelity-gated event and summary lines.
 
 ## 2026-02-09 # {NOTE FOR CODEX}
 - CODEX OVER HERE! READ THIS!
