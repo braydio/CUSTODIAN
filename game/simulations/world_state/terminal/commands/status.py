@@ -42,15 +42,21 @@ def cmd_status(state: GameState) -> list[str]:
         lines[2] = "ASSAULT: UNKNOWN"
         lines.append("SYSTEM POSTURE: ACTIVE")
         lines.append("ARCHIVE STATUS: DEGRADED")
-        lines.extend([
-            "",
-            "RESOURCES:",
-            f"- MATERIALS: {resources.get('materials', 0)}",
-        ])
-        lines.extend([
-            "",
-            "SECTORS:",
-        ])
+        lines.extend(
+            [
+                "",
+                "RESOURCES:",
+                f"- MATERIALS: {resources.get('materials', 0)}",
+            ]
+        )
+        if state.active_repairs:
+            lines.append("REPAIRS: ACTIVE")
+        lines.extend(
+            [
+                "",
+                "SECTORS:",
+            ]
+        )
         for sector in snapshot["sectors"]:
             status = "STABLE"
             if sector["status"] in {"ALERT", "DAMAGED", "COMPROMISED"}:
@@ -63,15 +69,21 @@ def cmd_status(state: GameState) -> list[str]:
         lines.append("SYSTEM POSTURE: FOCUSED")
         loss_floor = state.archive_losses if state.archive_losses > 0 else 0
         lines.append(f"ARCHIVE LOSSES: {loss_floor}+")
-        lines.extend([
-            "",
-            "RESOURCES:",
-            f"- MATERIALS: {resources.get('materials', 0)}",
-        ])
-        lines.extend([
-            "",
-            "SECTORS:",
-        ])
+        lines.extend(
+            [
+                "",
+                "RESOURCES:",
+                f"- MATERIALS: {resources.get('materials', 0)}",
+            ]
+        )
+        if state.active_repairs:
+            lines.append("REPAIRS: ACTIVE")
+        lines.extend(
+            [
+                "",
+                "SECTORS:",
+            ]
+        )
         for sector in snapshot["sectors"]:
             status = sector["status"]
             if status == "DAMAGED":
@@ -88,22 +100,30 @@ def cmd_status(state: GameState) -> list[str]:
         posture = "ACTIVE"
     lines.append(f"SYSTEM POSTURE: {posture}")
     lines.append(f"ARCHIVE LOSSES: {state.archive_losses}/{ARCHIVE_LOSS_LIMIT}")
-    lines.extend([
-        "",
-        "RESOURCES:",
-        f"- MATERIALS: {resources.get('materials', 0)}",
-    ])
-    lines.extend([
-        "",
-        "SECTORS:",
-    ])
-        for sector in snapshot["sectors"]:
-            lines.append(f"{sector['name']}: {sector['status']}")
+    lines.extend(
+        [
+            "",
+            "RESOURCES:",
+            f"- MATERIALS: {resources.get('materials', 0)}",
+        ]
+    )
+    if state.active_repairs:
+        lines.append("REPAIRS:")
+        for repair in snapshot.get("active_repairs", []):
+            structure = state.structures.get(repair["id"])
+            name = structure.name if structure else repair["id"]
+            lines.append(f"- {repair['id']} {name}: {repair['ticks']} TICKS REMAINING")
+    lines.extend(
+        [
+            "",
+            "SECTORS:",
+        ]
+    )
+    for sector in snapshot["sectors"]:
+        lines.append(f"{sector['name']}: {sector['status']}")
         if comms_status == "STABLE":
             sector_structures = [
-                s
-                for s in state.structures.values()
-                if s.sector == sector["name"]
+                s for s in state.structures.values() if s.sector == sector["name"]
             ]
             for structure in sector_structures:
                 lines.append(

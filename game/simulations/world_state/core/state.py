@@ -149,6 +149,10 @@ class GameState:
             "archive_losses": self.archive_losses,
             "archive_limit": ARCHIVE_LOSS_LIMIT,
             "resources": {"materials": self.materials},
+            "active_repairs": [
+                {"id": sid, "ticks": ticks}
+                for sid, ticks in self.active_repairs.items()
+            ],
         }
 
     @property
