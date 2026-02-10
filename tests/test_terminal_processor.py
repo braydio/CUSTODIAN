@@ -69,8 +69,8 @@ def test_process_command_harden_sets_posture() -> None:
     assert state.focused_sector is None
 
 
-def test_process_command_wait_10x_steps_world(monkeypatch) -> None:
-    """WAIT 10X should advance ten ticks and summarize output."""
+def test_process_command_wait_nx_steps_world(monkeypatch) -> None:
+    """WAIT NX should advance N ticks and summarize output."""
 
     state = GameState()
 

@@ -2,7 +2,7 @@
 
 This document is the **single source of truth** for information degradation in CUSTODIAN.
 It consolidates the prior feature planning specs for:
-- WAIT/WAIT 10X output
+- WAIT/WAIT NX output
 - STATUS output
 - STATUS ↔ WAIT parity rules
 
@@ -14,7 +14,7 @@ It is authoritative. Follow the structure, ordering, and suppression rules exact
 
 This specification applies only to:
 - `WAIT`
-- `WAIT 10X`
+- `WAIT NX`
 - `STATUS`
 
 Separation rules:
@@ -75,7 +75,8 @@ It never advances time, never lies, and never implies trends.
 4. SYSTEM POSTURE (if available)
 5. ARCHIVE STATUS / LOSSES (if available)
 6. RESOURCES
-7. SECTORS
+7. REPAIRS (if available)
+8. SECTORS
 
 ## 1. INFO FIDELITY: FULL
 
@@ -89,6 +90,9 @@ ARCHIVE LOSSES: 1 / 3
 
 RESOURCES:
 - MATERIALS: 2
+
+REPAIRS:
+- CC_CORE COMMAND CORE: 2 TICKS REMAINING
 
 SECTORS:
 COMMAND: STABLE
@@ -119,6 +123,8 @@ ARCHIVE LOSSES: 1+
 
 RESOURCES:
 - MATERIALS: 2
+
+REPAIRS: ACTIVE
 
 SECTORS:
 COMMAND: STABLE
@@ -151,6 +157,8 @@ ARCHIVE STATUS: DEGRADED
 RESOURCES:
 - MATERIALS: 2
 
+REPAIRS: ACTIVE
+
 SECTORS:
 COMMAND: ACTIVITY DETECTED
 COMMS: DAMAGED
@@ -177,9 +185,6 @@ THREAT: UNKNOWN
 ASSAULT: NO SIGNAL
 
 ARCHIVE STATUS: NO SIGNAL
-
-RESOURCES:
-- MATERIALS: 2
 
 SECTORS:
 COMMAND: NO DATA
@@ -213,7 +218,7 @@ It may be wrong at low fidelity but must remain plausible and internally consist
 - Primary line always present unless session terminated
 - Primary line is exactly:
   - `TIME ADVANCED.`
-  - `TIME ADVANCED x10.`
+  - `TIME ADVANCED xN.`
 - Output order is fixed:
   1. Primary line
   2. Optional detail lines
@@ -335,16 +340,16 @@ TIME ADVANCED.
 - FRAGMENTED: directional verbs must be hedged and uncertain (e.g., "MAY BE WORSENING").
 - LOST: no directionality.
 
-## 7. WAIT 10X — Aggregation Rules
+## 7. WAIT NX — Aggregation Rules
 
 - No per-tick output
 - Always emits a summary block unless LOST
 - Fidelity used is the worst reached during the interval
 
-### WAIT 10X — FULL
+### WAIT NX — FULL
 
 ```
-TIME ADVANCED x10.
+TIME ADVANCED xN.
 
 [SUMMARY]
 - THREAT ESCALATED
@@ -352,29 +357,29 @@ TIME ADVANCED x10.
 - ASSAULT STATUS CHANGED
 ```
 
-### WAIT 10X — DEGRADED
+### WAIT NX — DEGRADED
 
 ```
-TIME ADVANCED x10.
+TIME ADVANCED xN.
 
 [SUMMARY]
 - SYSTEM STABILITY DECLINED
 - HOSTILE ACTIVITY INCREASED
 ```
 
-### WAIT 10X — FRAGMENTED
+### WAIT NX — FRAGMENTED
 
 ```
-TIME ADVANCED x10.
+TIME ADVANCED xN.
 
 [SUMMARY]
 - CONDITIONS MAY HAVE WORSENED
 ```
 
-### WAIT 10X — LOST
+### WAIT NX — LOST
 
 ```
-TIME ADVANCED x10.
+TIME ADVANCED xN.
 ```
 
 ## 8. Absolute Prohibitions

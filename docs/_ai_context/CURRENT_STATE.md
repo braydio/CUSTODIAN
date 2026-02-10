@@ -14,7 +14,7 @@
 - Git hooks for docs/secret hygiene exist; enable via `git config core.hooksPath .githooks`.
 
 ## Terminal Command Surface (Implemented)
-- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HARDEN`, `REPAIR`, `SCAVENGE`, `HELP`.
+- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT NX`, `FOCUS`, `HARDEN`, `REPAIR`, `SCAVENGE`, `HELP`.
 - Failure-recovery commands: `RESET`, `REBOOT`.
 - Unknown or invalid command input returns:
   - `ok=false`

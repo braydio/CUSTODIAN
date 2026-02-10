@@ -20,8 +20,8 @@ def test_wait_advances_exactly_one_tick() -> None:
     assert result.text == "TIME ADVANCED."
 
 
-def test_wait_10x_advances_ten_ticks(monkeypatch) -> None:
-    """WAIT 10X should advance time by ten and summarize output."""
+def test_wait_nx_advances_ten_ticks(monkeypatch) -> None:
+    """WAIT NX should advance time by N and summarize output."""
 
     state = GameState()
 
