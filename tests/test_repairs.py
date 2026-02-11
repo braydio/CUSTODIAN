@@ -10,7 +10,7 @@ def test_structure_repair_progression() -> None:
     state.structures[structure.id] = structure
 
     result = start_repair(state, "T1")
-    assert result == "REPAIR STARTED: Test Turret"
+    assert result == "REPAIR STARTED: Test Turret (COST: 1 MATERIALS)"
 
     tick_repairs(state)
     tick_repairs(state)

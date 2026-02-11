@@ -48,15 +48,20 @@ def start_repair(state, structure_id: str) -> str:
         return "REPAIR FAILED: INSUFFICIENT MATERIALS."
 
     state.materials -= cost
-    state.active_repairs[structure_id] = REPAIR_TICKS[structure.state]
-    return f"REPAIR STARTED: {structure.name}"
+    total_ticks = REPAIR_TICKS[structure.state]
+    state.active_repairs[structure.id] = {
+        "remaining": total_ticks,
+        "total": total_ticks,
+        "cost": cost,
+    }
+    return f"REPAIR STARTED: {structure.name} (COST: {cost} MATERIALS)"
 
 
 def tick_repairs(state) -> list[str]:
     completed = []
-    for sid in list(state.active_repairs.keys()):
-        state.active_repairs[sid] -= 1
-        if state.active_repairs[sid] <= 0:
+    for sid, job in list(state.active_repairs.items()):
+        job["remaining"] -= 1
+        if job["remaining"] <= 0:
             completed.append(sid)
 
     lines = []

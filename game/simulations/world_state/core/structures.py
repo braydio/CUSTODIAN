@@ -28,3 +28,18 @@ class Structure:
             StructureState.OPERATIONAL,
             StructureState.DAMAGED,
         }
+
+
+def create_fabrication_structures() -> list[Structure]:
+    return [
+        Structure(
+            id="FB_CORE",
+            name="FABRICATION CORE",
+            sector="FABRICATION",
+        ),
+        Structure(
+            id="FB_TOOLS",
+            name="ASSEMBLY TOOLS",
+            sector="FABRICATION",
+        ),
+    ]

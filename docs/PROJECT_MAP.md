@@ -58,10 +58,10 @@ Campaign progress is **knowledge-driven**, not stat-driven.
 
 ### Total Sectors (Tutorial)
 
-* **10 total sectors**
+* **9 total sectors**
 
   * **2 Critical**
-  * **8 Peripheral**
+  * **7 Peripheral**
 
 ---
 

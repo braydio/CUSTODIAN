@@ -18,16 +18,31 @@ def _fidelity_from_comms(state: GameState) -> str:
 
 def _repair_status_line(state: GameState, structure_id: str) -> str:
     fidelity = _fidelity_from_comms(state)
-    ticks = state.active_repairs.get(structure_id, 0)
+    job = state.active_repairs.get(structure_id, {})
+    remaining = job.get("remaining", 0)
+    total = job.get("total", 0)
+    cost = job.get("cost", 0)
     structure = state.structures.get(structure_id)
     name = structure.name.upper() if structure else "UNKNOWN"
     if fidelity == "FULL":
-        return f"[REPAIR] IN PROGRESS: {name} ({ticks} TICKS REMAINING)"
+        return (
+            f"[REPAIR] IN PROGRESS: {name} "
+            f"({total - remaining}/{total} TICKS, COST: {cost} MATERIALS)"
+        )
     if fidelity == "DEGRADED":
-        return "[REPAIR] IN PROGRESS"
+        approx = _approximate_ticks(remaining)
+        return f"[REPAIR] IN PROGRESS: {approx} (COST: {cost} MATERIALS)"
     if fidelity == "FRAGMENTED":
-        return "[EVENT] MAINTENANCE SIGNALS DETECTED"
+        return f"[EVENT] MAINTENANCE SIGNALS DETECTED (COST: {cost} MATERIALS)"
     return "REPAIR STATUS: NO SIGNAL."
+
+
+def _approximate_ticks(remaining: int) -> str:
+    if remaining <= 1:
+        return "NEAR COMPLETE"
+    if remaining <= 3:
+        return "MID PROGRESS"
+    return "EARLY STAGE"
 
 
 def _resolve_structure_id(state: GameState, structure_id: str) -> str | None:

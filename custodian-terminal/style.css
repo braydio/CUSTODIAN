@@ -252,12 +252,17 @@ html, body {
 }
 
 .sector-card.role-goal { opacity: 0.85; }
+.sector-card.role-fabrication { opacity: 0.9; }
 .sector-card.role-egress,
 .sector-card.role-ingress { opacity: 0.8; }
 
 .sector-card.recent-hit {
   border-color: #f0a1a1;
   box-shadow: 0 0 10px rgba(240, 161, 161, 0.35);
+}
+
+.sector-card.repair-active {
+  box-shadow: inset 0 0 8px rgba(122, 210, 140, 0.25);
 }
 
 /* =========================
