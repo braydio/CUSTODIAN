@@ -12,6 +12,44 @@ def cmd_status(state: GameState) -> list[str]:
     snapshot = state.snapshot()
     focus_lookup = {sector["id"]: sector["name"] for sector in SECTOR_DEFS}
     resources = snapshot.get("resources", {})
+
+    def _approximate_ticks(remaining: int) -> str:
+        if remaining <= 1:
+            return "NEAR COMPLETE"
+        if remaining <= 3:
+            return "MID PROGRESS"
+        return "EARLY STAGE"
+
+    def _append_repairs(lines: list[str], fidelity: str) -> None:
+        repairs = snapshot.get("active_repairs", [])
+        if not repairs:
+            return
+        if fidelity == "FULL":
+            lines.append("REPAIRS:")
+            for repair in repairs:
+                structure = state.structures.get(repair["id"])
+                name = structure.name if structure else repair["id"]
+                done = repair["total"] - repair["remaining"]
+                lines.append(
+                    f"- {repair['id']} {name}: "
+                    f"{done}/{repair['total']} TICKS (COST: {repair['cost']} MATERIALS)"
+                )
+            return
+        if fidelity == "DEGRADED":
+            lines.append("REPAIRS:")
+            for repair in repairs:
+                approx = _approximate_ticks(repair["remaining"])
+                lines.append(
+                    f"- {repair['id']}: {approx} (COST: {repair['cost']} MATERIALS)"
+                )
+            return
+        if fidelity == "SEVERE":
+            lines.append("REPAIRS: ACTIVE")
+            for repair in repairs:
+                lines.append(
+                    f"- {repair['id']}: IN PROGRESS (COST: {repair['cost']} MATERIALS)"
+                )
+            return
     if comms_status == "COMPROMISED":
         lines = [
             "TIME: ??",
@@ -49,8 +87,7 @@ def cmd_status(state: GameState) -> list[str]:
                 f"- MATERIALS: {resources.get('materials', 0)}",
             ]
         )
-        if state.active_repairs:
-            lines.append("REPAIRS: ACTIVE")
+        _append_repairs(lines, "SEVERE")
         lines.extend(
             [
                 "",
@@ -76,8 +113,7 @@ def cmd_status(state: GameState) -> list[str]:
                 f"- MATERIALS: {resources.get('materials', 0)}",
             ]
         )
-        if state.active_repairs:
-            lines.append("REPAIRS: ACTIVE")
+        _append_repairs(lines, "DEGRADED")
         lines.extend(
             [
                 "",
@@ -107,12 +143,7 @@ def cmd_status(state: GameState) -> list[str]:
             f"- MATERIALS: {resources.get('materials', 0)}",
         ]
     )
-    if state.active_repairs:
-        lines.append("REPAIRS:")
-        for repair in snapshot.get("active_repairs", []):
-            structure = state.structures.get(repair["id"])
-            name = structure.name if structure else repair["id"]
-            lines.append(f"- {repair['id']} {name}: {repair['ticks']} TICKS REMAINING")
+    _append_repairs(lines, "FULL")
     lines.extend(
         [
             "",

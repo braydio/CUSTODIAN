@@ -75,6 +75,7 @@
 
     const layout = window.CustodianSectorLayout?.SECTOR_LAYOUT || [];
     const byId = new Map(snapshot.sectors.map(s => [s.id, s]));
+    const repairIds = new Set((snapshot.active_repairs || []).map(r => r.id));
     const commsStatus = getCommsStatus(snapshot);
 
     const header = document.createElement("div");
@@ -97,6 +98,9 @@
       card.className = `sector-card ${STATUS_CLASS[sector.status] || "stable"} role-${entry.role || "generic"}`;
       card.style.gridColumn = entry.x + 1;
       card.style.gridRow = entry.y + 1;
+      if (repairIds.has(`${entry.id}_CORE`)) {
+        card.classList.add("repair-active");
+      }
 
       const name = document.createElement("div");
       name.className = "sector-name";

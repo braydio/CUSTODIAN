@@ -11,7 +11,7 @@ from .config import (
     SECTOR_DEFS,
     SECTORS,
 )
-from .structures import Structure, StructureState
+from .structures import Structure, StructureState, create_fabrication_structures
 from .effects import apply_global_effects, apply_sector_effects
 from .factions import build_faction_profile
 
@@ -85,7 +85,7 @@ class GameState:
             for sector in SECTOR_DEFS
         }
         self.structures: dict[str, Structure] = {}
-        self.active_repairs: dict[str, int] = {}
+        self.active_repairs: dict[str, dict] = {}
         for sector in SECTOR_DEFS:
             structure_id = f"{sector['id']}_CORE"
             self.structures[structure_id] = Structure(
@@ -93,6 +93,8 @@ class GameState:
                 f"{sector['name']} CORE",
                 sector["name"],
             )
+        for structure in create_fabrication_structures():
+            self.structures[structure.id] = structure
 
     def threat_bucket(self) -> str:
         """Map ambient threat to a Phase 1 bucket."""
@@ -150,8 +152,13 @@ class GameState:
             "archive_limit": ARCHIVE_LOSS_LIMIT,
             "resources": {"materials": self.materials},
             "active_repairs": [
-                {"id": sid, "ticks": ticks}
-                for sid, ticks in self.active_repairs.items()
+                {
+                    "id": sid,
+                    "remaining": job["remaining"],
+                    "total": job["total"],
+                    "cost": job["cost"],
+                }
+                for sid, job in self.active_repairs.items()
             ],
         }
 

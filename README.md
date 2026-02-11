@@ -48,6 +48,7 @@ Repeat until campaign objective achieved or lost
   - COMMS
   - DEFENSE GRID
   - POWER
+  - FABRICATION
   - ARCHIVE (campaign objective; loss = campaign failure)
   - STORAGE
   - HANGAR
