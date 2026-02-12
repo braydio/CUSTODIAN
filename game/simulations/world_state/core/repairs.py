@@ -1,20 +1,27 @@
 from .structures import StructureState
 
 
-REPAIR_TICKS = {
+REMOTE_REPAIR_TICKS = {
+    StructureState.DAMAGED: 4,
+}
+
+LOCAL_REPAIR_TICKS = {
     StructureState.DAMAGED: 2,
     StructureState.OFFLINE: 4,
     StructureState.DESTROYED: 6,
 }
 
-REPAIR_COSTS = {
+LOCAL_REPAIR_COSTS = {
     StructureState.DAMAGED: 1,
     StructureState.OFFLINE: 2,
     StructureState.DESTROYED: 4,
 }
 
+REMOTE_REPAIR_COSTS = {
+    StructureState.DAMAGED: 2,
+}
 
-def start_repair(state, structure_id: str) -> str:
+def start_repair(state, structure_id: str, *, local: bool = False) -> str:
     if not structure_id:
         return "REPAIR REQUIRES STRUCTURE ID."
 
@@ -34,6 +41,12 @@ def start_repair(state, structure_id: str) -> str:
     if not structure:
         return "UNKNOWN STRUCTURE."
 
+    if state.active_task:
+        return "ACTION IN PROGRESS."
+
+    if state.active_repairs:
+        return "ACTION IN PROGRESS."
+
     if structure.id in state.active_repairs:
         return "REPAIR ALREADY IN PROGRESS."
 
@@ -43,18 +56,28 @@ def start_repair(state, structure_id: str) -> str:
     if state.in_major_assault and structure.state == StructureState.DESTROYED:
         return "RECONSTRUCTION NOT POSSIBLE DURING ASSAULT."
 
-    cost = REPAIR_COSTS.get(structure.state, 0)
+    repair_ticks = LOCAL_REPAIR_TICKS if local else REMOTE_REPAIR_TICKS
+    repair_costs = LOCAL_REPAIR_COSTS if local else REMOTE_REPAIR_COSTS
+
+    if structure.state not in repair_ticks:
+        if local:
+            return "STRUCTURE NOT IN SECTOR."
+        return "REMOTE REPAIR NOT POSSIBLE. PHYSICAL INTERVENTION REQUIRED."
+
+    cost = repair_costs.get(structure.state, 0)
     if state.materials < cost:
         return "REPAIR FAILED: INSUFFICIENT MATERIALS."
 
     state.materials -= cost
-    total_ticks = REPAIR_TICKS[structure.state]
+    total_ticks = repair_ticks[structure.state]
     state.active_repairs[structure.id] = {
         "remaining": total_ticks,
         "total": total_ticks,
         "cost": cost,
     }
-    return f"REPAIR STARTED: {structure.name} (COST: {cost} MATERIALS)"
+    if local:
+        return f"MANUAL REPAIR STARTED: {structure.name} (COST: {cost} MATERIALS)"
+    return f"REMOTE REPAIR QUEUED: {structure.name} (COST: {cost} MATERIALS)"
 
 
 def tick_repairs(state) -> list[str]:

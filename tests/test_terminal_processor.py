@@ -121,6 +121,51 @@ def test_process_command_scavenge_advances_time_and_materials(monkeypatch) -> No
     assert result.lines == ["[RESOURCE GAIN] +2 MATERIALS"]
 
 
+def test_process_command_deploy_move_return_cycle(monkeypatch) -> None:
+    state = GameState()
+
+    def _quiet_step(local_state: GameState) -> bool:
+        local_state.time += 1
+        local_state.assault_timer = None
+        return False
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.wait.step_world",
+        _quiet_step,
+    )
+
+    deploy = process_command(state, "DEPLOY NORTH")
+    assert deploy.ok is True
+    assert deploy.text == "DEPLOYING TO T_NORTH."
+    assert state.player_mode == "FIELD"
+
+    process_command(state, "WAIT 2X")
+    assert state.player_location == "T_NORTH"
+
+    move = process_command(state, "MOVE ARCHIVE")
+    assert move.ok is True
+    assert move.text == "MOVING TO ARCHIVE."
+    process_command(state, "WAIT")
+    assert state.player_location == "ARCHIVE"
+
+    ret = process_command(state, "RETURN")
+    assert ret.ok is True
+    assert ret.text == "RETURNING TO COMMAND CENTER."
+    process_command(state, "WAIT 2X")
+    assert state.player_mode == "COMMAND"
+    assert state.player_location == "COMMAND"
+
+
+def test_field_mode_blocks_command_authority_actions() -> None:
+    state = GameState()
+    process_command(state, "DEPLOY NORTH")
+
+    result = process_command(state, "FOCUS POWER")
+
+    assert result.ok is False
+    assert result.text == "COMMAND AUTHORITY REQUIRED."
+
+
 def test_repair_reissue_reports_status() -> None:
     """REPAIR issued during active repair should return a status line."""
 
@@ -133,5 +178,6 @@ def test_repair_reissue_reports_status() -> None:
     status = process_command(state, "REPAIR CC_CORE")
 
     assert start.ok is True
+    assert start.text == "REMOTE REPAIR QUEUED: COMMAND CORE (COST: 2 MATERIALS)"
     assert status.ok is True
     assert status.text.startswith("[REPAIR] IN PROGRESS:")

@@ -10,12 +10,14 @@
 - World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`).
 - Structure-level damage scaffolding exists (`core/structures.py`) with timed repairs (`core/repairs.py`), driven by `REPAIR`, `WAIT`, and the materials economy (status-aware repair reissue).
 - Canonical sector layout now includes 9 sectors with FABRICATION present but inert.
+- Embodied Presence Phase A is implemented: command/field player modes, transit graph movement (`DEPLOY`, `MOVE`, `RETURN`), and field-local STATUS projection.
+- Repair authority is mode-aware: command mode supports remote DAMAGED repairs only, while field mode supports local DAMAGED/OFFLINE/DESTROYED repairs.
 - Unified entrypoint is available at `python -m game` with `--ui` (default), `--sim`, and `--repl`.
 - Automated tests exist for parser/processor behavior and simulation stepping.
 - Git hooks for docs/secret hygiene exist; enable via `git config core.hooksPath .githooks`.
 
 ## Terminal Command Surface (Implemented)
-- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT NX`, `FOCUS`, `HARDEN`, `REPAIR`, `SCAVENGE`, `HELP`.
+- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT NX`, `DEPLOY`, `MOVE`, `RETURN`, `FOCUS`, `HARDEN`, `REPAIR`, `SCAVENGE`, `HELP`.
 - Failure-recovery commands: `RESET`, `REBOOT`.
 - Unknown or invalid command input returns:
   - `ok=false`
@@ -30,11 +32,13 @@
   - `ok` (bool)
   - `lines` (string[]; primary line first)
 - Runtime model: Flask server process keeps a persistent in-memory `GameState` across requests.
+- World-state server `/command` accepts `{ "command": "<string>" }` with legacy `{ "raw": "<string>" }` fallback and returns `{ok, text, lines}`.
 
 ## Locked Decisions
 - Terminal-first interface with terse, operational output.
 - World time advances only on explicit time-bearing commands (`WAIT`, `WAIT 10X`) in terminal mode.
 - `STATUS` remains a high-level board view (time, threat bucket, assault state, posture, archive losses, sector statuses).
+- While in field mode, `STATUS` is local-only (location, active task, local structures) and withholds global threat/assault telemetry.
 - `STATUS` output degrades with COMMS fidelity (FULL/ALERT/DAMAGED/COMPROMISED).
 - `WAIT`/`WAIT 10X` output now follows the information degradation spec (event/warning + optional interpretive line, fidelity-gated summaries).
 - Command processor is backend-authoritative; frontend local echo is display-only.

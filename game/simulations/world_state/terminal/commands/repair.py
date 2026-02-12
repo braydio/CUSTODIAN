@@ -1,6 +1,7 @@
 """REPAIR command handler."""
 
 from game.simulations.world_state.core.repairs import start_repair
+from game.simulations.world_state.core.config import FIELD_ACTION_REPAIRING
 from game.simulations.world_state.core.state import GameState
 
 
@@ -62,9 +63,22 @@ def _resolve_structure_id(state: GameState, structure_id: str) -> str | None:
 def cmd_repair(state: GameState, structure_id: str) -> list[str]:
     """Start a repair task for a structure."""
 
+    if state.active_task:
+        return ["ACTION IN PROGRESS."]
+
     resolved_id = _resolve_structure_id(state, structure_id)
     if resolved_id and resolved_id in state.active_repairs:
         return [_repair_status_line(state, resolved_id)]
 
-    result = start_repair(state, structure_id)
+    local = state.in_field_mode()
+    if local:
+        structure = state.structures.get(resolved_id) if resolved_id else None
+        if not structure:
+            return ["UNKNOWN STRUCTURE."]
+        if structure.sector != state.player_location:
+            return ["STRUCTURE NOT IN SECTOR."]
+
+    result = start_repair(state, structure_id, local=local)
+    if result.startswith("MANUAL REPAIR STARTED:"):
+        state.field_action = FIELD_ACTION_REPAIRING
     return [result]

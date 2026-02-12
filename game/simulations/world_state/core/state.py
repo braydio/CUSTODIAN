@@ -5,7 +5,10 @@ from .config import (
     ALERTNESS_FROM_DAMAGE,
     AMBIENT_THREAT_GROWTH,
     ARCHIVE_LOSS_LIMIT,
+    COMMAND_CENTER_LOCATION,
     COMMAND_CENTER_BREACH_DAMAGE,
+    FIELD_ACTION_IDLE,
+    PLAYER_MODE_COMMAND,
     POWER_THREAT_MULT,
     STORAGE_DECAY_MULT,
     SECTOR_DEFS,
@@ -66,7 +69,10 @@ class GameState:
         self.materials = 3
 
         # Player state
-        self.player_location = "COMMAND"
+        self.player_mode = PLAYER_MODE_COMMAND
+        self.player_location = COMMAND_CENTER_LOCATION
+        self.field_action = FIELD_ACTION_IDLE
+        self.active_task: dict | None = None
         self.current_assault = None
         self.focused_sector = None
         self.hardened = False
@@ -160,12 +166,22 @@ class GameState:
                 }
                 for sid, job in self.active_repairs.items()
             ],
+            "player_mode": self.player_mode,
+            "player_location": self.player_location,
+            "field_action": self.field_action,
+            "active_task": dict(self.active_task) if self.active_task else None,
         }
 
     @property
     def in_command_center(self) -> bool:
         """Return True when the operator is in the COMMAND sector."""
-        return self.player_location == "COMMAND"
+        return self.player_mode == PLAYER_MODE_COMMAND
+
+    def in_command_mode(self) -> bool:
+        return self.player_mode == PLAYER_MODE_COMMAND
+
+    def in_field_mode(self) -> bool:
+        return not self.in_command_mode()
 
     def weakest_sectors(self, n=2):
         return sorted(

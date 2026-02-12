@@ -1,5 +1,13 @@
 # DEVLOG — CUSTODIAN
 
+## 2026-02-11
+- Implemented Embodied Presence Phase A: command/field mode split, transit travel graph, and new `DEPLOY`/`MOVE`/`RETURN` command flow.
+- Added field-local `STATUS` output (location, task, local structures only) and command-authority gating for strategic commands while deployed.
+- Updated repair authority model: remote repair is command-only for DAMAGED, local field repair handles DAMAGED/OFFLINE/DESTROYED with mode-specific timing/cost behavior.
+- Updated world-state `/command` endpoint contract handling to accept `{command}` with `{raw}` fallback and return `{ok, text, lines}`.
+- Added and updated tests for presence flow, authority gating, snapshot fields, and revised repair/help command contracts.
+- Completed feature-planning execution pass and moved planning docs into `feature_planing/completed/`; added recommendation docs in `feature_planning/`.
+
 ## 2026-02-10
 - Added structure damage scaffolding with timed repairs, plus the `REPAIR` command and repair progression tests.
 - Shifted assault outcomes to degrade structures at resolution and tightened status report degradation to match COMMS fidelity rules.

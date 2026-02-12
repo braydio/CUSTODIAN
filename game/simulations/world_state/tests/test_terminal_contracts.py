@@ -17,7 +17,10 @@ def test_help_output_matches_locked_contract() -> None:
     assert result.lines == [
         "- STATUS   View current situation",
         "- WAIT     Advance time",
-        "- WAIT 10X Advance time by ten ticks",
+        "- WAIT NX  Advance time by N ticks",
+        "- DEPLOY   Leave command via transit",
+        "- MOVE     Traverse transit and sectors",
+        "- RETURN   Return to command center",
         "- FOCUS    Reallocate attention to a sector",
         "- HARDEN   Reinforce systems against impact",
         "- REPAIR   Begin structure repair",
