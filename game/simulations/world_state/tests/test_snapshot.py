@@ -17,6 +17,10 @@ def test_snapshot_shape_and_defaults() -> None:
     assert snapshot["hardened"] is False
     assert snapshot["archive_losses"] == 0
     assert snapshot["archive_limit"] > 0
+    assert snapshot["player_mode"] == "COMMAND"
+    assert snapshot["player_location"] == "COMMAND"
+    assert snapshot["field_action"] == "IDLE"
+    assert snapshot["active_task"] is None
 
     sectors = snapshot["sectors"]
     assert len(sectors) > 0

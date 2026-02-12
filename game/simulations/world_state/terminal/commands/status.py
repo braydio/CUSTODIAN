@@ -8,6 +8,33 @@ from game.simulations.world_state.core.structures import StructureState
 def cmd_status(state: GameState) -> list[str]:
     """Build the locked STATUS report output."""
 
+    if state.in_field_mode():
+        lines = [
+            "MODE: FIELD",
+            f"LOCATION: {state.player_location}",
+        ]
+        if state.active_task:
+            remaining = state.active_task.get("ticks", 0)
+            total = state.active_task.get("total", remaining)
+            lines.append(
+                f"TASK: {state.active_task.get('type', 'UNKNOWN')} "
+                f"({total - remaining}/{total} TICKS)"
+            )
+        else:
+            lines.append(f"TASK: {state.field_action}")
+
+        lines.extend(["", "LOCAL STRUCTURES:"])
+        local_structures = [
+            s for s in state.structures.values() if s.sector == state.player_location
+        ]
+        if not local_structures:
+            lines.append("- NO LOCAL STRUCTURES.")
+            return lines
+
+        for structure in local_structures:
+            lines.append(f"- {structure.id} {structure.name}: {structure.state.value}")
+        return lines
+
     comms_status = state.sectors["COMMS"].status_label()
     snapshot = state.snapshot()
     focus_lookup = {sector["id"]: sector["name"] for sector in SECTOR_DEFS}

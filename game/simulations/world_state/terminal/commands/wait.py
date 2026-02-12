@@ -4,6 +4,12 @@ from contextlib import redirect_stdout
 from dataclasses import dataclass
 import io
 
+from game.simulations.world_state.core.config import (
+    FIELD_ACTION_IDLE,
+    FIELD_ACTION_MOVING,
+    FIELD_ACTION_REPAIRING,
+    PLAYER_MODE_COMMAND,
+)
 from game.simulations.world_state.core.repairs import tick_repairs
 from game.simulations.world_state.core.simulation import step_world
 from game.simulations.world_state.core.state import GameState
@@ -118,7 +124,10 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
 
     with redirect_stdout(io.StringIO()):
         became_failed = step_world(state)
+        _tick_active_task(state)
         repair_lines = tick_repairs(state)
+        if not state.active_repairs and state.field_action == FIELD_ACTION_REPAIRING:
+            state.field_action = FIELD_ACTION_IDLE
 
     fidelity = _fidelity_from_comms(state)
     event_name, event_sector = _latest_event(state, before_time)
@@ -150,6 +159,26 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
         became_failed=became_failed,
         warning_window=warning_window,
     )
+
+
+def _tick_active_task(state: GameState) -> None:
+    task = state.active_task
+    if not task:
+        return
+
+    task["ticks"] -= 1
+    if task["ticks"] > 0:
+        return
+
+    if task["type"] == "MOVE":
+        state.player_location = task["target"]
+        if task["target"] == "COMMAND":
+            state.player_mode = PLAYER_MODE_COMMAND
+    state.active_task = None
+    if not state.active_repairs:
+        state.field_action = FIELD_ACTION_IDLE
+    elif state.field_action == FIELD_ACTION_MOVING:
+        state.field_action = FIELD_ACTION_IDLE
 
 
 def cmd_wait(state: GameState) -> list[str]:

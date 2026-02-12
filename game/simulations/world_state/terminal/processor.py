@@ -4,10 +4,13 @@ from collections.abc import Callable
 
 from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.terminal.commands import (
+    cmd_deploy,
     cmd_focus,
     cmd_harden,
     cmd_help,
+    cmd_move,
     cmd_repair,
+    cmd_return,
     cmd_reset,
     cmd_scavenge,
     cmd_status,
@@ -88,6 +91,35 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return CommandResult(ok=True, text=primary_line, lines=detail_lines)
+
+    if parsed.verb == "DEPLOY":
+        if len(parsed.args) == 0:
+            return CommandResult(ok=False, text="DEPLOY REQUIRES TRANSIT TARGET.")
+        if len(parsed.args) > 1:
+            return CommandResult(ok=False, text="USE QUOTES FOR MULTI-WORD TARGET.")
+        lines = cmd_deploy(state, parsed.args[0])
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return CommandResult(ok=True, text=primary_line, lines=detail_lines)
+    if parsed.verb == "MOVE":
+        if len(parsed.args) == 0:
+            return CommandResult(ok=False, text="MOVE REQUIRES TARGET.")
+        if len(parsed.args) > 1:
+            return CommandResult(ok=False, text="USE QUOTES FOR MULTI-WORD TARGET.")
+        lines = cmd_move(state, parsed.args[0])
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return CommandResult(ok=True, text=primary_line, lines=detail_lines)
+    if parsed.verb == "RETURN":
+        if parsed.args:
+            return _unknown_command()
+        lines = cmd_return(state)
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return CommandResult(ok=True, text=primary_line, lines=detail_lines)
+
+    if state.in_field_mode() and parsed.verb in {"FOCUS", "HARDEN", "SCAVENGE"}:
+        return CommandResult(ok=False, text="COMMAND AUTHORITY REQUIRED.")
 
     if parsed.verb == "FOCUS":
         if len(parsed.args) == 0:

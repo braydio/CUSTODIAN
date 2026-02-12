@@ -82,14 +82,10 @@ def _stream_world_state(delay):
 def _command_result_payload(result) -> dict:
     """Convert a CommandResult into the command API payload."""
 
-    lines = []
-    if result.text:
-        lines.append(result.text)
-    if result.lines:
-        lines.extend(result.lines)
+    lines = list(result.lines or [])
     if result.warnings:
         lines.extend(result.warnings)
-    return {"ok": bool(result.ok), "lines": lines}
+    return {"ok": bool(result.ok), "text": result.text, "lines": lines}
 
 
 @app.route("/")
@@ -129,7 +125,7 @@ def command():
     """Execute a terminal command from POSTed JSON payload."""
 
     payload = request.get_json(silent=True) or {}
-    raw = payload.get("raw", "")
+    raw = payload.get("command", payload.get("raw", ""))
     result = process_command(command_state, raw)
     return jsonify(_command_result_payload(result))
 

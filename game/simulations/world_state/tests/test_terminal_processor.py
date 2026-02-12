@@ -194,3 +194,23 @@ def test_archive_loss_triggers_failure(monkeypatch) -> None:
 
     assert result.ok is True
     assert result.lines == ["ARCHIVAL INTEGRITY LOST", "SESSION TERMINATED."]
+
+
+def test_deploy_transitions_to_field_mode() -> None:
+    state = GameState()
+
+    result = process_command(state, "DEPLOY NORTH")
+
+    assert result.ok is True
+    assert result.text == "DEPLOYING TO T_NORTH."
+    assert state.player_mode == "FIELD"
+
+
+def test_focus_denied_in_field_mode() -> None:
+    state = GameState()
+    process_command(state, "DEPLOY NORTH")
+
+    result = process_command(state, "FOCUS POWER")
+
+    assert result.ok is False
+    assert result.text == "COMMAND AUTHORITY REQUIRED."

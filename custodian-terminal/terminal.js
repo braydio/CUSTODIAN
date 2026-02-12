@@ -220,7 +220,18 @@
   function shouldRefreshSnapshot(command, ok) {
     if (!ok) return false;
     const verb = command.trim().toUpperCase().split(/\s+/)[0];
-    return ["WAIT", "RESET", "REBOOT", "FOCUS", "HARDEN"].includes(verb);
+    return [
+      "WAIT",
+      "RESET",
+      "REBOOT",
+      "FOCUS",
+      "HARDEN",
+      "SCAVENGE",
+      "REPAIR",
+      "DEPLOY",
+      "MOVE",
+      "RETURN",
+    ].includes(verb);
   }
 
   function updateCommsPresentation(snapshot) {

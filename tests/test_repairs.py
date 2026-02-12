@@ -10,8 +10,10 @@ def test_structure_repair_progression() -> None:
     state.structures[structure.id] = structure
 
     result = start_repair(state, "T1")
-    assert result == "REPAIR STARTED: Test Turret (COST: 1 MATERIALS)"
+    assert result == "REMOTE REPAIR QUEUED: Test Turret (COST: 2 MATERIALS)"
 
+    tick_repairs(state)
+    tick_repairs(state)
     tick_repairs(state)
     tick_repairs(state)
 
@@ -30,3 +32,14 @@ def test_repair_requires_materials() -> None:
     assert result == "REPAIR FAILED: INSUFFICIENT MATERIALS."
     assert state.active_repairs == {}
     assert structure.state == StructureState.DAMAGED
+
+
+def test_remote_repair_for_offline_is_denied() -> None:
+    state = GameState()
+    structure = Structure("T3", "Test Node", "POWER")
+    structure.state = StructureState.OFFLINE
+    state.structures[structure.id] = structure
+
+    result = start_repair(state, "T3")
+
+    assert result == "REMOTE REPAIR NOT POSSIBLE. PHYSICAL INTERVENTION REQUIRED."
