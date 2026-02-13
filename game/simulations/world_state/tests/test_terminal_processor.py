@@ -5,23 +5,32 @@ from game.simulations.world_state.core.config import (
     COMMAND_CENTER_BREACH_DAMAGE,
 )
 from game.simulations.world_state.core.state import GameState, check_failure
+from game.simulations.world_state.terminal.commands.wait import WaitTickInfo
 from game.simulations.world_state.terminal.processor import process_command
 
 
-def test_wait_advances_exactly_one_tick() -> None:
-    """WAIT should increment time by one and report advancement."""
+def _disable_wait_tick_pause(monkeypatch) -> None:
+    monkeypatch.setattr("game.simulations.world_state.terminal.commands.wait.time.sleep", lambda *_: None)
+
+
+def test_wait_advances_five_ticks(monkeypatch) -> None:
+    """WAIT should advance one wait unit (5 ticks) and report advancement."""
+
+    _disable_wait_tick_pause(monkeypatch)
 
     state = GameState()
 
     result = process_command(state, "WAIT")
 
     assert result.ok is True
-    assert state.time == 1
+    assert state.time == 5
     assert result.text == "TIME ADVANCED."
 
 
-def test_wait_nx_advances_ten_ticks(monkeypatch) -> None:
-    """WAIT NX should advance time by N and summarize output."""
+def test_wait_nx_advances_units_of_five_ticks(monkeypatch) -> None:
+    """WAIT NX should advance time by N wait units (5 ticks each)."""
+
+    _disable_wait_tick_pause(monkeypatch)
 
     state = GameState()
 
@@ -36,12 +45,47 @@ def test_wait_nx_advances_ten_ticks(monkeypatch) -> None:
         _quiet_step,
     )
 
-    result = process_command(state, "WAIT 10X")
+    result = process_command(state, "WAIT 5X")
 
     assert result.ok is True
-    assert state.time == 10
-    assert result.text == "TIME ADVANCED x10."
-    assert result.lines == ["", "[SUMMARY]", "- THREAT ESCALATED"]
+    assert state.time == 25
+    assert result.text == "TIME ADVANCED."
+    assert result.lines is None
+
+
+def test_wait_suppresses_repeated_event_blocks(monkeypatch) -> None:
+    """Repeated tick signals should not be emitted back-to-back."""
+
+    _disable_wait_tick_pause(monkeypatch)
+    state = GameState()
+
+    def _repeat_event(_state: GameState) -> WaitTickInfo:
+        _state.time += 1
+        return WaitTickInfo(
+            fidelity="FULL",
+            event_name="Comms Burst",
+            event_sector="COMMS",
+            repair_names=[],
+            assault_started=False,
+            assault_warning=False,
+            assault_active=False,
+            became_failed=False,
+            warning_window=6,
+        )
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.wait._advance_tick",
+        _repeat_event,
+    )
+
+    result = process_command(state, "WAIT")
+
+    assert result.ok is True
+    assert result.text == "TIME ADVANCED."
+    assert result.lines == [
+        "[EVENT] COMMS BURST DETECTED",
+        "[STATUS SHIFT] SYSTEM STABILITY DECLINING",
+    ]
 
 
 def test_status_does_not_mutate_state() -> None:
@@ -97,11 +141,12 @@ def test_unknown_command_returns_locked_error_lines() -> None:
     assert result.lines == ["TYPE HELP FOR AVAILABLE COMMANDS."]
 
 
-def test_failure_mode_locks_non_reset_commands() -> None:
+def test_failure_mode_locks_non_reset_commands(monkeypatch) -> None:
     """After failure, non-reset commands should be rejected."""
 
     state = GameState()
     state.sectors["COMMAND"].damage = COMMAND_CENTER_BREACH_DAMAGE
+    _disable_wait_tick_pause(monkeypatch)
 
     wait_result = process_command(state, "WAIT")
     status_result = process_command(state, "STATUS")
@@ -113,11 +158,12 @@ def test_failure_mode_locks_non_reset_commands() -> None:
     assert status_result.lines == ["REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED."]
 
 
-def test_reset_command_restores_session_after_failure() -> None:
+def test_reset_command_restores_session_after_failure(monkeypatch) -> None:
     """RESET should clear failure mode and restore baseline state."""
 
     state = GameState()
     state.sectors["COMMAND"].damage = COMMAND_CENTER_BREACH_DAMAGE
+    _disable_wait_tick_pause(monkeypatch)
     process_command(state, "WAIT")
 
     result = process_command(state, "RESET")
@@ -134,6 +180,7 @@ def test_wait_quiet_tick_emits_pressure_line(monkeypatch) -> None:
     """WAIT should emit only the primary line when no event or signal occurs."""
 
     state = GameState()
+    _disable_wait_tick_pause(monkeypatch)
 
     def _quiet_step(local_state: GameState) -> bool:
         local_state.time += 1
@@ -157,6 +204,7 @@ def test_wait_quiet_tick_pressure_line_has_no_empty_entries(monkeypatch) -> None
     """WAIT quiet-tick fallback should emit only the primary line."""
 
     state = GameState()
+    _disable_wait_tick_pause(monkeypatch)
 
     def _quiet_step(local_state: GameState) -> bool:
         local_state.time += 1
@@ -180,6 +228,7 @@ def test_archive_loss_triggers_failure(monkeypatch) -> None:
 
     state = GameState()
     state.archive_losses = ARCHIVE_LOSS_LIMIT
+    _disable_wait_tick_pause(monkeypatch)
 
     def _failure_step(local_state: GameState) -> bool:
         local_state.time += 1

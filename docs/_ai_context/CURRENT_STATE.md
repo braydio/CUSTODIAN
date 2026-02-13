@@ -36,11 +36,11 @@
 
 ## Locked Decisions
 - Terminal-first interface with terse, operational output.
-- World time advances only on explicit time-bearing commands (`WAIT`, `WAIT 10X`) in terminal mode.
+- World time advances only on explicit time-bearing commands (`WAIT`, `WAIT NX`) in terminal mode.
 - `STATUS` remains a high-level board view (time, threat bucket, assault state, posture, archive losses, sector statuses).
 - While in field mode, `STATUS` is local-only (location, active task, local structures) and withholds global threat/assault telemetry.
 - `STATUS` output degrades with COMMS fidelity (FULL/ALERT/DAMAGED/COMPROMISED).
-- `WAIT`/`WAIT 10X` output now follows the information degradation spec (event/warning + optional interpretive line, fidelity-gated summaries).
+- `WAIT`/`WAIT NX` now advances in 5-tick units (`WAIT` = 5 ticks, `WAIT NX` = `N x 5` ticks), applies a 0.5-second pause between internal ticks, and suppresses adjacent duplicate detail lines.
 - Command processor is backend-authoritative; frontend local echo is display-only.
 
 ## Flexible Areas

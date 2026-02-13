@@ -19,14 +19,14 @@
 
 ## Phase 1 Terminal Design Lock (Historical Plan)
 - Rationale: build a deterministic, command-driven loop before any map UI to avoid UI creep and ensure a playable spine.
-- Loop invariant: `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS -> ...` (world only moves on `WAIT`/`WAIT 10X`).
-- Phase 1 command set: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HARDEN`, `HELP` only (no aliases).
+- Loop invariant: `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS -> ...` (world only moves on `WAIT`/`WAIT NX`).
+- Phase 1 command set: `STATUS`, `WAIT`, `WAIT NX`, `FOCUS`, `HARDEN`, `HELP` only (no aliases).
 - `STATUS` output rules: ASCII, all caps, no recommendations; fields: TIME, THREAT bucket, ASSAULT state, sector list with one-word state; never advances time.
-- `WAIT` output rules: advance exactly one tick; minimal output only; no full status dump; may emit event/warning/assault lines.
-- `WAIT 10X` output rules: advance exactly ten ticks; summarize events, warnings, assault transitions, and failure lines without full status dumps.
+- `WAIT` output rules: advance one wait unit (5 ticks); minimal output only; no full status dump; may emit event/warning/assault lines.
+- `WAIT NX` output rules: advance `N x 5` ticks; emit observed event/signal lines in order without explicit per-tick counters.
 - Error phrasing reserved: `UNKNOWN COMMAND. TYPE HELP FOR AVAILABLE COMMANDS.` and `COMMAND DENIED. COMMAND CENTER REQUIRED.`
 - Map UI now exists as a read-only projection of `STATUS` via `/snapshot` and never advances time.
-- Acceptance criteria: boot completes, `STATUS` and `WAIT`/`WAIT 10X` work, time advances only via `WAIT`/`WAIT 10X`, `STATUS` reflects changes.
+- Acceptance criteria: boot completes, `STATUS` and `WAIT`/`WAIT NX` work, time advances only via `WAIT`/`WAIT NX`, `STATUS` reflects changes.
 - Current code diverges (extra commands + authority gating); treat this as a reference spec, not current behavior.
 
 ## Canonical Entrypoints

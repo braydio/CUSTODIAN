@@ -3,6 +3,7 @@
 from contextlib import redirect_stdout
 from dataclasses import dataclass
 import io
+import time
 
 from game.simulations.world_state.core.config import (
     FIELD_ACTION_IDLE,
@@ -15,7 +16,8 @@ from game.simulations.world_state.core.simulation import step_world
 from game.simulations.world_state.core.state import GameState
 
 
-FIDELITY_ORDER = {"FULL": 0, "DEGRADED": 1, "FRAGMENTED": 2, "LOST": 3}
+WAIT_TICKS_PER_UNIT = 5
+WAIT_TICK_DELAY_SECONDS = 0.5
 
 
 @dataclass
@@ -182,21 +184,67 @@ def _tick_active_task(state: GameState) -> None:
 
 
 def cmd_wait(state: GameState) -> list[str]:
-    """Advance the world simulation by exactly one tick."""
+    """Advance the world simulation by one wait unit (5 ticks)."""
 
+    return cmd_wait_ticks(state, 1)
+
+
+def cmd_wait_ticks(state: GameState, ticks: int) -> list[str]:
+    """Advance the world simulation by N wait units (5 ticks per unit)."""
+
+    if ticks <= 0:
+        return ["TIME ADVANCED."]
     if state.is_failed:
         return _failure_lines(state)
 
-    info = _advance_tick(state)
     lines = ["TIME ADVANCED."]
+    detail_lines: list[str] = []
+    last_detail_line = lines[0]
+    last_signal_line: str | None = None
+    total_ticks = ticks * WAIT_TICKS_PER_UNIT
 
+    for index in range(total_ticks):
+        info = _advance_tick(state)
+        tick_lines = _detail_lines_for_tick(info, state)
+        signal_line = tick_lines[0] if tick_lines else None
+        suppress_tick_lines = (
+            signal_line is not None
+            and signal_line == last_signal_line
+            and not info.became_failed
+        )
+        if not suppress_tick_lines and signal_line is not None:
+            last_signal_line = signal_line
+
+        if suppress_tick_lines:
+            if index < total_ticks - 1:
+                time.sleep(WAIT_TICK_DELAY_SECONDS)
+            continue
+
+        for line in tick_lines:
+            if line == last_detail_line:
+                continue
+            detail_lines.append(line)
+            last_detail_line = line
+
+        if info.became_failed:
+            break
+
+        if index < total_ticks - 1:
+            time.sleep(WAIT_TICK_DELAY_SECONDS)
+
+    if detail_lines:
+        lines.extend(detail_lines)
+
+    return lines
+
+
+def _detail_lines_for_tick(info: WaitTickInfo, state: GameState) -> list[str]:
     if info.fidelity == "LOST":
         if info.became_failed:
-            lines.extend(_failure_lines(state))
-        return lines
+            return _failure_lines(state)
+        return []
 
-    detail_lines: list[str] = []
-
+    tick_lines: list[str] = []
     event_line = None
     if info.event_name:
         event_line = _format_event_line(info.event_name, info.fidelity)
@@ -210,11 +258,11 @@ def cmd_wait(state: GameState) -> list[str]:
         warning_line = _format_warning_line(info.fidelity)
 
     if event_line:
-        detail_lines.append(event_line)
+        tick_lines.append(event_line)
     elif repair_line:
-        detail_lines.append(repair_line)
+        tick_lines.append(repair_line)
     elif warning_line:
-        detail_lines.append(warning_line)
+        tick_lines.append(warning_line)
 
     assault_signal = info.assault_started or info.assault_warning
     if info.fidelity == "FRAGMENTED" and not info.assault_started:
@@ -227,93 +275,9 @@ def cmd_wait(state: GameState) -> list[str]:
         interpretive_line = _format_status_shift(info.fidelity)
 
     if interpretive_line:
-        detail_lines.append(interpretive_line)
-
-    if detail_lines:
-        lines.extend(detail_lines)
+        tick_lines.append(interpretive_line)
 
     if info.became_failed:
-        lines.extend(_failure_lines(state))
+        tick_lines.extend(_failure_lines(state))
 
-    return lines
-
-
-def cmd_wait_ticks(state: GameState, ticks: int) -> list[str]:
-    """Advance the world simulation by multiple ticks."""
-
-    if ticks <= 1:
-        return cmd_wait(state)
-
-    advanced = 0
-    worst_fidelity = "FULL"
-    any_event = False
-    any_assault_signal = False
-    assault_status_changed = False
-    start_threat = state.ambient_threat
-    previous_assault_state = state.assault_state()
-
-    for _ in range(ticks):
-        info = _advance_tick(state)
-        advanced += 1
-
-        if FIDELITY_ORDER[info.fidelity] > FIDELITY_ORDER[worst_fidelity]:
-            worst_fidelity = info.fidelity
-
-        if info.event_name or info.repair_names:
-            any_event = True
-
-        if info.assault_started or info.assault_warning:
-            any_assault_signal = True
-
-        current_assault_state = state.assault_state()
-        if current_assault_state != previous_assault_state:
-            assault_status_changed = True
-        previous_assault_state = current_assault_state
-
-        if info.became_failed:
-            break
-
-    lines = [f"TIME ADVANCED x{advanced}."]
-    if worst_fidelity == "LOST":
-        if state.is_failed:
-            lines.extend(_failure_lines(state))
-        return lines
-
-    lines.append("")
-    lines.append("[SUMMARY]")
-
-    threat_delta = state.ambient_threat - start_threat
-    threat_escalated = threat_delta >= 0.1
-
-    summary_lines: list[str] = []
-    if worst_fidelity == "FULL":
-        if threat_escalated:
-            summary_lines.append("- THREAT ESCALATED")
-        if any_assault_signal:
-            summary_lines.append("- HOSTILE COUNT INCREASED")
-        if assault_status_changed:
-            summary_lines.append("- ASSAULT STATUS CHANGED")
-        if any_event and "SYSTEM STABILITY DECLINED" not in summary_lines:
-            summary_lines.append("- SYSTEM STABILITY DECLINED")
-    elif worst_fidelity == "DEGRADED":
-        if any_event or threat_escalated:
-            summary_lines.append("- SYSTEM STABILITY DECLINED")
-        if any_assault_signal:
-            summary_lines.append("- HOSTILE ACTIVITY INCREASED")
-        if assault_status_changed:
-            summary_lines.append("- ASSAULT STATUS SHIFTED")
-    else:
-        if any_event or any_assault_signal or threat_escalated:
-            summary_lines.append("- CONDITIONS MAY HAVE WORSENED")
-        else:
-            summary_lines.append("- SIGNALS INCONCLUSIVE")
-
-    if not summary_lines:
-        summary_lines.append("- CONDITIONS UNCHANGED")
-
-    lines.extend(summary_lines)
-
-    if state.is_failed:
-        lines.extend(_failure_lines(state))
-
-    return lines
+    return tick_lines
