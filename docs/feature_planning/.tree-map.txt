@@ -1,8 +1,0 @@
-Directory Tree Mapping
-[33m/home/braydenchaffee/Projects/CUSTODIAN/docs/feature_planning[0m
-├── FOCUS.md
-├── HARDEN.md
-├── HUB_AND_CAMPAIGN.md
-├── INFORMATION_DEGRADATION.md
-├── UI_ENHANCEMENT_DRAFT.md
-└── UI_ENHANCEMENT.md
