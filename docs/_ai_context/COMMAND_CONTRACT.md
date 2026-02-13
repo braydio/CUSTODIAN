@@ -33,13 +33,14 @@ Validation behavior:
     - sector status list (`STABLE|ALERT|DAMAGED|COMPROMISED`)
   - Does not advance time.
 - `WAIT`
-  - Advances simulation by exactly one tick.
+  - Advances simulation by one wait unit (5 ticks).
+  - Applies a 0.5-second pause between internal ticks.
   - Primary line: `TIME ADVANCED.`
-  - Optional detail lines for meaningful changes (`[EVENT]`, `[WARNING]`, assault start/end markers, failure termination lines).
-- `WAIT 10X`
-  - Advances simulation by ten ticks.
-  - Primary line: `TIME ADVANCED x10.`
-  - Detail lines summarize events, warnings, assault transitions, and failure termination lines seen during the burst.
+  - Optional detail lines for meaningful changes (`[EVENT]`, `[WARNING]`, status shifts, failure termination lines), with adjacent duplicate lines suppressed.
+- `WAIT NX`
+  - Advances simulation by `N` wait units (`N x 5` ticks).
+  - Primary line: `TIME ADVANCED.`
+  - Detail lines are emitted in observation order without explicit tick counters.
 - `FOCUS <SECTOR_ID>`
   - Sets the focused sector by ID (for example `FOCUS POWER`).
   - Returns confirmation line: `[FOCUS SET] <SECTOR_NAME>`

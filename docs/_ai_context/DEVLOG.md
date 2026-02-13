@@ -1,5 +1,10 @@
 # DEVLOG — CUSTODIAN
 
+## 2026-02-12
+- Updated `WAIT` semantics to use 5-tick units (`WAIT` = 5 ticks, `WAIT NX` = `N x 5` ticks) with a 0.5-second internal pacing delay.
+- Reworked wait output to emit observed event/signal lines in sequence and suppress adjacent duplicate lines.
+- Updated help text, terminal docs, AI context docs, and terminal processor tests to match the new wait pacing/contract.
+
 ## 2026-02-11
 - Implemented Embodied Presence Phase A: command/field mode split, transit travel graph, and new `DEPLOY`/`MOVE`/`RETURN` command flow.
 - Added field-local `STATUS` output (location, task, local structures only) and command-authority gating for strategic commands while deployed.

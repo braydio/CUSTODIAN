@@ -51,7 +51,7 @@ This prototype models pressure on a static command post. The terminal layer is c
 1. Accept one operator command.
 2. Parse and normalize command intent.
 3. Execute command action.
-4. Advance world by one step only when command semantics require time (`WAIT`, `WAIT 10X`).
+4. Advance world by wait-unit steps only when command semantics require time (`WAIT`, `WAIT NX`).
 5. Return `CommandResult` payload (`ok`, `text`, optional `lines`, optional `warnings`).
 
 ## Command-Driven Stepping
@@ -66,8 +66,8 @@ This keeps pacing deterministic and aligned with explicit operator intent.
 ## Terminal Command Set (Current)
 
 - `STATUS`: high-level board view of time, threat bucket, assault phase, and sector summary.
-- `WAIT`: advance exactly one tick and emit concise change lines, including a terse pressure fallback when no event/assault transition occurs.
-- `WAIT 10X`: advance ten ticks and summarize events, warnings, assault transitions, and failure lines seen during the burst.
+- `WAIT`: advance one wait unit (5 ticks) with 0.5-second pacing between internal ticks.
+- `WAIT NX`: advance `N` wait units (`N x 5` ticks) and emit observed event/signal lines in order.
 - `FOCUS <SECTOR_ID>`: reallocate attention to a sector ID (for example `FOCUS POWER`) without advancing time.
 - `HARDEN`: reduce the number of sectors hit in the next assault and concentrate damage into higher-risk sectors.
 - `HELP`: list available commands.

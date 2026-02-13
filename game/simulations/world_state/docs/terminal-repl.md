@@ -4,7 +4,7 @@ Phase 1 is a deterministic command loop:
 
 `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS`
 
-The world advances only when the operator runs `WAIT` or `WAIT 10X`.
+The world advances only when the operator runs `WAIT` or `WAIT NX`.
 
 ## Transport Contract (UI Path)
 
@@ -26,14 +26,15 @@ The world advances only when the operator runs `WAIT` or `WAIT 10X`.
   - Does not advance time.
 
 - `WAIT`
-  - Advances the simulation by exactly one tick.
+  - Advances the simulation by one wait unit (5 ticks).
+  - Internal tick pacing uses a 0.5-second delay between ticks.
   - Output starts with `TIME ADVANCED.`
-  - Additional lines are emitted for meaningful changes (`[EVENT]`, `[WARNING]`, assault begin/end markers, or failure lines).
-  - If no event/assault transition occurred, one terse `[PRESSURE]` line is emitted to preserve situational awareness.
-- `WAIT 10X`
-  - Advances the simulation by ten ticks.
-  - Output starts with `TIME ADVANCED x10.`
-  - Detail lines summarize events, warnings, assault transitions, and failure termination lines seen during the burst.
+  - Additional lines are emitted as events/signals occur (`[EVENT]`, `[WARNING]`, status/assault shifts, and failure lines).
+  - Immediate duplicate detail lines are suppressed.
+- `WAIT NX`
+  - Advances the simulation by `N` wait units (`N x 5` ticks).
+  - Output starts with `TIME ADVANCED.`
+  - Detail lines list observed events/signals in order, without explicit per-tick timing labels.
 - `FOCUS <SECTOR_ID>`
   - Sets the focused sector by ID (for example `FOCUS POWER`).
   - Focus persists until changed or an assault resolves.

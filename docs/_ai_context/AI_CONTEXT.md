@@ -20,14 +20,14 @@
 
 ## Phase 1 Terminal Design Lock (Historical Plan)
 - Rationale: build a deterministic, command-driven loop before any map UI to avoid UI creep and ensure a playable spine.
-- Loop invariant: `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS -> ...` (world only moves on `WAIT`/`WAIT 10X`).
-- Phase 1 command set: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HELP` only (no aliases).
+- Loop invariant: `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS -> ...` (world only moves on `WAIT`/`WAIT NX`).
+- Phase 1 command set: `STATUS`, `WAIT`, `WAIT NX`, `FOCUS`, `HELP` only (no aliases).
 - `STATUS` output rules: ASCII, all caps, no recommendations; fields: TIME, THREAT bucket, ASSAULT state, sector list with one-word state; never advances time.
-- `WAIT` output rules: advance exactly one tick; minimal output only; no full status dump; may emit event/warning/assault lines.
-- `WAIT 10X` output rules: advance exactly ten ticks; summarize events, warnings, assault transitions, and failure lines without full status dumps.
+- `WAIT` output rules: advance one wait unit (5 ticks); minimal output only; no full status dump; may emit event/warning/assault lines.
+- `WAIT NX` output rules: advance `N x 5` ticks; emit observed event/signal lines in order without explicit per-tick counters.
 - Error phrasing reserved: `UNKNOWN COMMAND. TYPE HELP FOR AVAILABLE COMMANDS.` and `COMMAND DENIED. COMMAND CENTER REQUIRED.`
 - Map UI now exists as a read-only projection of `STATUS` via `/snapshot` and never advances time.
-- Acceptance criteria: boot completes, `STATUS` and `WAIT`/`WAIT 10X` work, time advances only via `WAIT`/`WAIT 10X`, `STATUS` reflects changes.
+- Acceptance criteria: boot completes, `STATUS` and `WAIT`/`WAIT NX` work, time advances only via `WAIT`/`WAIT NX`, `STATUS` reflects changes.
 - Current code diverges (extra commands + authority gating); treat this as a reference spec, not current behavior.
 
 ## Canonical Entrypoints
@@ -80,13 +80,14 @@ Validation behavior:
     - sector status list (`STABLE|ALERT|DAMAGED|COMPROMISED`)
   - Does not advance time.
 - `WAIT`
-  - Advances simulation by exactly one tick.
+  - Advances simulation by one wait unit (5 ticks).
+  - Applies a 0.5-second pause between internal ticks.
   - Primary line: `TIME ADVANCED.`
-  - Optional detail lines for meaningful changes (`[EVENT]`, `[WARNING]`, assault start/end markers, failure termination lines).
-- `WAIT 10X`
-  - Advances simulation by ten ticks.
-  - Primary line: `TIME ADVANCED x10.`
-  - Detail lines summarize events, warnings, assault transitions, and failure termination lines seen during the burst.
+  - Optional detail lines for meaningful changes (`[EVENT]`, `[WARNING]`, status shifts, failure termination lines), with adjacent duplicate lines suppressed.
+- `WAIT NX`
+  - Advances simulation by `N` wait units (`N x 5` ticks).
+  - Primary line: `TIME ADVANCED.`
+  - Detail lines are emitted in observation order without explicit tick counters.
 - `FOCUS <SECTOR_ID>`
   - Sets the focused sector by ID (for example `FOCUS POWER`).
   - Confirmation line: `[FOCUS SET] <SECTOR_NAME>`
@@ -133,7 +134,7 @@ Validation behavior:
 - Git hooks for docs/secret hygiene exist; enable via `git config core.hooksPath .githooks`.
 
 ## Terminal Command Surface (Implemented)
-- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HELP`.
+- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT NX`, `FOCUS`, `HELP`.
 - Failure-recovery commands: `RESET`, `REBOOT`.
   - In failure mode, only `RESET`/`REBOOT` are accepted.
   - Outside failure mode, `RESET`/`REBOOT` still reset the in-process `GameState`.
@@ -155,7 +156,7 @@ Validation behavior:
 
 ## Locked Decisions
 - Terminal-first interface with terse, operational output.
-- World time advances only on explicit time-bearing commands (`WAIT`, `WAIT 10X`) in terminal mode.
+- World time advances only on explicit time-bearing commands (`WAIT`, `WAIT NX`) in terminal mode.
 - `STATUS` remains a high-level board view (time, threat bucket, assault state, sector statuses).
 - Command processor is backend-authoritative; frontend local echo is display-only.
 
