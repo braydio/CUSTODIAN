@@ -1,5 +1,3 @@
-import random
-
 from .config import (
     CHAIN_CHANCE,
     CRITICAL_SECTORS,
@@ -329,14 +327,14 @@ def maybe_trigger_event(state):
     if hangar and hangar.damage >= 1.0:
         chance += HANGAR_EVENT_CHANCE_BONUS
     chance = min(chance, EVENT_CHANCE_MAX)
-    if random.random() > chance:
+    if state.rng.random() > chance:
         return
 
     weighted = []
     for event, sector in candidates:
         weighted.extend([(event, sector)] * event.weight)
 
-    event, sector = random.choice(weighted)
+    event, sector = state.rng.choice(weighted)
 
     print(f"[Event] {event.name} in {sector.name}")
     event.effect(state, sector)
@@ -344,5 +342,5 @@ def maybe_trigger_event(state):
     state.event_cooldowns[(event.name, sector.name)] = state.time
 
     for chained_name in event.chains:
-        if random.random() < CHAIN_CHANCE:
+        if state.rng.random() < CHAIN_CHANCE:
             print(f"  -> Consequence: {chained_name}")

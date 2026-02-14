@@ -1,39 +1,21 @@
 """Location token normalization for field movement commands."""
 
-LOCATION_ALIASES = {
-    "COMMAND": "COMMAND",
-    "CC": "COMMAND",
-    "CMD": "COMMAND",
-    "T_NORTH": "T_NORTH",
-    "TN": "T_NORTH",
-    "NORTH": "T_NORTH",
-    "T_SOUTH": "T_SOUTH",
-    "TS": "T_SOUTH",
-    "SOUTH": "T_SOUTH",
-    "ARCHIVE": "ARCHIVE",
-    "AR": "ARCHIVE",
-    "DEFENSE GRID": "DEFENSE GRID",
-    "DEFENSE": "DEFENSE GRID",
-    "DF": "DEFENSE GRID",
-    "POWER": "POWER",
-    "PW": "POWER",
-    "FABRICATION": "FABRICATION",
-    "FAB": "FABRICATION",
-    "FB": "FABRICATION",
-    "COMMS": "COMMS",
-    "CM": "COMMS",
-    "STORAGE": "STORAGE",
-    "ST": "STORAGE",
-    "HANGAR": "HANGAR",
-    "HG": "HANGAR",
-    "GATEWAY": "GATEWAY",
-    "GATE": "GATEWAY",
-    "GS": "GATEWAY",
-}
+from game.simulations.world_state.core.location_registry import LocationRegistry
+
+
+LOCATION_REGISTRY = LocationRegistry()
+LOCATION_REGISTRY.register("COMMAND", ["CC", "CMD"])
+LOCATION_REGISTRY.register("T_NORTH", ["TN", "NORTH"])
+LOCATION_REGISTRY.register("T_SOUTH", ["TS", "SOUTH"])
+LOCATION_REGISTRY.register("ARCHIVE", ["AR"])
+LOCATION_REGISTRY.register("DEFENSE GRID", ["DEFENSE", "DF"])
+LOCATION_REGISTRY.register("POWER", ["PW"])
+LOCATION_REGISTRY.register("FABRICATION", ["FAB", "FB"])
+LOCATION_REGISTRY.register("COMMS", ["CM"])
+LOCATION_REGISTRY.register("STORAGE", ["ST"])
+LOCATION_REGISTRY.register("HANGAR", ["HG"])
+LOCATION_REGISTRY.register("GATEWAY", ["GATE", "GS"])
 
 
 def resolve_location_token(raw: str) -> str | None:
-    if not raw:
-        return None
-    token = raw.strip().upper()
-    return LOCATION_ALIASES.get(token)
+    return LOCATION_REGISTRY.normalize(raw)

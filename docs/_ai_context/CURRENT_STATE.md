@@ -5,17 +5,21 @@
 - Primary terminal UI webserver is `custodian-terminal/server.py` (static asset serving, SSE boot stream via `/stream/boot`, plus `/command` and `/snapshot`).
 - World-state server module `game/simulations/world_state/server.py` also exposes `/command`, `/snapshot` (plus `/stream`).
 - World-state simulation spine is implemented with procedural events, assault timing, and COMMAND/ARCHIVE failure latches.
+- Session determinism and endpoint robustness were hardened: `GameState` now supports seeded RNG (`seed`, `rng`), world random calls route through `state.rng`, `/command` supports idempotency via `command_id` replay cache, and both servers share command payload parsing/response serialization via `server_contracts.py`.
 - Hub scaffolding exists in `game/simulations/world_state/core/hub.py` with offer generation, recon refinement, hub mutation rules, and snapshot/load seams.
 - Phase 1.5 asymmetry is active: sector roles influence threat growth, assault damage, warnings, and event frequency.
 - World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`).
+- Runtime invariants are centralized in `core/invariants.py` and validated in both tick progression (`step_world`) and command mutation (`process_command`).
 - Structure-level damage scaffolding exists (`core/structures.py`) with timed repairs (`core/repairs.py`), driven by `REPAIR`, `WAIT`, and the materials economy (status-aware repair reissue).
 - Power-performance integration is active via `core/power.py`: structure output now follows `effective_output = power_efficiency * integrity_modifier`, COMMS fidelity maps from sensor effectiveness thresholds, and tactical defense output scales with DEFENSE GRID effective output.
 - COMMS fidelity is now persisted on state (`state.fidelity`) and refreshed each world tick from COMMS sensor effectiveness; fidelity transitions emit explicit event lines during `WAIT`.
 - Repair progression is now power-aware: speed scales by mechanic-drone output (`FB_TOOLS`) and sector power tier, assault outcome damage regresses in-progress repairs in affected sectors, and destroyed structures cancel active repairs with a 50% materials refund.
 - Canonical sector layout now includes 9 sectors with FABRICATION present but inert.
 - Embodied Presence Phase A is implemented: command/field player modes, transit graph movement (`DEPLOY`, `MOVE`, `RETURN`), and field-local STATUS projection.
+- Presence/task flow has been modularized: movement start/tick logic is in `core/presence.py`, command authority policy is centralized in `terminal/authority.py`, and task typing/serialization helpers are in `core/tasks.py`.
 - Repair authority is mode-aware: command mode supports remote DAMAGED repairs only, while field mode supports local DAMAGED/OFFLINE/DESTROYED repairs.
 - Unified entrypoint is available at `python -m game` with `--ui` (default), `--sim`, and `--repl`.
+- Snapshot schema versioning is introduced (`snapshot_version=2`) with migration scaffolding in `core/snapshot_migration.py`.
 - Automated tests exist for parser/processor behavior and simulation stepping.
 - Git hooks for docs/secret hygiene exist; enable via `git config core.hooksPath .githooks`.
 

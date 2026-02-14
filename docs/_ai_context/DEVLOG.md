@@ -1,6 +1,16 @@
 # DEVLOG — CUSTODIAN
 
 ## 2026-02-14
+- Applied `feature_planning/EXECUTE_RECOMMENDED_IMPROVEMENTS.md` and renamed it to `feature_planning/APPLIED-EXECUTE_RECOMMENDED_IMPROVEMENTS.md`.
+- Added deterministic world-state seeding (`GameState(seed=...)`, `state.rng`) and routed event/assault/scavenge randomness through state-owned RNG.
+- Added `/command` idempotency support (`command_id`) with short-lived replay cache and shared command contract helpers in `game/simulations/world_state/server_contracts.py`.
+- Added centralized invariant validation (`core/invariants.py`) and wired checks into tick and command processing.
+- Added snapshot schema versioning (`snapshot_version=2`) and migration scaffolding (`core/snapshot_migration.py`), plus state seed and operator log projection in snapshots.
+- Extracted modular command/presence helpers: `terminal/authority.py`, `core/presence.py`, `core/tasks.py`, and `core/location_registry.py`.
+- Improved terminal accessibility: reduced-motion handling, live region updates, keyboard command history (`ArrowUp/ArrowDown`), focus-visible styling, and an offline banner on repeated command transport failures.
+- Expanded operator-facing UI projections with compact logbook lines in the system panel and static role glyphs in sector cards.
+
+## 2026-02-14
 - Applied `feature_planning/COMMS_REPAIR_MECHANIC.md` (renamed to `feature_planning/APPLIED-COMMS_REPAIR_MECHANIC.md`).
 - Added persistent COMMS fidelity state (`state.fidelity`) with per-tick refresh in `core/simulation.py` via `refresh_comms_fidelity(...)`.
 - Added fidelity transition event emission (`[EVENT] INFORMATION FIDELITY ...`) into `WAIT` detail output.

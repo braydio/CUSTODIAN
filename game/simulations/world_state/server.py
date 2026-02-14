@@ -15,6 +15,11 @@ from flask import (
 )
 
 from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.server_contracts import (
+    CommandReplayCache,
+    parse_command_payload,
+    serialize_command_result,
+)
 from game.simulations.world_state.terminal.processor import process_command
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -26,6 +31,7 @@ HISTORY_LIMIT = 2000
 history = deque(maxlen=HISTORY_LIMIT)
 current_process = None
 command_state = GameState()
+command_cache = CommandReplayCache()
 
 
 def _coerce_delay(raw, default=0.2):
@@ -79,15 +85,6 @@ def _stream_world_state(delay):
         print("[server] stream closed", flush=True)
 
 
-def _command_result_payload(result) -> dict:
-    """Convert a CommandResult into the command API payload."""
-
-    lines = list(result.lines or [])
-    if result.warnings:
-        lines.extend(result.warnings)
-    return {"ok": bool(result.ok), "text": result.text, "lines": lines}
-
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -125,9 +122,23 @@ def command():
     """Execute a terminal command from POSTed JSON payload."""
 
     payload = request.get_json(silent=True) or {}
-    raw = payload.get("command", payload.get("raw", ""))
+    global command_state
+    raw, command_id = parse_command_payload(payload)
+    cached = command_cache.get(command_id)
+    if cached is not None:
+        return jsonify(cached)
+
+    seed = payload.get("seed")
+    if seed is not None and command_state.time == 0:
+        try:
+            command_state = GameState(seed=int(seed))
+        except (TypeError, ValueError):
+            pass
+
     result = process_command(command_state, raw)
-    return jsonify(_command_result_payload(result))
+    response = serialize_command_result(result)
+    command_cache.put(command_id, response)
+    return jsonify(response)
 
 
 @app.get("/snapshot")

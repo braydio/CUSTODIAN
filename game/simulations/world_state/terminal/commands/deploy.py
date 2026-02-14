@@ -3,11 +3,11 @@
 from game.simulations.world_state.core.config import (
     COMMAND_CENTER_LOCATION,
     DEPLOY_TICKS,
-    FIELD_ACTION_MOVING,
     PLAYER_MODE_FIELD,
     TRAVEL_GRAPH,
     TRANSIT_NODES,
 )
+from game.simulations.world_state.core.presence import start_move_task
 from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.terminal.location import resolve_location_token
@@ -33,15 +33,24 @@ def _shortest_path(start: str, goal: str) -> list[str] | None:
 
 def _start_deploy_task(state: GameState, target: str) -> list[str]:
     state.player_mode = PLAYER_MODE_FIELD
-    state.field_action = FIELD_ACTION_MOVING
     state.player_location = COMMAND_CENTER_LOCATION
-    state.active_task = {
-        "type": "MOVE",
-        "target": target,
-        "ticks": DEPLOY_TICKS,
-        "total": DEPLOY_TICKS,
-    }
-    return [f"DEPLOYING TO {target}."]
+    start_move_task(state, target, DEPLOY_TICKS)
+    lines = [f"DEPLOYING TO {target}."]
+    if target == "T_NORTH":
+        lines.append(_transit_signal_tag(comms_fidelity(state), "NORTH"))
+    elif target == "T_SOUTH":
+        lines.append(_transit_signal_tag(comms_fidelity(state), "SOUTH"))
+    return lines
+
+
+def _transit_signal_tag(fidelity: str, lane: str) -> str:
+    if fidelity == "FULL":
+        return f"[TRANSIT] {lane} LANE: POWER HUM"
+    if fidelity == "DEGRADED":
+        return f"[TRANSIT] {lane} LANE: THERMAL NOISE"
+    if fidelity == "FRAGMENTED":
+        return f"[TRANSIT] {lane} LANE: SIGNAL IRREGULAR"
+    return "[TRANSIT] NO SIGNAL."
 
 
 def cmd_deploy(state: GameState, destination: str) -> list[str]:
@@ -55,9 +64,9 @@ def cmd_deploy(state: GameState, destination: str) -> list[str]:
     if not destination or not destination.strip():
         if fidelity in {"FULL", "DEGRADED"}:
             return [
-                "DEPLOY REQUIRES TARGET ARGUMENT.",
-                "USAGE: DEPLOY <NORTH|SOUTH|SECTOR>.",
-                "CONTEXT: FROM COMMAND, PRIMARY TRANSIT NODES ARE NORTH AND SOUTH.",
+                "DEPLOY COMMAND INCOMPLETE.",
+                "ROUTE FORMAT: DEPLOY <NORTH|SOUTH|SECTOR>.",
+                "TRANSIT CONTEXT: PRIMARY NODES FROM COMMAND ARE NORTH AND SOUTH.",
             ]
         if fidelity == "FRAGMENTED":
             return ["DEPLOY REQUIRES TRANSIT TARGET."]
@@ -73,8 +82,8 @@ def cmd_deploy(state: GameState, destination: str) -> list[str]:
         if fidelity == "DEGRADED":
             return [
                 "INVALID DEPLOYMENT TARGET.",
-                "REQUIRES: DEPLOY NORTH OR DEPLOY SOUTH.",
-                f"CONTEXT: RECEIVED TARGET={destination.strip().upper()}.",
+                "TRANSIT LOCK: USE DEPLOY NORTH OR DEPLOY SOUTH.",
+                f"UNRESOLVED ROUTE TOKEN: {destination.strip().upper()}.",
             ]
         if fidelity == "LOST":
             return ["NO SIGNAL."]

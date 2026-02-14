@@ -8,6 +8,17 @@
     DAMAGED: "damaged",
     COMPROMISED: "compromised",
   };
+  const ROLE_GLYPH = {
+    info: "I",
+    mitigation: "M",
+    authority: "A",
+    amplifier: "P",
+    fabrication: "F",
+    goal: "R",
+    buffer: "B",
+    egress: "E",
+    ingress: "G",
+  };
 
   let lastSnapshot = null;
 
@@ -35,6 +46,19 @@
       row.textContent = text;
       panel.appendChild(row);
     });
+    const log = Array.isArray(snapshot.operator_log) ? snapshot.operator_log.slice(-4) : [];
+    if (log.length) {
+      const spacer = document.createElement("div");
+      spacer.className = "system-panel-line";
+      spacer.textContent = "LOGBOOK...";
+      panel.appendChild(spacer);
+      log.forEach((entry) => {
+        const row = document.createElement("div");
+        row.className = "system-panel-line";
+        row.textContent = entry;
+        panel.appendChild(row);
+      });
+    }
   }
 
   function renderSectorMap(snapshot) {
@@ -70,6 +94,9 @@
       const status = document.createElement("div");
       status.className = "sector-status";
       status.textContent = sector.status;
+      const glyph = document.createElement("div");
+      glyph.className = "sector-role-glyph";
+      glyph.textContent = ROLE_GLYPH[entry.role] || "?";
 
       if (sector.repairing) {
         card.classList.add("repair-active");
@@ -77,6 +104,7 @@
 
       card.appendChild(name);
       card.appendChild(status);
+      card.appendChild(glyph);
       grid.appendChild(card);
     });
 
@@ -89,4 +117,3 @@
 
   window.CustodianSectorMap = { renderSectorMap };
 })();
-
