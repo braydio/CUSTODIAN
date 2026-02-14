@@ -285,6 +285,10 @@ def test_deploy_degraded_returns_args_and_context() -> None:
 
     assert result.ok is True
     assert result.text == "INVALID DEPLOYMENT TARGET."
+    assert result.lines == [
+        "TRANSIT LOCK: USE DEPLOY NORTH OR DEPLOY SOUTH.",
+        "UNRESOLVED ROUTE TOKEN: ARCHIVE.",
+    ]
 
 
 def test_wait_emits_fidelity_upgrade_event(monkeypatch) -> None:
@@ -301,11 +305,7 @@ def test_wait_emits_fidelity_upgrade_event(monkeypatch) -> None:
     assert result.ok is True
     assert result.text == "TIME ADVANCED."
     assert result.lines is not None
-    assert "[EVENT] INFORMATION FIDELITY UPGRADED TO FULL" in result.lines
-    assert result.lines == [
-        "REQUIRES: DEPLOY NORTH OR DEPLOY SOUTH.",
-        "CONTEXT: RECEIVED TARGET=ARCHIVE.",
-    ]
+    assert "[EVENT] SIGNAL CLARITY RESTORED" in result.lines
 
 
 def test_deploy_fragmented_keeps_terse_invalid_target() -> None:

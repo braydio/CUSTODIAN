@@ -6,6 +6,9 @@
   const inputField = document.getElementById("terminal-input");
   const outputIndicator = document.getElementById("new-output-indicator");
   const idleTip = document.getElementById("idle-tip");
+  const liveRegion = document.getElementById("terminal-live");
+  const offlineBanner = document.getElementById("offline-banner");
+  const inputFocusZone = document.getElementById("input-focus-zone");
 
   const keyClick = document.getElementById("keyClick");
 
@@ -17,7 +20,14 @@
     typingActive: false,
     mapHintShown: false,
     userAtBottom: true,
-    idleTimer: null,
+    history: [],
+    historyIndex: -1,
+    failureCount: 0,
+    hintLocked: false,
+    hintFocusStarted: false,
+    hintSecondaryShown: false,
+    hintTimer: null,
+    hintFocusIntent: false,
   };
 
   const CURSOR_IDLE_MS = 420;
@@ -55,6 +65,16 @@
   }
 
   function classifyLine(line) {
+    if (line.includes("(+)") || line.includes("(-)")) return "delta";
+    const heatMatch = line.match(/^\s*[> ]?\s*[A-Z ]{3,}\s+([X!~?.])(?:\s+\([+-]\))?\s*$/);
+    if (heatMatch) {
+      const marker = heatMatch[1];
+      if (marker === "X") return "heat-critical";
+      if (marker === "!") return "heat-damaged";
+      if (marker === "~") return "heat-alert";
+      if (marker === "?") return "heat-unknown";
+      if (marker === ".") return "heat-stable";
+    }
     if (line.startsWith("[EVENT]")) return "event";
     if (line.startsWith("[WARNING]")) return "warning";
     if (line.startsWith("[ASSAULT]") || line.startsWith("=== ASSAULT")) {
@@ -116,19 +136,42 @@
     return output;
   }
 
-  function scheduleIdleTip() {
-    console.log("[TERMINAL] scheduleIdleTip")
-    if (!state.inputEnabled) return;
-    if (state.idleTimer) clearTimeout(state.idleTimer);
-    idleTip?.classList.remove("visible");
-    state.idleTimer = setTimeout(() => {
-      if (state.inputEnabled) idleTip?.classList.add("visible");
-    }, IDLE_TIP_MS);
+  function renderHint(primaryFaded = false, showSecondary = false) {
+    if (!idleTip || state.hintLocked) return;
+    const primaryClass = primaryFaded ? "hint-primary faded" : "hint-primary";
+    idleTip.innerHTML = `<span class="${primaryClass}">CLICK TO FOCUS INPUT</span>${
+      showSecondary
+        ? '<span class="hint-sep">|</span><span class="hint-secondary">TYPE HELP FOR AVAILABLE COMMANDS</span>'
+        : ""
+    }`;
+    idleTip.classList.add("visible");
   }
 
-  function hideIdleTip() {
-    if (state.idleTimer) clearTimeout(state.idleTimer);
+  function primeHint() {
+    if (state.hintLocked) return;
+    renderHint(false, false);
+  }
+
+  function lockHints() {
+    state.hintLocked = true;
+    if (state.hintTimer) clearTimeout(state.hintTimer);
     idleTip?.classList.remove("visible");
+  }
+
+  function startFocusedHintSequence() {
+    if (!state.hintFocusIntent) return;
+    if (state.hintLocked || state.hintFocusStarted) return;
+    state.hintFocusStarted = true;
+    renderHint(true, false);
+    if (state.hintTimer) clearTimeout(state.hintTimer);
+    state.hintTimer = setTimeout(() => {
+      if (state.hintLocked || state.hintSecondaryShown) return;
+      if (!state.inputEnabled) return;
+      if (document.activeElement !== inputField) return;
+      if (state.liveInput.trim() !== "") return;
+      state.hintSecondaryShown = true;
+      renderHint(true, true);
+    }, IDLE_TIP_MS);
   }
 
   function clearBuffer() {
@@ -169,7 +212,9 @@
     state.typingActive = true;
     state.liveInput = inputField.value.toUpperCase();
     renderLiveLine();
-    scheduleIdleTip();
+    if (state.liveInput.trim() !== "" && state.hintTimer) {
+      clearTimeout(state.hintTimer);
+    }
 
     clearTimeout(state._typingTimer);
     state._typingTimer = setTimeout(() => {
@@ -193,18 +238,25 @@
       inputField.focus();
       state.cursorVisible = true;
       renderLiveLine();
-      scheduleIdleTip();
+      primeHint();
     } else {
       state.cursorVisible = false;
-      hideIdleTip();
     }
   }
 
+  function focusInputIfEnabled() {
+    if (!state.inputEnabled) return;
+    state.hintFocusIntent = true;
+    inputField.focus();
+    startFocusedHintSequence();
+  }
+
   async function submitCommand(command) {
+    const commandId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const res = await fetch("/command", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ raw: command }),
+      body: JSON.stringify({ raw: command, command_id: commandId }),
     });
     const payload = await res.json();
     return {
@@ -232,6 +284,14 @@
       "MOVE",
       "RETURN",
     ].includes(verb);
+  }
+
+  function setLiveSummary(text) {
+    if (liveRegion) liveRegion.textContent = text;
+  }
+
+  function setOfflineBanner(visible) {
+    offlineBanner?.classList.toggle("visible", visible);
   }
 
   function updateCommsPresentation(snapshot) {
@@ -262,8 +322,11 @@
     const cmd = inputField.value.trim();
     if (!cmd) return;
 
-    hideIdleTip();
+    lockHints();
     if (state.buffer.at(-1)?.startsWith("> ")) state.buffer.pop();
+
+    state.history.push(cmd.toUpperCase());
+    state.historyIndex = state.history.length;
 
     appendLine(`> ${cmd.toUpperCase()}`);
     inputField.value = "";
@@ -273,10 +336,16 @@
 
     try {
       const result = await submitCommand(cmd);
+      state.failureCount = 0;
+      setOfflineBanner(false);
       appendLines(result.lines);
+      setLiveSummary(result.ok ? "Command executed." : "Command failed.");
       if (shouldRefreshSnapshot(cmd, result.ok)) await refreshSnapshot();
     } catch {
+      state.failureCount += 1;
+      if (state.failureCount >= 3) setOfflineBanner(true);
       appendLines(["COMMAND LINK FAILED.", "VERIFY SERVER AND RETRY."]);
+      setLiveSummary("Command link failed.");
     } finally {
       setInputEnabled(true);
     }
@@ -293,13 +362,40 @@
 
     setInputEnabled(true);
     console.log("[ TERMINAL ] enabling input");
-    scheduleIdleTip();
+    primeHint();
   }
 
 
   inputForm.addEventListener("submit", handleSubmit);
-  inputField.addEventListener("keydown", () => {
-    if (state.inputEnabled) scheduleIdleTip();
+  inputFocusZone?.addEventListener("click", focusInputIfEnabled);
+  inputField.addEventListener("mousedown", () => {
+    state.hintFocusIntent = true;
+  });
+  inputField.addEventListener("focus", startFocusedHintSequence);
+  terminalContainer.addEventListener("click", (e) => {
+    if (e.target === terminal || e.target === terminalContainer) {
+      focusInputIfEnabled();
+    }
+  });
+  inputField.addEventListener("keydown", (e) => {
+    if (!state.inputEnabled) return;
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!state.history.length) return;
+      state.historyIndex = Math.max(0, state.historyIndex - 1);
+      inputField.value = state.history[state.historyIndex] || "";
+      state.liveInput = inputField.value;
+      renderLiveLine();
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!state.history.length) return;
+      state.historyIndex = Math.min(state.history.length, state.historyIndex + 1);
+      inputField.value = state.history[state.historyIndex] || "";
+      state.liveInput = inputField.value;
+      renderLiveLine();
+    }
   });
   terminal.addEventListener("scroll", () => {
     const atBottom =

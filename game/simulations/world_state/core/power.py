@@ -21,6 +21,8 @@ class PowerTier(Enum):
 
 
 FIDELITY_ORDER = ["LOST", "FRAGMENTED", "DEGRADED", "FULL"]
+FIDELITY_UP_LINE = "[EVENT] SIGNAL CLARITY RESTORED"
+FIDELITY_DOWN_LINE = "[WARNING] SIGNAL DEGRADATION DETECTED"
 
 
 def _normalize_power_targets(min_power: float, standard_power: float) -> tuple[float, float]:
@@ -130,8 +132,8 @@ def refresh_comms_fidelity(state: "GameState", *, emit_event: bool) -> str:
     if emit_event:
         state.last_fidelity_lines = []
         if new != old:
-            direction = "UPGRADED" if FIDELITY_ORDER.index(new) > FIDELITY_ORDER.index(old) else "DEGRADED"
-            state.last_fidelity_lines.append(
-                f"[EVENT] INFORMATION FIDELITY {direction} TO {new}"
-            )
+            if FIDELITY_ORDER.index(new) > FIDELITY_ORDER.index(old):
+                state.last_fidelity_lines.append(FIDELITY_UP_LINE)
+            else:
+                state.last_fidelity_lines.append(FIDELITY_DOWN_LINE)
     return new

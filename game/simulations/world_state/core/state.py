@@ -1,5 +1,7 @@
 from collections import defaultdict
+from typing import Any
 import math
+import random
 
 from .config import (
     ALERTNESS_DECAY,
@@ -18,6 +20,8 @@ from .config import (
 from .structures import Structure, StructureState, create_fabrication_structures
 from .effects import apply_global_effects, apply_sector_effects
 from .factions import build_faction_profile
+from .snapshot_migration import migrate_snapshot
+from .tasks import task_to_dict
 
 
 class SectorState:
@@ -57,9 +61,11 @@ class SectorState:
 class GameState:
     """Shared world-state container for the simulation."""
 
-    def __init__(self):
+    def __init__(self, seed: int | None = None):
         """Initialize the world-state simulation state."""
 
+        self.seed = seed if seed is not None else random.randrange(0, 2**32)
+        self.rng = random.Random(self.seed)
         self.time = 0
         self.ambient_threat = 0.0
         self.assault_timer = None
@@ -69,12 +75,14 @@ class GameState:
         self.last_assault_lines = []
         self.last_repair_lines: list[str] = []
         self.materials = 3
+        self.operator_log: list[str] = []
+        self._last_sector_status: dict[str, str] = {}
 
         # Player state
         self.player_mode = PLAYER_MODE_COMMAND
         self.player_location = COMMAND_CENTER_LOCATION
         self.field_action = FIELD_ACTION_IDLE
-        self.active_task: dict | None = None
+        self.active_task: Any | None = None
         self.fidelity = "FULL"
         self.last_fidelity_lines: list[str] = []
         self.current_assault = None
@@ -85,7 +93,7 @@ class GameState:
         # World progression
         self.assault_count = 0
         self.event_cooldowns = defaultdict(int)
-        self.faction_profile = build_faction_profile()
+        self.faction_profile = build_faction_profile(self.rng)
         self.event_catalog = None
         self.global_effects = {}
 
@@ -151,6 +159,7 @@ class GameState:
             )
 
         return {
+            "snapshot_version": 2,
             "time": self.time,
             "threat": self.threat_bucket(),
             "assault": self.assault_state(),
@@ -173,7 +182,9 @@ class GameState:
             "player_mode": self.player_mode,
             "player_location": self.player_location,
             "field_action": self.field_action,
-            "active_task": dict(self.active_task) if self.active_task else None,
+            "active_task": task_to_dict(self.active_task),
+            "seed": self.seed,
+            "operator_log": list(self.operator_log[-50:]),
         }
 
     @property
@@ -204,6 +215,16 @@ class GameState:
         for sector in self.sectors.values():
             lines.append(str(sector))
         return "\n".join(lines)
+
+    @classmethod
+    def from_snapshot(cls, snapshot: dict) -> "GameState":
+        migrated = migrate_snapshot(snapshot)
+        state = cls(seed=migrated.get("seed"))
+        state.time = int(migrated.get("time", 0))
+        state.player_mode = migrated.get("player_mode", state.player_mode)
+        state.player_location = migrated.get("player_location", state.player_location)
+        state.field_action = migrated.get("field_action", state.field_action)
+        return state
 
 
 def check_failure(state: GameState) -> bool:

@@ -1,7 +1,5 @@
 """SCAVENGE command handler."""
 
-import random
-
 from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.terminal.commands.wait import cmd_wait
 
@@ -39,7 +37,7 @@ def cmd_scavenge(state: GameState) -> list[str]:
             scavenge_lines.extend(detail)
             last_detail = detail
 
-    gained = random.randint(SCAVENGE_MIN_GAIN, SCAVENGE_MAX_GAIN)
+    gained = state.rng.randint(SCAVENGE_MIN_GAIN, SCAVENGE_MAX_GAIN)
     state.materials += gained
 
     lines = ["[SCAVENGE] OPERATION COMPLETE."]

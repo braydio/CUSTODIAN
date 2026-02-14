@@ -12,12 +12,18 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.server_contracts import (
+    CommandReplayCache,
+    parse_command_payload,
+    serialize_command_result,
+)
 from game.simulations.world_state.terminal.processor import process_command
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__, static_folder=None)
 state = GameState()
+command_cache = CommandReplayCache()
 
 BOOT_LINES = [
     "[ SYSTEM POWER: UNSTABLE ]",
@@ -84,18 +90,22 @@ def command():
     """Execute a command from canonical request JSON."""
 
     payload = request.get_json(silent=True) or {}
-    raw = payload.get("raw", "")
+    global state
+    raw, command_id = parse_command_payload(payload)
+    cached = command_cache.get(command_id)
+    if cached is not None:
+        return jsonify(cached)
+
+    seed = payload.get("seed")
+    if seed is not None and state.time == 0:
+        try:
+            state = GameState(seed=int(seed))
+        except (TypeError, ValueError):
+            pass
+
     result = process_command(state, raw)
-
-    lines = []
-    if result.text:
-        lines.append(result.text)
-    if result.lines:
-        lines.extend(result.lines)
-    if result.warnings:
-        lines.extend(result.warnings)
-
-    response = {"ok": bool(result.ok), "lines": lines}
+    response = serialize_command_result(result)
+    command_cache.put(command_id, response)
     return jsonify(response)
 
 

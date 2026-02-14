@@ -107,10 +107,7 @@ def test_process_command_scavenge_advances_time_and_materials(monkeypatch) -> No
         "game.simulations.world_state.terminal.commands.scavenge.cmd_wait",
         _cmd_wait,
     )
-    monkeypatch.setattr(
-        "game.simulations.world_state.terminal.commands.scavenge.random.randint",
-        lambda _min, _max: 2,
-    )
+    monkeypatch.setattr(state.rng, "randint", lambda _min, _max: 2)
 
     result = process_command(state, "SCAVENGE")
 

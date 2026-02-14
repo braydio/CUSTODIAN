@@ -2,6 +2,7 @@ import time
 
 from .assaults import maybe_start_assault_timer, resolve_assault, tick_assault_timer
 from .events import maybe_trigger_event
+from .invariants import validate_state_invariants
 from .power import refresh_comms_fidelity
 from .repairs import tick_repairs
 from .state import GameState, advance_time, check_failure
@@ -34,6 +35,7 @@ def step_world(state: GameState, tick_delay: float = 0.0) -> bool:
 
     state.last_repair_lines = tick_repairs(state)
     refresh_comms_fidelity(state, emit_event=True)
+    validate_state_invariants(state)
 
     return check_failure(state)
 

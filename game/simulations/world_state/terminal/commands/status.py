@@ -5,164 +5,146 @@ from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.state import GameState
 
 
-def cmd_status(state: GameState) -> list[str]:
-    """Build the locked STATUS report output."""
+MARKERS = {
+    "COMPROMISED": "X",
+    "DAMAGED": "!",
+    "ALERT": "~",
+    "ACTIVITY DETECTED": "?",
+    "STABLE": ".",
+}
 
-    if state.in_field_mode():
-        lines = [
-            "MODE: FIELD",
-            f"LOCATION: {state.player_location}",
-        ]
-        if state.active_task:
-            remaining = state.active_task.get("ticks", 0)
-            total = state.active_task.get("total", remaining)
-            lines.append(
-                f"TASK: {state.active_task.get('type', 'UNKNOWN')} "
-                f"({total - remaining}/{total} TICKS)"
-            )
+
+def _sector_priority_by_label(label: str) -> int:
+    order = {
+        "COMPROMISED": 0,
+        "DAMAGED": 1,
+        "ALERT": 2,
+        "ACTIVITY DETECTED": 3,
+        "STABLE": 4,
+        "NO DATA": 5,
+    }
+    return order.get(label, 6)
+
+
+def _sector_priority(sector) -> int:
+    return _sector_priority_by_label(sector.status_label())
+
+
+def _compute_situation_header(state: GameState) -> str:
+    degraded = []
+    for sector in state.sectors.values():
+        label = sector.status_label()
+        if label in ("DAMAGED", "COMPROMISED"):
+            degraded.append(sector.name)
+
+    if degraded:
+        count = len(degraded)
+        return f"SITUATION: {count} SYSTEM{'S' if count > 1 else ''} DEGRADED"
+
+    if state.fidelity != "FULL":
+        return "SITUATION: INFORMATION UNSTABLE"
+
+    return "SITUATION: STABLE"
+
+
+def _system_posture(state: GameState, fidelity: str) -> str:
+    if state.hardened:
+        return "HARDENED"
+    if state.focused_sector and fidelity == "FULL":
+        focus_lookup = {sector["id"]: sector["name"] for sector in SECTOR_DEFS}
+        focused_name = focus_lookup.get(state.focused_sector, "UNKNOWN")
+        return f"FOCUSED ({focused_name})"
+    if state.focused_sector and fidelity != "FULL":
+        return "FOCUSED"
+    return "ACTIVE"
+
+
+def _render_compact_field_view(state: GameState) -> list[str]:
+    lines = []
+    lines.append(f"LOCATION: {state.player_location}")
+    lines.append(f"FIDELITY: {state.fidelity}")
+    lines.append("")
+
+    sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
+    stable_header_added = False
+    for sector in sorted_sectors:
+        label = sector.status_label()
+        marker = MARKERS.get(label, ".")
+        if marker == "." and not stable_header_added:
+            lines.append("---")
+            stable_header_added = True
+        prefix = ">" if sector.name == state.player_location else " "
+        lines.append(f"{prefix} {sector.name:<12} {marker}")
+    return lines
+
+
+def _append_repairs(lines: list[str], snapshot: dict, state: GameState, fidelity: str) -> None:
+    repairs = snapshot.get("active_repairs", [])
+    if not repairs:
+        return
+    if fidelity == "LOST":
+        lines.append("REPAIRS: NO SIGNAL")
+        return
+
+    lines.append("REPAIRS:")
+    for repair in repairs:
+        structure = state.structures.get(repair["id"])
+        name = structure.name if structure else repair["id"]
+        if fidelity == "FULL":
+            done = repair["total"] - repair["remaining"]
+            lines.append(f"- {repair['id']} {name}: {done}/{repair['total']} TICKS")
+        elif fidelity == "DEGRADED":
+            lines.append(f"- {repair['id']}: IN PROGRESS")
         else:
-            lines.append(f"TASK: {state.field_action}")
+            lines.append("- MAINTENANCE SIGNALS DETECTED")
 
-        lines.extend(["", "LOCAL STRUCTURES:"])
-        local_structures = [
-            s for s in state.structures.values() if s.sector == state.player_location
-        ]
-        if not local_structures:
-            lines.append("- NO LOCAL STRUCTURES.")
-            return lines
 
-        for structure in local_structures:
-            lines.append(f"- {structure.id} {structure.name}: {structure.state.value}")
-        return lines
+def cmd_status(state: GameState) -> list[str]:
+    """Build compact command status and field tactical status outputs."""
 
     fidelity = comms_fidelity(state)
     snapshot = state.snapshot()
-    focus_lookup = {sector["id"]: sector["name"] for sector in SECTOR_DEFS}
-    resources = snapshot.get("resources", {})
+    state.fidelity = fidelity
 
-    def _approximate_ticks(remaining: int) -> str:
-        if remaining <= 1:
-            return "NEAR COMPLETE"
-        if remaining <= 3:
-            return "MID PROGRESS"
-        return "EARLY STAGE"
+    if state.player_mode == "FIELD":
+        return _render_compact_field_view(state)
 
-    def _append_repairs(lines: list[str], fidelity: str) -> None:
-        repairs = snapshot.get("active_repairs", [])
-        if not repairs:
-            return
-        if fidelity == "FULL":
-            lines.append("REPAIRS:")
-            for repair in repairs:
-                structure = state.structures.get(repair["id"])
-                name = structure.name if structure else repair["id"]
-                done = repair["total"] - repair["remaining"]
-                lines.append(
-                    f"- {repair['id']} {name}: "
-                    f"{done}/{repair['total']} TICKS (COST: {repair['cost']} MATERIALS)"
-                )
-            return
-        if fidelity == "DEGRADED":
-            lines.append("REPAIRS:")
-            for repair in repairs:
-                approx = _approximate_ticks(repair["remaining"])
-                lines.append(
-                    f"- {repair['id']}: {approx} (COST: {repair['cost']} MATERIALS)"
-                )
-            return
-        if fidelity == "SEVERE":
-            lines.append("REPAIRS: ACTIVE")
-            for repair in repairs:
-                lines.append(
-                    f"- {repair['id']}: IN PROGRESS (COST: {repair['cost']} MATERIALS)"
-                )
-            return
     if fidelity == "LOST":
         lines = [
-            "TIME: ??",
-            "THREAT: UNKNOWN",
-            "ASSAULT: NO SIGNAL",
-            "",
-            "ARCHIVE STATUS: NO SIGNAL",
-            "",
-            "RESOURCES:",
-            f"- MATERIALS: {resources.get('materials', 0)}",
+            "TIME: ?? | THREAT: UNKNOWN | ASSAULT: NO SIGNAL",
+            "POSTURE: - | ARCHIVE: NO SIGNAL",
+            _compute_situation_header(state),
             "",
             "SECTORS:",
         ]
-        for sector in snapshot["sectors"]:
-            status = "NO DATA" if sector["name"] != "COMMS" else "COMPROMISED"
-            lines.append(f"{sector['name']}: {status}")
+        sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
+        stable_header_added = False
+        for sector in sorted_sectors:
+            marker = MARKERS.get("NO DATA", "?")
+            if marker == "." and not stable_header_added:
+                lines.append("---")
+                stable_header_added = True
+            lines.append(f"{sector.name:<12} {marker}")
+            state._last_sector_status[sector.name] = "NO DATA"
         return lines
+
+    posture = _system_posture(state, fidelity)
+    archive_text = (
+        f"{state.archive_losses}/{ARCHIVE_LOSS_LIMIT}"
+        if fidelity == "FULL"
+        else f"{state.archive_losses}+"
+    )
 
     lines = [
-        f"TIME: {snapshot['time']}",
-        f"THREAT: {snapshot['threat']}",
-        f"ASSAULT: {snapshot['assault']}",
-        "",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"POSTURE: {posture} | ARCHIVE: {archive_text}",
+        _compute_situation_header(state),
     ]
 
-    if fidelity == "FRAGMENTED":
-        lines[1] = "THREAT: ELEVATED"
-        lines[2] = "ASSAULT: UNKNOWN"
-        lines.append("SYSTEM POSTURE: ACTIVE")
-        lines.append("ARCHIVE STATUS: DEGRADED")
-        lines.extend(
-            [
-                "",
-                "RESOURCES:",
-                f"- MATERIALS: {resources.get('materials', 0)}",
-            ]
-        )
-        _append_repairs(lines, "SEVERE")
-        lines.extend(
-            [
-                "",
-                "SECTORS:",
-            ]
-        )
-        for sector in snapshot["sectors"]:
-            status = "STABLE"
-            if sector["status"] in {"ALERT", "DAMAGED", "COMPROMISED"}:
-                status = "ACTIVITY DETECTED"
-            lines.append(f"{sector['name']}: {status}")
-        return lines
+    if fidelity == "FULL":
+        lines.append(f"SEED: {state.seed}")
 
-    if fidelity == "DEGRADED":
-        lines[2] = "ASSAULT: UNSTABLE"
-        lines.append("SYSTEM POSTURE: FOCUSED")
-        loss_floor = state.archive_losses if state.archive_losses > 0 else 0
-        lines.append(f"ARCHIVE LOSSES: {loss_floor}+")
-        lines.extend(
-            [
-                "",
-                "RESOURCES:",
-                f"- MATERIALS: {resources.get('materials', 0)}",
-            ]
-        )
-        _append_repairs(lines, "DEGRADED")
-        lines.extend(
-            [
-                "",
-                "SECTORS:",
-            ]
-        )
-        for sector in snapshot["sectors"]:
-            status = sector["status"]
-            if status == "DAMAGED":
-                status = "UNSTABLE"
-            lines.append(f"{sector['name']}: {status}")
-        return lines
-
-    if state.hardened:
-        posture = "HARDENED"
-    elif state.focused_sector:
-        focused_name = focus_lookup.get(state.focused_sector, "UNKNOWN")
-        posture = f"FOCUSED ({focused_name})"
-    else:
-        posture = "ACTIVE"
-    lines.append(f"SYSTEM POSTURE: {posture}")
-    lines.append(f"ARCHIVE LOSSES: {state.archive_losses}/{ARCHIVE_LOSS_LIMIT}")
+    resources = snapshot.get("resources", {})
     lines.extend(
         [
             "",
@@ -170,21 +152,26 @@ def cmd_status(state: GameState) -> list[str]:
             f"- MATERIALS: {resources.get('materials', 0)}",
         ]
     )
-    _append_repairs(lines, "FULL")
-    lines.extend(
-        [
-            "",
-            "SECTORS:",
-        ]
-    )
-    for sector in snapshot["sectors"]:
-        lines.append(f"{sector['name']}: {sector['status']}")
-        if fidelity == "FULL":
-            sector_structures = [
-                s for s in state.structures.values() if s.sector == sector["name"]
-            ]
-            for structure in sector_structures:
-                lines.append(
-                    f"    * {structure.id} {structure.name}: {structure.state.value}"
-                )
+    _append_repairs(lines, snapshot, state, fidelity)
+
+    lines.extend(["", "SECTORS:"])
+    sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
+    stable_header_added = False
+    for sector in sorted_sectors:
+        current = sector.status_label()
+        marker = MARKERS.get(current, ".")
+        if marker == "." and not stable_header_added:
+            lines.append("---")
+            stable_header_added = True
+
+        delta = ""
+        prev = state._last_sector_status.get(sector.name)
+        if prev and current != prev:
+            if _sector_priority_by_label(current) < _sector_priority_by_label(prev):
+                delta = " (+)"
+            else:
+                delta = " (-)"
+        lines.append(f"{sector.name:<12} {marker}{delta}")
+        state._last_sector_status[sector.name] = current
+
     return lines

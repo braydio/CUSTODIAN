@@ -1,4 +1,3 @@
-import random
 import time
 
 from .assault_instance import AssaultInstance
@@ -24,7 +23,7 @@ from .structures import StructureState
 
 def maybe_start_assault_timer(state):
     if state.assault_timer is None and not state.in_major_assault:
-        base = random.randint(ASSAULT_TIMER_BASE_MIN, ASSAULT_TIMER_BASE_MAX)
+        base = state.rng.randint(ASSAULT_TIMER_BASE_MIN, ASSAULT_TIMER_BASE_MAX)
         weak = sum(sector.damage for sector in state.weakest_sectors())
         timer = max(
             ASSAULT_TIMER_MIN, int(base - weak * ASSAULT_TIMER_WEAK_DAMAGE_MULT)
@@ -68,7 +67,7 @@ def _select_focus_targets(state, count: int):
     pool = list(zip(eligible, weights))
     while pool and len(targets) < count:
         sectors, sector_weights = zip(*pool)
-        chosen = random.choices(sectors, weights=sector_weights, k=1)[0]
+        chosen = state.rng.choices(sectors, weights=sector_weights, k=1)[0]
         targets.append(chosen)
         pool = [(sector, weight) for sector, weight in pool if sector is not chosen]
 
@@ -113,7 +112,7 @@ def start_assault(state):
 
 def resolve_assault(state, tick_delay=0.05):
     assault = state.current_assault
-    duration = random.randint(ASSAULT_DURATION_MIN, ASSAULT_DURATION_MAX)
+    duration = state.rng.randint(ASSAULT_DURATION_MIN, ASSAULT_DURATION_MAX)
     assault.duration_ticks = duration
     target_names = {sector.name for sector in assault.target_sectors}
     archive_pre_damage = state.sectors["ARCHIVE"].damage

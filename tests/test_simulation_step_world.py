@@ -115,5 +115,5 @@ def test_step_world_refreshes_comms_fidelity_and_emits_event(monkeypatch) -> Non
 
     assert state.fidelity == "FRAGMENTED"
     assert state.last_fidelity_lines == [
-        "[EVENT] INFORMATION FIDELITY DEGRADED TO FRAGMENTED"
+        "[WARNING] SIGNAL DEGRADATION DETECTED"
     ]

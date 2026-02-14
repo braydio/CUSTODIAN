@@ -25,8 +25,11 @@
   <div id="app-shell">
     <div id="terminal-container">
       <pre id="terminal"></pre>
+      <div id="terminal-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+      <div id="offline-banner" role="status" aria-live="polite">LINK DEGRADED: COMMAND NETWORK UNSTABLE</div>
       <div id="new-output-indicator">NEW OUTPUT</div>
-      <div id="idle-tip">TYPE HELP FOR AVAILABLE COMMANDS</div>
+      <div id="idle-tip"></div>
+      <button id="input-focus-zone" type="button" aria-label="Focus terminal input"></button>
 
       <form id="terminal-input-form" autocomplete="off">
         <span id="terminal-prompt">&gt;</span>
@@ -51,4 +54,3 @@
   <script src="boot.js"></script>
 </body>
 </html>
-
