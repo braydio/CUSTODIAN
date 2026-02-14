@@ -9,6 +9,9 @@
 - Phase 1.5 asymmetry is active: sector roles influence threat growth, assault damage, warnings, and event frequency.
 - World-state terminal stack is wired end-to-end (`parser.py`, `commands/`, `processor.py`, `result.py`, `repl.py`).
 - Structure-level damage scaffolding exists (`core/structures.py`) with timed repairs (`core/repairs.py`), driven by `REPAIR`, `WAIT`, and the materials economy (status-aware repair reissue).
+- Power-performance integration is active via `core/power.py`: structure output now follows `effective_output = power_efficiency * integrity_modifier`, COMMS fidelity maps from sensor effectiveness thresholds, and tactical defense output scales with DEFENSE GRID effective output.
+- COMMS fidelity is now persisted on state (`state.fidelity`) and refreshed each world tick from COMMS sensor effectiveness; fidelity transitions emit explicit event lines during `WAIT`.
+- Repair progression is now power-aware: speed scales by mechanic-drone output (`FB_TOOLS`) and sector power tier, assault outcome damage regresses in-progress repairs in affected sectors, and destroyed structures cancel active repairs with a 50% materials refund.
 - Canonical sector layout now includes 9 sectors with FABRICATION present but inert.
 - Embodied Presence Phase A is implemented: command/field player modes, transit graph movement (`DEPLOY`, `MOVE`, `RETURN`), and field-local STATUS projection.
 - Repair authority is mode-aware: command mode supports remote DAMAGED repairs only, while field mode supports local DAMAGED/OFFLINE/DESTROYED repairs.

@@ -1,4 +1,5 @@
 from collections import defaultdict
+import math
 
 from .config import (
     ALERTNESS_DECAY,
@@ -66,6 +67,7 @@ class GameState:
         self.is_failed = False
         self.failure_reason = None
         self.last_assault_lines = []
+        self.last_repair_lines: list[str] = []
         self.materials = 3
 
         # Player state
@@ -73,6 +75,8 @@ class GameState:
         self.player_location = COMMAND_CENTER_LOCATION
         self.field_action = FIELD_ACTION_IDLE
         self.active_task: dict | None = None
+        self.fidelity = "FULL"
+        self.last_fidelity_lines: list[str] = []
         self.current_assault = None
         self.focused_sector = None
         self.hardened = False
@@ -160,8 +164,8 @@ class GameState:
             "active_repairs": [
                 {
                     "id": sid,
-                    "remaining": job["remaining"],
-                    "total": job["total"],
+                    "remaining": max(0, int(math.ceil(job["remaining"]))),
+                    "total": int(math.ceil(job["total"])),
                     "cost": job["cost"],
                 }
                 for sid, job in self.active_repairs.items()

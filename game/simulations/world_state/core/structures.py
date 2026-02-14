@@ -9,10 +9,20 @@ class StructureState(Enum):
 
 
 class Structure:
-    def __init__(self, id: str, name: str, sector: str):
+    def __init__(
+        self,
+        id: str,
+        name: str,
+        sector: str,
+        *,
+        min_power: float = 0.4,
+        standard_power: float = 1.0,
+    ):
         self.id = id
         self.name = name
         self.sector = sector
+        self.min_power = min_power
+        self.standard_power = standard_power
         self.state = StructureState.OPERATIONAL
 
     def degrade(self) -> None:

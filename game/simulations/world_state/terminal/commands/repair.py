@@ -1,27 +1,22 @@
 """REPAIR command handler."""
 
+import math
+
+from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.repairs import start_repair
 from game.simulations.world_state.core.config import FIELD_ACTION_REPAIRING
 from game.simulations.world_state.core.state import GameState
 
 
 def _fidelity_from_comms(state: GameState) -> str:
-    comms = state.sectors.get("COMMS")
-    status = comms.status_label() if comms else "STABLE"
-    if status == "ALERT":
-        return "DEGRADED"
-    if status == "DAMAGED":
-        return "FRAGMENTED"
-    if status == "COMPROMISED":
-        return "LOST"
-    return "FULL"
+    return comms_fidelity(state)
 
 
 def _repair_status_line(state: GameState, structure_id: str) -> str:
     fidelity = _fidelity_from_comms(state)
     job = state.active_repairs.get(structure_id, {})
-    remaining = job.get("remaining", 0)
-    total = job.get("total", 0)
+    remaining = max(0, int(math.ceil(job.get("remaining", 0))))
+    total = int(math.ceil(job.get("total", 0)))
     cost = job.get("cost", 0)
     structure = state.structures.get(structure_id)
     name = structure.name.upper() if structure else "UNKNOWN"

@@ -15,10 +15,11 @@ from .config import (
     ASSAULT_TIMER_MIN,
     ASSAULT_TIMER_WEAK_DAMAGE_MULT,
     COMMAND_CENTER_BREACH_DAMAGE,
-    DEFENSE_ASSAULT_DAMAGE_MULT,
     GATEWAY_ASSAULT_TIMER_ACCEL,
 )
 from .effects import add_global_effect, add_sector_effect
+from .repairs import cancel_repair_for_structure, regress_repairs_in_sectors
+from .structures import StructureState
 
 
 def maybe_start_assault_timer(state):
@@ -119,8 +120,6 @@ def resolve_assault(state, tick_delay=0.05):
 
     def on_tick(sectors, tick):
         assault.tick()
-        defense = state.sectors.get("DEFENSE GRID")
-        defense_mult = DEFENSE_ASSAULT_DAMAGE_MULT if defense and defense.damage >= 1.0 else 1.0
         for sector in sectors:
             if not sector.has_hostiles():
                 continue
@@ -130,12 +129,13 @@ def resolve_assault(state, tick_delay=0.05):
             if world_sector is None:
                 continue
             print(f"[Assault] Fighting in {world_sector.name}")
+            world_sector.occupied = True
             world_sector.alertness += ASSAULT_ALERTNESS_PER_TICK
             state.ambient_threat += ASSAULT_THREAT_PER_TICK
 
         time.sleep(tick_delay)
 
-    summary = resolve_tactical_assault(assault, on_tick)
+    summary = resolve_tactical_assault(assault, on_tick, state=state)
 
     assault.resolved = True
     state.current_assault = None
@@ -171,6 +171,7 @@ def _apply_assault_outcome(state, assault, outcome, target_names):
     if "COMMAND" in target_names and outcome.penetration == "severe":
         command_center = state.sectors["COMMAND"]
         command_center.damage = max(command_center.damage, COMMAND_CENTER_BREACH_DAMAGE)
+        regress_repairs_in_sectors(state, target_names)
         return "[ASSAULT] COMMAND BREACHED."
 
     if outcome.penetration == "none" and outcome.intensity == "low":
@@ -180,25 +181,32 @@ def _apply_assault_outcome(state, assault, outcome, target_names):
         return "[ASSAULT] DEFENSES HELD. ENEMY WITHDREW."
 
     if outcome.penetration == "none":
-        for structure in state.structures.values():
-            if structure.sector in target_names:
-                structure.degrade()
+        _degrade_target_structures(state, target_names)
+        regress_repairs_in_sectors(state, target_names)
         return "[ASSAULT] ENEMY REPULSED. INFRASTRUCTURE DAMAGE REPORTED."
 
     if outcome.penetration == "partial":
-        for structure in state.structures.values():
-            if structure.sector in target_names:
-                structure.degrade()
+        _degrade_target_structures(state, target_names)
+        regress_repairs_in_sectors(state, target_names)
         target = assault.target_sectors[0]
         target.alertness += 1.0
         add_sector_effect(target, "sensor_blackout", severity=1.0, decay=0.02)
         return "[ASSAULT] BREACH CONTAINED. SECTOR CONTROL DEGRADED."
 
     # Severe penetration but not command center breach -> strategic loss
-    for structure in state.structures.values():
-        if structure.sector in target_names:
-            structure.degrade()
+    _degrade_target_structures(state, target_names)
+    regress_repairs_in_sectors(state, target_names)
     target = assault.target_sectors[0]
     target.power = max(0.2, target.power - 0.2)
     add_global_effect(state, "signal_interference", severity=1.0, decay=0.0)
     return "[ASSAULT] CRITICAL SYSTEM LOST. NO REPLACEMENT AVAILABLE."
+
+
+def _degrade_target_structures(state, target_names: set[str]) -> None:
+    for structure in state.structures.values():
+        if structure.sector not in target_names:
+            continue
+        before = structure.state
+        structure.degrade()
+        if before != StructureState.DESTROYED and structure.state == StructureState.DESTROYED:
+            cancel_repair_for_structure(state, structure.id)

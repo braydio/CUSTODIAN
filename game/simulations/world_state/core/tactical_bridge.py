@@ -2,10 +2,21 @@ from game.simulations.assault.core.assault import resolve_assault as resolve_tac
 from game.simulations.assault.core.defenses import Turret
 from game.simulations.assault.core.enums import SectorType
 from game.simulations.assault.core.sectors import Sector
+from game.simulations.world_state.core.power import structure_effective_output
 
 
-def build_tactical_sectors(assault):
+def _defense_effective_output(state) -> float:
+    if state is None:
+        return 1.0
+    structure = state.structures.get("DF_CORE")
+    if not structure:
+        return 1.0
+    return structure_effective_output(state, structure)
+
+
+def build_tactical_sectors(assault, state=None):
     sectors = []
+    output = _defense_effective_output(state)
     for sector_state in assault.target_sectors:
         sector_type = SectorType.PERIPHERAL
         if sector_state.name == "COMMAND":
@@ -13,13 +24,13 @@ def build_tactical_sectors(assault):
         elif sector_state.name == "ARCHIVE":
             sector_type = SectorType.GOAL
         sector = Sector(sector_state.name, sector_type)
-        sector.defenses.append(Turret(damage=5))
+        sector.defenses.append(Turret(damage=5, effective_output=output))
         sectors.append(sector)
     return sectors
 
 
-def resolve_tactical_assault(assault, on_tick):
-    assault_sectors = build_tactical_sectors(assault)
+def resolve_tactical_assault(assault, on_tick, state=None):
+    assault_sectors = build_tactical_sectors(assault, state=state)
     assault.duration_ticks = max(1, assault.duration_ticks)
 
     return resolve_tactical(

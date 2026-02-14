@@ -93,11 +93,10 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         return CommandResult(ok=True, text=primary_line, lines=detail_lines)
 
     if parsed.verb == "DEPLOY":
-        if len(parsed.args) == 0:
-            return CommandResult(ok=False, text="DEPLOY REQUIRES TRANSIT TARGET.")
         if len(parsed.args) > 1:
             return CommandResult(ok=False, text="USE QUOTES FOR MULTI-WORD TARGET.")
-        lines = cmd_deploy(state, parsed.args[0])
+        destination = parsed.args[0] if parsed.args else ""
+        lines = cmd_deploy(state, destination)
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return CommandResult(ok=True, text=primary_line, lines=detail_lines)
