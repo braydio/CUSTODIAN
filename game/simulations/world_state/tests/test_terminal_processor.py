@@ -5,6 +5,7 @@ from game.simulations.world_state.core.config import (
     COMMAND_CENTER_BREACH_DAMAGE,
 )
 from game.simulations.world_state.core.state import GameState, check_failure
+from game.simulations.world_state.core.structures import StructureState
 from game.simulations.world_state.terminal.commands.wait import WaitTickInfo
 from game.simulations.world_state.terminal.processor import process_command
 
@@ -63,6 +64,7 @@ def test_wait_suppresses_repeated_event_blocks(monkeypatch) -> None:
         _state.time += 1
         return WaitTickInfo(
             fidelity="FULL",
+            fidelity_lines=[],
             event_name="Comms Burst",
             event_sector="COMMS",
             repair_names=[],
@@ -253,6 +255,79 @@ def test_deploy_transitions_to_field_mode() -> None:
     assert result.ok is True
     assert result.text == "DEPLOYING TO T_NORTH."
     assert state.player_mode == "FIELD"
+
+
+def test_deploy_autoroutes_sector_when_fidelity_full() -> None:
+    state = GameState()
+
+    result = process_command(state, "DEPLOY ARCHIVE")
+
+    assert result.ok is True
+    assert result.text == "DEPLOYING TO T_NORTH."
+    assert state.player_mode == "FIELD"
+
+
+def test_deploy_autoroutes_gateway_to_south_transit() -> None:
+    state = GameState()
+
+    result = process_command(state, "DEPLOY GATEWAY")
+
+    assert result.ok is True
+    assert result.text == "DEPLOYING TO T_SOUTH."
+    assert state.player_mode == "FIELD"
+
+
+def test_deploy_degraded_returns_args_and_context() -> None:
+    state = GameState()
+    state.structures["CM_CORE"].state = StructureState.DAMAGED
+
+    result = process_command(state, "DEPLOY ARCHIVE")
+
+    assert result.ok is True
+    assert result.text == "INVALID DEPLOYMENT TARGET."
+
+
+def test_wait_emits_fidelity_upgrade_event(monkeypatch) -> None:
+    _disable_wait_tick_pause(monkeypatch)
+    state = GameState()
+    state.structures["CM_CORE"].state = StructureState.DAMAGED
+    state.sectors["COMMS"].power = 0.6
+    state.fidelity = "DEGRADED"
+    state.structures["CM_CORE"].state = StructureState.OPERATIONAL
+    state.sectors["COMMS"].power = 1.0
+
+    result = process_command(state, "WAIT")
+
+    assert result.ok is True
+    assert result.text == "TIME ADVANCED."
+    assert result.lines is not None
+    assert "[EVENT] INFORMATION FIDELITY UPGRADED TO FULL" in result.lines
+    assert result.lines == [
+        "REQUIRES: DEPLOY NORTH OR DEPLOY SOUTH.",
+        "CONTEXT: RECEIVED TARGET=ARCHIVE.",
+    ]
+
+
+def test_deploy_fragmented_keeps_terse_invalid_target() -> None:
+    state = GameState()
+    state.structures["CM_CORE"].state = StructureState.DAMAGED
+    state.sectors["COMMS"].power = 0.5
+
+    result = process_command(state, "DEPLOY ARCHIVE")
+
+    assert result.ok is True
+    assert result.text == "INVALID DEPLOYMENT TARGET."
+
+
+def test_move_from_transit_to_comms_is_valid() -> None:
+    state = GameState()
+    process_command(state, "DEPLOY NORTH")
+    process_command(state, "WAIT 2X")
+
+    result = process_command(state, "MOVE COMMS")
+
+    assert result.ok is True
+    assert result.text == "MOVING TO COMMS."
 
 
 def test_focus_denied_in_field_mode() -> None:

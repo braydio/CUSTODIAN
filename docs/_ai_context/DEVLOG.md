@@ -1,5 +1,20 @@
 # DEVLOG — CUSTODIAN
 
+## 2026-02-14
+- Applied `feature_planning/COMMS_REPAIR_MECHANIC.md` (renamed to `feature_planning/APPLIED-COMMS_REPAIR_MECHANIC.md`).
+- Added persistent COMMS fidelity state (`state.fidelity`) with per-tick refresh in `core/simulation.py` via `refresh_comms_fidelity(...)`.
+- Added fidelity transition event emission (`[EVENT] INFORMATION FIDELITY ...`) into `WAIT` detail output.
+- Updated WAIT tick payload/model to carry fidelity-event lines and preserve fidelity-aware suppression/interpretive behavior.
+- Added tests for fidelity refresh/event emission in `tests/test_simulation_step_world.py` and `game/simulations/world_state/tests/test_terminal_processor.py`.
+
+## 2026-02-13
+- Implemented a shared power-performance layer in `core/power.py` with deterministic power tiers, integrity modifiers, and `effective_output = power_efficiency * integrity`.
+- Integrated power-aware repairs in `core/repairs.py`: speed now scales by mechanic-drone output (`FB_TOOLS`) and sector power tier; DESTROYED reconstruction requires minimum sector power plus powered mechanic drones.
+- Added deterministic repair regression on assault damage and cancellation/refund behavior (50% materials) when a structure is destroyed mid-repair.
+- Wired COMMS information fidelity to sensor effectiveness thresholds in `WAIT`, `STATUS`, and repair-status responses, while preserving legacy COMMS degradation caps.
+- Scaled tactical turret behavior in `assault/core/defenses.py` using effective output (damage/cadence degradation and low-output misfire behavior), fed from DEFENSE GRID structure output via `core/tactical_bridge.py`.
+- Added new repair tests for degraded power speed, reconstruction power requirements, and regression/cancel-refund behavior.
+
 ## 2026-02-12
 - Updated `WAIT` semantics to use 5-tick units (`WAIT` = 5 ticks, `WAIT NX` = `N x 5` ticks) with a 0.5-second internal pacing delay.
 - Reworked wait output to emit observed event/signal lines in sequence and suppress adjacent duplicate lines.

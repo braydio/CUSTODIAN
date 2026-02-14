@@ -1,8 +1,8 @@
 """STATUS command handler."""
 
 from game.simulations.world_state.core.config import ARCHIVE_LOSS_LIMIT, SECTOR_DEFS
+from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.state import GameState
-from game.simulations.world_state.core.structures import StructureState
 
 
 def cmd_status(state: GameState) -> list[str]:
@@ -35,7 +35,7 @@ def cmd_status(state: GameState) -> list[str]:
             lines.append(f"- {structure.id} {structure.name}: {structure.state.value}")
         return lines
 
-    comms_status = state.sectors["COMMS"].status_label()
+    fidelity = comms_fidelity(state)
     snapshot = state.snapshot()
     focus_lookup = {sector["id"]: sector["name"] for sector in SECTOR_DEFS}
     resources = snapshot.get("resources", {})
@@ -77,7 +77,7 @@ def cmd_status(state: GameState) -> list[str]:
                     f"- {repair['id']}: IN PROGRESS (COST: {repair['cost']} MATERIALS)"
                 )
             return
-    if comms_status == "COMPROMISED":
+    if fidelity == "LOST":
         lines = [
             "TIME: ??",
             "THREAT: UNKNOWN",
@@ -102,7 +102,7 @@ def cmd_status(state: GameState) -> list[str]:
         "",
     ]
 
-    if comms_status == "DAMAGED":
+    if fidelity == "FRAGMENTED":
         lines[1] = "THREAT: ELEVATED"
         lines[2] = "ASSAULT: UNKNOWN"
         lines.append("SYSTEM POSTURE: ACTIVE")
@@ -128,7 +128,7 @@ def cmd_status(state: GameState) -> list[str]:
             lines.append(f"{sector['name']}: {status}")
         return lines
 
-    if comms_status == "ALERT":
+    if fidelity == "DEGRADED":
         lines[2] = "ASSAULT: UNSTABLE"
         lines.append("SYSTEM POSTURE: FOCUSED")
         loss_floor = state.archive_losses if state.archive_losses > 0 else 0
@@ -179,7 +179,7 @@ def cmd_status(state: GameState) -> list[str]:
     )
     for sector in snapshot["sectors"]:
         lines.append(f"{sector['name']}: {sector['status']}")
-        if comms_status == "STABLE":
+        if fidelity == "FULL":
             sector_structures = [
                 s for s in state.structures.values() if s.sector == sector["name"]
             ]

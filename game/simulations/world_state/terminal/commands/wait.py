@@ -11,7 +11,7 @@ from game.simulations.world_state.core.config import (
     FIELD_ACTION_REPAIRING,
     PLAYER_MODE_COMMAND,
 )
-from game.simulations.world_state.core.repairs import tick_repairs
+from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.simulation import step_world
 from game.simulations.world_state.core.state import GameState
 
@@ -23,6 +23,7 @@ WAIT_TICK_DELAY_SECONDS = 0.5
 @dataclass
 class WaitTickInfo:
     fidelity: str
+    fidelity_lines: list[str]
     event_name: str | None
     event_sector: str | None
     repair_names: list[str]
@@ -39,15 +40,7 @@ def _failure_lines(state: GameState) -> list[str]:
 
 
 def _fidelity_from_comms(state: GameState) -> str:
-    comms = state.sectors.get("COMMS")
-    status = comms.status_label() if comms else "STABLE"
-    if status == "ALERT":
-        return "DEGRADED"
-    if status == "DAMAGED":
-        return "FRAGMENTED"
-    if status == "COMPROMISED":
-        return "LOST"
-    return "FULL"
+    return comms_fidelity(state)
 
 
 def _latest_event(state: GameState, before_time: int) -> tuple[str | None, str | None]:
@@ -127,7 +120,8 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
     with redirect_stdout(io.StringIO()):
         became_failed = step_world(state)
         _tick_active_task(state)
-        repair_lines = tick_repairs(state)
+        repair_lines = state.last_repair_lines
+        fidelity_lines = state.last_fidelity_lines
         if not state.active_repairs and state.field_action == FIELD_ACTION_REPAIRING:
             state.field_action = FIELD_ACTION_IDLE
 
@@ -152,6 +146,7 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
 
     return WaitTickInfo(
         fidelity=fidelity,
+        fidelity_lines=fidelity_lines,
         event_name=event_name,
         event_sector=event_sector,
         repair_names=repair_names,
@@ -240,13 +235,21 @@ def cmd_wait_ticks(state: GameState, ticks: int) -> list[str]:
 
 def _detail_lines_for_tick(info: WaitTickInfo, state: GameState) -> list[str]:
     if info.fidelity == "LOST":
+        if info.fidelity_lines:
+            lines = list(info.fidelity_lines)
+            if info.became_failed:
+                lines.extend(_failure_lines(state))
+            return lines
         if info.became_failed:
             return _failure_lines(state)
         return []
 
     tick_lines: list[str] = []
+    if info.fidelity_lines:
+        tick_lines.extend(info.fidelity_lines)
+
     event_line = None
-    if info.event_name:
+    if info.event_name and not info.fidelity_lines:
         event_line = _format_event_line(info.event_name, info.fidelity)
 
     repair_line = None
@@ -271,7 +274,7 @@ def _detail_lines_for_tick(info: WaitTickInfo, state: GameState) -> list[str]:
     interpretive_line = None
     if assault_signal:
         interpretive_line = _format_assault_line(info.fidelity)
-    elif event_line or repair_line:
+    elif event_line or repair_line or info.fidelity_lines:
         interpretive_line = _format_status_shift(info.fidelity)
 
     if interpretive_line:

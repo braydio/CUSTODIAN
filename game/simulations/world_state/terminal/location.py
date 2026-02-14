@@ -20,6 +20,15 @@ LOCATION_ALIASES = {
     "FABRICATION": "FABRICATION",
     "FAB": "FABRICATION",
     "FB": "FABRICATION",
+    "COMMS": "COMMS",
+    "CM": "COMMS",
+    "STORAGE": "STORAGE",
+    "ST": "STORAGE",
+    "HANGAR": "HANGAR",
+    "HG": "HANGAR",
+    "GATEWAY": "GATEWAY",
+    "GATE": "GATEWAY",
+    "GS": "GATEWAY",
 }
 
 

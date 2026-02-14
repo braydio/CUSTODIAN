@@ -294,7 +294,7 @@
     "",
     "Residual Authority accepted.",
     "",
-    "Initializing Custodian interface...",
+    "Initializing Custodian Interface...",
   ];
 
   function sleep(ms) {
