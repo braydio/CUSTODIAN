@@ -40,9 +40,15 @@ def step_world(state: GameState, tick_delay: float = 0.0) -> bool:
     return check_failure(state)
 
 
-def sandbox_world(ticks=300, tick_delay=0.05):
+def sandbox_world(
+    ticks: int = 300,
+    tick_delay: float = 0.05,
+    seed: int | None = None,
+    dev_mode: bool = False,
+):
     """Run the autonomous world simulation loop."""
-    state = GameState()
+    state = GameState(seed=seed)
+    state.dev_mode = dev_mode
     print("World simulation started.\n")
     profile = state.faction_profile
     print(

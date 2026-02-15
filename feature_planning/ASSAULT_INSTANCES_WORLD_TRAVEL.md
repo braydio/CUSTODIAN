@@ -713,8 +713,568 @@ This message is reused everywhere — good consistency.
 
 ---
 
-## Next logical steps (after you review)
+### Key takeaways from general game design practice
 
-Once you confirm these diffs align with your intent, the **next clean slices** are:
+* A spatial graph with weighted nodes/edges is the classic foundation for AI movement and strike paths in strategy games (pathfinding via BFS/A*/similar) — even simple grid or node graphs guide unit progression toward objectives. ([Reddit][1])
+
+* Economies in strategy/simulation games are meant to meaningfully gate player actions (e.g., repairs, expansions) so that decisions have cost and opportunity impact rather than trivial mechanical overhead. ([Wayward Strategy][2])
+
+* Enemy movement models that present *advance warnings* and *progressive approach behavior* give players strategic tension, even without detailed combat systems. ([Reddit][3])
+
+These insights validate that our planned system — with spatial enemy traversal and resource gating — is *not only coherent but in line with common design patterns.*
+
+---
+
+# FULL SYSTEM DESIGN (LOCKED)
+
+This design spec defines:
+
+1. **Enemy Spatial Traversal System**
+2. **Enemy Lifecycle & States**
+3. **World Graph Geometry**
+4. **Assault Trigger & Engagement Logic**
+5. **Resource Salvage**
+6. **Integration Points with Current Codebase**
+
+It is **implementation ready**, and nothing should change without coordinated diffs.
+
+---
+
+## 1) World Geometry Model (Graph)
+
+Your world becomes a **graph of named nodes**:
+
+```
+INGRESS_N
+       \
+     T_NORTH
+         |
+      COMMAND ---- FAB
+         |
+     T_SOUTH
+        /
+DEFENSE
+```
+
+### Node types
+
+| Node        | Type    | Meaning                           |
+| ----------- | ------- | --------------------------------- |
+| `INGRESS_N` | Ingress | Starting point for north assaults |
+| `T_NORTH`   | Transit | Buffer node                       |
+| `COMMAND`   | Hub     | Strategic center                  |
+| `FAB`       | Sector  | Auxiliary sector                  |
+| `T_SOUTH`   | Transit | Buffer node                       |
+| `DEFENSE`   | Sector  | Defensive sector                  |
+
+### Config structure
+
+This is implemented as:
+
+```python
+WORLD_GRAPH = {
+    "INGRESS_N": ["T_NORTH"],
+    "T_NORTH": ["INGRESS_N", "COMMAND"],
+    "COMMAND": ["T_NORTH", "FAB", "T_SOUTH"],
+    "FAB": ["COMMAND"],
+    "T_SOUTH": ["COMMAND", "DEFENSE"],
+    "DEFENSE": ["T_SOUTH"],
+}
+```
+
+Edges are **bidirectional**.
+
+---
+
+## 2) Enemy Unit (AssaultApproach) Lifecycle
+
+Each assault is now a **moving entity** with its own state:
+
+```python
+class AssaultApproach:
+    id: str
+    route: list[str]        # Ordered nodes from ingress → target
+    index: int              # Current position in route
+    ticks_to_next: int      # Time until reaching next node
+    state: Enum(ENV_ROUTE, NEAR_TARGET, ENGAGED, RESOLVED)
+```
+
+States:
+
+* **ENV_ROUTE** — moving between nodes
+* **NEAR_TARGET** — arrived at perimeter node (e.g., next is target)
+* **ENGAGED** — assault resolution started
+* **RESOLVED** — assault finished
+
+---
+
+## 3) Pathfinding & Routing
+
+Routing is computed on spawn:
+
+* Use **BFS** over `WORLD_GRAPH` (weights = 1 per edge)
+* Compute shortest path from an ingress node to target sector
+* Set assault route accordingly
+
+Example:
+
+```
+INGRESS_N → T_NORTH → COMMAND
+```
+
+---
+
+## 4) Movement per Tick (when Assault Exists)
+
+Each tick:
+
+1. For each assault in `ENV_ROUTE`:
+
+   * Decrement `ticks_to_next`
+   * If reaches zero:
+
+     * `index += 1`
+     * If `index == len(route) - 1`:
+       `state = NEAR_TARGET`
+     * Else: set `ticks_to_next = 1` for next edge
+
+2. When in `NEAR_TARGET`:
+
+   * Move to `ENGAGED`
+   * Spawn tactical assault (your existing resolution code)
+
+---
+
+## 5) Assault Initiation & Warning
+
+When an assault is created:
+
+* Pick ingress (`INGRESS_N` for N/S case)
+* Compute route
+* Set initial `ticks_to_next` to 1
+
+Warning strategy:
+
+* If assault passes through a transit node adjacent to command (`T_NORTH`, `T_SOUTH`), broadcast:
+
+  ```
+  HOSTILES APPROACHING NEARBY
+  ```
+
+* If assault arrives at node adjacent to command, broadcast:
+
+  ```
+  HOSTILES AT PERIMETER
+  ```
+
+These are textual, not UI events.
+
+---
+
+## 6) Engagement & Resolution
+
+When an assault transitions to `ENGAGED`:
+
+* Call existing `start_assault()` / tactical resolution
+* After resolution, set `state = RESOLVED`
+* Award salvage (materials)
+
+---
+
+## 7) Salvage & Resource Economy
+
+### Materials gain
+
+On assault resolution **before damage application**:
+
+```
+if cleaned (no damage): materials += 0
+if damage incurred: materials += 1
+if partial breach: materials += 2
+if strategic loss: materials += 3
+```
+
+These values are locked for now.
+
+### Materials sink (repairs)
+
+Costs should be enforced up front:
+
+```
+remote DAMAGED → OPERATIONAL: 2 materials
+field DAMAGED → OPERATIONAL: 1
+field OFFLINE → DAMAGED: 2
+field DESTROYED → OFFLINE (rebuild): 4
+```
+
+---
+
+## 8) Integration With Current Architecture
+
+### Replace
+
+```
+state.assault_timer
+tick_assault_timer()
+```
+
+with:
+
+* A list of `AssaultApproach` objects in `state`.
+
+Tick loop becomes:
+
+```
+for assault in state.assaults:
+    advance_assault_route(assault)
+    if assault.state == ENGAGED:
+        resolve_tactical_assault(...)
+        award_salvage(...)
+```
+
+Remove global timers.
+
+---
+
+## 9) Interfaces to Add/Update
+
+| System          | Change                                      |
+| --------------- | ------------------------------------------- |
+| state           | Replace timer with assault list             |
+| simulation tick | Route advancement                           |
+| assaults        | `AssaultApproach` logic                     |
+| terminal/status | Show nearest threat and ETA if COMMS permit |
+| economy         | Salvage awarding                            |
+| repair          | Materials gating + front/back enforcement   |
+
+---
+
+## 10) Failure & Edge Cases
+
+* If player is on foot far from target, they may miss warnings
+* Assaults must complete even if player is downed (future state)
+* If multiple assaults exist, they can overlap routes
+
+This makes the system relatable to RTS-style paths without combat micro. It gives you **pressure, spatiality, and meaningful warnings**. ([Reddit][3])
+
+---
+
+# QUESTIONS TO LOCK BEFORE DIFFS
+
+Answer these with simple values, then I’ll generate exact diffs:
+
+1. **Target selection model:**
+   Should assaults route to the **nearest single strategic sector**, or can they target multiple goals (e.g., **COMMAND or FAB or DEFENSE**) based on threat level?
+
+2. **Global assault cap:**
+   How many assaults can be in transit simultaneously? (default candidates: `1`, `2`, `unlimited`)
+
+3. **Warning visibility:**
+
+   * If COMMS are degraded, should warnings show:
+
+     * A) Still visible with text
+     * B) Partially obfuscated (garbled text)
+     * C) Not shown until at perimeter
+
+4. **Route travel cost per edge:**
+   Do you prefer:
+
+   * `1 tick per edge` (fast, snappy)
+   * `2 ticks per edge` (slower, more warning time)
 
 
+## ANSWERS / DEFINITIONS
+* 🎯 Targeting: threat-level + enemy profile driven
+* 🧠 Assault cap: campaign-scaled (start = 1 in tutorial)
+* 📡 Warning visibility: A + B (nondeterministic)
+* 🐢 Travel speed: **2 ticks per edge**
+* ⏳ WAIT = 5 ticks per command (correct in current codebase)
+
+Now I’ll give you the **exact diff implementation plan**, in clean commit-order sequence so Codex can implement safely.
+
+---
+
+# 🚧 IMPLEMENTATION PLAN
+
+(Spatial Assault Traversal + Salvage + Materials Integration)
+
+This replaces timer-based assault spawning with graph-based traversal.
+
+---
+
+# PHASE 1 — WORLD GRAPH + CONFIG
+
+### File: `core/config.py`
+
+### Add:
+
+```python
+# =========================
+# WORLD GEOMETRY
+# =========================
+
+WORLD_GRAPH = {
+    "INGRESS_N": ["T_NORTH"],
+    "INGRESS_S": ["T_SOUTH"],
+    "T_NORTH": ["INGRESS_N", "COMMAND"],
+    "T_SOUTH": ["INGRESS_S", "COMMAND"],
+    "COMMAND": ["T_NORTH", "T_SOUTH", "FAB", "POWER"],
+    "FAB": ["COMMAND"],
+    "POWER": ["COMMAND"],
+    "DEFENSE": ["T_SOUTH"],
+}
+
+EDGE_TRAVEL_TICKS = 2
+
+MAX_ACTIVE_ASSAULTS_TUTORIAL = 1
+```
+
+No logic yet — just geometry.
+
+---
+
+# PHASE 2 — NEW ASSAULT ENTITY
+
+### File: `core/assaults.py`
+
+### Add class:
+
+```python
+class AssaultApproach:
+    def __init__(self, assault_id, ingress, target, route):
+        self.id = assault_id
+        self.ingress = ingress
+        self.target = target
+        self.route = route
+        self.index = 0
+        self.ticks_to_next = EDGE_TRAVEL_TICKS
+        self.state = "APPROACHING"  # APPROACHING, ENGAGED, RESOLVED
+```
+
+---
+
+# PHASE 3 — PATH ROUTING (BFS)
+
+Still inside `core/assaults.py`
+
+Add:
+
+```python
+def compute_route(start, goal):
+    from collections import deque
+    visited = set()
+    queue = deque([[start]])
+
+    while queue:
+        path = queue.popleft()
+        node = path[-1]
+        if node == goal:
+            return path
+        if node not in visited:
+            visited.add(node)
+            for neighbor in WORLD_GRAPH.get(node, []):
+                new_path = list(path)
+                new_path.append(neighbor)
+                queue.append(new_path)
+    return None
+```
+
+---
+
+# PHASE 4 — Replace Assault Timer With Active Assault List
+
+### File: `core/state.py`
+
+### Remove:
+
+```
+self.assault_timer
+```
+
+### Add:
+
+```python
+self.assaults = []
+self.materials = 0
+```
+
+---
+
+# PHASE 5 — Spawn Assaults Spatially
+
+### File: `core/assaults.py`
+
+Replace logic in `tick_assault_timer()` and `start_assault()` with:
+
+```python
+def maybe_spawn_assault(state):
+    if len(state.assaults) >= MAX_ACTIVE_ASSAULTS_TUTORIAL:
+        return
+
+    # Spawn probability logic can reuse old timer thresholds
+    if state.ambient_threat > 1.5:
+        ingress = random.choice(["INGRESS_N", "INGRESS_S"])
+        target = choose_target_sector(state)
+        route = compute_route(ingress, target)
+
+        assault = AssaultApproach(
+            assault_id=str(uuid4()),
+            ingress=ingress,
+            target=target,
+            route=route
+        )
+        state.assaults.append(assault)
+```
+
+---
+
+# PHASE 6 — Per-Tick Assault Movement
+
+### File: `core/simulation.py`
+
+(inside your main tick loop)
+
+Add:
+
+```python
+for assault in list(state.assaults):
+    if assault.state != "APPROACHING":
+        continue
+
+    assault.ticks_to_next -= 1
+
+    if assault.ticks_to_next <= 0:
+        assault.index += 1
+
+        if assault.index >= len(assault.route) - 1:
+            assault.state = "ENGAGED"
+        else:
+            assault.ticks_to_next = EDGE_TRAVEL_TICKS
+```
+
+---
+
+# PHASE 7 — Trigger Tactical Assault When ENGAGED
+
+In same loop:
+
+```python
+if assault.state == "ENGAGED":
+    outcome = resolve_tactical_assault(state, assault.target)
+    award_salvage(state, outcome)
+    state.assaults.remove(assault)
+```
+
+---
+
+# PHASE 8 — Salvage Implementation
+
+### File: `core/assaults.py`
+
+Add:
+
+```python
+def award_salvage(state, outcome):
+    if outcome == "CLEAN":
+        return
+    elif outcome == "DAMAGE":
+        state.materials += 1
+    elif outcome == "BREACH":
+        state.materials += 2
+    elif outcome == "STRATEGIC_LOSS":
+        state.materials += 3
+```
+
+Hook into actual outcome enum instead of string once verified.
+
+---
+
+# PHASE 9 — Repair Material Gating
+
+### File: `terminal/commands/repair.py`
+
+Before starting repair:
+
+```python
+cost = get_material_cost(structure, state.player_mode)
+
+if state.materials < cost:
+    return ["INSUFFICIENT MATERIALS."]
+
+state.materials -= cost
+```
+
+---
+
+# PHASE 10 — Warning Logic (Nondeterministic A/B)
+
+### File: `core/simulation.py`
+
+Inside assault movement:
+
+```python
+if assault.route[assault.index] in {"T_NORTH", "T_SOUTH"}:
+    if random.random() < comms_warning_chance(state):
+        print("[ALERT] HOSTILES APPROACHING.")
+    else:
+        print("[SIGNAL NOISE DETECTED.]")
+```
+
+Where:
+
+```python
+def comms_warning_chance(state):
+    return 0.8 if state.comms_integrity > 0.5 else 0.4
+```
+
+---
+
+# PHASE 11 — STATUS Enhancement
+
+### File: `terminal/commands/status.py`
+
+If in COMMAND mode and comms sufficient:
+
+Show nearest assault:
+
+```python
+for assault in state.assaults:
+    remaining_edges = len(assault.route) - assault.index
+    eta = remaining_edges * EDGE_TRAVEL_TICKS
+    lines.append(f"HOSTILE APPROACH: {assault.target} ETA {eta}")
+```
+
+Hide or obfuscate in FIELD mode.
+
+---
+
+# What This Replaces
+
+| Old System      | New System          |
+| --------------- | ------------------- |
+| assault_timer   | active assault list |
+| immediate spawn | ingress-based route |
+| warning window  | spatial approach    |
+| binary trigger  | progressive advance |
+
+---
+
+# What Remains Untouched
+
+* Tactical resolution logic
+* Structure degradation logic
+* Field movement system
+* Repair task progression
+* WAIT command behavior (still 5 ticks)
+
+# Strategic Note
+
+Once this lands:
+
+* Assaults become spatial
+* Transit nodes become meaningful
+* Field mode becomes dangerous
+* Economy ties into spatial defense
+
+---

@@ -1,6 +1,8 @@
 # DEVLOG — CUSTODIAN
 
 ## 2026-02-14
+- Implemented field-assault delayed warning behavior: when an assault starts while the player is deployed in FIELD mode, immediate assault signaling is suppressed and warning lines surface after a short deterministic delay window.
+- Added test coverage for delayed field warning timing in `game/simulations/world_state/tests/test_terminal_processor.py`.
 - Applied `feature_planning/EXECUTE_RECOMMENDED_IMPROVEMENTS.md` and renamed it to `feature_planning/APPLIED-EXECUTE_RECOMMENDED_IMPROVEMENTS.md`.
 - Added deterministic world-state seeding (`GameState(seed=...)`, `state.rng`) and routed event/assault/scavenge randomness through state-owned RNG.
 - Added `/command` idempotency support (`command_id`) with short-lived replay cache and shared command contract helpers in `game/simulations/world_state/server_contracts.py`.
@@ -32,6 +34,13 @@
 
 ## 2026-02-11
 - Implemented Embodied Presence Phase A: command/field mode split, transit travel graph, and new `DEPLOY`/`MOVE`/`RETURN` command flow.
+## 2026-02-15
+- Implemented dev-mode world-state tooling: `GameState.dev_mode` and `GameState.dev_trace`, plus gated `DEBUG` command routing in terminal processor.
+- Added debug command handlers for forced assaults, manual tick advancement, assault timer override, sector power override, sector damage override, and trace toggling.
+- Added deterministic CLI flags to unified entrypoint: `--dev` and `--seed` now flow into REPL and sim startup state.
+- Added structured per-tick assault trace output in `core/assaults.py` behind `state.dev_trace`.
+- Added terminal processor tests covering debug-mode gating, forced assault trigger, manual tick advancement, and sector mutation commands.
+
 - Added field-local `STATUS` output (location, task, local structures only) and command-authority gating for strategic commands while deployed.
 - Updated repair authority model: remote repair is command-only for DAMAGED, local field repair handles DAMAGED/OFFLINE/DESTROYED with mode-specific timing/cost behavior.
 - Updated world-state `/command` endpoint contract handling to accept `{command}` with `{raw}` fallback and return `{ok, text, lines}`.

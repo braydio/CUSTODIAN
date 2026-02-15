@@ -62,7 +62,7 @@ html, body {
 .terminal-line.intent { color: #b6f3b8; }
 
 .terminal-line.delta {
-  animation: pulse 1.2s ease-out 1;
+  font-weight: 600;
 }
 
 .terminal-line.heat-critical { color: #ff5a5a; }

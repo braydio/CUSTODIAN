@@ -16,9 +16,12 @@
 - Repair progression is now power-aware: speed scales by mechanic-drone output (`FB_TOOLS`) and sector power tier, assault outcome damage regresses in-progress repairs in affected sectors, and destroyed structures cancel active repairs with a 50% materials refund.
 - Canonical sector layout now includes 9 sectors with FABRICATION present but inert.
 - Embodied Presence Phase A is implemented: command/field player modes, transit graph movement (`DEPLOY`, `MOVE`, `RETURN`), and field-local STATUS projection.
+- Assault signaling now accounts for field blindness: when an assault begins while deployed, warning visibility is delayed by a short deterministic tick window before surfacing in `WAIT`.
 - Presence/task flow has been modularized: movement start/tick logic is in `core/presence.py`, command authority policy is centralized in `terminal/authority.py`, and task typing/serialization helpers are in `core/tasks.py`.
 - Repair authority is mode-aware: command mode supports remote DAMAGED repairs only, while field mode supports local DAMAGED/OFFLINE/DESTROYED repairs.
 - Unified entrypoint is available at `python -m game` with `--ui` (default), `--sim`, and `--repl`.
+- Dev tooling mode is now available in CLI entrypoints via `python -m game --dev --seed <N>` for deterministic reproduction and gated `DEBUG` commands in terminal processing.
+- Debug command set (dev mode only): `DEBUG ASSAULT`, `DEBUG TICK <N>`, `DEBUG TIMER <VALUE>`, `DEBUG POWER <SECTOR> <FLOAT>`, `DEBUG DAMAGE <SECTOR> <FLOAT>`, `DEBUG TRACE`.
 - Snapshot schema versioning is introduced (`snapshot_version=2`) with migration scaffolding in `core/snapshot_migration.py`.
 - Automated tests exist for parser/processor behavior and simulation stepping.
 - Git hooks for docs/secret hygiene exist; enable via `git config core.hooksPath .githooks`.

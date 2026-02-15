@@ -2,8 +2,12 @@
 
 from collections.abc import Callable
 
+from game.simulations.world_state.core.assaults import start_assault
+from game.simulations.world_state.core.config import SECTOR_DEFS
+from game.simulations.world_state.core.presence import tick_presence
 from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.core.invariants import validate_state_invariants
+from game.simulations.world_state.core.simulation import step_world
 from game.simulations.world_state.terminal.authority import requires_command_authority
 from game.simulations.world_state.terminal.commands import (
     cmd_deploy,
@@ -24,6 +28,8 @@ from game.simulations.world_state.terminal.result import CommandResult
 from game.simulations.world_state.terminal.messages import MESSAGES
 
 Handler = Callable[[GameState], list[str]]
+SECTOR_ID_TO_NAME = {sector["id"]: sector["name"] for sector in SECTOR_DEFS}
+SECTOR_NAME_TO_NAME = {sector["name"]: sector["name"] for sector in SECTOR_DEFS}
 
 
 COMMAND_HANDLERS: dict[str, Handler] = {
@@ -67,6 +73,105 @@ def _parse_wait_ticks(args: list[str]) -> int | None:
     return count
 
 
+def _resolve_sector_name(token: str) -> str | None:
+    normalized = token.strip().upper()
+    if not normalized:
+        return None
+    return SECTOR_ID_TO_NAME.get(normalized) or SECTOR_NAME_TO_NAME.get(normalized)
+
+
+def _handle_debug_command(state: GameState, args: list[str]) -> CommandResult:
+    if not args:
+        return CommandResult(ok=False, text="DEBUG REQUIRES SUBCOMMAND.")
+
+    sub = args[0].upper()
+    if sub == "ASSAULT":
+        return _debug_force_assault(state)
+    if sub == "TICK":
+        return _debug_advance_ticks(state, args[1:])
+    if sub == "TIMER":
+        return _debug_set_assault_timer(state, args[1:])
+    if sub == "POWER":
+        return _debug_set_power(state, args[1:])
+    if sub == "DAMAGE":
+        return _debug_set_damage(state, args[1:])
+    if sub == "TRACE":
+        state.dev_trace = not state.dev_trace
+        return CommandResult(ok=True, text=f"ASSAULT TRACE = {state.dev_trace}")
+
+    return CommandResult(ok=False, text="UNKNOWN DEBUG SUBCOMMAND.")
+
+
+def _debug_force_assault(state: GameState) -> CommandResult:
+    if state.current_assault is not None or state.in_major_assault:
+        return CommandResult(ok=False, text="ASSAULT ALREADY ACTIVE.")
+    start_assault(state)
+    return CommandResult(ok=True, text="ASSAULT FORCED.")
+
+
+def _debug_advance_ticks(state: GameState, args: list[str]) -> CommandResult:
+    if not args or not args[0].isdigit():
+        return CommandResult(ok=False, text="DEBUG TICK <N> REQUIRED.")
+    tick_count = int(args[0])
+    if tick_count <= 0:
+        return CommandResult(ok=False, text="TICK COUNT MUST BE > 0.")
+
+    became_failed = False
+    for _ in range(tick_count):
+        became_failed = step_world(state)
+        tick_presence(state)
+        if became_failed:
+            break
+
+    if became_failed:
+        reason = state.failure_reason or "SESSION FAILED."
+        return CommandResult(
+            ok=True,
+            text=f"ADVANCED {tick_count} TICKS.",
+            lines=[reason, "SESSION TERMINATED."],
+        )
+    return CommandResult(ok=True, text=f"ADVANCED {tick_count} TICKS.")
+
+
+def _debug_set_assault_timer(state: GameState, args: list[str]) -> CommandResult:
+    if not args or not args[0].isdigit():
+        return CommandResult(ok=False, text="DEBUG TIMER <VALUE> REQUIRED.")
+    state.assault_timer = int(args[0])
+    return CommandResult(ok=True, text=f"ASSAULT TIMER SET TO {state.assault_timer}")
+
+
+def _debug_set_power(state: GameState, args: list[str]) -> CommandResult:
+    if len(args) != 2:
+        return CommandResult(ok=False, text="DEBUG POWER <SECTOR> <VALUE>")
+    sector_name = _resolve_sector_name(args[0])
+    if sector_name is None:
+        return CommandResult(ok=False, text="UNKNOWN SECTOR.")
+
+    try:
+        value = float(args[1])
+    except ValueError:
+        return CommandResult(ok=False, text="INVALID POWER VALUE.")
+
+    state.sectors[sector_name].power = value
+    return CommandResult(ok=True, text=f"{sector_name} POWER SET TO {value}")
+
+
+def _debug_set_damage(state: GameState, args: list[str]) -> CommandResult:
+    if len(args) != 2:
+        return CommandResult(ok=False, text="DEBUG DAMAGE <SECTOR> <VALUE>")
+    sector_name = _resolve_sector_name(args[0])
+    if sector_name is None:
+        return CommandResult(ok=False, text="UNKNOWN SECTOR.")
+
+    try:
+        value = float(args[1])
+    except ValueError:
+        return CommandResult(ok=False, text="INVALID DAMAGE VALUE.")
+
+    state.sectors[sector_name].damage = value
+    return CommandResult(ok=True, text=f"{sector_name} DAMAGE SET TO {value}")
+
+
 def process_command(state: GameState, raw: str) -> CommandResult:
     """Parse and dispatch a command against a mutable game state.
 
@@ -106,6 +211,15 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         return _finalize_result(
             state,
             CommandResult(ok=False, text=MESSAGES["AUTHORITY_REQUIRED"]),
+        )
+
+    if parsed.verb == "DEBUG":
+        if not state.dev_mode:
+            return _finalize_result(state, CommandResult(ok=False, text="DEV MODE DISABLED."))
+        return _finalize_result(
+            state,
+            _handle_debug_command(state, parsed.args),
+            "DEBUG",
         )
 
     if parsed.verb == "WAIT":

@@ -17,6 +17,7 @@ from game.simulations.world_state.core.state import GameState
 
 WAIT_TICKS_PER_UNIT = 5
 WAIT_TICK_DELAY_SECONDS = 0.5
+FIELD_ASSAULT_WARNING_DELAY_TICKS = 2
 
 
 @dataclass
@@ -130,6 +131,8 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
 
     assault_active = state.in_major_assault or state.current_assault is not None
     assault_started = (not was_assault_active) and assault_active
+    if not assault_active:
+        state.field_assault_warning_pending = 0
 
     warning_window = 6
     if fidelity in {"FRAGMENTED", "LOST"}:
@@ -142,6 +145,14 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
         and previous_timer > warning_window
         and 0 < current_timer <= warning_window
     )
+    if assault_started and state.in_field_mode():
+        state.field_assault_warning_pending = FIELD_ASSAULT_WARNING_DELAY_TICKS
+        assault_started = False
+        assault_warning = False
+    if state.field_assault_warning_pending > 0:
+        state.field_assault_warning_pending -= 1
+        if state.field_assault_warning_pending == 0 and assault_active:
+            assault_warning = True
 
     return WaitTickInfo(
         fidelity=fidelity,
