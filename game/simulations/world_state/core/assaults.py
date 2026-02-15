@@ -119,6 +119,17 @@ def resolve_assault(state, tick_delay=0.05):
 
     def on_tick(sectors, tick):
         assault.tick()
+        if state.dev_trace:
+            print(
+                {
+                    "tick": assault.elapsed_ticks,
+                    "active_sectors": [s.name for s in sectors if s.has_hostiles()],
+                    "ambient_threat": state.ambient_threat,
+                    "alertness": {
+                        sector.name: sector.alertness for sector in assault.target_sectors
+                    },
+                }
+            )
         for sector in sectors:
             if not sector.has_hostiles():
                 continue

@@ -319,6 +319,65 @@ def test_deploy_fragmented_keeps_terse_invalid_target() -> None:
     assert result.text == "INVALID DEPLOYMENT TARGET."
 
 
+def test_debug_blocked_when_dev_mode_disabled() -> None:
+    state = GameState()
+
+    result = process_command(state, "DEBUG ASSAULT")
+
+    assert result.ok is False
+    assert result.text == "DEV MODE DISABLED."
+
+
+def test_debug_assault_forces_assault_in_dev_mode(monkeypatch) -> None:
+    state = GameState()
+    state.dev_mode = True
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.processor.start_assault",
+        lambda local_state: setattr(local_state, "in_major_assault", True),
+    )
+
+    result = process_command(state, "DEBUG ASSAULT")
+
+    assert result.ok is True
+    assert result.text == "ASSAULT FORCED."
+    assert state.in_major_assault is True
+
+
+def test_debug_tick_advances_exact_tick_count(monkeypatch) -> None:
+    state = GameState()
+    state.dev_mode = True
+
+    def _advance(local_state: GameState) -> bool:
+        local_state.time += 1
+        return False
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.processor.step_world",
+        _advance,
+    )
+
+    result = process_command(state, "DEBUG TICK 7")
+
+    assert result.ok is True
+    assert result.text == "ADVANCED 7 TICKS."
+    assert state.time == 7
+
+
+def test_debug_sector_mutators_accept_sector_id() -> None:
+    state = GameState()
+    state.dev_mode = True
+
+    power_result = process_command(state, "DEBUG POWER CM 0.45")
+    damage_result = process_command(state, "DEBUG DAMAGE PW 1.25")
+
+    assert power_result.ok is True
+    assert power_result.text == "COMMS POWER SET TO 0.45"
+    assert damage_result.ok is True
+    assert damage_result.text == "POWER DAMAGE SET TO 1.25"
+    assert state.sectors["COMMS"].power == 0.45
+    assert state.sectors["POWER"].damage == 1.25
+
+
 def test_move_from_transit_to_comms_is_valid() -> None:
     state = GameState()
     process_command(state, "DEPLOY NORTH")
@@ -338,3 +397,34 @@ def test_focus_denied_in_field_mode() -> None:
 
     assert result.ok is False
     assert result.text == "COMMAND AUTHORITY REQUIRED."
+
+
+def test_field_mode_assault_warning_is_delayed(monkeypatch) -> None:
+    from game.simulations.world_state.terminal.commands import wait as wait_cmd
+
+    state = GameState()
+    process_command(state, "DEPLOY NORTH")
+
+    call_count = {"n": 0}
+
+    def _step_to_assault(local_state: GameState) -> bool:
+        local_state.time += 1
+        local_state.assault_timer = None
+        if call_count["n"] == 0:
+            local_state.in_major_assault = True
+        call_count["n"] += 1
+        return False
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.wait.step_world",
+        _step_to_assault,
+    )
+
+    tick1 = wait_cmd._advance_tick(state)
+    tick2 = wait_cmd._advance_tick(state)
+    tick3 = wait_cmd._advance_tick(state)
+
+    assert tick1.assault_warning is False
+    assert tick1.assault_started is False
+    assert tick2.assault_warning is True
+    assert tick3.assault_warning is False

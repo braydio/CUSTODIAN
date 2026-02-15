@@ -36,6 +36,7 @@
 
   let lastKeyClickAt = 0;
   const KEY_CLICK_MIN_INTERVAL = 28;
+  let alertBurstTimer = null;
 
   function playKeyClick() {
     if (!keyClick) return;
@@ -84,6 +85,43 @@
       return "intent";
     }
     return "";
+  }
+
+  function hasCriticalSignal(lines) {
+    return lines.some((line) => {
+      const text = (line || "").toUpperCase();
+      if (!text) return false;
+      if (text.startsWith("[WARNING]") || text.startsWith("[ASSAULT]")) return true;
+      if (text.includes(" COMPROMISED") || text.endsWith(" X") || text.includes(" X(")) return true;
+      if (text.includes("(+)") || text.includes("(-)")) return true;
+      return false;
+    });
+  }
+
+  function triggerAlertFlashBurst(pulses = 3) {
+    if (!terminal) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+    if (alertBurstTimer) {
+      clearTimeout(alertBurstTimer);
+      alertBurstTimer = null;
+    }
+    terminal.classList.remove("flicker");
+
+    const pulseMs = 120;
+    const gapMs = 90;
+    for (let i = 0; i < pulses; i++) {
+      const start = i * (pulseMs + gapMs);
+      setTimeout(() => {
+        terminal.classList.add("flicker");
+      }, start);
+      setTimeout(() => {
+        terminal.classList.remove("flicker");
+      }, start + pulseMs);
+    }
+    alertBurstTimer = setTimeout(() => {
+      terminal.classList.remove("flicker");
+      alertBurstTimer = null;
+    }, pulses * (pulseMs + gapMs) + 10);
   }
 
   function render() {
@@ -185,8 +223,12 @@
 
   function appendLines(lines) {
     const lastLine = state.buffer.at(-1);
-    state.buffer.push(...normalizeAssaultSpacing(lines, lastLine));
+    const normalized = normalizeAssaultSpacing(lines, lastLine);
+    state.buffer.push(...normalized);
     render();
+    if (hasCriticalSignal(normalized)) {
+      triggerAlertFlashBurst(3);
+    }
     if (!state.userAtBottom) outputIndicator?.classList.add("visible");
   }
 

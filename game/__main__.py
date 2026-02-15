@@ -57,6 +57,17 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         default=0.05,
         help="Delay between ticks in sim mode (seconds).",
     )
+    parser.add_argument(
+        "--dev",
+        action="store_true",
+        help="Enable dev tooling commands in terminal modes.",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Deterministic RNG seed for world-state sessions.",
+    )
 
     return parser.parse_args(argv)
 
@@ -65,11 +76,16 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv or sys.argv[1:])
 
     if args.repl:
-        run_repl()
+        run_repl(seed=args.seed, dev_mode=args.dev)
         return 0
 
     if args.sim:
-        sandbox_world(ticks=args.ticks, tick_delay=args.tick_delay)
+        sandbox_world(
+            ticks=args.ticks,
+            tick_delay=args.tick_delay,
+            seed=args.seed,
+            dev_mode=args.dev,
+        )
         return 0
 
     _run_ui()

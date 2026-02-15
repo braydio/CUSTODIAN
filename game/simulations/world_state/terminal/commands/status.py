@@ -30,10 +30,10 @@ def _sector_priority(sector) -> int:
     return _sector_priority_by_label(sector.status_label())
 
 
-def _compute_situation_header(state: GameState) -> str:
+def _compute_situation_header(state: GameState, sector_status_by_name: dict[str, str]) -> str:
     degraded = []
     for sector in state.sectors.values():
-        label = sector.status_label()
+        label = sector_status_by_name.get(sector.name, sector.status_label())
         if label in ("DAMAGED", "COMPROMISED"):
             degraded.append(sector.name)
 
@@ -59,7 +59,7 @@ def _system_posture(state: GameState, fidelity: str) -> str:
     return "ACTIVE"
 
 
-def _render_compact_field_view(state: GameState) -> list[str]:
+def _render_compact_field_view(state: GameState, sector_status_by_name: dict[str, str]) -> list[str]:
     lines = []
     lines.append(f"LOCATION: {state.player_location}")
     lines.append(f"FIDELITY: {state.fidelity}")
@@ -68,7 +68,7 @@ def _render_compact_field_view(state: GameState) -> list[str]:
     sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
     stable_header_added = False
     for sector in sorted_sectors:
-        label = sector.status_label()
+        label = sector_status_by_name.get(sector.name, sector.status_label())
         marker = MARKERS.get(label, ".")
         if marker == "." and not stable_header_added:
             lines.append("---")
@@ -105,15 +105,16 @@ def cmd_status(state: GameState) -> list[str]:
     fidelity = comms_fidelity(state)
     snapshot = state.snapshot()
     state.fidelity = fidelity
+    sector_status_by_name = {item["name"]: item["status"] for item in snapshot["sectors"]}
 
     if state.player_mode == "FIELD":
-        return _render_compact_field_view(state)
+        return _render_compact_field_view(state, sector_status_by_name)
 
     if fidelity == "LOST":
         lines = [
             "TIME: ?? | THREAT: UNKNOWN | ASSAULT: NO SIGNAL",
             "POSTURE: - | ARCHIVE: NO SIGNAL",
-            _compute_situation_header(state),
+            _compute_situation_header(state, sector_status_by_name),
             "",
             "SECTORS:",
         ]
@@ -138,7 +139,7 @@ def cmd_status(state: GameState) -> list[str]:
     lines = [
         f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
         f"POSTURE: {posture} | ARCHIVE: {archive_text}",
-        _compute_situation_header(state),
+        _compute_situation_header(state, sector_status_by_name),
     ]
 
     if fidelity == "FULL":
@@ -158,7 +159,7 @@ def cmd_status(state: GameState) -> list[str]:
     sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
     stable_header_added = False
     for sector in sorted_sectors:
-        current = sector.status_label()
+        current = sector_status_by_name.get(sector.name, sector.status_label())
         marker = MARKERS.get(current, ".")
         if marker == "." and not stable_header_added:
             lines.append("---")
@@ -173,5 +174,9 @@ def cmd_status(state: GameState) -> list[str]:
                 delta = " (-)"
         lines.append(f"{sector.name:<12} {marker}{delta}")
         state._last_sector_status[sector.name] = current
+        if fidelity == "FULL":
+            sector_structures = [s for s in state.structures.values() if s.sector == sector.name]
+            for structure in sector_structures:
+                lines.append(f"  - {structure.id} {structure.state.value}")
 
     return lines

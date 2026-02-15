@@ -86,6 +86,9 @@ class GameState:
         self.fidelity = "FULL"
         self.last_fidelity_lines: list[str] = []
         self.current_assault = None
+        self.field_assault_warning_pending = 0
+        self.dev_mode = False
+        self.dev_trace = False
         self.focused_sector = None
         self.hardened = False
         self.archive_losses = 0

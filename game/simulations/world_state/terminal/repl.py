@@ -4,12 +4,15 @@ from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.terminal.processor import process_command
 
 
-def run_repl() -> None:
+def run_repl(seed: int | None = None, dev_mode: bool = False) -> None:
     """Start the deterministic operator loop."""
 
-    state = GameState()
+    state = GameState(seed=seed)
+    state.dev_mode = dev_mode
     print("WORLD-STATE TERMINAL ONLINE.")
     print("COMMANDS: STATUS, WAIT, WAIT NX, FOCUS, HARDEN, REPAIR, SCAVENGE, HELP. TYPE QUIT TO EXIT.")
+    if state.dev_mode:
+        print("DEV MODE ENABLED. DEBUG COMMANDS UNLOCKED.")
 
     while True:
         try:
