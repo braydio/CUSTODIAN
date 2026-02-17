@@ -47,6 +47,30 @@ def cmd_scavenge(state: GameState) -> list[str]:
     return lines
 
 
+def cmd_scavenge_runs(state: GameState, runs: int) -> list[str]:
+    if runs <= 0:
+        return ["[SCAVENGE] OPERATION COMPLETE.", "[RESOURCE GAIN] +0 MATERIALS"]
+    if runs == 1:
+        return cmd_scavenge(state)
+
+    lines = [f"[SCAVENGE] BATCH STARTED ({runs} RUNS)."]
+    total_gain = 0
+    for _ in range(runs):
+        if state.is_failed:
+            reason = state.failure_reason or "SESSION FAILED."
+            return [reason, "SESSION TERMINATED."]
+        before = state.materials
+        run_lines = cmd_scavenge(state)
+        total_gain += max(0, state.materials - before)
+        for line in run_lines[1:]:
+            if line.startswith("[RESOURCE GAIN]"):
+                continue
+            lines.append(line)
+
+    lines.append(f"[RESOURCE GAIN] +{total_gain} MATERIALS")
+    return lines
+
+
 def _state_signature(state: GameState) -> tuple:
     sector_signature = tuple(
         (

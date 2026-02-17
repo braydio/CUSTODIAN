@@ -1,5 +1,43 @@
 # DEVLOG — CUSTODIAN
 
+## 2026-02-15
+- Completed world-state command-loop QoL/fun pass: added `WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>` batching and `SCAVENGE NX` multi-run support.
+- Added recoverable COMMAND breach behavior (`COMMAND_BREACH_RECOVERY_TICKS`) so breach is an emergency window instead of immediate hard fail.
+- Tuned WAIT interpretive pressure output to emit stability-decline messaging only when threat/damage actually increased this tick.
+- Added ambient-threat maintenance recovery in `advance_time`: while assaults are idle and COMMAND/COMMS/POWER remain healthy, threat can now trend downward.
+- Added repair-triggered sector recovery windows in `advance_time`: no passive sector healing; recovery begins only after `REPAIR COMPLETE` and applies faster decay for local/manual repair, then drone-focused remote repair, then baseline remote repair.
+- Added explicit full stabilization command path `REPAIR <ID> FULL` with additional material cost, operational-core requirement, and immediate clamp to stable sector thresholds before timed recovery continuation.
+- Implemented Infrastructure Policy Layer core systems: `core/policies.py`, policy state on `GameState`, policy-aware STATUS block, policy commands (`SET ...`, `SET FAB ...`, `FORTIFY ...`), and help/contract updates.
+- Added policy-linked simulation systems: fabrication queue ticking (`core/fabrication.py`), dynamic power load computation (`core/power_load.py`) feeding brownout pressure, passive wear (`core/wear.py`), and fortification mitigation in assault incoming-pressure computation.
+- Added automated coverage in `test_infrastructure_policy_layer.py` and expanded terminal processor contract tests for policy commands/rendering.
+- Updated STATUS action guidance and refreshed command/server contract tests for revised HELP/WAIT/failure timing behavior.
+
+## 2026-02-15
+- Added structured assault introspection ledger in `core/assault_ledger.py` and wired it into world-state (`GameState.assault_ledger`, `assault_trace_enabled`, `last_target_weights`).
+- Instrumented assault resolution to append deterministic per-tick ledger records (target sector/weight, assault strength, defense mitigation), structure-destruction entries, and failure-chain records.
+- Extended debug tooling with `DEBUG REPORT` and aligned `DEBUG TRACE` to toggle assault instrumentation visibility state while preserving trace output behavior.
+- Added brownout instrumentation in `core/events.py` to log explicit power-delta records into the ledger when trace instrumentation is enabled.
+- Added `DEBUG ASSAULT_TRACE` and `DEBUG ASSAULT_REPORT` aliases and a compact player-facing after-action loss summary emitted after assault resolution when structures are destroyed.
+- Expanded tests for ledger/report/trace behavior and event instrumentation in `test_assault_misc_design.py` and `test_terminal_processor.py`.
+
+## 2026-02-15
+- Replaced timer-driven assault progression with spatial ingress approaches in `core/assaults.py` using `WORLD_GRAPH` routing (`compute_route`) and `AssaultApproach` movement (`EDGE_TRAVEL_TICKS=2`).
+- Wired simulation flow to approach advancement/spawn (`advance_assaults`, `maybe_spawn_assault`) while preserving tactical resolution via `resolve_assault`.
+- Added non-deterministic transit warning emission during approach movement and derived `assault_timer` as minimum inbound ETA.
+- Added salvage awards from assault penetration outcomes and command-mode STATUS ETA projection for inbound approaches.
+- Added/updated tests for routing, spawn/movement, salvage, step-world orchestration, and command STATUS/WAIT behavior.
+
+## 2026-02-15
+- Implemented assault target scoring in `core/assaults.py` with explicit static/dynamic weighting and transit-lane pressure modifiers, preserving posture modifiers (`FOCUS` and `HARDEN`).
+- Added structure destruction side-effect mapping in `core/structure_effects.py` and wired structure-loss tracking (`pending`/`detected`) into world-state and assault degradation flow.
+- Added autonomy defensive-margin override for severe non-command assault outcomes, enabling `[ASSAULT] AUTONOMOUS SYSTEMS HELD PERIMETER.` when defensive capacity is sufficient.
+- Extended `WAIT` fidelity behavior to surface first-detection structure-loss signals once (FULL/DEGRADED/FRAGMENTED) and suppress identity when fidelity is LOST.
+- Added targeted tests in `game/simulations/world_state/tests/test_assault_misc_design.py` plus additional `WAIT` structure-loss tests in `test_terminal_processor.py`.
+
+## 2026-02-15
+- Updated `WAIT` pacing to 1-tick units (`WAIT` = 1 tick, `WAIT NX` = `N x 1` tick) while preserving 0.5-second internal pacing and duplicate-line suppression behavior.
+- Updated terminal help text, terminal docs, AI context docs, and terminal processor contract tests to match the new wait semantics.
+
 ## 2026-02-14
 - Implemented field-assault delayed warning behavior: when an assault starts while the player is deployed in FIELD mode, immediate assault signaling is suppressed and warning lines surface after a short deterministic delay window.
 - Added test coverage for delayed field warning timing in `game/simulations/world_state/tests/test_terminal_processor.py`.
@@ -34,6 +72,13 @@
 
 ## 2026-02-11
 - Implemented Embodied Presence Phase A: command/field mode split, transit travel graph, and new `DEPLOY`/`MOVE`/`RETURN` command flow.
+## 2026-02-15
+- Implemented the Defense Control Layer from `feature_planning/PLAYER_DESIGNED_DEFENSE.md`: doctrine state, normalized allocation bias, readiness computation, and command-surface configuration (`CONFIG DOCTRINE`, `ALLOCATE DEFENSE`).
+- Wired deterministic strategic influence into assaults: doctrine/allocation now affect target weighting, tactical defense output, incoming pressure, structure degradation severity, and repair regression triage.
+- Added readiness-driven assault severity scaling in `AssaultInstance` via `effective_threat = base_threat * (1.1 - readiness)` with doctrine scale factor.
+- Extended STATUS output with doctrine/allocation/readiness details in command mode.
+- Added deterministic tests in `test_assault_doctrine_variation.py` for doctrine variation, allocation distribution effects, readiness severity scaling, and command-authority gating.
+
 ## 2026-02-15
 - Implemented dev-mode world-state tooling: `GameState.dev_mode` and `GameState.dev_trace`, plus gated `DEBUG` command routing in terminal processor.
 - Added debug command handlers for forced assaults, manual tick advancement, assault timer override, sector power override, sector damage override, and trace toggling.

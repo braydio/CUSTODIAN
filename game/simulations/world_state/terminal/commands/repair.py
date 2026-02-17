@@ -3,8 +3,8 @@
 import math
 
 from game.simulations.world_state.core.power import comms_fidelity
-from game.simulations.world_state.core.repairs import start_repair
-from game.simulations.world_state.core.config import FIELD_ACTION_REPAIRING
+from game.simulations.world_state.core.repairs import start_full_restore, start_repair
+from game.simulations.world_state.core.config import COMMAND_CENTER_LOCATION, FIELD_ACTION_REPAIRING
 from game.simulations.world_state.core.state import GameState
 
 
@@ -55,7 +55,7 @@ def _resolve_structure_id(state: GameState, structure_id: str) -> str | None:
     return None
 
 
-def cmd_repair(state: GameState, structure_id: str) -> list[str]:
+def cmd_repair(state: GameState, structure_id: str, *, full: bool = False) -> list[str]:
     """Start a repair task for a structure."""
 
     if state.active_task:
@@ -65,13 +65,21 @@ def cmd_repair(state: GameState, structure_id: str) -> list[str]:
     if resolved_id and resolved_id in state.active_repairs:
         return [_repair_status_line(state, resolved_id)]
 
-    local = state.in_field_mode()
-    if local:
-        structure = state.structures.get(resolved_id) if resolved_id else None
-        if not structure:
-            return ["UNKNOWN STRUCTURE."]
-        if structure.sector != state.player_location:
-            return ["STRUCTURE NOT IN SECTOR."]
+    structure = state.structures.get(resolved_id) if resolved_id else None
+    if not structure:
+        return ["UNKNOWN STRUCTURE."]
+
+    local = state.in_field_mode() or (
+        state.in_command_mode()
+        and state.player_location == COMMAND_CENTER_LOCATION
+        and structure.sector == COMMAND_CENTER_LOCATION
+    )
+    if local and structure.sector != state.player_location:
+        return ["STRUCTURE NOT IN SECTOR."]
+
+    if full:
+        result = start_full_restore(state, structure_id, local=local)
+        return [result]
 
     result = start_repair(state, structure_id, local=local)
     if result.startswith("MANUAL REPAIR STARTED:"):

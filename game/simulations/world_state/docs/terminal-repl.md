@@ -26,13 +26,13 @@ The world advances only when the operator runs `WAIT` or `WAIT NX`.
   - Does not advance time.
 
 - `WAIT`
-  - Advances the simulation by one wait unit (5 ticks).
+  - Advances the simulation by one wait unit (1 tick).
   - Internal tick pacing uses a 0.5-second delay between ticks.
   - Output starts with `TIME ADVANCED.`
   - Additional lines are emitted as events/signals occur (`[EVENT]`, `[WARNING]`, status/assault shifts, and failure lines).
   - Immediate duplicate detail lines are suppressed.
 - `WAIT NX`
-  - Advances the simulation by `N` wait units (`N x 5` ticks).
+  - Advances the simulation by `N` wait units (`N x 1` tick).
   - Output starts with `TIME ADVANCED.`
   - Detail lines list observed events/signals in order, without explicit per-tick timing labels.
 - `FOCUS <SECTOR_ID>`

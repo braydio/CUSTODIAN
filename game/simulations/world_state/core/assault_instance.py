@@ -9,10 +9,23 @@ class AssaultInstance:
     either abstractly (world pressure) or tactically (combat).
     """
 
-    def __init__(self, faction_profile, target_sectors, threat_budget, start_time):
+    def __init__(
+        self,
+        faction_profile,
+        target_sectors,
+        threat_budget,
+        start_time,
+        *,
+        readiness: float = 0.0,
+        threat_scale: float = 1.0,
+    ):
         self.faction_profile = faction_profile
         self.target_sectors = target_sectors  # list of SectorState
-        self.threat_budget = threat_budget
+        self.base_threat_budget = max(10, int(threat_budget))
+        readiness = max(0.0, min(1.0, float(readiness)))
+        scaled = self.base_threat_budget * (1.1 - readiness) * max(0.1, float(threat_scale))
+        self.threat_budget = max(10, int(round(scaled)))
+        self.readiness = readiness
         self.start_time = start_time
 
         self.ticks_elapsed = 0

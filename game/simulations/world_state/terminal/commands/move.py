@@ -16,6 +16,8 @@ def cmd_move(state: GameState, destination: str) -> list[str]:
 
     if state.active_task:
         return ["ACTION IN PROGRESS."]
+    if state.active_repairs:
+        return ["ACTION IN PROGRESS."]
 
     target = resolve_location_token(destination)
     if not target:
