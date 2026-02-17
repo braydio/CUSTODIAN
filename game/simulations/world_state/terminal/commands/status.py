@@ -1,6 +1,13 @@
 """STATUS command handler."""
 
-from game.simulations.world_state.core.config import ARCHIVE_LOSS_LIMIT, SECTOR_DEFS
+import math
+
+from game.simulations.world_state.core.config import (
+    ARCHIVE_LOSS_LIMIT,
+    COMMAND_CENTER_BREACH_DAMAGE,
+    SECTOR_DEFS,
+)
+from game.simulations.world_state.core.policies import render_slider
 from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.state import GameState
 
@@ -99,6 +106,152 @@ def _append_repairs(lines: list[str], snapshot: dict, state: GameState, fidelity
             lines.append("- MAINTENANCE SIGNALS DETECTED")
 
 
+def _append_assault_eta(lines: list[str], state: GameState, fidelity: str) -> None:
+    approaches = [assault for assault in state.assaults if getattr(assault, "state", "") == "APPROACHING"]
+    if not approaches:
+        return
+    if fidelity == "LOST":
+        return
+    if fidelity == "FRAGMENTED":
+        lines.append("THREAT: APPROACH SIGNALS DETECTED")
+        return
+
+    if fidelity == "DEGRADED":
+        eta_values = []
+        for assault in approaches:
+            eta_fn = getattr(assault, "eta_ticks", None)
+            eta_values.append(max(0, int(eta_fn() if callable(eta_fn) else 0)))
+        eta = min(eta_values) if eta_values else 0
+        lines.append(f"THREAT: APPROACH ETA~{eta}")
+        return
+
+    for assault in approaches:
+        eta = max(0, int(assault.eta_ticks()))
+        lines.append(f"THREAT: {assault.target} ETA~{eta}")
+
+
+def _append_recovery_windows(lines: list[str], state: GameState, fidelity: str) -> None:
+    windows = state.sector_recovery_windows
+    if not windows:
+        return
+    if fidelity == "LOST":
+        return
+
+    lines.append("RECOVERY:")
+    ordered = sorted(windows.items(), key=lambda item: item[0])
+    if fidelity == "FULL":
+        for sector_name, window in ordered:
+            mode = str(window.get("mode", "REMOTE")).upper()
+            remaining = max(0, int(math.ceil(float(window.get("remaining", 0.0)))))
+            lines.append(f"- {sector_name}: {mode} ({remaining} TICKS)")
+        return
+    if fidelity == "DEGRADED":
+        for sector_name, _window in ordered:
+            lines.append(f"- {sector_name}: RECOVERY ACTIVE")
+        return
+    lines.append("- RECOVERY SIGNATURE DETECTED")
+
+
+def _append_debug_trace_status(lines: list[str], state: GameState) -> None:
+    if not state.dev_mode:
+        return
+    if not state.dev_trace and not state.assault_trace_enabled:
+        return
+
+    lines.append("DEBUG:")
+    lines.append("- ASSAULT TRACE: ON")
+    lines.append(f"- LEDGER ROWS: {len(state.assault_ledger.ticks)}")
+    lines.append("- TRACE LINES EMIT ON WAIT; SUMMARY VIA DEBUG REPORT")
+
+
+def _append_policy_state(lines: list[str], state: GameState, fidelity: str) -> None:
+    if fidelity == "LOST":
+        return
+
+    if fidelity == "FRAGMENTED":
+        lines.append("POLICY: SIGNAL FRAGMENTED")
+        return
+
+    lines.append("POLICY STATE:")
+    if fidelity == "DEGRADED":
+        lines.extend(
+            [
+                "- REPAIR: ACTIVE",
+                "- DEFENSE: ACTIVE",
+                "- SURVEILLANCE: ACTIVE",
+                f"- POWER LOAD: {state.power_load:.2f}",
+            ]
+        )
+        return
+
+    repair = state.policies.repair_intensity
+    defense = state.policies.defense_readiness
+    surveillance = state.policies.surveillance_coverage
+    lines.extend(
+        [
+            f"- REPAIR INTENSITY: {render_slider(repair)}",
+            "- + Faster recovery throughput",
+            "- - Higher materials and power drain",
+            f"- DEFENSE READINESS: {render_slider(defense)}",
+            "- + Stronger tactical response",
+            "- - Higher wear and power draw",
+            f"- SURVEILLANCE COVERAGE: {render_slider(surveillance)}",
+            "- + Better early threat detection",
+            "- - Increased brownout pressure",
+        ]
+    )
+    fab_parts = [f"{name}:{value}" for name, value in sorted(state.fab_allocation.items())]
+    lines.append("- FAB ALLOCATION: " + " | ".join(fab_parts))
+    fortified = [
+        f"{name}:{level}" for name, level in state.sector_fort_levels.items() if int(level) > 0
+    ]
+    if fortified:
+        lines.append("- FORTIFICATION: " + " | ".join(sorted(fortified)))
+    else:
+        lines.append("- FORTIFICATION: NONE")
+    lines.append(f"- POWER LOAD: {state.power_load:.2f}")
+
+
+def _root_causes_and_actions(state: GameState) -> tuple[list[str], list[str]]:
+    causes: list[str] = []
+    actions: list[str] = []
+
+    command = state.sectors.get("COMMAND")
+    if command and command.damage >= COMMAND_CENTER_BREACH_DAMAGE:
+        ticks = state.command_breach_recovery_ticks if state.command_breach_recovery_ticks is not None else 0
+        causes.append(f"COMMAND BREACH CASCADE ({ticks} TICKS TO FAILURE)")
+        actions.append("REPAIR CC_CORE IMMEDIATELY")
+
+    if state.fidelity != "FULL":
+        causes.append("COMMS FIDELITY DEGRADED")
+        actions.append("RESTORE COMMS POWER OR REPAIR CM_CORE")
+
+    if state.assaults:
+        causes.append("HOSTILE APPROACHES INBOUND")
+        actions.append("HARDEN OR REALLOCATE DEFENSE")
+
+    if state.materials <= 1:
+        causes.append("LOW MATERIAL RESERVES")
+        actions.append("SCAVENGE 5X")
+
+    if (
+        not state.assaults
+        and command
+        and command.damage < 0.5
+        and state.sectors.get("COMMS")
+        and state.sectors["COMMS"].damage < 0.5
+        and state.sectors.get("POWER")
+        and state.sectors["POWER"].damage < 0.5
+    ):
+        actions.append("HOLD COMMAND/COMMS/POWER <0.5 DAMAGE TO BLEED THREAT")
+
+    if not causes:
+        causes.append("NO CRITICAL PRESSURE DETECTED")
+        actions.append("MAINTAIN REPAIRS AND MONITOR APPROACH ETA")
+
+    return causes[:2], actions[:2]
+
+
 def cmd_status(state: GameState) -> list[str]:
     """Build compact command status and field tactical status outputs."""
 
@@ -114,10 +267,12 @@ def cmd_status(state: GameState) -> list[str]:
         lines = [
             "TIME: ?? | THREAT: UNKNOWN | ASSAULT: NO SIGNAL",
             "POSTURE: - | ARCHIVE: NO SIGNAL",
+            "DEFENSE DOCTRINE: NO SIGNAL",
+            "READINESS: NO SIGNAL",
             _compute_situation_header(state, sector_status_by_name),
-            "",
-            "SECTORS:",
         ]
+        _append_debug_trace_status(lines, state)
+        lines.extend(["", "SECTORS:"])
         sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
         stable_header_added = False
         for sector in sorted_sectors:
@@ -139,8 +294,21 @@ def cmd_status(state: GameState) -> list[str]:
     lines = [
         f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
         f"POSTURE: {posture} | ARCHIVE: {archive_text}",
+        f"DEFENSE DOCTRINE: {state.defense_doctrine}",
+        "ALLOCATION:",
+        f"- PERIMETER: {state.defense_allocation.get('PERIMETER', 1.0):.2f}",
+        f"- POWER: {state.defense_allocation.get('POWER', 1.0):.2f}",
+        f"- SENSORS: {state.defense_allocation.get('SENSORS', 1.0):.2f}",
+        f"- COMMAND: {state.defense_allocation.get('COMMAND', 1.0):.2f}",
+        f"READINESS: {state.compute_readiness():.2f}",
         _compute_situation_header(state, sector_status_by_name),
     ]
+    causes, actions = _root_causes_and_actions(state)
+    lines.append("CAUSES:")
+    lines.extend(f"- {cause}" for cause in causes)
+    lines.append("ACTIONS:")
+    lines.extend(f"- {action}" for action in actions)
+    _append_assault_eta(lines, state, fidelity)
 
     if fidelity == "FULL":
         lines.append(f"SEED: {state.seed}")
@@ -154,6 +322,9 @@ def cmd_status(state: GameState) -> list[str]:
         ]
     )
     _append_repairs(lines, snapshot, state, fidelity)
+    _append_recovery_windows(lines, state, fidelity)
+    _append_policy_state(lines, state, fidelity)
+    _append_debug_trace_status(lines, state)
 
     lines.extend(["", "SECTORS:"])
     sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)

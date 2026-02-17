@@ -16,7 +16,8 @@ This prototype models pressure on a static command post. The terminal layer is c
 - `GameState`
   - `time`: current tick.
   - `ambient_threat`: global pressure scalar.
-  - `assault_timer`: hidden countdown to major assault.
+  - `assaults`: active ingress approaches moving through the world graph.
+  - `assault_timer`: derived shortest ETA (in ticks) among active approaches.
   - `in_major_assault`: whether major assault is active.
   - `player_location`: current sector name.
   - `in_command_center`: derived location flag.
@@ -66,8 +67,8 @@ This keeps pacing deterministic and aligned with explicit operator intent.
 ## Terminal Command Set (Current)
 
 - `STATUS`: high-level board view of time, threat bucket, assault phase, and sector summary.
-- `WAIT`: advance one wait unit (5 ticks) with 0.5-second pacing between internal ticks.
-- `WAIT NX`: advance `N` wait units (`N x 5` ticks) and emit observed event/signal lines in order.
+- `WAIT`: advance one wait unit (1 tick) with 0.5-second pacing between internal ticks.
+- `WAIT NX`: advance `N` wait units (`N x 1` tick) and emit observed event/signal lines in order.
 - `FOCUS <SECTOR_ID>`: reallocate attention to a sector ID (for example `FOCUS POWER`) without advancing time.
 - `HARDEN`: reduce the number of sectors hit in the next assault and concentrate damage into higher-risk sectors.
 - `HELP`: list available commands.
@@ -97,11 +98,11 @@ Terminal failure also latches when ARCHIVE loss count reaches `ARCHIVE_LOSS_LIMI
 
 ## Assault Behavior
 
-Major assaults are countdown-driven and influenced by vulnerable sector damage.
+Major assaults are ingress-driven: approaches spawn at `INGRESS_N`/`INGRESS_S`, traverse graph edges, and engage when they reach target sectors.
 
 - Assaults increase ambient threat.
 - Assaults apply additional damage and alertness to targeted sectors.
-- Assaults end after a short randomized duration.
+- Assaults end after tactical resolution and can award salvage materials by penetration outcome.
 
 ## Tuning Notes
 

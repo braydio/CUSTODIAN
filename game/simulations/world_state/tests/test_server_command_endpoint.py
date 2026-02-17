@@ -18,7 +18,7 @@ def test_command_endpoint_executes_status_with_command_key() -> None:
     payload = response.get_json()
     assert payload["ok"] is True
     assert payload["text"].startswith("TIME: ")
-    assert payload["lines"][0].startswith("THREAT: ")
+    assert payload["lines"][0].startswith("TIME: ")
 
 
 def test_command_endpoint_accepts_raw_as_fallback() -> None:
@@ -46,7 +46,7 @@ def test_command_endpoint_reports_unknown_command() -> None:
     assert payload == {
         "ok": False,
         "text": "UNKNOWN COMMAND.",
-        "lines": ["TYPE HELP FOR AVAILABLE COMMANDS."],
+        "lines": ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."],
     }
 
 
@@ -62,5 +62,5 @@ def test_command_endpoint_requires_command_string() -> None:
     assert payload == {
         "ok": False,
         "text": "UNKNOWN COMMAND.",
-        "lines": ["TYPE HELP FOR AVAILABLE COMMANDS."],
+        "lines": ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."],
     }

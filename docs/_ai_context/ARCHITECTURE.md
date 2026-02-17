@@ -22,8 +22,8 @@
 - Loop invariant: `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS -> ...` (world only moves on `WAIT`/`WAIT NX`).
 - Phase 1 command set: `STATUS`, `WAIT`, `WAIT NX`, `FOCUS`, `HARDEN`, `HELP` only (no aliases).
 - `STATUS` output rules: ASCII, all caps, no recommendations; fields: TIME, THREAT bucket, ASSAULT state, sector list with one-word state; never advances time.
-- `WAIT` output rules: advance one wait unit (5 ticks); minimal output only; no full status dump; may emit event/warning/assault lines.
-- `WAIT NX` output rules: advance `N x 5` ticks; emit observed event/signal lines in order without explicit per-tick counters.
+- `WAIT` output rules: advance one wait unit (1 tick); minimal output only; no full status dump; may emit event/warning/assault lines.
+- `WAIT NX` output rules: advance `N x 1` tick; emit observed event/signal lines in order without explicit per-tick counters.
 - Error phrasing reserved: `UNKNOWN COMMAND. TYPE HELP FOR AVAILABLE COMMANDS.` and `COMMAND DENIED. COMMAND CENTER REQUIRED.`
 - Map UI now exists as a read-only projection of `STATUS` via `/snapshot` and never advances time.
 - Acceptance criteria: boot completes, `STATUS` and `WAIT`/`WAIT NX` work, time advances only via `WAIT`/`WAIT NX`, `STATUS` reflects changes.

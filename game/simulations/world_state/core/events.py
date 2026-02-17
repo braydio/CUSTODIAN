@@ -7,13 +7,16 @@ from .config import (
     HANGAR_EVENT_CHANCE_BONUS,
     SECTOR_TAGS,
 )
+from .assault_ledger import AssaultTickRecord, append_record
 from .effects import add_global_effect, add_sector_effect
 from .factions import build_faction_profile
+from .power_load import brownout_event_chance_bonus, brownout_event_weight_multiplier
 
 
 class AmbientEvent:
     def __init__(
         self,
+        key,
         name,
         min_threat,
         weight,
@@ -22,6 +25,7 @@ class AmbientEvent:
         effect,
         chains=None,
     ):
+        self.key = key
         self.name = name
         self.min_threat = min_threat
         self.weight = weight
@@ -90,9 +94,23 @@ def goal_sector_breach(state, sector):
 
 
 def power_brownout(state, sector):
+    before_power = sector.power
     sector.alertness += 0.6
     sector.power = max(0.4, sector.power - 0.2)
     add_sector_effect(sector, "power_drain", severity=1.4, decay=0.04)
+    if state.assault_trace_enabled:
+        append_record(
+            state,
+            AssaultTickRecord(
+                tick=state.time,
+                targeted_sector=sector.id,
+                target_weight=0.0,
+                assault_strength=0.0,
+                defense_mitigation=0.0,
+                failure_triggered=False,
+                note=f"BROWNOUT:POWER_DELTA={before_power:.2f}->{sector.power:.2f}",
+            ),
+        )
 
 
 def structural_fatigue(state, sector):
@@ -297,6 +315,7 @@ def build_event_catalog(state):
         )
         events.append(
             AmbientEvent(
+                key=archetype["key"],
                 name=name,
                 min_threat=archetype["min_threat"],
                 weight=archetype["weight"],
@@ -326,13 +345,17 @@ def maybe_trigger_event(state):
     hangar = state.sectors.get("HANGAR")
     if hangar and hangar.damage >= 1.0:
         chance += HANGAR_EVENT_CHANCE_BONUS
+    chance += brownout_event_chance_bonus(state)
     chance = min(chance, EVENT_CHANCE_MAX)
     if state.rng.random() > chance:
         return
 
     weighted = []
     for event, sector in candidates:
-        weighted.extend([(event, sector)] * event.weight)
+        weight = int(event.weight)
+        if event.key == "power_brownout":
+            weight *= brownout_event_weight_multiplier(state)
+        weighted.extend([(event, sector)] * max(1, weight))
 
     event, sector = state.rng.choice(weighted)
 

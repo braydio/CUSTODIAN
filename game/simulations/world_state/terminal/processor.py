@@ -6,21 +6,29 @@ from game.simulations.world_state.core.assaults import start_assault
 from game.simulations.world_state.core.config import SECTOR_DEFS
 from game.simulations.world_state.core.presence import tick_presence
 from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.core.structures import StructureState
 from game.simulations.world_state.core.invariants import validate_state_invariants
 from game.simulations.world_state.core.simulation import step_world
 from game.simulations.world_state.terminal.authority import requires_command_authority
 from game.simulations.world_state.terminal.commands import (
     cmd_deploy,
+    cmd_allocate_defense,
+    cmd_config_doctrine,
     cmd_focus,
     cmd_harden,
     cmd_help,
     cmd_move,
+    cmd_fortify,
     cmd_repair,
     cmd_return,
     cmd_reset,
     cmd_scavenge,
+    cmd_scavenge_runs,
+    cmd_set_fabrication,
+    cmd_set_policy,
     cmd_status,
     cmd_wait,
+    cmd_wait_until,
     cmd_wait_ticks,
 )
 from game.simulations.world_state.terminal.parser import parse_input
@@ -35,7 +43,7 @@ SECTOR_NAME_TO_NAME = {sector["name"]: sector["name"] for sector in SECTOR_DEFS}
 COMMAND_HANDLERS: dict[str, Handler] = {
     "STATUS": cmd_status,
     "WAIT": cmd_wait,
-    "HELP": lambda _state: cmd_help(),
+    "HELP": lambda state: cmd_help(dev_mode=state.dev_mode),
 }
 
 
@@ -73,6 +81,19 @@ def _parse_wait_ticks(args: list[str]) -> int | None:
     return count
 
 
+def _parse_multiplier(token: str) -> int | None:
+    normalized = token.strip().upper()
+    if not normalized.endswith("X"):
+        return None
+    body = normalized[:-1]
+    if not body.isdigit():
+        return None
+    count = int(body)
+    if count <= 0:
+        return None
+    return count
+
+
 def _resolve_sector_name(token: str) -> str | None:
     normalized = token.strip().upper()
     if not normalized:
@@ -85,6 +106,21 @@ def _handle_debug_command(state: GameState, args: list[str]) -> CommandResult:
         return CommandResult(ok=False, text="DEBUG REQUIRES SUBCOMMAND.")
 
     sub = args[0].upper()
+    if sub == "HELP":
+        return CommandResult(
+            ok=True,
+            text="DEBUG COMMANDS:",
+            lines=[
+                "- DEBUG ASSAULT",
+                "- DEBUG TICK <N>",
+                "- DEBUG TIMER <VALUE>",
+                "- DEBUG POWER <SECTOR> <VALUE>",
+                "- DEBUG DAMAGE <SECTOR> <VALUE>",
+                "- DEBUG TRACE",
+                "- DEBUG REPORT",
+                "- DEBUG HELP",
+            ],
+        )
     if sub == "ASSAULT":
         return _debug_force_assault(state)
     if sub == "TICK":
@@ -95,9 +131,12 @@ def _handle_debug_command(state: GameState, args: list[str]) -> CommandResult:
         return _debug_set_power(state, args[1:])
     if sub == "DAMAGE":
         return _debug_set_damage(state, args[1:])
-    if sub == "TRACE":
+    if sub in {"TRACE", "ASSAULT_TRACE"}:
         state.dev_trace = not state.dev_trace
-        return CommandResult(ok=True, text=f"ASSAULT TRACE = {state.dev_trace}")
+        state.assault_trace_enabled = state.dev_trace
+        return CommandResult(ok=True, text=f"ASSAULT TRACE = {state.assault_trace_enabled}")
+    if sub in {"REPORT", "ASSAULT_REPORT"}:
+        return _debug_assault_report(state)
 
     return CommandResult(ok=False, text="UNKNOWN DEBUG SUBCOMMAND.")
 
@@ -169,7 +208,56 @@ def _debug_set_damage(state: GameState, args: list[str]) -> CommandResult:
         return CommandResult(ok=False, text="INVALID DAMAGE VALUE.")
 
     state.sectors[sector_name].damage = value
-    return CommandResult(ok=True, text=f"{sector_name} DAMAGE SET TO {value}")
+    target_state = _structure_state_for_debug_damage(value)
+    affected = 0
+    for structure in state.structures.values():
+        if structure.sector != sector_name:
+            continue
+        structure.state = target_state
+        affected += 1
+    return CommandResult(
+        ok=True,
+        text=f"{sector_name} DAMAGE SET TO {value}",
+        lines=[f"STRUCTURES UPDATED: {affected} -> {target_state.value}"],
+    )
+
+
+def _structure_state_for_debug_damage(damage: float) -> StructureState:
+    if damage >= 3.0:
+        return StructureState.DESTROYED
+    if damage >= 2.0:
+        return StructureState.OFFLINE
+    if damage >= 1.0:
+        return StructureState.DAMAGED
+    return StructureState.OPERATIONAL
+
+
+def _debug_assault_report(state: GameState) -> CommandResult:
+    rows = state.assault_ledger.ticks[-20:]
+    if not rows:
+        return CommandResult(ok=True, text="ASSAULT REPORT: NO RECORDS.")
+
+    lines: list[str] = []
+    if state.last_target_weights:
+        weight_parts = [f"{sid}={value:.2f}" for sid, value in sorted(state.last_target_weights.items())]
+        lines.append("TARGET WEIGHTS: " + ", ".join(weight_parts))
+
+    for record in rows:
+        line = (
+            f"T{record.tick:04d} {record.targeted_sector} "
+            f"W={record.target_weight:.2f} "
+            f"S={record.assault_strength:.2f} "
+            f"M={record.defense_mitigation:.2f}"
+        )
+        if record.building_destroyed:
+            line += f" DESTROYED={record.building_destroyed}"
+        if record.failure_triggered:
+            line += " FAILURE=TRUE"
+        if record.note:
+            line += f" NOTE={record.note}"
+        lines.append(line)
+
+    return CommandResult(ok=True, text="ASSAULT REPORT:", lines=lines)
 
 
 def process_command(state: GameState, raw: str) -> CommandResult:
@@ -222,7 +310,79 @@ def process_command(state: GameState, raw: str) -> CommandResult:
             "DEBUG",
         )
 
+    if parsed.verb == "CONFIG":
+        if len(parsed.args) != 2:
+            return _finalize_result(state, CommandResult(ok=False, text="CONFIG DOCTRINE <NAME>"))
+        if parsed.args[0].strip().upper() != "DOCTRINE":
+            return _finalize_result(state, _unknown_command())
+        lines = cmd_config_doctrine(state, parsed.args[1])
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
+    if parsed.verb == "SET":
+        if len(parsed.args) == 2:
+            lines = cmd_set_policy(state, parsed.args[0], parsed.args[1])
+        elif len(parsed.args) == 3 and parsed.args[0].strip().upper() == "FAB":
+            lines = cmd_set_fabrication(state, parsed.args[1], parsed.args[2])
+        else:
+            return _finalize_result(
+                state,
+                CommandResult(ok=False, text="SET <REPAIR|DEFENSE|SURVEILLANCE> <0-4> | SET FAB <CAT> <0-4>"),
+            )
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
+    if parsed.verb == "FORTIFY":
+        if len(parsed.args) != 2:
+            return _finalize_result(state, CommandResult(ok=False, text="FORTIFY <SECTOR> <0-4>"))
+        lines = cmd_fortify(state, parsed.args[0], parsed.args[1])
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
+    if parsed.verb == "ALLOCATE":
+        if len(parsed.args) != 3:
+            return _finalize_result(state, CommandResult(ok=False, text="ALLOCATE DEFENSE <SECTOR> <PERCENT>"))
+        if parsed.args[0].strip().upper() != "DEFENSE":
+            return _finalize_result(state, _unknown_command())
+        lines = cmd_allocate_defense(state, parsed.args[1], parsed.args[2])
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
     if parsed.verb == "WAIT":
+        if parsed.args and parsed.args[0].strip().upper() == "UNTIL":
+            if len(parsed.args) != 2:
+                return _finalize_result(
+                    state,
+                    CommandResult(ok=False, text="WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>"),
+                )
+            lines = cmd_wait_until(state, parsed.args[1])
+            primary_line = lines[0] if lines else "COMMAND EXECUTED."
+            detail_lines = lines[1:] if len(lines) > 1 else None
+            return _finalize_result(
+                state,
+                CommandResult(ok=True, text=primary_line, lines=detail_lines),
+                parsed.verb,
+            )
         ticks = _parse_wait_ticks(parsed.args)
         if ticks is None:
             return _finalize_result(state, _unknown_command())
@@ -303,9 +463,14 @@ def process_command(state: GameState, raw: str) -> CommandResult:
     if parsed.verb == "REPAIR":
         if len(parsed.args) == 0:
             return _finalize_result(state, CommandResult(ok=False, text="REPAIR REQUIRES STRUCTURE ID."))
-        if len(parsed.args) > 1:
-            return _finalize_result(state, CommandResult(ok=False, text="USE QUOTES FOR MULTI-WORD STRUCTURE."))
-        lines = cmd_repair(state, parsed.args[0])
+        if len(parsed.args) > 2:
+            return _finalize_result(state, CommandResult(ok=False, text="REPAIR <STRUCTURE> [FULL]"))
+        full = False
+        if len(parsed.args) == 2:
+            if parsed.args[1].strip().upper() != "FULL":
+                return _finalize_result(state, CommandResult(ok=False, text="REPAIR <STRUCTURE> [FULL]"))
+            full = True
+        lines = cmd_repair(state, parsed.args[0], full=full)
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(
@@ -314,9 +479,15 @@ def process_command(state: GameState, raw: str) -> CommandResult:
             parsed.verb,
         )
     if parsed.verb == "SCAVENGE":
-        if parsed.args:
+        if len(parsed.args) > 1:
             return _finalize_result(state, _unknown_command())
-        lines = cmd_scavenge(state)
+        if not parsed.args:
+            lines = cmd_scavenge(state)
+        else:
+            runs = _parse_multiplier(parsed.args[0])
+            if runs is None:
+                return _finalize_result(state, _unknown_command())
+            lines = cmd_scavenge_runs(state, runs)
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(

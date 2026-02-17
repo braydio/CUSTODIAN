@@ -1,7 +1,10 @@
 """Tests for terminal command processing behavior."""
 
+from types import SimpleNamespace
+
 from game.simulations.world_state.core.config import (
     ARCHIVE_LOSS_LIMIT,
+    COMMAND_BREACH_RECOVERY_TICKS,
     COMMAND_CENTER_BREACH_DAMAGE,
 )
 from game.simulations.world_state.core.state import GameState, check_failure
@@ -14,8 +17,8 @@ def _disable_wait_tick_pause(monkeypatch) -> None:
     monkeypatch.setattr("game.simulations.world_state.terminal.commands.wait.time.sleep", lambda *_: None)
 
 
-def test_wait_advances_five_ticks(monkeypatch) -> None:
-    """WAIT should advance one wait unit (5 ticks) and report advancement."""
+def test_wait_advances_one_tick(monkeypatch) -> None:
+    """WAIT should advance one wait unit (1 tick) and report advancement."""
 
     _disable_wait_tick_pause(monkeypatch)
 
@@ -24,12 +27,12 @@ def test_wait_advances_five_ticks(monkeypatch) -> None:
     result = process_command(state, "WAIT")
 
     assert result.ok is True
-    assert state.time == 5
+    assert state.time == 1
     assert result.text == "TIME ADVANCED."
 
 
-def test_wait_nx_advances_units_of_five_ticks(monkeypatch) -> None:
-    """WAIT NX should advance time by N wait units (5 ticks each)."""
+def test_wait_nx_advances_units_of_one_tick(monkeypatch) -> None:
+    """WAIT NX should advance time by N wait units (1 tick each)."""
 
     _disable_wait_tick_pause(monkeypatch)
 
@@ -49,7 +52,7 @@ def test_wait_nx_advances_units_of_five_ticks(monkeypatch) -> None:
     result = process_command(state, "WAIT 5X")
 
     assert result.ok is True
-    assert state.time == 25
+    assert state.time == 5
     assert result.text == "TIME ADVANCED."
     assert result.lines is None
 
@@ -65,6 +68,7 @@ def test_wait_suppresses_repeated_event_blocks(monkeypatch) -> None:
         return WaitTickInfo(
             fidelity="FULL",
             fidelity_lines=[],
+            debug_lines=[],
             event_name="Comms Burst",
             event_sector="COMMS",
             repair_names=[],
@@ -73,6 +77,9 @@ def test_wait_suppresses_repeated_event_blocks(monkeypatch) -> None:
             assault_active=False,
             became_failed=False,
             warning_window=6,
+            assault_lines=[],
+            structure_loss_lines=[],
+            stability_declining=True,
         )
 
     monkeypatch.setattr(
@@ -99,7 +106,7 @@ def test_status_does_not_mutate_state() -> None:
 
     assert result.ok is True
     assert state.time == 0
-    assert result.text == "TIME: 0"
+    assert result.text.startswith("TIME: 0")
 
 
 def test_focus_sets_sector_without_advancing_time() -> None:
@@ -150,10 +157,13 @@ def test_failure_mode_locks_non_reset_commands(monkeypatch) -> None:
     state.sectors["COMMAND"].damage = COMMAND_CENTER_BREACH_DAMAGE
     _disable_wait_tick_pause(monkeypatch)
 
-    wait_result = process_command(state, "WAIT")
+    wait_result = None
+    for _ in range(COMMAND_BREACH_RECOVERY_TICKS + 2):
+        wait_result = process_command(state, "WAIT")
     status_result = process_command(state, "STATUS")
 
     assert wait_result.ok is True
+    assert wait_result is not None
     assert wait_result.lines[-2:] == ["COMMAND CENTER LOST", "SESSION TERMINATED."]
     assert status_result.ok is False
     assert status_result.text == "COMMAND CENTER LOST"
@@ -166,7 +176,8 @@ def test_reset_command_restores_session_after_failure(monkeypatch) -> None:
     state = GameState()
     state.sectors["COMMAND"].damage = COMMAND_CENTER_BREACH_DAMAGE
     _disable_wait_tick_pause(monkeypatch)
-    process_command(state, "WAIT")
+    for _ in range(COMMAND_BREACH_RECOVERY_TICKS + 2):
+        process_command(state, "WAIT")
 
     result = process_command(state, "RESET")
 
@@ -308,6 +319,67 @@ def test_wait_emits_fidelity_upgrade_event(monkeypatch) -> None:
     assert "[EVENT] SIGNAL CLARITY RESTORED" in result.lines
 
 
+def test_wait_surfaces_structure_loss_once_at_full_fidelity(monkeypatch) -> None:
+    state = GameState()
+    state.pending_structure_losses.add("CM_CORE")
+
+    def _quiet_step(local_state: GameState) -> bool:
+        local_state.time += 1
+        return False
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.wait.step_world",
+        _quiet_step,
+    )
+
+    first = process_command(state, "WAIT")
+    second = process_command(state, "WAIT")
+
+    assert first.ok is True
+    assert first.lines is not None
+    assert "[EVENT] STRUCTURE LOST: CM_CORE" in first.lines
+    assert second.ok is True
+    assert second.lines is None
+
+
+def test_wait_lost_fidelity_suppresses_structure_identity(monkeypatch) -> None:
+    state = GameState()
+    state.pending_structure_losses.add("CM_CORE")
+    state.structures["CM_CORE"].state = StructureState.DESTROYED
+    state.sectors["COMMS"].power = 0.0
+
+    def _quiet_step(local_state: GameState) -> bool:
+        local_state.time += 1
+        return False
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.wait.step_world",
+        _quiet_step,
+    )
+
+    result = process_command(state, "WAIT")
+
+    assert result.ok is True
+    assert result.lines is None
+
+
+def test_status_includes_approach_eta_in_command_mode() -> None:
+    state = GameState()
+    state.assaults = [
+        SimpleNamespace(
+            state="APPROACHING",
+            target="ARCHIVE",
+            eta_ticks=lambda: 4,
+        )
+    ]
+
+    result = process_command(state, "STATUS")
+
+    assert result.ok is True
+    assert result.lines is not None
+    assert any(line.startswith("THREAT: ARCHIVE ETA~4") for line in result.lines)
+
+
 def test_deploy_fragmented_keeps_terse_invalid_target() -> None:
     state = GameState()
     state.structures["CM_CORE"].state = StructureState.DAMAGED
@@ -374,8 +446,261 @@ def test_debug_sector_mutators_accept_sector_id() -> None:
     assert power_result.text == "COMMS POWER SET TO 0.45"
     assert damage_result.ok is True
     assert damage_result.text == "POWER DAMAGE SET TO 1.25"
+    assert damage_result.lines == ["STRUCTURES UPDATED: 1 -> DAMAGED"]
     assert state.sectors["COMMS"].power == 0.45
     assert state.sectors["POWER"].damage == 1.25
+    assert state.structures["PW_CORE"].state == StructureState.DAMAGED
+
+
+def test_help_shows_debug_hint_only_in_dev_mode() -> None:
+    normal_state = GameState()
+    dev_state = GameState()
+    dev_state.dev_mode = True
+
+    normal = process_command(normal_state, "HELP")
+    dev = process_command(dev_state, "HELP")
+
+    assert normal.ok is True
+    assert dev.ok is True
+    assert normal.lines is not None
+    assert dev.lines is not None
+    assert "DEBUG COMMANDS (DEV MODE):" not in normal.lines
+    assert "DEBUG COMMANDS (DEV MODE):" in dev.lines
+    assert "- DEBUG HELP" in dev.lines
+
+
+def test_deploy_blocked_while_repair_active() -> None:
+    state = GameState()
+    state.structures["CM_CORE"].state = StructureState.DAMAGED
+    repair_result = process_command(state, "REPAIR CM_CORE")
+    deploy_result = process_command(state, "DEPLOY NORTH")
+
+    assert repair_result.ok is True
+    assert "REPAIR" in repair_result.text
+    assert deploy_result.ok is True
+    assert deploy_result.text == "ACTION IN PROGRESS."
+    assert state.active_task is None
+
+
+def test_repair_full_stabilizes_sector_with_extra_material_cost() -> None:
+    state = GameState()
+    state.materials = 3
+    state.sectors["DEFENSE GRID"].damage = 1.4
+    state.sectors["DEFENSE GRID"].alertness = 1.1
+
+    result = process_command(state, "REPAIR DF_CORE FULL")
+
+    assert result.ok is True
+    assert result.text.startswith("FULL RESTORE COMPLETE: DEFENSE GRID")
+    assert state.materials == 2
+    assert state.sectors["DEFENSE GRID"].damage < 0.8
+    assert state.sectors["DEFENSE GRID"].alertness < 0.8
+    assert "DEFENSE GRID" in state.sector_recovery_windows
+
+
+def test_repair_command_core_is_local_when_in_command_mode() -> None:
+    state = GameState()
+    state.structures["CC_CORE"].state = StructureState.DAMAGED
+
+    result = process_command(state, "REPAIR CC_CORE")
+
+    assert result.ok is True
+    assert result.text.startswith("MANUAL REPAIR STARTED:")
+
+
+def test_repair_full_command_core_uses_local_mode_when_in_command() -> None:
+    state = GameState()
+    state.materials = 3
+    state.sectors["COMMAND"].damage = 1.2
+    state.sectors["COMMAND"].alertness = 1.1
+
+    result = process_command(state, "REPAIR CC_CORE FULL")
+
+    assert result.ok is True
+    assert result.text.startswith("FULL RESTORE COMPLETE: COMMAND")
+    assert "(LOCAL," in result.text
+
+
+def test_repair_full_requires_operational_structure() -> None:
+    state = GameState()
+    state.structures["DF_CORE"].state = StructureState.DAMAGED
+    state.sectors["DEFENSE GRID"].damage = 1.2
+
+    result = process_command(state, "REPAIR DF_CORE FULL")
+
+    assert result.ok is True
+    assert result.text == "STRUCTURE NOT YET OPERATIONAL. COMPLETE REPAIRS FIRST."
+
+
+def test_set_fab_and_fortify_commands_apply_levels() -> None:
+    state = GameState()
+
+    set_fab = process_command(state, "SET FAB DEFENSE 4")
+    fortify = process_command(state, "FORTIFY PW 3")
+
+    assert set_fab.ok is True
+    assert set_fab.text == "FABRICATION DEFENSE ALLOCATION SET TO 4."
+    assert fortify.ok is True
+    assert fortify.text == "FORTIFICATION POWER SET TO 3."
+    assert state.fab_allocation["DEFENSE"] == 4
+    assert state.sector_fort_levels["POWER"] == 3
+
+
+def test_status_includes_policy_state_section() -> None:
+    state = GameState()
+    state.policies.repair_intensity = 4
+    state.policies.defense_readiness = 1
+    state.policies.surveillance_coverage = 3
+
+    result = process_command(state, "STATUS")
+
+    assert result.ok is True
+    assert result.lines is not None
+    assert "POLICY STATE:" in result.lines
+    assert any(line.startswith("- REPAIR INTENSITY: ") for line in result.lines)
+    assert any(line.startswith("- POWER LOAD: ") for line in result.lines)
+
+
+def test_debug_help_lists_debug_commands() -> None:
+    state = GameState()
+    state.dev_mode = True
+
+    result = process_command(state, "DEBUG HELP")
+
+    assert result.ok is True
+    assert result.text == "DEBUG COMMANDS:"
+    assert result.lines == [
+        "- DEBUG ASSAULT",
+        "- DEBUG TICK <N>",
+        "- DEBUG TIMER <VALUE>",
+        "- DEBUG POWER <SECTOR> <VALUE>",
+        "- DEBUG DAMAGE <SECTOR> <VALUE>",
+        "- DEBUG TRACE",
+        "- DEBUG REPORT",
+        "- DEBUG HELP",
+    ]
+
+
+def test_debug_trace_toggles_assault_trace_flag() -> None:
+    state = GameState()
+    state.dev_mode = True
+
+    result = process_command(state, "DEBUG TRACE")
+
+    assert result.ok is True
+    assert result.text == "ASSAULT TRACE = True"
+    assert state.assault_trace_enabled is True
+
+
+def test_debug_assault_trace_alias_toggles_trace_flag() -> None:
+    state = GameState()
+    state.dev_mode = True
+
+    result = process_command(state, "DEBUG ASSAULT_TRACE")
+
+    assert result.ok is True
+    assert result.text == "ASSAULT TRACE = True"
+    assert state.assault_trace_enabled is True
+
+
+def test_debug_report_returns_recent_ledger_rows() -> None:
+    from game.simulations.world_state.core.assault_ledger import AssaultTickRecord, append_record
+
+    state = GameState()
+    state.dev_mode = True
+    state.last_target_weights = {"CC": 2.0}
+    append_record(
+        state,
+        AssaultTickRecord(
+            tick=state.time,
+            targeted_sector="CC",
+            target_weight=2.0,
+            assault_strength=3.5,
+            defense_mitigation=0.8,
+            note="TEST",
+        ),
+    )
+
+    result = process_command(state, "DEBUG REPORT")
+
+    assert result.ok is True
+    assert result.text == "ASSAULT REPORT:"
+    assert result.lines is not None
+    assert any("TARGET WEIGHTS:" in line for line in result.lines)
+    assert any("NOTE=TEST" in line for line in result.lines)
+
+
+def test_wait_surfaces_debug_trace_lines(monkeypatch) -> None:
+    _disable_wait_tick_pause(monkeypatch)
+    state = GameState()
+    state.dev_mode = True
+    state.dev_trace = True
+
+    def _trace_step(local_state: GameState) -> bool:
+        local_state.time += 1
+        print("{'tick': 1, 'active_sectors': [], 'ambient_threat': 0.0, 'alertness': {}}")
+        return False
+
+    monkeypatch.setattr(
+        "game.simulations.world_state.terminal.commands.wait.step_world",
+        _trace_step,
+    )
+
+    result = process_command(state, "WAIT")
+
+    assert result.ok is True
+    assert result.lines is not None
+    assert any(line.startswith("[DEBUG] {'tick': 1") for line in result.lines)
+
+
+def test_status_shows_recovery_window_details_at_full_fidelity() -> None:
+    state = GameState()
+    state.sector_recovery_windows["DEFENSE GRID"] = {
+        "remaining": 3.2,
+        "damage_rate": 0.05,
+        "alertness_rate": 0.1,
+        "mode": "LOCAL",
+    }
+
+    result = process_command(state, "STATUS")
+
+    assert result.ok is True
+    assert result.lines is not None
+    assert "RECOVERY:" in result.lines
+    assert "- DEFENSE GRID: LOCAL (4 TICKS)" in result.lines
+
+
+def test_status_shows_generic_recovery_at_degraded_fidelity() -> None:
+    state = GameState()
+    state.sector_recovery_windows["POWER"] = {
+        "remaining": 7.0,
+        "damage_rate": 0.03,
+        "alertness_rate": 0.06,
+        "mode": "DRONE",
+    }
+    state.structures["CM_CORE"].state = StructureState.DAMAGED
+
+    result = process_command(state, "STATUS")
+
+    assert result.ok is True
+    assert result.lines is not None
+    assert "RECOVERY:" in result.lines
+    assert "- POWER: RECOVERY ACTIVE" in result.lines
+
+
+def test_status_shows_debug_trace_section_when_enabled() -> None:
+    state = GameState()
+    state.dev_mode = True
+    state.dev_trace = True
+    state.assault_trace_enabled = True
+
+    result = process_command(state, "STATUS")
+
+    assert result.ok is True
+    assert result.lines is not None
+    assert "DEBUG:" in result.lines
+    assert "- ASSAULT TRACE: ON" in result.lines
+    assert any(line.startswith("- LEDGER ROWS: ") for line in result.lines)
 
 
 def test_move_from_transit_to_comms_is_valid() -> None:

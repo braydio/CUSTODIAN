@@ -31,7 +31,21 @@ def resolve_assault(sectors, assault_instance=None, max_ticks=10, on_tick=None):
                 print(f" - {e.name}: HP={e.hp}, Morale={e.morale} [{status}]")
 
         for sector in sectors:
-            run_autopilot(sector)
+            doctrine = "BALANCED"
+            bias = 1.0
+            if assault_instance is not None:
+                doctrine = getattr(assault_instance, "defense_doctrine", doctrine)
+                allocation = getattr(assault_instance, "defense_allocation", None) or {}
+                if sector.name == "COMMAND":
+                    group = "COMMAND"
+                elif sector.name in {"POWER", "FABRICATION"}:
+                    group = "POWER"
+                elif sector.name == "COMMS":
+                    group = "SENSORS"
+                else:
+                    group = "PERIMETER"
+                bias = float(allocation.get(group, 1.0))
+            run_autopilot(sector, doctrine=doctrine, defense_bias=bias)
 
         for sector in sectors:
             for e in list(sector.enemies):

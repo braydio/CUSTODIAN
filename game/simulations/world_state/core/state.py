@@ -7,9 +7,12 @@ from .config import (
     ALERTNESS_DECAY,
     ALERTNESS_FROM_DAMAGE,
     AMBIENT_THREAT_GROWTH,
+    AMBIENT_THREAT_REPAIR_RECOVERY,
+    AMBIENT_THREAT_STABILITY_RECOVERY,
     ARCHIVE_LOSS_LIMIT,
     COMMAND_CENTER_LOCATION,
     COMMAND_CENTER_BREACH_DAMAGE,
+    COMMAND_BREACH_RECOVERY_TICKS,
     FIELD_ACTION_IDLE,
     PLAYER_MODE_COMMAND,
     POWER_THREAT_MULT,
@@ -22,6 +25,9 @@ from .effects import apply_global_effects, apply_sector_effects
 from .factions import build_faction_profile
 from .snapshot_migration import migrate_snapshot
 from .tasks import task_to_dict
+from .defense import DEFAULT_DEFENSE_ALLOCATION, compute_readiness, normalize_doctrine
+from .assault_ledger import AssaultLedger, AssaultTickRecord, append_record
+from .policies import PolicyState, default_fabrication_allocation
 
 
 class SectorState:
@@ -70,13 +76,27 @@ class GameState:
         self.ambient_threat = 0.0
         self.assault_timer = None
         self.in_major_assault = False
+        self.assaults: list[Any] = []
+        self.command_breach_recovery_ticks: int | None = None
         self.is_failed = False
         self.failure_reason = None
+        self.assault_ledger = AssaultLedger()
+        self.assault_trace_enabled = False
         self.last_assault_lines = []
+        self.last_structure_loss_lines: list[str] = []
         self.last_repair_lines: list[str] = []
+        self.last_fabrication_lines: list[str] = []
         self.materials = 3
         self.operator_log: list[str] = []
         self._last_sector_status: dict[str, str] = {}
+        self.pending_structure_losses: set[str] = set()
+        self.detected_structure_losses: set[str] = set()
+        self.sector_recovery_windows: dict[str, dict[str, float]] = {}
+        self.policies = PolicyState()
+        self.fab_allocation = default_fabrication_allocation()
+        self.fabrication_queue: list[Any] = []
+        self.sector_fort_levels = {name: 0 for name in SECTORS}
+        self.power_load = 1.0
 
         # Player state
         self.player_mode = PLAYER_MODE_COMMAND
@@ -92,6 +112,13 @@ class GameState:
         self.focused_sector = None
         self.hardened = False
         self.archive_losses = 0
+        self.autonomy_override_enabled = True
+        self.autonomy_strength_bonus = 0.0
+        self.defense_doctrine = "BALANCED"
+        self.doctrine_last_changed_time = 0
+        self.defense_allocation = dict(DEFAULT_DEFENSE_ALLOCATION)
+        self.readiness_cache = None
+        self.last_target_weights: dict[str, float] = {}
 
         # World progression
         self.assault_count = 0
@@ -133,7 +160,7 @@ class GameState:
 
         if self.in_major_assault or self.current_assault is not None:
             return "ACTIVE"
-        if self.assault_timer is not None:
+        if self.assaults or self.assault_timer is not None:
             return "PENDING"
         return "NONE"
 
@@ -173,6 +200,28 @@ class GameState:
             "archive_losses": self.archive_losses,
             "archive_limit": ARCHIVE_LOSS_LIMIT,
             "resources": {"materials": self.materials},
+            "power_load": self.power_load,
+            "policies": {
+                "repair_intensity": self.policies.repair_intensity,
+                "defense_readiness": self.policies.defense_readiness,
+                "surveillance_coverage": self.policies.surveillance_coverage,
+                "fabrication_allocation": dict(self.fab_allocation),
+                "fortification": dict(self.sector_fort_levels),
+            },
+            "defense": {
+                "doctrine": self.defense_doctrine,
+                "allocation": dict(self.defense_allocation),
+                "readiness": self.compute_readiness(),
+            },
+            "fabrication_queue": [
+                {
+                    "name": task.name,
+                    "remaining": max(0, int(task.ticks_remaining)),
+                    "category": task.category,
+                    "cost": task.material_cost,
+                }
+                for task in self.fabrication_queue
+            ],
             "active_repairs": [
                 {
                     "id": sid,
@@ -207,6 +256,18 @@ class GameState:
             key=lambda s: s.damage + s.alertness,
             reverse=True,
         )[:n]
+
+    def set_defense_doctrine(self, doctrine: str) -> bool:
+        normalized = normalize_doctrine(doctrine)
+        if normalized is None:
+            return False
+        if self.defense_doctrine != normalized:
+            self.defense_doctrine = normalized
+            self.doctrine_last_changed_time = self.time
+        return True
+
+    def compute_readiness(self) -> float:
+        return compute_readiness(self)
 
     def __str__(self):
         global_fx = ", ".join(self.global_effects.keys())
@@ -244,15 +305,48 @@ def check_failure(state: GameState) -> bool:
         return False
 
     command_center = state.sectors["COMMAND"]
-    if command_center.damage < COMMAND_CENTER_BREACH_DAMAGE:
+    if command_center.damage >= COMMAND_CENTER_BREACH_DAMAGE:
+        if state.command_breach_recovery_ticks is None:
+            state.command_breach_recovery_ticks = COMMAND_BREACH_RECOVERY_TICKS
+            return False
+        if state.command_breach_recovery_ticks > 0:
+            state.command_breach_recovery_ticks -= 1
+            return False
+    else:
+        state.command_breach_recovery_ticks = None
         if state.archive_losses < ARCHIVE_LOSS_LIMIT:
             return False
 
     state.is_failed = True
     if command_center.damage >= COMMAND_CENTER_BREACH_DAMAGE:
         state.failure_reason = "COMMAND CENTER LOST"
+        append_record(
+            state,
+            AssaultTickRecord(
+                tick=state.time,
+                targeted_sector=command_center.id,
+                target_weight=0.0,
+                assault_strength=0.0,
+                defense_mitigation=0.0,
+                failure_triggered=True,
+                note="FAILURE_CHAIN:COMMAND",
+            ),
+        )
     else:
         state.failure_reason = "ARCHIVAL INTEGRITY LOST"
+        archive = state.sectors.get("ARCHIVE")
+        append_record(
+            state,
+            AssaultTickRecord(
+                tick=state.time,
+                targeted_sector=archive.id if archive else "AR",
+                target_weight=0.0,
+                assault_strength=0.0,
+                defense_mitigation=0.0,
+                failure_triggered=True,
+                note="FAILURE_CHAIN:ARCHIVE",
+            ),
+        )
     return True
 
 
@@ -277,6 +371,36 @@ def advance_time(state: GameState, delta: int = 1) -> None:
     if power_sector and power_sector.damage >= 1.0:
         threat_growth *= POWER_THREAT_MULT
     state.ambient_threat += threat_growth
+
+    # Maintenance loop: disciplined recovery on core systems can bleed threat down.
+    command_sector = state.sectors.get("COMMAND")
+    comms_sector = state.sectors.get("COMMS")
+    no_active_assault = (
+        not state.assaults
+        and state.current_assault is None
+        and not state.in_major_assault
+    )
+    if (
+        no_active_assault
+        and command_sector is not None
+        and comms_sector is not None
+        and power_sector is not None
+        and state.ambient_threat >= 2.0
+        and command_sector.damage < 0.5
+        and comms_sector.damage < 0.5
+        and power_sector.damage < 0.5
+    ):
+        state.ambient_threat = max(
+            0.0,
+            state.ambient_threat - (AMBIENT_THREAT_STABILITY_RECOVERY * delta),
+        )
+
+    if state.active_repairs and no_active_assault:
+        state.ambient_threat = max(
+            0.0,
+            state.ambient_threat - (AMBIENT_THREAT_REPAIR_RECOVERY * delta),
+        )
+
     apply_global_effects(state)
 
     storage_sector = state.sectors.get("STORAGE")
@@ -289,4 +413,11 @@ def advance_time(state: GameState, delta: int = 1) -> None:
         if storage_damaged and sector.name != "STORAGE":
             sector.alertness += sector.damage * ALERTNESS_FROM_DAMAGE * STORAGE_DECAY_MULT
         sector.alertness = max(0.0, sector.alertness - ALERTNESS_DECAY)
+        recovery = state.sector_recovery_windows.get(sector.name)
+        if recovery:
+            sector.damage = max(0.0, sector.damage - recovery.get("damage_rate", 0.0) * delta)
+            sector.alertness = max(0.0, sector.alertness - recovery.get("alertness_rate", 0.0) * delta)
+            recovery["remaining"] = max(0.0, recovery.get("remaining", 0.0) - delta)
+            if recovery["remaining"] <= 0.0:
+                state.sector_recovery_windows.pop(sector.name, None)
         sector.occupied = False

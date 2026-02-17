@@ -14,6 +14,8 @@ def cmd_return(state: GameState) -> list[str]:
 
     if state.active_task:
         return ["ACTION IN PROGRESS."]
+    if state.active_repairs:
+        return ["ACTION IN PROGRESS."]
 
     start_move_task(state, COMMAND_CENTER_LOCATION, RETURN_TICKS)
     return ["RETURNING TO COMMAND CENTER."]

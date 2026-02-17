@@ -59,6 +59,8 @@ def cmd_deploy(state: GameState, destination: str) -> list[str]:
 
     if state.active_task:
         return ["ACTION IN PROGRESS."]
+    if state.active_repairs:
+        return ["ACTION IN PROGRESS."]
 
     fidelity = comms_fidelity(state)
     if not destination or not destination.strip():
