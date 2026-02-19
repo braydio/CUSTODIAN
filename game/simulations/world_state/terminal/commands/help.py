@@ -7,6 +7,7 @@ def cmd_help(dev_mode: bool = False) -> list[str]:
     lines = [
         "AVAILABLE COMMANDS:",
         "- STATUS   View current situation",
+        "- STATUS FULL  Show extended diagnostics",
         "- WAIT     Advance time (1 tick)",
         "- WAIT NX  Advance time by N x 1 tick",
         "- WAIT UNTIL <COND>  Advance until ASSAULT/APPROACH/REPAIR_DONE",

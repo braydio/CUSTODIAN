@@ -324,6 +324,27 @@ def process_command(state: GameState, raw: str) -> CommandResult:
             parsed.verb,
         )
 
+    if parsed.verb == "STATUS":
+        if len(parsed.args) > 1:
+            return _finalize_result(state, _unknown_command())
+        full = False
+        if len(parsed.args) == 1:
+            mode = parsed.args[0].strip().upper()
+            if mode == "FULL":
+                full = True
+            elif mode in {"BRIEF", "SUMMARY"}:
+                full = False
+            else:
+                return _finalize_result(state, _unknown_command())
+        lines = cmd_status(state, full=full)
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
     if parsed.verb == "SET":
         if len(parsed.args) == 2:
             lines = cmd_set_policy(state, parsed.args[0], parsed.args[1])

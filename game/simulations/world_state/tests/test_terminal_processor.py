@@ -552,7 +552,7 @@ def test_status_includes_policy_state_section() -> None:
     state.policies.defense_readiness = 1
     state.policies.surveillance_coverage = 3
 
-    result = process_command(state, "STATUS")
+    result = process_command(state, "STATUS FULL")
 
     assert result.ok is True
     assert result.lines is not None
@@ -662,7 +662,7 @@ def test_status_shows_recovery_window_details_at_full_fidelity() -> None:
         "mode": "LOCAL",
     }
 
-    result = process_command(state, "STATUS")
+    result = process_command(state, "STATUS FULL")
 
     assert result.ok is True
     assert result.lines is not None
@@ -680,7 +680,7 @@ def test_status_shows_generic_recovery_at_degraded_fidelity() -> None:
     }
     state.structures["CM_CORE"].state = StructureState.DAMAGED
 
-    result = process_command(state, "STATUS")
+    result = process_command(state, "STATUS FULL")
 
     assert result.ok is True
     assert result.lines is not None
