@@ -19,6 +19,7 @@ def test_help_output_matches_contract() -> None:
     assert result.text == "AVAILABLE COMMANDS:"
     assert result.lines == [
         "- STATUS   View current situation",
+        "- STATUS FULL  Show extended diagnostics",
         "- WAIT     Advance time (1 tick)",
         "- WAIT NX  Advance time by N x 1 tick",
         "- WAIT UNTIL <COND>  Advance until ASSAULT/APPROACH/REPAIR_DONE",

@@ -164,6 +164,71 @@ def _append_debug_trace_status(lines: list[str], state: GameState) -> None:
     lines.append("- TRACE LINES EMIT ON WAIT; SUMMARY VIA DEBUG REPORT")
 
 
+def _render_sector_attention_lines(
+    state: GameState,
+    sector_status_by_name: dict[str, str],
+    *,
+    limit: int = 3,
+) -> list[str]:
+    lines = ["SECTORS:"]
+    command_status = sector_status_by_name.get("COMMAND", state.sectors["COMMAND"].status_label())
+    lines.append(f"- COMMAND: {command_status}")
+
+    attention: list[tuple[str, str]] = []
+    for sector in state.sectors.values():
+        if sector.name == "COMMAND":
+            continue
+        label = sector_status_by_name.get(sector.name, sector.status_label())
+        if label in {"COMPROMISED", "DAMAGED", "ALERT"}:
+            attention.append((sector.name, label))
+
+    attention.sort(key=lambda item: _sector_priority_by_label(item[1]))
+    for name, label in attention[:limit]:
+        lines.append(f"- {name}: {label}")
+
+    remaining = max(0, len(attention) - limit)
+    if remaining > 0:
+        lines.append(f"- +{remaining} OTHER SECTORS REQUIRE REVIEW")
+    if not attention:
+        lines.append("- ALL OTHER SECTORS STABLE")
+
+    return lines
+
+
+def _brief_assault_line(state: GameState, fidelity: str) -> str | None:
+    approaches = [assault for assault in state.assaults if getattr(assault, "state", "") == "APPROACHING"]
+    if not approaches:
+        return None
+    if fidelity == "LOST":
+        return "THREAT: APPROACH SIGNAL LOST"
+    if fidelity == "FRAGMENTED":
+        return "THREAT: APPROACH SIGNALS DETECTED"
+
+    eta_pairs: list[tuple[str, int]] = []
+    for assault in approaches:
+        eta_fn = getattr(assault, "eta_ticks", None)
+        eta = max(0, int(eta_fn() if callable(eta_fn) else 0))
+        target = str(getattr(assault, "target", "UNKNOWN"))
+        eta_pairs.append((target, eta))
+    if not eta_pairs:
+        return "THREAT: APPROACH DETECTED"
+    target, eta = min(eta_pairs, key=lambda item: item[1])
+    return f"THREAT: {target} ETA~{eta}"
+
+
+def _brief_repair_line(snapshot: dict, state: GameState, fidelity: str) -> str:
+    repairs = snapshot.get("active_repairs", [])
+    if not repairs:
+        return "REPAIRS: NONE ACTIVE"
+    if fidelity == "LOST":
+        return "REPAIRS: NO SIGNAL"
+    if fidelity == "FRAGMENTED":
+        return "REPAIRS: MAINTENANCE SIGNALS DETECTED"
+
+    nearest = min(max(0, int(math.ceil(repair["remaining"]))) for repair in repairs)
+    return f"REPAIRS: {len(repairs)} ACTIVE (NEXT COMPLETE ~{nearest} TICKS)"
+
+
 def _append_policy_state(lines: list[str], state: GameState, fidelity: str) -> None:
     if fidelity == "LOST":
         return
@@ -252,7 +317,7 @@ def _root_causes_and_actions(state: GameState) -> tuple[list[str], list[str]]:
     return causes[:2], actions[:2]
 
 
-def cmd_status(state: GameState) -> list[str]:
+def cmd_status(state: GameState, full: bool = False) -> list[str]:
     """Build compact command status and field tactical status outputs."""
 
     fidelity = comms_fidelity(state)
@@ -264,6 +329,19 @@ def cmd_status(state: GameState) -> list[str]:
         return _render_compact_field_view(state, sector_status_by_name)
 
     if fidelity == "LOST":
+        if not full:
+            lines = [
+                "TIME: ?? | THREAT: UNKNOWN | ASSAULT: NO SIGNAL",
+                "SITUATION: INFORMATION UNSTABLE | POSTURE: UNKNOWN",
+                "CAUSES: COMMS FIDELITY DEGRADED",
+                "ACTIONS: RESTORE COMMS POWER OR REPAIR CM_CORE",
+                "REPAIRS: NO SIGNAL",
+                "RESOURCES: MATERIALS UNKNOWN",
+            ]
+            lines.extend(_render_sector_attention_lines(state, sector_status_by_name))
+            _append_debug_trace_status(lines, state)
+            return lines
+
         lines = [
             "TIME: ?? | THREAT: UNKNOWN | ASSAULT: NO SIGNAL",
             "POSTURE: - | ARCHIVE: NO SIGNAL",
@@ -285,6 +363,25 @@ def cmd_status(state: GameState) -> list[str]:
         return lines
 
     posture = _system_posture(state, fidelity)
+
+    if not full:
+        causes, actions = _root_causes_and_actions(state)
+        situation = _compute_situation_header(state, sector_status_by_name).replace("SITUATION: ", "")
+        lines = [
+            f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+            f"SITUATION: {situation} | POSTURE: {posture} | FIDELITY: {fidelity}",
+            "CAUSES: " + " | ".join(causes),
+            "ACTIONS: " + " | ".join(actions),
+            f"RESOURCES: MATERIALS {snapshot.get('resources', {}).get('materials', 0)}",
+            _brief_repair_line(snapshot, state, fidelity),
+        ]
+        assault_line = _brief_assault_line(state, fidelity)
+        if assault_line:
+            lines.append(assault_line)
+        lines.extend(_render_sector_attention_lines(state, sector_status_by_name))
+        _append_debug_trace_status(lines, state)
+        return lines
+
     archive_text = (
         f"{state.archive_losses}/{ARCHIVE_LOSS_LIMIT}"
         if fidelity == "FULL"
