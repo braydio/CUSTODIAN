@@ -50,3 +50,10 @@ def validate_state_invariants(state) -> None:
         fort_level = int(state.sector_fort_levels.get(sector_name, -1))
         if fort_level < POLICY_LEVEL_MIN or fort_level > POLICY_LEVEL_MAX:
             raise AssertionError("Fortification levels must stay in [0,4].")
+
+    for key in ("SCRAP", "COMPONENTS", "ASSEMBLIES", "MODULES"):
+        if int(state.inventory.get(key, -1)) < 0:
+            raise AssertionError("Inventory values must be non-negative.")
+
+    if int(state.repair_drone_stock) < 0 or int(state.turret_ammo_stock) < 0:
+        raise AssertionError("Stock values must be non-negative.")

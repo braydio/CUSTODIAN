@@ -78,6 +78,10 @@ def _repair_speed(state, structure) -> float:
     )
     if state.in_major_assault:
         speed *= ASSAULT_REPAIR_PENALTY
+        if state.repair_drone_stock <= 0:
+            speed *= 0.75
+        if f"REPAIR:{structure.sector}" in state.assault_tactical_effects:
+            speed *= 1.35
     return speed
 
 

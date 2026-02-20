@@ -54,8 +54,6 @@ html, body {
 
 .terminal-line { display: block; }
 
-.terminal-line { display: block; }
-
 .terminal-line.event { color: #9fd99f; }
 .terminal-line.warning { color: #ffd166; font-weight: 700; }
 .terminal-line.assault { color: #f0a1a1; font-weight: 600; }

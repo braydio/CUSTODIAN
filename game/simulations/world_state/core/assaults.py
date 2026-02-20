@@ -3,8 +3,10 @@ from collections import deque
 from uuid import uuid4
 
 from .assault_instance import AssaultInstance
-from .tactical_bridge import resolve_tactical_assault
+from .tactical_bridge import build_tactical_sectors
 from ..assault_outcome import AssaultOutcome
+from game.simulations.assault.core.autopilot import run_autopilot
+from game.simulations.assault.core.morale import should_retreat
 
 from .config import (
     ASSAULT_ALERTNESS_PER_TICK,
@@ -31,6 +33,7 @@ from .config import (
 )
 from .effects import add_global_effect, add_sector_effect
 from .assault_ledger import AssaultTickRecord, append_record
+from .detection import detection_probability
 from .defense import (
     defense_bias_for_sector,
     doctrine_sector_priority_multiplier,
@@ -254,13 +257,13 @@ def maybe_spawn_assault(state) -> None:
 def maybe_warn(state, node: str) -> None:
     fidelity = comms_fidelity(state)
     if fidelity == "FULL":
-        chance = 0.8
+        chance = detection_probability(0.8, state)
     elif fidelity == "DEGRADED":
-        chance = 0.6
+        chance = detection_probability(0.6, state)
     elif fidelity == "FRAGMENTED":
-        chance = 0.4
+        chance = detection_probability(0.4, state)
     else:
-        chance = 0.2
+        chance = detection_probability(0.2, state)
 
     if state.rng.random() < chance:
         line = f"[WARNING] HOSTILE MOVEMENT NEAR {node}"
@@ -325,6 +328,20 @@ def _start_assault(state, targets) -> None:
     )
     assault.defense_doctrine = state.defense_doctrine
     assault.defense_allocation = dict(state.defense_allocation)
+    assault.duration_ticks = state.rng.randint(5, 12)
+    assault._tactical_sectors = build_tactical_sectors(assault, state=state)
+    assault._summary = {
+        "duration": assault.duration_ticks,
+        "spawned": 0,
+        "killed": 0,
+        "retreated": 0,
+        "remaining": 0,
+    }
+    assault._pre_damage = {name: sector.damage for name, sector in state.sectors.items()}
+    assault._pre_materials = state.materials
+    assault._pre_power_load = float(getattr(state, "power_load", 1.0))
+    assault._pre_queue_ticks = sum(task.ticks_remaining for task in state.fabrication_queue)
+    assault._pre_surveillance = int(state.policies.surveillance_coverage)
     state.current_assault = assault
     print("\n=== MAJOR ASSAULT BEGINS ===")
     print(assault)
@@ -333,56 +350,60 @@ def _start_assault(state, targets) -> None:
 
 def resolve_assault(state, tick_delay=0.05):
     assault = state.current_assault
+    if assault is None:
+        return None
+
     ledger_start = len(state.assault_ledger.ticks)
-    duration = state.rng.randint(ASSAULT_DURATION_MIN, ASSAULT_DURATION_MAX)
-    assault.duration_ticks = duration
     target_names = {sector.name for sector in assault.target_sectors}
     archive_pre_damage = state.sectors["ARCHIVE"].damage
+    tactical_sectors = getattr(assault, "_tactical_sectors", None)
+    if not tactical_sectors:
+        tactical_sectors = build_tactical_sectors(assault, state=state)
+        assault._tactical_sectors = tactical_sectors
+    summary = getattr(assault, "_summary", None)
+    if summary is None:
+        summary = {"duration": assault.duration_ticks, "spawned": 0, "killed": 0, "retreated": 0, "remaining": 0}
+        assault._summary = summary
 
-    def on_tick(sectors, tick):
-        assault.tick()
-        if state.dev_trace:
-            print(
-                {
-                    "tick": getattr(assault, "ticks_elapsed", tick),
-                    "active_sectors": [s.name for s in sectors if s.has_hostiles()],
-                    "ambient_threat": state.ambient_threat,
-                    "alertness": {
-                        sector.name: sector.alertness for sector in assault.target_sectors
-                    },
-                }
-            )
-        for sector in sectors:
-            if not sector.has_hostiles():
-                continue
-            world_sector = next(
-                (s for s in assault.target_sectors if s.name == sector.name), None
-            )
-            if world_sector is None:
-                continue
-            print(f"[Assault] Fighting in {world_sector.name}")
-            world_sector.occupied = True
-            pressure = _incoming_damage_multiplier(state, world_sector.name)
-            world_sector.alertness += ASSAULT_ALERTNESS_PER_TICK * pressure
-            state.ambient_threat += ASSAULT_THREAT_PER_TICK
-            target_weight = _sector_target_weight(state, world_sector)
-            assault_strength = max(1.0, assault.threat_budget / max(1, assault.duration_ticks))
-            defense_mitigation = max(0.0, min(1.0, 1.0 / pressure))
-            append_record(
-                state,
-                AssaultTickRecord(
-                    tick=state.time,
-                    targeted_sector=world_sector.id,
-                    target_weight=target_weight,
-                    assault_strength=assault_strength,
-                    defense_mitigation=defense_mitigation,
-                    failure_triggered=state.is_failed,
-                ),
-            )
+    tick = assault.ticks_elapsed
+    sector_lookup = {sector.name: sector for sector in tactical_sectors}
+    summary["spawned"] += assault.spawn_at_tick(tick, sector_lookup)
+    doctrine = getattr(assault, "defense_doctrine", "BALANCED")
+    allocation = getattr(assault, "defense_allocation", {})
+    for sector in tactical_sectors:
+        if sector.name == "COMMAND":
+            bias_group = "COMMAND"
+        elif sector.name in {"POWER", "FABRICATION"}:
+            bias_group = "POWER"
+        elif sector.name == "COMMS":
+            bias_group = "SENSORS"
+        else:
+            bias_group = "PERIMETER"
+        bias = float(allocation.get(bias_group, 1.0))
+        ammo_factor = 1.0 if state.turret_ammo_stock > 0 else 0.6
+        run_autopilot(sector, doctrine=doctrine, defense_bias=bias * ammo_factor)
 
+    for sector in tactical_sectors:
+        for enemy in list(sector.enemies):
+            if not enemy.alive:
+                summary["killed"] += 1
+                sector.enemies.remove(enemy)
+                continue
+            if should_retreat(enemy):
+                summary["retreated"] += 1
+                sector.enemies.remove(enemy)
+
+    _apply_assault_tick_world_effects(state, assault, tactical_sectors, tick)
+    _tick_tactical_effects(state)
+    assault.tick()
+    summary["remaining"] = sum(len(sector.enemies) for sector in tactical_sectors)
+    if state.turret_ammo_stock > 0:
+        state.turret_ammo_stock -= 1
+
+    if assault.ticks_elapsed < assault.duration_ticks:
+        state.last_assault_lines = _assault_tick_feedback_lines(state, assault, tactical_sectors)
         time.sleep(tick_delay)
-
-    summary = resolve_tactical_assault(assault, on_tick, state=state)
+        return None
 
     assault.resolved = True
     state.current_assault = None
@@ -393,7 +414,7 @@ def resolve_assault(state, tick_delay=0.05):
 
     outcome = AssaultOutcome(
         threat_budget=assault.threat_budget,
-        duration=summary["duration"],
+        duration=assault.duration_ticks,
         spawned=summary["spawned"],
         killed=summary["killed"],
         retreated=summary["retreated"],
@@ -402,9 +423,20 @@ def resolve_assault(state, tick_delay=0.05):
 
     message = _apply_assault_outcome(state, assault, outcome, target_names)
     state.last_assault_lines = [message] if message else []
-    summary_lines = _generate_after_action_summary(state, ledger_start)
+    summary_lines = _generate_after_action_summary(
+        state,
+        ledger_start,
+        pre_damage=getattr(assault, "_pre_damage", {}),
+        pre_materials=getattr(assault, "_pre_materials", state.materials),
+        pre_power_load=getattr(assault, "_pre_power_load", float(getattr(state, "power_load", 1.0))),
+        pre_queue_ticks=getattr(assault, "_pre_queue_ticks", 0.0),
+        pre_surveillance=getattr(assault, "_pre_surveillance", int(state.policies.surveillance_coverage)),
+    )
     if summary_lines:
         state.last_assault_lines.extend(summary_lines)
+        state.last_after_action_lines = list(summary_lines)
+    else:
+        state.last_after_action_lines = []
 
     archive_post_damage = state.sectors["ARCHIVE"].damage
     if archive_pre_damage < 1.0 and archive_post_damage >= 1.0:
@@ -475,6 +507,95 @@ def _compute_defensive_margin(state, outcome) -> float:
         + state.autonomy_strength_bonus
         - outcome.remaining
     )
+
+
+def _tactical_modifier(state, sector_name: str) -> float:
+    modifier = 1.0
+    if f"BOOST:{sector_name}" in state.assault_tactical_effects:
+        modifier *= 0.75
+    if f"LOCKDOWN:{sector_name}" in state.assault_tactical_effects:
+        modifier *= 0.8
+    if f"REROUTE:{sector_name}" in state.assault_tactical_effects:
+        modifier *= 0.85
+    return modifier
+
+
+def _apply_assault_tick_world_effects(state, assault, sectors, tick: int) -> None:
+    if state.dev_trace:
+        print(
+            {
+                "tick": getattr(assault, "ticks_elapsed", tick),
+                "active_sectors": [s.name for s in sectors if s.has_hostiles()],
+                "ambient_threat": state.ambient_threat,
+                "alertness": {
+                    sector.name: sector.alertness for sector in assault.target_sectors
+                },
+            }
+        )
+
+    for sector in sectors:
+        if not sector.has_hostiles():
+            continue
+        world_sector = next(
+            (candidate for candidate in assault.target_sectors if candidate.name == sector.name),
+            None,
+        )
+        if world_sector is None:
+            continue
+        world_sector.occupied = True
+        pressure = _incoming_damage_multiplier(state, world_sector.name)
+        pressure *= _tactical_modifier(state, world_sector.name)
+        if f"DRONE:{world_sector.name}" in state.assault_tactical_effects:
+            world_sector.damage = max(0.0, world_sector.damage - 0.03)
+        if f"REPAIR:{world_sector.name}" in state.assault_tactical_effects:
+            world_sector.damage = max(0.0, world_sector.damage - 0.02)
+        world_sector.alertness += ASSAULT_ALERTNESS_PER_TICK * pressure
+        world_sector.damage += 0.04 * pressure
+        state.ambient_threat += ASSAULT_THREAT_PER_TICK
+        target_weight = _sector_target_weight(state, world_sector)
+        assault_strength = max(1.0, assault.threat_budget / max(1, assault.duration_ticks))
+        defense_mitigation = max(0.0, min(1.0, 1.0 / pressure))
+        append_record(
+            state,
+            AssaultTickRecord(
+                tick=state.time,
+                targeted_sector=world_sector.id,
+                target_weight=target_weight,
+                assault_strength=assault_strength,
+                defense_mitigation=defense_mitigation,
+                failure_triggered=state.is_failed,
+            ),
+        )
+
+
+def _tick_tactical_effects(state) -> None:
+    expired = []
+    for key, payload in state.assault_tactical_effects.items():
+        payload["remaining"] = int(payload.get("remaining", 0)) - 1
+        if payload["remaining"] <= 0:
+            expired.append(key)
+    for key in expired:
+        state.assault_tactical_effects.pop(key, None)
+
+
+def _assault_tick_feedback_lines(state, assault, sectors) -> list[str]:
+    lines = []
+    active = [sector.name for sector in sectors if sector.has_hostiles()]
+    if active:
+        lines.append(f"ASSAULT ACTIVE - SECTOR: {active[0]}")
+    else:
+        lines.append("ASSAULT ACTIVE - HOSTILES MANEUVERING")
+    for name in active[:2]:
+        lines.append(f"{name} UNDER FIRE")
+    if state.turret_ammo_stock <= 0:
+        lines.append("- DEFENSE GRID LOW AMMO")
+    else:
+        lines.append("- DEFENSE GRID ENGAGED")
+    if state.repair_drone_stock > 0:
+        lines.append("- AUTONOMOUS DRONE REPAIRING")
+    lines.append("- STRUCTURAL DAMAGE ACCRUING")
+    lines.append(f"- ASSAULT TICK {assault.ticks_elapsed}/{assault.duration_ticks}")
+    return lines
 
 
 def _incoming_damage_multiplier(state, sector_name: str) -> float:
@@ -555,21 +676,62 @@ def award_salvage(state, outcome) -> None:
         state.materials += 2
 
 
-def _generate_after_action_summary(state, ledger_start: int) -> list[str]:
+def _generate_after_action_summary(
+    state,
+    ledger_start: int,
+    *,
+    pre_damage: dict[str, float] | None = None,
+    pre_materials: int | None = None,
+    pre_power_load: float | None = None,
+    pre_queue_ticks: float | None = None,
+    pre_surveillance: int | None = None,
+) -> list[str]:
+    if pre_damage is None:
+        pre_damage = {name: sector.damage for name, sector in state.sectors.items()}
+    if pre_materials is None:
+        pre_materials = state.materials
+    if pre_power_load is None:
+        pre_power_load = float(getattr(state, "power_load", 1.0))
+    if pre_queue_ticks is None:
+        pre_queue_ticks = sum(task.ticks_remaining for task in state.fabrication_queue)
+    if pre_surveillance is None:
+        pre_surveillance = int(state.policies.surveillance_coverage)
     destroyed = []
     for record in state.assault_ledger.ticks[ledger_start:]:
         if record.building_destroyed and record.building_destroyed not in destroyed:
             destroyed.append(record.building_destroyed)
-    if not destroyed:
-        return []
-    return [
-        "AFTER ACTION SUMMARY:",
-        "LOSS: " + ", ".join(destroyed),
-        (
-            "POLICY LOAD: "
-            f"R{state.policies.repair_intensity} "
-            f"D{state.policies.defense_readiness} "
-            f"S{state.policies.surveillance_coverage} "
-            f"| POWER {state.power_load:.2f}"
-        ),
-    ]
+    sector_losses = []
+    for name, before in pre_damage.items():
+        after = state.sectors[name].damage
+        delta = after - before
+        if delta > 0.01:
+            sector_losses.append((name, delta))
+    sector_losses.sort(key=lambda item: item[1], reverse=True)
+    materials_delta = state.materials - pre_materials
+    power_delta = float(getattr(state, "power_load", 1.0)) - pre_power_load
+    queue_delta = sum(task.ticks_remaining for task in state.fabrication_queue) - pre_queue_ticks
+
+    lines = ["ASSAULT IMPACT:"]
+    if destroyed:
+        lines.append("LOSS: " + ", ".join(destroyed))
+    if sector_losses:
+        name, delta = sector_losses[0]
+        lines.append(f"- {name} integrity -{int(round(delta * 100))}")
+    if materials_delta != 0:
+        lines.append(f"- MATERIALS {materials_delta:+d}")
+    if abs(power_delta) > 0.01:
+        lines.append(f"- POWER LOAD {power_delta:+.2f}")
+    if queue_delta > 0.5:
+        lines.append("- FABRICATION THROUGHPUT REDUCED")
+    if int(state.policies.surveillance_coverage) != pre_surveillance:
+        lines.append("- SURVEILLANCE PROFILE CHANGED")
+    else:
+        lines.append(f"- SURVEILLANCE COVERAGE {state.policies.surveillance_coverage}/4")
+    lines.append(
+        "POLICY LOAD: "
+        f"R{state.policies.repair_intensity} "
+        f"D{state.policies.defense_readiness} "
+        f"S{state.policies.surveillance_coverage} "
+        f"| POWER {state.power_load:.2f}"
+    )
+    return lines

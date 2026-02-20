@@ -17,6 +17,7 @@
 - Canonical sector layout now includes 9 sectors with FABRICATION present but inert.
 - Embodied Presence Phase A is implemented: command/field player modes, transit graph movement (`DEPLOY`, `MOVE`, `RETURN`), and field-local STATUS projection.
 - Defense Control Layer is implemented: command-authored doctrine (`CONFIG DOCTRINE`), normalized defense allocation bias (`ALLOCATE DEFENSE`), computed readiness index, and deterministic assault influence on target weighting, tactical output, and post-assault degradation/regression.
+- Colony-sim expansion is active: surveillance now affects warning/event detection and comms fidelity buffering, assaults now resolve as multi-tick tactical phases (5-12 ticks), and fabrication now supports operator queue management (`FAB ADD/QUEUE/CANCEL/PRIORITY`) plus tiered resource recipes and stockpile outputs.
 - Assault signaling now accounts for field blindness: when an assault begins while deployed, warning visibility is delayed by a short deterministic tick window before surfacing in `WAIT`.
 - Assault spawning now uses ingress-route approaches (`INGRESS_N`/`INGRESS_S`) over `WORLD_GRAPH` edges (2 ticks per edge), with tutorial cap control and derived ETA projection.
 - Internal assault introspection ledger is now active (`core/assault_ledger.py`) and records per-tick assault decisions, structure-loss records, and failure-chain markers for deterministic replay/debug analysis.
@@ -36,7 +37,7 @@
 - Git hooks for docs/secret hygiene exist; enable via `git config core.hooksPath .githooks`.
 
 ## Terminal Command Surface (Implemented)
-- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT NX`, `DEPLOY`, `MOVE`, `RETURN`, `FOCUS`, `HARDEN`, `REPAIR`, `SCAVENGE`, `CONFIG DOCTRINE <NAME>`, `ALLOCATE DEFENSE <SECTOR|GROUP> <PERCENT>`, `HELP`.
+- Accepted operator commands in normal operation: `STATUS`, `WAIT`, `WAIT NX`, `WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>`, `DEPLOY`, `MOVE`, `RETURN`, `FOCUS`, `HARDEN`, `REPAIR`, `SCAVENGE`, `SET <POLICY> <0-4>`, `SET FAB <CAT> <0-4>`, `FORTIFY <SECTOR> <0-4>`, `CONFIG DOCTRINE <NAME>`, `ALLOCATE DEFENSE <SECTOR|GROUP> <PERCENT>`, `FAB ADD <ITEM>`, `FAB QUEUE`, `FAB CANCEL <ID>`, `FAB PRIORITY <CATEGORY>`, tactical assault commands (`REROUTE POWER`, `BOOST DEFENSE`, `DEPLOY DRONE`, `LOCKDOWN`, `PRIORITIZE REPAIR`), `HELP`.
 - Failure-recovery commands: `RESET`, `REBOOT`.
 - Unknown or invalid command input returns:
   - `ok=false`

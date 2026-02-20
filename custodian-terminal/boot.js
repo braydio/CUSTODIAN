@@ -1,16 +1,20 @@
 
 (() => {
-  const terminal = document.getElementById("terminal");
+  const ui = window.CustodianUiHelpers || {};
+  const byId = ui.byId || ((id) => document.getElementById(id));
+  const sleep = ui.sleep || ((ms) => new Promise((r) => setTimeout(r, ms)));
 
-  const hum = document.getElementById("hum");
-  const relay = document.getElementById("relay");
-  const beep = document.getElementById("beep");
-  const timingRelay = document.getElementById("timingRelay");
-  const fourBeep = document.getElementById("fourBeep");
-  const hddSpin = document.getElementById("hddSpin");
+  const terminal = byId("terminal");
 
-  const alertPulseA = document.getElementById("alertPulseA");
-  const alertPulseB = document.getElementById("alertPulseB");
+  const hum = byId("hum");
+  const relay = byId("relay");
+  const beep = byId("beep");
+  const timingRelay = byId("timingRelay");
+  const fourBeep = byId("fourBeep");
+  const hddSpin = byId("hddSpin");
+
+  const alertPulseA = byId("alertPulseA");
+  const alertPulseB = byId("alertPulseB");
 
   const terminalController = window.CustodianTerminal;
 
@@ -297,10 +301,6 @@
     "Initializing Custodian Interface...",
   ];
 
-  function sleep(ms) {
-    return new Promise((r) => setTimeout(r, ms));
-  }
-
   /* =========================
      Typing logic
      ========================= */
@@ -363,4 +363,3 @@
 
   runBoot();
 })();
-

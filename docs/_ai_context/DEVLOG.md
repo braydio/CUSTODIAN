@@ -73,6 +73,14 @@
 ## 2026-02-11
 - Implemented Embodied Presence Phase A: command/field mode split, transit travel graph, and new `DEPLOY`/`MOVE`/`RETURN` command flow.
 ## 2026-02-15
+- Implemented `feature_planning/COLONY-SIM-FEATURES.md` and moved it to `feature_planning/completed/`.
+- Completed surveillance wiring: detection speed now scales warning/event visibility and comms fidelity now applies surveillance buffer plus interference penalty.
+- Extended assault loop to multi-tick tactical resolution (5-12 ticks) with per-tick feedback lines and tactical command effects (`REROUTE`, `BOOST`, `DEPLOY DRONE`, `LOCKDOWN`, `PRIORITIZE REPAIR`).
+- Added after-action impact deltas for sector integrity loss, material delta, power load change, fabrication slowdown signal, and surveillance state.
+- Completed fabrication command loop (`FAB ADD/QUEUE/CANCEL/PRIORITY`) and introduced tiered recipe-driven inventory flow (`SCRAP` -> `COMPONENTS` -> `ASSEMBLIES` -> `MODULES`) plus drone/ammo stock outputs affecting assault/repair behavior.
+- Added deterministic tests for surveillance/fidelity scaling, fabrication loop behavior, and assault WAIT cadence/phase persistence.
+
+## 2026-02-15
 - Implemented the Defense Control Layer from `feature_planning/PLAYER_DESIGNED_DEFENSE.md`: doctrine state, normalized allocation bias, readiness computation, and command-surface configuration (`CONFIG DOCTRINE`, `ALLOCATE DEFENSE`).
 - Wired deterministic strategic influence into assaults: doctrine/allocation now affect target weighting, tactical defense output, incoming pressure, structure degradation severity, and repair regression triage.
 - Added readiness-driven assault severity scaling in `AssaultInstance` via `effective_threat = base_threat * (1.1 - readiness)` with doctrine scale factor.

@@ -1,16 +1,22 @@
 
 (() => {
-  const terminal = document.getElementById("terminal");
-  const terminalContainer = document.getElementById("terminal-container");
-  const inputForm = document.getElementById("terminal-input-form");
-  const inputField = document.getElementById("terminal-input");
-  const outputIndicator = document.getElementById("new-output-indicator");
-  const idleTip = document.getElementById("idle-tip");
-  const liveRegion = document.getElementById("terminal-live");
-  const offlineBanner = document.getElementById("offline-banner");
-  const inputFocusZone = document.getElementById("input-focus-zone");
+  const ui = window.CustodianUiHelpers || {};
+  const byId = ui.byId || ((id) => document.getElementById(id));
+  const escapeHtml = ui.escapeHtml || ((text) => String(text));
+  const isAtBottom = ui.isAtBottom || ((node, threshold) =>
+    node.scrollTop + node.clientHeight >= node.scrollHeight - threshold);
 
-  const keyClick = document.getElementById("keyClick");
+  const terminal = byId("terminal");
+  const terminalContainer = byId("terminal-container");
+  const inputForm = byId("terminal-input-form");
+  const inputField = byId("terminal-input");
+  const outputIndicator = byId("new-output-indicator");
+  const idleTip = byId("idle-tip");
+  const liveRegion = byId("terminal-live");
+  const offlineBanner = byId("offline-banner");
+  const inputFocusZone = byId("input-focus-zone");
+
+  const keyClick = byId("keyClick");
 
   const state = {
     buffer: [],
@@ -56,13 +62,6 @@
     state.buffer = terminal.textContent
       ? terminal.textContent.split("\n")
       : [];
-  }
-
-  function escapeHtml(text) {
-    return text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
   }
 
   function classifyLine(line) {
@@ -318,6 +317,8 @@
       "WAIT",
       "RESET",
       "REBOOT",
+      "CONFIG",
+      "ALLOCATE",
       "FOCUS",
       "HARDEN",
       "SCAVENGE",
@@ -440,9 +441,7 @@
     }
   });
   terminal.addEventListener("scroll", () => {
-    const atBottom =
-      terminal.scrollTop + terminal.clientHeight >=
-      terminal.scrollHeight - SCROLL_THRESHOLD;
+    const atBottom = isAtBottom(terminal, SCROLL_THRESHOLD);
     state.userAtBottom = atBottom;
     if (atBottom) outputIndicator?.classList.remove("visible");
   });

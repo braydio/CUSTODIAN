@@ -8,6 +8,7 @@ from .config import (
     SECTOR_TAGS,
 )
 from .assault_ledger import AssaultTickRecord, append_record
+from .detection import detection_probability
 from .effects import add_global_effect, add_sector_effect
 from .factions import build_faction_profile
 from .power_load import brownout_event_chance_bonus, brownout_event_weight_multiplier
@@ -94,10 +95,13 @@ def goal_sector_breach(state, sector):
 
 
 def power_brownout(state, sector):
+    surveillance_level = int(state.policies.surveillance_coverage)
+    mitigation = 1.0 - (surveillance_level * 0.08)
+    mitigation = max(0.6, mitigation)
     before_power = sector.power
     sector.alertness += 0.6
-    sector.power = max(0.4, sector.power - 0.2)
-    add_sector_effect(sector, "power_drain", severity=1.4, decay=0.04)
+    sector.power = max(0.4, sector.power - (0.2 * mitigation))
+    add_sector_effect(sector, "power_drain", severity=1.4 * mitigation, decay=0.04)
     if state.assault_trace_enabled:
         append_record(
             state,
@@ -126,9 +130,11 @@ def coolant_leak(state, sector):
 
 
 def signal_blackout(state, sector):
+    surveillance_level = int(state.policies.surveillance_coverage)
+    severity_mult = max(0.65, 1.0 - (surveillance_level * 0.07))
     sector.alertness += 0.8
-    add_sector_effect(sector, "sensor_blackout", severity=1.5, decay=0.04)
-    add_global_effect(state, "signal_interference", severity=1.2, decay=0.03)
+    add_sector_effect(sector, "sensor_blackout", severity=1.5 * severity_mult, decay=0.04)
+    add_global_effect(state, "signal_interference", severity=1.2 * severity_mult, decay=0.03)
 
 
 def doctrine_panic(state, sector):
@@ -359,11 +365,17 @@ def maybe_trigger_event(state):
 
     event, sector = state.rng.choice(weighted)
 
-    print(f"[Event] {event.name} in {sector.name}")
+    detection_chance = detection_probability(0.7, state)
+    detected = state.rng.random() < detection_chance
+    if detected:
+        print(f"[Event] {event.name} in {sector.name}")
+    else:
+        print("[Event] Unattributed signal anomaly")
     event.effect(state, sector)
-    sector.last_event = event.name
+    sector.last_event = event.name if detected else "Signal anomaly"
     state.event_cooldowns[(event.name, sector.name)] = state.time
 
     for chained_name in event.chains:
         if state.rng.random() < CHAIN_CHANCE:
-            print(f"  -> Consequence: {chained_name}")
+            if detected:
+                print(f"  -> Consequence: {chained_name}")

@@ -86,7 +86,16 @@ class GameState:
         self.last_structure_loss_lines: list[str] = []
         self.last_repair_lines: list[str] = []
         self.last_fabrication_lines: list[str] = []
+        self.last_after_action_lines: list[str] = []
         self.materials = 3
+        self.inventory = {
+            "SCRAP": 12,
+            "COMPONENTS": 0,
+            "ASSEMBLIES": 0,
+            "MODULES": 0,
+        }
+        self.repair_drone_stock = 0
+        self.turret_ammo_stock = 6
         self.operator_log: list[str] = []
         self._last_sector_status: dict[str, str] = {}
         self.pending_structure_losses: set[str] = set()
@@ -114,6 +123,7 @@ class GameState:
         self.archive_losses = 0
         self.autonomy_override_enabled = True
         self.autonomy_strength_bonus = 0.0
+        self.assault_tactical_effects: dict[str, dict[str, int]] = {}
         self.defense_doctrine = "BALANCED"
         self.doctrine_last_changed_time = 0
         self.defense_allocation = dict(DEFAULT_DEFENSE_ALLOCATION)
@@ -200,6 +210,11 @@ class GameState:
             "archive_losses": self.archive_losses,
             "archive_limit": ARCHIVE_LOSS_LIMIT,
             "resources": {"materials": self.materials},
+            "inventory": dict(self.inventory),
+            "stocks": {
+                "repair_drones": self.repair_drone_stock,
+                "turret_ammo": self.turret_ammo_stock,
+            },
             "power_load": self.power_load,
             "policies": {
                 "repair_intensity": self.policies.repair_intensity,
@@ -215,6 +230,7 @@ class GameState:
             },
             "fabrication_queue": [
                 {
+                    "id": task.id,
                     "name": task.name,
                     "remaining": max(0, int(task.ticks_remaining)),
                     "category": task.category,

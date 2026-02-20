@@ -18,6 +18,15 @@ from game.simulations.world_state.terminal.commands import (
     cmd_harden,
     cmd_help,
     cmd_move,
+    cmd_fab_add,
+    cmd_fab_cancel,
+    cmd_fab_priority,
+    cmd_fab_queue,
+    cmd_boost_defense,
+    cmd_deploy_drone,
+    cmd_lockdown,
+    cmd_prioritize_repair,
+    cmd_reroute_power,
     cmd_fortify,
     cmd_repair,
     cmd_return,
@@ -389,6 +398,68 @@ def process_command(state: GameState, raw: str) -> CommandResult:
             parsed.verb,
         )
 
+    if parsed.verb == "FAB":
+        if not parsed.args:
+            return _finalize_result(state, CommandResult(ok=False, text="FAB <ADD|QUEUE|CANCEL|PRIORITY> ..."))
+        sub = parsed.args[0].strip().upper()
+        if sub == "ADD" and len(parsed.args) == 2:
+            lines = cmd_fab_add(state, parsed.args[1])
+        elif sub == "QUEUE" and len(parsed.args) == 1:
+            lines = cmd_fab_queue(state)
+        elif sub == "CANCEL" and len(parsed.args) == 2:
+            lines = cmd_fab_cancel(state, parsed.args[1])
+        elif sub == "PRIORITY" and len(parsed.args) == 2:
+            lines = cmd_fab_priority(state, parsed.args[1])
+        else:
+            return _finalize_result(state, CommandResult(ok=False, text="FAB ADD <ITEM> | FAB QUEUE | FAB CANCEL <ID> | FAB PRIORITY <CATEGORY>"))
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
+    if parsed.verb == "REROUTE":
+        if len(parsed.args) == 2 and parsed.args[0].strip().upper() == "POWER":
+            lines = cmd_reroute_power(state, parsed.args[1])
+            primary_line = lines[0] if lines else "COMMAND EXECUTED."
+            detail_lines = lines[1:] if len(lines) > 1 else None
+            return _finalize_result(state, CommandResult(ok=True, text=primary_line, lines=detail_lines), parsed.verb)
+        return _finalize_result(state, CommandResult(ok=False, text="REROUTE POWER <SECTOR>"))
+
+    if parsed.verb == "BOOST":
+        if len(parsed.args) == 2 and parsed.args[0].strip().upper() == "DEFENSE":
+            lines = cmd_boost_defense(state, parsed.args[1])
+            primary_line = lines[0] if lines else "COMMAND EXECUTED."
+            detail_lines = lines[1:] if len(lines) > 1 else None
+            return _finalize_result(state, CommandResult(ok=True, text=primary_line, lines=detail_lines), parsed.verb)
+        return _finalize_result(state, CommandResult(ok=False, text="BOOST DEFENSE <SECTOR>"))
+
+    if parsed.verb == "DRONE":
+        if len(parsed.args) == 2 and parsed.args[0].strip().upper() == "DEPLOY":
+            lines = cmd_deploy_drone(state, parsed.args[1])
+            primary_line = lines[0] if lines else "COMMAND EXECUTED."
+            detail_lines = lines[1:] if len(lines) > 1 else None
+            return _finalize_result(state, CommandResult(ok=True, text=primary_line, lines=detail_lines), parsed.verb)
+        return _finalize_result(state, CommandResult(ok=False, text="DRONE DEPLOY <SECTOR>"))
+
+    if parsed.verb == "LOCKDOWN":
+        if len(parsed.args) == 1:
+            lines = cmd_lockdown(state, parsed.args[0])
+            primary_line = lines[0] if lines else "COMMAND EXECUTED."
+            detail_lines = lines[1:] if len(lines) > 1 else None
+            return _finalize_result(state, CommandResult(ok=True, text=primary_line, lines=detail_lines), parsed.verb)
+        return _finalize_result(state, CommandResult(ok=False, text="LOCKDOWN <SECTOR>"))
+
+    if parsed.verb == "PRIORITIZE":
+        if len(parsed.args) == 2 and parsed.args[0].strip().upper() == "REPAIR":
+            lines = cmd_prioritize_repair(state, parsed.args[1])
+            primary_line = lines[0] if lines else "COMMAND EXECUTED."
+            detail_lines = lines[1:] if len(lines) > 1 else None
+            return _finalize_result(state, CommandResult(ok=True, text=primary_line, lines=detail_lines), parsed.verb)
+        return _finalize_result(state, CommandResult(ok=False, text="PRIORITIZE REPAIR <SECTOR>"))
+
     if parsed.verb == "WAIT":
         if parsed.args and parsed.args[0].strip().upper() == "UNTIL":
             if len(parsed.args) != 2:
@@ -408,6 +479,16 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         if ticks is None:
             return _finalize_result(state, _unknown_command())
         lines = cmd_wait_ticks(state, ticks)
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
+    if parsed.verb == "DEPLOY" and len(parsed.args) == 2 and parsed.args[0].strip().upper() == "DRONE":
+        lines = cmd_deploy_drone(state, parsed.args[1])
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(

@@ -1,4 +1,10 @@
 (() => {
+  const ui = window.CustodianUiHelpers || {};
+  const byId = ui.byId || ((id) => document.getElementById(id));
+  const clearChildren = ui.clearChildren || ((node) => {
+    while (node && node.firstChild) node.removeChild(node.firstChild);
+  });
+
   const MAP_CONTAINER_ID = "sector-map";
   const SYSTEM_PANEL_ID = "system-panel";
 
@@ -22,15 +28,11 @@
 
   let lastSnapshot = null;
 
-  function clearNode(node) {
-    while (node.firstChild) node.removeChild(node.firstChild);
-  }
-
   function renderSystemPanel(snapshot) {
-    const panel = document.getElementById(SYSTEM_PANEL_ID);
+    const panel = byId(SYSTEM_PANEL_ID);
     if (!panel) return;
 
-    clearNode(panel);
+    clearChildren(panel);
 
     const lines = [
       `TIME...... ${snapshot.time}`,
@@ -62,10 +64,10 @@
   }
 
   function renderSectorMap(snapshot) {
-    const container = document.getElementById(MAP_CONTAINER_ID);
+    const container = byId(MAP_CONTAINER_ID);
     if (!container) return;
 
-    clearNode(container);
+    clearChildren(container);
 
     const layout = window.CustodianSectorLayout?.SECTOR_LAYOUT || [];
     const byId = new Map(snapshot.sectors.map(s => [s.id, s]));

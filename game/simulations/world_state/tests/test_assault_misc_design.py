@@ -183,5 +183,5 @@ def test_after_action_summary_includes_destroyed_structures() -> None:
         ),
     )
     lines = assaults._generate_after_action_summary(state, 0)
-    assert lines[0:2] == ["AFTER ACTION SUMMARY:", "LOSS: CM_CORE"]
-    assert lines[2].startswith("POLICY LOAD: ")
+    assert lines[0:2] == ["ASSAULT IMPACT:", "LOSS: CM_CORE"]
+    assert any(line.startswith("POLICY LOAD: ") for line in lines)

@@ -27,11 +27,13 @@ def step_world(state: GameState, tick_delay: float = 0.0) -> bool:
         state.last_structure_loss_lines = []
         state.last_repair_lines = []
         state.last_fabrication_lines = []
+        state.last_after_action_lines = []
         state.last_fidelity_lines = []
         return False
 
     state.last_assault_lines = []
     state.last_structure_loss_lines = []
+    state.last_after_action_lines = []
     advance_time(state)
     compute_power_load(state)
     maybe_trigger_event(state)
