@@ -3,7 +3,21 @@
 from __future__ import annotations
 
 
-COMMAND_AUTHORITY_ONLY = {"FOCUS", "HARDEN", "SCAVENGE", "CONFIG", "ALLOCATE"}
+COMMAND_AUTHORITY_ONLY = {
+    "FOCUS",
+    "HARDEN",
+    "SCAVENGE",
+    "CONFIG",
+    "ALLOCATE",
+    "SET",
+    "FORTIFY",
+    "FAB",
+    "REROUTE",
+    "BOOST",
+    "DRONE",
+    "LOCKDOWN",
+    "PRIORITIZE",
+}
 
 
 def requires_command_authority(verb: str) -> bool:

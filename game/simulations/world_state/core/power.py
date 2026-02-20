@@ -3,6 +3,7 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
+from .fidelity import buffered_effectiveness
 from .structures import StructureState
 
 if TYPE_CHECKING:
@@ -101,7 +102,7 @@ def _comms_sensor_fidelity(state: "GameState") -> str:
     comms = state.structures.get("CM_CORE")
     if not comms:
         return "FULL"
-    effectiveness = structure_effective_output(state, comms)
+    effectiveness = buffered_effectiveness(structure_effective_output(state, comms), state)
     if effectiveness >= 0.9:
         return "FULL"
     if effectiveness >= 0.6:

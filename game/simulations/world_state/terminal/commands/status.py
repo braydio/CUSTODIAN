@@ -416,8 +416,24 @@ def cmd_status(state: GameState, full: bool = False) -> list[str]:
             "",
             "RESOURCES:",
             f"- MATERIALS: {resources.get('materials', 0)}",
+            (
+                "- INVENTORY: "
+                f"SCRAP {state.inventory.get('SCRAP', 0)} | "
+                f"COMP {state.inventory.get('COMPONENTS', 0)} | "
+                f"ASM {state.inventory.get('ASSEMBLIES', 0)} | "
+                f"MOD {state.inventory.get('MODULES', 0)}"
+            ),
+            (
+                "- STOCKS: "
+                f"REPAIR_DRONES {state.repair_drone_stock} | "
+                f"TURRET_AMMO {state.turret_ammo_stock}"
+            ),
         ]
     )
+    if state.fabrication_queue:
+        lines.append("FAB QUEUE:")
+        for task in state.fabrication_queue[:4]:
+            lines.append(f"- {task.id} {task.name} ({max(0, int(task.ticks_remaining))} TICKS)")
     _append_repairs(lines, snapshot, state, fidelity)
     _append_recovery_windows(lines, state, fidelity)
     _append_policy_state(lines, state, fidelity)

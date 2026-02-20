@@ -20,8 +20,8 @@ def test_help_output_matches_contract() -> None:
     assert result.lines == [
         "- STATUS   View current situation",
         "- STATUS FULL  Show extended diagnostics",
-        "- WAIT     Advance time (1 tick)",
-        "- WAIT NX  Advance time by N x 1 tick",
+        "- WAIT     Advance time (5 ticks)",
+        "- WAIT NX  Advance time by N x 5 ticks",
         "- WAIT UNTIL <COND>  Advance until ASSAULT/APPROACH/REPAIR_DONE",
         "- DEPLOY   Leave command via transit",
         "- MOVE     Traverse transit and sectors",
@@ -37,6 +37,13 @@ def test_help_output_matches_contract() -> None:
         "- SCAVENGE NX  Run N scavenge cycles",
         "- CONFIG   Set defense doctrine",
         "- ALLOCATE Set defense allocation bias",
+        "- FAB      Queue/add/cancel/prioritize fabrication",
+        "- REROUTE  Tactical: REROUTE POWER <SECTOR>",
+        "- BOOST    Tactical: BOOST DEFENSE <SECTOR>",
+        "- DRONE    Tactical: DRONE DEPLOY <SECTOR>",
+        "- DEPLOY DRONE <SECTOR> (during assault)",
+        "- LOCKDOWN Tactical: LOCKDOWN <SECTOR>",
+        "- PRIORITIZE Tactical: PRIORITIZE REPAIR <SECTOR>",
         "- HELP     Show this list",
     ]
 
@@ -63,7 +70,10 @@ def test_wait_failure_lines_are_explicit_and_final() -> None:
     state = GameState()
     state.sectors["COMMAND"].damage = COMMAND_CENTER_BREACH_DAMAGE
 
-    for _ in range(COMMAND_BREACH_RECOVERY_TICKS + 2):
+    result = process_command(state, "WAIT")
+    for _ in range(COMMAND_BREACH_RECOVERY_TICKS + 6):
+        if result.lines == ["COMMAND CENTER LOST", "SESSION TERMINATED."]:
+            break
         result = process_command(state, "WAIT")
 
     assert result.ok is True

@@ -28,8 +28,28 @@ def test_fabrication_speed_scales_with_allocation_level() -> None:
     low.fab_allocation["DEFENSE"] = 0
     high.fab_allocation["DEFENSE"] = 4
 
-    low.fabrication_queue = [FabricationTask(name="TURRET PARTS", ticks_remaining=10.0, material_cost=1, category="DEFENSE")]
-    high.fabrication_queue = [FabricationTask(name="TURRET PARTS", ticks_remaining=10.0, material_cost=1, category="DEFENSE")]
+    low.fabrication_queue = [
+        FabricationTask(
+            id=1,
+            name="TURRET PARTS",
+            ticks_remaining=10.0,
+            material_cost=1,
+            category="DEFENSE",
+            inputs={},
+            outputs={},
+        )
+    ]
+    high.fabrication_queue = [
+        FabricationTask(
+            id=1,
+            name="TURRET PARTS",
+            ticks_remaining=10.0,
+            material_cost=1,
+            category="DEFENSE",
+            inputs={},
+            outputs={},
+        )
+    ]
 
     tick_fabrication(low)
     tick_fabrication(high)
@@ -61,4 +81,3 @@ def test_wear_scales_with_defense_readiness() -> None:
     apply_wear(high)
 
     assert high.sectors["POWER"].damage > low.sectors["POWER"].damage
-

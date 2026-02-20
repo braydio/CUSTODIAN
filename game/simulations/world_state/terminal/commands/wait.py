@@ -10,15 +10,15 @@ from game.simulations.world_state.core.config import (
     FIELD_ACTION_REPAIRING,
     WAIT_UNTIL_MAX_TICKS,
 )
+from game.simulations.world_state.core.detection import warning_delay_ticks
 from game.simulations.world_state.core.presence import tick_presence
 from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.simulation import step_world
 from game.simulations.world_state.core.state import GameState
 
 
-WAIT_TICKS_PER_UNIT = 1
+WAIT_TICKS_PER_UNIT = 5
 WAIT_TICK_DELAY_SECONDS = 0.5
-FIELD_ASSAULT_WARNING_DELAY_TICKS = 2
 
 
 @dataclass
@@ -29,6 +29,7 @@ class WaitTickInfo:
     event_name: str | None
     event_sector: str | None
     repair_names: list[str]
+    fabrication_lines: list[str]
     assault_started: bool
     assault_warning: bool
     assault_active: bool
@@ -129,6 +130,7 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
         became_failed = step_world(state)
         tick_presence(state)
         repair_lines = state.last_repair_lines
+        fabrication_lines = list(state.last_fabrication_lines)
         fidelity_lines = state.last_fidelity_lines
         if not state.active_repairs and state.field_action == FIELD_ACTION_REPAIRING:
             state.field_action = FIELD_ACTION_IDLE
@@ -161,13 +163,15 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
         and previous_timer > warning_window
         and 0 < current_timer <= warning_window
     )
+    pending_seeded = False
     if assault_started and state.in_field_mode():
-        state.field_assault_warning_pending = FIELD_ASSAULT_WARNING_DELAY_TICKS
+        state.field_assault_warning_pending = warning_delay_ticks(state)
+        pending_seeded = state.field_assault_warning_pending > 0
         assault_started = False
         assault_warning = False
-    if state.field_assault_warning_pending > 0:
+    if state.field_assault_warning_pending > 0 and not pending_seeded:
         state.field_assault_warning_pending -= 1
-        if state.field_assault_warning_pending == 0 and assault_active:
+        if state.field_assault_warning_pending == 0 and assault_active and not pending_seeded:
             assault_warning = True
 
     after_threat = state.ambient_threat
@@ -184,6 +188,7 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
         event_name=event_name,
         event_sector=event_sector,
         repair_names=repair_names,
+        fabrication_lines=fabrication_lines,
         assault_started=assault_started,
         assault_warning=assault_warning,
         assault_active=assault_active,
@@ -230,13 +235,13 @@ def _consume_structure_loss_lines(state: GameState, fidelity: str) -> list[str]:
 
 
 def cmd_wait(state: GameState) -> list[str]:
-    """Advance the world simulation by one wait unit (1 tick)."""
+    """Advance the world simulation by one wait unit."""
 
     return cmd_wait_ticks(state, 1)
 
 
 def cmd_wait_ticks(state: GameState, ticks: int) -> list[str]:
-    """Advance the world simulation by N wait units (1 tick per unit)."""
+    """Advance the world simulation by N wait units."""
 
     if ticks <= 0:
         return ["TIME ADVANCED."]
@@ -248,6 +253,8 @@ def cmd_wait_ticks(state: GameState, ticks: int) -> list[str]:
     last_detail_line = lines[0]
     last_signal_line: str | None = None
     total_ticks = ticks * WAIT_TICKS_PER_UNIT
+    if state.current_assault is not None or state.in_major_assault:
+        total_ticks = ticks
 
     for index in range(total_ticks):
         info = _advance_tick(state)
@@ -354,6 +361,8 @@ def _detail_lines_for_tick(info: WaitTickInfo, state: GameState) -> list[str]:
         tick_lines.extend(info.structure_loss_lines)
     if info.assault_lines:
         tick_lines.extend(info.assault_lines)
+    if info.fabrication_lines:
+        tick_lines.extend(info.fabrication_lines)
 
     event_line = None
     if info.event_name and not info.fidelity_lines:

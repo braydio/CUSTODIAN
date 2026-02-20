@@ -17,8 +17,8 @@ def _disable_wait_tick_pause(monkeypatch) -> None:
     monkeypatch.setattr("game.simulations.world_state.terminal.commands.wait.time.sleep", lambda *_: None)
 
 
-def test_wait_advances_one_tick(monkeypatch) -> None:
-    """WAIT should advance one wait unit (1 tick) and report advancement."""
+def test_wait_advances_five_ticks(monkeypatch) -> None:
+    """WAIT should advance one wait unit (5 ticks) and report advancement."""
 
     _disable_wait_tick_pause(monkeypatch)
 
@@ -27,12 +27,12 @@ def test_wait_advances_one_tick(monkeypatch) -> None:
     result = process_command(state, "WAIT")
 
     assert result.ok is True
-    assert state.time == 1
+    assert state.time == 5
     assert result.text == "TIME ADVANCED."
 
 
-def test_wait_nx_advances_units_of_one_tick(monkeypatch) -> None:
-    """WAIT NX should advance time by N wait units (1 tick each)."""
+def test_wait_nx_advances_units_of_five_ticks(monkeypatch) -> None:
+    """WAIT NX should advance time by N wait units (5 ticks each)."""
 
     _disable_wait_tick_pause(monkeypatch)
 
@@ -52,7 +52,7 @@ def test_wait_nx_advances_units_of_one_tick(monkeypatch) -> None:
     result = process_command(state, "WAIT 5X")
 
     assert result.ok is True
-    assert state.time == 5
+    assert state.time == 25
     assert result.text == "TIME ADVANCED."
     assert result.lines is None
 
@@ -72,6 +72,7 @@ def test_wait_suppresses_repeated_event_blocks(monkeypatch) -> None:
             event_name="Comms Burst",
             event_sector="COMMS",
             repair_names=[],
+            fabrication_lines=[],
             assault_started=False,
             assault_warning=False,
             assault_active=False,
@@ -158,8 +159,10 @@ def test_failure_mode_locks_non_reset_commands(monkeypatch) -> None:
     _disable_wait_tick_pause(monkeypatch)
 
     wait_result = None
-    for _ in range(COMMAND_BREACH_RECOVERY_TICKS + 2):
+    for _ in range(COMMAND_BREACH_RECOVERY_TICKS + 6):
         wait_result = process_command(state, "WAIT")
+        if wait_result.lines and wait_result.lines[-2:] == ["COMMAND CENTER LOST", "SESSION TERMINATED."]:
+            break
     status_result = process_command(state, "STATUS")
 
     assert wait_result.ok is True
@@ -176,8 +179,10 @@ def test_reset_command_restores_session_after_failure(monkeypatch) -> None:
     state = GameState()
     state.sectors["COMMAND"].damage = COMMAND_CENTER_BREACH_DAMAGE
     _disable_wait_tick_pause(monkeypatch)
-    for _ in range(COMMAND_BREACH_RECOVERY_TICKS + 2):
-        process_command(state, "WAIT")
+    for _ in range(COMMAND_BREACH_RECOVERY_TICKS + 6):
+        wait_result = process_command(state, "WAIT")
+        if wait_result.lines and wait_result.lines[-2:] == ["COMMAND CENTER LOST", "SESSION TERMINATED."]:
+            break
 
     result = process_command(state, "RESET")
 
@@ -579,6 +584,63 @@ def test_debug_help_lists_debug_commands() -> None:
         "- DEBUG REPORT",
         "- DEBUG HELP",
     ]
+
+
+def test_fab_command_loop_add_queue_cancel_priority() -> None:
+    state = GameState(seed=5)
+    state.inventory["SCRAP"] = 10
+
+    added = process_command(state, "FAB ADD COMPONENTS_BATCH")
+    queued = process_command(state, "FAB QUEUE")
+    set_priority = process_command(state, "FAB PRIORITY DRONES")
+    canceled = process_command(state, "FAB CANCEL 1")
+
+    assert added.ok is True
+    assert added.text.startswith("FAB QUEUED:")
+    assert queued.ok is True
+    assert queued.text == "FAB QUEUE:"
+    assert queued.lines is not None
+    assert "1." in queued.lines[0]
+    assert set_priority.ok is True
+    assert set_priority.text == "FAB PRIORITY SET: DRONES"
+    assert canceled.ok is True
+    assert canceled.text == "FAB TASK 1 CANCELED."
+
+
+def test_wait_uses_world_five_ticks_and_assault_one_tick(monkeypatch) -> None:
+    _disable_wait_tick_pause(monkeypatch)
+    state = GameState(seed=3)
+
+    world_wait = process_command(state, "WAIT")
+    assert world_wait.ok is True
+    assert state.time == 5
+
+    state.dev_mode = True
+    process_command(state, "DEBUG ASSAULT")
+    assault_wait = process_command(state, "WAIT")
+
+    assert assault_wait.ok is True
+    assert state.time == 6
+    assert state.current_assault is not None
+
+
+def test_assault_progresses_over_multiple_waits(monkeypatch) -> None:
+    _disable_wait_tick_pause(monkeypatch)
+    state = GameState(seed=11)
+    state.dev_mode = True
+    process_command(state, "DEBUG ASSAULT")
+
+    first = process_command(state, "WAIT")
+    assert first.ok is True
+    assert first.lines is not None
+    assert any("ASSAULT ACTIVE" in line for line in first.lines)
+
+    for _ in range(20):
+        process_command(state, "WAIT")
+        if state.current_assault is None:
+            break
+
+    assert state.current_assault is None
 
 
 def test_debug_trace_toggles_assault_trace_flag() -> None:

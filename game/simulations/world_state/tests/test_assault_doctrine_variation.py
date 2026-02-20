@@ -79,7 +79,7 @@ def test_terminal_commands_configure_defense_layer() -> None:
 
     doctrine = process_command(state, "CONFIG DOCTRINE COMMAND_FIRST")
     allocation = process_command(state, "ALLOCATE DEFENSE COMMAND 40")
-    status = process_command(state, "STATUS")
+    status = process_command(state, "STATUS FULL")
 
     assert doctrine.ok is True
     assert doctrine.text == "DEFENSE DOCTRINE SET: COMMAND_FIRST"
