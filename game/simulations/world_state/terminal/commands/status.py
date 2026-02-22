@@ -9,6 +9,7 @@ from game.simulations.world_state.core.config import (
 )
 from game.simulations.world_state.core.policies import render_slider
 from game.simulations.world_state.core.power import comms_fidelity
+from game.simulations.world_state.core.relays import relay_scan_lines
 from game.simulations.world_state.core.state import GameState
 
 
@@ -18,6 +19,20 @@ MARKERS = {
     "ALERT": "~",
     "ACTIVITY DETECTED": "?",
     "STABLE": ".",
+}
+
+STATUS_GROUP_ALIASES = {
+    "FULL": "FULL",
+    "BRIEF": "BRIEF",
+    "SUMMARY": "BRIEF",
+    "FAB": "FAB",
+    "FABRICATION": "FAB",
+    "POSTURE": "POSTURE",
+    "ASSAULT": "ASSAULT",
+    "POLICY": "POLICY",
+    "SYSTEMS": "SYSTEMS",
+    "RELAY": "RELAY",
+    "RELAYS": "RELAY",
 }
 
 
@@ -245,6 +260,7 @@ def _append_policy_state(lines: list[str], state: GameState, fidelity: str) -> N
                 "- DEFENSE: ACTIVE",
                 "- SURVEILLANCE: ACTIVE",
                 f"- POWER LOAD: {state.power_load:.2f}",
+                f"- LOGISTICS: L{state.logistics_load:.2f}/T{state.logistics_throughput:.2f}",
             ]
         )
         return
@@ -275,6 +291,12 @@ def _append_policy_state(lines: list[str], state: GameState, fidelity: str) -> N
     else:
         lines.append("- FORTIFICATION: NONE")
     lines.append(f"- POWER LOAD: {state.power_load:.2f}")
+    lines.append(
+        "- LOGISTICS: "
+        f"LOAD {state.logistics_load:.2f} | "
+        f"THROUGHPUT {state.logistics_throughput:.2f} | "
+        f"MULT {state.logistics_multiplier:.2f}"
+    )
 
 
 def _root_causes_and_actions(state: GameState) -> tuple[list[str], list[str]]:
@@ -464,3 +486,169 @@ def cmd_status(state: GameState, full: bool = False) -> list[str]:
                 lines.append(f"  - {structure.id} {structure.state.value}")
 
     return lines
+
+
+def _status_fabrication(state: GameState) -> list[str]:
+    lines = ["STATUS GROUP: FABRICATION"]
+    snapshot = state.snapshot()
+    resources = snapshot.get("resources", {})
+    lines.extend(
+        [
+            f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+            f"MATERIALS: {resources.get('materials', 0)}",
+            (
+                "INVENTORY: "
+                f"SCRAP {state.inventory.get('SCRAP', 0)} | "
+                f"COMP {state.inventory.get('COMPONENTS', 0)} | "
+                f"ASM {state.inventory.get('ASSEMBLIES', 0)} | "
+                f"MOD {state.inventory.get('MODULES', 0)}"
+            ),
+            (
+                "STOCKS: "
+                f"REPAIR_DRONES {state.repair_drone_stock} | "
+                f"TURRET_AMMO {state.turret_ammo_stock}"
+            ),
+            "FAB ALLOCATION:",
+        ]
+    )
+    for name, value in sorted(state.fab_allocation.items()):
+        lines.append(f"- {name}: {value}")
+    if not state.fabrication_queue:
+        lines.append("FAB QUEUE: EMPTY")
+    else:
+        lines.append("FAB QUEUE:")
+        for task in state.fabrication_queue[:8]:
+            lines.append(
+                f"- {task.id} {task.name} [{task.category}] "
+                f"{max(0, int(task.ticks_remaining))} TICKS"
+            )
+    return lines
+
+
+def _status_posture(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    posture = _system_posture(state, fidelity)
+    archive_text = (
+        f"{state.archive_losses}/{ARCHIVE_LOSS_LIMIT}"
+        if fidelity == "FULL"
+        else f"{state.archive_losses}+"
+    )
+    lines = [
+        "STATUS GROUP: POSTURE",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"POSTURE: {posture} | FIDELITY: {fidelity} | ARCHIVE: {archive_text}",
+        f"LOCATION: {state.player_location} | MODE: {state.player_mode}",
+        f"DEFENSE DOCTRINE: {state.defense_doctrine}",
+        f"READINESS: {state.compute_readiness():.2f}",
+    ]
+    if state.focused_sector:
+        lines.append(f"FOCUS: {state.focused_sector}")
+    lines.append(f"HARDENED: {'YES' if state.hardened else 'NO'}")
+    return lines
+
+
+def _status_assault(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    lines = [
+        "STATUS GROUP: ASSAULT",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"ACTIVE ASSAULT: {'YES' if state.current_assault is not None or state.in_major_assault else 'NO'}",
+    ]
+    if state.assault_timer is None:
+        lines.append("NEXT ASSAULT ETA: NONE")
+    else:
+        lines.append(f"NEXT ASSAULT ETA: {state.assault_timer} TICKS")
+    lines.append(f"APPROACH TRACKS: {len(state.assaults)}")
+    _append_assault_eta(lines, state, fidelity)
+    if state.last_assault_lines:
+        lines.append("LAST TACTICAL SUMMARY:")
+        lines.extend(f"- {line}" for line in state.last_assault_lines[:6])
+    return lines
+
+
+def _status_policy(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    lines = [
+        "STATUS GROUP: POLICY",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"DEFENSE DOCTRINE: {state.defense_doctrine}",
+        f"READINESS: {state.compute_readiness():.2f}",
+        "DEFENSE ALLOCATION:",
+        f"- PERIMETER: {state.defense_allocation.get('PERIMETER', 1.0):.2f}",
+        f"- POWER: {state.defense_allocation.get('POWER', 1.0):.2f}",
+        f"- SENSORS: {state.defense_allocation.get('SENSORS', 1.0):.2f}",
+        f"- COMMAND: {state.defense_allocation.get('COMMAND', 1.0):.2f}",
+    ]
+    _append_policy_state(lines, state, fidelity)
+    return lines
+
+
+def _status_systems(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    sector_status_by_name = {item["name"]: item["status"] for item in snapshot["sectors"]}
+    lines = [
+        "STATUS GROUP: SYSTEMS",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"FIDELITY: {fidelity}",
+        "SECTORS:",
+    ]
+    sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
+    stable_header_added = False
+    for sector in sorted_sectors:
+        current = sector_status_by_name.get(sector.name, sector.status_label())
+        marker = MARKERS.get(current, ".")
+        if marker == "." and not stable_header_added:
+            lines.append("---")
+            stable_header_added = True
+        lines.append(f"{sector.name:<12} {marker}")
+        if fidelity == "FULL":
+            sector_structures = [s for s in state.structures.values() if s.sector == sector.name]
+            for structure in sector_structures:
+                lines.append(f"  - {structure.id} {structure.state.value}")
+    _append_repairs(lines, snapshot, state, fidelity)
+    _append_recovery_windows(lines, state, fidelity)
+    return lines
+
+
+def _status_relay(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    lines = [
+        "STATUS GROUP: RELAY",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"LOCATION: {state.player_location} | MODE: {state.player_mode} | FIDELITY: {fidelity}",
+    ]
+    lines.extend(relay_scan_lines(state, fidelity))
+    return lines
+
+
+def cmd_status_group(state: GameState, group: str) -> list[str] | None:
+    normalized = STATUS_GROUP_ALIASES.get(group.strip().upper())
+    if normalized is None:
+        return None
+    if normalized == "FULL":
+        return cmd_status(state, full=True)
+    if normalized == "BRIEF":
+        return cmd_status(state, full=False)
+    if normalized == "FAB":
+        return _status_fabrication(state)
+    if normalized == "POSTURE":
+        return _status_posture(state)
+    if normalized == "ASSAULT":
+        return _status_assault(state)
+    if normalized == "POLICY":
+        return _status_policy(state)
+    if normalized == "SYSTEMS":
+        return _status_systems(state)
+    if normalized == "RELAY":
+        return _status_relay(state)
+    return None

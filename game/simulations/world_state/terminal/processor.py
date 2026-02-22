@@ -28,14 +28,20 @@ from game.simulations.world_state.terminal.commands import (
     cmd_prioritize_repair,
     cmd_reroute_power,
     cmd_fortify,
+    cmd_policy_preset,
+    cmd_policy_show,
     cmd_repair,
     cmd_return,
     cmd_reset,
+    cmd_scan_relays,
     cmd_scavenge,
     cmd_scavenge_runs,
     cmd_set_fabrication,
     cmd_set_policy,
     cmd_status,
+    cmd_status_group,
+    cmd_stabilize_relay,
+    cmd_sync,
     cmd_wait,
     cmd_wait_until,
     cmd_wait_ticks,
@@ -333,18 +339,28 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         )
 
     if parsed.verb == "STATUS":
-        if len(parsed.args) > 1:
-            return _finalize_result(state, _unknown_command())
-        full = False
-        if len(parsed.args) == 1:
-            mode = parsed.args[0].strip().upper()
-            if mode == "FULL":
-                full = True
-            elif mode in {"BRIEF", "SUMMARY"}:
-                full = False
-            else:
-                return _finalize_result(state, _unknown_command())
-        lines = cmd_status(state, full=full)
+        if len(parsed.args) == 0:
+            lines = cmd_status(state, full=False)
+        elif len(parsed.args) == 1:
+            lines = cmd_status_group(state, parsed.args[0])
+            if lines is None:
+                return _finalize_result(
+                    state,
+                    CommandResult(
+                        ok=False,
+                        text=(
+                            "STATUS <BRIEF|FULL|FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>"
+                        ),
+                    ),
+                )
+        else:
+            return _finalize_result(
+                state,
+                CommandResult(
+                    ok=False,
+                    text="STATUS <BRIEF|FULL|FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>",
+                ),
+            )
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(
@@ -376,6 +392,21 @@ def process_command(state: GameState, raw: str) -> CommandResult:
                 state,
                 CommandResult(ok=False, text="SET <REPAIR|DEFENSE|SURVEILLANCE> <0-4> | SET FAB <CAT> <0-4>"),
             )
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
+    if parsed.verb == "POLICY":
+        if len(parsed.args) == 1 and parsed.args[0].strip().upper() == "SHOW":
+            lines = cmd_policy_show(state)
+        elif len(parsed.args) == 2 and parsed.args[0].strip().upper() == "PRESET":
+            lines = cmd_policy_preset(state, parsed.args[1])
+        else:
+            return _finalize_result(state, CommandResult(ok=False, text="POLICY SHOW | POLICY PRESET <NAME>"))
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(
@@ -491,6 +522,42 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         if ticks is None:
             return _finalize_result(state, _unknown_command())
         lines = cmd_wait_ticks(state, ticks)
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
+    if parsed.verb == "SCAN":
+        if len(parsed.args) == 1 and parsed.args[0].strip().upper() == "RELAYS":
+            lines = cmd_scan_relays(state)
+            primary_line = lines[0] if lines else "COMMAND EXECUTED."
+            detail_lines = lines[1:] if len(lines) > 1 else None
+            return _finalize_result(
+                state,
+                CommandResult(ok=True, text=primary_line, lines=detail_lines),
+                parsed.verb,
+            )
+        return _finalize_result(state, CommandResult(ok=False, text="SCAN RELAYS"))
+
+    if parsed.verb == "STABILIZE":
+        if len(parsed.args) == 2 and parsed.args[0].strip().upper() == "RELAY":
+            lines = cmd_stabilize_relay(state, parsed.args[1])
+            primary_line = lines[0] if lines else "COMMAND EXECUTED."
+            detail_lines = lines[1:] if len(lines) > 1 else None
+            return _finalize_result(
+                state,
+                CommandResult(ok=True, text=primary_line, lines=detail_lines),
+                parsed.verb,
+            )
+        return _finalize_result(state, CommandResult(ok=False, text="STABILIZE RELAY <ID>"))
+
+    if parsed.verb == "SYNC":
+        if parsed.args:
+            return _finalize_result(state, _unknown_command())
+        lines = cmd_sync(state)
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(

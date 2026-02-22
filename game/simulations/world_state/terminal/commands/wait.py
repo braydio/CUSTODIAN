@@ -30,6 +30,7 @@ class WaitTickInfo:
     event_sector: str | None
     repair_names: list[str]
     fabrication_lines: list[str]
+    relay_lines: list[str]
     assault_started: bool
     assault_warning: bool
     assault_active: bool
@@ -131,6 +132,8 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
         tick_presence(state)
         repair_lines = state.last_repair_lines
         fabrication_lines = list(state.last_fabrication_lines)
+        relay_lines = list(state.last_relay_lines)
+        state.last_relay_lines = []
         fidelity_lines = state.last_fidelity_lines
         if not state.active_repairs and state.field_action == FIELD_ACTION_REPAIRING:
             state.field_action = FIELD_ACTION_IDLE
@@ -189,6 +192,7 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
         event_sector=event_sector,
         repair_names=repair_names,
         fabrication_lines=fabrication_lines,
+        relay_lines=relay_lines,
         assault_started=assault_started,
         assault_warning=assault_warning,
         assault_active=assault_active,
@@ -363,6 +367,8 @@ def _detail_lines_for_tick(info: WaitTickInfo, state: GameState) -> list[str]:
         tick_lines.extend(info.assault_lines)
     if info.fabrication_lines:
         tick_lines.extend(info.fabrication_lines)
+    if info.relay_lines:
+        tick_lines.extend(info.relay_lines)
 
     event_line = None
     if info.event_name and not info.fidelity_lines:

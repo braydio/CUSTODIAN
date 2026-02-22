@@ -9,11 +9,9 @@ Generated from `feature_planning/` document audit against current implementation
 
 ## Unified Outstanding Backlog
 
-1. `OPEN` Add ARRN relay network feature set.
-- Add state: `relay_nodes`, `relay_packets_pending`, `knowledge_index`, `last_sync_time`.
-- Add commands: `SCAN RELAYS`, `STABILIZE RELAY <ID>`, `SYNC`.
-- Add authority/fidelity behavior for relay reporting.
-- Add tests for command authority, locality, timed stabilization, and fidelity output.
+1. `PARTIAL` Add ARRN relay network feature set.
+- Implemented: state fields, command surface (`SCAN RELAYS`, `STABILIZE RELAY`, `SYNC`), fidelity-gated scan output, timed field stabilization, and sync-to-knowledge progression.
+- Remaining: expand rewards beyond the initial remote-repair discount and add relay decay/dormancy pressure loop.
 - Source: `feature_planning/CODEX-FEATURE-RECOMMEND.md`
 
 2. `PARTIAL` Complete assault-resource coupling follow-ons after transit interception.
@@ -27,9 +25,8 @@ Generated from `feature_planning/` document audit against current implementation
 - Source: `feature_planning/ASSAULT_INSTANCES_WORLD_TRAVEL.md`
 
 4. `PARTIAL` Finish infrastructure next-step systems not yet wired.
-- Add logistics throughput cap system (`core/logistics.py`) and integrate with simulation/status.
-- Add policy QoL commands: `POLICY PRESET <...>` and `POLICY SHOW`.
-- Add tests for logistics penalties and preset invariants.
+- Implemented: logistics throughput cap model (`core/logistics.py`) integrated with simulation/status, policy QoL commands, and initial logistics penalty tests.
+- Remaining: balance/tuning pass for logistics pressure curve and additional long-run edge-case tests.
 - Source: `feature_planning/INFRASTRUCTURE_POLICY_LAYER_NEXT_STEPS.md`
 
 5. `PARTIAL` Complete power-performance exact mechanics that are still missing.

@@ -74,6 +74,7 @@ def test_wait_suppresses_repeated_event_blocks(monkeypatch) -> None:
             event_sector="COMMS",
             repair_names=[],
             fabrication_lines=[],
+            relay_lines=[],
             assault_started=False,
             assault_warning=False,
             assault_active=False,
@@ -600,6 +601,117 @@ def test_status_includes_policy_state_section() -> None:
     assert "POLICY STATE:" in result.lines
     assert any(line.startswith("- REPAIR INTENSITY: ") for line in result.lines)
     assert any(line.startswith("- POWER LOAD: ") for line in result.lines)
+
+
+def test_status_group_fabrication_reports_queue_and_allocation() -> None:
+    state = GameState(seed=7)
+
+    result = process_command(state, "STATUS FAB")
+
+    assert result.ok is True
+    assert result.text == "STATUS GROUP: FABRICATION"
+    assert result.lines is not None
+    assert "FAB ALLOCATION:" in result.lines
+    assert "FAB QUEUE: EMPTY" in result.lines
+
+
+def test_status_group_policy_reports_doctrine_and_allocation() -> None:
+    state = GameState()
+
+    result = process_command(state, "STATUS POLICY")
+
+    assert result.ok is True
+    assert result.text == "STATUS GROUP: POLICY"
+    assert result.lines is not None
+    assert "DEFENSE ALLOCATION:" in result.lines
+    assert any(line.startswith("- PERIMETER: ") for line in result.lines)
+    assert any(line.startswith("- REPAIR INTENSITY: ") for line in result.lines)
+
+
+def test_status_group_systems_reports_sector_rows() -> None:
+    state = GameState()
+
+    result = process_command(state, "STATUS SYSTEMS")
+
+    assert result.ok is True
+    assert result.text == "STATUS GROUP: SYSTEMS"
+    assert result.lines is not None
+    assert "SECTORS:" in result.lines
+    assert any("COMMAND" in line for line in result.lines)
+
+
+def test_status_group_relay_reports_network_summary() -> None:
+    state = GameState()
+
+    result = process_command(state, "STATUS RELAY")
+
+    assert result.ok is True
+    assert result.text == "STATUS GROUP: RELAY"
+    assert result.lines is not None
+    assert "RELAY NETWORK:" in result.lines
+
+
+def test_status_invalid_group_returns_usage() -> None:
+    state = GameState()
+
+    result = process_command(state, "STATUS BOGUS")
+
+    assert result.ok is False
+    assert result.text == "STATUS <BRIEF|FULL|FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>"
+
+
+def test_policy_show_and_preset_commands_apply_state() -> None:
+    state = GameState()
+
+    preset = process_command(state, "POLICY PRESET SIEGE")
+    shown = process_command(state, "POLICY SHOW")
+
+    assert preset.ok is True
+    assert preset.text == "POLICY PRESET APPLIED: SIEGE."
+    assert state.policies.defense_readiness == 4
+    assert shown.ok is True
+    assert shown.text == "POLICY STATE:"
+    assert shown.lines is not None
+    assert "- DEFENSE: 4" in shown.lines
+
+
+def test_relay_commands_scan_stabilize_and_sync(monkeypatch) -> None:
+    _disable_wait_tick_pause(monkeypatch)
+    state = GameState(seed=13)
+
+    scan = process_command(state, "SCAN RELAYS")
+    assert scan.ok is True
+    assert scan.text == "RELAY NETWORK:"
+
+    deploy = process_command(state, "DEPLOY NORTH")
+    assert deploy.ok is True
+    process_command(state, "WAIT")
+    stabilize = process_command(state, "STABILIZE RELAY R_NORTH")
+    assert stabilize.ok is True
+    assert stabilize.text.startswith("STABILIZING R_NORTH")
+
+    process_command(state, "WAIT")
+    process_command(state, "WAIT")
+    process_command(state, "WAIT")
+
+    back = process_command(state, "RETURN")
+    assert back.ok is True
+    process_command(state, "WAIT")
+    sync = process_command(state, "SYNC")
+    assert sync.ok is True
+    assert sync.text.startswith("SYNC COMPLETE:")
+    assert state.knowledge_index["RELAY_RECOVERY"] >= 1
+
+
+def test_sync_requires_command_authority() -> None:
+    state = GameState()
+    process_command(state, "DEPLOY NORTH")
+    process_command(state, "WAIT")
+
+    result = process_command(state, "SYNC")
+
+    assert result.ok is False
+    assert result.text == "COMMAND AUTHORITY REQUIRED."
 
 
 def test_debug_help_lists_debug_commands() -> None:

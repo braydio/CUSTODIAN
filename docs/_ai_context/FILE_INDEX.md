@@ -12,6 +12,8 @@
 - `game/simulations/world_state/core/assaults.py` — approach movement, assault resolution, after-action effects.
 - `game/simulations/world_state/core/repairs.py` — repair progression/cancellation/regression.
 - `game/simulations/world_state/core/fabrication.py` — fabrication queue and recipe processing.
+- `game/simulations/world_state/core/logistics.py` — throughput-cap/load model and overload multipliers.
+- `game/simulations/world_state/core/relays.py` — ARRN relay state, scan rendering, stabilize/sync helpers.
 - `game/simulations/world_state/core/power.py` — power efficiency and comms fidelity mapping.
 - `game/simulations/world_state/core/detection.py` — surveillance/fidelity warning-window helpers.
 
@@ -20,6 +22,8 @@
 - `game/simulations/world_state/terminal/parser.py` — command parsing/tokenization.
 - `game/simulations/world_state/terminal/processor.py` — authority checks and command dispatch.
 - `game/simulations/world_state/terminal/commands/help.py` — categorical help tree.
+- `game/simulations/world_state/terminal/commands/policy.py` — policy mutation + preset/show commands.
+- `game/simulations/world_state/terminal/commands/relay.py` — relay scan/stabilize/sync command handlers.
 - `game/simulations/world_state/terminal/commands/wait.py` — WAIT/WAIT UNTIL behavior.
 - `game/simulations/world_state/terminal/repl.py` — interactive CLI REPL.
 

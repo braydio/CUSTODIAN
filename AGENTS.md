@@ -51,6 +51,7 @@ This repository contains lightweight prototypes for a defense-oriented simulatio
 - Favor small functions and clear naming.
 - Use ASCII text in code and output.
 - Add only minimal comments where logic is not self-explanatory.
+- For multi-phase or dependency-heavy feature work, implement in coherent slices (one stable phase at a time), validate with tests, then proceed to the next slice. Avoid large all-at-once rewrites across dependent systems.
 
 ## Documentation
 

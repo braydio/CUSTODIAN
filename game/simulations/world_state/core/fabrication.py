@@ -75,6 +75,7 @@ def tick_fabrication(state) -> list[str]:
     category = str(task.category).upper()
     allocation_level = int(state.fab_allocation.get(category, 2))
     throughput_mult = 0.5 + (allocation_level * 0.25)
+    throughput_mult *= max(0.25, float(getattr(state, "fabrication_throughput_mult", 1.0)))
 
     # Fortification posture diverts throughput capacity into infrastructure upkeep.
     fort_avg = 0.0

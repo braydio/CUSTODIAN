@@ -2,9 +2,17 @@
 
 from __future__ import annotations
 
-from .config import COMMAND_CENTER_LOCATION, FIELD_ACTION_IDLE, FIELD_ACTION_MOVING, FIELD_ACTION_REPAIRING
+from .config import (
+    COMMAND_CENTER_LOCATION,
+    FIELD_ACTION_IDLE,
+    FIELD_ACTION_MOVING,
+    FIELD_ACTION_REPAIRING,
+    FIELD_ACTION_STABILIZING,
+)
 from .defense import ALLOCATION_KEYS, normalize_doctrine
 from .policies import FAB_CATEGORIES, POLICY_LEVEL_MAX, POLICY_LEVEL_MIN
+from .relays import RELAY_STATUSES
+from .tasks import task_type
 
 
 def validate_state_invariants(state) -> None:
@@ -14,10 +22,18 @@ def validate_state_invariants(state) -> None:
     if len(state.active_repairs) > 1:
         raise AssertionError("Phase A supports at most one active repair.")
 
-    if state.active_task and state.field_action != FIELD_ACTION_MOVING:
-        raise AssertionError("field_action mismatch for active movement task.")
+    if state.active_task:
+        active_type = task_type(state.active_task)
+        if active_type == "MOVE" and state.field_action != FIELD_ACTION_MOVING:
+            raise AssertionError("field_action mismatch for active movement task.")
+        if active_type == "RELAY" and state.field_action != FIELD_ACTION_STABILIZING:
+            raise AssertionError("field_action mismatch for active relay task.")
 
-    if state.active_repairs and state.field_action not in {FIELD_ACTION_REPAIRING, FIELD_ACTION_IDLE}:
+    if state.active_repairs and state.field_action not in {
+        FIELD_ACTION_REPAIRING,
+        FIELD_ACTION_IDLE,
+        FIELD_ACTION_STABILIZING,
+    }:
         raise AssertionError("field_action mismatch for active repair.")
 
     if state.in_command_mode() and state.player_location != COMMAND_CENTER_LOCATION:
@@ -57,3 +73,17 @@ def validate_state_invariants(state) -> None:
 
     if int(state.repair_drone_stock) < 0 or int(state.turret_ammo_stock) < 0:
         raise AssertionError("Stock values must be non-negative.")
+
+    if int(state.relay_packets_pending) < 0:
+        raise AssertionError("Relay packet count must be non-negative.")
+    for relay in state.relay_nodes.values():
+        status = str(relay.get("status", "UNKNOWN")).upper()
+        if status not in RELAY_STATUSES:
+            raise AssertionError("Relay status must be a known value.")
+
+    if float(state.logistics_throughput) <= 0.0:
+        raise AssertionError("Logistics throughput must be positive.")
+    if float(state.logistics_load) < 0.0:
+        raise AssertionError("Logistics load must be non-negative.")
+    if float(state.logistics_multiplier) <= 0.0:
+        raise AssertionError("Logistics multiplier must be positive.")

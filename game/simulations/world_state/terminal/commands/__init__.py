@@ -7,8 +7,15 @@ from .deploy import cmd_deploy
 from .move import cmd_move
 from .config_doctrine import cmd_config_doctrine
 from .allocate_defense import cmd_allocate_defense
-from .policy import cmd_fortify, cmd_set_fabrication, cmd_set_policy
+from .policy import (
+    cmd_fortify,
+    cmd_policy_preset,
+    cmd_policy_show,
+    cmd_set_fabrication,
+    cmd_set_policy,
+)
 from .fabrication import cmd_fab_add, cmd_fab_cancel, cmd_fab_priority, cmd_fab_queue
+from .relay import cmd_scan_relays, cmd_stabilize_relay, cmd_sync
 from .assault_ops import (
     cmd_boost_defense,
     cmd_deploy_drone,
@@ -20,7 +27,7 @@ from .repair import cmd_repair
 from .return_cmd import cmd_return
 from .reset import cmd_reset
 from .scavenge import cmd_scavenge, cmd_scavenge_runs
-from .status import cmd_status
+from .status import cmd_status, cmd_status_group
 from .wait import cmd_wait, cmd_wait_ticks, cmd_wait_until
 
 __all__ = [
@@ -43,13 +50,19 @@ __all__ = [
     "cmd_scavenge_runs",
     "cmd_set_fabrication",
     "cmd_set_policy",
+    "cmd_policy_show",
+    "cmd_policy_preset",
     "cmd_reroute_power",
     "cmd_boost_defense",
     "cmd_deploy_drone",
     "cmd_lockdown",
     "cmd_prioritize_repair",
     "cmd_status",
+    "cmd_status_group",
     "cmd_wait",
     "cmd_wait_ticks",
     "cmd_wait_until",
+    "cmd_scan_relays",
+    "cmd_stabilize_relay",
+    "cmd_sync",
 ]

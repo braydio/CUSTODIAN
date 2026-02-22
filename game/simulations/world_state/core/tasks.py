@@ -20,6 +20,15 @@ class RepairTask:
     ticks_remaining: int
 
 
+@dataclass
+class RelayTask:
+    relay_id: str
+    target: str
+    ticks: int
+    total: int
+    type: str = "RELAY"
+
+
 def task_type(task: Any) -> str:
     if task is None:
         return "UNKNOWN"

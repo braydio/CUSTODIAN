@@ -28,6 +28,7 @@ from .tasks import task_to_dict
 from .defense import DEFAULT_DEFENSE_ALLOCATION, compute_readiness, normalize_doctrine
 from .assault_ledger import AssaultLedger, AssaultTickRecord, append_record
 from .policies import PolicyState, default_fabrication_allocation
+from .relays import default_relay_nodes
 
 
 class SectorState:
@@ -86,6 +87,7 @@ class GameState:
         self.last_structure_loss_lines: list[str] = []
         self.last_repair_lines: list[str] = []
         self.last_fabrication_lines: list[str] = []
+        self.last_relay_lines: list[str] = []
         self.last_after_action_lines: list[str] = []
         self.materials = 3
         self.inventory = {
@@ -106,6 +108,17 @@ class GameState:
         self.fabrication_queue: list[Any] = []
         self.sector_fort_levels = {name: 0 for name in SECTORS}
         self.power_load = 1.0
+        self.logistics_throughput = 3.0
+        self.logistics_load = 0.0
+        self.logistics_pressure = 0.0
+        self.logistics_multiplier = 1.0
+        self.repair_throughput_mult = 1.0
+        self.fabrication_throughput_mult = 1.0
+        self.relay_nodes = default_relay_nodes()
+        self.relay_packets_pending = 0
+        self.knowledge_index: dict[str, int] = {"RELAY_RECOVERY": 0}
+        self.last_sync_time: int | None = None
+        self.relay_benefits: dict[str, int] = {}
 
         # Player state
         self.player_mode = PLAYER_MODE_COMMAND
@@ -216,6 +229,12 @@ class GameState:
                 "turret_ammo": self.turret_ammo_stock,
             },
             "power_load": self.power_load,
+            "logistics": {
+                "throughput": self.logistics_throughput,
+                "load": self.logistics_load,
+                "pressure": self.logistics_pressure,
+                "multiplier": self.logistics_multiplier,
+            },
             "policies": {
                 "repair_intensity": self.policies.repair_intensity,
                 "defense_readiness": self.policies.defense_readiness,
@@ -238,6 +257,12 @@ class GameState:
                 }
                 for task in self.fabrication_queue
             ],
+            "relays": {
+                "nodes": {key: dict(value) for key, value in self.relay_nodes.items()},
+                "packets_pending": int(self.relay_packets_pending),
+                "knowledge_index": dict(self.knowledge_index),
+                "last_sync_time": self.last_sync_time,
+            },
             "active_repairs": [
                 {
                     "id": sid,
