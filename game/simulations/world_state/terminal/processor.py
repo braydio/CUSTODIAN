@@ -52,7 +52,6 @@ SECTOR_NAME_TO_NAME = {sector["name"]: sector["name"] for sector in SECTOR_DEFS}
 COMMAND_HANDLERS: dict[str, Handler] = {
     "STATUS": cmd_status,
     "WAIT": cmd_wait,
-    "HELP": lambda state: cmd_help(dev_mode=state.dev_mode),
 }
 
 
@@ -346,6 +345,19 @@ def process_command(state: GameState, raw: str) -> CommandResult:
             else:
                 return _finalize_result(state, _unknown_command())
         lines = cmd_status(state, full=full)
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
+    if parsed.verb == "HELP":
+        if len(parsed.args) > 1:
+            return _finalize_result(state, CommandResult(ok=False, text="HELP <TOPIC>"))
+        topic = parsed.args[0] if parsed.args else None
+        lines = cmd_help(dev_mode=state.dev_mode, topic=topic)
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(

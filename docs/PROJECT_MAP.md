@@ -1,5 +1,7 @@
 # PROJECT MAP — “Airfield Campaign (Tutorial)”
 
+> Implementation note: this document is a campaign design reference and is not a strict description of current world-state code behavior. For implemented runtime behavior, use `docs/_ai_context/CURRENT_STATE.md`.
+
 ## 1. Core Fantasy (Locked)
 
 * Post-apocalyptic spacer tech world

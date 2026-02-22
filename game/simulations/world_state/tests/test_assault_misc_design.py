@@ -112,6 +112,96 @@ def test_advance_assaults_moves_on_edge_tick_budget() -> None:
     assert approach.current_node() != start_node
 
 
+def test_transit_intercept_spends_ammo_and_reduces_threat_multiplier(monkeypatch) -> None:
+    state = GameState(seed=9)
+    state.turret_ammo_stock = 3
+    monkeypatch.setattr(assaults, "maybe_warn", lambda *_: None)
+    approach = assaults.AssaultApproach(
+        ingress="INGRESS_N",
+        target="ARCHIVE",
+        route=["INGRESS_N", "T_NORTH", "ARCHIVE"],
+    )
+    approach.index = 1
+    state.assaults = [approach]
+
+    assaults.advance_assaults(state)
+
+    assert state.turret_ammo_stock == 2
+    assert approach.threat_mult < 1.0
+    assert any(line.startswith("[INTERCEPT] T_NORTH") for line in state.last_assault_lines)
+
+
+def test_transit_intercept_does_not_apply_without_ammo(monkeypatch) -> None:
+    state = GameState(seed=9)
+    state.turret_ammo_stock = 0
+    monkeypatch.setattr(assaults, "maybe_warn", lambda *_: None)
+    approach = assaults.AssaultApproach(
+        ingress="INGRESS_N",
+        target="ARCHIVE",
+        route=["INGRESS_N", "T_NORTH", "ARCHIVE"],
+    )
+    approach.index = 1
+    state.assaults = [approach]
+
+    assaults.advance_assaults(state)
+
+    assert state.turret_ammo_stock == 0
+    assert approach.threat_mult == 1.0
+    assert not any(line.startswith("[INTERCEPT]") for line in state.last_assault_lines)
+
+
+def test_transit_intercept_mitigation_applies_to_started_assault(monkeypatch) -> None:
+    seeded = 11
+    monkeypatch.setattr(assaults, "maybe_warn", lambda *_: None)
+
+    with_ammo = GameState(seed=seeded)
+    with_ammo.turret_ammo_stock = 1
+    approach_with = assaults.AssaultApproach(
+        ingress="INGRESS_N",
+        target="ARCHIVE",
+        route=["INGRESS_N", "T_NORTH", "ARCHIVE"],
+    )
+    approach_with.index = 1
+    approach_with.ticks_to_next = 1
+    with_ammo.assaults = [approach_with]
+
+    without_ammo = GameState(seed=seeded)
+    without_ammo.turret_ammo_stock = 0
+    approach_without = assaults.AssaultApproach(
+        ingress="INGRESS_N",
+        target="ARCHIVE",
+        route=["INGRESS_N", "T_NORTH", "ARCHIVE"],
+    )
+    approach_without.index = 1
+    approach_without.ticks_to_next = 1
+    without_ammo.assaults = [approach_without]
+
+    assaults.advance_assaults(with_ammo)
+    assaults.advance_assaults(without_ammo)
+
+    assert with_ammo.current_assault is not None
+    assert without_ammo.current_assault is not None
+    assert with_ammo.current_assault.threat_budget < without_ammo.current_assault.threat_budget
+
+
+def test_transit_intercept_multiplier_is_bounded_by_floor(monkeypatch) -> None:
+    state = GameState(seed=7)
+    state.turret_ammo_stock = 1
+    monkeypatch.setattr(assaults, "maybe_warn", lambda *_: None)
+    approach = assaults.AssaultApproach(
+        ingress="INGRESS_N",
+        target="ARCHIVE",
+        route=["INGRESS_N", "T_NORTH", "ARCHIVE"],
+    )
+    approach.index = 1
+    approach.threat_mult = 0.71
+    state.assaults = [approach]
+
+    assaults.advance_assaults(state)
+
+    assert approach.threat_mult == assaults.ASSAULT_TRANSIT_INTERCEPT_FLOOR
+
+
 def test_award_salvage_maps_penetration_to_materials() -> None:
     state = GameState(seed=1)
     base = state.materials

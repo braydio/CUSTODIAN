@@ -1,27 +1,42 @@
 # FILE INDEX — CUSTODIAN
 
+## Entrypoints
+
 - `game/__main__.py` — unified entrypoint (`python -m game`).
-- `game/run.py` — main world simulation entry point.
-- `game/simulations/world_state/core/simulation.py` — world-state tick loop (`sandbox_world`).
-- `game/simulations/world_state/core/state.py` — `GameState` and time progression.
-- `game/simulations/world_state/core/hub.py` — hub/campaign schemas, offer generation, recon, and hub mutation rules.
-- `game/simulations/world_state/core/events.py` — ambient event generation.
-- `game/simulations/world_state/core/assaults.py` — assault timing + lifecycle.
-- `game/simulations/world_state/core/structures.py` — structure damage model scaffolding.
-- `game/simulations/world_state/core/repairs.py` — repair task timing and progression.
-- `game/simulations/world_state/terminal/` — command parser, processor, registry, and REPL.
-- `game/simulations/world_state/terminal/commands/harden.py` — HARDEN command handler.
-- `game/simulations/world_state/terminal/commands/repair.py` — REPAIR command handler.
-- `game/simulations/world_state/terminal/commands/scavenge.py` — SCAVENGE command handler.
-- `game/simulations/world_state/server.py` — world-state SSE stream server.
-- `game/simulations/assault/core/assault.py` — assault resolution logic.
-- `custodian-terminal/index.html` — terminal UI shell.
-- `custodian-terminal/boot.js` — boot sequence + system log + SSE fallback + audio base.
-- `custodian-terminal/terminal.js` — terminal buffer + input handling.
-- `custodian-terminal/sector-map.js` — sector map projection renderer.
-- `custodian-terminal/sector_layout.js` — canonical Phase 1 layout metadata for map rendering.
-- `custodian-terminal/server.py` — static server + boot stream + `/command` + `/snapshot`.
-- `.githooks/` — local git hooks (pre-commit, commit-msg, post-commit).
-- `docs/INFORMATION_DEGRADATION.md` — canonical STATUS/WAIT information degradation rules.
-- `tests/` — pytest suite for world-state stepping and terminal commands.
-- `tests/test_repairs.py` — repair progression tests.
+- `game/run.py` — world simulation runner shim.
+
+## World-State Core
+
+- `game/simulations/world_state/core/state.py` — `GameState`, snapshot shape, failure checks.
+- `game/simulations/world_state/core/simulation.py` — tick orchestration (`step_world`).
+- `game/simulations/world_state/core/assaults.py` — approach movement, assault resolution, after-action effects.
+- `game/simulations/world_state/core/repairs.py` — repair progression/cancellation/regression.
+- `game/simulations/world_state/core/fabrication.py` — fabrication queue and recipe processing.
+- `game/simulations/world_state/core/power.py` — power efficiency and comms fidelity mapping.
+- `game/simulations/world_state/core/detection.py` — surveillance/fidelity warning-window helpers.
+
+## Terminal Stack
+
+- `game/simulations/world_state/terminal/parser.py` — command parsing/tokenization.
+- `game/simulations/world_state/terminal/processor.py` — authority checks and command dispatch.
+- `game/simulations/world_state/terminal/commands/help.py` — categorical help tree.
+- `game/simulations/world_state/terminal/commands/wait.py` — WAIT/WAIT UNTIL behavior.
+- `game/simulations/world_state/terminal/repl.py` — interactive CLI REPL.
+
+## Server Contract
+
+- `game/simulations/world_state/server_contracts.py` — shared request parsing/result serialization and replay cache.
+- `game/simulations/world_state/server.py` — world-state server endpoints.
+- `custodian-terminal/server.py` — UI server endpoints and static host.
+
+## Terminal UI
+
+- `custodian-terminal/index.html` — shell layout.
+- `custodian-terminal/boot.js` — boot stream + audio sequencing.
+- `custodian-terminal/terminal.js` — input loop, history, hints, autocomplete, output rendering.
+- `custodian-terminal/sector-map.js` — snapshot projection for sector map/system panel.
+- `custodian-terminal/style.css` — terminal and panel styling.
+
+## Tests
+
+- `game/simulations/world_state/tests/` — parser, processor, simulation, and feature behavior tests.
