@@ -206,3 +206,9 @@
 - Updated contract documentation to reflect active endpoint behavior, current command set semantics, and authoritative backend dispatch model.
 - Updated cross-references in docs index and world-state docs so `/command` behavior descriptions match live code paths.
 - Confirmed no `AGENTS_ADDENDUM.md` exists in repository scope, so no completed addendum items remain to prune or archive.
+
+## 2026-02-22
+- Updated terminal UI readability and spacing in `custodian-terminal/style.css`, including a new display header with explicit mode labeling.
+- Added strategic map monitor mode in `custodian-terminal/index.html`/`terminal.js`/`sector-map.js` with auto `WAIT` cadence every 2 seconds while active.
+- Removed startup shortcut banner from command-mode activation; UI shortcut line is now printed only after the operator runs `HELP`.
+- Added directional topology visuals for transit links, ingress links, and core sectors in the map monitor SVG projection.
