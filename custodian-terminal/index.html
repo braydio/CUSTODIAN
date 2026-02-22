@@ -24,6 +24,10 @@
 
   <div id="app-shell">
     <div id="terminal-container">
+      <div id="display-header">
+        <div id="display-mode-label">MODE: COMMAND</div>
+        <button id="map-mode-toggle" type="button">ENTER MAP MODE</button>
+      </div>
       <pre id="terminal"></pre>
       <div id="terminal-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div id="offline-banner" role="status" aria-live="polite">LINK DEGRADED: COMMAND NETWORK UNSTABLE</div>
@@ -45,6 +49,11 @@
     <div id="side-panel">
       <div id="sector-map"></div>
       <div id="system-panel"></div>
+    </div>
+
+    <div id="map-mode-panel" class="hidden" aria-live="polite">
+      <div id="map-mode-map"></div>
+      <div id="map-mode-log"></div>
     </div>
   </div>
 

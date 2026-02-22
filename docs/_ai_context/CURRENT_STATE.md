@@ -3,6 +3,8 @@
 ## Runtime Status
 
 - Terminal UI is active in `custodian-terminal/` with boot stream, command transport, and snapshot-driven side panels.
+- Terminal UI now includes a strategic map monitor mode with 2-second auto-`WAIT` cadence while active.
+- Startup command activation no longer prints UI shortcut text; shortcut line is emitted only after `HELP`.
 - Backend-authoritative world-state simulation is active in `game/simulations/world_state/`.
 - Unified CLI entrypoint is active via `python -m game` (`--ui`, `--repl`, `--sim`, `--dev`, `--seed`).
 - Deterministic seeding and command idempotency are implemented (`GameState(seed=...)`, `/command` `command_id` replay cache).
