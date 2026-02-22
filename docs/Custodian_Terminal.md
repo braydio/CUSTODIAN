@@ -30,3 +30,13 @@ Browser terminal UI for the world-state backend.
 
 - Frontend is non-authoritative.
 - Backend controls parsing, authority, simulation stepping, and all game state mutation.
+
+
+## Map monitor mode
+
+- Startup no longer prints UI shortcut text in the terminal feed.
+- Shortcut guidance appears only when operators run `HELP`.
+- Added `ENTER MAP MODE` toggle in the terminal header.
+- Map mode shifts to a strategic topology view with transit and ingress links.
+- While map mode is active, the client issues `WAIT` every 2 seconds to keep world-time moving.
+- Map mode keeps a minimal rolling log at the bottom of the map panel and fades older lines.

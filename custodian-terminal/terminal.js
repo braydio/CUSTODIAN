@@ -1,4 +1,3 @@
-
 (() => {
   const ui = window.CustodianUiHelpers || {};
   const byId = ui.byId || ((id) => document.getElementById(id));
@@ -6,6 +5,7 @@
   const isAtBottom = ui.isAtBottom || ((node, threshold) =>
     node.scrollTop + node.clientHeight >= node.scrollHeight - threshold);
 
+  const appShell = byId("app-shell");
   const terminal = byId("terminal");
   const terminalContainer = byId("terminal-container");
   const inputForm = byId("terminal-input-form");
@@ -15,6 +15,10 @@
   const liveRegion = byId("terminal-live");
   const offlineBanner = byId("offline-banner");
   const inputFocusZone = byId("input-focus-zone");
+  const modeLabel = byId("display-mode-label");
+  const mapModeToggle = byId("map-mode-toggle");
+  const mapModePanel = byId("map-mode-panel");
+  const mapModeLog = byId("map-mode-log");
 
   const keyClick = byId("keyClick");
 
@@ -34,61 +38,28 @@
     hintSecondaryShown: false,
     hintTimer: null,
     hintFocusIntent: false,
-    shortcutsShown: false,
     completionMatches: [],
     completionIndex: -1,
     completionSeed: "",
+    mapMode: false,
+    mapAutoTimer: null,
+    mapAutoBusy: false,
   };
 
   const CURSOR_IDLE_MS = 420;
   const SCROLL_THRESHOLD = 8;
   const IDLE_TIP_MS = 5000;
+  const MAP_AUTOWAIT_MS = 2000;
 
   let lastKeyClickAt = 0;
   const KEY_CLICK_MIN_INTERVAL = 28;
   let alertBurstTimer = null;
   const COMPLETION_TOKENS = [
-    "HELP",
-    "HELP CORE",
-    "HELP MOVEMENT",
-    "HELP SYSTEMS",
-    "HELP POLICY",
-    "HELP FABRICATION",
-    "HELP ASSAULT",
-    "HELP STATUS",
-    "STATUS",
-    "STATUS FULL",
-    "WAIT",
-    "WAIT UNTIL",
-    "DEPLOY",
-    "MOVE",
-    "RETURN",
-    "FOCUS",
-    "HARDEN",
-    "REPAIR",
-    "SCAVENGE",
-    "SET",
-    "SET FAB",
-    "POLICY SHOW",
-    "POLICY PRESET",
-    "FORTIFY",
-    "CONFIG DOCTRINE",
-    "ALLOCATE DEFENSE",
-    "SCAN RELAYS",
-    "STABILIZE RELAY",
-    "SYNC",
-    "FAB ADD",
-    "FAB QUEUE",
-    "FAB CANCEL",
-    "FAB PRIORITY",
-    "REROUTE POWER",
-    "BOOST DEFENSE",
-    "DRONE DEPLOY",
-    "DEPLOY DRONE",
-    "LOCKDOWN",
-    "PRIORITIZE REPAIR",
-    "STATUS RELAY",
-    "DEBUG HELP",
+    "HELP", "HELP CORE", "HELP MOVEMENT", "HELP SYSTEMS", "HELP POLICY", "HELP FABRICATION", "HELP ASSAULT", "HELP STATUS",
+    "STATUS", "STATUS FULL", "WAIT", "WAIT UNTIL", "DEPLOY", "MOVE", "RETURN", "FOCUS", "HARDEN", "REPAIR", "SCAVENGE",
+    "SET", "SET FAB", "POLICY SHOW", "POLICY PRESET", "FORTIFY", "CONFIG DOCTRINE", "ALLOCATE DEFENSE", "SCAN RELAYS",
+    "STABILIZE RELAY", "SYNC", "FAB ADD", "FAB QUEUE", "FAB CANCEL", "FAB PRIORITY", "REROUTE POWER", "BOOST DEFENSE",
+    "DRONE DEPLOY", "DEPLOY DRONE", "LOCKDOWN", "PRIORITIZE REPAIR", "STATUS RELAY", "DEBUG HELP",
   ];
 
   function playKeyClick() {
@@ -103,12 +74,6 @@
       keyClick.playbackRate = 0.95 + Math.random() * 0.1;
       keyClick.play().catch(() => {});
     } catch {}
-  }
-
-  function syncBufferFromDom() {
-    state.buffer = terminal.textContent
-      ? terminal.textContent.split("\n")
-      : [];
   }
 
   function classifyLine(line) {
@@ -126,12 +91,8 @@
     }
     if (line.startsWith("[EVENT]")) return "event";
     if (line.startsWith("[WARNING]")) return "warning";
-    if (line.startsWith("[ASSAULT]") || line.startsWith("=== ASSAULT")) {
-      return "assault";
-    }
-    if (line.startsWith("[FOCUS SET]") || line.startsWith("[HARDENING")) {
-      return "intent";
-    }
+    if (line.startsWith("[ASSAULT]") || line.startsWith("=== ASSAULT")) return "assault";
+    if (line.startsWith("[FOCUS SET]") || line.startsWith("[HARDENING")) return "intent";
     return "";
   }
 
@@ -159,12 +120,8 @@
     const gapMs = 90;
     for (let i = 0; i < pulses; i++) {
       const start = i * (pulseMs + gapMs);
-      setTimeout(() => {
-        terminal.classList.add("flicker");
-      }, start);
-      setTimeout(() => {
-        terminal.classList.remove("flicker");
-      }, start + pulseMs);
+      setTimeout(() => terminal.classList.add("flicker"), start);
+      setTimeout(() => terminal.classList.remove("flicker"), start + pulseMs);
     }
     alertBurstTimer = setTimeout(() => {
       terminal.classList.remove("flicker");
@@ -196,8 +153,7 @@
   function normalizeAssaultSpacing(lines, lastLine) {
     const output = [];
     let inAssault = false;
-    const isAssault = (line) =>
-      line.startsWith("[ASSAULT]") || line.startsWith("=== ASSAULT");
+    const isAssault = (line) => line.startsWith("[ASSAULT]") || line.startsWith("=== ASSAULT");
 
     for (const line of lines) {
       const assaultLine = isAssault(line);
@@ -226,9 +182,7 @@
     if (!idleTip || state.hintLocked) return;
     const primaryClass = primaryFaded ? "hint-primary faded" : "hint-primary";
     idleTip.innerHTML = `<span class="${primaryClass}">CLICK TO FOCUS INPUT</span>${
-      showSecondary
-        ? '<span class="hint-sep">|</span><span class="hint-secondary">TYPE HELP FOR AVAILABLE COMMANDS</span>'
-        : ""
+      showSecondary ? '<span class="hint-sep">|</span><span class="hint-secondary">TYPE HELP FOR AVAILABLE COMMANDS</span>' : ""
     }`;
     idleTip.classList.add("visible");
   }
@@ -245,15 +199,13 @@
   }
 
   function startFocusedHintSequence() {
-    if (!state.hintFocusIntent) return;
-    if (state.hintLocked || state.hintFocusStarted) return;
+    if (!state.hintFocusIntent || state.hintLocked || state.hintFocusStarted) return;
     state.hintFocusStarted = true;
     renderHint(true, false);
     if (state.hintTimer) clearTimeout(state.hintTimer);
     state.hintTimer = setTimeout(() => {
       if (state.hintLocked || state.hintSecondaryShown) return;
-      if (!state.inputEnabled) return;
-      if (document.activeElement !== inputField) return;
+      if (!state.inputEnabled || document.activeElement !== inputField) return;
       if (state.liveInput.trim() !== "") return;
       state.hintSecondaryShown = true;
       renderHint(true, true);
@@ -289,19 +241,13 @@
     }
 
     const count = state.completionMatches.length;
-    if (reverse) {
-      state.completionIndex = (state.completionIndex - 1 + count) % count;
-    } else {
-      state.completionIndex = (state.completionIndex + 1) % count;
-    }
+    state.completionIndex = reverse
+      ? (state.completionIndex - 1 + count) % count
+      : (state.completionIndex + 1) % count;
     const suggestion = state.completionMatches[state.completionIndex];
     if (!suggestion) return false;
     applyInputValue(`${suggestion} `);
     return true;
-  }
-
-  function appendLine(line) {
-    appendLines([line]);
   }
 
   function appendLines(lines) {
@@ -309,14 +255,32 @@
     const normalized = normalizeAssaultSpacing(lines, lastLine);
     state.buffer.push(...normalized);
     render();
-    if (hasCriticalSignal(normalized)) {
-      triggerAlertFlashBurst(3);
-    }
+    if (hasCriticalSignal(normalized)) triggerAlertFlashBurst(3);
     if (!state.userAtBottom) outputIndicator?.classList.add("visible");
   }
 
+  function appendLine(line) {
+    appendLines([line]);
+  }
+
+  function appendMapLog(lines) {
+    if (!mapModeLog || !Array.isArray(lines) || !lines.length) return;
+    const cleaned = lines.filter((line) => String(line || "").trim() !== "").slice(-8);
+    cleaned.forEach((line) => {
+      const row = document.createElement("div");
+      row.className = "map-mode-log-line";
+      row.textContent = line;
+      mapModeLog.appendChild(row);
+      setTimeout(() => row.classList.add("faded"), 5000);
+    });
+    while (mapModeLog.children.length > 16) {
+      mapModeLog.removeChild(mapModeLog.firstChild);
+    }
+    mapModeLog.scrollTop = mapModeLog.scrollHeight;
+  }
+
   function renderLiveLine() {
-    if (!state.inputEnabled) return;
+    if (!state.inputEnabled || state.mapMode) return;
     const last = state.buffer.at(-1);
     if (last?.startsWith("> ")) state.buffer.pop();
     const cursor = state.cursorVisible && !state.typingActive ? "_" : "";
@@ -325,7 +289,7 @@
   }
 
   setInterval(() => {
-    if (!state.inputEnabled) return;
+    if (!state.inputEnabled || state.mapMode) return;
     state.cursorVisible = !state.cursorVisible;
     renderLiveLine();
   }, CURSOR_IDLE_MS);
@@ -333,15 +297,11 @@
   inputField.addEventListener("input", () => {
     if (!state.inputEnabled) return;
     playKeyClick();
-
     state.typingActive = true;
     state.liveInput = inputField.value.toUpperCase();
     if (inputField.value !== state.liveInput) inputField.value = state.liveInput;
     resetCompletionState();
     renderLiveLine();
-    if (state.liveInput.trim() !== "" && state.hintTimer) {
-      clearTimeout(state.hintTimer);
-    }
 
     clearTimeout(state._typingTimer);
     state._typingTimer = setTimeout(() => {
@@ -349,19 +309,11 @@
     }, 220);
   });
 
-  inputField.addEventListener("keydown", (e) => {
-    if (!state.inputEnabled) return;
-    if (e.key.length === 1 || e.key === "Backspace" || e.key === "Enter") {
-      playKeyClick();
-    }
-  });
-
   function setInputEnabled(enabled) {
-    console.log("[TERMINAL] setInputEnabled:", enabled);
     state.inputEnabled = enabled;
     inputField.disabled = !enabled;
     inputForm.classList.toggle("disabled", !enabled);
-    if (enabled) {
+    if (enabled && !state.mapMode) {
       inputField.focus();
       state.cursorVisible = true;
       renderLiveLine();
@@ -372,7 +324,7 @@
   }
 
   function focusInputIfEnabled() {
-    if (!state.inputEnabled) return;
+    if (!state.inputEnabled || state.mapMode) return;
     state.hintFocusIntent = true;
     inputField.focus();
     startFocusedHintSequence();
@@ -386,10 +338,7 @@
       body: JSON.stringify({ raw: command, command_id: commandId }),
     });
     const payload = await res.json();
-    return {
-      ok: Boolean(payload.ok),
-      lines: Array.isArray(payload.lines) ? payload.lines : [],
-    };
+    return { ok: Boolean(payload.ok), lines: Array.isArray(payload.lines) ? payload.lines : [] };
   }
 
   async function fetchSnapshot() {
@@ -399,23 +348,7 @@
   function shouldRefreshSnapshot(command, ok) {
     if (!ok) return false;
     const verb = command.trim().toUpperCase().split(/\s+/)[0];
-    return [
-      "STATUS",
-      "WAIT",
-      "RESET",
-      "REBOOT",
-      "SET",
-      "FAB",
-      "CONFIG",
-      "ALLOCATE",
-      "FOCUS",
-      "HARDEN",
-      "SCAVENGE",
-      "REPAIR",
-      "DEPLOY",
-      "MOVE",
-      "RETURN",
-    ].includes(verb);
+    return ["STATUS", "WAIT", "RESET", "REBOOT", "SET", "FAB", "CONFIG", "ALLOCATE", "FOCUS", "HARDEN", "SCAVENGE", "REPAIR", "DEPLOY", "MOVE", "RETURN"].includes(verb);
   }
 
   function setLiveSummary(text) {
@@ -439,6 +372,7 @@
     try {
       const snapshot = await fetchSnapshot();
       window.CustodianSectorMap.renderSectorMap(snapshot);
+      window.CustodianSectorMap.renderOverviewMap(snapshot, "map-mode-map", true);
       updateCommsPresentation(snapshot);
       if (!state.mapHintShown) {
         appendLine("[MAP UPDATED]");
@@ -447,9 +381,33 @@
     } catch {}
   }
 
+  async function executeCommandFlow(cmd, options = {}) {
+    const { echo = true, mapFeed = false, appendHelpShortcut = false } = options;
+    if (!cmd) return;
+
+    if (echo) appendLine(`> ${cmd.toUpperCase()}`);
+    try {
+      const result = await submitCommand(cmd);
+      state.failureCount = 0;
+      setOfflineBanner(false);
+      appendLines(result.lines);
+      if (mapFeed) appendMapLog(result.lines);
+      if (appendHelpShortcut) appendLines(["UI SHORTCUTS: TAB COMPLETE | UP/DOWN HISTORY | ESC CLEAR | CTRL+L CLEAR SCREEN"]);
+      setLiveSummary(result.ok ? "Command executed." : "Command failed.");
+      if (shouldRefreshSnapshot(cmd, result.ok)) await refreshSnapshot();
+    } catch {
+      state.failureCount += 1;
+      if (state.failureCount >= 3) setOfflineBanner(true);
+      const failLines = ["COMMAND LINK FAILED.", "VERIFY SERVER AND RETRY."];
+      appendLines(failLines);
+      if (mapFeed) appendMapLog(failLines);
+      setLiveSummary("Command link failed.");
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!state.inputEnabled) return;
+    if (!state.inputEnabled || state.mapMode) return;
 
     const cmd = inputField.value.trim();
     if (!cmd) return;
@@ -459,53 +417,63 @@
 
     state.history.push(cmd.toUpperCase());
     state.historyIndex = state.history.length;
-
-    appendLine(`> ${cmd.toUpperCase()}`);
     inputField.value = "";
     state.liveInput = "";
     state.cursorVisible = false;
     setInputEnabled(false);
 
-    try {
-      const result = await submitCommand(cmd);
-      state.failureCount = 0;
-      setOfflineBanner(false);
-      appendLines(result.lines);
-      setLiveSummary(result.ok ? "Command executed." : "Command failed.");
-      if (shouldRefreshSnapshot(cmd, result.ok)) await refreshSnapshot();
-    } catch {
-      state.failureCount += 1;
-      if (state.failureCount >= 3) setOfflineBanner(true);
-      appendLines(["COMMAND LINK FAILED.", "VERIFY SERVER AND RETRY."]);
-      setLiveSummary("Command link failed.");
-    } finally {
+    await executeCommandFlow(cmd, {
+      echo: true,
+      mapFeed: false,
+      appendHelpShortcut: cmd.trim().toUpperCase() === "HELP",
+    });
+
+    setInputEnabled(true);
+  }
+
+  function stopMapAutoWait() {
+    if (!state.mapAutoTimer) return;
+    clearInterval(state.mapAutoTimer);
+    state.mapAutoTimer = null;
+  }
+
+  function startMapAutoWait() {
+    stopMapAutoWait();
+    state.mapAutoTimer = setInterval(async () => {
+      if (!state.mapMode || state.mapAutoBusy) return;
+      state.mapAutoBusy = true;
+      await executeCommandFlow("WAIT", { echo: false, mapFeed: true, appendHelpShortcut: false });
+      state.mapAutoBusy = false;
+    }, MAP_AUTOWAIT_MS);
+  }
+
+  function setMapMode(enabled) {
+    state.mapMode = enabled;
+    appShell?.classList.toggle("map-mode", enabled);
+    mapModePanel?.classList.toggle("hidden", !enabled);
+    if (modeLabel) modeLabel.textContent = enabled ? "MODE: MAP MONITOR" : "MODE: COMMAND";
+    if (mapModeToggle) mapModeToggle.textContent = enabled ? "RETURN TO COMMAND" : "ENTER MAP MODE";
+
+    if (enabled) {
+      setInputEnabled(false);
+      appendMapLog(["MAP MONITOR ACTIVE", "AUTO-WAIT LOOP ENGAGED (2S CADENCE)"]);
+      startMapAutoWait();
+      refreshSnapshot();
+    } else {
+      stopMapAutoWait();
       setInputEnabled(true);
     }
   }
 
-  
   function startCommandMode() {
-    console.log("[TERMINAL] startCommandMode()")
-    appendLines([
-      "",
-      "--- COMMAND INTERFACE ACTIVE ---",
-      "Awaiting directives.",
-    ]);
-    if (!state.shortcutsShown) {
-      appendLines([
-        "UI SHORTCUTS: TAB COMPLETE | UP/DOWN HISTORY | ESC CLEAR | CTRL+L CLEAR SCREEN",
-      ]);
-      state.shortcutsShown = true;
-    }
-
+    appendLines(["", "--- COMMAND INTERFACE ACTIVE ---", "Awaiting directives."]);
     setInputEnabled(true);
-    console.log("[ TERMINAL ] enabling input");
     primeHint();
     refreshSnapshot();
   }
 
-
   inputForm.addEventListener("submit", handleSubmit);
+  mapModeToggle?.addEventListener("click", () => setMapMode(!state.mapMode));
   outputIndicator?.addEventListener("click", () => {
     terminal.scrollTop = terminal.scrollHeight;
     state.userAtBottom = true;
@@ -522,8 +490,9 @@
       focusInputIfEnabled();
     }
   });
+
   inputField.addEventListener("keydown", (e) => {
-    if (!state.inputEnabled) return;
+    if (!state.inputEnabled || state.mapMode) return;
     if (e.key === "Tab") {
       e.preventDefault();
       if (autocompleteInput(e.shiftKey)) playKeyClick();
@@ -557,6 +526,7 @@
       resetCompletionState();
     }
   });
+
   terminal.addEventListener("scroll", () => {
     const atBottom = isAtBottom(terminal, SCROLL_THRESHOLD);
     state.userAtBottom = atBottom;
@@ -569,6 +539,6 @@
     clearBuffer,
     setInputEnabled,
     startCommandMode,
-    syncBufferFromDom,
+    setMapMode,
   };
 })();

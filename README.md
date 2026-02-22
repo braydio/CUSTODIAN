@@ -74,6 +74,7 @@ Current status:
 - Boot stream and terminal shell rendering are active.
 - Command transport is wired via `POST /command` with `{ "raw": "<string>" }`.
 - `/snapshot` provides read-only UI projection data.
+- Terminal display supports a strategic map monitor mode with auto-time progression (`WAIT` every 2 seconds) while active.
 
 Key files:
 
