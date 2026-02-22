@@ -1,75 +1,98 @@
-# World-State Terminal REPL (Phase 1)
+# World-State Terminal REPL
 
-Phase 1 is a deterministic command loop:
+Deterministic command loop:
 
 `BOOT -> COMMAND -> WAIT -> STATE CHANGES -> STATUS`
 
-The world advances only when the operator runs `WAIT` or `WAIT NX`.
+The world advances only on time-bearing commands.
 
 ## Transport Contract (UI Path)
 
-- Terminal UI submits commands to `POST /command` as JSON `{ "raw": "<string>" }`.
-- Backend returns JSON with `ok` and `lines`.
-- `lines` are ordered for terminal display (primary line first).
-- Backend-owned `GameState` is authoritative for command results.
+- `POST /command` body: `{ "command": "<string>" }` (`{ "raw": "<string>" }` fallback).
+- Optional idempotency key: `command_id`.
+- Response: `{ ok, text, lines }`.
+- `lines` includes `text` first, then detail lines.
 
-## Commands
+## Core Commands
 
-- `STATUS`
-  - Prints:
-    - `TIME`
-    - `THREAT` bucket (`LOW`, `ELEVATED`, `HIGH`, `CRITICAL`)
-    - `ASSAULT` (`NONE`, `PENDING`, `ACTIVE`)
-    - optional `SYSTEM POSTURE` (`HARDENED` or `FOCUSED (<SECTOR>)`)
-    - optional `ARCHIVE LOSSES` (`<count>/<limit>`)
-    - sector list with one-word state (`STABLE`, `ALERT`, `DAMAGED`, `COMPROMISED`)
-  - Does not advance time.
-
+- `STATUS`, `STATUS FULL`
 - `WAIT`
-  - Advances the simulation by one wait unit (1 tick).
-  - Internal tick pacing uses a 0.5-second delay between ticks.
-  - Output starts with `TIME ADVANCED.`
-  - Additional lines are emitted as events/signals occur (`[EVENT]`, `[WARNING]`, status/assault shifts, and failure lines).
-  - Immediate duplicate detail lines are suppressed.
 - `WAIT NX`
-  - Advances the simulation by `N` wait units (`N x 1` tick).
-  - Output starts with `TIME ADVANCED.`
-  - Detail lines list observed events/signals in order, without explicit per-tick timing labels.
-- `FOCUS <SECTOR_ID>`
-  - Sets the focused sector by ID (for example `FOCUS POWER`).
-  - Focus persists until changed or an assault resolves.
-  - Does not advance time.
+- `WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>`
+- `HELP`, `HELP <TOPIC>`
+- `RESET`, `REBOOT`
+
+## Movement and Presence
+
+- `DEPLOY <TARGET>`
+- `MOVE <TARGET>`
+- `RETURN`
+
+Presence model:
+
+- Command mode: strategic authority available.
+- Field mode: strategic verbs requiring command authority are blocked.
+
+## Systems and Policy
+
+- `FOCUS <SECTOR>`
 - `HARDEN`
-  - Hardens systems to compress assault damage into fewer sectors.
-  - Clears any active focus and resets after an assault resolves.
-  - Does not advance time.
+- `REPAIR <STRUCTURE>`
+- `REPAIR <STRUCTURE> FULL`
+- `SCAVENGE`, `SCAVENGE NX`
+- `SET <REPAIR|DEFENSE|SURVEILLANCE> <0-4>`
+- `SET FAB <DEFENSE|DRONES|REPAIRS|ARCHIVE> <0-4>`
+- `FORTIFY <SECTOR> <0-4>`
+- `CONFIG DOCTRINE <NAME>`
+- `ALLOCATE DEFENSE <SECTOR|GROUP> <PERCENT>`
 
-- `HELP`
-  - Prints available command list.
+## Fabrication and Tactical Commands
 
-- `RESET` / `REBOOT`
-  - Reinitialize the in-process world state.
-  - Primarily used for recovery after failure lockout.
+- `FAB ADD <ITEM>`
+- `FAB QUEUE`
+- `FAB CANCEL <ID>`
+- `FAB PRIORITY <CATEGORY>`
+- `REROUTE POWER <SECTOR>`
+- `BOOST DEFENSE <SECTOR>`
+- `DRONE DEPLOY <SECTOR>`
+- `DEPLOY DRONE <SECTOR>`
+- `LOCKDOWN <SECTOR>`
+- `PRIORITIZE REPAIR <SECTOR>`
+
+## WAIT Semantics
+
+- `WAIT` and `WAIT NX` are wait units, not always single ticks.
+- Default pacing: 5 ticks per wait unit.
+- During active assault: 1 tick per wait unit.
+- Tick pacing delay: 0.5 seconds between internal ticks.
+
+Primary line:
+
+- `TIME ADVANCED.`
+
+Detail lines may include:
+
+- fidelity transitions
+- events/warnings
+- assault/intercept signals
+- repair/fabrication signals
+- failure termination lines
+
+Adjacent duplicate detail lines are suppressed.
+
+## Failure Lockdown
+
+Failure latches include command-center loss and archive-integrity loss.
+
+While failed:
+
+- only `RESET`/`REBOOT` accepted
+- other commands return lockout line: `REBOOT REQUIRED. ONLY RESET OR REBOOT ACCEPTED.`
 
 ## Error Output
 
 Unknown command response:
 
-- `UNKNOWN COMMAND.`
-- `TYPE HELP FOR AVAILABLE COMMANDS.`
-
-## Failure Lockdown
-
-- COMMAND breach places the session in failure mode.
-- Breach criteria: COMMAND damage reaches configured threshold (`COMMAND_CENTER_BREACH_DAMAGE`).
-- `WAIT` returns explicit final lines when breach occurs:
-  - `COMMAND CENTER LOST`
-  - `SESSION TERMINATED.`
-- ARCHIVE loss also places the session in failure mode once the loss limit is reached.
-- Failure reason for ARCHIVE loss:
-  - `ARCHIVAL INTEGRITY LOST`
-- While failed, normal commands are locked.
-- Only `RESET` or `REBOOT` are accepted until session reset.
-- Recovery response is:
-  - `SYSTEM REBOOTED.`
-  - `SESSION READY.`
+- `ok=false`
+- `text="UNKNOWN COMMAND."`
+- `lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]`

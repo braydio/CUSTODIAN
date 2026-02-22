@@ -8,6 +8,8 @@ It consolidates the prior feature planning specs for:
 
 It is authoritative. Follow the structure, ordering, and suppression rules exactly.
 
+> Runtime note: command-contract details in this file follow the implemented terminal processor. For endpoint and payload truth, see `docs/_ai_context/COMMAND_CONTRACT.md`.
+
 ---
 
 ## 0. Scope & Separation
@@ -231,7 +233,7 @@ It may be wrong at low fidelity but must remain plausible and internally consist
 - Primary line always present unless session terminated
 - Primary line is exactly:
   - `TIME ADVANCED.`
-  - `TIME ADVANCED xN.`
+  - `TIME ADVANCED.`
 - Output order is fixed:
   1. Primary line
   2. Optional detail lines
@@ -362,7 +364,7 @@ TIME ADVANCED.
 ### WAIT NX — FULL
 
 ```
-TIME ADVANCED xN.
+TIME ADVANCED.
 
 [SUMMARY]
 - THREAT ESCALATED
@@ -373,7 +375,7 @@ TIME ADVANCED xN.
 ### WAIT NX — DEGRADED
 
 ```
-TIME ADVANCED xN.
+TIME ADVANCED.
 
 [SUMMARY]
 - SYSTEM STABILITY DECLINED
@@ -383,7 +385,7 @@ TIME ADVANCED xN.
 ### WAIT NX — FRAGMENTED
 
 ```
-TIME ADVANCED xN.
+TIME ADVANCED.
 
 [SUMMARY]
 - CONDITIONS MAY HAVE WORSENED
@@ -392,7 +394,7 @@ TIME ADVANCED xN.
 ### WAIT NX — LOST
 
 ```
-TIME ADVANCED xN.
+TIME ADVANCED.
 ```
 
 ## 8. Absolute Prohibitions

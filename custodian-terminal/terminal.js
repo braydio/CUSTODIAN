@@ -34,6 +34,10 @@
     hintSecondaryShown: false,
     hintTimer: null,
     hintFocusIntent: false,
+    shortcutsShown: false,
+    completionMatches: [],
+    completionIndex: -1,
+    completionSeed: "",
   };
 
   const CURSOR_IDLE_MS = 420;
@@ -43,6 +47,43 @@
   let lastKeyClickAt = 0;
   const KEY_CLICK_MIN_INTERVAL = 28;
   let alertBurstTimer = null;
+  const COMPLETION_TOKENS = [
+    "HELP",
+    "HELP CORE",
+    "HELP MOVEMENT",
+    "HELP SYSTEMS",
+    "HELP POLICY",
+    "HELP FABRICATION",
+    "HELP ASSAULT",
+    "HELP STATUS",
+    "STATUS",
+    "STATUS FULL",
+    "WAIT",
+    "WAIT UNTIL",
+    "DEPLOY",
+    "MOVE",
+    "RETURN",
+    "FOCUS",
+    "HARDEN",
+    "REPAIR",
+    "SCAVENGE",
+    "SET",
+    "SET FAB",
+    "FORTIFY",
+    "CONFIG DOCTRINE",
+    "ALLOCATE DEFENSE",
+    "FAB ADD",
+    "FAB QUEUE",
+    "FAB CANCEL",
+    "FAB PRIORITY",
+    "REROUTE POWER",
+    "BOOST DEFENSE",
+    "DRONE DEPLOY",
+    "DEPLOY DRONE",
+    "LOCKDOWN",
+    "PRIORITIZE REPAIR",
+    "DEBUG HELP",
+  ];
 
   function playKeyClick() {
     if (!keyClick) return;
@@ -65,6 +106,8 @@
   }
 
   function classifyLine(line) {
+    if (line.startsWith("> ")) return "command";
+    if (line.startsWith("--- ") && line.endsWith(" ---")) return "banner";
     if (line.includes("(+)") || line.includes("(-)")) return "delta";
     const heatMatch = line.match(/^\s*[> ]?\s*[A-Z ]{3,}\s+([X!~?.])(?:\s+\([+-]\))?\s*$/);
     if (heatMatch) {
@@ -216,6 +259,41 @@
     render();
   }
 
+  function resetCompletionState() {
+    state.completionMatches = [];
+    state.completionIndex = -1;
+    state.completionSeed = "";
+  }
+
+  function applyInputValue(value) {
+    inputField.value = value;
+    state.liveInput = value;
+    renderLiveLine();
+  }
+
+  function autocompleteInput(reverse = false) {
+    const seed = inputField.value.trim().toUpperCase();
+    if (!seed) return false;
+
+    if (state.completionSeed !== seed || !state.completionMatches.length) {
+      state.completionSeed = seed;
+      state.completionMatches = COMPLETION_TOKENS.filter((token) => token.startsWith(seed));
+      state.completionIndex = -1;
+      if (!state.completionMatches.length) return false;
+    }
+
+    const count = state.completionMatches.length;
+    if (reverse) {
+      state.completionIndex = (state.completionIndex - 1 + count) % count;
+    } else {
+      state.completionIndex = (state.completionIndex + 1) % count;
+    }
+    const suggestion = state.completionMatches[state.completionIndex];
+    if (!suggestion) return false;
+    applyInputValue(`${suggestion} `);
+    return true;
+  }
+
   function appendLine(line) {
     appendLines([line]);
   }
@@ -252,6 +330,8 @@
 
     state.typingActive = true;
     state.liveInput = inputField.value.toUpperCase();
+    if (inputField.value !== state.liveInput) inputField.value = state.liveInput;
+    resetCompletionState();
     renderLiveLine();
     if (state.liveInput.trim() !== "" && state.hintTimer) {
       clearTimeout(state.hintTimer);
@@ -314,6 +394,7 @@
     if (!ok) return false;
     const verb = command.trim().toUpperCase().split(/\s+/)[0];
     return [
+      "STATUS",
       "WAIT",
       "RESET",
       "REBOOT",
@@ -402,14 +483,27 @@
       "--- COMMAND INTERFACE ACTIVE ---",
       "Awaiting directives.",
     ]);
+    if (!state.shortcutsShown) {
+      appendLines([
+        "UI SHORTCUTS: TAB COMPLETE | UP/DOWN HISTORY | ESC CLEAR | CTRL+L CLEAR SCREEN",
+      ]);
+      state.shortcutsShown = true;
+    }
 
     setInputEnabled(true);
     console.log("[ TERMINAL ] enabling input");
     primeHint();
+    refreshSnapshot();
   }
 
 
   inputForm.addEventListener("submit", handleSubmit);
+  outputIndicator?.addEventListener("click", () => {
+    terminal.scrollTop = terminal.scrollHeight;
+    state.userAtBottom = true;
+    outputIndicator.classList.remove("visible");
+    focusInputIfEnabled();
+  });
   inputFocusZone?.addEventListener("click", focusInputIfEnabled);
   inputField.addEventListener("mousedown", () => {
     state.hintFocusIntent = true;
@@ -422,22 +516,37 @@
   });
   inputField.addEventListener("keydown", (e) => {
     if (!state.inputEnabled) return;
+    if (e.key === "Tab") {
+      e.preventDefault();
+      if (autocompleteInput(e.shiftKey)) playKeyClick();
+      return;
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      applyInputValue("");
+      resetCompletionState();
+      return;
+    }
+    if (e.ctrlKey && e.key.toLowerCase() === "l") {
+      e.preventDefault();
+      clearBuffer();
+      renderLiveLine();
+      return;
+    }
     if (e.key === "ArrowUp") {
       e.preventDefault();
       if (!state.history.length) return;
       state.historyIndex = Math.max(0, state.historyIndex - 1);
-      inputField.value = state.history[state.historyIndex] || "";
-      state.liveInput = inputField.value;
-      renderLiveLine();
+      applyInputValue(state.history[state.historyIndex] || "");
+      resetCompletionState();
       return;
     }
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (!state.history.length) return;
       state.historyIndex = Math.min(state.history.length, state.historyIndex + 1);
-      inputField.value = state.history[state.historyIndex] || "";
-      state.liveInput = inputField.value;
-      renderLiveLine();
+      applyInputValue(state.history[state.historyIndex] || "");
+      resetCompletionState();
     }
   });
   terminal.addEventListener("scroll", () => {

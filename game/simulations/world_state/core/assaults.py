@@ -22,6 +22,11 @@ from .config import (
     ASSAULT_TARGET_DAMAGE_WEIGHT,
     ASSAULT_TARGET_STATIC_WEIGHT,
     ASSAULT_TARGET_TRANSIT_BONUS,
+    ASSAULT_TRANSIT_INTERCEPT_BASE_MULT,
+    ASSAULT_TRANSIT_INTERCEPT_FLOOR,
+    ASSAULT_TRANSIT_INTERCEPT_MIN_STEP_MULT,
+    ASSAULT_TRANSIT_INTERCEPT_PERIMETER_BONUS,
+    ASSAULT_TRANSIT_INTERCEPT_READINESS_BONUS,
     COMMAND_CENTER_BREACH_DAMAGE,
     EDGE_TRAVEL_TICKS,
     INGRESS_N,
@@ -57,6 +62,8 @@ class AssaultApproach:
         self.index = 0
         self.ticks_to_next = EDGE_TRAVEL_TICKS
         self.state = "APPROACHING"  # APPROACHING | ENGAGED
+        self.threat_mult = 1.0
+        self.intercepted_indices: set[int] = set()
 
     def current_node(self) -> str:
         return self.route[min(self.index, len(self.route) - 1)]
@@ -274,12 +281,45 @@ def maybe_warn(state, node: str) -> None:
         state.last_assault_lines.append(line)
 
 
+def _intercept_step_multiplier(state) -> float:
+    readiness = max(0.0, min(1.0, float(state.compute_readiness())))
+    readiness_bonus = max(0.0, readiness - 0.5) * ASSAULT_TRANSIT_INTERCEPT_READINESS_BONUS
+    perimeter_bias = max(0.0, float(state.defense_allocation.get("PERIMETER", 1.0)) - 1.0)
+    perimeter_bonus = perimeter_bias * ASSAULT_TRANSIT_INTERCEPT_PERIMETER_BONUS
+    step_mult = ASSAULT_TRANSIT_INTERCEPT_BASE_MULT - readiness_bonus - perimeter_bonus
+    return max(ASSAULT_TRANSIT_INTERCEPT_MIN_STEP_MULT, min(1.0, step_mult))
+
+
+def _attempt_transit_intercept(state, approach: AssaultApproach, node: str) -> None:
+    if approach.index in approach.intercepted_indices:
+        return
+    approach.intercepted_indices.add(approach.index)
+
+    if state.turret_ammo_stock < 1:
+        return
+
+    state.turret_ammo_stock -= 1
+    step_mult = _intercept_step_multiplier(state)
+    approach.threat_mult = max(
+        ASSAULT_TRANSIT_INTERCEPT_FLOOR,
+        min(1.0, approach.threat_mult * step_mult),
+    )
+    line = f"[INTERCEPT] {node} DEFENSE FIRE DISRUPTED HOSTILES"
+    if line not in state.last_assault_lines:
+        state.last_assault_lines.append(line)
+
+
 def advance_assaults(state) -> None:
     engaged: list[AssaultApproach] = []
 
     for approach in state.assaults:
         if approach.state != "APPROACHING":
             continue
+
+        node = approach.current_node()
+        if node in TRANSIT_NODES:
+            maybe_warn(state, node)
+            _attempt_transit_intercept(state, approach, node)
 
         approach.ticks_to_next -= 1
         if approach.ticks_to_next <= 0:
@@ -290,15 +330,15 @@ def advance_assaults(state) -> None:
             else:
                 approach.ticks_to_next = EDGE_TRAVEL_TICKS
 
-        node = approach.current_node()
-        if node in TRANSIT_NODES:
-            maybe_warn(state, node)
-
     if engaged and state.current_assault is None and not state.in_major_assault:
         approach = engaged[0]
         target_sector = state.sectors.get(approach.target)
         if target_sector is not None:
-            _start_assault(state, [target_sector])
+            _start_assault(
+                state,
+                [target_sector],
+                approach_threat_mult=approach.threat_mult,
+            )
         state.assaults = [a for a in state.assaults if a.id != approach.id]
 
     _refresh_assault_eta(state)
@@ -312,7 +352,7 @@ def start_assault(state):
     _start_assault(state, targets)
 
 
-def _start_assault(state, targets) -> None:
+def _start_assault(state, targets, *, approach_threat_mult: float = 1.0) -> None:
     state.in_major_assault = True
     state.assault_timer = None
     state.assault_count += 1
@@ -325,6 +365,18 @@ def _start_assault(state, targets) -> None:
         start_time=state.time,
         readiness=readiness,
         threat_scale=doctrine_threat_multiplier(state.defense_doctrine),
+    )
+    assault.threat_budget = max(
+        10,
+        int(
+            round(
+                assault.threat_budget
+                * max(
+                    ASSAULT_TRANSIT_INTERCEPT_FLOOR,
+                    min(1.0, float(approach_threat_mult)),
+                )
+            )
+        ),
     )
     assault.defense_doctrine = state.defense_doctrine
     assault.defense_allocation = dict(state.defense_allocation)

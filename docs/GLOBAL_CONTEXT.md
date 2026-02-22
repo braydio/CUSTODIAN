@@ -1,4 +1,6 @@
-This global context file details the relationship between the persistent Hub World and the transient Campaign Worlds
+This global context file details the relationship between the persistent Hub World and the transient Campaign Worlds.
+
+> Implementation note: this file is design-facing. For the current implemented runtime and command contract, use `docs/_ai_context/`.
 
 1. **States the structure precisely** (to make sure we lock it correctly)
 2. **Designates the systems that sit inside that structure** (scenarios, rewards, partial success)

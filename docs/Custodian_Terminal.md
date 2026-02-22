@@ -1,13 +1,32 @@
 # Custodian Terminal UI
 
-Text-only terminal UI prototype for the custodian interface. The boot sequence runs from `custodian-terminal/boot.js`, while `custodian-terminal/terminal.js` owns command input, transcript rendering, and backend command submission. Input stays disabled through boot and the system log, then unlocks when command mode is active.
+Browser terminal UI for the world-state backend.
 
-## Behavior Notes
+## Modules
 
-- Boot lines render with a type-in effect plus audio cues (hum + relay + beep + alert + power_cycle), then a system log prints before command mode.
-- The terminal module tracks a buffered history and appends command/response transcript lines.
-- System log introduces `STATUS`, `WAIT`, `WAIT 10X`, `FOCUS`, `HARDEN`, and `HELP` before input unlock.
-- Prompt input posts to `POST /command` with `{raw}` and appends returned `lines` (served by `custodian-terminal/server.py`).
-- Sector map UI is a read-only projection fetched from `GET /snapshot` after state-changing commands (`WAIT`, `RESET`, `REBOOT`).
-- System panel mirrors snapshot metadata (time, threat, assault, posture, archive losses) without replacing `STATUS`.
-- Prompt interaction stays minimal by design and remains inside the terminal frame.
+- `custodian-terminal/boot.js`: boot stream playback, audio sequencing, unlock handoff.
+- `custodian-terminal/terminal.js`: input loop, command submit, transcript rendering, terminal QoL behavior.
+- `custodian-terminal/sector-map.js`: snapshot-driven map/panel projection.
+- `custodian-terminal/server.py`: static host + `/stream/boot` + `/command` + `/snapshot`.
+
+## Runtime Behavior
+
+- Input remains disabled during boot stream playback.
+- On boot completion, command mode activates and backend command transport begins.
+- Command submit uses `POST /command` and expects `{ok, text, lines}`.
+- Snapshot projection refreshes after state-changing commands.
+
+## Current Operator UX
+
+- Command history: `ArrowUp` / `ArrowDown`.
+- Input focus hint sequence and focus zone support.
+- Tab completion for common commands (`Tab` and `Shift+Tab`).
+- `Esc` clears the current input line.
+- `Ctrl+L` clears terminal viewport locally.
+- `NEW OUTPUT - JUMP` indicator appears when scrolled up and jumps back to latest output on click.
+- Critical output styling includes bounded alert flicker bursts (not continuous).
+
+## Contract Boundary
+
+- Frontend is non-authoritative.
+- Backend controls parsing, authority, simulation stepping, and all game state mutation.

@@ -1,5 +1,22 @@
 # DEVLOG — CUSTODIAN
 
+## 2026-02-21
+- Reconciled `docs/_ai_context/` to current implementation and removed stale aggregated-context drift from `AI_CONTEXT.md`.
+- Updated canonical docs for current command contract, architecture boundaries, simulation rules, file index, and active roadmap.
+- Synced help-command documentation to the new categorized tree model (`HELP` and `HELP <TOPIC>`).
+- Synced wait semantics documentation to current behavior (`WAIT`/`WAIT NX` = 5 ticks per unit, reduced to 1 tick per unit while assault is active).
+- Updated terminal UI docs to include current QoL features (history navigation, focus hints, tab completion, jump-to-latest indicator, and keyboard shortcuts).
+
+## 2026-02-20
+- Moved repair tick progression into `core/simulation.py::step_world` and changed `WAIT` to consume per-tick repair events from state instead of mutating repair jobs directly.
+- Updated STATUS behavior to default to a concise action brief and added `STATUS FULL` for extended diagnostics.
+- Updated terminal help and processor parsing to support explicit STATUS verbosity selection (`STATUS`, `STATUS FULL`, `STATUS BRIEF`/`STATUS SUMMARY`).
+- Reconciled documentation to current endpoint/runtime behavior (`{command}` canonical request body with `{raw}` fallback, `{ok,text,lines}` response shape, and current STATUS semantics).
+- Added a current-runtime snapshot section in `ARCHITECTURE.md` to distinguish historical design lock text from live behavior.
+- Rewrote `feature_planning/ASSAULT-RESOURCE-LINK.md` into a codebase-accurate, phased implementation spec centered on transit interception and existing resource systems.
+- Implemented Assault-Resource-Link Phase A in `core/assaults.py`: transit-node interception now spends DEFENSE ammo during approach traversal and applies bounded pre-engagement threat mitigation to the resulting assault instance.
+- Added coverage for interception mechanics and operator surfacing in `test_assault_misc_design.py` and `test_terminal_processor.py`.
+
 ## 2026-02-15
 - Completed world-state command-loop QoL/fun pass: added `WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>` batching and `SCAVENGE NX` multi-run support.
 - Added recoverable COMMAND breach behavior (`COMMAND_BREACH_RECOVERY_TICKS`) so breach is an emergency window instead of immediate hard fail.

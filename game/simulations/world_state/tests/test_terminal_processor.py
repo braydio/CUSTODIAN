@@ -7,6 +7,7 @@ from game.simulations.world_state.core.config import (
     COMMAND_BREACH_RECOVERY_TICKS,
     COMMAND_CENTER_BREACH_DAMAGE,
 )
+from game.simulations.world_state.core import assaults
 from game.simulations.world_state.core.state import GameState, check_failure
 from game.simulations.world_state.core.structures import StructureState
 from game.simulations.world_state.terminal.commands.wait import WaitTickInfo
@@ -96,6 +97,26 @@ def test_wait_suppresses_repeated_event_blocks(monkeypatch) -> None:
         "[EVENT] COMMS BURST DETECTED",
         "[STATUS SHIFT] SYSTEM STABILITY DECLINING",
     ]
+
+
+def test_wait_surfaces_transit_intercept_lines(monkeypatch) -> None:
+    _disable_wait_tick_pause(monkeypatch)
+    monkeypatch.setattr("game.simulations.world_state.core.assaults.maybe_warn", lambda *_: None)
+    state = GameState(seed=21)
+    state.turret_ammo_stock = 1
+    approach = assaults.AssaultApproach(
+        ingress="INGRESS_N",
+        target="ARCHIVE",
+        route=["INGRESS_N", "T_NORTH", "ARCHIVE"],
+    )
+    approach.index = 1
+    state.assaults = [approach]
+
+    result = process_command(state, "WAIT")
+
+    assert result.ok is True
+    assert result.lines is not None
+    assert any(line.startswith("[INTERCEPT] T_NORTH") for line in result.lines)
 
 
 def test_status_does_not_mutate_state() -> None:
@@ -472,6 +493,21 @@ def test_help_shows_debug_hint_only_in_dev_mode() -> None:
     assert "DEBUG COMMANDS (DEV MODE):" not in normal.lines
     assert "DEBUG COMMANDS (DEV MODE):" in dev.lines
     assert "- DEBUG HELP" in dev.lines
+
+
+def test_help_topic_shows_focused_category() -> None:
+    state = GameState()
+
+    result = process_command(state, "HELP FABRICATION")
+
+    assert result.ok is True
+    assert result.text == "HELP > FABRICATION"
+    assert result.lines == [
+        "- FAB ADD <ITEM>  Queue item production",
+        "- FAB QUEUE  View active fabrication queue",
+        "- FAB CANCEL <ID>  Cancel queued fabrication job",
+        "- FAB PRIORITY <CATEGORY>  Reorder by category priority",
+    ]
 
 
 def test_deploy_blocked_while_repair_active() -> None:

@@ -9,42 +9,25 @@ from game.simulations.world_state.terminal.processor import process_command
 
 
 def test_help_output_matches_contract() -> None:
-    """HELP should return the documented command list."""
+    """HELP should return the categorized command tree."""
 
     state = GameState()
 
     result = process_command(state, "HELP")
 
     assert result.ok is True
-    assert result.text == "AVAILABLE COMMANDS:"
+    assert result.text == "COMMAND TREE"
     assert result.lines == [
-        "- STATUS   View current situation",
-        "- STATUS FULL  Show extended diagnostics",
-        "- WAIT     Advance time (5 ticks)",
-        "- WAIT NX  Advance time by N x 5 ticks",
-        "- WAIT UNTIL <COND>  Advance until ASSAULT/APPROACH/REPAIR_DONE",
-        "- DEPLOY   Leave command via transit",
-        "- MOVE     Traverse transit and sectors",
-        "- RETURN   Return to command center",
-        "- FOCUS    Reallocate attention to a sector",
-        "- HARDEN   Reinforce systems against impact",
-        "- REPAIR   Begin structure repair",
-        "- REPAIR <ID> FULL  Force sector stabilization",
-        "- SET <POLICY> <0-4>  Set REPAIR/DEFENSE/SURVEILLANCE",
-        "- SET FAB <CAT> <0-4>  Set FAB DEFENSE/DRONES/REPAIRS/ARCHIVE",
-        "- FORTIFY <SECTOR> <0-4>  Set sector fortification level",
-        "- SCAVENGE Recover materials",
-        "- SCAVENGE NX  Run N scavenge cycles",
-        "- CONFIG   Set defense doctrine",
-        "- ALLOCATE Set defense allocation bias",
-        "- FAB      Queue/add/cancel/prioritize fabrication",
-        "- REROUTE  Tactical: REROUTE POWER <SECTOR>",
-        "- BOOST    Tactical: BOOST DEFENSE <SECTOR>",
-        "- DRONE    Tactical: DRONE DEPLOY <SECTOR>",
-        "- DEPLOY DRONE <SECTOR> (during assault)",
-        "- LOCKDOWN Tactical: LOCKDOWN <SECTOR>",
-        "- PRIORITIZE Tactical: PRIORITIZE REPAIR <SECTOR>",
-        "- HELP     Show this list",
+        "USE: HELP <TOPIC>",
+        "TOPICS: CORE | MOVEMENT | SYSTEMS | POLICY | FABRICATION | ASSAULT | STATUS",
+        "",
+        "[CORE] STATUS | WAIT | HELP",
+        "[MOVEMENT] DEPLOY | MOVE | RETURN",
+        "[SYSTEMS] FOCUS | HARDEN | REPAIR | SCAVENGE",
+        "[POLICY] SET | FORTIFY | CONFIG | ALLOCATE",
+        "[FABRICATION] FAB ADD | QUEUE | CANCEL | PRIORITY",
+        "[ASSAULT] REROUTE | BOOST | DRONE | LOCKDOWN | PRIORITIZE",
+        "[STATUS] STATUS | STATUS FULL",
     ]
 
 

@@ -53,6 +53,8 @@ html, body {
 #terminal::-webkit-scrollbar-thumb:hover { background-color: #2c5a2c; }
 
 .terminal-line { display: block; }
+.terminal-line.command { color: #ccffcf; font-weight: 600; }
+.terminal-line.banner { color: #8ac28f; letter-spacing: 0.1em; }
 
 .terminal-line.event { color: #9fd99f; }
 .terminal-line.warning { color: #ffd166; font-weight: 700; }
@@ -90,10 +92,15 @@ html, body {
   color: #b6f3b8;
   opacity: 0;
   transition: opacity 0.2s ease;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
+  border: 1px solid rgba(75, 124, 75, 0.42);
+  padding: 3px 7px;
+  background: rgba(6, 14, 7, 0.88);
 }
 
 #new-output-indicator.visible { opacity: 0.7; }
+#new-output-indicator:hover { opacity: 0.95; }
 
 #offline-banner {
   position: absolute;
