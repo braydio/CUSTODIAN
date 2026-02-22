@@ -6,6 +6,7 @@ TOPIC_LINES = {
         "HELP > CORE",
         "- STATUS  View current operational summary",
         "- STATUS FULL  View extended diagnostics",
+        "- STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS>  View grouped subsystem detail",
         "- WAIT  Advance one command wait cycle",
         "- WAIT NX  Advance N wait cycles",
         "- WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>  Advance until condition",
@@ -31,6 +32,8 @@ TOPIC_LINES = {
         "- SET <REPAIR|DEFENSE|SURVEILLANCE> <0-4>  Set policy weight",
         "- SET FAB <DEFENSE|DRONES|REPAIRS|ARCHIVE> <0-4>  Set fabrication priority",
         "- FORTIFY <SECTOR> <0-4>  Set passive fortification level",
+        "- POLICY SHOW  Show policy state and allocations",
+        "- POLICY PRESET <NAME>  Apply balanced preset bundle",
         "- CONFIG DOCTRINE <NAME>  Switch defense doctrine preset",
         "- ALLOCATE DEFENSE <SECTOR|GROUP> <PERCENT>  Bias defense routing",
     ],
@@ -43,6 +46,9 @@ TOPIC_LINES = {
     ],
     "ASSAULT": [
         "HELP > ASSAULT",
+        "- SCAN RELAYS  Scan relay network links from command",
+        "- STABILIZE RELAY <ID>  Field stabilization task at relay sector",
+        "- SYNC  Convert stabilized relay packets to knowledge",
         "- REROUTE POWER <SECTOR>  Push emergency power to sector",
         "- BOOST DEFENSE <SECTOR>  Increase active mitigation",
         "- DEPLOY DRONE <SECTOR>  Dispatch drone support (alias)",
@@ -54,6 +60,12 @@ TOPIC_LINES = {
         "HELP > STATUS",
         "- STATUS  Compact status readout",
         "- STATUS FULL  Detailed status with diagnostics",
+        "- STATUS FAB  Fabrication queue, allocation, and stocks",
+        "- STATUS POSTURE  Command posture and readiness",
+        "- STATUS ASSAULT  Assault tracks and ETA detail",
+        "- STATUS POLICY  Doctrine, allocation, and policy sliders",
+        "- STATUS SYSTEMS  Sector and structure system detail",
+        "- STATUS RELAY  Relay-network scan and knowledge state",
     ],
 }
 
@@ -67,10 +79,10 @@ def _help_index(dev_mode: bool) -> list[str]:
         "[CORE] STATUS | WAIT | HELP",
         "[MOVEMENT] DEPLOY | MOVE | RETURN",
         "[SYSTEMS] FOCUS | HARDEN | REPAIR | SCAVENGE",
-        "[POLICY] SET | FORTIFY | CONFIG | ALLOCATE",
+        "[POLICY] SET | FORTIFY | POLICY | CONFIG | ALLOCATE",
         "[FABRICATION] FAB ADD | QUEUE | CANCEL | PRIORITY",
-        "[ASSAULT] REROUTE | BOOST | DRONE | LOCKDOWN | PRIORITIZE",
-        "[STATUS] STATUS | STATUS FULL",
+        "[ASSAULT] SCAN | STABILIZE | SYNC | REROUTE | BOOST | DRONE | LOCKDOWN | PRIORITIZE",
+        "[STATUS] STATUS | STATUS FULL | STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>",
     ]
     if dev_mode:
         lines.extend(["", "DEBUG COMMANDS (DEV MODE):", "- DEBUG HELP"])

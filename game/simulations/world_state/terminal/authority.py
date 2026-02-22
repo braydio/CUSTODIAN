@@ -17,6 +17,9 @@ COMMAND_AUTHORITY_ONLY = {
     "DRONE",
     "LOCKDOWN",
     "PRIORITIZE",
+    "SCAN",
+    "SYNC",
+    "POLICY",
 }
 
 

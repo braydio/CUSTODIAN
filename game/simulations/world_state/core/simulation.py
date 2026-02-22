@@ -4,6 +4,7 @@ from .assaults import advance_assaults, maybe_spawn_assault, resolve_assault
 from .events import maybe_trigger_event
 from .fabrication import tick_fabrication
 from .invariants import validate_state_invariants
+from .logistics import update_logistics
 from .power_load import compute_power_load
 from .power import refresh_comms_fidelity
 from .repairs import tick_repairs
@@ -36,6 +37,7 @@ def step_world(state: GameState, tick_delay: float = 0.0) -> bool:
     state.last_after_action_lines = []
     advance_time(state)
     compute_power_load(state)
+    update_logistics(state)
     maybe_trigger_event(state)
 
     if state.current_assault is not None:

@@ -1,8 +1,11 @@
 """Tests for infrastructure policy layer mechanics."""
 
 from game.simulations.world_state.core.fabrication import FabricationTask, tick_fabrication
+from game.simulations.world_state.core.logistics import update_logistics
 from game.simulations.world_state.core.power_load import compute_power_load
 from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.core.repairs import tick_repairs
+from game.simulations.world_state.core.structures import StructureState
 from game.simulations.world_state.core.wear import apply_wear
 from game.simulations.world_state.terminal.processor import process_command
 
@@ -81,3 +84,52 @@ def test_wear_scales_with_defense_readiness() -> None:
     apply_wear(high)
 
     assert high.sectors["POWER"].damage > low.sectors["POWER"].damage
+
+
+def test_logistics_overload_reduces_throughput_multiplier() -> None:
+    relaxed = GameState()
+    stressed = GameState()
+    stressed.power_load = 5.0
+    stressed.fabrication_queue = [
+        FabricationTask(
+            id=1,
+            name="A",
+            ticks_remaining=5.0,
+            material_cost=0,
+            category="DEFENSE",
+            inputs={},
+            outputs={},
+        ),
+        FabricationTask(
+            id=2,
+            name="B",
+            ticks_remaining=5.0,
+            material_cost=0,
+            category="DEFENSE",
+            inputs={},
+            outputs={},
+        ),
+    ]
+
+    update_logistics(relaxed)
+    update_logistics(stressed)
+
+    assert stressed.logistics_multiplier < relaxed.logistics_multiplier
+
+
+def test_logistics_multiplier_slows_repair_progress() -> None:
+    fast = GameState()
+    slow = GameState()
+    fast.structures["CM_CORE"].state = StructureState.DAMAGED
+    slow.structures["CM_CORE"].state = StructureState.DAMAGED
+    process_command(fast, "REPAIR CM_CORE")
+    process_command(slow, "REPAIR CM_CORE")
+    assert "CM_CORE" in fast.active_repairs
+    assert "CM_CORE" in slow.active_repairs
+    fast.repair_throughput_mult = 1.0
+    slow.repair_throughput_mult = 0.5
+
+    tick_repairs(fast)
+    tick_repairs(slow)
+
+    assert fast.active_repairs["CM_CORE"]["remaining"] < slow.active_repairs["CM_CORE"]["remaining"]

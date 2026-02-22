@@ -82,6 +82,7 @@ def _repair_speed(state, structure) -> float:
             speed *= 0.75
         if f"REPAIR:{structure.sector}" in state.assault_tactical_effects:
             speed *= 1.35
+    speed *= max(0.25, float(getattr(state, "repair_throughput_mult", 1.0)))
     return speed
 
 
@@ -174,6 +175,10 @@ def start_repair(state, structure_id: str, *, local: bool = False) -> str:
 
     base_cost = repair_costs.get(structure.state, 0)
     cost = int(math.ceil(base_cost * REPAIR_MATERIAL_MULT[state.policies.repair_intensity]))
+    if not local:
+        discount = int(state.relay_benefits.get("remote_repair_discount", 0))
+        if discount > 0:
+            cost = max(1, cost - discount)
     if state.materials < cost:
         return "REPAIR FAILED: INSUFFICIENT MATERIALS."
 

@@ -1,5 +1,20 @@
 # DEVLOG — CUSTODIAN
 
+## 2026-02-22
+- Added logistics throughput cap system (`core/logistics.py`) and integrated it into `step_world`; repair and fabrication throughput now slow deterministically under overload pressure.
+- Extended status/policy readouts with logistics load/throughput/multiplier visibility and added invariant checks for logistics state.
+- Added infrastructure-policy tests covering logistics pressure and repair slowdown behavior.
+- Updated `AGENTS.md` with a best-practice rule for dependency-heavy work: implement in validated slices instead of all-at-once rewrites.
+- Implemented ARRN relay command slice: `SCAN RELAYS` (command), `STABILIZE RELAY <ID>` (field/local timed task), and `SYNC` (command packet conversion to knowledge index).
+- Added relay state to `GameState` (`relay_nodes`, `relay_packets_pending`, `knowledge_index`, `last_sync_time`) plus status projection and `STATUS RELAY` grouped output.
+- Added first relay-derived mechanical benefit: remote repair cost discount after sufficient sync progress (`RELAY_RECOVERY` threshold).
+- Added policy QoL commands: `POLICY SHOW` and `POLICY PRESET <BALANCED|SIEGE|RECOVERY|LOW_POWER>`.
+- Updated help/authority/status surfaces and terminal completion tokens for new relay/policy commands.
+- Expanded world-state tests to cover relay flow, sync authority gating, policy preset/show behavior, and status/help contract updates.
+- Updated terminal UI snapshot refresh triggers to include `STATUS`, `SET`, and `FAB`, and added startup snapshot refresh so side-panel map/system state renders immediately after boot handoff.
+- Expanded STATUS command surface with grouped detail views: `STATUS FAB`, `STATUS POSTURE`, `STATUS ASSAULT`, `STATUS POLICY`, and `STATUS SYSTEMS` (plus existing `STATUS`/`STATUS FULL`/`STATUS BRIEF` aliases).
+- Updated help/contract text and added terminal processor tests for grouped STATUS output and invalid-group usage handling.
+
 ## 2026-02-21
 - Reconciled `docs/_ai_context/` to current implementation and removed stale aggregated-context drift from `AI_CONTEXT.md`.
 - Updated canonical docs for current command contract, architecture boundaries, simulation rules, file index, and active roadmap.

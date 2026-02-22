@@ -17,20 +17,25 @@
 - Presence split (`COMMAND` vs `FIELD`) with transit graph travel (`DEPLOY`, `MOVE`, `RETURN`).
 - Command-authority gating while deployed (strategic verbs blocked outside command authority).
 - Defense policy layer (`SET`, `SET FAB`, `FORTIFY`) and doctrine/allocation controls (`CONFIG DOCTRINE`, `ALLOCATE DEFENSE`).
+- Policy QoL controls (`POLICY SHOW`, `POLICY PRESET <...>`).
 - Fabrication queue with recipes, queue ops, and stock outputs (`repair_drones`, `turret_ammo`).
+- Logistics throughput caps tied to active system load (`core/logistics.py`) with deterministic slowdown multipliers for repair/fabrication under overload.
 - Assault system with spatial approach traversal, transit interception, multi-tick tactical resolution, and after-action effects.
+- ARRN relay scaffolding with command/field flow (`SCAN RELAYS`, `STABILIZE RELAY`, `SYNC`) and knowledge-index progression.
 - Dev-mode debug command path (`DEBUG ...`) gated behind `--dev`.
 
 ## Terminal Command Surface
 
 Normal operation includes:
 
-- `STATUS`, `STATUS FULL`
+- `STATUS`, `STATUS FULL`, `STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>`
 - `WAIT`, `WAIT NX`, `WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>`
 - `DEPLOY`, `MOVE`, `RETURN`
 - `FOCUS`, `HARDEN`, `REPAIR`, `REPAIR <ID> FULL`, `SCAVENGE`, `SCAVENGE NX`
 - `SET`, `SET FAB`, `FORTIFY`, `CONFIG DOCTRINE`, `ALLOCATE DEFENSE`
+- `POLICY SHOW`, `POLICY PRESET <BALANCED|SIEGE|RECOVERY|LOW_POWER>`
 - `FAB ADD`, `FAB QUEUE`, `FAB CANCEL`, `FAB PRIORITY`
+- `SCAN RELAYS`, `STABILIZE RELAY <ID>`, `SYNC`
 - `REROUTE POWER`, `BOOST DEFENSE`, `DRONE DEPLOY`, `DEPLOY DRONE`, `LOCKDOWN`, `PRIORITIZE REPAIR`
 - `HELP` and `HELP <TOPIC>` (category tree)
 - Recovery: `RESET`, `REBOOT`
