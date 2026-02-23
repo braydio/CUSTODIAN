@@ -4,12 +4,13 @@ This folder is the canonical project snapshot for external review and AI session
 Read files in this order:
 
 1. `CURRENT_STATE.md`
-2. `COMMAND_CONTRACT.md`
-3. `ARCHITECTURE.md`
-4. `SIMULATION_RULES.md`
-5. `FILE_INDEX.md`
-6. `ROADMAP.md`
-7. `DEVLOG.md`
+2. `PROJECT_CONTEXT_PRIMER.md`
+3. `COMMAND_CONTRACT.md`
+4. `ARCHITECTURE.md`
+5. `SIMULATION_RULES.md`
+6. `FILE_INDEX.md`
+7. `ROADMAP.md`
+8. `DEVLOG.md`
 
 ## Scope
 
