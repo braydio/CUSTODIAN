@@ -1,5 +1,10 @@
 # DEVLOG — CUSTODIAN
 
+## 2026-02-23
+- Added consolidated AI handoff primer at `docs/_ai_context/PROJECT_CONTEXT_PRIMER.md` with current architecture, implemented systems, active gaps, and prioritized focus areas for next-step recommendations.
+- Updated `docs/_ai_context/AI_CONTEXT.md` read order to include the new primer immediately after `CURRENT_STATE.md`.
+- Added concise external-reviewer primer at `docs/_ai_context/PROJECT_CONTEXT_PRIMER_EXTERNAL.md` with runtime model, contract summary, current feature state, active gaps, and immediate focus recommendations.
+
 ## 2026-02-22
 - Added logistics throughput cap system (`core/logistics.py`) and integrated it into `step_world`; repair and fabrication throughput now slow deterministically under overload pressure.
 - Extended status/policy readouts with logistics load/throughput/multiplier visibility and added invariant checks for logistics state.
