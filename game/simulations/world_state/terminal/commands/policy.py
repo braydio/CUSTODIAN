@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from game.simulations.world_state.core.config import SECTOR_DEFS
+from game.simulations.world_state.core.config import SECTOR_DEFS, TRANSIT_NODES
 from game.simulations.world_state.core.fabrication import is_valid_fabrication_category
 from game.simulations.world_state.core.policies import (
     POLICY_LEVEL_MAX,
@@ -58,6 +58,11 @@ def cmd_fortify(state: GameState, sector_token: str, level_token: str) -> list[s
     level = parse_policy_level(level_token)
     if level is None:
         return [f"LEVEL MUST BE {POLICY_LEVEL_MIN}-{POLICY_LEVEL_MAX}."]
+
+    token = sector_token.strip().upper()
+    if token in TRANSIT_NODES:
+        state.transit_fort_levels[token] = clamp_policy_level(level)
+        return [f"FORTIFICATION {token} SET TO {level}."]
 
     sector_name = _resolve_sector_name(sector_token)
     if not sector_name:

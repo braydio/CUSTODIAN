@@ -45,7 +45,7 @@ Implemented sectors:
 - events and pressure
 - assault approach movement/spawn/resolve
 - transit interception effects
-- repair/fabrication progression
+- repair/fabrication progression (explicit queue + low-rate ambient fabrication)
 - fidelity refresh and failure checks
 
 ## Command-Driven Time

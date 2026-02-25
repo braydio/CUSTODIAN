@@ -31,7 +31,7 @@ TOPIC_LINES = {
         "HELP > POLICY",
         "- SET <REPAIR|DEFENSE|SURVEILLANCE> <0-4>  Set policy weight",
         "- SET FAB <DEFENSE|DRONES|REPAIRS|ARCHIVE> <0-4>  Set fabrication priority",
-        "- FORTIFY <SECTOR> <0-4>  Set passive fortification level",
+        "- FORTIFY <SECTOR|T_NORTH|T_SOUTH> <0-4>  Set passive fortification level",
         "- POLICY SHOW  Show policy state and allocations",
         "- POLICY PRESET <NAME>  Apply balanced preset bundle",
         "- CONFIG DOCTRINE <NAME>  Switch defense doctrine preset",

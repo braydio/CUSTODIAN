@@ -42,13 +42,22 @@ html, body {
   background: linear-gradient(to bottom, rgba(8,16,9,0.95), rgba(7,14,8,0.85));
 }
 
+.hidden { display: none !important; }
+
 #display-mode-label {
   font-size: 11px;
   letter-spacing: 0.18em;
   color: #9fd99f;
 }
 
-#map-mode-toggle {
+#display-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#map-mode-toggle,
+#dev-map-toggle {
   border: 1px solid #2e5532;
   background: #09130a;
   color: #b8f0bc;
@@ -59,7 +68,8 @@ html, body {
   cursor: pointer;
 }
 
-#map-mode-toggle:hover {
+#map-mode-toggle:hover,
+#dev-map-toggle:hover {
   border-color: #4a8650;
 }
 
@@ -118,7 +128,7 @@ html, body {
 #new-output-indicator {
   position: absolute;
   right: 24px;
-  top: 18px;
+  top: 60px;
   font-size: 11px;
   letter-spacing: 0.2em;
   color: #b6f3b8;
@@ -511,6 +521,48 @@ html, body {
 
 #map-mode-panel.hidden { display: none; }
 
+#map-mode-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 22px 8px;
+  border-bottom: 1px solid #132513;
+  background: linear-gradient(90deg, rgba(4,10,5,0.98), rgba(3,8,4,0.95));
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  color: #b6e7b8;
+}
+
+#map-mode-title {
+  font-weight: 700;
+}
+
+#map-mode-focus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-focus-button {
+  border: 1px solid #2a4a2f;
+  background: rgba(6, 16, 8, 0.9);
+  color: #a7d8ab;
+  font: 11px "IBM Plex Mono", monospace;
+  padding: 4px 8px;
+  cursor: pointer;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.map-focus-button.active {
+  border-color: #7bbf86;
+  color: #e1ffe6;
+  background: rgba(14, 32, 16, 0.95);
+  box-shadow: 0 0 10px rgba(123, 191, 134, 0.18);
+}
+
 #app-shell.map-mode #side-panel,
 #app-shell.map-mode #terminal,
 #app-shell.map-mode #terminal-input-form,
@@ -519,6 +571,14 @@ html, body {
 #app-shell.map-mode #idle-tip,
 #app-shell.map-mode #new-output-indicator,
 #app-shell.map-mode #offline-banner { display: none; }
+
+#app-shell.dev-map #side-panel { display: none; }
+
+#app-shell.dev-map #terminal-container {
+  flex: 0 0 45%;
+}
+
+#app-shell.dev-map #map-mode-panel { display: flex; }
 
 #app-shell.map-mode #terminal-container {
   flex: 0 0 250px;
@@ -530,7 +590,7 @@ html, body {
 #map-mode-map {
   flex: 1;
   border-bottom: 1px solid #132513;
-  padding: 18px 22px;
+  padding: 12px 22px 18px;
 }
 
 #map-mode-log {
@@ -575,6 +635,25 @@ html, body {
 .map-link.ingress-link {
   stroke: #9d6f2d;
   stroke-dasharray: 4 4;
+}
+
+.map-link.logistics-link {
+  stroke: #7bbf86;
+  stroke-width: 2.4;
+  stroke-dasharray: 6 5;
+  opacity: 0.9;
+}
+
+.map-defense-ring {
+  fill: none;
+  stroke: rgba(108, 182, 122, 0.35);
+  stroke-width: 2;
+}
+
+.map-overlay-text {
+  font: 11px "IBM Plex Mono", monospace;
+  fill: #b7e4bc;
+  letter-spacing: 0.08em;
 }
 
 .map-node.status-DAMAGED circle,

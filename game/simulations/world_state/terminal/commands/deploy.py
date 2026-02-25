@@ -7,6 +7,7 @@ from game.simulations.world_state.core.config import (
     TRAVEL_GRAPH,
     TRANSIT_NODES,
 )
+from game.simulations.world_state.core.display_names import display_location
 from game.simulations.world_state.core.presence import start_move_task
 from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.state import GameState
@@ -35,7 +36,7 @@ def _start_deploy_task(state: GameState, target: str) -> list[str]:
     state.player_mode = PLAYER_MODE_FIELD
     state.player_location = COMMAND_CENTER_LOCATION
     start_move_task(state, target, DEPLOY_TICKS)
-    lines = [f"DEPLOYING TO {target}."]
+    lines = [f"DEPLOYING TO {display_location(target)}."]
     if target == "T_NORTH":
         lines.append(_transit_signal_tag(comms_fidelity(state), "NORTH"))
     elif target == "T_SOUTH":

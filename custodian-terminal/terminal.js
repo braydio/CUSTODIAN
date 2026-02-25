@@ -17,8 +17,10 @@
   const inputFocusZone = byId("input-focus-zone");
   const modeLabel = byId("display-mode-label");
   const mapModeToggle = byId("map-mode-toggle");
+  const devMapToggle = byId("dev-map-toggle");
   const mapModePanel = byId("map-mode-panel");
   const mapModeLog = byId("map-mode-log");
+  const mapFocusButtons = Array.from(document.querySelectorAll("[data-map-focus]"));
 
   const keyClick = byId("keyClick");
 
@@ -44,6 +46,9 @@
     mapMode: false,
     mapAutoTimer: null,
     mapAutoBusy: false,
+    mapFocusMode: "general",
+    devMapMode: false,
+    devModeAvailable: false,
   };
 
   const CURSOR_IDLE_MS = 420;
@@ -371,6 +376,10 @@
     if (!window.CustodianSectorMap) return;
     try {
       const snapshot = await fetchSnapshot();
+      const devMode = Boolean(snapshot.dev_mode);
+      state.devModeAvailable = devMode;
+      devMapToggle?.classList.toggle("hidden", !devMode);
+      if (!devMode && state.devMapMode) setDevMapMode(false);
       window.CustodianSectorMap.renderSectorMap(snapshot);
       window.CustodianSectorMap.renderOverviewMap(snapshot, "map-mode-map", true);
       updateCommsPresentation(snapshot);
@@ -447,10 +456,16 @@
     }, MAP_AUTOWAIT_MS);
   }
 
+  function updateMapPanelVisibility() {
+    appShell?.classList.toggle("map-mode", state.mapMode);
+    appShell?.classList.toggle("dev-map", state.devMapMode);
+    mapModePanel?.classList.toggle("hidden", !(state.mapMode || state.devMapMode));
+  }
+
   function setMapMode(enabled) {
+    if (enabled && state.devMapMode) setDevMapMode(false);
     state.mapMode = enabled;
-    appShell?.classList.toggle("map-mode", enabled);
-    mapModePanel?.classList.toggle("hidden", !enabled);
+    updateMapPanelVisibility();
     if (modeLabel) modeLabel.textContent = enabled ? "MODE: MAP MONITOR" : "MODE: COMMAND";
     if (mapModeToggle) mapModeToggle.textContent = enabled ? "RETURN TO COMMAND" : "ENTER MAP MODE";
 
@@ -461,7 +476,7 @@
       refreshSnapshot();
     } else {
       stopMapAutoWait();
-      setInputEnabled(true);
+      if (!state.devMapMode) setInputEnabled(true);
     }
   }
 
@@ -472,8 +487,37 @@
     refreshSnapshot();
   }
 
+  function setDevMapMode(enabled) {
+    if (enabled && !state.devModeAvailable) return;
+    if (enabled && state.mapMode) setMapMode(false);
+    state.devMapMode = enabled;
+    updateMapPanelVisibility();
+    if (modeLabel) modeLabel.textContent = enabled ? "MODE: DEV MAP" : "MODE: COMMAND";
+    if (devMapToggle) devMapToggle.textContent = enabled ? "CLOSE DEV MAP" : "DEV MAP VIEWER";
+    if (enabled) {
+      stopMapAutoWait();
+      setInputEnabled(true);
+      appendMapLog(["DEV MAP VIEWER ACTIVE", "AUTO-WAIT DISABLED"]);
+      refreshSnapshot();
+    } else if (!state.mapMode) {
+      setInputEnabled(true);
+    }
+  }
+
+  function setMapFocusMode(mode) {
+    state.mapFocusMode = mode;
+    mapFocusButtons.forEach((button) => {
+      button.classList.toggle("active", button.dataset.mapFocus === mode);
+    });
+    window.CustodianSectorMap?.setMapFocusMode?.(mode);
+  }
+
   inputForm.addEventListener("submit", handleSubmit);
   mapModeToggle?.addEventListener("click", () => setMapMode(!state.mapMode));
+  devMapToggle?.addEventListener("click", () => setDevMapMode(!state.devMapMode));
+  mapFocusButtons.forEach((button) => {
+    button.addEventListener("click", () => setMapFocusMode(button.dataset.mapFocus || "general"));
+  });
   outputIndicator?.addEventListener("click", () => {
     terminal.scrollTop = terminal.scrollHeight;
     state.userAtBottom = true;
@@ -490,6 +534,8 @@
       focusInputIfEnabled();
     }
   });
+
+  setMapFocusMode(state.mapFocusMode);
 
   inputField.addEventListener("keydown", (e) => {
     if (!state.inputEnabled || state.mapMode) return;

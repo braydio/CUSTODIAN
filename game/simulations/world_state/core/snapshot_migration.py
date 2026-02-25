@@ -13,5 +13,6 @@ def migrate_snapshot(snapshot: dict) -> dict:
         migrated.setdefault("active_task", None)
         migrated["snapshot_version"] = 2
 
-    return migrated
+    migrated.setdefault("transit_fort_levels", {"T_NORTH": 0, "T_SOUTH": 0})
 
+    return migrated

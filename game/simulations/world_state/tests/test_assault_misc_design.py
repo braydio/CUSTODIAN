@@ -5,7 +5,7 @@ from types import SimpleNamespace
 from game.simulations.world_state.assault_outcome import AssaultOutcome
 from game.simulations.world_state.core.assault_ledger import AssaultTickRecord, append_record
 from game.simulations.world_state.core import assaults
-from game.simulations.world_state.core.events import power_brownout
+from game.simulations.world_state.core.events import power_blackout
 from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.core.structures import StructureState
 
@@ -128,7 +128,7 @@ def test_transit_intercept_spends_ammo_and_reduces_threat_multiplier(monkeypatch
 
     assert state.turret_ammo_stock == 2
     assert approach.threat_mult < 1.0
-    assert any(line.startswith("[INTERCEPT] T_NORTH") for line in state.last_assault_lines)
+    assert any(line.startswith("[INTERCEPT] NORTH TRANSIT") for line in state.last_assault_lines)
 
 
 def test_transit_intercept_does_not_apply_without_ammo(monkeypatch) -> None:
@@ -248,15 +248,15 @@ def test_structure_destruction_adds_ledger_record() -> None:
     assert any(record.building_destroyed == "CM_CORE" for record in state.assault_ledger.ticks)
 
 
-def test_power_brownout_logs_delta_when_trace_enabled() -> None:
+def test_power_blackout_logs_delta_when_trace_enabled() -> None:
     state = GameState(seed=3)
     state.assault_trace_enabled = True
     sector = state.sectors["POWER"]
     sector.power = 0.9
 
-    power_brownout(state, sector)
+    power_blackout(state, sector)
 
-    assert any(record.note and record.note.startswith("BROWNOUT:POWER_DELTA=") for record in state.assault_ledger.ticks)
+    assert any(record.note and record.note.startswith("BLACKOUT:POWER_DELTA=") for record in state.assault_ledger.ticks)
 
 
 def test_after_action_summary_includes_destroyed_structures() -> None:

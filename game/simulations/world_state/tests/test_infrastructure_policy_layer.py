@@ -133,3 +133,49 @@ def test_logistics_multiplier_slows_repair_progress() -> None:
     tick_repairs(slow)
 
     assert fast.active_repairs["CM_CORE"]["remaining"] < slow.active_repairs["CM_CORE"]["remaining"]
+
+
+def test_ambient_fabrication_converts_scrap_into_components() -> None:
+    state = GameState()
+    state.fab_allocation = {name: 0 for name in state.fab_allocation}
+    state.fab_allocation["REPAIRS"] = 4
+    state.inventory["SCRAP"] = 20
+
+    for _ in range(40):
+        tick_fabrication(state)
+
+    assert state.inventory["COMPONENTS"] > 0
+    assert state.inventory["SCRAP"] < 20
+
+
+def test_ambient_fabrication_respects_policy_bias_for_defense() -> None:
+    state = GameState()
+    state.fab_allocation = {name: 0 for name in state.fab_allocation}
+    state.fab_allocation["DEFENSE"] = 4
+    state.inventory["COMPONENTS"] = 12
+    ammo_before = state.turret_ammo_stock
+
+    for _ in range(80):
+        tick_fabrication(state)
+
+    assert state.turret_ammo_stock > ammo_before
+
+
+def test_ambient_fabrication_is_throttled_by_supply_chain_pressure() -> None:
+    relaxed = GameState()
+    stressed = GameState()
+    for state in (relaxed, stressed):
+        state.fab_allocation = {name: 0 for name in state.fab_allocation}
+        state.fab_allocation["REPAIRS"] = 4
+        state.inventory["SCRAP"] = 30
+
+    relaxed.fabrication_throughput_mult = 1.0
+    relaxed.logistics_pressure = 0.0
+    stressed.fabrication_throughput_mult = 0.45
+    stressed.logistics_pressure = 3.0
+
+    for _ in range(50):
+        tick_fabrication(relaxed)
+        tick_fabrication(stressed)
+
+    assert relaxed.inventory["COMPONENTS"] > stressed.inventory["COMPONENTS"]

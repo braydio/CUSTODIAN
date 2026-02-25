@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from game.simulations.world_state.core.config import COMMAND_CENTER_LOCATION
+from game.simulations.world_state.core.display_names import display_location, display_relay
 
 
 RELAY_STATUSES = {"UNKNOWN", "LOCATED", "UNSTABLE", "STABLE", "DORMANT"}
@@ -63,6 +64,8 @@ def relay_scan_lines(state, fidelity: str) -> list[str]:
     for relay_id in sorted(state.relay_nodes.keys()):
         relay = state.relay_nodes[relay_id]
         sector = str(relay.get("sector", "UNKNOWN"))
+        relay_name = display_relay(relay_id)
+        sector_name = display_location(sector)
         status = str(relay.get("status", "UNKNOWN"))
         required = int(relay.get("stability_ticks_required", 0))
 
@@ -73,10 +76,10 @@ def relay_scan_lines(state, fidelity: str) -> list[str]:
                 status_text = "STABLE"
             else:
                 status_text = "ACTIVE"
-            lines.append(f"- {relay_id}: {status_text}")
+            lines.append(f"- {relay_name}: {status_text}")
             continue
 
-        lines.append(f"- {relay_id}: {status} | SECTOR {sector} | STABILIZE {required} TICKS")
+        lines.append(f"- {relay_name}: {status} | SECTOR {sector_name} | STABILIZE {required} TICKS")
 
     lines.append(f"PENDING PACKETS: {state.relay_packets_pending}")
     lines.append(f"KNOWLEDGE INDEX: {state.knowledge_index.get('RELAY_RECOVERY', 0)}")
@@ -90,7 +93,7 @@ def complete_relay_stabilization(state, relay_id: str) -> list[str]:
     relay["status"] = "STABLE"
     relay["last_stabilized_time"] = state.time
     state.relay_packets_pending += 1
-    return [f"RELAY STABLE: {relay_id}", "PACKET READY FOR SYNC."]
+    return [f"RELAY STABLE: {display_relay(relay_id)}", "PACKET READY FOR SYNC."]
 
 
 def apply_sync(state) -> tuple[int, int]:

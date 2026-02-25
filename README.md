@@ -4,7 +4,7 @@ Lightweight game simulation prototypes centered on a sole survivor defending a s
 
 > CUSTODIAN is not about winning campaigns.
 > It is about deciding what must be known before it disappears forever.
-> And winning campaigns.
+> And winnjng campaigns.
 
 ## Core
 

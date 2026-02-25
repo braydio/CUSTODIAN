@@ -34,6 +34,8 @@ from .config import (
     MAX_ACTIVE_ASSAULTS_TUTORIAL,
     TRAVEL_GRAPH,
     TRANSIT_NODES,
+    TRANSIT_FORTIFICATION_FACTOR,
+    THREAT_MULT_FLOOR,
     WORLD_GRAPH,
 )
 from .effects import add_global_effect, add_sector_effect
@@ -45,6 +47,7 @@ from .defense import (
     doctrine_threat_multiplier,
 )
 from .policies import FORTIFICATION_MULT
+from .display_names import display_location
 from .power import comms_fidelity, structure_effective_output
 from .repairs import cancel_repair_for_structure, regress_repairs_in_sectors
 from .structure_effects import apply_structure_destroyed_effects
@@ -273,7 +276,7 @@ def maybe_warn(state, node: str) -> None:
         chance = detection_probability(0.2, state)
 
     if state.rng.random() < chance:
-        line = f"[WARNING] HOSTILE MOVEMENT NEAR {node}"
+        line = f"[WARNING] HOSTILE MOVEMENT NEAR {display_location(node)}"
     else:
         line = "[EVENT] SIGNAL INTERFERENCE DETECTED"
 
@@ -300,11 +303,15 @@ def _attempt_transit_intercept(state, approach: AssaultApproach, node: str) -> N
 
     state.turret_ammo_stock -= 1
     step_mult = _intercept_step_multiplier(state)
+    approach.threat_mult = min(1.0, approach.threat_mult * step_mult)
+    fort_level = int(state.transit_fort_levels.get(node, 0))
+    if fort_level > 0:
+        approach.threat_mult -= fort_level * TRANSIT_FORTIFICATION_FACTOR
     approach.threat_mult = max(
-        ASSAULT_TRANSIT_INTERCEPT_FLOOR,
-        min(1.0, approach.threat_mult * step_mult),
+        THREAT_MULT_FLOOR,
+        min(1.0, approach.threat_mult),
     )
-    line = f"[INTERCEPT] {node} DEFENSE FIRE DISRUPTED HOSTILES"
+    line = f"[INTERCEPT] {display_location(node)} DEFENSE FIRE DISRUPTED HOSTILES"
     if line not in state.last_assault_lines:
         state.last_assault_lines.append(line)
 

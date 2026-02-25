@@ -4,6 +4,7 @@ from game.simulations.world_state.core.config import (
     MOVE_TICKS,
     TRAVEL_GRAPH,
 )
+from game.simulations.world_state.core.display_names import display_location
 from game.simulations.world_state.core.presence import start_move_task
 from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.state import GameState
@@ -29,7 +30,7 @@ def cmd_move(state: GameState, destination: str) -> list[str]:
         return ["INVALID ROUTE."]
 
     start_move_task(state, target, MOVE_TICKS)
-    lines = [f"MOVING TO {target}."]
+    lines = [f"MOVING TO {display_location(target)}."]
     if target in {"T_NORTH", "T_SOUTH"}:
         lines.append(_transit_signal_tag(comms_fidelity(state), target))
     return lines

@@ -15,6 +15,13 @@ from game.simulations.world_state.core.presence import tick_presence
 from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.simulation import step_world
 from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.terminal.procgen_text import (
+    render_wait_assault_line,
+    render_wait_event_line,
+    render_wait_repair_line,
+    render_wait_status_shift_line,
+    render_wait_warning_line,
+)
 
 
 WAIT_TICKS_PER_UNIT = 5
@@ -39,6 +46,8 @@ class WaitTickInfo:
     assault_lines: list[str]
     structure_loss_lines: list[str]
     stability_declining: bool
+    event_key: str | None = None
+    event_detected: bool | None = None
 
 
 def _failure_lines(state: GameState) -> list[str]:
@@ -68,55 +77,37 @@ def _latest_event(state: GameState, before_time: int) -> tuple[str | None, str |
     return latest_name, latest_sector
 
 
-def _format_event_line(event_name: str, fidelity: str) -> str | None:
-    event_text = event_name.upper()
-    if fidelity == "FULL":
-        return f"[EVENT] {event_text} DETECTED"
-    if fidelity == "DEGRADED":
-        return f"[EVENT] {event_text} REPORTED"
-    if fidelity == "FRAGMENTED":
-        return "[EVENT] IRREGULAR SIGNALS DETECTED"
-    return None
+def _format_event_line(
+    state: GameState,
+    *,
+    event_name: str,
+    fidelity: str,
+    event_key: str | None,
+    detected: bool | None,
+) -> str | None:
+    return render_wait_event_line(
+        state,
+        fidelity=fidelity,
+        event_name=event_name,
+        event_key=event_key,
+        detected=detected,
+    )
 
 
-def _format_repair_line(repair_name: str, fidelity: str) -> str | None:
-    if fidelity == "FULL":
-        return f"[EVENT] REPAIR COMPLETE: {repair_name.upper()}"
-    if fidelity == "DEGRADED":
-        return f"[EVENT] REPAIR COMPLETE: {repair_name.upper()}"
-    if fidelity == "FRAGMENTED":
-        return "[EVENT] MAINTENANCE SIGNALS DETECTED"
-    return None
+def _format_repair_line(state: GameState, *, repair_name: str, fidelity: str) -> str | None:
+    return render_wait_repair_line(state, fidelity=fidelity, repair_name=repair_name)
 
 
-def _format_warning_line(fidelity: str) -> str | None:
-    if fidelity == "FULL":
-        return "[WARNING] HOSTILE COORDINATION DETECTED"
-    if fidelity == "DEGRADED":
-        return "[WARNING] HOSTILE ACTIVITY REPORTED"
-    if fidelity == "FRAGMENTED":
-        return "[WARNING] STRUCTURAL STRESS INDICATED"
-    return None
+def _format_warning_line(state: GameState, *, fidelity: str) -> str | None:
+    return render_wait_warning_line(state, fidelity=fidelity)
 
 
-def _format_assault_line(fidelity: str) -> str | None:
-    if fidelity == "FULL":
-        return "[ASSAULT] THREAT ACTIVITY INCREASING"
-    if fidelity == "DEGRADED":
-        return "[ASSAULT] THREAT ACTIVITY APPEARS TO BE INCREASING"
-    if fidelity == "FRAGMENTED":
-        return "[ASSAULT] HOSTILE ACTIVITY POSSIBLE"
-    return None
+def _format_assault_line(state: GameState, *, fidelity: str) -> str | None:
+    return render_wait_assault_line(state, fidelity=fidelity)
 
 
-def _format_status_shift(fidelity: str) -> str | None:
-    if fidelity == "FULL":
-        return "[STATUS SHIFT] SYSTEM STABILITY DECLINING"
-    if fidelity == "DEGRADED":
-        return "[STATUS SHIFT] SYSTEM STABILITY APPEARS TO BE DECLINING"
-    if fidelity == "FRAGMENTED":
-        return "[STATUS SHIFT] INTERNAL CONDITIONS MAY BE WORSENING"
-    return None
+def _format_status_shift(state: GameState, *, fidelity: str) -> str | None:
+    return render_wait_status_shift_line(state, fidelity=fidelity)
 
 
 def _advance_tick(state: GameState) -> WaitTickInfo:
@@ -147,6 +138,14 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
     fidelity = _fidelity_from_comms(state)
     structure_loss_lines = _consume_structure_loss_lines(state, fidelity)
     event_name, event_sector = _latest_event(state, before_time)
+    event_key = None
+    event_detected = None
+    if state.tick_events:
+        event = state.tick_events[-1]
+        event_name = event.event_name
+        event_sector = event.sector
+        event_key = event.event_key
+        event_detected = event.detected
     repair_names = [line.replace("REPAIR COMPLETE: ", "") for line in repair_lines]
     assault_lines = list(state.last_assault_lines)
 
@@ -201,7 +200,29 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
         assault_lines=assault_lines,
         structure_loss_lines=structure_loss_lines,
         stability_declining=stability_declining,
+        event_key=event_key,
+        event_detected=event_detected,
     )
+
+
+def _primary_signal_key(info: WaitTickInfo) -> str | None:
+    if info.fidelity_lines:
+        return "fidelity"
+    if info.structure_loss_lines:
+        return "structure_loss"
+    if info.assault_lines:
+        return "assault_lines"
+    if info.fabrication_lines:
+        return "fabrication"
+    if info.relay_lines:
+        return "relay"
+    if info.event_name:
+        return f"event:{info.event_key or info.event_name}"
+    if info.repair_names:
+        return f"repair:{info.repair_names[0]}"
+    if info.assault_warning:
+        return "warning"
+    return None
 
 
 def _consume_structure_loss_lines(state: GameState, fidelity: str) -> list[str]:
@@ -255,7 +276,7 @@ def cmd_wait_ticks(state: GameState, ticks: int) -> list[str]:
     lines = ["TIME ADVANCED."]
     detail_lines: list[str] = []
     last_detail_line = lines[0]
-    last_signal_line: str | None = None
+    last_signal_key: str | None = None
     total_ticks = ticks * WAIT_TICKS_PER_UNIT
     if state.current_assault is not None or state.in_major_assault:
         total_ticks = ticks
@@ -263,14 +284,14 @@ def cmd_wait_ticks(state: GameState, ticks: int) -> list[str]:
     for index in range(total_ticks):
         info = _advance_tick(state)
         tick_lines = _detail_lines_for_tick(info, state)
-        signal_line = tick_lines[0] if tick_lines else None
+        signal_key = _primary_signal_key(info)
         suppress_tick_lines = (
-            signal_line is not None
-            and signal_line == last_signal_line
+            signal_key is not None
+            and signal_key == last_signal_key
             and not info.became_failed
         )
-        if not suppress_tick_lines and signal_line is not None:
-            last_signal_line = signal_line
+        if not suppress_tick_lines and signal_key is not None:
+            last_signal_key = signal_key
 
         if suppress_tick_lines:
             if index < total_ticks - 1:
@@ -308,20 +329,20 @@ def cmd_wait_until(state: GameState, condition: str) -> list[str]:
     lines = [f"TIME ADVANCED UNTIL {token}."]
     detail_lines: list[str] = []
     last_detail_line = lines[0]
-    last_signal_line: str | None = None
+    last_signal_key: str | None = None
     condition_met = False
 
     for _ in range(WAIT_UNTIL_MAX_TICKS):
         info = _advance_tick(state)
         tick_lines = _detail_lines_for_tick(info, state)
-        signal_line = tick_lines[0] if tick_lines else None
+        signal_key = _primary_signal_key(info)
         suppress_tick_lines = (
-            signal_line is not None
-            and signal_line == last_signal_line
+            signal_key is not None
+            and signal_key == last_signal_key
             and not info.became_failed
         )
-        if not suppress_tick_lines and signal_line is not None:
-            last_signal_line = signal_line
+        if not suppress_tick_lines and signal_key is not None:
+            last_signal_key = signal_key
 
         if not suppress_tick_lines:
             for line in tick_lines:
@@ -372,15 +393,25 @@ def _detail_lines_for_tick(info: WaitTickInfo, state: GameState) -> list[str]:
 
     event_line = None
     if info.event_name and not info.fidelity_lines:
-        event_line = _format_event_line(info.event_name, info.fidelity)
+        event_line = _format_event_line(
+            state,
+            event_name=info.event_name,
+            fidelity=info.fidelity,
+            event_key=info.event_key,
+            detected=info.event_detected,
+        )
 
     repair_line = None
     if not event_line and info.repair_names:
-        repair_line = _format_repair_line(info.repair_names[0], info.fidelity)
+        repair_line = _format_repair_line(
+            state,
+            repair_name=info.repair_names[0],
+            fidelity=info.fidelity,
+        )
 
     warning_line = None
     if not event_line and not repair_line and info.assault_warning:
-        warning_line = _format_warning_line(info.fidelity)
+        warning_line = _format_warning_line(state, fidelity=info.fidelity)
 
     if event_line:
         tick_lines.append(event_line)
@@ -395,12 +426,12 @@ def _detail_lines_for_tick(info: WaitTickInfo, state: GameState) -> list[str]:
 
     interpretive_line = None
     if assault_signal:
-        interpretive_line = _format_assault_line(info.fidelity)
+        interpretive_line = _format_assault_line(state, fidelity=info.fidelity)
     elif (
         info.stability_declining
         and (event_line or repair_line or info.fidelity_lines or info.structure_loss_lines)
     ):
-        interpretive_line = _format_status_shift(info.fidelity)
+        interpretive_line = _format_status_shift(state, fidelity=info.fidelity)
 
     if interpretive_line:
         tick_lines.append(interpretive_line)

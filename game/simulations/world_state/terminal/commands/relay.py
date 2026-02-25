@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from game.simulations.world_state.core.config import FIELD_ACTION_STABILIZING
+from game.simulations.world_state.core.display_names import display_relay
 from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.relays import (
     apply_sync,
@@ -35,13 +36,13 @@ def cmd_stabilize_relay(state: GameState, relay_token: str) -> list[str]:
         return ["RELAY NOT IN CURRENT LOCATION."]
     status = str(relay.get("status", "UNKNOWN")).upper()
     if status == "STABLE":
-        return [f"RELAY {relay_id} ALREADY STABLE."]
+        return [f"RELAY {display_relay(relay_id)} ALREADY STABLE."]
 
     ticks = int(relay.get("stability_ticks_required", 3))
     relay["status"] = "UNSTABLE"
     state.active_task = RelayTask(relay_id=relay_id, target=sector, ticks=ticks, total=ticks)
     state.field_action = FIELD_ACTION_STABILIZING
-    return [f"STABILIZING {relay_id} ({ticks} TICKS)."]
+    return [f"STABILIZING {display_relay(relay_id)} ({ticks} TICKS)."]
 
 
 def cmd_sync(state: GameState) -> list[str]:

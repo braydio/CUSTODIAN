@@ -62,7 +62,7 @@ def test_wait_suppresses_repeated_event_blocks(monkeypatch) -> None:
     """Repeated tick signals should not be emitted back-to-back."""
 
     _disable_wait_tick_pause(monkeypatch)
-    state = GameState()
+    state = GameState(seed=1)
 
     def _repeat_event(_state: GameState) -> WaitTickInfo:
         _state.time += 1
@@ -94,10 +94,11 @@ def test_wait_suppresses_repeated_event_blocks(monkeypatch) -> None:
 
     assert result.ok is True
     assert result.text == "TIME ADVANCED."
-    assert result.lines == [
-        "[EVENT] COMMS BURST DETECTED",
-        "[STATUS SHIFT] SYSTEM STABILITY DECLINING",
-    ]
+    assert result.lines is not None
+    assert len(result.lines) == 2
+    assert result.lines[0].startswith("[EVENT] ")
+    assert "COMMS BURST" in result.lines[0]
+    assert result.lines[1].startswith("[STATUS SHIFT] ")
 
 
 def test_wait_surfaces_transit_intercept_lines(monkeypatch) -> None:
@@ -117,7 +118,7 @@ def test_wait_surfaces_transit_intercept_lines(monkeypatch) -> None:
 
     assert result.ok is True
     assert result.lines is not None
-    assert any(line.startswith("[INTERCEPT] T_NORTH") for line in result.lines)
+    assert any(line.startswith("[INTERCEPT] NORTH TRANSIT") for line in result.lines)
 
 
 def test_status_does_not_mutate_state() -> None:
@@ -291,7 +292,7 @@ def test_deploy_transitions_to_field_mode() -> None:
     result = process_command(state, "DEPLOY NORTH")
 
     assert result.ok is True
-    assert result.text == "DEPLOYING TO T_NORTH."
+    assert result.text == "DEPLOYING TO NORTH TRANSIT."
     assert state.player_mode == "FIELD"
 
 
@@ -301,7 +302,7 @@ def test_deploy_autoroutes_sector_when_fidelity_full() -> None:
     result = process_command(state, "DEPLOY ARCHIVE")
 
     assert result.ok is True
-    assert result.text == "DEPLOYING TO T_NORTH."
+    assert result.text == "DEPLOYING TO NORTH TRANSIT."
     assert state.player_mode == "FIELD"
 
 
@@ -311,7 +312,7 @@ def test_deploy_autoroutes_gateway_to_south_transit() -> None:
     result = process_command(state, "DEPLOY GATEWAY")
 
     assert result.ok is True
-    assert result.text == "DEPLOYING TO T_SOUTH."
+    assert result.text == "DEPLOYING TO SOUTH TRANSIT."
     assert state.player_mode == "FIELD"
 
 
@@ -611,6 +612,7 @@ def test_status_group_fabrication_reports_queue_and_allocation() -> None:
     assert result.ok is True
     assert result.text == "STATUS GROUP: FABRICATION"
     assert result.lines is not None
+    assert any(line.startswith("AMBIENT FAB: RATE ") for line in result.lines)
     assert "FAB ALLOCATION:" in result.lines
     assert "FAB QUEUE: EMPTY" in result.lines
 
@@ -688,7 +690,7 @@ def test_relay_commands_scan_stabilize_and_sync(monkeypatch) -> None:
     process_command(state, "WAIT")
     stabilize = process_command(state, "STABILIZE RELAY R_NORTH")
     assert stabilize.ok is True
-    assert stabilize.text.startswith("STABILIZING R_NORTH")
+    assert stabilize.text.startswith("STABILIZING NORTH RELAY")
 
     process_command(state, "WAIT")
     process_command(state, "WAIT")
@@ -963,3 +965,39 @@ def test_field_mode_assault_warning_is_delayed(monkeypatch) -> None:
     assert tick1.assault_started is False
     assert tick2.assault_warning is True
     assert tick3.assault_warning is False
+
+
+def test_field_status_reports_routes_and_local_relay_actions() -> None:
+    state = GameState()
+    state.player_mode = "FIELD"
+    state.player_location = "T_NORTH"
+
+    result = process_command(state, "STATUS")
+
+    assert result.ok is True
+    assert result.text == "LOCATION: NORTH TRANSIT"
+    assert result.lines is not None
+    assert "ROUTES:" in result.lines
+    assert "- COMMAND CENTER | MOVE COMMAND" in result.lines
+    assert "IMPORTANT:" in result.lines
+    assert "- NORTH RELAY LOCATED" in result.lines
+    assert "ACTIONS:" in result.lines
+    assert "- STABILIZE RELAY R_NORTH" in result.lines
+
+
+def test_field_status_in_sector_reports_local_damage_and_repair_action() -> None:
+    state = GameState()
+    state.player_mode = "FIELD"
+    state.player_location = "COMMS"
+    state.structures["CM_CORE"].state = StructureState.DAMAGED
+
+    result = process_command(state, "STATUS")
+
+    assert result.ok is True
+    assert result.text == "LOCATION: COMMS"
+    assert result.lines is not None
+    assert "LOCAL STATUS: DAMAGED" in result.lines
+    assert "LOCAL DAMAGE:" in result.lines
+    assert any(line.startswith("- CM_CORE DAMAGED") for line in result.lines)
+    assert "ACTIONS:" in result.lines
+    assert "- REPAIR CM_CORE" in result.lines
