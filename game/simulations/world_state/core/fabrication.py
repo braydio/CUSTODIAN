@@ -5,7 +5,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from itertools import count
 
+from .config import (
+    AMBIENT_FAB_BASE_UNITS_PER_TICK,
+    AMBIENT_FAB_POWER_LOAD_PENALTY,
+    AMBIENT_FAB_POWER_LOAD_SOFTCAP,
+    AMBIENT_FAB_SUPPLY_PRESSURE_PENALTY,
+)
 from .policies import FAB_CATEGORIES
+from .power import power_efficiency, structure_effective_output
 
 
 @dataclass
@@ -66,10 +73,153 @@ RECIPES = {
     },
 }
 
+AMBIENT_FAB_RULES = {
+    "DEFENSE": {
+        "cycle": 5.0,
+        "inputs": {"COMPONENTS": 1},
+        "outputs": {"TURRET_AMMO": 1},
+        "line": "AMBIENT FAB: DEFENSE SUPPLY +1 TURRET_AMMO",
+    },
+    "DRONES": {
+        "cycle": 8.0,
+        "inputs": {"COMPONENTS": 2, "ASSEMBLIES": 1, "MODULES": 1},
+        "outputs": {"REPAIR_DRONE": 1},
+        "line": "AMBIENT FAB: SUPPORT FRAME +1 REPAIR_DRONE",
+    },
+    "REPAIRS": {
+        "cycle": 3.0,
+        "inputs": {"SCRAP": 2},
+        "outputs": {"COMPONENTS": 1},
+        "line": "AMBIENT FAB: MATERIALS +1 COMPONENTS",
+    },
+    "ARCHIVE": {
+        "cycle": 4.5,
+        "inputs": {"COMPONENTS": 2, "ASSEMBLIES": 1},
+        "outputs": {"MODULES": 1},
+        "line": "AMBIENT FAB: ARCHIVE STOCK +1 MODULES",
+    },
+}
+
+
+def _apply_outputs(state, outputs: dict[str, int]) -> None:
+    for output, amount in outputs.items():
+        if output == "REPAIR_DRONE":
+            state.repair_drone_stock += int(amount)
+        elif output == "TURRET_AMMO":
+            state.turret_ammo_stock += int(amount)
+        elif output == "ARCHIVE_ARMOR":
+            archive = state.sectors.get("ARCHIVE")
+            if archive is not None:
+                archive.damage = max(0.0, archive.damage - (0.2 * int(amount)))
+        else:
+            state.inventory[output] = int(state.inventory.get(output, 0)) + int(amount)
+
+
+def _has_inputs(state, inputs: dict[str, int]) -> bool:
+    for resource, amount in inputs.items():
+        if int(state.inventory.get(resource, 0)) < int(amount):
+            return False
+    return True
+
+
+def _consume_inputs(state, inputs: dict[str, int]) -> None:
+    for resource, amount in inputs.items():
+        state.inventory[resource] = int(state.inventory.get(resource, 0)) - int(amount)
+
+
+def ambient_fabrication_projection(state) -> dict[str, float]:
+    fab_sector = state.sectors.get("FABRICATION")
+    if fab_sector is None:
+        return {"rate": 0.0, "power_factor": 0.0, "supply_factor": 0.0}
+
+    core = state.structures.get("FB_CORE")
+    tools = state.structures.get("FB_TOOLS")
+    core_output = structure_effective_output(state, core) if core else 1.0
+    tools_output = structure_effective_output(state, tools) if tools else 1.0
+    local_power = power_efficiency(fab_sector.power)
+    logistics_factor = max(0.25, float(getattr(state, "fabrication_throughput_mult", 1.0)))
+
+    pressure = max(0.0, float(getattr(state, "logistics_pressure", 0.0)))
+    supply_factor = max(0.2, 1.0 - (pressure * AMBIENT_FAB_SUPPLY_PRESSURE_PENALTY))
+
+    overload = max(
+        0.0,
+        float(getattr(state, "power_load", 1.0)) - AMBIENT_FAB_POWER_LOAD_SOFTCAP,
+    )
+    power_load_factor = max(0.25, 1.0 - (overload * AMBIENT_FAB_POWER_LOAD_PENALTY))
+
+    rate = AMBIENT_FAB_BASE_UNITS_PER_TICK
+    rate *= core_output
+    rate *= tools_output
+    rate *= local_power
+    rate *= logistics_factor
+    rate *= supply_factor
+    rate *= power_load_factor
+    if rate < 0.01:
+        rate = 0.0
+
+    return {
+        "rate": float(rate),
+        "power_factor": float(local_power * power_load_factor),
+        "supply_factor": float(logistics_factor * supply_factor),
+    }
+
+
+def _tick_ambient_fabrication(state) -> list[str]:
+    if not hasattr(state, "ambient_fab_progress") or not isinstance(state.ambient_fab_progress, dict):
+        state.ambient_fab_progress = {name: 0.0 for name in FAB_CATEGORIES}
+
+    projection = ambient_fabrication_projection(state)
+    state.ambient_fab_effective_rate = round(float(projection["rate"]), 3)
+    state.ambient_fab_power_factor = round(float(projection["power_factor"]), 3)
+    state.ambient_fab_supply_factor = round(float(projection["supply_factor"]), 3)
+
+    if state.ambient_fab_effective_rate <= 0.0:
+        return []
+
+    total_allocation = sum(max(0, int(state.fab_allocation.get(name, 0))) for name in FAB_CATEGORIES)
+    if total_allocation <= 0:
+        return []
+
+    for category in FAB_CATEGORIES:
+        share = max(0, int(state.fab_allocation.get(category, 0))) / total_allocation
+        state.ambient_fab_progress[category] = float(state.ambient_fab_progress.get(category, 0.0))
+        state.ambient_fab_progress[category] += state.ambient_fab_effective_rate * share
+        cycle = float(AMBIENT_FAB_RULES[category]["cycle"])
+        state.ambient_fab_progress[category] = min(state.ambient_fab_progress[category], cycle * 1.5)
+
+    lines: list[str] = []
+    while len(lines) < 3:
+        crafted = False
+        ordered = sorted(
+            FAB_CATEGORIES,
+            key=lambda name: float(state.ambient_fab_progress.get(name, 0.0)),
+            reverse=True,
+        )
+        for category in ordered:
+            rule = AMBIENT_FAB_RULES[category]
+            cycle = float(rule["cycle"])
+            if float(state.ambient_fab_progress.get(category, 0.0)) < cycle:
+                continue
+            if not _has_inputs(state, rule["inputs"]):
+                continue
+            _consume_inputs(state, rule["inputs"])
+            _apply_outputs(state, rule["outputs"])
+            state.ambient_fab_progress[category] -= cycle
+            lines.append(str(rule["line"]))
+            crafted = True
+            if len(lines) >= 3:
+                break
+        if not crafted:
+            break
+
+    return lines
+
 
 def tick_fabrication(state) -> list[str]:
+    lines = _tick_ambient_fabrication(state)
     if not state.fabrication_queue:
-        return []
+        return lines
 
     task = state.fabrication_queue[0]
     category = str(task.category).upper()
@@ -85,21 +235,11 @@ def tick_fabrication(state) -> list[str]:
 
     task.ticks_remaining -= throughput_mult
     if task.ticks_remaining > 0:
-        return []
+        return lines
 
     state.fabrication_queue.pop(0)
-    lines = [f"FABRICATION COMPLETE: {task.name}"]
-    for output, amount in task.outputs.items():
-        if output == "REPAIR_DRONE":
-            state.repair_drone_stock += int(amount)
-        elif output == "TURRET_AMMO":
-            state.turret_ammo_stock += int(amount)
-        elif output == "ARCHIVE_ARMOR":
-            archive = state.sectors.get("ARCHIVE")
-            if archive is not None:
-                archive.damage = max(0.0, archive.damage - (0.2 * int(amount)))
-        else:
-            state.inventory[output] = int(state.inventory.get(output, 0)) + int(amount)
+    lines.append(f"FABRICATION COMPLETE: {task.name}")
+    _apply_outputs(state, task.outputs)
     return lines
 
 

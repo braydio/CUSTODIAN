@@ -1,0 +1,2216 @@
+=== allocate_defense.py ===
+"""ALLOCATE DEFENSE command handler."""
+
+from game.simulations.world_state.core.defense import (
+    ALLOCATION_KEYS,
+    allocation_from_target_percent,
+)
+from game.simulations.world_state.core.state import GameState
+
+
+SECTOR_TO_ALLOCATION = {
+    "COMMAND": "COMMAND",
+    "POWER": "POWER",
+    "FABRICATION": "POWER",
+    "COMMS": "SENSORS",
+    "SENSORS": "SENSORS",
+    "PERIMETER": "PERIMETER",
+    "DEFENSE": "PERIMETER",
+    "DEFENSE GRID": "PERIMETER",
+    "HANGAR": "PERIMETER",
+    "GATEWAY": "PERIMETER",
+    "STORAGE": "PERIMETER",
+    "ARCHIVE": "PERIMETER",
+}
+
+
+def _resolve_group(token: str) -> str | None:
+    normalized = token.strip().upper()
+    if not normalized:
+        return None
+    if normalized in ALLOCATION_KEYS:
+        return normalized
+    return SECTOR_TO_ALLOCATION.get(normalized)
+
+
+def cmd_allocate_defense(state: GameState, group_token: str, percent_token: str) -> list[str]:
+    group = _resolve_group(group_token)
+    if group is None:
+        return ["INVALID ALLOCATION TARGET."]
+
+    try:
+        percent = float(percent_token)
+    except ValueError:
+        return ["INVALID PERCENT VALUE."]
+
+    weights = allocation_from_target_percent(group, percent)
+    if weights is None:
+        return ["ALLOCATION PERCENT MUST BE > 0 AND < 100."]
+
+    state.defense_allocation = weights
+    readiness = state.compute_readiness()
+    return [
+        f"DEFENSE ALLOCATION UPDATED: {group} {percent:.0f}%",
+        f"READINESS: {readiness:.2f}",
+    ]
+
+
+
+
+=== assault_ops.py ===
+"""Assault micro-tactical command handlers."""
+
+from __future__ import annotations
+
+from game.simulations.world_state.core.state import GameState
+
+
+def _require_active_assault(state: GameState) -> str | None:
+    if state.current_assault is None or not state.in_major_assault:
+        return "TACTICAL COMMAND REQUIRES ACTIVE ASSAULT."
+    return None
+
+
+def cmd_reroute_power(state: GameState, sector_token: str) -> list[str]:
+    err = _require_active_assault(state)
+    if err:
+        return [err]
+    token = sector_token.strip().upper()
+    sector = state.sectors.get(token)
+    if sector is None:
+        return ["UNKNOWN SECTOR."]
+    if sector.power < 1.5:
+        sector.power = min(2.0, sector.power + 0.25)
+    state.assault_tactical_effects[f"REROUTE:{sector.name}"] = {"remaining": 2}
+    return [f"POWER REROUTED TO {sector.name} (2 TICKS)."]
+
+
+def cmd_boost_defense(state: GameState, sector_token: str) -> list[str]:
+    err = _require_active_assault(state)
+    if err:
+        return [err]
+    token = sector_token.strip().upper()
+    sector = state.sectors.get(token)
+    if sector is None:
+        return ["UNKNOWN SECTOR."]
+    state.assault_tactical_effects[f"BOOST:{sector.name}"] = {"remaining": 2}
+    return [f"DEFENSE BOOSTED AT {sector.name} (2 TICKS)."]
+
+
+def cmd_deploy_drone(state: GameState, sector_token: str) -> list[str]:
+    err = _require_active_assault(state)
+    if err:
+        return [err]
+    if state.repair_drone_stock <= 0:
+        return ["NO REPAIR DRONES AVAILABLE."]
+    token = sector_token.strip().upper()
+    sector = state.sectors.get(token)
+    if sector is None:
+        return ["UNKNOWN SECTOR."]
+    state.repair_drone_stock -= 1
+    state.assault_tactical_effects[f"DRONE:{sector.name}"] = {"remaining": 3}
+    return [f"REPAIR DRONE DEPLOYED TO {sector.name}."]
+
+
+def cmd_lockdown(state: GameState, sector_token: str) -> list[str]:
+    err = _require_active_assault(state)
+    if err:
+        return [err]
+    token = sector_token.strip().upper()
+    sector = state.sectors.get(token)
+    if sector is None:
+        return ["UNKNOWN SECTOR."]
+    state.assault_tactical_effects[f"LOCKDOWN:{sector.name}"] = {"remaining": 2}
+    return [f"LOCKDOWN ACTIVE IN {sector.name} (2 TICKS)."]
+
+
+def cmd_prioritize_repair(state: GameState, sector_token: str) -> list[str]:
+    err = _require_active_assault(state)
+    if err:
+        return [err]
+    token = sector_token.strip().upper()
+    sector = state.sectors.get(token)
+    if sector is None:
+        return ["UNKNOWN SECTOR."]
+    state.assault_tactical_effects[f"REPAIR:{sector.name}"] = {"remaining": 3}
+    return [f"REPAIR PRIORITY SET: {sector.name} (3 TICKS)."]
+
+
+
+
+=== config_doctrine.py ===
+"""CONFIG DOCTRINE command handler."""
+
+from game.simulations.world_state.core.defense import normalize_doctrine
+from game.simulations.world_state.core.state import GameState
+
+
+def cmd_config_doctrine(state: GameState, doctrine_name: str) -> list[str]:
+    doctrine = normalize_doctrine(doctrine_name)
+    if doctrine is None:
+        return ["INVALID DOCTRINE.", "VALID: BALANCED, AGGRESSIVE, COMMAND_FIRST, INFRASTRUCTURE_FIRST, SENSOR_PRIORITY."]
+
+    state.set_defense_doctrine(doctrine)
+    readiness = state.compute_readiness()
+    return [
+        f"DEFENSE DOCTRINE SET: {state.defense_doctrine}",
+        f"READINESS: {readiness:.2f}",
+    ]
+
+
+
+
+=== deploy.py ===
+"""DEPLOY command handler."""
+
+from game.simulations.world_state.core.config import (
+    COMMAND_CENTER_LOCATION,
+    DEPLOY_TICKS,
+    PLAYER_MODE_FIELD,
+    TRAVEL_GRAPH,
+    TRANSIT_NODES,
+)
+from game.simulations.world_state.core.display_names import display_location
+from game.simulations.world_state.core.presence import start_move_task
+from game.simulations.world_state.core.power import comms_fidelity
+from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.terminal.location import resolve_location_token
+
+
+def _shortest_path(start: str, goal: str) -> list[str] | None:
+    if start == goal:
+        return [start]
+    frontier: list[tuple[str, list[str]]] = [(start, [start])]
+    visited = {start}
+    while frontier:
+        node, path = frontier.pop(0)
+        for neighbor in TRAVEL_GRAPH.get(node, []):
+            if neighbor in visited:
+                continue
+            next_path = path + [neighbor]
+            if neighbor == goal:
+                return next_path
+            visited.add(neighbor)
+            frontier.append((neighbor, next_path))
+    return None
+
+
+def _start_deploy_task(state: GameState, target: str) -> list[str]:
+    state.player_mode = PLAYER_MODE_FIELD
+    state.player_location = COMMAND_CENTER_LOCATION
+    start_move_task(state, target, DEPLOY_TICKS)
+    lines = [f"DEPLOYING TO {display_location(target)}."]
+    if target == "T_NORTH":
+        lines.append(_transit_signal_tag(comms_fidelity(state), "NORTH"))
+    elif target == "T_SOUTH":
+        lines.append(_transit_signal_tag(comms_fidelity(state), "SOUTH"))
+    return lines
+
+
+def _transit_signal_tag(fidelity: str, lane: str) -> str:
+    if fidelity == "FULL":
+        return f"[TRANSIT] {lane} LANE: POWER HUM"
+    if fidelity == "DEGRADED":
+        return f"[TRANSIT] {lane} LANE: THERMAL NOISE"
+    if fidelity == "FRAGMENTED":
+        return f"[TRANSIT] {lane} LANE: SIGNAL IRREGULAR"
+    return "[TRANSIT] NO SIGNAL."
+
+
+def cmd_deploy(state: GameState, destination: str) -> list[str]:
+    if state.player_mode != "COMMAND":
+        return ["ALREADY DEPLOYED."]
+
+    if state.active_task:
+        return ["ACTION IN PROGRESS."]
+    if state.active_repairs:
+        return ["ACTION IN PROGRESS."]
+
+    fidelity = comms_fidelity(state)
+    if not destination or not destination.strip():
+        if fidelity in {"FULL", "DEGRADED"}:
+            return [
+                "DEPLOY COMMAND INCOMPLETE.",
+                "ROUTE FORMAT: DEPLOY <NORTH|SOUTH|SECTOR>.",
+                "TRANSIT CONTEXT: PRIMARY NODES FROM COMMAND ARE NORTH AND SOUTH.",
+            ]
+        if fidelity == "FRAGMENTED":
+            return ["DEPLOY REQUIRES TRANSIT TARGET."]
+        return ["NO SIGNAL."]
+
+    target = resolve_location_token(destination)
+    if fidelity == "FULL" and target and target not in TRANSIT_NODES:
+        path = _shortest_path(COMMAND_CENTER_LOCATION, target)
+        if path and len(path) >= 2:
+            return _start_deploy_task(state, path[1])
+
+    if target not in TRANSIT_NODES:
+        if fidelity == "DEGRADED":
+            return [
+                "INVALID DEPLOYMENT TARGET.",
+                "TRANSIT LOCK: USE DEPLOY NORTH OR DEPLOY SOUTH.",
+                f"UNRESOLVED ROUTE TOKEN: {destination.strip().upper()}.",
+            ]
+        if fidelity == "LOST":
+            return ["NO SIGNAL."]
+        return ["INVALID DEPLOYMENT TARGET."]
+
+    return _start_deploy_task(state, target)
+
+
+
+=== fabrication.py ===
+"""FAB command handlers."""
+
+from __future__ import annotations
+
+from game.simulations.world_state.core.fabrication import (
+    cancel_fabrication_task,
+    recipe_catalog,
+    set_fabrication_priority,
+    start_fabrication_task,
+)
+from game.simulations.world_state.core.state import GameState
+
+
+def cmd_fab_add(state: GameState, item_name: str) -> list[str]:
+    result = start_fabrication_task(state, item_name)
+    if result == "UNKNOWN FAB ITEM.":
+        recipes = ", ".join(recipe_catalog())
+        return [result, f"KNOWN: {recipes}"]
+    return [result]
+
+
+def cmd_fab_queue(state: GameState) -> list[str]:
+    if not state.fabrication_queue:
+        return ["FAB QUEUE EMPTY."]
+
+    lines = ["FAB QUEUE:"]
+    for task in state.fabrication_queue:
+        lines.append(f"{task.id}. {task.name} ({max(0, int(task.ticks_remaining))} ticks remaining)")
+    return lines
+
+
+def cmd_fab_cancel(state: GameState, task_id: str) -> list[str]:
+    if not task_id.strip().isdigit():
+        return ["FAB CANCEL <ID> REQUIRED."]
+    return [cancel_fabrication_task(state, int(task_id))]
+
+
+def cmd_fab_priority(state: GameState, category: str) -> list[str]:
+    return [set_fabrication_priority(state, category)]
+
+
+
+
+=== focus.py ===
+"""FOCUS command handler."""
+
+from game.simulations.world_state.core.config import SECTOR_DEFS
+from game.simulations.world_state.core.state import GameState
+
+
+def cmd_focus(state: GameState, sector_id: str) -> list[str]:
+    """Set the focused sector by ID."""
+
+    if state.current_assault or state.in_major_assault:
+        return ["[FOCUS IGNORED] ASSAULT ACTIVE."]
+
+    normalized = sector_id.strip().upper()
+    sector_lookup = {}
+    for sector in SECTOR_DEFS:
+        sector_lookup[sector["id"]] = sector["name"]
+        sector_lookup[sector["name"].upper()] = sector["name"]
+        sector_lookup[sector["name"].split()[0].upper()] = sector["name"]
+
+    if normalized not in sector_lookup:
+        return ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]
+
+    name = sector_lookup[normalized]
+    sector = state.sectors.get(name)
+    if sector is None or sector.status_label() == "COMPROMISED":
+        return ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]
+
+    sector_id = next(
+        sector["id"] for sector in SECTOR_DEFS if sector["name"] == name
+    )
+    state.focused_sector = sector_id
+    state.hardened = False
+    return [f"[FOCUS SET] {name}"]
+
+
+
+=== harden.py ===
+"""HARDEN command handler."""
+
+from game.simulations.world_state.core.state import GameState
+
+
+def cmd_harden(state: GameState) -> list[str]:
+    """Harden systems to compress assault damage."""
+
+    if state.current_assault or state.in_major_assault:
+        return ["[HARDEN IGNORED] ASSAULT ACTIVE."]
+
+    state.hardened = True
+    state.focused_sector = None
+    return ["[HARDENING SYSTEMS]"]
+
+
+
+=== help.py ===
+"""HELP command handler with category tree output."""
+
+
+TOPIC_LINES = {
+    "CORE": [
+        "HELP > CORE",
+        "- STATUS  View current operational summary",
+        "- STATUS FULL  View extended diagnostics",
+        "- STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS>  View grouped subsystem detail",
+        "- WAIT  Advance one command wait cycle",
+        "- WAIT NX  Advance N wait cycles",
+        "- WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>  Advance until condition",
+        "- HELP  Show command tree or topic details",
+    ],
+    "MOVEMENT": [
+        "HELP > MOVEMENT",
+        "- DEPLOY <TARGET>  Exit command center via transit",
+        "- MOVE <TARGET>  Traverse connected sectors/routes",
+        "- RETURN  Return to command center authority",
+    ],
+    "SYSTEMS": [
+        "HELP > SYSTEMS",
+        "- FOCUS <SECTOR>  Prioritize protection for one sector",
+        "- HARDEN  Shift to system-wide defensive posture",
+        "- REPAIR <STRUCTURE>  Queue targeted repair",
+        "- REPAIR <STRUCTURE> FULL  Immediate full restore at extra cost",
+        "- SCAVENGE  Run one material recovery cycle",
+        "- SCAVENGE NX  Run N material recovery cycles",
+    ],
+    "POLICY": [
+        "HELP > POLICY",
+        "- SET <REPAIR|DEFENSE|SURVEILLANCE> <0-4>  Set policy weight",
+        "- SET FAB <DEFENSE|DRONES|REPAIRS|ARCHIVE> <0-4>  Set fabrication priority",
+        "- FORTIFY <SECTOR> <0-4>  Set passive fortification level",
+        "- POLICY SHOW  Show policy state and allocations",
+        "- POLICY PRESET <NAME>  Apply balanced preset bundle",
+        "- CONFIG DOCTRINE <NAME>  Switch defense doctrine preset",
+        "- ALLOCATE DEFENSE <SECTOR|GROUP> <PERCENT>  Bias defense routing",
+    ],
+    "FABRICATION": [
+        "HELP > FABRICATION",
+        "- FAB ADD <ITEM>  Queue item production",
+        "- FAB QUEUE  View active fabrication queue",
+        "- FAB CANCEL <ID>  Cancel queued fabrication job",
+        "- FAB PRIORITY <CATEGORY>  Reorder by category priority",
+    ],
+    "ASSAULT": [
+        "HELP > ASSAULT",
+        "- SCAN RELAYS  Scan relay network links from command",
+        "- STABILIZE RELAY <ID>  Field stabilization task at relay sector",
+        "- SYNC  Convert stabilized relay packets to knowledge",
+        "- REROUTE POWER <SECTOR>  Push emergency power to sector",
+        "- BOOST DEFENSE <SECTOR>  Increase active mitigation",
+        "- DEPLOY DRONE <SECTOR>  Dispatch drone support (alias)",
+        "- DRONE DEPLOY <SECTOR>  Dispatch drone support",
+        "- LOCKDOWN <SECTOR>  Isolate sector to contain damage",
+        "- PRIORITIZE REPAIR <SECTOR>  Raise repair routing priority",
+    ],
+    "STATUS": [
+        "HELP > STATUS",
+        "- STATUS  Compact status readout",
+        "- STATUS FULL  Detailed status with diagnostics",
+        "- STATUS FAB  Fabrication queue, allocation, and stocks",
+        "- STATUS POSTURE  Command posture and readiness",
+        "- STATUS ASSAULT  Assault tracks and ETA detail",
+        "- STATUS POLICY  Doctrine, allocation, and policy sliders",
+        "- STATUS SYSTEMS  Sector and structure system detail",
+        "- STATUS RELAY  Relay-network scan and knowledge state",
+    ],
+}
+
+
+def _help_index(dev_mode: bool) -> list[str]:
+    lines = [
+        "COMMAND TREE",
+        "USE: HELP <TOPIC>",
+        "TOPICS: CORE | MOVEMENT | SYSTEMS | POLICY | FABRICATION | ASSAULT | STATUS",
+        "",
+        "[CORE] STATUS | WAIT | HELP",
+        "[MOVEMENT] DEPLOY | MOVE | RETURN",
+        "[SYSTEMS] FOCUS | HARDEN | REPAIR | SCAVENGE",
+        "[POLICY] SET | FORTIFY | POLICY | CONFIG | ALLOCATE",
+        "[FABRICATION] FAB ADD | QUEUE | CANCEL | PRIORITY",
+        "[ASSAULT] SCAN | STABILIZE | SYNC | REROUTE | BOOST | DRONE | LOCKDOWN | PRIORITIZE",
+        "[STATUS] STATUS | STATUS FULL | STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>",
+    ]
+    if dev_mode:
+        lines.extend(["", "DEBUG COMMANDS (DEV MODE):", "- DEBUG HELP"])
+    return lines
+
+
+def cmd_help(dev_mode: bool = False, topic: str | None = None) -> list[str]:
+    """Return categorized help index or topic details."""
+
+    if not topic:
+        return _help_index(dev_mode)
+
+    key = topic.strip().upper()
+    lines = TOPIC_LINES.get(key)
+    if lines:
+        return lines
+    return [
+        "UNKNOWN HELP TOPIC.",
+        "USE: HELP <TOPIC>",
+        "TOPICS: CORE | MOVEMENT | SYSTEMS | POLICY | FABRICATION | ASSAULT | STATUS",
+    ]
+
+
+
+=== __init__.py ===
+"""Phase 1 terminal command handlers."""
+
+from .focus import cmd_focus
+from .harden import cmd_harden
+from .help import cmd_help
+from .deploy import cmd_deploy
+from .move import cmd_move
+from .config_doctrine import cmd_config_doctrine
+from .allocate_defense import cmd_allocate_defense
+from .policy import (
+    cmd_fortify,
+    cmd_policy_preset,
+    cmd_policy_show,
+    cmd_set_fabrication,
+    cmd_set_policy,
+)
+from .fabrication import cmd_fab_add, cmd_fab_cancel, cmd_fab_priority, cmd_fab_queue
+from .relay import cmd_scan_relays, cmd_stabilize_relay, cmd_sync
+from .assault_ops import (
+    cmd_boost_defense,
+    cmd_deploy_drone,
+    cmd_lockdown,
+    cmd_prioritize_repair,
+    cmd_reroute_power,
+)
+from .repair import cmd_repair
+from .return_cmd import cmd_return
+from .reset import cmd_reset
+from .scavenge import cmd_scavenge, cmd_scavenge_runs
+from .status import cmd_status, cmd_status_group
+from .wait import cmd_wait, cmd_wait_ticks, cmd_wait_until
+
+__all__ = [
+    "cmd_deploy",
+    "cmd_fab_add",
+    "cmd_fab_cancel",
+    "cmd_fab_priority",
+    "cmd_fab_queue",
+    "cmd_allocate_defense",
+    "cmd_config_doctrine",
+    "cmd_fortify",
+    "cmd_focus",
+    "cmd_harden",
+    "cmd_help",
+    "cmd_move",
+    "cmd_repair",
+    "cmd_return",
+    "cmd_reset",
+    "cmd_scavenge",
+    "cmd_scavenge_runs",
+    "cmd_set_fabrication",
+    "cmd_set_policy",
+    "cmd_policy_show",
+    "cmd_policy_preset",
+    "cmd_reroute_power",
+    "cmd_boost_defense",
+    "cmd_deploy_drone",
+    "cmd_lockdown",
+    "cmd_prioritize_repair",
+    "cmd_status",
+    "cmd_status_group",
+    "cmd_wait",
+    "cmd_wait_ticks",
+    "cmd_wait_until",
+    "cmd_scan_relays",
+    "cmd_stabilize_relay",
+    "cmd_sync",
+]
+
+
+
+=== move.py ===
+"""MOVE command handler."""
+
+from game.simulations.world_state.core.config import (
+    MOVE_TICKS,
+    TRAVEL_GRAPH,
+)
+from game.simulations.world_state.core.display_names import display_location
+from game.simulations.world_state.core.presence import start_move_task
+from game.simulations.world_state.core.power import comms_fidelity
+from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.terminal.location import resolve_location_token
+
+
+def cmd_move(state: GameState, destination: str) -> list[str]:
+    if not state.in_field_mode():
+        return ["COMMAND AUTHORITY REQUIRED."]
+
+    if state.active_task:
+        return ["ACTION IN PROGRESS."]
+    if state.active_repairs:
+        return ["ACTION IN PROGRESS."]
+
+    target = resolve_location_token(destination)
+    if not target:
+        return ["INVALID ROUTE."]
+
+    here = state.player_location
+    valid_targets = TRAVEL_GRAPH.get(here, [])
+    if target not in valid_targets:
+        return ["INVALID ROUTE."]
+
+    start_move_task(state, target, MOVE_TICKS)
+    lines = [f"MOVING TO {display_location(target)}."]
+    if target in {"T_NORTH", "T_SOUTH"}:
+        lines.append(_transit_signal_tag(comms_fidelity(state), target))
+    return lines
+
+
+def _transit_signal_tag(fidelity: str, transit: str) -> str:
+    lane = "NORTH" if transit == "T_NORTH" else "SOUTH"
+    if fidelity == "FULL":
+        return f"[TRANSIT] {lane} LANE: POWER HUM"
+    if fidelity == "DEGRADED":
+        return f"[TRANSIT] {lane} LANE: THERMAL NOISE"
+    if fidelity == "FRAGMENTED":
+        return f"[TRANSIT] {lane} LANE: SIGNAL IRREGULAR"
+    return "[TRANSIT] NO SIGNAL."
+
+
+
+=== policy.py ===
+"""Policy-layer command handlers."""
+
+from __future__ import annotations
+
+from game.simulations.world_state.core.config import SECTOR_DEFS
+from game.simulations.world_state.core.fabrication import is_valid_fabrication_category
+from game.simulations.world_state.core.policies import (
+    POLICY_LEVEL_MAX,
+    POLICY_LEVEL_MIN,
+    clamp_policy_level,
+    parse_policy_level,
+)
+from game.simulations.world_state.core.state import GameState
+
+
+SECTOR_ID_TO_NAME = {sector["id"]: sector["name"] for sector in SECTOR_DEFS}
+SECTOR_NAME_TO_NAME = {sector["name"]: sector["name"] for sector in SECTOR_DEFS}
+
+
+def _resolve_sector_name(token: str) -> str | None:
+    normalized = token.strip().upper()
+    if not normalized:
+        return None
+    return SECTOR_ID_TO_NAME.get(normalized) or SECTOR_NAME_TO_NAME.get(normalized)
+
+
+def cmd_set_policy(state: GameState, policy_name: str, level_token: str) -> list[str]:
+    level = parse_policy_level(level_token)
+    if level is None:
+        return [f"LEVEL MUST BE {POLICY_LEVEL_MIN}-{POLICY_LEVEL_MAX}."]
+
+    key = policy_name.strip().upper()
+    if key == "REPAIR":
+        state.policies.repair_intensity = level
+        return [f"REPAIR INTENSITY SET TO {level}."]
+    if key == "DEFENSE":
+        state.policies.defense_readiness = level
+        return [f"DEFENSE READINESS SET TO {level}."]
+    if key == "SURVEILLANCE":
+        state.policies.surveillance_coverage = level
+        return [f"SURVEILLANCE COVERAGE SET TO {level}."]
+    return ["SET REQUIRES: REPAIR, DEFENSE, OR SURVEILLANCE."]
+
+
+def cmd_set_fabrication(state: GameState, category: str, level_token: str) -> list[str]:
+    level = parse_policy_level(level_token)
+    if level is None:
+        return [f"LEVEL MUST BE {POLICY_LEVEL_MIN}-{POLICY_LEVEL_MAX}."]
+
+    normalized = category.strip().upper()
+    if not is_valid_fabrication_category(normalized):
+        return ["FAB CATEGORY MUST BE DEFENSE, DRONES, REPAIRS, OR ARCHIVE."]
+    state.fab_allocation[normalized] = clamp_policy_level(level)
+    return [f"FABRICATION {normalized} ALLOCATION SET TO {level}."]
+
+
+def cmd_fortify(state: GameState, sector_token: str, level_token: str) -> list[str]:
+    level = parse_policy_level(level_token)
+    if level is None:
+        return [f"LEVEL MUST BE {POLICY_LEVEL_MIN}-{POLICY_LEVEL_MAX}."]
+
+    sector_name = _resolve_sector_name(sector_token)
+    if not sector_name:
+        return ["UNKNOWN SECTOR."]
+
+    state.sector_fort_levels[sector_name] = clamp_policy_level(level)
+    return [f"FORTIFICATION {sector_name} SET TO {level}."]
+
+
+def cmd_policy_show(state: GameState) -> list[str]:
+    return [
+        "POLICY STATE:",
+        f"- REPAIR: {state.policies.repair_intensity}",
+        f"- DEFENSE: {state.policies.defense_readiness}",
+        f"- SURVEILLANCE: {state.policies.surveillance_coverage}",
+        (
+            "- FAB: "
+            f"DEFENSE {state.fab_allocation.get('DEFENSE', 2)} | "
+            f"DRONES {state.fab_allocation.get('DRONES', 2)} | "
+            f"REPAIRS {state.fab_allocation.get('REPAIRS', 2)} | "
+            f"ARCHIVE {state.fab_allocation.get('ARCHIVE', 2)}"
+        ),
+    ]
+
+
+def cmd_policy_preset(state: GameState, preset_token: str) -> list[str]:
+    presets = {
+        "BALANCED": {
+            "repair": 2,
+            "defense": 2,
+            "surveillance": 2,
+            "fab": {"DEFENSE": 2, "DRONES": 2, "REPAIRS": 2, "ARCHIVE": 2},
+        },
+        "SIEGE": {
+            "repair": 1,
+            "defense": 4,
+            "surveillance": 3,
+            "fab": {"DEFENSE": 4, "DRONES": 2, "REPAIRS": 1, "ARCHIVE": 1},
+        },
+        "RECOVERY": {
+            "repair": 4,
+            "defense": 1,
+            "surveillance": 2,
+            "fab": {"DEFENSE": 1, "DRONES": 2, "REPAIRS": 4, "ARCHIVE": 1},
+        },
+        "LOW_POWER": {
+            "repair": 1,
+            "defense": 1,
+            "surveillance": 1,
+            "fab": {"DEFENSE": 1, "DRONES": 1, "REPAIRS": 2, "ARCHIVE": 1},
+        },
+    }
+
+    key = preset_token.strip().upper()
+    preset = presets.get(key)
+    if preset is None:
+        return ["POLICY PRESET MUST BE BALANCED, SIEGE, RECOVERY, OR LOW_POWER."]
+
+    state.policies.repair_intensity = preset["repair"]
+    state.policies.defense_readiness = preset["defense"]
+    state.policies.surveillance_coverage = preset["surveillance"]
+    for category, level in preset["fab"].items():
+        state.fab_allocation[category] = clamp_policy_level(level)
+    return [f"POLICY PRESET APPLIED: {key}."]
+
+
+
+=== relay.py ===
+"""Relay-network command handlers."""
+
+from __future__ import annotations
+
+from game.simulations.world_state.core.config import FIELD_ACTION_STABILIZING
+from game.simulations.world_state.core.display_names import display_relay
+from game.simulations.world_state.core.power import comms_fidelity
+from game.simulations.world_state.core.relays import (
+    apply_sync,
+    can_sync,
+    relay_scan_lines,
+    resolve_relay_id,
+)
+from game.simulations.world_state.core.tasks import RelayTask
+from game.simulations.world_state.core.state import GameState
+
+
+def cmd_scan_relays(state: GameState) -> list[str]:
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    return relay_scan_lines(state, fidelity)
+
+
+def cmd_stabilize_relay(state: GameState, relay_token: str) -> list[str]:
+    if state.in_command_mode():
+        return ["FIELD AUTHORITY REQUIRED."]
+    if state.active_task or state.active_repairs:
+        return ["ACTION IN PROGRESS."]
+
+    relay_id = resolve_relay_id(state, relay_token)
+    if relay_id is None:
+        return ["UNKNOWN RELAY."]
+    relay = state.relay_nodes[relay_id]
+    sector = str(relay.get("sector", ""))
+    if sector != state.player_location:
+        return ["RELAY NOT IN CURRENT LOCATION."]
+    status = str(relay.get("status", "UNKNOWN")).upper()
+    if status == "STABLE":
+        return [f"RELAY {display_relay(relay_id)} ALREADY STABLE."]
+
+    ticks = int(relay.get("stability_ticks_required", 3))
+    relay["status"] = "UNSTABLE"
+    state.active_task = RelayTask(relay_id=relay_id, target=sector, ticks=ticks, total=ticks)
+    state.field_action = FIELD_ACTION_STABILIZING
+    return [f"STABILIZING {display_relay(relay_id)} ({ticks} TICKS)."]
+
+
+def cmd_sync(state: GameState) -> list[str]:
+    if not can_sync(state):
+        return ["COMMAND AUTHORITY REQUIRED."]
+    packets, new_level = apply_sync(state)
+    if packets <= 0:
+        return ["SYNC: NO RELAY PACKETS PENDING."]
+
+    lines = [
+        f"SYNC COMPLETE: {packets} PACKET{'S' if packets != 1 else ''}.",
+        f"KNOWLEDGE INDEX RELAY_RECOVERY={new_level}.",
+    ]
+    if int(state.relay_benefits.get("remote_repair_discount", 0)) > 0:
+        lines.append("BENEFIT ACTIVE: REMOTE REPAIR COST -1.")
+    return lines
+
+
+
+=== repair.py ===
+"""REPAIR command handler."""
+
+import math
+
+from game.simulations.world_state.core.power import comms_fidelity
+from game.simulations.world_state.core.repairs import start_full_restore, start_repair
+from game.simulations.world_state.core.config import COMMAND_CENTER_LOCATION, FIELD_ACTION_REPAIRING
+from game.simulations.world_state.core.state import GameState
+
+
+def _fidelity_from_comms(state: GameState) -> str:
+    return comms_fidelity(state)
+
+
+def _repair_status_line(state: GameState, structure_id: str) -> str:
+    fidelity = _fidelity_from_comms(state)
+    job = state.active_repairs.get(structure_id, {})
+    remaining = max(0, int(math.ceil(job.get("remaining", 0))))
+    total = int(math.ceil(job.get("total", 0)))
+    cost = job.get("cost", 0)
+    structure = state.structures.get(structure_id)
+    name = structure.name.upper() if structure else "UNKNOWN"
+    if fidelity == "FULL":
+        return (
+            f"[REPAIR] IN PROGRESS: {name} "
+            f"({total - remaining}/{total} TICKS, COST: {cost} MATERIALS)"
+        )
+    if fidelity == "DEGRADED":
+        approx = _approximate_ticks(remaining)
+        return f"[REPAIR] IN PROGRESS: {approx} (COST: {cost} MATERIALS)"
+    if fidelity == "FRAGMENTED":
+        return f"[EVENT] MAINTENANCE SIGNALS DETECTED (COST: {cost} MATERIALS)"
+    return "REPAIR STATUS: NO SIGNAL."
+
+
+def _approximate_ticks(remaining: int) -> str:
+    if remaining <= 1:
+        return "NEAR COMPLETE"
+    if remaining <= 3:
+        return "MID PROGRESS"
+    return "EARLY STAGE"
+
+
+def _resolve_structure_id(state: GameState, structure_id: str) -> str | None:
+    if structure_id in state.structures:
+        return structure_id
+    normalized = structure_id.strip().upper()
+    for candidate in state.structures.values():
+        if candidate.id.upper() == normalized:
+            return candidate.id
+        if candidate.name.upper() == normalized:
+            return candidate.id
+        if candidate.name.split()[0].upper() == normalized:
+            return candidate.id
+    return None
+
+
+def cmd_repair(state: GameState, structure_id: str, *, full: bool = False) -> list[str]:
+    """Start a repair task for a structure."""
+
+    if state.active_task:
+        return ["ACTION IN PROGRESS."]
+
+    resolved_id = _resolve_structure_id(state, structure_id)
+    if resolved_id and resolved_id in state.active_repairs:
+        return [_repair_status_line(state, resolved_id)]
+
+    structure = state.structures.get(resolved_id) if resolved_id else None
+    if not structure:
+        return ["UNKNOWN STRUCTURE."]
+
+    local = state.in_field_mode() or (
+        state.in_command_mode()
+        and state.player_location == COMMAND_CENTER_LOCATION
+        and structure.sector == COMMAND_CENTER_LOCATION
+    )
+    if local and structure.sector != state.player_location:
+        return ["STRUCTURE NOT IN SECTOR."]
+
+    if full:
+        result = start_full_restore(state, structure_id, local=local)
+        return [result]
+
+    result = start_repair(state, structure_id, local=local)
+    if result.startswith("MANUAL REPAIR STARTED:"):
+        state.field_action = FIELD_ACTION_REPAIRING
+    return [result]
+
+
+
+=== reset.py ===
+"""RESET command handler."""
+
+from game.simulations.world_state.core.state import GameState, reset_game_state
+
+
+def cmd_reset(state: GameState) -> list[str]:
+    """Reset the in-memory game state and confirm readiness."""
+
+    reset_game_state(state)
+    return ["SYSTEM REBOOTED.", "SESSION READY."]
+
+
+
+=== return_cmd.py ===
+"""RETURN command handler."""
+
+from game.simulations.world_state.core.config import (
+    COMMAND_CENTER_LOCATION,
+    RETURN_TICKS,
+)
+from game.simulations.world_state.core.presence import start_move_task
+from game.simulations.world_state.core.state import GameState
+
+
+def cmd_return(state: GameState) -> list[str]:
+    if not state.in_field_mode():
+        return ["ALREADY IN COMMAND."]
+
+    if state.active_task:
+        return ["ACTION IN PROGRESS."]
+    if state.active_repairs:
+        return ["ACTION IN PROGRESS."]
+
+    start_move_task(state, COMMAND_CENTER_LOCATION, RETURN_TICKS)
+    return ["RETURNING TO COMMAND CENTER."]
+
+
+
+=== scavenge.py ===
+"""SCAVENGE command handler."""
+
+from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.terminal.commands.wait import cmd_wait
+
+
+SCAVENGE_TICKS = 3
+SCAVENGE_MIN_GAIN = 1
+SCAVENGE_MAX_GAIN = 3
+
+
+def cmd_scavenge(state: GameState) -> list[str]:
+    """Advance time and gain materials from a scavenge run."""
+
+    if state.is_failed:
+        reason = state.failure_reason or "SESSION FAILED."
+        return [reason, "SESSION TERMINATED."]
+
+    scavenge_lines: list[str] = []
+    last_detail: list[str] | None = None
+
+    for _ in range(SCAVENGE_TICKS):
+        before_signature = _state_signature(state)
+        tick_lines = cmd_wait(state)
+        after_signature = _state_signature(state)
+
+        if state.is_failed:
+            reason = state.failure_reason or "SESSION FAILED."
+            return [reason, "SESSION TERMINATED."]
+
+        detail = tick_lines[1:] if tick_lines and tick_lines[0] == "TIME ADVANCED." else []
+        no_effect = before_signature == after_signature
+
+        if detail:
+            if detail == last_detail and no_effect:
+                continue
+            scavenge_lines.extend(detail)
+            last_detail = detail
+
+    gained = state.rng.randint(SCAVENGE_MIN_GAIN, SCAVENGE_MAX_GAIN)
+    state.materials += gained
+
+    lines = ["[SCAVENGE] OPERATION COMPLETE."]
+    if scavenge_lines:
+        lines.extend(scavenge_lines)
+    lines.append(f"[RESOURCE GAIN] +{gained} MATERIALS")
+    return lines
+
+
+def cmd_scavenge_runs(state: GameState, runs: int) -> list[str]:
+    if runs <= 0:
+        return ["[SCAVENGE] OPERATION COMPLETE.", "[RESOURCE GAIN] +0 MATERIALS"]
+    if runs == 1:
+        return cmd_scavenge(state)
+
+    lines = [f"[SCAVENGE] BATCH STARTED ({runs} RUNS)."]
+    total_gain = 0
+    for _ in range(runs):
+        if state.is_failed:
+            reason = state.failure_reason or "SESSION FAILED."
+            return [reason, "SESSION TERMINATED."]
+        before = state.materials
+        run_lines = cmd_scavenge(state)
+        total_gain += max(0, state.materials - before)
+        for line in run_lines[1:]:
+            if line.startswith("[RESOURCE GAIN]"):
+                continue
+            lines.append(line)
+
+    lines.append(f"[RESOURCE GAIN] +{total_gain} MATERIALS")
+    return lines
+
+
+def _state_signature(state: GameState) -> tuple:
+    sector_signature = tuple(
+        (
+            sector.name,
+            round(sector.damage, 3),
+            round(sector.alertness, 3),
+            round(sector.power, 3),
+            sector.occupied,
+        )
+        for sector in state.sectors.values()
+    )
+    structure_signature = tuple(
+        (structure.id, structure.state.value)
+        for structure in state.structures.values()
+    )
+    return (
+        round(state.ambient_threat, 3),
+        state.assault_timer,
+        state.in_major_assault,
+        state.current_assault is not None,
+        state.archive_losses,
+        sector_signature,
+        structure_signature,
+    )
+
+
+
+=== status.py ===
+"""STATUS command handler."""
+
+import math
+
+from game.simulations.world_state.core.config import (
+    ARCHIVE_LOSS_LIMIT,
+    COMMAND_CENTER_BREACH_DAMAGE,
+    SECTOR_DEFS,
+    TRAVEL_GRAPH,
+)
+from game.simulations.world_state.core.display_names import display_location, display_relay
+from game.simulations.world_state.core.policies import render_slider
+from game.simulations.world_state.core.power import comms_fidelity
+from game.simulations.world_state.core.relays import relay_scan_lines
+from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.core.structures import StructureState
+from game.simulations.world_state.core.tasks import task_target, task_ticks, task_total, task_type
+
+
+MARKERS = {
+    "COMPROMISED": "X",
+    "DAMAGED": "!",
+    "ALERT": "~",
+    "ACTIVITY DETECTED": "?",
+    "STABLE": ".",
+}
+
+STATUS_GROUP_ALIASES = {
+    "FULL": "FULL",
+    "BRIEF": "BRIEF",
+    "SUMMARY": "BRIEF",
+    "FAB": "FAB",
+    "FABRICATION": "FAB",
+    "POSTURE": "POSTURE",
+    "ASSAULT": "ASSAULT",
+    "POLICY": "POLICY",
+    "SYSTEMS": "SYSTEMS",
+    "RELAY": "RELAY",
+    "RELAYS": "RELAY",
+}
+
+
+def _sector_priority_by_label(label: str) -> int:
+    order = {
+        "COMPROMISED": 0,
+        "DAMAGED": 1,
+        "ALERT": 2,
+        "ACTIVITY DETECTED": 3,
+        "STABLE": 4,
+        "NO DATA": 5,
+    }
+    return order.get(label, 6)
+
+
+def _sector_priority(sector) -> int:
+    return _sector_priority_by_label(sector.status_label())
+
+
+def _compute_situation_header(state: GameState, sector_status_by_name: dict[str, str]) -> str:
+    degraded = []
+    for sector in state.sectors.values():
+        label = sector_status_by_name.get(sector.name, sector.status_label())
+        if label in ("DAMAGED", "COMPROMISED"):
+            degraded.append(sector.name)
+
+    if degraded:
+        count = len(degraded)
+        return f"SITUATION: {count} SYSTEM{'S' if count > 1 else ''} DEGRADED"
+
+    if state.fidelity != "FULL":
+        return "SITUATION: INFORMATION UNSTABLE"
+
+    return "SITUATION: STABLE"
+
+
+def _system_posture(state: GameState, fidelity: str) -> str:
+    if state.hardened:
+        return "HARDENED"
+    if state.focused_sector and fidelity == "FULL":
+        focus_lookup = {sector["id"]: sector["name"] for sector in SECTOR_DEFS}
+        focused_name = focus_lookup.get(state.focused_sector, "UNKNOWN")
+        return f"FOCUSED ({focused_name})"
+    if state.focused_sector and fidelity != "FULL":
+        return "FOCUSED"
+    return "ACTIVE"
+
+
+def _render_compact_field_view(state: GameState, sector_status_by_name: dict[str, str]) -> list[str]:
+    def _route_token(destination: str) -> str:
+        if destination == "T_NORTH":
+            return "NORTH"
+        if destination == "T_SOUTH":
+            return "SOUTH"
+        if destination == "DEFENSE GRID":
+            return "DEFENSE"
+        return destination
+
+    def _find_local_relay() -> tuple[str, dict] | None:
+        for relay_id, relay in state.relay_nodes.items():
+            if str(relay.get("sector", "")).upper() == state.player_location:
+                return relay_id, relay
+        return None
+
+    lines = []
+    location = state.player_location
+    lines.append(f"LOCATION: {display_location(location)}")
+    lines.append(f"MODE: {state.player_mode} | FIDELITY: {state.fidelity}")
+
+    if location in state.sectors:
+        local_label = sector_status_by_name.get(location, state.sectors[location].status_label())
+        lines.append(f"LOCAL STATUS: {local_label}")
+        local_structures = [s for s in state.structures.values() if s.sector == location]
+        degraded_structures = [s for s in local_structures if s.state != StructureState.OPERATIONAL]
+        if degraded_structures:
+            lines.append("LOCAL DAMAGE:")
+            for structure in degraded_structures[:3]:
+                lines.append(f"- {structure.id} {structure.state.value}")
+        else:
+            lines.append("LOCAL DAMAGE: NONE")
+    else:
+        lines.append("LOCAL STATUS: TRANSIT NODE")
+        neighbor_lines: list[str] = []
+        for neighbor in TRAVEL_GRAPH.get(location, []):
+            if neighbor in state.sectors:
+                label = sector_status_by_name.get(neighbor, state.sectors[neighbor].status_label())
+                marker = MARKERS.get(label, ".")
+                neighbor_lines.append(f"- {display_location(neighbor)} {marker} ({label})")
+        if neighbor_lines:
+            lines.append("ADJACENT SECTORS:")
+            lines.extend(neighbor_lines[:4])
+
+    if state.active_task:
+        t_type = task_type(state.active_task)
+        target = display_location(task_target(state.active_task))
+        remaining = max(0, task_ticks(state.active_task))
+        total = max(1, task_total(state.active_task))
+        lines.append(f"TASK: {t_type} -> {target} ({remaining}/{total} TICKS)")
+    elif state.active_repairs:
+        lines.append("TASK: REPAIR IN PROGRESS")
+    else:
+        lines.append("TASK: IDLE")
+
+    routes = TRAVEL_GRAPH.get(location, [])
+    lines.append("ROUTES:")
+    if routes:
+        for destination in routes:
+            lines.append(f"- {display_location(destination)} | MOVE {_route_token(destination)}")
+    else:
+        lines.append("- NO ROUTES AVAILABLE")
+
+    important: list[str] = []
+    if state.current_assault is not None or state.in_major_assault:
+        important.append("ACTIVE ASSAULT IN PROGRESS")
+    elif state.assaults:
+        important.append("HOSTILE APPROACHES DETECTED")
+
+    local_relay = _find_local_relay()
+    if local_relay is not None:
+        relay_id, relay = local_relay
+        relay_status = str(relay.get("status", "UNKNOWN")).upper()
+        important.append(f"{display_relay(relay_id)} {relay_status}")
+
+    if not important:
+        important.append("NO IMMEDIATE LOCAL THREATS")
+    lines.append("IMPORTANT:")
+    lines.extend(f"- {entry}" for entry in important[:3])
+
+    actions: list[str] = []
+    if not state.active_task and not state.active_repairs:
+        if location != "COMMAND":
+            actions.append("RETURN")
+        if routes:
+            actions.append(f"MOVE {_route_token(routes[0])}")
+
+    if location in state.sectors:
+        for structure in state.structures.values():
+            if structure.sector == location and structure.state != StructureState.OPERATIONAL:
+                actions.append(f"REPAIR {structure.id}")
+                break
+
+    if local_relay is not None:
+        relay_id, relay = local_relay
+        if str(relay.get("status", "UNKNOWN")).upper() != "STABLE":
+            actions.append(f"STABILIZE RELAY {relay_id}")
+
+    lines.append("ACTIONS:")
+    if actions:
+        deduped: list[str] = []
+        for action in actions:
+            if action not in deduped:
+                deduped.append(action)
+        lines.extend(f"- {action}" for action in deduped[:4])
+    else:
+        lines.append("- WAIT")
+    return lines
+
+
+def _append_repairs(lines: list[str], snapshot: dict, state: GameState, fidelity: str) -> None:
+    repairs = snapshot.get("active_repairs", [])
+    if not repairs:
+        return
+    if fidelity == "LOST":
+        lines.append("REPAIRS: NO SIGNAL")
+        return
+
+    lines.append("REPAIRS:")
+    for repair in repairs:
+        structure = state.structures.get(repair["id"])
+        name = structure.name if structure else repair["id"]
+        if fidelity == "FULL":
+            done = repair["total"] - repair["remaining"]
+            lines.append(f"- {repair['id']} {name}: {done}/{repair['total']} TICKS")
+        elif fidelity == "DEGRADED":
+            lines.append(f"- {repair['id']}: IN PROGRESS")
+        else:
+            lines.append("- MAINTENANCE SIGNALS DETECTED")
+
+
+def _append_assault_eta(lines: list[str], state: GameState, fidelity: str) -> None:
+    approaches = [assault for assault in state.assaults if getattr(assault, "state", "") == "APPROACHING"]
+    if not approaches:
+        return
+    if fidelity == "LOST":
+        return
+    if fidelity == "FRAGMENTED":
+        lines.append("THREAT: APPROACH SIGNALS DETECTED")
+        return
+
+    if fidelity == "DEGRADED":
+        eta_values = []
+        for assault in approaches:
+            eta_fn = getattr(assault, "eta_ticks", None)
+            eta_values.append(max(0, int(eta_fn() if callable(eta_fn) else 0)))
+        eta = min(eta_values) if eta_values else 0
+        lines.append(f"THREAT: APPROACH ETA~{eta}")
+        return
+
+    for assault in approaches:
+        eta = max(0, int(assault.eta_ticks()))
+        lines.append(f"THREAT: {assault.target} ETA~{eta}")
+
+
+def _append_recovery_windows(lines: list[str], state: GameState, fidelity: str) -> None:
+    windows = state.sector_recovery_windows
+    if not windows:
+        return
+    if fidelity == "LOST":
+        return
+
+    lines.append("RECOVERY:")
+    ordered = sorted(windows.items(), key=lambda item: item[0])
+    if fidelity == "FULL":
+        for sector_name, window in ordered:
+            mode = str(window.get("mode", "REMOTE")).upper()
+            remaining = max(0, int(math.ceil(float(window.get("remaining", 0.0)))))
+            lines.append(f"- {sector_name}: {mode} ({remaining} TICKS)")
+        return
+    if fidelity == "DEGRADED":
+        for sector_name, _window in ordered:
+            lines.append(f"- {sector_name}: RECOVERY ACTIVE")
+        return
+    lines.append("- RECOVERY SIGNATURE DETECTED")
+
+
+def _append_debug_trace_status(lines: list[str], state: GameState) -> None:
+    if not state.dev_mode:
+        return
+    if not state.dev_trace and not state.assault_trace_enabled:
+        return
+
+    lines.append("DEBUG:")
+    lines.append("- ASSAULT TRACE: ON")
+    lines.append(f"- LEDGER ROWS: {len(state.assault_ledger.ticks)}")
+    lines.append("- TRACE LINES EMIT ON WAIT; SUMMARY VIA DEBUG REPORT")
+
+
+def _render_sector_attention_lines(
+    state: GameState,
+    sector_status_by_name: dict[str, str],
+    *,
+    limit: int = 3,
+) -> list[str]:
+    lines = ["SECTORS:"]
+    command_status = sector_status_by_name.get("COMMAND", state.sectors["COMMAND"].status_label())
+    lines.append(f"- COMMAND: {command_status}")
+
+    attention: list[tuple[str, str]] = []
+    for sector in state.sectors.values():
+        if sector.name == "COMMAND":
+            continue
+        label = sector_status_by_name.get(sector.name, sector.status_label())
+        if label in {"COMPROMISED", "DAMAGED", "ALERT"}:
+            attention.append((sector.name, label))
+
+    attention.sort(key=lambda item: _sector_priority_by_label(item[1]))
+    for name, label in attention[:limit]:
+        lines.append(f"- {name}: {label}")
+
+    remaining = max(0, len(attention) - limit)
+    if remaining > 0:
+        lines.append(f"- +{remaining} OTHER SECTORS REQUIRE REVIEW")
+    if not attention:
+        lines.append("- ALL OTHER SECTORS STABLE")
+
+    return lines
+
+
+def _brief_assault_line(state: GameState, fidelity: str) -> str | None:
+    approaches = [assault for assault in state.assaults if getattr(assault, "state", "") == "APPROACHING"]
+    if not approaches:
+        return None
+    if fidelity == "LOST":
+        return "THREAT: APPROACH SIGNAL LOST"
+    if fidelity == "FRAGMENTED":
+        return "THREAT: APPROACH SIGNALS DETECTED"
+
+    eta_pairs: list[tuple[str, int]] = []
+    for assault in approaches:
+        eta_fn = getattr(assault, "eta_ticks", None)
+        eta = max(0, int(eta_fn() if callable(eta_fn) else 0))
+        target = str(getattr(assault, "target", "UNKNOWN"))
+        eta_pairs.append((target, eta))
+    if not eta_pairs:
+        return "THREAT: APPROACH DETECTED"
+    target, eta = min(eta_pairs, key=lambda item: item[1])
+    return f"THREAT: {target} ETA~{eta}"
+
+
+def _brief_repair_line(snapshot: dict, state: GameState, fidelity: str) -> str:
+    repairs = snapshot.get("active_repairs", [])
+    if not repairs:
+        return "REPAIRS: NONE ACTIVE"
+    if fidelity == "LOST":
+        return "REPAIRS: NO SIGNAL"
+    if fidelity == "FRAGMENTED":
+        return "REPAIRS: MAINTENANCE SIGNALS DETECTED"
+
+    nearest = min(max(0, int(math.ceil(repair["remaining"]))) for repair in repairs)
+    return f"REPAIRS: {len(repairs)} ACTIVE (NEXT COMPLETE ~{nearest} TICKS)"
+
+
+def _append_policy_state(lines: list[str], state: GameState, fidelity: str) -> None:
+    if fidelity == "LOST":
+        return
+
+    if fidelity == "FRAGMENTED":
+        lines.append("POLICY: SIGNAL FRAGMENTED")
+        return
+
+    lines.append("POLICY STATE:")
+    if fidelity == "DEGRADED":
+        lines.extend(
+            [
+                "- REPAIR: ACTIVE",
+                "- DEFENSE: ACTIVE",
+                "- SURVEILLANCE: ACTIVE",
+                f"- POWER LOAD: {state.power_load:.2f}",
+                f"- LOGISTICS: L{state.logistics_load:.2f}/T{state.logistics_throughput:.2f}",
+            ]
+        )
+        return
+
+    repair = state.policies.repair_intensity
+    defense = state.policies.defense_readiness
+    surveillance = state.policies.surveillance_coverage
+    lines.extend(
+        [
+            f"- REPAIR INTENSITY: {render_slider(repair)}",
+            "- + Faster recovery throughput",
+            "- - Higher materials and power drain",
+            f"- DEFENSE READINESS: {render_slider(defense)}",
+            "- + Stronger tactical response",
+            "- - Higher wear and power draw",
+            f"- SURVEILLANCE COVERAGE: {render_slider(surveillance)}",
+            "- + Better early threat detection",
+            "- - Increased blackout pressure",
+        ]
+    )
+    fab_parts = [f"{name}:{value}" for name, value in sorted(state.fab_allocation.items())]
+    lines.append("- FAB ALLOCATION: " + " | ".join(fab_parts))
+    fortified = [
+        f"{name}:{level}" for name, level in state.sector_fort_levels.items() if int(level) > 0
+    ]
+    if fortified:
+        lines.append("- FORTIFICATION: " + " | ".join(sorted(fortified)))
+    else:
+        lines.append("- FORTIFICATION: NONE")
+    lines.append(f"- POWER LOAD: {state.power_load:.2f}")
+    lines.append(
+        "- LOGISTICS: "
+        f"LOAD {state.logistics_load:.2f} | "
+        f"THROUGHPUT {state.logistics_throughput:.2f} | "
+        f"MULT {state.logistics_multiplier:.2f}"
+    )
+
+
+def _root_causes_and_actions(state: GameState) -> tuple[list[str], list[str]]:
+    causes: list[str] = []
+    actions: list[str] = []
+
+    command = state.sectors.get("COMMAND")
+    if command and command.damage >= COMMAND_CENTER_BREACH_DAMAGE:
+        ticks = state.command_breach_recovery_ticks if state.command_breach_recovery_ticks is not None else 0
+        causes.append(f"COMMAND BREACH CASCADE ({ticks} TICKS TO FAILURE)")
+        actions.append("REPAIR CC_CORE IMMEDIATELY")
+
+    if state.fidelity != "FULL":
+        causes.append("COMMS FIDELITY DEGRADED")
+        actions.append("RESTORE COMMS POWER OR REPAIR CM_CORE")
+
+    if state.assaults:
+        causes.append("HOSTILE APPROACHES INBOUND")
+        actions.append("HARDEN OR REALLOCATE DEFENSE")
+
+    if state.materials <= 1:
+        causes.append("LOW MATERIAL RESERVES")
+        actions.append("SCAVENGE 5X")
+
+    if (
+        not state.assaults
+        and command
+        and command.damage < 0.5
+        and state.sectors.get("COMMS")
+        and state.sectors["COMMS"].damage < 0.5
+        and state.sectors.get("POWER")
+        and state.sectors["POWER"].damage < 0.5
+    ):
+        actions.append("HOLD COMMAND/COMMS/POWER <0.5 DAMAGE TO BLEED THREAT")
+
+    if not causes:
+        causes.append("NO CRITICAL PRESSURE DETECTED")
+        actions.append("MAINTAIN REPAIRS AND MONITOR APPROACH ETA")
+
+    return causes[:2], actions[:2]
+
+
+def cmd_status(state: GameState, full: bool = False) -> list[str]:
+    """Build compact command status and field tactical status outputs."""
+
+    fidelity = comms_fidelity(state)
+    snapshot = state.snapshot()
+    state.fidelity = fidelity
+    sector_status_by_name = {item["name"]: item["status"] for item in snapshot["sectors"]}
+
+    if state.player_mode == "FIELD":
+        return _render_compact_field_view(state, sector_status_by_name)
+
+    if fidelity == "LOST":
+        if not full:
+            lines = [
+                "TIME: ?? | THREAT: UNKNOWN | ASSAULT: NO SIGNAL",
+                "SITUATION: INFORMATION UNSTABLE | POSTURE: UNKNOWN",
+                "CAUSES: COMMS FIDELITY DEGRADED",
+                "ACTIONS: RESTORE COMMS POWER OR REPAIR CM_CORE",
+                "REPAIRS: NO SIGNAL",
+                "RESOURCES: MATERIALS UNKNOWN",
+            ]
+            lines.extend(_render_sector_attention_lines(state, sector_status_by_name))
+            _append_debug_trace_status(lines, state)
+            return lines
+
+        lines = [
+            "TIME: ?? | THREAT: UNKNOWN | ASSAULT: NO SIGNAL",
+            "POSTURE: - | ARCHIVE: NO SIGNAL",
+            "DEFENSE DOCTRINE: NO SIGNAL",
+            "READINESS: NO SIGNAL",
+            _compute_situation_header(state, sector_status_by_name),
+        ]
+        _append_debug_trace_status(lines, state)
+        lines.extend(["", "SECTORS:"])
+        sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
+        stable_header_added = False
+        for sector in sorted_sectors:
+            marker = MARKERS.get("NO DATA", "?")
+            if marker == "." and not stable_header_added:
+                lines.append("---")
+                stable_header_added = True
+            lines.append(f"{sector.name:<12} {marker}")
+            state._last_sector_status[sector.name] = "NO DATA"
+        return lines
+
+    posture = _system_posture(state, fidelity)
+
+    if not full:
+        causes, actions = _root_causes_and_actions(state)
+        situation = _compute_situation_header(state, sector_status_by_name).replace("SITUATION: ", "")
+        lines = [
+            f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+            f"SITUATION: {situation} | POSTURE: {posture} | FIDELITY: {fidelity}",
+            "CAUSES: " + " | ".join(causes),
+            "ACTIONS: " + " | ".join(actions),
+            f"RESOURCES: MATERIALS {snapshot.get('resources', {}).get('materials', 0)}",
+            _brief_repair_line(snapshot, state, fidelity),
+        ]
+        assault_line = _brief_assault_line(state, fidelity)
+        if assault_line:
+            lines.append(assault_line)
+        lines.extend(_render_sector_attention_lines(state, sector_status_by_name))
+        _append_debug_trace_status(lines, state)
+        return lines
+
+    archive_text = (
+        f"{state.archive_losses}/{ARCHIVE_LOSS_LIMIT}"
+        if fidelity == "FULL"
+        else f"{state.archive_losses}+"
+    )
+
+    lines = [
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"POSTURE: {posture} | ARCHIVE: {archive_text}",
+        f"DEFENSE DOCTRINE: {state.defense_doctrine}",
+        "ALLOCATION:",
+        f"- PERIMETER: {state.defense_allocation.get('PERIMETER', 1.0):.2f}",
+        f"- POWER: {state.defense_allocation.get('POWER', 1.0):.2f}",
+        f"- SENSORS: {state.defense_allocation.get('SENSORS', 1.0):.2f}",
+        f"- COMMAND: {state.defense_allocation.get('COMMAND', 1.0):.2f}",
+        f"READINESS: {state.compute_readiness():.2f}",
+        _compute_situation_header(state, sector_status_by_name),
+    ]
+    causes, actions = _root_causes_and_actions(state)
+    lines.append("CAUSES:")
+    lines.extend(f"- {cause}" for cause in causes)
+    lines.append("ACTIONS:")
+    lines.extend(f"- {action}" for action in actions)
+    _append_assault_eta(lines, state, fidelity)
+
+    if fidelity == "FULL":
+        lines.append(f"SEED: {state.seed}")
+
+    resources = snapshot.get("resources", {})
+    lines.extend(
+        [
+            "",
+            "RESOURCES:",
+            f"- MATERIALS: {resources.get('materials', 0)}",
+            (
+                "- INVENTORY: "
+                f"SCRAP {state.inventory.get('SCRAP', 0)} | "
+                f"COMP {state.inventory.get('COMPONENTS', 0)} | "
+                f"ASM {state.inventory.get('ASSEMBLIES', 0)} | "
+                f"MOD {state.inventory.get('MODULES', 0)}"
+            ),
+            (
+                "- STOCKS: "
+                f"REPAIR_DRONES {state.repair_drone_stock} | "
+                f"TURRET_AMMO {state.turret_ammo_stock}"
+            ),
+        ]
+    )
+    if state.fabrication_queue:
+        lines.append("FAB QUEUE:")
+        for task in state.fabrication_queue[:4]:
+            lines.append(f"- {task.id} {task.name} ({max(0, int(task.ticks_remaining))} TICKS)")
+    _append_repairs(lines, snapshot, state, fidelity)
+    _append_recovery_windows(lines, state, fidelity)
+    _append_policy_state(lines, state, fidelity)
+    _append_debug_trace_status(lines, state)
+
+    lines.extend(["", "SECTORS:"])
+    sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
+    stable_header_added = False
+    for sector in sorted_sectors:
+        current = sector_status_by_name.get(sector.name, sector.status_label())
+        marker = MARKERS.get(current, ".")
+        if marker == "." and not stable_header_added:
+            lines.append("---")
+            stable_header_added = True
+
+        delta = ""
+        prev = state._last_sector_status.get(sector.name)
+        if prev and current != prev:
+            if _sector_priority_by_label(current) < _sector_priority_by_label(prev):
+                delta = " (+)"
+            else:
+                delta = " (-)"
+        lines.append(f"{sector.name:<12} {marker}{delta}")
+        state._last_sector_status[sector.name] = current
+        if fidelity == "FULL":
+            sector_structures = [s for s in state.structures.values() if s.sector == sector.name]
+            for structure in sector_structures:
+                lines.append(f"  - {structure.id} {structure.state.value}")
+
+    return lines
+
+
+def _status_fabrication(state: GameState) -> list[str]:
+    lines = ["STATUS GROUP: FABRICATION"]
+    snapshot = state.snapshot()
+    resources = snapshot.get("resources", {})
+    lines.extend(
+        [
+            f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+            f"MATERIALS: {resources.get('materials', 0)}",
+            (
+                "INVENTORY: "
+                f"SCRAP {state.inventory.get('SCRAP', 0)} | "
+                f"COMP {state.inventory.get('COMPONENTS', 0)} | "
+                f"ASM {state.inventory.get('ASSEMBLIES', 0)} | "
+                f"MOD {state.inventory.get('MODULES', 0)}"
+            ),
+            (
+                "STOCKS: "
+                f"REPAIR_DRONES {state.repair_drone_stock} | "
+                f"TURRET_AMMO {state.turret_ammo_stock}"
+            ),
+            "FAB ALLOCATION:",
+        ]
+    )
+    for name, value in sorted(state.fab_allocation.items()):
+        lines.append(f"- {name}: {value}")
+    if not state.fabrication_queue:
+        lines.append("FAB QUEUE: EMPTY")
+    else:
+        lines.append("FAB QUEUE:")
+        for task in state.fabrication_queue[:8]:
+            lines.append(
+                f"- {task.id} {task.name} [{task.category}] "
+                f"{max(0, int(task.ticks_remaining))} TICKS"
+            )
+    return lines
+
+
+def _status_posture(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    posture = _system_posture(state, fidelity)
+    archive_text = (
+        f"{state.archive_losses}/{ARCHIVE_LOSS_LIMIT}"
+        if fidelity == "FULL"
+        else f"{state.archive_losses}+"
+    )
+    lines = [
+        "STATUS GROUP: POSTURE",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"POSTURE: {posture} | FIDELITY: {fidelity} | ARCHIVE: {archive_text}",
+        f"LOCATION: {display_location(state.player_location)} | MODE: {state.player_mode}",
+        f"DEFENSE DOCTRINE: {state.defense_doctrine}",
+        f"READINESS: {state.compute_readiness():.2f}",
+    ]
+    if state.focused_sector:
+        lines.append(f"FOCUS: {state.focused_sector}")
+    lines.append(f"HARDENED: {'YES' if state.hardened else 'NO'}")
+    return lines
+
+
+def _status_assault(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    lines = [
+        "STATUS GROUP: ASSAULT",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"ACTIVE ASSAULT: {'YES' if state.current_assault is not None or state.in_major_assault else 'NO'}",
+    ]
+    if state.assault_timer is None:
+        lines.append("NEXT ASSAULT ETA: NONE")
+    else:
+        lines.append(f"NEXT ASSAULT ETA: {state.assault_timer} TICKS")
+    lines.append(f"APPROACH TRACKS: {len(state.assaults)}")
+    _append_assault_eta(lines, state, fidelity)
+    if state.last_assault_lines:
+        lines.append("LAST TACTICAL SUMMARY:")
+        lines.extend(f"- {line}" for line in state.last_assault_lines[:6])
+    return lines
+
+
+def _status_policy(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    lines = [
+        "STATUS GROUP: POLICY",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"DEFENSE DOCTRINE: {state.defense_doctrine}",
+        f"READINESS: {state.compute_readiness():.2f}",
+        "DEFENSE ALLOCATION:",
+        f"- PERIMETER: {state.defense_allocation.get('PERIMETER', 1.0):.2f}",
+        f"- POWER: {state.defense_allocation.get('POWER', 1.0):.2f}",
+        f"- SENSORS: {state.defense_allocation.get('SENSORS', 1.0):.2f}",
+        f"- COMMAND: {state.defense_allocation.get('COMMAND', 1.0):.2f}",
+    ]
+    _append_policy_state(lines, state, fidelity)
+    return lines
+
+
+def _status_systems(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    sector_status_by_name = {item["name"]: item["status"] for item in snapshot["sectors"]}
+    lines = [
+        "STATUS GROUP: SYSTEMS",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"FIDELITY: {fidelity}",
+        "SECTORS:",
+    ]
+    sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
+    stable_header_added = False
+    for sector in sorted_sectors:
+        current = sector_status_by_name.get(sector.name, sector.status_label())
+        marker = MARKERS.get(current, ".")
+        if marker == "." and not stable_header_added:
+            lines.append("---")
+            stable_header_added = True
+        lines.append(f"{sector.name:<12} {marker}")
+        if fidelity == "FULL":
+            sector_structures = [s for s in state.structures.values() if s.sector == sector.name]
+            for structure in sector_structures:
+                lines.append(f"  - {structure.id} {structure.state.value}")
+    _append_repairs(lines, snapshot, state, fidelity)
+    _append_recovery_windows(lines, state, fidelity)
+    return lines
+
+
+def _status_relay(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = comms_fidelity(state)
+    state.fidelity = fidelity
+    lines = [
+        "STATUS GROUP: RELAY",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"LOCATION: {display_location(state.player_location)} | MODE: {state.player_mode} | FIDELITY: {fidelity}",
+    ]
+    lines.extend(relay_scan_lines(state, fidelity))
+    return lines
+
+
+def cmd_status_group(state: GameState, group: str) -> list[str] | None:
+    normalized = STATUS_GROUP_ALIASES.get(group.strip().upper())
+    if normalized is None:
+        return None
+    if normalized == "FULL":
+        return cmd_status(state, full=True)
+    if normalized == "BRIEF":
+        return cmd_status(state, full=False)
+    if normalized == "FAB":
+        return _status_fabrication(state)
+    if normalized == "POSTURE":
+        return _status_posture(state)
+    if normalized == "ASSAULT":
+        return _status_assault(state)
+    if normalized == "POLICY":
+        return _status_policy(state)
+    if normalized == "SYSTEMS":
+        return _status_systems(state)
+    if normalized == "RELAY":
+        return _status_relay(state)
+    return None
+
+
+
+=== wait.py ===
+"""WAIT command handler."""
+
+from contextlib import redirect_stdout
+from dataclasses import dataclass
+import io
+import time
+
+from game.simulations.world_state.core.config import (
+    FIELD_ACTION_IDLE,
+    FIELD_ACTION_REPAIRING,
+    WAIT_UNTIL_MAX_TICKS,
+)
+from game.simulations.world_state.core.detection import warning_delay_ticks
+from game.simulations.world_state.core.presence import tick_presence
+from game.simulations.world_state.core.power import comms_fidelity
+from game.simulations.world_state.core.simulation import step_world
+from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.terminal.procgen_text import (
+    render_wait_assault_line,
+    render_wait_event_line,
+    render_wait_repair_line,
+    render_wait_status_shift_line,
+    render_wait_warning_line,
+)
+
+
+WAIT_TICKS_PER_UNIT = 5
+WAIT_TICK_DELAY_SECONDS = 0.5
+
+
+@dataclass
+class WaitTickInfo:
+    fidelity: str
+    fidelity_lines: list[str]
+    debug_lines: list[str]
+    event_name: str | None
+    event_sector: str | None
+    repair_names: list[str]
+    fabrication_lines: list[str]
+    relay_lines: list[str]
+    assault_started: bool
+    assault_warning: bool
+    assault_active: bool
+    became_failed: bool
+    warning_window: int
+    assault_lines: list[str]
+    structure_loss_lines: list[str]
+    stability_declining: bool
+    event_key: str | None = None
+    event_detected: bool | None = None
+
+
+def _failure_lines(state: GameState) -> list[str]:
+    reason = state.failure_reason or "SESSION FAILED."
+    return [reason, "SESSION TERMINATED."]
+
+
+def _fidelity_from_comms(state: GameState) -> str:
+    return comms_fidelity(state)
+
+
+def _latest_event(state: GameState, before_time: int) -> tuple[str | None, str | None]:
+    latest_name = None
+    latest_sector = None
+    latest_time = before_time
+
+    for sector in state.sectors.values():
+        event_name = sector.last_event
+        if not event_name:
+            continue
+        event_time = state.event_cooldowns.get((event_name, sector.name), -1)
+        if event_time > latest_time:
+            latest_time = event_time
+            latest_name = event_name
+            latest_sector = sector.name
+
+    return latest_name, latest_sector
+
+
+def _format_event_line(
+    state: GameState,
+    *,
+    event_name: str,
+    fidelity: str,
+    event_key: str | None,
+    detected: bool | None,
+) -> str | None:
+    return render_wait_event_line(
+        state,
+        fidelity=fidelity,
+        event_name=event_name,
+        event_key=event_key,
+        detected=detected,
+    )
+
+
+def _format_repair_line(state: GameState, *, repair_name: str, fidelity: str) -> str | None:
+    return render_wait_repair_line(state, fidelity=fidelity, repair_name=repair_name)
+
+
+def _format_warning_line(state: GameState, *, fidelity: str) -> str | None:
+    return render_wait_warning_line(state, fidelity=fidelity)
+
+
+def _format_assault_line(state: GameState, *, fidelity: str) -> str | None:
+    return render_wait_assault_line(state, fidelity=fidelity)
+
+
+def _format_status_shift(state: GameState, *, fidelity: str) -> str | None:
+    return render_wait_status_shift_line(state, fidelity=fidelity)
+
+
+def _advance_tick(state: GameState) -> WaitTickInfo:
+    before_time = state.time
+    before_threat = state.ambient_threat
+    before_damage = sum(sector.damage for sector in state.sectors.values())
+    was_assault_active = state.in_major_assault or state.current_assault is not None
+    previous_timer = state.assault_timer
+
+    captured = io.StringIO()
+    with redirect_stdout(captured):
+        became_failed = step_world(state)
+        tick_presence(state)
+        repair_lines = state.last_repair_lines
+        fabrication_lines = list(state.last_fabrication_lines)
+        relay_lines = list(state.last_relay_lines)
+        state.last_relay_lines = []
+        fidelity_lines = state.last_fidelity_lines
+        if not state.active_repairs and state.field_action == FIELD_ACTION_REPAIRING:
+            state.field_action = FIELD_ACTION_IDLE
+    debug_lines: list[str] = []
+    if state.dev_mode and state.dev_trace:
+        for line in captured.getvalue().splitlines():
+            cleaned = line.strip()
+            if cleaned.startswith("{") and "'tick':" in cleaned:
+                debug_lines.append(f"[DEBUG] {cleaned}")
+
+    fidelity = _fidelity_from_comms(state)
+    structure_loss_lines = _consume_structure_loss_lines(state, fidelity)
+    event_name, event_sector = _latest_event(state, before_time)
+    event_key = None
+    event_detected = None
+    if state.tick_events:
+        event = state.tick_events[-1]
+        event_name = event.event_name
+        event_sector = event.sector
+        event_key = event.event_key
+        event_detected = event.detected
+    repair_names = [line.replace("REPAIR COMPLETE: ", "") for line in repair_lines]
+    assault_lines = list(state.last_assault_lines)
+
+    assault_active = state.in_major_assault or state.current_assault is not None
+    assault_started = (not was_assault_active) and assault_active
+    if not assault_active:
+        state.field_assault_warning_pending = 0
+
+    warning_window = 6
+    if fidelity in {"FRAGMENTED", "LOST"}:
+        warning_window = 2
+
+    current_timer = state.assault_timer
+    assault_warning = (
+        previous_timer is not None
+        and current_timer is not None
+        and previous_timer > warning_window
+        and 0 < current_timer <= warning_window
+    )
+    pending_seeded = False
+    if assault_started and state.in_field_mode():
+        state.field_assault_warning_pending = warning_delay_ticks(state)
+        pending_seeded = state.field_assault_warning_pending > 0
+        assault_started = False
+        assault_warning = False
+    if state.field_assault_warning_pending > 0 and not pending_seeded:
+        state.field_assault_warning_pending -= 1
+        if state.field_assault_warning_pending == 0 and assault_active and not pending_seeded:
+            assault_warning = True
+
+    after_threat = state.ambient_threat
+    after_damage = sum(sector.damage for sector in state.sectors.values())
+    stability_declining = (
+        after_threat > before_threat + 0.02
+        or after_damage > before_damage + 0.05
+    )
+
+    return WaitTickInfo(
+        fidelity=fidelity,
+        fidelity_lines=fidelity_lines,
+        debug_lines=debug_lines,
+        event_name=event_name,
+        event_sector=event_sector,
+        repair_names=repair_names,
+        fabrication_lines=fabrication_lines,
+        relay_lines=relay_lines,
+        assault_started=assault_started,
+        assault_warning=assault_warning,
+        assault_active=assault_active,
+        became_failed=became_failed,
+        warning_window=warning_window,
+        assault_lines=assault_lines,
+        structure_loss_lines=structure_loss_lines,
+        stability_declining=stability_declining,
+        event_key=event_key,
+        event_detected=event_detected,
+    )
+
+
+def _primary_signal_key(info: WaitTickInfo) -> str | None:
+    if info.fidelity_lines:
+        return "fidelity"
+    if info.structure_loss_lines:
+        return "structure_loss"
+    if info.assault_lines:
+        return "assault_lines"
+    if info.fabrication_lines:
+        return "fabrication"
+    if info.relay_lines:
+        return "relay"
+    if info.event_name:
+        return f"event:{info.event_key or info.event_name}"
+    if info.repair_names:
+        return f"repair:{info.repair_names[0]}"
+    if info.assault_warning:
+        return "warning"
+    return None
+
+
+def _consume_structure_loss_lines(state: GameState, fidelity: str) -> list[str]:
+    pending = sorted(
+        sid for sid in state.pending_structure_losses if sid not in state.detected_structure_losses
+    )
+    if not pending:
+        return []
+    if fidelity == "LOST":
+        return []
+
+    surfaced = set(pending)
+    lines: list[str] = []
+    if fidelity == "FULL":
+        lines.extend(f"[EVENT] STRUCTURE LOST: {sid}" for sid in pending)
+        lines.extend(state.last_structure_loss_lines)
+    elif fidelity == "DEGRADED":
+        sectors: list[str] = []
+        for sid in pending:
+            structure = state.structures.get(sid)
+            sector_name = structure.sector if structure else "UNKNOWN"
+            if sector_name not in sectors:
+                sectors.append(sector_name)
+        lines.extend(f"[EVENT] INFRASTRUCTURE LOSS REPORTED: {name}" for name in sectors)
+        if state.last_structure_loss_lines:
+            lines.append("[WARNING] SYSTEM CAPABILITY REDUCED.")
+    else:
+        lines.append("[EVENT] STRUCTURAL LOSS SIGNAL DETECTED")
+        if state.last_structure_loss_lines:
+            lines.append("[WARNING] INTERNAL CONDITIONS DEGRADED.")
+
+    state.detected_structure_losses.update(surfaced)
+    state.pending_structure_losses.difference_update(surfaced)
+    return lines
+
+
+def cmd_wait(state: GameState) -> list[str]:
+    """Advance the world simulation by one wait unit."""
+
+    return cmd_wait_ticks(state, 1)
+
+
+def cmd_wait_ticks(state: GameState, ticks: int) -> list[str]:
+    """Advance the world simulation by N wait units."""
+
+    if ticks <= 0:
+        return ["TIME ADVANCED."]
+    if state.is_failed:
+        return _failure_lines(state)
+
+    lines = ["TIME ADVANCED."]
+    detail_lines: list[str] = []
+    last_detail_line = lines[0]
+    last_signal_key: str | None = None
+    total_ticks = ticks * WAIT_TICKS_PER_UNIT
+    if state.current_assault is not None or state.in_major_assault:
+        total_ticks = ticks
+
+    for index in range(total_ticks):
+        info = _advance_tick(state)
+        tick_lines = _detail_lines_for_tick(info, state)
+        signal_key = _primary_signal_key(info)
+        suppress_tick_lines = (
+            signal_key is not None
+            and signal_key == last_signal_key
+            and not info.became_failed
+        )
+        if not suppress_tick_lines and signal_key is not None:
+            last_signal_key = signal_key
+
+        if suppress_tick_lines:
+            if index < total_ticks - 1:
+                time.sleep(WAIT_TICK_DELAY_SECONDS)
+            continue
+
+        for line in tick_lines:
+            if line == last_detail_line:
+                continue
+            detail_lines.append(line)
+            last_detail_line = line
+
+        if info.became_failed:
+            break
+
+        if index < total_ticks - 1:
+            time.sleep(WAIT_TICK_DELAY_SECONDS)
+
+    if detail_lines:
+        lines.extend(detail_lines)
+
+    return lines
+
+
+def cmd_wait_until(state: GameState, condition: str) -> list[str]:
+    """Advance until a named condition is met or a safety cap is reached."""
+
+    if state.is_failed:
+        return _failure_lines(state)
+
+    token = condition.strip().upper()
+    if token not in {"ASSAULT", "APPROACH", "REPAIR_DONE"}:
+        return ["WAIT UNTIL REQUIRES: ASSAULT, APPROACH, OR REPAIR_DONE."]
+
+    lines = [f"TIME ADVANCED UNTIL {token}."]
+    detail_lines: list[str] = []
+    last_detail_line = lines[0]
+    last_signal_key: str | None = None
+    condition_met = False
+
+    for _ in range(WAIT_UNTIL_MAX_TICKS):
+        info = _advance_tick(state)
+        tick_lines = _detail_lines_for_tick(info, state)
+        signal_key = _primary_signal_key(info)
+        suppress_tick_lines = (
+            signal_key is not None
+            and signal_key == last_signal_key
+            and not info.became_failed
+        )
+        if not suppress_tick_lines and signal_key is not None:
+            last_signal_key = signal_key
+
+        if not suppress_tick_lines:
+            for line in tick_lines:
+                if line == last_detail_line:
+                    continue
+                detail_lines.append(line)
+                last_detail_line = line
+
+        if token == "ASSAULT":
+            condition_met = info.assault_active or info.assault_started
+        elif token == "APPROACH":
+            condition_met = bool(state.assaults)
+        else:
+            condition_met = bool(info.repair_names)
+
+        if info.became_failed or condition_met:
+            break
+
+    if detail_lines:
+        lines.extend(detail_lines)
+    if not condition_met and not state.is_failed:
+        lines.append("CONDITION NOT MET BEFORE SAFETY LIMIT.")
+    return lines
+
+
+def _detail_lines_for_tick(info: WaitTickInfo, state: GameState) -> list[str]:
+    if info.fidelity == "LOST":
+        if info.fidelity_lines:
+            lines = list(info.debug_lines) + list(info.fidelity_lines)
+            if info.became_failed:
+                lines.extend(_failure_lines(state))
+            return lines
+        if info.became_failed:
+            return list(info.debug_lines) + _failure_lines(state)
+        return list(info.debug_lines)
+
+    tick_lines: list[str] = list(info.debug_lines)
+    if info.fidelity_lines:
+        tick_lines.extend(info.fidelity_lines)
+    if info.structure_loss_lines:
+        tick_lines.extend(info.structure_loss_lines)
+    if info.assault_lines:
+        tick_lines.extend(info.assault_lines)
+    if info.fabrication_lines:
+        tick_lines.extend(info.fabrication_lines)
+    if info.relay_lines:
+        tick_lines.extend(info.relay_lines)
+
+    event_line = None
+    if info.event_name and not info.fidelity_lines:
+        event_line = _format_event_line(
+            state,
+            event_name=info.event_name,
+            fidelity=info.fidelity,
+            event_key=info.event_key,
+            detected=info.event_detected,
+        )
+
+    repair_line = None
+    if not event_line and info.repair_names:
+        repair_line = _format_repair_line(
+            state,
+            repair_name=info.repair_names[0],
+            fidelity=info.fidelity,
+        )
+
+    warning_line = None
+    if not event_line and not repair_line and info.assault_warning:
+        warning_line = _format_warning_line(state, fidelity=info.fidelity)
+
+    if event_line:
+        tick_lines.append(event_line)
+    elif repair_line:
+        tick_lines.append(repair_line)
+    elif warning_line:
+        tick_lines.append(warning_line)
+
+    assault_signal = info.assault_started or info.assault_warning
+    if info.fidelity == "FRAGMENTED" and not info.assault_started:
+        assault_signal = False
+
+    interpretive_line = None
+    if assault_signal:
+        interpretive_line = _format_assault_line(state, fidelity=info.fidelity)
+    elif (
+        info.stability_declining
+        and (event_line or repair_line or info.fidelity_lines or info.structure_loss_lines)
+    ):
+        interpretive_line = _format_status_shift(state, fidelity=info.fidelity)
+
+    if interpretive_line:
+        tick_lines.append(interpretive_line)
+
+    if info.became_failed:
+        tick_lines.extend(_failure_lines(state))
+
+    return tick_lines
+
+
+

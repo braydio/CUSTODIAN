@@ -3,6 +3,8 @@ from typing import Any
 import math
 import random
 
+from game.procgen.engine import VariantMemory, mix_seed64
+
 from .config import (
     ALERTNESS_DECAY,
     ALERTNESS_FROM_DAMAGE,
@@ -68,11 +70,18 @@ class SectorState:
 class GameState:
     """Shared world-state container for the simulation."""
 
-    def __init__(self, seed: int | None = None):
+    def __init__(self, seed: int | None = None, text_seed: int | None = None):
         """Initialize the world-state simulation state."""
 
         self.seed = seed if seed is not None else random.randrange(0, 2**32)
         self.rng = random.Random(self.seed)
+        self.text_seed = (
+            int(text_seed)
+            if text_seed is not None
+            else int(mix_seed64(self.seed, "text"))
+        )
+        self.variant_memory = VariantMemory(max_recent=3)
+        self.tick_events: list[Any] = []
         self.time = 0
         self.ambient_threat = 0.0
         self.assault_timer = None
@@ -106,7 +115,12 @@ class GameState:
         self.policies = PolicyState()
         self.fab_allocation = default_fabrication_allocation()
         self.fabrication_queue: list[Any] = []
+        self.ambient_fab_progress = {name: 0.0 for name in self.fab_allocation}
+        self.ambient_fab_effective_rate = 0.0
+        self.ambient_fab_power_factor = 1.0
+        self.ambient_fab_supply_factor = 1.0
         self.sector_fort_levels = {name: 0 for name in SECTORS}
+        self.transit_fort_levels = {"T_NORTH": 0, "T_SOUTH": 0}
         self.power_load = 1.0
         self.logistics_throughput = 3.0
         self.logistics_load = 0.0
@@ -242,6 +256,7 @@ class GameState:
                 "fabrication_allocation": dict(self.fab_allocation),
                 "fortification": dict(self.sector_fort_levels),
             },
+            "transit_fort_levels": dict(self.transit_fort_levels),
             "defense": {
                 "doctrine": self.defense_doctrine,
                 "allocation": dict(self.defense_allocation),
@@ -257,6 +272,15 @@ class GameState:
                 }
                 for task in self.fabrication_queue
             ],
+            "ambient_fabrication": {
+                "rate": float(self.ambient_fab_effective_rate),
+                "power_factor": float(self.ambient_fab_power_factor),
+                "supply_factor": float(self.ambient_fab_supply_factor),
+                "progress": {
+                    str(name): round(float(value), 3)
+                    for name, value in self.ambient_fab_progress.items()
+                },
+            },
             "relays": {
                 "nodes": {key: dict(value) for key, value in self.relay_nodes.items()},
                 "packets_pending": int(self.relay_packets_pending),
@@ -277,7 +301,9 @@ class GameState:
             "field_action": self.field_action,
             "active_task": task_to_dict(self.active_task),
             "seed": self.seed,
+            "text_seed": self.text_seed,
             "operator_log": list(self.operator_log[-50:]),
+            "dev_mode": self.dev_mode,
         }
 
     @property
@@ -324,11 +350,17 @@ class GameState:
     @classmethod
     def from_snapshot(cls, snapshot: dict) -> "GameState":
         migrated = migrate_snapshot(snapshot)
-        state = cls(seed=migrated.get("seed"))
+        state = cls(seed=migrated.get("seed"), text_seed=migrated.get("text_seed"))
         state.time = int(migrated.get("time", 0))
         state.player_mode = migrated.get("player_mode", state.player_mode)
         state.player_location = migrated.get("player_location", state.player_location)
         state.field_action = migrated.get("field_action", state.field_action)
+        transit_forts = migrated.get("transit_fort_levels")
+        if isinstance(transit_forts, dict):
+            state.transit_fort_levels = {
+                "T_NORTH": int(transit_forts.get("T_NORTH", 0)),
+                "T_SOUTH": int(transit_forts.get("T_SOUTH", 0)),
+            }
         return state
 
 

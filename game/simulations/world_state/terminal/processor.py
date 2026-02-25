@@ -417,7 +417,10 @@ def process_command(state: GameState, raw: str) -> CommandResult:
 
     if parsed.verb == "FORTIFY":
         if len(parsed.args) != 2:
-            return _finalize_result(state, CommandResult(ok=False, text="FORTIFY <SECTOR> <0-4>"))
+            return _finalize_result(
+                state,
+                CommandResult(ok=False, text="FORTIFY <SECTOR|T_NORTH|T_SOUTH> <0-4>"),
+            )
         lines = cmd_fortify(state, parsed.args[0], parsed.args[1])
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None

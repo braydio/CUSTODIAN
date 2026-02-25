@@ -61,11 +61,17 @@ def validate_state_invariants(state) -> None:
         level = int(state.fab_allocation.get(category, -1))
         if level < POLICY_LEVEL_MIN or level > POLICY_LEVEL_MAX:
             raise AssertionError("Fabrication allocation levels must stay in [0,4].")
+        if float(state.ambient_fab_progress.get(category, -1.0)) < 0.0:
+            raise AssertionError("Ambient fabrication progress must be non-negative.")
 
     for sector_name in state.sectors:
         fort_level = int(state.sector_fort_levels.get(sector_name, -1))
         if fort_level < POLICY_LEVEL_MIN or fort_level > POLICY_LEVEL_MAX:
             raise AssertionError("Fortification levels must stay in [0,4].")
+    for node in ("T_NORTH", "T_SOUTH"):
+        fort_level = int(state.transit_fort_levels.get(node, -1))
+        if fort_level < POLICY_LEVEL_MIN or fort_level > POLICY_LEVEL_MAX:
+            raise AssertionError("Transit fortification levels must stay in [0,4].")
 
     for key in ("SCRAP", "COMPONENTS", "ASSEMBLIES", "MODULES"):
         if int(state.inventory.get(key, -1)) < 0:

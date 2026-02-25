@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "symbols": {
+    "wait.event.full": [
+      { "text": "[EVENT] #event_name.upper# DETECTED", "weight": 5 },
+      { "text": "[EVENT] #event_name.upper# CONFIRMED", "weight": 3 },
+      { "text": "[EVENT] #event_name.upper# SIGNATURE REGISTERED", "weight": 2 }
+    ],
+    "wait.event.degraded": [
+      { "text": "[EVENT] #event_name.upper# REPORTED", "weight": 5 },
+      { "text": "[EVENT] #event_name.upper# LOGGED", "weight": 3 },
+      { "text": "[EVENT] #event_name.upper# RECEIVED", "weight": 2 }
+    ],
+    "wait.event.fragmented": [
+      { "text": "[EVENT] IRREGULAR SIGNALS DETECTED", "weight": 5 },
+      { "text": "[EVENT] SIGNAL FRAGMENTS RECORDED", "weight": 2 },
+      { "text": "[EVENT] PARTIAL TELEMETRY REGISTERED", "weight": 1 }
+    ],
+    "wait.repair.full": [
+      { "text": "[EVENT] REPAIR COMPLETE: #repair_name.upper#", "weight": 5 },
+      { "text": "[EVENT] MAINTENANCE COMPLETE: #repair_name.upper#", "weight": 2 }
+    ],
+    "wait.repair.degraded": [
+      { "text": "[EVENT] REPAIR COMPLETE: #repair_name.upper#", "weight": 5 },
+      { "text": "[EVENT] MAINTENANCE COMPLETE: #repair_name.upper#", "weight": 2 }
+    ],
+    "wait.repair.fragmented": [
+      { "text": "[EVENT] MAINTENANCE SIGNALS DETECTED", "weight": 4 },
+      { "text": "[EVENT] SERVICE FRAGMENTS RECORDED", "weight": 1 }
+    ],
+    "wait.warning.full": [
+      { "text": "[WARNING] HOSTILE COORDINATION DETECTED", "weight": 4 },
+      { "text": "[WARNING] HOSTILE MOVEMENT DETECTED", "weight": 2 }
+    ],
+    "wait.warning.degraded": [
+      { "text": "[WARNING] HOSTILE ACTIVITY REPORTED", "weight": 4 },
+      { "text": "[WARNING] HOSTILE ACTIVITY SUSPECTED", "weight": 2 }
+    ],
+    "wait.warning.fragmented": [
+      { "text": "[WARNING] STRUCTURAL STRESS INDICATED", "weight": 4 },
+      { "text": "[WARNING] PRESSURE SPIKE INDICATED", "weight": 1 }
+    ],
+    "wait.assault.full": [
+      { "text": "[ASSAULT] THREAT ACTIVITY INCREASING", "weight": 4 },
+      { "text": "[ASSAULT] THREAT SIGNATURES INTENSIFYING", "weight": 2 }
+    ],
+    "wait.assault.degraded": [
+      { "text": "[ASSAULT] THREAT ACTIVITY APPEARS TO BE INCREASING", "weight": 4 },
+      { "text": "[ASSAULT] THREAT PATTERNS MAY BE INTENSIFYING", "weight": 2 }
+    ],
+    "wait.assault.fragmented": [
+      { "text": "[ASSAULT] HOSTILE ACTIVITY POSSIBLE", "weight": 4 },
+      { "text": "[ASSAULT] CONTACTS POSSIBLE", "weight": 1 }
+    ],
+    "wait.status_shift.full": [
+      { "text": "[STATUS SHIFT] SYSTEM STABILITY DECLINING", "weight": 4 },
+      { "text": "[STATUS SHIFT] SYSTEM LOAD TRENDING UP", "weight": 1 }
+    ],
+    "wait.status_shift.degraded": [
+      { "text": "[STATUS SHIFT] SYSTEM STABILITY APPEARS TO BE DECLINING", "weight": 4 },
+      { "text": "[STATUS SHIFT] CONDITIONS APPEAR TO BE WORSENING", "weight": 1 }
+    ],
+    "wait.status_shift.fragmented": [
+      { "text": "[STATUS SHIFT] INTERNAL CONDITIONS MAY BE WORSENING", "weight": 4 },
+      { "text": "[STATUS SHIFT] INSTABILITY POSSIBLE", "weight": 1 }
+    ]
+  }
+}

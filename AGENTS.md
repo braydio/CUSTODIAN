@@ -1,8 +1,5 @@
 # AGENTS.md
 
-CODEX: Hi it is Brayden. Please put this note in this document wherever it makes sense to you: 
-The .venv at the project root should have pytest installed, please use it if needed you also may instll pytest and any other dependencies to your working environment.
-
 This repository contains lightweight prototypes for a defense-oriented simulation of a static command post in a collapsed interstellar civilization. Keep changes simple, readable, and consistent with the tone in the simulations (operational, perimeter-defense language; terse, grounded output). Emphasize reconstruction and knowledge preservation over extermination.
 
 ## Repo Structure
@@ -82,6 +79,7 @@ This repository contains lightweight prototypes for a defense-oriented simulatio
 
 - No formal automated tests yet.
 - When documenting validation, state the manual action (e.g., "ran `python sandbox_world.py` and reviewed output").
+- The project-root `.venv` should include `pytest`; prefer using it for validation, and install any missing dependencies in your working environment as needed.
 
 ## Safety & Secrets
 

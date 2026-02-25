@@ -26,7 +26,10 @@
     <div id="terminal-container">
       <div id="display-header">
         <div id="display-mode-label">MODE: COMMAND</div>
-        <button id="map-mode-toggle" type="button">ENTER MAP MODE</button>
+        <div id="display-controls">
+          <button id="dev-map-toggle" type="button" class="hidden">DEV MAP VIEWER</button>
+          <button id="map-mode-toggle" type="button">ENTER MAP MODE</button>
+        </div>
       </div>
       <pre id="terminal"></pre>
       <div id="terminal-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
@@ -52,6 +55,15 @@
     </div>
 
     <div id="map-mode-panel" class="hidden" aria-live="polite">
+      <div id="map-mode-controls">
+        <div id="map-mode-title">STRATEGIC MAP FEED</div>
+        <div id="map-mode-focus">
+          <span>FOCUS:</span>
+          <button type="button" class="map-focus-button active" data-map-focus="general">GENERAL</button>
+          <button type="button" class="map-focus-button" data-map-focus="defense">DEFENSE</button>
+          <button type="button" class="map-focus-button" data-map-focus="logistics">LOGISTICS</button>
+        </div>
+      </div>
       <div id="map-mode-map"></div>
       <div id="map-mode-log"></div>
     </div>

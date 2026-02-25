@@ -9,9 +9,10 @@ from .config import (
 )
 from .assault_ledger import AssaultTickRecord, append_record
 from .detection import detection_probability
+from .event_records import EventInstance
 from .effects import add_global_effect, add_sector_effect
 from .factions import build_faction_profile
-from .power_load import brownout_event_chance_bonus, brownout_event_weight_multiplier
+from .power_load import blackout_event_chance_bonus, blackout_event_weight_multiplier
 
 
 class AmbientEvent:
@@ -94,7 +95,7 @@ def goal_sector_breach(state, sector):
     state.ambient_threat += 0.6
 
 
-def power_brownout(state, sector):
+def power_blackout(state, sector):
     surveillance_level = int(state.policies.surveillance_coverage)
     mitigation = 1.0 - (surveillance_level * 0.08)
     mitigation = max(0.6, mitigation)
@@ -112,7 +113,7 @@ def power_brownout(state, sector):
                 assault_strength=0.0,
                 defense_mitigation=0.0,
                 failure_triggered=False,
-                note=f"BROWNOUT:POWER_DELTA={before_power:.2f}->{sector.power:.2f}",
+                note=f"BLACKOUT:POWER_DELTA={before_power:.2f}->{sector.power:.2f}",
             ),
         )
 
@@ -194,13 +195,13 @@ EVENT_ARCHETYPES = [
         "chain_templates": ["Backup grid drops", "Signal relays desync"],
     },
     {
-        "key": "power_brownout",
+        "key": "power_blackout",
         "min_threat": 1.6,
         "weight": 2,
         "cooldown": 20,
         "tags": {"power", "maintenance", "terminal"},
-        "effect": power_brownout,
-        "name_template": "{label} induced brownout",
+        "effect": power_blackout,
+        "name_template": "{label} induced blackout",
         "chain_templates": ["Auto-turret cycle stutters"],
     },
     {
@@ -351,7 +352,7 @@ def maybe_trigger_event(state):
     hangar = state.sectors.get("HANGAR")
     if hangar and hangar.damage >= 1.0:
         chance += HANGAR_EVENT_CHANCE_BONUS
-    chance += brownout_event_chance_bonus(state)
+    chance += blackout_event_chance_bonus(state)
     chance = min(chance, EVENT_CHANCE_MAX)
     if state.rng.random() > chance:
         return
@@ -359,8 +360,8 @@ def maybe_trigger_event(state):
     weighted = []
     for event, sector in candidates:
         weight = int(event.weight)
-        if event.key == "power_brownout":
-            weight *= brownout_event_weight_multiplier(state)
+        if event.key == "power_blackout":
+            weight *= blackout_event_weight_multiplier(state)
         weighted.extend([(event, sector)] * max(1, weight))
 
     event, sector = state.rng.choice(weighted)
@@ -374,6 +375,15 @@ def maybe_trigger_event(state):
     event.effect(state, sector)
     sector.last_event = event.name if detected else "Signal anomaly"
     state.event_cooldowns[(event.name, sector.name)] = state.time
+    state.tick_events.append(
+        EventInstance(
+            tick=state.time,
+            event_key=event.key,
+            event_name=sector.last_event,
+            sector=sector.name,
+            detected=bool(detected),
+        )
+    )
 
     for chained_name in event.chains:
         if state.rng.random() < CHAIN_CHANCE:

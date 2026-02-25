@@ -7,6 +7,11 @@
 
   const MAP_CONTAINER_ID = "sector-map";
   const SYSTEM_PANEL_ID = "system-panel";
+  const MAP_MODE_TITLE_ID = "map-mode-title";
+
+  const FOCUS_MODES = ["general", "defense", "logistics"];
+  let activeFocusMode = "general";
+  let lastSnapshot = null;
 
   const STATUS_CLASS = {
     STABLE: "stable",
@@ -31,20 +36,180 @@
   ];
 
   const MAP_POSITIONS = {
-    INGRESS_N: { x: 420, y: 36, type: "ingress" },
-    T_NORTH: { x: 420, y: 108, type: "transit" },
+    INGRESS_N: { x: 420, y: 36, type: "ingress", label: "NORTH INGRESS" },
+    T_NORTH: { x: 420, y: 108, type: "transit", label: "NORTH TRANSIT" },
     COMMS: { x: 260, y: 172, type: "sector", id: "CM" },
     ARCHIVE: { x: 420, y: 172, type: "sector", id: "AR" },
     STORAGE: { x: 580, y: 172, type: "sector", id: "ST" },
     COMMAND: { x: 420, y: 260, type: "sector", id: "CC" },
     POWER: { x: 580, y: 260, type: "sector", id: "PW" },
     FABRICATION: { x: 580, y: 348, type: "sector", id: "FB" },
-    T_SOUTH: { x: 420, y: 348, type: "transit" },
+    T_SOUTH: { x: 420, y: 348, type: "transit", label: "SOUTH TRANSIT" },
     DEFENSE_GRID: { x: 260, y: 348, type: "sector", id: "DF", label: "DEFENSE GRID" },
     HANGAR: { x: 260, y: 432, type: "sector", id: "HG" },
     GATEWAY: { x: 420, y: 432, type: "sector", id: "GS" },
-    INGRESS_S: { x: 420, y: 500, type: "ingress" },
+    INGRESS_S: { x: 420, y: 500, type: "ingress", label: "SOUTH INGRESS" },
   };
+
+  const DEFENSE_GROUP_BY_SECTOR = {
+    COMMAND: "COMMAND",
+    POWER: "POWER",
+    FABRICATION: "POWER",
+    COMMS: "SENSORS",
+  };
+
+  const LOGISTICS_FLOW_LINKS = [
+    ["INGRESS_N", "T_NORTH"],
+    ["INGRESS_S", "T_SOUTH"],
+    ["T_NORTH", "STORAGE"],
+    ["T_SOUTH", "STORAGE"],
+    ["STORAGE", "FABRICATION"],
+    ["FABRICATION", "DEFENSE_GRID"],
+    ["FABRICATION", "HANGAR"],
+    ["FABRICATION", "COMMAND"],
+  ];
+
+  function clampNumber(value, min, max) {
+    const num = Number.isFinite(value) ? value : 0;
+    return Math.max(min, Math.min(max, num));
+  }
+
+  function formatLevel(value) {
+    const level = clampNumber(value, 0, 4);
+    return String(Math.round(level));
+  }
+
+  function renderPips(value, max = 4) {
+    const count = clampNumber(value, 0, max);
+    const filled = "#".repeat(Math.round(count));
+    const empty = ".".repeat(max - Math.round(count));
+    return `${filled}${empty}`;
+  }
+
+  function renderMiniBar(value) {
+    const scaled = clampNumber(Math.round(value / 10), 0, 5);
+    return `[${"#".repeat(scaled)}${".".repeat(5 - scaled)}]`;
+  }
+
+  function sectorNameForKey(key, pos) {
+    if (!pos || pos.type !== "sector") return null;
+    return pos.label || key.replaceAll("_", " ");
+  }
+
+  function overlayAnchorFor(pos) {
+    if (pos.x < 320) return { x: 26, y: -8, anchor: "start" };
+    if (pos.x > 520) return { x: -26, y: -8, anchor: "end" };
+    return { x: 0, y: -48, anchor: "middle" };
+  }
+
+  function defenseGroupForSector(name) {
+    return DEFENSE_GROUP_BY_SECTOR[name] || "PERIMETER";
+  }
+
+  function buildOverlayLines(sectorName, snapshot, focusMode) {
+    const policies = snapshot.policies || {};
+    const defense = snapshot.defense || {};
+    const logistics = snapshot.logistics || {};
+    const fortLevel = (policies.fortification || {})[sectorName] ?? 0;
+    const defenseAlloc = defense.allocation || {};
+    const defenseReadiness = policies.defense_readiness ?? 2;
+    const repairIntensity = policies.repair_intensity ?? 2;
+    const surveillanceCoverage = policies.surveillance_coverage ?? 2;
+    const focus = snapshot.focused_sector;
+    const focusName = snapshot.sectors?.find((sector) => sector.id === focus)?.name || focus;
+    const hardened = snapshot.hardened;
+    const doctrine = defense.doctrine || "STANDARD";
+    const readiness = defense.readiness ?? 1;
+    const materials = snapshot.resources?.materials ?? 0;
+    const stocks = snapshot.stocks || {};
+    const inventory = snapshot.inventory || {};
+    const fabAllocation = policies.fabrication_allocation || {};
+    const fabQueue = Array.isArray(snapshot.fabrication_queue) ? snapshot.fabrication_queue : [];
+    const group = defenseGroupForSector(sectorName);
+    const weight = Number(defenseAlloc[group] ?? 1);
+
+    if (focusMode === "general") {
+      if (sectorName === "COMMAND") {
+        return [
+          `POSTURE ${hardened ? "HARDENED" : "BASELINE"}`,
+          focus ? `FOCUS ${focusName}` : "FOCUS NONE",
+          `POL R${formatLevel(repairIntensity)} D${formatLevel(defenseReadiness)} S${formatLevel(surveillanceCoverage)}`,
+        ];
+      }
+      if (sectorName === "FABRICATION") {
+        return [
+          `FORT ${formatLevel(fortLevel)}`,
+          `FAB DEF${formatLevel(fabAllocation.DEFENSE)} DRN${formatLevel(fabAllocation.DRONES)}`,
+          `FAB REP${formatLevel(fabAllocation.REPAIRS)} ARC${formatLevel(fabAllocation.ARCHIVE)}`,
+        ];
+      }
+      return [
+        `FORT ${formatLevel(fortLevel)}`,
+        `DEF ${group} ${weight.toFixed(2)}`,
+      ];
+    }
+
+    if (focusMode === "defense") {
+      if (sectorName === "COMMAND") {
+        return [
+          `DOCTRINE ${doctrine}`,
+          `READINESS ${readiness.toFixed(2)}`,
+          `POSTURE ${hardened ? "HARDENED" : "BASELINE"}`,
+        ];
+      }
+      if (sectorName === "DEFENSE GRID") {
+        return [
+          `DEF ${group} ${weight.toFixed(2)}`,
+          `FORT ${formatLevel(fortLevel)}`,
+          `UNITS ${renderPips(defenseReadiness)}`,
+        ];
+      }
+      return [
+        `DEF ${group} ${weight.toFixed(2)}`,
+        `FORT ${formatLevel(fortLevel)}`,
+      ];
+    }
+
+    if (focusMode === "logistics") {
+      if (sectorName === "STORAGE") {
+        const invCount = Object.values(inventory).reduce((sum, val) => sum + (Number(val) || 0), 0);
+        return [
+          `MATS ${materials} ${renderMiniBar(materials)}`,
+          `STORE ${invCount} ${renderMiniBar(invCount)}`,
+          `FLOW ${logistics.throughput ?? 0} / ${logistics.load ?? 0}`,
+        ];
+      }
+      if (sectorName === "FABRICATION") {
+        return [
+          `QUEUE ${fabQueue.length} ${renderMiniBar(fabQueue.length * 5)}`,
+          `DEF${formatLevel(fabAllocation.DEFENSE)} DRN${formatLevel(fabAllocation.DRONES)}`,
+          `REP${formatLevel(fabAllocation.REPAIRS)} ARC${formatLevel(fabAllocation.ARCHIVE)}`,
+        ];
+      }
+      if (sectorName === "HANGAR") {
+        return [
+          `DRONES ${stocks.repair_drones ?? 0} ${renderMiniBar(stocks.repair_drones ?? 0)}`,
+          `OUTFLOW ${logistics.pressure ?? 0}`,
+        ];
+      }
+      if (sectorName === "DEFENSE GRID") {
+        return [
+          `AMMO ${stocks.turret_ammo ?? 0} ${renderMiniBar(stocks.turret_ammo ?? 0)}`,
+          `LOAD ${logistics.load ?? 0}`,
+        ];
+      }
+      if (sectorName === "COMMAND") {
+        return [
+          `THRU ${logistics.throughput ?? 0}`,
+          `LOAD ${logistics.load ?? 0}`,
+          `PRESS ${logistics.pressure ?? 0}`,
+        ];
+      }
+      return [`FORT ${formatLevel(fortLevel)}`, `DEF ${group} ${weight.toFixed(2)}`];
+    }
+
+    return [];
+  }
 
   function renderSystemPanel(snapshot) {
     const panel = byId(SYSTEM_PANEL_ID);
@@ -125,17 +290,40 @@
     if (!container) return;
     clearChildren(container);
 
+    lastSnapshot = snapshot;
     const sectorsByName = new Map(snapshot.sectors.map((s) => [s.name, s]));
 
-    const header = document.createElement("div");
-    header.className = "sector-map-header";
-    header.textContent = detailed ? "STRATEGIC MAP FEED" : "WORLD MAP";
-    container.appendChild(header);
+    const mapTitle = byId(MAP_MODE_TITLE_ID);
+    if (targetId === "map-mode-map" && mapTitle) {
+      mapTitle.textContent = detailed ? "STRATEGIC MAP FEED" : "WORLD MAP";
+    } else {
+      const header = document.createElement("div");
+      header.className = "sector-map-header";
+      header.textContent = detailed ? "STRATEGIC MAP FEED" : "WORLD MAP";
+      container.appendChild(header);
+    }
 
     const svgNs = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNs, "svg");
     svg.setAttribute("viewBox", "0 0 840 540");
     svg.setAttribute("class", "map-canvas");
+
+    if (activeFocusMode === "logistics" && detailed) {
+      const defs = document.createElementNS(svgNs, "defs");
+      const marker = document.createElementNS(svgNs, "marker");
+      marker.setAttribute("id", "flow-arrow");
+      marker.setAttribute("markerWidth", "10");
+      marker.setAttribute("markerHeight", "10");
+      marker.setAttribute("refX", "6");
+      marker.setAttribute("refY", "3");
+      marker.setAttribute("orient", "auto");
+      const arrow = document.createElementNS(svgNs, "path");
+      arrow.setAttribute("d", "M0,0 L6,3 L0,6 Z");
+      arrow.setAttribute("fill", "#7bbf86");
+      marker.appendChild(arrow);
+      defs.appendChild(marker);
+      svg.appendChild(defs);
+    }
 
     WORLD_LINKS.forEach(([a, b]) => {
       const pa = MAP_POSITIONS[a];
@@ -149,6 +337,39 @@
       line.setAttribute("class", `map-link ${a.startsWith("INGRESS") || b.startsWith("INGRESS") ? "ingress-link" : ""}`);
       svg.appendChild(line);
     });
+
+    if (activeFocusMode === "logistics" && detailed) {
+      LOGISTICS_FLOW_LINKS.forEach(([a, b]) => {
+        const pa = MAP_POSITIONS[a];
+        const pb = MAP_POSITIONS[b];
+        if (!pa || !pb) return;
+        const line = document.createElementNS(svgNs, "line");
+        line.setAttribute("x1", String(pa.x));
+        line.setAttribute("y1", String(pa.y));
+        line.setAttribute("x2", String(pb.x));
+        line.setAttribute("y2", String(pb.y));
+        line.setAttribute("class", "map-link logistics-link");
+        line.setAttribute("marker-end", "url(#flow-arrow)");
+        svg.appendChild(line);
+      });
+    }
+
+    if (activeFocusMode === "defense" && detailed) {
+      Object.entries(MAP_POSITIONS).forEach(([key, pos]) => {
+        if (pos.type !== "sector") return;
+        const sectorName = sectorNameForKey(key, pos);
+        if (!sectorName) return;
+        const defenseAlloc = snapshot.defense?.allocation || {};
+        const group = defenseGroupForSector(sectorName);
+        const weight = Number(defenseAlloc[group] ?? 1);
+        const ring = document.createElementNS(svgNs, "circle");
+        ring.setAttribute("cx", String(pos.x));
+        ring.setAttribute("cy", String(pos.y));
+        ring.setAttribute("r", String(26 + Math.max(0, weight - 0.6) * 12));
+        ring.setAttribute("class", "map-defense-ring");
+        svg.appendChild(ring);
+      });
+    }
 
     Object.entries(MAP_POSITIONS).forEach(([key, pos]) => {
       const node = document.createElementNS(svgNs, "g");
@@ -184,6 +405,29 @@
       svg.appendChild(node);
     });
 
+    if (detailed) {
+      const overlayGroup = document.createElementNS(svgNs, "g");
+      overlayGroup.setAttribute("class", `map-overlays mode-${activeFocusMode}`);
+      Object.entries(MAP_POSITIONS).forEach(([key, pos]) => {
+        if (pos.type !== "sector") return;
+        const sectorName = sectorNameForKey(key, pos);
+        if (!sectorName) return;
+        const lines = buildOverlayLines(sectorName, snapshot, activeFocusMode);
+        if (!lines.length) return;
+        const anchor = overlayAnchorFor(pos);
+        lines.forEach((text, index) => {
+          const row = document.createElementNS(svgNs, "text");
+          row.setAttribute("class", "map-overlay-text");
+          row.setAttribute("x", String(pos.x + anchor.x));
+          row.setAttribute("y", String(pos.y + anchor.y + index * 12));
+          row.setAttribute("text-anchor", anchor.anchor);
+          row.textContent = text;
+          overlayGroup.appendChild(row);
+        });
+      });
+      svg.appendChild(overlayGroup);
+    }
+
     container.appendChild(svg);
   }
 
@@ -193,5 +437,11 @@
     renderOverviewMap(snapshot, "map-mode-map", true);
   }
 
-  window.CustodianSectorMap = { renderSectorMap, renderOverviewMap };
+  function setMapFocusMode(mode) {
+    if (!FOCUS_MODES.includes(mode)) return;
+    activeFocusMode = mode;
+    if (lastSnapshot) renderOverviewMap(lastSnapshot, "map-mode-map", true);
+  }
+
+  window.CustodianSectorMap = { renderSectorMap, renderOverviewMap, setMapFocusMode };
 })();

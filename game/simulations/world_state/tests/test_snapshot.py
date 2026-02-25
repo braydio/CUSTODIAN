@@ -21,6 +21,8 @@ def test_snapshot_shape_and_defaults() -> None:
     assert snapshot["player_location"] == "COMMAND"
     assert snapshot["field_action"] == "IDLE"
     assert snapshot["active_task"] is None
+    assert snapshot["dev_mode"] is False
+    assert snapshot["transit_fort_levels"] == {"T_NORTH": 0, "T_SOUTH": 0}
 
     sectors = snapshot["sectors"]
     assert len(sectors) > 0

@@ -19,7 +19,7 @@ def test_surveillance_changes_warning_detection_probability() -> None:
     maybe_warn(high, "T_NORTH")
 
     assert low.last_assault_lines == ["[EVENT] SIGNAL INTERFERENCE DETECTED"]
-    assert high.last_assault_lines == ["[WARNING] HOSTILE MOVEMENT NEAR T_NORTH"]
+    assert high.last_assault_lines == ["[WARNING] HOSTILE MOVEMENT NEAR NORTH TRANSIT"]
 
 
 def test_fidelity_buffer_scales_effective_integrity() -> None:
@@ -35,4 +35,3 @@ def test_fidelity_buffer_scales_effective_integrity() -> None:
 
     assert low_fidelity in {"FRAGMENTED", "DEGRADED"}
     assert high_fidelity == "FULL"
-

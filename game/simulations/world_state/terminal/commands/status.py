@@ -6,11 +6,16 @@ from game.simulations.world_state.core.config import (
     ARCHIVE_LOSS_LIMIT,
     COMMAND_CENTER_BREACH_DAMAGE,
     SECTOR_DEFS,
+    TRAVEL_GRAPH,
 )
+from game.simulations.world_state.core.display_names import display_location, display_relay
+from game.simulations.world_state.core.fabrication import ambient_fabrication_projection
 from game.simulations.world_state.core.policies import render_slider
 from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.relays import relay_scan_lines
 from game.simulations.world_state.core.state import GameState
+from game.simulations.world_state.core.structures import StructureState
+from game.simulations.world_state.core.tasks import task_target, task_ticks, task_total, task_type
 
 
 MARKERS = {
@@ -82,21 +87,112 @@ def _system_posture(state: GameState, fidelity: str) -> str:
 
 
 def _render_compact_field_view(state: GameState, sector_status_by_name: dict[str, str]) -> list[str]:
-    lines = []
-    lines.append(f"LOCATION: {state.player_location}")
-    lines.append(f"FIDELITY: {state.fidelity}")
-    lines.append("")
+    def _route_token(destination: str) -> str:
+        if destination == "T_NORTH":
+            return "NORTH"
+        if destination == "T_SOUTH":
+            return "SOUTH"
+        if destination == "DEFENSE GRID":
+            return "DEFENSE"
+        return destination
 
-    sorted_sectors = sorted(state.sectors.values(), key=_sector_priority)
-    stable_header_added = False
-    for sector in sorted_sectors:
-        label = sector_status_by_name.get(sector.name, sector.status_label())
-        marker = MARKERS.get(label, ".")
-        if marker == "." and not stable_header_added:
-            lines.append("---")
-            stable_header_added = True
-        prefix = ">" if sector.name == state.player_location else " "
-        lines.append(f"{prefix} {sector.name:<12} {marker}")
+    def _find_local_relay() -> tuple[str, dict] | None:
+        for relay_id, relay in state.relay_nodes.items():
+            if str(relay.get("sector", "")).upper() == state.player_location:
+                return relay_id, relay
+        return None
+
+    lines = []
+    location = state.player_location
+    lines.append(f"LOCATION: {display_location(location)}")
+    lines.append(f"MODE: {state.player_mode} | FIDELITY: {state.fidelity}")
+
+    if location in state.sectors:
+        local_label = sector_status_by_name.get(location, state.sectors[location].status_label())
+        lines.append(f"LOCAL STATUS: {local_label}")
+        local_structures = [s for s in state.structures.values() if s.sector == location]
+        degraded_structures = [s for s in local_structures if s.state != StructureState.OPERATIONAL]
+        if degraded_structures:
+            lines.append("LOCAL DAMAGE:")
+            for structure in degraded_structures[:3]:
+                lines.append(f"- {structure.id} {structure.state.value}")
+        else:
+            lines.append("LOCAL DAMAGE: NONE")
+    else:
+        lines.append("LOCAL STATUS: TRANSIT NODE")
+        neighbor_lines: list[str] = []
+        for neighbor in TRAVEL_GRAPH.get(location, []):
+            if neighbor in state.sectors:
+                label = sector_status_by_name.get(neighbor, state.sectors[neighbor].status_label())
+                marker = MARKERS.get(label, ".")
+                neighbor_lines.append(f"- {display_location(neighbor)} {marker} ({label})")
+        if neighbor_lines:
+            lines.append("ADJACENT SECTORS:")
+            lines.extend(neighbor_lines[:4])
+
+    if state.active_task:
+        t_type = task_type(state.active_task)
+        target = display_location(task_target(state.active_task))
+        remaining = max(0, task_ticks(state.active_task))
+        total = max(1, task_total(state.active_task))
+        lines.append(f"TASK: {t_type} -> {target} ({remaining}/{total} TICKS)")
+    elif state.active_repairs:
+        lines.append("TASK: REPAIR IN PROGRESS")
+    else:
+        lines.append("TASK: IDLE")
+
+    routes = TRAVEL_GRAPH.get(location, [])
+    lines.append("ROUTES:")
+    if routes:
+        for destination in routes:
+            lines.append(f"- {display_location(destination)} | MOVE {_route_token(destination)}")
+    else:
+        lines.append("- NO ROUTES AVAILABLE")
+
+    important: list[str] = []
+    if state.current_assault is not None or state.in_major_assault:
+        important.append("ACTIVE ASSAULT IN PROGRESS")
+    elif state.assaults:
+        important.append("HOSTILE APPROACHES DETECTED")
+
+    local_relay = _find_local_relay()
+    if local_relay is not None:
+        relay_id, relay = local_relay
+        relay_status = str(relay.get("status", "UNKNOWN")).upper()
+        important.append(f"{display_relay(relay_id)} {relay_status}")
+
+    if not important:
+        important.append("NO IMMEDIATE LOCAL THREATS")
+    lines.append("IMPORTANT:")
+    lines.extend(f"- {entry}" for entry in important[:3])
+
+    actions: list[str] = []
+    if not state.active_task and not state.active_repairs:
+        if location != "COMMAND":
+            actions.append("RETURN")
+        if routes:
+            actions.append(f"MOVE {_route_token(routes[0])}")
+
+    if location in state.sectors:
+        for structure in state.structures.values():
+            if structure.sector == location and structure.state != StructureState.OPERATIONAL:
+                actions.append(f"REPAIR {structure.id}")
+                break
+
+    if local_relay is not None:
+        relay_id, relay = local_relay
+        if str(relay.get("status", "UNKNOWN")).upper() != "STABLE":
+            actions.append(f"STABILIZE RELAY {relay_id}")
+
+    lines.append("ACTIONS:")
+    if actions:
+        deduped: list[str] = []
+        for action in actions:
+            if action not in deduped:
+                deduped.append(action)
+        lines.extend(f"- {action}" for action in deduped[:4])
+    else:
+        lines.append("- WAIT")
     return lines
 
 
@@ -278,7 +374,7 @@ def _append_policy_state(lines: list[str], state: GameState, fidelity: str) -> N
             "- - Higher wear and power draw",
             f"- SURVEILLANCE COVERAGE: {render_slider(surveillance)}",
             "- + Better early threat detection",
-            "- - Increased brownout pressure",
+            "- - Increased blackout pressure",
         ]
     )
     fab_parts = [f"{name}:{value}" for name, value in sorted(state.fab_allocation.items())]
@@ -290,6 +386,13 @@ def _append_policy_state(lines: list[str], state: GameState, fidelity: str) -> N
         lines.append("- FORTIFICATION: " + " | ".join(sorted(fortified)))
     else:
         lines.append("- FORTIFICATION: NONE")
+    transit_forts = [
+        f"{name}:{level}"
+        for name, level in state.transit_fort_levels.items()
+        if int(level) > 0
+    ]
+    if transit_forts:
+        lines.append("- TRANSIT FORTIFICATION: " + " | ".join(sorted(transit_forts)))
     lines.append(f"- POWER LOAD: {state.power_load:.2f}")
     lines.append(
         "- LOGISTICS: "
@@ -492,6 +595,7 @@ def _status_fabrication(state: GameState) -> list[str]:
     lines = ["STATUS GROUP: FABRICATION"]
     snapshot = state.snapshot()
     resources = snapshot.get("resources", {})
+    ambient = ambient_fabrication_projection(state)
     lines.extend(
         [
             f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
@@ -507,6 +611,12 @@ def _status_fabrication(state: GameState) -> list[str]:
                 "STOCKS: "
                 f"REPAIR_DRONES {state.repair_drone_stock} | "
                 f"TURRET_AMMO {state.turret_ammo_stock}"
+            ),
+            (
+                "AMBIENT FAB: "
+                f"RATE {ambient['rate']:.2f}/TICK | "
+                f"POWER {ambient['power_factor']:.2f} | "
+                f"SUPPLY {ambient['supply_factor']:.2f}"
             ),
             "FAB ALLOCATION:",
         ]
@@ -539,7 +649,7 @@ def _status_posture(state: GameState) -> list[str]:
         "STATUS GROUP: POSTURE",
         f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
         f"POSTURE: {posture} | FIDELITY: {fidelity} | ARCHIVE: {archive_text}",
-        f"LOCATION: {state.player_location} | MODE: {state.player_mode}",
+        f"LOCATION: {display_location(state.player_location)} | MODE: {state.player_mode}",
         f"DEFENSE DOCTRINE: {state.defense_doctrine}",
         f"READINESS: {state.compute_readiness():.2f}",
     ]
@@ -625,7 +735,7 @@ def _status_relay(state: GameState) -> list[str]:
     lines = [
         "STATUS GROUP: RELAY",
         f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
-        f"LOCATION: {state.player_location} | MODE: {state.player_mode} | FIDELITY: {fidelity}",
+        f"LOCATION: {display_location(state.player_location)} | MODE: {state.player_mode} | FIDELITY: {fidelity}",
     ]
     lines.extend(relay_scan_lines(state, fidelity))
     return lines
