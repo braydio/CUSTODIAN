@@ -7,6 +7,7 @@ Backend-authoritative simulation of a static command post under pressure.
 - Entry: `game/simulations/world_state/sandbox_world.py`
 - Core: `game/simulations/world_state/core/`
 - Terminal stack: `game/simulations/world_state/terminal/`
+- Tutorial: `game/simulations/world_state/docs/tutorial.md`
 - Servers:
   - `custodian-terminal/server.py`
   - `game/simulations/world_state/server.py`
