@@ -9,6 +9,7 @@ from .config_doctrine import cmd_config_doctrine
 from .allocate_defense import cmd_allocate_defense
 from .policy import (
     cmd_fortify,
+    cmd_policy_drone_repair,
     cmd_policy_preset,
     cmd_policy_show,
     cmd_set_fabrication,
@@ -29,6 +30,7 @@ from .reset import cmd_reset
 from .scavenge import cmd_scavenge, cmd_scavenge_runs
 from .status import cmd_status, cmd_status_group
 from .wait import cmd_wait, cmd_wait_ticks, cmd_wait_until
+from .build import cmd_build
 
 __all__ = [
     "cmd_deploy",
@@ -51,6 +53,7 @@ __all__ = [
     "cmd_set_fabrication",
     "cmd_set_policy",
     "cmd_policy_show",
+    "cmd_policy_drone_repair",
     "cmd_policy_preset",
     "cmd_reroute_power",
     "cmd_boost_defense",
@@ -65,4 +68,5 @@ __all__ = [
     "cmd_scan_relays",
     "cmd_stabilize_relay",
     "cmd_sync",
+    "cmd_build",
 ]

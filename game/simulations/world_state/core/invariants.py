@@ -12,6 +12,7 @@ from .config import (
 from .defense import ALLOCATION_KEYS, normalize_doctrine
 from .policies import FAB_CATEGORIES, POLICY_LEVEL_MAX, POLICY_LEVEL_MIN
 from .relays import RELAY_STATUSES
+from .structures import STRUCTURE_TYPES
 from .tasks import task_type
 
 
@@ -93,3 +94,52 @@ def validate_state_invariants(state) -> None:
         raise AssertionError("Logistics load must be non-negative.")
     if float(state.logistics_multiplier) <= 0.0:
         raise AssertionError("Logistics multiplier must be positive.")
+    if str(getattr(state, "drone_perimeter_repair_policy", "AUTO")).upper() not in {"AUTO", "OFF"}:
+        raise AssertionError("drone_perimeter_repair_policy must be AUTO or OFF.")
+
+    max_instance_id = 0
+    seen_positions: set[tuple[str, tuple[int, int]]] = set()
+    for sid, instance in state.structure_instances.items():
+        if not instance.id or instance.id != sid:
+            raise AssertionError("Structure-instance id mapping mismatch.")
+        if instance.sector not in state.sector_grids:
+            raise AssertionError("Structure instance references unknown sector grid.")
+        if instance.type not in STRUCTURE_TYPES:
+            raise AssertionError("Structure instance type must exist in registry.")
+        if instance.hp < 0 or instance.hp > instance.max_hp:
+            raise AssertionError("Structure instance HP must be bounded by max_hp.")
+
+        grid = state.sector_grids[instance.sector]
+        x, y = instance.position
+        if not grid.in_bounds(x, y):
+            raise AssertionError("Structure instance out of grid bounds.")
+        key = (instance.sector, instance.position)
+        if key in seen_positions:
+            raise AssertionError("Duplicate structure instance grid position detected.")
+        seen_positions.add(key)
+
+        cell = grid.cells[(x, y)]
+        if cell.structure_id != sid:
+            raise AssertionError("Grid cell id does not match structure instance.")
+        if cell.blocked != bool(STRUCTURE_TYPES[instance.type].get("blocks", False)):
+            raise AssertionError("Grid blocked flag does not match structure type.")
+
+        if sid.startswith("S") and sid[1:].isdigit():
+            max_instance_id = max(max_instance_id, int(sid[1:]))
+
+    for sector_name, grid in state.sector_grids.items():
+        if sector_name not in state.sectors:
+            raise AssertionError("Grid exists for unknown sector.")
+        for (x, y), cell in grid.cells.items():
+            if not grid.in_bounds(x, y):
+                raise AssertionError("Grid cell key is out of bounds.")
+            if cell.structure_id is None:
+                continue
+            instance = state.structure_instances.get(cell.structure_id)
+            if instance is None:
+                raise AssertionError("Grid references missing structure instance.")
+            if instance.sector != sector_name or instance.position != (x, y):
+                raise AssertionError("Grid/instance sector-position mismatch.")
+
+    if int(state.next_structure_id) <= max_instance_id:
+        raise AssertionError("next_structure_id must be greater than all allocated IDs.")

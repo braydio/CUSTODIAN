@@ -20,6 +20,7 @@ COMMAND_AUTHORITY_ONLY = {
     "SCAN",
     "SYNC",
     "POLICY",
+    "BUILD",
 }
 
 

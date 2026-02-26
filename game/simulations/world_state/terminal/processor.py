@@ -29,6 +29,7 @@ from game.simulations.world_state.terminal.commands import (
     cmd_reroute_power,
     cmd_fortify,
     cmd_policy_preset,
+    cmd_policy_drone_repair,
     cmd_policy_show,
     cmd_repair,
     cmd_return,
@@ -45,6 +46,7 @@ from game.simulations.world_state.terminal.commands import (
     cmd_wait,
     cmd_wait_until,
     cmd_wait_ticks,
+    cmd_build,
 )
 from game.simulations.world_state.terminal.parser import parse_input
 from game.simulations.world_state.terminal.result import CommandResult
@@ -405,8 +407,16 @@ def process_command(state: GameState, raw: str) -> CommandResult:
             lines = cmd_policy_show(state)
         elif len(parsed.args) == 2 and parsed.args[0].strip().upper() == "PRESET":
             lines = cmd_policy_preset(state, parsed.args[1])
+        elif len(parsed.args) == 2 and parsed.args[0].strip().upper() in {"DRONE_REPAIR", "DRONES"}:
+            lines = cmd_policy_drone_repair(state, parsed.args[1])
         else:
-            return _finalize_result(state, CommandResult(ok=False, text="POLICY SHOW | POLICY PRESET <NAME>"))
+            return _finalize_result(
+                state,
+                CommandResult(
+                    ok=False,
+                    text="POLICY SHOW | POLICY PRESET <NAME> | POLICY DRONE_REPAIR <AUTO|OFF>",
+                ),
+            )
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(
@@ -655,6 +665,17 @@ def process_command(state: GameState, raw: str) -> CommandResult:
                 return _finalize_result(state, CommandResult(ok=False, text="REPAIR <STRUCTURE> [FULL]"))
             full = True
         lines = cmd_repair(state, parsed.args[0], full=full)
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+    if parsed.verb == "BUILD":
+        if len(parsed.args) != 3:
+            return _finalize_result(state, CommandResult(ok=False, text="BUILD <TYPE> <X> <Y>"))
+        lines = cmd_build(state, parsed.args[0], parsed.args[1], parsed.args[2])
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(

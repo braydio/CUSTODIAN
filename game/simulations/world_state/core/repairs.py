@@ -13,6 +13,7 @@ from .config import (
 from .policies import REPAIR_MATERIAL_MULT, REPAIR_SPEED
 from .power import sector_power_modifier, structure_effective_output
 from .structures import StructureState
+from .drone_repairs import route_drone_perimeter_repairs
 
 
 REMOTE_REPAIR_TICKS = {
@@ -259,6 +260,8 @@ def tick_repairs(state) -> list[str]:
         _start_sector_recovery_window(state, structure.sector, local=bool(job.get("local", False)))
         del state.active_repairs[sid]
         lines.append(f"REPAIR COMPLETE: {structure.name}")
+
+    lines.extend(route_drone_perimeter_repairs(state))
 
     return lines
 

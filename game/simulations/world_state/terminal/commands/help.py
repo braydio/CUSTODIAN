@@ -26,6 +26,12 @@ TOPIC_LINES = {
         "- REPAIR <STRUCTURE> FULL  Immediate full restore at extra cost",
         "- SCAVENGE  Run one material recovery cycle",
         "- SCAVENGE NX  Run N material recovery cycles",
+        "- BUILD <TYPE> <X> <Y>  Place deterministic grid structure",
+    ],
+    "GRID": [
+        "HELP > GRID",
+        "- BUILD <TYPE> <X> <Y>  Place deterministic grid structure",
+        "- COORDINATES START AT (0,0) AND MUST FIT THE SECTOR GRID",
     ],
     "POLICY": [
         "HELP > POLICY",
@@ -34,6 +40,7 @@ TOPIC_LINES = {
         "- FORTIFY <SECTOR|T_NORTH|T_SOUTH> <0-4>  Set passive fortification level",
         "- POLICY SHOW  Show policy state and allocations",
         "- POLICY PRESET <NAME>  Apply balanced preset bundle",
+        "- POLICY DRONE_REPAIR <AUTO|OFF>  Control autonomous perimeter wall repair routing",
         "- CONFIG DOCTRINE <NAME>  Switch defense doctrine preset",
         "- ALLOCATE DEFENSE <SECTOR|GROUP> <PERCENT>  Bias defense routing",
     ],
@@ -74,12 +81,13 @@ def _help_index(dev_mode: bool) -> list[str]:
     lines = [
         "COMMAND TREE",
         "USE: HELP <TOPIC>",
-        "TOPICS: CORE | MOVEMENT | SYSTEMS | POLICY | FABRICATION | ASSAULT | STATUS",
+        "TOPICS: CORE | MOVEMENT | SYSTEMS | GRID | POLICY | FABRICATION | ASSAULT | STATUS",
         "",
         "[CORE] STATUS | WAIT | HELP",
         "[MOVEMENT] DEPLOY | MOVE | RETURN",
         "[SYSTEMS] FOCUS | HARDEN | REPAIR | SCAVENGE",
-        "[POLICY] SET | FORTIFY | POLICY | CONFIG | ALLOCATE",
+        "[GRID] BUILD <TYPE> <X> <Y>",
+        "[POLICY] SET | FORTIFY | POLICY | CONFIG | ALLOCATE | DRONE_REPAIR",
         "[FABRICATION] FAB ADD | QUEUE | CANCEL | PRIORITY",
         "[ASSAULT] SCAN | STABILIZE | SYNC | REROUTE | BOOST | DRONE | LOCKDOWN | PRIORITIZE",
         "[STATUS] STATUS | STATUS FULL | STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>",
@@ -102,5 +110,5 @@ def cmd_help(dev_mode: bool = False, topic: str | None = None) -> list[str]:
     return [
         "UNKNOWN HELP TOPIC.",
         "USE: HELP <TOPIC>",
-        "TOPICS: CORE | MOVEMENT | SYSTEMS | POLICY | FABRICATION | ASSAULT | STATUS",
+        "TOPICS: CORE | MOVEMENT | SYSTEMS | GRID | POLICY | FABRICATION | ASSAULT | STATUS",
     ]

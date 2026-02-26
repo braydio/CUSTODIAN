@@ -11,11 +11,21 @@
 - Unified CLI entrypoint is active via `python -m game` (`--ui`, `--repl`, `--sim`, `--dev`, `--seed`).
 - Deterministic seeding and command idempotency are implemented (`GameState(seed=...)`, `/command` `command_id` replay cache).
 - Deterministic procedural terminal messaging is active for `WAIT` signals (seeded grammar variants with fidelity-aware symbol banks).
+- Deterministic sector grid substrate is active (fixed `12x12` per sector) with snapshot-compatible serialization.
 - World-state tests are passing (`game/simulations/world_state/tests`).
 
 ## Implemented World Features
 
 - 9-sector base state (including FABRICATION sector).
+- Grid-based structure placement substrate with deterministic instance IDs (`S<n>`) is implemented.
+- Spatial structure registry is active for buildable types (`WALL`, `TURRET`, `GENERATOR`).
+- Sector fortification now auto-generates deterministic perimeter-wall layouts (`PERIMETER` subtype) while retaining numeric fort levels for compatibility.
+- Assault incoming-pressure math now reads spatial perimeter topology (coverage + continuity) when perimeter walls exist, creating deterministic weak-segment effects.
+- `STATUS FULL` now reports perimeter topology telemetry (coverage/continuity percentages) for fortified sectors.
+- Assault structure-degradation flow now includes deterministic perimeter-wall erosion under high incoming pressure.
+- Perimeter-topology model now includes weakest-edge scoring (`WEAK`) used in assault pressure shaping and exposed in `STATUS FULL`.
+- Repair drone stock now routes deterministic autonomous perimeter-wall restoration (weakest-edge-first, max one wall restored per tick).
+- Operator policy control exists for autonomous drone routing (`POLICY DRONE_REPAIR <AUTO|OFF>`), surfaced in status as mode + backlog.
 - Structure-level damage/state model with repair jobs and reconstruction gating.
 - Power-performance coupling for defense output, repair speed, and comms fidelity.
 - Comms fidelity levels (`FULL`, `DEGRADED`, `FRAGMENTED`, `LOST`) with fidelity-gated `WAIT`/`STATUS` output.
@@ -40,8 +50,11 @@ Normal operation includes:
 - `WAIT`, `WAIT NX`, `WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>`
 - `DEPLOY`, `MOVE`, `RETURN`
 - `FOCUS`, `HARDEN`, `REPAIR`, `REPAIR <ID> FULL`, `SCAVENGE`, `SCAVENGE NX`
+- `BUILD <TYPE> <X> <Y>`
 - `SET`, `SET FAB`, `FORTIFY`, `CONFIG DOCTRINE`, `ALLOCATE DEFENSE`
+- `FORTIFY <SECTOR> <0-4>` now also mutates spatial perimeter wall layout for the targeted sector.
 - `POLICY SHOW`, `POLICY PRESET <BALANCED|SIEGE|RECOVERY|LOW_POWER>`
+- `POLICY DRONE_REPAIR <AUTO|OFF>`
 - `FAB ADD`, `FAB QUEUE`, `FAB CANCEL`, `FAB PRIORITY`
 - `SCAN RELAYS`, `STABILIZE RELAY <ID>`, `SYNC`
 - `REROUTE POWER`, `BOOST DEFENSE`, `DRONE DEPLOY`, `DEPLOY DRONE`, `LOCKDOWN`, `PRIORITIZE REPAIR`
