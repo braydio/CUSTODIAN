@@ -677,6 +677,29 @@ def test_policy_show_and_preset_commands_apply_state() -> None:
     assert "- DEFENSE: 4" in shown.lines
 
 
+def test_policy_drone_repair_command_toggles_mode() -> None:
+    state = GameState()
+
+    off = process_command(state, "POLICY DRONE_REPAIR OFF")
+    auto = process_command(state, "POLICY DRONE_REPAIR AUTO")
+
+    assert off.ok is True
+    assert off.text == "DRONE PERIMETER REPAIR POLICY SET: OFF."
+    assert auto.ok is True
+    assert auto.text == "DRONE PERIMETER REPAIR POLICY SET: AUTO."
+
+
+def test_policy_drone_repair_requires_command_authority() -> None:
+    state = GameState()
+    process_command(state, "DEPLOY NORTH")
+    process_command(state, "WAIT")
+
+    result = process_command(state, "POLICY DRONE_REPAIR OFF")
+
+    assert result.ok is False
+    assert result.text == "COMMAND AUTHORITY REQUIRED."
+
+
 def test_relay_commands_scan_stabilize_and_sync(monkeypatch) -> None:
     _disable_wait_tick_pause(monkeypatch)
     state = GameState(seed=13)

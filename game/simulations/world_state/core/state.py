@@ -16,13 +16,20 @@ from .config import (
     COMMAND_CENTER_BREACH_DAMAGE,
     COMMAND_BREACH_RECOVERY_TICKS,
     FIELD_ACTION_IDLE,
+    GRID_HEIGHT,
+    GRID_WIDTH,
     PLAYER_MODE_COMMAND,
     POWER_THREAT_MULT,
     STORAGE_DECAY_MULT,
     SECTOR_DEFS,
     SECTORS,
 )
-from .structures import Structure, StructureState, create_fabrication_structures
+from .structures import (
+    STRUCTURE_TYPES,
+    Structure,
+    StructureState,
+    create_fabrication_structures,
+)
 from .effects import apply_global_effects, apply_sector_effects
 from .factions import build_faction_profile
 from .snapshot_migration import migrate_snapshot
@@ -65,6 +72,50 @@ class SectorState:
             f"PWR={self.power:.2f}"
             f"{effect_text}"
         )
+
+
+class GridCell:
+    __slots__ = ("structure_id", "blocked")
+
+    def __init__(self):
+        self.structure_id: str | None = None
+        self.blocked = False
+
+
+class SectorGrid:
+    def __init__(self, width: int, height: int):
+        self.width = int(width)
+        self.height = int(height)
+        self.cells = {
+            (x, y): GridCell()
+            for x in range(self.width)
+            for y in range(self.height)
+        }
+
+    def in_bounds(self, x: int, y: int) -> bool:
+        return 0 <= x < self.width and 0 <= y < self.height
+
+
+class StructureInstance:
+    __slots__ = ("id", "type", "sector", "position", "hp", "max_hp", "subtype")
+
+    def __init__(
+        self,
+        sid: str,
+        structure_type: str,
+        sector: str,
+        position: tuple[int, int],
+        max_hp: int,
+        *,
+        subtype: str | None = None,
+    ):
+        self.id = sid
+        self.type = structure_type
+        self.sector = sector
+        self.position = (int(position[0]), int(position[1]))
+        self.hp = int(max_hp)
+        self.max_hp = int(max_hp)
+        self.subtype = subtype
 
 
 class GameState:
@@ -154,6 +205,7 @@ class GameState:
         self.defense_doctrine = "BALANCED"
         self.doctrine_last_changed_time = 0
         self.defense_allocation = dict(DEFAULT_DEFENSE_ALLOCATION)
+        self.drone_perimeter_repair_policy = "AUTO"
         self.readiness_cache = None
         self.last_target_weights: dict[str, float] = {}
 
@@ -180,6 +232,13 @@ class GameState:
             )
         for structure in create_fabrication_structures():
             self.structures[structure.id] = structure
+
+        self.sector_grids: dict[str, SectorGrid] = {
+            sector_name: SectorGrid(GRID_WIDTH, GRID_HEIGHT)
+            for sector_name in self.sectors
+        }
+        self.structure_instances: dict[str, StructureInstance] = {}
+        self.next_structure_id = 1
 
     def threat_bucket(self) -> str:
         """Map ambient threat to a Phase 1 bucket."""
@@ -226,7 +285,7 @@ class GameState:
             )
 
         return {
-            "snapshot_version": 2,
+            "snapshot_version": 4,
             "time": self.time,
             "threat": self.threat_bucket(),
             "assault": self.assault_state(),
@@ -261,6 +320,7 @@ class GameState:
                 "doctrine": self.defense_doctrine,
                 "allocation": dict(self.defense_allocation),
                 "readiness": self.compute_readiness(),
+                "drone_perimeter_repair_policy": self.drone_perimeter_repair_policy,
             },
             "fabrication_queue": [
                 {
@@ -304,6 +364,32 @@ class GameState:
             "text_seed": self.text_seed,
             "operator_log": list(self.operator_log[-50:]),
             "dev_mode": self.dev_mode,
+            "drone_perimeter_repair_policy": self.drone_perimeter_repair_policy,
+            "next_structure_id": int(self.next_structure_id),
+            "sector_grids": {
+                sector_name: {
+                    "width": grid.width,
+                    "height": grid.height,
+                    "cells": {
+                        f"{x},{y}": cell.structure_id
+                        for (x, y), cell in grid.cells.items()
+                        if cell.structure_id is not None
+                    },
+                }
+                for sector_name, grid in self.sector_grids.items()
+            },
+            "structure_instances": {
+                sid: {
+                    "id": instance.id,
+                    "type": instance.type,
+                    "sector": instance.sector,
+                    "position": [instance.position[0], instance.position[1]],
+                    "hp": int(instance.hp),
+                    "max_hp": int(instance.max_hp),
+                    "subtype": instance.subtype,
+                }
+                for sid, instance in self.structure_instances.items()
+            },
         }
 
     @property
@@ -347,20 +433,135 @@ class GameState:
             lines.append(str(sector))
         return "\n".join(lines)
 
+    def _fresh_sector_grids(self) -> dict[str, SectorGrid]:
+        return {
+            sector_name: SectorGrid(GRID_WIDTH, GRID_HEIGHT)
+            for sector_name in self.sectors
+        }
+
+    def next_spatial_structure_id(self) -> str:
+        sid = f"S{self.next_structure_id}"
+        self.next_structure_id += 1
+        return sid
+
+    def place_structure_instance(
+        self,
+        structure_type: str,
+        sector: str,
+        x: int,
+        y: int,
+        *,
+        subtype: str | None = None,
+        sid: str | None = None,
+    ) -> StructureInstance:
+        stype = structure_type.strip().upper()
+        profile = STRUCTURE_TYPES[stype]
+        structure_id = sid or self.next_spatial_structure_id()
+        instance = StructureInstance(
+            structure_id,
+            stype,
+            sector,
+            (x, y),
+            int(profile["max_hp"]),
+            subtype=subtype,
+        )
+        self.structure_instances[structure_id] = instance
+        cell = self.sector_grids[sector].cells[(x, y)]
+        cell.structure_id = structure_id
+        cell.blocked = bool(profile.get("blocks", False))
+        return instance
+
+    def remove_structure_instance(self, sid: str) -> bool:
+        instance = self.structure_instances.pop(sid, None)
+        if instance is None:
+            return False
+        grid = self.sector_grids.get(instance.sector)
+        if grid is None:
+            return True
+        x, y = instance.position
+        if not grid.in_bounds(x, y):
+            return True
+        cell = grid.cells[(x, y)]
+        if cell.structure_id == sid:
+            cell.structure_id = None
+            cell.blocked = False
+        return True
+
     @classmethod
     def from_snapshot(cls, snapshot: dict) -> "GameState":
         migrated = migrate_snapshot(snapshot)
         state = cls(seed=migrated.get("seed"), text_seed=migrated.get("text_seed"))
         state.time = int(migrated.get("time", 0))
+        state.materials = int(migrated.get("resources", {}).get("materials", state.materials))
         state.player_mode = migrated.get("player_mode", state.player_mode)
         state.player_location = migrated.get("player_location", state.player_location)
         state.field_action = migrated.get("field_action", state.field_action)
+        policy_token = str(migrated.get("drone_perimeter_repair_policy", state.drone_perimeter_repair_policy)).upper()
+        if policy_token in {"AUTO", "OFF"}:
+            state.drone_perimeter_repair_policy = policy_token
+        state.next_structure_id = max(1, int(migrated.get("next_structure_id", state.next_structure_id)))
         transit_forts = migrated.get("transit_fort_levels")
         if isinstance(transit_forts, dict):
             state.transit_fort_levels = {
                 "T_NORTH": int(transit_forts.get("T_NORTH", 0)),
                 "T_SOUTH": int(transit_forts.get("T_SOUTH", 0)),
             }
+
+        state.sector_grids = state._fresh_sector_grids()
+        grids_data = migrated.get("sector_grids")
+        if isinstance(grids_data, dict):
+            for sector_name, raw_grid in grids_data.items():
+                if sector_name not in state.sectors or not isinstance(raw_grid, dict):
+                    continue
+                width = int(raw_grid.get("width", GRID_WIDTH))
+                height = int(raw_grid.get("height", GRID_HEIGHT))
+                if width <= 0 or height <= 0:
+                    continue
+                state.sector_grids[sector_name] = SectorGrid(width, height)
+
+        state.structure_instances = {}
+        raw_instances = migrated.get("structure_instances")
+        if isinstance(raw_instances, dict):
+            for sid, raw in raw_instances.items():
+                if not isinstance(raw, dict):
+                    continue
+                sector = str(raw.get("sector", "")).upper()
+                stype = str(raw.get("type", "")).upper()
+                pos = raw.get("position")
+                if (
+                    not sid
+                    or sector not in state.sector_grids
+                    or stype not in STRUCTURE_TYPES
+                    or not isinstance(pos, (list, tuple))
+                    or len(pos) != 2
+                ):
+                    continue
+                x = int(pos[0])
+                y = int(pos[1])
+                grid = state.sector_grids[sector]
+                if not grid.in_bounds(x, y):
+                    continue
+                if grid.cells[(x, y)].structure_id is not None:
+                    continue
+                instance = StructureInstance(
+                    str(sid),
+                    stype,
+                    sector,
+                    (x, y),
+                    int(raw.get("max_hp", STRUCTURE_TYPES[stype]["max_hp"])),
+                    subtype=raw.get("subtype"),
+                )
+                instance.hp = max(0, min(int(raw.get("hp", instance.max_hp)), instance.max_hp))
+                state.structure_instances[instance.id] = instance
+                cell = grid.cells[(x, y)]
+                cell.structure_id = instance.id
+                cell.blocked = bool(STRUCTURE_TYPES[stype].get("blocks", False))
+
+        max_seen = 0
+        for sid in state.structure_instances:
+            if sid.startswith("S") and sid[1:].isdigit():
+                max_seen = max(max_seen, int(sid[1:]))
+        state.next_structure_id = max(state.next_structure_id, max_seen + 1)
         return state
 
 

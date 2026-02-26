@@ -247,3 +247,28 @@
 - Ambient fabrication now consumes real inventory inputs and is throttled by FAB power effectiveness, global power load stress, and logistics supply-chain pressure.
 - Updated `STATUS FAB` to include ambient fabrication throughput telemetry (rate, power factor, supply factor).
 - Added world-state tests covering ambient materials conversion, policy-biased ambient output, and supply-pressure throttling behavior.
+- Implemented deterministic sector grid substrate (`12x12` per sector) in `core/state.py` with `GridCell`/`SectorGrid` state and spatial `StructureInstance` records.
+- Added snapshot schema updates (`snapshot_version=3`) to serialize/restore grid occupancy, structure instances, and deterministic `next_structure_id` progression.
+- Added buildable structure registry in `core/structures.py` (`WALL`, `TURRET`, `GENERATOR`) and deterministic perimeter layout helper `generate_perimeter_positions` for future fortification migration.
+- Added `BUILD <TYPE> <X> <Y>` command handler with command authority gating, occupancy/bounds/material checks, and deterministic ID allocation (`S<n>`).
+- Extended runtime invariants for grid-instance consistency and added `test_grid_building.py`; full world-state test suite now passes with grid layer active.
+- Wired sector `FORTIFY` handling to deterministic perimeter wall auto-generation in `core/grid_fortification.py`, using `PERIMETER`-tagged wall instances while retaining numeric fort levels.
+- Added safe layout mutation behavior so fortification generation never overwrites occupied non-perimeter cells and never removes manual/non-perimeter walls.
+- Added `test_grid_fortification.py` for level-transition replacement, non-overwrite behavior, manual-wall preservation, and deterministic replay.
+- Added `core/grid_assault.py` with deterministic perimeter-wall coverage/continuity metrics and bounded topology multiplier for assault pressure shaping.
+- Integrated topology multiplier into `_incoming_damage_multiplier` so intact perimeter layouts reduce incoming pressure and weak segments increase pressure, without introducing per-tile combat state.
+- Added compatibility guard so numeric fortification without perimeter wall instances remains behavior-neutral (legacy snapshots/tests).
+- Added `test_grid_assault_topology.py` to validate intact mitigation, weak-segment penalty, and deterministic repeatability.
+- Exposed perimeter topology telemetry in `STATUS FULL` policy output, including per-fortified-sector coverage and continuity percentages.
+- Added regression coverage for topology telemetry visibility in `test_grid_fortification.py`.
+- Added deterministic perimeter wall erosion helper (`erode_perimeter_walls`) and integrated it into assault structure degradation for high-pressure sectors.
+- Fortification topology now degrades across repeated assaults, feeding back into coverage/continuity-based pressure shaping.
+- Added regression test for high-pressure erosion behavior in `test_grid_assault_topology.py`.
+- Extended topology metrics with weakest-perimeter-segment scoring and incorporated it into assault pressure shaping.
+- Updated `STATUS FULL` perimeter telemetry to include `WEAK` edge integrity percentage per fortified sector.
+- Added `core/drone_repairs.py` for deterministic autonomous perimeter wall restoration using repair drone stock.
+- Integrated drone perimeter routing into `tick_repairs`, restoring at most one wall per tick with weakest-edge-first prioritization.
+- Added `test_drone_perimeter_repairs.py` for single-tick pacing, no-stock behavior, and deterministic replay.
+- Added operator-facing drone routing policy command `POLICY DRONE_REPAIR <AUTO|OFF>`.
+- Extended policy status rendering to include drone routing mode and perimeter repair backlog drilldown.
+- Added regression tests for policy command authority/toggling and drone policy-off behavior.

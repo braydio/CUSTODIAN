@@ -1,3 +1,19 @@
+## 2026-02-25 Addendum: Deterministic Grid Substrate
+
+- World-state infrastructure now includes a fixed deterministic sector grid (`12x12` per sector).
+- Spatial structure instances are stored separately from legacy structure-state records and are identified by deterministic IDs (`S<n>`).
+- Snapshot schema now includes `sector_grids`, `structure_instances`, and `next_structure_id` with backward-compatible migration.
+- Operator command surface now includes `BUILD <TYPE> <X> <Y>` for command-authority placement.
+- Perimeter fortification migration helper is available as pure deterministic logic (`generate_perimeter_positions(level, width, height)`), not yet wired into `FORTIFY`.
+- `FORTIFY` now applies deterministic perimeter-wall auto-generation for sector targets using `PERIMETER`-tagged wall instances.
+- Auto-generation does not overwrite occupied non-perimeter cells and does not remove manual/non-perimeter walls.
+- Assault pressure now includes deterministic grid-topology influence from perimeter-wall coverage/continuity, enabling weak-segment penalties without per-tile combat simulation.
+- `STATUS FULL` includes perimeter topology telemetry for fortified sectors to expose coverage/continuity health to operators.
+- High-pressure assault degradation now erodes deterministic perimeter-wall instances, enabling progressive wall-continuity collapse without per-tile enemy simulation.
+- Topology pressure shaping now includes weakest-edge integrity scoring to represent breach-vector exposure across perimeter segments.
+- Repair drone stock now performs deterministic autonomous perimeter restoration, prioritizing weakest perimeter segments and restoring one wall per tick.
+- Operators can now control autonomous drone perimeter routing policy (`AUTO`/`OFF`) via `POLICY DRONE_REPAIR`, with backlog telemetry in status output.
+
 This details a full **between-assault infrastructure layer spec**, written as real documentation, aligned to the repo, with an actionable Codex implementation plan.
 
 Below is the complete documentation draft + implementation plan.

@@ -1,4 +1,18 @@
 
+## Implementation Status (2026-02-25)
+
+- Phase 1 (deterministic grid substrate + structure instances) is implemented in code.
+- Snapshot compatibility and migration are live (`snapshot_version=3`).
+- `BUILD <TYPE> <X> <Y>` is implemented with deterministic IDs and invariants.
+- Perimeter generation logic is integrated into `FORTIFY <SECTOR> <0-4>` using `PERIMETER`-tagged wall instances.
+- `FORTIFY` layout updates are deterministic, do not overwrite occupied non-perimeter cells, and preserve manual/non-perimeter walls.
+- Assault pressure now incorporates deterministic perimeter topology signals (coverage + continuity) to model weak-point exposure without tile-by-tile combat simulation.
+- Operator-facing telemetry now surfaces perimeter topology in `STATUS FULL` for fortified sectors.
+- High-pressure assault degradation now deterministically erodes perimeter-wall instances, allowing grid topology to evolve across repeated assaults.
+- Topology scoring now includes weakest-edge integrity (`WEAK`) for stronger breach-vector modeling and operator visibility.
+- Repair drone stock now routes deterministic weakest-segment perimeter restoration during repair ticks.
+- Operator policy control now governs drone perimeter routing (`POLICY DRONE_REPAIR <AUTO|OFF>`) with explicit status drilldown telemetry.
+
 This is the process documents to add:
 
 > A deterministic grid-based spatial layer.

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from game.simulations.world_state.core.config import SECTOR_DEFS, TRANSIT_NODES
 from game.simulations.world_state.core.fabrication import is_valid_fabrication_category
+from game.simulations.world_state.core.grid_fortification import apply_sector_fortification_layout
 from game.simulations.world_state.core.policies import (
     POLICY_LEVEL_MAX,
     POLICY_LEVEL_MIN,
@@ -69,6 +70,7 @@ def cmd_fortify(state: GameState, sector_token: str, level_token: str) -> list[s
         return ["UNKNOWN SECTOR."]
 
     state.sector_fort_levels[sector_name] = clamp_policy_level(level)
+    apply_sector_fortification_layout(state, sector_name, state.sector_fort_levels[sector_name])
     return [f"FORTIFICATION {sector_name} SET TO {level}."]
 
 
@@ -78,6 +80,7 @@ def cmd_policy_show(state: GameState) -> list[str]:
         f"- REPAIR: {state.policies.repair_intensity}",
         f"- DEFENSE: {state.policies.defense_readiness}",
         f"- SURVEILLANCE: {state.policies.surveillance_coverage}",
+        f"- DRONE PERIMETER REPAIR: {state.drone_perimeter_repair_policy}",
         (
             "- FAB: "
             f"DEFENSE {state.fab_allocation.get('DEFENSE', 2)} | "
@@ -86,6 +89,14 @@ def cmd_policy_show(state: GameState) -> list[str]:
             f"ARCHIVE {state.fab_allocation.get('ARCHIVE', 2)}"
         ),
     ]
+
+
+def cmd_policy_drone_repair(state: GameState, mode_token: str) -> list[str]:
+    mode = mode_token.strip().upper()
+    if mode not in {"AUTO", "OFF"}:
+        return ["POLICY DRONE_REPAIR <AUTO|OFF>"]
+    state.drone_perimeter_repair_policy = mode
+    return [f"DRONE PERIMETER REPAIR POLICY SET: {mode}."]
 
 
 def cmd_policy_preset(state: GameState, preset_token: str) -> list[str]:

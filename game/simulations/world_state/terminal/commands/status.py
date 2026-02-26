@@ -10,6 +10,12 @@ from game.simulations.world_state.core.config import (
 )
 from game.simulations.world_state.core.display_names import display_location, display_relay
 from game.simulations.world_state.core.fabrication import ambient_fabrication_projection
+from game.simulations.world_state.core.grid_assault import (
+    perimeter_wall_continuity,
+    perimeter_wall_coverage,
+    weakest_perimeter_segment,
+)
+from game.simulations.world_state.core.drone_repairs import perimeter_repair_backlog
 from game.simulations.world_state.core.policies import render_slider
 from game.simulations.world_state.core.power import comms_fidelity
 from game.simulations.world_state.core.relays import relay_scan_lines
@@ -393,6 +399,33 @@ def _append_policy_state(lines: list[str], state: GameState, fidelity: str) -> N
     ]
     if transit_forts:
         lines.append("- TRANSIT FORTIFICATION: " + " | ".join(sorted(transit_forts)))
+    backlog = perimeter_repair_backlog(state)
+    mode = str(getattr(state, "drone_perimeter_repair_policy", "AUTO")).upper()
+    if backlog:
+        backlog_parts = [f"{name}:{count}" for name, count in sorted(backlog.items())[:4]]
+        lines.append(f"- DRONE PERIMETER REPAIR: {mode} | BACKLOG " + " | ".join(backlog_parts))
+    else:
+        lines.append(f"- DRONE PERIMETER REPAIR: {mode} | BACKLOG CLEAR")
+    topology_rows = []
+    for sector_name, level in sorted(state.sector_fort_levels.items()):
+        if int(level) <= 0:
+            continue
+        coverage = perimeter_wall_coverage(state, sector_name)
+        continuity = perimeter_wall_continuity(state, sector_name)
+        weakest = weakest_perimeter_segment(state, sector_name)
+        topology_rows.append(
+            " | ".join(
+                [
+                    f"{sector_name}: COV {int(round(coverage * 100))}%",
+                    f"CONT {int(round(continuity * 100))}%",
+                    f"WEAK {int(round(weakest * 100))}%",
+                ]
+            )
+        )
+    if topology_rows:
+        lines.append("- PERIMETER TOPOLOGY:")
+        for row in topology_rows[:4]:
+            lines.append(f"  {row}")
     lines.append(f"- POWER LOAD: {state.power_load:.2f}")
     lines.append(
         "- LOGISTICS: "

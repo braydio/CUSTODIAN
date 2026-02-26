@@ -48,6 +48,8 @@ from .defense import (
 )
 from .policies import FORTIFICATION_MULT
 from .display_names import display_location
+from .grid_fortification import erode_perimeter_walls
+from .grid_assault import topology_damage_multiplier
 from .power import comms_fidelity, structure_effective_output
 from .repairs import cancel_repair_for_structure, regress_repairs_in_sectors
 from .structure_effects import apply_structure_destroyed_effects
@@ -661,6 +663,7 @@ def _incoming_damage_multiplier(state, sector_name: str) -> float:
     multiplier = 1.0 / defense_bias_for_sector(state.defense_allocation, sector_name)
     fort_level = int(state.sector_fort_levels.get(sector_name, 0))
     multiplier /= max(1.0, FORTIFICATION_MULT[fort_level])
+    multiplier *= topology_damage_multiplier(state, sector_name)
     doctrine = state.defense_doctrine
     if doctrine == "AGGRESSIVE":
         multiplier *= 1.15
@@ -687,6 +690,16 @@ def _effective_repair_regression_targets(state, target_names: set[str]) -> set[s
 
 
 def _degrade_target_structures(state, target_names: set[str]) -> None:
+    for sector_name in sorted(target_names):
+        pressure = _incoming_damage_multiplier(state, sector_name)
+        erosion_steps = 0
+        if pressure >= 1.35:
+            erosion_steps = 2
+        elif pressure >= 1.1:
+            erosion_steps = 1
+        if erosion_steps > 0:
+            erode_perimeter_walls(state, sector_name, steps=erosion_steps)
+
     for structure in state.structures.values():
         if structure.sector not in target_names:
             continue
