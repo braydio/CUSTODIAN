@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 REPO_DIR="$(git rev-parse --show-toplevel)"
-DROPBOX_REMOTE="git-dropbox-sync:git-backups/$REPO_DIR"
+G_DRIVE_REMOTE="git-gdrive-sync:git-backups/$REPO_DIR"
 
-echo "Syncing $REPO_DIR to Dropbox..."
+echo "Syncing $REPO_DIR to G-Drive..."
 
-rclone sync "$REPO_DIR" "$DROPBOX_REMOTE" \
+rclone sync "$REPO_DIR" "$G_DRIVE_REMOTE" \
   --exclude ".git/**" \
   --exclude ".venv/**" \
   --exclude "__pycache__/**" \
   --progress
 
-echo "Dropbox sync complete."
+echo "G-Drive sync complete."

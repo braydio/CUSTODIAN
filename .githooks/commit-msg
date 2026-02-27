@@ -13,7 +13,7 @@ if grep -q "\[no-docs\]" "$msg_file"; then
 fi
 
 changed_code=$(git diff --cached --name-only | grep -E '\.(py|js)$' || true)
-changed_docs=$(git diff --cached --name-only | grep -E 'docs/_ai_context/(CURRENT_STATE|DEVLOG)\.md' || true)
+changed_docs=$(git diff --cached --name-only | grep -E 'ai/(CURRENT_STATE|CONTEXT)\.md' || true)
 
 if [ -n "$changed_code" ] && [ -z "$changed_docs" ]; then
   echo "Code changed but tracking docs not updated." >&2
