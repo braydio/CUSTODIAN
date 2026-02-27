@@ -208,6 +208,12 @@ class GameState:
         self.drone_perimeter_repair_policy = "AUTO"
         self.readiness_cache = None
         self.last_target_weights: dict[str, float] = {}
+        self.tutorial_active = False
+        self.tutorial_step = 0
+        self.tutorial_assault_seen = False
+        self.tutorial_last_hint_step = -1
+        self.tutorial_just_started = False
+        self.tutorial_last_command: dict[str, Any] | None = None
 
         # World progression
         self.assault_count = 0

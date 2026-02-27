@@ -1,11 +1,13 @@
 ## 2026-02-27
 
+- Added phase-specific planned doc `design/20_features/planned/PROCGEN_PHASE1_TOPOLOGY_PROFILES.md` defining deterministic seeded topology profile generation, rule wiring, and validation gates.
 - Added phase-specific planned doc `design/20_features/planned/PROCGEN_PHASE0_INSTRUMENTATION.md` defining deterministic procgen instrumentation schema, baseline metrics, and test/acceptance gates.
 - Added planned feature roadmap `design/20_features/planned/PROCGEN_FORWARD_PROTOTYPE_ROADMAP.md` to drive a procgen-forward prototype across topology, doctrine, economy, event chains, objectives, and UI readability.
 - Added in-terminal `TUTORIAL` command with topic drilldowns matching the `HELP` tree.
 - Enabled optional leading `/` on terminal commands (e.g., `/TUTORIAL CORE`) for UI parity.
 - Documented tutorial usage in world-state terminal docs.
 - Expanded tutorial topics with formatted message tags, examples, and UI-focused guidance.
+- Added `TUTORIAL QUICKSTART` live prompt sequence that guides a first-assault session and hands control back to the operator.
 
 ## 2026-02-25
 

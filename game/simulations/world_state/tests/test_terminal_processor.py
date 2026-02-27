@@ -1024,3 +1024,21 @@ def test_field_status_in_sector_reports_local_damage_and_repair_action() -> None
     assert any(line.startswith("- CM_CORE DAMAGED") for line in result.lines)
     assert "ACTIONS:" in result.lines
     assert "- REPAIR CM_CORE" in result.lines
+
+
+def test_tutorial_quickstart_advances_after_status() -> None:
+    state = GameState()
+
+    result = process_command(state, "TUTORIAL QUICKSTART")
+
+    assert result.ok is True
+    assert result.text == "TUTORIAL QUICKSTART ACTIVE."
+    assert result.lines is not None
+    assert any("RUN: STATUS" in line for line in result.lines)
+    assert state.tutorial_active is True
+
+    result = process_command(state, "STATUS")
+
+    assert result.ok is True
+    assert result.lines is not None
+    assert any("POLICY PRESET" in line for line in result.lines)

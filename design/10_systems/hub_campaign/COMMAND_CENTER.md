@@ -32,6 +32,7 @@ The terminal provides an in-session tutorial for new operators.
 
 * `TUTORIAL` returns a detailed index mirroring the `HELP` topic tree.
 * `TUTORIAL <TOPIC>` drills into the selected system family.
+* `TUTORIAL QUICKSTART` runs a staged, live guide through the first assault.
 * Commands accept optional slash prefix for UI parity (example: `/TUTORIAL CORE`).
 
 Purpose:

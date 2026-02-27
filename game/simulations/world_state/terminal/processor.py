@@ -49,6 +49,7 @@ from game.simulations.world_state.terminal.commands import (
     cmd_wait_ticks,
     cmd_build,
 )
+from game.simulations.world_state.terminal.tutorial_flow import apply_tutorial, start_quickstart
 from game.simulations.world_state.terminal.parser import parse_input
 from game.simulations.world_state.terminal.result import CommandResult
 from game.simulations.world_state.terminal.messages import MESSAGES
@@ -78,7 +79,7 @@ def _finalize_result(state: GameState, result: CommandResult, verb: str | None =
         state.operator_log.append(f"T{state.time:04d} {verb}: {result.text}")
         if len(state.operator_log) > 300:
             del state.operator_log[:-300]
-    return result
+    return apply_tutorial(state, result)
 
 
 def _parse_wait_ticks(args: list[str]) -> int | None:
@@ -291,6 +292,11 @@ def process_command(state: GameState, raw: str) -> CommandResult:
     parsed = parse_input(raw)
     if parsed is None:
         return _finalize_result(state, _unknown_command())
+    state.tutorial_last_command = {
+        "verb": parsed.verb,
+        "args": list(parsed.args),
+        "raw": parsed.raw,
+    }
 
     if parsed.verb in {"RESET", "REBOOT"}:
         lines = cmd_reset(state)
@@ -389,7 +395,10 @@ def process_command(state: GameState, raw: str) -> CommandResult:
         if len(parsed.args) > 1:
             return _finalize_result(state, CommandResult(ok=False, text="TUTORIAL <TOPIC>"))
         topic = parsed.args[0] if parsed.args else None
-        lines = cmd_tutorial(topic=topic)
+        if topic and topic.strip().upper() == "QUICKSTART":
+            lines = start_quickstart(state)
+        else:
+            lines = cmd_tutorial(topic=topic)
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(
