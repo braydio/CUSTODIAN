@@ -21,6 +21,7 @@ The world advances only on time-bearing commands.
 - `WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>`
 - `HELP`, `HELP <TOPIC>`
 - `TUTORIAL`, `TUTORIAL <TOPIC>`
+- `TUTORIAL QUICKSTART`
 - `RESET`, `REBOOT`
 
 ## Movement and Presence

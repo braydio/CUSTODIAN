@@ -60,6 +60,7 @@ Normal operation includes:
 - `REROUTE POWER`, `BOOST DEFENSE`, `DRONE DEPLOY`, `DEPLOY DRONE`, `LOCKDOWN`, `PRIORITIZE REPAIR`
 - `HELP` and `HELP <TOPIC>` (category tree)
 - `TUTORIAL` and `TUTORIAL <TOPIC>` (detailed operator guide)
+- `TUTORIAL QUICKSTART` (staged live guide through first assault)
 - Recovery: `RESET`, `REBOOT`
 
 Dev mode only:
@@ -80,6 +81,7 @@ Dev mode only:
   - `lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]`
 - Terminal parser accepts optional leading `/` on commands (example: `/TUTORIAL CORE`).
 - Tutorial topics include tagged message formatting, examples, and UI-focused guidance.
+- Tutorial quickstart runs a live, staged prompt sequence and returns control after first assault.
 - Failure mode locks command surface until `RESET`/`REBOOT`.
 
 ## Known Documentation Boundaries
