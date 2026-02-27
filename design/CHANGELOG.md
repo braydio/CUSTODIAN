@@ -1,3 +1,9 @@
+## 2026-02-27
+
+- Added in-terminal `TUTORIAL` command with topic drilldowns matching the `HELP` tree.
+- Enabled optional leading `/` on terminal commands (e.g., `/TUTORIAL CORE`) for UI parity.
+- Documented tutorial usage in world-state terminal docs.
+
 ## 2026-02-25
 
 - Executed documentation architecture migration from legacy `docs/` and `feature_planning/` into canonical `design/` and projection `ai/`.

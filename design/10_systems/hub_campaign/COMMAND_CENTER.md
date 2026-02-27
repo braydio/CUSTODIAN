@@ -26,6 +26,21 @@ This immediately creates:
 
 ---
 
+## Operator Tutorial Surface (Terminal)
+
+The terminal provides an in-session tutorial for new operators.
+
+* `TUTORIAL` returns a detailed index mirroring the `HELP` topic tree.
+* `TUTORIAL <TOPIC>` drills into the selected system family.
+* Commands accept optional slash prefix for UI parity (example: `/TUTORIAL CORE`).
+
+Purpose:
+
+* Provide system context, actions, and tradeoffs without leaving the live session.
+* Preserve terse, operational tone while explaining consequences.
+
+---
+
 ## 2. Power routing modes (this is the heart of it)
 
 ### A. Command Center routing (strategic control)

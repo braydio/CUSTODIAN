@@ -20,6 +20,7 @@ The world advances only on time-bearing commands.
 - `WAIT NX`
 - `WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>`
 - `HELP`, `HELP <TOPIC>`
+- `TUTORIAL`, `TUTORIAL <TOPIC>`
 - `RESET`, `REBOOT`
 
 ## Movement and Presence
@@ -101,3 +102,7 @@ Unknown command response:
 - `ok=false`
 - `text="UNKNOWN COMMAND."`
 - `lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]`
+
+## Input Shorthand
+
+- Commands accept an optional leading `/` (example: `/TUTORIAL CORE`).

@@ -2,6 +2,12 @@
 
 This guide is for the terminal-driven world-state sim (`python -m game --repl`).
 
+## Live Terminal Tutorial Command
+
+- Run `TUTORIAL` (or `/TUTORIAL`) for the in-terminal guide.
+- Use `TUTORIAL <TOPIC>` to drill into a system family.
+- Topics mirror the `HELP` tree: `CORE`, `MOVEMENT`, `SYSTEMS`, `GRID`, `POLICY`, `FABRICATION`, `ASSAULT`, `STATUS`.
+
 ## 1) Core Mental Model
 
 - Nothing advances unless you run a time-bearing command.

@@ -3,6 +3,7 @@
 from .focus import cmd_focus
 from .harden import cmd_harden
 from .help import cmd_help
+from .tutorial import cmd_tutorial
 from .deploy import cmd_deploy
 from .move import cmd_move
 from .config_doctrine import cmd_config_doctrine
@@ -44,6 +45,7 @@ __all__ = [
     "cmd_focus",
     "cmd_harden",
     "cmd_help",
+    "cmd_tutorial",
     "cmd_move",
     "cmd_repair",
     "cmd_return",

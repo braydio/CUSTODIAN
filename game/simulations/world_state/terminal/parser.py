@@ -38,6 +38,11 @@ def parse_input(text: str) -> Optional[ParsedCommand]:
     if not tokens:
         return None
 
-    verb = tokens[0].upper()
+    verb_token = tokens[0]
+    if verb_token.startswith("/"):
+        verb_token = verb_token[1:]
+    if not verb_token:
+        return None
+    verb = verb_token.upper()
     args = tokens[1:]
     return ParsedCommand(raw=raw, verb=verb, args=args)

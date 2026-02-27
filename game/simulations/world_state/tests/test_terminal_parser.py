@@ -17,3 +17,13 @@ def test_parse_input_returns_none_for_empty_text() -> None:
     """Parser should ignore empty command lines."""
 
     assert parse_input("   ") is None
+
+
+def test_parse_input_allows_slash_prefixed_commands() -> None:
+    """Parser should accept /COMMAND shorthand."""
+
+    parsed = parse_input("/tutorial core")
+
+    assert parsed is not None
+    assert parsed.verb == "TUTORIAL"
+    assert parsed.args == ["core"]
