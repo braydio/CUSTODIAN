@@ -79,6 +79,7 @@ Dev mode only:
   - `text="UNKNOWN COMMAND."`
   - `lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]`
 - Terminal parser accepts optional leading `/` on commands (example: `/TUTORIAL CORE`).
+- Tutorial topics include tagged message formatting, examples, and UI-focused guidance.
 - Failure mode locks command surface until `RESET`/`REBOOT`.
 
 ## Known Documentation Boundaries
