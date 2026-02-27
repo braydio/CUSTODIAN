@@ -186,7 +186,7 @@
   function renderHint(primaryFaded = false, showSecondary = false) {
     if (!idleTip || state.hintLocked) return;
     const primaryClass = primaryFaded ? "hint-primary faded" : "hint-primary";
-    idleTip.innerHTML = `<span class="${primaryClass}">CLICK TO FOCUS INPUT</span>${
+    idleTip.innerHTML = `<span class="${primaryClass}">HELP: SHOW AVAILABLE COMMANDS</span>${
       showSecondary ? '<span class="hint-sep">|</span><span class="hint-secondary">TYPE HELP FOR AVAILABLE COMMANDS</span>' : ""
     }`;
     idleTip.classList.add("visible");

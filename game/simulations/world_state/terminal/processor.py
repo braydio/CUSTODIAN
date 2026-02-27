@@ -17,6 +17,7 @@ from game.simulations.world_state.terminal.commands import (
     cmd_focus,
     cmd_harden,
     cmd_help,
+    cmd_tutorial,
     cmd_move,
     cmd_fab_add,
     cmd_fab_cancel,
@@ -376,6 +377,19 @@ def process_command(state: GameState, raw: str) -> CommandResult:
             return _finalize_result(state, CommandResult(ok=False, text="HELP <TOPIC>"))
         topic = parsed.args[0] if parsed.args else None
         lines = cmd_help(dev_mode=state.dev_mode, topic=topic)
+        primary_line = lines[0] if lines else "COMMAND EXECUTED."
+        detail_lines = lines[1:] if len(lines) > 1 else None
+        return _finalize_result(
+            state,
+            CommandResult(ok=True, text=primary_line, lines=detail_lines),
+            parsed.verb,
+        )
+
+    if parsed.verb == "TUTORIAL":
+        if len(parsed.args) > 1:
+            return _finalize_result(state, CommandResult(ok=False, text="TUTORIAL <TOPIC>"))
+        topic = parsed.args[0] if parsed.args else None
+        lines = cmd_tutorial(topic=topic)
         primary_line = lines[0] if lines else "COMMAND EXECUTED."
         detail_lines = lines[1:] if len(lines) > 1 else None
         return _finalize_result(

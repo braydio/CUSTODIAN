@@ -59,6 +59,7 @@ Normal operation includes:
 - `SCAN RELAYS`, `STABILIZE RELAY <ID>`, `SYNC`
 - `REROUTE POWER`, `BOOST DEFENSE`, `DRONE DEPLOY`, `DEPLOY DRONE`, `LOCKDOWN`, `PRIORITIZE REPAIR`
 - `HELP` and `HELP <TOPIC>` (category tree)
+- `TUTORIAL` and `TUTORIAL <TOPIC>` (detailed operator guide)
 - Recovery: `RESET`, `REBOOT`
 
 Dev mode only:
@@ -77,6 +78,7 @@ Dev mode only:
   - `ok=false`
   - `text="UNKNOWN COMMAND."`
   - `lines=["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."]`
+- Terminal parser accepts optional leading `/` on commands (example: `/TUTORIAL CORE`).
 - Failure mode locks command surface until `RESET`/`REBOOT`.
 
 ## Known Documentation Boundaries

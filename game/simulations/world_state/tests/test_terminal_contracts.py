@@ -32,6 +32,20 @@ def test_help_output_matches_contract() -> None:
     ]
 
 
+def test_tutorial_output_matches_contract() -> None:
+    """TUTORIAL should return the tutorial index."""
+
+    state = GameState()
+
+    result = process_command(state, "TUTORIAL")
+
+    assert result.ok is True
+    assert result.text == "TUTORIAL INDEX"
+    assert result.lines is not None
+    assert result.lines[0] == "USE: TUTORIAL <TOPIC>"
+    assert "TOPICS: CORE | MOVEMENT | SYSTEMS | GRID | POLICY | FABRICATION | ASSAULT | STATUS" in result.lines
+
+
 def test_status_output_contains_locked_sections() -> None:
     """STATUS output should provide required headers and sector rows."""
 
