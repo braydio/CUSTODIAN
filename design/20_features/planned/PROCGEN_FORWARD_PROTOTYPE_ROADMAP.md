@@ -75,6 +75,44 @@ Current procgen value is real but mostly concentrated in output texture and even
 - Snapshot tests updated and passing.
 - Can compare seeds with explicit, machine-readable procgen fingerprints.
 
+## Phase 0.5: Signal Registry and Projection Infrastructure
+
+### Scope
+
+- Isolate text RNG from simulation RNG.
+- Create canonical signal registry enum.
+- Formalize projection engine as abstract layer.
+- Add deterministic replay tests.
+- Verify existing WAIT projection is stable.
+
+### Implementation Targets
+
+- `game/simulations/world_state/core/state.py` — RNG isolation
+- `game/procgen/signals.py` — Signal enum (NEW)
+- `game/procgen/projection.py` — Projection engine (NEW)
+- `game/simulations/world_state/tests/test_procgen_determinism.py` — Tests (NEW)
+- `game/simulations/world_state/terminal/procgen_text.py` — WAIT verification
+
+### Deliverables
+
+- `state.sim_rng` and `state.text_rng` isolated
+- `Signal` enum with assault/infrastructure/relay/tick categories
+- `project()` function in projection.py
+- Determinism tests proving same-seed text stability
+- Zero simulation behavior changes
+
+### Exit Criteria
+
+- Full pytest suite passes with identical results
+- Signal enum imports cleanly
+- Determinism tests added and passing
+- No gameplay mechanic changes
+
+### Relationship
+
+- Can run parallel to Phase 0
+- Required foundation for Phase 1+ (Topology, Doctrine, Economy)
+
 ## Phase 1: Seeded Topology Profiles
 
 ### Scope

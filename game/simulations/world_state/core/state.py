@@ -125,13 +125,17 @@ class GameState:
         """Initialize the world-state simulation state."""
 
         self.seed = seed if seed is not None else random.randrange(0, 2**32)
-        self.rng = random.Random(self.seed)
+        self.sim_rng = random.Random(self.seed)
+        # Backward-compatible alias for existing simulation call sites/tests.
+        self.rng = self.sim_rng
         self.text_seed = (
             int(text_seed)
             if text_seed is not None
             else int(mix_seed64(self.seed, "text"))
         )
+        self.text_rng = random.Random(self.text_seed)
         self.variant_memory = VariantMemory(max_recent=3)
+        self.procgen_projection_enabled = False
         self.tick_events: list[Any] = []
         self.time = 0
         self.ambient_threat = 0.0

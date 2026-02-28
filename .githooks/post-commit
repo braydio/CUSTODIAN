@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Sync to Google Drive
+REPO_DIR="$(git rev-parse --show-toplevel)"
+"$REPO_DIR/rclone-git-sync.sh"
+
 # Gentle reminder after commits.
 
 cat <<'MSG'
