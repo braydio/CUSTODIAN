@@ -46,3 +46,25 @@ def test_wait_event_line_includes_event_name_at_full_fidelity() -> None:
     assert line is not None
     assert line.startswith("[EVENT] ")
     assert "COMMS BURST" in line
+
+
+def test_wait_event_line_projection_flag_matches_legacy_output() -> None:
+    legacy = GameState(seed=7)
+    projected = GameState(seed=7)
+    projected.procgen_projection_enabled = True
+
+    legacy_line = render_wait_event_line(
+        legacy,
+        fidelity="FULL",
+        event_name="Power Blackout",
+        event_key="power_blackout",
+        detected=True,
+    )
+    projected_line = render_wait_event_line(
+        projected,
+        fidelity="FULL",
+        event_name="Power Blackout",
+        event_key="power_blackout",
+        detected=True,
+    )
+    assert projected_line == legacy_line

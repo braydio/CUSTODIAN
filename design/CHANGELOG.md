@@ -1,5 +1,12 @@
 ## 2026-02-27
 
+- Revised `design/20_features/planned/PROCGEN_PHASE0_5_SIGNAL_PROJECTION_INFRASTRUCTURE.md` to align with live implementation constraints (discrete fidelity contract, realistic RNG migration, executable test plan).
+- Began Phase 0.5 implementation: added explicit `sim_rng`/`text_rng` ownership in `GameState` while preserving `rng` compatibility alias.
+- Added canonical procgen signal registry at `game/procgen/signals.py`.
+- Added reusable projection entrypoint at `game/procgen/projection.py` (deterministic, fidelity-gated, additive scaffold).
+- Wired WAIT procgen rendering to the new projection layer behind `GameState.procgen_projection_enabled` (default off) for safe migration.
+- Added determinism coverage in `game/simulations/world_state/tests/test_procgen_determinism.py`.
+- Added projection parity test coverage in `game/simulations/world_state/tests/test_procgen_engine.py` to ensure flagged path matches legacy output.
 - Added phase-specific planned doc `design/20_features/planned/PROCGEN_PHASE1_TOPOLOGY_PROFILES.md` defining deterministic seeded topology profile generation, rule wiring, and validation gates.
 - Added phase-specific planned doc `design/20_features/planned/PROCGEN_PHASE0_INSTRUMENTATION.md` defining deterministic procgen instrumentation schema, baseline metrics, and test/acceptance gates.
 - Added planned feature roadmap `design/20_features/planned/PROCGEN_FORWARD_PROTOTYPE_ROADMAP.md` to drive a procgen-forward prototype across topology, doctrine, economy, event chains, objectives, and UI readability.

@@ -11,6 +11,8 @@
 - Unified CLI entrypoint is active via `python -m game` (`--ui`, `--repl`, `--sim`, `--dev`, `--seed`).
 - Deterministic seeding and command idempotency are implemented (`GameState(seed=...)`, `/command` `command_id` replay cache).
 - Deterministic procedural terminal messaging is active for `WAIT` signals (seeded grammar variants with fidelity-aware symbol banks).
+- Procgen infrastructure scaffolding is active for Phase 0.5 (`game/procgen/signals.py`, `game/procgen/projection.py`) with deterministic projection tests in place.
+- WAIT text rendering can now route through the Phase 0.5 projection layer via `GameState.procgen_projection_enabled` (default disabled for behavior-safe migration).
 - Deterministic sector grid substrate is active (fixed `12x12` per sector) with snapshot-compatible serialization.
 - World-state tests are passing (`game/simulations/world_state/tests`).
 

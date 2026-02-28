@@ -107,8 +107,7 @@
       const text = (line || "").toUpperCase();
       if (!text) return false;
       if (text.startsWith("[WARNING]") || text.startsWith("[ASSAULT]")) return true;
-      if (text.includes(" COMPROMISED") || text.endsWith(" X") || text.includes(" X(")) return true;
-      if (text.includes("(+)") || text.includes("(-)")) return true;
+      if (text.includes(" COMPROMISED") || text.endsWith(" X") || text.includes(" X(")) return true;u      if (text.includes("(+)") || text.includes("(-)")) return true;
       return false;
     });
   }
@@ -124,11 +123,11 @@
     WAIT: "⏳",
     SCAVENGE: "⬇",
     REPAIR: "🔧",
-    FOCUS: "◎",
+    FOCUS: "⊙",
     HARDEN: "🛡",
     DEPLOY: "⬆",
     MOVE: "→",
-    RETURN: "↓",
+    RETURN: "⬇",
     SET: "⚙",
     POLICY: "⚙",
     FAB: "⚡",
@@ -143,14 +142,11 @@
     "SCAN RELAYS": "📡",
     "STABILIZE RELAY": "📡",
     SYNC: "⟳",
-    HELP: "❓",
+    HELP: "?",
     TUTORIAL: "◉",
     DEBUG: "⌘",
     RESET: "↻",
     REBOOT: "↻",
-    BUILD: "⛧",
-    DESTROY: "✕",
-    QUICKSTART: "▶",
   };
 
   function getCommandIcon(command) {
@@ -162,9 +158,10 @@
   function renderCommandIcon(command) {
     const icon = getCommandIcon(command);
     const cmd = (command || "").trim().toUpperCase();
-    const maxLen = 36;
+    const maxLen = 32;
     const displayCmd = cmd.length > maxLen ? cmd.slice(0, maxLen - 2) + ".." : cmd;
-    return [` ${icon} ${displayCmd}`];
+    const padding = Math.max(1, 40 - displayCmd.length - icon.length);
+    return [` ┌─ ${icon} ${displayCmd}${"─".repeat(padding)}┐ `, ` └${"─".repeat(44)}┘ `];
   }
 
   function triggerAlertFlashBurst(pulses = 3) {
