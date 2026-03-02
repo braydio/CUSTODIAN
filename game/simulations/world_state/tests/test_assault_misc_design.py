@@ -202,17 +202,9 @@ def test_transit_intercept_multiplier_is_bounded_by_floor(monkeypatch) -> None:
     assert approach.threat_mult == assaults.ASSAULT_TRANSIT_INTERCEPT_FLOOR
 
 
-def test_award_salvage_maps_penetration_to_materials() -> None:
+def test_award_salvage_uses_phase_c_formula_and_updates_ledger() -> None:
     state = GameState(seed=1)
     base = state.materials
-    partial = AssaultOutcome(
-        threat_budget=100,
-        duration=10,
-        spawned=10,
-        killed=8,
-        retreated=1,
-        remaining=1,
-    )
     severe = AssaultOutcome(
         threat_budget=100,
         duration=10,
@@ -221,11 +213,66 @@ def test_award_salvage_maps_penetration_to_materials() -> None:
         retreated=1,
         remaining=8,
     )
+    assault = SimpleNamespace(
+        salvage_ledger={
+            "intercepted_units": 5,
+            "intercept_ammo_spent": 8,
+            "tactical_ammo_spent": 12,
+            "transit_fortification_wear": 10,
+        }
+    )
 
-    assaults.award_salvage(state, partial)
-    assaults.award_salvage(state, severe)
+    awarded = assaults.award_salvage(state, severe, assault=assault)
 
-    assert state.materials == base + 3
+    assert awarded == 12
+    assert state.materials == base + 12
+    assert assault.salvage_ledger["total_assault_units"] == 10
+    assert assault.salvage_ledger["base_salvage"] == 10
+    assert assault.salvage_ledger["efficiency_bonus"] == 5
+    assert assault.salvage_ledger["burn_penalty"] == 3
+    assert assault.salvage_ledger["final_salvage"] == 12
+
+
+def test_award_salvage_clamps_to_outcome_bounds() -> None:
+    state = GameState(seed=1)
+    partial = AssaultOutcome(
+        threat_budget=100,
+        duration=10,
+        spawned=20,
+        killed=10,
+        retreated=8,
+        remaining=2,
+    )
+    assault = SimpleNamespace(
+        salvage_ledger={
+            "intercepted_units": 20,
+            "intercept_ammo_spent": 0,
+            "tactical_ammo_spent": 0,
+            "transit_fortification_wear": 0,
+        }
+    )
+
+    awarded = assaults.award_salvage(state, partial, assault=assault)
+
+    assert awarded == 30
+    assert assaults.SALVAGE_MIN_BY_OUTCOME["partial"] <= awarded <= assaults.SALVAGE_MAX_BY_OUTCOME["partial"]
+
+
+def test_award_salvage_uses_partial_tier_when_no_units_spawned() -> None:
+    state = GameState(seed=1)
+    none = AssaultOutcome(
+        threat_budget=100,
+        duration=10,
+        spawned=0,
+        killed=0,
+        retreated=0,
+        remaining=0,
+    )
+    assault = SimpleNamespace(salvage_ledger={})
+
+    awarded = assaults.award_salvage(state, none, assault=assault)
+
+    assert awarded == assaults.SALVAGE_BASE_BY_OUTCOME["partial"]
 
 
 def test_target_weights_captured_when_trace_enabled() -> None:
@@ -275,3 +322,23 @@ def test_after_action_summary_includes_destroyed_structures() -> None:
     lines = assaults._generate_after_action_summary(state, 0)
     assert lines[0:2] == ["ASSAULT IMPACT:", "LOSS: CM_CORE"]
     assert any(line.startswith("POLICY LOAD: ") for line in lines)
+
+
+def test_after_action_summary_includes_salvage_breakdown() -> None:
+    state = GameState(seed=2)
+
+    lines = assaults._generate_after_action_summary(
+        state,
+        0,
+        salvage_ledger={
+            "base_salvage": 20,
+            "efficiency_bonus": 4,
+            "burn_penalty": 2,
+            "final_salvage": 22,
+        },
+    )
+
+    assert "- BASE SALVAGE: 20" in lines
+    assert "- INTERCEPTION EFFICIENCY: +4" in lines
+    assert "- RESOURCE BURN: -2" in lines
+    assert "= FINAL SALVAGE: 22 SCRAP" in lines

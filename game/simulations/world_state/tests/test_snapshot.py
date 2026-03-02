@@ -9,6 +9,7 @@ def test_snapshot_shape_and_defaults() -> None:
     state = GameState()
     snapshot = state.snapshot()
 
+    assert snapshot["snapshot_version"] == 5
     assert snapshot["time"] == 0
     assert snapshot["threat"] == "LOW"
     assert snapshot["assault"] == "NONE"
@@ -23,6 +24,18 @@ def test_snapshot_shape_and_defaults() -> None:
     assert snapshot["active_task"] is None
     assert snapshot["dev_mode"] is False
     assert snapshot["transit_fort_levels"] == {"T_NORTH": 0, "T_SOUTH": 0}
+    assert snapshot["relays"]["dormancy_pressure"] == 0
+    assert snapshot["relays"]["benefits"] == {}
+    assert "run_fingerprint" in snapshot
+    fp = snapshot["run_fingerprint"]
+    assert fp["schema_version"] == 1
+    assert fp["seed"] == state.seed
+    assert fp["text_seed"] == state.text_seed
+    assert fp["topology_profile_id"] == "BASELINE_STATIC"
+    assert fp["economy_profile_id"] == "BASELINE_STATIC"
+    assert len(fp["event_catalog_hash"]) == 16
+    assert len(fp["faction_profile_hash"]) == 16
+    assert len(fp["fingerprint_hash"]) == 16
 
     sectors = snapshot["sectors"]
     assert len(sectors) > 0
@@ -30,3 +43,13 @@ def test_snapshot_shape_and_defaults() -> None:
     assert all("name" in sector for sector in sectors)
     assert all("status" in sector for sector in sectors)
     assert all(sector["status"] == "STABLE" for sector in sectors)
+
+
+def test_run_fingerprint_ignores_runtime_counters() -> None:
+    state = GameState(seed=777)
+    before = state.snapshot()["run_fingerprint"]
+    state.time = 99
+    state.materials += 5
+    state.ambient_threat = 3.2
+    after = state.snapshot()["run_fingerprint"]
+    assert before == after
