@@ -33,11 +33,11 @@ This document consolidates all prior drafts and roadmaps into a single implement
 
 ### Phase B — Explicit Material Spend (Transit Fortification)
 
-**Status: Design complete, implementation pending**
+**Status: Implemented**
 
 ### Phase C — Salvage Coupling
 
-**Status: Design-stage follow-on**
+**Status: Implemented**
 
 ---
 
@@ -510,14 +510,15 @@ Add small bounded modifier based on:
 
 ---
 
-## Open Questions (Intentionally Left Open)
+## Phase C Resolution (Closed)
 
-* Exact salvage modifier formula
-* Whether ammo burn reduces salvage or increases it
-* Whether fortification level influences salvage
-* Whether salvage should reward efficiency vs over-spend
+Phase C salvage coupling is now closed and implemented with a deterministic bounded formula:
 
-These remain unresolved and must be formally closed before Phase C implementation.
+* `final = clamp(base + efficiency_bonus - burn_penalty, outcome_min, outcome_max)`
+* Efficiency bonus derives from `intercepted_units / total_assault_units`.
+* Burn penalty derives from intercept ammo, tactical ammo, and transit-fortification wear.
+* Zero-unit edge case resolves using the `partial` tier envelope.
+* No additional RNG is used.
 
 ---
 
@@ -575,33 +576,32 @@ Optional:
 * [x] Clamp enforcement
 * [x] Deterministic
 
-## Phase B (To Complete)
+## Phase B (Complete)
 
-* [ ] Add transit fort storage
-* [ ] Extend FORTIFY
-* [ ] Modify interception math
-* [ ] Clamp maintained
-* [ ] STATUS shows transit fort
-* [ ] Snapshot safe
-* [ ] Determinism preserved
+* [x] Add transit fort storage
+* [x] Extend FORTIFY
+* [x] Modify interception math
+* [x] Clamp maintained
+* [x] STATUS shows transit fort
+* [x] Snapshot safe
+* [x] Determinism preserved
 
-## Phase C (Open)
+## Phase C (Complete)
 
-* [ ] Define salvage coupling formula
-* [ ] Bound modifier
-* [ ] Add tests
-* [ ] Preserve determinism
+* [x] Define salvage coupling formula
+* [x] Bound modifier
+* [x] Add tests
+* [x] Preserve determinism
 
 ---
 
 # FINAL DECISION PATH
 
 1. Phase A: Already stable.
-2. Implement Phase B exactly as specified.
-3. Close open salvage questions.
-4. Implement Phase C only after formula is formally defined.
+2. Phase B is complete in live code.
+3. Phase C formula is locked and complete in live code.
+4. Keep balance tuning bounded and deterministic.
 
 ---
 
 This is now the canonical ASSAULT–RESOURCE LINK specification.
-
