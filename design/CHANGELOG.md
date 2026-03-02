@@ -1,12 +1,24 @@
+## 2026-03-02
+
+- Implemented ARRN reward-ladder and decay-loop expansion (`core/relays.py`) with deterministic relay stability decay, `WEAK`/`DORMANT` thresholds, dormancy pressure, bounded knowledge drift, and capped relay knowledge index (`0..7`).
+- Added tiered ARRN effects across systems: remote repair discount (tier 2), threat-forecast warning lead-time bonus (tier 3), Archive Plating fabrication gate (tier 4), logistics-penalty reduction (tier 5), and status fidelity floors (tiers 1 and 6).
+- Added `STATUS KNOWLEDGE` group output and updated status/help contracts to include `KNOWLEDGE` in grouped status surfaces.
+- Extended snapshot relay payload with ARRN benefit/dormancy fields and added ARRN progression tests (`test_arrn_progression.py`) plus updated contract/snapshot assertions.
+
 ## 2026-02-27
 
 - Revised `design/20_features/planned/PROCGEN_PHASE0_5_SIGNAL_PROJECTION_INFRASTRUCTURE.md` to align with live implementation constraints (discrete fidelity contract, realistic RNG migration, executable test plan).
+- Revised and normalized `design/20_features/planned/PROCGEN_PHASE0_INSTRUMENTATION.md` to remove malformed duplicate sections and align field sources/contracts with live code.
 - Began Phase 0.5 implementation: added explicit `sim_rng`/`text_rng` ownership in `GameState` while preserving `rng` compatibility alias.
 - Added canonical procgen signal registry at `game/procgen/signals.py`.
 - Added reusable projection entrypoint at `game/procgen/projection.py` (deterministic, fidelity-gated, additive scaffold).
 - Wired WAIT procgen rendering to the new projection layer behind `GameState.procgen_projection_enabled` (default off) for safe migration.
 - Added determinism coverage in `game/simulations/world_state/tests/test_procgen_determinism.py`.
 - Added projection parity test coverage in `game/simulations/world_state/tests/test_procgen_engine.py` to ensure flagged path matches legacy output.
+- Began Phase 0 implementation: added deterministic `run_fingerprint` to world snapshots (`snapshot_version=5`) and migration support in `snapshot_migration.py`.
+- Added deterministic procgen report surface (`GET /procgen_report`) with dev-mode gating in both world-state and terminal servers.
+- Added instrumentation tests for snapshot fingerprint stability and procgen report endpoint behavior.
+- Added baseline variability harness tests (`test_procgen_variability.py`) for seed-suite uniqueness/switch-rate metrics.
 - Added phase-specific planned doc `design/20_features/planned/PROCGEN_PHASE1_TOPOLOGY_PROFILES.md` defining deterministic seeded topology profile generation, rule wiring, and validation gates.
 - Added phase-specific planned doc `design/20_features/planned/PROCGEN_PHASE0_INSTRUMENTATION.md` defining deterministic procgen instrumentation schema, baseline metrics, and test/acceptance gates.
 - Added planned feature roadmap `design/20_features/planned/PROCGEN_FORWARD_PROTOTYPE_ROADMAP.md` to drive a procgen-forward prototype across topology, doctrine, economy, event chains, objectives, and UI readability.

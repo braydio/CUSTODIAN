@@ -5,7 +5,8 @@ This document replaces the older draft assumptions with a design that fits the c
 ## Implementation Status
 
 - Phase A is now implemented in the live codebase (`core/assaults.py`) with deterministic transit interception, ammo spend, and bounded threat-budget mitigation before engagement.
-- Phase B and Phase C remain design-stage follow-ons.
+- Phase B is implemented in the live codebase (`FORTIFY T_NORTH|T_SOUTH` transit-lane prep coupled to interception).
+- Phase C salvage coupling is locked by `CLARIFY.md` and implemented in `core/assaults.py`.
 
 ## Goal
 
@@ -88,10 +89,43 @@ Behavior:
 
 Refine salvage to reflect resource burn and intercept effectiveness.
 
-Adjustments:
-- Keep current penetration-based salvage baseline.
-- Add a small modifier from interception success and ammo spent (bounded, deterministic).
-- Do not add RNG-heavy reward spikes.
+Locked formula:
+
+`FINAL_SALVAGE = clamp(BASE_OUTCOME_SALVAGE + INTERCEPTION_EFFICIENCY_MOD - RESOURCE_BURN_PENALTY, MIN[outcome], MAX[outcome])`
+
+1. Base outcome salvage (deterministic):
+- `none -> 30`
+- `partial -> 20`
+- `severe -> 10`
+
+2. Interception efficiency:
+- `intercept_ratio = clamp(intercepted_units / total_assault_units, 0.0, 1.0)`
+- `efficiency_bonus = round(10 * intercept_ratio)` (range `0..10`)
+
+3. Resource burn penalty:
+- `burn_score = intercept_ammo_spent * 1.0 + tactical_ammo_spent * 0.5 + transit_fortification_wear * 2.0`
+- `burn_penalty = clamp(round(burn_score / 10), 0, 12)`
+
+4. Outcome clamp envelopes:
+- `none: min=25 max=45`
+- `partial: min=15 max=35`
+- `severe: min=5 max=20`
+
+5. Locked edge handling:
+- If `total_assault_units == 0`, use `partial` tier for base/clamp.
+- Deterministic only; no extra RNG.
+
+6. Accounting:
+- Ledger is assault-scoped (`AssaultInstance.salvage_ledger`).
+- Final salvage mutates `GameState.materials`.
+- Burn metrics are not persisted after assault resolution.
+
+7. Operator surfacing:
+- After-action summary includes concise salvage breakdown lines:
+  - Base salvage
+  - Interception efficiency
+  - Resource burn
+  - Final salvage
 
 ## Required Code Touchpoints
 
