@@ -33,6 +33,17 @@ class AssaultInstance:
         self.enemy_groups = self._build_enemy_groups()
         self.entry_phases = self._build_entry_phases()
         self.duration_ticks = max(10, 6 + len(self.entry_phases) * 2)
+        self.salvage_ledger = {
+            "intercept_ammo_spent": 0,
+            "tactical_ammo_spent": 0,
+            "transit_fortification_wear": 0,
+            "intercepted_units": 0,
+            "total_assault_units": 0,
+            "base_salvage": 0,
+            "efficiency_bonus": 0,
+            "burn_penalty": 0,
+            "final_salvage": 0,
+        }
 
     def tick(self):
         self.ticks_elapsed += 1

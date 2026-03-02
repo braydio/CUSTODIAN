@@ -69,6 +69,9 @@ class AssaultApproach:
         self.state = "APPROACHING"  # APPROACHING | ENGAGED
         self.threat_mult = 1.0
         self.intercepted_indices: set[int] = set()
+        self.intercept_ammo_spent = 0
+        self.intercepted_units = 0
+        self.transit_fortification_wear = 0
 
     def current_node(self) -> str:
         return self.route[min(self.index, len(self.route) - 1)]
@@ -149,6 +152,12 @@ def _transit_lanes() -> dict[str, set[str]]:
 
 
 TRANSIT_LANES = _transit_lanes()
+SALVAGE_BASE_BY_OUTCOME = {"none": 30, "partial": 20, "severe": 10}
+SALVAGE_MIN_BY_OUTCOME = {"none": 25, "partial": 15, "severe": 5}
+SALVAGE_MAX_BY_OUTCOME = {"none": 45, "partial": 35, "severe": 20}
+SALVAGE_EFFICIENCY_SCALE = 10
+SALVAGE_BURN_PENALTY_DIVISOR = 10.0
+SALVAGE_BURN_PENALTY_MAX = 12
 
 
 def _transit_pressure_bonus(state, sector_name: str) -> float:
@@ -246,7 +255,9 @@ def maybe_spawn_assault(state) -> None:
         _refresh_assault_eta(state)
         return
 
-    spawn_chance = min(0.65, 0.08 + state.ambient_threat * 0.06)
+    dormancy_pressure = max(0, int(getattr(state, "dormancy_pressure", 0)))
+    # ARRN dormancy emulates shorter assault intervals by raising spawn chance.
+    spawn_chance = min(0.80, 0.08 + state.ambient_threat * 0.06 + (dormancy_pressure * 0.03))
     if state.rng.random() > spawn_chance:
         _refresh_assault_eta(state)
         return
@@ -304,11 +315,14 @@ def _attempt_transit_intercept(state, approach: AssaultApproach, node: str) -> N
         return
 
     state.turret_ammo_stock -= 1
+    approach.intercept_ammo_spent += 1
+    approach.intercepted_units += 1
     step_mult = _intercept_step_multiplier(state)
     approach.threat_mult = min(1.0, approach.threat_mult * step_mult)
     fort_level = int(state.transit_fort_levels.get(node, 0))
     if fort_level > 0:
         approach.threat_mult -= fort_level * TRANSIT_FORTIFICATION_FACTOR
+        approach.transit_fortification_wear += fort_level
     approach.threat_mult = max(
         THREAT_MULT_FLOOR,
         min(1.0, approach.threat_mult),
@@ -347,6 +361,9 @@ def advance_assaults(state) -> None:
                 state,
                 [target_sector],
                 approach_threat_mult=approach.threat_mult,
+                approach_intercept_ammo_spent=approach.intercept_ammo_spent,
+                approach_intercepted_units=approach.intercepted_units,
+                approach_transit_fortification_wear=approach.transit_fortification_wear,
             )
         state.assaults = [a for a in state.assaults if a.id != approach.id]
 
@@ -361,7 +378,15 @@ def start_assault(state):
     _start_assault(state, targets)
 
 
-def _start_assault(state, targets, *, approach_threat_mult: float = 1.0) -> None:
+def _start_assault(
+    state,
+    targets,
+    *,
+    approach_threat_mult: float = 1.0,
+    approach_intercept_ammo_spent: int = 0,
+    approach_intercepted_units: int = 0,
+    approach_transit_fortification_wear: int = 0,
+) -> None:
     state.in_major_assault = True
     state.assault_timer = None
     state.assault_count += 1
@@ -403,6 +428,12 @@ def _start_assault(state, targets, *, approach_threat_mult: float = 1.0) -> None
     assault._pre_power_load = float(getattr(state, "power_load", 1.0))
     assault._pre_queue_ticks = sum(task.ticks_remaining for task in state.fabrication_queue)
     assault._pre_surveillance = int(state.policies.surveillance_coverage)
+    assault.salvage_ledger["intercept_ammo_spent"] = max(0, int(approach_intercept_ammo_spent))
+    assault.salvage_ledger["intercepted_units"] = max(0, int(approach_intercepted_units))
+    assault.salvage_ledger["transit_fortification_wear"] = max(
+        0,
+        int(approach_transit_fortification_wear),
+    )
     state.current_assault = assault
     print("\n=== MAJOR ASSAULT BEGINS ===")
     print(assault)
@@ -460,6 +491,9 @@ def resolve_assault(state, tick_delay=0.05):
     summary["remaining"] = sum(len(sector.enemies) for sector in tactical_sectors)
     if state.turret_ammo_stock > 0:
         state.turret_ammo_stock -= 1
+        assault.salvage_ledger["tactical_ammo_spent"] = (
+            int(assault.salvage_ledger.get("tactical_ammo_spent", 0)) + 1
+        )
 
     if assault.ticks_elapsed < assault.duration_ticks:
         state.last_assault_lines = _assault_tick_feedback_lines(state, assault, tactical_sectors)
@@ -492,6 +526,7 @@ def resolve_assault(state, tick_delay=0.05):
         pre_power_load=getattr(assault, "_pre_power_load", float(getattr(state, "power_load", 1.0))),
         pre_queue_ticks=getattr(assault, "_pre_queue_ticks", 0.0),
         pre_surveillance=getattr(assault, "_pre_surveillance", int(state.policies.surveillance_coverage)),
+        salvage_ledger=dict(getattr(assault, "salvage_ledger", {})),
     )
     if summary_lines:
         state.last_assault_lines.extend(summary_lines)
@@ -523,12 +558,13 @@ def _apply_assault_outcome(state, assault, outcome, target_names):
         state.ambient_threat += 0.2
         for sector in assault.target_sectors:
             sector.alertness *= 0.85
+        award_salvage(state, outcome, assault=assault)
         return "[ASSAULT] DEFENSES HELD. ENEMY WITHDREW."
 
     if outcome.penetration == "none":
         _degrade_target_structures(state, target_names)
         regress_repairs_in_sectors(state, regression_targets)
-        award_salvage(state, outcome)
+        award_salvage(state, outcome, assault=assault)
         return "[ASSAULT] ENEMY REPULSED. INFRASTRUCTURE DAMAGE REPORTED."
 
     if outcome.penetration == "partial":
@@ -537,13 +573,13 @@ def _apply_assault_outcome(state, assault, outcome, target_names):
         target = assault.target_sectors[0]
         target.alertness += 1.0
         add_sector_effect(target, "sensor_blackout", severity=1.0, decay=0.02)
-        award_salvage(state, outcome)
+        award_salvage(state, outcome, assault=assault)
         return "[ASSAULT] BREACH CONTAINED. SECTOR CONTROL DEGRADED."
 
     if state.autonomy_override_enabled and _compute_defensive_margin(state, outcome) >= 0:
         _degrade_target_structures(state, target_names)
         regress_repairs_in_sectors(state, regression_targets)
-        award_salvage(state, outcome)
+        award_salvage(state, outcome, assault=assault)
         return "[ASSAULT] AUTONOMOUS SYSTEMS HELD PERIMETER."
 
     # Severe penetration but not command center breach -> strategic loss
@@ -552,7 +588,7 @@ def _apply_assault_outcome(state, assault, outcome, target_names):
     target = assault.target_sectors[0]
     target.power = max(0.2, target.power - 0.2)
     add_global_effect(state, "signal_interference", severity=1.0, decay=0.0)
-    award_salvage(state, outcome)
+    award_salvage(state, outcome, assault=assault)
     return "[ASSAULT] CRITICAL SYSTEM LOST. NO REPLACEMENT AVAILABLE."
 
 
@@ -738,14 +774,69 @@ def _degrade_target_structures(state, target_names: set[str]) -> None:
             )
 
 
-def award_salvage(state, outcome) -> None:
-    if outcome.penetration == "none":
-        return
-    if outcome.penetration == "partial":
-        state.materials += 1
-        return
-    if outcome.penetration == "severe":
-        state.materials += 2
+def _salvage_clamp_bounds(penetration: str) -> tuple[int, int]:
+    return (
+        SALVAGE_MIN_BY_OUTCOME.get(penetration, SALVAGE_MIN_BY_OUTCOME["partial"]),
+        SALVAGE_MAX_BY_OUTCOME.get(penetration, SALVAGE_MAX_BY_OUTCOME["partial"]),
+    )
+
+
+def award_salvage(state, outcome, *, assault=None) -> int:
+    penetration = str(getattr(outcome, "penetration", "partial")).lower()
+    base_salvage = SALVAGE_BASE_BY_OUTCOME.get(penetration, SALVAGE_BASE_BY_OUTCOME["partial"])
+    intercepted_units = 0
+    intercept_ammo_spent = 0
+    tactical_ammo_spent = 0
+    transit_fortification_wear = 0
+    total_assault_units = max(0, int(getattr(outcome, "spawned", 0)))
+    clamp_penetration = penetration
+    if total_assault_units == 0:
+        base_salvage = SALVAGE_BASE_BY_OUTCOME["partial"]
+        clamp_penetration = "partial"
+
+    ledger: dict[str, int] | None = None
+    if assault is not None:
+        candidate = getattr(assault, "salvage_ledger", None)
+        if not isinstance(candidate, dict):
+            candidate = {}
+            setattr(assault, "salvage_ledger", candidate)
+        ledger = candidate
+        intercepted_units = max(0, int(ledger.get("intercepted_units", 0)))
+        intercept_ammo_spent = max(0, int(ledger.get("intercept_ammo_spent", 0)))
+        tactical_ammo_spent = max(0, int(ledger.get("tactical_ammo_spent", 0)))
+        transit_fortification_wear = max(
+            0,
+            int(ledger.get("transit_fortification_wear", 0)),
+        )
+
+    if total_assault_units <= 0:
+        intercept_ratio = 0.0
+    else:
+        intercept_ratio = intercepted_units / total_assault_units
+    intercept_ratio = max(0.0, min(1.0, float(intercept_ratio)))
+    efficiency_bonus = int(round(SALVAGE_EFFICIENCY_SCALE * intercept_ratio))
+
+    burn_score = (
+        (intercept_ammo_spent * 1.0)
+        + (tactical_ammo_spent * 0.5)
+        + (transit_fortification_wear * 2.0)
+    )
+    burn_penalty = int(round(burn_score / SALVAGE_BURN_PENALTY_DIVISOR))
+    burn_penalty = max(0, min(SALVAGE_BURN_PENALTY_MAX, burn_penalty))
+
+    raw = base_salvage + efficiency_bonus - burn_penalty
+    min_salvage, max_salvage = _salvage_clamp_bounds(clamp_penetration)
+    final_salvage = max(min_salvage, min(max_salvage, raw))
+    state.materials += final_salvage
+
+    if ledger is not None:
+        ledger["total_assault_units"] = total_assault_units
+        ledger["base_salvage"] = base_salvage
+        ledger["efficiency_bonus"] = efficiency_bonus
+        ledger["burn_penalty"] = burn_penalty
+        ledger["final_salvage"] = final_salvage
+
+    return final_salvage
 
 
 def _generate_after_action_summary(
@@ -757,6 +848,7 @@ def _generate_after_action_summary(
     pre_power_load: float | None = None,
     pre_queue_ticks: float | None = None,
     pre_surveillance: int | None = None,
+    salvage_ledger: dict[str, int] | None = None,
 ) -> list[str]:
     if pre_damage is None:
         pre_damage = {name: sector.damage for name, sector in state.sectors.items()}
@@ -784,6 +876,11 @@ def _generate_after_action_summary(
     queue_delta = sum(task.ticks_remaining for task in state.fabrication_queue) - pre_queue_ticks
 
     lines = ["ASSAULT IMPACT:"]
+    if salvage_ledger:
+        lines.append(f"- BASE SALVAGE: {int(salvage_ledger.get('base_salvage', 0))}")
+        lines.append(f"- INTERCEPTION EFFICIENCY: +{int(salvage_ledger.get('efficiency_bonus', 0))}")
+        lines.append(f"- RESOURCE BURN: -{int(salvage_ledger.get('burn_penalty', 0))}")
+        lines.append(f"= FINAL SALVAGE: {int(salvage_ledger.get('final_salvage', 0))} SCRAP")
     if destroyed:
         lines.append("LOSS: " + ", ".join(destroyed))
     if sector_losses:

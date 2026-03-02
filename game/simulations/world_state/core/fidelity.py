@@ -14,5 +14,9 @@ def buffered_effectiveness(base_effectiveness: float, state) -> float:
     value = float(base_effectiveness) * surveillance_buffer_multiplier(state)
     if "signal_interference" in state.global_effects:
         value *= 0.85
+    dormancy_pressure = int(getattr(state, "dormancy_pressure", 0))
+    if dormancy_pressure >= 2:
+        # Deterministic intermittent suppression under network dormancy.
+        if int(getattr(state, "time", 0)) % 6 in {0, 1}:
+            value *= 0.9
     return max(0.0, min(1.0, value))
-

@@ -8,6 +8,7 @@ from .logistics import update_logistics
 from .power_load import compute_power_load
 from .power import refresh_comms_fidelity
 from .repairs import tick_repairs
+from .relays import tick_relays
 from .state import GameState, advance_time, check_failure
 from .wear import apply_wear
 
@@ -38,6 +39,7 @@ def step_world(state: GameState, tick_delay: float = 0.0) -> bool:
     state.last_structure_loss_lines = []
     state.last_after_action_lines = []
     advance_time(state)
+    tick_relays(state)
     compute_power_load(state)
     update_logistics(state)
     maybe_trigger_event(state)

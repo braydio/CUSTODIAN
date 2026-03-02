@@ -260,6 +260,9 @@ def start_fabrication_task(state, recipe_token: str) -> str:
     recipe = resolve_recipe(recipe_token)
     if not recipe:
         return "UNKNOWN FAB ITEM."
+    if str(recipe.get("name", "")).upper() == "ARCHIVE PLATING":
+        if int(state.relay_benefits.get("fab_blueprints_archive", 0)) <= 0:
+            return "FAB LOCKED: KNOWLEDGE TIER 4 REQUIRED."
     if len(state.fabrication_queue) >= 6:
         return "FAB QUEUE FULL."
 

@@ -25,4 +25,26 @@ def migrate_snapshot(snapshot: dict) -> dict:
         migrated.setdefault("drone_perimeter_repair_policy", "AUTO")
         migrated["snapshot_version"] = 4
 
+    if version < 5:
+        migrated.setdefault("run_fingerprint", None)
+        migrated["snapshot_version"] = 5
+
+    relays = migrated.get("relays")
+    if not isinstance(relays, dict):
+        migrated["relays"] = {
+            "nodes": {},
+            "packets_pending": 0,
+            "knowledge_index": {"RELAY_RECOVERY": 0},
+            "last_sync_time": None,
+            "benefits": {},
+            "dormancy_pressure": 0,
+        }
+    else:
+        relays.setdefault("nodes", {})
+        relays.setdefault("packets_pending", 0)
+        relays.setdefault("knowledge_index", {"RELAY_RECOVERY": 0})
+        relays.setdefault("last_sync_time", None)
+        relays.setdefault("benefits", {})
+        relays.setdefault("dormancy_pressure", 0)
+
     return migrated
