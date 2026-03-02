@@ -1,9 +1,10 @@
 from collections import defaultdict
 from typing import Any
+import json
 import math
 import random
 
-from game.procgen.engine import VariantMemory, mix_seed64
+from game.procgen.engine import VariantMemory, mix_seed64, stable_hash64
 
 from .config import (
     ALERTNESS_DECAY,
@@ -37,7 +38,7 @@ from .tasks import task_to_dict
 from .defense import DEFAULT_DEFENSE_ALLOCATION, compute_readiness, normalize_doctrine
 from .assault_ledger import AssaultLedger, AssaultTickRecord, append_record
 from .policies import PolicyState, default_fabrication_allocation
-from .relays import default_relay_nodes
+from .relays import default_relay_nodes, refresh_relay_benefits
 
 
 class SectorState:
@@ -188,6 +189,7 @@ class GameState:
         self.knowledge_index: dict[str, int] = {"RELAY_RECOVERY": 0}
         self.last_sync_time: int | None = None
         self.relay_benefits: dict[str, int] = {}
+        self.dormancy_pressure = 0
 
         # Player state
         self.player_mode = PLAYER_MODE_COMMAND
@@ -270,6 +272,64 @@ class GameState:
             return "PENDING"
         return "NONE"
 
+    @staticmethod
+    def _hash_hex(payload: Any) -> str:
+        text = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
+        return f"{stable_hash64(text):016x}"
+
+    def _build_run_fingerprint(self) -> dict[str, Any]:
+        doctrine_profile_id = str(
+            self.faction_profile.get("doctrine_short", "UNKNOWN")
+        ).upper()
+        topology_profile_id = "BASELINE_STATIC"
+        economy_profile_id = "BASELINE_STATIC"
+
+        event_catalog_source: Any
+        if self.event_catalog:
+            event_catalog_source = [
+                {
+                    "key": getattr(event, "key", ""),
+                    "name": getattr(event, "name", ""),
+                    "min_threat": getattr(event, "min_threat", 0),
+                    "weight": getattr(event, "weight", 0),
+                    "cooldown": getattr(event, "cooldown", 0),
+                    "chains": list(getattr(event, "chains", [])),
+                }
+                for event in self.event_catalog
+            ]
+        else:
+            event_catalog_source = "UNBUILT"
+
+        event_catalog_hash = self._hash_hex(event_catalog_source)
+        faction_profile_hash = self._hash_hex(self.faction_profile)
+
+        base = {
+            "schema_version": 1,
+            "seed": int(self.seed),
+            "text_seed": int(self.text_seed),
+            "topology_profile_id": topology_profile_id,
+            "doctrine_profile_id": doctrine_profile_id,
+            "economy_profile_id": economy_profile_id,
+            "event_catalog_hash": event_catalog_hash,
+            "faction_profile_hash": faction_profile_hash,
+        }
+        base["fingerprint_hash"] = self._hash_hex(base)
+        return base
+
+    def procgen_report(self) -> dict[str, Any]:
+        fingerprint = self._build_run_fingerprint()
+        return {
+            "seed": int(self.seed),
+            "fingerprint_hash": fingerprint["fingerprint_hash"],
+            "components": [
+                {"name": "topology_profile_id", "value": fingerprint["topology_profile_id"]},
+                {"name": "doctrine_profile_id", "value": fingerprint["doctrine_profile_id"]},
+                {"name": "economy_profile_id", "value": fingerprint["economy_profile_id"]},
+                {"name": "event_catalog_hash", "value": fingerprint["event_catalog_hash"]},
+                {"name": "faction_profile_hash", "value": fingerprint["faction_profile_hash"]},
+            ],
+        }
+
     def snapshot(self) -> dict:
         """Return a read-only snapshot for STATUS and UI projections."""
 
@@ -295,7 +355,7 @@ class GameState:
             )
 
         return {
-            "snapshot_version": 4,
+            "snapshot_version": 5,
             "time": self.time,
             "threat": self.threat_bucket(),
             "assault": self.assault_state(),
@@ -356,6 +416,8 @@ class GameState:
                 "packets_pending": int(self.relay_packets_pending),
                 "knowledge_index": dict(self.knowledge_index),
                 "last_sync_time": self.last_sync_time,
+                "benefits": dict(self.relay_benefits),
+                "dormancy_pressure": int(self.dormancy_pressure),
             },
             "active_repairs": [
                 {
@@ -372,6 +434,7 @@ class GameState:
             "active_task": task_to_dict(self.active_task),
             "seed": self.seed,
             "text_seed": self.text_seed,
+            "run_fingerprint": self._build_run_fingerprint(),
             "operator_log": list(self.operator_log[-50:]),
             "dev_mode": self.dev_mode,
             "drone_perimeter_repair_policy": self.drone_perimeter_repair_policy,
@@ -516,6 +579,28 @@ class GameState:
                 "T_NORTH": int(transit_forts.get("T_NORTH", 0)),
                 "T_SOUTH": int(transit_forts.get("T_SOUTH", 0)),
             }
+        relays = migrated.get("relays", {})
+        if isinstance(relays, dict):
+            nodes = relays.get("nodes")
+            if isinstance(nodes, dict):
+                merged_nodes = default_relay_nodes()
+                for relay_id, relay in nodes.items():
+                    if not isinstance(relay, dict):
+                        continue
+                    current = dict(merged_nodes.get(relay_id, {}))
+                    current.update(relay)
+                    merged_nodes[str(relay_id)] = current
+                state.relay_nodes = merged_nodes
+            state.relay_packets_pending = int(relays.get("packets_pending", state.relay_packets_pending))
+            knowledge_index = relays.get("knowledge_index")
+            if isinstance(knowledge_index, dict):
+                state.knowledge_index = {str(k): int(v) for k, v in knowledge_index.items()}
+            state.last_sync_time = relays.get("last_sync_time", state.last_sync_time)
+            benefits = relays.get("benefits")
+            if isinstance(benefits, dict):
+                state.relay_benefits = {str(k): int(v) for k, v in benefits.items()}
+            state.dormancy_pressure = int(relays.get("dormancy_pressure", state.dormancy_pressure))
+        refresh_relay_benefits(state)
 
         state.sector_grids = state._fresh_sector_grids()
         grids_data = migrated.get("sector_grids")

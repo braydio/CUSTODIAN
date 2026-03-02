@@ -87,6 +87,9 @@ def validate_state_invariants(state) -> None:
         status = str(relay.get("status", "UNKNOWN")).upper()
         if status not in RELAY_STATUSES:
             raise AssertionError("Relay status must be a known value.")
+        stability = float(relay.get("stability", 0.0))
+        if stability < 0.0 or stability > 100.0:
+            raise AssertionError("Relay stability must stay in [0,100].")
 
     if float(state.logistics_throughput) <= 0.0:
         raise AssertionError("Logistics throughput must be positive.")

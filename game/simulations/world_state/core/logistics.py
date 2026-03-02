@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from .relays import logistics_penalty_modifier
+
 
 def _queue_load(state) -> float:
     repair_load = 1.0 if state.active_repairs else 0.0
@@ -22,6 +24,7 @@ def update_logistics(state) -> None:
 
     load = float(state.power_load) * 0.45 + _queue_load(state)
     pressure = max(0.0, load - base_throughput)
+    pressure *= logistics_penalty_modifier(state)
 
     # Soft penalty curve: overload gradually slows logistics-sensitive systems.
     throughput_mult = 1.0 - min(0.55, pressure * 0.18)
