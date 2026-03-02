@@ -13,6 +13,7 @@ from game.simulations.world_state.core.config import (
 from game.simulations.world_state.core.detection import warning_delay_ticks
 from game.simulations.world_state.core.presence import tick_presence
 from game.simulations.world_state.core.power import comms_fidelity
+from game.simulations.world_state.core.relays import threat_forecast_bonus_ticks
 from game.simulations.world_state.core.simulation import step_world
 from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.terminal.procgen_text import (
@@ -157,6 +158,7 @@ def _advance_tick(state: GameState) -> WaitTickInfo:
     warning_window = 6
     if fidelity in {"FRAGMENTED", "LOST"}:
         warning_window = 2
+    warning_window += threat_forecast_bonus_ticks(state)
 
     current_timer = state.assault_timer
     assault_warning = (

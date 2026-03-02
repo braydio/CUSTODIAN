@@ -18,7 +18,11 @@ from game.simulations.world_state.core.grid_assault import (
 from game.simulations.world_state.core.drone_repairs import perimeter_repair_backlog
 from game.simulations.world_state.core.policies import render_slider
 from game.simulations.world_state.core.power import comms_fidelity
-from game.simulations.world_state.core.relays import relay_scan_lines
+from game.simulations.world_state.core.relays import (
+    knowledge_status_lines,
+    relay_effective_fidelity_floor,
+    relay_scan_lines,
+)
 from game.simulations.world_state.core.state import GameState
 from game.simulations.world_state.core.structures import StructureState
 from game.simulations.world_state.core.tasks import task_target, task_ticks, task_total, task_type
@@ -44,6 +48,7 @@ STATUS_GROUP_ALIASES = {
     "SYSTEMS": "SYSTEMS",
     "RELAY": "RELAY",
     "RELAYS": "RELAY",
+    "KNOWLEDGE": "KNOWLEDGE",
 }
 
 
@@ -478,7 +483,7 @@ def _root_causes_and_actions(state: GameState) -> tuple[list[str], list[str]]:
 def cmd_status(state: GameState, full: bool = False) -> list[str]:
     """Build compact command status and field tactical status outputs."""
 
-    fidelity = comms_fidelity(state)
+    fidelity = relay_effective_fidelity_floor(state, comms_fidelity(state))
     snapshot = state.snapshot()
     state.fidelity = fidelity
     sector_status_by_name = {item["name"]: item["status"] for item in snapshot["sectors"]}
@@ -670,7 +675,7 @@ def _status_fabrication(state: GameState) -> list[str]:
 
 def _status_posture(state: GameState) -> list[str]:
     snapshot = state.snapshot()
-    fidelity = comms_fidelity(state)
+    fidelity = relay_effective_fidelity_floor(state, comms_fidelity(state))
     state.fidelity = fidelity
     posture = _system_posture(state, fidelity)
     archive_text = (
@@ -694,7 +699,7 @@ def _status_posture(state: GameState) -> list[str]:
 
 def _status_assault(state: GameState) -> list[str]:
     snapshot = state.snapshot()
-    fidelity = comms_fidelity(state)
+    fidelity = relay_effective_fidelity_floor(state, comms_fidelity(state))
     state.fidelity = fidelity
     lines = [
         "STATUS GROUP: ASSAULT",
@@ -715,7 +720,7 @@ def _status_assault(state: GameState) -> list[str]:
 
 def _status_policy(state: GameState) -> list[str]:
     snapshot = state.snapshot()
-    fidelity = comms_fidelity(state)
+    fidelity = relay_effective_fidelity_floor(state, comms_fidelity(state))
     state.fidelity = fidelity
     lines = [
         "STATUS GROUP: POLICY",
@@ -734,7 +739,7 @@ def _status_policy(state: GameState) -> list[str]:
 
 def _status_systems(state: GameState) -> list[str]:
     snapshot = state.snapshot()
-    fidelity = comms_fidelity(state)
+    fidelity = relay_effective_fidelity_floor(state, comms_fidelity(state))
     state.fidelity = fidelity
     sector_status_by_name = {item["name"]: item["status"] for item in snapshot["sectors"]}
     lines = [
@@ -763,7 +768,7 @@ def _status_systems(state: GameState) -> list[str]:
 
 def _status_relay(state: GameState) -> list[str]:
     snapshot = state.snapshot()
-    fidelity = comms_fidelity(state)
+    fidelity = relay_effective_fidelity_floor(state, comms_fidelity(state))
     state.fidelity = fidelity
     lines = [
         "STATUS GROUP: RELAY",
@@ -771,6 +776,19 @@ def _status_relay(state: GameState) -> list[str]:
         f"LOCATION: {display_location(state.player_location)} | MODE: {state.player_mode} | FIDELITY: {fidelity}",
     ]
     lines.extend(relay_scan_lines(state, fidelity))
+    return lines
+
+
+def _status_knowledge(state: GameState) -> list[str]:
+    snapshot = state.snapshot()
+    fidelity = relay_effective_fidelity_floor(state, comms_fidelity(state))
+    state.fidelity = fidelity
+    lines = [
+        "STATUS GROUP: KNOWLEDGE",
+        f"TIME: {snapshot['time']} | THREAT: {snapshot['threat']} | ASSAULT: {snapshot['assault']}",
+        f"LOCATION: {display_location(state.player_location)} | MODE: {state.player_mode} | FIDELITY: {fidelity}",
+    ]
+    lines.extend(knowledge_status_lines(state, fidelity))
     return lines
 
 
@@ -794,4 +812,6 @@ def cmd_status_group(state: GameState, group: str) -> list[str] | None:
         return _status_systems(state)
     if normalized == "RELAY":
         return _status_relay(state)
+    if normalized == "KNOWLEDGE":
+        return _status_knowledge(state)
     return None

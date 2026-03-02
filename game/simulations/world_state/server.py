@@ -148,6 +148,15 @@ def snapshot():
     return jsonify(command_state.snapshot())
 
 
+@app.get("/procgen_report")
+def procgen_report():
+    """Return deterministic procgen instrumentation report in dev mode."""
+
+    if not command_state.dev_mode:
+        return jsonify({"ok": False, "error": "DEV MODE REQUIRED"}), 403
+    return jsonify({"ok": True, "procgen_report": command_state.procgen_report()})
+
+
 @app.route("/stream")
 def stream():
     delay = _coerce_delay(request.args.get("delay"))

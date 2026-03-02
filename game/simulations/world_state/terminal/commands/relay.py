@@ -48,14 +48,16 @@ def cmd_stabilize_relay(state: GameState, relay_token: str) -> list[str]:
 def cmd_sync(state: GameState) -> list[str]:
     if not can_sync(state):
         return ["COMMAND AUTHORITY REQUIRED."]
-    packets, new_level = apply_sync(state)
-    if packets <= 0:
+    packets, new_level, failed_packets = apply_sync(state)
+    if packets <= 0 and failed_packets <= 0:
         return ["SYNC: NO RELAY PACKETS PENDING."]
 
     lines = [
         f"SYNC COMPLETE: {packets} PACKET{'S' if packets != 1 else ''}.",
         f"KNOWLEDGE INDEX RELAY_RECOVERY={new_level}.",
     ]
+    if failed_packets > 0:
+        lines.append(f"SYNC LOSS: {failed_packets} PACKET{'S' if failed_packets != 1 else ''} CORRUPTED.")
     if int(state.relay_benefits.get("remote_repair_discount", 0)) > 0:
         lines.append("BENEFIT ACTIVE: REMOTE REPAIR COST -1.")
     return lines

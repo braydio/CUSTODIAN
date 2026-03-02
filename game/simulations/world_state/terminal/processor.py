@@ -358,7 +358,7 @@ def process_command(state: GameState, raw: str) -> CommandResult:
                     CommandResult(
                         ok=False,
                         text=(
-                            "STATUS <BRIEF|FULL|FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>"
+                            "STATUS <BRIEF|FULL|FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY|KNOWLEDGE>"
                         ),
                     ),
                 )
@@ -367,7 +367,7 @@ def process_command(state: GameState, raw: str) -> CommandResult:
                 state,
                 CommandResult(
                     ok=False,
-                    text="STATUS <BRIEF|FULL|FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>",
+                    text="STATUS <BRIEF|FULL|FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY|KNOWLEDGE>",
                 ),
             )
         primary_line = lines[0] if lines else "COMMAND EXECUTED."

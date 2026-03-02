@@ -6,7 +6,7 @@ TOPIC_LINES = {
         "HELP > CORE",
         "- STATUS  View current operational summary",
         "- STATUS FULL  View extended diagnostics",
-        "- STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS>  View grouped subsystem detail",
+        "- STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY|KNOWLEDGE>  View grouped subsystem detail",
         "- WAIT  Advance one command wait cycle",
         "- WAIT NX  Advance N wait cycles",
         "- WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>  Advance until condition",
@@ -73,6 +73,7 @@ TOPIC_LINES = {
         "- STATUS POLICY  Doctrine, allocation, and policy sliders",
         "- STATUS SYSTEMS  Sector and structure system detail",
         "- STATUS RELAY  Relay-network scan and knowledge state",
+        "- STATUS KNOWLEDGE  ARRN index, dormancy pressure, and unlock ladder",
     ],
 }
 
@@ -90,7 +91,7 @@ def _help_index(dev_mode: bool) -> list[str]:
         "[POLICY] SET | FORTIFY | POLICY | CONFIG | ALLOCATE | DRONE_REPAIR",
         "[FABRICATION] FAB ADD | QUEUE | CANCEL | PRIORITY",
         "[ASSAULT] SCAN | STABILIZE | SYNC | REROUTE | BOOST | DRONE | LOCKDOWN | PRIORITIZE",
-        "[STATUS] STATUS | STATUS FULL | STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>",
+        "[STATUS] STATUS | STATUS FULL | STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY|KNOWLEDGE>",
     ]
     if dev_mode:
         lines.extend(["", "DEBUG COMMANDS (DEV MODE):", "- DEBUG HELP"])

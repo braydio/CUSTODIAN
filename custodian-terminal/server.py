@@ -116,5 +116,14 @@ def snapshot():
     return jsonify(state.snapshot())
 
 
+@app.get("/procgen_report")
+def procgen_report():
+    """Return deterministic procgen instrumentation report in dev mode."""
+
+    if not state.dev_mode:
+        return jsonify({"ok": False, "error": "DEV MODE REQUIRED"}), 403
+    return jsonify({"ok": True, "procgen_report": state.procgen_report()})
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=7331, debug=True)
