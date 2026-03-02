@@ -77,13 +77,13 @@ Gameplay centers on command-vs-field authority, infrastructure survival, degrade
 1. Procedural narrative variation system is not fully implemented.
 - Current messaging is fidelity-gated templates, not a separate deterministic narrative variation layer.
 
-2. ARRN progression is early-stage.
-- Relay commands and first benefit exist; deeper knowledge unlock ladder and decay/maintenance loops remain.
+2. ARRN progression is active with deterministic ladder + decay loop.
+- Relay commands now drive bounded tier unlocks, relay stability decay, dormancy pressure, and knowledge drift.
 
-3. Assault-Resource-Link follow-on phases remain.
+3. Assault-Resource-Link Phase C is now implemented.
 - Transit interception Phase A exists.
 - Phase B transit fortification is implemented.
-- Phase C salvage coupling remains open.
+- Phase C salvage coupling is implemented with deterministic bounded payout coupling.
 
 4. Downed-state architecture remains future-facing.
 - Presence model has seams, but operational downed state is not fully active.
@@ -96,8 +96,7 @@ Gameplay centers on command-vs-field authority, infrastructure survival, degrade
 Recommend in this order unless user asks otherwise:
 
 1. Mechanics completion:
-- Finish Assault-Resource-Link Phase C.
-- Expand ARRN reward ladder with bounded, deterministic effects.
+- Tune ARRN reward/decay pacing with deterministic seed coverage.
 
 2. Systems clarity:
 - Add deterministic narrative variation layer without violating fidelity constraints.
