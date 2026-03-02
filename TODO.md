@@ -12,29 +12,34 @@ Generated from design and archived planning document audit against current imple
 ## Recommended Next Focus
 
 1. `NEXT` Complete mechanics follow-ons before new feature surface area.
-- Close Assault-Resource-Link Phase C design + implementation (`design/10_systems/assault/ASSAULT_DESIGN.md`):
-  - finalize deterministic salvage-coupling formula tied to interception/ammo usage
-  - implement bounded salvage modifier with tests (no RNG spikes)
 - Expand ARRN progression depth (`design/20_features/planned/ARRN_FEATURE_RECOMMENDATIONS.md`):
   - add relay reward ladder beyond initial remote-repair discount
   - add relay decay/dormancy pressure loop
-- Why this is next: Phase B is now complete and Phase C remains the unresolved resource-combat loop closure.
+- Why this is next: Assault-resource coupling is complete and ARRN remains the primary open progression loop.
 
-1. `PARTIAL` Add ARRN relay network feature set.
-- Implemented: state fields, command surface (`SCAN RELAYS`, `STABILIZE RELAY`, `SYNC`), fidelity-gated scan output, timed field stabilization, and sync-to-knowledge progression.
-- Remaining: expand rewards beyond the initial remote-repair discount and add relay decay/dormancy pressure loop.
-- Source: `design/20_features/planned/ARRN_FEATURE_RECOMMENDATIONS.md`
+1. `OPEN` Intra-sector tactical depth expansion.
+- Current 12x12 grid insufficient for meaningful defensive geometry.
+- Expand to configurable per-sector grids (target 30-40x per sector).
+- Add player-authored wall placement beyond auto-perimeter.
+- Source: `design/00_foundations/GAME_IDENTITY_LOCK.md` (design review 2026-02)
 
-2. `PARTIAL` Complete assault-resource coupling follow-ons after transit interception.
-- Implemented (Phase B from `ASSAULT-RESOURCE-LINK-V2`):
-  - transit fortification storage (`state.transit_fort_levels`) with snapshot/migration fallback
-  - `FORTIFY` extended to support `T_NORTH` and `T_SOUTH`
-  - interception scaling now includes transit fortification effect with deterministic clamping
-  - policy/status/help surfaces updated to show and document transit fortification
-  - test coverage added in `test_transit_fortification.py`
-- Remaining (Phase C):
-  - define and implement salvage coupling formula for interception/ammo expenditure
-  - keep modifier bounded and deterministic with no RNG expansion
+1. `OPEN` ARRN Expansion: Reward Ladder + Decay Loop.
+- New spec in `design/20_features/planned/ARRN_FEATURE_RECOMMENDATIONS.md`
+- Implement reward ladder (tier table: knowledge_index 1-7)
+- Implement decay loop (0.5 stability/tick + assault pressure modifier)
+- Implement dormancy pressure (affects assault freq, fidelity, knowledge drift)
+- Files to modify:
+  - core/relays.py (stability, decay, dormancy)
+  - core/state.py (dormancy_pressure field)
+  - core/assaults.py (assault_interval modifier)
+  - corefidelity suppression)
+/fidelity.py (  - terminal/commands/status.py (STATUS KNOWLEDGE)
+
+2. `COMPLETE` Assault-resource coupling follow-ons.
+- Implemented:
+  - transit fortification lane prep and interception coupling
+  - deterministic bounded Phase C salvage coupling
+  - after-action salvage breakdown surfacing
 - Source: `design/10_systems/assault/ASSAULT_DESIGN.md`
 
 3. `PARTIAL` Finish embodied-presence future compatibility items.
