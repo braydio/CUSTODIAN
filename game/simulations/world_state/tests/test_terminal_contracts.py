@@ -28,7 +28,7 @@ def test_help_output_matches_contract() -> None:
         "[POLICY] SET | FORTIFY | POLICY | CONFIG | ALLOCATE | DRONE_REPAIR",
         "[FABRICATION] FAB ADD | QUEUE | CANCEL | PRIORITY",
         "[ASSAULT] SCAN | STABILIZE | SYNC | REROUTE | BOOST | DRONE | LOCKDOWN | PRIORITIZE",
-        "[STATUS] STATUS | STATUS FULL | STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>",
+        "[STATUS] STATUS | STATUS FULL | STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY|KNOWLEDGE>",
     ]
 
 
@@ -43,7 +43,7 @@ def test_tutorial_output_matches_contract() -> None:
     assert result.text == "TUTORIAL INDEX"
     assert result.lines is not None
     assert result.lines[0] == "USE: TUTORIAL <TOPIC>"
-    assert "TOPICS: CORE | MOVEMENT | SYSTEMS | GRID | POLICY | FABRICATION | ASSAULT | STATUS" in result.lines
+    assert "TOPICS: CORE | MOVEMENT | SYSTEMS | GRID | POLICY | FABRICATION | ASSAULT | STATUS | QUICKSTART" in result.lines
 
 
 def test_status_output_contains_locked_sections() -> None:

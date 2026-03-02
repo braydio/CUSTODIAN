@@ -653,13 +653,25 @@ def test_status_group_relay_reports_network_summary() -> None:
     assert "RELAY NETWORK:" in result.lines
 
 
+def test_status_group_knowledge_reports_ladder_summary() -> None:
+    state = GameState()
+
+    result = process_command(state, "STATUS KNOWLEDGE")
+
+    assert result.ok is True
+    assert result.text == "STATUS GROUP: KNOWLEDGE"
+    assert result.lines is not None
+    assert "KNOWLEDGE STATUS:" in result.lines
+    assert any(line.startswith("INDEX: ") for line in result.lines)
+
+
 def test_status_invalid_group_returns_usage() -> None:
     state = GameState()
 
     result = process_command(state, "STATUS BOGUS")
 
     assert result.ok is False
-    assert result.text == "STATUS <BRIEF|FULL|FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>"
+    assert result.text == "STATUS <BRIEF|FULL|FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY|KNOWLEDGE>"
 
 
 def test_policy_show_and_preset_commands_apply_state() -> None:

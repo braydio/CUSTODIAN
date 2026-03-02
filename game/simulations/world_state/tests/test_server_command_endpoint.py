@@ -64,3 +64,28 @@ def test_command_endpoint_requires_command_string() -> None:
         "text": "UNKNOWN COMMAND.",
         "lines": ["UNKNOWN COMMAND.", "TYPE HELP FOR AVAILABLE COMMANDS."],
     }
+
+
+def test_procgen_report_requires_dev_mode() -> None:
+    client = server.app.test_client()
+    server.command_state.dev_mode = False
+
+    response = client.get("/procgen_report")
+
+    assert response.status_code == 403
+    assert response.get_json() == {"ok": False, "error": "DEV MODE REQUIRED"}
+
+
+def test_procgen_report_returns_fingerprint_in_dev_mode() -> None:
+    client = server.app.test_client()
+    server.command_state.dev_mode = True
+
+    response = client.get("/procgen_report")
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["ok"] is True
+    report = payload["procgen_report"]
+    assert "fingerprint_hash" in report
+    assert len(report["fingerprint_hash"]) == 16
+    assert any(item["name"] == "doctrine_profile_id" for item in report["components"])
