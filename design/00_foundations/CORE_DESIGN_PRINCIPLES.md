@@ -134,6 +134,37 @@ Concrete base rules:
 - You cannot expand infinitely.
 - You can reinforce, reroute, or abandon sectors.
 
+## Identity Guardrail (LOCKED)
+
+> **This is a defensive machine, not a living colony.**
+
+CUSTODIAN is explicitly NOT a colony sim. The base is a machine you fortify, not a settlement you grow.
+
+### What We ARE
+
+- Fixed facility footprint
+- Defensive geometry and tactical interior
+- Power/logistics as hard constraints
+- Assault-centric design loop
+
+### What We Are NOT
+
+| Anti-Pattern | Why Rejected |
+|--------------|--------------|
+| Colony sim (RimWorld) | No colonists, moods, or social graphs |
+| Infinite expansion | Fixed footprint, power constrains |
+| Farming/comfort | Irrelevant to defensive purpose |
+| Population management | Only Custodian + automation |
+
+### The Philosophical Distinction
+
+> "The difference is what the space is for."
+
+- **RimWorld map**: Open terrain → build anything → grow indefinitely → manage colonists
+- **CUSTODIAN base**: Fixed facility footprint → customize interior → defend under pressure
+
+See `GAME_IDENTITY_LOCK.md` for the permanent constraints.
+
 ## Initial Base Layout (Strong Starting State)
 
 Start with:

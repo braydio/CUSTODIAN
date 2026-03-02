@@ -13,6 +13,7 @@
 - Deterministic procedural terminal messaging is active for `WAIT` signals (seeded grammar variants with fidelity-aware symbol banks).
 - Procgen infrastructure scaffolding is active for Phase 0.5 (`game/procgen/signals.py`, `game/procgen/projection.py`) with deterministic projection tests in place.
 - WAIT text rendering can now route through the Phase 0.5 projection layer via `GameState.procgen_projection_enabled` (default disabled for behavior-safe migration).
+- Phase 0 instrumentation is partially active: snapshots now expose deterministic `run_fingerprint` (`snapshot_version=5`) and both servers expose dev-gated `GET /procgen_report`.
 - Deterministic sector grid substrate is active (fixed `12x12` per sector) with snapshot-compatible serialization.
 - World-state tests are passing (`game/simulations/world_state/tests`).
 
@@ -41,14 +42,15 @@
 - Ambient fabrication loop that passively fabricates materials/gear from policy allocation (`SET FAB`) and scales output from available inputs, power posture, and logistics pressure.
 - Logistics throughput caps tied to active system load (`core/logistics.py`) with deterministic slowdown multipliers for repair/fabrication under overload.
 - Assault system with spatial approach traversal, transit interception, multi-tick tactical resolution, and after-action effects.
-- ARRN relay scaffolding with command/field flow (`SCAN RELAYS`, `STABILIZE RELAY`, `SYNC`) and knowledge-index progression.
+- Assault-Resource-Link Phase C is active: salvage payout now uses deterministic bounded coupling from interception efficiency and resource burn.
+- ARRN relay network includes command/field flow (`SCAN RELAYS`, `STABILIZE RELAY`, `SYNC`), deterministic relay stability decay, dormancy pressure, bounded knowledge drift, and tiered knowledge unlocks (1-7).
 - Dev-mode debug command path (`DEBUG ...`) gated behind `--dev`.
 
 ## Terminal Command Surface
 
 Normal operation includes:
 
-- `STATUS`, `STATUS FULL`, `STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY>`
+- `STATUS`, `STATUS FULL`, `STATUS <FAB|POSTURE|ASSAULT|POLICY|SYSTEMS|RELAY|KNOWLEDGE>`
 - `WAIT`, `WAIT NX`, `WAIT UNTIL <ASSAULT|APPROACH|REPAIR_DONE>`
 - `DEPLOY`, `MOVE`, `RETURN`
 - `FOCUS`, `HARDEN`, `REPAIR`, `REPAIR <ID> FULL`, `SCAVENGE`, `SCAVENGE NX`
