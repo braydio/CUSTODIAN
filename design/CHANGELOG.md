@@ -1,5 +1,9 @@
 ## 2026-03-02
 
+- Began procgen Phase 1 slice A: added deterministic seeded topology profile registry/selector (`core/topology_profiles.py`) with bounded profile families and stable profile IDs.
+- Snapshot contract now includes additive `topology_profile` metadata (`profile_id`, full-name `summary`) and migration bump to `snapshot_version=6`.
+- `run_fingerprint.topology_profile_id` now reflects the selected topology profile instead of a static baseline token.
+- Added topology profile coverage in `test_topology_profiles.py` (determinism, divergence, bounds, summary token hygiene) and updated snapshot assertions.
 - Implemented ARRN reward-ladder and decay-loop expansion (`core/relays.py`) with deterministic relay stability decay, `WEAK`/`DORMANT` thresholds, dormancy pressure, bounded knowledge drift, and capped relay knowledge index (`0..7`).
 - Added tiered ARRN effects across systems: remote repair discount (tier 2), threat-forecast warning lead-time bonus (tier 3), Archive Plating fabrication gate (tier 4), logistics-penalty reduction (tier 5), and status fidelity floors (tiers 1 and 6).
 - Added `STATUS KNOWLEDGE` group output and updated status/help contracts to include `KNOWLEDGE` in grouped status surfaces.

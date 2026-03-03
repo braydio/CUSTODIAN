@@ -9,7 +9,7 @@ def test_snapshot_shape_and_defaults() -> None:
     state = GameState()
     snapshot = state.snapshot()
 
-    assert snapshot["snapshot_version"] == 5
+    assert snapshot["snapshot_version"] == 6
     assert snapshot["time"] == 0
     assert snapshot["threat"] == "LOW"
     assert snapshot["assault"] == "NONE"
@@ -31,11 +31,14 @@ def test_snapshot_shape_and_defaults() -> None:
     assert fp["schema_version"] == 1
     assert fp["seed"] == state.seed
     assert fp["text_seed"] == state.text_seed
-    assert fp["topology_profile_id"] == "BASELINE_STATIC"
+    assert fp["topology_profile_id"] == snapshot["topology_profile"]["profile_id"]
     assert fp["economy_profile_id"] == "BASELINE_STATIC"
     assert len(fp["event_catalog_hash"]) == 16
     assert len(fp["faction_profile_hash"]) == 16
     assert len(fp["fingerprint_hash"]) == 16
+    assert "topology_profile" in snapshot
+    assert "profile_id" in snapshot["topology_profile"]
+    assert "summary" in snapshot["topology_profile"]
 
     sectors = snapshot["sectors"]
     assert len(sectors) > 0

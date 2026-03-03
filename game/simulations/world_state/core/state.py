@@ -39,6 +39,7 @@ from .defense import DEFAULT_DEFENSE_ALLOCATION, compute_readiness, normalize_do
 from .assault_ledger import AssaultLedger, AssaultTickRecord, append_record
 from .policies import PolicyState, default_fabrication_allocation
 from .relays import default_relay_nodes, refresh_relay_benefits
+from .topology_profiles import select_topology_profile
 
 
 class SectorState:
@@ -137,6 +138,7 @@ class GameState:
         self.text_rng = random.Random(self.text_seed)
         self.variant_memory = VariantMemory(max_recent=3)
         self.procgen_projection_enabled = False
+        self.topology_profile = select_topology_profile(self.seed)
         self.tick_events: list[Any] = []
         self.time = 0
         self.ambient_threat = 0.0
@@ -281,7 +283,7 @@ class GameState:
         doctrine_profile_id = str(
             self.faction_profile.get("doctrine_short", "UNKNOWN")
         ).upper()
-        topology_profile_id = "BASELINE_STATIC"
+        topology_profile_id = str(self.topology_profile.get("profile_id", "TP_BALANCED_BASELINE_A"))
         economy_profile_id = "BASELINE_STATIC"
 
         event_catalog_source: Any
@@ -355,7 +357,7 @@ class GameState:
             )
 
         return {
-            "snapshot_version": 5,
+            "snapshot_version": 6,
             "time": self.time,
             "threat": self.threat_bucket(),
             "assault": self.assault_state(),
@@ -435,6 +437,15 @@ class GameState:
             "seed": self.seed,
             "text_seed": self.text_seed,
             "run_fingerprint": self._build_run_fingerprint(),
+            "topology_profile": {
+                "profile_id": str(self.topology_profile.get("profile_id", "TP_BALANCED_BASELINE_A")),
+                "summary": str(
+                    self.topology_profile.get(
+                        "summary",
+                        "Balanced baseline. North Transit and South Transit remain even.",
+                    )
+                ),
+            },
             "operator_log": list(self.operator_log[-50:]),
             "dev_mode": self.dev_mode,
             "drone_perimeter_repair_policy": self.drone_perimeter_repair_policy,
@@ -601,6 +612,11 @@ class GameState:
                 state.relay_benefits = {str(k): int(v) for k, v in benefits.items()}
             state.dormancy_pressure = int(relays.get("dormancy_pressure", state.dormancy_pressure))
         refresh_relay_benefits(state)
+        topology_profile = migrated.get("topology_profile")
+        if isinstance(topology_profile, dict):
+            current = dict(state.topology_profile)
+            current.update(topology_profile)
+            state.topology_profile = current
 
         state.sector_grids = state._fresh_sector_grids()
         grids_data = migrated.get("sector_grids")
