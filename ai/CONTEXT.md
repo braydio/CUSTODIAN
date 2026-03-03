@@ -23,7 +23,7 @@ Gameplay centers on command-vs-field authority, infrastructure survival, degrade
   - Request: `POST /command` with `{ "command": "<string>" }` (`raw` fallback supported).
   - Response: `{ "ok": bool, "text": str, "lines": list[str] }`.
   - Optional idempotency: `command_id`.
-- Snapshot contract: `GET /snapshot`, schema version `2`.
+- Snapshot contract: `GET /snapshot`, schema version `6`.
 
 ## Current Architecture
 
@@ -56,6 +56,8 @@ Gameplay centers on command-vs-field authority, infrastructure survival, degrade
   - Assault ledger + trace/report controls in dev mode.
 - ARRN relay slice:
   - `SCAN RELAYS`, `STABILIZE RELAY`, `SYNC`, knowledge index progression, first relay benefit.
+- Procgen topology metadata slice:
+  - deterministic run-level topology profile ID + summary surfaced in snapshot/fingerprint.
 - Reliability hardening:
   - Idempotency cache, snapshot migration/versioning, centralized invariants.
 - Terminal UI QoL:

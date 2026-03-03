@@ -13,7 +13,8 @@
 - Deterministic procedural terminal messaging is active for `WAIT` signals (seeded grammar variants with fidelity-aware symbol banks).
 - Procgen infrastructure scaffolding is active for Phase 0.5 (`game/procgen/signals.py`, `game/procgen/projection.py`) with deterministic projection tests in place.
 - WAIT text rendering can now route through the Phase 0.5 projection layer via `GameState.procgen_projection_enabled` (default disabled for behavior-safe migration).
-- Phase 0 instrumentation is partially active: snapshots now expose deterministic `run_fingerprint` (`snapshot_version=5`) and both servers expose dev-gated `GET /procgen_report`.
+- Phase 0 instrumentation is partially active: snapshots now expose deterministic `run_fingerprint` (`snapshot_version=6`) and both servers expose dev-gated `GET /procgen_report`.
+- Procgen Phase 1 slice A is active: run initialization now selects a deterministic seeded topology profile surfaced in snapshot metadata and run fingerprint (`snapshot_version=6`).
 - Deterministic sector grid substrate is active (fixed `12x12` per sector) with snapshot-compatible serialization.
 - World-state tests are passing (`game/simulations/world_state/tests`).
 

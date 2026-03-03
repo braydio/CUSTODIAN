@@ -8,6 +8,9 @@
 - Added ARRN knowledge/status surfaces: `STATUS KNOWLEDGE`, updated status/help contract strings, and relay sync reporting for weak-link packet corruption.
 - Wired ARRN unlock effects into simulation systems: remote repair discount at tier 2, warning lead-time bonus at tier 3, Archive Plating fabrication gate at tier 4, logistics penalty reduction at tier 5, and status-fidelity flooring at tiers 1/6.
 - Added ARRN regression coverage in `test_arrn_progression.py` and expanded status/contract snapshot assertions.
+- Began procgen Phase 1 (slice A): added deterministic seeded topology profile selection in `core/topology_profiles.py` with bounded profile families and full-name summaries.
+- Wired topology profile metadata into `GameState` snapshot and run fingerprint (`snapshot_version=6`), plus migration fallback and restoration support.
+- Added topology profile tests covering same-seed determinism, cross-seed divergence, bounded modifiers, and summary token hygiene (`test_topology_profiles.py`).
 
 ## 2026-02-27
 

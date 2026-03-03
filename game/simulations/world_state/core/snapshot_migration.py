@@ -29,6 +29,10 @@ def migrate_snapshot(snapshot: dict) -> dict:
         migrated.setdefault("run_fingerprint", None)
         migrated["snapshot_version"] = 5
 
+    if version < 6:
+        migrated.setdefault("topology_profile", None)
+        migrated["snapshot_version"] = 6
+
     relays = migrated.get("relays")
     if not isinstance(relays, dict):
         migrated["relays"] = {
