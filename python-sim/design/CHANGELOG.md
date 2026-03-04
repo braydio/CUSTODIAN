@@ -1,3 +1,35 @@
+## 2026-03-04
+
+- Completed documentation migration to align with the Godot-authoritative pivot described in `python-sim/CODEX_HANDOFF.md`.
+- Rewrote foundational runtime docs to reflect active architecture:
+  - `design/00_foundations/ARCHITECTURE.md`
+  - `design/00_foundations/CORE_DESIGN_PRINCIPLES.md`
+  - `design/00_foundations/GAME_IDENTITY_LOCK.md`
+  - `design/00_foundations/SIMULATION_RULES.md`
+  - `design/00_foundations/ENGINE_TRANSITION_STRATEGY.md`
+- Reworked playable-layer transition docs:
+  - `design/30_playable_game/PLAYER_CONTROL_MODEL.md`
+  - `design/30_playable_game/ENGINE_PORT_PLAN.md`
+  - Marked `design/30_playable_game/RTS_LAYER.md` deprecated as a standalone future layer.
+- Archived terminal-specific contract/command docs to `design/archive/terminal-deprecated/`:
+  - `COMMANDS.txt`
+  - `COMMAND_CONTRACT.md`
+  - `CUSTODIAN_TERMINAL.md`
+  - `TUTORIAL_DETAILS.md`
+- Added new active Godot documentation set under `custodian/docs/`:
+  - `ARCHITECTURE.md`
+  - `GDSCRIPT_STANDARDS.md`
+  - `SCENE_HIERARCHY.md`
+- Updated active repo and tracker docs for pivot consistency:
+  - `python-sim/README.md`
+  - `custodian/README.md`
+  - `python-sim/AGENTS.md`
+  - `python-sim/design/AGENTS.md`
+  - `python-sim/ai/CURRENT_STATE.md`
+  - `python-sim/ai/CONTEXT.md`
+  - `python-sim/ai/FILE_INDEX.md`
+  - `python-sim/TODO.md`
+
 ## 2026-03-03
 
 - Implemented ambient event diversity pacing in `game/simulations/world_state/core/events.py`:

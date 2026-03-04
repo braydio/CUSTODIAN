@@ -1,99 +1,39 @@
 # CURRENT STATE — CUSTODIAN
 
+Last updated: 2026-03-04
+
 ## Runtime Status
 
-- **Engine:** Godot 4.x (new development target)
-- **Project Status:** FOUNDATION PHASE — core project structure being established
-- **Architecture:** Godot-authoritative, fixed-step simulation
-- **Primary Interface:** Isometric real-time gameplay (WASD operator)
-- **Secondary Interface:** Terminal (deprecated, preserved for debug)
+- Active runtime: Godot 4.x project in `custodian/`.
+- Active main scene: `res://scenes/game.tscn`.
+- Authority model: Godot-authoritative (no external runtime process).
+- Timing model: fixed-step simulation in `core/systems/simulation.gd` (`FIXED_DT = 1/60`).
+- Pause model: hard pause toggled via `pause` input action (`Space`), sets `get_tree().paused`.
+- State root: autoload `GameState` (`core/state/game_state.gd`).
+- Embodied operator: `CharacterBody2D` with WASD movement in `entities/operator/operator.gd`.
 
----
+## Current Implemented Godot Slice
 
-## Godot Project (In Development)
+- Project boot and run pipeline is live (`project.godot` + `scenes/game.tscn`).
+- Operator movement is functional with normalized vector and configurable speed.
+- Simulation tick accumulator loop is implemented and advances `GameState.tick` when unpaused.
+- Scene includes world root, operator instance, camera, simulation node, and UI layer placeholders.
 
-### Current Focus
+## Legacy Scope (Preserved)
 
-1. **Godot Project Setup**
-   - Project structure creation
-   - Scene hierarchy foundation
-   - Isometric camera implementation
+- `python-sim/game/` and `python-sim/custodian-terminal/` are legacy terminal-era systems.
+- Legacy command parser/processor and `/command` transport are not active runtime authority.
+- Legacy docs are retained for migration context and parity reference.
 
-2. **Operator Controller**
-   - WASD movement within sectors
-   - Collision detection
-   - Weapon slot system
+## Active Gaps
 
-3. **Combat Prototype**
-   - Hitscan weapon system
-   - Projectile system
-   - Damage pipeline
+- Combat loop (hitscan/projectile/melee) not yet implemented in Godot runtime.
+- Sector system and base layout rules need full scene/system integration.
+- Infrastructure systems (power/logistics/fabrication/ARRN) need Godot-native runtime implementations.
+- Save/load pipeline not yet implemented.
 
----
+## Documentation Status
 
-## Legacy Terminal Implementation (Preserved for Reference)
-
-The Python terminal implementation is deprecated but preserved at:
-
-- `custodian-terminal/` — Terminal UI files
-- `game/simulations/world_state/` — Python simulation core
-
-These are **not** the primary development target. They remain for:
-- Debug/diagnostic reference
-- Deterministic behavior testing
-- Legacy feature documentation
-
----
-
-## Implemented (Legacy / Reference)
-
-The following were implemented in the Python terminal phase and need reimplementation in Godot:
-
-- Command parser and processor
-- Spatial assault with approach traversal
-- Policy/doctrine/allocation/fabrication layers
-- Comms fidelity-driven information degradation
-- ARRN relay progression system
-- Deterministic seeded world simulation
-- Ambient event and procgen systems
-
----
-
-## Godot Command Surface (Target)
-
-- **Movement:** WASD continuous movement
-- **Combat:** Left-click (ranged), Right-click (melee), E (utility)
-- **Pause:** Spacebar / Escape (FTL-style hard pause)
-- **Camera:** Edge pan, middle mouse pan, scroll zoom
-
----
-
-## Known Gaps (Godot Phase)
-
-- No Godot scenes created yet
-- No operator controller
-- No combat system
-- No sector navigation
-- No assault waves
-- No infrastructure simulation (power, logistics, fabrication)
-- No save system
-
----
-
-## Locked Behavior Notes
-
-- Godot is fully authoritative
-- Fixed-step simulation (60Hz or 30Hz)
-- FTL-style pause freezes all simulation
-- Time scaling: 1x, 2x, 4x (all deterministic)
-- Save anywhere, including mid-assault
-
----
-
-## Documentation Structure
-
-- `design/MASTER_DESIGN_DOCTRINE.md` — **LOCKED** master reference
-- `design/*` — Design documents
-- `ai/*` — AI session context files
-- `custodian-terminal/` — Deprecated terminal UI
-- `game/simulations/world_state/` — Deprecated Python simulation
+- Master doctrine remains locked at `python-sim/design/MASTER_DESIGN_DOCTRINE.md`.
+- Foundation/playable docs have been updated to Godot-native assumptions.
+- Terminal contract docs are archived under `python-sim/design/archive/terminal-deprecated/`.

@@ -1,96 +1,47 @@
 # AGENTS.md
 
-This repository contains lightweight prototypes for a defense-oriented simulation of a static command post in a collapsed interstellar civilization. Keep changes simple, readable, and consistent with the simulation tone (operational, perimeter-defense language; terse, grounded output). Emphasize reconstruction and knowledge preservation over extermination.
+CUSTODIAN has pivoted to a Godot-native runtime. Treat `custodian/` as active implementation and `python-sim/` as legacy/reference unless the user explicitly requests legacy work.
 
-## Repo Structure
+## Active Repo Structure
 
-- `game/`: simulation engine code.
-- `game/simulations/world_state/`: primary world-state simulation and terminal command stack.
-- `game/simulations/assault/`: assault simulation modules and JSON data packs.
-- `custodian-terminal/`: Flask UI server, terminal frontend, boot stream scripts, and static assets.
-- `design/`: canonical design and architecture docs (see `design/AGENTS.md` for design-layer governance).
-- `ai/`: AI context projection docs (`CURRENT_STATE.md`, `FILE_INDEX.md`, `CONTEXT.md`).
-- `docs/`: lightweight operational docs (for example deployment notes).
-- `tests/`: top-level regression tests.
+- `custodian/`: active Godot 4.x project.
+- `python-sim/design/`: canonical design docs (shared reference).
+- `python-sim/ai/`: AI projection docs.
 
-## Entrypoints
+## Legacy / Deprecated
 
-- Unified launcher: `python -m game`
-- Terminal UI server (default from unified launcher): `python -m game --ui`
-- World-state autonomous sim: `python -m game --sim`
-- World-state REPL: `python -m game --repl`
-- World-state standalone script: `python game/simulations/world_state/sandbox_world.py`
-- Assault standalone script: `python game/simulations/assault/sandbox_assault.py`
+- `python-sim/game/`: legacy Python simulation runtime.
+- `python-sim/custodian-terminal/`: legacy terminal UI.
 
-## Runtime Servers
+Do not delete legacy assets unless explicitly requested.
 
-- Primary terminal web service: `custodian-terminal/server.py` (boot stream at `/stream/boot`, command endpoint at `/command`, snapshot endpoint at `/snapshot`).
-- Secondary world-state server prototype: `game/simulations/world_state/server.py` (stream/history/pause/resume prototype plus `/command` and `/snapshot`).
-- Render deployment is configured in `render.yaml` and currently starts Gunicorn with `--chdir custodian-terminal server:app`.
+## Active Entrypoints
 
-## Terminal Contract Guidance
+- Open Godot project: `custodian/project.godot`
+- Run from terminal: `cd custodian && godot`
 
-- Command transport is `POST /command` with JSON containing `command` or `raw`; `command_id` is supported for idempotent replay.
-- Backend handler contract is `CommandResult(ok, text, lines=None, warnings=None)` from `game/simulations/world_state/terminal/result.py`.
-- Serialized response currently returns `ok`, `text`, and merged `lines` (warnings are folded into `lines` by serializer).
-- `text` is the single primary operator-facing line; `lines` are ordered detail lines.
-- Keep output concise, operational, and ASCII-safe.
+## Documentation Workflow
 
-## UI Naming Policy (No Shorthand In User-Facing Text)
+When architecture/design behavior changes:
 
-- Never use shorthand/acronyms/internal tokens in user-facing UI copy, terminal output, map labels, help text, or tutorials.
-- Use full readable names such as `Fabrication`, `North Transit`, `South Transit`, `Command Center`.
-- Do not surface abbreviations such as `FAB`, `FB`, `T_NORTH`, `TN`, `T_SOUTH`, `TS`, `CC`, `DF`, `HG`, `GS` to users.
-- Internal tokens are allowed in code, data models, and parser aliases only; display surfaces must map to full names via display-name utilities.
+1. Update relevant docs in `python-sim/design/`.
+2. Update `python-sim/design/CHANGELOG.md`.
+3. Update `python-sim/design/DEVLOG.md`.
+4. Sync `python-sim/ai/CURRENT_STATE.md` (and `CONTEXT.md`/`FILE_INDEX.md` as needed).
 
-## Terminal Module Guidance
+## Design/Lifecycle Rules
 
-- Keep web transport and HTTP routes in `custodian-terminal/server.py`.
-- Keep boot stream sequencing in `custodian-terminal/boot.js`.
-- Keep terminal I/O rendering and submit wiring in `custodian-terminal/terminal.js`.
-- Keep map rendering/overlay logic in `custodian-terminal/sector-map.js`.
-- Keep authority and command dispatch logic backend-side in `game/simulations/world_state/terminal/processor.py`.
+- Keep feature lifecycle docs in `python-sim/design/20_features/{planned,in_progress,completed}`.
+- Move deprecated terminal-contract docs to `python-sim/design/archive/terminal-deprecated/`.
+- Avoid duplicate canonical docs.
 
-## World-State Module Guidance
+## Coding and Style
 
-- Keep simulation tick progression in `game/simulations/world_state/core/simulation.py`.
-- Keep balancing/tuning knobs in `game/simulations/world_state/core/config.py`.
-- Keep parser/token normalization in `game/simulations/world_state/terminal/parser.py` and `terminal/location.py`.
-- Keep command specs and handlers under `game/simulations/world_state/terminal/commands/`.
-- Handlers must return `CommandResult` and should not print directly.
+- Keep changes pragmatic and deterministic.
+- Preserve operational tone in user-facing copy.
+- Keep docs ASCII unless file already requires otherwise.
 
-## Documentation Guidance
+## Validation
 
-- Read `ai/CURRENT_STATE.md` at the start of each session; treat it as current runtime status context.
-- Keep `ai/` files concise and synchronized with actual implemented behavior.
-- Keep canonical architecture/design changes in `design/` and append material design/architecture changes to `design/DEVLOG.md` once per session.
-- If code structure, entrypoints, naming, or behavior drift from docs, update docs in the same change.
-- Do not add speculative plans or TODO lists to state-tracking docs.
-
-## Testing & Validation
-
-- Automated tests exist at both top-level `tests/` and `game/simulations/world_state/tests/`.
-- Run `python -m pytest` for full regression coverage.
-- Prefer targeted runs while iterating (for example `python -m pytest game/simulations/world_state/tests/test_terminal_parser.py`).
-- When documenting validation, include exact commands you ran and what you checked manually.
-
-## Coding Style
-
-- Keep Python/JS straightforward; avoid unnecessary abstraction.
-- Favor small functions and clear naming.
-- Use ASCII in code and output unless a file already requires otherwise.
-- Add minimal comments only where logic is not self-evident.
-- For multi-phase work, ship stable slices with tests before moving to the next slice.
-
-## Safety & Secrets
-
-- Do not commit credentials or runtime-local artifacts.
-- Treat files like `auth.json`, `internal_storage.json`, `history.jsonl`, `olddauth.json`, and similar local auth/state files as sensitive.
-- Keep secrets out of repository docs and code.
-
-## Contribution Notes
-
-- Preserve scenario tone and thematic consistency in event text.
-- Keep entrypoints stable unless a deliberate migration is documented.
-- Keep sector naming aligned with the current world model and user-facing full-name policy.
-- Prefer `rg` for repository searches.
+For doc-only updates, validate by checking references and paths.
+For code changes in Godot, validate by opening/running `custodian/project.godot` when feasible.

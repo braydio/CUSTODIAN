@@ -1,44 +1,50 @@
-# ARCHITECTURE — CUSTODIAN
+# ARCHITECTURE — CUSTODIAN (v2.0)
 
-## Core Shape
+Status: Active (Godot-native)
+Last updated: 2026-03-04
 
-- Terminal-first simulation interface.
-- Backend-authoritative world state (`GameState`) with deterministic tick progression.
-- Frontend is a transport and projection layer, not game authority.
+## Authority and Runtime
 
-## Runtime Layers
+- Runtime authority is Godot 4.x.
+- There is no external simulation server in the active game runtime.
+- Legacy Python simulation remains preserved under `python-sim/game/` for reference and parity testing.
 
-1. Command layer
-- Parser + processor dispatch in `game/simulations/world_state/terminal/`.
-- Commands return `CommandResult` payloads.
+## Active Runtime Layers
 
-2. World-state layer
-- Tick orchestration in `core/simulation.py::step_world`.
-- Subsystems: events, assaults, repairs, power, policies, fabrication, presence.
+1. State layer
+- `res://core/state/game_state.gd` (autoload singleton).
+- Holds canonical simulation state for the active run.
 
-3. UI layer
-- Browser terminal in `custodian-terminal/`.
-- Boot stream + command POST + snapshot polling.
+2. Systems layer
+- `res://core/systems/*.gd`.
+- Fixed-step deterministic logic mutates GameState.
 
-## Time Model
+3. Entity layer
+- `res://entities/*`.
+- Operator/enemy scripts consume state and input.
 
-- No hidden background time in terminal operation.
-- Time advances through explicit commands (`WAIT`, `WAIT NX`, `WAIT UNTIL ...`).
-- `WAIT` currently advances 5 ticks per unit; while an assault is active it advances 1 tick per unit.
+4. Scene/UI layer
+- `res://scenes/*.tscn` and `res://ui/*`.
+- Presentation, camera, and overlays read state; they do not own rules.
 
-## Authority Model
+## Timing Model
 
-- Command authority is location-based.
-- While deployed in field mode, strategic command verbs are blocked and return `COMMAND AUTHORITY REQUIRED.`
+- Simulation is fixed-step (target: 60Hz).
+- `_process(delta)` accumulates and runs deterministic `simulation_step(FIXED_DT)` loops.
+- Tactical pause is a hard freeze (`get_tree().paused`).
+- Time scaling (1x/2x/4x) is permitted only if fixed-step determinism is preserved.
 
-## Failure Model
+## Input Model
 
-- COMMAND-center loss and archive-integrity loss latch failure mode.
-- In failure mode, only `RESET` and `REBOOT` are accepted.
+- Primary: embodied operator control (`move_up`, `move_down`, `move_left`, `move_right`, `pause`).
+- Secondary: terminal/debug interface is legacy and non-authoritative for the active game.
 
-## Entrypoints
+## Legacy Reference Scope
 
-- Unified: `python -m game`
-- UI: `python -m game --ui`
-- REPL: `python -m game --repl`
-- Autonomous sim loop: `python -m game --sim`
+The following are deprecated for active gameplay authority:
+
+- `python-sim/custodian-terminal/`
+- `python-sim/game/simulations/world_state/terminal/`
+- HTTP `/command` and `/snapshot` runtime contract as primary control path
+
+These remain preserved for reference, migration history, and debugging support.

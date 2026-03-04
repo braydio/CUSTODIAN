@@ -1,131 +1,55 @@
 # Unified TODO
 
-*Last Updated: 2026-03-03*
+Last Updated: 2026-03-04
 
-## Legend
+## Scope
 
-- `OPEN`: Not implemented.
-- `PARTIAL`: Implemented in part; remaining requirements listed.
-- `IN_PROGRESS`: Actively being worked on.
+Tracks active Godot-runtime work after the architecture pivot.
 
----
+## Current Runtime Baseline (Already Landed)
 
-## Master Design Doctrine
+- Godot project boot and run (`custodian/project.godot`)
+- Main scene scaffold (`custodian/scenes/game.tscn`)
+- GameState autoload (`custodian/core/state/game_state.gd`)
+- Fixed-step simulation loop + pause toggle (`custodian/core/systems/simulation.gd`)
+- Embodied operator movement (WASD) (`custodian/entities/operator/operator.gd`)
 
-All work must align with `design/MASTER_DESIGN_DOCTRINE.md` (LOCKED v2.0).
+## High Priority
 
----
+1. Combat Core (`OPEN`)
+- Implement ranged slot (hitscan baseline)
+- Implement melee slot
+- Implement utility slot interactions
+- Add damage reception pipeline
 
-## Recommended Next Focus
+2. Sector Runtime (`OPEN`)
+- Build sector scene/layout contract
+- Add sector traversal and collision boundaries
+- Define ingress points for assaults
 
-### 1. `OPEN` Godot Project Foundation
+3. Assault Runtime (`OPEN`)
+- Spawn logic and wave pacing
+- Enemy movement/targeting baseline
+- Structural damage propagation into GameState
 
-- Set up Godot 4.x project structure
-- Configure scene hierarchy (main → sectors → entities)
-- Implement isometric camera (pan, zoom, fixed angle)
-- Add Y-sort for isometric rendering
+4. Save/Load (`OPEN`)
+- Serialize full run state
+- Restore deterministic state mid-assault
+- Version save format
 
-**Why this is next:** Core engine foundation must be established before any gameplay.
+## Medium Priority
 
----
-
-### 2. `OPEN` Operator Controller
-
-- Implement WASD movement within sectors
-- Add collision detection per sector
-- Create weapon slots (melee, ranged, utility)
-- Implement basic attack inputs
-
-**Why this is next:** Player embodiment is core to the design identity.
-
----
-
-### 3. `OPEN` Combat System Prototype
-
-- Hitscan weapon implementation
-- Projectile system for heavy weapons
-- Damage pipeline (LOS → spread → hit → penetration → damage type)
-- Melee attack with range check
-- Utility tool (repair, relay interface)
-
-**Why this is next:** Combat is the primary interaction layer.
-
----
-
-### 4. `OPEN` Sector Base System
-
-- Define sector layout (Command, Power, Defense, Archive, etc.)
-- Implement sector navigation/transitions
-- Add collision maps per sector
-- Create static base structure
-
-**Why this is next:** Base is the tactical playing field.
-
----
-
-### 5. `OPEN` Assault Wave System
-
-- Real-time enemy spawning at sector ingress
-- Basic enemy AI (approach, engage)
-- Damage propagation to structures
-- Assault resolution and aftermath
-
-**Why this is next:** Assaults are the core gameplay pressure.
-
----
-
-### 6. `OPEN` Infrastructure Systems
-
-- Power grid simulation
+5. Infrastructure Systems (`OPEN`)
+- Power model
 - Logistics throughput model
-- Fabrication queue system
-- Relay network management
+- Fabrication queue and outputs
+- ARRN relay progression loop
 
-**Why this is next:** Systemic depth distinguishes CUSTODIAN from action games.
+6. UI Command Surfaces (`OPEN`)
+- Pause-time systems management panel
+- Tactical state and warning overlays
 
----
+## Legacy Note
 
-### 7. `OPEN` Pause & Time Management
-
-- FTL-style hard pause implementation
-- Command issuing while paused
-- Time scaling (1x, 2x, 4x)
-- Projectile/AI freeze on pause
-
-**Why this is next:** Tactical pause is a core design pillar.
-
----
-
-### 8. `OPEN` Save System
-
-- Full state serialization
-- Mid-assault save capability
-- Deterministic state reconstruction
-- Ironman mode support
-
----
-
-## Deprecated / Archived
-
-The following are no longer active priorities (superseded by v2.0):
-
-- Terminal-first Python backend development
-- External simulation process architecture
-- Backend-authoritative command contract
-- Legacy terminal UI enhancements
-
-See `design/archive/terminal-deprecated/` for legacy documentation.
-
----
-
-## Completed (Pre-v2.0 Terminal Era)
-
-These were completed in the Python terminal phase but are not directly carried forward:
-
-- Command parser and processor
-- Spatial assault with approach traversal
-- Policy/doctrine/allocation/fabrication layers
-- Comms fidelity-driven information degradation
-- ARRN relay progression system
-
-*These systems need reimplementation in Godot.*
+Terminal-era Python features remain preserved in `python-sim/` for reference.
+No new primary gameplay implementation should target the legacy stack unless explicitly requested.

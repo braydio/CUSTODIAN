@@ -1,31 +1,28 @@
-# Roadmap
+# ENGINE TRANSITION STRATEGY
 
-This roadmap tracks implementation-facing priorities.
+Status: Transition Complete
+Last updated: 2026-03-04
 
-## Completed Baseline
+## Outcome
 
-- Backend-authoritative terminal command loop.
-- Shared `/command` contract across UI/world-state servers.
-- Spatial assaults with approach traversal and tactical resolution.
-- Presence/authority split with transit movement.
-- Policy/doctrine/allocation/fabrication layers.
-- Comms fidelity-driven information degradation.
+CUSTODIAN has completed its primary architecture transition to Godot 4.x native runtime.
+The Python terminal stack is retained as a legacy reference and debug aid.
 
-## Current Workstreams
+## Current Execution Model
 
-1. Balance and pacing
-- Tune threat, assaults, interception, and material economy.
+- Primary development target: `custodian/` (Godot project)
+- Legacy reference target: `python-sim/` (terminal-era simulation and docs)
+- Design doctrine authority: `python-sim/design/MASTER_DESIGN_DOCTRINE.md`
 
-2. UX readability
-- Improve operator output clarity while preserving terse diegetic tone.
+## Migration Rules Going Forward
 
-3. Test depth
-- Expand deterministic integration coverage for long-run world interactions.
+1. New gameplay/system implementation happens in Godot.
+2. Python runtime changes are limited to archival/reference maintenance unless explicitly requested.
+3. Cross-check major mechanical ports against legacy deterministic intent where applicable.
+4. Documentation must clearly label active vs legacy authority.
 
-4. Snapshot stability
-- Keep snapshot fields stable for terminal-side projection modules.
+## Remaining Transition Work
 
-## Deferred
-
-- Hub/campaign progression systems beyond current scaffolding.
-- Presentation-layer experiments that preserve backend authority.
+- Port prioritized legacy mechanics (assault, infrastructure, ARRN relay, save pipeline) into Godot systems.
+- Keep terminal-specific contracts archived under `design/archive/terminal-deprecated/`.
+- Maintain one canonical active architecture narrative across `README`, `ai/*`, and `design/00_foundations/*`.
