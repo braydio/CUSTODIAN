@@ -1,109 +1,49 @@
-# Game Identity Lock
+# GAME IDENTITY LOCK
 
-> **Permanently locked design decisions. These are not up for debate or iteration.**
+Status: LOCKED
+Last updated: 2026-03-04
 
-This document captures the core identity of CUSTODIAN as a defensive machine simulation. It serves as a filter against feature creep and scope drift.
+> Permanently locked design identity. Any change here requires explicit doctrine revision.
 
----
+## Core Identity (Non-Negotiable)
 
-## This IS (Core Identity)
+CUSTODIAN is a 2.5D isometric real-time tactical base defense game with one embodied operator.
 
-- **Fixed facility footprint** — static command post, not a growing colony
-- **Defensive geometry** — interior layout matters for tactical defense
-- **Power/logistics as hard constraints** — you cannot power/fortify everything
-- **Assault-centric design** — the core gameplay loop is defend → repair → learn
-- **The base is a machine** — you are chief infrastructure architect under siege
+- Fixed command-post footprint
+- Assault-driven pressure loop
+- Deterministic systems simulation
+- Reconstruction and knowledge preservation as campaign objective
 
----
+## This Is
 
-## This IS NOT (Anti-Patterns)
+- Static facility defense with deep sector tactics
+- Embodied operator (WASD) integrated with macro command decisions
+- FTL-style hard pause for tactical planning
+- Infrastructure triad under stress: power, logistics, fabrication
+- ARRN relay progression as knowledge backbone
 
-These are explicitly rejected design directions:
+## This Is Not
 
-| Rejected | Why |
-|----------|-----|
-| Colony sim | No colonists, no moods, no social graphs |
-| RimWorld-style open sandbox | Fixed footprint, not infinite expansion |
-| Population management | Only the Custodian + automated systems |
-| Farming/comfort systems | Irrelevant to defensive machine identity |
-| Infinite wall spam | Defense slots per sector are capped |
+- Colony-life simulation (no colonists, mood, social simulation)
+- Infinite expansion sandbox
+- Pure action shooter detached from systems
+- Squad RTS with direct unit micro at launch
 
----
+## Permanent Guardrails
 
-## Spatial Scope
+1. No colony-population management loop.
+2. Base footprint remains finite and strategically constrained.
+3. System constraints (power/logistics/fab) remain meaningful at all progression tiers.
+4. Assault aftermath must include recovery pressure, not only kill-count reward.
+5. Knowledge progression remains a first-class win condition.
 
-### Current State
-- 9 macro-sectors (fixed footprint)
-- 12x12 tactical grid per sector (1,296 total cells)
+## Presentation Lock
 
-### Target State
-- 8-9 macro-sectors (fixed footprint)
-- 30-40x tactical grid per sector (7,200-14,400 cells per sector)
-- Connected by corridors/chokepoints
-- Total footprint comparable to mid-sized RimWorld map, but defensive purpose
+- Camera: fixed isometric bias with pan/zoom.
+- Tone: operational, grounded, defensive.
+- Information design: readable tactical state over visual clutter.
 
-### Scope Justification
+## Legacy Note
 
-> "You can have 'RimWorld-sized total space' without becoming RimWorld. The difference is what the space is for."
-
-The space exists for:
-- Turret placement strategy
-- Wall angle and choke point design
-- Cover geometry
-- Line-of-sight tactical decisions
-- Attack vector awareness
-
----
-
-## Guardrails (Permanent Constraints)
-
-These constraints are **locked** and cannot be removed without explicit design review:
-
-### Guardrail A: No Colonists
-
-Only the Custodian and automated systems exist in the facility. No human population to manage.
-
-### Guardrail B: Defense Slot Caps
-
-Each sector has a maximum number of defense structures. You cannot turtle infinitely by spamming turrets.
-
-### Guardrail C: Power Routing is Hard Constraint
-
-Space is abundant. Power is not. You cannot power everything. This prevents turtling and forces prioritization.
-
-### Guardrail D: Expansion Increases Vulnerability
-
-Adding more sectors/structures increases your attack surface, not your safety. This is the inverse of colony sim where more buildings = more safety.
-
----
-
-## Camera & Presentation
-
-### Approved Features
-- Isometric or fixed camera
-- Zoom capability
-- Sector focus mode
-- Floor slicing (future enhancement)
-
-### Not Approved
-- Free camera (at least initially)
-- Full physics (avoid early)
-
----
-
-## Design Lineage
-
-This document was created following an external design review (2026-02) that clarified:
-
-- The distinction between "base expansion" and "intra-sector depth and layout control"
-- The philosophical difference between a defensive machine and a colony
-- The engineering challenges of larger interior spaces (pathfinding, performance, turret targeting)
-
----
-
-## Related Documents
-
-- `CORE_DESIGN_PRINCIPLES.md` — foundational design rules
-- `GRID-SURFACE-DESIGN.md` — spatial structure implementation
-- `ASSAULT_DESIGN.md` — assault mechanics
-- `POWER_SYSTEMS.md` — power constraint system
+Terminal-first identity is deprecated as primary mode.
+Terminal interfaces may persist for debugging and reference support only.

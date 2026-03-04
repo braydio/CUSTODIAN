@@ -1,66 +1,38 @@
 # FILE INDEX — CUSTODIAN
 
-## Godot Project Structure
+Last updated: 2026-03-04
 
-### Entrypoints
+## Active Runtime (Godot)
 
-- `project.godot` — Godot 4.x project file
-- Export via **Project → Export** menu
+### Project Entry
 
-### Scenes
+- `custodian/project.godot` — Godot project config and input map
+- `custodian/scenes/game.tscn` — active main scene
 
-- `scenes/main/` — Main game scene and manager
-- `scenes/operator/` — Player character (WASD-controlled)
-- `scenes/sectors/` — Base sector scenes
-- `scenes/combat/` — Enemy and projectile scenes
-- `scenes/ui/` — Menus, HUD, pause overlay
+### Core Runtime
 
-### Scripts
+- `custodian/core/state/game_state.gd` — GameState autoload singleton
+- `custodian/core/systems/simulation.gd` — fixed-step simulation loop + pause toggle
 
-- `scripts/core/` — Core systems (GameState, Systems)
-- `scripts/entities/` — Entity behaviors
-- `scripts/ui/` — Interface scripts
+### Entities
 
-### Resources
+- `custodian/entities/operator/operator.gd` — embodied operator movement controller
+- `custodian/entities/operator/operator.tscn` — operator scene
 
-- `resources/` — Assets, configs, tilemaps
+### Active Runtime Docs
 
----
+- `custodian/docs/ARCHITECTURE.md`
+- `custodian/docs/GDSCRIPT_STANDARDS.md`
+- `custodian/docs/SCENE_HIERARCHY.md`
 
-## Legacy (Deprecated)
+## Canonical Design Docs
 
-### Terminal Interface (Preserved for Reference)
+- `python-sim/design/MASTER_DESIGN_DOCTRINE.md` — locked master doctrine
+- `python-sim/design/00_foundations/` — architecture/timing/identity foundations
+- `python-sim/design/30_playable_game/` — control/runtime-play model docs
 
-- `custodian-terminal/server.py` — Terminal server
-- `custodian-terminal/index.html` — Terminal UI
-- `custodian-terminal/boot.js` — Boot sequence
-- `custodian-terminal/terminal.js` — Input/output handling
+## Legacy Reference (Deprecated)
 
-### Python Simulation (Preserved for Reference)
-
-- `game/simulations/world_state/core/state.py` — GameState
-- `game/simulations/world_state/core/simulation.py` — Tick orchestration
-- `game/simulations/world_state/core/assaults.py` — Assault system
-- `game/simulations/world_state/terminal/` — Command parser/processor
-
----
-
-## Design Documents
-
-- `design/MASTER_DESIGN_DOCTRINE.md` — **LOCKED** master reference
-- `design/00_foundations/` — Core design principles
-- `design/10_systems/` — System specifications
-- `design/20_features/` — Feature implementations
-- `design/30_playable_game/` — Playable game layer docs
-- `design/archive/` — Historical and deprecated docs
-
----
-
-## Testing
-
-Tests run via Godot's built-in test framework:
-
-```bash
-# If configured for headless
-godot --headless --script tests/run.gd
-```
+- `python-sim/game/` — terminal-era Python simulation
+- `python-sim/custodian-terminal/` — terminal UI
+- `python-sim/design/archive/terminal-deprecated/` — archived command-contract docs

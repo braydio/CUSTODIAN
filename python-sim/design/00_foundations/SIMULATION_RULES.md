@@ -1,33 +1,36 @@
 # SIMULATION RULES — CUSTODIAN
 
-## Time
+Status: Active
+Last updated: 2026-03-04
 
-- World mutation is tick-based and explicit.
-- In terminal mode, only time-bearing commands advance world time.
-- `STATUS` and other read/config commands do not advance time.
+## Tick and Time
+
+- Active runtime simulation is fixed-step (default target 60Hz).
+- Simulation systems execute on fixed ticks only.
+- Render frames may interpolate but must not mutate authoritative gameplay state.
+
+## Determinism
+
+- Use deterministic RNG streams for simulation-affecting outcomes.
+- Avoid frame-rate-dependent mutation.
+- Equivalent seed + input sequence must produce equivalent outcomes.
+
+## Pause and Scaling
+
+- Hard pause freezes simulation mutation.
+- Input/command planning can continue while paused.
+- Time scaling is allowed only if deterministic tick-order remains stable.
 
 ## State Authority
 
-- `GameState` is authoritative and mutated server-side only.
-- Frontend rendering must not infer or apply gameplay mutations.
+- `GameState` (autoload singleton in Godot) is authoritative for the active runtime.
+- Visual scenes and UI consume state; they do not define rules.
 
-## Assault Lifecycle
+## Assault, Repair, and Infrastructure
 
-- Approaches traverse spatial ingress routes before tactical engagement.
-- Transit interception can reduce incoming threat budget prior to engagement.
-- Active assaults resolve across multiple tactical ticks.
+- Assaults, damage propagation, repair progression, fabrication, and relay state mutate on simulation ticks.
+- Power and logistics remain cross-system modifiers.
 
-## Repair and Fabrication
+## Legacy Python Rules
 
-- Repair progression and fabrication ticking happen in world stepping.
-- Power/fidelity/assault conditions can change repair and detection outcomes.
-
-## Information Fidelity
-
-- Comms fidelity gates what operators can see in `WAIT` and `STATUS`.
-- Fidelity changes emit diegetic signal events (`SIGNAL CLARITY RESTORED`, `SIGNAL DEGRADATION DETECTED`).
-
-## Output Tone
-
-- Keep output terse, operational, and diegetic.
-- Avoid meta-system phrasing in player-facing lines.
+Legacy terminal command-time progression rules (`WAIT`, `WAIT NX`, `WAIT UNTIL`) are preserved in `python-sim/game/` as historical reference only and are not the primary live runtime model.

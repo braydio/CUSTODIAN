@@ -1,3 +1,15 @@
+## 2026-03-04
+
+- Applied repository-wide documentation sync to match post-pivot runtime model in `python-sim/CODEX_HANDOFF.md` (Godot-authoritative active runtime, Python stack as legacy reference).
+- Replaced terminal-first foundation docs with Godot-native architecture/timing/control language in `design/00_foundations/*`.
+- Updated playable runtime docs in `design/30_playable_game/*` and explicitly deprecated `RTS_LAYER.md` as a separate future adapter model.
+- Created new active Godot documentation in `custodian/docs/`:
+  - `ARCHITECTURE.md`
+  - `GDSCRIPT_STANDARDS.md`
+  - `SCENE_HIERARCHY.md`
+- Archived terminal contract/command docs into `design/archive/terminal-deprecated/` and removed them from `design/archive/historical/`.
+- Updated operational trackers and context docs (`python-sim/README.md`, `custodian/README.md`, `python-sim/ai/*`, `python-sim/TODO.md`, `python-sim/AGENTS.md`, `python-sim/design/AGENTS.md`) to remove stale terminal-first assumptions.
+
 ## 2026-03-03
 
 - Implemented Ambient Event Diversity Phase 1-2 in `core/events.py` with category metadata (`QUIET`, `ENVIRONMENTAL`, `INFRASTRUCTURE`, `RECON`, `HOSTILE`), category-aware weighted selection, same-category rotation penalty, and recent-name suppression memory.
