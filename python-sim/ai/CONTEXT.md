@@ -54,4 +54,5 @@ These remain useful for:
 - Keep simulation logic separated from rendering concerns.
 - Preserve deterministic fixed-step mutation.
 - Keep active-vs-legacy documentation labels explicit.
+- Use `python-sim/design/DOC_STATUS.md` to resolve doc authority conflicts.
 - Update `design/CHANGELOG.md`, `design/DEVLOG.md`, and `ai/CURRENT_STATE.md` on material architecture changes.

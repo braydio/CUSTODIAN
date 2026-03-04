@@ -28,6 +28,7 @@ Last updated: 2026-03-04
 ## Canonical Design Docs
 
 - `python-sim/design/MASTER_DESIGN_DOCTRINE.md` — locked master doctrine
+- `python-sim/design/DOC_STATUS.md` — active vs legacy documentation authority map
 - `python-sim/design/00_foundations/` — architecture/timing/identity foundations
 - `python-sim/design/30_playable_game/` — control/runtime-play model docs
 

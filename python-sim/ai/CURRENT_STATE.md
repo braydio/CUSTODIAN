@@ -36,4 +36,5 @@ Last updated: 2026-03-04
 
 - Master doctrine remains locked at `python-sim/design/MASTER_DESIGN_DOCTRINE.md`.
 - Foundation/playable docs have been updated to Godot-native assumptions.
+- Active-vs-legacy design authority map is maintained in `python-sim/design/DOC_STATUS.md`.
 - Terminal contract docs are archived under `python-sim/design/archive/terminal-deprecated/`.

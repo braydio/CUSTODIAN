@@ -6,7 +6,7 @@ Status: Deprecated as primary runtime authority.
 
 ## Active Runtime
 
-Primary development now targets the Godot project at:
+Primary development targets the Godot project at:
 
 - `../custodian/`
 
@@ -21,8 +21,12 @@ godot
 
 - `game/` — legacy Python simulation code
 - `custodian-terminal/` — legacy browser terminal interface
-- `design/` — canonical design docs (including locked doctrine)
+- `design/` — canonical design docs and historical references
 - `ai/` — AI context projection docs
+
+## Documentation Status
+
+See `design/DOC_STATUS.md` for active-vs-legacy design doc authority.
 
 ## Legacy Usage
 
@@ -32,7 +36,7 @@ Use this folder for:
 - historical behavior comparison
 - archived terminal-contract documentation
 
-Do not treat this folder as the active gameplay runtime.
+Do not treat this folder as active gameplay runtime.
 
 ## Canonical Design Reference
 
