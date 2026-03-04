@@ -2,52 +2,48 @@
 
 ## CUSTODIAN Design Governance (Post-Pivot)
 
-CUSTODIAN is now Godot-native for active runtime. Design docs remain in `python-sim/design/`.
+CUSTODIAN runtime authority is Godot-native (`custodian/`).
+Design canon remains in `python-sim/design/` with explicit active-vs-legacy classification.
 
 ## Canonical Layers
 
 ### Active Code Layer
 
-- `custodian/` (Godot 4.x project)
+- `custodian/` (Godot 4.x runtime)
 
-### Design Layer (Canonical)
+### Active Design Layer
 
-- `python-sim/design/`
+- `design/MASTER_DESIGN_DOCTRINE.md`
+- `design/00_foundations/*`
+- `design/30_playable_game/*`
+- `../custodian/docs/*`
 
-### AI Projection Layer
+### Legacy Design Layer
 
-- `python-sim/ai/`
+- `design/10_systems/*`
+- `design/20_features/*`
 
-## Document Hierarchy
+Use `design/DOC_STATUS.md` for status authority.
 
-- `00_foundations/`: locked architecture/timing/identity principles
-- `10_systems/`: system-level design references
-- `20_features/{planned,in_progress,completed}`: lifecycle tracking
-- `30_playable_game/`: playable/runtime model docs
-- `archive/`: historical and deprecated docs
+## Archive Rules
 
-## Terminal Deprecation Rule
-
-Terminal-command and `/command` transport docs are deprecated as active runtime contracts.
-Archive these under:
-
-- `python-sim/design/archive/terminal-deprecated/`
+- Terminal-contract docs belong in `design/archive/terminal-deprecated/`.
+- Historical material belongs in `design/archive/`.
 
 ## Update Rules
 
-Whenever active architecture/behavior changes:
+When active architecture/behavior changes:
 
-1. Update relevant design docs.
+1. Update impacted active docs.
 2. Update `design/CHANGELOG.md`.
 3. Update `design/DEVLOG.md`.
-4. Update `ai/CURRENT_STATE.md`.
-5. Ensure active-vs-legacy labels remain accurate.
+4. Update `../ai/CURRENT_STATE.md`.
+5. Keep status labels in `DOC_STATUS.md` accurate.
 
 ## Determinism Rule
 
-- Fixed-step simulation logic must remain deterministic.
-- If determinism constraints change, update `00_foundations/SIMULATION_RULES.md`.
+- Fixed-step simulation constraints must remain explicit in `00_foundations/SIMULATION_RULES.md`.
 
-## Final Principle
+## Principle
 
-CUSTODIAN remains systems-first and deterministic, now executed in a Godot-authoritative runtime with an embodied operator control model.
+If legacy docs conflict with active docs, active docs win.

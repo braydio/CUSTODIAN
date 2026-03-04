@@ -29,6 +29,14 @@
   - `python-sim/ai/CONTEXT.md`
   - `python-sim/ai/FILE_INDEX.md`
   - `python-sim/TODO.md`
+- Added repository-level `AGENTS.md` at project root to unify active runtime/documentation precedence across `custodian/` and `python-sim/`.
+- Added `python-sim/design/DOC_STATUS.md` to classify active vs legacy document authority.
+- Added status index files:
+  - `python-sim/design/10_systems/README.md`
+  - `python-sim/design/20_features/README.md`
+- Refined post-pivot agent governance in:
+  - `python-sim/AGENTS.md`
+  - `python-sim/design/AGENTS.md`
 
 ## 2026-03-03
 

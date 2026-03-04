@@ -9,6 +9,8 @@
   - `SCENE_HIERARCHY.md`
 - Archived terminal contract/command docs into `design/archive/terminal-deprecated/` and removed them from `design/archive/historical/`.
 - Updated operational trackers and context docs (`python-sim/README.md`, `custodian/README.md`, `python-sim/ai/*`, `python-sim/TODO.md`, `python-sim/AGENTS.md`, `python-sim/design/AGENTS.md`) to remove stale terminal-first assumptions.
+- Added root-level `AGENTS.md` and design-level `DOC_STATUS.md` to explicitly govern active-vs-legacy doc authority across the repo.
+- Added `design/10_systems/README.md` and `design/20_features/README.md` as directory-level legacy status markers.
 
 ## 2026-03-03
 
