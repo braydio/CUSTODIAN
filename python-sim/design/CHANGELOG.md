@@ -1,3 +1,22 @@
+## 2026-03-06
+
+- Implemented initial Godot turret runtime slice from `design/20_features/in_progress/TURRET_SYSTEM.md`.
+- Added turret entity/runtime assets:
+  - `custodian/entities/sector/turret.gd`
+  - `custodian/entities/sector/turret.tscn`
+  - `custodian/entities/sector/turret_gunner.tscn`
+  - `custodian/entities/sector/turret_blaster.tscn`
+  - `custodian/entities/sector/turret_repeater.tscn`
+  - `custodian/entities/sector/turret_sniper.tscn`
+- Wired initial defense placements into `custodian/scenes/game.tscn` under `World/Sectors/DEFENSE`.
+- Updated projectile team support in `custodian/entities/projectiles/bullet.gd` for defense-fired bullets and friendly filtering.
+- Extended enemy objective behavior in `custodian/entities/enemies/enemy.gd` to prioritize grouped structures (`command_post`, `power_node`, `turret`) before player fallback.
+- Added structure group registration for sectors in `custodian/entities/sector/sector.gd` and player group registration in `custodian/entities/operator/operator.gd`.
+- Updated active runtime docs:
+  - `custodian/docs/ARCHITECTURE.md`
+  - `custodian/docs/SCENE_HIERARCHY.md`
+  - `design/20_features/in_progress/TURRET_SYSTEM.md`
+
 ## 2026-03-05
 
 - Implemented the first `design/20_features/in_progress` dependency item: Wave Spawning System (`WAVE_SPAWNING_SYSTEM.md`) in Godot runtime.
@@ -7,6 +26,15 @@
   - escalating point budgets (`base_points + wave * growth_per_wave`)
   - deterministic spawn composition selection, lane-based spawn-node usage, and drone variant fallback for fast/heavy waves.
 - Added `custodian/core/systems/spawn_node.gd` and `custodian/core/systems/spawn_node.tscn` for lane-tagged enemy ingress points.
+- Added dedicated enemy variant scenes:
+  - `custodian/entities/enemies/fast_drone.tscn`
+  - `custodian/entities/enemies/heavy_drone.tscn`
+  and wired both into `WaveManager` in `custodian/scenes/game.tscn`.
+- Updated `custodian/entities/enemies/enemy.gd` to use exported `base_tint` for per-variant visual identity.
+- Added melee combat option to operator:
+  - new input action `melee_attack` (key: `Q`) in `custodian/project.godot`
+  - cone/range hit check + cooldown + impact feedback in `custodian/entities/operator/operator.gd`
+  - UI control hint update in `custodian/scenes/ui.gd` and `custodian/scenes/game.tscn`.
 - Updated `custodian/scenes/game.tscn`:
   - removed static preplaced enemy instances
   - added `World/SpawnNodes` with north/east/south/west ingress markers
