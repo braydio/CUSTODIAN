@@ -1,6 +1,6 @@
 # PROJECT CONTEXT PRIMER — CUSTODIAN
 
-Last updated: 2026-03-04
+Last updated: 2026-03-05
 
 ## Purpose
 
@@ -19,6 +19,7 @@ CUSTODIAN is now a Godot-native 2.5D isometric tactical base-defense game with a
 - Fixed-step loop: `core/systems/simulation.gd`
 - State singleton: `core/state/game_state.gd`
 - Input map includes `move_up/down/left/right` and `pause`
+- Enemy wave system: `core/systems/wave_manager.gd` + spawn nodes grouped as `enemy_spawn`
 
 ## Active Architecture Snapshot
 
@@ -45,7 +46,7 @@ These remain useful for:
 
 1. Combat implementation (hitscan/projectile/melee + utility loop)
 2. Sector/base spatial model and traversal
-3. Assault spawning and pressure loop
+3. Enemy objective targeting against structures
 4. Infrastructure systems (power/logistics/fabrication/relay)
 5. Save/load determinism pipeline
 

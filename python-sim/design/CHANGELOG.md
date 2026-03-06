@@ -1,3 +1,19 @@
+## 2026-03-05
+
+- Implemented the first `design/20_features/in_progress` dependency item: Wave Spawning System (`WAVE_SPAWNING_SYSTEM.md`) in Godot runtime.
+- Added `custodian/core/systems/wave_manager.gd`:
+  - timed wave cadence (`initial_delay`, `wave_interval`, `max_wave`)
+  - intra-wave spawn cadence (`intra_wave_spawn_interval`) to avoid full-wave pop-in bursts
+  - escalating point budgets (`base_points + wave * growth_per_wave`)
+  - deterministic spawn composition selection, lane-based spawn-node usage, and drone variant fallback for fast/heavy waves.
+- Added `custodian/core/systems/spawn_node.gd` and `custodian/core/systems/spawn_node.tscn` for lane-tagged enemy ingress points.
+- Updated `custodian/scenes/game.tscn`:
+  - removed static preplaced enemy instances
+  - added `World/SpawnNodes` with north/east/south/west ingress markers
+  - added root `WaveManager` node wired to `Enemy` scene for live wave spawning.
+- Extended `custodian/entities/enemies/enemy.gd` with `apply_difficulty_modifiers(hp_scale, damage_scale)` to support per-wave scaling.
+- Updated active runtime docs to reflect the new wave runtime ownership and scene hierarchy (`custodian/docs/ARCHITECTURE.md`, `custodian/docs/SCENE_HIERARCHY.md`).
+
 ## 2026-03-04
 
 - Completed documentation migration to align with the Godot-authoritative pivot described in `python-sim/CODEX_HANDOFF.md`.

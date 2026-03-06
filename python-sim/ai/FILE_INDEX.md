@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-03-04
+Last updated: 2026-03-05
 
 ## Active Runtime (Godot)
 
@@ -13,11 +13,14 @@ Last updated: 2026-03-04
 
 - `custodian/core/state/game_state.gd` — GameState autoload singleton
 - `custodian/core/systems/simulation.gd` — fixed-step simulation loop + pause toggle
+- `custodian/core/systems/wave_manager.gd` — timed enemy wave orchestration + difficulty scaling
+- `custodian/core/systems/spawn_node.gd` — lane-tagged enemy ingress points
 
 ### Entities
 
 - `custodian/entities/operator/operator.gd` — embodied operator movement controller
 - `custodian/entities/operator/operator.tscn` — operator scene
+- `custodian/entities/enemies/enemy.gd` — enemy controller + wave difficulty modifier hook
 
 ### Active Runtime Docs
 

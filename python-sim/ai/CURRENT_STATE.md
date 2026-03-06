@@ -1,6 +1,6 @@
 # CURRENT STATE — CUSTODIAN
 
-Last updated: 2026-03-04
+Last updated: 2026-03-05
 
 ## Runtime Status
 
@@ -18,6 +18,8 @@ Last updated: 2026-03-04
 - Operator movement is functional with normalized vector and configurable speed.
 - Simulation tick accumulator loop is implemented and advances `GameState.tick` when unpaused.
 - Scene includes world root, operator instance, camera, simulation node, and UI layer placeholders.
+- Wave spawning is live via `core/systems/wave_manager.gd`, using lane-based spawn nodes under `World/SpawnNodes`.
+- Enemy pressure now comes from timed wave spawns into `World/Enemies` instead of static preplaced drones.
 
 ## Legacy Scope (Preserved)
 
@@ -27,7 +29,7 @@ Last updated: 2026-03-04
 
 ## Active Gaps
 
-- Combat loop (hitscan/projectile/melee) not yet implemented in Godot runtime.
+- Enemy objective targeting and structure damage/repair loops are not yet implemented in Godot runtime.
 - Sector system and base layout rules need full scene/system integration.
 - Infrastructure systems (power/logistics/fabrication/ARRN) need Godot-native runtime implementations.
 - Save/load pipeline not yet implemented.
