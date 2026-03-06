@@ -1,3 +1,17 @@
+## 2026-03-05
+
+- Implemented Wave Spawning as the first logical feature in the in-progress chain (`Wave Spawning -> Enemy Objective -> Sector Damage -> Repair`).
+- Added a Godot-native `WaveManager` that:
+  - discovers active spawn nodes via `enemy_spawn` group
+  - starts after an initial delay and runs recurring wave intervals
+  - staggers individual enemy spawns within each wave to reduce teleport/pop-in feel
+  - builds escalating wave point budgets with deterministic composition selection
+  - spawns enemies into `/root/GameRoot/World/Enemies` with fast/heavy variant fallback from the base drone scene.
+- Added lane-aware spawn-node component (`SpawnNode`) and initial map-edge spawn node placement in `game.tscn`.
+- Removed static hand-placed drones from `game.tscn` so combat pressure now originates from wave orchestration.
+- Added enemy difficulty hook (`apply_difficulty_modifiers`) to support health/damage scaling from the wave system.
+- Updated active Godot architecture/hierarchy docs to include wave system ownership and scene nodes.
+
 ## 2026-03-04
 
 - Applied repository-wide documentation sync to match post-pivot runtime model in `python-sim/CODEX_HANDOFF.md` (Godot-authoritative active runtime, Python stack as legacy reference).
