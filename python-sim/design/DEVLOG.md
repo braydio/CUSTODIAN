@@ -1,3 +1,15 @@
+## 2026-03-06
+
+- Implemented the Turret System initial runtime slice in Godot:
+  - Added base turret script and four scene variants (gunner/blaster/repeater/sniper).
+  - Added initial preplaced turrets in the Defense sector within `game.tscn`.
+- Updated projectile runtime to include `team` semantics so defense bullets do not collide with friendly player/turret targets.
+- Extended enemy objective targeting:
+  - enemies now evaluate grouped objectives (`command_post`, `power_node`, `turret`, fallback `player`)
+  - structure attack range is separated from player contact range.
+- Added sector/operator group wiring required for objective targeting (`command_post`, `power_node`, `player`).
+- Updated active docs and turret feature specification checklist for the implemented slice.
+
 ## 2026-03-05
 
 - Implemented Wave Spawning as the first logical feature in the in-progress chain (`Wave Spawning -> Enemy Objective -> Sector Damage -> Repair`).
@@ -10,7 +22,11 @@
 - Added lane-aware spawn-node component (`SpawnNode`) and initial map-edge spawn node placement in `game.tscn`.
 - Removed static hand-placed drones from `game.tscn` so combat pressure now originates from wave orchestration.
 - Added enemy difficulty hook (`apply_difficulty_modifiers`) to support health/damage scaling from the wave system.
+- Added dedicated `fast_drone.tscn` and `heavy_drone.tscn` variants and wired them into `WaveManager` for visible archetype differentiation.
+- Added `base_tint` support in `enemy.gd` so variant scenes maintain distinct colors across health-state updates.
 - Updated active Godot architecture/hierarchy docs to include wave system ownership and scene nodes.
+- Added melee operator action (`Q`) with close-range cone damage, cooldown gating, and impact spark feedback.
+- Surfaced melee control in weapon HUD text (`WEAPON: ... | MELEE: Q`).
 
 ## 2026-03-04
 

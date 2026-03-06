@@ -1,6 +1,6 @@
 # CURRENT STATE — CUSTODIAN
 
-Last updated: 2026-03-05
+Last updated: 2026-03-06
 
 ## Runtime Status
 
@@ -20,6 +20,8 @@ Last updated: 2026-03-05
 - Scene includes world root, operator instance, camera, simulation node, and UI layer placeholders.
 - Wave spawning is live via `core/systems/wave_manager.gd`, using lane-based spawn nodes under `World/SpawnNodes`.
 - Enemy pressure now comes from timed wave spawns into `World/Enemies` instead of static preplaced drones.
+- Initial turret runtime is implemented in `entities/sector/turret.gd` with four turret variants placed in `World/Sectors/DEFENSE`.
+- Enemy objective targeting now prioritizes structure groups (`command_post`, `power_node`, `turret`) before player fallback.
 
 ## Legacy Scope (Preserved)
 
@@ -29,7 +31,7 @@ Last updated: 2026-03-05
 
 ## Active Gaps
 
-- Enemy objective targeting and structure damage/repair loops are not yet implemented in Godot runtime.
+- Full structure damage/repair loop is not yet implemented in Godot runtime (turret damage states are implemented, repair gameplay loop is pending).
 - Sector system and base layout rules need full scene/system integration.
 - Infrastructure systems (power/logistics/fabrication/ARRN) need Godot-native runtime implementations.
 - Save/load pipeline not yet implemented.

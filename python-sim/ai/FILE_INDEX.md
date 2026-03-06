@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-03-05
+Last updated: 2026-03-06
 
 ## Active Runtime (Godot)
 
@@ -15,12 +15,20 @@ Last updated: 2026-03-05
 - `custodian/core/systems/simulation.gd` — fixed-step simulation loop + pause toggle
 - `custodian/core/systems/wave_manager.gd` — timed enemy wave orchestration + difficulty scaling
 - `custodian/core/systems/spawn_node.gd` — lane-tagged enemy ingress points
+- `custodian/core/systems/power.gd` — sector power distribution model
 
 ### Entities
 
 - `custodian/entities/operator/operator.gd` — embodied operator movement controller
 - `custodian/entities/operator/operator.tscn` — operator scene
-- `custodian/entities/enemies/enemy.gd` — enemy controller + wave difficulty modifier hook
+- `custodian/entities/enemies/enemy.gd` — enemy controller + structure-priority objective targeting
+- `custodian/entities/projectiles/bullet.gd` — shared projectile logic (player + defense teams)
+- `custodian/entities/sector/turret.gd` — automated defense turret runtime + damage-state efficiency
+- `custodian/entities/sector/turret.tscn` — base turret scene
+- `custodian/entities/sector/turret_gunner.tscn` — balanced turret variant
+- `custodian/entities/sector/turret_blaster.tscn` — high-damage turret variant
+- `custodian/entities/sector/turret_repeater.tscn` — rapid-fire turret variant
+- `custodian/entities/sector/turret_sniper.tscn` — long-range turret variant
 
 ### Active Runtime Docs
 
