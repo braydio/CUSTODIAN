@@ -1,8 +1,9 @@
 # CUSTODIAN — Wave Spawning System Implementation Plan
 
 **Created:** 2026-03-05
-**Status:** Ready for Implementation
-**Godot-Native:** Yes (not integrated with Python simulation)
+**Status:** ✅ IMPLEMENTED
+**Godot-Native:** Yes
+**Files:** `custodian/core/systems/wave_manager.gd`, `spawn_node.gd`
 
 ---
 
