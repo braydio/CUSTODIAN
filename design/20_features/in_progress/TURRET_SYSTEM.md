@@ -1,7 +1,7 @@
 # Turret System — Implementation Plan
 
 **Created:** 2026-03-05
-**Status:** Implemented (Initial Runtime Slice)
+**Status:** Implemented (Defense Module Runtime Slice)
 **Depends On:** Sector Damage System
 
 ---
@@ -286,14 +286,21 @@ When power is low:
 
 ### Current Runtime Mapping (Godot)
 
-- Implemented base script: `custodian/entities/sector/turret.gd`
-- Implemented scenes:
-  - `custodian/entities/sector/turret.tscn`
+- Implemented defense module:
+  - `custodian/entities/defense/turret.gd`
+  - `custodian/entities/defense/turret.tscn`
+  - `custodian/entities/defense/bullet.gd`
+  - `custodian/entities/defense/bullet.tscn`
+- Sector turret variants now instantiate the defense base scene:
   - `custodian/entities/sector/turret_gunner.tscn`
   - `custodian/entities/sector/turret_blaster.tscn`
   - `custodian/entities/sector/turret_repeater.tscn`
   - `custodian/entities/sector/turret_sniper.tscn`
-- Initial map placement added under `World/Sectors/DEFENSE` in `custodian/scenes/game.tscn`
+- Shared projectile team filtering updated in:
+  - `custodian/entities/projectiles/bullet.gd`
+- Enemy compatibility updated (`enemy` + `enemies` groups):
+  - `custodian/entities/enemies/enemy.gd`
+- Initial map placement remains under `World/Sectors/DEFENSE` in `custodian/scenes/game.tscn`
 
 ---
 
