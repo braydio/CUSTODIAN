@@ -45,10 +45,9 @@ Use this precedence order:
 When behavior/architecture changes:
 
 1. Update relevant docs in active sets above.
-2. If the change is in the Godot runtime, update `./design/` with implementation specs.
-3. Update `python-sim/design/CHANGELOG.md`.
-4. Update `python-sim/design/DEVLOG.md`.
-5. Update `python-sim/ai/CURRENT_STATE.md` (and `CONTEXT.md`/`FILE_INDEX.md` if impacted).
+2. **For Godot runtime changes:** Update `./design/` with implementation specs FIRST.
+3. Optionally update legacy docs (CHANGELOG, DEVLOG) for historical tracking.
+4. Update `python-sim/ai/CURRENT_STATE.md` if game state significantly changes.
 
 ## Determinism
 
@@ -67,7 +66,7 @@ Use slash commands to run the implementation workflows from design docs:
 | Command | Example |
 |--------|---------|
 | `/implement` | `/implement design/20_features/in_progress/TURRET_SYSTEM.md` |
-| `/plan` | `/plan design/20_features/in_progress/REPAIR_GAMEPLAY_SYSTEM.md` |
-| `/design-audit` | `/design-audit design/20_features/in_progress` |
+| `/build-plan` | `/build-plan design/20_features/in_progress/REPAIR_GAMEPLAY_SYSTEM.md` |
+| `/designaudit` | `/designaudit design/20_features/in_progress` |
 
 These commands map to scripts under `~/.codex/scripts/`.
