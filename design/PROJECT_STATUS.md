@@ -88,6 +88,8 @@ Without this, the game has no stakes.
 | WAVE_SPAWNING_SYSTEM.md | ✅ Implemented |
 | ENEMY_OBJECTIVE_SYSTEM.md | ✅ Implemented |
 | TURRET_SYSTEM.md | ✅ Implemented |
+| GAME_OVER_FLOW.md | 📋 Ready to implement |
+| BALANCE_TARGETS_V1.md | 📋 Ready to implement |
 | ENEMY_BEHAVIOR_DIRECTOR.md | 📋 Ready |
 | SECTOR_DAMAGE_SYSTEM.md | 📋 Ready (needed next) |
 | REPAIR_GAMEPLAY_SYSTEM.md | 📋 Ready |

@@ -1,7 +1,7 @@
 # CUSTODIAN — Sector Damage System Implementation Plan
 
 **Created:** 2026-03-05
-**Status:** In Progress (Audit Complete, Ready to Build)
+**Status:** Implemented (Core Runtime Slice: Damageable + Command Post + Power Node Coupling)
 **Depends On:** Enemy Objective System
 
 ---
@@ -285,12 +285,12 @@ func on_power_node_destroyed(node: PowerNode):
 
 ## 7. Testing Checklist
 
-- [ ] Damageable component created
-- [ ] Power Node takes damage, efficiency scales
-- [ ] Turret takes damage, fire rate scales
-- [ ] Command Post destruction triggers game over
-- [ ] Power system recalculates on node damage/destruction
-- [ ] Visual feedback for damage states (color changes, etc.)
+- [x] Damageable component created
+- [x] Power Node takes damage, efficiency scales
+- [x] Turret takes damage, fire rate scales
+- [x] Command Post destruction triggers game over
+- [x] Power system recalculates on node damage/destruction
+- [x] Visual feedback for damage states (color changes, etc.)
 
 ---
 
@@ -309,3 +309,38 @@ Efficiency Loss → Turrets fire slower, power decreases
                       ↓
 Player Decision → Repair or defend?
 ```
+
+---
+
+## 9. Clarification — Game Over UX Contract (2026-03-07)
+
+Command Post destruction behavior is now defined as:
+
+1. Command Post enters `destroyed` state.
+2. `GameState.trigger_game_over("Command Post destroyed")` is called.
+3. Runtime tree is paused (`get_tree().paused = true`).
+4. UI displays `GAME OVER: <reason>` in the interaction channel.
+
+Current scope intentionally excludes a dedicated restart/modal flow.
+That is treated as a polish task, not a blocker for combat-loop implementation.
+
+---
+
+## 10. Clarification — Baseline Balance Targets (2026-03-07)
+
+These are implementation baselines for tuning passes:
+
+- Power Node output by state:
+  - `operational = 1.0x`
+  - `damaged = 0.6x`
+  - `critical = 0.3x`
+  - `destroyed = 0.0x`
+- Turret fire efficiency by state:
+  - `operational = 1.0x`
+  - `damaged = 0.6x`
+  - `critical = 0.3x`
+  - `destroyed = 0.0x`
+- System tuning goal:
+  - Early waves should be sustainable with one healthy power node.
+  - Mid-combat power-node degradation should force repair prioritization within 1-2 waves.
+  - Command Post loss should occur quickly when power network collapses and defense uptime drops.
