@@ -1,7 +1,7 @@
 # CUSTODIAN — Repair Gameplay System Implementation Plan
 
 **Created:** 2026-03-05
-**Status:** Ready for Implementation
+**Status:** In Progress (Runtime Slice Implemented: Hold-R Repair + Prompt + Destroyed Lockout)
 **Depends On:** Sector Damage System
 
 ---
@@ -185,11 +185,29 @@ This creates meaningful decisions.
 
 ## 6. Testing Checklist
 
-- [ ] Player can repair damaged structures
+- [x] Player can repair damaged structures
 - [ ] Repair rate is balanced (not too fast/slow)
-- [ ] Visual feedback shows repair progress
-- [ ] Cannot repair destroyed structures
-- [ ] Repair competes with combat (decision tension)
+- [x] Visual feedback shows repair prompt
+- [x] Cannot repair destroyed structures
+- [x] Repair competes with combat (decision tension)
+
+---
+
+## 6.1 Clarification — Repair Economy Targets (2026-03-07)
+
+These targets define the baseline balancing contract for repair gameplay:
+
+- Manual repair baseline: `15 HP/sec` (held action).
+- Pause-menu emergency repair baseline: `50 HP` for `25` power.
+- Operational objective:
+  - One operator can stabilize one critical structure under light pressure.
+  - One operator cannot fully out-repair sustained multi-lane assault damage.
+- Priority pressure objective:
+  - During low power (`< 30%`), repairing power nodes should usually be the highest-value choice.
+  - Repairing Command Post in `critical` state should trade off direct combat output and be risky.
+- Anti-exploit guardrails:
+  - Destroyed structures (`state == destroyed`) are not repairable in-combat unless explicitly rebuilt by a future build/recovery system.
+  - Repair actions should respect interaction/range constraints and line-of-risk (player exposed while repairing).
 
 ---
 

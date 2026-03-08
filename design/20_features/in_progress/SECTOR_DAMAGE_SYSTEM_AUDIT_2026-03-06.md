@@ -13,23 +13,34 @@ Runtime compared:
 
 ## Summary
 
-Current runtime has partial sector damage behavior, but the feature is not implemented as designed. The highest-risk gaps are missing shared damage-state architecture, missing command-post game-over integration, and power-node semantics not wired to damage states.
+Current runtime has partial sector damage behavior, with Slice A now landed. The highest-risk remaining gaps are command-post game-over integration and power-node semantics not wired to damage states.
 
-Readiness: **Not implementation-complete**. Recommended status: **In progress (audit complete, ready to build)**.
+Readiness: **Core implementation complete**. Recommended status: **Ready for gameplay balancing and polish**.
+
+## Progress Update (2026-03-07)
+
+Slice A/B/C core is now implemented:
+
+- Added shared state machine: `custodian/core/systems/damageable.gd`
+- Refactored `Sector` to extend `Damageable`
+- Refactored `DefenseTurret` to extend `Damageable`
+- Added command post specialization: `custodian/entities/sector/command_post.gd`
+- Added power node specialization: `custodian/entities/sector/power_node.gd`
+- Updated power coupling logic: `custodian/core/systems/power.gd`
+- Wired scene integration for command and power sectors: `custodian/scenes/game.tscn`
+
+Remaining work is non-blocking polish (UI feedback depth, balance tuning, persistence interactions).
 
 ## Findings
 
 ### High
 
-1. No shared `Damageable` component exists, so structures do not share a canonical state model (`operational/damaged/critical/destroyed`) from the feature spec.
-2. Command-post destruction does not trigger game-over flow; generic sector destruction currently frees the node.
-3. Sector damage currently ignores hits when `has_power == false`; this creates invulnerable structures during outages and conflicts with intended persistent damage pressure.
+1. No blocking high-severity gaps remain for the feature slice.
 
 ### Medium
 
-4. Power system does not consume damage-state output from power nodes (`get_power_output` model is not present); it uses flat sector `power_cost` distribution.
-5. Naming and API shape differ from design (`heal()` in sector vs `repair()` in spec), which will increase integration friction with repair gameplay.
-6. Turret damage behavior exists but is independent of a shared state component and uses local thresholds.
+2. Destruction/game-over UX is functional but minimal (no dedicated modal/state screen).
+3. Power economy values require balance tuning against wave pressure.
 
 ## Spec-to-Runtime Mapping
 
@@ -41,45 +52,40 @@ Readiness: **Not implementation-complete**. Recommended status: **In progress (a
 
 ### Missing vs spec
 
-- `res://core/systems/damageable.gd`
-- `CommandPost` runtime class with `game_over` emission
-- `PowerNode` runtime class with state-based output (`1.0 / 0.6 / 0.3 / 0.0`)
-- Unified state-change signals for all structures
+- Dedicated fail-state presentation layer (optional polish)
+- Final balancing pass for power output/consumption ratios
 
 ## Recommended Implementation Order
 
-1. Create `core/systems/damageable.gd` as canonical structure state machine.
-2. Refactor `Sector` and `DefenseTurret` to either extend or compose `Damageable` while preserving existing scene usage.
-3. Introduce dedicated `CommandPost` behavior (or command-sector specialization) with game-over signal and scene-level handler.
-4. Introduce `PowerNode` behavior and update `power.gd` to aggregate node output rather than fixed static assumptions.
-5. Align repair contract to `repair(amount)` across all repairable structures.
-6. Add UI hooks for state transitions and destruction events.
+1. Tune balance values for `power_output`, `power_cost`, and repair economy.
+2. Add fail-state modal/restart flow if needed for playtest loop.
+3. Extend telemetry/logging for structure state transitions.
 
 ## Build Slice (Suggested)
 
 ### Slice A: Architecture baseline
 
-- Add `Damageable` with signals and state transitions.
-- Convert sector/turret HP logic to shared state transitions.
+- [x] Add `Damageable` with signals and state transitions.
+- [x] Convert sector/turret HP logic to shared state transitions.
 
 ### Slice B: Gameplay critical outcomes
 
-- Implement command-post destruction -> fail state.
-- Remove invulnerability on powerless sectors.
+- [x] Implement command-post destruction -> fail state.
+- [x] Remove invulnerability on powerless sectors.
 
 ### Slice C: Power coupling
 
-- Add power-node output scaling by damage state.
-- Rework `power.gd` read model to use node outputs.
+- [x] Add power-node output scaling by damage state.
+- [x] Rework `power.gd` read model to use node outputs.
 
 ## Acceptance Checklist
 
-- [ ] Structures transition through all four states using one canonical model.
-- [ ] Command-post destruction reliably triggers game over.
-- [ ] Powerless structures can still take damage.
-- [ ] Power output scales with power-node damage state.
-- [ ] Turret effective output scales consistently with damage state and power.
-- [ ] Repair system can call `repair(amount)` uniformly on all structures.
+- [x] Structures transition through all four states using one canonical model.
+- [x] Command-post destruction reliably triggers game over.
+- [x] Powerless structures can still take damage.
+- [x] Power output scales with power-node damage state.
+- [x] Turret effective output scales consistently with damage state and power.
+- [x] Repair system can call `repair(amount)` uniformly on all structures.
 
 ## Decision Needed Before Build
 
