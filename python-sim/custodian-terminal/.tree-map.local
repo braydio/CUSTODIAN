@@ -1,0 +1,37 @@
+Directory Tree Mapping
+[33m/home/braydenchaffee/Projects/CUSTODIAN/custodian-terminal[0m
+├── boot.js
+├── index.html
+├── notes.md
+├── sector_layout.js
+├── sector-map.js
+├── server.py
+├── sounds
+│   ├── 4-beep.mp3
+│   ├── alert-deep.mp3
+│   ├── alert.mp3
+│   ├── alert_pulse_2_ui.mp3
+│   ├── alert_pulse_2_ui_spec.png
+│   ├── alert_pulse_2.wav
+│   ├── alert_pulse_ui.mp3
+│   ├── alert_pulse_ui_spec.png
+│   ├── alert_pulse.wav
+│   ├── alert_ui_final.mp3
+│   ├── beep.mp3
+│   ├── beep_tick.mp3
+│   ├── enter_confirm_tuned.mp3
+│   ├── hdd-spin-normalized.mp3
+│   ├── hum.mp3
+│   ├── hum_tuned.mp3
+│   ├── key_click_tuned.mp3
+│   ├── normalizer.sh
+│   ├── normalize.sh
+│   ├── power_cycle_tuned.mp3
+│   ├── relay.mp3
+│   ├── soft-alert.mp3
+│   ├── timing-relay.mp3
+│   ├── tuned
+│   ├── tuning
+│   └── typing_bed_final.mp3
+├── style.css
+└── terminal.js

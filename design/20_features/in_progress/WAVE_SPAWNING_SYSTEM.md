@@ -350,16 +350,16 @@ GameRoot
 
 ## 7. Testing Checklist
 
-- [ ] WaveManager node added to scene
-- [ ] Enemy scenes assigned in inspector
-- [ ] Spawn nodes placed on map edges
-- [ ] Spawn nodes have correct lane groups
-- [ ] First wave triggers after initial_delay
-- [ ] Enemies spawn at correct positions
-- [ ] Wave difficulty increases over time
-- [ ] Fast drones unlock at wave 3
-- [ ] Heavy drones unlock at wave 6
-- [ ] Max wave stops spawning
+- [x] WaveManager node added to scene
+- [x] Enemy scenes assigned in inspector
+- [x] Spawn nodes placed on map edges
+- [x] Spawn nodes have correct lane groups
+- [x] First wave triggers after initial_delay
+- [x] Enemies spawn at correct positions
+- [x] Wave difficulty increases over time
+- [x] Fast drones unlock at wave 3
+- [x] Heavy drones unlock at wave 6
+- [x] Max wave stops spawning
 
 ---
 

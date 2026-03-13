@@ -21,6 +21,7 @@ design/
         ├── ENEMY_BEHAVIOR_DIRECTOR.md
         ├── TURRET_SYSTEM.md
         ├── SECTOR_DAMAGE_SYSTEM.md
+        ├── COMBAT_FEEL_SYSTEM.md
         └── REPAIR_GAMEPLAY_SYSTEM.md
 ```
 
@@ -70,3 +71,11 @@ Use slash commands to run the implementation workflows from design docs:
 | `/designaudit` | `/designaudit design/20_features/in_progress` |
 
 These commands map to scripts under `~/.codex/scripts/`.
+
+## Animation Asset Workflow
+
+- When gameplay work requires a new or updated animation asset, explicitly ask the user to implement/provide that animation.
+- For each requested animation, include:
+  - exact save path under `custodian/assets/sprites/...`
+  - short description of the animation intent (what it should communicate in gameplay)
+- Do not silently invent missing production art assets; wire placeholders only when explicitly approved.
