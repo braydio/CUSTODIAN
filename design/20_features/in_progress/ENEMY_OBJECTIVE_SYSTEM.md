@@ -282,13 +282,13 @@ func _on_destroyed():
 
 ## 5. Testing Checklist
 
-- [ ] Command Post in group "command_post"
-- [ ] Power Nodes in group "power_node"
-- [ ] Turrets in group "turret"
-- [ ] Enemies prioritize Command Post over Player
-- [ ] Enemies switch targets when higher priority appears
-- [ ] Structures take damage from enemies
-- [ ] Destroyed structures affect gameplay (power off, etc.)
+- [x] Command Post in group "command_post"
+- [x] Power Nodes in group "power_node"
+- [x] Turrets in group "turret"
+- [x] Enemies prioritize Command Post over Player
+- [x] Enemies switch targets when higher priority appears
+- [x] Structures take damage from enemies
+- [x] Destroyed structures affect gameplay (power off, etc.)
 
 ---
 

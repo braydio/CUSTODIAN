@@ -1,7 +1,7 @@
 # Enemy Behavior Director — Implementation Plan
 
 **Created:** 2026-03-05
-**Status:** Ready for Implementation
+**Status:** In Progress (Runtime Slice + Telemetry Implemented)
 **Depends On:** Wave Spawning System
 
 ---
@@ -14,6 +14,19 @@ The Enemy Behavior Director sits above the WaveManager and Enemy AI, acting as t
 - What their objectives are
 
 This mirrors the legacy Python assault orchestration layer, which modeled lanes, objectives, and escalation. The Godot implementation borrows these core patterns but is adapted for native architecture.
+
+### Runtime Slice Delivered (2026-03-08 to 2026-03-10)
+
+- Added `res://core/systems/enemy_director.gd` and attached it in `res://scenes/game.tscn` as `EnemyDirector`.
+- Added `res://core/systems/threat_model.gd`.
+- Added `res://core/systems/assault_lane.gd`.
+- Added `res://core/systems/enemy_factory.gd`.
+- Extended `res://core/systems/wave_manager.gd` with `set_external_wave_plan(composition, lane, objective)`.
+- WaveManager now accepts director-forced lane and objective per wave while retaining existing spawn execution.
+- Enemy objective string is now respected by `res://entities/enemies/enemy.gd` target-priority ordering.
+- Added `EnemyDirector.get_director_status()` runtime telemetry.
+- Added lane outcome metrics (`total_attacks`, `successful_attacks`, `success_ratio`) in `AssaultLane`.
+- Added HUD line + terminal fallback telemetry rendering in `res://scenes/ui.gd` (`DIRECTOR`, `THREAT`, `ASSAULT`, `WAVE/BUDGET`).
 
 ---
 
@@ -387,16 +400,16 @@ func _find_best_target() -> Node2D:
 
 ---
 
-## 10. Testing Checklist
+## 10. Runtime Validation Checklist
 
-- [ ] ThreatModel calculates correctly
-- [ ] AssaultLanes register spawn nodes
-- [ ] Lane selection prefers weaker/less-attacked lanes
-- [ ] EnemyFactory generates compositions within budget
-- [ ] Objectives determine target priority
-- [ ] Director produces AttackPlan each wave
-- [ ] WaveManager executes AttackPlan
-- [ ] Enemies follow objective target priority
+- [x] ThreatModel calculates and updates threat over time/wave/destruction.
+- [x] Assault lanes register active spawn nodes by lane.
+- [x] Lane selection uses lane scores with recency/failure bias.
+- [x] EnemyFactory generates wave composition within point budget.
+- [x] Director produces lane + objective + composition plan each wave.
+- [x] WaveManager executes external director plan.
+- [x] Enemies consume objective and adjust target priority.
+- [x] Director telemetry exposed to HUD/terminal output.
 
 ---
 

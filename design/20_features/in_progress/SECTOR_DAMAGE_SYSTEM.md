@@ -6,6 +6,21 @@
 
 ---
 
+## Runtime Update — 2026-03-10 (Projectile Blocking)
+
+Implemented in current Godot runtime:
+
+- `Damageable` now supports `receive_projectile_hit(amount, attacker_team)` and `projectile_armor`.
+- Sector structures set `structure_projectile_armor` (default `8.0`) and map that into `projectile_armor`.
+- Turrets expose `projectile_armor` (default `10.0`) and return blocked-hit outcomes for low-damage projectiles.
+- `bullet.gd` reads the hit result and spawns:
+  - `impact_spark` on normal damage
+  - `block_spark` when `blocked = true`
+
+This is the first live blocked-hit path for structure combat readability.
+
+---
+
 ## 1. Overview
 
 Structures (Command Post, Power Nodes, Turrets) take persistent damage that affects their functionality. This creates strategic pressure — the player must prioritize repairs.
