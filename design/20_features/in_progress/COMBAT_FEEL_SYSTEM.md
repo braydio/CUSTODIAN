@@ -98,6 +98,15 @@ Required events:
 - `damage_end`
 - `cancel_start`
 
+Current runtime hookup:
+
+- `operator_runtime_frames.tres` fast melee attack uses `res://assets/sprites/operator/runtime/body/melee_fast/melee_fast_baked_operator_only.png`
+- fast attack weapon overlay uses `res://assets/sprites/operator/runtime/body/melee_fast/melee_fast_baked_katana.png`
+- fast attack FX overlay uses `res://assets/sprites/operator/runtime/body/melee_fast/melee_fast_baked_katana_effects.png`
+- melee idle stance now uses the authored body clip `res://assets/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_stance.png`
+- socketed `fallen_star_katana` remains active for non-authored melee movement/fallback poses
+- fast melee hit confirm / impact spark timing is frame 5 of the authored strip (1-based)
+
 #### Heavy attack
 
 4 frames minimum:

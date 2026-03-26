@@ -1,144 +1,142 @@
 # CUSTODIAN — Project Status Summary
 
-**Last Updated:** 2026-03-11
-
----
+**Last Updated:** 2026-03-12
 
 ## Current Development Stage
 
-**Playable Combat Core (Godot Runtime Bootstrapping)**
+**Playable Godot combat slice with runtime procgen contract world**
 
-The Godot runtime is live and executing the first vertical slice.
+The active Godot runtime now boots into a generated contract context:
 
----
+- PixelPlanets planet contract generation
+- Procgen map generation promoted into the live world
+- Local in-game terminal with contract/world snapshot and previews
+- Wave combat, turrets, supply drops, sprint, melee, and repair loop foundations
 
-## ✅ Implemented Features
-
-| Feature | Status | Files |
-|---------|--------|-------|
-| **Wave Spawning** | ✅ Done | `wave_manager.gd`, `spawn_node.gd` |
-| **Enemy Objectives** | ✅ Done | Enemies target command_post → power_node → turret → player |
-| **Turrets** | ✅ Done | 4 types: Gunner, Blaster, Repeater, Sniper with sprites |
-| **Melee Combat** | ✅ Done | Q key attack with cone detection |
-| **Player Movement** | ✅ Done | WASD + mouse aim |
-| **Combat System** | ✅ Done | Bullets, damage, enemy death |
-| **Supply Drops** | ✅ Done | Timer-based ammo caches spawning at map edges |
-| **Debug Spawn** | ✅ Done | Press N to spawn enemy at cursor |
-
----
-
-## 🔄 In Progress
+## Implemented
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| **Animation System** | Skeleton Created | State machine + states in `entities/operator/animations/` |
-| **Sector Damage** | Partial | Targeting works, damage propagation needs testing |
-| **Power System** | Basic | Drains over time, powers turrets |
+| Wave spawning | Done | `wave_manager.gd`, lane spawn nodes, fast/heavy variants |
+| Enemy director | Done | Threat, budget, lane/objective routing |
+| Enemy objectives | Done | Structure-first targeting with player fallback |
+| Enemy runtime visuals | Done | Base / fast / heavy variants now use 8-direction humanoid sheets in live wave spawns |
+| Turrets | Done | 4 archetypes, powered targeting and firing |
+| Player ranged combat | Done | Standard/heavy profiles, ammo, cooldowns |
+| Player melee combat | Done | Fast/heavy/combo timing, hit-stop, camera shake |
+| Sprint and stamina | Done | `CTRL` sprint, stamina HUD |
+| Repair gameplay slice | Done | Hold repair on damaged structures |
+| Supply drops | Done | Periodic resource drop loop |
+| Local command terminal | Done | In-world interactable, no HTTP dependency |
+| Contract planet generation | Done | PixelPlanets integrated into runtime |
+| Runtime procgen map loading | Done | Generated map is promoted into active world |
+| Terminal previews | Done | Planet render + map preview in terminal |
+| Procgen compound zone | Done | Structured base footprint, ingress points, edge spawn projection |
+| Runtime wall collision | Done | Explicit wall colliders built from generated wall cells |
+| Game feel: hit-stop | Done | Time scale freeze on hit |
+| Game feel: screen shake | Done | Camera shake on hit |
+| Game feel: knockback | Done | Push enemies on melee hit |
+| Game feel: damage flash | Done | White flash on damage |
 
----
+## In Progress
 
-## ⏳ Not Yet Implemented
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Procgen camera handoff | **BROKEN** | Camera still follows legacy sector bounds, not procgen map |
+| Compound identity pass | Partial | Compound has sector-like footprints, but named sector roles are not yet instantiated as real entities |
+| Procgen layout tuning | Partial | Open/cave variety added, but still needs feel iteration |
+| Sector damage integration | Partial | Runtime systems exist; procgen compound and damage semantics still need deeper coupling |
+| Animation overhaul integration | Partial | Runtime uses updated attacks/sprint/drone hooks, but animation set is still evolving |
+
+## Known Issues (Procgen Handoff)
+
+| Priority | Issue | Impact |
+|----------|-------|--------|
+| **HIGH** | Camera bounds rebuilt from `/root/GameRoot/World/Sectors` which are hidden after procgen promotion | Camera feels "linked elsewhere", doesn't follow procgen map |
+| **HIGH** | Firing direction uses `get_global_mouse_position()` which is wrong if camera bounds are stale | Bullets fire toward wrong world position |
+| **MEDIUM** | Only Operator and SpawnNodes are repositioned to procgen space | Terminal, ammo caches, other anchors remain in legacy coords |
+| **MEDIUM** | No explicit camera rebind after contract generation | Camera never snaps to procgen player spawn |
+| **LOW** | Game feel scripts query `get_tree().get_first_node_in_group("camera")` but camera never registers to that group | Screen shake is no-op |
+
+## Not Yet Implemented
 
 | Feature | Priority | Notes |
 |---------|----------|-------|
-| **Repair Gameplay** | High | Core Custodian fantasy |
-| **Sector Layout Authority** | High | Real structure hierarchy |
-| **Save/Snapshot System** | Medium | Will need soon |
-| **ARRN Relay Network** | Medium | Campaign progression |
-| **Logistics/Fabrication** | Medium | Economic layer |
+| Named procgen sectors as real gameplay structures | High | Command/power/defense/fabrication should become authoritative spawned structures |
+| Full assault loop against compound ingress/sector objectives | High | Current spawns route correctly, but objective semantics are still hybrid |
+| Save/snapshot persistence | Medium | No campaign persistence yet |
+| Fabrication/logistics gameplay | Medium | Economy layer still absent |
+| ARRN relay / campaign progression | Medium | Not yet ported into Godot runtime |
+
+## Current Runtime Loop
+
+1. Game boots into `res://scenes/game.tscn`
+2. `World/ContractMap` generates a deterministic PixelPlanets contract + procgen map
+3. `ContractWorldLoader` promotes the generated map into `World/ProcGenRuntime`
+4. Static legacy sector visuals/collisions are disabled for runtime procgen play
+5. **Operator is moved to procgen player spawn**
+6. **Spawn nodes are projected to map edges** nearest compound ingress points
+7. Terminal interactable opens local command UI with:
+   - world snapshot
+   - contract metadata
+   - planet preview
+   - map preview
+8. Combat loop proceeds with waves, enemies, turrets, supply drops, repair
+
+**NOTE:** The procgen handoff is PARTIAL. Camera, terminal, ammo caches, and other anchors remain in legacy static scene coordinates. Only Operator and SpawnNodes are repositioned.
+
+## Main Risks / Gaps
+
+- Camera still follows old sector bounds, causing aim/bounds issues
+- Compound buildings are currently visual/map-space structures, not yet instantiated as named authoritative sector entities.
+- Power and sector systems still reflect legacy/static assumptions in places.
+- Procgen readability is improved, but still needs aesthetic/autotile refinement.
+- Game feel shake doesn't work (camera not in "camera" group)
+
+## Next Priority
+
+1. **FIX: Camera procgen handoff** - Derive bounds from `World/ProcGenRuntime` tilemaps, not `World/Sectors`
+2. **FIX: Camera snap to procgen player** - Rebind camera position when ContractWorldLoader finishes
+3. **FIX: Move other anchors** - Reposition terminal, ammo caches to procgen coords
+4. **FIX: Register camera to group** - Add camera to "camera" group for game feel hooks
+5. Promote compound pads into real spawned structures (`COMMAND`, `POWER`, `DEFENSE`, etc.)
+6. Bind assault objectives directly to procgen compound ingress/sector targets
 
 ---
 
-## Current Gameplay Loop
+## Free-Roam Pre-Assault Roadmap
 
-```
-Move (WASD)
-↓ 
-Fight enemies (left click shoot, Q melee)
-↓ 
-Waves spawn automatically
-↓ 
-Turrets shoot enemies
-↓ 
-Enemies target structures
-↓ 
-Supply drops spawn ammo periodically
-```
+**NEW:** See `design/FREE_ROAM_PRE_ASSAULT_WALKTHROUGH.md` for the complete implementation plan to add free-roam exploration and strategic prep before assault begins.
 
-**What's working:**
-- Combat loop complete
-- Turrets fire at enemies
-- Debug spawn (N key) for testing
-- Supply drop system running
+### Quick Summary
+- **Phase 0:** Procgen handoff fixes (camera, firing, group registration)
+- **Phase 1:** Mission state machine (CONTRACT_BRIEFING → FREE_ROAM_PREP → ASSAULT_ACTIVE → POST_ASSAULT → EXFIL)
+- **Phase 2:** Manual assault trigger via terminal command
+- **Phase 3:** Authoritative procgen sectors as interactable entities
+- **Phase 4:** Real prep systems (fabrication, fortification, power routing, scavenging)
+- **Phase 5:** Terminal interface for all prep commands
 
-**What's missing:**
-- Structures don't meaningfully degrade yet
-- No repair mechanic
-- Infrastructure doesn't matter yet
+**Why this matters:** The current runtime immediately starts wave combat after 15 seconds. This roadmap enables players to traverse the map, prepare defenses, scavenge resources, and CHOOSE when to start the assault.
 
 ---
 
-## Animation System (New)
+## Operator Animation State Machine
 
-Located at `entities/operator/animations/`:
+**NEW:** See `design/OPERATOR_ANIMATION_STATE_MACHINE.md` for the complete state transition mapping and missing state implementation plan.
 
-```
-animations/
-├── animation_state_machine.gd   # Main state machine
-├── camera_shake.gd            # Screen shake effect
-├── custodian_node_setup.tscn   # Recommended node setup
-├── states/                    # Animation states
-│   ├── idle_state.gd
-│   ├── walk_state.gd
-│   ├── sprint_state.gd
-│   ├── attack_fast_state.gd
-│   ├── attack_heavy_state.gd
-│   ├── attack_dash_state.gd
-│   ├── equip_weapon_state.gd
-│   ├── hit_recoil_state.gd
-│   ├── stagger_state.gd
-│   └── death_state.gd
-├── events/                    # Event markers
-└── transitions/              # Transition rules
-```
+### Current State
+- State machine is now connected to the operator attack + locomotion request path; block is live, while reload/interact and broader non-combat states are still pending
+- Operator directly controls `AnimatedSprite2D` instead of using state machine
+- Existing states: idle, walk, sprint, attack_fast, attack_heavy, attack_dash, equip_weapon, stagger, death
 
----
+### Missing States (Priority Order)
+1. **RELOAD** - High priority, ranged weapons need reload
+2. **INTERACT** - High priority, world interaction needs visual
+3. **PICKUP** - Medium priority, scavenging needs visual
+4. **REPAIR** - Medium priority, repair gameplay exists
+5. **CROUCH** - Low priority, tactical option
 
-## Next Priority: Combat Verification + Animation Integration
-
-1. Verify turrets firing (use debug spawn N)
-2. Wire animation state machine to operator.gd
-3. Sector damage propagation
-4. Repair gameplay
-
----
-
-## Design Docs Status
-
-| Doc | Status |
-|-----|--------|
-| WAVE_SPAWNING_SYSTEM.md | ✅ Implemented |
-| ENEMY_OBJECTIVE_SYSTEM.md | ✅ Implemented |
-| TURRET_SYSTEM.md | ✅ Implemented |
-| GAME_OVER_FLOW.md | ✅ Implemented |
-| BALANCE_TARGETS_V1.md | ✅ Implemented |
-| POWER_SYSTEMS_GODOT.md | ✅ Implemented |
-| REPAIR_MECHANICS_GODOT.md | ✅ Implemented |
-| ASSAULT_DESIGN_GODOT.md | ✅ Implemented |
-| ENEMY_BEHAVIOR_DIRECTOR.md | ✅ Implemented |
-| COMBAT_FEEL_SYSTEM.md | ✅ Created |
-
----
-
-## Target: First Playable Defense Scenario
-
-**Goal:** 10-minute gameplay loop
-
-Required:
-1. ✅ Movement & combat
-2. ✅ Wave spawning
-3. ✅ Turrets
-4. 🔄 Animation integration
-5. 🔄 Sector damage (partial)
-6. ⏳ Repair gameplay
-7. ⏳ Save system
+### Implementation Path
+- Phase 1: Wire state machine to operator + create Block/Reload/Interact states
+- Phase 2: Create Pickup/Repair/Crouch states
+- Phase 3: Polish (victory, emotes)

@@ -1,1 +1,39 @@
-__pycache__/*
+# Godot
+.godot/
+.import/
+custodian/.godot/
+custodian/.import/
+export_presets.cfg
+*.translation
+
+# Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Local tooling / generated diagnostics
+*.log
+*.tmp
+*.bak
+python-sim/custodian-terminal/.fastcat.local
+python-sim/custodian-terminal/.tree-map.local
+scripts/.tmp/
+
+# MCP / local plugin output
+custodian/addons/godot_mcp/.cache/
+
+# Keep imported assets tracked only through source files already committed.

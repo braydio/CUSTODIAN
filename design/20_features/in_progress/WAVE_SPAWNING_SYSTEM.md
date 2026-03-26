@@ -84,6 +84,7 @@ signal all_waves_completed()
 @export var growth_per_wave: int = 3
 @export var max_wave: int = 20
 @export var initial_delay: float = 5.0
+@export var max_alive_enemies: int = 60
 
 # Enemy Scene References (assign in inspector)
 @export var drone_scene: PackedScene
@@ -162,6 +163,8 @@ func _spawn_wave(points: int, difficulty: float):
     var remaining_points = points
     
     while remaining_points > 0:
+        if _count_alive_enemies() >= max_alive_enemies:
+            break
         var enemy_type = _choose_enemy(remaining_points)
         
         if enemy_type.is_empty():
@@ -218,6 +221,8 @@ func _spawn_enemy(enemy_type: String, difficulty: float):
         enemy.apply_difficulty_modifiers(difficulty, difficulty)
     
     # Position at spawn node
+
+The live implementation now uses the alive-enemy cap as a throttle on the pending spawn queue. When the battlefield reaches `max_alive_enemies`, the spawn timer keeps running but defers additional spawns until enemies die.
     enemy.global_position = spawn_node.global_position
     
     # Add to world

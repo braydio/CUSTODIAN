@@ -14,6 +14,7 @@ Confirmed implementation decisions:
 - Destroyed turrets remain as wrecks in-world (not `queue_free()`).
 - Turrets remain preplaced for the current gameplay slice.
 - Power dependency remains sector-based for now.
+- Procgen contract maps reposition the existing `DEFENSE` sector into the generated compound and carry its turret children with it.
 
 ---
 

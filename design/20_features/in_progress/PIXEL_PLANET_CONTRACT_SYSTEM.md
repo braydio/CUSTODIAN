@@ -95,8 +95,10 @@ This ensures stable planet+map pairing per contract seed.
 - On generation, it re-parents the contract `ProcGenMap` instance into active world runtime container:
   - `World/ProcGenRuntime`
 - Static sector visuals are hidden (systems remain available), and runtime entities are aligned to contract map data:
-  - Operator moved to `level_data.player_spawn`
+  - Operator moved to an open walkable tile inside the generated compound, preferring ingress-adjacent courtyard tiles and avoiding wall-locked pockets (fallback `level_data.player_spawn`)
   - Spawn nodes redistributed across `level_data.corridor_spawns` (fallback `rooms_by_distance`)
+  - Command terminal snapped to a walkable compound tile instead of unrelated room samples, preventing unreachable terminal placement
+  - Legacy sector nodes are rescaled to the procgen tile size before being repositioned onto compound building pads, so their footprint does not spill outside the generated map zone
 
 ## Map Feel Controls (Implemented)
 
@@ -109,6 +111,7 @@ This ensures stable planet+map pairing per contract seed.
   - bounded min/max compound dimensions
   - perimeter walls + ingress points + internal building blocks
   - building blocks now use fixed sector-like footprint presets (command/power/defense/storage style scales)
+  - sealed compound floor pockets that are not reachable from any ingress are converted into explicit hole tiles (`[9,2]`) instead of remaining accidental spawnable floor
 - Added layout diversity controls:
   - `open_layout_chance`
   - `open_layout_carve_ratio`
