@@ -1,8 +1,6 @@
 # Godot
 .godot/
 .import/
-custodian/.godot/
-custodian/.import/
 export_presets.cfg
 *.translation
 
@@ -29,8 +27,6 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
-python-sim/custodian-terminal/.fastcat.local
-python-sim/custodian-terminal/.tree-map.local
 scripts/.tmp/
 
 # MCP / local plugin output
