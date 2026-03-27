@@ -1,0 +1,8 @@
+# Godot 4+ generated artifacts
+.godot/
+.import/
+.android/
+.mono/
+.export_cmake/
+export_presets.cfg
+*.translation

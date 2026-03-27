@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://entities/effects/melee_swing.gd" id="1_melee_swing"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arc"]
+bg_color = Color(1, 0.5, 0.2, 0.6)
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slash"]
+bg_color = Color(1, 0.8, 0.4, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_trail"]
+bg_color = Color(1, 0.6, 0.3, 0.3)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="MeleeSwing" type="Node2D"]
+script = ExtResource("1_melee_swing")
+
+[node name="Trail" type="Panel" parent="."]
+offset_left = -40.0
+offset_top = -8.0
+offset_right = -10.0
+offset_bottom = 8.0
+rotation = -0.785398
+theme_override_styles/panel = SubResource("StyleBoxFlat_trail")
+
+[node name="Arc" type="Panel" parent="."]
+offset_left = -8.0
+offset_top = -60.0
+offset_right = 8.0
+offset_bottom = 60.0
+rotation = -1.5708
+theme_override_styles/panel = SubResource("StyleBoxFlat_arc")
+
+[node name="Slash" type="Panel" parent="."]
+offset_left = -50.0
+offset_top = -4.0
+offset_right = 50.0
+offset_bottom = 4.0
+rotation = -0.785398
+theme_override_styles/panel = SubResource("StyleBoxFlat_slash")

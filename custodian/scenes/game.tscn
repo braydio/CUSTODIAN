@@ -1,0 +1,585 @@
+[gd_scene format=3 uid="uid://c0x7mhq5n2kd8"]
+
+[ext_resource type="Script" uid="uid://c4e4i6nkboriy" path="res://core/systems/simulation.gd" id="1_simulation"]
+[ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://entities/operator/operator.tscn" id="2_operator"]
+[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://scenes/camera.gd" id="3_camera"]
+[ext_resource type="PackedScene" path="res://entities/sector/sector.tscn" id="4_sector"]
+[ext_resource type="Script" uid="uid://dv1vtc24ktkdi" path="res://core/systems/combat.gd" id="5_combat"]
+[ext_resource type="PackedScene" uid="uid://dgtvm5ncnayht" path="res://entities/enemies/enemy.tscn" id="6_enemy"]
+[ext_resource type="Script" uid="uid://bmm250f700v61" path="res://core/systems/power.gd" id="7_power"]
+[ext_resource type="Script" uid="uid://b8du6y5b0ppbh" path="res://scenes/ui.gd" id="8_ui"]
+[ext_resource type="Script" uid="uid://bewgosi1uu3qj" path="res://scenes/pause_ui.gd" id="9_pause"]
+[ext_resource type="PackedScene" path="res://entities/items/ammo_cache.tscn" id="10_cache"]
+[ext_resource type="Script" uid="uid://citwrr55dyx86" path="res://core/systems/spawn_node.gd" id="13_spawn_node"]
+[ext_resource type="Script" uid="uid://bvwvd7qwsk7tk" path="res://core/systems/wave_manager.gd" id="14_wave_manager"]
+[ext_resource type="Script" uid="uid://cwmil77ydatus" path="res://core/systems/enemy_director.gd" id="15_enemy_director"]
+[ext_resource type="PackedScene" path="res://entities/enemies/fast_drone.tscn" id="16_fast_enemy"]
+[ext_resource type="PackedScene" path="res://entities/enemies/heavy_drone.tscn" id="17_heavy_enemy"]
+[ext_resource type="PackedScene" uid="uid://chxttfh575v5i" path="res://entities/sector/turret_gunner.tscn" id="19_turret_gunner"]
+[ext_resource type="PackedScene" path="res://entities/sector/turret_blaster.tscn" id="20_turret_blaster"]
+[ext_resource type="PackedScene" path="res://entities/sector/turret_repeater.tscn" id="21_turret_repeater"]
+[ext_resource type="PackedScene" path="res://entities/sector/turret_sniper.tscn" id="22_turret_sniper"]
+[ext_resource type="Script" uid="uid://bv666t3wt6ofa" path="res://entities/sector/power_node.gd" id="24_power_node"]
+[ext_resource type="Script" uid="uid://c1cs5ipx8lxnp" path="res://core/systems/supply_drop_manager.gd" id="25_supply_drop"]
+[ext_resource type="PackedScene" uid="uid://lp5kk4al1nnv" path="res://procgen/custodian_contract_map.tscn" id="26_contract_map"]
+[ext_resource type="PackedScene" path="res://entities/terminal/command_terminal.tscn" id="27_command_terminal"]
+[ext_resource type="Script" uid="uid://bvqagq17ro1u6" path="res://core/systems/contract_world_loader.gd" id="28_contract_loader"]
+[ext_resource type="Script" uid="uid://xjdny30dgrp6" path="res://debug/debug_controller.gd" id="29_debug_controller"]
+[ext_resource type="PackedScene" path="res://debug/dev_ui.tscn" id="30_dev_ui"]
+[ext_resource type="Script" uid="uid://cg1kmf7hdh3s2" path="res://debug/debug_draw.gd" id="31_debug_draw"]
+[ext_resource type="Script" uid="uid://jp87rnpxqgdt" path="res://debug/inspector_probe.gd" id="32_inspector_probe"]
+[ext_resource type="Script" uid="uid://xj0cr1hc5c46" path="res://debug/debug_collector.gd" id="33_debug_collector"]
+[ext_resource type="Script" uid="uid://bi11w51uaudmj" path="res://core/systems/ambient_critter_manager.gd" id="34_ambient_critters"]
+[ext_resource type="PackedScene" path="res://entities/enemies/ambient_scav_droid.tscn" id="35_ambient_droid"]
+[ext_resource type="Script" uid="uid://by380p21nbchx" path="res://entities/ui/terminal_background.gd" id="36_terminal_background"]
+[ext_resource type="Script" uid="uid://bg78eihw40m6g" path="res://core/systems/navigation_system.gd" id="40_navigation"]
+[ext_resource type="Script" uid="uid://din0buhray3ph" path="res://debug/navigation_debug.gd" id="41_nav_debug"]
+[ext_resource type="PackedScene" path="res://core/systems/wall_build_system.tscn" id="99_wall_build_system"]
+[ext_resource type="PackedScene" path="res://core/systems/wall_placer.tscn" id="99_wall_placer"]
+
+[node name="GameRoot" type="Node2D" unique_id=593578645]
+position = Vector2(1512.3806, 578.4541)
+
+[node name="DebugController" type="Node" parent="." unique_id=744681739]
+script = ExtResource("29_debug_controller")
+
+[node name="DebugCollector" type="Node" parent="." unique_id=599804427]
+script = ExtResource("33_debug_collector")
+
+[node name="DevUI" parent="." unique_id=227687621 instance=ExtResource("30_dev_ui")]
+
+[node name="World" type="Node2D" parent="." unique_id=932635855]
+
+[node name="DebugDraw" type="Node2D" parent="World" unique_id=1320630577]
+script = ExtResource("31_debug_draw")
+
+[node name="InspectorProbe" type="Node2D" parent="World" unique_id=1619477561]
+script = ExtResource("32_inspector_probe")
+
+[node name="NavigationDebug" type="Node2D" parent="World" unique_id=1619477562]
+script = ExtResource("41_nav_debug")
+
+[node name="Sectors" type="Node2D" parent="World" unique_id=800988395]
+
+[node name="NORTH_TRANSIT" parent="World/Sectors" unique_id=1229477064 instance=ExtResource("4_sector")]
+position = Vector2(-312, -480)
+sector_name = "NORTH TRANSIT"
+sector_type = "TRANSIT"
+size_tiles = Vector2i(24, 16)
+door_sides = PackedStringArray("W", "E")
+
+[node name="POWER" parent="World/Sectors" unique_id=305107457 instance=ExtResource("4_sector")]
+position = Vector2(1728, -890)
+script = ExtResource("24_power_node")
+node_name = "Power Node"
+power_output = 120.0
+sector_name = "POWER"
+sector_type = "POWER"
+size_tiles = Vector2i(28, 26)
+door_sides = PackedStringArray("W", "S")
+
+[node name="DEFENSE" parent="World/Sectors" unique_id=1371060751 instance=ExtResource("4_sector")]
+position = Vector2(1800, 312)
+sector_name = "DEFENSE"
+sector_type = "DEFENSE"
+size_tiles = Vector2i(30, 28)
+door_sides = PackedStringArray("N", "W")
+
+[node name="TurretGunner" parent="World/Sectors/DEFENSE" unique_id=1973721001 instance=ExtResource("19_turret_gunner")]
+position = Vector2(100, -36)
+
+[node name="TurretBlaster" parent="World/Sectors/DEFENSE" unique_id=1973721002 instance=ExtResource("20_turret_blaster")]
+position = Vector2(-120, 24)
+
+[node name="TurretBlaster2" parent="World/Sectors/DEFENSE" unique_id=247143122 instance=ExtResource("20_turret_blaster")]
+position = Vector2(-120, 24)
+
+[node name="TurretRepeater" parent="World/Sectors/DEFENSE" unique_id=1973721003 instance=ExtResource("21_turret_repeater")]
+position = Vector2(40, 132)
+
+[node name="TurretSniper" parent="World/Sectors/DEFENSE" unique_id=1973721004 instance=ExtResource("22_turret_sniper")]
+position = Vector2(-42, -156)
+
+[node name="ARCHIVE" parent="World/Sectors" unique_id=1258512870 instance=ExtResource("4_sector")]
+position = Vector2(-1200, -480)
+sector_name = "ARCHIVE"
+sector_type = "ARCHIVE"
+size_tiles = Vector2i(30, 28)
+door_sides = PackedStringArray("E")
+
+[node name="STORAGE" parent="World/Sectors" unique_id=1668407586 instance=ExtResource("4_sector")]
+position = Vector2(-312, 288)
+sector_name = "STORAGE"
+sector_type = "STORAGE"
+size_tiles = Vector2i(28, 24)
+door_sides = PackedStringArray("N", "E")
+
+[node name="SOUTH_TRANSIT" parent="World/Sectors" unique_id=2063248664 instance=ExtResource("4_sector")]
+position = Vector2(720, 288)
+sector_name = "SOUTH TRANSIT"
+sector_type = "TRANSIT"
+size_tiles = Vector2i(24, 16)
+door_sides = PackedStringArray("N", "W")
+
+[node name="Enemies" type="Node2D" parent="World" unique_id=1365669343]
+
+[node name="SpawnNodes" type="Node2D" parent="World" unique_id=1079383596]
+
+[node name="NorthSpawn" type="Node2D" parent="World/SpawnNodes" unique_id=594161002]
+position = Vector2(700, -980)
+script = ExtResource("13_spawn_node")
+lane = "north"
+
+[node name="EastSpawn" type="Node2D" parent="World/SpawnNodes" unique_id=1197471513]
+position = Vector2(2220, -220)
+script = ExtResource("13_spawn_node")
+lane = "east"
+
+[node name="SouthSpawn" type="Node2D" parent="World/SpawnNodes" unique_id=223677011]
+position = Vector2(700, 760)
+script = ExtResource("13_spawn_node")
+lane = "south"
+
+[node name="WestSpawn" type="Node2D" parent="World/SpawnNodes" unique_id=1311720741]
+position = Vector2(-1620, -120)
+script = ExtResource("13_spawn_node")
+lane = "west"
+
+[node name="Projectiles" type="Node2D" parent="World" unique_id=1418877711]
+
+[node name="Items" type="Node2D" parent="World" unique_id=1390419870]
+
+[node name="AmmoCacheA" parent="World/Items" unique_id=1977245667 instance=ExtResource("10_cache")]
+position = Vector2(-920, -520)
+standard_ammo = 32
+
+[node name="AmmoCacheB" parent="World/Items" unique_id=892279798 instance=ExtResource("10_cache")]
+position = Vector2(420, 300)
+standard_ammo = 24
+heavy_ammo = 10
+
+[node name="AmmoCacheC" parent="World/Items" unique_id=228248645 instance=ExtResource("10_cache")]
+position = Vector2(1600, -140)
+standard_ammo = 36
+heavy_ammo = 6
+
+[node name="AmmoCacheD" parent="World/Items" unique_id=655756500 instance=ExtResource("10_cache")]
+position = Vector2(40, -520)
+
+[node name="ContractMap" parent="World" unique_id=1103719919 instance=ExtResource("26_contract_map")]
+visible = false
+
+[node name="Operator" parent="World" unique_id=2047803984 instance=ExtResource("2_operator")]
+position = Vector2(717.45905, -485.33954)
+muzzle_offset = 24.0
+aim_crosshair_color = Color(0.9, 0.9, 0.9, 1)
+ammo_standard = 120
+ammo_heavy = 32
+ammo_standard_max = 240
+ammo_heavy_max = 80
+interaction_range = 84.0
+melee_damage = 28.0
+melee_range = 72.0
+melee_arc_degrees = 80.0
+melee_cooldown = 0.45
+melee_fast_hit_damage = 7.0
+melee_heavy_hit_damage = 34.0
+melee_heavy_range = 84.0
+melee_heavy_arc_degrees = 58.0
+melee_input_buffer_time = 0.15
+melee_fast_cancel_start = 0.5
+melee_heavy_cancel_start = 0.58
+melee_hit_stop_scale = 0.8
+melee_hit_stop_duration = 0.02
+melee_camera_shake_power = 1.0
+repair_rate = 15.0
+sprint_multiplier = 1.7
+stamina_max = 100.0
+stamina_drain_per_second = 32.0
+stamina_regen_per_second = 22.0
+stamina_sprint_gate = 10.0
+move_acceleration = 1200.0
+move_deceleration = 1500.0
+movement_turn_response = 14.0
+heavy_attack_stamina_cost = 14.0
+heavy_attack_blocked_while_sprinting = true
+block_move_multiplier = 0.6
+block_stamina_cost_per_hit = 12.0
+combat_target_range = 360.0
+use_tiny_rpg_placeholder_soldier = true
+idle_main_sheet_path = "res://assets/sprites/operator/runtime/idle/operator_idle_main.png"
+ranged_2h_stance_sheet_path = "res://assets/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_stance.png"
+ranged_2h_aim_sheet_path = "res://assets/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_aim_raise.png"
+idle_long_loop_threshold = 20
+placeholder_sprite_position = Vector2(0, -18)
+placeholder_sprite_offset = Vector2(0, 0)
+right_hand_socket_position = Vector2(10, -16)
+left_hand_socket_position = Vector2(12, -28)
+primary_weapon_socket_position = Vector2(12, -28)
+primary_weapon_sprite_position = Vector2(0, 0)
+primary_weapon_sprite_scale = Vector2(1, 1)
+primary_weapon_muzzle_socket_position = Vector2(20, 2)
+placeholder_collision_offset = Vector2(0, 12)
+placeholder_collision_radius = 7.0
+placeholder_collision_height = 22.0
+placeholder_melee_hitbox_radius = 22.0
+placeholder_healthbar_top = -54.0
+placeholder_healthbar_bottom = -48.0
+
+[node name="WallPlacer" parent="World" unique_id=1022301411 instance=ExtResource("99_wall_placer")]
+
+[node name="WallBuildSystem" parent="World" unique_id=1989965356 instance=ExtResource("99_wall_build_system")]
+
+[node name="CommandTerminal" parent="World" unique_id=2021499921 instance=ExtResource("27_command_terminal")]
+position = Vector2(804, -492)
+
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=1332183342]
+position = Vector2(720, -480)
+script = ExtResource("3_camera")
+
+[node name="Simulation" type="Node" parent="." unique_id=262550242]
+script = ExtResource("1_simulation")
+
+[node name="Combat" type="Node" parent="." unique_id=780370146]
+script = ExtResource("5_combat")
+
+[node name="Power" type="Node" parent="." unique_id=986267273]
+script = ExtResource("7_power")
+
+[node name="WaveManager" type="Node" parent="." unique_id=987111452]
+script = ExtResource("14_wave_manager")
+wave_interval = 25.0
+initial_delay = 4.0
+drone_scene = ExtResource("6_enemy")
+fast_drone_scene = ExtResource("16_fast_enemy")
+heavy_drone_scene = ExtResource("17_heavy_enemy")
+
+[node name="EnemyDirector" type="Node" parent="." unique_id=987111453]
+script = ExtResource("15_enemy_director")
+
+[node name="NavigationSystem" type="Node" parent="." unique_id=987111455]
+script = ExtResource("40_navigation")
+
+[node name="SupplyDropManager" type="Node" parent="." unique_id=987111454]
+script = ExtResource("25_supply_drop")
+drop_interval = 35.0
+initial_delay = 25.0
+
+[node name="ContractWorldLoader" type="Node" parent="." unique_id=1201129447]
+script = ExtResource("28_contract_loader")
+
+[node name="AmbientCritterManager" type="Node" parent="." unique_id=292901155]
+script = ExtResource("34_ambient_critters")
+critter_scene = ExtResource("35_ambient_droid")
+min_distance_from_spawn_tiles = 10
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=2053415447]
+script = ExtResource("8_ui")
+
+[node name="PowerDisplay" type="Panel" parent="UI" unique_id=449160537]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 220.0
+offset_bottom = 60.0
+
+[node name="Label" type="Label" parent="UI/PowerDisplay" unique_id=1591291188]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 190.0
+offset_bottom = 35.0
+text = "POWER: 500/500"
+
+[node name="PowerBar" type="ProgressBar" parent="UI/PowerDisplay" unique_id=1933106435]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 20.0
+offset_right = 190.0
+offset_bottom = 32.0
+value = 100.0
+show_percentage = false
+
+[node name="ContractPhaseLabel" type="Label" parent="UI" unique_id=934551200]
+offset_left = 20.0
+offset_top = 68.0
+offset_right = 340.0
+offset_bottom = 92.0
+text = "CONTRACT PHASE: BRIEFING"
+
+[node name="CameraFollowLabel" type="Label" parent="UI" unique_id=170044321]
+offset_left = 20.0
+offset_top = 92.0
+offset_right = 300.0
+offset_bottom = 116.0
+text = "CAMERA: TRACKING (C)"
+
+[node name="CameraZoomLabel" type="Label" parent="UI"]
+offset_left = 20.0
+offset_top = 116.0
+offset_right = 300.0
+offset_bottom = 140.0
+text = "ZOOM: AUTO (Z)"
+
+[node name="TimeScaleLabel" type="Label" parent="UI" unique_id=177033776]
+offset_left = 20.0
+offset_top = 140.0
+offset_right = 320.0
+offset_bottom = 164.0
+text = "TIME SCALE: 1.0X (T)"
+
+[node name="WeaponLabel" type="Label" parent="UI" unique_id=179173991]
+offset_left = 20.0
+offset_top = 164.0
+offset_right = 520.0
+offset_bottom = 188.0
+text = "LOADOUT: HOLSTERED (Q RANGED, E MELEE) | FIRE MODE: STANDARD (1/2) | ATTACK: F/M1 | BLOCK: R/M2"
+
+[node name="PrimaryWeaponButton" type="Button" parent="UI" unique_id=179173992]
+offset_left = 20.0
+offset_top = 188.0
+offset_right = 180.0
+offset_bottom = 216.0
+text = "EQUIP CARBINE"
+
+[node name="AmmoLabel" type="Label" parent="UI" unique_id=1735120534]
+offset_left = 20.0
+offset_top = 220.0
+offset_right = 360.0
+offset_bottom = 244.0
+text = "AMMO STD: 0 | HVY: 0"
+
+[node name="CooldownBar" type="ProgressBar" parent="UI" unique_id=129306331]
+offset_left = 20.0
+offset_top = 246.0
+offset_right = 260.0
+offset_bottom = 262.0
+show_percentage = false
+
+[node name="CooldownLabel" type="Label" parent="UI" unique_id=105988336]
+offset_left = 268.0
+offset_top = 242.0
+offset_right = 420.0
+offset_bottom = 266.0
+text = "COOLDOWN: READY"
+
+[node name="StaminaBar" type="ProgressBar" parent="UI" unique_id=120306331]
+offset_left = 20.0
+offset_top = 266.0
+offset_right = 260.0
+offset_bottom = 282.0
+value = 100.0
+show_percentage = false
+
+[node name="StaminaLabel" type="Label" parent="UI" unique_id=120988336]
+offset_left = 268.0
+offset_top = 262.0
+offset_right = 500.0
+offset_bottom = 286.0
+text = "STAMINA: 100% (JOG, CTRL)"
+
+[node name="DirectorLabel" type="Label" parent="UI" unique_id=120988337]
+offset_left = 20.0
+offset_top = 290.0
+offset_right = 640.0
+offset_bottom = 314.0
+text = "DIRECTOR W0 | TH 0.0 | NONE | NONE"
+
+[node name="SupplyDropLabel" type="Label" parent="UI" unique_id=120988338]
+offset_left = 20.0
+offset_top = 314.0
+offset_right = 360.0
+offset_bottom = 338.0
+text = "SUPPLY DROP: --"
+
+[node name="Crosshair" type="Label" parent="UI" unique_id=111706062]
+offset_left = 640.0
+offset_top = 360.0
+offset_right = 650.0
+offset_bottom = 374.0
+text = "+"
+
+[node name="InteractionLabel" type="Label" parent="UI" unique_id=466777138]
+offset_left = 20.0
+offset_top = 342.0
+offset_right = 560.0
+offset_bottom = 366.0
+
+[node name="TerminalPanel" type="Panel" parent="UI" unique_id=760134112]
+visible = false
+offset_left = 72.0
+offset_top = 40.0
+offset_right = 1208.0
+offset_bottom = 684.0
+
+[node name="Header" type="Panel" parent="UI/TerminalPanel" unique_id=1714410557]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 1128.0
+offset_bottom = 56.0
+
+[node name="Eyebrow" type="Label" parent="UI/TerminalPanel/Header" unique_id=1814410557]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 6.0
+offset_right = 360.0
+offset_bottom = 22.0
+text = "CUSTODIAN NODE // LINKING"
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Header" unique_id=103289056]
+layout_mode = 0
+offset_left = 302.0
+offset_top = 14.0
+offset_right = 820.0
+offset_bottom = 48.0
+text = "NO CONTRACT LOCK"
+horizontal_alignment = 1
+
+[node name="Target" type="Label" parent="UI/TerminalPanel/Header" unique_id=292939273]
+layout_mode = 0
+offset_left = 824.0
+offset_top = 12.0
+offset_right = 1112.0
+offset_bottom = 44.0
+text = "SIM: 60 TPS | THREAT: LOW | POWER: --"
+horizontal_alignment = 2
+
+[node name="Body" type="HBoxContainer" parent="UI/TerminalPanel" unique_id=1510856963]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 72.0
+offset_right = 1128.0
+offset_bottom = 592.0
+theme_override_constants/separation = 14
+
+[node name="CommandColumn" type="VBoxContainer" parent="UI/TerminalPanel/Body" unique_id=1757164212]
+custom_minimum_size = Vector2(448, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CommandTitle" type="Label" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1757164213]
+layout_mode = 2
+text = "ACTIVITY FEED"
+
+[node name="ActivityScroll" type="ScrollContainer" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1905084263]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TerminalOutput" type="RichTextLabel" parent="UI/TerminalPanel/Body/CommandColumn/ActivityScroll" unique_id=668276365]
+custom_minimum_size = Vector2(420, 520)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+selection_enabled = true
+
+[node name="InputRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1322626681]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Prompt" type="Label" parent="UI/TerminalPanel/Body/CommandColumn/InputRow" unique_id=86849026]
+layout_mode = 2
+text = ">"
+
+[node name="TerminalInput" type="LineEdit" parent="UI/TerminalPanel/Body/CommandColumn/InputRow" unique_id=140366070]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "ENTER COMMAND"
+
+[node name="Status" type="Label" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1839776512]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+text = "READY"
+
+[node name="MapColumn" type="VBoxContainer" parent="UI/TerminalPanel/Body" unique_id=1561351348]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="MapTitle" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=492283667]
+layout_mode = 2
+text = "TACTICAL MAP"
+
+[node name="PlanetPreviewTitle" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1034419010]
+layout_mode = 2
+text = "CONTRACTED GLOBE"
+
+[node name="PlanetPreview" type="TextureRect" parent="UI/TerminalPanel/Body/MapColumn" unique_id=111001529]
+custom_minimum_size = Vector2(0, 376)
+layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MapPreviewTitle" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1250833323]
+layout_mode = 2
+text = "COMPOUND OUTLINE"
+
+[node name="MapPreview" type="TextureRect" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1591864208]
+custom_minimum_size = Vector2(0, 88)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MapOutput" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn" unique_id=194127337]
+custom_minimum_size = Vector2(0, 152)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "NO DATA"
+fit_content = true
+
+[node name="Hint" type="Label" parent="UI/TerminalPanel" unique_id=1026997078]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 604.0
+offset_right = 1112.0
+offset_bottom = 628.0
+text = "Type directly into the command line. Drag globe to inspect. Mouse wheel zooms. Esc closes."
+
+[node name="TerminalBackground" type="TextureRect" parent="UI" unique_id=999999999]
+visible = false
+offset_left = 100.0
+offset_top = 72.0
+offset_right = 1180.0
+offset_bottom = 666.0
+stretch_mode = 1
+script = ExtResource("36_terminal_background")
+
+[node name="TerminalCommandRequest" type="HTTPRequest" parent="UI" unique_id=1546700661]
+
+[node name="TerminalSnapshotRequest" type="HTTPRequest" parent="UI" unique_id=286853618]
+
+[node name="TerminalPollTimer" type="Timer" parent="UI" unique_id=928815458]
+wait_time = 2.0
+
+[node name="PauseUI" type="CanvasLayer" parent="." unique_id=1301628053]
+script = ExtResource("9_pause")
+
+[node name="PausePanel" type="Panel" parent="PauseUI" unique_id=2092493330]
+visible = false
+offset_left = 300.0
+offset_top = 150.0
+offset_right = 700.0
+offset_bottom = 500.0
+
+[node name="Title" type="Label" parent="PauseUI/PausePanel" unique_id=242961927]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 380.0
+offset_bottom = 50.0
+text = "== COMMAND INTERFACE =="
+
+[node name="MenuContainer" type="VBoxContainer" parent="PauseUI/PausePanel" unique_id=140312117]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 380.0
+offset_bottom = 330.0

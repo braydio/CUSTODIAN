@@ -1,0 +1,107 @@
+{
+  "$schema": "../weapon_schema.json",
+  "version": "1.0.0",
+
+  "mods": {
+    "optic": {
+      "red_dot": {
+        "name": "Red Dot Sight",
+        "accuracy_bonus": 0.05,
+        "ads_time_penalty": 0.0,
+        "weight_kg": 0.1,
+        "cost": 100
+      },
+      "holo": {
+        "name": "Holographic Sight",
+        "accuracy_bonus": 0.08,
+        "ads_time_penalty": 0.02,
+        "weight_kg": 0.2,
+        "cost": 200
+      },
+      "acog": {
+        "name": "ACOG 4x",
+        "accuracy_bonus": 0.12,
+        "ads_time_penalty": 0.05,
+        "weight_kg": 0.4,
+        "cost": 400
+      },
+      "4x_scope": {
+        "name": "4x Precision Scope",
+        "accuracy_bonus": 0.15,
+        "ads_time_penalty": 0.1,
+        "weight_kg": 0.6,
+        "cost": 600
+      },
+      "8x_scope": {
+        "name": "8x Sniper Scope",
+        "accuracy_bonus": 0.2,
+        "ads_time_penalty": 0.15,
+        "weight_kg": 0.8,
+        "cost": 1000
+      },
+      "micro_dot": {
+        "name": "Micro Dot",
+        "accuracy_bonus": 0.03,
+        "ads_time_penalty": 0.0,
+        "weight_kg": 0.05,
+        "cost": 50
+      }
+    },
+    "barrel": {
+      "silencer": {
+        "name": "Tactical Silencer",
+        "spread_reduction": 0.3,
+        "damage_penalty": 0.1,
+        "range_penalty": 0.15,
+        "stealth_bonus": 0.5,
+        "weight_kg": 0.2,
+        "cost": 300
+      },
+      "compensator": {
+        "name": "Compensator",
+        "spread_reduction": 0.25,
+        "recoil_reduction": 0.2,
+        "weight_kg": 0.3,
+        "cost": 150
+      },
+      "heavy_barrel": {
+        "name": "Heavy Barrel",
+        "accuracy_bonus": 0.1,
+        "recoil_reduction": 0.15,
+        "weight_kg": 0.8,
+        "cost": 350
+      }
+    },
+    "magazine": {
+      "extended_mag": {
+        "name": "Extended Magazine",
+        "capacity_bonus_mult": 0.5,
+        "reload_time_penalty": 0.2,
+        "weight_kg": 0.3,
+        "cost": 200
+      },
+      "quick_mag": {
+        "name": "Quickdraw Magazine",
+        "reload_time_reduction": 0.3,
+        "weight_kg": 0.1,
+        "cost": 250
+      }
+    },
+    "stock": {
+      "tactical_stock": {
+        "name": "Tactical Stock",
+        "accuracy_bonus": 0.05,
+        "recoil_reduction": 0.1,
+        "weight_kg": 0.4,
+        "cost": 175
+      },
+      "precision_stock": {
+        "name": "Precision Stock",
+        "accuracy_bonus": 0.1,
+        "ads_stability_bonus": 0.15,
+        "weight_kg": 0.6,
+        "cost": 350
+      }
+    }
+  }
+}

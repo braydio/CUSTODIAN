@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://5q83mjlwm8ie"]
+
+[ext_resource type="PackedScene" path="res://procgen/proc_gen_map.tscn" id="1_base"]
+
+[node name="ProcGenMapStoneMixedPreview" instance=ExtResource("1_base")]
+floor_source_id = 0
+alternate_floor_source_ids = Array[int]([10])
+full_grid_floor_source_ids = Array[int]([10])
+

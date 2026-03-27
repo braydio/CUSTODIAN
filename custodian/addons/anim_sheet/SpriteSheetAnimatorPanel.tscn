@@ -1,0 +1,160 @@
+[gd_scene format=3 uid="uid://r25mhx1jk0i0"]
+
+[ext_resource type="Script" uid="uid://dkcy3rgktprrv" path="res://addons/anim_sheet/sprite_sheet_animator.gd" id="1_i02eu"]
+
+[node name="SpriteSheetAnimatorPanel" type="Control" unique_id=2058341702]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_i02eu")
+
+[node name="HSplitContainer" type="HSplitContainer" parent="." unique_id=1631999028]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="PanelContainer" type="PanelContainer" parent="HSplitContainer" unique_id=1103088268]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer/PanelContainer" unique_id=1587802969]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=927817340]
+layout_mode = 2
+text = "Sprite Sheet:"
+
+[node name="LoadTextureButton" type="Button" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=1104642221]
+layout_mode = 2
+text = "Load Image..."
+
+[node name="HSeparator" type="HSeparator" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=1862505995]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=1479311284]
+layout_mode = 2
+text = "Sprite Size:"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=2071449454]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HSplitContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=826002411]
+layout_mode = 2
+text = "W:"
+
+[node name="SpriteWidthSpinBox" type="SpinBox" parent="HSplitContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=776218380]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 8192.0
+value = 32.0
+
+[node name="Label2" type="Label" parent="HSplitContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=119731958]
+layout_mode = 2
+text = "H:"
+
+[node name="SpriteHeightSpinBox" type="SpinBox" parent="HSplitContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=1843601326]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 8192.0
+value = 32.0
+
+[node name="HSeparator2" type="HSeparator" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=1600505172]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=861165077]
+layout_mode = 2
+text = "Sheet Direction:"
+
+[node name="DirectionOptionButton" type="OptionButton" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=172593241]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Horizontal"
+popup/item_0/id = 0
+popup/item_1/text = "Vertical"
+popup/item_1/id = 1
+
+[node name="HSeparator3" type="HSeparator" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=1437798889]
+layout_mode = 2
+
+[node name="Label4" type="Label" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=1471066173]
+layout_mode = 2
+text = "Frames per Animation:"
+
+[node name="FramesPerAnimSpinBox" type="SpinBox" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=2020367814]
+layout_mode = 2
+tooltip_text = "0 = Full Row/Column"
+max_value = 1000.0
+
+[node name="HSeparator4" type="HSeparator" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=361242747]
+layout_mode = 2
+
+[node name="AutoDetectButton" type="Button" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=2122592316]
+layout_mode = 2
+text = "Auto-Detect Animations"
+
+[node name="ClearButton" type="Button" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=1649630111]
+layout_mode = 2
+text = "Clear All Outlines"
+
+[node name="HSeparator5" type="HSeparator" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=726204696]
+layout_mode = 2
+
+[node name="Label5" type="Label" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=1333793306]
+layout_mode = 2
+text = "Output Format:"
+
+[node name="OutputFormatContainer" type="HBoxContainer" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=631809467]
+layout_mode = 2
+
+[node name="OutputFormatOption" type="OptionButton" parent="HSplitContainer/PanelContainer/VBoxContainer/OutputFormatContainer" unique_id=1178276273]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Choose output format for generated animations"
+selected = 0
+item_count = 2
+popup/item_0/text = "AnimationPlayer"
+popup/item_0/id = 0
+popup/item_1/text = "AnimatedSprite2D"
+popup/item_1/id = 1
+
+[node name="HSeparator6" type="HSeparator" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=1656107854]
+layout_mode = 2
+
+[node name="Label6" type="Label" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=701572486]
+layout_mode = 2
+text = "Animation FPS:"
+
+[node name="FpsSpinBox" type="SpinBox" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=1001159529]
+layout_mode = 2
+min_value = 1.0
+max_value = 60.0
+value = 10.0
+
+[node name="GenerateButton" type="Button" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=262928094]
+layout_mode = 2
+tooltip_text = "Load a sprite sheet first."
+disabled = true
+text = "Generate Animation"
+
+[node name="StatusLabel" type="Label" parent="HSplitContainer/PanelContainer/VBoxContainer" unique_id=875711567]
+layout_mode = 2
+text = "Status: Ready. Load a sprite sheet."
+autowrap_mode = 3
+
+[node name="PanelContainer2" type="PanelContainer" parent="HSplitContainer" unique_id=1317115726]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureDisplay" type="TextureRect" parent="HSplitContainer/PanelContainer2" unique_id=1731818224]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch_mode = 2

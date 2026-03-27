@@ -1,0 +1,186 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" uid="uid://dto40xijafu8e" path="res://assets/sprites/enemies/drone/drone_arm_missiles.png" id="2_v0fch"]
+[ext_resource type="Texture2D" uid="uid://b0fb3kcudndkc" path="res://assets/sprites/enemies/drone/drone-fire-missile.png" id="3_85mm6"]
+[ext_resource type="Texture2D" uid="uid://depwcct2a1acd" path="res://assets/sprites/enemies/drone/drones-missile-launch.png" id="4_r74wi"]
+[ext_resource type="Texture2D" uid="uid://jol3o1okl58p" path="res://assets/sprites/enemies/drone/runtime/attack/drone_firing.png" id="5_r74wi"]
+[ext_resource type="Texture2D" uid="uid://b57nw2h7wqqmr" path="res://assets/sprites/enemies/drone/drone-missiles-stowed.png" id="9_85mm6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ogbfu"]
+atlas = ExtResource("5_r74wi")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mw80y"]
+atlas = ExtResource("5_r74wi")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x73bo"]
+atlas = ExtResource("5_r74wi")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_574g6"]
+atlas = ExtResource("5_r74wi")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_fir51"]
+load_path = "res://.godot/imported/drone_idle.png-0bba2fd1cbe0d7f1186668afdfa0b00f.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v6n0q"]
+atlas = SubResource("CompressedTexture2D_fir51")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_43r8n"]
+atlas = SubResource("CompressedTexture2D_fir51")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r0gp3"]
+atlas = ExtResource("2_v0fch")
+region = Rect2(180, 150, 533, 229)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hrcqf"]
+atlas = ExtResource("3_85mm6")
+region = Rect2(180, 150, 533, 237)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_22s4x"]
+atlas = ExtResource("3_85mm6")
+region = Rect2(180, 568, 533, 237)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n3vqp"]
+atlas = ExtResource("3_85mm6")
+region = Rect2(773, 150, 533, 237)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_anaty"]
+atlas = ExtResource("3_85mm6")
+region = Rect2(773, 568, 533, 237)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5umyx"]
+atlas = ExtResource("4_r74wi")
+region = Rect2(723, 150, 541, 249)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o0mb4"]
+atlas = ExtResource("4_r74wi")
+region = Rect2(723, 570, 541, 249)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2wolr"]
+atlas = ExtResource("2_v0fch")
+region = Rect2(773, 560, 533, 229)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_covni"]
+atlas = ExtResource("2_v0fch")
+region = Rect2(773, 150, 533, 229)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qg3ah"]
+atlas = ExtResource("9_85mm6")
+region = Rect2(793, 543, 468, 233)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_31x1o"]
+atlas = ExtResource("9_85mm6")
+region = Rect2(793, 130, 468, 233)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3fh4i"]
+atlas = ExtResource("9_85mm6")
+region = Rect2(192, 543, 468, 233)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aaiv7"]
+atlas = ExtResource("9_85mm6")
+region = Rect2(192, 130, 468, 233)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kpjw6"]
+atlas = ExtResource("2_v0fch")
+region = Rect2(180, 560, 533, 229)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ogbfu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mw80y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x73bo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_574g6")
+}],
+"loop": true,
+"name": &"drone_firing",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v6n0q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_43r8n")
+}],
+"loop": true,
+"name": &"drone_idle",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r0gp3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hrcqf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_22s4x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n3vqp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_anaty")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5umyx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o0mb4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_anaty")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5umyx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o0mb4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_anaty")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2wolr")
+}, {
+"duration": 0.7,
+"texture": SubResource("AtlasTexture_hrcqf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_covni")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qg3ah")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_31x1o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3fh4i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aaiv7")
+}, {
+"duration": 0.7,
+"texture": SubResource("AtlasTexture_kpjw6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r0gp3")
+}],
+"loop": true,
+"name": &"drone_missiles",
+"speed": 5.0
+}]

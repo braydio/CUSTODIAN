@@ -1,0 +1,12 @@
+{
+  "weapon_id": "carbine_rifle",
+  "frames": {
+    "ranged_stance": "animations/carbine_rifle__ranged__stance.png"
+  },
+  "frame_counts": {
+    "ranged_stance": 3
+  },
+  "animation_speeds": {
+    "ranged_stance": 7.0
+  }
+}

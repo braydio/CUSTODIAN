@@ -1,0 +1,44 @@
+{
+  "graph_name": "default_compound",
+  "rooms": {
+    "command_post": {
+      "templates": ["command_post"],
+      "required": true,
+      "min_count": 1,
+      "max_count": 1,
+      "default_spawn": true
+    },
+    "hangar": {
+      "templates": ["hangar_large", "hangar_small"],
+      "required": false,
+      "min_count": 2,
+      "max_count": 4
+    },
+    "corridor": {
+      "templates": ["corridor_h", "corridor_v"],
+      "required": false,
+      "min_count": 3,
+      "max_count": 8
+    },
+    "storage": {
+      "templates": ["storage"],
+      "required": false,
+      "min_count": 1,
+      "max_count": 2
+    },
+    "landing_pad": {
+      "templates": ["landing_pad"],
+      "required": false,
+      "min_count": 1,
+      "max_count": 2
+    }
+  },
+  "connections": [
+    {"from": "command_post", "to": "hangar", "direction": "any"},
+    {"from": "command_post", "to": "corridor", "direction": "any"},
+    {"from": "hangar", "to": "corridor", "direction": "any"},
+    {"from": "corridor", "to": "storage", "direction": "any"},
+    {"from": "corridor", "to": "landing_pad", "direction": "any"}
+  ],
+  "seed_overrides": {}
+}

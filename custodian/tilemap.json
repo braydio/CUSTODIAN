@@ -1,0 +1,78 @@
+{
+  "tileset": "atlas_walls_low-16x16.png",
+  "legend": {
+    "P": "playable_ground",
+    "W": "wall",
+    "H": "hole",
+    "C": "connector"
+  },
+  "bitmask_rules": {
+    "N": 1,
+    "E": 2,
+    "S": 4,
+    "W": 8
+  },
+  "tiles": [
+
+    { "index":[0,0],"name":"vertical_wall_slice","mask":5,"connects":["N","S"],"cells":[["P","W","P"],["P","W","P"],["P","W","P"]] },
+    { "index":[0,1],"name":"vertical_wall_slice_variant","mask":5,"connects":["N","S"],"cells":[["P","W","P"],["P","W","P"],["P","W","P"]] },
+    { "index":[0,2],"name":"vertical_wall_terminal_door_support","mask":5,"connects":["N","S"],"cells":[["P","W","P"],["P","W","P"],["P","C","P"]] },
+    { "index":[0,3],"name":"horizontal_wall_cap_top","mask":10,"connects":["E","W"],"cells":[["C","C","C"],["W","W","W"],["W","W","W"]] },
+
+    { "index":[1,0],"name":"inner_corner_br_open_left","mask":7,"connects":["N","E","S"],"cells":[["P","C","C"],["P","W","W"],["P","W","W"]] },
+    { "index":[1,1],"name":"t_junction_right_open_left","mask":7,"connects":["N","E","S"],"cells":[["P","C","C"],["P","W","W"],["P","C","W"]] },
+    { "index":[1,2],"name":"inner_corner_tr_open_left","mask":7,"connects":["N","E","S"],"cells":[["P","C","C"],["P","W","W"],["P","C","W"]] },
+    { "index":[1,3],"name":"vertical_terminal_right_open_left","mask":7,"connects":["N","E","S"],"cells":[["P","C","C"],["P","W","W"],["P","W","W"]] },
+
+    { "index":[2,0],"name":"t_top_cross_open_left","mask":15,"connects":["N","E","S","W"],"cells":[["P","C","C"],["P","W","W"],["P","W","W"]] },
+    { "index":[2,1],"name":"t_top_cross_open_left_variant","mask":15,"connects":["N","E","S","W"],"cells":[["P","C","C"],["P","W","W"],["P","W","W"]] },
+    { "index":[2,2],"name":"top_horizontal_connector_cap","mask":10,"connects":["E","W"],"cells":[["C","C","C"],["W","W","W"],["P","W","P"]] },
+    { "index":[2,3],"name":"horizontal_wall_cap_variant","mask":10,"connects":["E","W"],"cells":[["C","C","C"],["W","W","W"],["W","W","W"]] },
+
+    { "index":[3,0],"name":"inner_corner_bl_open_right","mask":11,"connects":["N","W","S"],"cells":[["C","C","P"],["W","W","P"],["W","W","P"]] },
+    { "index":[3,1],"name":"t_junction_left_open_right","mask":13,"connects":["N","W","S"],"cells":[["C","C","P"],["W","W","P"],["W","C","P"]] },
+    { "index":[3,2],"name":"inner_corner_tl_open_right","mask":11,"connects":["N","W","S"],"cells":[["C","C","P"],["W","W","P"],["W","C","P"]] },
+    { "index":[3,3],"name":"horizontal_terminal_left_open_right","mask":8,"connects":["W"],"cells":[["C","W","P"],["W","W","P"],["W","W","P"]] },
+
+    { "index":[4,0],"name":"t_top_cross_center_supported","mask":15,"connects":["N","E","S","W"],"cells":[["P","C","C"],["P","C","W"],["P","W","W"]] },
+    { "index":[4,1],"name":"t_junction_right_hole_variant","mask":7,"connects":["N","E","S"],"cells":[["P","C","C"],["P","W","W"],["P","C","H"]] },
+    { "index":[4,2],"name":"vertical_hole_corridor_corner","mask":7,"connects":["N","E","S"],"cells":[["P","C","C"],["P","H","W"],["P","H","W"]] },
+    { "index":[4,3],"name":"vertical_hole_terminal_variant","mask":7,"connects":["N","E","S"],"cells":[["P","C","C"],["P","H","W"],["P","H","W"]] },
+
+    { "index":[5,0],"name":"t_top_cross_with_bottom_holes","mask":15,"connects":["N","E","S","W"],"cells":[["P","C","C"],["P","W","W"],["H","W","H"]] },
+    { "index":[5,1],"name":"inner_corner_tl_hole_field","mask":9,"connects":["N","W"],"cells":[["C","C","H"],["W","H","H"],["W","H","H"]] },
+    { "index":[5,2],"name":"inner_corner_bl_hole_right","mask":11,"connects":["N","W","S"],"cells":[["C","C","H"],["W","W","H"],["W","W","H"]] },
+    { "index":[5,3],"name":"top_horizontal_connector_cap_variant_2","mask":10,"connects":["E","W"],"cells":[["C","C","C"],["W","W","W"],["P","W","P"]] },
+
+    { "index":[6,0],"name":"t_top_cross_with_bottom_holes_flip","mask":15,"connects":["N","E","S","W"],"cells":[["C","C","P"],["W","W","P"],["H","W","H"]] },
+    { "index":[6,1],"name":"inner_corner_tr_hole_field","mask":3,"connects":["N","E"],"cells":[["H","C","C"],["H","H","W"],["H","H","W"]] },
+    { "index":[6,2],"name":"inner_corner_br_hole_left","mask":7,"connects":["N","E","S"],"cells":[["H","C","C"],["H","W","W"],["H","W","W"]] },
+    { "index":[6,3],"name":"top_horizontal_connector_cap_variant_3","mask":10,"connects":["E","W"],"cells":[["C","C","C"],["W","W","W"],["P","W","P"]] },
+
+    { "index":[7,0],"name":"t_top_cross_center_supported_variant","mask":15,"connects":["N","E","S","W"],"cells":[["P","C","C"],["P","C","W"],["P","W","W"]] },
+    { "index":[7,1],"name":"t_junction_left_hole_variant","mask":13,"connects":["N","W","S"],"cells":[["C","C","P"],["W","W","P"],["H","C","P"]] },
+    { "index":[7,2],"name":"vertical_hole_corridor_corner_flip","mask":11,"connects":["N","W","S"],"cells":[["C","C","P"],["W","H","P"],["W","H","P"]] },
+    { "index":[7,3],"name":"vertical_hole_terminal_variant_flip","mask":11,"connects":["N","W","S"],"cells":[["C","C","P"],["W","H","P"],["W","H","P"]] },
+
+    { "index":[8,0],"name":"inner_corner_br_hole_right_open_left","mask":7,"connects":["N","E","S"],"cells":[["P","C","C"],["P","W","H"],["P","W","H"]] },
+    { "index":[8,1],"name":"vertical_wall_slice_hole_right","mask":5,"connects":["N","S"],"cells":[["P","W","H"],["P","W","H"],["P","W","H"]] },
+    { "index":[8,2],"name":"vertical_hole_corridor_corner_flip_hole_right","mask":11,"connects":["N","W","S"],"cells":[["C","C","H"],["W","H","H"],["W","H","H"]] },
+    { "index":[8,3],"name":"vertical_terminal_right_open_left_variant","mask":7,"connects":["N","E","S"],"cells":[["P","C","C"],["P","W","W"],["P","W","W"]] },
+
+    { "index":[9,0],"name":"top_horizontal_connector_cap_hole_bottom","mask":10,"connects":["E","W"],"cells":[["C","C","C"],["W","W","W"],["H","W","H"]] },
+    { "index":[9,1],"name":"vertical_hole_terminal_variant_flip","mask":11,"connects":["N","W","S"],"cells":[["C","C","P"],["W","H","P"],["W","H","P"]] },
+    { "index":[9,2],"name":"all_holes","mask":0,"connects":[],"cells":[["H","H","H"],["H","H","H"],["H","H","H"]] },
+    { "index":[9,3],"name":"horizontal_wall_cap_full","mask":10,"connects":["E","W"],"cells":[["C","C","C"],["W","W","W"],["W","W","W"]] },
+
+    { "index":[10,0],"name":"horizontal_wall_cap_hole_bottom","mask":10,"connects":["E","W"],"cells":[["C","C","C"],["W","W","W"],["H","H","H"]] },
+    { "index":[10,1],"name":"all_playable_floor","mask":0,"connects":[],"cells":[["P","P","P"],["P","P","P"],["P","P","P"]] },
+    { "index":[10,2],"name":"vertical_hole_terminal_variant_flip_duplicate","mask":11,"connects":["N","W","S"],"cells":[["C","C","P"],["W","H","P"],["W","H","P"]] },
+    { "index":[10,3],"name":"t_top_cross_center_supported_repeat","mask":15,"connects":["N","E","S","W"],"cells":[["P","C","C"],["P","C","W"],["P","W","W"]] },
+
+    { "index":[11,0],"name":"inner_corner_bl_hole_left_open_right","mask":11,"connects":["N","W","S"],"cells":[["C","C","P"],["H","W","P"],["H","W","P"]] },
+    { "index":[11,1],"name":"vertical_hole_corridor_corner_flip","mask":7,"connects":["N","E","S"],"cells":[["H","C","C"],["H","H","W"],["H","H","W"]] },
+    { "index":[11,2],"name":"vertical_wall_slice_hole_left","mask":5,"connects":["N","S"],"cells":[["H","W","P"],["H","W","P"],["H","W","P"]] },
+    { "index":[11,3],"name":"vertical_terminal_left_open_right_variant","mask":11,"connects":["N","W","S"],"cells":[["C","C","P"],["W","W","P"],["W","W","P"]] }
+
+  ]
+}

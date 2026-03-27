@@ -1,0 +1,89 @@
+{
+  "$schema": "../weapon_schema.json",
+  "version": "1.0.0",
+  "registry_version": "1.0.0",
+
+  "weapons": [
+    "carbine_mk1",
+    "pistol_mk1",
+    "shotgun_mk1",
+    "sniper_mk1",
+    "minigun_mk1"
+  ],
+
+  "categories": [
+    "pistol",
+    "rifle",
+    "carbine",
+    "smg",
+    "shotgun",
+    "sniper",
+    "minigun",
+    "rocket"
+  ],
+
+  "rarities": [
+    "common",
+    "uncommon",
+    "rare",
+    "legendary"
+  ],
+
+  "archetypes": {
+    "archetype_rifle": {
+      "base_stats": {
+        "fire_rate_rps": 5.0,
+        "accuracy": 0.8,
+        "spread_deg": 3.0,
+        "recoil": 0.5,
+        "reload_time_sec": 2.0,
+        "movement_speed_penalty": -0.1
+      },
+      "ai_behavior": "balanced"
+    },
+    "archetype_pistol": {
+      "base_stats": {
+        "fire_rate_rps": 3.0,
+        "accuracy": 0.75,
+        "spread_deg": 5.0,
+        "recoil": 0.6,
+        "reload_time_sec": 1.0,
+        "movement_speed_penalty": 0.0
+      },
+      "ai_behavior": "quick_engage"
+    },
+    "archetype_shotgun": {
+      "base_stats": {
+        "fire_rate_rps": 1.0,
+        "accuracy": 0.4,
+        "spread_deg": 20.0,
+        "recoil": 1.5,
+        "reload_time_sec": 3.0,
+        "movement_speed_penalty": -0.2
+      },
+      "ai_behavior": "close_quarters"
+    },
+    "archetype_sniper": {
+      "base_stats": {
+        "fire_rate_rps": 0.5,
+        "accuracy": 0.95,
+        "spread_deg": 0.5,
+        "recoil": 2.5,
+        "reload_time_sec": 3.5,
+        "movement_speed_penalty": -0.4
+      },
+      "ai_behavior": "long_range"
+    },
+    "archetype_minigun": {
+      "base_stats": {
+        "fire_rate_rps": 15.0,
+        "accuracy": 0.6,
+        "spread_deg": 10.0,
+        "recoil": 0.2,
+        "reload_time_sec": 5.0,
+        "movement_speed_penalty": -0.5
+      },
+      "ai_behavior": "suppression"
+    }
+  }
+}

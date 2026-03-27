@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://chxttfh575v5i"]
+
+[ext_resource type="PackedScene" path="res://entities/defense/turret.tscn" id="1_base"]
+[ext_resource type="Texture2D" path="res://assets/sprites/turrets/gunner/turret_sandbag_1frame.png" id="2_gunner"]
+
+[node name="TurretGunner" unique_id=1913988268 instance=ExtResource("1_base")]
+turret_name = "Gunner Turret"
+
+[node name="BaseSprite" parent="." index="0"]
+texture = ExtResource("2_gunner")

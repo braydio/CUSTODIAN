@@ -1,0 +1,28 @@
+[gd_scene format=4 uid="uid://cwdr77671ltmr"]
+
+[ext_resource type="TileSet" uid="uid://cta2wn25785pf" path="res://assets/dungeon_tileset.tres" id="1"]
+[ext_resource type="PackedScene" uid="uid://b8qv5m3x2kc1y" path="res://entities/operator/operator.tscn" id="2"]
+[ext_resource type="Script" uid="uid://citwrr55dyx86" path="res://core/systems/spawn_node.gd" id="3"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_cy860"]
+
+[node name="TestMap" type="Node2D" unique_id=684645357]
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=351037615]
+navigation_polygon = SubResource("NavigationPolygon_cy860")
+
+[node name="TileMapLayer_floor" type="TileMapLayer" parent="NavigationRegion2D" unique_id=402035548]
+tile_map_data = PackedByteArray("AAAAAPP/AAABAAEAAAABAPP/AAACAAEAAAACAPH/AAABAAMAAAADAPH/AAAEAAMAAAABAPL/AAABAAEAAAACAPL/AAABAAEAAAADAPL/AAACAAEAAAD///L/AAABAAEAAAAAAPL/AAACAAEAAAAAAPH/AAABAAEAAAABAPH/AAAAAAMAAAAGAPD/AAAAAAYAAAAFAO//AAAEAAAAAAADAPD/AAADAAEAAAAAAPD/AAACAAYAADAEAPH/AAAEAAMAADAFAPH/AAABAAYAAAAGAPH/AAABAAYAAAAEAPD/AAAFAAUAAAACAPD/AAADAAEAAAA=")
+tile_set = ExtResource("1")
+
+[node name="TileMapLayer_walls" type="TileMapLayer" parent="NavigationRegion2D" unique_id=229521462]
+tile_set = ExtResource("1")
+
+[node name="Operator" parent="." unique_id=123456789 instance=ExtResource("2")]
+position = Vector2(400, 300)
+
+[node name="Camera2D" type="Camera2D" parent="Operator" unique_id=987654321]
+
+[node name="SpawnPoint" type="Node2D" parent="." unique_id=111111111]
+position = Vector2(100, 100)
+script = ExtResource("3")

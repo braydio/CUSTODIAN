@@ -1,0 +1,21 @@
+{
+  "weapon_id": "fallen_star_katana",
+  "frames": {
+    "idle": "animations/fallen_star_katana__idle.png",
+    "melee_fast_weapon": "animations/fallen_star_katana__melee_1h__fast_weapon.png",
+    "melee_fast_fx": "animations/fallen_star_katana__melee_1h__fast_fx.png"
+  },
+  "frame_counts": {
+    "idle": 1,
+    "melee_fast_weapon": 12,
+    "melee_fast_fx": 12
+  },
+  "animation_speeds": {
+    "idle": 1.0,
+    "melee_fast_weapon": 9.0,
+    "melee_fast_fx": 9.0
+  },
+  "hit_frame_windows": {
+    "melee_fast_weapon": [5, 5]
+  }
+}

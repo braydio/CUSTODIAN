@@ -1,0 +1,71 @@
+{
+    "activeFile": "",
+    "automapping.whileDrawing": false,
+    "expandedProjectPaths": [
+        "Zeldaesqe"
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "Dungeon_24x24.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "Island_24x24.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "NewMap.tmx": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 380,
+                "y": 355.5
+            }
+        },
+        "TX Tileset Grass.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
+        "Zeldaesqe/TX Struct.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Zeldaesqe/TX Tileset Stone Ground.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
+        "Zeldaesqe/TX Tileset Wall.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1.5
+        },
+        "decor.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
+        "example.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/assets/sprites/additional-charsets/Texture",
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+    ],
+    "project": "CUSTODIAN-Tilesets.tiled-project",
+    "recentFiles": [
+        "TX Tileset Grass.tsx",
+        "Zeldaesqe/TX Struct.tsx",
+        "Zeldaesqe/TX Tileset Wall.tsx",
+        "Zeldaesqe/TX Tileset Stone Ground.tsx",
+        "decor.tsx",
+        "NewMap.tmx",
+        "Island_24x24.tsx",
+        "Dungeon_24x24.tsx",
+        "example.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 32,
+        "width": 32
+    }
+}

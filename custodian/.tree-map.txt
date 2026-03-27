@@ -1,0 +1,127 @@
+Directory Tree Mapping
+[33mentities[0m
+├── custodian
+│   ├── custodian.gd
+│   ├── custodian.gd.uid
+│   └── custodian.tscn
+├── defense
+│   ├── bullet.gd
+│   ├── bullet.gd.uid
+│   ├── bullet.tscn
+│   ├── turret.gd
+│   ├── turret.gd.uid
+│   └── turret.tscn
+├── door
+│   ├── door.gd
+│   ├── door.gd.uid
+│   └── door.tscn
+├── effects
+│   ├── block_spark.tscn
+│   ├── floating_text.gd
+│   ├── floating_text.gd.uid
+│   ├── floating_text.tscn
+│   ├── impact_spark.gd
+│   ├── impact_spark.gd.uid
+│   ├── impact_spark.tscn
+│   ├── melee_swing.gd
+│   ├── melee_swing.gd.uid
+│   ├── melee_swing.tscn
+│   ├── muzzle_flash_frames.tres
+│   ├── muzzle_flash.gd
+│   ├── muzzle_flash.gd.uid
+│   ├── muzzle_flash.tscn
+│   ├── target_ring.gd
+│   ├── target_ring.gd.uid
+│   └── target_ring.tscn
+├── enemies
+│   ├── enemy.gd
+│   ├── enemy.gd.uid
+│   ├── enemy.tres
+│   ├── enemy.tscn
+│   ├── fast_drone.tscn
+│   └── heavy_drone.tscn
+├── items
+│   ├── ammo_cache.gd
+│   ├── ammo_cache.gd.uid
+│   └── ammo_cache.tscn
+├── operator
+│   ├── animations
+│   │   ├── animation_state_machine.gd
+│   │   ├── animation_state_machine.gd.uid
+│   │   ├── camera_shake.gd
+│   │   ├── camera_shake.gd.uid
+│   │   ├── custodian_node_setup.tscn
+│   │   ├── events
+│   │   │   └── README.md
+│   │   ├── README.md
+│   │   ├── states
+│   │   │   ├── animation_state.gd
+│   │   │   ├── animation_state.gd.uid
+│   │   │   ├── attack_dash_state.gd
+│   │   │   ├── attack_dash_state.gd.uid
+│   │   │   ├── attack_fast_state.gd
+│   │   │   ├── attack_fast_state.gd.uid
+│   │   │   ├── attack_heavy_state.gd
+│   │   │   ├── attack_heavy_state.gd.uid
+│   │   │   ├── death_state.gd
+│   │   │   ├── death_state.gd.uid
+│   │   │   ├── equip_weapon_state.gd
+│   │   │   ├── equip_weapon_state.gd.uid
+│   │   │   ├── idle_state.gd
+│   │   │   ├── idle_state.gd.uid
+│   │   │   ├── sprint_state.gd
+│   │   │   ├── sprint_state.gd.uid
+│   │   │   ├── stagger_state.gd
+│   │   │   ├── stagger_state.gd.uid
+│   │   │   ├── walk_state.gd
+│   │   │   └── walk_state.gd.uid
+│   │   └── transitions
+│   │       └── README.md
+│   ├── carbine_rifle_mk1_definition.tres
+│   ├── fallen_star_katana_definition.tres
+│   ├── fallen_star_katana_frames.tres
+│   ├── operator.gd
+│   ├── operator.gd.uid
+│   ├── operator_melee_overlay_frames.tres
+│   ├── operator_runtime_frames.tres
+│   ├── operator.tscn
+│   ├── operator_weapon_definition.gd
+│   ├── operator_weapon_definition.gd.uid
+│   ├── operator_weapon_frames.tres
+│   ├── sword_night_flame_definition.tres
+│   └── sword_night_flame_frames.tres
+├── projectiles
+│   ├── bullet.gd
+│   ├── bullet.gd.uid
+│   ├── bullet.tscn
+│   ├── energy_shot.gd
+│   ├── energy_shot.gd.uid
+│   ├── energy_shot.tscn
+│   ├── missile.gd
+│   ├── missile.gd.uid
+│   ├── missile.tscn
+│   ├── tracer.gd
+│   ├── tracer.gd.uid
+│   └── tracer.tscn
+├── sector
+│   ├── command_post.gd
+│   ├── command_post.gd.uid
+│   ├── power_node.gd
+│   ├── power_node.gd.uid
+│   ├── sector.gd
+│   ├── sector.gd.uid
+│   ├── sector.tscn
+│   ├── turret_blaster.tscn
+│   ├── turret.gd
+│   ├── turret.gd.uid
+│   ├── turret_gunner.tscn
+│   ├── turret_repeater.tscn
+│   ├── turret_sniper.tscn
+│   ├── turret.tscn
+│   ├── wall.gd
+│   ├── wall.gd.uid
+│   └── wall.tscn
+└── terminal
+    ├── command_terminal.gd
+    ├── command_terminal.gd.uid
+    └── command_terminal.tscn

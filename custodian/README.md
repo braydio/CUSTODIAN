@@ -1,0 +1,74 @@
+# CUSTODIAN — Godot Project
+
+2.5D isometric real-time tactical base defense game.
+
+Status: Active implementation runtime.
+
+## Run
+
+```bash
+cd custodian
+godot
+```
+
+Or open `custodian/project.godot` and press `F5`.
+
+## Current Project Structure
+
+```text
+custodian/
+├── core/
+│   ├── state/              # GameState autoload
+│   └── systems/            # Fixed-step simulation systems
+├── entities/
+│   ├── operator/           # Player controller scene/script
+│   └── enemies/            # Enemy entities (in progress)
+├── scenes/
+│   └── game.tscn           # Main runtime scene
+├── ui/                     # Runtime UI layer
+├── sectors/                # Sector content (in progress)
+└── docs/
+    ├── ARCHITECTURE.md
+    ├── GDSCRIPT_STANDARDS.md
+    └── SCENE_HIERARCHY.md
+```
+
+## Runtime Contract
+
+- Godot is authoritative for active gameplay state.
+- Simulation runs as fixed-step deterministic logic.
+- Tactical pause is a hard freeze of simulation progression.
+
+## Controls
+
+- `WASD`: move operator
+- `Mouse`: aim
+- `F` or `Left Mouse`: attack
+- `R` or `Right Mouse`: block
+- `1/2`: weapon profile
+- `Q`: toggle ranged equip/holster
+- `E`: toggle melee equip/holster
+- `H`: hold repair
+- `G`: interact (including Command sector terminal access)
+- `C`: camera follow toggle
+- `Z`: auto-zoom toggle
+- `X`: reload ranged weapon
+- `T`: time shift
+- `Space`: pause menu
+
+## In-Game Command Terminal
+
+- Command sector includes an interactable terminal prop.
+- Terminal UI is rendered inside Godot and mirrors legacy boot/command/snapshot flow.
+- Default service endpoint is `http://127.0.0.1:7331` (`python-sim/custodian-terminal/server.py`).
+
+## Legacy Reference
+
+Legacy terminal-era implementation is preserved in `../python-sim/`.
+It is reference/debug context only and not the active runtime authority.
+
+## Design Doctrine
+
+Canonical doctrine is maintained in:
+
+- `../python-sim/design/MASTER_DESIGN_DOCTRINE.md`

@@ -1,0 +1,696 @@
+extends CharacterBody2D
+class_name Enemy
+
+const DAMAGE_POPUP_SCENE := preload("res://entities/ui/damage_popup.tscn")
+const SCRAP_PICKUP_SCENE := preload("res://entities/items/scrap_pickup.tscn")
+const AXUL_DIRECTIONAL_SHEET_PATH := "res://assets/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt.png"
+const DIRECTIONAL_SUFFIXES := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
+const DIRECTIONAL_ANIMATION_PREFIX := "red_walk"
+
+@export var enemy_name: String = "SCOUT"
+@export var speed: float = 80.0
+@export var health: float = 50.0
+@export var max_health: float = 50.0
+@export var damage: float = 10.0
+@export var base_tint: Color = Color(0.8, 0.2, 0.2, 1.0)
+@export var structure_attack_range: float = 58.0
+@export var detection_range: float = 420.0
+@export var retarget_interval: float = 0.25
+@export var team: String = "enemy"
+@export var strong_attack_multiplier: float = 3.0
+@export var attack_objective: String = "breach_command"
+@export var attack_windup_duration: float = 0.10
+@export var hit_recoil_duration: float = 0.12
+@export var stagger_duration: float = 0.35
+@export var stagger_damage_threshold: float = 24.0
+@export var passive: bool = false
+@export var counts_as_wave_enemy: bool = true
+@export var material_drop_min: int = 0
+@export var material_drop_max: int = 0
+@export var passive_wander_radius: float = 72.0
+@export var passive_wander_interval_min: float = 0.8
+@export var passive_wander_interval_max: float = 2.6
+@export var passive_alert_radius: float = 96.0
+@export var passive_flee_speed_multiplier: float = 1.9
+@export var passive_flee_cooldown: float = 1.25
+@export var uses_directional_charset: bool = false
+@export_file("*.png") var directional_charset_sheet_path: String = AXUL_DIRECTIONAL_SHEET_PATH
+@export var directional_charset_row_start: int = 2
+@export var directional_charset_frame_size: int = 16
+@export var directional_charset_fps: float = 8.0
+@export var directional_charset_scale: Vector2 = Vector2(1.75, 1.75)
+@export var directional_animation_prefix: String = DIRECTIONAL_ANIMATION_PREFIX
+
+var target: Node2D = null
+var dead := false
+var damage_timer := 0.0
+var damage_interval := 1.0  # Damage every 1 second
+var target_refresh_timer := 0.0
+var used_strong_attack := false
+var _attack_windup_timer: float = 0.0
+var _pending_attack_damage: float = 0.0
+var _stagger_timer: float = 0.0
+var _recoil_timer: float = 0.0
+var _windup_attack_is_strong: bool = false
+var _threat_highlight_enabled: bool = false
+var _threat_highlight_time: float = 0.0
+var _base_sprite_scale: Vector2 = Vector2.ONE
+var _last_move_direction: Vector2 = Vector2.DOWN
+var _spawn_position: Vector2 = Vector2.ZERO
+var _passive_target_position: Vector2 = Vector2.ZERO
+var _passive_wander_timer: float = 0.0
+var _passive_flee_timer: float = 0.0
+
+# Pathfinding
+var navigation_system: Node = null
+var current_path: PackedVector2Array = []
+var path_follow_index: int = 0
+var path_refresh_timer: float = 0.0
+var path_refresh_interval: float = 0.5
+var use_pathfinding: bool = true
+var path_tolerance: float = 16.0
+
+const TARGET_PRIORITY := {
+	"command_post": 1,
+	"power_node": 2,
+	"turret": 3,
+	"player": 4,
+}
+
+const OBJECTIVE_GROUPS := {
+	"harass_player": ["player", "turret", "power_node", "command_post"],
+	"destroy_power": ["power_node", "turret", "command_post", "player"],
+	"destroy_turrets": ["turret", "power_node", "command_post", "player"],
+	"breach_command": ["command_post", "turret", "power_node", "player"],
+}
+
+@onready var health_bar = $HealthBar
+@onready var visual = $Visual
+@onready var animated_sprite = $AnimatedSprite2D if has_node("AnimatedSprite2D") else null
+
+func _ready():
+	add_to_group("enemies")
+	add_to_group("enemy")
+	if passive:
+		add_to_group("ambient_critter")
+	if _uses_directional_animation_set():
+		_ensure_directional_animations()
+		if visual:
+			visual.visible = false
+		if animated_sprite:
+			animated_sprite.scale = directional_charset_scale
+			_base_sprite_scale = animated_sprite.scale
+		_update_directional_animation(_last_move_direction, false)
+	if animated_sprite:
+		_base_sprite_scale = animated_sprite.scale
+	_spawn_position = global_position
+	_passive_target_position = global_position
+	_schedule_next_passive_wander()
+	damage_timer = damage_interval
+	_refresh_target()
+	_initialize_navigation()
+	_setup_health_bar_style()
+	update_visuals()
+
+
+func _setup_health_bar_style() -> void:
+	if health_bar == null:
+		return
+	
+	health_bar.custom_minimum_size = Vector2(48, 8)
+	health_bar.offset_left = -24.0
+	health_bar.offset_top = -28.0
+	health_bar.offset_right = 24.0
+	health_bar.offset_bottom = -20.0
+	
+	var bg_style = StyleBoxFlat.new()
+	bg_style.bg_color = Color(0.1, 0.1, 0.1, 0.8)
+	bg_style.corner_radius_top_left = 2
+	bg_style.corner_radius_top_right = 2
+	bg_style.corner_radius_bottom_right = 2
+	bg_style.corner_radius_bottom_left = 2
+	bg_style.set_border_width_all(1)
+	bg_style.border_color = Color(0.3, 0.3, 0.3, 0.9)
+	health_bar.add_theme_stylebox_override("background", bg_style)
+	
+	var fill_style = StyleBoxFlat.new()
+	fill_style.bg_color = Color(0.2, 0.8, 0.3, 1.0)
+	fill_style.corner_radius_top_left = 2
+	fill_style.corner_radius_top_right = 2
+	fill_style.corner_radius_bottom_right = 2
+	fill_style.corner_radius_bottom_left = 2
+	health_bar.add_theme_stylebox_override("fill", fill_style)
+
+
+func _initialize_navigation() -> void:
+	# Find navigation system
+	if navigation_system == null:
+		navigation_system = get_tree().get_first_node_in_group("navigation")
+	
+	if navigation_system == null:
+		for node in get_tree().get_nodes_in_group("navigation"):
+			if node.has_method("get_path_to_target"):
+				navigation_system = node
+				break
+	
+	if navigation_system != null:
+		print("[Enemy] ", enemy_name, " connected to navigation system")
+	else:
+		push_warning("[Enemy] ", enemy_name, " no navigation system found, using direct movement")
+
+func _physics_process(delta):
+	if dead:
+		return
+	_update_threat_highlight_visual(delta)
+	if _update_reaction_timers(delta):
+		return
+	if _update_attack_windup(delta):
+		return
+	if passive:
+		_update_passive_behavior(delta)
+		return
+
+	target_refresh_timer -= delta
+	if target_refresh_timer <= 0.0 or target == null or not is_instance_valid(target) or _is_target_destroyed(target):
+		target_refresh_timer = retarget_interval
+		_refresh_target()
+
+	if target:
+		var target_pos = target.global_position
+		var dist = global_position.distance_to(target_pos)
+		var attack_range = _get_attack_range(target)
+		
+		if dist > attack_range:
+			var direction: Vector2
+			
+			# Use pathfinding if available and target is far enough
+			if use_pathfinding and navigation_system != null and navigation_system.has_method("get_path_to_target"):
+				direction = _get_pathfinding_direction(target_pos, delta)
+			else:
+				# Direct movement (fallback)
+				direction = (target_pos - global_position).normalized()
+			
+			velocity = direction * speed
+			move_and_slide()
+			_last_move_direction = direction if direction.length_squared() > 0.0001 else _last_move_direction
+			if _uses_directional_animation_set():
+				_update_directional_animation(_last_move_direction, true)
+		else:
+			velocity = Vector2.ZERO
+			var direction = (target_pos - global_position).normalized()
+			if direction.length_squared() > 0.0001:
+				_last_move_direction = direction
+			if _uses_directional_animation_set():
+				_update_directional_animation(_last_move_direction, false)
+			_attack_target(delta)
+		
+func _attack_target(delta: float):
+	if _attack_windup_timer > 0.0:
+		return
+	damage_timer += delta
+	if damage_timer >= damage_interval:
+		damage_timer = 0
+		if target and target.has_method("take_damage"):
+			var dealt_damage := damage
+			var is_strong := false
+			if not used_strong_attack:
+				used_strong_attack = true
+				dealt_damage = damage * strong_attack_multiplier
+				is_strong = true
+			_start_attack_windup(dealt_damage, is_strong)
+
+func _refresh_target():
+	if passive:
+		target = null
+		return
+	target = _find_best_target()
+
+func _find_best_target() -> Node2D:
+	var best: Node2D = null
+	var best_priority := 999
+	var best_distance := INF
+	var groups: Array = OBJECTIVE_GROUPS.get(attack_objective, OBJECTIVE_GROUPS["breach_command"])
+	for group_name in groups:
+		var priority = int(TARGET_PRIORITY.get(group_name, 999))
+		for candidate in get_tree().get_nodes_in_group(group_name):
+			if not (candidate is Node2D):
+				continue
+			var node = candidate as Node2D
+			if _is_target_destroyed(node):
+				continue
+			var dist = global_position.distance_to(node.global_position)
+			if group_name != "player" and dist > detection_range:
+				continue
+			if priority < best_priority or (priority == best_priority and dist < best_distance):
+				best = node
+				best_priority = priority
+				best_distance = dist
+	return best
+
+func _is_target_destroyed(node: Node) -> bool:
+	if node == null or not is_instance_valid(node):
+		return true
+	if node.has_method("is_dead"):
+		return bool(node.is_dead())
+	return false
+
+func _get_attack_range(node: Node2D) -> float:
+	if node.is_in_group("player"):
+		return 40.0
+	return structure_attack_range
+
+
+func _get_pathfinding_direction(target_pos: Vector2, delta: float) -> Vector2:
+	# Refresh path periodically
+	path_refresh_timer -= delta
+	if path_refresh_timer <= 0.0 or current_path.is_empty():
+		path_refresh_timer = path_refresh_interval
+		_refresh_path(target_pos)
+	
+	# If no valid path, move directly toward target
+	if current_path.is_empty():
+		return (target_pos - global_position).normalized()
+	
+	# Follow path waypoints
+	return _get_direction_along_path(target_pos)
+
+
+func _refresh_path(target_pos: Vector2) -> void:
+	if navigation_system == null:
+		current_path = PackedVector2Array()
+		return
+	
+	var path = navigation_system.get_path_to_target(global_position, target_pos)
+	
+	# Filter out points too close to current position
+	if not path.is_empty():
+		# Skip first point if it's behind us
+		while path.size() > 1 and global_position.distance_squared_to(path[0]) < path_tolerance * path_tolerance:
+			path.remove_at(0)
+	
+	current_path = path
+	path_follow_index = 0
+
+
+func _get_direction_along_path(target_pos: Vector2) -> Vector2:
+	if current_path.is_empty():
+		return (target_pos - global_position).normalized()
+	
+	# Find the next reachable waypoint
+	while path_follow_index < current_path.size() - 1:
+		var waypoint = current_path[path_follow_index]
+		if global_position.distance_to(waypoint) <= path_tolerance:
+			path_follow_index += 1
+		else:
+			break
+	
+	# Get target waypoint
+	var target_waypoint: Vector2
+	if path_follow_index < current_path.size():
+		target_waypoint = current_path[path_follow_index]
+	else:
+		target_waypoint = target_pos
+	
+	var direction = (target_waypoint - global_position).normalized()
+	
+	# If close to final waypoint and has direct line to actual target, switch to direct
+	if path_follow_index >= current_path.size() - 1:
+		var dist_to_target = global_position.distance_to(target_pos)
+		if dist_to_target < path_tolerance * 3.0:
+			current_path = PackedVector2Array()  # Clear path, go direct
+	
+	return direction
+
+
+func has_valid_path() -> bool:
+	return not current_path.is_empty()
+
+
+func get_path_remaining() -> int:
+	return max(0, current_path.size() - path_follow_index)
+
+
+func get_current_path() -> PackedVector2Array:
+	return current_path
+
+
+func get_navigation_target() -> Node:
+	return target
+
+
+func clear_path() -> void:
+	current_path = PackedVector2Array()
+	path_follow_index = 0
+
+func apply_difficulty_modifiers(hp_scale: float, damage_scale: float):
+	max_health = max(1.0, max_health * hp_scale)
+	health = max(1.0, health * hp_scale)
+	damage = max(1.0, damage * damage_scale)
+	update_visuals()
+
+func take_damage(amount: float):
+	if dead:
+		return
+	
+	health -= amount
+	_apply_reaction(amount)
+	update_visuals()
+	_spawn_damage_popup(amount)
+	
+	# Flash effect
+	if visual:
+		visual.modulate = Color(1, 1, 1)  # Flash white
+		await get_tree().create_timer(0.1).timeout
+		update_visuals()
+	
+	if health <= 0:
+		die()
+
+func update_visuals():
+	if health_bar:
+		health_bar.value = (health / max_health) * 100.0
+		
+		var health_pct = health / max_health
+		var fill_style = health_bar.get_theme_stylebox("fill")
+		if fill_style:
+			if health_pct > 0.6:
+				fill_style.bg_color = Color(0.2, 0.85, 0.3, 1.0)
+			elif health_pct > 0.3:
+				fill_style.bg_color = Color(0.85, 0.7, 0.2, 1.0)
+			else:
+				fill_style.bg_color = Color(0.9, 0.25, 0.2, 1.0)
+	
+	if visual:
+		var health_pct = health / max_health
+		if health_pct > 0.5:
+			visual.modulate = base_tint
+		elif health_pct > 0.2:
+			visual.modulate = base_tint.lerp(Color(1.0, 0.65, 0.25, 1.0), 0.35)
+		else:
+			visual.modulate = base_tint.darkened(0.35)
+
+func die():
+	dead = true
+	velocity = Vector2.ZERO
+	set_threat_highlight(false)
+	if has_node("CollisionShape2D"):
+		$CollisionShape2D.disabled = true
+	var camera = get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera and camera.has_method("on_enemy_killed"):
+		camera.call("on_enemy_killed")
+	_spawn_material_pickup()
+	print("ENEMY DESTROYED: ", enemy_name)
+	queue_free()
+
+
+func is_passive_enemy() -> bool:
+	return passive
+
+
+func counts_for_wave_cap() -> bool:
+	return counts_as_wave_enemy and not passive
+
+
+func _update_passive_behavior(delta: float) -> void:
+	target = null
+	_passive_wander_timer -= delta
+	_passive_flee_timer = max(0.0, _passive_flee_timer - delta)
+	var player := get_tree().get_first_node_in_group("player") as Node2D
+	if player != null and is_instance_valid(player):
+		var away_from_player := global_position - player.global_position
+		var player_distance := away_from_player.length()
+		if player_distance <= passive_alert_radius:
+			var flee_direction := away_from_player.normalized() if player_distance > 0.001 else Vector2.RIGHT.rotated(randf() * TAU)
+			var flee_radius: float = max(passive_wander_radius, passive_alert_radius * 1.25)
+			_passive_target_position = _spawn_position + flee_direction * flee_radius
+			_passive_flee_timer = passive_flee_cooldown
+	var to_target := _passive_target_position - global_position
+	if to_target.length() > 6.0:
+		var move_direction := to_target.normalized()
+		var move_speed := speed * (passive_flee_speed_multiplier if _passive_flee_timer > 0.0 else 1.0)
+		velocity = move_direction * move_speed
+		move_and_slide()
+		_last_move_direction = move_direction
+		if _uses_directional_animation_set():
+			_update_directional_animation(_last_move_direction, true)
+		return
+
+	velocity = Vector2.ZERO
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+	if _passive_flee_timer > 0.0:
+		return
+	if _passive_wander_timer <= 0.0:
+		_choose_next_passive_destination()
+
+
+func _schedule_next_passive_wander() -> void:
+	_passive_wander_timer = randf_range(
+		min(passive_wander_interval_min, passive_wander_interval_max),
+		max(passive_wander_interval_min, passive_wander_interval_max)
+	)
+
+
+func _choose_next_passive_destination() -> void:
+	_schedule_next_passive_wander()
+	if passive_wander_radius <= 1.0:
+		_passive_target_position = _spawn_position
+		return
+	var angle := randf() * TAU
+	var distance := randf_range(12.0, passive_wander_radius)
+	_passive_target_position = _spawn_position + Vector2.RIGHT.rotated(angle) * distance
+
+
+func _spawn_material_pickup() -> void:
+	if SCRAP_PICKUP_SCENE == null:
+		return
+	var drop_min: int = max(0, material_drop_min)
+	var drop_max: int = max(drop_min, material_drop_max)
+	if drop_max <= 0:
+		return
+	var pickup := SCRAP_PICKUP_SCENE.instantiate()
+	if pickup == null:
+		return
+	if pickup.has_method("set_material_amount"):
+		pickup.call("set_material_amount", randi_range(drop_min, drop_max))
+	else:
+		pickup.set("material_amount", randi_range(drop_min, drop_max))
+	var parent := get_parent()
+	if parent != null:
+		parent.add_child(pickup)
+	else:
+		get_tree().current_scene.add_child(pickup)
+	if pickup is Node2D:
+		(pickup as Node2D).global_position = global_position
+
+
+func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
+	_pending_attack_damage = queued_damage
+	_attack_windup_timer = max(0.01, attack_windup_duration)
+	_windup_attack_is_strong = is_strong
+	velocity = Vector2.ZERO
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+
+
+func _update_attack_windup(delta: float) -> bool:
+	if _attack_windup_timer <= 0.0:
+		return false
+	_attack_windup_timer = max(0.0, _attack_windup_timer - delta)
+	velocity = Vector2.ZERO
+	if _attack_windup_timer > 0.0:
+		return true
+	_execute_queued_attack()
+	return true
+
+
+func _execute_queued_attack() -> void:
+	if dead:
+		return
+	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
+		return
+	if target.has_method("take_damage"):
+		target.take_damage(_pending_attack_damage)
+		print("Enemy hit ", target.name, " for ", _pending_attack_damage, " damage!")
+	_pending_attack_damage = 0.0
+	_windup_attack_is_strong = false
+
+
+func _apply_reaction(amount: float) -> void:
+	if amount >= stagger_damage_threshold:
+		_start_stagger_reaction()
+	else:
+		_start_hit_recoil_reaction()
+
+
+func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knockback_force: float) -> void:
+	if dead:
+		return
+	_last_move_direction = knockback_direction if knockback_direction.length_squared() > 0.0001 else _last_move_direction
+	if attack_kind == "heavy":
+		_stagger_timer = max(_stagger_timer, stagger_duration * 1.2)
+		_recoil_timer = 0.0
+	else:
+		_recoil_timer = max(_recoil_timer, hit_recoil_duration * 1.2)
+	velocity = knockback_direction.normalized() * knockback_force
+	move_and_slide()
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+
+
+func _start_hit_recoil_reaction() -> void:
+	_recoil_timer = max(_recoil_timer, hit_recoil_duration)
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+
+
+func _start_stagger_reaction() -> void:
+	_stagger_timer = max(_stagger_timer, stagger_duration)
+	_recoil_timer = 0.0
+	_attack_windup_timer = 0.0
+	_pending_attack_damage = 0.0
+	velocity = Vector2.ZERO
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+
+
+func _spawn_damage_popup(amount: float) -> void:
+	var popup := DAMAGE_POPUP_SCENE.instantiate()
+	popup.text = str(int(amount))
+	get_tree().current_scene.add_child(popup)
+	popup.global_position = global_position + Vector2(randf_range(-10, 10), -20)
+
+
+func _update_reaction_timers(delta: float) -> bool:
+	if _stagger_timer > 0.0:
+		_stagger_timer = max(0.0, _stagger_timer - delta)
+		velocity = Vector2.ZERO
+		if _uses_directional_animation_set():
+			_update_directional_animation(_last_move_direction, false)
+		return true
+	if _recoil_timer > 0.0:
+		_recoil_timer = max(0.0, _recoil_timer - delta)
+		velocity = Vector2.ZERO
+		if _uses_directional_animation_set():
+			_update_directional_animation(_last_move_direction, false)
+		return true
+	return false
+
+func is_dead() -> bool:
+	return dead
+
+
+func _uses_directional_animation_set() -> bool:
+	return uses_directional_charset and animated_sprite != null
+
+
+func _has_animation(name: String) -> bool:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return false
+	return animated_sprite.sprite_frames.has_animation(name)
+
+
+func _play_animation(name: String, allow_restart: bool = true) -> void:
+	if not _has_animation(name):
+		return
+	if not allow_restart and animated_sprite.animation == name and animated_sprite.is_playing():
+		return
+	if allow_restart and animated_sprite.animation == name:
+		if animated_sprite.is_playing():
+			animated_sprite.set_frame_and_progress(0, 0.0)
+		else:
+			animated_sprite.play(name)
+		return
+	animated_sprite.play(name)
+
+
+func _ensure_directional_animations() -> void:
+	if animated_sprite == null or _has_directional_animation_assets():
+		return
+	if animated_sprite.sprite_frames == null:
+		animated_sprite.sprite_frames = SpriteFrames.new()
+	if not ResourceLoader.exists(directional_charset_sheet_path):
+		return
+	var texture := load(directional_charset_sheet_path)
+	if not (texture is Texture2D):
+		return
+	var tex := texture as Texture2D
+	var safe_frame_size: int = max(1, directional_charset_frame_size)
+	var safe_row_start: int = max(0, directional_charset_row_start)
+	var sheet_rows := int(tex.get_height() / safe_frame_size)
+	var sheet_cols := int(tex.get_width() / safe_frame_size)
+	if sheet_rows < safe_row_start + 4 or sheet_cols < DIRECTIONAL_SUFFIXES.size():
+		return
+
+	var frames: SpriteFrames = animated_sprite.sprite_frames
+	for dir_index in range(DIRECTIONAL_SUFFIXES.size()):
+		var suffix: String = String(DIRECTIONAL_SUFFIXES[dir_index])
+		var anim_name := _get_directional_animation_name(StringName(suffix))
+		if frames.has_animation(anim_name):
+			frames.remove_animation(anim_name)
+		frames.add_animation(anim_name)
+		frames.set_animation_loop(anim_name, true)
+		frames.set_animation_speed(anim_name, directional_charset_fps)
+		for frame_index in range(4):
+			frames.add_frame(anim_name, _build_directional_atlas(tex, dir_index, safe_row_start + frame_index, safe_frame_size))
+
+
+func _build_directional_atlas(texture: Texture2D, dir_index: int, row_index: int, frame_size: int) -> AtlasTexture:
+	var atlas := AtlasTexture.new()
+	atlas.atlas = texture
+	atlas.region = Rect2(float(dir_index * frame_size), float(row_index * frame_size), float(frame_size), float(frame_size))
+	return atlas
+
+
+func _update_directional_animation(direction: Vector2, is_moving: bool) -> void:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+	var anim_name := _get_directional_animation_name(_get_directional_charset_suffix(direction))
+	if not _has_animation(anim_name):
+		return
+	if is_moving:
+		_play_animation(anim_name, false)
+		return
+	if animated_sprite.animation != anim_name:
+		animated_sprite.play(anim_name)
+	animated_sprite.stop()
+	animated_sprite.set_frame_and_progress(0, 0.0)
+
+
+func _get_directional_charset_suffix(direction: Vector2) -> StringName:
+	if direction.length_squared() <= 0.0001:
+		return &"s"
+	var angle := wrapf(direction.angle(), 0.0, TAU)
+	var sector := int(round(angle / (PI / 4.0))) % DIRECTIONAL_SUFFIXES.size()
+	var angle_to_index := [2, 3, 4, 5, 6, 7, 0, 1]
+	return DIRECTIONAL_SUFFIXES[angle_to_index[sector]]
+
+
+func _get_directional_animation_name(suffix: StringName) -> String:
+	return "%s_%s" % [directional_animation_prefix, String(suffix)]
+
+
+func _has_directional_animation_assets() -> bool:
+	for suffix in DIRECTIONAL_SUFFIXES:
+		if _has_animation(_get_directional_animation_name(suffix)):
+			return true
+	return false
+
+
+func set_threat_highlight(enabled: bool) -> void:
+	_threat_highlight_enabled = enabled
+	if not _threat_highlight_enabled and animated_sprite:
+		animated_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0)
+		animated_sprite.scale = _base_sprite_scale
+
+
+func _update_threat_highlight_visual(delta: float) -> void:
+	if animated_sprite == null:
+		return
+	if not _threat_highlight_enabled:
+		return
+	_threat_highlight_time += delta
+	var pulse: float = 0.5 + 0.5 * sin(_threat_highlight_time * 7.5)
+	var intensity: float = lerp(1.0, 1.2, pulse)
+	animated_sprite.modulate = Color(intensity, 0.72, 0.72, 1.0)
+	animated_sprite.scale = _base_sprite_scale * lerp(1.0, 1.06, pulse)
