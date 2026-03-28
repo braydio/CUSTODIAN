@@ -43,15 +43,16 @@ custodian/
 
 - `WASD`: move operator
 - `Mouse`: aim
+- `Arrow Keys`: aim when arrow-aim mode is enabled
 - `F` or `Left Mouse`: attack
 - `R` or `Right Mouse`: block
-- `1/2`: weapon profile
 - `Q`: toggle ranged equip/holster
 - `E`: toggle melee equip/holster
 - `H`: hold repair
 - `G`: interact (including Command sector terminal access)
 - `C`: camera follow toggle
 - `Z`: auto-zoom toggle
+- `V`: toggle aim input mode (`Mouse` / `Arrows`)
 - `X`: reload ranged weapon
 - `T`: time shift
 - `Space`: pause menu

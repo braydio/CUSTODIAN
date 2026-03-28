@@ -50,6 +50,12 @@ When behavior/architecture changes:
 3. Optionally update legacy docs (CHANGELOG, DEVLOG) for historical tracking.
 4. Update `python-sim/ai/CURRENT_STATE.md` if game state significantly changes.
 
+## Clarifications
+
+- Agents should ask concise clarifying questions when requirements, assets, or intended behavior are ambiguous enough that guessing would risk incorrect work.
+- The user explicitly encourages clarifying questions when needed; do not avoid asking just to appear autonomous.
+- If proceeding with a reasonable temporary assumption, state that assumption clearly and keep the implementation easy to revise.
+
 ## Determinism
 
 - Keep fixed-step simulation deterministic.
