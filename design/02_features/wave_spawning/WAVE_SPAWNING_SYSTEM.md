@@ -9,7 +9,12 @@
 
 ## 1. System Overview
 
-The wave spawning system creates periodic enemy waves that escalate in difficulty. It is Godot-native and designed for later integration with the strategic Python simulation.
+The current runtime uses assault waves as a temporary delivery mechanism for hostile pressure, but the target feel is not arcade horde defense. Assaults should arrive as tactical incursions with short bursts of contact and meaningful lulls between them.
+
+Current runtime slice:
+- lower threat budgets than the original wave-defense tuning
+- short spawn bursts within a wave instead of a continuous stream
+- recovery gating before the next assault timer arms
 
 ### Architecture
 
@@ -64,7 +69,13 @@ Spawn nodes automatically join groups:
 ## 3. Wave Manager
 
 ### Purpose
-Controls wave timing, composition, and difficulty scaling.
+Controls assault timing, composition, and pacing.
+
+### Pacing Direction
+- keep enemy counts low enough that each attacker matters
+- cluster spawns into small bursts
+- require a recovery lull after the field is mostly clear before the next assault starts
+- preserve lane/objective readability so the player can reposition and react
 
 ### Implementation: `wave_manager.gd`
 

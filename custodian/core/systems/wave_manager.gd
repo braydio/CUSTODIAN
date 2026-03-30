@@ -7,11 +7,15 @@ signal all_waves_completed()
 
 @export var wave_interval: float = 45.0
 @export var intra_wave_spawn_interval: float = 0.5
+@export var spawn_burst_size: int = 2
+@export var spawn_burst_pause: float = 6.0
 @export var base_points: int = 5
 @export var growth_per_wave: int = 3
 @export var max_wave: int = 20
 @export var initial_delay: float = 15.0
 @export var max_alive_enemies: int = 60
+@export var recovery_enemy_threshold: int = 0
+@export var recovery_poll_interval: float = 2.0
 
 @export var drone_scene: PackedScene
 @export var fast_drone_scene: PackedScene
@@ -34,6 +38,8 @@ var _external_wave_queue: Array[String] = []
 var _forced_lane: String = ""
 var _forced_objective: String = ""
 var _game_state: Node = null
+var _burst_spawns_remaining: int = 0
+var _waiting_for_recovery_clearance: bool = false
 
 const ENEMY_COST := {
 	"drone": 1,
@@ -70,6 +76,9 @@ func _setup_timer() -> void:
 	add_child(_spawn_timer)
 
 func _on_wave_timer_timeout() -> void:
+	if _waiting_for_recovery_clearance:
+		_arm_next_wave_timer()
+		return
 	start_next_wave()
 
 func _on_phase_changed(_old_phase: int, new_phase: int) -> void:
@@ -91,6 +100,7 @@ func _sync_phase_state(phase: int) -> void:
 	_spawn_timer.stop()
 	_pending_spawns.clear()
 	_wave_in_progress = false
+	_waiting_for_recovery_clearance = false
 	_forced_lane = ""
 	_forced_objective = ""
 
@@ -129,9 +139,11 @@ func start_next_wave() -> void:
 	wave_started.emit(wave_number)
 	_wave_in_progress = true
 	_prepare_wave_queue(points)
+	_burst_spawns_remaining = min(spawn_burst_size, _pending_spawns.size())
+	_waiting_for_recovery_clearance = false
 	_spawn_next_from_queue(difficulty)
 	if not _pending_spawns.is_empty():
-		_spawn_timer.start()
+		_schedule_next_spawn()
 	else:
 		_complete_wave()
 
@@ -162,6 +174,8 @@ func _on_spawn_timer_timeout() -> void:
 	if _pending_spawns.is_empty():
 		_spawn_timer.stop()
 		_complete_wave()
+	else:
+		_schedule_next_spawn()
 
 func _spawn_next_from_queue(difficulty: float) -> void:
 	if _pending_spawns.is_empty():
@@ -170,6 +184,8 @@ func _spawn_next_from_queue(difficulty: float) -> void:
 		return
 	var enemy_type: String = str(_pending_spawns.pop_front())
 	_spawn_enemy(enemy_type, difficulty)
+	if _burst_spawns_remaining > 0:
+		_burst_spawns_remaining -= 1
 
 func _complete_wave() -> void:
 	_wave_in_progress = false
@@ -177,7 +193,8 @@ func _complete_wave() -> void:
 	_forced_objective = ""
 	wave_completed.emit(wave_number)
 	if active:
-		_timer.start()
+		_waiting_for_recovery_clearance = true
+		_arm_next_wave_timer()
 
 func _choose_enemy_type(available_points: int) -> String:
 	var options: Array[String] = []
@@ -317,3 +334,23 @@ func _configure_enemy_variant(enemy: Node, enemy_type: String) -> void:
 				enemy.get_node("Visual").modulate = Color(0.3, 0.3, 0.9, 1.0)
 		_:
 			pass
+
+
+func _schedule_next_spawn() -> void:
+	if _pending_spawns.is_empty():
+		return
+	if _burst_spawns_remaining <= 0:
+		_burst_spawns_remaining = min(spawn_burst_size, _pending_spawns.size())
+		_spawn_timer.start(max(0.1, spawn_burst_pause))
+		return
+	_spawn_timer.start(max(0.05, intra_wave_spawn_interval))
+
+
+func _arm_next_wave_timer() -> void:
+	if not active:
+		return
+	if _count_alive_enemies() > recovery_enemy_threshold:
+		_timer.start(max(0.1, recovery_poll_interval))
+		return
+	_waiting_for_recovery_clearance = false
+	_timer.start(max(0.1, wave_interval))

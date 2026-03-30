@@ -252,7 +252,9 @@ func _attempt_place_turret(position: Vector2) -> void:
 		return
 	
 	var cost: int = int(TURRET_COSTS.get(_selected_turret_type, 0))
-	if _game_state and _game_state.has("materials"):
+	if _game_state and _game_state.has_method("add_materials"):
+		_game_state.add_materials(-cost)
+	elif _game_state and _game_state.has("materials"):
 		_game_state.materials -= cost
 	
 	var scene: PackedScene = turret_scenes.get(_selected_turret_type, null)
@@ -272,6 +274,46 @@ func _attempt_place_turret(position: Vector2) -> void:
 	turret_placed.emit(turret)
 	
 	exit_placement_mode()
+
+
+func set_preview_world_position(position: Vector2) -> bool:
+	if not _is_placing:
+		return false
+	_update_ghost_preview(position)
+	return _placement_valid
+
+
+func attempt_place_turret_at(position: Vector2) -> bool:
+	if not _is_placing:
+		return false
+	if not _can_place_at(position):
+		return false
+	_attempt_place_turret(position)
+	return true
+
+
+func get_preview_world_position() -> Vector2:
+	if _ghost_preview == null:
+		return Vector2.ZERO
+	return _ghost_preview.global_position
+
+
+func get_placement_valid() -> bool:
+	return _placement_valid
+
+
+func get_placed_turrets() -> Array[Node2D]:
+	return _placed_turrets
+
+
+func get_material_count() -> int:
+	if _game_state == null:
+		return 0
+	return int(_game_state.get("materials"))
+
+
+func get_cost_for_type(turret_type: String) -> int:
+	return int(TURRET_COSTS.get(turret_type, 0))
 
 
 func get_tilemap_layer(layer_name: String) -> TileMapLayer:

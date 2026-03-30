@@ -7,6 +7,13 @@ const AXUL_DIRECTIONAL_SHEET_PATH := "res://assets/sprites/additional-charsets/S
 const DIRECTIONAL_SUFFIXES := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
 const DIRECTIONAL_ANIMATION_PREFIX := "red_walk"
 
+enum AssaultState {
+	STAGING,
+	PROBING,
+	COMMIT,
+	REGROUP,
+}
+
 @export var enemy_name: String = "SCOUT"
 @export var speed: float = 80.0
 @export var health: float = 50.0
@@ -23,6 +30,15 @@ const DIRECTIONAL_ANIMATION_PREFIX := "red_walk"
 @export var hit_recoil_duration: float = 0.12
 @export var stagger_duration: float = 0.35
 @export var stagger_damage_threshold: float = 24.0
+@export var assault_staging_duration_min: float = 1.25
+@export var assault_staging_duration_max: float = 2.75
+@export var assault_probe_duration_min: float = 2.5
+@export var assault_probe_duration_max: float = 4.5
+@export var assault_regroup_duration: float = 2.2
+@export var assault_probe_speed_multiplier: float = 0.72
+@export var assault_regroup_speed_multiplier: float = 0.82
+@export var assault_damage_commit_threshold: float = 8.0
+@export var assault_commit_detection_multiplier: float = 0.72
 @export var passive: bool = false
 @export var counts_as_wave_enemy: bool = true
 @export var material_drop_min: int = 0
@@ -60,6 +76,9 @@ var _spawn_position: Vector2 = Vector2.ZERO
 var _passive_target_position: Vector2 = Vector2.ZERO
 var _passive_wander_timer: float = 0.0
 var _passive_flee_timer: float = 0.0
+var _assault_state: int = AssaultState.STAGING
+var _assault_state_timer: float = 0.0
+var _assault_probe_destination: Vector2 = Vector2.ZERO
 
 # Pathfinding
 var navigation_system: Node = null
@@ -104,8 +123,10 @@ func _ready():
 	if animated_sprite:
 		_base_sprite_scale = animated_sprite.scale
 	_spawn_position = global_position
+	_assault_probe_destination = global_position
 	_passive_target_position = global_position
 	_schedule_next_passive_wander()
+	_enter_assault_state(AssaultState.STAGING)
 	damage_timer = damage_interval
 	_refresh_target()
 	_initialize_navigation()
@@ -169,6 +190,8 @@ func _physics_process(delta):
 	if passive:
 		_update_passive_behavior(delta)
 		return
+	if _update_assault_state(delta):
+		return
 
 	target_refresh_timer -= delta
 	if target_refresh_timer <= 0.0 or target == null or not is_instance_valid(target) or _is_target_destroyed(target):
@@ -221,6 +244,9 @@ func _attack_target(delta: float):
 
 func _refresh_target():
 	if passive:
+		target = null
+		return
+	if _assault_state == AssaultState.STAGING or _assault_state == AssaultState.REGROUP:
 		target = null
 		return
 	target = _find_best_target()
@@ -353,6 +379,7 @@ func take_damage(amount: float):
 		return
 	
 	health -= amount
+	_on_assault_damage_taken(amount)
 	_apply_reaction(amount)
 	update_visuals()
 	_spawn_damage_popup(amount)
@@ -575,6 +602,135 @@ func _update_reaction_timers(delta: float) -> bool:
 			_update_directional_animation(_last_move_direction, false)
 		return true
 	return false
+
+
+func _update_assault_state(delta: float) -> bool:
+	_assault_state_timer = max(0.0, _assault_state_timer - delta)
+	match _assault_state:
+		AssaultState.STAGING:
+			return _update_staging_state()
+		AssaultState.PROBING:
+			if _assault_state_timer <= 0.0:
+				_enter_assault_state(AssaultState.COMMIT)
+			return _update_probing_state()
+		AssaultState.REGROUP:
+			if _assault_state_timer <= 0.0:
+				_enter_assault_state(AssaultState.PROBING)
+			return _update_regroup_state()
+		_:
+			return false
+
+
+func _update_staging_state() -> bool:
+	velocity = Vector2.ZERO
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+	if _assault_state_timer <= 0.0:
+		_enter_assault_state(AssaultState.PROBING)
+	return true
+
+
+func _update_probing_state() -> bool:
+	var sensed_target := _find_best_target_in_range(detection_range * assault_commit_detection_multiplier)
+	if sensed_target != null:
+		target = sensed_target
+		_enter_assault_state(AssaultState.COMMIT)
+		return false
+	if _assault_probe_destination.distance_to(_spawn_position) <= 1.0:
+		_refresh_probe_destination()
+	var move_direction := (_assault_probe_destination - global_position).normalized()
+	if global_position.distance_to(_assault_probe_destination) <= path_tolerance:
+		_refresh_probe_destination()
+		move_direction = (_assault_probe_destination - global_position).normalized()
+	velocity = move_direction * speed * assault_probe_speed_multiplier if move_direction.length_squared() > 0.0001 else Vector2.ZERO
+	move_and_slide()
+	if move_direction.length_squared() > 0.0001:
+		_last_move_direction = move_direction
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, velocity.length_squared() > 0.0001)
+	return true
+
+
+func _update_regroup_state() -> bool:
+	target = null
+	clear_path()
+	var fallback_target := _spawn_position
+	var retreat_direction := (fallback_target - global_position).normalized()
+	velocity = retreat_direction * speed * assault_regroup_speed_multiplier if retreat_direction.length_squared() > 0.0001 else Vector2.ZERO
+	move_and_slide()
+	if retreat_direction.length_squared() > 0.0001:
+		_last_move_direction = retreat_direction
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, velocity.length_squared() > 0.0001)
+	return true
+
+
+func _enter_assault_state(next_state: int) -> void:
+	_assault_state = next_state
+	match _assault_state:
+		AssaultState.STAGING:
+			target = null
+			clear_path()
+			_assault_state_timer = randf_range(
+				min(assault_staging_duration_min, assault_staging_duration_max),
+				max(assault_staging_duration_min, assault_staging_duration_max)
+			)
+		AssaultState.PROBING:
+			target = null
+			clear_path()
+			_assault_state_timer = randf_range(
+				min(assault_probe_duration_min, assault_probe_duration_max),
+				max(assault_probe_duration_min, assault_probe_duration_max)
+			)
+			_refresh_probe_destination()
+		AssaultState.COMMIT:
+			_assault_state_timer = 0.0
+		AssaultState.REGROUP:
+			target = null
+			clear_path()
+			_assault_state_timer = max(0.1, assault_regroup_duration)
+
+
+func _refresh_probe_destination() -> void:
+	var offset := Vector2(
+		randf_range(-96.0, 96.0),
+		randf_range(-96.0, 96.0)
+	)
+	_assault_probe_destination = _spawn_position + offset
+
+
+func _find_best_target_in_range(max_range: float) -> Node2D:
+	var best: Node2D = null
+	var best_priority := 999
+	var best_distance := INF
+	var groups: Array = OBJECTIVE_GROUPS.get(attack_objective, OBJECTIVE_GROUPS["breach_command"])
+	for group_name in groups:
+		var priority = int(TARGET_PRIORITY.get(group_name, 999))
+		for candidate in get_tree().get_nodes_in_group(group_name):
+			if not (candidate is Node2D):
+				continue
+			var node := candidate as Node2D
+			if _is_target_destroyed(node):
+				continue
+			var dist := global_position.distance_to(node.global_position)
+			if dist > max_range:
+				continue
+			if priority < best_priority or (priority == best_priority and dist < best_distance):
+				best = node
+				best_priority = priority
+				best_distance = dist
+	return best
+
+
+func _on_assault_damage_taken(amount: float) -> void:
+	if passive or dead:
+		return
+	if _assault_state == AssaultState.STAGING or _assault_state == AssaultState.PROBING:
+		if amount >= assault_damage_commit_threshold:
+			_enter_assault_state(AssaultState.COMMIT)
+		return
+	if _assault_state == AssaultState.COMMIT and health > 0.0 and health <= max_health * 0.35:
+		_enter_assault_state(AssaultState.REGROUP)
 
 func is_dead() -> bool:
 	return dead

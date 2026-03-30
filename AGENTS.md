@@ -85,3 +85,35 @@ These commands map to scripts under `~/.codex/scripts/`.
   - exact save path under `custodian/assets/sprites/...`
   - short description of the animation intent (what it should communicate in gameplay)
 - Do not silently invent missing production art assets; wire placeholders only when explicitly approved.
+- Treat multi-animation or multi-direction master sheets as source assets, not direct runtime assets.
+- For any sheet that contains more than one animation or directional set, rebuild only the concrete runtime slices actually used by the game into `SpriteFrames` resources.
+- Prefer smaller per-animation runtime slices over binding a large master sheet directly to the active runtime.
+
+## Implementation Workflow
+
+### Codex Agent (Special)
+- **Can implement IMMEDIATELY** without proposal sheets
+- Copy code from `design/features/implementation/*.md` files
+- Make changes directly to Godot runtime
+
+### All Other Agents (OpenCode, Claude, etc.)
+1. Create **design document** in `design/` folder
+2. Create **implementation code** in `design/features/implementation/` as proposal
+3. Wait for **human review/approval**
+4. After approval, implement and update design doc status to `complete`
+
+### Required Process for New Features
+
+```
+design/
+└── features/
+    └── implementation/
+        ├── FEATURE_NAME.md           ← Design doc
+        └── FEATURE_NAME_CODE.md      ← Exact code to copy (PROPOSAL)
+```
+
+**Template locations:**
+- Design doc: `design/00_meta/TEMPLATE_SYSTEM.md`
+- Implementation: Copy existing `WEAPON_DATA_INTEGRATION_CODE.md` format
+
+**Status labels:** `draft` → `review` → `complete`

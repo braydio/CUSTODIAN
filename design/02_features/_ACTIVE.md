@@ -28,7 +28,7 @@
 | Feature | Status | Doc | Notes |
 |---------|--------|-----|-------|
 | Shadow System Integration | 🟡 Pending | `02_features/shadow/implementation.md` | - |
-| Weapon Data System | 🟡 Pending | `02_features/weapon_data/implementation.md` | - |
+| Weapon Data System | ✅ Done | `02_features/weapon_data/implementation.md` | JSON weapon stats now load |
 
 ---
 

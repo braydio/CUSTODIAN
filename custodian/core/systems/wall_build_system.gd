@@ -66,6 +66,7 @@ func _complete_build() -> void:
 	wall.width = type_data.width
 	wall.height = type_data.height
 	wall.wall_color = type_data.color.darkened(0.2)  # Slightly darker than blueprint
+	wall.orientation = blueprint.orientation
 	
 	# Add to world
 	world.add_child(wall)

@@ -1,5 +1,9 @@
 # CUSTODIAN Design Documentation
 
+!ATTENTION ASSISTANTS!
+
+! CUSTODIAN - Is not a tactical wave defense. It is more similar to a roguelike/roguelite, real-time tactical, base-builder in a procedurally generated universe. The wave defense style gameplay is for testing only. Production will be continuous. Please be sure to update this anywhere it is referenced (like below, though it is not required that it be as verbose)!
+
 **Project:** CUSTODIAN - Godot-based tactical wave defense with procgen contracts  
 **Last Updated:** 2026-03-27
 
@@ -13,17 +17,18 @@ design/
 ├── ROADMAP.md                     # Master roadmap & milestone tracking
 ├── TRACKING.md                    # Sprint backlog, issues, progress
 │
-├── architecture/                  # High-level architecture docs
+├── 00_meta/                       # Meta documents (templates, status)
 │   ├── PROJECT_STATUS.md
-│   └── SIZING_STRATEGY.md
+│   ├── SIZING_STRATEGY.md
+│   └── TEMPLATE_*.md
 │
-├── systems/                      # Core system designs
+├── 01_systems/                    # Core system designs (from root/systems/)
 │   ├── COMMAND_TERMINAL_UI.md
 │   ├── CAMERA_SYSTEM.md
 │   ├── CAMERA_COMBAT_INTEGRATION.md
 │   └── ROADMAP_COMMAND_TERMINAL.md
 │
-├── features/
+├── 02_features/                   # Feature specs & implementations
 │   ├── implementation/           # Active implementation docs
 │   │   ├── FREE_ROAM_PRE_ASSAULT_WALKTHROUGH.md
 │   │   ├── OPERATOR_ANIMATION_STATE_MACHINE.md
@@ -38,7 +43,16 @@ design/
 │       ├── SHADOW_SYSTEM.md
 │       └── UPGRADE_FIGHT_MECHANICS.md
 │
-├── research/                     # Research & exploration docs
+├── 03_architecture/               # High-level architecture (moved from root)
+│   ├── INTEGRATION_CONTRACT_GLUE_LAYER.md
+│   ├── CAMPAIGN_FLOW_AND_GAME_LOOP.md
+│   ├── COMPOUND_TILE_SYSTEM.md
+│   ├── REGION_GENERATION_SYSTEM.md
+│   ├── HUB_SYSTEM_META_PROGRESSION.md
+│   ├── WORLD_TRANSITION_SYSTEM.md
+│   └── RUNTIME_WORLD_AND_CAMERA_STABILIZATION.md
+│
+├── 04_research/                   # Research & exploration
 │   ├── DEERFLOW_AUTONOMOUS_CONTENT_SYSTEM.md
 │   ├── EDGAR_ROOM_TEMPLATE_SYSTEM.md
 │   └── DRONE_ASSETS_NEEDED.md

@@ -34,6 +34,16 @@ Each enemy evaluates nearby targets in priority order:
 - Turrets = immediate threat to enemies
 - Player = fallback when nothing else nearby
 
+### Assault Behavior Layer
+
+Objective selection is now only one part of enemy behavior. Runtime enemies may cycle through short assault phases before and during contact:
+- staging near ingress
+- probing toward likely contact
+- committing once a target is sensed or combat begins
+- regrouping briefly after heavy damage
+
+This keeps objective-driven enemies from reading as constant full-commit swarm units.
+
 ---
 
 ## 3. Implementation

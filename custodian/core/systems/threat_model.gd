@@ -3,10 +3,10 @@ class_name ThreatModel
 
 signal threat_updated(new_threat: float)
 
-@export var base_threat: float = 5.0
-@export var threat_per_wave: float = 3.0
-@export var threat_per_destroyed_structure: float = 10.0
-@export var threat_per_minute: float = 1.0
+@export var base_threat: float = 3.0
+@export var threat_per_wave: float = 1.5
+@export var threat_per_destroyed_structure: float = 6.0
+@export var threat_per_minute: float = 0.35
 
 var elapsed_minutes: float = 0.0
 var _last_threat: float = -1.0

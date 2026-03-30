@@ -66,6 +66,7 @@ var last_fire_cooldown := 0.0
 @export var stamina_drain_per_second: float = 32.0
 @export var stamina_regen_per_second: float = 22.0
 @export var stamina_sprint_gate: float = 10.0
+@export var stamina_sprint_exhaustion_requires_full_recovery: bool = true
 @export var move_acceleration: float = 1200.0
 @export var move_deceleration: float = 1500.0
 @export var movement_turn_response: float = 14.0
@@ -102,8 +103,10 @@ var repair_target: Damageable = null
 var build_target: Node = null  # WallBlueprint we're building
 var aim_direction := Vector2.RIGHT  # Direction player is facing (for attack animations)
 var movement_direction := Vector2.DOWN  # Direction player is moving (for walk animations)
+var arrow_aim_enabled: bool = false
 var stamina: float = 100.0
 var is_sprinting: bool = false
+var _sprint_exhausted: bool = false
 var _melee_active: bool = false
 var _melee_attack_kind: String = ""
 var _melee_attack_key: String = ""
@@ -167,9 +170,7 @@ const WEAPON_PROFILES = [
 
 
 func _get_current_ranged_profile() -> Dictionary:
-	var resolved_profile: Dictionary = WEAPON_PROFILES[weapon_profile].duplicate()
-	if weapon_profile != 0:
-		return resolved_profile
+	var resolved_profile: Dictionary = WEAPON_PROFILES[0].duplicate()
 	if primary_weapon_definition == null or not (primary_weapon_definition is OperatorWeaponDefinition):
 		return resolved_profile
 	var weapon_definition := primary_weapon_definition as OperatorWeaponDefinition
@@ -204,6 +205,7 @@ const LOADOUT_RANGED := &"ranged"
 @onready var hitbox_root: Node2D = $HitboxRoot if has_node("HitboxRoot") else null
 @onready var weapon_hitbox: Area2D = $HitboxRoot/WeaponHitbox if has_node("HitboxRoot/WeaponHitbox") else null
 @onready var weapon_hitbox_shape: CollisionShape2D = $HitboxRoot/WeaponHitbox/CollisionShape2D if has_node("HitboxRoot/WeaponHitbox/CollisionShape2D") else null
+@onready var weapon_factory: Node = get_node_or_null("/root/GameRoot/World/WeaponDefinitionFactory")
 
 func _ready():
 	add_to_group("player")
@@ -224,6 +226,7 @@ func _ready():
 	_update_primary_weapon_visual(false)
 	stamina = stamina_max
 	_ensure_target_ring()
+	weapon_profile = 0
 	_initialize_magazines()
 	disable_hitbox()
 	update_visuals()
@@ -265,7 +268,7 @@ func _process(delta):
 	if _is_terminal_open():
 		return
 	_handle_loadout_toggle_input()
-	_handle_weapon_switch()
+	_handle_aim_input_toggle()
 	_handle_reload_input()
 	_update_aim()
 	_update_animation()
@@ -303,7 +306,9 @@ func _physics_process(delta):
 
 	var moving = input_direction != Vector2.ZERO
 	var wants_sprint = Input.is_key_pressed(KEY_CTRL)
-	is_sprinting = moving and wants_sprint and stamina > stamina_sprint_gate
+	if _sprint_exhausted and stamina >= stamina_max:
+		_sprint_exhausted = false
+	is_sprinting = moving and wants_sprint and not _sprint_exhausted and stamina > stamina_sprint_gate
 	var move_speed = SPEED * sprint_multiplier if is_sprinting else SPEED
 	if _is_block_state_active():
 		move_speed *= block_move_multiplier
@@ -316,6 +321,8 @@ func _physics_process(delta):
 		stamina = max(0.0, stamina - stamina_drain_per_second * delta)
 		if stamina <= 0.0:
 			is_sprinting = false
+			if stamina_sprint_exhaustion_requires_full_recovery:
+				_sprint_exhausted = true
 	else:
 		stamina = min(stamina_max, stamina + stamina_regen_per_second * delta)
 
@@ -325,10 +332,14 @@ func _physics_process(delta):
 
 
 func _update_aim():
-	var aim_vector = get_global_mouse_position() - global_position
-	if aim_vector.length_squared() <= 0.0001:
-		return
-	aim_direction = aim_vector.normalized()
+	var keyboard_aim := _get_keyboard_aim_direction()
+	if arrow_aim_enabled:
+		if keyboard_aim != Vector2.ZERO:
+			aim_direction = keyboard_aim
+	else:
+		var mouse_aim_vector := get_global_mouse_position() - global_position
+		if mouse_aim_vector.length_squared() > 0.0001:
+			aim_direction = mouse_aim_vector.normalized()
 	_apply_dynamic_weapon_socket_layout()
 	var weapon_display_angle := _get_weapon_display_angle(aim_direction)
 	
@@ -338,7 +349,7 @@ func _update_aim():
 	elif primary_weapon_socket:
 		primary_weapon_socket.rotation = 0.0
 	elif barrel:
-		barrel.rotation = aim_vector.angle() + deg_to_rad(current_recoil * 0.12)
+		barrel.rotation = aim_direction.angle() + deg_to_rad(current_recoil * 0.12)
 
 
 func _update_animation():
@@ -397,9 +408,18 @@ func _update_animation():
 	
 	# Play walk or idle based on movement and direction
 	if is_moving:
-		if is_sprinting and animated_sprite.sprite_frames.has_animation("run_right"):
-			if animated_sprite.animation != "run_right":
-				animated_sprite.play("run_right")
+		if is_sprinting:
+			var run_anim := "run_" + direction_suffix
+			if animated_sprite.sprite_frames.has_animation(run_anim):
+				if animated_sprite.animation != run_anim:
+					animated_sprite.play(run_anim)
+				_update_idle_loop_tracking(false, "")
+				return
+			if animated_sprite.sprite_frames.has_animation("run_right"):
+				if animated_sprite.animation != "run_right":
+					animated_sprite.play("run_right")
+				_update_idle_loop_tracking(false, "")
+				return
 			_update_idle_loop_tracking(false, "")
 			return
 		if not _is_using_ranged_2h_primary() and direction_suffix == "down" and animated_sprite.sprite_frames.has_animation("walk_down_default"):
@@ -489,16 +509,16 @@ func _fire_bullet():
 		return
 	if _reload_active:
 		return
-	var aim_vector = get_global_mouse_position() - global_position
-	if aim_vector.length_squared() <= 0.0001:
-		return
 	var profile := _get_current_ranged_profile()
 	if not _has_loaded_ammo():
 		_try_start_reload()
 		return
+	var direction := _get_attack_aim_direction()
+	if direction.length_squared() <= 0.0001:
+		return
 	var spread = float(profile["spread"]) + (current_recoil * 0.2)
 	var spread_rad = deg_to_rad(randf_range(-spread, spread))
-	var direction = aim_vector.normalized().rotated(spread_rad)
+	direction = direction.rotated(spread_rad)
 
 	var bullet = BULLET_SCENE.instantiate()
 	if bullet == null:
@@ -751,10 +771,7 @@ func _apply_melee_hitbox_tick() -> void:
 
 
 func _get_melee_forward_direction() -> Vector2:
-	var aim_vector = get_global_mouse_position() - global_position
-	if aim_vector.length_squared() <= 0.0001:
-		return aim_direction.normalized() if aim_direction.length_squared() > 0.0001 else Vector2.RIGHT
-	return aim_vector.normalized()
+	return _get_attack_aim_direction()
 
 
 func start_attack(attack_key: String) -> void:
@@ -1133,10 +1150,7 @@ func _apply_hit_stop() -> void:
 
 
 func _handle_weapon_switch():
-	if Input.is_key_pressed(KEY_1):
-		weapon_profile = 0
-	elif Input.is_key_pressed(KEY_2):
-		weapon_profile = 1
+	weapon_profile = 0
 
 
 func _handle_loadout_toggle_input() -> void:
@@ -1144,6 +1158,11 @@ func _handle_loadout_toggle_input() -> void:
 		_toggle_ranged_loadout()
 	elif Input.is_action_just_pressed("toggle_melee_loadout"):
 		_toggle_melee_loadout()
+
+
+func _handle_aim_input_toggle() -> void:
+	if Input.is_action_just_pressed("toggle_aim_input_mode"):
+		arrow_aim_enabled = not arrow_aim_enabled
 
 
 func _handle_reload_input() -> void:
@@ -1344,6 +1363,10 @@ func _has_active_idle_input() -> bool:
 		or Input.is_action_pressed("move_right") \
 		or Input.is_action_pressed("move_up") \
 		or Input.is_action_pressed("move_down") \
+		or Input.is_action_pressed("aim_left") \
+		or Input.is_action_pressed("aim_right") \
+		or Input.is_action_pressed("aim_up") \
+		or Input.is_action_pressed("aim_down") \
 		or Input.is_action_pressed("attack") \
 		or Input.is_action_pressed("reload_weapon") \
 		or Input.is_action_pressed("block") \
@@ -1703,10 +1726,7 @@ func _is_authored_melee_body_stance_active() -> bool:
 
 
 func _consume_ammo():
-	if weapon_profile == 0:
-		_ammo_standard_loaded = max(0, _ammo_standard_loaded - 1)
-	else:
-		_ammo_heavy_loaded = max(0, _ammo_heavy_loaded - 1)
+	_ammo_standard_loaded = max(0, _ammo_standard_loaded - 1)
 
 
 func _initialize_magazines() -> void:
@@ -1729,15 +1749,15 @@ func _get_heavy_magazine_size() -> int:
 
 
 func _get_current_magazine_size() -> int:
-	return _get_standard_magazine_size() if weapon_profile == 0 else _get_heavy_magazine_size()
+	return _get_standard_magazine_size()
 
 
 func _get_current_loaded_ammo() -> int:
-	return _ammo_standard_loaded if weapon_profile == 0 else _ammo_heavy_loaded
+	return _ammo_standard_loaded
 
 
 func _get_current_reserve_ammo() -> int:
-	return ammo_standard if weapon_profile == 0 else ammo_heavy
+	return ammo_standard
 
 
 func _has_loaded_ammo() -> bool:
@@ -1783,16 +1803,10 @@ func _finish_reload() -> void:
 	if not _reload_active:
 		return
 	var capacity: int = _get_current_magazine_size()
-	if weapon_profile == 0:
-		var needed_standard: int = max(0, capacity - _ammo_standard_loaded)
-		var transfer_standard: int = min(needed_standard, ammo_standard)
-		_ammo_standard_loaded += transfer_standard
-		ammo_standard -= transfer_standard
-	else:
-		var needed_heavy: int = max(0, capacity - _ammo_heavy_loaded)
-		var transfer_heavy: int = min(needed_heavy, ammo_heavy)
-		_ammo_heavy_loaded += transfer_heavy
-		ammo_heavy -= transfer_heavy
+	var needed_standard: int = max(0, capacity - _ammo_standard_loaded)
+	var transfer_standard: int = min(needed_standard, ammo_standard)
+	_ammo_standard_loaded += transfer_standard
+	ammo_standard -= transfer_standard
 	_cancel_reload()
 
 
@@ -1818,9 +1832,15 @@ func add_ammo(standard: int, heavy: int) -> Dictionary:
 func get_weapon_status() -> Dictionary:
 	var profile := _get_current_ranged_profile()
 	var cooldown_total = max(last_fire_cooldown, float(profile["cooldown"]))
+	var weapon_name := "CARBINE"
+	if primary_weapon_definition != null and primary_weapon_definition is OperatorWeaponDefinition:
+		var weapon_data: Dictionary = (primary_weapon_definition as OperatorWeaponDefinition).get_weapon_data()
+		weapon_name = str(weapon_data.get("name", weapon_name)).to_upper()
 	return {
 		"equipped": primary_weapon_equipped,
 		"primary_weapon_id": equipped_primary_weapon_id,
+		"weapon_name": weapon_name,
+		"aim_mode": "arrows" if arrow_aim_enabled else "mouse",
 		"loadout_mode": String(combat_loadout_mode),
 		"blocking": _is_blocking(),
 		"profile": String(profile["name"]),
@@ -1841,7 +1861,31 @@ func get_sprint_status() -> Dictionary:
 		"is_sprinting": is_sprinting,
 		"stamina": stamina,
 		"stamina_max": stamina_max,
+		"sprint_exhausted": _sprint_exhausted,
 	}
+
+
+func _get_keyboard_aim_direction() -> Vector2:
+	var aim_input := Vector2(
+		Input.get_action_strength("aim_right") - Input.get_action_strength("aim_left"),
+		Input.get_action_strength("aim_down") - Input.get_action_strength("aim_up")
+	)
+	if aim_input.length_squared() <= 0.0001:
+		return Vector2.ZERO
+	return aim_input.normalized()
+
+
+func _get_attack_aim_direction() -> Vector2:
+	if arrow_aim_enabled:
+		var keyboard_aim := _get_keyboard_aim_direction()
+		if keyboard_aim != Vector2.ZERO:
+			return keyboard_aim
+	if aim_direction.length_squared() > 0.0001:
+		return aim_direction.normalized()
+	var mouse_aim_vector := get_global_mouse_position() - global_position
+	if mouse_aim_vector.length_squared() > 0.0001:
+		return mouse_aim_vector.normalized()
+	return Vector2.RIGHT
 
 
 func equip_primary_carbine() -> void:
@@ -1849,7 +1893,15 @@ func equip_primary_carbine() -> void:
 	equipped_primary_weapon_id = PRIMARY_WEAPON_CARBINE
 	combat_loadout_mode = LOADOUT_RANGED
 	_reset_melee_overlay_visuals()
+	_create_weapon_from_factory("carbine_mk1")
 	_refresh_primary_weapon_state()
+
+
+func _create_weapon_from_factory(weapon_id: String) -> void:
+	if weapon_factory and weapon_factory.has_method("create_weapon_definition"):
+		primary_weapon_definition = weapon_factory.create_weapon_definition(weapon_id)
+		_initialize_magazines()
+		print("[Operator] Loaded weapon: ", weapon_id, " | Magazine: ", _get_current_magazine_size())
 
 
 func unequip_primary_weapon() -> void:

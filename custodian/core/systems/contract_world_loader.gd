@@ -9,6 +9,7 @@ class_name ContractWorldLoader
 @export var command_terminal_path: NodePath = NodePath("/root/GameRoot/World/CommandTerminal")
 @export var items_root_path: NodePath = NodePath("/root/GameRoot/World/Items")
 @export var camera_path: NodePath = NodePath("/root/GameRoot/World/Camera2D")
+@export var navigation_system_path: NodePath = NodePath("/root/GameRoot/NavigationSystem")
 @export var runtime_map_container_name: String = "ProcGenRuntime"
 @export var hide_static_sectors: bool = true
 @export var reposition_operator_from_contract: bool = true
@@ -85,6 +86,7 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_position_item_anchors(level_data, map_instance)
 	if reposition_camera_from_contract:
 		_refresh_camera(map_instance)
+	_rebuild_navigation(map_instance)
 	_mark_contract_ready()
 
 
@@ -265,6 +267,25 @@ func _refresh_camera(map_instance: Node) -> void:
 		return
 	if camera.has_method("set_runtime_map"):
 		camera.call("set_runtime_map", map_instance)
+
+
+func _rebuild_navigation(map_instance: Node) -> void:
+	var nav := get_node_or_null(navigation_system_path)
+	if nav == null:
+		push_warning("[ContractWorldLoader] NavigationSystem not found at %s" % String(navigation_system_path))
+		return
+	if not nav.has_method("rebuild"):
+		push_warning("[ContractWorldLoader] NavigationSystem missing rebuild method")
+		return
+
+	if map_instance is ProcGenTilemap:
+		var pg := map_instance as ProcGenTilemap
+		if pg.floor_tilemap:
+			nav.floor_tilemap = pg.floor_tilemap
+		if pg.walls_tilemap:
+			nav.walls_tilemap = pg.walls_tilemap
+	nav.rebuild()
+	print("[ContractWorldLoader] Navigation rebuilt with procgen tilemaps")
 
 
 func _position_command_terminal(level_data: Dictionary, map_instance: Node) -> void:

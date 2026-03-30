@@ -1,5 +1,20 @@
 # Weapon Data Integration Design
 
+## Status: ✅ IMPLEMENTED
+
+**Implemented:** 2026-03-29
+
+| Component | Status |
+|-----------|--------|
+| JSON weapon data loader | ✅ Complete |
+| Weapon definition factory | ✅ Complete |
+| OperatorWeaponDefinition stats | ✅ Complete |
+| Factory integration in equip | ✅ Complete |
+| Game scene setup | ✅ Complete |
+| UI reload indicator | ✅ Complete |
+
+---
+
 ## Overview
 
 Wire the existing JSON weapon definitions (`assets/weapons/data/*.json`) into the runtime game so weapon stats like clip size, fire rate, and damage are actually used instead of hardcoded values.
@@ -385,4 +400,29 @@ if weapon_def:
 
 ---
 
+## Implementation Code Reference
+
+**Detailed implementation code (copy verbatim):**
+`design/features/implementation/WEAPON_DATA_INTEGRATION_CODE.md`
+
+---
+
+## Implementation Process
+
+### For Codex Agent
+
+- **Can implement IMMEDIATELY** without proposal sheets
+- Copy code from `features/implementation/*.md` files
+- Make changes directly
+
+### For Other Agents (OpenCode, Claude, etc.)
+
+- Must create **proposal sheet** with exact code first
+- Place proposal in `features/implementation/PROPOSAL_*.md`
+- Wait for human review/approval before implementing
+- After approval, update status and implement
+
+---
+
 *Document created: 2026-03-27*
+*Updated: 2026-03-29*

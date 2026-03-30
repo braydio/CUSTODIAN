@@ -28,6 +28,13 @@ This mirrors the legacy Python assault orchestration layer, which modeled lanes,
 - Added lane outcome metrics (`total_attacks`, `successful_attacks`, `success_ratio`) in `AssaultLane`.
 - Added HUD line + terminal fallback telemetry rendering in `res://scenes/ui.gd` (`DIRECTOR`, `THREAT`, `ASSAULT`, `WAVE/BUDGET`).
 
+### Assault Pacing Adjustment (2026-03-30)
+
+- Threat defaults were reduced so early assaults feel like probing attacks instead of swarm clears.
+- Director budget application now scales raw threat down before composition generation.
+- This is an intentional move away from "wave defense density" and toward "base-builder under intermittent assault."
+- Runtime enemies now layer a local assault state machine on top of objective targeting: `STAGING -> PROBING -> COMMIT -> REGROUP`.
+
 ---
 
 ## 2. Architecture
@@ -48,7 +55,7 @@ custodian/
 ## 3. Threat Model
 
 ### Concept
-Threat scales with time, destruction, and wave number. Higher threat = harder attacks.
+Threat scales with time, destruction, and wave number, but it should translate into tactical assault pressure rather than raw body count.
 
 ### Implementation: `threat_model.gd`
 
@@ -58,10 +65,10 @@ class_name ThreatModel
 
 signal threat_updated(new_threat: float)
 
-@export var base_threat: float = 5.0
-@export var threat_per_wave: float = 3.0
-@export var threat_per_destroyed_structure: float = 10.0
-@export var threat_per_minute: float = 1.0
+@export var base_threat: float = 3.0
+@export var threat_per_wave: float = 1.5
+@export var threat_per_destroyed_structure: float = 6.0
+@export var threat_per_minute: float = 0.35
 
 var elapsed_minutes: float = 0.0
 

@@ -63,6 +63,7 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var camera_follow_label = get_node_or_null("CameraFollowLabel")
 @onready var camera_zoom_label = get_node_or_null("CameraZoomLabel")
 @onready var time_scale_label = get_node_or_null("TimeScaleLabel")
+@onready var aim_mode_label = get_node_or_null("AimModeLabel")
 @onready var weapon_label = get_node_or_null("WeaponLabel")
 @onready var primary_weapon_button = get_node_or_null("PrimaryWeaponButton")
 @onready var ammo_label = get_node_or_null("AmmoLabel")
@@ -104,7 +105,7 @@ var _last_follow_state: bool = false
 var _last_auto_zoom_state: bool = false
 var _last_contract_phase_text := ""
 var _last_time_scale := -1.0
-var _last_weapon_profile := -1
+var _last_aim_mode := ""
 var _last_primary_equipped: bool = false
 var _last_primary_weapon_id := ""
 var _last_loadout_mode := ""
@@ -167,7 +168,7 @@ const TERMINAL_COMMAND_QUEUE_INTERVAL := 0.12
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_apply_minimal_runtime_hud()
+	_set_main_hud_hidden(false)
 	if terminal_panel:
 		terminal_panel.visible = false
 	if terminal_input and not terminal_input.text_submitted.is_connected(_on_terminal_input_submitted):
@@ -236,37 +237,43 @@ func _process(delta):
 		_last_time_scale = Engine.time_scale
 
 	var operator = get_node_or_null("/root/GameRoot/World/Operator")
-	if not _main_hud_hidden and operator and weapon_label and "weapon_profile" in operator:
-		var profile = int(operator.weapon_profile)
+	if not _main_hud_hidden and operator and aim_mode_label:
+		if operator.has_method("get_weapon_status"):
+			var aim_ws = operator.get_weapon_status()
+			var aim_mode := str(aim_ws.get("aim_mode", "mouse"))
+			if aim_mode != _last_aim_mode or aim_mode_label.text.is_empty():
+				aim_mode_label.text = "AIM: %s (V TOGGLE, ARROWS)" % aim_mode.to_upper()
+				_last_aim_mode = aim_mode
+
+	if not _main_hud_hidden and operator and weapon_label:
 		if operator.has_method("get_weapon_status"):
 			var ws = operator.get_weapon_status()
 			var equipped := bool(ws.get("equipped", false))
 			var primary_weapon_id := str(ws.get("primary_weapon_id", ""))
 			var loadout_mode := str(ws.get("loadout_mode", "holstered"))
-			if profile != _last_weapon_profile or equipped != _last_primary_equipped or primary_weapon_id != _last_primary_weapon_id or loadout_mode != _last_loadout_mode or weapon_label.text.is_empty():
-				var mode_name := "STANDARD" if profile == 0 else "HEAVY"
+			if equipped != _last_primary_equipped or primary_weapon_id != _last_primary_weapon_id or loadout_mode != _last_loadout_mode or weapon_label.text.is_empty():
 				var primary_label := "HOLSTERED"
 				if loadout_mode == "melee":
 					primary_label = "MELEE"
 				elif equipped:
-					primary_label = "CARBINE" if primary_weapon_id == "carbine_rifle" else primary_weapon_id.to_upper()
+					primary_label = str(ws.get("weapon_name", "CARBINE"))
 				var block_label := "ACTIVE" if bool(ws.get("blocking", false)) else "R/M2"
-				weapon_label.text = "LOADOUT: %s (Q RANGED, E MELEE) | FIRE MODE: %s (1/2) | ATTACK: F/M1 | BLOCK: %s | RELOAD: X" % [primary_label, mode_name, block_label]
-				_last_weapon_profile = profile
+				weapon_label.text = "LOADOUT: %s (Q RANGED, E MELEE) | ATTACK: F/M1 | BLOCK: %s | RELOAD: X" % [primary_label, block_label]
 				_last_primary_equipped = equipped
 				_last_primary_weapon_id = primary_weapon_id
 				_last_loadout_mode = loadout_mode
 			if primary_weapon_button:
 				primary_weapon_button.text = "UNEQUIP CARBINE" if equipped and primary_weapon_id == "carbine_rifle" else "EQUIP CARBINE"
 			if ammo_label:
-				var ammo_text = "AMMO STD: %d/%d +%d | HVY: %d/%d +%d" % [
-					int(ws.get("ammo_standard_loaded", ws.ammo_standard)),
-					int(ws.get("ammo_standard_magazine_size", 0)),
-					int(ws.ammo_standard),
-					int(ws.get("ammo_heavy_loaded", ws.ammo_heavy)),
-					int(ws.get("ammo_heavy_magazine_size", 0)),
-					int(ws.ammo_heavy),
-				]
+				var magazine_size = int(ws.get("ammo_standard_magazine_size", 0))
+				var loaded = int(ws.get("ammo_standard_loaded", 0))
+				var reserve = int(ws.ammo_standard)
+				var reloading = bool(ws.get("reloading", false))
+				
+				var ammo_text = "AMMO: %d/%d +%d" % [loaded, magazine_size, reserve]
+				if reloading:
+					ammo_text += " [RELOADING...]"
+				
 				if ammo_text != _last_ammo_text:
 					ammo_label.text = ammo_text
 					_last_ammo_text = ammo_text
@@ -284,7 +291,7 @@ func _process(delta):
 		if operator.has_method("get_sprint_status"):
 			var ss = operator.get_sprint_status()
 			if stamina_label:
-				var sprint_state = "SPRINT" if bool(ss.get("is_sprinting", false)) else "JOG"
+				var sprint_state = "EXHAUSTED" if bool(ss.get("sprint_exhausted", false)) else ("SPRINT" if bool(ss.get("is_sprinting", false)) else "JOG")
 				var stamina_pct = (float(ss.get("stamina", 0.0)) / max(1.0, float(ss.get("stamina_max", 1.0)))) * 100.0
 				stamina_label.text = "STAMINA: %d%% (%s, CTRL)" % [int(round(stamina_pct)), sprint_state]
 			if stamina_bar:
@@ -380,15 +387,15 @@ func _process(delta):
 			interaction_label.text = prompt
 
 
-func _apply_minimal_runtime_hud() -> void:
-	_main_hud_hidden = true
-	for node in [
+func _get_main_hud_nodes() -> Array:
+	return [
 		power_label,
 		power_bar,
 		contract_phase_label,
 		camera_follow_label,
 		camera_zoom_label,
 		time_scale_label,
+		aim_mode_label,
 		weapon_label,
 		primary_weapon_button,
 		ammo_label,
@@ -400,37 +407,22 @@ func _apply_minimal_runtime_hud() -> void:
 		supply_drop_label,
 		crosshair_label,
 		get_node_or_null("ControlsHintLabel"),
-	]:
+	]
+
+
+func _set_main_hud_hidden(hidden: bool) -> void:
+	_main_hud_hidden = hidden
+	for node in _get_main_hud_nodes():
 		if node:
-			node.visible = false
+			node.visible = not hidden
+	if crosshair_label:
+		crosshair_label.visible = false
 
 func enter_placement_mode_ui() -> void:
 	if _placement_mode_active:
 		return
 	_placement_mode_active = true
-	_main_hud_hidden = true
-	
-	for node in [
-		power_label,
-		power_bar,
-		contract_phase_label,
-		camera_follow_label,
-		camera_zoom_label,
-		time_scale_label,
-		weapon_label,
-		primary_weapon_button,
-		ammo_label,
-		cooldown_bar,
-		cooldown_label,
-		stamina_bar,
-		stamina_label,
-		director_label,
-		supply_drop_label,
-		crosshair_label,
-		get_node_or_null("ControlsHintLabel"),
-	]:
-		if node:
-			node.visible = false
+	_set_main_hud_hidden(true)
 	
 	if terminal_panel:
 		_terminal_panel_saved_position = terminal_panel.position
@@ -454,7 +446,7 @@ func exit_placement_mode_ui() -> void:
 	if not _placement_mode_active:
 		return
 	_placement_mode_active = false
-	_apply_minimal_runtime_hud()
+	_set_main_hud_hidden(false)
 	
 	if terminal_panel:
 		terminal_panel.position = _terminal_panel_saved_position

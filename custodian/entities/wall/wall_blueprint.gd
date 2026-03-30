@@ -12,6 +12,11 @@ enum WallType {
 	DOUBLE_WALL,  # Double thickness
 }
 
+enum Orientation {
+	VERTICAL,
+	HORIZONTAL,
+}
+
 const WALL_TYPE_DATA := {
 	WallType.BARRICADE: {
 		"name": "Barricade",
@@ -51,6 +56,10 @@ const WALL_TYPE_DATA := {
 	set(value):
 		wall_type = value
 		_update_visual()
+@export_enum("Vertical", "Horizontal") var orientation: int = Orientation.VERTICAL:
+	set(value):
+		orientation = value
+		_update_visual()
 
 var _visual: ColorRect
 var _data: Dictionary
@@ -80,11 +89,12 @@ func _update_visual() -> void:
 		return
 	
 	_data = WALL_TYPE_DATA[wall_type]
+	var size := _get_oriented_size()
 	
-	_visual.offset_left = -_data.width * 0.5
-	_visual.offset_top = -_data.height * 0.5
-	_visual.offset_right = _data.width * 0.5
-	_visual.offset_bottom = _data.height * 0.5
+	_visual.offset_left = -size.x * 0.5
+	_visual.offset_top = -size.y * 0.5
+	_visual.offset_right = size.x * 0.5
+	_visual.offset_bottom = size.y * 0.5
 	
 	# Pulsing effect
 	var tween = create_tween().set_loops()
@@ -98,7 +108,11 @@ func get_hp() -> float:
 	return _data.hp
 
 func get_size() -> Vector2:
-	return Vector2(_data.width, _data.height)
+	return _get_oriented_size()
+
+
+func is_horizontal() -> bool:
+	return orientation == Orientation.HORIZONTAL
 
 func get_wall_type_name() -> String:
 	return _data.name
@@ -113,7 +127,14 @@ func build() -> void:
 func get_blueprint_data() -> Dictionary:
 	return {
 		"type": wall_type,
+		"orientation": orientation,
 		"position": global_position,
 		"build_time": _data.build_time,
 		"hp": _data.hp,
 	}
+
+
+func _get_oriented_size() -> Vector2:
+	if orientation == Orientation.HORIZONTAL:
+		return Vector2(_data.height, _data.width)
+	return Vector2(_data.width, _data.height)

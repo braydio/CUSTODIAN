@@ -11,6 +11,8 @@ class_name EnemyDirector
 	"destroy_turrets": 2.0,
 	"breach_command": 3.0,
 }
+@export_range(0.1, 2.0, 0.05) var assault_budget_scale: float = 0.65
+@export var minimum_assault_budget: int = 1
 
 var wave_manager: Node
 var threat_model: Node
@@ -97,7 +99,7 @@ func _on_wave_started(wave_number: int) -> void:
 	_destroyed_at_wave_start = _count_destroyed_structures()
 
 	var threat: float = float(threat_model.calculate_threat(wave_number, _destroyed_at_wave_start))
-	var budget: int = max(1, int(round(threat)))
+	var budget: int = max(minimum_assault_budget, int(round(threat * assault_budget_scale)))
 	var composition: Array[String] = enemy_factory.generate_composition(budget, wave_number)
 	if composition.is_empty():
 		composition.append("drone")

@@ -160,6 +160,24 @@ final_salvage = clamp(
 
 See `wave_manager.gd` for existing wave system.
 
+### Current Direction
+
+The runtime should not feel like nonstop horde defense. Assaults should:
+- approach through readable lanes
+- arrive in short bursts
+- leave time for repositioning, repair, and recovery
+- pressure objectives with fewer, more legible enemies
+
+### Enemy Contact Rhythm
+
+First-pass runtime behavior now uses a lightweight per-enemy assault state machine:
+- `STAGING`: brief pause after spawn so arrivals do not instantly sprint the objective
+- `PROBING`: slower advance / local repositioning while feeling out the lane
+- `COMMIT`: full objective pressure once contact is established
+- `REGROUP`: temporary fallback after heavy attrition before re-entering the fight
+
+This is not the final assault orchestration layer, but it moves the live feel away from horde-stream behavior and toward tactical pushes.
+
 ### Escalation Formula
 
 ```

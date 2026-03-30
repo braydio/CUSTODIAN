@@ -34,8 +34,10 @@
 [ext_resource type="Script" uid="uid://by380p21nbchx" path="res://entities/ui/terminal_background.gd" id="36_terminal_background"]
 [ext_resource type="Script" uid="uid://bg78eihw40m6g" path="res://core/systems/navigation_system.gd" id="40_navigation"]
 [ext_resource type="Script" uid="uid://din0buhray3ph" path="res://debug/navigation_debug.gd" id="41_nav_debug"]
+[ext_resource type="Script" uid="uid://cqw8eihx50m7g" path="res://core/systems/weapon_definition_factory.gd" id="99_weapon_factory"]
 [ext_resource type="PackedScene" path="res://core/systems/wall_build_system.tscn" id="99_wall_build_system"]
 [ext_resource type="PackedScene" path="res://core/systems/wall_placer.tscn" id="99_wall_placer"]
+[ext_resource type="Script" path="res://core/systems/turret_placement.gd" id="100_turret_placement"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 position = Vector2(1512.3806, 578.4541)
@@ -260,6 +262,9 @@ script = ExtResource("15_enemy_director")
 [node name="NavigationSystem" type="Node" parent="." unique_id=987111455]
 script = ExtResource("40_navigation")
 
+[node name="WeaponDefinitionFactory" type="Node" parent="." unique_id=987111456]
+script = ExtResource("99_weapon_factory")
+
 [node name="SupplyDropManager" type="Node" parent="." unique_id=987111454]
 script = ExtResource("25_supply_drop")
 drop_interval = 35.0
@@ -313,7 +318,7 @@ offset_right = 300.0
 offset_bottom = 116.0
 text = "CAMERA: TRACKING (C)"
 
-[node name="CameraZoomLabel" type="Label" parent="UI"]
+[node name="CameraZoomLabel" type="Label" parent="UI" unique_id=771662881]
 offset_left = 20.0
 offset_top = 116.0
 offset_right = 300.0
@@ -327,68 +332,75 @@ offset_right = 320.0
 offset_bottom = 164.0
 text = "TIME SCALE: 1.0X (T)"
 
-[node name="WeaponLabel" type="Label" parent="UI" unique_id=179173991]
+[node name="AimModeLabel" type="Label" parent="UI" unique_id=177033777]
 offset_left = 20.0
 offset_top = 164.0
-offset_right = 520.0
+offset_right = 360.0
 offset_bottom = 188.0
-text = "LOADOUT: HOLSTERED (Q RANGED, E MELEE) | FIRE MODE: STANDARD (1/2) | ATTACK: F/M1 | BLOCK: R/M2"
+text = "AIM: MOUSE (V TOGGLE, ARROWS)"
+
+[node name="WeaponLabel" type="Label" parent="UI" unique_id=179173991]
+offset_left = 20.0
+offset_top = 188.0
+offset_right = 520.0
+offset_bottom = 212.0
+text = "LOADOUT: HOLSTERED (Q RANGED, E MELEE) | ATTACK: F/M1 | BLOCK: R/M2 | RELOAD: X"
 
 [node name="PrimaryWeaponButton" type="Button" parent="UI" unique_id=179173992]
 offset_left = 20.0
-offset_top = 188.0
+offset_top = 212.0
 offset_right = 180.0
-offset_bottom = 216.0
+offset_bottom = 240.0
 text = "EQUIP CARBINE"
 
 [node name="AmmoLabel" type="Label" parent="UI" unique_id=1735120534]
 offset_left = 20.0
-offset_top = 220.0
+offset_top = 244.0
 offset_right = 360.0
-offset_bottom = 244.0
-text = "AMMO STD: 0 | HVY: 0"
+offset_bottom = 268.0
+text = "AMMO: 0/0 +0"
 
 [node name="CooldownBar" type="ProgressBar" parent="UI" unique_id=129306331]
 offset_left = 20.0
-offset_top = 246.0
+offset_top = 270.0
 offset_right = 260.0
-offset_bottom = 262.0
+offset_bottom = 286.0
 show_percentage = false
 
 [node name="CooldownLabel" type="Label" parent="UI" unique_id=105988336]
 offset_left = 268.0
-offset_top = 242.0
+offset_top = 266.0
 offset_right = 420.0
-offset_bottom = 266.0
+offset_bottom = 290.0
 text = "COOLDOWN: READY"
 
 [node name="StaminaBar" type="ProgressBar" parent="UI" unique_id=120306331]
 offset_left = 20.0
-offset_top = 266.0
+offset_top = 290.0
 offset_right = 260.0
-offset_bottom = 282.0
+offset_bottom = 306.0
 value = 100.0
 show_percentage = false
 
 [node name="StaminaLabel" type="Label" parent="UI" unique_id=120988336]
 offset_left = 268.0
-offset_top = 262.0
+offset_top = 286.0
 offset_right = 500.0
-offset_bottom = 286.0
+offset_bottom = 310.0
 text = "STAMINA: 100% (JOG, CTRL)"
 
 [node name="DirectorLabel" type="Label" parent="UI" unique_id=120988337]
 offset_left = 20.0
-offset_top = 290.0
+offset_top = 314.0
 offset_right = 640.0
-offset_bottom = 314.0
+offset_bottom = 338.0
 text = "DIRECTOR W0 | TH 0.0 | NONE | NONE"
 
 [node name="SupplyDropLabel" type="Label" parent="UI" unique_id=120988338]
 offset_left = 20.0
-offset_top = 314.0
+offset_top = 338.0
 offset_right = 360.0
-offset_bottom = 338.0
+offset_bottom = 362.0
 text = "SUPPLY DROP: --"
 
 [node name="Crosshair" type="Label" parent="UI" unique_id=111706062]
@@ -518,11 +530,12 @@ stretch_mode = 5
 
 [node name="MapPreviewTitle" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1250833323]
 layout_mode = 2
-text = "COMPOUND OUTLINE"
+text = "TACTICAL MINIMAP"
 
 [node name="MapPreview" type="TextureRect" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1591864208]
-custom_minimum_size = Vector2(0, 88)
+custom_minimum_size = Vector2(0, 248)
 layout_mode = 2
+mouse_filter = 1
 expand_mode = 1
 stretch_mode = 5
 
@@ -541,7 +554,7 @@ offset_left = 16.0
 offset_top = 604.0
 offset_right = 1112.0
 offset_bottom = 628.0
-text = "Type directly into the command line. Drag globe to inspect. Mouse wheel zooms. Esc closes."
+text = "Type directly into the command line. Drag globe to inspect. Click tactical minimap to place while building. Esc closes."
 
 [node name="TerminalBackground" type="TextureRect" parent="UI" unique_id=999999999]
 visible = false

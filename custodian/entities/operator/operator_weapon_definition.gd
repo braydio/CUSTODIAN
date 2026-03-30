@@ -28,6 +28,30 @@ class_name OperatorWeaponDefinition
 @export var weapon_socket_position_down: Vector2 = Vector2(12, -14)
 @export var muzzle_socket_position_down: Vector2 = Vector2(20, 4)
 
+# === WEAPON STATS (from JSON) ===
+@export_group("Combat Stats")
+@export var damage: float = 12.0
+@export var fire_rate_rps: float = 7.5
+@export var magazine_size: int = 28
+@export var reload_time_sec: float = 1.7
+@export var range_px: float = 300.0
+@export var accuracy: float = 0.86
+@export var spread_deg: float = 2.0
+@export var recoil: float = 0.35
+@export var projectile_speed_px: float = 950.0
+@export var penetration: int = 1
+
+@export_group("Ammo")
+@export var ammo_type: String = "kinetic"
+@export var reserve_ammo: int = 112
+@export var reload_style: String = "magazine"
+
+# === RUNTIME STATE ===
+@export_group("Runtime State")
+@export var current_magazine: int = 0
+@export var is_reloading: bool = false
+@export var reload_timer: float = 0.0
+
 var _cached_weapon_data: Dictionary = {}
 
 
