@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://bmm250f700v61" path="res://core/systems/power.gd" id="7_power"]
 [ext_resource type="Script" uid="uid://b8du6y5b0ppbh" path="res://scenes/ui.gd" id="8_ui"]
 [ext_resource type="Script" uid="uid://bewgosi1uu3qj" path="res://scenes/pause_ui.gd" id="9_pause"]
+[ext_resource type="Texture2D" path="res://assets/crosshair_64x64.png" id="101_crosshair"]
 [ext_resource type="PackedScene" path="res://entities/items/ammo_cache.tscn" id="10_cache"]
 [ext_resource type="Script" uid="uid://citwrr55dyx86" path="res://core/systems/spawn_node.gd" id="13_spawn_node"]
 [ext_resource type="Script" uid="uid://bvwvd7qwsk7tk" path="res://core/systems/wave_manager.gd" id="14_wave_manager"]
@@ -34,10 +35,10 @@
 [ext_resource type="Script" uid="uid://by380p21nbchx" path="res://entities/ui/terminal_background.gd" id="36_terminal_background"]
 [ext_resource type="Script" uid="uid://bg78eihw40m6g" path="res://core/systems/navigation_system.gd" id="40_navigation"]
 [ext_resource type="Script" uid="uid://din0buhray3ph" path="res://debug/navigation_debug.gd" id="41_nav_debug"]
-[ext_resource type="Script" uid="uid://cqw8eihx50m7g" path="res://core/systems/weapon_definition_factory.gd" id="99_weapon_factory"]
 [ext_resource type="PackedScene" path="res://core/systems/wall_build_system.tscn" id="99_wall_build_system"]
 [ext_resource type="PackedScene" path="res://core/systems/wall_placer.tscn" id="99_wall_placer"]
-[ext_resource type="Script" path="res://core/systems/turret_placement.gd" id="100_turret_placement"]
+[ext_resource type="Script" uid="uid://cm60nou56jgt7" path="res://core/systems/weapon_definition_factory.gd" id="99_weapon_factory"]
+[ext_resource type="Script" uid="uid://bxpa63ls5ihkq" path="res://core/systems/turret_placement.gd" id="100_turret_placement"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 position = Vector2(1512.3806, 578.4541)
@@ -232,6 +233,9 @@ placeholder_healthbar_bottom = -48.0
 
 [node name="WallBuildSystem" parent="World" unique_id=1989965356 instance=ExtResource("99_wall_build_system")]
 
+[node name="TurretPlacement" type="Node" parent="World" unique_id=1022301412]
+script = ExtResource("100_turret_placement")
+
 [node name="CommandTerminal" parent="World" unique_id=2021499921 instance=ExtResource("27_command_terminal")]
 position = Vector2(804, -492)
 
@@ -403,12 +407,13 @@ offset_right = 360.0
 offset_bottom = 362.0
 text = "SUPPLY DROP: --"
 
-[node name="Crosshair" type="Label" parent="UI" unique_id=111706062]
+[node name="Crosshair" type="TextureRect" parent="UI" unique_id=111706062]
 offset_left = 640.0
 offset_top = 360.0
-offset_right = 650.0
-offset_bottom = 374.0
-text = "+"
+offset_right = 704.0
+offset_bottom = 424.0
+texture = ExtResource("101_crosshair")
+stretch_mode = 0
 
 [node name="InteractionLabel" type="Label" parent="UI" unique_id=466777138]
 offset_left = 20.0
@@ -535,7 +540,6 @@ text = "TACTICAL MINIMAP"
 [node name="MapPreview" type="TextureRect" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1591864208]
 custom_minimum_size = Vector2(0, 248)
 layout_mode = 2
-mouse_filter = 1
 expand_mode = 1
 stretch_mode = 5
 

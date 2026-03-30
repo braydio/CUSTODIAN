@@ -15,6 +15,7 @@ Confirmed implementation decisions:
 - Turrets remain preplaced for the current gameplay slice.
 - Power dependency remains sector-based for now.
 - Procgen contract maps reposition the existing `DEFENSE` sector into the generated compound and carry its turret children with it.
+- Runtime also supports player-placed turrets through `TurretPlacement` plus terminal tactical-map placement.
 
 ---
 

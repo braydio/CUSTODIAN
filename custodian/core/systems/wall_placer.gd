@@ -16,6 +16,8 @@ var _current_orientation: int = WallBlueprint.Orientation.VERTICAL
 var _blueprints: Array[WallBlueprint] = []
 var _ghost: WallBlueprint = null
 var _can_place := true
+var _preview_override_active := false
+var _preview_override_world_pos := Vector2.ZERO
 
 func _ready() -> void:
 	_set_ghost()
@@ -55,7 +57,7 @@ func _update_ghost_position() -> void:
 	if not _ghost:
 		return
 	
-	var mouse_pos = get_global_mouse_position()
+	var mouse_pos = _preview_override_world_pos if _preview_override_active else get_global_mouse_position()
 	var snapped = _get_structured_snap_position(mouse_pos)
 	_ghost.global_position = snapped
 	
@@ -138,6 +140,7 @@ func enter_placement_mode() -> void:
 
 func exit_placement_mode() -> void:
 	_placement_active = false
+	_preview_override_active = false
 	_clear_ghost()
 	_set_placement_mode(false)
 	emit_signal("placement_mode_changed", false)
@@ -159,9 +162,15 @@ func _set_ghost() -> void:
 func set_preview_world_position(world_pos: Vector2) -> bool:
 	if not _placement_active or _ghost == null:
 		return false
+	_preview_override_active = true
+	_preview_override_world_pos = world_pos
 	_ghost.global_position = _get_structured_snap_position(world_pos)
 	_update_can_place()
 	return _can_place
+
+
+func clear_preview_world_override() -> void:
+	_preview_override_active = false
 
 func _clear_ghost() -> void:
 	if _ghost:

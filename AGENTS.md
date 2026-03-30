@@ -54,6 +54,7 @@ When behavior/architecture changes:
 
 - Agents should ask concise clarifying questions when requirements, assets, or intended behavior are ambiguous enough that guessing would risk incorrect work.
 - The user explicitly encourages clarifying questions when needed; do not avoid asking just to appear autonomous.
+- When in doubt during this project, explicitly note the ambiguity and ask the user for details before proceeding further; they prefer responses that surface open questions early instead of silent assumptions.
 - If proceeding with a reasonable temporary assumption, state that assumption clearly and keep the implementation easy to revise.
 
 ## Determinism

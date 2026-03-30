@@ -1841,6 +1841,8 @@ func get_weapon_status() -> Dictionary:
 		"primary_weapon_id": equipped_primary_weapon_id,
 		"weapon_name": weapon_name,
 		"aim_mode": "arrows" if arrow_aim_enabled else "mouse",
+		"aim_direction": aim_direction,
+		"player_position": global_position,
 		"loadout_mode": String(combat_loadout_mode),
 		"blocking": _is_blocking(),
 		"profile": String(profile["name"]),

@@ -37,6 +37,7 @@ const TERMINAL_COMPLETION_TOKENS := [
 	"FAB PRIORITY", "REROUTE POWER", "BOOST DEFENSE", "DRONE DEPLOY",
 	"DEPLOY DRONE", "LOCKDOWN", "PRIORITIZE REPAIR", "STATUS RELAY",
 	"OVERLAY SHOW", "OVERLAY THREAT", "OVERLAY PATH", "OVERLAY POWER", "OVERLAY REPAIR", "OVERLAY CLEAR",
+	"TURRET", "TURRET GUNNER", "TURRET BLASTER", "TURRET REPEATER", "TURRET SNIPER",
 	"ALLOCATE_DEFENSE", "DEPLOY", "FOCUS",
 ]
 
@@ -145,6 +146,7 @@ var _planet_preview_spin_velocity := Vector2.ZERO
 var _planet_preview_zoom_distance := 3.8
 var _main_hud_hidden := false
 var _placement_mode_active := false
+var _last_crosshair_aim_dir := Vector2.ZERO
 var _terminal_panel_saved_position := Vector2.ZERO
 var _terminal_panel_saved_size := Vector2.ZERO
 var _terminal_output_saved_min_height := 0.0
@@ -159,12 +161,15 @@ var _terminal_last_phase := ""
 var _terminal_last_wave_number := -1
 var _terminal_last_threat_band := ""
 var _terminal_known_sector_states: Dictionary = {}
+var _terminal_map_render_bounds := {}
+var _terminal_map_hover_world_pos := Vector2.ZERO
 
 const PLANET_PREVIEW_ZOOM_MIN := 2.7
 const PLANET_PREVIEW_ZOOM_MAX := 6.2
 const PLANET_PREVIEW_ZOOM_STEP := 0.3
 const TERMINAL_LOG_LIMIT := 1000
 const TERMINAL_COMMAND_QUEUE_INTERVAL := 0.12
+const TERMINAL_MAP_PREVIEW_SIZE := 256
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -183,6 +188,10 @@ func _ready():
 		terminal_planet_preview.gui_input.connect(_on_terminal_planet_preview_gui_input)
 	if terminal_planet_preview:
 		terminal_planet_preview.mouse_filter = Control.MOUSE_FILTER_STOP
+	if terminal_map_preview and not terminal_map_preview.gui_input.is_connected(_on_terminal_map_preview_gui_input):
+		terminal_map_preview.gui_input.connect(_on_terminal_map_preview_gui_input)
+	if terminal_map_preview:
+		terminal_map_preview.mouse_filter = Control.MOUSE_FILTER_STOP
 	if terminal_poll_timer and not terminal_poll_timer.timeout.is_connected(_on_terminal_poll_timeout):
 		terminal_poll_timer.timeout.connect(_on_terminal_poll_timeout)
 	if primary_weapon_button and not primary_weapon_button.pressed.is_connected(_on_primary_weapon_button_pressed):
@@ -191,6 +200,7 @@ func _ready():
 	_init_terminal_previews()
 	_ensure_terminal_contract_binding()
 	_bind_wall_placer_ui()
+	_bind_turret_placement_ui()
 
 func _process(delta):
 	_handle_terminal_shortcuts()
@@ -423,6 +433,9 @@ func enter_placement_mode_ui() -> void:
 		return
 	_placement_mode_active = true
 	_set_main_hud_hidden(true)
+	if terminal_hint_label and _terminal_open:
+		terminal_hint_label.text = "TACTICAL BUILD MODE // CLICK MINIMAP TO PLACE // RIGHT-CLICK OR ESC CANCELS"
+		return
 	
 	if terminal_panel:
 		_terminal_panel_saved_position = terminal_panel.position
@@ -447,6 +460,9 @@ func exit_placement_mode_ui() -> void:
 		return
 	_placement_mode_active = false
 	_set_main_hud_hidden(false)
+	if terminal_hint_label and _terminal_open:
+		terminal_hint_label.text = "Type directly into the command line. Drag globe to inspect. Click tactical minimap to place while building. Esc closes."
+		return
 	
 	if terminal_panel:
 		terminal_panel.position = _terminal_panel_saved_position
@@ -490,10 +506,7 @@ func open_command_terminal(service_url: String = ""):
 
 func close_command_terminal():
 	if _placement_mode_active:
-		var wall_placer = get_node_or_null("/root/GameRoot/World/WallPlacer")
-		if wall_placer and wall_placer.has_method("get_placement_active") and wall_placer.get_placement_active():
-			wall_placer.exit_placement_mode()
-		else:
+		if not _cancel_active_placement_mode():
 			exit_placement_mode_ui()
 		return
 	_terminal_open = false
@@ -516,10 +529,7 @@ func _handle_terminal_shortcuts():
 	_ensure_terminal_input_focus()
 	if Input.is_action_just_pressed("ui_cancel"):
 		if _placement_mode_active:
-			var wall_placer = get_node_or_null("/root/GameRoot/World/WallPlacer")
-			if wall_placer and wall_placer.has_method("get_placement_active") and wall_placer.get_placement_active():
-				wall_placer.exit_placement_mode()
-			else:
+			if not _cancel_active_placement_mode():
 				exit_placement_mode_ui()
 			return
 		close_command_terminal()
@@ -1008,7 +1018,7 @@ func _should_refresh_snapshot(command_upper: String) -> bool:
 	var verb = command_upper.split(" ", false, 1)[0]
 	return verb in [
 		"STATUS", "ENEMIES", "WAVE", "SECTORS", "CONTRACT", "PLANET", "MAP",
-		"START",
+		"START", "WALL", "TURRET",
 		"WAIT", "RESET", "REBOOT", "SET", "FAB", "CONFIG",
 		"ALLOCATE", "FOCUS", "HARDEN", "SCAVENGE", "REPAIR", "DEPLOY",
 		"MOVE", "RETURN", "SYNC", "LOCKDOWN", "OVERLAY", "ALLOCATE_DEFENSE",
@@ -1354,11 +1364,11 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 		_append_terminal_line("ASSAULT COMMANDS: STATUS FULL, WAVE, ENEMIES, SECTORS, START ASSAULT", "info")
 		_append_terminal_line("START ASSAULT is only valid during FREE_ROAM_PREP.", "info")
 		return true
-	if cmd_upper == "HELP PREP":
-		_append_terminal_line("PREP COMMANDS: STATUS, CONTRACT, MAP, SECTORS, WALL, START ASSAULT", "info")
-		_append_terminal_line("FREE_ROAM_PREP keeps waves inactive until you trigger the assault.", "info")
-		_append_terminal_line("WALL enters placement mode for constructing defenses.", "info")
-		return true
+		if cmd_upper == "HELP PREP":
+			_append_terminal_line("PREP COMMANDS: STATUS, CONTRACT, MAP, SECTORS, WALL, TURRET <TYPE>, START ASSAULT", "info")
+			_append_terminal_line("FREE_ROAM_PREP keeps waves inactive until you trigger the assault.", "info")
+			_append_terminal_line("WALL and TURRET placement can be driven from the tactical minimap.", "info")
+			return true
 	if cmd_upper == "HELP STATUS":
 		_append_terminal_line("STATUS: quick snapshot refresh.", "info")
 		_append_terminal_line("STATUS FULL: contract phase + snapshot + wave + enemy summary lines.", "info")
@@ -1367,7 +1377,7 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 
 	match verb:
 		"HELP":
-			_append_terminal_line("LOCAL COMMANDS: HELP STATUS PREP ENEMIES WAVE SECTORS CONTRACT PLANET MAP START ASSAULT WALL CLEAR OVERLAY", "info")
+			_append_terminal_line("LOCAL COMMANDS: HELP STATUS PREP ENEMIES WAVE SECTORS CONTRACT PLANET MAP START ASSAULT WALL TURRET CLEAR OVERLAY", "info")
 			_append_terminal_line("BUFFERED COMMANDS: ALLOCATE_DEFENSE sector=COMMAND weight=HIGH | DEPLOY turret_sniper x=14 y=22 | FOCUS relay_network priority=stability", "info")
 			return true
 		"ENEMIES":
@@ -1450,7 +1460,26 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 			else:
 				wall_placer.enter_placement_mode()
 				_append_terminal_line("WALL PLACEMENT MODE ACTIVE", "success")
-				_append_terminal_line("1=BARRICADE 2=WALL 3=REINFORCED 4=DOUBLE | ESC/RIGHT-CLICK EXIT", "info")
+				_append_terminal_line("1=BARRICADE 2=WALL 3=REINFORCED 4=DOUBLE | CLICK TACTICAL MINIMAP TO PLACE | TAB ROTATES", "info")
+			return true
+		"TURRET":
+			var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
+			if turret_placement == null:
+				_append_terminal_line("TURRET PLACEMENT UNAVAILABLE", "warning")
+				return true
+			if args.is_empty():
+				_append_terminal_line("TURRETS: GUNNER(10) BLASTER(15) REPEATER(20) SNIPER(25)", "info")
+				_append_terminal_line("USE: TURRET GUNNER", "info")
+				return true
+			var turret_type := str(args[0]).to_lower()
+			if not turret_placement.has_method("enter_placement_mode"):
+				_append_terminal_line("TURRET PLACEMENT API MISSING", "warning")
+				return true
+			if turret_placement.call("enter_placement_mode", turret_type):
+				_append_terminal_line("TURRET PLACEMENT ACTIVE // %s" % turret_type.to_upper(), "success")
+				_append_terminal_line("CLICK TACTICAL MINIMAP TO PLACE // Q OR ESC TO EXIT", "info")
+			else:
+				_append_terminal_line("TURRET PLACEMENT FAILED // CHECK MATERIALS OR CAP", "warning")
 			return true
 		"OVERLAY":
 			var overlay_name := str(args[0]).to_lower() if not args.is_empty() else "show"
@@ -1640,6 +1669,94 @@ func _planet_preview_contains_screen_point(point: Vector2) -> bool:
 		return false
 	return terminal_planet_preview.get_global_rect().has_point(point)
 
+
+func _on_terminal_map_preview_gui_input(event: InputEvent) -> void:
+	if not _terminal_open or terminal_map_preview == null:
+		return
+	if _terminal_map_render_bounds.is_empty():
+		return
+	if event is InputEventMouseMotion:
+		var motion_event := event as InputEventMouseMotion
+		var world_pos := _terminal_map_local_to_world(motion_event.position)
+		_terminal_map_hover_world_pos = world_pos
+		_update_terminal_map_placement_preview(world_pos)
+		terminal_map_preview.accept_event()
+		return
+	if event is InputEventMouseButton:
+		var button_event := event as InputEventMouseButton
+		var world_pos := _terminal_map_local_to_world(button_event.position)
+		_terminal_map_hover_world_pos = world_pos
+		if button_event.button_index == MOUSE_BUTTON_LEFT and button_event.pressed:
+			if _apply_terminal_map_placement(world_pos):
+				_refresh_snapshot()
+			terminal_input.grab_focus()
+			terminal_map_preview.accept_event()
+			return
+		if button_event.button_index == MOUSE_BUTTON_RIGHT and button_event.pressed:
+			if _cancel_active_placement_mode():
+				_append_terminal_line("PLACEMENT CANCELLED", "info")
+				terminal_input.grab_focus()
+				terminal_map_preview.accept_event()
+			return
+
+
+func _update_terminal_map_placement_preview(world_pos: Vector2) -> void:
+	var handled := false
+	var wall_placer = get_node_or_null("/root/GameRoot/World/WallPlacer")
+	if wall_placer and wall_placer.has_method("get_placement_active") and wall_placer.get_placement_active():
+		wall_placer.call("set_preview_world_position", world_pos)
+		handled = true
+	var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
+	if turret_placement and turret_placement.has_method("is_placing") and turret_placement.is_placing():
+		turret_placement.call("set_preview_world_position", world_pos)
+		handled = true
+	if handled:
+		_refresh_contract_previews()
+
+
+func _apply_terminal_map_placement(world_pos: Vector2) -> bool:
+	var wall_placer = get_node_or_null("/root/GameRoot/World/WallPlacer")
+	if wall_placer and wall_placer.has_method("get_placement_active") and wall_placer.get_placement_active():
+		var placed := bool(wall_placer.call("place_blueprint_at", world_pos))
+		if placed:
+			_append_terminal_line("WALL BLUEPRINT PLACED", "success")
+		return placed
+	var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
+	if turret_placement and turret_placement.has_method("is_placing") and turret_placement.is_placing():
+		var placed_turret := bool(turret_placement.call("attempt_place_turret_at", world_pos))
+		if placed_turret:
+			_append_terminal_line("TURRET DEPLOYED", "success")
+		else:
+			_append_terminal_line("INVALID TURRET PLACEMENT", "warning")
+		return placed_turret
+	return false
+
+
+func _terminal_map_local_to_world(local_pos: Vector2) -> Vector2:
+	if _terminal_map_render_bounds.is_empty():
+		return Vector2.ZERO
+	var image_size: Vector2 = Vector2(
+		float(_terminal_map_render_bounds.get("image_width", TERMINAL_MAP_PREVIEW_SIZE)),
+		float(_terminal_map_render_bounds.get("image_height", TERMINAL_MAP_PREVIEW_SIZE))
+	)
+	var control_size: Vector2 = terminal_map_preview.size
+	if control_size.x <= 0.001 or control_size.y <= 0.001:
+		return Vector2.ZERO
+	var draw_scale: float = min(control_size.x / image_size.x, control_size.y / image_size.y)
+	var used_size: Vector2 = image_size * draw_scale
+	var pad: Vector2 = (control_size - used_size) * 0.5
+	var normalized: Vector2 = (local_pos - pad) / max(draw_scale, 0.001)
+	normalized.x = clampf(normalized.x, 0.0, image_size.x - 1.0)
+	normalized.y = clampf(normalized.y, 0.0, image_size.y - 1.0)
+	var min_x := float(_terminal_map_render_bounds.get("min_x", 0.0))
+	var min_y := float(_terminal_map_render_bounds.get("min_y", 0.0))
+	var scale := float(_terminal_map_render_bounds.get("scale", 1.0))
+	var draw_offset: Vector2 = _terminal_map_render_bounds.get("draw_offset", Vector2.ZERO)
+	return Vector2(
+		((normalized.x - draw_offset.x) / max(scale, 0.001)) + min_x,
+		((normalized.y - draw_offset.y) / max(scale, 0.001)) + min_y
+	)
+
 func _build_terminal_planet_globe_material(planet_key: String, planet_seed: int) -> Material:
 	var image := _generate_terminal_planet_globe_image(planet_key, planet_seed)
 	var texture := ImageTexture.create_from_image(image)
@@ -1762,12 +1879,14 @@ func _sample_terminal_planet_color(planet_key: String, value: float, latitude: f
 func _build_map_preview_texture(contract: Dictionary, snapshot: Dictionary = {}) -> Texture2D:
 	var map_data = contract.get("map", {})
 	if not (map_data is Dictionary):
+		_terminal_map_render_bounds.clear()
 		return _build_placeholder_preview("NO MAP DATA")
 	var level_data = map_data.get("level_data", {})
 	if not (level_data is Dictionary):
+		_terminal_map_render_bounds.clear()
 		return _build_placeholder_preview("NO LEVEL DATA")
 
-	var image := Image.create(192, 192, false, Image.FORMAT_RGBA8)
+	var image := Image.create(TERMINAL_MAP_PREVIEW_SIZE, TERMINAL_MAP_PREVIEW_SIZE, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0.04, 0.07, 0.06, 1.0))
 
 	var points: Array[Vector2] = []
@@ -1789,6 +1908,7 @@ func _build_map_preview_texture(contract: Dictionary, snapshot: Dictionary = {})
 		points.append(Vector2(player_spawn))
 
 	if points.is_empty():
+		_terminal_map_render_bounds.clear()
 		return _build_placeholder_preview("EMPTY MAP")
 
 	var min_x: float = points[0].x
@@ -1804,8 +1924,18 @@ func _build_map_preview_texture(contract: Dictionary, snapshot: Dictionary = {})
 	var pad: float = 8.0
 	var width: float = max(1.0, max_x - min_x)
 	var height: float = max(1.0, max_y - min_y)
-	var scale: float = min((192.0 - pad * 2.0) / width, (192.0 - pad * 2.0) / height)
+	var scale: float = min((float(TERMINAL_MAP_PREVIEW_SIZE) - pad * 2.0) / width, (float(TERMINAL_MAP_PREVIEW_SIZE) - pad * 2.0) / height)
 	var draw_offset := Vector2(pad, pad)
+	_terminal_map_render_bounds = {
+		"min_x": min_x,
+		"min_y": min_y,
+		"max_x": max_x,
+		"max_y": max_y,
+		"scale": scale,
+		"draw_offset": draw_offset,
+		"image_width": image.get_width(),
+		"image_height": image.get_height(),
+	}
 
 	var draw_point = func(v: Vector2i, color: Color, radius: int) -> void:
 		var mapped = Vector2((v.x - min_x) * scale, (v.y - min_y) * scale) + draw_offset
@@ -1815,19 +1945,20 @@ func _build_map_preview_texture(contract: Dictionary, snapshot: Dictionary = {})
 			for dy in range(-radius, radius + 1):
 				var px := cx + dx
 				var py := cy + dy
-				if px < 0 or py < 0 or px >= 192 or py >= 192:
+				if px < 0 or py < 0 or px >= image.get_width() or py >= image.get_height():
 					continue
 				image.set_pixel(px, py, color)
 
+	_draw_preview_path_lines(image, corridor_points, min_x, min_y, scale, draw_offset)
 	for p in floor_points:
 		if p is Vector2i:
-			draw_point.call(p, Color(0.22, 0.28, 0.26, 1.0), 0)
+			draw_point.call(p, Color(0.17, 0.21, 0.20, 1.0), 1)
 	for p in room_points:
 		if p is Vector2i:
-			draw_point.call(p, Color(0.2, 0.8, 0.75, 1.0), 1)
+			draw_point.call(p, Color(0.16, 0.66, 0.60, 1.0), 2)
 	for p in corridor_points:
 		if p is Vector2i:
-			draw_point.call(p, Color(0.92, 0.32, 0.32, 1.0), 1)
+			draw_point.call(p, Color(0.52, 0.78, 0.94, 0.95), 1)
 	if player_spawn is Vector2i:
 		draw_point.call(player_spawn, Color(0.9, 0.95, 0.25, 1.0), 2)
 
@@ -1851,14 +1982,30 @@ func _build_map_preview_texture(contract: Dictionary, snapshot: Dictionary = {})
 		for turret in tactical_entities.get("turrets", []):
 			if turret is Dictionary and turret.get("pos", null) is Vector2:
 				var turret_color := Color(0.44, 0.88, 0.72, 1.0)
-				_draw_preview_world_marker(image, turret["pos"], turret_color, 2, points, min_x, min_y, scale, draw_offset)
-		for enemy in tactical_entities.get("enemies", []):
-			if enemy is Dictionary and enemy.get("pos", null) is Vector2:
-				var enemy_color := Color(0.96, 0.38, 0.34, 1.0)
-				_draw_preview_world_marker(image, enemy["pos"], enemy_color, 1, points, min_x, min_y, scale, draw_offset)
-		for operator_entry in tactical_entities.get("operator", []):
-			if operator_entry is Dictionary and operator_entry.get("pos", null) is Vector2:
-				_draw_preview_world_marker(image, operator_entry["pos"], Color(0.98, 0.98, 0.46, 1.0), 2, points, min_x, min_y, scale, draw_offset)
+				_draw_preview_world_marker(image, turret["pos"], turret_color, 3, points, min_x, min_y, scale, draw_offset)
+			for enemy in tactical_entities.get("enemies", []):
+				if enemy is Dictionary and enemy.get("pos", null) is Vector2:
+					var enemy_color := Color(0.96, 0.38, 0.34, 1.0)
+					_draw_preview_world_marker(image, enemy["pos"], enemy_color, 2, points, min_x, min_y, scale, draw_offset)
+			for operator_entry in tactical_entities.get("operator", []):
+				if operator_entry is Dictionary and operator_entry.get("pos", null) is Vector2:
+					_draw_preview_world_marker(image, operator_entry["pos"], Color(0.98, 0.98, 0.46, 1.0), 3, points, min_x, min_y, scale, draw_offset)
+
+	var wall_placer = get_node_or_null("/root/GameRoot/World/WallPlacer")
+	if wall_placer and wall_placer.has_method("get_blueprints"):
+		for blueprint in wall_placer.get_blueprints():
+			if blueprint == null or not is_instance_valid(blueprint):
+				continue
+			_draw_preview_world_ring(image, blueprint.global_position, Color(0.86, 0.78, 0.34, 0.95), 5, points, min_x, min_y, scale, draw_offset)
+	if wall_placer and wall_placer.has_method("get_placement_active") and wall_placer.get_placement_active() and wall_placer.has_method("get_preview_world_position"):
+		var wall_preview_pos: Vector2 = wall_placer.get_preview_world_position()
+		_draw_preview_world_ring(image, wall_preview_pos, Color(0.95, 0.96, 0.52, 0.98), 7, points, min_x, min_y, scale, draw_offset)
+
+	var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
+	if turret_placement and turret_placement.has_method("is_placing") and turret_placement.is_placing() and turret_placement.has_method("get_preview_world_position"):
+		var turret_preview_pos: Vector2 = turret_placement.get_preview_world_position()
+		var preview_color := Color(0.42, 0.94, 0.70, 0.95) if bool(turret_placement.get_placement_valid()) else Color(0.95, 0.34, 0.34, 0.95)
+		_draw_preview_world_marker(image, turret_preview_pos, preview_color, 4, points, min_x, min_y, scale, draw_offset)
 
 	if bool(_terminal_overlay_flags.get("path", false)):
 		_draw_preview_path_lines(image, corridor_points, min_x, min_y, scale, draw_offset)
@@ -1939,19 +2086,19 @@ func _draw_preview_threat_heat(image: Image, enemy_entries: Array, fallback_poin
 				image.set_pixel(px, py, existing.lerp(Color(0.82, 0.16, 0.16, 1.0), alpha))
 
 func _build_placeholder_preview(label: String) -> Texture2D:
-	var image := Image.create(192, 192, false, Image.FORMAT_RGBA8)
+	var image := Image.create(TERMINAL_MAP_PREVIEW_SIZE, TERMINAL_MAP_PREVIEW_SIZE, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0.02, 0.03, 0.03, 1.0))
-	for x in range(0, 192):
+	for x in range(0, TERMINAL_MAP_PREVIEW_SIZE):
 		image.set_pixel(x, 0, Color(0.15, 0.26, 0.2, 1.0))
-		image.set_pixel(x, 191, Color(0.15, 0.26, 0.2, 1.0))
-	for y in range(0, 192):
+		image.set_pixel(x, TERMINAL_MAP_PREVIEW_SIZE - 1, Color(0.15, 0.26, 0.2, 1.0))
+	for y in range(0, TERMINAL_MAP_PREVIEW_SIZE):
 		image.set_pixel(0, y, Color(0.15, 0.26, 0.2, 1.0))
-		image.set_pixel(191, y, Color(0.15, 0.26, 0.2, 1.0))
+		image.set_pixel(TERMINAL_MAP_PREVIEW_SIZE - 1, y, Color(0.15, 0.26, 0.2, 1.0))
 
 	var hash: int = int(abs(label.hash()))
 	for i in range(24):
-		var px: int = 8 + ((hash + i * 29) % 176)
-		var py: int = 8 + ((hash + i * 43) % 176)
+		var px: int = 8 + ((hash + i * 29) % (TERMINAL_MAP_PREVIEW_SIZE - 16))
+		var py: int = 8 + ((hash + i * 43) % (TERMINAL_MAP_PREVIEW_SIZE - 16))
 		image.set_pixel(px, py, Color(0.25, 0.45, 0.35, 1.0))
 	return ImageTexture.create_from_image(image)
 
@@ -1988,11 +2135,46 @@ func _bind_wall_placer_ui() -> void:
 		wall_placer.connect("placement_mode_changed", callback)
 
 
+func _bind_turret_placement_ui() -> void:
+	var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
+	if turret_placement == null:
+		return
+	if not turret_placement.has_signal("placement_mode_changed"):
+		return
+	var callback := Callable(self, "_on_turret_placement_mode_changed")
+	if not turret_placement.is_connected("placement_mode_changed", callback):
+		turret_placement.connect("placement_mode_changed", callback)
+
+
 func _on_wall_placement_mode_changed(active: bool) -> void:
 	if active:
 		enter_placement_mode_ui()
 	else:
 		exit_placement_mode_ui()
+
+
+func _on_turret_placement_mode_changed(active: bool) -> void:
+	if active:
+		enter_placement_mode_ui()
+	else:
+		exit_placement_mode_ui()
+
+
+func _cancel_active_placement_mode() -> bool:
+	var handled := false
+	var wall_placer = get_node_or_null("/root/GameRoot/World/WallPlacer")
+	if wall_placer and wall_placer.has_method("get_placement_active") and wall_placer.get_placement_active():
+		if wall_placer.has_method("clear_preview_world_override"):
+			wall_placer.clear_preview_world_override()
+		wall_placer.exit_placement_mode()
+		handled = true
+	var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
+	if turret_placement and turret_placement.has_method("is_placing") and turret_placement.is_placing():
+		if turret_placement.has_method("clear_preview_world_override"):
+			turret_placement.clear_preview_world_override()
+		turret_placement.exit_placement_mode()
+		handled = true
+	return handled
 
 func _on_terminal_contract_generated(contract: Dictionary) -> void:
 	_terminal_latest_contract = contract

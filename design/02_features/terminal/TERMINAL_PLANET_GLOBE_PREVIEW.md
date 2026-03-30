@@ -80,7 +80,7 @@ The globe preview should sit inside a sleeker terminal shell rather than a debug
   - concise link / operator status
 - Right column:
   - large hero globe preview
-  - compact map strip
+  - tactical minimap
   - short tactical summary block
 
 ### Text Direction
@@ -101,6 +101,21 @@ The globe preview should sit inside a sleeker terminal shell rather than a debug
 - Use compact uppercase labels and larger title text.
 - Give the command input stronger visual priority than the log body.
 - Keep the planet panel dominant and the map panel secondary.
+
+## Tactical Minimap Direction
+
+The terminal map should no longer behave like a passive preview strip.
+
+Current runtime direction:
+- render a readable compound minimap from contract floor/corridor data
+- overlay operator, turrets, enemies, damaged sectors, and wall blueprints
+- support direct placement interaction during build modes
+
+Placement interaction:
+- `WALL` enters wall blueprint placement mode
+- `TURRET <TYPE>` enters turret placement mode
+- clicking the tactical minimap places the active wall blueprint or turret in world space
+- wall/turret ghost previews should remain visible in-world while the terminal is open
 
 ## Non-Goals
 

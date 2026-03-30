@@ -35,6 +35,8 @@ var _selected_turret_type: String = ""
 var _ghost_preview: Node2D = null
 var _placement_valid: bool = false
 var _placed_turrets: Array[Node2D] = []
+var _preview_override_active: bool = false
+var _preview_override_world_pos: Vector2 = Vector2.ZERO
 
 var _game_state: Node = null
 var _operator: Node2D = null
@@ -135,6 +137,8 @@ func _process(delta: float) -> void:
 		return
 	
 	var mouse_pos: Vector2 = _get_world_mouse_position()
+	if _preview_override_active:
+		mouse_pos = _preview_override_world_pos
 	_update_ghost_preview(mouse_pos)
 
 
@@ -172,6 +176,7 @@ func exit_placement_mode() -> void:
 	_is_placing = false
 	_selected_turret_type = ""
 	_ghost_preview.visible = false
+	_preview_override_active = false
 	placement_mode_changed.emit(false)
 	
 	if _ui != null and _ui.has_method("exit_placement_mode_ui"):
@@ -279,8 +284,14 @@ func _attempt_place_turret(position: Vector2) -> void:
 func set_preview_world_position(position: Vector2) -> bool:
 	if not _is_placing:
 		return false
+	_preview_override_active = true
+	_preview_override_world_pos = position
 	_update_ghost_preview(position)
 	return _placement_valid
+
+
+func clear_preview_world_override() -> void:
+	_preview_override_active = false
 
 
 func attempt_place_turret_at(position: Vector2) -> bool:

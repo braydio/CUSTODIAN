@@ -82,10 +82,10 @@ Allow players to place defense turrets from the command terminal on any walkable
 
 ### Phase 2: UI Integration
 
-- [ ] Create build panel UI (can use existing terminal system)
+- [x] Connect terminal command flow to placement mode (`TURRET <TYPE>`)
+- [x] Allow tactical minimap click-to-place while terminal is open
+- [ ] Create richer build panel UI with explicit buttons/cards
 - [ ] Show materials count
-- [ ] Show turret buttons with costs
-- [ ] Connect selection to placement mode
 
 ### Phase 3: Dismantle
 
@@ -114,10 +114,10 @@ GameRoot (game.tscn)
 ## Data Flow
 
 ```
-[Player Input B]
+[Player Input B or terminal command TURRET <TYPE>]
     → TurretPlacement.enter_placement_mode(type)
     → UI updates to show ghost preview
-    → Player clicks
+    → Player clicks world OR tactical minimap
     → TurretPlacement._attempt_place_turret()
     → Deduct materials from GameState
     → Instantiate turret scene
