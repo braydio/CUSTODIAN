@@ -162,6 +162,27 @@ var _streaming_current_chunk: Vector2i = Vector2i(999999, 999999)
 var shadow_system: Node = null
 
 
+const FOLIAGE_ASSET_PATHS := [
+	"res://assets/sprites/environment/foliage/shrub_verdent_32x32_01.png",
+	"res://assets/sprites/environment/foliage/shrub_verdent_32x32_02.png",
+	"res://assets/sprites/environment/foliage/shrub_verdent_32x32_03.png",
+	"res://assets/sprites/environment/foliage/shrub_verdent_64x64_01.png",
+	"res://assets/sprites/environment/foliage/shrub_verdent_64x64_02.png",
+	"res://assets/sprites/environment/foliage/shrub_verdent_64x64_03.png",
+	"res://assets/sprites/environment/foliage/tree_verdent_96x128_01.png",
+	"res://assets/sprites/environment/foliage/tree_verdent_96x128_02.png",
+	"res://assets/sprites/environment/foliage/tree_verdent_96x128_03.png",
+]
+@export var foliage_parent_path: NodePath = NodePath("NavigationRegion2D/FoliageLayer")
+@export var foliage_density: float = 0.12
+@export var foliage_min_wall_distance: int = 1
+@export var foliage_jitter_amplitude: Vector2 = Vector2(4, 2)
+@export var extra_foliage_textures: Array[Texture2D] = []
+
+var _foliage_parent: Node2D = null
+var _foliage_nodes: Array[Node2D] = []
+var _foliage_textures: Array[Texture2D] = []
+
 func _ready() -> void:
 	# Auto-find ProcGen if not assigned
 	if not procgen_node:
@@ -178,6 +199,8 @@ func _ready() -> void:
 
 	if shadow_system == null:
 		shadow_system = find_child("ShadowOverlay", true, false)
+	_foliage_parent = _find_foliage_parent()
+	_load_foliage_textures()
 	
 	if procgen_node:
 		procgen_node.finished.connect(_on_procgen_finished)
@@ -242,6 +265,7 @@ func _fill_tilemaps() -> void:
 		floor_tilemap.clear()
 		walls_tilemap.clear()
 		_wall_health.clear()
+		_clear_foliage()
 	
 	var map_size = procgen_node.map_size
 	var open_layout_active := _is_open_layout_active()
@@ -887,7 +911,7 @@ func damage_wall_tile(pos: Vector2i, amount: float, attacker_team: String = "") 
 	_refresh_wall_neighbors(pos)
 	_refresh_shadows()
 	if build_runtime_wall_collision and procgen_node != null:
-		_rebuild_runtime_wall_collision(procgen_node.map_size)
+		call_deferred("_rebuild_runtime_wall_collision", procgen_node.map_size)
 	_refresh_navigation_after_wall_change()
 	return {
 		"blocked": false,
@@ -939,6 +963,116 @@ func _capture_generated_tile_state(map_size: Vector2i) -> void:
 					"atlas": walls_tilemap.get_cell_atlas_coords(pos),
 				}
 
+	_generate_foliage(map_size)
+
+
+func _generate_foliage(map_size: Vector2i) -> void:
+	if _foliage_parent == null:
+		return
+	_clear_foliage()
+	if _foliage_textures.is_empty():
+		return
+
+	for pos in _generated_floor_cells.keys():
+		if _should_place_foliage(pos):
+			_place_foliage(pos)
+
+
+func _clear_foliage() -> void:
+	for node in _foliage_nodes:
+		if is_instance_valid(node):
+			node.queue_free()
+	_foliage_nodes.clear()
+
+
+func _should_place_foliage(pos: Vector2i) -> bool:
+	if foliage_density <= 0.0:
+		return false
+	if _is_near_wall(pos):
+		return false
+	var prob := float(_tile_noise_hash(pos + Vector2i(13, 41)) % 1000) / 1000.0
+	return prob < foliage_density
+
+
+func _is_near_wall(pos: Vector2i) -> bool:
+	if _generated_wall_cells.is_empty():
+		return false
+	for x in range(-foliage_min_wall_distance, foliage_min_wall_distance + 1):
+		for y in range(-foliage_min_wall_distance, foliage_min_wall_distance + 1):
+			if _generated_wall_cells.has(pos + Vector2i(x, y)):
+				return true
+	return false
+
+
+func _place_foliage(pos: Vector2i) -> void:
+	var texture := _pick_foliage_texture(pos)
+	if texture == null:
+		return
+	var sprite := Sprite2D.new()
+	sprite.texture = texture
+	sprite.position = _tile_to_world_position(pos) + _foliage_jitter(pos)
+	sprite.z_index = 1
+	sprite.z_as_relative = true
+	sprite.scale = Vector2.ONE
+	_foliage_parent.add_child(sprite)
+	_foliage_nodes.append(sprite)
+
+
+func _pick_foliage_texture(pos: Vector2i) -> Texture2D:
+	if _foliage_textures.is_empty():
+		return null
+	var idx := _tile_noise_hash(pos + Vector2i(19, 73)) % _foliage_textures.size()
+	return _foliage_textures[idx]
+
+
+func _tile_to_world_position(pos: Vector2i) -> Vector2:
+	if floor_tilemap == null:
+		return Vector2.ZERO
+	var local := floor_tilemap.map_to_local(pos)
+	var tile_size := _get_tile_size()
+	return floor_tilemap.to_global(local + tile_size * 0.5)
+
+
+func _get_tile_size() -> Vector2:
+	if floor_tilemap != null and floor_tilemap.tile_set != null:
+		return Vector2(floor_tilemap.tile_set.tile_size)
+	return Vector2(16, 16)
+
+
+func _foliage_jitter(pos: Vector2i) -> Vector2:
+	var seed := _tile_noise_hash(pos + Vector2i(7, 13))
+	var x_unit := float(seed % 21) - 10.0
+	var y_unit := float((seed / 21) % 11) - 5.0
+	return Vector2(
+		x_unit * (foliage_jitter_amplitude.x / 10.0),
+		y_unit * (foliage_jitter_amplitude.y / 5.0)
+	)
+
+
+func _load_foliage_textures() -> void:
+	_foliage_textures.clear()
+	for path in FOLIAGE_ASSET_PATHS:
+		var tex := load(path) as Texture2D
+		if tex != null:
+			_foliage_textures.append(tex)
+	for texture in extra_foliage_textures:
+		if texture != null:
+			_foliage_textures.append(texture)
+
+
+func _find_foliage_parent() -> Node2D:
+	if foliage_parent_path != NodePath("") and has_node(foliage_parent_path):
+		return get_node(foliage_parent_path) as Node2D
+	if foliage_parent_path != NodePath("") and owner != null and owner.has_node(foliage_parent_path):
+		return owner.get_node(foliage_parent_path) as Node2D
+	if foliage_parent_path != NodePath("") and get_tree() != null and get_tree().current_scene != null:
+		if get_tree().current_scene.has_node(foliage_parent_path):
+			return get_tree().current_scene.get_node(foliage_parent_path) as Node2D
+	var fallback := get_tree().get_root().find_child("FoliageLayer", true, false)
+	if fallback is Node2D:
+		return fallback
+	return null
+
 
 func _prepare_streaming_reveal() -> void:
 	_revealed_chunks.clear()
@@ -946,6 +1080,7 @@ func _prepare_streaming_reveal() -> void:
 	_streaming_reveal_queue.clear()
 	_streaming_player = null
 	_streaming_current_chunk = Vector2i(999999, 999999)
+	_clear_foliage()
 	floor_tilemap.clear()
 	walls_tilemap.clear()
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node

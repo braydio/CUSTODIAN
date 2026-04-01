@@ -38,12 +38,17 @@ navigation_polygon = SubResource("NavigationPolygon_1")
 
 [node name="Floor" type="TileMapLayer" parent="NavigationRegion2D" unique_id=1495522250]
 tile_set = ExtResource("2")
+z_index = 0
+
+[node name="FoliageLayer" type="Node2D" parent="NavigationRegion2D"]
+z_index = 1
 
 [node name="ShadowOverlay" type="Node2D" parent="NavigationRegion2D"]
 script = ExtResource("4_shadow_system")
 
 [node name="Walls" type="TileMapLayer" parent="NavigationRegion2D" unique_id=495031987]
 tile_set = ExtResource("2")
+z_index = 2
 
 [node name="ProcGen2" type="Node" parent="." unique_id=1827944280]
 script = ExtResource("3_7iafn")
