@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://d1ye43ko8snt1"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://cc8j2ooy81qm7"]
 
 [ext_resource type="Texture2D" uid="uid://bpfyu8mp7e2ko" path="res://assets/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_1h__fast_weapon.png" id="1_fast_weapon"]
 [ext_resource type="Texture2D" uid="uid://cv0sv0joe7eud" path="res://assets/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_1h__fast_fx.png" id="2_fast_fx"]

@@ -8,6 +8,7 @@ const BlockState = preload("res://entities/operator/animations/states/block_stat
 const IdleState = preload("res://entities/operator/animations/states/idle_state.gd")
 const WalkState = preload("res://entities/operator/animations/states/walk_state.gd")
 const SprintState = preload("res://entities/operator/animations/states/sprint_state.gd")
+const DeathState = preload("res://entities/operator/animations/states/death_state.gd")
 const SPEED := 150.0
 const BULLET_SCENE := preload("res://entities/projectiles/bullet.tscn")
 const MUZZLE_FLASH_SCENE := preload("res://entities/effects/muzzle_flash.tscn")
@@ -137,6 +138,7 @@ var _idle_loop_counter := 0
 var _last_idle_frame := -1
 var _last_idle_animation := ""
 var _animation_state_machine = null
+var _is_dead := false
 
 # Debug socket visualization
 var debug_draw_sockets: bool = false
@@ -264,6 +266,9 @@ func _process(delta):
 	_update_combat_target()
 	_update_target_ring()
 	_update_interaction_target()
+	if _is_dead:
+		_update_animation_state_machine(delta)
+		return
 	_handle_interact_input()
 	if _is_terminal_open():
 		return
@@ -288,6 +293,10 @@ func _process(delta):
 
 
 func _physics_process(delta):
+	if _is_dead:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 	if _is_terminal_open():
 		velocity = Vector2.ZERO
 		is_sprinting = false
@@ -306,9 +315,11 @@ func _physics_process(delta):
 
 	var moving = input_direction != Vector2.ZERO
 	var wants_sprint = Input.is_key_pressed(KEY_CTRL)
+	var was_sprinting := is_sprinting
 	if _sprint_exhausted and stamina >= stamina_max:
 		_sprint_exhausted = false
-	is_sprinting = moving and wants_sprint and not _sprint_exhausted and stamina > stamina_sprint_gate
+	var can_start_sprint := stamina > stamina_sprint_gate
+	is_sprinting = moving and wants_sprint and not _sprint_exhausted and (was_sprinting or can_start_sprint)
 	var move_speed = SPEED * sprint_multiplier if is_sprinting else SPEED
 	if _is_block_state_active():
 		move_speed *= block_move_multiplier
@@ -1669,6 +1680,7 @@ func _setup_animation_state_machine() -> void:
 	_animation_state_machine.register_state(BlockState.new())
 	_animation_state_machine.register_state(AttackFastState.new())
 	_animation_state_machine.register_state(AttackHeavyState.new())
+	_animation_state_machine.register_state(DeathState.new())
 	_animation_state_machine.current_state = "idle"
 
 
@@ -1935,6 +1947,8 @@ func receive_projectile_hit(amount: float, _attacker_team: String = "neutral") -
 	}
 
 func take_damage(amount: float):
+	if _is_dead:
+		return
 	health -= amount
 	var hit_direction := -aim_direction.normalized() if aim_direction.length_squared() > 0.001 else Vector2.DOWN
 	_notify_camera_damage_taken(hit_direction)
@@ -1948,8 +1962,53 @@ func take_damage(amount: float):
 		update_visuals()
 	
 	if health <= 0:
+		health = 0
 		print("OPERATOR DOWN!")
-		# TODO: Handle player death
+		_handle_death()
+
+func _handle_death() -> void:
+	if _is_dead:
+		return
+	_is_dead = true
+	_buffered_attack_kind = ""
+	_melee_active = false
+	_melee_attack_kind = ""
+	_melee_attack_key = ""
+	fire_cooldown_remaining = 0.0
+	melee_cooldown_remaining = 0.0
+	is_sprinting = false
+	stamina = 0.0
+	velocity = Vector2.ZERO
+	disable_hitbox()
+	if _animation_state_machine != null:
+		_animation_state_machine.request("death", 20)
+	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("death"):
+		animated_sprite.play("death")
+	var gs = get_node_or_null("/root/GameState")
+	if gs and gs.has_method("lose_life"):
+		gs.lose_life("Operator eliminated after a fatal strike")
+	await get_tree().create_timer(1.6).timeout
+	_finish_death()
+
+func _finish_death() -> void:
+	var gs = get_node_or_null("/root/GameState")
+	if gs and gs.game_over:
+		return
+	health = max_health
+	stamina = stamina_max
+	_sprint_exhausted = false
+	_buffered_attack_kind = ""
+	_melee_active = false
+	_melee_attack_kind = ""
+	_melee_attack_key = ""
+	fire_cooldown_remaining = 0.0
+	melee_cooldown_remaining = 0.0
+	velocity = Vector2.ZERO
+	disable_hitbox()
+	update_visuals()
+	_is_dead = false
+	if _animation_state_machine != null:
+		_animation_state_machine.request("idle", 0)
 
 func update_visuals():
 	if health_bar:

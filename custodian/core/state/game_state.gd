@@ -10,6 +10,10 @@ enum Phase {
 
 signal phase_changed(old_phase: int, new_phase: int)
 signal resources_changed()
+signal lives_changed(lives_left: int)
+
+@export var total_lives: int = 3
+var lives_remaining: int = total_lives
 
 var tick := 0
 var paused := false
@@ -27,6 +31,7 @@ var defense_rating: float = 0.0
 
 func _ready() -> void:
 	add_to_group("game_state")
+	reset_lives()
 
 
 func advance() -> void:
@@ -94,3 +99,17 @@ func trigger_game_over(reason: String = "Command Post destroyed") -> void:
 	game_over = true
 	paused = true
 	game_over_reason = reason
+
+func lose_life(reason: String = "Operator eliminated") -> int:
+	if lives_remaining <= 0:
+		return 0
+	lives_remaining = max(0, lives_remaining - 1)
+	lives_changed.emit(lives_remaining)
+	if lives_remaining <= 0:
+		trigger_game_over(reason)
+	return lives_remaining
+
+func reset_lives() -> void:
+	var effective_total: int = max(1, total_lives)
+	lives_remaining = effective_total
+	lives_changed.emit(lives_remaining)
