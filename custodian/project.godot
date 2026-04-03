@@ -17,9 +17,9 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GameState="*res://core/state/game_state.gd"
+GameState="*res://game/systems/core/state/game_state.gd"
 DevConsole="*uid://ccoijpiv8l45j"
-DebugBus="*res://debug/debug_bus.gd"
+DebugBus="*res://dev/debug/debug_bus.gd"
 
 [dev_console]
 

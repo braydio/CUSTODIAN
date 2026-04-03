@@ -1,0 +1,56 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" uid="uid://bh83sfgbwu3yl" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="SpriteFrames" uid="uid://cbmbkih7g80ah" path="res://game/actors/enemies/enemy.tres" id="2_frames"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
+size = Vector2(22, 22)
+
+[node name="AmbientScavDroid" type="CharacterBody2D"]
+script = ExtResource("1_enemy")
+enemy_name = "SCRAP DROID"
+speed = 34.0
+health = 18.0
+max_health = 18.0
+damage = 0.0
+base_tint = Color(0.52, 0.48, 0.41, 1)
+structure_attack_range = 0.0
+detection_range = 0.0
+retarget_interval = 2.0
+passive = true
+counts_as_wave_enemy = false
+material_drop_min = 2
+material_drop_max = 5
+passive_wander_radius = 84.0
+passive_wander_interval_min = 0.9
+passive_wander_interval_max = 2.4
+passive_alert_radius = 104.0
+passive_flee_speed_multiplier = 2.1
+passive_flee_cooldown = 1.4
+uses_directional_charset = true
+directional_charset_sheet_path = "res://content/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt2.png"
+directional_charset_row_start = 0
+
+[node name="Visual" type="ColorRect" parent="."]
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 12.0
+offset_bottom = 12.0
+color = Color(0.52, 0.48, 0.41, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_enemy")
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -15.0
+offset_top = -20.0
+offset_right = 15.0
+offset_bottom = -15.0
+value = 100.0
+show_percentage = false
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(1, 0)
+scale = Vector2(1.6, 1.6)
+sprite_frames = ExtResource("2_frames")
+animation = &"drone_idle"

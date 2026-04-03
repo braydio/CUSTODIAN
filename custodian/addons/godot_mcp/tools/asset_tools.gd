@@ -20,7 +20,7 @@ func _refresh_filesystem() -> void:
 func generate_2d_asset(args: Dictionary) -> Dictionary:
 	var svg_code: String = str(args.get(&"svg_code", ""))
 	var filename: String = str(args.get(&"filename", ""))
-	var save_path: String = str(args.get(&"save_path", "res://assets/generated/"))
+	var save_path: String = str(args.get(&"save_path", "res://content/generated/"))
 
 	if svg_code.strip_edges().is_empty():
 		return {&"ok": false, &"error": "Missing 'svg_code'"}

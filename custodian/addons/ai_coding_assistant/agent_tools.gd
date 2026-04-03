@@ -11,7 +11,7 @@ class_name AIAgentTools
 # <search_files pattern="MyClass" />
 # <update_blueprint>content</update_blueprint>
 # <open_scene path="res://main.tscn" />
-# <open_script path="res://scripts/player.gd" />
+# <open_script path="res://tools/pipelines/player.gd" />
 # <run_project />
 
 static func parse_and_execute(response: String, editor: Control) -> Array:

@@ -1,0 +1,18 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://8dc2gdonc7y4"]
+
+[ext_resource type="Texture2D" uid="uid://cwac8iekd1yxx" path="res://content/sprites/weapons/melee/sword_night_flame.png" id="1_sword_texture"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sword_trimmed"]
+atlas = ExtResource("1_sword_texture")
+region = Rect2(80, 1, 1424, 1021)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sword_trimmed")
+}],
+"loop": true,
+"name": &"melee_stance",
+"speed": 1.0
+}]

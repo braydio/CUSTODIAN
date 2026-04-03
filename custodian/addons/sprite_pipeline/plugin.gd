@@ -80,7 +80,7 @@ func _load_settings() -> void:
 func _save_default_settings() -> void:
 	var config := ConfigFile.new()
 	config.set_value("general", "mode", "byok")  # byok or pool
-	config.set_value("general", "output_root", "res://assets/sprites")
+	config.set_value("general", "output_root", "res://content/sprites")
 	config.set_value("general", "global_style", "pixel art game sprite, clean silhouette, transparent background")
 	config.set_value("byok", "api_key", "")  # User must set this
 	config.set_value("pool", "server_url", "https://sprites.pi-agents.dev")

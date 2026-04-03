@@ -1,0 +1,86 @@
+[gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3 uid="uid://cx8rk2ac54vfm"]
+
+[ext_resource type="Script" uid="uid://dr83ct4e8mal7" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
+[ext_resource type="SpriteFrames" uid="uid://dnf1qpps4kf2r" path="res://game/actors/operator/fallen_star_katana_frames.tres" id="2_weapon_frames"]
+
+[resource]
+script = ExtResource("1_weapon_definition")
+weapon_id = &"fallen_star_katana"
+weapon_type = &"melee_1h"
+frames_resource = ExtResource("2_weapon_frames")
+animation_map = {
+"melee_fast": "melee_2h_fast_1",
+"melee_fast_1": "melee_2h_fast_1",
+"melee_fast_2": "melee_2h_fast_2",
+"melee_heavy": "melee_2h_heavy",
+"melee_stance": "melee_stance"
+}
+hit_windows = {
+"melee_fast": {
+"directional_frames": {
+"2": ["north", "northeast"],
+"3": ["east", "southeast"],
+"4": ["south", "southwest", "west"]
+},
+"frames": [2, 3, 4]
+},
+"melee_fast_1": {
+"directional_frames": {
+"2": ["north", "northeast"],
+"3": ["east", "southeast"],
+"4": ["south", "southwest", "west"]
+},
+"frames": [2, 3, 4]
+},
+"melee_fast_2": {
+"directional_frames": {
+"2": ["south", "southeast"],
+"3": ["east", "northeast"],
+"4": ["north", "northwest"],
+"5": ["west"]
+},
+"frames": [2, 3, 4, 5]
+},
+"melee_heavy": {
+"directional_frames": {
+"3": ["west"],
+"6": ["south"],
+"7": ["southeast", "east", "northeast"]
+},
+"frames": [3, 4, 6, 7]
+}
+}
+fx_map = {
+"melee_fast": {
+"fx_anim": "melee_2h_fast_1_fx",
+"weapon_anim": "melee_2h_fast_1_weapon"
+},
+"melee_fast_1": {
+"fx_anim": "melee_2h_fast_1_fx",
+"weapon_anim": "melee_2h_fast_1_weapon"
+},
+"melee_fast_2": {
+"fx_anim": "melee_2h_fast_2_fx",
+"weapon_anim": "melee_2h_fast_2_weapon"
+},
+"melee_heavy": {
+"fx_anim": "melee_2h_heavy_fx",
+"weapon_anim": "melee_2h_heavy_weapon"
+}
+}
+authored_body_stance_animation = &"melee_2h_stance"
+right_hand_socket_position = Vector2(10, -11)
+left_hand_socket_position = Vector2(2, -5)
+weapon_socket_position = Vector2(10, -11)
+weapon_sprite_position = Vector2(-18, 0)
+weapon_sprite_scale = Vector2(0.62, 0.62)
+weapon_sprite_rotation_degrees = 42.0
+muzzle_socket_position = Vector2(24, -18)
+right_hand_socket_position_up = Vector2(8, -14)
+left_hand_socket_position_up = Vector2(1, -8)
+weapon_socket_position_up = Vector2(8, -14)
+muzzle_socket_position_up = Vector2(20, -24)
+right_hand_socket_position_down = Vector2(11, -8)
+left_hand_socket_position_down = Vector2(3, -2)
+weapon_socket_position_down = Vector2(11, -8)
+muzzle_socket_position_down = Vector2(24, -14)

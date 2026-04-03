@@ -625,6 +625,13 @@ func on_world_regenerate() -> void:
 | Player Shadow | `player.gd` | Blob shadow sprite |
 | Debug | `shadow_debug.gd` | Visualization |
 
+## Implementation Status (2026-03-30)
+
+- `custodian/core/systems/shadow_system.gd` already generates the edge/corner overlays described in this doc, respects the global offset/alpha settings, and exposes `request_regenerate` so the procgen flow can refresh shadows whenever tiles change.
+- Blob shadows are live under `custodian/entities/operator/operator.tscn`; the ellipse shader in `custodian/entities/effects/blob_shadow.gd` stretches with the operator's movement.
+- `procgen/proc_gen_tilemap.gd` now looks up the `ShadowOverlay` node and calls `_refresh_shadows()` right after floor/wall updates, ensuring runtime walls fountain as expected.
+- Remaining work includes authoring a dedicated `ShadowTileset` atlas for the shadow `TileMap`, providing a `ShadowDebug` helper (for visualization/testing), and the fade-in/settling timing once art assets finalize.
+
 ---
 
 *Addendum created: 2026-03-26*

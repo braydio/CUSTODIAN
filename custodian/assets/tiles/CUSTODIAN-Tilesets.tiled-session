@@ -1,10 +1,8 @@
 {
     "activeFile": "",
-    "automapping.whileDrawing": false,
     "expandedProjectPaths": [
         "Zeldaesqe"
     ],
-    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "Dungeon_24x24.tsx": {
             "scaleInDock": 1.5,
@@ -23,8 +21,24 @@
             }
         },
         "TX Tileset Grass.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 4
+        },
+        "TX_Cracked_Mossy_Stone_64_64.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.33
+        },
+        "Zeldaesqe/Scene Overview.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.75
+        },
+        "Zeldaesqe/TX Props.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1.5
+        },
+        "Zeldaesqe/TX Shadow.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "Zeldaesqe/TX Struct.tsx": {
             "scaleInDock": 1,
@@ -35,7 +49,19 @@
             "scaleInEditor": 1.5
         },
         "Zeldaesqe/TX Tileset Wall.tsx": {
-            "scaleInDock": 0.5,
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1.5
+        },
+        "Zeldaesqe/TX_Cracked_Mossy_Stone.tsx": {
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1.5
+        },
+        "Zeldaesqe/TX_Cracked_Mossy_Stone_96x96.tsx": {
+            "scaleInDock": 0.25,
+            "scaleInEditor": 0.33
+        },
+        "Zeldaesqe/TX_Mossy_Resized.tsx": {
+            "scaleInDock": 1,
             "scaleInEditor": 1.5
         },
         "decor.tsx": {
@@ -45,27 +71,31 @@
         "example.tsx": {
             "scaleInDock": 4,
             "scaleInEditor": 1
+        },
+        "untitled.tmj": {
+            "scale": 0.75,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1242,
+                "y": 490.66666666666663
+            }
         }
     },
-    "last.imagePath": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/assets/sprites/additional-charsets/Texture",
-    "map.lastUsedFormat": "tmx",
     "openFiles": [
     ],
     "project": "CUSTODIAN-Tilesets.tiled-project",
     "recentFiles": [
         "TX Tileset Grass.tsx",
-        "Zeldaesqe/TX Struct.tsx",
+        "Zeldaesqe/TX_Mossy_Resized.tsx",
+        "untitled.tmj",
+        "Zeldaesqe/TX Props.tsx",
         "Zeldaesqe/TX Tileset Wall.tsx",
+        "Zeldaesqe/Scene Overview.tsx",
+        "Zeldaesqe/TX Shadow.tsx",
+        "Zeldaesqe/TX Struct.tsx",
         "Zeldaesqe/TX Tileset Stone Ground.tsx",
-        "decor.tsx",
-        "NewMap.tmx",
-        "Island_24x24.tsx",
-        "Dungeon_24x24.tsx",
-        "example.tsx"
-    ],
-    "tileset.lastUsedFormat": "tsx",
-    "tileset.tileSize": {
-        "height": 32,
-        "width": 32
-    }
+        "Zeldaesqe/TX_Cracked_Mossy_Stone.tsx",
+        "Zeldaesqe/TX_Cracked_Mossy_Stone_96x96.tsx",
+        "TX_Cracked_Mossy_Stone_64_64.tsx"
+    ]
 }

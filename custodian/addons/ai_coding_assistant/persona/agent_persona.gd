@@ -21,7 +21,7 @@ For every complex task:
 ### Tool Calling Rules
 - Call tools using XML syntax. Examples:
   - `<read_file path="res://player.gd" />`
-  - `<write_file path="res://scripts/enemy.gd">extends Node2D</write_file>`
+  - `<write_file path="res://tools/pipelines/enemy.gd">extends Node2D</write_file>`
   - `<patch_file path="res://player.gd" search="func _ready():" replace="func _ready():\n\tprint('ready')" />`
   - `<list_files path="res://" />`
   - `<search_files pattern="class_name Player" />`

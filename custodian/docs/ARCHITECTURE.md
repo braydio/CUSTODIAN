@@ -13,11 +13,11 @@ Godot is the only authoritative runtime for active gameplay.
 ## Layer Boundaries
 
 1. State
-- `res://core/state/game_state.gd`
+- `res://game/systems/core/state/game_state.gd`
 - Holds canonical run-state fields.
 
 2. Systems
-- `res://core/systems/*.gd`
+- `res://game/systems/core/systems/*.gd`
 - Fixed-step or runtime orchestration systems.
 - Key active systems:
   - `wave_manager.gd`
@@ -27,9 +27,9 @@ Godot is the only authoritative runtime for active gameplay.
   - `contract_world_loader.gd`
 
 3. Procgen / Contract Runtime
-- `res://procgen/custodian_contract_map.gd`
-- `res://procgen/proc_gen_tilemap.gd`
-- `res://procgen/procgen.gd`
+- `res://game/world/procgen/custodian_contract_map.gd`
+- `res://game/world/procgen/proc_gen_tilemap.gd`
+- `res://game/world/procgen/procgen.gd`
 - Responsibilities:
   - contract planet selection
   - map seed derivation
@@ -37,7 +37,7 @@ Godot is the only authoritative runtime for active gameplay.
   - live world handoff through `ContractWorldLoader`
 
 4. Entities
-- `res://entities/*`
+- `res://game/actors/*`
 - Operator, enemies, turrets, sectors, interactables, projectiles.
 - Current runtime is hybrid:
   - legacy/static sectors still provide some systems compatibility
@@ -85,13 +85,13 @@ Flow:
 
 ## Command Terminal Integration
 
-- World terminal prop: `res://entities/terminal/command_terminal.tscn`
+- World terminal prop: `res://game/actors/terminal/command_terminal.tscn`
 - Interaction contract:
   - group `interactable`
   - operator proximity query
   - `interact` action (`G`)
 - Terminal runtime:
-  - implemented in `res://scenes/ui.gd`
+  - implemented in `res://game/ui/hud/ui.gd`
   - local snapshot mode only
   - no HTTP service dependency
   - renders contract metadata, wave/enemy/sector snapshot, planet preview, map preview

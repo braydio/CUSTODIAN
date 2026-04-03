@@ -66,7 +66,7 @@ Purchase the full version with premium support from [itch.io](https://fabs133.it
 
 ### Output Settings
 
-- **Output Root**: Where generated sprites are saved (default: `res://assets/sprites`)
+- **Output Root**: Where generated sprites are saved (default: `res://content/sprites`)
 - **Queue Path**: JSON file with batch generation requests
 - **Global Style**: Default style applied to all generations (can be overridden per-sprite)
 
@@ -221,7 +221,7 @@ godot --headless --enable-sprite-pipeline-automation
 curl http://localhost:8765/generate -X POST -d '{
   "command": "generate",
   "queue_path": "res://sprites/queue.json",
-  "output_root": "res://assets/sprites"
+  "output_root": "res://content/sprites"
 }'
 ```
 

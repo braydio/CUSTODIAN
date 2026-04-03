@@ -65,7 +65,7 @@ static func success_generate_sync() -> Dictionary:
 				"results": [
 					{
 						"sprite_key": "characters/hero",
-						"file_path": "res://assets/sprites/characters/hero.png",
+						"file_path": "res://content/sprites/characters/hero.png",
 						"sha256": "abc123def456",
 						"frame_w": 64,
 						"frame_h": 64,
@@ -238,7 +238,7 @@ static func create_mock_manifest(sprite_count: int = 3, error_count: int = 0, sa
 		var safe_mode := i < safe_mode_count
 		results.append({
 			"sprite_key": "category_%d/sprite_%d" % [i % 3, i],
-			"file_path": "res://assets/sprites/category_%d/sprite_%d.png" % [i % 3, i],
+			"file_path": "res://content/sprites/category_%d/sprite_%d.png" % [i % 3, i],
 			"sha256": "sha256_mock_%d" % i,
 			"frame_w": 64,
 			"frame_h": 64,
@@ -262,7 +262,7 @@ static func create_mock_manifest(sprite_count: int = 3, error_count: int = 0, sa
 		"model": "gpt-4o",
 		"image_model": "dall-e-3",
 		"global_style": "pixel art game sprite, test style",
-		"output_root": "res://assets/sprites",
+		"output_root": "res://content/sprites",
 		"results": results,
 		"errors": errors,
 		"safe_mode_count": safe_mode_count,

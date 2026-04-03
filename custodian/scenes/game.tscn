@@ -1,44 +1,44 @@
 [gd_scene format=3 uid="uid://c0x7mhq5n2kd8"]
 
-[ext_resource type="Script" uid="uid://c4e4i6nkboriy" path="res://core/systems/simulation.gd" id="1_simulation"]
-[ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://entities/operator/operator.tscn" id="2_operator"]
-[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://scenes/camera.gd" id="3_camera"]
-[ext_resource type="PackedScene" path="res://entities/sector/sector.tscn" id="4_sector"]
-[ext_resource type="Script" uid="uid://dv1vtc24ktkdi" path="res://core/systems/combat.gd" id="5_combat"]
-[ext_resource type="PackedScene" uid="uid://dgtvm5ncnayht" path="res://entities/enemies/enemy.tscn" id="6_enemy"]
-[ext_resource type="Script" uid="uid://bmm250f700v61" path="res://core/systems/power.gd" id="7_power"]
-[ext_resource type="Script" uid="uid://b8du6y5b0ppbh" path="res://scenes/ui.gd" id="8_ui"]
-[ext_resource type="Script" uid="uid://bewgosi1uu3qj" path="res://scenes/pause_ui.gd" id="9_pause"]
-[ext_resource type="Texture2D" path="res://assets/crosshair_64x64.png" id="101_crosshair"]
-[ext_resource type="PackedScene" path="res://entities/items/ammo_cache.tscn" id="10_cache"]
-[ext_resource type="Script" uid="uid://citwrr55dyx86" path="res://core/systems/spawn_node.gd" id="13_spawn_node"]
-[ext_resource type="Script" uid="uid://bvwvd7qwsk7tk" path="res://core/systems/wave_manager.gd" id="14_wave_manager"]
-[ext_resource type="Script" uid="uid://cwmil77ydatus" path="res://core/systems/enemy_director.gd" id="15_enemy_director"]
-[ext_resource type="PackedScene" path="res://entities/enemies/fast_drone.tscn" id="16_fast_enemy"]
-[ext_resource type="PackedScene" path="res://entities/enemies/heavy_drone.tscn" id="17_heavy_enemy"]
-[ext_resource type="PackedScene" uid="uid://chxttfh575v5i" path="res://entities/sector/turret_gunner.tscn" id="19_turret_gunner"]
-[ext_resource type="PackedScene" path="res://entities/sector/turret_blaster.tscn" id="20_turret_blaster"]
-[ext_resource type="PackedScene" path="res://entities/sector/turret_repeater.tscn" id="21_turret_repeater"]
-[ext_resource type="PackedScene" path="res://entities/sector/turret_sniper.tscn" id="22_turret_sniper"]
-[ext_resource type="Script" uid="uid://bv666t3wt6ofa" path="res://entities/sector/power_node.gd" id="24_power_node"]
-[ext_resource type="Script" uid="uid://c1cs5ipx8lxnp" path="res://core/systems/supply_drop_manager.gd" id="25_supply_drop"]
-[ext_resource type="PackedScene" uid="uid://lp5kk4al1nnv" path="res://procgen/custodian_contract_map.tscn" id="26_contract_map"]
-[ext_resource type="PackedScene" path="res://entities/terminal/command_terminal.tscn" id="27_command_terminal"]
-[ext_resource type="Script" uid="uid://bvqagq17ro1u6" path="res://core/systems/contract_world_loader.gd" id="28_contract_loader"]
-[ext_resource type="Script" uid="uid://xjdny30dgrp6" path="res://debug/debug_controller.gd" id="29_debug_controller"]
-[ext_resource type="PackedScene" path="res://debug/dev_ui.tscn" id="30_dev_ui"]
-[ext_resource type="Script" uid="uid://cg1kmf7hdh3s2" path="res://debug/debug_draw.gd" id="31_debug_draw"]
-[ext_resource type="Script" uid="uid://jp87rnpxqgdt" path="res://debug/inspector_probe.gd" id="32_inspector_probe"]
-[ext_resource type="Script" uid="uid://xj0cr1hc5c46" path="res://debug/debug_collector.gd" id="33_debug_collector"]
-[ext_resource type="Script" uid="uid://bi11w51uaudmj" path="res://core/systems/ambient_critter_manager.gd" id="34_ambient_critters"]
-[ext_resource type="PackedScene" path="res://entities/enemies/ambient_scav_droid.tscn" id="35_ambient_droid"]
-[ext_resource type="Script" uid="uid://by380p21nbchx" path="res://entities/ui/terminal_background.gd" id="36_terminal_background"]
-[ext_resource type="Script" uid="uid://bg78eihw40m6g" path="res://core/systems/navigation_system.gd" id="40_navigation"]
-[ext_resource type="Script" uid="uid://din0buhray3ph" path="res://debug/navigation_debug.gd" id="41_nav_debug"]
-[ext_resource type="PackedScene" path="res://core/systems/wall_build_system.tscn" id="99_wall_build_system"]
-[ext_resource type="PackedScene" path="res://core/systems/wall_placer.tscn" id="99_wall_placer"]
-[ext_resource type="Script" uid="uid://cm60nou56jgt7" path="res://core/systems/weapon_definition_factory.gd" id="99_weapon_factory"]
-[ext_resource type="Script" uid="uid://bxpa63ls5ihkq" path="res://core/systems/turret_placement.gd" id="100_turret_placement"]
+[ext_resource type="Script" uid="uid://c4e4i6nkboriy" path="res://game/systems/core/systems/simulation.gd" id="1_simulation"]
+[ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="2_operator"]
+[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="3_camera"]
+[ext_resource type="PackedScene" path="res://game/actors/sector/sector.tscn" id="4_sector"]
+[ext_resource type="Script" uid="uid://dv1vtc24ktkdi" path="res://game/systems/core/systems/combat.gd" id="5_combat"]
+[ext_resource type="PackedScene" uid="uid://dgtvm5ncnayht" path="res://game/actors/enemies/enemy.tscn" id="6_enemy"]
+[ext_resource type="Script" uid="uid://bmm250f700v61" path="res://game/systems/core/systems/power.gd" id="7_power"]
+[ext_resource type="Script" uid="uid://b8du6y5b0ppbh" path="res://game/ui/hud/ui.gd" id="8_ui"]
+[ext_resource type="Script" uid="uid://bewgosi1uu3qj" path="res://game/ui/hud/pause_ui.gd" id="9_pause"]
+[ext_resource type="PackedScene" path="res://game/actors/items/ammo_cache.tscn" id="10_cache"]
+[ext_resource type="Script" uid="uid://citwrr55dyx86" path="res://game/systems/core/systems/spawn_node.gd" id="13_spawn_node"]
+[ext_resource type="Script" uid="uid://bvwvd7qwsk7tk" path="res://game/systems/core/systems/wave_manager.gd" id="14_wave_manager"]
+[ext_resource type="Script" uid="uid://cwmil77ydatus" path="res://game/systems/core/systems/enemy_director.gd" id="15_enemy_director"]
+[ext_resource type="PackedScene" path="res://game/actors/enemies/fast_drone.tscn" id="16_fast_enemy"]
+[ext_resource type="PackedScene" path="res://game/actors/enemies/heavy_drone.tscn" id="17_heavy_enemy"]
+[ext_resource type="PackedScene" uid="uid://chxttfh575v5i" path="res://game/actors/sector/turret_gunner.tscn" id="19_turret_gunner"]
+[ext_resource type="PackedScene" path="res://game/actors/sector/turret_blaster.tscn" id="20_turret_blaster"]
+[ext_resource type="PackedScene" path="res://game/actors/sector/turret_repeater.tscn" id="21_turret_repeater"]
+[ext_resource type="PackedScene" path="res://game/actors/sector/turret_sniper.tscn" id="22_turret_sniper"]
+[ext_resource type="Script" uid="uid://bv666t3wt6ofa" path="res://game/actors/sector/power_node.gd" id="24_power_node"]
+[ext_resource type="Script" uid="uid://c1cs5ipx8lxnp" path="res://game/systems/core/systems/supply_drop_manager.gd" id="25_supply_drop"]
+[ext_resource type="PackedScene" uid="uid://lp5kk4al1nnv" path="res://game/world/procgen/custodian_contract_map.tscn" id="26_contract_map"]
+[ext_resource type="PackedScene" path="res://game/actors/terminal/command_terminal.tscn" id="27_command_terminal"]
+[ext_resource type="Script" uid="uid://bvqagq17ro1u6" path="res://game/systems/core/systems/contract_world_loader.gd" id="28_contract_loader"]
+[ext_resource type="Script" uid="uid://xjdny30dgrp6" path="res://dev/debug/debug_controller.gd" id="29_debug_controller"]
+[ext_resource type="PackedScene" path="res://dev/debug/dev_ui.tscn" id="30_dev_ui"]
+[ext_resource type="Script" uid="uid://cg1kmf7hdh3s2" path="res://dev/debug/debug_draw.gd" id="31_debug_draw"]
+[ext_resource type="Script" uid="uid://jp87rnpxqgdt" path="res://dev/debug/inspector_probe.gd" id="32_inspector_probe"]
+[ext_resource type="Script" uid="uid://xj0cr1hc5c46" path="res://dev/debug/debug_collector.gd" id="33_debug_collector"]
+[ext_resource type="Script" uid="uid://bi11w51uaudmj" path="res://game/systems/core/systems/ambient_critter_manager.gd" id="34_ambient_critters"]
+[ext_resource type="PackedScene" path="res://game/actors/enemies/ambient_scav_droid.tscn" id="35_ambient_droid"]
+[ext_resource type="Script" uid="uid://by380p21nbchx" path="res://game/actors/ui/terminal_background.gd" id="36_terminal_background"]
+[ext_resource type="Script" uid="uid://bg78eihw40m6g" path="res://game/systems/core/systems/navigation_system.gd" id="40_navigation"]
+[ext_resource type="Script" uid="uid://din0buhray3ph" path="res://dev/debug/navigation_debug.gd" id="41_nav_debug"]
+[ext_resource type="PackedScene" path="res://game/systems/core/systems/wall_build_system.tscn" id="99_wall_build_system"]
+[ext_resource type="PackedScene" path="res://game/systems/core/systems/wall_placer.tscn" id="99_wall_placer"]
+[ext_resource type="Script" uid="uid://cm60nou56jgt7" path="res://game/systems/core/systems/weapon_definition_factory.gd" id="99_weapon_factory"]
+[ext_resource type="Script" uid="uid://bxpa63ls5ihkq" path="res://game/systems/core/systems/turret_placement.gd" id="100_turret_placement"]
+[ext_resource type="Texture2D" uid="uid://6y4pj114mk8m" path="res://content/sprites/misc/crosshair_64x64.png" id="101_crosshair"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 position = Vector2(1512.3806, 578.4541)
@@ -210,9 +210,9 @@ block_move_multiplier = 0.6
 block_stamina_cost_per_hit = 12.0
 combat_target_range = 360.0
 use_tiny_rpg_placeholder_soldier = true
-idle_main_sheet_path = "res://assets/sprites/operator/runtime/idle/operator_idle_main.png"
-ranged_2h_stance_sheet_path = "res://assets/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_stance.png"
-ranged_2h_aim_sheet_path = "res://assets/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_aim_raise.png"
+idle_main_sheet_path = "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
+ranged_2h_stance_sheet_path = "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_stance.png"
+ranged_2h_aim_sheet_path = "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_aim_raise.png"
 idle_long_loop_threshold = 20
 placeholder_sprite_position = Vector2(0, -18)
 placeholder_sprite_offset = Vector2(0, 0)
@@ -284,6 +284,7 @@ min_distance_from_spawn_tiles = 10
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=2053415447]
 script = ExtResource("8_ui")
+terminal_contract_node_path = null
 
 [node name="PowerDisplay" type="Panel" parent="UI" unique_id=449160537]
 offset_left = 20.0
@@ -314,6 +315,14 @@ offset_top = 68.0
 offset_right = 340.0
 offset_bottom = 92.0
 text = "CONTRACT PHASE: BRIEFING"
+
+[node name="LivesLabel" type="Label" parent="UI" unique_id=1512345678]
+offset_left = 420.0
+offset_top = 68.0
+offset_right = 720.0
+offset_bottom = 92.0
+text = "LIVES: 3/3"
+horizontal_alignment = 1
 
 [node name="CameraFollowLabel" type="Label" parent="UI" unique_id=170044321]
 offset_left = 20.0
@@ -413,7 +422,6 @@ offset_top = 360.0
 offset_right = 704.0
 offset_bottom = 424.0
 texture = ExtResource("101_crosshair")
-stretch_mode = 0
 
 [node name="InteractionLabel" type="Label" parent="UI" unique_id=466777138]
 offset_left = 20.0

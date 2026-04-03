@@ -17,10 +17,10 @@ Scale contract reference: `res://docs/WORLD_SCALE_CONTRACT.md`
 - `World/SpawnNodes/*`
 - `World/Projectiles`
 - `World/Items`
-- `World/ContractMap` (instance: `res://procgen/custodian_contract_map.tscn`)
+- `World/ContractMap` (instance: `res://game/world/procgen/custodian_contract_map.tscn`)
 - `World/ProcGenRuntime` (created at runtime by `ContractWorldLoader`)
 - `World/Operator`
-- `World/CommandTerminal` (instance: `res://entities/terminal/command_terminal.tscn`)
+- `World/CommandTerminal` (instance: `res://game/actors/terminal/command_terminal.tscn`)
 - `World/Camera2D`
 - `Simulation`
 - `Combat`

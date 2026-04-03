@@ -1,0 +1,45 @@
+{
+    "activeFile": "",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "Zeldaesqe/TX Struct.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Zeldaesqe/TX Tileset Grass.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 2
+        },
+        "Zeldaesqe/TX Tileset Stone Ground.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "Zeldaesqe/TX Tileset Wall.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "Zeldaesqe/ZeldaStyledTiles.tmx": {
+            "scale": 3,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 557,
+                "y": 221.66666666666666
+            }
+        }
+    },
+    "last.imagePath": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/additional-charsets/Texture",
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+    ],
+    "project": "Zeldalike.tiled-project",
+    "recentFiles": [
+        "Zeldaesqe/TX Tileset Grass.tsx",
+        "Zeldaesqe/TX Struct.tsx",
+        "Zeldaesqe/TX Tileset Stone Ground.tsx",
+        "Zeldaesqe/TX Tileset Wall.tsx",
+        "Zeldaesqe/ZeldaStyledTiles.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}

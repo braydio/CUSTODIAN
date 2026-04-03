@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://d0fhsf8x4gk8v"]
 
-[ext_resource type="TileSet" uid="uid://76mcutgcnrvv" path="res://assets/facility-terrain.tres" id="1_pw728"]
-[ext_resource type="Script" uid="uid://c4e4i6nkboriy" path="res://core/systems/simulation.gd" id="1_simulation"]
-[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://scenes/camera.gd" id="3_camera"]
-[ext_resource type="Script" uid="uid://dv1vtc24ktkdi" path="res://core/systems/combat.gd" id="5_combat"]
-[ext_resource type="PackedScene" uid="uid://dgtvm5ncnayht" path="res://entities/enemies/enemy.tscn" id="6_enemy"]
-[ext_resource type="Script" uid="uid://bmm250f700v61" path="res://core/systems/power.gd" id="7_power"]
-[ext_resource type="Script" uid="uid://b8du6y5b0ppbh" path="res://scenes/ui.gd" id="8_ui"]
-[ext_resource type="Script" uid="uid://bewgosi1uu3qj" path="res://scenes/pause_ui.gd" id="9_pause"]
+[ext_resource type="TileSet" uid="uid://76mcutgcnrvv" path="res://content/tiles/tilesets/facility-terrain.tres" id="1_pw728"]
+[ext_resource type="Script" uid="uid://c4e4i6nkboriy" path="res://game/systems/core/systems/simulation.gd" id="1_simulation"]
+[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="3_camera"]
+[ext_resource type="Script" uid="uid://dv1vtc24ktkdi" path="res://game/systems/core/systems/combat.gd" id="5_combat"]
+[ext_resource type="PackedScene" uid="uid://dgtvm5ncnayht" path="res://game/actors/enemies/enemy.tscn" id="6_enemy"]
+[ext_resource type="Script" uid="uid://bmm250f700v61" path="res://game/systems/core/systems/power.gd" id="7_power"]
+[ext_resource type="Script" uid="uid://b8du6y5b0ppbh" path="res://game/ui/hud/ui.gd" id="8_ui"]
+[ext_resource type="Script" uid="uid://bewgosi1uu3qj" path="res://game/ui/hud/pause_ui.gd" id="9_pause"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 

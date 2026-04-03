@@ -33,7 +33,7 @@ func _register_all_tools() -> void:
 	# File Tools
 	register_tool("read_file",
 		"Read the complete contents of a file.",
-		{"path": {"type": "String", "required": true, "desc": "File path (e.g. res://scripts/player.gd)"}},
+		{"path": {"type": "String", "required": true, "desc": "File path (e.g. res://tools/pipelines/player.gd)"}},
 		_tool_read_file)
 
 	register_tool("write_file",

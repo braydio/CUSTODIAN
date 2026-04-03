@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://lp5kk4al1nnv"]
+
+[ext_resource type="Script" uid="uid://d2utur30i0bqj" path="res://game/world/procgen/custodian_contract_map.gd" id="1_script"]
+
+[node name="CustodianContractMap" type="Node2D" unique_id=2134097645]
+script = ExtResource("1_script")
+
+[node name="PlanetRoot" type="Node2D" parent="." unique_id=1210776991]
+
+[node name="MapRoot" type="Node2D" parent="." unique_id=1904829906]

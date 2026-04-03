@@ -598,7 +598,7 @@ func _load_settings() -> void:
 	if err == OK:
 		_current_mode = config.get_value("general", "mode", "byok")
 		queue_path_edit.text = config.get_value("general", "queue_path", "res://sprites/sprite_queue.yaml")
-		output_path_edit.text = config.get_value("general", "output_root", "res://assets/sprites")
+		output_path_edit.text = config.get_value("general", "output_root", "res://content/sprites")
 		style_edit.text = config.get_value("general", "global_style",
 			"pixel art game sprite, PC hardware themed incremental game, clean silhouette, transparent background")
 		api_key_edit.text = config.get_value("byok", "api_key", "")

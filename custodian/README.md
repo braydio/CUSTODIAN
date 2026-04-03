@@ -17,16 +17,17 @@ Or open `custodian/project.godot` and press `F5`.
 
 ```text
 custodian/
-├── core/
-│   ├── state/              # GameState autoload
-│   └── systems/            # Fixed-step simulation systems
-├── entities/
-│   ├── operator/           # Player controller scene/script
-│   └── enemies/            # Enemy entities (in progress)
-├── scenes/
-│   └── game.tscn           # Main runtime scene
-├── ui/                     # Runtime UI layer
-├── sectors/                # Sector content (in progress)
+├── game/                   # All runtime (code + scenes)
+│   ├── world/              # Tilemaps, procgen, navigation, compound
+│   ├── systems/            # Fixed-step deterministic systems
+│   ├── actors/             # Player/enemy/turret/etc scenes + scripts
+│   ├── ui/                 # Runtime UI
+│   └── rendering/          # Shaders + effects
+├── content/                # Assets only (sprites, tiles, audio, etc.)
+├── scenes/                 # Entry points (game.tscn, test_*.tscn)
+├── addons/                 # Godot editor plugins
+├── tools/                  # Import/pipeline scripts
+├── dev/                    # Debug + test scenes/logs
 └── docs/
     ├── ARCHITECTURE.md
     ├── GDSCRIPT_STANDARDS.md

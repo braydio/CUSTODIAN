@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3 uid="uid://b1lx6jd375ry7"]
+
+[ext_resource type="Script" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_weapon_frames.tres" id="2_weapon_frames"]
+
+[resource]
+script = ExtResource("1_weapon_definition")
+weapon_data_path = "res://content/weapons/data/carbine_mk1.json"
+frames_resource = ExtResource("2_weapon_frames")
+right_hand_socket_position = Vector2(10, -8)
+left_hand_socket_position = Vector2(2, -4)
+weapon_socket_position = Vector2(12, -8)
+muzzle_socket_position = Vector2(24, 0)
+right_hand_socket_position_up = Vector2(10, -12)
+left_hand_socket_position_up = Vector2(0, -8)
+weapon_socket_position_up = Vector2(12, -12)
+muzzle_socket_position_up = Vector2(24, -2)
+right_hand_socket_position_down = Vector2(10, -6)
+left_hand_socket_position_down = Vector2(4, -2)
+weapon_socket_position_down = Vector2(12, -6)
+muzzle_socket_position_down = Vector2(24, 2)

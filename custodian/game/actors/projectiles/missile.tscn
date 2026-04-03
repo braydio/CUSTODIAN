@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/actors/projectiles/missile.gd" id="1_missile"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_missile"]
+radius = 8.0
+
+[node name="Missile" type="Area2D"]
+script = ExtResource("1_missile")
+monitoring = true
+monitorable = true
+
+[node name="Visual" type="ColorRect" parent="."]
+offset_left = -12.0
+offset_top = -8.0
+offset_right = 24.0
+offset_bottom = 8.0
+color = Color(1, 0.3, 0.1, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_missile")

@@ -44,7 +44,7 @@ Available commands in terminal input:
 
 ## Sources
 
-- `res://scenes/ui.gd`
-- `res://core/systems/wave_manager.gd`
-- `res://procgen/custodian_contract_map.gd`
+- `res://game/ui/hud/ui.gd`
+- `res://game/systems/core/systems/wave_manager.gd`
+- `res://game/world/procgen/custodian_contract_map.gd`
 - `res://scenes/game.tscn` (`World/ContractMap`, terminal preview widgets)

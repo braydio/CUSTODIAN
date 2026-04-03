@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://dcuyb6c8x3862"]
+
+[ext_resource type="Script" uid="uid://dhph4w3w8vsll" path="res://game/world/procgen/procgen.gd" id="1_jnw6n"]
+
+[node name="ProcGen" type="Node" unique_id=1393196412]
+script = ExtResource("1_jnw6n")
+seed = 1827311218
+metadata/_custom_type_script = "uid://dhph4w3w8vsll"
