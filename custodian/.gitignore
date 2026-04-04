@@ -1,8 +1,21 @@
-# Godot 4+ generated artifacts
+# CUSTODIAN - Godot Project .gitignore
+# References root .gitignore for full coverage
+
+# This file handles the custodian/ subdirectory specifically
+# See root .gitignore for complete list
+
+# Godot 4+ generated artifacts (explicit for this subdir)
 .godot/
 .import/
-.android/
 .mono/
-.export_cmake/
+
+# Local addon cache
+addons/godot_mcp/.cache/
+
+# Export
 export_presets.cfg
 *.translation
+
+# =======================
+# NOTE: Full ignores are in parent .gitignore
+# =======================

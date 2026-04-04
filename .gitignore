@@ -1,10 +1,22 @@
-# Godot
+# CUSTODIAN - Unified .gitignore
+# Project root and all sub-projects
+
+# =======================
+# GODOT (all Godot projects)
+# =======================
 .godot/
 .import/
+.android/
+.mono/
+.export_cmake/
 export_presets.cfg
+export.cfg
 *.translation
+icon.svg.import
 
-# Python
+# =======================
+# PYTHON (python-sim)
+# =======================
 __pycache__/
 **/__pycache__/
 *.pyc
@@ -15,21 +27,73 @@ __pycache__/
 .ruff_cache/
 .venv/
 venv/
+env/
+ENV/
+env.bak/
+venv.bak/
 
-# OS / editor
+# =======================
+# GODOT ASSETS (external)
+# =======================
+PixelPlanets/
+PixelSpace/
+
+# =======================
+# OS / EDITOR
+# =======================
 .DS_Store
 Thumbs.db
 *.swp
 *.swo
 *~
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 
-# Local tooling / generated diagnostics
+# =======================
+# LOCAL TOOLING / DIAGNOSTICS
+# =======================
 *.log
 *.tmp
 *.bak
+*.cache
+.tmp/
+.temp/
 scripts/.tmp/
 
-# MCP / local plugin output
+# =======================
+# MCP / LOCAL PLUGINS
+# =======================
 custodian/addons/godot_mcp/.cache/
 
+# =======================
+# BUILD OUTPUTS
+# =======================
+build/
+dist/
+*.egg-info/
+*.whl
+out/
+
+# =======================
+# IDE
+# =====================/
+.idea/
+.vscode/
+*.code-workspace
+*.sublime-*
+
+# =======================
+# GODOT SPECIFIC
+# =======================
 # Keep imported assets tracked only through source files already committed.
+# Do NOT ignore .tres, .tscn, .gd files - these are source code.
+
+# =======================
+# TESTING
+# =======================
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
