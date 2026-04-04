@@ -154,6 +154,8 @@ var interrupt_priority: int = 0
 
 **Purpose:** Reload ranged weapon
 
+> ⚠️ **From GAMEPLAY_NOTES.md (Run 001):** "Need to have the custodian movement speed slowed when reloading"
+
 **Triggers:**
 - Input: `reload` action pressed
 - From: idle, walk, sprint, `ranged_2h_fire` (firing)
@@ -162,6 +164,7 @@ var interrupt_priority: int = 0
 **Behavior:**
 - Play reload animation
 - Reset ammo count
+- **SLOW DOWN MOVEMENT SPEED** while reloading (50% of normal)
 - Exit on: animation complete
 
 ```gdscript

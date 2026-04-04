@@ -42,7 +42,7 @@ The active Godot runtime now boots into a generated contract context:
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Procgen camera handoff | **BROKEN** | Camera still follows legacy sector bounds, not procgen map |
+| Procgen handoff cleanup | Partial | Camera/runtime anchor handoff is largely live; remaining work is mouse aim validation and shadow coupling |
 | Compound identity pass | Partial | Compound has sector-like footprints, but named sector roles are not yet instantiated as real entities |
 | Procgen layout tuning | Partial | Open/cave variety added, but still needs feel iteration |
 | Sector damage integration | Partial | Runtime systems exist; procgen compound and damage semantics still need deeper coupling |
@@ -52,11 +52,9 @@ The active Godot runtime now boots into a generated contract context:
 
 | Priority | Issue | Impact |
 |----------|-------|--------|
-| **HIGH** | Camera bounds rebuilt from `/root/GameRoot/World/Sectors` which are hidden after procgen promotion | Camera feels "linked elsewhere", doesn't follow procgen map |
-| **HIGH** | Firing direction uses `get_global_mouse_position()` which is wrong if camera bounds are stale | Bullets fire toward wrong world position |
-| **MEDIUM** | Only Operator and SpawnNodes are repositioned to procgen space | Terminal, ammo caches, other anchors remain in legacy coords |
-| **MEDIUM** | No explicit camera rebind after contract generation | Camera never snaps to procgen player spawn |
-| **LOW** | Game feel scripts query `get_tree().get_first_node_in_group("camera")` but camera never registers to that group | Screen shake is no-op |
+| **HIGH** | Mouse/world aim path still needs explicit validation against procgen camera handoff | Bullets/crosshair may drift if any caller still assumes stale world coordinates |
+| **MEDIUM** | Shadow system is still only partially coupled to procgen runtime updates | Visual readability can drift from live wall/floor state |
+| **LOW** | Project docs still described older handoff failures after camera/anchor fixes landed | Roadmap/status guidance drifted from runtime reality |
 
 ## Not Yet Implemented
 
@@ -76,31 +74,31 @@ The active Godot runtime now boots into a generated contract context:
 4. Static legacy sector visuals/collisions are disabled for runtime procgen play
 5. **Operator is moved to procgen player spawn**
 6. **Spawn nodes are projected to map edges** nearest compound ingress points
-7. Terminal interactable opens local command UI with:
+7. **Terminal, item anchors, and camera are rebound into procgen space**
+8. Terminal interactable opens local command UI with:
    - world snapshot
    - contract metadata
    - planet preview
    - map preview
-8. Combat loop proceeds with waves, enemies, turrets, supply drops, repair
+9. Combat loop proceeds with waves, enemies, turrets, supply drops, repair
 
-**NOTE:** The procgen handoff is PARTIAL. Camera, terminal, ammo caches, and other anchors remain in legacy static scene coordinates. Only Operator and SpawnNodes are repositioned.
+**NOTE:** The procgen handoff is functional for camera and world anchors. The remaining cleanup is mouse/world aim validation plus deeper shadow/system coupling.
 
 ## Main Risks / Gaps
 
-- Camera still follows old sector bounds, causing aim/bounds issues
+- Mouse/world aim path still needs validation against the procgen camera handoff
 - Compound buildings are currently visual/map-space structures, not yet instantiated as named authoritative sector entities.
 - Power and sector systems still reflect legacy/static assumptions in places.
 - Procgen readability is improved, but still needs aesthetic/autotile refinement.
-- Game feel shake doesn't work (camera not in "camera" group)
+- Shadow coupling to dynamic procgen/runtime updates is still incomplete
 
 ## Next Priority
 
-1. **FIX: Camera procgen handoff** - Derive bounds from `World/ProcGenRuntime` tilemaps, not `World/Sectors`
-2. **FIX: Camera snap to procgen player** - Rebind camera position when ContractWorldLoader finishes
-3. **FIX: Move other anchors** - Reposition terminal, ammo caches to procgen coords
-4. **FIX: Register camera to group** - Add camera to "camera" group for game feel hooks
-5. Promote compound pads into real spawned structures (`COMMAND`, `POWER`, `DEFENSE`, etc.)
-6. Bind assault objectives directly to procgen compound ingress/sector targets
+1. **FIX: Validate mouse/world aim path** - Confirm all aiming callers resolve correctly against procgen runtime camera state
+2. **FIX: Shadow system integration** - Keep shadow overlay authoritative against live procgen wall/floor changes
+3. **CLEANUP: Update roadmap/status docs** - Keep planning aligned with shipped procgen handoff work
+4. Promote compound pads into real spawned structures (`COMMAND`, `POWER`, `DEFENSE`, etc.)
+5. Bind assault objectives directly to procgen compound ingress/sector targets
 
 ---
 

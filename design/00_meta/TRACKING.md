@@ -1,9 +1,44 @@
 # CUSTODIAN Task Tracking
 
-**Last Updated:** 2026-03-27  
-**Sprint:** 2026-03-27
+> ⚠️ **IMPORTANT:** The MASTER ROADMAP is the single source of truth for feature planning.  
+> **See:** [`MASTER_ROADMAP.md`](MASTER_ROADMAP.md) for all milestones and features.
+
+**Last Updated:** 2026-04-04  
+**Sprint:** 2026-04-04
 
 ---
+
+## Adding New Features (MANDATORY PROCESS)
+
+```
+[new idea/request]
+        │
+        ▼
+┌───────────────────┐
+│ Check MASTER     │  ← MANDATORY FIRST STEP
+│ ROADMAP.md        │
+└───────────────────┘
+        │
+        ▼
+┌───────────────────┐
+│ Feature exists?   │
+│ - YES → Update    │
+│ - NO → Create     │
+│   new entry       │
+└───────────────────┘
+        │
+        ▼
+[Add to appropriate milestone in MASTER_ROADMAP.md]
+        │
+        ▼
+[Create design doc in design/ folder]
+        │
+        ▼
+[Add to sprint backlog below]
+        │
+        ▼
+[Implement]
+```
 
 ## Sprint Backlog
 

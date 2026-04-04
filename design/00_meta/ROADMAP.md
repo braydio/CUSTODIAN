@@ -1,10 +1,15 @@
 # CUSTODIAN Development Roadmap
 
-**Last Updated:** 2026-03-27
+> ⚠️ **DEPRECATED:** This file is now a reference. All roadmap planning lives in `MASTER_ROADMAP.md`.
+> 
+> **Process:** Before adding any new feature, check `MASTER_ROADMAP.md` first.
+
+**Last Updated:** 2026-03-27  
+**Master Doc:** [`MASTER_ROADMAP.md`](00_meta/MASTER_ROADMAP.md)
 
 ---
 
-## Milestones
+## Milestones (Reference Only)
 
 ### Milestone 1: Procgen Handoff ✅ DONE (Partially Broken)
 **Target:** 2026-03-15 | **Status:** ⚠️ IN PROGRESS
