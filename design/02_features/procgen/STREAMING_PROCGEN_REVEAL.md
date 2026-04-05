@@ -43,6 +43,16 @@ This preserves:
 - Navigation is rebuilt after chunk reveal batches so enemies can path through the visible world shell.
 - This system is compatible with destructible procgen walls.
 
+## Foliage Lifecycle + Depth Rules
+
+- Foliage participates in the same reveal/unload lifecycle as streamed floor and wall tiles.
+- Foliage is spawned deterministically from generated floor/wall state, not from ad hoc runtime randomness.
+- Foliage should render between floor and walls by default.
+- Foliage in front of the operator should render above the operator body while still remaining below wall layers.
+- Foliage behind the operator should remain behind, but a small local occlusion bubble around the operator may soften the covered region to preserve readability.
+- The translucency rule is a local readability zone, not a whole-sprite fade; distant foliage should remain fully opaque.
+- Tree foliage may carry a small trunk-only collision shape at the ground contact point so the canopy remains visual while the base behaves like a readable world obstacle.
+
 ## Scope
 
 Included now:

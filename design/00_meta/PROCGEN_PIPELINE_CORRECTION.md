@@ -67,6 +67,15 @@ STEP 5 — Build navigation FROM tilemap
 STEP 6 — Apply overlays (shadows, decals)
 ```
 
+### Contract Map Retry Rule
+When a generated procgen map fails acceptance checks, the contract wrapper may retry with a larger bounded map footprint instead of only rerolling the same size.
+
+Required behavior:
+- expansion remains deterministic per attempt seed
+- expansion is bounded by an explicit maximum map size
+- larger retries may increase room count modestly so the outer space does not become empty dead area
+- tilemap remains the structural authority after generation regardless of retry size
+
 ---
 
 ## 5. Implementation Requirements

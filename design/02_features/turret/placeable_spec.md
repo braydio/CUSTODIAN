@@ -8,7 +8,7 @@
 
 ## Overview
 
-Allow players to place defense turrets from the command terminal on any walkable floor, consuming materials dropped by passive scav droids.
+Allow players to place defense turrets from the command terminal on any walkable floor, consuming materials dropped by passive shrumbs.
 
 ---
 
@@ -142,7 +142,7 @@ GameRoot (game.tscn)
 ## Related Systems
 
 - **GameState.materials** — Currency for turrets
-- **Scav droid kills** — Source of materials
+- **Shrumb kills** — Source of materials
 - **Power system** — Max turret count (later)
 
 ---

@@ -261,6 +261,25 @@ Milestones are major release checkpoints. Each has:
 
 ---
 
+### Milestone v1.1 - Vehicle System
+**Target:** 2026-06-15  
+**Status:** design
+
+| Feature | Status | Priority |
+|---------|--------|----------|
+| ControllableActor interface | design | P0 |
+| VehicleBase class | design | P0 |
+| Player controller routing | design | P0 |
+| Enter/exit mechanics | design | P0 |
+| Light Hover Buggy archetype | design | P1 |
+| Vehicle health/destruction | design | P1 |
+| Vehicle weapon integration | design | P1 |
+
+**Doc:** `02_features/vehicles/implementation.md`  
+**Depends on:** Combat system, Repair mechanics, Free-roam (v0.5.0)
+
+---
+
 ### Backlog
 
 | Feature | Status | Priority | Notes |

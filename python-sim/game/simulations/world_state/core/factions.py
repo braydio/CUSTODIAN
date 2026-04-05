@@ -14,7 +14,7 @@ FORMS = [
     ("post-humans", "post-human"),
     ("bio-engineered remnants", "bio-remnant"),
     ("autonomous warforms", "warform"),
-    ("hybrid scavenger constructs", "scavenger-construct"),
+    ("shrumbs", "shrumb"),
     ("sleeper drones", "sleeper-drone"),
     ("void-wrecked crews", "void-crew"),
 ]
