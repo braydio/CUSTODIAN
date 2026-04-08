@@ -40,6 +40,21 @@ Signal emitted: `contract_generated(contract: Dictionary)`
 Payload structure:
 
 - `contract_seed`
+- `world_profile`
+  - `planet_key`
+  - `profile_seed`
+  - `world_label`
+  - `compound_area_ratio`
+  - `open_layout_chance`
+  - `open_layout_carve_ratio`
+  - `foliage_density`
+  - `foliage_compound_density_multiplier`
+  - `fruit_spawn_chance_shrub`
+  - `fruit_spawn_chance_tree`
+  - `tile_tint`
+  - `wall_tint`
+  - `foliage_tint`
+  - `critter_tint`
 - `planet`
   - `key`
   - `scene_path`
@@ -56,6 +71,7 @@ A single seed initializes one RNG stream, then derives:
 
 - `planet_key`
 - `planet_seed`
+- `world_profile`
 - `map_seed`
 
 This ensures stable planet+map pairing per contract seed.
@@ -116,8 +132,28 @@ This ensures stable planet+map pairing per contract seed.
   - `open_layout_chance`
   - `open_layout_carve_ratio`
   - prevents cave-like output every run
+- Added planet-driven world coupling:
+  - `CustodianContractMap` derives a deterministic `world_profile` from the selected contract planet
+  - `ProcGenTilemap` consumes that profile before generation so planet choice changes layout, foliage, and tinting
+  - `level_data` forwards `world_profile` so runtime systems can stay on the same planet identity contract
 - Runtime loader now disables legacy sector collisions when static sectors are hidden, removing invisible-wall artifacts.
 - `ProcGenTilemap` can build runtime wall colliders (`build_runtime_wall_collision`) so wall blocking does not depend on TileSet physics metadata.
+
+## Planet <-> Runtime World Coupling
+
+The generated contract planet is the source of truth for the runtime world profile.
+
+This profile is not decorative metadata. It must produce visible and mechanical differences inside the promoted combat world so the player is clearly on the contracted planet rather than on a generic procgen slice.
+
+Current intended consequences:
+
+- compound footprint bias changes by planet
+- openness / carved traversal lanes change by planet
+- foliage density and fruit spawning change by planet
+- floor / wall / foliage tint shifts follow the selected planet palette
+- ambient critter tint / pacing can read from the same profile
+
+That keeps the contract preview, promoted map, and runtime ambience bound to one deterministic source instead of drifting into separate systems.
 
 ## Validation Command
 

@@ -280,6 +280,27 @@ Milestones are major release checkpoints. Each has:
 
 ---
 
+### Milestone v1.2 - Command Terminal UI
+**Target:** 2026-07-15  
+**Status:** design
+
+| Feature | Status | Priority |
+|---------|--------|----------|
+| Four-zone layout (Header, Nav, Content, Transcript) | design | P0 |
+| 12-page terminal structure | design | P0 |
+| Information fidelity system | design | P0 |
+| Boot sequence flow | design | P1 |
+| Mode-dependent behavior (Hub/Command/Field) | design | P1 |
+| Power routing page | design | P0 |
+| Sector management page | design | P0 |
+| Archive/knowledge system page | design | P1 |
+| Command palette | design | P2 |
+
+**Doc:** `02_features/terminal/COMMAND_TERMINAL_SPEC.md`  
+**Depends on:** Power routing (v1.0), Free-roam (v0.5.0)
+
+---
+
 ### Backlog
 
 | Feature | Status | Priority | Notes |

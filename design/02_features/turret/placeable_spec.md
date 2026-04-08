@@ -14,11 +14,12 @@ Allow players to place defense turrets from the command terminal on any walkable
 
 ## Flow
 
-1. Player presses B → enters placement mode OR opens terminal → FABRICATION section
+1. Player presses B → enters placement mode with the next available turret type OR opens terminal → FABRICATION section
 2. UI panel shows available turret types with costs
 3. Player selects turret type → enters placement mode (if not already)
 4. Click on walkable floor → turret placed if enough materials, materials deducted
 5. Press B on placed turret → dismantle for partial refund
+6. Press E on a movable world-placed turret → pick it up and redeploy it without spending materials again
 
 ---
 
@@ -39,8 +40,10 @@ Allow players to place defense turrets from the command terminal on any walkable
 - **Max turrets:** Equal to available power banks (start: 10, can increase)
 - **Placement preview:** Show ghost sprite at cursor before confirming
 - **Dismantle:** Press B on placed turret → dismantle for partial refund
-- **Build hotkey:** Press B when not in terminal to enter placement mode
-- **Cancel:** Press ESC or B again to exit placement mode
+- **Pickup / redeploy:** Press E on a movable turret to enter placement mode carrying that turret; the redeploy keeps the turret and does not charge materials again
+- **Build hotkey:** Press B when not in terminal to enter placement mode with the next turret type in the build cycle
+- **Cycle type:** Press B again during placement mode to rotate through turret types
+- **Cancel:** Press ESC or Q to exit placement mode
 
 ---
 
@@ -48,9 +51,10 @@ Allow players to place defense turrets from the command terminal on any walkable
 
 | Input | Action |
 |-------|--------|
-| B (world mode, not terminal) | Open turret build panel OR enter placement mode |
+| B (world mode, not terminal) | Enter placement mode / cycle turret type |
 | Left Click (placement mode) | Place turret at cursor |
-| ESC (placement mode) | Exit placement mode |
+| E (near movable turret) | Pick up turret for redeploy |
+| ESC or Q (placement mode) | Exit placement mode |
 | B (over placed turret) | Dismantle turret |
 
 ---
@@ -136,6 +140,7 @@ GameRoot (game.tscn)
 | Invalid placement (wall) | Ghost turns red, click does nothing |
 | Placement on enemy | Ghost turns red, click does nothing |
 | Dismantle last turret | Works normally, frees power bank |
+| Pick up placed turret | Enters placement mode with carried turret, no extra material cost |
 
 ---
 

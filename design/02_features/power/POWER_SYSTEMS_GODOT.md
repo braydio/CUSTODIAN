@@ -1,6 +1,6 @@
 # Power Systems Design
 
-**Status:** Ready to Implement  
+**Status:** In Progress  
 **Source:** Legacy Python `python-sim/design/10_systems/infrastructure/POWER_SYSTEMS.md`  
 **Last Updated:** 2026-03-10
 
@@ -127,3 +127,27 @@ max_output = 100
 - Recalculate when power changes (damage, routing, or node destroyed)
 - Update UI bars in real-time
 - Turrets should visibly degrade (muzzle flash rate slows, accuracy cone widens)
+
+## Runtime Slice Implemented
+
+The current Godot runtime now includes the first live slice of this design:
+
+- sectors track `min_power_required`, `standard_power_required`, `power_tier`, `power_ratio`, and `effective_output`
+- allocation is priority-based, with minimum-power pass first and normal-power fill second
+- power nodes scale output from structural integrity instead of acting as fixed-output always-on sources
+- defense turrets now use sector/turret effective output to scale:
+  - fire cadence
+  - damage
+  - accuracy / spread
+  - offline / misfire behavior at very low output
+- HUD power display now surfaces total reserve plus generation, draw, and net rate
+- terminal `STATUS` / `SECTORS` output now exposes power tiers, effective output, and per-sector priority
+- terminal local command `REROUTE POWER sector=<NAME> priority=<LEVEL>` now updates sector priority live
+- pause-menu emergency repair now scales repaired HP by active `FABRICATION` sector effectiveness while preserving the baseline power cost
+
+Not yet implemented from the fuller legacy design:
+
+- explicit routing UI / manual power redirection
+- sensor fidelity integration
+- assault-state repair penalty hooks
+- relay / ARRN coupling

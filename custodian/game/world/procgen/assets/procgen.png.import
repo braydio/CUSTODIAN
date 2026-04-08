@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://lswpxd6tcqal"
-path="res://.godot/imported/procgen.png-56393976b986d7590ecb667d560749b8.ctex"
+path="res://.godot/imported/procgen.png-0712b0437b3ebfb136631e05386fb274.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/world/procgen/content/procgen.png"
-dest_files=["res://.godot/imported/procgen.png-56393976b986d7590ecb667d560749b8.ctex"]
+source_file="res://game/world/procgen/assets/procgen.png"
+dest_files=["res://.godot/imported/procgen.png-0712b0437b3ebfb136631e05386fb274.ctex"]
 
 [params]
 

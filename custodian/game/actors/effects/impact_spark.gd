@@ -23,6 +23,8 @@ func _ready():
 	fps = max(1.0, fps)
 	_duration = float(used_frames) / fps
 
+	z_as_relative = false
+	z_index = 20
 	visual.texture = strip_texture
 	visual.centered = true
 	visual.region_enabled = true

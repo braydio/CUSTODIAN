@@ -9,8 +9,8 @@ weapon_id = &"fallen_star_katana"
 weapon_type = &"melee_1h"
 frames_resource = ExtResource("2_weapon_frames")
 animation_map = {
-"melee_fast": "melee_2h_fast_1",
-"melee_fast_1": "melee_2h_fast_1",
+"melee_fast": "melee_2h_fast",
+"melee_fast_1": "melee_2h_fast",
 "melee_fast_2": "melee_2h_fast_2",
 "melee_heavy": "melee_2h_heavy",
 "melee_stance": "melee_stance"
@@ -52,12 +52,12 @@ hit_windows = {
 }
 fx_map = {
 "melee_fast": {
-"fx_anim": "melee_2h_fast_1_fx",
-"weapon_anim": "melee_2h_fast_1_weapon"
+"fx_anim": "melee_2h_fast_fx",
+"weapon_anim": "melee_2h_fast_weapon"
 },
 "melee_fast_1": {
-"fx_anim": "melee_2h_fast_1_fx",
-"weapon_anim": "melee_2h_fast_1_weapon"
+"fx_anim": "melee_2h_fast_fx",
+"weapon_anim": "melee_2h_fast_weapon"
 },
 "melee_fast_2": {
 "fx_anim": "melee_2h_fast_2_fx",

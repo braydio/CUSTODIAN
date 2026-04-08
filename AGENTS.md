@@ -6,6 +6,7 @@ Repository-level guidance for CUSTODIAN (post-Godot pivot).
 
 - Active gameplay/runtime code: `custodian/` (Godot 4.x)
 - Active runtime docs: `custodian/docs/`
+- Active AI context docs: `custodian/docs/ai_context/`
 - Locked master doctrine: `python-sim/design/MASTER_DESIGN_DOCTRINE.md`
 
 ## Godot-Native Design Docs
@@ -47,8 +48,15 @@ When behavior/architecture changes:
 
 1. Update relevant docs in active sets above.
 2. **For Godot runtime changes:** Update `./design/` with implementation specs FIRST.
-3. Optionally update legacy docs (CHANGELOG, DEVLOG) for historical tracking.
-4. Update `python-sim/ai/CURRENT_STATE.md` if game state significantly changes.
+3. Update `custodian/docs/ai_context/` tracker files when runtime state or architecture materially changes.
+4. Optionally update legacy docs (CHANGELOG, DEVLOG) for historical tracking.
+
+## AI Context Practice
+
+- Maintain the active AI context pack in `custodian/docs/ai_context/`.
+- Minimum update target on meaningful runtime changes: `custodian/docs/ai_context/CURRENT_STATE.md`.
+- Prefer updating the full pack (`CURRENT_STATE.md`, `CONTEXT.md`, `FILE_INDEX.md`) when architecture, authority, or key file ownership changes.
+- Treat `python-sim/ai/` as historical reference only.
 
 ## Clarifications
 

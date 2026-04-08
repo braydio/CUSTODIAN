@@ -47,11 +47,15 @@ This preserves:
 
 - Foliage participates in the same reveal/unload lifecycle as streamed floor and wall tiles.
 - Foliage is spawned deterministically from generated floor/wall state, not from ad hoc runtime randomness.
+- When streaming reveal is enabled, foliage should not be pre-spawned during map capture; it should be restored on tile reveal and removed on chunk unload.
 - Foliage should render between floor and walls by default.
+- Foliage density inside the compound footprint should be reduced so build pads, traversal lanes, and named structures remain readable.
+- Building pads and the immediate player spawn zone should maintain foliage clearance rather than filling with trees and shrubs.
 - Foliage in front of the operator should render above the operator body while still remaining below wall layers.
 - Foliage behind the operator should remain behind, but a small local occlusion bubble around the operator may soften the covered region to preserve readability.
 - The translucency rule is a local readability zone, not a whole-sprite fade; distant foliage should remain fully opaque.
 - Tree foliage may carry a small trunk-only collision shape at the ground contact point so the canopy remains visual while the base behaves like a readable world obstacle.
+- Tree trunk collision must be attached to the spawned foliage node itself so streamed reveal/unload and foliage cleanup do not leave orphan collision bodies behind.
 
 ## Scope
 

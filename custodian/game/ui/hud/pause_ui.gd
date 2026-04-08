@@ -91,6 +91,7 @@ func build_menu():
 	
 	# Get sectors
 	var sectors = get_sectors()
+	var power_system = get_node_or_null("/root/GameRoot/Power")
 	for sector in sectors:
 		var power_state = "ON" if sector.powered else "OFF"
 		menu_items.append({
@@ -98,8 +99,19 @@ func build_menu():
 			"type": "toggle_power",
 			"sector": sector.sector_name
 		})
+		var repair_cost := 25.0
+		var repair_amount := 50.0
+		if power_system and power_system.has_method("get_emergency_repair_profile"):
+			var profile = power_system.call("get_emergency_repair_profile", String(sector.sector_name))
+			if profile is Dictionary:
+				repair_cost = float(profile.get("power_cost", repair_cost))
+				repair_amount = float(profile.get("repair_amount", repair_amount))
 		menu_items.append({
-			"label": "  REPAIR %s (25 power)" % sector.sector_name,
+			"label": "  REPAIR %s (+%d HP / %d power)" % [
+				sector.sector_name,
+				int(round(repair_amount)),
+				int(round(repair_cost)),
+			],
 			"type": "repair",
 			"sector": sector.sector_name
 		})
@@ -185,6 +197,17 @@ func toggle_sector_power(sector_name: String):
 func request_repair(sector_name: String):
 	var power = get_node_or_null("/root/GameRoot/Power")
 	if power:
+		if power.has_method("apply_emergency_repair"):
+			var result = power.call("apply_emergency_repair", sector_name)
+			if result is Dictionary and bool(result.get("available", false)):
+				print("Repaired sector: %s (+%.1f HP, fab %.0f%%)" % [
+					sector_name,
+					float(result.get("repair_amount", 0.0)),
+					float(result.get("fabrication_effectiveness", 1.0)) * 100.0,
+				])
+			else:
+				print("Emergency repair unavailable: ", str(result.get("reason", "UNKNOWN")) if result is Dictionary else "UNKNOWN")
+			return
 		if power.total_power >= 25:
 			power.total_power -= 25
 			var sectors = get_sectors()

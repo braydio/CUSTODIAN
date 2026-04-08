@@ -6,6 +6,7 @@ CUSTODIAN is now Godot-native. Treat `custodian/` as active implementation and `
 
 - `custodian/`: active Godot 4.x runtime code
 - `custodian/docs/`: active runtime architecture/spec docs
+- `custodian/docs/ai_context/`: active AI context tracker docs
 - `python-sim/design/MASTER_DESIGN_DOCTRINE.md`: locked doctrine
 - `python-sim/design/00_foundations/*`, `python-sim/design/30_playable_game/*`: active design references
 
@@ -28,7 +29,12 @@ When architecture/design changes:
 1. Update active docs (`custodian/docs/*`, `python-sim/design/00_foundations/*`, `python-sim/design/30_playable_game/*` as needed).
 2. Update `python-sim/design/CHANGELOG.md`.
 3. Update `python-sim/design/DEVLOG.md`.
-4. Sync `python-sim/ai/CURRENT_STATE.md` and related tracker files.
+4. Sync `custodian/docs/ai_context/` tracker files.
+
+## AI Context Rule
+
+- `python-sim/ai/` is historical only.
+- The active AI context pack lives in `custodian/docs/ai_context/`.
 
 ## Guardrails
 

@@ -17,6 +17,7 @@ Design canon remains in `python-sim/design/` with explicit active-vs-legacy clas
 - `design/00_foundations/*`
 - `design/30_playable_game/*`
 - `../custodian/docs/*`
+- `../custodian/docs/ai_context/*`
 
 ### Legacy Design Layer
 
@@ -37,7 +38,7 @@ When active architecture/behavior changes:
 1. Update impacted active docs.
 2. Update `design/CHANGELOG.md`.
 3. Update `design/DEVLOG.md`.
-4. Update `../ai/CURRENT_STATE.md`.
+4. Update `../custodian/docs/ai_context/CURRENT_STATE.md`.
 5. Keep status labels in `DOC_STATUS.md` accurate.
 
 ## Determinism Rule

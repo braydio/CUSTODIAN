@@ -6,6 +6,7 @@ extends Node
 signal placement_mode_changed(is_placing: bool)
 signal turret_placed(turret: Node2D)
 signal turret_dismantled(turret: Node2D, refund: int)
+signal turret_picked_up(turret_type: String)
 
 const TURRET_COSTS := {
 	"gunner": 10,
@@ -22,6 +23,7 @@ const TURRET_REFUNDS := {
 }
 
 const MAX_DEFAULT_TURRETS := 10
+const TURRET_BUILD_ORDER := ["gunner", "blaster", "repeater", "sniper"]
 
 @export var turret_scenes: Dictionary = {
 	"gunner": preload("res://game/actors/sector/turret_gunner.tscn"),
@@ -35,8 +37,10 @@ var _selected_turret_type: String = ""
 var _ghost_preview: Node2D = null
 var _placement_valid: bool = false
 var _placed_turrets: Array[Node2D] = []
+var _carried_turret_data: Dictionary = {}
 var _preview_override_active: bool = false
 var _preview_override_world_pos: Vector2 = Vector2.ZERO
+var _build_cycle_index: int = -1
 
 var _game_state: Node = null
 var _operator: Node2D = null
@@ -70,7 +74,7 @@ func _create_ghost_preview() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	# B key - toggle placement mode or dismantle
+	# B key - cycle placement mode or dismantle nearby turret
 	if event is InputEventKey and event.pressed and event.keycode == KEY_B:
 		_handle_build_input()
 		return
@@ -90,23 +94,19 @@ func _input(event: InputEvent) -> void:
 
 func _handle_build_input() -> void:
 	if _is_placing:
-		exit_placement_mode()
+		if bool(_carried_turret_data.get("active", false)):
+			exit_placement_mode()
+		else:
+			_cycle_to_next_turret_type()
 		return
 	
-	# Check if near a placed turret for dismantling
-	if _operator != null:
-		var mouse_pos := _get_world_mouse_position()
-		for turret in _placed_turrets:
-			if turret.global_position.distance_to(mouse_pos) < 40.0:
-				_attempt_dismantle(turret)
-				return
+	var turret_under_cursor := _get_turret_under_cursor(_get_world_mouse_position())
+	if turret_under_cursor != null:
+		_attempt_dismantle(turret_under_cursor)
+		return
 	
-	# Show build menu - for now just enter placement with first available turret
-	# TODO: Wire to UI for full turret selection
-	if _game_state != null and _game_state.materials >= 10:
-		enter_placement_mode("gunner")
-	else:
-		push_warning("[TurretPlacement] No materials available")
+	if not _cycle_to_next_turret_type(true):
+		push_warning("[TurretPlacement] No turret type available")
 
 
 func _attempt_dismantle(turret: Node2D) -> void:
@@ -132,7 +132,36 @@ func _attempt_dismantle(turret: Node2D) -> void:
 	print("[TurretPlacement] Dismantled turret, refunded ", refund, " materials")
 
 
+func _cycle_to_next_turret_type(include_current_index: bool = false) -> bool:
+	if TURRET_BUILD_ORDER.is_empty():
+		return false
+	var active_materials := get_material_count()
+	var current_count := get_turret_count()
+	var max_turrets := get_max_turrets()
+	for step in range(TURRET_BUILD_ORDER.size()):
+		var candidate_index := 0
+		if include_current_index and _build_cycle_index < 0 and step == 0:
+			candidate_index = 0
+		else:
+			candidate_index = posmod(_build_cycle_index + step + 1, TURRET_BUILD_ORDER.size())
+		var turret_type := String(TURRET_BUILD_ORDER[candidate_index])
+		var is_redeploy := bool(_carried_turret_data.get("active", false)) and String(_carried_turret_data.get("type", "")) == turret_type
+		if not is_redeploy and current_count >= max_turrets:
+			continue
+		if is_redeploy or active_materials >= get_cost_for_type(turret_type):
+			return enter_placement_mode(turret_type)
+	return false
+
+
+func _get_turret_under_cursor(mouse_pos: Vector2) -> Node2D:
+	for turret in _placed_turrets:
+		if turret != null and is_instance_valid(turret) and turret.global_position.distance_to(mouse_pos) < 40.0:
+			return turret
+	return null
+
+
 func _process(delta: float) -> void:
+	_prune_placed_turrets()
 	if not _is_placing:
 		return
 	
@@ -149,18 +178,20 @@ func enter_placement_mode(turret_type: String) -> bool:
 	
 	var cost: int = TURRET_COSTS[turret_type]
 	var current_materials: int = 0
+	var is_redeploy := bool(_carried_turret_data.get("active", false)) and String(_carried_turret_data.get("type", "")) == turret_type
 	if _game_state != null:
 		current_materials = _game_state.materials
 	
-	if current_materials < cost:
+	if not is_redeploy and current_materials < cost:
 		push_warning("[TurretPlacement] Insufficient materials for " + turret_type + " (have: " + str(current_materials) + ", need: " + str(cost) + ")")
 		return false
 	
-	if get_turret_count() >= get_max_turrets():
+	if not is_redeploy and get_turret_count() >= get_max_turrets():
 		push_warning("[TurretPlacement] Max turrets reached")
 		return false
 	
 	_selected_turret_type = turret_type
+	_build_cycle_index = TURRET_BUILD_ORDER.find(turret_type)
 	_is_placing = true
 	_ghost_preview.visible = true
 	placement_mode_changed.emit(true)
@@ -257,10 +288,12 @@ func _attempt_place_turret(position: Vector2) -> void:
 		return
 	
 	var cost: int = int(TURRET_COSTS.get(_selected_turret_type, 0))
-	if _game_state and _game_state.has_method("add_materials"):
-		_game_state.add_materials(-cost)
-	elif _game_state and _game_state.has("materials"):
-		_game_state.materials -= cost
+	var is_redeploy := bool(_carried_turret_data.get("active", false)) and String(_carried_turret_data.get("type", "")) == _selected_turret_type
+	if not is_redeploy:
+		if _game_state and _game_state.has_method("add_materials"):
+			_game_state.add_materials(-cost)
+		elif _game_state and _game_state.has("materials"):
+			_game_state.materials -= cost
 	
 	var scene: PackedScene = turret_scenes.get(_selected_turret_type, null)
 	if scene == null:
@@ -274,6 +307,14 @@ func _attempt_place_turret(position: Vector2) -> void:
 	
 	get_parent().add_child(turret)
 	turret.global_position = position
+	if is_redeploy:
+		if "current_health" in turret and _carried_turret_data.has("current_health"):
+			turret.set("current_health", float(_carried_turret_data.get("current_health", turret.get("current_health"))))
+		if "state" in turret and _carried_turret_data.has("state"):
+			turret.set("state", String(_carried_turret_data.get("state", turret.get("state"))))
+		if turret.has_method("_update_damage_visuals"):
+			turret.call("_update_damage_visuals")
+		_carried_turret_data.clear()
 	
 	_placed_turrets.append(turret)
 	turret_placed.emit(turret)
@@ -317,6 +358,25 @@ func get_placed_turrets() -> Array[Node2D]:
 	return _placed_turrets
 
 
+func pick_up_turret(turret: Node2D) -> bool:
+	if turret == null or not is_instance_valid(turret):
+		return false
+	var turret_type := _infer_turret_type(turret)
+	if turret_type.is_empty():
+		return false
+	_prune_placed_turrets()
+	_placed_turrets.erase(turret)
+	_carried_turret_data = {
+		"active": true,
+		"type": turret_type,
+		"current_health": float(turret.get("current_health")) if "current_health" in turret else 0.0,
+		"state": String(turret.get("state")) if "state" in turret else "operational",
+	}
+	turret.queue_free()
+	turret_picked_up.emit(turret_type)
+	return enter_placement_mode(turret_type)
+
+
 func get_material_count() -> int:
 	if _game_state == null:
 		return 0
@@ -325,6 +385,36 @@ func get_material_count() -> int:
 
 func get_cost_for_type(turret_type: String) -> int:
 	return int(TURRET_COSTS.get(turret_type, 0))
+
+
+func _infer_turret_type(turret: Node2D) -> String:
+	if turret == null:
+		return ""
+	if "turret_type" in turret:
+		var raw_type = turret.get("turret_type")
+		if raw_type is String:
+			return String(raw_type).to_lower()
+		if raw_type is int:
+			match int(raw_type):
+				0:
+					return "gunner"
+				1:
+					return "blaster"
+				2:
+					return "repeater"
+				3:
+					return "sniper"
+	for type in turret_scenes.keys():
+		var scene: PackedScene = turret_scenes.get(type, null)
+		if scene != null and turret.scene_file_path == scene.resource_path:
+			return String(type)
+	return ""
+
+
+func _prune_placed_turrets() -> void:
+	_placed_turrets = _placed_turrets.filter(func(turret: Node2D) -> bool:
+		return turret != null and is_instance_valid(turret)
+	)
 
 
 func get_tilemap_layer(layer_name: String) -> TileMapLayer:

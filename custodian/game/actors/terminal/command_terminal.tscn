@@ -1,27 +1,27 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://dqle6bbgblr2o"]
 
-[ext_resource type="Script" path="res://game/actors/terminal/command_terminal.gd" id="1_terminal"]
+[ext_resource type="Script" uid="uid://dj1viok18xp87" path="res://game/actors/terminal/command_terminal.gd" id="1_terminal"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(34, 24)
 
-[node name="CommandTerminal" type="Node2D"]
+[node name="CommandTerminal" type="Node2D" unique_id=1246296214]
 script = ExtResource("1_terminal")
 
-[node name="Body" type="StaticBody2D" parent="."]
+[node name="Body" type="StaticBody2D" parent="." unique_id=1093520542]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body" unique_id=1593765371]
 position = Vector2(0, 6)
 shape = SubResource("RectangleShape2D_body")
 
-[node name="Cabinet" type="Polygon2D" parent="."]
+[node name="Cabinet" type="Polygon2D" parent="." unique_id=262591887]
 color = Color(0.2, 0.2, 0.22, 1)
 polygon = PackedVector2Array(-18, 18, 18, 18, 14, -2, -14, -2)
 
-[node name="Screen" type="Polygon2D" parent="."]
+[node name="Screen" type="Polygon2D" parent="." unique_id=1088133084]
 color = Color(0.1, 0.7, 0.65, 1)
 polygon = PackedVector2Array(-12, -4, 12, -4, 10, -18, -10, -18)
 
-[node name="StatusStrip" type="Polygon2D" parent="."]
+[node name="StatusStrip" type="Polygon2D" parent="." unique_id=1421444196]
 color = Color(0.82, 0.88, 0.95, 1)
 polygon = PackedVector2Array(-15, 20, 15, 20, 15, 22, -15, 22)

@@ -1,6 +1,6 @@
-extends CharacterBody2D
+extends ControllableActor
 
-const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
+const AnimationASsgResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
 const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
 const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
 const AttackHeavyState = preload("res://game/actors/operator/animations/states/attack_heavy_state.gd")
@@ -17,7 +17,6 @@ const MELEE_SWING_SCENE := preload("res://game/actors/effects/melee_swing.tscn")
 const TARGET_RING_SCENE := preload("res://game/actors/effects/target_ring.tscn")
 const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
 var health: float = 100.0
-var max_health: float = 100.0
 var fire_cooldown_remaining := 0.0
 var melee_cooldown_remaining := 0.0
 var current_recoil := 0.0
@@ -102,7 +101,6 @@ var last_fire_cooldown := 0.0
 var interaction_target: Node = null
 var repair_target: Damageable = null
 var build_target: Node = null  # WallBlueprint we're building
-var aim_direction := Vector2.RIGHT  # Direction player is facing (for attack animations)
 var movement_direction := Vector2.DOWN  # Direction player is moving (for walk animations)
 var arrow_aim_enabled: bool = false
 var stamina: float = 100.0
@@ -211,6 +209,10 @@ const LOADOUT_RANGED := &"ranged"
 
 func _ready():
 	add_to_group("player")
+	# Sync with ControllableActor base class
+	current_health = health
+	move_speed = SPEED
+	
 	# Reset any modulation from editor
 	if visual:
 		visual.modulate = Color(1, 1, 1, 1)
@@ -1950,6 +1952,7 @@ func take_damage(amount: float):
 	if _is_dead:
 		return
 	health -= amount
+	current_health = health  # Sync with ControllableActor interface
 	var hit_direction := -aim_direction.normalized() if aim_direction.length_squared() > 0.001 else Vector2.DOWN
 	_notify_camera_damage_taken(hit_direction)
 	update_visuals()
@@ -1970,6 +1973,7 @@ func _handle_death() -> void:
 	if _is_dead:
 		return
 	_is_dead = true
+	current_health = 0.0  # Sync with ControllableActor
 	_buffered_attack_kind = ""
 	_melee_active = false
 	_melee_attack_kind = ""
@@ -2022,6 +2026,21 @@ func update_visuals():
 			visual.modulate = Color(0.8, 0.6, 0.2)  # Yellow - damaged
 		else:
 			visual.modulate = Color(0.8, 0.2, 0.2)  # Red - critical
+
+
+func get_display_name() -> String:
+	return "Operator"
+
+
+func can_be_controlled() -> bool:
+	return is_alive() and not _is_dead and not _is_terminal_open()
+
+
+## ControllableActor interface implementation
+func process_input(input_vector: Vector2, aim_vector: Vector2, is_firing: bool) -> void:
+	# Operator handles its own input natively via _physics_process
+	# This method exists for interface compliance but operator uses native input
+	pass
 
 func _damage_nearest_sector(amount: float):
 	var sectors = []

@@ -8,6 +8,9 @@ const BASE_WALK_SHEET := "res://content/sprites/operator/runtime/animation_base/
 const BASE_RUN_SHEET := "res://content/sprites/operator/runtime/animation_base/body/core_locomotion/running_base.png"
 const BASE_LIGHT_ATTACK_SHEET := "res://content/sprites/operator/runtime/animation_base/body/melee/light_attack_base.png"
 const BASE_FAST_ATTACK_RIGHT_SHEET := "res://content/sprites/operator/runtime/animation_base/body/melee/fast_attack_right_base.png"
+const BASE_FAST_ATTACK_NORTH_BODY_SHEET := "res://content/sprites/operator/runtime/animation_base/body/melee/fast_attack_north_base_body.png"
+const BASE_FAST_ATTACK_NORTH_WEAPON_SHEET := "res://content/sprites/operator/runtime/animation_base/body/melee/fast_attack_north_base_weapon.png"
+const BASE_FAST_ATTACK_NORTH_FX_SHEET := "res://content/sprites/operator/runtime/animation_base/body/melee/fast_attack_north_base_effects.png"
 const BASE_DEATH_SHEET := "res://content/sprites/operator/runtime/animation_base/body/core_locomotion/death_disintigrate_base.png"
 const RANGED_RUN_SHEET := "res://content/sprites/operator/runtime/curated/body/ranged_2h/equipped_run_right_body.png"
 const HEAVY_ANTICIPATION_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_anticipation_body.png"
@@ -51,6 +54,7 @@ func _init() -> void:
 	_replace_sheet_slices(body_frames, BASE_RUN_SHEET, RUN_BASE_SLICES, 96, 96)
 	_replace_sheet_slices(body_frames, BASE_LIGHT_ATTACK_SHEET, LIGHT_ATTACK_BASE_SLICES, 96, 96)
 	_replace_animation(body_frames, "melee_2h_fast_right", BASE_FAST_ATTACK_RIGHT_SHEET, 12, 0, 96, 128, 12.0, false)
+	_replace_animation(body_frames, "melee_2h_fast_up", BASE_FAST_ATTACK_NORTH_BODY_SHEET, 6, 0, 96, 96, 12.0, false)
 	_replace_animation(body_frames, "melee_2h_heavy_anticipation", HEAVY_ANTICIPATION_SHEET, 5, 0, 96, 96, 11.0, false)
 	_replace_animation(body_frames, "melee_2h_fast_1_right", FAST_ATTACK_1_SHEET, 6, 0, 96, 96, 12.0, false)
 	_replace_animation(body_frames, "melee_2h_fast_2_right", FAST_ATTACK_2_SHEET, 5, 0, 96, 96, 12.0, false)
@@ -64,6 +68,8 @@ func _init() -> void:
 	_replace_animation(melee_overlay_frames, "melee_2h_fast_1_fx", FAST_ATTACK_1_SHEET, 6, 2, 96, 96, 12.0, false)
 	_replace_animation(melee_overlay_frames, "melee_2h_fast_2_weapon", FAST_ATTACK_2_SHEET, 5, 1, 96, 96, 12.0, false)
 	_replace_animation(melee_overlay_frames, "melee_2h_fast_2_fx", FAST_ATTACK_2_SHEET, 5, 2, 96, 96, 12.0, false)
+	_replace_animation(melee_overlay_frames, "melee_2h_fast_weapon", BASE_FAST_ATTACK_NORTH_WEAPON_SHEET, 6, 0, 96, 96, 12.0, false)
+	_replace_animation(melee_overlay_frames, "melee_2h_fast_fx", BASE_FAST_ATTACK_NORTH_FX_SHEET, 6, 0, 96, 96, 12.0, false)
 	_replace_animation(melee_overlay_frames, "melee_2h_fast_recovery_weapon", FAST_RECOVERY_SHEET, 2, 1, 96, 96, 10.0, false)
 	_replace_animation(melee_overlay_frames, "melee_2h_fast_recovery_fx", FAST_RECOVERY_SHEET, 2, 2, 96, 96, 10.0, false)
 

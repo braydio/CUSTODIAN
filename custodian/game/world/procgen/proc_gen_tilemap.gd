@@ -173,15 +173,40 @@ const FOLIAGE_ASSET_PATHS := [
 	"res://content/sprites/environment/foliage/tree_verdent_96x128_02.png",
 	"res://content/sprites/environment/foliage/tree_verdent_96x128_03.png",
 ]
+
+const FRUIT_TEXTURE_PATH := "res://content/sprites/environment/foliage/fruit_sheet.png"
+const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occlusion_bubble.gdshader")
 @export var foliage_parent_path: NodePath = NodePath("NavigationRegion2D/FoliageLayer")
 @export var foliage_density: float = 0.12
 @export var foliage_min_wall_distance: int = 1
 @export var foliage_jitter_amplitude: Vector2 = Vector2(4, 2)
+@export var foliage_debug_logging: bool = false
+@export_range(0.0, 1.0, 0.01) var foliage_compound_density_multiplier: float = 0.28
+@export_range(0, 8, 1) var foliage_compound_building_clearance: int = 2
+@export_range(0, 12, 1) var foliage_spawn_clearance_radius: int = 4
 @export var extra_foliage_textures: Array[Texture2D] = []
+@export var enable_fruit_spawning: bool = true
+@export_range(0.0, 1.0, 0.01) var fruit_spawn_chance_shrub: float = 0.10
+@export_range(0.0, 1.0, 0.01) var fruit_spawn_chance_tree: float = 0.14
+@export_range(1, 8, 1) var fruit_tiles_wide: int = 3
+@export_range(1, 8, 1) var fruit_tiles_high: int = 3
+@export var foliage_behind_z_index: int = 1
+@export var foliage_front_z_index: int = 3
+@export var foliage_player_feet_offset: Vector2 = Vector2(0, 8)
+@export var foliage_player_upper_body_offset: Vector2 = Vector2(0, -22)
+@export var foliage_player_occlusion_x_padding: float = 10.0
+@export var foliage_player_occlusion_radius: float = 80.0
+@export var foliage_player_occlusion_softness: float = 12.0
+@export_range(0.1, 1.0, 0.05) var foliage_player_occlusion_alpha: float = 0.55
+@export var foliage_tree_trunk_collision_size: Vector2 = Vector2(18, 12)
+@export var foliage_tree_trunk_collision_offset: Vector2 = Vector2(0, -6)
 
 var _foliage_parent: Node2D = null
-var _foliage_nodes: Array[Node2D] = []
+var _foliage_nodes: Dictionary = {}
 var _foliage_textures: Array[Texture2D] = []
+var _fruit_texture: Texture2D = null
+var _fruit_sprites: Array[Node2D] = []
+var _planet_world_profile: Dictionary = {}
 
 func _ready() -> void:
 	# Auto-find ProcGen if not assigned
@@ -201,6 +226,7 @@ func _ready() -> void:
 		shadow_system = find_child("ShadowOverlay", true, false)
 	_foliage_parent = _find_foliage_parent()
 	_load_foliage_textures()
+	_apply_planet_visual_profile()
 	
 	if procgen_node:
 		procgen_node.finished.connect(_on_procgen_finished)
@@ -223,6 +249,7 @@ func _process(_delta: float) -> void:
 		if player_chunk != _streaming_current_chunk:
 			_streaming_current_chunk = player_chunk
 			_update_streaming_chunks(player_chunk, player_tile)
+		_update_foliage_occlusion(_streaming_player)
 
 	_process_streaming_reveal_queue()
 
@@ -242,6 +269,22 @@ func generate() -> void:
 		return
 	
 	procgen_node.generate()
+
+
+func apply_planet_world_profile(profile: Dictionary) -> void:
+	_planet_world_profile = profile.duplicate(true)
+	compound_area_ratio = clamp(float(_planet_world_profile.get("compound_area_ratio", compound_area_ratio)), 0.10, 0.20)
+	open_layout_chance = clamp(float(_planet_world_profile.get("open_layout_chance", open_layout_chance)), 0.0, 1.0)
+	open_layout_carve_ratio = clamp(float(_planet_world_profile.get("open_layout_carve_ratio", open_layout_carve_ratio)), 0.0, 0.6)
+	foliage_density = max(0.0, float(_planet_world_profile.get("foliage_density", foliage_density)))
+	foliage_compound_density_multiplier = clamp(float(_planet_world_profile.get("foliage_compound_density_multiplier", foliage_compound_density_multiplier)), 0.0, 1.0)
+	fruit_spawn_chance_shrub = clamp(float(_planet_world_profile.get("fruit_spawn_chance_shrub", fruit_spawn_chance_shrub)), 0.0, 1.0)
+	fruit_spawn_chance_tree = clamp(float(_planet_world_profile.get("fruit_spawn_chance_tree", fruit_spawn_chance_tree)), 0.0, 1.0)
+	_apply_planet_visual_profile()
+
+
+func get_planet_world_profile() -> Dictionary:
+	return _planet_world_profile.duplicate(true)
 
 
 ## Emitted when level data is ready (after generation)
@@ -266,6 +309,7 @@ func _fill_tilemaps() -> void:
 		walls_tilemap.clear()
 		_wall_health.clear()
 		_clear_foliage()
+	_apply_planet_visual_profile()
 	
 	var map_size = procgen_node.map_size
 	var open_layout_active := _is_open_layout_active()
@@ -974,20 +1018,46 @@ func _generate_foliage(map_size: Vector2i) -> void:
 	if _foliage_textures.is_empty():
 		push_warning("[Foliage] No foliage textures loaded, skipping foliage spawn")
 		return
+	if enable_streaming_reveal:
+		if foliage_debug_logging:
+			print("[Foliage] Streaming reveal active; foliage will spawn during tile reveal")
+		return
 
 	var placed := 0
 	for pos in _generated_floor_cells.keys():
 		if _should_place_foliage(pos):
 			_place_foliage(pos)
 			placed += 1
-	push_warning("[Foliage] Placed %d sprites under %s" % [placed, _foliage_parent.get_path()])
+	if foliage_debug_logging:
+		print("[Foliage] Placed %d sprites under %s" % [placed, _foliage_parent.get_path()])
 
 
 func _clear_foliage() -> void:
-	for node in _foliage_nodes:
+	for entry in _foliage_nodes.values():
+		var node: Node = null
+		if entry is Dictionary:
+			node = entry.get("node", null) as Node
+		elif entry is Node:
+			node = entry as Node
 		if is_instance_valid(node):
 			node.queue_free()
 	_foliage_nodes.clear()
+	
+	# Clear fruit sprites too
+	for sprite in _fruit_sprites:
+		if is_instance_valid(sprite):
+			sprite.queue_free()
+	_fruit_sprites.clear()
+
+
+func _remove_foliage(pos: Vector2i) -> void:
+	var entry = _foliage_nodes.get(pos, null)
+	var node := entry as Node2D
+	if entry is Dictionary:
+		node = entry.get("node", null) as Node2D
+	if node != null and is_instance_valid(node):
+		node.queue_free()
+	_foliage_nodes.erase(pos)
 
 
 func _should_place_foliage(pos: Vector2i) -> bool:
@@ -995,8 +1065,15 @@ func _should_place_foliage(pos: Vector2i) -> bool:
 		return false
 	if _is_near_wall(pos):
 		return false
+	if _is_inside_foliage_clearance(pos):
+		return false
+	var density := foliage_density
+	if _is_inside_compound_zone(pos):
+		density *= foliage_compound_density_multiplier
+	if density <= 0.0:
+		return false
 	var prob := float(_tile_noise_hash(pos + Vector2i(13, 41)) % 1000) / 1000.0
-	return prob < foliage_density
+	return prob < density
 
 
 func _is_near_wall(pos: Vector2i) -> bool:
@@ -1009,18 +1086,57 @@ func _is_near_wall(pos: Vector2i) -> bool:
 	return false
 
 
+func _is_inside_foliage_clearance(pos: Vector2i) -> bool:
+	if foliage_spawn_clearance_radius > 0:
+		var spawn_tile := get_player_spawn()
+		if abs(pos.x - spawn_tile.x) <= foliage_spawn_clearance_radius and abs(pos.y - spawn_tile.y) <= foliage_spawn_clearance_radius:
+			return true
+	for building in _last_compound_buildings:
+		var expanded := building.grow(foliage_compound_building_clearance)
+		if expanded.has_point(pos):
+			return true
+	return false
+
+
+func _is_inside_compound_zone(pos: Vector2i) -> bool:
+	return _last_compound_rect.size.x > 0 and _last_compound_rect.size.y > 0 and _last_compound_rect.has_point(pos)
+
+
 func _place_foliage(pos: Vector2i) -> void:
+	if _foliage_parent == null or _foliage_nodes.has(pos):
+		return
 	var texture := _pick_foliage_texture(pos)
 	if texture == null:
 		return
 	var sprite := Sprite2D.new()
 	sprite.texture = texture
-	sprite.position = _tile_to_world_position(pos) + _foliage_jitter(pos)
-	sprite.z_index = 1
-	sprite.z_as_relative = true
-	sprite.scale = Vector2.ONE
+	sprite.modulate = _get_planet_profile_color("foliage_tint", Color.WHITE)
+	var world_pos := _tile_to_world_position(pos) + _foliage_jitter(pos)
+	sprite.position = _foliage_parent.to_local(world_pos)
+	sprite.z_index = foliage_behind_z_index
+	sprite.z_as_relative = false
+	var material := ShaderMaterial.new()
+	material.shader = FOLIAGE_OCCLUSION_SHADER
+	material.set_shader_parameter("bubble_radius", foliage_player_occlusion_radius)
+	material.set_shader_parameter("bubble_softness", foliage_player_occlusion_softness)
+	material.set_shader_parameter("bubble_alpha", foliage_player_occlusion_alpha)
+	sprite.material = material
 	_foliage_parent.add_child(sprite)
-	_foliage_nodes.append(sprite)
+	var texture_size := texture.get_size()
+	var foliage_kind := _classify_foliage(texture_size)
+	if foliage_kind == "tree":
+		_add_tree_trunk_collision(sprite, texture_size)
+	_foliage_nodes[pos] = {
+		"node": sprite,
+		"world_pos": world_pos,
+		"base_y": world_pos.y + texture_size.y * 0.5,
+		"size": texture_size,
+		"kind": foliage_kind,
+	}
+	
+	# Optionally spawn fruit on this foliage
+	if enable_fruit_spawning and _fruit_texture != null and _should_place_fruit(pos, foliage_kind):
+		_place_fruit(sprite, pos, texture_size, foliage_kind)
 
 
 func _pick_foliage_texture(pos: Vector2i) -> Texture2D:
@@ -1028,6 +1144,73 @@ func _pick_foliage_texture(pos: Vector2i) -> Texture2D:
 		return null
 	var idx := _tile_noise_hash(pos + Vector2i(19, 73)) % _foliage_textures.size()
 	return _foliage_textures[idx]
+
+
+func _classify_foliage(foliage_size: Vector2) -> String:
+	if foliage_size.y >= 96.0:
+		return "tree"
+	return "shrub"
+
+
+func _add_tree_trunk_collision(foliage_sprite: Sprite2D, foliage_size: Vector2) -> void:
+	if foliage_sprite == null:
+		return
+	var body := StaticBody2D.new()
+	body.name = "TrunkCollision"
+	var shape := CollisionShape2D.new()
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = foliage_tree_trunk_collision_size
+	shape.shape = rectangle
+	body.position = Vector2(0, foliage_size.y * 0.5) + foliage_tree_trunk_collision_offset
+	body.add_child(shape)
+	foliage_sprite.add_child(body)
+
+
+func _should_place_fruit(pos: Vector2i, foliage_kind: String) -> bool:
+	var fruit_prob := float(_tile_noise_hash(pos + Vector2i(17, 89)) % 1000) / 1000.0
+	var chance := fruit_spawn_chance_tree if foliage_kind == "tree" else fruit_spawn_chance_shrub
+	return fruit_prob < chance
+
+
+func _place_fruit(foliage_sprite: Sprite2D, foliage_tile: Vector2i, foliage_size: Vector2, foliage_kind: String) -> void:
+	if _fruit_texture == null:
+		return
+	
+	var sprite := Sprite2D.new()
+	sprite.texture = _fruit_texture
+	sprite.modulate = _get_planet_profile_color("foliage_tint", Color.WHITE)
+	
+	# Slice the square fruit sheet correctly; the previous code only split horizontally.
+	var frame_x := _tile_noise_hash(foliage_tile + Vector2i(23, 47)) % fruit_tiles_wide
+	var frame_y := _tile_noise_hash(foliage_tile + Vector2i(61, 11)) % fruit_tiles_high
+	var frame_size := Vector2(
+		float(_fruit_texture.get_size().x) / float(max(1, fruit_tiles_wide)),
+		float(_fruit_texture.get_size().y) / float(max(1, fruit_tiles_high))
+	)
+	sprite.region_enabled = true
+	sprite.region_rect = Rect2(frame_x * frame_size.x, frame_y * frame_size.y, frame_size.x, frame_size.y)
+	sprite.centered = true
+	
+	# Anchor fruit to the plant itself so it doesn't float or desync.
+	var x_jitter := (float(_tile_noise_hash(foliage_tile + Vector2i(31, 59)) % 100) / 100.0 - 0.5)
+	var y_jitter := (float(_tile_noise_hash(foliage_tile + Vector2i(71, 29)) % 100) / 100.0 - 0.5)
+	var fruit_offset := Vector2.ZERO
+	if foliage_kind == "tree":
+		fruit_offset = Vector2(
+			x_jitter * foliage_size.x * 0.18,
+			-foliage_size.y * 0.18 + y_jitter * foliage_size.y * 0.04
+		)
+	else:
+		fruit_offset = Vector2(
+			x_jitter * foliage_size.x * 0.16,
+			-foliage_size.y * 0.12 + y_jitter * foliage_size.y * 0.03
+		)
+	sprite.position = fruit_offset
+	sprite.z_index = 1
+	sprite.z_as_relative = true
+	
+	foliage_sprite.add_child(sprite)
+	_fruit_sprites.append(sprite)
 
 
 func _tile_to_world_position(pos: Vector2i) -> Vector2:
@@ -1063,6 +1246,25 @@ func _load_foliage_textures() -> void:
 	for texture in extra_foliage_textures:
 		if texture != null:
 			_foliage_textures.append(texture)
+	
+	if enable_fruit_spawning:
+		_fruit_texture = load(FRUIT_TEXTURE_PATH) as Texture2D
+		if _fruit_texture == null:
+			push_warning("[Foliage] Failed to load fruit texture: " + FRUIT_TEXTURE_PATH)
+
+
+func _apply_planet_visual_profile() -> void:
+	if floor_tilemap != null:
+		floor_tilemap.modulate = _get_planet_profile_color("tile_tint", Color.WHITE)
+	if walls_tilemap != null:
+		walls_tilemap.modulate = _get_planet_profile_color("wall_tint", Color.WHITE)
+
+
+func _get_planet_profile_color(key: String, fallback: Color) -> Color:
+	var value: Variant = _planet_world_profile.get(key, fallback)
+	if value is Color:
+		return value as Color
+	return fallback
 
 
 func _find_foliage_parent() -> Node2D:
@@ -1077,6 +1279,39 @@ func _find_foliage_parent() -> Node2D:
 	if fallback is Node2D:
 		return fallback
 	return null
+
+
+func _update_foliage_occlusion(player: Node2D) -> void:
+	if player == null:
+		return
+	var player_feet := player.global_position + foliage_player_feet_offset
+	var player_upper := player.global_position + foliage_player_upper_body_offset
+	for pos in _foliage_nodes.keys():
+		var entry = _foliage_nodes.get(pos, null)
+		if not (entry is Dictionary):
+			continue
+		var sprite := entry.get("node", null) as Sprite2D
+		if sprite == null or not is_instance_valid(sprite):
+			continue
+		var base_y := float(entry.get("base_y", sprite.global_position.y))
+		var size := entry.get("size", Vector2.ZERO) as Vector2
+		var half_width := size.x * 0.5 + foliage_player_occlusion_x_padding
+		var top_y := base_y - size.y
+		var canopy_contains_upper := (
+			player_upper.x >= sprite.global_position.x - half_width
+			and player_upper.x <= sprite.global_position.x + half_width
+			and player_upper.y >= top_y
+			and player_upper.y <= base_y
+		)
+		var player_in_front := player_feet.y > base_y
+		sprite.z_index = foliage_behind_z_index if player_in_front else foliage_front_z_index
+		var material := sprite.material as ShaderMaterial
+		if material != null:
+			material.set_shader_parameter("bubble_radius", foliage_player_occlusion_radius)
+			material.set_shader_parameter("bubble_softness", foliage_player_occlusion_softness)
+			material.set_shader_parameter("bubble_alpha", foliage_player_occlusion_alpha)
+			material.set_shader_parameter("bubble_center", player_upper)
+			material.set_shader_parameter("bubble_enabled", (not player_in_front) and canopy_contains_upper)
 
 
 func _prepare_streaming_reveal() -> void:
@@ -1182,6 +1417,7 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 			var tile := Vector2i(x, y)
 			floor_tilemap.erase_cell(tile)
 			walls_tilemap.erase_cell(tile)
+			_remove_foliage(tile)
 			_remove_runtime_wall_body(tile)
 	_revealed_chunks.erase(chunk_pos)
 	_refresh_shadows()
@@ -1191,9 +1427,12 @@ func _reveal_tile(tile: Vector2i) -> void:
 	if _generated_floor_cells.has(tile):
 		var floor_data: Dictionary = _generated_floor_cells[tile]
 		floor_tilemap.set_cell(tile, int(floor_data.get("source_id", floor_source_id)), floor_data.get("atlas", floor_atlas_coord))
+		if _should_place_foliage(tile):
+			_place_foliage(tile)
 	if _generated_wall_cells.has(tile):
 		var wall_data: Dictionary = _generated_wall_cells[tile]
 		walls_tilemap.set_cell(tile, int(wall_data.get("source_id", walls_source_id)), wall_data.get("atlas", wall_atlas_coord))
+		_remove_foliage(tile)
 		if build_runtime_wall_collision:
 			_spawn_runtime_wall_body(tile)
 
@@ -1370,4 +1609,5 @@ func get_level_data() -> Dictionary:
 		"compound_rect": _last_compound_rect,
 		"compound_ingress": _last_compound_ingress,
 		"compound_buildings": _last_compound_buildings,
+		"world_profile": get_planet_world_profile(),
 	}

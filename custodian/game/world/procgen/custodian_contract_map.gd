@@ -40,6 +40,111 @@ const PLANET_LIBRARY := {
 	"gas_giant": "res://Planets/GasPlanet/GasPlanet.tscn",
 }
 
+const PLANET_WORLD_PROFILES := {
+	"terran_wet": {
+		"world_label": "humid river basin",
+		"compound_area_ratio": 0.12,
+		"open_layout_chance": 0.58,
+		"open_layout_carve_ratio": 0.25,
+		"foliage_density": 0.20,
+		"foliage_compound_density_multiplier": 0.45,
+		"fruit_spawn_chance_shrub": 0.18,
+		"fruit_spawn_chance_tree": 0.24,
+		"tile_tint": Color(0.88, 0.97, 0.90, 1.0),
+		"wall_tint": Color(0.78, 0.90, 0.82, 1.0),
+		"foliage_tint": Color(0.94, 1.04, 0.94, 1.0),
+		"critter_tint": Color(0.88, 1.06, 0.92, 1.0),
+		"critter_count_bonus": 2,
+		"ambient_max_count_bonus": 2,
+		"ambient_spawn_interval_scale": 0.80,
+	},
+	"terran_dry": {
+		"world_label": "dust basin",
+		"compound_area_ratio": 0.16,
+		"open_layout_chance": 0.28,
+		"open_layout_carve_ratio": 0.12,
+		"foliage_density": 0.05,
+		"foliage_compound_density_multiplier": 0.12,
+		"fruit_spawn_chance_shrub": 0.02,
+		"fruit_spawn_chance_tree": 0.04,
+		"tile_tint": Color(1.00, 0.93, 0.82, 1.0),
+		"wall_tint": Color(0.92, 0.82, 0.70, 1.0),
+		"foliage_tint": Color(0.86, 0.80, 0.68, 1.0),
+		"critter_tint": Color(1.04, 0.92, 0.82, 1.0),
+		"critter_count_bonus": -1,
+		"ambient_max_count_bonus": -1,
+		"ambient_spawn_interval_scale": 1.18,
+	},
+	"islands": {
+		"world_label": "archipelago shelf",
+		"compound_area_ratio": 0.11,
+		"open_layout_chance": 0.62,
+		"open_layout_carve_ratio": 0.27,
+		"foliage_density": 0.17,
+		"foliage_compound_density_multiplier": 0.36,
+		"fruit_spawn_chance_shrub": 0.16,
+		"fruit_spawn_chance_tree": 0.22,
+		"tile_tint": Color(0.88, 0.98, 1.00, 1.0),
+		"wall_tint": Color(0.78, 0.90, 0.95, 1.0),
+		"foliage_tint": Color(0.86, 1.06, 0.95, 1.0),
+		"critter_tint": Color(0.84, 1.02, 1.02, 1.0),
+		"critter_count_bonus": 1,
+		"ambient_max_count_bonus": 1,
+		"ambient_spawn_interval_scale": 0.88,
+	},
+	"ice_world": {
+		"world_label": "cryotic shelf",
+		"compound_area_ratio": 0.15,
+		"open_layout_chance": 0.42,
+		"open_layout_carve_ratio": 0.18,
+		"foliage_density": 0.03,
+		"foliage_compound_density_multiplier": 0.08,
+		"fruit_spawn_chance_shrub": 0.00,
+		"fruit_spawn_chance_tree": 0.01,
+		"tile_tint": Color(0.88, 0.95, 1.05, 1.0),
+		"wall_tint": Color(0.78, 0.88, 1.02, 1.0),
+		"foliage_tint": Color(0.82, 0.92, 1.00, 1.0),
+		"critter_tint": Color(0.82, 0.96, 1.06, 1.0),
+		"critter_count_bonus": -1,
+		"ambient_max_count_bonus": -1,
+		"ambient_spawn_interval_scale": 1.14,
+	},
+	"lava_world": {
+		"world_label": "igneous scar",
+		"compound_area_ratio": 0.18,
+		"open_layout_chance": 0.18,
+		"open_layout_carve_ratio": 0.08,
+		"foliage_density": 0.01,
+		"foliage_compound_density_multiplier": 0.04,
+		"fruit_spawn_chance_shrub": 0.00,
+		"fruit_spawn_chance_tree": 0.00,
+		"tile_tint": Color(1.04, 0.82, 0.72, 1.0),
+		"wall_tint": Color(1.02, 0.68, 0.58, 1.0),
+		"foliage_tint": Color(0.90, 0.68, 0.58, 1.0),
+		"critter_tint": Color(1.06, 0.78, 0.70, 1.0),
+		"critter_count_bonus": -1,
+		"ambient_max_count_bonus": 0,
+		"ambient_spawn_interval_scale": 1.08,
+	},
+	"gas_giant": {
+		"world_label": "aerostat platform",
+		"compound_area_ratio": 0.10,
+		"open_layout_chance": 0.68,
+		"open_layout_carve_ratio": 0.30,
+		"foliage_density": 0.02,
+		"foliage_compound_density_multiplier": 0.05,
+		"fruit_spawn_chance_shrub": 0.00,
+		"fruit_spawn_chance_tree": 0.00,
+		"tile_tint": Color(0.92, 0.90, 1.03, 1.0),
+		"wall_tint": Color(0.82, 0.80, 0.95, 1.0),
+		"foliage_tint": Color(0.88, 0.84, 0.98, 1.0),
+		"critter_tint": Color(0.92, 0.90, 1.08, 1.0),
+		"critter_count_bonus": 0,
+		"ambient_max_count_bonus": 1,
+		"ambient_spawn_interval_scale": 0.92,
+	},
+}
+
 @onready var planet_root: Node2D = $PlanetRoot
 @onready var map_root: Node2D = $MapRoot
 
@@ -66,6 +171,7 @@ func generate_contract(seed_value: int) -> void:
 
 	var planet_key: String = _pick_planet_key(_rng)
 	var planet_seed: int = int(_rng.randi())
+	var world_profile := _build_planet_world_profile(planet_key, planet_seed)
 	var map_seed: int = int(_rng.randi())
 
 	_clear_previous_instances()
@@ -76,7 +182,7 @@ func generate_contract(seed_value: int) -> void:
 	var map_generated := false
 	for attempt in range(max(1, map_generation_attempts)):
 		var attempt_seed: int = map_seed + attempt * 7919
-		map_instance = await _instantiate_map(attempt_seed, attempt)
+		map_instance = await _instantiate_map(attempt_seed, attempt, world_profile)
 		if map_instance == null:
 			continue
 		level_data = await _generate_map_level_data(map_instance)
@@ -93,11 +199,13 @@ func generate_contract(seed_value: int) -> void:
 		return
 	var contract := {
 		"contract_seed": int(contract_seed),
+		"world_profile": world_profile.duplicate(true),
 		"planet": {
 			"key": planet_key,
 			"scene_path": PLANET_LIBRARY[planet_key],
 			"planet_seed": planet_seed,
 			"instance": planet_instance,
+			"world_profile": world_profile.duplicate(true),
 		},
 		"map": {
 			"map_seed": map_seed,
@@ -122,6 +230,7 @@ func generate_edgar_contract(seed_value: int) -> Dictionary:
 	
 	var planet_key: String = _pick_planet_key(_rng)
 	var planet_seed: int = int(_rng.randi())
+	var world_profile := _build_planet_world_profile(planet_key, planet_seed)
 	var planet_instance: Node = _instantiate_contracted_planet(planet_key, planet_seed)
 	
 	var layout: Dictionary = _generate_edgar_layout()
@@ -135,15 +244,18 @@ func generate_edgar_contract(seed_value: int) -> Dictionary:
 		"generation_mode": "edgar",
 		"layout": layout,
 		"room_count": layout.get("room_count", 0),
+		"world_profile": world_profile.duplicate(true),
 	}
 	
 	var contract := {
 		"contract_seed": int(contract_seed),
+		"world_profile": world_profile.duplicate(true),
 		"planet": {
 			"key": planet_key,
 			"scene_path": PLANET_LIBRARY[planet_key],
 			"planet_seed": planet_seed,
 			"instance": planet_instance,
+			"world_profile": world_profile.duplicate(true),
 		},
 		"map": {
 			"map_seed": seed_value,
@@ -243,7 +355,7 @@ func _instantiate_contracted_planet(planet_key: String, planet_seed: int) -> Nod
 	return planet
 
 
-func _instantiate_map(map_seed: int, attempt_index: int = 0) -> ProcGenTilemap:
+func _instantiate_map(map_seed: int, attempt_index: int = 0, planet_world_profile: Dictionary = {}) -> ProcGenTilemap:
 	if map_scene == null:
 		return null
 	var map_instance = map_scene.instantiate()
@@ -259,7 +371,7 @@ func _instantiate_map(map_seed: int, attempt_index: int = 0) -> ProcGenTilemap:
 	if map_instance.procgen_node:
 		while map_instance.procgen_node.is_generating():
 			await get_tree().process_frame
-		_apply_map_generation_profile(map_instance, attempt_index)
+		_apply_map_generation_profile(map_instance, attempt_index, planet_world_profile)
 
 	(map_instance as Node2D).position = map_offset
 	map_instance.set_seed(map_seed)
@@ -285,9 +397,11 @@ func _on_map_level_data_ready(level_data: Dictionary) -> void:
 	_map_level_data_ready = true
 
 
-func _apply_map_generation_profile(map_instance: ProcGenTilemap, attempt_index: int) -> void:
+func _apply_map_generation_profile(map_instance: ProcGenTilemap, attempt_index: int, planet_world_profile: Dictionary = {}) -> void:
 	if map_instance == null or map_instance.procgen_node == null:
 		return
+	if not planet_world_profile.is_empty() and map_instance.has_method("apply_planet_world_profile"):
+		map_instance.call("apply_planet_world_profile", planet_world_profile)
 	var procgen := map_instance.procgen_node
 	var room_variance := attempt_index % 3
 	procgen.room_amount = 7 + room_variance + _rng.randi_range(0, 2)
@@ -298,6 +412,52 @@ func _apply_map_generation_profile(map_instance: ProcGenTilemap, attempt_index: 
 	procgen.automaton_noise_rate = 0.48 + _rng.randf_range(0.0, 0.10)
 	procgen.automaton_corridor_fixed_width_expand = 1
 	procgen.automaton_corridor_non_fixed_width_expand = 1 + ((attempt_index + 1) % 2)
+
+
+func _build_planet_world_profile(planet_key: String, planet_seed: int) -> Dictionary:
+	var fallback: Dictionary = PLANET_WORLD_PROFILES.get("terran_dry", {})
+	var profile: Dictionary = PLANET_WORLD_PROFILES.get(planet_key, fallback).duplicate(true)
+	var profile_rng := RandomNumberGenerator.new()
+	profile_rng.seed = int(planet_seed)
+	profile["planet_key"] = planet_key
+	profile["profile_seed"] = planet_seed
+	profile["compound_area_ratio"] = clamp(
+		float(profile.get("compound_area_ratio", 0.14)) + profile_rng.randf_range(-0.01, 0.01),
+		0.10,
+		0.20
+	)
+	profile["open_layout_chance"] = clamp(
+		float(profile.get("open_layout_chance", 0.35)) + profile_rng.randf_range(-0.05, 0.05),
+		0.05,
+		0.85
+	)
+	profile["open_layout_carve_ratio"] = clamp(
+		float(profile.get("open_layout_carve_ratio", 0.20)) + profile_rng.randf_range(-0.03, 0.03),
+		0.03,
+		0.45
+	)
+	profile["foliage_density"] = clamp(
+		float(profile.get("foliage_density", 0.12)) + profile_rng.randf_range(-0.02, 0.02),
+		0.0,
+		0.35
+	)
+	profile["foliage_compound_density_multiplier"] = clamp(
+		float(profile.get("foliage_compound_density_multiplier", 0.28)) + profile_rng.randf_range(-0.06, 0.06),
+		0.0,
+		0.75
+	)
+	profile["fruit_spawn_chance_shrub"] = clamp(
+		float(profile.get("fruit_spawn_chance_shrub", 0.10)) + profile_rng.randf_range(-0.03, 0.03),
+		0.0,
+		0.35
+	)
+	profile["fruit_spawn_chance_tree"] = clamp(
+		float(profile.get("fruit_spawn_chance_tree", 0.14)) + profile_rng.randf_range(-0.03, 0.03),
+		0.0,
+		0.40
+	)
+	profile["critter_variant_offset"] = profile_rng.randi_range(0, 31)
+	return profile
 
 
 func _is_map_layout_acceptable(map_instance: ProcGenTilemap, level_data: Dictionary) -> bool:

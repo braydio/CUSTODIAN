@@ -6,8 +6,9 @@ Last updated: 2026-03-11
 
 The in-game command terminal now runs in **local snapshot mode** for gameplay wiring.
 
-- Boot intro sequence is skipped.
-- Terminal opens directly into ready state.
+- World terminal art plays a short activation sequence before the shell opens.
+- Closing the shell hides the UI immediately, then plays the terminal shutdown sequence after a short delay.
+- Once open, the shell enters ready state immediately.
 - No HTTP server calls are required.
 - Snapshot data is pulled directly from active runtime nodes.
 

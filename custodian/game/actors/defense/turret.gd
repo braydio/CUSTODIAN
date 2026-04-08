@@ -16,16 +16,20 @@ const BULLET_SCENE := preload("res://game/actors/defense/bullet.tscn")
 @export var damage: float = 10.0
 @export var fire_rate: float = 0.6
 @export var power_required: bool = true
+@export var base_accuracy: float = 0.7
+@export var max_inaccuracy_degrees: float = 10.0
+@export var misfire_threshold: float = 0.2
+@export var interaction_distance: float = 72.0
 
 var target: Node2D = null
 var fire_timer: float = 0.0
 var sector_reference: Sector = null
 var enemies_in_range: Array[Node2D] = []
 
-const FIRE_EFFICIENCY_BY_STATE := {
+const INTEGRITY_MODIFIER_BY_STATE := {
 	"operational": 1.0,
-	"damaged": 0.6,
-	"critical": 0.3,
+	"damaged": 0.75,
+	"critical": 0.4,
 	"destroyed": 0.0,
 }
 
@@ -49,6 +53,7 @@ func _ready() -> void:
 	add_to_group("turret")
 	add_to_group("structure")
 	add_to_group("defense")
+	add_to_group("interactable")
 
 	super._ready()
 	_set_base_tint_by_type()
@@ -99,6 +104,11 @@ func _physics_process(delta: float) -> void:
 		target = null
 		_set_power_visual(false)
 		return
+	var effective_output := get_effective_output()
+	if effective_output <= 0.0:
+		target = null
+		_set_power_visual(false)
+		return
 	_set_power_visual(true)
 
 	_prune_enemies_in_range()
@@ -110,12 +120,14 @@ func _physics_process(delta: float) -> void:
 	fire_timer -= delta
 	if target:
 		rotate_barrel()
-		var fire_eff = float(FIRE_EFFICIENCY_BY_STATE.get(state, 0.0))
-		var effective_fire_rate = fire_rate * fire_eff
+		var effective_fire_rate = fire_rate * effective_output
 		if effective_fire_rate <= 0.001:
 			return
 		if fire_timer <= 0.0:
-			shoot()
+			if effective_output < misfire_threshold:
+				fire_timer = 1.0 / effective_fire_rate
+				return
+			shoot(effective_output)
 			fire_timer = 1.0 / effective_fire_rate
 
 
@@ -180,7 +192,7 @@ func rotate_barrel() -> void:
 	barrel.rotation = dir.angle()
 
 
-func shoot() -> void:
+func shoot(effective_output: float) -> void:
 	if target == null or not is_instance_valid(target):
 		return
 	var bullet = BULLET_SCENE.instantiate()
@@ -188,13 +200,17 @@ func shoot() -> void:
 		return
 
 	var spawn_position: Vector2 = muzzle.global_position
-	var dir = (target.global_position - muzzle.global_position).normalized()
+	var dir: Vector2 = (target.global_position - muzzle.global_position).normalized()
+	var effective_accuracy: float = clamp(base_accuracy * effective_output, 0.0, 1.0)
+	var spread_degrees: float = (1.0 - effective_accuracy) * max_inaccuracy_degrees
+	if spread_degrees > 0.001:
+		dir = dir.rotated(deg_to_rad(randf_range(-spread_degrees, spread_degrees)))
 	if bullet.has_method("set_direction"):
 		bullet.set_direction(dir)
 	else:
 		bullet.set("direction", dir)
 
-	bullet.set("damage", damage)
+	bullet.set("damage", damage * effective_output)
 	bullet.set("team", "defense")
 	bullet.set("shooter", self)
 
@@ -223,6 +239,25 @@ func has_power() -> bool:
 	return bool(sector_reference.has_power)
 
 
+func get_effective_output() -> float:
+	if not power_required:
+		return _get_integrity_modifier()
+	if sector_reference == null or not is_instance_valid(sector_reference):
+		sector_reference = get_parent() as Sector
+	if sector_reference == null:
+		return _get_integrity_modifier()
+	var sector_output := sector_reference.get_effective_output() if sector_reference.has_method("get_effective_output") else (1.0 if sector_reference.has_power else 0.0)
+	return clamp(float(sector_output) * _get_integrity_modifier(), 0.0, 1.0)
+
+
+func get_power_tier() -> String:
+	if sector_reference == null or not is_instance_valid(sector_reference):
+		sector_reference = get_parent() as Sector
+	if sector_reference != null and sector_reference.has_method("get"):
+		return String(sector_reference.power_tier)
+	return "NORMAL"
+
+
 func destroy() -> void:
 	current_health = 0.0
 	state = "destroyed"
@@ -246,6 +281,10 @@ func _set_power_visual(powered: bool) -> void:
 		return
 	if powered:
 		_update_damage_visuals()
+		var tier := get_power_tier()
+		if tier == "DEGRADED":
+			base_sprite.modulate = base_sprite.modulate.lerp(Color(0.95, 0.78, 0.32, 1.0), 0.45)
+			barrel_sprite.modulate = barrel_sprite.modulate.lerp(Color(0.95, 0.78, 0.32, 1.0), 0.45)
 	else:
 		base_sprite.modulate = Color(0.35, 0.35, 0.35, 1.0)
 		barrel_sprite.modulate = Color(0.35, 0.35, 0.35, 1.0)
@@ -263,6 +302,10 @@ func _update_damage_visuals() -> void:
 	base_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0)
 
 
+func _get_integrity_modifier() -> float:
+	return float(INTEGRITY_MODIFIER_BY_STATE.get(state, 0.0))
+
+
 func _set_base_tint_by_type() -> void:
 	match turret_type:
 		TurretType.GUNNER:
@@ -273,3 +316,39 @@ func _set_base_tint_by_type() -> void:
 			base_sprite.modulate = Color(0.76, 0.92, 0.78, 1.0)
 		TurretType.SNIPER:
 			base_sprite.modulate = Color(0.80, 0.80, 1.0, 1.0)
+
+
+func can_be_picked_up() -> bool:
+	return not (get_parent() is Sector)
+
+
+func _get_interact_prompt_key() -> String:
+	for event in InputMap.action_get_events("interact"):
+		if event is InputEventKey:
+			var key_event: InputEventKey = event
+			var key_text := key_event.as_text_key_label().strip_edges().to_upper()
+			if not key_text.is_empty():
+				return key_text
+	return "INTERACT"
+
+
+func get_interaction_prompt() -> String:
+	if not can_be_picked_up():
+		return ""
+	return "PRESS %s TO PICK UP %s" % [_get_interact_prompt_key(), turret_name.to_upper()]
+
+
+func get_interaction_position() -> Vector2:
+	return global_position
+
+
+func get_interaction_distance() -> float:
+	return interaction_distance
+
+
+func interact(_actor: Node) -> void:
+	if not can_be_picked_up():
+		return
+	var placement := get_node_or_null("/root/GameRoot/World/TurretPlacement")
+	if placement and placement.has_method("pick_up_turret"):
+		placement.call("pick_up_turret", self)

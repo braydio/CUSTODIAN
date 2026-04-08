@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dq3plr8cwaw78" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/fire_body.png" id="1_fire"]
 [ext_resource type="Texture2D" uid="uid://cvpkw2im1oht2" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/operator_reloading.png" id="2_reload"]
 
-[sub_resource type="Image" id="Image_x8bak"]
+[sub_resource type="Image" id="Image_3i6gm"]
 data = {
 "data": PackedByteArray(0, 0, 0, 0),
 "format": "RGBA8",
@@ -13,7 +13,7 @@ data = {
 }
 
 [sub_resource type="ImageTexture" id="ImageTexture_hidden"]
-image = SubResource("Image_x8bak")
+image = SubResource("Image_3i6gm")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fire_fx_0"]
 atlas = ExtResource("1_fire")

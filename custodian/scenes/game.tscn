@@ -289,14 +289,14 @@ terminal_contract_node_path = null
 [node name="PowerDisplay" type="Panel" parent="UI" unique_id=449160537]
 offset_left = 20.0
 offset_top = 20.0
-offset_right = 220.0
+offset_right = 430.0
 offset_bottom = 60.0
 
 [node name="Label" type="Label" parent="UI/PowerDisplay" unique_id=1591291188]
 layout_mode = 0
 offset_left = 10.0
 offset_top = 5.0
-offset_right = 190.0
+offset_right = 400.0
 offset_bottom = 35.0
 text = "POWER: 500/500"
 
@@ -304,7 +304,7 @@ text = "POWER: 500/500"
 layout_mode = 0
 offset_left = 10.0
 offset_top = 20.0
-offset_right = 190.0
+offset_right = 400.0
 offset_bottom = 32.0
 value = 100.0
 show_percentage = false
@@ -477,14 +477,1133 @@ offset_right = 1128.0
 offset_bottom = 592.0
 theme_override_constants/separation = 14
 
+[node name="NavRail" type="VBoxContainer" parent="UI/TerminalPanel/Body" unique_id=-2137803084]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NavTitle" type="Label" parent="UI/TerminalPanel/Body/NavRail" unique_id=-2137803083]
+layout_mode = 2
+text = "PAGES"
+
+[node name="PageButtons" type="VBoxContainer" parent="UI/TerminalPanel/Body/NavRail" unique_id=-2137803082]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="OverviewButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803081]
+layout_mode = 2
+text = "OVERVIEW"
+
+[node name="StatusButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803080]
+layout_mode = 2
+text = "STATUS"
+
+[node name="SectorsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803079]
+layout_mode = 2
+text = "SECTORS"
+
+[node name="PowerButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803078]
+layout_mode = 2
+text = "POWER"
+
+[node name="DefenseButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803077]
+layout_mode = 2
+text = "DEFENSE"
+
+[node name="SensorsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803076]
+layout_mode = 2
+text = "SENSORS"
+
+[node name="IncidentsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803075]
+layout_mode = 2
+text = "INCIDENTS"
+
+[node name="ArchiveButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803074]
+layout_mode = 2
+text = "ARCHIVE"
+
+[node name="ReconButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803073]
+layout_mode = 2
+text = "RECON"
+
+[node name="ContractsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803072]
+layout_mode = 2
+text = "CONTRACTS"
+
+[node name="HistoryButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803071]
+layout_mode = 2
+text = "HISTORY"
+
+[node name="SettingsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803070]
+layout_mode = 2
+text = "SETTINGS"
+
+[node name="ContextSpacer" type="Control" parent="UI/TerminalPanel/Body/NavRail" unique_id=-2137803069]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="ActionTitle" type="Label" parent="UI/TerminalPanel/Body/NavRail" unique_id=-2137803068]
+layout_mode = 2
+text = "ACTIONS"
+
+[node name="ActionButtons" type="VBoxContainer" parent="UI/TerminalPanel/Body/NavRail" unique_id=-2137803067]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="WaitButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/ActionButtons" unique_id=-2137803066]
+layout_mode = 2
+text = "WAIT"
+
+[node name="Wait10xButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/ActionButtons" unique_id=-2137803062]
+layout_mode = 2
+text = "WAIT 10X"
+
+[node name="FocusButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/ActionButtons" unique_id=-2137803065]
+layout_mode = 2
+text = "FOCUS"
+
+[node name="HardenButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/ActionButtons" unique_id=-2137803064]
+layout_mode = 2
+text = "HARDEN"
+
+[node name="ResetButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/ActionButtons" unique_id=-2137803061]
+layout_mode = 2
+text = "RESET"
+
+[node name="RebootButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/ActionButtons" unique_id=-2137803060]
+layout_mode = 2
+text = "REBOOT"
+
+[node name="HelpButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/ActionButtons" unique_id=-2137803063]
+layout_mode = 2
+text = "HELP"
+
+[node name="MapColumn" type="VBoxContainer" parent="UI/TerminalPanel/Body" unique_id=1561351348]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="MapTitle" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=492283667]
+layout_mode = 2
+text = "OVERVIEW"
+
+[node name="PageSummary" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=492283668]
+layout_mode = 2
+text = "TACTICAL SUMMARY // LIVE CONTRACT SNAPSHOT"
+autowrap_mode = 3
+
+[node name="PlanetPreviewTitle" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1034419010]
+layout_mode = 2
+text = "CONTRACTED GLOBE"
+
+[node name="PlanetPreview" type="TextureRect" parent="UI/TerminalPanel/Body/MapColumn" unique_id=111001529]
+custom_minimum_size = Vector2(0, 188)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MapPreviewTitle" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1250833323]
+layout_mode = 2
+text = "TACTICAL MINIMAP"
+
+[node name="MapPreview" type="TextureRect" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1591864208]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="WidgetStack" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn" unique_id=-2137803059]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="OverviewWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137803058]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="OverviewTopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets" unique_id=-2137803057]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="OverviewOperationalPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow" unique_id=-2137803056]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewOperationalPanel" unique_id=-2137803055]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewOperationalPanel/Margin" unique_id=-2137803054]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewOperationalPanel/Margin/Content" unique_id=-2137803053]
+layout_mode = 2
+text = "OPERATIONAL SUMMARY"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewOperationalPanel/Margin/Content" unique_id=-2137803052]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="OverviewPowerPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow" unique_id=-2137803051]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewPowerPanel" unique_id=-2137803050]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewPowerPanel/Margin" unique_id=-2137803049]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewPowerPanel/Margin/Content" unique_id=-2137803048]
+layout_mode = 2
+text = "POWER SUMMARY"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewPowerPanel/Margin/Content" unique_id=-2137803047]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="OverviewAssaultPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow" unique_id=-2137803046]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewAssaultPanel" unique_id=-2137803045]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewAssaultPanel/Margin" unique_id=-2137803044]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewAssaultPanel/Margin/Content" unique_id=-2137803043]
+layout_mode = 2
+text = "ASSAULT SUMMARY"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewAssaultPanel/Margin/Content" unique_id=-2137803042]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="OverviewBottomRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets" unique_id=-2137803041]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="OverviewPriorityPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow" unique_id=-2137803040]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewPriorityPanel" unique_id=-2137803039]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewPriorityPanel/Margin" unique_id=-2137803038]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewPriorityPanel/Margin/Content" unique_id=-2137803037]
+layout_mode = 2
+text = "PRIORITY SECTORS"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewPriorityPanel/Margin/Content" unique_id=-2137803036]
+custom_minimum_size = Vector2(0, 138)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="OverviewContractPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow" unique_id=-2137803035]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewContractPanel" unique_id=-2137803034]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewContractPanel/Margin" unique_id=-2137803033]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewContractPanel/Margin/Content" unique_id=-2137803032]
+layout_mode = 2
+text = "CONTRACT LINK"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewContractPanel/Margin/Content" unique_id=-2137803031]
+custom_minimum_size = Vector2(0, 138)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="SectorsWidgets" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137803030]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="SectorListPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets" unique_id=-2137803029]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorListPanel" unique_id=-2137803028]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorListPanel/Margin" unique_id=-2137803027]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorListPanel/Margin/Content" unique_id=-2137803026]
+layout_mode = 2
+text = "SECTOR LIST"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorListPanel/Margin/Content" unique_id=-2137803025]
+custom_minimum_size = Vector2(0, 292)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="SectorDetailPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets" unique_id=-2137803024]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorDetailPanel" unique_id=-2137803023]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorDetailPanel/Margin" unique_id=-2137803022]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorDetailPanel/Margin/Content" unique_id=-2137803021]
+layout_mode = 2
+text = "SECTOR DETAIL"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorDetailPanel/Margin/Content" unique_id=-2137803020]
+custom_minimum_size = Vector2(0, 292)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="PowerWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137803019]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="PowerTopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets" unique_id=-2137803018]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="PowerGlobalPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow" unique_id=-2137803017]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow/PowerGlobalPanel" unique_id=-2137803016]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow/PowerGlobalPanel/Margin" unique_id=-2137803015]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow/PowerGlobalPanel/Margin/Content" unique_id=-2137803014]
+layout_mode = 2
+text = "GLOBAL POWER"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow/PowerGlobalPanel/Margin/Content" unique_id=-2137803013]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="PowerPresetPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow" unique_id=-2137803012]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow/PowerPresetPanel" unique_id=-2137803011]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow/PowerPresetPanel/Margin" unique_id=-2137803010]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow/PowerPresetPanel/Margin/Content" unique_id=-2137803009]
+layout_mode = 2
+text = "ROUTING PRESETS"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerTopRow/PowerPresetPanel/Margin/Content" unique_id=-2137803008]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="PowerAllocationPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets" unique_id=-2137803007]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerAllocationPanel" unique_id=-2137803006]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerAllocationPanel/Margin" unique_id=-2137803005]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerAllocationPanel/Margin/Content" unique_id=-2137803004]
+layout_mode = 2
+text = "SECTOR ALLOCATION"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/PowerWidgets/PowerAllocationPanel/Margin/Content" unique_id=-2137803003]
+custom_minimum_size = Vector2(0, 214)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="DefenseWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137803002]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="DefenseTopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets" unique_id=-2137803001]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="DefenseReadinessPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseTopRow" unique_id=-2137803000]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseTopRow/DefenseReadinessPanel" unique_id=-2137802999]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseTopRow/DefenseReadinessPanel/Margin" unique_id=-2137802998]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseTopRow/DefenseReadinessPanel/Margin/Content" unique_id=-2137802997]
+layout_mode = 2
+text = "READINESS SUMMARY"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseTopRow/DefenseReadinessPanel/Margin/Content" unique_id=-2137802996]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="DefenseModesPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseTopRow" unique_id=-2137802995]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseTopRow/DefenseModesPanel" unique_id=-2137802994]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseTopRow/DefenseModesPanel/Margin" unique_id=-2137802993]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseTopRow/DefenseModesPanel/Margin/Content" unique_id=-2137802992]
+layout_mode = 2
+text = "ENGAGEMENT MODES"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseTopRow/DefenseModesPanel/Margin/Content" unique_id=-2137802991]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="DefenseCoveragePanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets" unique_id=-2137802990]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseCoveragePanel" unique_id=-2137802989]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseCoveragePanel/Margin" unique_id=-2137802988]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseCoveragePanel/Margin/Content" unique_id=-2137802987]
+layout_mode = 2
+text = "SECTOR COVERAGE"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/DefenseWidgets/DefenseCoveragePanel/Margin/Content" unique_id=-2137802986]
+custom_minimum_size = Vector2(0, 214)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="SensorsWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802985]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="SensorsTopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets" unique_id=-2137802984]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="SensorsFidelityPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow" unique_id=-2137802983]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsFidelityPanel" unique_id=-2137802982]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsFidelityPanel/Margin" unique_id=-2137802981]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsFidelityPanel/Margin/Content" unique_id=-2137802980]
+layout_mode = 2
+text = "FIDELITY SUMMARY"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsFidelityPanel/Margin/Content" unique_id=-2137802979]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="SensorsPredictionPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow" unique_id=-2137802978]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsPredictionPanel" unique_id=-2137802977]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsPredictionPanel/Margin" unique_id=-2137802976]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsPredictionPanel/Margin/Content" unique_id=-2137802975]
+layout_mode = 2
+text = "PREDICTION STRIP"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsTopRow/SensorsPredictionPanel/Margin/Content" unique_id=-2137802974]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="SensorsActivityPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets" unique_id=-2137802973]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsActivityPanel" unique_id=-2137802972]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsActivityPanel/Margin" unique_id=-2137802971]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsActivityPanel/Margin/Content" unique_id=-2137802970]
+layout_mode = 2
+text = "ACTIVITY TAGS"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SensorsWidgets/SensorsActivityPanel/Margin/Content" unique_id=-2137802969]
+custom_minimum_size = Vector2(0, 214)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="IncidentsWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802968]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="IncidentsFilterPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/IncidentsWidgets" unique_id=-2137802967]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/IncidentsWidgets/IncidentsFilterPanel" unique_id=-2137802966]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/IncidentsWidgets/IncidentsFilterPanel/Margin" unique_id=-2137802965]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/IncidentsWidgets/IncidentsFilterPanel/Margin/Content" unique_id=-2137802964]
+layout_mode = 2
+text = "FILTERS"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/IncidentsWidgets/IncidentsFilterPanel/Margin/Content" unique_id=-2137802963]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="IncidentsTablePanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/IncidentsWidgets" unique_id=-2137802962]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/IncidentsWidgets/IncidentsTablePanel" unique_id=-2137802961]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/IncidentsWidgets/IncidentsTablePanel/Margin" unique_id=-2137802960]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/IncidentsWidgets/IncidentsTablePanel/Margin/Content" unique_id=-2137802959]
+layout_mode = 2
+text = "INCIDENT TABLE"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/IncidentsWidgets/IncidentsTablePanel/Margin/Content" unique_id=-2137802958]
+custom_minimum_size = Vector2(0, 246)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ArchiveWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802957]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="ArchiveTopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets" unique_id=-2137802956]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="ArchiveIntegrityPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveTopRow" unique_id=-2137802955]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveTopRow/ArchiveIntegrityPanel" unique_id=-2137802954]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveTopRow/ArchiveIntegrityPanel/Margin" unique_id=-2137802953]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveTopRow/ArchiveIntegrityPanel/Margin/Content" unique_id=-2137802952]
+layout_mode = 2
+text = "ARCHIVE INTEGRITY"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveTopRow/ArchiveIntegrityPanel/Margin/Content" unique_id=-2137802951]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ArchiveCategoriesPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveTopRow" unique_id=-2137802950]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveTopRow/ArchiveCategoriesPanel" unique_id=-2137802949]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveTopRow/ArchiveCategoriesPanel/Margin" unique_id=-2137802948]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveTopRow/ArchiveCategoriesPanel/Margin/Content" unique_id=-2137802947]
+layout_mode = 2
+text = "KNOWLEDGE CATEGORIES"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveTopRow/ArchiveCategoriesPanel/Margin/Content" unique_id=-2137802946]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ArchiveDetailPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets" unique_id=-2137802945]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveDetailPanel" unique_id=-2137802944]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveDetailPanel/Margin" unique_id=-2137802943]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveDetailPanel/Margin/Content" unique_id=-2137802942]
+layout_mode = 2
+text = "NODE DETAIL"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ArchiveWidgets/ArchiveDetailPanel/Margin/Content" unique_id=-2137802941]
+custom_minimum_size = Vector2(0, 214)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ReconWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802940]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="ReconHypothesisPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ReconWidgets" unique_id=-2137802939]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ReconWidgets/ReconHypothesisPanel" unique_id=-2137802938]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ReconWidgets/ReconHypothesisPanel/Margin" unique_id=-2137802937]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ReconWidgets/ReconHypothesisPanel/Margin/Content" unique_id=-2137802936]
+layout_mode = 2
+text = "CURRENT HYPOTHESIS"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ReconWidgets/ReconHypothesisPanel/Margin/Content" unique_id=-2137802935]
+custom_minimum_size = Vector2(0, 138)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ReconTargetsPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ReconWidgets" unique_id=-2137802934]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ReconWidgets/ReconTargetsPanel" unique_id=-2137802933]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ReconWidgets/ReconTargetsPanel/Margin" unique_id=-2137802932]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ReconWidgets/ReconTargetsPanel/Margin/Content" unique_id=-2137802931]
+layout_mode = 2
+text = "AVAILABLE TARGETS"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ReconWidgets/ReconTargetsPanel/Margin/Content" unique_id=-2137802930]
+custom_minimum_size = Vector2(0, 214)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ContractsWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802929]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="ContractsTopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets" unique_id=-2137802928]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="ContractsSlotPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets/ContractsTopRow" unique_id=-2137802927]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets/ContractsTopRow/ContractsSlotPanel" unique_id=-2137802926]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets/ContractsTopRow/ContractsSlotPanel/Margin" unique_id=-2137802925]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets/ContractsTopRow/ContractsSlotPanel/Margin/Content" unique_id=-2137802924]
+layout_mode = 2
+text = "SCENARIO SLOT"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets/ContractsTopRow/ContractsSlotPanel/Margin/Content" unique_id=-2137802923]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ContractsCouplingPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets/ContractsTopRow" unique_id=-2137802922]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets/ContractsTopRow/ContractsCouplingPanel" unique_id=-2137802921]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets/ContractsTopRow/ContractsCouplingPanel/Margin" unique_id=-2137802920]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets/ContractsTopRow/ContractsCouplingPanel/Margin/Content" unique_id=-2137802919]
+layout_mode = 2
+text = "WORLD COUPLING"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/ContractsWidgets/ContractsTopRow/ContractsCouplingPanel/Margin/Content" unique_id=-2137802918]
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="HistoryWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802917]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="HistoryLogPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/HistoryWidgets" unique_id=-2137802916]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/HistoryWidgets/HistoryLogPanel" unique_id=-2137802915]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/HistoryWidgets/HistoryLogPanel/Margin" unique_id=-2137802914]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/HistoryWidgets/HistoryLogPanel/Margin/Content" unique_id=-2137802913]
+layout_mode = 2
+text = "COMMAND LOG"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/HistoryWidgets/HistoryLogPanel/Margin/Content" unique_id=-2137802912]
+custom_minimum_size = Vector2(0, 286)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="StatusWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802911]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="StatusTopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets" unique_id=-2137802910]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="StatusRawPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusTopRow" unique_id=-2137802909]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusTopRow/StatusRawPanel" unique_id=-2137802908]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusTopRow/StatusRawPanel/Margin" unique_id=-2137802907]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusTopRow/StatusRawPanel/Margin/Content" unique_id=-2137802906]
+layout_mode = 2
+text = "STATUS RAW"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusTopRow/StatusRawPanel/Margin/Content" unique_id=-2137802905]
+custom_minimum_size = Vector2(0, 138)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="StatusParsedPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusTopRow" unique_id=-2137802904]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusTopRow/StatusParsedPanel" unique_id=-2137802903]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusTopRow/StatusParsedPanel/Margin" unique_id=-2137802902]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusTopRow/StatusParsedPanel/Margin/Content" unique_id=-2137802901]
+layout_mode = 2
+text = "PARSED MIRROR"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusTopRow/StatusParsedPanel/Margin/Content" unique_id=-2137802900]
+custom_minimum_size = Vector2(0, 138)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="StatusFidelityPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets" unique_id=-2137802899]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusFidelityPanel" unique_id=-2137802898]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusFidelityPanel/Margin" unique_id=-2137802897]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusFidelityPanel/Margin/Content" unique_id=-2137802896]
+layout_mode = 2
+text = "FIDELITY NOTES"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/StatusWidgets/StatusFidelityPanel/Margin/Content" unique_id=-2137802895]
+custom_minimum_size = Vector2(0, 186)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="SettingsWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802894]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="SettingsTopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets" unique_id=-2137802893]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="SettingsDisplayPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow" unique_id=-2137802892]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow/SettingsDisplayPanel" unique_id=-2137802891]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow/SettingsDisplayPanel/Margin" unique_id=-2137802890]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow/SettingsDisplayPanel/Margin/Content" unique_id=-2137802889]
+layout_mode = 2
+text = "DISPLAY"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow/SettingsDisplayPanel/Margin/Content" unique_id=-2137802888]
+custom_minimum_size = Vector2(0, 138)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="SettingsInputPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow" unique_id=-2137802887]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow/SettingsInputPanel" unique_id=-2137802886]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow/SettingsInputPanel/Margin" unique_id=-2137802885]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow/SettingsInputPanel/Margin/Content" unique_id=-2137802884]
+layout_mode = 2
+text = "INPUT"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow/SettingsInputPanel/Margin/Content" unique_id=-2137802883]
+custom_minimum_size = Vector2(0, 138)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="SettingsMapPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets" unique_id=-2137802882]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsMapPanel" unique_id=-2137802881]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsMapPanel/Margin" unique_id=-2137802880]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsMapPanel/Margin/Content" unique_id=-2137802879]
+layout_mode = 2
+text = "MAP"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsMapPanel/Margin/Content" unique_id=-2137802878]
+custom_minimum_size = Vector2(0, 186)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="MapOutput" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn" unique_id=194127337]
+custom_minimum_size = Vector2(0, 104)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "NO DATA"
+fit_content = true
+
 [node name="CommandColumn" type="VBoxContainer" parent="UI/TerminalPanel/Body" unique_id=1757164212]
-custom_minimum_size = Vector2(448, 0)
+custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="CommandTitle" type="Label" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1757164213]
 layout_mode = 2
-text = "ACTIVITY FEED"
+text = "TRANSCRIPT"
 
 [node name="ActivityScroll" type="ScrollContainer" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1905084263]
 layout_mode = 2
@@ -511,7 +1630,7 @@ layout_mode = 2
 text = ">"
 
 [node name="TerminalInput" type="LineEdit" parent="UI/TerminalPanel/Body/CommandColumn/InputRow" unique_id=140366070]
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "ENTER COMMAND"
@@ -520,45 +1639,6 @@ placeholder_text = "ENTER COMMAND"
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
 text = "READY"
-
-[node name="MapColumn" type="VBoxContainer" parent="UI/TerminalPanel/Body" unique_id=1561351348]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 8
-
-[node name="MapTitle" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=492283667]
-layout_mode = 2
-text = "TACTICAL MAP"
-
-[node name="PlanetPreviewTitle" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1034419010]
-layout_mode = 2
-text = "CONTRACTED GLOBE"
-
-[node name="PlanetPreview" type="TextureRect" parent="UI/TerminalPanel/Body/MapColumn" unique_id=111001529]
-custom_minimum_size = Vector2(0, 376)
-layout_mode = 2
-size_flags_vertical = 3
-expand_mode = 1
-stretch_mode = 5
-
-[node name="MapPreviewTitle" type="Label" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1250833323]
-layout_mode = 2
-text = "TACTICAL MINIMAP"
-
-[node name="MapPreview" type="TextureRect" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1591864208]
-custom_minimum_size = Vector2(0, 248)
-layout_mode = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="MapOutput" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn" unique_id=194127337]
-custom_minimum_size = Vector2(0, 152)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-bbcode_enabled = true
-text = "NO DATA"
-fit_content = true
 
 [node name="Hint" type="Label" parent="UI/TerminalPanel" unique_id=1026997078]
 layout_mode = 0

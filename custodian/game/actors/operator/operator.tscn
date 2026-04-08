@@ -16,6 +16,7 @@ radius = 11.0
 radius = 30.0
 
 [node name="Operator" type="CharacterBody2D" unique_id=1868101329]
+z_index = 2
 script = ExtResource("1_operator")
 muzzle_offset = null
 aim_crosshair_color = null

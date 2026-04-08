@@ -3,16 +3,52 @@ extends Node
 @export var contract_map_path: NodePath = NodePath("/root/GameRoot/World/ContractMap")
 @export var critter_container_path: NodePath = NodePath("/root/GameRoot/World/Enemies")
 @export var critter_scene: PackedScene
-@export var critter_count: int = 2
+@export var critter_count: int = 3
 @export var min_distance_from_spawn_tiles: int = 8
 @export var preferred_habitat_groups: PackedStringArray = PackedStringArray(["vegetation", "ambient_cover"])
 
+@export var ambient_spawn_enabled: bool = true
+@export var ambient_spawn_interval: float = 15.0
+@export var ambient_max_count: int = 8
+@export var ambient_spawn_radius_min: float = 200.0
+@export var ambient_spawn_radius_max: float = 600.0
+
 var _contract_map_node: Node = null
 var _spawned_critters: Array[Node] = []
+var _ambient_spawn_timer: float = 0.0
+var _planet_world_profile: Dictionary = {}
+var _base_critter_count: int = 0
+var _base_ambient_max_count: int = 0
+var _base_ambient_spawn_interval: float = 0.0
+
+# Shrumb variants - different appearances for atmosphere
+var SHRUMB_VARIANTS := [
+	{"name": "SHRUMB", "tint": Color(0.45, 0.55, 0.35, 1.0), "scale": Vector2(0.85, 0.85), "speed_mod": 1.0},
+	{"name": "SPORE SHRUMB", "tint": Color(0.55, 0.40, 0.50, 1.0), "scale": Vector2(0.75, 0.75), "speed_mod": 1.2},
+	{"name": "LUMEN SHRUMB", "tint": Color(0.40, 0.50, 0.60, 1.0), "scale": Vector2(0.95, 0.95), "speed_mod": 0.9},
+	{"name": "CLAY SHRUMB", "tint": Color(0.50, 0.45, 0.40, 1.0), "scale": Vector2(1.0, 1.0), "speed_mod": 0.8},
+	{"name": "TENDRILE SHRUMB", "tint": Color(0.38, 0.52, 0.42, 1.0), "scale": Vector2(0.80, 0.90), "speed_mod": 1.1},
+	{"name": "RUST SHRUMB", "tint": Color(0.48, 0.42, 0.38, 1.0), "scale": Vector2(0.90, 0.90), "speed_mod": 1.0},
+	{"name": "Crystalline SHRUMB", "tint": Color(0.42, 0.58, 0.55, 1.0), "scale": Vector2(0.70, 0.70), "speed_mod": 1.3},
+	{"name": "MOSS SHRUMB", "tint": Color(0.52, 0.58, 0.38, 1.0), "scale": Vector2(0.88, 0.88), "speed_mod": 0.95},
+]
 
 
 func _ready() -> void:
+	_base_critter_count = critter_count
+	_base_ambient_max_count = ambient_max_count
+	_base_ambient_spawn_interval = ambient_spawn_interval
 	call_deferred("_bind_contract_map")
+
+
+func _process(delta: float) -> void:
+	if not ambient_spawn_enabled:
+		return
+	
+	_ambient_spawn_timer += delta
+	if _ambient_spawn_timer >= ambient_spawn_interval:
+		_ambient_spawn_timer = 0.0
+		_try_ambient_spawn()
 
 
 func _bind_contract_map() -> void:
@@ -30,6 +66,20 @@ func _bind_contract_map() -> void:
 
 func _on_contract_generated(contract: Dictionary) -> void:
 	_clear_spawned_critters()
+	_ambient_spawn_timer = 0.0
+	var world_profile: Dictionary = {}
+	var world_profile_variant: Variant = contract.get("world_profile", {})
+	if world_profile_variant is Dictionary:
+		world_profile = world_profile_variant as Dictionary
+	else:
+		var map_variant: Variant = contract.get("map", {})
+		if map_variant is Dictionary:
+			var level_data_variant: Variant = (map_variant as Dictionary).get("level_data", {})
+			if level_data_variant is Dictionary:
+				var nested_profile: Variant = (level_data_variant as Dictionary).get("world_profile", {})
+				if nested_profile is Dictionary:
+					world_profile = nested_profile as Dictionary
+	_apply_planet_world_profile(world_profile)
 	if critter_scene == null or critter_count <= 0:
 		return
 
@@ -78,6 +128,60 @@ func _on_contract_generated(contract: Dictionary) -> void:
 			break
 
 
+func _try_ambient_spawn() -> void:
+	if _spawned_critters.size() >= ambient_max_count:
+		return
+	
+	var player := _get_player()
+	if player == null:
+		return
+	
+	var container := get_node_or_null(critter_container_path)
+	if container == null:
+		return
+	
+	if critter_scene == null:
+		return
+	
+	# Pick random position around player
+	var spawn_offset := Vector2.RIGHT.rotated(randf() * TAU) * randf_range(ambient_spawn_radius_min, ambient_spawn_radius_max)
+	var spawn_pos: Vector2 = player.global_position + spawn_offset
+	
+	# Check if valid spawn location (not too close to walls, etc.)
+	if not _is_valid_spawn_position(spawn_pos):
+		return
+	
+	var critter := critter_scene.instantiate()
+	if critter == null:
+		return
+	
+	container.add_child(critter)
+	critter.global_position = spawn_pos
+	
+	# Random variant for variety
+	_apply_critter_variation(critter, randi() % SHRUMB_VARIANTS.size())
+	
+	_spawned_critters.append(critter)
+
+
+func _get_player() -> Node:
+	var players = get_tree().get_nodes_in_group("player")
+	if not players.is_empty():
+		return players[0]
+	return get_node_or_null("/root/GameRoot/World/Player")
+
+
+func _is_valid_spawn_position(pos: Vector2) -> bool:
+	# Check distance from player - don't spawn too close
+	var player := _get_player()
+	if player:
+		if pos.distance_to(player.global_position) < 100.0:
+			return false
+	
+	# Could add wall/collision checks here
+	return true
+
+
 func _collect_candidate_tiles(level_data: Dictionary) -> Array[Vector2i]:
 	var tiles: Array[Vector2i] = []
 	for item in level_data.get("random_floor_tiles", []):
@@ -91,23 +195,22 @@ func _collect_candidate_tiles(level_data: Dictionary) -> Array[Vector2i]:
 
 
 func _apply_critter_variation(critter: Node2D, index: int) -> void:
-	var variants := [
-		{
-			"name": "SCRAP DROID",
-			"tint": Color(0.52, 0.48, 0.41, 1.0),
-			"scale": Vector2(0.92, 0.92),
-		},
-		{
-			"name": "DUST MITE",
-			"tint": Color(0.42, 0.56, 0.52, 1.0),
-			"scale": Vector2(0.84, 0.84),
-		},
-	]
-	var data: Dictionary = variants[index % variants.size()]
+	var variant_offset := int(_planet_world_profile.get("critter_variant_offset", 0))
+	var data: Dictionary = SHRUMB_VARIANTS[(index + variant_offset) % SHRUMB_VARIANTS.size()]
+	var tint := data.get("tint", Color.WHITE) as Color
+	var planet_tint := _get_planet_profile_color("critter_tint", Color.WHITE)
+	var final_tint := Color(
+		tint.r * planet_tint.r,
+		tint.g * planet_tint.g,
+		tint.b * planet_tint.b,
+		tint.a
+	)
 	if "enemy_name" in critter:
-		critter.set("enemy_name", String(data.get("name", "SCRAP DROID")))
+		critter.set("enemy_name", String(data.get("name", "SHRUMB")))
 	if "base_tint" in critter:
-		critter.set("base_tint", data.get("tint", Color.WHITE))
+		critter.set("base_tint", final_tint)
+	if "speed_modifier" in critter:
+		critter.set("speed_modifier", data.get("speed_mod", 1.0))
 	if critter.has_method("update_visuals"):
 		critter.call("update_visuals")
 	critter.scale = data.get("scale", Vector2.ONE)
@@ -148,3 +251,51 @@ func _clear_spawned_critters() -> void:
 		if critter != null and is_instance_valid(critter):
 			critter.queue_free()
 	_spawned_critters.clear()
+
+
+func get_shrumb_count() -> int:
+	return _spawned_critters.size()
+
+
+func get_shrumb_variants() -> Array:
+	return SHRUMB_VARIANTS
+
+
+func add_shrumb_variants(count: int) -> void:
+	# Add more variants dynamically if needed
+	var base_tints := [
+		Color(0.45, 0.55, 0.35),
+		Color(0.55, 0.40, 0.50),
+		Color(0.40, 0.50, 0.60),
+		Color(0.50, 0.45, 0.40),
+		Color(0.38, 0.52, 0.42),
+		Color(0.48, 0.42, 0.38),
+		Color(0.42, 0.58, 0.55),
+		Color(0.52, 0.58, 0.38),
+	]
+	var base_names := [
+		"SHRUMB", "SPORE", "LUMEN", "CLAY", "TENDRILE", "RUST", "CRYSTALLINE", "MOSS"
+	]
+	for i in range(count):
+		var idx = SHRUMB_VARIANTS.size() + i
+		var tint = base_tints[idx % base_tints.size()]
+		SHRUMB_VARIANTS.append({
+			"name": base_names[idx % base_names.size()] + " SHRUMB",
+			"tint": tint,
+			"scale": Vector2(randf_range(0.7, 1.0), randf_range(0.7, 1.0)),
+			"speed_mod": randf_range(0.8, 1.3),
+		})
+
+
+func _apply_planet_world_profile(profile: Dictionary) -> void:
+	_planet_world_profile = profile.duplicate(true)
+	critter_count = max(1, _base_critter_count + int(_planet_world_profile.get("critter_count_bonus", 0)))
+	ambient_max_count = max(critter_count, _base_ambient_max_count + int(_planet_world_profile.get("ambient_max_count_bonus", 0)))
+	ambient_spawn_interval = max(3.0, _base_ambient_spawn_interval * float(_planet_world_profile.get("ambient_spawn_interval_scale", 1.0)))
+
+
+func _get_planet_profile_color(key: String, fallback: Color) -> Color:
+	var value: Variant = _planet_world_profile.get(key, fallback)
+	if value is Color:
+		return value as Color
+	return fallback

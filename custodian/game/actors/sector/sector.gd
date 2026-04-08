@@ -13,9 +13,21 @@ var max_power: float = 100.0
 var has_power: bool = true
 var power_cost: float = 10.0  # Power consumed per second
 var powered: bool = true  # Can be toggled on/off
+var min_power_required: float = 4.0
+var standard_power_required: float = 10.0
+var power_priority: int = 50
+var power_ratio: float = 1.0
+var power_tier: String = "NORMAL"
+var effective_output: float = 1.0
 
 const TILE_PX := 24.0
 const WALL_THICKNESS := 18.0
+const INTEGRITY_MODIFIER_BY_STATE := {
+	"operational": 1.0,
+	"damaged": 0.75,
+	"critical": 0.4,
+	"destroyed": 0.0,
+}
 
 @onready var health_bar = get_node_or_null("HealthBar")
 @onready var power_bar = get_node_or_null("PowerBar")
@@ -45,24 +57,37 @@ func _set_power_cost() -> void:
 	match sector_type:
 		"COMMAND":
 			power_cost = 20.0
+			power_priority = 100
 		"POWER":
 			power_cost = 5.0  # Generates power, costs little
+			power_priority = 95
 		"DEFENSE":
 			power_cost = 25.0
+			power_priority = 85
 		"ARCHIVE":
 			power_cost = 15.0
+			power_priority = 65
 		"STORAGE":
 			power_cost = 5.0
+			power_priority = 35
 		"FABRICATION":
 			power_cost = 30.0
+			power_priority = 75
 		"COMMS":
 			power_cost = 10.0
+			power_priority = 70
 		"HANGAR":
 			power_cost = 15.0
+			power_priority = 60
 		"TRANSIT":
 			power_cost = 8.0
+			power_priority = 45
 		_:
 			power_cost = 10.0
+			power_priority = 50
+	min_power_required = max(1.0, power_cost * 0.4)
+	standard_power_required = max(min_power_required, power_cost)
+	max_power = max(max_power, standard_power_required)
 
 
 func _build_geometry() -> void:
@@ -192,15 +217,50 @@ func heal(amount: float) -> void:
 
 
 func set_power(amount: float) -> void:
+	apply_power_allocation(amount)
+
+
+func apply_power_allocation(amount: float) -> void:
 	power = max(0.0, amount)
-	has_power = power > 0.0 and powered
+	var standard: float = max(standard_power_required, 0.001)
+	power_ratio = clamp(power / standard, 0.0, 1.0)
+	if not powered or is_dead():
+		power_tier = "OFFLINE"
+	elif power < min_power_required:
+		power_tier = "OFFLINE"
+	elif power < standard_power_required:
+		power_tier = "DEGRADED"
+	else:
+		power_tier = "NORMAL"
+	has_power = power_tier != "OFFLINE" and powered
+	effective_output = get_power_efficiency() * get_integrity_modifier()
 	update_visuals()
 
 
 func toggle_power() -> void:
 	powered = !powered
-	has_power = power > 0.0 and powered
+	apply_power_allocation(power)
 	update_visuals()
+
+
+func get_integrity_modifier() -> float:
+	return float(INTEGRITY_MODIFIER_BY_STATE.get(state, 0.0))
+
+
+func get_power_efficiency() -> float:
+	if not powered or is_dead():
+		return 0.0
+	if power < min_power_required:
+		return 0.0
+	return clamp(power / max(standard_power_required, 0.001), 0.0, 1.0)
+
+
+func get_effective_output() -> float:
+	return clamp(effective_output, 0.0, 1.0)
+
+
+func get_power_priority() -> int:
+	return power_priority
 
 
 func update_visuals() -> void:
@@ -219,16 +279,15 @@ func update_visuals() -> void:
 
 	# Update power bar
 	if power_bar:
-		power_bar.value = (power / max_power) * 100.0
-		var power_pct = power / max_power
+		power_bar.value = clamp((power / max(standard_power_required, 0.001)) * 100.0, 0.0, 100.0)
 		var power_style = power_bar.get_theme_stylebox("fill")
 		if power_style:
-			if power_pct > 0.5:
+			if power_tier == "NORMAL":
 				power_style.bg_color = Color(0.2, 0.5, 0.9)
-			elif power_pct > 0.2:
+			elif power_tier == "DEGRADED":
 				power_style.bg_color = Color(0.8, 0.6, 0.2)
 			else:
-				power_style.bg_color = Color(0.8, 0.2, 0.2)
+				power_style.bg_color = Color(0.45, 0.45, 0.45)
 
 	# Visual damage indication + power status
 	if visual:
@@ -240,13 +299,14 @@ func update_visuals() -> void:
 		else:
 			visual.modulate = Color(0.8, 0.2, 0.2)
 
-		if not has_power:
+		if power_tier == "OFFLINE":
 			visual.modulate = Color(0.2, 0.2, 0.2)
-		elif not powered:
-			visual.modulate = visual.modulate.darkened(0.5)
+		elif power_tier == "DEGRADED":
+			visual.modulate = visual.modulate.lerp(Color(0.9, 0.75, 0.35), 0.45)
 
 
 func _on_state_changed(_new_state: String) -> void:
+	apply_power_allocation(power)
 	update_visuals()
 
 
@@ -256,4 +316,6 @@ func _on_destroyed() -> void:
 	power = 0.0
 	powered = false
 	has_power = false
+	power_tier = "OFFLINE"
+	effective_output = 0.0
 	update_visuals()

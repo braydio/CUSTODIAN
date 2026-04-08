@@ -7,6 +7,7 @@
 size = Vector2(24, 24)
 
 [node name="Enemy" type="CharacterBody2D" unique_id=1666152458]
+z_index = 2
 script = ExtResource("1_enemy")
 enemy_name = "SCOUT"
 uses_directional_charset = true

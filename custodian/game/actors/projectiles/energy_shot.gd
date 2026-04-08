@@ -113,7 +113,7 @@ func _spawn_impact():
 	var fx = IMPACT_SPARK_SCENE.instantiate()
 	if fx == null:
 		return
-	fx.global_position = global_position
+	fx.global_position = _resolve_impact_position()
 	var parent = get_parent()
 	if parent:
 		parent.add_child(fx)
@@ -126,6 +126,10 @@ func _apply_game_feel(hit_body: Node, knockback: float) -> void:
 		var knockback_dir = hit_body.global_position.direction_to(global_position)
 		hit_body.velocity = knockback_dir * knockback
 		hit_body.move_and_slide()
+
+
+func _resolve_impact_position() -> Vector2:
+	return global_position - direction * max(4.0, bullet_radius * 2.0)
 
 
 func _apply_visual_style():

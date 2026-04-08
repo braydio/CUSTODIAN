@@ -19,7 +19,11 @@ func _ready() -> void:
 
 
 func get_power_output() -> float:
-	return power_output * float(EFFICIENCY_BY_STATE.get(state, 0.0))
+	if is_dead():
+		return 0.0
+	var health_pct: float = get_efficiency()
+	var output_ratio: float = clamp(0.2 + health_pct * 0.8, 0.0, 1.0)
+	return power_output * output_ratio
 
 
 func _on_state_changed(new_state: String) -> void:
