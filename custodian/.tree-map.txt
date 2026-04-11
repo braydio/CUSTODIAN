@@ -1,0 +1,373 @@
+Directory Tree Mapping
+[33mdocs/[0m
+├── ai_context
+│   ├── CONTEXT.md
+│   ├── CURRENT_STATE.md
+│   └── FILE_INDEX.md
+├── animations
+│   ├── animation_index_2.md
+│   ├── animation_index_3.md
+│   └── animation_index.md
+├── ARCHITECTURE.md
+├── ArchitectureOverview.md
+├── ASSET_LAYOUT_CONVENTION.md
+├── CodeStyleGuide.md
+├── cover.png
+├── cover.png.import
+├── GDSCRIPT_STANDARDS.md
+├── GODOT_MCP_SETUP.md
+├── Lore
+├── SCENE_HIERARCHY.md
+├── submissions
+│   ├── ASSET_LIBRARY_SUBMISSION.md
+│   └── ITCH_IO_SUBMISSION.md
+├── TERMINAL_VIEW_LOCAL_MODE.md
+├── TILEMAP_REFERENCE.md
+└── WORLD_SCALE_CONTRACT.md
+[33mgame/[0m
+├── actors
+│   ├── base
+│   │   ├── controllable_actor.gd
+│   │   ├── controllable_actor.gd.uid
+│   │   ├── light_buggy.tscn.txt
+│   │   ├── vehicle_base.gd
+│   │   ├── vehicle_base.gd.uid
+│   │   ├── vehicle_interaction.gd
+│   │   └── vehicle_interaction.gd.uid
+│   ├── custodian
+│   │   ├── custodian.gd
+│   │   ├── custodian.gd.uid
+│   │   └── custodian.tscn
+│   ├── defense
+│   │   ├── bullet.gd
+│   │   ├── bullet.gd.uid
+│   │   ├── bullet.tscn
+│   │   ├── turret.gd
+│   │   ├── turret.gd.uid
+│   │   └── turret.tscn
+│   ├── door
+│   │   ├── door.gd
+│   │   ├── door.gd.uid
+│   │   └── door.tscn
+│   ├── effects
+│   │   ├── blob_shadow.gd
+│   │   ├── blob_shadow.gd.uid
+│   │   ├── block_spark.tscn
+│   │   ├── floating_text.gd
+│   │   ├── floating_text.gd.uid
+│   │   ├── floating_text.tscn
+│   │   ├── impact_spark.gd
+│   │   ├── impact_spark.gd.uid
+│   │   ├── impact_spark.tscn
+│   │   ├── melee_swing.gd
+│   │   ├── melee_swing.gd.uid
+│   │   ├── melee_swing.tscn
+│   │   ├── muzzle_flash_frames.tres
+│   │   ├── muzzle_flash.gd
+│   │   ├── muzzle_flash.gd.uid
+│   │   ├── muzzle_flash.tscn
+│   │   ├── target_ring.gd
+│   │   ├── target_ring.gd.uid
+│   │   └── target_ring.tscn
+│   ├── enemies
+│   │   ├── ambient_scav_droid.tscn
+│   │   ├── ambient_shrumb.tscn
+│   │   ├── archive
+│   │   │   ├── enemy_drone_legacy.gd
+│   │   │   ├── enemy_drone_legacy.gd.uid
+│   │   │   ├── enemy_drone_legacy.tres
+│   │   │   └── README.md
+│   │   ├── enemy_design_01.aseprite
+│   │   ├── enemy.gd
+│   │   ├── enemy.gd.uid
+│   │   ├── enemy.tres
+│   │   ├── enemy.tscn
+│   │   ├── fast_drone.tscn
+│   │   └── heavy_drone.tscn
+│   ├── items
+│   │   ├── ammo_cache.gd
+│   │   ├── ammo_cache.gd.uid
+│   │   ├── ammo_cache.tscn
+│   │   ├── scrap_pickup.gd
+│   │   ├── scrap_pickup.gd.uid
+│   │   └── scrap_pickup.tscn
+│   ├── operator
+│   │   ├── animations
+│   │   │   ├── animation_resolver.gd
+│   │   │   ├── animation_resolver.gd.uid
+│   │   │   ├── animation_state_machine.gd
+│   │   │   ├── animation_state_machine.gd.uid
+│   │   │   ├── camera_shake.gd
+│   │   │   ├── camera_shake.gd.uid
+│   │   │   ├── custodian_node_setup.tscn
+│   │   │   ├── events
+│   │   │   │   └── README.md
+│   │   │   ├── README.md
+│   │   │   ├── states
+│   │   │   │   ├── animation_state.gd
+│   │   │   │   ├── animation_state.gd.uid
+│   │   │   │   ├── attack_dash_state.gd
+│   │   │   │   ├── attack_dash_state.gd.uid
+│   │   │   │   ├── attack_fast_state.gd
+│   │   │   │   ├── attack_fast_state.gd.uid
+│   │   │   │   ├── attack_heavy_state.gd
+│   │   │   │   ├── attack_heavy_state.gd.uid
+│   │   │   │   ├── block_state.gd
+│   │   │   │   ├── block_state.gd.uid
+│   │   │   │   ├── death_state.gd
+│   │   │   │   ├── death_state.gd.uid
+│   │   │   │   ├── equip_weapon_state.gd
+│   │   │   │   ├── equip_weapon_state.gd.uid
+│   │   │   │   ├── idle_state.gd
+│   │   │   │   ├── idle_state.gd.uid
+│   │   │   │   ├── sprint_state.gd
+│   │   │   │   ├── sprint_state.gd.uid
+│   │   │   │   ├── stagger_state.gd
+│   │   │   │   ├── stagger_state.gd.uid
+│   │   │   │   ├── walk_state.gd
+│   │   │   │   └── walk_state.gd.uid
+│   │   │   └── transitions
+│   │   │       └── README.md
+│   │   ├── carbine_rifle_mk1_definition.tres
+│   │   ├── fallen_star_katana_definition.tres
+│   │   ├── fallen_star_katana_frames.tres
+│   │   ├── operator.gd
+│   │   ├── operator.gd.uid
+│   │   ├── operator_melee_overlay_frames.tres
+│   │   ├── operator_ranged_fx_frames.tres
+│   │   ├── operator_runtime_frames.tres
+│   │   ├── operator.tscn
+│   │   ├── operator_weapon_definition.gd
+│   │   ├── operator_weapon_definition.gd.uid
+│   │   ├── operator_weapon_frames.tres
+│   │   ├── sword_night_flame_definition.tres
+│   │   └── sword_night_flame_frames.tres
+│   ├── projectiles
+│   │   ├── bullet.gd
+│   │   ├── bullet.gd.uid
+│   │   ├── bullet.tscn
+│   │   ├── energy_shot.gd
+│   │   ├── energy_shot.gd.uid
+│   │   ├── energy_shot.tscn
+│   │   ├── missile.gd
+│   │   ├── missile.gd.uid
+│   │   ├── missile.tscn
+│   │   ├── tracer.gd
+│   │   ├── tracer.gd.uid
+│   │   └── tracer.tscn
+│   ├── sector
+│   │   ├── command_post.gd
+│   │   ├── command_post.gd.uid
+│   │   ├── power_node.gd
+│   │   ├── power_node.gd.uid
+│   │   ├── sector.gd
+│   │   ├── sector.gd.uid
+│   │   ├── sector.tscn
+│   │   ├── turret_blaster.tscn
+│   │   ├── turret.gd
+│   │   ├── turret.gd.uid
+│   │   ├── turret_gunner.tscn
+│   │   ├── turret_repeater.tscn
+│   │   ├── turret_sniper.tscn
+│   │   ├── turret.tscn
+│   │   ├── wall.gd
+│   │   ├── wall.gd.uid
+│   │   └── wall.tscn
+│   ├── terminal
+│   │   ├── command_terminal.gd
+│   │   ├── command_terminal.gd.uid
+│   │   └── command_terminal.tscn
+│   ├── ui
+│   │   ├── damage_popup.gd
+│   │   ├── damage_popup.gd.uid
+│   │   ├── damage_popup.tscn
+│   │   ├── terminal_background.gd
+│   │   ├── terminal_background.gd.uid
+│   │   └── terminal_background.tscn
+│   └── wall
+│       ├── wall_blueprint.gd
+│       ├── wall_blueprint.gd.uid
+│       └── wall_blueprint.tscn
+├── rendering
+│   ├── effects
+│   └── shaders
+│       ├── shaderlib
+│       ├── terminal_crt.gdshader
+│       └── terminal_crt.gdshader.uid
+├── systems
+│   ├── ai
+│   ├── combat
+│   │   └── animation_states
+│   │       ├── hit_recoil_state.gd
+│   │       └── hit_recoil_state.gd.uid
+│   ├── core
+│   │   ├── data
+│   │   ├── player_controller.gd
+│   │   ├── player_controller.gd.uid
+│   │   ├── state
+│   │   │   ├── game_state.gd
+│   │   │   └── game_state.gd.uid
+│   │   └── systems
+│   │       ├── ambient_critter_manager.gd
+│   │       ├── ambient_critter_manager.gd.uid
+│   │       ├── assault_lane.gd
+│   │       ├── assault_lane.gd.uid
+│   │       ├── combat.gd
+│   │       ├── combat.gd.uid
+│   │       ├── contract_world_loader.gd
+│   │       ├── contract_world_loader.gd.uid
+│   │       ├── damageable.gd
+│   │       ├── damageable.gd.uid
+│   │       ├── deerflow_code_generator.gd
+│   │       ├── deerflow_code_generator.gd.uid
+│   │       ├── deerflow_event_designer.gd
+│   │       ├── deerflow_event_designer.gd.uid
+│   │       ├── deerflow_event_registry.gd
+│   │       ├── deerflow_event_registry.gd.uid
+│   │       ├── deerflow_orchestrator.gd
+│   │       ├── deerflow_orchestrator.gd.uid
+│   │       ├── deerflow_state_snapshot.gd
+│   │       ├── deerflow_state_snapshot.gd.uid
+│   │       ├── deerflow_validator.gd
+│   │       ├── deerflow_validator.gd.uid
+│   │       ├── enemy_director.gd
+│   │       ├── enemy_director.gd.uid
+│   │       ├── enemy_factory.gd
+│   │       ├── enemy_factory.gd.uid
+│   │       ├── game_feel_manager.gd
+│   │       ├── game_feel_manager.gd.uid
+│   │       ├── map_loader.gd
+│   │       ├── map_loader.gd.uid
+│   │       ├── navigation_system.gd
+│   │       ├── navigation_system.gd.uid
+│   │       ├── power.gd
+│   │       ├── power.gd.uid
+│   │       ├── shadow_system.gd
+│   │       ├── shadow_system.gd.uid
+│   │       ├── simulation.gd
+│   │       ├── simulation.gd.uid
+│   │       ├── spawn_node.gd
+│   │       ├── spawn_node.gd.uid
+│   │       ├── spawn_node.tscn
+│   │       ├── supply_drop_manager.gd
+│   │       ├── supply_drop_manager.gd.uid
+│   │       ├── threat_model.gd
+│   │       ├── threat_model.gd.uid
+│   │       ├── turret_placement.gd
+│   │       ├── turret_placement.gd.uid
+│   │       ├── wall_build_system.gd
+│   │       ├── wall_build_system.gd.uid
+│   │       ├── wall_build_system.tscn
+│   │       ├── wall_placer.gd
+│   │       ├── wall_placer.gd.uid
+│   │       ├── wall_placer.tscn
+│   │       ├── wave_manager.gd
+│   │       ├── wave_manager.gd.uid
+│   │       ├── weapon_data_loader.gd
+│   │       ├── weapon_data_loader.gd.uid
+│   │       ├── weapon_definition_factory.gd
+│   │       └── weapon_definition_factory.gd.uid
+│   ├── power
+│   ├── repair
+│   └── turret
+├── ui
+│   ├── hud
+│   │   ├── pause_ui.gd
+│   │   ├── pause_ui.gd.uid
+│   │   ├── ui.gd
+│   │   └── ui.gd.uid
+│   └── terminal
+└── world
+    ├── camera.gd
+    ├── camera.gd.uid
+    ├── chunk
+    │   └── chunk
+    │       ├── cel_chunk.gd
+    │       ├── cel_chunk.gd.uid
+    │       ├── cel_extra_chunk.gd
+    │       ├── cel_extra_chunk.gd.uid
+    │       ├── color_profile_chunk.gd
+    │       ├── color_profile_chunk.gd.uid
+    │       ├── external_files_chunk.gd
+    │       ├── external_files_chunk.gd.uid
+    │       ├── layer_chunk.gd
+    │       ├── layer_chunk.gd.uid
+    │       ├── mask_chunk.gd
+    │       ├── mask_chunk.gd.uid
+    │       ├── old_palette_chunk.gd
+    │       ├── old_palette_chunk.gd.uid
+    │       ├── palette_chunk.gd
+    │       ├── palette_chunk.gd.uid
+    │       ├── slice_chunk.gd
+    │       ├── slice_chunk.gd.uid
+    │       ├── tags_chunk.gd
+    │       ├── tags_chunk.gd.uid
+    │       ├── tileset_chunk.gd
+    │       ├── tileset_chunk.gd.uid
+    │       ├── user_data_chunk.gd
+    │       └── user_data_chunk.gd.uid
+    ├── compound
+    │   └── rooms
+    │       ├── graphs
+    │       │   └── default_compound.json
+    │       ├── layout_assembler.gd
+    │       ├── layout_assembler.gd.uid
+    │       ├── README.md
+    │       ├── room_graph.gd
+    │       ├── room_graph.gd.uid
+    │       ├── room_loader.gd
+    │       ├── room_loader.gd.uid
+    │       └── templates
+    │           └── command_post.tmj
+    ├── layouts
+    ├── maps
+    ├── navigation
+    ├── procgen
+    │   ├── assets
+    │   │   ├── procgen.png
+    │   │   ├── procgen.png.import
+    │   │   ├── visualizer.png
+    │   │   └── visualizer.png.import
+    │   ├── custodian_contract_map.gd
+    │   ├── custodian_contract_map.gd.uid
+    │   ├── custodian_contract_map.tscn
+    │   ├── foliage_occlusion_bubble.gdshader
+    │   ├── foliage_occlusion_bubble.gdshader.uid
+    │   ├── generator
+    │   │   ├── automaton.gd
+    │   │   ├── automaton.gd.uid
+    │   │   ├── bsp.gd
+    │   │   ├── bsp.gd.uid
+    │   │   ├── context.gd
+    │   │   ├── context.gd.uid
+    │   │   ├── generator.gd
+    │   │   ├── generator.gd.uid
+    │   │   ├── router.gd
+    │   │   └── router.gd.uid
+    │   ├── plugin.cfg
+    │   ├── plugin.gd
+    │   ├── plugin.gd.uid
+    │   ├── procgen.gd
+    │   ├── procgen.gd.uid
+    │   ├── proc_gen_map_grass_mixed_preview.tscn
+    │   ├── proc_gen_map_grass_preview.tscn
+    │   ├── proc_gen_map_stone_mixed_preview.tscn
+    │   ├── proc_gen_map_stone_preview.tscn
+    │   ├── proc_gen_map.tscn
+    │   ├── proc_gen_tilemap.gd
+    │   ├── proc_gen_tilemap.gd.uid
+    │   ├── proc_gen.tscn
+    │   ├── runtime_wall_segment.gd
+    │   ├── runtime_wall_segment.gd.uid
+    │   ├── visualizer.gd
+    │   └── visualizer.gd.uid
+    ├── sectors
+    │   └── sectors
+    ├── tilemaps
+    │   ├── test_map_32x32.tscn
+    │   ├── test_map.tscn
+    │   └── tilemap.json
+    └── world_manager
+[33mscenes/[0m
+├── game.tscn
+└── test_map.tscn
