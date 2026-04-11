@@ -581,54 +581,33 @@ func reset_zoom():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 func set_runtime_map(map_instance: Node) -> void:
+	if not is_in_group("camera"):
+		add_to_group("camera")
+	if operator_ref == null or not is_instance_valid(operator_ref):
+		operator_ref = get_node_or_null("/root/GameRoot/World/Operator")
 	_runtime_map = map_instance
 	_rebuild_bounds()
 	on_sector_entry()
 	if follow_enabled and operator_ref:
-		global_position = operator_ref.global_position
+		snap_to_player_spawn(operator_ref.global_position)
+
+
+func snap_to_player_spawn(spawn_position: Vector2) -> void:
+	global_position = spawn_position + player_offset
+	_last_position = spawn_position
+	_velocity = Vector2.ZERO
+	_lookahead = Vector2.ZERO
+	_current_bob = 0.0
+	_target_bob = 0.0
+	_threat_offset = Vector2.ZERO
+	_push_offset = Vector2.ZERO
+	_shake_offset = Vector2.ZERO
 
 
 func _rebuild_bounds():
-	if _rebuild_bounds_from_procgen():
-		return
-	
-	var sectors = get_node_or_null("/root/GameRoot/World/Sectors")
-	if sectors == null:
-		return
-	
-	var min_point = Vector2(INF, INF)
-	var max_point = Vector2(-INF, -INF)
-	var found_any := false
-	
-	for child in sectors.get_children():
-		if not (child is Node2D):
-			continue
-		var floor_node := child.get_node_or_null("Floor")
-		if floor_node == null:
-			continue
-		var left = floor_node.offset_left
-		var top = floor_node.offset_top
-		var right = floor_node.offset_right
-		var bottom = floor_node.offset_bottom
-		var corners = [
-			child.to_global(Vector2(left, top)),
-			child.to_global(Vector2(right, top)),
-			child.to_global(Vector2(left, bottom)),
-			child.to_global(Vector2(right, bottom)),
-		]
-		for p in corners:
-			min_point.x = min(min_point.x, p.x)
-			min_point.y = min(min_point.y, p.y)
-			max_point.x = max(max_point.x, p.x)
-			max_point.y = max(max_point.y, p.y)
-			found_any = true
-	
-	if not found_any:
-		return
-	
-	min_point -= Vector2(map_padding, map_padding)
-	max_point += Vector2(map_padding, map_padding)
-	map_bounds = Rect2(min_point, max_point - min_point)
+	if not _rebuild_bounds_from_procgen():
+		map_bounds = Rect2()
+		push_warning("[Camera] Procgen bounds rebuild failed; disabling camera clamp for this session")
 
 
 func _rebuild_bounds_from_procgen() -> bool:

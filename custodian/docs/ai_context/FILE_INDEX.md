@@ -29,6 +29,8 @@ Last updated: 2026-04-08
 - `custodian/docs/SCENE_HIERARCHY.md` — scene organization reference
 - `custodian/docs/GDSCRIPT_STANDARDS.md` — scripting standards
 - `design/` — active Godot feature/system implementation specs
+- `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md` — canonical lore, faction, and game-protocol authority
+- `design/03_content/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target
 
 ## Legacy Reference Only
 

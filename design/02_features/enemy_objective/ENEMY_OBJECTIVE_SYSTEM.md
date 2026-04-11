@@ -3,6 +3,8 @@
 **Created:** 2026-03-05
 **Status:** ✅ IMPLEMENTED
 **Depends On:** Wave Spawning System
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -11,6 +13,8 @@
 Enemies currently just chase the player. This system gives them **objectives** — they target structures (power nodes, turrets, command post) instead of solely chasing the player.
 
 This creates the core defense gameplay: enemies attack your base, not just you.
+
+This file defines base target-priority behavior. For future ideology-driven target selection and behavior-first lore delivery, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 
@@ -43,6 +47,16 @@ Objective selection is now only one part of enemy behavior. Runtime enemies may 
 - regrouping briefly after heavy damage
 
 This keeps objective-driven enemies from reading as constant full-commit swarm units.
+
+### Future-Facing Content Rule
+
+Enemy objectives should eventually become part of the game’s storytelling surface. What an enemy prioritizes is evidence of worldview. Even before full faction systems exist, objective logic should stay extensible enough to support:
+
+- system sabotage
+- archive seizure
+- relay corruption
+- classification or desecration behavior
+- tactical avoidance of taboo or sealed spaces
 
 ---
 

@@ -4,6 +4,8 @@
 **Status:** design
 **Created:** 2026-04-06
 **Author:** PAI-OpenCode
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -12,6 +14,8 @@
 The Command Terminal is the player's primary interface for strategic decision-making, power routing, defense management, and campaign oversight. It embodies the core game doctrine: information asymmetry between Command Center and field play, power as a routing constraint, and knowledge preservation over raw combat spectacle.
 
 This specification supersedes the earlier `COMMAND_TERMINAL_UI.md` concept and `ROADMAP_COMMAND_TERMINAL.md` roadmap, incorporating the full four-zone layout, twelve-page structure, and mode-dependent behavior.
+
+This file is the implementation authority for terminal structure. For player-facing lore tone, confidence language, archive semantics, and the rule that systems should speak in procedure rather than exposition, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 
@@ -24,6 +28,13 @@ This specification supersedes the earlier `COMMAND_TERMINAL_UI.md` concept and `
 | Sectorized defense | Every page preserves sector awareness |
 | Deterministic language | STATUS output follows canonical format |
 | Loss of clarity | Comms degradation shown as omission, not weakness |
+
+### Lore / Language Rules
+
+- The terminal should present **confidence-bearing interpretation**, not omniscient truth.
+- Archive and recon surfaces should prefer terms like `Approximate`, `High Confidence`, `Contested`, `Corrupted`, and `Sealed`.
+- Machine and transcript language should remain denotative and procedural.
+- The terminal should reveal the world through operational evidence, not lore-dump prose.
 
 ---
 
@@ -181,6 +192,8 @@ CUSTODIAN // COMMAND LINK | MODE: COMMAND | FIDELITY: FULL | T: 18 | THREAT: HIG
 - DEGRADED: generalized counts, posture targets hidden
 - FRAGMENTED: activity replaces certainty
 - LOST: no usable network truth
+
+When archive/recon/contract data is surfaced, fidelity and confidence should interact. A line can be structurally present but still marked as contested, approximate, or corrupted.
 
 ---
 

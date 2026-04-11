@@ -1,7 +1,7 @@
 # Runtime World & Camera Stabilization — Implementation Plan
 
 **Feature:** Runtime World & Camera Stabilization
-**Last Updated:** 2026-03-27
+**Last Updated:** 2026-04-10
 
 ---
 
@@ -181,11 +181,11 @@ func _process(delta):
 
 ## Implementation Order
 
-1. **ContractWorldLoader** — Add navigation rebuild call
-2. **Camera** — Add `snap_to_player_spawn()` method
-3. **Camera** — Force procgen bounds, remove legacy fallback
-4. **Test** — Boot game, verify camera behavior
-5. **Debug** — If aim wrong, trace through `get_global_mouse_position()` → camera transform
+1. **Complete** — `ContractWorldLoader` now snaps camera and explicitly rebinds navigation tilemaps
+2. **Complete** — `Camera` now has `snap_to_player_spawn()` and resets motion state on handoff
+3. **Complete** — `Camera` now uses procgen-only bounds with unclamped fallback on failure
+4. **Complete** — `Operator` aim path now resolves through the active camera first
+5. **Next** — Boot game and verify camera, aim, anchors, and navigation in one procgen session
 
 ---
 
@@ -193,8 +193,10 @@ func _process(delta):
 
 | File | Changes |
 |------|---------|
-| `custodian/core/systems/contract_world_loader.gd` | Add `_rebuild_navigation()`, call in handoff |
-| `custodian/scenes/camera.gd | Add `snap_to_player_spawn()`, force procgen bounds |
+| `custodian/game/systems/core/systems/contract_world_loader.gd` | Camera snap on handoff, explicit navigation tilemap rebinding, active map accessor, group registration |
+| `custodian/game/world/camera.gd` | Add `snap_to_player_spawn()`, force procgen-only bounds, reassert camera group |
+| `custodian/game/systems/core/systems/navigation_system.gd` | Explicit runtime tilemap setter, rebuild state reset |
+| `custodian/game/actors/operator/operator.gd` | Camera-authoritative mouse aim lookup |
 
 ---
 

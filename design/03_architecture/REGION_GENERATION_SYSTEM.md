@@ -8,7 +8,8 @@
 **Depends On:** Runtime World & Camera Stabilization, Hub System (Meta Progression), World Transition System
 **Blocks:** Campaign Flow & Game Loop, Integration Contract, Biome Runtime Expansion
 **Runtime Target:** Godot 4.x (`custodian/`)
-**Last Updated:** 2026-03-27
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -28,6 +29,8 @@ It must preserve four already-established truths:
 2. the active runtime is Godot-authoritative and fixed-step deterministic 
 3. contract/procgen world promotion is already part of the runtime baseline 
 4. designer-authored room-template hybrid generation is already an active implementation path via Edgar/Tiled room templates, not just raw noise fields 
+
+This file is the **region-construction authority**. For the fiction meaning of Contracts, legibility classes, factions, procedural lore stack, and environmental storytelling rules, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 
@@ -68,6 +71,8 @@ The player must be able to understand the navigable shape, probable objective di
 
 Biome, threat profile, victory type, and scenario archetype must materially affect structure.
 
+They should also affect what the world appears to have been, how it failed, how it was reused, and what false local reading dominates it.
+
 ### 3.4 Hybrid
 
 Use authored room templates where they improve structure and identity; use procedural assembly where they improve replayability. The existing Edgar room-template direction is the correct backbone for this. 
@@ -79,6 +84,8 @@ Regions are not persistent homesteads or revisitable open worlds. They exist to 
 ### 3.6 Systemic
 
 Objectives, hazards, extraction, enemy ingress, and encounter pacing must come from the generation model, not be manually placed one by one.
+
+The region should feel like a recoverable place with evidence, not a neutral arena with enemies dropped into it.
 
 ---
 
@@ -120,6 +127,8 @@ Only then should it assemble geometry, tiles, hazards, and entities.
 
 If you skip the graph layer and go straight to tile noise or ad hoc room scattering, regions will feel shapeless.
 
+Second core rule: a region should encode **procedural evidence**, not merely shape. Generation should preserve room for original function, collapse pattern, reuse pattern, present ideology, surviving truth, and false local interpretation.
+
 ---
 
 ## 6. Relationship to Existing Systems
@@ -160,6 +169,14 @@ Turn abstract graph nodes into room templates, corridor chains, terrain clusters
 
 Apply biome tile palette, environmental hazards, structural dressing, visibility conditions, and encounter semantics.
 
+This pass should also carry first-pass lore-bearing identity through:
+
+- provenance tags
+- signage/dressing families
+- reuse markers
+- procedural tableau opportunities
+- faction-compatible machine language
+
 ### 7.5 Place Objectives
 
 Spawn primary and optional objectives in structurally appropriate locations.
@@ -171,6 +188,31 @@ Determine spawn zones, pressure lanes, patrol basins, ambush pockets, and escala
 ### 7.7 Export Runtime Payload
 
 Produce a fully-baked region world or a structured payload that the runtime can instantiate into the campaign world.
+
+That payload should reserve fields for lore-bearing generation metadata even if the first runtime implementation only consumes a subset.
+
+---
+
+## 7A. Content-Facing Generation Rules
+
+Every generated region should eventually be able to answer:
+
+- What was this place originally for?
+- How did it collapse or become severed from its prior function?
+- Who uses it now?
+- What is actually true here?
+- What do current occupants believe instead?
+
+For first-pass implementation, the generator should at minimum support tags or derived fields for:
+
+- `original_function`
+- `collapse_mode`
+- `post_collapse_reuse`
+- `present_ideology`
+- `surviving_truth`
+- `false_local_interpretation`
+
+These do not need to produce full authored prose. They should drive environment dressing, inspect pools, encounter posture, and machine-language snippets.
 
 ---
 
@@ -1402,4 +1444,3 @@ That is the minimum viable Region Generation System.
 * [5] Compound Tile System
 * [6] Campaign Flow & Game Loop
 * [7] Integration Contract (Glue Layer)
-

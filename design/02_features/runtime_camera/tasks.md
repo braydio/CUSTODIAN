@@ -1,7 +1,7 @@
 # Runtime World & Camera Stabilization — Tasks
 
 **Feature:** Runtime World & Camera Stabilization
-**Last Updated:** 2026-03-27
+**Last Updated:** 2026-04-10
 
 ---
 
@@ -168,11 +168,18 @@ All tasks T-001 through T-008 must pass for feature complete.
 
 | Task | Description | Status |
 |------|-------------|--------|
-| T-001 | Navigation rebuild in ContractWorldLoader | ⬜ |
-| T-002 | Camera snap method | ⬜ |
-| T-003 | Force procgen bounds | ⬜ |
-| T-004 | Camera group registration | ⬜ |
+| T-001 | Navigation rebuild in ContractWorldLoader | ✅ |
+| T-002 | Camera snap method | ✅ |
+| T-003 | Force procgen bounds | ✅ |
+| T-004 | Camera group registration | ✅ |
 | T-005 | Boot test — Camera behavior | ⬜ |
 | T-006 | Boot test — Mouse aim | ⬜ |
 | T-007 | Boot test — Terminal and anchors | ⬜ |
 | T-008 | Boot test — Navigation | ⬜ |
+
+## Runtime Update — 2026-04-10
+
+- `T-001` is implemented in `custodian/game/systems/core/systems/contract_world_loader.gd`
+- `T-002` through `T-004` are implemented in `custodian/game/world/camera.gd`
+- Mouse aim now also routes through the active world camera in `custodian/game/actors/operator/operator.gd`
+- Procgen streaming navigation rebuilds are now batched in `custodian/game/world/procgen/proc_gen_tilemap.gd` instead of firing every reveal frame

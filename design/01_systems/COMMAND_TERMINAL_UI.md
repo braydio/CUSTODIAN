@@ -1,3 +1,27 @@
+# CUSTODIAN Command Terminal UI Concept Archive
+
+**Status:** concept archive  
+**Last Updated:** 2026-04-08  
+**Implementation Authority:** `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`  
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+
+This file is preserved as an inspiration/concept sheet, not the current implementation spec.
+
+Use it for:
+
+- rough layout inspiration
+- panel composition ideas
+- dual-scale presentation intuition
+
+Do **not** use it as the authoritative source for:
+
+- player-facing language
+- archive/recon semantics
+- confidence wording
+- contract fiction
+- implementation contracts
+
+Those now live in the canonical docs above.
 
 Here’s a **high-fidelity concept of your CUSTODIAN command terminal UI**, based on what you described and aligned with your Godot-first architecture (render separated from simulation per your repo doctrine ).
 
@@ -53,6 +77,8 @@ This is your **legacy terminal evolved into UI form**.
   * Red = combat-critical
 * Supports **click-to-focus event → highlights map sector**
 
+**Canon note:** feed language should remain procedural and denotative, not conversational or lore-dump heavy.
+
 ---
 
 ### 3. **Center Panel — Contracted Planet (Strategic Layer)**
@@ -76,6 +102,8 @@ This is your **high-level render**, not gameplay space.
   * Global integrity
   * Relay network status
   * Incoming assault origin
+
+**Canon note:** this view should reinforce contract/world identity and context recovery, not just act as decorative sci-fi spectacle.
 
 ---
 
@@ -189,6 +217,8 @@ You need to choose:
 * Commands queue into tick system
 
 👉 Given your deterministic sim goals, **B is the correct choice**
+
+This is no longer an open design question; treat buffered execution as the default direction unless a later explicit doctrine change overturns it.
 
 Below is a **complete, drop-in `.tscn` layout** for your CUSTODIAN command terminal.
 It includes:

@@ -4,6 +4,8 @@
 **Status:** In Progress  
 **Created:** 2026-03-26  
 **Depends On:** `design/EDGAR_ROOM_TEMPLATE_SYSTEM.md`
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ## Purpose
 
@@ -13,6 +15,8 @@ Add a stable authored-room pipeline on top of the current Edgar/Tiled room-templ
 - place authored markers like spawns, terminals, and stairs
 - export to a format the Godot runtime actually supports
 - preserve authored metadata through room loading and layout assembly
+
+This pipeline should remain extensible enough to carry lore-bearing room metadata, not only collision/spawn utility.
 
 ## Supported Tiled Format
 
@@ -75,6 +79,10 @@ Supported map properties:
 | `doors_south` | string/array | south door definitions |
 | `doors_east` | string/array | east door definitions |
 | `doors_west` | string/array | west door definitions |
+| `original_function` | string | pre-collapse function of the room/site |
+| `collapse_mode` | string | how the room/site failed or was severed |
+| `post_collapse_reuse` | string | how later occupants repurposed it |
+| `present_ideology` | string | current occupant worldview/faction logic |
 
 Door properties should use JSON arrays:
 
@@ -150,3 +158,4 @@ Layout assembly should carry these fields forward into placed room instances.
 - use `player_spawn` and `terminal` from authored templates when present
 - add authored stair transitions between separate room/floor maps
 - optionally support authored sector markers and loot anchors later
+- add first-pass consumption of provenance/reuse metadata for dressing and inspect text pools

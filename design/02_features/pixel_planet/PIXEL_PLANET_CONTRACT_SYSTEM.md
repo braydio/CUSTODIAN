@@ -3,6 +3,8 @@
 Status: in progress
 Owner: procgen/runtime
 Runtime target: Godot 4 (`custodian/`)
+Last Updated: 2026-04-08
+Content Canon Authority: `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ## Purpose
 
@@ -10,6 +12,8 @@ Pair PixelPlanets with `procgen/proc_gen_map` so one deterministic contract seed
 
 1. CUSTODIAN contracted planet
 2. CUSTODIAN map instance (plus level data)
+
+This file is the planet/runtime coupling authority. For content-facing world identity, procedural lore stack targets, and the rule that the contracted world should feel like a recoverable place rather than a generic procgen slice, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ## Integration Approach
 
@@ -64,6 +68,18 @@ Payload structure:
   - `map_seed`
   - `instance`
   - `level_data`
+
+### Reserved Future World-Identity Payload
+
+As procgen and campaign content deepen, `world_profile` / `level_data` should reserve room for lore-bearing identity fields such as:
+
+- `original_function`
+- `collapse_mode`
+- `post_collapse_reuse`
+- `present_ideology`
+- `world_legibility_class`
+
+These fields are not required to be fully implemented yet, but planet-contract generation should stay extensible enough to carry them.
 
 ## Determinism
 
@@ -152,6 +168,13 @@ Current intended consequences:
 - foliage density and fruit spawning change by planet
 - floor / wall / foliage tint shifts follow the selected planet palette
 - ambient critter tint / pacing can read from the same profile
+
+Next intended consequences:
+
+- signage and structural dressing families can vary by world identity
+- inspect text pools can inherit provenance/reuse context
+- threat selection can better match present ideology and legibility class
+- machine-language snippets can reflect original function and collapse history
 
 That keeps the contract preview, promoted map, and runtime ambience bound to one deterministic source instead of drifting into separate systems.
 

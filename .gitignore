@@ -97,3 +97,4 @@ coverage/
 .coverage
 htmlcov/
 .pytest_cache/
+.omx/

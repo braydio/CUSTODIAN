@@ -3,6 +3,8 @@
 **Created:** 2026-03-05
 **Status:** In Progress (Runtime Slice + Telemetry Implemented)
 **Depends On:** Wave Spawning System
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -14,6 +16,8 @@ The Enemy Behavior Director sits above the WaveManager and Enemy AI, acting as t
 - What their objectives are
 
 This mirrors the legacy Python assault orchestration layer, which modeled lanes, objectives, and escalation. The Godot implementation borrows these core patterns but is adapted for native architecture.
+
+This file is the runtime behavior authority for assault orchestration. For faction ideology, behavior-first lore delivery, and the rule that enemy activity should reveal belief before dialogue does, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ### Runtime Slice Delivered (2026-03-08 to 2026-03-10)
 
@@ -34,6 +38,16 @@ This mirrors the legacy Python assault orchestration layer, which modeled lanes,
 - Director budget application now scales raw threat down before composition generation.
 - This is an intentional move away from "wave defense density" and toward "base-builder under intermittent assault."
 - Runtime enemies now layer a local assault state machine on top of objective targeting: `STAGING -> PROBING -> COMMIT -> REGROUP`.
+
+### Content-Facing Rule
+
+Enemy plans should eventually reflect more than target efficiency. They should also communicate:
+
+- what a force believes is worth destroying
+- what systems it strips, avoids, desecrates, repairs, or claims
+- whether it is trying to classify, jam, seize, purge, or merely overwhelm
+
+The director should remain extensible enough to support ideology-conditioned objective weighting later.
 
 ---
 

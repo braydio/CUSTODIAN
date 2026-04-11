@@ -19,6 +19,9 @@ walls_source_id = 11
 alternate_floor_source_ids = Array[int]([9])
 full_grid_floor_source_ids = Array[int]([9, 10])
 full_grid_floor_dimensions = Vector2i(8, 8)
+show_base_wall_tiles = false
+collision_only_on_new_ruined_wall_tiles = true
+show_runtime_wall_collision_debug = true
 
 [node name="ProcGen" type="Node" parent="." unique_id=206276379 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region")]
 script = ExtResource("1")
@@ -31,6 +34,9 @@ walls_source_id = 11
 alternate_floor_source_ids = Array[int]([9])
 full_grid_floor_source_ids = Array[int]([9, 10])
 full_grid_floor_dimensions = Vector2i(8, 8)
+show_base_wall_tiles = false
+collision_only_on_new_ruined_wall_tiles = true
+show_runtime_wall_collision_debug = true
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=2086078231]
 visible = true

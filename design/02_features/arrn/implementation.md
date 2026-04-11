@@ -4,13 +4,16 @@
 **Feature:** Automated Relay Routing Network (ARRN)  
 **Created:** 2026-03-27  
 **Status:** 🔴 In Progress  
-**Last Updated:** 2026-03-27
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
 ## Overview
 
-The **Automated Relay Routing Network (ARRN)** is a strategic progression system where players discover, stabilize, and sync with remote relay stations to unlock gameplay benefits and narrative lore.
+The **Automated Relay Routing Network (ARRN)** is a strategic progression system where players discover, stabilize, and sync with remote relay stations to unlock gameplay benefits, interpretive leverage, and world-lore recovery.
+
+In fiction, ARRN is not just a communications network. It is the surviving field-facing relay spine of the old continuity lattice: an array of **epistemic anchors** that helps the Hub restore context density, compare fragments, and recover confidence-bearing interpretation.
 
 ### Core Loop
 
@@ -30,6 +33,13 @@ The **Automated Relay Routing Network (ARRN)** is a strategic progression system
 - **Stabilize:** Player travels to relay sector, initiates stabilization task
 - **Sync:** Return to COMMAND center, sync packets → knowledge progression
 - **Benefits:** Each knowledge level unlocks permanent bonuses
+
+### Fiction / Presentation Rules
+
+- ARRN should be presented as restoring trusted linkage and comparison capacity, not merely “making the signal better.”
+- Syncing packets should be framed as recovering context, not as generic XP conversion.
+- Player-facing text should preserve the distinction between **signal recovery** and **truth recovery**.
+- Weak or dormant relays should reduce confidence and fidelity, not just convenience.
 
 ---
 
@@ -117,6 +127,8 @@ const KNOWLEDGE_DRIFT_PERIOD: int = 40
 | 6 | SIGNAL_RECONSTRUCTION_II | Advanced signal recovery (improves LOST/FRAGMENTED) |
 | 7 | ARCHIVAL_SYNTHESIS | Full network mastery, halves dormancy pressure |
 
+These unlocks should be treated fictionally as increased interpretive capability and continuity recovery, not as abstract level-ups.
+
 ### Fidelity Interaction
 
 The ARRN directly affects the **comms fidelity** system:
@@ -127,6 +139,8 @@ The ARRN directly affects the **comms fidelity** system:
 | FRAGMENTED | SIGNAL_RECONSTRUCTION_II | → DEGRADED |
 | DEGRADED | SIGNAL_RECONSTRUCTION_I | → FULL |
 | FULL | — | No change |
+
+Important fiction guardrail: improved fidelity does **not** mean the system becomes omniscient. It means the Hub can compare, correlate, and judge with higher confidence.
 
 ---
 

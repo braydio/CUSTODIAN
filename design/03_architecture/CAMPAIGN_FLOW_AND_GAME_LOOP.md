@@ -8,7 +8,8 @@
 **Depends On:** Runtime World & Camera Stabilization, Hub System (Meta Progression), World Transition System, Region Generation System, Compound Tile System
 **Blocks:** Integration Contract, end-to-end playable campaign loop
 **Runtime Target:** Godot 4.x (`custodian/`)
-**Last Updated:** 2026-03-27
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -47,6 +48,8 @@ This is the document that answers:
 - how does failure propagate?
 - what actually constitutes one “run,” one “campaign,” one “cycle,” and one “return”?
 
+This file is the **macro-loop authority**. For the fiction meaning of Contracts, Campaigns, interpretive collapse, faction worldview, and lore-delivery constraints, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+
 ---
 
 ## 2. Why This System Exists
@@ -79,6 +82,8 @@ The Campaign Flow and Game Loop should satisfy the following design goals.
 
 The persistent Hub and transient Campaign World must remain distinct. A campaign is instantiated from a scenario, resolved into an outcome, and then discarded, while the Hub persists and mutates.
 
+In fiction terms, this means a campaign is a bounded operational world under Contract, not a colony seed or permanent territorial claim.
+
 ### 3.2 Make the Compound Matter
 
 The compound is not just a menu backdrop. It is the embodied preparation and return layer, a physical place where the player orients, accesses the terminal, reads campaign state, performs prep interactions, and re-enters the strategic layer.
@@ -86,6 +91,8 @@ The compound is not just a menu backdrop. It is the embodied preparation and ret
 ### 3.3 Make Missions Structurally Different
 
 Deployment should feel like leaving home for a temporary but consequential operational world.
+
+The player is not leaving for “another match.” The player is leaving to perform a bounded historical intervention whose consequences will be absorbed into the Hub’s record.
 
 ### 3.4 Support Partial Success and Failure
 
@@ -134,6 +141,8 @@ The game loop is:
 
 Every major feature should be locatable somewhere inside that loop.
 
+The word **Interpretation** is deliberate. The loop is not only about combat success; it is about deciding what can be trusted, recovered, correlated, sealed, or lost.
+
 If a feature cannot be placed in that sequence, it is likely underspecified or belongs in a different system.
 
 ---
@@ -153,6 +162,8 @@ The compound is the lived-in, immediate home context where the player physically
 ### 6.3 Transient Operational Layer: Campaign Region
 
 A campaign region is an instantiated world built from a chosen scenario, played through, resolved, and destroyed.
+
+Campaign regions should be authored and generated as places with recoverable evidence, not as abstract combat arenas. This should remain compatible with the procedural lore stack in `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 The Campaign Flow system must connect all three without blurring them.
 
@@ -376,6 +387,8 @@ The first implementation should route boot through the campaign flow manager rat
 ### 13.2 Important Rule
 
 The game should not boot directly into mission combat by default once campaign flow is active. The earlier pre-assault walkthrough already identifies the need to move away from “boot straight into wave defense” and toward a contract/briefing/prep flow.
+
+This is also a tone requirement: the production game must not present itself as only a wave-defense loop once campaign flow is active.
 
 ---
 

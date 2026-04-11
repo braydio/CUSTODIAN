@@ -51,10 +51,16 @@ func _initialize_navigation() -> void:
 		return
 	
 	astar = AStar2D.new()
+	_walkable_tiles.clear()
 	_build_navigation_graph()
 	_initialized = true
 	navigation_ready.emit()
 	print("[NavigationSystem] Initialized with ", _walkable_tiles.size(), " walkable tiles")
+
+
+func set_runtime_tilemaps(p_floor_tilemap: TileMapLayer, p_walls_tilemap: TileMapLayer) -> void:
+	floor_tilemap = p_floor_tilemap
+	walls_tilemap = p_walls_tilemap
 
 
 func _find_floor_tilemap() -> TileMapLayer:
@@ -248,5 +254,6 @@ func rebuild() -> void:
 	if astar != null:
 		astar.clear()
 	_walkable_tiles.clear()
+	_initialized = false
 	_initialize_navigation()
 	navigation_dirty.emit()

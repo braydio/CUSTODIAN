@@ -8,7 +8,8 @@
 **Depends On:** Runtime World & Camera Stabilization
 **Blocks:** Campaign Flow, World Transition, Region Generation, Integration Contract
 **Runtime Target:** Godot 4.x (`custodian/`)
-**Last Updated:** 2026-03-27
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -17,6 +18,20 @@
 Define the Hub as the persistent strategic and epistemic layer that exists across campaigns. The Hub is not a menu, not a generic metagame wrapper, and not a power-escalation system. It is the persistent historical layer that survives campaign disposal, surfaces scenario proposals, mutates from campaign outcomes, and accumulates knowledge, interpretation, and irreversible loss. The canonical split is already established: Hub is persistent, Campaign World is transient, and accepting a scenario instantiates a disposable campaign state that returns a mutation back into the Hub on win, loss, or abandonment.  
 
 This file locks the Hub as a **knowledge-state machine** rather than a resource economy. The Hub tracks what is known, suspected, lost, and pattern-repeated. Persistent rewards are not raw buffs; they are interpretive leverage that changes what can be understood, surfaced, or chosen later. 
+
+This file is the **system authority** for Hub structure and behavior. For fiction semantics, tone, faction lore, Great Severance framing, and player-facing interpretive language, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+
+---
+
+## 1A. Canon Alignment
+
+The Hub implementation must remain aligned with the following content-facing rules:
+
+- The Hub is a surviving adjudication layer, not a generic mission board.
+- Contracts are bounded historical interventions, not ordinary quests.
+- Campaigns are transient operational worlds whose outcomes mutate the historical record.
+- Hub outputs should present confidence-bearing interpretation rather than omniscient fact when surfaced to the player.
+- Archive loss is existential because loss of context can permanently narrow what reality can still be responsibly claimed.
 
 ---
 
@@ -38,6 +53,8 @@ The Hub doc must start by locking terminology, because the entire campaign layer
 * **Scenario**: a generated configuration bundle surfaced by the Hub
 * **Campaign**: a transient world instantiated from a selected scenario
 * **Reward**: a Hub mutation justified by accumulated context, such as unlocks, capability changes, archive entries, or hypothesis changes 
+
+When shown in player-facing UI or supporting docs, a Contract should be framed as a **bounded historical intervention**.
 
 ### 3.2 Two Worlds, Two Timescales
 
@@ -132,6 +149,8 @@ Store all information that survives campaign disposal.
 
 Generate or refine mission offers from current Hub knowledge and capability state.
 
+These offers should read as proposals to resolve uncertainty, preserve or quarantine knowledge, or intervene in contested interpretation — not as flavorless mission tickets.
+
 ### 7.3 Recon Refinement
 
 Reveal more about a proposal before acceptance based on recon-related capabilities.
@@ -147,6 +166,14 @@ Apply campaign outcomes back into the Hub.
 ### 7.6 Archive / Knowledge Graph Management
 
 Record recoveries, revelations, contradictions, partial truths, and irretrievable loss.
+
+This layer should preserve the distinction between:
+
+- observed facts
+- interpreted models
+- correlated truths
+- canonical doctrine
+- sealed conclusions
 
 ### 7.7 Campaign History
 
@@ -789,6 +816,8 @@ History can feed:
 
 The prior roadmap already sketches the correct terminal-style Hub interface showing archive losses, campaign streak, and three offers with region ID, difficulty, threat, objective, and reward. 
 
+Player-facing Hub language should follow the confidence protocol defined in `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`. Favor terms such as `Approximate`, `High Confidence`, `Contested`, `Corrupted`, and `Sealed` over flat omniscient statements.
+
 ### 26.1 Required UI Responsibilities
 
 The Hub UI must:
@@ -1057,4 +1086,3 @@ That is the minimum viable Hub.
 * [5] Compound Tile System
 * [6] Campaign Flow & Game Loop
 * [7] Integration Contract (Glue Layer)
-

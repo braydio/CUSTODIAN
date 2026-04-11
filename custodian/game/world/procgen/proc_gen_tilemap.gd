@@ -159,6 +159,8 @@ var _queued_chunks: Dictionary = {}
 var _streaming_reveal_queue: Array[Vector2i] = []
 var _streaming_player: Node2D = null
 var _streaming_current_chunk: Vector2i = Vector2i(999999, 999999)
+var _navigation_rebuild_pending: bool = false
+var _navigation_rebuild_deferred: bool = false
 var shadow_system: Node = null
 
 
@@ -175,6 +177,9 @@ const FOLIAGE_ASSET_PATHS := [
 ]
 
 const FRUIT_TEXTURE_PATH := "res://content/sprites/environment/foliage/fruit_sheet.png"
+const HORIZONTAL_WALL_OVERLAY_TEXTURE := preload("res://content/tiles/walls/runtime/marble_ruined_walls_runtime_3x4_96x96.png")
+const HORIZONTAL_WALL_ENDCAP_TEXTURE_PATH := "res://content/tiles/walls/runtime/marble_ruined_walls_runtime_endcaps_7x1_96x96.png"
+const HORIZONTAL_WALL_SOUTH_CONNECTOR_TEXTURE_PATH := "res://content/tiles/walls/runtime/marble_ruined_single_south_connector.aseprite"
 const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occlusion_bubble.gdshader")
 @export var foliage_parent_path: NodePath = NodePath("NavigationRegion2D/FoliageLayer")
 @export var foliage_density: float = 0.12
@@ -192,6 +197,27 @@ const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occl
 @export_range(1, 8, 1) var fruit_tiles_high: int = 3
 @export var foliage_behind_z_index: int = 1
 @export var foliage_front_z_index: int = 3
+@export var use_horizontal_wall_overlays: bool = true
+@export var horizontal_wall_overlay_texture: Texture2D = HORIZONTAL_WALL_OVERLAY_TEXTURE
+@export_range(1, 6, 1) var horizontal_wall_overlay_cells_wide: int = 3
+@export_range(1, 6, 1) var horizontal_wall_overlay_cells_high: int = 3
+@export var horizontal_wall_overlay_z_index: int = 4
+@export var horizontal_wall_overlay_tint_with_planet_profile: bool = true
+@export var use_vertical_wall_overlays: bool = true
+@export_range(1, 6, 1) var vertical_wall_overlay_cells_wide: int = 3
+@export_range(1, 6, 1) var vertical_wall_overlay_cells_high: int = 3
+@export var tighten_tall_wall_collision: bool = true
+@export var show_base_wall_tiles: bool = true
+@export var collision_only_on_new_ruined_wall_tiles: bool = true
+@export var use_horizontal_wall_endcaps: bool = true
+@export var horizontal_wall_endcap_texture: Texture2D
+@export var use_horizontal_wall_south_connector: bool = true
+@export var horizontal_wall_south_connector_texture: Texture2D
+@export_range(0, 4, 1) var horizontal_wall_south_connector_end_buffer_segments: int = 1
+@export_range(0.0, 1.0, 0.05) var horizontal_wall_south_connector_spawn_chance: float = 0.35
+@export var show_runtime_wall_collision_debug: bool = true
+@export_range(0.0, 0.75, 0.05) var horizontal_wall_endcap_overlap_ratio: float = 0.25
+@export_range(0, 48, 1) var horizontal_wall_endcap_vertical_jitter_px: int = 12
 @export var foliage_player_feet_offset: Vector2 = Vector2(0, 8)
 @export var foliage_player_upper_body_offset: Vector2 = Vector2(0, -22)
 @export var foliage_player_occlusion_x_padding: float = 10.0
@@ -224,6 +250,12 @@ func _ready() -> void:
 
 	if shadow_system == null:
 		shadow_system = find_child("ShadowOverlay", true, false)
+	if horizontal_wall_endcap_texture == null:
+		var endcap_image := Image.load_from_file(HORIZONTAL_WALL_ENDCAP_TEXTURE_PATH)
+		if endcap_image != null and not endcap_image.is_empty():
+			horizontal_wall_endcap_texture = ImageTexture.create_from_image(endcap_image)
+	if horizontal_wall_south_connector_texture == null:
+		horizontal_wall_south_connector_texture = load(HORIZONTAL_WALL_SOUTH_CONNECTOR_TEXTURE_PATH) as Texture2D
 	_foliage_parent = _find_foliage_parent()
 	_load_foliage_textures()
 	_apply_planet_visual_profile()
@@ -309,6 +341,7 @@ func _fill_tilemaps() -> void:
 		walls_tilemap.clear()
 		_wall_health.clear()
 		_clear_foliage()
+		_clear_horizontal_wall_overlays()
 	_apply_planet_visual_profile()
 	
 	var map_size = procgen_node.map_size
@@ -335,6 +368,8 @@ func _fill_tilemaps() -> void:
 		_prepare_streaming_reveal()
 	elif build_runtime_wall_collision:
 		_rebuild_runtime_wall_collision(map_size)
+	if not enable_streaming_reveal:
+		_rebuild_horizontal_wall_overlays()
 
 
 func set_seed(new_seed: int) -> void:
@@ -680,6 +715,12 @@ func _has_wall_cell(pos: Vector2i) -> bool:
 	return walls_tilemap != null and walls_tilemap.get_cell_source_id(pos) >= 0
 
 
+func _has_generated_wall_cell(pos: Vector2i) -> bool:
+	if _generated_wall_cells.has(pos):
+		return true
+	return _has_wall_cell(pos)
+
+
 func _is_void_cell(pos: Vector2i) -> bool:
 	if procgen_node == null:
 		return true
@@ -906,6 +947,7 @@ func _rebuild_runtime_wall_collision(map_size: Vector2i) -> void:
 			if src < 0:
 				continue
 			_spawn_runtime_wall_body(pos)
+	_rebuild_runtime_wall_collision_debug()
 
 
 func _is_floor_like_tile(pos: Vector2i) -> bool:
@@ -953,6 +995,7 @@ func damage_wall_tile(pos: Vector2i, amount: float, attacker_team: String = "") 
 	}
 	_set_floor_tile(pos)
 	_refresh_wall_neighbors(pos)
+	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
 	if build_runtime_wall_collision and procgen_node != null:
 		call_deferred("_rebuild_runtime_wall_collision", procgen_node.map_size)
@@ -982,10 +1025,26 @@ func _refresh_wall_neighbors(center_tile: Vector2i) -> void:
 			walls_tilemap.set_cell(pos, source, _select_wall_coord(pos))
 
 
-func _refresh_navigation_after_wall_change() -> void:
+func _refresh_navigation_after_wall_change(force_immediate: bool = false) -> void:
+	if not force_immediate and enable_streaming_reveal and not _streaming_reveal_queue.is_empty():
+		_navigation_rebuild_pending = true
+		return
+	_queue_navigation_rebuild()
+
+
+func _queue_navigation_rebuild() -> void:
+	if _navigation_rebuild_deferred:
+		return
+	_navigation_rebuild_deferred = true
+	call_deferred("_flush_navigation_rebuild")
+
+
+func _flush_navigation_rebuild() -> void:
+	_navigation_rebuild_deferred = false
+	_navigation_rebuild_pending = false
 	for navigation_node in get_tree().get_nodes_in_group("navigation"):
 		if navigation_node != null and navigation_node.has_method("rebuild"):
-			navigation_node.call_deferred("rebuild")
+			navigation_node.call("rebuild")
 
 
 func _capture_generated_tile_state(map_size: Vector2i) -> void:
@@ -1258,6 +1317,14 @@ func _apply_planet_visual_profile() -> void:
 		floor_tilemap.modulate = _get_planet_profile_color("tile_tint", Color.WHITE)
 	if walls_tilemap != null:
 		walls_tilemap.modulate = _get_planet_profile_color("wall_tint", Color.WHITE)
+		_apply_wall_tile_visibility()
+
+
+func _apply_wall_tile_visibility() -> void:
+	if walls_tilemap == null:
+		return
+	var alpha := 1.0 if show_base_wall_tiles else 0.0
+	walls_tilemap.self_modulate = Color(1.0, 1.0, 1.0, alpha)
 
 
 func _get_planet_profile_color(key: String, fallback: Color) -> Color:
@@ -1320,13 +1387,17 @@ func _prepare_streaming_reveal() -> void:
 	_streaming_reveal_queue.clear()
 	_streaming_player = null
 	_streaming_current_chunk = Vector2i(999999, 999999)
+	_navigation_rebuild_pending = false
+	_navigation_rebuild_deferred = false
 	_clear_foliage()
+	_clear_horizontal_wall_overlays()
 	floor_tilemap.clear()
 	walls_tilemap.clear()
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node
 	if collision_root != null:
 		for child in collision_root.get_children():
 			child.queue_free()
+	_rebuild_runtime_wall_collision_debug()
 	_refresh_shadows()
 	var spawn_tile := get_player_spawn()
 	_prime_streaming_chunks(spawn_tile)
@@ -1343,11 +1414,13 @@ func _prime_streaming_chunks(center_tile: Vector2i) -> void:
 				_reveal_chunk_immediately(chunk)
 			else:
 				_queue_chunk_for_reveal(chunk, center_tile)
+	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
 	_refresh_navigation_after_wall_change()
 
 
 func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> void:
+	var unloaded_any := false
 	for x in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 		for y in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 			_queue_chunk_for_reveal(center_chunk + Vector2i(x, y), center_tile)
@@ -1358,6 +1431,9 @@ func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> 
 				var chunk_pos := key as Vector2i
 				if maxi(abs(chunk_pos.x - center_chunk.x), abs(chunk_pos.y - center_chunk.y)) > streaming_unload_chunk_distance:
 					_unload_chunk(chunk_pos)
+					unloaded_any = true
+	if unloaded_any:
+		_refresh_navigation_after_wall_change()
 
 
 func _process_streaming_reveal_queue() -> void:
@@ -1371,8 +1447,10 @@ func _process_streaming_reveal_queue() -> void:
 		revealed_any = true
 		remaining -= 1
 	if revealed_any:
+		_rebuild_horizontal_wall_overlays()
 		_refresh_shadows()
-		_refresh_navigation_after_wall_change()
+		if _streaming_reveal_queue.is_empty() or _navigation_rebuild_pending:
+			_refresh_navigation_after_wall_change()
 
 
 func _queue_chunk_for_reveal(chunk_pos: Vector2i, center_tile: Vector2i) -> void:
@@ -1420,6 +1498,7 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 			_remove_foliage(tile)
 			_remove_runtime_wall_body(tile)
 	_revealed_chunks.erase(chunk_pos)
+	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
 
 
@@ -1438,6 +1517,8 @@ func _reveal_tile(tile: Vector2i) -> void:
 
 
 func _spawn_runtime_wall_body(tile: Vector2i) -> void:
+	if collision_only_on_new_ruined_wall_tiles and not _tile_uses_new_ruined_wall_treatment(tile):
+		return
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
 	if collision_root == null:
 		collision_root = Node2D.new()
@@ -1460,10 +1541,14 @@ func _spawn_runtime_wall_body(tile: Vector2i) -> void:
 	body.position = walls_tilemap.map_to_local(tile)
 	var shape := CollisionShape2D.new()
 	var rect := RectangleShape2D.new()
-	rect.size = Vector2(tile_size.x, tile_size.y)
+	var collision_profile := _get_runtime_wall_collision_profile(tile, tile_size)
+	var collision_size: Vector2 = collision_profile.get("size", Vector2(tile_size.x, tile_size.y))
+	shape.position = collision_profile.get("offset", Vector2.ZERO)
+	rect.size = collision_size
 	shape.shape = rect
 	body.add_child(shape)
 	collision_root.add_child(body)
+	_rebuild_runtime_wall_collision_debug()
 
 
 func _remove_runtime_wall_body(tile: Vector2i) -> void:
@@ -1473,10 +1558,472 @@ func _remove_runtime_wall_body(tile: Vector2i) -> void:
 	var body := collision_root.get_node_or_null(NodePath(_runtime_wall_body_name(tile)))
 	if body != null:
 		body.queue_free()
+	_rebuild_runtime_wall_collision_debug()
 
 
 func _runtime_wall_body_name(tile: Vector2i) -> String:
 	return "Wall_%d_%d" % [tile.x, tile.y]
+
+
+func _get_runtime_wall_collision_debug_root() -> Node2D:
+	if walls_tilemap == null:
+		return null
+	var debug_root := walls_tilemap.get_node_or_null("RuntimeWallCollisionDebug") as Node2D
+	if debug_root == null:
+		debug_root = Node2D.new()
+		debug_root.name = "RuntimeWallCollisionDebug"
+		walls_tilemap.add_child(debug_root)
+	return debug_root
+
+
+func _rebuild_runtime_wall_collision_debug() -> void:
+	var debug_root := _get_runtime_wall_collision_debug_root()
+	if debug_root == null:
+		return
+	for child in debug_root.get_children():
+		child.queue_free()
+	debug_root.visible = show_runtime_wall_collision_debug
+	if not show_runtime_wall_collision_debug:
+		return
+
+	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
+	if collision_root == null:
+		return
+
+	for child in collision_root.get_children():
+		var body := child as StaticBody2D
+		if body == null:
+			continue
+		var shape := body.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		if shape == null:
+			for grandchild in body.get_children():
+				if grandchild is CollisionShape2D:
+					shape = grandchild as CollisionShape2D
+					break
+		if shape == null:
+			continue
+		var rectangle := shape.shape as RectangleShape2D
+		if rectangle == null:
+			continue
+		var poly := Polygon2D.new()
+		poly.color = Color(1.0, 0.1, 0.1, 0.24)
+		poly.position = body.position + shape.position
+		poly.polygon = PackedVector2Array([
+			Vector2(-rectangle.size.x * 0.5, -rectangle.size.y * 0.5),
+			Vector2(rectangle.size.x * 0.5, -rectangle.size.y * 0.5),
+			Vector2(rectangle.size.x * 0.5, rectangle.size.y * 0.5),
+			Vector2(-rectangle.size.x * 0.5, rectangle.size.y * 0.5),
+		])
+		debug_root.add_child(poly)
+
+
+func _should_use_horizontal_wall_overlay_collision(tile: Vector2i) -> bool:
+	if not use_horizontal_wall_overlays:
+		return false
+	if horizontal_wall_overlay_texture == null:
+		return false
+	if not _has_wall_cell(tile):
+		return false
+	return not _has_generated_wall_cell(tile + Vector2i.UP)
+
+
+func _should_use_vertical_wall_overlay_collision(tile: Vector2i, right_side: bool) -> bool:
+	if not use_vertical_wall_overlays:
+		return false
+	if horizontal_wall_overlay_texture == null:
+		return false
+	if not _has_wall_cell(tile):
+		return false
+	var side_offset := Vector2i.RIGHT if right_side else Vector2i.LEFT
+	return not _has_generated_wall_cell(tile + side_offset)
+
+
+func _tile_uses_new_ruined_wall_treatment(tile: Vector2i) -> bool:
+	if not _has_wall_cell(tile):
+		return false
+	if _should_use_horizontal_wall_overlay_collision(tile):
+		return true
+	if _should_use_vertical_wall_overlay_collision(tile, false):
+		return true
+	if _should_use_vertical_wall_overlay_collision(tile, true):
+		return true
+	return false
+
+
+func _get_runtime_wall_collision_profile(tile: Vector2i, tile_size: Vector2) -> Dictionary:
+	var size := Vector2(tile_size.x, tile_size.y)
+	var offset := Vector2.ZERO
+	if not tighten_tall_wall_collision:
+		return {"size": size, "offset": offset}
+
+	var top_exposed := _should_use_horizontal_wall_overlay_collision(tile)
+	var left_exposed := _should_use_vertical_wall_overlay_collision(tile, false)
+	var right_exposed := _should_use_vertical_wall_overlay_collision(tile, true)
+
+	if top_exposed:
+		var expanded_height := tile_size.y * float(max(1, horizontal_wall_overlay_cells_high))
+		size.y = max(size.y, expanded_height)
+		offset.y = ((size.y - tile_size.y) * 0.5)
+
+	if left_exposed or right_exposed:
+		var expanded_width := tile_size.x * float(max(1, vertical_wall_overlay_cells_wide))
+		if left_exposed and right_exposed:
+			size.x = max(size.x, expanded_width)
+			offset.x = 0.0
+		elif left_exposed:
+			size.x = max(size.x, expanded_width)
+			offset.x = -((size.x - tile_size.x) * 0.5)
+		else:
+			size.x = max(size.x, expanded_width)
+			offset.x = ((size.x - tile_size.x) * 0.5)
+
+	return {"size": size, "offset": offset}
+
+
+func _get_horizontal_wall_overlay_root() -> Node2D:
+	if walls_tilemap == null:
+		return null
+	var overlay_root := walls_tilemap.get_node_or_null("RuntimeWallVisuals") as Node2D
+	if overlay_root == null:
+		overlay_root = Node2D.new()
+		overlay_root.name = "RuntimeWallVisuals"
+		walls_tilemap.add_child(overlay_root)
+	return overlay_root
+
+
+func _clear_horizontal_wall_overlays() -> void:
+	var overlay_root := _get_horizontal_wall_overlay_root()
+	if overlay_root == null:
+		return
+	for child in overlay_root.get_children():
+		child.queue_free()
+
+
+func _rebuild_horizontal_wall_overlays() -> void:
+	var overlay_root := _get_horizontal_wall_overlay_root()
+	if overlay_root == null:
+		return
+	_clear_horizontal_wall_overlays()
+	if not use_horizontal_wall_overlays or horizontal_wall_overlay_texture == null or walls_tilemap == null:
+		return
+
+	_rebuild_horizontal_top_wall_overlays(overlay_root)
+	if use_vertical_wall_overlays:
+		_rebuild_vertical_side_wall_overlays(overlay_root)
+
+
+func _create_horizontal_wall_overlay_run(parent: Node2D, row_y: int, start_x: int, end_x: int) -> void:
+	if parent == null or start_x > end_x:
+		return
+
+	var tile_size := _get_tile_size()
+	var run_tiles := end_x - start_x + 1
+	var run_width := tile_size.x * float(run_tiles)
+	if run_width <= 0.0:
+		return
+
+	var overlay_height := tile_size.y * float(max(1, horizontal_wall_overlay_cells_high))
+	var nominal_cap_width := tile_size.x * float(max(1, horizontal_wall_overlay_cells_wide))
+	var variant_row := _tile_noise_hash(Vector2i(start_x, row_y) + Vector2i(193, 401)) % 4
+	var tint := Color.WHITE
+	if horizontal_wall_overlay_tint_with_planet_profile:
+		tint = _get_planet_profile_color("wall_tint", Color.WHITE)
+
+	var origin := walls_tilemap.map_to_local(Vector2i(start_x, row_y)) - tile_size * 0.5
+	var container := Node2D.new()
+	container.name = "HorizontalWall_%d_%d_%d" % [row_y, start_x, end_x]
+	container.position = origin
+	parent.add_child(container)
+
+	if run_tiles == 1:
+		_add_horizontal_wall_overlay_sprite(
+			container,
+			Rect2(96.0, float(variant_row * 96), 96.0, 96.0),
+			Vector2.ZERO,
+			Vector2(run_width, overlay_height),
+			tint
+		)
+		return
+
+	var cap_width := minf(nominal_cap_width, run_width * 0.5)
+	var middle_width := maxf(0.0, run_width - cap_width * 2.0)
+	_add_horizontal_wall_overlay_sprite(
+		container,
+		Rect2(0.0, float(variant_row * 96), 96.0, 96.0),
+		Vector2.ZERO,
+		Vector2(cap_width, overlay_height),
+			tint
+		)
+	if middle_width > 0.0:
+		var repeat_width := nominal_cap_width
+		var cursor_x := cap_width
+		var remaining_width := middle_width
+		while remaining_width > 0.0:
+			var segment_width := minf(repeat_width, remaining_width)
+			_add_horizontal_wall_overlay_sprite(
+				container,
+				Rect2(96.0, float(variant_row * 96), 96.0, 96.0),
+				Vector2(cursor_x, 0.0),
+				Vector2(segment_width, overlay_height),
+				tint
+			)
+			cursor_x += segment_width
+			remaining_width -= segment_width
+	_add_horizontal_wall_overlay_sprite(
+		container,
+		Rect2(192.0, float(variant_row * 96), 96.0, 96.0),
+		Vector2(run_width - cap_width, 0.0),
+		Vector2(cap_width, overlay_height),
+		tint
+	)
+	_add_horizontal_wall_south_connector_sprites(container, row_y, start_x, end_x, run_width, overlay_height, tint)
+	_add_horizontal_wall_endcap_sprites(container, row_y, start_x, end_x, run_width, overlay_height, tint)
+
+
+func _rebuild_horizontal_top_wall_overlays(overlay_root: Node2D) -> void:
+	var rows: Dictionary = {}
+	for cell_variant in walls_tilemap.get_used_cells():
+		var cell: Vector2i = cell_variant
+		if walls_tilemap.get_cell_source_id(cell) < 0:
+			continue
+		if _has_generated_wall_cell(cell + Vector2i.UP):
+			continue
+		if not rows.has(cell.y):
+			rows[cell.y] = []
+		var row_cells: Array = rows[cell.y]
+		row_cells.append(cell.x)
+		rows[cell.y] = row_cells
+
+	var row_keys := rows.keys()
+	row_keys.sort()
+	for row_key in row_keys:
+		var row_y := int(row_key)
+		var x_values: Array = rows[row_key]
+		x_values.sort()
+		if x_values.is_empty():
+			continue
+		var run_start := int(x_values[0])
+		var previous := int(x_values[0])
+		for i in range(1, x_values.size()):
+			var x_value := int(x_values[i])
+			if x_value != previous + 1:
+				_create_horizontal_wall_overlay_run(overlay_root, row_y, run_start, previous)
+				run_start = x_value
+			previous = x_value
+		_create_horizontal_wall_overlay_run(overlay_root, row_y, run_start, previous)
+
+
+func _rebuild_vertical_side_wall_overlays(overlay_root: Node2D) -> void:
+	var left_columns: Dictionary = {}
+	var right_columns: Dictionary = {}
+	for cell_variant in walls_tilemap.get_used_cells():
+		var cell: Vector2i = cell_variant
+		if walls_tilemap.get_cell_source_id(cell) < 0:
+			continue
+		if not _has_generated_wall_cell(cell + Vector2i.LEFT):
+			if not left_columns.has(cell.x):
+				left_columns[cell.x] = []
+			var left_values: Array = left_columns[cell.x]
+			left_values.append(cell.y)
+			left_columns[cell.x] = left_values
+		if not _has_generated_wall_cell(cell + Vector2i.RIGHT):
+			if not right_columns.has(cell.x):
+				right_columns[cell.x] = []
+			var right_values: Array = right_columns[cell.x]
+			right_values.append(cell.y)
+			right_columns[cell.x] = right_values
+
+	_create_vertical_wall_overlay_runs(overlay_root, left_columns, false)
+	_create_vertical_wall_overlay_runs(overlay_root, right_columns, true)
+
+
+func _create_vertical_wall_overlay_runs(parent: Node2D, columns: Dictionary, right_side: bool) -> void:
+	var column_keys := columns.keys()
+	column_keys.sort()
+	for column_key in column_keys:
+		var column_x := int(column_key)
+		var y_values: Array = columns[column_key]
+		y_values.sort()
+		if y_values.is_empty():
+			continue
+		var run_start := int(y_values[0])
+		var previous := int(y_values[0])
+		for i in range(1, y_values.size()):
+			var y_value := int(y_values[i])
+			if y_value != previous + 1:
+				_create_vertical_wall_overlay_run(parent, column_x, run_start, previous, right_side)
+				run_start = y_value
+			previous = y_value
+		_create_vertical_wall_overlay_run(parent, column_x, run_start, previous, right_side)
+
+
+func _create_vertical_wall_overlay_run(parent: Node2D, column_x: int, start_y: int, end_y: int, right_side: bool) -> void:
+	if parent == null or start_y > end_y:
+		return
+	var tile_size := _get_tile_size()
+	var run_tiles := end_y - start_y + 1
+	var run_height := tile_size.y * float(run_tiles)
+	if run_height <= 0.0:
+		return
+
+	var overlay_width := tile_size.x * float(max(1, vertical_wall_overlay_cells_wide))
+	var segment_height := tile_size.y * float(max(1, vertical_wall_overlay_cells_high))
+	var variant_row := _tile_noise_hash(Vector2i(column_x, start_y) + Vector2i(317, 977)) % 4
+	var tint := Color.WHITE
+	if horizontal_wall_overlay_tint_with_planet_profile:
+		tint = _get_planet_profile_color("wall_tint", Color.WHITE)
+
+	var base_origin := walls_tilemap.map_to_local(Vector2i(column_x, start_y)) - tile_size * 0.5
+	var side_offset_x := -overlay_width + tile_size.x if not right_side else 0.0
+	var container := Node2D.new()
+	container.name = "VerticalWall_%d_%d_%d_%s" % [column_x, start_y, end_y, "R" if right_side else "L"]
+	container.position = base_origin + Vector2(side_offset_x, 0.0)
+	parent.add_child(container)
+
+	var cursor_y := 0.0
+	var remaining_height := run_height
+	while remaining_height > 0.0:
+		var piece_height := minf(segment_height, remaining_height)
+		_add_vertical_wall_overlay_sprite(
+			container,
+			Rect2(96.0, float(variant_row * 96), 96.0, 96.0),
+			Vector2(0.0, cursor_y),
+			Vector2(overlay_width, piece_height),
+			tint,
+			right_side
+		)
+		cursor_y += piece_height
+		remaining_height -= piece_height
+
+
+func _add_horizontal_wall_overlay_sprite(parent: Node2D, region: Rect2, position: Vector2, size: Vector2, tint: Color) -> void:
+	if parent == null or horizontal_wall_overlay_texture == null or size.x <= 0.0 or size.y <= 0.0:
+		return
+	var sprite := Sprite2D.new()
+	sprite.texture = horizontal_wall_overlay_texture
+	sprite.region_enabled = true
+	sprite.region_rect = region
+	sprite.centered = false
+	sprite.position = position
+	sprite.scale = Vector2(size.x / region.size.x, size.y / region.size.y)
+	sprite.z_index = horizontal_wall_overlay_z_index
+	sprite.z_as_relative = false
+	sprite.modulate = tint
+	parent.add_child(sprite)
+
+
+func _add_vertical_wall_overlay_sprite(parent: Node2D, region: Rect2, position: Vector2, size: Vector2, tint: Color, right_side: bool) -> void:
+	if parent == null or horizontal_wall_overlay_texture == null or size.x <= 0.0 or size.y <= 0.0:
+		return
+	var sprite := Sprite2D.new()
+	sprite.texture = horizontal_wall_overlay_texture
+	sprite.region_enabled = true
+	sprite.region_rect = region
+	sprite.centered = true
+	sprite.position = position + size * 0.5
+	sprite.rotation_degrees = 90.0 if right_side else -90.0
+	sprite.scale = Vector2(size.y / region.size.x, size.x / region.size.y)
+	sprite.z_index = horizontal_wall_overlay_z_index
+	sprite.z_as_relative = false
+	sprite.modulate = tint
+	parent.add_child(sprite)
+
+
+func _add_horizontal_wall_south_connector_sprites(parent: Node2D, row_y: int, start_x: int, end_x: int, run_width: float, overlay_height: float, tint: Color) -> void:
+	if not use_horizontal_wall_south_connector or horizontal_wall_south_connector_texture == null:
+		return
+	var segment_count: int = end_x - start_x + 1
+	var end_buffer: int = max(0, horizontal_wall_south_connector_end_buffer_segments)
+	var usable_start: int = end_buffer
+	var usable_end: int = segment_count - end_buffer - 1
+	if usable_end < usable_start:
+		return
+	for local_index in range(usable_start, usable_end + 1):
+		var absolute_tile := Vector2i(start_x + local_index, row_y)
+		var roll: float = float(_tile_noise_hash(absolute_tile + Vector2i(1409, 223)) % 1000) / 1000.0
+		if roll > horizontal_wall_south_connector_spawn_chance:
+			continue
+		var size := Vector2(28.0, 48.5)
+		var x_center := (float(local_index) + 0.5) * _get_tile_size().x
+		var position := Vector2(x_center - size.x * 0.5, overlay_height - 4.0)
+		if position.x < 0.0 or position.x + size.x > run_width:
+			continue
+		_add_horizontal_wall_south_connector_sprite(parent, position, size, tint)
+
+
+func _add_horizontal_wall_south_connector_sprite(parent: Node2D, position: Vector2, size: Vector2, tint: Color) -> void:
+	if parent == null or horizontal_wall_south_connector_texture == null:
+		return
+	var sprite := Sprite2D.new()
+	sprite.texture = horizontal_wall_south_connector_texture
+	sprite.centered = false
+	sprite.position = position
+	var tex_size := horizontal_wall_south_connector_texture.get_size()
+	if tex_size.x > 0.0 and tex_size.y > 0.0:
+		sprite.scale = Vector2(size.x / tex_size.x, size.y / tex_size.y)
+	sprite.z_index = horizontal_wall_overlay_z_index + 1
+	sprite.z_as_relative = false
+	sprite.modulate = tint
+	parent.add_child(sprite)
+
+
+func _add_horizontal_wall_endcap_sprites(parent: Node2D, row_y: int, start_x: int, end_x: int, run_width: float, overlay_height: float, tint: Color) -> void:
+	if not use_horizontal_wall_endcaps or horizontal_wall_endcap_texture == null:
+		return
+	var tile_size := _get_tile_size()
+	var endcap_size := Vector2(
+		tile_size.x * float(max(1, horizontal_wall_overlay_cells_wide)),
+		tile_size.y * float(max(1, horizontal_wall_overlay_cells_high))
+	)
+	var overlap_width := endcap_size.x * clampf(horizontal_wall_endcap_overlap_ratio, 0.0, 0.75)
+	var left_variant := _tile_noise_hash(Vector2i(start_x, row_y) + Vector2i(601, 97)) % 7
+	var right_variant := _tile_noise_hash(Vector2i(end_x, row_y) + Vector2i(887, 131)) % 7
+	var left_jitter := _compute_horizontal_wall_endcap_vertical_jitter(Vector2i(start_x, row_y), false)
+	var right_jitter := _compute_horizontal_wall_endcap_vertical_jitter(Vector2i(end_x, row_y), true)
+	_add_horizontal_wall_endcap_sprite(
+		parent,
+		Rect2(float(left_variant * 96), 0.0, 96.0, 96.0),
+		Vector2(-(endcap_size.x - overlap_width), left_jitter + (overlay_height - endcap_size.y)),
+		endcap_size,
+		tint,
+		false
+	)
+	_add_horizontal_wall_endcap_sprite(
+		parent,
+		Rect2(float(right_variant * 96), 0.0, 96.0, 96.0),
+		Vector2(run_width - overlap_width, right_jitter + (overlay_height - endcap_size.y)),
+		endcap_size,
+		tint,
+		true
+	)
+
+
+func _compute_horizontal_wall_endcap_vertical_jitter(tile: Vector2i, mirror_side: bool) -> float:
+	var jitter_range: int = max(0, horizontal_wall_endcap_vertical_jitter_px)
+	if jitter_range <= 0:
+		return 0.0
+	var offset_seed := Vector2i(709, 431)
+	if mirror_side:
+		offset_seed = Vector2i(911, 557)
+	var jitter: int = _tile_noise_hash(tile + offset_seed) % (jitter_range + 1)
+	return -float(jitter)
+
+
+func _add_horizontal_wall_endcap_sprite(parent: Node2D, region: Rect2, position: Vector2, size: Vector2, tint: Color, flip_h: bool) -> void:
+	if parent == null or horizontal_wall_endcap_texture == null or size.x <= 0.0 or size.y <= 0.0:
+		return
+	var sprite := Sprite2D.new()
+	sprite.texture = horizontal_wall_endcap_texture
+	sprite.region_enabled = true
+	sprite.region_rect = region
+	sprite.centered = false
+	sprite.position = position
+	sprite.flip_h = flip_h
+	sprite.scale = Vector2(size.x / region.size.x, size.y / region.size.y)
+	sprite.z_index = horizontal_wall_overlay_z_index + 1
+	sprite.z_as_relative = false
+	sprite.modulate = tint
+	parent.add_child(sprite)
 
 
 func _global_to_tile(global_position: Vector2) -> Vector2i:

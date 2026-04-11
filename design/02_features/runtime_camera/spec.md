@@ -1,9 +1,9 @@
 # Runtime World & Camera Stabilization — Specification
 
 **Project:** CUSTODIAN
-**Status:** In Progress
+**Status:** In Progress (runtime handoff wiring updated 2026-04-10)
 **Feature:** Runtime World & Camera Stabilization
-**Last Updated:** 2026-03-27
+**Last Updated:** 2026-04-10
 
 ---
 
@@ -61,11 +61,10 @@ This feature does NOT implement:
 - Camera refresh called from contract loader
 - Wave combat, turrets, sprint, melee, repair, terminal systems present
 
-### Known Issues (From Analysis)
-- Camera `_rebuild_bounds()` falls back to legacy sector bounds if procgen fails
-- No explicit camera snap to player spawn on handoff
-- Navigation tilemap references resolved via auto-discovery, not explicit binding
-- Camera group registration present but may be inconsistent in some flows
+### Known Issues (Current Remaining Risks)
+- Runtime mouse aim still requires live boot verification after the camera snap change
+- Navigation authority is now explicitly rebound during procgen handoff, but enemy pathing still needs live verification
+- If procgen bounds rebuild fails, the camera now intentionally unclamps instead of falling back to legacy sectors
 
 ---
 
@@ -166,6 +165,19 @@ Navigation rebuild uses promoted floor/wall tilemaps as current authority.
 | `custodian/core/systems/contract_world_loader.gd` | Promotes map, repositions entities, calls camera refresh | Add explicit camera snap call, add navigation rebuild call |
 | `custodian/scenes/camera.gd` | Has `set_runtime_map()`, falls back to legacy bounds | Force procgen bounds, add explicit snap_to_spawn() |
 | `custodian/core/systems/navigation_system.gd` | Auto-finds tilemaps, has rebuild() | Receive explicit tilemap references after handoff |
+| `custodian/entities/operator/operator.gd` | Uses mouse aim from node-local query path | Resolve aim through the active world camera during runtime play |
+
+## 12. Runtime Note — 2026-04-10
+
+The active runtime implementation now does the following:
+- `ContractWorldLoader` registers as `contract_world_loader`, exposes `get_active_map_instance()`, explicitly snaps the camera after procgen handoff, and explicitly rebinds navigation tilemaps before rebuild.
+- `camera.gd` now treats procgen bounds as the only clamp authority and snaps cleanly to the operator spawn without carrying previous motion state.
+- `operator.gd` now resolves mouse aim through the active world camera before falling back to local `get_global_mouse_position()`.
+
+This feature remains open until live boot verification confirms:
+- cursor aim matches projectile direction
+- enemies path correctly on the promoted map
+- terminal and item anchors remain reachable in procgen space
 
 ---
 

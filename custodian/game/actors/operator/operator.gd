@@ -350,7 +350,7 @@ func _update_aim():
 		if keyboard_aim != Vector2.ZERO:
 			aim_direction = keyboard_aim
 	else:
-		var mouse_aim_vector := get_global_mouse_position() - global_position
+		var mouse_aim_vector := _get_world_mouse_position() - global_position
 		if mouse_aim_vector.length_squared() > 0.0001:
 			aim_direction = mouse_aim_vector.normalized()
 	_apply_dynamic_weapon_socket_layout()
@@ -1898,10 +1898,17 @@ func _get_attack_aim_direction() -> Vector2:
 			return keyboard_aim
 	if aim_direction.length_squared() > 0.0001:
 		return aim_direction.normalized()
-	var mouse_aim_vector := get_global_mouse_position() - global_position
+	var mouse_aim_vector := _get_world_mouse_position() - global_position
 	if mouse_aim_vector.length_squared() > 0.0001:
 		return mouse_aim_vector.normalized()
 	return Vector2.RIGHT
+
+
+func _get_world_mouse_position() -> Vector2:
+	var camera := _get_world_camera()
+	if camera != null and camera.has_method("get_global_mouse_position"):
+		return camera.get_global_mouse_position()
+	return get_global_mouse_position()
 
 
 func equip_primary_carbine() -> void:

@@ -3,6 +3,8 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-03-27  
 **Status:** 🔴 In Progress
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -13,6 +15,8 @@ Three major expansions to transform CUSTODIAN from a single-map wave defense int
 1. **Expanded World Map** - Multiple regions/biomes beyond the compound
 2. **Tile-Based Compound Construction** - Distinct wall tiles making up the compound structure  
 3. **The Hub** - Campaign system generating procedurally unique missions
+
+This roadmap remains useful as a broad expansion sketch, but its framing must now align with canon: production CUSTODIAN is not only a single-map wave-defense game scaling outward. It is a contract-driven tactical/campaign game whose expanded worlds should feel like recoverable places shaped by interpretive collapse.
 
 ---
 
@@ -30,6 +34,7 @@ Three major expansions to transform CUSTODIAN from a single-map wave defense int
 - Diverse biomes and environments
 - World map navigation between areas
 - Campaign-driven mission selection
+- Region identity expressed through provenance, collapse, reuse, and present ideology
 
 ## Biomes (from Hub system)
 
@@ -55,7 +60,8 @@ WORLD MAP
 ├── REGION_1 (Campaign Mission)
 │   ├── Objective sites
 │   ├── Threat zones
-│   └── Environmental hazards
+│   ├── Environmental hazards
+│   └── Lore-bearing evidence layers
 │
 ├── REGION_2 (Campaign Mission)
 │   └── ...
@@ -94,6 +100,7 @@ func get_world_bounds() -> Rect2:
 - Each region is a separate Godot scene or procedurally generated
 - Regions loaded on-demand for campaign missions
 - Seamless transitions between compound and regions
+- Region payloads should stay extensible for provenance and legibility metadata even before those surfaces are fully consumed by runtime systems
 
 ---
 
@@ -110,6 +117,7 @@ func get_world_bounds() -> Rect2:
 - Destructible wall tiles
 - Tactical cover system
 - Power routing through wall network
+- Compound dressing that preserves institutional residue and machine-legible site identity
 
 ## Tile System Architecture
 
@@ -189,6 +197,8 @@ Each sector building constructed from wall tiles:
 ## Overview
 
 The Hub is the strategic layer that generates unique campaign missions. Players choose missions, complete objectives, and build their knowledge archive.
+
+Hub-facing language should remain confidence-bearing and procedural, not omniscient or quest-like.
 
 ## Core Data Structures
 

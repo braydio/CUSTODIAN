@@ -3,12 +3,16 @@
 **Project:** CUSTODIAN  
 **Status:** In Progress  
 **Created:** 2026-03-26
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ## Goal
 
 Make the procgen world appear to build itself around the player during play instead of fully appearing before the run starts.
 
 This is a **deterministic chunk-streamed reveal layer** over the current contract map pipeline, not a replacement for the existing seeded procgen map generation.
+
+The reveal should help the world feel operationally discovered, not magically conjured. Presentation and sequencing should support evidence-first world reading when possible.
 
 ## Runtime Model
 
@@ -36,6 +40,7 @@ This preserves:
 - The chunk containing the spawn/player and its closest neighbors are revealed immediately.
 - Outer chunks are queued and revealed over subsequent frames.
 - Reveal order is distance-biased so tiles appear to build outward from the player.
+- As content systems deepen, reveal order may also prioritize structurally or fictionally important signals (ingress, terminal zones, relay anchors, obvious machine warnings) as long as determinism is preserved.
 
 ## Collision + Navigation
 

@@ -2,7 +2,8 @@
 
 **Status:** implementation-ready
 **Source:** Godot runtime authority
-**Last Updated:** 2026-04-06
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -17,6 +18,8 @@ This spec assumes:
 - Simulation/game state remains deterministic and separate from presentation
 - Raw status text remains canonical and reusable across transcript and status page
 
+This file is the shell/interface authority. For archive tone, contract-fiction semantics, confidence language, and procedural machine phrasing, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+
 ---
 
 ## What the Terminal Displays
@@ -29,6 +32,13 @@ The terminal expresses the core game doctrine:
 - Deterministic status language
 - Knowledge preservation over raw combat spectacle
 - Loss of clarity as comms degrade
+
+### Player-Facing Language Rules
+
+- The terminal should sound like wounded institutional procedure, not a chatty assistant.
+- Contracts should read as bounded interventions, not casual quests.
+- Archive/recon output should preserve uncertainty explicitly when certainty is not justified.
+- Short denotative fragments are preferred over explanatory paragraphs.
 
 ### Five Information Categories
 

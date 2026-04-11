@@ -8,7 +8,8 @@
 **Depends On:** Runtime World & Camera Stabilization
 **Supports:** Campaign Flow, World Transition, Repair Gameplay, Sector Damage, Turret Placement, Power Routing, Defensive Readability
 **Runtime Target:** Godot 4.x (`custodian/`)
-**Last Updated:** 2026-03-27
+**Last Updated:** 2026-04-08
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
 
@@ -31,6 +32,8 @@ This system is not just “better walls.” It is the structural substrate for:
 - assault pressure against actual built space
 
 The compound is the home-state world context. If it remains a mostly decorative or loosely inferred arrangement, every system built on top of it becomes vague. This file defines how the compound becomes a real runtime object.
+
+This file is the structural authority for the compound. For tone, institutional residue, machine-language presentation, and environmental storytelling rules, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 
@@ -108,6 +111,8 @@ The player should be able to read:
 - where turrets can be placed
 - where defensive lines can form
 
+The compound should also remain fictionally legible as an institutional site. It should not read as abstract walls only; it should read as a damaged but still interpretable continuity structure.
+
 ### 3.5 Allow Controlled Granularity
 
 The system should be more granular than “whole sector healthy / damaged,” but it does not need to simulate arbitrary voxel destruction. Granularity should exist where it produces meaningful tactical consequences.
@@ -169,6 +174,8 @@ visual tilemap
 ```
 
 That path creates three or four conflicting truths and will rot.
+
+Secondary rule: the compound should preserve **institutional residue** through its tile and dressing language. Structural truth and fiction legibility should reinforce each other.
 
 ---
 

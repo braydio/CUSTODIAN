@@ -1,5 +1,11 @@
 # Enemy Behavior Director Implementation Notes (2026-03-08)
 
+**Last Updated:** 2026-04-08  
+**Runtime Authority:** `design/02_features/enemy_director/implementation.md`  
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+
+These notes are runtime-slice implementation notes. For future faction ideology, behavior-first storytelling, and lore-bearing enemy activity rules, defer to the authority docs above.
+
 ## Implemented Runtime Slice
 
 ### New systems

@@ -2,6 +2,12 @@
 
 Based on: `COMMAND_TERMINAL_UI.md`
 
+**Last Updated:** 2026-04-08  
+**Implementation Authority:** `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`  
+**Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+
+This roadmap remains useful for task tracking, but implementation and player-facing language should follow the newer authority docs above.
+
 ---
 
 ## Phase 1: Core UI Layout (Priority: Critical)
@@ -67,7 +73,7 @@ Status note: implemented incrementally inside the live in-game terminal shell in
 - [x] Support: `focus relay_network priority=X`
 
 ### 2.2 Command Execution Mode
-- [ ] **DECISION REQUIRED:** Immediate (arcade) vs Buffered (simulation)
+- [x] Buffered execution direction locked for current design authority
 - [x] Given deterministic sim goals → Buffered execution
 - [x] Commands queue into tick system
 - [x] Visual feedback during queuing
@@ -155,7 +161,7 @@ CustodianTerminal (Control)
 - **A. Immediate** - commands apply instantly (arcade feel)
 - **B. Buffered** - commands queue into tick system (simulation feel)
 
-*Recommendation: B (Buffered) per deterministic sim goals*
+*Current direction: B (Buffered) per deterministic sim goals and current terminal authority docs*
 
 ### 2. Activity Feed Source
 - Direct simulation events?

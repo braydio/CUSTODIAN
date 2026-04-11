@@ -238,6 +238,8 @@ var _terminal_page_buttons: Dictionary = {}
 var _terminal_nav_buttons: Array[BaseButton] = []
 var _terminal_action_buttons: Array[BaseButton] = []
 var _terminal_main_scroll: ScrollContainer = null
+var _terminal_fabrication_queue: Array[String] = []
+var _terminal_policy_preset := "BALANCED"
 
 const PLANET_PREVIEW_ZOOM_MIN := 2.7
 const PLANET_PREVIEW_ZOOM_MAX := 6.2
@@ -1434,6 +1436,9 @@ func _update_terminal_input_validation(raw_text: String) -> void:
 		"CONTRACT": true, "PLANET": true, "MAP": true, "CLEAR": true, "WALL": true,
 		"START": true, "OVERLAY": true, "ALLOCATE_DEFENSE": true, "DEPLOY": true, "FOCUS": true,
 		"TURRET": true, "REROUTE": true, "GOTO": true, "WAIT": true, "HARDEN": true,
+		"REPAIR": true, "MOVE": true, "RETURN": true, "SYNC": true, "LOCKDOWN": true,
+		"FORTIFY": true, "BOOST": true, "SCAN": true, "STABILIZE": true, "PRIORITIZE": true,
+		"DRONE": true, "POLICY": true, "CONFIG": true, "SET": true, "FAB": true, "SCAVENGE": true,
 	}
 	if valid_verbs.has(verb):
 		terminal_status_label.text = "VALIDATING // %s%s" % [verb, " // > " + input_echo if not input_echo.is_empty() else ""]
@@ -2131,11 +2136,13 @@ func _render_terminal_settings_widgets() -> void:
 		"TEXT SCALE      STANDARD",
 		"LOG SPEED       LIVE",
 		"COLORS          DEFAULT COMMAND",
+		"POLICY         %s" % _terminal_policy_preset,
 	]))
 	_set_terminal_rich_text(terminal_settings_input_body, "\n".join([
 		"MODE            KEYBOARD-FIRST",
 		"COMMAND LINE    FOCUS LOCK",
 		"CONFIRMATIONS   STANDARD",
+		"FAB QUEUE       %s" % (", ".join(_terminal_fabrication_queue) if not _terminal_fabrication_queue.is_empty() else "EMPTY"),
 	]))
 	_set_terminal_rich_text(terminal_settings_map_body, "\n".join([
 		"PLANET DRAG     ENABLED",
@@ -2409,7 +2416,7 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 		"HELP":
 			_append_terminal_line("LOCAL COMMANDS: HELP STATUS PREP ENEMIES WAVE SECTORS CONTRACT PLANET MAP START ASSAULT WALL TURRET REROUTE CLEAR OVERLAY RESET REBOOT", "info")
 			_append_terminal_line("ACTIONS: WAIT | WAIT 10X | GOTO <PAGE> | HARDEN <SECTOR> | FOCUS <TARGET>", "info")
-			_append_terminal_line("BUFFERED COMMANDS: ALLOCATE_DEFENSE sector=COMMAND weight=HIGH | DEPLOY turret_sniper x=14 y=22 | FOCUS relay_network priority=stability", "info")
+			_append_terminal_line("LIVE CONTROL: ALLOCATE_DEFENSE sector=COMMAND weight=HIGH | DEPLOY turret_sniper sector=COMMAND | REPAIR COMMAND", "info")
 			return true
 		"GOTO":
 			if args.is_empty():
@@ -2612,12 +2619,234 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 			_refresh_snapshot()
 			return true
 		"DEPLOY":
-			var deploy_type := str(args[0]).to_upper() if not args.is_empty() else "ASSET"
-			_append_terminal_line("DEPLOY BUFFERED %s x=%s y=%s" % [
-				deploy_type,
-				str(params.get("x", "?")),
-				str(params.get("y", "?")),
-			], "success")
+			if args.is_empty():
+				_append_terminal_line("USE: DEPLOY <TURRET_TYPE> x=<WORLD_X> y=<WORLD_Y> OR sector=<SECTOR>", "warning")
+				return true
+			if str(args[0]).to_upper() == "DRONE":
+				_set_terminal_page("RECON")
+				_terminal_overlay_flags["path"] = true
+				_append_terminal_line("RECON DEPLOY PLAN OPENED // DRONE SUPPORT NOT YET A PHYSICAL RUNTIME UNIT", "success")
+				_refresh_snapshot()
+				return true
+			var turret_type := _resolve_terminal_turret_type(str(args[0]))
+			if turret_type.is_empty():
+				_append_terminal_line("UNKNOWN DEPLOY TYPE %s" % str(args[0]).to_upper(), "warning")
+				return true
+			var fallback_sector := str(args[1]) if args.size() > 1 else ""
+			var target := _resolve_terminal_target_position(params, fallback_sector)
+			if not bool(target.get("ok", false)):
+				_append_terminal_line("DEPLOY REQUIRES x=<WORLD_X> y=<WORLD_Y> OR sector=<SECTOR>", "warning")
+				return true
+			var deploy_result := _attempt_terminal_turret_deploy(turret_type, target)
+			if bool(deploy_result.get("ok", false)):
+				_set_terminal_page("DEFENSE")
+				_append_terminal_line("DEPLOYED %s // %s @ %s" % [
+					turret_type.to_upper(),
+					str(target.get("source", "TARGET")).to_upper(),
+					str(deploy_result.get("position", Vector2.ZERO)),
+				], "success")
+				_refresh_snapshot()
+			else:
+				_append_terminal_line("DEPLOY FAILED // %s" % str(deploy_result.get("reason", "UNKNOWN")), "warning")
+			return true
+		"REPAIR":
+			var repair_target := str(args[0]) if not args.is_empty() else str(params.get("sector", _terminal_highlight_sector if not _terminal_highlight_sector.is_empty() else "COMMAND"))
+			var repair_result := _apply_terminal_emergency_repair(repair_target)
+			if bool(repair_result.get("ok", false)):
+				_set_terminal_page("SECTORS")
+				_terminal_highlight_sector = str(repair_result.get("sector", ""))
+				_append_terminal_line("REPAIRED %s // +%.1f HP" % [
+					str(repair_result.get("sector", "UNKNOWN")),
+					float(repair_result.get("repair_amount", 0.0)),
+				], "success", str(repair_result.get("sector", "")))
+				_refresh_snapshot()
+			else:
+				_append_terminal_line("REPAIR FAILED // %s" % str(repair_result.get("reason", "UNKNOWN")), "warning")
+			return true
+		"MOVE":
+			var move_target := str(args[0]).to_upper() if not args.is_empty() else "SECTORS"
+			if _terminal_page_buttons.has(move_target):
+				_set_terminal_page(move_target)
+				_append_terminal_line("MOVED VIEW -> %s" % move_target, "success")
+				return true
+			var move_sector := _resolve_terminal_sector_name(move_target)
+			if not move_sector.is_empty():
+				_terminal_highlight_sector = move_sector
+				_set_terminal_page("SECTORS")
+				_append_terminal_line("MOVED FOCUS -> %s" % _display_sector_name(move_sector).to_upper(), "success", move_sector)
+				_refresh_snapshot()
+				return true
+			_append_terminal_line("UNKNOWN MOVE TARGET %s" % move_target, "warning")
+			return true
+		"RETURN":
+			_cancel_active_placement_mode()
+			_terminal_highlight_sector = ""
+			_set_terminal_page("OVERVIEW")
+			_append_terminal_line("RETURNED TO COMMAND OVERVIEW", "success")
+			_refresh_snapshot()
+			return true
+		"SYNC":
+			_ensure_terminal_contract_binding()
+			_refresh_snapshot()
+			_append_terminal_line("COMMAND LINK SYNCHRONIZED // SNAPSHOT REFRESHED", "success")
+			return true
+		"LOCKDOWN":
+			var lockdown_target := str(args[0]).to_upper() if not args.is_empty() else "ALL"
+			_terminal_overlay_flags["threat"] = true
+			_terminal_overlay_flags["repair"] = true
+			_terminal_overlay_flags["path"] = false
+			_terminal_overlay_flags["power"] = false
+			if lockdown_target == "ALL":
+				for sector_variant in _collect_sector_snapshot():
+					if not (sector_variant is Dictionary):
+						continue
+					_apply_terminal_sector_priority(str((sector_variant as Dictionary).get("name", "")), "CRITICAL")
+				_set_terminal_page("DEFENSE")
+				_append_terminal_line("LOCKDOWN APPLIED // ALL SECTOR PRIORITIES CRITICAL", "critical")
+			else:
+				var lock_result := _apply_terminal_sector_priority(lockdown_target, "CRITICAL")
+				if bool(lock_result.get("ok", false)):
+					_terminal_highlight_sector = str(lock_result.get("sector", ""))
+					_set_terminal_page("DEFENSE")
+					_append_terminal_line("LOCKDOWN APPLIED // %s" % str(lock_result.get("sector", "UNKNOWN")), "critical", str(lock_result.get("sector", "")))
+				else:
+					_append_terminal_line("LOCKDOWN FAILED // %s" % str(lock_result.get("reason", "UNKNOWN")), "warning")
+			_refresh_snapshot()
+			return true
+		"FORTIFY":
+			var fortify_target := str(args[0]) if not args.is_empty() else "COMMAND"
+			var fortify_result := _apply_terminal_sector_priority(fortify_target, "CRITICAL")
+			if bool(fortify_result.get("ok", false)):
+				_terminal_highlight_sector = str(fortify_result.get("sector", ""))
+				_set_terminal_page("DEFENSE")
+				_append_terminal_line("FORTIFY APPLIED // %s PRIORITY CRITICAL" % str(fortify_result.get("sector", "UNKNOWN")), "success", str(fortify_result.get("sector", "")))
+				_refresh_snapshot()
+			else:
+				_append_terminal_line("FORTIFY FAILED // %s" % str(fortify_result.get("reason", "UNKNOWN")), "warning")
+			return true
+		"BOOST":
+			if not args.is_empty() and str(args[0]).to_upper() == "DEFENSE":
+				_terminal_overlay_flags["threat"] = true
+				_terminal_overlay_flags["repair"] = true
+				_set_terminal_page("DEFENSE")
+				_append_terminal_line("DEFENSE BOOST MODE ENABLED", "success")
+				_refresh_snapshot()
+				return true
+			_append_terminal_line("UNKNOWN BOOST TARGET", "warning")
+			return true
+		"SCAN":
+			if not args.is_empty() and str(args[0]).to_upper() == "RELAYS":
+				_terminal_overlay_flags["path"] = true
+				_terminal_overlay_flags["threat"] = true
+				_set_terminal_page("SENSORS")
+				_refresh_snapshot()
+				_append_terminal_line("RELAY SCAN COMPLETE // SENSOR PAGE OPEN", "success")
+				return true
+			_append_terminal_line("UNKNOWN SCAN TARGET", "warning")
+			return true
+		"STABILIZE":
+			if not args.is_empty() and str(args[0]).to_upper() == "RELAY":
+				var relay_target := str(args[1]) if args.size() > 1 else str(params.get("sector", "COMMS"))
+				var relay_priority := _apply_terminal_sector_priority(relay_target, "CRITICAL")
+				var relay_repair := _apply_terminal_emergency_repair(relay_target)
+				if bool(relay_priority.get("ok", false)):
+					_terminal_highlight_sector = str(relay_priority.get("sector", ""))
+					_set_terminal_page("SENSORS")
+					_append_terminal_line("RELAY STABILIZED // %s // REPAIR %s" % [
+						str(relay_priority.get("sector", "UNKNOWN")),
+						str(relay_repair.get("reason", "UNAVAILABLE")),
+					], "success", str(relay_priority.get("sector", "")))
+					_refresh_snapshot()
+				else:
+					_append_terminal_line("STABILIZE RELAY FAILED // %s" % str(relay_priority.get("reason", "UNKNOWN")), "warning")
+				return true
+			_append_terminal_line("UNKNOWN STABILIZE TARGET", "warning")
+			return true
+		"PRIORITIZE":
+			if not args.is_empty() and str(args[0]).to_upper() == "REPAIR":
+				_terminal_overlay_flags["repair"] = true
+				var repair_focus := str(args[1]) if args.size() > 1 else str(params.get("sector", _terminal_highlight_sector))
+				if not repair_focus.is_empty():
+					var prioritized_sector := _resolve_terminal_sector_name(repair_focus)
+					if not prioritized_sector.is_empty():
+						_terminal_highlight_sector = prioritized_sector
+				_set_terminal_page("SECTORS")
+				_append_terminal_line("REPAIR PRIORITY ENABLED", "success", _terminal_highlight_sector)
+				_refresh_snapshot()
+				return true
+			_append_terminal_line("UNKNOWN PRIORITIZE TARGET", "warning")
+			return true
+		"DRONE":
+			if not args.is_empty() and str(args[0]).to_upper() == "DEPLOY":
+				_set_terminal_page("RECON")
+				_terminal_overlay_flags["path"] = true
+				_append_terminal_line("DRONE RECON MODE ENABLED", "success")
+				_refresh_snapshot()
+				return true
+			_append_terminal_line("UNKNOWN DRONE TARGET", "warning")
+			return true
+		"POLICY":
+			if args.is_empty() or str(args[0]).to_upper() == "SHOW":
+				_set_terminal_page("SETTINGS")
+				_append_terminal_line("POLICY PRESET=%s | RATE=%s" % [_terminal_policy_preset, _format_terminal_rate(Engine.time_scale)], "info")
+				return true
+			if str(args[0]).to_upper() == "PRESET":
+				var preset_name := str(args[1]).to_upper() if args.size() > 1 else str(params.get("name", "BALANCED")).to_upper()
+				_apply_terminal_policy_preset(preset_name)
+				_append_terminal_line("POLICY PRESET APPLIED -> %s" % _terminal_policy_preset, "success")
+				_refresh_snapshot()
+				return true
+			_append_terminal_line("UNKNOWN POLICY COMMAND", "warning")
+			return true
+		"CONFIG":
+			if not args.is_empty() and str(args[0]).to_upper() == "DOCTRINE":
+				_set_terminal_page("SETTINGS")
+				_append_terminal_line("DOCTRINE CONFIG OPENED", "success")
+				return true
+			_append_terminal_line("UNKNOWN CONFIG TARGET", "warning")
+			return true
+		"SET":
+			if not args.is_empty() and str(args[0]).to_upper() == "FAB":
+				_set_terminal_page("SETTINGS")
+				var fab_profile := str(args[1]).to_upper() if args.size() > 1 else "STANDARD"
+				_append_terminal_line("FAB PROFILE SET -> %s" % fab_profile, "success")
+				return true
+			_append_terminal_line("UNKNOWN SET TARGET", "warning")
+			return true
+		"FAB":
+			var fab_action := str(args[0]).to_upper() if not args.is_empty() else "QUEUE"
+			var fab_payload := " ".join(args.slice(1, args.size()))
+			match fab_action:
+				"ADD":
+					if fab_payload.is_empty():
+						_append_terminal_line("FAB ADD REQUIRES AN ITEM NAME", "warning")
+						return true
+					_terminal_fabrication_queue.append(fab_payload)
+					_set_terminal_page("SETTINGS")
+					_append_terminal_line("FAB QUEUE ADD -> %s" % fab_payload, "success")
+				"QUEUE":
+					_set_terminal_page("SETTINGS")
+					_append_terminal_line("FAB QUEUE: %s" % (", ".join(_terminal_fabrication_queue) if not _terminal_fabrication_queue.is_empty() else "EMPTY"), "info")
+				"CANCEL":
+					if _terminal_fabrication_queue.is_empty():
+						_append_terminal_line("FAB QUEUE ALREADY EMPTY", "warning")
+					else:
+						var cancelled: String = str(_terminal_fabrication_queue.pop_back())
+						_append_terminal_line("FAB CANCELLED -> %s" % cancelled, "success")
+				"PRIORITY":
+					_set_terminal_page("SETTINGS")
+					_append_terminal_line("FAB PRIORITY -> %s" % (fab_payload if not fab_payload.is_empty() else "STANDARD"), "success")
+				_:
+					_append_terminal_line("UNKNOWN FAB COMMAND", "warning")
+			return true
+		"SCAVENGE":
+			var salvage_gain := 5
+			var game_state := _get_game_state()
+			if game_state != null and game_state.has_method("add_materials"):
+				game_state.add_materials(salvage_gain)
+			_set_terminal_page("RECON")
+			_append_terminal_line("SCAVENGE COMPLETE // +%d MATERIALS" % salvage_gain, "success")
+			_refresh_snapshot()
 			return true
 		"FOCUS":
 			var focus_target := str(args[0]).to_upper() if not args.is_empty() else "SYSTEM"
@@ -3411,6 +3640,147 @@ func _reset_terminal_local_state(include_boot_lines: bool) -> void:
 		_terminal_lines = TERMINAL_BOOT_LINES.duplicate()
 		_terminal_log_entries.clear()
 		_render_terminal_output()
+
+
+func _find_terminal_sector_snapshot(raw_name: String) -> Dictionary:
+	var resolved_name := _resolve_terminal_sector_name(raw_name)
+	if resolved_name.is_empty():
+		return {}
+	for sector_variant in _collect_sector_snapshot():
+		if not (sector_variant is Dictionary):
+			continue
+		var sector: Dictionary = sector_variant
+		if str(sector.get("name", "")).strip_edges().to_upper() == resolved_name:
+			return sector
+	return {}
+
+
+func _get_terminal_sector_world_pos(raw_name: String) -> Variant:
+	var sector := _find_terminal_sector_snapshot(raw_name)
+	var world_pos = sector.get("world_pos", null)
+	if world_pos is Vector2:
+		return world_pos
+	return null
+
+
+func _apply_terminal_emergency_repair(raw_name: String) -> Dictionary:
+	var resolved_name := _resolve_terminal_sector_name(raw_name)
+	if resolved_name.is_empty():
+		return {"ok": false, "reason": "UNKNOWN_SECTOR"}
+	var power_system := get_node_or_null("/root/GameRoot/Power")
+	if power_system == null or not power_system.has_method("apply_emergency_repair"):
+		return {"ok": false, "reason": "POWER_UNAVAILABLE", "sector": resolved_name}
+	var result = power_system.call("apply_emergency_repair", resolved_name)
+	if result is Dictionary:
+		var response: Dictionary = result
+		response["ok"] = str(response.get("reason", "")) == "APPLIED"
+		response["sector"] = resolved_name
+		return response
+	return {"ok": false, "reason": "UNKNOWN", "sector": resolved_name}
+
+
+func _apply_terminal_sector_priority(raw_name: String, priority_name: String) -> Dictionary:
+	var resolved_name := _resolve_terminal_sector_name(raw_name)
+	if resolved_name.is_empty():
+		return {"ok": false, "reason": "UNKNOWN_SECTOR"}
+	var power_system := get_node_or_null("/root/GameRoot/Power")
+	if power_system == null or not power_system.has_method("set_sector_priority"):
+		return {"ok": false, "reason": "POWER_UNAVAILABLE", "sector": resolved_name}
+	var priority_value := _resolve_power_priority(priority_name)
+	var changed := bool(power_system.call("set_sector_priority", resolved_name, priority_value))
+	return {
+		"ok": changed,
+		"sector": resolved_name,
+		"priority_name": priority_name,
+		"priority_value": priority_value,
+	}
+
+
+func _resolve_terminal_turret_type(raw_name: String) -> String:
+	var key := raw_name.strip_edges().to_lower()
+	match key:
+		"gunner", "turret_gunner", "tg":
+			return "gunner"
+		"blaster", "turret_blaster", "tb":
+			return "blaster"
+		"repeater", "turret_repeater", "tr":
+			return "repeater"
+		"sniper", "turret_sniper", "ts":
+			return "sniper"
+		_:
+			return ""
+
+
+func _resolve_terminal_target_position(params: Dictionary, fallback_sector: String = "") -> Dictionary:
+	var x_raw := str(params.get("x", "")).strip_edges()
+	var y_raw := str(params.get("y", "")).strip_edges()
+	if x_raw.is_valid_float() and y_raw.is_valid_float():
+		return {"ok": true, "position": Vector2(x_raw.to_float(), y_raw.to_float()), "source": "coordinates"}
+	var sector_name := str(params.get("sector", fallback_sector)).strip_edges()
+	if sector_name.is_empty():
+		sector_name = _terminal_highlight_sector
+	if not sector_name.is_empty():
+		var anchor = _get_terminal_sector_world_pos(sector_name)
+		if anchor is Vector2:
+			return {"ok": true, "position": anchor, "source": "sector", "sector": _resolve_terminal_sector_name(sector_name)}
+	if _terminal_map_hover_world_pos != Vector2.ZERO:
+		return {"ok": true, "position": _terminal_map_hover_world_pos, "source": "hover"}
+	return {"ok": false, "reason": "MISSING_TARGET"}
+
+
+func _attempt_terminal_turret_deploy(turret_type: String, target: Dictionary) -> Dictionary:
+	var placement := get_node_or_null("/root/GameRoot/World/TurretPlacement")
+	if placement == null:
+		return {"ok": false, "reason": "PLACEMENT_UNAVAILABLE"}
+	if not placement.has_method("enter_placement_mode") or not placement.has_method("attempt_place_turret_at"):
+		return {"ok": false, "reason": "PLACEMENT_API_MISSING"}
+	if not placement.call("enter_placement_mode", turret_type):
+		return {"ok": false, "reason": "ENTER_FAILED"}
+	var anchor: Vector2 = target.get("position", Vector2.ZERO)
+	var attempts: Array[Vector2] = [
+		Vector2.ZERO,
+		Vector2(64, 0), Vector2(-64, 0), Vector2(0, 64), Vector2(0, -64),
+		Vector2(64, 64), Vector2(-64, 64), Vector2(64, -64), Vector2(-64, -64),
+	]
+	for offset in attempts:
+		var world_pos := anchor + offset
+		if bool(placement.call("attempt_place_turret_at", world_pos)):
+			return {"ok": true, "position": world_pos, "source": target.get("source", "unknown")}
+	placement.call("exit_placement_mode")
+	return {"ok": false, "reason": "INVALID_POSITION"}
+
+
+func _apply_terminal_policy_preset(preset_name: String) -> void:
+	var normalized := preset_name.strip_edges().to_upper()
+	match normalized:
+		"DEFENSE", "FORTIFY":
+			_terminal_policy_preset = "DEFENSE"
+			_terminal_overlay_flags["threat"] = true
+			_terminal_overlay_flags["repair"] = true
+			_terminal_overlay_flags["power"] = false
+			_terminal_overlay_flags["path"] = false
+			_set_terminal_page("DEFENSE")
+		"SCAN", "RECON":
+			_terminal_policy_preset = "SCAN"
+			_terminal_overlay_flags["threat"] = true
+			_terminal_overlay_flags["path"] = true
+			_terminal_overlay_flags["power"] = false
+			_terminal_overlay_flags["repair"] = false
+			_set_terminal_page("SENSORS")
+		"POWER":
+			_terminal_policy_preset = "POWER"
+			_terminal_overlay_flags["power"] = true
+			_terminal_overlay_flags["path"] = false
+			_terminal_overlay_flags["threat"] = true
+			_terminal_overlay_flags["repair"] = false
+			_set_terminal_page("POWER")
+		_:
+			_terminal_policy_preset = "BALANCED"
+			_terminal_overlay_flags["power"] = false
+			_terminal_overlay_flags["path"] = false
+			_terminal_overlay_flags["threat"] = true
+			_terminal_overlay_flags["repair"] = false
+			_set_terminal_page("OVERVIEW")
 
 func _request_json(requester: HTTPRequest, path: String, method: int, payload: Variant = null) -> Dictionary:
 	if requester == null:

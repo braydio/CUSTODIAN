@@ -38,6 +38,7 @@ var _active_procgen_map: Node = null
 
 
 func _ready() -> void:
+	add_to_group("contract_world_loader")
 	call_deferred("_bind_contract_map")
 
 
@@ -262,11 +263,15 @@ func _position_spawn_nodes(level_data: Dictionary, map_instance: Node) -> void:
 
 
 func _refresh_camera(map_instance: Node) -> void:
-	var camera := get_node_or_null(camera_path)
+	var camera := get_node_or_null(camera_path) as Node
 	if camera == null:
 		return
 	if camera.has_method("set_runtime_map"):
 		camera.call("set_runtime_map", map_instance)
+	if camera.has_method("snap_to_player_spawn"):
+		var operator := get_node_or_null(operator_path) as Node2D
+		if operator != null:
+			camera.call("snap_to_player_spawn", operator.global_position)
 
 
 func _rebuild_navigation(map_instance: Node) -> void:
@@ -280,12 +285,19 @@ func _rebuild_navigation(map_instance: Node) -> void:
 
 	if map_instance is ProcGenTilemap:
 		var pg := map_instance as ProcGenTilemap
-		if pg.floor_tilemap:
-			nav.floor_tilemap = pg.floor_tilemap
-		if pg.walls_tilemap:
-			nav.walls_tilemap = pg.walls_tilemap
+		if nav.has_method("set_runtime_tilemaps"):
+			nav.call("set_runtime_tilemaps", pg.floor_tilemap, pg.walls_tilemap)
+		else:
+			if pg.floor_tilemap:
+				nav.floor_tilemap = pg.floor_tilemap
+			if pg.walls_tilemap:
+				nav.walls_tilemap = pg.walls_tilemap
 	nav.rebuild()
 	print("[ContractWorldLoader] Navigation rebuilt with procgen tilemaps")
+
+
+func get_active_map_instance() -> Node:
+	return _active_procgen_map
 
 
 func _position_command_terminal(level_data: Dictionary, map_instance: Node) -> void:

@@ -4,8 +4,8 @@
 
 ! CUSTODIAN - Is not a tactical wave defense. It is more similar to a roguelike/roguelite, real-time tactical, base-builder in a procedurally generated universe. The wave defense style gameplay is for testing only. Production will be continuous. Please be sure to update this anywhere it is referenced (like below, though it is not required that it be as verbose)!
 
-**Project:** CUSTODIAN - Godot-based tactical wave defense with procgen contracts  
-**Last Updated:** 2026-03-27
+**Project:** CUSTODIAN - Godot-based contract-driven tactical defense / procgen campaign game  
+**Last Updated:** 2026-04-08
 
 ---
 
@@ -51,6 +51,10 @@ design/
 │   ├── HUB_SYSTEM_META_PROGRESSION.md
 │   ├── WORLD_TRANSITION_SYSTEM.md
 │   └── RUNTIME_WORLD_AND_CAMERA_STABILIZATION.md
+│
+├── 03_content/                    # Canon world/lore/content docs
+│   ├── GAME_PROTOCOLS_AND_WORLD_LORE.md
+│   └── PROCEDURAL_LORE_GENERATION.md
 │
 ├── 04_research/                   # Research & exploration
 │   ├── DEERFLOW_AUTONOMOUS_CONTENT_SYSTEM.md
