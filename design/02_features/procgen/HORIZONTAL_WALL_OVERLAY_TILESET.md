@@ -1,12 +1,14 @@
 # Horizontal Wall Overlay Tileset
 
 **Project:** CUSTODIAN  
-**Status:** Complete  
-**Updated:** 2026-04-08
+**Status:** Deprecated / Historical Reference  
+**Updated:** 2026-04-20
 
 ## Goal
 
-Add the new 4x3 ruined wall sheet to procgen so exposed horizontal wall runs can render with left cap, stretchable middle, and right cap visuals.
+This document is retained as historical reference for the removed marble overlay experiment.
+The active procgen runtime no longer builds horizontal or vertical runtime wall overlays.
+Current runtime authority is tile-only wall rendering through `dungeon_tileset.tres`.
 
 ## Asset Contract
 
@@ -22,22 +24,9 @@ Add the new 4x3 ruined wall sheet to procgen so exposed horizontal wall runs can
 
 ## Runtime Integration
 
+- Not active in the current runtime.
 - Procgen wall logic remains tile-based and collision-authoritative.
-- A runtime overlay pass scans currently visible top-exposed wall runs.
-- A companion pass can also skin left/right-exposed vertical runs by reusing the same wall sheet with rotated repeated segments.
-- Collision can now expand upward and sideways on exposed rows/faces so the gameplay blocker matches the larger ruined wall mass more closely.
-- Each run is rendered as:
-  - left cap sprite at run start
-  - repeated middle sprite segments across the interior
-  - right cap sprite at run end
-- Overlay rebuilds happen after full generation, streaming reveal changes, chunk unloads, and destructible wall breaches.
-- Top-exposed wall collision is also extended upward to match the taller ruined wall presentation.
-- Optional ruined endcaps now decorate the left and right terminals of exposed runs, including interior/corridor runs.
-- Exposed vertical/corner-adjacent wall runs can now borrow the same ruined language so corridors do not collapse back to puny one-tile silhouettes.
-- A toggleable runtime collision debug overlay can render the generated blocker footprints for tuning overblocking.
-- The base tilemap wall visuals can be hidden for inspection so only the ruined overlay treatment and collision debug remain visible.
-- Test mode can also restrict collision generation to only tiles that currently use the ruined overlay treatment, preventing hidden legacy wall collision from confusing inspection.
-- Endcaps overlap the run by roughly 25% horizontally and can jitter upward slightly for broken silhouette variation.
+- Wall visuals now come directly from the wall tile atlas and the collision footprint matches the visible tile footprint.
 
 ## Non-Goals
 

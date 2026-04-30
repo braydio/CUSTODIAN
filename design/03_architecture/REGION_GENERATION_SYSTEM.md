@@ -13,6 +13,39 @@
 
 ---
 
+## 0. Implementation Status
+
+| Phase | Description | Status | Location |
+|-------|------------|--------|----------|
+| **Phase 1** | BSP Room Partitioning + Cellular Automaton | ✅ COMPLETE | `custodian/game/world/procgen/generator/bsp.gd`, `automaton.gd` |
+| **Phase 2** | Room Template Metadata + Biome Selection | 📋 BACKLOG | Edgar/Tiled integration pending |
+| **Phase 3** | Graph-First Mission Assembly | 📋 BACKLOG | RegionGraph not implemented |
+| **Phase 4** | Full Scenario Conditioning | 📋 BACKLOG | CampaignScenario→RegionSpec pending |
+
+### Phase 1 Complete (2026-04-08)
+
+The current implementation provides the **foundation layer**:
+
+- **BSP (Binary Space Partitioning):** Recursive zone splitting until `room_amount` leaves reached
+- **Room Adjacency:** Detection via edge overlap ratio
+- **Corridor Routing:** MST-based connection building
+- **Cellular Automaton:** Neighbor-based terrain smoothing
+- **Destructible Walls:** `runtime_wall_segment.gd` class
+
+This foundation is production-ready and used by the runtime procgen system.
+
+### Phase 2+ (Target)
+
+The design documents in this file describe the full **Phase 2-4** system:
+- Authored room templates with metadata
+- Biome-conditioned selection
+- Graph-based mission topology
+- Scenario input preprocessing
+
+These remain as the target architecture for future development.
+
+---
+
 ## 1. Purpose
 
 Define the system that generates transient campaign regions from Hub-selected scenarios and turns them into playable runtime worlds with coherent topology, biome identity, objective placement, threat pressure, extraction structure, and deterministic reproducibility.

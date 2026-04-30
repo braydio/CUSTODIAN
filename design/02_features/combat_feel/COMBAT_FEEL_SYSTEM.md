@@ -122,6 +122,28 @@ Required events:
 - `damage_end`
 - `cancel_start`
 
+### Profile intent taxonomy
+
+Attack input is profile-relative, not state-relative:
+
+- `ranged.primary` -> `ranged_fire`
+- `ranged.secondary` -> reserved for a future aimed/focused shot
+- `melee.primary` -> `melee_fast`
+- `melee.secondary` -> `melee_heavy`
+- `unarmed.primary` -> `unarmed_fast`
+- `unarmed.secondary` -> `unarmed_heavy`
+
+Unarmed/Fists is a selectable weapon profile. It must not create separate unarmed combat states; `unarmed_fast`
+and `unarmed_heavy` reuse the shared `attack_fast` and `attack_heavy` states while resolving profile-specific
+animations, hit windows, FX, and stat multipliers through `unarmed_definition.tres`.
+
+Unarmed heavy is the first fists secondary baseline. It should read as a committed short-range strike with better
+control/repositioning than weapons but lower reach, damage, and stagger. Parry/counter is deferred to the block
+state path and should not be overloaded onto unarmed secondary.
+
+Asset rule: unarmed body motion and unarmed FX should be separate runtime layers. If an existing clean body strip
+matches the needed motion, reuse it for body frames and put fist impact/trail pixels in an unarmed FX overlay.
+
 ## 2. Hit Confirmation
 
 ### Design

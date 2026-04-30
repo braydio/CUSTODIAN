@@ -18,6 +18,7 @@ Start with **one constrained design**:
 * One weapon (forward firing)
 * No passengers
 * Instant enter/exit (no animation yet)
+* Visually dormant while unoccupied; idle hover loop begins only after entry
 
 👉 This avoids physics hell and lets you integrate cleanly.
 
@@ -119,6 +120,11 @@ func exit_vehicle():
     current_actor = operator
 ```
 
+## Runtime placement
+
+- Runtime vehicle instances under `World` should be repositioned by `ContractWorldLoader` into open compound tiles when a procgen contract becomes active.
+- Vehicles should not remain at editor-authored coordinates once the operator and terminal have been moved into the live contract map.
+
 ---
 
 ## 4. Vehicle interaction trigger
@@ -129,7 +135,7 @@ Vehicle scene includes:
 # vehicle_interaction.gd
 func _on_body_entered(body):
     if body is Operator:
-        show_prompt("Press E to enter")
+        show_prompt("Press <interact> to enter")
 ```
 
 ---
@@ -333,4 +339,3 @@ I also built in:
 * a current-state reconciliation section
 
 One important caveat: the project design snapshot I could inspect is older than the repo guidance. The broad design material I found was created on **February 9, 2026**, while the active repo guidance I found is from **March 30, 2026**. I do **not** currently have a dated up-to-date devlog or current gamefile snapshot in this conversation, so this roadmap is broad and consistent with project doctrine, but not yet reconciled against the latest live implementation state.  
-

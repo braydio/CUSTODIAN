@@ -2,6 +2,12 @@
 
 Repository-level guidance for CUSTODIAN (post-Godot pivot).
 
+## Mandatory Local Routing
+
+- Any work inside `custodian/` must start with `custodian/AGENTS.md`.
+- Treat `custodian/AGENTS.md` as the local primer for runtime state, design/development routing, context retrieval, docs-drift review, and migration execution.
+- This root file defines repository-wide doctrine and authority order; the `custodian/` primer defines how to operate inside the active Godot runtime subtree.
+
 ## Active Runtime
 
 - Active gameplay/runtime code: `custodian/` (Godot 4.x)
@@ -56,6 +62,7 @@ When behavior/architecture changes:
 - Maintain the active AI context pack in `custodian/docs/ai_context/`.
 - Minimum update target on meaningful runtime changes: `custodian/docs/ai_context/CURRENT_STATE.md`.
 - Prefer updating the full pack (`CURRENT_STATE.md`, `CONTEXT.md`, `FILE_INDEX.md`) when architecture, authority, or key file ownership changes.
+- Keep local routing docs aligned with the active context pack, especially `custodian/AGENTS.md` and `custodian/README.md`.
 - Treat `python-sim/ai/` as historical reference only.
 
 ## Clarifications

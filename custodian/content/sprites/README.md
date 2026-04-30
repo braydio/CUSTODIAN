@@ -19,6 +19,7 @@
 
 ```
 custodian/content/sprites/
+├── _pipeline/                  # Intake-only manifest-driven ingest area
 ├── weapons/                    # Weapon-owned animation system
 │   ├── README.md               # Weapons documentation
 │   ├── ANIMATION_SYSTEM.md    # Full animation system
@@ -44,8 +45,18 @@ custodian/content/sprites/
 │   │   └── block_spark/        # 128x128, 4 frames
 │   └── source/                 # Original files
 │
+├── environment/                 # In-world environmental sprites
+│   ├── props/
+│   │   └── terminal/
+│   │       └── runtime/body/   # Terminal activation prop sheets
+│   ├── foliage/
+│   └── ambient_critter/
+│
 └── additional-charsets/        # Third-party assets
 ```
+
+`_pipeline/` is not a runtime asset root. It stages source PNG + manifest pairs that are written into the
+existing runtime-owned sprite domains.
 
 ---
 
@@ -94,36 +105,64 @@ custodian/content/sprites/
 
 ## Animation Naming Convention
 
-### Sprite Files
+New sprite sheets should use the canonical pipeline naming pattern:
 
 ```
-<weapon_id>__<category>__<variant>.png
+<owner>__<layer>__<action_group>__<variant>__<direction>__<frames>f__<frame_size>.png
 ```
 
-**Examples:**
-```
-fallen_star_katana__melee_2h__fast.png
-carbine_rifle__ranged__fire.png
-```
-
-### Godot Animations
+Examples:
 
 ```
-<category>_<variant>
+operator__body__locomotion__walk__n__8f__96.png
+operator__body__locomotion__sprint__se__8f__96.png
+operator__body__locomotion__dodge__w__6f__96.png
+operator__body__locomotion__roll__nw__8f__96.png
+operator__body__melee__fast_01__n__6f__96.png
+operator__weapon__melee__fast_01__n__6f__96.png
+operator__fx__melee__fast_01__n__6f__96.png
+enemy_grunt__body__reaction__stagger__s__5f__96.png
+hit_spark__fx__impact__default__omni__4f__64.png
+computer_terminal__body__interaction__activate__omni__4f__48.png
 ```
 
-**Examples:**
+Legacy files may remain while current scenes and rebuild scripts still reference them. New source and intake work
+should use the canonical filename and let pipeline manifests write compatibility copies when needed.
+
+### Direction Codes
+
+Use fixed direction codes:
+
 ```
-idle
-melee_fast
-melee_heavy
-ranged_stance
-ranged_fire
+n, ne, e, se, s, sw, w, nw, omni
+```
+
+Use `omni` only for non-directional effects.
+
+### Animation Vocabulary
+
+```
+locomotion: idle, walk, sprint, dodge, roll
+melee: light_01, light_02, fast_01, fast_02, heavy_01, heavy_charge, heavy_release
+defense: block_enter, block_hold, block_hit, block_break, block_exit
+ranged: aim, fire, fire_walk, reload, recoil
+reaction: hit_light, hit_heavy, stagger, knockdown, recover
+death: default, disintegrate
+interaction: activate, deactivate, open, close, idle
 ```
 
 ---
 
 ## Workflow
+
+### Intake Pipeline
+
+1. Drop a PNG + matching JSON manifest into `content/sprites/_pipeline/inbox/`
+2. Run `python custodian/tools/pipelines/ingest.py`
+3. Validate the written runtime asset in Godot
+
+The ingest pipeline writes into the existing runtime domains such as `weapons/`, `enemies/`, `operator/`,
+`effects/`, `vehicles/`, and `turrets/`. It does not write into a separate `entities/` hierarchy.
 
 ### Adding New Weapon
 
@@ -143,9 +182,9 @@ ranged_fire
 ### Fixing Drone Animations
 
 1. **TODO:** Acquire new drone sprite sheets
-2. Resize to 96x96
-3. Clean up irregular frame regions
-4. Update `enemy.tres`
+2. Use a manifest in `_pipeline/inbox/` to slice the authored strip into the live runtime file path
+3. Clean up irregular frame regions only if the source sheet actually needs it
+4. Validate the runtime scene/script that consumes the new strip
 
 **See:** `design/DRONE_ASSETS_NEEDED.md`
 

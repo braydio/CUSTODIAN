@@ -19,6 +19,9 @@ The animation state machine is defined at:
 
 The state machine is now connected to the live operator attack + locomotion request path, but body animation playback is still rendered by `operator.gd` rather than fully delegated to state-owned visual handlers.
 
+Holstered movement currently gets a small locomotion bonus so the operator feels lighter when fully unarmed.
+Committed melee attack swings and heavy windup currently lock locomotion so attacks read as planted actions rather than sliding strikes.
+
 ```gdscript
 func _update_animation():
     # Still resolves directional body clips here
@@ -132,7 +135,7 @@ var interrupt_priority: int = 0
 **Live behavior:**
 - Plays `melee_2h_block_enter` → `melee_2h_block_hold` → `melee_2h_block_exit`
 - Uses the authored katana row as a separate synced weapon overlay during block
-- Slows movement while blocking
+- Locks locomotion while any block phase is active
 - Disables melee/ranged attack input while block is active
 - Spends stamina on successful blocked hits
 - If stamina is insufficient, the hit goes through and block drops into exit
@@ -164,7 +167,7 @@ var interrupt_priority: int = 0
 **Behavior:**
 - Play reload animation
 - Reset ammo count
-- **SLOW DOWN MOVEMENT SPEED** while reloading (50% of normal)
+- Lock locomotion while reloading
 - Exit on: animation complete
 
 ```gdscript

@@ -131,8 +131,10 @@ CUSTODIAN // COMMAND LINK | MODE: COMMAND | FIDELITY: FULL | T: 18 | THREAT: HIG
 
 **Rules:**
 - Scrollable, newest at bottom
+- Auto-follow newest entries while the transcript is already at the bottom
 - Timestamps on every entry
 - Clicking opens linked page/sector
+- World interaction prompts should resolve the live `interact` binding at runtime rather than hardcoding a specific key label
 
 ---
 

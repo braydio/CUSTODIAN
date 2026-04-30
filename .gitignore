@@ -13,6 +13,7 @@ export_presets.cfg
 export.cfg
 *.translation
 icon.svg.import
+# Keep .tres, .tscn, .gd files tracked - these are source code
 
 # =======================
 # PYTHON (python-sim)
@@ -31,9 +32,10 @@ env/
 ENV/
 env.bak/
 venv.bak/
+ENV.bak/
 
 # =======================
-# GODOT ASSETS (external)
+# GODOT ASSETS (external - placeholder dirs)
 # =======================
 PixelPlanets/
 PixelSpace/
@@ -50,6 +52,7 @@ Thumbs.db
 .Spotlight-V100
 .Trashes
 ehthumbs.db
+Desktop.ini
 
 # =======================
 # LOCAL TOOLING / DIAGNOSTICS
@@ -61,6 +64,10 @@ ehthumbs.db
 .tmp/
 .temp/
 scripts/.tmp/
+.nvimlog
+nvimspector*.json
+vscode/*.json
+.vscode-test/
 
 # =======================
 # MCP / LOCAL PLUGINS
@@ -78,17 +85,13 @@ out/
 
 # =======================
 # IDE
-# =====================/
+# =======================
 .idea/
 .vscode/
 *.code-workspace
 *.sublime-*
-
-# =======================
-# GODOT SPECIFIC
-# =======================
-# Keep imported assets tracked only through source files already committed.
-# Do NOT ignore .tres, .tscn, .gd files - these are source code.
+.ijsettings/
+*.iml
 
 # =======================
 # TESTING
@@ -96,5 +99,19 @@ out/
 coverage/
 .coverage
 htmlcov/
-.pytest_cache/
 .omx/
+
+# =======================
+# CUSTODIAN SPECIFIC
+# =======================
+# Local environment overrides (create personal .env files but don't track them)
+.env
+.env.local
+.env.*.local
+# Editor history/state
+custodian/.editorrescache
+
+# =======================
+# RCLONE SYNC (if used)
+# =======================
+rclone-git-sync.sh

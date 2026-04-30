@@ -4,6 +4,18 @@
 
 Status: Active implementation runtime.
 
+## Start Here
+
+Before changing anything under `custodian/`, read `AGENTS.md`.
+
+That file is the mandatory local primer for:
+
+- active design and development state
+- source-of-truth routing
+- context retrieval across adjacent docs and runtime files
+- documentation drift review and remediation
+- migration execution instructions for layout or authority changes
+
 ## Run
 
 ```bash
@@ -29,9 +41,9 @@ custodian/
 ├── tools/                  # Import/pipeline scripts
 ├── dev/                    # Debug + test scenes/logs
 └── docs/
-    ├── ARCHITECTURE.md
-    ├── GDSCRIPT_STANDARDS.md
-    └── SCENE_HIERARCHY.md
+	├── ARCHITECTURE.md
+	├── GDSCRIPT_STANDARDS.md
+	└── SCENE_HIERARCHY.md
 ```
 
 ## Runtime Contract
@@ -74,3 +86,4 @@ It is reference/debug context only and not the active runtime authority.
 Canonical doctrine is maintained in:
 
 - `../python-sim/design/MASTER_DESIGN_DOCTRINE.md`
+- `AGENTS.md`
