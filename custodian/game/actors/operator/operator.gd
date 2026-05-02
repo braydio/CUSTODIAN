@@ -2,9 +2,12 @@ extends ControllableActor
 
 const AnimationASsgResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
 const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
+const AttackLightState = preload("res://game/actors/operator/animations/states/attack_light_state.gd")
 const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
 const AttackHeavyState = preload("res://game/actors/operator/animations/states/attack_heavy_state.gd")
 const BlockState = preload("res://game/actors/operator/animations/states/block_state.gd")
+const EquipWeaponState = preload("res://game/actors/operator/animations/states/equip_weapon_state.gd")
+const HitRecoilState = preload("res://game/actors/operator/animations/states/hit_recoil_state.gd")
 const IdleState = preload("res://game/actors/operator/animations/states/idle_state.gd")
 const WalkState = preload("res://game/actors/operator/animations/states/walk_state.gd")
 const SprintState = preload("res://game/actors/operator/animations/states/sprint_state.gd")
@@ -41,6 +44,10 @@ var last_fire_cooldown := 0.0
 @export var melee_range: float = 72.0
 @export var melee_arc_degrees: float = 80.0
 @export var melee_cooldown: float = 0.45
+@export var melee_light_hit_damage: float = 16.0
+@export var melee_light_range: float = 68.0
+@export var melee_light_arc_degrees: float = 88.0
+@export var melee_light_cancel_start: float = 0.34
 @export var melee_fast_hit_damage: float = 7.0
 @export var melee_heavy_hit_damage: float = 34.0
 @export var melee_heavy_range: float = 84.0
@@ -51,9 +58,13 @@ var last_fire_cooldown := 0.0
 @export var melee_hit_stop_scale: float = 0.8
 @export var melee_hit_stop_duration: float = 0.02
 @export var melee_camera_shake_power: float = 1.0
+@export var melee_light_hit_stop_scale: float = 0.86
+@export var melee_light_hit_stop_duration: float = 0.035
+@export var melee_light_camera_shake_power: float = 1.4
 @export var melee_fast_hit_stop_scale: float = 0.88
 @export var melee_fast_hit_stop_duration: float = 0.028
 @export var melee_fast_camera_shake_power: float = 1.4
+@export var operator_light_reaction_stun_duration: float = 0.22
 @export var melee_fast_knockback_force: float = 56.0
 @export var melee_fast_recovery_duration: float = 0.2
 @export var melee_heavy_hit_stop_scale: float = 0.55
@@ -70,6 +81,8 @@ var last_fire_cooldown := 0.0
 @export var move_acceleration: float = 1200.0
 @export var move_deceleration: float = 1500.0
 @export var movement_turn_response: float = 14.0
+@export var unarmed_move_multiplier: float = 1.12
+@export var ranged_firing_move_multiplier: float = 0.72
 @export var heavy_attack_stamina_cost: float = 14.0
 @export var heavy_attack_blocked_while_sprinting: bool = true
 @export var block_move_multiplier: float = 0.6
@@ -79,8 +92,10 @@ var last_fire_cooldown := 0.0
 @export_file("*.png") var idle_main_sheet_path := "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
 @export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_stance.png"
 @export_file("*.png") var ranged_2h_aim_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_aim_raise.png"
+@export_file("*.png") var ranged_2h_fire_walk_sheet_path := "res://content/sprites/operator/runtime/curated/body/ranged_2h/firing_slow_walk.png"
 @export var primary_weapon_definition = null
 @export var melee_weapon_definition = null
+@export var unarmed_definition: OperatorWeaponDefinition = preload("res://game/actors/operator/unarmed_definition.tres")
 @export var idle_long_loop_threshold: int = 20
 @export var primary_weapon_frames_resource: SpriteFrames
 @export var placeholder_sprite_position: Vector2 = Vector2(0, -18)
@@ -102,6 +117,7 @@ var interaction_target: Node = null
 var repair_target: Damageable = null
 var build_target: Node = null  # WallBlueprint we're building
 var movement_direction := Vector2.DOWN  # Direction player is moving (for walk animations)
+var visual_idle_direction := Vector2.DOWN
 var arrow_aim_enabled: bool = false
 var stamina: float = 100.0
 var is_sprinting: bool = false
@@ -112,6 +128,13 @@ var _melee_attack_key: String = ""
 var _melee_elapsed: float = 0.0
 var _melee_duration: float = 0.0
 var _melee_forward: Vector2 = Vector2.RIGHT
+var armed_weapons: Array[OperatorWeaponDefinition] = []
+var armed_weapon_index: int = 0
+var last_armed_weapon_index: int = 0
+var using_unarmed: bool = false
+var pending_weapon_selection: Dictionary = {}
+var _active_attack_profile: OperatorWeaponDefinition = null
+var _missing_animation_warnings: Dictionary = {}
 var _melee_heavy_anticipating: bool = false
 var _melee_fast_combo_step: int = 0
 var _buffered_attack_kind: String = ""
@@ -130,6 +153,7 @@ var _reload_active: bool = false
 var _reload_timer: float = 0.0
 var _ammo_standard_loaded: int = 0
 var _ammo_heavy_loaded: int = 0
+var _pending_ranged_shot: Dictionary = {}
 var _combat_target: Node2D = null
 var _target_ring: Node2D = null
 var _idle_loop_counter := 0
@@ -137,6 +161,11 @@ var _last_idle_frame := -1
 var _last_idle_animation := ""
 var _animation_state_machine = null
 var _is_dead := false
+var _body_recoil_offset := Vector2.ZERO
+var _animated_sprite_base_position := Vector2.ZERO
+var _melee_weapon_overlay_base_position := Vector2.ZERO
+var _melee_fx_overlay_base_position := Vector2.ZERO
+var _last_damage_reaction_direction := Vector2.DOWN
 
 # Debug socket visualization
 var debug_draw_sockets: bool = false
@@ -189,6 +218,17 @@ const PRIMARY_WEAPON_SWORD := "fallen_star_katana"
 const LOADOUT_HOLSTERED := &"holstered"
 const LOADOUT_MELEE := &"melee"
 const LOADOUT_RANGED := &"ranged"
+const RANGED_FIRE_WALK_ANIMATION := &"ranged_2h_fire_walk"
+const RANGED_FIRE_WALK_FRAME_WIDTH := 96
+const RANGED_FIRE_WALK_BASE_FPS := 10.0
+const BODY_RECOIL_RECOVERY_RATE := 18.0
+const BODY_RECOIL_PROFILE_PIXELS := {
+	"recoil_pistol": 0.7,
+	"recoil_standard": 1.0,
+	"recoil_shotgun": 1.5,
+	"recoil_sniper": 2.0,
+	"recoil_minigun": 0.6,
+}
 
 @onready var health_bar = $HealthBar
 @onready var visual = $Visual
@@ -207,6 +247,10 @@ const LOADOUT_RANGED := &"ranged"
 @onready var weapon_hitbox_shape: CollisionShape2D = $HitboxRoot/WeaponHitbox/CollisionShape2D if has_node("HitboxRoot/WeaponHitbox/CollisionShape2D") else null
 @onready var weapon_factory: Node = get_node_or_null("/root/GameRoot/World/WeaponDefinitionFactory")
 
+func _exit_tree() -> void:
+	_animation_state_machine = null
+
+
 func _ready():
 	add_to_group("player")
 	# Sync with ControllableActor base class
@@ -222,10 +266,17 @@ func _ready():
 		animated_sprite.frame_changed.connect(_on_attack_frame_changed)
 		if not animated_sprite.animation_finished.is_connected(_on_operator_animation_finished):
 			animated_sprite.animation_finished.connect(_on_operator_animation_finished)
+		_ensure_runtime_body_animations()
+	_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_fire", "ranged_fire")
+	_configure_weapon_definition_defaults(melee_weapon_definition, "Fallen Star Katana", "melee", "melee_light", "melee_heavy")
+	_rebuild_armed_weapon_list()
+	_sync_weapon_selection_from_current_loadout()
 	_apply_active_weapon_frames()
 	_setup_animation_state_machine()
 	if use_tiny_rpg_placeholder_soldier:
 		_apply_placeholder_runtime_layout()
+	else:
+		_capture_runtime_visual_base_positions()
 	_reset_melee_overlay_visuals()
 	_update_primary_weapon_visual(false)
 	stamina = stamina_max
@@ -233,6 +284,7 @@ func _ready():
 	weapon_profile = 0
 	_initialize_magazines()
 	disable_hitbox()
+	_apply_body_recoil_offset()
 	update_visuals()
 
 func _draw():
@@ -260,6 +312,8 @@ func _process(delta):
 	fire_cooldown_remaining = max(0.0, fire_cooldown_remaining - delta)
 	melee_cooldown_remaining = max(0.0, melee_cooldown_remaining - delta)
 	current_recoil = max(0.0, current_recoil - recoil_decay * delta)
+	_update_pending_ranged_shot(delta)
+	_update_body_recoil(delta)
 	_update_attack_buffer(delta)
 	_update_melee_attack(delta)
 	_update_melee_recovery(delta)
@@ -275,6 +329,7 @@ func _process(delta):
 	if _is_terminal_open():
 		return
 	_handle_loadout_toggle_input()
+	try_apply_pending_weapon_selection()
 	_handle_aim_input_toggle()
 	_handle_reload_input()
 	_update_aim()
@@ -286,12 +341,16 @@ func _process(delta):
 		return
 	if Input.is_action_pressed("build"):
 		_try_build(delta)
-	if _is_ranged_loadout_active() and not _is_blocking() and Input.is_action_pressed("attack") and fire_cooldown_remaining <= 0.0:
-		_fire_bullet()
-	if _is_melee_loadout_active() and not _is_blocking() and Input.is_action_just_pressed("attack"):
-		_try_melee_attack()
+	_handle_attack_input()
 	if _wants_block():
 		_request_block_state()
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion and not arrow_aim_enabled:
+		var mouse_aim_vector := _get_world_mouse_position() - global_position
+		if mouse_aim_vector.length_squared() > 0.0001:
+			visual_idle_direction = mouse_aim_vector.normalized()
 
 
 func _physics_process(delta):
@@ -305,6 +364,11 @@ func _physics_process(delta):
 		stamina = min(stamina_max, stamina + stamina_regen_per_second * delta)
 		move_and_slide()
 		return
+	if _is_movement_locked():
+		velocity = Vector2.ZERO
+		is_sprinting = false
+		move_and_slide()
+		return
 
 	var direction: Vector2 = Vector2.ZERO
 	direction.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
@@ -314,6 +378,7 @@ func _physics_process(delta):
 	# Track movement direction for animations
 	if input_direction != Vector2.ZERO:
 		movement_direction = input_direction
+		visual_idle_direction = input_direction
 
 	var moving = input_direction != Vector2.ZERO
 	var wants_sprint = Input.is_key_pressed(KEY_CTRL)
@@ -322,11 +387,18 @@ func _physics_process(delta):
 		_sprint_exhausted = false
 	var can_start_sprint := stamina > stamina_sprint_gate
 	is_sprinting = moving and wants_sprint and not _sprint_exhausted and (was_sprinting or can_start_sprint)
+	var movement_profile := get_current_combat_profile()
 	var move_speed = SPEED * sprint_multiplier if is_sprinting else SPEED
+	if movement_profile != null:
+		move_speed *= movement_profile.move_speed_multiplier
+	if _is_ranged_firing_move_state():
+		move_speed *= _get_ranged_firing_move_multiplier()
 	if _is_block_state_active():
 		move_speed *= block_move_multiplier
 	var target_velocity: Vector2 = input_direction * move_speed
 	var accel_rate: float = move_acceleration if moving else move_deceleration
+	if movement_profile != null:
+		accel_rate *= movement_profile.acceleration_multiplier
 	velocity = velocity.move_toward(target_velocity, accel_rate * delta)
 	move_and_slide()
 
@@ -349,6 +421,7 @@ func _update_aim():
 	if arrow_aim_enabled:
 		if keyboard_aim != Vector2.ZERO:
 			aim_direction = keyboard_aim
+			visual_idle_direction = keyboard_aim
 	else:
 		var mouse_aim_vector := _get_world_mouse_position() - global_position
 		if mouse_aim_vector.length_squared() > 0.0001:
@@ -370,7 +443,7 @@ func _update_animation():
 		return
 	
 	# Check if currently firing or attacking (lock to cursor)
-	var is_firing = fire_cooldown_remaining > 0.0
+	var is_firing = _is_ranged_fire_animation_active()
 	var current_animation := String(animated_sprite.animation)
 	var is_melee_attack_anim := current_animation.begins_with("melee_2h_fast") or current_animation.begins_with("melee_2h_heavy")
 	var is_attacking = _melee_active or (
@@ -387,20 +460,21 @@ func _update_animation():
 	if is_firing or is_attacking or is_block_anim or is_reloading or _melee_recovery_active:
 		animation_dir = aim_direction
 	else:
-		animation_dir = movement_direction if is_moving else aim_direction
+		animation_dir = movement_direction if is_moving else visual_idle_direction
 	
 	# Determine direction suffix
 	var direction_suffix := _get_direction_suffix(animation_dir)
 	var facing_left := _is_facing_left(animation_dir)
 	var facing_up := _is_facing_up(animation_dir)
-	
+
 	# Don't override attack animation while playing
-	if is_attacking or is_block_anim or _melee_recovery_active:
+	if is_attacking or is_block_anim or _melee_recovery_active or _is_equip_weapon_state_active():
 		animated_sprite.flip_h = facing_left
 		return
 
 	if is_reloading:
 		animated_sprite.flip_h = facing_left
+		animated_sprite.speed_scale = 1.0
 		if animated_sprite.sprite_frames.has_animation("ranged_2h_reload"):
 			if animated_sprite.animation != "ranged_2h_reload" or not animated_sprite.is_playing():
 				animated_sprite.play("ranged_2h_reload")
@@ -412,17 +486,19 @@ func _update_animation():
 	animated_sprite.flip_h = facing_left
 	_update_primary_weapon_visual(is_firing)
 
-	var ranged_fire_anim := _get_weapon_animation_name(_get_equipped_primary_weapon_definition(), "ranged_fire", &"ranged_2h_fire")
+	var ranged_fire_anim := _get_current_ranged_body_fire_animation(is_moving and not is_sprinting)
 	if is_firing and not facing_up and _is_using_ranged_2h_primary() and animated_sprite.sprite_frames.has_animation(ranged_fire_anim):
+		animated_sprite.speed_scale = _get_body_animation_speed_scale(ranged_fire_anim)
 		if animated_sprite.animation != ranged_fire_anim or not animated_sprite.is_playing():
 			animated_sprite.play(ranged_fire_anim)
 		_update_idle_loop_tracking(false, "")
 		return
+	animated_sprite.speed_scale = 1.0
 	
 	# Play walk or idle based on movement and direction
 	if is_moving:
 		if is_sprinting:
-			var run_anim := "run_" + direction_suffix
+			var run_anim := String(AnimationResolver.resolve("unarmed_run", animation_dir, animated_sprite)) if _is_current_profile_unarmed() else "run_" + direction_suffix
 			if animated_sprite.sprite_frames.has_animation(run_anim):
 				if animated_sprite.animation != run_anim:
 					animated_sprite.play(run_anim)
@@ -435,6 +511,13 @@ func _update_animation():
 				return
 			_update_idle_loop_tracking(false, "")
 			return
+		if _is_current_profile_unarmed():
+			var unarmed_walk_anim := String(AnimationResolver.resolve("unarmed_walk", animation_dir, animated_sprite))
+			if animated_sprite.sprite_frames.has_animation(unarmed_walk_anim):
+				if animated_sprite.animation != unarmed_walk_anim:
+					animated_sprite.play(unarmed_walk_anim)
+				_update_idle_loop_tracking(false, "")
+				return
 		if not _is_using_ranged_2h_primary() and direction_suffix == "down" and animated_sprite.sprite_frames.has_animation("walk_down_default"):
 			if animated_sprite.animation != "walk_down_default":
 				animated_sprite.play("walk_down_default")
@@ -452,11 +535,13 @@ func _update_animation():
 			_update_idle_loop_tracking(false, "")
 	else:
 		var melee_body_stance_anim := _get_authored_melee_body_stance_animation()
-		if _is_melee_loadout_active() and not melee_body_stance_anim.is_empty() and animated_sprite.sprite_frames.has_animation(melee_body_stance_anim):
-			if animated_sprite.animation != melee_body_stance_anim:
-				animated_sprite.play(melee_body_stance_anim)
-			_update_idle_loop_tracking(false, "")
-			return
+		if _is_melee_loadout_active() and not melee_body_stance_anim.is_empty():
+			var resolved_stance_anim := AnimationResolver.resolve(String(melee_body_stance_anim), animation_dir, animated_sprite)
+			if animated_sprite.sprite_frames.has_animation(resolved_stance_anim):
+				if animated_sprite.animation != resolved_stance_anim:
+					animated_sprite.play(resolved_stance_anim)
+				_update_idle_loop_tracking(false, "")
+				return
 		var ranged_stance_anim := _get_weapon_animation_name(_get_equipped_primary_weapon_definition(), "ranged_stance", &"ranged_2h_stance")
 		if not facing_up and animated_sprite.sprite_frames.has_animation(ranged_stance_anim) and _is_using_ranged_2h_primary():
 			if animated_sprite.animation != ranged_stance_anim:
@@ -517,20 +602,39 @@ func _get_weapon_display_angle(dir: Vector2) -> float:
 	return -angle if _is_facing_left(dir) else angle
 
 
-func _fire_bullet():
+func _request_ranged_shot() -> void:
 	if not _is_ranged_loadout_active():
 		return
 	if _reload_active:
 		return
-	var profile := _get_current_ranged_profile()
 	if not _has_loaded_ammo():
 		_try_start_reload()
 		return
-	var direction := _get_attack_aim_direction()
+	var profile := _get_current_ranged_profile()
+	last_fire_cooldown = float(profile["cooldown"])
+	fire_cooldown_remaining = last_fire_cooldown
+	var fire_animation := _get_current_ranged_body_fire_animation(velocity.length() > 0.01 and not is_sprinting)
+	var delay := _get_ranged_fire_release_delay(fire_animation)
+	_pending_ranged_shot = {
+		"timer": delay,
+		"profile": profile.duplicate(true),
+		"aim_direction": _get_attack_aim_direction(),
+	}
+	_play_ranged_fire_animation(fire_animation)
+	if delay <= 0.0:
+		_emit_pending_ranged_shot()
+
+
+func _emit_pending_ranged_shot() -> void:
+	if _pending_ranged_shot.is_empty():
+		return
+	var profile: Dictionary = _pending_ranged_shot.get("profile", {})
+	var direction: Vector2 = _pending_ranged_shot.get("aim_direction", Vector2.RIGHT)
+	_pending_ranged_shot.clear()
 	if direction.length_squared() <= 0.0001:
 		return
-	var spread = float(profile["spread"]) + (current_recoil * 0.2)
-	var spread_rad = deg_to_rad(randf_range(-spread, spread))
+	var spread := float(profile.get("spread", 0.0)) + (current_recoil * 0.2)
+	var spread_rad := deg_to_rad(randf_range(-spread, spread))
 	direction = direction.rotated(spread_rad)
 
 	var bullet = BULLET_SCENE.instantiate()
@@ -542,10 +646,10 @@ func _fire_bullet():
 		spawn_position = barrel.global_position
 	if bullet.has_method("set_direction"):
 		bullet.set_direction(direction)
-	bullet.speed = float(profile["speed"])
-	bullet.damage = float(profile["damage"])
-	bullet.bullet_radius = float(profile["radius"])
-	bullet.bullet_color = profile["color"]
+	bullet.speed = float(profile.get("speed", 780.0))
+	bullet.damage = float(profile.get("damage", 16.0))
+	bullet.bullet_radius = float(profile.get("radius", 3.0))
+	bullet.bullet_color = profile.get("color", Color(1.0, 0.9, 0.35, 1.0))
 	bullet.impact_scene = IMPACT_SPARK_SCENE
 	bullet.shooter = self
 
@@ -556,34 +660,101 @@ func _fire_bullet():
 		get_tree().current_scene.add_child(bullet)
 	bullet.global_position = spawn_position
 
-	current_recoil += float(profile["recoil_kick"])
-	last_fire_cooldown = float(profile["cooldown"])
-	fire_cooldown_remaining = last_fire_cooldown
+	current_recoil += float(profile.get("recoil_kick", 1.2))
 	_consume_ammo()
 	_spawn_muzzle_flash(direction)
+	_apply_body_recoil_impulse(direction)
 
 
-func _try_melee_attack():
+func _handle_attack_input() -> void:
+	if _is_blocking():
+		return
+	if _is_attack_secondary_just_pressed():
+		_request_current_profile_intent(false)
+		return
+	if _is_attack_primary_just_pressed():
+		_request_current_profile_intent(true)
+		return
+	if _is_ranged_loadout_active() and _is_attack_primary_pressed() and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
+		_request_current_profile_intent(true)
+
+
+func _request_current_profile_intent(primary: bool) -> void:
+	var profile := get_current_combat_profile()
+	if profile == null:
+		return
+	var intent := profile.primary_intent if primary else profile.secondary_intent
+	if intent.is_empty():
+		return
+	_request_attack_intent(intent)
+
+
+func _request_attack_intent(intent: String) -> void:
+	match intent:
+		"ranged_fire":
+			_request_ranged_shot()
+		"melee_light", "melee_fast", "melee_heavy", "unarmed_fast", "unarmed_heavy":
+			_try_melee_attack(intent)
+		_:
+			push_warning("Unsupported attack intent: %s" % intent)
+
+
+func _try_melee_attack(intent: String = ""):
 	if not _is_melee_loadout_active():
 		return
-	var requested_kind := _get_requested_attack_kind()
+	var requested_kind := _get_requested_attack_kind(intent)
 	if _can_start_attack_now():
 		_request_attack_state(requested_kind)
 		return
 	_buffer_attack(requested_kind)
 
 
-func _get_requested_attack_kind() -> String:
+func _is_attack_primary_just_pressed() -> bool:
+	return Input.is_action_just_pressed("attack_primary") \
+		or Input.is_action_just_pressed("attack") \
+		or Input.is_action_just_pressed("melee_attack")
+
+
+func _is_attack_primary_pressed() -> bool:
+	return Input.is_action_pressed("attack_primary") \
+		or Input.is_action_pressed("attack") \
+		or Input.is_action_pressed("melee_attack")
+
+
+func _is_attack_secondary_just_pressed() -> bool:
+	return Input.is_action_just_pressed("attack_secondary") \
+		or (Input.is_key_pressed(KEY_SHIFT) and _is_attack_primary_just_pressed())
+
+
+func _get_requested_attack_kind(intent: String = "") -> String:
+	if not intent.is_empty():
+		return _attack_kind_from_intent(intent)
 	var wants_heavy: bool = Input.is_key_pressed(KEY_SHIFT)
 	if not wants_heavy:
-		return "fast"
+		return "light"
 	if heavy_attack_blocked_while_sprinting and is_sprinting:
-		return "fast"
+		return "light"
 	if stamina < heavy_attack_stamina_cost:
-		return "fast"
+		return "light"
 	if Input.is_key_pressed(KEY_SHIFT):
 		return "heavy"
-	return "fast"
+	return "light"
+
+
+func _attack_kind_from_intent(intent: String) -> String:
+	match intent:
+		"melee_heavy":
+			return "heavy"
+		"unarmed_heavy":
+			return "heavy"
+		"melee_fast":
+			return "fast"
+		"unarmed_fast":
+			return "fast"
+		"melee_light":
+			return "light"
+		_:
+			return "light"
 
 
 func _can_start_attack_now() -> bool:
@@ -595,12 +766,18 @@ func _can_start_attack_now() -> bool:
 func _start_attack_by_kind(kind: String) -> void:
 	if kind == "heavy":
 		_start_heavy_attack()
-	else:
+	elif kind == "fast":
 		_start_fast_attack()
+	else:
+		_start_light_attack()
 
 
 func _request_attack_state(kind: String) -> void:
-	var state_name := "attack_heavy" if kind == "heavy" else "attack_fast"
+	var state_name := "attack_light"
+	if kind == "heavy":
+		state_name = "attack_heavy"
+	elif kind == "fast":
+		state_name = "attack_fast"
 	if _animation_state_machine != null and _animation_state_machine.request(state_name, 10):
 		return
 	_start_attack_by_kind(kind)
@@ -635,7 +812,24 @@ func _clear_attack_buffer() -> void:
 	_buffered_attack_timer = 0.0
 
 
+func _start_light_attack() -> void:
+	_active_attack_profile = get_current_combat_profile()
+	_melee_active = true
+	_melee_heavy_anticipating = false
+	_melee_fast_combo_step = 0
+	_melee_attack_kind = "light"
+	_melee_attack_key = "melee_light"
+	_notify_camera_attack_windup(false)
+	_melee_elapsed = 0.0
+	_melee_duration = 0.46
+	_melee_forward = _get_melee_forward_direction()
+	_configure_melee_hitbox(melee_light_hit_damage, melee_light_range, melee_light_arc_degrees)
+	_play_melee_anim_from_key(_melee_attack_key, &"melee_2h_fast")
+	_lock_melee_cooldown(_melee_duration + 0.06)
+
+
 func _start_fast_attack() -> void:
+	_active_attack_profile = get_current_combat_profile()
 	_melee_active = true
 	_melee_heavy_anticipating = false
 	_melee_attack_kind = "fast"
@@ -643,6 +837,7 @@ func _start_fast_attack() -> void:
 	var next_fast_key := "melee_fast_1"
 	var fallback_animation: StringName = &"melee_2h_fast"
 	var next_duration := 0.42
+	var is_unarmed_attack := _is_attack_profile_unarmed(_active_attack_profile)
 	if _melee_fast_combo_step >= 1 and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_fast_2_right"):
 		next_fast_key = "melee_fast_2"
 		fallback_animation = &"melee_2h_fast_2"
@@ -653,6 +848,9 @@ func _start_fast_attack() -> void:
 		if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_fast_1_right"):
 			fallback_animation = &"melee_2h_fast_1"
 		next_duration = 0.42
+	if is_unarmed_attack:
+		next_fast_key = "unarmed_fast_2" if _melee_fast_combo_step >= 2 else "unarmed_fast_1"
+		fallback_animation = &"unarmed_attack_fast"
 	_melee_attack_key = next_fast_key
 	_melee_elapsed = 0.0
 	_melee_duration = next_duration
@@ -663,14 +861,16 @@ func _start_fast_attack() -> void:
 
 
 func _start_heavy_attack() -> void:
+	_active_attack_profile = get_current_combat_profile()
 	_melee_heavy_anticipating = false
 	_melee_fast_combo_step = 0
 	_melee_attack_kind = "heavy"
-	_melee_attack_key = "melee_heavy"
+	var is_unarmed_attack := _is_attack_profile_unarmed(_active_attack_profile)
+	_melee_attack_key = "unarmed_heavy" if is_unarmed_attack else "melee_heavy"
 	_notify_camera_attack_windup(true)
 	stamina = max(0.0, stamina - heavy_attack_stamina_cost)
 	_melee_forward = _get_melee_forward_direction()
-	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_heavy_anticipation"):
+	if not is_unarmed_attack and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_heavy_anticipation"):
 		_melee_active = false
 		_melee_heavy_anticipating = true
 		_melee_elapsed = 0.0
@@ -683,6 +883,14 @@ func _start_heavy_attack() -> void:
 		_lock_melee_cooldown(1.10)
 		return
 	_begin_heavy_attack_active_phase()
+
+
+func _is_attack_profile_unarmed(profile: OperatorWeaponDefinition) -> bool:
+	return profile != null and profile.weapon_kind == "unarmed"
+
+
+func _is_current_profile_unarmed() -> bool:
+	return _is_attack_profile_unarmed(get_current_combat_profile())
 
 
 func _begin_heavy_attack_active_phase() -> void:
@@ -699,6 +907,8 @@ func _begin_heavy_attack_active_phase() -> void:
 func _get_cancel_start_time() -> float:
 	if _melee_attack_kind == "heavy":
 		return melee_heavy_cancel_start
+	if _melee_attack_kind == "light":
+		return melee_light_cancel_start
 	return melee_fast_cancel_start
 
 
@@ -714,7 +924,7 @@ func _update_melee_attack(delta: float) -> void:
 		_apply_melee_hitbox_tick()
 
 	if not _buffered_attack_kind.is_empty() and _melee_elapsed >= _get_cancel_start_time():
-		_start_attack_by_kind(_consume_buffered_attack())
+		_request_attack_state(_consume_buffered_attack())
 		return
 
 	if _melee_elapsed < _melee_duration:
@@ -730,6 +940,7 @@ func _update_melee_attack(delta: float) -> void:
 	_melee_elapsed = 0.0
 	_melee_duration = 0.0
 	_melee_heavy_anticipating = false
+	_active_attack_profile = null
 	disable_hitbox()
 	_melee_hit_targets.clear()
 	if not _melee_recovery_active:
@@ -739,7 +950,7 @@ func _update_melee_attack(delta: float) -> void:
 func _apply_melee_hitbox_tick() -> void:
 	if weapon_hitbox == null:
 		return
-	var weapon_definition = _get_equipped_primary_weapon_definition()
+	var weapon_definition = _active_attack_profile if _active_attack_profile != null else _get_equipped_primary_weapon_definition()
 	var window: Dictionary = {}
 	if weapon_definition != null and weapon_definition.hit_windows is Dictionary:
 		window = weapon_definition.hit_windows.get(_melee_attack_key, {})
@@ -767,6 +978,7 @@ func _apply_melee_hitbox_tick() -> void:
 		var angle = abs(rad_to_deg(_melee_forward.angle_to(to_enemy.normalized())))
 		if angle > (_melee_arc_current * 0.5):
 			continue
+		var impact_position := _resolve_melee_impact_position(enemy)
 		enemy.take_damage(_melee_damage_current)
 		_melee_hit_targets[enemy_id] = true
 		var knockback_dir := global_position.direction_to(enemy.global_position)
@@ -777,7 +989,7 @@ func _apply_melee_hitbox_tick() -> void:
 			enemy.velocity = knockback_dir * knockback_force
 			enemy.move_and_slide()
 		hit_count += 1
-		_spawn_melee_impact(enemy.global_position)
+		_spawn_melee_impact(impact_position)
 	if hit_count > 0:
 		_on_melee_hit_confirmed()
 		print("MELEE HIT: ", hit_count, " target(s), damage=", _melee_damage_current)
@@ -787,10 +999,22 @@ func _get_melee_forward_direction() -> Vector2:
 	return _get_attack_aim_direction()
 
 
+func is_attack_state_complete(kind: String) -> bool:
+	if _melee_heavy_anticipating:
+		return false
+	if _melee_recovery_active and kind == "fast":
+		return false
+	if _melee_active:
+		return _melee_attack_kind != kind
+	return true
+
+
 func start_attack(attack_key: String) -> void:
-	if attack_key == "melee_fast":
+	if attack_key == "melee_light":
+		_start_light_attack()
+	elif attack_key == "melee_fast" or attack_key == "unarmed_fast":
 		_start_fast_attack()
-	elif attack_key == "melee_heavy":
+	elif attack_key == "melee_heavy" or attack_key == "unarmed_heavy":
 		_start_heavy_attack()
 
 
@@ -806,6 +1030,7 @@ func start_block() -> void:
 	_melee_attack_key = ""
 	_melee_elapsed = 0.0
 	_melee_duration = 0.0
+	_active_attack_profile = null
 	disable_hitbox()
 	_melee_hit_targets.clear()
 	_reset_melee_overlay_visuals()
@@ -872,39 +1097,63 @@ func _play_melee_anim_from_key(attack_key: String, fallback_animation: StringNam
 		return
 	var weapon_definition = _get_equipped_primary_weapon_definition()
 	var base_animation := _get_weapon_animation_name(weapon_definition, attack_key, fallback_animation)
-	_play_melee_anim_resolved(base_animation, _melee_forward, attack_key)
-
-
-func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, attack_key: String) -> void:
-	if animated_sprite == null:
+	if _play_melee_anim_resolved(base_animation, _melee_forward, attack_key):
 		return
+	if not fallback_animation.is_empty() and fallback_animation != base_animation:
+		_warn_missing_animation_once(String(base_animation), String(fallback_animation))
+		_play_melee_anim_resolved(fallback_animation, _melee_forward, attack_key)
+
+
+func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, attack_key: String) -> bool:
+	if animated_sprite == null:
+		return false
 	animated_sprite.flip_h = _is_facing_left(direction)
 	var resolved_animation := AnimationResolver.resolve(String(base_animation), direction, animated_sprite)
-	if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(resolved_animation):
+	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, resolved_animation):
+		animated_sprite.flip_h = _is_facing_left(direction) and not String(resolved_animation).ends_with("_left")
 		animated_sprite.play(resolved_animation)
 		_play_melee_overlay_from_key(attack_key)
 		_sync_melee_hitbox_window_from_animation()
-		return
+		return true
 	var right_fallback := StringName("%s_right" % String(base_animation))
-	if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(right_fallback):
+	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, right_fallback):
 		animated_sprite.play(right_fallback)
-		return
-	if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(base_animation):
+		return true
+	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, base_animation):
 		animated_sprite.play(base_animation)
-		return
-	if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("attack_right_old"):
+		return true
+	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, &"attack_right_old"):
 		animated_sprite.play("attack_right_old")
+		return true
+	return false
+
+
+func _warn_missing_animation_once(animation_name: String, fallback_name: String) -> void:
+	if _missing_animation_warnings.has(animation_name):
+		return
+	_missing_animation_warnings[animation_name] = true
+	push_warning("Missing operator animation '%s'; using '%s' fallback" % [animation_name, fallback_name])
+
+
+func _has_playable_sprite_animation(sprite_frames: SpriteFrames, animation_name: StringName) -> bool:
+	return sprite_frames.has_animation(animation_name) and sprite_frames.get_frame_count(animation_name) > 0
 
 
 func _lock_melee_cooldown(duration: float) -> void:
+	var profile := _active_attack_profile if _active_attack_profile != null else get_current_combat_profile()
+	if profile != null:
+		duration *= profile.recovery_multiplier
 	melee_cooldown_remaining = duration
 	last_fire_cooldown = max(last_fire_cooldown, duration)
 	fire_cooldown_remaining = max(fire_cooldown_remaining, melee_cooldown_remaining)
 
 
 func _configure_melee_hitbox(damage: float, attack_range: float, attack_arc_degrees: float) -> void:
-	_melee_damage_current = damage
-	_melee_range_current = attack_range
+	var profile := _active_attack_profile if _active_attack_profile != null else get_current_combat_profile()
+	var damage_multiplier := profile.damage_multiplier if profile != null else 1.0
+	var range_multiplier := profile.range_multiplier if profile != null else 1.0
+	_melee_damage_current = damage * damage_multiplier
+	_melee_range_current = attack_range * range_multiplier
 	_melee_arc_current = attack_arc_degrees
 	_melee_hit_targets.clear()
 	_update_melee_hitbox_transform()
@@ -1016,6 +1265,10 @@ func _play_melee_overlay_from_key(attack_key: String) -> void:
 		return
 	var weapon_anim := StringName(str(overlay_data.get("weapon_anim", "")))
 	var fx_anim := StringName(str(overlay_data.get("fx_anim", "")))
+	if not weapon_anim.is_empty() and melee_weapon_overlay_sprite:
+		weapon_anim = AnimationResolver.resolve(String(weapon_anim), _melee_forward, melee_weapon_overlay_sprite)
+	if not fx_anim.is_empty() and melee_fx_overlay_sprite:
+		fx_anim = AnimationResolver.resolve(String(fx_anim), _melee_forward, melee_fx_overlay_sprite)
 	if melee_weapon_overlay_sprite and melee_weapon_overlay_sprite.sprite_frames and melee_weapon_overlay_sprite.sprite_frames.has_animation(weapon_anim):
 		melee_weapon_overlay_sprite.visible = true
 		melee_weapon_overlay_sprite.flip_h = animated_sprite.flip_h if animated_sprite else false
@@ -1076,6 +1329,19 @@ func _play_named_melee_fx_overlay(animation_name: StringName) -> bool:
 func _play_fast_attack_recovery() -> void:
 	if animated_sprite == null or not animated_sprite.sprite_frames:
 		return
+	if _is_attack_profile_unarmed(_active_attack_profile):
+		var recovery_animation := AnimationResolver.resolve("unarmed_attack_fast_recovery", _melee_forward, animated_sprite)
+		if _melee_forward.x < -0.05 and animated_sprite.sprite_frames.has_animation("unarmed_attack_fast_recovery_left"):
+			recovery_animation = &"unarmed_attack_fast_recovery_left"
+		if animated_sprite.sprite_frames.has_animation(recovery_animation):
+			animated_sprite.flip_h = _is_facing_left(_melee_forward) and recovery_animation != &"unarmed_attack_fast_recovery_left"
+			animated_sprite.play(recovery_animation)
+		if melee_weapon_overlay_sprite:
+			melee_weapon_overlay_sprite.visible = false
+		var recovery_fx := AnimationResolver.resolve("unarmed_attack_fast_recovery_fx", _melee_forward, melee_fx_overlay_sprite)
+		if not _play_named_melee_fx_overlay(recovery_fx):
+			_reset_melee_overlay_visuals()
+		return
 	if animated_sprite.sprite_frames.has_animation("melee_2h_fast_recovery"):
 		animated_sprite.play("melee_2h_fast_recovery")
 		_play_named_melee_weapon_overlay(&"melee_2h_fast_recovery_weapon")
@@ -1104,14 +1370,41 @@ func _spawn_melee_impact(pos: Vector2):
 	
 	var spark = IMPACT_SPARK_SCENE.instantiate()
 	if spark:
-		spark.global_position = pos
 		target.add_child(spark)
+		spark.global_position = pos
 	
 	var swing = MELEE_SWING_SCENE.instantiate()
 	if swing:
-		swing.global_position = pos
-		swing.set_direction(aim_direction)
 		target.add_child(swing)
+		swing.global_position = pos
+		swing.set_direction(_melee_forward if _melee_forward != Vector2.ZERO else aim_direction)
+
+
+func _resolve_melee_impact_position(target: Node2D) -> Vector2:
+	if target == null:
+		return global_position + _melee_forward * max(12.0, _melee_range_current * 0.65)
+	var to_target := target.global_position - global_position
+	var strike_direction := to_target.normalized() if to_target.length_squared() > 0.001 else _melee_forward.normalized()
+	if strike_direction == Vector2.ZERO:
+		strike_direction = Vector2.RIGHT
+	return target.global_position - strike_direction * _estimate_node_contact_radius(target, 14.0)
+
+
+func _estimate_node_contact_radius(target: Node, fallback_radius: float = 12.0) -> float:
+	if target == null:
+		return fallback_radius
+	var shape_node := target.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if shape_node == null:
+		return fallback_radius
+	var shape := shape_node.shape
+	if shape is CircleShape2D:
+		return max(fallback_radius, (shape as CircleShape2D).radius)
+	if shape is RectangleShape2D:
+		return max(fallback_radius, min((shape as RectangleShape2D).size.x, (shape as RectangleShape2D).size.y) * 0.5)
+	if shape is CapsuleShape2D:
+		var capsule := shape as CapsuleShape2D
+		return max(fallback_radius, capsule.radius + capsule.height * 0.25)
+	return fallback_radius
 
 
 func _on_melee_hit_confirmed() -> void:
@@ -1122,7 +1415,11 @@ func _on_melee_hit_confirmed() -> void:
 func _trigger_camera_shake() -> void:
 	var camera = _get_world_camera()
 	if camera and camera.has_method("shake"):
-		var power := melee_fast_camera_shake_power if _melee_attack_kind == "fast" else melee_heavy_camera_shake_power
+		var power := melee_heavy_camera_shake_power
+		if _melee_attack_kind == "light":
+			power = melee_light_camera_shake_power
+		elif _melee_attack_kind == "fast":
+			power = melee_fast_camera_shake_power
 		camera.call("shake", power if power > 0.0 else melee_camera_shake_power)
 
 
@@ -1153,8 +1450,14 @@ func _apply_hit_stop() -> void:
 		return
 	_hit_stop_active = true
 	var previous_scale := Engine.time_scale
-	var configured_scale := melee_fast_hit_stop_scale if _melee_attack_kind == "fast" else melee_heavy_hit_stop_scale
-	var configured_duration := melee_fast_hit_stop_duration if _melee_attack_kind == "fast" else melee_heavy_hit_stop_duration
+	var configured_scale := melee_heavy_hit_stop_scale
+	var configured_duration := melee_heavy_hit_stop_duration
+	if _melee_attack_kind == "light":
+		configured_scale = melee_light_hit_stop_scale
+		configured_duration = melee_light_hit_stop_duration
+	elif _melee_attack_kind == "fast":
+		configured_scale = melee_fast_hit_stop_scale
+		configured_duration = melee_fast_hit_stop_duration
 	var target_scale: float = clamp(configured_scale if configured_scale > 0.0 else melee_hit_stop_scale, 0.01, 1.0)
 	Engine.time_scale = min(previous_scale, target_scale)
 	await get_tree().create_timer(configured_duration if configured_duration > 0.0 else melee_hit_stop_duration, true, false, true).timeout
@@ -1167,10 +1470,12 @@ func _handle_weapon_switch():
 
 
 func _handle_loadout_toggle_input() -> void:
-	if Input.is_action_just_pressed("toggle_ranged_loadout"):
-		_toggle_ranged_loadout()
-	elif Input.is_action_just_pressed("toggle_melee_loadout"):
-		_toggle_melee_loadout()
+	if Input.is_action_just_pressed("toggle_unarmed"):
+		request_toggle_unarmed()
+	if Input.is_action_just_pressed("cycle_next_weapon"):
+		request_cycle_weapon(1)
+	if Input.is_action_just_pressed("cycle_prev_weapon"):
+		request_cycle_weapon(-1)
 
 
 func _handle_aim_input_toggle() -> void:
@@ -1183,39 +1488,207 @@ func _handle_reload_input() -> void:
 		_try_start_reload()
 
 
-func _toggle_ranged_loadout() -> void:
-	if _is_ranged_loadout_active():
-		_holster_all_weapons()
-		return
-	equip_primary_carbine()
+func get_current_combat_profile() -> OperatorWeaponDefinition:
+	if using_unarmed or armed_weapons.is_empty():
+		return unarmed_definition
+	var index: int = clampi(armed_weapon_index, 0, max(armed_weapons.size() - 1, 0))
+	return armed_weapons[index]
 
 
-func _toggle_melee_loadout() -> void:
-	if _is_melee_loadout_active():
-		_holster_all_weapons()
+func request_toggle_unarmed() -> void:
+	_rebuild_armed_weapon_list()
+	if armed_weapons.is_empty():
+		queue_weapon_selection({"type": "unarmed"})
 		return
-	_equip_melee_loadout()
+	if using_unarmed:
+		queue_weapon_selection({
+			"type": "armed",
+			"index": clampi(last_armed_weapon_index, 0, armed_weapons.size() - 1),
+		})
+		return
+	last_armed_weapon_index = clampi(armed_weapon_index, 0, armed_weapons.size() - 1)
+	queue_weapon_selection({"type": "unarmed"})
+
+
+func request_cycle_weapon(direction: int) -> void:
+	_rebuild_armed_weapon_list()
+	if armed_weapons.is_empty():
+		queue_weapon_selection({"type": "unarmed"})
+		return
+	var base_index := last_armed_weapon_index if using_unarmed else armed_weapon_index
+	var next_index := wrapi(base_index + direction, 0, armed_weapons.size())
+	queue_weapon_selection({
+		"type": "armed",
+		"index": next_index,
+	})
+
+
+func queue_weapon_selection(selection: Dictionary) -> void:
+	pending_weapon_selection = selection.duplicate(true)
+	try_apply_pending_weapon_selection()
+
+
+func try_apply_pending_weapon_selection() -> void:
+	if pending_weapon_selection.is_empty():
+		return
+	if not can_apply_weapon_selection_now():
+		return
+	_rebuild_armed_weapon_list()
+	var selection_type := str(pending_weapon_selection.get("type", ""))
+	match selection_type:
+		"unarmed":
+			_apply_unarmed_selection()
+		"armed":
+			_apply_armed_selection(int(pending_weapon_selection.get("index", armed_weapon_index)))
+	pending_weapon_selection.clear()
+	_refresh_primary_weapon_state()
+	_enter_equip_weapon_state_if_available()
+
+
+func can_apply_weapon_selection_now() -> bool:
+	if _is_dead or _melee_active or _melee_heavy_anticipating or _melee_recovery_active or _is_block_state_active() or _reload_active:
+		return false
+	if _animation_state_machine == null:
+		return true
+	return _animation_state_machine.current_state in ["idle", "walk", "sprint"]
+
+
+func _enter_equip_weapon_state_if_available() -> void:
+	if _animation_state_machine == null:
+		return
+	_animation_state_machine.request("equip_weapon", 5)
+
+
+func _is_equip_weapon_state_active() -> bool:
+	return _animation_state_machine != null and _animation_state_machine.current_state == "equip_weapon"
+
+
+func _apply_unarmed_selection() -> void:
+	using_unarmed = true
+	primary_weapon_equipped = true
+	equipped_primary_weapon_id = String(unarmed_definition.weapon_id) if unarmed_definition != null else "fists"
+	combat_loadout_mode = LOADOUT_MELEE
+	_cancel_reload()
+	_reset_melee_overlay_visuals()
+
+
+func _apply_armed_selection(index: int) -> void:
+	if armed_weapons.is_empty():
+		_apply_unarmed_selection()
+		return
+	armed_weapon_index = clampi(index, 0, armed_weapons.size() - 1)
+	last_armed_weapon_index = armed_weapon_index
+	using_unarmed = false
+	var profile := armed_weapons[armed_weapon_index]
+	primary_weapon_equipped = profile != null
+	equipped_primary_weapon_id = String(profile.weapon_id) if profile != null else PRIMARY_WEAPON_NONE
+	combat_loadout_mode = _get_loadout_mode_for_profile(profile)
+	_cancel_reload()
+	_reset_melee_overlay_visuals()
+
+
+func _rebuild_armed_weapon_list() -> void:
+	armed_weapons.clear()
+	_append_armed_weapon(primary_weapon_definition)
+	_append_armed_weapon(melee_weapon_definition)
+	if armed_weapons.is_empty():
+		armed_weapon_index = 0
+		last_armed_weapon_index = 0
+		using_unarmed = true
+		return
+	armed_weapon_index = clampi(armed_weapon_index, 0, armed_weapons.size() - 1)
+	last_armed_weapon_index = clampi(last_armed_weapon_index, 0, armed_weapons.size() - 1)
+
+
+func _append_armed_weapon(profile_variant: Variant) -> void:
+	if not (profile_variant is OperatorWeaponDefinition):
+		return
+	var profile := profile_variant as OperatorWeaponDefinition
+	if profile == null or profile == unarmed_definition or profile.weapon_kind == "unarmed":
+		return
+	if armed_weapons.has(profile):
+		return
+	armed_weapons.append(profile)
+
+
+func _configure_weapon_definition_defaults(
+	profile_variant: Variant,
+	default_display_name: String,
+	default_kind: String,
+	default_primary_intent: String,
+	default_secondary_intent: String
+) -> void:
+	if not (profile_variant is OperatorWeaponDefinition):
+		return
+	var profile := profile_variant as OperatorWeaponDefinition
+	if profile.display_name.is_empty():
+		profile.display_name = default_display_name
+	if profile.weapon_kind.is_empty() or (default_kind == "ranged" and profile.weapon_kind == "melee"):
+		profile.weapon_kind = default_kind
+	if profile.primary_intent.is_empty() or (default_kind == "ranged" and profile.primary_intent.begins_with("melee")):
+		profile.primary_intent = default_primary_intent
+	if profile.secondary_intent.is_empty() or (default_kind == "ranged" and profile.secondary_intent.begins_with("melee")):
+		profile.secondary_intent = default_secondary_intent
+
+
+func _sync_weapon_selection_from_current_loadout() -> void:
+	if armed_weapons.is_empty():
+		_apply_unarmed_selection()
+		return
+	var current_profile = _get_equipped_primary_weapon_definition()
+	var index := armed_weapons.find(current_profile)
+	if index < 0:
+		index = 0
+	armed_weapon_index = index
+	last_armed_weapon_index = index
+	using_unarmed = false
+	_apply_armed_selection(index)
+
+
+func _get_loadout_mode_for_profile(profile: OperatorWeaponDefinition) -> StringName:
+	if profile == null:
+		return LOADOUT_HOLSTERED
+	if profile.weapon_kind == "ranged" or String(profile.weapon_type).begins_with("ranged"):
+		return LOADOUT_RANGED
+	return LOADOUT_MELEE
+
+
+func get_weapon_selection_state() -> Dictionary:
+	return {
+		"using_unarmed": using_unarmed,
+		"armed_weapon_index": armed_weapon_index,
+		"last_armed_weapon_index": last_armed_weapon_index,
+	}
+
+
+func apply_weapon_selection_state(selection_state: Dictionary) -> void:
+	_rebuild_armed_weapon_list()
+	using_unarmed = bool(selection_state.get("using_unarmed", using_unarmed))
+	armed_weapon_index = clampi(int(selection_state.get("armed_weapon_index", armed_weapon_index)), 0, max(armed_weapons.size() - 1, 0))
+	last_armed_weapon_index = clampi(int(selection_state.get("last_armed_weapon_index", last_armed_weapon_index)), 0, max(armed_weapons.size() - 1, 0))
+	pending_weapon_selection.clear()
+	if using_unarmed or armed_weapons.is_empty():
+		_apply_unarmed_selection()
+	else:
+		_apply_armed_selection(armed_weapon_index)
+	_refresh_primary_weapon_state()
 
 
 func _equip_melee_loadout() -> void:
-	_cancel_reload()
-	primary_weapon_equipped = melee_weapon_definition != null
-	equipped_primary_weapon_id = PRIMARY_WEAPON_SWORD if melee_weapon_definition != null else PRIMARY_WEAPON_NONE
-	combat_loadout_mode = LOADOUT_MELEE
-	_refresh_primary_weapon_state()
+	_rebuild_armed_weapon_list()
+	var index := armed_weapons.find(melee_weapon_definition)
+	if index < 0:
+		return
+	queue_weapon_selection({"type": "armed", "index": index})
 
 
 func _holster_all_weapons() -> void:
-	_cancel_reload()
-	primary_weapon_equipped = false
-	equipped_primary_weapon_id = PRIMARY_WEAPON_NONE
-	combat_loadout_mode = LOADOUT_HOLSTERED
-	_reset_melee_overlay_visuals()
-	_refresh_primary_weapon_state()
+	queue_weapon_selection({"type": "unarmed"})
 
 
 func _is_melee_loadout_active() -> bool:
-	return combat_loadout_mode == LOADOUT_MELEE
+	var profile := get_current_combat_profile()
+	return combat_loadout_mode == LOADOUT_MELEE and profile != null and profile.weapon_kind in ["melee", "unarmed"]
 
 
 func _is_ranged_loadout_active() -> bool:
@@ -1265,11 +1738,15 @@ func _update_target_ring() -> void:
 		return
 	_target_ring.visible = true
 	_target_ring.global_position = _combat_target.global_position
+	if _target_ring.has_method("set_in_strike_zone"):
+		_target_ring.call("set_in_strike_zone", _is_enemy_in_preview_strike_zone(_combat_target))
 
 
 func _find_nearest_enemy_target(max_distance: float) -> Node2D:
 	var nearest: Node2D = null
 	var nearest_dist: float = max_distance
+	var nearest_strike_target: Node2D = null
+	var nearest_strike_dist: float = INF
 	for enemy in get_tree().get_nodes_in_group("enemy"):
 		if not (enemy is Node2D):
 			continue
@@ -1281,10 +1758,50 @@ func _find_nearest_enemy_target(max_distance: float) -> Node2D:
 		if enemy_node.has_method("is_dead") and bool(enemy_node.call("is_dead")):
 			continue
 		var dist: float = global_position.distance_to(enemy_node.global_position)
+		if _is_enemy_in_preview_strike_zone(enemy_node) and dist < nearest_strike_dist:
+			nearest_strike_dist = dist
+			nearest_strike_target = enemy_node
 		if dist <= nearest_dist:
 			nearest_dist = dist
 			nearest = enemy_node
-	return nearest
+	return nearest_strike_target if nearest_strike_target != null else nearest
+
+
+func _is_enemy_in_preview_strike_zone(enemy: Node2D) -> bool:
+	if enemy == null or not is_instance_valid(enemy):
+		return false
+	if not _is_melee_loadout_active():
+		return false
+	var to_enemy := enemy.global_position - global_position
+	var dist := to_enemy.length()
+	if dist <= 0.001:
+		return false
+	var preview := _get_preview_melee_range_arc()
+	if dist > float(preview.get("range", melee_range)):
+		return false
+	var forward := _get_attack_aim_direction()
+	if forward.length_squared() <= 0.001:
+		forward = aim_direction if aim_direction.length_squared() > 0.001 else Vector2.RIGHT
+	var angle: float = abs(rad_to_deg(forward.normalized().angle_to(to_enemy.normalized())))
+	return angle <= float(preview.get("arc", melee_arc_degrees)) * 0.5
+
+
+func _get_preview_melee_range_arc() -> Dictionary:
+	if _melee_active:
+		return {"range": _melee_range_current, "arc": _melee_arc_current}
+	var profile := get_current_combat_profile()
+	var intent := String(profile.primary_intent) if profile != null else "melee_light"
+	var base_range := melee_light_range
+	var base_arc := melee_light_arc_degrees
+	match _attack_kind_from_intent(intent):
+		"fast":
+			base_range = melee_range
+			base_arc = melee_arc_degrees
+		"heavy":
+			base_range = melee_heavy_range
+			base_arc = melee_heavy_arc_degrees
+	var range_multiplier := profile.range_multiplier if profile != null else 1.0
+	return {"range": base_range * range_multiplier, "arc": base_arc}
 
 
 func _spawn_muzzle_flash(direction: Vector2):
@@ -1330,6 +1847,126 @@ func _is_blocking() -> bool:
 
 func _is_block_state_active() -> bool:
 	return not _block_phase.is_empty()
+
+
+func _is_movement_locked() -> bool:
+	return _reload_active or _is_block_state_active() or _melee_active or _melee_heavy_anticipating
+
+
+func _is_ranged_fire_animation_active() -> bool:
+	return _is_ranged_loadout_active() and (not _pending_ranged_shot.is_empty() or fire_cooldown_remaining > 0.0)
+
+
+func _is_ranged_firing_move_state() -> bool:
+	return _is_ranged_fire_animation_active() and velocity.length() > 0.01 and not is_sprinting
+
+
+func _get_ranged_firing_move_multiplier() -> float:
+	var multiplier := ranged_firing_move_multiplier
+	var weapon_definition = _get_equipped_primary_weapon_definition()
+	if weapon_definition is OperatorWeaponDefinition:
+		var handling_multiplier := 1.0 + (weapon_definition as OperatorWeaponDefinition).get_handling_float("movement_speed_penalty", (weapon_definition as OperatorWeaponDefinition).movement_speed_penalty)
+		multiplier *= max(0.2, handling_multiplier)
+	return clampf(multiplier, 0.15, 1.0)
+
+
+func _get_current_ranged_body_fire_animation(is_moving: bool) -> StringName:
+	var weapon_definition = _get_equipped_primary_weapon_definition()
+	if is_moving:
+		var mapped_move_anim := _get_weapon_animation_name(weapon_definition, "ranged_fire_walk", RANGED_FIRE_WALK_ANIMATION)
+		if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(mapped_move_anim):
+			return mapped_move_anim
+	return _get_weapon_animation_name(weapon_definition, "ranged_fire", &"ranged_2h_fire")
+
+
+func _get_body_animation_speed_scale(animation_name: StringName) -> float:
+	if animation_name == RANGED_FIRE_WALK_ANIMATION:
+		return _get_ranged_firing_move_multiplier()
+	return 1.0
+
+
+func _get_ranged_fire_release_delay(animation_name: StringName) -> float:
+	var weapon_definition = _get_equipped_primary_weapon_definition()
+	var fire_frame := 0
+	if weapon_definition is OperatorWeaponDefinition:
+		fire_frame = max(0, (weapon_definition as OperatorWeaponDefinition).get_animation_int("fire_frame", (weapon_definition as OperatorWeaponDefinition).animation_fire_frame))
+	if fire_frame <= 0 or animated_sprite == null or animated_sprite.sprite_frames == null:
+		return 0.0
+	if not animated_sprite.sprite_frames.has_animation(animation_name):
+		return 0.0
+	var fps: float = animated_sprite.sprite_frames.get_animation_speed(animation_name) * _get_body_animation_speed_scale(animation_name)
+	if fps <= 0.001:
+		return 0.0
+	return float(fire_frame) / fps
+
+
+func _play_ranged_fire_animation(animation_name: StringName) -> void:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+	if not animated_sprite.sprite_frames.has_animation(animation_name):
+		return
+	animated_sprite.flip_h = _is_facing_left(aim_direction)
+	animated_sprite.speed_scale = _get_body_animation_speed_scale(animation_name)
+	animated_sprite.play(animation_name)
+	_update_primary_weapon_visual(true)
+
+
+func _update_pending_ranged_shot(delta: float) -> void:
+	if _pending_ranged_shot.is_empty():
+		return
+	var timer: float = float(_pending_ranged_shot.get("timer", 0.0))
+	timer = max(0.0, timer - delta)
+	_pending_ranged_shot["timer"] = timer
+	if timer <= 0.0:
+		_emit_pending_ranged_shot()
+
+
+func _ensure_runtime_body_animations() -> void:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+	if animated_sprite.sprite_frames.has_animation(RANGED_FIRE_WALK_ANIMATION):
+		return
+	var runtime_frames := animated_sprite.sprite_frames.duplicate() as SpriteFrames
+	if runtime_frames == null:
+		return
+	animated_sprite.sprite_frames = runtime_frames
+	var fire_walk_texture: Texture2D = _load_optional_texture(ranged_2h_fire_walk_sheet_path, null)
+	if fire_walk_texture == null:
+		return
+	var frame_count: int = max(1, fire_walk_texture.get_width() / RANGED_FIRE_WALK_FRAME_WIDTH)
+	_add_sheet_animation(runtime_frames, String(RANGED_FIRE_WALK_ANIMATION), fire_walk_texture, frame_count, true, RANGED_FIRE_WALK_BASE_FPS)
+
+
+func _update_body_recoil(delta: float) -> void:
+	if _body_recoil_offset == Vector2.ZERO:
+		return
+	_body_recoil_offset = _body_recoil_offset.move_toward(Vector2.ZERO, BODY_RECOIL_RECOVERY_RATE * delta)
+	_apply_body_recoil_offset()
+
+
+func _apply_body_recoil_impulse(direction: Vector2) -> void:
+	var recoil_pixels := float(BODY_RECOIL_PROFILE_PIXELS.get("recoil_standard", 1.0))
+	var weapon_definition = _get_equipped_primary_weapon_definition()
+	if weapon_definition is OperatorWeaponDefinition:
+		var recoil_key := (weapon_definition as OperatorWeaponDefinition).get_animation_string("recoil_animation", String((weapon_definition as OperatorWeaponDefinition).recoil_animation))
+		if not recoil_key.is_empty():
+			recoil_pixels = float(BODY_RECOIL_PROFILE_PIXELS.get(recoil_key, recoil_pixels))
+	var normalized_direction := direction.normalized()
+	if normalized_direction == Vector2.ZERO:
+		normalized_direction = Vector2.RIGHT
+	_body_recoil_offset += -normalized_direction * recoil_pixels
+	if _body_recoil_offset.length() > 3.0:
+		_body_recoil_offset = _body_recoil_offset.normalized() * 3.0
+	_apply_body_recoil_offset()
+
+
+func _apply_body_recoil_offset() -> void:
+	if animated_sprite:
+		animated_sprite.position = _animated_sprite_base_position + _body_recoil_offset
+	if melee_weapon_overlay_sprite:
+		melee_weapon_overlay_sprite.position = _melee_weapon_overlay_base_position + _body_recoil_offset
+	if melee_fx_overlay_sprite:
+		melee_fx_overlay_sprite.position = _melee_fx_overlay_base_position + _body_recoil_offset
 
 
 func _wants_block() -> bool:
@@ -1381,6 +2018,9 @@ func _has_active_idle_input() -> bool:
 		or Input.is_action_pressed("aim_up") \
 		or Input.is_action_pressed("aim_down") \
 		or Input.is_action_pressed("attack") \
+		or Input.is_action_pressed("attack_primary") \
+		or Input.is_action_pressed("attack_secondary") \
+		or Input.is_action_pressed("toggle_unarmed") \
 		or Input.is_action_pressed("reload_weapon") \
 		or Input.is_action_pressed("block") \
 		or Input.is_action_pressed("interact") \
@@ -1435,6 +2075,16 @@ func _apply_placeholder_runtime_layout() -> void:
 		health_bar.offset_right = 18.0
 		health_bar.offset_top = placeholder_healthbar_top
 		health_bar.offset_bottom = placeholder_healthbar_bottom
+	_capture_runtime_visual_base_positions()
+
+
+func _capture_runtime_visual_base_positions() -> void:
+	if animated_sprite:
+		_animated_sprite_base_position = animated_sprite.position
+	if melee_weapon_overlay_sprite:
+		_melee_weapon_overlay_base_position = melee_weapon_overlay_sprite.position
+	if melee_fx_overlay_sprite:
+		_melee_fx_overlay_base_position = melee_fx_overlay_sprite.position
 
 
 func _apply_dynamic_weapon_socket_layout(weapon_definition = null) -> void:
@@ -1459,7 +2109,7 @@ func _apply_dynamic_weapon_socket_layout(weapon_definition = null) -> void:
 	var weapon_socket_pos = _mirror_socket_vector_if_needed(
 		_get_weapon_definition_vector(weapon_definition, aim_state, "weapon_socket_position", primary_weapon_socket_position),
 		facing_left
-	)
+	) + _body_recoil_offset
 	var weapon_sprite_pos = _mirror_socket_vector_if_needed(
 		_get_weapon_definition_vector(weapon_definition, aim_state, "weapon_sprite_position", primary_weapon_sprite_position),
 		facing_left
@@ -1554,7 +2204,7 @@ func _update_primary_weapon_visual(is_firing: bool) -> void:
 			melee_weapon_overlay_sprite.stop()
 			melee_weapon_overlay_sprite.frame = 0
 	if melee_fx_overlay_sprite:
-		melee_fx_overlay_sprite.visible = (_melee_active and _melee_attack_kind == "fast") or _melee_recovery_active
+		melee_fx_overlay_sprite.visible = (_melee_active and (_melee_attack_kind == "fast" or _melee_attack_kind == "light")) or _melee_recovery_active
 		if not melee_fx_overlay_sprite.visible:
 			melee_fx_overlay_sprite.stop()
 			melee_fx_overlay_sprite.frame = 0
@@ -1628,6 +2278,8 @@ func _update_primary_weapon_visual(is_firing: bool) -> void:
 
 
 func _get_equipped_primary_weapon_definition():
+	if using_unarmed:
+		return unarmed_definition
 	if not primary_weapon_equipped:
 		return null
 	if combat_loadout_mode == LOADOUT_RANGED and primary_weapon_definition != null:
@@ -1680,6 +2332,11 @@ func _setup_animation_state_machine() -> void:
 	_animation_state_machine.register_state(WalkState.new())
 	_animation_state_machine.register_state(SprintState.new())
 	_animation_state_machine.register_state(BlockState.new())
+	_animation_state_machine.register_state(EquipWeaponState.new())
+	var hit_recoil_state := HitRecoilState.new()
+	hit_recoil_state.recoil_duration = operator_light_reaction_stun_duration
+	_animation_state_machine.register_state(hit_recoil_state)
+	_animation_state_machine.register_state(AttackLightState.new())
 	_animation_state_machine.register_state(AttackFastState.new())
 	_animation_state_machine.register_state(AttackHeavyState.new())
 	_animation_state_machine.register_state(DeathState.new())
@@ -1847,13 +2504,19 @@ func get_weapon_status() -> Dictionary:
 	var profile := _get_current_ranged_profile()
 	var cooldown_total = max(last_fire_cooldown, float(profile["cooldown"]))
 	var weapon_name := "CARBINE"
-	if primary_weapon_definition != null and primary_weapon_definition is OperatorWeaponDefinition:
+	var combat_profile := get_current_combat_profile()
+	if combat_profile != null and not combat_profile.display_name.is_empty():
+		weapon_name = combat_profile.display_name.to_upper()
+	elif primary_weapon_definition != null and primary_weapon_definition is OperatorWeaponDefinition:
 		var weapon_data: Dictionary = (primary_weapon_definition as OperatorWeaponDefinition).get_weapon_data()
 		weapon_name = str(weapon_data.get("name", weapon_name)).to_upper()
 	return {
 		"equipped": primary_weapon_equipped,
 		"primary_weapon_id": equipped_primary_weapon_id,
 		"weapon_name": weapon_name,
+		"using_unarmed": using_unarmed,
+		"armed_weapon_index": armed_weapon_index,
+		"last_armed_weapon_index": last_armed_weapon_index,
 		"aim_mode": "arrows" if arrow_aim_enabled else "mouse",
 		"aim_direction": aim_direction,
 		"player_position": global_position,
@@ -1912,17 +2575,18 @@ func _get_world_mouse_position() -> Vector2:
 
 
 func equip_primary_carbine() -> void:
-	primary_weapon_equipped = true
-	equipped_primary_weapon_id = PRIMARY_WEAPON_CARBINE
-	combat_loadout_mode = LOADOUT_RANGED
-	_reset_melee_overlay_visuals()
 	_create_weapon_from_factory("carbine_mk1")
-	_refresh_primary_weapon_state()
+	_rebuild_armed_weapon_list()
+	var index := armed_weapons.find(primary_weapon_definition)
+	if index >= 0:
+		queue_weapon_selection({"type": "armed", "index": index})
 
 
 func _create_weapon_from_factory(weapon_id: String) -> void:
 	if weapon_factory and weapon_factory.has_method("create_weapon_definition"):
 		primary_weapon_definition = weapon_factory.create_weapon_definition(weapon_id)
+		_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_fire", "ranged_fire")
+		_rebuild_armed_weapon_list()
 		_initialize_magazines()
 		print("[Operator] Loaded weapon: ", weapon_id, " | Magazine: ", _get_current_magazine_size())
 
@@ -1961,9 +2625,12 @@ func take_damage(amount: float):
 	health -= amount
 	current_health = health  # Sync with ControllableActor interface
 	var hit_direction := -aim_direction.normalized() if aim_direction.length_squared() > 0.001 else Vector2.DOWN
+	_last_damage_reaction_direction = hit_direction
 	_notify_camera_damage_taken(hit_direction)
 	update_visuals()
 	_spawn_damage_popup(amount)
+	if health > 0.0:
+		_request_damage_reaction(amount)
 	
 	# Flash effect
 	if visual:
@@ -1975,6 +2642,22 @@ func take_damage(amount: float):
 		health = 0
 		print("OPERATOR DOWN!")
 		_handle_death()
+
+
+func _request_damage_reaction(_amount: float) -> void:
+	if _animation_state_machine == null:
+		return
+	_animation_state_machine.request("hit_recoil", 20)
+
+
+func get_damage_reaction_animation(_reaction_name: String) -> StringName:
+	var profile := get_current_combat_profile()
+	if profile == null:
+		return &""
+	var mapped := _get_weapon_animation_name(profile, "unarmed_light_hitreact", &"")
+	if mapped == StringName():
+		return &""
+	return AnimationResolver.resolve(String(mapped), _last_damage_reaction_direction, animated_sprite)
 
 func _handle_death() -> void:
 	if _is_dead:
@@ -2111,7 +2794,7 @@ func get_build_prompt() -> String:
 	build_target = _find_nearest_blueprint()
 	if build_target == null:
 		return ""
-	return "PRESS F TO BUILD %s" % build_target.get_wall_type_name().to_upper()
+	return "HOLD %s TO BUILD %s" % [_get_action_prompt_key("build", "B"), build_target.get_wall_type_name().to_upper()]
 
 
 func get_interaction_prompt() -> String:
@@ -2190,6 +2873,18 @@ func _find_best_interactable(max_distance: float) -> Node:
 			best = candidate
 			best_dist = dist
 	return best
+
+
+func _get_action_prompt_key(action_name: StringName, fallback: String) -> String:
+	for event in InputMap.action_get_events(action_name):
+		if event is InputEventKey:
+			var key_event := event as InputEventKey
+			var keycode := key_event.physical_keycode if key_event.physical_keycode != 0 else key_event.keycode
+			return OS.get_keycode_string(keycode)
+		if event is InputEventMouseButton:
+			var mouse_event := event as InputEventMouseButton
+			return "M%d" % mouse_event.button_index
+	return fallback
 
 
 func _is_terminal_open() -> bool:

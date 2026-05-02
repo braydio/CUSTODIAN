@@ -1,0 +1,372 @@
+@tool
+extends Node2D
+class_name ProceduralProp
+
+enum VariantIntensity {
+	ORIGINAL,
+	SUBTLE,
+	DRAMATIC,
+	RETURNED
+}
+
+const PALETTE_SHADER := preload("res://content/props/ruins/shaders/prop_palette_variation.gdshader")
+
+@export var definition: PropDefinition
+@export var variant_seed: int = 0
+@export var variant_intensity: VariantIntensity = VariantIntensity.SUBTLE
+@export var generate_on_ready: bool = true
+@export var regenerate_in_editor: bool = false:
+	set(value):
+		if not value:
+			regenerate_in_editor = false
+			return
+
+		regenerate_in_editor = false
+		if Engine.is_editor_hint():
+			generate_variant()
+
+@export var randomize_seed_in_editor: bool = false:
+	set(value):
+		if not value:
+			randomize_seed_in_editor = false
+			return
+
+		randomize_seed_in_editor = false
+		if Engine.is_editor_hint():
+			variant_seed = randi()
+			generate_variant()
+
+@onready var visual_root: Node2D = $VisualRoot
+@onready var base_sprite: Sprite2D = $VisualRoot/BaseSprite
+@onready var overlay_root: Node2D = $VisualRoot/OverlayRoot
+@onready var rubble_root: Node2D = $VisualRoot/RubbleRoot
+@onready var collision_root: Node2D = $CollisionRoot
+
+var _rng := RandomNumberGenerator.new()
+
+
+func _ready() -> void:
+	if generate_on_ready:
+		generate_variant()
+
+
+func generate_variant() -> void:
+	if not _has_required_nodes():
+		push_warning("ProceduralProp scene is missing one or more required child nodes.")
+		return
+
+	_clear_children(overlay_root)
+	_clear_children(rubble_root)
+	_clear_children(collision_root)
+
+	if definition == null:
+		push_warning("ProceduralProp has no PropDefinition assigned.")
+		base_sprite.texture = null
+		base_sprite.material = null
+		return
+
+	if definition.base_texture == null:
+		push_warning("PropDefinition '%s' has no base texture assigned." % str(definition.id))
+
+	_rng.seed = _resolve_seed()
+
+	_setup_base_sprite()
+	_spawn_collision()
+
+	if variant_intensity == VariantIntensity.ORIGINAL:
+		base_sprite.material = null
+		return
+
+	_apply_material_variation()
+	_spawn_overlays()
+	_spawn_rubble()
+
+
+func _resolve_seed() -> int:
+	if variant_seed != 0:
+		return variant_seed
+
+	return PropVariantGenerator.seed_from_position(definition.id, global_position)
+
+
+func _setup_base_sprite() -> void:
+	base_sprite.texture = definition.base_texture
+	base_sprite.position = -definition.anchor_offset
+	base_sprite.centered = true
+	base_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+	if definition.allow_flip_h and variant_intensity != VariantIntensity.ORIGINAL:
+		base_sprite.flip_h = _rng.randf() < 0.5
+	else:
+		base_sprite.flip_h = false
+
+
+func _apply_material_variation() -> void:
+	var mat := ShaderMaterial.new()
+	mat.shader = PALETTE_SHADER
+
+	var brightness_range := _get_brightness_range()
+	var saturation_range := _get_saturation_range()
+	var hue_shift_range := _get_hue_shift_range()
+
+	mat.set_shader_parameter(
+		"brightness",
+		_rng.randf_range(brightness_range.x, brightness_range.y)
+	)
+	mat.set_shader_parameter(
+		"saturation",
+		_rng.randf_range(saturation_range.x, saturation_range.y)
+	)
+	mat.set_shader_parameter(
+		"hue_shift",
+		_rng.randf_range(hue_shift_range.x, hue_shift_range.y)
+	)
+
+	base_sprite.material = mat
+
+
+func _spawn_overlays() -> void:
+	if definition.variant_layers.is_empty():
+		_spawn_legacy_overlays()
+		return
+
+	var eligible_layers: Array[PropVariantLayer] = []
+	for layer in definition.variant_layers:
+		if layer == null or layer.texture == null:
+			continue
+		if layer.layer_type == PropVariantLayer.LayerType.RUBBLE:
+			continue
+		if _rng.randf() <= layer.spawn_chance:
+			eligible_layers.append(layer)
+
+	var count := min(_get_overlay_count(), eligible_layers.size())
+	for i in count:
+		var layer_index := _rng.randi_range(0, eligible_layers.size() - 1)
+		var layer := eligible_layers[layer_index]
+		eligible_layers.remove_at(layer_index)
+		_add_overlay_sprite(
+			layer.texture,
+			_pick_layer_spawn_rect(layer),
+			layer.allow_flip_h,
+			layer.alpha_min,
+			layer.alpha_max,
+			layer.z_index
+		)
+
+
+func _spawn_legacy_overlays() -> void:
+	var available: Array[Texture2D] = []
+	available.append_array(definition.moss_overlays)
+	available.append_array(definition.crack_overlays)
+	available.append_array(definition.chip_overlays)
+	available.append_array(definition.dirt_overlays)
+
+	available = available.filter(func(texture: Texture2D) -> bool: return texture != null)
+	if available.is_empty():
+		return
+
+	var count := min(_get_overlay_count(), available.size())
+	for i in count:
+		var tex := available[_rng.randi_range(0, available.size() - 1)]
+		_add_overlay_sprite(
+			tex,
+			definition.overlay_spawn_rect,
+			definition.allow_overlay_flip_h,
+			0.70,
+			1.0,
+			1
+		)
+
+
+func _spawn_rubble() -> void:
+	var count := _get_rubble_count()
+	if count <= 0:
+		return
+
+	var rubble_layers: Array[PropVariantLayer] = []
+	for layer in definition.variant_layers:
+		if layer == null or layer.texture == null:
+			continue
+		if layer.layer_type == PropVariantLayer.LayerType.RUBBLE and _rng.randf() <= layer.spawn_chance:
+			rubble_layers.append(layer)
+
+	if not rubble_layers.is_empty():
+		for i in min(count, rubble_layers.size()):
+			var layer := rubble_layers[_rng.randi_range(0, rubble_layers.size() - 1)]
+			_add_rubble_sprite(
+				layer.texture,
+				_pick_layer_spawn_rect(layer),
+				layer.allow_flip_h,
+				layer.alpha_min,
+				layer.alpha_max,
+				layer.z_index
+			)
+		return
+
+	if definition.rubble_textures.is_empty():
+		return
+
+	var available := definition.rubble_textures.filter(func(texture: Texture2D) -> bool: return texture != null)
+	if available.is_empty():
+		return
+
+	for i in count:
+		var tex := available[_rng.randi_range(0, available.size() - 1)]
+		_add_rubble_sprite(tex, definition.rubble_spawn_rect, true, 1.0, 1.0, 1)
+
+
+func _spawn_collision() -> void:
+	if definition.collision_scene == null:
+		return
+
+	var collision_instance := definition.collision_scene.instantiate()
+	collision_root.add_child(collision_instance)
+
+
+func _add_overlay_sprite(
+	texture: Texture2D,
+	spawn_rect: Rect2,
+	allow_flip_h: bool,
+	alpha_min: float,
+	alpha_max: float,
+	z_index: int
+) -> void:
+	var sprite := Sprite2D.new()
+	sprite.texture = texture
+	sprite.centered = true
+	sprite.position = _random_point_in_rect(spawn_rect)
+	sprite.flip_h = allow_flip_h and _rng.randf() < 0.5
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.modulate.a = _rng.randf_range(alpha_min, alpha_max)
+	sprite.z_index = z_index
+	overlay_root.add_child(sprite)
+
+
+func _add_rubble_sprite(
+	texture: Texture2D,
+	spawn_rect: Rect2,
+	allow_flip_h: bool,
+	alpha_min: float,
+	alpha_max: float,
+	z_index: int
+) -> void:
+	var sprite := Sprite2D.new()
+	sprite.texture = texture
+	sprite.centered = true
+	sprite.position = _random_point_in_rect(spawn_rect)
+	sprite.flip_h = allow_flip_h and _rng.randf() < 0.5
+	sprite.rotation = 0.0
+	sprite.scale = Vector2.ONE
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.modulate.a = _rng.randf_range(alpha_min, alpha_max)
+	sprite.z_index = z_index
+	rubble_root.add_child(sprite)
+
+
+func _get_overlay_count() -> int:
+	match variant_intensity:
+		VariantIntensity.ORIGINAL:
+			return 0
+		VariantIntensity.SUBTLE:
+			return _rng.randi_range(1, 2)
+		VariantIntensity.DRAMATIC:
+			return _rng.randi_range(3, 5)
+		VariantIntensity.RETURNED:
+			return _rng.randi_range(1, 3)
+		_:
+			return _rng.randi_range(definition.min_overlay_count, definition.max_overlay_count)
+
+
+func _get_rubble_count() -> int:
+	match variant_intensity:
+		VariantIntensity.ORIGINAL:
+			return 0
+		VariantIntensity.SUBTLE:
+			return min(_rng.randi_range(definition.min_rubble_count, definition.max_rubble_count), 2)
+		VariantIntensity.DRAMATIC:
+			return max(_rng.randi_range(definition.min_rubble_count, definition.max_rubble_count), 3)
+		VariantIntensity.RETURNED:
+			return min(_rng.randi_range(definition.min_rubble_count, definition.max_rubble_count), 3)
+		_:
+			return _rng.randi_range(definition.min_rubble_count, definition.max_rubble_count)
+
+
+func _get_brightness_range() -> Vector2:
+	match variant_intensity:
+		VariantIntensity.SUBTLE:
+			return _intersect_range(definition.brightness_min, definition.brightness_max, 0.94, 1.06)
+		VariantIntensity.DRAMATIC:
+			return _intersect_range(definition.brightness_min, definition.brightness_max, 0.78, 1.22)
+		VariantIntensity.RETURNED:
+			return _intersect_range(definition.brightness_min, definition.brightness_max, 0.96, 1.08)
+		_:
+			return Vector2(1.0, 1.0)
+
+
+func _get_saturation_range() -> Vector2:
+	match variant_intensity:
+		VariantIntensity.SUBTLE:
+			return _intersect_range(definition.saturation_min, definition.saturation_max, 0.92, 1.06)
+		VariantIntensity.DRAMATIC:
+			return _intersect_range(definition.saturation_min, definition.saturation_max, 0.75, 1.20)
+		VariantIntensity.RETURNED:
+			return _intersect_range(definition.saturation_min, definition.saturation_max, 0.94, 1.08)
+		_:
+			return Vector2(1.0, 1.0)
+
+
+func _get_hue_shift_range() -> Vector2:
+	match variant_intensity:
+		VariantIntensity.SUBTLE:
+			return _intersect_range(definition.hue_shift_min, definition.hue_shift_max, -0.01, 0.01)
+		VariantIntensity.DRAMATIC:
+			return _intersect_range(definition.hue_shift_min, definition.hue_shift_max, -0.02, 0.02)
+		VariantIntensity.RETURNED:
+			return _intersect_range(definition.hue_shift_min, definition.hue_shift_max, -0.008, 0.008)
+		_:
+			return Vector2(0.0, 0.0)
+
+
+func _intersect_range(definition_min: float, definition_max: float, intensity_min: float, intensity_max: float) -> Vector2:
+	var range_min := max(min(definition_min, definition_max), intensity_min)
+	var range_max := min(max(definition_min, definition_max), intensity_max)
+	if range_min > range_max:
+		return Vector2(intensity_min, intensity_max)
+
+	return Vector2(range_min, range_max)
+
+
+func _pick_layer_spawn_rect(layer: PropVariantLayer) -> Rect2:
+	if layer.spawn_rect.size == Vector2.ZERO:
+		if layer.layer_type == PropVariantLayer.LayerType.RUBBLE:
+			return definition.rubble_spawn_rect
+
+		return definition.overlay_spawn_rect
+
+	return layer.spawn_rect
+
+
+func _random_point_in_rect(rect: Rect2) -> Vector2:
+	return Vector2(
+		_rng.randf_range(rect.position.x, rect.position.x + rect.size.x),
+		_rng.randf_range(rect.position.y, rect.position.y + rect.size.y)
+	).round()
+
+
+func _clear_children(node: Node) -> void:
+	for child in node.get_children():
+		node.remove_child(child)
+		if Engine.is_editor_hint():
+			child.free()
+		else:
+			child.queue_free()
+
+
+func _has_required_nodes() -> bool:
+	return (
+		visual_root != null
+		and base_sprite != null
+		and overlay_root != null
+		and rubble_root != null
+		and collision_root != null
+	)

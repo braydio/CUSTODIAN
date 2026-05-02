@@ -6,6 +6,10 @@ const SCRAP_PICKUP_SCENE := preload("res://game/actors/items/scrap_pickup.tscn")
 const AXUL_DIRECTIONAL_SHEET_PATH := "res://content/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt.png"
 const DIRECTIONAL_SUFFIXES := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
 const DIRECTIONAL_ANIMATION_PREFIX := "red_walk"
+const CUSTOM_AMBIENT_EAST_ANIMATION := &"ambient_slink_east"
+const CUSTOM_AMBIENT_NORTH_ANIMATION := &"ambient_slink_north"
+const CUSTOM_AMBIENT_SOUTH_ANIMATION := &"ambient_slink_south"
+const CUSTOM_AMBIENT_KO_ANIMATION := &"ambient_knockout"
 
 enum AssaultState {
 	STAGING,
@@ -49,6 +53,7 @@ enum AssaultState {
 @export var passive_alert_radius: float = 96.0
 @export var passive_flee_speed_multiplier: float = 1.9
 @export var passive_flee_cooldown: float = 1.25
+@export var ambient_critter_target_range: float = 120.0
 @export var uses_directional_charset: bool = false
 @export_file("*.png") var directional_charset_sheet_path: String = AXUL_DIRECTIONAL_SHEET_PATH
 @export var directional_charset_row_start: int = 2
@@ -56,6 +61,24 @@ enum AssaultState {
 @export var directional_charset_fps: float = 8.0
 @export var directional_charset_scale: Vector2 = Vector2(1.75, 1.75)
 @export var directional_animation_prefix: String = DIRECTIONAL_ANIMATION_PREFIX
+@export var custom_ambient_animation_enabled: bool = false
+@export_file("*.png") var custom_ambient_east_sheet_path: String = ""
+@export var custom_ambient_east_frame_size: Vector2i = Vector2i(64, 83)
+@export var custom_ambient_east_fps: float = 10.0
+@export var custom_ambient_east_scale: Vector2 = Vector2(0.42, 0.42)
+@export_file("*.png") var custom_ambient_north_south_sheet_path: String = ""
+@export_file("*.png") var custom_ambient_north_sheet_path: String = ""
+@export_file("*.png") var custom_ambient_south_sheet_path: String = ""
+@export var custom_ambient_north_south_frame_size: Vector2i = Vector2i(384, 512)
+@export var custom_ambient_north_south_columns: int = 4
+@export var custom_ambient_north_south_fps: float = 8.0
+@export var custom_ambient_north_south_scale: Vector2 = Vector2(0.20, 0.20)
+@export_file("*.png") var custom_ambient_knockout_sheet_path: String = ""
+@export var custom_ambient_knockout_frame_size: Vector2i = Vector2i(384, 512)
+@export var custom_ambient_knockout_columns: int = 4
+@export var custom_ambient_knockout_rows: int = 2
+@export var custom_ambient_knockout_fps: float = 12.0
+@export var custom_ambient_knockout_scale: Vector2 = Vector2(0.20, 0.20)
 
 var target: Node2D = null
 var dead := false
@@ -79,6 +102,7 @@ var _passive_flee_timer: float = 0.0
 var _assault_state: int = AssaultState.STAGING
 var _assault_state_timer: float = 0.0
 var _assault_probe_destination: Vector2 = Vector2.ZERO
+var _custom_ambient_knockout_flip_h: bool = false
 
 # Pathfinding
 var navigation_system: Node = null
@@ -117,7 +141,7 @@ func _ready():
 		if visual:
 			visual.visible = false
 		if animated_sprite:
-			animated_sprite.scale = directional_charset_scale
+			animated_sprite.scale = _get_custom_ambient_scale_for_animation(CUSTOM_AMBIENT_SOUTH_ANIMATION) if _uses_custom_ambient_animation_set() else directional_charset_scale
 			_base_sprite_scale = animated_sprite.scale
 		_update_directional_animation(_last_move_direction, false)
 	if animated_sprite:
@@ -271,7 +295,27 @@ func _find_best_target() -> Node2D:
 				best = node
 				best_priority = priority
 				best_distance = dist
+	if best == null:
+		best = _find_nearest_ambient_critter_target()
 	return best
+
+
+func _find_nearest_ambient_critter_target() -> Node2D:
+	if passive:
+		return null
+	var nearest: Node2D = null
+	var nearest_dist := ambient_critter_target_range
+	for candidate in get_tree().get_nodes_in_group("ambient_critter"):
+		if not (candidate is Node2D):
+			continue
+		var node := candidate as Node2D
+		if node == self or _is_target_destroyed(node):
+			continue
+		var dist := global_position.distance_to(node.global_position)
+		if dist <= nearest_dist:
+			nearest = node
+			nearest_dist = dist
+	return nearest
 
 func _is_target_destroyed(node: Node) -> bool:
 	if node == null or not is_instance_valid(node):
@@ -427,6 +471,9 @@ func die():
 		camera.call("on_enemy_killed")
 	_spawn_material_pickup()
 	print("ENEMY DESTROYED: ", enemy_name)
+	if _uses_custom_ambient_animation_set() and _has_animation(String(CUSTOM_AMBIENT_KO_ANIMATION)):
+		call_deferred("_play_custom_ambient_knockout")
+		return
 	queue_free()
 
 
@@ -553,6 +600,7 @@ func _apply_reaction(amount: float) -> void:
 func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knockback_force: float) -> void:
 	if dead:
 		return
+	_custom_ambient_knockout_flip_h = knockback_direction.x > 0.0
 	_last_move_direction = knockback_direction if knockback_direction.length_squared() > 0.0001 else _last_move_direction
 	if attack_kind == "heavy":
 		_stagger_timer = max(_stagger_timer, stagger_duration * 1.2)
@@ -737,7 +785,11 @@ func is_dead() -> bool:
 
 
 func _uses_directional_animation_set() -> bool:
-	return uses_directional_charset and animated_sprite != null
+	return (uses_directional_charset or _uses_custom_ambient_animation_set()) and animated_sprite != null
+
+
+func _uses_custom_ambient_animation_set() -> bool:
+	return custom_ambient_animation_enabled and passive and animated_sprite != null
 
 
 func _has_animation(name: String) -> bool:
@@ -762,6 +814,9 @@ func _play_animation(name: String, allow_restart: bool = true) -> void:
 
 func _ensure_directional_animations() -> void:
 	if animated_sprite == null or _has_directional_animation_assets():
+		return
+	if _uses_custom_ambient_animation_set():
+		_ensure_custom_ambient_animations()
 		return
 	if animated_sprite.sprite_frames == null:
 		animated_sprite.sprite_frames = SpriteFrames.new()
@@ -801,6 +856,9 @@ func _build_directional_atlas(texture: Texture2D, dir_index: int, row_index: int
 func _update_directional_animation(direction: Vector2, is_moving: bool) -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
+	if _uses_custom_ambient_animation_set():
+		_update_custom_ambient_animation(direction, is_moving)
+		return
 	var anim_name := _get_directional_animation_name(_get_directional_charset_suffix(direction))
 	if not _has_animation(anim_name):
 		return
@@ -827,10 +885,166 @@ func _get_directional_animation_name(suffix: StringName) -> String:
 
 
 func _has_directional_animation_assets() -> bool:
+	if _uses_custom_ambient_animation_set():
+		return _has_animation(String(CUSTOM_AMBIENT_EAST_ANIMATION)) and _has_animation(String(CUSTOM_AMBIENT_NORTH_ANIMATION)) and _has_animation(String(CUSTOM_AMBIENT_SOUTH_ANIMATION))
 	for suffix in DIRECTIONAL_SUFFIXES:
 		if _has_animation(_get_directional_animation_name(suffix)):
 			return true
 	return false
+
+
+func _ensure_custom_ambient_animations() -> void:
+	if animated_sprite == null:
+		return
+	if animated_sprite.sprite_frames == null:
+		animated_sprite.sprite_frames = SpriteFrames.new()
+	var frames: SpriteFrames = animated_sprite.sprite_frames
+	_build_custom_ambient_east_animation(frames)
+	_build_custom_ambient_north_south_animations(frames)
+	_build_custom_ambient_knockout_animation(frames)
+
+
+func _build_custom_ambient_east_animation(frames: SpriteFrames) -> void:
+	var texture: Texture2D = _load_enemy_texture(custom_ambient_east_sheet_path)
+	if texture == null:
+		return
+	var frame_width: int = max(1, custom_ambient_east_frame_size.x)
+	var frame_height: int = max(1, custom_ambient_east_frame_size.y)
+	var frame_count: int = max(1, texture.get_width() / frame_width)
+	_rebuild_animation(frames, String(CUSTOM_AMBIENT_EAST_ANIMATION), frame_count, true, custom_ambient_east_fps, func(frame_index: int) -> AtlasTexture:
+		return _build_custom_region_atlas(texture, frame_index * frame_width, 0, frame_width, frame_height)
+	)
+
+
+func _build_custom_ambient_north_south_animations(frames: SpriteFrames) -> void:
+	if not custom_ambient_north_sheet_path.is_empty() and not custom_ambient_south_sheet_path.is_empty():
+		_build_custom_ambient_strip_animation(
+			frames,
+			CUSTOM_AMBIENT_NORTH_ANIMATION,
+			custom_ambient_north_sheet_path,
+			custom_ambient_north_south_frame_size,
+			custom_ambient_north_south_fps
+		)
+		_build_custom_ambient_strip_animation(
+			frames,
+			CUSTOM_AMBIENT_SOUTH_ANIMATION,
+			custom_ambient_south_sheet_path,
+			custom_ambient_north_south_frame_size,
+			custom_ambient_north_south_fps
+		)
+		return
+	var texture: Texture2D = _load_enemy_texture(custom_ambient_north_south_sheet_path)
+	if texture == null:
+		return
+	var frame_width: int = max(1, custom_ambient_north_south_frame_size.x)
+	var frame_height: int = max(1, custom_ambient_north_south_frame_size.y)
+	var columns: int = max(1, custom_ambient_north_south_columns)
+	_rebuild_animation(frames, String(CUSTOM_AMBIENT_NORTH_ANIMATION), columns, true, custom_ambient_north_south_fps, func(frame_index: int) -> AtlasTexture:
+		return _build_custom_region_atlas(texture, frame_index * frame_width, 0, frame_width, frame_height)
+	)
+	_rebuild_animation(frames, String(CUSTOM_AMBIENT_SOUTH_ANIMATION), columns, true, custom_ambient_north_south_fps, func(frame_index: int) -> AtlasTexture:
+		return _build_custom_region_atlas(texture, frame_index * frame_width, frame_height, frame_width, frame_height)
+	)
+
+
+func _build_custom_ambient_strip_animation(frames: SpriteFrames, animation_name: StringName, sheet_path: String, frame_size: Vector2i, fps: float) -> void:
+	var texture: Texture2D = _load_enemy_texture(sheet_path)
+	if texture == null:
+		return
+	var frame_width: int = max(1, frame_size.x)
+	var frame_height: int = max(1, frame_size.y)
+	var frame_count: int = max(1, texture.get_width() / frame_width)
+	_rebuild_animation(frames, String(animation_name), frame_count, true, fps, func(frame_index: int) -> AtlasTexture:
+		return _build_custom_region_atlas(texture, frame_index * frame_width, 0, frame_width, frame_height)
+	)
+
+
+func _build_custom_ambient_knockout_animation(frames: SpriteFrames) -> void:
+	var texture: Texture2D = _load_enemy_texture(custom_ambient_knockout_sheet_path)
+	if texture == null:
+		return
+	var frame_width: int = max(1, custom_ambient_knockout_frame_size.x)
+	var frame_height: int = max(1, custom_ambient_knockout_frame_size.y)
+	var columns: int = max(1, custom_ambient_knockout_columns)
+	var rows: int = max(1, custom_ambient_knockout_rows)
+	var frame_count: int = columns * rows
+	_rebuild_animation(frames, String(CUSTOM_AMBIENT_KO_ANIMATION), frame_count, false, custom_ambient_knockout_fps, func(frame_index: int) -> AtlasTexture:
+		var col: int = frame_index % columns
+		var row: int = frame_index / columns
+		return _build_custom_region_atlas(texture, col * frame_width, row * frame_height, frame_width, frame_height)
+	)
+
+
+func _rebuild_animation(frames: SpriteFrames, animation_name: String, frame_count: int, loop: bool, fps: float, atlas_builder: Callable) -> void:
+	if frames.has_animation(animation_name):
+		frames.remove_animation(animation_name)
+	frames.add_animation(animation_name)
+	frames.set_animation_loop(animation_name, loop)
+	frames.set_animation_speed(animation_name, fps)
+	for frame_index in range(frame_count):
+		var atlas_variant: Variant = atlas_builder.call(frame_index)
+		if atlas_variant is AtlasTexture:
+			frames.add_frame(animation_name, atlas_variant as AtlasTexture)
+
+
+func _build_custom_region_atlas(texture: Texture2D, x: int, y: int, width: int, height: int) -> AtlasTexture:
+	var atlas := AtlasTexture.new()
+	atlas.atlas = texture
+	atlas.region = Rect2(float(x), float(y), float(width), float(height))
+	return atlas
+
+
+func _load_enemy_texture(path: String) -> Texture2D:
+	if path.is_empty() or not ResourceLoader.exists(path):
+		return null
+	var resource := load(path)
+	if resource is Texture2D:
+		return resource as Texture2D
+	return null
+
+
+func _update_custom_ambient_animation(direction: Vector2, is_moving: bool) -> void:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+	var animation_name := CUSTOM_AMBIENT_SOUTH_ANIMATION
+	var flip_h := false
+	if absf(direction.x) >= absf(direction.y) and direction.length_squared() > 0.0001:
+		animation_name = CUSTOM_AMBIENT_EAST_ANIMATION
+		flip_h = direction.x < 0.0
+	elif direction.y < 0.0:
+		animation_name = CUSTOM_AMBIENT_NORTH_ANIMATION
+	animated_sprite.flip_h = flip_h
+	animated_sprite.scale = _get_custom_ambient_scale_for_animation(animation_name)
+	_base_sprite_scale = animated_sprite.scale
+	if not _has_animation(String(animation_name)):
+		return
+	if is_moving:
+		_play_animation(String(animation_name), false)
+		return
+	if animated_sprite.animation != String(animation_name):
+		animated_sprite.play(String(animation_name))
+	animated_sprite.stop()
+	animated_sprite.set_frame_and_progress(0, 0.0)
+
+
+func _get_custom_ambient_scale_for_animation(animation_name: StringName) -> Vector2:
+	if animation_name == CUSTOM_AMBIENT_EAST_ANIMATION:
+		return custom_ambient_east_scale
+	if animation_name == CUSTOM_AMBIENT_KO_ANIMATION:
+		return custom_ambient_knockout_scale
+	return custom_ambient_north_south_scale
+
+
+func _play_custom_ambient_knockout() -> void:
+	if animated_sprite == null or not _has_animation(String(CUSTOM_AMBIENT_KO_ANIMATION)):
+		queue_free()
+		return
+	animated_sprite.flip_h = _custom_ambient_knockout_flip_h
+	animated_sprite.scale = _get_custom_ambient_scale_for_animation(CUSTOM_AMBIENT_KO_ANIMATION)
+	_base_sprite_scale = animated_sprite.scale
+	animated_sprite.play(String(CUSTOM_AMBIENT_KO_ANIMATION))
+	await animated_sprite.animation_finished
+	queue_free()
 
 
 func set_threat_highlight(enabled: bool) -> void:

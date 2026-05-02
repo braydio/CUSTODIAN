@@ -22,18 +22,20 @@
 [ext_resource type="Script" uid="uid://bv666t3wt6ofa" path="res://game/actors/sector/power_node.gd" id="24_power_node"]
 [ext_resource type="Script" uid="uid://c1cs5ipx8lxnp" path="res://game/systems/core/systems/supply_drop_manager.gd" id="25_supply_drop"]
 [ext_resource type="PackedScene" uid="uid://lp5kk4al1nnv" path="res://game/world/procgen/custodian_contract_map.tscn" id="26_contract_map"]
-[ext_resource type="PackedScene" path="res://game/actors/terminal/command_terminal.tscn" id="27_command_terminal"]
+[ext_resource type="PackedScene" uid="uid://dqle6bbgblr2o" path="res://game/actors/terminal/command_terminal.tscn" id="27_command_terminal"]
 [ext_resource type="Script" uid="uid://bvqagq17ro1u6" path="res://game/systems/core/systems/contract_world_loader.gd" id="28_contract_loader"]
 [ext_resource type="Script" uid="uid://xjdny30dgrp6" path="res://dev/debug/debug_controller.gd" id="29_debug_controller"]
-[ext_resource type="PackedScene" path="res://dev/debug/dev_ui.tscn" id="30_dev_ui"]
+[ext_resource type="PackedScene" uid="uid://dvn8i1td7r2hf" path="res://dev/debug/dev_ui.tscn" id="30_dev_ui"]
 [ext_resource type="Script" uid="uid://cg1kmf7hdh3s2" path="res://dev/debug/debug_draw.gd" id="31_debug_draw"]
 [ext_resource type="Script" uid="uid://jp87rnpxqgdt" path="res://dev/debug/inspector_probe.gd" id="32_inspector_probe"]
 [ext_resource type="Script" uid="uid://xj0cr1hc5c46" path="res://dev/debug/debug_collector.gd" id="33_debug_collector"]
 [ext_resource type="Script" uid="uid://bi11w51uaudmj" path="res://game/systems/core/systems/ambient_critter_manager.gd" id="34_ambient_critters"]
-[ext_resource type="PackedScene" path="res://game/actors/enemies/ambient_scav_droid.tscn" id="35_ambient_droid"]
+[ext_resource type="PackedScene" path="res://game/actors/enemies/ambient_shrumb.tscn" id="35_ambient_shrumb"]
 [ext_resource type="Script" uid="uid://by380p21nbchx" path="res://game/actors/ui/terminal_background.gd" id="36_terminal_background"]
 [ext_resource type="Script" uid="uid://bg78eihw40m6g" path="res://game/systems/core/systems/navigation_system.gd" id="40_navigation"]
 [ext_resource type="Script" uid="uid://din0buhray3ph" path="res://dev/debug/navigation_debug.gd" id="41_nav_debug"]
+[ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="42_player_controller"]
+[ext_resource type="PackedScene" path="res://game/actors/vehicles/light_buggy.tscn" id="43_light_buggy"]
 [ext_resource type="PackedScene" path="res://game/systems/core/systems/wall_build_system.tscn" id="99_wall_build_system"]
 [ext_resource type="PackedScene" path="res://game/systems/core/systems/wall_placer.tscn" id="99_wall_placer"]
 [ext_resource type="Script" uid="uid://cm60nou56jgt7" path="res://game/systems/core/systems/weapon_definition_factory.gd" id="99_weapon_factory"]
@@ -229,6 +231,13 @@ placeholder_melee_hitbox_radius = 22.0
 placeholder_healthbar_top = -54.0
 placeholder_healthbar_bottom = -48.0
 
+[node name="PlayerController" type="Node" parent="World" unique_id=2047803985]
+script = ExtResource("42_player_controller")
+operator_path = NodePath("../Operator")
+
+[node name="LightBuggy" parent="World" unique_id=2047803986 instance=ExtResource("43_light_buggy")]
+position = Vector2(872, -486)
+
 [node name="WallPlacer" parent="World" unique_id=1022301411 instance=ExtResource("99_wall_placer")]
 
 [node name="WallBuildSystem" parent="World" unique_id=1989965356 instance=ExtResource("99_wall_build_system")]
@@ -279,12 +288,11 @@ script = ExtResource("28_contract_loader")
 
 [node name="AmbientCritterManager" type="Node" parent="." unique_id=292901155]
 script = ExtResource("34_ambient_critters")
-critter_scene = ExtResource("35_ambient_droid")
+critter_scene = ExtResource("35_ambient_shrumb")
 min_distance_from_spawn_tiles = 10
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=2053415447]
 script = ExtResource("8_ui")
-terminal_contract_node_path = null
 
 [node name="PowerDisplay" type="Panel" parent="UI" unique_id=449160537]
 offset_left = 20.0
@@ -1666,6 +1674,12 @@ wait_time = 2.0
 
 [node name="PauseUI" type="CanvasLayer" parent="." unique_id=1301628053]
 script = ExtResource("9_pause")
+metadata/logic_bricks_graph = {
+"connections": [],
+"next_id": 0,
+"nodes": []
+}
+metadata/logic_bricks_frames = []
 
 [node name="PausePanel" type="Panel" parent="PauseUI" unique_id=2092493330]
 visible = false

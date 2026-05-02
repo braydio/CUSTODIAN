@@ -1,0 +1,81 @@
+[gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3 uid="uid://cxjt0ptnue4pm"]
+
+[ext_resource type="Script" uid="uid://dr83ct4e8mal7" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
+
+[resource]
+script = ExtResource("1_weapon_definition")
+weapon_id = &"fists"
+weapon_type = &"unarmed"
+display_name = "Fists"
+weapon_kind = "unarmed"
+primary_intent = "unarmed_fast"
+secondary_intent = "unarmed_heavy"
+animation_map = {
+"melee_fast": "unarmed_attack_fast",
+"melee_fast_1": "unarmed_attack_fast",
+"melee_fast_2": "unarmed_attack_fast",
+"melee_heavy": "unarmed_attack_heavy",
+"melee_stance": "unarmed_idle",
+"unarmed_fast": "unarmed_attack_fast",
+"unarmed_fast_1": "unarmed_attack_fast",
+"unarmed_fast_2": "unarmed_attack_fast",
+"unarmed_heavy": "unarmed_attack_heavy",
+"unarmed_light_hitreact": "unarmed_light_hitreact",
+"unarmed_stance": "unarmed_stance"
+}
+hit_windows = {
+"melee_fast": {
+"frames": [3]
+},
+"melee_fast_1": {
+"frames": [3]
+},
+"melee_fast_2": {
+"frames": [3]
+},
+"melee_heavy": {
+"frames": [4, 5]
+},
+"unarmed_fast": {
+"frames": [3]
+},
+"unarmed_fast_1": {
+"frames": [3]
+},
+"unarmed_fast_2": {
+"frames": [3]
+},
+"unarmed_heavy": {
+"frames": [4, 5]
+}
+}
+fx_map = {
+"melee_fast": {
+"fx_anim": "unarmed_attack_fast_fx"
+},
+"melee_fast_1": {
+"fx_anim": "unarmed_attack_fast_fx"
+},
+"melee_fast_2": {
+"fx_anim": "unarmed_attack_fast_fx"
+},
+"unarmed_fast": {
+"fx_anim": "unarmed_attack_fast_fx"
+},
+"unarmed_fast_1": {
+"fx_anim": "unarmed_attack_fast_fx"
+},
+"unarmed_fast_2": {
+"fx_anim": "unarmed_attack_fast_fx"
+},
+"unarmed_heavy": {
+"fx_anim": "unarmed_attack_heavy_fx"
+}
+}
+authored_body_stance_animation = &"unarmed_idle"
+move_speed_multiplier = 1.15
+acceleration_multiplier = 1.3
+recovery_multiplier = 0.8
+range_multiplier = 0.7
+damage_multiplier = 0.65
+stagger_multiplier = 0.55

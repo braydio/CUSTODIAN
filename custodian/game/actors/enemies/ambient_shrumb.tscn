@@ -1,47 +1,88 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://dn7go36qvrw6x"]
 
-[ext_resource type="Script" uid="uid://bh83sfgbwu3yl" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="Script" uid="uid://bcp50gjio051y" path="res://game/actors/enemies/ambient_shrumb.gd" id="1_ambient_shrumb"]
 [ext_resource type="SpriteFrames" uid="uid://cbmbkih7g80ah" path="res://game/actors/enemies/enemy.tres" id="2_frames"]
+[ext_resource type="Script" uid="uid://dvstas7qouqc2" path="res://game/actors/items/shrumb_dropper.gd" id="3_dropper"]
+[ext_resource type="PackedScene" path="res://game/actors/items/cognitive_pickup.tscn" id="4_pickup"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
 size = Vector2(22, 22)
 
-[node name="AmbientScavDroid" type="CharacterBody2D"]
-script = ExtResource("1_enemy")
-enemy_name = "SCRAP DROID"
+[node name="AmbientShrumb" type="CharacterBody2D" unique_id=1301915438]
+script = ExtResource("1_ambient_shrumb")
+enemy_name = "SHRUMB"
 speed = 34.0
 health = 18.0
 max_health = 18.0
 damage = 0.0
-base_tint = Color(0.52, 0.48, 0.41, 1)
+base_tint = Color(0.36, 0.58, 0.32, 1)
 structure_attack_range = 0.0
 detection_range = 0.0
 retarget_interval = 2.0
+team = null
+strong_attack_multiplier = null
+attack_objective = null
+attack_windup_duration = null
+hit_recoil_duration = null
+stagger_duration = null
+stagger_damage_threshold = null
+assault_staging_duration_min = null
+assault_staging_duration_max = null
+assault_probe_duration_min = null
+assault_probe_duration_max = null
+assault_regroup_duration = null
+assault_probe_speed_multiplier = null
+assault_regroup_speed_multiplier = null
+assault_damage_commit_threshold = null
+assault_commit_detection_multiplier = null
 passive = true
 counts_as_wave_enemy = false
-material_drop_min = 2
-material_drop_max = 5
+material_drop_min = null
+material_drop_max = null
 passive_wander_radius = 84.0
 passive_wander_interval_min = 0.9
 passive_wander_interval_max = 2.4
 passive_alert_radius = 104.0
 passive_flee_speed_multiplier = 2.1
 passive_flee_cooldown = 1.4
+ambient_critter_target_range = null
 uses_directional_charset = true
 directional_charset_sheet_path = "res://content/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt2.png"
 directional_charset_row_start = 0
+directional_charset_frame_size = null
+directional_charset_fps = null
+directional_charset_scale = null
+directional_animation_prefix = null
+custom_ambient_animation_enabled = true
+custom_ambient_east_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_slink_east-sheet.png"
+custom_ambient_east_frame_size = null
+custom_ambient_east_fps = null
+custom_ambient_east_scale = Vector2(0.7, 0.7)
+custom_ambient_north_south_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_slink_north_south.png"
+custom_ambient_north_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_slink_north.png"
+custom_ambient_south_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_slink_south.png"
+custom_ambient_north_south_frame_size = Vector2i(64, 85)
+custom_ambient_north_south_columns = null
+custom_ambient_north_south_fps = null
+custom_ambient_north_south_scale = Vector2(0.7, 0.7)
+custom_ambient_knockout_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_struck_knockout.png"
+custom_ambient_knockout_frame_size = null
+custom_ambient_knockout_columns = null
+custom_ambient_knockout_rows = null
+custom_ambient_knockout_fps = null
+custom_ambient_knockout_scale = Vector2(0.18, 0.18)
 
-[node name="Visual" type="ColorRect" parent="."]
+[node name="Visual" type="ColorRect" parent="." unique_id=727133011]
 offset_left = -12.0
 offset_top = -12.0
 offset_right = 12.0
 offset_bottom = 12.0
-color = Color(0.52, 0.48, 0.41, 1)
+color = Color(0.36, 0.58, 0.32, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1838369720]
 shape = SubResource("RectangleShape2D_enemy")
 
-[node name="HealthBar" type="ProgressBar" parent="."]
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1371173746]
 offset_left = -15.0
 offset_top = -20.0
 offset_right = 15.0
@@ -49,8 +90,12 @@ offset_bottom = -15.0
 value = 100.0
 show_percentage = false
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2116492062]
 position = Vector2(1, 0)
-scale = Vector2(1.6, 1.6)
+scale = Vector2(0.7, 0.7)
 sprite_frames = ExtResource("2_frames")
 animation = &"drone_idle"
+
+[node name="ShrumbDropper" type="Node" parent="." unique_id=639036069]
+script = ExtResource("3_dropper")
+cognitive_pickup_scene = ExtResource("4_pickup")

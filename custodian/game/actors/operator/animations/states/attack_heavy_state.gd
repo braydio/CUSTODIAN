@@ -7,6 +7,7 @@ func _init(state_name: String = "attack_heavy"):
 	name = state_name
 	can_interrupt = true
 	interrupt_priority = 8
+	can_reenter = true
 
 func enter() -> void:
 	current_phase = "start"
@@ -35,7 +36,7 @@ func trigger_damage_frame() -> void:
 	state_machine.trigger_event("damage_frame", "melee_heavy")
 
 func update(delta: float) -> String:
-	if state_machine and state_machine.sprite:
-		if not state_machine.sprite.is_playing():
+	if state_machine and state_machine.actor and state_machine.actor.has_method("is_attack_state_complete"):
+		if bool(state_machine.actor.call("is_attack_state_complete", "heavy")):
 			return "idle"
 	return name

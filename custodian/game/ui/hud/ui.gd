@@ -240,6 +240,7 @@ var _terminal_action_buttons: Array[BaseButton] = []
 var _terminal_main_scroll: ScrollContainer = null
 var _terminal_fabrication_queue: Array[String] = []
 var _terminal_policy_preset := "BALANCED"
+var _terminal_activity_autofollow := true
 
 const PLANET_PREVIEW_ZOOM_MIN := 2.7
 const PLANET_PREVIEW_ZOOM_MAX := 6.2
@@ -249,6 +250,7 @@ const TERMINAL_COMMAND_QUEUE_INTERVAL := 0.12
 const TERMINAL_MAP_PREVIEW_SIZE := 256
 const CROSSHAIR_WORLD_DISTANCE := 110.0
 const CROSSHAIR_SCREEN_MARGIN := 22.0
+const TERMINAL_ACTIVITY_SCROLL_FOLLOW_MARGIN := 24.0
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -594,9 +596,14 @@ func _process(delta):
 			interaction_label.visible = true
 			interaction_label.text = prompt
 			return
-		var operator_ref = get_node_or_null("/root/GameRoot/World/Operator")
-		if operator_ref and operator_ref.has_method("get_interaction_prompt"):
-			prompt = str(operator_ref.get_interaction_prompt())
+		var player_controller = get_node_or_null("/root/GameRoot/World/PlayerController")
+		if player_controller and player_controller.has_method("should_show_prompt") and bool(player_controller.should_show_prompt()):
+			if player_controller.has_method("get_interaction_prompt"):
+				prompt = str(player_controller.get_interaction_prompt())
+		else:
+			var operator_ref = get_node_or_null("/root/GameRoot/World/Operator")
+			if operator_ref and operator_ref.has_method("get_interaction_prompt"):
+				prompt = str(operator_ref.get_interaction_prompt())
 		if _terminal_open:
 			if _terminal_ready:
 				prompt = "TERMINAL ACTIVE: TYPE COMMANDS | ESC CLOSE"
@@ -1145,6 +1152,7 @@ func _apply_terminal_theme():
 		primary_weapon_button.add_theme_color_override("font_color", Color(0.88, 1.0, 0.92, 1.0))
 
 func _append_terminal_line(line: String, level: String = "info", sector: String = ""):
+	_terminal_activity_autofollow = _is_terminal_activity_near_bottom()
 	_terminal_lines.append(line)
 	var entry := {
 		"time": Time.get_time_string_from_system(),
@@ -1177,13 +1185,25 @@ func _render_terminal_output():
 		terminal_output.append_text("\n".join(chunks))
 	else:
 		terminal_output.text = "\n".join(chunks)
-	call_deferred("_scroll_terminal_output_to_bottom")
+	if _terminal_activity_autofollow:
+		call_deferred("_scroll_terminal_output_to_bottom")
 
 func _scroll_terminal_output_to_bottom():
-	if terminal_output == null:
+	if terminal_output == null or terminal_activity_scroll == null:
 		return
-	if terminal_output is RichTextLabel:
-		terminal_output.scroll_to_line(max(0, terminal_output.get_line_count() - 1))
+	var scroll_bar: ScrollBar = terminal_activity_scroll.get_v_scroll_bar()
+	if scroll_bar == null:
+		return
+	terminal_activity_scroll.scroll_vertical = int(max(0.0, scroll_bar.max_value))
+
+func _is_terminal_activity_near_bottom() -> bool:
+	if terminal_activity_scroll == null:
+		return true
+	var scroll_bar: ScrollBar = terminal_activity_scroll.get_v_scroll_bar()
+	if scroll_bar == null:
+		return true
+	var bottom_threshold: float = max(0.0, scroll_bar.max_value - scroll_bar.page - TERMINAL_ACTIVITY_SCROLL_FOLLOW_MARGIN)
+	return scroll_bar.value >= bottom_threshold
 
 func _get_terminal_log_color(level: String) -> String:
 	match level:

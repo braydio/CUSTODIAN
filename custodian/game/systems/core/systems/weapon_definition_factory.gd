@@ -33,6 +33,14 @@ func create_weapon_definition(weapon_id: String) -> OperatorWeaponDefinition:
 	def.ammo_type = String(ammo.get("ammo_type", "kinetic"))
 	def.reserve_ammo = int(ammo.get("reserve", 112))
 	def.reload_style = String(ammo.get("reload_style", "magazine"))
+
+	var handling = data.get("handling", {})
+	def.movement_speed_penalty = float(handling.get("movement_speed_penalty", 0.0))
+	def.movement_accuracy_penalty = float(handling.get("movement_accuracy_penalty", 0.0))
+
+	var animation = data.get("animation", {})
+	def.animation_fire_frame = int(animation.get("fire_frame", 0))
+	def.recoil_animation = StringName(String(animation.get("recoil_animation", "recoil_standard")))
 	
 	def.current_magazine = def.magazine_size
 	

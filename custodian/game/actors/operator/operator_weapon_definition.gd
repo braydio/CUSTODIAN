@@ -3,6 +3,10 @@ class_name OperatorWeaponDefinition
 
 @export var weapon_id: StringName = &"carbine_rifle"
 @export var weapon_type: StringName = &"ranged_2h"
+@export var display_name: String = ""
+@export var weapon_kind: String = "melee"
+@export var primary_intent: String = "melee_fast"
+@export var secondary_intent: String = "melee_heavy"
 @export_file("*.json") var weapon_data_path: String = ""
 @export var frames_resource: SpriteFrames
 @export var animation_map: Dictionary = {
@@ -12,6 +16,7 @@ class_name OperatorWeaponDefinition
 @export var hit_windows: Dictionary = {}
 @export var fx_map: Dictionary = {}
 @export var authored_body_stance_animation: StringName = &""
+@export var authored_body_fire_walk_animation: StringName = &""
 @export var right_hand_socket_position: Vector2 = Vector2(10, -16)
 @export var left_hand_socket_position: Vector2 = Vector2(2, -12)
 @export var weapon_socket_position: Vector2 = Vector2(12, -16)
@@ -45,6 +50,18 @@ class_name OperatorWeaponDefinition
 @export var ammo_type: String = "kinetic"
 @export var reserve_ammo: int = 112
 @export var reload_style: String = "magazine"
+@export var movement_speed_penalty: float = 0.0
+@export var movement_accuracy_penalty: float = 0.0
+@export var animation_fire_frame: int = 0
+@export var recoil_animation: StringName = &"recoil_standard"
+
+@export_group("Combat Profile")
+@export var move_speed_multiplier: float = 1.0
+@export var acceleration_multiplier: float = 1.0
+@export var recovery_multiplier: float = 1.0
+@export var range_multiplier: float = 1.0
+@export var damage_multiplier: float = 1.0
+@export var stagger_multiplier: float = 1.0
 
 # === RUNTIME STATE ===
 @export_group("Runtime State")
@@ -82,4 +99,25 @@ func get_stat_float(stat_name: String, fallback: float = 0.0) -> float:
 	var stats: Variant = get_weapon_data().get("stats", {})
 	if stats is Dictionary and stats.has(stat_name):
 		return float(stats[stat_name])
+	return fallback
+
+
+func get_handling_float(stat_name: String, fallback: float = 0.0) -> float:
+	var handling: Variant = get_weapon_data().get("handling", {})
+	if handling is Dictionary and handling.has(stat_name):
+		return float(handling[stat_name])
+	return fallback
+
+
+func get_animation_int(stat_name: String, fallback: int = 0) -> int:
+	var animation: Variant = get_weapon_data().get("animation", {})
+	if animation is Dictionary and animation.has(stat_name):
+		return int(animation[stat_name])
+	return fallback
+
+
+func get_animation_string(stat_name: String, fallback: String = "") -> String:
+	var animation: Variant = get_weapon_data().get("animation", {})
+	if animation is Dictionary and animation.has(stat_name):
+		return String(animation[stat_name])
 	return fallback

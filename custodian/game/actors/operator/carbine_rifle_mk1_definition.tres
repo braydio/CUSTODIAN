@@ -5,6 +5,12 @@
 
 [resource]
 script = ExtResource("1_weapon_definition")
+weapon_id = &"carbine_rifle"
+weapon_type = &"ranged_2h"
+display_name = "Carbine Rifle"
+weapon_kind = "ranged"
+primary_intent = "ranged_fire"
+secondary_intent = "ranged_fire"
 weapon_data_path = "res://content/weapons/data/carbine_mk1.json"
 frames_resource = ExtResource("2_weapon_frames")
 right_hand_socket_position = Vector2(10, -8)

@@ -1,0 +1,30 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://qrr0201sbv3r"]
+
+[ext_resource type="Texture2D" uid="uid://ds3k7l7o7ncdu" path="res://content/sprites/effects/runtime/block_spark/block_spark_4f_128.png" id="1_block_spark"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_block_spark_0"]
+atlas = ExtResource("1_block_spark")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_block_spark_1"]
+atlas = ExtResource("1_block_spark")
+region = Rect2(128, 0, 128, 128)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_block_spark_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_block_spark_1")
+}],
+"loop": false,
+"name": &"block",
+"speed": 20.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

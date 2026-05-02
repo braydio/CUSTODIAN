@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__body__unarmed__fast_01__s__6f__96t.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__s__6f__96.png"
+	],
+	"post_process": [
+		"operator_curated_resources"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__body__unarmed__fast_01__s__6f__96t.png",
+	"timestamp_utc": "2026-04-30 21:14:35"
+}

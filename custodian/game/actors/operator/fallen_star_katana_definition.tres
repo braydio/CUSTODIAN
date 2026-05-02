@@ -7,8 +7,13 @@
 script = ExtResource("1_weapon_definition")
 weapon_id = &"fallen_star_katana"
 weapon_type = &"melee_1h"
+display_name = "Fallen Star Katana"
+weapon_kind = "melee"
+primary_intent = "melee_light"
+secondary_intent = "melee_heavy"
 frames_resource = ExtResource("2_weapon_frames")
 animation_map = {
+"melee_light": "melee_light",
 "melee_fast": "melee_2h_fast",
 "melee_fast_1": "melee_2h_fast",
 "melee_fast_2": "melee_2h_fast_2",
@@ -16,6 +21,9 @@ animation_map = {
 "melee_stance": "melee_stance"
 }
 hit_windows = {
+"melee_light": {
+"frames": [4]
+},
 "melee_fast": {
 "directional_frames": {
 "2": ["north", "northeast"],
@@ -51,6 +59,10 @@ hit_windows = {
 }
 }
 fx_map = {
+"melee_light": {
+"fx_anim": "melee_light_fx",
+"weapon_anim": "melee_light_weapon"
+},
 "melee_fast": {
 "fx_anim": "melee_2h_fast_fx",
 "weapon_anim": "melee_2h_fast_weapon"

@@ -6,8 +6,8 @@ class_name PlayerController
 ## Attach this as a child of the main game node or operator's parent.
 ## Requires reference to the operator node.
 
-@export var operator_path: NodePath = @"../operator"
-@export var camera_path: NodePath = @"../Camera2D"
+@export var operator_path: NodePath = ^"../operator"
+@export var camera_path: NodePath = ^"../Camera2D"
 
 var operator: Node = null
 var current_vehicle: Node = null
@@ -163,7 +163,9 @@ func _get_world_mouse_position() -> Vector2:
 	var camera = _get_camera()
 	if camera:
 		return camera.get_global_mouse_position()
-	return get_global_mouse_position()
+	if operator is CanvasItem:
+		return (operator as CanvasItem).get_global_mouse_position()
+	return get_viewport().get_mouse_position()
 
 
 ## Get camera node.

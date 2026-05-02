@@ -162,6 +162,14 @@ func _ready() -> void:
 		generate_contract(contract_seed)
 
 
+func _exit_tree() -> void:
+	_active_planet = null
+	_active_map = null
+	_map_level_data_ready = false
+	_map_level_data = {}
+	_latest_contract = {}
+
+
 func generate_contract(seed_value: int) -> void:
 	if not is_node_ready():
 		await ready
@@ -173,36 +181,67 @@ func generate_contract(seed_value: int) -> void:
 	var planet_seed: int = int(_rng.randi())
 	var world_profile := _build_planet_world_profile(planet_key, planet_seed)
 	var map_seed: int = int(_rng.randi())
+	var best_attempt_seed: int = map_seed
 
-	_clear_previous_instances()
+	await _clear_previous_instances()
 
 	var planet_instance: Node = _instantiate_contracted_planet(planet_key, planet_seed)
+	var planet_scene_path := _get_planet_scene_path(planet_key)
 	var map_instance: ProcGenTilemap = null
 	var level_data: Dictionary = {}
 	var map_generated := false
+	var best_map_instance: ProcGenTilemap = null
+	var best_level_data: Dictionary = {}
+	var best_map_score: float = -1.0
 	for attempt in range(max(1, map_generation_attempts)):
 		var attempt_seed: int = map_seed + attempt * 7919
-		map_instance = await _instantiate_map(attempt_seed, attempt, world_profile)
-		if map_instance == null:
+		var candidate_map := await _instantiate_map(attempt_seed, attempt, world_profile)
+		if candidate_map == null:
 			continue
-		level_data = await _generate_map_level_data(map_instance)
-		if _is_map_layout_acceptable(map_instance, level_data):
+		var candidate_level_data := await _generate_map_level_data(candidate_map)
+		var candidate_metrics := _get_map_layout_metrics(candidate_map, candidate_level_data)
+		var candidate_score := _score_map_layout(candidate_metrics)
+		if _is_map_layout_acceptable(candidate_metrics):
+			if best_map_instance != null and best_map_instance != candidate_map:
+				await _dispose_node(best_map_instance)
+			best_map_instance = candidate_map
+			best_level_data = candidate_level_data
+			best_map_score = candidate_score
+			best_attempt_seed = attempt_seed
+			map_instance = candidate_map
+			level_data = candidate_level_data
 			map_seed = attempt_seed
 			map_generated = true
 			break
-		map_instance.queue_free()
-		if _active_map == map_instance:
-			_active_map = null
+		elif best_map_instance == null or candidate_score > best_map_score:
+			if best_map_instance != null and best_map_instance != candidate_map:
+				await _dispose_node(best_map_instance)
+			best_map_instance = candidate_map
+			best_level_data = candidate_level_data
+			best_map_score = candidate_score
+			best_attempt_seed = attempt_seed
+		else:
+			await _dispose_node(candidate_map)
+			if _active_map == candidate_map:
+				_active_map = null
 
-	if not map_generated or map_instance == null:
-		push_error("[CustodianContractMap] Could not generate an acceptable procgen map")
+	if not map_generated:
+		map_instance = best_map_instance
+		level_data = best_level_data
+		map_seed = best_attempt_seed
+
+	if map_instance == null:
+		push_error("[CustodianContractMap] Could not generate a usable procgen map")
 		return
+
+	if not map_generated:
+		push_warning("[CustodianContractMap] Falling back to best available procgen map after %d attempts" % max(1, map_generation_attempts))
 	var contract := {
 		"contract_seed": int(contract_seed),
 		"world_profile": world_profile.duplicate(true),
 		"planet": {
 			"key": planet_key,
-			"scene_path": PLANET_LIBRARY[planet_key],
+			"scene_path": planet_scene_path,
 			"planet_seed": planet_seed,
 			"instance": planet_instance,
 			"world_profile": world_profile.duplicate(true),
@@ -224,7 +263,7 @@ func generate_edgar_contract(seed_value: int) -> Dictionary:
 	contract_seed = seed_value
 	_rng.seed = int(seed_value)
 	
-	_clear_previous_instances()
+	await _clear_previous_instances()
 	
 	_init_edgar_systems()
 	
@@ -232,6 +271,7 @@ func generate_edgar_contract(seed_value: int) -> Dictionary:
 	var planet_seed: int = int(_rng.randi())
 	var world_profile := _build_planet_world_profile(planet_key, planet_seed)
 	var planet_instance: Node = _instantiate_contracted_planet(planet_key, planet_seed)
+	var planet_scene_path := _get_planet_scene_path(planet_key)
 	
 	var layout: Dictionary = _generate_edgar_layout()
 	
@@ -252,7 +292,7 @@ func generate_edgar_contract(seed_value: int) -> Dictionary:
 		"world_profile": world_profile.duplicate(true),
 		"planet": {
 			"key": planet_key,
-			"scene_path": PLANET_LIBRARY[planet_key],
+			"scene_path": planet_scene_path,
 			"planet_seed": planet_seed,
 			"instance": planet_instance,
 			"world_profile": world_profile.duplicate(true),
@@ -305,12 +345,25 @@ func get_latest_contract() -> Dictionary:
 
 func _clear_previous_instances() -> void:
 	if _active_planet and is_instance_valid(_active_planet):
-		_active_planet.queue_free()
+		await _dispose_node(_active_planet)
 	_active_planet = null
 
 	if _active_map and is_instance_valid(_active_map):
-		_active_map.queue_free()
+		await _dispose_node(_active_map)
 	_active_map = null
+
+
+func _dispose_node(node: Node) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	if node.is_inside_tree():
+		node.queue_free()
+		await node.tree_exited
+		return
+	var parent := node.get_parent()
+	if parent != null:
+		parent.remove_child(node)
+	node.free()
 
 
 func _pick_planet_key(rng: RandomNumberGenerator) -> String:
@@ -326,9 +379,8 @@ func _instantiate_contracted_planet(planet_key: String, planet_seed: int) -> Nod
 		push_warning("[CustodianContractMap] Unknown planet key: %s" % planet_key)
 		return null
 
-	var scene_path: String = String(PLANET_LIBRARY[planet_key])
-	if not ResourceLoader.exists(scene_path):
-		push_warning("[CustodianContractMap] Missing planet scene at %s" % scene_path)
+	var scene_path := _get_planet_scene_path(planet_key)
+	if scene_path.is_empty():
 		return null
 
 	var scene_res = load(scene_path)
@@ -353,6 +405,15 @@ func _instantiate_contracted_planet(planet_key: String, planet_seed: int) -> Nod
 
 	_active_planet = planet
 	return planet
+
+
+func _get_planet_scene_path(planet_key: String) -> String:
+	if not PLANET_LIBRARY.has(planet_key):
+		return ""
+	var scene_path: String = String(PLANET_LIBRARY[planet_key])
+	if not ResourceLoader.exists(scene_path):
+		return ""
+	return scene_path
 
 
 func _instantiate_map(map_seed: int, attempt_index: int = 0, planet_world_profile: Dictionary = {}) -> ProcGenTilemap:
@@ -460,19 +521,35 @@ func _build_planet_world_profile(planet_key: String, planet_seed: int) -> Dictio
 	return profile
 
 
-func _is_map_layout_acceptable(map_instance: ProcGenTilemap, level_data: Dictionary) -> bool:
-	if map_instance == null or map_instance.procgen_node == null:
+func _is_map_layout_acceptable(metrics: Dictionary) -> bool:
+	if not bool(metrics.get("valid", false)):
 		return false
+	if float(metrics.get("connected_ratio", 0.0)) < min_connected_room_ratio:
+		return false
+	if require_compound_ingress_connectivity and float(metrics.get("ingress_ratio", 0.0)) < 1.0:
+		return false
+	return true
+
+
+func _score_map_layout(metrics: Dictionary) -> float:
+	if not bool(metrics.get("valid", false)):
+		return -1.0
+	return float(metrics.get("connected_ratio", 0.0)) + float(metrics.get("ingress_ratio", 0.0)) * 0.1
+
+
+func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionary) -> Dictionary:
+	if map_instance == null or map_instance.procgen_node == null:
+		return {"valid": false}
 	var spawn_variant: Variant = level_data.get("player_spawn", Vector2i.ZERO)
 	if not (spawn_variant is Vector2i):
-		return false
+		return {"valid": false}
 	var spawn_tile := spawn_variant as Vector2i
 	if map_instance.procgen_node.is_full_at(spawn_tile):
-		return false
+		return {"valid": false}
 
 	var reachable := _flood_fill_walkable(map_instance.procgen_node, spawn_tile)
 	if reachable.is_empty():
-		return false
+		return {"valid": false}
 
 	var rooms_total := 0
 	var rooms_connected := 0
@@ -483,18 +560,27 @@ func _is_map_layout_acceptable(map_instance: ProcGenTilemap, level_data: Diction
 		if reachable.has(room_item):
 			rooms_connected += 1
 	if rooms_total <= 0:
-		return false
+		return {"valid": false}
 
 	var connected_ratio := float(rooms_connected) / float(rooms_total)
-	if connected_ratio < min_connected_room_ratio:
-		return false
+	var ingress_total := 0
+	var ingress_connected := 0
+	for ingress_item in level_data.get("compound_ingress", []):
+		if not (ingress_item is Vector2i):
+			continue
+		ingress_total += 1
+		if reachable.has(ingress_item):
+			ingress_connected += 1
 
-	if require_compound_ingress_connectivity:
-		for ingress_item in level_data.get("compound_ingress", []):
-			if ingress_item is Vector2i and not reachable.has(ingress_item):
-				return false
+	var ingress_ratio := 1.0
+	if ingress_total > 0:
+		ingress_ratio = float(ingress_connected) / float(ingress_total)
 
-	return true
+	return {
+		"valid": true,
+		"connected_ratio": connected_ratio,
+		"ingress_ratio": ingress_ratio,
+	}
 
 
 func _flood_fill_walkable(procgen: ProcGen, start_tile: Vector2i) -> Dictionary:

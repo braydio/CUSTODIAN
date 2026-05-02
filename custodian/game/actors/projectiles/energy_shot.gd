@@ -48,27 +48,29 @@ func _on_body_entered(body: Node):
 	if body == shooter:
 		return
 	if body.has_method("receive_projectile_hit") and (_is_world_blocker(body) or _can_hit(body)):
+		var impact_position := _resolve_impact_position(body)
 		var result_variant: Variant = body.call("receive_projectile_hit", damage, team)
 		_apply_game_feel(body, 40.0 if not _is_world_blocker(body) else 0.0)
-		_spawn_impact()
+		_spawn_impact_at(impact_position)
 		queue_free()
 		return
 	if _is_world_blocker(body):
-		_spawn_impact()
+		_spawn_impact_at(_resolve_impact_position(body))
 		queue_free()
 		return
 	if not _can_hit(body):
 		return
 
 	if body.has_method("take_damage"):
+		var impact_position := _resolve_impact_position(body)
 		body.take_damage(damage)
 		_apply_game_feel(body, 50.0)
-		_spawn_impact()
+		_spawn_impact_at(impact_position)
 		queue_free()
 		return
 
 	if body is StaticBody2D or body is CharacterBody2D:
-		_spawn_impact()
+		_spawn_impact_at(_resolve_impact_position(body))
 		queue_free()
 
 
@@ -109,16 +111,20 @@ func _is_world_blocker(body: Node) -> bool:
 	return true
 
 
-func _spawn_impact():
+func _spawn_impact(body: Node = null):
+	_spawn_impact_at(_resolve_impact_position(body))
+
+
+func _spawn_impact_at(impact_position: Vector2) -> void:
 	var fx = IMPACT_SPARK_SCENE.instantiate()
 	if fx == null:
 		return
-	fx.global_position = _resolve_impact_position()
 	var parent = get_parent()
 	if parent:
 		parent.add_child(fx)
 	else:
 		get_tree().current_scene.add_child(fx)
+	fx.global_position = impact_position
 
 
 func _apply_game_feel(hit_body: Node, knockback: float) -> void:
@@ -128,8 +134,36 @@ func _apply_game_feel(hit_body: Node, knockback: float) -> void:
 		hit_body.move_and_slide()
 
 
-func _resolve_impact_position() -> Vector2:
+func _resolve_impact_position(body: Node = null) -> Vector2:
+	if body is Node2D and not _is_world_blocker(body):
+		return _resolve_body_contact_point(body as Node2D)
 	return global_position - direction * max(4.0, bullet_radius * 2.0)
+
+
+func _resolve_body_contact_point(body: Node2D) -> Vector2:
+	var fallback := global_position - direction * max(4.0, bullet_radius * 2.0)
+	var strike_direction := direction.normalized()
+	if strike_direction == Vector2.ZERO:
+		var to_body := body.global_position - global_position
+		strike_direction = to_body.normalized()
+	if strike_direction == Vector2.ZERO:
+		return fallback
+	return body.global_position - strike_direction * _estimate_body_contact_radius(body, bullet_radius * 2.0)
+
+
+func _estimate_body_contact_radius(body: Node, fallback_radius: float) -> float:
+	var shape_node := body.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if shape_node == null:
+		return fallback_radius
+	var shape := shape_node.shape
+	if shape is CircleShape2D:
+		return max(fallback_radius, (shape as CircleShape2D).radius)
+	if shape is RectangleShape2D:
+		return max(fallback_radius, min((shape as RectangleShape2D).size.x, (shape as RectangleShape2D).size.y) * 0.5)
+	if shape is CapsuleShape2D:
+		var capsule := shape as CapsuleShape2D
+		return max(fallback_radius, capsule.radius + capsule.height * 0.25)
+	return fallback_radius
 
 
 func _apply_visual_style():

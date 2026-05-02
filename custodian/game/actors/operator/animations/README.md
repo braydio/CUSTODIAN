@@ -27,6 +27,7 @@ Custodian (CharacterBody2D)
 ### Combat
 | Animation | Description | Loop | Key Events |
 |-----------|-------------|------|------------|
+| `attack_light` | Standard melee | No | start → windup → active → recovery |
 | `attack_fast` | Quick melee | No | start → windup → active → recovery |
 | `attack_heavy` | Heavy melee | No | start → windup → active → recovery |
 | `attack_dash` | Dash + attack | No | start → windup → active → recovery |
@@ -71,6 +72,7 @@ animations/
 │   ├── idle_state.gd
 │   ├── walk_state.gd
 │   ├── sprint_state.gd
+│   ├── attack_light_state.gd
 │   ├── attack_fast_state.gd
 │   ├── attack_heavy_state.gd
 │   ├── attack_dash_state.gd
@@ -106,10 +108,19 @@ func _on_animation_event(event_name, event_type):
     asm.current_state.on_animation_event(event_name, event_type)
 ```
 
+## State Manager Contract
+
+- The state machine owns deterministic transition sequencing, per-state elapsed time, priorities, and enter/exit calls.
+- States may opt into same-state re-entry with `can_reenter = true`; attack states use this so a valid repeated light attack restarts cleanly instead of silently no-oping.
+- Combat state remains authoritative. Attack states call into `operator.gd` to start attacks and query `is_attack_state_complete(kind)` to finish.
+- `AnimatedSprite2D.is_playing()` is not combat authority. Sprite playback can support presentation, but lockout, recovery, hit windows, and completion must come from gameplay state.
+- Animation events should notify gameplay systems; they should not replace deterministic gameplay timers or profile data.
+
 ## Integration with Operator
 
 The animation system integrates with the existing operator.gd:
-- Replace current animation playback with state machine
-- Use animation player callbacks for event triggers
-- Connect combat system to damage frames
-- Connect hurtbox to hit_recoil state
+- Request state transitions through `AnimationStateMachine.request(state_name, priority)`.
+- Use state entry to call gameplay methods such as `start_attack("melee_light")`.
+- Use operator gameplay state to determine when attack/block states complete.
+- Connect combat system to frame windows and damage frames.
+- Connect hurtbox to hit_recoil state.

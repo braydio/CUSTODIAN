@@ -1,0 +1,14 @@
+{
+  "source": "operator__fx__unarmed__fast_01__n__6f__96.png",
+  "mode": "strip",
+  "frame_size": [96, 90],
+  "outputs": [
+    {
+      "path": "operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__n__6f__96.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 6 },
+      "transform": { "canvas": [96, 96], "offset": [0, 6] }
+    }
+  ],
+  "post_process": ["operator_curated_resources"]
+}

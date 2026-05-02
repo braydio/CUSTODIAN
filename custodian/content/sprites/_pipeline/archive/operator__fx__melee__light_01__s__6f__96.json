@@ -1,0 +1,16 @@
+{
+  "source": "operator__fx__melee__light_01__s__6f__96.png",
+  "mode": "strip",
+  "frame_size": [96, 96],
+  "outputs": [
+    {
+      "path": "operator/runtime/overlay/melee/operator__fx__melee__light_01__s__6f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 6
+      }
+    }
+  ]
+}

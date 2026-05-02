@@ -1,0 +1,13 @@
+{
+  "source": "operator__fx__unarmed__heavy_01__n__8f__96.png",
+  "mode": "strip",
+  "frame_size": [96, 96],
+  "outputs": [
+    {
+      "path": "operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__n__8f__96.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 8 }
+    }
+  ],
+  "post_process": ["operator_curated_resources"]
+}

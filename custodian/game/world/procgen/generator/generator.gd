@@ -1,4 +1,4 @@
-extends Node
+extends RefCounted
 
 signal finished
 signal automaton_iteration_finished

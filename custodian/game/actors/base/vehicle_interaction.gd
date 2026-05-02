@@ -8,7 +8,7 @@ class_name VehicleInteraction
 signal interaction_ready(vehicle: Node, prompt: String)
 signal interaction_pressed(vehicle: Node)
 
-@export var vehicle_path: NodePath = @".."
+@export var vehicle_path: NodePath = ^".."
 @export var interaction_range: float = 64.0
 
 var vehicle: Node = null
@@ -49,7 +49,8 @@ func _on_body_entered(body: Node) -> void:
 		# Try to find player controller
 		var controller = body.get_parent()
 		if controller and controller.has_method("should_show_prompt"):
-			# Player will handle prompt display
+			# Player controller owns prompt display.
+			pass
 
 
 func _on_body_exited(body: Node) -> void:

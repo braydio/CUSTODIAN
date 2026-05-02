@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__body__light_hitreact_01__s__3f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__light_hitreact_01__s__3f__96.png"
+	],
+	"post_process": [
+		"operator_curated_resources"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__body__light_hitreact_01__s__3f__96.png",
+	"timestamp_utc": "2026-04-30 06:25:39"
+}

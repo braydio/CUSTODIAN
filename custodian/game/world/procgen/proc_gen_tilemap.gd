@@ -67,7 +67,7 @@ const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_w
 	Vector2i(9, 0), Vector2i(10, 0)
 ]
 @export var reference_open_left_wall_coords: Array[Vector2i] = [
-	Vector2i(1, 0), Vector2i(1, 1), Vector2i(1, 2), Vector2i(1, 3), Vector2i(8, 3)
+	Vector2i(1, 0), Vector2i(1, 1), Vector2i(1, 2)
 ]
 @export var reference_open_left_corner_coords: Array[Vector2i] = [
 	Vector2i(1, 0)
@@ -79,7 +79,7 @@ const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_w
 	Vector2i(4, 1), Vector2i(4, 2), Vector2i(4, 3), Vector2i(6, 2), Vector2i(8, 0), Vector2i(11, 1)
 ]
 @export var reference_open_right_wall_coords: Array[Vector2i] = [
-	Vector2i(3, 0), Vector2i(3, 1), Vector2i(3, 2), Vector2i(11, 3)
+	Vector2i(3, 0), Vector2i(3, 1), Vector2i(3, 2)
 ]
 @export var reference_open_right_corner_coords: Array[Vector2i] = [
 	Vector2i(3, 0), Vector2i(3, 2)
@@ -103,7 +103,10 @@ const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_w
 	Vector2i(6, 1)
 ]
 @export var reference_left_terminal_coords: Array[Vector2i] = [
-	Vector2i(3, 3)
+	Vector2i(1, 3), Vector2i(8, 3)
+]
+@export var reference_right_terminal_coords: Array[Vector2i] = [
+	Vector2i(3, 3), Vector2i(11, 3)
 ]
 @export var high_wall_variant_coords: Array[Vector2i] = [
 	Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0),
@@ -177,9 +180,6 @@ const FOLIAGE_ASSET_PATHS := [
 ]
 
 const FRUIT_TEXTURE_PATH := "res://content/sprites/environment/foliage/fruit_sheet.png"
-const HORIZONTAL_WALL_OVERLAY_TEXTURE := preload("res://content/tiles/walls/runtime/marble_ruined_walls_runtime_3x4_96x96.png")
-const HORIZONTAL_WALL_ENDCAP_TEXTURE_PATH := "res://content/tiles/walls/runtime/marble_ruined_walls_runtime_endcaps_7x1_96x96.png"
-const HORIZONTAL_WALL_SOUTH_CONNECTOR_TEXTURE_PATH := "res://content/tiles/walls/runtime/marble_ruined_single_south_connector.aseprite"
 const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occlusion_bubble.gdshader")
 @export var foliage_parent_path: NodePath = NodePath("NavigationRegion2D/FoliageLayer")
 @export var foliage_density: float = 0.12
@@ -197,25 +197,25 @@ const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occl
 @export_range(1, 8, 1) var fruit_tiles_high: int = 3
 @export var foliage_behind_z_index: int = 1
 @export var foliage_front_z_index: int = 3
-@export var use_horizontal_wall_overlays: bool = true
-@export var horizontal_wall_overlay_texture: Texture2D = HORIZONTAL_WALL_OVERLAY_TEXTURE
+@export var use_horizontal_wall_overlays: bool = false
+@export var horizontal_wall_overlay_texture: Texture2D = null
 @export_range(1, 6, 1) var horizontal_wall_overlay_cells_wide: int = 3
 @export_range(1, 6, 1) var horizontal_wall_overlay_cells_high: int = 3
 @export var horizontal_wall_overlay_z_index: int = 4
 @export var horizontal_wall_overlay_tint_with_planet_profile: bool = true
-@export var use_vertical_wall_overlays: bool = true
+@export var use_vertical_wall_overlays: bool = false
 @export_range(1, 6, 1) var vertical_wall_overlay_cells_wide: int = 3
 @export_range(1, 6, 1) var vertical_wall_overlay_cells_high: int = 3
-@export var tighten_tall_wall_collision: bool = true
+@export var tighten_tall_wall_collision: bool = false
 @export var show_base_wall_tiles: bool = true
-@export var collision_only_on_new_ruined_wall_tiles: bool = true
-@export var use_horizontal_wall_endcaps: bool = true
+@export var collision_only_on_new_ruined_wall_tiles: bool = false
+@export var use_horizontal_wall_endcaps: bool = false
 @export var horizontal_wall_endcap_texture: Texture2D
-@export var use_horizontal_wall_south_connector: bool = true
+@export var use_horizontal_wall_south_connector: bool = false
 @export var horizontal_wall_south_connector_texture: Texture2D
 @export_range(0, 4, 1) var horizontal_wall_south_connector_end_buffer_segments: int = 1
 @export_range(0.0, 1.0, 0.05) var horizontal_wall_south_connector_spawn_chance: float = 0.35
-@export var show_runtime_wall_collision_debug: bool = true
+@export var show_runtime_wall_collision_debug: bool = false
 @export_range(0.0, 0.75, 0.05) var horizontal_wall_endcap_overlap_ratio: float = 0.25
 @export_range(0, 48, 1) var horizontal_wall_endcap_vertical_jitter_px: int = 12
 @export var foliage_player_feet_offset: Vector2 = Vector2(0, 8)
@@ -250,12 +250,6 @@ func _ready() -> void:
 
 	if shadow_system == null:
 		shadow_system = find_child("ShadowOverlay", true, false)
-	if horizontal_wall_endcap_texture == null:
-		var endcap_image := Image.load_from_file(HORIZONTAL_WALL_ENDCAP_TEXTURE_PATH)
-		if endcap_image != null and not endcap_image.is_empty():
-			horizontal_wall_endcap_texture = ImageTexture.create_from_image(endcap_image)
-	if horizontal_wall_south_connector_texture == null:
-		horizontal_wall_south_connector_texture = load(HORIZONTAL_WALL_SOUTH_CONNECTOR_TEXTURE_PATH) as Texture2D
 	_foliage_parent = _find_foliage_parent()
 	_load_foliage_textures()
 	_apply_planet_visual_profile()
@@ -647,11 +641,11 @@ func _select_reference_wall_coord_by_mask(pos: Vector2i) -> Vector2i:
 		14:
 			return _pick_reference_coord(pos, reference_open_left_t_coords, wall_atlas_coord)
 		8:
-			return _pick_reference_coord(pos, reference_left_terminal_coords, wall_atlas_coord)
+			return _pick_reference_coord(pos, reference_right_terminal_coords, wall_atlas_coord)
 		1, 4:
 			return _pick_reference_coord(pos, reference_vertical_wall_coords, wall_atlas_coord)
 		2:
-			return _pick_reference_coord(pos, reference_horizontal_wall_coords, wall_atlas_coord)
+			return _pick_reference_coord(pos, reference_left_terminal_coords, wall_atlas_coord)
 		10:
 			var horizontal_variants := reference_horizontal_hole_bottom_coords if hole_below else reference_horizontal_wall_coords
 			return _pick_reference_coord(pos, horizontal_variants, wall_atlas_coord)
@@ -671,6 +665,10 @@ func _select_reference_wall_coord_by_mask(pos: Vector2i) -> Vector2i:
 				var right_variants := reference_open_right_hole_coords if hole_left else reference_open_right_wall_coords
 				return _pick_reference_coord(pos, right_variants, wall_atlas_coord)
 			if east or west:
+				if east and not west:
+					return _pick_reference_coord(pos, reference_left_terminal_coords, wall_atlas_coord)
+				if west and not east:
+					return _pick_reference_coord(pos, reference_right_terminal_coords, wall_atlas_coord)
 				var horizontal_fallback := reference_horizontal_hole_bottom_coords if hole_below else reference_horizontal_wall_coords
 				return _pick_reference_coord(pos, horizontal_fallback, wall_atlas_coord)
 			if north or south:
@@ -1307,9 +1305,10 @@ func _load_foliage_textures() -> void:
 			_foliage_textures.append(texture)
 	
 	if enable_fruit_spawning:
-		_fruit_texture = load(FRUIT_TEXTURE_PATH) as Texture2D
-		if _fruit_texture == null:
-			push_warning("[Foliage] Failed to load fruit texture: " + FRUIT_TEXTURE_PATH)
+		if ResourceLoader.exists(FRUIT_TEXTURE_PATH):
+			_fruit_texture = load(FRUIT_TEXTURE_PATH) as Texture2D
+		else:
+			_fruit_texture = null
 
 
 func _apply_planet_visual_profile() -> void:
@@ -1618,77 +1617,25 @@ func _rebuild_runtime_wall_collision_debug() -> void:
 
 
 func _should_use_horizontal_wall_overlay_collision(tile: Vector2i) -> bool:
-	if not use_horizontal_wall_overlays:
-		return false
-	if horizontal_wall_overlay_texture == null:
-		return false
-	if not _has_wall_cell(tile):
-		return false
-	return not _has_generated_wall_cell(tile + Vector2i.UP)
+	return false
 
 
 func _should_use_vertical_wall_overlay_collision(tile: Vector2i, right_side: bool) -> bool:
-	if not use_vertical_wall_overlays:
-		return false
-	if horizontal_wall_overlay_texture == null:
-		return false
-	if not _has_wall_cell(tile):
-		return false
-	var side_offset := Vector2i.RIGHT if right_side else Vector2i.LEFT
-	return not _has_generated_wall_cell(tile + side_offset)
+	return false
 
 
 func _tile_uses_new_ruined_wall_treatment(tile: Vector2i) -> bool:
-	if not _has_wall_cell(tile):
-		return false
-	if _should_use_horizontal_wall_overlay_collision(tile):
-		return true
-	if _should_use_vertical_wall_overlay_collision(tile, false):
-		return true
-	if _should_use_vertical_wall_overlay_collision(tile, true):
-		return true
 	return false
 
 
 func _get_runtime_wall_collision_profile(tile: Vector2i, tile_size: Vector2) -> Dictionary:
-	var size := Vector2(tile_size.x, tile_size.y)
-	var offset := Vector2.ZERO
-	if not tighten_tall_wall_collision:
-		return {"size": size, "offset": offset}
-
-	var top_exposed := _should_use_horizontal_wall_overlay_collision(tile)
-	var left_exposed := _should_use_vertical_wall_overlay_collision(tile, false)
-	var right_exposed := _should_use_vertical_wall_overlay_collision(tile, true)
-
-	if top_exposed:
-		var expanded_height := tile_size.y * float(max(1, horizontal_wall_overlay_cells_high))
-		size.y = max(size.y, expanded_height)
-		offset.y = ((size.y - tile_size.y) * 0.5)
-
-	if left_exposed or right_exposed:
-		var expanded_width := tile_size.x * float(max(1, vertical_wall_overlay_cells_wide))
-		if left_exposed and right_exposed:
-			size.x = max(size.x, expanded_width)
-			offset.x = 0.0
-		elif left_exposed:
-			size.x = max(size.x, expanded_width)
-			offset.x = -((size.x - tile_size.x) * 0.5)
-		else:
-			size.x = max(size.x, expanded_width)
-			offset.x = ((size.x - tile_size.x) * 0.5)
-
-	return {"size": size, "offset": offset}
+	return {"size": Vector2(tile_size.x, tile_size.y), "offset": Vector2.ZERO}
 
 
 func _get_horizontal_wall_overlay_root() -> Node2D:
 	if walls_tilemap == null:
 		return null
-	var overlay_root := walls_tilemap.get_node_or_null("RuntimeWallVisuals") as Node2D
-	if overlay_root == null:
-		overlay_root = Node2D.new()
-		overlay_root.name = "RuntimeWallVisuals"
-		walls_tilemap.add_child(overlay_root)
-	return overlay_root
+	return walls_tilemap.get_node_or_null("RuntimeWallVisuals") as Node2D
 
 
 func _clear_horizontal_wall_overlays() -> void:
@@ -1700,16 +1647,8 @@ func _clear_horizontal_wall_overlays() -> void:
 
 
 func _rebuild_horizontal_wall_overlays() -> void:
-	var overlay_root := _get_horizontal_wall_overlay_root()
-	if overlay_root == null:
-		return
 	_clear_horizontal_wall_overlays()
-	if not use_horizontal_wall_overlays or horizontal_wall_overlay_texture == null or walls_tilemap == null:
-		return
-
-	_rebuild_horizontal_top_wall_overlays(overlay_root)
-	if use_vertical_wall_overlays:
-		_rebuild_vertical_side_wall_overlays(overlay_root)
+	return
 
 
 func _create_horizontal_wall_overlay_run(parent: Node2D, row_y: int, start_x: int, end_x: int) -> void:

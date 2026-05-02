@@ -25,6 +25,15 @@ func _ready() -> void:
 	call_deferred("_initialize_navigation_deferred")
 
 
+func _exit_tree() -> void:
+	astar = null
+	floor_tilemap = null
+	walls_tilemap = null
+	_walkable_tiles.clear()
+	_initialized = false
+	_init_deferred = false
+
+
 func _initialize_navigation_deferred() -> void:
 	if _init_deferred:
 		return

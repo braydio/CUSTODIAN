@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "item_id": "faint_recollection",
+      "display_name": "Faint Recollection",
+      "description": "A faint recollection shed by forest shrumbs.\nIt stirs toward something once known, but does not gather enough to become it.",
+      "stack_size": 999,
+      "rarity": "common",
+      "cognitive_axis": "recollection",
+      "cognitive_value": 1.0
+    },
+    {
+      "item_id": "residual_instinct",
+      "display_name": "Residual Instinct",
+      "description": "A dull instinct held among forest shrumbs.\nIt compels movement without aim, settling where decision never took hold.",
+      "stack_size": 999,
+      "rarity": "uncommon",
+      "cognitive_axis": "instinct",
+      "cognitive_value": 1.0
+    },
+    {
+      "item_id": "ancient_bearing",
+      "display_name": "Ancient Bearing",
+      "description": "A fragment of orientation from the elder days, carried by the shrumb.\nIt suggests a place once held among the ordered things, though no memory of it remains.",
+      "stack_size": 999,
+      "rarity": "rare",
+      "cognitive_axis": "bearing",
+      "cognitive_value": 1.0
+    }
+  ]
+}

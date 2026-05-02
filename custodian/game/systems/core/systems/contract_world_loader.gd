@@ -7,6 +7,7 @@ class_name ContractWorldLoader
 @export var operator_path: NodePath = NodePath("/root/GameRoot/World/Operator")
 @export var spawn_nodes_path: NodePath = NodePath("/root/GameRoot/World/SpawnNodes")
 @export var command_terminal_path: NodePath = NodePath("/root/GameRoot/World/CommandTerminal")
+@export var vehicle_root_path: NodePath = NodePath("/root/GameRoot/World")
 @export var items_root_path: NodePath = NodePath("/root/GameRoot/World/Items")
 @export var camera_path: NodePath = NodePath("/root/GameRoot/World/Camera2D")
 @export var navigation_system_path: NodePath = NodePath("/root/GameRoot/NavigationSystem")
@@ -15,6 +16,7 @@ class_name ContractWorldLoader
 @export var reposition_operator_from_contract: bool = true
 @export var reposition_spawn_nodes_from_contract: bool = true
 @export var reposition_terminal_from_contract: bool = true
+@export var reposition_vehicles_from_contract: bool = true
 @export var reposition_items_from_contract: bool = true
 @export var reposition_camera_from_contract: bool = true
 @export var fallback_tile_size: float = 16.0
@@ -40,6 +42,15 @@ var _active_procgen_map: Node = null
 func _ready() -> void:
 	add_to_group("contract_world_loader")
 	call_deferred("_bind_contract_map")
+
+
+func _exit_tree() -> void:
+	var callback := Callable(self, "_on_contract_generated")
+	if _contract_map_node != null and is_instance_valid(_contract_map_node):
+		if _contract_map_node.is_connected("contract_generated", callback):
+			_contract_map_node.disconnect("contract_generated", callback)
+	_contract_map_node = null
+	_active_procgen_map = null
 
 
 func _bind_contract_map() -> void:
@@ -83,6 +94,8 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_position_spawn_nodes(level_data, map_instance)
 	if reposition_terminal_from_contract:
 		_position_command_terminal(level_data, map_instance)
+	if reposition_vehicles_from_contract:
+		_position_vehicles(level_data, map_instance)
 	if reposition_items_from_contract:
 		_position_item_anchors(level_data, map_instance)
 	if reposition_camera_from_contract:
@@ -366,6 +379,55 @@ func _position_item_anchors(level_data: Dictionary, map_instance: Node) -> void:
 		used_tiles[tile] = true
 		(child as Node2D).global_position = _tile_to_world(map_instance, tile)
 		tile_index += 1
+
+
+func _position_vehicles(level_data: Dictionary, map_instance: Node) -> void:
+	var vehicle_root := get_node_or_null(vehicle_root_path)
+	if vehicle_root == null:
+		return
+
+	var vehicle_nodes: Array[Node2D] = []
+	for child in vehicle_root.get_children():
+		if child is Node2D and child.is_in_group("vehicle"):
+			vehicle_nodes.append(child as Node2D)
+	if vehicle_nodes.is_empty():
+		return
+
+	var compound_tiles := _filter_open_compound_tiles(_get_compound_walkable_tiles(level_data, map_instance), map_instance)
+	if compound_tiles.is_empty():
+		compound_tiles = _get_compound_walkable_tiles(level_data, map_instance)
+	if compound_tiles.is_empty():
+		return
+
+	var anchor_tile := _pick_compound_spawn_tile(level_data, map_instance)
+	var player_spawn: Variant = level_data.get("player_spawn")
+	if anchor_tile == Vector2i.ZERO and player_spawn is Vector2i:
+		anchor_tile = player_spawn as Vector2i
+
+	var ordered_tiles := compound_tiles.duplicate()
+	if anchor_tile != Vector2i.ZERO:
+		ordered_tiles.sort_custom(func(a: Vector2i, b: Vector2i): return a.distance_squared_to(anchor_tile) < b.distance_squared_to(anchor_tile))
+
+	var used_tiles: Dictionary = {}
+	for vehicle in vehicle_nodes:
+		var chosen_tile := Vector2i.ZERO
+		for tile in ordered_tiles:
+			if used_tiles.has(tile):
+				continue
+			var dist_sq: int = tile.distance_squared_to(anchor_tile)
+			if dist_sq < 16:
+				continue
+			chosen_tile = tile
+			break
+		if chosen_tile == Vector2i.ZERO:
+			for tile in ordered_tiles:
+				if not used_tiles.has(tile):
+					chosen_tile = tile
+					break
+		if chosen_tile == Vector2i.ZERO:
+			continue
+		used_tiles[chosen_tile] = true
+		vehicle.global_position = _tile_to_world(map_instance, chosen_tile)
 
 
 func _project_ingress_to_edge(ingress: Vector2i, map_size: Vector2i) -> Vector2i:

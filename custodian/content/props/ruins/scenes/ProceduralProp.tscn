@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://content/props/ruins/scripts/ProceduralProp.gd" id="1_procedural_prop"]
+
+[node name="ProceduralProp" type="Node2D"]
+script = ExtResource("1_procedural_prop")
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="BaseSprite" type="Sprite2D" parent="VisualRoot"]
+texture_filter = 1
+
+[node name="OverlayRoot" type="Node2D" parent="VisualRoot"]
+
+[node name="RubbleRoot" type="Node2D" parent="VisualRoot"]
+
+[node name="CollisionRoot" type="Node2D" parent="."]

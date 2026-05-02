@@ -1,15 +1,13 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://game/actors/effects/impact_spark.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://content/sprites/effects/runtime/block_spark/block_spark_4f_128.png" id="2_texture"]
+[ext_resource type="SpriteFrames" path="res://game/actors/effects/block_spark_frames.tres" id="2_frames"]
 
 [node name="BlockSpark" type="Node2D"]
 script = ExtResource("1_script")
-strip_texture = ExtResource("2_texture")
-frame_size = Vector2i(128, 128)
-total_frames = 4
-used_frames = 2
-fps = 20.0
+animation_name = &"block"
 
-[node name="Visual" type="Sprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 centered = true
+sprite_frames = ExtResource("2_frames")
+animation = &"block"

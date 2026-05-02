@@ -1,0 +1,44 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://cdy366ywuongy"]
+
+[ext_resource type="Texture2D" uid="uid://ciae07eoyqjb8" path="res://content/sprites/effects/runtime/hit_spark/hit_spark_4f_64.png" id="1_hit_spark"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit_spark_0"]
+atlas = ExtResource("1_hit_spark")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit_spark_1"]
+atlas = ExtResource("1_hit_spark")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit_spark_2"]
+atlas = ExtResource("1_hit_spark")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hit_spark_3"]
+atlas = ExtResource("1_hit_spark")
+region = Rect2(192, 0, 64, 64)
+
+[resource]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit_spark_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit_spark_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit_spark_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hit_spark_3")
+}],
+"loop": false,
+"name": &"impact",
+"speed": 24.0
+}]

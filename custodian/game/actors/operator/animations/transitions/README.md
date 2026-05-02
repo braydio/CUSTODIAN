@@ -8,6 +8,7 @@
 - `sprint` - Running
 
 ### Combat
+- `attack_light` - Standard attack
 - `attack_fast` - Quick attack
 - `attack_heavy` - Heavy attack
 - `attack_dash` - Dash attack
@@ -25,7 +26,7 @@ FROM          TO                CONDITION
 ─────────────────────────────────────────────
 idle          walk              velocity > 0
 idle          sprint            sprint_pressed
-idle          attack_fast       attack_pressed
+idle          attack_light      attack_pressed
 idle          attack_heavy      heavy_attack_pressed
 idle          hit_recoil       took_damage
 idle          stagger           heavy_damage
@@ -33,7 +34,7 @@ idle          death             health <= 0
 
 walk          idle              velocity == 0
 walk          sprint            sprint_pressed
-walk          attack_fast       attack_pressed
+walk          attack_light      attack_pressed
 walk          hit_recoil       took_damage
 walk          death             health <= 0
 
@@ -42,8 +43,13 @@ sprint        walk              velocity_low
 sprint        attack_dash       attack_pressed
 sprint        hit_recoil       took_damage
 
+attack_light  idle              animation_finished
+attack_light  attack_light      combo_pressed (if combo available)
+attack_light  attack_heavy      heavy_combo_pressed
+attack_light  hit_recoil       took_damage (if interruptible)
+
 attack_fast   idle              animation_finished
-attack_fast   attack_fast       combo_pressed (if combo available)
+attack_fast   attack_fast       compatibility_combo_pressed
 attack_fast   hit_recoil       took_damage (if interruptible)
 
 attack_heavy  idle              animation_finished
@@ -71,15 +77,16 @@ States have interrupt priority:
 | 25 | stagger | - |
 | 20 | hit_recoil | - |
 | 15 | attack_dash | - |
-| 10 | attack_fast/attack_heavy | - |
+| 10 | attack_light/attack_fast/attack_heavy | - |
 | 5 | equip_weapon | - |
 | 1 | walk/sprint | Lower priority |
 | 0 | idle | Can be interrupted by anything |
 
 ## Combo System
 
-Attack fast can chain into combos:
-- `attack_fast` → (combo window) → `attack_fast` (2nd hit)
-- `attack_fast` → (combo window) → `attack_heavy` (finisher)
+Default attack can chain into combos:
+- `attack_light` → (combo window) → `attack_light`
+- `attack_light` → (combo window) → `attack_heavy`
+- `attack_fast` remains available as a compatibility path for authored fast variants.
 
 Combo window: 0.3 seconds after animation ends
