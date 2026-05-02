@@ -255,6 +255,7 @@ const TERMINAL_ACTIVITY_SCROLL_FOLLOW_MARGIN := 24.0
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_set_main_hud_hidden(false)
+	_create_debug_panel()
 	if terminal_panel:
 		terminal_panel.visible = false
 	if terminal_input and not terminal_input.text_submitted.is_connected(_on_terminal_input_submitted):
@@ -343,6 +344,69 @@ func _ready():
 func _setup_terminal_main_scroll() -> void:
 	if terminal_map_column == null:
 		return
+
+func _create_debug_panel() -> void:
+	# Create debug panel for inventory and cognitive state
+	var debug_panel := VBoxContainer.new()
+	debug_panel.name = "DebugPanel"
+	debug_panel.visible = false  # Hidden by default, toggle with debug key
+	debug_panel.position = Vector2(10, 10)
+	debug_panel.add_theme_stylebox_override("panel", _create_debug_panel_style())
+	
+	# Inventory section
+	var inv_label := Label.new()
+	inv_label.name = "InventoryLabel"
+	inv_label.text = "INVENTORY"
+	inv_label.add_theme_font_size_override(14)
+	debug_panel.add_child(inv_label)
+	
+	var inv_display := Label.new()
+	inv_display.name = "InventoryDisplay"
+	inv_display.text = "Loading..."
+	inv_display.autowrap_mode = Label.AUTOWRAP_WORD
+	debug_panel.add_child(inv_display)
+	
+	# Cognitive state section
+	var cog_label := Label.new()
+	cog_label.name = "CognitiveLabel"
+	cog_label.text = "COGNITIVE STATE"
+	cog_label.add_theme_font_size_override(14)
+	cog_label.add_theme_constant_override("margin_top", 10)
+	debug_panel.add_child(cog_label)
+	
+	var cog_display := Label.new()
+	cog_display.name = "CognitiveDisplay"
+	cog_display.text = "Loading..."
+	cog_display.autowrap_mode = Label.AUTOWRAP_WORD
+	debug_panel.add_child(cog_display)
+	
+	# Add to scene
+	if get_tree().current_scene:
+		get_tree().current_scene.add_child(debug_panel)
+	
+	# Store references
+	set_meta("debug_panel", debug_panel)
+	set_meta("inv_display", inv_display)
+	set_meta("cog_display", cog_display)
+
+
+func _create_debug_panel_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.1, 0.1, 0.15, 0.85)
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 1
+	style.border_color = Color(0.3, 0.5, 0.8, 0.6)
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_left = 4
+	style.corner_radius_bottom_right = 4
+	style.content_margin_left = 8
+	style.content_margin_top = 6
+	style.content_margin_right = 8
+	style.content_margin_bottom = 6
+	return style
 	var content_nodes: Array[Control] = [
 		terminal_planet_title_label,
 		terminal_planet_preview,
@@ -396,10 +460,68 @@ func _setup_terminal_main_scroll() -> void:
 			content_column.add_child(node)
 
 
+func _update_debug_panel() -> void:
+	var debug_panel = get_meta("debug_panel", null)
+	if debug_panel == null:
+		return
+	
+	# Toggle debug panel with F12 (or your preferred key)
+	if Input.is_action_just_pressed("debug_toggle"):
+		debug_panel.visible = not debug_panel.visible
+	
+	if not debug_panel.visible:
+		return
+	
+	# Update inventory display
+	var inv_display = get_meta("inv_display", null)
+	if inv_display != null:
+		var inventory = get_node_or_null("/root/InventoryManager")
+		if inventory != null:
+			var items = inventory.get_all_items()
+			var text = ""
+			if items.keys().size() == 0:
+				text = "Empty"
+			else:
+				for item_id in items.keys():
+					var count = items[item_id]
+					var display_name = item_id.capitalize()
+					match String(item_id):
+						&"faint_recollection":
+							display_name = "Faint Recollection"
+						&"residual_instinct":
+							display_name = "Residual Instinct"
+						&"ancient_bearing":
+							display_name = "Ancient Bearing"
+					text += "%s: %d\n" % [display_name, count]
+			inv_display.text = text if text != "" else "Empty"
+		else:
+			inv_display.text = "No InventoryManager"
+	
+	# Update cognitive state display
+	var cog_display = get_meta("cog_display", null)
+	if cog_display != null:
+		var cognitive = get_node_or_null("/root/CognitiveState")
+		if cognitive != null:
+			if cognitive.has_method("get_weights"):
+				var weights = cognitive.call("get_weights")
+				var dominant = cognitive.call("get_dominant_state") if cognitive.has_method("get_dominant_state") else "UNKNOWN"
+				cog_display.text = "Recollection: %.2f\nInstinct: %.2f\nBearing: %.2f\n\nDominant: %s" % [
+					float(weights.get("recollection", 0.0)),
+					float(weights.get("instinct", 0.0)),
+					float(weights.get("bearing", 0.0)),
+					String(dominant)
+				]
+			else:
+				cog_display.text = "CognitiveState: incomplete API"
+		else:
+			cog_display.text = "No CognitiveState"
+
+
 func _process(delta):
 	_handle_terminal_shortcuts()
 	_update_terminal_planet_spin(delta)
 	_process_terminal_command_queue(delta)
+	_update_debug_panel()
 
 	var power_system = get_node_or_null("/root/GameRoot/Power")
 	if not _main_hud_hidden and power_system and power_label and power_bar:
