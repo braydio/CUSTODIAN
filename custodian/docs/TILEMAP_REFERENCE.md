@@ -168,6 +168,11 @@
 
 ## Usage
 
+Procgen selector note:
+- Repeatable horizontal runs should use the horizontal-cap pool for middles only.
+- Left ends of horizontal runs should resolve to the open-left terminal variants `[1,3]` / `[8,3]`.
+- Right ends of horizontal runs should resolve to the open-right terminal variants `[3,3]` / `[11,3]`.
+
 Load via Godot tilemap:
 ```gdscript
 var tileset = load("res://content/tiles/tilesets/dungeon_tileset.tres")

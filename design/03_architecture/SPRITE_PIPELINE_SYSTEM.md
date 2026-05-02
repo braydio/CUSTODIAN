@@ -5,7 +5,7 @@
 - **Type**: Infrastructure Architecture
 - **Location**: `custodian/tools/pipelines/`
 - **Status**: Active, repo-native intake pipeline
-- **Last Updated**: 2026-04-25
+- **Last Updated**: 2026-05-01
 
 ## Purpose
 
@@ -103,6 +103,13 @@ Compatibility rule:
 - New source and pipeline intake work should use the canonical name.
 - A manifest may write a canonical output and a compatibility copy in the same run.
 - Do not create new naming families such as `fast_attack_north_base_*` unless they are temporary compatibility outputs for existing code.
+
+Replacement rule:
+
+- Runtime folders are current-state authority, not version history.
+- If a corrected sheet replaces the same mapped owner/layer/action/variant/direction, remove the superseded runtime PNG and `.import` after the new sheet is imported, wired, and validated.
+- Keep `_pipeline/archive/`, source files, normalized previews, and logs as provenance/history.
+- Do not remove intentional alternate variants such as `heavy_02`, `alt`, or weapon-specific variants unless they are explicitly unmapped and superseded.
 
 ## Standard Animation Set Target
 

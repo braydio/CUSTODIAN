@@ -1,9 +1,11 @@
 # CUSTODIAN — Forest Shrumb Runtime Implementation Delta
 
-Status: draft implementation delta
+Status: v1 foundation initialized 2026-04-30
 Purpose: compact Codex/agent-facing runtime implementation instructions
 Depends on: `design/features/implementation/FOREST_SHRUMB_COGNITIVE_DROPS.md` or equivalent Forest Shrumb lore/gameplay design document
 Runtime target: Godot 4.x under `custodian/`
+
+Implementation note, 2026-04-30: v1 added the minimal inventory ledger, cognitive state autoload, item data, cognitive pickup, shrumb dropper, placeholder item sprites, and the live `ambient_shrumb.tscn` actor. Ambient spawning now uses `ambient_shrumb.tscn`; the former scav droid scene path has been removed.
 
 ---
 
@@ -39,8 +41,8 @@ Current validation indicates:
   * Ancient Bearing
 * There is **no cognitive pickup scene/script** currently.
 * There is **no implemented cognitive drop table** for Forest Shrumbs currently.
-* There is an existing `ambient_shrumb.tscn`, but it must not be blindly assumed to be the final lore-accurate Forest Shrumb actor.
-* The current `ambient_shrumb.tscn` may currently behave like a scrap/droid-style ambient enemy and may already have scrap-drop behavior.
+* `ambient_shrumb.tscn` is the live lore-accurate ambient Forest Shrumb actor.
+* The former scav droid scene path has been removed from ambient spawning.
 * The shrumb death/drop hook is a live check item. Inspect before adding duplicate death logic.
 
 ---
@@ -69,38 +71,18 @@ If not, add one clean death signal path and do not duplicate existing enemy deat
 
 ---
 
-## 4. Actor Identity Correction
+## 4. Actor Identity
 
-The current runtime has an `ambient_shrumb.tscn`, but validation suggests it may be acting as a scrap/droid-style enemy.
+The current runtime uses `ambient_shrumb.tscn` as the live shrumb actor.
 
-Do **not** mix the final Forest Shrumb lore drops into a droid actor by accident.
-
-Choose one implementation path:
-
-### Preferred Path
-
-Create or preserve a true lore actor:
+Preserve the true lore actor at:
 
 ```text
-custodian/game/actors/enemies/forest_shrumb.tscn
-custodian/game/actors/enemies/forest_shrumb.gd
+custodian/game/actors/enemies/ambient_shrumb.tscn
+custodian/game/actors/enemies/ambient_shrumb.gd
 ```
 
-Then use that actor for the Forest Shrumb item drops.
-
-If the existing `ambient_shrumb.tscn` is actually being used as a scrap droid, rename or duplicate it later into a better identity such as:
-
-```text
-custodian/game/actors/enemies/ambient_scav_droid.tscn
-```
-
-### Acceptable Temporary Path
-
-If references make renaming too risky, keep `ambient_shrumb.tscn` as the runtime path but update its semantics carefully:
-
-* Remove or disable scrap/droid-only drop behavior for true shrumb variants.
-* Add the cognitive dropper only to actual shrumb instances.
-* Avoid breaking existing test maps or ambient critter spawning.
+This actor owns the shrumb slink/knockout animation sheet references, has no scrap material drop range, and carries the cognitive dropper.
 
 ---
 

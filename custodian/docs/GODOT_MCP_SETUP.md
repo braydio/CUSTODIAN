@@ -25,11 +25,11 @@ Set these before launching Godot:
 ## Quick Launch Examples
 
 ```bash
-GODOT_MCP_URL=ws://127.0.0.1:6505 godot --path custodian
+GODOT_MCP_URL=ws://127.0.0.1:6505 godot --editor --path custodian
 ```
 
 ```bash
-GODOT_MCP_DISABLE_AUTOCONNECT=1 godot --path custodian
+GODOT_MCP_DISABLE_AUTOCONNECT=1 godot --editor --path custodian
 ```
 
 ## One-Command Launcher
@@ -51,7 +51,7 @@ Examples:
 Behavior:
 
 - If MCP server is already listening at `GODOT_MCP_URL` (default `ws://127.0.0.1:6505`), it reuses it.
-- Otherwise it starts `npx -y godot-mcp-server`, waits for socket readiness, and then launches Godot.
+- Otherwise it starts `npx -y godot-mcp-server`, waits for socket readiness, and then launches the Godot editor.
 
 ## Troubleshooting
 

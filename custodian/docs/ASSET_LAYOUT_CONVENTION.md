@@ -1,6 +1,6 @@
 # Asset Layout and Naming Convention
 
-Last updated: 2026-03-10
+Last updated: 2026-05-01
 
 ## Scope
 
@@ -13,6 +13,7 @@ This convention covers current Godot runtime assets in `res://content/` with a c
 ```text
 content/
   sprites/
+    _pipeline/          # staged intake only, never read by runtime scenes
     <entity>/
       runtime/            # files directly loaded by scenes/resources
         attack/
@@ -21,6 +22,11 @@ content/
         fx/
       source/             # editable source files (.aseprite, .xcf, .psd, .gif)
       archive/            # deprecated but retained files not used by runtime
+    environment/
+      props/
+        <prop_id>/
+          runtime/
+            body/
     enemies/
     raw/
   tiles/
@@ -29,10 +35,40 @@ content/
 
 ## Naming Rules
 
-- Prefix by owner: `op_` (operator), `drone_` (drone), etc.
-- Use role-oriented names: `*_sheet`, `*_frame`, `*_atlas`.
-- Use zero-padded indices for ordered frame sets: `_01`, `_02`, ... `_13`.
+- New sprite sheets use `<owner>__<layer>__<action_group>__<variant>__<direction>__<frames>f__<frame_size>.png`.
+- Use owner names such as `operator`, `enemy_grunt`, `drone`, `fallen_star_katana`, or `hit_spark`.
+- Use layer names such as `body`, `weapon`, `fx`, `shadow`, or `mask`.
+- Use action groups such as `locomotion`, `melee`, `defense`, `ranged`, `reaction`, `death`, `impact`, or `interaction`.
+- For in-world props, use `environment/props/<prop_id>/runtime/<layer>/` and the `interaction` action group for open/close/activate/deactivate-style animations.
+- Use direction codes `n`, `ne`, `e`, `se`, `s`, `sw`, `w`, `nw`, or `omni`.
+- Use zero-padded variants where order matters: `fast_01`, `fast_02`, `light_01`, `heavy_01`.
 - Use lowercase snake_case only.
+- Intake manifests in `_pipeline/inbox/` should match their PNG basename.
+
+Examples:
+
+```text
+operator__body__locomotion__walk__n__8f__96.png
+operator__body__melee__fast_01__n__6f__96.png
+operator__weapon__melee__fast_01__n__6f__96.png
+operator__fx__melee__fast_01__n__6f__96.png
+enemy_grunt__body__reaction__stagger__s__5f__96.png
+hit_spark__fx__impact__default__omni__4f__64.png
+computer_terminal__body__interaction__activate__omni__4f__48.png
+```
+
+Legacy names remain valid only as compatibility targets for existing scenes/resources. Do not use legacy names for
+new source art unless a manifest also writes the canonical asset.
+
+## Runtime Replacement Rule
+
+Runtime asset folders represent the active mapped version of each sheet. If a corrected or retimed sheet replaces
+the same owner/layer/action/variant/direction, the old runtime PNG and `.import` file should be removed after the
+new sheet is ingested, imported, wired, and verified.
+
+Do not remove `_pipeline/archive/`, source art, normalized previews, or logs during this cleanup. Those preserve
+history and debugging context. Also do not remove intentional alternate variants such as `heavy_02`, `alt`, or
+weapon-specific variants unless the mapping has explicitly superseded them.
 
 ## Operator Runtime Assets (Linked)
 
@@ -84,6 +120,8 @@ Moved to `res://content/sprites/operator/source/`:
 - One compatibility exception remains at top-level:
   - `res://content/sprites/operator/sprite-map-custodian-red.png`
   - Kept in place because it is referenced by `res://game/actors/custodian/custodian.tscn`.
+- Intake assets staged in `res://content/sprites/_pipeline/` are not runtime authority and should be treated as
+  temporary ingest inputs only.
 
 ## Effects Runtime Assets (Linked)
 
@@ -98,8 +136,20 @@ res://content/sprites/effects/source/block_spark/*
 
 Runtime scenes:
 
-- `res://game/actors/effects/impact_spark.tscn` (uses all 4 hit-spark frames)
-- `res://game/actors/effects/block_spark.tscn` (uses first 2 of 4 block-spark frames)
+- `res://game/actors/effects/impact_spark.tscn` (`AnimatedSprite2D` + `impact_spark_frames.tres`, uses all 4 hit-spark frames)
+- `res://game/actors/effects/block_spark.tscn` (`AnimatedSprite2D` + `block_spark_frames.tres`, uses first 2 of 4 block-spark frames)
+
+## Environment Prop Runtime Assets (Linked)
+
+World props use the environment prop domain rather than loose files at `res://content/sprites/`:
+
+```text
+res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__activate__omni__4f__48.png
+```
+
+Runtime scenes/scripts:
+
+- `res://game/actors/terminal/command_terminal.gd` slices the terminal sheet as a 2x2 set of 48x48 frames and plays it forward for activation and backward for deactivation.
 
 ## Enemy Drone Runtime Additions
 
