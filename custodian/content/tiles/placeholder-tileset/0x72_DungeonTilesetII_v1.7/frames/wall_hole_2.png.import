@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://gvg54ianp8m1"
-path="res://.godot/imported/wall_hole_2.png-0da4d40c8c3aaf4ab110de005e910c65.ctex"
+path="res://.godot/imported/wall_hole_2.png-580565ec4eea0da418e5cf9c3294f05d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/wall_hole_2.png"
-dest_files=["res://.godot/imported/wall_hole_2.png-0da4d40c8c3aaf4ab110de005e910c65.ctex"]
+dest_files=["res://.godot/imported/wall_hole_2.png-580565ec4eea0da418e5cf9c3294f05d.ctex"]
 
 [params]
 

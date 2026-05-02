@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cnmb38yl7nvt"
-path="res://.godot/imported/warped-shooting-fx.wav-335e9497596bc0b9cab8e369974e4b61.sample"
+path="res://.godot/imported/warped-shooting-fx.wav-c7f38767cc7f81d4920b573c21c08359.sample"
 
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Music/warped-shooting-fx.wav"
-dest_files=["res://.godot/imported/warped-shooting-fx.wav-335e9497596bc0b9cab8e369974e4b61.sample"]
+dest_files=["res://.godot/imported/warped-shooting-fx.wav-c7f38767cc7f81d4920b573c21c08359.sample"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dywljy1ojtulm"
-path="res://.godot/imported/KingSlimeGreen.png-b79ef5acaab822a963650898d3ddbb8a.ctex"
+path="res://.godot/imported/KingSlimeGreen.png-08b147e4d056b3419854a590c2ad1b10.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Slimes/KingSlimeGreen.png"
-dest_files=["res://.godot/imported/KingSlimeGreen.png-b79ef5acaab822a963650898d3ddbb8a.ctex"]
+dest_files=["res://.godot/imported/KingSlimeGreen.png-08b147e4d056b3419854a590c2ad1b10.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://o00iulfryxv2"
-path="res://.godot/imported/ui_heart_empty.png-f447632d013081f090ec8debaf37bf3c.ctex"
+path="res://.godot/imported/ui_heart_empty.png-c3baa9e38f5928fb88cb1c7dae9922db.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/ui_heart_empty.png"
-dest_files=["res://.godot/imported/ui_heart_empty.png-f447632d013081f090ec8debaf37bf3c.ctex"]
+dest_files=["res://.godot/imported/ui_heart_empty.png-c3baa9e38f5928fb88cb1c7dae9922db.ctex"]
 
 [params]
 

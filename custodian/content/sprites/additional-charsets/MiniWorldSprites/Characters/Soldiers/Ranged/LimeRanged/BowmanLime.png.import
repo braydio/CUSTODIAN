@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qk5va45oc5dc"
-path="res://.godot/imported/BowmanLime.png-af30a43e8743d19ea2b7ba28c70909a9.ctex"
+path="res://.godot/imported/BowmanLime.png-6f11ae3661a8308cef5c07c7285804fe.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Ranged/LimeRanged/BowmanLime.png"
-dest_files=["res://.godot/imported/BowmanLime.png-af30a43e8743d19ea2b7ba28c70909a9.ctex"]
+dest_files=["res://.godot/imported/BowmanLime.png-6f11ae3661a8308cef5c07c7285804fe.ctex"]
 
 [params]
 

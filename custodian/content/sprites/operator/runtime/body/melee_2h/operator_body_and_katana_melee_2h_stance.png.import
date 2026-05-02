@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjp8butwgd5px"
-path="res://.godot/imported/operator_body_and_katana_melee_2h_stance.png-2b4fc65a9c37865f55124cbcf86f4b56.ctex"
+path="res://.godot/imported/operator_body_and_katana_melee_2h_stance.png-941602e63cbb265b04c42e4414b10b4a.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/body/melee_2h/operator_body_and_katana_melee_2h_stance.png"
-dest_files=["res://.godot/imported/operator_body_and_katana_melee_2h_stance.png-2b4fc65a9c37865f55124cbcf86f4b56.ctex"]
+dest_files=["res://.godot/imported/operator_body_and_katana_melee_2h_stance.png-941602e63cbb265b04c42e4414b10b4a.ctex"]
 
 [params]
 

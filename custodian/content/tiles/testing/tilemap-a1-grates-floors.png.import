@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cujubwmog4lm8"
-path="res://.godot/imported/tilemap-a1-grates-floors.png-23cdf844ec2f1deb04b44c00a80ba499.ctex"
+path="res://.godot/imported/tilemap-a1-grates-floors.png-76816790a9711142cd4e70fb2ca7584d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/testing/tilemap-a1-grates-floors.png"
-dest_files=["res://.godot/imported/tilemap-a1-grates-floors.png-23cdf844ec2f1deb04b44c00a80ba499.ctex"]
+dest_files=["res://.godot/imported/tilemap-a1-grates-floors.png-76816790a9711142cd4e70fb2ca7584d.ctex"]
 
 [params]
 

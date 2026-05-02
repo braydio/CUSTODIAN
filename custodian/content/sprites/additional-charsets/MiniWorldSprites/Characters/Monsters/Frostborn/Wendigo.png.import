@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dmjt4fiss3nmg"
-path="res://.godot/imported/Wendigo.png-9e9cf613323d905e1210850349b50761.ctex"
+path="res://.godot/imported/Wendigo.png-745d15bcba484224a8530419234bddfb.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Frostborn/Wendigo.png"
-dest_files=["res://.godot/imported/Wendigo.png-9e9cf613323d905e1210850349b50761.ctex"]
+dest_files=["res://.godot/imported/Wendigo.png-745d15bcba484224a8530419234bddfb.ctex"]
 
 [params]
 

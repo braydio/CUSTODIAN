@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brqwo2jvg47cd"
-path="res://.godot/imported/LimeTower.png-cf4a0efdca897c77222f6d63ea62fb5d.ctex"
+path="res://.godot/imported/LimeTower.png-00b984dc078b31bb04627efa6ba4d2ea.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Lime/LimeTower.png"
-dest_files=["res://.godot/imported/LimeTower.png-cf4a0efdca897c77222f6d63ea62fb5d.ctex"]
+dest_files=["res://.godot/imported/LimeTower.png-00b984dc078b31bb04627efa6ba4d2ea.ctex"]
 
 [params]
 

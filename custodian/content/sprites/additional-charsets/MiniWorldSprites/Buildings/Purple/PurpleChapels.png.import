@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://balndceww8ewx"
-path="res://.godot/imported/PurpleChapels.png-3f2aa91a285f76be1089403f8b40b1f2.ctex"
+path="res://.godot/imported/PurpleChapels.png-4798c7a28f1e1ca26c141a20adc3359a.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Purple/PurpleChapels.png"
-dest_files=["res://.godot/imported/PurpleChapels.png-3f2aa91a285f76be1089403f8b40b1f2.ctex"]
+dest_files=["res://.godot/imported/PurpleChapels.png-4798c7a28f1e1ca26c141a20adc3359a.ctex"]
 
 [params]
 

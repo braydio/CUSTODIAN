@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dto40xijafu8e"
-path="res://.godot/imported/drone_arm_missiles.png-29d5f058299d56b95444e4c74ee5a55e.ctex"
+path="res://.godot/imported/drone_arm_missiles.png-b30864fb196e0e58afe7395eb5ef97f6.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/enemies/drone/drone_arm_missiles.png"
-dest_files=["res://.godot/imported/drone_arm_missiles.png-29d5f058299d56b95444e4c74ee5a55e.ctex"]
+dest_files=["res://.godot/imported/drone_arm_missiles.png-b30864fb196e0e58afe7395eb5ef97f6.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://e78dm3g2dpp6"
-path="res://.godot/imported/run_up_one_soldier.png-915b623d5d37d2b16cbc14e75e357623.ctex"
+path="res://.godot/imported/run_up_one_soldier.png-bf45c1b1ab937cf52d55b1307b508553.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/source/run_up_one_soldier.png"
-dest_files=["res://.godot/imported/run_up_one_soldier.png-915b623d5d37d2b16cbc14e75e357623.ctex"]
+dest_files=["res://.godot/imported/run_up_one_soldier.png-bf45c1b1ab937cf52d55b1307b508553.ctex"]
 
 [params]
 

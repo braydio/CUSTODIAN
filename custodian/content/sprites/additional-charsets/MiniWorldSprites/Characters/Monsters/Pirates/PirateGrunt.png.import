@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0gag0huj8mf3"
-path="res://.godot/imported/PirateGrunt.png-72678e74005d0fa8a7a23d326febd14d.ctex"
+path="res://.godot/imported/PirateGrunt.png-6239d22f79ad58998015973c8ec324d1.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Pirates/PirateGrunt.png"
-dest_files=["res://.godot/imported/PirateGrunt.png-72678e74005d0fa8a7a23d326febd14d.ctex"]
+dest_files=["res://.godot/imported/PirateGrunt.png-6239d22f79ad58998015973c8ec324d1.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://pev44s6kjjbg"
-path="res://.godot/imported/fallen_star_katana__melee_2h__block_exit_weapon.png-35a4192bd03c90b8a708212f20c58b45.ctex"
+path="res://.godot/imported/fallen_star_katana__melee_2h__block_exit_weapon.png-2bfd7b846298fa8eb91d1547d21f183b.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_2h__block_exit_weapon.png"
-dest_files=["res://.godot/imported/fallen_star_katana__melee_2h__block_exit_weapon.png-35a4192bd03c90b8a708212f20c58b45.ctex"]
+dest_files=["res://.godot/imported/fallen_star_katana__melee_2h__block_exit_weapon.png-2bfd7b846298fa8eb91d1547d21f183b.ctex"]
 
 [params]
 

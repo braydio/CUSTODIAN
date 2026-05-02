@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b0ubxohgfiy6c"
-path="res://.godot/imported/autumn water sparkles B 16x16.png-50de243d956b7d24316b58908c87177a.ctex"
+path="res://.godot/imported/autumn water sparkles B 16x16.png-ddcd2849437f519a017915458a40f320.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/Pixellated Forest Tilesets/autumn/seasonal water animations/autumn water sparkles B 16x16.png"
-dest_files=["res://.godot/imported/autumn water sparkles B 16x16.png-50de243d956b7d24316b58908c87177a.ctex"]
+dest_files=["res://.godot/imported/autumn water sparkles B 16x16.png-ddcd2849437f519a017915458a40f320.ctex"]
 
 [params]
 

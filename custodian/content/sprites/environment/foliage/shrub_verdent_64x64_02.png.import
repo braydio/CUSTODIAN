@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://65727c4mj4ff"
-path="res://.godot/imported/shrub_verdent_64x64_02.png-774ffd8015ad415e2754444a1a7ac9b3.ctex"
+path="res://.godot/imported/shrub_verdent_64x64_02.png-6182abcb7f7f8b200c872c22bc87ded9.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/environment/foliage/shrub_verdent_64x64_02.png"
-dest_files=["res://.godot/imported/shrub_verdent_64x64_02.png-774ffd8015ad415e2754444a1a7ac9b3.ctex"]
+dest_files=["res://.godot/imported/shrub_verdent_64x64_02.png-6182abcb7f7f8b200c872c22bc87ded9.ctex"]
 
 [params]
 

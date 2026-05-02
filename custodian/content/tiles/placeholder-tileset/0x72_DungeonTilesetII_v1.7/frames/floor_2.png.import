@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cttvfricqsdj3"
-path="res://.godot/imported/floor_2.png-163262ece7eb6d65afb00897b1807842.ctex"
+path="res://.godot/imported/floor_2.png-01da9e7ac04d646ac85962d1f2cc8a8d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/floor_2.png"
-dest_files=["res://.godot/imported/floor_2.png-163262ece7eb6d65afb00897b1807842.ctex"]
+dest_files=["res://.godot/imported/floor_2.png-01da9e7ac04d646ac85962d1f2cc8a8d.ctex"]
 
 [params]
 

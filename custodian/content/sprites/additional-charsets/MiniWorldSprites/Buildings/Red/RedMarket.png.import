@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgdpsg6qw676w"
-path="res://.godot/imported/RedMarket.png-8477ccfa0d04e18929cbf37300d39938.ctex"
+path="res://.godot/imported/RedMarket.png-778221536697a79586b2d0d64e3a4d04.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Red/RedMarket.png"
-dest_files=["res://.godot/imported/RedMarket.png-8477ccfa0d04e18929cbf37300d39938.ctex"]
+dest_files=["res://.godot/imported/RedMarket.png-778221536697a79586b2d0d64e3a4d04.ctex"]
 
 [params]
 

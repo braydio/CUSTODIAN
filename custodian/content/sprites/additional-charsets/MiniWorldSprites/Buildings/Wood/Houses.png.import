@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d2xj8ak07sbyi"
-path="res://.godot/imported/Houses.png-4dbf0b18fbe9c32a96a74cceed37f658.ctex"
+path="res://.godot/imported/Houses.png-a8df2f2c6c3f255a0ee9c7e258025628.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Wood/Houses.png"
-dest_files=["res://.godot/imported/Houses.png-4dbf0b18fbe9c32a96a74cceed37f658.ctex"]
+dest_files=["res://.godot/imported/Houses.png-a8df2f2c6c3f255a0ee9c7e258025628.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8nsco0hsqgum"
-path="res://.godot/imported/swords_download_secondaryu.png-3a9d67d7f376dcdb810aec3b4f4b75c8.ctex"
+path="res://.godot/imported/swords_download_secondaryu.png-f78e2988557414185647609abb525e8f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/misc/swords_download_secondaryu.png"
-dest_files=["res://.godot/imported/swords_download_secondaryu.png-3a9d67d7f376dcdb810aec3b4f4b75c8.ctex"]
+dest_files=["res://.godot/imported/swords_download_secondaryu.png-f78e2988557414185647609abb525e8f.ctex"]
 
 [params]
 

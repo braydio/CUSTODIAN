@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bljyjb6aujruu"
-path="res://.godot/imported/waveform4.png-bb30432656f2d1437f217d4197a2f6bb.ctex"
+path="res://.godot/imported/waveform4.png-6c9a6feee93cc4ff91e62a994faab1ff.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/waveform/sprites/waveform4.png"
-dest_files=["res://.godot/imported/waveform4.png-bb30432656f2d1437f217d4197a2f6bb.ctex"]
+dest_files=["res://.godot/imported/waveform4.png-6c9a6feee93cc4ff91e62a994faab1ff.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c1mdb02e4gt87"
-path="res://.godot/imported/weapon_throwing_axe.png-49496d0dafe8af3a6f4e4a7c13f1474d.ctex"
+path="res://.godot/imported/weapon_throwing_axe.png-5a8e1e9d81ffe93642678972766e8914.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/weapon_throwing_axe.png"
-dest_files=["res://.godot/imported/weapon_throwing_axe.png-49496d0dafe8af3a6f4e4a7c13f1474d.ctex"]
+dest_files=["res://.godot/imported/weapon_throwing_axe.png-5a8e1e9d81ffe93642678972766e8914.ctex"]
 
 [params]
 

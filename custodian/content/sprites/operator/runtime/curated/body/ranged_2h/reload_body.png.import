@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bi1cadatsrg4c"
-path="res://.godot/imported/reload_body.png-a984d74d9b4a83e6a3b6f5f00bdc9491.ctex"
+path="res://.godot/imported/reload_body.png-246e0bf0a2e6f1e45281b564476716e1.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/curated/body/ranged_2h/reload_body.png"
-dest_files=["res://.godot/imported/reload_body.png-a984d74d9b4a83e6a3b6f5f00bdc9491.ctex"]
+dest_files=["res://.godot/imported/reload_body.png-246e0bf0a2e6f1e45281b564476716e1.ctex"]
 
 [params]
 

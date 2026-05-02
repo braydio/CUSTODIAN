@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b08vok4x688co"
-path="res://.godot/imported/turret-blaster-design.png-197fe215ee07787c9cee350890754284.ctex"
+path="res://.godot/imported/turret-blaster-design.png-d24f80a6c13958b73e7440f6ff4dd43a.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/turrets/source/turret-blaster-design.png"
-dest_files=["res://.godot/imported/turret-blaster-design.png-197fe215ee07787c9cee350890754284.ctex"]
+dest_files=["res://.godot/imported/turret-blaster-design.png-d24f80a6c13958b73e7440f6ff4dd43a.ctex"]
 
 [params]
 

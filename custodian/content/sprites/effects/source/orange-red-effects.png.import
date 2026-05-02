@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://df8asrduu1k8q"
-path="res://.godot/imported/orange-red-effects.png-b890bab3f3f29208619a5545014d19b4.ctex"
+path="res://.godot/imported/orange-red-effects.png-b88ccbcc5a112c5496cdb83a1faa278f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/effects/source/orange-red-effects.png"
-dest_files=["res://.godot/imported/orange-red-effects.png-b890bab3f3f29208619a5545014d19b4.ctex"]
+dest_files=["res://.godot/imported/orange-red-effects.png-b88ccbcc5a112c5496cdb83a1faa278f.ctex"]
 
 [params]
 

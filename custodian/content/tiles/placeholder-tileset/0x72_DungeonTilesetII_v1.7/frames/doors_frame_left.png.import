@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjvqslb26djhq"
-path="res://.godot/imported/doors_frame_left.png-2a3ef8856cfbc6ebcb9b479c6cbf5b44.ctex"
+path="res://.godot/imported/doors_frame_left.png-198122cfb4cc2fa4a51ad28559a00811.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/doors_frame_left.png"
-dest_files=["res://.godot/imported/doors_frame_left.png-2a3ef8856cfbc6ebcb9b479c6cbf5b44.ctex"]
+dest_files=["res://.godot/imported/doors_frame_left.png-198122cfb4cc2fa4a51ad28559a00811.ctex"]
 
 [params]
 

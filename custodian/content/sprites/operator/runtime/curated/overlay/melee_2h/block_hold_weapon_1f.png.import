@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c357e8jtfg6cj"
-path="res://.godot/imported/block_hold_weapon_1f.png-9ac21be191d677b42e9f64a8fe7b8ec8.ctex"
+path="res://.godot/imported/block_hold_weapon_1f.png-7bb1f034a4ed93342a976a7e494e1027.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_hold_weapon_1f.png"
-dest_files=["res://.godot/imported/block_hold_weapon_1f.png-9ac21be191d677b42e9f64a8fe7b8ec8.ctex"]
+dest_files=["res://.godot/imported/block_hold_weapon_1f.png-7bb1f034a4ed93342a976a7e494e1027.ctex"]
 
 [params]
 

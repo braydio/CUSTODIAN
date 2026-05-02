@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bqefemq1l3j4g"
-path="res://.godot/imported/sword_zweihander.png-d1b2aa917901dd0e9211b386f5ccc817.ctex"
+path="res://.godot/imported/sword_zweihander.png-9b128c7567dea0e4f8bbc3cb46933485.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/8bit-custodian/sword_zweihander.png"
-dest_files=["res://.godot/imported/sword_zweihander.png-d1b2aa917901dd0e9211b386f5ccc817.ctex"]
+dest_files=["res://.godot/imported/sword_zweihander.png-9b128c7567dea0e4f8bbc3cb46933485.ctex"]
 
 [params]
 

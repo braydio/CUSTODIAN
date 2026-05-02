@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cetr1tulp0r8u"
-path="res://.godot/imported/Arrow01(100x100).png-95f1d718afbc7870a8d4417346fe9696.ctex"
+path="res://.godot/imported/Arrow01(100x100).png-039f7236556368c9e4d64fb7f3a33cdd.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Arrow(Projectile)/Arrow01(100x100).png"
-dest_files=["res://.godot/imported/Arrow01(100x100).png-95f1d718afbc7870a8d4417346fe9696.ctex"]
+dest_files=["res://.godot/imported/Arrow01(100x100).png-039f7236556368c9e4d64fb7f3a33cdd.ctex"]
 
 [params]
 

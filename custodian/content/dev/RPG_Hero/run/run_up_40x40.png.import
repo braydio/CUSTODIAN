@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddkjrto0nwfh1"
-path="res://.godot/imported/run_up_40x40.png-8484ef3f744701c4b157a5c0aab82451.ctex"
+path="res://.godot/imported/run_up_40x40.png-b7d33e933b4a69d7dfba10682787bea4.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/dev/RPG_Hero/run/run_up_40x40.png"
-dest_files=["res://.godot/imported/run_up_40x40.png-8484ef3f744701c4b157a5c0aab82451.ctex"]
+dest_files=["res://.godot/imported/run_up_40x40.png-b7d33e933b4a69d7dfba10682787bea4.ctex"]
 
 [params]
 

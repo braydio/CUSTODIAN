@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0dyisjf70p6l"
-path="res://.godot/imported/PineTrees.png-7921e8a0b23fa332ee89bd7a1710f7fb.ctex"
+path="res://.godot/imported/PineTrees.png-4d5bb93bf03dd81cb65b1e734cffd54f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Nature/PineTrees.png"
-dest_files=["res://.godot/imported/PineTrees.png-7921e8a0b23fa332ee89bd7a1710f7fb.ctex"]
+dest_files=["res://.godot/imported/PineTrees.png-4d5bb93bf03dd81cb65b1e734cffd54f.ctex"]
 
 [params]
 

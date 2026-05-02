@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2xaijg6laqtf"
-path="res://.godot/imported/2h_heavy_pre-strike.png-e5bed4a2dc76219a34da9697fb55f6c4.ctex"
+path="res://.godot/imported/2h_heavy_pre-strike.png-77f330ec224ce1bbc393fa1119536c88.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/source/heavy_2h/2h_heavy_pre-strike.png"
-dest_files=["res://.godot/imported/2h_heavy_pre-strike.png-e5bed4a2dc76219a34da9697fb55f6c4.ctex"]
+dest_files=["res://.godot/imported/2h_heavy_pre-strike.png-77f330ec224ce1bbc393fa1119536c88.ctex"]
 
 [params]
 

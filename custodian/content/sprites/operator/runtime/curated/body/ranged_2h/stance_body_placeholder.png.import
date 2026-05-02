@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://yedfhqsfxtwm"
-path="res://.godot/imported/stance_body_placeholder.png-56e3ec039b7b6e4c6e3d6fa50c013363.ctex"
+path="res://.godot/imported/stance_body_placeholder.png-247d822d346adbbf7eed77610bc7a30b.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/curated/body/ranged_2h/stance_body_placeholder.png"
-dest_files=["res://.godot/imported/stance_body_placeholder.png-56e3ec039b7b6e4c6e3d6fa50c013363.ctex"]
+dest_files=["res://.godot/imported/stance_body_placeholder.png-247d822d346adbbf7eed77610bc7a30b.ctex"]
 
 [params]
 

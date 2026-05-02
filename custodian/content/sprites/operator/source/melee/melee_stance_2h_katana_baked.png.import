@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://csynwx1sds4um"
-path="res://.godot/imported/melee_stance_2h_katana_baked.png-533cdea929e597106ef9cebffcfc59be.ctex"
+path="res://.godot/imported/melee_stance_2h_katana_baked.png-7742abc9535d090746ab1e7ec8c722b2.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/source/melee/melee_stance_2h_katana_baked.png"
-dest_files=["res://.godot/imported/melee_stance_2h_katana_baked.png-533cdea929e597106ef9cebffcfc59be.ctex"]
+dest_files=["res://.godot/imported/melee_stance_2h_katana_baked.png-7742abc9535d090746ab1e7ec8c722b2.ctex"]
 
 [params]
 

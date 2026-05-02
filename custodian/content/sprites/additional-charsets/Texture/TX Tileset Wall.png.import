@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://drrom8ydkea2r"
-path="res://.godot/imported/TX Tileset Wall.png-ec56f40f4aaa3d0bf184247347051c1a.ctex"
+path="res://.godot/imported/TX Tileset Wall.png-48e5fa3645286ad40a9f41fd94193f9a.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/Texture/TX Tileset Wall.png"
-dest_files=["res://.godot/imported/TX Tileset Wall.png-ec56f40f4aaa3d0bf184247347051c1a.ctex"]
+dest_files=["res://.godot/imported/TX Tileset Wall.png-48e5fa3645286ad40a9f41fd94193f9a.ctex"]
 
 [params]
 

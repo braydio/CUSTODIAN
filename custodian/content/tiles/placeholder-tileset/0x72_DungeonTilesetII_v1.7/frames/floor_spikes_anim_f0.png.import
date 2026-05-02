@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjfbd775rxc1s"
-path="res://.godot/imported/floor_spikes_anim_f0.png-94de92d713f3a81e6c318d7b85a1ee59.ctex"
+path="res://.godot/imported/floor_spikes_anim_f0.png-b8ac3b50d3f95690adf831c0da1d86dd.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/floor_spikes_anim_f0.png"
-dest_files=["res://.godot/imported/floor_spikes_anim_f0.png-94de92d713f3a81e6c318d7b85a1ee59.ctex"]
+dest_files=["res://.godot/imported/floor_spikes_anim_f0.png-b8ac3b50d3f95690adf831c0da1d86dd.ctex"]
 
 [params]
 

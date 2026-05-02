@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bl7qop32q5jkj"
-path="res://.godot/imported/Signs.png-b4ef6fd845a47d0c797285df2b18a06f.ctex"
+path="res://.godot/imported/Signs.png-96f9a46411c0f802b7cc59c8b0d2c9e5.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Miscellaneous/Signs.png"
-dest_files=["res://.godot/imported/Signs.png-b4ef6fd845a47d0c797285df2b18a06f.ctex"]
+dest_files=["res://.godot/imported/Signs.png-96f9a46411c0f802b7cc59c8b0d2c9e5.ctex"]
 
 [params]
 

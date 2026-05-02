@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0n3darm6srk0"
-path="res://.godot/imported/PurpleTaverns.png-4091ae14f0deb86b5d655b5aa5747308.ctex"
+path="res://.godot/imported/PurpleTaverns.png-af0c7e3fe222aa832174db51c396fb81.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Purple/PurpleTaverns.png"
-dest_files=["res://.godot/imported/PurpleTaverns.png-4091ae14f0deb86b5d655b5aa5747308.ctex"]
+dest_files=["res://.godot/imported/PurpleTaverns.png-af0c7e3fe222aa832174db51c396fb81.ctex"]
 
 [params]
 

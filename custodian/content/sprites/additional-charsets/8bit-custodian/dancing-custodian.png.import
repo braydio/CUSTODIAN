@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b07vq6m1agh1t"
-path="res://.godot/imported/dancing-custodian.png-74165f8c19e23b14986d5fb602ae198a.ctex"
+path="res://.godot/imported/dancing-custodian.png-1cf3d0028d57a34d20a551b04b58581a.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/8bit-custodian/dancing-custodian.png"
-dest_files=["res://.godot/imported/dancing-custodian.png-74165f8c19e23b14986d5fb602ae198a.ctex"]
+dest_files=["res://.godot/imported/dancing-custodian.png-1cf3d0028d57a34d20a551b04b58581a.ctex"]
 
 [params]
 

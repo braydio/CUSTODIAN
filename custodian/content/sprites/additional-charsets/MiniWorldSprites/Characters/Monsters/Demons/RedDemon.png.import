@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3l2kclv4aahn"
-path="res://.godot/imported/RedDemon.png-4f4d7e5ac6c3d6e4fcc2c299ea05e057.ctex"
+path="res://.godot/imported/RedDemon.png-d22c1571efb0cf2c72fe168904dc6201.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Demons/RedDemon.png"
-dest_files=["res://.godot/imported/RedDemon.png-4f4d7e5ac6c3d6e4fcc2c299ea05e057.ctex"]
+dest_files=["res://.godot/imported/RedDemon.png-d22c1571efb0cf2c72fe168904dc6201.ctex"]
 
 [params]
 

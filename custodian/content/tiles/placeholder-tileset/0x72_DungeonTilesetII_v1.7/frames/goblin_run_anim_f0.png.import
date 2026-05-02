@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://n4twv3egoki3"
-path="res://.godot/imported/goblin_run_anim_f0.png-98213e21dd018db64bbfdf99b08f5984.ctex"
+path="res://.godot/imported/goblin_run_anim_f0.png-4381f50c96c0515e04ee05fcf35407db.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/goblin_run_anim_f0.png"
-dest_files=["res://.godot/imported/goblin_run_anim_f0.png-98213e21dd018db64bbfdf99b08f5984.ctex"]
+dest_files=["res://.godot/imported/goblin_run_anim_f0.png-4381f50c96c0515e04ee05fcf35407db.ctex"]
 
 [params]
 

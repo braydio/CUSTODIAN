@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwyjle4e6c8ha"
-path="res://.godot/imported/stance_ranged_2h.png-9137c40ac1430b22a52bba566a049bb4.ctex"
+path="res://.godot/imported/stance_ranged_2h.png-3c5fe7c26cb215aeb5970ebec88f50f7.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/8bit-custodian/stance_ranged_2h.png"
-dest_files=["res://.godot/imported/stance_ranged_2h.png-9137c40ac1430b22a52bba566a049bb4.ctex"]
+dest_files=["res://.godot/imported/stance_ranged_2h.png-3c5fe7c26cb215aeb5970ebec88f50f7.ctex"]
 
 [params]
 

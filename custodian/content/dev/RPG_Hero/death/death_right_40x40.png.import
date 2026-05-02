@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bop5xq4fidt3b"
-path="res://.godot/imported/death_right_40x40.png-396b1afda7649e25a461ae2121796168.ctex"
+path="res://.godot/imported/death_right_40x40.png-59e4e8d4508a929f7df28747f6307f91.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/dev/RPG_Hero/death/death_right_40x40.png"
-dest_files=["res://.godot/imported/death_right_40x40.png-396b1afda7649e25a461ae2121796168.ctex"]
+dest_files=["res://.godot/imported/death_right_40x40.png-59e4e8d4508a929f7df28747f6307f91.ctex"]
 
 [params]
 

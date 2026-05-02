@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3f8h64sqqhay"
-path="res://.godot/imported/operator_body_melee_2h_block_exit.png-7619f495946fc39b47c24dd1acb978f3.ctex"
+path="res://.godot/imported/operator_body_melee_2h_block_exit.png-b50f9741ecf05610c3e758262cd4f07d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_block_exit.png"
-dest_files=["res://.godot/imported/operator_body_melee_2h_block_exit.png-7619f495946fc39b47c24dd1acb978f3.ctex"]
+dest_files=["res://.godot/imported/operator_body_melee_2h_block_exit.png-b50f9741ecf05610c3e758262cd4f07d.ctex"]
 
 [params]
 

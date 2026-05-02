@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3id0i5jp1tog"
-path="res://.godot/imported/fast_recovery_body.png-3bdae75143d90e067c7ee610f7af5a65.ctex"
+path="res://.godot/imported/fast_recovery_body.png-8362ad916a2f189161bc0d75189e07b6.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/curated/body/melee_2h/fast_recovery_body.png"
-dest_files=["res://.godot/imported/fast_recovery_body.png-3bdae75143d90e067c7ee610f7af5a65.ctex"]
+dest_files=["res://.godot/imported/fast_recovery_body.png-8362ad916a2f189161bc0d75189e07b6.ctex"]
 
 [params]
 

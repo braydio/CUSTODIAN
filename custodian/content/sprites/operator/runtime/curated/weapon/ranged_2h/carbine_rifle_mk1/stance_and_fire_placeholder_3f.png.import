@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dib18xmh5luvt"
-path="res://.godot/imported/stance_and_fire_placeholder_3f.png-bd57ad243cc1f1efefb583264eec624e.ctex"
+path="res://.godot/imported/stance_and_fire_placeholder_3f.png-aa9d089dc33a5c05b35c1b9b9ddf303d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/curated/weapon/ranged_2h/carbine_rifle_mk1/stance_and_fire_placeholder_3f.png"
-dest_files=["res://.godot/imported/stance_and_fire_placeholder_3f.png-bd57ad243cc1f1efefb583264eec624e.ctex"]
+dest_files=["res://.godot/imported/stance_and_fire_placeholder_3f.png-aa9d089dc33a5c05b35c1b9b9ddf303d.ctex"]
 
 [params]
 

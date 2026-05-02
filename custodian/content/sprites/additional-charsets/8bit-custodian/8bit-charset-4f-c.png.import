@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blpqwvy2wydoc"
-path="res://.godot/imported/8bit-charset-4f-c.png-0b8638ff1aa549e98b57de2b6406afe3.ctex"
+path="res://.godot/imported/8bit-charset-4f-c.png-8a0c24402458c39db4415b018ba20e56.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/8bit-custodian/8bit-charset-4f-c.png"
-dest_files=["res://.godot/imported/8bit-charset-4f-c.png-0b8638ff1aa549e98b57de2b6406afe3.ctex"]
+dest_files=["res://.godot/imported/8bit-charset-4f-c.png-8a0c24402458c39db4415b018ba20e56.ctex"]
 
 [params]
 

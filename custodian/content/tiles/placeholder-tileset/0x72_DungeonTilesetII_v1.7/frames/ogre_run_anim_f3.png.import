@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://onso675e3h2j"
-path="res://.godot/imported/ogre_run_anim_f3.png-a1d21fdcade040f55206dca23da78de0.ctex"
+path="res://.godot/imported/ogre_run_anim_f3.png-67d6fd4a54aedf9a889aa5d9c9aaa910.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/ogre_run_anim_f3.png"
-dest_files=["res://.godot/imported/ogre_run_anim_f3.png-a1d21fdcade040f55206dca23da78de0.ctex"]
+dest_files=["res://.godot/imported/ogre_run_anim_f3.png-67d6fd4a54aedf9a889aa5d9c9aaa910.ctex"]
 
 [params]
 

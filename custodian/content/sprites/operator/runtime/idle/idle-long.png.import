@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bekkn6v5oroga"
-path="res://.godot/imported/idle-long.png-40456383973735db2ee4ab82b04ca58c.ctex"
+path="res://.godot/imported/idle-long.png-245669bd6b8fda2b8a8696d2f4a0befc.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/idle/idle-long.png"
-dest_files=["res://.godot/imported/idle-long.png-40456383973735db2ee4ab82b04ca58c.ctex"]
+dest_files=["res://.godot/imported/idle-long.png-245669bd6b8fda2b8a8696d2f4a0befc.ctex"]
 
 [params]
 

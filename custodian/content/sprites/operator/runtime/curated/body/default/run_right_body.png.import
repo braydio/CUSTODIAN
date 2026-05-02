@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnmplpgp62rvr"
-path="res://.godot/imported/run_right_body.png-0144d09e96f8b4c27c0a4f9df8369b88.ctex"
+path="res://.godot/imported/run_right_body.png-f66f3eadd798d7bbdf3f3b63dbe0bf91.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/curated/body/default/run_right_body.png"
-dest_files=["res://.godot/imported/run_right_body.png-0144d09e96f8b4c27c0a4f9df8369b88.ctex"]
+dest_files=["res://.godot/imported/run_right_body.png-f66f3eadd798d7bbdf3f3b63dbe0bf91.ctex"]
 
 [params]
 

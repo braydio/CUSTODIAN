@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cq6st8ao2mw71"
-path="res://.godot/imported/Dirty-Tiles.png-29475f1a3e1b951d9acb3d76017aa9b4.ctex"
+path="res://.godot/imported/Dirty-Tiles.png-53b86df8106c62bb39fa0897a658410f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/testing/Dirty-Tiles.png"
-dest_files=["res://.godot/imported/Dirty-Tiles.png-29475f1a3e1b951d9acb3d76017aa9b4.ctex"]
+dest_files=["res://.godot/imported/Dirty-Tiles.png-53b86df8106c62bb39fa0897a658410f.ctex"]
 
 [params]
 

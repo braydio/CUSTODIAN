@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://uenje70o1f3j"
-path="res://.godot/imported/Trees.png-21fc08b5436a1d902cbf4a4380c55371.ctex"
+path="res://.godot/imported/Trees.png-7b98cf84142cc6b7374997773b1c17d4.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Nature/Trees.png"
-dest_files=["res://.godot/imported/Trees.png-21fc08b5436a1d902cbf4a4380c55371.ctex"]
+dest_files=["res://.godot/imported/Trees.png-7b98cf84142cc6b7374997773b1c17d4.ctex"]
 
 [params]
 

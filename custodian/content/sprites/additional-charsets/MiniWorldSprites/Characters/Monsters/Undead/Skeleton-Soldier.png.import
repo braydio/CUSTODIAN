@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfgtrah11ghk4"
-path="res://.godot/imported/Skeleton-Soldier.png-174d50a27ac8033ce5e6446fa31d2556.ctex"
+path="res://.godot/imported/Skeleton-Soldier.png-7c502aec4706367041cc640b2c009a55.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Undead/Skeleton-Soldier.png"
-dest_files=["res://.godot/imported/Skeleton-Soldier.png-174d50a27ac8033ce5e6446fa31d2556.ctex"]
+dest_files=["res://.godot/imported/Skeleton-Soldier.png-7c502aec4706367041cc640b2c009a55.ctex"]
 
 [params]
 

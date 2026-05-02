@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddmll0v7i44hc"
-path="res://.godot/imported/Katan.png-4c9af164ce875e50c2a6404a1b5e0dd3.ctex"
+path="res://.godot/imported/Katan.png-7f5687d159d724da4cf61d198d3de2ce.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Champions/Katan.png"
-dest_files=["res://.godot/imported/Katan.png-4c9af164ce875e50c2a6404a1b5e0dd3.ctex"]
+dest_files=["res://.godot/imported/Katan.png-7f5687d159d724da4cf61d198d3de2ce.ctex"]
 
 [params]
 

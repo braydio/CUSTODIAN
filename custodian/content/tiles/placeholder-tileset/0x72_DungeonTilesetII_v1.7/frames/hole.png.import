@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3ldt7qknqnxk"
-path="res://.godot/imported/hole.png-5d885db8ba2c2c9dda60daaad667ef80.ctex"
+path="res://.godot/imported/hole.png-3fca3d614e233d1b031ef437dd05fc32.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/hole.png"
-dest_files=["res://.godot/imported/hole.png-5d885db8ba2c2c9dda60daaad667ef80.ctex"]
+dest_files=["res://.godot/imported/hole.png-3fca3d614e233d1b031ef437dd05fc32.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dumi7o0xtisdp"
-path="res://.godot/imported/explosion-f5.png-fd8bbc33a1c4d7fa4f6bf7b3e4d47dcd.ctex"
+path="res://.godot/imported/explosion-f5.png-39d9756d73be53aeecdd9d7049bab29c.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/effects/explosion pack 1/Explosions pack/explosion-1-f/Sprites/explosion-f5.png"
-dest_files=["res://.godot/imported/explosion-f5.png-fd8bbc33a1c4d7fa4f6bf7b3e4d47dcd.ctex"]
+dest_files=["res://.godot/imported/explosion-f5.png-39d9756d73be53aeecdd9d7049bab29c.ctex"]
 
 [params]
 

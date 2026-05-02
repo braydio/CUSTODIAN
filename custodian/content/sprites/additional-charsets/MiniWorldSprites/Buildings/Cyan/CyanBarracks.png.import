@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkjn0m8a08o3t"
-path="res://.godot/imported/CyanBarracks.png-4ef964dd524f55ad0b050c9a8c531222.ctex"
+path="res://.godot/imported/CyanBarracks.png-87f1a85c22b9288ea4cf461c6bbe93a0.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Cyan/CyanBarracks.png"
-dest_files=["res://.godot/imported/CyanBarracks.png-4ef964dd524f55ad0b050c9a8c531222.ctex"]
+dest_files=["res://.godot/imported/CyanBarracks.png-87f1a85c22b9288ea4cf461c6bbe93a0.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cokvjd2tsh5h4"
-path="res://.godot/imported/enemy_temp.png-1721aef00c1f602c8f778f483993c429.ctex"
+path="res://.godot/imported/enemy_temp.png-49a25c86a26d91bd2d9d567f685878bd.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/dev/enemy_temp.png"
-dest_files=["res://.godot/imported/enemy_temp.png-1721aef00c1f602c8f778f483993c429.ctex"]
+dest_files=["res://.godot/imported/enemy_temp.png-49a25c86a26d91bd2d9d567f685878bd.ctex"]
 
 [params]
 

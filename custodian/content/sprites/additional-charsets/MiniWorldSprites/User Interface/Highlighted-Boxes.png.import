@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dn7jdltx17evr"
-path="res://.godot/imported/Highlighted-Boxes.png-60a239dc9affb60b206e79592ffca774.ctex"
+path="res://.godot/imported/Highlighted-Boxes.png-dfbd76459e881b3596c95d187e73cf9e.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/User Interface/Highlighted-Boxes.png"
-dest_files=["res://.godot/imported/Highlighted-Boxes.png-60a239dc9affb60b206e79592ffca774.ctex"]
+dest_files=["res://.godot/imported/Highlighted-Boxes.png-dfbd76459e881b3596c95d187e73cf9e.ctex"]
 
 [params]
 

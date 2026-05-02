@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c15iafv81a181"
-path="res://.godot/imported/CyanDocks.png-411e4e0a522745a0360de512ad6ef90b.ctex"
+path="res://.godot/imported/CyanDocks.png-7ab94e46d3a099378b13e8d7933a1900.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Cyan/CyanDocks.png"
-dest_files=["res://.godot/imported/CyanDocks.png-411e4e0a522745a0360de512ad6ef90b.ctex"]
+dest_files=["res://.godot/imported/CyanDocks.png-7ab94e46d3a099378b13e8d7933a1900.ctex"]
 
 [params]
 

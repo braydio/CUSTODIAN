@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ecsfj1ivdm8f"
-path="res://.godot/imported/operator_reloadign.png-b0c182174d529a5d389627553e20beda.ctex"
+path="res://.godot/imported/operator_reloadign.png-219c456c4e2c94d36ff3b4c0fb1d33cd.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator_reloadign.png"
-dest_files=["res://.godot/imported/operator_reloadign.png-b0c182174d529a5d389627553e20beda.ctex"]
+dest_files=["res://.godot/imported/operator_reloadign.png-219c456c4e2c94d36ff3b4c0fb1d33cd.ctex"]
 
 [params]
 

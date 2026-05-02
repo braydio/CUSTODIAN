@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhh0teu2ea2ue"
-path="res://.godot/imported/walk_down3.png-4d344c7800d33c616559b6f4528c1429.ctex"
+path="res://.godot/imported/walk_down3.png-70808a755a43c13a805415a08054d7b2.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/move/walk_down3.png"
-dest_files=["res://.godot/imported/walk_down3.png-4d344c7800d33c616559b6f4528c1429.ctex"]
+dest_files=["res://.godot/imported/walk_down3.png-70808a755a43c13a805415a08054d7b2.ctex"]
 
 [params]
 

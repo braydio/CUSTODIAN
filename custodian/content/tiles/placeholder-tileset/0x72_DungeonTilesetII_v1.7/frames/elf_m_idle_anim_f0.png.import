@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpvcom5ht0wsw"
-path="res://.godot/imported/elf_m_idle_anim_f0.png-2d6e99aa7346c655a2f596bf2bf6b0a0.ctex"
+path="res://.godot/imported/elf_m_idle_anim_f0.png-27fb1c3413f25d69dd14932ea4f4ea2d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/elf_m_idle_anim_f0.png"
-dest_files=["res://.godot/imported/elf_m_idle_anim_f0.png-2d6e99aa7346c655a2f596bf2bf6b0a0.ctex"]
+dest_files=["res://.godot/imported/elf_m_idle_anim_f0.png-27fb1c3413f25d69dd14932ea4f4ea2d.ctex"]
 
 [params]
 

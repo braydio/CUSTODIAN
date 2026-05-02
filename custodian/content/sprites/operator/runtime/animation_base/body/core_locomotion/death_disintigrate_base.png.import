@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmmw1ly83vttt"
-path="res://.godot/imported/death_disintigrate_base.png-1c5b63a4a24e0c504cbe6339f627b7bb.ctex"
+path="res://.godot/imported/death_disintigrate_base.png-6ab4681b95723a73cdd6b32a180cbe8c.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/animation_base/body/core_locomotion/death_disintigrate_base.png"
-dest_files=["res://.godot/imported/death_disintigrate_base.png-1c5b63a4a24e0c504cbe6339f627b7bb.ctex"]
+dest_files=["res://.godot/imported/death_disintigrate_base.png-6ab4681b95723a73cdd6b32a180cbe8c.ctex"]
 
 [params]
 

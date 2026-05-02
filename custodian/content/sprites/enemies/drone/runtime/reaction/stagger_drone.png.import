@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cf4c2hu4syrad"
-path="res://.godot/imported/stagger_drone.png-7b6e1703c40defe26142c061224fa783.ctex"
+path="res://.godot/imported/stagger_drone.png-b06746913bd0533dc2c8262f4ea85314.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/enemies/drone/runtime/reaction/stagger_drone.png"
-dest_files=["res://.godot/imported/stagger_drone.png-7b6e1703c40defe26142c061224fa783.ctex"]
+dest_files=["res://.godot/imported/stagger_drone.png-b06746913bd0533dc2c8262f4ea85314.ctex"]
 
 [params]
 

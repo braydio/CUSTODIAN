@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dy7o8imth3tls"
-path="res://.godot/imported/orc_shaman_idle_anim_f1.png-cf5ef0ab332b1cab4625fa8893ad9f67.ctex"
+path="res://.godot/imported/orc_shaman_idle_anim_f1.png-37717052d99760580c7bfccccac82469.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/orc_shaman_idle_anim_f1.png"
-dest_files=["res://.godot/imported/orc_shaman_idle_anim_f1.png-cf5ef0ab332b1cab4625fa8893ad9f67.ctex"]
+dest_files=["res://.godot/imported/orc_shaman_idle_anim_f1.png-37717052d99760580c7bfccccac82469.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://fpd1esgjkmic"
-path="res://.godot/imported/seasonal sample (spring).png-132eff35524424489bd1e9e745ba3633.ctex"
+path="res://.godot/imported/seasonal sample (spring).png-71eb46df21e9df6f2f1e22a5aaab0635.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/Pixellated Forest Tilesets/spring/seasonal sample (spring).png"
-dest_files=["res://.godot/imported/seasonal sample (spring).png-132eff35524424489bd1e9e745ba3633.ctex"]
+dest_files=["res://.godot/imported/seasonal sample (spring).png-71eb46df21e9df6f2f1e22a5aaab0635.ctex"]
 
 [params]
 

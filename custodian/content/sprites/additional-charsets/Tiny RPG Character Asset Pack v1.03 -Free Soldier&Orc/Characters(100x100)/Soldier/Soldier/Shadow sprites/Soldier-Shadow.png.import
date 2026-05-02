@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://di0y64we226v8"
-path="res://.godot/imported/Soldier-Shadow.png-2fc48e51863ae5811b822a08573eca2b.ctex"
+path="res://.godot/imported/Soldier-Shadow.png-e401cf401e2120d5ba66ac7346174f91.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/Soldier/Shadow sprites/Soldier-Shadow.png"
-dest_files=["res://.godot/imported/Soldier-Shadow.png-2fc48e51863ae5811b822a08573eca2b.ctex"]
+dest_files=["res://.godot/imported/Soldier-Shadow.png-e401cf401e2120d5ba66ac7346174f91.ctex"]
 
 [params]
 

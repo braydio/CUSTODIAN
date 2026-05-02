@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b23uc5edwa5er"
-path="res://.godot/imported/spark-preview4.png-3f763452a9481ce3b31a0608ae6265a1.ctex"
+path="res://.godot/imported/spark-preview4.png-584d1cab2ae8a5d890ae5e05d9fef14b.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/spark/sprites/spark-preview4.png"
-dest_files=["res://.godot/imported/spark-preview4.png-3f763452a9481ce3b31a0608ae6265a1.ctex"]
+dest_files=["res://.godot/imported/spark-preview4.png-584d1cab2ae8a5d890ae5e05d9fef14b.ctex"]
 
 [params]
 

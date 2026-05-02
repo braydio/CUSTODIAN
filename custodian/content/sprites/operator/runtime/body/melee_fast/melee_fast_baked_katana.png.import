@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ibyn3t3c33w6"
-path="res://.godot/imported/melee_fast_baked_katana.png-7c1de570b3a40d04ba0abfdcbd46e37d.ctex"
+path="res://.godot/imported/melee_fast_baked_katana.png-88422371e74bf84ae62133c10516d1bc.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/body/melee_fast/melee_fast_baked_katana.png"
-dest_files=["res://.godot/imported/melee_fast_baked_katana.png-7c1de570b3a40d04ba0abfdcbd46e37d.ctex"]
+dest_files=["res://.godot/imported/melee_fast_baked_katana.png-88422371e74bf84ae62133c10516d1bc.ctex"]
 
 [params]
 

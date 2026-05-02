@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqgkl4m8lossq"
-path="res://.godot/imported/WhiteDragon.png-553b73cb1124f220a1803806fb4a45c7.ctex"
+path="res://.godot/imported/WhiteDragon.png-7a4bcfce14c54752a6a136f31564cb89.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Dragons/WhiteDragon.png"
-dest_files=["res://.godot/imported/WhiteDragon.png-553b73cb1124f220a1803806fb4a45c7.ctex"]
+dest_files=["res://.godot/imported/WhiteDragon.png-7a4bcfce14c54752a6a136f31564cb89.ctex"]
 
 [params]
 

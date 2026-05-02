@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfsdsyhjrpq7"
-path="res://.godot/imported/tilemap-a2-walls-misc.png-d5870617ae82646d906689a3ce4d6355.ctex"
+path="res://.godot/imported/tilemap-a2-walls-misc.png-51907ae64dc6c829dd3ac98d5af9df75.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/testing/tilemap-a2-walls-misc.png"
-dest_files=["res://.godot/imported/tilemap-a2-walls-misc.png-d5870617ae82646d906689a3ce4d6355.ctex"]
+dest_files=["res://.godot/imported/tilemap-a2-walls-misc.png-51907ae64dc6c829dd3ac98d5af9df75.ctex"]
 
 [params]
 

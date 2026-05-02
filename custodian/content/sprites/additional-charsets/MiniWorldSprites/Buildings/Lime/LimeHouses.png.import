@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://1avrcv1s6a0q"
-path="res://.godot/imported/LimeHouses.png-f100783fcef9663ac79984fdba890455.ctex"
+path="res://.godot/imported/LimeHouses.png-79c913f53181b03fc2cfd83e98f4bb22.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Lime/LimeHouses.png"
-dest_files=["res://.godot/imported/LimeHouses.png-f100783fcef9663ac79984fdba890455.ctex"]
+dest_files=["res://.godot/imported/LimeHouses.png-79c913f53181b03fc2cfd83e98f4bb22.ctex"]
 
 [params]
 

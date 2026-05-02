@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4xww5ift1e1b"
-path="res://.godot/imported/SpearmanTemplate.png-a30da0d7633f0959e5d111e203117eba.ctex"
+path="res://.godot/imported/SpearmanTemplate.png-8153f300b5e0fe7a66bb3fa5a5c4a777.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Melee/SpearmanTemplate.png"
-dest_files=["res://.godot/imported/SpearmanTemplate.png-a30da0d7633f0959e5d111e203117eba.ctex"]
+dest_files=["res://.godot/imported/SpearmanTemplate.png-8153f300b5e0fe7a66bb3fa5a5c4a777.ctex"]
 
 [params]
 

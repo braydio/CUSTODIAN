@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3nxaa2k4o7mr"
-path="res://.godot/imported/CyanHouses.png-551592ddf66368bffced5c418337fa8c.ctex"
+path="res://.godot/imported/CyanHouses.png-839288ca5ac9b7a27b6809c01678c309.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Cyan/CyanHouses.png"
-dest_files=["res://.godot/imported/CyanHouses.png-551592ddf66368bffced5c418337fa8c.ctex"]
+dest_files=["res://.godot/imported/CyanHouses.png-839288ca5ac9b7a27b6809c01678c309.ctex"]
 
 [params]
 

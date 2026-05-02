@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dj5irx721x854"
-path="res://.godot/imported/terminal_2phase.png-7e36342868b125ee5bc1fd0dd9337e78.ctex"
+path="res://.godot/imported/terminal_2phase.png-da4b8d887802f96b80e265361ec19997.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/terminal_2phase.png"
-dest_files=["res://.godot/imported/terminal_2phase.png-7e36342868b125ee5bc1fd0dd9337e78.ctex"]
+dest_files=["res://.godot/imported/terminal_2phase.png-da4b8d887802f96b80e265361ec19997.ctex"]
 
 [params]
 

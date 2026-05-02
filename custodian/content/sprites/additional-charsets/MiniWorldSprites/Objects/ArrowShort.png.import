@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bamlfk2eabuyx"
-path="res://.godot/imported/ArrowShort.png-f900545f9c55ce216f4423dac6934841.ctex"
+path="res://.godot/imported/ArrowShort.png-607ea5442fef7c0d5065aa8dc616de0c.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Objects/ArrowShort.png"
-dest_files=["res://.godot/imported/ArrowShort.png-f900545f9c55ce216f4423dac6934841.ctex"]
+dest_files=["res://.godot/imported/ArrowShort.png-607ea5442fef7c0d5065aa8dc616de0c.ctex"]
 
 [params]
 

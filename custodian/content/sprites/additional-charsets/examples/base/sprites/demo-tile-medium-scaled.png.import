@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blgcqqhqjcc0r"
-path="res://.godot/imported/demo-tile-medium-scaled.png-8485d57884cda294fa7312ed8f7a883e.ctex"
+path="res://.godot/imported/demo-tile-medium-scaled.png-7d700a6c53b32b029849ab22997e8a0e.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/examples/base/sprites/demo-tile-medium-scaled.png"
-dest_files=["res://.godot/imported/demo-tile-medium-scaled.png-8485d57884cda294fa7312ed8f7a883e.ctex"]
+dest_files=["res://.godot/imported/demo-tile-medium-scaled.png-7d700a6c53b32b029849ab22997e8a0e.ctex"]
 
 [params]
 

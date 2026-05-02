@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bt803mmkxn4g4"
-path="res://.godot/imported/sandbags_shooting_up.png-42b07d7d278a8d5203cb91a352d7ffe2.ctex"
+path="res://.godot/imported/sandbags_shooting_up.png-c512798f01e6b71657bae2ef3b2a14c3.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/turrets/sandbags_shooting_up.png"
-dest_files=["res://.godot/imported/sandbags_shooting_up.png-42b07d7d278a8d5203cb91a352d7ffe2.ctex"]
+dest_files=["res://.godot/imported/sandbags_shooting_up.png-c512798f01e6b71657bae2ef3b2a14c3.ctex"]
 
 [params]
 

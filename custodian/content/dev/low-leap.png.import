@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ox2vyi42j04o"
-path="res://.godot/imported/low-leap.png-52453f7fd02b2c1d8432ca8141469e3c.ctex"
+path="res://.godot/imported/low-leap.png-f0857c136945f81e8bdc579db4993cd8.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/dev/low-leap.png"
-dest_files=["res://.godot/imported/low-leap.png-52453f7fd02b2c1d8432ca8141469e3c.ctex"]
+dest_files=["res://.godot/imported/low-leap.png-f0857c136945f81e8bdc579db4993cd8.ctex"]
 
 [params]
 

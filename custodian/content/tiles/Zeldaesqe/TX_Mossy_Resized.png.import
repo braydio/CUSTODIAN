@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hfd60rr0vdc1"
-path="res://.godot/imported/TX_Mossy_Resized.png-b5c72b49f0ab11b0289d6e75dc913dbf.ctex"
+path="res://.godot/imported/TX_Mossy_Resized.png-d3cbe3d1e5d1f0a3e962a7cf554b5e8c.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/Zeldaesqe/TX_Mossy_Resized.png"
-dest_files=["res://.godot/imported/TX_Mossy_Resized.png-b5c72b49f0ab11b0289d6e75dc913dbf.ctex"]
+dest_files=["res://.godot/imported/TX_Mossy_Resized.png-d3cbe3d1e5d1f0a3e962a7cf554b5e8c.ctex"]
 
 [params]
 

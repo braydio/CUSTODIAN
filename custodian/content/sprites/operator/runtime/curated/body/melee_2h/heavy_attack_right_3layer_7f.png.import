@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ds846q2i2ul2r"
-path="res://.godot/imported/heavy_attack_right_3layer_7f.png-5de4a0837ba799096606e4050d552c8d.ctex"
+path="res://.godot/imported/heavy_attack_right_3layer_7f.png-148238c11f7b96cb029e04fa70636357.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_attack_right_3layer_7f.png"
-dest_files=["res://.godot/imported/heavy_attack_right_3layer_7f.png-5de4a0837ba799096606e4050d552c8d.ctex"]
+dest_files=["res://.godot/imported/heavy_attack_right_3layer_7f.png-148238c11f7b96cb029e04fa70636357.ctex"]
 
 [params]
 

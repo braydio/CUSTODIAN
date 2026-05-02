@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b68yoymg550km"
-path="res://.godot/imported/Icons-Essentials.png-cda9a9d9e2ff409bf6a1b6dece9c6f68.ctex"
+path="res://.godot/imported/Icons-Essentials.png-81a2cf993d91309b6a229348a2264688.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/User Interface/Icons-Essentials.png"
-dest_files=["res://.godot/imported/Icons-Essentials.png-cda9a9d9e2ff409bf6a1b6dece9c6f68.ctex"]
+dest_files=["res://.godot/imported/Icons-Essentials.png-81a2cf993d91309b6a229348a2264688.ctex"]
 
 [params]
 

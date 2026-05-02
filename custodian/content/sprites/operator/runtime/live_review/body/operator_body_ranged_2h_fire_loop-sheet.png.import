@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cuvip1a5po2ur"
-path="res://.godot/imported/operator_body_ranged_2h_fire_loop-sheet.png-6bc093ef7dc484263a5a8919e6534183.ctex"
+path="res://.godot/imported/operator_body_ranged_2h_fire_loop-sheet.png-dab0f5197cb3f773678be42082e543f7.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/live_review/body/operator_body_ranged_2h_fire_loop-sheet.png"
-dest_files=["res://.godot/imported/operator_body_ranged_2h_fire_loop-sheet.png-6bc093ef7dc484263a5a8919e6534183.ctex"]
+dest_files=["res://.godot/imported/operator_body_ranged_2h_fire_loop-sheet.png-dab0f5197cb3f773678be42082e543f7.ctex"]
 
 [params]
 

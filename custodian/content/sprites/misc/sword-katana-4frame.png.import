@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvyt3j0bswdwq"
-path="res://.godot/imported/sword-katana-4frame.png-6e39454ee52b9408542a382a995d733c.ctex"
+path="res://.godot/imported/sword-katana-4frame.png-cca4e6aec5701d270384ac3ccca4fe38.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/misc/sword-katana-4frame.png"
-dest_files=["res://.godot/imported/sword-katana-4frame.png-6e39454ee52b9408542a382a995d733c.ctex"]
+dest_files=["res://.godot/imported/sword-katana-4frame.png-cca4e6aec5701d270384ac3ccca4fe38.ctex"]
 
 [params]
 

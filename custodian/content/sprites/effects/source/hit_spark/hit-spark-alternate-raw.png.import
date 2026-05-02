@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0lkxtne1rwyn"
-path="res://.godot/imported/hit-spark-alternate-raw.png-29e624969924a9ccbfbad03deb93a07b.ctex"
+path="res://.godot/imported/hit-spark-alternate-raw.png-1158a3a723b0616eb6a7717f52004999.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/effects/source/hit_spark/hit-spark-alternate-raw.png"
-dest_files=["res://.godot/imported/hit-spark-alternate-raw.png-29e624969924a9ccbfbad03deb93a07b.ctex"]
+dest_files=["res://.godot/imported/hit-spark-alternate-raw.png-1158a3a723b0616eb6a7717f52004999.ctex"]
 
 [params]
 

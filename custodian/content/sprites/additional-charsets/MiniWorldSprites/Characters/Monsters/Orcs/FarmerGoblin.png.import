@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kb1nknf3yscd"
-path="res://.godot/imported/FarmerGoblin.png-5621022d655445cf47e633758849558c.ctex"
+path="res://.godot/imported/FarmerGoblin.png-d31836fff83c7cabd4d90184dc4894d5.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Orcs/FarmerGoblin.png"
-dest_files=["res://.godot/imported/FarmerGoblin.png-5621022d655445cf47e633758849558c.ctex"]
+dest_files=["res://.godot/imported/FarmerGoblin.png-d31836fff83c7cabd4d90184dc4894d5.ctex"]
 
 [params]
 

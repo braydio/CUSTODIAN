@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhnmjr4ah1xr7"
-path="res://.godot/imported/BlackDragon.png-4c10fb4654d437b3930bde52874d8616.ctex"
+path="res://.godot/imported/BlackDragon.png-d891a78739794c5b1f783b6c1fdf29d0.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Dragons/BlackDragon.png"
-dest_files=["res://.godot/imported/BlackDragon.png-4c10fb4654d437b3930bde52874d8616.ctex"]
+dest_files=["res://.godot/imported/BlackDragon.png-d891a78739794c5b1f783b6c1fdf29d0.ctex"]
 
 [params]
 

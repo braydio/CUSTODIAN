@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://44c0covhmobm"
-path="res://.godot/imported/CyanTower.png-917cfa80539db7ba6e9fa2107daf4eff.ctex"
+path="res://.godot/imported/CyanTower.png-0624236ad2a9da106ca45bbcbebc1c48.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Cyan/CyanTower.png"
-dest_files=["res://.godot/imported/CyanTower.png-917cfa80539db7ba6e9fa2107daf4eff.ctex"]
+dest_files=["res://.godot/imported/CyanTower.png-0624236ad2a9da106ca45bbcbebc1c48.ctex"]
 
 [params]
 

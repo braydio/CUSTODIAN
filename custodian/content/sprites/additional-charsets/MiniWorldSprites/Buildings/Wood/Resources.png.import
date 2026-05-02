@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjq73lba13kxm"
-path="res://.godot/imported/Resources.png-4011f2739e5816fe5410fe33c25afe4c.ctex"
+path="res://.godot/imported/Resources.png-35c6626dca67c619305f422ef7766fe1.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Wood/Resources.png"
-dest_files=["res://.godot/imported/Resources.png-4011f2739e5816fe5410fe33c25afe4c.ctex"]
+dest_files=["res://.godot/imported/Resources.png-35c6626dca67c619305f422ef7766fe1.ctex"]
 
 [params]
 

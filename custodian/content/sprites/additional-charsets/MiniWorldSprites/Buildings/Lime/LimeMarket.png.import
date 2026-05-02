@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cn1wtennjsk36"
-path="res://.godot/imported/LimeMarket.png-2c757759ec23420f887f94dda0d981ac.ctex"
+path="res://.godot/imported/LimeMarket.png-f6304ebd5c1329416d4a5a05799430b1.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Lime/LimeMarket.png"
-dest_files=["res://.godot/imported/LimeMarket.png-2c757759ec23420f887f94dda0d981ac.ctex"]
+dest_files=["res://.godot/imported/LimeMarket.png-f6304ebd5c1329416d4a5a05799430b1.ctex"]
 
 [params]
 

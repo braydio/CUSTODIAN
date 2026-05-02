@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2jqqn1nki7ds"
-path="res://.godot/imported/operator_2h_heavy_3layer.png-2f383320c704a17a8cc1cfcb9f77c5ad.ctex"
+path="res://.godot/imported/operator_2h_heavy_3layer.png-fe98f97d942b25ddf20232e18d512519.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/live_review/body/operator_2h_heavy_3layer.png"
-dest_files=["res://.godot/imported/operator_2h_heavy_3layer.png-2f383320c704a17a8cc1cfcb9f77c5ad.ctex"]
+dest_files=["res://.godot/imported/operator_2h_heavy_3layer.png-fe98f97d942b25ddf20232e18d512519.ctex"]
 
 [params]
 

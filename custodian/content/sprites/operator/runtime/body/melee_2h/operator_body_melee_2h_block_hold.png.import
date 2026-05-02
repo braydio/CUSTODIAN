@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4u6cablaak6s"
-path="res://.godot/imported/operator_body_melee_2h_block_hold.png-fdd8b445bba7d4f3e2816aaf69f449dc.ctex"
+path="res://.godot/imported/operator_body_melee_2h_block_hold.png-352b5ab615b65467e5aaa9b61bd0aa50.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/body/melee_2h/operator_body_melee_2h_block_hold.png"
-dest_files=["res://.godot/imported/operator_body_melee_2h_block_hold.png-fdd8b445bba7d4f3e2816aaf69f449dc.ctex"]
+dest_files=["res://.godot/imported/operator_body_melee_2h_block_hold.png-352b5ab615b65467e5aaa9b61bd0aa50.ctex"]
 
 [params]
 

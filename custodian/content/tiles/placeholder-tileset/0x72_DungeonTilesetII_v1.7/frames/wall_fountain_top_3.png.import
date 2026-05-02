@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2shvqq3f66cw"
-path="res://.godot/imported/wall_fountain_top_3.png-6c2539506511bb3aff5a333cd306a2a2.ctex"
+path="res://.godot/imported/wall_fountain_top_3.png-edd403601fb54efc0f977c3bea9bb260.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/wall_fountain_top_3.png"
-dest_files=["res://.godot/imported/wall_fountain_top_3.png-6c2539506511bb3aff5a333cd306a2a2.ctex"]
+dest_files=["res://.godot/imported/wall_fountain_top_3.png-edd403601fb54efc0f977c3bea9bb260.ctex"]
 
 [params]
 

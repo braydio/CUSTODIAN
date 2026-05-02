@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://darchdp1wiijs"
-path="res://.godot/imported/Cactus.png-fcb80b6cb40baa3819da4dfcf2da70fe.ctex"
+path="res://.godot/imported/Cactus.png-eb82758a2c00e45f672661ae8edec407.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Nature/Cactus.png"
-dest_files=["res://.godot/imported/Cactus.png-fcb80b6cb40baa3819da4dfcf2da70fe.ctex"]
+dest_files=["res://.godot/imported/Cactus.png-eb82758a2c00e45f672661ae8edec407.ctex"]
 
 [params]
 

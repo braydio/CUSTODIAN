@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bd5eus6pmcghl"
-path="res://.godot/imported/CyanMarket.png-886c6a5a891e478352423cd5219b4610.ctex"
+path="res://.godot/imported/CyanMarket.png-a77e3d2b631350753373e81aa70226ab.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Cyan/CyanMarket.png"
-dest_files=["res://.godot/imported/CyanMarket.png-886c6a5a891e478352423cd5219b4610.ctex"]
+dest_files=["res://.godot/imported/CyanMarket.png-a77e3d2b631350753373e81aa70226ab.ctex"]
 
 [params]
 

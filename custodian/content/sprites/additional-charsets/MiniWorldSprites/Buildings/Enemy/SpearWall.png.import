@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfaif8btjubnv"
-path="res://.godot/imported/SpearWall.png-a9b62d25b21612ef7072380266d44acb.ctex"
+path="res://.godot/imported/SpearWall.png-3a83ed8853db5c786048409eb735aa9f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Enemy/SpearWall.png"
-dest_files=["res://.godot/imported/SpearWall.png-a9b62d25b21612ef7072380266d44acb.ctex"]
+dest_files=["res://.godot/imported/SpearWall.png-3a83ed8853db5c786048409eb735aa9f.ctex"]
 
 [params]
 

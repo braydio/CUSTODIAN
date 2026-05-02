@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://iwxvwvebswdk"
-path="res://.godot/imported/RedKeep.png-8de9c88331a7ce6eb6eea3dc95d4cbe7.ctex"
+path="res://.godot/imported/RedKeep.png-db13e8b5b96a3095c3323d7fa0a61c24.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Red/RedKeep.png"
-dest_files=["res://.godot/imported/RedKeep.png-8de9c88331a7ce6eb6eea3dc95d4cbe7.ctex"]
+dest_files=["res://.godot/imported/RedKeep.png-db13e8b5b96a3095c3323d7fa0a61c24.ctex"]
 
 [params]
 

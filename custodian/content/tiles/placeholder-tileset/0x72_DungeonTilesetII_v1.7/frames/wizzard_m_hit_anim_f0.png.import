@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6o7p661isy7i"
-path="res://.godot/imported/wizzard_m_hit_anim_f0.png-f76f6f4afd7eb7365dffacea4b5ce072.ctex"
+path="res://.godot/imported/wizzard_m_hit_anim_f0.png-a14c1ca13c697bc136d2a71fb3495035.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/wizzard_m_hit_anim_f0.png"
-dest_files=["res://.godot/imported/wizzard_m_hit_anim_f0.png-f76f6f4afd7eb7365dffacea4b5ce072.ctex"]
+dest_files=["res://.godot/imported/wizzard_m_hit_anim_f0.png-a14c1ca13c697bc136d2a71fb3495035.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8mbjn8sxjohq"
-path="res://.godot/imported/BlueDragon.png-a763997c44048388252a773cb7c98c70.ctex"
+path="res://.godot/imported/BlueDragon.png-f7f3b6312eeeff71316720cc17435f83.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Dragons/BlueDragon.png"
-dest_files=["res://.godot/imported/BlueDragon.png-a763997c44048388252a773cb7c98c70.ctex"]
+dest_files=["res://.godot/imported/BlueDragon.png-f7f3b6312eeeff71316720cc17435f83.ctex"]
 
 [params]
 

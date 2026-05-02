@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbpyjfyyrnpfp"
-path="res://.godot/imported/sword_swing_basic.png-49b40edc497508474cc10489a5a9b714.ctex"
+path="res://.godot/imported/sword_swing_basic.png-d80c7da2a4c61f32e95c7540bddf6381.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/sword_swing_basic.png"
-dest_files=["res://.godot/imported/sword_swing_basic.png-49b40edc497508474cc10489a5a9b714.ctex"]
+dest_files=["res://.godot/imported/sword_swing_basic.png-d80c7da2a4c61f32e95c7540bddf6381.ctex"]
 
 [params]
 

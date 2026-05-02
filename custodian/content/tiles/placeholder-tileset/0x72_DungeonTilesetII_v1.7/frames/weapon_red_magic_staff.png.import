@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dcc2o4ngkehdk"
-path="res://.godot/imported/weapon_red_magic_staff.png-cfad94fb219c59f22cc062bc86ce580a.ctex"
+path="res://.godot/imported/weapon_red_magic_staff.png-4f481db81c99c2572d304a8cb0af461d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/weapon_red_magic_staff.png"
-dest_files=["res://.godot/imported/weapon_red_magic_staff.png-cfad94fb219c59f22cc062bc86ce580a.ctex"]
+dest_files=["res://.godot/imported/weapon_red_magic_staff.png-4f481db81c99c2572d304a8cb0af461d.ctex"]
 
 [params]
 

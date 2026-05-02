@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3yw3v6y46b5a"
-path="res://.godot/imported/tiny_zombie_run_anim_f1.png-b7432fee739a2e33dc2c40c51110c6e0.ctex"
+path="res://.godot/imported/tiny_zombie_run_anim_f1.png-2df952f6672e12c17d63aa62bff0e8d8.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/tiny_zombie_run_anim_f1.png"
-dest_files=["res://.godot/imported/tiny_zombie_run_anim_f1.png-b7432fee739a2e33dc2c40c51110c6e0.ctex"]
+dest_files=["res://.godot/imported/tiny_zombie_run_anim_f1.png-2df952f6672e12c17d63aa62bff0e8d8.ctex"]
 
 [params]
 

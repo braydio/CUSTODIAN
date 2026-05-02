@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2mi1no5gbls4"
-path="res://.godot/imported/TX Tileset Grass.png-6f7f8058441cea766b091087e1a578f6.ctex"
+path="res://.godot/imported/TX Tileset Grass.png-e54c75fef24214b747bd44d5c75f1ce9.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/Texture/TX Tileset Grass.png"
-dest_files=["res://.godot/imported/TX Tileset Grass.png-6f7f8058441cea766b091087e1a578f6.ctex"]
+dest_files=["res://.godot/imported/TX Tileset Grass.png-e54c75fef24214b747bd44d5c75f1ce9.ctex"]
 
 [params]
 

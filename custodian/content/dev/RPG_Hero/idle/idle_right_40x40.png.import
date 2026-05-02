@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkg8clmy5n1pa"
-path="res://.godot/imported/idle_right_40x40.png-48dc3e0b296f32174041ab3211d732fc.ctex"
+path="res://.godot/imported/idle_right_40x40.png-e562ae6acc2dd49d53af2a8af2d5562a.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/dev/RPG_Hero/idle/idle_right_40x40.png"
-dest_files=["res://.godot/imported/idle_right_40x40.png-48dc3e0b296f32174041ab3211d732fc.ctex"]
+dest_files=["res://.godot/imported/idle_right_40x40.png-e562ae6acc2dd49d53af2a8af2d5562a.ctex"]
 
 [params]
 

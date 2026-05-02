@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btu7aihamf4mo"
-path="res://.godot/imported/bomb_f2.png-6de0ba3a0d8f1c07ab0802a1b36df866.ctex"
+path="res://.godot/imported/bomb_f2.png-b0b7ce7ca28aed92d3fd38704c0f8ed3.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/bomb_f2.png"
-dest_files=["res://.godot/imported/bomb_f2.png-6de0ba3a0d8f1c07ab0802a1b36df866.ctex"]
+dest_files=["res://.godot/imported/bomb_f2.png-b0b7ce7ca28aed92d3fd38704c0f8ed3.ctex"]
 
 [params]
 

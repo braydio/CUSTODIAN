@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bl7c618ond5om"
-path="res://.godot/imported/LimeKeep.png-334ec40d29e25075ac2330264cb8e088.ctex"
+path="res://.godot/imported/LimeKeep.png-d76fd7a2de6e46a85ea7246c66866220.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Lime/LimeKeep.png"
-dest_files=["res://.godot/imported/LimeKeep.png-334ec40d29e25075ac2330264cb8e088.ctex"]
+dest_files=["res://.godot/imported/LimeKeep.png-d76fd7a2de6e46a85ea7246c66866220.ctex"]
 
 [params]
 

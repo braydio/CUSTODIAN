@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7pkodxnd1o8y"
-path="res://.godot/imported/Cliff.png-5c779d38bfded4a1143b57b7818a37a3.ctex"
+path="res://.godot/imported/Cliff.png-ab4dd8b90c078d23665fa054c426e42f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Ground/Cliff.png"
-dest_files=["res://.godot/imported/Cliff.png-5c779d38bfded4a1143b57b7818a37a3.ctex"]
+dest_files=["res://.godot/imported/Cliff.png-ab4dd8b90c078d23665fa054c426e42f.ctex"]
 
 [params]
 

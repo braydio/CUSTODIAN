@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqvvh7o40iivd"
-path="res://.godot/imported/attack_down_40x40.png-e62eb39ea7d69706e02f9a9cbc4db97e.ctex"
+path="res://.godot/imported/attack_down_40x40.png-48038b660bf2d2c53bb0c5b31e9773a6.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/dev/RPG_Hero/attack/attack_down_40x40.png"
-dest_files=["res://.godot/imported/attack_down_40x40.png-e62eb39ea7d69706e02f9a9cbc4db97e.ctex"]
+dest_files=["res://.godot/imported/attack_down_40x40.png-48038b660bf2d2c53bb0c5b31e9773a6.ctex"]
 
 [params]
 

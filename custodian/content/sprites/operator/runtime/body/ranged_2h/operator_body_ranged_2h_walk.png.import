@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://uq2aix4xuvld"
-path="res://.godot/imported/operator_body_ranged_2h_walk.png-fe351b6ae45182b30ae76d07b243dcf9.ctex"
+path="res://.godot/imported/operator_body_ranged_2h_walk.png-e8779d0e513324e291d05ebc824b0ae5.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_walk.png"
-dest_files=["res://.godot/imported/operator_body_ranged_2h_walk.png-fe351b6ae45182b30ae76d07b243dcf9.ctex"]
+dest_files=["res://.godot/imported/operator_body_ranged_2h_walk.png-e8779d0e513324e291d05ebc824b0ae5.ctex"]
 
 [params]
 

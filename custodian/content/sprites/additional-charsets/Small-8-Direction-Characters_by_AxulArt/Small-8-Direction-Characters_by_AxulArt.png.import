@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://l5njcnlo6bku"
-path="res://.godot/imported/Small-8-Direction-Characters_by_AxulArt.png-6059aab3ac3d2345d23693b5a558dbd5.ctex"
+path="res://.godot/imported/Small-8-Direction-Characters_by_AxulArt.png-c7e04f1a8aae30ec17fd9e8ea9cd7aa2.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt.png"
-dest_files=["res://.godot/imported/Small-8-Direction-Characters_by_AxulArt.png-6059aab3ac3d2345d23693b5a558dbd5.ctex"]
+dest_files=["res://.godot/imported/Small-8-Direction-Characters_by_AxulArt.png-c7e04f1a8aae30ec17fd9e8ea9cd7aa2.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddfga0ygmgeiy"
-path="res://.godot/imported/BoxSelector.png-19528f3c738f9d8047f6b0f445b84091.ctex"
+path="res://.godot/imported/BoxSelector.png-8851ccb69dc894fda7a0384df722f4e0.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/User Interface/BoxSelector.png"
-dest_files=["res://.godot/imported/BoxSelector.png-19528f3c738f9d8047f6b0f445b84091.ctex"]
+dest_files=["res://.godot/imported/BoxSelector.png-8851ccb69dc894fda7a0384df722f4e0.ctex"]
 
 [params]
 

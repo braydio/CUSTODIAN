@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8sc5xk4y4dey"
-path="res://.godot/imported/turret_sandbag_1frame.png-39c625f98459c8da6689eb54ee8e2733.ctex"
+path="res://.godot/imported/turret_sandbag_1frame.png-4600b534c8245a308e559ba2f728c662.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/turrets/gunner/turret_sandbag_1frame.png"
-dest_files=["res://.godot/imported/turret_sandbag_1frame.png-39c625f98459c8da6689eb54ee8e2733.ctex"]
+dest_files=["res://.godot/imported/turret_sandbag_1frame.png-4600b534c8245a308e559ba2f728c662.ctex"]
 
 [params]
 

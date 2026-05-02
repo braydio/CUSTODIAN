@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d3qrjhdgkbsru"
-path="res://.godot/imported/Docks.png-f6ed3fdbf70680fdb42ba155df81ebd1.ctex"
+path="res://.godot/imported/Docks.png-4e56f43b104e774a1b6e22d43bf4f783.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Wood/Docks.png"
-dest_files=["res://.godot/imported/Docks.png-f6ed3fdbf70680fdb42ba155df81ebd1.ctex"]
+dest_files=["res://.godot/imported/Docks.png-4e56f43b104e774a1b6e22d43bf4f783.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ut76ugg8ixnt"
-path="res://.godot/imported/Tumbleweed.png-efa22260d3b291809c66defce69a4357.ctex"
+path="res://.godot/imported/Tumbleweed.png-ccbe9e10ea2f14b9e67f08be71cbbfab.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Nature/Tumbleweed.png"
-dest_files=["res://.godot/imported/Tumbleweed.png-efa22260d3b291809c66defce69a4357.ctex"]
+dest_files=["res://.godot/imported/Tumbleweed.png-ccbe9e10ea2f14b9e67f08be71cbbfab.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brfdloxivn0kf"
-path="res://.godot/imported/dwarf_m_hit_anim_f0.png-ddc76e5fd361f63025ee2cf4b045cf3c.ctex"
+path="res://.godot/imported/dwarf_m_hit_anim_f0.png-90c994599d02047d234757cc3e6ac9f3.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/dwarf_m_hit_anim_f0.png"
-dest_files=["res://.godot/imported/dwarf_m_hit_anim_f0.png-ddc76e5fd361f63025ee2cf4b045cf3c.ctex"]
+dest_files=["res://.godot/imported/dwarf_m_hit_anim_f0.png-90c994599d02047d234757cc3e6ac9f3.ctex"]
 
 [params]
 

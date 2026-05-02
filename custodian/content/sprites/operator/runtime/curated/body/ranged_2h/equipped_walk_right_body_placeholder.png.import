@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkbcbufd3j6wg"
-path="res://.godot/imported/equipped_walk_right_body_placeholder.png-2c5929844678be7e270b5087f287d40e.ctex"
+path="res://.godot/imported/equipped_walk_right_body_placeholder.png-ac5f7e7d4dd8da4bfb19c94c9406ca81.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/curated/body/ranged_2h/equipped_walk_right_body_placeholder.png"
-dest_files=["res://.godot/imported/equipped_walk_right_body_placeholder.png-2c5929844678be7e270b5087f287d40e.ctex"]
+dest_files=["res://.godot/imported/equipped_walk_right_body_placeholder.png-ac5f7e7d4dd8da4bfb19c94c9406ca81.ctex"]
 
 [params]
 

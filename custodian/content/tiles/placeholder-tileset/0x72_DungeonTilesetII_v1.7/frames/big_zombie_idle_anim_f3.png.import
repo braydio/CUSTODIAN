@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://gkplu1wefyx5"
-path="res://.godot/imported/big_zombie_idle_anim_f3.png-e978979e3eed626183eb4b2981de2a7b.ctex"
+path="res://.godot/imported/big_zombie_idle_anim_f3.png-8e552cedf35a0aba6817f692741636f7.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/big_zombie_idle_anim_f3.png"
-dest_files=["res://.godot/imported/big_zombie_idle_anim_f3.png-e978979e3eed626183eb4b2981de2a7b.ctex"]
+dest_files=["res://.godot/imported/big_zombie_idle_anim_f3.png-8e552cedf35a0aba6817f692741636f7.ctex"]
 
 [params]
 

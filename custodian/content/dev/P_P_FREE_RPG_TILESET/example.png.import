@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://denalxuf8x4hu"
-path="res://.godot/imported/example.png-b0d03204270c4829a154e9351f03071b.ctex"
+path="res://.godot/imported/example.png-2a86b97beecfdb7452e8f61dd3d53523.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/dev/P_P_FREE_RPG_TILESET/example.png"
-dest_files=["res://.godot/imported/example.png-b0d03204270c4829a154e9351f03071b.ctex"]
+dest_files=["res://.godot/imported/example.png-2a86b97beecfdb7452e8f61dd3d53523.ctex"]
 
 [params]
 

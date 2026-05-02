@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dy5dspbg6n3l3"
-path="res://.godot/imported/crosshairs_tilesheet_black.png-6c24d97519997919884d72b90e7b01df.ctex"
+path="res://.godot/imported/crosshairs_tilesheet_black.png-e6904d26ace5c65da3f0478c60894f5f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/dev/Tilesheet/crosshairs_tilesheet_black.png"
-dest_files=["res://.godot/imported/crosshairs_tilesheet_black.png-6c24d97519997919884d72b90e7b01df.ctex"]
+dest_files=["res://.godot/imported/crosshairs_tilesheet_black.png-e6904d26ace5c65da3f0478c60894f5f.ctex"]
 
 [params]
 

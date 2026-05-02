@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxbbl8iajqv0q"
-path="res://.godot/imported/Sprite-0001.png-bc89f1c54b80c1d5cbdb667027379c74.ctex"
+path="res://.godot/imported/Sprite-0001.png-04b652436501541c2fb838fd862f80e6.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/body/ranged_2h/Sprite-0001.png"
-dest_files=["res://.godot/imported/Sprite-0001.png-bc89f1c54b80c1d5cbdb667027379c74.ctex"]
+dest_files=["res://.godot/imported/Sprite-0001.png-04b652436501541c2fb838fd862f80e6.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://7hkw1comjltr"
-path="res://.godot/imported/PurpleHouses.png-c48ef0768b188723aaddec5b0f23edae.ctex"
+path="res://.godot/imported/PurpleHouses.png-88bc9e404f4924962ccc906823874b70.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Purple/PurpleHouses.png"
-dest_files=["res://.godot/imported/PurpleHouses.png-c48ef0768b188723aaddec5b0f23edae.ctex"]
+dest_files=["res://.godot/imported/PurpleHouses.png-88bc9e404f4924962ccc906823874b70.ctex"]
 
 [params]
 

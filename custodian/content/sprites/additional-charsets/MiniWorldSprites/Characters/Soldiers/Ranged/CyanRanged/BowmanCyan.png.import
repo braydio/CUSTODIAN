@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dv02e84ix3ovu"
-path="res://.godot/imported/BowmanCyan.png-9cab2d2e4e80ed1c56500aba2b250ef0.ctex"
+path="res://.godot/imported/BowmanCyan.png-376cd267c861b5a4ed0c32bd089e39cf.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Ranged/CyanRanged/BowmanCyan.png"
-dest_files=["res://.godot/imported/BowmanCyan.png-9cab2d2e4e80ed1c56500aba2b250ef0.ctex"]
+dest_files=["res://.godot/imported/BowmanCyan.png-376cd267c861b5a4ed0c32bd089e39cf.ctex"]
 
 [params]
 

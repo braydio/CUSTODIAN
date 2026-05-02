@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://crcguctl2mkk1"
-path="res://.godot/imported/CoconutTrees.png-d376b7cd57e80edff965aaa0b68e1b79.ctex"
+path="res://.godot/imported/CoconutTrees.png-74ac0a7bd8121141fccbf08781931175.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Nature/CoconutTrees.png"
-dest_files=["res://.godot/imported/CoconutTrees.png-d376b7cd57e80edff965aaa0b68e1b79.ctex"]
+dest_files=["res://.godot/imported/CoconutTrees.png-74ac0a7bd8121141fccbf08781931175.ctex"]
 
 [params]
 

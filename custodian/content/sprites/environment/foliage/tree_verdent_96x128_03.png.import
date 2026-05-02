@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bukq3rk603dnt"
-path="res://.godot/imported/tree_verdent_96x128_03.png-a9268a7afb3ab8eb43547ac4686bfe2d.ctex"
+path="res://.godot/imported/tree_verdent_96x128_03.png-a99a30065302c88ce442fa232a26eeed.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/environment/foliage/tree_verdent_96x128_03.png"
-dest_files=["res://.godot/imported/tree_verdent_96x128_03.png-a9268a7afb3ab8eb43547ac4686bfe2d.ctex"]
+dest_files=["res://.godot/imported/tree_verdent_96x128_03.png-a99a30065302c88ce442fa232a26eeed.ctex"]
 
 [params]
 

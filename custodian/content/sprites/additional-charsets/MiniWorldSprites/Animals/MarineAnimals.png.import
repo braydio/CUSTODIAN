@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0621a16u8vf3"
-path="res://.godot/imported/MarineAnimals.png-924d8953f0f4530ed2185da1a9d170e6.ctex"
+path="res://.godot/imported/MarineAnimals.png-2ffaf2b349ef9a446265fe71a67f91b1.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Animals/MarineAnimals.png"
-dest_files=["res://.godot/imported/MarineAnimals.png-924d8953f0f4530ed2185da1a9d170e6.ctex"]
+dest_files=["res://.godot/imported/MarineAnimals.png-2ffaf2b349ef9a446265fe71a67f91b1.ctex"]
 
 [params]
 

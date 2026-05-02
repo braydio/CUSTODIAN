@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dlaou2lfco7f5"
-path="res://.godot/imported/winter water sparkles B 16x16.png-b929912ba6e4f6114de04b63d3fa0c56.ctex"
+path="res://.godot/imported/winter water sparkles B 16x16.png-a89fc9a0321697bfc25466d83c0a6701.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/Pixellated Forest Tilesets/winter/seasonal water animations/winter water sparkles B 16x16.png"
-dest_files=["res://.godot/imported/winter water sparkles B 16x16.png-b929912ba6e4f6114de04b63d3fa0c56.ctex"]
+dest_files=["res://.godot/imported/winter water sparkles B 16x16.png-a89fc9a0321697bfc25466d83c0a6701.ctex"]
 
 [params]
 

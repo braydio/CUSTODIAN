@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://byv6m0606hovl"
-path="res://.godot/imported/crossed6.png-e3c60a4b8382bec0d5760ed5724b1825.ctex"
+path="res://.godot/imported/crossed6.png-fcd3a379e47b786bb26bcfcf7fca744f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/crossed/sprites/crossed6.png"
-dest_files=["res://.godot/imported/crossed6.png-e3c60a4b8382bec0d5760ed5724b1825.ctex"]
+dest_files=["res://.godot/imported/crossed6.png-fcd3a379e47b786bb26bcfcf7fca744f.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dur35jod4xifd"
-path="res://.godot/imported/Orc.png-0d94cd3b83b71d6a9168778659c192e4.ctex"
+path="res://.godot/imported/Orc.png-93960741942d9bfaa9db4d0643b23a1f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Orcs/Orc.png"
-dest_files=["res://.godot/imported/Orc.png-0d94cd3b83b71d6a9168778659c192e4.ctex"]
+dest_files=["res://.godot/imported/Orc.png-93960741942d9bfaa9db4d0643b23a1f.ctex"]
 
 [params]
 

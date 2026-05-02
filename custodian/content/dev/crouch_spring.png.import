@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cylm1pgn3ms6s"
-path="res://.godot/imported/crouch_spring.png-8668a5068eb92c14b3bb7828ab31e2ad.ctex"
+path="res://.godot/imported/crouch_spring.png-3225e12a93e41ce3c18bf6e371cc39a6.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/dev/crouch_spring.png"
-dest_files=["res://.godot/imported/crouch_spring.png-8668a5068eb92c14b3bb7828ab31e2ad.ctex"]
+dest_files=["res://.godot/imported/crouch_spring.png-3225e12a93e41ce3c18bf6e371cc39a6.ctex"]
 
 [params]
 

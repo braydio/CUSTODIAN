@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://breopwshkm53e"
-path="res://.godot/imported/TX_Cracked_Mossy_Stone.png-2b0e39eda51e0ce9505dfba549f799af.ctex"
+path="res://.godot/imported/TX_Cracked_Mossy_Stone.png-2536d347440bae614967a7a7e9f7f98a.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/Zeldaesqe/TX_Cracked_Mossy_Stone.png"
-dest_files=["res://.godot/imported/TX_Cracked_Mossy_Stone.png-2b0e39eda51e0ce9505dfba549f799af.ctex"]
+dest_files=["res://.godot/imported/TX_Cracked_Mossy_Stone.png-2536d347440bae614967a7a7e9f7f98a.ctex"]
 
 [params]
 

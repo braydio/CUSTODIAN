@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cf2kqi1mygjy3"
-path="res://.godot/imported/turret_examples.png-020bb139f189c8c44b193aa142ab5450.ctex"
+path="res://.godot/imported/turret_examples.png-f23fe80752389cfc4132d6a2113fb80c.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/turret_examples.png"
-dest_files=["res://.godot/imported/turret_examples.png-020bb139f189c8c44b193aa142ab5450.ctex"]
+dest_files=["res://.godot/imported/turret_examples.png-f23fe80752389cfc4132d6a2113fb80c.ctex"]
 
 [params]
 

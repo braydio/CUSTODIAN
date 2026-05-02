@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://k84j0f5m6qnv"
-path="res://.godot/imported/Taverns.png-6e3c6879a700ab38fcd5d265bb515973.ctex"
+path="res://.godot/imported/Taverns.png-6de791830ea5aa25022540a305693f2e.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Wood/Taverns.png"
-dest_files=["res://.godot/imported/Taverns.png-6e3c6879a700ab38fcd5d265bb515973.ctex"]
+dest_files=["res://.godot/imported/Taverns.png-6de791830ea5aa25022540a305693f2e.ctex"]
 
 [params]
 

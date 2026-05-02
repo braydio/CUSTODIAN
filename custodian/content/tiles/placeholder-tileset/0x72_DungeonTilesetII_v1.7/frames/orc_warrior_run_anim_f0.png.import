@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bechff587m7mj"
-path="res://.godot/imported/orc_warrior_run_anim_f0.png-211fdf3d765bc3b58f4d2bc8d8a38543.ctex"
+path="res://.godot/imported/orc_warrior_run_anim_f0.png-1878efc590e20655c53942868e6978df.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/orc_warrior_run_anim_f0.png"
-dest_files=["res://.godot/imported/orc_warrior_run_anim_f0.png-211fdf3d765bc3b58f4d2bc8d8a38543.ctex"]
+dest_files=["res://.godot/imported/orc_warrior_run_anim_f0.png-1878efc590e20655c53942868e6978df.ctex"]
 
 [params]
 

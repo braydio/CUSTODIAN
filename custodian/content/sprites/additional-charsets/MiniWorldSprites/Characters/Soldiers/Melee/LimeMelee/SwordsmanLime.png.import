@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dyg56epid2fkl"
-path="res://.godot/imported/SwordsmanLime.png-3efb7d53e6a7733a3976feb355042538.ctex"
+path="res://.godot/imported/SwordsmanLime.png-e89bd9bc1eebd393a23f73969f315252.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Melee/LimeMelee/SwordsmanLime.png"
-dest_files=["res://.godot/imported/SwordsmanLime.png-3efb7d53e6a7733a3976feb355042538.ctex"]
+dest_files=["res://.godot/imported/SwordsmanLime.png-e89bd9bc1eebd393a23f73969f315252.ctex"]
 
 [params]
 

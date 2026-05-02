@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c5th7u4khv2wy"
-path="res://.godot/imported/weapon_double_axe.png-23488b058e3614b5ee8e062a884925ae.ctex"
+path="res://.godot/imported/weapon_double_axe.png-60aaa8e43181e96f80b790fd03d89816.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/weapon_double_axe.png"
-dest_files=["res://.godot/imported/weapon_double_axe.png-23488b058e3614b5ee8e062a884925ae.ctex"]
+dest_files=["res://.godot/imported/weapon_double_axe.png-60aaa8e43181e96f80b790fd03d89816.ctex"]
 
 [params]
 

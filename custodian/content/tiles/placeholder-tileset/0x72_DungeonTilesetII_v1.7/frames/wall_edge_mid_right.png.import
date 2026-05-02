@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cuykgc3t8xk38"
-path="res://.godot/imported/wall_edge_mid_right.png-1c73a594b7cc92d8a2a2d4ab9479c12f.ctex"
+path="res://.godot/imported/wall_edge_mid_right.png-7c534470ebbfa6317058e3c669114381.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/wall_edge_mid_right.png"
-dest_files=["res://.godot/imported/wall_edge_mid_right.png-1c73a594b7cc92d8a2a2d4ab9479c12f.ctex"]
+dest_files=["res://.godot/imported/wall_edge_mid_right.png-7c534470ebbfa6317058e3c669114381.ctex"]
 
 [params]
 

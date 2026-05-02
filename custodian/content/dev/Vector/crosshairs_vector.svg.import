@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4fcx62tlrxxc"
-path="res://.godot/imported/crosshairs_vector.svg-bf7dd28ef0393ca2d059cc9049bd4f28.ctex"
+path="res://.godot/imported/crosshairs_vector.svg-993fece82b5d3478c629f3ba4df409b6.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/dev/Vector/crosshairs_vector.svg"
-dest_files=["res://.godot/imported/crosshairs_vector.svg-bf7dd28ef0393ca2d059cc9049bd4f28.ctex"]
+dest_files=["res://.godot/imported/crosshairs_vector.svg-993fece82b5d3478c629f3ba4df409b6.ctex"]
 
 [params]
 

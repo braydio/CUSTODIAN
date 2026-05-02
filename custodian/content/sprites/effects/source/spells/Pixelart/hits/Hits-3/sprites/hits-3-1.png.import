@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2vohtnnpafn0"
-path="res://.godot/imported/hits-3-1.png-87ee4562dc2309edfcc890ec3774705d.ctex"
+path="res://.godot/imported/hits-3-1.png-87ecbd66702c81b94724cb3fac94b4ea.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/hits/Hits-3/sprites/hits-3-1.png"
-dest_files=["res://.godot/imported/hits-3-1.png-87ee4562dc2309edfcc890ec3774705d.ctex"]
+dest_files=["res://.godot/imported/hits-3-1.png-87ecbd66702c81b94724cb3fac94b4ea.ctex"]
 
 [params]
 

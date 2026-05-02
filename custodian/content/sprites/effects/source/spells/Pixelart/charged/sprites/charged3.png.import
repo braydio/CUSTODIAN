@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ljdr53ij253c"
-path="res://.godot/imported/charged3.png-14dd8d14755e56954fc660dd7ccdd61e.ctex"
+path="res://.godot/imported/charged3.png-0e8786d6ac9f47fa8f2b2ba6184600c0.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/charged/sprites/charged3.png"
-dest_files=["res://.godot/imported/charged3.png-14dd8d14755e56954fc660dd7ccdd61e.ctex"]
+dest_files=["res://.godot/imported/charged3.png-0e8786d6ac9f47fa8f2b2ba6184600c0.ctex"]
 
 [params]
 

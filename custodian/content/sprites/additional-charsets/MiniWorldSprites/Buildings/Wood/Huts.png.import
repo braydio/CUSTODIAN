@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwpugpetaj8sn"
-path="res://.godot/imported/Huts.png-6a7fc26faf4e456cc9220e967775dc50.ctex"
+path="res://.godot/imported/Huts.png-a9ea245e4900236c87d717098871dab6.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Wood/Huts.png"
-dest_files=["res://.godot/imported/Huts.png-6a7fc26faf4e456cc9220e967775dc50.ctex"]
+dest_files=["res://.godot/imported/Huts.png-a9ea245e4900236c87d717098871dab6.ctex"]
 
 [params]
 

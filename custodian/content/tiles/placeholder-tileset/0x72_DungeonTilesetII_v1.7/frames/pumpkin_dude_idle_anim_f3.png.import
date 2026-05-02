@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfiletu7kwrwb"
-path="res://.godot/imported/pumpkin_dude_idle_anim_f3.png-c15b4502db2db22af53c3bd2093cdf66.ctex"
+path="res://.godot/imported/pumpkin_dude_idle_anim_f3.png-f9f06d4a9960551892068503b1b7da78.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/pumpkin_dude_idle_anim_f3.png"
-dest_files=["res://.godot/imported/pumpkin_dude_idle_anim_f3.png-c15b4502db2db22af53c3bd2093cdf66.ctex"]
+dest_files=["res://.godot/imported/pumpkin_dude_idle_anim_f3.png-f9f06d4a9960551892068503b1b7da78.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cey73my7460jq"
-path="res://.godot/imported/operator_body_default_walk_down.png-d56e946eda0d8752c5aba38e1343340c.ctex"
+path="res://.godot/imported/operator_body_default_walk_down.png-e43bab46fc67ac604221acd7dfa8bc61.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/live_review/body/operator_body_default_walk_down.png"
-dest_files=["res://.godot/imported/operator_body_default_walk_down.png-d56e946eda0d8752c5aba38e1343340c.ctex"]
+dest_files=["res://.godot/imported/operator_body_default_walk_down.png-e43bab46fc67ac604221acd7dfa8bc61.ctex"]
 
 [params]
 

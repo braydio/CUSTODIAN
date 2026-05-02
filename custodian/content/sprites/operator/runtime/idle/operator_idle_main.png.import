@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://omj7ldtuxlds"
-path="res://.godot/imported/operator_idle_main.png-9ad1309719919481db4641900924fdff.ctex"
+path="res://.godot/imported/operator_idle_main.png-204a3c4605b3bb485388802c4e3466fa.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/idle/operator_idle_main.png"
-dest_files=["res://.godot/imported/operator_idle_main.png-9ad1309719919481db4641900924fdff.ctex"]
+dest_files=["res://.godot/imported/operator_idle_main.png-204a3c4605b3bb485388802c4e3466fa.ctex"]
 
 [params]
 

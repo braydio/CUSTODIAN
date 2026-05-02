@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0jg0g68gdd2s"
-path="res://.godot/imported/PurpleBarracks.png-21d1d5686d076ba1abbf23badeaa6498.ctex"
+path="res://.godot/imported/PurpleBarracks.png-4f69ce3796c99d0a59728007222cf159.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Buildings/Purple/PurpleBarracks.png"
-dest_files=["res://.godot/imported/PurpleBarracks.png-21d1d5686d076ba1abbf23badeaa6498.ctex"]
+dest_files=["res://.godot/imported/PurpleBarracks.png-4f69ce3796c99d0a59728007222cf159.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dlp1dwlotqg0b"
-path="res://.godot/imported/pulse2.png-5bd8118025e0b68fd43a4fbb6004d397.ctex"
+path="res://.godot/imported/pulse2.png-9b2b07a0da6caf514cd1f446380c4ba8.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/Pulse/sprites/pulse2.png"
-dest_files=["res://.godot/imported/pulse2.png-5bd8118025e0b68fd43a4fbb6004d397.ctex"]
+dest_files=["res://.godot/imported/pulse2.png-9b2b07a0da6caf514cd1f446380c4ba8.ctex"]
 
 [params]
 

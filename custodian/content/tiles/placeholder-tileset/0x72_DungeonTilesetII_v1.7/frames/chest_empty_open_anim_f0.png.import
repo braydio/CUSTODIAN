@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfagyhdcgilmw"
-path="res://.godot/imported/chest_empty_open_anim_f0.png-a180b3587ef5a30dd968a1a0ffe321e4.ctex"
+path="res://.godot/imported/chest_empty_open_anim_f0.png-8b9e6f6c505319cf2818667eb51eb2e8.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/tiles/placeholder-tileset/0x72_DungeonTilesetII_v1.7/frames/chest_empty_open_anim_f0.png"
-dest_files=["res://.godot/imported/chest_empty_open_anim_f0.png-a180b3587ef5a30dd968a1a0ffe321e4.ctex"]
+dest_files=["res://.godot/imported/chest_empty_open_anim_f0.png-8b9e6f6c505319cf2818667eb51eb2e8.ctex"]
 
 [params]
 

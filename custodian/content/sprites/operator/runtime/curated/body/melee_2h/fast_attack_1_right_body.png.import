@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d128x8wlowba6"
-path="res://.godot/imported/fast_attack_1_right_body.png-ae044a8ea3ce381f6638f7e697ca36a6.ctex"
+path="res://.godot/imported/fast_attack_1_right_body.png-038b5332b1672b1366e9d23f038cc647.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/curated/body/melee_2h/fast_attack_1_right_body.png"
-dest_files=["res://.godot/imported/fast_attack_1_right_body.png-ae044a8ea3ce381f6638f7e697ca36a6.ctex"]
+dest_files=["res://.godot/imported/fast_attack_1_right_body.png-038b5332b1672b1366e9d23f038cc647.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://beps7cn262h3c"
-path="res://.godot/imported/KamikazeGoblin.png-2300d8fb64d2d661b5934dd90590a964.ctex"
+path="res://.godot/imported/KamikazeGoblin.png-c5a7cf8e544e1b092d2e865a85c380cc.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Monsters/Orcs/KamikazeGoblin.png"
-dest_files=["res://.godot/imported/KamikazeGoblin.png-2300d8fb64d2d661b5934dd90590a964.ctex"]
+dest_files=["res://.godot/imported/KamikazeGoblin.png-c5a7cf8e544e1b092d2e865a85c380cc.ctex"]
 
 [params]
 

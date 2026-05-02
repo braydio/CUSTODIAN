@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hp3kg5vqf50o"
-path="res://.godot/imported/spritesheet.png-3e2abd89543cc2572a6d21d414a244e9.ctex"
+path="res://.godot/imported/spritesheet.png-46436029cf4fff380ed3a8ebdffb4fa1.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Pixelart/Bolt/spritesheet.png"
-dest_files=["res://.godot/imported/spritesheet.png-3e2abd89543cc2572a6d21d414a244e9.ctex"]
+dest_files=["res://.godot/imported/spritesheet.png-46436029cf4fff380ed3a8ebdffb4fa1.ctex"]
 
 [params]
 

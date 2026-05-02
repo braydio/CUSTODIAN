@@ -3,12 +3,12 @@
 importer="mp3"
 type="AudioStreamMP3"
 uid="uid://cbdgyme8b8r5x"
-path="res://.godot/imported/warped-shooting-fx.mp3-e5a63d99b3798aafb5d248041a7bdedb.mp3str"
+path="res://.godot/imported/warped-shooting-fx.mp3-b71e2e6ebba251977a88cb45f91dac7d.mp3str"
 
 [deps]
 
 source_file="res://content/sprites/effects/source/spells/Music/warped-shooting-fx.mp3"
-dest_files=["res://.godot/imported/warped-shooting-fx.mp3-e5a63d99b3798aafb5d248041a7bdedb.mp3str"]
+dest_files=["res://.godot/imported/warped-shooting-fx.mp3-b71e2e6ebba251977a88cb45f91dac7d.mp3str"]
 
 [params]
 

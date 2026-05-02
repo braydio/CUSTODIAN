@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cvpgg3o0t42ug"
-path="res://.godot/imported/FireballProjectile.png-448b4f60e5744418abc8be7f769e5123.ctex"
+path="res://.godot/imported/FireballProjectile.png-ee71dcec370306d74c223af611f86156.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Objects/FireballProjectile.png"
-dest_files=["res://.godot/imported/FireballProjectile.png-448b4f60e5744418abc8be7f769e5123.ctex"]
+dest_files=["res://.godot/imported/FireballProjectile.png-ee71dcec370306d74c223af611f86156.ctex"]
 
 [params]
 

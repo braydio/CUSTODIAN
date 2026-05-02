@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wo3ad0naulic"
-path="res://.godot/imported/Cliff-Water.png-a9a3e5fd88fdda0aa33c102049368c3a.ctex"
+path="res://.godot/imported/Cliff-Water.png-e9f7121ec1e8b4093bd963b4054dc905.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Ground/Cliff-Water.png"
-dest_files=["res://.godot/imported/Cliff-Water.png-a9a3e5fd88fdda0aa33c102049368c3a.ctex"]
+dest_files=["res://.godot/imported/Cliff-Water.png-e9f7121ec1e8b4093bd963b4054dc905.ctex"]
 
 [params]
 

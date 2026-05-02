@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ds2yvl4x3j0in"
-path="res://.godot/imported/carbine_rifle_mk1_stance.png-737e49fb73f1b972299096482d961f64.ctex"
+path="res://.godot/imported/carbine_rifle_mk1_stance.png-8c6919c9b2719fb6c35c5a40c1ccd429.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/operator/runtime/live_review/weapons/carbine_rifle_mk1_stance.png"
-dest_files=["res://.godot/imported/carbine_rifle_mk1_stance.png-737e49fb73f1b972299096482d961f64.ctex"]
+dest_files=["res://.godot/imported/carbine_rifle_mk1_stance.png-8c6919c9b2719fb6c35c5a40c1ccd429.ctex"]
 
 [params]
 

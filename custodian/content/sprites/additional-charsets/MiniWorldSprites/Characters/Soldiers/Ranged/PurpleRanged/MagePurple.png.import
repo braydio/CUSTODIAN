@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bd8ewwynah8ag"
-path="res://.godot/imported/MagePurple.png-560c388840ea06f828ff94855b5ced8b.ctex"
+path="res://.godot/imported/MagePurple.png-ef1aa44e44ce0abe78971bbb7ba36d87.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://content/sprites/additional-charsets/MiniWorldSprites/Characters/Soldiers/Ranged/PurpleRanged/MagePurple.png"
-dest_files=["res://.godot/imported/MagePurple.png-560c388840ea06f828ff94855b5ced8b.ctex"]
+dest_files=["res://.godot/imported/MagePurple.png-ef1aa44e44ce0abe78971bbb7ba36d87.ctex"]
 
 [params]
 

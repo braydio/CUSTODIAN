@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://btxgyaccfki6s"
-path="res://.godot/imported/scraps-droid_idle.png-ab0e15e62d763c9b5270ed3dd6dbe93e.ctex"
+uid="uid://b81ud6d36hipa"
+path="res://.godot/imported/operator__body__unarmed__stance_01__e__6f__96.png-d031c5663b688ee939610264e1f67f65.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/scraps-droid_idle.png"
-dest_files=["res://.godot/imported/scraps-droid_idle.png-ab0e15e62d763c9b5270ed3dd6dbe93e.ctex"]
+source_file="res://content/sprites/_pipeline/archive/operator__body__unarmed__stance_01__e__6f__96.png"
+dest_files=["res://.godot/imported/operator__body__unarmed__stance_01__e__6f__96.png-d031c5663b688ee939610264e1f67f65.ctex"]
 
 [params]
 
