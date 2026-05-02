@@ -363,7 +363,7 @@ func _create_debug_panel() -> void:
 	var inv_display := Label.new()
 	inv_display.name = "InventoryDisplay"
 	inv_display.text = "Loading..."
-	inv_display.autowrap_mode = Label.AUTOWRAP_WORD
+	inv_display.autowrap_mode = Label.AUTOWRAP_WORDS
 	debug_panel.add_child(inv_display)
 	
 	# Cognitive state section
@@ -377,7 +377,7 @@ func _create_debug_panel() -> void:
 	var cog_display := Label.new()
 	cog_display.name = "CognitiveDisplay"
 	cog_display.text = "Loading..."
-	cog_display.autowrap_mode = Label.AUTOWRAP_WORD
+	cog_display.autowrap_mode = Label.AUTOWRAP_WORDS
 	debug_panel.add_child(cog_display)
 	
 	# Add to scene
