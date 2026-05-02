@@ -357,7 +357,7 @@ func _create_debug_panel() -> void:
 	var inv_label := Label.new()
 	inv_label.name = "InventoryLabel"
 	inv_label.text = "INVENTORY"
-	inv_label.add_theme_font_size_override(14)
+	inv_label.add_theme_font_size_override("font_size", 14)
 	debug_panel.add_child(inv_label)
 	
 	var inv_display := Label.new()
@@ -370,7 +370,7 @@ func _create_debug_panel() -> void:
 	var cog_label := Label.new()
 	cog_label.name = "CognitiveLabel"
 	cog_label.text = "COGNITIVE STATE"
-	cog_label.add_theme_font_size_override(14)
+	cog_label.add_theme_font_size_override("font_size", 14)
 	cog_label.add_theme_constant_override("margin_top", 10)
 	debug_panel.add_child(cog_label)
 	
