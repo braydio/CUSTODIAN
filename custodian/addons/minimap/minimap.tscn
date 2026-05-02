@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://xvil6tbvu8xi"]
+
+[ext_resource type="Script" uid="uid://bsaqrouxv2xwe" path="res://addons/minimap/minimap.gd" id="1_47y0n"]
+[ext_resource type="Texture2D" uid="uid://c6ioi3rnmduh8" path="res://addons/minimap/demo/icon.svg" id="2_easvd"]
+[ext_resource type="PackedScene" uid="uid://duy5uqy64cdoe" path="res://addons/minimap/demo/nine_patch_rect.tscn" id="3_u2k77"]
+
+[node name="SubViewportContainer" type="SubViewportContainer" unique_id=971734981 node_paths=PackedStringArray("target")]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -256.0
+offset_bottom = 128.0
+grow_horizontal = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_47y0n")
+target = NodePath("")
+marker_image = ExtResource("2_easvd")
+border_line_color = Color(0.8913288, 0.82334, 0.6411151, 1)
+frame_image = ExtResource("3_u2k77")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=365452768]
+unique_name_in_owner = true
+handle_input_locally = false
+canvas_cull_mask = 4294967293
+oversampling = false
+size = Vector2i(256, 128)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="SubViewport" unique_id=1670246272]
+unique_name_in_owner = true
+limit_enabled = false
+
+[node name="marker" type="Sprite2D" parent="." unique_id=863247922]
+unique_name_in_owner = true
+texture = ExtResource("2_easvd")
+
+[node name="placeholder" type="ColorRect" parent="." unique_id=2049222858]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(256, 128)
+layout_mode = 2
+
+[node name="border" type="Line2D" parent="." unique_id=331189498]
+unique_name_in_owner = true
+z_index = 1
+width = 5.0

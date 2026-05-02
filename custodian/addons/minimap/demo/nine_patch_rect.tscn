@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://duy5uqy64cdoe"]
+
+[ext_resource type="Texture2D" uid="uid://c7rsfkxd5nfwp" path="res://addons/minimap/demo/Farm RPG FREE 16x16 - Tiny Asset Pack/window.png" id="1_cw11c"]
+
+[node name="NinePatchRect" type="NinePatchRect" unique_id=1592266564]
+texture = ExtResource("1_cw11c")
+patch_margin_left = 3
+patch_margin_top = 8
+patch_margin_right = 14
+patch_margin_bottom = 5
