@@ -1,0 +1,25 @@
+{
+  "source": "drone__body__locomotion__idle__s__4f__96.png",
+  "mode": "strip",
+  "frame_size": [96, 96],
+  "outputs": [
+    {
+      "path": "enemies/drone/runtime/body/drone__body__locomotion__idle__s__4f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 4
+      }
+    },
+    {
+      "path": "enemies/drone/runtime/idle/drone_idle.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 4
+      }
+    }
+  ]
+}

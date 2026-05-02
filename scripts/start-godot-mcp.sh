@@ -10,7 +10,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT_DIR="$ROOT_DIR/custodian"
 MCP_URL_DEFAULT="ws://127.0.0.1:6505"
 MCP_URL="${GODOT_MCP_URL:-$MCP_URL_DEFAULT}"
-GODOT_CMD=(godot --path "$PROJECT_DIR")
+GODOT_CMD=(godot --editor --path "$PROJECT_DIR")
 
 if [[ "${1:-}" == "--headless-editor" ]]; then
   GODOT_CMD=(godot --headless --editor --path "$PROJECT_DIR")
