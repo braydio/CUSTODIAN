@@ -48,6 +48,11 @@ Payload structure:
   - `planet_key`
   - `profile_seed`
   - `world_label`
+  - `map_size`
+  - `map_size_min`
+  - `map_size_max`
+  - `room_count_min`
+  - `room_count_max`
   - `compound_area_ratio`
   - `open_layout_chance`
   - `open_layout_carve_ratio`
@@ -59,6 +64,11 @@ Payload structure:
   - `wall_tint`
   - `foliage_tint`
   - `critter_tint`
+  - `critter_name_prefix`
+  - `critter_traits`
+  - `critter_speed_multiplier`
+  - `critter_scale_multiplier`
+  - `critter_variant_offset`
 - `planet`
   - `key`
   - `scene_path`
@@ -150,7 +160,7 @@ This ensures stable planet+map pairing per contract seed.
   - prevents cave-like output every run
 - Added planet-driven world coupling:
   - `CustodianContractMap` derives a deterministic `world_profile` from the selected contract planet
-  - `ProcGenTilemap` consumes that profile before generation so planet choice changes layout, foliage, and tinting
+  - `ProcGenTilemap` consumes that profile before generation so planet choice changes map size, room count, layout, foliage, and tinting
   - `level_data` forwards `world_profile` so runtime systems can stay on the same planet identity contract
 - Runtime loader now disables legacy sector collisions when static sectors are hidden, removing invisible-wall artifacts.
 - `ProcGenTilemap` can build runtime wall colliders (`build_runtime_wall_collision`) so wall blocking does not depend on TileSet physics metadata.
@@ -164,10 +174,11 @@ This profile is not decorative metadata. It must produce visible and mechanical 
 Current intended consequences:
 
 - compound footprint bias changes by planet
+- generated map size and room count bands change by planet, currently ranging from tighter `144x144` scar-world maps up to `240x240` aerostat-platform maps
 - openness / carved traversal lanes change by planet
 - foliage density and fruit spawning change by planet
 - floor / wall / foliage tint shifts follow the selected planet palette
-- ambient critter tint / pacing can read from the same profile
+- ambient critter tint, pacing, size, speed, naming prefix, and trait tags read from the same profile
 
 Next intended consequences:
 

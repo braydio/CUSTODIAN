@@ -1,6 +1,6 @@
 # PROJECT CONTEXT PRIMER — CUSTODIAN
 
-Last updated: 2026-05-02
+Last updated: 2026-05-03
 
 ## Purpose
 
@@ -37,6 +37,8 @@ CUSTODIAN is a Godot-native tactical base-defense game with an embodied operator
 
 - Treat `custodian/` and `design/` as the active implementation surface.
 - Start all local work by reading `custodian/AGENTS.md`, then this context pack.
+- For non-trivial implementation, review, migration, validation, asset workflow, or multi-file docs work, create or update an agent task packet from `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` under `custodian/docs/ai_context/task_packets/`.
+- Keep task packets current as scope, assumptions, blockers, validation, or documentation requirements change.
 - Keep deterministic simulation separate from rendering/UI logic.
 - When runtime behavior changes materially, update this directory alongside the relevant design/runtime docs.
 - Do not silently shift authority back to Python-era systems or docs.
@@ -57,6 +59,7 @@ On significant architecture or behavior changes, update:
 - `custodian/docs/ai_context/CURRENT_STATE.md`
 - `custodian/docs/ai_context/CONTEXT.md`
 - `custodian/docs/ai_context/FILE_INDEX.md`
+- relevant files under `custodian/docs/ai_context/task_packets/`
 - `custodian/AGENTS.md` when local routing, migration flow, or operating rules change
 
 Optionally also update legacy changelog/devlog material for historical continuity.

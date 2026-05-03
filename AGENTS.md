@@ -62,6 +62,8 @@ When behavior/architecture changes:
 - Maintain the active AI context pack in `custodian/docs/ai_context/`.
 - Minimum update target on meaningful runtime changes: `custodian/docs/ai_context/CURRENT_STATE.md`.
 - Prefer updating the full pack (`CURRENT_STATE.md`, `CONTEXT.md`, `FILE_INDEX.md`) when architecture, authority, or key file ownership changes.
+- For non-trivial implementation, review, migration, validation, asset workflow, or multi-file docs work, create or update an agent task packet from `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` before implementation.
+- Store active packets in `custodian/docs/ai_context/task_packets/` and keep packet status, assumptions, acceptance checks, and completion notes current as the task changes.
 - Keep local routing docs aligned with the active context pack, especially `custodian/AGENTS.md` and `custodian/README.md`.
 - Treat `python-sim/ai/` as historical reference only.
 

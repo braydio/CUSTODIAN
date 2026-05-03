@@ -1,6 +1,6 @@
 # Procedural Prop Variant System
 
-Status: complete
+Status: in progress
 Last updated: 2026-05-02
 
 ## Goal
@@ -23,6 +23,9 @@ The system composes variants from:
 - `custodian/content/props/ruins/scripts/PropDefinition.gd`
 - `custodian/content/props/ruins/scripts/PropVariantLayer.gd`
 - `custodian/content/props/ruins/scripts/PropVariantGenerator.gd`
+- `custodian/content/props/ruins/scripts/WeightedPropEntry.gd`
+- `custodian/content/props/ruins/scripts/PropSpawnSet.gd`
+- `custodian/content/props/ruins/scripts/PropScatterer.gd`
 - `custodian/content/props/ruins/shaders/prop_palette_variation.gdshader`
 - `custodian/content/props/ruins/README.md`
 
@@ -36,6 +39,19 @@ The system composes variants from:
 - `RETURNED`: near-original palette with a few residual details
 
 Collision is never generated from visual output. `PropDefinition.collision_scene` supplies an authored stable footprint when needed.
+
+## Procgen Placement Slice
+
+`ProcGenTilemap` can now place decorative ruin prop variants after floor/wall generation captures the stable generated cell state. Placement uses a `PropSpawnSet` resource with weighted entries, spacing checks, player/compound clearance, wall clearance, and deterministic seeds derived from tile cells.
+
+The current slice is intentionally visual-only:
+
+- props spawn under `NavigationRegion2D/PropLayer`
+- spawned `ProceduralProp` instances use `collision_scene = null` unless a definition explicitly provides one
+- gameplay navigation and collision do not depend on procedural prop variants
+- placement avoids the player spawn, compound buildings, and near-wall cells
+
+The initial spawn set lives at `custodian/content/props/ruins/data/ruin_prop_spawn_set.tres`.
 
 ## Asset Rules
 

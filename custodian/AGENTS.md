@@ -22,7 +22,8 @@ Read these in order before making changes:
 2. `docs/ai_context/CURRENT_STATE.md` for the latest runtime and documentation state
 3. `docs/ai_context/CONTEXT.md` for project rules and handoff context
 4. `docs/ai_context/FILE_INDEX.md` for high-signal file ownership and entrypoints
-5. Relevant runtime/docs files for the feature or asset area you are touching
+5. `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` and any relevant packet in `docs/ai_context/task_packets/` for non-trivial work
+6. Relevant runtime/docs files for the feature or asset area you are touching
 
 If a conflict appears, prefer this authority order:
 
@@ -63,11 +64,13 @@ Before editing, run this retrieval pipeline:
    Read the matching file in `../design/` first.
 3. Pull current state.
    Read `docs/ai_context/CURRENT_STATE.md` and `docs/ai_context/FILE_INDEX.md`.
-4. Pull adjacent context.
+4. Check task packet requirements.
+   For non-trivial implementation, review, migration, validation, asset workflow, or multi-file docs work, create or update a packet from `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` under `docs/ai_context/task_packets/`.
+5. Pull adjacent context.
    Read neighboring docs, scene files, READMEs, and directly related scripts/assets.
-5. Pull historical context only if still unresolved.
+6. Pull historical context only if still unresolved.
    Use `../python-sim/` or archived docs only to explain intent, not to override active authority.
-6. Record any mismatch immediately.
+7. Record any mismatch immediately.
    If names, paths, behavior, or ownership disagree, treat that as drift and remediate before or alongside the main change.
 
 Minimum adjacency check:
@@ -76,6 +79,31 @@ Minimum adjacency check:
 - one upstream authority doc
 - one downstream runtime or content consumer
 - one neighboring doc or index that would become stale if ignored
+- the relevant task packet when the work requires one
+
+## Agent Task Packets
+
+Task packets are task-scoped planning and handoff records for work that is large enough to risk ambiguity or documentation drift.
+
+Use a packet for:
+
+- runtime behavior changes
+- architecture or ownership changes
+- validation workflow changes
+- asset pipeline or production asset workflow changes
+- migrations and docs-drift cleanup
+- multi-file documentation changes
+- reviews that produce follow-up implementation work
+
+Task packet workflow:
+
+1. Copy `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` into `docs/ai_context/task_packets/`.
+2. Name the copy after the task, for example `VALIDATION_RECIPES.md`.
+3. Fill task, outcome, authority, work surface, constraints, plan, acceptance, and drift review before implementation.
+4. Keep packet status and assumptions current as scope changes.
+5. Mark the packet `complete` only after implementation, documentation updates, feasible validation, and completion notes are done.
+
+Task packets do not replace design docs. Use `../design/` as implementation authority, and use task packets to make the current agent slice explicit.
 
 ## Docs Drift Review
 
@@ -103,8 +131,9 @@ When you detect drift, do this automatically unless the user explicitly says not
 2. Update `docs/ai_context/CURRENT_STATE.md` if runtime state, ownership, or workflow changed.
 3. Update `docs/ai_context/CONTEXT.md` if the working model or guardrails changed.
 4. Update `docs/ai_context/FILE_INDEX.md` if entry files, locations, or ownership changed.
-5. Update local routing docs such as `README.md` or folder `README.md` files if discoverability changed.
-6. Note any intentionally deferred cleanup explicitly so the drift is tracked, not hidden.
+5. Update the relevant task packet if scope, acceptance, status, or deferred work changed.
+6. Update local routing docs such as `README.md` or folder `README.md` files if discoverability changed.
+7. Note any intentionally deferred cleanup explicitly so the drift is tracked, not hidden.
 
 ## Migration Execution Instructions
 
