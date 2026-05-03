@@ -16,21 +16,26 @@ extends Node
 var _contract_map_node: Node = null
 var _spawned_critters: Array[Node] = []
 var _ambient_spawn_timer: float = 0.0
+var _critter_rng := RandomNumberGenerator.new()
 var _planet_world_profile: Dictionary = {}
 var _base_critter_count: int = 0
 var _base_ambient_max_count: int = 0
 var _base_ambient_spawn_interval: float = 0.0
+var _profile_critter_speed_multiplier: float = 1.0
+var _profile_critter_scale_multiplier: float = 1.0
+var _profile_critter_name_prefix: String = ""
+var _profile_critter_traits: PackedStringArray = PackedStringArray()
 
 # Shrumb variants - different appearances for atmosphere
 var SHRUMB_VARIANTS := [
-	{"name": "SHRUMB", "tint": Color(0.45, 0.55, 0.35, 1.0), "scale": Vector2(0.85, 0.85), "speed_mod": 1.0},
-	{"name": "SPORE SHRUMB", "tint": Color(0.55, 0.40, 0.50, 1.0), "scale": Vector2(0.75, 0.75), "speed_mod": 1.2},
-	{"name": "LUMEN SHRUMB", "tint": Color(0.40, 0.50, 0.60, 1.0), "scale": Vector2(0.95, 0.95), "speed_mod": 0.9},
-	{"name": "CLAY SHRUMB", "tint": Color(0.50, 0.45, 0.40, 1.0), "scale": Vector2(1.0, 1.0), "speed_mod": 0.8},
-	{"name": "TENDRILE SHRUMB", "tint": Color(0.38, 0.52, 0.42, 1.0), "scale": Vector2(0.80, 0.90), "speed_mod": 1.1},
-	{"name": "RUST SHRUMB", "tint": Color(0.48, 0.42, 0.38, 1.0), "scale": Vector2(0.90, 0.90), "speed_mod": 1.0},
-	{"name": "Crystalline SHRUMB", "tint": Color(0.42, 0.58, 0.55, 1.0), "scale": Vector2(0.70, 0.70), "speed_mod": 1.3},
-	{"name": "MOSS SHRUMB", "tint": Color(0.52, 0.58, 0.38, 1.0), "scale": Vector2(0.88, 0.88), "speed_mod": 0.95},
+	{"name": "SHRUMB", "tint": Color(0.45, 0.55, 0.35, 1.0), "scale": Vector2(1.05, 1.05), "speed_mod": 1.0},
+	{"name": "SPORE SHRUMB", "tint": Color(0.55, 0.40, 0.50, 1.0), "scale": Vector2(0.98, 0.98), "speed_mod": 1.2},
+	{"name": "LUMEN SHRUMB", "tint": Color(0.40, 0.50, 0.60, 1.0), "scale": Vector2(1.10, 1.10), "speed_mod": 0.9},
+	{"name": "CLAY SHRUMB", "tint": Color(0.50, 0.45, 0.40, 1.0), "scale": Vector2(1.16, 1.16), "speed_mod": 0.8},
+	{"name": "TENDRILE SHRUMB", "tint": Color(0.38, 0.52, 0.42, 1.0), "scale": Vector2(1.02, 1.12), "speed_mod": 1.1},
+	{"name": "RUST SHRUMB", "tint": Color(0.48, 0.42, 0.38, 1.0), "scale": Vector2(1.08, 1.08), "speed_mod": 1.0},
+	{"name": "Crystalline SHRUMB", "tint": Color(0.42, 0.58, 0.55, 1.0), "scale": Vector2(0.95, 0.95), "speed_mod": 1.3},
+	{"name": "MOSS SHRUMB", "tint": Color(0.52, 0.58, 0.38, 1.0), "scale": Vector2(1.06, 1.06), "speed_mod": 0.95},
 ]
 
 
@@ -38,6 +43,7 @@ func _ready() -> void:
 	_base_critter_count = critter_count
 	_base_ambient_max_count = ambient_max_count
 	_base_ambient_spawn_interval = ambient_spawn_interval
+	_critter_rng.seed = 1
 	call_deferred("_bind_contract_map")
 
 
@@ -99,7 +105,7 @@ func _on_contract_generated(contract: Dictionary) -> void:
 
 	var spawn_tile: Vector2i = level_data.get("player_spawn", Vector2i.ZERO) as Vector2i
 	var habitat_positions := _collect_habitat_positions()
-	candidate_tiles.shuffle()
+	_shuffle_candidate_tiles(candidate_tiles)
 	candidate_tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		var a_world := _tile_to_world(map_instance, a)
 		var b_world := _tile_to_world(map_instance, b)
@@ -144,7 +150,7 @@ func _try_ambient_spawn() -> void:
 		return
 	
 	# Pick random position around player
-	var spawn_offset := Vector2.RIGHT.rotated(randf() * TAU) * randf_range(ambient_spawn_radius_min, ambient_spawn_radius_max)
+	var spawn_offset := Vector2.RIGHT.rotated(_critter_rng.randf() * TAU) * _critter_rng.randf_range(ambient_spawn_radius_min, ambient_spawn_radius_max)
 	var spawn_pos: Vector2 = player.global_position + spawn_offset
 	
 	# Check if valid spawn location (not too close to walls, etc.)
@@ -158,8 +164,9 @@ func _try_ambient_spawn() -> void:
 	container.add_child(critter)
 	critter.global_position = spawn_pos
 	
-	# Random variant for variety
-	_apply_critter_variation(critter, randi() % SHRUMB_VARIANTS.size())
+	# Ambient spawns use profile-offset variation so the local Shrumb population
+	# remains tied to the generated world identity.
+	_apply_critter_variation(critter, _spawned_critters.size())
 	
 	_spawned_critters.append(critter)
 
@@ -194,6 +201,16 @@ func _collect_candidate_tiles(level_data: Dictionary) -> Array[Vector2i]:
 	return tiles
 
 
+func _shuffle_candidate_tiles(tiles: Array[Vector2i]) -> void:
+	if tiles.size() < 2:
+		return
+	for i in range(tiles.size() - 1, 0, -1):
+		var swap_index := _critter_rng.randi_range(0, i)
+		var temp := tiles[i]
+		tiles[i] = tiles[swap_index]
+		tiles[swap_index] = temp
+
+
 func _apply_critter_variation(critter: Node2D, index: int) -> void:
 	var variant_offset := int(_planet_world_profile.get("critter_variant_offset", 0))
 	var data: Dictionary = SHRUMB_VARIANTS[(index + variant_offset) % SHRUMB_VARIANTS.size()]
@@ -205,15 +222,23 @@ func _apply_critter_variation(critter: Node2D, index: int) -> void:
 		tint.b * planet_tint.b,
 		tint.a
 	)
+	var variant_name := String(data.get("name", "SHRUMB"))
+	if not _profile_critter_name_prefix.is_empty():
+		variant_name = "%s %s" % [_profile_critter_name_prefix, variant_name]
 	if "enemy_name" in critter:
-		critter.set("enemy_name", String(data.get("name", "SHRUMB")))
+		critter.set("enemy_name", variant_name)
 	if "base_tint" in critter:
 		critter.set("base_tint", final_tint)
-	if "speed_modifier" in critter:
-		critter.set("speed_modifier", data.get("speed_mod", 1.0))
+	var speed_mod := float(data.get("speed_mod", 1.0)) * _profile_critter_speed_multiplier
+	if "speed" in critter:
+		critter.set("speed", float(critter.get("speed")) * speed_mod)
 	if critter.has_method("update_visuals"):
 		critter.call("update_visuals")
-	critter.scale = data.get("scale", Vector2.ONE)
+	var base_scale: Vector2 = data.get("scale", Vector2.ONE)
+	critter.scale = base_scale * _profile_critter_scale_multiplier
+	critter.set_meta("shrumb_variant", variant_name)
+	critter.set_meta("shrumb_traits", _profile_critter_traits)
+	critter.set_meta("world_profile", String(_planet_world_profile.get("world_label", "")))
 
 
 func _collect_habitat_positions() -> Array[Vector2]:
@@ -263,6 +288,8 @@ func get_shrumb_variants() -> Array:
 
 func add_shrumb_variants(count: int) -> void:
 	# Add more variants dynamically if needed
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(_planet_world_profile.get("profile_seed", 0)) + SHRUMB_VARIANTS.size() * 97 + count
 	var base_tints := [
 		Color(0.45, 0.55, 0.35),
 		Color(0.55, 0.40, 0.50),
@@ -282,16 +309,21 @@ func add_shrumb_variants(count: int) -> void:
 		SHRUMB_VARIANTS.append({
 			"name": base_names[idx % base_names.size()] + " SHRUMB",
 			"tint": tint,
-			"scale": Vector2(randf_range(0.7, 1.0), randf_range(0.7, 1.0)),
-			"speed_mod": randf_range(0.8, 1.3),
+			"scale": Vector2(rng.randf_range(0.95, 1.16), rng.randf_range(0.95, 1.16)),
+			"speed_mod": rng.randf_range(0.8, 1.3),
 		})
 
 
 func _apply_planet_world_profile(profile: Dictionary) -> void:
 	_planet_world_profile = profile.duplicate(true)
+	_critter_rng.seed = int(_planet_world_profile.get("profile_seed", 1))
 	critter_count = max(1, _base_critter_count + int(_planet_world_profile.get("critter_count_bonus", 0)))
 	ambient_max_count = max(critter_count, _base_ambient_max_count + int(_planet_world_profile.get("ambient_max_count_bonus", 0)))
 	ambient_spawn_interval = max(3.0, _base_ambient_spawn_interval * float(_planet_world_profile.get("ambient_spawn_interval_scale", 1.0)))
+	_profile_critter_speed_multiplier = clampf(float(_planet_world_profile.get("critter_speed_multiplier", 1.0)), 0.70, 1.35)
+	_profile_critter_scale_multiplier = clampf(float(_planet_world_profile.get("critter_scale_multiplier", 1.0)), 0.85, 1.25)
+	_profile_critter_name_prefix = String(_planet_world_profile.get("critter_name_prefix", "")).strip_edges()
+	_profile_critter_traits = _to_packed_string_array(_planet_world_profile.get("critter_traits", []))
 
 
 func _get_planet_profile_color(key: String, fallback: Color) -> Color:
@@ -299,3 +331,13 @@ func _get_planet_profile_color(key: String, fallback: Color) -> Color:
 	if value is Color:
 		return value as Color
 	return fallback
+
+
+func _to_packed_string_array(value: Variant) -> PackedStringArray:
+	var result := PackedStringArray()
+	if value is PackedStringArray:
+		return value as PackedStringArray
+	if value is Array:
+		for item in value as Array:
+			result.append(String(item))
+	return result

@@ -181,6 +181,9 @@ const FOLIAGE_ASSET_PATHS := [
 
 const FRUIT_TEXTURE_PATH := "res://content/sprites/environment/foliage/fruit_sheet.png"
 const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occlusion_bubble.gdshader")
+const DEFAULT_RUIN_PROP_SCENE := preload("res://content/props/ruins/scenes/ProceduralProp.tscn")
+const DEFAULT_RUIN_PROP_SPAWN_SET := preload("res://content/props/ruins/data/ruin_prop_spawn_set.tres")
+const PROP_SCATTERER_SCRIPT := preload("res://content/props/ruins/scripts/PropScatterer.gd")
 @export var foliage_parent_path: NodePath = NodePath("NavigationRegion2D/FoliageLayer")
 @export var foliage_density: float = 0.12
 @export var foliage_min_wall_distance: int = 1
@@ -226,8 +229,22 @@ const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occl
 @export_range(0.1, 1.0, 0.05) var foliage_player_occlusion_alpha: float = 0.55
 @export var foliage_tree_trunk_collision_size: Vector2 = Vector2(18, 12)
 @export var foliage_tree_trunk_collision_offset: Vector2 = Vector2(0, -6)
+@export var ruin_prop_parent_path: NodePath = NodePath("NavigationRegion2D/PropLayer")
+@export var enable_ruin_prop_spawning: bool = true
+@export var ruin_prop_scene: PackedScene = DEFAULT_RUIN_PROP_SCENE
+@export var ruin_prop_spawn_set: PropSpawnSet = DEFAULT_RUIN_PROP_SPAWN_SET
+@export_range(0, 64, 1) var ruin_prop_count: int = 10
+@export_range(1, 12, 1) var ruin_prop_min_distance_tiles: int = 5
+@export_range(0, 8, 1) var ruin_prop_wall_clearance_tiles: int = 2
+@export_range(0, 12, 1) var ruin_prop_spawn_clearance_radius: int = 7
+@export_range(0, 8, 1) var ruin_prop_compound_building_clearance: int = 3
+@export var ruin_prop_jitter_amplitude: Vector2 = Vector2(5, 3)
+@export var ruin_prop_variant_intensity: ProceduralProp.VariantIntensity = ProceduralProp.VariantIntensity.SUBTLE
+@export var ruin_prop_debug_logging: bool = false
 
 var _foliage_parent: Node2D = null
+var _ruin_prop_parent: Node2D = null
+var _ruin_prop_scatterer: PropScatterer = null
 var _foliage_nodes: Dictionary = {}
 var _foliage_textures: Array[Texture2D] = []
 var _fruit_texture: Texture2D = null
@@ -251,6 +268,7 @@ func _ready() -> void:
 	if shadow_system == null:
 		shadow_system = find_child("ShadowOverlay", true, false)
 	_foliage_parent = _find_foliage_parent()
+	_ruin_prop_parent = _find_ruin_prop_parent()
 	_load_foliage_textures()
 	_apply_planet_visual_profile()
 	
@@ -335,6 +353,7 @@ func _fill_tilemaps() -> void:
 		walls_tilemap.clear()
 		_wall_health.clear()
 		_clear_foliage()
+		_clear_ruin_props()
 		_clear_horizontal_wall_overlays()
 	_apply_planet_visual_profile()
 	
@@ -1065,6 +1084,7 @@ func _capture_generated_tile_state(map_size: Vector2i) -> void:
 				}
 
 	_generate_foliage(map_size)
+	_generate_ruin_props(map_size)
 
 
 func _generate_foliage(map_size: Vector2i) -> void:
@@ -1105,6 +1125,104 @@ func _clear_foliage() -> void:
 		if is_instance_valid(sprite):
 			sprite.queue_free()
 	_fruit_sprites.clear()
+
+
+func _generate_ruin_props(map_size: Vector2i) -> void:
+	_clear_ruin_props()
+	if not enable_ruin_prop_spawning:
+		return
+	if _ruin_prop_parent == null:
+		if ruin_prop_debug_logging:
+			push_warning("[RuinProps] Missing PropLayer, skipping ruin prop spawn")
+		return
+	if ruin_prop_scene == null or ruin_prop_spawn_set == null or ruin_prop_count <= 0:
+		return
+
+	var candidate_tiles: Array[Vector2i] = []
+	for tile_variant in _generated_floor_cells.keys():
+		var tile := tile_variant as Vector2i
+		if _should_place_ruin_prop(tile, map_size):
+			candidate_tiles.append(tile)
+
+	if candidate_tiles.is_empty():
+		if ruin_prop_debug_logging:
+			print("[RuinProps] No valid prop candidate tiles")
+		return
+
+	_ruin_prop_scatterer = PROP_SCATTERER_SCRIPT.new() as PropScatterer
+	if _ruin_prop_scatterer == null:
+		push_warning("[RuinProps] Failed to create PropScatterer")
+		return
+	_ruin_prop_scatterer.name = "RuinPropScatterer"
+	_ruin_prop_scatterer.prop_scene = ruin_prop_scene
+	_ruin_prop_scatterer.spawn_set = ruin_prop_spawn_set
+	_ruin_prop_scatterer.count = ruin_prop_count
+	_ruin_prop_scatterer.min_distance_tiles = ruin_prop_min_distance_tiles
+	_ruin_prop_scatterer.seed = _tile_noise_hash(Vector2i(97, 211))
+	_ruin_prop_scatterer.variant_intensity = ruin_prop_variant_intensity
+	_ruin_prop_parent.add_child(_ruin_prop_scatterer)
+
+	var spawned := _ruin_prop_scatterer.scatter_on_tiles(candidate_tiles, Callable(self, "_ruin_prop_tile_to_world"))
+	if ruin_prop_debug_logging:
+		print("[RuinProps] Placed %d props under %s" % [spawned.size(), _ruin_prop_parent.get_path()])
+
+
+func _clear_ruin_props() -> void:
+	if _ruin_prop_scatterer != null and is_instance_valid(_ruin_prop_scatterer):
+		_ruin_prop_scatterer.queue_free()
+	_ruin_prop_scatterer = null
+	if _ruin_prop_parent == null:
+		return
+	for child in _ruin_prop_parent.get_children():
+		child.queue_free()
+
+
+func _should_place_ruin_prop(pos: Vector2i, map_size: Vector2i) -> bool:
+	if pos.x <= 1 or pos.y <= 1 or pos.x >= map_size.x - 2 or pos.y >= map_size.y - 2:
+		return false
+	if _is_near_wall_for_ruin_prop(pos):
+		return false
+	if _is_inside_ruin_prop_clearance(pos):
+		return false
+	if _foliage_nodes.has(pos):
+		return false
+	return true
+
+
+func _is_near_wall_for_ruin_prop(pos: Vector2i) -> bool:
+	if ruin_prop_wall_clearance_tiles <= 0:
+		return false
+	for x in range(-ruin_prop_wall_clearance_tiles, ruin_prop_wall_clearance_tiles + 1):
+		for y in range(-ruin_prop_wall_clearance_tiles, ruin_prop_wall_clearance_tiles + 1):
+			if _generated_wall_cells.has(pos + Vector2i(x, y)):
+				return true
+	return false
+
+
+func _is_inside_ruin_prop_clearance(pos: Vector2i) -> bool:
+	if ruin_prop_spawn_clearance_radius > 0:
+		var spawn_tile := get_player_spawn()
+		if abs(pos.x - spawn_tile.x) <= ruin_prop_spawn_clearance_radius and abs(pos.y - spawn_tile.y) <= ruin_prop_spawn_clearance_radius:
+			return true
+	for building in _last_compound_buildings:
+		var expanded := building.grow(ruin_prop_compound_building_clearance)
+		if expanded.has_point(pos):
+			return true
+	return false
+
+
+func _ruin_prop_tile_to_world(pos: Vector2i) -> Vector2:
+	return _tile_to_world_position(pos) + _ruin_prop_jitter(pos)
+
+
+func _ruin_prop_jitter(pos: Vector2i) -> Vector2:
+	var seed := _tile_noise_hash(pos + Vector2i(53, 89))
+	var x_unit := float(seed % 21) - 10.0
+	var y_unit := float((seed / 21) % 11) - 5.0
+	return Vector2(
+		x_unit / 10.0 * ruin_prop_jitter_amplitude.x,
+		y_unit / 5.0 * ruin_prop_jitter_amplitude.y
+	).round()
 
 
 func _remove_foliage(pos: Vector2i) -> void:
@@ -1347,6 +1465,20 @@ func _find_foliage_parent() -> Node2D:
 	return null
 
 
+func _find_ruin_prop_parent() -> Node2D:
+	if ruin_prop_parent_path != NodePath("") and has_node(ruin_prop_parent_path):
+		return get_node(ruin_prop_parent_path) as Node2D
+	if ruin_prop_parent_path != NodePath("") and owner != null and owner.has_node(ruin_prop_parent_path):
+		return owner.get_node(ruin_prop_parent_path) as Node2D
+	if ruin_prop_parent_path != NodePath("") and get_tree() != null and get_tree().current_scene != null:
+		if get_tree().current_scene.has_node(ruin_prop_parent_path):
+			return get_tree().current_scene.get_node(ruin_prop_parent_path) as Node2D
+	var fallback := get_tree().get_root().find_child("PropLayer", true, false)
+	if fallback is Node2D:
+		return fallback
+	return null
+
+
 func _update_foliage_occlusion(player: Node2D) -> void:
 	if player == null:
 		return
@@ -1389,6 +1521,7 @@ func _prepare_streaming_reveal() -> void:
 	_navigation_rebuild_pending = false
 	_navigation_rebuild_deferred = false
 	_clear_foliage()
+	_clear_ruin_props()
 	_clear_horizontal_wall_overlays()
 	floor_tilemap.clear()
 	walls_tilemap.clear()

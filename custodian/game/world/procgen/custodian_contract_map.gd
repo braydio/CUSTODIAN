@@ -14,7 +14,11 @@ signal contract_generated(contract: Dictionary)
 @export var planet_offset: Vector2 = Vector2(-420, -320)
 @export var map_offset: Vector2 = Vector2.ZERO
 @export var map_generation_attempts: int = 6
-@export_range(0.0, 1.0, 0.01) var min_connected_room_ratio: float = 0.85
+@export var generated_map_size_min: Vector2i = Vector2i(160, 160)
+@export var generated_map_size_max: Vector2i = Vector2i(224, 224)
+@export_range(1, 128, 1) var generated_room_count_min: int = 12
+@export_range(1, 128, 1) var generated_room_count_max: int = 22
+@export_range(0.0, 1.0, 0.01) var min_connected_room_ratio: float = 0.75
 @export var require_compound_ingress_connectivity: bool = true
 
 enum MapGenerationMode {
@@ -43,6 +47,10 @@ const PLANET_LIBRARY := {
 const PLANET_WORLD_PROFILES := {
 	"terran_wet": {
 		"world_label": "humid river basin",
+		"map_size_min": Vector2i(176, 176),
+		"map_size_max": Vector2i(224, 224),
+		"room_count_min": 15,
+		"room_count_max": 24,
 		"compound_area_ratio": 0.12,
 		"open_layout_chance": 0.58,
 		"open_layout_carve_ratio": 0.25,
@@ -57,9 +65,17 @@ const PLANET_WORLD_PROFILES := {
 		"critter_count_bonus": 2,
 		"ambient_max_count_bonus": 2,
 		"ambient_spawn_interval_scale": 0.80,
+		"critter_name_prefix": "MIRE",
+		"critter_traits": ["lush", "wetland", "grazing"],
+		"critter_speed_multiplier": 0.94,
+		"critter_scale_multiplier": 1.08,
 	},
 	"terran_dry": {
 		"world_label": "dust basin",
+		"map_size_min": Vector2i(152, 152),
+		"map_size_max": Vector2i(192, 192),
+		"room_count_min": 11,
+		"room_count_max": 18,
 		"compound_area_ratio": 0.16,
 		"open_layout_chance": 0.28,
 		"open_layout_carve_ratio": 0.12,
@@ -74,9 +90,17 @@ const PLANET_WORLD_PROFILES := {
 		"critter_count_bonus": -1,
 		"ambient_max_count_bonus": -1,
 		"ambient_spawn_interval_scale": 1.18,
+		"critter_name_prefix": "DUST",
+		"critter_traits": ["dry", "scarce", "skittish"],
+		"critter_speed_multiplier": 1.10,
+		"critter_scale_multiplier": 0.98,
 	},
 	"islands": {
 		"world_label": "archipelago shelf",
+		"map_size_min": Vector2i(176, 176),
+		"map_size_max": Vector2i(224, 224),
+		"room_count_min": 14,
+		"room_count_max": 23,
 		"compound_area_ratio": 0.11,
 		"open_layout_chance": 0.62,
 		"open_layout_carve_ratio": 0.27,
@@ -91,9 +115,17 @@ const PLANET_WORLD_PROFILES := {
 		"critter_count_bonus": 1,
 		"ambient_max_count_bonus": 1,
 		"ambient_spawn_interval_scale": 0.88,
+		"critter_name_prefix": "REEF",
+		"critter_traits": ["salt", "humid", "quick"],
+		"critter_speed_multiplier": 1.06,
+		"critter_scale_multiplier": 1.02,
 	},
 	"ice_world": {
 		"world_label": "cryotic shelf",
+		"map_size_min": Vector2i(160, 160),
+		"map_size_max": Vector2i(208, 208),
+		"room_count_min": 12,
+		"room_count_max": 20,
 		"compound_area_ratio": 0.15,
 		"open_layout_chance": 0.42,
 		"open_layout_carve_ratio": 0.18,
@@ -108,9 +140,17 @@ const PLANET_WORLD_PROFILES := {
 		"critter_count_bonus": -1,
 		"ambient_max_count_bonus": -1,
 		"ambient_spawn_interval_scale": 1.14,
+		"critter_name_prefix": "FROST",
+		"critter_traits": ["cryotic", "pale", "slow-metabolic"],
+		"critter_speed_multiplier": 0.90,
+		"critter_scale_multiplier": 1.04,
 	},
 	"lava_world": {
 		"world_label": "igneous scar",
+		"map_size_min": Vector2i(144, 144),
+		"map_size_max": Vector2i(184, 184),
+		"room_count_min": 10,
+		"room_count_max": 17,
 		"compound_area_ratio": 0.18,
 		"open_layout_chance": 0.18,
 		"open_layout_carve_ratio": 0.08,
@@ -125,9 +165,17 @@ const PLANET_WORLD_PROFILES := {
 		"critter_count_bonus": -1,
 		"ambient_max_count_bonus": 0,
 		"ambient_spawn_interval_scale": 1.08,
+		"critter_name_prefix": "ASH",
+		"critter_traits": ["heat-hardened", "scarce", "darkened"],
+		"critter_speed_multiplier": 1.04,
+		"critter_scale_multiplier": 0.96,
 	},
 	"gas_giant": {
 		"world_label": "aerostat platform",
+		"map_size_min": Vector2i(192, 192),
+		"map_size_max": Vector2i(240, 240),
+		"room_count_min": 16,
+		"room_count_max": 26,
 		"compound_area_ratio": 0.10,
 		"open_layout_chance": 0.68,
 		"open_layout_carve_ratio": 0.30,
@@ -142,6 +190,10 @@ const PLANET_WORLD_PROFILES := {
 		"critter_count_bonus": 0,
 		"ambient_max_count_bonus": 1,
 		"ambient_spawn_interval_scale": 0.92,
+		"critter_name_prefix": "LUMEN",
+		"critter_traits": ["aerostat", "drifting", "lumen"],
+		"critter_speed_multiplier": 1.12,
+		"critter_scale_multiplier": 0.95,
 	},
 }
 
@@ -465,7 +517,11 @@ func _apply_map_generation_profile(map_instance: ProcGenTilemap, attempt_index: 
 		map_instance.call("apply_planet_world_profile", planet_world_profile)
 	var procgen := map_instance.procgen_node
 	var room_variance := attempt_index % 3
-	procgen.room_amount = 7 + room_variance + _rng.randi_range(0, 2)
+	var profile_map_size: Vector2i = planet_world_profile.get("map_size", procgen.map_size) as Vector2i
+	procgen.map_size = profile_map_size
+	var min_rooms: int = maxi(1, int(planet_world_profile.get("room_count_min", generated_room_count_min)))
+	var max_rooms: int = maxi(min_rooms, int(planet_world_profile.get("room_count_max", generated_room_count_max)))
+	procgen.room_amount = clampi(_rng.randi_range(min_rooms, max_rooms) + room_variance, min_rooms, max_rooms)
 	procgen.room_center_ratio = 0.18 + _rng.randf_range(0.0, 0.20)
 	procgen.corridor_edge_overlap_min_ratio = 0.14 + _rng.randf_range(0.0, 0.12)
 	procgen.corridor_cycle_chance = 0.22 + _rng.randf_range(0.0, 0.18)
@@ -482,6 +538,18 @@ func _build_planet_world_profile(planet_key: String, planet_seed: int) -> Dictio
 	profile_rng.seed = int(planet_seed)
 	profile["planet_key"] = planet_key
 	profile["profile_seed"] = planet_seed
+	var min_map_size: Vector2i = profile.get("map_size_min", generated_map_size_min) as Vector2i
+	var max_map_size: Vector2i = profile.get("map_size_max", generated_map_size_max) as Vector2i
+	min_map_size = min_map_size.maxi(64)
+	max_map_size = Vector2i(maxi(max_map_size.x, min_map_size.x), maxi(max_map_size.y, min_map_size.y))
+	var map_width := _round_map_dimension(profile_rng.randi_range(min_map_size.x, max_map_size.x))
+	var map_height := _round_map_dimension(profile_rng.randi_range(min_map_size.y, max_map_size.y))
+	profile["map_size"] = Vector2i(map_width, map_height)
+	profile["room_count_min"] = max(1, int(profile.get("room_count_min", generated_room_count_min)))
+	profile["room_count_max"] = max(
+		int(profile["room_count_min"]),
+		int(profile.get("room_count_max", generated_room_count_max))
+	)
 	profile["compound_area_ratio"] = clamp(
 		float(profile.get("compound_area_ratio", 0.14)) + profile_rng.randf_range(-0.01, 0.01),
 		0.10,
@@ -518,7 +586,21 @@ func _build_planet_world_profile(planet_key: String, planet_seed: int) -> Dictio
 		0.40
 	)
 	profile["critter_variant_offset"] = profile_rng.randi_range(0, 31)
+	profile["critter_speed_multiplier"] = clamp(
+		float(profile.get("critter_speed_multiplier", 1.0)) + profile_rng.randf_range(-0.03, 0.03),
+		0.70,
+		1.35
+	)
+	profile["critter_scale_multiplier"] = clamp(
+		float(profile.get("critter_scale_multiplier", 1.0)) + profile_rng.randf_range(-0.03, 0.03),
+		0.85,
+		1.25
+	)
 	return profile
+
+
+func _round_map_dimension(value: int) -> int:
+	return max(64, int(round(float(value) / 16.0)) * 16)
 
 
 func _is_map_layout_acceptable(metrics: Dictionary) -> bool:

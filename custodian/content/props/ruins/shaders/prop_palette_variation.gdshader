@@ -31,14 +31,13 @@ void fragment() {
 
 	if (tex.a <= 0.0) {
 		COLOR = tex;
-		return;
+	} else {
+		vec3 hsv = rgb_to_hsv(tex.rgb);
+
+		hsv.x = fract(hsv.x + hue_shift);
+		hsv.y = clamp(hsv.y * saturation, 0.0, 1.0);
+		hsv.z = clamp(hsv.z * brightness, 0.0, 1.0);
+
+		COLOR = vec4(hsv_to_rgb(hsv), tex.a);
 	}
-
-	vec3 hsv = rgb_to_hsv(tex.rgb);
-
-	hsv.x = fract(hsv.x + hue_shift);
-	hsv.y = clamp(hsv.y * saturation, 0.0, 1.0);
-	hsv.z = clamp(hsv.z * brightness, 0.0, 1.0);
-
-	COLOR = vec4(hsv_to_rgb(hsv), tex.a);
 }

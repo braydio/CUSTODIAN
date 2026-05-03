@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="PropDefinition" format=3]
+
+[ext_resource type="Script" path="res://content/props/ruins/scripts/PropDefinition.gd" id="1_definition"]
+[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rotunda_01.png" id="2_base"]
+[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/moss_patch_01.png" id="3_moss_01"]
+[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/moss_patch_03.png" id="4_moss_03"]
+[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_01.png" id="5_crack_01"]
+[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_06.png" id="6_crack_06"]
+[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_07.png" id="7_crack_07"]
+[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_small_light_02.png" id="8_rubble_01"]
+[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_medium_dark_02.png" id="9_rubble_02"]
+[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_large_light_01.png" id="10_rubble_03"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"rotunda_01"
+base_texture = ExtResource("2_base")
+anchor_offset = Vector2(0, 60)
+allow_flip_h = false
+moss_overlays = Array[Texture2D]([ExtResource("3_moss_01"), ExtResource("4_moss_03")])
+crack_overlays = Array[Texture2D]([ExtResource("5_crack_01"), ExtResource("6_crack_06"), ExtResource("7_crack_07")])
+rubble_textures = Array[Texture2D]([ExtResource("8_rubble_01"), ExtResource("9_rubble_02"), ExtResource("10_rubble_03")])
+min_overlay_count = 1
+max_overlay_count = 4
+min_rubble_count = 1
+max_rubble_count = 4
+rubble_spawn_rect = Rect2(-34, 0, 68, 18)
+overlay_spawn_rect = Rect2(-30, -56, 60, 58)

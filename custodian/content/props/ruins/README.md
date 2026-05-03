@@ -22,8 +22,25 @@ content/props/ruins/
 - `scripts/PropDefinition.gd`
 - `scripts/PropVariantLayer.gd`
 - `scripts/PropVariantGenerator.gd`
+- `scripts/WeightedPropEntry.gd`
+- `scripts/PropSpawnSet.gd`
+- `scripts/PropScatterer.gd`
+- `data/ruin_prop_spawn_set.tres`
 
 `PropDefinition.collision_scene` is optional, but collision should be authored separately and kept stable across visual variants.
+
+## Procgen Placement
+
+`ProcGenTilemap` can spawn decorative ruin props from `data/ruin_prop_spawn_set.tres` into `NavigationRegion2D/PropLayer`.
+
+Current placement rules:
+
+- floor cells only
+- avoids near-wall cells
+- avoids the player spawn and compound buildings
+- enforces minimum distance between placed props
+- uses deterministic tile-based seeds
+- keeps collision authored on the `PropDefinition`, not generated from visual variants
 
 ## Pixel Padding
 

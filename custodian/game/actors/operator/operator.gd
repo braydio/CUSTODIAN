@@ -469,7 +469,8 @@ func _update_animation():
 
 	# Don't override attack animation while playing
 	if is_attacking or is_block_anim or _melee_recovery_active or _is_equip_weapon_state_active():
-		animated_sprite.flip_h = facing_left
+		var active_animation_name := String(animated_sprite.animation)
+		animated_sprite.flip_h = facing_left and not active_animation_name.ends_with("_left")
 		return
 
 	if is_reloading:
@@ -500,6 +501,7 @@ func _update_animation():
 		if is_sprinting:
 			var run_anim := String(AnimationResolver.resolve("unarmed_run", animation_dir, animated_sprite)) if _is_current_profile_unarmed() else "run_" + direction_suffix
 			if animated_sprite.sprite_frames.has_animation(run_anim):
+				animated_sprite.flip_h = facing_left and not run_anim.ends_with("_left")
 				if animated_sprite.animation != run_anim:
 					animated_sprite.play(run_anim)
 				_update_idle_loop_tracking(false, "")
@@ -514,6 +516,7 @@ func _update_animation():
 		if _is_current_profile_unarmed():
 			var unarmed_walk_anim := String(AnimationResolver.resolve("unarmed_walk", animation_dir, animated_sprite))
 			if animated_sprite.sprite_frames.has_animation(unarmed_walk_anim):
+				animated_sprite.flip_h = facing_left and not unarmed_walk_anim.ends_with("_left")
 				if animated_sprite.animation != unarmed_walk_anim:
 					animated_sprite.play(unarmed_walk_anim)
 				_update_idle_loop_tracking(false, "")
@@ -538,6 +541,7 @@ func _update_animation():
 		if _is_melee_loadout_active() and not melee_body_stance_anim.is_empty():
 			var resolved_stance_anim := AnimationResolver.resolve(String(melee_body_stance_anim), animation_dir, animated_sprite)
 			if animated_sprite.sprite_frames.has_animation(resolved_stance_anim):
+				animated_sprite.flip_h = facing_left and not String(resolved_stance_anim).ends_with("_left")
 				if animated_sprite.animation != resolved_stance_anim:
 					animated_sprite.play(resolved_stance_anim)
 				_update_idle_loop_tracking(false, "")

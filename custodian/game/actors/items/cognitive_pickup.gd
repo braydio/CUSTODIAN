@@ -5,6 +5,8 @@ extends Area2D
 @export var pickup_volume_db: float = -12.0
 @export var visual_bob_amplitude: float = 2.0
 @export var visual_bob_speed: float = 3.5
+@export var animation_fps: float = 8.0
+@export var animation_frame_count: int = 4
 
 const FLOATING_TEXT_SCENE := preload("res://game/actors/effects/floating_text.tscn")
 
@@ -20,10 +22,10 @@ const ITEM_COLORS := {
 	&"ancient_bearing": Color(0.86, 0.72, 1.0, 1.0),
 }
 
-const ITEM_TEXTURES := {
-	&"faint_recollection": preload("res://content/sprites/items/shrumb_drops/faint_recollection.png"),
-	&"residual_instinct": preload("res://content/sprites/items/shrumb_drops/residual_instinct.png"),
-	&"ancient_bearing": preload("res://content/sprites/items/shrumb_drops/ancient_bearing.png"),
+const ITEM_ANIMATION_TEXTURES := {
+	&"faint_recollection": preload("res://content/sprites/items/faint_recollection.png"),
+	&"residual_instinct": preload("res://content/sprites/items/faded_instinct.png"),
+	&"ancient_bearing": preload("res://content/sprites/items/ancient_bearing.png"),
 }
 
 @onready var visual: Sprite2D = get_node_or_null("Visual")
@@ -31,6 +33,7 @@ const ITEM_TEXTURES := {
 
 var _visual_base_y: float = 0.0
 var _visual_time: float = 0.0
+var _animation_time: float = 0.0
 
 
 func _ready() -> void:
@@ -47,6 +50,8 @@ func _process(delta: float) -> void:
 	var bob := sin(_visual_time) * visual_bob_amplitude
 	visual.position.y = _visual_base_y + bob
 	visual.scale = Vector2.ONE * lerp(0.95, 1.05, (sin(_visual_time * 0.8) + 1.0) * 0.5)
+	_animation_time += delta
+	visual.frame = int(floor(_animation_time * animation_fps)) % max(1, animation_frame_count)
 
 
 func set_item(new_item_id: StringName, new_quantity: int = 1) -> void:
@@ -74,8 +79,13 @@ func _on_body_entered(body: Node) -> void:
 
 func _refresh_visual() -> void:
 	if visual != null:
-		visual.texture = ITEM_TEXTURES.get(item_id, null)
+		visual.texture = ITEM_ANIMATION_TEXTURES.get(item_id, null)
+		visual.hframes = animation_frame_count if visual.texture != null else 1
+		visual.vframes = 1
+		visual.frame = 0
+		visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		visual.modulate = Color.WHITE if visual.texture != null else ITEM_COLORS.get(item_id, Color(0.8, 0.85, 0.95, 1.0))
+		_animation_time = 0.0
 	if label != null:
 		label.text = _get_label_text()
 

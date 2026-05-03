@@ -1,0 +1,29 @@
+{
+    "activeFile": "",
+    "fileStates": {
+        "Gate_Of_Return_Remix": {
+            "scale": 0.6485,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 296.0678488820355,
+                "y": 150.3469545104087
+            }
+        },
+        "isometric/isometric_tilesheet.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "source/hub_world_origin/Gate_of_Return_Tilemap.tsx": {
+            "scaleInDock": 1.1605,
+            "scaleInEditor": 0.49
+        }
+    },
+    "openFiles": [
+        "source/hub_world_origin/Gate_of_Return_Tilemap.tsx"
+    ],
+    "recentFiles": [
+        "source/hub_world_origin/Gate_of_Return_Tilemap.tsx",
+        "isometric/isometric_tilesheet.tsx",
+        "Gate_Of_Return_Remix"
+    ]
+}

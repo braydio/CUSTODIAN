@@ -1,0 +1,13 @@
+{
+  "source": "operator__body__unarmed__stance_01__w__6f__96-sheet.png",
+  "mode": "strip",
+  "frame_size": [96, 96],
+  "outputs": [
+    {
+      "path": "operator/runtime/body/unarmed/operator__body__unarmed__stance_01__w__6f__96.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 6 }
+    }
+  ],
+  "post_process": ["operator_curated_resources"]
+}

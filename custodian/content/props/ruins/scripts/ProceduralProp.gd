@@ -139,7 +139,7 @@ func _spawn_overlays() -> void:
 		if _rng.randf() <= layer.spawn_chance:
 			eligible_layers.append(layer)
 
-	var count := min(_get_overlay_count(), eligible_layers.size())
+	var count: int = min(_get_overlay_count(), eligible_layers.size())
 	for i in count:
 		var layer_index := _rng.randi_range(0, eligible_layers.size() - 1)
 		var layer := eligible_layers[layer_index]
@@ -165,9 +165,9 @@ func _spawn_legacy_overlays() -> void:
 	if available.is_empty():
 		return
 
-	var count := min(_get_overlay_count(), available.size())
+	var count: int = min(_get_overlay_count(), available.size())
 	for i in count:
-		var tex := available[_rng.randi_range(0, available.size() - 1)]
+		var tex: Texture2D = available[_rng.randi_range(0, available.size() - 1)]
 		_add_overlay_sprite(
 			tex,
 			definition.overlay_spawn_rect,
@@ -206,12 +206,12 @@ func _spawn_rubble() -> void:
 	if definition.rubble_textures.is_empty():
 		return
 
-	var available := definition.rubble_textures.filter(func(texture: Texture2D) -> bool: return texture != null)
+	var available: Array[Texture2D] = definition.rubble_textures.filter(func(texture: Texture2D) -> bool: return texture != null)
 	if available.is_empty():
 		return
 
 	for i in count:
-		var tex := available[_rng.randi_range(0, available.size() - 1)]
+		var tex: Texture2D = available[_rng.randi_range(0, available.size() - 1)]
 		_add_rubble_sprite(tex, definition.rubble_spawn_rect, true, 1.0, 1.0, 1)
 
 
@@ -328,8 +328,8 @@ func _get_hue_shift_range() -> Vector2:
 
 
 func _intersect_range(definition_min: float, definition_max: float, intensity_min: float, intensity_max: float) -> Vector2:
-	var range_min := max(min(definition_min, definition_max), intensity_min)
-	var range_max := min(max(definition_min, definition_max), intensity_max)
+	var range_min: float = max(min(definition_min, definition_max), intensity_min)
+	var range_max: float = min(max(definition_min, definition_max), intensity_max)
 	if range_min > range_max:
 		return Vector2(intensity_min, intensity_max)
 

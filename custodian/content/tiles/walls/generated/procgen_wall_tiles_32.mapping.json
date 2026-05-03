@@ -1,0 +1,2868 @@
+{
+  "schema": "custodian.procgen_wall_tiles.v1",
+  "generated_at": "2026-05-02T22:02:27.816125+00:00",
+  "tile_size": 32,
+  "columns": 16,
+  "source_parts_json": "custodian/assets/tiles/walls/generated/procgen_wall_source_parts.json",
+  "source_atlas": "custodian/assets/tiles/walls/generated/procgen_wall_source_atlas.png",
+  "passage_dir": "custodian/content/tiles/walls/source/wall_passages",
+  "source_image": "custodian/content/tiles/walls/generated/procgen_wall_tiles_32.png",
+  "source_parts_schema": "custodian.wall_parts.v1",
+  "vertical_window": "bottom",
+  "buckets": {
+    "reference_horizontal_wall_coords": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        7,
+        3
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        9,
+        3
+      ],
+      [
+        12,
+        3
+      ],
+      [
+        13,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        8,
+        5
+      ],
+      [
+        11,
+        5
+      ],
+      [
+        12,
+        5
+      ]
+    ],
+    "reference_horizontal_hole_bottom_coords": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        7,
+        3
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        9,
+        3
+      ],
+      [
+        12,
+        3
+      ],
+      [
+        13,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        15,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        8,
+        5
+      ],
+      [
+        9,
+        5
+      ],
+      [
+        10,
+        5
+      ],
+      [
+        11,
+        5
+      ],
+      [
+        12,
+        5
+      ],
+      [
+        13,
+        5
+      ]
+    ],
+    "reference_open_left_wall_coords": [
+      [
+        0,
+        0
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        9,
+        0
+      ],
+      [
+        11,
+        0
+      ],
+      [
+        13,
+        0
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        10,
+        1
+      ],
+      [
+        12,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        15,
+        2
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        11,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        9,
+        4
+      ],
+      [
+        11,
+        4
+      ],
+      [
+        13,
+        4
+      ],
+      [
+        15,
+        4
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        10,
+        5
+      ]
+    ],
+    "reference_open_right_wall_coords": [
+      [
+        6,
+        0
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        10,
+        0
+      ],
+      [
+        12,
+        0
+      ],
+      [
+        14,
+        0
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        11,
+        1
+      ],
+      [
+        13,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        10,
+        3
+      ],
+      [
+        14,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        10,
+        4
+      ],
+      [
+        12,
+        4
+      ],
+      [
+        14,
+        4
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        9,
+        5
+      ],
+      [
+        13,
+        5
+      ]
+    ],
+    "reference_left_terminal_coords": [
+      [
+        0,
+        0
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        9,
+        0
+      ],
+      [
+        11,
+        0
+      ],
+      [
+        13,
+        0
+      ],
+      [
+        10,
+        1
+      ],
+      [
+        12,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        15,
+        2
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        11,
+        3
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        9,
+        4
+      ],
+      [
+        11,
+        4
+      ],
+      [
+        13,
+        4
+      ],
+      [
+        15,
+        4
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        10,
+        5
+      ]
+    ],
+    "reference_right_terminal_coords": [
+      [
+        6,
+        0
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        10,
+        0
+      ],
+      [
+        12,
+        0
+      ],
+      [
+        14,
+        0
+      ],
+      [
+        11,
+        1
+      ],
+      [
+        13,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        10,
+        3
+      ],
+      [
+        14,
+        3
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        10,
+        4
+      ],
+      [
+        12,
+        4
+      ],
+      [
+        14,
+        4
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        9,
+        5
+      ],
+      [
+        13,
+        5
+      ]
+    ],
+    "reference_vertical_wall_coords": [
+      [
+        15,
+        0
+      ]
+    ],
+    "reference_top_terminal_coords": [
+      [
+        15,
+        0
+      ]
+    ],
+    "reference_bottom_terminal_coords": [
+      [
+        15,
+        0
+      ]
+    ],
+    "reference_northwest_corner_coords": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "reference_northeast_corner_coords": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "reference_southwest_corner_coords": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "reference_southeast_corner_coords": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "reference_cross_fallback_coords": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        9,
+        1
+      ],
+      [
+        14,
+        1
+      ],
+      [
+        15,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        7,
+        2
+      ],
+      [
+        8,
+        2
+      ],
+      [
+        9,
+        2
+      ],
+      [
+        10,
+        2
+      ],
+      [
+        11,
+        2
+      ],
+      [
+        12,
+        2
+      ],
+      [
+        13,
+        2
+      ],
+      [
+        14,
+        2
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        15,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        4,
+        4
+      ]
+    ],
+    "reference_damaged_wall_coords": [],
+    "reference_moss_wall_coords": [],
+    "reference_rubble_wall_coords": [],
+    "reference_north_west_corner_coords": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "reference_north_east_corner_coords": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "reference_open_left_corner_coords": [
+      [
+        0,
+        0
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        9,
+        0
+      ],
+      [
+        11,
+        0
+      ],
+      [
+        13,
+        0
+      ],
+      [
+        10,
+        1
+      ],
+      [
+        12,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        15,
+        2
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        11,
+        3
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        9,
+        4
+      ],
+      [
+        11,
+        4
+      ],
+      [
+        13,
+        4
+      ]
+    ],
+    "reference_open_left_t_coords": [
+      [
+        0,
+        0
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        9,
+        0
+      ],
+      [
+        11,
+        0
+      ],
+      [
+        13,
+        0
+      ],
+      [
+        10,
+        1
+      ],
+      [
+        12,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        15,
+        2
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        11,
+        3
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        9,
+        4
+      ],
+      [
+        11,
+        4
+      ],
+      [
+        13,
+        4
+      ]
+    ],
+    "reference_open_left_hole_coords": [
+      [
+        15,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        8,
+        5
+      ],
+      [
+        9,
+        5
+      ],
+      [
+        10,
+        5
+      ],
+      [
+        11,
+        5
+      ],
+      [
+        12,
+        5
+      ],
+      [
+        13,
+        5
+      ]
+    ],
+    "reference_open_right_corner_coords": [
+      [
+        6,
+        0
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        10,
+        0
+      ],
+      [
+        12,
+        0
+      ],
+      [
+        14,
+        0
+      ],
+      [
+        11,
+        1
+      ],
+      [
+        13,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        10,
+        3
+      ],
+      [
+        14,
+        3
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        10,
+        4
+      ],
+      [
+        12,
+        4
+      ],
+      [
+        14,
+        4
+      ]
+    ],
+    "reference_open_right_t_coords": [
+      [
+        6,
+        0
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        10,
+        0
+      ],
+      [
+        12,
+        0
+      ],
+      [
+        14,
+        0
+      ],
+      [
+        11,
+        1
+      ],
+      [
+        13,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        10,
+        3
+      ],
+      [
+        14,
+        3
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        10,
+        4
+      ],
+      [
+        12,
+        4
+      ],
+      [
+        14,
+        4
+      ]
+    ],
+    "reference_open_right_hole_coords": [
+      [
+        15,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        8,
+        5
+      ],
+      [
+        9,
+        5
+      ],
+      [
+        10,
+        5
+      ],
+      [
+        11,
+        5
+      ],
+      [
+        12,
+        5
+      ],
+      [
+        13,
+        5
+      ]
+    ],
+    "reference_cross_wall_coords": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        9,
+        1
+      ],
+      [
+        14,
+        1
+      ],
+      [
+        15,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        7,
+        2
+      ],
+      [
+        8,
+        2
+      ],
+      [
+        9,
+        2
+      ],
+      [
+        10,
+        2
+      ],
+      [
+        11,
+        2
+      ],
+      [
+        12,
+        2
+      ],
+      [
+        13,
+        2
+      ],
+      [
+        14,
+        2
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        15,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        4,
+        4
+      ]
+    ],
+    "reference_cross_hole_coords": [
+      [
+        15,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        8,
+        5
+      ],
+      [
+        9,
+        5
+      ],
+      [
+        10,
+        5
+      ],
+      [
+        11,
+        5
+      ],
+      [
+        12,
+        5
+      ],
+      [
+        13,
+        5
+      ]
+    ],
+    "reference_passage_wall_coords": [
+      [
+        15,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        8,
+        5
+      ],
+      [
+        9,
+        5
+      ],
+      [
+        10,
+        5
+      ],
+      [
+        11,
+        5
+      ],
+      [
+        12,
+        5
+      ],
+      [
+        13,
+        5
+      ]
+    ]
+  },
+  "cells": [
+    {
+      "coord": [
+        0,
+        0
+      ],
+      "source_part": "wall_part_000",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 7,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        1,
+        0
+      ],
+      "source_part": "wall_part_000",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 7,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        2,
+        0
+      ],
+      "source_part": "wall_part_000",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 2,
+      "slice_count": 7,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        3,
+        0
+      ],
+      "source_part": "wall_part_000",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 3,
+      "slice_count": 7,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        4,
+        0
+      ],
+      "source_part": "wall_part_000",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 4,
+      "slice_count": 7,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        5,
+        0
+      ],
+      "source_part": "wall_part_000",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 5,
+      "slice_count": 7,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        6,
+        0
+      ],
+      "source_part": "wall_part_000",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 6,
+      "slice_count": 7,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        7,
+        0
+      ],
+      "source_part": "wall_part_001",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        8,
+        0
+      ],
+      "source_part": "wall_part_001",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        9,
+        0
+      ],
+      "source_part": "wall_part_002",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        10,
+        0
+      ],
+      "source_part": "wall_part_002",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        11,
+        0
+      ],
+      "source_part": "wall_part_003",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        12,
+        0
+      ],
+      "source_part": "wall_part_003",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        13,
+        0
+      ],
+      "source_part": "wall_part_004",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        14,
+        0
+      ],
+      "source_part": "wall_part_004",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        15,
+        0
+      ],
+      "source_part": "wall_part_005",
+      "source_kind": "vertical_end_or_pillar",
+      "role": "vertical",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        0,
+        1
+      ],
+      "source_part": "wall_part_006",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        1,
+        1
+      ],
+      "source_part": "wall_part_007",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        2,
+        1
+      ],
+      "source_part": "wall_part_008",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        3,
+        1
+      ],
+      "source_part": "wall_part_009",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        4,
+        1
+      ],
+      "source_part": "wall_part_010",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        5,
+        1
+      ],
+      "source_part": "wall_part_011",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        6,
+        1
+      ],
+      "source_part": "wall_part_012",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        7,
+        1
+      ],
+      "source_part": "wall_part_013",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        8,
+        1
+      ],
+      "source_part": "wall_part_014",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        9,
+        1
+      ],
+      "source_part": "wall_part_015",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        10,
+        1
+      ],
+      "source_part": "wall_part_016",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        11,
+        1
+      ],
+      "source_part": "wall_part_016",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        12,
+        1
+      ],
+      "source_part": "wall_part_017",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        13,
+        1
+      ],
+      "source_part": "wall_part_017",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        14,
+        1
+      ],
+      "source_part": "wall_part_018",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        15,
+        1
+      ],
+      "source_part": "wall_part_019",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        0,
+        2
+      ],
+      "source_part": "wall_part_020",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        1,
+        2
+      ],
+      "source_part": "wall_part_021",
+      "source_kind": "medium_straight",
+      "role": "medium_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 3,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        2,
+        2
+      ],
+      "source_part": "wall_part_021",
+      "source_kind": "medium_straight",
+      "role": "medium_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 3,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        3,
+        2
+      ],
+      "source_part": "wall_part_021",
+      "source_kind": "medium_straight",
+      "role": "medium_horizontal",
+      "tags": [],
+      "slice_index": 2,
+      "slice_count": 3,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        4,
+        2
+      ],
+      "source_part": "wall_part_022",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        5,
+        2
+      ],
+      "source_part": "wall_part_022",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        6,
+        2
+      ],
+      "source_part": "wall_part_023",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        7,
+        2
+      ],
+      "source_part": "wall_part_024",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        8,
+        2
+      ],
+      "source_part": "wall_part_025",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        9,
+        2
+      ],
+      "source_part": "wall_part_026",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        10,
+        2
+      ],
+      "source_part": "wall_part_027",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        11,
+        2
+      ],
+      "source_part": "wall_part_028",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        12,
+        2
+      ],
+      "source_part": "wall_part_028",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        13,
+        2
+      ],
+      "source_part": "wall_part_029",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        14,
+        2
+      ],
+      "source_part": "wall_part_029",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        15,
+        2
+      ],
+      "source_part": "wall_part_030",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 5,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        0,
+        3
+      ],
+      "source_part": "wall_part_030",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 5,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        1,
+        3
+      ],
+      "source_part": "wall_part_030",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 2,
+      "slice_count": 5,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        2,
+        3
+      ],
+      "source_part": "wall_part_030",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 3,
+      "slice_count": 5,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        3,
+        3
+      ],
+      "source_part": "wall_part_030",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 4,
+      "slice_count": 5,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        4,
+        3
+      ],
+      "source_part": "wall_part_031",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        5,
+        3
+      ],
+      "source_part": "wall_part_032",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        6,
+        3
+      ],
+      "source_part": "wall_part_033",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 5,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        7,
+        3
+      ],
+      "source_part": "wall_part_033",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 5,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        8,
+        3
+      ],
+      "source_part": "wall_part_033",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 2,
+      "slice_count": 5,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        9,
+        3
+      ],
+      "source_part": "wall_part_033",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 3,
+      "slice_count": 5,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        10,
+        3
+      ],
+      "source_part": "wall_part_033",
+      "source_kind": "long_straight",
+      "role": "long_horizontal",
+      "tags": [],
+      "slice_index": 4,
+      "slice_count": 5,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        11,
+        3
+      ],
+      "source_part": "wall_part_034",
+      "source_kind": "medium_straight",
+      "role": "medium_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        12,
+        3
+      ],
+      "source_part": "wall_part_034",
+      "source_kind": "medium_straight",
+      "role": "medium_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        13,
+        3
+      ],
+      "source_part": "wall_part_034",
+      "source_kind": "medium_straight",
+      "role": "medium_horizontal",
+      "tags": [],
+      "slice_index": 2,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        14,
+        3
+      ],
+      "source_part": "wall_part_034",
+      "source_kind": "medium_straight",
+      "role": "medium_horizontal",
+      "tags": [],
+      "slice_index": 3,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        15,
+        3
+      ],
+      "source_part": "wall_part_035",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        0,
+        4
+      ],
+      "source_part": "wall_part_036",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        1,
+        4
+      ],
+      "source_part": "wall_part_037",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        2,
+        4
+      ],
+      "source_part": "wall_part_038",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        3,
+        4
+      ],
+      "source_part": "wall_part_039",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        4,
+        4
+      ],
+      "source_part": "wall_part_040",
+      "source_kind": "short_straight",
+      "role": "cross_fallback",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 1,
+      "needs_review": true
+    },
+    {
+      "coord": [
+        5,
+        4
+      ],
+      "source_part": "wall_part_041",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        6,
+        4
+      ],
+      "source_part": "wall_part_041",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        7,
+        4
+      ],
+      "source_part": "wall_part_042",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        8,
+        4
+      ],
+      "source_part": "wall_part_042",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        9,
+        4
+      ],
+      "source_part": "wall_part_043",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        10,
+        4
+      ],
+      "source_part": "wall_part_043",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        11,
+        4
+      ],
+      "source_part": "wall_part_044",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        12,
+        4
+      ],
+      "source_part": "wall_part_044",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        13,
+        4
+      ],
+      "source_part": "wall_part_045",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 0,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        14,
+        4
+      ],
+      "source_part": "wall_part_045",
+      "source_kind": "short_straight",
+      "role": "short_horizontal",
+      "tags": [],
+      "slice_index": 1,
+      "slice_count": 2,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        15,
+        4
+      ],
+      "source_part": "Wall_Passage_01",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 0,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        0,
+        5
+      ],
+      "source_part": "Wall_Passage_01",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 1,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        1,
+        5
+      ],
+      "source_part": "Wall_Passage_01",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 2,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        2,
+        5
+      ],
+      "source_part": "Wall_Passage_01",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 3,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        3,
+        5
+      ],
+      "source_part": "Wall_Passage_02",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 0,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        4,
+        5
+      ],
+      "source_part": "Wall_Passage_02",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 1,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        5,
+        5
+      ],
+      "source_part": "Wall_Passage_02",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 2,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        6,
+        5
+      ],
+      "source_part": "Wall_Passage_02",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 3,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        7,
+        5
+      ],
+      "source_part": "Wall_Passage_03",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 0,
+      "slice_count": 3,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        8,
+        5
+      ],
+      "source_part": "Wall_Passage_03",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 1,
+      "slice_count": 3,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        9,
+        5
+      ],
+      "source_part": "Wall_Passage_03",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 2,
+      "slice_count": 3,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        10,
+        5
+      ],
+      "source_part": "Wall_Passage_04",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 0,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        11,
+        5
+      ],
+      "source_part": "Wall_Passage_04",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 1,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        12,
+        5
+      ],
+      "source_part": "Wall_Passage_04",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 2,
+      "slice_count": 4,
+      "needs_review": false
+    },
+    {
+      "coord": [
+        13,
+        5
+      ],
+      "source_part": "Wall_Passage_04",
+      "source_kind": "passage_strip",
+      "role": "passage_horizontal",
+      "tags": [
+        "passage"
+      ],
+      "slice_index": 3,
+      "slice_count": 4,
+      "needs_review": false
+    }
+  ],
+  "needs_review": [
+    {
+      "id": "wall_part_005",
+      "role": "vertical",
+      "kind": "vertical_end_or_pillar"
+    },
+    {
+      "id": "wall_part_006",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_007",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_008",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_009",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_010",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_011",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_012",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_013",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_015",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_018",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_019",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_020",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_022",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_023",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_024",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_025",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_026",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_027",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_028",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_029",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_031",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_032",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_035",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_036",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_037",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_038",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    },
+    {
+      "id": "wall_part_040",
+      "role": "cross_fallback",
+      "kind": "short_straight"
+    }
+  ],
+  "warnings": {
+    "tall_source_parts_cropped_to_tile": 26,
+    "passage_sources_loaded": 4,
+    "missing_semantic_buckets": [
+      "reference_damaged_wall_coords",
+      "reference_moss_wall_coords",
+      "reference_rubble_wall_coords"
+    ]
+  }
+}

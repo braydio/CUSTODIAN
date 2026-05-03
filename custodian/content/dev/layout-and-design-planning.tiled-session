@@ -1,0 +1,39 @@
+{
+    "activeFile": "source/hub_world_origin/Gate_of_Return_Tilemap.tsx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "Gate_Of_Return_Remix": {
+            "scale": 0.6485,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 296.0678488820355,
+                "y": 150.3469545104087
+            }
+        },
+        "isometric/isometric_tilesheet.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "source/hub_world_origin/Gate_of_Return_Tilemap.tsx": {
+            "scaleInDock": 0.33,
+            "scaleInEditor": 0.6576
+        }
+    },
+    "last.imagePath": "/home/linux/Projects/CUSTODIAN/custodian/content/dev/Isometric/isometric tileset",
+    "map.fixedSize": false,
+    "map.lastUsedFormat": "tmx",
+    "map.orientation": "1",
+    "openFiles": [
+        "Gate_Of_Return_Remix",
+        "source/hub_world_origin/Gate_of_Return_Tilemap.tsx"
+    ],
+    "project": "layout-and-design-planning.tiled-project",
+    "recentFiles": [
+        "isometric/isometric_tilesheet.tsx",
+        "Gate_Of_Return_Remix",
+        "source/hub_world_origin/Gate_of_Return_Tilemap.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}

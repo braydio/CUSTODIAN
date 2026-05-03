@@ -57,20 +57,20 @@ custom_ambient_animation_enabled = true
 custom_ambient_east_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_slink_east-sheet.png"
 custom_ambient_east_frame_size = null
 custom_ambient_east_fps = null
-custom_ambient_east_scale = Vector2(0.7, 0.7)
+custom_ambient_east_scale = Vector2(0.9, 0.9)
 custom_ambient_north_south_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_slink_north_south.png"
 custom_ambient_north_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_slink_north.png"
 custom_ambient_south_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_slink_south.png"
 custom_ambient_north_south_frame_size = Vector2i(64, 85)
 custom_ambient_north_south_columns = null
 custom_ambient_north_south_fps = null
-custom_ambient_north_south_scale = Vector2(0.7, 0.7)
+custom_ambient_north_south_scale = Vector2(0.9, 0.9)
 custom_ambient_knockout_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_struck_knockout.png"
 custom_ambient_knockout_frame_size = null
 custom_ambient_knockout_columns = null
 custom_ambient_knockout_rows = null
 custom_ambient_knockout_fps = null
-custom_ambient_knockout_scale = Vector2(0.18, 0.18)
+custom_ambient_knockout_scale = Vector2(0.22, 0.22)
 
 [node name="Visual" type="ColorRect" parent="." unique_id=727133011]
 offset_left = -12.0
@@ -92,7 +92,7 @@ show_percentage = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2116492062]
 position = Vector2(1, 0)
-scale = Vector2(0.7, 0.7)
+scale = Vector2(0.9, 0.9)
 sprite_frames = ExtResource("2_frames")
 animation = &"drone_idle"
 
