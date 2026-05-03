@@ -395,6 +395,10 @@ func _physics_process(delta):
 		move_speed *= _get_ranged_firing_move_multiplier()
 	if _is_block_state_active():
 		move_speed *= block_move_multiplier
+	# Apply cognitive state move speed modifier
+	var cognitive := get_node_or_null("/root/CognitiveState")
+	if cognitive != null and cognitive.has_method("get_move_speed_multiplier"):
+		move_speed *= float(cognitive.call("get_move_speed_multiplier"))
 	var target_velocity: Vector2 = input_direction * move_speed
 	var accel_rate: float = move_acceleration if moving else move_deceleration
 	if movement_profile != null:
@@ -617,6 +621,12 @@ func _request_ranged_shot() -> void:
 	var profile := _get_current_ranged_profile()
 	last_fire_cooldown = float(profile["cooldown"])
 	fire_cooldown_remaining = last_fire_cooldown
+	# Apply cognitive attack recovery modifier (instinct reduces cooldown)
+	var cognitive := get_node_or_null("/root/CognitiveState")
+	if cognitive != null and cognitive.has_method("get_attack_recovery_multiplier"):
+		var multiplier: float = float(cognitive.call("get_attack_recovery_multiplier"))
+		fire_cooldown_remaining *= multiplier
+		last_fire_cooldown *= multiplier
 	var fire_animation := _get_current_ranged_body_fire_animation(velocity.length() > 0.01 and not is_sprinting)
 	var delay := _get_ranged_fire_release_delay(fire_animation)
 	_pending_ranged_shot = {
@@ -638,6 +648,11 @@ func _emit_pending_ranged_shot() -> void:
 	if direction.length_squared() <= 0.0001:
 		return
 	var spread := float(profile.get("spread", 0.0)) + (current_recoil * 0.2)
+	# Apply cognitive accuracy bonus (bearing reduces spread)
+	var cognitive := get_node_or_null("/root/CognitiveState")
+	if cognitive != null and cognitive.has_method("get_player_accuracy_bonus"):
+		var accuracy_bonus: float = float(cognitive.call("get_player_accuracy_bonus"))
+		spread = max(0.0, spread - accuracy_bonus)
 	var spread_rad := deg_to_rad(randf_range(-spread, spread))
 	direction = direction.rotated(spread_rad)
 
@@ -656,6 +671,10 @@ func _emit_pending_ranged_shot() -> void:
 	bullet.bullet_color = profile.get("color", Color(1.0, 0.9, 0.35, 1.0))
 	bullet.impact_scene = IMPACT_SPARK_SCENE
 	bullet.shooter = self
+	# Apply cognitive crit bonus (bearing increases crit chance)
+	var cognitive := get_node_or_null("/root/CognitiveState")
+	if cognitive != null and cognitive.has_method("get_player_crit_bonus"):
+		bullet.crit_chance = float(cognitive.call("get_player_crit_bonus"))
 
 	var container = get_node_or_null("/root/GameRoot/World/Projectiles")
 	if container:
@@ -1355,6 +1374,11 @@ func _play_fast_attack_recovery() -> void:
 func _start_fast_attack_recovery() -> void:
 	_melee_recovery_active = true
 	_melee_recovery_timer = melee_fast_recovery_duration
+	# Apply cognitive attack recovery modifier (instinct reduces recovery time)
+	var cognitive := get_node_or_null("/root/CognitiveState")
+	if cognitive != null and cognitive.has_method("get_attack_recovery_multiplier"):
+		var multiplier: float = float(cognitive.call("get_attack_recovery_multiplier"))
+		_melee_recovery_timer *= multiplier
 	_play_fast_attack_recovery()
 
 

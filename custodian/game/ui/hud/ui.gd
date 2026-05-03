@@ -407,6 +407,11 @@ func _create_debug_panel_style() -> StyleBoxFlat:
 	style.content_margin_right = 8
 	style.content_margin_bottom = 6
 	return style
+
+
+func _setup_terminal_main_scroll() -> void:
+	if terminal_map_column == null:
+		return
 	var content_nodes: Array[Control] = [
 		terminal_planet_title_label,
 		terminal_planet_preview,

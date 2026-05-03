@@ -7,6 +7,8 @@ extends Area2D
 @export var bullet_color: Color = Color(1.0, 0.85, 0.25, 1.0)
 @export var bullet_radius: float = 4.0
 @export var team: String = "player"  # player, defense, enemy, or neutral
+@export var crit_chance: float = 0.0
+@export var crit_multiplier: float = 1.5
 
 const BLOCK_SPARK_SCENE := preload("res://game/actors/effects/block_spark.tscn")
 
@@ -60,7 +62,10 @@ func _on_body_entered(body: Node):
 
 	if body.has_method("take_damage"):
 		var impact_position := _resolve_impact_position(body)
-		body.take_damage(damage)
+		var final_damage: float = damage
+		if crit_chance > 0.0 and randf() < crit_chance:
+			final_damage *= crit_multiplier
+		body.take_damage(final_damage)
 		_apply_game_feel(body, 60.0)
 		_spawn_impact_at(impact_position)
 		queue_free()
