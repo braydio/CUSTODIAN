@@ -20,6 +20,7 @@ const FAST_RECOVERY_SHEET := "res://content/sprites/operator/runtime/curated/bod
 const UNARMED_WALK_SOUTH_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__walk_01__s__5f__96.png"
 const UNARMED_WALK_EAST_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__walk_01__e__5f__96.png"
 const UNARMED_WALK_NORTH_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__walk_01__n__7f__96.png"
+const UNARMED_WALK_WEST_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__walk_01__w__5f__96.png"
 const UNARMED_FAST_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__s__6f__96.png"
 const UNARMED_FAST_FX_SOUTH_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__s__6f__96.png"
 const UNARMED_FAST_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__e__3f__96.png"
@@ -46,7 +47,9 @@ const UNARMED_IDLE_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/bo
 const UNARMED_RUN_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__run_01__e__5f__96.png"
 const UNARMED_RUN_NORTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__run_01__n__6f__96.png"
 const UNARMED_RUN_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__run_01__s__4f__96.png"
+const UNARMED_RUN_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__run_01__w__5f__96.png"
 const UNARMED_STANCE_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__stance_01__e__6f__96.png"
+const UNARMED_STANCE_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__stance_01__w__6f__96.png"
 const UNARMED_LIGHT_HITREACT_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__light_hitreact_01__s__3f__96.png"
 const UNARMED_LIGHT_HITREACT_FX_SOUTH_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__light_hitreact_01__s__3f__96.png"
 var _had_rebuild_error := false
@@ -115,14 +118,17 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "unarmed_run_right", UNARMED_RUN_EAST_BODY_SHEET, 5, 0, 96, 96, 12.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_run_up", UNARMED_RUN_NORTH_BODY_SHEET, 6, 0, 96, 96, 12.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_run_down", UNARMED_RUN_SOUTH_BODY_SHEET, 4, 0, 96, 96, 12.0, true)
+	_replace_animation_if_exists(body_frames, "unarmed_run_left", UNARMED_RUN_WEST_BODY_SHEET, 5, 0, 96, 96, 12.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_stance", UNARMED_STANCE_EAST_BODY_SHEET, 6, 0, 96, 96, 8.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_stance_right", UNARMED_STANCE_EAST_BODY_SHEET, 6, 0, 96, 96, 8.0, true)
+	_replace_animation_if_exists(body_frames, "unarmed_stance_left", UNARMED_STANCE_WEST_BODY_SHEET, 6, 0, 96, 96, 8.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_light_hitreact", UNARMED_LIGHT_HITREACT_SOUTH_BODY_SHEET, 3, 0, 96, 96, 10.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_light_hitreact_down", UNARMED_LIGHT_HITREACT_SOUTH_BODY_SHEET, 3, 0, 96, 96, 10.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_walk", UNARMED_WALK_SOUTH_SHEET, 5, 0, 96, 96, 10.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_walk_down", UNARMED_WALK_SOUTH_SHEET, 5, 0, 96, 96, 10.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_walk_right", UNARMED_WALK_EAST_SHEET, 5, 0, 96, 96, 10.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_walk_up", UNARMED_WALK_NORTH_SHEET, 7, 0, 96, 96, 10.0, true)
+	_replace_animation_if_exists(body_frames, "unarmed_walk_left", UNARMED_WALK_WEST_SHEET, 5, 0, 96, 96, 10.0, true)
 	_replace_animation(body_frames, "death", BASE_DEATH_SHEET, 9, 0, 128, 128, 7.0, false)
 
 	_replace_animation(weapon_frames, "equipped_run_right", RANGED_RUN_SHEET, 4, 1, 96, 96, 14.0, true)
