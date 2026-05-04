@@ -51,6 +51,7 @@ BUCKETS = [
 
 HORIZONTAL_ROLES = {"long_horizontal", "medium_horizontal", "short_horizontal", "horizontal"}
 PASSAGE_ROLES = {"passage_horizontal", "passage"}
+TOP_SOURCE_ROLES = {"top_source", "wall_top"}
 
 
 def parse_args() -> argparse.Namespace:
@@ -63,10 +64,21 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         help="Optional directory of 32px-tall passage wall strips to slice directly into passage/hole buckets.",
     )
+    parser.add_argument(
+        "--top-source",
+        type=Path,
+        help="Optional wall-top sheet or directory of wall-top images to alpha-split into top-oriented wall cells.",
+    )
     parser.add_argument("--out-image", required=True, type=Path, help="Output fixed-grid runtime atlas PNG.")
     parser.add_argument("--out-json", required=True, type=Path, help="Output semantic mapping JSON.")
     parser.add_argument("--tile-size", type=int, default=DEFAULT_TILE_SIZE, help="Square runtime tile size.")
     parser.add_argument("--columns", type=int, default=DEFAULT_COLUMNS, help="Atlas columns.")
+    parser.add_argument(
+        "--top-min-area",
+        type=int,
+        default=16,
+        help="Minimum alpha-island area to keep when splitting top-source sheets.",
+    )
     parser.add_argument(
         "--vertical-window",
         choices=["bottom", "top", "center"],
@@ -160,6 +172,63 @@ def load_passage_images(path: Path | None) -> list[tuple[str, Image.Image]]:
     return images
 
 
+def find_alpha_components(image: Image.Image, min_area: int = 16) -> list[tuple[int, int, int, int]]:
+    alpha = image.getchannel("A")
+    width, height = image.size
+    seen: set[tuple[int, int]] = set()
+    components: list[tuple[int, int, int, int]] = []
+    pixels = alpha.load()
+
+    for y in range(height):
+        for x in range(width):
+            if (x, y) in seen or pixels[x, y] == 0:
+                continue
+            queue = [(x, y)]
+            seen.add((x, y))
+            xs: list[int] = []
+            ys: list[int] = []
+            while queue:
+                cx, cy = queue.pop()
+                xs.append(cx)
+                ys.append(cy)
+                for nx, ny in ((cx + 1, cy), (cx - 1, cy), (cx, cy + 1), (cx, cy - 1)):
+                    if nx < 0 or ny < 0 or nx >= width or ny >= height:
+                        continue
+                    if (nx, ny) in seen or pixels[nx, ny] == 0:
+                        continue
+                    seen.add((nx, ny))
+                    queue.append((nx, ny))
+            x0, x1 = min(xs), max(xs) + 1
+            y0, y1 = min(ys), max(ys) + 1
+            if (x1 - x0) * (y1 - y0) >= min_area:
+                components.append((x0, y0, x1 - x0, y1 - y0))
+
+    components.sort(key=lambda rect: (rect[1], rect[0], rect[3], rect[2]))
+    return components
+
+
+def load_top_source_parts(path: Path | None, min_area: int) -> list[tuple[str, Image.Image]]:
+    if path is None or not path.exists():
+        return []
+
+    images: list[tuple[str, Image.Image]] = []
+    if path.is_dir():
+        for image_path in sorted(path.iterdir()):
+            if image_path.suffix.lower() not in {".png", ".webp"}:
+                continue
+            images.append((image_path.stem, Image.open(image_path).convert("RGBA")))
+        return images
+
+    top_image = Image.open(path).convert("RGBA")
+    components = find_alpha_components(top_image, min_area=min_area)
+    if not components:
+        return []
+    stem = path.stem
+    for idx, (x, y, width, height) in enumerate(components):
+        images.append((f"{stem}_{idx:03d}", top_image.crop((x, y, x + width, y + height))))
+    return images
+
+
 def add_unique(bucket_map: dict[str, list[list[int]]], bucket: str, coord: list[int]) -> None:
     if coord not in bucket_map[bucket]:
         bucket_map[bucket].append(coord)
@@ -220,6 +289,35 @@ def assign_buckets(
             add_unique(bucket_map, "reference_open_right_wall_coords", coord)
         else:
             add_unique(bucket_map, "reference_horizontal_wall_coords", coord)
+        return
+
+    if role in TOP_SOURCE_ROLES:
+        add_unique(bucket_map, "reference_top_terminal_coords", coord)
+        if count == 1:
+            add_unique(bucket_map, "reference_horizontal_wall_coords", coord)
+            add_unique(bucket_map, "reference_horizontal_hole_bottom_coords", coord)
+            add_unique(bucket_map, "reference_open_left_wall_coords", coord)
+            add_unique(bucket_map, "reference_open_right_wall_coords", coord)
+        else:
+            if is_first:
+                add_unique(bucket_map, "reference_left_terminal_coords", coord)
+                add_unique(bucket_map, "reference_open_left_wall_coords", coord)
+                add_unique(bucket_map, "reference_open_left_corner_coords", coord)
+                add_unique(bucket_map, "reference_open_left_t_coords", coord)
+            elif is_last:
+                add_unique(bucket_map, "reference_right_terminal_coords", coord)
+                add_unique(bucket_map, "reference_open_right_wall_coords", coord)
+                add_unique(bucket_map, "reference_open_right_corner_coords", coord)
+                add_unique(bucket_map, "reference_open_right_t_coords", coord)
+            elif is_middle:
+                add_unique(bucket_map, "reference_horizontal_wall_coords", coord)
+                add_unique(bucket_map, "reference_horizontal_hole_bottom_coords", coord)
+        if "damage" in tag_text or "damaged" in tag_text:
+            add_unique(bucket_map, "reference_damaged_wall_coords", coord)
+        if "moss" in tag_text:
+            add_unique(bucket_map, "reference_moss_wall_coords", coord)
+        if "rubble" in tag_text:
+            add_unique(bucket_map, "reference_rubble_wall_coords", coord)
         return
 
     if role == "left_terminal":
@@ -315,6 +413,7 @@ def main() -> None:
     needs_review: list[dict[str, Any]] = []
     tall_source_count = 0
     passage_sources = load_passage_images(args.passage_dir)
+    top_sources = load_top_source_parts(args.top_source, args.top_min_area)
 
     for part in parts:
         part_id = str(part.get("id", f"part_{len(cell_records):03d}"))
@@ -366,6 +465,26 @@ def main() -> None:
                 }
             )
 
+    for top_part_id, top_part_image in top_sources:
+        part_cells = slice_part_into_cells(top_part_image, args.tile_size, "top")
+        for idx, cell in enumerate(part_cells):
+            cell_index = len(cells)
+            coord = [cell_index % args.columns, int(cell_index / args.columns)]
+            cells.append(cell)
+            assign_buckets(bucket_map, "top_source", ["top"], coord, idx, len(part_cells))
+            cell_records.append(
+                {
+                    "coord": coord,
+                    "source_part": top_part_id,
+                    "source_kind": "wall_top_component",
+                    "role": "top_source",
+                    "tags": ["top"],
+                    "slice_index": idx,
+                    "slice_count": len(part_cells),
+                    "needs_review": False,
+                }
+            )
+
     ensure_runtime_fallbacks(bucket_map)
 
     rows = max(1, math.ceil(len(cells) / args.columns))
@@ -389,6 +508,7 @@ def main() -> None:
         "source_parts_json": str(args.parts_json.as_posix()),
         "source_atlas": str(args.atlas.as_posix()),
         "passage_dir": str(args.passage_dir.as_posix()) if args.passage_dir else "",
+        "top_source": str(args.top_source.as_posix()) if args.top_source else "",
         "source_image": str(args.out_image.as_posix()),
         "source_parts_schema": metadata.get("schema", "unknown"),
         "vertical_window": args.vertical_window,
@@ -398,6 +518,7 @@ def main() -> None:
         "warnings": {
             "tall_source_parts_cropped_to_tile": tall_source_count,
             "passage_sources_loaded": len(passage_sources),
+            "top_source_components_loaded": len(top_sources),
             "missing_semantic_buckets": missing,
         },
     }
@@ -407,6 +528,7 @@ def main() -> None:
     print(f"Emitted {len(cells)} runtime cells")
     print(f"Tall source parts cropped to {args.vertical_window} {args.tile_size}px window: {tall_source_count}")
     print(f"Passage strips loaded: {len(passage_sources)}")
+    print(f"Top-source components loaded: {len(top_sources)}")
     print(f"Needs review: {len(needs_review)}")
     print(f"Missing semantic buckets: {', '.join(missing) if missing else 'none'}")
     print(f"Wrote {args.out_image}")
