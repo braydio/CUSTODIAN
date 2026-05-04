@@ -40,6 +40,7 @@ adding the generated wall source.
 - `custodian/assets/tiles/walls/generated/procgen_wall_source_atlas.png`
 - `tools/tiles/procgen_wall_semantics.json` for optional curated role overrides
 - `custodian/content/tiles/walls/source/wall_passages/` for optional `32px`-tall wall passage strips
+- `custodian/content/tiles/walls/Wall_Tops.png` for optional top-source preprocessing into top-oriented wall cells
 
 ## Outputs
 
@@ -58,8 +59,10 @@ adding the generated wall source.
 5. Slices modules into fixed `32x32` cells.
 6. Optionally slices `32px`-tall passage strips from `custodian/content/tiles/walls/source/wall_passages/`.
 7. Crops tall modules to the bottom `32px` window by default.
-8. Emits a fixed-grid runtime atlas.
-9. Emits mapping buckets compatible with `ProcGenTilemap` exported coordinate arrays.
+8. Optionally alpha-splits a wall-top source sheet through `--top-source`, filters tiny noise islands, and top-aligns
+   connected components into `32x32` runtime cells.
+9. Emits a fixed-grid runtime atlas.
+10. Emits mapping buckets compatible with `ProcGenTilemap` exported coordinate arrays.
 
 No scaling, stretching, rotation, or resampling is performed.
 
@@ -79,6 +82,10 @@ Passage-strip cells are assigned to:
 `reference_passage_wall_coords` is exported on `ProcGenTilemap` and populated in `proc_gen_map.tscn`. Horizontal wall
 runs can pick from this bucket with a deterministic per-run chance. The current default is `30%` for runs of at least
 four wall cells, choosing one non-terminal cell in each selected run.
+
+Wall-top source sheets are processed separately with `--top-source`. The builder alpha-splits the sheet into connected
+components, ignores tiny noise islands, top-aligns each component into `32x32` runtime cells, and routes the result
+through the existing horizontal/terminal buckets while also populating `reference_top_terminal_coords` for future use.
 
 ## Semantic Mapping
 
@@ -131,6 +138,7 @@ python3 tools/tiles/build_procgen_wall_atlas.py \
   --atlas custodian/assets/tiles/walls/generated/procgen_wall_source_atlas.png \
   --semantics tools/tiles/procgen_wall_semantics.json \
   --passage-dir custodian/content/tiles/walls/source/wall_passages \
+  --top-source custodian/content/tiles/walls/Wall_Tops.png \
   --out-image custodian/content/tiles/walls/generated/procgen_wall_tiles_32.png \
   --out-json custodian/content/tiles/walls/generated/procgen_wall_tiles_32.mapping.json \
   --tile-size 32
@@ -141,6 +149,8 @@ Validation result:
 
 - `python3 tools/tiles/build_procgen_wall_atlas.py --help` succeeds.
 - Real builder command succeeds and writes the fixed-grid atlas plus mapping JSON.
+- The top-source validation run also succeeds with `--top-source custodian/content/tiles/walls/Wall_Tops.png`, loading
+  `92` connected components and emitting `355` runtime cells total.
 - `cd custodian && godot --headless --quit` exits `0`.
 - `godot --headless --path custodian --quit` exits `0`.
 - Existing project exit warnings remain: ObjectDB leak warning and `14 resources still in use at exit`.
