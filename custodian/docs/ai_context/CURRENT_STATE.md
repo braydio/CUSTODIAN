@@ -1,6 +1,6 @@
 # CURRENT STATE — CUSTODIAN
 
-Last updated: 2026-05-03
+Last updated: 2026-05-04
 
 ## Runtime Status
 
@@ -20,6 +20,7 @@ Last updated: 2026-05-03
 - Procgen wall presentation is tile-only again: wall visuals come from the active TileSet wall atlas, runtime overlay/endcap passes are disabled, and per-tile runtime collision now matches the visible wall tile footprint.
 - Ambient critter behavior also reads the same world profile so non-combat ambience matches the contracted planet.
 - The command terminal has a multi-page shell with nav rail, action rail, center content pane, transcript, and command line input.
+- The command terminal decursification pass has started: HUD rendering still lives in `game/ui/hud/ui.gd`, while command parsing/dispatch boundary, snapshot aggregation, map preview state/conversion, and planet preview state now have dedicated scripts under `game/ui/terminal/`.
 - Terminal pages are widget-backed for `OVERVIEW`, `STATUS`, `SECTORS`, `POWER`, `DEFENSE`, `SENSORS`, `INCIDENTS`, `ARCHIVE`, `RECON`, `CONTRACTS`, `HISTORY`, and `SETTINGS`.
 - Terminal usability includes keyboard page/action navigation, transcript link jumps, command echo fallback, auto-following text panes, and a scrollable center content column.
 - The in-world command terminal prop plays open/close visual sequences from `res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__activate__omni__4f__48.png`.
@@ -40,7 +41,7 @@ Last updated: 2026-05-03
 - New sprite sheets should use the canonical `<owner>__<layer>__<action_group>__<variant>__<direction>__<frames>f__<frame_size>.png` naming convention, with manifests writing compatibility copies where legacy runtime paths still exist.
 - Successful non-dry-run sprite ingests automatically stage generated outputs, existing `.import` metadata, normalized previews, logs, and archived intake files with `git add`; pass `--no-git-add` when deliberately inspecting without staging.
 - An offline wall tile extraction/composition pipeline now exists under `tools/tiles/`, using canonical source `custodian/content/tiles/walls/source/procgen_wall_modules_source.png` to generate procgen wall source modules, a packed source atlas, metadata, and composed previews under `custodian/assets/tiles/walls/generated/`.
-- Procgen walls now use a generated fixed-grid wall bridge atlas: `tools/tiles/build_procgen_wall_atlas.py` converts extracted wall modules plus optional `32px`-tall passage strips from `custodian/content/tiles/walls/source/wall_passages/` into `custodian/content/tiles/walls/generated/procgen_wall_tiles_32.png` plus semantic mapping JSON, and `proc_gen_map.tscn` points wall rendering at TileSet source ID `12`.
+- Procgen walls now use a generated fixed-grid wall bridge atlas: `tools/tiles/build_procgen_wall_atlas.py` converts extracted wall modules plus optional `32px`-tall passage strips from `custodian/content/tiles/walls/source/wall_passages/` and optional wall-top preprocessing from `custodian/content/tiles/walls/Wall_Tops.png` into `custodian/content/tiles/walls/generated/procgen_wall_tiles_32.png` plus semantic mapping JSON, and `proc_gen_map.tscn` points wall rendering at TileSet source ID `12`. Passage-strip art is exported through `reference_passage_wall_coords` and can appear as deterministic visual variants on ordinary horizontal wall runs; this does not carve walkable openings or change wall collision.
 - Operator melee now has a distinct `attack_light` animation state, while active attack intent resolves through the current `OperatorWeaponDefinition` combat profile.
 - Unarmed/Fists is now a first-class selectable combat profile at `res://game/actors/operator/unarmed_definition.tres`; it is selected with `F`, excluded from normal weapon cycling, toggles back to the last armed weapon, and owns canonical `unarmed_fast` / `unarmed_heavy` primary/secondary intents.
 - Input bindings are intentionally split to avoid combat/build ambiguity: `M1` is `attack_primary`, `Shift+M1` is `attack_secondary`, `Q/E` cycle armed profiles only, `F` toggles Fists, and `B` is build. Runtime prompts should derive from `InputMap` instead of hardcoded keys.
@@ -52,17 +53,20 @@ Last updated: 2026-05-03
 - Unarmed south fast attack is wired as `unarmed_attack_fast_down` from canonical `operator__body__unarmed__fast_01__s__6f__96.png`; this replaces the earlier temporary fallback to the clean melee-light body sheet.
 - Unarmed east run is wired as `unarmed_run_right` from canonical `operator__body__unarmed__run_01__e__5f__96.png`; sprint animation selection now resolves profile-specific unarmed run before falling back to default body run.
 - Unarmed north run is wired as `unarmed_run_up` from canonical `operator__body__unarmed__run_01__n__6f__96.png`.
+- Unarmed south run is wired as `unarmed_run_down` from canonical `operator__body__unarmed__run_01__s__7f__96.png`.
 - Unarmed west run is wired as `unarmed_run_left` from canonical `operator__body__unarmed__run_01__w__5f__96.png`.
 - Unarmed south fast recovery is wired as `unarmed_attack_fast_recovery_down` from canonical `operator__body__unarmed__fast_recovery_01__s__2f__96.png`.
 - Unarmed north fast recovery is wired as `unarmed_attack_fast_recovery_up` plus `unarmed_attack_fast_recovery_fx_up`; east fast recovery was refreshed from a 3-frame source and now plays at `15 FPS` to keep the same short recovery timing.
 - Unarmed east and west fast recoveries are wired from canonical 3-frame sheets; west uses dedicated `unarmed_attack_fast_recovery_left` playback instead of mirroring the east recovery.
 - Unarmed east walk is wired as `unarmed_walk_right` from canonical `operator__body__unarmed__walk_01__e__5f__96.png`.
-- Unarmed south walk is wired as `unarmed_walk` / `unarmed_walk_down` from canonical `operator__body__unarmed__walk_01__s__5f__96.png`; Fists-specific walk selection now runs before the default `walk_down_default` fallback so the placeholder walk cannot override unarmed walking.
+- Unarmed south walk is wired as `unarmed_walk` / `unarmed_walk_down` from canonical `operator__body__unarmed__walk_01__s__6f__96.png`; Fists-specific walk selection now runs before the default `walk_down_default` fallback so the placeholder walk cannot override unarmed walking.
 - Unarmed north walk is wired as `unarmed_walk_up` from canonical `operator__body__unarmed__walk_01__n__7f__96.png`.
 - Unarmed west walk is wired as `unarmed_walk_left` from canonical `operator__body__unarmed__walk_01__w__5f__96.png`.
 - Unarmed west stance is wired as `unarmed_stance_left` from canonical `operator__body__unarmed__stance_01__w__6f__96.png`.
+- Operator ranged east stance is refreshed as `ranged_2h_stance` from canonical `operator__body__ranged__stance_01__e__12f__96.png`.
 - Operator idle facing now preserves the last movement direction after stopping; mouse motion or keyboard aim updates the visual idle facing explicitly, while attacks still resolve from combat aim.
 - Unarmed heavy attacks are wired for all four cardinal directions: east/right body+FX, west/left body+FX, north/up body+FX, and south/down body+FX. North uses canonical 8-frame sheets at `11.5 FPS`; east, west, and south use canonical 7-frame sheets at `10 FPS`.
+- Unarmed death is wired as `unarmed_death` from canonical `operator__body__unarmed__death_01__omni__6f__96.png`; the operator death handler uses it only while Fists are active and falls back to generic `death` otherwise.
 - `AnimationResolver` now resolves authored `_left` clips before mirrored right fallbacks when facing west, and operator playback disables horizontal flip for authored-left melee animations.
 - Sprite runtime directories should retain only the currently mapped sheet for a given owner/layer/action/variant/direction once the replacement has been ingested, imported, and verified; `_pipeline/archive/` keeps the older source/intake history.
 - Melee target readability now prefers enemies inside the current melee/Fists strike range and facing arc, and the target ring switches to a thicker green pulse when the selected enemy is actually hittable by the current preview strike profile.
@@ -76,7 +80,10 @@ Last updated: 2026-05-03
 - Agent task packets are now the required planning/handoff artifact for non-trivial implementation, review, migration, validation, asset workflow, and multi-file docs work.
 - Task packet template: `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`.
 - Active packet directory: `custodian/docs/ai_context/task_packets/`.
-- First active packet: `custodian/docs/ai_context/task_packets/VALIDATION_RECIPES.md`, covering the planned implementation of canonical validation recipes.
+- Validation recipes now live at `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
+- Reusable prompt templates now live under `custodian/docs/ai_context/prompts/`.
+- Agent workflow automation candidates are prioritized in `custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md`.
+- First workflow packet: `custodian/docs/ai_context/task_packets/VALIDATION_RECIPES.md`, covering validation recipes and prompt-template cleanup.
 
 ## Current Runtime Focus
 
@@ -100,7 +107,7 @@ Last updated: 2026-05-03
 
 - Some terminal pages still use placeholder or lightly-derived summaries instead of full live runtime controls/data.
 - Forest Shrumb cognitive modifiers are exposed as getters only; player movement, combat feel, enemy accuracy/tracking, instinct actions, and full inventory UI are intentionally not integrated in v1.
-- Terminal rendering still lives largely inside `custodian/game/ui/hud/ui.gd` and should eventually be split into dedicated page/controller scripts.
+- Terminal page rendering still lives largely inside `custodian/game/ui/hud/ui.gd`; command routing, snapshot aggregation, and preview boundaries have been split, but page renderers/theme resources still need follow-up extraction.
 - The project still exits headless validation with existing object/resource leak warnings that have not yet been cleaned up.
 - Broader infrastructure depth, save/load, and full long-horizon base systems are still incomplete relative to full doctrine scope.
 - The remaining procgen handoff gap is live runtime verification: camera bounds, cursor aim, reachable anchors, and enemy navigation still need an end-to-end boot test in Godot.
@@ -116,6 +123,9 @@ Last updated: 2026-05-03
 - Mandatory local routing primer: `custodian/AGENTS.md`.
 - Agent task packet template: `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`.
 - Agent task packet directory: `custodian/docs/ai_context/task_packets/`.
+- Validation recipes: `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
+- Reusable prompt templates: `custodian/docs/ai_context/prompts/`.
+- Agent automation backlog: `custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md`.
 - Active runtime docs: `custodian/docs/*`.
 - Godot implementation specs: `design/`.
 - Locked doctrine: `python-sim/design/MASTER_DESIGN_DOCTRINE.md`.

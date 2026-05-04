@@ -9,15 +9,17 @@ Review documentation for drift against the live runtime in: **[target_system or 
 ## Rules
 - Preserve deterministic fixed-step simulation.
 - Keep rendering/UI separate from simulation authority.
+- Create or update a task packet when the review produces follow-up implementation work.
 - Update `CURRENT_STATE.md` if behavior changes.
 - Update `FILE_INDEX.md` if ownership or entrypoints change.
-- Run feasible Godot validation.
+- Follow `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
 
 ## Context Files
-- `custodian/docs/ai_context/AGENTS.md` — Coding rules and conventions
+- `custodian/AGENTS.md` — Local routing and working rules
 - `custodian/docs/ai_context/CURRENT_STATE.md` — Live runtime state (primary drift check)
 - `custodian/docs/ai_context/FILE_INDEX.md` — File ownership map
 - `custodian/docs/ai_context/CONTEXT.md` — Full context overview
+- `custodian/docs/ai_context/VALIDATION_RECIPES.md` — Validation command guide
 - Design docs: `design/` — Original specifications
 
 ## Drift Check Process

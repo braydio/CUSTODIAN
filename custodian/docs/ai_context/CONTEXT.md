@@ -17,7 +17,7 @@ CUSTODIAN is a Godot-native tactical base-defense game with an embodied operator
 - Engine: Godot 4.x
 - Main scene: `res://scenes/game.tscn`
 - Runtime authority: Godot only
-- Active command shell: HUD terminal in `custodian/game/ui/hud/ui.gd`
+- Active command shell: HUD terminal in `custodian/game/ui/hud/ui.gd`, with terminal helper modules under `custodian/game/ui/terminal/`
 - Contract/runtime coupling: contract planet generation feeds procgen world generation through a shared world profile
 - Input prompts: interaction UI should derive from `InputMap`, not hardcoded keys
 - Operator combat selection: Fists/unarmed is a first-class `OperatorWeaponDefinition` profile selected with `toggle_unarmed`; normal weapon cycling excludes Fists and only cycles armed profiles.
@@ -30,7 +30,7 @@ CUSTODIAN is a Godot-native tactical base-defense game with an embodied operator
 - World layer: procgen tilemap/runtime world systems
 - Simulation layer: deterministic Godot runtime systems
 - Cognitive layer: autoloaded inventory ledger and cognitive state values expose drop/combat modifier getters, with only pickup/drop feedback wired in v1
-- UI layer: HUD + command terminal pages/widgets
+- UI layer: HUD + command terminal pages/widgets; terminal command, snapshot, map preview, and planet preview helpers live under `game/ui/terminal/`
 - Actor layer: operator, enemies, structures, defenses, ambient entities
 
 ## Working Rules
@@ -39,6 +39,8 @@ CUSTODIAN is a Godot-native tactical base-defense game with an embodied operator
 - Start all local work by reading `custodian/AGENTS.md`, then this context pack.
 - For non-trivial implementation, review, migration, validation, asset workflow, or multi-file docs work, create or update an agent task packet from `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` under `custodian/docs/ai_context/task_packets/`.
 - Keep task packets current as scope, assumptions, blockers, validation, or documentation requirements change.
+- Use `custodian/docs/ai_context/VALIDATION_RECIPES.md` for validation command selection.
+- Use `custodian/docs/ai_context/prompts/` for reusable task prompts, and confirm prompt paths before acting.
 - Keep deterministic simulation separate from rendering/UI logic.
 - When runtime behavior changes materially, update this directory alongside the relevant design/runtime docs.
 - Do not silently shift authority back to Python-era systems or docs.
@@ -60,6 +62,7 @@ On significant architecture or behavior changes, update:
 - `custodian/docs/ai_context/CONTEXT.md`
 - `custodian/docs/ai_context/FILE_INDEX.md`
 - relevant files under `custodian/docs/ai_context/task_packets/`
+- relevant files under `custodian/docs/ai_context/prompts/`
 - `custodian/AGENTS.md` when local routing, migration flow, or operating rules change
 
 Optionally also update legacy changelog/devlog material for historical continuity.

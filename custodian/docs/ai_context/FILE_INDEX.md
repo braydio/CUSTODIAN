@@ -1,14 +1,20 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-03
+Last updated: 2026-05-04
 
 ## Local Entry And Workflow
 
 - `custodian/AGENTS.md` — mandatory local primer for routing, context retrieval, docs-drift review, and migration execution
 - `custodian/docs/AGENT_MIGRATION_PLAYBOOK.md` — detailed migration and drift-remediation workflow
 - `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` — template for non-trivial agent implementation, review, migration, validation, asset workflow, and multi-file docs work
+- `custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` — prioritized automation/script backlog for agent workflow validation and safety checks
+- `custodian/docs/ai_context/VALIDATION_RECIPES.md` — canonical validation command selection guide for docs, Godot, asset pipeline, tile pipeline, and review work
+- `custodian/docs/ai_context/prompts/README.md` — reusable agent prompt index and usage rules
 - `custodian/docs/ai_context/task_packets/README.md` — task packet workflow and active packet index
-- `custodian/docs/ai_context/task_packets/VALIDATION_RECIPES.md` — active packet for implementing canonical validation recipes
+- `custodian/docs/ai_context/task_packets/AGENT_WORKFLOW_AUTOMATION.md` — completed packet for task-packet next steps, ownership rules, and automation backlog
+- `custodian/docs/ai_context/task_packets/VALIDATION_RECIPES.md` — completed packet for canonical validation recipes and prompt-template cleanup
+- `custodian/docs/ai_context/task_packets/PROCGEN_WALL_PASSAGE_VISIBILITY.md` — completed packet for generated wall passage visibility on normal horizontal procgen wall runs
+- `custodian/docs/ai_context/task_packets/PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` — completed packet for wall-top preprocessing support in the atlas builder
 
 ## Active Runtime Entry
 
@@ -27,7 +33,11 @@ Last updated: 2026-05-03
 - `custodian/game/actors/items/cognitive_pickup.tscn` — generic pickup scene for cognitive item drops
 - `custodian/game/actors/items/cognitive_pickup.gd` — pickup flow that increments `InventoryManager`, applies `CognitiveState`, animates the 4-frame item sheet, and emits popup/log feedback
 - `custodian/game/actors/items/shrumb_dropper.gd` — reusable Forest Shrumb cognitive drop table component
-- `custodian/game/ui/hud/ui.gd` — active command terminal and essentials-first HUD/debug visibility logic
+- `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, page rendering orchestration, and essentials-first HUD/debug visibility logic
+- `custodian/game/ui/terminal/terminal_command_router.gd` — command parsing, validation, refresh policy, and dispatch boundary for the HUD terminal
+- `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems
+- `custodian/game/ui/terminal/terminal_map_preview.gd` — terminal minimap preview state and click-to-world conversion boundary
+- `custodian/game/ui/terminal/terminal_planet_preview.gd` — terminal globe viewport, rotation, zoom, and preview input handling
 - `custodian/game/actors/operator/operator.gd` — operator movement, queued armed/Fists profile selection, ranged fire, block, and light/fast/heavy melee attack runtime logic
 - `custodian/game/actors/operator/operator_weapon_definition.gd` — weapon/combat profile resource schema, including intent and movement/combat multipliers
 - `custodian/game/actors/operator/unarmed_definition.tres` — Fists/unarmed combat profile used by `toggle_unarmed`
@@ -59,6 +69,7 @@ Last updated: 2026-05-03
 - `tools/tiles/procgen_wall_semantics.json` — optional curated role override file for generated wall module semantics
 - `custodian/content/tiles/walls/source/procgen_wall_modules_source.png` — canonical reviewed source sheet for generated procgen wall modules
 - `custodian/content/tiles/walls/source/wall_passages/` — optional `32px`-tall wall passage strips sliced directly into procgen passage/hole buckets
+- `custodian/content/tiles/walls/Wall_Tops.png` — wall-top source sheet that is alpha-split by the atlas builder with `--top-source`
 - `custodian/assets/tiles/walls/generated/procgen_wall_source_parts.json` — stable intermediate metadata for extracted procgen wall source modules
 - `custodian/assets/tiles/walls/generated/procgen_wall_source_atlas.png` — stable intermediate packed atlas for extracted procgen wall source modules
 - `custodian/content/tiles/walls/generated/procgen_wall_tiles_32.png` — generated fixed-grid wall atlas used by procgen TileSet source ID `12`
@@ -72,6 +83,7 @@ Last updated: 2026-05-03
 - `custodian/content/sprites/items/faint_recollection.png` — animated 4-frame pickup sheet for Faint Recollection
 - `custodian/content/sprites/items/faded_instinct.png` — animated 4-frame pickup sheet currently used for `residual_instinct`
 - `custodian/content/sprites/items/ancient_bearing.png` — animated 4-frame pickup sheet for Ancient Bearing
+- `custodian/content/ui/terminal/README.md` — intended terminal PNG asset paths for frames, overlays, icons, pips, and button skins
 
 ## Active Prop Content
 
@@ -98,6 +110,9 @@ Last updated: 2026-05-03
 - `custodian/docs/ai_context/CONTEXT.md` — project primer and working rules
 - `custodian/docs/ai_context/FILE_INDEX.md` — this file
 - `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` — reusable task packet template
+- `custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` — recommended automation scripts and implementation order
+- `custodian/docs/ai_context/VALIDATION_RECIPES.md` — validation command recipes and selection rules
+- `custodian/docs/ai_context/prompts/` — reusable prompt templates for common agent tasks
 - `custodian/docs/ai_context/task_packets/` — active and completed task-scoped agent packets
 - `custodian/AGENTS.md` — first-stop local operating guide for all work under `custodian/`
 - `custodian/docs/ARCHITECTURE.md` — runtime architecture reference

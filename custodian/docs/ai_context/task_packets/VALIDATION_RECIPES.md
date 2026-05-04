@@ -2,18 +2,18 @@
 
 ## Packet Status
 
-- Status: ready
+- Status: complete
 - Owner: agent
 - Created: 2026-05-03
 - Last updated: 2026-05-03
 
 ## Task
 
-Add a canonical validation recipes document for Godot/runtime/docs/asset-pipeline validation and wire it into the active agent context.
+Add a canonical validation recipes document for Godot/runtime/docs/asset-pipeline validation, repair the related agent prompt templates, and wire the agent workflow docs into the active context pack.
 
 ## Outcome
 
-Agents can quickly find the expected validation commands and choose the right validation level for doc-only changes, Godot runtime changes, scene/load checks, sprite pipeline work, asset/path changes, and docs-drift reviews.
+Agents can quickly find expected validation commands, choose the right validation level for common work types, discover reusable prompt templates, and avoid stale paths or unsafe commit/staging guidance.
 
 ## Authority
 
@@ -30,6 +30,7 @@ Agents can quickly find the expected validation commands and choose the right va
   - `custodian/docs/ai_context/CURRENT_STATE.md`
   - `custodian/docs/ai_context/CONTEXT.md`
   - `custodian/docs/ai_context/FILE_INDEX.md`
+  - `custodian/docs/ai_context/prompts/`
   - `custodian/AGENTS.md`
   - `AGENTS.md`
 - Files or folders expected to be read but not changed:
@@ -42,6 +43,7 @@ Agents can quickly find the expected validation commands and choose the right va
   - Godot scene edits
   - New test harness implementation
   - Asset regeneration
+  - Git commits or broad staging actions
 
 ## Constraints
 
@@ -54,14 +56,15 @@ Agents can quickly find the expected validation commands and choose the right va
 ## Implementation Plan
 
 1. Create `custodian/docs/ai_context/VALIDATION_RECIPES.md` with command recipes and selection guidance.
-2. Link the recipes from `custodian/AGENTS.md`, `AGENTS.md`, `CONTEXT.md`, and `FILE_INDEX.md`.
-3. Update `CURRENT_STATE.md` to record the new agent workflow artifact.
-4. Validate paths and references with `rg`/shell reads.
+2. Add or update prompt-template index material and fix stale prompt paths.
+3. Link the recipes and prompts from `custodian/AGENTS.md`, `AGENTS.md`, `CONTEXT.md`, and `FILE_INDEX.md`.
+4. Update `CURRENT_STATE.md` to record the new agent workflow artifacts.
+5. Validate paths and references with `rg`/shell reads.
 
 ## Acceptance
 
 - Runtime behavior: unchanged.
-- Documentation: validation recipes are discoverable from root routing, local routing, and the AI context pack.
+- Documentation: validation recipes and prompt templates are discoverable from root routing, local routing, and the AI context pack.
 - Path/reference validation: all referenced paths exist or are explicitly identified as future commands/examples.
 - Manual validation: read the new docs and verify the recipe selection rules are clear.
 - Automated/headless validation: not required for this doc-only packet.
@@ -76,6 +79,14 @@ Agents can quickly find the expected validation commands and choose the right va
 
 ## Completion Notes
 
-- Implemented:
-- Validated:
-- Deferred:
+- Implemented: added `custodian/docs/ai_context/VALIDATION_RECIPES.md`, prompt index, runtime review prompt, stale prompt path fixes, safer git prompt rules, agent work modes, `Next Agent Slice` guidance, and routing/index updates.
+- Validated: checked referenced prompt paths, validation docs, task packet links, and stale path patterns with RTK-backed shell reads/searches.
+- Deferred: no automated Godot validation was run because this packet only changed documentation and agent workflow guidance.
+
+## Next Steps
+
+- Next action: consider adding lightweight validation scripts from `custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md`.
+- Best starting files: `custodian/docs/ai_context/VALIDATION_RECIPES.md`, `custodian/docs/ai_context/prompts/`, `custodian/docs/ai_context/task_packets/`.
+- Required context: read `custodian/AGENTS.md` and `custodian/docs/ai_context/FILE_INDEX.md`.
+- Validation to run: stale-path search plus any new script dry-run.
+- Blockers or open questions: none for this completed packet.

@@ -9,15 +9,17 @@ Inspect and document the handoff between: **[procgen_system]** → **[target_sys
 ## Rules
 - Preserve deterministic fixed-step simulation.
 - Keep rendering/UI separate from simulation authority.
+- Create or update a task packet for non-trivial work.
 - Update `CURRENT_STATE.md` if behavior changes.
 - Update `FILE_INDEX.md` if ownership or entrypoints change.
-- Run feasible Godot validation.
+- Follow `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
 
 ## Context Files
-- `custodian/docs/ai_context/AGENTS.md` — Coding rules and conventions
+- `custodian/AGENTS.md` — Local routing and working rules
 - `custodian/docs/ai_context/CURRENT_STATE.md` — Live runtime state
 - `custodian/docs/ai_context/FILE_INDEX.md` — File ownership map
 - `custodian/docs/ai_context/CONTEXT.md` — Full context overview
+- `custodian/docs/ai_context/VALIDATION_RECIPES.md` — Validation command guide
 - Procgen docs: `design/` — Procedural generation specifications
 
 ## Procgen Systems to Inspect

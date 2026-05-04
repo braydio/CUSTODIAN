@@ -1,5 +1,7 @@
 # AGENT TASK PACKET TEMPLATE
 
+Template last updated: 2026-05-03
+
 Use this template before implementation, review, migration, or docs work when the task is more than a trivial one-line edit.
 
 Copy this file into `custodian/docs/ai_context/task_packets/` and name the copy after the task, for example `VALIDATION_RECIPES.md`.
@@ -8,6 +10,7 @@ Copy this file into `custodian/docs/ai_context/task_packets/` and name the copy 
 
 - Status: draft
 - Owner: agent
+- Agent/session:
 - Created:
 - Last updated:
 
@@ -18,6 +21,14 @@ Status values:
 - `in_progress` - implementation is active
 - `blocked` - waiting on user input, assets, tooling, or design authority
 - `complete` - implementation, docs, and validation are done
+
+Ownership rules:
+
+- Reuse an existing packet only when its task scope matches the current task.
+- Create a new packet when the current task has a different scope, even if it touches adjacent docs or files.
+- Do not edit another agent's in-progress packet unless the user asks, the packet is the current task surface, or the change is required to resolve direct conflict with your task.
+- Record a stable identifier in `Agent/session`, such as tool name plus date/time or another user-visible handle.
+- Update `Last updated` on every packet edit.
 
 ## Task
 
@@ -76,3 +87,11 @@ What should be true when this packet is complete?
 - Implemented:
 - Validated:
 - Deferred:
+
+## Next Steps
+
+- Next action:
+- Best starting files:
+- Required context:
+- Validation to run:
+- Blockers or open questions:
