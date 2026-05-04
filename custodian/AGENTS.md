@@ -23,7 +23,8 @@ Read these in order before making changes:
 3. `docs/ai_context/CONTEXT.md` for project rules and handoff context
 4. `docs/ai_context/FILE_INDEX.md` for high-signal file ownership and entrypoints
 5. `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` and any relevant packet in `docs/ai_context/task_packets/` for non-trivial work
-6. Relevant runtime/docs files for the feature or asset area you are touching
+6. `docs/ai_context/VALIDATION_RECIPES.md` and relevant prompt templates in `docs/ai_context/prompts/`
+7. Relevant runtime/docs files for the feature or asset area you are touching
 
 If a conflict appears, prefer this authority order:
 
@@ -53,6 +54,9 @@ Use this map to land on the right material fast:
 | Asset layout or content placement | `docs/ASSET_LAYOUT_CONVENTION.md` | nearby `README.md` files in `content/` |
 | Scene/runtime structure | `docs/SCENE_HIERARCHY.md` | `scenes/`, `game/`, `project.godot` |
 | Migration or drift cleanup | `docs/AGENT_MIGRATION_PLAYBOOK.md` | this primer, `docs/ai_context/*` |
+| Validation command selection | `docs/ai_context/VALIDATION_RECIPES.md` | relevant task packet acceptance checks |
+| Reusable agent prompts | `docs/ai_context/prompts/README.md` | task-specific prompt template |
+| Agent workflow automation | `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` | `tools/agent/` when scripts exist |
 
 ## Reusable Context Fetch Pipeline
 
@@ -66,11 +70,13 @@ Before editing, run this retrieval pipeline:
    Read `docs/ai_context/CURRENT_STATE.md` and `docs/ai_context/FILE_INDEX.md`.
 4. Check task packet requirements.
    For non-trivial implementation, review, migration, validation, asset workflow, or multi-file docs work, create or update a packet from `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` under `docs/ai_context/task_packets/`.
-5. Pull adjacent context.
+5. Pull validation and prompt guidance.
+   Read `docs/ai_context/VALIDATION_RECIPES.md` and any matching prompt template in `docs/ai_context/prompts/`.
+6. Pull adjacent context.
    Read neighboring docs, scene files, READMEs, and directly related scripts/assets.
-6. Pull historical context only if still unresolved.
+7. Pull historical context only if still unresolved.
    Use `../python-sim/` or archived docs only to explain intent, not to override active authority.
-7. Record any mismatch immediately.
+8. Record any mismatch immediately.
    If names, paths, behavior, or ownership disagree, treat that as drift and remediate before or alongside the main change.
 
 Minimum adjacency check:
@@ -80,6 +86,7 @@ Minimum adjacency check:
 - one downstream runtime or content consumer
 - one neighboring doc or index that would become stale if ignored
 - the relevant task packet when the work requires one
+- the validation recipe and prompt template when the work matches one
 
 ## Agent Task Packets
 
@@ -104,6 +111,34 @@ Task packet workflow:
 5. Mark the packet `complete` only after implementation, documentation updates, feasible validation, and completion notes are done.
 
 Task packets do not replace design docs. Use `../design/` as implementation authority, and use task packets to make the current agent slice explicit.
+
+## Prompt Templates And Validation
+
+Reusable prompts live in `docs/ai_context/prompts/`.
+
+Use these agent work modes:
+
+- Design Audit: compare active design docs, AI context, and runtime files for drift before implementation.
+- Implementation: make the scoped change, update active docs, and run feasible validation.
+- Review: inspect diffs for behavior regressions, determinism risks, stale paths, missing validation, and unsafe workflow assumptions.
+
+Use these prompts to standardize recurring agent work:
+
+- runtime feature implementation
+- runtime change review
+- docs-drift review
+- sprite pipeline updates
+- procgen handoff inspection
+- combat feel tuning
+- git state and commit preparation
+
+Validation recipes live in `docs/ai_context/VALIDATION_RECIPES.md`.
+
+Use the recipes to choose the narrowest command that proves the change. Prefer RTK wrappers for compact output when they support the command shape, and use raw commands when RTK argument rewriting would hide or alter needed output.
+
+When editing a design doc that will drive follow-up implementation, add or refresh a `Next Agent Slice` section with goal, files, constraints, and acceptance checks. This keeps design docs usable as executable work queues without replacing task packets.
+
+Planned automation for these workflows is tracked in `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md`. Add scripts only when they support a listed check or update the backlog with the new rationale.
 
 ## Docs Drift Review
 
