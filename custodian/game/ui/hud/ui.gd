@@ -235,8 +235,8 @@ var _terminal_map_render_bounds := {}
 var _terminal_map_hover_world_pos := Vector2.ZERO
 var _terminal_current_page := "OVERVIEW"
 var _terminal_page_buttons: Dictionary = {}
-var _terminal_nav_buttons: Array[BaseButton] = []
-var _terminal_action_buttons: Array[BaseButton] = []
+var _terminal_nav_buttons: Array = []
+var _terminal_action_buttons: Array = []
 var _terminal_main_scroll: ScrollContainer = null
 var _terminal_fabrication_queue: Array[String] = []
 var _terminal_policy_preset := "BALANCED"
@@ -341,10 +341,6 @@ func _ready():
 	_bind_turret_placement_ui()
 	_refresh_terminal_page_buttons()
 
-func _setup_terminal_main_scroll() -> void:
-	if terminal_map_column == null:
-		return
-
 func _create_debug_panel() -> void:
 	# Create debug panel for inventory and cognitive state
 	var debug_panel := VBoxContainer.new()
@@ -382,7 +378,7 @@ func _create_debug_panel() -> void:
 	
 	# Add to scene
 	if get_tree().current_scene:
-		get_tree().current_scene.add_child.call_deferred(debug_panel)
+		get_tree().current_scene.call_deferred("add_child", debug_panel)
 	
 	# Store references
 	set_meta("debug_panel", debug_panel)
@@ -412,7 +408,7 @@ func _create_debug_panel_style() -> StyleBoxFlat:
 func _setup_terminal_main_scroll() -> void:
 	if terminal_map_column == null:
 		return
-	var content_nodes: Array[Control] = [
+	var content_nodes: Array = [
 		terminal_planet_title_label,
 		terminal_planet_preview,
 		terminal_map_preview_title_label,
@@ -616,7 +612,7 @@ func _process(delta):
 			if ammo_label:
 				var magazine_size = int(ws.get("ammo_standard_magazine_size", 0))
 				var loaded = int(ws.get("ammo_standard_loaded", 0))
-				var reserve = int(ws.ammo_standard)
+				var reserve = int(ws.get("ammo_standard", 0))
 				var reloading = bool(ws.get("reloading", false))
 				
 				var ammo_text = "AMMO: %d/%d +%d" % [loaded, magazine_size, reserve]
@@ -627,13 +623,10 @@ func _process(delta):
 					ammo_label.text = ammo_text
 					_last_ammo_text = ammo_text
 			if cooldown_bar and cooldown_label:
-				var total = max(0.001, float(ws.cooldown_total))
-				var remaining = max(0.0, float(ws.cooldown_remaining))
-				var pct = clamp((remaining / total) * 100.0, 0.0, 100.0)
-				if abs(pct - _last_cooldown_pct) > 0.1:
-					cooldown_bar.value = pct
-					_last_cooldown_pct = pct
-				var cd_text = "COOLDOWN: READY" if remaining <= 0.001 else "COOLDOWN: %.2fs" % remaining
+				var cooldown_total = max(0.001, float(ws.get("cooldown_total", 0.001)))
+				var cooldown_remaining = max(0.0, float(ws.get("cooldown_remaining", 0.0)))
+				var pct = clamp((cooldown_remaining / cooldown_total) * 100.0, 0.0, 100.0)
+				var cd_text = "COOLDOWN: READY" if cooldown_remaining <= 0.001 else "COOLDOWN: %.2fs" % cooldown_remaining
 				if cd_text != _last_cooldown_text:
 					cooldown_label.text = cd_text
 					_last_cooldown_text = cd_text
@@ -668,10 +661,10 @@ func _process(delta):
 	if not _main_hud_hidden and supply_drop_label:
 		var supply_manager = get_node_or_null("/root/GameRoot/SupplyDropManager")
 		if supply_manager and supply_manager.has_method("get_status"):
-			var status = supply_manager.get_status()
-			if status.get("active", false):
-				var next_drop = status.get("next_drop_in", -1.0)
-				var drops = status.get("drops_queued", 0)
+			var supply_status = supply_manager.get_status()
+			if supply_status.get("active", false):
+				var next_drop = supply_status.get("next_drop_in", -1.0)
+				var drops = supply_status.get("drops_queued", 0)
 				if next_drop > 0:
 					supply_drop_label.text = "SUPPLY DROP: %.0fs (%d queued)" % [next_drop, drops]
 					supply_drop_label.visible = true
@@ -889,16 +882,17 @@ func open_command_terminal(service_url: String = ""):
 		terminal_background.generate_new()
 	if terminal_target_label:
 		terminal_target_label.text = "SIM: %d TPS | THREAT: STABLE | POWER: -- | LINKING" % Engine.physics_ticks_per_second
-	if not _terminal_ready:
-		_terminal_ready = true
+	if not _terminal_boot_started:
+		_terminal_ready = false
 		_terminal_boot_started = true
 		_terminal_lines.clear()
 		_terminal_log_entries.clear()
 		_terminal_command_queue.clear()
 		_terminal_command_queue_tick = 0.0
-		_append_terminal_line("CUSTODIAN COMMAND INTERFACE", "success")
+		_run_terminal_boot_sequence()
+	else:
+		_terminal_ready = true
 		_append_terminal_line("LOCAL SNAPSHOT MODE ACTIVE", "info")
-		_append_terminal_line("Type HELP for local commands.", "info")
 	_set_terminal_input_enabled(true)
 	_refresh_snapshot()
 	if terminal_poll_timer:
@@ -984,7 +978,8 @@ func _input(event: InputEvent) -> void:
 			_planet_preview_drag_active = button_event.pressed
 			_planet_preview_drag_last_pos = button_event.position
 			if button_event.pressed:
-				terminal_input.grab_focus()
+				if terminal_input:
+					terminal_input.grab_focus()
 			else:
 				_planet_preview_spin_velocity.x = clamp(_planet_preview_spin_velocity.x, -2.2, 2.2)
 				_planet_preview_spin_velocity.y = clamp(_planet_preview_spin_velocity.y, -4.2, 4.2)
@@ -1006,7 +1001,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
 		if mouse_event.pressed:
-			terminal_input.grab_focus()
+			if terminal_input:
+				terminal_input.grab_focus()
 		return
 	if not (event is InputEventKey):
 		return
@@ -1022,7 +1018,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	var typed_text := key_event.as_text_key_label()
 	if typed_text.is_empty():
 		return
-	terminal_input.grab_focus()
+	if terminal_input:
+		terminal_input.grab_focus()
 	if typed_text.length() == 1:
 		var next_text: String = terminal_input.text + typed_text
 		terminal_input.text = next_text
@@ -1035,7 +1032,8 @@ func _set_terminal_input_enabled(enabled: bool):
 	terminal_input.editable = enabled
 	terminal_input.placeholder_text = "ENTER COMMAND" if enabled else "TERMINAL INPUT LOCKED"
 	if enabled and _terminal_open:
-		terminal_input.grab_focus()
+		if terminal_input:
+			terminal_input.grab_focus()
 
 
 func _ensure_terminal_input_focus():
@@ -1051,7 +1049,8 @@ func _ensure_terminal_input_focus():
 		return
 	if focus_owner != null and terminal_panel != null and terminal_panel.is_ancestor_of(focus_owner):
 		return
-	terminal_input.grab_focus()
+	if terminal_input:
+		terminal_input.grab_focus()
 
 
 func _focus_terminal_button_group(buttons: Array[BaseButton], forward: bool) -> void:
@@ -2533,14 +2532,14 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 			_append_terminal_line("CONTRACT NONE", "warning")
 		return true
 	if cmd_upper == "START ASSAULT":
-		var game_state := _get_game_state()
-		if game_state == null:
+		var assault_game_state := _get_game_state()
+		if assault_game_state == null:
 			_append_terminal_line("CONTRACT STATE UNAVAILABLE", "warning")
 			return true
-		if game_state.start_assault():
+		if assault_game_state.start_assault():
 			_append_terminal_line("ASSAULT INITIATED. DEFEND THE COMPOUND.", "critical")
 		else:
-			_append_terminal_line("ASSAULT NOT AVAILABLE IN PHASE %s" % game_state.get_phase_name(), "warning")
+			_append_terminal_line("ASSAULT NOT AVAILABLE IN PHASE %s" % assault_game_state.get_phase_name(), "warning")
 		return true
 	if cmd_upper == "HELP ASSAULT":
 		_append_terminal_line("ASSAULT COMMANDS: STATUS FULL, WAVE, ENEMIES, SECTORS, START ASSAULT", "info")
@@ -2584,36 +2583,36 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 			_append_terminal_line("TIME RATE SET -> %s // LIVE SIMULATION" % _format_terminal_rate(Engine.time_scale), "success")
 			_refresh_snapshot()
 			return true
-		"HARDEN":
-			var requested_target := str(args[0]).to_upper() if not args.is_empty() else "COMMAND"
-			var harden_target := _resolve_terminal_sector_name(requested_target)
-			if harden_target.is_empty():
-				_append_terminal_line("UNKNOWN HARDEN TARGET %s" % requested_target, "warning")
-				return true
-			_terminal_highlight_sector = harden_target
-			var power_system := get_node_or_null("/root/GameRoot/Power")
-			if power_system != null and power_system.has_method("set_sector_priority"):
-				power_system.call("set_sector_priority", harden_target, 100)
-			var repair_result: Dictionary = {}
-			if power_system != null and power_system.has_method("apply_emergency_repair"):
-				var response = power_system.call("apply_emergency_repair", harden_target)
-				if response is Dictionary:
-					repair_result = response
-			_set_terminal_page("DEFENSE")
-			if repair_result.is_empty():
-				_append_terminal_line("HARDENED %s // PRIORITY RAISED TO CRITICAL" % harden_target, "success", harden_target)
-			elif bool(repair_result.get("available", false)) and str(repair_result.get("reason", "")) == "APPLIED":
-				_append_terminal_line("HARDENED %s // REPAIRED +%.1f HP // PRIORITY CRITICAL" % [
-					harden_target,
-					float(repair_result.get("repair_amount", 0.0)),
-				], "success", harden_target)
-			else:
-				_append_terminal_line("HARDENED %s // PRIORITY CRITICAL // REPAIR %s" % [
-					harden_target,
-					str(repair_result.get("reason", "UNAVAILABLE")),
-				], "warning", harden_target)
-			_refresh_snapshot()
+	"HARDEN":
+		var requested_target := str(args[0]).to_upper() if not args.is_empty() else "COMMAND"
+		var harden_target := _resolve_terminal_sector_name(requested_target)
+		if harden_target.is_empty():
+			_append_terminal_line("UNKNOWN HARDEN TARGET %s" % requested_target, "warning")
 			return true
+		_terminal_highlight_sector = harden_target
+		var harden_power_system := get_node_or_null("/root/GameRoot/Power")
+		if harden_power_system != null and harden_power_system.has_method("set_sector_priority"):
+			harden_power_system.call("set_sector_priority", harden_target, 100)
+		var harden_repair_result: Dictionary = {}
+		if harden_power_system != null and harden_power_system.has_method("apply_emergency_repair"):
+			var response = harden_power_system.call("apply_emergency_repair", harden_target)
+			if response is Dictionary:
+				harden_repair_result = response
+		_set_terminal_page("DEFENSE")
+		if harden_repair_result.is_empty():
+			_append_terminal_line("HARDENED %s // PRIORITY RAISED TO CRITICAL" % harden_target, "success", harden_target)
+		elif bool(harden_repair_result.get("available", false)) and str(harden_repair_result.get("reason", "")) == "APPLIED":
+			_append_terminal_line("HARDENED %s // REPAIRED +%.1f HP // PRIORITY CRITICAL" % [
+				harden_target,
+				float(harden_repair_result.get("repair_amount", 0.0)),
+			], "success", harden_target)
+		else:
+			_append_terminal_line("HARDENED %s // PRIORITY CRITICAL // REPAIR %s" % [
+				harden_target,
+				str(harden_repair_result.get("reason", "UNAVAILABLE")),
+			], "warning", harden_target)
+		_refresh_snapshot()
+		return true
 		"RESET":
 			_reset_terminal_local_state(false)
 			_append_terminal_line("TERMINAL STATE RESET // OVERLAYS CLEARED // RATE %s" % _format_terminal_rate(Engine.time_scale), "success")
@@ -2718,12 +2717,12 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 				_append_terminal_line("TURRETS: GUNNER(10) BLASTER(15) REPEATER(20) SNIPER(25)", "info")
 				_append_terminal_line("USE: TURRET GUNNER", "info")
 				return true
-			var turret_type := str(args[0]).to_lower()
+			var turret_place_type := str(args[0]).to_lower()
 			if not turret_placement.has_method("enter_placement_mode"):
 				_append_terminal_line("TURRET PLACEMENT API MISSING", "warning")
 				return true
-			if turret_placement.call("enter_placement_mode", turret_type):
-				_append_terminal_line("TURRET PLACEMENT ACTIVE // %s" % turret_type.to_upper(), "success")
+			if turret_placement.call("enter_placement_mode", turret_place_type):
+				_append_terminal_line("TURRET PLACEMENT ACTIVE // %s" % turret_place_type.to_upper(), "success")
 				_append_terminal_line("LEFT CLICK IN WORLD TO PLACE // B CYCLES TYPES // Q OR ESC TO EXIT", "info")
 			else:
 				_append_terminal_line("TURRET PLACEMENT FAILED // CHECK MATERIALS OR CAP", "warning")
@@ -2749,22 +2748,22 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 				return true
 			_append_terminal_line("UNKNOWN OVERLAY", "warning")
 			return true
-		"ALLOCATE_DEFENSE":
-			var sector_name := str(params.get("sector", "COMMAND")).to_upper()
-			var weight := str(params.get("weight", "MEDIUM")).to_upper()
-			var resolved_sector := _resolve_terminal_sector_name(sector_name)
-			if resolved_sector.is_empty():
-				_append_terminal_line("UNKNOWN SECTOR %s" % sector_name, "warning")
-				return true
-			_terminal_highlight_sector = resolved_sector
-			var priority_value := _resolve_power_priority(weight)
-			var power_system := get_node_or_null("/root/GameRoot/Power")
-			if power_system != null and power_system.has_method("set_sector_priority"):
-				power_system.call("set_sector_priority", resolved_sector, priority_value)
-			_set_terminal_page("DEFENSE")
-			_append_terminal_line("DEFENSE PRIORITY UPDATED %s -> %s (%d)" % [resolved_sector, weight, priority_value], "success", resolved_sector)
-			_refresh_snapshot()
+	"ALLOCATE_DEFENSE":
+		var defense_sector_name := str(params.get("sector", "COMMAND")).to_upper()
+		var weight := str(params.get("weight", "MEDIUM")).to_upper()
+		var resolved_sector := _resolve_terminal_sector_name(defense_sector_name)
+		if resolved_sector.is_empty():
+			_append_terminal_line("UNKNOWN SECTOR %s" % defense_sector_name, "warning")
 			return true
+		_terminal_highlight_sector = resolved_sector
+		var defense_priority_value := _resolve_power_priority(weight)
+		var defense_power_system := get_node_or_null("/root/GameRoot/Power")
+		if defense_power_system != null and defense_power_system.has_method("set_sector_priority"):
+			defense_power_system.call("set_sector_priority", resolved_sector, defense_priority_value)
+		_set_terminal_page("DEFENSE")
+		_append_terminal_line("DEFENSE PRIORITY UPDATED %s -> %s (%d)" % [resolved_sector, weight, defense_priority_value], "success", resolved_sector)
+		_refresh_snapshot()
+		return true
 		"DEPLOY":
 			if args.is_empty():
 				_append_terminal_line("USE: DEPLOY <TURRET_TYPE> x=<WORLD_X> y=<WORLD_Y> OR sector=<SECTOR>", "warning")
@@ -2775,8 +2774,8 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 				_append_terminal_line("RECON DEPLOY PLAN OPENED // DRONE SUPPORT NOT YET A PHYSICAL RUNTIME UNIT", "success")
 				_refresh_snapshot()
 				return true
-			var turret_type := _resolve_terminal_turret_type(str(args[0]))
-			if turret_type.is_empty():
+			var deploy_turret_type := _resolve_terminal_turret_type(str(args[0]))
+			if deploy_turret_type.is_empty():
 				_append_terminal_line("UNKNOWN DEPLOY TYPE %s" % str(args[0]).to_upper(), "warning")
 				return true
 			var fallback_sector := str(args[1]) if args.size() > 1 else ""
@@ -2784,11 +2783,11 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 			if not bool(target.get("ok", false)):
 				_append_terminal_line("DEPLOY REQUIRES x=<WORLD_X> y=<WORLD_Y> OR sector=<SECTOR>", "warning")
 				return true
-			var deploy_result := _attempt_terminal_turret_deploy(turret_type, target)
+			var deploy_result := _attempt_terminal_turret_deploy(deploy_turret_type, target)
 			if bool(deploy_result.get("ok", false)):
 				_set_terminal_page("DEFENSE")
 				_append_terminal_line("DEPLOYED %s // %s @ %s" % [
-					turret_type.to_upper(),
+					deploy_turret_type.to_upper(),
 					str(target.get("source", "TARGET")).to_upper(),
 					str(deploy_result.get("position", Vector2.ZERO)),
 				], "success")
@@ -2986,15 +2985,15 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 				_:
 					_append_terminal_line("UNKNOWN FAB COMMAND", "warning")
 			return true
-		"SCAVENGE":
-			var salvage_gain := 5
-			var game_state := _get_game_state()
-			if game_state != null and game_state.has_method("add_materials"):
-				game_state.add_materials(salvage_gain)
-			_set_terminal_page("RECON")
-			_append_terminal_line("SCAVENGE COMPLETE // +%d MATERIALS" % salvage_gain, "success")
-			_refresh_snapshot()
-			return true
+	"SCAVENGE":
+		var salvage_gain := 5
+		var salvage_game_state := _get_game_state()
+		if salvage_game_state != null and salvage_game_state.has_method("add_materials"):
+			salvage_game_state.add_materials(salvage_gain)
+		_set_terminal_page("RECON")
+		_append_terminal_line("SCAVENGE COMPLETE // +%d MATERIALS" % salvage_gain, "success")
+		_refresh_snapshot()
+		return true
 		"FOCUS":
 			var focus_target := str(args[0]).to_upper() if not args.is_empty() else "SYSTEM"
 			var priority := str(params.get("priority", "NORMAL")).to_upper()
@@ -3017,26 +3016,26 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 				return true
 			_append_terminal_line("FOCUS ACKNOWLEDGED target=%s priority=%s" % [focus_target, priority], "success")
 			return true
-		"REROUTE":
-			if args.is_empty() or str(args[0]).to_upper() != "POWER":
-				_append_terminal_line("USE: REROUTE POWER sector=COMMAND priority=CRITICAL|HIGH|MEDIUM|LOW", "warning")
-				return true
-			var sector_name := str(params.get("sector", "")).strip_edges().to_upper()
-			if sector_name.is_empty():
-				_append_terminal_line("REROUTE POWER REQUIRES sector=<SECTOR_NAME>", "warning")
-				return true
-			var priority_name := str(params.get("priority", "HIGH")).strip_edges().to_upper()
-			var priority_value := _resolve_power_priority(priority_name)
-			var power_system := get_node_or_null("/root/GameRoot/Power")
-			if power_system == null or not power_system.has_method("set_sector_priority"):
-				_append_terminal_line("POWER ROUTING UNAVAILABLE", "warning")
-				return true
-			if power_system.call("set_sector_priority", sector_name, priority_value):
-				_append_terminal_line("POWER PRIORITY UPDATED %s -> %s (%d)" % [sector_name, priority_name, priority_value], "success", sector_name)
-				_refresh_snapshot()
-			else:
-				_append_terminal_line("UNKNOWN SECTOR %s" % sector_name, "warning")
+	"REROUTE":
+		if args.is_empty() or str(args[0]).to_upper() != "POWER":
+			_append_terminal_line("USE: REROUTE POWER sector=COMMAND priority=CRITICAL|HIGH|MEDIUM|LOW", "warning")
 			return true
+		var reroute_sector_name := str(params.get("sector", "")).strip_edges().to_upper()
+		if reroute_sector_name.is_empty():
+			_append_terminal_line("REROUTE POWER REQUIRES sector=<SECTOR_NAME>", "warning")
+			return true
+		var priority_name := str(params.get("priority", "HIGH")).strip_edges().to_upper()
+		var reroute_priority_value := _resolve_power_priority(priority_name)
+		var reroute_power_system := get_node_or_null("/root/GameRoot/Power")
+		if reroute_power_system == null or not reroute_power_system.has_method("set_sector_priority"):
+			_append_terminal_line("POWER ROUTING UNAVAILABLE", "warning")
+			return true
+		if reroute_power_system.call("set_sector_priority", reroute_sector_name, reroute_priority_value):
+			_append_terminal_line("POWER PRIORITY UPDATED %s -> %s (%d)" % [reroute_sector_name, priority_name, reroute_priority_value], "success", reroute_sector_name)
+			_refresh_snapshot()
+		else:
+			_append_terminal_line("UNKNOWN SECTOR %s" % reroute_sector_name, "warning")
+		return true
 		_:
 			return false
 
@@ -3170,7 +3169,8 @@ func _on_terminal_planet_preview_gui_input(event: InputEvent) -> void:
 			_planet_preview_drag_active = button_event.pressed
 			_planet_preview_drag_last_pos = button_event.position
 			if button_event.pressed:
-				terminal_input.grab_focus()
+				if terminal_input:
+					terminal_input.grab_focus()
 			else:
 				_planet_preview_spin_velocity.x = clamp(_planet_preview_spin_velocity.x, -2.2, 2.2)
 				_planet_preview_spin_velocity.y = clamp(_planet_preview_spin_velocity.y, -4.2, 4.2)
@@ -3209,17 +3209,17 @@ func _on_terminal_map_preview_gui_input(event: InputEvent) -> void:
 			return
 	if event is InputEventMouseMotion:
 		var motion_event := event as InputEventMouseMotion
-		var world_pos := _terminal_map_local_to_world(motion_event.position)
-		_terminal_map_hover_world_pos = world_pos
-		_update_terminal_map_placement_preview(world_pos)
+		var hover_world_pos := _terminal_map_local_to_world(motion_event.position)
+		_terminal_map_hover_world_pos = hover_world_pos
+		_update_terminal_map_placement_preview(hover_world_pos)
 		terminal_map_preview.accept_event()
 		return
 	if event is InputEventMouseButton:
 		var button_event := event as InputEventMouseButton
-		var world_pos := _terminal_map_local_to_world(button_event.position)
-		_terminal_map_hover_world_pos = world_pos
+		var click_world_pos := _terminal_map_local_to_world(button_event.position)
+		_terminal_map_hover_world_pos = click_world_pos
 		if button_event.button_index == MOUSE_BUTTON_LEFT and button_event.pressed:
-			if _apply_terminal_map_placement(world_pos):
+			if _apply_terminal_map_placement(click_world_pos):
 				_refresh_snapshot()
 			terminal_input.grab_focus()
 			terminal_map_preview.accept_event()
@@ -3515,13 +3515,15 @@ func _build_map_preview_texture(contract: Dictionary, snapshot: Dictionary = {})
 			if turret is Dictionary and turret.get("pos", null) is Vector2:
 				var turret_color := Color(0.44, 0.88, 0.72, 1.0)
 				_draw_preview_world_marker(image, turret["pos"], turret_color, 3, points, min_x, min_y, scale, draw_offset)
-			for enemy in tactical_entities.get("enemies", []):
-				if enemy is Dictionary and enemy.get("pos", null) is Vector2:
-					var enemy_color := Color(0.96, 0.38, 0.34, 1.0)
-					_draw_preview_world_marker(image, enemy["pos"], enemy_color, 2, points, min_x, min_y, scale, draw_offset)
-			for operator_entry in tactical_entities.get("operator", []):
-				if operator_entry is Dictionary and operator_entry.get("pos", null) is Vector2:
-					_draw_preview_world_marker(image, operator_entry["pos"], Color(0.98, 0.98, 0.46, 1.0), 3, points, min_x, min_y, scale, draw_offset)
+
+		for enemy in tactical_entities.get("enemies", []):
+			if enemy is Dictionary and enemy.get("pos", null) is Vector2:
+				var enemy_color := Color(0.96, 0.38, 0.34, 1.0)
+				_draw_preview_world_marker(image, enemy["pos"], enemy_color, 2, points, min_x, min_y, scale, draw_offset)
+
+		for operator_entry in tactical_entities.get("operator", []):
+			if operator_entry is Dictionary and operator_entry.get("pos", null) is Vector2:
+				_draw_preview_world_marker(image, operator_entry["pos"], Color(0.98, 0.98, 0.46, 1.0), 3, points, min_x, min_y, scale, draw_offset)
 
 	var wall_placer = get_node_or_null("/root/GameRoot/World/WallPlacer")
 	if wall_placer and wall_placer.has_method("get_blueprints"):
@@ -3758,10 +3760,10 @@ func _resolve_terminal_sector_name(raw_name: String) -> String:
 		for sector_variant in sectors:
 			if not (sector_variant is Dictionary):
 				continue
-			var sector: Dictionary = sector_variant
-			var sector_name := str(sector.get("name", "")).strip_edges().to_upper()
-			if _display_sector_name(sector_name).to_upper() == display_name:
-				return sector_name
+			var mapped_sector: Dictionary = sector_variant
+			var mapped_sector_name := str(mapped_sector.get("name", "")).strip_edges().to_upper()
+			if _display_sector_name(mapped_sector_name).to_upper() == display_name:
+				return mapped_sector_name
 	return ""
 
 
