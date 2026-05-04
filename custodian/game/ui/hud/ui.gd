@@ -265,6 +265,7 @@ func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_set_main_hud_hidden(false)
 	_create_debug_panel()
+	_register_devconsole_commands()
 	if terminal_panel:
 		terminal_panel.visible = false
 	if terminal_input and not terminal_input.text_submitted.is_connected(_on_terminal_input_submitted):
@@ -413,6 +414,53 @@ func _create_debug_panel_style() -> StyleBoxFlat:
 	style.content_margin_bottom = 6
 	return style
 
+func _register_devconsole_commands() -> void:
+	# Register custom debug commands with the DevConsole addon
+	var console = get_node_or_null("/root/DevConsole")
+	if console == null:
+		printerr("DevConsole not found at /root/DevConsole")
+		return
+	
+	# Command: debug_hud - Toggle debug HUD visibility
+	if console.has_method("add_command"):
+		console.add_command("debug_hud", _devconsole_toggle_debug_hud)
+		console.add_command("show_cognitive", _devconsole_show_cognitive)
+		console.add_command("test_spawn", _devconsole_test_spawn)
+		console.add_command("ui_status", _devconsole_ui_status)
+		printerr("Registered debug commands with DevConsole")
+
+func _devconsole_toggle_debug_hud(args: Array) -> String:
+	# Toggle debug HUD visibility (camera/aim/time/director/supply/button diagnostics)
+	_main_hud_hidden = !_main_hud_hidden
+	_set_main_hud_hidden(_main_hud_hidden)
+	return "Debug HUD: " + ("OFF" if _main_hud_hidden else "ON")
+
+func _devconsole_show_cognitive(args: Array) -> String:
+	# Show cognitive state from CognitiveState autoload
+	var cs = get_node_or_null("/root/CognitiveState")
+	if cs == null:
+		return "CognitiveState autoload not found"
+	var dominant = cs.get_dominant_state() if cs.has_method("get_dominant_state") else "UNKNOWN"
+	return "Cognitive: Dominant=%s" % str(dominant)
+
+func _devconsole_test_spawn(args: Array) -> String:
+	# Spawn a test enemy at operator position
+	var operator = get_node_or_null("/root/GameRoot/Operator")
+	if operator == null:
+		return "Operator not found"
+	var enemy_mgr = get_node_or_null("/root/GameRoot/EnemyDirector")
+	if enemy_mgr != null and enemy_mgr.has_method("spawn_test_enemy"):
+		var pos = operator.global_position
+		enemy_mgr.call("spawn_test_enemy", pos)
+		return "Spawned test enemy at " + str(pos)
+	return "EnemyDirector not found or spawn_test_enemy not available"
+
+func _devconsole_ui_status(args: Array) -> String:
+	# Show HUD/terminal status
+	var status = "Terminal: " + ("OPEN" if _terminal_open else "CLOSED")
+	status += " | Ready: " + str(_terminal_ready)
+	status += " | Boot started: " + str(_terminal_boot_started)
+	return status
 
 func _setup_terminal_main_scroll() -> void:
 	if terminal_map_column == null:
