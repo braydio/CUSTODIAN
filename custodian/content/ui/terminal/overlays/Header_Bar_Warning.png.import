@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbwps5pnrl6bc"
-path="res://.godot/imported/operator__body__unarmed__run_01__s__4f__96.png-380a79d66b07b91838eca4311637b5af.ctex"
+uid="uid://bantwflfbc1f4"
+path="res://.godot/imported/Header_Bar_Warning.png-044867273e26adf473137cc172ee5308.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__run_01__s__4f__96.png"
-dest_files=["res://.godot/imported/operator__body__unarmed__run_01__s__4f__96.png-380a79d66b07b91838eca4311637b5af.ctex"]
+source_file="res://content/ui/terminal/overlays/Header_Bar_Warning.png"
+dest_files=["res://.godot/imported/Header_Bar_Warning.png-044867273e26adf473137cc172ee5308.ctex"]
 
 [params]
 

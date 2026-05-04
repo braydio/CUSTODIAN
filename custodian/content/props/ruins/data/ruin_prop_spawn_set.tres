@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="PropSpawnSet" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="PropSpawnSet" format=3 uid="uid://dhkt8vol1mscl"]
 
-[ext_resource type="Script" path="res://content/props/ruins/scripts/PropSpawnSet.gd" id="1_spawn_set"]
-[ext_resource type="Script" path="res://content/props/ruins/scripts/WeightedPropEntry.gd" id="2_entry"]
+[ext_resource type="Script" uid="uid://cynlgq73fcf8w" path="res://content/props/ruins/scripts/PropSpawnSet.gd" id="1_spawn_set"]
+[ext_resource type="Script" uid="uid://cygufcktgre5k" path="res://content/props/ruins/scripts/WeightedPropEntry.gd" id="2_entry"]
 [ext_resource type="Resource" path="res://content/props/ruins/data/prop_definitions/obelisk.tres" id="3_obelisk"]
 [ext_resource type="Resource" path="res://content/props/ruins/data/prop_definitions/portal_ring_01.tres" id="4_portal"]
 [ext_resource type="Resource" path="res://content/props/ruins/data/prop_definitions/rotunda_01.tres" id="5_rotunda"]
@@ -10,20 +10,17 @@
 [sub_resource type="Resource" id="WeightedPropEntry_obelisk"]
 script = ExtResource("2_entry")
 definition = ExtResource("3_obelisk")
-weight = 1.0
 max_count = 2
 
 [sub_resource type="Resource" id="WeightedPropEntry_portal"]
 script = ExtResource("2_entry")
 definition = ExtResource("4_portal")
 weight = 0.35
-max_count = 1
 
 [sub_resource type="Resource" id="WeightedPropEntry_rotunda"]
 script = ExtResource("2_entry")
 definition = ExtResource("5_rotunda")
 weight = 0.55
-max_count = 1
 
 [sub_resource type="Resource" id="WeightedPropEntry_slab"]
 script = ExtResource("2_entry")
@@ -33,4 +30,4 @@ max_count = 6
 
 [resource]
 script = ExtResource("1_spawn_set")
-entries = Array[WeightedPropEntry]([SubResource("WeightedPropEntry_obelisk"), SubResource("WeightedPropEntry_portal"), SubResource("WeightedPropEntry_rotunda"), SubResource("WeightedPropEntry_slab")])
+entries = Array[ExtResource("2_entry")]([SubResource("WeightedPropEntry_obelisk"), SubResource("WeightedPropEntry_portal"), SubResource("WeightedPropEntry_rotunda"), SubResource("WeightedPropEntry_slab")])

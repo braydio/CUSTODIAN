@@ -30,7 +30,7 @@
 [ext_resource type="Script" uid="uid://jp87rnpxqgdt" path="res://dev/debug/inspector_probe.gd" id="32_inspector_probe"]
 [ext_resource type="Script" uid="uid://xj0cr1hc5c46" path="res://dev/debug/debug_collector.gd" id="33_debug_collector"]
 [ext_resource type="Script" uid="uid://bi11w51uaudmj" path="res://game/systems/core/systems/ambient_critter_manager.gd" id="34_ambient_critters"]
-[ext_resource type="PackedScene" path="res://game/actors/enemies/ambient_shrumb.tscn" id="35_ambient_shrumb"]
+[ext_resource type="PackedScene" uid="uid://dn7go36qvrw6x" path="res://game/actors/enemies/ambient_shrumb.tscn" id="35_ambient_shrumb"]
 [ext_resource type="Script" uid="uid://by380p21nbchx" path="res://game/actors/ui/terminal_background.gd" id="36_terminal_background"]
 [ext_resource type="Script" uid="uid://bg78eihw40m6g" path="res://game/systems/core/systems/navigation_system.gd" id="40_navigation"]
 [ext_resource type="Script" uid="uid://din0buhray3ph" path="res://dev/debug/navigation_debug.gd" id="41_nav_debug"]
@@ -213,7 +213,7 @@ block_stamina_cost_per_hit = 12.0
 combat_target_range = 360.0
 use_tiny_rpg_placeholder_soldier = true
 idle_main_sheet_path = "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
-ranged_2h_stance_sheet_path = "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_stance.png"
+ranged_2h_stance_sheet_path = "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
 ranged_2h_aim_sheet_path = "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_aim_raise.png"
 idle_long_loop_threshold = 20
 placeholder_sprite_position = Vector2(0, -18)

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://i6d62mx6lcsf"
-path="res://.godot/imported/operator__body__unarmed__walk_01__s__5f__96.png-e1e0d9e6d666f43a37accda3f1df8136.ctex"
+uid="uid://d4ff48guhkcgg"
+path="res://.godot/imported/operator__body__unarmed__run_01__s__7f__96.png-1569e37d6556abae4208507bf1a19359.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__walk_01__s__5f__96.png"
-dest_files=["res://.godot/imported/operator__body__unarmed__walk_01__s__5f__96.png-e1e0d9e6d666f43a37accda3f1df8136.ctex"]
+source_file="res://content/sprites/_pipeline/archive/operator__body__unarmed__run_01__s__7f__96.png"
+dest_files=["res://.godot/imported/operator__body__unarmed__run_01__s__7f__96.png-1569e37d6556abae4208507bf1a19359.ctex"]
 
 [params]
 
