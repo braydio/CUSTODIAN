@@ -79,6 +79,7 @@ var _last_rendered_server_text: String = ""
 ## `McpConnection.server_version` drifts from the plugin version. Hidden
 ## in the match case so the UI stays calm.
 var _version_restart_btn: Button
+var _server_restart_in_progress := false
 ## Sorted snapshot of the most recent mismatched-client set. Powers two things:
 ## (a) the Reconfigure button reuses this list instead of re-running
 ## `check_status` per row (saves ~18 filesystem reads per click), and
@@ -129,7 +130,6 @@ var _client_action_generations: Dictionary = {}
 # Dev-mode only
 var _dev_section: VBoxContainer
 var _server_label: Label
-var _reconnect_btn: Button
 var _reload_btn: Button
 var _mode_override_btn: OptionButton
 var _setup_section: VBoxContainer
@@ -149,6 +149,8 @@ var _startup_grace_until_msec: int = 0
 # booleans. See `_crash_body_for_state`.
 var _crash_panel: VBoxContainer
 var _crash_output: RichTextLabel
+var _crash_restart_btn: Button
+var _crash_reload_btn: Button
 ## Port-picker escape hatch — visible inside the panel when the root
 ## cause is port contention (PORT_EXCLUDED or FOREIGN_PORT). Applies a
 ## new `godot_ai/http_port` value and reloads the plugin so the spawn
@@ -381,11 +383,22 @@ func _build_ui() -> void:
 
 	_build_port_picker_section()
 
-	var crash_retry := Button.new()
-	crash_retry.text = "Reload Plugin"
-	crash_retry.tooltip_text = "Re-run the spawn after fixing the underlying issue"
-	crash_retry.pressed.connect(_on_reload_plugin)
-	_crash_panel.add_child(crash_retry)
+	_crash_restart_btn = Button.new()
+	_crash_restart_btn.text = "Restart Server"
+	_crash_restart_btn.tooltip_text = "Stop the old server on this port and start the bundled godot-ai server"
+	_crash_restart_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_crash_restart_btn.add_theme_color_override("font_color", Color.WHITE)
+	_crash_restart_btn.add_theme_color_override("font_hover_color", Color.WHITE)
+	_crash_restart_btn.add_theme_color_override("font_pressed_color", Color.WHITE)
+	_crash_restart_btn.pressed.connect(_on_restart_stale_server)
+	_crash_restart_btn.visible = false
+	_crash_panel.add_child(_crash_restart_btn)
+
+	_crash_reload_btn = Button.new()
+	_crash_reload_btn.text = "Reload Plugin"
+	_crash_reload_btn.tooltip_text = "Re-run the spawn after fixing the underlying issue"
+	_crash_reload_btn.pressed.connect(_on_reload_plugin)
+	_crash_panel.add_child(_crash_reload_btn)
 
 	_crash_panel.add_child(HSeparator.new())
 	add_child(_crash_panel)
@@ -424,7 +437,7 @@ func _build_ui() -> void:
 	add_child(_http_request)
 	_check_for_updates.call_deferred()
 
-	# --- Dev-only connection extras (server label + reconnect/reload buttons) ---
+	# --- Dev-only connection extras (server label + reload button) ---
 	_dev_section = VBoxContainer.new()
 	_dev_section.add_theme_constant_override("separation", 6)
 	add_child(_dev_section)
@@ -437,14 +450,9 @@ func _build_ui() -> void:
 	var btn_row := HBoxContainer.new()
 	btn_row.add_theme_constant_override("separation", 6)
 
-	_reconnect_btn = Button.new()
-	_reconnect_btn.text = "Reconnect"
-	_reconnect_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_reconnect_btn.pressed.connect(_on_reconnect)
-	btn_row.add_child(_reconnect_btn)
-
 	_reload_btn = Button.new()
-	_reload_btn.text = "Reload Plugin"
+	_reload_btn.text = "Dev: Reload Plugin"
+	_reload_btn.tooltip_text = "Developer utility: reload the GDScript plugin. This does not restart or replace the server."
 	_reload_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_reload_btn.pressed.connect(_on_reload_plugin)
 	btn_row.add_child(_reload_btn)
@@ -731,7 +739,10 @@ func _update_status() -> void:
 	## one body string in `_crash_body_for_state`.
 	var status_text: String
 	var status_color: Color
-	if connected:
+	if _server_restart_in_progress:
+		status_text = "Restarting server..."
+		status_color = COLOR_AMBER
+	elif connected:
 		if bool(server_status.get("dev_version_mismatch_allowed", false)):
 			var actual := str(server_status.get("actual_version", ""))
 			status_text = "Connected (dev server v%s)" % actual if not actual.is_empty() else "Connected (dev server)"
@@ -797,6 +808,19 @@ func _update_crash_panel(server_status: Dictionary) -> void:
 	_crash_panel.visible = true
 	_crash_output.clear()
 	_crash_output.add_text(_crash_body_for_state(state, server_status))
+	var show_recovery_restart := (
+		state == McpSpawnState.INCOMPATIBLE_SERVER
+		and bool(server_status.get("can_recover_incompatible", false))
+	)
+	if _crash_restart_btn != null:
+		_crash_restart_btn.visible = show_recovery_restart
+		_crash_restart_btn.disabled = _server_restart_in_progress
+		_crash_restart_btn.text = "Restarting..." if _server_restart_in_progress else "Restart Server"
+	if _crash_reload_btn != null:
+		_crash_reload_btn.visible = (
+			not show_recovery_restart
+			and state != McpSpawnState.INCOMPATIBLE_SERVER
+		)
 
 	var port_picker_visible := (
 		state == McpSpawnState.PORT_EXCLUDED
@@ -821,6 +845,13 @@ static func _crash_body_for_state(state: String, server_status: Dictionary = {})
 			return "Windows (Hyper-V / WSL2 / Docker) reserved port %d. Pick a free port or try `net stop winnat; net start winnat` in an admin shell." % port
 		McpSpawnState.INCOMPATIBLE_SERVER:
 			var message := str(server_status.get("message", ""))
+			if bool(server_status.get("can_recover_incompatible", false)):
+				var expected := str(server_status.get("expected_version", ""))
+				if expected.is_empty():
+					expected = McpClientConfigurator.get_plugin_version()
+				if not message.is_empty():
+					return "%s Click Restart Server below to replace it with godot-ai v%s." % [message, expected]
+				return "Port %d is occupied by an older godot-ai server. Click Restart Server below to replace it with godot-ai v%s." % [port, expected]
 			if not message.is_empty():
 				return message
 			return "Port %d is occupied by an incompatible server. Stop it or change both HTTP and WS ports." % port
@@ -915,7 +946,7 @@ func _update_log() -> void:
 
 func _load_dev_mode() -> bool:
 	# Default OFF for every install (including dev checkouts). Contributors
-	# who want the extra diagnostic UI (Reload Plugin, Reconnect, MCP log
+	# who want the extra diagnostic UI (Reload Plugin, MCP log
 	# panel, Start/Stop Dev Server) can flip the toggle once — editor
 	# settings persist across sessions.
 	var es := EditorInterface.get_editor_settings()
@@ -998,12 +1029,6 @@ func _on_reload_plugin() -> void:
 	EditorInterface.set_plugin_enabled("res://addons/godot_ai/plugin.cfg", true)
 
 
-func _on_reconnect() -> void:
-	if _connection:
-		_connection.disconnect_from_server()
-		_connection._attempt_reconnect()
-
-
 ## Setup-section "Server" row: always report the TRUE running server
 ## version (from the handshake_ack) rather than the plugin's expected
 ## version, and highlight the mismatch so self-update drift is visible
@@ -1030,10 +1055,20 @@ func _refresh_server_version_label() -> void:
 	var expected_ver := str(server_status.get("expected_version", ""))
 	if expected_ver.is_empty():
 		expected_ver = plugin_ver
+	var state: String = str(server_status.get("state", McpSpawnState.OK))
+	if _server_restart_in_progress and (
+		server_ver == expected_ver
+		or (state != McpSpawnState.OK and state != McpSpawnState.INCOMPATIBLE_SERVER)
+	):
+		_server_restart_in_progress = false
 	var text: String
 	var color: Color
 	var show_restart := false
-	if server_ver.is_empty():
+	if _server_restart_in_progress:
+		text = "restarting server..."
+		color = COLOR_AMBER
+		show_restart = true
+	elif server_ver.is_empty():
 		text = "checking live version (expected godot-ai == %s)" % expected_ver
 		color = COLOR_MUTED
 	elif server_ver == expected_ver:
@@ -1046,28 +1081,79 @@ func _refresh_server_version_label() -> void:
 			color = COLOR_AMBER
 		else:
 			text = "godot-ai == %s  (expected %s)" % [server_ver, expected_ver]
-			color = Color.RED if server_status.get("state", "") == McpSpawnState.INCOMPATIBLE_SERVER else COLOR_AMBER
-			show_restart = (
-				server_status.get("state", "") != McpSpawnState.INCOMPATIBLE_SERVER
-				and _plugin != null
+			var is_incompatible: bool = state == McpSpawnState.INCOMPATIBLE_SERVER
+			color = Color.RED if is_incompatible else COLOR_AMBER
+			var has_managed_proof: bool = (
+				_plugin != null
 				and _plugin.has_method("can_restart_managed_server")
 				and _plugin.can_restart_managed_server()
 			)
+			var can_recover: bool = bool(server_status.get("can_recover_incompatible", false))
+			show_restart = (
+				(not is_incompatible and has_managed_proof)
+				## Recoverable incompatible servers get the primary action in
+				## the top error panel. Duplicating it in Setup made the UI
+				## look like it had multiple restart paths.
+				or (is_incompatible and can_recover and _crash_restart_btn == null)
+			)
 	if text == _last_rendered_server_text:
 		_setup_server_label.add_theme_color_override("font_color", color)
-		if _version_restart_btn != null and _version_restart_btn.visible != show_restart:
-			_version_restart_btn.visible = show_restart
+		_update_restart_button(show_restart)
 		return
 	_last_rendered_server_text = text
 	_setup_server_label.text = text
 	_setup_server_label.add_theme_color_override("font_color", color)
+	_update_restart_button(show_restart)
+
+
+func _update_restart_button(visible: bool) -> void:
 	if _version_restart_btn != null:
-		_version_restart_btn.visible = show_restart
+		_version_restart_btn.visible = visible
+		_version_restart_btn.disabled = _server_restart_in_progress
+		_version_restart_btn.text = "Restarting..." if _server_restart_in_progress else "Restart"
+	if _crash_restart_btn != null:
+		_crash_restart_btn.disabled = _server_restart_in_progress
+		_crash_restart_btn.text = "Restarting..." if _server_restart_in_progress else "Restart Server"
 
 
 func _on_restart_stale_server() -> void:
-	if _plugin != null and _plugin.has_method("force_restart_server"):
+	if _plugin == null or _server_restart_in_progress:
+		return
+	_server_restart_in_progress = true
+	_last_rendered_server_text = ""
+	_refresh_server_version_label()
+	if not is_inside_tree():
+		_dispatch_stale_server_restart()
+		_server_restart_in_progress = false
+		_last_rendered_server_text = ""
+		_refresh_server_version_label()
+		return
+	call_deferred("_restart_stale_server_after_feedback")
+
+
+func _restart_stale_server_after_feedback() -> void:
+	await get_tree().create_timer(0.15).timeout
+	if not _dispatch_stale_server_restart():
+		_server_restart_in_progress = false
+		_last_rendered_server_text = ""
+		_refresh_server_version_label()
+
+
+func _dispatch_stale_server_restart() -> bool:
+	if _plugin == null:
+		return false
+	var status: Dictionary = (
+		_plugin.get_server_status()
+		if _plugin.has_method("get_server_status")
+		else {}
+	)
+	if str(status.get("state", "")) == McpSpawnState.INCOMPATIBLE_SERVER:
+		if _plugin.has_method("recover_incompatible_server"):
+			return bool(_plugin.recover_incompatible_server())
+	elif _plugin.has_method("force_restart_server"):
 		_plugin.force_restart_server()
+		return true
+	return false
 
 
 func _on_log_toggled(enabled: bool) -> void:
@@ -1232,6 +1318,15 @@ func _on_install_uv() -> void:
 			OS.execute("powershell", ["-ExecutionPolicy", "ByPass", "-c", "irm https://astral.sh/uv/install.ps1 | iex"], [], false)
 		_:
 			OS.execute("bash", ["-c", "curl -LsSf https://astral.sh/uv/install.sh | sh"], [], false)
+	## Drop the cached uvx path AND the cached `uvx --version` so the
+	## next `_refresh_setup_status` finds and reads the freshly-installed
+	## binary instead of returning the pre-install "not found" result.
+	## Routing through the configurator here matters on Windows, where
+	## the CLI-finder cache key is `uvx.exe` — invalidating just `"uvx"`
+	## would leave the cache stale and the dock would keep showing
+	## "uv: not found" for the rest of the session.
+	McpClientConfigurator.invalidate_uvx_cli_cache()
+	McpClientConfigurator.invalidate_uv_version_cache()
 	_refresh_setup_status.call_deferred()
 
 
@@ -1766,7 +1861,8 @@ func _prune_orphaned_client_status_refresh_threads() -> void:
 
 
 func _perform_initial_client_status_refresh() -> void:
-	## Pre-warm strategy bytecode on main, defer CLI probes to the worker.
+	## Pre-warm strategy bytecode on main, then hand every client probe
+	## (JSON / TOML / CLI alike) to the worker.
 	##
 	## Godot's GDScript hot-reload of overwritten plugin files is lazy: the
 	## bytecode swap happens on first dereference, not at `set_plugin_enabled`
@@ -1779,10 +1875,19 @@ func _perform_initial_client_status_refresh() -> void:
 	## in-place plugin reload because the editor stays focused — so neither
 	## works as a gate. See #233 / #235.
 	##
-	## Phase 1 (sync, on main): for each client, snapshot warms the CLI call
-	## graph via `resolve_cli_path`; for non-CLI clients, sync `check_status`
-	## warms `_json_strategy.gd` / `_toml_strategy.gd`. Phase 2 (worker): CLI
-	## probes only, race-safe because Phase 1 dereferenced their call graph.
+	## Phase 1 (sync, on main): a single explicit `_warm_strategy_bytecode`
+	## call invokes a pure-memory helper on each strategy script —
+	## `_json_strategy.gd`, `_toml_strategy.gd`, `_cli_strategy.gd`, plus
+	## `client_configurator.gd` via `client_ids()` / `get_by_id`. No disk,
+	## no `OS.execute`, no JSON parse on main. `client_status_probe_snapshot`
+	## per client adds the `installed` flag and (for CLI clients) a cached
+	## CLI path to each probe.
+	##
+	## Phase 2 (worker): every probe — JSON, TOML, CLI — runs through the
+	## same `_run_client_status_refresh_worker` pipeline. Disk reads + JSON
+	## parses for the ~17 non-CLI clients now happen off the main thread,
+	## so the dock paints immediately on cold open instead of stalling
+	## behind ~16 sync `FileAccess.open` + `JSON.parse_string` calls.
 	##
 	## No-op outside the tree — GDScript tests instantiate via `new()`.
 	if not is_inside_tree():
@@ -1805,36 +1910,27 @@ func _perform_initial_client_status_refresh() -> void:
 		_refresh_clients_summary()
 		return
 
+	_warm_strategy_bytecode()
+
 	var generation := _begin_client_status_refresh_run()
 	var server_url := McpClientConfigurator.http_url()
-	var deferred_cli_probes: Array[Dictionary] = []
+	var all_probes: Array[Dictionary] = []
 
 	for client_id in _client_rows:
-		var client := McpClientRegistry.get_by_id(String(client_id))
-		if client == null:
-			continue
 		var probe := McpClientConfigurator.client_status_probe_snapshot(String(client_id))
 		if probe.is_empty():
 			continue
-		if client.config_type == "cli":
-			deferred_cli_probes.append(probe)
-			continue
-		var status := McpClientConfigurator.check_status_for_url_with_cli_path(
-			String(client_id), server_url, ""
-		)
-		_apply_row_status(
-			String(client_id), status, "", bool(probe.get("installed", false))
-		)
+		all_probes.append(probe)
 	_refresh_clients_summary()
 
-	if deferred_cli_probes.is_empty():
+	if all_probes.is_empty():
 		_finalize_completed_refresh()
 		return
 
 	_client_status_refresh_thread = Thread.new()
 	var err := _client_status_refresh_thread.start(
 		Callable(self, "_run_client_status_refresh_worker").bind(
-			deferred_cli_probes, server_url, generation
+			all_probes, server_url, generation
 		)
 	)
 	if err != OK:
@@ -1842,6 +1938,22 @@ func _perform_initial_client_status_refresh() -> void:
 		_client_status_refresh_timed_out = false
 		_client_status_refresh_thread = null
 		_refresh_clients_summary()
+
+
+## Force GDScript's lazy bytecode swap to complete for every script the
+## worker thread will reach into. Each call is pure-memory — no disk, no
+## network, no `OS.execute` — so it only costs the bytecode dereference
+## itself. See `_perform_initial_client_status_refresh` for context and
+## #233 / #235 for the SIGABRT this exists to prevent.
+func _warm_strategy_bytecode() -> void:
+	var ids := McpClientConfigurator.client_ids()
+	if ids.is_empty():
+		return
+	var any_client := McpClientRegistry.get_by_id(String(ids[0]))
+	if any_client != null:
+		McpJsonStrategy.verify_entry(any_client, {}, "")
+	McpTomlStrategy.format_body(PackedStringArray(), "")
+	McpCliStrategy.format_args(PackedStringArray(), "", "")
 
 
 func _begin_client_status_refresh_run() -> int:
