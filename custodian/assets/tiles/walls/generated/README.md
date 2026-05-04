@@ -53,10 +53,15 @@ python3 tools/tiles/build_procgen_wall_atlas.py \
   --atlas custodian/assets/tiles/walls/generated/procgen_wall_source_atlas.png \
   --semantics tools/tiles/procgen_wall_semantics.json \
   --passage-dir custodian/content/tiles/walls/source/wall_passages \
+  --top-source custodian/content/tiles/walls/Wall_Tops.png \
   --out-image custodian/content/tiles/walls/generated/procgen_wall_tiles_32.png \
   --out-json custodian/content/tiles/walls/generated/procgen_wall_tiles_32.mapping.json \
   --tile-size 32
 ```
+
+The wall-top sheet is not a drop-in runtime atlas. The bridge alpha-splits the sheet into connected components, filters
+tiny noise islands, and top-aligns each component into `32x32` runtime cells before routing them through the semantic
+bucket map.
 
 ## Manual Rectangles
 

@@ -21,9 +21,9 @@ GameState="*res://game/systems/core/state/game_state.gd"
 DevConsole="*uid://ccoijpiv8l45j"
 DebugBus="*res://dev/debug/debug_bus.gd"
 BetterTerrain="*uid://6gj10atdkou3"
-_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 InventoryManager="*res://game/systems/core/systems/inventory_manager.gd"
 CognitiveState="*res://game/systems/cognitive/cognitive_state_system.gd"
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [dev_console]
 
@@ -40,7 +40,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/better-terrain/plugin.cfg", "res://addons/dev-console/plugin.cfg", "res://addons/dynamic_minimap/plugin.cfg", "res://addons/fightengine/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/indie_game_components/plugin.cfg", "res://addons/shader_library/plugin.cfg")
+enabled=PackedStringArray("res://addons/better-terrain/plugin.cfg", "res://addons/dev-console/plugin.cfg", "res://addons/dynamic_minimap/plugin.cfg", "res://addons/fightengine/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/godotdev_nvim_node_copy/plugin.cfg", "res://addons/indie_game_components/plugin.cfg", "res://addons/shader_library/plugin.cfg")
 
 [input]
 
