@@ -32,6 +32,9 @@ const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_w
 @export var use_floor_variants: bool = true
 @export var use_wall_variants: bool = true
 @export var use_reference_wall_connectors: bool = true
+@export var use_wall_passage_variants: bool = true
+@export_range(0.0, 1.0, 0.01) var wall_passage_spawn_chance: float = 0.30
+@export_range(2, 16, 1) var wall_passage_min_run_tiles: int = 4
 @export var floor_variant_coords: Array[Vector2i] = [
 	Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0), Vector2i(6, 0),
 	Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(4, 1), Vector2i(5, 1), Vector2i(6, 1),
@@ -96,6 +99,7 @@ const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_w
 @export var reference_cross_hole_coords: Array[Vector2i] = [
 	Vector2i(5, 0), Vector2i(6, 0)
 ]
+@export var reference_passage_wall_coords: Array[Vector2i] = []
 @export var reference_north_west_corner_coords: Array[Vector2i] = [
 	Vector2i(5, 1)
 ]
@@ -550,6 +554,8 @@ func _select_reference_linear_wall_coord(pos: Vector2i) -> Vector2i:
 		return _pick_reference_coord(pos, reference_vertical_wall_coords, wall_atlas_coord)
 
 	if east and west and not north and not south:
+		if not hole_below and _should_use_wall_passage_variant(pos):
+			return _pick_reference_coord(pos + Vector2i(613, 397), reference_passage_wall_coords, wall_atlas_coord)
 		var horizontal_variants := reference_horizontal_hole_bottom_coords if hole_below else reference_horizontal_wall_coords
 		return _pick_reference_coord(pos, horizontal_variants, wall_atlas_coord)
 
@@ -709,6 +715,47 @@ func _pick_reference_coord(pos: Vector2i, variants: Array, fallback: Vector2i) -
 	if typed_variants.is_empty():
 		return fallback
 	return _pick_variant_coord(pos, typed_variants, fallback)
+
+
+func _should_use_wall_passage_variant(pos: Vector2i) -> bool:
+	if not use_wall_passage_variants or reference_passage_wall_coords.is_empty():
+		return false
+	var run := _get_horizontal_wall_run_info(pos)
+	var length: int = int(run.get("length", 0))
+	if length < wall_passage_min_run_tiles:
+		return false
+	var start_x: int = int(run.get("start_x", pos.x))
+	var index: int = int(run.get("index", 0))
+	if index <= 0 or index >= length - 1:
+		return false
+	var run_key := Vector2i(start_x, pos.y)
+	var threshold := int(round(clamp(wall_passage_spawn_chance, 0.0, 1.0) * 1000.0))
+	if (_tile_noise_hash(run_key + Vector2i(313, 733)) % 1000) >= threshold:
+		return false
+	var interior_count: int = maxi(1, length - 2)
+	var target_index: int = 1 + (_tile_noise_hash(run_key + Vector2i(719, 421)) % interior_count)
+	return index == target_index
+
+
+func _get_horizontal_wall_run_info(pos: Vector2i) -> Dictionary:
+	var start_x := pos.x
+	var end_x := pos.x
+	while _is_wall_run_continuation(Vector2i(start_x - 1, pos.y)):
+		start_x -= 1
+	while _is_wall_run_continuation(Vector2i(end_x + 1, pos.y)):
+		end_x += 1
+	return {
+		"start_x": start_x,
+		"end_x": end_x,
+		"length": end_x - start_x + 1,
+		"index": pos.x - start_x,
+	}
+
+
+func _is_wall_run_continuation(pos: Vector2i) -> bool:
+	if not _has_wall_cell(pos):
+		return false
+	return not _has_wall_cell(pos + Vector2i.UP) and not _has_wall_cell(pos + Vector2i.DOWN)
 
 
 func _get_reference_wall_mask(north: bool, east: bool, south: bool, west: bool) -> int:

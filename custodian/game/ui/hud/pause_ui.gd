@@ -2,218 +2,209 @@ extends CanvasLayer
 
 var is_paused := false
 var selected_index := 0
-var menu_items: Array = []
+var menu_items: Array[Dictionary] = []
 
-@onready var panel = get_node_or_null("PausePanel")
-@onready var title_label = get_node_or_null("PausePanel/Title")
-@onready var menu_container = get_node_or_null("PausePanel/MenuContainer")
+@onready var panel: Control = get_node_or_null("PausePanel")
+@onready var title_label: Label = get_node_or_null("PausePanel/Title")
+@onready var menu_container: Control = get_node_or_null("PausePanel/MenuContainer")
 
-# Signals available for external systems
-# signal time_scale_changed(scale: float)
-# signal sector_toggled(sector_name: String)
-# signal repair_requested(sector_name: String)
 
-func _ready():
-	# Pause UI must keep processing while the tree is paused so it can unpause.
+func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	is_paused = false
+
 	if panel:
 		panel.visible = false
 
-func _process(_delta):
-	var ui = get_node_or_null("/root/GameRoot/UI")
-	var terminal_open := false
-	if ui and ui.has_method("is_terminal_open"):
-		terminal_open = bool(ui.is_terminal_open())
-	if terminal_open:
+	if title_label:
+		title_label.text = "PAUSED"
+
+
+func _process(_delta: float) -> void:
+	if _is_terminal_open():
 		return
 
-	# Check for pause toggle
 	if Input.is_action_just_pressed("pause"):
 		toggle_pause()
-		# Prevent the same keypress (Space = ui_accept) from also activating menu actions.
 		return
-	if is_paused and Input.is_action_just_pressed("time_shift"):
+
+	if not is_paused:
+		return
+
+	if Input.is_action_just_pressed("time_shift"):
 		cycle_time_scale()
 		build_menu()
 		update_menu_display()
-	
-	# Handle menu navigation when paused
-	if is_paused:
-		handle_input()
+		return
 
-func toggle_pause():
-	is_paused = !is_paused
+	handle_input()
+
+
+func toggle_pause() -> void:
+	is_paused = not is_paused
+
 	if panel == null:
 		push_warning("PausePanel missing in scene tree.")
 		is_paused = false
+		get_tree().paused = false
 		return
+
 	get_tree().paused = is_paused
+
 	var game_state = get_node_or_null("/root/GameState")
 	if game_state:
 		game_state.paused = is_paused
+
 	panel.visible = is_paused
+
 	if is_paused:
 		build_menu()
 		selected_index = 0
 		update_menu_display()
+	else:
+		menu_items.clear()
+		selected_index = 0
+		_clear_menu_labels()
 
-func handle_input():
+
+func handle_input() -> void:
 	if menu_items.is_empty():
 		return
+
 	if Input.is_action_just_pressed("ui_up"):
 		selected_index = max(0, selected_index - 1)
 		update_menu_display()
-	elif Input.is_action_just_pressed("ui_down"):
+		return
+
+	if Input.is_action_just_pressed("ui_down"):
 		selected_index = min(menu_items.size() - 1, selected_index + 1)
 		update_menu_display()
-	elif Input.is_action_just_pressed("ui_accept") and not Input.is_action_just_pressed("pause"):
+		return
+
+	if Input.is_action_just_pressed("ui_accept") and not Input.is_action_just_pressed("pause"):
 		execute_selected()
 
-func build_menu():
+
+func build_menu() -> void:
 	menu_items.clear()
+
 	if menu_container == null:
 		return
-	
-	# Clear existing labels
-	for child in menu_container.get_children():
-		child.queue_free()
-	
-	# Get simulation for time scale
-	var current_scale = Engine.time_scale
-	
-	# Time scale options
+
+	_clear_menu_labels()
+
+	var current_scale := Engine.time_scale
+
 	menu_items.append({
-		"label": "TIME SCALE: %dx" % current_scale,
+		"label": "TIME SCALE: %sx" % _format_time_scale(current_scale),
 		"type": "time_scale",
-		"action": "cycle_time"
 	})
-	
-	# Get sectors
-	var sectors = get_sectors()
-	var power_system = get_node_or_null("/root/GameRoot/Power")
-	for sector in sectors:
-		var power_state = "ON" if sector.powered else "OFF"
-		menu_items.append({
-			"label": "%s POWER: %s" % [sector.sector_name, power_state],
-			"type": "toggle_power",
-			"sector": sector.sector_name
-		})
-		var repair_cost := 25.0
-		var repair_amount := 50.0
-		if power_system and power_system.has_method("get_emergency_repair_profile"):
-			var profile = power_system.call("get_emergency_repair_profile", String(sector.sector_name))
-			if profile is Dictionary:
-				repair_cost = float(profile.get("power_cost", repair_cost))
-				repair_amount = float(profile.get("repair_amount", repair_amount))
-		menu_items.append({
-			"label": "  REPAIR %s (+%d HP / %d power)" % [
-				sector.sector_name,
-				int(round(repair_amount)),
-				int(round(repair_cost)),
-			],
-			"type": "repair",
-			"sector": sector.sector_name
-		})
-	
-	# Resume
+
+	menu_items.append({
+		"label": "OPEN COMMAND TERMINAL FOR POWER / REPAIR / DEPLOYMENT",
+		"type": "hint",
+	})
+
 	menu_items.append({
 		"label": "RESUME",
-		"type": "resume"
+		"type": "resume",
 	})
-	
-	# Create labels
+
 	for item in menu_items:
-		var label = Label.new()
-		label.text = "  " + item.label
+		var label := Label.new()
+		label.text = "  " + str(item.get("label", ""))
 		menu_container.add_child(label)
 
-func get_sectors():
-	var world = get_node_or_null("/root/GameRoot/World/Sectors")
-	if world:
-		# Filter to only include nodes with 'powered' property (actual sectors)
-		var all_children = world.get_children()
-		var sectors = []
-		for child in all_children:
-			if child.has_method("toggle_power"):
-				sectors.append(child)
-		return sectors
-	return []
 
-func update_menu_display():
+func _clear_menu_labels() -> void:
 	if menu_container == null:
 		return
-	var labels = menu_container.get_children()
+
+	for child in menu_container.get_children():
+		child.queue_free()
+
+
+func update_menu_display() -> void:
+	if menu_container == null:
+		return
+
+	var labels := menu_container.get_children()
+
 	if labels.is_empty() or menu_items.is_empty():
 		selected_index = 0
 		return
-	selected_index = clamp(selected_index, 0, min(labels.size(), menu_items.size()) - 1)
-	for i in range(labels.size()):
-		if i >= menu_items.size():
-			labels[i].text = "  "
-			continue
-		if i == selected_index:
-			labels[i].add_theme_color_override("font_color", Color(1, 0.8, 0.2))
-			labels[i].text = "> " + menu_items[i].label
-		else:
-			labels[i].remove_theme_color_override("font_color")
-			labels[i].text = "  " + menu_items[i].label
 
-func execute_selected():
+	selected_index = clamp(selected_index, 0, min(labels.size(), menu_items.size()) - 1)
+
+	for i in range(labels.size()):
+		if not (labels[i] is Label):
+			continue
+
+		var label := labels[i] as Label
+
+		if i >= menu_items.size():
+			label.text = "  "
+			continue
+
+		var item_label := str(menu_items[i].get("label", ""))
+		var item_type := str(menu_items[i].get("type", ""))
+
+		if item_type == "hint":
+			label.add_theme_color_override("font_color", Color(0.55, 0.7, 0.8))
+			label.text = "  " + item_label
+			continue
+
+		if i == selected_index:
+			label.add_theme_color_override("font_color", Color(1, 0.8, 0.2))
+			label.text = "> " + item_label
+		else:
+			label.remove_theme_color_override("font_color")
+			label.text = "  " + item_label
+
+
+func execute_selected() -> void:
 	if menu_items.is_empty():
 		return
+
 	selected_index = clamp(selected_index, 0, menu_items.size() - 1)
-	var item = menu_items[selected_index]
-	var type = item.type
-	
-	match type:
+
+	var item: Dictionary = menu_items[selected_index]
+	var item_type := str(item.get("type", ""))
+
+	match item_type:
 		"time_scale":
 			cycle_time_scale()
-		"toggle_power":
-			toggle_sector_power(item.sector)
-		"repair":
-			request_repair(item.sector)
 		"resume":
 			toggle_pause()
-	
+		"hint":
+			pass
+
 	build_menu()
 	selected_index = clamp(selected_index, 0, max(0, menu_items.size() - 1))
 	update_menu_display()
 
-func cycle_time_scale():
-	var scales = [1.0, 2.0, 4.0, 0.5]
-	var current = Engine.time_scale
-	var idx = scales.find(current)
-	var new_scale = scales[(idx + 1) % scales.size()]
+
+func cycle_time_scale() -> void:
+	var scales := [1.0, 2.0, 4.0, 0.5]
+	var current := Engine.time_scale
+	var idx := scales.find(current)
+
+	if idx < 0:
+		idx = 0
+
+	var new_scale: float = scales[(idx + 1) % scales.size()]
 	Engine.time_scale = new_scale
 	print("Time scale: ", new_scale)
 
-func toggle_sector_power(sector_name: String):
-	var power = get_node_or_null("/root/GameRoot/Power")
-	if power:
-		power.toggle_sector_power(sector_name)
-		print("Toggled power for: ", sector_name)
 
-func request_repair(sector_name: String):
-	var power = get_node_or_null("/root/GameRoot/Power")
-	if power:
-		if power.has_method("apply_emergency_repair"):
-			var result = power.call("apply_emergency_repair", sector_name)
-			if result is Dictionary and bool(result.get("available", false)):
-				print("Repaired sector: %s (+%.1f HP, fab %.0f%%)" % [
-					sector_name,
-					float(result.get("repair_amount", 0.0)),
-					float(result.get("fabrication_effectiveness", 1.0)) * 100.0,
-				])
-			else:
-				print("Emergency repair unavailable: ", str(result.get("reason", "UNKNOWN")) if result is Dictionary else "UNKNOWN")
-			return
-		if power.total_power >= 25:
-			power.total_power -= 25
-			var sectors = get_sectors()
-			for sector in sectors:
-				if sector.sector_name == sector_name:
-					sector.heal(50.0)
-					print("Repaired sector: ", sector_name)
-		else:
-			print("Not enough power to repair!")
+func _format_time_scale(time_scale: float) -> String:
+	if is_equal_approx(time_scale, round(time_scale)):
+		return str(int(round(time_scale)))
+	return "%.1f" % time_scale
+
+
+func _is_terminal_open() -> bool:
+	var ui = get_node_or_null("/root/GameRoot/UI")
+	if ui and ui.has_method("is_terminal_open"):
+		return bool(ui.is_terminal_open())
+	return false

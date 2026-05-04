@@ -1,6 +1,6 @@
 # Procgen Wall Tile Bridge
 
-Status: implementation-ready
+Status: complete
 
 ## Purpose
 
@@ -9,6 +9,15 @@ Godot-ready wall atlas and semantic coordinate mapping.
 
 The current procgen wall runtime expects one wall cell to resolve to one atlas coordinate. This bridge preserves that
 contract and does not alter wall placement, destructible wall logic, or collision.
+
+Passage-strip art is now available in two paths:
+
+- Hole/void-adjacent wall buckets, for the existing neighbor-aware connector logic.
+- Normal horizontal wall runs, through `ProcGenTilemap.use_wall_passage_variants`, so passage-looking cells can appear
+  during ordinary procgen playtests without requiring actual void tiles beside the wall.
+
+The runtime passage selection is visual-only. It does not carve walkable openings, remove wall collision, or alter
+destructible wall ownership.
 
 ## Active Runtime Context
 
@@ -67,6 +76,10 @@ Passage-strip cells are assigned to:
 - `reference_open_right_hole_coords`
 - `reference_cross_hole_coords`
 
+`reference_passage_wall_coords` is exported on `ProcGenTilemap` and populated in `proc_gen_map.tscn`. Horizontal wall
+runs can pick from this bucket with a deterministic per-run chance. The current default is `30%` for runs of at least
+four wall cells, choosing one non-terminal cell in each selected run.
+
 ## Semantic Mapping
 
 The mapping JSON contains broad required buckets plus exact current scene property names. The current scene property
@@ -100,6 +113,8 @@ fallback cells so the runtime has valid coordinates even before final art curati
 3. Update both `ProcGenMap` and nested `ProcGen` nodes in `proc_gen_map.tscn` to use the new `walls_source_id`.
 4. Update exported reference coordinate arrays from the generated mapping JSON.
 5. Keep runtime collision unchanged.
+6. Expose a dedicated visual passage bucket for horizontal wall runs so passage art is visible outside rare hole/void
+   adjacency cases.
 
 Implementation used source ID `12` for `TileSetAtlasSource_procgen_wall_generated`. `dungeon_tileset.tres` also now
 loads the floor atlas from its existing source PNG instead of a stale `.godot/imported` cache path, because the active
@@ -127,9 +142,9 @@ Validation result:
 - `python3 tools/tiles/build_procgen_wall_atlas.py --help` succeeds.
 - Real builder command succeeds and writes the fixed-grid atlas plus mapping JSON.
 - `cd custodian && godot --headless --quit` exits `0`.
+- `godot --headless --path custodian --quit` exits `0`.
 - Existing project exit warnings remain: ObjectDB leak warning and `14 resources still in use at exit`.
-- The latest validation also reports an unrelated runtime scene boot error: `InventoryDisplay` is already parented under
-  `DebugPanel`.
+- The earlier unrelated `InventoryDisplay` double-parenting boot error was corrected in `custodian/game/ui/hud/ui.gd`.
 
 ## Documentation Drift Check
 

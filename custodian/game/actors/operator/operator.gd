@@ -1,6 +1,6 @@
 extends ControllableActor
 
-const AnimationASsgResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
+const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
 const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
 const AttackLightState = preload("res://game/actors/operator/animations/states/attack_light_state.gd")
 const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
@@ -90,7 +90,7 @@ var last_fire_cooldown := 0.0
 @export var combat_target_range: float = 360.0
 @export var use_tiny_rpg_placeholder_soldier: bool = true
 @export_file("*.png") var idle_main_sheet_path := "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
-@export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_stance.png"
+@export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
 @export_file("*.png") var ranged_2h_aim_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_aim_raise.png"
 @export_file("*.png") var ranged_2h_fire_walk_sheet_path := "res://content/sprites/operator/runtime/curated/body/ranged_2h/firing_slow_walk.png"
 @export var primary_weapon_definition = null
@@ -261,7 +261,7 @@ func _ready():
 	if visual:
 		visual.modulate = Color(1, 1, 1, 1)
 	if animated_sprite:
-		var has_scene_frames: bool = animated_sprite.sprite_frames != null and not animated_sprite.sprite_frames.get_animation_names().is_empty()
+
 		animated_sprite.modulate = Color(1.3, 1.3, 1.3, 1)  # Brighten 30%
 		animated_sprite.frame_changed.connect(_on_attack_frame_changed)
 		if not animated_sprite.animation_finished.is_connected(_on_operator_animation_finished):
@@ -323,7 +323,6 @@ func _process(delta):
 	_update_target_ring()
 	_update_interaction_target()
 	if _is_dead:
-		_update_animation_state_machine(delta)
 		return
 	_handle_interact_input()
 	if _is_terminal_open():
@@ -388,18 +387,19 @@ func _physics_process(delta):
 	var can_start_sprint := stamina > stamina_sprint_gate
 	is_sprinting = moving and wants_sprint and not _sprint_exhausted and (was_sprinting or can_start_sprint)
 	var movement_profile := get_current_combat_profile()
-	var move_speed = SPEED * sprint_multiplier if is_sprinting else SPEED
+	var active_move_speed := SPEED * sprint_multiplier if is_sprinting else SPEED
 	if movement_profile != null:
-		move_speed *= movement_profile.move_speed_multiplier
+		active_move_speed *= movement_profile.move_speed_multiplier
 	if _is_ranged_firing_move_state():
-		move_speed *= _get_ranged_firing_move_multiplier()
+		active_move_speed *= _get_ranged_firing_move_multiplier()
 	if _is_block_state_active():
-		move_speed *= block_move_multiplier
+		active_move_speed *= block_move_multiplier
+		
 	# Apply cognitive state move speed modifier
 	var cognitive := get_node_or_null("/root/CognitiveState")
 	if cognitive != null and cognitive.has_method("get_move_speed_multiplier"):
-		move_speed *= float(cognitive.call("get_move_speed_multiplier"))
-	var target_velocity: Vector2 = input_direction * move_speed
+		active_move_speed *= float(cognitive.call("get_move_speed_multiplier"))
+	var target_velocity: Vector2 = input_direction * active_move_speed
 	var accel_rate: float = move_acceleration if moving else move_deceleration
 	if movement_profile != null:
 		accel_rate *= movement_profile.acceleration_multiplier
@@ -672,7 +672,6 @@ func _emit_pending_ranged_shot() -> void:
 	bullet.impact_scene = IMPACT_SPARK_SCENE
 	bullet.shooter = self
 	# Apply cognitive crit bonus (bearing increases crit chance)
-	var cognitive := get_node_or_null("/root/CognitiveState")
 	if cognitive != null and cognitive.has_method("get_player_crit_bonus"):
 		bullet.crit_chance = float(cognitive.call("get_player_crit_bonus"))
 
@@ -2406,7 +2405,9 @@ func _get_weapon_animation_name(weapon_definition, key: String, fallback: String
 func _on_operator_animation_finished() -> void:
 	if animated_sprite == null:
 		return
-	if _melee_heavy_anticipating and animated_sprite.animation == &"melee_2h_heavy_anticipation":
+	
+	var finished_animation := String(animated_sprite.animation)
+	if _melee_heavy_anticipating and finished_animation.begins_with("melee_2h_heavy_anticipation"):
 		_begin_heavy_attack_active_phase()
 
 
@@ -2650,27 +2651,28 @@ func receive_projectile_hit(amount: float, _attacker_team: String = "neutral") -
 func take_damage(amount: float):
 	if _is_dead:
 		return
-	health -= amount
-	current_health = health  # Sync with ControllableActor interface
+
+	health = max(0.0, health - amount)
+	current_health = health
+
 	var hit_direction := -aim_direction.normalized() if aim_direction.length_squared() > 0.001 else Vector2.DOWN
 	_last_damage_reaction_direction = hit_direction
 	_notify_camera_damage_taken(hit_direction)
 	update_visuals()
 	_spawn_damage_popup(amount)
-	if health > 0.0:
-		_request_damage_reaction(amount)
-	
-	# Flash effect
+
+	if health <= 0.0:
+		print("OPERATOR DOWN!")
+		_handle_death()
+		return
+
+	_request_damage_reaction(amount)
+
 	if visual:
 		visual.modulate = Color(1, 1, 1)
 		await get_tree().create_timer(0.1).timeout
-		update_visuals()
-	
-	if health <= 0:
-		health = 0
-		print("OPERATOR DOWN!")
-		_handle_death()
-
+		if not _is_dead:
+			update_visuals()
 
 func _request_damage_reaction(_amount: float) -> void:
 	if _animation_state_machine == null:
@@ -2704,8 +2706,12 @@ func _handle_death() -> void:
 	disable_hitbox()
 	if _animation_state_machine != null:
 		_animation_state_machine.request("death", 20)
-	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("death"):
-		animated_sprite.play("death")
+	if animated_sprite and animated_sprite.sprite_frames:
+		var death_animation := "unarmed_death" if _is_current_profile_unarmed() else "death"
+		if not animated_sprite.sprite_frames.has_animation(death_animation):
+			death_animation = "death"
+		if animated_sprite.sprite_frames.has_animation(death_animation):
+			animated_sprite.play(death_animation)
 	var gs = get_node_or_null("/root/GameState")
 	if gs and gs.has_method("lose_life"):
 		gs.lose_life("Operator eliminated after a fatal strike")

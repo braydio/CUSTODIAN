@@ -1,5 +1,10 @@
 extends CanvasLayer
 
+const TerminalCommandRouterScript := preload("res://game/ui/terminal/terminal_command_router.gd")
+const TerminalSnapshotScript := preload("res://game/ui/terminal/terminal_snapshot.gd")
+const TerminalMapPreviewScript := preload("res://game/ui/terminal/terminal_map_preview.gd")
+const TerminalPlanetPreviewScript := preload("res://game/ui/terminal/terminal_planet_preview.gd")
+
 const DEFAULT_TERMINAL_SERVICE_URL := "http://127.0.0.1:7331"
 const TERMINAL_LOCAL_LINK := "LOCAL://GAME_STATE"
 const TERMINAL_BOOT_LINES := [
@@ -241,6 +246,10 @@ var _terminal_main_scroll: ScrollContainer = null
 var _terminal_fabrication_queue: Array[String] = []
 var _terminal_policy_preset := "BALANCED"
 var _terminal_activity_autofollow := true
+var _terminal_command_router: TerminalCommandRouter = TerminalCommandRouterScript.new()
+var _terminal_snapshot_builder: TerminalSnapshot = TerminalSnapshotScript.new()
+var _terminal_map_preview_renderer: TerminalMapPreview = TerminalMapPreviewScript.new()
+var _terminal_planet_preview_renderer: TerminalPlanetPreview = TerminalPlanetPreviewScript.new()
 
 const PLANET_PREVIEW_ZOOM_MIN := 2.7
 const PLANET_PREVIEW_ZOOM_MAX := 6.2
@@ -454,8 +463,10 @@ func _setup_terminal_main_scroll() -> void:
 	for node in content_nodes:
 		if node == null:
 			continue
+		if not (node is Node):
+			continue
 		if node.get_parent() != content_column:
-			var previous_parent := node.get_parent()
+			var previous_parent: Node = node.get_parent()
 			if previous_parent != null:
 				previous_parent.remove_child(node)
 			content_column.add_child(node)
@@ -1052,19 +1063,24 @@ func _ensure_terminal_input_focus():
 	if terminal_input:
 		terminal_input.grab_focus()
 
-
-func _focus_terminal_button_group(buttons: Array[BaseButton], forward: bool) -> void:
+func _focus_terminal_button_group(buttons: Array, forward: bool) -> void:
 	var indexes: Array[int] = []
 	for idx in range(buttons.size()):
 		indexes.append(idx)
+
 	if not forward:
 		indexes.reverse()
+
 	for idx in indexes:
-		var button := buttons[idx]
-		if button == null or not is_instance_valid(button) or button.disabled:
+		var button = buttons[idx]
+		if button == null or not is_instance_valid(button) or not (button is BaseButton):
 			continue
-		button.grab_focus()
+		if button.disabled:
+			continue
+
+		(button as BaseButton).grab_focus()
 		return
+
 	if terminal_input and terminal_input.editable:
 		terminal_input.grab_focus()
 
@@ -1074,46 +1090,41 @@ func _move_terminal_button_focus(step: int) -> void:
 	var focus_owner := viewport.gui_get_focus_owner() if viewport != null else null
 	if not (focus_owner is BaseButton):
 		return
-	var ordered_buttons: Array[BaseButton] = []
+
+	var ordered_buttons: Array = []
+
 	for button in _terminal_nav_buttons:
-		if button != null:
+		if button is BaseButton:
 			ordered_buttons.append(button)
+
 	for button in _terminal_action_buttons:
-		if button != null:
+		if button is BaseButton:
 			ordered_buttons.append(button)
+
 	var current_index := ordered_buttons.find(focus_owner)
 	if current_index < 0 or ordered_buttons.is_empty():
 		return
+
 	var total := ordered_buttons.size()
 	for offset in range(1, total + 1):
 		var next_index := (current_index + (step * offset) + total) % total
-		var next_button := ordered_buttons[next_index]
-		if next_button == null or not is_instance_valid(next_button) or next_button.disabled:
+		var next_button = ordered_buttons[next_index]
+		if next_button == null or not is_instance_valid(next_button) or not (next_button is BaseButton):
 			continue
-		next_button.grab_focus()
+		if next_button.disabled:
+			continue
+
+		(next_button as BaseButton).grab_focus()
 		return
 
 func _update_terminal_planet_spin(delta: float) -> void:
-	if _planet_preview_root == null or not is_instance_valid(_planet_preview_root):
-		return
-	if _planet_preview_drag_active:
-		return
-	if _planet_preview_spin_velocity.length_squared() < 0.0001:
-		return
-	_planet_preview_rotation.x = clamp(_planet_preview_rotation.x + _planet_preview_spin_velocity.x * delta, -0.9, 0.9)
-	_planet_preview_rotation.y += _planet_preview_spin_velocity.y * delta
-	_apply_terminal_planet_rotation()
-	_planet_preview_spin_velocity = _planet_preview_spin_velocity.move_toward(Vector2.ZERO, 2.8 * delta)
+	_terminal_planet_preview_renderer.update_spin(delta)
 
 func _apply_terminal_planet_rotation() -> void:
-	if _planet_preview_root == null or not is_instance_valid(_planet_preview_root):
-		return
-	_planet_preview_root.rotation = Vector3(_planet_preview_rotation.x, _planet_preview_rotation.y, 0.0)
+	_terminal_planet_preview_renderer.apply_rotation()
 
 func _apply_terminal_planet_zoom() -> void:
-	if _planet_preview_camera == null or not is_instance_valid(_planet_preview_camera):
-		return
-	_planet_preview_camera.position = Vector3(0.0, 0.06, _planet_preview_zoom_distance)
+	_terminal_planet_preview_renderer.apply_zoom()
 
 func _apply_terminal_theme():
 	if terminal_panel:
@@ -1507,7 +1518,7 @@ func _reset_completion_state():
 	_terminal_completion_seed = ""
 
 func _queue_terminal_command(command: String) -> void:
-	var parsed := _parse_terminal_command(command)
+	var parsed := _terminal_command_router.parse(command)
 	var cmd_upper := str(parsed.get("normalized", command.to_upper()))
 	_terminal_history.append(cmd_upper)
 	_terminal_history_index = _terminal_history.size()
@@ -1533,7 +1544,7 @@ func _execute_terminal_command_buffered(parsed: Dictionary) -> void:
 	_set_terminal_input_enabled(false)
 	var cmd_upper := str(parsed.get("normalized", ""))
 	_render_terminal_status("EXECUTING %s" % cmd_upper)
-	var handled := _execute_local_terminal_command(parsed)
+	var handled := _terminal_command_router.execute(self, parsed)
 	if handled:
 		_append_terminal_line("COMMAND ACCEPTED", "success")
 		_render_terminal_status("QUEUE %d | LINK STABLE" % _terminal_command_queue.size())
@@ -1547,59 +1558,24 @@ func _execute_terminal_command_buffered(parsed: Dictionary) -> void:
 		_refresh_snapshot()
 
 func _parse_terminal_command(command: String) -> Dictionary:
-	var normalized := command.strip_edges().to_upper()
-	var tokens := normalized.split(" ", false)
-	var verb := tokens[0] if not tokens.is_empty() else ""
-	var args: Array[String] = []
-	var params: Dictionary = {}
-	for i in range(1, tokens.size()):
-		var token := str(tokens[i])
-		if token.contains("="):
-			var parts := token.split("=", false, 1)
-			if parts.size() == 2:
-				params[str(parts[0]).to_lower()] = str(parts[1])
-		else:
-			args.append(token)
-	return {
-		"raw": command,
-		"normalized": normalized,
-		"verb": verb,
-		"args": args,
-		"params": params,
-	}
+	return _terminal_command_router.parse(command)
 
 func _update_terminal_input_validation(raw_text: String) -> void:
 	if terminal_status_label == null:
 		return
 	var input_echo := _format_terminal_input_echo(raw_text)
-	var parsed := _parse_terminal_command(raw_text)
+	var parsed := _terminal_command_router.parse(raw_text)
 	var verb := str(parsed.get("verb", ""))
 	if verb.is_empty():
 		terminal_status_label.text = "READY // COMMAND BAR ACTIVE%s" % (" // > " + input_echo if not input_echo.is_empty() else "")
 		return
-	var valid_verbs := {
-		"HELP": true, "STATUS": true, "ENEMIES": true, "WAVE": true, "SECTORS": true,
-		"CONTRACT": true, "PLANET": true, "MAP": true, "CLEAR": true, "WALL": true,
-		"START": true, "OVERLAY": true, "ALLOCATE_DEFENSE": true, "DEPLOY": true, "FOCUS": true,
-		"TURRET": true, "REROUTE": true, "GOTO": true, "WAIT": true, "HARDEN": true,
-		"REPAIR": true, "MOVE": true, "RETURN": true, "SYNC": true, "LOCKDOWN": true,
-		"FORTIFY": true, "BOOST": true, "SCAN": true, "STABILIZE": true, "PRIORITIZE": true,
-		"DRONE": true, "POLICY": true, "CONFIG": true, "SET": true, "FAB": true, "SCAVENGE": true,
-	}
-	if valid_verbs.has(verb):
+	if _terminal_command_router.is_known_verb(verb):
 		terminal_status_label.text = "VALIDATING // %s%s" % [verb, " // > " + input_echo if not input_echo.is_empty() else ""]
 	else:
 		terminal_status_label.text = "UNKNOWN VERB // %s%s" % [verb, " // > " + input_echo if not input_echo.is_empty() else ""]
 
 func _should_refresh_snapshot(command_upper: String) -> bool:
-	var verb = command_upper.split(" ", false, 1)[0]
-	return verb in [
-		"STATUS", "ENEMIES", "WAVE", "SECTORS", "CONTRACT", "PLANET", "MAP",
-		"START", "WALL", "TURRET",
-		"WAIT", "RESET", "REBOOT", "SET", "FAB", "CONFIG",
-		"ALLOCATE", "FOCUS", "HARDEN", "SCAVENGE", "REPAIR", "DEPLOY",
-		"MOVE", "RETURN", "SYNC", "LOCKDOWN", "OVERLAY", "ALLOCATE_DEFENSE", "REROUTE",
-	]
+	return _terminal_command_router.should_refresh_snapshot(command_upper)
 
 func _on_terminal_poll_timeout():
 	if _terminal_open and _terminal_ready:
@@ -2347,117 +2323,23 @@ func _render_terminal_main_content(snapshot: Dictionary) -> void:
 	_render_terminal_text_output(lines)
 
 func _build_local_snapshot() -> Dictionary:
-	var sectors = _collect_sector_snapshot()
-	var enemies = _collect_enemy_snapshot()
-	var wave = _collect_wave_snapshot()
-	var director = _get_local_director_status()
-	var contract = _collect_contract_snapshot()
-	var game_state = _get_game_state()
-	var power_pct := _get_terminal_power_utilization_pct()
-	return {
-		"time": str(Time.get_time_string_from_system()),
-		"threat": "%.1f" % float(director.get("threat", 0.0)) if not director.is_empty() else "?",
-		"threat_raw": float(director.get("threat", 0.0)) if not director.is_empty() else 0.0,
-		"assault": "%s/%s" % [
-			str(director.get("lane", "none")).to_upper(),
-			str(director.get("objective", "none")).to_upper(),
-		] if not director.is_empty() else "?",
-		"player_mode": "LIVE",
-		"contract_phase": game_state.get_phase_name() if game_state != null else "UNKNOWN",
-		"materials": int(game_state.materials) if game_state != null else 0,
-		"defense_rating": snapped(float(game_state.defense_rating), 0.1) if game_state != null else 0.0,
-		"sectors": sectors,
-		"enemies": enemies,
-		"wave": wave,
-		"contract": contract,
-		"power_pct": power_pct,
-		"tactical_entities": _collect_tactical_entities(),
-	}
+	return _terminal_snapshot_builder.build(self)
 
 func _collect_sector_snapshot() -> Array[Dictionary]:
-	var sectors: Array[Dictionary] = []
-	for node in get_tree().get_nodes_in_group("structure"):
-		if not (node is Node2D):
-			continue
-		var entry: Dictionary = {}
-		entry["name"] = str(node.get("sector_name") if "sector_name" in node else node.name)
-		entry["status"] = str(node.get("state") if "state" in node else "unknown")
-		entry["world_pos"] = node.global_position
-		if "current_health" in node and "max_health" in node:
-			var hp = float(node.get("current_health"))
-			var hp_max = max(1.0, float(node.get("max_health")))
-			entry["hp_pct"] = int(round((hp / hp_max) * 100.0))
-		if "power_tier" in node:
-			entry["power_tier"] = str(node.get("power_tier"))
-		if "effective_output" in node:
-			entry["effective_output"] = snapped(float(node.get("effective_output")) * 100.0, 0.1)
-		if "power_priority" in node:
-			entry["power_priority"] = int(node.get("power_priority"))
-		if "power" in node and "standard_power_required" in node:
-			entry["power_allocated"] = snapped(float(node.get("power")), 0.1)
-			entry["power_standard"] = snapped(float(node.get("standard_power_required")), 0.1)
-		sectors.append(entry)
-	sectors.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		return str(a.get("name", "")) < str(b.get("name", ""))
-	)
-	return sectors
+	return _terminal_snapshot_builder.collect_sectors(self)
 
 func _collect_enemy_snapshot() -> Dictionary:
-	var summary := {"total": 0, "drone": 0, "fast": 0, "heavy": 0}
-	for enemy in get_tree().get_nodes_in_group("enemy"):
-		if enemy == null or not is_instance_valid(enemy):
-			continue
-		summary["total"] = int(summary["total"]) + 1
-		var name = str(enemy.get("enemy_name") if "enemy_name" in enemy else enemy.name).to_upper()
-		if name.find("FAST") >= 0:
-			summary["fast"] = int(summary["fast"]) + 1
-		elif name.find("HEAVY") >= 0:
-			summary["heavy"] = int(summary["heavy"]) + 1
-		else:
-			summary["drone"] = int(summary["drone"]) + 1
-	return summary
+	return _terminal_snapshot_builder.collect_enemies(self)
 
 func _collect_tactical_entities() -> Dictionary:
-	var entities := {
-		"operator": [],
-		"turrets": [],
-		"enemies": [],
-	}
-	var operator = get_node_or_null("/root/GameRoot/World/Operator")
-	if operator and operator is Node2D:
-		entities["operator"].append({"pos": operator.global_position})
-	for turret in get_tree().get_nodes_in_group("turret"):
-		if turret is Node2D:
-			entities["turrets"].append({
-				"pos": turret.global_position,
-				"health": turret.get("health") if turret.has_method("get") else null,
-			})
-	for enemy in get_tree().get_nodes_in_group("enemy"):
-		if enemy is Node2D:
-			entities["enemies"].append({
-				"pos": enemy.global_position,
-				"type": str(enemy.get("enemy_name") if "enemy_name" in enemy else enemy.name),
-			})
-	return entities
+	return _terminal_snapshot_builder.collect_tactical_entities(self)
 
 func _get_terminal_power_utilization_pct() -> float:
-	var power_system = get_node_or_null("/root/GameRoot/Power")
-	if power_system == null or not power_system.has_method("get_power_status"):
-		return 0.0
-	var status: Dictionary = power_system.get_power_status()
-	var total := float(status.get("total", 0.0))
-	var max_value := float(status.get("max", 0.0))
-	if max_value <= 0.001:
-		return 0.0
-	return clampf((total / max_value) * 100.0, 0.0, 100.0)
+	return _terminal_snapshot_builder.get_power_utilization_pct(self)
 
 
 func _get_power_status_snapshot() -> Dictionary:
-	var power_system = get_node_or_null("/root/GameRoot/Power")
-	if power_system == null or not power_system.has_method("get_power_status"):
-		return {}
-	var status = power_system.call("get_power_status")
-	return status if status is Dictionary else {}
+	return _terminal_snapshot_builder.get_power_status(self)
 
 
 func _resolve_power_priority(priority_name: String) -> int:
@@ -2476,18 +2358,17 @@ func _resolve_power_priority(priority_name: String) -> int:
 			return 60
 
 func _collect_wave_snapshot() -> Dictionary:
-	var wave_manager = get_node_or_null("/root/GameRoot/WaveManager")
-	if wave_manager and wave_manager.has_method("get_wave_status"):
-		var status = wave_manager.call("get_wave_status")
-		if status is Dictionary:
-			return status
-	return {}
+	return _terminal_snapshot_builder.collect_wave(self)
 
-func _execute_local_terminal_command(parsed: Dictionary) -> bool:
+func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 	var cmd_upper := str(parsed.get("normalized", ""))
 	var verb := str(parsed.get("verb", ""))
 	var args: Array[String] = parsed.get("args", [])
 	var params: Dictionary = parsed.get("params", {})
+	
+	if verb == "ALLOCATE" and not args.is_empty() and str(args[0]).to_upper() == "DEFENSE":
+		verb = ""
+
 	if cmd_upper == "STATUS FULL" or cmd_upper == "STATUS":
 		_refresh_snapshot()
 		var wave = _collect_wave_snapshot()
@@ -2583,36 +2464,43 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 			_append_terminal_line("TIME RATE SET -> %s // LIVE SIMULATION" % _format_terminal_rate(Engine.time_scale), "success")
 			_refresh_snapshot()
 			return true
-	"HARDEN":
-		var requested_target := str(args[0]).to_upper() if not args.is_empty() else "COMMAND"
-		var harden_target := _resolve_terminal_sector_name(requested_target)
-		if harden_target.is_empty():
-			_append_terminal_line("UNKNOWN HARDEN TARGET %s" % requested_target, "warning")
+		"HARDEN":
+			var requested_target := str(args[0]).to_upper() if not args.is_empty() else "COMMAND"
+			var harden_target := _resolve_terminal_sector_name(requested_target)
+			if harden_target.is_empty():
+				_append_terminal_line("UNKNOWN HARDEN TARGET %s" % requested_target, "warning")
+				return true
+
+			_terminal_highlight_sector = harden_target
+
+			var harden_power_system := get_node_or_null("/root/GameRoot/Power")
+			if harden_power_system != null and harden_power_system.has_method("set_sector_priority"):
+				harden_power_system.call("set_sector_priority", harden_target, 100)
+
+			var harden_repair_result: Dictionary = {}
+			if harden_power_system != null and harden_power_system.has_method("apply_emergency_repair"):
+				var harden_response = harden_power_system.call("apply_emergency_repair", harden_target)
+				if harden_response is Dictionary:
+					harden_repair_result = harden_response
+
+			_set_terminal_page("DEFENSE")
+
+			if harden_repair_result.is_empty():
+				_append_terminal_line("HARDENED %s // PRIORITY RAISED TO CRITICAL" % harden_target, "success", harden_target)
+			elif bool(harden_repair_result.get("available", false)) and str(harden_repair_result.get("reason", "")) == "APPLIED":
+				_append_terminal_line("HARDENED %s // REPAIRED +%.1f HP // PRIORITY CRITICAL" % [
+					harden_target,
+					float(harden_repair_result.get("repair_amount", 0.0)),
+				], "success", harden_target)
+			else:
+				_append_terminal_line("HARDENED %s // PRIORITY CRITICAL // REPAIR %s" % [
+					harden_target,
+					str(harden_repair_result.get("reason", "UNAVAILABLE")),
+				], "warning", harden_target)
+
+			_refresh_snapshot()
 			return true
-		_terminal_highlight_sector = harden_target
-		var harden_power_system := get_node_or_null("/root/GameRoot/Power")
-		if harden_power_system != null and harden_power_system.has_method("set_sector_priority"):
-			harden_power_system.call("set_sector_priority", harden_target, 100)
-		var harden_repair_result: Dictionary = {}
-		if harden_power_system != null and harden_power_system.has_method("apply_emergency_repair"):
-			var response = harden_power_system.call("apply_emergency_repair", harden_target)
-			if response is Dictionary:
-				harden_repair_result = response
-		_set_terminal_page("DEFENSE")
-		if harden_repair_result.is_empty():
-			_append_terminal_line("HARDENED %s // PRIORITY RAISED TO CRITICAL" % harden_target, "success", harden_target)
-		elif bool(harden_repair_result.get("available", false)) and str(harden_repair_result.get("reason", "")) == "APPLIED":
-			_append_terminal_line("HARDENED %s // REPAIRED +%.1f HP // PRIORITY CRITICAL" % [
-				harden_target,
-				float(harden_repair_result.get("repair_amount", 0.0)),
-			], "success", harden_target)
-		else:
-			_append_terminal_line("HARDENED %s // PRIORITY CRITICAL // REPAIR %s" % [
-				harden_target,
-				str(harden_repair_result.get("reason", "UNAVAILABLE")),
-			], "warning", harden_target)
-		_refresh_snapshot()
-		return true
+		
 		"RESET":
 			_reset_terminal_local_state(false)
 			_append_terminal_line("TERMINAL STATE RESET // OVERLAYS CLEARED // RATE %s" % _format_terminal_rate(Engine.time_scale), "success")
@@ -2666,7 +2554,7 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 					str(contract.get("map_seed", "?")),
 					int(contract.get("room_count", 0)),
 					int(contract.get("corridor_spawn_count", 0)),
-				], "info")
+				], "info") 
 			return true
 		"PLANET":
 			var planet_contract = _collect_contract_snapshot()
@@ -2748,22 +2636,25 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 				return true
 			_append_terminal_line("UNKNOWN OVERLAY", "warning")
 			return true
-	"ALLOCATE_DEFENSE":
-		var defense_sector_name := str(params.get("sector", "COMMAND")).to_upper()
-		var weight := str(params.get("weight", "MEDIUM")).to_upper()
-		var resolved_sector := _resolve_terminal_sector_name(defense_sector_name)
-		if resolved_sector.is_empty():
-			_append_terminal_line("UNKNOWN SECTOR %s" % defense_sector_name, "warning")
-			return true
-		_terminal_highlight_sector = resolved_sector
-		var defense_priority_value := _resolve_power_priority(weight)
-		var defense_power_system := get_node_or_null("/root/GameRoot/Power")
-		if defense_power_system != null and defense_power_system.has_method("set_sector_priority"):
-			defense_power_system.call("set_sector_priority", resolved_sector, defense_priority_value)
-		_set_terminal_page("DEFENSE")
-		_append_terminal_line("DEFENSE PRIORITY UPDATED %s -> %s (%d)" % [resolved_sector, weight, defense_priority_value], "success", resolved_sector)
-		_refresh_snapshot()
-		return true
+		"ALLOCATE_DEFENSE":
+			var defense_sector_name := str(params.get("sector", "COMMAND")).to_upper()
+			var weight := str(params.get("weight", "MEDIUM")).to_upper()
+			var resolved_sector := _resolve_terminal_sector_name(defense_sector_name)
+			if resolved_sector.is_empty():
+				_append_terminal_line("UNKNOWN SECTOR %s" % defense_sector_name, "warning")
+				return true
+
+			_terminal_highlight_sector = resolved_sector
+
+			var defense_priority_value := _resolve_power_priority(weight)
+			var defense_power_system := get_node_or_null("/root/GameRoot/Power")
+			if defense_power_system != null and defense_power_system.has_method("set_sector_priority"):
+				defense_power_system.call("set_sector_priority", resolved_sector, defense_priority_value)
+
+			_set_terminal_page("DEFENSE")
+			_append_terminal_line("DEFENSE PRIORITY UPDATED %s -> %s (%d)" % [resolved_sector, weight, defense_priority_value], "success", resolved_sector)
+			_refresh_snapshot()
+			return true	
 		"DEPLOY":
 			if args.is_empty():
 				_append_terminal_line("USE: DEPLOY <TURRET_TYPE> x=<WORLD_X> y=<WORLD_Y> OR sector=<SECTOR>", "warning")
@@ -2985,15 +2876,16 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 				_:
 					_append_terminal_line("UNKNOWN FAB COMMAND", "warning")
 			return true
-	"SCAVENGE":
-		var salvage_gain := 5
-		var salvage_game_state := _get_game_state()
-		if salvage_game_state != null and salvage_game_state.has_method("add_materials"):
-			salvage_game_state.add_materials(salvage_gain)
-		_set_terminal_page("RECON")
-		_append_terminal_line("SCAVENGE COMPLETE // +%d MATERIALS" % salvage_gain, "success")
-		_refresh_snapshot()
-		return true
+		"SCAVENGE":
+			var salvage_gain := 5
+			var salvage_game_state := _get_game_state()
+			if salvage_game_state != null and salvage_game_state.has_method("add_materials"):
+				salvage_game_state.add_materials(salvage_gain)
+
+			_set_terminal_page("RECON")
+			_append_terminal_line("SCAVENGE COMPLETE // +%d MATERIALS" % salvage_gain, "success")
+			_refresh_snapshot()
+			return true	
 		"FOCUS":
 			var focus_target := str(args[0]).to_upper() if not args.is_empty() else "SYSTEM"
 			var priority := str(params.get("priority", "NORMAL")).to_upper()
@@ -3015,40 +2907,45 @@ func _execute_local_terminal_command(parsed: Dictionary) -> bool:
 				_refresh_snapshot()
 				return true
 			_append_terminal_line("FOCUS ACKNOWLEDGED target=%s priority=%s" % [focus_target, priority], "success")
+			return true 
+		"REROUTE":
+			if args.is_empty() or str(args[0]).to_upper() != "POWER":
+				_append_terminal_line("USE: REROUTE POWER sector=COMMAND priority=CRITICAL|HIGH|MEDIUM|LOW", "warning")
+				return true
+
+			var reroute_sector_name := str(params.get("sector", "")).strip_edges().to_upper()
+			if reroute_sector_name.is_empty():
+				_append_terminal_line("REROUTE POWER REQUIRES sector=<SECTOR_NAME>", "warning")
+				return true
+
+			var priority_name := str(params.get("priority", "HIGH")).strip_edges().to_upper()
+			var reroute_priority_value := _resolve_power_priority(priority_name)
+			var reroute_power_system := get_node_or_null("/root/GameRoot/Power")
+
+			if reroute_power_system == null or not reroute_power_system.has_method("set_sector_priority"):
+				_append_terminal_line("POWER ROUTING UNAVAILABLE", "warning")
+				return true
+
+			if reroute_power_system.call("set_sector_priority", reroute_sector_name, reroute_priority_value):
+				_append_terminal_line("POWER PRIORITY UPDATED %s -> %s (%d)" % [
+					reroute_sector_name,
+					priority_name,
+					reroute_priority_value,
+				], "success", reroute_sector_name)
+				_refresh_snapshot()
+			else:
+				_append_terminal_line("UNKNOWN SECTOR %s" % reroute_sector_name, "warning")
+
 			return true
-	"REROUTE":
-		if args.is_empty() or str(args[0]).to_upper() != "POWER":
-			_append_terminal_line("USE: REROUTE POWER sector=COMMAND priority=CRITICAL|HIGH|MEDIUM|LOW", "warning")
-			return true
-		var reroute_sector_name := str(params.get("sector", "")).strip_edges().to_upper()
-		if reroute_sector_name.is_empty():
-			_append_terminal_line("REROUTE POWER REQUIRES sector=<SECTOR_NAME>", "warning")
-			return true
-		var priority_name := str(params.get("priority", "HIGH")).strip_edges().to_upper()
-		var reroute_priority_value := _resolve_power_priority(priority_name)
-		var reroute_power_system := get_node_or_null("/root/GameRoot/Power")
-		if reroute_power_system == null or not reroute_power_system.has_method("set_sector_priority"):
-			_append_terminal_line("POWER ROUTING UNAVAILABLE", "warning")
-			return true
-		if reroute_power_system.call("set_sector_priority", reroute_sector_name, reroute_priority_value):
-			_append_terminal_line("POWER PRIORITY UPDATED %s -> %s (%d)" % [reroute_sector_name, priority_name, reroute_priority_value], "success", reroute_sector_name)
-			_refresh_snapshot()
-		else:
-			_append_terminal_line("UNKNOWN SECTOR %s" % reroute_sector_name, "warning")
-		return true
+
 		_:
 			return false
 
 func _get_game_state() -> Node:
-	return get_node_or_null("/root/GameState")
+	return _terminal_snapshot_builder.get_game_state(self)
 
 func _get_local_director_status() -> Dictionary:
-	var director = get_node_or_null("/root/GameRoot/EnemyDirector")
-	if director and director.has_method("get_director_status"):
-		var status = director.call("get_director_status")
-		if status is Dictionary:
-			return status
-	return {}
+	return _terminal_snapshot_builder.get_local_director_status(self)
 
 func _collect_contract_snapshot() -> Dictionary:
 	_ensure_terminal_contract_binding()
@@ -3057,57 +2954,7 @@ func _collect_contract_snapshot() -> Dictionary:
 	return _terminal_contract_snapshot.duplicate(true)
 
 func _init_terminal_previews() -> void:
-	if _planet_preview_viewport != null and is_instance_valid(_planet_preview_viewport):
-		return
-
-	_planet_preview_viewport = SubViewport.new()
-	_planet_preview_viewport.name = "TerminalPlanetPreviewViewport"
-	_planet_preview_viewport.size = Vector2i(768, 768)
-	_planet_preview_viewport.transparent_bg = false
-	_planet_preview_viewport.disable_3d = false
-	_planet_preview_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	add_child(_planet_preview_viewport)
-
-	_planet_preview_root = Node3D.new()
-	_planet_preview_root.name = "Root"
-	_planet_preview_viewport.add_child(_planet_preview_root)
-
-	_planet_preview_globe = MeshInstance3D.new()
-	_planet_preview_globe.name = "TerminalGlobe"
-	var sphere := SphereMesh.new()
-	sphere.radial_segments = 96
-	sphere.rings = 48
-	sphere.radius = 1.0
-	sphere.height = 2.0
-	_planet_preview_globe.mesh = sphere
-	_planet_preview_root.add_child(_planet_preview_globe)
-
-	var light := DirectionalLight3D.new()
-	light.rotation = Vector3(deg_to_rad(-24.0), deg_to_rad(28.0), 0.0)
-	light.light_energy = 2.4
-	_planet_preview_viewport.add_child(light)
-
-	_planet_preview_environment = WorldEnvironment.new()
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.01, 0.02, 0.03, 1.0)
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.55, 0.62, 0.7, 1.0)
-	env.ambient_light_energy = 0.45
-	_planet_preview_environment.environment = env
-	_planet_preview_viewport.add_child(_planet_preview_environment)
-
-	var camera := Camera3D.new()
-	camera.position = Vector3(0.0, 0.06, _planet_preview_zoom_distance)
-	camera.fov = 34.0
-	camera.near = 0.05
-	camera.far = 20.0
-	camera.current = true
-	_planet_preview_viewport.add_child(camera)
-	_planet_preview_camera = camera
-
-	if terminal_planet_preview:
-		terminal_planet_preview.texture = _planet_preview_viewport.get_texture()
+	_terminal_planet_preview_renderer.init(self, terminal_planet_preview)
 
 func _refresh_contract_previews() -> void:
 	if terminal_map_preview == null:
@@ -3125,71 +2972,21 @@ func _refresh_contract_previews() -> void:
 	terminal_map_preview.texture = _build_map_preview_texture(_terminal_latest_contract, _terminal_snapshot)
 
 func _render_planet_preview() -> void:
-	if _planet_preview_globe == null or not is_instance_valid(_planet_preview_globe):
-		return
-	if terminal_planet_preview and _planet_preview_viewport:
-		terminal_planet_preview.texture = _planet_preview_viewport.get_texture()
-
-	var planet: Dictionary = _terminal_latest_contract.get("planet", {})
-	if not (planet is Dictionary):
-		terminal_planet_preview.texture = _build_placeholder_preview("NO PLANET DATA")
-		return
-
-	var planet_key := str(planet.get("key", "terran_dry"))
-	var planet_seed := int(planet.get("planet_seed", -1))
-	_planet_preview_globe.material_override = _build_terminal_planet_globe_material(planet_key, planet_seed)
-	_planet_preview_rotation = Vector2(0.14, -0.36)
-	_planet_preview_spin_velocity = Vector2.ZERO
-	_planet_preview_zoom_distance = 3.8
-	_apply_terminal_planet_zoom()
-	_apply_terminal_planet_rotation()
+	_terminal_planet_preview_renderer.render(self, terminal_planet_preview, _terminal_latest_contract)
 
 func _on_terminal_planet_preview_gui_input(event: InputEvent) -> void:
 	if not _terminal_open or terminal_planet_preview == null:
 		return
-	if event is InputEventMouseButton:
-		var button_event := event as InputEventMouseButton
-		if button_event.button_index == MOUSE_BUTTON_WHEEL_UP and button_event.pressed:
-			if button_event.ctrl_pressed:
-				_planet_preview_zoom_distance = max(PLANET_PREVIEW_ZOOM_MIN, _planet_preview_zoom_distance - PLANET_PREVIEW_ZOOM_STEP)
-				_apply_terminal_planet_zoom()
-			else:
-				_scroll_terminal_main_by(-96)
-			terminal_planet_preview.accept_event()
-			return
-		if button_event.button_index == MOUSE_BUTTON_WHEEL_DOWN and button_event.pressed:
-			if button_event.ctrl_pressed:
-				_planet_preview_zoom_distance = min(PLANET_PREVIEW_ZOOM_MAX, _planet_preview_zoom_distance + PLANET_PREVIEW_ZOOM_STEP)
-				_apply_terminal_planet_zoom()
-			else:
-				_scroll_terminal_main_by(96)
-			terminal_planet_preview.accept_event()
-			return
-		if button_event.button_index == MOUSE_BUTTON_LEFT:
-			_planet_preview_drag_active = button_event.pressed
-			_planet_preview_drag_last_pos = button_event.position
-			if button_event.pressed:
-				if terminal_input:
-					terminal_input.grab_focus()
-			else:
-				_planet_preview_spin_velocity.x = clamp(_planet_preview_spin_velocity.x, -2.2, 2.2)
-				_planet_preview_spin_velocity.y = clamp(_planet_preview_spin_velocity.y, -4.2, 4.2)
-			terminal_planet_preview.accept_event()
-	elif event is InputEventMouseMotion and _planet_preview_drag_active:
-		var motion_event := event as InputEventMouseMotion
-		var delta_pos := motion_event.position - _planet_preview_drag_last_pos
-		_planet_preview_drag_last_pos = motion_event.position
-		_planet_preview_rotation.x = clamp(_planet_preview_rotation.x - delta_pos.y * 0.005, -0.9, 0.9)
-		_planet_preview_rotation.y += delta_pos.x * 0.012
-		_planet_preview_spin_velocity.x = -delta_pos.y * 0.03
-		_planet_preview_spin_velocity.y = delta_pos.x * 0.07
-		_apply_terminal_planet_rotation()
-		terminal_planet_preview.accept_event()
+	var result := _terminal_planet_preview_renderer.handle_gui_input(event, terminal_planet_preview)
+	if bool(result.get("handled", false)):
+		if terminal_input:
+			terminal_input.grab_focus()
+		var scroll_delta := int(result.get("scroll_delta", 0))
+		if scroll_delta != 0 and event is InputEventMouseButton and not (event as InputEventMouseButton).ctrl_pressed:
+			_scroll_terminal_main_by(scroll_delta)
 
 func _planet_preview_contains_screen_point(point: Vector2) -> bool:
-	if terminal_planet_preview == null or not is_instance_valid(terminal_planet_preview):
-		return false
-	return terminal_planet_preview.get_global_rect().has_point(point)
+	return _terminal_planet_preview_renderer.contains_screen_point(terminal_planet_preview, point)
 
 
 func _on_terminal_map_preview_gui_input(event: InputEvent) -> void:
@@ -3221,13 +3018,15 @@ func _on_terminal_map_preview_gui_input(event: InputEvent) -> void:
 		if button_event.button_index == MOUSE_BUTTON_LEFT and button_event.pressed:
 			if _apply_terminal_map_placement(click_world_pos):
 				_refresh_snapshot()
-			terminal_input.grab_focus()
+			if terminal_input:
+				terminal_input.grab_focus()
 			terminal_map_preview.accept_event()
 			return
 		if button_event.button_index == MOUSE_BUTTON_RIGHT and button_event.pressed:
 			if _cancel_active_placement_mode():
 				_append_terminal_line("PLACEMENT CANCELLED", "info")
-				terminal_input.grab_focus()
+				if terminal_input:
+					terminal_input.grab_focus()
 				terminal_map_preview.accept_event()
 			return
 
