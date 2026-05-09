@@ -62,6 +62,10 @@ enum AssaultState {
 @export var passive_flee_cooldown: float = 1.25
 @export var passive_flee_retarget_interval: float = 0.35
 @export var ambient_critter_target_range: float = 120.0
+@export var stuck_reroute_enabled: bool = true
+@export var stuck_reroute_delay: float = 0.28
+@export var stuck_progress_ratio_threshold: float = 0.18
+@export var stuck_repath_cooldown: float = 0.35
 @export var uses_directional_charset: bool = false
 @export_file("*.png") var directional_charset_sheet_path: String = AXUL_DIRECTIONAL_SHEET_PATH
 @export var directional_charset_row_start: int = 2
@@ -118,6 +122,9 @@ var _variant_behavior_id: String = ""
 var _variant_attack_profile_id: String = ""
 var _variant_special_profile_id: String = ""
 var _uses_procedural_variant_visuals: bool = false
+var _last_movement_probe_position: Vector2 = Vector2.ZERO
+var _stuck_reroute_timer: float = 0.0
+var _stuck_repath_cooldown_timer: float = 0.0
 
 # Pathfinding
 var navigation_system: Node = null
@@ -163,6 +170,7 @@ func _ready():
 		_base_sprite_scale = animated_sprite.scale
 	set_passive_home_position(global_position)
 	_assault_probe_destination = global_position
+	_last_movement_probe_position = global_position
 	_schedule_next_passive_wander()
 	_enter_assault_state(AssaultState.STAGING)
 	damage_timer = damage_interval
@@ -253,6 +261,7 @@ func _physics_process(delta):
 			
 			velocity = direction * speed
 			move_and_slide()
+			_update_stuck_reroute(target_pos, delta)
 			_last_move_direction = direction if direction.length_squared() > 0.0001 else _last_move_direction
 			if _uses_directional_animation_set():
 				_update_directional_animation(_last_move_direction, true)
@@ -423,6 +432,7 @@ func _apply_variant_collision(profile: Resource) -> void:
 func _get_pathfinding_direction(target_pos: Vector2, delta: float) -> Vector2:
 	# Refresh path periodically
 	path_refresh_timer -= delta
+	_stuck_repath_cooldown_timer = maxf(0.0, _stuck_repath_cooldown_timer - delta)
 	if path_refresh_timer <= 0.0 or current_path.is_empty():
 		path_refresh_timer = path_refresh_interval
 		_refresh_path(target_pos)
@@ -433,6 +443,59 @@ func _get_pathfinding_direction(target_pos: Vector2, delta: float) -> Vector2:
 	
 	# Follow path waypoints
 	return _get_direction_along_path(target_pos)
+
+
+func _update_stuck_reroute(target_pos: Vector2, delta: float) -> void:
+	if not stuck_reroute_enabled or not use_pathfinding or navigation_system == null:
+		_last_movement_probe_position = global_position
+		_stuck_reroute_timer = 0.0
+		return
+	var attempted_distance := velocity.length() * delta
+	if attempted_distance <= 0.01:
+		_last_movement_probe_position = global_position
+		_stuck_reroute_timer = 0.0
+		return
+	var moved_distance := global_position.distance_to(_last_movement_probe_position)
+	_last_movement_probe_position = global_position
+	var blocked_by_collision := get_slide_collision_count() > 0
+	var stalled := moved_distance < attempted_distance * stuck_progress_ratio_threshold
+	if blocked_by_collision or stalled:
+		_stuck_reroute_timer += delta
+	else:
+		_stuck_reroute_timer = 0.0
+	if _stuck_reroute_timer < stuck_reroute_delay:
+		return
+	if _stuck_repath_cooldown_timer > 0.0:
+		return
+	_stuck_reroute_timer = 0.0
+	_stuck_repath_cooldown_timer = stuck_repath_cooldown
+	current_path = PackedVector2Array()
+	path_follow_index = 0
+	path_refresh_timer = path_refresh_interval
+	_refresh_path(target_pos)
+
+
+func _update_passive_obstacle_recovery(delta: float) -> void:
+	if not stuck_reroute_enabled:
+		_last_movement_probe_position = global_position
+		_stuck_reroute_timer = 0.0
+		return
+	var attempted_distance := velocity.length() * delta
+	if attempted_distance <= 0.01:
+		_last_movement_probe_position = global_position
+		_stuck_reroute_timer = 0.0
+		return
+	var moved_distance := global_position.distance_to(_last_movement_probe_position)
+	_last_movement_probe_position = global_position
+	var blocked_by_collision := get_slide_collision_count() > 0
+	var stalled := moved_distance < attempted_distance * stuck_progress_ratio_threshold
+	if blocked_by_collision or stalled:
+		_stuck_reroute_timer += delta
+	else:
+		_stuck_reroute_timer = 0.0
+	if _stuck_reroute_timer >= stuck_reroute_delay:
+		_stuck_reroute_timer = 0.0
+		_choose_next_passive_destination()
 
 
 func _refresh_path(target_pos: Vector2) -> void:
@@ -608,6 +671,7 @@ func _update_passive_behavior(delta: float) -> void:
 		var move_speed := speed * (passive_flee_speed_multiplier if _passive_flee_timer > 0.0 else 1.0)
 		velocity = move_direction * move_speed
 		move_and_slide()
+		_update_passive_obstacle_recovery(delta)
 		_last_move_direction = move_direction
 		if _uses_directional_animation_set():
 			_update_directional_animation(_last_move_direction, true)

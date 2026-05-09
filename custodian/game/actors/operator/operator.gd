@@ -19,6 +19,57 @@ const IMPACT_SPARK_SCENE := preload("res://game/actors/effects/impact_spark.tscn
 const MELEE_SWING_SCENE := preload("res://game/actors/effects/melee_swing.tscn")
 const TARGET_RING_SCENE := preload("res://game/actors/effects/target_ring.tscn")
 const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
+
+enum AttackPhase {
+	NONE,
+	STARTUP,
+	ACTIVE,
+	RECOVERY,
+}
+
+const ATTACK_MOVE_PROFILES := {
+	"unarmed_fast": {
+		"startup_time": 0.06,
+		"active_time": 0.10,
+		"startup_move": 0.95,
+		"active_move": 0.85,
+		"recovery_move": 1.00,
+		"turn_locked": false,
+	},
+	"melee_fast": {
+		"startup_time": 0.08,
+		"active_time": 0.12,
+		"startup_move": 0.80,
+		"active_move": 0.65,
+		"recovery_move": 0.85,
+		"turn_locked": false,
+	},
+	"melee_heavy": {
+		"startup_time": 0.18,
+		"active_time": 0.16,
+		"startup_move": 0.45,
+		"active_move": 0.10,
+		"recovery_move": 0.35,
+		"turn_locked": true,
+	},
+	"unarmed_heavy": {
+		"startup_time": 0.18,
+		"active_time": 0.16,
+		"startup_move": 0.45,
+		"active_move": 0.10,
+		"recovery_move": 0.35,
+		"turn_locked": true,
+	},
+	"ranged_fire": {
+		"startup_time": 0.05,
+		"active_time": 0.08,
+		"startup_move": 0.65,
+		"active_move": 0.55,
+		"recovery_move": 0.70,
+		"turn_locked": false,
+	},
+}
+
 var health: float = 100.0
 var fire_cooldown_remaining := 0.0
 var melee_cooldown_remaining := 0.0
@@ -147,6 +198,10 @@ var _melee_attack_key: String = ""
 var _melee_elapsed: float = 0.0
 var _melee_duration: float = 0.0
 var _melee_forward: Vector2 = Vector2.RIGHT
+var attack_phase: AttackPhase = AttackPhase.NONE
+var current_attack_id: String = ""
+var attack_phase_time_remaining: float = 0.0
+var attack_facing_dir: Vector2 = Vector2.DOWN
 var armed_weapons: Array[OperatorWeaponDefinition] = []
 var armed_weapon_index: int = 0
 var last_armed_weapon_index: int = 0
@@ -565,6 +620,7 @@ func _physics_process(delta):
 		is_sprinting = false
 		move_and_slide()
 		return
+	_refresh_attack_phase_state()
 
 	var direction: Vector2 = Vector2.ZERO
 	direction.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
@@ -582,13 +638,12 @@ func _physics_process(delta):
 	if _sprint_exhausted and stamina >= stamina_max:
 		_sprint_exhausted = false
 	var can_start_sprint := stamina > stamina_sprint_gate
-	is_sprinting = moving and wants_sprint and not _sprint_exhausted and (was_sprinting or can_start_sprint)
+	is_sprinting = moving and wants_sprint and not _has_attack_movement_modifier() and not _sprint_exhausted and (was_sprinting or can_start_sprint)
 	var movement_profile := get_current_combat_profile()
 	var active_move_speed := SPEED * sprint_multiplier if is_sprinting else SPEED
 	if movement_profile != null:
 		active_move_speed *= movement_profile.move_speed_multiplier
-	if _is_ranged_firing_move_state():
-		active_move_speed *= _get_ranged_firing_move_multiplier()
+	active_move_speed *= _get_attack_move_multiplier()
 	if _is_block_state_active():
 		active_move_speed *= block_move_multiplier
 		
@@ -658,7 +713,9 @@ func _update_animation():
 	var is_moving = velocity.length() > 0
 	var animation_dir: Vector2
 	
-	if is_firing or is_attacking or is_block_anim or is_reloading or _melee_recovery_active:
+	if _is_attack_turn_locked():
+		animation_dir = attack_facing_dir
+	elif is_firing or is_attacking or is_block_anim or is_reloading or _melee_recovery_active:
 		animation_dir = aim_direction
 	else:
 		animation_dir = movement_direction if is_moving else visual_idle_direction
@@ -1123,6 +1180,7 @@ func _start_light_attack() -> void:
 	_melee_elapsed = 0.0
 	_melee_duration = 0.46
 	_melee_forward = _get_melee_forward_direction()
+	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
 	_configure_melee_hitbox(melee_light_hit_damage, melee_light_range, melee_light_arc_degrees)
 	_play_melee_anim_from_key(_melee_attack_key, &"melee_2h_fast")
 	_lock_melee_cooldown(_melee_duration + 0.06)
@@ -1154,6 +1212,7 @@ func _start_fast_attack() -> void:
 	_melee_attack_key = next_fast_key
 	_melee_elapsed = 0.0
 	_melee_forward = _get_melee_forward_direction()
+	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
 	_configure_melee_hitbox(melee_fast_hit_damage, melee_range, melee_arc_degrees)
 	_play_melee_anim_from_key(_melee_attack_key, fallback_animation)
 	_melee_duration = _get_current_melee_animation_duration(next_duration, 0.24, next_duration)
@@ -1170,6 +1229,7 @@ func _start_heavy_attack() -> void:
 	_notify_camera_attack_windup(true)
 	stamina = max(0.0, stamina - heavy_attack_stamina_cost)
 	_melee_forward = _get_melee_forward_direction()
+	_begin_attack_movement_profile(_melee_attack_key, _melee_forward)
 	if not is_unarmed_attack and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_heavy_anticipation"):
 		_melee_active = false
 		_melee_heavy_anticipating = true
@@ -2182,7 +2242,103 @@ func _is_block_state_active() -> bool:
 
 
 func _is_movement_locked() -> bool:
-	return _reload_active or _is_block_state_active() or _melee_active or _melee_heavy_anticipating
+	return _reload_active or _is_block_state_active()
+
+
+func _has_attack_movement_modifier() -> bool:
+	_refresh_attack_phase_state()
+	return attack_phase != AttackPhase.NONE
+
+
+func _get_attack_move_multiplier() -> float:
+	_refresh_attack_phase_state()
+	if attack_phase == AttackPhase.NONE:
+		return 1.0
+	var profile := _get_current_attack_move_profile()
+	match attack_phase:
+		AttackPhase.STARTUP:
+			return float(profile.get("startup_move", 0.75))
+		AttackPhase.ACTIVE:
+			return float(profile.get("active_move", 0.5))
+		AttackPhase.RECOVERY:
+			return float(profile.get("recovery_move", 0.75))
+		_:
+			return 1.0
+
+
+func _is_attack_turn_locked() -> bool:
+	_refresh_attack_phase_state()
+	if attack_phase == AttackPhase.NONE:
+		return false
+	return bool(_get_current_attack_move_profile().get("turn_locked", false))
+
+
+func _get_current_attack_move_profile() -> Dictionary:
+	if current_attack_id.is_empty():
+		return {}
+	return ATTACK_MOVE_PROFILES.get(current_attack_id, {})
+
+
+func _refresh_attack_phase_state() -> void:
+	if _melee_heavy_anticipating:
+		if current_attack_id.is_empty():
+			current_attack_id = _resolve_current_attack_id()
+		attack_phase = AttackPhase.STARTUP
+		attack_phase_time_remaining = float(_get_current_attack_move_profile().get("startup_time", 0.18))
+		return
+	if _melee_active:
+		if current_attack_id.is_empty():
+			current_attack_id = _resolve_current_attack_id()
+		var profile := _get_current_attack_move_profile()
+		var startup_time := float(profile.get("startup_time", 0.08))
+		var active_time := float(profile.get("active_time", 0.12))
+		if _melee_elapsed < startup_time:
+			attack_phase = AttackPhase.STARTUP
+			attack_phase_time_remaining = startup_time - _melee_elapsed
+		elif _melee_elapsed < startup_time + active_time:
+			attack_phase = AttackPhase.ACTIVE
+			attack_phase_time_remaining = startup_time + active_time - _melee_elapsed
+		else:
+			attack_phase = AttackPhase.RECOVERY
+			attack_phase_time_remaining = max(0.0, _melee_duration - _melee_elapsed)
+		return
+	if _melee_recovery_active:
+		if current_attack_id.is_empty():
+			current_attack_id = _resolve_current_attack_id()
+		attack_phase = AttackPhase.RECOVERY
+		attack_phase_time_remaining = _melee_recovery_timer
+		return
+	if _is_ranged_fire_animation_active():
+		current_attack_id = "ranged_fire"
+		attack_phase = AttackPhase.ACTIVE if _pending_ranged_shot.is_empty() else AttackPhase.STARTUP
+		attack_phase_time_remaining = max(fire_cooldown_remaining, 0.0)
+		attack_facing_dir = aim_direction if aim_direction.length_squared() > 0.0001 else visual_idle_direction
+		return
+	attack_phase = AttackPhase.NONE
+	current_attack_id = ""
+	attack_phase_time_remaining = 0.0
+
+
+func _begin_attack_movement_profile(attack_id: String, facing_dir: Vector2) -> void:
+	current_attack_id = attack_id
+	attack_phase = AttackPhase.STARTUP
+	attack_phase_time_remaining = float(_get_current_attack_move_profile().get("startup_time", 0.08))
+	if facing_dir.length_squared() > 0.0001:
+		attack_facing_dir = facing_dir.normalized()
+
+
+func _resolve_current_attack_id() -> String:
+	if _melee_attack_key.begins_with("unarmed_heavy"):
+		return "unarmed_heavy"
+	if _melee_attack_key.begins_with("unarmed_fast"):
+		return "unarmed_fast"
+	if _melee_attack_kind == "heavy":
+		return "melee_heavy"
+	if _melee_attack_kind == "fast":
+		return "unarmed_fast" if _is_attack_profile_unarmed(_active_attack_profile) else "melee_fast"
+	if _melee_attack_kind == "light":
+		return "unarmed_fast" if _is_attack_profile_unarmed(_active_attack_profile) else "melee_fast"
+	return "melee_fast"
 
 
 func _is_ranged_fire_animation_active() -> bool:

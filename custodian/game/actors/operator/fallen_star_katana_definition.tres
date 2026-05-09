@@ -15,7 +15,7 @@ frames_resource = ExtResource("2_weapon_frames")
 animation_map = {
 "melee_light": "melee_light",
 "melee_fast": "melee_2h_fast",
-"melee_fast_1": "melee_2h_fast",
+"melee_fast_1": "melee_2h_fast_1",
 "melee_fast_2": "melee_2h_fast_2",
 "melee_heavy": "melee_2h_heavy",
 "melee_stance": "melee_stance"
@@ -68,8 +68,8 @@ fx_map = {
 "weapon_anim": "melee_2h_fast_weapon"
 },
 "melee_fast_1": {
-"fx_anim": "melee_2h_fast_fx",
-"weapon_anim": "melee_2h_fast_weapon"
+"fx_anim": "melee_2h_fast_1_fx",
+"weapon_anim": "melee_2h_fast_1_weapon"
 },
 "melee_fast_2": {
 "fx_anim": "melee_2h_fast_2_fx",

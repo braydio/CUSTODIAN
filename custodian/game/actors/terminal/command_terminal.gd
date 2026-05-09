@@ -22,6 +22,7 @@ var _activation_sequence_token: int = 0
 
 func _ready() -> void:
 	add_to_group("interactable")
+	add_to_group("command_terminal")
 	_resolve_activation_texture()
 	if _ensure_terminal_sprite():
 		_hide_placeholder_geometry()
