@@ -12,12 +12,16 @@ extends Control
 @export var enemy_color: Color = Color(0.86, 0.22, 0.18, 1.0)
 @export var passive_creature_color: Color = Color(0.42, 0.86, 0.52, 1.0)
 @export var objective_color: Color = Color(0.95, 0.72, 0.24, 1.0)
+@export var terminal_color: Color = Color(0.38, 0.70, 0.96, 1.0)
+@export var vehicle_color: Color = Color(0.96, 0.80, 0.32, 1.0)
+@export var turret_color: Color = Color(0.40, 0.92, 0.78, 1.0)
 @export var grid_color: Color = Color(0.32, 0.38, 0.32, 0.16)
 
 @export var map_padding_px: float = 9.0
 @export var player_pip_radius_px: float = 3.5
 @export var enemy_pip_radius_px: float = 2.1
 @export var passive_creature_pip_radius_px: float = 2.6
+@export var utility_marker_radius_px: float = 3.0
 @export var room_marker_radius_px: float = 1.6
 @export var draw_grid: bool = true
 
@@ -37,6 +41,9 @@ var procgen_tilemap: Node = null
 var player_node: Node2D = null
 var enemy_nodes: Array[Node2D] = []
 var objective_nodes: Array[Node2D] = []
+var terminal_nodes: Array[Node2D] = []
+var vehicle_nodes: Array[Node2D] = []
+var turret_nodes: Array[Node2D] = []
 
 
 func _ready() -> void:
@@ -75,6 +82,18 @@ func set_objectives(nodes: Array[Node2D]) -> void:
 	objective_nodes = nodes
 
 
+func set_terminals(nodes: Array[Node2D]) -> void:
+	terminal_nodes = nodes
+
+
+func set_vehicles(nodes: Array[Node2D]) -> void:
+	vehicle_nodes = nodes
+
+
+func set_turrets(nodes: Array[Node2D]) -> void:
+	turret_nodes = nodes
+
+
 func update_tile(tile: Vector2i, terrain_kind: String) -> void:
 	if not _is_tile_inside(tile):
 		return
@@ -98,6 +117,9 @@ func get_status_summary() -> Dictionary:
 		"enemies": _count_hostile_enemy_nodes(),
 		"passive_creatures": _count_passive_creature_nodes(),
 		"objectives": objective_nodes.size(),
+		"terminals": terminal_nodes.size(),
+		"vehicles": vehicle_nodes.size(),
+		"turrets": turret_nodes.size(),
 		"has_player": player_node != null and is_instance_valid(player_node),
 	}
 
@@ -158,6 +180,9 @@ func _draw() -> void:
 	_draw_compound_overlay(map_rect)
 	_draw_interior_room_overlays(map_rect)
 	_draw_room_markers(map_rect)
+	_draw_terminal_pips(map_rect)
+	_draw_vehicle_pips(map_rect)
+	_draw_turret_pips(map_rect)
 	_draw_objective_pips(map_rect)
 	_draw_enemy_pips(map_rect)
 	_draw_player_pip(map_rect)
@@ -222,6 +247,58 @@ func _draw_passive_creature_marker(panel_pos: Vector2) -> void:
 	])
 	draw_colored_polygon(points, passive_creature_color)
 	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), Color(0.02, 0.035, 0.025, 0.95), 1.0)
+
+
+func _draw_terminal_pips(map_rect: Rect2) -> void:
+	for terminal in terminal_nodes:
+		if terminal == null or not is_instance_valid(terminal):
+			continue
+		var tile := _global_to_tile(terminal.global_position)
+		if _is_tile_inside(tile):
+			_draw_square_marker(_tile_to_panel(tile, map_rect), terminal_color)
+
+
+func _draw_vehicle_pips(map_rect: Rect2) -> void:
+	for vehicle in vehicle_nodes:
+		if vehicle == null or not is_instance_valid(vehicle):
+			continue
+		var tile := _global_to_tile(vehicle.global_position)
+		if _is_tile_inside(tile):
+			_draw_triangle_marker(_tile_to_panel(tile, map_rect), vehicle_color)
+
+
+func _draw_turret_pips(map_rect: Rect2) -> void:
+	for turret in turret_nodes:
+		if turret == null or not is_instance_valid(turret):
+			continue
+		var tile := _global_to_tile(turret.global_position)
+		if _is_tile_inside(tile):
+			_draw_cross_marker(_tile_to_panel(tile, map_rect), turret_color)
+
+
+func _draw_square_marker(panel_pos: Vector2, color: Color) -> void:
+	var r := utility_marker_radius_px
+	draw_rect(Rect2(panel_pos - Vector2(r, r), Vector2(r * 2.0, r * 2.0)), Color(0.0, 0.0, 0.0, 0.9), true)
+	draw_rect(Rect2(panel_pos - Vector2(r - 1.0, r - 1.0), Vector2((r - 1.0) * 2.0, (r - 1.0) * 2.0)), color, true)
+
+
+func _draw_triangle_marker(panel_pos: Vector2, color: Color) -> void:
+	var r := utility_marker_radius_px + 0.8
+	var points := PackedVector2Array([
+		panel_pos + Vector2(0.0, -r),
+		panel_pos + Vector2(r, r),
+		panel_pos + Vector2(-r, r),
+	])
+	draw_colored_polygon(points, color)
+	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[0]]), Color(0.0, 0.0, 0.0, 0.9), 1.0)
+
+
+func _draw_cross_marker(panel_pos: Vector2, color: Color) -> void:
+	var r := utility_marker_radius_px + 0.5
+	draw_line(panel_pos + Vector2(-r, 0.0), panel_pos + Vector2(r, 0.0), Color(0.0, 0.0, 0.0, 0.9), 3.0)
+	draw_line(panel_pos + Vector2(0.0, -r), panel_pos + Vector2(0.0, r), Color(0.0, 0.0, 0.0, 0.9), 3.0)
+	draw_line(panel_pos + Vector2(-r, 0.0), panel_pos + Vector2(r, 0.0), color, 1.5)
+	draw_line(panel_pos + Vector2(0.0, -r), panel_pos + Vector2(0.0, r), color, 1.5)
 
 
 func _is_passive_creature_node(node: Node) -> bool:

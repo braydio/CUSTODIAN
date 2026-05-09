@@ -6,21 +6,39 @@ extends Control
 @export var player_group_name: StringName = &"player"
 @export var enemy_group_name: StringName = &"enemy"
 @export var objective_group_name: StringName = &"objective"
+@export var terminal_group_name: StringName = &"command_terminal"
+@export var vehicle_group_name: StringName = &"vehicle"
+@export var turret_group_name: StringName = &"turret"
 @export var refresh_entities_interval: float = 0.25
 @export var retry_procgen_interval: float = 0.35
+@export var enable_expand_toggle: bool = true
+@export var toggle_expand_action: StringName = &"toggle_minimap_expand"
+@export var compact_size: Vector2 = Vector2(224, 224)
+@export var expanded_size: Vector2 = Vector2(560, 560)
+@export var screen_margin: Vector2 = Vector2(20, 20)
 
 var minimap_view: Node = null
 var procgen_tilemap: Node = null
 var _refresh_accum := 0.0
 var _retry_accum := 0.0
 var _connected_procgen_id := 0
+var _expanded := false
 
 
 func _ready() -> void:
 	minimap_view = get_node_or_null(minimap_view_path)
+	_apply_minimap_size(false)
 	_resolve_procgen()
 	_refresh_dynamic_nodes()
 	set_process(true)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not enable_expand_toggle or not visible:
+		return
+	if InputMap.has_action(toggle_expand_action) and event.is_action_pressed(toggle_expand_action):
+		toggle_expanded()
+		get_viewport().set_input_as_handled()
 
 
 func _process(delta: float) -> void:
@@ -42,7 +60,19 @@ func get_status_summary() -> Dictionary:
 		view_status = minimap_view.call("get_status_summary")
 	view_status["procgen_connected"] = procgen_tilemap != null and is_instance_valid(procgen_tilemap)
 	view_status["visible"] = visible
+	view_status["expanded"] = _expanded
 	return view_status
+
+
+func toggle_expanded() -> void:
+	set_expanded(not _expanded)
+
+
+func set_expanded(expanded: bool) -> void:
+	if not enable_expand_toggle:
+		return
+	_expanded = expanded
+	_apply_minimap_size(_expanded)
 
 
 func refresh_now() -> void:
@@ -58,6 +88,23 @@ func local_to_world(local_pos: Vector2) -> Vector2:
 	var global_pos: Vector2 = get_global_transform() * local_pos
 	var view_local: Vector2 = view_control.get_global_transform().affine_inverse() * global_pos
 	return minimap_view.call("local_to_world", view_local)
+
+
+func _apply_minimap_size(expanded: bool) -> void:
+	if not enable_expand_toggle:
+		return
+	var target_size := expanded_size if expanded else compact_size
+	custom_minimum_size = target_size
+	if get_parent() is Container:
+		return
+	anchor_left = 1.0
+	anchor_right = 1.0
+	anchor_top = 0.0
+	anchor_bottom = 0.0
+	offset_right = -screen_margin.x
+	offset_left = offset_right - target_size.x
+	offset_top = screen_margin.y
+	offset_bottom = offset_top + target_size.y
 
 
 func _resolve_procgen() -> void:
@@ -140,5 +187,26 @@ func _refresh_dynamic_nodes() -> void:
 		if node is Node2D:
 			objectives.append(node as Node2D)
 
+	var terminals: Array[Node2D] = []
+	for node in get_tree().get_nodes_in_group(terminal_group_name):
+		if node is Node2D:
+			terminals.append(node as Node2D)
+
+	var vehicles: Array[Node2D] = []
+	for node in get_tree().get_nodes_in_group(vehicle_group_name):
+		if node is Node2D:
+			vehicles.append(node as Node2D)
+
+	var turrets: Array[Node2D] = []
+	for node in get_tree().get_nodes_in_group(turret_group_name):
+		if node is Node2D:
+			turrets.append(node as Node2D)
+
 	minimap_view.set_enemies(enemies)
 	minimap_view.set_objectives(objectives)
+	if minimap_view.has_method("set_terminals"):
+		minimap_view.call("set_terminals", terminals)
+	if minimap_view.has_method("set_vehicles"):
+		minimap_view.call("set_vehicles", vehicles)
+	if minimap_view.has_method("set_turrets"):
+		minimap_view.call("set_turrets", turrets)

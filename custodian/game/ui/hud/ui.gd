@@ -432,7 +432,12 @@ func _register_devconsole_commands() -> void:
 		console.add_command("debug_hud", _devconsole_toggle_debug_hud)
 		console.add_command("show_cognitive", _devconsole_show_cognitive)
 		console.add_command("test_spawn", _devconsole_test_spawn)
+		console.add_command("knight_skin", _devconsole_knight_skin)
 		console.add_command("ui_status", _devconsole_ui_status)
+		console.add_command("fab_status", _devconsole_fab_status)
+		console.add_command("fab_recipes", _devconsole_fab_recipes)
+		console.add_command("fab_grant", _devconsole_fab_grant)
+		console.add_command("fab_start", _devconsole_fab_start)
 		if ENABLE_MINIMAP:
 			console.add_command("toggle_minimap", _devconsole_toggle_minimap)
 			console.add_command("minimap_status", _devconsole_minimap_status)
@@ -454,7 +459,7 @@ func _devconsole_show_cognitive(args: Array) -> String:
 
 func _devconsole_test_spawn(args: Array) -> String:
 	# Spawn a test enemy at operator position
-	var operator = get_node_or_null("/root/GameRoot/Operator")
+	var operator = _get_operator_node()
 	if operator == null:
 		return "Operator not found"
 	var enemy_mgr = get_node_or_null("/root/GameRoot/EnemyDirector")
@@ -464,12 +469,158 @@ func _devconsole_test_spawn(args: Array) -> String:
 		return "Spawned test enemy at " + str(pos)
 	return "EnemyDirector not found or spawn_test_enemy not available"
 
+func _devconsole_knight_skin(args: Array) -> String:
+	var operator = _get_operator_node()
+	if operator == null:
+		return "Operator not found"
+	if not operator.has_method("set_knight_test_skin_enabled"):
+		return "Operator does not expose Knight test skin controls"
+	var mode := "toggle"
+	if args.size() > 0:
+		mode = str(args[0]).strip_edges().to_lower()
+	match mode:
+		"on", "true", "1", "enable", "enabled":
+			operator.call("set_knight_test_skin_enabled", true)
+		"off", "false", "0", "disable", "disabled":
+			operator.call("set_knight_test_skin_enabled", false)
+		"status":
+			pass
+		"toggle", "":
+			operator.call("toggle_knight_test_skin")
+		_:
+			return "Usage: knight_skin [on|off|toggle|status]"
+	var active := bool(operator.call("is_knight_test_skin_active")) if operator.has_method("is_knight_test_skin_active") else false
+	return "Knight skin: " + ("ON" if active else "OFF")
+
+func _get_operator_node() -> Node:
+	var operator := get_tree().get_first_node_in_group("player")
+	if operator != null:
+		return operator
+	operator = get_node_or_null("/root/GameRoot/World/Operator")
+	if operator != null:
+		return operator
+	return get_node_or_null("/root/GameRoot/Operator")
+
 func _devconsole_ui_status(args: Array) -> String:
 	# Show HUD/terminal status
 	var status = "Terminal: " + ("OPEN" if _terminal_open else "CLOSED")
 	status += " | Ready: " + str(_terminal_ready)
 	status += " | Boot started: " + str(_terminal_boot_started)
 	return status
+
+
+func _devconsole_fab_status(args: Array) -> String:
+	var ledger := get_node_or_null("/root/ResourceLedger")
+	var build_inventory := get_node_or_null("/root/BuildInventory")
+	var fab_pipeline := get_node_or_null("/root/FabPipeline")
+	if ledger == null or build_inventory == null or fab_pipeline == null:
+		return "Fabrication autoloads unavailable"
+
+	var lines: Array[String] = ["FAB STATUS"]
+	lines.append("Resources: " + _format_debug_dictionary(ledger.call("get_snapshot")))
+	lines.append("Build tokens: " + _format_debug_dictionary(build_inventory.call("get_snapshot")))
+	lines.append("Jobs: " + _format_fab_jobs(fab_pipeline.call("get_jobs_snapshot")))
+	lines.append("Unlocks: " + _format_debug_dictionary(fab_pipeline.call("get_completed_unlocks")))
+	return "\n".join(lines)
+
+
+func _devconsole_fab_recipes(args: Array) -> String:
+	var fab_pipeline := get_node_or_null("/root/FabPipeline")
+	if fab_pipeline == null:
+		return "FabPipeline autoload unavailable"
+	var recipes: Dictionary = fab_pipeline.call("get_all_recipes")
+	if recipes.is_empty():
+		return "No fabrication recipes loaded"
+
+	var lines: Array[String] = ["FAB RECIPES"]
+	for recipe_id in recipes.keys():
+		var recipe: Dictionary = recipes[recipe_id]
+		var label := str(recipe.get("label", recipe_id))
+		var cost: Dictionary = recipe.get("cost", {})
+		var build_seconds := float(recipe.get("build_seconds", 0.0))
+		var output_type := str(recipe.get("output_type", "build_token"))
+		var output_id := str(recipe.get("output_id", recipe_id))
+		lines.append("%s - %s | %.1fs | cost: %s | output: %s:%s" % [
+			str(recipe_id),
+			label,
+			build_seconds,
+			_format_debug_dictionary(cost),
+			output_type,
+			output_id,
+		])
+	return "\n".join(lines)
+
+
+func _devconsole_fab_grant(args: Array) -> String:
+	var ledger := get_node_or_null("/root/ResourceLedger")
+	if ledger == null:
+		return "ResourceLedger autoload unavailable"
+
+	if args.size() >= 2:
+		var resource_id := str(args[0]).strip_edges()
+		var amount := int(str(args[1]))
+		if resource_id.is_empty() or amount <= 0:
+			return "Usage: fab_grant [resource_id amount] or fab_grant"
+		ledger.call("add", resource_id, amount)
+		return "Granted %d %s. Resources: %s" % [
+			amount,
+			resource_id,
+			_format_debug_dictionary(ledger.call("get_snapshot")),
+		]
+
+	ledger.call("debug_grant")
+	return "Granted starter fabrication resources. Resources: %s" % _format_debug_dictionary(ledger.call("get_snapshot"))
+
+
+func _devconsole_fab_start(args: Array) -> String:
+	if args.is_empty():
+		return "Usage: fab_start <recipe_id>"
+	var fab_pipeline := get_node_or_null("/root/FabPipeline")
+	if fab_pipeline == null:
+		return "FabPipeline autoload unavailable"
+
+	var recipe_id := str(args[0]).strip_edges()
+	if recipe_id.is_empty():
+		return "Usage: fab_start <recipe_id>"
+	if not bool(fab_pipeline.call("has_recipe", recipe_id)):
+		return "Unknown recipe: %s" % recipe_id
+	if not bool(fab_pipeline.call("can_start_recipe", recipe_id)):
+		return "Cannot start %s. Insufficient resources or pipeline unavailable." % recipe_id
+	if bool(fab_pipeline.call("try_start_recipe", recipe_id)):
+		return "Started fabrication recipe: %s" % recipe_id
+	return "Failed to start fabrication recipe: %s" % recipe_id
+
+
+func _format_debug_dictionary(value: Variant) -> String:
+	if not (value is Dictionary):
+		return "{}"
+	var dictionary := value as Dictionary
+	if dictionary.is_empty():
+		return "{}"
+	var parts: Array[String] = []
+	for key in dictionary.keys():
+		parts.append("%s=%s" % [str(key), str(dictionary[key])])
+	return ", ".join(parts)
+
+
+func _format_fab_jobs(value: Variant) -> String:
+	if not (value is Array):
+		return "[]"
+	var jobs := value as Array
+	if jobs.is_empty():
+		return "[]"
+	var parts: Array[String] = []
+	for job_variant in jobs:
+		if not (job_variant is Dictionary):
+			continue
+		var job := job_variant as Dictionary
+		parts.append("#%d %s %.0f%%" % [
+			int(job.get("job_id", 0)),
+			str(job.get("recipe_id", "")),
+			float(job.get("progress", 0.0)) * 100.0,
+		])
+	return "; ".join(parts)
+
 
 func _devconsole_toggle_minimap(args: Array) -> String:
 	# Toggle minimap visibility at runtime
