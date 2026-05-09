@@ -43,6 +43,7 @@
 [ext_resource type="Texture2D" uid="uid://6y4pj114mk8m" path="res://content/sprites/misc/crosshair_64x64.png" id="101_crosshair"]
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
+[ext_resource type="PackedScene" path="res://game/resources/resource_node.tscn" id="202_resource_node"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 
@@ -171,6 +172,48 @@ heavy_ammo = 6
 
 [node name="AmmoCacheD" parent="World/Items" unique_id=655756500 instance=ExtResource("10_cache")]
 position = Vector2(40, -520)
+
+[node name="BlackwoodDeadfallTest" parent="World/Items" instance=ExtResource("202_resource_node")]
+position = Vector2(552, -356)
+node_kind = "blackwood_deadfall"
+harvest_label = "CUT"
+resource_id = "blackwood"
+work_required = 3
+yield_amount = 6
+secondary_yields = {
+"ruin_scrap": 1
+}
+standing_color = Color(0.16, 0.1, 0.075, 1)
+depleted_color = Color(0.07, 0.055, 0.045, 1)
+prompt_resource_label = "BLACKWOOD"
+
+[node name="AlloyVeinTest" parent="World/Items" instance=ExtResource("202_resource_node")]
+position = Vector2(604, -308)
+node_kind = "alloy_vein"
+harvest_label = "MINE"
+resource_id = "structural_alloy"
+work_required = 4
+yield_amount = 5
+secondary_yields = {
+"ruin_scrap": 2
+}
+standing_color = Color(0.25, 0.28, 0.31, 1)
+depleted_color = Color(0.08, 0.085, 0.09, 1)
+prompt_resource_label = "STRUCTURAL ALLOY"
+
+[node name="MachineWreckageTest" parent="World/Items" instance=ExtResource("202_resource_node")]
+position = Vector2(480, -434)
+node_kind = "machine_wreckage"
+harvest_label = "SALVAGE"
+resource_id = "ruin_scrap"
+work_required = 2
+yield_amount = 10
+secondary_yields = {
+"capacitor_dust": 1
+}
+standing_color = Color(0.28, 0.25, 0.2, 1)
+depleted_color = Color(0.075, 0.07, 0.065, 1)
+prompt_resource_label = "RUIN SCRAP"
 
 [node name="ContractMap" parent="World" unique_id=1103719919 instance=ExtResource("26_contract_map")]
 visible = false
@@ -622,6 +665,7 @@ text = "TACTICAL MINIMAP"
 custom_minimum_size = Vector2(0, 168)
 layout_mode = 2
 mouse_filter = 0
+enable_expand_toggle = false
 
 [node name="WidgetStack" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn" unique_id=-2137803059]
 layout_mode = 2
