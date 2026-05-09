@@ -217,6 +217,8 @@ const FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES := 8
 const DEFAULT_RUIN_PROP_SCENE := preload("res://content/props/ruins/scenes/ProceduralProp.tscn")
 const DEFAULT_RUIN_PROP_SPAWN_SET := preload("res://content/props/ruins/data/ruin_prop_spawn_set.tres")
 const PROP_SCATTERER_SCRIPT := preload("res://content/props/ruins/scripts/PropScatterer.gd")
+const PORTAL_TELEPORTER_SCRIPT := preload("res://game/world/procgen/portal_teleporter.gd")
+const PORTAL_DEFINITION_ID := &"portal_ring_01"
 const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
 @export var foliage_parent_path: NodePath = NodePath("NavigationRegion2D/FoliageLayer")
 @export var foliage_density: float = 0.12
@@ -289,6 +291,14 @@ const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
 @export var ruin_prop_jitter_amplitude: Vector2 = Vector2(5, 3)
 @export var ruin_prop_variant_intensity: ProceduralProp.VariantIntensity = ProceduralProp.VariantIntensity.SUBTLE
 @export var ruin_prop_debug_logging: bool = false
+@export var enable_portal_pair_teleport: bool = true
+@export_range(1, 12, 1) var portal_pair_min_distance_tiles: int = 8
+@export_range(0, 96, 1) var portal_teleport_cooldown_frames: int = 24
+@export_range(4.0, 48.0, 1.0) var portal_trigger_radius: float = 14.0
+@export var portal_trigger_local_offset: Vector2 = Vector2(0, -65)
+@export var portal_arrival_offset: Vector2 = Vector2(0, 54)
+@export var portal_spawn_floor_half_extents_tiles: Vector2i = Vector2i(3, 2)
+@export_range(0, 8, 1) var portal_spawn_wall_clearance_tiles: int = 3
 @export_group("Interior Props", "interior_prop")
 @export var interior_prop_spawning_enabled: bool = true
 @export_range(0, 80, 1) var interior_prop_count: int = 50
@@ -304,6 +314,7 @@ var _foliage_parent: Node2D = null
 var _ruin_prop_parent: Node2D = null
 var _ruin_prop_scatterer: PropScatterer = null
 var _interior_prop_nodes: Array[Node2D] = []
+var _portal_teleporters: Array[Area2D] = []
 var _foliage_nodes: Dictionary = {}
 var _foliage_textures: Array[Texture2D] = []
 var _interior_prop_textures: Array[Texture2D] = []
@@ -448,6 +459,13 @@ func _fill_tilemaps() -> void:
 		_prepare_streaming_reveal()
 	elif build_runtime_wall_collision:
 		_rebuild_runtime_wall_collision(map_size)
+	if enable_streaming_reveal:
+		_generate_ruin_props(map_size)
+		_generate_interior_props(map_size)
+	else:
+		_generate_foliage(map_size)
+		_generate_ruin_props(map_size)
+		_generate_interior_props(map_size)
 	if not enable_streaming_reveal:
 		_rebuild_horizontal_wall_overlays()
 
@@ -1553,10 +1571,6 @@ func _capture_generated_tile_state(map_size: Vector2i) -> void:
 					"alternative": walls_tilemap.get_cell_alternative_tile(pos),
 				}
 
-	_generate_foliage(map_size)
-	_generate_ruin_props(map_size)
-	_generate_interior_props(map_size)
-
 
 func _generate_foliage(map_size: Vector2i) -> void:
 	if _foliage_parent == null:
@@ -1634,11 +1648,13 @@ func _generate_ruin_props(map_size: Vector2i) -> void:
 	_ruin_prop_parent.add_child(_ruin_prop_scatterer)
 
 	var spawned := _ruin_prop_scatterer.scatter_on_tiles(candidate_tiles, Callable(self, "_ruin_prop_tile_to_world"))
+	_configure_portal_pair(candidate_tiles, spawned, map_size)
 	if ruin_prop_debug_logging:
 		print("[RuinProps] Placed %d props under %s" % [spawned.size(), _ruin_prop_parent.get_path()])
 
 
 func _clear_ruin_props() -> void:
+	_portal_teleporters.clear()
 	if _ruin_prop_scatterer != null and is_instance_valid(_ruin_prop_scatterer):
 		_ruin_prop_scatterer.queue_free()
 	_ruin_prop_scatterer = null
@@ -1690,6 +1706,10 @@ func _ruin_prop_tile_to_world(pos: Vector2i) -> Vector2:
 	return _tile_to_world_position(pos) + _ruin_prop_jitter(pos)
 
 
+func _portal_tile_to_world(pos: Vector2i) -> Vector2:
+	return _tile_to_world_position(pos)
+
+
 func _ruin_prop_jitter(pos: Vector2i) -> Vector2:
 	var seed := _tile_noise_hash(pos + Vector2i(53, 89))
 	var x_unit := float(seed % 21) - 10.0
@@ -1698,6 +1718,222 @@ func _ruin_prop_jitter(pos: Vector2i) -> Vector2:
 		x_unit / 10.0 * ruin_prop_jitter_amplitude.x,
 		y_unit / 5.0 * ruin_prop_jitter_amplitude.y
 	).round()
+
+
+func _configure_portal_pair(candidate_tiles: Array[Vector2i], spawned: Array[ProceduralProp], map_size: Vector2i) -> void:
+	_portal_teleporters.clear()
+	if not enable_portal_pair_teleport:
+		return
+
+	var portal_definition := _get_portal_prop_definition()
+	if portal_definition == null:
+		return
+
+	var portal_props: Array[ProceduralProp] = []
+	var blocked_tiles: Dictionary = {}
+	for prop in spawned:
+		if prop == null or not is_instance_valid(prop):
+			continue
+		var source_tile := _get_prop_source_tile(prop)
+		if prop.has_meta("source_tile"):
+			blocked_tiles[source_tile] = true
+		if _is_portal_prop(prop):
+			if _is_safe_portal_tile(source_tile, map_size):
+				prop.global_position = _portal_tile_to_world(source_tile)
+				portal_props.append(prop)
+			else:
+				if ruin_prop_debug_logging:
+					push_warning("[RuinProps] Discarding unsafe portal prop at tile %s" % [source_tile])
+				prop.queue_free()
+
+	while portal_props.size() < 2:
+		var tile_result := _pick_portal_pair_tile(candidate_tiles, blocked_tiles, portal_props, map_size, true)
+		if not bool(tile_result.get("ok", false)):
+			tile_result = _pick_portal_pair_tile(candidate_tiles, blocked_tiles, portal_props, map_size, false)
+		if not bool(tile_result.get("ok", false)):
+			if ruin_prop_debug_logging:
+				push_warning("[RuinProps] Could not find a valid tile for portal pair endpoint")
+			break
+
+		var tile := tile_result["tile"] as Vector2i
+		var prop := _spawn_guaranteed_ruin_prop(portal_definition, tile)
+		if prop == null:
+			break
+		blocked_tiles[tile] = true
+		portal_props.append(prop)
+		spawned.append(prop)
+
+	if portal_props.size() < 2:
+		return
+
+	var first: Area2D = _attach_portal_teleporter(portal_props[0])
+	var second: Area2D = _attach_portal_teleporter(portal_props[1])
+	if first == null or second == null:
+		return
+
+	first.call("link_to", second)
+	second.call("link_to", first)
+	_portal_teleporters = [first, second]
+
+
+func _get_portal_prop_definition() -> PropDefinition:
+	if ruin_prop_spawn_set == null:
+		return null
+	for entry in ruin_prop_spawn_set.entries:
+		if entry == null or entry.definition == null:
+			continue
+		if entry.definition.id == PORTAL_DEFINITION_ID:
+			return entry.definition
+	return null
+
+
+func _is_portal_prop(prop: ProceduralProp) -> bool:
+	return prop.definition != null and prop.definition.id == PORTAL_DEFINITION_ID
+
+
+func _pick_portal_pair_tile(
+	candidate_tiles: Array[Vector2i],
+	blocked_tiles: Dictionary,
+	existing_portals: Array[ProceduralProp],
+	map_size: Vector2i,
+	require_min_distance: bool
+) -> Dictionary:
+	var best_tile := Vector2i.ZERO
+	var best_score := -INF
+	var found := false
+	var player_spawn := get_player_spawn()
+
+	for tile in candidate_tiles:
+		if blocked_tiles.has(tile):
+			continue
+		if not _is_safe_portal_tile(tile, map_size):
+			continue
+		if require_min_distance and not _is_far_enough_from_existing_portals(tile, existing_portals):
+			continue
+
+		var score := float(tile.distance_squared_to(player_spawn))
+		if not existing_portals.is_empty():
+			score = _min_distance_squared_to_portals(tile, existing_portals)
+		score += float(_tile_noise_hash(tile + Vector2i(311, 719)) % 1000) / 1000.0
+
+		if not found or score > best_score:
+			found = true
+			best_score = score
+			best_tile = tile
+
+	if not found:
+		return {"ok": false}
+
+	return {
+		"ok": true,
+		"tile": best_tile,
+	}
+
+
+func _is_far_enough_from_existing_portals(tile: Vector2i, existing_portals: Array[ProceduralProp]) -> bool:
+	for portal in existing_portals:
+		var portal_tile := _get_prop_source_tile(portal)
+		if portal_tile.distance_to(tile) < float(portal_pair_min_distance_tiles):
+			return false
+	return true
+
+
+func _min_distance_squared_to_portals(tile: Vector2i, existing_portals: Array[ProceduralProp]) -> float:
+	var result := INF
+	for portal in existing_portals:
+		var portal_tile := _get_prop_source_tile(portal)
+		result = min(result, float(tile.distance_squared_to(portal_tile)))
+	return result
+
+
+func _is_safe_portal_tile(pos: Vector2i, map_size: Vector2i) -> bool:
+	if not _generated_floor_cells.has(pos):
+		return false
+	if _is_inside_ruin_prop_clearance(pos):
+		return false
+	if _foliage_nodes.has(pos):
+		return false
+	if not _has_clear_portal_floor_footprint(pos, map_size):
+		return false
+	if _has_wall_near_portal(pos, map_size):
+		return false
+	return true
+
+
+func _has_clear_portal_floor_footprint(pos: Vector2i, map_size: Vector2i) -> bool:
+	var extents := Vector2i(
+		maxi(0, portal_spawn_floor_half_extents_tiles.x),
+		maxi(0, portal_spawn_floor_half_extents_tiles.y)
+	)
+	for x in range(-extents.x, extents.x + 1):
+		for y in range(-extents.y, extents.y + 1):
+			var tile := pos + Vector2i(x, y)
+			if tile.x <= 1 or tile.y <= 1 or tile.x >= map_size.x - 2 or tile.y >= map_size.y - 2:
+				return false
+			if not _generated_floor_cells.has(tile):
+				return false
+			if _generated_wall_cells.has(tile):
+				return false
+			if is_indoor_tile(tile):
+				return false
+	return true
+
+
+func _has_wall_near_portal(pos: Vector2i, map_size: Vector2i) -> bool:
+	if portal_spawn_wall_clearance_tiles <= 0:
+		return false
+	for x in range(-portal_spawn_wall_clearance_tiles, portal_spawn_wall_clearance_tiles + 1):
+		for y in range(-portal_spawn_wall_clearance_tiles, portal_spawn_wall_clearance_tiles + 1):
+			var tile := pos + Vector2i(x, y)
+			if tile.x <= 1 or tile.y <= 1 or tile.x >= map_size.x - 2 or tile.y >= map_size.y - 2:
+				return true
+			if _generated_wall_cells.has(tile):
+				return true
+	return false
+
+
+func _get_prop_source_tile(prop: ProceduralProp) -> Vector2i:
+	if prop != null and prop.has_meta("source_tile"):
+		return prop.get_meta("source_tile") as Vector2i
+	return floor_tilemap.local_to_map(floor_tilemap.to_local(prop.global_position)) if floor_tilemap != null else Vector2i.ZERO
+
+
+func _spawn_guaranteed_ruin_prop(definition: PropDefinition, tile: Vector2i) -> ProceduralProp:
+	if ruin_prop_scene == null or _ruin_prop_scatterer == null:
+		return null
+
+	var prop := ruin_prop_scene.instantiate() as ProceduralProp
+	if prop == null:
+		return null
+
+	prop.definition = definition
+	prop.variant_intensity = ruin_prop_variant_intensity
+	prop.variant_seed = PropVariantGenerator.seed_from_world_cell(definition.id, tile, _ruin_prop_scatterer.seed)
+	prop.generate_on_ready = false
+	_ruin_prop_scatterer.add_child(prop)
+	prop.global_position = _portal_tile_to_world(tile)
+	prop.set_meta("source_tile", tile)
+	prop.generate_variant()
+	return prop
+
+
+func _attach_portal_teleporter(prop: ProceduralProp) -> Area2D:
+	if prop == null or not is_instance_valid(prop):
+		return null
+	for child in prop.get_children():
+		if child is Area2D and child.get_script() == PORTAL_TELEPORTER_SCRIPT:
+			return child as Area2D
+
+	var teleporter := PORTAL_TELEPORTER_SCRIPT.new() as Area2D
+	if teleporter == null:
+		return null
+	teleporter.name = "PortalTeleporter"
+	teleporter.position = portal_trigger_local_offset
+	teleporter.set("trigger_radius", portal_trigger_radius)
+	teleporter.set("arrival_offset", portal_arrival_offset)
+	teleporter.set("cooldown_frames", portal_teleport_cooldown_frames)
+	prop.add_child(teleporter)
+	return teleporter
 
 
 func _generate_interior_props(map_size: Vector2i) -> void:
