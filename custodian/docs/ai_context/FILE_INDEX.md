@@ -37,6 +37,8 @@ Last updated: 2026-05-05
 - `custodian/game/fabrication/fab_job.gd` — lightweight queued fabrication job state with elapsed/duration/progress helpers
 - `custodian/game/fabrication/fab_recipe_database.gd` — reusable JSON recipe database node for fabrication UI/world bridges
 - `custodian/game/fabrication/fabricator_terminal.gd` — Area2D bridge for starting allowed fabrication recipes through `FabPipeline`
+- `custodian/game/resources/resource_node.gd` — harvestable interactable resource node that depletes through operator interaction and deposits primary/secondary yields into `ResourceLedger`
+- `custodian/game/resources/resource_node.tscn` — placeholder visual/collision scene for V1 hand-placed resource nodes
 - `custodian/content/resources/resource_defs.json` — metadata for tier-0 CUSTODIAN-flavored fabrication resources
 - `custodian/content/fabrication/fab_recipes.json` — starter fabrication recipes that output build tokens or unlocks
 - `custodian/game/actors/enemies/ambient_shrumb.tscn` — live ambient Forest Shrumb actor path with shrumb slink animations, cognitive dropper, and no scrap material drops

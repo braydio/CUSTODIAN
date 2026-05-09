@@ -54,6 +54,7 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `PORTAL_FX_PLAYBACK_WIRING.md` - completed packet for wiring portal idle, activation, and arrival FX playback.
 - `PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` - completed packet for adding `--top-source` preprocessing support to the wall atlas builder.
 - `RANGED_PHYSICS_ALIGNMENT.md` - completed packet for ranged muzzle obstruction, swept projectile movement, and temporary stance-band socket rotation clamps.
+- `RESOURCE_NODE_HARVESTING_V1.md` - completed packet for first hand-placed interactable resource nodes feeding `ResourceLedger`.
 - `SHRUMB_LOCAL_WANDER_HOME.md` - completed packet for anchoring passive Shrumb wander to their generated spawn position.
 - `TERMINAL_LIVE_MINIMAP.md` - completed packet for replacing the terminal placeholder tactical map with the shared live custom minimap.
 - `TILESET_RENAME_ALIGNMENT.md` - completed packet for renaming the canonical world/procgen TileSet to `custodian_world_tileset.tres`.
