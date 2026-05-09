@@ -2,7 +2,9 @@
 
 set -e
 
-# Block commits that include forbidden files or directories.
+# ──────────────────────────────────────────────
+# 1. Block commits that include forbidden files
+# ──────────────────────────────────────────────
 forbidden_pattern='^(auth\.json|internal_storage\.json|history\.jsonl|olddauth\.json|shell_snapshots/|log/)$'
 
 staged_paths=$(git diff --cached --name-only)
@@ -16,7 +18,40 @@ if [ -n "$staged_paths" ]; then
   fi
 fi
 
-# Optional warning: untracked, unignored files under log/, sessions/, shell_snapshots/.
+# ──────────────────────────────────────────────
+# 2. Auto-sweep .aseprite / .ase source files
+#    into content/_aseprite/ before commit
+# ──────────────────────────────────────────────
+ASEPRITE_TARGET="content/_aseprite"
+
+# Only run if the custodian subdirectory exists
+if [ -d "custodian/content" ]; then
+  # Find any .aseprite/.ase files tracked or untracked outside _aseprite/
+  # that are staged or modified in the working tree
+  content_aseprite_files=$(find custodian/content \
+    -not -path "*/_aseprite/*" \
+    \( -name "*.aseprite" -o -name "*.ase" \) \
+    -print 2>/dev/null || true)
+
+  if [ -n "$content_aseprite_files" ]; then
+    echo "$content_aseprite_files" | while IFS= read -r src; do
+      rel="${src#custodian/content/}"
+      dest="custodian/$ASEPRITE_TARGET/$rel"
+      dest_dir="$(dirname "$dest")"
+      mkdir -p "$dest_dir"
+      mv -v "$src" "$dest"
+      # If it was tracked, remove from old location
+      if git ls-files --error-unmatch "$src" > /dev/null 2>&1; then
+        git rm --cached "$src" > /dev/null 2>&1 || true
+      fi
+    done
+    echo "[pre-commit] Swept .aseprite source files into $ASEPRITE_TARGET/"
+  fi
+fi
+
+# ──────────────────────────────────────────────
+# 3. Optional warning: untracked, unignored files
+# ──────────────────────────────────────────────
 warn_dirs="log sessions shell_snapshots"
 if [ -n "$warn_dirs" ]; then
   untracked=$(git ls-files -o --exclude-standard $warn_dirs 2>/dev/null || true)
