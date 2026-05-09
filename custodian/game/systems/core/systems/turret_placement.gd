@@ -22,6 +22,10 @@ const TURRET_REFUNDS := {
 	"sniper": 12,
 }
 
+const TURRET_BUILD_TOKENS := {
+	"gunner": "turret_basic",
+}
+
 const MAX_DEFAULT_TURRETS := 10
 const TURRET_BUILD_ORDER := ["gunner", "blaster", "repeater", "sniper"]
 
@@ -148,7 +152,7 @@ func _cycle_to_next_turret_type(include_current_index: bool = false) -> bool:
 		var is_redeploy := bool(_carried_turret_data.get("active", false)) and String(_carried_turret_data.get("type", "")) == turret_type
 		if not is_redeploy and current_count >= max_turrets:
 			continue
-		if is_redeploy or active_materials >= get_cost_for_type(turret_type):
+		if is_redeploy or _has_build_token_for_turret(turret_type) or active_materials >= get_cost_for_type(turret_type):
 			return enter_placement_mode(turret_type)
 	return false
 
@@ -179,10 +183,11 @@ func enter_placement_mode(turret_type: String) -> bool:
 	var cost: int = TURRET_COSTS[turret_type]
 	var current_materials: int = 0
 	var is_redeploy := bool(_carried_turret_data.get("active", false)) and String(_carried_turret_data.get("type", "")) == turret_type
+	var has_build_token := _has_build_token_for_turret(turret_type)
 	if _game_state != null:
 		current_materials = _game_state.materials
 	
-	if not is_redeploy and current_materials < cost:
+	if not is_redeploy and not has_build_token and current_materials < cost:
 		push_warning("[TurretPlacement] Insufficient materials for " + turret_type + " (have: " + str(current_materials) + ", need: " + str(cost) + ")")
 		return false
 	
@@ -289,7 +294,10 @@ func _attempt_place_turret(position: Vector2) -> void:
 	
 	var cost: int = int(TURRET_COSTS.get(_selected_turret_type, 0))
 	var is_redeploy := bool(_carried_turret_data.get("active", false)) and String(_carried_turret_data.get("type", "")) == _selected_turret_type
+	var used_build_token := false
 	if not is_redeploy:
+		used_build_token = _consume_build_token_for_turret(_selected_turret_type)
+	if not is_redeploy and not used_build_token:
 		if _game_state and _game_state.has_method("add_materials"):
 			_game_state.add_materials(-cost)
 		elif _game_state and _game_state.has("materials"):
@@ -297,11 +305,15 @@ func _attempt_place_turret(position: Vector2) -> void:
 	
 	var scene: PackedScene = turret_scenes.get(_selected_turret_type, null)
 	if scene == null:
+		if used_build_token:
+			_refund_build_token_for_turret(_selected_turret_type)
 		push_error("[TurretPlacement] Missing scene for: " + _selected_turret_type)
 		return
 	
 	var turret: Node2D = scene.instantiate() as Node2D
 	if turret == null:
+		if used_build_token:
+			_refund_build_token_for_turret(_selected_turret_type)
 		push_error("[TurretPlacement] Failed to instantiate turret")
 		return
 	
@@ -385,6 +397,39 @@ func get_material_count() -> int:
 
 func get_cost_for_type(turret_type: String) -> int:
 	return int(TURRET_COSTS.get(turret_type, 0))
+
+
+func _has_build_token_for_turret(turret_type: String) -> bool:
+	var token_id := _get_build_token_for_turret(turret_type)
+	if token_id.is_empty():
+		return false
+	var build_inventory := _get_build_inventory()
+	return build_inventory != null and int(build_inventory.call("get_amount", token_id)) > 0
+
+
+func _consume_build_token_for_turret(turret_type: String) -> bool:
+	var token_id := _get_build_token_for_turret(turret_type)
+	if token_id.is_empty():
+		return false
+	var build_inventory := _get_build_inventory()
+	return build_inventory != null and bool(build_inventory.call("remove", token_id, 1))
+
+
+func _refund_build_token_for_turret(turret_type: String) -> void:
+	var token_id := _get_build_token_for_turret(turret_type)
+	if token_id.is_empty():
+		return
+	var build_inventory := _get_build_inventory()
+	if build_inventory != null:
+		build_inventory.call("add", token_id, 1)
+
+
+func _get_build_token_for_turret(turret_type: String) -> String:
+	return String(TURRET_BUILD_TOKENS.get(turret_type, ""))
+
+
+func _get_build_inventory() -> Node:
+	return get_node_or_null("/root/BuildInventory")
 
 
 func _infer_turret_type(turret: Node2D) -> String:
