@@ -1,6 +1,6 @@
 # Asset Layout and Naming Convention
 
-Last updated: 2026-05-01
+Last updated: 2026-05-09
 
 ## Scope
 
@@ -12,15 +12,16 @@ This convention covers current Godot runtime assets in `res://content/` with a c
 
 ```text
 content/
+  _aseprite/            # ALL .aseprite/.ase source files, mirroring content tree
+  _pipeline/            # staged intake only, never read by runtime scenes
   sprites/
-    _pipeline/          # staged intake only, never read by runtime scenes
     <entity>/
       runtime/            # files directly loaded by scenes/resources
         attack/
         idle/
         move/
         fx/
-      source/             # editable source files (.aseprite, .xcf, .psd, .gif)
+      source/             # non-aseprite editable source files (.xcf, .psd, .gif)
       archive/            # deprecated but retained files not used by runtime
     environment/
       props/
@@ -30,8 +31,51 @@ content/
     enemies/
     raw/
   tiles/
+  ui/
   raw/
 ```
+
+## Aseprite Source File Convention
+
+**All `.aseprite` and `.ase` source files must live under `content/_aseprite/`.**
+
+This is a consolidated source tree that mirrors the content hierarchy:
+
+```text
+content/
+  _aseprite/
+    sprites/
+      operator/source/foo.aseprite
+      operator/dev/bar.aseprite
+      effects/source/hit_spark/hit-spark-1.aseprite
+      environment/foliage/tree_verdent_96x128.aseprite
+      items/faded_instinct.aseprite
+    tiles/interiors/runtime/prop_sheet.aseprite
+    tiles/interiors/source/props_cables_01.aseprite
+    ui/terminal/source/Icons_Tilesheet.aseprite
+    props/ruins/portal_arrival.aseprite
+```
+
+When you save a new `.aseprite` file anywhere under `content/`, it is automatically
+swept into the mirrored path under `_aseprite/` by one of:
+- **Pre-commit hook** (active — runs `git commit` in the repo root)
+- **`watch_aseprite.sh` daemon** (optional — instant move on save via inotify)
+
+The runtime PNG exports stay in their original location. The `.aseprite` source is
+always findable at `content/_aseprite/<original-relative-path>`.
+
+### Tools
+
+| Tool | Purpose | Usage |
+|------|---------|-------|
+| `tools/aseprite/sweep_aseprite.sh` | One-time cleanup: move all existing `.aseprite` files into place | `./tools/aseprite/sweep_aseprite.sh --apply --git` |
+| `tools/aseprite/watch_aseprite.sh` | inotify daemon: auto-move on save (requires `inotify-tools`) | `./tools/aseprite/watch_aseprite.sh --daemon` |
+| `.githooks/pre-commit` | Auto-sweep staged `.aseprite` files before every commit | Active when `core.hooksPath` is set |
+
+### Exceptions
+
+Third-party addon assets (e.g. `addons/fightengine/demo/Assets/Aseprite/*.ase`)
+are not moved — they belong to their respective packages.
 
 ## Naming Rules
 

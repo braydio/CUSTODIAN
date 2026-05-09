@@ -1,6 +1,6 @@
 # CURRENT STATE — CUSTODIAN
 
-Last updated: 2026-05-08
+Last updated: 2026-05-09
 
 ## Runtime Status
 
@@ -27,6 +27,7 @@ Last updated: 2026-05-08
 - Foliage canopy occlusion now supports multiple visual fade bubbles: the player remains the priority occluder, and nearby enemy, ambient Shrumb, or mob-group actors within a configurable player range can also fade tree/shrub canopies when hidden behind them.
 - Constructed interiors now have a first dedicated visual tile family: runtime `32x32` military/concrete floor and wall tiles live under `res://content/tiles/interiors/runtime/`, are registered into `custodian_world_tileset.tres` by `tools/tiles/register_interior_floor_tiles.py`, and are selected deterministically from `interior_floor_source_ids` and `interior_wall_source_ids`; floor selection uses patch/accent variation plus stable flip/transpose alternatives, and corner wall art is routed through `interior_wall_corner_source_id`.
 - Constructed interiors now scatter decorative runtime prop sprites from `res://content/tiles/interiors/runtime/props_*.png` and `prop_*.png` under `NavigationRegion2D/PropLayer`; these are separate from outdoor ruin props, which remain excluded from indoor tiles.
+- Procgen prop generation now runs after streaming reveal setup, so the streaming clear pass no longer deletes generated outdoor ruin props or constructed-interior runtime prop sprites immediately after creating them.
 - Ambient critter behavior also reads the same world profile so non-combat ambience matches the contracted planet.
 - The command terminal has a multi-page shell with nav rail, action rail, center content pane, transcript, and command line input.
 - The command terminal decursification pass has started: HUD rendering still lives in `game/ui/hud/ui.gd`, while command parsing/dispatch boundary, snapshot aggregation, map preview state/conversion, and planet preview state now have dedicated scripts under `game/ui/terminal/`.
@@ -38,6 +39,7 @@ Last updated: 2026-05-08
 - Ambient shrumbs now participate in runtime world interaction: the buggy can launch or squish passive critters on collision depending on speed, and active enemies can attack nearby shrumbs as fallback targets.
 - Ambient Shrumb passive wander is anchored to each critter's placed world position after procgen spawn, so Shrumbs meander locally around their habitat instead of drifting back toward the map origin.
 - Ambient Shrumb flee animation is stabilized with a short flee-retarget cooldown, avoiding frame-to-frame direction thrash while the player remains inside alert range.
+- Enemy movement now has a first wall-stuck recovery pass: pathfinding enemies detect repeated collision or near-zero movement progress and force a fresh route, while passive ambient critters pick a new local wander destination when blocked.
 - A first procedural enemy variant slice is wired for wolves: `EnemyVariantFactory` generates deterministic data-only wolf profiles from seed, biome, threat level, tier, family, affixes, and palette, `WolfAnimationLibrary` slices the current wolf sheets into runtime `SpriteFrames`, and `WaveManager` can spawn `"wolf"` entries through the existing `Enemy` actor using `apply_variant(profile)`.
 - Procedural wolf animation now reads the current 4-row wolf sheets as directional rows (`south`, `west`, `east`, `north`) instead of always slicing row 0; runtime movement chooses the dominant direction and preserves legacy east clip names as compatibility aliases.
 - Ambient Shrumb populations now inherit deterministic world-profile traits, including tint, count/pacing, name prefix, trait tags, size multiplier, and speed multiplier, so ambient critter procgen starts from the same planet settings as map generation.
@@ -45,10 +47,11 @@ Last updated: 2026-05-08
 - Ambient shrumb readability was increased: the live shrumb scene uses larger custom slink/knockout sprite scales, and ambient variant scale modifiers no longer shrink variants below readable size.
 - Forest Shrumb lore/gameplay implementation has a v1 runtime foundation: `InventoryManager` and `CognitiveState` autoloads, stackable cognitive item definitions, a generic cognitive pickup, a reusable shrumb dropper, placeholder item sprites, and the live `ambient_shrumb.tscn` actor. The former scav droid scene path has been removed from ambient spawning.
 - Shrumb cognitive pickups now render item-specific animated 4-frame horizontal sheets from `res://content/sprites/items/` with a lightweight procedural bob/pulse instead of the earlier colored placeholder square. `residual_instinct` currently maps to the authored `faded_instinct.png` sheet.
+- Resource/fabrication now has a first build-token-first runtime spine: `ResourceLedger`, `BuildInventory`, and `FabPipeline` autoloads load CUSTODIAN-flavored resource/recipe JSON, spend resources immediately when a recipe starts, tick queued `FabJob`s, and grant completed build tokens or unlock outputs. This implements the core `RESOURCE_FAB_PIPELINE_ADD.md` path but does not yet include resource-node harvesting, placement mode, full UI, save/load, or power scaling.
 - A first authored hub-space prototype now exists at `res://scenes/hub_road_of_witnesses_prototype.tscn`, using the Road of Witnesses PNG as a playable background with rough collision and foreground occlusion masks.
 - A Godot-native procedural ruin prop variant foundation now exists at `res://content/props/ruins/`: `ProceduralProp.tscn`, `PropDefinition`, `PropVariantLayer`, `PropVariantGenerator`, and a conservative palette shader assemble deterministic visual variants from authored base sprites, overlays, and rubble while keeping collision stable through authored collision scenes.
 - Starter ruin prop definitions now exist for `obelisk`, `portal_ring_01`, `rotunda_01`, and `slab_01`, using the available moss/crack overlays and padded rubble/base sprites for immediate editor testing.
-- Procgen now has a decorative ruin prop placement slice: `ProcGenTilemap` spawns weighted `ProceduralProp` instances under `NavigationRegion2D/PropLayer` from `ruin_prop_spawn_set.tres`, using floor-cell filtering, wall/player/compound clearance, spacing checks, and deterministic tile seeds.
+- Procgen now has a decorative ruin prop placement slice: `ProcGenTilemap` spawns weighted `ProceduralProp` instances under `NavigationRegion2D/PropLayer` from `ruin_prop_spawn_set.tres`, using floor-cell filtering, wall/player/compound clearance, spacing checks, and deterministic tile seeds. Portal-ring ruin props now have a v1 paired teleport behavior: procgen guarantees two deterministic `portal_ring_01` endpoints when portal pairing is enabled, validates portal endpoints with a stricter clear-floor footprint and wall clearance than normal decorative props, snaps portal endpoints to tile centers, and links them with cooldown-gated triggers inside the active tactical map.
 - Ruin prop art prep is documented in `res://content/props/ruins/README.md`, including transparent ImageMagick padding commands for cropped PNGs and the bottom-center anchor convention needed after padding.
 - Sprite ingest is now routed through a manifest-driven intake pipeline at `res://content/sprites/_pipeline/`, which writes into the existing `operator/`, `weapons/`, `enemies/`, `effects/`, `vehicles/`, and `turrets/` runtime domains instead of a separate synthetic asset tree.
 - New sprite sheets should use the canonical `<owner>__<layer>__<action_group>__<variant>__<direction>__<frames>f__<frame_size>.png` naming convention, with manifests writing compatibility copies where legacy runtime paths still exist.
@@ -58,12 +61,14 @@ Last updated: 2026-05-08
 - Destructible procgen wall collision removal is tile-scoped: breaking one wall now removes only that tile's runtime wall body, and full runtime collision rebuilds detach old bodies before queue-free so same-name replacements are not skipped.
 - Procgen wall collision authority is runtime-body based rather than TileSet-physics based: streaming reveal now detaches stale `RuntimeWallCollision` bodies before freeing them, then syncs visible wall cells against `Wall_x_y` bodies after initial reveal, incremental reveal, and chunk unload so visible walls do not drift into non-colliding tiles.
 - Operator combat is organized as three attack modes with two attack types each: unarmed primary/secondary maps to `unarmed_fast` / `unarmed_heavy`, melee primary/secondary maps to `melee_fast` / `melee_heavy`, and ranged primary/secondary maps to `ranged_unfocused_fire` / `ranged_focused_fire`.
+- Operator attacks now use phase-based movement profiles instead of hard-locking movement for every melee attack: unarmed/fast attacks stay mobile, heavy attacks strongly slow/root during committed frames, and ranged firing keeps controlled strafing.
 - Unarmed/Fists is now a first-class selectable combat profile at `res://game/actors/operator/unarmed_definition.tres`; it is selected with `F`, excluded from normal weapon cycling, toggles back to the last armed weapon, and owns canonical `unarmed_fast` / `unarmed_heavy` primary/secondary intents.
 - Input bindings are intentionally split to avoid combat/build ambiguity: `M1` is `attack_primary`, `Shift+M1` is `attack_secondary`, `Q/E` cycle armed profiles only, `F` toggles Fists, `B` is build, and `I` / `toggle_inventory` opens the live inventory overlay. Runtime prompts should derive from `InputMap` instead of hardcoded keys.
 - Operator selection state is simulation-owned (`using_unarmed`, `armed_weapon_index`, `last_armed_weapon_index`, `pending_weapon_selection`) and queued selection only applies from safe idle/walk/sprint states.
 - The default HUD is essentials-first: contract phase, operator health, stamina, cooldown, and the custom tactical minimap remain visible; camera/aim/time/loadout/ammo/director/supply/button diagnostics stay hidden unless DevConsole commands such as `debug_hud` enable them.
 - The tactical minimap is now custom and data-driven rather than addon-based: `ProcGenTilemap` emits floor/wall terrain arrays and wall-destruction tile changes, while `game/ui/minimap/minimap_panel.tscn` renders cached tactical geometry plus player/enemy/objective pips under the HUD `UI` CanvasLayer.
 - Minimap actor markers now separate hostile enemies from passive ambient creatures: hostiles remain red dots, while passive Shrumbs/ambient critters render with a distinct non-red marker on both HUD and terminal minimap instances.
+- The HUD minimap expands/collapses with `M` / `toggle_minimap_expand`, and both HUD and terminal minimap instances render utility markers for command terminals, vehicles, and turrets from their runtime groups.
 - The command terminal tactical map panel now reuses the same live custom minimap scene instead of the older contract-preview placeholder texture, while retaining terminal map hover/click conversion for placement workflows.
 - The inventory overlay scene is mounted hidden under the HUD `UI` CanvasLayer and toggles with `I`; it currently uses the Shrumb drop item factory/sample data until the broader inventory gameplay UI is completed.
 - Operator visual testing now has a DevConsole-driven Knight skin override: `knight_skin on/off/status` swaps the body `SpriteFrames` to runtime slices built from `res://dev/test_sprites/Knight/*.png`, hides custom operator weapon/FX overlays while active, and leaves movement, collision, health, stamina, loadout, and combat simulation unchanged.
@@ -95,6 +100,9 @@ Last updated: 2026-05-08
 - Melee target readability now prefers enemies inside the current melee/Fists strike range and facing arc, and the target ring switches to a thicker green pulse when the selected enemy is actually hittable by the current preview strike profile.
 - Light attack is deprecated as a live input path; any remaining `attack_light` state/assets are compatibility leftovers until the animation-state docs/assets are cleaned up.
 - Fast melee/unarmed attacks use a shorter `0.22s` cancel start, `0.10s` recovery, `1.35x` playback scale, and clip-length-derived runtime duration so loaded fast attack sheets no longer wait on the old fixed `0.42s` timing.
+- Latest operator melee fast moving attack layer sheets have been ingested through the sprite pipeline as additive runtime assets: body, weapon, and FX outputs were preserved as corrected `9f` east-facing strips after source dimensions showed `864x96` despite `7f` inbox filenames. They are not yet wired into active modular playback.
+- Additional sprite pipeline ingest added an `8f` east-facing operator melee moving-fast body/weapon layer pair, refreshed unarmed east fast FX, and added portal-ring teleport FX runtime sheets under `res://content/sprites/effects/runtime/portal_ring/`; portal idle/arrival are `6f` `161x98` strips, and portal activation is a corrected `12f` `161x98` strip with the first-frame white-box artifact removed.
+- Portal-ring teleport FX playback is wired in `PortalTeleporter`: each paired procgen portal builds runtime `AnimatedSprite2D` effects from the ingested strips, loops idle FX at the portal center, plays activation at the source portal, teleports on activation frame 10 by default, and holds the destination arrival FX so the whole portal sequence reads for about 2 seconds.
 - Melee impact sparks resolve their contact point before enemy knockback and set world position after parenting, so hit feedback should land at the struck contact point instead of drifting with post-hit movement or parent transforms.
 - Projectile impact sparks now follow the same rule: bullets, tracers, energy shots, and missiles snapshot the contact point before damage/knockback and assign FX world position after parenting.
 - Ranged firing now has a first physics-alignment pass: operator muzzle obstruction is checked before spawning a shot, blocked muzzles create an impact at the near wall instead of firing through it, bullets/tracers sweep their movement segment to avoid tunneling through the first wall layer, and ranged weapon socket rotation is clamped by aim-state band until full authored stance/socket assets exist.
@@ -130,7 +138,7 @@ Last updated: 2026-05-08
 
 ## Active Gaps
 
-- Resource collection and fabrication is designed but unimplemented. Design authority merged from two brainstorms (`design/RESOURCE_FABRICATION_PIPELINE.md` and `design/RESOURCE_COLLECTION_PLAN.md`) into `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md`. Stage 1 (compound test nodes) is ready for implementation — see the design doc for full spec, code pseudocode, and validation tests.
+- Resource-node harvesting, build placement, and full fabrication UI are still unimplemented. The first fab runtime spine is live; next slice should attach harvestable resource nodes or a terminal/debug UI to `ResourceLedger` and `FabPipeline`.
 - Some terminal pages still use placeholder or lightly-derived summaries instead of full live runtime controls/data.
 - Forest Shrumb cognitive modifiers are exposed as getters only; player movement, combat feel, enemy accuracy/tracking, instinct actions, and full inventory UI are intentionally not integrated in v1.
 - Terminal page rendering still lives largely inside `custodian/game/ui/hud/ui.gd`; command routing, snapshot aggregation, and preview boundaries have been split, but page renderers/theme resources still need follow-up extraction.
@@ -141,8 +149,17 @@ Last updated: 2026-05-08
 - Additional ruin prop definitions and production chip/dirt/vine/highlight overlays still need to be authored under `custodian/content/props/ruins/data/prop_definitions/`, `extracted/`, and `overlays/`; the first moss/crack-driven test definitions and procgen placement are available.
 - The sprite pipeline only has one automated post-process hook today: operator curated outputs can rebuild live `SpriteFrames`, while most other runtime consumers still rely on direct path updates plus Godot import.
 - The enemy variant system is a first runtime slice only: wolf profiles and sheet slicing are live, but beast-pack alpha extraction, Aseprite JSON rebaking, overlays, dedicated wolf scene structure, and the visual QA lab remain follow-up work.
-- Melee combat still needs profile-data consolidation: light/fast/heavy timing, active frames, movement lock, movement resume, recovery, range, arc, damage, knockback, hit stop, and camera impulse are not yet centralized.
+- Melee combat still needs profile-data consolidation: light/fast/heavy timing, active frames, recovery, range, arc, damage, knockback, hit stop, camera impulse, and the new movement profile values are only partially centralized.
 - Unarmed runtime body animation slices are still art-incomplete. Missing production sheets should be supplied under `custodian/content/sprites/_pipeline/inbox/` using canonical names such as `operator__body__unarmed__idle_01__s__?f__96.png`, `operator__body__unarmed__walk_01__s__?f__96.png`, `operator__body__unarmed__fast_01__s__?f__96.png`, and `operator__body__unarmed__heavy_01__s__?f__96.png`.
+
+## Asset Source Cleanup
+
+- A canonical `content/_aseprite/` directory now exists as the single home for all `.aseprite` and `.ase` source files, mirroring the content tree.
+- `tools/aseprite/sweep_aseprite.sh` — one-time sweep to move all 213 existing `.aseprite` files into `_aseprite/` (run with `--apply --git`).
+- `tools/aseprite/watch_aseprite.sh` — optional inotify daemon for instant move-on-save.
+- `.githooks/pre-commit` — activated via `core.hooksPath = .githooks`, auto-sweeps `.aseprite` files before every commit.
+- Updated `docs/ASSET_LAYOUT_CONVENTION.md` with the new convention.
+- See `docs/ASSET_LAYOUT_CONVENTION.md` § "Aseprite Source File Convention" for full details.
 
 ## Documentation Status
 

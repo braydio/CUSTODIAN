@@ -26,10 +26,19 @@ Last updated: 2026-05-05
 ## Active Runtime Systems
 
 - `custodian/game/world/procgen/custodian_contract_map.gd` — contract generation and planet-linked world profile creation, including deterministic map size/room bands and ambient Shrumb trait profile fields
-- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, constructed interior region carving, region metadata, foliage placement, and decorative ruin prop placement
+- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, constructed interior region carving, region metadata, foliage placement, decorative ruin prop placement, and paired portal-ring teleport endpoint wiring with portal-specific safe placement filtering
+- `custodian/game/world/procgen/portal_teleporter.gd` — Area2D trigger component used by procgen portal-ring props to teleport the player to their linked endpoint with a physics-frame cooldown and runtime-built idle/activation/arrival FX playback
 - `custodian/game/systems/core/systems/ambient_critter_manager.gd` — ambient critter spawning, tint, pacing, scale, speed, naming, and trait metadata linked to world profile
 - `custodian/game/systems/core/systems/inventory_manager.gd` — minimal stack-count ledger autoload for cognitive drops and future stackable resources
 - `custodian/game/systems/cognitive/cognitive_state_system.gd` — `CognitiveState` autoload tracking Forest Shrumb recollection/instinct/bearing values, decay, dominant state, and v1 modifier getters
+- `custodian/autoload/resource_ledger.gd` — fabrication resource accounting autoload for CUSTODIAN-flavored resource totals and payment checks
+- `custodian/autoload/build_inventory.gd` — completed build-token inventory autoload used by fabrication outputs before placement exists
+- `custodian/autoload/fab_pipeline.gd` — recipe loading, resource payment, queued fabrication jobs, and output completion autoload
+- `custodian/game/fabrication/fab_job.gd` — lightweight queued fabrication job state with elapsed/duration/progress helpers
+- `custodian/game/fabrication/fab_recipe_database.gd` — reusable JSON recipe database node for fabrication UI/world bridges
+- `custodian/game/fabrication/fabricator_terminal.gd` — Area2D bridge for starting allowed fabrication recipes through `FabPipeline`
+- `custodian/content/resources/resource_defs.json` — metadata for tier-0 CUSTODIAN-flavored fabrication resources
+- `custodian/content/fabrication/fab_recipes.json` — starter fabrication recipes that output build tokens or unlocks
 - `custodian/game/actors/enemies/ambient_shrumb.tscn` — live ambient Forest Shrumb actor path with shrumb slink animations, cognitive dropper, and no scrap material drops
 - `custodian/game/actors/enemies/ambient_shrumb.gd` — ambient Forest Shrumb death hook that invokes the cognitive dropper before inherited enemy cleanup
 - `custodian/game/actors/enemies/enemy.gd` — shared active enemy actor, now including `apply_variant(profile)` support for procedural wolf profiles and wolf sheet playback through `AnimatedSprite2D`
@@ -116,7 +125,7 @@ Last updated: 2026-05-05
 - `custodian/content/props/ruins/scripts/PropVariantGenerator.gd` — deterministic helper for deriving seeds from world cells or positions
 - `custodian/content/props/ruins/scripts/WeightedPropEntry.gd` — weighted prop spawn entry resource
 - `custodian/content/props/ruins/scripts/PropSpawnSet.gd` — weighted set of prop definitions used by scatterers/procgen
-- `custodian/content/props/ruins/scripts/PropScatterer.gd` — reusable tile-based deterministic prop scatterer
+- `custodian/content/props/ruins/scripts/PropScatterer.gd` — reusable tile-based deterministic prop scatterer that records each spawned prop source tile for downstream systems such as portal pairing
 - `custodian/content/props/ruins/shaders/prop_palette_variation.gdshader` — conservative HSV brightness/saturation/hue adjustment shader for prop sprites
 - `custodian/content/props/ruins/data/ruin_prop_spawn_set.tres` — default weighted procgen spawn set for ruin props
 - `custodian/content/props/ruins/data/prop_definitions/obelisk.tres` — starter test definition using available moss/crack overlays and rubble
@@ -126,6 +135,11 @@ Last updated: 2026-05-05
 - `custodian/content/props/ruins/README.md` — ruin prop folder layout, padding commands for cropped PNGs, import settings, and pixel-art transform constraints
 - `design/02_features/props/PROCEDURAL_PROP_VARIANT_SYSTEM.md` — active implementation spec and runtime ownership note for the ruin prop variant system
 - `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md` — merged system design for resource collection, ledger, and fabrication pipeline; Stage 1 ready for implementation
+- `design/RESOURCE_FAB_PIPELINE_ADD.md` — build-token-first fabrication pipeline addendum used to scope the first runtime implementation
+- `design/features/implementation/FAB_PIPELINE_SYSTEM.md` — implementation note for the first resource ledger, build inventory, and queued fab pipeline slice
+- `design/04_research/resource_fabrication/RESOURCE_FABRICATION_PIPELINE.md` — source brainstorm: implementation-level pseudocode and script contracts
+- `design/04_research/resource_fabrication/RESOURCE_COLLECTION_PLAN.md` — source brainstorm: strategic staging and spatial design for resource zones
+- `design/04_research/resource_fabrication/RESOURCE_STARTER_TIER.md` — source brainstorm: resource identity, lore, and CUSTODIAN flavor framing
 
 ## Active Documentation
 
