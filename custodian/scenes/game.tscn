@@ -41,9 +41,10 @@
 [ext_resource type="Script" uid="uid://cm60nou56jgt7" path="res://game/systems/core/systems/weapon_definition_factory.gd" id="99_weapon_factory"]
 [ext_resource type="Script" uid="uid://bxpa63ls5ihkq" path="res://game/systems/core/systems/turret_placement.gd" id="100_turret_placement"]
 [ext_resource type="Texture2D" uid="uid://6y4pj114mk8m" path="res://content/sprites/misc/crosshair_64x64.png" id="101_crosshair"]
+[ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
+[ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
-position = Vector2(1512.3806, 578.4541)
 
 [node name="DebugController" type="Node" parent="." unique_id=744681739]
 script = ExtResource("29_debug_controller")
@@ -97,7 +98,7 @@ position = Vector2(100, -36)
 position = Vector2(-120, 24)
 
 [node name="TurretBlaster2" parent="World/Sectors/DEFENSE" unique_id=247143122 instance=ExtResource("20_turret_blaster")]
-position = Vector2(-120, 24)
+position = Vector2(-180, -72)
 
 [node name="TurretRepeater" parent="World/Sectors/DEFENSE" unique_id=1973721003 instance=ExtResource("21_turret_repeater")]
 position = Vector2(40, 132)
@@ -192,7 +193,7 @@ melee_heavy_hit_damage = 34.0
 melee_heavy_range = 84.0
 melee_heavy_arc_degrees = 58.0
 melee_input_buffer_time = 0.15
-melee_fast_cancel_start = 0.5
+melee_fast_cancel_start = 0.22
 melee_heavy_cancel_start = 0.58
 melee_hit_stop_scale = 0.8
 melee_hit_stop_duration = 0.02
@@ -293,6 +294,9 @@ min_distance_from_spawn_tiles = 10
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=2053415447]
 script = ExtResource("8_ui")
+terminal_contract_node_path = NodePath("../World/ContractMap")
+
+[node name="Minimap" parent="UI" unique_id=999000001 instance=ExtResource("200_minimap")]
 
 [node name="PowerDisplay" type="Panel" parent="UI" unique_id=449160537]
 offset_left = 20.0
@@ -329,7 +333,7 @@ offset_left = 420.0
 offset_top = 68.0
 offset_right = 720.0
 offset_bottom = 92.0
-text = "LIVES: 3/3"
+text = "HEALTH: 100/100"
 horizontal_alignment = 1
 
 [node name="CameraFollowLabel" type="Label" parent="UI" unique_id=170044321]
@@ -433,9 +437,9 @@ texture = ExtResource("101_crosshair")
 
 [node name="InteractionLabel" type="Label" parent="UI" unique_id=466777138]
 offset_left = 20.0
-offset_top = 342.0
+offset_top = 368.0
 offset_right = 560.0
-offset_bottom = 366.0
+offset_bottom = 392.0
 
 [node name="TerminalPanel" type="Panel" parent="UI" unique_id=760134112]
 visible = false
@@ -614,11 +618,10 @@ stretch_mode = 5
 layout_mode = 2
 text = "TACTICAL MINIMAP"
 
-[node name="MapPreview" type="TextureRect" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1591864208]
-custom_minimum_size = Vector2(0, 128)
+[node name="MapPreview" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1591864208 instance=ExtResource("200_minimap")]
+custom_minimum_size = Vector2(0, 168)
 layout_mode = 2
-expand_mode = 1
-stretch_mode = 5
+mouse_filter = 0
 
 [node name="WidgetStack" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn" unique_id=-2137803059]
 layout_mode = 2
@@ -1658,10 +1661,12 @@ text = "Type directly into the command line. Drag globe to inspect. Click tactic
 
 [node name="TerminalBackground" type="TextureRect" parent="UI" unique_id=999999999]
 visible = false
+z_index = -10
 offset_left = 100.0
 offset_top = 72.0
 offset_right = 1180.0
 offset_bottom = 666.0
+mouse_filter = 2
 stretch_mode = 1
 script = ExtResource("36_terminal_background")
 
@@ -1671,6 +1676,9 @@ script = ExtResource("36_terminal_background")
 
 [node name="TerminalPollTimer" type="Timer" parent="UI" unique_id=928815458]
 wait_time = 2.0
+
+[node name="InventoryUI" parent="UI" unique_id=999000002 instance=ExtResource("201_inventory_ui")]
+layout_mode = 3
 
 [node name="PauseUI" type="CanvasLayer" parent="." unique_id=1301628053]
 script = ExtResource("9_pause")

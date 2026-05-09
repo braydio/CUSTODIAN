@@ -128,6 +128,7 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		if critter is Node2D:
 			(critter as Node2D).global_position = _tile_to_world(map_instance, tile)
 			_apply_critter_variation(critter as Node2D, spawned)
+			_set_critter_home(critter as Node2D)
 		_spawned_critters.append(critter)
 		spawned += 1
 		if spawned >= critter_count:
@@ -167,6 +168,7 @@ func _try_ambient_spawn() -> void:
 	# Ambient spawns use profile-offset variation so the local Shrumb population
 	# remains tied to the generated world identity.
 	_apply_critter_variation(critter, _spawned_critters.size())
+	_set_critter_home(critter)
 	
 	_spawned_critters.append(critter)
 
@@ -239,6 +241,11 @@ func _apply_critter_variation(critter: Node2D, index: int) -> void:
 	critter.set_meta("shrumb_variant", variant_name)
 	critter.set_meta("shrumb_traits", _profile_critter_traits)
 	critter.set_meta("world_profile", String(_planet_world_profile.get("world_label", "")))
+
+
+func _set_critter_home(critter: Node2D) -> void:
+	if critter != null and critter.has_method("set_passive_home_position"):
+		critter.call("set_passive_home_position", critter.global_position)
 
 
 func _collect_habitat_positions() -> Array[Vector2]:

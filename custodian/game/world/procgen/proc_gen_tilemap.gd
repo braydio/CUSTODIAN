@@ -11,6 +11,9 @@ extends Node
 ## Set tile coordinates in inspector, then call generate()
 
 const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_wall_segment.gd")
+const TILE_ALT_FLIP_H := 4096
+const TILE_ALT_FLIP_V := 8192
+const TILE_ALT_TRANSPOSE := 16384
 
 @export var procgen_node: ProcGen
 @export var floor_tilemap: TileMapLayer
@@ -33,7 +36,7 @@ const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_w
 @export var use_wall_variants: bool = true
 @export var use_reference_wall_connectors: bool = true
 @export var use_wall_passage_variants: bool = true
-@export_range(0.0, 1.0, 0.01) var wall_passage_spawn_chance: float = 0.30
+@export_range(0.0, 1.0, 0.01) var wall_passage_spawn_chance: float = 0.65
 @export_range(2, 16, 1) var wall_passage_min_run_tiles: int = 4
 @export var floor_variant_coords: Array[Vector2i] = [
 	Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0), Vector2i(6, 0),
@@ -68,6 +71,9 @@ const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_w
 ]
 @export var reference_horizontal_hole_bottom_coords: Array[Vector2i] = [
 	Vector2i(9, 0), Vector2i(10, 0)
+]
+@export var reference_wall_top_coords: Array[Vector2i] = [
+	Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0)
 ]
 @export var reference_open_left_wall_coords: Array[Vector2i] = [
 	Vector2i(1, 0), Vector2i(1, 1), Vector2i(1, 2)
@@ -144,6 +150,24 @@ const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_w
 ## Layout variation: not cave-like every run
 @export_range(0.0, 1.0, 0.01) var open_layout_chance: float = 0.35
 @export_range(0.0, 0.6, 0.01) var open_layout_carve_ratio: float = 0.20
+@export_group("Constructed Interior Region", "interior_region")
+@export var interior_region_enabled: bool = true
+@export var interior_region_min_size: Vector2i = Vector2i(26, 18)
+@export var interior_region_max_size: Vector2i = Vector2i(44, 30)
+@export_range(1, 5, 1) var interior_region_hallway_width: int = 3
+@export_range(2, 10, 1) var interior_region_room_count: int = 5
+@export_range(1, 4, 1) var interior_region_entrance_count: int = 2
+@export var interior_region_debug_logging: bool = false
+@export var interior_use_dedicated_tiles: bool = true
+@export var interior_floor_source_ids: Array[int] = []
+@export var interior_wall_source_ids: Array[int] = []
+@export var interior_wall_source_id: int = -1
+@export var interior_wall_corner_source_id: int = -1
+@export var interior_tile_atlas_coord: Vector2i = Vector2i(0, 0)
+@export var interior_floor_use_transforms: bool = true
+@export_range(2, 8, 1) var interior_floor_patch_size_tiles: int = 4
+@export_range(0.0, 1.0, 0.01) var interior_floor_accent_chance: float = 0.22
+@export_group("", "")
 @export var build_runtime_wall_collision: bool = true
 @export var destructible_runtime_walls: bool = true
 @export var wall_tile_max_health: float = 42.0
@@ -158,6 +182,10 @@ const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_w
 var _last_compound_rect: Rect2i = Rect2i()
 var _last_compound_ingress: Array[Vector2i] = []
 var _last_compound_buildings: Array[Rect2i] = []
+var _last_interior_region_rect: Rect2i = Rect2i()
+var _last_interior_rooms: Array[Rect2i] = []
+var _last_interior_thresholds: Array[Vector2i] = []
+var _region_tiles: Dictionary = {}
 var _wall_health: Dictionary = {}
 var _generated_floor_cells: Dictionary = {}
 var _generated_wall_cells: Dictionary = {}
@@ -185,12 +213,15 @@ const FOLIAGE_ASSET_PATHS := [
 
 const FRUIT_TEXTURE_PATH := "res://content/sprites/environment/foliage/fruit_sheet.png"
 const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occlusion_bubble.gdshader")
+const FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES := 8
 const DEFAULT_RUIN_PROP_SCENE := preload("res://content/props/ruins/scenes/ProceduralProp.tscn")
 const DEFAULT_RUIN_PROP_SPAWN_SET := preload("res://content/props/ruins/data/ruin_prop_spawn_set.tres")
 const PROP_SCATTERER_SCRIPT := preload("res://content/props/ruins/scripts/PropScatterer.gd")
+const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
 @export var foliage_parent_path: NodePath = NodePath("NavigationRegion2D/FoliageLayer")
 @export var foliage_density: float = 0.12
 @export var foliage_min_wall_distance: int = 1
+@export_range(0, 6, 1) var foliage_indoor_clearance_tiles: int = 3
 @export var foliage_jitter_amplitude: Vector2 = Vector2(4, 2)
 @export var foliage_debug_logging: bool = false
 @export_range(0.0, 1.0, 0.01) var foliage_compound_density_multiplier: float = 0.28
@@ -231,31 +262,57 @@ const PROP_SCATTERER_SCRIPT := preload("res://content/props/ruins/scripts/PropSc
 @export var foliage_player_occlusion_radius: float = 80.0
 @export var foliage_player_occlusion_softness: float = 12.0
 @export_range(0.1, 1.0, 0.05) var foliage_player_occlusion_alpha: float = 0.55
+@export_range(1, 8, 1) var foliage_occlusion_max_bubbles: int = 8
+@export var foliage_mob_occlusion_enabled: bool = true
+@export var foliage_mob_occlusion_groups: PackedStringArray = PackedStringArray(["enemy", "ambient_critter", "mob"])
+@export var foliage_mob_occlusion_player_range: float = 360.0
+@export var foliage_mob_feet_offset: Vector2 = Vector2(0, 6)
+@export var foliage_mob_upper_body_offset: Vector2 = Vector2(0, -18)
+@export var foliage_mob_occlusion_x_padding: float = 8.0
 @export var foliage_tree_trunk_collision_size: Vector2 = Vector2(18, 12)
 @export var foliage_tree_trunk_collision_offset: Vector2 = Vector2(0, -6)
+@export var foliage_probabilistic_tree_collision: bool = true
+@export_range(1, 8, 1) var foliage_tree_collision_density_radius: int = 4
+@export_range(0.0, 1.0, 0.01) var foliage_sparse_tree_collision_threshold: float = 0.08
+@export_range(0.0, 1.0, 0.01) var foliage_dense_tree_collision_threshold: float = 0.22
+@export_range(0.0, 1.0, 0.01) var foliage_dense_tree_collision_chance: float = 0.28
 @export var ruin_prop_parent_path: NodePath = NodePath("NavigationRegion2D/PropLayer")
 @export var enable_ruin_prop_spawning: bool = true
 @export var ruin_prop_scene: PackedScene = DEFAULT_RUIN_PROP_SCENE
 @export var ruin_prop_spawn_set: PropSpawnSet = DEFAULT_RUIN_PROP_SPAWN_SET
-@export_range(0, 64, 1) var ruin_prop_count: int = 10
+@export_range(0, 64, 1) var ruin_prop_count: int = 50
 @export_range(1, 12, 1) var ruin_prop_min_distance_tiles: int = 5
+@export_range(0, 6, 1) var ruin_prop_indoor_clearance_tiles: int = 2
 @export_range(0, 8, 1) var ruin_prop_wall_clearance_tiles: int = 2
 @export_range(0, 12, 1) var ruin_prop_spawn_clearance_radius: int = 7
 @export_range(0, 8, 1) var ruin_prop_compound_building_clearance: int = 3
 @export var ruin_prop_jitter_amplitude: Vector2 = Vector2(5, 3)
 @export var ruin_prop_variant_intensity: ProceduralProp.VariantIntensity = ProceduralProp.VariantIntensity.SUBTLE
 @export var ruin_prop_debug_logging: bool = false
+@export_group("Interior Props", "interior_prop")
+@export var interior_prop_spawning_enabled: bool = true
+@export_range(0, 80, 1) var interior_prop_count: int = 50
+@export_range(1, 8, 1) var interior_prop_min_distance_tiles: int = 1
+@export_range(0, 4, 1) var interior_prop_wall_clearance_tiles: int = 0
+@export_range(0, 6, 1) var interior_prop_threshold_clearance_tiles: int = 1
+@export var interior_prop_jitter_amplitude: Vector2 = Vector2(6, 4)
+@export var interior_prop_allow_flip_h: bool = false
+@export var interior_prop_debug_logging: bool = false
+@export_group("", "")
 
 var _foliage_parent: Node2D = null
 var _ruin_prop_parent: Node2D = null
 var _ruin_prop_scatterer: PropScatterer = null
+var _interior_prop_nodes: Array[Node2D] = []
 var _foliage_nodes: Dictionary = {}
 var _foliage_textures: Array[Texture2D] = []
+var _interior_prop_textures: Array[Texture2D] = []
 var _fruit_texture: Texture2D = null
 var _fruit_sprites: Array[Node2D] = []
 var _planet_world_profile: Dictionary = {}
 
 func _ready() -> void:
+	add_to_group("procgen_tilemap")
 	# Auto-find ProcGen if not assigned
 	if not procgen_node:
 		procgen_node = find_child("ProcGen", true, false) as ProcGen
@@ -274,6 +331,7 @@ func _ready() -> void:
 	_foliage_parent = _find_foliage_parent()
 	_ruin_prop_parent = _find_ruin_prop_parent()
 	_load_foliage_textures()
+	_load_interior_prop_textures()
 	_apply_planet_visual_profile()
 	
 	if procgen_node:
@@ -337,6 +395,7 @@ func get_planet_world_profile() -> Dictionary:
 
 ## Emitted when level data is ready (after generation)
 signal level_data_ready(data: Dictionary)
+signal minimap_tile_changed(tile: Vector2i, terrain_kind: String)
 
 
 func _on_procgen_finished() -> void:
@@ -356,7 +415,9 @@ func _fill_tilemaps() -> void:
 		floor_tilemap.clear()
 		walls_tilemap.clear()
 		_wall_health.clear()
+		_clear_region_metadata()
 		_clear_foliage()
+		_clear_interior_props()
 		_clear_ruin_props()
 		_clear_horizontal_wall_overlays()
 	_apply_planet_visual_profile()
@@ -378,6 +439,8 @@ func _fill_tilemaps() -> void:
 
 	if enable_compound_zone:
 		_apply_compound_layout(map_size)
+	if interior_region_enabled:
+		_apply_constructed_interior_region(map_size)
 	if use_cohesive_wall_visuals:
 		_apply_wall_visuals(map_size)
 	_capture_generated_tile_state(map_size)
@@ -491,12 +554,90 @@ func _set_wall_tile(pos: Vector2i) -> void:
 		_wall_health[pos] = wall_tile_max_health
 
 
+func _set_interior_floor_tile(pos: Vector2i, zone: String = "") -> void:
+	if not interior_use_dedicated_tiles or interior_floor_source_ids.is_empty():
+		_set_floor_tile(pos)
+		return
+	var source_id := _select_interior_floor_source_id(pos, zone)
+	floor_tilemap.set_cell(pos, source_id, interior_tile_atlas_coord, _select_interior_floor_alternative(pos, zone))
+	walls_tilemap.erase_cell(pos)
+	_wall_health.erase(pos)
+
+
+func _select_interior_floor_source_id(pos: Vector2i, zone: String = "") -> int:
+	if interior_floor_source_ids.is_empty():
+		return _select_floor_source_id(pos)
+	var source_ids := interior_floor_source_ids.duplicate()
+	var patch_size: int = maxi(1, interior_floor_patch_size_tiles)
+	var patch := Vector2i(int(pos.x / patch_size), int(pos.y / patch_size))
+	var idx := _tile_noise_hash(patch + Vector2i(337, 911)) % source_ids.size()
+	var accent_threshold := int(round(interior_floor_accent_chance * 100.0))
+	if zone == "warehouse_bay":
+		accent_threshold = maxi(accent_threshold, 38)
+	if source_ids.size() > 1 and (_tile_noise_hash(pos + Vector2i(701, 313)) % 100) < accent_threshold:
+		idx = _tile_noise_hash(pos + Vector2i(557, 883)) % source_ids.size()
+	return source_ids[idx]
+
+
+func _select_interior_floor_alternative(pos: Vector2i, zone: String = "") -> int:
+	if not interior_floor_use_transforms:
+		return 0
+	var hash := _tile_noise_hash(pos + Vector2i(1249, 787))
+	var transform := hash % 8
+	match transform:
+		1:
+			return TILE_ALT_FLIP_H
+		2:
+			return TILE_ALT_FLIP_V
+		3:
+			return TILE_ALT_FLIP_H | TILE_ALT_FLIP_V
+		4:
+			return TILE_ALT_TRANSPOSE
+		5:
+			return TILE_ALT_TRANSPOSE | TILE_ALT_FLIP_H
+		6:
+			return TILE_ALT_TRANSPOSE | TILE_ALT_FLIP_V
+		7:
+			return TILE_ALT_TRANSPOSE | TILE_ALT_FLIP_H | TILE_ALT_FLIP_V
+		_:
+			return 0
+
+
+func _set_interior_wall_tile(pos: Vector2i) -> void:
+	if not interior_use_dedicated_tiles or (interior_wall_source_id < 0 and interior_wall_source_ids.is_empty()):
+		_set_wall_tile(pos)
+		return
+	var source_id := _select_interior_wall_source_id(pos)
+	if interior_wall_corner_source_id >= 0 and _is_interior_corner_wall(pos):
+		source_id = interior_wall_corner_source_id
+	walls_tilemap.set_cell(pos, source_id, interior_tile_atlas_coord)
+	floor_tilemap.erase_cell(pos)
+	if not _wall_health.has(pos):
+		_wall_health[pos] = wall_tile_max_health
+
+
+func _select_interior_wall_source_id(pos: Vector2i) -> int:
+	if interior_wall_source_ids.is_empty():
+		return interior_wall_source_id
+	var idx := _tile_noise_hash(pos + Vector2i(977, 389)) % interior_wall_source_ids.size()
+	return interior_wall_source_ids[idx]
+
+
+func _is_interior_corner_wall(pos: Vector2i) -> bool:
+	var horizontal_floor := get_region_type_at_tile(pos + Vector2i.LEFT) in ["interior_floor", "interior_threshold"] or get_region_type_at_tile(pos + Vector2i.RIGHT) in ["interior_floor", "interior_threshold"]
+	var vertical_floor := get_region_type_at_tile(pos + Vector2i.UP) in ["interior_floor", "interior_threshold"] or get_region_type_at_tile(pos + Vector2i.DOWN) in ["interior_floor", "interior_threshold"]
+	return horizontal_floor and vertical_floor
+
+
 func _apply_wall_visuals(map_size: Vector2i) -> void:
 	var source = high_walls_source_id if use_high_walls else walls_source_id
 	for x in range(map_size.x):
 		for y in range(map_size.y):
 			var pos := Vector2i(x, y)
 			if walls_tilemap.get_cell_source_id(pos) < 0:
+				continue
+			if get_region_type_at_tile(pos) == "interior_wall" and interior_use_dedicated_tiles and (interior_wall_source_id >= 0 or not interior_wall_source_ids.is_empty()):
+				_set_interior_wall_tile(pos)
 				continue
 			walls_tilemap.set_cell(pos, source, _select_cohesive_wall_coord(pos))
 
@@ -527,6 +668,11 @@ func _select_cohesive_wall_coord(pos: Vector2i) -> Vector2i:
 
 
 func _select_reference_wall_coord(pos: Vector2i) -> Vector2i:
+	if _is_wall_top_exposed(pos):
+		if _should_use_wall_passage_variant(pos):
+			return _pick_reference_coord(pos + Vector2i(613, 397), reference_passage_wall_coords, wall_atlas_coord)
+		if _is_horizontal_wall_surface(pos):
+			return _pick_reference_coord(pos, reference_wall_top_coords, wall_atlas_coord)
 	var forced_linear_match := _select_reference_linear_wall_coord(pos)
 	if forced_linear_match != Vector2i(-1, -1):
 		return forced_linear_match
@@ -720,7 +866,9 @@ func _pick_reference_coord(pos: Vector2i, variants: Array, fallback: Vector2i) -
 func _should_use_wall_passage_variant(pos: Vector2i) -> bool:
 	if not use_wall_passage_variants or reference_passage_wall_coords.is_empty():
 		return false
-	var run := _get_horizontal_wall_run_info(pos)
+	if not _is_horizontal_wall_surface(pos):
+		return false
+	var run := _get_horizontal_wall_surface_run_info(pos)
 	var length: int = int(run.get("length", 0))
 	if length < wall_passage_min_run_tiles:
 		return false
@@ -735,6 +883,29 @@ func _should_use_wall_passage_variant(pos: Vector2i) -> bool:
 	var interior_count: int = maxi(1, length - 2)
 	var target_index: int = 1 + (_tile_noise_hash(run_key + Vector2i(719, 421)) % interior_count)
 	return index == target_index
+
+
+func _is_horizontal_wall_surface(pos: Vector2i) -> bool:
+	if not _has_wall_cell(pos):
+		return false
+	if not _is_wall_top_exposed(pos):
+		return false
+	return _has_wall_cell(pos + Vector2i.LEFT) or _has_wall_cell(pos + Vector2i.RIGHT)
+
+
+func _get_horizontal_wall_surface_run_info(pos: Vector2i) -> Dictionary:
+	var start_x := pos.x
+	var end_x := pos.x
+	while _is_horizontal_wall_surface(Vector2i(start_x - 1, pos.y)):
+		start_x -= 1
+	while _is_horizontal_wall_surface(Vector2i(end_x + 1, pos.y)):
+		end_x += 1
+	return {
+		"start_x": start_x,
+		"end_x": end_x,
+		"length": end_x - start_x + 1,
+		"index": pos.x - start_x,
+	}
 
 
 func _get_horizontal_wall_run_info(pos: Vector2i) -> Dictionary:
@@ -990,6 +1161,256 @@ func _get_compound_ingress_inward(ingress: Vector2i, rect: Rect2i) -> Vector2i:
 	return Vector2i.LEFT
 
 
+func _apply_constructed_interior_region(map_size: Vector2i) -> void:
+	var rect := _build_constructed_interior_rect(map_size)
+	if rect.size.x <= 0 or rect.size.y <= 0:
+		_last_interior_region_rect = Rect2i()
+		_last_interior_rooms.clear()
+		_last_interior_thresholds.clear()
+		return
+
+	_last_interior_region_rect = rect
+	_last_interior_rooms.clear()
+	_last_interior_thresholds.clear()
+
+	for x in range(rect.position.x, rect.end.x):
+		for y in range(rect.position.y, rect.end.y):
+				var tile := Vector2i(x, y)
+				_set_interior_wall_tile(tile)
+				_set_region_tile(tile, "interior_wall", "military_complex")
+
+	var hall_width: int = clampi(interior_region_hallway_width, 1, max(1, rect.size.y - 4))
+	var hall_start_y: int = rect.position.y + int(rect.size.y * 0.5) - int(hall_width * 0.5)
+	var hall_rect := Rect2i(
+		rect.position.x + 1,
+		hall_start_y,
+		max(1, rect.size.x - 2),
+		hall_width
+	)
+	_carve_interior_floor_rect(hall_rect, "hallway")
+
+	var rooms := _build_constructed_interior_rooms(rect, hall_rect)
+	for room in rooms:
+		_carve_interior_floor_rect(room, "room")
+		_last_interior_rooms.append(room)
+
+	var bay := _build_constructed_interior_bay(rect, hall_rect)
+	if bay.size.x > 0 and bay.size.y > 0:
+		_carve_interior_floor_rect(bay, "warehouse_bay")
+		_last_interior_rooms.append(bay)
+
+	_carve_constructed_interior_thresholds(rect, hall_rect)
+	if interior_region_debug_logging:
+		print("[InteriorRegion] Built rect=%s rooms=%d thresholds=%d" % [
+			str(rect),
+			_last_interior_rooms.size(),
+			_last_interior_thresholds.size(),
+		])
+
+
+func _build_constructed_interior_rect(map_size: Vector2i) -> Rect2i:
+	if map_size.x < interior_region_min_size.x + 6 or map_size.y < interior_region_min_size.y + 6:
+		return Rect2i()
+
+	var min_size := interior_region_min_size.maxi(8)
+	var max_size := Vector2i(
+		maxi(min_size.x, mini(interior_region_max_size.x, map_size.x - 6)),
+		maxi(min_size.y, mini(interior_region_max_size.y, map_size.y - 6))
+	)
+	var width := _hash_range(Vector2i(223, 151), min_size.x, max_size.x)
+	var height := _hash_range(Vector2i(331, 197), min_size.y, max_size.y)
+	var margin := 3
+
+	if _last_compound_rect.size.x > 0 and _last_compound_rect.size.y > 0:
+		var side := _tile_noise_hash(Vector2i(401, 509)) % 4
+		match side:
+			0:
+				return _clamped_rect(
+					Vector2i(_last_compound_rect.end.x + 2, _last_compound_rect.position.y + int((_last_compound_rect.size.y - height) * 0.5)),
+					Vector2i(width, height),
+					map_size,
+					margin
+				)
+			1:
+				return _clamped_rect(
+					Vector2i(_last_compound_rect.position.x - width - 2, _last_compound_rect.position.y + int((_last_compound_rect.size.y - height) * 0.5)),
+					Vector2i(width, height),
+					map_size,
+					margin
+				)
+			2:
+				return _clamped_rect(
+					Vector2i(_last_compound_rect.position.x + int((_last_compound_rect.size.x - width) * 0.5), _last_compound_rect.end.y + 2),
+					Vector2i(width, height),
+					map_size,
+					margin
+				)
+			_:
+				return _clamped_rect(
+					Vector2i(_last_compound_rect.position.x + int((_last_compound_rect.size.x - width) * 0.5), _last_compound_rect.position.y - height - 2),
+					Vector2i(width, height),
+					map_size,
+					margin
+				)
+
+	var x := int(map_size.x * 0.58) + _hash_range(Vector2i(419, 37), -8, 8)
+	var y := int(map_size.y * 0.44) + _hash_range(Vector2i(43, 421), -8, 8)
+	return _clamped_rect(Vector2i(x, y), Vector2i(width, height), map_size, margin)
+
+
+func _clamped_rect(origin: Vector2i, size: Vector2i, map_size: Vector2i, margin: int) -> Rect2i:
+	var max_x: int = max(margin, map_size.x - size.x - margin)
+	var max_y: int = max(margin, map_size.y - size.y - margin)
+	return Rect2i(
+		clampi(origin.x, margin, max_x),
+		clampi(origin.y, margin, max_y),
+		size.x,
+		size.y
+	)
+
+
+func _hash_range(token: Vector2i, min_value: int, max_value: int) -> int:
+	if max_value <= min_value:
+		return min_value
+	return min_value + (_tile_noise_hash(token) % (max_value - min_value + 1))
+
+
+func _build_constructed_interior_rooms(region_rect: Rect2i, hall_rect: Rect2i) -> Array[Rect2i]:
+	var rooms: Array[Rect2i] = []
+	var count: int = max(1, interior_region_room_count)
+	var slots_per_side: int = int(ceil(float(count) * 0.5))
+	var usable_width: int = max(1, region_rect.size.x - 4)
+	var slot_width: int = max(4, int(usable_width / max(1, slots_per_side)))
+
+	for i in range(count):
+		var top_side := i % 2 == 0
+		var slot_index := int(i * 0.5)
+		var room_w: int = clampi(5 + (_tile_noise_hash(Vector2i(503 + i * 11, 607)) % 6), 4, max(4, slot_width - 1))
+		var max_room_h: int
+		var room_y: int
+		if top_side:
+			max_room_h = max(3, hall_rect.position.y - region_rect.position.y - 2)
+			var room_h: int = clampi(4 + (_tile_noise_hash(Vector2i(557 + i * 17, 619)) % 5), 3, max_room_h)
+			room_y = hall_rect.position.y - room_h
+			var room_x := region_rect.position.x + 2 + slot_index * slot_width + int((slot_width - room_w) * 0.5)
+			rooms.append(_clamp_rect_inside(Rect2i(room_x, room_y, room_w, room_h), region_rect.grow(-1)))
+		else:
+			max_room_h = max(3, region_rect.end.y - hall_rect.end.y - 2)
+			var room_h: int = clampi(4 + (_tile_noise_hash(Vector2i(563 + i * 17, 631)) % 5), 3, max_room_h)
+			room_y = hall_rect.end.y
+			var room_x := region_rect.position.x + 2 + slot_index * slot_width + int((slot_width - room_w) * 0.5)
+			rooms.append(_clamp_rect_inside(Rect2i(room_x, room_y, room_w, room_h), region_rect.grow(-1)))
+
+	return rooms
+
+
+func _build_constructed_interior_bay(region_rect: Rect2i, hall_rect: Rect2i) -> Rect2i:
+	var bay_w: int = clampi(int(region_rect.size.x * 0.30), 7, max(7, region_rect.size.x - 4))
+	var bay_h: int = clampi(int(region_rect.size.y * 0.34), 5, max(5, region_rect.size.y - 4))
+	var right_side := (_tile_noise_hash(Vector2i(673, 701)) % 2) == 0
+	var bay_x := region_rect.end.x - bay_w - 2 if right_side else region_rect.position.x + 2
+	var bay_y := hall_rect.end.y
+	if bay_y + bay_h >= region_rect.end.y - 1:
+		bay_y = hall_rect.position.y - bay_h
+	return _clamp_rect_inside(Rect2i(bay_x, bay_y, bay_w, bay_h), region_rect.grow(-1))
+
+
+func _clamp_rect_inside(rect: Rect2i, bounds: Rect2i) -> Rect2i:
+	var width: int = mini(rect.size.x, bounds.size.x)
+	var height: int = mini(rect.size.y, bounds.size.y)
+	var max_x: int = bounds.end.x - width
+	var max_y: int = bounds.end.y - height
+	return Rect2i(
+		clampi(rect.position.x, bounds.position.x, max_x),
+		clampi(rect.position.y, bounds.position.y, max_y),
+		width,
+		height
+	)
+
+
+func _carve_interior_floor_rect(rect: Rect2i, zone: String) -> void:
+	for x in range(rect.position.x, rect.end.x):
+		for y in range(rect.position.y, rect.end.y):
+				var tile := Vector2i(x, y)
+				_set_interior_floor_tile(tile, zone)
+				_set_region_tile(tile, "interior_floor", zone)
+
+
+func _carve_constructed_interior_thresholds(region_rect: Rect2i, hall_rect: Rect2i) -> void:
+	var entrance_count: int = max(1, interior_region_entrance_count)
+	var candidates: Array[Vector2i] = [
+		Vector2i(region_rect.position.x, hall_rect.position.y + int(hall_rect.size.y * 0.5)),
+		Vector2i(region_rect.end.x - 1, hall_rect.position.y + int(hall_rect.size.y * 0.5)),
+	]
+	for i in range(mini(entrance_count, candidates.size())):
+		var candidate_index := (i + (_tile_noise_hash(Vector2i(809, 877)) % candidates.size())) % candidates.size()
+		var edge_tile := candidates[candidate_index]
+		_carve_constructed_interior_threshold(edge_tile, region_rect)
+
+
+func _carve_constructed_interior_threshold(edge_tile: Vector2i, region_rect: Rect2i) -> void:
+	var outward := Vector2i.ZERO
+	if edge_tile.x <= region_rect.position.x:
+		outward = Vector2i.LEFT
+	elif edge_tile.x >= region_rect.end.x - 1:
+		outward = Vector2i.RIGHT
+	elif edge_tile.y <= region_rect.position.y:
+		outward = Vector2i.UP
+	else:
+		outward = Vector2i.DOWN
+	var inward := -outward
+	for step in range(3):
+		var tile := edge_tile + inward * step
+		if region_rect.has_point(tile):
+			_set_interior_floor_tile(tile, "doorway")
+			_set_region_tile(tile, "interior_threshold", "doorway")
+	for step in range(1, 5):
+		var exterior_tile := edge_tile + outward * step
+		if procgen_node == null:
+			break
+		if exterior_tile.x < 1 or exterior_tile.y < 1 or exterior_tile.x >= procgen_node.map_size.x - 1 or exterior_tile.y >= procgen_node.map_size.y - 1:
+			break
+		_set_floor_tile(exterior_tile)
+		_set_region_tile(exterior_tile, "exterior_threshold", "doorway")
+	_last_interior_thresholds.append(edge_tile)
+
+
+func _clear_region_metadata() -> void:
+	_last_interior_region_rect = Rect2i()
+	_last_interior_rooms.clear()
+	_last_interior_thresholds.clear()
+	_region_tiles.clear()
+
+
+func _set_region_tile(tile: Vector2i, region_type: String, zone: String) -> void:
+	_region_tiles[tile] = {
+		"region_type": region_type,
+		"zone": zone,
+	}
+
+
+func get_region_type_at_tile(tile: Vector2i) -> String:
+	var data: Variant = _region_tiles.get(tile, {})
+	if data is Dictionary:
+		return String((data as Dictionary).get("region_type", "exterior"))
+	return "exterior"
+
+
+func get_region_data_at_tile(tile: Vector2i) -> Dictionary:
+	var data: Variant = _region_tiles.get(tile, {})
+	if data is Dictionary:
+		return (data as Dictionary).duplicate(true)
+	return {
+		"region_type": "exterior",
+		"zone": "natural",
+	}
+
+
+func is_indoor_tile(tile: Vector2i) -> bool:
+	var region_type := get_region_type_at_tile(tile)
+	return region_type == "interior_floor" or region_type == "interior_wall" or region_type == "interior_threshold"
+
+
 func _rebuild_runtime_wall_collision(map_size: Vector2i) -> void:
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
 	if collision_root == null:
@@ -997,8 +1418,7 @@ func _rebuild_runtime_wall_collision(map_size: Vector2i) -> void:
 		collision_root.name = "RuntimeWallCollision"
 		walls_tilemap.add_child(collision_root)
 
-	for child in collision_root.get_children():
-		child.queue_free()
+	_clear_runtime_wall_collision()
 
 	var tile_size: Vector2 = Vector2(16, 16)
 	if walls_tilemap.tile_set != null:
@@ -1010,7 +1430,7 @@ func _rebuild_runtime_wall_collision(map_size: Vector2i) -> void:
 			var src := walls_tilemap.get_cell_source_id(pos)
 			if src < 0:
 				continue
-			_spawn_runtime_wall_body(pos)
+			_spawn_runtime_wall_body(pos, false)
 	_rebuild_runtime_wall_collision_debug()
 
 
@@ -1058,11 +1478,12 @@ func damage_wall_tile(pos: Vector2i, amount: float, attacker_team: String = "") 
 		"atlas": _select_floor_coord(pos),
 	}
 	_set_floor_tile(pos)
+	minimap_tile_changed.emit(pos, "floor")
 	_refresh_wall_neighbors(pos)
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
-	if build_runtime_wall_collision and procgen_node != null:
-		call_deferred("_rebuild_runtime_wall_collision", procgen_node.map_size)
+	if build_runtime_wall_collision:
+		_remove_runtime_wall_body(pos)
 	_refresh_navigation_after_wall_change()
 	return {
 		"blocked": false,
@@ -1122,16 +1543,19 @@ func _capture_generated_tile_state(map_size: Vector2i) -> void:
 				_generated_floor_cells[pos] = {
 					"source_id": floor_source,
 					"atlas": floor_tilemap.get_cell_atlas_coords(pos),
+					"alternative": floor_tilemap.get_cell_alternative_tile(pos),
 				}
 			var wall_source := walls_tilemap.get_cell_source_id(pos)
 			if wall_source >= 0:
 				_generated_wall_cells[pos] = {
 					"source_id": wall_source,
 					"atlas": walls_tilemap.get_cell_atlas_coords(pos),
+					"alternative": walls_tilemap.get_cell_alternative_tile(pos),
 				}
 
 	_generate_foliage(map_size)
 	_generate_ruin_props(map_size)
+	_generate_interior_props(map_size)
 
 
 func _generate_foliage(map_size: Vector2i) -> void:
@@ -1227,6 +1651,10 @@ func _clear_ruin_props() -> void:
 func _should_place_ruin_prop(pos: Vector2i, map_size: Vector2i) -> bool:
 	if pos.x <= 1 or pos.y <= 1 or pos.x >= map_size.x - 2 or pos.y >= map_size.y - 2:
 		return false
+	if is_indoor_tile(pos):
+		return false
+	if _is_near_indoor_tile(pos, ruin_prop_indoor_clearance_tiles):
+		return false
 	if _is_near_wall_for_ruin_prop(pos):
 		return false
 	if _is_inside_ruin_prop_clearance(pos):
@@ -1272,6 +1700,126 @@ func _ruin_prop_jitter(pos: Vector2i) -> Vector2:
 	).round()
 
 
+func _generate_interior_props(map_size: Vector2i) -> void:
+	_clear_interior_props()
+	if not interior_prop_spawning_enabled or interior_prop_count <= 0:
+		return
+	if _ruin_prop_parent == null:
+		if interior_prop_debug_logging:
+			push_warning("[InteriorProps] Missing PropLayer, skipping interior props")
+		return
+	if _interior_prop_textures.is_empty():
+		if interior_prop_debug_logging:
+			print("[InteriorProps] No props_*.png textures found in %s" % INTERIOR_RUNTIME_DIR)
+		return
+
+	var candidate_tiles: Array[Vector2i] = []
+	for tile_variant in _generated_floor_cells.keys():
+		var tile := tile_variant as Vector2i
+		if _should_place_interior_prop(tile, map_size):
+			candidate_tiles.append(tile)
+	candidate_tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return _tile_noise_hash(a + Vector2i(1501, 271)) < _tile_noise_hash(b + Vector2i(1501, 271))
+	)
+
+	var placed_tiles: Array[Vector2i] = []
+	for tile in candidate_tiles:
+		if _interior_prop_nodes.size() >= interior_prop_count:
+			break
+		if not _is_far_enough_from_tiles(tile, placed_tiles, interior_prop_min_distance_tiles):
+			continue
+		_place_interior_prop(tile)
+		placed_tiles.append(tile)
+
+	if interior_prop_debug_logging:
+		print("[InteriorProps] Placed %d props under %s" % [_interior_prop_nodes.size(), _ruin_prop_parent.get_path()])
+
+
+func _clear_interior_props() -> void:
+	for node in _interior_prop_nodes:
+		if is_instance_valid(node):
+			node.queue_free()
+	_interior_prop_nodes.clear()
+	if _ruin_prop_parent == null:
+		return
+	for child in _ruin_prop_parent.get_children():
+		if child.is_in_group("interior_runtime_props"):
+			child.queue_free()
+
+
+func _should_place_interior_prop(pos: Vector2i, map_size: Vector2i) -> bool:
+	if pos.x <= 1 or pos.y <= 1 or pos.x >= map_size.x - 2 or pos.y >= map_size.y - 2:
+		return false
+	if get_region_type_at_tile(pos) != "interior_floor":
+		return false
+	if _is_near_region_type(pos, "interior_threshold", interior_prop_threshold_clearance_tiles):
+		return false
+	if _is_near_wall_for_interior_prop(pos):
+		return false
+	return true
+
+
+func _is_near_wall_for_interior_prop(pos: Vector2i) -> bool:
+	if interior_prop_wall_clearance_tiles <= 0:
+		return false
+	for x in range(-interior_prop_wall_clearance_tiles, interior_prop_wall_clearance_tiles + 1):
+		for y in range(-interior_prop_wall_clearance_tiles, interior_prop_wall_clearance_tiles + 1):
+			if _generated_wall_cells.has(pos + Vector2i(x, y)):
+				return true
+	return false
+
+
+func _is_near_region_type(pos: Vector2i, region_type: String, clearance_tiles: int) -> bool:
+	if clearance_tiles <= 0:
+		return false
+	for x in range(-clearance_tiles, clearance_tiles + 1):
+		for y in range(-clearance_tiles, clearance_tiles + 1):
+			if get_region_type_at_tile(pos + Vector2i(x, y)) == region_type:
+				return true
+	return false
+
+
+func _is_far_enough_from_tiles(tile: Vector2i, placed_tiles: Array[Vector2i], min_distance_tiles: int) -> bool:
+	for placed in placed_tiles:
+		if tile.distance_to(placed) < float(min_distance_tiles):
+			return false
+	return true
+
+
+func _place_interior_prop(pos: Vector2i) -> void:
+	if _interior_prop_textures.is_empty() or _ruin_prop_parent == null:
+		return
+	var texture_index := _tile_noise_hash(pos + Vector2i(383, 1597)) % _interior_prop_textures.size()
+	var texture := _interior_prop_textures[texture_index]
+	if texture == null:
+		return
+
+	var sprite := Sprite2D.new()
+	sprite.name = "InteriorProp_%s_%s" % [pos.x, pos.y]
+	sprite.texture = texture
+	sprite.centered = true
+	sprite.z_as_relative = true
+	sprite.z_index = 1
+	if interior_prop_allow_flip_h:
+		sprite.flip_h = (_tile_noise_hash(pos + Vector2i(719, 1223)) % 2) == 0
+	var texture_size := texture.get_size()
+	var base_offset := Vector2(0, -texture_size.y * 0.5 + _get_tile_size().y * 0.5)
+	sprite.add_to_group("interior_runtime_props")
+	_ruin_prop_parent.add_child(sprite)
+	sprite.global_position = _tile_to_world_position(pos) + base_offset + _interior_prop_jitter(pos)
+	_interior_prop_nodes.append(sprite)
+
+
+func _interior_prop_jitter(pos: Vector2i) -> Vector2:
+	var seed := _tile_noise_hash(pos + Vector2i(991, 467))
+	var x_unit := float(seed % 21) - 10.0
+	var y_unit := float((seed / 21) % 11) - 5.0
+	return Vector2(
+		x_unit / 10.0 * interior_prop_jitter_amplitude.x,
+		y_unit / 5.0 * interior_prop_jitter_amplitude.y
+	).round()
+
+
 func _remove_foliage(pos: Vector2i) -> void:
 	var entry = _foliage_nodes.get(pos, null)
 	var node := entry as Node2D
@@ -1285,17 +1833,15 @@ func _remove_foliage(pos: Vector2i) -> void:
 func _should_place_foliage(pos: Vector2i) -> bool:
 	if foliage_density <= 0.0:
 		return false
+	if is_indoor_tile(pos):
+		return false
+	if _is_near_indoor_tile(pos, foliage_indoor_clearance_tiles):
+		return false
 	if _is_near_wall(pos):
 		return false
 	if _is_inside_foliage_clearance(pos):
 		return false
-	var density := foliage_density
-	if _is_inside_compound_zone(pos):
-		density *= foliage_compound_density_multiplier
-	if density <= 0.0:
-		return false
-	var prob := float(_tile_noise_hash(pos + Vector2i(13, 41)) % 1000) / 1000.0
-	return prob < density
+	return _would_place_foliage_at(pos)
 
 
 func _is_near_wall(pos: Vector2i) -> bool:
@@ -1317,6 +1863,18 @@ func _is_inside_foliage_clearance(pos: Vector2i) -> bool:
 		var expanded := building.grow(foliage_compound_building_clearance)
 		if expanded.has_point(pos):
 			return true
+	return false
+
+
+func _is_near_indoor_tile(pos: Vector2i, clearance_tiles: int) -> bool:
+	if clearance_tiles <= 0:
+		return false
+	if _region_tiles.is_empty():
+		return false
+	for x in range(-clearance_tiles, clearance_tiles + 1):
+		for y in range(-clearance_tiles, clearance_tiles + 1):
+			if is_indoor_tile(pos + Vector2i(x, y)):
+				return true
 	return false
 
 
@@ -1342,11 +1900,16 @@ func _place_foliage(pos: Vector2i) -> void:
 	material.set_shader_parameter("bubble_radius", foliage_player_occlusion_radius)
 	material.set_shader_parameter("bubble_softness", foliage_player_occlusion_softness)
 	material.set_shader_parameter("bubble_alpha", foliage_player_occlusion_alpha)
+	material.set_shader_parameter("bubble_enabled", false)
+	material.set_shader_parameter("bubble_count", 0)
+	for bubble_index in range(FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES):
+		material.set_shader_parameter("bubble_center_%d" % bubble_index, Vector2.ZERO)
 	sprite.material = material
 	_foliage_parent.add_child(sprite)
 	var texture_size := texture.get_size()
 	var foliage_kind := _classify_foliage(texture_size)
-	if foliage_kind == "tree":
+	var has_trunk_collision := foliage_kind == "tree" and _should_add_tree_trunk_collision(pos)
+	if has_trunk_collision:
 		_add_tree_trunk_collision(sprite, texture_size)
 	_foliage_nodes[pos] = {
 		"node": sprite,
@@ -1354,6 +1917,7 @@ func _place_foliage(pos: Vector2i) -> void:
 		"base_y": world_pos.y + texture_size.y * 0.5,
 		"size": texture_size,
 		"kind": foliage_kind,
+		"has_collision": has_trunk_collision,
 	}
 	
 	# Optionally spawn fruit on this foliage
@@ -1372,6 +1936,57 @@ func _classify_foliage(foliage_size: Vector2) -> String:
 	if foliage_size.y >= 96.0:
 		return "tree"
 	return "shrub"
+
+
+func _should_add_tree_trunk_collision(pos: Vector2i) -> bool:
+	if not foliage_probabilistic_tree_collision:
+		return true
+	var local_tree_density := _estimate_local_tree_density(pos)
+	if local_tree_density <= foliage_sparse_tree_collision_threshold:
+		return true
+	var dense_threshold := maxf(foliage_sparse_tree_collision_threshold + 0.01, foliage_dense_tree_collision_threshold)
+	var density_t := clampf(
+		(local_tree_density - foliage_sparse_tree_collision_threshold) / (dense_threshold - foliage_sparse_tree_collision_threshold),
+		0.0,
+		1.0
+	)
+	var collision_chance := lerpf(1.0, foliage_dense_tree_collision_chance, density_t)
+	var roll := float(_tile_noise_hash(pos + Vector2i(1459, 811)) % 1000) / 1000.0
+	return roll < collision_chance
+
+
+func _estimate_local_tree_density(center: Vector2i) -> float:
+	var radius: int = maxi(1, foliage_tree_collision_density_radius)
+	var possible := 0
+	var tree_count := 0
+	for x in range(-radius, radius + 1):
+		for y in range(-radius, radius + 1):
+			var pos := center + Vector2i(x, y)
+			if not _generated_floor_cells.has(pos):
+				continue
+			if is_indoor_tile(pos) or _is_near_indoor_tile(pos, foliage_indoor_clearance_tiles):
+				continue
+			if _is_near_wall(pos) or _is_inside_foliage_clearance(pos):
+				continue
+			possible += 1
+			if not _would_place_foliage_at(pos):
+				continue
+			var texture := _pick_foliage_texture(pos)
+			if texture != null and _classify_foliage(texture.get_size()) == "tree":
+				tree_count += 1
+	if possible <= 0:
+		return 0.0
+	return float(tree_count) / float(possible)
+
+
+func _would_place_foliage_at(pos: Vector2i) -> bool:
+	var density := foliage_density
+	if _is_inside_compound_zone(pos):
+		density *= foliage_compound_density_multiplier
+	if density <= 0.0:
+		return false
+	var prob := float(_tile_noise_hash(pos + Vector2i(13, 41)) % 1000) / 1000.0
+	return prob < density
 
 
 func _add_tree_trunk_collision(foliage_sprite: Sprite2D, foliage_size: Vector2) -> void:
@@ -1476,6 +2091,22 @@ func _load_foliage_textures() -> void:
 			_fruit_texture = null
 
 
+func _load_interior_prop_textures() -> void:
+	_interior_prop_textures.clear()
+	var files := DirAccess.get_files_at(INTERIOR_RUNTIME_DIR)
+	files.sort()
+	for file_name in files:
+		if not file_name.ends_with(".png"):
+			continue
+		if not file_name.begins_with("props_") and not file_name.begins_with("prop_"):
+			continue
+		var texture := load(INTERIOR_RUNTIME_DIR + "/" + file_name) as Texture2D
+		if texture != null:
+			_interior_prop_textures.append(texture)
+	if interior_prop_debug_logging:
+		print("[InteriorProps] Loaded %d runtime prop textures" % _interior_prop_textures.size())
+
+
 func _apply_planet_visual_profile() -> void:
 	if floor_tilemap != null:
 		floor_tilemap.modulate = _get_planet_profile_color("tile_tint", Color.WHITE)
@@ -1529,8 +2160,7 @@ func _find_ruin_prop_parent() -> Node2D:
 func _update_foliage_occlusion(player: Node2D) -> void:
 	if player == null:
 		return
-	var player_feet := player.global_position + foliage_player_feet_offset
-	var player_upper := player.global_position + foliage_player_upper_body_offset
+	var occluders := _collect_foliage_occluders(player)
 	for pos in _foliage_nodes.keys():
 		var entry = _foliage_nodes.get(pos, null)
 		if not (entry is Dictionary):
@@ -1540,23 +2170,111 @@ func _update_foliage_occlusion(player: Node2D) -> void:
 			continue
 		var base_y := float(entry.get("base_y", sprite.global_position.y))
 		var size := entry.get("size", Vector2.ZERO) as Vector2
-		var half_width := size.x * 0.5 + foliage_player_occlusion_x_padding
 		var top_y := base_y - size.y
-		var canopy_contains_upper := (
-			player_upper.x >= sprite.global_position.x - half_width
-			and player_upper.x <= sprite.global_position.x + half_width
-			and player_upper.y >= top_y
-			and player_upper.y <= base_y
-		)
-		var player_in_front := player_feet.y > base_y
+		var player_in_front := false
+		var active_centers: Array[Vector2] = []
+		for occluder in occluders:
+			var upper := occluder.get("upper", Vector2.ZERO) as Vector2
+			var feet := occluder.get("feet", Vector2.ZERO) as Vector2
+			var x_padding := float(occluder.get("x_padding", foliage_player_occlusion_x_padding))
+			var half_width := size.x * 0.5 + x_padding
+			var canopy_contains_upper := (
+				upper.x >= sprite.global_position.x - half_width
+				and upper.x <= sprite.global_position.x + half_width
+				and upper.y >= top_y
+				and upper.y <= base_y
+			)
+			var actor_in_front := feet.y > base_y
+			if bool(occluder.get("is_player", false)):
+				player_in_front = actor_in_front
+			if not actor_in_front and canopy_contains_upper:
+				active_centers.append(upper)
+				if active_centers.size() >= _get_foliage_occlusion_bubble_limit():
+					break
 		sprite.z_index = foliage_behind_z_index if player_in_front else foliage_front_z_index
 		var material := sprite.material as ShaderMaterial
 		if material != null:
-			material.set_shader_parameter("bubble_radius", foliage_player_occlusion_radius)
-			material.set_shader_parameter("bubble_softness", foliage_player_occlusion_softness)
-			material.set_shader_parameter("bubble_alpha", foliage_player_occlusion_alpha)
-			material.set_shader_parameter("bubble_center", player_upper)
-			material.set_shader_parameter("bubble_enabled", (not player_in_front) and canopy_contains_upper)
+			_apply_foliage_occlusion_material(material, active_centers)
+
+
+func _collect_foliage_occluders(player: Node2D) -> Array[Dictionary]:
+	var occluders: Array[Dictionary] = []
+	var player_id := player.get_instance_id()
+	var seen_ids := {player_id: true}
+	occluders.append({
+		"node": player,
+		"feet": player.global_position + foliage_player_feet_offset,
+		"upper": player.global_position + foliage_player_upper_body_offset,
+		"x_padding": foliage_player_occlusion_x_padding,
+		"is_player": true,
+	})
+	if not foliage_mob_occlusion_enabled:
+		return occluders
+	var tree := get_tree()
+	if tree == null:
+		return occluders
+	var max_bubbles := _get_foliage_occlusion_bubble_limit()
+	var range_squared := foliage_mob_occlusion_player_range * foliage_mob_occlusion_player_range
+	var candidates: Array[Dictionary] = []
+	for group_name in foliage_mob_occlusion_groups:
+		var group := String(group_name)
+		if group.is_empty():
+			continue
+		for node in tree.get_nodes_in_group(group):
+			if not (node is Node2D):
+				continue
+			var actor := node as Node2D
+			var actor_id := actor.get_instance_id()
+			if seen_ids.has(actor_id):
+				continue
+			seen_ids[actor_id] = true
+			if not is_instance_valid(actor) or _is_foliage_occluder_inactive(actor):
+				continue
+			var dist_squared := actor.global_position.distance_squared_to(player.global_position)
+			if dist_squared > range_squared:
+				continue
+			candidates.append({
+				"node": actor,
+				"feet": actor.global_position + foliage_mob_feet_offset,
+				"upper": actor.global_position + foliage_mob_upper_body_offset,
+				"x_padding": foliage_mob_occlusion_x_padding,
+				"is_player": false,
+				"dist_squared": dist_squared,
+			})
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return float(a.get("dist_squared", 0.0)) < float(b.get("dist_squared", 0.0))
+	)
+	for candidate in candidates:
+		occluders.append(candidate)
+		if occluders.size() >= max_bubbles:
+			break
+	return occluders
+
+
+func _is_foliage_occluder_inactive(actor: Node2D) -> bool:
+	if actor.has_method("is_dead") and bool(actor.call("is_dead")):
+		return true
+	if "dead" in actor and bool(actor.get("dead")):
+		return true
+	if "health" in actor and float(actor.get("health")) <= 0.0:
+		return true
+	return false
+
+
+func _get_foliage_occlusion_bubble_limit() -> int:
+	return clampi(foliage_occlusion_max_bubbles, 1, FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES)
+
+
+func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers: Array[Vector2]) -> void:
+	var bubble_count := mini(active_centers.size(), _get_foliage_occlusion_bubble_limit())
+	material.set_shader_parameter("bubble_radius", foliage_player_occlusion_radius)
+	material.set_shader_parameter("bubble_softness", foliage_player_occlusion_softness)
+	material.set_shader_parameter("bubble_alpha", foliage_player_occlusion_alpha)
+	material.set_shader_parameter("bubble_enabled", false)
+	material.set_shader_parameter("bubble_count", bubble_count)
+	for bubble_index in range(FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES):
+		var center := active_centers[bubble_index] if bubble_index < bubble_count else Vector2.ZERO
+		material.set_shader_parameter("bubble_center_%d" % bubble_index, center)
 
 
 func _prepare_streaming_reveal() -> void:
@@ -1572,10 +2290,7 @@ func _prepare_streaming_reveal() -> void:
 	_clear_horizontal_wall_overlays()
 	floor_tilemap.clear()
 	walls_tilemap.clear()
-	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node
-	if collision_root != null:
-		for child in collision_root.get_children():
-			child.queue_free()
+	_clear_runtime_wall_collision()
 	_rebuild_runtime_wall_collision_debug()
 	_refresh_shadows()
 	var spawn_tile := get_player_spawn()
@@ -1593,6 +2308,7 @@ func _prime_streaming_chunks(center_tile: Vector2i) -> void:
 				_reveal_chunk_immediately(chunk)
 			else:
 				_queue_chunk_for_reveal(chunk, center_tile)
+	_sync_runtime_wall_collision_with_visible_walls()
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
 	_refresh_navigation_after_wall_change()
@@ -1626,6 +2342,7 @@ func _process_streaming_reveal_queue() -> void:
 		revealed_any = true
 		remaining -= 1
 	if revealed_any:
+		_sync_runtime_wall_collision_with_visible_walls()
 		_rebuild_horizontal_wall_overlays()
 		_refresh_shadows()
 		if _streaming_reveal_queue.is_empty() or _navigation_rebuild_pending:
@@ -1677,6 +2394,7 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 			_remove_foliage(tile)
 			_remove_runtime_wall_body(tile)
 	_revealed_chunks.erase(chunk_pos)
+	_sync_runtime_wall_collision_with_visible_walls()
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
 
@@ -1684,18 +2402,18 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 func _reveal_tile(tile: Vector2i) -> void:
 	if _generated_floor_cells.has(tile):
 		var floor_data: Dictionary = _generated_floor_cells[tile]
-		floor_tilemap.set_cell(tile, int(floor_data.get("source_id", floor_source_id)), floor_data.get("atlas", floor_atlas_coord))
+		floor_tilemap.set_cell(tile, int(floor_data.get("source_id", floor_source_id)), floor_data.get("atlas", floor_atlas_coord), int(floor_data.get("alternative", 0)))
 		if _should_place_foliage(tile):
 			_place_foliage(tile)
 	if _generated_wall_cells.has(tile):
 		var wall_data: Dictionary = _generated_wall_cells[tile]
-		walls_tilemap.set_cell(tile, int(wall_data.get("source_id", walls_source_id)), wall_data.get("atlas", wall_atlas_coord))
+		walls_tilemap.set_cell(tile, int(wall_data.get("source_id", walls_source_id)), wall_data.get("atlas", wall_atlas_coord), int(wall_data.get("alternative", 0)))
 		_remove_foliage(tile)
 		if build_runtime_wall_collision:
 			_spawn_runtime_wall_body(tile)
 
 
-func _spawn_runtime_wall_body(tile: Vector2i) -> void:
+func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true) -> void:
 	if collision_only_on_new_ruined_wall_tiles and not _tile_uses_new_ruined_wall_treatment(tile):
 		return
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
@@ -1727,7 +2445,8 @@ func _spawn_runtime_wall_body(tile: Vector2i) -> void:
 	shape.shape = rect
 	body.add_child(shape)
 	collision_root.add_child(body)
-	_rebuild_runtime_wall_collision_debug()
+	if refresh_debug:
+		_rebuild_runtime_wall_collision_debug()
 
 
 func _remove_runtime_wall_body(tile: Vector2i) -> void:
@@ -1736,12 +2455,56 @@ func _remove_runtime_wall_body(tile: Vector2i) -> void:
 		return
 	var body := collision_root.get_node_or_null(NodePath(_runtime_wall_body_name(tile)))
 	if body != null:
+		collision_root.remove_child(body)
 		body.queue_free()
 	_rebuild_runtime_wall_collision_debug()
 
 
 func _runtime_wall_body_name(tile: Vector2i) -> String:
 	return "Wall_%d_%d" % [tile.x, tile.y]
+
+
+func _clear_runtime_wall_collision() -> void:
+	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
+	if collision_root == null:
+		return
+	for child in collision_root.get_children():
+		collision_root.remove_child(child)
+		child.queue_free()
+
+
+func _sync_runtime_wall_collision_with_visible_walls() -> void:
+	if walls_tilemap == null or not build_runtime_wall_collision:
+		return
+	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
+	if collision_root == null:
+		collision_root = Node2D.new()
+		collision_root.name = "RuntimeWallCollision"
+		walls_tilemap.add_child(collision_root)
+
+	var visible_wall_tiles := {}
+	for tile in walls_tilemap.get_used_cells():
+		if walls_tilemap.get_cell_source_id(tile) >= 0:
+			visible_wall_tiles[tile] = true
+			_spawn_runtime_wall_body(tile, false)
+
+	for child in collision_root.get_children():
+		var tile := _wall_tile_from_runtime_body_name(String(child.name))
+		if tile == Vector2i(999999, 999999) or not visible_wall_tiles.has(tile):
+			collision_root.remove_child(child)
+			child.queue_free()
+	_rebuild_runtime_wall_collision_debug()
+
+
+func _wall_tile_from_runtime_body_name(body_name: String) -> Vector2i:
+	if not body_name.begins_with("Wall_"):
+		return Vector2i(999999, 999999)
+	var parts := body_name.split("_")
+	if parts.size() != 3:
+		return Vector2i(999999, 999999)
+	if not String(parts[1]).is_valid_int() or not String(parts[2]).is_valid_int():
+		return Vector2i(999999, 999999)
+	return Vector2i(int(parts[1]), int(parts[2]))
 
 
 func _get_runtime_wall_collision_debug_root() -> Node2D:
@@ -2151,6 +2914,16 @@ func _global_to_tile(global_position: Vector2) -> Vector2i:
 	return Vector2i.ZERO
 
 
+func global_to_minimap_tile(global_position: Vector2) -> Vector2i:
+	return _global_to_tile(global_position)
+
+
+func minimap_tile_to_global(tile: Vector2i) -> Vector2:
+	if floor_tilemap != null:
+		return floor_tilemap.to_global(floor_tilemap.map_to_local(tile))
+	return Vector2.ZERO
+
+
 func _tile_to_chunk(tile: Vector2i) -> Vector2i:
 	return Vector2i(
 		int(floor(float(tile.x) / max(1.0, float(streaming_chunk_size_tiles)))),
@@ -2264,9 +3037,18 @@ func get_corridor_spawn_points(count: int = 5) -> Array[Vector2i]:
 
 
 ## Returns all data as a dict (for debugging or passing to game)
+func _dict_keys_as_vector2i_array(source: Dictionary) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	for key in source.keys():
+		if key is Vector2i:
+			result.append(key)
+	return result
+
+
 func get_level_data() -> Dictionary:
 	return {
 		"map_size": procgen_node.map_size,
+		"tile_size": get_runtime_tile_size(),
 		"player_spawn": get_player_spawn(),
 		"rooms": get_room_centers(),
 		"rooms_by_distance": get_rooms_by_distance_from_spawn(),
@@ -2275,5 +3057,11 @@ func get_level_data() -> Dictionary:
 		"compound_rect": _last_compound_rect,
 		"compound_ingress": _last_compound_ingress,
 		"compound_buildings": _last_compound_buildings,
+		"interior_region_rect": _last_interior_region_rect,
+		"interior_rooms": _last_interior_rooms,
+		"interior_thresholds": _last_interior_thresholds,
+		"region_tiles": _region_tiles.duplicate(true),
+		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
+		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"world_profile": get_planet_world_profile(),
 	}

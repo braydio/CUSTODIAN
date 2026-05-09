@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://cwdr77671ltmr"]
 
-[ext_resource type="TileSet" uid="uid://cta2wn25785pf" path="res://content/tiles/tilesets/dungeon_tileset.tres" id="1"]
+[ext_resource type="TileSet" path="res://content/tiles/tilesets/custodian_world_tileset.tres" id="1"]
 [ext_resource type="PackedScene" uid="uid://b8qv5m3x2kc1y" path="res://game/actors/operator/operator.tscn" id="2"]
 [ext_resource type="Script" uid="uid://citwrr55dyx86" path="res://game/systems/core/systems/spawn_node.gd" id="3"]
 

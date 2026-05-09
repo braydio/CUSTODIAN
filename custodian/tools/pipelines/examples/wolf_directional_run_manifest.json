@@ -1,0 +1,15 @@
+{
+  "source": "enemy_wolf__body__locomotion__run__4dir__32f__64.png",
+  "mode": "copy",
+  "outputs": [
+    {
+      "path": "enemies/wolf/source/enemy_wolf__body__locomotion__run__4dir__32f__64.png",
+      "layout": "copy"
+    },
+    {
+      "path": "enemies/wolf/wolf-run.png",
+      "layout": "copy"
+    }
+  ],
+  "post_process": ["enemy_runtime_import"]
+}

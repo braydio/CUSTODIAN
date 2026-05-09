@@ -77,3 +77,25 @@ Operator curated body updates can trigger the runtime `SpriteFrames` rebuild aut
   "post_process": ["operator_curated_resources"]
 }
 ```
+
+## Enemy Example
+
+Current enemy sheets can also use the shared intake path. For wolf directional sheets, keep a canonical source copy and write the compatibility path read by `wolf_animation_library.gd`:
+
+```json
+{
+  "source": "enemy_wolf__body__locomotion__run__4dir__32f__64.png",
+  "mode": "copy",
+  "outputs": [
+    {
+      "path": "enemies/wolf/source/enemy_wolf__body__locomotion__run__4dir__32f__64.png",
+      "layout": "copy"
+    },
+    {
+      "path": "enemies/wolf/wolf-run.png",
+      "layout": "copy"
+    }
+  ],
+  "post_process": ["enemy_runtime_import"]
+}
+```

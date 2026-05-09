@@ -1,6 +1,6 @@
-# TILEMAP REFERENCE — dungeon_tileset.tres
+# TILEMAP REFERENCE — custodian_world_tileset.tres
 
-**Source File:** `custodian/content/tiles/tilesets/dungeon_tileset.tres`
+**Source File:** `custodian/content/tiles/tilesets/custodian_world_tileset.tres`
 **Atlas:** `atlas_walls_low-16x16.png`
 **Total Tiles:** 48 (12 rows × 4 columns)
 
@@ -175,7 +175,7 @@ Procgen selector note:
 
 Load via Godot tilemap:
 ```gdscript
-var tileset = load("res://content/tiles/tilesets/dungeon_tileset.tres")
+var tileset = load("res://content/tiles/tilesets/custodian_world_tileset.tres")
 $TileMap.tileset = tileset
 ```
 

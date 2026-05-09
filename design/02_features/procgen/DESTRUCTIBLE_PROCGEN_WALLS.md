@@ -31,7 +31,7 @@ This is heavier than merged strip collision, but it allows:
 
 ## Visual Source
 
-Live procgen walls now use the `TX Tileset Wall` atlas source in `dungeon_tileset.tres` instead of the older placeholder dungeon low-wall source.
+Live procgen walls now use the `TX Tileset Wall` atlas source in `custodian_world_tileset.tres` instead of the older placeholder dungeon low-wall source.
 The active runtime now renders procgen walls with real TileSet wall cells only. The experimental ruined marble overlay pass, stretched endcaps, and side-cladding overlays are no longer active runtime authority.
 Runtime wall collision matches the actual generated wall tiles directly instead of expanding to match decorative overlay massing.
 Reference wall selection now also treats horizontal run terminals separately from repeatable horizontal-cap middles so left-end and right-end wall pieces do not get randomly used in the middle of a run.

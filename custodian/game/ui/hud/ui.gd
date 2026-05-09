@@ -46,6 +46,9 @@ const TERMINAL_COMPLETION_TOKENS := [
 	"ALLOCATE_DEFENSE", "DEPLOY", "FOCUS",
 ]
 
+# Custom minimap feature flag.
+const ENABLE_MINIMAP := true
+
 const SECTOR_DISPLAY_NAMES := {
 	"COMMAND": "Command Center",
 	"POWER": "Power",
@@ -82,6 +85,7 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var supply_drop_label = get_node_or_null("SupplyDropLabel")
 @onready var crosshair_label = get_node_or_null("Crosshair")
 @onready var interaction_label = get_node_or_null("InteractionLabel")
+@onready var minimap = get_node_or_null("Minimap")
 
 @onready var terminal_panel = get_node_or_null("TerminalPanel")
 @onready var terminal_header_eyebrow = get_node_or_null("TerminalPanel/Header/Eyebrow")
@@ -185,6 +189,7 @@ var _last_primary_equipped: bool = false
 var _last_primary_weapon_id := ""
 var _last_loadout_mode := ""
 var _last_ammo_text := ""
+var _last_health_text := ""
 var _last_cooldown_pct := -1.0
 var _last_cooldown_text := ""
 var _last_director_text := ""
@@ -219,6 +224,7 @@ var _planet_preview_rotation := Vector2.ZERO
 var _planet_preview_spin_velocity := Vector2.ZERO
 var _planet_preview_zoom_distance := 3.8
 var _main_hud_hidden := false
+var _debug_hud_visible := false
 var _placement_mode_active := false
 var _last_crosshair_aim_dir := Vector2.ZERO
 var _last_crosshair_screen_pos := Vector2.ZERO
@@ -427,13 +433,16 @@ func _register_devconsole_commands() -> void:
 		console.add_command("show_cognitive", _devconsole_show_cognitive)
 		console.add_command("test_spawn", _devconsole_test_spawn)
 		console.add_command("ui_status", _devconsole_ui_status)
-		printerr("Registered debug commands with DevConsole")
+		if ENABLE_MINIMAP:
+			console.add_command("toggle_minimap", _devconsole_toggle_minimap)
+			console.add_command("minimap_status", _devconsole_minimap_status)
+		print("Registered debug commands with DevConsole")
 
 func _devconsole_toggle_debug_hud(args: Array) -> String:
 	# Toggle debug HUD visibility (camera/aim/time/director/supply/button diagnostics)
-	_main_hud_hidden = !_main_hud_hidden
+	_debug_hud_visible = not _debug_hud_visible
 	_set_main_hud_hidden(_main_hud_hidden)
-	return "Debug HUD: " + ("OFF" if _main_hud_hidden else "ON")
+	return "Debug HUD: " + ("ON" if _debug_hud_visible else "OFF")
 
 func _devconsole_show_cognitive(args: Array) -> String:
 	# Show cognitive state from CognitiveState autoload
@@ -460,6 +469,42 @@ func _devconsole_ui_status(args: Array) -> String:
 	var status = "Terminal: " + ("OPEN" if _terminal_open else "CLOSED")
 	status += " | Ready: " + str(_terminal_ready)
 	status += " | Boot started: " + str(_terminal_boot_started)
+	return status
+
+func _devconsole_toggle_minimap(args: Array) -> String:
+	# Toggle minimap visibility at runtime
+	if not ENABLE_MINIMAP:
+		return "Minimap feature is disabled (ENABLE_MINIMAP = false)"
+	var minimap = get_node_or_null("Minimap")
+	if minimap == null:
+		# Try absolute path
+		minimap = get_node_or_null("/root/GameRoot/UI/Minimap")
+	if minimap == null:
+		return "Minimap node not found. Check scene tree path."
+	minimap.visible = !minimap.visible
+	return "Minimap: " + ("VISIBLE" if minimap.visible else "HIDDEN")
+
+func _devconsole_minimap_status(args: Array) -> String:
+	# Show minimap status and configuration
+	if not ENABLE_MINIMAP:
+		return "Minimap feature is disabled (ENABLE_MINIMAP = false)"
+	var minimap = get_node_or_null("Minimap")
+	if minimap == null:
+		minimap = get_node_or_null("/root/GameRoot/UI/Minimap")
+	if minimap == null:
+		return "Minimap node not found. Check scene tree path."
+	var status = "Minimap: " + ("VISIBLE" if minimap.visible else "HIDDEN") + "\n"
+	if minimap.has_method("get_status_summary"):
+		var summary: Dictionary = minimap.call("get_status_summary")
+		status += "Procgen connected: " + str(summary.get("procgen_connected", false)) + "\n"
+		status += "Map size: " + str(summary.get("map_size", Vector2i.ZERO)) + "\n"
+		status += "Floor cells: " + str(summary.get("floor_cells", 0)) + "\n"
+		status += "Wall cells: " + str(summary.get("wall_cells", 0)) + "\n"
+		status += "Player tracked: " + str(summary.get("has_player", false)) + "\n"
+		status += "Enemies tracked: " + str(summary.get("enemies", 0)) + "\n"
+		status += "Objectives tracked: " + str(summary.get("objectives", 0))
+	else:
+		status += "Status summary unavailable"
 	return status
 
 func _setup_terminal_main_scroll() -> void:
@@ -583,8 +628,9 @@ func _process(delta):
 	_process_terminal_command_queue(delta)
 	_update_debug_panel()
 
+	var show_debug_hud := not _main_hud_hidden and _debug_hud_visible
 	var power_system = get_node_or_null("/root/GameRoot/Power")
-	if not _main_hud_hidden and power_system and power_label and power_bar:
+	if show_debug_hud and power_system and power_label and power_bar:
 		var status: Dictionary = power_system.get_power_status()
 		var total_power: float = float(status.get("total", 0.0))
 		var max_power_value: float = float(status.get("max", 0.0))
@@ -619,15 +665,32 @@ func _process(delta):
 			GameState.Phase.EXFIL:
 				contract_phase_label.modulate = Color(0.85, 0.85, 0.95, 1.0)
 	if not _main_hud_hidden and lives_label:
-		var total_lives := 3
-		var remaining := 3
-		if game_state != null:
-			total_lives = max(1, int(game_state.total_lives))
-			remaining = max(0, int(game_state.lives_remaining))
-		lives_label.text = "LIVES: %d/%d" % [remaining, total_lives]
+		var health_value := 0.0
+		var max_health_value := 1.0
+		var operator_for_health = get_node_or_null("/root/GameRoot/World/Operator")
+		if operator_for_health != null:
+			if operator_for_health.has_method("get_health"):
+				health_value = float(operator_for_health.get_health())
+			elif "health" in operator_for_health:
+				health_value = float(operator_for_health.get("health"))
+			if operator_for_health.has_method("get_max_health"):
+				max_health_value = max(1.0, float(operator_for_health.get_max_health()))
+			elif "max_health" in operator_for_health:
+				max_health_value = max(1.0, float(operator_for_health.get("max_health")))
+		var health_text := "HEALTH: %d/%d" % [int(round(health_value)), int(round(max_health_value))]
+		if health_text != _last_health_text:
+			lives_label.text = health_text
+			_last_health_text = health_text
+		var health_pct: float = clamp(health_value / max_health_value, 0.0, 1.0)
+		if health_pct <= 0.3:
+			lives_label.modulate = Color(0.95, 0.35, 0.35, 1.0)
+		elif health_pct <= 0.6:
+			lives_label.modulate = Color(0.95, 0.8, 0.35, 1.0)
+		else:
+			lives_label.modulate = Color(0.55, 0.95, 0.65, 1.0)
 
 	var cam = get_node_or_null("/root/GameRoot/World/Camera2D")
-	if not _main_hud_hidden and cam and camera_follow_label and camera_zoom_label and "auto_zoom_enabled" in cam and "follow_enabled" in cam:
+	if show_debug_hud and cam and camera_follow_label and camera_zoom_label and "auto_zoom_enabled" in cam and "follow_enabled" in cam:
 		var follow_enabled: bool = bool(cam.follow_enabled)
 		var auto_zoom_enabled: bool = bool(cam.auto_zoom_enabled)
 		if follow_enabled != _last_follow_state or auto_zoom_enabled != _last_auto_zoom_state or camera_follow_label.text.is_empty() or camera_zoom_label.text.is_empty():
@@ -636,12 +699,12 @@ func _process(delta):
 			_last_follow_state = follow_enabled
 			_last_auto_zoom_state = auto_zoom_enabled
 
-	if not _main_hud_hidden and time_scale_label and Engine.time_scale != _last_time_scale:
+	if show_debug_hud and time_scale_label and Engine.time_scale != _last_time_scale:
 		time_scale_label.text = "TIME SCALE: %.1fX (T)" % Engine.time_scale
 		_last_time_scale = Engine.time_scale
 
 	var operator = get_node_or_null("/root/GameRoot/World/Operator")
-	if not _main_hud_hidden and operator and aim_mode_label:
+	if show_debug_hud and operator and aim_mode_label:
 		if operator.has_method("get_weapon_status"):
 			var aim_ws = operator.get_weapon_status()
 			var aim_mode := str(aim_ws.get("aim_mode", "mouse"))
@@ -649,26 +712,27 @@ func _process(delta):
 				aim_mode_label.text = "AIM: %s (V TOGGLE, ARROWS)" % aim_mode.to_upper()
 				_last_aim_mode = aim_mode
 
-	if not _main_hud_hidden and operator and weapon_label:
+	if not _main_hud_hidden and operator:
 		if operator.has_method("get_weapon_status"):
 			var ws = operator.get_weapon_status()
 			var equipped := bool(ws.get("equipped", false))
 			var primary_weapon_id := str(ws.get("primary_weapon_id", ""))
 			var loadout_mode := str(ws.get("loadout_mode", "holstered"))
-			if equipped != _last_primary_equipped or primary_weapon_id != _last_primary_weapon_id or loadout_mode != _last_loadout_mode or weapon_label.text.is_empty():
-				var primary_label := "HOLSTERED"
-				if loadout_mode == "melee":
-					primary_label = "MELEE"
-				elif equipped:
-					primary_label = str(ws.get("weapon_name", "CARBINE"))
-				var block_label := "ACTIVE" if bool(ws.get("blocking", false)) else "R/M2"
-				weapon_label.text = "LOADOUT: %s (Q RANGED, E MELEE) | ATTACK: F/M1 | BLOCK: %s | RELOAD: X" % [primary_label, block_label]
-				_last_primary_equipped = equipped
-				_last_primary_weapon_id = primary_weapon_id
-				_last_loadout_mode = loadout_mode
-			if primary_weapon_button:
+			if show_debug_hud and weapon_label:
+				if equipped != _last_primary_equipped or primary_weapon_id != _last_primary_weapon_id or loadout_mode != _last_loadout_mode or weapon_label.text.is_empty():
+					var primary_label := "HOLSTERED"
+					if loadout_mode == "melee":
+						primary_label = "MELEE"
+					elif equipped:
+						primary_label = str(ws.get("weapon_name", "CARBINE"))
+					var block_label := "ACTIVE" if bool(ws.get("blocking", false)) else "R/M2"
+					weapon_label.text = "LOADOUT: %s (Q RANGED, E MELEE) | ATTACK: F/M1 | BLOCK: %s | RELOAD: X" % [primary_label, block_label]
+					_last_primary_equipped = equipped
+					_last_primary_weapon_id = primary_weapon_id
+					_last_loadout_mode = loadout_mode
+			if show_debug_hud and primary_weapon_button:
 				primary_weapon_button.text = "UNEQUIP CARBINE" if equipped and primary_weapon_id == "carbine_rifle" else "EQUIP CARBINE"
-			if ammo_label:
+			if show_debug_hud and ammo_label:
 				var magazine_size = int(ws.get("ammo_standard_magazine_size", 0))
 				var loaded = int(ws.get("ammo_standard_loaded", 0))
 				var reserve = int(ws.get("ammo_standard", 0))
@@ -686,6 +750,9 @@ func _process(delta):
 				var cooldown_remaining = max(0.0, float(ws.get("cooldown_remaining", 0.0)))
 				var pct = clamp((cooldown_remaining / cooldown_total) * 100.0, 0.0, 100.0)
 				var cd_text = "COOLDOWN: READY" if cooldown_remaining <= 0.001 else "COOLDOWN: %.2fs" % cooldown_remaining
+				if absf(pct - _last_cooldown_pct) > 0.1:
+					cooldown_bar.value = pct
+					_last_cooldown_pct = pct
 				if cd_text != _last_cooldown_text:
 					cooldown_label.text = cd_text
 					_last_cooldown_text = cd_text
@@ -698,7 +765,7 @@ func _process(delta):
 			if stamina_bar:
 				stamina_bar.value = clamp((float(ss.get("stamina", 0.0)) / max(1.0, float(ss.get("stamina_max", 1.0)))) * 100.0, 0.0, 100.0)
 
-	if not _main_hud_hidden and director_label:
+	if show_debug_hud and director_label:
 		var director_status = _get_local_director_status()
 		if not director_status.is_empty():
 			var line = "DIRECTOR W%s | TH %.1f | %s | %s" % [
@@ -717,7 +784,7 @@ func _process(delta):
 	if crosshair_label:
 		crosshair_label.visible = false
 
-	if not _main_hud_hidden and supply_drop_label:
+	if show_debug_hud and supply_drop_label:
 		var supply_manager = get_node_or_null("/root/GameRoot/SupplyDropManager")
 		if supply_manager and supply_manager.has_method("get_status"):
 			var supply_status = supply_manager.get_status()
@@ -847,12 +914,22 @@ func _update_crosshair() -> void:
 	_last_crosshair_aim_dir = normalized_aim
 
 
-func _get_main_hud_nodes() -> Array:
+func _get_essential_hud_nodes() -> Array:
+	return [
+		minimap,
+		contract_phase_label,
+		lives_label,
+		cooldown_bar,
+		cooldown_label,
+		stamina_bar,
+		stamina_label,
+	]
+
+
+func _get_debug_hud_nodes() -> Array:
 	return [
 		power_label,
 		power_bar,
-		contract_phase_label,
-		lives_label,
 		camera_follow_label,
 		camera_zoom_label,
 		time_scale_label,
@@ -860,10 +937,6 @@ func _get_main_hud_nodes() -> Array:
 		weapon_label,
 		primary_weapon_button,
 		ammo_label,
-		cooldown_bar,
-		cooldown_label,
-		stamina_bar,
-		stamina_label,
 		director_label,
 		supply_drop_label,
 		crosshair_label,
@@ -873,9 +946,12 @@ func _get_main_hud_nodes() -> Array:
 
 func _set_main_hud_hidden(hidden: bool) -> void:
 	_main_hud_hidden = hidden
-	for node in _get_main_hud_nodes():
+	for node in _get_essential_hud_nodes():
 		if node:
 			node.visible = not hidden
+	for node in _get_debug_hud_nodes():
+		if node:
+			node.visible = not hidden and _debug_hud_visible
 	if crosshair_label:
 		crosshair_label.visible = false
 
@@ -3005,19 +3081,21 @@ func _init_terminal_previews() -> void:
 	_terminal_planet_preview_renderer.init(self, terminal_planet_preview)
 
 func _refresh_contract_previews() -> void:
-	if terminal_map_preview == null:
-		return
+	_refresh_terminal_minimap()
 
 	var contract = _collect_contract_snapshot()
 	if contract.is_empty():
-		terminal_map_preview.texture = _build_placeholder_preview("NO MAP CONTRACT")
 		if terminal_planet_preview:
 			terminal_planet_preview.texture = _build_placeholder_preview("NO PLANET CONTRACT")
 		return
 
 	if terminal_planet_preview:
 		_render_planet_preview()
-	terminal_map_preview.texture = _build_map_preview_texture(_terminal_latest_contract, _terminal_snapshot)
+
+
+func _refresh_terminal_minimap() -> void:
+	if terminal_map_preview != null and terminal_map_preview.has_method("refresh_now"):
+		terminal_map_preview.call("refresh_now")
 
 func _render_planet_preview() -> void:
 	_terminal_planet_preview_renderer.render(self, terminal_planet_preview, _terminal_latest_contract)
@@ -3039,8 +3117,6 @@ func _planet_preview_contains_screen_point(point: Vector2) -> bool:
 
 func _on_terminal_map_preview_gui_input(event: InputEvent) -> void:
 	if not _terminal_open or terminal_map_preview == null:
-		return
-	if _terminal_map_render_bounds.is_empty():
 		return
 	if event is InputEventMouseButton:
 		var scroll_event := event as InputEventMouseButton
@@ -3112,6 +3188,8 @@ func _apply_terminal_map_placement(world_pos: Vector2) -> bool:
 
 
 func _terminal_map_local_to_world(local_pos: Vector2) -> Vector2:
+	if terminal_map_preview != null and terminal_map_preview.has_method("local_to_world"):
+		return terminal_map_preview.call("local_to_world", local_pos)
 	if _terminal_map_render_bounds.is_empty():
 		return Vector2.ZERO
 	var image_size: Vector2 = Vector2(

@@ -23,15 +23,15 @@ destructible wall ownership.
 
 - Runtime procgen script: `custodian/game/world/procgen/proc_gen_tilemap.gd`
 - Runtime procgen scene: `custodian/game/world/procgen/proc_gen_map.tscn`
-- Runtime TileSet path expected by scene: `custodian/content/tiles/tilesets/dungeon_tileset.tres`
+- Runtime TileSet path expected by scene: `custodian/content/tiles/tilesets/custodian_world_tileset.tres`
 - Existing wall source ID in scene before this bridge: `11`
 - Existing source ID `11` atlas region size: `32x32`
 
 ## Drift Note
 
-During implementation, `custodian/content/tiles/tilesets/dungeon_tileset.tres` was missing from the worktree while
+During implementation, `custodian/content/tiles/tilesets/custodian_world_tileset.tres` was missing from the worktree while
 `proc_gen_map.tscn` still referenced it. A matching copy existed at
-`custodian/content/dev/tilesets/dungeon_tileset.tres`. The active TileSet path was recreated from that copy before
+`custodian/content/dev/tilesets/custodian_world_tileset.tres`. The active TileSet path was recreated from that copy before
 adding the generated wall source.
 
 ## Inputs
@@ -87,6 +87,11 @@ Wall-top source sheets are processed separately with `--top-source`. The builder
 components, ignores tiny noise islands, top-aligns each component into `32x32` runtime cells, and routes the result
 through the existing horizontal/terminal buckets while also populating `reference_top_terminal_coords` for future use.
 
+Runtime note: exposed horizontal wall surfaces now prefer `reference_wall_top_coords` before the broader connector
+stencil buckets. Passage variants also use exposed horizontal wall-surface runs instead of only one-cell-thick linear
+runs, so passage art remains visible on ordinary generated wall tops. The default visual passage chance is `65%` per
+eligible run; this remains visual-only and does not alter collision or walkability.
+
 ## Semantic Mapping
 
 The mapping JSON contains broad required buckets plus exact current scene property names. The current scene property
@@ -115,7 +120,7 @@ fallback cells so the runtime has valid coordinates even before final art curati
 
 ## Godot Integration Plan
 
-1. Add generated atlas as a new `TileSetAtlasSource` in `dungeon_tileset.tres`.
+1. Add generated atlas as a new `TileSetAtlasSource` in `custodian_world_tileset.tres`.
 2. Use a new source ID instead of replacing existing source ID `11`.
 3. Update both `ProcGenMap` and nested `ProcGen` nodes in `proc_gen_map.tscn` to use the new `walls_source_id`.
 4. Update exported reference coordinate arrays from the generated mapping JSON.
@@ -123,7 +128,7 @@ fallback cells so the runtime has valid coordinates even before final art curati
 6. Expose a dedicated visual passage bucket for horizontal wall runs so passage art is visible outside rare hole/void
    adjacency cases.
 
-Implementation used source ID `12` for `TileSetAtlasSource_procgen_wall_generated`. `dungeon_tileset.tres` also now
+Implementation used source ID `12` for `TileSetAtlasSource_procgen_wall_generated`. `custodian_world_tileset.tres` also now
 loads the floor atlas from its existing source PNG instead of a stale `.godot/imported` cache path, because the active
 TileSet file had been missing and the recreated copy pointed at an unavailable cache artifact.
 
@@ -162,7 +167,7 @@ Checked paths:
 
 - `custodian/game/world/procgen/proc_gen_tilemap.gd` exists.
 - `custodian/game/world/procgen/proc_gen_map.tscn` exists.
-- `custodian/content/tiles/tilesets/dungeon_tileset.tres` was missing and recreated from `custodian/content/dev/tilesets/dungeon_tileset.tres`.
+- `custodian/content/tiles/tilesets/custodian_world_tileset.tres` was missing and recreated from `custodian/content/dev/tilesets/custodian_world_tileset.tres`.
 - `custodian/assets/tiles/walls/generated/procgen_wall_source_parts.json` exists.
 - `custodian/assets/tiles/walls/generated/procgen_wall_source_atlas.png` exists.
 - `custodian/docs/ai_context/` exists.

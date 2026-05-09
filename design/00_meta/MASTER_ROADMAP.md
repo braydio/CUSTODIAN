@@ -142,12 +142,13 @@ Milestones are major release checkpoints. Each has:
 |---------|--------|----------|
 | Traverse procgen compound | design | P0 |
 | Scavenge/pickup system | design | P1 |
+| Resource collection & fabrication | design | P1 |
 | Power routing between structures | design | P1 |
 | Fortification placement | design | P1 |
 | Terminal prep commands | design | P1 |
 | Manual assault trigger | design | P0 |
 
-**Doc:** `02_features/free_roam/implementation.md`  
+**Doc:** `02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md`  
 **Depends on:** v0.4.0
 
 ---

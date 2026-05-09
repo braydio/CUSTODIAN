@@ -2,6 +2,7 @@ extends SceneTree
 
 const SUPPORTED_IMAGE_EXTENSIONS := [".png"]
 const POST_PROCESS_OPERATOR_CURATED := "operator_curated_resources"
+const POST_PROCESS_ENEMY_RUNTIME_IMPORT := "enemy_runtime_import"
 
 var _project_root: String
 var _sprites_root: String
@@ -382,6 +383,25 @@ func _run_post_process(step: String) -> Dictionary:
 			)
 			if exit_code != 0:
 				return {"ok": false, "error": "operator curated rebuild failed:\n%s" % "\n".join(output)}
+			return {"ok": true}
+		POST_PROCESS_ENEMY_RUNTIME_IMPORT:
+			if _dry_run:
+				print("[DRY RUN] post_process %s" % step)
+				return {"ok": true}
+			var output: Array = []
+			var exit_code := OS.execute(
+				"godot",
+				[
+					"--headless",
+					"--path",
+					_project_root,
+					"--import"
+				],
+				output,
+				true
+			)
+			if exit_code != 0:
+				return {"ok": false, "error": "enemy runtime import failed:\n%s" % "\n".join(output)}
 			return {"ok": true}
 		_:
 			return {"ok": false, "error": "unsupported post_process step %s" % step}

@@ -1,5 +1,8 @@
 {
     "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "Gate_Of_Return_Remix": {
             "scale": 0.6485,
@@ -19,8 +22,8 @@
         }
     },
     "openFiles": [
-        "source/hub_world_origin/Gate_of_Return_Tilemap.tsx"
     ],
+    "project": "",
     "recentFiles": [
         "source/hub_world_origin/Gate_of_Return_Tilemap.tsx",
         "isometric/isometric_tilesheet.tsx",

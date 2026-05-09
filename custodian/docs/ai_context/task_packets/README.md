@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-05-04
+Last updated: 2026-05-08
 
 Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
 
@@ -26,7 +26,24 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 ## Current Packets
 
 - `AGENT_WORKFLOW_AUTOMATION.md` - completed packet for task-packet next steps, ownership rules, and automation backlog.
+- `ATTACK_PRIMARY_SECONDARY_INPUT_FIX.md` - completed packet for fixing plain M1 fast attack versus Shift+M1 heavy attack input routing.
 - `VALIDATION_RECIPES.md` - completed implementation packet for canonical validation recipes and prompt-template cleanup.
 - `COGNITIVE_STATE_PHASE_B.md` - in-progress runtime packet for cognitive modifier integration and debug panel validation.
+- `ENEMY_VARIANT_SYSTEM.md` - completed packet for the first procedural wolf enemy variant runtime slice.
+- `ENEMY_ANIMATION_STABILITY_AND_PIPELINE.md` - completed packet for Shrumb flee animation stabilization, wolf directional row selection, and the first enemy animation intake pipeline hook.
+- `INDOOR_OUTDOOR_PROCGEN_REGIONS.md` - completed runtime packet for the first region-aware indoor/outdoor procgen slice.
+- `INTERIOR_TILE_ART_WIRING.md` - completed packet for organizing interior tile art and wiring constructed procgen regions to the new tile family.
+- `KNIGHT_OPERATOR_TEST_SKIN.md` - completed packet for the DevConsole-toggleable Knight operator test skin.
+- `MINIMAP_SYSTEM.md` - completed packet for replacing the addon minimap with a custom data-driven tactical HUD minimap.
+- `MINIMAP_PASSIVE_CREATURE_ICONS.md` - completed packet for splitting hostile red dots from passive creature minimap markers.
+- `MOB_FOLIAGE_OCCLUSION.md` - completed packet for extending procgen foliage fade bubbles to nearby enemy, Shrumb, and mob-group actors.
+- `PLACEHOLDER_TILESET_SOURCE_RELOCATION.md` - completed packet for moving the old placeholder tileset into `content/tiles/source` and restoring world TileSet loading.
+- `PRIMARY_SECONDARY_ATTACK_MODEL.md` - completed packet for aligning unarmed/melee/ranged attack modes to primary/secondary intent routing.
 - `PROCGEN_WALL_PASSAGE_VISIBILITY.md` - completed packet for making generated passage wall tiles visible on normal procgen wall runs.
+- `PROCGEN_WALL_COLLISION_SYNC.md` - completed packet for keeping visible procgen wall cells synchronized with runtime wall bodies during streaming reveal.
 - `PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` - completed packet for adding `--top-source` preprocessing support to the wall atlas builder.
+- `RANGED_PHYSICS_ALIGNMENT.md` - completed packet for ranged muzzle obstruction, swept projectile movement, and temporary stance-band socket rotation clamps.
+- `SHRUMB_LOCAL_WANDER_HOME.md` - completed packet for anchoring passive Shrumb wander to their generated spawn position.
+- `TERMINAL_LIVE_MINIMAP.md` - completed packet for replacing the terminal placeholder tactical map with the shared live custom minimap.
+- `TILESET_RENAME_ALIGNMENT.md` - completed packet for renaming the canonical world/procgen TileSet to `custodian_world_tileset.tres`.
+- `UI_MINIMAP_INVENTORY_VERIFY.md` - completed packet for keeping the custom minimap visible in the normal HUD and mounting the inventory overlay on `I`.

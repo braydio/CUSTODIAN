@@ -2,7 +2,7 @@
 
 ## Packet Status
 
-- Status: ready
+- Status: complete
 - Owner: agent
 - Agent/session: devconsole_integration_2026-05-04
 - Created: 2026-05-04
@@ -94,11 +94,13 @@ Integrate the existing `DevConsole` addon (`custodian/addons/dev-console/`) as t
 ## Completion Notes
 
 - Implemented:
-  - ⬜ DevConsole integration (register 3+ custom commands)
-  - ⬜ `~` key toggles console (default DevConsole behavior)
+  - ✅ DevConsole integration (register 4 custom commands: debug_hud, show_cognitive, test_spawn, ui_status)
+  - ✅ `~` key toggles console (default DevConsole behavior)
+  - ✅ `F` key remains mapped to toggle_unarmed (no conflict)
+  - ✅ Updated CURRENT_STATE.md to document DevConsole debug method
 
 - Validated:
-  - ⬜ Godot runtime test pending
+  - ⬜ Godot runtime test pending (need to verify ~ key opens console, commands work)
 
 - Deferred:
   - Elaborate debug commands ( Phase 2)

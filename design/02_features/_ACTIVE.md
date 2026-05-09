@@ -27,6 +27,7 @@
 
 | Feature | Status | Doc | Notes |
 |---------|--------|-----|-------|
+| Resource Collection & Fabrication | 🧠 Design | `02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md` | Merged pipeline + plan brainstorms |
 | Shadow System Integration | 🟡 Pending | `02_features/shadow/implementation.md` | - |
 | Weapon Data System | ✅ Done | `02_features/weapon_data/implementation.md` | JSON weapon stats now load |
 

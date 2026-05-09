@@ -2,7 +2,7 @@
 
 **Issue:** No wall collision, unclear wall/floor tiles
 
-**Root Cause:** The `dungeon_tileset.tres` has NO physics layers configured. The procgen code calls `_rebuild_runtime_wall_collision()` which creates StaticBody2D nodes, but these have no CollisionShape2D with proper size, OR the tilemap layers lack proper physics layers.
+**Root Cause:** The `custodian_world_tileset.tres` has NO physics layers configured. The procgen code calls `_rebuild_runtime_wall_collision()` which creates StaticBody2D nodes, but these have no CollisionShape2D with proper size, OR the tilemap layers lack proper physics layers.
 
 ---
 
@@ -90,7 +90,7 @@ body.global_position = walls_tilemap.to_global(local_pos)
 
 If runtime collision continues to fail, add physics directly to tileset:
 
-1. Open `dungeon_tileset.tres` in Godot
+1. Open `custodian_world_tileset.tres` in Godot
 2. Select TileSet → Inspector → Physics Layers
 3. Add 1 physics layer
 4. For each wall source (1 and 2), configure collision:

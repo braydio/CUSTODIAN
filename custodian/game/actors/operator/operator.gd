@@ -53,7 +53,7 @@ var last_fire_cooldown := 0.0
 @export var melee_heavy_range: float = 84.0
 @export var melee_heavy_arc_degrees: float = 58.0
 @export var melee_input_buffer_time: float = 0.15
-@export var melee_fast_cancel_start: float = 0.50
+@export var melee_fast_cancel_start: float = 0.22
 @export var melee_heavy_cancel_start: float = 0.58
 @export var melee_hit_stop_scale: float = 0.8
 @export var melee_hit_stop_duration: float = 0.02
@@ -66,7 +66,8 @@ var last_fire_cooldown := 0.0
 @export var melee_fast_camera_shake_power: float = 1.4
 @export var operator_light_reaction_stun_duration: float = 0.22
 @export var melee_fast_knockback_force: float = 56.0
-@export var melee_fast_recovery_duration: float = 0.2
+@export var melee_fast_recovery_duration: float = 0.10
+@export var melee_fast_animation_speed_scale: float = 1.35
 @export var melee_heavy_hit_stop_scale: float = 0.55
 @export var melee_heavy_hit_stop_duration: float = 0.05
 @export var melee_heavy_camera_shake_power: float = 4.2
@@ -93,6 +94,21 @@ var last_fire_cooldown := 0.0
 @export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
 @export_file("*.png") var ranged_2h_aim_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_aim_raise.png"
 @export_file("*.png") var ranged_2h_fire_walk_sheet_path := "res://content/sprites/operator/runtime/curated/body/ranged_2h/firing_slow_walk.png"
+@export_group("Knight Test Skin", "knight_test")
+@export var knight_test_skin_enabled: bool = false
+@export_dir var knight_test_sprite_dir := "res://dev/test_sprites/Knight"
+@export var knight_test_frame_size: Vector2i = Vector2i(128, 128)
+@export_range(1, 32, 1) var knight_test_frame_columns: int = 15
+@export_range(0, 7, 1) var knight_test_row_up_left: int = 0
+@export_range(0, 7, 1) var knight_test_row_up: int = 1
+@export_range(0, 7, 1) var knight_test_row_up_right: int = 2
+@export_range(0, 7, 1) var knight_test_row_right: int = 3
+@export_range(0, 7, 1) var knight_test_row_down_right: int = 4
+@export_range(0, 7, 1) var knight_test_row_down: int = 5
+@export var knight_test_sprite_position: Vector2 = Vector2(0, -18)
+@export var knight_test_sprite_offset: Vector2 = Vector2.ZERO
+@export var knight_test_sprite_scale: Vector2 = Vector2.ONE
+@export_group("", "")
 @export var primary_weapon_definition = null
 @export var melee_weapon_definition = null
 @export var unarmed_definition: OperatorWeaponDefinition = preload("res://game/actors/operator/unarmed_definition.tres")
@@ -112,6 +128,9 @@ var last_fire_cooldown := 0.0
 @export var placeholder_melee_hitbox_radius: float = 22.0
 @export var placeholder_healthbar_top: float = -54.0
 @export var placeholder_healthbar_bottom: float = -48.0
+@export var ranged_muzzle_obstruction_margin: float = 2.0
+@export var ranged_neutral_rotation_limit_degrees: float = 34.0
+@export var ranged_vertical_rotation_limit_degrees: float = 18.0
 
 var interaction_target: Node = null
 var repair_target: Damageable = null
@@ -166,6 +185,9 @@ var _animated_sprite_base_position := Vector2.ZERO
 var _melee_weapon_overlay_base_position := Vector2.ZERO
 var _melee_fx_overlay_base_position := Vector2.ZERO
 var _last_damage_reaction_direction := Vector2.DOWN
+var _production_body_frames: SpriteFrames = null
+var _knight_test_frames: SpriteFrames = null
+var _knight_test_skin_active: bool = false
 
 # Debug socket visualization
 var debug_draw_sockets: bool = false
@@ -229,6 +251,18 @@ const BODY_RECOIL_PROFILE_PIXELS := {
 	"recoil_sniper": 2.0,
 	"recoil_minigun": 0.6,
 }
+const KNIGHT_TEST_ANIMATION_SPECS := {
+	"idle": {"file": "Idle.png", "fps": 8.0, "loop": true},
+	"walk": {"file": "Walk.png", "fps": 10.0, "loop": true},
+	"run": {"file": "Run.png", "fps": 12.0, "loop": true},
+	"melee": {"file": "Melee.png", "fps": 14.0, "loop": false},
+	"melee2": {"file": "Melee2.png", "fps": 14.0, "loop": false},
+	"heavy": {"file": "MeleeSpin.png", "fps": 12.0, "loop": false},
+	"block_start": {"file": "ShieldBlockStart.png", "fps": 10.0, "loop": false},
+	"block_hold": {"file": "ShieldBlockMid.png", "fps": 8.0, "loop": true},
+	"hit": {"file": "TakeDamage.png", "fps": 10.0, "loop": false},
+	"death": {"file": "Die.png", "fps": 10.0, "loop": false},
+}
 
 @onready var health_bar = $HealthBar
 @onready var visual = $Visual
@@ -261,14 +295,16 @@ func _ready():
 	if visual:
 		visual.modulate = Color(1, 1, 1, 1)
 	if animated_sprite:
+		_production_body_frames = animated_sprite.sprite_frames
 
 		animated_sprite.modulate = Color(1.3, 1.3, 1.3, 1)  # Brighten 30%
 		animated_sprite.frame_changed.connect(_on_attack_frame_changed)
 		if not animated_sprite.animation_finished.is_connected(_on_operator_animation_finished):
 			animated_sprite.animation_finished.connect(_on_operator_animation_finished)
 		_ensure_runtime_body_animations()
-	_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_fire", "ranged_fire")
-	_configure_weapon_definition_defaults(melee_weapon_definition, "Fallen Star Katana", "melee", "melee_light", "melee_heavy")
+		_apply_knight_test_skin_if_requested()
+	_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_unfocused_fire", "ranged_focused_fire")
+	_configure_weapon_definition_defaults(melee_weapon_definition, "Fallen Star Katana", "melee", "melee_fast", "melee_heavy")
 	_rebuild_armed_weapon_list()
 	_sync_weapon_selection_from_current_loadout()
 	_apply_active_weapon_frames()
@@ -286,6 +322,167 @@ func _ready():
 	disable_hitbox()
 	_apply_body_recoil_offset()
 	update_visuals()
+
+
+func set_knight_test_skin_enabled(enabled: bool) -> bool:
+	knight_test_skin_enabled = enabled
+	_apply_knight_test_skin_if_requested()
+	return _knight_test_skin_active
+
+
+func toggle_knight_test_skin() -> bool:
+	return set_knight_test_skin_enabled(not _knight_test_skin_active)
+
+
+func is_knight_test_skin_active() -> bool:
+	return _knight_test_skin_active
+
+
+func _apply_knight_test_skin_if_requested() -> void:
+	if animated_sprite == null:
+		return
+	if _production_body_frames == null:
+		_production_body_frames = animated_sprite.sprite_frames
+	if knight_test_skin_enabled:
+		if _knight_test_frames == null:
+			_knight_test_frames = _build_knight_test_frames()
+		if _knight_test_frames == null:
+			knight_test_skin_enabled = false
+			_knight_test_skin_active = false
+			return
+		animated_sprite.sprite_frames = _knight_test_frames
+		animated_sprite.position = knight_test_sprite_position
+		animated_sprite.offset = knight_test_sprite_offset
+		animated_sprite.scale = knight_test_sprite_scale
+		_animated_sprite_base_position = animated_sprite.position
+		_hide_custom_operator_visual_layers()
+		_knight_test_skin_active = true
+		update_visuals()
+		return
+	if _knight_test_skin_active and _production_body_frames != null:
+		animated_sprite.sprite_frames = _production_body_frames
+		if use_tiny_rpg_placeholder_soldier:
+			_apply_placeholder_runtime_layout()
+		else:
+			_capture_runtime_visual_base_positions()
+		_refresh_primary_weapon_state()
+	_knight_test_skin_active = false
+
+
+func _hide_custom_operator_visual_layers() -> void:
+	if primary_weapon_sprite:
+		primary_weapon_sprite.visible = false
+		primary_weapon_sprite.stop()
+	if ranged_fx_overlay_sprite:
+		ranged_fx_overlay_sprite.visible = false
+		ranged_fx_overlay_sprite.stop()
+	if melee_weapon_overlay_sprite:
+		melee_weapon_overlay_sprite.visible = false
+		melee_weapon_overlay_sprite.stop()
+	if melee_fx_overlay_sprite:
+		melee_fx_overlay_sprite.visible = false
+		melee_fx_overlay_sprite.stop()
+
+
+func _build_knight_test_frames() -> SpriteFrames:
+	var frames := SpriteFrames.new()
+	if frames.has_animation(&"default"):
+		frames.remove_animation(&"default")
+	_add_knight_locomotion_animations(frames, "idle", [
+		"idle", "idle_right", "idle_down", "idle_up", "idle_down_right", "idle_up_right",
+		"idle_long", "ranged_2h_stance", "melee_2h_stance", "unarmed_idle",
+		"unarmed_idle_right", "unarmed_idle_down", "unarmed_idle_up", "unarmed_stance", "default",
+	])
+	_add_knight_locomotion_animations(frames, "walk", [
+		"walk_right", "walk_down", "walk_up", "walk_down_right", "walk_up_right",
+		"walk_down_default", "walk_east", "unarmed_walk", "unarmed_walk_right",
+		"unarmed_walk_down", "unarmed_walk_up",
+	])
+	_add_knight_locomotion_animations(frames, "run", [
+		"run_right", "run_down", "run_up", "run_down_right", "run_up_right",
+		"unarmed_run_right", "unarmed_run_down", "unarmed_run_up",
+	])
+	_add_knight_locomotion_animations(frames, "melee", [
+		"melee_2h_fast_1", "melee_2h_fast_1_right", "melee_2h_fast",
+		"melee_2h_fast_right", "unarmed_attack_fast", "unarmed_attack_fast_right",
+		"unarmed_attack_fast_down", "unarmed_attack_fast_up", "ranged_2h_fire",
+	])
+	_add_knight_locomotion_animations(frames, "melee2", [
+		"melee_2h_fast_2", "melee_2h_fast_2_right", "unarmed_attack_fast_recovery",
+		"unarmed_attack_fast_recovery_right", "unarmed_attack_fast_recovery_down",
+		"unarmed_attack_fast_recovery_up",
+	])
+	_add_knight_locomotion_animations(frames, "heavy", [
+		"melee_2h_heavy_anticipation", "melee_2h_heavy", "unarmed_attack_heavy",
+		"unarmed_attack_heavy_right", "unarmed_attack_heavy_down", "unarmed_attack_heavy_up",
+	])
+	_add_knight_locomotion_animations(frames, "block_start", ["melee_2h_block_enter", "melee_2h_block_exit"])
+	_add_knight_locomotion_animations(frames, "block_hold", ["melee_2h_block_hold"])
+	_add_knight_locomotion_animations(frames, "hit", ["unarmed_light_hitreact", "unarmed_light_hitreact_down", "hit_recoil"])
+	_add_knight_locomotion_animations(frames, "death", ["death", "unarmed_death"])
+	return frames if frames.get_animation_names().size() > 0 else null
+
+
+func _add_knight_locomotion_animations(frames: SpriteFrames, spec_key: String, names: Array) -> void:
+	var spec: Dictionary = KNIGHT_TEST_ANIMATION_SPECS.get(spec_key, {})
+	if spec.is_empty():
+		return
+	var texture := load("%s/%s" % [knight_test_sprite_dir, String(spec.get("file", ""))]) as Texture2D
+	if texture == null:
+		push_warning("[KnightTestSkin] Missing sheet for %s at %s" % [spec_key, knight_test_sprite_dir])
+		return
+	for name_variant in names:
+		var animation_name := StringName(str(name_variant))
+		var row := _get_knight_test_row_for_animation_name(String(animation_name))
+		_add_knight_sheet_animation(
+			frames,
+			animation_name,
+			texture,
+			row,
+			float(spec.get("fps", 8.0)),
+			bool(spec.get("loop", true))
+		)
+
+
+func _get_knight_test_row_for_animation_name(animation_name: String) -> int:
+	if animation_name.ends_with("_up_right"):
+		return knight_test_row_up_right
+	if animation_name.ends_with("_down_right"):
+		return knight_test_row_down_right
+	if animation_name.ends_with("_up"):
+		return knight_test_row_up
+	if animation_name.ends_with("_down"):
+		return knight_test_row_down
+	if animation_name == "default" or animation_name == "idle" or animation_name == "idle_long":
+		return knight_test_row_down
+	return knight_test_row_right
+
+
+func _add_knight_sheet_animation(
+	frames: SpriteFrames,
+	animation_name: StringName,
+	texture: Texture2D,
+	row: int,
+	fps: float,
+	loop: bool
+) -> void:
+	if frames.has_animation(animation_name):
+		frames.remove_animation(animation_name)
+	frames.add_animation(animation_name)
+	frames.set_animation_speed(animation_name, fps)
+	frames.set_animation_loop(animation_name, loop)
+	var frame_size := knight_test_frame_size
+	var columns: int = maxi(1, knight_test_frame_columns)
+	for column in range(columns):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(
+			column * frame_size.x,
+			clampi(row, 0, 7) * frame_size.y,
+			frame_size.x,
+			frame_size.y
+		)
+		frames.add_frame(animation_name, atlas)
 
 func _draw():
 	if not debug_draw_sockets:
@@ -431,7 +628,7 @@ func _update_aim():
 		if mouse_aim_vector.length_squared() > 0.0001:
 			aim_direction = mouse_aim_vector.normalized()
 	_apply_dynamic_weapon_socket_layout()
-	var weapon_display_angle := _get_weapon_display_angle(aim_direction)
+	var weapon_display_angle := _get_ranged_weapon_socket_rotation(aim_direction)
 	
 	# Rotate barrel instead of entire body
 	if primary_weapon_socket and _is_using_ranged_2h_primary() and not _is_facing_up(aim_direction):
@@ -610,6 +807,79 @@ func _get_weapon_display_angle(dir: Vector2) -> float:
 	return -angle if _is_facing_left(dir) else angle
 
 
+func _get_ranged_weapon_socket_rotation(dir: Vector2) -> float:
+	if not _is_using_ranged_2h_primary():
+		return _get_weapon_display_angle(dir)
+	var aim_state := _get_weapon_aim_state()
+	var raw_angle := _get_weapon_display_angle(dir)
+	var limit := deg_to_rad(ranged_neutral_rotation_limit_degrees)
+	if aim_state == &"up" or aim_state == &"down":
+		limit = deg_to_rad(ranged_vertical_rotation_limit_degrees)
+	return clampf(raw_angle, -limit, limit)
+
+
+func _get_ranged_muzzle_origin() -> Vector2:
+	if primary_weapon_socket != null:
+		return primary_weapon_socket.global_position
+	return global_position
+
+
+func _get_muzzle_obstruction(direction: Vector2, muzzle_position: Vector2) -> Dictionary:
+	if direction.length_squared() <= 0.0001:
+		return {}
+	var from: Vector2 = _get_ranged_muzzle_origin()
+	var to: Vector2 = muzzle_position + direction.normalized() * max(0.0, ranged_muzzle_obstruction_margin)
+	if from.distance_squared_to(to) <= 1.0:
+		return {}
+	var space_state := get_world_2d().direct_space_state
+	if space_state == null:
+		return {}
+	var query: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(from, to)
+	query.collide_with_bodies = true
+	query.collide_with_areas = false
+	query.exclude = _get_ranged_fire_ray_exclusions()
+	var hit: Dictionary = space_state.intersect_ray(query)
+	if hit.is_empty():
+		return {}
+	var collider: Object = hit.get("collider", null)
+	if _is_ranged_fire_blocker(collider):
+		return hit
+	return {}
+
+
+func _get_ranged_fire_ray_exclusions() -> Array[RID]:
+	var exclusions: Array[RID] = []
+	exclusions.append(get_rid())
+	if primary_weapon_socket is CollisionObject2D:
+		exclusions.append((primary_weapon_socket as CollisionObject2D).get_rid())
+	return exclusions
+
+
+func _is_ranged_fire_blocker(collider: Object) -> bool:
+	if collider == null:
+		return false
+	if collider == self:
+		return false
+	if not (collider is StaticBody2D):
+		return false
+	var node := collider as Node
+	if node.is_in_group("player") or node.is_in_group("enemy") or node.is_in_group("enemies") or node.is_in_group("defense") or node.is_in_group("turret"):
+		return false
+	return true
+
+
+func _spawn_ranged_impact_at(impact_position: Vector2) -> void:
+	if IMPACT_SPARK_SCENE == null:
+		return
+	var parent = get_node_or_null("/root/GameRoot/World/Projectiles")
+	var target = parent if parent != null else get_tree().current_scene
+	var spark = IMPACT_SPARK_SCENE.instantiate()
+	if spark == null:
+		return
+	target.add_child(spark)
+	spark.global_position = impact_position
+
+
 func _request_ranged_shot() -> void:
 	if not _is_ranged_loadout_active():
 		return
@@ -663,6 +933,14 @@ func _emit_pending_ranged_shot() -> void:
 	var spawn_position: Vector2 = global_position + direction * muzzle_offset
 	if barrel:
 		spawn_position = barrel.global_position
+	var muzzle_check := _get_muzzle_obstruction(direction, spawn_position)
+	if not muzzle_check.is_empty():
+		_spawn_ranged_impact_at(muzzle_check.get("position", spawn_position))
+		current_recoil += float(profile.get("recoil_kick", 1.2))
+		_consume_ammo()
+		_spawn_muzzle_flash(direction)
+		_apply_body_recoil_impulse(direction)
+		return
 	if bullet.has_method("set_direction"):
 		bullet.set_direction(direction)
 	bullet.speed = float(profile.get("speed", 780.0))
@@ -713,7 +991,7 @@ func _request_current_profile_intent(primary: bool) -> void:
 
 func _request_attack_intent(intent: String) -> void:
 	match intent:
-		"ranged_fire":
+		"ranged_fire", "ranged_unfocused_fire", "ranged_focused_fire":
 			_request_ranged_shot()
 		"melee_light", "melee_fast", "melee_heavy", "unarmed_fast", "unarmed_heavy":
 			_try_melee_attack(intent)
@@ -875,11 +1153,11 @@ func _start_fast_attack() -> void:
 		fallback_animation = &"unarmed_attack_fast"
 	_melee_attack_key = next_fast_key
 	_melee_elapsed = 0.0
-	_melee_duration = next_duration
 	_melee_forward = _get_melee_forward_direction()
 	_configure_melee_hitbox(melee_fast_hit_damage, melee_range, melee_arc_degrees)
 	_play_melee_anim_from_key(_melee_attack_key, fallback_animation)
-	_lock_melee_cooldown(_melee_duration + 0.10)
+	_melee_duration = _get_current_melee_animation_duration(next_duration, 0.24, next_duration)
+	_lock_melee_cooldown(_melee_duration + 0.04)
 
 
 func _start_heavy_attack() -> void:
@@ -1133,18 +1411,22 @@ func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, a
 	var resolved_animation := AnimationResolver.resolve(String(base_animation), direction, animated_sprite)
 	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, resolved_animation):
 		animated_sprite.flip_h = _is_facing_left(direction) and not String(resolved_animation).ends_with("_left")
+		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		animated_sprite.play(resolved_animation)
 		_play_melee_overlay_from_key(attack_key)
 		_sync_melee_hitbox_window_from_animation()
 		return true
 	var right_fallback := StringName("%s_right" % String(base_animation))
 	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, right_fallback):
+		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		animated_sprite.play(right_fallback)
 		return true
 	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, base_animation):
+		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		animated_sprite.play(base_animation)
 		return true
 	if animated_sprite.sprite_frames and _has_playable_sprite_animation(animated_sprite.sprite_frames, &"attack_right_old"):
+		animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		animated_sprite.play("attack_right_old")
 		return true
 	return false
@@ -1159,6 +1441,25 @@ func _warn_missing_animation_once(animation_name: String, fallback_name: String)
 
 func _has_playable_sprite_animation(sprite_frames: SpriteFrames, animation_name: StringName) -> bool:
 	return sprite_frames.has_animation(animation_name) and sprite_frames.get_frame_count(animation_name) > 0
+
+
+func _get_melee_animation_speed_scale(attack_key: String) -> float:
+	if attack_key.begins_with("melee_fast") or attack_key.begins_with("unarmed_fast"):
+		return max(0.1, melee_fast_animation_speed_scale)
+	return 1.0
+
+
+func _get_current_melee_animation_duration(fallback_duration: float, min_duration: float, max_duration: float) -> float:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return fallback_duration
+	var animation_name: StringName = animated_sprite.animation
+	if not animated_sprite.sprite_frames.has_animation(animation_name):
+		return fallback_duration
+	var fps: float = animated_sprite.sprite_frames.get_animation_speed(animation_name) * max(0.1, animated_sprite.speed_scale)
+	if fps <= 0.001:
+		return fallback_duration
+	var frame_count: int = animated_sprite.sprite_frames.get_frame_count(animation_name)
+	return clampf(float(frame_count) / fps, min_duration, max_duration)
 
 
 func _lock_melee_cooldown(duration: float) -> void:
@@ -1294,10 +1595,12 @@ func _play_melee_overlay_from_key(attack_key: String) -> void:
 	if melee_weapon_overlay_sprite and melee_weapon_overlay_sprite.sprite_frames and melee_weapon_overlay_sprite.sprite_frames.has_animation(weapon_anim):
 		melee_weapon_overlay_sprite.visible = true
 		melee_weapon_overlay_sprite.flip_h = animated_sprite.flip_h if animated_sprite else false
+		melee_weapon_overlay_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		melee_weapon_overlay_sprite.play(weapon_anim)
 	if melee_fx_overlay_sprite and melee_fx_overlay_sprite.sprite_frames and melee_fx_overlay_sprite.sprite_frames.has_animation(fx_anim):
 		melee_fx_overlay_sprite.visible = true
 		melee_fx_overlay_sprite.flip_h = animated_sprite.flip_h if animated_sprite else false
+		melee_fx_overlay_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
 		melee_fx_overlay_sprite.play(fx_anim)
 
 
@@ -1320,10 +1623,12 @@ func _reset_melee_overlay_visuals() -> void:
 		melee_weapon_overlay_sprite.visible = false
 		melee_weapon_overlay_sprite.stop()
 		melee_weapon_overlay_sprite.frame = 0
+		melee_weapon_overlay_sprite.speed_scale = 1.0
 	if melee_fx_overlay_sprite:
 		melee_fx_overlay_sprite.visible = false
 		melee_fx_overlay_sprite.stop()
 		melee_fx_overlay_sprite.frame = 0
+		melee_fx_overlay_sprite.speed_scale = 1.0
 
 
 func _play_named_melee_weapon_overlay(animation_name: StringName) -> bool:
@@ -1817,9 +2122,9 @@ func _get_preview_melee_range_arc() -> Dictionary:
 	if _melee_active:
 		return {"range": _melee_range_current, "arc": _melee_arc_current}
 	var profile := get_current_combat_profile()
-	var intent := String(profile.primary_intent) if profile != null else "melee_light"
-	var base_range := melee_light_range
-	var base_arc := melee_light_arc_degrees
+	var intent := String(profile.primary_intent) if profile != null else "melee_fast"
+	var base_range := melee_range
+	var base_arc := melee_arc_degrees
 	match _attack_kind_from_intent(intent):
 		"fast":
 			base_range = melee_range
@@ -2222,6 +2527,11 @@ func _get_body_animation_aim_state() -> StringName:
 
 
 func _update_primary_weapon_visual(is_firing: bool) -> void:
+	if _knight_test_skin_active:
+		_hide_custom_operator_visual_layers()
+		if primary_weapon_socket:
+			primary_weapon_socket.rotation = 0.0
+		return
 	var is_melee_mode = _is_using_melee_weapon_sprite()
 	var show_attack_weapon_overlay := is_melee_mode and (_melee_active or _melee_heavy_anticipating or _melee_recovery_active)
 	var show_block_weapon_overlay := is_melee_mode and _is_block_state_active()
@@ -2614,7 +2924,7 @@ func equip_primary_carbine() -> void:
 func _create_weapon_from_factory(weapon_id: String) -> void:
 	if weapon_factory and weapon_factory.has_method("create_weapon_definition"):
 		primary_weapon_definition = weapon_factory.create_weapon_definition(weapon_id)
-		_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_fire", "ranged_fire")
+		_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_unfocused_fire", "ranged_focused_fire")
 		_rebuild_armed_weapon_list()
 		_initialize_magazines()
 		print("[Operator] Loaded weapon: ", weapon_id, " | Magazine: ", _get_current_magazine_size())
@@ -2677,17 +2987,62 @@ func take_damage(amount: float):
 func _request_damage_reaction(_amount: float) -> void:
 	if _animation_state_machine == null:
 		return
+	_interrupt_active_combat_for_damage_reaction()
 	_animation_state_machine.request("hit_recoil", 20)
 
 
 func get_damage_reaction_animation(_reaction_name: String) -> StringName:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return &""
 	var profile := get_current_combat_profile()
-	if profile == null:
-		return &""
-	var mapped := _get_weapon_animation_name(profile, "unarmed_light_hitreact", &"")
+	var mapped := _get_weapon_animation_name(profile, "unarmed_light_hitreact", &"") if profile != null else &""
+	if mapped == StringName() and unarmed_definition != null:
+		mapped = _get_weapon_animation_name(unarmed_definition, "unarmed_light_hitreact", &"")
 	if mapped == StringName():
-		return &""
-	return AnimationResolver.resolve(String(mapped), _last_damage_reaction_direction, animated_sprite)
+		mapped = &"unarmed_light_hitreact"
+	var resolved := AnimationResolver.resolve(String(mapped), _last_damage_reaction_direction, animated_sprite)
+	if _has_playable_sprite_animation(animated_sprite.sprite_frames, resolved):
+		return resolved
+	if _has_playable_sprite_animation(animated_sprite.sprite_frames, &"unarmed_light_hitreact_down"):
+		return &"unarmed_light_hitreact_down"
+	if _has_playable_sprite_animation(animated_sprite.sprite_frames, &"unarmed_light_hitreact"):
+		return &"unarmed_light_hitreact"
+	return &""
+
+
+func play_damage_reaction_fx(_animation_name: StringName) -> void:
+	if melee_weapon_overlay_sprite:
+		melee_weapon_overlay_sprite.visible = false
+		melee_weapon_overlay_sprite.stop()
+	if melee_fx_overlay_sprite == null or melee_fx_overlay_sprite.sprite_frames == null:
+		return
+	var fx_animation := &"unarmed_light_hitreact_fx_down"
+	if not melee_fx_overlay_sprite.sprite_frames.has_animation(fx_animation):
+		return
+	melee_fx_overlay_sprite.visible = true
+	melee_fx_overlay_sprite.flip_h = false
+	melee_fx_overlay_sprite.speed_scale = 1.0
+	melee_fx_overlay_sprite.set_frame_and_progress(0, 0.0)
+	melee_fx_overlay_sprite.play(fx_animation)
+
+
+func _interrupt_active_combat_for_damage_reaction() -> void:
+	_buffered_attack_kind = ""
+	_buffered_attack_timer = 0.0
+	_melee_active = false
+	_melee_attack_kind = ""
+	_melee_attack_key = ""
+	_melee_elapsed = 0.0
+	_melee_duration = 0.0
+	_melee_heavy_anticipating = false
+	_melee_recovery_active = false
+	_melee_recovery_timer = 0.0
+	_active_attack_profile = null
+	_block_phase = &""
+	_block_active = false
+	disable_hitbox()
+	_melee_hit_targets.clear()
+	_reset_melee_overlay_visuals()
 
 func _handle_death() -> void:
 	if _is_dead:

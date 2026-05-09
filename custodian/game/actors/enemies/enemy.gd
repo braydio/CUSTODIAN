@@ -3,9 +3,16 @@ class_name Enemy
 
 const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
 const SCRAP_PICKUP_SCENE := preload("res://game/actors/items/scrap_pickup.tscn")
+const WOLF_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/wolf_animation_library.gd")
+const ENEMY_PALETTE_SHADER := preload("res://game/enemies/procgen/enemy_palette_tint.gdshader")
 const AXUL_DIRECTIONAL_SHEET_PATH := "res://content/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt.png"
 const DIRECTIONAL_SUFFIXES := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
 const DIRECTIONAL_ANIMATION_PREFIX := "red_walk"
+const WOLF_IDLE_ANIMATION := &"idle_east"
+const WOLF_MOVE_ANIMATION := &"run_east"
+const WOLF_ATTACK_ANIMATION := &"bite_east"
+const WOLF_DEATH_ANIMATION := &"death_east"
+const WOLF_SPECIAL_ANIMATION := &"howl_east"
 const CUSTOM_AMBIENT_EAST_ANIMATION := &"ambient_slink_east"
 const CUSTOM_AMBIENT_NORTH_ANIMATION := &"ambient_slink_north"
 const CUSTOM_AMBIENT_SOUTH_ANIMATION := &"ambient_slink_south"
@@ -53,6 +60,7 @@ enum AssaultState {
 @export var passive_alert_radius: float = 96.0
 @export var passive_flee_speed_multiplier: float = 1.9
 @export var passive_flee_cooldown: float = 1.25
+@export var passive_flee_retarget_interval: float = 0.35
 @export var ambient_critter_target_range: float = 120.0
 @export var uses_directional_charset: bool = false
 @export_file("*.png") var directional_charset_sheet_path: String = AXUL_DIRECTIONAL_SHEET_PATH
@@ -96,13 +104,20 @@ var _threat_highlight_time: float = 0.0
 var _base_sprite_scale: Vector2 = Vector2.ONE
 var _last_move_direction: Vector2 = Vector2.DOWN
 var _spawn_position: Vector2 = Vector2.ZERO
+var _passive_home_initialized: bool = false
 var _passive_target_position: Vector2 = Vector2.ZERO
 var _passive_wander_timer: float = 0.0
 var _passive_flee_timer: float = 0.0
+var _passive_flee_retarget_timer: float = 0.0
 var _assault_state: int = AssaultState.STAGING
 var _assault_state_timer: float = 0.0
 var _assault_probe_destination: Vector2 = Vector2.ZERO
 var _custom_ambient_knockout_flip_h: bool = false
+var _variant_profile: Resource = null
+var _variant_behavior_id: String = ""
+var _variant_attack_profile_id: String = ""
+var _variant_special_profile_id: String = ""
+var _uses_procedural_variant_visuals: bool = false
 
 # Pathfinding
 var navigation_system: Node = null
@@ -146,9 +161,8 @@ func _ready():
 		_update_directional_animation(_last_move_direction, false)
 	if animated_sprite:
 		_base_sprite_scale = animated_sprite.scale
-	_spawn_position = global_position
+	set_passive_home_position(global_position)
 	_assault_probe_destination = global_position
-	_passive_target_position = global_position
 	_schedule_next_passive_wander()
 	_enter_assault_state(AssaultState.STAGING)
 	damage_timer = damage_interval
@@ -325,9 +339,85 @@ func _is_target_destroyed(node: Node) -> bool:
 	return false
 
 func _get_attack_range(node: Node2D) -> float:
+	if _variant_profile != null:
+		return float(_variant_profile.get("attack_range"))
 	if node.is_in_group("player"):
 		return 40.0
 	return structure_attack_range
+
+
+func apply_variant(profile: Resource) -> void:
+	if profile == null:
+		return
+	_variant_profile = profile
+	_variant_behavior_id = String(profile.get("behavior_id"))
+	_variant_attack_profile_id = String(profile.get("attack_profile_id"))
+	_variant_special_profile_id = String(profile.get("special_profile_id"))
+	enemy_name = String(profile.get("display_name"))
+	max_health = float(profile.get("max_health"))
+	health = max_health
+	speed = float(profile.get("move_speed"))
+	damage = float(profile.get("attack_damage"))
+	damage_interval = float(profile.get("attack_cooldown"))
+	structure_attack_range = float(profile.get("attack_range"))
+	detection_range = float(profile.get("detection_radius"))
+	base_tint = Color(profile.get("primary_tint"))
+	if profile.get("archetype_id") == "wolf":
+		_apply_wolf_variant_visuals(profile)
+	_apply_variant_collision(profile)
+	update_visuals()
+
+
+func get_variant_summary() -> Dictionary:
+	if _variant_profile == null:
+		return {}
+	if _variant_profile.has_method("get_debug_summary"):
+		return _variant_profile.call("get_debug_summary")
+	return {
+		"display_name": enemy_name,
+		"behavior_id": _variant_behavior_id,
+		"attack_profile_id": _variant_attack_profile_id,
+		"special_profile_id": _variant_special_profile_id,
+	}
+
+
+func _apply_wolf_variant_visuals(profile: Resource) -> void:
+	_uses_procedural_variant_visuals = true
+	uses_directional_charset = false
+	custom_ambient_animation_enabled = false
+	if visual == null and has_node("Visual"):
+		visual = get_node("Visual")
+	if visual:
+		visual.visible = false
+	if animated_sprite == null and has_node("AnimatedSprite2D"):
+		animated_sprite = get_node("AnimatedSprite2D")
+	if animated_sprite == null:
+		return
+	animated_sprite.visible = true
+	animated_sprite.sprite_frames = WOLF_ANIMATION_LIBRARY.get_wolf_sprite_frames()
+	animated_sprite.position = Vector2(0.0, -12.0)
+	animated_sprite.scale = Vector2(profile.get("body_scale"))
+	animated_sprite.speed_scale = float(profile.get("animation_speed_scale"))
+	animated_sprite.flip_h = false
+	_base_sprite_scale = animated_sprite.scale
+	var material := ShaderMaterial.new()
+	material.shader = ENEMY_PALETTE_SHADER
+	material.set_shader_parameter("primary_tint", Color(profile.get("primary_tint")))
+	material.set_shader_parameter("glow_tint", Color(profile.get("glow_color")))
+	material.set_shader_parameter("glow_strength", float(profile.get("glow_strength")))
+	material.set_shader_parameter("contrast_boost", float(profile.get("contrast_boost")))
+	animated_sprite.material = material
+	_play_animation(String(WOLF_IDLE_ANIMATION), false)
+
+
+func _apply_variant_collision(profile: Resource) -> void:
+	var collision_radius := float(profile.get("collision_radius"))
+	var collision_shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision_shape == null:
+		return
+	var circle := CircleShape2D.new()
+	circle.radius = collision_radius
+	collision_shape.shape = circle
 
 
 func _get_pathfinding_direction(target_pos: Vector2, delta: float) -> Vector2:
@@ -471,6 +561,9 @@ func die():
 		camera.call("on_enemy_killed")
 	_spawn_material_pickup()
 	print("ENEMY DESTROYED: ", enemy_name)
+	if _uses_procedural_variant_animation_set() and _has_animation(String(WOLF_DEATH_ANIMATION)):
+		call_deferred("_play_procedural_variant_death")
+		return
 	if _uses_custom_ambient_animation_set() and _has_animation(String(CUSTOM_AMBIENT_KO_ANIMATION)):
 		call_deferred("_play_custom_ambient_knockout")
 		return
@@ -485,19 +578,30 @@ func counts_for_wave_cap() -> bool:
 	return counts_as_wave_enemy and not passive
 
 
+func set_passive_home_position(home_position: Vector2) -> void:
+	_spawn_position = home_position
+	_passive_home_initialized = true
+	_passive_target_position = home_position
+	clear_path()
+
+
 func _update_passive_behavior(delta: float) -> void:
 	target = null
+	if not _passive_home_initialized:
+		set_passive_home_position(global_position)
 	_passive_wander_timer -= delta
 	_passive_flee_timer = max(0.0, _passive_flee_timer - delta)
+	_passive_flee_retarget_timer = max(0.0, _passive_flee_retarget_timer - delta)
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	if player != null and is_instance_valid(player):
 		var away_from_player := global_position - player.global_position
 		var player_distance := away_from_player.length()
-		if player_distance <= passive_alert_radius:
+		if player_distance <= passive_alert_radius and (_passive_flee_timer <= 0.0 or _passive_flee_retarget_timer <= 0.0):
 			var flee_direction := away_from_player.normalized() if player_distance > 0.001 else Vector2.RIGHT.rotated(randf() * TAU)
 			var flee_radius: float = max(passive_wander_radius, passive_alert_radius * 1.25)
-			_passive_target_position = _spawn_position + flee_direction * flee_radius
+			_passive_target_position = _pick_passive_destination_near_home(flee_direction, flee_radius)
 			_passive_flee_timer = passive_flee_cooldown
+			_passive_flee_retarget_timer = passive_flee_retarget_interval
 	var to_target := _passive_target_position - global_position
 	if to_target.length() > 6.0:
 		var move_direction := to_target.normalized()
@@ -530,9 +634,33 @@ func _choose_next_passive_destination() -> void:
 	if passive_wander_radius <= 1.0:
 		_passive_target_position = _spawn_position
 		return
-	var angle := randf() * TAU
-	var distance := randf_range(12.0, passive_wander_radius)
-	_passive_target_position = _spawn_position + Vector2.RIGHT.rotated(angle) * distance
+	_passive_target_position = _pick_passive_destination_near_home()
+
+
+func _pick_passive_destination_near_home(preferred_direction: Vector2 = Vector2.ZERO, preferred_distance: float = -1.0) -> Vector2:
+	var fallback: Vector2 = _spawn_position
+	var sample_count: int = 10
+	for i in range(sample_count):
+		var direction: Vector2 = preferred_direction
+		if direction.length_squared() <= 0.0001 or i > 0:
+			direction = Vector2.RIGHT.rotated(randf() * TAU)
+		else:
+			direction = direction.normalized().rotated(randf_range(-0.45, 0.45))
+		var max_distance: float = maxf(12.0, passive_wander_radius)
+		var distance: float = preferred_distance if preferred_distance > 0.0 and i == 0 else randf_range(12.0, max_distance)
+		distance = clampf(distance, 12.0, max_distance)
+		var candidate: Vector2 = _spawn_position + direction * distance
+		if _is_passive_destination_valid(candidate):
+			return candidate
+		if i == 0:
+			fallback = candidate
+	return fallback
+
+
+func _is_passive_destination_valid(destination: Vector2) -> bool:
+	if navigation_system != null and navigation_system.has_method("is_in_walkable_area"):
+		return bool(navigation_system.call("is_in_walkable_area", destination))
+	return true
 
 
 func _spawn_material_pickup() -> void:
@@ -563,7 +691,9 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 	_attack_windup_timer = max(0.01, attack_windup_duration)
 	_windup_attack_is_strong = is_strong
 	velocity = Vector2.ZERO
-	if _uses_directional_animation_set():
+	if _uses_procedural_variant_animation_set():
+		_update_procedural_variant_animation(_last_move_direction, false, true)
+	elif _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
 
 
@@ -785,7 +915,11 @@ func is_dead() -> bool:
 
 
 func _uses_directional_animation_set() -> bool:
-	return (uses_directional_charset or _uses_custom_ambient_animation_set()) and animated_sprite != null
+	return (uses_directional_charset or _uses_custom_ambient_animation_set() or _uses_procedural_variant_animation_set()) and animated_sprite != null
+
+
+func _uses_procedural_variant_animation_set() -> bool:
+	return _uses_procedural_variant_visuals and animated_sprite != null
 
 
 func _uses_custom_ambient_animation_set() -> bool:
@@ -814,6 +948,9 @@ func _play_animation(name: String, allow_restart: bool = true) -> void:
 
 func _ensure_directional_animations() -> void:
 	if animated_sprite == null or _has_directional_animation_assets():
+		return
+	if _uses_procedural_variant_animation_set():
+		animated_sprite.sprite_frames = WOLF_ANIMATION_LIBRARY.get_wolf_sprite_frames()
 		return
 	if _uses_custom_ambient_animation_set():
 		_ensure_custom_ambient_animations()
@@ -855,6 +992,9 @@ func _build_directional_atlas(texture: Texture2D, dir_index: int, row_index: int
 
 func _update_directional_animation(direction: Vector2, is_moving: bool) -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+	if _uses_procedural_variant_animation_set():
+		_update_procedural_variant_animation(direction, is_moving)
 		return
 	if _uses_custom_ambient_animation_set():
 		_update_custom_ambient_animation(direction, is_moving)
@@ -1025,6 +1165,49 @@ func _update_custom_ambient_animation(direction: Vector2, is_moving: bool) -> vo
 		animated_sprite.play(String(animation_name))
 	animated_sprite.stop()
 	animated_sprite.set_frame_and_progress(0, 0.0)
+
+
+func _update_procedural_variant_animation(direction: Vector2, is_moving: bool, force_attack: bool = false) -> void:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+	var direction_suffix := _get_procedural_variant_direction_suffix(direction)
+	animated_sprite.flip_h = direction_suffix == "west"
+	var animation_name := "idle_%s" % direction_suffix
+	if force_attack:
+		animation_name = "bite_%s" % direction_suffix
+	elif is_moving:
+		animation_name = "run_%s" % direction_suffix
+	if not _has_animation(animation_name):
+		animation_name = String(WOLF_ATTACK_ANIMATION if force_attack else (WOLF_MOVE_ANIMATION if is_moving else WOLF_IDLE_ANIMATION))
+		if not _has_animation(animation_name):
+			return
+	if is_moving or force_attack:
+		_play_animation(animation_name, false)
+		return
+	if animated_sprite.animation != animation_name:
+		animated_sprite.play(animation_name)
+	animated_sprite.stop()
+	animated_sprite.set_frame_and_progress(0, 0.0)
+
+
+func _get_procedural_variant_direction_suffix(direction: Vector2) -> String:
+	var facing := direction
+	if facing.length_squared() <= 0.0001:
+		facing = _last_move_direction
+	if facing.length_squared() <= 0.0001:
+		return "east"
+	if absf(facing.x) >= absf(facing.y):
+		return "west" if facing.x < 0.0 else "east"
+	return "north" if facing.y < 0.0 else "south"
+
+
+func _play_procedural_variant_death() -> void:
+	if animated_sprite == null or not _has_animation(String(WOLF_DEATH_ANIMATION)):
+		queue_free()
+		return
+	animated_sprite.play(String(WOLF_DEATH_ANIMATION))
+	await animated_sprite.animation_finished
+	queue_free()
 
 
 func _get_custom_ambient_scale_for_animation(animation_name: StringName) -> Vector2:

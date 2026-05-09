@@ -124,6 +124,16 @@ Optional post-process:
 
 That hook runs the Godot-side rebuild script for operator curated resources.
 
+Enemy runtime import post-process:
+
+```json
+{
+  "post_process": ["enemy_runtime_import"]
+}
+```
+
+That hook runs a headless Godot import pass after writing enemy PNGs so dynamic enemy loaders can read the updated runtime sheets on the next boot. It does not yet build enemy `SpriteFrames` resources; current Shrumb and wolf loaders build those dynamically from their configured PNG paths.
+
 ## Examples
 
 Example manifests live in:

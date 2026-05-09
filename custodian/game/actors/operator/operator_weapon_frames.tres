@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://nkcjc65owk7r"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://b5tntyocq5icr"]
 
 [ext_resource type="Texture2D" uid="uid://ccj48r300xn48" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/stance_body.png" id="1_7d8j0"]
 [ext_resource type="Texture2D" uid="uid://cw5djsrt6iv6q" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/equipped_run_right_body.png" id="1_mr1dc"]

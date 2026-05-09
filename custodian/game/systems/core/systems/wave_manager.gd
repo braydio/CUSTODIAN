@@ -1,6 +1,8 @@
 extends Node
 class_name WaveManager
 
+const ENEMY_VARIANT_FACTORY_SCRIPT := preload("res://game/enemies/procgen/enemy_variant_factory.gd")
+
 signal wave_started(wave_number: int)
 signal wave_completed(wave_number: int)
 signal all_waves_completed()
@@ -20,6 +22,7 @@ signal all_waves_completed()
 @export var drone_scene: PackedScene
 @export var fast_drone_scene: PackedScene
 @export var heavy_drone_scene: PackedScene
+@export var procedural_enemy_variants_enabled: bool = true
 
 @export var enemy_container_path: NodePath = NodePath("/root/GameRoot/World/Enemies")
 @export var game_state_path: NodePath = NodePath("/root/GameState")
@@ -45,6 +48,7 @@ const ENEMY_COST := {
 	"drone": 1,
 	"fast": 2,
 	"heavy": 4,
+	"wolf": 2,
 }
 
 func _ready():
@@ -244,14 +248,19 @@ func _spawn_enemy(enemy_type: String, difficulty: float) -> bool:
 	if enemy is Node2D:
 		enemy.global_position = spawn_node.global_position
 
+	var variant_profile: Resource = null
+	if procedural_enemy_variants_enabled and enemy_type == "wolf":
+		variant_profile = _build_enemy_variant_profile(enemy_type, spawn_node)
+
 	if is_fallback_variant:
 		_configure_enemy_variant(enemy, enemy_type)
 	if not _forced_objective.is_empty() and "attack_objective" in enemy:
 		enemy.set("attack_objective", _forced_objective)
-	if enemy.has_method("apply_difficulty_modifiers"):
-		enemy.apply_difficulty_modifiers(difficulty, difficulty)
-
 	parent.add_child(enemy)
+	if variant_profile != null and enemy.has_method("apply_variant"):
+		enemy.call("apply_variant", variant_profile)
+	elif enemy.has_method("apply_difficulty_modifiers"):
+		enemy.apply_difficulty_modifiers(difficulty, difficulty)
 	return true
 
 func set_external_wave_plan(composition: Array[String], lane: String = "", objective: String = "") -> void:
@@ -308,8 +317,52 @@ func _scene_for_enemy_type(enemy_type: String) -> PackedScene:
 			return fast_drone_scene if fast_drone_scene != null else drone_scene
 		"heavy":
 			return heavy_drone_scene if heavy_drone_scene != null else drone_scene
+		"wolf":
+			return drone_scene
 		_:
 			return null
+
+
+func _build_enemy_variant_profile(enemy_type: String, spawn_node: SpawnNode) -> Resource:
+	var seed := _stable_enemy_seed(enemy_type, spawn_node)
+	var biome_id := _get_enemy_variant_biome_id()
+	var threat_level := clampi(int(ceil(float(wave_number) / 4.0)), 1, 5)
+	var context := {
+		"wave_number": wave_number,
+		"spawn_index": _spawn_index,
+		"lane": spawn_node.lane,
+		"objective": _forced_objective,
+	}
+	match enemy_type:
+		"wolf":
+			var factory = ENEMY_VARIANT_FACTORY_SCRIPT.new()
+			return factory.call("build_wolf_variant", seed, biome_id, threat_level, context)
+		_:
+			return null
+
+
+func _stable_enemy_seed(enemy_type: String, spawn_node: SpawnNode) -> int:
+	var text := "%d:%d:%s:%s:%s" % [wave_number, _spawn_index, enemy_type, spawn_node.lane, _forced_objective]
+	var value := 2166136261
+	for index in range(text.length()):
+		value = value ^ text.unicode_at(index)
+		value = (value * 16777619) & 0x7fffffff
+	return maxi(1, value)
+
+
+func _get_enemy_variant_biome_id() -> String:
+	var procgen := get_tree().get_first_node_in_group("procgen_tilemap")
+	if procgen != null and procgen.has_method("get_planet_world_profile"):
+		var profile_variant: Variant = procgen.call("get_planet_world_profile")
+		if profile_variant is Dictionary:
+			var profile := profile_variant as Dictionary
+			var planet_key := String(profile.get("planet_key", ""))
+			if planet_key.contains("forest") or float(profile.get("foliage_density", 0.0)) >= 0.16:
+				return "forest_ruin"
+			if planet_key.contains("void"):
+				return "void_contaminated"
+			return "industrial_ruin"
+	return "default"
 
 func _configure_enemy_variant(enemy: Node, enemy_type: String) -> void:
 	match enemy_type:

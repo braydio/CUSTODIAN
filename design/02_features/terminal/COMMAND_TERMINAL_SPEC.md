@@ -172,7 +172,7 @@ CUSTODIAN // COMMAND LINK | MODE: COMMAND | FIDELITY: FULL | T: 18 | THREAT: HIG
 - Time since contact
 
 **Sector Tactical Map:**
-- Interactive schematic (nodes + corridors)
+- Live tactical minimap using the shared Godot `MinimapPanel` / `MinimapView` path; do not use the old placeholder contract-preview texture.
 - Display per sector: state color, power state, defense readiness, hostile count, objective badge, operator marker
 - Click to open SECTORS page focused on sector
 

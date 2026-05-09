@@ -1,13 +1,14 @@
-{
+ {
   "source": "operator__body__unarmed__fast_01__e__3f__96.png",
   "mode": "strip",
   "frame_size": [96, 96],
   "outputs": [
     {
-      "path": "operator/runtime/body/unarmed/operator__body__unarmed__fast_01__e__3f__96.png",
-      "layout": "horizontal_strip",
-      "select": { "type": "range", "start": 0, "count": 3 }
+      "path": "operator/body/runtime/unarmed/fast_01__e__3f__96.png",
+      "layout": "horizontal_strip"
     }
   ],
-  "post_process": ["operator_curated_resources"]
+  "post_process": [
+    "operator_curated_resources"
+  ]
 }

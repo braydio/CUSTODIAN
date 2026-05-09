@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-04
+Last updated: 2026-05-05
 
 ## Local Entry And Workflow
 
@@ -13,6 +13,8 @@ Last updated: 2026-05-04
 - `custodian/docs/ai_context/task_packets/README.md` — task packet workflow and active packet index
 - `custodian/docs/ai_context/task_packets/AGENT_WORKFLOW_AUTOMATION.md` — completed packet for task-packet next steps, ownership rules, and automation backlog
 - `custodian/docs/ai_context/task_packets/VALIDATION_RECIPES.md` — completed packet for canonical validation recipes and prompt-template cleanup
+- `custodian/docs/ai_context/task_packets/ENEMY_VARIANT_SYSTEM.md` — completed packet for the first procedural wolf enemy variant runtime slice
+- `custodian/docs/ai_context/task_packets/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — completed packet for the first region-aware indoor/outdoor procgen slice
 - `custodian/docs/ai_context/task_packets/PROCGEN_WALL_PASSAGE_VISIBILITY.md` — completed packet for generated wall passage visibility on normal horizontal procgen wall runs
 - `custodian/docs/ai_context/task_packets/PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` — completed packet for wall-top preprocessing support in the atlas builder
 
@@ -24,16 +26,28 @@ Last updated: 2026-05-04
 ## Active Runtime Systems
 
 - `custodian/game/world/procgen/custodian_contract_map.gd` — contract generation and planet-linked world profile creation, including deterministic map size/room bands and ambient Shrumb trait profile fields
-- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, foliage placement, and decorative ruin prop placement
+- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, constructed interior region carving, region metadata, foliage placement, and decorative ruin prop placement
 - `custodian/game/systems/core/systems/ambient_critter_manager.gd` — ambient critter spawning, tint, pacing, scale, speed, naming, and trait metadata linked to world profile
 - `custodian/game/systems/core/systems/inventory_manager.gd` — minimal stack-count ledger autoload for cognitive drops and future stackable resources
 - `custodian/game/systems/cognitive/cognitive_state_system.gd` — `CognitiveState` autoload tracking Forest Shrumb recollection/instinct/bearing values, decay, dominant state, and v1 modifier getters
 - `custodian/game/actors/enemies/ambient_shrumb.tscn` — live ambient Forest Shrumb actor path with shrumb slink animations, cognitive dropper, and no scrap material drops
 - `custodian/game/actors/enemies/ambient_shrumb.gd` — ambient Forest Shrumb death hook that invokes the cognitive dropper before inherited enemy cleanup
+- `custodian/game/actors/enemies/enemy.gd` — shared active enemy actor, now including `apply_variant(profile)` support for procedural wolf profiles and wolf sheet playback through `AnimatedSprite2D`
+- `custodian/game/enemies/procgen/enemy_variant_profile.gd` — data-only procedural enemy profile resource generated from seed, biome, threat, family, tier, and affixes
+- `custodian/game/enemies/procgen/enemy_variant_factory.gd` — deterministic procedural wolf profile composer with separate RNG streams, family/tier/affix rolls, palettes, safety clamps, and DPS normalization
+- `custodian/game/enemies/procgen/wolf_animation_library.gd` — runtime `SpriteFrames` builder that slices the current wolf PNG sheets into idle/run/bite/death/howl animations
+- `custodian/game/enemies/procgen/enemy_palette_tint.gdshader` — palette/glow/contrast shader used by procedural enemy visuals
+- `custodian/game/systems/core/systems/enemy_factory.gd` — wave composition factory with deterministic local composition rolls and `"wolf"` type support
+- `custodian/game/systems/core/systems/wave_manager.gd` — wave spawning system that applies procedural wolf variant profiles to spawned enemies when `"wolf"` entries are selected
 - `custodian/game/actors/items/cognitive_pickup.tscn` — generic pickup scene for cognitive item drops
 - `custodian/game/actors/items/cognitive_pickup.gd` — pickup flow that increments `InventoryManager`, applies `CognitiveState`, animates the 4-frame item sheet, and emits popup/log feedback
 - `custodian/game/actors/items/shrumb_dropper.gd` — reusable Forest Shrumb cognitive drop table component
 - `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, page rendering orchestration, and essentials-first HUD/debug visibility logic
+- `custodian/game/ui/minimap/minimap_panel.tscn` — custom HUD tactical minimap panel instanced under `UI`
+- `custodian/game/ui/minimap/minimap_controller.gd` — discovers runtime procgen/player/enemy/objective nodes and feeds minimap data to the view
+- `custodian/game/ui/minimap/minimap_view.gd` — data-driven minimap renderer that caches procgen floor/wall terrain and draws tactical pips
+- `custodian/game/ui/inventory/inventory_ui.tscn` — hidden HUD inventory overlay instanced under `UI` and toggled with `I`
+- `custodian/game/ui/inventory/inventory_ui.gd` — inventory overlay open/close, sample item loading, and slot rendering
 - `custodian/game/ui/terminal/terminal_command_router.gd` — command parsing, validation, refresh policy, and dispatch boundary for the HUD terminal
 - `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems
 - `custodian/game/ui/terminal/terminal_map_preview.gd` — terminal minimap preview state and click-to-world conversion boundary
@@ -48,6 +62,8 @@ Last updated: 2026-05-04
 - `design/02_features/combat_feel/COMBAT_FEEL_UPGRADE.md` — ordered combat feel implementation lane after sprite pipeline cleanup
 - `design/features/implementation/UNARMED_TOGGLE.md` — unarmed/Fists selection behavior, state rules, and acceptance tests
 - `design/features/implementation/UNARMED_TOGGLE_CODE.md` — implementation notes for the unarmed/Fists profile selection system
+- `design/features/implementation/MINIMAP_SYSTEM.md` — custom data-driven tactical minimap implementation spec
+- `design/features/implementation/MINIMAP_SYSTEM_CODE.md` — minimap runtime code plan and integration notes
 - `design/THE_TRAGEDY_OF_THE_FOREST_SHRUMB_GAMEPLAY_CORE.md` — active Forest Shrumb cognitive drop runtime implementation notes
 - `design/THE_TRAGEDY_OF_THE_FOREST_SHRUMB-IMPLEMENTATION_DELTA.md` — duplicate/current Forest Shrumb implementation delta reference used for v1 foundation
 
@@ -66,10 +82,15 @@ Last updated: 2026-05-04
 - `tools/tiles/extract_wall_parts.py` — offline wall module extractor that reads canonical wall source art, writes per-part PNGs, a packed source atlas, and JSON metadata
 - `tools/tiles/compose_wall_variants.py` — offline deterministic wall-run composer that reads generated wall part metadata/atlas and writes composed wall variant sheets
 - `tools/tiles/build_procgen_wall_atlas.py` — bridge builder that slices extracted wall modules into fixed `32x32` procgen TileMap cells and semantic coordinate buckets
+- `custodian/tools/tiles/register_interior_floor_tiles.py` — convention-based registrar for `content/tiles/interiors/runtime/floor_*_32.png`, non-corner `wall_*_32.png`, and `wall_*corner*_32.png` TileSet sources plus procgen source arrays
 - `tools/tiles/procgen_wall_semantics.json` — optional curated role override file for generated wall module semantics
 - `custodian/content/tiles/walls/source/procgen_wall_modules_source.png` — canonical reviewed source sheet for generated procgen wall modules
 - `custodian/content/tiles/walls/source/wall_passages/` — optional `32px`-tall wall passage strips sliced directly into procgen passage/hole buckets
 - `custodian/content/tiles/walls/Wall_Tops.png` — wall-top source sheet that is alpha-split by the atlas builder with `--top-source`
+- `custodian/content/tiles/tilesets/custodian_world_tileset.tres` — canonical active world/procgen TileSet used by procgen and test-map TileMapLayer scenes
+- `custodian/content/tiles/interiors/runtime/` — runtime-ready `32x32` constructed-interior floor and military wall tiles registered into procgen source lists by naming convention
+- `custodian/content/tiles/interiors/source/` — oversized/reference interior tile source art preserved for slicing or replacement
+- `custodian/content/tiles/interiors/README.md` — interior tile folder layout, runtime/source split, and remaining art needs
 - `custodian/assets/tiles/walls/generated/procgen_wall_source_parts.json` — stable intermediate metadata for extracted procgen wall source modules
 - `custodian/assets/tiles/walls/generated/procgen_wall_source_atlas.png` — stable intermediate packed atlas for extracted procgen wall source modules
 - `custodian/content/tiles/walls/generated/procgen_wall_tiles_32.png` — generated fixed-grid wall atlas used by procgen TileSet source ID `12`
@@ -77,6 +98,7 @@ Last updated: 2026-05-04
 - `custodian/assets/tiles/walls/generated/README.md` — regeneration and Godot import notes for generated wall tile assets
 - `design/features/implementation/WALL_TILE_PIPELINE.md` — implementation spec for the offline wall tile extraction and composition pipeline
 - `design/features/implementation/PROCGEN_WALL_TILE_BRIDGE.md` — implementation spec for integrating generated wall tiles into the procgen TileMap runtime
+- `design/02_features/procgen/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — first runtime slice for single-map indoor/outdoor region-aware procgen
 - `custodian/content/sprites/_pipeline/README.md` — intake contract, canonical sprite naming, and manifest examples
 - `custodian/docs/ASSET_LAYOUT_CONVENTION.md` — project-wide runtime asset layout and canonical sprite filename convention
 - `custodian/content/items/shrumb_drops/shrumb_drops.json` — v1 cognitive item definitions for Faint Recollection, Residual Instinct, and Ancient Bearing
@@ -103,6 +125,7 @@ Last updated: 2026-05-04
 - `custodian/content/props/ruins/data/prop_definitions/slab_01.tres` — starter test definition using available moss/crack overlays and rubble
 - `custodian/content/props/ruins/README.md` — ruin prop folder layout, padding commands for cropped PNGs, import settings, and pixel-art transform constraints
 - `design/02_features/props/PROCEDURAL_PROP_VARIANT_SYSTEM.md` — active implementation spec and runtime ownership note for the ruin prop variant system
+- `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md` — merged system design for resource collection, ledger, and fabrication pipeline; Stage 1 ready for implementation
 
 ## Active Documentation
 

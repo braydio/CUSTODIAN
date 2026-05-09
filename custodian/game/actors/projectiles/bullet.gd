@@ -33,17 +33,28 @@ func set_direction(dir: Vector2):
 
 
 func _physics_process(delta):
-	global_position += direction * speed * delta
+	var from: Vector2 = global_position
+	var to: Vector2 = global_position + direction * speed * delta
+	var hit: Dictionary = _sweep_projectile(from, to)
+	if not hit.is_empty():
+		global_position = hit.get("position", to)
+		var collider: Object = hit.get("collider", null)
+		if collider is Node and _handle_body_hit(collider as Node, global_position):
+			return
+	global_position = to
 	age += delta
 	if age >= max_lifetime:
 		queue_free()
 
 
 func _on_body_entered(body: Node):
+	_handle_body_hit(body, _resolve_impact_position(body))
+
+
+func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
 	if body == shooter:
-		return
+		return false
 	if body.has_method("receive_projectile_hit") and (_is_world_blocker(body) or _can_hit(body)):
-		var impact_position := _resolve_impact_position(body)
 		var result_variant: Variant = body.call("receive_projectile_hit", damage, team)
 		var was_blocked: bool = _extract_blocked_result(result_variant)
 		_apply_game_feel(body, 0.0)
@@ -52,16 +63,15 @@ func _on_body_entered(body: Node):
 		else:
 			_spawn_impact_at(impact_position)
 		queue_free()
-		return
+		return true
 	if _is_world_blocker(body):
-		_spawn_impact_at(_resolve_impact_position(body))
+		_spawn_impact_at(impact_position)
 		queue_free()
-		return
+		return true
 	if not _can_hit(body):
-		return
+		return false
 
 	if body.has_method("take_damage"):
-		var impact_position := _resolve_impact_position(body)
 		var final_damage: float = damage
 		if crit_chance > 0.0 and randf() < crit_chance:
 			final_damage *= crit_multiplier
@@ -69,11 +79,34 @@ func _on_body_entered(body: Node):
 		_apply_game_feel(body, 60.0)
 		_spawn_impact_at(impact_position)
 		queue_free()
-		return
+		return true
 
 	if body is StaticBody2D or body is CharacterBody2D:
-		_spawn_impact_at(_resolve_impact_position(body))
+		_spawn_impact_at(impact_position)
 		queue_free()
+		return true
+	return false
+
+
+func _sweep_projectile(from: Vector2, to: Vector2) -> Dictionary:
+	if from.distance_squared_to(to) <= 0.01:
+		return {}
+	var space_state := get_world_2d().direct_space_state
+	if space_state == null:
+		return {}
+	var query: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(from, to)
+	query.collide_with_bodies = true
+	query.collide_with_areas = false
+	query.exclude = _get_sweep_exclusions()
+	return space_state.intersect_ray(query)
+
+
+func _get_sweep_exclusions() -> Array[RID]:
+	var exclusions: Array[RID] = []
+	exclusions.append(get_rid())
+	if shooter is CollisionObject2D:
+		exclusions.append((shooter as CollisionObject2D).get_rid())
+	return exclusions
 
 
 func _can_hit(body: Node) -> bool:
