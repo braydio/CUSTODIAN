@@ -23,7 +23,13 @@ DebugBus="*res://dev/debug/debug_bus.gd"
 BetterTerrain="*uid://6gj10atdkou3"
 InventoryManager="*res://game/systems/core/systems/inventory_manager.gd"
 CognitiveState="*res://game/systems/cognitive/cognitive_state_system.gd"
+ResourceLedger="*res://autoload/resource_ledger.gd"
+BuildInventory="*res://autoload/build_inventory.gd"
+FabPipeline="*res://autoload/fab_pipeline.gd"
 _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
+DebugCore="*uid://ctmkncwpk2qma"
+CommandRegistry="*uid://ce5ap1y1kwavq"
+GameConsoleManager="*uid://dsr8e7vkd3scc"
 
 [dev_console]
 
@@ -40,7 +46,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/better-terrain/plugin.cfg", "res://addons/debug_console/plugin.cfg", "res://addons/dev-console/plugin.cfg", "res://addons/dynamic_minimap/plugin.cfg", "res://addons/fightengine/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/godotdev_nvim_node_copy/plugin.cfg", "res://addons/indie_game_components/plugin.cfg", "res://addons/shader_library/plugin.cfg")
+enabled=PackedStringArray("res://addons/better-terrain/plugin.cfg", "res://addons/debug_console/plugin.cfg", "res://addons/dev-console/plugin.cfg", "res://addons/fightengine/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/godotdev_nvim_node_copy/plugin.cfg", "res://addons/indie_game_components/plugin.cfg", "res://addons/shader_library/plugin.cfg")
 
 [input]
 
@@ -154,11 +160,6 @@ toggle_aim_input_mode={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":86,"key_label":0,"unicode":118,"location":0,"echo":false,"script":null)
 ]
 }
-toggle_inventory={
-"deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":73,"key_label":0,"unicode":105,"location":0,"echo":false,"script":null)
-]
-}
 aim_up={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194320,"physical_keycode":0,"key_label":4194320,"unicode":0,"location":0,"echo":false,"script":null)
@@ -177,6 +178,16 @@ aim_left={
 aim_right={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194322,"physical_keycode":0,"key_label":4194322,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+toggle_inventory={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":73,"key_label":0,"unicode":105,"location":0,"echo":false,"script":null)
+]
+}
+toggle_minimap_expand={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":77,"key_label":0,"unicode":109,"location":0,"echo":false,"script":null)
 ]
 }
 
