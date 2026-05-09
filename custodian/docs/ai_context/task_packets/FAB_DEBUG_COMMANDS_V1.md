@@ -2,7 +2,7 @@
 
 ## Packet Status
 
-- Status: in_progress
+- Status: complete
 - Owner: agent
 - Agent/session: Codex 2026-05-09
 - Created: 2026-05-09
@@ -62,13 +62,13 @@ DevConsole should support inspecting recipes/status, granting starter resources,
 
 ## Completion Notes
 
-- Implemented:
-- Validated:
-- Deferred:
+- Implemented: Added `fab_status`, `fab_recipes`, `fab_grant`, and `fab_start <recipe_id>` DevConsole commands through the existing HUD command registration path.
+- Validated: `godot --headless --check-only --script res://game/ui/hud/ui.gd`; `godot --headless --quit`.
+- Deferred: Dedicated terminal/fabricator panel UI.
 
 ## Next Steps
 
-- Next action: Add DevConsole command handlers.
+- Next action: Add terminal/fabricator panel UI or broader build-token placement.
 - Best starting files: `custodian/game/ui/hud/ui.gd`
 - Required context: Existing DevConsole command registration in the HUD.
 - Validation to run: `godot --headless --check-only --script res://game/ui/hud/ui.gd`; `godot --headless --quit`

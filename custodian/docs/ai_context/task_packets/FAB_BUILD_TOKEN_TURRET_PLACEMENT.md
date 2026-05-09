@@ -2,7 +2,7 @@
 
 ## Packet Status
 
-- Status: in_progress
+- Status: complete
 - Owner: agent
 - Agent/session: Codex 2026-05-09
 - Created: 2026-05-09
@@ -63,13 +63,13 @@ Completed `turret_basic` build tokens should allow placing a basic/gunner turret
 
 ## Completion Notes
 
-- Implemented:
-- Validated:
-- Deferred:
+- Implemented: Added `TURRET_BUILD_TOKENS` mapping in `TurretPlacement`, allowed `turret_basic` tokens to unlock `gunner` placement mode, consumed tokens on placement, and refunded token consumption if turret scene instantiation fails.
+- Validated: `godot --headless --check-only --script res://game/systems/core/systems/turret_placement.gd`; `godot --headless --quit`.
+- Deferred: `barricade_light`, `reinforced_panel`, and `sensor_pylon_basic` placement; full buildable registry.
 
 ## Next Steps
 
-- Next action: Patch `TurretPlacement`.
+- Next action: Add broader buildable placement or terminal/fabricator UI.
 - Best starting files: `custodian/game/systems/core/systems/turret_placement.gd`
 - Required context: Existing turret placement material path and `BuildInventory` autoload.
 - Validation to run: Script check and project headless load.

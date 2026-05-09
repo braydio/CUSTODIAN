@@ -34,6 +34,8 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `ENEMY_ANIMATION_STABILITY_AND_PIPELINE.md` - completed packet for Shrumb flee animation stabilization, wolf directional row selection, and the first enemy animation intake pipeline hook.
 - `ENEMY_WALL_REROUTE_RECOVERY.md` - completed packet for enemy and passive critter wall-stuck recovery.
 - `FAB_PIPELINE_V1.md` - completed packet for the first build-token-first resource/fabrication runtime spine.
+- `FAB_DEBUG_COMMANDS_V1.md` - completed packet for DevConsole fabrication status, recipe, grant, and start commands.
+- `FAB_BUILD_TOKEN_TURRET_PLACEMENT.md` - completed packet for mapping completed `turret_basic` build tokens to existing gunner turret placement.
 - `INDOOR_OUTDOOR_PROCGEN_REGIONS.md` - completed runtime packet for the first region-aware indoor/outdoor procgen slice.
 - `INTERIOR_TILE_ART_WIRING.md` - completed packet for organizing interior tile art and wiring constructed procgen regions to the new tile family.
 - `KNIGHT_OPERATOR_TEST_SKIN.md` - completed packet for the DevConsole-toggleable Knight operator test skin.
