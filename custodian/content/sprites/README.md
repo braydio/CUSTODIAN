@@ -45,10 +45,10 @@ custodian/content/sprites/
 │   │   └── block_spark/        # 128x128, 4 frames
 │   └── source/                 # Original files
 │
-├── environment/                 # In-world environmental sprites
-│   ├── props/
-│   │   └── terminal/
-│   │       └── runtime/body/   # Terminal activation prop sheets
+	├── environment/                 # In-world environmental sprites
+	│   ├── props/
+	│   │   └── terminal/
+	│   │       └── runtime/body/   # command_terminal / fabricator_terminal prop sheets
 │   ├── foliage/
 │   └── ambient_critter/
 │
@@ -123,11 +123,12 @@ operator__weapon__melee__fast_01__n__6f__96.png
 operator__fx__melee__fast_01__n__6f__96.png
 enemy_grunt__body__reaction__stagger__s__5f__96.png
 hit_spark__fx__impact__default__omni__4f__64.png
-computer_terminal__body__interaction__activate__omni__4f__48.png
+command_terminal__body__interaction__activate__omni__4f__48.png
 ```
 
 Legacy files may remain while current scenes and rebuild scripts still reference them. New source and intake work
-should use the canonical filename and let pipeline manifests write compatibility copies when needed.
+should use the canonical `command_terminal` or `fabricator_terminal` filename and let pipeline manifests write
+compatibility copies when needed.
 
 ### Direction Codes
 
@@ -163,6 +164,14 @@ interaction: activate, deactivate, open, close, idle
 
 The ingest pipeline writes into the existing runtime domains such as `weapons/`, `enemies/`, `operator/`,
 `effects/`, `vehicles/`, and `turrets/`. It does not write into a separate `entities/` hierarchy.
+
+For terminal props, prefer the prop-owned runtime body folder:
+
+```text
+environment/props/terminal/runtime/body/
+```
+
+Use `command_terminal` for the current world prop and reserve `fabricator_terminal` for the future distinct prop sprite.
 
 ### Adding New Weapon
 

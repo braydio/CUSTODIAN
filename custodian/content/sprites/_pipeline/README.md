@@ -25,6 +25,7 @@ content/sprites/_pipeline/
   - `effects/...`
   - `vehicles/...`
   - `turrets/...`
+  - `environment/props/...`
 - Use explicit frame metadata per manifest. Do not assume one global sheet layout.
 - Preserve source pixels by default. Resize only when the manifest explicitly requests it.
 
@@ -75,6 +76,42 @@ Operator curated body updates can trigger the runtime `SpriteFrames` rebuild aut
     }
   ],
   "post_process": ["operator_curated_resources"]
+}
+```
+
+## Terminal Prop Example
+
+Current and future terminal prop sheets should use the `command_terminal` / `fabricator_terminal` prefix convention and write into the prop-owned runtime body folder:
+
+```json
+{
+  "source": "command_terminal__body__interaction__pickup__omni__4f__48.png",
+  "mode": "strip",
+  "frame_size": [48, 48],
+  "outputs": [
+    {
+      "path": "environment/props/terminal/runtime/body/command_terminal__body__interaction__pickup__omni__4f__48.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 4 }
+    }
+  ]
+}
+```
+
+For a future distinct fabricator prop, keep the same structure and swap the basename:
+
+```json
+{
+  "source": "fabricator_terminal__body__interaction__pickup__omni__4f__48.png",
+  "mode": "strip",
+  "frame_size": [48, 48],
+  "outputs": [
+    {
+      "path": "environment/props/terminal/runtime/body/fabricator_terminal__body__interaction__pickup__omni__4f__48.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 4 }
+    }
+  ]
 }
 ```
 
