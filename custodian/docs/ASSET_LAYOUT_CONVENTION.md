@@ -189,11 +189,13 @@ World props use the environment prop domain rather than loose files at `res://co
 
 ```text
 res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__activate__omni__4f__48.png
+res://content/sprites/environment/props/portal_ring/runtime/fx/portal_ring__fx__interaction__activate_01__omni__12f__161.png
 ```
 
 Runtime scenes/scripts:
 
 - `res://game/actors/terminal/command_terminal.gd` slices the terminal sheet as a 2x2 set of 48x48 frames and plays it forward for activation and backward for deactivation.
+- `res://game/world/procgen/portal_teleporter.gd` slices portal-ring idle, activation, and arrival FX strips from the prop-owned `portal_ring/runtime/fx/` directory.
 
 ## Enemy Drone Runtime Additions
 

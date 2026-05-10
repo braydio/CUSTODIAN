@@ -53,7 +53,7 @@ Last updated: 2026-05-05
 - `custodian/game/actors/items/cognitive_pickup.tscn` — generic pickup scene for cognitive item drops
 - `custodian/game/actors/items/cognitive_pickup.gd` — pickup flow that increments `InventoryManager`, applies `CognitiveState`, animates the 4-frame item sheet, and emits popup/log feedback
 - `custodian/game/actors/items/shrumb_dropper.gd` — reusable Forest Shrumb cognitive drop table component
-- `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, page rendering orchestration, and essentials-first HUD/debug visibility logic
+- `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, fabrication page rendering, page orchestration, and essentials-first HUD/debug visibility logic
 - `custodian/game/ui/minimap/minimap_panel.tscn` — custom HUD tactical minimap panel instanced under `UI`
 - `custodian/game/ui/minimap/minimap_controller.gd` — discovers runtime procgen/player/enemy/objective nodes and feeds minimap data to the view
 - `custodian/game/ui/minimap/minimap_view.gd` — data-driven minimap renderer that caches procgen floor/wall terrain and draws tactical pips
@@ -83,6 +83,7 @@ Last updated: 2026-05-05
 - `custodian/game/actors/defense/turret.gd` — turret interaction prompt reads actual interact binding
 - `custodian/game/actors/base/vehicle_base.gd` — vehicle exit prompt reads actual interact binding
 - `custodian/game/actors/terminal/command_terminal.gd` — in-world command terminal interaction and activation/deactivation prop animation
+- `custodian/game/systems/core/systems/terminal_deployment.gd` — deployable terminal pickup/redeploy runtime for the in-world command terminal prop
 - `custodian/docs/TERMINAL_VIEW_LOCAL_MODE.md` — terminal-related runtime doc reference
 
 ## Active Asset Pipeline
@@ -112,6 +113,8 @@ Last updated: 2026-05-05
 - `design/02_features/procgen/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — first runtime slice for single-map indoor/outdoor region-aware procgen
 - `custodian/content/sprites/_pipeline/README.md` — intake contract, canonical sprite naming, and manifest examples
 - `custodian/docs/ASSET_LAYOUT_CONVENTION.md` — project-wide runtime asset layout and canonical sprite filename convention
+- `custodian/content/sprites/environment/props/portal_ring/runtime/fx/` — canonical portal-ring prop FX runtime strips used by `PortalTeleporter` for idle, activation, and arrival playback
+- `custodian/content/sprites/effects/runtime/portal_ring/` — legacy compatibility copies of portal-ring teleport FX strips
 - `custodian/content/items/shrumb_drops/shrumb_drops.json` — v1 cognitive item definitions for Faint Recollection, Residual Instinct, and Ancient Bearing
 - `custodian/content/sprites/items/faint_recollection.png` — animated 4-frame pickup sheet for Faint Recollection
 - `custodian/content/sprites/items/faded_instinct.png` — animated 4-frame pickup sheet currently used for `residual_instinct`

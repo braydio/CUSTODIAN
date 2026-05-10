@@ -40,10 +40,11 @@
 [ext_resource type="PackedScene" path="res://game/systems/core/systems/wall_placer.tscn" id="99_wall_placer"]
 [ext_resource type="Script" uid="uid://cm60nou56jgt7" path="res://game/systems/core/systems/weapon_definition_factory.gd" id="99_weapon_factory"]
 [ext_resource type="Script" uid="uid://bxpa63ls5ihkq" path="res://game/systems/core/systems/turret_placement.gd" id="100_turret_placement"]
+[ext_resource type="Script" path="res://game/systems/core/systems/terminal_deployment.gd" id="101_terminal_deployment"]
 [ext_resource type="Texture2D" uid="uid://6y4pj114mk8m" path="res://content/sprites/misc/crosshair_64x64.png" id="101_crosshair"]
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
-[ext_resource type="PackedScene" path="res://game/resources/resource_node.tscn" id="202_resource_node"]
+[ext_resource type="PackedScene" uid="uid://bi00x8n8q1f65" path="res://game/resources/resource_node.tscn" id="202_resource_node"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 
@@ -173,13 +174,8 @@ heavy_ammo = 6
 [node name="AmmoCacheD" parent="World/Items" unique_id=655756500 instance=ExtResource("10_cache")]
 position = Vector2(40, -520)
 
-[node name="BlackwoodDeadfallTest" parent="World/Items" instance=ExtResource("202_resource_node")]
+[node name="BlackwoodDeadfallTest" parent="World/Items" unique_id=728503269 instance=ExtResource("202_resource_node")]
 position = Vector2(552, -356)
-node_kind = "blackwood_deadfall"
-harvest_label = "CUT"
-resource_id = "blackwood"
-work_required = 3
-yield_amount = 6
 secondary_yields = {
 "ruin_scrap": 1
 }
@@ -187,7 +183,7 @@ standing_color = Color(0.16, 0.1, 0.075, 1)
 depleted_color = Color(0.07, 0.055, 0.045, 1)
 prompt_resource_label = "BLACKWOOD"
 
-[node name="AlloyVeinTest" parent="World/Items" instance=ExtResource("202_resource_node")]
+[node name="AlloyVeinTest" parent="World/Items" unique_id=1974364176 instance=ExtResource("202_resource_node")]
 position = Vector2(604, -308)
 node_kind = "alloy_vein"
 harvest_label = "MINE"
@@ -201,7 +197,7 @@ standing_color = Color(0.25, 0.28, 0.31, 1)
 depleted_color = Color(0.08, 0.085, 0.09, 1)
 prompt_resource_label = "STRUCTURAL ALLOY"
 
-[node name="MachineWreckageTest" parent="World/Items" instance=ExtResource("202_resource_node")]
+[node name="MachineWreckageTest" parent="World/Items" unique_id=1269217461 instance=ExtResource("202_resource_node")]
 position = Vector2(480, -434)
 node_kind = "machine_wreckage"
 harvest_label = "SALVAGE"
@@ -288,6 +284,9 @@ position = Vector2(872, -486)
 
 [node name="TurretPlacement" type="Node" parent="World" unique_id=1022301412]
 script = ExtResource("100_turret_placement")
+
+[node name="TerminalDeployment" type="Node" parent="World" unique_id=1022301413]
+script = ExtResource("101_terminal_deployment")
 
 [node name="CommandTerminal" parent="World" unique_id=2021499921 instance=ExtResource("27_command_terminal")]
 position = Vector2(804, -492)

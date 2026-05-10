@@ -37,6 +37,9 @@ const TERMINAL_COMPLETION_TOKENS := [
 	"START ASSAULT",
 	"WAIT", "WAIT UNTIL", "DEPLOY", "MOVE", "RETURN", "FOCUS", "HARDEN",
 	"REPAIR", "SCAVENGE", "SET", "SET FAB", "POLICY SHOW", "POLICY PRESET",
+	"FABRICATION",
+	"FAB STATUS", "FAB RECIPES", "FAB GRANT", "FAB START", "FAB QUEUE", "FAB CANCEL",
+	"FAB PRIORITY",
 	"FORTIFY", "CONFIG DOCTRINE", "ALLOCATE DEFENSE", "SCAN RELAYS",
 	"STABILIZE RELAY", "SYNC", "FAB ADD", "FAB QUEUE", "FAB CANCEL",
 	"FAB PRIORITY", "REROUTE POWER", "BOOST DEFENSE", "DRONE DEPLOY",
@@ -166,6 +169,7 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var terminal_contracts_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/ContractsButton")
 @onready var terminal_history_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/HistoryButton")
 @onready var terminal_settings_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/SettingsButton")
+var terminal_fabrication_button: BaseButton = null
 @onready var terminal_wait_button = get_node_or_null("TerminalPanel/Body/NavRail/ActionButtons/WaitButton")
 @onready var terminal_wait_10x_button = get_node_or_null("TerminalPanel/Body/NavRail/ActionButtons/Wait10xButton")
 @onready var terminal_focus_button = get_node_or_null("TerminalPanel/Body/NavRail/ActionButtons/FocusButton")
@@ -304,9 +308,10 @@ func _ready():
 		"INCIDENTS": terminal_incidents_button,
 		"ARCHIVE": terminal_archive_button,
 		"RECON": terminal_recon_button,
-		"CONTRACTS": terminal_contracts_button,
-		"HISTORY": terminal_history_button,
-		"SETTINGS": terminal_settings_button,
+	"CONTRACTS": terminal_contracts_button,
+	"HISTORY": terminal_history_button,
+	"SETTINGS": terminal_settings_button,
+		"FABRICATION": terminal_fabrication_button,
 	}
 	_terminal_nav_buttons = [
 		terminal_overview_button,
@@ -321,6 +326,7 @@ func _ready():
 		terminal_contracts_button,
 		terminal_history_button,
 		terminal_settings_button,
+		terminal_fabrication_button,
 	]
 	_terminal_action_buttons = [
 		terminal_wait_button,
@@ -335,6 +341,12 @@ func _ready():
 		var button: BaseButton = _terminal_page_buttons[page_name]
 		if button != null and not button.pressed.is_connected(_on_terminal_page_button_pressed.bind(page_name)):
 			button.pressed.connect(_on_terminal_page_button_pressed.bind(page_name))
+	_ensure_fabrication_terminal_button()
+	_terminal_page_buttons["FABRICATION"] = terminal_fabrication_button
+	if terminal_fabrication_button != null and not terminal_fabrication_button.pressed.is_connected(_on_terminal_page_button_pressed.bind("FABRICATION")):
+		terminal_fabrication_button.pressed.connect(_on_terminal_page_button_pressed.bind("FABRICATION"))
+	if terminal_fabrication_button != null and not _terminal_nav_buttons.has(terminal_fabrication_button):
+		_terminal_nav_buttons.append(terminal_fabrication_button)
 	if terminal_wait_button and not terminal_wait_button.pressed.is_connected(_on_terminal_action_button_pressed.bind("WAIT")):
 		terminal_wait_button.pressed.connect(_on_terminal_action_button_pressed.bind("WAIT"))
 	if terminal_wait_10x_button and not terminal_wait_10x_button.pressed.is_connected(_on_terminal_action_button_pressed.bind("WAIT 10X")):
@@ -1184,6 +1196,18 @@ func open_command_terminal(service_url: String = ""):
 	if terminal_poll_timer:
 		terminal_poll_timer.start()
 
+
+func open_fabricator_terminal(service_url: String = ""):
+	open_command_terminal(service_url)
+	_set_terminal_page("FABRICATION")
+	if _terminal_ready:
+		_append_terminal_line("FABRICATION SHELL ACTIVE", "success")
+		_render_terminal_status("FABRICATION LINK ESTABLISHED")
+
+
+func close_fabricator_terminal():
+	close_command_terminal()
+
 func close_command_terminal():
 	if _placement_mode_active:
 		if not _cancel_active_placement_mode():
@@ -1562,6 +1586,28 @@ func _apply_terminal_theme():
 		primary_weapon_button.add_theme_stylebox_override("hover", button_style)
 		primary_weapon_button.add_theme_stylebox_override("pressed", button_style)
 		primary_weapon_button.add_theme_color_override("font_color", Color(0.88, 1.0, 0.92, 1.0))
+
+
+func _ensure_fabrication_terminal_button() -> void:
+	if terminal_fabrication_button != null and is_instance_valid(terminal_fabrication_button):
+		return
+	var page_buttons_container := get_node_or_null("TerminalPanel/Body/NavRail/PageButtons")
+	if page_buttons_container == null:
+		return
+	var existing := page_buttons_container.get_node_or_null("FabricationButton")
+	if existing is BaseButton:
+		terminal_fabrication_button = existing as BaseButton
+		return
+	var button := Button.new()
+	button.name = "FabricationButton"
+	button.text = "FABRICATION"
+	button.focus_mode = Control.FOCUS_ALL
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.custom_minimum_size = Vector2(0, 32)
+	page_buttons_container.add_child(button)
+	page_buttons_container.move_child(button, page_buttons_container.get_child_count() - 1)
+	terminal_fabrication_button = button
+
 
 func _append_terminal_line(line: String, level: String = "info", sector: String = ""):
 	_terminal_activity_autofollow = _is_terminal_activity_near_bottom()
@@ -1979,8 +2025,101 @@ func _set_terminal_page(page_name: String) -> void:
 		return
 	_terminal_current_page = normalized
 	_refresh_terminal_page_buttons()
+	_apply_terminal_page_theme()
 	if _terminal_open:
 		_refresh_snapshot()
+
+
+func _apply_terminal_page_theme() -> void:
+	var fabrication_mode := _terminal_current_page == "FABRICATION"
+	if terminal_panel:
+		var panel_style := StyleBoxFlat.new()
+		if fabrication_mode:
+			panel_style.bg_color = Color(0.065, 0.045, 0.016, 0.985)
+			panel_style.border_color = Color(0.88, 0.58, 0.24, 0.98)
+		else:
+			panel_style.bg_color = Color(0.025, 0.035, 0.04, 0.975)
+			panel_style.border_color = Color(0.34, 0.56, 0.48, 0.95)
+		panel_style.set_border_width_all(2)
+		panel_style.set_corner_radius_all(8)
+		panel_style.shadow_color = Color(0.0, 0.0, 0.0, 0.35)
+		panel_style.shadow_size = 14
+		terminal_panel.add_theme_stylebox_override("panel", panel_style)
+	if terminal_header_panel:
+		var header_style := StyleBoxFlat.new()
+		if fabrication_mode:
+			header_style.bg_color = Color(0.12, 0.06, 0.02, 0.985)
+			header_style.border_color = Color(0.96, 0.68, 0.28, 1.0)
+		else:
+			header_style.bg_color = Color(0.055, 0.08, 0.09, 0.98)
+			header_style.border_color = Color(0.26, 0.5, 0.42, 1.0)
+		header_style.set_border_width_all(1)
+		header_style.set_corner_radius_all(5)
+		terminal_header_panel.add_theme_stylebox_override("panel", header_style)
+	if terminal_title_label:
+		terminal_title_label.add_theme_color_override("font_color", Color(0.98, 0.90, 0.72, 1.0) if fabrication_mode else Color(0.93, 0.98, 0.95, 1.0))
+	if terminal_header_eyebrow:
+		terminal_header_eyebrow.add_theme_color_override("font_color", Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
+	if terminal_nav_title:
+		terminal_nav_title.add_theme_color_override("font_color", Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
+	if terminal_action_title:
+		terminal_action_title.add_theme_color_override("font_color", Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
+	if terminal_status_label:
+		terminal_status_label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.48, 0.96) if fabrication_mode else Color(0.64, 0.88, 0.78, 0.96))
+	if terminal_hint_label:
+		terminal_hint_label.add_theme_color_override("font_color", Color(0.96, 0.79, 0.54, 0.88) if fabrication_mode else Color(0.54, 0.72, 0.68, 0.88))
+	if terminal_input:
+		var input_style := StyleBoxFlat.new()
+		if fabrication_mode:
+			input_style.bg_color = Color(0.12, 0.07, 0.02, 1.0)
+			input_style.border_color = Color(0.98, 0.72, 0.34, 1.0)
+		else:
+			input_style.bg_color = Color(0.06, 0.12, 0.095, 1.0)
+			input_style.border_color = Color(0.58, 0.92, 0.74, 1.0)
+		input_style.set_border_width_all(2)
+		input_style.set_corner_radius_all(6)
+		input_style.content_margin_left = 10.0
+		input_style.content_margin_right = 10.0
+		input_style.content_margin_top = 8.0
+		input_style.content_margin_bottom = 8.0
+		terminal_input.add_theme_stylebox_override("normal", input_style)
+		terminal_input.add_theme_stylebox_override("focus", input_style)
+		terminal_input.add_theme_color_override("font_color", Color(1.0, 0.96, 0.88, 1.0) if fabrication_mode else Color(0.96, 1.0, 0.98, 1.0))
+		terminal_input.add_theme_color_override("font_placeholder_color", Color(0.92, 0.74, 0.46, 0.92) if fabrication_mode else Color(0.70, 0.88, 0.79, 0.95))
+		terminal_input.add_theme_color_override("font_selected_color", Color(0.18, 0.10, 0.02, 1.0) if fabrication_mode else Color(0.02, 0.05, 0.04, 1.0))
+		terminal_input.add_theme_color_override("selection_color", Color(0.96, 0.72, 0.28, 0.92) if fabrication_mode else Color(0.68, 0.92, 0.80, 0.92))
+		terminal_input.add_theme_color_override("caret_color", Color(1.0, 0.96, 0.88, 1.0) if fabrication_mode else Color(0.96, 1.0, 0.98, 1.0))
+		terminal_input.add_theme_constant_override("minimum_character_width", 1)
+		terminal_input.add_theme_font_size_override("font_size", 18)
+		terminal_input.self_modulate = Color(1, 1, 1, 1)
+	for output in [terminal_output, terminal_map_label]:
+		if output == null:
+			continue
+		output.add_theme_color_override("font_color", Color(1.0, 0.90, 0.76, 1.0) if fabrication_mode else Color(0.82, 0.92, 0.88, 1.0))
+		if output is RichTextLabel:
+			output.add_theme_color_override("selection_color", Color(0.98, 0.72, 0.28, 0.92) if fabrication_mode else Color(0.68, 0.92, 0.80, 0.92))
+	if terminal_background and fabrication_mode:
+		terminal_background.modulate = Color(1.0, 0.92, 0.72, 1.0)
+	elif terminal_background:
+		terminal_background.modulate = Color(1, 1, 1, 1)
+	if terminal_widget_stack:
+		var widget_panel_style := StyleBoxFlat.new()
+		widget_panel_style.bg_color = Color(0.045, 0.028, 0.010, 0.99) if fabrication_mode else Color(0.012, 0.02, 0.024, 0.99)
+		widget_panel_style.border_color = Color(0.92, 0.66, 0.32, 1.0) if fabrication_mode else Color(0.18, 0.3, 0.28, 1.0)
+		widget_panel_style.set_border_width_all(1)
+		widget_panel_style.set_corner_radius_all(6)
+		for panel in terminal_widget_stack.find_children("*", "PanelContainer", true, false):
+			panel.add_theme_stylebox_override("panel", widget_panel_style)
+		for rich_text in terminal_widget_stack.find_children("*", "RichTextLabel", true, false):
+			rich_text.add_theme_color_override("font_color", Color(1.0, 0.90, 0.76, 1.0) if fabrication_mode else Color(0.82, 0.92, 0.88, 1.0))
+			rich_text.add_theme_font_size_override("font_size", 13)
+			rich_text.fit_content = false
+			rich_text.scroll_active = true
+			rich_text.scroll_following = true
+			rich_text.bbcode_enabled = true
+		for label in terminal_widget_stack.find_children("*", "Label", true, false):
+			label.add_theme_color_override("font_color", Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
+			label.add_theme_font_size_override("font_size", 11)
 
 
 func _refresh_terminal_page_buttons() -> void:
@@ -2201,6 +2340,9 @@ func _render_terminal_page(context: Dictionary) -> String:
 		"SETTINGS":
 			_render_terminal_settings_widgets()
 			return "TERMINAL SETTINGS // CURRENT LIVE-SHELL CONTROLS"
+		"FABRICATION":
+			_render_terminal_fabrication_widgets()
+			return "FABRICATION SHELL // RESOURCES, RECIPES, BUILD TOKENS"
 		_:
 			return "TACTICAL SUMMARY // LIVE CONTRACT SNAPSHOT"
 
@@ -2218,7 +2360,8 @@ func _set_terminal_widget_mode(page_name: String) -> void:
 	var show_history := page_name == "HISTORY"
 	var show_status := page_name == "STATUS"
 	var show_settings := page_name == "SETTINGS"
-	var using_widgets := show_overview or show_sectors or show_power or show_defense or show_sensors or show_incidents or show_archive or show_recon or show_contracts or show_history or show_status or show_settings
+	var show_fabrication := page_name == "FABRICATION"
+	var using_widgets := show_overview or show_sectors or show_power or show_defense or show_sensors or show_incidents or show_archive or show_recon or show_contracts or show_history or show_status or show_settings or show_fabrication
 	if terminal_widget_stack:
 		terminal_widget_stack.visible = using_widgets
 	if terminal_overview_widgets:
@@ -2244,7 +2387,7 @@ func _set_terminal_widget_mode(page_name: String) -> void:
 	if terminal_status_widgets:
 		terminal_status_widgets.visible = show_status
 	if terminal_settings_widgets:
-		terminal_settings_widgets.visible = show_settings
+		terminal_settings_widgets.visible = show_settings or show_fabrication
 	if terminal_map_label:
 		terminal_map_label.visible = not using_widgets
 
@@ -2539,13 +2682,93 @@ func _render_terminal_settings_widgets() -> void:
 		"MODE            KEYBOARD-FIRST",
 		"COMMAND LINE    FOCUS LOCK",
 		"CONFIRMATIONS   STANDARD",
-		"FAB QUEUE       %s" % (", ".join(_terminal_fabrication_queue) if not _terminal_fabrication_queue.is_empty() else "EMPTY"),
+		"FAB PAGE        USE FABRICATION",
 	]))
 	_set_terminal_rich_text(terminal_settings_map_body, "\n".join([
 		"PLANET DRAG     ENABLED",
 		"TACTICAL INPUT  ENABLED",
 		"OVERLAYS        MANUAL",
 	]))
+
+
+func _render_terminal_fabrication_widgets() -> void:
+	var ledger := get_node_or_null("/root/ResourceLedger")
+	var build_inventory := get_node_or_null("/root/BuildInventory")
+	var fab_pipeline := get_node_or_null("/root/FabPipeline")
+	if ledger == null or build_inventory == null or fab_pipeline == null:
+		_set_terminal_rich_text(terminal_settings_display_body, "FABRICATION SYSTEM OFFLINE")
+		_set_terminal_rich_text(terminal_settings_input_body, "RESOURCE LEDGER OR PIPELINE MISSING")
+		_set_terminal_rich_text(terminal_settings_map_body, "CHECK AUTLOAD REGISTRATION")
+		return
+
+	var resources: Dictionary = ledger.call("get_snapshot")
+	var build_tokens: Dictionary = build_inventory.call("get_snapshot")
+	var jobs: Array = fab_pipeline.call("get_jobs_snapshot")
+	var recipes: Dictionary = fab_pipeline.call("get_all_recipes")
+
+	var resource_lines: Array[String] = [
+		"RESOURCE LEDGER",
+		"---------------",
+	]
+	for resource_id in resources.keys():
+		resource_lines.append(_terminal_kv(str(resource_id).to_upper(), resources[resource_id]))
+	if resource_lines.size() == 2:
+		resource_lines.append("NO RESOURCES TRACKED")
+	resource_lines.append("")
+	resource_lines.append("BUILD TOKENS")
+	resource_lines.append("------------")
+	for token_id in build_tokens.keys():
+		resource_lines.append(_terminal_kv(str(token_id).to_upper(), build_tokens[token_id]))
+	if build_tokens.is_empty():
+		resource_lines.append("NO BUILD TOKENS")
+	_set_terminal_rich_text(terminal_settings_display_body, "\n".join(resource_lines))
+
+	var command_lines: Array[String] = [
+		"FAB COMMANDS",
+		"------------",
+		"FAB STATUS",
+		"FAB RECIPES",
+		"FAB GRANT [RESOURCE AMOUNT]",
+		"FAB START <RECIPE_ID>",
+		"GOTO SETTINGS",
+	]
+	command_lines.append("")
+	command_lines.append("JOBS")
+	command_lines.append("----")
+	if jobs.is_empty():
+		command_lines.append("NO ACTIVE JOBS")
+	else:
+		for job_variant in jobs:
+			if not (job_variant is Dictionary):
+				continue
+			var job: Dictionary = job_variant
+			command_lines.append("#%d %s %.0f%%" % [
+				int(job.get("job_id", 0)),
+				str(job.get("recipe_id", "")).to_upper(),
+				float(job.get("progress", 0.0)) * 100.0,
+			])
+	_set_terminal_rich_text(terminal_settings_input_body, "\n".join(command_lines))
+
+	var recipe_lines: Array[String] = [
+		"RECIPES",
+		"-------",
+	]
+	for recipe_id in recipes.keys():
+		var recipe: Dictionary = recipes[recipe_id]
+		var cost: Dictionary = recipe.get("cost", {})
+		var cost_parts: Array[String] = []
+		for resource_id in cost.keys():
+			cost_parts.append("%s=%s" % [str(resource_id).to_upper(), str(cost[resource_id])])
+		var cost_text := ", ".join(cost_parts) if not cost_parts.is_empty() else "FREE"
+		recipe_lines.append("%s | %s | %ss | %s" % [
+			str(recipe_id).to_upper(),
+			str(recipe.get("label", recipe_id)),
+			str(recipe.get("build_seconds", 0.0)),
+			cost_text,
+		])
+	if recipes.is_empty():
+		recipe_lines.append("NO RECIPES LOADED")
+	_set_terminal_rich_text(terminal_settings_map_body, "\n".join(recipe_lines))
 
 
 func _render_terminal_main_content(snapshot: Dictionary) -> void:
@@ -2558,8 +2781,18 @@ func _render_terminal_main_content(snapshot: Dictionary) -> void:
 		terminal_planet_title_label.text = "PLANET CONTRACT // SURFACE GLOBE"
 	if terminal_map_preview_title_label:
 		terminal_map_preview_title_label.text = "TACTICAL FEED // LIVE MINIMAP"
+	if terminal_page_summary_label:
+		terminal_page_summary_label.text = "FABRICATION PAGE // LIVE PIPELINE" if _terminal_current_page == "FABRICATION" else "TACTICAL PAGE // LIVE CONTRACT"
 	if terminal_command_title:
-		terminal_command_title.text = "TRANSCRIPT"
+		terminal_command_title.text = "FABRICATION CONTROL" if _terminal_current_page == "FABRICATION" else "TRANSCRIPT"
+	if terminal_nav_title:
+		terminal_nav_title.text = "FAB SHELL" if _terminal_current_page == "FABRICATION" else "NAVIGATION"
+	if terminal_action_title:
+		terminal_action_title.text = "FAB ACTIONS" if _terminal_current_page == "FABRICATION" else "ACTIONS"
+	if terminal_header_eyebrow:
+		terminal_header_eyebrow.text = "FABRICATION TERMINAL" if _terminal_current_page == "FABRICATION" else "CUSTODIAN NODE"
+	if terminal_title_label:
+		terminal_title_label.text = "FABRICATION" if _terminal_current_page == "FABRICATION" else "CUSTODIAN INTERFACE"
 	if terminal_planet_preview:
 		terminal_planet_preview.visible = _terminal_current_page in ["OVERVIEW", "STATUS", "CONTRACTS", "ARCHIVE"]
 	if terminal_planet_title_label:
@@ -2713,10 +2946,14 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 		_append_terminal_line("SECTORS: shows power tier, effective output, and priority.", "info")
 		_append_terminal_line("REROUTE POWER sector=<NAME> priority=CRITICAL|HIGH|MEDIUM|LOW", "info")
 		return true
+	if cmd_upper == "HELP FABRICATION":
+		_append_terminal_line("FABRICATION PAGE: FAB STATUS, FAB RECIPES, FAB GRANT, FAB START <RECIPE_ID>", "info")
+		_append_terminal_line("SET FAB opens the fabrication shell.", "info")
+		return true
 
 	match verb:
 		"HELP":
-			_append_terminal_line("LOCAL COMMANDS: HELP STATUS PREP ENEMIES WAVE SECTORS CONTRACT PLANET MAP START ASSAULT WALL TURRET REROUTE CLEAR OVERLAY RESET REBOOT", "info")
+			_append_terminal_line("LOCAL COMMANDS: HELP STATUS PREP ENEMIES WAVE SECTORS CONTRACT PLANET MAP START ASSAULT WALL TURRET REROUTE CLEAR OVERLAY RESET REBOOT FABRICATION", "info")
 			_append_terminal_line("ACTIONS: WAIT | WAIT 10X | GOTO <PAGE> | HARDEN <SECTOR> | FOCUS <TARGET>", "info")
 			_append_terminal_line("LIVE CONTROL: ALLOCATE_DEFENSE sector=COMMAND weight=HIGH | DEPLOY turret_sniper sector=COMMAND | REPAIR COMMAND", "info")
 			return true
@@ -3119,7 +3356,7 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 			return true
 		"SET":
 			if not args.is_empty() and str(args[0]).to_upper() == "FAB":
-				_set_terminal_page("SETTINGS")
+				_set_terminal_page("FABRICATION")
 				var fab_profile := str(args[1]).to_upper() if args.size() > 1 else "STANDARD"
 				_append_terminal_line("FAB PROFILE SET -> %s" % fab_profile, "success")
 				return true
@@ -3129,27 +3366,106 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 			var fab_action := str(args[0]).to_upper() if not args.is_empty() else "QUEUE"
 			var fab_payload := " ".join(args.slice(1, args.size()))
 			match fab_action:
-				"ADD":
-					if fab_payload.is_empty():
-						_append_terminal_line("FAB ADD REQUIRES AN ITEM NAME", "warning")
+				"STATUS":
+					_set_terminal_page("FABRICATION")
+					_refresh_snapshot()
+					_append_terminal_line("FAB STATUS REFRESHED", "success")
+				"RECIPES":
+					_set_terminal_page("FABRICATION")
+					var fab_pipeline := get_node_or_null("/root/FabPipeline")
+					if fab_pipeline == null:
+						_append_terminal_line("FAB PIPELINE UNAVAILABLE", "warning")
 						return true
-					_terminal_fabrication_queue.append(fab_payload)
-					_set_terminal_page("SETTINGS")
-					_append_terminal_line("FAB QUEUE ADD -> %s" % fab_payload, "success")
+					var recipes: Dictionary = fab_pipeline.call("get_all_recipes")
+					if recipes.is_empty():
+						_append_terminal_line("NO FAB RECIPES LOADED", "warning")
+						return true
+					for recipe_id in recipes.keys():
+						var recipe: Dictionary = recipes[recipe_id]
+						var cost: Dictionary = recipe.get("cost", {})
+						var cost_parts: Array[String] = []
+						for resource_id in cost.keys():
+							cost_parts.append("%s=%s" % [str(resource_id).to_upper(), str(cost[resource_id])])
+						_append_terminal_line("%s | %s | %.1fs | %s" % [
+							str(recipe_id).to_upper(),
+							str(recipe.get("label", recipe_id)),
+							float(recipe.get("build_seconds", 0.0)),
+							", ".join(cost_parts) if not cost_parts.is_empty() else "FREE",
+						], "info")
 				"QUEUE":
-					_set_terminal_page("SETTINGS")
-					_append_terminal_line("FAB QUEUE: %s" % (", ".join(_terminal_fabrication_queue) if not _terminal_fabrication_queue.is_empty() else "EMPTY"), "info")
-				"CANCEL":
-					if _terminal_fabrication_queue.is_empty():
-						_append_terminal_line("FAB QUEUE ALREADY EMPTY", "warning")
+					_set_terminal_page("FABRICATION")
+					var fab_pipeline := get_node_or_null("/root/FabPipeline")
+					if fab_pipeline == null:
+						_append_terminal_line("FAB PIPELINE UNAVAILABLE", "warning")
+						return true
+					var jobs: Array = fab_pipeline.call("get_jobs_snapshot")
+					if jobs.is_empty():
+						_append_terminal_line("FAB JOBS: EMPTY", "info")
 					else:
-						var cancelled: String = str(_terminal_fabrication_queue.pop_back())
-						_append_terminal_line("FAB CANCELLED -> %s" % cancelled, "success")
+						for job_variant in jobs:
+							if not (job_variant is Dictionary):
+								continue
+							var job: Dictionary = job_variant
+							_append_terminal_line("#%d %s %.0f%%" % [
+								int(job.get("job_id", 0)),
+								str(job.get("recipe_id", "")).to_upper(),
+								float(job.get("progress", 0.0)) * 100.0,
+							], "info")
+				"CANCEL":
+					var cancel_pipeline := get_node_or_null("/root/FabPipeline")
+					if cancel_pipeline == null:
+						_append_terminal_line("FAB PIPELINE UNAVAILABLE", "warning")
+						return true
+					cancel_pipeline.call("clear_jobs")
+					_set_terminal_page("FABRICATION")
+					_append_terminal_line("FAB JOBS CLEARED", "success")
 				"PRIORITY":
-					_set_terminal_page("SETTINGS")
+					_set_terminal_page("FABRICATION")
 					_append_terminal_line("FAB PRIORITY -> %s" % (fab_payload if not fab_payload.is_empty() else "STANDARD"), "success")
+				"GRANT":
+					var fab_ledger := get_node_or_null("/root/ResourceLedger")
+					if fab_ledger == null:
+						_append_terminal_line("RESOURCE LEDGER UNAVAILABLE", "warning")
+						return true
+					if args.size() >= 3:
+						var resource_id := str(args[1]).strip_edges()
+						var amount := int(str(args[2]))
+						if resource_id.is_empty() or amount <= 0:
+							_append_terminal_line("USE: FAB GRANT <RESOURCE> <AMOUNT>", "warning")
+							return true
+						fab_ledger.call("add", resource_id, amount)
+						_set_terminal_page("FABRICATION")
+						_append_terminal_line("GRANTED %d %s" % [amount, resource_id.to_upper()], "success")
+						_refresh_snapshot()
+						return true
+					fab_ledger.call("debug_grant")
+					_set_terminal_page("FABRICATION")
+					_append_terminal_line("STARTER FAB RESOURCES GRANTED", "success")
+					_refresh_snapshot()
+					return true
+				"START":
+					if fab_payload.is_empty():
+						_append_terminal_line("USE: FAB START <RECIPE_ID>", "warning")
+						return true
+					var start_pipeline := get_node_or_null("/root/FabPipeline")
+					if start_pipeline == null:
+						_append_terminal_line("FAB PIPELINE UNAVAILABLE", "warning")
+						return true
+					if not bool(start_pipeline.call("has_recipe", fab_payload)):
+						_append_terminal_line("UNKNOWN RECIPE %s" % fab_payload.to_upper(), "warning")
+						return true
+					if not bool(start_pipeline.call("can_start_recipe", fab_payload)):
+						_append_terminal_line("CANNOT START %s // INSUFFICIENT RESOURCES" % fab_payload.to_upper(), "warning")
+						return true
+					if bool(start_pipeline.call("try_start_recipe", fab_payload)):
+						_set_terminal_page("FABRICATION")
+						_append_terminal_line("FAB JOB STARTED -> %s" % fab_payload.to_upper(), "success")
+						_refresh_snapshot()
+						return true
+					_append_terminal_line("FAB START FAILED -> %s" % fab_payload.to_upper(), "warning")
 				_:
-					_append_terminal_line("UNKNOWN FAB COMMAND", "warning")
+					_set_terminal_page("FABRICATION")
+					_append_terminal_line("FAB COMMANDS: STATUS | RECIPES | GRANT | START | QUEUE | CANCEL", "info")
 			return true
 		"SCAVENGE":
 			var salvage_gain := 5

@@ -1,9 +1,13 @@
 extends Area2D
 class_name PortalTeleporter
 
-const PORTAL_IDLE_SHEET := preload("res://content/sprites/effects/runtime/portal_ring/portal_ring__fx__teleport__idle_01__omni__6f__161.png")
-const PORTAL_ACTIVATE_SHEET := preload("res://content/sprites/effects/runtime/portal_ring/portal_ring__fx__teleport__activate_01__omni__12f__161.png")
-const PORTAL_ARRIVAL_SHEET := preload("res://content/sprites/effects/runtime/portal_ring/portal_ring__fx__teleport__arrival_01__omni__6f__161.png")
+const PORTAL_IDLE_SHEET := preload("res://content/sprites/environment/props/portal_ring/runtime/fx/portal_ring__fx__interaction__idle_01__omni__6f__161.png")
+const PORTAL_ACTIVATE_SHEET := preload("res://content/sprites/environment/props/portal_ring/runtime/fx/portal_ring__fx__interaction__activate_01__omni__12f__161.png")
+const PORTAL_ARRIVAL_SHEET := preload("res://content/sprites/environment/props/portal_ring/runtime/fx/portal_ring__fx__interaction__arrival_01__omni__12f__161.png")
+
+const PORTAL_IDLE_FRAME_COUNT := 6
+const PORTAL_ACTIVATE_FRAME_COUNT := 12
+const PORTAL_ARRIVAL_FRAME_COUNT := 12
 
 @export var trigger_radius: float = 14.0
 @export var arrival_offset: Vector2 = Vector2(0, 34)
@@ -112,9 +116,9 @@ func _ensure_collision_shape() -> void:
 
 func _ensure_fx_sprites() -> void:
 	var frames := SpriteFrames.new()
-	_add_strip_animation(frames, &"idle", PORTAL_IDLE_SHEET, 6, idle_fps, true)
-	_add_strip_animation(frames, &"activate", PORTAL_ACTIVATE_SHEET, 12, activate_fps, false)
-	_add_strip_animation(frames, &"arrival", PORTAL_ARRIVAL_SHEET, 6, arrival_fps, false)
+	_add_strip_animation(frames, &"idle", PORTAL_IDLE_SHEET, PORTAL_IDLE_FRAME_COUNT, idle_fps, true)
+	_add_strip_animation(frames, &"activate", PORTAL_ACTIVATE_SHEET, PORTAL_ACTIVATE_FRAME_COUNT, activate_fps, false)
+	_add_strip_animation(frames, &"arrival", PORTAL_ARRIVAL_SHEET, PORTAL_ARRIVAL_FRAME_COUNT, arrival_fps, false)
 
 	_idle_sprite = get_node_or_null("PortalIdleFx") as AnimatedSprite2D
 	if _idle_sprite == null:

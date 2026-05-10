@@ -6,11 +6,19 @@ signal resource_spent(cost: Dictionary)
 
 @export var resource_defs_path: String = "res://content/resources/resource_defs.json"
 
+const CANONICAL_RESOURCE_IDS := ["timber", "ore", "scrap", "power_components"]
+const RESOURCE_ALIASES := {
+	"blackwood": "timber",
+	"structural_alloy": "ore",
+	"ruin_scrap": "scrap",
+}
+
 var _resources: Dictionary = {}
 var _resource_defs: Dictionary = {}
 
 
 func _ready() -> void:
+	_reset_known_resources()
 	load_resource_defs()
 
 
@@ -19,7 +27,7 @@ func load_resource_defs() -> void:
 
 
 func get_amount(resource_id: String) -> int:
-	return int(_resources.get(resource_id, 0))
+	return int(_resources.get(_normalize_resource_id(resource_id), 0))
 
 
 func get_snapshot() -> Dictionary:
@@ -34,17 +42,22 @@ func add(resource_id: String, amount: int) -> void:
 	if amount <= 0 or resource_id.is_empty():
 		return
 
-	var new_total := get_amount(resource_id) + amount
-	_resources[resource_id] = new_total
+	var normalized_resource_id := _normalize_resource_id(resource_id)
+	if normalized_resource_id.is_empty():
+		return
 
-	resource_added.emit(resource_id, amount, new_total)
+	var new_total := get_amount(normalized_resource_id) + amount
+	_resources[normalized_resource_id] = new_total
+
+	resource_added.emit(normalized_resource_id, amount, new_total)
 	changed.emit(get_snapshot())
 
 
 func can_pay(cost: Dictionary) -> bool:
-	for resource_id_variant in cost.keys():
+	var normalized_cost := _normalize_cost(cost)
+	for resource_id_variant in normalized_cost.keys():
 		var resource_id := str(resource_id_variant)
-		var amount := int(cost[resource_id_variant])
+		var amount := int(normalized_cost[resource_id])
 		if amount < 0:
 			return false
 		if get_amount(resource_id) < amount:
@@ -53,20 +66,21 @@ func can_pay(cost: Dictionary) -> bool:
 
 
 func pay(cost: Dictionary) -> bool:
-	if not can_pay(cost):
+	var normalized_cost := _normalize_cost(cost)
+	if not can_pay(normalized_cost):
 		return false
 
-	for resource_id_variant in cost.keys():
+	for resource_id_variant in normalized_cost.keys():
 		var resource_id := str(resource_id_variant)
-		_resources[resource_id] = get_amount(resource_id) - int(cost[resource_id_variant])
+		_resources[resource_id] = get_amount(resource_id) - int(normalized_cost[resource_id])
 
-	resource_spent.emit(cost.duplicate(true))
+	resource_spent.emit(normalized_cost.duplicate(true))
 	changed.emit(get_snapshot())
 	return true
 
 
 func clear() -> void:
-	_resources.clear()
+	_reset_known_resources()
 	changed.emit(get_snapshot())
 
 
@@ -85,6 +99,34 @@ func debug_grant(resources: Dictionary = {}) -> void:
 		}
 	for resource_id_variant in grant.keys():
 		add(str(resource_id_variant), int(grant[resource_id_variant]))
+
+
+func _reset_known_resources() -> void:
+	_resources.clear()
+	for resource_id in CANONICAL_RESOURCE_IDS:
+		_resources[resource_id] = 0
+
+
+func _normalize_resource_id(resource_id: String) -> String:
+	if resource_id.is_empty():
+		return ""
+	if CANONICAL_RESOURCE_IDS.has(resource_id):
+		return resource_id
+	return str(RESOURCE_ALIASES.get(resource_id, resource_id))
+
+
+func _normalize_cost(cost: Dictionary) -> Dictionary:
+	var normalized: Dictionary = {}
+	if cost.is_empty():
+		return normalized
+
+	for resource_id_variant in cost.keys():
+		var resource_id := _normalize_resource_id(str(resource_id_variant))
+		if resource_id.is_empty():
+			continue
+		var amount := int(cost[resource_id_variant])
+		normalized[resource_id] = int(normalized.get(resource_id, 0)) + amount
+	return normalized
 
 
 func _load_json_dictionary(path: String) -> Dictionary:

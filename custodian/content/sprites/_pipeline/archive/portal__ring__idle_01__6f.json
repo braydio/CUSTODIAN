@@ -1,0 +1,17 @@
+{
+	"source": "portal__ring__idle_01__6f.png",
+	"mode": "strip",
+	"frame_size": [161, 98],
+	"outputs": [
+		{
+			"path": "environment/props/portal_ring/runtime/fx/portal_ring__fx__interaction__idle_01__omni__6f__161.png",
+			"layout": "horizontal_strip",
+			"select": {"type": "range", "start": 0, "count": 6}
+		},
+		{
+			"path": "effects/runtime/portal_ring/portal_ring__fx__teleport__idle_01__omni__6f__161.png",
+			"layout": "horizontal_strip",
+			"select": {"type": "range", "start": 0, "count": 6}
+		}
+	]
+}

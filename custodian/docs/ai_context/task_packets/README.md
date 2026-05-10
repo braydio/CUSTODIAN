@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-05-08
+Last updated: 2026-05-10
 
 Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
 
@@ -36,6 +36,10 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `FAB_PIPELINE_V1.md` - completed packet for the first build-token-first resource/fabrication runtime spine.
 - `FAB_DEBUG_COMMANDS_V1.md` - completed packet for DevConsole fabrication status, recipe, grant, and start commands.
 - `FAB_BUILD_TOKEN_TURRET_PLACEMENT.md` - completed packet for mapping completed `turret_basic` build tokens to existing gunner turret placement.
+- `FABRICATION_RUNTIME_WIRING.md` - completed packet for restoring the missing fabrication JSON and aliasing live harvest resources into the canonical fab economy.
+- `FAB_TERMINAL_PAGE.md` - completed packet for the dedicated fabrication-only HUD terminal page and command routing.
+- `FAB_TERMINAL_DEPLOYABLE.md` - in-progress packet for pickup/redeploy behavior on the in-world fabrication terminal.
+- `FAB_TERMINAL_DEPLOYABLE.md` - in-progress packet for pickup/redeploy behavior on the in-world fabrication terminal.
 - `INDOOR_OUTDOOR_PROCGEN_REGIONS.md` - completed runtime packet for the first region-aware indoor/outdoor procgen slice.
 - `INTERIOR_TILE_ART_WIRING.md` - completed packet for organizing interior tile art and wiring constructed procgen regions to the new tile family.
 - `KNIGHT_OPERATOR_TEST_SKIN.md` - completed packet for the DevConsole-toggleable Knight operator test skin.
@@ -54,6 +58,7 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `PORTAL_CENTER_TRIGGER_AND_ANIMATION.md` - completed packet for tightening portal activation to the center and defining portal animation asset needs.
 - `PORTAL_AND_MOVING_ATTACK_SPRITE_INGEST.md` - completed packet for ingesting portal teleport FX and moving attack layer sheets.
 - `PORTAL_FX_PLAYBACK_WIRING.md` - completed packet for wiring portal idle, activation, and arrival FX playback.
+- `PORTAL_PROP_SPRITE_REINGEST.md` - completed packet for reingesting portal-ring FX into canonical environment prop runtime paths.
 - `PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` - completed packet for adding `--top-source` preprocessing support to the wall atlas builder.
 - `RANGED_PHYSICS_ALIGNMENT.md` - completed packet for ranged muzzle obstruction, swept projectile movement, and temporary stance-band socket rotation clamps.
 - `RESOURCE_NODE_HARVESTING_V1.md` - completed packet for first hand-placed interactable resource nodes feeding `ResourceLedger`.

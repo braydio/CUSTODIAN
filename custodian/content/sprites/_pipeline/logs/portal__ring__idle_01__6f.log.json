@@ -1,0 +1,10 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/portal__ring__idle_01__6f.json",
+	"outputs": [
+		"res://content/sprites/environment/props/portal_ring/runtime/fx/portal_ring__fx__interaction__idle_01__omni__6f__161.png",
+		"res://content/sprites/effects/runtime/portal_ring/portal_ring__fx__teleport__idle_01__omni__6f__161.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/portal__ring__idle_01__6f.png",
+	"timestamp_utc": "2026-05-09 20:47:37"
+}

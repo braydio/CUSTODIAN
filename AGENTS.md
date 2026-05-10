@@ -2,6 +2,11 @@
 
 Repository-level guidance for CUSTODIAN (post-Godot pivot).
 
+**CRITICAL:**
+ 
+    *Note - FROM Brayden: Please help me stay on task by ending each message or run by stating what we are currently focused on, what the last session comppletede (brief -- 1 sentence or so) and the next items we will be working on or that I need to do
+
+
 ## Mandatory Local Routing
 
 - Any work inside `custodian/` must start with `custodian/AGENTS.md`.

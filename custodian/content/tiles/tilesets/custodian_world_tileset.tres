@@ -1,9 +1,9 @@
 [gd_resource type="TileSet" format=3 uid="uid://cta2wn25785pf"]
 
-[ext_resource type="Texture2D" path="res://content/tiles/source/placeholder-tileset/0x72_DungeonTilesetII_v1.7/atlas_floor-16x16.png" id="1_floor"]
-[ext_resource type="Texture2D" path="res://content/tiles/source/placeholder-tileset/0x72_DungeonTilesetII_v1.7/atlas_walls_low-16x16.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bo1n04u8gjmtm" path="res://content/tiles/source/placeholder-tileset/0x72_DungeonTilesetII_v1.7/atlas_floor-16x16.png" id="1_floor"]
+[ext_resource type="Texture2D" uid="uid://dgkepltqkyl7u" path="res://content/tiles/source/placeholder-tileset/0x72_DungeonTilesetII_v1.7/atlas_walls_low-16x16.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://ok00m7x12cod" path="res://content/sprites/additional-charsets/Texture/TX Tileset Stone Ground.png" id="2_odq1l"]
-[ext_resource type="Texture2D" path="res://content/tiles/source/placeholder-tileset/0x72_DungeonTilesetII_v1.7/atlas_walls_high-16x32.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://c4cc3cicumtic" path="res://content/tiles/source/placeholder-tileset/0x72_DungeonTilesetII_v1.7/atlas_walls_high-16x32.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://drrom8ydkea2r" path="res://content/sprites/additional-charsets/Texture/TX Tileset Wall.png" id="3_qc53y"]
 [ext_resource type="Texture2D" uid="uid://dgwir0u8c16bk" path="res://content/sprites/additional-charsets/Texture/TX Plant.png" id="5_jjgqu"]
 [ext_resource type="Texture2D" uid="uid://cmo4dkrj1fyal" path="res://content/sprites/additional-charsets/Texture/TX Player.png" id="6_h74cr"]
@@ -13,17 +13,15 @@
 [ext_resource type="Texture2D" uid="uid://cu4qbyhbmvyof" path="res://content/sprites/additional-charsets/Texture/TX Struct.png" id="10_uwn5h"]
 [ext_resource type="Texture2D" uid="uid://2mi1no5gbls4" path="res://content/sprites/additional-charsets/Texture/TX Tileset Grass.png" id="11_b3ept"]
 [ext_resource type="Texture2D" uid="uid://ynl0dotgprii" path="res://content/tiles/walls/generated/procgen_wall_tiles_32.png" id="12_procgen_wall"]
-[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/wall_military_32.png" id="16_interior_wall_military"]
-[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/wall_military_corner_32.png" id="17_interior_wall_corner"]
-
-[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_concrete_01_32.png" id="18_interior_floor_concrete_01_32"]
-[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_concrete_02_32.png" id="19_interior_floor_concrete_02_32"]
-[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_concrete_03_32.png" id="20_interior_floor_concrete_03_32"]
-[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_concrete_04_32.png" id="21_interior_floor_concrete_04_32"]
-[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_concrete_05_32.png" id="22_interior_floor_concrete_05_32"]
-[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_concrete_06_32.png" id="23_interior_floor_concrete_06_32"]
-
-[ext_resource type="Texture2D" path="res://content/tiles/interiors/runtime/floor_panel_32.png" id="25_interior_floor_panel_32"]
+[ext_resource type="Texture2D" uid="uid://bhqodrke8woqn" path="res://content/tiles/interiors/runtime/wall_military_32.png" id="16_interior_wall_military"]
+[ext_resource type="Texture2D" uid="uid://b7x1todkk8wk5" path="res://content/tiles/interiors/runtime/wall_military_corner_32.png" id="17_interior_wall_corner"]
+[ext_resource type="Texture2D" uid="uid://b4aflkmxdahtm" path="res://content/tiles/interiors/runtime/floor_concrete_01_32.png" id="18_interior_floor_concrete_01_32"]
+[ext_resource type="Texture2D" uid="uid://bwbomlqovynyj" path="res://content/tiles/interiors/runtime/floor_concrete_02_32.png" id="19_interior_floor_concrete_02_32"]
+[ext_resource type="Texture2D" uid="uid://bsfl73emk1o00" path="res://content/tiles/interiors/runtime/floor_concrete_03_32.png" id="20_interior_floor_concrete_03_32"]
+[ext_resource type="Texture2D" uid="uid://bjhu3fn2yld8o" path="res://content/tiles/interiors/runtime/floor_concrete_04_32.png" id="21_interior_floor_concrete_04_32"]
+[ext_resource type="Texture2D" uid="uid://bm3hp2p0tgi6a" path="res://content/tiles/interiors/runtime/floor_concrete_05_32.png" id="22_interior_floor_concrete_05_32"]
+[ext_resource type="Texture2D" uid="uid://6ris1x6gvvpi" path="res://content/tiles/interiors/runtime/floor_concrete_06_32.png" id="23_interior_floor_concrete_06_32"]
+[ext_resource type="Texture2D" uid="uid://dvnmos4hmypij" path="res://content/tiles/interiors/runtime/floor_panel_32.png" id="25_interior_floor_panel_32"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_floor"]
 texture = ExtResource("1_floor")
@@ -331,6 +329,26 @@ texture_region_size = Vector2i(32, 32)
 12:5/0 = 0
 13:5/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_wall_military"]
+texture = ExtResource("16_interior_wall_military")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_wall_corner"]
+texture = ExtResource("17_interior_wall_corner")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_01_32"]
+texture = ExtResource("18_interior_floor_concrete_01_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_02_32"]
+texture = ExtResource("19_interior_floor_concrete_02_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_walls_high"]
 texture = ExtResource("3")
 texture_region_size = Vector2i(16, 32)
@@ -384,6 +402,31 @@ texture_region_size = Vector2i(16, 32)
 0:3/0 = 0
 12:3/0 = 0
 13:3/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_03_32"]
+texture = ExtResource("20_interior_floor_concrete_03_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_04_32"]
+texture = ExtResource("21_interior_floor_concrete_04_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_05_32"]
+texture = ExtResource("22_interior_floor_concrete_05_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_06_32"]
+texture = ExtResource("23_interior_floor_concrete_06_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_panel_32"]
+texture = ExtResource("25_interior_floor_panel_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ufmbm"]
 texture = ExtResource("5_jjgqu")
@@ -485,51 +528,6 @@ texture_region_size = Vector2i(32, 32)
 7:5/0 = 0
 7:6/0 = 0
 7:7/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_wall_military"]
-texture = ExtResource("16_interior_wall_military")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_wall_corner"]
-texture = ExtResource("17_interior_wall_corner")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_01_32"]
-texture = ExtResource("18_interior_floor_concrete_01_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_02_32"]
-texture = ExtResource("19_interior_floor_concrete_02_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_03_32"]
-texture = ExtResource("20_interior_floor_concrete_03_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_04_32"]
-texture = ExtResource("21_interior_floor_concrete_04_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_05_32"]
-texture = ExtResource("22_interior_floor_concrete_05_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_concrete_06_32"]
-texture = ExtResource("23_interior_floor_concrete_06_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_interior_floor_panel_32"]
-texture = ExtResource("25_interior_floor_panel_32")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
 
 [resource]
 sources/0 = SubResource("TileSetAtlasSource_floor")

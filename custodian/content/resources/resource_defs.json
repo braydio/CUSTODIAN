@@ -1,0 +1,18 @@
+{
+	"timber": {
+		"label": "Timber",
+		"description": "Petrified root mass and deadfall suitable for crude structures."
+	},
+	"ore": {
+		"label": "Raw Ore",
+		"description": "Exposed metal-bearing deposits and ruin-veins."
+	},
+	"scrap": {
+		"label": "Scrap",
+		"description": "Generic fabrication feedstock recovered from wreckage."
+	},
+	"power_components": {
+		"label": "Power Components",
+		"description": "Rare salvage used for powered systems and fabricator upgrades."
+	}
+}

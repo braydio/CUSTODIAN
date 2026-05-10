@@ -1,0 +1,40 @@
+{
+	"barricade_light": {
+		"label": "Light Barricade",
+		"category": "structure",
+		"cost": {
+			"timber": 10,
+			"scrap": 4
+		},
+		"build_seconds": 4.0,
+		"output_type": "build_token",
+		"output_id": "barricade_light",
+		"output_amount": 1
+	},
+	"turret_basic": {
+		"label": "Basic Turret",
+		"category": "defense",
+		"cost": {
+			"ore": 8,
+			"scrap": 25,
+			"power_components": 1
+		},
+		"build_seconds": 7.5,
+		"output_type": "build_token",
+		"output_id": "turret_basic",
+		"output_amount": 1
+	},
+	"power_bank_patch": {
+		"label": "Power Bank Patch",
+		"category": "power",
+		"cost": {
+			"ore": 6,
+			"scrap": 12,
+			"power_components": 2
+		},
+		"build_seconds": 6.0,
+		"output_type": "build_token",
+		"output_id": "power_bank_patch",
+		"output_amount": 1
+	}
+}

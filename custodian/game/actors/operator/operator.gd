@@ -585,6 +585,9 @@ func _process(delta):
 	_handle_reload_input()
 	_update_aim()
 	_update_animation()
+	if Input.is_action_just_pressed("build"):
+		if _try_terminal_deploy_or_pickup():
+			return
 	var is_repairing := false
 	if Input.is_action_pressed("repair"):
 		is_repairing = _try_repair(delta)
@@ -3373,6 +3376,8 @@ func _find_nearest_blueprint() -> Node:
 
 
 func _try_build(delta: float) -> bool:
+	if _is_terminal_carry_active():
+		return false
 	build_target = _find_nearest_blueprint()
 	if build_target == null:
 		return false
@@ -3385,6 +3390,20 @@ func _try_build(delta: float) -> bool:
 		print("Started building: ", build_target.get_wall_type_name())
 		return true
 	return false
+
+
+func _try_terminal_deploy_or_pickup() -> bool:
+	var terminal_deployment := get_node_or_null("/root/GameRoot/World/TerminalDeployment")
+	if terminal_deployment == null or not terminal_deployment.has_method("handle_build_action"):
+		return false
+	return bool(terminal_deployment.call("handle_build_action"))
+
+
+func _is_terminal_carry_active() -> bool:
+	var terminal_deployment := get_node_or_null("/root/GameRoot/World/TerminalDeployment")
+	if terminal_deployment == null or not terminal_deployment.has_method("is_carrying_terminal"):
+		return false
+	return bool(terminal_deployment.call("is_carrying_terminal"))
 
 
 func _handle_interact_input():
