@@ -82,7 +82,7 @@ Last updated: 2026-05-05
 
 - `custodian/game/actors/defense/turret.gd` — turret interaction prompt reads actual interact binding
 - `custodian/game/actors/base/vehicle_base.gd` — vehicle exit prompt reads actual interact binding
-- `custodian/game/actors/terminal/command_terminal.gd` — in-world command terminal interaction and activation/deactivation prop animation
+- `custodian/game/actors/terminal/command_terminal.gd` — in-world `command_terminal` prop interaction and activation/deactivation animation, with fallback compatibility to the older `computer_terminal` sheets
 - `custodian/game/systems/core/systems/terminal_deployment.gd` — deployable terminal pickup/redeploy runtime for the in-world command terminal prop
 - `custodian/docs/TERMINAL_VIEW_LOCAL_MODE.md` — terminal-related runtime doc reference
 

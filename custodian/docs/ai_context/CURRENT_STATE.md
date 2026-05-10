@@ -34,8 +34,9 @@ Last updated: 2026-05-10
 - Terminal pages are widget-backed for `OVERVIEW`, `STATUS`, `SECTORS`, `POWER`, `DEFENSE`, `SENSORS`, `INCIDENTS`, `ARCHIVE`, `RECON`, `CONTRACTS`, `HISTORY`, and `SETTINGS`.
 - The HUD command terminal now also exposes a dedicated `FABRICATION` page with a distinct amber-styled theme, page-specific copy, and live `ResourceLedger` / `FabPipeline` readouts, while still reusing the current terminal source sheets and shell layout.
 - The in-world command terminal is now treated as a deployable prop: build interaction can pick it up, carry it as a ghost, and redeploy it without changing the HUD shell entrypoint.
+- The terminal deploy visual now reuses a dedicated pickup animation sheet, playing forward on pickup and in reverse on redeploy.
 - Terminal usability includes keyboard page/action navigation, transcript link jumps, command echo fallback, auto-following text panes, and a scrollable center content column.
-- The in-world command terminal prop plays open/close visual sequences from `res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__activate__omni__4f__48.png`.
+- The in-world command terminal prop family is now named `command_terminal`, with compatibility fallback to the older `computer_terminal` sheets until the art rename lands.
 - Interaction prompts for turret pickup and vehicle exit now reflect the actual `interact` input binding instead of stale hardcoded keys.
 - A first drivable vehicle slice is now wired into the live scene: `PlayerController` is mounted in `game.tscn`, a `LightBuggy` test vehicle is placed near spawn, and the buggy uses cleaned runtime sheets for both hover idle and horizontal movement.
 - Ambient shrumbs now participate in runtime world interaction: the buggy can launch or squish passive critters on collision depending on speed, and active enemies can attack nearby shrumbs as fallback targets.

@@ -8,7 +8,7 @@ The in-game command terminal now runs in **local snapshot mode** for gameplay wi
 
 - World terminal art plays a short activation sequence before the shell opens.
 - Closing the shell hides the UI immediately, then plays the terminal shutdown sequence after a short delay.
-- World terminal activation art is sourced from `res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__activate__omni__4f__48.png` as a 2x2 sheet of 48x48 frames.
+- World terminal activation art is sourced from `res://content/sprites/environment/props/terminal/runtime/body/command_terminal__body__interaction__activate__omni__4f__48.png` as a 2x2 sheet of 48x48 frames, with fallback to the older `computer_terminal` compatibility sheet while the rename lands.
 - Once open, the shell enters ready state immediately.
 - No HTTP server calls are required.
 - Snapshot data is pulled directly from active runtime nodes.

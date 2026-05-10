@@ -63,6 +63,7 @@ The world terminal can be picked up with the build interaction, carried as a gho
 ## Completion Notes
 
 - Implemented: added a dedicated terminal deployment runtime node, carried-state handling on `CommandTerminal`, and operator build-input routing for pickup/redeploy.
+- Implemented: added a dedicated terminal deployment runtime node, carried-state handling on `CommandTerminal`, and operator build-input routing for pickup/redeploy. The redeploy visual reuses the pickup sheet in reverse.
 - Validated: headless script load check succeeded for `command_terminal.gd`, `terminal_deployment.gd`, and `scenes/game.tscn`.
 - Deferred: dedicated pickup icon / art pass.
 

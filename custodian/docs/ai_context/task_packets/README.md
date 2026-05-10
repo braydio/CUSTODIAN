@@ -39,7 +39,7 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `FABRICATION_RUNTIME_WIRING.md` - completed packet for restoring the missing fabrication JSON and aliasing live harvest resources into the canonical fab economy.
 - `FAB_TERMINAL_PAGE.md` - completed packet for the dedicated fabrication-only HUD terminal page and command routing.
 - `FAB_TERMINAL_DEPLOYABLE.md` - in-progress packet for pickup/redeploy behavior on the in-world fabrication terminal.
-- `FAB_TERMINAL_DEPLOYABLE.md` - in-progress packet for pickup/redeploy behavior on the in-world fabrication terminal.
+- `TERMINAL_NAMING_NORMALIZATION.md` - complete packet for normalizing command_terminal / fabricator_terminal naming in terminal docs and sprite pipeline guidance.
 - `INDOOR_OUTDOOR_PROCGEN_REGIONS.md` - completed runtime packet for the first region-aware indoor/outdoor procgen slice.
 - `INTERIOR_TILE_ART_WIRING.md` - completed packet for organizing interior tile art and wiring constructed procgen regions to the new tile family.
 - `KNIGHT_OPERATOR_TEST_SKIN.md` - completed packet for the DevConsole-toggleable Knight operator test skin.
