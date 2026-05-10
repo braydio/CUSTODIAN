@@ -4,7 +4,7 @@
 **Status:** design
 **Created:** 2026-04-06
 **Author:** PAI-OpenCode
-**Last Updated:** 2026-04-08
+**Last Updated:** 2026-05-10
 **Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
@@ -599,6 +599,20 @@ CustodianTerminal (Control)
 | Active incidents | Event system |
 | Campaign scenarios | Hub system |
 | Fidelity state | Communications system |
+
+---
+
+## World Deployable Terminal Slice
+
+The in-world command terminal prop family is also treated as a deployable interaction surface.
+
+Implementation notes:
+
+- The world prop reuses the existing terminal source sheets and the same HUD shell entrypoint.
+- The current prop family is `command_terminal`; `fabricator_terminal` is reserved for the future separate sprite family.
+- The prop can be picked up and redeployed in world space through the runtime placement flow.
+- While carried, the terminal should not remain in the interactable or terminal-marker groups.
+- Build/placement input should prefer terminal pickup or redeploy before falling back to wall/turret placement behavior.
 
 ---
 

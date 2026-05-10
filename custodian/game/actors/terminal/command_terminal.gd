@@ -4,8 +4,11 @@ class_name CommandTerminal
 signal terminal_visual_activated
 signal terminal_visual_deactivated
 
-const DEFAULT_ACTIVATION_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__activate__omni__4f__48.png"
-const DEFAULT_PICKUP_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__pickup__omni__4f__48.png"
+const COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/command_terminal__body__interaction__activate__omni__4f__48.png"
+const COMPAT_COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__activate__omni__4f__48.png"
+const COMMAND_TERMINAL_PICKUP_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/command_terminal__body__interaction__pickup__omni__4f__48.png"
+const COMPAT_COMMAND_TERMINAL_PICKUP_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__pickup__omni__4f__48.png"
+const COMPAT_COMMAND_TERMINAL_PICKUP_ALT_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__pick-up__omni__4f__48.png"
 
 @export var launch_url: String = "http://127.0.0.1:7331"
 @export var prompt_text: String = "ACCESS CUSTODIAN INTERFACE"
@@ -176,15 +179,27 @@ func _resolve_terminal_body_collision() -> void:
 func _resolve_activation_texture() -> void:
 	if activation_texture != null:
 		return
-	if ResourceLoader.exists(DEFAULT_ACTIVATION_TEXTURE_PATH):
-		activation_texture = load(DEFAULT_ACTIVATION_TEXTURE_PATH) as Texture2D
+	activation_texture = _load_first_existing_texture([
+		COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH,
+		COMPAT_COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH,
+	])
 
 
 func _resolve_pickup_texture() -> void:
 	if pickup_texture != null:
 		return
-	if ResourceLoader.exists(DEFAULT_PICKUP_TEXTURE_PATH):
-		pickup_texture = load(DEFAULT_PICKUP_TEXTURE_PATH) as Texture2D
+	pickup_texture = _load_first_existing_texture([
+		COMMAND_TERMINAL_PICKUP_TEXTURE_PATH,
+		COMPAT_COMMAND_TERMINAL_PICKUP_TEXTURE_PATH,
+		COMPAT_COMMAND_TERMINAL_PICKUP_ALT_TEXTURE_PATH,
+	])
+
+
+func _load_first_existing_texture(paths: Array[String]) -> Texture2D:
+	for path in paths:
+		if ResourceLoader.exists(path):
+			return load(path) as Texture2D
+	return null
 
 
 func _ensure_terminal_sprite() -> bool:
