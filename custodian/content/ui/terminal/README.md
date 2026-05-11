@@ -18,5 +18,7 @@ Preferred targets:
 
 If you add dedicated prop sheets later, keep them under `content/sprites/environment/props/terminal/runtime/body/` and name them with the `command_terminal` / `fabricator_terminal` prefix rather than the UI shell filenames.
 
+The current pickup/redeploy prop visual also honors the authored `builder_terminal__body__interaction__pick_up__omni__4f__48.png` sheet before falling back to the legacy computer-terminal move sheets.
+
 Keep layout in `res://scenes/game.tscn` and behavior in `res://game/ui/terminal/*.gd`.
 Use PNGs as skins and overlays, not as the whole terminal layout.

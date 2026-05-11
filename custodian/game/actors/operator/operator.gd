@@ -182,6 +182,8 @@ var last_fire_cooldown := 0.0
 @export var ranged_muzzle_obstruction_margin: float = 2.0
 @export var ranged_neutral_rotation_limit_degrees: float = 34.0
 @export var ranged_vertical_rotation_limit_degrees: float = 18.0
+@export var fake_elevation_visual_lift_factor: float = 0.5
+@export var fake_elevation_z_scale: float = 0.08
 
 var interaction_target: Node = null
 var repair_target: Damageable = null
@@ -243,6 +245,10 @@ var _last_damage_reaction_direction := Vector2.DOWN
 var _production_body_frames: SpriteFrames = null
 var _knight_test_frames: SpriteFrames = null
 var _knight_test_skin_active: bool = false
+var fake_elevation: float = 0.0
+var movement_surface_multiplier: float = 1.0
+var _base_world_z_index: int = 2
+var _fake_elevation_visual_offset: Vector2 = Vector2.ZERO
 
 # Debug socket visualization
 var debug_draw_sockets: bool = false
@@ -331,6 +337,7 @@ const KNIGHT_TEST_ANIMATION_SPECS := {
 @onready var melee_fx_overlay_sprite = $MeleeFxOverlaySprite if has_node("MeleeFxOverlaySprite") else null
 @onready var barrel = $PrimaryWeaponSocket/Barrel if has_node("PrimaryWeaponSocket/Barrel") else null
 @onready var body_collision = $CollisionShape2D if has_node("CollisionShape2D") else null
+@onready var blob_shadow = $BlobShadow if has_node("BlobShadow") else null
 @onready var hitbox_root: Node2D = $HitboxRoot if has_node("HitboxRoot") else null
 @onready var weapon_hitbox: Area2D = $HitboxRoot/WeaponHitbox if has_node("HitboxRoot/WeaponHitbox") else null
 @onready var weapon_hitbox_shape: CollisionShape2D = $HitboxRoot/WeaponHitbox/CollisionShape2D if has_node("HitboxRoot/WeaponHitbox/CollisionShape2D") else null
@@ -345,6 +352,7 @@ func _ready():
 	# Sync with ControllableActor base class
 	current_health = health
 	move_speed = SPEED
+	_base_world_z_index = z_index
 	
 	# Reset any modulation from editor
 	if visual:
@@ -376,6 +384,7 @@ func _ready():
 	_initialize_magazines()
 	disable_hitbox()
 	_apply_body_recoil_offset()
+	_sync_fake_elevation_visual_state()
 	update_visuals()
 
 
@@ -654,6 +663,7 @@ func _physics_process(delta):
 	var cognitive := get_node_or_null("/root/CognitiveState")
 	if cognitive != null and cognitive.has_method("get_move_speed_multiplier"):
 		active_move_speed *= float(cognitive.call("get_move_speed_multiplier"))
+	active_move_speed *= max(0.0, movement_surface_multiplier)
 	var target_velocity: Vector2 = input_direction * active_move_speed
 	var accel_rate: float = move_acceleration if moving else move_deceleration
 	if movement_profile != null:
@@ -2453,11 +2463,31 @@ func _apply_body_recoil_impulse(direction: Vector2) -> void:
 
 func _apply_body_recoil_offset() -> void:
 	if animated_sprite:
-		animated_sprite.position = _animated_sprite_base_position + _body_recoil_offset
+		animated_sprite.position = _animated_sprite_base_position + _body_recoil_offset + _fake_elevation_visual_offset
 	if melee_weapon_overlay_sprite:
-		melee_weapon_overlay_sprite.position = _melee_weapon_overlay_base_position + _body_recoil_offset
+		melee_weapon_overlay_sprite.position = _melee_weapon_overlay_base_position + _body_recoil_offset + _fake_elevation_visual_offset
 	if melee_fx_overlay_sprite:
-		melee_fx_overlay_sprite.position = _melee_fx_overlay_base_position + _body_recoil_offset
+		melee_fx_overlay_sprite.position = _melee_fx_overlay_base_position + _body_recoil_offset + _fake_elevation_visual_offset
+
+
+func set_fake_elevation(value: float) -> void:
+	fake_elevation = max(0.0, value)
+	_sync_fake_elevation_visual_state()
+
+
+func set_movement_surface_multiplier(value: float) -> void:
+	movement_surface_multiplier = max(0.0, value)
+
+
+func _sync_fake_elevation_visual_state() -> void:
+	var t := clampf(fake_elevation / 24.0, 0.0, 1.0)
+	_fake_elevation_visual_offset = Vector2(0.0, -fake_elevation * fake_elevation_visual_lift_factor)
+	z_index = _base_world_z_index + int(round(fake_elevation * fake_elevation_z_scale))
+	if blob_shadow:
+		blob_shadow.scale = Vector2.ONE.lerp(Vector2(0.65, 0.65), t)
+		blob_shadow.modulate = Color(1.0, 1.0, 1.0, lerpf(1.0, 0.55, t))
+		blob_shadow.queue_redraw()
+	_apply_body_recoil_offset()
 
 
 func _wants_block() -> bool:

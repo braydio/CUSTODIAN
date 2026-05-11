@@ -5,9 +5,10 @@ signal terminal_visual_activated
 signal terminal_visual_deactivated
 
 const COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/command_terminal__body__interaction__activate__omni__4f__48.png"
-const COMPAT_COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__activate__omni__4f__48.png"
-const COMMAND_TERMINAL_PICKUP_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/command_terminal__body__interaction__pickup__omni__4f__48.png"
-const COMPAT_COMMAND_TERMINAL_PICKUP_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__pickup__omni__4f__48.png"
+const COMPAT_COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/builder_terminal__body__interaction__activate__omni__4f__48.png"
+const LEGACY_COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__activate__omni__4f__48.png"
+const COMMAND_TERMINAL_PICKUP_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/builder_terminal__body__interaction__pick_up__omni__4f__48.png"
+const COMPAT_COMMAND_TERMINAL_PICKUP_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/command_terminal__body__interaction__pickup__omni__4f__48.png"
 const COMPAT_COMMAND_TERMINAL_PICKUP_ALT_TEXTURE_PATH := "res://content/sprites/environment/props/terminal/runtime/body/computer_terminal__body__interaction__pick-up__omni__4f__48.png"
 
 @export var launch_url: String = "http://127.0.0.1:7331"
@@ -182,6 +183,7 @@ func _resolve_activation_texture() -> void:
 	activation_texture = _load_first_existing_texture([
 		COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH,
 		COMPAT_COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH,
+		LEGACY_COMMAND_TERMINAL_ACTIVATION_TEXTURE_PATH,
 	])
 
 

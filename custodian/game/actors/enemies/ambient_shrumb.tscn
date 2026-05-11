@@ -65,11 +65,11 @@ custom_ambient_north_south_frame_size = Vector2i(64, 85)
 custom_ambient_north_south_columns = null
 custom_ambient_north_south_fps = null
 custom_ambient_north_south_scale = Vector2(0.9, 0.9)
-custom_ambient_knockout_sheet_path = "res://content/sprites/environment/ambient_critter/shrumb_struck_knockout.png"
-custom_ambient_knockout_frame_size = null
-custom_ambient_knockout_columns = null
-custom_ambient_knockout_rows = null
-custom_ambient_knockout_fps = null
+custom_ambient_knockout_sheet_path = "res://content/sprites/environment/ambient_critter/source/environment__ambient_critter__shrumb__death_01__8f__e__96.png"
+custom_ambient_knockout_frame_size = Vector2i(64, 88)
+custom_ambient_knockout_columns = 8
+custom_ambient_knockout_rows = 1
+custom_ambient_knockout_fps = 12.0
 custom_ambient_knockout_scale = Vector2(0.22, 0.22)
 
 [node name="Visual" type="ColorRect" parent="." unique_id=727133011]
