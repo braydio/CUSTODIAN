@@ -33,3 +33,30 @@ class_name PropDefinition
 
 # Collision is authored per prop type and remains stable across visual variants.
 @export var collision_scene: PackedScene
+@export var collision_shape_size: Vector2 = Vector2.ZERO
+@export var collision_shape_offset: Vector2 = Vector2.ZERO
+@export var collision_shape_rotation_degrees: float = 0.0
+
+# Optional local depth sorting for tall props. The prop root z-index is flipped
+# around the player so the sprite can sit behind the operator when appropriate.
+@export var depth_sort_enabled: bool = false
+@export var depth_sort_base_y_offset: float = 0.0
+@export var depth_sort_behind_z_index: int = 1
+@export var depth_sort_front_z_index: int = 3
+@export var occlusion_bounds_size: Vector2 = Vector2.ZERO
+@export var occlusion_bounds_offset: Vector2 = Vector2.ZERO
+@export var occlusion_front_padding: float = 2.0
+@export var occlusion_side_padding: float = 8.0
+@export var portal_platform_enabled: bool = false
+@export var portal_platform_trigger_offset: Vector2 = Vector2(0, -56)
+@export var portal_platform_bottom_offset: Vector2 = Vector2(0, 34)
+@export var portal_platform_top_offset: Vector2 = Vector2(0, -10)
+@export var portal_platform_lane_half_width: float = 16.0
+@export var portal_platform_bottom_width: float = 64.0
+@export var portal_platform_top_width: float = 30.0
+@export var portal_platform_side_block_width: float = 28.0
+@export var portal_platform_side_block_height: float = 44.0
+@export var portal_platform_required_elevation: float = 18.0
+@export var portal_platform_max_elevation: float = 24.0
+@export var portal_platform_speed_multiplier: float = 0.82
+@export var portal_platform_dual_approach: bool = false

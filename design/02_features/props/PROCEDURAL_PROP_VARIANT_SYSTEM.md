@@ -1,7 +1,7 @@
 # Procedural Prop Variant System
 
 Status: in progress
-Last updated: 2026-05-02
+Last updated: 2026-05-11
 
 ## Goal
 
@@ -15,6 +15,8 @@ The system composes variants from:
 - conservative shader palette shifts
 - deterministic seeded placement
 - optional stable collision scene authored separately from visuals
+- optional authored collision footprint fields for simple blocker shapes
+- optional player-relative depth sorting for tall props that should tuck behind the operator when the player is in front of them
 
 ## Runtime Files
 
@@ -38,7 +40,13 @@ The system composes variants from:
 - `DRAMATIC`: stronger tone shifts and more overlays/rubble
 - `RETURNED`: near-original palette with a few residual details
 
-Collision is never generated from visual output. `PropDefinition.collision_scene` supplies an authored stable footprint when needed.
+Collision is never generated from visual output. `PropDefinition.collision_scene` supplies an authored stable footprint when needed. For simple props, `PropDefinition` can also describe a lightweight rectangle/capsule-style blocker footprint directly so the runtime does not need a bespoke scene for every prop.
+
+Tall props that should visually pass behind the player can opt into player-relative depth sorting. The runtime keeps that behavior local to the prop layer so it does not require a global scene-wide Y-sort rewrite.
+
+Portal props can also opt into a 2.5D stair/platform impostor: the definition can provide a trigger offset, a passable center lane, side blockers, and a fake-elevation ramp so the prop feels like the player is walking up onto a raised portal mouth without requiring true 3D stairs. The portal runtime may mirror that approach for a north-side entry as well so the same prop can read as walkable from both sides without introducing full 3D geometry.
+
+For portal-ring props, prefer a dedicated authored collision scene when the side blockers need exact placement; keep the ramp math and top-only trigger in the teleporter runtime, not in the prop collision body.
 
 ## Procgen Placement Slice
 
@@ -48,6 +56,9 @@ The current slice is intentionally visual-only:
 
 - props spawn under `NavigationRegion2D/PropLayer`
 - spawned `ProceduralProp` instances use `collision_scene = null` unless a definition explicitly provides one
+- definitions can also opt into simple authored collision footprints for runtime collision without a dedicated collision scene
+- definitions can opt into player-relative depth sorting for tall blockers and portal props
+- portal definitions can opt into a raised platform impostor with ramp-side blockers, fake elevation, and top-only teleport gating
 - gameplay navigation and collision do not depend on procedural prop variants
 - placement avoids the player spawn, compound buildings, and near-wall cells
 

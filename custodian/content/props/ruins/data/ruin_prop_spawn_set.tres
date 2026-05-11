@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://cynlgq73fcf8w" path="res://content/props/ruins/scripts/PropSpawnSet.gd" id="1_spawn_set"]
 [ext_resource type="Script" uid="uid://cygufcktgre5k" path="res://content/props/ruins/scripts/WeightedPropEntry.gd" id="2_entry"]
-[ext_resource type="Resource" path="res://content/props/ruins/data/prop_definitions/obelisk.tres" id="3_obelisk"]
-[ext_resource type="Resource" path="res://content/props/ruins/data/prop_definitions/portal_ring_01.tres" id="4_portal"]
-[ext_resource type="Resource" path="res://content/props/ruins/data/prop_definitions/rotunda_01.tres" id="5_rotunda"]
-[ext_resource type="Resource" path="res://content/props/ruins/data/prop_definitions/slab_01.tres" id="6_slab"]
+[ext_resource type="Resource" uid="uid://byhvxv8uloxoy" path="res://content/props/ruins/data/prop_definitions/obelisk.tres" id="3_obelisk"]
+[ext_resource type="Resource" uid="uid://bw4ujbedo7yel" path="res://content/props/ruins/data/prop_definitions/portal_ring_01.tres" id="4_portal"]
+[ext_resource type="Resource" uid="uid://3uf677vu1u40" path="res://content/props/ruins/data/prop_definitions/rotunda_01.tres" id="5_rotunda"]
+[ext_resource type="Resource" uid="uid://b8751124bhqko" path="res://content/props/ruins/data/prop_definitions/slab_01.tres" id="6_slab"]
 
 [sub_resource type="Resource" id="WeightedPropEntry_obelisk"]
 script = ExtResource("2_entry")

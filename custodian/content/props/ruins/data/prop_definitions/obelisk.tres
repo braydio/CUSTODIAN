@@ -1,15 +1,16 @@
-[gd_resource type="Resource" script_class="PropDefinition" format=3]
+[gd_resource type="Resource" script_class="PropDefinition" format=3 uid="uid://byhvxv8uloxoy"]
 
-[ext_resource type="Script" path="res://content/props/ruins/scripts/PropDefinition.gd" id="1_definition"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/obelisk.png" id="2_base"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/moss_patch_01.png" id="3_moss_01"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/moss_patch_02.png" id="4_moss_02"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_01.png" id="5_crack_01"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_02.png" id="6_crack_02"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_03.png" id="7_crack_03"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_small_dark_01.png" id="8_rubble_01"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_small_light_01.png" id="9_rubble_02"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_medium_dark_01.png" id="10_rubble_03"]
+[ext_resource type="Script" uid="uid://cdob00ehymgu0" path="res://content/props/ruins/scripts/PropDefinition.gd" id="1_definition"]
+[ext_resource type="Texture2D" uid="uid://cbi543thqkhji" path="res://content/props/ruins/extracted/obelisk.png" id="2_base"]
+[ext_resource type="Texture2D" uid="uid://mx2hhn2m76sm" path="res://content/props/ruins/overlays/moss_patch_01.png" id="3_moss_01"]
+[ext_resource type="Texture2D" uid="uid://cbms7fcysx33i" path="res://content/props/ruins/overlays/moss_patch_02.png" id="4_moss_02"]
+[ext_resource type="Texture2D" uid="uid://banuiot6mp4lo" path="res://content/props/ruins/overlays/crack_01.png" id="5_crack_01"]
+[ext_resource type="Texture2D" uid="uid://cdq68b5pcd5di" path="res://content/props/ruins/overlays/crack_02.png" id="6_crack_02"]
+[ext_resource type="Texture2D" uid="uid://ceqq0p3r0rbqo" path="res://content/props/ruins/overlays/crack_03.png" id="7_crack_03"]
+[ext_resource type="Texture2D" uid="uid://dw0e4griqew04" path="res://content/props/ruins/extracted/rubble_single_small_dark_01.png" id="8_rubble_01"]
+[ext_resource type="Texture2D" uid="uid://cx7c8opf4e686" path="res://content/props/ruins/extracted/rubble_single_small_light_01.png" id="9_rubble_02"]
+[ext_resource type="Texture2D" uid="uid://clpdwt10835yv" path="res://content/props/ruins/extracted/rubble_single_medium_dark_01.png" id="10_rubble_03"]
+[ext_resource type="Script" uid="uid://c16mdiw0b3n65" path="res://content/props/ruins/scripts/PropVariantLayer.gd" id="11_mngy4"]
 
 [resource]
 script = ExtResource("1_definition")
@@ -21,8 +22,13 @@ moss_overlays = Array[Texture2D]([ExtResource("3_moss_01"), ExtResource("4_moss_
 crack_overlays = Array[Texture2D]([ExtResource("5_crack_01"), ExtResource("6_crack_02"), ExtResource("7_crack_03")])
 rubble_textures = Array[Texture2D]([ExtResource("8_rubble_01"), ExtResource("9_rubble_02"), ExtResource("10_rubble_03")])
 min_overlay_count = 1
-max_overlay_count = 3
-min_rubble_count = 0
 max_rubble_count = 3
 rubble_spawn_rect = Rect2(-18, -4, 36, 14)
 overlay_spawn_rect = Rect2(-16, -90, 32, 78)
+collision_shape_size = Vector2(22, 78)
+collision_shape_offset = Vector2(0, -14)
+depth_sort_enabled = true
+occlusion_bounds_size = Vector2(38, 132)
+occlusion_bounds_offset = Vector2(0, -4)
+occlusion_front_padding = 8.0
+occlusion_side_padding = 10.0

@@ -1,25 +1,27 @@
-[gd_resource type="Resource" script_class="PropDefinition" format=3]
+[gd_resource type="Resource" script_class="PropDefinition" format=3 uid="uid://b8751124bhqko"]
 
-[ext_resource type="Script" path="res://content/props/ruins/scripts/PropDefinition.gd" id="1_definition"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/slab_01.png" id="2_base"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/moss_patch_02.png" id="3_moss_02"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_02.png" id="4_crack_02"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_05.png" id="5_crack_05"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_small_dark_03.png" id="6_rubble_01"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_small_light_03.png" id="7_rubble_02"]
+[ext_resource type="Script" uid="uid://cdob00ehymgu0" path="res://content/props/ruins/scripts/PropDefinition.gd" id="1_definition"]
+[ext_resource type="Texture2D" uid="uid://b3ifei5brrdks" path="res://content/props/ruins/extracted/slab_01.png" id="2_base"]
+[ext_resource type="Texture2D" uid="uid://cbms7fcysx33i" path="res://content/props/ruins/overlays/moss_patch_02.png" id="3_moss_02"]
+[ext_resource type="Texture2D" uid="uid://cdq68b5pcd5di" path="res://content/props/ruins/overlays/crack_02.png" id="4_crack_02"]
+[ext_resource type="Texture2D" uid="uid://cgaymp2nqug0o" path="res://content/props/ruins/overlays/crack_05.png" id="5_crack_05"]
+[ext_resource type="Texture2D" uid="uid://oh3l1jxlbyng" path="res://content/props/ruins/extracted/rubble_single_small_dark_03.png" id="6_rubble_01"]
+[ext_resource type="Texture2D" uid="uid://dl7bc8rjb6y6h" path="res://content/props/ruins/extracted/rubble_single_small_light_03.png" id="7_rubble_02"]
+[ext_resource type="Script" uid="uid://c16mdiw0b3n65" path="res://content/props/ruins/scripts/PropVariantLayer.gd" id="8_ieeh3"]
 
 [resource]
 script = ExtResource("1_definition")
 id = &"slab_01"
 base_texture = ExtResource("2_base")
 anchor_offset = Vector2(0, 36)
-allow_flip_h = true
 moss_overlays = Array[Texture2D]([ExtResource("3_moss_02")])
 crack_overlays = Array[Texture2D]([ExtResource("4_crack_02"), ExtResource("5_crack_05")])
 rubble_textures = Array[Texture2D]([ExtResource("6_rubble_01"), ExtResource("7_rubble_02")])
 min_overlay_count = 1
 max_overlay_count = 2
-min_rubble_count = 0
 max_rubble_count = 2
 rubble_spawn_rect = Rect2(-28, -2, 56, 12)
 overlay_spawn_rect = Rect2(-24, -42, 48, 36)
+collision_shape_size = Vector2(56, 16)
+collision_shape_offset = Vector2(0, 8)
+depth_sort_enabled = true

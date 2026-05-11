@@ -46,6 +46,7 @@ var _rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
+	z_as_relative = true
 	if generate_on_ready:
 		generate_variant()
 
@@ -217,10 +218,47 @@ func _spawn_rubble() -> void:
 
 func _spawn_collision() -> void:
 	if definition.collision_scene == null:
+		if definition.collision_shape_size.x <= 0.0 or definition.collision_shape_size.y <= 0.0:
+			return
+		var body := StaticBody2D.new()
+		body.name = "CollisionBody"
+		body.collision_layer = 1
+		body.collision_mask = 1
+		var shape := CollisionShape2D.new()
+		var rectangle := RectangleShape2D.new()
+		rectangle.size = definition.collision_shape_size
+		shape.shape = rectangle
+		shape.position = definition.collision_shape_offset
+		shape.rotation_degrees = definition.collision_shape_rotation_degrees
+		body.add_child(shape)
+		collision_root.add_child(body)
 		return
 
 	var collision_instance := definition.collision_scene.instantiate()
 	collision_root.add_child(collision_instance)
+
+
+func apply_depth_sort(player_feet_y: float) -> void:
+	if definition == null or not definition.depth_sort_enabled:
+		return
+	var base_y := global_position.y + definition.depth_sort_base_y_offset
+	z_as_relative = false
+	z_index = definition.depth_sort_behind_z_index if player_feet_y > base_y else definition.depth_sort_front_z_index
+
+
+func get_occlusion_bounds() -> Rect2:
+	if definition == null:
+		return Rect2()
+	var size := definition.occlusion_bounds_size
+	if size.x <= 0.0 or size.y <= 0.0:
+		if definition.collision_shape_size.x > 0.0 and definition.collision_shape_size.y > 0.0:
+			size = definition.collision_shape_size
+		else:
+			return Rect2()
+	var offset := definition.occlusion_bounds_offset
+	if offset == Vector2.ZERO and definition.collision_shape_size.x > 0.0 and definition.collision_shape_size.y > 0.0:
+		offset = definition.collision_shape_offset
+	return Rect2(global_position + offset - size * 0.5, size)
 
 
 func _add_overlay_sprite(

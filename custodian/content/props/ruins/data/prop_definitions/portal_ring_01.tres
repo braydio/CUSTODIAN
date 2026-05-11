@@ -1,16 +1,18 @@
-[gd_resource type="Resource" script_class="PropDefinition" format=3]
+[gd_resource type="Resource" script_class="PropDefinition" format=3 uid="uid://bw4ujbedo7yel"]
 
-[ext_resource type="Script" path="res://content/props/ruins/scripts/PropDefinition.gd" id="1_definition"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/portal_ring_01.png" id="2_base"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/moss_patch_01.png" id="3_moss_01"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/moss_patch_02.png" id="4_moss_02"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/moss_patch_03.png" id="5_moss_03"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_03.png" id="6_crack_03"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_04.png" id="7_crack_04"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/overlays/crack_05.png" id="8_crack_05"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_small_dark_02.png" id="9_rubble_01"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_medium_light_01.png" id="10_rubble_02"]
-[ext_resource type="Texture2D" path="res://content/props/ruins/extracted/rubble_single_large_dark_01.png" id="11_rubble_03"]
+[ext_resource type="Script" uid="uid://cdob00ehymgu0" path="res://content/props/ruins/scripts/PropDefinition.gd" id="1_definition"]
+[ext_resource type="Texture2D" uid="uid://c46vaf5uixttn" path="res://content/props/ruins/extracted/portal_ring_01.png" id="2_base"]
+[ext_resource type="Texture2D" uid="uid://mx2hhn2m76sm" path="res://content/props/ruins/overlays/moss_patch_01.png" id="3_moss_01"]
+[ext_resource type="Texture2D" uid="uid://cbms7fcysx33i" path="res://content/props/ruins/overlays/moss_patch_02.png" id="4_moss_02"]
+[ext_resource type="Texture2D" uid="uid://do8wogb37cdrf" path="res://content/props/ruins/overlays/moss_patch_03.png" id="5_moss_03"]
+[ext_resource type="Texture2D" uid="uid://ceqq0p3r0rbqo" path="res://content/props/ruins/overlays/crack_03.png" id="6_crack_03"]
+[ext_resource type="Texture2D" uid="uid://bpgla5aodhr5f" path="res://content/props/ruins/overlays/crack_04.png" id="7_crack_04"]
+[ext_resource type="Texture2D" uid="uid://cgaymp2nqug0o" path="res://content/props/ruins/overlays/crack_05.png" id="8_crack_05"]
+[ext_resource type="Texture2D" uid="uid://bws5jxiach2fm" path="res://content/props/ruins/extracted/rubble_single_small_dark_02.png" id="9_rubble_01"]
+[ext_resource type="Texture2D" uid="uid://d0vld6pkqw73t" path="res://content/props/ruins/extracted/rubble_single_medium_light_01.png" id="10_rubble_02"]
+[ext_resource type="Texture2D" uid="uid://cbotioqpjej32" path="res://content/props/ruins/extracted/rubble_single_large_dark_01.png" id="11_rubble_03"]
+[ext_resource type="Script" uid="uid://c16mdiw0b3n65" path="res://content/props/ruins/scripts/PropVariantLayer.gd" id="12_r0wm8"]
+[ext_resource type="PackedScene" path="res://content/props/ruins/scenes/portal_ring_collision.tscn" id="13_collision_scene"]
 
 [resource]
 script = ExtResource("1_definition")
@@ -26,6 +28,24 @@ rubble_textures = Array[Texture2D]([ExtResource("9_rubble_01"), ExtResource("10_
 min_overlay_count = 1
 max_overlay_count = 4
 min_rubble_count = 1
-max_rubble_count = 4
 rubble_spawn_rect = Rect2(-52, 0, 104, 18)
 overlay_spawn_rect = Rect2(-48, -56, 96, 52)
+collision_scene = ExtResource("13_collision_scene")
+depth_sort_enabled = true
+occlusion_bounds_size = Vector2(112, 108)
+occlusion_bounds_offset = Vector2(0, -24)
+occlusion_front_padding = 4.0
+occlusion_side_padding = 12.0
+portal_platform_enabled = true
+portal_platform_trigger_offset = Vector2(0, -56)
+portal_platform_bottom_offset = Vector2(0, 34)
+portal_platform_top_offset = Vector2(0, -10)
+portal_platform_lane_half_width = 16.0
+portal_platform_bottom_width = 64.0
+portal_platform_top_width = 30.0
+portal_platform_side_block_width = 28.0
+portal_platform_side_block_height = 44.0
+portal_platform_required_elevation = 18.0
+portal_platform_max_elevation = 24.0
+portal_platform_speed_multiplier = 0.82
+portal_platform_dual_approach = true

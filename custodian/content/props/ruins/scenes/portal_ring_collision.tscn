@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_left_block"]
+size = Vector2(56, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_right_block"]
+size = Vector2(63, 30)
+
+[node name="PortalRingCollision" type="StaticBody2D"]
+collision_layer = 1
+collision_mask = 1
+
+[node name="LeftBlocker" type="CollisionShape2D" parent="."]
+position = Vector2(28, 68)
+shape = SubResource("RectangleShape2D_left_block")
+
+[node name="RightBlocker" type="CollisionShape2D" parent="."]
+position = Vector2(128.5, 65)
+shape = SubResource("RectangleShape2D_right_block")

@@ -27,7 +27,7 @@ content/props/ruins/
 - `scripts/PropScatterer.gd`
 - `data/ruin_prop_spawn_set.tres`
 
-`PropDefinition.collision_scene` is optional, but collision should be authored separately and kept stable across visual variants.
+`PropDefinition.collision_scene` is optional. For simple blockers, `PropDefinition` can also describe an authored collision footprint directly. Tall props can opt into player-relative depth sorting so they render behind the player when the player is in front of them.
 
 ## Procgen Placement
 
@@ -41,6 +41,8 @@ Current placement rules:
 - enforces minimum distance between placed props
 - uses deterministic tile-based seeds
 - keeps collision authored on the `PropDefinition`, not generated from visual variants
+- can opt into simple inline collision footprints for runtime physics without a bespoke collision scene
+- can opt into player-relative depth sorting for tall props
 
 ## Pixel Padding
 
