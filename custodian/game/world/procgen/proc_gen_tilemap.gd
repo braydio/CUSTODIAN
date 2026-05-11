@@ -299,6 +299,8 @@ const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
 @export var portal_arrival_offset: Vector2 = Vector2(0, 54)
 @export var portal_spawn_floor_half_extents_tiles: Vector2i = Vector2i(3, 2)
 @export_range(0, 8, 1) var portal_spawn_wall_clearance_tiles: int = 3
+@export_range(0.0, 32.0, 0.5) var portal_spawn_collision_probe_radius: float = 8.0
+@export_range(0, 4, 1) var portal_spawn_nudge_radius_tiles: int = 2
 @export_group("Interior Props", "interior_prop")
 @export var interior_prop_spawning_enabled: bool = true
 @export_range(0, 80, 1) var interior_prop_count: int = 50
@@ -367,6 +369,7 @@ func _process(_delta: float) -> void:
 			_streaming_current_chunk = player_chunk
 			_update_streaming_chunks(player_chunk, player_tile)
 		_update_foliage_occlusion(_streaming_player)
+		_update_ruin_prop_occlusion(_streaming_player)
 
 	_process_streaming_reveal_queue()
 
@@ -1738,8 +1741,20 @@ func _configure_portal_pair(candidate_tiles: Array[Vector2i], spawned: Array[Pro
 		if prop.has_meta("source_tile"):
 			blocked_tiles[source_tile] = true
 		if _is_portal_prop(prop):
-			if _is_safe_portal_tile(source_tile, map_size):
-				prop.global_position = _portal_tile_to_world(source_tile)
+			var resolved_tile := _resolve_portal_endpoint_tile(
+				source_tile,
+				_build_tile_lookup(candidate_tiles),
+				blocked_tiles,
+				portal_props,
+				map_size,
+				false,
+				true
+			)
+			if bool(resolved_tile.get("ok", false)):
+				var safe_tile := resolved_tile["tile"] as Vector2i
+				prop.global_position = _portal_tile_to_world(safe_tile)
+				prop.set_meta("source_tile", safe_tile)
+				blocked_tiles[safe_tile] = true
 				portal_props.append(prop)
 			else:
 				if ruin_prop_debug_logging:
@@ -1798,28 +1813,34 @@ func _pick_portal_pair_tile(
 	map_size: Vector2i,
 	require_min_distance: bool
 ) -> Dictionary:
+	var candidate_lookup := _build_tile_lookup(candidate_tiles)
 	var best_tile := Vector2i.ZERO
 	var best_score := -INF
 	var found := false
 	var player_spawn := get_player_spawn()
 
 	for tile in candidate_tiles:
-		if blocked_tiles.has(tile):
+		var resolved := _resolve_portal_endpoint_tile(
+			tile,
+			candidate_lookup,
+			blocked_tiles,
+			existing_portals,
+			map_size,
+			require_min_distance
+		)
+		if not bool(resolved.get("ok", false)):
 			continue
-		if not _is_safe_portal_tile(tile, map_size):
-			continue
-		if require_min_distance and not _is_far_enough_from_existing_portals(tile, existing_portals):
-			continue
+		var safe_tile := resolved["tile"] as Vector2i
 
-		var score := float(tile.distance_squared_to(player_spawn))
+		var score := float(safe_tile.distance_squared_to(player_spawn))
 		if not existing_portals.is_empty():
-			score = _min_distance_squared_to_portals(tile, existing_portals)
-		score += float(_tile_noise_hash(tile + Vector2i(311, 719)) % 1000) / 1000.0
+			score = _min_distance_squared_to_portals(safe_tile, existing_portals)
+		score += float(_tile_noise_hash(safe_tile + Vector2i(311, 719)) % 1000) / 1000.0
 
 		if not found or score > best_score:
 			found = true
 			best_score = score
-			best_tile = tile
+			best_tile = safe_tile
 
 	if not found:
 		return {"ok": false}
@@ -1857,7 +1878,104 @@ func _is_safe_portal_tile(pos: Vector2i, map_size: Vector2i) -> bool:
 		return false
 	if _has_wall_near_portal(pos, map_size):
 		return false
+	if _has_portal_center_collision(pos):
+		return false
 	return true
+
+
+func _resolve_portal_endpoint_tile(
+	base_tile: Vector2i,
+	candidate_lookup: Dictionary,
+	blocked_tiles: Dictionary,
+	existing_portals: Array[ProceduralProp],
+	map_size: Vector2i,
+	require_min_distance: bool,
+	allow_base_tile_even_if_blocked: bool = false
+) -> Dictionary:
+	if candidate_lookup.has(base_tile) and (allow_base_tile_even_if_blocked or not blocked_tiles.has(base_tile)):
+		if _is_safe_portal_tile(base_tile, map_size):
+			if not require_min_distance or _is_far_enough_from_existing_portals(base_tile, existing_portals):
+				return {
+					"ok": true,
+					"tile": base_tile,
+				}
+
+	for radius in range(1, maxi(0, portal_spawn_nudge_radius_tiles) + 1):
+		for offset in _get_portal_nudge_ring(radius):
+			var tile := base_tile + offset
+			if not candidate_lookup.has(tile):
+				continue
+			if blocked_tiles.has(tile):
+				continue
+			if not _is_safe_portal_tile(tile, map_size):
+				continue
+			if require_min_distance and not _is_far_enough_from_existing_portals(tile, existing_portals):
+				continue
+			return {
+				"ok": true,
+				"tile": tile,
+			}
+
+	return {"ok": false}
+
+
+func _get_portal_nudge_ring(radius: int) -> Array[Vector2i]:
+	var offsets: Array[Vector2i] = []
+	if radius <= 0:
+		offsets.append(Vector2i.ZERO)
+		return offsets
+	for x in range(-radius, radius + 1):
+		for y in range(-radius, radius + 1):
+			if max(abs(x), abs(y)) != radius:
+				continue
+			offsets.append(Vector2i(x, y))
+	offsets.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var a_score := float(a.x * a.x + a.y * a.y)
+		var b_score := float(b.x * b.x + b.y * b.y)
+		if a_score == b_score:
+			if a.x == b.x:
+				return a.y < b.y
+			return a.x < b.x
+		return a_score < b_score
+	)
+	return offsets
+
+
+func _build_tile_lookup(tiles: Array[Vector2i]) -> Dictionary:
+	var lookup := {}
+	for tile in tiles:
+		lookup[tile] = true
+	return lookup
+
+
+func _has_portal_center_collision(pos: Vector2i) -> bool:
+	if portal_spawn_collision_probe_radius <= 0.0:
+		return false
+	if floor_tilemap == null:
+		return false
+	var world := floor_tilemap.get_world_2d()
+	if world == null:
+		return false
+	var space_state: PhysicsDirectSpaceState2D = world.direct_space_state
+	if space_state == null:
+		return false
+
+	var shape := CircleShape2D.new()
+	shape.radius = portal_spawn_collision_probe_radius
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = shape
+	var transform := Transform2D.IDENTITY
+	transform.origin = _portal_tile_to_world(pos)
+	query.transform = transform
+	query.collide_with_bodies = true
+	query.collide_with_areas = false
+	query.collision_mask = 1
+
+	var player := get_tree().get_first_node_in_group("player")
+	if player is CollisionObject2D:
+		query.exclude = [player.get_rid()]
+
+	return not space_state.intersect_shape(query, 8).is_empty()
 
 
 func _has_clear_portal_floor_footprint(pos: Vector2i, map_size: Vector2i) -> bool:
@@ -1890,6 +2008,60 @@ func _has_wall_near_portal(pos: Vector2i, map_size: Vector2i) -> bool:
 			if _generated_wall_cells.has(tile):
 				return true
 	return false
+
+
+func _update_ruin_prop_occlusion(player: Node2D) -> void:
+	if player == null or _ruin_prop_parent == null:
+		return
+	var player_feet := player.global_position + foliage_player_feet_offset
+	var player_upper := player.global_position + foliage_player_upper_body_offset
+	for prop in _collect_ruin_props():
+		if prop == null or not is_instance_valid(prop):
+			continue
+		var bounds := prop.get_occlusion_bounds()
+		if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+			prop.apply_depth_sort(player_feet.y)
+			continue
+		var z_index := _resolve_ruin_prop_depth_z_index(prop, player_feet, player_upper, bounds)
+		prop.z_as_relative = false
+		prop.z_index = z_index
+
+
+func _resolve_ruin_prop_depth_z_index(prop: ProceduralProp, player_feet: Vector2, player_upper: Vector2, bounds: Rect2) -> int:
+	if prop == null or prop.definition == null:
+		return 0
+	var definition := prop.definition
+	var left := bounds.position.x - definition.occlusion_side_padding
+	var right := bounds.end.x + definition.occlusion_side_padding
+	var top := bounds.position.y - definition.occlusion_front_padding
+	var bottom := bounds.end.y + definition.occlusion_front_padding
+	var x_overlap := player_upper.x >= left and player_upper.x <= right
+	if not x_overlap:
+		return definition.depth_sort_behind_z_index if player_feet.y > bounds.end.y else definition.depth_sort_front_z_index
+	if player_feet.y <= top:
+		return definition.depth_sort_front_z_index
+	if player_feet.y >= bottom:
+		return definition.depth_sort_behind_z_index
+	if player_upper.y <= bounds.position.y + bounds.size.y * 0.5:
+		return definition.depth_sort_front_z_index
+	return definition.depth_sort_behind_z_index
+
+
+func _collect_ruin_props() -> Array[ProceduralProp]:
+	var result: Array[ProceduralProp] = []
+	if _ruin_prop_parent == null:
+		return result
+	var stack: Array[Node] = [_ruin_prop_parent]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		if node == null or not is_instance_valid(node):
+			continue
+		for child in node.get_children():
+			if child is ProceduralProp:
+				result.append(child as ProceduralProp)
+			elif child is Node:
+				stack.append(child)
+	return result
 
 
 func _get_prop_source_tile(prop: ProceduralProp) -> Vector2i:
@@ -1928,7 +2100,25 @@ func _attach_portal_teleporter(prop: ProceduralProp) -> Area2D:
 	if teleporter == null:
 		return null
 	teleporter.name = "PortalTeleporter"
-	teleporter.position = portal_trigger_local_offset
+	var portal_definition := prop.definition
+	if portal_definition != null and portal_definition.portal_platform_enabled:
+		teleporter.position = portal_definition.portal_platform_trigger_offset
+		teleporter.set("ramp_top_local_offset", Vector2.ZERO)
+		teleporter.set(
+			"ramp_bottom_local_offset",
+			portal_definition.portal_platform_bottom_offset - portal_definition.portal_platform_trigger_offset
+		)
+		teleporter.set("ramp_lane_half_width", portal_definition.portal_platform_lane_half_width)
+		teleporter.set("ramp_bottom_width", portal_definition.portal_platform_bottom_width)
+		teleporter.set("ramp_top_width", portal_definition.portal_platform_top_width)
+		teleporter.set("ramp_side_block_width", portal_definition.portal_platform_side_block_width)
+		teleporter.set("ramp_side_block_height", portal_definition.portal_platform_side_block_height)
+		teleporter.set("ramp_required_elevation", portal_definition.portal_platform_required_elevation)
+		teleporter.set("ramp_max_elevation", portal_definition.portal_platform_max_elevation)
+		teleporter.set("ramp_speed_multiplier", portal_definition.portal_platform_speed_multiplier)
+		teleporter.set("ramp_dual_approach", portal_definition.portal_platform_dual_approach)
+	else:
+		teleporter.position = portal_trigger_local_offset
 	teleporter.set("trigger_radius", portal_trigger_radius)
 	teleporter.set("arrival_offset", portal_arrival_offset)
 	teleporter.set("cooldown_frames", portal_teleport_cooldown_frames)
