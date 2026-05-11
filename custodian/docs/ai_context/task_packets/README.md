@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-05-10
+Last updated: 2026-05-11
 
 Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
 
@@ -58,7 +58,10 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `PORTAL_CENTER_TRIGGER_AND_ANIMATION.md` - completed packet for tightening portal activation to the center and defining portal animation asset needs.
 - `PORTAL_AND_MOVING_ATTACK_SPRITE_INGEST.md` - completed packet for ingesting portal teleport FX and moving attack layer sheets.
 - `PORTAL_FX_PLAYBACK_WIRING.md` - completed packet for wiring portal idle, activation, and arrival FX playback.
+- `PORTAL_DUAL_APPROACH_TUNING.md` - in-progress packet for mirroring the portal ramp so the same prop can be approached from north or south.
 - `PORTAL_PROP_SPRITE_REINGEST.md` - completed packet for reingesting portal-ring FX into canonical environment prop runtime paths.
+- `PROCGEN_PORTAL_AND_PROP_OCCLUSION.md` - completed packet for portal safe-placement hardening plus ruin-prop collision and depth sorting.
+- `PORTAL_STAIR_RAMP_2_5D.md` - completed packet for the portal stair-lane, elevation, and top-only trigger impostor.
 - `PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` - completed packet for adding `--top-source` preprocessing support to the wall atlas builder.
 - `RANGED_PHYSICS_ALIGNMENT.md` - completed packet for ranged muzzle obstruction, swept projectile movement, and temporary stance-band socket rotation clamps.
 - `RESOURCE_NODE_HARVESTING_V1.md` - completed packet for first hand-placed interactable resource nodes feeding `ResourceLedger`.

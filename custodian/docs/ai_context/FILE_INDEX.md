@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-05
+Last updated: 2026-05-11
 
 ## Local Entry And Workflow
 
@@ -27,7 +27,7 @@ Last updated: 2026-05-05
 
 - `custodian/game/world/procgen/custodian_contract_map.gd` — contract generation and planet-linked world profile creation, including deterministic map size/room bands and ambient Shrumb trait profile fields
 - `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, constructed interior region carving, region metadata, foliage placement, decorative ruin prop placement, and paired portal-ring teleport endpoint wiring with portal-specific safe placement filtering
-- `custodian/game/world/procgen/portal_teleporter.gd` — Area2D trigger component used by procgen portal-ring props to teleport the player to their linked endpoint with a physics-frame cooldown and runtime-built idle/activation/arrival FX playback
+- `custodian/game/world/procgen/portal_teleporter.gd` — Area2D trigger component used by procgen portal-ring props to teleport the player to their linked endpoint with a physics-frame cooldown, runtime-built activation/arrival FX playback, optional idle overlay, and a 2.5D stair/platform impostor for top-only portal access plus mirrored north-side dual approach when enabled
 - `custodian/game/systems/core/systems/ambient_critter_manager.gd` — ambient critter spawning, tint, pacing, scale, speed, naming, and trait metadata linked to world profile
 - `custodian/game/systems/core/systems/inventory_manager.gd` — minimal stack-count ledger autoload for cognitive drops and future stackable resources
 - `custodian/game/systems/cognitive/cognitive_state_system.gd` — `CognitiveState` autoload tracking Forest Shrumb recollection/instinct/bearing values, decay, dominant state, and v1 modifier getters
@@ -82,7 +82,7 @@ Last updated: 2026-05-05
 
 - `custodian/game/actors/defense/turret.gd` — turret interaction prompt reads actual interact binding
 - `custodian/game/actors/base/vehicle_base.gd` — vehicle exit prompt reads actual interact binding
-- `custodian/game/actors/terminal/command_terminal.gd` — in-world `command_terminal` prop interaction and activation/deactivation animation, with fallback compatibility to the older `computer_terminal` sheets
+- `custodian/game/actors/terminal/command_terminal.gd` — in-world `command_terminal` prop interaction and activation/deactivation animation, with fallback compatibility to the older `computer_terminal` sheets and the authored `builder_terminal` pickup/deploy sheet
 - `custodian/game/systems/core/systems/terminal_deployment.gd` — deployable terminal pickup/redeploy runtime for the in-world command terminal prop
 - `custodian/docs/TERMINAL_VIEW_LOCAL_MODE.md` — terminal-related runtime doc reference
 
@@ -124,8 +124,8 @@ Last updated: 2026-05-05
 ## Active Prop Content
 
 - `custodian/content/props/ruins/scenes/ProceduralProp.tscn` — reusable Node2D assembly scene for deterministic visual ruin prop variants
-- `custodian/content/props/ruins/scripts/ProceduralProp.gd` — seeded visual variant generation, intensity modes, editor regeneration, palette material application, overlay/rubble placement, and stable collision scene instancing
-- `custodian/content/props/ruins/scripts/PropDefinition.gd` — per-prop resource schema for base texture, anchor, palette bounds, overlay/rubble inputs, spawn regions, and optional collision scene
+- `custodian/content/props/ruins/scripts/ProceduralProp.gd` — seeded visual variant generation, intensity modes, editor regeneration, palette material application, overlay/rubble placement, optional inline collision footprints, occlusion bounds, and player-relative depth sorting
+- `custodian/content/props/ruins/scripts/PropDefinition.gd` — per-prop resource schema for base texture, anchor, palette bounds, overlay/rubble inputs, spawn regions, optional collision scene, optional collision footprint fields, optional occlusion bounds, and optional depth-sort settings
 - `custodian/content/props/ruins/scripts/PropVariantLayer.gd` — structured overlay/rubble layer resource with type, spawn chance, spawn rect, alpha range, z-index, and flip rules
 - `custodian/content/props/ruins/scripts/PropVariantGenerator.gd` — deterministic helper for deriving seeds from world cells or positions
 - `custodian/content/props/ruins/scripts/WeightedPropEntry.gd` — weighted prop spawn entry resource
@@ -134,7 +134,8 @@ Last updated: 2026-05-05
 - `custodian/content/props/ruins/shaders/prop_palette_variation.gdshader` — conservative HSV brightness/saturation/hue adjustment shader for prop sprites
 - `custodian/content/props/ruins/data/ruin_prop_spawn_set.tres` — default weighted procgen spawn set for ruin props
 - `custodian/content/props/ruins/data/prop_definitions/obelisk.tres` — starter test definition using available moss/crack overlays and rubble
-- `custodian/content/props/ruins/data/prop_definitions/portal_ring_01.tres` — starter test definition using available moss/crack overlays and rubble
+- `custodian/content/props/ruins/data/prop_definitions/portal_ring_01.tres` — starter test definition using available moss/crack overlays and rubble, including the raised platform impostor tuning used by the portal stair lane and the mirrored north-side approach flag
+- `custodian/content/props/ruins/scenes/portal_ring_collision.tscn` — authored side-block collision scene used by `portal_ring_01`
 - `custodian/content/props/ruins/data/prop_definitions/rotunda_01.tres` — starter test definition using available moss/crack overlays and rubble
 - `custodian/content/props/ruins/data/prop_definitions/slab_01.tres` — starter test definition using available moss/crack overlays and rubble
 - `custodian/content/props/ruins/README.md` — ruin prop folder layout, padding commands for cropped PNGs, import settings, and pixel-art transform constraints
