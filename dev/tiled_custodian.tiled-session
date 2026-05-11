@@ -1,5 +1,5 @@
 {
-    "activeFile": "mini_world_map.tsx",
+    "activeFile": "",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
         "."
@@ -30,7 +30,7 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 720.6666666666666,
+                "x": 721.3333333333333,
                 "y": 480
             }
         },
@@ -44,13 +44,11 @@
     "last.imagePath": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/additional-charsets/Texture",
     "map.lastUsedFormat": "tmx",
     "openFiles": [
-        "mini_world_map.tsx",
-        "mini_map.tmx"
     ],
     "project": "tiled_custodian.tiled-project",
     "recentFiles": [
-        "mini_map.tmx",
         "mini_world_map.tsx",
+        "mini_map.tmx",
         "Scene Overview.tsx",
         "KJeep_Tunnelt.tsx"
     ],
