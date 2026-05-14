@@ -14,7 +14,7 @@ Wire the ingested portal teleport FX sheets into runtime portal behavior.
 
 ## Outcome
 
-Each paired procgen portal now builds runtime `AnimatedSprite2D` FX from the ingested portal sheets: idle loops continuously, activation plays at the source portal, teleport resolves on activation frame 10 by default, and arrival plays/holds at the destination portal so the full sequence reads for about 2 seconds.
+Each paired procgen portal now builds one runtime `PortalStateSprite` from the ingested portal sheets: idle loops continuously, activation replaces idle at the source portal, teleport resolves on activation frame 10 by default, and arrival replaces idle at the destination portal before returning to idle so the full sequence reads for about 2 seconds.
 
 ## Authority
 
@@ -39,7 +39,7 @@ Each paired procgen portal now builds runtime `AnimatedSprite2D` FX from the ing
 
 ## Completion Notes
 
-- Implemented: `PortalTeleporter` now creates idle/action `AnimatedSprite2D` children, loads the portal idle/activate/arrival runtime strips, loops idle, plays activation at source, delays the actual teleport until activation frame 10, extends the player cooldown through the sequence buffer, and holds arrival playback at the destination for the remaining sequence time.
+- Implemented: `PortalTeleporter` now creates one `PortalStateSprite`, loads the portal idle/activate/arrival runtime strips, loops idle, plays activation at source, delays the actual teleport until activation frame 10, extends the player cooldown through the sequence buffer, and holds arrival playback at the destination for the remaining sequence time before returning to idle.
 - Validated: `godot --headless --check-only --script res://game/world/procgen/portal_teleporter.gd`; `godot --headless --check-only --script res://game/world/procgen/proc_gen_tilemap.gd`.
 - Deferred: in-editor tuning for FX z-index, frame rate, center alignment, and whether teleport should wait for an activation frame.
 

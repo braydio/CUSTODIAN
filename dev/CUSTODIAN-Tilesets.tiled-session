@@ -1,5 +1,5 @@
 {
-    "activeFile": "untitled.tmj",
+    "activeFile": "",
     "automapping.whileDrawing": false,
     "expandedProjectPaths": [
         "Zeldaesqe"
@@ -29,6 +29,9 @@
         "TX_Cracked_Mossy_Stone_64_64.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 0.33
+        },
+        "Zeldaesqe/TX Props.tsx": {
+            "scaleInDock": 1
         },
         "Zeldaesqe/TX Shadow.tsx": {
             "scaleInDock": 1,
@@ -71,29 +74,23 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 329.5,
-                "y": 137
+                "y": 124
             }
         }
     },
     "last.imagePath": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/additional-charsets",
     "map.lastUsedFormat": "json",
     "openFiles": [
-        "TX Tileset Grass.tsx",
-        "Zeldaesqe/TX_Mossy_Resized.tsx",
-        "untitled.tmj",
-        "Zeldaesqe/TX Tileset Wall.tsx",
-        "Zeldaesqe/TX Struct.tsx",
-        "Zeldaesqe/TX Tileset Stone Ground.tsx"
     ],
     "project": "CUSTODIAN-Tilesets.tiled-project",
     "recentFiles": [
-        "Zeldaesqe/TX Tileset Wall.tsx",
-        "Zeldaesqe/TX Shadow.tsx",
-        "Zeldaesqe/TX Struct.tsx",
-        "Zeldaesqe/TX Tileset Stone Ground.tsx",
         "TX Tileset Grass.tsx",
         "Zeldaesqe/TX_Mossy_Resized.tsx",
+        "Zeldaesqe/TX Tileset Stone Ground.tsx",
+        "Zeldaesqe/TX Struct.tsx",
+        "Zeldaesqe/TX Tileset Wall.tsx",
         "untitled.tmj",
+        "Zeldaesqe/TX Shadow.tsx",
         "Zeldaesqe/TX_Cracked_Mossy_Stone.tsx",
         "Zeldaesqe/TX_Cracked_Mossy_Stone_96x96.tsx",
         "TX_Cracked_Mossy_Stone_64_64.tsx",

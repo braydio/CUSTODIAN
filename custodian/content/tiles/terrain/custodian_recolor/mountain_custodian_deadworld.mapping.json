@@ -1,0 +1,284 @@
+{
+  "cells": {
+    "0,0": {
+      "collision": "none",
+      "coord": [
+        0,
+        0
+      ],
+      "notes": "",
+      "sockets": {},
+      "source_rect": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "stamp_owner": "0,0:3x1",
+      "tags": [],
+      "terrain_type": "stamp_origin",
+      "walkable": true,
+      "weight": 0
+    },
+    "1,0": {
+      "collision": "none",
+      "coord": [
+        1,
+        0
+      ],
+      "notes": "",
+      "sockets": {},
+      "source_rect": [
+        32,
+        0,
+        32,
+        32
+      ],
+      "stamp_owner": "0,0:3x1",
+      "tags": [],
+      "terrain_type": "stamp_member",
+      "walkable": true,
+      "weight": 0
+    },
+    "2,0": {
+      "collision": "none",
+      "coord": [
+        2,
+        0
+      ],
+      "notes": "",
+      "sockets": {},
+      "source_rect": [
+        64,
+        0,
+        32,
+        32
+      ],
+      "stamp_owner": "0,0:3x1",
+      "tags": [],
+      "terrain_type": "stamp_member",
+      "walkable": true,
+      "weight": 0
+    },
+    "3,0": {
+      "collision": "unknown",
+      "collision_rect_px": null,
+      "coord": [
+        3,
+        0
+      ],
+      "notes": "",
+      "opaque_bounds_px": [
+        0,
+        11,
+        32,
+        21
+      ],
+      "placement_offset_px": [
+        0,
+        0
+      ],
+      "sockets": {},
+      "source_rect": [
+        96,
+        0,
+        32,
+        32
+      ],
+      "tags": [],
+      "terrain_type": "skipped",
+      "visual_rect_px": [
+        0,
+        11,
+        32,
+        21
+      ],
+      "walkable": false,
+      "weight": 0
+    },
+    "4,0": {
+      "collision": "unknown",
+      "collision_rect_px": null,
+      "coord": [
+        4,
+        0
+      ],
+      "notes": "",
+      "opaque_bounds_px": [
+        0,
+        11,
+        32,
+        2
+      ],
+      "placement_offset_px": [
+        0,
+        0
+      ],
+      "sockets": {},
+      "source_rect": [
+        128,
+        0,
+        32,
+        32
+      ],
+      "tags": [],
+      "terrain_type": "skipped",
+      "visual_rect_px": [
+        0,
+        11,
+        32,
+        2
+      ],
+      "walkable": false,
+      "weight": 0
+    },
+    "5,0": {
+      "collision": "right_edge",
+      "collision_rect_px": [
+        0,
+        11,
+        28,
+        21
+      ],
+      "coord": [
+        5,
+        0
+      ],
+      "notes": "",
+      "opaque_bounds_px": [
+        0,
+        11,
+        28,
+        21
+      ],
+      "placement_offset_px": [
+        0,
+        0
+      ],
+      "sockets": {
+        "east": "cliff",
+        "north": "edge",
+        "south": "open",
+        "west": "open"
+      },
+      "source_rect": [
+        160,
+        0,
+        32,
+        32
+      ],
+      "tags": [],
+      "terrain_type": "terrain_wall_side",
+      "visual_rect_px": [
+        0,
+        11,
+        28,
+        21
+      ],
+      "walkable": true,
+      "weight": 1
+    },
+    "6,0": {
+      "collision": "left_edge",
+      "collision_rect_px": [
+        10,
+        11,
+        22,
+        21
+      ],
+      "coord": [
+        6,
+        0
+      ],
+      "notes": "",
+      "opaque_bounds_px": [
+        10,
+        11,
+        22,
+        21
+      ],
+      "placement_offset_px": [
+        0,
+        0
+      ],
+      "sockets": {
+        "east": "open",
+        "north": "edge",
+        "south": "unknown",
+        "west": "cliff"
+      },
+      "source_rect": [
+        192,
+        0,
+        32,
+        32
+      ],
+      "tags": [],
+      "terrain_type": "terrain_wall_top",
+      "visual_rect_px": [
+        10,
+        11,
+        22,
+        21
+      ],
+      "walkable": false,
+      "weight": 1
+    }
+  },
+  "image_size": [
+    768,
+    512
+  ],
+  "schema": "custodian_terrain_cell_mapping_v1",
+  "source_image": "content/tiles/terrain/custodian_recolor/mountain_custodian_deadworld.png",
+  "stamps": {
+    "0,0:3x1": {
+      "collision": "none",
+      "collision_rect_px": null,
+      "coord": [
+        0,
+        0
+      ],
+      "id": "0,0:3x1",
+      "kind": "terrain_stamp",
+      "notes": "",
+      "opaque_bounds_px": [
+        8,
+        11,
+        88,
+        21
+      ],
+      "placement_offset_px": [
+        0,
+        0
+      ],
+      "size_cells": [
+        3,
+        1
+      ],
+      "sockets": {
+        "east": "open",
+        "north": "edge",
+        "south": "open",
+        "west": "cliff"
+      },
+      "source_rect": [
+        0,
+        0,
+        96,
+        32
+      ],
+      "tags": [],
+      "terrain_type": "terrain_wall_side",
+      "visual_rect_px": [
+        8,
+        11,
+        88,
+        21
+      ],
+      "walkable": true,
+      "weight": 1
+    }
+  },
+  "tile_size": 32
+}

@@ -8,7 +8,7 @@
 
 This document is retained as historical reference for the removed marble overlay experiment.
 The active procgen runtime no longer builds horizontal or vertical runtime wall overlays.
-Current runtime authority is tile-only wall rendering through `custodian_world_tileset.tres`.
+Current runtime authority is tile-only wall rendering through `procgen_world_tileset.tres`.
 
 ## Asset Contract
 

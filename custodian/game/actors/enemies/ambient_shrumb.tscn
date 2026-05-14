@@ -70,7 +70,7 @@ custom_ambient_knockout_frame_size = Vector2i(64, 88)
 custom_ambient_knockout_columns = 8
 custom_ambient_knockout_rows = 1
 custom_ambient_knockout_fps = 12.0
-custom_ambient_knockout_scale = Vector2(0.22, 0.22)
+custom_ambient_knockout_scale = Vector2(0.9, 0.9)
 
 [node name="Visual" type="ColorRect" parent="." unique_id=727133011]
 offset_left = -12.0

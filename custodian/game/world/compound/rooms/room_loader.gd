@@ -14,24 +14,35 @@ var _rng: RandomNumberGenerator
 func _init(rng: RandomNumberGenerator = null) -> void:
 	_rng = rng if rng else RandomNumberGenerator.new()
 
+func set_seed(seed: int) -> void:
+	_rng.seed = int(seed)
+
 func load_templates_from_directory(directory_path: String) -> int:
 	var dir := DirAccess.open(directory_path)
 	if dir == null:
 		push_error("[RoomLoader] Cannot open directory: " + directory_path)
 		return 0
 	
-	var loaded_count := 0
+	var file_names: Array[String] = []
+
 	dir.list_dir_begin()
 	var file_name := dir.get_next()
 	while file_name != "":
-		if file_name.ends_with(".tmj"):
-			var full_path := directory_path + "/" + file_name
-			if _load_single_template(full_path):
-				loaded_count += 1
-		elif file_name.ends_with(".tmx"):
-			push_warning("[RoomLoader] Skipping XML Tiled map; export as .tmj instead: " + directory_path + "/" + file_name)
+		if not dir.current_is_dir():
+			file_names.append(file_name)
 		file_name = dir.get_next()
 	dir.list_dir_end()
+
+	file_names.sort()
+
+	var loaded_count := 0
+	for sorted_file_name in file_names:
+		if sorted_file_name.ends_with(".tmj"):
+			var full_path := directory_path.path_join(sorted_file_name)
+			if _load_single_template(full_path):
+				loaded_count += 1
+		elif sorted_file_name.ends_with(".tmx"):
+			push_warning("[RoomLoader] Skipping XML Tiled map; export as .tmj instead: " + directory_path.path_join(sorted_file_name))
 	
 	return loaded_count
 
@@ -57,7 +68,11 @@ func _load_single_template(file_path: String) -> bool:
 		push_warning("[RoomLoader] JSON parse failed: " + file_path)
 		return false
 	
-	var data: Dictionary = json.data
+	if not (json.data is Dictionary):
+		push_warning("[RoomLoader] JSON root must be a dictionary: " + file_path)
+		return false
+
+	var data := json.data as Dictionary
 	if not data.has("width") or not data.has("height"):
 		push_warning("[RoomLoader] Invalid Tiled map (missing dimensions): " + file_path)
 		return false
@@ -128,10 +143,7 @@ func _parse_door_value(raw_value: Variant) -> Array:
 	return []
 
 func _parse_door_string(door_str: String) -> Array:
-	var doors := []
-	if door_str.is_empty():
-		return doors
-	
+	var doors: Array = []
 	var trimmed := door_str.strip_edges()
 	if trimmed.is_empty():
 		return doors
@@ -140,35 +152,64 @@ func _parse_door_string(door_str: String) -> Array:
 		var json := JSON.new()
 		if json.parse(trimmed) == OK and json.data is Array:
 			return _normalize_doors(json.data as Array)
-	
-	var parts := trimmed.split(",")
-	for part in parts:
-		var kv := part.split(":")
-		if kv.size() >= 2:
-			var door := {}
-			var key := kv[0].strip_edges().to_lower()
-			var value := kv[1].strip_edges()
-			if key == "x" or key == "y":
-				door[key] = int(value)
-			elif key == "width" or key == "height":
-				door[key] = int(value)
-		elif kv.size() == 1:
-			var single := kv[0].strip_edges()
-			if single.is_valid_int():
-				doors.append({"x": int(single), "width": 1})
-	
-	return doors
+
+	var door_chunks := trimmed.split(";")
+	for chunk in door_chunks:
+		var door := {}
+		var parts := chunk.split(",")
+
+		for part in parts:
+			var kv := part.split(":")
+			if kv.size() >= 2:
+				var key := kv[0].strip_edges().to_lower()
+				var value := kv[1].strip_edges()
+
+				if key == "x" or key == "y" or key == "width" or key == "height" or key == "elevation":
+					if value.is_valid_int():
+						door[key] = int(value)
+				elif key == "kind" or key == "type" or key == "lock" or key == "required_key":
+					door[key] = value
+			elif kv.size() == 1:
+				var single := kv[0].strip_edges()
+				if single.is_valid_int():
+					door["x"] = int(single)
+
+		if not door.is_empty():
+			if not door.has("width"):
+				door["width"] = 1
+			if not door.has("height"):
+				door["height"] = 1
+			doors.append(door)
+
+	return _normalize_doors(doors)
 
 func _normalize_doors(raw_doors: Array) -> Array:
 	var normalized: Array = []
 	for raw_door in raw_doors:
-		if raw_door is Dictionary:
-			var normalized_door := {}
-			for key in ["x", "y", "width", "height"]:
-				if raw_door.has(key):
-					normalized_door[key] = int(raw_door.get(key, 0))
-			if not normalized_door.is_empty():
-				normalized.append(normalized_door)
+		if not (raw_door is Dictionary):
+			continue
+
+		var source := raw_door as Dictionary
+		var normalized_door := {}
+		var x := int(source.get("x", 0))
+		var y := int(source.get("y", 0))
+		var width := maxi(1, int(source.get("width", 1)))
+		var height := maxi(1, int(source.get("height", 1)))
+
+		normalized_door["x"] = x
+		normalized_door["y"] = y
+		normalized_door["width"] = width
+		normalized_door["height"] = height
+		normalized_door["tile_position"] = Vector2i(x, y)
+
+		for key in ["kind", "type", "lock", "required_key"]:
+			if source.has(key):
+				normalized_door[key] = String(source.get(key, ""))
+
+		if source.has("elevation"):
+			normalized_door["elevation"] = int(source.get("elevation", 0))
+
+		normalized.append(normalized_door)
 	return normalized
 
 func _parse_tiles(data: Dictionary) -> Dictionary:
@@ -277,10 +318,13 @@ func _collect_marker_tiles(markers: Array, marker_type: String) -> Array:
 	return tiles
 
 func get_template(template_name: String) -> Dictionary:
-	return _templates.get(template_name, {})
+	var template: Variant = _templates.get(template_name, {})
+	if template is Dictionary:
+		return (template as Dictionary).duplicate(true)
+	return {}
 
 func get_all_templates() -> Dictionary:
-	return _templates
+	return _templates.duplicate(true)
 
 func get_templates_by_type(room_type: String) -> Array:
 	var result := []
@@ -316,6 +360,36 @@ func get_doors(template_name: String, direction: String) -> Array:
 	return template.get(door_key, [])
 
 func can_connect(door_a: Dictionary, door_b: Dictionary) -> bool:
-	var width_a = door_a.get("width", 1)
-	var width_b = door_b.get("width", 1)
-	return abs(width_a - width_b) <= 1
+	if door_a.is_empty() or door_b.is_empty():
+		return false
+
+	var width_a := int(door_a.get("width", 1))
+	var width_b := int(door_b.get("width", 1))
+	var height_a := int(door_a.get("height", 1))
+	var height_b := int(door_b.get("height", 1))
+
+	if abs(width_a - width_b) > 1:
+		return false
+
+	if abs(height_a - height_b) > 1:
+		return false
+
+	var kind_a := String(door_a.get("kind", door_a.get("type", "standard")))
+	var kind_b := String(door_b.get("kind", door_b.get("type", "standard")))
+
+	if kind_a != "any" and kind_b != "any" and kind_a != kind_b:
+		return false
+
+	var elevation_a := int(door_a.get("elevation", 0))
+	var elevation_b := int(door_b.get("elevation", 0))
+
+	if abs(elevation_a - elevation_b) > 1:
+		return false
+
+	var required_key_a := String(door_a.get("required_key", ""))
+	var required_key_b := String(door_b.get("required_key", ""))
+
+	if not required_key_a.is_empty() and not required_key_b.is_empty() and required_key_a != required_key_b:
+		return false
+
+	return true

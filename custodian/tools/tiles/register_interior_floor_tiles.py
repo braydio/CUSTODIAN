@@ -3,13 +3,15 @@
 
 Convention:
   custodian/content/tiles/interiors/runtime/floor_*_32.png
+  custodian/content/tiles/interiors/runtime/threshold_*_32.png
+  custodian/content/tiles/interiors/runtime/doorway_*_32.png
   custodian/content/tiles/interiors/runtime/wall_*_32.png
   custodian/content/tiles/interiors/runtime/wall_*corner*_32.png
 
 The script adds missing one-tile TileSetAtlasSource entries to the canonical
-world TileSet and refreshes ProcGenTilemap interior floor/wall source IDs in
-proc_gen_map.tscn. Wall files with "corner" in the filename are routed to
-interior_wall_corner_source_id; other wall files are routed to
+world TileSet and refreshes ProcGenTilemap interior floor/wall/opening source
+IDs in proc_gen_map.tscn. Wall files with "corner" in the filename are routed
+to interior_wall_corner_source_id; other wall files are routed to
 interior_wall_source_ids.
 """
 
@@ -22,10 +24,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNTIME_DIR = ROOT / "content/tiles/interiors/runtime"
-TILESET_PATH = ROOT / "content/tiles/tilesets/custodian_world_tileset.tres"
+TILESET_PATH = ROOT / "content/tiles/tilesets/procgen_world_tileset.tres"
 PROCGEN_SCENE_PATH = ROOT / "game/world/procgen/proc_gen_map.tscn"
 RES_PREFIX = "res://content/tiles/interiors/runtime/"
 FLOOR_GLOB = "floor_*_32.png"
+THRESHOLD_GLOB = "threshold_*_32.png"
+DOORWAY_GLOB = "doorway_*_32.png"
 WALL_GLOB = "wall_*_32.png"
 
 
@@ -34,6 +38,8 @@ SUB_RE = re.compile(r'^\[sub_resource type="TileSetAtlasSource" id="([^"]+)"\]$'
 TEXTURE_RE = re.compile(r'^texture = ExtResource\("([^"]+)"\)$')
 SOURCE_RE = re.compile(r'^sources/(\d+) = SubResource\("([^"]+)"\)$')
 INTERIOR_FLOOR_IDS_RE = re.compile(r'interior_floor_source_ids = Array\[int\]\(\[([^\]]*)\]\)')
+INTERIOR_THRESHOLD_IDS_RE = re.compile(r'interior_threshold_source_ids = Array\[int\]\(\[([^\]]*)\]\)')
+INTERIOR_DOORWAY_IDS_RE = re.compile(r'interior_doorway_source_ids = Array\[int\]\(\[([^\]]*)\]\)')
 INTERIOR_WALL_IDS_RE = re.compile(r'interior_wall_source_ids = Array\[int\]\(\[([^\]]*)\]\)')
 INTERIOR_WALL_ID_RE = re.compile(r'interior_wall_source_id = -?\d+')
 INTERIOR_WALL_CORNER_ID_RE = re.compile(r'interior_wall_corner_source_id = -?\d+')
@@ -94,6 +100,8 @@ def _build_path_to_source_id(
         path = ext_id_to_path.get(ext_id, "")
         if path:
             path_to_source_id[path] = source_id
+            if path.startswith("res://content/tiles/interiors/"):
+                path_to_source_id.setdefault(RES_PREFIX + Path(path).name, source_id)
     return path_to_source_id
 
 
@@ -202,6 +210,8 @@ def _replace_or_insert_after(text: str, pattern: re.Pattern[str], replacement: s
 def _refresh_procgen_scene(
     text: str,
     floor_source_ids: list[int],
+    threshold_source_ids: list[int],
+    doorway_source_ids: list[int],
     wall_source_ids: list[int],
     wall_corner_source_id: int,
 ) -> tuple[str, dict[str, int]]:
@@ -210,6 +220,20 @@ def _refresh_procgen_scene(
     text, counts["floor"] = INTERIOR_FLOOR_IDS_RE.subn(
         "interior_floor_source_ids = " + _format_id_list(floor_source_ids),
         text,
+    )
+
+    text, counts["threshold"] = _replace_or_insert_after(
+        text,
+        INTERIOR_THRESHOLD_IDS_RE,
+        "interior_threshold_source_ids = " + _format_id_list(threshold_source_ids),
+        r'^interior_floor_source_ids = Array\[int\]\(\[[^\]]*\]\)$',
+    )
+
+    text, counts["doorway"] = _replace_or_insert_after(
+        text,
+        INTERIOR_DOORWAY_IDS_RE,
+        "interior_doorway_source_ids = " + _format_id_list(doorway_source_ids),
+        r'^interior_threshold_source_ids = Array\[int\]\(\[[^\]]*\]\)$',
     )
 
     text, counts["wall_array"] = _replace_or_insert_after(
@@ -288,9 +312,13 @@ def _register_tile_source(
 
 def register(dry_run: bool = False) -> int:
     floor_candidates = sorted(RUNTIME_DIR.glob(FLOOR_GLOB))
+    threshold_candidates = sorted(RUNTIME_DIR.glob(THRESHOLD_GLOB))
+    doorway_candidates = sorted(RUNTIME_DIR.glob(DOORWAY_GLOB))
     wall_candidates = sorted(RUNTIME_DIR.glob(WALL_GLOB))
-    if not floor_candidates and not wall_candidates:
-        raise RuntimeError(f"No {FLOOR_GLOB} or {WALL_GLOB} files found under {RUNTIME_DIR}")
+    if not floor_candidates and not threshold_candidates and not doorway_candidates and not wall_candidates:
+        raise RuntimeError(
+            f"No {FLOOR_GLOB}, {THRESHOLD_GLOB}, {DOORWAY_GLOB}, or {WALL_GLOB} files found under {RUNTIME_DIR}"
+        )
 
     tileset_text = _read(TILESET_PATH)
     ext_id_to_path, sub_id_to_ext_id, source_id_to_sub_id = _parse_tileset(tileset_text)
@@ -312,6 +340,8 @@ def register(dry_run: bool = False) -> int:
     new_sub_blocks: list[str] = []
     new_source_lines: list[str] = []
     floor_source_ids: list[int] = []
+    threshold_source_ids: list[int] = []
+    doorway_source_ids: list[int] = []
     wall_source_ids: list[int] = []
     wall_corner_source_ids: list[int] = []
 
@@ -328,6 +358,34 @@ def register(dry_run: bool = False) -> int:
             new_source_lines,
         )
         floor_source_ids.append(source_id)
+
+    for path in threshold_candidates:
+        source_id, next_source_id = _register_tile_source(
+            path,
+            path_to_source_id,
+            used_ext_ids,
+            used_sub_ids,
+            used_source_ids,
+            next_source_id,
+            new_ext_lines,
+            new_sub_blocks,
+            new_source_lines,
+        )
+        threshold_source_ids.append(source_id)
+
+    for path in doorway_candidates:
+        source_id, next_source_id = _register_tile_source(
+            path,
+            path_to_source_id,
+            used_ext_ids,
+            used_sub_ids,
+            used_source_ids,
+            next_source_id,
+            new_ext_lines,
+            new_sub_blocks,
+            new_source_lines,
+        )
+        doorway_source_ids.append(source_id)
 
     for path in wall_candidates:
         source_id, next_source_id = _register_tile_source(
@@ -356,6 +414,8 @@ def register(dry_run: bool = False) -> int:
     procgen_text, replaced_counts = _refresh_procgen_scene(
         procgen_text,
         floor_source_ids,
+        threshold_source_ids,
+        doorway_source_ids,
         wall_source_ids,
         wall_corner_source_id,
     )
@@ -364,6 +424,8 @@ def register(dry_run: bool = False) -> int:
         raise RuntimeError("Could not refresh proc_gen_map.tscn fields: " + ", ".join(missing_keys))
 
     print("Interior floor source IDs: " + ", ".join(str(value) for value in floor_source_ids))
+    print("Interior threshold source IDs: " + (", ".join(str(value) for value in threshold_source_ids) if threshold_source_ids else "<none>"))
+    print("Interior doorway source IDs: " + (", ".join(str(value) for value in doorway_source_ids) if doorway_source_ids else "<none>"))
     print("Interior wall source IDs: " + (", ".join(str(value) for value in wall_source_ids) if wall_source_ids else "<none>"))
     print("Interior wall corner source ID: " + (str(wall_corner_source_id) if wall_corner_source_id >= 0 else "<none>"))
     if new_source_lines:

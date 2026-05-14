@@ -21,7 +21,7 @@ Dropping `floor_*_32.png`, non-corner `wall_*_32.png`, or `wall_*corner*_32.png`
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/procgen/INDOOR_OUTDOOR_PROCGEN_REGIONS.md`
-- Active runtime/docs files: `custodian/game/world/procgen/proc_gen_map.tscn`, `custodian/content/tiles/tilesets/custodian_world_tileset.tres`, `custodian/content/tiles/interiors/README.md`
+- Active runtime/docs files: `custodian/game/world/procgen/proc_gen_map.tscn`, `custodian/content/tiles/tilesets/procgen_world_tileset.tres`, `custodian/content/tiles/interiors/README.md`
 - Historical reference only: `python-sim/`
 
 ## Work Surface

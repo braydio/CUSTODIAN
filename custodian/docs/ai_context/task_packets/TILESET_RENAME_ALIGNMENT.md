@@ -14,7 +14,7 @@ Rename the active runtime TileSet away from the stale `dungeon_tileset.tres` nam
 
 ## Outcome
 
-The canonical world/procgen TileSet is named `custodian_world_tileset.tres`, and no active `custodian/` or `design/` reference points at `dungeon_tileset.tres`.
+The canonical world/procgen TileSet is named `procgen_world_tileset.tres`, and no active `custodian/` or `design/` reference points at `dungeon_tileset.tres`.
 
 ## Authority
 
@@ -36,11 +36,11 @@ The canonical world/procgen TileSet is named `custodian_world_tileset.tres`, and
 - Simulation/UI boundary concerns: none.
 - Asset requirements: preserve the existing TileSet UID and contents.
 - Compatibility or migration concerns: update all text references in active runtime and docs; scene references resolve the TileSet by explicit path so a stale local Godot UID cache cannot redirect the renamed resource to the old path.
-- Clarifying questions or assumptions: `custodian_world_tileset.tres` is the aligned canonical name because the resource is used by world/procgen maps, not only dungeon content.
+- Clarifying questions or assumptions: `procgen_world_tileset.tres` is the aligned canonical name because the resource is used by world/procgen maps, not only dungeon content.
 
 ## Implementation Plan
 
-1. Rename active and dev TileSet resources to `custodian_world_tileset.tres`.
+1. Rename active and dev TileSet resources to `procgen_world_tileset.tres`.
 2. Update active scenes and documentation references.
 3. Search for stale old-name references and run headless Godot validation.
 
@@ -62,13 +62,13 @@ The canonical world/procgen TileSet is named `custodian_world_tileset.tres`, and
 
 ## Completion Notes
 
-- Implemented: active/dev TileSet resources renamed to `custodian_world_tileset.tres`; scene and docs references updated; scene TileSet references now resolve by explicit path to avoid stale local UID-cache redirects.
+- Implemented: active/dev TileSet resources renamed to `procgen_world_tileset.tres`; scene and docs references updated; scene TileSet references now resolve by explicit path to avoid stale local UID-cache redirects.
 - Validated: stale old-name search completed; `godot --headless --path custodian --quit` loads without missing TileSet errors.
 - Deferred: none.
 
 ## Next Steps
 
-- Next action: use `custodian/content/tiles/tilesets/custodian_world_tileset.tres` for world/procgen TileSet work.
+- Next action: use `custodian/content/tiles/tilesets/procgen_world_tileset.tres` for world/procgen TileSet work.
 - Best starting files: `custodian/docs/TILEMAP_REFERENCE.md`, `custodian/game/world/procgen/proc_gen_map.tscn`
 - Required context: procgen wall bridge docs and tilemap reference.
 - Validation to run: `godot --headless --path custodian --quit`

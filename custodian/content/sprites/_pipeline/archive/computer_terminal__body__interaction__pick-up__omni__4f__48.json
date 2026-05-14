@@ -1,0 +1,25 @@
+{
+  "source": "computer_terminal__body__interaction__pick-up__omni__4f__48.png",
+  "mode": "strip",
+  "frame_size": [224, 128],
+  "outputs": [
+    {
+      "path": "environment/props/terminal/runtime/body/command_terminal__body__interaction__pickup__omni__4f__48.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 4 },
+      "transform": { "resize": [48, 48] }
+    },
+    {
+      "path": "environment/props/terminal/runtime/body/builder_terminal__body__interaction__pick_up__omni__4f__48.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 4 },
+      "transform": { "resize": [48, 48] }
+    },
+    {
+      "path": "environment/props/terminal/runtime/body/computer_terminal__body__interaction__pick-up__omni__4f__48.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 4 },
+      "transform": { "resize": [48, 48] }
+    }
+  ]
+}

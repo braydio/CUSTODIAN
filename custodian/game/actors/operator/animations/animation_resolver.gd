@@ -29,6 +29,19 @@ static func _has_playable_animation(sprite_frames: SpriteFrames, animation_name:
 
 
 static func _get_direction_suffix(direction: Vector2) -> String:
-	if absf(direction.x) > absf(direction.y):
-		return "left" if direction.x < 0.0 else "right"
-	return "down" if direction.y > 0.0 else "up"
+	var angle := direction.angle()
+	if angle >= -PI / 8.0 and angle < PI / 8.0:
+		return "right"
+	if angle >= PI / 8.0 and angle < 3.0 * PI / 8.0:
+		return "down_right"
+	if angle >= 3.0 * PI / 8.0 and angle < 5.0 * PI / 8.0:
+		return "down"
+	if angle >= 5.0 * PI / 8.0 and angle < 7.0 * PI / 8.0:
+		return "down_left"
+	if angle >= -3.0 * PI / 8.0 and angle < -PI / 8.0:
+		return "up_right"
+	if angle >= -5.0 * PI / 8.0 and angle < -3.0 * PI / 8.0:
+		return "up"
+	if angle >= -7.0 * PI / 8.0 and angle < -5.0 * PI / 8.0:
+		return "up_left"
+	return "left"

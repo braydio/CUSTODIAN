@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="/home/linux/Projects/CUSTODIAN"
-PAI_DIR="/home/linux/Projects/pai-opencode"
+ROOT_DIR="/home/braydenchaffee/Projects/CUSTODIAN"
+PAI_DIR="/home/braydenchaffee/Production/AI-Tools/pai-opencode"
 
 WORKSPACE_MAIN="${CUSTODIAN_MAIN_WORKSPACE:-1}"
 WORKSPACE_ART="${CUSTODIAN_ART_WORKSPACE:-2}"

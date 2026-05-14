@@ -21,14 +21,14 @@ The indoor procgen section visually reads as a constructed military/warehouse in
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
 - Active design/spec docs: `design/02_features/procgen/INDOOR_OUTDOOR_PROCGEN_REGIONS.md`
-- Active runtime/docs files: `custodian/game/world/procgen/proc_gen_tilemap.gd`, `custodian/content/tiles/tilesets/custodian_world_tileset.tres`, `custodian/content/tiles/interiors/REQUIRED_ASSETS_CHECKLIST.md`
+- Active runtime/docs files: `custodian/game/world/procgen/proc_gen_tilemap.gd`, `custodian/content/tiles/tilesets/procgen_world_tileset.tres`, `custodian/content/tiles/interiors/REQUIRED_ASSETS_CHECKLIST.md`
 - Historical reference only: legacy Python runtime and archived docs
 
 ## Work Surface
 
 - Files or folders expected to change:
   - `custodian/content/tiles/interiors/`
-  - `custodian/content/tiles/tilesets/custodian_world_tileset.tres`
+  - `custodian/content/tiles/tilesets/procgen_world_tileset.tres`
   - `custodian/game/world/procgen/proc_gen_tilemap.gd`
   - `custodian/game/world/procgen/proc_gen_map.tscn`
   - active docs/context files as needed
@@ -52,7 +52,7 @@ The indoor procgen section visually reads as a constructed military/warehouse in
 ## Implementation Plan
 
 1. Split interior art into `source/` and `runtime/`.
-2. Add available `32x32` interior runtime tiles to `custodian_world_tileset.tres`.
+2. Add available `32x32` interior runtime tiles to `procgen_world_tileset.tres`.
 3. Add interior tile source exports and deterministic selection to `ProcGenTilemap`.
 4. Update procgen scene defaults to point interior region rendering at the new source IDs.
 5. Validate with stale path checks and headless Godot.
@@ -82,7 +82,7 @@ The indoor procgen section visually reads as a constructed military/warehouse in
 ## Next Steps
 
 - Next action: generate the remaining clean runtime interior tiles, then refine doorway/top/corner selection.
-- Best starting files: `custodian/game/world/procgen/proc_gen_tilemap.gd`, `custodian/content/tiles/tilesets/custodian_world_tileset.tres`
+- Best starting files: `custodian/game/world/procgen/proc_gen_tilemap.gd`, `custodian/content/tiles/tilesets/procgen_world_tileset.tres`
 - Required context: interior region design doc and tile asset checklist.
 - Validation to run: `godot --headless --path custodian --quit`
 - Blockers or open questions: final doorway/wall-top/connector art is still incomplete.

@@ -10,7 +10,7 @@
 
 ## Task
 
-Move the placeholder 0x72 tileset out of the repository-root `dev/` folder into a Godot-visible, tile-domain content directory and restore `custodian_world_tileset.tres` loading.
+Move the placeholder 0x72 tileset out of the repository-root `dev/` folder into a Godot-visible, tile-domain content directory and restore `procgen_world_tileset.tres` loading.
 
 ## Outcome
 
@@ -20,7 +20,7 @@ The placeholder atlas files used by the world TileSet now live under `res://cont
 
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active runtime/docs files: `custodian/content/tiles/tilesets/custodian_world_tileset.tres`, `custodian/game/world/camera.gd`, `custodian/docs/ai_context/CURRENT_STATE.md`
+- Active runtime/docs files: `custodian/content/tiles/tilesets/procgen_world_tileset.tres`, `custodian/game/world/camera.gd`, `custodian/docs/ai_context/CURRENT_STATE.md`
 
 ## Work Surface
 
@@ -42,7 +42,7 @@ The placeholder atlas files used by the world TileSet now live under `res://cont
 
 ## Acceptance
 
-- `custodian_world_tileset.tres` no longer references `res://content/dev/placeholder-tileset/`.
+- `procgen_world_tileset.tres` no longer references `res://content/dev/placeholder-tileset/`.
 - Procgen map scene loads headless without missing placeholder-atlas errors or `tile_set.is_null()` floods.
 - Camera bounds no longer throws invalid `tile_size` access when a TileMapLayer has no TileSet.
 

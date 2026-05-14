@@ -41,6 +41,7 @@ const PALETTE_SHADER := preload("res://content/props/ruins/shaders/prop_palette_
 @onready var overlay_root: Node2D = $VisualRoot/OverlayRoot
 @onready var rubble_root: Node2D = $VisualRoot/RubbleRoot
 @onready var collision_root: Node2D = $CollisionRoot
+@onready var collision_debug_root: Node2D = $CollisionDebugRoot
 
 var _rng := RandomNumberGenerator.new()
 
@@ -59,11 +60,13 @@ func generate_variant() -> void:
 	_clear_children(overlay_root)
 	_clear_children(rubble_root)
 	_clear_children(collision_root)
+	_clear_children(collision_debug_root)
 
 	if definition == null:
 		push_warning("ProceduralProp has no PropDefinition assigned.")
 		base_sprite.texture = null
 		base_sprite.material = null
+		collision_debug_root.visible = false
 		return
 
 	if definition.base_texture == null:
@@ -73,6 +76,7 @@ func generate_variant() -> void:
 
 	_setup_base_sprite()
 	_spawn_collision()
+	_rebuild_collision_debug()
 
 	if variant_intensity == VariantIntensity.ORIGINAL:
 		base_sprite.material = null
@@ -94,6 +98,7 @@ func _setup_base_sprite() -> void:
 	base_sprite.texture = definition.base_texture
 	base_sprite.position = -definition.anchor_offset
 	base_sprite.centered = true
+	base_sprite.visible = not definition.use_portal_state_sprite
 	base_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 	if definition.allow_flip_h and variant_intensity != VariantIntensity.ORIGINAL:
@@ -238,12 +243,87 @@ func _spawn_collision() -> void:
 	collision_root.add_child(collision_instance)
 
 
+func _rebuild_collision_debug() -> void:
+	_clear_children(collision_debug_root)
+	collision_debug_root.visible = definition != null and definition.show_collision_debug
+
+	if not collision_debug_root.visible:
+		return
+
+	collision_debug_root.z_index = definition.collision_debug_z_index
+	collision_debug_root.z_as_relative = true
+
+	for child in collision_root.get_children():
+		_add_collision_debug_for_node(child, Transform2D.IDENTITY)
+
+
+func _add_collision_debug_for_node(node: Node, parent_transform: Transform2D) -> void:
+	var local_transform := parent_transform
+
+	if node is Node2D:
+		local_transform = parent_transform * (node as Node2D).transform
+
+	if node is CollisionShape2D:
+		_add_collision_shape_debug(node as CollisionShape2D, local_transform)
+
+	for child in node.get_children():
+		_add_collision_debug_for_node(child, local_transform)
+
+
+func _add_collision_shape_debug(collision_shape: CollisionShape2D, local_transform: Transform2D) -> void:
+	if collision_shape.disabled:
+		return
+
+	var rectangle := collision_shape.shape as RectangleShape2D
+
+	if rectangle == null:
+		return
+
+	var half_size := rectangle.size * 0.5
+	var points := PackedVector2Array([
+		local_transform * Vector2(-half_size.x, -half_size.y),
+		local_transform * Vector2(half_size.x, -half_size.y),
+		local_transform * Vector2(half_size.x, half_size.y),
+		local_transform * Vector2(-half_size.x, half_size.y),
+	])
+
+	var polygon := Polygon2D.new()
+	polygon.name = collision_shape.name + "DebugFill"
+	polygon.polygon = points
+	polygon.color = definition.collision_debug_color
+	collision_debug_root.add_child(polygon)
+
+	var outline := Line2D.new()
+	outline.name = collision_shape.name + "DebugOutline"
+	outline.points = PackedVector2Array([
+		points[0],
+		points[1],
+		points[2],
+		points[3],
+		points[0],
+	])
+	outline.width = 1.5
+	outline.default_color = definition.collision_debug_outline_color
+	outline.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	collision_debug_root.add_child(outline)
+
+
 func apply_depth_sort(player_feet_y: float) -> void:
 	if definition == null or not definition.depth_sort_enabled:
 		return
 	var base_y := global_position.y + definition.depth_sort_base_y_offset
 	z_as_relative = false
 	z_index = definition.depth_sort_behind_z_index if player_feet_y > base_y else definition.depth_sort_front_z_index
+
+
+func resolve_depth_sort_z_index(player_feet_y: float) -> int:
+	if definition == null:
+		return 0
+	if definition.portal_platform_enabled:
+		var platform_horizon_y := global_position.y + definition.portal_platform_top_offset.y
+		return definition.depth_sort_front_z_index if player_feet_y <= platform_horizon_y else definition.depth_sort_behind_z_index
+	var base_y := global_position.y + definition.depth_sort_base_y_offset
+	return definition.depth_sort_behind_z_index if player_feet_y > base_y else definition.depth_sort_front_z_index
 
 
 func get_occlusion_bounds() -> Rect2:
@@ -407,4 +487,5 @@ func _has_required_nodes() -> bool:
 		and overlay_root != null
 		and rubble_root != null
 		and collision_root != null
+		and collision_debug_root != null
 	)

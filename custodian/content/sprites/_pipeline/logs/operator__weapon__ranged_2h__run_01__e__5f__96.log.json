@@ -1,0 +1,10 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__weapon__ranged_2h__run_01__e__5f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/curated/weapon/ranged_2h/carbine_rifle_mk1/operator__weapon__ranged_2h__run_01__e__5f__96.png",
+		"res://content/sprites/weapons/carbine_rifle/animations/operator__weapon__ranged_2h__run_01__e__5f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/operator__weapon__ranged_2h__run_01__e__5f__96.png",
+	"timestamp_utc": "2026-05-12 11:29:26"
+}

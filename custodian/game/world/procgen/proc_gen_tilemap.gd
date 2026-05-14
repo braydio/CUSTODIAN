@@ -150,6 +150,18 @@ const TILE_ALT_TRANSPOSE := 16384
 ## Layout variation: not cave-like every run
 @export_range(0.0, 1.0, 0.01) var open_layout_chance: float = 0.35
 @export_range(0.0, 0.6, 0.01) var open_layout_carve_ratio: float = 0.20
+
+@export_group("Gameplay Feel / Intent Zones", "intent")
+@export var intent_spawn_clearing_enabled: bool = true
+@export var intent_spawn_clearing_half_extents_tiles: Vector2i = Vector2i(5, 4)
+@export var intent_soft_paths_enabled: bool = true
+@export_range(0, 4, 1) var intent_soft_path_width: int = 1
+@export var intent_portal_plazas_enabled: bool = true
+@export var intent_portal_plaza_half_extents_tiles: Vector2i = Vector2i(3, 2)
+@export var intent_mark_foliage_cover: bool = true
+@export var intent_decorate_compound_ingress: bool = true
+@export_group("", "")
+
 @export_group("Constructed Interior Region", "interior_region")
 @export var interior_region_enabled: bool = true
 @export var interior_region_min_size: Vector2i = Vector2i(26, 18)
@@ -160,6 +172,8 @@ const TILE_ALT_TRANSPOSE := 16384
 @export var interior_region_debug_logging: bool = false
 @export var interior_use_dedicated_tiles: bool = true
 @export var interior_floor_source_ids: Array[int] = []
+@export var interior_threshold_source_ids: Array[int] = []
+@export var interior_doorway_source_ids: Array[int] = []
 @export var interior_wall_source_ids: Array[int] = []
 @export var interior_wall_source_id: int = -1
 @export var interior_wall_corner_source_id: int = -1
@@ -293,18 +307,19 @@ const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
 @export var ruin_prop_debug_logging: bool = false
 @export var enable_portal_pair_teleport: bool = true
 @export_range(1, 12, 1) var portal_pair_min_distance_tiles: int = 8
-@export_range(0, 96, 1) var portal_teleport_cooldown_frames: int = 24
-@export_range(4.0, 48.0, 1.0) var portal_trigger_radius: float = 14.0
+@export_range(0, 96, 1) var portal_teleport_cooldown_frames: int = 60
+@export_range(4.0, 48.0, 1.0) var portal_trigger_radius: float = 12.0
 @export var portal_trigger_local_offset: Vector2 = Vector2(0, -65)
 @export var portal_arrival_offset: Vector2 = Vector2(0, 54)
+@export_range(0.0, 2.0, 0.05) var portal_arrival_animation_delay_seconds: float = 0.50
 @export var portal_spawn_floor_half_extents_tiles: Vector2i = Vector2i(3, 2)
 @export_range(0, 8, 1) var portal_spawn_wall_clearance_tiles: int = 3
 @export_range(0.0, 32.0, 0.5) var portal_spawn_collision_probe_radius: float = 8.0
 @export_range(0, 4, 1) var portal_spawn_nudge_radius_tiles: int = 2
 @export_group("Interior Props", "interior_prop")
 @export var interior_prop_spawning_enabled: bool = true
-@export_range(0, 80, 1) var interior_prop_count: int = 50
-@export_range(1, 8, 1) var interior_prop_min_distance_tiles: int = 1
+@export_range(0, 80, 1) var interior_prop_count: int = 24
+@export_range(1, 8, 1) var interior_prop_min_distance_tiles: int = 3
 @export_range(0, 4, 1) var interior_prop_wall_clearance_tiles: int = 0
 @export_range(0, 6, 1) var interior_prop_threshold_clearance_tiles: int = 1
 @export var interior_prop_jitter_amplitude: Vector2 = Vector2(6, 4)
@@ -352,8 +367,6 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if not enable_streaming_reveal:
-		return
 	if _generated_floor_cells.is_empty() and _generated_wall_cells.is_empty():
 		return
 	if not _is_attached_to_runtime_world():
@@ -363,15 +376,17 @@ func _process(_delta: float) -> void:
 		_streaming_player = get_tree().get_first_node_in_group("player") as Node2D
 
 	if _streaming_player != null:
-		var player_tile := _global_to_tile(_streaming_player.global_position)
-		var player_chunk := _tile_to_chunk(player_tile)
-		if player_chunk != _streaming_current_chunk:
-			_streaming_current_chunk = player_chunk
-			_update_streaming_chunks(player_chunk, player_tile)
-		_update_foliage_occlusion(_streaming_player)
+		if enable_streaming_reveal:
+			var player_tile := _global_to_tile(_streaming_player.global_position)
+			var player_chunk := _tile_to_chunk(player_tile)
+			if player_chunk != _streaming_current_chunk:
+				_streaming_current_chunk = player_chunk
+				_update_streaming_chunks(player_chunk, player_tile)
+			_update_foliage_occlusion(_streaming_player)
 		_update_ruin_prop_occlusion(_streaming_player)
 
-	_process_streaming_reveal_queue()
+	if enable_streaming_reveal:
+		_process_streaming_reveal_queue()
 
 
 func _is_attached_to_runtime_world() -> bool:
@@ -434,6 +449,8 @@ func _fill_tilemaps() -> void:
 		_clear_interior_props()
 		_clear_ruin_props()
 		_clear_horizontal_wall_overlays()
+		_clear_runtime_wall_collision()
+		_rebuild_runtime_wall_collision_debug()
 	_apply_planet_visual_profile()
 	
 	var map_size = procgen_node.map_size
@@ -455,6 +472,10 @@ func _fill_tilemaps() -> void:
 		_apply_compound_layout(map_size)
 	if interior_region_enabled:
 		_apply_constructed_interior_region(map_size)
+	if intent_spawn_clearing_enabled:
+		_stamp_spawn_clearing(map_size)
+	if intent_soft_paths_enabled:
+		_carve_interest_paths(map_size)
 	if use_cohesive_wall_visuals:
 		_apply_wall_visuals(map_size)
 	_capture_generated_tile_state(map_size)
@@ -579,10 +600,28 @@ func _set_interior_floor_tile(pos: Vector2i, zone: String = "") -> void:
 	if not interior_use_dedicated_tiles or interior_floor_source_ids.is_empty():
 		_set_floor_tile(pos)
 		return
-	var source_id := _select_interior_floor_source_id(pos, zone)
-	floor_tilemap.set_cell(pos, source_id, interior_tile_atlas_coord, _select_interior_floor_alternative(pos, zone))
+	var source_id := _select_interior_surface_source_id(pos, zone)
+	floor_tilemap.set_cell(pos, source_id, interior_tile_atlas_coord, _select_interior_surface_alternative(pos, zone))
 	walls_tilemap.erase_cell(pos)
 	_wall_health.erase(pos)
+
+
+func _select_interior_surface_source_id(pos: Vector2i, zone: String = "") -> int:
+	if zone == "doorway" and not interior_doorway_source_ids.is_empty():
+		return _select_interior_opening_source_id(interior_doorway_source_ids)
+	if zone == "threshold" and not interior_threshold_source_ids.is_empty():
+		return _select_interior_opening_source_id(interior_threshold_source_ids)
+	return _select_interior_floor_source_id(pos, zone)
+
+
+func _select_interior_surface_alternative(pos: Vector2i, zone: String = "") -> int:
+	if zone == "doorway" or zone == "threshold":
+		return 0
+	return _select_interior_floor_alternative(pos, zone)
+
+
+func _select_interior_opening_source_id(source_ids: Array[int]) -> int:
+	return source_ids[0]
 
 
 func _select_interior_floor_source_id(pos: Vector2i, zone: String = "") -> int:
@@ -987,6 +1026,62 @@ func _is_void_cell(pos: Vector2i) -> bool:
 	return not _has_wall_cell(pos) and (floor_tilemap == null or floor_tilemap.get_cell_source_id(pos) < 0)
 
 
+func _is_tile_inside_map(tile: Vector2i, map_size: Vector2i, margin: int = 1) -> bool:
+	return tile.x >= margin and tile.y >= margin and tile.x < map_size.x - margin and tile.y < map_size.y - margin
+
+
+func _stamp_spawn_clearing(map_size: Vector2i) -> void:
+	if procgen_node == null:
+		return
+	var spawn := get_player_spawn()
+	var half_extents := Vector2i(
+		maxi(0, intent_spawn_clearing_half_extents_tiles.x),
+		maxi(0, intent_spawn_clearing_half_extents_tiles.y)
+	)
+	for x in range(-half_extents.x, half_extents.x + 1):
+		for y in range(-half_extents.y, half_extents.y + 1):
+			var tile := spawn + Vector2i(x, y)
+			if not _is_tile_inside_map(tile, map_size, 1):
+				continue
+			_set_floor_tile(tile)
+			_set_region_tile(tile, "spawn_clearing", "safe")
+
+
+func _carve_interest_paths(map_size: Vector2i) -> void:
+	if procgen_node == null:
+		return
+	var spawn := get_player_spawn()
+	var path_width := maxi(0, intent_soft_path_width)
+	for ingress in _last_compound_ingress:
+		_carve_soft_path(spawn, ingress, path_width, map_size)
+	for threshold in _last_interior_thresholds:
+		_carve_soft_path(spawn, threshold, path_width, map_size)
+
+
+func _carve_soft_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
+	var current := from_tile
+	while current.x != to_tile.x:
+		current.x += 1 if to_tile.x > current.x else -1
+		_carve_path_brush(current, width, map_size)
+	while current.y != to_tile.y:
+		current.y += 1 if to_tile.y > current.y else -1
+		_carve_path_brush(current, width, map_size)
+
+
+func _carve_path_brush(center: Vector2i, width: int, map_size: Vector2i) -> void:
+	for x in range(-width, width + 1):
+		for y in range(-width, width + 1):
+			var tile := center + Vector2i(x, y)
+			if not _is_tile_inside_map(tile, map_size, 1):
+				continue
+			if is_indoor_tile(tile):
+				continue
+			if walls_tilemap != null and walls_tilemap.get_cell_source_id(tile) >= 0:
+				continue
+			_set_floor_tile(tile)
+			_set_region_tile(tile, "soft_path", "travel")
+
+
 func _apply_compound_layout(map_size: Vector2i) -> void:
 	var compound := _build_compound_layout(map_size)
 	var rect: Rect2i = compound.get("rect", Rect2i()) as Rect2i
@@ -1031,6 +1126,8 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 				_set_wall_tile(right_tile)
 	for tile in ingress:
 		_carve_compound_ingress(tile, rect, t)
+		if intent_decorate_compound_ingress:
+			_decorate_compound_ingress(tile, rect)
 
 	for b in buildings:
 		for x in range(b.position.x, b.end.x):
@@ -1130,6 +1227,29 @@ func _carve_compound_ingress(ingress: Vector2i, rect: Rect2i, wall_thickness: in
 	_set_floor_tile(ingress + outward)
 
 
+func _decorate_compound_ingress(ingress: Vector2i, rect: Rect2i) -> void:
+	if procgen_node == null:
+		return
+	var inward: Vector2i = _get_compound_ingress_inward(ingress, rect)
+	var outward: Vector2i = -inward
+	var map_size: Vector2i = procgen_node.map_size
+	for step in range(1, 4):
+		var approach_tile: Vector2i = ingress + outward * step
+		if not _is_tile_inside_map(approach_tile, map_size, 1):
+			continue
+		_set_floor_tile(approach_tile)
+		_set_region_tile(approach_tile, "compound_approach", "compound_ingress")
+	var outside_anchor: Vector2i = ingress + outward * 2
+	var side_axis := Vector2i(-inward.y, inward.x)
+	for side in [-1, 1]:
+		var cover_tile: Vector2i = outside_anchor + side_axis * int(side) * 2
+		if not _is_tile_inside_map(cover_tile, map_size, 1):
+			continue
+		if walls_tilemap != null and walls_tilemap.get_cell_source_id(cover_tile) >= 0:
+			continue
+		_set_region_tile(cover_tile, "cover_anchor", "compound_ingress")
+
+
 func _seal_unreachable_compound_pockets(rect: Rect2i, ingress_tiles: Array[Vector2i]) -> void:
 	var frontier: Array[Vector2i] = []
 	var visited: Dictionary = {}
@@ -1196,9 +1316,9 @@ func _apply_constructed_interior_region(map_size: Vector2i) -> void:
 
 	for x in range(rect.position.x, rect.end.x):
 		for y in range(rect.position.y, rect.end.y):
-				var tile := Vector2i(x, y)
-				_set_interior_wall_tile(tile)
-				_set_region_tile(tile, "interior_wall", "military_complex")
+			var tile := Vector2i(x, y)
+			_set_interior_wall_tile(tile)
+			_set_region_tile(tile, "interior_wall", "military_complex")
 
 	var hall_width: int = clampi(interior_region_hallway_width, 1, max(1, rect.size.y - 4))
 	var hall_start_y: int = rect.position.y + int(rect.size.y * 0.5) - int(hall_width * 0.5)
@@ -1212,7 +1332,8 @@ func _apply_constructed_interior_region(map_size: Vector2i) -> void:
 
 	var rooms := _build_constructed_interior_rooms(rect, hall_rect)
 	for room in rooms:
-		_carve_interior_floor_rect(room, "room")
+		var room_zone := _pick_room_zone(room, _last_interior_rooms.size())
+		_carve_interior_floor_rect(room, room_zone)
 		_last_interior_rooms.append(room)
 
 	var bay := _build_constructed_interior_bay(rect, hall_rect)
@@ -1325,6 +1446,21 @@ func _build_constructed_interior_rooms(region_rect: Rect2i, hall_rect: Rect2i) -
 	return rooms
 
 
+func _pick_room_zone(room: Rect2i, room_index: int) -> String:
+	var zones := [
+		"storage",
+		"security",
+		"maintenance",
+		"archive",
+		"generator",
+		"barracks",
+		"lab",
+	]
+	var token := room.position + Vector2i(room_index * 37, 777)
+	var index := _tile_noise_hash(token) % zones.size()
+	return zones[index]
+
+
 func _build_constructed_interior_bay(region_rect: Rect2i, hall_rect: Rect2i) -> Rect2i:
 	var bay_w: int = clampi(int(region_rect.size.x * 0.30), 7, max(7, region_rect.size.x - 4))
 	var bay_h: int = clampi(int(region_rect.size.y * 0.34), 5, max(5, region_rect.size.y - 4))
@@ -1352,9 +1488,9 @@ func _clamp_rect_inside(rect: Rect2i, bounds: Rect2i) -> Rect2i:
 func _carve_interior_floor_rect(rect: Rect2i, zone: String) -> void:
 	for x in range(rect.position.x, rect.end.x):
 		for y in range(rect.position.y, rect.end.y):
-				var tile := Vector2i(x, y)
-				_set_interior_floor_tile(tile, zone)
-				_set_region_tile(tile, "interior_floor", zone)
+			var tile := Vector2i(x, y)
+			_set_interior_floor_tile(tile, zone)
+			_set_region_tile(tile, "interior_floor", zone)
 
 
 func _carve_constructed_interior_thresholds(region_rect: Rect2i, hall_rect: Rect2i) -> void:
@@ -1383,7 +1519,7 @@ func _carve_constructed_interior_threshold(edge_tile: Vector2i, region_rect: Rec
 	for step in range(3):
 		var tile := edge_tile + inward * step
 		if region_rect.has_point(tile):
-			_set_interior_floor_tile(tile, "doorway")
+			_set_interior_floor_tile(tile, "doorway" if step == 0 else "threshold")
 			_set_region_tile(tile, "interior_threshold", "doorway")
 	for step in range(1, 5):
 		var exterior_tile := edge_tile + outward * step
@@ -1432,6 +1568,40 @@ func is_indoor_tile(tile: Vector2i) -> bool:
 	return region_type == "interior_floor" or region_type == "interior_wall" or region_type == "interior_threshold"
 
 
+func get_intensity_at_tile(tile: Vector2i) -> float:
+	if procgen_node == null:
+		return 0.0
+	var spawn := get_player_spawn()
+	var map_vector := Vector2(float(procgen_node.map_size.x), float(procgen_node.map_size.y))
+	var max_dist := maxf(1.0, map_vector.length())
+	var value := clampf(tile.distance_to(spawn) / max_dist, 0.0, 1.0)
+	var region := get_region_type_at_tile(tile)
+	match region:
+		"spawn_clearing":
+			value -= 0.35
+		"soft_path":
+			value -= 0.10
+		"compound_approach":
+			value += 0.08
+		"cover_anchor":
+			value += 0.10
+		"interior_threshold":
+			value += 0.15
+		"interior_floor":
+			value += 0.22
+		"portal_plaza":
+			value += 0.30
+		"destroyed_wall_floor":
+			value += 0.12
+		"foliage_cover":
+			value += 0.05
+	if _last_compound_rect.size.x > 0 and _last_compound_rect.has_point(tile):
+		value += 0.08
+	if _last_interior_region_rect.size.x > 0 and _last_interior_region_rect.has_point(tile):
+		value += 0.12
+	return clampf(value, 0.0, 1.0)
+
+
 func _rebuild_runtime_wall_collision(map_size: Vector2i) -> void:
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
 	if collision_root == null:
@@ -1473,6 +1643,22 @@ func _set_hole_tile(pos: Vector2i) -> void:
 	_wall_health.erase(pos)
 
 
+func _set_destroyed_wall_floor_tile(pos: Vector2i) -> void:
+	if floor_tilemap == null or walls_tilemap == null:
+		return
+	var source_id := _select_floor_source_id(pos)
+	var atlas := _select_floor_coord(pos)
+	_generated_floor_cells[pos] = {
+		"source_id": source_id,
+		"atlas": atlas,
+		"alternative": 0,
+	}
+	floor_tilemap.set_cell(pos, source_id, atlas, 0)
+	walls_tilemap.erase_cell(pos)
+	_wall_health.erase(pos)
+	_set_region_tile(pos, "destroyed_wall_floor", "debris")
+
+
 func damage_wall_tile(pos: Vector2i, amount: float, attacker_team: String = "") -> Dictionary:
 	if walls_tilemap == null or walls_tilemap.get_cell_source_id(pos) < 0:
 		return {
@@ -1494,12 +1680,8 @@ func damage_wall_tile(pos: Vector2i, amount: float, attacker_team: String = "") 
 		}
 
 	_generated_wall_cells.erase(pos)
-	_generated_floor_cells[pos] = {
-		"source_id": _select_floor_source_id(pos),
-		"atlas": _select_floor_coord(pos),
-	}
-	_set_floor_tile(pos)
-	minimap_tile_changed.emit(pos, "floor")
+	_set_destroyed_wall_floor_tile(pos)
+	minimap_tile_changed.emit(pos, "destroyed_wall_floor")
 	_refresh_wall_neighbors(pos)
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
@@ -1527,8 +1709,15 @@ func _refresh_wall_neighbors(center_tile: Vector2i) -> void:
 			var pos := Vector2i(x, y)
 			if walls_tilemap.get_cell_source_id(pos) < 0:
 				continue
-			var source = high_walls_source_id if use_high_walls else walls_source_id
-			walls_tilemap.set_cell(pos, source, _select_wall_coord(pos))
+			var source := high_walls_source_id if use_high_walls else walls_source_id
+			var coord := _select_wall_coord(pos)
+			walls_tilemap.set_cell(pos, source, coord)
+			if _generated_wall_cells.has(pos):
+				_generated_wall_cells[pos] = {
+					"source_id": source,
+					"atlas": coord,
+					"alternative": walls_tilemap.get_cell_alternative_tile(pos),
+				}
 
 
 func _refresh_navigation_after_wall_change(force_immediate: bool = false) -> void:
@@ -1548,9 +1737,13 @@ func _queue_navigation_rebuild() -> void:
 func _flush_navigation_rebuild() -> void:
 	_navigation_rebuild_deferred = false
 	_navigation_rebuild_pending = false
+	var rebuilt := false
 	for navigation_node in get_tree().get_nodes_in_group("navigation"):
 		if navigation_node != null and navigation_node.has_method("rebuild"):
 			navigation_node.call("rebuild")
+			rebuilt = true
+	if not rebuilt and nav_region != null:
+		nav_region.bake_navigation_polygon(false)
 
 
 func _capture_generated_tile_state(map_size: Vector2i) -> void:
@@ -1752,6 +1945,7 @@ func _configure_portal_pair(candidate_tiles: Array[Vector2i], spawned: Array[Pro
 			)
 			if bool(resolved_tile.get("ok", false)):
 				var safe_tile := resolved_tile["tile"] as Vector2i
+				_stamp_portal_plaza(safe_tile, map_size)
 				prop.global_position = _portal_tile_to_world(safe_tile)
 				prop.set_meta("source_tile", safe_tile)
 				blocked_tiles[safe_tile] = true
@@ -1771,6 +1965,7 @@ func _configure_portal_pair(candidate_tiles: Array[Vector2i], spawned: Array[Pro
 			break
 
 		var tile := tile_result["tile"] as Vector2i
+		_stamp_portal_plaza(tile, map_size)
 		var prop := _spawn_guaranteed_ruin_prop(portal_definition, tile)
 		if prop == null:
 			break
@@ -1781,6 +1976,18 @@ func _configure_portal_pair(candidate_tiles: Array[Vector2i], spawned: Array[Pro
 	if portal_props.size() < 2:
 		return
 
+	while portal_props.size() > 2:
+		var extra: ProceduralProp = portal_props.pop_back()
+		if extra != null and is_instance_valid(extra):
+			extra.queue_free()
+
+	if intent_soft_paths_enabled:
+		var spawn_tile := get_player_spawn()
+		var portal_a_tile := _get_prop_source_tile(portal_props[0])
+		var portal_b_tile := _get_prop_source_tile(portal_props[1])
+		_carve_generated_soft_path(spawn_tile, portal_a_tile, intent_soft_path_width, map_size)
+		_carve_generated_soft_path(spawn_tile, portal_b_tile, intent_soft_path_width, map_size)
+
 	var first: Area2D = _attach_portal_teleporter(portal_props[0])
 	var second: Area2D = _attach_portal_teleporter(portal_props[1])
 	if first == null or second == null:
@@ -1789,6 +1996,74 @@ func _configure_portal_pair(candidate_tiles: Array[Vector2i], spawned: Array[Pro
 	first.call("link_to", second)
 	second.call("link_to", first)
 	_portal_teleporters = [first, second]
+
+
+func _is_tile_currently_visible(tile: Vector2i) -> bool:
+	if not enable_streaming_reveal:
+		return true
+	return _revealed_chunks.has(_tile_to_chunk(tile))
+
+
+func _set_floor_tile_and_generated_state(pos: Vector2i, region_type: String = "", zone: String = "") -> void:
+	if floor_tilemap == null or walls_tilemap == null:
+		return
+	var source_id := _select_floor_source_id(pos)
+	var atlas := _select_floor_coord(pos)
+	_generated_floor_cells[pos] = {
+		"source_id": source_id,
+		"atlas": atlas,
+		"alternative": 0,
+	}
+	_generated_wall_cells.erase(pos)
+	_wall_health.erase(pos)
+	if not region_type.is_empty():
+		_set_region_tile(pos, region_type, zone)
+	if _is_tile_currently_visible(pos):
+		floor_tilemap.set_cell(pos, source_id, atlas, 0)
+		walls_tilemap.erase_cell(pos)
+		if build_runtime_wall_collision:
+			_remove_runtime_wall_body(pos)
+
+
+func _stamp_portal_plaza(center: Vector2i, map_size: Vector2i) -> void:
+	if not intent_portal_plazas_enabled:
+		return
+	var half_extents := Vector2i(
+		maxi(0, intent_portal_plaza_half_extents_tiles.x),
+		maxi(0, intent_portal_plaza_half_extents_tiles.y)
+	)
+	for x in range(-half_extents.x, half_extents.x + 1):
+		for y in range(-half_extents.y, half_extents.y + 1):
+			var tile := center + Vector2i(x, y)
+			if not _is_tile_inside_map(tile, map_size, 1):
+				continue
+			if is_indoor_tile(tile):
+				continue
+			_set_floor_tile_and_generated_state(tile, "portal_plaza", "portal")
+			_remove_foliage(tile)
+
+
+func _carve_generated_soft_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
+	var current := from_tile
+	while current.x != to_tile.x:
+		current.x += 1 if to_tile.x > current.x else -1
+		_carve_generated_path_brush(current, width, map_size)
+	while current.y != to_tile.y:
+		current.y += 1 if to_tile.y > current.y else -1
+		_carve_generated_path_brush(current, width, map_size)
+
+
+func _carve_generated_path_brush(center: Vector2i, width: int, map_size: Vector2i) -> void:
+	for x in range(-width, width + 1):
+		for y in range(-width, width + 1):
+			var tile := center + Vector2i(x, y)
+			if not _is_tile_inside_map(tile, map_size, 1):
+				continue
+			if is_indoor_tile(tile):
+				continue
+			if _generated_wall_cells.has(tile):
+				continue
+			_set_floor_tile_and_generated_state(tile, "soft_path", "travel")
 
 
 func _get_portal_prop_definition() -> PropDefinition:
@@ -2014,9 +2289,14 @@ func _update_ruin_prop_occlusion(player: Node2D) -> void:
 	if player == null or _ruin_prop_parent == null:
 		return
 	var player_feet := player.global_position + foliage_player_feet_offset
+	var portal_player_feet_y := _get_portal_depth_feet_y(player)
 	var player_upper := player.global_position + foliage_player_upper_body_offset
 	for prop in _collect_ruin_props():
 		if prop == null or not is_instance_valid(prop):
+			continue
+		if prop.definition != null and prop.definition.portal_platform_enabled:
+			prop.z_as_relative = false
+			prop.z_index = prop.resolve_depth_sort_z_index(portal_player_feet_y)
 			continue
 		var bounds := prop.get_occlusion_bounds()
 		if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
@@ -2045,6 +2325,29 @@ func _resolve_ruin_prop_depth_z_index(prop: ProceduralProp, player_feet: Vector2
 	if player_upper.y <= bounds.position.y + bounds.size.y * 0.5:
 		return definition.depth_sort_front_z_index
 	return definition.depth_sort_behind_z_index
+
+
+func _get_portal_depth_feet_y(player: Node2D) -> float:
+	var feet_y := player.global_position.y + foliage_player_feet_offset.y
+	var collision_shape := player.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision_shape != null and collision_shape.shape != null:
+		var shape := collision_shape.shape
+		if shape is CapsuleShape2D:
+			var capsule := shape as CapsuleShape2D
+			feet_y = collision_shape.global_position.y + max(capsule.height * 0.5, capsule.radius)
+		elif shape is CircleShape2D:
+			feet_y = collision_shape.global_position.y + (shape as CircleShape2D).radius
+		elif shape is RectangleShape2D:
+			feet_y = collision_shape.global_position.y + (shape as RectangleShape2D).size.y * 0.5
+	if player.has_method("get"):
+		var fake_elevation_value: Variant = player.get("fake_elevation")
+		var lift_factor_value: Variant = player.get("fake_elevation_visual_lift_factor")
+		if fake_elevation_value is float or fake_elevation_value is int:
+			var lift_factor := 0.5
+			if lift_factor_value is float or lift_factor_value is int:
+				lift_factor = float(lift_factor_value)
+			feet_y -= float(fake_elevation_value) * lift_factor
+	return feet_y
 
 
 func _collect_ruin_props() -> Array[ProceduralProp]:
@@ -2102,25 +2405,37 @@ func _attach_portal_teleporter(prop: ProceduralProp) -> Area2D:
 	teleporter.name = "PortalTeleporter"
 	var portal_definition := prop.definition
 	if portal_definition != null and portal_definition.portal_platform_enabled:
+		var ramp_bottom_offset := portal_definition.portal_platform_bottom_offset - portal_definition.portal_platform_trigger_offset
 		teleporter.position = portal_definition.portal_platform_trigger_offset
+		teleporter.set("trigger_shape_size", portal_definition.portal_platform_trigger_shape_size)
+		teleporter.set("trigger_shape_offset", portal_definition.portal_platform_trigger_shape_offset)
 		teleporter.set("ramp_top_local_offset", Vector2.ZERO)
-		teleporter.set(
-			"ramp_bottom_local_offset",
-			portal_definition.portal_platform_bottom_offset - portal_definition.portal_platform_trigger_offset
-		)
+		teleporter.set("ramp_bottom_local_offset", ramp_bottom_offset)
 		teleporter.set("ramp_lane_half_width", portal_definition.portal_platform_lane_half_width)
 		teleporter.set("ramp_bottom_width", portal_definition.portal_platform_bottom_width)
 		teleporter.set("ramp_top_width", portal_definition.portal_platform_top_width)
 		teleporter.set("ramp_side_block_width", portal_definition.portal_platform_side_block_width)
-		teleporter.set("ramp_side_block_height", portal_definition.portal_platform_side_block_height)
+		teleporter.set("ramp_side_block_extra_height", portal_definition.portal_platform_side_block_height)
 		teleporter.set("ramp_required_elevation", portal_definition.portal_platform_required_elevation)
 		teleporter.set("ramp_max_elevation", portal_definition.portal_platform_max_elevation)
 		teleporter.set("ramp_speed_multiplier", portal_definition.portal_platform_speed_multiplier)
 		teleporter.set("ramp_dual_approach", portal_definition.portal_platform_dual_approach)
+		teleporter.set("fx_offset", portal_trigger_local_offset - portal_definition.portal_platform_trigger_offset)
+		teleporter.set("generate_side_block_collision", portal_definition.collision_scene == null)
+		teleporter.set("arrival_offset", ramp_bottom_offset)
+		teleporter.set("require_ramp_elevation_to_teleport", true)
+		teleporter.set("require_body_still_in_trigger_at_teleport_frame", true)
+		teleporter.set("stop_body_velocity_on_arrival", true)
 	else:
 		teleporter.position = portal_trigger_local_offset
+		teleporter.set("trigger_shape_size", Vector2.ZERO)
+		teleporter.set("trigger_shape_offset", Vector2.ZERO)
+		teleporter.set("arrival_offset", portal_arrival_offset)
+		teleporter.set("require_ramp_elevation_to_teleport", false)
+		teleporter.set("require_body_still_in_trigger_at_teleport_frame", true)
+		teleporter.set("stop_body_velocity_on_arrival", true)
 	teleporter.set("trigger_radius", portal_trigger_radius)
-	teleporter.set("arrival_offset", portal_arrival_offset)
+	teleporter.set("arrival_animation_delay_seconds", portal_arrival_animation_delay_seconds)
 	teleporter.set("cooldown_frames", portal_teleport_cooldown_frames)
 	prop.add_child(teleporter)
 	return teleporter
@@ -2139,11 +2454,12 @@ func _generate_interior_props(map_size: Vector2i) -> void:
 			print("[InteriorProps] No props_*.png textures found in %s" % INTERIOR_RUNTIME_DIR)
 		return
 
-	var candidate_tiles: Array[Vector2i] = []
-	for tile_variant in _generated_floor_cells.keys():
-		var tile := tile_variant as Vector2i
-		if _should_place_interior_prop(tile, map_size):
-			candidate_tiles.append(tile)
+	var candidate_tiles := _build_intentional_interior_prop_candidates(map_size)
+	if candidate_tiles.is_empty():
+		for tile_variant in _generated_floor_cells.keys():
+			var tile := tile_variant as Vector2i
+			if _should_place_interior_prop(tile, map_size):
+				candidate_tiles.append(tile)
 	candidate_tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		return _tile_noise_hash(a + Vector2i(1501, 271)) < _tile_noise_hash(b + Vector2i(1501, 271))
 	)
@@ -2159,6 +2475,43 @@ func _generate_interior_props(map_size: Vector2i) -> void:
 
 	if interior_prop_debug_logging:
 		print("[InteriorProps] Placed %d props under %s" % [_interior_prop_nodes.size(), _ruin_prop_parent.get_path()])
+
+
+func _build_intentional_interior_prop_candidates(map_size: Vector2i) -> Array[Vector2i]:
+	var candidates: Array[Vector2i] = []
+	var seen: Dictionary = {}
+	for room in _last_interior_rooms:
+		if room.size.x <= 2 or room.size.y <= 2:
+			continue
+		_append_interior_prop_room_edge_candidates(room, map_size, candidates, seen)
+	return candidates
+
+
+func _append_interior_prop_room_edge_candidates(room: Rect2i, map_size: Vector2i, candidates: Array[Vector2i], seen: Dictionary) -> void:
+	var left := room.position.x
+	var right := room.end.x - 1
+	var top := room.position.y
+	var bottom := room.end.y - 1
+	var edge_step := maxi(2, interior_prop_min_distance_tiles)
+	var edge_points: Array[Vector2i] = [
+		Vector2i(left, top),
+		Vector2i(right, top),
+		Vector2i(left, bottom),
+		Vector2i(right, bottom),
+	]
+	for x in range(left + edge_step, right, edge_step):
+		edge_points.append(Vector2i(x, top))
+		edge_points.append(Vector2i(x, bottom))
+	for y in range(top + edge_step, bottom, edge_step):
+		edge_points.append(Vector2i(left, y))
+		edge_points.append(Vector2i(right, y))
+	for tile in edge_points:
+		if seen.has(tile):
+			continue
+		if not _should_place_interior_prop(tile, map_size):
+			continue
+		seen[tile] = true
+		candidates.append(tile)
 
 
 func _clear_interior_props() -> void:
@@ -2231,6 +2584,8 @@ func _place_interior_prop(pos: Vector2i) -> void:
 	var texture_size := texture.get_size()
 	var base_offset := Vector2(0, -texture_size.y * 0.5 + _get_tile_size().y * 0.5)
 	sprite.add_to_group("interior_runtime_props")
+	sprite.set_meta("source_tile", pos)
+	sprite.set_meta("region_zone", String(get_region_data_at_tile(pos).get("zone", "room")))
 	_ruin_prop_parent.add_child(sprite)
 	sprite.global_position = _tile_to_world_position(pos) + base_offset + _interior_prop_jitter(pos)
 	_interior_prop_nodes.append(sprite)
@@ -2248,12 +2603,16 @@ func _interior_prop_jitter(pos: Vector2i) -> Vector2:
 
 func _remove_foliage(pos: Vector2i) -> void:
 	var entry = _foliage_nodes.get(pos, null)
-	var node := entry as Node2D
+	var node: Node2D = null
 	if entry is Dictionary:
 		node = entry.get("node", null) as Node2D
+	elif entry is Node2D:
+		node = entry as Node2D
 	if node != null and is_instance_valid(node):
 		node.queue_free()
 	_foliage_nodes.erase(pos)
+	if get_region_type_at_tile(pos) == "foliage_cover":
+		_region_tiles.erase(pos)
 
 
 func _should_place_foliage(pos: Vector2i) -> bool:
@@ -2345,6 +2704,8 @@ func _place_foliage(pos: Vector2i) -> void:
 		"kind": foliage_kind,
 		"has_collision": has_trunk_collision,
 	}
+	if intent_mark_foliage_cover and get_region_type_at_tile(pos) == "exterior":
+		_set_region_tile(pos, "foliage_cover", foliage_kind)
 	
 	# Optionally spawn fruit on this foliage
 	if enable_fruit_spawning and _fruit_texture != null and _should_place_fruit(pos, foliage_kind):
@@ -2479,9 +2840,7 @@ func _place_fruit(foliage_sprite: Sprite2D, foliage_tile: Vector2i, foliage_size
 func _tile_to_world_position(pos: Vector2i) -> Vector2:
 	if floor_tilemap == null:
 		return Vector2.ZERO
-	var local := floor_tilemap.map_to_local(pos)
-	var tile_size := _get_tile_size()
-	return floor_tilemap.to_global(local + tile_size * 0.5)
+	return floor_tilemap.to_global(floor_tilemap.map_to_local(pos))
 
 
 func _get_tile_size() -> Vector2:
@@ -2696,10 +3055,12 @@ func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers:
 	material.set_shader_parameter("bubble_radius", foliage_player_occlusion_radius)
 	material.set_shader_parameter("bubble_softness", foliage_player_occlusion_softness)
 	material.set_shader_parameter("bubble_alpha", foliage_player_occlusion_alpha)
-	material.set_shader_parameter("bubble_enabled", false)
+	material.set_shader_parameter("bubble_enabled", bubble_count > 0)
 	material.set_shader_parameter("bubble_count", bubble_count)
 	for bubble_index in range(FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES):
-		var center := active_centers[bubble_index] if bubble_index < bubble_count else Vector2.ZERO
+		var center := Vector2.ZERO
+		if bubble_index < bubble_count:
+			center = active_centers[bubble_index]
 		material.set_shader_parameter("bubble_center_%d" % bubble_index, center)
 
 
@@ -2780,9 +3141,38 @@ func _queue_chunk_for_reveal(chunk_pos: Vector2i, center_tile: Vector2i) -> void
 		return
 	_queued_chunks[chunk_pos] = true
 	var tiles := _get_chunk_tiles(chunk_pos)
-	tiles.sort_custom(func(a: Vector2i, b: Vector2i): return a.distance_squared_to(center_tile) < b.distance_squared_to(center_tile))
+	tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return _streaming_reveal_priority(a, center_tile) < _streaming_reveal_priority(b, center_tile)
+	)
 	for tile in tiles:
 		_streaming_reveal_queue.append(tile)
+
+
+func _streaming_reveal_priority(tile: Vector2i, center_tile: Vector2i) -> float:
+	var score := float(tile.distance_squared_to(center_tile))
+	var region := get_region_type_at_tile(tile)
+	match region:
+		"spawn_clearing":
+			score -= 240.0
+		"portal_plaza":
+			score -= 220.0
+		"compound_approach":
+			score -= 180.0
+		"compound_ingress":
+			score -= 160.0
+		"interior_threshold":
+			score -= 140.0
+		"soft_path":
+			score -= 120.0
+		"interior_floor":
+			score -= 80.0
+		"destroyed_wall_floor":
+			score -= 60.0
+		"foliage_cover":
+			score += 30.0
+	if _generated_wall_cells.has(tile):
+		score += 12.0
+	return score
 
 
 func _reveal_chunk_immediately(chunk_pos: Vector2i) -> void:
@@ -3004,7 +3394,12 @@ func _get_runtime_wall_collision_profile(tile: Vector2i, tile_size: Vector2) -> 
 func _get_horizontal_wall_overlay_root() -> Node2D:
 	if walls_tilemap == null:
 		return null
-	return walls_tilemap.get_node_or_null("RuntimeWallVisuals") as Node2D
+	var root := walls_tilemap.get_node_or_null("RuntimeWallVisuals") as Node2D
+	if root == null:
+		root = Node2D.new()
+		root.name = "RuntimeWallVisuals"
+		walls_tilemap.add_child(root)
+	return root
 
 
 func _clear_horizontal_wall_overlays() -> void:
@@ -3017,7 +3412,15 @@ func _clear_horizontal_wall_overlays() -> void:
 
 func _rebuild_horizontal_wall_overlays() -> void:
 	_clear_horizontal_wall_overlays()
-	return
+	if walls_tilemap == null:
+		return
+	var overlay_root := _get_horizontal_wall_overlay_root()
+	if overlay_root == null:
+		return
+	if use_horizontal_wall_overlays and horizontal_wall_overlay_texture != null:
+		_rebuild_horizontal_top_wall_overlays(overlay_root)
+	if use_vertical_wall_overlays and horizontal_wall_overlay_texture != null:
+		_rebuild_vertical_side_wall_overlays(overlay_root)
 
 
 func _create_horizontal_wall_overlay_run(parent: Node2D, row_y: int, start_x: int, end_x: int) -> void:
@@ -3490,4 +3893,5 @@ func get_level_data() -> Dictionary:
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"world_profile": get_planet_world_profile(),
+		"intent_zones_enabled": true,
 	}

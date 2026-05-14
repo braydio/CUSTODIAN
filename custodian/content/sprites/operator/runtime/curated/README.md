@@ -13,6 +13,10 @@ These updates are for codex or other agent assistants to track newly updated or 
 
 - `body/ranged_2h/equipped_run_right_body.png`
     - This file is the new 'equipped ranged weapon running right' animation. It is 2 rows of 4 frames each with the operator body in row 1 and the standard default ranged weapon sprite in row 2
+- `operator/runtime/body/ranged_2h/operator__body__ranged_2h__run_01__e__5f__96.png`
+    - This is the current canonical ranged 2H east/right run body strip, wired as `ranged_2h_run_right`.
+- `operator/runtime/curated/weapon/ranged_2h/carbine_rifle_mk1/operator__weapon__ranged_2h__run_01__e__5f__96.png`
+    - This is the current canonical ranged 2H east/right run weapon strip, wired as `equipped_run_right`.
 
 - `body/melee_2h/heavy_anticipation_body.png`
 - 2 rows of 5 frames each - operator body in row 1 and standard katana melee weapon row 2
@@ -33,6 +37,10 @@ The following new curated sheets are wired into the active operator runtime reso
 - `body/ranged_2h/equipped_run_right_body.png`
   - body row wired to `run_right`
   - weapon row wired to `equipped_run_right`
+- `operator/runtime/body/ranged_2h/operator__body__ranged_2h__run_01__e__5f__96.png`
+  - wired to `ranged_2h_run_right`
+- `operator/runtime/curated/weapon/ranged_2h/carbine_rifle_mk1/operator__weapon__ranged_2h__run_01__e__5f__96.png`
+  - wired to `equipped_run_right`
 - `body/melee_2h/heavy_anticipation_body.png`
   - body row wired to `melee_2h_heavy_anticipation`
   - weapon row wired to `melee_2h_heavy_anticipation_weapon`
@@ -100,7 +108,11 @@ The following new curated sheets are wired into the active operator runtime reso
   - from `operator_body_ranged_2h_walk.png`
   - used by `walk_right`
 - `body/ranged_2h/equipped_run_right_body.png`
-  - used by `run_right` and `equipped_run_right`
+  - legacy combined body/weapon source, superseded for active ranged 2H east run by the canonical body and weapon strips
+- `../body/ranged_2h/operator__body__ranged_2h__run_01__e__5f__96.png`
+  - used by `ranged_2h_run_right`
+- `weapon/ranged_2h/carbine_rifle_mk1/operator__weapon__ranged_2h__run_01__e__5f__96.png`
+  - used by `equipped_run_right`
 - `body/ranged_2h/stance_body_placeholder.png`
   - from `operator_body_ranged_2h_stance.png`
   - used by `ranged_2h_stance`

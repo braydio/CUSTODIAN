@@ -15,3 +15,5 @@ texture_filter = 1
 [node name="RubbleRoot" type="Node2D" parent="VisualRoot"]
 
 [node name="CollisionRoot" type="Node2D" parent="."]
+
+[node name="CollisionDebugRoot" type="Node2D" parent="."]

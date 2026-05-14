@@ -12,28 +12,44 @@
                 "y": 150.3469545104087
             }
         },
+        "Isometric/isometric tileset/seasonal sample (winter).tsx": {
+            "scaleInDock": 1
+        },
         "isometric/isometric_tilesheet.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "source/hub_world_origin/Gate_of_Return_Tilemap.tsx": {
             "scaleInDock": 0.33,
-            "scaleInEditor": 0.6576
+            "scaleInEditor": 0.75
+        },
+        "source/hub_world_origin/Gate_of_Return_Walls_Tilemap.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "untitled.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 240.16666666666663,
+                "y": 131.66666666666666
+            }
         }
     },
-    "last.imagePath": "/home/linux/Projects/CUSTODIAN/custodian/content/dev/Isometric/isometric tileset",
+    "last.imagePath": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles",
     "map.fixedSize": false,
     "map.lastUsedFormat": "tmx",
     "map.orientation": "1",
     "openFiles": [
-        "Gate_Of_Return_Remix",
         "source/hub_world_origin/Gate_of_Return_Tilemap.tsx"
     ],
     "project": "layout-and-design-planning.tiled-project",
     "recentFiles": [
+        "source/hub_world_origin/Gate_of_Return_Tilemap.tsx",
+        "source/hub_world_origin/Gate_of_Return_Walls_Tilemap.tsx",
+        "untitled.tmx",
         "isometric/isometric_tilesheet.tsx",
-        "Gate_Of_Return_Remix",
-        "source/hub_world_origin/Gate_of_Return_Tilemap.tsx"
+        "Gate_Of_Return_Remix"
     ],
     "tileset.lastUsedFormat": "tsx"
 }

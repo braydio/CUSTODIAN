@@ -12,7 +12,10 @@ const BASE_FAST_ATTACK_NORTH_BODY_SHEET := "res://content/sprites/operator/runti
 const BASE_FAST_ATTACK_NORTH_WEAPON_SHEET := "res://content/sprites/operator/runtime/animation_base/body/melee/fast_attack_north_base_weapon.png"
 const BASE_FAST_ATTACK_NORTH_FX_SHEET := "res://content/sprites/operator/runtime/animation_base/body/melee/fast_attack_north_base_effects.png"
 const BASE_DEATH_SHEET := "res://content/sprites/operator/runtime/animation_base/body/core_locomotion/death_disintigrate_base.png"
-const RANGED_RUN_SHEET := "res://content/sprites/operator/runtime/curated/body/ranged_2h/equipped_run_right_body.png"
+const RANGED_RUN_BODY_SHEET := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged_2h__run_01__e__5f__96.png"
+const RANGED_RUN_WEAPON_SHEET := "res://content/sprites/operator/runtime/curated/weapon/ranged_2h/carbine_rifle_mk1/operator__weapon__ranged_2h__run_01__e__5f__96.png"
+const RANGED_RUN_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged_2h__run_01__w__5f__96.png"
+const RANGED_RUN_WEST_WEAPON_SHEET := "res://content/sprites/operator/runtime/curated/weapon/ranged_2h/carbine_rifle_mk1/operator__weapon__ranged_2h__run_01__w__5f__96.png"
 const RANGED_STANCE_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
 const HEAVY_ANTICIPATION_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_anticipation_body.png"
 const FAST_ATTACK_1_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/fast_attack_1_right_body.png"
@@ -24,7 +27,8 @@ const UNARMED_WALK_NORTH_SHEET := "res://content/sprites/operator/runtime/body/u
 const UNARMED_WALK_WEST_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__walk_01__w__5f__96.png"
 const UNARMED_FAST_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__s__6f__96.png"
 const UNARMED_FAST_FX_SOUTH_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__s__6f__96.png"
-const UNARMED_FAST_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__e__3f__96.png"
+const UNARMED_FAST_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__e__5f__96.png"
+const UNARMED_FAST_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__w__5f__96.png"
 const UNARMED_FAST_FX_EAST_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__e__3f__96.png"
 const UNARMED_FAST_NORTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__n__6f__96.png"
 const UNARMED_FAST_FX_NORTH_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__n__6f__96.png"
@@ -49,9 +53,12 @@ const UNARMED_RUN_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/bod
 const UNARMED_RUN_NORTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__run_01__n__6f__96.png"
 const UNARMED_RUN_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__run_01__s__7f__96.png"
 const UNARMED_RUN_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__run_01__w__5f__96.png"
+const UNARMED_RUN_SOUTHEAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__run_01__se__4f__96.png"
+const UNARMED_RUN_SOUTHWEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__run_01__sw__4f__96.png"
 const UNARMED_STANCE_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__stance_01__e__6f__96.png"
 const UNARMED_STANCE_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__stance_01__w__6f__96.png"
 const UNARMED_DEATH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__death_01__omni__6f__96.png"
+const UNARMED_ARRIVAL_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__arrival_01__s__9f__96.png"
 const UNARMED_LIGHT_HITREACT_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__light_hitreact_01__s__3f__96.png"
 const UNARMED_LIGHT_HITREACT_FX_SOUTH_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__light_hitreact_01__s__3f__96.png"
 var _had_rebuild_error := false
@@ -100,7 +107,8 @@ func _init() -> void:
 	_replace_animation(body_frames, "melee_2h_fast_recovery", FAST_RECOVERY_SHEET, 2, 0, 96, 96, 10.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_fast", UNARMED_FAST_SOUTH_BODY_SHEET, 6, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_down", UNARMED_FAST_SOUTH_BODY_SHEET, 6, 0, 96, 96, 12.0, false)
-	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_right", UNARMED_FAST_EAST_BODY_SHEET, 3, 0, 96, 96, 12.0, false)
+	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_right", UNARMED_FAST_EAST_BODY_SHEET, 5, 0, 96, 96, 12.0, false)
+	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_left", UNARMED_FAST_WEST_BODY_SHEET, 5, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_up", UNARMED_FAST_NORTH_BODY_SHEET, 6, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_recovery", UNARMED_FAST_RECOVERY_EAST_BODY_SHEET, 3, 0, 96, 96, 15.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_recovery_right", UNARMED_FAST_RECOVERY_EAST_BODY_SHEET, 3, 0, 96, 96, 15.0, false)
@@ -121,6 +129,8 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "unarmed_run_up", UNARMED_RUN_NORTH_BODY_SHEET, 6, 0, 96, 96, 12.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_run_down", UNARMED_RUN_SOUTH_BODY_SHEET, 7, 0, 96, 96, 12.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_run_left", UNARMED_RUN_WEST_BODY_SHEET, 5, 0, 96, 96, 12.0, true)
+	_replace_animation_if_exists(body_frames, "unarmed_run_down_right", UNARMED_RUN_SOUTHEAST_BODY_SHEET, 4, 0, 96, 96, 12.0, true)
+	_replace_animation_if_exists(body_frames, "unarmed_run_down_left", UNARMED_RUN_SOUTHWEST_BODY_SHEET, 4, 0, 96, 96, 12.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_stance", UNARMED_STANCE_EAST_BODY_SHEET, 6, 0, 96, 96, 8.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_stance_right", UNARMED_STANCE_EAST_BODY_SHEET, 6, 0, 96, 96, 8.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_stance_left", UNARMED_STANCE_WEST_BODY_SHEET, 6, 0, 96, 96, 8.0, true)
@@ -132,10 +142,15 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "unarmed_walk_up", UNARMED_WALK_NORTH_SHEET, 7, 0, 96, 96, 10.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_walk_left", UNARMED_WALK_WEST_SHEET, 5, 0, 96, 96, 10.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_death", UNARMED_DEATH_BODY_SHEET, 6, 0, 96, 96, 7.0, false)
+	_replace_animation_if_exists(body_frames, "unarmed_arrival", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
+	_replace_animation_if_exists(body_frames, "unarmed_arrival_down", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
 	_replace_animation(body_frames, "death", BASE_DEATH_SHEET, 9, 0, 128, 128, 7.0, false)
 	_replace_animation_if_exists(body_frames, "ranged_2h_stance", RANGED_STANCE_EAST_BODY_SHEET, 12, 0, 96, 96, 8.0, true)
+	_replace_animation_if_exists(body_frames, "ranged_2h_run_right", RANGED_RUN_BODY_SHEET, 5, 0, 96, 96, 14.0, true)
+	_replace_animation_if_exists(body_frames, "ranged_2h_run_left", RANGED_RUN_WEST_BODY_SHEET, 5, 0, 96, 96, 14.0, true)
 
-	_replace_animation(weapon_frames, "equipped_run_right", RANGED_RUN_SHEET, 4, 1, 96, 96, 14.0, true)
+	_replace_animation_if_exists(weapon_frames, "equipped_run_right", RANGED_RUN_WEAPON_SHEET, 5, 0, 96, 96, 14.0, true)
+	_replace_animation_if_exists(weapon_frames, "equipped_run_left", RANGED_RUN_WEST_WEAPON_SHEET, 5, 0, 96, 96, 14.0, true)
 
 	_replace_animation(melee_overlay_frames, "melee_2h_heavy_anticipation_weapon", HEAVY_ANTICIPATION_SHEET, 5, 1, 96, 96, 11.0, false)
 	_replace_animation(melee_overlay_frames, "melee_2h_fast_1_weapon", FAST_ATTACK_1_SHEET, 6, 1, 96, 96, 12.0, false)

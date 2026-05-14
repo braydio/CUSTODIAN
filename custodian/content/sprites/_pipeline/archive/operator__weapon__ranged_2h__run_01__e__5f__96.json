@@ -1,0 +1,17 @@
+{
+  "source": "operator__weapon__ranged_2h__run_01__e__5f__96.png",
+  "mode": "strip",
+  "frame_size": [96, 96],
+  "outputs": [
+    {
+      "path": "operator/runtime/curated/weapon/ranged_2h/carbine_rifle_mk1/operator__weapon__ranged_2h__run_01__e__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 5 }
+    },
+    {
+      "path": "weapons/carbine_rifle/animations/operator__weapon__ranged_2h__run_01__e__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 5 }
+    }
+  ]
+}

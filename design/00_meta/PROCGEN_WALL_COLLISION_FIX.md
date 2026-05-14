@@ -2,7 +2,7 @@
 
 **Issue:** No wall collision, unclear wall/floor tiles
 
-**Root Cause:** The `custodian_world_tileset.tres` has NO physics layers configured. The procgen code calls `_rebuild_runtime_wall_collision()` which creates StaticBody2D nodes, but these have no CollisionShape2D with proper size, OR the tilemap layers lack proper physics layers.
+**Root Cause:** The `procgen_world_tileset.tres` has NO physics layers configured. The procgen code calls `_rebuild_runtime_wall_collision()` which creates StaticBody2D nodes, but these have no CollisionShape2D with proper size, OR the tilemap layers lack proper physics layers.
 
 ---
 
@@ -90,7 +90,7 @@ body.global_position = walls_tilemap.to_global(local_pos)
 
 If runtime collision continues to fail, add physics directly to tileset:
 
-1. Open `custodian_world_tileset.tres` in Godot
+1. Open `procgen_world_tileset.tres` in Godot
 2. Select TileSet → Inspector → Physics Layers
 3. Add 1 physics layer
 4. For each wall source (1 and 2), configure collision:
@@ -116,7 +116,7 @@ If walls look like floors:
 
 In the scene:
 - `floor_source_id = 10` → sources[10] = grass tiles
-- `walls_source_id = 11` → sources[11] = TX Tileset Wall (32x32, different from walls_low!)
+- `walls_source_id = 11` → sources[11] = procgen_wall_stone_32_atlas (32x32, different from walls_low!)
 
 This might be the issue - source 11 is different from source 1 (walls_low).
 
@@ -125,7 +125,7 @@ This might be the issue - source 11 is different from source 1 (walls_low).
 ## Recommended Fix Order
 
 1. **Quick test:** Change `walls_source_id` from 11 to 1 in `proc_gen_map.tscn`
-   - This uses the actual walls_low tiles instead of TX Tileset Wall
+   - This uses the actual walls_low tiles instead of procgen_wall_stone_32_atlas
 
 2. **If that doesn't work:** Add debug prints to verify collision is being built
 

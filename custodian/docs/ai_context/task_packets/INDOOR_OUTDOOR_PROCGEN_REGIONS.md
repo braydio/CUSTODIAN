@@ -58,7 +58,7 @@ This first slice is not a full Edgar/template-room replacement. It is a runtime 
   - `design/03_architecture/REGION_GENERATION_SYSTEM.md`
   - `design/03_architecture/COMPOUND_TILE_SYSTEM.md`
   - `custodian/docs/ai_context/VALIDATION_RECIPES.md`
-  - `custodian/content/tiles/tilesets/custodian_world_tileset.tres`
+  - `custodian/content/tiles/tilesets/procgen_world_tileset.tres`
 - Out-of-scope areas:
   - New production art generation.
   - Separate interior scene loading.

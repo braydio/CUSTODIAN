@@ -55,7 +55,7 @@ The constructed region starts as a wall-filled rectangle, then carves:
 
 ## Interior Tile Family
 
-The first dedicated military/warehouse tile family is wired through `custodian_world_tileset.tres` and maintained by:
+The first dedicated military/warehouse tile family is wired through `procgen_world_tileset.tres` and maintained by:
 
 ```bash
 cd custodian

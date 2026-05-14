@@ -36,6 +36,10 @@ class_name PropDefinition
 @export var collision_shape_size: Vector2 = Vector2.ZERO
 @export var collision_shape_offset: Vector2 = Vector2.ZERO
 @export var collision_shape_rotation_degrees: float = 0.0
+@export var show_collision_debug: bool = false
+@export var collision_debug_color: Color = Color(1.0, 0.25, 0.1, 0.34)
+@export var collision_debug_outline_color: Color = Color(1.0, 0.85, 0.2, 0.9)
+@export var collision_debug_z_index: int = 99
 
 # Optional local depth sorting for tall props. The prop root z-index is flipped
 # around the player so the sprite can sit behind the operator when appropriate.
@@ -47,8 +51,11 @@ class_name PropDefinition
 @export var occlusion_bounds_offset: Vector2 = Vector2.ZERO
 @export var occlusion_front_padding: float = 2.0
 @export var occlusion_side_padding: float = 8.0
+@export var use_portal_state_sprite: bool = false
 @export var portal_platform_enabled: bool = false
 @export var portal_platform_trigger_offset: Vector2 = Vector2(0, -56)
+@export var portal_platform_trigger_shape_size: Vector2 = Vector2.ZERO
+@export var portal_platform_trigger_shape_offset: Vector2 = Vector2.ZERO
 @export var portal_platform_bottom_offset: Vector2 = Vector2(0, 34)
 @export var portal_platform_top_offset: Vector2 = Vector2(0, -10)
 @export var portal_platform_lane_half_width: float = 16.0

@@ -236,6 +236,8 @@ var _idle_loop_counter := 0
 var _last_idle_frame := -1
 var _last_idle_animation := ""
 var _animation_state_machine = null
+var _portal_transition_locked := false
+var _portal_arrival_animation_active := false
 var _is_dead := false
 var _body_recoil_offset := Vector2.ZERO
 var _animated_sprite_base_position := Vector2.ZERO
@@ -304,6 +306,8 @@ const LOADOUT_RANGED := &"ranged"
 const RANGED_FIRE_WALK_ANIMATION := &"ranged_2h_fire_walk"
 const RANGED_FIRE_WALK_FRAME_WIDTH := 96
 const RANGED_FIRE_WALK_BASE_FPS := 10.0
+const PORTAL_ARRIVAL_ANIMATION := &"unarmed_arrival"
+const PORTAL_ARRIVAL_DOWN_ANIMATION := &"unarmed_arrival_down"
 const BODY_RECOIL_RECOVERY_RATE := 18.0
 const BODY_RECOIL_PROFILE_PIXELS := {
 	"recoil_pistol": 0.7,
@@ -465,11 +469,13 @@ func _build_knight_test_frames() -> SpriteFrames:
 	_add_knight_locomotion_animations(frames, "run", [
 		"run_right", "run_down", "run_up", "run_down_right", "run_up_right",
 		"unarmed_run_right", "unarmed_run_down", "unarmed_run_up",
+		"unarmed_run_down_right", "unarmed_run_down_left",
 	])
 	_add_knight_locomotion_animations(frames, "melee", [
 		"melee_2h_fast_1", "melee_2h_fast_1_right", "melee_2h_fast",
 		"melee_2h_fast_right", "unarmed_attack_fast", "unarmed_attack_fast_right",
-		"unarmed_attack_fast_down", "unarmed_attack_fast_up", "ranged_2h_fire",
+		"unarmed_attack_fast_left", "unarmed_attack_fast_down", "unarmed_attack_fast_up",
+		"ranged_2h_fire",
 	])
 	_add_knight_locomotion_animations(frames, "melee2", [
 		"melee_2h_fast_2", "melee_2h_fast_2_right", "unarmed_attack_fast_recovery",
@@ -587,6 +593,10 @@ func _process(delta):
 		return
 	_handle_interact_input()
 	if _is_terminal_open():
+		return
+	if _portal_transition_locked or _portal_arrival_animation_active:
+		_update_aim()
+		_update_animation()
 		return
 	_handle_loadout_toggle_input()
 	try_apply_pending_weapon_selection()
@@ -710,6 +720,11 @@ func _update_aim():
 func _update_animation():
 	if animated_sprite == null:
 		return
+	if _portal_arrival_animation_active:
+		if animated_sprite.animation != PORTAL_ARRIVAL_ANIMATION and animated_sprite.animation != PORTAL_ARRIVAL_DOWN_ANIMATION:
+			_portal_arrival_animation_active = false
+		else:
+			return
 	
 	# Check if currently firing or attacking (lock to cursor)
 	var is_firing = _is_ranged_fire_animation_active()
@@ -770,6 +785,14 @@ func _update_animation():
 	# Play walk or idle based on movement and direction
 	if is_moving:
 		if is_sprinting:
+			if _is_using_ranged_2h_primary() and (direction_suffix == "right" or direction_suffix == "left"):
+				var ranged_run_anim := "ranged_2h_run_left" if direction_suffix == "left" and animated_sprite.sprite_frames.has_animation("ranged_2h_run_left") else "ranged_2h_run_right"
+				if animated_sprite.sprite_frames.has_animation(ranged_run_anim):
+					animated_sprite.flip_h = facing_left and not ranged_run_anim.ends_with("_left")
+					if animated_sprite.animation != ranged_run_anim:
+						animated_sprite.play(ranged_run_anim)
+					_update_idle_loop_tracking(false, "")
+					return
 			var run_anim := String(AnimationResolver.resolve("unarmed_run", animation_dir, animated_sprite)) if _is_current_profile_unarmed() else "run_" + direction_suffix
 			if animated_sprite.sprite_frames.has_animation(run_anim):
 				animated_sprite.flip_h = facing_left and not run_anim.ends_with("_left")
@@ -849,10 +872,14 @@ func _get_direction_suffix(dir: Vector2) -> String:
 		return "down_right"
 	elif angle >= 3*PI/8 and angle < 5*PI/8:
 		return "down"
+	elif angle >= 5*PI/8 and angle < 7*PI/8:
+		return "down_left"
 	elif angle >= -3*PI/8 and angle < -PI/8:
 		return "up_right"
 	elif angle >= -5*PI/8 and angle < -3*PI/8:
 		return "up"
+	elif angle >= -7*PI/8 and angle < -5*PI/8:
+		return "up_left"
 	elif angle >= 5*PI/8 or angle < -5*PI/8:
 		return "left"
 	# Default
@@ -2255,7 +2282,7 @@ func _is_block_state_active() -> bool:
 
 
 func _is_movement_locked() -> bool:
-	return _reload_active or _is_block_state_active()
+	return _reload_active or _is_block_state_active() or _portal_transition_locked or _portal_arrival_animation_active
 
 
 func _has_attack_movement_modifier() -> bool:
@@ -2786,8 +2813,14 @@ func _update_primary_weapon_visual(is_firing: bool) -> void:
 		"ranged_fire" if is_firing else "ranged_stance",
 		&"ranged_2h_fire" if is_firing else &"ranged_2h_stance"
 	)
-	if not is_firing and is_sprinting and velocity.length() > 0.0 and primary_weapon_sprite.sprite_frames and primary_weapon_sprite.sprite_frames.has_animation("equipped_run_right"):
-		target_animation = &"equipped_run_right"
+	if not is_firing and is_sprinting and velocity.length() > 0.0 and primary_weapon_sprite.sprite_frames:
+		var sprinting_left := _is_facing_left(velocity)
+		if sprinting_left and primary_weapon_sprite.sprite_frames.has_animation("equipped_run_left"):
+			target_animation = &"equipped_run_left"
+			primary_weapon_sprite.flip_h = false
+		elif primary_weapon_sprite.sprite_frames.has_animation("equipped_run_right"):
+			target_animation = &"equipped_run_right"
+			primary_weapon_sprite.flip_h = sprinting_left
 	if primary_weapon_sprite.sprite_frames and primary_weapon_sprite.sprite_frames.has_animation(target_animation):
 		if primary_weapon_sprite.animation != target_animation or (is_firing and not primary_weapon_sprite.is_playing()):
 			primary_weapon_sprite.play(target_animation)
@@ -2872,6 +2905,8 @@ func _setup_animation_state_machine() -> void:
 func _update_animation_state_machine(delta: float) -> void:
 	if _animation_state_machine == null:
 		return
+	if _portal_transition_locked or _portal_arrival_animation_active:
+		return
 	_animation_state_machine._process(delta)
 	if _melee_active:
 		return
@@ -2891,6 +2926,38 @@ func _get_desired_animation_state() -> String:
 	return "walk"
 
 
+func play_portal_arrival_animation() -> bool:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return false
+	var animation_name := PORTAL_ARRIVAL_DOWN_ANIMATION
+	if not animated_sprite.sprite_frames.has_animation(animation_name):
+		animation_name = PORTAL_ARRIVAL_ANIMATION
+	if not animated_sprite.sprite_frames.has_animation(animation_name):
+		return false
+	_portal_transition_locked = false
+	_portal_arrival_animation_active = true
+	velocity = Vector2.ZERO
+	is_sprinting = false
+	movement_direction = Vector2.DOWN
+	visual_idle_direction = Vector2.DOWN
+	animated_sprite.flip_h = false
+	animated_sprite.speed_scale = 1.0
+	_hide_custom_operator_visual_layers()
+	if primary_weapon_socket:
+		primary_weapon_socket.rotation = 0.0
+	_update_idle_loop_tracking(false, "")
+	animated_sprite.play(animation_name)
+	return true
+
+
+func set_portal_transition_locked(locked: bool) -> void:
+	_portal_transition_locked = locked
+	if locked:
+		velocity = Vector2.ZERO
+		is_sprinting = false
+		_clear_attack_buffer()
+
+
 func _get_weapon_animation_name(weapon_definition, key: String, fallback: StringName = &"") -> StringName:
 	if weapon_definition != null and weapon_definition.animation_map is Dictionary:
 		var mapped_value = weapon_definition.animation_map.get(key, null)
@@ -2906,6 +2973,12 @@ func _on_operator_animation_finished() -> void:
 		return
 	
 	var finished_animation := String(animated_sprite.animation)
+	if _portal_arrival_animation_active and (finished_animation == String(PORTAL_ARRIVAL_ANIMATION) or finished_animation == String(PORTAL_ARRIVAL_DOWN_ANIMATION)):
+		_portal_arrival_animation_active = false
+		animated_sprite.speed_scale = 1.0
+		_update_primary_weapon_visual(false)
+		_update_animation()
+		return
 	if _melee_heavy_anticipating and finished_animation.begins_with("melee_2h_heavy_anticipation"):
 		_begin_heavy_attack_active_phase()
 

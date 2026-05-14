@@ -1,0 +1,79 @@
+
+• Implemented the portal visual/occlusion fix.
+
+  The portal now uses one visible animated state sprite:
+
+  - idle is the default visible state.
+  - source portal plays activate.
+  - destination portal plays arrival.
+  - both return to idle.
+  - the static portal base sprite is hidden for portal props so the animation no longer stacks over a second rendered portal.
+
+  Key code:
+
+  - custodian/game/world/procgen/portal_teleporter.gd
+  - custodian/game/world/procgen/proc_gen_tilemap.gd
+
+  Occlusion change:
+
+  - Portal depth now uses the portal platform top as the horizon.
+  - Operator draws in front when below the plateau.
+  - Portal draws in front when the operator is at/above the plateau.
+
+  Docs updated:
+
+  - custodian/docs/ai_context/CURRENT_STATE.md
+  - custodian/docs/ai_context/FILE_INDEX.md
+  - custodian/docs/ai_context/task_packets/PORTAL_DUAL_APPROACH_TUNING.md
+  - design/02_features/props/PROCEDURAL_PROP_VARIANT_SYSTEM.md
+
+  Validation passed:
+
+  - portal_teleporter.gd
+  - proc_gen_tilemap.gd
+  - ProceduralProp.gd
+
+  Residual tuning risk: the exact plateau line may need a few pixels of adjustment in play, but the rule is now correct and tunable.
+
+  Current focus: single-instance portal animation and plateau occlusion. Last session completed: portal state playback now replaces the
+  stacked duplicate animation path. Next items: playtest portal approach from both sides, then tune collision/ramp offsets once the
+  occlusion read is stable.
+• Implemented the portal visual/occlusion fix.
+
+  The portal now uses one visible animated state sprite:
+
+  - idle is the default visible state.
+  - source portal plays activate.
+  - destination portal plays arrival.
+  - both return to idle.
+  - the static portal base sprite is hidden for portal props so the animation no longer stacks over a second rendered portal.
+
+  Key code:
+
+  - custodian/game/world/procgen/portal_teleporter.gd
+  - custodian/game/world/procgen/proc_gen_tilemap.gd
+
+  Occlusion change:
+
+  - Portal depth now uses the portal platform top as the horizon.
+  - Operator draws in front when below the plateau.
+  - Portal draws in front when the operator is at/above the plateau.
+
+  Docs updated:
+
+  - custodian/docs/ai_context/CURRENT_STATE.md
+  - custodian/docs/ai_context/FILE_INDEX.md
+  - custodian/docs/ai_context/task_packets/PORTAL_DUAL_APPROACH_TUNING.md
+  - design/02_features/props/PROCEDURAL_PROP_VARIANT_SYSTEM.md
+
+  Validation passed:
+
+  - portal_teleporter.gd
+  - proc_gen_tilemap.gd
+  - ProceduralProp.gd
+
+  Residual tuning risk: the exact plateau line may need a few pixels of adjustment in play, but the rule is now correct and tunable.
+
+  Current focus: single-instance portal animation and plateau occlusion. Last session completed: portal state playback now replaces the
+  stacked duplicate animation path. Next items: playtest portal approach from both sides, then tune collision/ramp offsets once the
+  occlusion read is stable.

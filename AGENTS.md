@@ -22,19 +22,24 @@ Repository-level guidance for CUSTODIAN (post-Godot pivot).
 
 ## Godot-Native Design Docs
 
-New Godot implementation specs live in `./design/`:
+New Godot implementation specs live in `./design/`. See `design/README.md` for the full tree.
 
 ```
 design/
-└── 20_features/
-    └── in_progress/
-        ├── WAVE_SPAWNING_SYSTEM.md
-        ├── ENEMY_OBJECTIVE_SYSTEM.md
-        ├── ENEMY_BEHAVIOR_DIRECTOR.md
-        ├── TURRET_SYSTEM.md
-        ├── SECTOR_DAMAGE_SYSTEM.md
-        ├── COMBAT_FEEL_SYSTEM.md
-        └── REPAIR_GAMEPLAY_SYSTEM.md
+├── 00_meta/            # Tracking, status, templates, drift reports
+├── 01_systems/         # Core system designs (terminal, camera, etc.)
+├── 02_features/        # Feature specs & implementations
+│   ├── animation/
+│   ├── forest_shrumb/
+│   ├── minimap/
+│   ├── procgen/
+│   ├── resource_fabrication/
+│   ├── vehicles/
+│   ├── ... (30+ feature folders)
+│   └── _requests/      # Feature requests (not yet implemented)
+├── 03_architecture/    # High-level architecture
+├── 03_content/         # Lore, factions, world-building
+└── 04_research/        # Exploration notes
 ```
 
 ## Legacy Reference
@@ -113,6 +118,19 @@ These commands map to scripts under `~/.codex/scripts/`.
 - Treat multi-animation or multi-direction master sheets as source assets, not direct runtime assets.
 - For any sheet that contains more than one animation or directional set, rebuild only the concrete runtime slices actually used by the game into `SpriteFrames` resources.
 - Prefer smaller per-animation runtime slices over binding a large master sheet directly to the active runtime.
+
+## Asset Tracking Workflow (REQUIRED_ASSETS.md)
+
+Production asset needs are tracked in `REQUIRED_ASSETS.md`, which exists in **two identical copies**:
+1. `REQUIRED_ASSETS.md` — project root (user-facing visibility)
+2. `design/00_meta/REQUIRED_ASSETS.md` — design directory (agent reference)
+
+### Asset Lifecycle Automation
+
+- **When you create an asset** that fulfills a `needed` entry: **automatically remove that entry** from both copies. No user approval needed — the asset is done.
+- **When you discover a missing production asset** during implementation: **automatically add it** to both copies with status `needed`, exact target paths, and **inform the user** what was added and why.
+- **When you change an asset's status** (e.g., `needed` → `partial` or `done`), update both copies immediately.
+- **Never let the two copies drift** — they must always be identical.
 
 ## Implementation Workflow
 

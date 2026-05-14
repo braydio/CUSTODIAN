@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-05-11
+Last updated: 2026-05-13
 
 Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
 
@@ -26,10 +26,13 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 ## Current Packets
 
 - `AGENT_WORKFLOW_AUTOMATION.md` - completed packet for task-packet next steps, ownership rules, and automation backlog.
+- `ASSET_REFERENCE_SAMPLESHEET.md` - completed packet for generating a single reference samplesheet from active tiles, walls, floors, and prop art.
 - `ATTACK_PRIMARY_SECONDARY_INPUT_FIX.md` - completed packet for fixing plain M1 fast attack versus Shift+M1 heavy attack input routing.
 - `VALIDATION_RECIPES.md` - completed implementation packet for canonical validation recipes and prompt-template cleanup.
 - `COGNITIVE_STATE_PHASE_B.md` - in-progress runtime packet for cognitive modifier integration and debug panel validation.
 - `COMBAT_MOVING_ATTACK_PROFILES.md` - completed packet for phase-based operator attack movement profiles.
+- `COMPOUND_ROOM_ASSEMBLY_CONTRACT.md` - completed packet for deterministic room graph, loader, and layout assembler contract hardening.
+- `COMPOUND_ROOM_GRAPH_WALK_LAYOUT.md` - completed packet for the first graph-walk, door-aligned compound room layout pass.
 - `ENEMY_VARIANT_SYSTEM.md` - completed packet for the first procedural wolf enemy variant runtime slice.
 - `ENEMY_ANIMATION_STABILITY_AND_PIPELINE.md` - completed packet for Shrumb flee animation stabilization, wolf directional row selection, and the first enemy animation intake pipeline hook.
 - `ENEMY_WALL_REROUTE_RECOVERY.md` - completed packet for enemy and passive critter wall-stuck recovery.
@@ -52,13 +55,15 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `PRIMARY_SECONDARY_ATTACK_MODEL.md` - completed packet for aligning unarmed/melee/ranged attack modes to primary/secondary intent routing.
 - `PROCGEN_WALL_PASSAGE_VISIBILITY.md` - completed packet for making generated passage wall tiles visible on normal procgen wall runs.
 - `PROCGEN_WALL_COLLISION_SYNC.md` - completed packet for keeping visible procgen wall cells synchronized with runtime wall bodies during streaming reveal.
+- `PROCGEN_GAMEPLAY_FEEL_INTENT_ZONES.md` - completed packet for implementing procgen semantic intent zones, streaming reveal priority, intensity queries, and the root required-assets tracker.
 - `PROCGEN_PROP_STREAMING_VISIBILITY.md` - completed packet for preserving outdoor ruin and interior runtime props through streaming reveal setup.
 - `PROCGEN_PORTAL_PAIR_TELEPORT.md` - completed packet for paired portal-ring teleport behavior in procgen maps.
 - `PROCGEN_PORTAL_SAFE_PLACEMENT.md` - completed packet for adding portal-specific safe placement, unsafe portal replacement, and jitter-free portal endpoint positioning.
 - `PORTAL_CENTER_TRIGGER_AND_ANIMATION.md` - completed packet for tightening portal activation to the center and defining portal animation asset needs.
 - `PORTAL_AND_MOVING_ATTACK_SPRITE_INGEST.md` - completed packet for ingesting portal teleport FX and moving attack layer sheets.
 - `PORTAL_FX_PLAYBACK_WIRING.md` - completed packet for wiring portal idle, activation, and arrival FX playback.
-- `PORTAL_DUAL_APPROACH_TUNING.md` - in-progress packet for mirroring the portal ramp so the same prop can be approached from north or south.
+- `PORTAL_DUAL_APPROACH_TUNING.md` - completed packet for mirroring the portal ramp, collapsing portal animation to one state sprite, and using platform-horizon occlusion.
+- `PORTAL_COLLISION_DEBUG_TUNING.md` - completed packet for visualizing portal prop collision and correcting portal-ring side blocker positions.
 - `PORTAL_PROP_SPRITE_REINGEST.md` - completed packet for reingesting portal-ring FX into canonical environment prop runtime paths.
 - `PROCGEN_PORTAL_AND_PROP_OCCLUSION.md` - completed packet for portal safe-placement hardening plus ruin-prop collision and depth sorting.
 - `PORTAL_STAIR_RAMP_2_5D.md` - completed packet for the portal stair-lane, elevation, and top-only trigger impostor.
@@ -67,5 +72,5 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `RESOURCE_NODE_HARVESTING_V1.md` - completed packet for first hand-placed interactable resource nodes feeding `ResourceLedger`.
 - `SHRUMB_LOCAL_WANDER_HOME.md` - completed packet for anchoring passive Shrumb wander to their generated spawn position.
 - `TERMINAL_LIVE_MINIMAP.md` - completed packet for replacing the terminal placeholder tactical map with the shared live custom minimap.
-- `TILESET_RENAME_ALIGNMENT.md` - completed packet for renaming the canonical world/procgen TileSet to `custodian_world_tileset.tres`.
+- `TILESET_RENAME_ALIGNMENT.md` - completed packet for renaming the canonical world/procgen TileSet to `procgen_world_tileset.tres`.
 - `UI_MINIMAP_INVENTORY_VERIFY.md` - completed packet for keeping the custom minimap visible in the normal HUD and mounting the inventory overlay on `I`.

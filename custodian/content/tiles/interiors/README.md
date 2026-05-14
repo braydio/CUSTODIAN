@@ -11,6 +11,8 @@ runtime/
   floor_*_32.png
   floor_grate_32.png
   floor_panel_32.png
+  threshold_*_32.png
+  doorway_*_32.png
   wall_*_32.png
   wall_*corner*_32.png
 ```
@@ -22,10 +24,12 @@ cd custodian
 python tools/tiles/register_interior_floor_tiles.py
 ```
 
-The registration script adds missing one-tile sources to `content/tiles/tilesets/custodian_world_tileset.tres` and refreshes `game/world/procgen/proc_gen_map.tscn`.
+The registration script adds missing one-tile sources to `content/tiles/tilesets/procgen_world_tileset.tres` and refreshes `game/world/procgen/proc_gen_map.tscn`.
 It also prunes stale interior TileSet sources when their runtime PNG no longer exists, because a missing TileSet texture prevents the procgen map from loading.
 
 - `floor_*_32.png` files are written into `interior_floor_source_ids`.
+- `threshold_*_32.png` files are written into `interior_threshold_source_ids`.
+- `doorway_*_32.png` files are written into `interior_doorway_source_ids`.
 - non-corner `wall_*_32.png` files are written into `interior_wall_source_ids` and the legacy `interior_wall_source_id` fallback.
 - `wall_*corner*_32.png` files are treated as corner art; the first sorted match is written into `interior_wall_corner_source_id`.
 
@@ -60,7 +64,5 @@ Several incoming files had `_32` in the filename but were actually `1254x1254`; 
 ## Still Needed
 
 - `wall_military_top_32.png`
-- `doorway_military_32.png` with real transparent opening, not a baked checkerboard background
-- `threshold_metal_32.png`
 - More wall connector pieces if interiors need cleaner corners, T-junctions, and endcaps
 - Optional interior props: crates, lockers, consoles, cable clutter, hazard markers

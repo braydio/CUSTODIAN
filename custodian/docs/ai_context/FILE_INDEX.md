@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-11
+Last updated: 2026-05-14
 
 ## Local Entry And Workflow
 
@@ -11,8 +11,12 @@ Last updated: 2026-05-11
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` — canonical validation command selection guide for docs, Godot, asset pipeline, tile pipeline, and review work
 - `custodian/docs/ai_context/prompts/README.md` — reusable agent prompt index and usage rules
 - `custodian/docs/ai_context/task_packets/README.md` — task packet workflow and active packet index
+- `REQUIRED_ASSETS.md` — project-level tracker for missing or partial production art, audio, animation, and content assets that implementation work depends on
 - `custodian/docs/ai_context/task_packets/AGENT_WORKFLOW_AUTOMATION.md` — completed packet for task-packet next steps, ownership rules, and automation backlog
 - `custodian/docs/ai_context/task_packets/VALIDATION_RECIPES.md` — completed packet for canonical validation recipes and prompt-template cleanup
+- `custodian/docs/ai_context/task_packets/COMPOUND_ROOM_ASSEMBLY_CONTRACT.md` — completed packet for deterministic compound room graph, loader, and layout assembler contract hardening
+- `custodian/docs/ai_context/task_packets/COMPOUND_ROOM_GRAPH_WALK_LAYOUT.md` — completed packet for the first graph-walk, door-aligned compound room layout pass
+- `custodian/docs/ai_context/task_packets/PORTAL_COLLISION_DEBUG_TUNING.md` — completed packet for visualizing portal prop collision and correcting portal-ring side blocker positions
 - `custodian/docs/ai_context/task_packets/ENEMY_VARIANT_SYSTEM.md` — completed packet for the first procedural wolf enemy variant runtime slice
 - `custodian/docs/ai_context/task_packets/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — completed packet for the first region-aware indoor/outdoor procgen slice
 - `custodian/docs/ai_context/task_packets/PROCGEN_WALL_PASSAGE_VISIBILITY.md` — completed packet for generated wall passage visibility on normal horizontal procgen wall runs
@@ -26,8 +30,13 @@ Last updated: 2026-05-11
 ## Active Runtime Systems
 
 - `custodian/game/world/procgen/custodian_contract_map.gd` — contract generation and planet-linked world profile creation, including deterministic map size/room bands and ambient Shrumb trait profile fields
-- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, constructed interior region carving, region metadata, foliage placement, decorative ruin prop placement, and paired portal-ring teleport endpoint wiring with portal-specific safe placement filtering
-- `custodian/game/world/procgen/portal_teleporter.gd` — Area2D trigger component used by procgen portal-ring props to teleport the player to their linked endpoint with a physics-frame cooldown, runtime-built activation/arrival FX playback, optional idle overlay, and a 2.5D stair/platform impostor for top-only portal access plus mirrored north-side dual approach when enabled
+- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, constructed interior region carving, semantic intent-zone metadata, intensity queries, foliage placement, decorative ruin prop placement, and paired portal-ring teleport endpoint wiring with portal-specific safe placement filtering
+- `custodian/game/world/procgen/portal_teleporter.gd` — Area2D trigger component used by procgen portal-ring props to teleport the player to their linked endpoint with a physics-frame cooldown, one runtime-built `PortalStateSprite` for idle/activation/arrival playback, delayed destination arrival playback, and a 2.5D stair/platform impostor for top-only portal access plus mirrored north-side dual approach when enabled
+- `custodian/game/world/compound/rooms/room_graph.gd` — deterministic compound room graph loader/validator with room count clamps, sorted type lookup, seeded template selection, and directional connection-rule checks
+- `custodian/game/world/compound/rooms/room_loader.gd` — deterministic `.tmj` Tiled room-template loader with normalized door metadata, marker/stair extraction, template duplication, and door compatibility checks
+- `custodian/game/world/compound/rooms/layout_assembler.gd` — deterministic compound room layout assembler with stable room IDs, graph-walk door-aligned placement, fixed-grid fallback, graph-rule-enforced compatible door connections, resolved endpoint tiles, intensity estimates, actual tile bounds, and placed-room state
+- `custodian/game/world/compound/rooms/graphs/default_compound.json` — default compound room graph referencing command post, hangar, corridor, storage, and landing pad template names
+- `custodian/game/world/compound/rooms/templates/` — Tiled `.tmj` compound room template directory; currently only `command_post.tmj` exists, with additional templates tracked in `REQUIRED_ASSETS.md`
 - `custodian/game/systems/core/systems/ambient_critter_manager.gd` — ambient critter spawning, tint, pacing, scale, speed, naming, and trait metadata linked to world profile
 - `custodian/game/systems/core/systems/inventory_manager.gd` — minimal stack-count ledger autoload for cognitive drops and future stackable resources
 - `custodian/game/systems/cognitive/cognitive_state_system.gd` — `CognitiveState` autoload tracking Forest Shrumb recollection/instinct/bearing values, decay, dominant state, and v1 modifier getters
@@ -91,6 +100,8 @@ Last updated: 2026-05-11
 - `custodian/tools/pipelines/ingest.py` — manifest-driven sprite ingest that writes into live runtime sprite domains and stages generated files through Git by default
 - `custodian/tools/pipelines/reload_assets.py` — direct operator curated-resource rebuild entrypoint
 - `custodian/tools/pipelines/update_operator_curated_resources.gd` — rebuilds operator runtime `SpriteFrames` from curated/source sheets
+- `custodian/tools/art/build_reference_samplesheet.py` — Pillow-based utility that samples active runtime-facing tiles, walls, floors, ruin props, and environment prop sheets into a labeled design-reference PNG
+- `custodian/content/reference/active_art_samplesheet.png` — generated design-reference sheet containing deterministic samples from active art directories; regenerate with `python3 custodian/tools/art/build_reference_samplesheet.py`
 - `tools/tiles/extract_wall_parts.py` — offline wall module extractor that reads canonical wall source art, writes per-part PNGs, a packed source atlas, and JSON metadata
 - `tools/tiles/compose_wall_variants.py` — offline deterministic wall-run composer that reads generated wall part metadata/atlas and writes composed wall variant sheets
 - `tools/tiles/build_procgen_wall_atlas.py` — bridge builder that slices extracted wall modules into fixed `32x32` procgen TileMap cells and semantic coordinate buckets
@@ -99,7 +110,7 @@ Last updated: 2026-05-11
 - `custodian/content/tiles/walls/source/procgen_wall_modules_source.png` — canonical reviewed source sheet for generated procgen wall modules
 - `custodian/content/tiles/walls/source/wall_passages/` — optional `32px`-tall wall passage strips sliced directly into procgen passage/hole buckets
 - `custodian/content/tiles/walls/Wall_Tops.png` — wall-top source sheet that is alpha-split by the atlas builder with `--top-source`
-- `custodian/content/tiles/tilesets/custodian_world_tileset.tres` — canonical active world/procgen TileSet used by procgen and test-map TileMapLayer scenes
+- `custodian/content/tiles/tilesets/procgen_world_tileset.tres` — canonical active world/procgen TileSet used by procgen and test-map TileMapLayer scenes
 - `custodian/content/tiles/interiors/runtime/` — runtime-ready `32x32` constructed-interior floor and military wall tiles registered into procgen source lists by naming convention
 - `custodian/content/tiles/interiors/source/` — oversized/reference interior tile source art preserved for slicing or replacement
 - `custodian/content/tiles/interiors/README.md` — interior tile folder layout, runtime/source split, and remaining art needs
@@ -134,7 +145,7 @@ Last updated: 2026-05-11
 - `custodian/content/props/ruins/shaders/prop_palette_variation.gdshader` — conservative HSV brightness/saturation/hue adjustment shader for prop sprites
 - `custodian/content/props/ruins/data/ruin_prop_spawn_set.tres` — default weighted procgen spawn set for ruin props
 - `custodian/content/props/ruins/data/prop_definitions/obelisk.tres` — starter test definition using available moss/crack overlays and rubble
-- `custodian/content/props/ruins/data/prop_definitions/portal_ring_01.tres` — starter test definition using available moss/crack overlays and rubble, including the raised platform impostor tuning used by the portal stair lane and the mirrored north-side approach flag
+- `custodian/content/props/ruins/data/prop_definitions/portal_ring_01.tres` — starter test definition using available moss/crack overlays and rubble, including the raised platform impostor tuning, visual-frame `(80,60)` platform horizon/trigger anchor, mirrored north-side approach flag, and static-base hiding flag used by the animated portal state sprite
 - `custodian/content/props/ruins/scenes/portal_ring_collision.tscn` — authored side-block collision scene used by `portal_ring_01`
 - `custodian/content/props/ruins/data/prop_definitions/rotunda_01.tres` — starter test definition using available moss/crack overlays and rubble
 - `custodian/content/props/ruins/data/prop_definitions/slab_01.tres` — starter test definition using available moss/crack overlays and rubble

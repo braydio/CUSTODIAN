@@ -44,7 +44,7 @@ Collision is never generated from visual output. `PropDefinition.collision_scene
 
 Tall props that should visually pass behind the player can opt into player-relative depth sorting. The runtime keeps that behavior local to the prop layer so it does not require a global scene-wide Y-sort rewrite.
 
-Portal props can also opt into a 2.5D stair/platform impostor: the definition can provide a trigger offset, a passable center lane, side blockers, and a fake-elevation ramp so the prop feels like the player is walking up onto a raised portal mouth without requiring true 3D stairs. The portal runtime may mirror that approach for a north-side entry as well so the same prop can read as walkable from both sides without introducing full 3D geometry.
+Portal props can also opt into a 2.5D stair/platform impostor: the definition can provide a trigger offset, a passable center lane, side blockers, and a fake-elevation ramp so the prop feels like the player is walking up onto a raised portal mouth without requiring true 3D stairs. The portal runtime may mirror that approach for a north-side entry as well so the same prop can read as walkable from both sides without introducing full 3D geometry. For the current portal-ring frame, the visual FX center and the platform horizon are intentionally separate: the FX remains centered on its animation frame, while occlusion is tuned to the source-image y=60 platform horizon so the operator remains in front until their visual feet cross that line. Portal definitions can also hide their static base texture when a runtime `PortalStateSprite` owns idle, activation, and arrival visuals; overlays, rubble, collision, and deterministic variant data remain owned by the procedural prop.
 
 For portal-ring props, prefer a dedicated authored collision scene when the side blockers need exact placement; keep the ramp math and top-only trigger in the teleporter runtime, not in the prop collision body.
 
@@ -58,7 +58,7 @@ The current slice is intentionally visual-only:
 - spawned `ProceduralProp` instances use `collision_scene = null` unless a definition explicitly provides one
 - definitions can also opt into simple authored collision footprints for runtime collision without a dedicated collision scene
 - definitions can opt into player-relative depth sorting for tall blockers and portal props
-- portal definitions can opt into a raised platform impostor with ramp-side blockers, fake elevation, and top-only teleport gating
+- portal definitions can opt into a raised platform impostor with ramp-side blockers, fake elevation, top-only teleport gating, single-state-sprite animation, and platform-horizon depth sorting
 - gameplay navigation and collision do not depend on procedural prop variants
 - placement avoids the player spawn, compound buildings, and near-wall cells
 
