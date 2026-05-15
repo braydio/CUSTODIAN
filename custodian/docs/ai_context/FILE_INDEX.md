@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-14
+Last updated: 2026-05-15
 
 ## Local Entry And Workflow
 
@@ -21,11 +21,12 @@ Last updated: 2026-05-14
 - `custodian/docs/ai_context/task_packets/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — completed packet for the first region-aware indoor/outdoor procgen slice
 - `custodian/docs/ai_context/task_packets/PROCGEN_WALL_PASSAGE_VISIBILITY.md` — completed packet for generated wall passage visibility on normal horizontal procgen wall runs
 - `custodian/docs/ai_context/task_packets/PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` — completed packet for wall-top preprocessing support in the atlas builder
+- `custodian/docs/ai_context/task_packets/ASH_BELL_BELL_KNEELER.md` — packet for the first authored Ash-Bell / Bell-Kneeler event implementation slice and deferred production asset/procgen integration work
 
 ## Active Runtime Entry
 
 - `custodian/project.godot` — Godot project config and input map
-- `custodian/scenes/game.tscn` — active game scene and terminal layout
+- `custodian/scenes/game.tscn` — active game scene and terminal layout; currently includes temporary `AshBellDevSpawner` for live Bell-Kneeler encounter review
 
 ## Active Runtime Systems
 
@@ -37,6 +38,14 @@ Last updated: 2026-05-14
 - `custodian/game/world/compound/rooms/layout_assembler.gd` — deterministic compound room layout assembler with stable room IDs, graph-walk door-aligned placement, fixed-grid fallback, graph-rule-enforced compatible door connections, resolved endpoint tiles, intensity estimates, actual tile bounds, and placed-room state
 - `custodian/game/world/compound/rooms/graphs/default_compound.json` — default compound room graph referencing command post, hangar, corridor, storage, and landing pad template names
 - `custodian/game/world/compound/rooms/templates/` — Tiled `.tmj` compound room template directory; currently only `command_post.tmj` exists, with additional templates tracked in `REQUIRED_ASSETS.md`
+- `custodian/game/world/events/ash_bell/bell_kneeler_site.tscn` — placeholder authored Ash-Bell special-room scene with Bell-Kneeler NPC, bell-frame/fountain/thread/clapper placeholders, triggers, and debug dialogue labels
+- `custodian/game/world/events/ash_bell/bell_kneeler_site.gd` — Ash-Bell encounter controller for silence pressure, thread/fountain state, dialogue/item/knowledge signals, apparition/procession placeholders, and completion state
+- `custodian/game/world/events/ash_bell/ash_bell_event_state.gd` — local Resource state model for Ash-Bell silence pressure, thread tension, fountain state, resolution, and knowledge flags
+- `custodian/game/world/events/ash_bell/bell_kneeler_npc.gd` — Bell-Kneeler NPC controller with kneeling, hostile, dissolve, clapper swing, and thread-pull hooks
+- `custodian/game/world/events/ash_bell/white_thread_hazard.gd` — soft thread hazard Area2D that increments thread tension and optionally applies player slow hooks
+- `custodian/game/world/events/ash_bell/ash_bell_interactable.gd` — operator interaction bridge for kneeler, thread, clapper, fountain, and silence-ringing actions
+- `custodian/game/world/events/ash_bell/ash_bell_trigger.gd` — Area2D trigger bridge for intro, fountain occupancy, exit, and procession-lane pressure
+- `custodian/game/world/events/ash_bell/ash_bell_dev_spawner.gd` — temporary live-review spawner mounted in `scenes/game.tscn` that places the Ash-Bell site near the operator after contract world setup
 - `custodian/game/systems/core/systems/ambient_critter_manager.gd` — ambient critter spawning, tint, pacing, scale, speed, naming, and trait metadata linked to world profile
 - `custodian/game/systems/core/systems/inventory_manager.gd` — minimal stack-count ledger autoload for cognitive drops and future stackable resources
 - `custodian/game/systems/cognitive/cognitive_state_system.gd` — `CognitiveState` autoload tracking Forest Shrumb recollection/instinct/bearing values, decay, dominant state, and v1 modifier getters
@@ -98,6 +107,7 @@ Last updated: 2026-05-14
 ## Active Asset Pipeline
 
 - `custodian/tools/pipelines/ingest.py` — manifest-driven sprite ingest that writes into live runtime sprite domains and stages generated files through Git by default
+- `custodian/tools/pipelines/generate_inbox_manifests.py` — deterministic inbox manifest generator that infers JSON sidecars from canonical filenames, image dimensions, flat item filenames, and harvesting-node filenames, then runs the ingest pipeline
 - `custodian/tools/pipelines/reload_assets.py` — direct operator curated-resource rebuild entrypoint
 - `custodian/tools/pipelines/update_operator_curated_resources.gd` — rebuilds operator runtime `SpriteFrames` from curated/source sheets
 - `custodian/tools/art/build_reference_samplesheet.py` — Pillow-based utility that samples active runtime-facing tiles, walls, floors, ruin props, and environment prop sheets into a labeled design-reference PNG
@@ -127,6 +137,9 @@ Last updated: 2026-05-14
 - `custodian/content/sprites/environment/props/portal_ring/runtime/fx/` — canonical portal-ring prop FX runtime strips used by `PortalTeleporter` for idle, activation, and arrival playback
 - `custodian/content/sprites/effects/runtime/portal_ring/` — legacy compatibility copies of portal-ring teleport FX strips
 - `custodian/content/items/shrumb_drops/shrumb_drops.json` — v1 cognitive item definitions for Faint Recollection, Residual Instinct, and Ancient Bearing
+- `custodian/content/dialogue/ash_bell/bell_kneeler_dialogue.json` — Ash-Bell Bell-Kneeler dialogue data using Ninth Bell, Dry Fountain, white thread, black banners, and Unarrived Saint motifs without explicit alternate-continuity language
+- `custodian/content/items/lore/ash_bell_items.json` — lore item definitions for Bell-Clapper Without a Bell, White Thread Knot, and Prayer to the Unarrived Saint
+- `custodian/content/procgen/special_rooms/ash_bell_bell_kneeler_room.json` — metadata for future rare procgen insertion of the authored Ash-Bell Bell-Kneeler site
 - `custodian/content/sprites/items/faint_recollection.png` — animated 4-frame pickup sheet for Faint Recollection
 - `custodian/content/sprites/items/faded_instinct.png` — animated 4-frame pickup sheet currently used for `residual_instinct`
 - `custodian/content/sprites/items/ancient_bearing.png` — animated 4-frame pickup sheet for Ancient Bearing

@@ -5,6 +5,8 @@
 
 **Always prefix commands with `rtk`**. If RTK has a dedicated filter, it uses it. If not, it passes through unchanged. This means RTK is always safe to use.
 
+**Preferred usage rule**: when a command is likely to produce noisy output, use the `rtk` prefix to reduce tokens. If the wrapped command is already terse or `rtk` does not help, plain execution is acceptable.
+
 **Important**: Even in command chains with `&&`, use `rtk`:
 ```bash
 # ❌ Wrong

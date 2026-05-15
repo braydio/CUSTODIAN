@@ -64,6 +64,7 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `PORTAL_FX_PLAYBACK_WIRING.md` - completed packet for wiring portal idle, activation, and arrival FX playback.
 - `PORTAL_DUAL_APPROACH_TUNING.md` - completed packet for mirroring the portal ramp, collapsing portal animation to one state sprite, and using platform-horizon occlusion.
 - `PORTAL_COLLISION_DEBUG_TUNING.md` - completed packet for visualizing portal prop collision and correcting portal-ring side blocker positions.
+- `PORTAL_TRIGGER_FRAME_COVERAGE.md` - completed packet for expanding the portal-ring trigger/elevation span to the full visible frame width.
 - `PORTAL_PROP_SPRITE_REINGEST.md` - completed packet for reingesting portal-ring FX into canonical environment prop runtime paths.
 - `PROCGEN_PORTAL_AND_PROP_OCCLUSION.md` - completed packet for portal safe-placement hardening plus ruin-prop collision and depth sorting.
 - `PORTAL_STAIR_RAMP_2_5D.md` - completed packet for the portal stair-lane, elevation, and top-only trigger impostor.
