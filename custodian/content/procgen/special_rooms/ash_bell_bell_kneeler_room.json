@@ -1,0 +1,34 @@
+{
+  "id": "ash_bell_bell_kneeler_room",
+  "display_name": "Ruined Bell Chapel",
+  "scene_path": "res://game/world/events/ash_bell/bell_kneeler_site.tscn",
+  "size_tiles": [35, 27],
+  "entry_edges": ["south"],
+  "exit_edges": ["north", "east"],
+  "rarity": "rare",
+  "min_depth": 2,
+  "max_instances_per_run": 1,
+  "tags": [
+    "special_room",
+    "ash_bell",
+    "lore",
+    "temporal_drifter",
+    "low_combat",
+    "ritual_site"
+  ],
+  "spawn_conditions": {
+    "requires_flags_absent": ["ash_bell_bell_kneeler_completed"],
+    "preferred_biomes": [
+      "ruined_capital",
+      "underground_chapel",
+      "ash_waste",
+      "collapsed_transit"
+    ],
+    "avoid_biomes": ["tutorial_compound", "high_tech_cleanroom"]
+  },
+  "reward_profile": {
+    "primary": "knowledge",
+    "secondary": "lore_relic",
+    "combat_reward": "none"
+  }
+}

@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__fx__unarmed__fast_01__w__5f__96.png.manifest.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__w__5f__96.png",
+		"res://content/sprites/operator/runtime/curated/overlay/unarmed/fast_attack_west_fx.png"
+	],
+	"post_process": [
+		"operator_curated_resources"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__fx__unarmed__fast_01__w__5f__96.png",
+	"timestamp_utc": "2026-05-14 23:00:18"
+}

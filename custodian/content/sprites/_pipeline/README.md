@@ -26,6 +26,8 @@ content/sprites/_pipeline/
   - `vehicles/...`
   - `turrets/...`
   - `environment/props/...`
+  - `props/harvesting_nodes/...`
+  - `items/...`
 - Use explicit frame metadata per manifest. Do not assume one global sheet layout.
 - Preserve source pixels by default. Resize only when the manifest explicitly requests it.
 
@@ -135,4 +137,79 @@ Current enemy sheets can also use the shared intake path. For wolf directional s
   ],
   "post_process": ["enemy_runtime_import"]
 }
+```
+
+## Automation
+
+Generate missing inbox manifests with the Python generator, then run ingest:
+
+```bash
+python custodian/tools/pipelines/generate_inbox_manifests.py
+```
+
+Useful flags:
+
+```bash
+python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run
+python custodian/tools/pipelines/generate_inbox_manifests.py --skip-post
+python custodian/tools/pipelines/generate_inbox_manifests.py --regen
+```
+
+## Filename Rules
+
+- For `items`, use a flat inbox filename of `items__<item_type>__<item_name>__<frames>f__<frame_size>.png`.
+- The generator saves that to `res://content/sprites/items/<item_type>/<item_name>.png`.
+- Item sheets are expected to be horizontal strips; the parser uses the filename to confirm frame count and frame size.
+- Common item families include `resources`, `shrumb_drops`, and future consumable or lore pickup folders.
+- For harvesting nodes, use a flat inbox filename of `props__harvesting_nodes__<node_type>__node__<state>__<frames>f__<frame_size>.png`.
+- The generator saves those to `res://content/sprites/props/harvesting_nodes/<node_type>/<node_type>__node__<state>__<frames>f__<frame_size>.png`.
+- Recommended layout: one directory per node type under `res://content/sprites/props/harvesting_nodes/`, with the node type repeated in the filename.
+- For other domains, the filename should still follow the canonical `<owner>__<layer>__<action_group>__<variant>__<direction>__<frames>f__<frame_size>.png` pattern when possible.
+
+## Filename Examples
+
+Flat item examples:
+
+```text
+items__resources__blackwood_node__6f__96.png
+items__resources__structural_alloy_vein__6f__96.png
+items__shrumb_drops__faint_recollection__4f__64.png
+items__shrumb_drops__residual_instinct__4f__64.png
+items__shrumb_drops__ancient_bearing__4f__64.png
+```
+
+Runtime paths they produce:
+
+```text
+res://content/sprites/items/resources/blackwood_node.png
+res://content/sprites/items/resources/structural_alloy_vein.png
+res://content/sprites/items/shrumb_drops/faint_recollection.png
+res://content/sprites/items/shrumb_drops/residual_instinct.png
+res://content/sprites/items/shrumb_drops/ancient_bearing.png
+```
+
+Non-item examples:
+
+```text
+operator__body__melee__fast_01__n__6f__96.png
+enemy_wolf__body__locomotion__run__4dir__32f__64.png
+drone__body__locomotion__idle__s__4f__96.png
+command_terminal__body__interaction__pickup__omni__4f__48.png
+portal_ring__fx__interaction__activate__omni__12f__161.png
+props__harvesting_nodes__blackwood_deadfall__node__idle__6f__96.png
+```
+
+Saved file examples by domain:
+
+```text
+content/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_1h__fast_weapon__n__6f__96.png
+content/sprites/weapons/carbine_rifle/animations/carbine_rifle__ranged__stance__e__6f__96.png
+content/sprites/enemies/drone/runtime/idle/drone__body__locomotion__idle__s__4f__96.png
+content/sprites/effects/runtime/hit_spark/hit_spark__fx__impact__default__omni__4f__64.png
+content/sprites/vehicles/hover_buggy/runtime/hover_buggy__body__move__east__6f__96.png
+content/sprites/turrets/gunner/turret-gunner-firing.png
+content/sprites/environment/props/terminal/runtime/body/command_terminal__body__interaction__pickup__omni__4f__48.png
+content/sprites/props/harvesting_nodes/blackwood_deadfall/blackwood_deadfall__node__idle__6f__96.png
+content/sprites/items/resources/blackwood_node.png
+content/sprites/items/shrumb_drops/faint_recollection.png
 ```
