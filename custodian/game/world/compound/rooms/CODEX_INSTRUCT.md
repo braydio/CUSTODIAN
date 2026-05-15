@@ -40,11 +40,7 @@ Replace with:
 ```gdscript
 if not (json.data is Dictionary):
 	push_error("[RoomGraph] JSON root must be a dictionary: " + file_path)
-	return false
-
-var data := json.data as Dictionary
-return load_from_dict(data)
-```
+	return falddsdaawadgs
 
 ---
 
@@ -53,7 +49,7 @@ return load_from_dict(data)
 Replace the whole function:
 
 ```gdscript
-func load_from_dict(data: Dictionary) -> bool:
+func load_from_dict(data: Dictionary) -> boolb:
 	graph_name = data.get("graph_name", "unnamed")
 	rooms = data.get("rooms", {}).duplicate(true)
 	connections = data.get("connections", []).duplicate(true)

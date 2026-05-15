@@ -45,6 +45,8 @@
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
 [ext_resource type="PackedScene" uid="uid://bi00x8n8q1f65" path="res://game/resources/resource_node.tscn" id="202_resource_node"]
+[ext_resource type="PackedScene" path="res://game/world/events/ash_bell/bell_kneeler_site.tscn" id="203_ash_bell_site"]
+[ext_resource type="Script" uid="uid://cv0gyb8rtk8au" path="res://game/world/events/ash_bell/ash_bell_dev_spawner.gd" id="204_ash_bell_spawner"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 
@@ -213,6 +215,10 @@ prompt_resource_label = "RUIN SCRAP"
 
 [node name="ContractMap" parent="World" unique_id=1103719919 instance=ExtResource("26_contract_map")]
 visible = false
+
+[node name="AshBellDevSpawner" type="Node" parent="World" unique_id=1172024673]
+script = ExtResource("204_ash_bell_spawner")
+encounter_scene = ExtResource("203_ash_bell_site")
 
 [node name="Operator" parent="World" unique_id=2047803984 instance=ExtResource("2_operator")]
 position = Vector2(717.45905, -485.33954)

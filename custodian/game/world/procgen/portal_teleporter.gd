@@ -105,6 +105,10 @@ func link_to(portal: PortalTeleporter) -> void:
 
 func get_arrival_position(from_position: Vector2) -> Vector2:
 	var offset := arrival_offset
+
+	if require_ramp_elevation_to_teleport:
+		return global_position + offset
+
 	var approach := global_position - from_position
 
 	if approach.length_squared() > 0.0001:
