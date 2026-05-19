@@ -142,7 +142,7 @@ func _generate_effect_implementation(effect: Dictionary) -> String:
 			result += "\t\tapplied_effects.append({\"type\": \"trigger_timer\", \"delay\": %d, \"effect\": \"%s\"})\n" % [delay, timer_effect]
 		
 		"spawn_item":
-			var item_type = effect.get("type", "scrap")
+			var item_type = effect.get("type", "ruin_scrap")
 			result = "\t\t# Spawn %s item\n" % item_type
 			result += "\t\tapplied_effects.append({\"type\": \"spawn_item\", \"item_type\": \"%s\"})\n" % item_type
 		

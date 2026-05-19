@@ -31,7 +31,12 @@ func load_recipes() -> void:
 
 
 func get_all_recipes() -> Dictionary:
-	return _recipes.duplicate(true)
+	var visible: Dictionary = {}
+	for recipe_id in _recipes.keys():
+		var recipe: Dictionary = (_recipes[recipe_id] as Dictionary).duplicate(true)
+		recipe["locked"] = _is_recipe_locked(recipe)
+		visible[recipe_id] = recipe
+	return visible
 
 
 func has_recipe(recipe_id: String) -> bool:
@@ -57,10 +62,12 @@ func get_completed_unlocks() -> Dictionary:
 func can_start_recipe(recipe_id: String) -> bool:
 	if not _recipes.has(recipe_id):
 		return false
+	var recipe: Dictionary = _recipes[recipe_id]
+	if _is_recipe_locked(recipe):
+		return false
 	var ledger := _get_resource_ledger()
 	if ledger == null:
 		return false
-	var recipe: Dictionary = _recipes[recipe_id]
 	var cost: Dictionary = recipe.get("cost", {})
 	return bool(ledger.call("can_pay", cost))
 
@@ -76,6 +83,9 @@ func try_start_recipe(recipe_id: String) -> bool:
 		return false
 
 	var recipe: Dictionary = (_recipes[recipe_id] as Dictionary).duplicate(true)
+	if _is_recipe_locked(recipe):
+		job_failed.emit(recipe_id, "ARRN blueprint locked")
+		return false
 	var cost: Dictionary = recipe.get("cost", {})
 	if not bool(ledger.call("can_pay", cost)):
 		job_failed.emit(recipe_id, "Insufficient resources")
@@ -160,6 +170,16 @@ func _get_resource_ledger() -> Node:
 
 func _get_build_inventory() -> Node:
 	return get_node_or_null("/root/BuildInventory")
+
+
+func _is_recipe_locked(recipe: Dictionary) -> bool:
+	var benefit_id := str(recipe.get("requires_arrn_benefit", "")).strip_edges().to_lower()
+	if benefit_id.is_empty():
+		return false
+	var arrn_manager := get_node_or_null("/root/ARRNManager")
+	if arrn_manager == null or not arrn_manager.has_method("has_benefit"):
+		return true
+	return not bool(arrn_manager.call("has_benefit", benefit_id))
 
 
 func _load_json_dictionary(path: String) -> Dictionary:

@@ -41,7 +41,8 @@ These notes are runtime-slice implementation notes. For future faction ideology,
 
 - Threat computed as:
   - `base_threat + wave*threat_per_wave + destroyed*threat_per_destroyed_structure + elapsed_minutes*threat_per_minute`
-- Threat is converted to wave budget by rounded integer (`max(1, round(threat))`).
+- Threat is converted to wave budget by scaled rounded integer (`max(3, round(threat * 0.9))` as of the current tuning pass).
+- The directed wave plan remains the live path when `EnemyDirector` is present; `WaveManager` point values are fallback tuning for undirected waves.
 
 ## Remaining Non-Blocking Work
 

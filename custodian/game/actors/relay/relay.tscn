@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=3 uid="uid://df3gm87vrj14v"]
+
+[ext_resource type="Script" path="res://game/actors/relay/relay.gd" id="1_relay"]
+[ext_resource type="Script" path="res://game/actors/relay/signal_indicator.gd" id="2_signal"]
+[ext_resource type="Script" path="res://game/actors/relay/relay_interaction.gd" id="3_interaction"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_relay_interaction"]
+radius = 86.0
+
+[node name="RelayNode" type="Node2D"]
+z_index = 2
+script = ExtResource("1_relay")
+
+[node name="Base" type="Polygon2D" parent="."]
+position = Vector2(0, -4)
+polygon = PackedVector2Array(-18, 14, -10, -2, 0, -8, 10, -2, 18, 14, 8, 20, -8, 20)
+color = Color(0.15, 0.22, 0.18, 1)
+
+[node name="Mast" type="Polygon2D" parent="."]
+position = Vector2(0, -24)
+polygon = PackedVector2Array(-4, 20, -2, -30, 2, -30, 4, 20, 16, -16, 19, -13, 5, 0, -5, 0, -19, -13, -16, -16)
+color = Color(0, 1, 0.35, 0.94)
+
+[node name="SignalIndicator" type="Node2D" parent="."]
+position = Vector2(0, -54)
+script = ExtResource("2_signal")
+
+[node name="PromptLabel" type="Label" parent="."]
+offset_left = -48.0
+offset_top = -86.0
+offset_right = 48.0
+offset_bottom = -68.0
+theme_override_font_sizes/font_size = 10
+text = "R_NORTH"
+horizontal_alignment = 1
+
+[node name="RelayInteraction" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("3_interaction")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RelayInteraction"]
+shape = SubResource("CircleShape2D_relay_interaction")

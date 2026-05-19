@@ -1,0 +1,19 @@
+{
+  "source": "resources__blackwood_item__1f__64.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "items/resources/blackwood_item.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 1
+      }
+    }
+  ],
+  "frame_size": [
+    64,
+    64
+  ]
+}

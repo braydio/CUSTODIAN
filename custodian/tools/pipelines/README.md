@@ -6,6 +6,7 @@ Repo-native sprite ingest for the active Godot runtime.
 
 - Intake path is `res://content/sprites/_pipeline/`.
 - Ingest script is `custodian/tools/pipelines/ingest.py`.
+- Aseprite exports can be staged through `custodian/tools/pipelines/aseprite_inbox.py`.
 - Operator curated body changes can trigger the live `SpriteFrames` rebuild through
   `custodian/tools/pipelines/update_operator_curated_resources.gd`.
 - Enemy, weapon, effects, vehicle, and turret outputs are written directly into the
@@ -169,6 +170,12 @@ Rebuild operator curated resources directly:
 
 ```bash
 python custodian/tools/pipelines/reload_assets.py
+```
+
+Stage aseprite exports into the inbox and optionally run the current ingest:
+
+```bash
+python custodian/tools/pipelines/aseprite_inbox.py --run-ingest
 ```
 
 ## Design Rules

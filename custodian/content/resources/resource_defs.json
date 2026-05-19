@@ -1,18 +1,38 @@
 {
-	"timber": {
-		"label": "Timber",
-		"description": "Petrified root mass and deadfall suitable for crude structures."
+	"blackwood": {
+		"label": "Blackwood",
+		"description": "Petrified deadfall and root mass suitable for crude structures."
 	},
-	"ore": {
-		"label": "Raw Ore",
-		"description": "Exposed metal-bearing deposits and ruin-veins."
+	"structural_alloy": {
+		"label": "Structural Alloy",
+		"description": "Recovered alloy from exposed veins, braces, and ruin-metal seams."
 	},
-	"scrap": {
-		"label": "Scrap",
-		"description": "Generic fabrication feedstock recovered from wreckage."
+	"ruin_scrap": {
+		"label": "Ruin Scrap",
+		"description": "Fabrication feedstock recovered from wreckage and broken machinery."
 	},
 	"power_components": {
 		"label": "Power Components",
 		"description": "Rare salvage used for powered systems and fabricator upgrades."
+	},
+	"resin_clot": {
+		"label": "Resin Clot",
+		"description": "Dense fungal resin used for sealing, patching, and crude bonding."
+	},
+	"capacitor_dust": {
+		"label": "Capacitor Dust",
+		"description": "Conductive residue recovered from ruptured banks and shorted panels."
+	},
+	"signal_filament": {
+		"label": "Signal Filament",
+		"description": "Fine relay thread used for sensors, archive links, and signal work."
+	},
+	"memory_glass_fragment": {
+		"label": "Memory Glass Fragment",
+		"description": "Brittle archive material that preserves damaged command-state traces."
+	},
+	"fiber_moss": {
+		"label": "Fiber Moss",
+		"description": "Tough ruin moss gathered from inert growths and resin pods."
 	}
 }

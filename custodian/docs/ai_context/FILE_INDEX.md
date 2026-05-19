@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-15
+Last updated: 2026-05-17
 
 ## Local Entry And Workflow
 
@@ -21,12 +21,18 @@ Last updated: 2026-05-15
 - `custodian/docs/ai_context/task_packets/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — completed packet for the first region-aware indoor/outdoor procgen slice
 - `custodian/docs/ai_context/task_packets/PROCGEN_WALL_PASSAGE_VISIBILITY.md` — completed packet for generated wall passage visibility on normal horizontal procgen wall runs
 - `custodian/docs/ai_context/task_packets/PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` — completed packet for wall-top preprocessing support in the atlas builder
-- `custodian/docs/ai_context/task_packets/ASH_BELL_BELL_KNEELER.md` — packet for the first authored Ash-Bell / Bell-Kneeler event implementation slice and deferred production asset/procgen integration work
+- `custodian/docs/ai_context/task_packets/ASH_BELL_FORLORN_RITUALANT.md` — packet for the first authored Ash-Bell / Forlorn-Ritualant event implementation slice and deferred production asset/procgen integration work
+- `custodian/docs/ai_context/task_packets/SEVERANCE_UNARRIVAL_LORE_REVISION.md` — completed packet for the Severance root-cause canon revision and Forlorn-Ritualant rename pass
+- `custodian/docs/ai_context/task_packets/AUTONOMOUS_COMBAT_DRONES.md` — packet for the first allied combat drone runtime slice and deferred production art/command UI work
+- `custodian/docs/ai_context/task_packets/ARRN_RUNTIME_IMPLEMENTATION.md` — completed packet for the first Automated Relay Routing Network runtime implementation
+- `custodian/docs/ai_context/task_packets/RESOURCE_ID_CANONICALIZATION.md` — completed packet for making CUSTODIAN-flavored resource IDs canonical across node drops, ledger storage, recipes, UI, and docs
+- `custodian/docs/ai_context/task_packets/ENEMY_GRUNT_RUNTIME_WIRING.md` — completed packet for verifying `enemy_grunt` asset usage and wiring it as a live wave-spawned enemy type
+- `custodian/docs/ai_context/task_packets/ENEMY_GRUNT_SPRITE_INGEST_2026_05_17.md` — completed packet for ingesting pending `enemy_grunt` sheets, fixing generated compatibility manifest layout, and expanding directional grunt playback
 
 ## Active Runtime Entry
 
 - `custodian/project.godot` — Godot project config and input map
-- `custodian/scenes/game.tscn` — active game scene and terminal layout; currently includes temporary `AshBellDevSpawner` for live Bell-Kneeler encounter review
+- `custodian/scenes/game.tscn` — active game scene and terminal layout; currently includes temporary `AshBellDevSpawner` for live Forlorn-Ritualant encounter review, scene-mounted `DroneManager` for allied combat drone V1 spawning, and a temporary grunt startup debug spawn for immediate enemy visual review
 
 ## Active Runtime Systems
 
@@ -38,40 +44,59 @@ Last updated: 2026-05-15
 - `custodian/game/world/compound/rooms/layout_assembler.gd` — deterministic compound room layout assembler with stable room IDs, graph-walk door-aligned placement, fixed-grid fallback, graph-rule-enforced compatible door connections, resolved endpoint tiles, intensity estimates, actual tile bounds, and placed-room state
 - `custodian/game/world/compound/rooms/graphs/default_compound.json` — default compound room graph referencing command post, hangar, corridor, storage, and landing pad template names
 - `custodian/game/world/compound/rooms/templates/` — Tiled `.tmj` compound room template directory; currently only `command_post.tmj` exists, with additional templates tracked in `REQUIRED_ASSETS.md`
-- `custodian/game/world/events/ash_bell/bell_kneeler_site.tscn` — placeholder authored Ash-Bell special-room scene with Bell-Kneeler NPC, bell-frame/fountain/thread/clapper placeholders, triggers, and debug dialogue labels
-- `custodian/game/world/events/ash_bell/bell_kneeler_site.gd` — Ash-Bell encounter controller for silence pressure, thread/fountain state, dialogue/item/knowledge signals, apparition/procession placeholders, and completion state
+- `custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn` — placeholder authored Ash-Bell special-room scene with Forlorn-Ritualant NPC, bell-frame/fountain/thread/clapper placeholders, south doorway, triggers, and debug dialogue labels
+- `custodian/game/world/events/ash_bell/forlorn_ritualant_site.gd` — Ash-Bell encounter controller for silence pressure, thread/fountain state, dialogue/item/knowledge signals, apparition/procession placeholders, and completion state
 - `custodian/game/world/events/ash_bell/ash_bell_event_state.gd` — local Resource state model for Ash-Bell silence pressure, thread tension, fountain state, resolution, and knowledge flags
-- `custodian/game/world/events/ash_bell/bell_kneeler_npc.gd` — Bell-Kneeler NPC controller with kneeling, hostile, dissolve, clapper swing, and thread-pull hooks
+- `custodian/game/world/events/ash_bell/forlorn_ritualant_npc.gd` — Forlorn-Ritualant NPC controller with kneeling, hostile, dissolve, clapper swing, and thread-pull hooks
 - `custodian/game/world/events/ash_bell/white_thread_hazard.gd` — soft thread hazard Area2D that increments thread tension and optionally applies player slow hooks
-- `custodian/game/world/events/ash_bell/ash_bell_interactable.gd` — operator interaction bridge for kneeler, thread, clapper, fountain, and silence-ringing actions
+- `custodian/game/world/events/ash_bell/ash_bell_interactable.gd` — operator interaction bridge for ritualant, thread, clapper, fountain, and silence-ringing actions
 - `custodian/game/world/events/ash_bell/ash_bell_trigger.gd` — Area2D trigger bridge for intro, fountain occupancy, exit, and procession-lane pressure
-- `custodian/game/world/events/ash_bell/ash_bell_dev_spawner.gd` — temporary live-review spawner mounted in `scenes/game.tscn` that places the Ash-Bell site near the operator after contract world setup
+- `custodian/game/world/events/ash_bell/ash_bell_dev_spawner.gd` — temporary live-review spawner mounted in `scenes/game.tscn` that places the Ash-Bell site north of the operator after contract world setup for an outside-in doorway approach
 - `custodian/game/systems/core/systems/ambient_critter_manager.gd` — ambient critter spawning, tint, pacing, scale, speed, naming, and trait metadata linked to world profile
 - `custodian/game/systems/core/systems/inventory_manager.gd` — minimal stack-count ledger autoload for cognitive drops and future stackable resources
 - `custodian/game/systems/cognitive/cognitive_state_system.gd` — `CognitiveState` autoload tracking Forest Shrumb recollection/instinct/bearing values, decay, dominant state, and v1 modifier getters
-- `custodian/autoload/resource_ledger.gd` — fabrication resource accounting autoload for CUSTODIAN-flavored resource totals and payment checks
+- `custodian/game/systems/core/systems/arrn/arrn_manager.gd` — ARRN autoload authority for relay state, scans, stabilization tasks, packet sync, knowledge progression, decay/drift, dormancy pressure, and benefit query APIs
+- `custodian/game/systems/core/systems/arrn/relay_data.gd` — relay state resource schema and status/risk formatting helpers
+- `custodian/game/systems/core/systems/arrn/stabilization_task.gd` — tick-counted field relay stabilization task state
+- `custodian/game/systems/core/systems/arrn/knowledge_system.gd` — knowledge track constants and sync-gain calculation
+- `custodian/game/systems/core/systems/arrn/benefits_manager.gd` — ARRN knowledge-level benefit activation and labels
+- `custodian/game/systems/core/systems/contract_world_loader.gd` — contract-world handoff and placement bridge; repositions runtime anchors and generates the scarce base-map tutorial resource nodes after procgen world creation
+- `custodian/game/actors/relay/relay.tscn` — placeholder in-world relay entity scene used by procgen contract handoff
+- `custodian/game/actors/relay/relay.gd` — interactable relay entity that mirrors ARRN state, shows scan/stabilization prompts, and starts stabilization through `ARRNManager`
+- `custodian/game/actors/relay/signal_indicator.gd` — primitive signal-strength visual for relay placeholder scenes
+- `custodian/game/actors/relay/relay_interaction.gd` — relay interaction area bridge for future scene-level interaction expansion
+- `custodian/game/actors/allies/combat_drone.tscn` — placeholder allied combat drone scene with health bar, collision, muzzle marker, and ColorRect visual
+- `custodian/game/actors/allies/combat_drone.gd` — fragile allied combat drone actor that follows/orbits the Custodian, supports FOLLOW/HOLD/INTERCEPT/RECALL modes, acquires local enemies, fires defense bullets, and can be destroyed
+- `custodian/game/systems/drone/drone_manager.gd` — scene-mounted drone squad manager that spawns up to two drones near the operator and exposes squad mode/state APIs
+- `custodian/game/systems/drone/drone_command_profile.gd` — V1 drone tuning and mode constants for HP, speed, range, burst cadence, retreat threshold, and leash behavior
+- `custodian/game/systems/drone/drone_targeting.gd` — deterministic local target selection helper for non-passive enemies near the Custodian or hold point
+- `custodian/game/systems/drone/drone_squad_state.gd` — lightweight resource tracking active/destroyed drone IDs and current squad mode
+- `custodian/autoload/resource_ledger.gd` — fabrication resource accounting autoload for canonical CUSTODIAN-flavored resource totals and payment checks, with legacy generic inputs normalized forward to flavored IDs
 - `custodian/autoload/build_inventory.gd` — completed build-token inventory autoload used by fabrication outputs before placement exists
 - `custodian/autoload/fab_pipeline.gd` — recipe loading, resource payment, queued fabrication jobs, and output completion autoload
 - `custodian/game/fabrication/fab_job.gd` — lightweight queued fabrication job state with elapsed/duration/progress helpers
 - `custodian/game/fabrication/fab_recipe_database.gd` — reusable JSON recipe database node for fabrication UI/world bridges
 - `custodian/game/fabrication/fabricator_terminal.gd` — Area2D bridge for starting allowed fabrication recipes through `FabPipeline`
-- `custodian/game/resources/resource_node.gd` — harvestable interactable resource node that depletes through operator interaction and deposits primary/secondary yields into `ResourceLedger`
-- `custodian/game/resources/resource_node.tscn` — placeholder visual/collision scene for V1 hand-placed resource nodes
-- `custodian/content/resources/resource_defs.json` — metadata for tier-0 CUSTODIAN-flavored fabrication resources
-- `custodian/content/fabrication/fab_recipes.json` — starter fabrication recipes that output build tokens or unlocks
-- `custodian/game/actors/enemies/ambient_shrumb.tscn` — live ambient Forest Shrumb actor path with shrumb slink animations, cognitive dropper, and no scrap material drops
+- `custodian/game/resources/resource_node.gd` — harvestable interactable resource node that depletes through operator interaction, deposits primary/secondary yields into `ResourceLedger`, and can build optional looped or harvest-state `AnimatedSprite2D` strips from exported sheet paths; harvest-state nodes show static body frames and flash matching strike FX frames per harvest step
+- `custodian/game/resources/resource_node.tscn` — reusable visual/collision scene for V1 generated or authored resource nodes, with optional `NodeSprite` and `FxSprite` children used by blackwood deadfall nodes
+- `custodian/content/resources/resource_defs.json` — metadata for canonical CUSTODIAN-flavored fabrication resources
+- `custodian/content/fabrication/fab_recipes.json` — starter fabrication recipes that consume canonical flavored resource IDs directly and output build tokens or unlocks
+- `custodian/game/actors/enemies/ambient_shrumb.tscn` — live ambient Forest Shrumb actor path with shrumb slink animations, cognitive dropper, and no ruin-scrap material drops
 - `custodian/game/actors/enemies/ambient_shrumb.gd` — ambient Forest Shrumb death hook that invokes the cognitive dropper before inherited enemy cleanup
-- `custodian/game/actors/enemies/enemy.gd` — shared active enemy actor, now including `apply_variant(profile)` support for procedural wolf profiles and wolf sheet playback through `AnimatedSprite2D`
+- `custodian/game/actors/enemies/enemy.gd` — shared active enemy actor, now including `apply_variant(profile)` support for procedural wolf profiles, wolf sheet playback, and custom active-enemy body/FX strip playback for the `enemy_grunt` scene through `AnimatedSprite2D`
+- `custodian/game/actors/enemies/enemy_grunt.tscn` — first live grunt enemy scene using canonical `enemy_grunt` runtime body strips plus a `CustomEnemyFxSprite` melee overlay through `GruntAnimationLibrary`
 - `custodian/game/enemies/procgen/enemy_variant_profile.gd` — data-only procedural enemy profile resource generated from seed, biome, threat, family, tier, and affixes
 - `custodian/game/enemies/procgen/enemy_variant_factory.gd` — deterministic procedural wolf profile composer with separate RNG streams, family/tier/affix rolls, palettes, safety clamps, and DPS normalization
 - `custodian/game/enemies/procgen/wolf_animation_library.gd` — runtime `SpriteFrames` builder that slices the current wolf PNG sheets into idle/run/bite/death/howl animations
+- `custodian/game/enemies/procgen/grunt_animation_library.gd` — runtime `SpriteFrames` builder and directional selector for canonical `enemy_grunt` idle/run/melee body strips and melee FX overlay strips
 - `custodian/game/enemies/procgen/enemy_palette_tint.gdshader` — palette/glow/contrast shader used by procedural enemy visuals
-- `custodian/game/systems/core/systems/enemy_factory.gd` — wave composition factory with deterministic local composition rolls and `"wolf"` type support
-- `custodian/game/systems/core/systems/wave_manager.gd` — wave spawning system that applies procedural wolf variant profiles to spawned enemies when `"wolf"` entries are selected
+- `custodian/game/systems/core/systems/enemy_factory.gd` — wave composition factory with deterministic local composition rolls and `"wolf"` plus `"grunt"` type support
+- `custodian/game/systems/core/systems/enemy_director.gd` — live directed-wave planner that scales threat into assault budget, chooses lane/objective, and passes a deterministic composition queue into `WaveManager`
+- `custodian/game/systems/core/systems/wave_manager.gd` — wave spawning system that applies procedural wolf variant profiles to spawned enemies when `"wolf"` entries are selected, can spawn the dedicated `EnemyGrunt` scene for `"grunt"` entries, owns fallback point/burst tuning, and exposes a debug spawn helper used by DevConsole/startup review
 - `custodian/game/actors/items/cognitive_pickup.tscn` — generic pickup scene for cognitive item drops
 - `custodian/game/actors/items/cognitive_pickup.gd` — pickup flow that increments `InventoryManager`, applies `CognitiveState`, animates the 4-frame item sheet, and emits popup/log feedback
 - `custodian/game/actors/items/shrumb_dropper.gd` — reusable Forest Shrumb cognitive drop table component
-- `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, fabrication page rendering, page orchestration, and essentials-first HUD/debug visibility logic
+- `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, fabrication page rendering, page orchestration, and essentials-first HUD/debug visibility logic, including DevConsole debug commands such as `spawn_grunt`
 - `custodian/game/ui/minimap/minimap_panel.tscn` — custom HUD tactical minimap panel instanced under `UI`
 - `custodian/game/ui/minimap/minimap_controller.gd` — discovers runtime procgen/player/enemy/objective nodes and feeds minimap data to the view
 - `custodian/game/ui/minimap/minimap_view.gd` — data-driven minimap renderer that caches procgen floor/wall terrain and draws tactical pips
@@ -89,6 +114,7 @@ Last updated: 2026-05-15
 - `custodian/game/actors/operator/animations/states/attack_light_state.gd` — default unmodified melee attack animation state
 - `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md` — active combat feel doctrine, including animation-driven attack loop and `attack_light` tuning priority
 - `design/02_features/combat_feel/COMBAT_FEEL_UPGRADE.md` — ordered combat feel implementation lane after sprite pipeline cleanup
+- `design/02_features/animation/ENEMY_GRUNT_RUNTIME_WIRING.md` — implementation note documenting the `enemy_grunt` scene, current partial art coverage, and wave wiring acceptance
 - `design/features/implementation/UNARMED_TOGGLE.md` — unarmed/Fists selection behavior, state rules, and acceptance tests
 - `design/features/implementation/UNARMED_TOGGLE_CODE.md` — implementation notes for the unarmed/Fists profile selection system
 - `design/features/implementation/MINIMAP_SYSTEM.md` — custom data-driven tactical minimap implementation spec
@@ -108,6 +134,7 @@ Last updated: 2026-05-15
 
 - `custodian/tools/pipelines/ingest.py` — manifest-driven sprite ingest that writes into live runtime sprite domains and stages generated files through Git by default
 - `custodian/tools/pipelines/generate_inbox_manifests.py` — deterministic inbox manifest generator that infers JSON sidecars from canonical filenames, image dimensions, flat item filenames, and harvesting-node filenames, then runs the ingest pipeline
+- `custodian/tools/pipelines/aseprite_inbox.py` — staging helper that moves aseprite PNG exports into the sprite inbox, prompts for incomplete canonical filename blocks, and can chain manifest generation / ingest
 - `custodian/tools/pipelines/reload_assets.py` — direct operator curated-resource rebuild entrypoint
 - `custodian/tools/pipelines/update_operator_curated_resources.gd` — rebuilds operator runtime `SpriteFrames` from curated/source sheets
 - `custodian/tools/art/build_reference_samplesheet.py` — Pillow-based utility that samples active runtime-facing tiles, walls, floors, ruin props, and environment prop sheets into a labeled design-reference PNG
@@ -133,13 +160,14 @@ Last updated: 2026-05-15
 - `design/features/implementation/PROCGEN_WALL_TILE_BRIDGE.md` — implementation spec for integrating generated wall tiles into the procgen TileMap runtime
 - `design/02_features/procgen/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — first runtime slice for single-map indoor/outdoor region-aware procgen
 - `custodian/content/sprites/_pipeline/README.md` — intake contract, canonical sprite naming, and manifest examples
+- `custodian/content/sprites/_pipeline/aseprite/` — raw aseprite PNG staging folder before normalization into inbox
 - `custodian/docs/ASSET_LAYOUT_CONVENTION.md` — project-wide runtime asset layout and canonical sprite filename convention
 - `custodian/content/sprites/environment/props/portal_ring/runtime/fx/` — canonical portal-ring prop FX runtime strips used by `PortalTeleporter` for idle, activation, and arrival playback
 - `custodian/content/sprites/effects/runtime/portal_ring/` — legacy compatibility copies of portal-ring teleport FX strips
 - `custodian/content/items/shrumb_drops/shrumb_drops.json` — v1 cognitive item definitions for Faint Recollection, Residual Instinct, and Ancient Bearing
-- `custodian/content/dialogue/ash_bell/bell_kneeler_dialogue.json` — Ash-Bell Bell-Kneeler dialogue data using Ninth Bell, Dry Fountain, white thread, black banners, and Unarrived Saint motifs without explicit alternate-continuity language
+- `custodian/content/dialogue/ash_bell/forlorn_ritualant_dialogue.json` — Ash-Bell Forlorn-Ritualant dialogue data using Ninth Bell, Dry Fountain, white thread, black banners, and Unarrived Saint motifs without explicit alternate-continuity language
 - `custodian/content/items/lore/ash_bell_items.json` — lore item definitions for Bell-Clapper Without a Bell, White Thread Knot, and Prayer to the Unarrived Saint
-- `custodian/content/procgen/special_rooms/ash_bell_bell_kneeler_room.json` — metadata for future rare procgen insertion of the authored Ash-Bell Bell-Kneeler site
+- `custodian/content/procgen/special_rooms/ash_bell_forlorn_ritualant_room.json` — metadata for future rare procgen insertion of the authored Ash-Bell Forlorn-Ritualant site
 - `custodian/content/sprites/items/faint_recollection.png` — animated 4-frame pickup sheet for Faint Recollection
 - `custodian/content/sprites/items/faded_instinct.png` — animated 4-frame pickup sheet currently used for `residual_instinct`
 - `custodian/content/sprites/items/ancient_bearing.png` — animated 4-frame pickup sheet for Ancient Bearing
@@ -165,6 +193,7 @@ Last updated: 2026-05-15
 - `custodian/content/props/ruins/README.md` — ruin prop folder layout, padding commands for cropped PNGs, import settings, and pixel-art transform constraints
 - `design/02_features/props/PROCEDURAL_PROP_VARIANT_SYSTEM.md` — active implementation spec and runtime ownership note for the ruin prop variant system
 - `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md` — merged system design for resource collection, ledger, and fabrication pipeline; Stage 1 ready for implementation
+- `design/02_features/arrn/implementation.md` — ARRN implementation roadmap; runtime V1 is implemented with primitive relay visuals and deferred production polish
 - `design/RESOURCE_FAB_PIPELINE_ADD.md` — build-token-first fabrication pipeline addendum used to scope the first runtime implementation
 - `design/features/implementation/FAB_PIPELINE_SYSTEM.md` — implementation note for the first resource ledger, build inventory, and queued fab pipeline slice
 - `design/04_research/resource_fabrication/RESOURCE_FABRICATION_PIPELINE.md` — source brainstorm: implementation-level pseudocode and script contracts
@@ -181,6 +210,8 @@ Last updated: 2026-05-15
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` — validation command recipes and selection rules
 - `custodian/docs/ai_context/prompts/` — reusable prompt templates for common agent tasks
 - `custodian/docs/ai_context/task_packets/` — active and completed task-scoped agent packets
+- `custodian/tools/validation/contract_resource_node_smoke.gd` — headless smoke test that loads `game.tscn` and verifies scarce generated tutorial resource nodes include blackwood, alloy, and wreckage kinds
+- `custodian/tools/validation/grunt_animation_smoke.gd` — targeted smoke check for loading the current `enemy_grunt` body/FX SpriteFrames and selector mappings
 - `custodian/AGENTS.md` — first-stop local operating guide for all work under `custodian/`
 - `custodian/docs/ARCHITECTURE.md` — runtime architecture reference
 - `custodian/docs/SCENE_HIERARCHY.md` — scene organization reference
@@ -189,6 +220,8 @@ Last updated: 2026-05-15
 - `design/` — active Godot feature/system implementation specs
 - `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md` — canonical lore, faction, and game-protocol authority
 - `design/03_content/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target
+- `design/FORLORN_RITUALANT_ENCOUNTER.md` — authored Ash-Bell encounter spec for the Forlorn-Ritualant
+- `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` — detailed authored Ash-Bell / Forlorn-Ritualant implementation spec
 
 ## Legacy Reference Only
 

@@ -27,6 +27,7 @@ func build(ui: Node) -> Dictionary:
 		"wave": wave,
 		"contract": contract,
 		"power_pct": power_pct,
+		"arrn": collect_arrn(ui),
 		"tactical_entities": collect_tactical_entities(ui),
 	}
 
@@ -150,3 +151,11 @@ func collect_contract(ui: Node) -> Dictionary:
 	if ui.get("_terminal_contract_snapshot") is Dictionary:
 		return ui.get("_terminal_contract_snapshot")
 	return {}
+
+
+func collect_arrn(ui: Node) -> Dictionary:
+	var arrn_manager := ui.get_node_or_null("/root/ARRNManager")
+	if arrn_manager == null or not arrn_manager.has_method("get_snapshot"):
+		return {}
+	var snapshot = arrn_manager.call("get_snapshot", "FULL")
+	return snapshot if snapshot is Dictionary else {}

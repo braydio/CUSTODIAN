@@ -17,7 +17,7 @@ The compound should have **limited, low-grade, non-respawning resources**:
 * deadfall / ruined blackwood
 * collapsed wall rubble
 * old machine wreckage
-* exposed scrap piles
+* exposed ruin-scrap piles
 
 That lets the player learn chopping/mining/salvaging without needing a whole expedition loop first.
 
@@ -26,7 +26,7 @@ But the **actual resource economy** should come from away sites:
 * ruined forest groves
 * old battlefield wreckage
 * collapsed industrial corridors
-* ore seams under dead cities
+* alloy seams under dead cities
 * crashed Custodian-era machines
 * corrupted fab depots
 * abandoned outposts
@@ -38,13 +38,13 @@ This fits CUSTODIAN better than “go chop trees next to your base forever.”
 If resources are right beside the compound, the player’s decision is boring:
 
 ```text
-Need turret → chop nearby tree → build turret
+Need turret → cut nearby blackwood deadfall → build turret
 ```
 
 If resources are off-site, the decision becomes tactical:
 
 ```text
-Need turret → choose risky salvage sortie → gather scrap → extract → build turret before next assault
+Need turret → choose risky salvage sortie → gather ruin_scrap → extract → build turret before next assault
 ```
 
 That creates pressure, planning, and consequences.
@@ -58,8 +58,8 @@ Do this in stages:
 Add a few nodes inside or just outside the compound:
 
 ```text
-3 ruined trees
-2 ore/rubble deposits
+3 blackwood deadfalls
+2 alloy/rubble deposits
 2 wreckage salvage piles
 ```
 
@@ -82,9 +82,9 @@ This gives you the travel loop without building the full world map.
 Later, add actual expedition destinations:
 
 ```text
-Blackwood Verge       → timber-heavy
-Collapsed Foundry     → ore-heavy
-Dead Convoy Field     → scrap-heavy
+Blackwood Verge       → blackwood-heavy
+Collapsed Foundry     → structural_alloy-heavy
+Dead Convoy Field     → ruin_scrap-heavy
 Signal-Wrecked Relay  → power components / rare salvage
 ```
 
@@ -92,13 +92,13 @@ Each map should have a **resource identity** so the player chooses where to go b
 
 ## Important design rule
 
-Do **not** make trees and ore feel like generic Minecraft resources.
+Do **not** make blackwood and structural_alloy feel like generic Minecraft resources.
 
 For CUSTODIAN, these should be framed as:
 
 ```text
-Tree chopping = cutting deadfall / petrified root / corrupted blackwood
-Mining = extracting exposed ruin-metal / alloy vein / collapsed structural ore
+Blackwood cutting = cutting deadfall / petrified root / corrupted blackwood
+Mining = extracting exposed ruin-metal / alloy vein / collapsed structural alloy
 Salvage = stripping dead machines / old defense wreckage / fab conduit remains
 ```
 

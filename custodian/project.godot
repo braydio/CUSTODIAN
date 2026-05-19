@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GameState="*res://game/systems/core/state/game_state.gd"
+ARRNManager="*res://game/systems/core/systems/arrn/arrn_manager.gd"
 DevConsole="*uid://ccoijpiv8l45j"
 DebugBus="*res://content/tiles/debug/debug_bus.gd"
 BetterTerrain="*uid://6gj10atdkou3"

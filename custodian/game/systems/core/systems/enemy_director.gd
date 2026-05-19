@@ -11,8 +11,8 @@ class_name EnemyDirector
 	"destroy_turrets": 2.0,
 	"breach_command": 3.0,
 }
-@export_range(0.1, 2.0, 0.05) var assault_budget_scale: float = 0.65
-@export var minimum_assault_budget: int = 1
+@export_range(0.1, 2.0, 0.05) var assault_budget_scale: float = 0.9
+@export var minimum_assault_budget: int = 3
 
 var wave_manager: Node
 var threat_model: Node
@@ -57,6 +57,7 @@ func _resolve_dependencies() -> void:
 		enemy_factory.set("drone_scene", wave_manager.get("drone_scene"))
 		enemy_factory.set("fast_drone_scene", wave_manager.get("fast_drone_scene"))
 		enemy_factory.set("heavy_drone_scene", wave_manager.get("heavy_drone_scene"))
+		enemy_factory.set("grunt_scene", wave_manager.get("grunt_scene"))
 
 func _connect_wave_events() -> void:
 	if wave_manager == null:
@@ -157,6 +158,26 @@ func get_director_status() -> Dictionary:
 		"last_attack_success": _last_attack_success,
 		"lane_stats": lane_stats,
 	}
+
+func spawn_test_enemy(spawn_position: Vector2) -> bool:
+	return spawn_debug_enemy_type("drone", spawn_position)
+
+
+func spawn_debug_enemy_type(enemy_type: String, spawn_position: Vector2) -> bool:
+	if wave_manager != null and wave_manager.has_method("debug_spawn_enemy_type"):
+		return bool(wave_manager.call("debug_spawn_enemy_type", enemy_type, spawn_position, 1.0))
+	if enemy_factory != null and enemy_factory.has_method("get_scene_for_type"):
+		var scene_variant: Variant = enemy_factory.call("get_scene_for_type", enemy_type)
+		if scene_variant is PackedScene:
+			var parent := get_node_or_null("/root/GameRoot/World/Enemies")
+			if parent == null:
+				return false
+			var enemy := (scene_variant as PackedScene).instantiate()
+			if enemy is Node2D:
+				(enemy as Node2D).global_position = spawn_position
+			parent.add_child(enemy)
+			return true
+	return false
 
 func _choose_lane() -> String:
 	var active_lanes: Array = []

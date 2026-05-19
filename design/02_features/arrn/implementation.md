@@ -3,8 +3,8 @@
 **Project:** CUSTODIAN  
 **Feature:** Automated Relay Routing Network (ARRN)  
 **Created:** 2026-03-27  
-**Status:** 🔴 In Progress  
-**Last Updated:** 2026-04-08
+**Status:** Runtime V1 Implemented  
+**Last Updated:** 2026-05-15
 **Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
@@ -535,6 +535,7 @@ custodian/
 | Date | Action | Notes |
 |------|--------|-------|
 | 2026-03-27 | Created | Initial implementation plan |
+| 2026-05-15 | Runtime V1 implemented | Added ARRNManager autoload, default relay state, relay world entities, procgen placement, terminal scan/status/stabilize/sync commands, tick decay/drift, knowledge benefits, repair/fabrication hooks, and minimap relay markers. Production relay art/audio, save/load, and richer relay UI remain future polish. |
 
 ---
 

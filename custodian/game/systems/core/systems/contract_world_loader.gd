@@ -19,8 +19,16 @@ class_name ContractWorldLoader
 @export var reposition_vehicles_from_contract: bool = true
 @export var reposition_items_from_contract: bool = true
 @export var reposition_camera_from_contract: bool = true
+@export var place_arrn_relays_from_contract: bool = true
+@export var place_tutorial_resource_nodes_from_contract: bool = true
+@export_range(0, 6, 1) var tutorial_resource_node_count: int = 3
+@export_range(2, 64, 1) var tutorial_resource_min_distance_tiles: int = 10
+@export_range(4, 96, 1) var tutorial_resource_max_distance_tiles: int = 42
+@export_range(2, 32, 1) var tutorial_resource_min_spacing_tiles: int = 12
 @export var fallback_tile_size: float = 16.0
 
+const ARRN_RELAY_SCENE := preload("res://game/actors/relay/relay.tscn")
+const RESOURCE_NODE_SCENE := preload("res://game/resources/resource_node.tscn")
 const SECTOR_TILE_PX := 24.0
 const PROCGEN_SECTOR_LAYOUT := {
 	"ARCHIVE": 0,
@@ -98,6 +106,10 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_position_vehicles(level_data, map_instance)
 	if reposition_items_from_contract:
 		_position_item_anchors(level_data, map_instance)
+	if place_tutorial_resource_nodes_from_contract:
+		_position_tutorial_resource_nodes(level_data, map_instance)
+	if place_arrn_relays_from_contract:
+		_position_arrn_relays(level_data, map_instance)
 	if reposition_camera_from_contract:
 		_refresh_camera(map_instance)
 	_rebuild_navigation(map_instance)
@@ -379,6 +391,218 @@ func _position_item_anchors(level_data: Dictionary, map_instance: Node) -> void:
 		used_tiles[tile] = true
 		(child as Node2D).global_position = _tile_to_world(map_instance, tile)
 		tile_index += 1
+
+
+func _position_tutorial_resource_nodes(level_data: Dictionary, map_instance: Node) -> void:
+	var items_root := get_node_or_null(items_root_path)
+	if items_root == null:
+		return
+	for child in items_root.get_children():
+		if child.is_in_group("generated_tutorial_resource_node"):
+			child.queue_free()
+	if tutorial_resource_node_count <= 0:
+		return
+
+	var candidate_tiles := _build_tutorial_resource_candidate_tiles(level_data, map_instance)
+	if candidate_tiles.is_empty():
+		return
+
+	var presets := _get_tutorial_resource_presets()
+	var placed_tiles: Array[Vector2i] = []
+	var max_nodes: int = mini(tutorial_resource_node_count, presets.size())
+	for preset_index in range(max_nodes):
+		var preset: Dictionary = presets[preset_index]
+		var chosen_tile := _pick_tutorial_resource_tile(candidate_tiles, placed_tiles)
+		if chosen_tile == Vector2i.ZERO:
+			continue
+		var node := RESOURCE_NODE_SCENE.instantiate() as ResourceNode
+		if node == null:
+			continue
+		node.name = "TutorialResource_%s" % String(preset.get("node_kind", "resource"))
+		node.add_to_group("generated_tutorial_resource_node")
+		_apply_resource_node_preset(node, preset)
+		items_root.add_child(node)
+		node.global_position = _tile_to_world(map_instance, chosen_tile)
+		placed_tiles.append(chosen_tile)
+
+
+func _build_tutorial_resource_candidate_tiles(level_data: Dictionary, map_instance: Node) -> Array[Vector2i]:
+	var candidates: Array[Vector2i] = []
+	var seen: Dictionary = {}
+	var raw_tiles: Array = level_data.get("floor_cells", [])
+	if raw_tiles.is_empty():
+		raw_tiles = level_data.get("random_floor_tiles", [])
+	var player_spawn: Variant = level_data.get("player_spawn")
+	var spawn_tile := player_spawn as Vector2i if player_spawn is Vector2i else Vector2i.ZERO
+	var min_dist_sq := tutorial_resource_min_distance_tiles * tutorial_resource_min_distance_tiles
+	var max_dist_sq := tutorial_resource_max_distance_tiles * tutorial_resource_max_distance_tiles
+	var compound_rect: Rect2i = level_data.get("compound_rect", Rect2i()) as Rect2i
+
+	for tile_variant in raw_tiles:
+		if not (tile_variant is Vector2i):
+			continue
+		var tile := tile_variant as Vector2i
+		if seen.has(tile):
+			continue
+		seen[tile] = true
+		if not _is_walkable_floor_tile(map_instance, tile):
+			continue
+		if compound_rect.size.x > 0 and compound_rect.size.y > 0 and compound_rect.has_point(tile):
+			continue
+		var dist_sq := tile.distance_squared_to(spawn_tile)
+		if dist_sq < min_dist_sq or dist_sq > max_dist_sq:
+			continue
+		if _count_walkable_neighbors(map_instance, tile) < 3:
+			continue
+		candidates.append(tile)
+
+	if candidates.is_empty():
+		for tile_variant in raw_tiles:
+			if tile_variant is Vector2i and _is_walkable_floor_tile(map_instance, tile_variant as Vector2i):
+				candidates.append(tile_variant as Vector2i)
+	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var a_score := _stable_resource_tile_score(a, spawn_tile)
+		var b_score := _stable_resource_tile_score(b, spawn_tile)
+		if a_score == b_score:
+			return a.x == b.x and a.y < b.y or a.x < b.x
+		return a_score < b_score
+	)
+	return candidates
+
+
+func _pick_tutorial_resource_tile(candidates: Array[Vector2i], placed_tiles: Array[Vector2i]) -> Vector2i:
+	for tile in candidates:
+		if not _is_far_enough_from_resource_tiles(tile, placed_tiles, tutorial_resource_min_spacing_tiles):
+			continue
+		return tile
+	for tile in candidates:
+		if _is_far_enough_from_resource_tiles(tile, placed_tiles, maxi(2, int(tutorial_resource_min_spacing_tiles / 2))):
+			return tile
+	return Vector2i.ZERO
+
+
+func _is_far_enough_from_resource_tiles(tile: Vector2i, placed_tiles: Array[Vector2i], min_spacing: int) -> bool:
+	var min_dist_sq := min_spacing * min_spacing
+	for placed in placed_tiles:
+		if tile.distance_squared_to(placed) < min_dist_sq:
+			return false
+	return true
+
+
+func _stable_resource_tile_score(tile: Vector2i, anchor_tile: Vector2i) -> int:
+	var value := 2166136261
+	for number in [tile.x, tile.y, anchor_tile.x, anchor_tile.y, tutorial_resource_node_count]:
+		value = value ^ int(number)
+		value = (value * 16777619) & 0x7fffffff
+	return value
+
+
+func _get_tutorial_resource_presets() -> Array[Dictionary]:
+	return [
+		{
+			"node_kind": "blackwood_deadfall",
+			"harvest_label": "CUT",
+			"resource_id": "blackwood",
+			"work_required": 5,
+			"yield_amount": 6,
+			"secondary_yields": {"ruin_scrap": 1},
+			"standing_color": Color(0.16, 0.1, 0.075, 1.0),
+			"depleted_color": Color(0.07, 0.055, 0.045, 1.0),
+			"prompt_resource_label": "BLACKWOOD",
+			"idle_sheet_path": "res://content/sprites/props/harvesting_nodes/blackwood_deadfall/blackwood_deadfall__node__idle__5f__96.png",
+			"depleted_sheet_path": "res://content/sprites/props/harvesting_nodes/blackwood_deadfall/blackwood_deadfall__node__depleted__1f__96.png",
+			"idle_fx_sheet_path": "res://content/sprites/effects/harvesting_nodes/blackwood_deadfall/props__harvesting_nodes__blackwood_deadfall__node__fx_idle__5f__96.png",
+			"strike_fx_sheet_path": "res://content/sprites/effects/harvesting_nodes/blackwood_deadfall/props__harvesting_nodes__blackwood_deadfall__node__fx_strike_idle__5f__96.png",
+			"sprite_playback_mode": "harvest_states",
+		},
+		{
+			"node_kind": "alloy_vein",
+			"harvest_label": "MINE",
+			"resource_id": "structural_alloy",
+			"work_required": 4,
+			"yield_amount": 5,
+			"secondary_yields": {"ruin_scrap": 2},
+			"standing_color": Color(0.25, 0.28, 0.31, 1.0),
+			"depleted_color": Color(0.08, 0.085, 0.09, 1.0),
+			"prompt_resource_label": "STRUCTURAL ALLOY",
+		},
+		{
+			"node_kind": "machine_wreckage",
+			"harvest_label": "SALVAGE",
+			"resource_id": "ruin_scrap",
+			"work_required": 2,
+			"yield_amount": 10,
+			"secondary_yields": {"capacitor_dust": 1},
+			"standing_color": Color(0.18, 0.18, 0.17, 1.0),
+			"depleted_color": Color(0.07, 0.07, 0.065, 1.0),
+			"prompt_resource_label": "RUIN SCRAP",
+		},
+	]
+
+
+func _apply_resource_node_preset(node: ResourceNode, preset: Dictionary) -> void:
+	for key in preset.keys():
+		node.set(String(key), preset[key])
+
+
+func _position_arrn_relays(level_data: Dictionary, map_instance: Node) -> void:
+	var world := get_node_or_null(world_path) as Node2D
+	if world == null:
+		return
+	var relay_root := world.get_node_or_null("ARRNRelays") as Node2D
+	if relay_root == null:
+		relay_root = Node2D.new()
+		relay_root.name = "ARRNRelays"
+		world.add_child(relay_root)
+	for child in relay_root.get_children():
+		child.queue_free()
+
+	var relay_specs := [
+		{"relay_id": &"R_NORTH", "sector_id": &"T_NORTH", "anchor": Vector2(0.50, 0.16)},
+		{"relay_id": &"R_SOUTH", "sector_id": &"T_SOUTH", "anchor": Vector2(0.50, 0.84)},
+		{"relay_id": &"R_ARCHIVE", "sector_id": &"ARCHIVE", "anchor": Vector2(0.18, 0.50)},
+		{"relay_id": &"R_GATEWAY", "sector_id": &"GATEWAY", "anchor": Vector2(0.84, 0.50)},
+	]
+	var used_tiles: Dictionary = {}
+	for spec in relay_specs:
+		var tile := _pick_arrn_relay_tile(level_data, spec["anchor"], used_tiles)
+		if tile == Vector2i.ZERO:
+			continue
+		used_tiles[tile] = true
+		var relay := ARRN_RELAY_SCENE.instantiate() as Node2D
+		relay.name = String(spec["relay_id"])
+		relay.set("relay_id", spec["relay_id"])
+		relay.set("sector_id", spec["sector_id"])
+		relay.global_position = _tile_to_world(map_instance, tile)
+		relay_root.add_child(relay)
+		var arrn_manager := get_node_or_null("/root/ARRNManager")
+		if arrn_manager != null and arrn_manager.has_method("set_relay_world_position"):
+			arrn_manager.call("set_relay_world_position", spec["relay_id"], relay.global_position)
+
+
+func _pick_arrn_relay_tile(level_data: Dictionary, anchor: Vector2, used_tiles: Dictionary) -> Vector2i:
+	var floor_tiles: Array[Vector2i] = []
+	for tile in level_data.get("floor_cells", []):
+		if tile is Vector2i:
+			floor_tiles.append(tile as Vector2i)
+	if floor_tiles.is_empty():
+		for tile in level_data.get("rooms_by_distance", []):
+			if tile is Vector2i:
+				floor_tiles.append(tile as Vector2i)
+	if floor_tiles.is_empty():
+		return Vector2i.ZERO
+
+	var map_size: Vector2i = level_data.get("map_size", Vector2i.ZERO)
+	var target := Vector2i(
+		int(round(float(map_size.x) * anchor.x)),
+		int(round(float(map_size.y) * anchor.y))
+	) if map_size != Vector2i.ZERO else floor_tiles[0]
+	floor_tiles.sort_custom(func(a: Vector2i, b: Vector2i): return a.distance_squared_to(target) < b.distance_squared_to(target))
+	for tile in floor_tiles:
+		if used_tiles.has(tile):
+			continue
+		return tile
+	return floor_tiles[0]
 
 
 func _position_vehicles(level_data: Dictionary, map_instance: Node) -> void:

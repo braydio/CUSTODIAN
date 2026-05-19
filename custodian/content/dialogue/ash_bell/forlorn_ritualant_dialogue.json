@@ -1,0 +1,164 @@
+{
+  "id": "ash_bell_forlorn_ritualant",
+  "internal_name": "The Forlorn-Ritualant and the Unarrived",
+  "public_name": "Forlorn-Ritualant",
+  "continuity_origin": "ash_bell",
+  "forbidden_terms": [
+    "timeline",
+    "alternate universe",
+    "this version",
+    "last time",
+    "multiverse",
+    "parallel world"
+  ],
+  "motifs": [
+    "ninth_bell",
+    "dry_fountain",
+    "black_banners",
+    "white_thread",
+    "unarrived_saint",
+    "ash_instead_of_snow"
+  ],
+  "nodes": {
+    "proximity_intro": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Do not speak during the toll.",
+        "delay": 0.0
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "The west gate was shut before the third ringing.",
+        "delay": 2.5
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Mothers pressed their children beneath the banners.",
+        "delay": 3.0
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "And still the ash came.",
+        "delay": 2.0
+      }
+    ],
+    "first_interaction": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "The Fountain should be beneath us."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Dry stone. Black water. Names counted without mouths."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "But the basin is gone."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Then the dead are uncounted."
+      }
+    ],
+    "ask_bell": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "There were eight for the living."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "One for the misplaced."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "The Ninth had no bronze, no rope, no tower."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Yet all knelt when it answered."
+      }
+    ],
+    "ask_thread": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "For the wrist."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "For the name."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "For the poor child who wakes before her mother is born."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "When the thread snaps, Orra knows you are loose."
+      }
+    ],
+    "ask_orra": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Saint Orra comes late."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "After the blade."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "After the order."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "After the gate is shut."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "She blesses only what cannot be saved."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Do not pray for her arrival."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "That is how the Bell learns your name."
+      }
+    ],
+    "attack_response": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Ahh, Custodian."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "So fear found you early."
+      }
+    ],
+    "cut_thread_response": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "No."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Not the thread."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "The Unarrived will come looking."
+      }
+    ],
+    "peaceful_exit": [
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Go gently."
+      },
+      {
+        "speaker": "Forlorn-Ritualant",
+        "text": "Some gates are closed by footsteps."
+      }
+    ]
+  }
+}

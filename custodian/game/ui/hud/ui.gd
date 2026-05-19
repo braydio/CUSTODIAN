@@ -5,6 +5,34 @@ const TerminalSnapshotScript := preload("res://game/ui/terminal/terminal_snapsho
 const TerminalMapPreviewScript := preload("res://game/ui/terminal/terminal_map_preview.gd")
 const TerminalPlanetPreviewScript := preload("res://game/ui/terminal/terminal_planet_preview.gd")
 
+const TERMINAL_PANEL_FRAME_TEXTURE := preload("res://content/ui/terminal/panels/panel_frame_medium_9slice.png")
+const TERMINAL_HEADER_ACTIVE_TEXTURE := preload("res://content/ui/terminal/overlays/Header_Bar_Active.png")
+const TERMINAL_HEADER_WARNING_TEXTURE := preload("res://content/ui/terminal/overlays/Header_Bar_Warning.png")
+const TERMINAL_NAV_IDLE_TEXTURE := preload("res://content/ui/terminal/nav/nav_tab_idle_9slice.png")
+const TERMINAL_NAV_HOVER_TEXTURE := preload("res://content/ui/terminal/nav/nav_tab_hover_9slice.png")
+const TERMINAL_NAV_ACTIVE_TEXTURE := preload("res://content/ui/terminal/nav/nav_tab_active_9slice.png")
+const TERMINAL_NAV_DISABLED_TEXTURE := preload("res://content/ui/terminal/nav/nav_tab_disabled_9slice.png")
+const TERMINAL_BUTTON_IDLE_TEXTURE := preload("res://content/ui/terminal/buttons/button_idle_9slice.png")
+const TERMINAL_BUTTON_HOVER_TEXTURE := preload("res://content/ui/terminal/buttons/button_hover_9slice.png")
+const TERMINAL_BUTTON_PRESSED_TEXTURE := preload("res://content/ui/terminal/buttons/button_pressed_9slice.png")
+const TERMINAL_BUTTON_DISABLED_TEXTURE := preload("res://content/ui/terminal/buttons/button_disabled_9slice.png")
+const TERMINAL_COMMAND_LINE_TEXTURE := preload("res://content/ui/terminal/command_line/command_line_frame_9slice.png")
+const TERMINAL_MAP_FRAME_TEXTURE := preload("res://content/ui/terminal/map/map_frame_large_9slice.png")
+const TERMINAL_SCANLINE_TEXTURE := preload("res://content/ui/terminal/overlays/terminal_scanline_overlay.png")
+const TERMINAL_NOISE_TEXTURE := preload("res://content/ui/terminal/overlays/terminal_noise_overlay.png")
+const TERMINAL_ICON_CONTRACT := preload("res://content/ui/terminal/icons/icon_contract.png")
+const TERMINAL_ICON_DEFENSE := preload("res://content/ui/terminal/icons/icon_defense.png")
+const TERMINAL_ICON_FABRICATION := preload("res://content/ui/terminal/icons/icon_fabrication.png")
+const TERMINAL_ICON_MAP := preload("res://content/ui/terminal/icons/icon_map.png")
+const TERMINAL_ICON_POWER := preload("res://content/ui/terminal/icons/icon_power.png")
+const TERMINAL_ICON_RECON := preload("res://content/ui/terminal/icons/icon_recon.png")
+const TERMINAL_ICON_REPAIR := preload("res://content/ui/terminal/icons/icon_repair.png")
+const TERMINAL_ICON_RESTART := preload("res://content/ui/terminal/icons/icon_restart.png")
+const TERMINAL_ICON_SCAN := preload("res://content/ui/terminal/icons/icon_scan.png")
+const TERMINAL_ICON_TURRET := preload("res://content/ui/terminal/icons/icon_turret.png")
+const TERMINAL_ICON_WARNING := preload("res://content/ui/terminal/icons/icon_warning.png")
+const TERMINAL_ICON_CRITICAL := preload("res://content/ui/terminal/icons/icon_critical.png")
+
 const DEFAULT_TERMINAL_SERVICE_URL := "http://127.0.0.1:7331"
 const TERMINAL_LOCAL_LINK := "LOCAL://GAME_STATE"
 const TERMINAL_BOOT_LINES := [
@@ -444,6 +472,7 @@ func _register_devconsole_commands() -> void:
 		console.add_command("debug_hud", _devconsole_toggle_debug_hud)
 		console.add_command("show_cognitive", _devconsole_show_cognitive)
 		console.add_command("test_spawn", _devconsole_test_spawn)
+		console.add_command("spawn_grunt", _devconsole_spawn_grunt)
 		console.add_command("knight_skin", _devconsole_knight_skin)
 		console.add_command("ui_status", _devconsole_ui_status)
 		console.add_command("fab_status", _devconsole_fab_status)
@@ -480,6 +509,20 @@ func _devconsole_test_spawn(args: Array) -> String:
 		enemy_mgr.call("spawn_test_enemy", pos)
 		return "Spawned test enemy at " + str(pos)
 	return "EnemyDirector not found or spawn_test_enemy not available"
+
+func _devconsole_spawn_grunt(args: Array) -> String:
+	var operator = _get_operator_node()
+	if operator == null:
+		return "Operator not found"
+	var enemy_mgr = get_node_or_null("/root/GameRoot/EnemyDirector")
+	if enemy_mgr != null and enemy_mgr.has_method("spawn_debug_enemy_type"):
+		var offset := Vector2(96.0, 0.0)
+		if args.size() >= 2:
+			offset = Vector2(float(args[0]), float(args[1]))
+		var pos = operator.global_position + offset
+		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "grunt", pos))
+		return "Spawned grunt at %s" % str(pos) if spawned else "Failed to spawn grunt"
+	return "EnemyDirector not found or spawn_debug_enemy_type not available"
 
 func _devconsole_knight_skin(args: Array) -> String:
 	var operator = _get_operator_node()
@@ -1425,24 +1468,129 @@ func _apply_terminal_planet_rotation() -> void:
 func _apply_terminal_planet_zoom() -> void:
 	_terminal_planet_preview_renderer.apply_zoom()
 
+func _make_terminal_texture_style(texture: Texture2D, margin: float, content_margin: float = 8.0) -> StyleBoxTexture:
+	var style := StyleBoxTexture.new()
+	style.texture = texture
+	style.texture_margin_left = margin
+	style.texture_margin_top = margin
+	style.texture_margin_right = margin
+	style.texture_margin_bottom = margin
+	style.content_margin_left = content_margin
+	style.content_margin_top = content_margin
+	style.content_margin_right = content_margin
+	style.content_margin_bottom = content_margin
+	return style
+
+func _apply_terminal_button_assets(button: BaseButton, normal: StyleBoxTexture, hover: StyleBoxTexture, pressed: StyleBoxTexture, disabled: StyleBoxTexture, focus: StyleBoxTexture, icon: Texture2D = null) -> void:
+	if button == null:
+		return
+	button.focus_mode = Control.FOCUS_ALL
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("pressed", pressed)
+	button.add_theme_stylebox_override("disabled", disabled)
+	button.add_theme_stylebox_override("focus", focus)
+	if icon != null and button is Button:
+		var concrete_button := button as Button
+		concrete_button.icon = icon
+		concrete_button.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+func _terminal_page_icon(page_name: String) -> Texture2D:
+	match page_name:
+		"OVERVIEW":
+			return TERMINAL_ICON_MAP
+		"STATUS":
+			return TERMINAL_ICON_CRITICAL
+		"SECTORS":
+			return TERMINAL_ICON_MAP
+		"POWER":
+			return TERMINAL_ICON_POWER
+		"DEFENSE":
+			return TERMINAL_ICON_DEFENSE
+		"SENSORS":
+			return TERMINAL_ICON_SCAN
+		"INCIDENTS":
+			return TERMINAL_ICON_WARNING
+		"ARCHIVE":
+			return TERMINAL_ICON_CONTRACT
+		"RECON":
+			return TERMINAL_ICON_RECON
+		"CONTRACTS":
+			return TERMINAL_ICON_CONTRACT
+		"HISTORY":
+			return TERMINAL_ICON_RESTART
+		"SETTINGS":
+			return TERMINAL_ICON_REPAIR
+		"FABRICATION":
+			return TERMINAL_ICON_FABRICATION
+		_:
+			return null
+
+func _terminal_action_icon(button: BaseButton) -> Texture2D:
+	if button == terminal_wait_button or button == terminal_wait_10x_button:
+		return TERMINAL_ICON_SCAN
+	if button == terminal_focus_button:
+		return TERMINAL_ICON_POWER
+	if button == terminal_harden_button:
+		return TERMINAL_ICON_DEFENSE
+	if button == terminal_reset_button or button == terminal_reboot_button:
+		return TERMINAL_ICON_RESTART
+	if button == terminal_help_button:
+		return TERMINAL_ICON_WARNING
+	return null
+
+func _ensure_terminal_texture_overlays() -> void:
+	if terminal_panel == null:
+		return
+	var scanline_overlay := terminal_panel.get_node_or_null("StarterScanlineOverlay")
+	if scanline_overlay == null:
+		scanline_overlay = TextureRect.new()
+		scanline_overlay.name = "StarterScanlineOverlay"
+		terminal_panel.add_child(scanline_overlay)
+	var scanline_rect := scanline_overlay as TextureRect
+	if scanline_rect:
+		scanline_rect.texture = TERMINAL_SCANLINE_TEXTURE
+		scanline_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		scanline_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		scanline_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		scanline_rect.stretch_mode = TextureRect.STRETCH_TILE
+		scanline_rect.modulate = Color(1.0, 1.0, 1.0, 0.13)
+		scanline_rect.z_index = 20
+	var noise_overlay := terminal_panel.get_node_or_null("StarterNoiseOverlay")
+	if noise_overlay == null:
+		noise_overlay = TextureRect.new()
+		noise_overlay.name = "StarterNoiseOverlay"
+		terminal_panel.add_child(noise_overlay)
+	var noise_rect := noise_overlay as TextureRect
+	if noise_rect:
+		noise_rect.texture = TERMINAL_NOISE_TEXTURE
+		noise_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		noise_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		noise_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		noise_rect.stretch_mode = TextureRect.STRETCH_TILE
+		noise_rect.modulate = Color(1.0, 1.0, 1.0, 0.08)
+		noise_rect.z_index = 21
+
 func _apply_terminal_theme():
+	_ensure_terminal_texture_overlays()
+	var panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, 10.0, 10.0)
+	var header_style := _make_terminal_texture_style(TERMINAL_HEADER_ACTIVE_TEXTURE, 4.0, 6.0)
+	var output_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, 10.0, 8.0)
+	var map_style := _make_terminal_texture_style(TERMINAL_MAP_FRAME_TEXTURE, 12.0, 10.0)
+	var input_style := _make_terminal_texture_style(TERMINAL_COMMAND_LINE_TEXTURE, 8.0, 10.0)
+	var nav_button_style := _make_terminal_texture_style(TERMINAL_NAV_IDLE_TEXTURE, 8.0, 6.0)
+	var nav_button_hover_style := _make_terminal_texture_style(TERMINAL_NAV_HOVER_TEXTURE, 8.0, 6.0)
+	var nav_button_active_style := _make_terminal_texture_style(TERMINAL_NAV_ACTIVE_TEXTURE, 8.0, 6.0)
+	var nav_button_focus_style := _make_terminal_texture_style(TERMINAL_NAV_ACTIVE_TEXTURE, 8.0, 6.0)
+	var action_button_style := _make_terminal_texture_style(TERMINAL_BUTTON_IDLE_TEXTURE, 8.0, 6.0)
+	var action_button_hover_style := _make_terminal_texture_style(TERMINAL_BUTTON_HOVER_TEXTURE, 8.0, 6.0)
+	var action_button_pressed_style := _make_terminal_texture_style(TERMINAL_BUTTON_PRESSED_TEXTURE, 8.0, 6.0)
+	var action_button_disabled_style := _make_terminal_texture_style(TERMINAL_BUTTON_DISABLED_TEXTURE, 8.0, 6.0)
 	if terminal_panel:
-		var panel_style := StyleBoxFlat.new()
-		panel_style.bg_color = Color(0.025, 0.035, 0.04, 0.975)
-		panel_style.border_color = Color(0.34, 0.56, 0.48, 0.95)
-		panel_style.set_border_width_all(2)
-		panel_style.set_corner_radius_all(8)
-		panel_style.shadow_color = Color(0.0, 0.0, 0.0, 0.35)
-		panel_style.shadow_size = 14
 		terminal_panel.add_theme_stylebox_override("panel", panel_style)
 		terminal_panel.modulate = Color(1, 1, 1, 1)
 
 	if terminal_header_panel:
-		var header_style := StyleBoxFlat.new()
-		header_style.bg_color = Color(0.055, 0.08, 0.09, 0.98)
-		header_style.border_color = Color(0.26, 0.5, 0.42, 1.0)
-		header_style.set_border_width_all(1)
-		header_style.set_corner_radius_all(5)
 		terminal_header_panel.add_theme_stylebox_override("panel", header_style)
 
 	for label in [terminal_header_eyebrow, terminal_nav_title, terminal_action_title, terminal_command_title, terminal_map_title_label, terminal_planet_title_label, terminal_map_preview_title_label]:
@@ -1470,12 +1618,7 @@ func _apply_terminal_theme():
 	for output in [terminal_output, terminal_map_label]:
 		if output == null:
 			continue
-		var output_style := StyleBoxFlat.new()
-		output_style.bg_color = Color(0.012, 0.02, 0.024, 0.99)
-		output_style.border_color = Color(0.18, 0.3, 0.28, 1.0)
-		output_style.set_border_width_all(1)
-		output_style.set_corner_radius_all(6)
-		output.add_theme_stylebox_override("normal", output_style)
+		output.add_theme_stylebox_override("normal", map_style if output == terminal_map_label else output_style)
 		output.add_theme_color_override("font_color", Color(0.82, 0.92, 0.88, 1.0))
 		output.add_theme_font_size_override("font_size", 14)
 		if output is RichTextLabel:
@@ -1484,11 +1627,7 @@ func _apply_terminal_theme():
 			output.scroll_following = true
 			output.bbcode_enabled = true
 	if terminal_widget_stack:
-		var widget_panel_style := StyleBoxFlat.new()
-		widget_panel_style.bg_color = Color(0.012, 0.02, 0.024, 0.99)
-		widget_panel_style.border_color = Color(0.18, 0.3, 0.28, 1.0)
-		widget_panel_style.set_border_width_all(1)
-		widget_panel_style.set_corner_radius_all(6)
+		var widget_panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, 10.0, 8.0)
 		for panel in terminal_widget_stack.find_children("*", "PanelContainer", true, false):
 			panel.add_theme_stylebox_override("panel", widget_panel_style)
 		for rich_text in terminal_widget_stack.find_children("*", "RichTextLabel", true, false):
@@ -1502,23 +1641,9 @@ func _apply_terminal_theme():
 			label.add_theme_color_override("font_color", Color(0.63, 0.83, 0.74, 0.92))
 			label.add_theme_font_size_override("font_size", 11)
 	if terminal_activity_scroll:
-		var scroll_style := StyleBoxFlat.new()
-		scroll_style.bg_color = Color(0.012, 0.02, 0.024, 0.99)
-		scroll_style.border_color = Color(0.18, 0.3, 0.28, 1.0)
-		scroll_style.set_border_width_all(1)
-		scroll_style.set_corner_radius_all(6)
-		terminal_activity_scroll.add_theme_stylebox_override("panel", scroll_style)
+		terminal_activity_scroll.add_theme_stylebox_override("panel", output_style)
 
 	if terminal_input:
-		var input_style := StyleBoxFlat.new()
-		input_style.bg_color = Color(0.06, 0.12, 0.095, 1.0)
-		input_style.border_color = Color(0.58, 0.92, 0.74, 1.0)
-		input_style.set_border_width_all(2)
-		input_style.set_corner_radius_all(6)
-		input_style.content_margin_left = 10.0
-		input_style.content_margin_right = 10.0
-		input_style.content_margin_top = 8.0
-		input_style.content_margin_bottom = 8.0
 		terminal_input.add_theme_stylebox_override("normal", input_style)
 		terminal_input.add_theme_stylebox_override("focus", input_style)
 		terminal_input.add_theme_color_override("font_color", Color(0.96, 1.0, 0.98, 1.0))
@@ -1539,52 +1664,24 @@ func _apply_terminal_theme():
 	if terminal_hint_label:
 		terminal_hint_label.add_theme_color_override("font_color", Color(0.54, 0.72, 0.68, 0.88))
 		terminal_hint_label.add_theme_font_size_override("font_size", 12)
-	var nav_button_style := StyleBoxFlat.new()
-	nav_button_style.bg_color = Color(0.04, 0.06, 0.065, 0.98)
-	nav_button_style.border_color = Color(0.20, 0.34, 0.31, 1.0)
-	nav_button_style.set_border_width_all(1)
-	nav_button_style.set_corner_radius_all(4)
-	var nav_button_active_style := StyleBoxFlat.new()
-	nav_button_active_style.bg_color = Color(0.08, 0.16, 0.14, 1.0)
-	nav_button_active_style.border_color = Color(0.43, 0.76, 0.61, 1.0)
-	nav_button_active_style.set_border_width_all(1)
-	nav_button_active_style.set_corner_radius_all(4)
-	var nav_button_focus_style := StyleBoxFlat.new()
-	nav_button_focus_style.bg_color = Color(0.10, 0.20, 0.17, 1.0)
-	nav_button_focus_style.border_color = Color(0.62, 0.92, 0.78, 1.0)
-	nav_button_focus_style.set_border_width_all(2)
-	nav_button_focus_style.set_corner_radius_all(4)
-	for button in _terminal_page_buttons.values():
+	for page_name in _terminal_page_buttons.keys():
+		var button: BaseButton = _terminal_page_buttons[page_name]
 		if button == null:
 			continue
-		button.focus_mode = Control.FOCUS_ALL
-		button.add_theme_stylebox_override("normal", nav_button_style)
-		button.add_theme_stylebox_override("hover", nav_button_style)
-		button.add_theme_stylebox_override("pressed", nav_button_active_style)
-		button.add_theme_stylebox_override("disabled", nav_button_active_style)
-		button.add_theme_stylebox_override("focus", nav_button_focus_style)
+		_apply_terminal_button_assets(button, nav_button_style, nav_button_hover_style, nav_button_active_style, nav_button_active_style, nav_button_focus_style, _terminal_page_icon(page_name))
 		button.add_theme_color_override("font_color", Color(0.80, 0.92, 0.88, 1.0))
 		button.add_theme_color_override("font_disabled_color", Color(0.95, 1.0, 0.97, 1.0))
 		button.add_theme_font_size_override("font_size", 13)
 	for button in [terminal_wait_button, terminal_wait_10x_button, terminal_focus_button, terminal_harden_button, terminal_reset_button, terminal_reboot_button, terminal_help_button]:
 		if button == null:
 			continue
-		button.focus_mode = Control.FOCUS_ALL
-		button.add_theme_stylebox_override("normal", nav_button_style)
-		button.add_theme_stylebox_override("hover", nav_button_style)
-		button.add_theme_stylebox_override("pressed", nav_button_active_style)
-		button.add_theme_stylebox_override("focus", nav_button_focus_style)
+		_apply_terminal_button_assets(button, action_button_style, action_button_hover_style, action_button_pressed_style, action_button_disabled_style, action_button_pressed_style, _terminal_action_icon(button))
 		button.add_theme_color_override("font_color", Color(0.74, 0.88, 0.82, 1.0))
 		button.add_theme_font_size_override("font_size", 12)
 	if primary_weapon_button:
-		var button_style := StyleBoxFlat.new()
-		button_style.bg_color = Color(0.08, 0.12, 0.10, 0.92)
-		button_style.border_color = Color(0.28, 0.68, 0.46, 1.0)
-		button_style.set_border_width_all(1)
-		button_style.set_corner_radius_all(3)
-		primary_weapon_button.add_theme_stylebox_override("normal", button_style)
-		primary_weapon_button.add_theme_stylebox_override("hover", button_style)
-		primary_weapon_button.add_theme_stylebox_override("pressed", button_style)
+		primary_weapon_button.add_theme_stylebox_override("normal", action_button_style)
+		primary_weapon_button.add_theme_stylebox_override("hover", action_button_hover_style)
+		primary_weapon_button.add_theme_stylebox_override("pressed", action_button_pressed_style)
 		primary_weapon_button.add_theme_color_override("font_color", Color(0.88, 1.0, 0.92, 1.0))
 
 
@@ -2033,29 +2130,11 @@ func _set_terminal_page(page_name: String) -> void:
 func _apply_terminal_page_theme() -> void:
 	var fabrication_mode := _terminal_current_page == "FABRICATION"
 	if terminal_panel:
-		var panel_style := StyleBoxFlat.new()
-		if fabrication_mode:
-			panel_style.bg_color = Color(0.065, 0.045, 0.016, 0.985)
-			panel_style.border_color = Color(0.88, 0.58, 0.24, 0.98)
-		else:
-			panel_style.bg_color = Color(0.025, 0.035, 0.04, 0.975)
-			panel_style.border_color = Color(0.34, 0.56, 0.48, 0.95)
-		panel_style.set_border_width_all(2)
-		panel_style.set_corner_radius_all(8)
-		panel_style.shadow_color = Color(0.0, 0.0, 0.0, 0.35)
-		panel_style.shadow_size = 14
-		terminal_panel.add_theme_stylebox_override("panel", panel_style)
+		terminal_panel.add_theme_stylebox_override("panel", _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, 10.0, 10.0))
+		terminal_panel.self_modulate = Color(1.0, 0.92, 0.72, 1.0) if fabrication_mode else Color(1, 1, 1, 1)
 	if terminal_header_panel:
-		var header_style := StyleBoxFlat.new()
-		if fabrication_mode:
-			header_style.bg_color = Color(0.12, 0.06, 0.02, 0.985)
-			header_style.border_color = Color(0.96, 0.68, 0.28, 1.0)
-		else:
-			header_style.bg_color = Color(0.055, 0.08, 0.09, 0.98)
-			header_style.border_color = Color(0.26, 0.5, 0.42, 1.0)
-		header_style.set_border_width_all(1)
-		header_style.set_corner_radius_all(5)
-		terminal_header_panel.add_theme_stylebox_override("panel", header_style)
+		var header_texture: Texture2D = TERMINAL_HEADER_WARNING_TEXTURE if fabrication_mode else TERMINAL_HEADER_ACTIVE_TEXTURE
+		terminal_header_panel.add_theme_stylebox_override("panel", _make_terminal_texture_style(header_texture, 4.0, 6.0))
 	if terminal_title_label:
 		terminal_title_label.add_theme_color_override("font_color", Color(0.98, 0.90, 0.72, 1.0) if fabrication_mode else Color(0.93, 0.98, 0.95, 1.0))
 	if terminal_header_eyebrow:
@@ -2069,19 +2148,7 @@ func _apply_terminal_page_theme() -> void:
 	if terminal_hint_label:
 		terminal_hint_label.add_theme_color_override("font_color", Color(0.96, 0.79, 0.54, 0.88) if fabrication_mode else Color(0.54, 0.72, 0.68, 0.88))
 	if terminal_input:
-		var input_style := StyleBoxFlat.new()
-		if fabrication_mode:
-			input_style.bg_color = Color(0.12, 0.07, 0.02, 1.0)
-			input_style.border_color = Color(0.98, 0.72, 0.34, 1.0)
-		else:
-			input_style.bg_color = Color(0.06, 0.12, 0.095, 1.0)
-			input_style.border_color = Color(0.58, 0.92, 0.74, 1.0)
-		input_style.set_border_width_all(2)
-		input_style.set_corner_radius_all(6)
-		input_style.content_margin_left = 10.0
-		input_style.content_margin_right = 10.0
-		input_style.content_margin_top = 8.0
-		input_style.content_margin_bottom = 8.0
+		var input_style := _make_terminal_texture_style(TERMINAL_COMMAND_LINE_TEXTURE, 8.0, 10.0)
 		terminal_input.add_theme_stylebox_override("normal", input_style)
 		terminal_input.add_theme_stylebox_override("focus", input_style)
 		terminal_input.add_theme_color_override("font_color", Color(1.0, 0.96, 0.88, 1.0) if fabrication_mode else Color(0.96, 1.0, 0.98, 1.0))
@@ -2103,11 +2170,7 @@ func _apply_terminal_page_theme() -> void:
 	elif terminal_background:
 		terminal_background.modulate = Color(1, 1, 1, 1)
 	if terminal_widget_stack:
-		var widget_panel_style := StyleBoxFlat.new()
-		widget_panel_style.bg_color = Color(0.045, 0.028, 0.010, 0.99) if fabrication_mode else Color(0.012, 0.02, 0.024, 0.99)
-		widget_panel_style.border_color = Color(0.92, 0.66, 0.32, 1.0) if fabrication_mode else Color(0.18, 0.3, 0.28, 1.0)
-		widget_panel_style.set_border_width_all(1)
-		widget_panel_style.set_corner_radius_all(6)
+		var widget_panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, 10.0, 8.0)
 		for panel in terminal_widget_stack.find_children("*", "PanelContainer", true, false):
 			panel.add_theme_stylebox_override("panel", widget_panel_style)
 		for rich_text in terminal_widget_stack.find_children("*", "RichTextLabel", true, false):
@@ -2320,13 +2383,13 @@ func _render_terminal_page(context: Dictionary) -> String:
 			_render_terminal_defense_widgets(snapshot, assault_value, hostile_text)
 			return "DEFENSE READINESS // TURRETS, ASSAULT LANES, COVERAGE"
 		"SENSORS":
-			_render_terminal_sensors_widgets(threat_text, hostile_text, wave_text, assault_value, sector_array)
+			_render_terminal_sensors_widgets(threat_text, hostile_text, wave_text, assault_value, sector_array, snapshot.get("arrn", {}))
 			return "SENSOR FIDELITY // CONTACTS, THREAT LANES, ACTIVITY"
 		"INCIDENTS":
 			_render_terminal_incidents_widgets()
 			return "EVENT TRIAGE // RECENT TRANSCRIPT SIGNALS AND ALERTS"
 		"ARCHIVE":
-			_render_terminal_archive_widgets(contract)
+			_render_terminal_archive_widgets(contract, snapshot.get("arrn", {}))
 			return "KNOWLEDGE PRESERVATION // CONTRACT WORLD PROFILE AND STATE"
 		"RECON":
 			_render_terminal_recon_widgets(contract, assault_value, hostile_text)
@@ -2544,27 +2607,47 @@ func _render_terminal_defense_widgets(snapshot: Dictionary, assault_value: Varia
 	_set_terminal_rich_text(terminal_defense_coverage_body, "\n".join(_build_terminal_defense_coverage_lines(snapshot.get("sectors", []))))
 
 
-func _render_terminal_sensors_widgets(threat_text: Variant, hostile_text: String, wave_text: String, assault_value: Variant, sector_array: Array) -> void:
+func _render_terminal_sensors_widgets(threat_text: Variant, hostile_text: String, wave_text: String, assault_value: Variant, sector_array: Array, arrn_snapshot: Dictionary) -> void:
+	var arrn_fidelity := str(arrn_snapshot.get("fidelity", "FULL")).to_upper() if not arrn_snapshot.is_empty() else "FULL"
+	var threat_bonus := 0
+	var arrn_manager := _get_arrn_manager()
+	if arrn_manager != null and arrn_manager.has_method("get_threat_warning_tick_bonus"):
+		threat_bonus = int(arrn_manager.call("get_threat_warning_tick_bonus"))
 	_set_terminal_rich_text(terminal_sensors_fidelity_body, "\n".join([
 		_terminal_kv("THREAT", threat_text),
 		_terminal_kv("HOSTILES", hostile_text),
 		_terminal_kv("WAVE", wave_text),
-		_terminal_kv("MODE", "FULL COMMAND CLARITY"),
+		_terminal_kv("MODE", "%s COMMAND CLARITY" % arrn_fidelity),
+		_terminal_kv("ARRN", "%d/%d" % [int(arrn_snapshot.get("knowledge_index", 0)), int(arrn_snapshot.get("knowledge_max", 7))]),
 	]))
 	_set_terminal_rich_text(terminal_sensors_prediction_body, "\n".join([
 		"LIKELY INGRESS AXIS  %s" % str(assault_value),
 		"WAVE PROFILE         %s" % wave_text,
-		"CONTACT CONFIDENCE   HIGH",
+		"CONTACT CONFIDENCE   %s" % ("RAISED" if threat_bonus > 0 else "HIGH"),
+		"FORECAST BONUS       +%d TICKS" % threat_bonus,
 	]))
 	var activity_lines: Array[String] = []
-	for sector_variant in sector_array:
-		if not (sector_variant is Dictionary):
-			continue
-		var sector: Dictionary = sector_variant
-		activity_lines.append("%-18s -> %s" % [
-			_display_sector_name(str(sector.get("name", "SECTOR"))).to_upper(),
-			str(sector.get("status", "UNKNOWN")).to_upper(),
-		])
+	if not arrn_snapshot.is_empty():
+		activity_lines.append("ARRN RELAY NETWORK")
+		for relay_variant in arrn_snapshot.get("relays", []):
+			if not (relay_variant is Dictionary):
+				continue
+			var relay: Dictionary = relay_variant
+			activity_lines.append("%-10s %-8s %3d%% %s" % [
+				str(relay.get("relay_id", "RELAY")).to_upper(),
+				str(relay.get("status", "UNKNOWN")).to_upper(),
+				int(round(float(relay.get("stability", 0.0)))),
+				str(relay.get("sector_id", "UNKNOWN")).to_upper(),
+			])
+	else:
+		for sector_variant in sector_array:
+			if not (sector_variant is Dictionary):
+				continue
+			var sector: Dictionary = sector_variant
+			activity_lines.append("%-18s -> %s" % [
+				_display_sector_name(str(sector.get("name", "SECTOR"))).to_upper(),
+				str(sector.get("status", "UNKNOWN")).to_upper(),
+			])
 	if activity_lines.is_empty():
 		activity_lines.append("NO SENSOR TAGS AVAILABLE")
 	_set_terminal_rich_text(terminal_sensors_activity_body, "\n".join(activity_lines))
@@ -2591,28 +2674,34 @@ func _render_terminal_incidents_widgets() -> void:
 	_set_terminal_rich_text(terminal_incidents_table_body, "\n".join(table_lines))
 
 
-func _render_terminal_archive_widgets(contract: Dictionary) -> void:
+func _render_terminal_archive_widgets(contract: Dictionary, arrn_snapshot: Dictionary = {}) -> void:
 	var world_profile: Dictionary = contract.get("world_profile", {})
 	_set_terminal_rich_text(terminal_archive_integrity_body, "\n".join([
 		_terminal_kv("STATE", "NOMINAL"),
 		_terminal_kv("PLANET", str(contract.get("planet_key", "UNKNOWN")).to_upper()),
 		_terminal_kv("PROFILE", str(world_profile.get("world_label", "UNCLASSIFIED")).to_upper()),
-		_terminal_kv("SEEDS", "%s / %s" % [str(contract.get("planet_seed", "?")), str(contract.get("map_seed", "?"))]),
+		_terminal_kv("ARRN", "%d/%d" % [int(arrn_snapshot.get("knowledge_index", 0)), int(arrn_snapshot.get("knowledge_max", 7))]),
 	]))
-	_set_terminal_rich_text(terminal_archive_categories_body, "\n".join([
+	var benefit_lines: Array[String] = []
+	for label in arrn_snapshot.get("benefit_labels", []):
+		benefit_lines.append(str(label))
+	if benefit_lines.is_empty():
+		benefit_lines = [
 		"GOVERNANCE",
 		"INFRASTRUCTURE",
 		"WARFARE",
 		"UNKNOWN",
-	]))
+		]
+	_set_terminal_rich_text(terminal_archive_categories_body, "\n".join(benefit_lines))
 	_set_terminal_rich_text(terminal_archive_detail_body, "\n".join([
 		"FOLIAGE %.2f | OPEN %.2f | COMPOUND %.2f" % [
 			float(world_profile.get("foliage_density", 0.0)),
 			float(world_profile.get("open_layout_chance", 0.0)),
 			float(world_profile.get("compound_area_ratio", 0.0)),
 		],
-		"STATUS: RECOVERED",
-		"CONFIDENCE: HIGH",
+		"TRACK: %s" % str(arrn_snapshot.get("knowledge_track", "RELAY_RECOVERY")),
+		"PENDING PACKETS: %d" % int(arrn_snapshot.get("relay_packets_pending", 0)),
+		"DORMANCY PRESSURE: %d" % int(arrn_snapshot.get("dormancy_pressure", 0)),
 	]))
 
 
@@ -2760,9 +2849,11 @@ func _render_terminal_fabrication_widgets() -> void:
 		for resource_id in cost.keys():
 			cost_parts.append("%s=%s" % [str(resource_id).to_upper(), str(cost[resource_id])])
 		var cost_text := ", ".join(cost_parts) if not cost_parts.is_empty() else "FREE"
-		recipe_lines.append("%s | %s | %ss | %s" % [
+		var lock_text := "LOCKED" if bool(recipe.get("locked", false)) else "READY"
+		recipe_lines.append("%s | %s | %s | %ss | %s" % [
 			str(recipe_id).to_upper(),
 			str(recipe.get("label", recipe_id)),
+			lock_text,
 			str(recipe.get("build_seconds", 0.0)),
 			cost_text,
 		])
@@ -2950,12 +3041,30 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 		_append_terminal_line("FABRICATION PAGE: FAB STATUS, FAB RECIPES, FAB GRANT, FAB START <RECIPE_ID>", "info")
 		_append_terminal_line("SET FAB opens the fabrication shell.", "info")
 		return true
+	if cmd_upper == "HELP ARRN":
+		_append_terminal_line("ARRN COMMANDS: SCAN RELAYS, STATUS RELAY, STABILIZE RELAY <ID>, SYNC", "info")
+		_append_terminal_line("Relay packets recover context density; knowledge benefits improve confidence, not omniscience.", "info")
+		return true
 
 	match verb:
 		"HELP":
-			_append_terminal_line("LOCAL COMMANDS: HELP STATUS PREP ENEMIES WAVE SECTORS CONTRACT PLANET MAP START ASSAULT WALL TURRET REROUTE CLEAR OVERLAY RESET REBOOT FABRICATION", "info")
+			_append_terminal_line("LOCAL COMMANDS: HELP STATUS PREP ARRN ENEMIES WAVE SECTORS CONTRACT PLANET MAP START ASSAULT WALL TURRET REROUTE CLEAR OVERLAY RESET REBOOT FABRICATION", "info")
 			_append_terminal_line("ACTIONS: WAIT | WAIT 10X | GOTO <PAGE> | HARDEN <SECTOR> | FOCUS <TARGET>", "info")
-			_append_terminal_line("LIVE CONTROL: ALLOCATE_DEFENSE sector=COMMAND weight=HIGH | DEPLOY turret_sniper sector=COMMAND | REPAIR COMMAND", "info")
+			_append_terminal_line("LIVE CONTROL: SCAN RELAYS | STABILIZE RELAY <ID> | SYNC | REPAIR COMMAND", "info")
+			return true
+		"STATUS":
+			if not args.is_empty() and str(args[0]).to_upper() == "RELAY":
+				var arrn_manager := _get_arrn_manager()
+				if arrn_manager == null or not arrn_manager.has_method("get_scan_lines"):
+					_append_terminal_line("ARRN MANAGER UNAVAILABLE", "warning")
+					return true
+				_set_terminal_page("SENSORS")
+				var status_lines: Array = arrn_manager.call("get_scan_lines", "FULL")
+				for line in status_lines:
+					_append_terminal_line(str(line), "info")
+				_refresh_snapshot()
+				return true
+			_append_terminal_line("STATUS TARGET UNKNOWN", "warning")
 			return true
 		"GOTO":
 			if args.is_empty():
@@ -3235,9 +3344,23 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 			_refresh_snapshot()
 			return true
 		"SYNC":
-			_ensure_terminal_contract_binding()
-			_refresh_snapshot()
-			_append_terminal_line("COMMAND LINK SYNCHRONIZED // SNAPSHOT REFRESHED", "success")
+			var sync_arrn := _get_arrn_manager()
+			if sync_arrn != null and sync_arrn.has_method("sync_packets"):
+				var sync_result: Dictionary = sync_arrn.call("sync_packets")
+				_set_terminal_page("ARCHIVE")
+				if bool(sync_result.get("ok", false)):
+					_append_terminal_line("SYNC COMPLETE: %d PACKETS." % int(sync_result.get("packets", 0)), "success")
+					_append_terminal_line("KNOWLEDGE INDEX RELAY_RECOVERY=%d." % int(sync_result.get("knowledge_index", 0)), "success")
+					var benefit := str(sync_result.get("benefit", ""))
+					if not benefit.is_empty():
+						_append_terminal_line("BENEFIT ACTIVE: %s." % benefit, "success")
+					if int(sync_result.get("failed", 0)) > 0:
+						_append_terminal_line("WEAK RELAY LOSS: %d PACKETS FAILED CONFIDENCE CHECK." % int(sync_result.get("failed", 0)), "warning")
+				else:
+					_append_terminal_line("SYNC FAILED // %s" % str(sync_result.get("reason", "UNKNOWN")), "warning")
+			else:
+				_ensure_terminal_contract_binding()
+				_append_terminal_line("COMMAND LINK SYNCHRONIZED // SNAPSHOT REFRESHED", "success")
 			return true
 		"LOCKDOWN":
 			var lockdown_target := str(args[0]).to_upper() if not args.is_empty() else "ALL"
@@ -3285,29 +3408,54 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 			return true
 		"SCAN":
 			if not args.is_empty() and str(args[0]).to_upper() == "RELAYS":
+				var scan_arrn := _get_arrn_manager()
+				if scan_arrn == null or not scan_arrn.has_method("scan_network"):
+					_append_terminal_line("ARRN MANAGER UNAVAILABLE", "warning")
+					return true
+				scan_arrn.call("scan_network", "FULL")
 				_terminal_overlay_flags["path"] = true
 				_terminal_overlay_flags["threat"] = true
 				_set_terminal_page("SENSORS")
+				var scan_lines: Array = scan_arrn.call("get_scan_lines", "FULL")
+				for line in scan_lines:
+					_append_terminal_line(str(line), "info")
 				_refresh_snapshot()
-				_append_terminal_line("RELAY SCAN COMPLETE // SENSOR PAGE OPEN", "success")
+				_append_terminal_line("RELAY SCAN COMPLETE // CONTEXT ANCHORS REACQUIRED", "success")
 				return true
 			_append_terminal_line("UNKNOWN SCAN TARGET", "warning")
 			return true
 		"STABILIZE":
 			if not args.is_empty() and str(args[0]).to_upper() == "RELAY":
-				var relay_target := str(args[1]) if args.size() > 1 else str(params.get("sector", "COMMS"))
-				var relay_priority := _apply_terminal_sector_priority(relay_target, "CRITICAL")
-				var relay_repair := _apply_terminal_emergency_repair(relay_target)
-				if bool(relay_priority.get("ok", false)):
-					_terminal_highlight_sector = str(relay_priority.get("sector", ""))
+				var stabilize_arrn := _get_arrn_manager()
+				if stabilize_arrn == null or not stabilize_arrn.has_method("start_stabilization"):
+					_append_terminal_line("ARRN MANAGER UNAVAILABLE", "warning")
+					return true
+				var relay_target := str(args[1]).to_upper() if args.size() > 1 else str(params.get("id", ""))
+				if relay_target.is_empty():
+					_append_terminal_line("USE: STABILIZE RELAY <R_NORTH|R_SOUTH|R_ARCHIVE|R_GATEWAY>", "warning")
+					return true
+				var relay_entity := _find_arrn_relay_entity(relay_target)
+				var operator := get_tree().get_first_node_in_group("player")
+				if relay_entity == null or operator == null or not (operator is Node2D):
+					_append_terminal_line("STABILIZE RELAY FAILED // FIELD VERIFICATION REQUIRED", "warning")
+					return true
+				var relay_pos := relay_entity.global_position
+				if relay_entity.has_method("get_interaction_position"):
+					relay_pos = relay_entity.call("get_interaction_position")
+				var allowed_distance := 86.0
+				if relay_entity.has_method("get_interaction_distance"):
+					allowed_distance = float(relay_entity.call("get_interaction_distance"))
+				if (operator as Node2D).global_position.distance_to(relay_pos) > allowed_distance:
+					_append_terminal_line("STABILIZE RELAY FAILED // OPERATOR NOT AT %s" % relay_target, "warning")
+					return true
+				var stabilize_result: Dictionary = stabilize_arrn.call("start_stabilization", StringName(relay_target), operator)
+				if bool(stabilize_result.get("ok", false)):
 					_set_terminal_page("SENSORS")
-					_append_terminal_line("RELAY STABILIZED // %s // REPAIR %s" % [
-						str(relay_priority.get("sector", "UNKNOWN")),
-						str(relay_repair.get("reason", "UNAVAILABLE")),
-					], "success", str(relay_priority.get("sector", "")))
+					_append_terminal_line("RELAY STABILIZATION STARTED // %s" % relay_target, "success")
+					_append_terminal_line("FIELD TASK WILL COMPLETE AFTER ARRN TICKS; return to COMMAND for SYNC.", "info")
 					_refresh_snapshot()
 				else:
-					_append_terminal_line("STABILIZE RELAY FAILED // %s" % str(relay_priority.get("reason", "UNKNOWN")), "warning")
+					_append_terminal_line("STABILIZE RELAY FAILED // %s" % str(stabilize_result.get("reason", "UNKNOWN")), "warning")
 				return true
 			_append_terminal_line("UNKNOWN STABILIZE TARGET", "warning")
 			return true
@@ -3534,6 +3682,17 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 
 func _get_game_state() -> Node:
 	return _terminal_snapshot_builder.get_game_state(self)
+
+func _get_arrn_manager() -> Node:
+	return get_node_or_null("/root/ARRNManager")
+
+func _find_arrn_relay_entity(relay_id: String) -> Node2D:
+	for node in get_tree().get_nodes_in_group("arrn_relay"):
+		if not (node is Node2D):
+			continue
+		if str(node.get("relay_id")).to_upper() == relay_id.strip_edges().to_upper():
+			return node as Node2D
+	return null
 
 func _get_local_director_status() -> Dictionary:
 	return _terminal_snapshot_builder.get_local_director_status(self)

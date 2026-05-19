@@ -15,6 +15,7 @@ extends Control
 @export var terminal_color: Color = Color(0.38, 0.70, 0.96, 1.0)
 @export var vehicle_color: Color = Color(0.96, 0.80, 0.32, 1.0)
 @export var turret_color: Color = Color(0.40, 0.92, 0.78, 1.0)
+@export var relay_color: Color = Color(0.74, 0.92, 1.0, 1.0)
 @export var grid_color: Color = Color(0.32, 0.38, 0.32, 0.16)
 
 @export var map_padding_px: float = 9.0
@@ -44,6 +45,7 @@ var objective_nodes: Array[Node2D] = []
 var terminal_nodes: Array[Node2D] = []
 var vehicle_nodes: Array[Node2D] = []
 var turret_nodes: Array[Node2D] = []
+var relay_nodes: Array[Node2D] = []
 
 
 func _ready() -> void:
@@ -94,6 +96,10 @@ func set_turrets(nodes: Array[Node2D]) -> void:
 	turret_nodes = nodes
 
 
+func set_relays(nodes: Array[Node2D]) -> void:
+	relay_nodes = nodes
+
+
 func update_tile(tile: Vector2i, terrain_kind: String) -> void:
 	if not _is_tile_inside(tile):
 		return
@@ -120,6 +126,7 @@ func get_status_summary() -> Dictionary:
 		"terminals": terminal_nodes.size(),
 		"vehicles": vehicle_nodes.size(),
 		"turrets": turret_nodes.size(),
+		"relays": relay_nodes.size(),
 		"has_player": player_node != null and is_instance_valid(player_node),
 	}
 
@@ -183,6 +190,7 @@ func _draw() -> void:
 	_draw_terminal_pips(map_rect)
 	_draw_vehicle_pips(map_rect)
 	_draw_turret_pips(map_rect)
+	_draw_relay_pips(map_rect)
 	_draw_objective_pips(map_rect)
 	_draw_enemy_pips(map_rect)
 	_draw_player_pip(map_rect)
@@ -276,6 +284,15 @@ func _draw_turret_pips(map_rect: Rect2) -> void:
 			_draw_cross_marker(_tile_to_panel(tile, map_rect), turret_color)
 
 
+func _draw_relay_pips(map_rect: Rect2) -> void:
+	for relay in relay_nodes:
+		if relay == null or not is_instance_valid(relay):
+			continue
+		var tile := _global_to_tile(relay.global_position)
+		if _is_tile_inside(tile):
+			_draw_diamond_marker(_tile_to_panel(tile, map_rect), relay_color)
+
+
 func _draw_square_marker(panel_pos: Vector2, color: Color) -> void:
 	var r := utility_marker_radius_px
 	draw_rect(Rect2(panel_pos - Vector2(r, r), Vector2(r * 2.0, r * 2.0)), Color(0.0, 0.0, 0.0, 0.9), true)
@@ -299,6 +316,24 @@ func _draw_cross_marker(panel_pos: Vector2, color: Color) -> void:
 	draw_line(panel_pos + Vector2(0.0, -r), panel_pos + Vector2(0.0, r), Color(0.0, 0.0, 0.0, 0.9), 3.0)
 	draw_line(panel_pos + Vector2(-r, 0.0), panel_pos + Vector2(r, 0.0), color, 1.5)
 	draw_line(panel_pos + Vector2(0.0, -r), panel_pos + Vector2(0.0, r), color, 1.5)
+
+
+func _draw_diamond_marker(panel_pos: Vector2, color: Color) -> void:
+	var r := utility_marker_radius_px + 1.0
+	var points := PackedVector2Array([
+		panel_pos + Vector2(0.0, -r),
+		panel_pos + Vector2(r, 0.0),
+		panel_pos + Vector2(0.0, r),
+		panel_pos + Vector2(-r, 0.0),
+	])
+	draw_colored_polygon(points, Color(0.0, 0.0, 0.0, 0.9))
+	var inner := PackedVector2Array([
+		panel_pos + Vector2(0.0, -r + 1.0),
+		panel_pos + Vector2(r - 1.0, 0.0),
+		panel_pos + Vector2(0.0, r - 1.0),
+		panel_pos + Vector2(-r + 1.0, 0.0),
+	])
+	draw_colored_polygon(inner, color)
 
 
 func _is_passive_creature_node(node: Node) -> bool:

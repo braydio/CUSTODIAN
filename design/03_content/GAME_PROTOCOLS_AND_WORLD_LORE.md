@@ -49,8 +49,8 @@ Use this tiering whenever later docs discuss setting or protocol.
 ### Tier 1 — Locked Canon
 These are stable unless a future doctrine revision explicitly changes them.
 
-1. **CUSTODIAN is mechanically a tactical defense / contract-driven systems game, but thematically it is about preserving reality from interpretive collapse.**
-2. **The world’s central catastrophe is the failure of trusted interpretation, not mere material destruction.**
+1. **CUSTODIAN is mechanically a tactical defense / contract-driven systems game, but thematically it is about preserving reality from a supernatural provenance wound.**
+2. **The world’s central catastrophe is the Great Severance: The Unarrival damaged reality's ability to maintain shared cause, memory, witness, and origin.**
 3. **The Hub is persistent. Campaign worlds are transient. Contracts formalize bounded historical interventions.**
 4. **Knowledge progression outranks raw stat inflation as the game’s long-horizon reward spine.**
 5. **Lore must be delivered primarily through evidence, procedure, environment, enemy behavior, and degraded interfaces — not long exposition dumps.**
@@ -61,8 +61,10 @@ These are stable unless a future doctrine revision explicitly changes them.
 These are canonically true, but their full detail can be expanded later without contradiction.
 
 - The civilization-wide collapse is called **the Great Severance**.
+- The internal name for the metaphysical pressure behind the Severance is **The Unarrival**.
 - Pre-collapse society depended on a provenance and interpretation lattice referred to here as the **Civic Mesh**.
 - Custodians were continuity authorities: archivists, adjudicators, field operators, forensic restorers, and doctrinal auditors.
+- Custodians are provenance-preservation systems; they can detect the wound as impossible records and orphaned causes, but they do not fully understand the supernatural source.
 - The Hub is the surviving adjudication layer of the Custodian order.
 - Many surviving cultures are coherent but wrong; they are built on stable misinterpretations of intact machinery and partial records.
 - Major remnant groups include the Indexers, Penitents of Static, Leaseholders, Choir of Provenance, Buried Kins, and Feral Defense Remnants.
@@ -70,7 +72,7 @@ These are canonically true, but their full detail can be expanded later without 
 ### Tier 3 — Reserved Mystery
 These must remain ambiguous in player-facing content until deliberately escalated.
 
-- What precisely caused the Great Severance.
+- What The Unarrival truly is: saint, event, presence, non-event, weaponized contradiction, or something outside those categories.
 - Whether archive contradictions are accidental, defensive, or maliciously induced.
 - Whether the Custodian order chose civilizational amputation to prevent something worse.
 - How much the Hub itself can be trusted.
@@ -116,17 +118,28 @@ Assaults, waves, and base pressure remain important, but they are expressions of
 
 ### The Great Severance
 
-The foundational catastrophe is the **Great Severance**: a cascading failure of authenticated context across interlinked worlds.
+The foundational catastrophe is the **Great Severance**: a supernatural/cosmic provenance wound caused by an impossible presence, event, or saint internally called **The Unarrival**.
+
+The world was not destroyed by misinformation, ordinary forgetting, institutional decay, or technological collapse. Those are civilization-facing symptoms. The root injury is deeper: something outside reality's normal chain of cause, memory, witness, and record tried to enter history, could not fully arrive, and damaged the substrate that lets events be commonly witnessed, remembered, sequenced, and inherited.
+
+The Severance has three mandatory layers:
+
+1. **Root cause:** The Unarrival, a cosmic non-event whose consequences are embedded in history before the source can exist.
+2. **Observable symptom:** information collapse, contradictory archives, fragmented history, incompatible faction memories, unreliable records, and technological regression.
+3. **Gameplay expression:** knowledge recovery as provenance stabilization: reconnecting object, origin, witness, time, use, and meaning.
 
 Before the Severance, systems did not merely move data. They preserved provenance:
 
 - who authored a record
 - who validated it
+- what object, place, or event it referred to
+- who witnessed the relationship
 - what doctrine governed its use
+- where it sat in sequence
 - what assumptions it depended on
 - what contradictions were already known
 
-When that lattice failed, civilization did not simply go dark.
+When The Unarrival wounded that lattice, civilization did not simply go dark.
 It went **ambiguous**.
 
 This distinction is mandatory. The setting should repeatedly communicate that:
@@ -137,6 +150,43 @@ This distinction is mandatory. The setting should repeatedly communicate that:
 - archives survived in fragments
 - institutions survived in fragments
 - **shared confidence in what things meant did not**
+
+Shared context is therefore **symptom-level language**, not root-cause language. The world lacks shared context because provenance itself is diseased.
+
+### The Unarrival
+
+The Unarrival is not a normal monster, faction, AI, or god walking through the setting. It is a pressure against reality's continuity: a presence or event that cannot fully exist because existence requires witness, naming, memory, and sequence.
+
+Do not overexplain it directly in player-facing content. Present it through scars:
+
+- events without origins
+- names without owners
+- memories without witnesses
+- artifacts that precede manufacture
+- rooms that were always sealed but contain fresh blood
+- factions that remember wars no one else fought
+- saints awaited after their relics already exist
+- bells rung by towers that were never built
+- corpses that behave like records or failed historical corrections
+
+Approved Custodian-facing diagnostic language:
+
+```text
+RECORD CONFLICT:
+SOURCE EXISTS.
+SOURCE NEVER EXISTED.
+SOURCE REQUESTS CONTINUATION.
+
+PROVENANCE FAILURE:
+OBJECT PRECEDES MANUFACTURE.
+WITNESS PRECEDES EVENT.
+EVENT PRECEDES WORLD.
+
+CLASSIFICATION:
+NOT LOST.
+NOT UNKNOWN.
+UNARRIVED.
+```
 
 ### World Consequence Rule
 
@@ -161,11 +211,14 @@ Their job was to:
 
 - recover damaged knowledge
 - reconcile contradiction
+- preserve provenance between object, origin, witness, time, use, and meaning
 - authorize or refuse restoration
 - preserve chain-of-trust between systems
 - intervene where local reality had drifted beyond recoverable truth
 
 They were part archivist, part field technician, part doctrinal judge, part systems operator.
+
+Custodians are not omniscient lore machines. Because they preserve provenance, they can feel the shape of the Severance wound without seeing The Unarrival directly. To a Custodian, supernatural horror first appears as reality-level checksum failure: a source that both exists and never existed, a witness that precedes an event, or an artifact whose origin refuses to be filed.
 
 ### What the Player Is
 
@@ -224,12 +277,14 @@ The Hub’s fiction-facing ontology should stay aligned with the system design d
 - **Correlated** — multiple records or campaigns support the interpretation.
 - **Canonical** — fit for operational doctrine.
 - **Sealed** — too dangerous, too uncertain, or too destabilizing to restore openly.
+- **Unarrived** — a source, event, artifact, name, or witness has effects in history while its origin cannot be placed.
 
 ### Loss States
 
 - **Material Loss** — the thing is gone.
 - **Context Loss** — the thing remains, but its meaning is gone.
 - **Comparative Loss** — too much of the relational context is gone to ever fully reconstruct the truth.
+- **Provenance Failure** — the relationship between object, origin, witness, time, use, and meaning contradicts itself.
 
 ### Confidence Protocol
 
@@ -336,10 +391,10 @@ These groups are canonical future-facing remnant profiles. Each faction must exp
 
 ### The Choir of Provenance
 
-- **Core belief:** only high-confidence truth deserves survival; uncertainty must be quarantined.
-- **Function:** distributed archive-verification remainder, not a singular villain AI.
-- **Behavioral signatures:** sealing, denial, evidence destruction, confidence thresholds, procedural coldness.
-- **Lore rule:** They are the Custodian’s mirror: preservation through exclusion.
+- **Core belief:** every object, corpse, ruin, name, and machine must be returned to its correct source before the world can stop bleeding.
+- **Function:** origin-fanatics and archive-verification remnants who noticed that provenance itself is diseased.
+- **Behavioral signatures:** sealing, denial, evidence destruction, confidence thresholds, forced origin assignment, quarantine of contradiction, procedural coldness.
+- **Lore rule:** They are the Custodian’s mirror: preservation through exclusion. They distrust the Custodian because the Custodian preserves contradiction long enough to understand it.
 
 ### The Buried Kins
 
@@ -372,6 +427,7 @@ Lore should emerge from what the player sees, fights, repairs, mistrusts, and gr
 3. **Behavioral evidence** — enemies reveal belief through what they do first.
 4. **Machine evidence** — procedures, warnings, and residual system language imply truth.
 5. **Status distortion** — bad instruments force inference rather than certainty.
+6. **Provenance anomalies** — objects, rooms, bodies, and records expose impossible origin states.
 
 ### Presentation Guardrails
 
@@ -380,6 +436,7 @@ Lore should emerge from what the player sees, fights, repairs, mistrusts, and gr
 - Repeated symbols and procedural phrases should matter.
 - Enemy setup should out-explain dialogue.
 - The Hub should record partial confidence, not omniscient certainty.
+- The Unarrival should be inferred from anomalies, motifs, religious/scientific interpretations, and impossible records; do not make NPCs explain it as settled cosmology.
 
 ### What to Avoid
 
@@ -398,6 +455,7 @@ Each generated world should derive a coherent evidence stack from a small number
 
 - **Original Function** — what the site originally was
 - **Collapse Mode** — how it ceased to function normally
+- **Provenance Failure** — which origin, witness, sequence, or ownership relation is impossible
 - **Post-Collapse Reuse** — how later inhabitants repurposed it
 - **Present Ideology** — who dominates it now and what they believe
 - **Surviving Truth** — what is actually true here
@@ -411,6 +469,7 @@ These are the correct first-pass systems for the active Godot runtime:
 
 1. **Room Provenance Tags**
    - Original function
+   - impossible origin/witness/sequence state
    - damage/collapse pattern
    - current occupant/reuse
    - truth/misinterpretation pairing
@@ -431,6 +490,7 @@ These are approved as the first implementation bridge between current procgen/ru
 
 The following are good later systems and should remain canon targets, but they are **not** the first implementation priority:
 
+- provenance anomaly contracts
 - contradictory packet triads
 - reconstruction hearings
 - deep hypothesis graphs
@@ -481,6 +541,9 @@ Prefer machine-denotative fragments such as:
 - `ARCHIVAL SEAL BREACH SUSPECTED`
 - `NO ACCEPTABLE OPERATOR SIGNATURE`
 - `DECONTAMINATION LANE OUT OF TOLERANCE`
+- `PROVENANCE FAILURE: SOURCE UNARRIVED`
+- `WITNESS PRECEDES EVENT`
+- `OBJECT PRECEDES MANUFACTURE`
 
 Residual systems should speak in procedure, not in poetry.
 
@@ -491,10 +554,11 @@ Residual systems should speak in procedure, not in poetry.
 These are approved long-form mysteries and should stay staged.
 
 1. **What happened?** — the player first learns the world suffered interpretive collapse.
-2. **Why are so many systems still coherent?** — the world begins to feel deliberate.
-3. **Why do archives contradict one another in patterned ways?** — contradiction appears designed, not random.
-4. **Did someone sever provenance intentionally to stop something worse?** — the moral scale of the catastrophe changes.
-5. **Were the Custodians complicit?** — the player’s institution becomes suspect.
+2. **Why are so many systems still coherent?** — the world begins to feel deliberate rather than merely damaged.
+3. **Why do archives contradict one another in patterned ways?** — contradiction appears tied to origin, witness, and sequence, not random data rot.
+4. **What is unarrived?** — motifs such as the Ninth Bell, sealed gates, white thread, impossible saints, and orphaned causes begin to point at one wound.
+5. **Did someone sever provenance intentionally to stop something worse?** — the moral scale of the catastrophe changes.
+6. **Were the Custodians complicit?** — the player’s institution becomes suspect.
 
 Important: the best late-game answer is **not** “the Custodians were secretly evil.”
 The stronger version is that they may have chosen a terrible civilizational amputation to prevent contaminated continuity from spreading.
@@ -507,6 +571,7 @@ That possibility should remain potent and unresolved until deliberately advanced
 These phrases are approved world-language and can recur across docs, UI, or later content work:
 
 - preserving reality from interpretive collapse
+- preserving contradiction long enough to understand it
 - industrial ruin with institutional residue
 - active misunderstandings with material force
 - context density
@@ -514,6 +579,10 @@ These phrases are approved world-language and can recur across docs, UI, or late
 - authorized interpreter
 - bounded historical intervention
 - comparative loss
+- provenance failure
+- orphaned cause
+- unarrived source
+- artifact whose origin refuses to exist
 
 Use them sparingly and consistently.
 

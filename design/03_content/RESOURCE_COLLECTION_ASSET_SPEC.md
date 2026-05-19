@@ -1,6 +1,6 @@
 # Resource Asset Spec — Starter Tier
 
-Production-ready sprite spec for the seven CUSTODIAN starter resources. Includes exact
+Production-ready sprite spec for the nine CUSTODIAN starter resources. Includes exact
 pipeline inbox filenames, runtime output paths, frame counts, and per-frame descriptions.
 
 > **Naming convention source:** `content/sprites/_pipeline/README.md`
@@ -40,6 +40,47 @@ Frames:      state_0 → state_1 → state_2 → state_3
 Background:  transparent
 Use:         map object visual state driven by `HarvestableResourceNode.work_remaining`
 ```
+
+---
+
+## 0. Blackwood
+
+**Gameplay role:** Common structure material. Source: blackwood deadfall / root mass.
+**Visual read:** Dark petrified wood with charcoal bark, pale cut grain, and faint cold-green fungal edge flecks. It should read as deadfall from a ruined alien forest, not ordinary lumber.
+
+### Inventory Icon
+| Field | Value |
+|-------|-------|
+| Inbox filename | `items__resources__blackwood__1f__32.png` |
+| Runtime output | `items/resources/blackwood__icon__1f__32x32.png` |
+| Size | 32x32 |
+| Frames | 1 |
+
+### Pickup Shimmer
+| Field | Value |
+|-------|-------|
+| Inbox filename | `items__resources__blackwood__pickup__4f__24.png` |
+| Runtime output | `items/resources/blackwood__pickup__4f__24x24.png` |
+| Layout | horizontal strip — 96×24 total |
+| Frames | 0: dark root chunk → 1: pale grain glint → 2: fungal edge glows → 3: glow recedes |
+| FPS | 6 |
+
+### Harvest-Source States (blackwood deadfall)
+| Field | Value |
+|-------|-------|
+| Inbox filename | `props__harvesting_nodes__blackwood_deadfall__node__state_0__4f__64.png` |
+| Runtime output | `props/harvesting_nodes/blackwood_deadfall/blackwood_deadfall__node__state_0__4f__64x48.png` |
+| Layout | horizontal strip — 256×48 total |
+| Frame size | 64×48 |
+| States | 0: Heavy root/deadfall mass<br>1: first cuts expose pale grain<br>2: major branches removed<br>3: low stripped stump and chips |
+
+### Harvest Hit FX
+| Field | Value |
+|-------|-------|
+| Inbox filename | `effects__resources__blackwood__hit__4f__32.png` |
+| Runtime output | `effects/resources/hit/blackwood__hit__4f__32x32.png` |
+| Layout | horizontal strip — 128×32 total |
+| Frames | pale chop flash, dark splinters, green fungal motes, fade |
 
 ---
 
@@ -338,10 +379,52 @@ Use:         map object visual state driven by `HarvestableResourceNode.work_rem
 
 ---
 
+## 8. Fiber Moss
+
+**Gameplay role:** Common organic binding fiber. Source: moss patches / fungal resin pods.
+**Visual read:** Tough blue-green and ash-gray moss strands braided around grit and tiny root fibers. It should read as fibrous growth, not blackwood.
+
+### Inventory Icon
+| Field | Value |
+|-------|-------|
+| Inbox filename | `items__resources__fiber_moss__1f__32.png` |
+| Runtime output | `items/resources/fiber_moss__icon__1f__32x32.png` |
+| Size | 32x32 |
+| Frames | 1 |
+
+### Pickup Shimmer
+| Field | Value |
+|-------|-------|
+| Inbox filename | `items__resources__fiber_moss__pickup__4f__24.png` |
+| Runtime output | `items/resources/fiber_moss__pickup__4f__24x24.png` |
+| Layout | horizontal strip — 96×24 total |
+| Frames | 0: bundled moss → 1: strand flex → 2: pale edge glint → 3: settles |
+| FPS | 5 |
+
+### Harvest-Source States (moss patch)
+| Field | Value |
+|-------|-------|
+| Inbox filename | `props__harvesting_nodes__moss_patch__node__state_0__4f__48.png` |
+| Runtime output | `props/harvesting_nodes/moss_patch/moss_patch__node__state_0__4f__48x48.png` |
+| Layout | horizontal strip — 192×48 total |
+| Frame size | 48×48 |
+| States | 0: Thick fibrous patch<br>1: upper growth gathered<br>2: thinned strands remain<br>3: scraped stone and sparse moss |
+
+### Harvest Hit FX
+| Field | Value |
+|-------|-------|
+| Inbox filename | `effects__resources__fiber_moss__gather__4f__24.png` |
+| Runtime output | `effects/resources/hit/fiber_moss__gather__4f__24x24.png` |
+| Layout | horizontal strip — 96×24 total |
+| Frames | soft tug, loose strands, dust flecks, fade |
+
+---
+
 ## Summary Table
 
 | Resource | Icon | Pickup Shimmer | Source State Sheet | Harvest FX |
 |----------|-----:|--------------:|------------------:|-----------:|
+| `blackwood` | 32×32, 1f | 24×24, 4f @6fps | 64×48, 4 states | 4f chop |
 | `ruin_scrap` | 32×32, 1f | 24×24, 4f @6fps | 64×48, 4 states | 4f metal spark |
 | `structural_alloy` | 32×32, 1f | 24×24, 4f @6fps | 48×48, 4 states | 5f spark/chip |
 | `power_components` | 32×32, 1f | 24×24, 6f @8fps | 48×48, 4 states | 5f electrical |
@@ -349,6 +432,7 @@ Use:         map object visual state driven by `HarvestableResourceNode.work_rem
 | `capacitor_dust` | 32×32, 1f | 24×24, 6f @10fps | 48×48, 4 states | 6f static pop |
 | `signal_filament` | 32×32, 1f | 24×24, 8f @10fps | 48×64, 4 states | 8f pulse |
 | `memory_glass_fragment` | 32×32, 1f | 24×24, 8f @8fps | 48×64, 4 states | 8f flicker + 12f lore |
+| `fiber_moss` | 32×32, 1f | 24×24, 4f @5fps | 48×48, 4 states | 4f gather |
 
 ---
 

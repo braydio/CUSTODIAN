@@ -9,23 +9,27 @@ signal all_waves_completed()
 
 @export var wave_interval: float = 45.0
 @export var intra_wave_spawn_interval: float = 0.5
-@export var spawn_burst_size: int = 2
+@export var spawn_burst_size: int = 3
 @export var spawn_burst_pause: float = 6.0
-@export var base_points: int = 5
-@export var growth_per_wave: int = 3
+@export var base_points: int = 7
+@export var growth_per_wave: int = 4
 @export var max_wave: int = 20
 @export var initial_delay: float = 15.0
-@export var max_alive_enemies: int = 60
+@export var max_alive_enemies: int = 80
 @export var recovery_enemy_threshold: int = 0
 @export var recovery_poll_interval: float = 2.0
 
 @export var drone_scene: PackedScene
 @export var fast_drone_scene: PackedScene
 @export var heavy_drone_scene: PackedScene
+@export var grunt_scene: PackedScene
 @export var procedural_enemy_variants_enabled: bool = true
+@export var debug_spawn_grunt_on_start: bool = false
+@export var debug_start_grunt_offset: Vector2 = Vector2(96.0, 0.0)
 
 @export var enemy_container_path: NodePath = NodePath("/root/GameRoot/World/Enemies")
 @export var game_state_path: NodePath = NodePath("/root/GameState")
+@export var operator_path: NodePath = NodePath("/root/GameRoot/World/Operator")
 
 var wave_number: int = 0
 var active: bool = false
@@ -46,6 +50,7 @@ var _waiting_for_recovery_clearance: bool = false
 
 const ENEMY_COST := {
 	"drone": 1,
+	"grunt": 2,
 	"fast": 2,
 	"heavy": 4,
 	"wolf": 2,
@@ -55,6 +60,7 @@ func _ready():
 	_setup_timer()
 	_refresh_spawn_nodes()
 	_bind_game_state()
+	_maybe_debug_spawn_grunt_on_start.call_deferred()
 	print("[WaveManager] Initialized with %d spawn nodes" % _spawn_nodes.size())
 
 func _bind_game_state() -> void:
@@ -205,6 +211,8 @@ func _choose_enemy_type(available_points: int) -> String:
 
 	if available_points >= ENEMY_COST["drone"] and drone_scene != null:
 		options.append("drone")
+	if available_points >= ENEMY_COST["grunt"] and wave_number >= 2 and grunt_scene != null:
+		options.append("grunt")
 	if available_points >= ENEMY_COST["fast"] and wave_number >= 3 and fast_drone_scene != null:
 		options.append("fast")
 	if available_points >= ENEMY_COST["heavy"] and wave_number >= 6 and heavy_drone_scene != null:
@@ -263,6 +271,36 @@ func _spawn_enemy(enemy_type: String, difficulty: float) -> bool:
 		enemy.apply_difficulty_modifiers(difficulty, difficulty)
 	return true
 
+func debug_spawn_enemy_type(enemy_type: String = "drone", spawn_position: Vector2 = Vector2.ZERO, difficulty: float = 1.0) -> bool:
+	var parent = get_node_or_null(enemy_container_path)
+	if parent == null:
+		push_warning("[WaveManager] Enemy container missing at %s" % String(enemy_container_path))
+		return false
+	var normalized_type := enemy_type.strip_edges().to_lower()
+	if normalized_type.is_empty():
+		normalized_type = "drone"
+	var packed_scene := _scene_for_enemy_type(normalized_type)
+	if packed_scene == null:
+		push_warning("[WaveManager] Enemy scene missing for debug type %s" % normalized_type)
+		return false
+	var enemy := packed_scene.instantiate()
+	if enemy == null:
+		return false
+	if enemy is Node2D:
+		(enemy as Node2D).global_position = spawn_position
+	var is_fallback_variant := normalized_type != "drone" and packed_scene == drone_scene
+	if is_fallback_variant:
+		_configure_enemy_variant(enemy, normalized_type)
+	parent.add_child(enemy)
+	if normalized_type == "wolf" and procedural_enemy_variants_enabled and enemy.has_method("apply_variant"):
+		var variant_profile := _build_debug_enemy_variant_profile(normalized_type)
+		if variant_profile != null:
+			enemy.call("apply_variant", variant_profile)
+	elif enemy.has_method("apply_difficulty_modifiers"):
+		enemy.apply_difficulty_modifiers(difficulty, difficulty)
+	print("[WaveManager] Debug spawned %s at %s" % [normalized_type, spawn_position])
+	return true
+
 func set_external_wave_plan(composition: Array[String], lane: String = "", objective: String = "") -> void:
 	_external_wave_queue.clear()
 	for enemy_type in composition:
@@ -315,10 +353,41 @@ func _scene_for_enemy_type(enemy_type: String) -> PackedScene:
 			return drone_scene
 		"fast":
 			return fast_drone_scene if fast_drone_scene != null else drone_scene
+		"grunt":
+			return grunt_scene if grunt_scene != null else drone_scene
 		"heavy":
 			return heavy_drone_scene if heavy_drone_scene != null else drone_scene
 		"wolf":
 			return drone_scene
+		_:
+			return null
+
+
+func _maybe_debug_spawn_grunt_on_start() -> void:
+	if not debug_spawn_grunt_on_start:
+		return
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var operator := get_node_or_null(operator_path)
+	if not (operator is Node2D):
+		push_warning("[WaveManager] Debug grunt startup spawn skipped; operator missing at %s" % String(operator_path))
+		return
+	var spawn_position := (operator as Node2D).global_position + debug_start_grunt_offset
+	debug_spawn_enemy_type("grunt", spawn_position, 1.0)
+
+
+func _build_debug_enemy_variant_profile(enemy_type: String) -> Resource:
+	var biome_id := _get_enemy_variant_biome_id()
+	var context := {
+		"wave_number": wave_number,
+		"spawn_index": _spawn_index,
+		"lane": "debug",
+		"objective": "debug",
+	}
+	match enemy_type:
+		"wolf":
+			var factory = ENEMY_VARIANT_FACTORY_SCRIPT.new()
+			return factory.call("build_wolf_variant", 9701, biome_id, 1, context)
 		_:
 			return null
 

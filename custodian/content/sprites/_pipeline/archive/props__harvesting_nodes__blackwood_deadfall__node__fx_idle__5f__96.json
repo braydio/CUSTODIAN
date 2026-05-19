@@ -1,0 +1,19 @@
+{
+  "source": "props__harvesting_nodes__blackwood_deadfall__node__fx_idle__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "effects/harvesting_nodes/blackwood_deadfall/props__harvesting_nodes__blackwood_deadfall__node__fx_idle__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ]
+}

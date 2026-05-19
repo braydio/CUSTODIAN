@@ -238,6 +238,7 @@ var _last_idle_animation := ""
 var _animation_state_machine = null
 var _portal_transition_locked := false
 var _portal_arrival_animation_active := false
+var _arrn_stabilization_locked := false
 var _is_dead := false
 var _body_recoil_offset := Vector2.ZERO
 var _animated_sprite_base_position := Vector2.ZERO
@@ -2282,7 +2283,7 @@ func _is_block_state_active() -> bool:
 
 
 func _is_movement_locked() -> bool:
-	return _reload_active or _is_block_state_active() or _portal_transition_locked or _portal_arrival_animation_active
+	return _reload_active or _is_block_state_active() or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked
 
 
 func _has_attack_movement_modifier() -> bool:
@@ -2952,6 +2953,14 @@ func play_portal_arrival_animation() -> bool:
 
 func set_portal_transition_locked(locked: bool) -> void:
 	_portal_transition_locked = locked
+	if locked:
+		velocity = Vector2.ZERO
+		is_sprinting = false
+		_clear_attack_buffer()
+
+
+func set_arrn_stabilization_locked(locked: bool) -> void:
+	_arrn_stabilization_locked = locked
 	if locked:
 		velocity = Vector2.ZERO
 		is_sprinting = false

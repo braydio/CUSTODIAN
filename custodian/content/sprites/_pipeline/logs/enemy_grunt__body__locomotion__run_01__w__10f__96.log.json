@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/enemy_grunt__body__locomotion__run_01__w__10f__96.json",
+	"outputs": [
+		"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__locomotion__run_01__w__10f__96.png",
+		"res://content/sprites/enemies/enemy_grunt/enemy_grunt__body__locomotion__run_01__w__10f__96.png"
+	],
+	"post_process": [
+		"enemy_runtime_import"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/enemy_grunt__body__locomotion__run_01__w__10f__96.png",
+	"timestamp_utc": "2026-05-17 14:55:48"
+}

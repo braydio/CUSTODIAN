@@ -4,9 +4,13 @@
 
 | Recipe ID | Label | Category | Cost | Build Time | Output |
 |----------|-------|----------|------|------------|--------|
-| `barricade_light` | Light Barricade | structure | timber:10, scrap:4 | 4s | build_token → `barricade_light` |
-| `turret_basic` | Basic Turret | defense | ore:8, scrap:25, power_components:1 | 7.5s | build_token → `turret_basic` |
-| `power_bank_patch` | Power Bank Patch | power | ore:6, scrap:12, power_components:2 | 6s | build_token → `power_bank_patch` |
+| `barricade_light` | Light Barricade | structure | blackwood:10, ruin_scrap:4 | 4s | build_token -> `barricade_light` |
+| `turret_basic` | Basic Turret | defense | ruin_scrap:25, structural_alloy:8, power_components:1 | 7.5s | build_token -> `turret_basic` |
+| `power_bank_patch` | Power Bank Patch | power | structural_alloy:6, ruin_scrap:12, power_components:2, capacitor_dust:2 | 6s | build_token -> `power_bank_patch` |
+| `sensor_pylon_basic` | Basic Sensor Pylon | sensor | ruin_scrap:12, capacitor_dust:4, signal_filament:1 | 8s | build_token -> `sensor_pylon_basic` |
+| `archive_sensor_pylon` | Archive Sensor Pylon | archive | structural_alloy:10, ruin_scrap:18, power_components:3, signal_filament:2, memory_glass_fragment:1 | 9s | build_token -> `archive_sensor_pylon` |
+| `fabricator_pattern_decode_01` | Fabricator Pattern Decode I | archive | memory_glass_fragment:2, signal_filament:1 | 5s | unlock -> `fabricator_pattern_decode_01` |
+| `field_sealant_patch` | Field Sealant Patch | support | resin_clot:4, fiber_moss:3, ruin_scrap:2 | 3.5s | build_token -> `field_sealant_patch` |
 
 ---
 
@@ -116,12 +120,17 @@ The firing sprites already exist as 50-frame sheets. Need to slice and wire:
 ## Resource Types (Canonical)
 
 From `resource_ledger.gd`:
-| ID | Alias | Used In |
-|----|-------|---------|
-| `timber` | `blackwood` | barricade_light cost |
-| `ore` | `structural_alloy` | turret_basic, power_bank_patch cost |
-| `scrap` | `ruin_scrap` | all recipe costs |
-| `power_components` | — | turret_basic, power_bank_patch cost |
+| ID | Source Examples | Used In |
+|----|-----------------|---------|
+| `blackwood` | blackwood_deadfall, blackwood_root_mass | barricade_light cost |
+| `structural_alloy` | alloy_vein, command-core braces | turret_basic, power_bank_patch, archive_sensor_pylon cost |
+| `ruin_scrap` | machine_wreckage, power_node, broken_signal_relay | most recipe costs |
+| `power_components` | power_node, intact capacitor banks | turret_basic, power_bank_patch, archive_sensor_pylon cost |
+| `resin_clot` | fungal_resin_pod, blackwood_resin_wound | field_sealant_patch cost |
+| `capacitor_dust` | ruptured_capacitor_bank, dead_drone_shell, shorted_floor_panel | power_bank_patch, sensor_pylon_basic cost |
+| `signal_filament` | broken_signal_relay, relay harness | sensor_pylon_basic, archive recipes |
+| `memory_glass_fragment` | shattered_archive_terminal, fractured_command_core | archive recipes |
+| `fiber_moss` | moss_patch, fungal_resin_pod | field_sealant_patch cost |
 
 ---
 

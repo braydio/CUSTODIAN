@@ -5,7 +5,7 @@ extends Node
 @export var operator_path: NodePath = NodePath("/root/GameRoot/World/Operator")
 @export var spawn_parent_path: NodePath = NodePath("/root/GameRoot/World")
 @export var contract_loader_path: NodePath = NodePath("/root/GameRoot/ContractWorldLoader")
-@export var spawn_offset: Vector2 = Vector2(0.0, -220.0)
+@export var spawn_offset: Vector2 = Vector2(0.0, -720.0)
 @export var spawn_delay_seconds: float = 0.0
 @export var wait_for_runtime_map: bool = true
 @export var max_wait_frames: int = 240

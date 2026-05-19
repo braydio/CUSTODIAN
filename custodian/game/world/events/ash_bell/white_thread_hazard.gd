@@ -5,7 +5,7 @@ extends Area2D
 @export var slow_multiplier: float = 0.88
 @export var tension_tick_interval: float = 0.75
 
-@onready var site: BellKneelerSite = get_node_or_null(site_path)
+@onready var site: ForlornRitualantSite = get_node_or_null(site_path)
 
 var _bodies_inside: Dictionary = {}
 var _tick_timer: float = 0.0

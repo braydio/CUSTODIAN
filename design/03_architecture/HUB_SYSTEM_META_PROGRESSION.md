@@ -31,7 +31,9 @@ The Hub implementation must remain aligned with the following content-facing rul
 - Contracts are bounded historical interventions, not ordinary quests.
 - Campaigns are transient operational worlds whose outcomes mutate the historical record.
 - Hub outputs should present confidence-bearing interpretation rather than omniscient fact when surfaced to the player.
-- Archive loss is existential because loss of context can permanently narrow what reality can still be responsibly claimed.
+- Archive loss is existential because the Severance is a provenance wound, not ordinary information loss.
+- "Shared context collapse" is symptom-level language. The Hub's deeper job is stabilizing provenance across object, origin, witness, time, use, and meaning.
+- The Hub may classify anomalies as `Unarrived`, but should not explain The Unarrival directly as settled cosmology.
 
 ---
 
@@ -123,6 +125,7 @@ The Hub tracks:
 * what is suspected
 * what is irretrievably lost
 * what patterns appear to repeat
+* which records, artifacts, bodies, or events have impossible provenance
 
 It does not primarily track money, gear tier, or XP. Persistent bonuses are not conventional stat buffs; they are interpretive leverage that alters capability and choice. 
 
@@ -132,6 +135,7 @@ This immediately implies four things:
 2. Recon should refine interpretation, not guarantee safety.
 3. Failure must still mutate the Hub.
 4. Archive loss must be mechanically meaningful and existential.
+5. Contradictions should sometimes be preserved long enough to understand, not automatically purged.
 
 Even a failed campaign can invalidate a hypothesis or mark some truth as no longer recoverable. That is one of the best parts of the design and should be kept intact. 
 
@@ -174,6 +178,7 @@ This layer should preserve the distinction between:
 - correlated truths
 - canonical doctrine
 - sealed conclusions
+- unarrived sources or events whose effects exist before their origin can be placed
 
 ### 7.7 Campaign History
 
@@ -274,6 +279,7 @@ var knowledge_nodes: Array[KnowledgeNode] = []
 var knowledge_archive: Array[ArchiveEntry] = []
 var invalidated_hypotheses: Array[HypothesisRecord] = []
 var irretrievable_losses: Array[LossRecord] = []
+var provenance_failures: Array[ProvenanceFailureRecord] = []
 
 var campaign_history: Array[CampaignRecord] = []
 var campaign_slots: int = 3
@@ -289,6 +295,7 @@ var abandonment_penalty_modifier: float = 1.0
 * `archive_loss_count` and `archive_loss_tolerance` track existential failure pressure. Existing plan text already uses `archive_loss_tolerance` as a capability flag, and earlier design notes emphasize archive loss as existential.  
 * `active_offer_bundle` is persistent so reloads do not silently reroll mission choices.
 * `knowledge_nodes` are the real currency and should be the richest persistent payload in the system. Existing design notes define them in terms of category, origin, confidence, and implications. 
+* `provenance_failures` are optional until the first dedicated anomaly system lands, but the data model must leave room for origin/witness/sequence contradictions rather than reducing them to generic lore entries.
 
 ---
 
@@ -304,6 +311,8 @@ var id: String
 var category: String            # biotech, propulsion, governance, cognition, warfare, etc.
 var origin: String              # civilization / era / unknown
 var confidence: String          # inferred / partial / confirmed
+var provenance_state: String     # stable / contested / failed / unarrived
+var witness_chain: Array[String] = []
 var concrete_recovery: String   # device/process/material fact, if any
 var contextual_revelation: String
 var implications: Array[String] = []

@@ -8,7 +8,7 @@ Your existing doctrine already supports this: recon/gathering should output **Sc
 Implement:
 
 ```text
-Tree / ore node in world
+Blackwood deadfall / alloy vein / wreckage source in world
         ↓
 Player presses interact near it
         ↓
@@ -16,7 +16,7 @@ Node takes harvest damage
         ↓
 Node depletes into stump / exhausted vein
         ↓
-ResourceLedger receives timber / ore / scrap
+ResourceLedger receives blackwood / structural_alloy / ruin_scrap
         ↓
 Fabricator consumes ResourceLedger costs
 ```
@@ -38,30 +38,50 @@ The repo guidance says active runtime is `custodian/`, active docs are under `cu
 
 ## Resource types for V1
 
-Use these four only:
+Use canonical CUSTODIAN-flavored resource IDs directly in the ledger and recipes:
 
 ```json
 {
-  "timber": {
-    "label": "Timber",
+  "blackwood": {
+    "label": "Blackwood",
     "fab_role": "cheap structure material"
   },
-  "ore": {
-    "label": "Raw Ore",
+  "structural_alloy": {
+    "label": "Structural Alloy",
     "fab_role": "metal input"
   },
-  "scrap": {
-    "label": "Scrap",
-    "fab_role": "generic fabrication fuel"
+  "ruin_scrap": {
+    "label": "Ruin Scrap",
+    "fab_role": "fabrication feedstock"
   },
   "power_components": {
     "label": "Power Components",
     "fab_role": "gated electronics / power recipes"
+  },
+  "resin_clot": {
+    "label": "Resin Clot",
+    "fab_role": "sealant / patching material"
+  },
+  "capacitor_dust": {
+    "label": "Capacitor Dust",
+    "fab_role": "conductive electronics input"
+  },
+  "signal_filament": {
+    "label": "Signal Filament",
+    "fab_role": "sensor / archive signal input"
+  },
+  "memory_glass_fragment": {
+    "label": "Memory Glass Fragment",
+    "fab_role": "archive-pattern decode input"
+  },
+  "fiber_moss": {
+    "label": "Fiber Moss",
+    "fab_role": "organic binding fiber"
   }
 }
 ```
 
-For CUSTODIAN flavor, trees should not be “wood economy.” They should be **deadfall, blackwood, fungal timber, petrified root mass**, etc. Ore should be **ferrous wreckage seams, exposed alloy veins, ruin-metal deposits**.
+Do not map `blackwood` back to `timber`, `structural_alloy` back to `ore`, or `ruin_scrap` back to `scrap` as the long-term economy. If legacy aliases exist, they should normalize old generic inputs forward to the flavored IDs.
 
 ## Core script: `resource_ledger.gd`
 
@@ -74,10 +94,15 @@ signal resource_added(resource_id: String, amount: int, new_total: int)
 signal resource_spent(cost: Dictionary)
 
 var _resources: Dictionary = {
-	"timber": 0,
-	"ore": 0,
-	"scrap": 0,
+	"blackwood": 0,
+	"structural_alloy": 0,
+	"ruin_scrap": 0,
 	"power_components": 0,
+	"resin_clot": 0,
+	"capacitor_dust": 0,
+	"signal_filament": 0,
+	"memory_glass_fragment": 0,
+	"fiber_moss": 0,
 }
 
 func get_amount(resource_id: String) -> int:
@@ -115,10 +140,14 @@ func pay(cost: Dictionary) -> bool:
 	return true
 
 func debug_grant_starting_resources() -> void:
-	add("timber", 20)
-	add("ore", 12)
-	add("scrap", 30)
+	add("blackwood", 20)
+	add("structural_alloy", 12)
+	add("ruin_scrap", 30)
 	add("power_components", 2)
+	add("capacitor_dust", 6)
+	add("signal_filament", 1)
+	add("memory_glass_fragment", 2)
+	add("resin_clot", 4)
 ```
 
 Add it as an autoload named:
@@ -137,10 +166,20 @@ class_name ResourceNode
 signal harvested(node: ResourceNode, resource_id: String, remaining_work: int)
 signal depleted(node: ResourceNode, resource_id: String, amount: int)
 
-@export_enum("tree", "ore", "scrap") var node_kind: String = "tree"
+@export_enum(
+	"blackwood_deadfall",
+	"alloy_vein",
+	"machine_wreckage",
+	"power_node",
+	"moss_patch",
+	"fungal_resin_pod",
+	"ruptured_capacitor_bank",
+	"broken_signal_relay",
+	"shattered_archive_terminal"
+) var node_kind: String = "blackwood_deadfall"
 @export_enum("cut", "mine", "salvage") var harvest_action: String = "cut"
 
-@export var resource_id: String = "timber"
+@export var resource_id: String = "blackwood"
 @export var harvest_label: String = "Harvest"
 @export var work_required: int = 3
 @export var yield_amount: int = 5
@@ -301,18 +340,28 @@ signal build_failed(recipe_id: String, reason: String)
 
 const RECIPES := {
 	"barricade_light": {
-		"timber": 10,
-		"scrap": 4
+		"blackwood": 10,
+		"ruin_scrap": 4
 	},
 	"turret_basic": {
-		"scrap": 25,
-		"ore": 8,
+		"ruin_scrap": 25,
+		"structural_alloy": 8,
 		"power_components": 1
 	},
 	"power_bank_patch": {
-		"scrap": 12,
-		"ore": 6,
-		"power_components": 2
+		"ruin_scrap": 12,
+		"structural_alloy": 6,
+		"power_components": 2,
+		"capacitor_dust": 2
+	},
+	"sensor_pylon_basic": {
+		"ruin_scrap": 12,
+		"capacitor_dust": 4,
+		"signal_filament": 1
+	},
+	"fabricator_pattern_decode_01": {
+		"memory_glass_fragment": 2,
+		"signal_filament": 1
 	}
 }
 
@@ -338,38 +387,38 @@ func try_start_build(recipe_id: String) -> bool:
 
 ## Recommended node presets
 
-### Tree node
+### Blackwood deadfall source
 
 ```text
-node_kind: tree
+node_kind: blackwood_deadfall
 harvest_action: cut
-resource_id: timber
+resource_id: blackwood
 harvest_label: CUT
 work_required: 3
 yield_amount: 6
 secondary_yields:
-  scrap: 1
+  ruin_scrap: 1
 ```
 
-### Ore node
+### Alloy vein source
 
 ```text
-node_kind: ore
+node_kind: alloy_vein
 harvest_action: mine
-resource_id: ore
+resource_id: structural_alloy
 harvest_label: MINE
 work_required: 4
 yield_amount: 5
 secondary_yields:
-  scrap: 2
+  ruin_scrap: 2
 ```
 
-### Wreckage node
+### Machine wreckage source
 
 ```text
-node_kind: scrap
+node_kind: machine_wreckage
 harvest_action: salvage
-resource_id: scrap
+resource_id: ruin_scrap
 harvest_label: SALVAGE
 work_required: 2
 yield_amount: 8
@@ -377,7 +426,35 @@ secondary_yields:
   power_components: 1
 ```
 
-Wreckage should be rarer than trees and ore because it can drop `power_components`.
+Wreckage should be rarer than blackwood deadfalls and alloy veins because it can drop `power_components` or `capacitor_dust`.
+
+### Moss patch source
+
+```text
+node_kind: moss_patch
+harvest_action: cut
+resource_id: fiber_moss
+harvest_label: GATHER
+work_required: 2
+yield_amount: 4
+secondary_yields: {}
+```
+
+Moss patches should not drop blackwood by default. Use `blackwood_root_mass` or `blackwood_resin_wound` as a future source kind if blackwood root growth is intended.
+
+### Broken signal relay source
+
+```text
+node_kind: broken_signal_relay
+harvest_action: extract
+resource_id: signal_filament
+harvest_label: EXTRACT
+work_required: 4
+yield_amount: 1
+secondary_yields:
+  capacitor_dust: 2
+  ruin_scrap: 2
+```
 
 ## One-time scaffold script
 
@@ -395,17 +472,17 @@ mkdir -p \
 
 cat > custodian/content/resources/resource_defs.json <<'EOF'
 {
-  "timber": {
-    "label": "Timber",
+  "blackwood": {
+    "label": "Blackwood",
     "description": "Petrified root mass and deadfall suitable for crude structures."
   },
-  "ore": {
-    "label": "Raw Ore",
+  "structural_alloy": {
+    "label": "Structural Alloy",
     "description": "Exposed metal-bearing deposits and ruin-veins."
   },
-  "scrap": {
-    "label": "Scrap",
-    "description": "Generic fabrication feedstock recovered from wreckage."
+  "ruin_scrap": {
+    "label": "Ruin Scrap",
+    "description": "Fabrication feedstock recovered from wreckage."
   },
   "power_components": {
     "label": "Power Components",
@@ -421,7 +498,7 @@ Status: draft
 
 ## Purpose
 
-Add rudimentary tree cutting, mining, and salvage collection so recon/exploration can feed the Fabricator pipeline.
+Add rudimentary blackwood cutting, alloy mining, and salvage collection so recon/exploration can feed the Fabricator pipeline.
 
 ## Scope
 
@@ -429,7 +506,7 @@ Add rudimentary tree cutting, mining, and salvage collection so recon/exploratio
 - ResourceLedger autoload.
 - PlayerResourceHarvester component.
 - FabricatorResourceBridge helper.
-- V1 resources: timber, ore, scrap, power_components.
+- V1 resources: blackwood, structural_alloy, ruin_scrap, power_components.
 
 ## Non-goals
 
@@ -455,8 +532,8 @@ This supports the existing recon loop: return with materials, reinforce the base
 
 - Add ResourceLedger autoload.
 - Place a ResourceNode near the Operator.
-- Press interact three times on tree node.
-- Confirm timber increases.
+- Press interact three times on blackwood_deadfall node.
+- Confirm blackwood increases.
 - Try a fabricator recipe and confirm resources are spent.
 EOF
 
@@ -472,7 +549,7 @@ Use this:
 Implement a v1 resource collection system for CUSTODIAN in Godot 4.x.
 
 Goal:
-- Add tree chopping, ore mining, and wreckage salvage as simple interactable resource nodes.
+- Add blackwood deadfall cutting, structural alloy mining, and wreckage salvage as simple interactable resource nodes.
 - Feed collected resources into a central ResourceLedger autoload.
 - Add a minimal FabricatorResourceBridge that can consume resource costs for early build recipes.
 - Keep it deterministic and lightweight.
@@ -491,12 +568,12 @@ Integration:
 - Add PlayerResourceHarvester near the existing PlayerController / Operator scene setup.
 - Use the existing Operator interaction_range if accessible, otherwise default to 84 px.
 - Use the existing InteractionLabel if available to show nearest node prompt.
-- ResourceNode should be reusable for tree, ore, and scrap/wreckage nodes via exported fields.
+- ResourceNode should be reusable for source-object node kinds such as blackwood_deadfall, alloy_vein, machine_wreckage, broken_signal_relay, and fungal_resin_pod via exported fields.
 - Harvesting should require repeated interact presses, then mark the node depleted and add resources to ResourceLedger.
-- Add a debug recipe bridge with barricade_light, turret_basic, and power_bank_patch recipes.
+- Add a debug recipe bridge with barricade_light, turret_basic, power_bank_patch, sensor_pylon_basic, and fabricator_pattern_decode_01 recipes.
 
 Validation:
-- Place one test tree, one ore vein, and one wreckage node in the current playable scene.
+- Place one test blackwood_deadfall, one alloy_vein, and one machine_wreckage node in the current playable scene.
 - Confirm interacting depletes each node and updates ResourceLedger.
 - Confirm FabricatorResourceBridge.try_start_build("barricade_light") spends resources only when enough are available.
 - Update custodian/docs/ai_context/CURRENT_STATE.md to mention the new resource collection layer.
@@ -509,10 +586,10 @@ No production animation is required for V1. Use static placeholders first.
 When you want final art, make these:
 
 ```text
-custodian/assets/sprites/resources/tree_ruined_standing_01.png
-custodian/assets/sprites/resources/tree_ruined_stump_01.png
-custodian/assets/sprites/resources/ore_vein_standing_01.png
-custodian/assets/sprites/resources/ore_vein_depleted_01.png
+custodian/assets/sprites/resources/blackwood_deadfall_standing_01.png
+custodian/assets/sprites/resources/blackwood_deadfall_depleted_01.png
+custodian/assets/sprites/resources/alloy_vein_standing_01.png
+custodian/assets/sprites/resources/alloy_vein_depleted_01.png
 custodian/assets/sprites/resources/wreckage_salvage_01.png
 custodian/assets/sprites/resources/wreckage_depleted_01.png
 ```
@@ -520,7 +597,7 @@ custodian/assets/sprites/resources/wreckage_depleted_01.png
 If you later add animation:
 
 ```text
-custodian/assets/sprites/resources/tree_chop_fx_01.png
+custodian/assets/sprites/resources/blackwood_chop_fx_01.png
 custodian/assets/sprites/resources/ore_mine_fx_01.png
 custodian/assets/sprites/resources/salvage_spark_fx_01.png
 ```

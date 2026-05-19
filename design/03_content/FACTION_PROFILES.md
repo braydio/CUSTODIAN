@@ -3,13 +3,16 @@
 # The Choir of Provenance
 
 FACTION IDENTITY:
-The Choir of Provenance is a severe archival verification force: austere, doctrinal, quiet, old, and unnervingly preserved. They are not flamboyant cultists and not glossy robots. They should feel like ancient procedure given form: restraint, quarantine, validation, seal enforcement, and purity of record.
+The Choir of Provenance is a severe archival verification force: austere, doctrinal, quiet, old, and unnervingly preserved. They are not flamboyant cultists and not glossy robots. They should feel like ancient procedure given form: restraint, quarantine, validation, seal enforcement, and purity of origin.
+
+They are origin-fanatics, not generic lore keepers. The Choir has noticed that provenance itself is diseased after the Severance. They believe every object, corpse, ruin, name, and machine must be returned to its correct source before the world can stop bleeding. They are hostile to Custodians because Custodians preserve contradiction long enough to understand it, while the Choir prefers to purge, seal, or overwrite contradictions that fail their confidence threshold.
 
 VISUAL DIRECTION:
 
 - structured robes, tabards, sealed coats, rigid armor frames, controlled layered garments
 - restrained symmetry
 - serial bands, seal devices, purity markers, archive locks, scanning apertures, restraint tools
+- provenance tags, origin clamps, witness-thread seals, quarantine labels
 - narrow mask-faces, faceless visors, calm unreadable optics
 - clean lines compared to most factions, but still old and weathered
 - integrated devices should feel archival and procedural, not flashy
@@ -27,7 +30,7 @@ COLOR LANGUAGE:
 - restrained accents of pale cyan, cold green, or seal red
 
 MOOD:
-judgmental, doctrinal, calm, severe, quiet, archival, incorruptible
+judgmental, doctrinal, calm, severe, quiet, archival, origin-obsessed, incorruptible
 
 MAKE THE 8 UNITS FEEL LIKE:
 
