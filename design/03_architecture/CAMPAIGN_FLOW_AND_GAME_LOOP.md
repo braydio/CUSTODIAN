@@ -48,7 +48,7 @@ This is the document that answers:
 - how does failure propagate?
 - what actually constitutes one “run,” one “campaign,” one “cycle,” and one “return”?
 
-This file is the **macro-loop authority**. For the fiction meaning of Contracts, Campaigns, interpretive collapse, faction worldview, and lore-delivery constraints, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+This file is the **macro-loop authority**. For the fiction meaning of Contracts, Campaigns, the Great Severance, The Unarrival, faction worldview, and lore-delivery constraints, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
 ---
 
@@ -94,6 +94,8 @@ Deployment should feel like leaving home for a temporary but consequential opera
 
 The player is not leaving for “another match.” The player is leaving to perform a bounded historical intervention whose consequences will be absorbed into the Hub’s record.
 
+Some campaigns should eventually be framed as provenance interventions: the Custodian is not simply recovering lore, but stabilizing a contradiction long enough to determine how an object, witness, event, or place can exist in the record.
+
 ### 3.4 Support Partial Success and Failure
 
 Campaigns should not collapse into binary success/failure. Existing design direction already explicitly values partial victory and abandonment as first-class outcomes.
@@ -101,6 +103,8 @@ Campaigns should not collapse into binary success/failure. Existing design direc
 ### 3.5 Produce a Repeatable but Finite Macro Loop
 
 The game should support repeated cycles of selection, deployment, outcome, and return, but not in the form of endless stat inflation. Persistent gain should be primarily interpretive and doctrinal, not raw combat power.
+
+This interpretive gain must align with the revised Severance canon: information collapse is the symptom, while the deeper wound is broken provenance. Campaign rewards can therefore expose recovered facts, but the strongest rewards should clarify origin, witness, sequence, use, or meaning.
 
 ### 3.6 Keep Runtime Ownership Clear
 

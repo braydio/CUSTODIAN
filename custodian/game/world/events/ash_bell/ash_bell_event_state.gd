@@ -16,13 +16,13 @@ enum FountainState {
 enum Resolution {
 	UNSEEN,
 	SEEN,
-	SPOKE_TO_KNEELER,
+	SPOKE_TO_RITUALANT,
 	TOUCHED_THREAD,
 	TOOK_CLAPPER,
 	CUT_THREAD,
 	RANG_SILENCE,
-	PROVOKED_KNEELER,
-	KNEELER_DISSOLVED,
+	PROVOKED_RITUALANT,
+	RITUALANT_DISSOLVED,
 	SITE_STABILIZED,
 	SITE_DEFILED,
 }
@@ -37,7 +37,7 @@ var unlocked_knowledge: Dictionary = {}
 var has_clapper: bool = false
 var has_thread_knot: bool = false
 var apparition_seen: bool = false
-var kneeler_hostile: bool = false
+var ritualant_hostile: bool = false
 
 
 func add_silence_pressure(amount: int, reason: StringName = &"unknown") -> void:
@@ -115,6 +115,6 @@ func _apply_pressure_thresholds(_reason: StringName) -> void:
 	elif silence_pressure >= 45 and fountain_state < FountainState.GHOST:
 		set_fountain_state(FountainState.GHOST)
 
-	if silence_pressure >= 90 and not kneeler_hostile:
-		kneeler_hostile = true
-		set_resolution(Resolution.PROVOKED_KNEELER)
+	if silence_pressure >= 90 and not ritualant_hostile:
+		ritualant_hostile = true
+		set_resolution(Resolution.PROVOKED_RITUALANT)

@@ -177,10 +177,14 @@ func get_emergency_repair_profile(sector_name: String) -> Dictionary:
 	var fabrication_output := _get_fabrication_effectiveness()
 	var repair_scale := lerpf(emergency_repair_min_fabrication_scale, 1.0, fabrication_output)
 	var repair_amount := emergency_repair_base_amount * repair_scale
+	var effective_power_cost := emergency_repair_power_cost
+	var arrn_manager := get_node_or_null("/root/ARRNManager")
+	if arrn_manager != null and arrn_manager.has_method("get_repair_power_cost"):
+		effective_power_cost = float(arrn_manager.call("get_repair_power_cost", emergency_repair_power_cost))
 	return {
-		"available": total_power >= emergency_repair_power_cost,
-		"reason": "INSUFFICIENT_POWER" if total_power < emergency_repair_power_cost else "OK",
-		"power_cost": emergency_repair_power_cost,
+		"available": total_power >= effective_power_cost,
+		"reason": "INSUFFICIENT_POWER" if total_power < effective_power_cost else "OK",
+		"power_cost": effective_power_cost,
 		"repair_amount": repair_amount,
 		"fabrication_effectiveness": fabrication_output,
 		"repair_scale": repair_scale,

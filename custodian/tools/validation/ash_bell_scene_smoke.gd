@@ -1,6 +1,6 @@
 extends SceneTree
 
-const SCENE_PATH := "res://game/world/events/ash_bell/bell_kneeler_site.tscn"
+const SCENE_PATH := "res://game/world/events/ash_bell/forlorn_ritualant_site.tscn"
 
 
 func _init() -> void:
@@ -28,7 +28,7 @@ func _run() -> void:
 		return
 
 	scene.call("trigger_intro")
-	scene.call("interact_with_kneeler")
+	scene.call("interact_with_ritualant")
 	scene.call("touch_thread")
 	scene.call("take_clapper")
 

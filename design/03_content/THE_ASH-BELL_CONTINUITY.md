@@ -37,6 +37,8 @@ The player slowly realizes several NPCs are not merely confused. They are confus
 
 This near-continuity should feel almost identical to the player’s world except for a few persistent differences.
 
+Under the revised Severance canon, the Ash-Bell material is not merely a cool alternate-continuity bleed. It is one of the clearest motif clusters around The Unarrival: bells rung without towers, a saint who arrives after her relics, sealed gates with consequences before causes, and white thread used to bind names to bodies. Do not explain this directly in dialogue. Let the repeated Ash-Bell contradictions read as scars from the same provenance wound.
+
 ## Repeated symbols
 
 Use 4–6 motifs that appear across unrelated drifters.

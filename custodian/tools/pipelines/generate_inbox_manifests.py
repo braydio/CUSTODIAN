@@ -128,10 +128,17 @@ def _inspect_sheet(png_path: Path) -> SheetInfo:
     owner = parts[0]
     layer = parts[1]
     action_group = parts[2]
-    variant = parts[3]
-    direction = parts[4]
-    frames_token = parts[5]
-    size_token = parts[6] if len(parts) > 6 else ""
+
+    # Variant and direction may contain underscores; work backwards from the end.
+    # Expected tail: <direction>__<frames>f__<size>
+    # The frames token is always the second-to-last segment.
+    if len(parts) < 5:
+        raise RuntimeError(f"{basename}: canonical sprite names need at least owner__layer__action__direction__Nf__size")
+    direction = parts[-3]
+    frames_token = parts[-2]
+    size_token = parts[-1]
+    # Variant is everything between action_group (parts[2]) and direction (parts[-3]).
+    variant = "__".join(parts[3:-3])
 
     frame_count = _parse_token_count(frames_token, "f", basename)
     frame_size = _parse_token_count(size_token, "", basename)
@@ -180,7 +187,7 @@ def _inspect_item_sheet(png_path: Path, parts: list[str]) -> SheetInfo:
     if frame_count <= 0:
         raise RuntimeError(f"{basename}: item frame count must be positive")
     if height != frame_size:
-        raise RuntimeError(f"{basename}: item strip height {height} must equal frame size {frame_size}")
+        raise RuntimeError(f"{basename}: item strip height {height} must equal declared frame size {frame_size} — fix the filename suffix")
     if width % frame_size != 0:
         raise RuntimeError(f"{basename}: item strip width {width} must be divisible by frame size {frame_size}")
     if width // frame_size != frame_count:
@@ -200,13 +207,13 @@ def _inspect_item_sheet(png_path: Path, parts: list[str]) -> SheetInfo:
 
 def _inspect_harvesting_node_sheet(png_path: Path, parts: list[str]) -> SheetInfo:
     basename = png_path.name
-    if len(parts) < 7:
+    if len(parts) < 6:
         raise RuntimeError(
             f"{basename}: harvesting node filenames should follow props__harvesting_nodes__<node_type>__node__<state>__<frames>f__<size>.png"
+            " or props__harvesting_nodes__<node_type>__fx__<state>__<frames>f__<size>.png"
         )
     node_type = parts[2]
-    if parts[3] != "node":
-        raise RuntimeError(f"{basename}: harvesting node filenames must include __node__")
+    # State is everything between the type prefix and the metadata tail (__Nf__size).
     state = "__".join(parts[4:-2]) if len(parts) > 6 else parts[4]
     frames_token = parts[-2]
     size_token = parts[-1]
@@ -238,6 +245,10 @@ def _inspect_harvesting_node_sheet(png_path: Path, parts: list[str]) -> SheetInf
 
 
 def _parse_token_count(token: str, suffix: str, basename: str) -> int:
+    # Strip a trailing suffix (e.g. "-sheet" from "96-sheet") before parsing.
+    for extra in ("-sheet", "-tile", "-strip"):
+        if token.endswith(extra):
+            token = token[: -len(extra)]
     if suffix and not token.endswith(suffix):
         raise RuntimeError(f"{basename}: expected token ending in {suffix!r}, got {token!r}")
     raw = token[: -len(suffix)] if suffix else token
@@ -286,6 +297,8 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
     if info.owner in {"turret", "gunner", "repeater", "sniper"} or info.layer == "turret":
         return f"turrets/{info.owner}/{info.basename}"
     if info.owner == "props" and info.layer == "harvesting_nodes":
+        if info.variant.startswith("fx") or info.variant.startswith("fx_strike"):
+            return f"effects/harvesting_nodes/{info.action_group}/{info.basename}"
         return f"props/harvesting_nodes/{info.action_group}/{info.action_group}__node__{info.variant}__{info.frame_count}f__{info.frame_size}.png"
     if info.owner == "items" or info.layer == "item" or info.action_group == "item":
         return _items_runtime_path(info)
@@ -293,10 +306,16 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
 
 
 def _compatibility_outputs(info: SheetInfo) -> list[dict]:
-    outputs: list[dict] = []
-    if info.owner.startswith("enemy_") or info.owner == "drone":
-        outputs.append({"path": f"enemies/{info.owner}/{info.basename}", "layout": "copy"})
-    return outputs
+	outputs: list[dict] = []
+	if info.owner.startswith("enemy_") or info.owner == "drone":
+		output: dict = {
+			"path": f"enemies/{info.owner}/{info.basename}",
+			"layout": "copy" if info.source_kind == "copy" else "horizontal_strip",
+		}
+		if info.source_kind != "copy":
+			output["select"] = {"type": "range", "start": 0, "count": info.frame_count}
+		outputs.append(output)
+	return outputs
 
 
 def _items_runtime_path(info: SheetInfo) -> str:

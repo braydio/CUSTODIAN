@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-05-13
+Last updated: 2026-05-16
 
 Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
 
@@ -26,6 +26,7 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 ## Current Packets
 
 - `AGENT_WORKFLOW_AUTOMATION.md` - completed packet for task-packet next steps, ownership rules, and automation backlog.
+- `ARRN_RUNTIME_IMPLEMENTATION.md` - completed packet for the first Automated Relay Routing Network runtime implementation.
 - `ASSET_REFERENCE_SAMPLESHEET.md` - completed packet for generating a single reference samplesheet from active tiles, walls, floors, and prop art.
 - `ATTACK_PRIMARY_SECONDARY_INPUT_FIX.md` - completed packet for fixing plain M1 fast attack versus Shift+M1 heavy attack input routing.
 - `VALIDATION_RECIPES.md` - completed implementation packet for canonical validation recipes and prompt-template cleanup.
@@ -35,6 +36,7 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `COMPOUND_ROOM_GRAPH_WALK_LAYOUT.md` - completed packet for the first graph-walk, door-aligned compound room layout pass.
 - `ENEMY_VARIANT_SYSTEM.md` - completed packet for the first procedural wolf enemy variant runtime slice.
 - `ENEMY_ANIMATION_STABILITY_AND_PIPELINE.md` - completed packet for Shrumb flee animation stabilization, wolf directional row selection, and the first enemy animation intake pipeline hook.
+- `ENEMY_GRUNT_SPRITE_INGEST_2026_05_17.md` - completed packet for ingesting pending `enemy_grunt` animation sheets and wiring expanded directional grunt playback.
 - `ENEMY_WALL_REROUTE_RECOVERY.md` - completed packet for enemy and passive critter wall-stuck recovery.
 - `FAB_PIPELINE_V1.md` - completed packet for the first build-token-first resource/fabrication runtime spine.
 - `FAB_DEBUG_COMMANDS_V1.md` - completed packet for DevConsole fabrication status, recipe, grant, and start commands.
@@ -43,6 +45,7 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `FAB_TERMINAL_PAGE.md` - completed packet for the dedicated fabrication-only HUD terminal page and command routing.
 - `FAB_TERMINAL_DEPLOYABLE.md` - in-progress packet for pickup/redeploy behavior on the in-world fabrication terminal.
 - `TERMINAL_NAMING_NORMALIZATION.md` - complete packet for normalizing command_terminal / fabricator_terminal naming in terminal docs and sprite pipeline guidance.
+- `TERMINAL_UI_STARTER_ASSET_WIRING.md` - completed packet for wiring starter terminal UI PNG resources into the live HUD terminal shell.
 - `INDOOR_OUTDOOR_PROCGEN_REGIONS.md` - completed runtime packet for the first region-aware indoor/outdoor procgen slice.
 - `INTERIOR_TILE_ART_WIRING.md` - completed packet for organizing interior tile art and wiring constructed procgen regions to the new tile family.
 - `KNIGHT_OPERATOR_TEST_SKIN.md` - completed packet for the DevConsole-toggleable Knight operator test skin.
@@ -71,6 +74,8 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - `PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` - completed packet for adding `--top-source` preprocessing support to the wall atlas builder.
 - `RANGED_PHYSICS_ALIGNMENT.md` - completed packet for ranged muzzle obstruction, swept projectile movement, and temporary stance-band socket rotation clamps.
 - `RESOURCE_NODE_HARVESTING_V1.md` - completed packet for first hand-placed interactable resource nodes feeding `ResourceLedger`.
+- `RESOURCE_ID_CANONICALIZATION.md` - completed packet for making CUSTODIAN-flavored resource IDs canonical across node drops, ledger storage, recipes, UI, and docs.
+- `SEVERANCE_UNARRIVAL_LORE_REVISION.md` - completed packet for locking The Unarrival as the Severance root cause, reframing shared-context collapse as symptom-level language, and renaming Bell-Kneeler to Forlorn-Ritualant.
 - `SHRUMB_LOCAL_WANDER_HOME.md` - completed packet for anchoring passive Shrumb wander to their generated spawn position.
 - `TERMINAL_LIVE_MINIMAP.md` - completed packet for replacing the terminal placeholder tactical map with the shared live custom minimap.
 - `TILESET_RENAME_ALIGNMENT.md` - completed packet for renaming the canonical world/procgen TileSet to `procgen_world_tileset.tres`.

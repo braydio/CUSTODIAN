@@ -2,7 +2,7 @@ class_name AshBellInteractable
 extends Area2D
 
 enum InteractionKind {
-	KNEELER,
+	RITUALANT,
 	ASK_BELL,
 	ASK_THREAD,
 	ASK_ORRA,
@@ -13,12 +13,12 @@ enum InteractionKind {
 	RING_CLAPPER,
 }
 
-@export var interaction_kind: int = InteractionKind.KNEELER
+@export var interaction_kind: int = InteractionKind.RITUALANT
 @export var site_path: NodePath
 @export var interaction_distance: float = 84.0
 @export var prompt_text: String = ""
 
-@onready var site: BellKneelerSite = get_node_or_null(site_path)
+@onready var site: ForlornRitualantSite = get_node_or_null(site_path)
 
 
 func _ready() -> void:
@@ -29,8 +29,8 @@ func get_interaction_prompt() -> String:
 	if not prompt_text.strip_edges().is_empty():
 		return prompt_text
 	match interaction_kind:
-		InteractionKind.KNEELER:
-			return "LISTEN TO BELL-KNEELER"
+		InteractionKind.RITUALANT:
+			return "LISTEN TO FORLORN-RITUALANT"
 		InteractionKind.ASK_BELL:
 			return "ASK: BELL?"
 		InteractionKind.ASK_THREAD:
@@ -65,8 +65,8 @@ func interact(_actor: Node) -> void:
 		return
 
 	match interaction_kind:
-		InteractionKind.KNEELER:
-			site.interact_with_kneeler()
+		InteractionKind.RITUALANT:
+			site.interact_with_ritualant()
 		InteractionKind.ASK_BELL:
 			site.ask_about_bell()
 		InteractionKind.ASK_THREAD:

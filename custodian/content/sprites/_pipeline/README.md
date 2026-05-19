@@ -7,6 +7,7 @@ read from here directly.
 
 ```text
 content/sprites/_pipeline/
+  aseprite/    # Drop raw Aseprite PNG exports here before normalization
   inbox/       # Drop PNG + sidecar JSON manifest pairs here
   normalized/  # Debug previews of the parsed source frames
   logs/        # Last ingest result per manifest
@@ -140,6 +141,21 @@ Current enemy sheets can also use the shared intake path. For wolf directional s
 ```
 
 ## Automation
+
+Normalize Aseprite exports into the inbox, then optionally run manifest generation and ingest:
+
+```bash
+python custodian/tools/pipelines/aseprite_inbox.py --run-ingest
+```
+
+Useful flags:
+
+```bash
+python custodian/tools/pipelines/aseprite_inbox.py --dry-run
+python custodian/tools/pipelines/aseprite_inbox.py --prompt
+python custodian/tools/pipelines/aseprite_inbox.py --yes
+python custodian/tools/pipelines/aseprite_inbox.py --run-ingest --skip-post
+```
 
 Generate missing inbox manifests with the Python generator, then run ingest:
 

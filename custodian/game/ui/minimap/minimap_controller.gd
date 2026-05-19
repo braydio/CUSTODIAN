@@ -9,6 +9,7 @@ extends Control
 @export var terminal_group_name: StringName = &"command_terminal"
 @export var vehicle_group_name: StringName = &"vehicle"
 @export var turret_group_name: StringName = &"turret"
+@export var relay_group_name: StringName = &"arrn_relay"
 @export var refresh_entities_interval: float = 0.25
 @export var retry_procgen_interval: float = 0.35
 @export var enable_expand_toggle: bool = true
@@ -202,6 +203,11 @@ func _refresh_dynamic_nodes() -> void:
 		if node is Node2D:
 			turrets.append(node as Node2D)
 
+	var relays: Array[Node2D] = []
+	for node in get_tree().get_nodes_in_group(relay_group_name):
+		if node is Node2D and bool(node.get("visible")):
+			relays.append(node as Node2D)
+
 	minimap_view.set_enemies(enemies)
 	minimap_view.set_objectives(objectives)
 	if minimap_view.has_method("set_terminals"):
@@ -210,3 +216,5 @@ func _refresh_dynamic_nodes() -> void:
 		minimap_view.call("set_vehicles", vehicles)
 	if minimap_view.has_method("set_turrets"):
 		minimap_view.call("set_turrets", turrets)
+	if minimap_view.has_method("set_relays"):
+		minimap_view.call("set_relays", relays)

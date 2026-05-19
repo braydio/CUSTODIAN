@@ -12,6 +12,10 @@ Use `custodian/AGENTS.md` as the first local stop before using this pack.
 
 CUSTODIAN is a Godot-native tactical base-defense game with an embodied operator, deterministic runtime simulation, contract-driven deployment, and an in-world command terminal. The active game lives in `custodian/`, the active implementation specs live in `design/`, and the old Python simulation/terminal stack remains preserved only as migration and design history.
 
+## Current Lore Canon
+
+The Great Severance is no longer framed as a collapse caused by lost shared context. The internal root cause is The Unarrival: a supernatural/cosmic provenance wound that damaged reality's ability to maintain shared cause, memory, witness, and origin. Shared-context collapse, contradictory archives, and fragmented histories are symptoms. Knowledge recovery should be treated as provenance stabilization across object, origin, witness, time, use, and meaning.
+
 ## Canonical Runtime Facts
 
 - Engine: Godot 4.x

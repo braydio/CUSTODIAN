@@ -6,11 +6,21 @@ signal resource_spent(cost: Dictionary)
 
 @export var resource_defs_path: String = "res://content/resources/resource_defs.json"
 
-const CANONICAL_RESOURCE_IDS := ["timber", "ore", "scrap", "power_components"]
-const RESOURCE_ALIASES := {
-	"blackwood": "timber",
-	"structural_alloy": "ore",
-	"ruin_scrap": "scrap",
+const CANONICAL_RESOURCE_IDS := [
+	"blackwood",
+	"structural_alloy",
+	"ruin_scrap",
+	"power_components",
+	"resin_clot",
+	"capacitor_dust",
+	"signal_filament",
+	"memory_glass_fragment",
+	"fiber_moss",
+]
+const LEGACY_RESOURCE_ALIASES := {
+	"timber": "blackwood",
+	"ore": "structural_alloy",
+	"scrap": "ruin_scrap",
 }
 
 var _resources: Dictionary = {}
@@ -112,7 +122,7 @@ func _normalize_resource_id(resource_id: String) -> String:
 		return ""
 	if CANONICAL_RESOURCE_IDS.has(resource_id):
 		return resource_id
-	return str(RESOURCE_ALIASES.get(resource_id, resource_id))
+	return str(LEGACY_RESOURCE_ALIASES.get(resource_id, resource_id))
 
 
 func _normalize_cost(cost: Dictionary) -> Dictionary:

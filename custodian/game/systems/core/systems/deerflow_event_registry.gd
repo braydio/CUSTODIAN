@@ -275,7 +275,7 @@ func _effect_spawn_enemy(effect: Dictionary, game_state: Dictionary) -> Dictiona
 
 
 func _effect_spawn_item(effect: Dictionary, game_state: Dictionary) -> Dictionary:
-	var item_type = effect.get("item_type", "scrap")
+	var item_type = effect.get("item_type", "ruin_scrap")
 	print("[DeerFlowDispatcher] spawn_item: ", item_type)
 	return {
 		"success": true,

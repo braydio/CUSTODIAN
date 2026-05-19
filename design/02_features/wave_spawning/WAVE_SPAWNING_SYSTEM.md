@@ -12,7 +12,7 @@
 The current runtime uses assault waves as a temporary delivery mechanism for hostile pressure, but the target feel is not arcade horde defense. Assaults should arrive as tactical incursions with short bursts of contact and meaningful lulls between them.
 
 Current runtime slice:
-- lower threat budgets than the original wave-defense tuning
+- moderate threat budgets tuned upward from the first tactical-incursion pass
 - short spawn bursts within a wave instead of a continuous stream
 - recovery gating before the next assault timer arms
 
@@ -91,11 +91,11 @@ signal all_waves_completed()
 
 # Configuration
 @export var wave_interval: float = 30.0
-@export var base_points: int = 5
-@export var growth_per_wave: int = 3
+@export var base_points: int = 7
+@export var growth_per_wave: int = 4
 @export var max_wave: int = 20
 @export var initial_delay: float = 5.0
-@export var max_alive_enemies: int = 60
+@export var max_alive_enemies: int = 80
 
 # Enemy Scene References (assign in inspector)
 @export var drone_scene: PackedScene
@@ -346,10 +346,11 @@ GameRoot
 | Parameter | Value | Description |
 |-----------|-------|-------------|
 | wave_interval | 30.0 | Seconds between waves |
-| base_points | 5 | Starting points for wave 1 |
-| growth_per_wave | 3 | Points added per wave |
+| base_points | 7 | Fallback starting points before director overrides |
+| growth_per_wave | 4 | Fallback points added per wave |
 | max_wave | 20 | Final wave |
 | initial_delay | 5.0 | Time before first wave |
+| max_alive_enemies | 80 | Live enemy cap before pending spawns defer |
 
 ### Wave Composition Examples
 

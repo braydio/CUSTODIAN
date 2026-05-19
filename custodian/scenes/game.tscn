@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://cwmil77ydatus" path="res://game/systems/core/systems/enemy_director.gd" id="15_enemy_director"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/fast_drone.tscn" id="16_fast_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/heavy_drone.tscn" id="17_heavy_enemy"]
+[ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_grunt.tscn" id="18_grunt_enemy"]
 [ext_resource type="PackedScene" uid="uid://chxttfh575v5i" path="res://game/actors/sector/turret_gunner.tscn" id="19_turret_gunner"]
 [ext_resource type="PackedScene" path="res://game/actors/sector/turret_blaster.tscn" id="20_turret_blaster"]
 [ext_resource type="PackedScene" path="res://game/actors/sector/turret_repeater.tscn" id="21_turret_repeater"]
@@ -45,8 +46,10 @@
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
 [ext_resource type="PackedScene" uid="uid://bi00x8n8q1f65" path="res://game/resources/resource_node.tscn" id="202_resource_node"]
-[ext_resource type="PackedScene" path="res://game/world/events/ash_bell/bell_kneeler_site.tscn" id="203_ash_bell_site"]
+[ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="203_ash_bell_site"]
 [ext_resource type="Script" uid="uid://cv0gyb8rtk8au" path="res://game/world/events/ash_bell/ash_bell_dev_spawner.gd" id="204_ash_bell_spawner"]
+[ext_resource type="PackedScene" path="res://game/actors/allies/combat_drone.tscn" id="205_combat_drone"]
+[ext_resource type="Script" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 
@@ -157,6 +160,8 @@ lane = "west"
 
 [node name="Projectiles" type="Node2D" parent="World" unique_id=1418877711]
 
+[node name="Allies" type="Node2D" parent="World" unique_id=1418877712]
+
 [node name="Items" type="Node2D" parent="World" unique_id=1390419870]
 
 [node name="AmmoCacheA" parent="World/Items" unique_id=1977245667 instance=ExtResource("10_cache")]
@@ -175,43 +180,6 @@ heavy_ammo = 6
 
 [node name="AmmoCacheD" parent="World/Items" unique_id=655756500 instance=ExtResource("10_cache")]
 position = Vector2(40, -520)
-
-[node name="BlackwoodDeadfallTest" parent="World/Items" unique_id=728503269 instance=ExtResource("202_resource_node")]
-position = Vector2(552, -356)
-secondary_yields = {
-"ruin_scrap": 1
-}
-standing_color = Color(0.16, 0.1, 0.075, 1)
-depleted_color = Color(0.07, 0.055, 0.045, 1)
-prompt_resource_label = "BLACKWOOD"
-
-[node name="AlloyVeinTest" parent="World/Items" unique_id=1974364176 instance=ExtResource("202_resource_node")]
-position = Vector2(604, -308)
-node_kind = "alloy_vein"
-harvest_label = "MINE"
-resource_id = "structural_alloy"
-work_required = 4
-yield_amount = 5
-secondary_yields = {
-"ruin_scrap": 2
-}
-standing_color = Color(0.25, 0.28, 0.31, 1)
-depleted_color = Color(0.08, 0.085, 0.09, 1)
-prompt_resource_label = "STRUCTURAL ALLOY"
-
-[node name="MachineWreckageTest" parent="World/Items" unique_id=1269217461 instance=ExtResource("202_resource_node")]
-position = Vector2(480, -434)
-node_kind = "machine_wreckage"
-harvest_label = "SALVAGE"
-resource_id = "ruin_scrap"
-work_required = 2
-yield_amount = 10
-secondary_yields = {
-"capacitor_dust": 1
-}
-standing_color = Color(0.28, 0.25, 0.2, 1)
-depleted_color = Color(0.075, 0.07, 0.065, 1)
-prompt_resource_label = "RUIN SCRAP"
 
 [node name="ContractMap" parent="World" unique_id=1103719919 instance=ExtResource("26_contract_map")]
 visible = false
@@ -294,6 +262,11 @@ script = ExtResource("100_turret_placement")
 [node name="TerminalDeployment" type="Node" parent="World" unique_id=1022301413]
 script = ExtResource("101_terminal_deployment")
 
+[node name="DroneManager" type="Node" parent="World" unique_id=1022301414]
+script = ExtResource("206_drone_manager")
+operator_path = NodePath("../Operator")
+drone_scene = ExtResource("205_combat_drone")
+
 [node name="CommandTerminal" parent="World" unique_id=2021499921 instance=ExtResource("27_command_terminal")]
 position = Vector2(804, -492)
 
@@ -317,6 +290,8 @@ initial_delay = 4.0
 drone_scene = ExtResource("6_enemy")
 fast_drone_scene = ExtResource("16_fast_enemy")
 heavy_drone_scene = ExtResource("17_heavy_enemy")
+grunt_scene = ExtResource("18_grunt_enemy")
+debug_spawn_grunt_on_start = true
 
 [node name="EnemyDirector" type="Node" parent="." unique_id=987111453]
 script = ExtResource("15_enemy_director")

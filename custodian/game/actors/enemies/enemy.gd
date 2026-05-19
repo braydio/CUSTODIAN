@@ -4,6 +4,7 @@ class_name Enemy
 const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
 const SCRAP_PICKUP_SCENE := preload("res://game/actors/items/scrap_pickup.tscn")
 const WOLF_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/wolf_animation_library.gd")
+const GRUNT_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/grunt_animation_library.gd")
 const ENEMY_PALETTE_SHADER := preload("res://game/enemies/procgen/enemy_palette_tint.gdshader")
 const AXUL_DIRECTIONAL_SHEET_PATH := "res://content/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt.png"
 const DIRECTIONAL_SUFFIXES := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
@@ -13,6 +14,11 @@ const WOLF_MOVE_ANIMATION := &"run_east"
 const WOLF_ATTACK_ANIMATION := &"bite_east"
 const WOLF_DEATH_ANIMATION := &"death_east"
 const WOLF_SPECIAL_ANIMATION := &"howl_east"
+const CUSTOM_ENEMY_GRUNT := &"enemy_grunt"
+const GRUNT_IDLE_ANIMATION := &"idle_s"
+const GRUNT_MOVE_ANIMATION := &"run_w"
+const GRUNT_ATTACK_ANIMATION := &"melee_e"
+const GRUNT_ATTACK_FX_ANIMATION := &"melee_fx_e"
 const CUSTOM_AMBIENT_EAST_ANIMATION := &"ambient_slink_east"
 const CUSTOM_AMBIENT_NORTH_ANIMATION := &"ambient_slink_north"
 const CUSTOM_AMBIENT_SOUTH_ANIMATION := &"ambient_slink_south"
@@ -73,6 +79,9 @@ enum AssaultState {
 @export var directional_charset_fps: float = 8.0
 @export var directional_charset_scale: Vector2 = Vector2(1.75, 1.75)
 @export var directional_animation_prefix: String = DIRECTIONAL_ANIMATION_PREFIX
+@export var custom_enemy_animation_set: String = ""
+@export var custom_enemy_animation_scale: Vector2 = Vector2.ONE
+@export var custom_enemy_fx_scale: Vector2 = Vector2.ONE
 @export var custom_ambient_animation_enabled: bool = false
 @export_file("*.png") var custom_ambient_east_sheet_path: String = ""
 @export var custom_ambient_east_frame_size: Vector2i = Vector2i(64, 83)
@@ -152,6 +161,7 @@ const OBJECTIVE_GROUPS := {
 @onready var health_bar = $HealthBar
 @onready var visual = $Visual
 @onready var animated_sprite = $AnimatedSprite2D if has_node("AnimatedSprite2D") else null
+@onready var custom_enemy_fx_sprite = $CustomEnemyFxSprite if has_node("CustomEnemyFxSprite") else null
 
 func _ready():
 	add_to_group("enemies")
@@ -160,14 +170,23 @@ func _ready():
 		add_to_group("ambient_critter")
 	if _uses_directional_animation_set():
 		_ensure_directional_animations()
+		_ensure_custom_enemy_fx_animations()
 		if visual:
 			visual.visible = false
 		if animated_sprite:
-			animated_sprite.scale = _get_custom_ambient_scale_for_animation(CUSTOM_AMBIENT_SOUTH_ANIMATION) if _uses_custom_ambient_animation_set() else directional_charset_scale
+			if _uses_custom_enemy_animation_set():
+				animated_sprite.scale = custom_enemy_animation_scale
+			else:
+				animated_sprite.scale = _get_custom_ambient_scale_for_animation(CUSTOM_AMBIENT_SOUTH_ANIMATION) if _uses_custom_ambient_animation_set() else directional_charset_scale
 			_base_sprite_scale = animated_sprite.scale
 		_update_directional_animation(_last_move_direction, false)
 	if animated_sprite:
 		_base_sprite_scale = animated_sprite.scale
+	if custom_enemy_fx_sprite:
+		custom_enemy_fx_sprite.visible = false
+		var fx_finished := Callable(self, "_on_custom_enemy_fx_finished")
+		if not custom_enemy_fx_sprite.animation_finished.is_connected(fx_finished):
+			custom_enemy_fx_sprite.animation_finished.connect(fx_finished)
 	set_passive_home_position(global_position)
 	_assault_probe_destination = global_position
 	_last_movement_probe_position = global_position
@@ -755,7 +774,9 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 	_attack_windup_timer = max(0.01, attack_windup_duration)
 	_windup_attack_is_strong = is_strong
 	velocity = Vector2.ZERO
-	if _uses_procedural_variant_animation_set():
+	if _uses_custom_enemy_animation_set():
+		_update_custom_enemy_animation(_last_move_direction, false, true)
+	elif _uses_procedural_variant_animation_set():
 		_update_procedural_variant_animation(_last_move_direction, false, true)
 	elif _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
@@ -979,11 +1000,15 @@ func is_dead() -> bool:
 
 
 func _uses_directional_animation_set() -> bool:
-	return (uses_directional_charset or _uses_custom_ambient_animation_set() or _uses_procedural_variant_animation_set()) and animated_sprite != null
+	return (uses_directional_charset or _uses_custom_enemy_animation_set() or _uses_custom_ambient_animation_set() or _uses_procedural_variant_animation_set()) and animated_sprite != null
 
 
 func _uses_procedural_variant_animation_set() -> bool:
 	return _uses_procedural_variant_visuals and animated_sprite != null
+
+
+func _uses_custom_enemy_animation_set() -> bool:
+	return custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT) and animated_sprite != null
 
 
 func _uses_custom_ambient_animation_set() -> bool:
@@ -1012,6 +1037,9 @@ func _play_animation(name: String, allow_restart: bool = true) -> void:
 
 func _ensure_directional_animations() -> void:
 	if animated_sprite == null or _has_directional_animation_assets():
+		return
+	if _uses_custom_enemy_animation_set():
+		_ensure_custom_enemy_animations()
 		return
 	if _uses_procedural_variant_animation_set():
 		animated_sprite.sprite_frames = WOLF_ANIMATION_LIBRARY.get_wolf_sprite_frames()
@@ -1057,6 +1085,9 @@ func _build_directional_atlas(texture: Texture2D, dir_index: int, row_index: int
 func _update_directional_animation(direction: Vector2, is_moving: bool) -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
+	if _uses_custom_enemy_animation_set():
+		_update_custom_enemy_animation(direction, is_moving)
+		return
 	if _uses_procedural_variant_animation_set():
 		_update_procedural_variant_animation(direction, is_moving)
 		return
@@ -1089,12 +1120,29 @@ func _get_directional_animation_name(suffix: StringName) -> String:
 
 
 func _has_directional_animation_assets() -> bool:
+	if _uses_custom_enemy_animation_set():
+		return _has_animation(String(GRUNT_IDLE_ANIMATION)) and _has_animation(String(GRUNT_MOVE_ANIMATION))
 	if _uses_custom_ambient_animation_set():
 		return _has_animation(String(CUSTOM_AMBIENT_EAST_ANIMATION)) and _has_animation(String(CUSTOM_AMBIENT_NORTH_ANIMATION)) and _has_animation(String(CUSTOM_AMBIENT_SOUTH_ANIMATION))
 	for suffix in DIRECTIONAL_SUFFIXES:
 		if _has_animation(_get_directional_animation_name(suffix)):
 			return true
 	return false
+
+
+func _ensure_custom_enemy_animations() -> void:
+	if animated_sprite == null:
+		return
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+		animated_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_grunt_sprite_frames()
+
+
+func _ensure_custom_enemy_fx_animations() -> void:
+	if not _uses_custom_enemy_animation_set() or custom_enemy_fx_sprite == null:
+		return
+	custom_enemy_fx_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_grunt_fx_sprite_frames()
+	custom_enemy_fx_sprite.scale = custom_enemy_fx_scale
+	custom_enemy_fx_sprite.visible = false
 
 
 func _ensure_custom_ambient_animations() -> void:
@@ -1229,6 +1277,59 @@ func _update_custom_ambient_animation(direction: Vector2, is_moving: bool) -> vo
 		animated_sprite.play(String(animation_name))
 	animated_sprite.stop()
 	animated_sprite.set_frame_and_progress(0, 0.0)
+
+
+func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_attack: bool = false) -> void:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+	var facing := direction
+	if facing.length_squared() <= 0.0001:
+		facing = _last_move_direction
+	animated_sprite.scale = custom_enemy_animation_scale
+	_base_sprite_scale = animated_sprite.scale
+	if force_attack:
+		var attack_animation := GRUNT_ANIMATION_LIBRARY.get_attack_animation(facing)
+		if not _has_animation(String(attack_animation)):
+			attack_animation = GRUNT_ATTACK_ANIMATION
+		if _has_animation(String(attack_animation)):
+			animated_sprite.flip_h = false
+			_play_animation(String(attack_animation), false)
+			_play_custom_enemy_attack_fx(facing)
+		return
+	if is_moving:
+		var move_animation := GRUNT_ANIMATION_LIBRARY.get_move_animation(facing)
+		if not _has_animation(String(move_animation)):
+			move_animation = GRUNT_MOVE_ANIMATION
+		if _has_animation(String(move_animation)):
+			animated_sprite.flip_h = false
+			_play_animation(String(move_animation), false)
+			return
+	animated_sprite.flip_h = false
+	if not _has_animation(String(GRUNT_IDLE_ANIMATION)):
+		return
+	if animated_sprite.animation != String(GRUNT_IDLE_ANIMATION):
+		animated_sprite.play(String(GRUNT_IDLE_ANIMATION))
+	animated_sprite.stop()
+	animated_sprite.set_frame_and_progress(0, 0.0)
+
+
+func _play_custom_enemy_attack_fx(facing: Vector2) -> void:
+	if custom_enemy_fx_sprite == null or custom_enemy_fx_sprite.sprite_frames == null:
+		return
+	var fx_animation := GRUNT_ANIMATION_LIBRARY.get_attack_fx_animation(facing)
+	if not custom_enemy_fx_sprite.sprite_frames.has_animation(String(fx_animation)):
+		fx_animation = GRUNT_ATTACK_FX_ANIMATION
+	if not custom_enemy_fx_sprite.sprite_frames.has_animation(String(fx_animation)):
+		return
+	custom_enemy_fx_sprite.visible = true
+	custom_enemy_fx_sprite.scale = custom_enemy_fx_scale
+	custom_enemy_fx_sprite.flip_h = false
+	custom_enemy_fx_sprite.play(String(fx_animation))
+
+
+func _on_custom_enemy_fx_finished() -> void:
+	if custom_enemy_fx_sprite != null:
+		custom_enemy_fx_sprite.visible = false
 
 
 func _update_procedural_variant_animation(direction: Vector2, is_moving: bool, force_attack: bool = false) -> void:

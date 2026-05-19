@@ -11,7 +11,7 @@ enum TriggerKind {
 @export var trigger_kind: int = TriggerKind.INTRO
 @export var site_path: NodePath
 
-@onready var site: BellKneelerSite = get_node_or_null(site_path)
+@onready var site: ForlornRitualantSite = get_node_or_null(site_path)
 
 
 func _ready() -> void:
