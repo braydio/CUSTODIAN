@@ -11,9 +11,42 @@ extends Node
 ## Set tile coordinates in inspector, then call generate()
 
 const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_wall_segment.gd")
+const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
+const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const TILE_ALT_FLIP_H := 4096
 const TILE_ALT_FLIP_V := 8192
 const TILE_ALT_TRANSPOSE := 16384
+const TERRAIN_TILE_ATLAS_COORD := Vector2i(0, 0)
+const TERRAIN_TILESET_SOURCES := {
+	"ground_flat_32": {"source_id": 32, "layer": "floor"},
+	"elevated_floor_32": {"source_id": 33, "layer": "floor"},
+	"elevation_edge_north_32": {"source_id": 34, "layer": "wall"},
+	"elevation_edge_south_32": {"source_id": 35, "layer": "wall"},
+	"elevation_edge_east_32": {"source_id": 36, "layer": "wall"},
+	"elevation_edge_west_32": {"source_id": 37, "layer": "wall"},
+	"ramp_north_32": {"source_id": 38, "layer": "floor"},
+	"ramp_south_32": {"source_id": 39, "layer": "floor"},
+	"ramp_east_32": {"source_id": 40, "layer": "floor"},
+	"ramp_west_32": {"source_id": 41, "layer": "floor"},
+	"cliff_shadow_32": {"source_id": 42, "layer": "wall"},
+	"stair_metal_32": {"source_id": 43, "layer": "floor"},
+	"rock_ground_flat_32": {"source_id": 44, "layer": "floor"},
+	"rock_plateau_raised_32": {"source_id": 45, "layer": "floor"},
+	"cliff_edge_north_32": {"source_id": 46, "layer": "wall"},
+	"cliff_edge_south_32": {"source_id": 47, "layer": "wall"},
+	"cliff_edge_east_32": {"source_id": 48, "layer": "wall"},
+	"cliff_edge_west_32": {"source_id": 49, "layer": "wall"},
+	"cliff_outer_nw_32": {"source_id": 50, "layer": "wall"},
+	"cliff_outer_ne_32": {"source_id": 51, "layer": "wall"},
+	"cliff_outer_sw_32": {"source_id": 52, "layer": "wall"},
+	"cliff_outer_se_32": {"source_id": 53, "layer": "wall"},
+	"cliff_inner_nw_32": {"source_id": 54, "layer": "wall"},
+	"cliff_inner_ne_32": {"source_id": 55, "layer": "wall"},
+	"cliff_inner_sw_32": {"source_id": 56, "layer": "wall"},
+	"cliff_inner_se_32": {"source_id": 57, "layer": "wall"},
+	"cliff_chasm_drop_32": {"source_id": 58, "layer": "wall"},
+	"mountain_wall_impassable_32": {"source_id": 59, "layer": "wall"},
+}
 
 @export var procgen_node: ProcGen
 @export var floor_tilemap: TileMapLayer
@@ -326,10 +359,21 @@ const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
 @export var interior_prop_allow_flip_h: bool = false
 @export var interior_prop_debug_logging: bool = false
 @export_group("", "")
+@export_group("Elevation Metadata", "elevation")
+@export var elevation_metadata_enabled: bool = true
+@export var elevation_platform_stamps_enabled: bool = true
+@export var terrain_builder_mountain_boundary_enabled: bool = true
+@export var terrain_builder_debug_logging: bool = true
+@export var elevation_platform_min_size: Vector2i = Vector2i(7, 5)
+@export var elevation_platform_max_size: Vector2i = Vector2i(12, 8)
+@export_group("", "")
 
 var _foliage_parent: Node2D = null
 var _ruin_prop_parent: Node2D = null
 var _ruin_prop_scatterer: PropScatterer = null
+var elevation_map: Node = null
+var _terrain_builder: RefCounted = null
+var _last_terrain_result: Dictionary = {}
 var _interior_prop_nodes: Array[Node2D] = []
 var _portal_teleporters: Array[Area2D] = []
 var _foliage_nodes: Dictionary = {}
@@ -354,6 +398,7 @@ func _ready() -> void:
 	if not nav_region:
 		nav_region = find_child("NavigationRegion2D", true, false) as NavigationRegion2D
 
+	_ensure_elevation_map()
 	if shadow_system == null:
 		shadow_system = find_child("ShadowOverlay", true, false)
 	_foliage_parent = _find_foliage_parent()
@@ -445,6 +490,7 @@ func _fill_tilemaps() -> void:
 		walls_tilemap.clear()
 		_wall_health.clear()
 		_clear_region_metadata()
+		_clear_elevation_metadata()
 		_clear_foliage()
 		_clear_interior_props()
 		_clear_ruin_props()
@@ -479,6 +525,9 @@ func _fill_tilemaps() -> void:
 	if use_cohesive_wall_visuals:
 		_apply_wall_visuals(map_size)
 	_capture_generated_tile_state(map_size)
+	if elevation_metadata_enabled:
+		_apply_terrain_builder(map_size)
+		_capture_generated_tile_state(map_size)
 	if enable_streaming_reveal:
 		_prepare_streaming_reveal()
 	elif build_runtime_wall_collision:
@@ -1563,6 +1612,45 @@ func get_region_data_at_tile(tile: Vector2i) -> Dictionary:
 	}
 
 
+func get_elevation_map() -> Node:
+	_ensure_elevation_map()
+	return elevation_map
+
+
+func get_elevation_data_at_tile(tile: Vector2i) -> Dictionary:
+	if elevation_map == null:
+		return {
+			"height": ELEVATION_MAP_SCRIPT.DEFAULT_HEIGHT,
+			"traversal_type": ELEVATION_MAP_SCRIPT.TRAVERSAL_FLAT,
+			"direction": ELEVATION_MAP_SCRIPT.DIRECTION_NONE,
+		}
+	return elevation_map.get_cell_data(tile)
+
+
+func get_elevation_at_tile(tile: Vector2i) -> int:
+	return int(get_elevation_data_at_tile(tile).get("height", ELEVATION_MAP_SCRIPT.DEFAULT_HEIGHT))
+
+
+func can_traverse_elevation(from_tile: Vector2i, to_tile: Vector2i) -> bool:
+	if elevation_map == null:
+		return abs((to_tile - from_tile).x) + abs((to_tile - from_tile).y) == 1
+	return elevation_map.can_traverse(from_tile, to_tile)
+
+
+func is_valid_spawn_cell(tile: Vector2i) -> bool:
+	if _generated_floor_cells.is_empty() and procgen_node != null:
+		return not procgen_node.is_full_at(tile)
+	if not _generated_floor_cells.has(tile):
+		return false
+	if _generated_wall_cells.has(tile):
+		return false
+	if elevation_map != null and elevation_map.has_method("is_valid_spawn_cell"):
+		return bool(elevation_map.call("is_valid_spawn_cell", tile))
+	var elevation_data := get_elevation_data_at_tile(tile)
+	var traversal := String(elevation_data.get("traversal_type", ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE))
+	return traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_RAMP or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_STAIR
+
+
 func is_indoor_tile(tile: Vector2i) -> bool:
 	var region_type := get_region_type_at_tile(tile)
 	return region_type == "interior_floor" or region_type == "interior_wall" or region_type == "interior_threshold"
@@ -1768,6 +1856,159 @@ func _capture_generated_tile_state(map_size: Vector2i) -> void:
 				}
 
 
+func _ensure_elevation_map() -> void:
+	if elevation_map != null and is_instance_valid(elevation_map):
+		return
+	var existing := get_node_or_null("ElevationMap")
+	if existing != null:
+		elevation_map = existing
+		return
+	elevation_map = ELEVATION_MAP_SCRIPT.new()
+	elevation_map.name = "ElevationMap"
+	add_child(elevation_map)
+
+
+func _ensure_terrain_builder() -> void:
+	if _terrain_builder == null:
+		_terrain_builder = TERRAIN_BUILDER_SCRIPT.new()
+
+
+func _clear_elevation_metadata() -> void:
+	_ensure_elevation_map()
+	elevation_map.clear()
+	_last_terrain_result.clear()
+
+
+func _apply_terrain_builder(map_size: Vector2i) -> void:
+	_ensure_elevation_map()
+	_ensure_terrain_builder()
+	var terrain_rng := RandomNumberGenerator.new()
+	var terrain_seed := _tile_noise_hash(Vector2i(1901, 2909))
+	terrain_rng.seed = terrain_seed
+	var required_cells := _collect_terrain_required_cells(map_size)
+	var context := {
+		"seed": terrain_seed,
+		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
+		"blocked_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
+		"start_cell": get_player_spawn(),
+		"required_cells": required_cells,
+		"enable_industrial_platform": elevation_platform_stamps_enabled,
+		"enable_mountain_boundary": terrain_builder_mountain_boundary_enabled,
+	}
+	_last_terrain_result = _terrain_builder.build_terrain(Rect2i(Vector2i.ZERO, map_size), terrain_rng, context)
+	if elevation_map.has_method("apply_build_result"):
+		elevation_map.call("apply_build_result", _last_terrain_result)
+	_apply_terrain_visuals(_last_terrain_result)
+	_log_terrain_builder_summary(_last_terrain_result)
+
+
+func _collect_terrain_required_cells(map_size: Vector2i) -> Array[Vector2i]:
+	var required: Array[Vector2i] = []
+	var spawn := get_player_spawn()
+	if _is_tile_inside_map(spawn, map_size):
+		required.append(spawn)
+	for center in get_rooms_by_distance_from_spawn().slice(0, 4):
+		if _is_tile_inside_map(center, map_size):
+			required.append(center)
+	for threshold in _last_interior_thresholds:
+		if _is_tile_inside_map(threshold, map_size):
+			required.append(threshold)
+	for ingress in _last_compound_ingress:
+		if _is_tile_inside_map(ingress, map_size):
+			required.append(ingress)
+	return required
+
+
+func _apply_terrain_visuals(terrain_result: Dictionary) -> void:
+	var traversal_by_cell: Dictionary = terrain_result.get("traversal_by_cell", {})
+	var tile_by_cell: Dictionary = terrain_result.get("tile_by_cell", {})
+	for cell_variant in traversal_by_cell.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		var traversal := String(traversal_by_cell.get(cell, ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE))
+		var tile_id := String(tile_by_cell.get(cell, ""))
+		var rendered_tile := _apply_terrain_tile_visual(cell, tile_id)
+		if traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_BLOCKED and (tile_id == "mountain_wall_impassable_32" or tile_id == "existing_wall"):
+			if not rendered_tile:
+				_set_wall_tile(cell)
+			_set_region_tile(cell, "terrain_mountain_wall", "blocked")
+		elif traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_DROP:
+			if not rendered_tile:
+				_set_hole_tile(cell)
+			_set_region_tile(cell, "terrain_drop", "blocked")
+		elif traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_LEDGE:
+			_set_region_tile(cell, "terrain_elevation_ledge", "elevated")
+		elif traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_RAMP or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_STAIR:
+			_set_region_tile(cell, "terrain_elevation_access", "elevated")
+		elif int(terrain_result.get("height_by_cell", {}).get(cell, 0)) > 0:
+			_set_region_tile(cell, "terrain_elevated_floor", "elevated")
+
+
+func _apply_terrain_tile_visual(cell: Vector2i, tile_id: String) -> bool:
+	if tile_id.is_empty() or not TERRAIN_TILESET_SOURCES.has(tile_id):
+		return false
+	var def: Dictionary = TERRAIN_TILESET_SOURCES[tile_id]
+	var source_id := int(def.get("source_id", -1))
+	if source_id < 0:
+		return false
+	var layer := String(def.get("layer", "floor"))
+	if layer == "wall":
+		_set_terrain_wall_visual(cell, source_id)
+	else:
+		_set_terrain_floor_visual(cell, source_id)
+	return true
+
+
+func _set_terrain_floor_visual(cell: Vector2i, source_id: int) -> void:
+	if floor_tilemap == null:
+		return
+	floor_tilemap.set_cell(cell, source_id, TERRAIN_TILE_ATLAS_COORD)
+	_generated_floor_cells[cell] = {
+		"source_id": source_id,
+		"atlas": TERRAIN_TILE_ATLAS_COORD,
+		"alternative": 0,
+	}
+	if walls_tilemap != null:
+		walls_tilemap.erase_cell(cell)
+	_generated_wall_cells.erase(cell)
+	_wall_health.erase(cell)
+
+
+func _set_terrain_wall_visual(cell: Vector2i, source_id: int) -> void:
+	if walls_tilemap == null:
+		return
+	walls_tilemap.set_cell(cell, source_id, TERRAIN_TILE_ATLAS_COORD)
+	_generated_wall_cells[cell] = {
+		"source_id": source_id,
+		"atlas": TERRAIN_TILE_ATLAS_COORD,
+		"alternative": 0,
+	}
+	if floor_tilemap != null:
+		floor_tilemap.erase_cell(cell)
+	_generated_floor_cells.erase(cell)
+	if not _wall_health.has(cell):
+		_wall_health[cell] = wall_tile_max_health
+
+
+func _log_terrain_builder_summary(terrain_result: Dictionary) -> void:
+	if not terrain_builder_debug_logging:
+		return
+	var summary: Dictionary = terrain_result.get("debug_summary", {})
+	print("TerrainBuilder: seed=%s map_size=%s regions=%s blocked=%s elevated=%s ramps=%s connectivity=%s fallback=%s" % [
+		str(summary.get("seed", 0)),
+		str(summary.get("map_size", Vector2i.ZERO)),
+		str(summary.get("regions", 0)),
+		str(summary.get("blocked_cells", 0)),
+		str(summary.get("elevated_cells", 0)),
+		str(summary.get("ramp_or_stair_cells", 0)),
+		str(summary.get("connectivity_ok", true)),
+		str(summary.get("fallback_used", false)),
+	])
+	for warning in terrain_result.get("warnings", []):
+		push_warning(str(warning))
+
+
 func _generate_foliage(map_size: Vector2i) -> void:
 	if _foliage_parent == null:
 		push_warning("[Foliage] Missing FoliageLayer, skipping foliage spawn")
@@ -1862,6 +2103,8 @@ func _clear_ruin_props() -> void:
 
 func _should_place_ruin_prop(pos: Vector2i, map_size: Vector2i) -> bool:
 	if pos.x <= 1 or pos.y <= 1 or pos.x >= map_size.x - 2 or pos.y >= map_size.y - 2:
+		return false
+	if not is_valid_spawn_cell(pos):
 		return false
 	if is_indoor_tile(pos):
 		return false
@@ -2143,7 +2386,7 @@ func _min_distance_squared_to_portals(tile: Vector2i, existing_portals: Array[Pr
 
 
 func _is_safe_portal_tile(pos: Vector2i, map_size: Vector2i) -> bool:
-	if not _generated_floor_cells.has(pos):
+	if not is_valid_spawn_cell(pos):
 		return false
 	if _is_inside_ruin_prop_clearance(pos):
 		return false
@@ -2263,7 +2506,7 @@ func _has_clear_portal_floor_footprint(pos: Vector2i, map_size: Vector2i) -> boo
 			var tile := pos + Vector2i(x, y)
 			if tile.x <= 1 or tile.y <= 1 or tile.x >= map_size.x - 2 or tile.y >= map_size.y - 2:
 				return false
-			if not _generated_floor_cells.has(tile):
+			if not is_valid_spawn_cell(tile):
 				return false
 			if _generated_wall_cells.has(tile):
 				return false
@@ -2528,6 +2771,8 @@ func _clear_interior_props() -> void:
 
 func _should_place_interior_prop(pos: Vector2i, map_size: Vector2i) -> bool:
 	if pos.x <= 1 or pos.y <= 1 or pos.x >= map_size.x - 2 or pos.y >= map_size.y - 2:
+		return false
+	if not is_valid_spawn_cell(pos):
 		return false
 	if get_region_type_at_tile(pos) != "interior_floor":
 		return false
@@ -3834,7 +4079,7 @@ func get_random_floor_tiles_in_rooms(count: int = 10) -> Array[Vector2i]:
 		for x in range(room.position.x + 1, room.position.x + room.size.x - 1):
 			for y in range(room.position.y + 1, room.position.y + room.size.y - 1):
 				var pos = Vector2i(x, y)
-				if not procgen_node.is_full_at(pos):
+				if not procgen_node.is_full_at(pos) and is_valid_spawn_cell(pos):
 					floor_tiles.append(pos)
 	
 	floor_tiles.shuffle()
@@ -3859,7 +4104,8 @@ func get_corridor_spawn_points(count: int = 5) -> Array[Vector2i]:
 				neighbor_count += 1
 		
 		if neighbor_count <= 1:
-			dead_ends.append(pos)
+			if is_valid_spawn_cell(pos):
+				dead_ends.append(pos)
 	
 	dead_ends.shuffle()
 	return dead_ends.slice(0, min(count, dead_ends.size()))
@@ -3890,6 +4136,7 @@ func get_level_data() -> Dictionary:
 		"interior_rooms": _last_interior_rooms,
 		"interior_thresholds": _last_interior_thresholds,
 		"region_tiles": _region_tiles.duplicate(true),
+		"elevation_cells": elevation_map.get_serialized_cells() if elevation_map != null else [],
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"world_profile": get_planet_world_profile(),
