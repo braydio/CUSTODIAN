@@ -4,6 +4,25 @@ To procgen levels like that image, do **not** try to generate the whole illustra
 
 Your repo guidance says active runtime is `custodian/`, Godot-native specs belong in `design/`, and runtime/architecture changes should update `custodian/docs/ai_context/` too.  The uploaded tree map confirms the repo has `custodian/`, content folders, dev tile material like `custodian/content/dev/in_progress/new_wall_tiles.png`, and tile/tooling material under `custodian/assets/tiles/`. 
 
+## Main Map Road Surface Slice
+
+The live contract map should also generate a modest functional road/path network outside the gothic compound using the resized road-piece exports at `custodian/content/tiles/roads_paths/runtime/roads/` and footpath exports at `custodian/content/tiles/roads_paths/runtime/paths/`. The exported pieces are variable-size road/path stamps mapped by `road_piece_manifest.game32.json` and `path_piece_manifest.game32.json`, not fixed `32x32` TileMap cells. The raw sheets, raw slices, and `Pathways.json` role map stay under `custodian/content/tiles/roads_paths/source/`. This is not the ornate connected-map gothic compound road grammar; it is a low-decoration tactical route pass that:
+
+- carves a readable road from the player-side spawn area toward compound ingress and constructed-interior thresholds
+- repairs the road graph after carving so spawn, edge access, compound ingress, connector end, and constructed-base thresholds stay in one connected road component
+- keeps this road generation in the main contract map; the authored gothic compound submap keeps its own road grammar
+- adds a long compound-connector road segment on the main map, running outward from the chosen compound ingress toward the generated map
+- contains that connector with procgen wall rails so it reads as a walled approach instead of an open scatter path
+- applies a deterministic elevation/ramp section to the connector after TerrainBuilder runs, using existing industrial elevation metadata and visuals
+- widens a small parking-like apron beside the primary road
+- marks road and parking cells as semantic movement surfaces
+- leaves procedural floor cells on the default floor sources and overlays road art as manifest-selected `Sprite2D` stamps
+- clears wall tiles, generated wall metadata, and runtime wall collision from road/parking cells after wall visuals and terrain builder have run
+- keeps foliage/tree placement off road and parking cells, with only nearby natural scatter allowed
+- gives the operator a small walking speed boost on road/path surfaces
+- gives occupied vehicles a larger driving speed boost on road/path surfaces
+- exposes parking cells in level data so `ContractWorldLoader` can place vehicles there before falling back to old compound placement
+
 ## Exact code files I would add
 
 ```txt
@@ -519,4 +538,3 @@ grep -R \
   "proc_gen_tilemap.gd\|proc_gen_map.tscn\|dungeon_tileset.tres\|game/world/procgen" \
   .tree-map.txt custodian/docs/ai_context/FILE_INDEX.md custodian/docs/ai_context/CURRENT_STATE.md
 ```
-

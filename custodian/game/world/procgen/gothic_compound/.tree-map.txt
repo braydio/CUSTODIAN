@@ -1,0 +1,7 @@
+Directory Tree Mapping
+[33mFile: gothic_compound_assets.gd[0m
+[33mFile: gothic_compound_config.gd[0m
+[33mFile: gothic_compound_generator.gd[0m
+[33mFile: gothic_compound_result.gd[0m
+[33mFile: gothic_compound_sprite_context.gd[0m
+[33mFile: gothic_compound_validator.gd[0m

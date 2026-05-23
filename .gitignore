@@ -121,3 +121,9 @@ custodian/.editorrescache
 # RCLONE SYNC (if used)
 # =======================
 rclone-git-sync.sh
+
+# =======================
+# AI generated context packets
+# =======================
+.ai/
+repomix-output.*

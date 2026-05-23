@@ -3,21 +3,21 @@
 [ext_resource type="Script" path="res://game/actors/effects/melee_swing.gd" id="1_melee_swing"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arc"]
-bg_color = Color(1, 0.5, 0.2, 0.6)
+bg_color = Color(1, 0.82, 0.46, 0.28)
 corner_radius_top_left = 32
 corner_radius_top_right = 32
 corner_radius_bottom_right = 32
 corner_radius_bottom_left = 32
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slash"]
-bg_color = Color(1, 0.8, 0.4, 0.8)
+bg_color = Color(1, 0.92, 0.68, 0.55)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_trail"]
-bg_color = Color(1, 0.6, 0.3, 0.3)
+bg_color = Color(0.72, 0.82, 0.9, 0.16)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -27,25 +27,25 @@ corner_radius_bottom_left = 8
 script = ExtResource("1_melee_swing")
 
 [node name="Trail" type="Panel" parent="."]
-offset_left = -40.0
-offset_top = -8.0
+offset_left = -28.0
+offset_top = -5.0
 offset_right = -10.0
-offset_bottom = 8.0
+offset_bottom = 5.0
 rotation = -0.785398
 theme_override_styles/panel = SubResource("StyleBoxFlat_trail")
 
 [node name="Arc" type="Panel" parent="."]
-offset_left = -8.0
-offset_top = -60.0
-offset_right = 8.0
-offset_bottom = 60.0
+offset_left = -4.0
+offset_top = -34.0
+offset_right = 4.0
+offset_bottom = 34.0
 rotation = -1.5708
 theme_override_styles/panel = SubResource("StyleBoxFlat_arc")
 
 [node name="Slash" type="Panel" parent="."]
-offset_left = -50.0
-offset_top = -4.0
-offset_right = 50.0
-offset_bottom = 4.0
+offset_left = -26.0
+offset_top = -2.5
+offset_right = 26.0
+offset_bottom = 2.5
 rotation = -0.785398
 theme_override_styles/panel = SubResource("StyleBoxFlat_slash")

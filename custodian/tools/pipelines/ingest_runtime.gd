@@ -143,6 +143,7 @@ func _process_manifest(manifest_path: String) -> bool:
 	_write_log(manifest_path, source_path, output_paths, post_process_steps)
 	_archive_file(manifest_path)
 	_archive_file(source_path)
+	_remove_source_import_sidecar(source_path)
 	print("[DONE] %s" % manifest_path.get_file())
 	return true
 
@@ -430,6 +431,14 @@ func _archive_file(path: String) -> void:
 	if FileAccess.file_exists(target_path):
 		DirAccess.remove_absolute(target_path)
 	DirAccess.rename_absolute(path, target_path)
+
+
+func _remove_source_import_sidecar(source_path: String) -> void:
+	if _dry_run:
+		return
+	var import_path := source_path + ".import"
+	if FileAccess.file_exists(import_path):
+		DirAccess.remove_absolute(import_path)
 
 
 func _resolve_input_path(path: String, base_dir: String = "") -> String:

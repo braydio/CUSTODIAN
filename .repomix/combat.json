@@ -1,0 +1,65 @@
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": ".ai/custodian-combat.xml",
+    "style": "xml",
+    "compress": true,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeEmptyLines": true
+  },
+  "include": [
+    "AGENTS.md",
+    "AGENTS_ADDENDUM.md",
+    "custodian/AGENTS.md",
+
+    "custodian/game/systems/core/**/*.gd",
+    "custodian/game/systems/combat/**/*.gd",
+    "custodian/game/enemies/**/*.gd",
+    "custodian/game/resources/**/*.gd",
+    "custodian/game/resources/**/*.tscn",
+    "custodian/game/fabrication/**/*.gd",
+
+    "custodian/autoload/resource_ledger.gd",
+    "custodian/autoload/build_inventory.gd",
+    "custodian/autoload/fab_pipeline.gd",
+
+    "custodian/content/ammo_types/**/*.json",
+    "custodian/content/items/**/*.json",
+    "custodian/content/resources/**/*.json",
+    "custodian/content/fabrication/**/*.json",
+    "custodian/content/fabrication/**/*.md",
+
+    "custodian/docs/**/*COMBAT*.md",
+    "custodian/docs/**/*combat*.md",
+    "custodian/docs/**/*PLAYER*.md",
+    "custodian/docs/**/*player*.md",
+    "custodian/docs/**/*DRONE*.md",
+    "custodian/docs/**/*drone*.md",
+    "custodian/docs/**/*RESOURCE*.md",
+    "custodian/docs/**/*resource*.md"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDotIgnore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "custodian/addons/**",
+      "custodian/content/sprites/**",
+      "custodian/content/_aseprite/**",
+      "**/*.png",
+      "**/*.png.import",
+      "**/*.aseprite",
+      "**/*.ase",
+      "**/*.uid",
+      ".ai/**"
+    ]
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
+}

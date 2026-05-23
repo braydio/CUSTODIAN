@@ -200,3 +200,9 @@ If the task is “where do I start?” or “what do I read first?”, the answe
 1. `custodian/AGENTS.md`
 2. `custodian/docs/ai_context/CURRENT_STATE.md`
 3. the relevant file in `design/`
+
+## Agentmemory Note
+
+- Start the worker service with `agentmemory` before running `agentmemory demo`.
+- `agentmemory demo` is a smoke test for a live worker on `http://localhost:3111`.
+- The demo prints a cleanup command for `/tmp/agentmemory-demo` sessions when it finishes.

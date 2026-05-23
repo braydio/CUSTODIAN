@@ -605,9 +605,23 @@ func snap_to_player_spawn(spawn_position: Vector2) -> void:
 
 
 func _rebuild_bounds():
-	if not _rebuild_bounds_from_procgen():
+	if not _rebuild_bounds_from_connected_map() and not _rebuild_bounds_from_procgen():
 		map_bounds = Rect2()
-		push_warning("[Camera] Procgen bounds rebuild failed; disabling camera clamp for this session")
+		push_warning("[Camera] Map bounds rebuild failed; disabling camera clamp for this session")
+
+
+func _rebuild_bounds_from_connected_map() -> bool:
+	var map_instance: Node = _runtime_map
+	if map_instance == null or not map_instance.has_method("get_camera_bounds"):
+		return false
+	var bounds_variant: Variant = map_instance.call("get_camera_bounds")
+	if not (bounds_variant is Rect2):
+		return false
+	var bounds := bounds_variant as Rect2
+	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+		return false
+	map_bounds = bounds.grow(map_padding)
+	return true
 
 
 func _rebuild_bounds_from_procgen() -> bool:

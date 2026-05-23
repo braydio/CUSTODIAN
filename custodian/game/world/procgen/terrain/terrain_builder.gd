@@ -44,6 +44,8 @@ const DIRECTION_SOUTH := "south"
 const DIRECTION_EAST := "east"
 const DIRECTION_WEST := "west"
 
+const NO_VISUAL_TILE := ""
+
 var _last_result: Dictionary = {}
 
 
@@ -152,7 +154,7 @@ func _build_baseline(map_rect: Rect2i, context: Dictionary) -> Dictionary:
 				HEIGHT_GROUND,
 				TRAVERSAL_WALKABLE,
 				TerrainType.GROUND,
-				TerrainTileIdsScript.industrial("ground")
+				NO_VISUAL_TILE
 			)
 
 	for blocked_cell in blocked_lookup.keys():
@@ -169,7 +171,7 @@ func _build_baseline(map_rect: Rect2i, context: Dictionary) -> Dictionary:
 			HEIGHT_GROUND,
 			TRAVERSAL_BLOCKED,
 			TerrainType.MOUNTAIN_WALL,
-			TerrainTileIdsScript.PLACEHOLDER["blocked"]
+			NO_VISUAL_TILE
 		)
 
 	return {
@@ -359,18 +361,42 @@ func _can_move_between_in_result(result: Dictionary, from_cell: Vector2i, to_cel
 	var delta := to_cell - from_cell
 	if abs(delta.x) + abs(delta.y) != 1:
 		return false
-	var from_traversal := _traversal_from_result(result, from_cell)
-	var to_traversal := _traversal_from_result(result, to_cell)
-	if not _is_walkable_traversal(from_traversal) or not _is_walkable_traversal(to_traversal):
+
+	var height_by_cell: Dictionary = result.get("height_by_cell", {})
+	var traversal_by_cell: Dictionary = result.get("traversal_by_cell", {})
+	var ramp_dir_by_cell: Dictionary = result.get("ramp_dir_by_cell", {})
+
+	var from_height := int(height_by_cell.get(from_cell, HEIGHT_GROUND))
+	var to_height := int(height_by_cell.get(to_cell, HEIGHT_GROUND))
+	var from_traversal := String(traversal_by_cell.get(from_cell, TRAVERSAL_WALKABLE))
+	var to_traversal := String(traversal_by_cell.get(to_cell, TRAVERSAL_WALKABLE))
+
+	if _is_blocked_traversal(from_traversal):
 		return false
-	var from_height := int(result.get("height_by_cell", {}).get(from_cell, HEIGHT_GROUND))
-	var to_height := int(result.get("height_by_cell", {}).get(to_cell, HEIGHT_GROUND))
+	if to_traversal == TRAVERSAL_BLOCKED or to_traversal == TRAVERSAL_LEDGE or to_traversal == TRAVERSAL_DROP:
+		return false
+
 	var height_delta := to_height - from_height
 	if height_delta == 0:
 		return true
+
 	if abs(height_delta) > 1:
 		return false
-	return from_traversal == TRAVERSAL_RAMP or to_traversal == TRAVERSAL_RAMP or from_traversal == TRAVERSAL_STAIR or to_traversal == TRAVERSAL_STAIR
+
+	if from_traversal == TRAVERSAL_STAIR or to_traversal == TRAVERSAL_STAIR:
+		return true
+
+	if from_traversal == TRAVERSAL_RAMP:
+		var from_dir := String(ramp_dir_by_cell.get(from_cell, DIRECTION_NONE))
+		if _direction_to_delta(from_dir) == delta:
+			return true
+
+	if to_traversal == TRAVERSAL_RAMP:
+		var to_dir := String(ramp_dir_by_cell.get(to_cell, DIRECTION_NONE))
+		if _direction_to_delta(to_dir) == -delta:
+			return true
+
+	return false
 
 
 func _build_debug_summary(result: Dictionary) -> Dictionary:
@@ -516,6 +542,20 @@ func _ramp_direction_name(ramp_side: int) -> String:
 			return DIRECTION_SOUTH
 		_:
 			return DIRECTION_WEST
+
+
+func _direction_to_delta(direction: String) -> Vector2i:
+	match direction:
+		DIRECTION_NORTH:
+			return Vector2i.UP
+		DIRECTION_SOUTH:
+			return Vector2i.DOWN
+		DIRECTION_EAST:
+			return Vector2i.RIGHT
+		DIRECTION_WEST:
+			return Vector2i.LEFT
+		_:
+			return Vector2i.ZERO
 
 
 func _industrial_ramp_tile(ramp_side: int) -> String:

@@ -78,7 +78,7 @@ func process_input(input_vector: Vector2, aim_vector: Vector2, is_firing: bool) 
 		return
 	
 	# Apply movement (direct velocity for v1)
-	velocity = input_vector * max_speed
+	velocity = input_vector * max_speed * _query_movement_surface_multiplier()
 	move_and_slide()
 	_handle_ambient_critter_impacts()
 	_update_movement_animation()
@@ -102,6 +102,15 @@ func _fire_weapon(aim_direction: Vector2) -> void:
 		fire_direction = aim_direction
 	
 	weapon.fire(global_position, fire_direction)
+
+
+func _query_movement_surface_multiplier() -> float:
+	if get_tree() == null:
+		return 1.0
+	for map_node in get_tree().get_nodes_in_group("procgen_tilemap"):
+		if map_node != null and map_node.has_method("get_movement_surface_multiplier_at_global"):
+			return float(map_node.call("get_movement_surface_multiplier_at_global", global_position, "vehicle"))
+	return 1.0
 
 
 ## Take damage and check for destruction.

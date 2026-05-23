@@ -33,6 +33,16 @@ const TERMINAL_ICON_TURRET := preload("res://content/ui/terminal/icons/icon_turr
 const TERMINAL_ICON_WARNING := preload("res://content/ui/terminal/icons/icon_warning.png")
 const TERMINAL_ICON_CRITICAL := preload("res://content/ui/terminal/icons/icon_critical.png")
 
+const TERMINAL_PANEL_SLICE := 10.0
+const TERMINAL_MAP_SLICE := 12.0
+const TERMINAL_NAV_SLICE := 10.0
+const TERMINAL_BUTTON_SLICE := 10.0
+const TERMINAL_COMMAND_LINE_SLICE := 8.0
+const TERMINAL_SCANLINE_ALPHA := 0.05
+const TERMINAL_NOISE_ALPHA := 0.025
+const TERMINAL_BACKDROP_COLOR := Color(0.015, 0.025, 0.03, 0.78)
+const TERMINAL_DENSE_PANEL_MODULATE := Color(1.0, 1.0, 1.0, 0.82)
+
 const DEFAULT_TERMINAL_SERVICE_URL := "http://127.0.0.1:7331"
 const TERMINAL_LOCAL_LINK := "LOCAL://GAME_STATE"
 const TERMINAL_BOOT_LINES := [
@@ -306,12 +316,17 @@ func _ready():
 	_register_devconsole_commands()
 	if terminal_panel:
 		terminal_panel.visible = false
+	_update_terminal_hint_visibility()
 	if terminal_input and not terminal_input.text_submitted.is_connected(_on_terminal_input_submitted):
 		terminal_input.text_submitted.connect(_on_terminal_input_submitted)
 	if terminal_input and not terminal_input.gui_input.is_connected(_on_terminal_input_gui_input):
 		terminal_input.gui_input.connect(_on_terminal_input_gui_input)
 	if terminal_input and not terminal_input.text_changed.is_connected(_on_terminal_input_text_changed):
 		terminal_input.text_changed.connect(_on_terminal_input_text_changed)
+	if terminal_input and not terminal_input.focus_entered.is_connected(_on_terminal_input_focus_changed):
+		terminal_input.focus_entered.connect(_on_terminal_input_focus_changed)
+	if terminal_input and not terminal_input.focus_exited.is_connected(_on_terminal_input_focus_changed):
+		terminal_input.focus_exited.connect(_on_terminal_input_focus_changed)
 	if terminal_output and terminal_output.has_signal("meta_clicked") and not terminal_output.meta_clicked.is_connected(_on_terminal_activity_meta_clicked):
 		terminal_output.meta_clicked.connect(_on_terminal_activity_meta_clicked)
 	if terminal_planet_preview and not terminal_planet_preview.gui_input.is_connected(_on_terminal_planet_preview_gui_input):
@@ -1235,6 +1250,7 @@ func open_command_terminal(service_url: String = ""):
 		_terminal_ready = true
 		_append_terminal_line("LOCAL SNAPSHOT MODE ACTIVE", "info")
 	_set_terminal_input_enabled(true)
+	_update_terminal_hint_visibility()
 	_refresh_snapshot()
 	if terminal_poll_timer:
 		terminal_poll_timer.start()
@@ -1262,6 +1278,7 @@ func close_command_terminal():
 	_set_terminal_input_enabled(false)
 	if terminal_panel:
 		terminal_panel.visible = false
+	_update_terminal_hint_visibility()
 	if terminal_background:
 		terminal_background.visible = false
 	if terminal_poll_timer:
@@ -1384,9 +1401,11 @@ func _set_terminal_input_enabled(enabled: bool):
 		return
 	terminal_input.editable = enabled
 	terminal_input.placeholder_text = "ENTER COMMAND" if enabled else "TERMINAL INPUT LOCKED"
+	_update_terminal_hint_visibility()
 	if enabled and _terminal_open:
 		if terminal_input:
 			terminal_input.grab_focus()
+			_update_terminal_hint_visibility()
 
 
 func _ensure_terminal_input_focus():
@@ -1404,6 +1423,15 @@ func _ensure_terminal_input_focus():
 		return
 	if terminal_input:
 		terminal_input.grab_focus()
+		_update_terminal_hint_visibility()
+
+func _on_terminal_input_focus_changed() -> void:
+	_update_terminal_hint_visibility()
+
+func _update_terminal_hint_visibility() -> void:
+	if terminal_hint_label == null:
+		return
+	terminal_hint_label.visible = _terminal_open and terminal_input != null and terminal_input.has_focus()
 
 func _focus_terminal_button_group(buttons: Array, forward: bool) -> void:
 	var indexes: Array[int] = []
@@ -1542,6 +1570,18 @@ func _terminal_action_icon(button: BaseButton) -> Texture2D:
 func _ensure_terminal_texture_overlays() -> void:
 	if terminal_panel == null:
 		return
+	var backdrop := terminal_panel.get_node_or_null("StarterDarkBackdrop")
+	if backdrop == null:
+		backdrop = ColorRect.new()
+		backdrop.name = "StarterDarkBackdrop"
+		terminal_panel.add_child(backdrop)
+		terminal_panel.move_child(backdrop, 0)
+	var backdrop_rect := backdrop as ColorRect
+	if backdrop_rect:
+		backdrop_rect.color = TERMINAL_BACKDROP_COLOR
+		backdrop_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		backdrop_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		backdrop_rect.z_index = -1
 	var scanline_overlay := terminal_panel.get_node_or_null("StarterScanlineOverlay")
 	if scanline_overlay == null:
 		scanline_overlay = TextureRect.new()
@@ -1554,7 +1594,7 @@ func _ensure_terminal_texture_overlays() -> void:
 		scanline_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		scanline_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		scanline_rect.stretch_mode = TextureRect.STRETCH_TILE
-		scanline_rect.modulate = Color(1.0, 1.0, 1.0, 0.13)
+		scanline_rect.modulate = Color(1.0, 1.0, 1.0, TERMINAL_SCANLINE_ALPHA)
 		scanline_rect.z_index = 20
 	var noise_overlay := terminal_panel.get_node_or_null("StarterNoiseOverlay")
 	if noise_overlay == null:
@@ -1568,24 +1608,24 @@ func _ensure_terminal_texture_overlays() -> void:
 		noise_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		noise_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		noise_rect.stretch_mode = TextureRect.STRETCH_TILE
-		noise_rect.modulate = Color(1.0, 1.0, 1.0, 0.08)
+		noise_rect.modulate = Color(1.0, 1.0, 1.0, TERMINAL_NOISE_ALPHA)
 		noise_rect.z_index = 21
 
 func _apply_terminal_theme():
 	_ensure_terminal_texture_overlays()
-	var panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, 10.0, 10.0)
+	var panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 10.0)
 	var header_style := _make_terminal_texture_style(TERMINAL_HEADER_ACTIVE_TEXTURE, 4.0, 6.0)
-	var output_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, 10.0, 8.0)
-	var map_style := _make_terminal_texture_style(TERMINAL_MAP_FRAME_TEXTURE, 12.0, 10.0)
-	var input_style := _make_terminal_texture_style(TERMINAL_COMMAND_LINE_TEXTURE, 8.0, 10.0)
-	var nav_button_style := _make_terminal_texture_style(TERMINAL_NAV_IDLE_TEXTURE, 8.0, 6.0)
-	var nav_button_hover_style := _make_terminal_texture_style(TERMINAL_NAV_HOVER_TEXTURE, 8.0, 6.0)
-	var nav_button_active_style := _make_terminal_texture_style(TERMINAL_NAV_ACTIVE_TEXTURE, 8.0, 6.0)
-	var nav_button_focus_style := _make_terminal_texture_style(TERMINAL_NAV_ACTIVE_TEXTURE, 8.0, 6.0)
-	var action_button_style := _make_terminal_texture_style(TERMINAL_BUTTON_IDLE_TEXTURE, 8.0, 6.0)
-	var action_button_hover_style := _make_terminal_texture_style(TERMINAL_BUTTON_HOVER_TEXTURE, 8.0, 6.0)
-	var action_button_pressed_style := _make_terminal_texture_style(TERMINAL_BUTTON_PRESSED_TEXTURE, 8.0, 6.0)
-	var action_button_disabled_style := _make_terminal_texture_style(TERMINAL_BUTTON_DISABLED_TEXTURE, 8.0, 6.0)
+	var output_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 8.0)
+	var map_style := _make_terminal_texture_style(TERMINAL_MAP_FRAME_TEXTURE, TERMINAL_MAP_SLICE, 10.0)
+	var input_style := _make_terminal_texture_style(TERMINAL_COMMAND_LINE_TEXTURE, TERMINAL_COMMAND_LINE_SLICE, 10.0)
+	var nav_button_style := _make_terminal_texture_style(TERMINAL_NAV_IDLE_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
+	var nav_button_hover_style := _make_terminal_texture_style(TERMINAL_NAV_HOVER_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
+	var nav_button_active_style := _make_terminal_texture_style(TERMINAL_NAV_ACTIVE_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
+	var nav_button_focus_style := _make_terminal_texture_style(TERMINAL_NAV_ACTIVE_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
+	var action_button_style := _make_terminal_texture_style(TERMINAL_BUTTON_IDLE_TEXTURE, TERMINAL_BUTTON_SLICE, 6.0)
+	var action_button_hover_style := _make_terminal_texture_style(TERMINAL_BUTTON_HOVER_TEXTURE, TERMINAL_BUTTON_SLICE, 6.0)
+	var action_button_pressed_style := _make_terminal_texture_style(TERMINAL_BUTTON_PRESSED_TEXTURE, TERMINAL_BUTTON_SLICE, 6.0)
+	var action_button_disabled_style := _make_terminal_texture_style(TERMINAL_BUTTON_DISABLED_TEXTURE, TERMINAL_BUTTON_SLICE, 6.0)
 	if terminal_panel:
 		terminal_panel.add_theme_stylebox_override("panel", panel_style)
 		terminal_panel.modulate = Color(1, 1, 1, 1)
@@ -1627,12 +1667,15 @@ func _apply_terminal_theme():
 			output.scroll_following = true
 			output.bbcode_enabled = true
 	if terminal_widget_stack:
-		var widget_panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, 10.0, 8.0)
+		var widget_panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 8.0)
 		for panel in terminal_widget_stack.find_children("*", "PanelContainer", true, false):
 			panel.add_theme_stylebox_override("panel", widget_panel_style)
+			panel.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
 		for rich_text in terminal_widget_stack.find_children("*", "RichTextLabel", true, false):
 			rich_text.add_theme_color_override("font_color", Color(0.82, 0.92, 0.88, 1.0))
 			rich_text.add_theme_font_size_override("font_size", 13)
+			if rich_text.custom_minimum_size.y > 0.0 and rich_text.custom_minimum_size.y < 130.0:
+				rich_text.custom_minimum_size.y = min(rich_text.custom_minimum_size.y, 86.0)
 			rich_text.fit_content = false
 			rich_text.scroll_active = true
 			rich_text.scroll_following = true
@@ -1642,6 +1685,7 @@ func _apply_terminal_theme():
 			label.add_theme_font_size_override("font_size", 11)
 	if terminal_activity_scroll:
 		terminal_activity_scroll.add_theme_stylebox_override("panel", output_style)
+		terminal_activity_scroll.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
 
 	if terminal_input:
 		terminal_input.add_theme_stylebox_override("normal", input_style)
@@ -1664,11 +1708,16 @@ func _apply_terminal_theme():
 	if terminal_hint_label:
 		terminal_hint_label.add_theme_color_override("font_color", Color(0.54, 0.72, 0.68, 0.88))
 		terminal_hint_label.add_theme_font_size_override("font_size", 12)
+		_update_terminal_hint_visibility()
 	for page_name in _terminal_page_buttons.keys():
 		var button: BaseButton = _terminal_page_buttons[page_name]
 		if button == null:
 			continue
 		_apply_terminal_button_assets(button, nav_button_style, nav_button_hover_style, nav_button_active_style, nav_button_active_style, nav_button_focus_style, _terminal_page_icon(page_name))
+		button.add_theme_color_override("icon_normal_color", Color(1.0, 1.0, 1.0, 0.62))
+		button.add_theme_color_override("icon_hover_color", Color(1.0, 1.0, 1.0, 0.82))
+		button.add_theme_color_override("icon_pressed_color", Color(1.0, 1.0, 1.0, 1.0))
+		button.add_theme_color_override("icon_disabled_color", Color(1.0, 1.0, 1.0, 1.0))
 		button.add_theme_color_override("font_color", Color(0.80, 0.92, 0.88, 1.0))
 		button.add_theme_color_override("font_disabled_color", Color(0.95, 1.0, 0.97, 1.0))
 		button.add_theme_font_size_override("font_size", 13)
@@ -2130,7 +2179,7 @@ func _set_terminal_page(page_name: String) -> void:
 func _apply_terminal_page_theme() -> void:
 	var fabrication_mode := _terminal_current_page == "FABRICATION"
 	if terminal_panel:
-		terminal_panel.add_theme_stylebox_override("panel", _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, 10.0, 10.0))
+		terminal_panel.add_theme_stylebox_override("panel", _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 10.0))
 		terminal_panel.self_modulate = Color(1.0, 0.92, 0.72, 1.0) if fabrication_mode else Color(1, 1, 1, 1)
 	if terminal_header_panel:
 		var header_texture: Texture2D = TERMINAL_HEADER_WARNING_TEXTURE if fabrication_mode else TERMINAL_HEADER_ACTIVE_TEXTURE
@@ -2148,7 +2197,7 @@ func _apply_terminal_page_theme() -> void:
 	if terminal_hint_label:
 		terminal_hint_label.add_theme_color_override("font_color", Color(0.96, 0.79, 0.54, 0.88) if fabrication_mode else Color(0.54, 0.72, 0.68, 0.88))
 	if terminal_input:
-		var input_style := _make_terminal_texture_style(TERMINAL_COMMAND_LINE_TEXTURE, 8.0, 10.0)
+		var input_style := _make_terminal_texture_style(TERMINAL_COMMAND_LINE_TEXTURE, TERMINAL_COMMAND_LINE_SLICE, 10.0)
 		terminal_input.add_theme_stylebox_override("normal", input_style)
 		terminal_input.add_theme_stylebox_override("focus", input_style)
 		terminal_input.add_theme_color_override("font_color", Color(1.0, 0.96, 0.88, 1.0) if fabrication_mode else Color(0.96, 1.0, 0.98, 1.0))
@@ -2170,9 +2219,10 @@ func _apply_terminal_page_theme() -> void:
 	elif terminal_background:
 		terminal_background.modulate = Color(1, 1, 1, 1)
 	if terminal_widget_stack:
-		var widget_panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, 10.0, 8.0)
+		var widget_panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 8.0)
 		for panel in terminal_widget_stack.find_children("*", "PanelContainer", true, false):
 			panel.add_theme_stylebox_override("panel", widget_panel_style)
+			panel.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
 		for rich_text in terminal_widget_stack.find_children("*", "RichTextLabel", true, false):
 			rich_text.add_theme_color_override("font_color", Color(1.0, 0.90, 0.76, 1.0) if fabrication_mode else Color(0.82, 0.92, 0.88, 1.0))
 			rich_text.add_theme_font_size_override("font_size", 13)

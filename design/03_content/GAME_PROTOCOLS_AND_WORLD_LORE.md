@@ -3,9 +3,9 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-04-08  
 **Status:** active  
-**Last Updated:** 2026-04-08  
+**Last Updated:** 2026-05-21  
 **Supersedes:** `design/GAME_NOTES.md`, `design/GAME_NOTES_DRAFT.md` as canonical authority  
-**Related Docs:** `design/03_content/PROCEDURAL_LORE_GENERATION.md`, `design/03_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/03_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/02_features/arrn/implementation.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
+**Related Docs:** `design/03_content/LATTICE_DOCTRINE.md`, `design/03_content/PROCEDURAL_LORE_GENERATION.md`, `design/03_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/03_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/02_features/arrn/implementation.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
 
 ---
 
@@ -49,10 +49,10 @@ Use this tiering whenever later docs discuss setting or protocol.
 ### Tier 1 — Locked Canon
 These are stable unless a future doctrine revision explicitly changes them.
 
-1. **CUSTODIAN is mechanically a tactical defense / contract-driven systems game, but thematically it is about preserving reality from a supernatural provenance wound.**
-2. **The world’s central catastrophe is the Great Severance: The Unarrival damaged reality's ability to maintain shared cause, memory, witness, and origin.**
-3. **The Hub is persistent. Campaign worlds are transient. Contracts formalize bounded historical interventions.**
-4. **Knowledge progression outranks raw stat inflation as the game’s long-horizon reward spine.**
+1. **CUSTODIAN is mechanically a tactical systems game about field-stabilizing Lattice reality pockets, but thematically it is about keeping meaning alive inside a doomed continuity field — not saving the world permanently.**
+2. **The world's central catastrophe is the Great Severance: The Unarrival damaged reality's ability to maintain shared cause, memory, witness, and origin.**
+3. **The Hub is persistent. Campaign worlds are transient Lattices — Archive-inflated reality pockets on specific planets, in specific temporal fields, that inevitably collapse. Contracts formalize bounded historical interventions that extend the bubble's lifespan.**
+4. **Knowledge progression outranks raw stat inflation as the game's long-horizon reward spine, because knowledge extends the stabilization field — it extends the Lattice.**
 5. **Lore must be delivered primarily through evidence, procedure, environment, enemy behavior, and degraded interfaces — not long exposition dumps.**
 6. **ARRN remains the knowledge backbone.** Its existing mechanical name, **Automated Relay Routing Network**, stays valid; in fiction it is the surviving field-facing relay layer of the old continuity lattice.
 7. **The active runtime’s current wave/assault slice is a test harness and pressure mode, not the final total identity of the game.** Production identity remains broader than pure wave defense.
@@ -86,10 +86,10 @@ If a future doc treats a Tier 3 item as settled fact, that doc is wrong unless i
 ### Identity Lock
 
 CUSTODIAN is **not just “post-collapse base defense with lore.”**
-It is a tactical systems game about deciding what truths can still be preserved, restored, quarantined, or allowed to die.
+It is a tactical systems game about keeping a Lattice reality pocket alive long enough for meaning to exist inside it.
 
 The player is not a generic scavenger.
-The player is the last surviving **authorized interpreter** of a civilization whose machines, archives, and relay systems still half-believe legitimate authority exists.
+The player is a **Lattice operator** — the last surviving authority that Archive engines, relays, and continuity systems may still recognize as legitimate. The player’s job is to extend the Lattice, recover what can be recovered, reconcile what can be reconciled, and accept that the field will not hold forever.
 
 ### Tone Lock
 
@@ -209,6 +209,8 @@ Do not write the world as random rubble. Write it as layered, functioning misint
 Custodians were the continuity arm of civilization.
 Their job was to:
 
+- inflate and maintain Archive stabilization fields (Lattice reality pockets)
+- extend Lattice integrity through knowledge recovery and infrastructure restoration
 - recover damaged knowledge
 - reconcile contradiction
 - preserve provenance between object, origin, witness, time, use, and meaning
@@ -216,19 +218,21 @@ Their job was to:
 - preserve chain-of-trust between systems
 - intervene where local reality had drifted beyond recoverable truth
 
-They were part archivist, part field technician, part doctrinal judge, part systems operator.
+They were part archivist, part field technician, part stabilization operator, part doctrinal judge, part systems operator.
 
-Custodians are not omniscient lore machines. Because they preserve provenance, they can feel the shape of the Severance wound without seeing The Unarrival directly. To a Custodian, supernatural horror first appears as reality-level checksum failure: a source that both exists and never existed, a witness that precedes an event, or an artifact whose origin refuses to be filed.
+Custodians are not omniscient lore machines. Because they operate Archive fields and preserve provenance, they can feel the shape of the Severance wound without seeing The Unarrival directly. To a Custodian, supernatural horror first appears as reality-level checksum failure: a source that both exists and never existed, a witness that precedes an event, or an artifact whose origin refuses to be filed. To extend the Lattice is to feel the Pale pressing in, to know the field is finite, and to choose what is worth preserving before the rupture.
 
 ### What the Player Is
 
-The player is the last surviving field authority that legacy systems may still recognize as legitimate.
+The player is the last surviving Lattice operator that Archive engines, relays, and continuity systems may still recognize as legitimate.
 That is why:
 
 - relays may still answer
 - archives may still unlock
+- stabilization fields respond to the player’s authority
 - factions may hate or fear the player on political grounds, not only combat grounds
 - the player’s presence destabilizes local claims about reality
+- every campaign the player undertakes extends—and ultimately accelerates—the Lattice’s collapse
 
 ### What the Hub Is
 
@@ -260,9 +264,12 @@ The player does not “claim” a world by visiting it. The player accepts a Con
 ### Campaign Rule
 
 Campaign worlds are transient both mechanically and in fiction.
+They are Archive-reinforced Lattice fields: temporary reality pockets on specific planets, in specific temporal fields, that will inevitably collapse.
 They are not colony seeds or permanent settlements. They are bounded operational worlds whose outcomes feed the historical record.
 
-This reinforces the existing Hub-system architecture and must stay consistent with `HUB_SYSTEM_META_PROGRESSION.md` and `CAMPAIGN_FLOW_AND_GAME_LOOP.md`.
+No Lattice lasts forever. The campaign ends not because the player lost, but because the Pale always wins.
+
+This reinforces the existing Hub-system architecture and the Lattice Doctrine, and must stay consistent with `HUB_SYSTEM_META_PROGRESSION.md` and `CAMPAIGN_FLOW_AND_GAME_LOOP.md`.
 
 ---
 
@@ -583,6 +590,12 @@ These phrases are approved world-language and can recur across docs, UI, or late
 - orphaned cause
 - unarrived source
 - artifact whose origin refuses to exist
+- Lattice
+- field extension
+- Lattice reality pocket
+- the Pale
+- no Lattice lasts forever
+- extending the Lattice
 
 Use them sparingly and consistently.
 
@@ -596,6 +609,7 @@ Use them sparingly and consistently.
 | `GAME_NOTES.md` emphasized immediate procedural-evidence systems and warned against early ontology UI. | Keep that implementation priority. The ontology is canon, but deep surfaced systems remain later-phase. |
 | Draft material expanded ARRN fiction beyond its existing implementation naming. | ARRN keeps its established name (**Automated Relay Routing Network**) while gaining clarified fiction as a context-restoration spine. |
 | Prototype docs risk framing the game as pure wave defense. | Production identity remains contract/campaign/knowledge-driven; assault slices are only one mode within that identity. |
+| `LORE_GAMEPLAY_DUMP.md` introduced the Lattice Doctrine, which reframes the Custodian’s purpose from knowledge preservation to field stabilization. | The Lattice doctrine is now locked canon via `LATTICE_DOCTRINE.md` and integrated into this document’s Tier 1 canon. |
 
 ---
 
@@ -605,7 +619,8 @@ When future docs touch setting, factions, contracts, Hub semantics, ARRN fiction
 
 1. Start here.
 2. Treat this file as the content-facing canon authority.
-3. Treat `HUB_SYSTEM_META_PROGRESSION.md` as the system-facing Hub authority.
-4. Treat implementation-phase docs as downstream realizations, not places to redefine canon.
+3. Treat `LATTICE_DOCTRINE.md` as the supporting doctrinal authority for the stabilization field mechanism and Custodian purpose reframe.
+4. Treat `HUB_SYSTEM_META_PROGRESSION.md` as the system-facing Hub authority.
+5. Treat implementation-phase docs as downstream realizations, not places to redefine canon.
 
 If a future note dump contains better ideas, fold them here or into a more specific content/system doc, then archive the note dump rather than letting multiple contradictory sources stay live.

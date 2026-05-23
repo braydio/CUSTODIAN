@@ -45,11 +45,9 @@
 [ext_resource type="Script" uid="uid://brs7i5frcn2w5" path="res://game/systems/core/systems/terminal_deployment.gd" id="101_terminal_deployment"]
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
-[ext_resource type="PackedScene" uid="uid://bi00x8n8q1f65" path="res://game/resources/resource_node.tscn" id="202_resource_node"]
 [ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="203_ash_bell_site"]
 [ext_resource type="Script" uid="uid://cv0gyb8rtk8au" path="res://game/world/events/ash_bell/ash_bell_dev_spawner.gd" id="204_ash_bell_spawner"]
-[ext_resource type="PackedScene" path="res://game/actors/allies/combat_drone.tscn" id="205_combat_drone"]
-[ext_resource type="Script" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
+[ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 
@@ -264,8 +262,6 @@ script = ExtResource("101_terminal_deployment")
 
 [node name="DroneManager" type="Node" parent="World" unique_id=1022301414]
 script = ExtResource("206_drone_manager")
-operator_path = NodePath("../Operator")
-drone_scene = ExtResource("205_combat_drone")
 
 [node name="CommandTerminal" parent="World" unique_id=2021499921 instance=ExtResource("27_command_terminal")]
 position = Vector2(804, -492)

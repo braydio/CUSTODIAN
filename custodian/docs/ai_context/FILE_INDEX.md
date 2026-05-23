@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-17
+Last updated: 2026-05-22
 
 ## Local Entry And Workflow
 
@@ -12,6 +12,7 @@ Last updated: 2026-05-17
 - `custodian/docs/ai_context/prompts/README.md` — reusable agent prompt index and usage rules
 - `custodian/docs/ai_context/task_packets/README.md` — task packet workflow and active packet index
 - `REQUIRED_ASSETS.md` — project-level tracker for missing or partial production art, audio, animation, and content assets that implementation work depends on
+- `custodian/tools/agent/change_control_bundle.py` — utility that bundles current git-changed files into `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the markdown bundle to the clipboard when a clipboard command is available
 - `custodian/docs/ai_context/task_packets/AGENT_WORKFLOW_AUTOMATION.md` — completed packet for task-packet next steps, ownership rules, and automation backlog
 - `custodian/docs/ai_context/task_packets/VALIDATION_RECIPES.md` — completed packet for canonical validation recipes and prompt-template cleanup
 - `custodian/docs/ai_context/task_packets/COMPOUND_ROOM_ASSEMBLY_CONTRACT.md` — completed packet for deterministic compound room graph, loader, and layout assembler contract hardening
@@ -28,6 +29,11 @@ Last updated: 2026-05-17
 - `custodian/docs/ai_context/task_packets/RESOURCE_ID_CANONICALIZATION.md` — completed packet for making CUSTODIAN-flavored resource IDs canonical across node drops, ledger storage, recipes, UI, and docs
 - `custodian/docs/ai_context/task_packets/ENEMY_GRUNT_RUNTIME_WIRING.md` — completed packet for verifying `enemy_grunt` asset usage and wiring it as a live wave-spawned enemy type
 - `custodian/docs/ai_context/task_packets/ENEMY_GRUNT_SPRITE_INGEST_2026_05_17.md` — completed packet for ingesting pending `enemy_grunt` sheets, fixing generated compatibility manifest layout, and expanding directional grunt playback
+- `custodian/docs/ai_context/task_packets/archived/GOTHIC_COMPOUND_CONNECTED_MAP.md` — completed packet for the first connected gothic compound destination reachable from the generated main map
+- `custodian/docs/ai_context/task_packets/archived/GOTHIC_COMPOUND_PERIMETER_AND_READABILITY_PASS.md` — completed packet for the focused gothic compound perimeter, gate, plaza, decal, and exterior cluster readability pass
+- `custodian/docs/ai_context/task_packets/GOTHIC_COMPOUND_OCCLUSION_AND_SCALE.md` — completed packet for gothic compound player/building occlusion, larger map bounds, and service-path complexity
+- `custodian/docs/ai_context/task_packets/ELEVATION_SUITE_V1.md` — packet for metadata-first elevation support, procgen elevation stamping, traversal validation, existing elevation/cliff tile audit, TileSet source wiring, and remaining movement/pathing follow-up
+- `custodian/docs/ai_context/task_packets/TERRAIN_BUILDER_ELEVATION_INTEGRATION.md` — completed packet for the dedicated terrain builder, elevation metadata, blocked terrain, and connectivity validation pass
 
 ## Active Runtime Entry
 
@@ -37,8 +43,16 @@ Last updated: 2026-05-17
 ## Active Runtime Systems
 
 - `custodian/game/world/procgen/custodian_contract_map.gd` — contract generation and planet-linked world profile creation, including deterministic map size/room bands and ambient Shrumb trait profile fields
-- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, constructed interior region carving, semantic intent-zone metadata, intensity queries, foliage placement, decorative ruin prop placement, and paired portal-ring teleport endpoint wiring with portal-specific safe placement filtering
+- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, constructed interior region carving, semantic intent-zone metadata, connected main-map road/parking-zone surface generation using `roads_paths/runtime/roads/road_piece_manifest.game32.json` sprite stamps plus `roads_paths/runtime/paths/path_piece_manifest.game32.json` footpath stamps, wall/collision clearing and speed multiplier queries, long walled main-map connector road carving from compound ingress with deterministic elevation/ramp metadata, dedicated terrain-builder integration, terrain-builder tile visual mapping, elevation metadata ownership/query helpers, intensity queries, foliage placement, decorative ruin prop placement, and paired portal-ring teleport endpoint wiring with portal-specific safe placement filtering
+- `custodian/game/world/procgen/terrain/terrain_builder.gd` — deterministic terrain-construction pass that emits baseline metadata, mountain blockers, industrial elevation platform metadata, symbolic tile IDs for explicit features only, flood-fill connectivity validation, and spawn-valid traversal helpers
+- `custodian/game/world/procgen/terrain/terrain_tile_ids.gd` — centralized symbolic terrain tile IDs for industrial elevation and mountain/cliff art plus placeholder constants; baseline visual no-op is owned by TerrainBuilder, not this file
+- `custodian/game/world/procgen/terrain/terrain_region.gd` — terrain region descriptor for baseline, mountain wall, chasm, and industrial platform debug/validation output
+- `custodian/game/world/procgen/terrain/terrain_debug_overlay.gd` — optional debug draw helper that visualizes terrain height/traversal metadata from a TerrainBuilder result
+- `custodian/game/world/elevation/elevation_map.gd` — script-owned elevation metadata map for cell height, traversal type, ramp/stair direction, builder-result ingestion, serialization, spawn validity, and directional cardinal traversal checks
 - `custodian/game/world/procgen/portal_teleporter.gd` — Area2D trigger component used by procgen portal-ring props to teleport the player to their linked endpoint with a physics-frame cooldown, one runtime-built `PortalStateSprite` for idle/activation/arrival playback, delayed destination arrival playback, and a 2.5D stair/platform impostor for top-only portal access plus mirrored north-side dual approach when enabled
+- `custodian/game/world/procgen/gothic_compound/` — deterministic gothic compound blueprint generator modules: metadata asset definitions, legacy path registry, config, result, validator, generator, and Sprite2D adapter used by the connected-map prototype; current generation uses logical asset definitions, top-left anchoring, footprint-aware placement, render/depth metadata, player-relative large-structure depth sorting, wall/post/gatehouse perimeter grammar, keep-plaza exclusion, service paths, zone-specific decals/grates, clustered exterior scatter, and perimeter topology validation
+- `custodian/game/world/gothic_compound/gothic_compound_map.gd` — authored connected gothic compound destination map that runs the larger gothic blueprint generator, exposes camera bounds, updates player-relative depth sorting, and places the return gate
+- `custodian/game/world/gothic_compound/gothic_compound_travel_gate.gd` — interactable gate used to enter the gothic compound from the main map and return from the compound to the main map
 - `custodian/game/world/compound/rooms/room_graph.gd` — deterministic compound room graph loader/validator with room count clamps, sorted type lookup, seeded template selection, and directional connection-rule checks
 - `custodian/game/world/compound/rooms/room_loader.gd` — deterministic `.tmj` Tiled room-template loader with normalized door metadata, marker/stair extraction, template duplication, and door compatibility checks
 - `custodian/game/world/compound/rooms/layout_assembler.gd` — deterministic compound room layout assembler with stable room IDs, graph-walk door-aligned placement, fixed-grid fallback, graph-rule-enforced compatible door connections, resolved endpoint tiles, intensity estimates, actual tile bounds, and placed-room state
@@ -60,7 +74,7 @@ Last updated: 2026-05-17
 - `custodian/game/systems/core/systems/arrn/stabilization_task.gd` — tick-counted field relay stabilization task state
 - `custodian/game/systems/core/systems/arrn/knowledge_system.gd` — knowledge track constants and sync-gain calculation
 - `custodian/game/systems/core/systems/arrn/benefits_manager.gd` — ARRN knowledge-level benefit activation and labels
-- `custodian/game/systems/core/systems/contract_world_loader.gd` — contract-world handoff and placement bridge; repositions runtime anchors and generates the scarce base-map tutorial resource nodes after procgen world creation
+- `custodian/game/systems/core/systems/contract_world_loader.gd` — contract-world handoff and placement bridge; repositions runtime anchors, places vehicles on generated road parking zones when available, places ARRN relays, instantiates the connected gothic compound map/gate, and generates the scarce base-map tutorial resource nodes after procgen world creation
 - `custodian/game/actors/relay/relay.tscn` — placeholder in-world relay entity scene used by procgen contract handoff
 - `custodian/game/actors/relay/relay.gd` — interactable relay entity that mirrors ARRN state, shows scan/stabilization prompts, and starts stabilization through `ARRNManager`
 - `custodian/game/actors/relay/signal_indicator.gd` — primitive signal-strength visual for relay placeholder scenes
@@ -106,7 +120,7 @@ Last updated: 2026-05-17
 - `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems
 - `custodian/game/ui/terminal/terminal_map_preview.gd` — terminal minimap preview state and click-to-world conversion boundary
 - `custodian/game/ui/terminal/terminal_planet_preview.gd` — terminal globe viewport, rotation, zoom, and preview input handling
-- `custodian/game/actors/operator/operator.gd` — operator movement, queued armed/Fists profile selection, ranged fire, block, and light/fast/heavy melee attack runtime logic
+- `custodian/game/actors/operator/operator.gd` — operator movement including procgen road/path surface speed multipliers, queued armed/Fists profile selection, ranged fire, block, and light/fast/heavy melee attack runtime logic
 - `custodian/game/actors/operator/operator_weapon_definition.gd` — weapon/combat profile resource schema, including intent and movement/combat multipliers
 - `custodian/game/actors/operator/unarmed_definition.tres` — Fists/unarmed combat profile used by `toggle_unarmed`
 - `custodian/project.godot` — canonical runtime input bindings, including `attack_primary`, `attack_secondary`, `toggle_unarmed`, armed cycling, and `build`
@@ -119,20 +133,21 @@ Last updated: 2026-05-17
 - `design/features/implementation/UNARMED_TOGGLE_CODE.md` — implementation notes for the unarmed/Fists profile selection system
 - `design/features/implementation/MINIMAP_SYSTEM.md` — custom data-driven tactical minimap implementation spec
 - `design/features/implementation/MINIMAP_SYSTEM_CODE.md` — minimap runtime code plan and integration notes
+- `design/features/implementation/GOTHIC_COMPOUND_PROCGEN.md` — active implementation note and migrated review for constraint-first gothic compound blueprint generation
 - `design/THE_TRAGEDY_OF_THE_FOREST_SHRUMB_GAMEPLAY_CORE.md` — active Forest Shrumb cognitive drop runtime implementation notes
 - `design/THE_TRAGEDY_OF_THE_FOREST_SHRUMB-IMPLEMENTATION_DELTA.md` — duplicate/current Forest Shrumb implementation delta reference used for v1 foundation
 
 ## Active Interaction/UI Files
 
 - `custodian/game/actors/defense/turret.gd` — turret interaction prompt reads actual interact binding
-- `custodian/game/actors/base/vehicle_base.gd` — vehicle exit prompt reads actual interact binding
+- `custodian/game/actors/base/vehicle_base.gd` — vehicle exit prompt reads actual interact binding, and occupied vehicles query procgen road/path surface speed multipliers while driving
 - `custodian/game/actors/terminal/command_terminal.gd` — in-world `command_terminal` prop interaction and activation/deactivation animation, with fallback compatibility to the older `computer_terminal` sheets and the authored `builder_terminal` pickup/deploy sheet
 - `custodian/game/systems/core/systems/terminal_deployment.gd` — deployable terminal pickup/redeploy runtime for the in-world command terminal prop
 - `custodian/docs/TERMINAL_VIEW_LOCAL_MODE.md` — terminal-related runtime doc reference
 
 ## Active Asset Pipeline
 
-- `custodian/tools/pipelines/ingest.py` — manifest-driven sprite ingest that writes into live runtime sprite domains and stages generated files through Git by default
+- `custodian/tools/pipelines/ingest.py` — manifest-driven sprite ingest that writes into live runtime sprite domains, stages generated files through Git by default, and cleans source PNG `.import` sidecars from the inbox after successful ingest
 - `custodian/tools/pipelines/generate_inbox_manifests.py` — deterministic inbox manifest generator that infers JSON sidecars from canonical filenames, image dimensions, flat item filenames, and harvesting-node filenames, then runs the ingest pipeline
 - `custodian/tools/pipelines/aseprite_inbox.py` — staging helper that moves aseprite PNG exports into the sprite inbox, prompts for incomplete canonical filename blocks, and can chain manifest generation / ingest
 - `custodian/tools/pipelines/reload_assets.py` — direct operator curated-resource rebuild entrypoint
@@ -147,7 +162,14 @@ Last updated: 2026-05-17
 - `custodian/content/tiles/walls/source/procgen_wall_modules_source.png` — canonical reviewed source sheet for generated procgen wall modules
 - `custodian/content/tiles/walls/source/wall_passages/` — optional `32px`-tall wall passage strips sliced directly into procgen passage/hole buckets
 - `custodian/content/tiles/walls/Wall_Tops.png` — wall-top source sheet that is alpha-split by the atlas builder with `--top-source`
-- `custodian/content/tiles/tilesets/procgen_world_tileset.tres` — canonical active world/procgen TileSet used by procgen and test-map TileMapLayer scenes
+- `custodian/content/tiles/tilesets/procgen_world_tileset.tres` — canonical active world/procgen TileSet used by procgen and test-map TileMapLayer scenes; source IDs `32..59` register the industrial elevation and mountain-cliff runtime PNGs
+- `custodian/content/tiles/roads_paths/README.md` — local road/path asset layout, regeneration commands, and runtime/source split
+- `custodian/content/tiles/roads_paths/source/Pathways.json` — road/path role metadata used by the game32 normalizer and procgen surface mapping
+- `custodian/content/tiles/roads_paths/source/road_piece_exports/road_piece_manifest.json` — raw procgen road-piece metadata; maps variable-size stamp PNGs by connection bitmask before game-grid normalization
+- `custodian/content/tiles/roads_paths/runtime/roads/road_piece_manifest.game32.json` — generated runtime road stamp manifest used for main-map road and parking-zone overlays
+- `custodian/content/tiles/roads_paths/runtime/paths/path_piece_manifest.game32.json` — generated runtime footpath/degraded-transition stamp manifest used for `soft_path` overlays
+- `custodian/content/tiles/roads_paths/tools/normalize_road_pieces_game32.py` — pads raw road/path stamps to 32px game-grid canvases and emits separate road/path runtime manifests
+- `custodian/content/tiles/roads_paths/source/ancient_ruined_roads_and_paths.png` — source road/path sheet preserved as the visual source/reference for the runtime exports
 - `custodian/content/tiles/interiors/runtime/` — runtime-ready `32x32` constructed-interior floor and military wall tiles registered into procgen source lists by naming convention
 - `custodian/content/tiles/interiors/source/` — oversized/reference interior tile source art preserved for slicing or replacement
 - `custodian/content/tiles/interiors/README.md` — interior tile folder layout, runtime/source split, and remaining art needs
@@ -161,6 +183,9 @@ Last updated: 2026-05-17
 - `design/02_features/procgen/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — first runtime slice for single-map indoor/outdoor region-aware procgen
 - `custodian/content/sprites/_pipeline/README.md` — intake contract, canonical sprite naming, and manifest examples
 - `custodian/content/sprites/_pipeline/aseprite/` — raw aseprite PNG staging folder before normalization into inbox
+- `custodian/content/sprites/props/harvesting_nodes/broken_signal_relay/` — runtime harvesting-node sheets for `broken_signal_relay`
+- `custodian/content/sprites/props/harvesting_nodes/ruptured_capacitor_bank/` — runtime harvesting-node sheets for `ruptured_capacitor_bank`
+- `custodian/content/sprites/props/harvesting_nodes/shattered_archive_terminal/` — runtime harvesting-node sheets for `shattered_archive_terminal`
 - `custodian/docs/ASSET_LAYOUT_CONVENTION.md` — project-wide runtime asset layout and canonical sprite filename convention
 - `custodian/content/sprites/environment/props/portal_ring/runtime/fx/` — canonical portal-ring prop FX runtime strips used by `PortalTeleporter` for idle, activation, and arrival playback
 - `custodian/content/sprites/effects/runtime/portal_ring/` — legacy compatibility copies of portal-ring teleport FX strips
@@ -212,6 +237,9 @@ Last updated: 2026-05-17
 - `custodian/docs/ai_context/task_packets/` — active and completed task-scoped agent packets
 - `custodian/tools/validation/contract_resource_node_smoke.gd` — headless smoke test that loads `game.tscn` and verifies scarce generated tutorial resource nodes include blackwood, alloy, and wreckage kinds
 - `custodian/tools/validation/grunt_animation_smoke.gd` — targeted smoke check for loading the current `enemy_grunt` body/FX SpriteFrames and selector mappings
+- `custodian/tools/validation/elevation_map_smoke.gd` — targeted smoke check for raised-platform elevation metadata, ramp traversal, blocked edges, and serialized cells
+- `custodian/tools/validation/terrain_builder_smoke.gd` — targeted smoke check for TerrainBuilder determinism, connectivity, elevated access, spawn-valid filtering, baseline visual no-op behavior, directional ramp validation, and registered elevation/cliff TileSet sources
+- `design/features/implementation/TERRAIN_BUILDER_ELEVATION_INTEGRATION.md` — implementation spec and completion notes for dedicated terrain builder elevation/cliff integration
 - `custodian/AGENTS.md` — first-stop local operating guide for all work under `custodian/`
 - `custodian/docs/ARCHITECTURE.md` — runtime architecture reference
 - `custodian/docs/SCENE_HIERARCHY.md` — scene organization reference

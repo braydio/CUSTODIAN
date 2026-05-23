@@ -18,7 +18,7 @@ The `enemy_grunt` sprite intake is a new active-enemy art set, not a replacement
 - Wave integration: `WaveManager` and `EnemyFactory` may select `grunt` when the scene is wired.
 - Debug spawn: DevConsole command `spawn_grunt [x_offset y_offset]` spawns one near the operator through `EnemyDirector` / `WaveManager`.
 - Startup test: `WaveManager.debug_spawn_grunt_on_start` can place one grunt near the operator at scene start for live visual review.
-- Attack timing: `EnemyGrunt.attack_windup_duration` is `0.83s`, matching the common 10-frame/12 FPS melee body and FX strips so gameplay does not interrupt most attack clips after the first frames. The west melee body source is currently 11 frames and may need a tiny timing follow-up if west-facing attacks feel clipped in play.
+- Attack timing: `EnemyGrunt.attack_windup_duration` is `0.42s`, so damage lands around the middle of the common 10-frame/12 FPS melee body and FX strips instead of waiting for the end of the clip. The west melee body source is currently 11 frames and may need a separate follow-up if west-facing attacks feel slightly early or late.
 
 The current art set is partial but expanded:
 
@@ -36,5 +36,5 @@ Until directional coverage is complete, runtime reuses available body strips ins
 - `scenes/game.tscn` exports the grunt scene into `WaveManager`.
 - `spawn_grunt` can spawn a grunt near the operator for immediate review.
 - Grunt melee windup plays the body melee strip plus the matching FX overlay strip.
-- Grunt melee windup duration matches the authored clip length before damage resolves.
+- Grunt melee windup duration lands in the middle of the authored clip before damage resolves.
 - Headless Godot validation loads the new scene and scripts without missing resource errors.

@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var speed: float = 15.0
-@export var lifetime: float = 0.3
+@export var lifetime: float = 0.18
 
 var age := 0.0
 var direction := Vector2.RIGHT
@@ -22,7 +22,7 @@ func _process(delta):
 	
 	if arc:
 		arc.modulate.a = 1.0 - progress
-		arc.scale = Vector2(1.0 + progress * 0.5, 1.0)
+		arc.scale = Vector2(1.0 + progress * 0.18, 1.0)
 	
 	if slash:
 		slash.modulate.a = 1.0 - progress

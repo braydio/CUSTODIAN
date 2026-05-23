@@ -189,6 +189,24 @@ const TERRAIN_TILESET_SOURCES := {
 @export var intent_spawn_clearing_half_extents_tiles: Vector2i = Vector2i(5, 4)
 @export var intent_soft_paths_enabled: bool = true
 @export_range(0, 4, 1) var intent_soft_path_width: int = 1
+@export var intent_main_roads_enabled: bool = true
+@export_range(1, 5, 1) var intent_main_road_half_width: int = 2
+@export var intent_parking_zone_half_extents_tiles: Vector2i = Vector2i(4, 3)
+@export var road_piece_decals_enabled: bool = true
+@export var road_piece_manifest_path: String = ROAD_PIECE_MANIFEST_PATH
+@export var path_piece_manifest_path: String = PATH_PIECE_MANIFEST_PATH
+@export var road_piece_parent_path: NodePath = NodePath("NavigationRegion2D/RoadPieceLayer")
+@export_range(1, 12, 1) var road_piece_straight_stride_tiles: int = 5
+@export_range(1, 12, 1) var path_piece_straight_stride_tiles: int = 4
+@export var road_piece_z_index: int = 0
+@export var intent_compound_connector_corridor_enabled: bool = true
+@export_range(18, 72, 1) var intent_compound_connector_min_length_tiles: int = 28
+@export_range(18, 96, 1) var intent_compound_connector_max_length_tiles: int = 48
+@export_range(1, 5, 1) var intent_compound_connector_half_width: int = 2
+@export_range(1, 4, 1) var intent_compound_connector_wall_gap_tiles: int = 1
+@export var intent_compound_connector_elevation_enabled: bool = true
+@export_range(1.0, 2.0, 0.05) var road_walk_speed_multiplier: float = 1.12
+@export_range(1.0, 2.5, 0.05) var road_vehicle_speed_multiplier: float = 1.35
 @export var intent_portal_plazas_enabled: bool = true
 @export var intent_portal_plaza_half_extents_tiles: Vector2i = Vector2i(3, 2)
 @export var intent_mark_foliage_cover: bool = true
@@ -232,6 +250,13 @@ var _last_compound_buildings: Array[Rect2i] = []
 var _last_interior_region_rect: Rect2i = Rect2i()
 var _last_interior_rooms: Array[Rect2i] = []
 var _last_interior_thresholds: Array[Vector2i] = []
+var _main_road_tiles: Dictionary = {}
+var _road_centerline_tiles: Dictionary = {}
+var _path_centerline_tiles: Dictionary = {}
+var _road_visual_tiles: Dictionary = {}
+var _path_visual_tiles: Dictionary = {}
+var _compound_connector_centerline_tiles: Array[Vector2i] = []
+var _parking_zone_tiles: Dictionary = {}
 var _region_tiles: Dictionary = {}
 var _wall_health: Dictionary = {}
 var _generated_floor_cells: Dictionary = {}
@@ -267,6 +292,10 @@ const PROP_SCATTERER_SCRIPT := preload("res://content/props/ruins/scripts/PropSc
 const PORTAL_TELEPORTER_SCRIPT := preload("res://game/world/procgen/portal_teleporter.gd")
 const PORTAL_DEFINITION_ID := &"portal_ring_01"
 const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
+const ROAD_PIECE_MANIFEST_PATH := "res://content/tiles/roads_paths/runtime/roads/road_piece_manifest.game32.json"
+const ROAD_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/roads"
+const PATH_PIECE_MANIFEST_PATH := "res://content/tiles/roads_paths/runtime/paths/path_piece_manifest.game32.json"
+const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/paths"
 @export var foliage_parent_path: NodePath = NodePath("NavigationRegion2D/FoliageLayer")
 @export var foliage_density: float = 0.12
 @export var foliage_min_wall_distance: int = 1
@@ -364,11 +393,17 @@ const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
 @export var elevation_platform_stamps_enabled: bool = true
 @export var terrain_builder_mountain_boundary_enabled: bool = true
 @export var terrain_builder_debug_logging: bool = true
+@export var terrain_debug_overlay: Node2D
 @export var elevation_platform_min_size: Vector2i = Vector2i(7, 5)
 @export var elevation_platform_max_size: Vector2i = Vector2i(12, 8)
 @export_group("", "")
 
 var _foliage_parent: Node2D = null
+var _road_piece_parent: Node2D = null
+var _road_piece_defs_by_mask: Dictionary = {}
+var _path_piece_defs_by_mask: Dictionary = {}
+var _road_piece_nodes: Array[Node2D] = []
+var _road_piece_nodes_by_key: Dictionary = {}
 var _ruin_prop_parent: Node2D = null
 var _ruin_prop_scatterer: PropScatterer = null
 var elevation_map: Node = null
@@ -402,6 +437,8 @@ func _ready() -> void:
 	if shadow_system == null:
 		shadow_system = find_child("ShadowOverlay", true, false)
 	_foliage_parent = _find_foliage_parent()
+	_road_piece_parent = _find_or_create_road_piece_parent()
+	_load_road_piece_manifest()
 	_ruin_prop_parent = _find_ruin_prop_parent()
 	_load_foliage_textures()
 	_load_interior_prop_textures()
@@ -492,6 +529,7 @@ func _fill_tilemaps() -> void:
 		_clear_region_metadata()
 		_clear_elevation_metadata()
 		_clear_foliage()
+		_clear_road_piece_decals()
 		_clear_interior_props()
 		_clear_ruin_props()
 		_clear_horizontal_wall_overlays()
@@ -522,11 +560,18 @@ func _fill_tilemaps() -> void:
 		_stamp_spawn_clearing(map_size)
 	if intent_soft_paths_enabled:
 		_carve_interest_paths(map_size)
+	if intent_main_roads_enabled:
+		_carve_main_roads(map_size)
 	if use_cohesive_wall_visuals:
 		_apply_wall_visuals(map_size)
+	_enforce_road_walkability(map_size)
+	_refresh_road_path_visuals()
 	_capture_generated_tile_state(map_size)
 	if elevation_metadata_enabled:
 		_apply_terrain_builder(map_size)
+		_enforce_road_walkability(map_size)
+		_apply_compound_connector_elevation(map_size)
+		_refresh_road_path_visuals()
 		_capture_generated_tile_state(map_size)
 	if enable_streaming_reveal:
 		_prepare_streaming_reveal()
@@ -1096,9 +1141,517 @@ func _stamp_spawn_clearing(map_size: Vector2i) -> void:
 			_set_region_tile(tile, "spawn_clearing", "safe")
 
 
+func _carve_main_roads(map_size: Vector2i) -> void:
+	_main_road_tiles.clear()
+	_road_centerline_tiles.clear()
+	_road_visual_tiles.clear()
+	_compound_connector_centerline_tiles.clear()
+	_parking_zone_tiles.clear()
+	if procgen_node == null:
+		return
+
+	var spawn := get_player_spawn()
+	var road_width := maxi(1, intent_main_road_half_width)
+	var compound_anchor := _pick_primary_road_compound_anchor(spawn)
+	var trunk_anchor := compound_anchor if compound_anchor != Vector2i.ZERO else spawn
+	var required_road_anchors: Array[Vector2i] = [spawn, trunk_anchor]
+	var road_targets: Array[Vector2i] = []
+	for threshold in _last_interior_thresholds:
+		road_targets.append(threshold)
+	if road_targets.is_empty():
+		for room_center in get_rooms_by_distance_from_spawn().slice(0, 3):
+			road_targets.append(room_center)
+
+	if trunk_anchor != spawn:
+		_carve_main_road_path(spawn, trunk_anchor, road_width, map_size)
+	for ingress in _last_compound_ingress:
+		if ingress != trunk_anchor:
+			_carve_main_road_path(trunk_anchor, ingress, road_width, map_size)
+		required_road_anchors.append(ingress)
+	for target in road_targets:
+		if target != trunk_anchor:
+			_carve_main_road_path(trunk_anchor, target, maxi(1, road_width - 1), map_size)
+		required_road_anchors.append(target)
+
+	var edge_anchor := _pick_road_edge_anchor(spawn, map_size)
+	_carve_main_road_path(edge_anchor, trunk_anchor, road_width, map_size)
+	required_road_anchors.append(edge_anchor)
+	if intent_compound_connector_corridor_enabled:
+		_carve_compound_connector_corridor(spawn, trunk_anchor, map_size)
+	if not _compound_connector_centerline_tiles.is_empty():
+		required_road_anchors.append(_compound_connector_centerline_tiles.back())
+	_repair_road_connectivity(required_road_anchors, trunk_anchor, road_width, map_size)
+	_stamp_parking_zone(_pick_parking_anchor(spawn, trunk_anchor, map_size), map_size)
+
+
+func _pick_primary_road_compound_anchor(spawn: Vector2i) -> Vector2i:
+	if _last_compound_ingress.is_empty():
+		return Vector2i.ZERO
+	if _last_compound_rect.size.x > 0:
+		for ingress in _last_compound_ingress:
+			if ingress == _last_compound_ingress[0]:
+				return ingress
+	return _pick_closest_road_target(spawn, _last_compound_ingress)
+
+
+func _repair_road_connectivity(required_anchors: Array[Vector2i], root_anchor: Vector2i, width: int, map_size: Vector2i) -> void:
+	if required_anchors.is_empty() or _main_road_tiles.is_empty():
+		return
+	var root := root_anchor
+	if not _main_road_tiles.has(root):
+		root = required_anchors[0]
+	for anchor in required_anchors:
+		if _main_road_tiles.has(anchor):
+			root = anchor
+			break
+	var connected := _collect_connected_road_tiles(root)
+	for anchor in required_anchors:
+		if not _is_tile_inside_map(anchor, map_size, 1):
+			continue
+		if connected.has(anchor):
+			continue
+		_carve_main_road_path(root, anchor, maxi(1, width), map_size)
+		connected = _collect_connected_road_tiles(root)
+
+
+func _collect_connected_road_tiles(root: Vector2i) -> Dictionary:
+	var visited: Dictionary = {}
+	if not _main_road_tiles.has(root):
+		return visited
+	var frontier: Array[Vector2i] = [root]
+	visited[root] = true
+	while not frontier.is_empty():
+		var tile: Vector2i = frontier.pop_front()
+		for dir in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+			var next: Vector2i = tile + dir
+			if visited.has(next) or not _main_road_tiles.has(next):
+				continue
+			visited[next] = true
+			frontier.append(next)
+	return visited
+
+
+func _pick_closest_road_target(anchor: Vector2i, targets: Array[Vector2i]) -> Vector2i:
+	if targets.is_empty():
+		return anchor
+	var best := targets[0]
+	var best_dist := best.distance_squared_to(anchor)
+	for target in targets:
+		var dist := target.distance_squared_to(anchor)
+		if dist < best_dist:
+			best = target
+			best_dist = dist
+	return best
+
+
+func _pick_road_edge_anchor(spawn: Vector2i, map_size: Vector2i) -> Vector2i:
+	var anchors := [
+		Vector2i(clampi(spawn.x, 2, map_size.x - 3), 2),
+		Vector2i(clampi(spawn.x, 2, map_size.x - 3), map_size.y - 3),
+		Vector2i(2, clampi(spawn.y, 2, map_size.y - 3)),
+		Vector2i(map_size.x - 3, clampi(spawn.y, 2, map_size.y - 3)),
+	]
+	anchors.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return a.distance_squared_to(spawn) < b.distance_squared_to(spawn)
+	)
+	return anchors[0]
+
+
+func _pick_parking_anchor(spawn: Vector2i, primary_anchor: Vector2i, map_size: Vector2i) -> Vector2i:
+	var direction := primary_anchor - spawn
+	var halfway := spawn + Vector2i(int(round(float(direction.x) * 0.35)), int(round(float(direction.y) * 0.35)))
+	var side := Vector2i(-_int_sign(direction.y), _int_sign(direction.x))
+	if side == Vector2i.ZERO:
+		side = Vector2i.RIGHT
+	var offset_distance := intent_main_road_half_width + intent_parking_zone_half_extents_tiles.x + 1
+	var candidate := halfway + side * offset_distance
+	return Vector2i(
+		clampi(candidate.x, 2 + intent_parking_zone_half_extents_tiles.x, map_size.x - 3 - intent_parking_zone_half_extents_tiles.x),
+		clampi(candidate.y, 2 + intent_parking_zone_half_extents_tiles.y, map_size.y - 3 - intent_parking_zone_half_extents_tiles.y)
+	)
+
+
+func _int_sign(value: int) -> int:
+	if value > 0:
+		return 1
+	if value < 0:
+		return -1
+	return 0
+
+
+func _carve_main_road_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
+	var current := from_tile
+	_road_centerline_tiles[current] = true
+	_road_visual_tiles[current] = true
+	_carve_road_brush(current, width, map_size)
+	var step_index := 0
+	var horizontal_first := (_tile_noise_hash(from_tile + to_tile + Vector2i(1709, 313)) % 2) == 0
+	if horizontal_first:
+		while current.x != to_tile.x:
+			current.x += 1 if to_tile.x > current.x else -1
+			_road_centerline_tiles[current] = true
+			step_index += 1
+			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
+				_road_visual_tiles[current] = true
+			_carve_road_brush(current, width, map_size)
+		while current.y != to_tile.y:
+			current.y += 1 if to_tile.y > current.y else -1
+			_road_centerline_tiles[current] = true
+			step_index += 1
+			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
+				_road_visual_tiles[current] = true
+			_carve_road_brush(current, width, map_size)
+	else:
+		while current.y != to_tile.y:
+			current.y += 1 if to_tile.y > current.y else -1
+			_road_centerline_tiles[current] = true
+			step_index += 1
+			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
+				_road_visual_tiles[current] = true
+			_carve_road_brush(current, width, map_size)
+		while current.x != to_tile.x:
+			current.x += 1 if to_tile.x > current.x else -1
+			_road_centerline_tiles[current] = true
+			step_index += 1
+			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
+				_road_visual_tiles[current] = true
+			_carve_road_brush(current, width, map_size)
+	_road_visual_tiles[current] = true
+
+
+func _carve_road_brush(center: Vector2i, width: int, map_size: Vector2i) -> void:
+	for x in range(-width, width + 1):
+		for y in range(-width, width + 1):
+			var tile := center + Vector2i(x, y)
+			if not _is_tile_inside_map(tile, map_size, 1):
+				continue
+			if is_indoor_tile(tile):
+				continue
+			_main_road_tiles[tile] = true
+			_set_road_path_tile(tile, "road")
+			_set_region_tile(tile, "main_road", "travel")
+
+
+func _carve_compound_connector_corridor(spawn: Vector2i, primary_anchor: Vector2i, map_size: Vector2i) -> void:
+	if _last_compound_rect.size.x <= 0 or _last_compound_ingress.is_empty():
+		return
+	var ingress := _last_compound_ingress[0]
+	var outward := -_get_compound_ingress_inward(ingress, _last_compound_rect)
+	if outward == Vector2i.ZERO:
+		return
+	var side_axis := Vector2i(-outward.y, outward.x)
+	var length_min: int = mini(intent_compound_connector_min_length_tiles, intent_compound_connector_max_length_tiles)
+	var length_max: int = maxi(intent_compound_connector_min_length_tiles, intent_compound_connector_max_length_tiles)
+	var length: int = length_min + (_tile_noise_hash(ingress + Vector2i(2039, 577)) % maxi(1, length_max - length_min + 1))
+	var width: int = maxi(1, intent_compound_connector_half_width)
+	var wall_offset: int = width + maxi(1, intent_compound_connector_wall_gap_tiles)
+	_compound_connector_centerline_tiles.clear()
+
+	var last_center := ingress
+	for step in range(1, length + 1):
+		var center := ingress + outward * step
+		if not _is_tile_inside_map(center, map_size, wall_offset + 1):
+			break
+		last_center = center
+		_compound_connector_centerline_tiles.append(center)
+		_road_centerline_tiles[center] = true
+		if step == 1 or step == length or step % maxi(1, road_piece_straight_stride_tiles) == 0:
+			_road_visual_tiles[center] = true
+		_carve_road_brush(center, width, map_size)
+		_set_region_tile(center, "compound_connector_road", "compound_ingress")
+		for side in [-1, 1]:
+			_stamp_compound_connector_wall(center + side_axis * int(side) * wall_offset, side_axis * int(side), map_size)
+
+	if not _compound_connector_centerline_tiles.is_empty():
+		_carve_main_road_path(spawn, last_center, maxi(1, width - 1), map_size)
+		if primary_anchor != Vector2i.ZERO and primary_anchor != ingress:
+			_carve_main_road_path(last_center, primary_anchor, maxi(1, width - 1), map_size)
+
+
+func _stamp_compound_connector_wall(center: Vector2i, outward_axis: Vector2i, map_size: Vector2i) -> void:
+	var wall_thickness := maxi(1, compound_wall_thickness)
+	for offset in range(wall_thickness):
+		var tile := center + outward_axis * offset
+		if not _is_tile_inside_map(tile, map_size, 1):
+			continue
+		if _main_road_tiles.has(tile) or is_indoor_tile(tile):
+			continue
+		_set_wall_tile(tile)
+		_set_region_tile(tile, "compound_connector_wall", "compound_ingress")
+
+
+func _stamp_parking_zone(center: Vector2i, map_size: Vector2i) -> void:
+	var half := Vector2i(
+		maxi(1, intent_parking_zone_half_extents_tiles.x),
+		maxi(1, intent_parking_zone_half_extents_tiles.y)
+	)
+	for x in range(-half.x, half.x + 1):
+		for y in range(-half.y, half.y + 1):
+			var tile := center + Vector2i(x, y)
+			if not _is_tile_inside_map(tile, map_size, 1):
+				continue
+			if is_indoor_tile(tile):
+				continue
+			_main_road_tiles[tile] = true
+			_parking_zone_tiles[tile] = true
+			_set_road_path_tile(tile, "road")
+			_set_region_tile(tile, "parking_zone", "vehicle_staging")
+			if x == 0 or y == 0 or (abs(x) % 3 == 0 and abs(y) % 2 == 0):
+				_road_centerline_tiles[tile] = true
+				_road_visual_tiles[tile] = true
+
+
+func _set_road_path_tile(pos: Vector2i, surface_kind: String = "road") -> void:
+	if floor_tilemap == null or walls_tilemap == null:
+		return
+	_set_floor_tile(pos)
+	_clear_road_blocking_wall(pos)
+
+
+func _enforce_road_walkability(map_size: Vector2i) -> void:
+	for tile_variant in _main_road_tiles.keys():
+		if tile_variant is Vector2i:
+			var tile := tile_variant as Vector2i
+			if _is_tile_inside_map(tile, map_size, 1) and not is_indoor_tile(tile):
+				_set_road_path_tile(tile, "road")
+	for tile_variant in _region_tiles.keys():
+		if not (tile_variant is Vector2i):
+			continue
+		var tile := tile_variant as Vector2i
+		if get_region_type_at_tile(tile) != "soft_path":
+			continue
+		if _is_tile_inside_map(tile, map_size, 1) and not is_indoor_tile(tile):
+			_set_road_path_tile(tile, "path")
+
+
+func _clear_road_blocking_wall(pos: Vector2i) -> void:
+	if walls_tilemap != null:
+		walls_tilemap.erase_cell(pos)
+	_wall_health.erase(pos)
+	_generated_wall_cells.erase(pos)
+	if build_runtime_wall_collision:
+		_remove_runtime_wall_body(pos)
+	_remove_foliage(pos)
+
+
+func _refresh_road_path_visuals() -> void:
+	_clear_road_piece_decals()
+	for tile_variant in _main_road_tiles.keys():
+		if tile_variant is Vector2i:
+			var road_tile := tile_variant as Vector2i
+			if not _should_preserve_road_floor_visual(road_tile):
+				_set_road_path_tile(road_tile, "road")
+	for tile_variant in _region_tiles.keys():
+		if not (tile_variant is Vector2i):
+			continue
+		var tile := tile_variant as Vector2i
+		if _main_road_tiles.has(tile):
+			continue
+		if get_region_type_at_tile(tile) == "soft_path":
+			_set_road_path_tile(tile, "path")
+	_spawn_road_piece_decals()
+
+
+func _should_preserve_road_floor_visual(tile: Vector2i) -> bool:
+	var region_type := get_region_type_at_tile(tile)
+	return region_type == "compound_connector_elevated_road" or region_type == "compound_connector_ramp"
+
+
+func _find_or_create_road_piece_parent() -> Node2D:
+	var existing := get_node_or_null(road_piece_parent_path) as Node2D
+	if existing != null:
+		return existing
+	var parent: Node = nav_region if nav_region != null else self
+	var parent_path := String(road_piece_parent_path)
+	if not parent_path.is_empty() and parent_path.contains("/"):
+		var path_parts := parent_path.split("/")
+		var root_name := String(path_parts[0])
+		var root_candidate := get_node_or_null(NodePath(root_name))
+		if root_candidate != null:
+			parent = root_candidate
+	var layer := Node2D.new()
+	layer.name = "RoadPieceLayer"
+	parent.add_child(layer)
+	return layer
+
+
+func _load_road_piece_manifest() -> void:
+	_road_piece_defs_by_mask = _load_surface_piece_manifest(road_piece_manifest_path, ROAD_PIECE_EXPORT_ROOT, false)
+	_path_piece_defs_by_mask = _load_surface_piece_manifest(path_piece_manifest_path, PATH_PIECE_EXPORT_ROOT, true)
+
+
+func _load_surface_piece_manifest(manifest_path: String, export_root: String, path_pieces_only: bool) -> Dictionary:
+	var defs_by_mask: Dictionary = {}
+	if manifest_path.is_empty() or not FileAccess.file_exists(manifest_path):
+		return defs_by_mask
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+	if not (parsed is Dictionary):
+		return defs_by_mask
+	var pieces: Variant = (parsed as Dictionary).get("pieces", [])
+	if not (pieces is Array):
+		return defs_by_mask
+	for piece_variant in pieces as Array:
+		if not (piece_variant is Dictionary):
+			continue
+		var piece := piece_variant as Dictionary
+		if not _piece_matches_surface(piece, path_pieces_only):
+			continue
+		var file_path := String(piece.get("file", ""))
+		var bitmask := int(piece.get("connection_bitmask", 0))
+		if file_path.is_empty() or bitmask <= 0:
+			continue
+		var res_path := export_root + "/" + file_path
+		if not ResourceLoader.exists(res_path):
+			continue
+		var defs: Array = defs_by_mask.get(bitmask, [])
+		var stored := piece.duplicate(true)
+		stored["res_path"] = res_path
+		defs.append(stored)
+		defs_by_mask[bitmask] = defs
+	return defs_by_mask
+
+
+func _piece_matches_surface(piece: Dictionary, path_pieces_only: bool) -> bool:
+	var kind := String(piece.get("kind", ""))
+	var width_class := String(piece.get("width_class", ""))
+	var tags: Array = piece.get("tags", []) as Array
+	var name := String(piece.get("name", piece.get("id", ""))).to_lower()
+	var is_path_piece := kind == "transition" or tags.has("rubble") or tags.has("path") or name.contains("rubble")
+	is_path_piece = is_path_piece or width_class == "tiny" or width_class == "short"
+	if path_pieces_only:
+		return is_path_piece
+	return not is_path_piece
+
+
+func _clear_road_piece_decals() -> void:
+	for node in _road_piece_nodes:
+		if node != null and is_instance_valid(node):
+			node.queue_free()
+	_road_piece_nodes.clear()
+	_road_piece_nodes_by_key.clear()
+
+
+func _remove_road_piece_decal(tile: Vector2i) -> void:
+	for surface in ["road", "path"]:
+		var key := _surface_tile_key(surface, tile)
+		var node := _road_piece_nodes_by_key.get(key, null) as Node2D
+		if node != null and is_instance_valid(node):
+			node.queue_free()
+		_road_piece_nodes_by_key.erase(key)
+
+
+func _spawn_road_piece_decals() -> void:
+	if not road_piece_decals_enabled or _road_piece_defs_by_mask.is_empty():
+		return
+	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
+		_road_piece_parent = _find_or_create_road_piece_parent()
+	for tile_variant in _road_visual_tiles.keys():
+		if not (tile_variant is Vector2i):
+			continue
+		_reveal_surface_piece_decal(tile_variant as Vector2i, "road")
+	for tile_variant in _path_visual_tiles.keys():
+		if not (tile_variant is Vector2i):
+			continue
+		_reveal_surface_piece_decal(tile_variant as Vector2i, "path")
+
+
+func _reveal_road_piece_decal(tile: Vector2i) -> void:
+	_reveal_surface_piece_decal(tile, "road")
+	_reveal_surface_piece_decal(tile, "path")
+
+
+func _reveal_surface_piece_decal(tile: Vector2i, surface_kind: String) -> void:
+	if not road_piece_decals_enabled:
+		return
+	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
+		_road_piece_parent = _find_or_create_road_piece_parent()
+	var source_tiles := _road_centerline_tiles
+	var visual_tiles := _road_visual_tiles
+	var defs_by_mask := _road_piece_defs_by_mask
+	if surface_kind == "path":
+		source_tiles = _path_centerline_tiles
+		visual_tiles = _path_visual_tiles
+		defs_by_mask = _path_piece_defs_by_mask
+	if defs_by_mask.is_empty() or not source_tiles.has(tile) or not visual_tiles.has(tile):
+		return
+	if surface_kind == "road" and not _main_road_tiles.has(tile):
+		return
+	if surface_kind == "path" and get_region_type_at_tile(tile) != "soft_path":
+		return
+	var mask := _get_road_piece_mask(tile, source_tiles)
+	if mask <= 0:
+		return
+	var piece := _select_surface_piece_definition(tile, mask, defs_by_mask)
+	if piece.is_empty():
+		return
+	_spawn_road_piece_decal(tile, piece, surface_kind)
+
+
+func _get_road_piece_mask(tile: Vector2i, source_tiles: Dictionary) -> int:
+	var mask := 0
+	if source_tiles.has(tile + Vector2i.UP):
+		mask |= 1
+	if source_tiles.has(tile + Vector2i.RIGHT):
+		mask |= 2
+	if source_tiles.has(tile + Vector2i.DOWN):
+		mask |= 4
+	if source_tiles.has(tile + Vector2i.LEFT):
+		mask |= 8
+	return mask
+
+
+func _select_road_piece_definition(tile: Vector2i, mask: int) -> Dictionary:
+	return _select_surface_piece_definition(tile, mask, _road_piece_defs_by_mask)
+
+
+func _select_surface_piece_definition(tile: Vector2i, mask: int, defs_by_mask: Dictionary) -> Dictionary:
+	var exact: Array = defs_by_mask.get(mask, [])
+	if exact.is_empty():
+		match mask:
+			1, 4, 5:
+				exact = defs_by_mask.get(5, [])
+			2, 8, 10:
+				exact = defs_by_mask.get(10, [])
+			3, 6, 9, 12:
+				exact = defs_by_mask.get(mask, [])
+			7, 11, 13, 14:
+				exact = defs_by_mask.get(mask, defs_by_mask.get(15, []))
+			_:
+				exact = defs_by_mask.get(15, [])
+	if exact.is_empty():
+		return {}
+	var index := _tile_noise_hash(tile + Vector2i(1901, 877)) % exact.size()
+	return (exact[index] as Dictionary).duplicate(true)
+
+
+func _spawn_road_piece_decal(tile: Vector2i, piece: Dictionary, surface_kind: String = "road") -> void:
+	var key := _surface_tile_key(surface_kind, tile)
+	if _road_piece_nodes_by_key.has(key):
+		return
+	var texture := ResourceLoader.load(String(piece.get("res_path", ""))) as Texture2D
+	if texture == null:
+		return
+	var sprite := Sprite2D.new()
+	sprite.name = "%s_%s" % [surface_kind, String(piece.get("id", "piece"))]
+	sprite.texture = texture
+	sprite.centered = true
+	sprite.global_position = _tile_to_world_position(tile)
+	sprite.z_index = road_piece_z_index
+	sprite.z_as_relative = false
+	_road_piece_parent.add_child(sprite)
+	_road_piece_nodes.append(sprite)
+	_road_piece_nodes_by_key[key] = sprite
+
+
+func _surface_tile_key(surface_kind: String, tile: Vector2i) -> String:
+	return "%s:%d:%d" % [surface_kind, tile.x, tile.y]
+
+
 func _carve_interest_paths(map_size: Vector2i) -> void:
 	if procgen_node == null:
 		return
+	_path_centerline_tiles.clear()
+	_path_visual_tiles.clear()
 	var spawn := get_player_spawn()
 	var path_width := maxi(0, intent_soft_path_width)
 	for ingress in _last_compound_ingress:
@@ -1109,12 +1662,24 @@ func _carve_interest_paths(map_size: Vector2i) -> void:
 
 func _carve_soft_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
 	var current := from_tile
+	_path_centerline_tiles[current] = true
+	_path_visual_tiles[current] = true
+	var step_index := 0
 	while current.x != to_tile.x:
 		current.x += 1 if to_tile.x > current.x else -1
+		_path_centerline_tiles[current] = true
+		step_index += 1
+		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
+			_path_visual_tiles[current] = true
 		_carve_path_brush(current, width, map_size)
 	while current.y != to_tile.y:
 		current.y += 1 if to_tile.y > current.y else -1
+		_path_centerline_tiles[current] = true
+		step_index += 1
+		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
+			_path_visual_tiles[current] = true
 		_carve_path_brush(current, width, map_size)
+	_path_visual_tiles[current] = true
 
 
 func _carve_path_brush(center: Vector2i, width: int, map_size: Vector2i) -> void:
@@ -1127,7 +1692,7 @@ func _carve_path_brush(center: Vector2i, width: int, map_size: Vector2i) -> void
 				continue
 			if walls_tilemap != null and walls_tilemap.get_cell_source_id(tile) >= 0:
 				continue
-			_set_floor_tile(tile)
+			_set_road_path_tile(tile, "path")
 			_set_region_tile(tile, "soft_path", "travel")
 
 
@@ -1585,6 +2150,13 @@ func _clear_region_metadata() -> void:
 	_last_interior_region_rect = Rect2i()
 	_last_interior_rooms.clear()
 	_last_interior_thresholds.clear()
+	_main_road_tiles.clear()
+	_road_centerline_tiles.clear()
+	_path_centerline_tiles.clear()
+	_road_visual_tiles.clear()
+	_path_visual_tiles.clear()
+	_compound_connector_centerline_tiles.clear()
+	_parking_zone_tiles.clear()
 	_region_tiles.clear()
 
 
@@ -1612,6 +2184,34 @@ func get_region_data_at_tile(tile: Vector2i) -> Dictionary:
 	}
 
 
+func is_road_surface_tile(tile: Vector2i) -> bool:
+	return _main_road_tiles.has(tile) or get_region_type_at_tile(tile) == "soft_path"
+
+
+func is_parking_zone_tile(tile: Vector2i) -> bool:
+	return _parking_zone_tiles.has(tile)
+
+
+func get_main_road_tiles() -> Array[Vector2i]:
+	return _dict_keys_as_vector2i_array(_main_road_tiles)
+
+
+func get_parking_zone_tiles() -> Array[Vector2i]:
+	return _dict_keys_as_vector2i_array(_parking_zone_tiles)
+
+
+func get_movement_surface_multiplier_at_tile(tile: Vector2i, actor_kind: String = "operator") -> float:
+	if not is_road_surface_tile(tile):
+		return 1.0
+	if actor_kind == "vehicle":
+		return maxf(1.0, road_vehicle_speed_multiplier)
+	return maxf(1.0, road_walk_speed_multiplier)
+
+
+func get_movement_surface_multiplier_at_global(global_position: Vector2, actor_kind: String = "operator") -> float:
+	return get_movement_surface_multiplier_at_tile(_global_to_tile(global_position), actor_kind)
+
+
 func get_elevation_map() -> Node:
 	_ensure_elevation_map()
 	return elevation_map
@@ -1629,6 +2229,14 @@ func get_elevation_data_at_tile(tile: Vector2i) -> Dictionary:
 
 func get_elevation_at_tile(tile: Vector2i) -> int:
 	return int(get_elevation_data_at_tile(tile).get("height", ELEVATION_MAP_SCRIPT.DEFAULT_HEIGHT))
+
+
+func get_elevation_at_global(global_position: Vector2) -> int:
+	return get_elevation_at_tile(_global_to_tile(global_position))
+
+
+func get_elevation_data_at_global(global_position: Vector2) -> Dictionary:
+	return get_elevation_data_at_tile(_global_to_tile(global_position))
 
 
 func can_traverse_elevation(from_tile: Vector2i, to_tile: Vector2i) -> bool:
@@ -1677,6 +2285,10 @@ func get_intensity_at_tile(tile: Vector2i) -> float:
 			value += 0.15
 		"interior_floor":
 			value += 0.22
+		"main_road":
+			value -= 0.08
+		"parking_zone":
+			value -= 0.12
 		"portal_plaza":
 			value += 0.30
 		"destroyed_wall_floor":
@@ -1899,6 +2511,7 @@ func _apply_terrain_builder(map_size: Vector2i) -> void:
 	if elevation_map.has_method("apply_build_result"):
 		elevation_map.call("apply_build_result", _last_terrain_result)
 	_apply_terrain_visuals(_last_terrain_result)
+	_update_terrain_debug_overlay()
 	_log_terrain_builder_summary(_last_terrain_result)
 
 
@@ -1916,6 +2529,12 @@ func _collect_terrain_required_cells(map_size: Vector2i) -> Array[Vector2i]:
 	for ingress in _last_compound_ingress:
 		if _is_tile_inside_map(ingress, map_size):
 			required.append(ingress)
+	for road_tile in _main_road_tiles.keys():
+		if road_tile is Vector2i and _is_tile_inside_map(road_tile as Vector2i, map_size):
+			required.append(road_tile as Vector2i)
+	for parking_tile in _parking_zone_tiles.keys():
+		if parking_tile is Vector2i and _is_tile_inside_map(parking_tile as Vector2i, map_size):
+			required.append(parking_tile as Vector2i)
 	return required
 
 
@@ -1929,24 +2548,103 @@ func _apply_terrain_visuals(terrain_result: Dictionary) -> void:
 		var traversal := String(traversal_by_cell.get(cell, ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE))
 		var tile_id := String(tile_by_cell.get(cell, ""))
 		var rendered_tile := _apply_terrain_tile_visual(cell, tile_id)
-		if traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_BLOCKED and (tile_id == "mountain_wall_impassable_32" or tile_id == "existing_wall"):
+		if traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_BLOCKED:
+			if tile_id.is_empty():
+				continue
 			if not rendered_tile:
 				_set_wall_tile(cell)
-			_set_region_tile(cell, "terrain_mountain_wall", "blocked")
+			if tile_id == "mountain_wall_impassable_32":
+				_set_region_tile(cell, "terrain_mountain_wall", "blocked")
+			else:
+				_set_region_tile(cell, "terrain_blocked", "blocked")
 		elif traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_DROP:
+			if tile_id.is_empty():
+				continue
 			if not rendered_tile:
 				_set_hole_tile(cell)
 			_set_region_tile(cell, "terrain_drop", "blocked")
 		elif traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_LEDGE:
+			if tile_id.is_empty():
+				continue
 			_set_region_tile(cell, "terrain_elevation_ledge", "elevated")
 		elif traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_RAMP or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_STAIR:
+			if tile_id.is_empty():
+				continue
 			_set_region_tile(cell, "terrain_elevation_access", "elevated")
 		elif int(terrain_result.get("height_by_cell", {}).get(cell, 0)) > 0:
+			if tile_id.is_empty():
+				continue
 			_set_region_tile(cell, "terrain_elevated_floor", "elevated")
 
 
+func _apply_compound_connector_elevation(map_size: Vector2i) -> void:
+	if not intent_compound_connector_elevation_enabled:
+		return
+	if _compound_connector_centerline_tiles.is_empty():
+		return
+	_ensure_elevation_map()
+	var width := maxi(1, intent_compound_connector_half_width)
+	var count := _compound_connector_centerline_tiles.size()
+	var ramp_index := clampi(int(round(float(count) * 0.55)), 1, maxi(1, count - 2))
+	var direction := _get_compound_connector_outward_direction()
+	var side_axis := Vector2i(-direction.y, direction.x)
+	var ramp_direction := _direction_name_from_delta(direction)
+	var ramp_tile_id := _ramp_tile_id_from_delta(direction)
+	for index in range(count):
+		var center := _compound_connector_centerline_tiles[index]
+		for lateral in range(-width, width + 1):
+			var tile := center + side_axis * lateral
+			if not _is_tile_inside_map(tile, map_size, 1) or not _main_road_tiles.has(tile):
+				continue
+			if index < ramp_index:
+				elevation_map.set_cell(tile, 1, ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE, ELEVATION_MAP_SCRIPT.DIRECTION_NONE)
+				_apply_terrain_tile_visual(tile, "elevated_floor_32")
+				_set_region_tile(tile, "compound_connector_elevated_road", "compound_ingress")
+			elif index == ramp_index:
+				elevation_map.set_cell(tile, 1, ELEVATION_MAP_SCRIPT.TRAVERSAL_RAMP, ramp_direction)
+				_apply_terrain_tile_visual(tile, ramp_tile_id)
+				_set_region_tile(tile, "compound_connector_ramp", "compound_ingress")
+			_clear_road_blocking_wall(tile)
+
+
+func _get_compound_connector_outward_direction() -> Vector2i:
+	if _last_compound_rect.size.x <= 0 or _last_compound_ingress.is_empty():
+		return Vector2i.DOWN
+	return -_get_compound_ingress_inward(_last_compound_ingress[0], _last_compound_rect)
+
+
+func _direction_name_from_delta(delta: Vector2i) -> String:
+	match delta:
+		Vector2i.UP:
+			return ELEVATION_MAP_SCRIPT.DIRECTION_NORTH
+		Vector2i.DOWN:
+			return ELEVATION_MAP_SCRIPT.DIRECTION_SOUTH
+		Vector2i.LEFT:
+			return ELEVATION_MAP_SCRIPT.DIRECTION_WEST
+		Vector2i.RIGHT:
+			return ELEVATION_MAP_SCRIPT.DIRECTION_EAST
+		_:
+			return ELEVATION_MAP_SCRIPT.DIRECTION_NONE
+
+
+func _ramp_tile_id_from_delta(delta: Vector2i) -> String:
+	match delta:
+		Vector2i.UP:
+			return "ramp_north_32"
+		Vector2i.DOWN:
+			return "ramp_south_32"
+		Vector2i.LEFT:
+			return "ramp_west_32"
+		Vector2i.RIGHT:
+			return "ramp_east_32"
+		_:
+			return "ramp_south_32"
+
+
 func _apply_terrain_tile_visual(cell: Vector2i, tile_id: String) -> bool:
-	if tile_id.is_empty() or not TERRAIN_TILESET_SOURCES.has(tile_id):
+	if tile_id.is_empty():
+		return false
+	if not TERRAIN_TILESET_SOURCES.has(tile_id):
 		return false
 	var def: Dictionary = TERRAIN_TILESET_SOURCES[tile_id]
 	var source_id := int(def.get("source_id", -1))
@@ -1989,6 +2687,22 @@ func _set_terrain_wall_visual(cell: Vector2i, source_id: int) -> void:
 	_generated_floor_cells.erase(cell)
 	if not _wall_health.has(cell):
 		_wall_health[cell] = wall_tile_max_health
+
+
+func _update_terrain_debug_overlay() -> void:
+	if terrain_debug_overlay == null:
+		return
+	if terrain_debug_overlay.has_method("set_terrain_result"):
+		terrain_debug_overlay.call("set_terrain_result", _last_terrain_result)
+
+
+func set_terrain_debug_enabled(enabled: bool) -> void:
+	if terrain_debug_overlay == null:
+		return
+	if terrain_debug_overlay.get("enabled") != null:
+		terrain_debug_overlay.set("enabled", enabled)
+	else:
+		terrain_debug_overlay.visible = enabled
 
 
 func _log_terrain_builder_summary(terrain_result: Dictionary) -> void:
@@ -2258,7 +2972,7 @@ func _set_floor_tile_and_generated_state(pos: Vector2i, region_type: String = ""
 		"alternative": 0,
 	}
 	_generated_wall_cells.erase(pos)
-	_wall_health.erase(pos)
+	_clear_road_blocking_wall(pos)
 	if not region_type.is_empty():
 		_set_region_tile(pos, region_type, zone)
 	if _is_tile_currently_visible(pos):
@@ -2288,12 +3002,24 @@ func _stamp_portal_plaza(center: Vector2i, map_size: Vector2i) -> void:
 
 func _carve_generated_soft_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
 	var current := from_tile
+	_path_centerline_tiles[current] = true
+	_path_visual_tiles[current] = true
+	var step_index := 0
 	while current.x != to_tile.x:
 		current.x += 1 if to_tile.x > current.x else -1
+		_path_centerline_tiles[current] = true
+		step_index += 1
+		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
+			_path_visual_tiles[current] = true
 		_carve_generated_path_brush(current, width, map_size)
 	while current.y != to_tile.y:
 		current.y += 1 if to_tile.y > current.y else -1
+		_path_centerline_tiles[current] = true
+		step_index += 1
+		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
+			_path_visual_tiles[current] = true
 		_carve_generated_path_brush(current, width, map_size)
+	_path_visual_tiles[current] = true
 
 
 func _carve_generated_path_brush(center: Vector2i, width: int, map_size: Vector2i) -> void:
@@ -2863,6 +3589,8 @@ func _remove_foliage(pos: Vector2i) -> void:
 func _should_place_foliage(pos: Vector2i) -> bool:
 	if foliage_density <= 0.0:
 		return false
+	if is_road_surface_tile(pos) or is_parking_zone_tile(pos):
+		return false
 	if is_indoor_tile(pos):
 		return false
 	if _is_near_indoor_tile(pos, foliage_indoor_clearance_tiles):
@@ -2996,6 +3724,8 @@ func _estimate_local_tree_density(center: Vector2i) -> float:
 			var pos := center + Vector2i(x, y)
 			if not _generated_floor_cells.has(pos):
 				continue
+			if is_road_surface_tile(pos) or is_parking_zone_tile(pos):
+				continue
 			if is_indoor_tile(pos) or _is_near_indoor_tile(pos, foliage_indoor_clearance_tiles):
 				continue
 			if _is_near_wall(pos) or _is_inside_foliage_clearance(pos):
@@ -3012,6 +3742,8 @@ func _estimate_local_tree_density(center: Vector2i) -> float:
 
 
 func _would_place_foliage_at(pos: Vector2i) -> bool:
+	if is_road_surface_tile(pos) or is_parking_zone_tile(pos):
+		return false
 	var density := foliage_density
 	if _is_inside_compound_zone(pos):
 		density *= foliage_compound_density_multiplier
@@ -3085,6 +3817,9 @@ func _place_fruit(foliage_sprite: Sprite2D, foliage_tile: Vector2i, foliage_size
 func _tile_to_world_position(pos: Vector2i) -> Vector2:
 	if floor_tilemap == null:
 		return Vector2.ZERO
+	if floor_tilemap.tile_set == null:
+		var tile_size := _get_tile_size()
+		return floor_tilemap.to_global((Vector2(pos) * tile_size) + (tile_size * 0.5))
 	return floor_tilemap.to_global(floor_tilemap.map_to_local(pos))
 
 
@@ -3320,6 +4055,7 @@ func _prepare_streaming_reveal() -> void:
 	_clear_foliage()
 	_clear_ruin_props()
 	_clear_horizontal_wall_overlays()
+	_clear_road_piece_decals()
 	floor_tilemap.clear()
 	walls_tilemap.clear()
 	_clear_runtime_wall_collision()
@@ -3453,6 +4189,7 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 			floor_tilemap.erase_cell(tile)
 			walls_tilemap.erase_cell(tile)
 			_remove_foliage(tile)
+			_remove_road_piece_decal(tile)
 			_remove_runtime_wall_body(tile)
 	_revealed_chunks.erase(chunk_pos)
 	_sync_runtime_wall_collision_with_visible_walls()
@@ -3464,6 +4201,7 @@ func _reveal_tile(tile: Vector2i) -> void:
 	if _generated_floor_cells.has(tile):
 		var floor_data: Dictionary = _generated_floor_cells[tile]
 		floor_tilemap.set_cell(tile, int(floor_data.get("source_id", floor_source_id)), floor_data.get("atlas", floor_atlas_coord), int(floor_data.get("alternative", 0)))
+		_reveal_road_piece_decal(tile)
 		if _should_place_foliage(tile):
 			_place_foliage(tile)
 	if _generated_wall_cells.has(tile):
@@ -3993,9 +4731,12 @@ func global_to_minimap_tile(global_position: Vector2) -> Vector2i:
 
 
 func minimap_tile_to_global(tile: Vector2i) -> Vector2:
-	if floor_tilemap != null:
-		return floor_tilemap.to_global(floor_tilemap.map_to_local(tile))
-	return Vector2.ZERO
+	if floor_tilemap == null:
+		return Vector2.ZERO
+	if floor_tilemap.tile_set == null:
+		var tile_size := _get_tile_size()
+		return floor_tilemap.to_global((Vector2(tile) * tile_size) + (tile_size * 0.5))
+	return floor_tilemap.to_global(floor_tilemap.map_to_local(tile))
 
 
 func _tile_to_chunk(tile: Vector2i) -> Vector2i:
@@ -4132,6 +4873,10 @@ func get_level_data() -> Dictionary:
 		"compound_rect": _last_compound_rect,
 		"compound_ingress": _last_compound_ingress,
 		"compound_buildings": _last_compound_buildings,
+		"main_road_tiles": get_main_road_tiles(),
+		"parking_zone_tiles": get_parking_zone_tiles(),
+		"road_walk_speed_multiplier": road_walk_speed_multiplier,
+		"road_vehicle_speed_multiplier": road_vehicle_speed_multiplier,
 		"interior_region_rect": _last_interior_region_rect,
 		"interior_rooms": _last_interior_rooms,
 		"interior_thresholds": _last_interior_thresholds,

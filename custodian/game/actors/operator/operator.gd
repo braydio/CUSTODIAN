@@ -674,6 +674,7 @@ func _physics_process(delta):
 	var cognitive := get_node_or_null("/root/CognitiveState")
 	if cognitive != null and cognitive.has_method("get_move_speed_multiplier"):
 		active_move_speed *= float(cognitive.call("get_move_speed_multiplier"))
+	set_movement_surface_multiplier(_query_movement_surface_multiplier("operator"))
 	active_move_speed *= max(0.0, movement_surface_multiplier)
 	var target_velocity: Vector2 = input_direction * active_move_speed
 	var accel_rate: float = move_acceleration if moving else move_deceleration
@@ -2505,6 +2506,15 @@ func set_fake_elevation(value: float) -> void:
 
 func set_movement_surface_multiplier(value: float) -> void:
 	movement_surface_multiplier = max(0.0, value)
+
+
+func _query_movement_surface_multiplier(actor_kind: String) -> float:
+	if get_tree() == null:
+		return 1.0
+	for map_node in get_tree().get_nodes_in_group("procgen_tilemap"):
+		if map_node != null and map_node.has_method("get_movement_surface_multiplier_at_global"):
+			return float(map_node.call("get_movement_surface_multiplier_at_global", global_position, actor_kind))
+	return 1.0
 
 
 func _sync_fake_elevation_visual_state() -> void:

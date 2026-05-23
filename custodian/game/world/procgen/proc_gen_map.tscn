@@ -115,6 +115,7 @@ z_index = 2
 
 [node name="ProcGen2" type="Node" parent="." unique_id=1827944280]
 script = ExtResource("3_7iafn")
+auto_generate_on_ready = false
 automaton_iterations = 4
 automaton_noise_rate = 0.56
 automaton_smoothing_step_cell_min_neighbors = 3

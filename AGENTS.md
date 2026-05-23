@@ -160,3 +160,9 @@ design/
 - Implementation: Copy existing `WEAPON_DATA_INTEGRATION_CODE.md` format
 
 **Status labels:** `draft` → `review` → `complete`
+
+## Agentmemory Note
+
+- Start the worker service with `agentmemory` before running `agentmemory demo`.
+- `agentmemory demo` is a smoke test for a live worker on `http://localhost:3111`.
+- The demo prints a cleanup command for `/tmp/agentmemory-demo` sessions when it finishes.

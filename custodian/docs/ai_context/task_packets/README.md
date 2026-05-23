@@ -1,10 +1,8 @@
 # Agent Task Packets
 
-Last updated: 2026-05-16
+Last updated: 2026-05-19
 
 Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
-
-Use a packet when work affects runtime behavior, architecture, validation workflow, asset workflow, documentation routing, or more than one file. For a trivial one-line edit, a packet is optional unless the user asks for one.
 
 ## Workflow
 
@@ -23,60 +21,18 @@ Use a packet when work affects runtime behavior, architecture, validation workfl
 - Set `Agent/session` in new packets with a stable handle, such as `Codex 2026-05-03T11:xx`.
 - Update `Last updated` whenever a packet changes.
 
-## Current Packets
+## Archive
 
-- `AGENT_WORKFLOW_AUTOMATION.md` - completed packet for task-packet next steps, ownership rules, and automation backlog.
-- `ARRN_RUNTIME_IMPLEMENTATION.md` - completed packet for the first Automated Relay Routing Network runtime implementation.
-- `ASSET_REFERENCE_SAMPLESHEET.md` - completed packet for generating a single reference samplesheet from active tiles, walls, floors, and prop art.
-- `ATTACK_PRIMARY_SECONDARY_INPUT_FIX.md` - completed packet for fixing plain M1 fast attack versus Shift+M1 heavy attack input routing.
-- `VALIDATION_RECIPES.md` - completed implementation packet for canonical validation recipes and prompt-template cleanup.
-- `COGNITIVE_STATE_PHASE_B.md` - in-progress runtime packet for cognitive modifier integration and debug panel validation.
-- `COMBAT_MOVING_ATTACK_PROFILES.md` - completed packet for phase-based operator attack movement profiles.
-- `COMPOUND_ROOM_ASSEMBLY_CONTRACT.md` - completed packet for deterministic room graph, loader, and layout assembler contract hardening.
-- `COMPOUND_ROOM_GRAPH_WALK_LAYOUT.md` - completed packet for the first graph-walk, door-aligned compound room layout pass.
-- `ENEMY_VARIANT_SYSTEM.md` - completed packet for the first procedural wolf enemy variant runtime slice.
-- `ENEMY_ANIMATION_STABILITY_AND_PIPELINE.md` - completed packet for Shrumb flee animation stabilization, wolf directional row selection, and the first enemy animation intake pipeline hook.
-- `ENEMY_GRUNT_SPRITE_INGEST_2026_05_17.md` - completed packet for ingesting pending `enemy_grunt` animation sheets and wiring expanded directional grunt playback.
-- `ENEMY_WALL_REROUTE_RECOVERY.md` - completed packet for enemy and passive critter wall-stuck recovery.
-- `FAB_PIPELINE_V1.md` - completed packet for the first build-token-first resource/fabrication runtime spine.
-- `FAB_DEBUG_COMMANDS_V1.md` - completed packet for DevConsole fabrication status, recipe, grant, and start commands.
-- `FAB_BUILD_TOKEN_TURRET_PLACEMENT.md` - completed packet for mapping completed `turret_basic` build tokens to existing gunner turret placement.
-- `FABRICATION_RUNTIME_WIRING.md` - completed packet for restoring the missing fabrication JSON and aliasing live harvest resources into the canonical fab economy.
-- `FAB_TERMINAL_PAGE.md` - completed packet for the dedicated fabrication-only HUD terminal page and command routing.
-- `FAB_TERMINAL_DEPLOYABLE.md` - in-progress packet for pickup/redeploy behavior on the in-world fabrication terminal.
-- `TERMINAL_NAMING_NORMALIZATION.md` - complete packet for normalizing command_terminal / fabricator_terminal naming in terminal docs and sprite pipeline guidance.
-- `TERMINAL_UI_STARTER_ASSET_WIRING.md` - completed packet for wiring starter terminal UI PNG resources into the live HUD terminal shell.
-- `INDOOR_OUTDOOR_PROCGEN_REGIONS.md` - completed runtime packet for the first region-aware indoor/outdoor procgen slice.
-- `INTERIOR_TILE_ART_WIRING.md` - completed packet for organizing interior tile art and wiring constructed procgen regions to the new tile family.
-- `KNIGHT_OPERATOR_TEST_SKIN.md` - completed packet for the DevConsole-toggleable Knight operator test skin.
-- `MINIMAP_SYSTEM.md` - completed packet for replacing the addon minimap with a custom data-driven tactical HUD minimap.
-- `MINIMAP_PASSIVE_CREATURE_ICONS.md` - completed packet for splitting hostile red dots from passive creature minimap markers.
-- `MINIMAP_EXPAND_AND_UTILITY_MARKERS.md` - completed packet for expanding the HUD minimap with `M` and adding terminal, vehicle, and turret markers.
-- `MOB_FOLIAGE_OCCLUSION.md` - completed packet for extending procgen foliage fade bubbles to nearby enemy, Shrumb, and mob-group actors.
-- `OPERATOR_FAST_MOVING_ATTACK_INGEST.md` - completed packet for ingesting the latest operator fast moving attack body/weapon/FX sheets.
-- `PLACEHOLDER_TILESET_SOURCE_RELOCATION.md` - completed packet for moving the old placeholder tileset into `content/tiles/source` and restoring world TileSet loading.
-- `PRIMARY_SECONDARY_ATTACK_MODEL.md` - completed packet for aligning unarmed/melee/ranged attack modes to primary/secondary intent routing.
-- `PROCGEN_WALL_PASSAGE_VISIBILITY.md` - completed packet for making generated passage wall tiles visible on normal procgen wall runs.
-- `PROCGEN_WALL_COLLISION_SYNC.md` - completed packet for keeping visible procgen wall cells synchronized with runtime wall bodies during streaming reveal.
-- `PROCGEN_GAMEPLAY_FEEL_INTENT_ZONES.md` - completed packet for implementing procgen semantic intent zones, streaming reveal priority, intensity queries, and the root required-assets tracker.
-- `PROCGEN_PROP_STREAMING_VISIBILITY.md` - completed packet for preserving outdoor ruin and interior runtime props through streaming reveal setup.
-- `PROCGEN_PORTAL_PAIR_TELEPORT.md` - completed packet for paired portal-ring teleport behavior in procgen maps.
-- `PROCGEN_PORTAL_SAFE_PLACEMENT.md` - completed packet for adding portal-specific safe placement, unsafe portal replacement, and jitter-free portal endpoint positioning.
-- `PORTAL_CENTER_TRIGGER_AND_ANIMATION.md` - completed packet for tightening portal activation to the center and defining portal animation asset needs.
-- `PORTAL_AND_MOVING_ATTACK_SPRITE_INGEST.md` - completed packet for ingesting portal teleport FX and moving attack layer sheets.
-- `PORTAL_FX_PLAYBACK_WIRING.md` - completed packet for wiring portal idle, activation, and arrival FX playback.
-- `PORTAL_DUAL_APPROACH_TUNING.md` - completed packet for mirroring the portal ramp, collapsing portal animation to one state sprite, and using platform-horizon occlusion.
-- `PORTAL_COLLISION_DEBUG_TUNING.md` - completed packet for visualizing portal prop collision and correcting portal-ring side blocker positions.
-- `PORTAL_TRIGGER_FRAME_COVERAGE.md` - completed packet for expanding the portal-ring trigger/elevation span to the full visible frame width.
-- `PORTAL_PROP_SPRITE_REINGEST.md` - completed packet for reingesting portal-ring FX into canonical environment prop runtime paths.
-- `PROCGEN_PORTAL_AND_PROP_OCCLUSION.md` - completed packet for portal safe-placement hardening plus ruin-prop collision and depth sorting.
-- `PORTAL_STAIR_RAMP_2_5D.md` - completed packet for the portal stair-lane, elevation, and top-only trigger impostor.
-- `PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` - completed packet for adding `--top-source` preprocessing support to the wall atlas builder.
-- `RANGED_PHYSICS_ALIGNMENT.md` - completed packet for ranged muzzle obstruction, swept projectile movement, and temporary stance-band socket rotation clamps.
-- `RESOURCE_NODE_HARVESTING_V1.md` - completed packet for first hand-placed interactable resource nodes feeding `ResourceLedger`.
-- `RESOURCE_ID_CANONICALIZATION.md` - completed packet for making CUSTODIAN-flavored resource IDs canonical across node drops, ledger storage, recipes, UI, and docs.
-- `SEVERANCE_UNARRIVAL_LORE_REVISION.md` - completed packet for locking The Unarrival as the Severance root cause, reframing shared-context collapse as symptom-level language, and renaming Bell-Kneeler to Forlorn-Ritualant.
-- `SHRUMB_LOCAL_WANDER_HOME.md` - completed packet for anchoring passive Shrumb wander to their generated spawn position.
-- `TERMINAL_LIVE_MINIMAP.md` - completed packet for replacing the terminal placeholder tactical map with the shared live custom minimap.
-- `TILESET_RENAME_ALIGNMENT.md` - completed packet for renaming the canonical world/procgen TileSet to `procgen_world_tileset.tres`.
-- `UI_MINIMAP_INVENTORY_VERIFY.md` - completed packet for keeping the custom minimap visible in the normal HUD and mounting the inventory overlay on `I`.
+Completed packets are moved to `archived/`. They are preserved for historical reference but are no longer active task surfaces.
+
+## Active Packets
+
+### In Progress
+
+- `COGNITIVE_STATE_PHASE_B.md` — Wire cognitive state modifiers into game systems and fix debug panel bugs. Implementation done; awaiting Godot runtime validation of move speed, attack recovery, accuracy bonus, and crit bonus modifiers. Manual test: F12 toggles debug panel, cognitive items change player stats visually.
+- `UI_GD_FIXES.md` — Fix 11 hard compile blockers, runtime bugs, and performance issues in `ui.gd`. 10 of 11 fixes verified in code; Fix #11 (minimap rebuild performance) deferred. Boot sequence and stub cleanup still need Godot runtime confirmation.
+
+### Recently Complete (awaiting archive)
+
+- `CHANGE_CONTROL_BUNDLE_SCRIPT.md` — Adds a change-control bundler that writes current git-changed files to `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the bundle to the clipboard when available.
+- `GOTHIC_COMPOUND_LAYOUT_GRAMMAR.md` — Hardens gothic compound asset metadata, zoning, decal quotas, anchoring, footprint placement, and perimeter validation.

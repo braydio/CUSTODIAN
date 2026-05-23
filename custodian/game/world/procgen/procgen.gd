@@ -232,11 +232,13 @@ const _Context = preload("generator/context.gd")
 
 var _generator := preload("generator/generator.gd").new()
 
+@export var auto_generate_on_ready: bool = true
+
 
 func _ready() -> void:
 	_generator.finished.connect(finished.emit)
 	_generator.automaton_iteration_finished.connect(automaton_iteration_finished.emit)
-	if not Engine.is_editor_hint():
+	if auto_generate_on_ready and not Engine.is_editor_hint():
 		generate()
 
 

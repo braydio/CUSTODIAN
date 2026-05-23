@@ -1,0 +1,47 @@
+{
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
+  "output": {
+    "filePath": ".ai/custodian-addons-ai-tooling.xml",
+    "style": "xml",
+    "compress": true,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeEmptyLines": true
+  },
+  "include": [
+    "AGENTS.md",
+    "AGENTS_ADDENDUM.md",
+    "custodian/AGENTS.md",
+
+    "custodian/addons/ai_coding_assistant/**/*.gd",
+    "custodian/addons/ai_coding_assistant/**/*.md",
+    "custodian/addons/godot_ai/**/*.gd",
+    "custodian/addons/godot_ai/**/*.md",
+    "custodian/addons/godot_mcp/**/*.gd",
+    "custodian/addons/godot_mcp/**/*.md",
+    "custodian/addons/aseprite_importer/**/*.gd",
+    "custodian/addons/aseprite_importer/**/*.md",
+    "custodian/addons/sprite_pipeline/**/*.gd",
+    "custodian/addons/sprite_pipeline/**/*.md"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDotIgnore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "**/*.png",
+      "**/*.png.import",
+      "**/*.svg.import",
+      "**/*.uid",
+      "custodian/addons/limboai/bin/**",
+      ".ai/**"
+    ]
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
+}

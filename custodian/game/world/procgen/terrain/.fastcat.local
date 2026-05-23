@@ -1,0 +1,157 @@
+=== terrain_tile_ids.gd ===
+extends RefCounted
+class_name TerrainTileIds
+
+const INDUSTRIAL := {
+	"ground": "ground_flat_32",
+	"elevated_floor": "elevated_floor_32",
+	"edge_north": "elevation_edge_north_32",
+	"edge_south": "elevation_edge_south_32",
+	"edge_east": "elevation_edge_east_32",
+	"edge_west": "elevation_edge_west_32",
+	"ramp_north": "ramp_north_32",
+	"ramp_south": "ramp_south_32",
+	"ramp_east": "ramp_east_32",
+	"ramp_west": "ramp_west_32",
+	"drop_shadow": "cliff_shadow_32",
+	"stair": "stair_metal_32",
+}
+
+const MOUNTAIN := {
+	"ground": "rock_ground_flat_32",
+	"plateau": "rock_plateau_raised_32",
+	"edge_north": "cliff_edge_north_32",
+	"edge_south": "cliff_edge_south_32",
+	"edge_east": "cliff_edge_east_32",
+	"edge_west": "cliff_edge_west_32",
+	"outer_nw": "cliff_outer_nw_32",
+	"outer_ne": "cliff_outer_ne_32",
+	"outer_sw": "cliff_outer_sw_32",
+	"outer_se": "cliff_outer_se_32",
+	"inner_nw": "cliff_inner_nw_32",
+	"inner_ne": "cliff_inner_ne_32",
+	"inner_sw": "cliff_inner_sw_32",
+	"inner_se": "cliff_inner_se_32",
+	"chasm": "cliff_chasm_drop_32",
+	"wall": "mountain_wall_impassable_32",
+}
+
+const PLACEHOLDER := {
+	"ground": "existing_floor",
+	"blocked": "existing_wall",
+}
+
+
+static func industrial(key: String, fallback: String = "existing_floor") -> String:
+	return String(INDUSTRIAL.get(key, fallback))
+
+
+static func mountain(key: String, fallback: String = "existing_wall") -> String:
+	return String(MOUNTAIN.get(key, fallback))
+
+
+=== terrain_region.gd ===
+extends RefCounted
+class_name TerrainRegion
+
+enum RegionKind {
+	BASELINE,
+	MOUNTAIN_WALL,
+	CHASM,
+	INDUSTRIAL_PLATFORM,
+}
+
+var kind: RegionKind = RegionKind.BASELINE
+var rect: Rect2i = Rect2i()
+var cells: Array[Vector2i] = []
+var access_cells: Array[Vector2i] = []
+var discarded: bool = false
+var reason: String = ""
+
+
+func _init(
+	p_kind: RegionKind = RegionKind.BASELINE,
+	p_rect: Rect2i = Rect2i(),
+	p_cells: Array[Vector2i] = [],
+	p_access_cells: Array[Vector2i] = []
+) -> void:
+	kind = p_kind
+	rect = p_rect
+	cells = p_cells.duplicate()
+	access_cells = p_access_cells.duplicate()
+
+
+func to_dictionary() -> Dictionary:
+	return {
+		"kind": kind,
+		"kind_name": kind_to_string(kind),
+		"rect": rect,
+		"cells": cells.duplicate(),
+		"access_cells": access_cells.duplicate(),
+		"discarded": discarded,
+		"reason": reason,
+	}
+
+
+static func kind_to_string(value: RegionKind) -> String:
+	match value:
+		RegionKind.MOUNTAIN_WALL:
+			return "mountain_wall"
+		RegionKind.CHASM:
+			return "chasm"
+		RegionKind.INDUSTRIAL_PLATFORM:
+			return "industrial_platform"
+		_:
+			return "baseline"
+
+
+=== terrain_debug_overlay.gd ===
+extends Node2D
+class_name TerrainDebugOverlay
+
+@export var enabled: bool = false:
+	get:
+		return _enabled
+	set(value):
+		if _enabled == value:
+			return
+		_enabled = value
+		queue_redraw()
+
+@export var cell_size: Vector2 = Vector2(16, 16)
+
+var terrain_result: Dictionary = {}
+var _enabled: bool = false
+
+
+func set_terrain_result(result: Dictionary) -> void:
+	terrain_result = result.duplicate(true)
+	queue_redraw()
+
+
+func _draw() -> void:
+	if not enabled or terrain_result.is_empty():
+		return
+	var height_by_cell: Dictionary = terrain_result.get("height_by_cell", {})
+	var traversal_by_cell: Dictionary = terrain_result.get("traversal_by_cell", {})
+	for cell_variant in height_by_cell.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		var traversal := String(traversal_by_cell.get(cell, "walkable"))
+		var height := int(height_by_cell.get(cell, 0))
+		var color := Color(0.1, 0.7, 0.2, 0.18)
+		if height > 0:
+			color = Color(0.2, 0.45, 1.0, 0.22)
+		match traversal:
+			"blocked":
+				color = Color(1.0, 0.0, 0.0, 0.30)
+			"ledge":
+				color = Color(1.0, 0.25, 0.0, 0.28)
+			"drop":
+				color = Color(0.08, 0.0, 0.0, 0.42)
+			"ramp", "stair":
+				color = Color(1.0, 0.9, 0.0, 0.35)
+		draw_rect(Rect2(Vector2(cell) * cell_size, cell_size), color, true)
+
+

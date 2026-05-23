@@ -26,7 +26,7 @@ The terrain builder owns baseline terrain metadata, blocked mountain/cliff terra
 
 ## Non-Goals
 
-This pass intentionally does not implement jumping, climbing, falling, vertical collision motion, projectile arcs, height-based combat bonuses, or a full TileSet rewrite. Active TileSet mapping still uses safe placeholders unless the new art is explicitly wired into the scene's TileSet later.
+This pass intentionally does not implement jumping, climbing, falling, vertical collision motion, projectile arcs, height-based combat bonuses, or a full TileSet rewrite. Actor traversal enforcement remains deferred. Elevation metadata currently supports procgen validation, spawn/prop filtering, visual stamping, and level-data export, but it does not yet block operator, vehicle, or enemy movement.
 
 ## Runtime Files
 
@@ -56,11 +56,25 @@ Traversal convention:
 - `stair`
 - `drop`
 
-Movement may cross equal-height adjacent cells. Height changes of one level are allowed only when the source or destination cell is a ramp or stair. Blocked, ledge, and drop cells are not spawn-valid.
+Movement may cross equal-height adjacent cells. Height changes of one level are allowed through stairs or through directional ramps when approach direction matches the ramp metadata. Blocked, ledge, and drop cells are not spawn-valid.
 
 ## Visual Mapping
 
-The builder returns symbolic tile IDs from `TerrainTileIds` rather than hardcoded atlas coordinates. `ProcGenTilemap` currently resolves those symbols to safe placeholder floor/wall cells using the existing TileMap configuration. The new industrial and mountain PNG assets can be added to the active TileSet later without changing the terrain metadata contract.
+The builder returns symbolic tile IDs from `TerrainTileIds` rather than hardcoded atlas coordinates.
+
+The active procgen TileSet now has registered terrain sources for industrial elevation and mountain/cliff art. `ProcGenTilemap` resolves `TerrainTileIds` symbols through `TERRAIN_TILESET_SOURCES`, currently mapped to source IDs `32..59` in `res://content/tiles/tilesets/procgen_world_tileset.tres`.
+
+Baseline terrain metadata must not repaint ordinary procgen floor/wall cells by default. Baseline floor and existing blocked/wall cells use an empty tile ID as a visual no-op.
+
+Only explicit terrain features should write visual tiles:
+
+- industrial elevated floors
+- industrial ledges
+- ramps/stairs
+- mountain walls
+- cliff/drop tiles
+
+If a tile source is missing, terrain metadata should remain valid and the visual pass should fail safely without corrupting baseline floor/wall art.
 
 ## Validation
 

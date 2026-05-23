@@ -21,6 +21,7 @@ class_name ContractWorldLoader
 @export var reposition_camera_from_contract: bool = true
 @export var place_arrn_relays_from_contract: bool = true
 @export var place_tutorial_resource_nodes_from_contract: bool = true
+@export var place_gothic_compound_connection: bool = true
 @export_range(0, 6, 1) var tutorial_resource_node_count: int = 3
 @export_range(2, 64, 1) var tutorial_resource_min_distance_tiles: int = 10
 @export_range(4, 96, 1) var tutorial_resource_max_distance_tiles: int = 42
@@ -29,6 +30,8 @@ class_name ContractWorldLoader
 
 const ARRN_RELAY_SCENE := preload("res://game/actors/relay/relay.tscn")
 const RESOURCE_NODE_SCENE := preload("res://game/resources/resource_node.tscn")
+const GOTHIC_COMPOUND_MAP_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_map.gd")
+const GOTHIC_COMPOUND_TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_travel_gate.gd")
 const SECTOR_TILE_PX := 24.0
 const PROCGEN_SECTOR_LAYOUT := {
 	"ARCHIVE": 0,
@@ -110,6 +113,8 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_position_tutorial_resource_nodes(level_data, map_instance)
 	if place_arrn_relays_from_contract:
 		_position_arrn_relays(level_data, map_instance)
+	if place_gothic_compound_connection:
+		_place_gothic_compound_connection(level_data, map_instance)
 	if reposition_camera_from_contract:
 		_refresh_camera(map_instance)
 	_rebuild_navigation(map_instance)
@@ -580,6 +585,83 @@ func _position_arrn_relays(level_data: Dictionary, map_instance: Node) -> void:
 			arrn_manager.call("set_relay_world_position", spec["relay_id"], relay.global_position)
 
 
+func _place_gothic_compound_connection(level_data: Dictionary, map_instance: Node) -> void:
+	var world := get_node_or_null(world_path) as Node2D
+	if world == null:
+		return
+
+	var connected_root := world.get_node_or_null("ConnectedMaps") as Node2D
+	if connected_root == null:
+		connected_root = Node2D.new()
+		connected_root.name = "ConnectedMaps"
+		world.add_child(connected_root)
+	for child in connected_root.get_children():
+		if child.is_in_group("generated_gothic_compound_connection"):
+			child.queue_free()
+	for child in world.get_children():
+		if child.is_in_group("generated_gothic_compound_connection") and child.get_parent() == world:
+			child.queue_free()
+
+	var main_gate_tile := _pick_gothic_compound_gate_tile(level_data, map_instance)
+	if main_gate_tile == Vector2i.ZERO:
+		return
+	var main_gate_position := _tile_to_world(map_instance, main_gate_tile)
+
+	var gothic_map := GOTHIC_COMPOUND_MAP_SCRIPT.new() as Node2D
+	if gothic_map == null:
+		return
+	gothic_map.name = "GothicCompoundMap"
+	gothic_map.add_to_group("generated_gothic_compound_connection")
+	gothic_map.global_position = _get_gothic_compound_world_offset(level_data, map_instance)
+	gothic_map.call("configure_connection", map_instance, main_gate_position)
+	connected_root.add_child(gothic_map)
+
+	var main_gate := GOTHIC_COMPOUND_TRAVEL_GATE_SCRIPT.new() as Node2D
+	if main_gate == null:
+		return
+	main_gate.name = "GothicCompoundTravelGate"
+	main_gate.add_to_group("generated_gothic_compound_connection")
+	main_gate.call("configure", gothic_map, 0, "ENTER GOTHIC COMPOUND")
+	main_gate.global_position = main_gate_position
+	world.add_child(main_gate)
+
+
+func _pick_gothic_compound_gate_tile(level_data: Dictionary, map_instance: Node) -> Vector2i:
+	var compound_rect_variant: Variant = level_data.get("compound_rect")
+	var ingress_tiles: Array[Vector2i] = []
+	for item in level_data.get("compound_ingress", []):
+		if item is Vector2i:
+			ingress_tiles.append(item as Vector2i)
+	if compound_rect_variant is Rect2i and not ingress_tiles.is_empty():
+		var compound_rect := compound_rect_variant as Rect2i
+		var preferred_ingress := ingress_tiles[0]
+		var direction := -_get_compound_ingress_direction(preferred_ingress, compound_rect)
+		for depth in range(3, 10):
+			var candidate: Vector2i = preferred_ingress + direction * depth
+			if _is_walkable_floor_tile(map_instance, candidate):
+				return candidate
+		return preferred_ingress
+
+	var player_spawn: Variant = level_data.get("player_spawn")
+	if player_spawn is Vector2i:
+		var spawn_tile := player_spawn as Vector2i
+		for offset in [Vector2i(0, 8), Vector2i(8, 0), Vector2i(-8, 0), Vector2i(0, -8)]:
+			var candidate: Vector2i = spawn_tile + offset
+			if _is_walkable_floor_tile(map_instance, candidate):
+				return candidate
+		return spawn_tile
+	return Vector2i.ZERO
+
+
+func _get_gothic_compound_world_offset(level_data: Dictionary, map_instance: Node) -> Vector2:
+	var map_size: Vector2i = level_data.get("map_size", Vector2i.ZERO)
+	var tile_size := Vector2(fallback_tile_size, fallback_tile_size)
+	if map_instance is ProcGenTilemap:
+		tile_size = (map_instance as ProcGenTilemap).get_runtime_tile_size()
+	var width_px := float(maxi(map_size.x, 96)) * tile_size.x
+	return Vector2(width_px + 1800.0, 0.0)
+
+
 func _pick_arrn_relay_tile(level_data: Dictionary, anchor: Vector2, used_tiles: Dictionary) -> Vector2i:
 	var floor_tiles: Array[Vector2i] = []
 	for tile in level_data.get("floor_cells", []):
@@ -617,6 +699,11 @@ func _position_vehicles(level_data: Dictionary, map_instance: Node) -> void:
 	if vehicle_nodes.is_empty():
 		return
 
+	var parking_tiles := _filter_open_tiles(_get_parking_zone_tiles(level_data, map_instance), map_instance)
+	if not parking_tiles.is_empty():
+		_position_vehicle_nodes_on_tiles(vehicle_nodes, parking_tiles, level_data, map_instance)
+		return
+
 	var compound_tiles := _filter_open_compound_tiles(_get_compound_walkable_tiles(level_data, map_instance), map_instance)
 	if compound_tiles.is_empty():
 		compound_tiles = _get_compound_walkable_tiles(level_data, map_instance)
@@ -652,6 +739,54 @@ func _position_vehicles(level_data: Dictionary, map_instance: Node) -> void:
 			continue
 		used_tiles[chosen_tile] = true
 		vehicle.global_position = _tile_to_world(map_instance, chosen_tile)
+
+
+func _position_vehicle_nodes_on_tiles(vehicle_nodes: Array[Node2D], tiles: Array[Vector2i], level_data: Dictionary, map_instance: Node) -> void:
+	var anchor_tile := Vector2i.ZERO
+	var player_spawn: Variant = level_data.get("player_spawn")
+	if player_spawn is Vector2i:
+		anchor_tile = player_spawn as Vector2i
+	var ordered_tiles := tiles.duplicate()
+	if anchor_tile != Vector2i.ZERO:
+		ordered_tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+			var a_score := a.distance_squared_to(anchor_tile)
+			var b_score := b.distance_squared_to(anchor_tile)
+			if a_score == b_score:
+				return a.x == b.x and a.y < b.y or a.x < b.x
+			return a_score < b_score
+		)
+	var used_tiles: Dictionary = {}
+	for vehicle in vehicle_nodes:
+		var chosen_tile := Vector2i.ZERO
+		for tile in ordered_tiles:
+			if used_tiles.has(tile):
+				continue
+			if anchor_tile != Vector2i.ZERO and tile.distance_squared_to(anchor_tile) < 9:
+				continue
+			chosen_tile = tile
+			break
+		if chosen_tile == Vector2i.ZERO:
+			for tile in ordered_tiles:
+				if not used_tiles.has(tile):
+					chosen_tile = tile
+					break
+		if chosen_tile == Vector2i.ZERO:
+			continue
+		used_tiles[chosen_tile] = true
+		vehicle.global_position = _tile_to_world(map_instance, chosen_tile)
+
+
+func _get_parking_zone_tiles(level_data: Dictionary, map_instance: Node) -> Array[Vector2i]:
+	var tiles: Array[Vector2i] = []
+	for tile_variant in level_data.get("parking_zone_tiles", []):
+		if tile_variant is Vector2i and _is_walkable_floor_tile(map_instance, tile_variant as Vector2i):
+			tiles.append(tile_variant as Vector2i)
+	if not tiles.is_empty():
+		return tiles
+	for tile_variant in level_data.get("main_road_tiles", []):
+		if tile_variant is Vector2i and _is_walkable_floor_tile(map_instance, tile_variant as Vector2i):
+			tiles.append(tile_variant as Vector2i)
+	return tiles
 
 
 func _project_ingress_to_edge(ingress: Vector2i, map_size: Vector2i) -> Vector2i:
@@ -735,6 +870,10 @@ func _get_compound_walkable_tiles(level_data: Dictionary, map_instance: Node) ->
 
 
 func _filter_open_compound_tiles(tiles: Array[Vector2i], map_instance: Node) -> Array[Vector2i]:
+	return _filter_open_tiles(tiles, map_instance)
+
+
+func _filter_open_tiles(tiles: Array[Vector2i], map_instance: Node) -> Array[Vector2i]:
 	var open_tiles: Array[Vector2i] = []
 	for tile in tiles:
 		if _count_walkable_neighbors(map_instance, tile) >= 2:

@@ -626,10 +626,10 @@ func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionar
 	if not (spawn_variant is Vector2i):
 		return {"valid": false}
 	var spawn_tile := spawn_variant as Vector2i
-	if map_instance.procgen_node.is_full_at(spawn_tile):
+	if not _is_layout_walkable_tile(map_instance, spawn_tile):
 		return {"valid": false}
 
-	var reachable := _flood_fill_walkable(map_instance.procgen_node, spawn_tile)
+	var reachable := _flood_fill_walkable(map_instance, level_data, spawn_tile)
 	if reachable.is_empty():
 		return {"valid": false}
 
@@ -665,11 +665,13 @@ func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionar
 	}
 
 
-func _flood_fill_walkable(procgen: ProcGen, start_tile: Vector2i) -> Dictionary:
+func _flood_fill_walkable(map_instance: ProcGenTilemap, level_data: Dictionary, start_tile: Vector2i) -> Dictionary:
 	var reachable := {}
 	var open: Array[Vector2i] = [start_tile]
 	reachable[start_tile] = true
-	var map_size: Vector2i = procgen.map_size
+	var map_size: Vector2i = level_data.get("map_size", Vector2i.ZERO)
+	if map_size == Vector2i.ZERO and map_instance != null and map_instance.procgen_node != null:
+		map_size = map_instance.procgen_node.map_size
 	var directions: Array[Vector2i] = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
 	while not open.is_empty():
 		var current: Vector2i = open.pop_back()
@@ -677,8 +679,18 @@ func _flood_fill_walkable(procgen: ProcGen, start_tile: Vector2i) -> Dictionary:
 			var next := current + direction
 			if next.x < 0 or next.y < 0 or next.x >= map_size.x or next.y >= map_size.y:
 				continue
-			if reachable.has(next) or procgen.is_full_at(next):
+			if reachable.has(next) or not _is_layout_walkable_tile(map_instance, next):
+				continue
+			if map_instance != null and map_instance.has_method("can_traverse_elevation") and not bool(map_instance.call("can_traverse_elevation", current, next)):
 				continue
 			reachable[next] = true
 			open.append(next)
 	return reachable
+
+
+func _is_layout_walkable_tile(map_instance: ProcGenTilemap, tile: Vector2i) -> bool:
+	if map_instance != null and map_instance.has_method("is_valid_spawn_cell"):
+		return bool(map_instance.call("is_valid_spawn_cell", tile))
+	if map_instance != null and map_instance.procgen_node != null:
+		return not map_instance.procgen_node.is_full_at(tile)
+	return false

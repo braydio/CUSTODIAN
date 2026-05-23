@@ -37,6 +37,9 @@ After a successful ingest:
 - debug previews land in `_pipeline/normalized/`
 - result logs land in `_pipeline/logs/`
 - processed inputs move to `_pipeline/archive/`
+- matching source PNG `.import` sidecars are removed from the inbox
+
+Do not keep inbox `.import` files around as source assets. They are editor metadata only and should be discarded once the PNG has been ingested.
 
 ## Manifest Schema
 
