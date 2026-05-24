@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://i1noe007ft1w"
+
+[deps]
+
+files=["res://content/tiles/roads_paths/source/index.section.translation", "res://content/tiles/roads_paths/source/index.role.translation", "res://content/tiles/roads_paths/source/index.filename.translation", "res://content/tiles/roads_paths/source/index.relative.translation", "res://content/tiles/roads_paths/source/index.x.translation", "res://content/tiles/roads_paths/source/index.y.translation", "res://content/tiles/roads_paths/source/index.w.translation", "res://content/tiles/roads_paths/source/index.h.translation", "res://content/tiles/roads_paths/source/index.pixels.translation"]
+
+source_file="res://content/tiles/roads_paths/source/index.csv"
+dest_files=["res://content/tiles/roads_paths/source/index.section.translation", "res://content/tiles/roads_paths/source/index.role.translation", "res://content/tiles/roads_paths/source/index.filename.translation", "res://content/tiles/roads_paths/source/index.relative.translation", "res://content/tiles/roads_paths/source/index.x.translation", "res://content/tiles/roads_paths/source/index.y.translation", "res://content/tiles/roads_paths/source/index.w.translation", "res://content/tiles/roads_paths/source/index.h.translation", "res://content/tiles/roads_paths/source/index.pixels.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

@@ -1,0 +1,72 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_floor_broken_stone_07",
+  "display_name": "Broken Stone Floor 07",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 13,
+    "row_index": 0,
+    "col_index": 12,
+    "bbox_px": {
+      "x": 888,
+      "y": 5,
+      "w": 66,
+      "h": 72
+    }
+  },
+  "file": {
+    "path": "custodian/content/tiles/gothic/floors/gothic_floor_broken_stone_07.png",
+    "pixel_size": {
+      "w": 66,
+      "h": 72
+    }
+  },
+  "classification": {
+    "asset_type": "tiles",
+    "semantic_role": "walkable_floor_variant",
+    "placement_layer": "ground",
+    "tags": [
+      "broken",
+      "compound",
+      "floor",
+      "gothic",
+      "stone",
+      "walkable"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 3,
+      "h": 3
+    },
+    "origin_mode": "top_left",
+    "pivot_px": {
+      "x": 0,
+      "y": 0
+    },
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": false
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "collision_shape": "none"
+  },
+  "procgen": {
+    "uses": [
+      "compound_floor",
+      "courtyard_floor",
+      "interior_floor",
+      "road_or_plaza"
+    ],
+    "weight": 70,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

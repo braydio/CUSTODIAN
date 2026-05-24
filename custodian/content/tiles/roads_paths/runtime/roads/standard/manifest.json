@@ -1,0 +1,2253 @@
+{
+  "schema_version": 1,
+  "asset_pack": "custodian_industrial_road_pieces_1254_roads_game32",
+  "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/roads_paths/unprocessed_street_tilesheet.png",
+  "reference_size": {
+    "w": 1254,
+    "h": 1254
+  },
+  "export_root": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/roads_paths/runtime/roads/standard",
+  "piece_count": 20,
+  "direction_bitmask": {
+    "n": 1,
+    "e": 2,
+    "s": 4,
+    "w": 8
+  },
+  "procgen_notes": {
+    "connection_rule": "A module connects to a neighbor when both expose matching opposite sockets.",
+    "opposites": {
+      "n": "s",
+      "e": "w",
+      "s": "n",
+      "w": "e"
+    },
+    "selection_rule": "Build a required connection bitmask, then pick a random piece where connection_bitmask equals that mask.",
+    "module_warning": "These are variable-size road stamps, not uniform single-cell tiles. Use as prefab stamps or slice further for TileMap atlas use.",
+    "naming_rule": "road_<kind>_<connection_string>_<size>_<variant>.png"
+  },
+  "pieces": [
+    {
+      "id": "road_straight_e_w_wide_01",
+      "file": "pieces/road_straight_e_w_wide_01.png",
+      "name": "road_straight_e_w_wide_01",
+      "kind": "straight",
+      "width_class": "wide",
+      "connections": [
+        "e",
+        "w"
+      ],
+      "connection_string": "e_w",
+      "connection_bitmask": 10,
+      "tags": [
+        "road",
+        "straight",
+        "horizontal",
+        "wide",
+        "sidewalk",
+        "variant"
+      ],
+      "description": "Wide east-west industrial road segment with sidewalk borders, variant 01.",
+      "size_px": {
+        "w": 288,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 65,
+        "y": 67,
+        "w": 283,
+        "h": 146
+      },
+      "source_rect_reference_px": {
+        "x": 65,
+        "y": 67,
+        "w": 283,
+        "h": 146
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 144,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_e_w_wide_01.png",
+      "original_size_px": {
+        "w": 283,
+        "h": 146
+      },
+      "scaled_art_size_px": {
+        "w": 283,
+        "h": 146
+      },
+      "art_offset_px": {
+        "x": 2,
+        "y": 7
+      },
+      "grid_size_tiles": {
+        "w": 9,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 144,
+          "y": 0
+        },
+        "e": {
+          "x": 288,
+          "y": 80
+        },
+        "s": {
+          "x": 144,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_straight_e_w_wide_02",
+      "file": "pieces/road_straight_e_w_wide_02.png",
+      "name": "road_straight_e_w_wide_02",
+      "kind": "straight",
+      "width_class": "wide",
+      "connections": [
+        "e",
+        "w"
+      ],
+      "connection_string": "e_w",
+      "connection_bitmask": 10,
+      "tags": [
+        "road",
+        "straight",
+        "horizontal",
+        "wide",
+        "sidewalk",
+        "variant"
+      ],
+      "description": "Wide east-west industrial road segment with sidewalk borders, variant 02.",
+      "size_px": {
+        "w": 288,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 369,
+        "y": 67,
+        "w": 267,
+        "h": 146
+      },
+      "source_rect_reference_px": {
+        "x": 369,
+        "y": 67,
+        "w": 267,
+        "h": 146
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 144,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_e_w_wide_02.png",
+      "original_size_px": {
+        "w": 267,
+        "h": 146
+      },
+      "scaled_art_size_px": {
+        "w": 267,
+        "h": 146
+      },
+      "art_offset_px": {
+        "x": 10,
+        "y": 7
+      },
+      "grid_size_tiles": {
+        "w": 9,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 144,
+          "y": 0
+        },
+        "e": {
+          "x": 288,
+          "y": 80
+        },
+        "s": {
+          "x": 144,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_straight_n_s_wide_01",
+      "file": "pieces/road_straight_n_s_wide_01.png",
+      "name": "road_straight_n_s_wide_01",
+      "kind": "straight",
+      "width_class": "wide",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "straight",
+        "vertical",
+        "wide",
+        "sidewalk",
+        "variant"
+      ],
+      "description": "Wide north-south industrial road segment with broad side borders, variant 01.",
+      "size_px": {
+        "w": 128,
+        "h": 320
+      },
+      "source_rect_px": {
+        "x": 660,
+        "y": 67,
+        "w": 127,
+        "h": 303
+      },
+      "source_rect_reference_px": {
+        "x": 660,
+        "y": 67,
+        "w": 127,
+        "h": 303
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 64,
+        "y": 160
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_n_s_wide_01.png",
+      "original_size_px": {
+        "w": 127,
+        "h": 303
+      },
+      "scaled_art_size_px": {
+        "w": 127,
+        "h": 303
+      },
+      "art_offset_px": {
+        "x": 0,
+        "y": 8
+      },
+      "grid_size_tiles": {
+        "w": 4,
+        "h": 10
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 64,
+          "y": 0
+        },
+        "e": {
+          "x": 128,
+          "y": 160
+        },
+        "s": {
+          "x": 64,
+          "y": 320
+        },
+        "w": {
+          "x": 0,
+          "y": 160
+        }
+      }
+    },
+    {
+      "id": "road_straight_n_s_narrow_01",
+      "file": "pieces/road_straight_n_s_narrow_01.png",
+      "name": "road_straight_n_s_narrow_01",
+      "kind": "straight",
+      "width_class": "narrow",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "straight",
+        "vertical",
+        "narrow",
+        "variant"
+      ],
+      "description": "Narrow north-south industrial road segment, variant 01.",
+      "size_px": {
+        "w": 128,
+        "h": 320
+      },
+      "source_rect_px": {
+        "x": 808,
+        "y": 67,
+        "w": 103,
+        "h": 303
+      },
+      "source_rect_reference_px": {
+        "x": 808,
+        "y": 67,
+        "w": 103,
+        "h": 303
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 64,
+        "y": 160
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_n_s_narrow_01.png",
+      "original_size_px": {
+        "w": 103,
+        "h": 303
+      },
+      "scaled_art_size_px": {
+        "w": 103,
+        "h": 303
+      },
+      "art_offset_px": {
+        "x": 12,
+        "y": 8
+      },
+      "grid_size_tiles": {
+        "w": 4,
+        "h": 10
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 64,
+          "y": 0
+        },
+        "e": {
+          "x": 128,
+          "y": 160
+        },
+        "s": {
+          "x": 64,
+          "y": 320
+        },
+        "w": {
+          "x": 0,
+          "y": 160
+        }
+      }
+    },
+    {
+      "id": "road_straight_n_s_narrow_02",
+      "file": "pieces/road_straight_n_s_narrow_02.png",
+      "name": "road_straight_n_s_narrow_02",
+      "kind": "straight",
+      "width_class": "narrow",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "straight",
+        "vertical",
+        "narrow",
+        "variant"
+      ],
+      "description": "Narrow north-south industrial road segment, variant 02.",
+      "size_px": {
+        "w": 128,
+        "h": 320
+      },
+      "source_rect_px": {
+        "x": 935,
+        "y": 67,
+        "w": 108,
+        "h": 303
+      },
+      "source_rect_reference_px": {
+        "x": 935,
+        "y": 67,
+        "w": 108,
+        "h": 303
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 64,
+        "y": 160
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_n_s_narrow_02.png",
+      "original_size_px": {
+        "w": 108,
+        "h": 303
+      },
+      "scaled_art_size_px": {
+        "w": 108,
+        "h": 303
+      },
+      "art_offset_px": {
+        "x": 10,
+        "y": 8
+      },
+      "grid_size_tiles": {
+        "w": 4,
+        "h": 10
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 64,
+          "y": 0
+        },
+        "e": {
+          "x": 128,
+          "y": 160
+        },
+        "s": {
+          "x": 64,
+          "y": 320
+        },
+        "w": {
+          "x": 0,
+          "y": 160
+        }
+      }
+    },
+    {
+      "id": "road_straight_n_s_narrow_03",
+      "file": "pieces/road_straight_n_s_narrow_03.png",
+      "name": "road_straight_n_s_narrow_03",
+      "kind": "straight",
+      "width_class": "narrow",
+      "connections": [
+        "n",
+        "s"
+      ],
+      "connection_string": "n_s",
+      "connection_bitmask": 5,
+      "tags": [
+        "road",
+        "straight",
+        "vertical",
+        "narrow",
+        "variant"
+      ],
+      "description": "Narrow north-south industrial road segment, variant 03.",
+      "size_px": {
+        "w": 128,
+        "h": 320
+      },
+      "source_rect_px": {
+        "x": 1072,
+        "y": 67,
+        "w": 109,
+        "h": 304
+      },
+      "source_rect_reference_px": {
+        "x": 1072,
+        "y": 67,
+        "w": 109,
+        "h": 304
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 64,
+        "y": 160
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_n_s_narrow_03.png",
+      "original_size_px": {
+        "w": 109,
+        "h": 304
+      },
+      "scaled_art_size_px": {
+        "w": 109,
+        "h": 304
+      },
+      "art_offset_px": {
+        "x": 9,
+        "y": 8
+      },
+      "grid_size_tiles": {
+        "w": 4,
+        "h": 10
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 64,
+          "y": 0
+        },
+        "e": {
+          "x": 128,
+          "y": 160
+        },
+        "s": {
+          "x": 64,
+          "y": 320
+        },
+        "w": {
+          "x": 0,
+          "y": 160
+        }
+      }
+    },
+    {
+      "id": "road_straight_e_w_wide_03",
+      "file": "pieces/road_straight_e_w_wide_03.png",
+      "name": "road_straight_e_w_wide_03",
+      "kind": "straight",
+      "width_class": "wide",
+      "connections": [
+        "e",
+        "w"
+      ],
+      "connection_string": "e_w",
+      "connection_bitmask": 10,
+      "tags": [
+        "road",
+        "straight",
+        "horizontal",
+        "wide",
+        "sidewalk",
+        "variant"
+      ],
+      "description": "Wide east-west industrial road segment with damaged surface, variant 03.",
+      "size_px": {
+        "w": 288,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 65,
+        "y": 227,
+        "w": 282,
+        "h": 143
+      },
+      "source_rect_reference_px": {
+        "x": 65,
+        "y": 227,
+        "w": 282,
+        "h": 143
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 144,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_e_w_wide_03.png",
+      "original_size_px": {
+        "w": 282,
+        "h": 143
+      },
+      "scaled_art_size_px": {
+        "w": 282,
+        "h": 143
+      },
+      "art_offset_px": {
+        "x": 3,
+        "y": 8
+      },
+      "grid_size_tiles": {
+        "w": 9,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 144,
+          "y": 0
+        },
+        "e": {
+          "x": 288,
+          "y": 80
+        },
+        "s": {
+          "x": 144,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_straight_e_w_wide_04",
+      "file": "pieces/road_straight_e_w_wide_04.png",
+      "name": "road_straight_e_w_wide_04",
+      "kind": "straight",
+      "width_class": "wide",
+      "connections": [
+        "e",
+        "w"
+      ],
+      "connection_string": "e_w",
+      "connection_bitmask": 10,
+      "tags": [
+        "road",
+        "straight",
+        "horizontal",
+        "wide",
+        "sidewalk",
+        "variant"
+      ],
+      "description": "Wide east-west industrial road segment with damaged surface, variant 04.",
+      "size_px": {
+        "w": 288,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 369,
+        "y": 226,
+        "w": 267,
+        "h": 144
+      },
+      "source_rect_reference_px": {
+        "x": 369,
+        "y": 226,
+        "w": 267,
+        "h": 144
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 144,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_e_w_wide_04.png",
+      "original_size_px": {
+        "w": 267,
+        "h": 144
+      },
+      "scaled_art_size_px": {
+        "w": 267,
+        "h": 144
+      },
+      "art_offset_px": {
+        "x": 10,
+        "y": 8
+      },
+      "grid_size_tiles": {
+        "w": 9,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 144,
+          "y": 0
+        },
+        "e": {
+          "x": 288,
+          "y": 80
+        },
+        "s": {
+          "x": 144,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_cross_n_e_s_w_large_01",
+      "file": "pieces/road_cross_n_e_s_w_large_01.png",
+      "name": "road_cross_n_e_s_w_large_01",
+      "kind": "cross",
+      "width_class": "large",
+      "connections": [
+        "n",
+        "e",
+        "s",
+        "w"
+      ],
+      "connection_string": "n_e_s_w",
+      "connection_bitmask": 15,
+      "tags": [
+        "road",
+        "intersection",
+        "cross",
+        "large",
+        "four_way"
+      ],
+      "description": "Large four-way intersection with sockets north, east, south, and west.",
+      "size_px": {
+        "w": 256,
+        "h": 256
+      },
+      "source_rect_px": {
+        "x": 66,
+        "y": 392,
+        "w": 236,
+        "h": 248
+      },
+      "source_rect_reference_px": {
+        "x": 66,
+        "y": 392,
+        "w": 236,
+        "h": 248
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 128,
+        "y": 128
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_cross_n_e_s_w_large_01.png",
+      "original_size_px": {
+        "w": 236,
+        "h": 248
+      },
+      "scaled_art_size_px": {
+        "w": 236,
+        "h": 248
+      },
+      "art_offset_px": {
+        "x": 10,
+        "y": 4
+      },
+      "grid_size_tiles": {
+        "w": 8,
+        "h": 8
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 128,
+          "y": 0
+        },
+        "e": {
+          "x": 256,
+          "y": 128
+        },
+        "s": {
+          "x": 128,
+          "y": 256
+        },
+        "w": {
+          "x": 0,
+          "y": 128
+        }
+      }
+    },
+    {
+      "id": "road_cross_n_e_s_w_large_02",
+      "file": "pieces/road_cross_n_e_s_w_large_02.png",
+      "name": "road_cross_n_e_s_w_large_02",
+      "kind": "cross",
+      "width_class": "large",
+      "connections": [
+        "n",
+        "e",
+        "s",
+        "w"
+      ],
+      "connection_string": "n_e_s_w",
+      "connection_bitmask": 15,
+      "tags": [
+        "road",
+        "intersection",
+        "cross",
+        "large",
+        "four_way",
+        "variant"
+      ],
+      "description": "Large four-way intersection with center markings, variant 02.",
+      "size_px": {
+        "w": 256,
+        "h": 256
+      },
+      "source_rect_px": {
+        "x": 325,
+        "y": 392,
+        "w": 235,
+        "h": 248
+      },
+      "source_rect_reference_px": {
+        "x": 325,
+        "y": 392,
+        "w": 235,
+        "h": 248
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 128,
+        "y": 128
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_cross_n_e_s_w_large_02.png",
+      "original_size_px": {
+        "w": 235,
+        "h": 248
+      },
+      "scaled_art_size_px": {
+        "w": 235,
+        "h": 248
+      },
+      "art_offset_px": {
+        "x": 10,
+        "y": 4
+      },
+      "grid_size_tiles": {
+        "w": 8,
+        "h": 8
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 128,
+          "y": 0
+        },
+        "e": {
+          "x": 256,
+          "y": 128
+        },
+        "s": {
+          "x": 128,
+          "y": 256
+        },
+        "w": {
+          "x": 0,
+          "y": 128
+        }
+      }
+    },
+    {
+      "id": "road_cross_n_e_s_w_large_03",
+      "file": "pieces/road_cross_n_e_s_w_large_03.png",
+      "name": "road_cross_n_e_s_w_large_03",
+      "kind": "cross",
+      "width_class": "large",
+      "connections": [
+        "n",
+        "e",
+        "s",
+        "w"
+      ],
+      "connection_string": "n_e_s_w",
+      "connection_bitmask": 15,
+      "tags": [
+        "road",
+        "intersection",
+        "cross",
+        "large",
+        "four_way",
+        "variant"
+      ],
+      "description": "Large four-way intersection with offset wear and broken side paving, variant 03.",
+      "size_px": {
+        "w": 256,
+        "h": 256
+      },
+      "source_rect_px": {
+        "x": 590,
+        "y": 398,
+        "w": 234,
+        "h": 240
+      },
+      "source_rect_reference_px": {
+        "x": 590,
+        "y": 398,
+        "w": 234,
+        "h": 240
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 128,
+        "y": 128
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_cross_n_e_s_w_large_03.png",
+      "original_size_px": {
+        "w": 234,
+        "h": 240
+      },
+      "scaled_art_size_px": {
+        "w": 234,
+        "h": 240
+      },
+      "art_offset_px": {
+        "x": 11,
+        "y": 8
+      },
+      "grid_size_tiles": {
+        "w": 8,
+        "h": 8
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 128,
+          "y": 0
+        },
+        "e": {
+          "x": 256,
+          "y": 128
+        },
+        "s": {
+          "x": 128,
+          "y": 256
+        },
+        "w": {
+          "x": 0,
+          "y": 128
+        }
+      }
+    },
+    {
+      "id": "road_t_n_s_w_large_01",
+      "file": "pieces/road_t_n_s_w_large_01.png",
+      "name": "road_t_n_s_w_large_01",
+      "kind": "tee",
+      "width_class": "large",
+      "connections": [
+        "n",
+        "s",
+        "w"
+      ],
+      "connection_string": "n_s_w",
+      "connection_bitmask": 13,
+      "tags": [
+        "road",
+        "intersection",
+        "tee",
+        "north",
+        "south",
+        "west"
+      ],
+      "description": "Large T-junction connecting north, south, and west; closed on east side.",
+      "size_px": {
+        "w": 192,
+        "h": 192
+      },
+      "source_rect_px": {
+        "x": 856,
+        "y": 397,
+        "w": 175,
+        "h": 191
+      },
+      "source_rect_reference_px": {
+        "x": 856,
+        "y": 397,
+        "w": 175,
+        "h": 191
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 96,
+        "y": 96
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_t_n_s_w_large_01.png",
+      "original_size_px": {
+        "w": 175,
+        "h": 191
+      },
+      "scaled_art_size_px": {
+        "w": 175,
+        "h": 191
+      },
+      "art_offset_px": {
+        "x": 8,
+        "y": 0
+      },
+      "grid_size_tiles": {
+        "w": 6,
+        "h": 6
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 96,
+          "y": 0
+        },
+        "e": {
+          "x": 192,
+          "y": 96
+        },
+        "s": {
+          "x": 96,
+          "y": 192
+        },
+        "w": {
+          "x": 0,
+          "y": 96
+        }
+      }
+    },
+    {
+      "id": "road_dead_end_n_large_01",
+      "file": "pieces/road_dead_end_n_large_01.png",
+      "name": "road_dead_end_n_large_01",
+      "kind": "dead_end",
+      "width_class": "large",
+      "connections": [
+        "n"
+      ],
+      "connection_string": "n",
+      "connection_bitmask": 1,
+      "tags": [
+        "road",
+        "dead_end",
+        "terminal",
+        "north"
+      ],
+      "description": "Large north-facing road dead-end / capped terminal.",
+      "size_px": {
+        "w": 128,
+        "h": 96
+      },
+      "source_rect_px": {
+        "x": 1068,
+        "y": 399,
+        "w": 112,
+        "h": 93
+      },
+      "source_rect_reference_px": {
+        "x": 1068,
+        "y": 399,
+        "w": 112,
+        "h": 93
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 64,
+        "y": 48
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_dead_end_n_large_01.png",
+      "original_size_px": {
+        "w": 112,
+        "h": 93
+      },
+      "scaled_art_size_px": {
+        "w": 112,
+        "h": 93
+      },
+      "art_offset_px": {
+        "x": 8,
+        "y": 1
+      },
+      "grid_size_tiles": {
+        "w": 4,
+        "h": 3
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 64,
+          "y": 0
+        },
+        "e": {
+          "x": 128,
+          "y": 48
+        },
+        "s": {
+          "x": 64,
+          "y": 96
+        },
+        "w": {
+          "x": 0,
+          "y": 48
+        }
+      }
+    },
+    {
+      "id": "road_dead_end_s_large_01",
+      "file": "pieces/road_dead_end_s_large_01.png",
+      "name": "road_dead_end_s_large_01",
+      "kind": "dead_end",
+      "width_class": "large",
+      "connections": [
+        "s"
+      ],
+      "connection_string": "s",
+      "connection_bitmask": 4,
+      "tags": [
+        "road",
+        "dead_end",
+        "terminal",
+        "south"
+      ],
+      "description": "Large south-facing road dead-end / capped terminal.",
+      "size_px": {
+        "w": 128,
+        "h": 96
+      },
+      "source_rect_px": {
+        "x": 1068,
+        "y": 540,
+        "w": 112,
+        "h": 96
+      },
+      "source_rect_reference_px": {
+        "x": 1068,
+        "y": 540,
+        "w": 112,
+        "h": 96
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 64,
+        "y": 48
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_dead_end_s_large_01.png",
+      "original_size_px": {
+        "w": 112,
+        "h": 96
+      },
+      "scaled_art_size_px": {
+        "w": 112,
+        "h": 96
+      },
+      "art_offset_px": {
+        "x": 8,
+        "y": 0
+      },
+      "grid_size_tiles": {
+        "w": 4,
+        "h": 3
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 64,
+          "y": 0
+        },
+        "e": {
+          "x": 128,
+          "y": 48
+        },
+        "s": {
+          "x": 64,
+          "y": 96
+        },
+        "w": {
+          "x": 0,
+          "y": 48
+        }
+      }
+    },
+    {
+      "id": "road_t_e_s_w_large_01",
+      "file": "pieces/road_t_e_s_w_large_01.png",
+      "name": "road_t_e_s_w_large_01",
+      "kind": "tee",
+      "width_class": "large",
+      "connections": [
+        "e",
+        "s",
+        "w"
+      ],
+      "connection_string": "e_s_w",
+      "connection_bitmask": 14,
+      "tags": [
+        "road",
+        "intersection",
+        "tee",
+        "east",
+        "south",
+        "west"
+      ],
+      "description": "Large T-junction with east-west road and south stem.",
+      "size_px": {
+        "w": 256,
+        "h": 256
+      },
+      "source_rect_px": {
+        "x": 67,
+        "y": 662,
+        "w": 233,
+        "h": 190
+      },
+      "source_rect_reference_px": {
+        "x": 67,
+        "y": 662,
+        "w": 233,
+        "h": 190
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 128,
+        "y": 128
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_t_e_s_w_large_01.png",
+      "original_size_px": {
+        "w": 233,
+        "h": 190
+      },
+      "scaled_art_size_px": {
+        "w": 233,
+        "h": 190
+      },
+      "art_offset_px": {
+        "x": 11,
+        "y": 33
+      },
+      "grid_size_tiles": {
+        "w": 8,
+        "h": 8
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 128,
+          "y": 0
+        },
+        "e": {
+          "x": 256,
+          "y": 128
+        },
+        "s": {
+          "x": 128,
+          "y": 256
+        },
+        "w": {
+          "x": 0,
+          "y": 128
+        }
+      }
+    },
+    {
+      "id": "road_t_n_e_w_large_01",
+      "file": "pieces/road_t_n_e_w_large_01.png",
+      "name": "road_t_n_e_w_large_01",
+      "kind": "tee",
+      "width_class": "large",
+      "connections": [
+        "n",
+        "e",
+        "w"
+      ],
+      "connection_string": "n_e_w",
+      "connection_bitmask": 11,
+      "tags": [
+        "road",
+        "intersection",
+        "tee",
+        "north",
+        "east",
+        "west"
+      ],
+      "description": "Large T-junction with east-west road and north stem.",
+      "size_px": {
+        "w": 224,
+        "h": 224
+      },
+      "source_rect_px": {
+        "x": 337,
+        "y": 663,
+        "w": 208,
+        "h": 186
+      },
+      "source_rect_reference_px": {
+        "x": 337,
+        "y": 663,
+        "w": 208,
+        "h": 186
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 112,
+        "y": 112
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_t_n_e_w_large_01.png",
+      "original_size_px": {
+        "w": 208,
+        "h": 186
+      },
+      "scaled_art_size_px": {
+        "w": 208,
+        "h": 186
+      },
+      "art_offset_px": {
+        "x": 8,
+        "y": 19
+      },
+      "grid_size_tiles": {
+        "w": 7,
+        "h": 7
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 112,
+          "y": 0
+        },
+        "e": {
+          "x": 224,
+          "y": 112
+        },
+        "s": {
+          "x": 112,
+          "y": 224
+        },
+        "w": {
+          "x": 0,
+          "y": 112
+        }
+      }
+    },
+    {
+      "id": "road_corner_n_e_large_01",
+      "file": "pieces/road_corner_n_e_large_01.png",
+      "name": "road_corner_n_e_large_01",
+      "kind": "corner",
+      "width_class": "large",
+      "connections": [
+        "n",
+        "e"
+      ],
+      "connection_string": "n_e",
+      "connection_bitmask": 3,
+      "tags": [
+        "road",
+        "corner",
+        "turn",
+        "north",
+        "east"
+      ],
+      "description": "Large L-corner road turn connecting north and east.",
+      "size_px": {
+        "w": 192,
+        "h": 192
+      },
+      "source_rect_px": {
+        "x": 583,
+        "y": 663,
+        "w": 188,
+        "h": 189
+      },
+      "source_rect_reference_px": {
+        "x": 583,
+        "y": 663,
+        "w": 188,
+        "h": 189
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 96,
+        "y": 96
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_corner_n_e_large_01.png",
+      "original_size_px": {
+        "w": 188,
+        "h": 189
+      },
+      "scaled_art_size_px": {
+        "w": 188,
+        "h": 189
+      },
+      "art_offset_px": {
+        "x": 2,
+        "y": 1
+      },
+      "grid_size_tiles": {
+        "w": 6,
+        "h": 6
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 96,
+          "y": 0
+        },
+        "e": {
+          "x": 192,
+          "y": 96
+        },
+        "s": {
+          "x": 96,
+          "y": 192
+        },
+        "w": {
+          "x": 0,
+          "y": 96
+        }
+      }
+    },
+    {
+      "id": "road_straight_e_w_medium_01",
+      "file": "pieces/road_straight_e_w_medium_01.png",
+      "name": "road_straight_e_w_medium_01",
+      "kind": "straight",
+      "width_class": "medium",
+      "connections": [
+        "e",
+        "w"
+      ],
+      "connection_string": "e_w",
+      "connection_bitmask": 10,
+      "tags": [
+        "road",
+        "straight",
+        "horizontal",
+        "medium"
+      ],
+      "description": "Medium east-west road segment.",
+      "size_px": {
+        "w": 192,
+        "h": 160
+      },
+      "source_rect_px": {
+        "x": 806,
+        "y": 664,
+        "w": 176,
+        "h": 140
+      },
+      "source_rect_reference_px": {
+        "x": 806,
+        "y": 664,
+        "w": 176,
+        "h": 140
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 96,
+        "y": 80
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_e_w_medium_01.png",
+      "original_size_px": {
+        "w": 176,
+        "h": 140
+      },
+      "scaled_art_size_px": {
+        "w": 176,
+        "h": 140
+      },
+      "art_offset_px": {
+        "x": 8,
+        "y": 10
+      },
+      "grid_size_tiles": {
+        "w": 6,
+        "h": 5
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 96,
+          "y": 0
+        },
+        "e": {
+          "x": 192,
+          "y": 80
+        },
+        "s": {
+          "x": 96,
+          "y": 160
+        },
+        "w": {
+          "x": 0,
+          "y": 80
+        }
+      }
+    },
+    {
+      "id": "road_corner_n_w_large_01",
+      "file": "pieces/road_corner_n_w_large_01.png",
+      "name": "road_corner_n_w_large_01",
+      "kind": "corner",
+      "width_class": "large",
+      "connections": [
+        "n",
+        "w"
+      ],
+      "connection_string": "n_w",
+      "connection_bitmask": 9,
+      "tags": [
+        "road",
+        "corner",
+        "turn",
+        "north",
+        "west"
+      ],
+      "description": "Large curved L-corner road turn connecting north and west.",
+      "size_px": {
+        "w": 192,
+        "h": 192
+      },
+      "source_rect_px": {
+        "x": 1012,
+        "y": 664,
+        "w": 168,
+        "h": 185
+      },
+      "source_rect_reference_px": {
+        "x": 1012,
+        "y": 664,
+        "w": 168,
+        "h": 185
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 96,
+        "y": 96
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_corner_n_w_large_01.png",
+      "original_size_px": {
+        "w": 168,
+        "h": 185
+      },
+      "scaled_art_size_px": {
+        "w": 168,
+        "h": 185
+      },
+      "art_offset_px": {
+        "x": 12,
+        "y": 3
+      },
+      "grid_size_tiles": {
+        "w": 6,
+        "h": 6
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 96,
+          "y": 0
+        },
+        "e": {
+          "x": 192,
+          "y": 96
+        },
+        "s": {
+          "x": 96,
+          "y": 192
+        },
+        "w": {
+          "x": 0,
+          "y": 96
+        }
+      }
+    },
+    {
+      "id": "road_straight_e_w_medium_02",
+      "file": "pieces/road_straight_e_w_medium_02.png",
+      "name": "road_straight_e_w_medium_02",
+      "kind": "straight",
+      "width_class": "medium",
+      "connections": [
+        "e",
+        "w"
+      ],
+      "connection_string": "e_w",
+      "connection_bitmask": 10,
+      "tags": [
+        "road",
+        "straight",
+        "horizontal",
+        "medium",
+        "variant"
+      ],
+      "description": "Medium east-west road connector, variant 02.",
+      "size_px": {
+        "w": 96,
+        "h": 128
+      },
+      "source_rect_px": {
+        "x": 1085,
+        "y": 878,
+        "w": 95,
+        "h": 102
+      },
+      "source_rect_reference_px": {
+        "x": 1085,
+        "y": 878,
+        "w": 95,
+        "h": 102
+      },
+      "anchor": {
+        "mode": "center",
+        "x": 48,
+        "y": 64
+      },
+      "socket_points_normalized": {
+        "n": {
+          "x": 0.5,
+          "y": 0.0
+        },
+        "e": {
+          "x": 1.0,
+          "y": 0.5
+        },
+        "s": {
+          "x": 0.5,
+          "y": 1.0
+        },
+        "w": {
+          "x": 0.0,
+          "y": 0.5
+        }
+      },
+      "default_weight": 1.0,
+      "original_file": "pieces/road_straight_e_w_medium_02.png",
+      "original_size_px": {
+        "w": 95,
+        "h": 102
+      },
+      "scaled_art_size_px": {
+        "w": 95,
+        "h": 102
+      },
+      "art_offset_px": {
+        "x": 0,
+        "y": 13
+      },
+      "grid_size_tiles": {
+        "w": 3,
+        "h": 4
+      },
+      "socket_points_px": {
+        "n": {
+          "x": 48,
+          "y": 0
+        },
+        "e": {
+          "x": 96,
+          "y": 64
+        },
+        "s": {
+          "x": 48,
+          "y": 128
+        },
+        "w": {
+          "x": 0,
+          "y": 64
+        }
+      }
+    }
+  ],
+  "tile_size_px": 32,
+  "surface": "roads",
+  "pathways_json": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/roads_paths/source/Pathways.json",
+  "normalization": {
+    "mode": "pad_to_32px_game_grid",
+    "tile_size_px": 32,
+    "scale_art": 1.0,
+    "resampled": false,
+    "resample_filter": "nearest",
+    "force_square_intersections": true,
+    "note": "Default behavior pads transparent canvas; it does not resize the art."
+  },
+  "pathways_tileset": {
+    "name": "ancient_ruined_roads_and_paths",
+    "tile_size": "identical_per_tile",
+    "intended_use": "modular road/path connectivity kit",
+    "connection_model": {
+      "N": "connects upward / north",
+      "S": "connects downward / south",
+      "E": "connects right / east",
+      "W": "connects left / west"
+    },
+    "sections": {
+      "top_left": {
+        "description": "wide horizontal ruined road segments",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_straight_h",
+            "connects": [
+              "W",
+              "E"
+            ],
+            "count": 4
+          }
+        ],
+        "notes": "These are mostly visual variants of the same east-west road topology."
+      },
+      "top_right": {
+        "description": "vertical ruined road segments",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_straight_v",
+            "connects": [
+              "N",
+              "S"
+            ],
+            "count": 4
+          }
+        ],
+        "notes": "Use as north-south road filler. Variants differ by rubble, moss, cracks, and side trim."
+      },
+      "center_left": {
+        "description": "large intersection cluster",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_cross",
+            "connects": [
+              "N",
+              "S",
+              "E",
+              "W"
+            ],
+            "count": 3
+          },
+          {
+            "role": "road_t_side_variant",
+            "connects": [
+              "N",
+              "S",
+              "E"
+            ],
+            "count": 1
+          }
+        ],
+        "notes": "This region is mostly 4-way crossings, with one piece reading closer to a sideways T / branch intersection."
+      },
+      "center_center": {
+        "description": "T-junction and branch pieces",
+        "count": 4,
+        "primary_roles": [
+          {
+            "role": "road_t_e",
+            "connects": [
+              "N",
+              "S",
+              "E"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_t_w",
+            "connects": [
+              "N",
+              "S",
+              "W"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_t_n",
+            "connects": [
+              "W",
+              "E",
+              "N"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_t_s",
+            "connects": [
+              "W",
+              "E",
+              "S"
+            ],
+            "count": 1
+          }
+        ],
+        "notes": "This is the main T-junction family. These are where roads split into three directions."
+      },
+      "center_right": {
+        "description": "corners, partial branches, caps, and compact utility pieces",
+        "count": 6,
+        "primary_roles": [
+          {
+            "role": "road_corner_ne",
+            "connects": [
+              "N",
+              "E"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_corner_es",
+            "connects": [
+              "E",
+              "S"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_corner_sw",
+            "connects": [
+              "S",
+              "W"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_corner_wn",
+            "connects": [
+              "W",
+              "N"
+            ],
+            "count": 1
+          },
+          {
+            "role": "road_end_or_cap",
+            "connects": [
+              "one_direction"
+            ],
+            "count": 2
+          }
+        ],
+        "notes": "Use this area for bends, short endings, and weird non-rectangular road transitions."
+      },
+      "pre_bottom_row": {
+        "description": "small connector and terminal utility row",
+        "count": 10,
+        "primary_roles": [
+          {
+            "role": "small_straight_h",
+            "connects": [
+              "W",
+              "E"
+            ],
+            "count": 3
+          },
+          {
+            "role": "small_straight_v",
+            "connects": [
+              "N",
+              "S"
+            ],
+            "count": 3
+          },
+          {
+            "role": "small_endcap",
+            "connects": [
+              "one_direction"
+            ],
+            "count": 3
+          },
+          {
+            "role": "rounded_or_u_terminal",
+            "connects": [
+              "one_direction"
+            ],
+            "count": 1
+          }
+        ],
+        "notes": "These are not main road masses. They are for short links, narrow paths, caps, and transition details."
+      },
+      "bottom_row": {
+        "description": "degraded dirt paths and road-to-path transitions",
+        "count": 8,
+        "primary_roles": [
+          {
+            "role": "path_straight_v",
+            "connects": [
+              "N",
+              "S"
+            ],
+            "count": 3
+          },
+          {
+            "role": "road_to_dirt_transition_v",
+            "connects": [
+              "N",
+              "S"
+            ],
+            "count": 3
+          },
+          {
+            "role": "path_fade_end",
+            "connects": [
+              "N"
+            ],
+            "count": 2
+          }
+        ],
+        "notes": "Use these to let ancient stone roads degrade into dirt trails, rubble, or terrain."
+      }
+    },
+    "summary_counts": {
+      "total_described_tiles": 36,
+      "wide_horizontal_straights": 4,
+      "vertical_straights": 4,
+      "cross_intersections": 3,
+      "t_junctions": 5,
+      "corners": 4,
+      "endcaps_or_terminals": 6,
+      "small_connectors": 6,
+      "path_or_degraded_transition_tiles": 8
+    },
+    "recommended_tile_role_names": [
+      "road_straight_h_a",
+      "road_straight_h_b",
+      "road_straight_h_c",
+      "road_straight_h_d",
+      "road_straight_v_a",
+      "road_straight_v_b",
+      "road_straight_v_c",
+      "road_straight_v_d",
+      "road_cross_a",
+      "road_cross_b",
+      "road_cross_c",
+      "road_t_n",
+      "road_t_s",
+      "road_t_e",
+      "road_t_w",
+      "road_corner_ne",
+      "road_corner_es",
+      "road_corner_sw",
+      "road_corner_wn",
+      "road_end_n",
+      "road_end_s",
+      "road_end_e",
+      "road_end_w",
+      "small_straight_h_a",
+      "small_straight_h_b",
+      "small_straight_h_c",
+      "small_straight_v_a",
+      "small_straight_v_b",
+      "small_straight_v_c",
+      "small_end_a",
+      "small_end_b",
+      "small_end_c",
+      "path_transition_v_a",
+      "path_transition_v_b",
+      "path_transition_v_c",
+      "path_fade_end_a",
+      "path_fade_end_b"
+    ]
+  },
+  "source_piece_count": 39
+}

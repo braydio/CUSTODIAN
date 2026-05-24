@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-22
+Last updated: 2026-05-23
 
 ## Local Entry And Workflow
 
@@ -15,8 +15,8 @@ Last updated: 2026-05-22
 - `custodian/tools/agent/change_control_bundle.py` — utility that bundles current git-changed files into `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the markdown bundle to the clipboard when a clipboard command is available
 - `custodian/docs/ai_context/task_packets/AGENT_WORKFLOW_AUTOMATION.md` — completed packet for task-packet next steps, ownership rules, and automation backlog
 - `custodian/docs/ai_context/task_packets/VALIDATION_RECIPES.md` — completed packet for canonical validation recipes and prompt-template cleanup
-- `custodian/docs/ai_context/task_packets/COMPOUND_ROOM_ASSEMBLY_CONTRACT.md` — completed packet for deterministic compound room graph, loader, and layout assembler contract hardening
-- `custodian/docs/ai_context/task_packets/COMPOUND_ROOM_GRAPH_WALK_LAYOUT.md` — completed packet for the first graph-walk, door-aligned compound room layout pass
+- `custodian/docs/ai_context/task_packets/archived/COMPOUND_ROOM_ASSEMBLY_CONTRACT.md` — completed packet for deterministic compound room graph, loader, and layout assembler contract hardening
+- `custodian/docs/ai_context/task_packets/archived/COMPOUND_ROOM_GRAPH_WALK_LAYOUT.md` — completed packet for the first graph-walk, door-aligned compound room layout pass
 - `custodian/docs/ai_context/task_packets/PORTAL_COLLISION_DEBUG_TUNING.md` — completed packet for visualizing portal prop collision and correcting portal-ring side blocker positions
 - `custodian/docs/ai_context/task_packets/ENEMY_VARIANT_SYSTEM.md` — completed packet for the first procedural wolf enemy variant runtime slice
 - `custodian/docs/ai_context/task_packets/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — completed packet for the first region-aware indoor/outdoor procgen slice

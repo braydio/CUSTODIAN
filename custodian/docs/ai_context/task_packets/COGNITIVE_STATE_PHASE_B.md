@@ -24,7 +24,7 @@ Wire cognitive state modifiers (Phase B) into game systems and fix debug panel b
 3. **Wire attack recovery multiplier** — `CognitiveState.get_attack_recovery_multiplier()` → melee recovery timer + ranged fire cooldown.
 4. **Wire player accuracy bonus** — `CognitiveState.get_player_accuracy_bonus()` → reduces bullet spread.
 5. **Wire player crit bonus** — `CognitiveState.get_player_crit_bonus()` → bullet crit chance.
-6. **Update AGENTS.md** — Add `rtk` usage guidelines.
+6. **Update AGENTS.md** — Add RTK subcommand usage guidelines.
 
 ## Outcome
 
@@ -33,7 +33,7 @@ Wire cognitive state modifiers (Phase B) into game systems and fix debug panel b
 - Player attacks recover faster with high instinct
 - Player has reduced bullet spread with high bearing
 - Player has increased crit chance with high bearing
-- `rtk` prefix used for all CLI commands in CUSTODIAN repo
+- RTK command routing is documented as subcommand usage, for example `rtk git status`; RTK is not a blind prefix for all CLI commands.
 
 ## Authority
 
@@ -49,7 +49,7 @@ Wire cognitive state modifiers (Phase B) into game systems and fix debug panel b
   - `custodian/game/ui/hud/ui.gd` ✅ (dead code fixed)
   - `custodian/game/actors/operator/operator.gd` ✅ (4 modifiers wired)
   - `custodian/game/actors/projectiles/bullet.gd` ✅ (crit support added)
-  - `AGENTS.md` ✅ (rtk usage added)
+  - `AGENTS.md` ✅ (RTK subcommand usage added)
 
 - Files expected to be read but not changed:
   - `custodian/game/systems/cognitive/cognitive_state_system.gd` (API reference)
@@ -81,7 +81,7 @@ Wire cognitive state modifiers (Phase B) into game systems and fix debug panel b
 4. ✅ Wire `get_player_accuracy_bonus()` into `_emit_pending_ranged_shot()` (reduce spread)
 5. ✅ Add crit support to `bullet.gd` (`crit_chance`, `crit_multiplier` exports)
 6. ✅ Wire `get_player_crit_bonus()` into `_request_ranged_shot()` (set bullet crit_chance)
-7. ✅ Update `AGENTS.md` with `rtk` usage guidelines
+7. ✅ Update `AGENTS.md` with RTK subcommand usage guidelines
 8. ⬜ Test in Godot — verify F12 toggles debug panel
 9. ⬜ Test cognitive modifiers — collect items, verify move speed/attack speed changes
 
@@ -97,7 +97,7 @@ Wire cognitive state modifiers (Phase B) into game systems and fix debug panel b
   - ⬜ High bearing (>0.5): occasional crit hits (visual confirmation)
 
 - Documentation:
-  - ✅ `AGENTS.md` updated with rtk usage
+  - ✅ `AGENTS.md` updated with RTK subcommand usage
   - ⬜ `CURRENT_STATE.md` — update if behavior changes verified
 
 - Path/reference validation:
@@ -120,7 +120,7 @@ Wire cognitive state modifiers (Phase B) into game systems and fix debug panel b
 - Does `custodian/docs/ai_context/FILE_INDEX.md` need an update?
   - No — file ownership unchanged
 - Does `custodian/AGENTS.md` need an update?
-  - ✅ Updated with rtk usage guidelines
+  - ✅ Updated with RTK subcommand usage guidelines
 - Do any design docs need an update?
   - No — implementation matches `THE_TRAGEDY_OF_THE_FOREST_SHRUMB_GAMEPLAY_CORE.md`
 
@@ -133,7 +133,7 @@ Wire cognitive state modifiers (Phase B) into game systems and fix debug panel b
   - ✅ Player accuracy bonus wired (spread reduction)
   - ✅ Player crit bonus wired (bullet crit_chance)
   - ✅ Bullet.gd crit support added
-  - ✅ AGENTS.md rtk usage added
+  - ✅ AGENTS.md RTK subcommand usage added
 
 - Validated:
   - ⬜ Godot runtime test pending

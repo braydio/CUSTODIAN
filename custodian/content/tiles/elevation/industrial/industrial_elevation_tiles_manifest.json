@@ -1,0 +1,77 @@
+{
+  "tile_size": 32,
+  "tiles": [
+    {
+      "file": "ground_flat_32.png",
+      "type": "flat",
+      "height": 0,
+      "traversal": "walkable"
+    },
+    {
+      "file": "elevated_floor_32.png",
+      "type": "flat",
+      "height": 1,
+      "traversal": "walkable"
+    },
+    {
+      "file": "elevation_edge_north_32.png",
+      "type": "ledge",
+      "height": 1,
+      "traversal": "blocked"
+    },
+    {
+      "file": "elevation_edge_south_32.png",
+      "type": "ledge",
+      "height": 1,
+      "traversal": "blocked"
+    },
+    {
+      "file": "elevation_edge_east_32.png",
+      "type": "ledge",
+      "height": 1,
+      "traversal": "blocked"
+    },
+    {
+      "file": "elevation_edge_west_32.png",
+      "type": "ledge",
+      "height": 1,
+      "traversal": "blocked"
+    },
+    {
+      "file": "ramp_north_32.png",
+      "type": "ramp_north",
+      "height": 0,
+      "traversal": "transition"
+    },
+    {
+      "file": "ramp_south_32.png",
+      "type": "ramp_south",
+      "height": 0,
+      "traversal": "transition"
+    },
+    {
+      "file": "ramp_east_32.png",
+      "type": "ramp_east",
+      "height": 0,
+      "traversal": "transition"
+    },
+    {
+      "file": "ramp_west_32.png",
+      "type": "ramp_west",
+      "height": 0,
+      "traversal": "transition"
+    },
+    {
+      "file": "cliff_shadow_32.png",
+      "type": "drop",
+      "height": -1,
+      "traversal": "blocked"
+    },
+    {
+      "file": "stair_metal_32.png",
+      "type": "stair",
+      "height": 0,
+      "traversal": "transition"
+    }
+  ]
+}

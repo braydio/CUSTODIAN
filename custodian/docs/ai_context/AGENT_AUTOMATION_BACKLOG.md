@@ -20,7 +20,7 @@ Checks:
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` exists
 - `custodian/docs/ai_context/prompts/README.md` exists
 - every `custodian/docs/ai_context/task_packets/*.md` contains `Packet Status`, `Task`, `Outcome`, `Acceptance`, `Completion Notes`, and `Next Steps`
-- no prompt references `custodian/docs/ai_context/AGENTS.md`, `PAIPELINE.md`, `operator_weapon_definition.tres`, or `rtk status`
+- no prompt references `custodian/docs/ai_context/AGENTS.md`, `PAIPELINE.md`, `operator_weapon_definition.tres`, or invalid bare RTK forms that omit the needed RTK subcommand
 - `FILE_INDEX.md` references new workflow docs
 
 Why first:

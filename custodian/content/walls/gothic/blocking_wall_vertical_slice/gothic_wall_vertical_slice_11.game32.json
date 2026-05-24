@@ -1,0 +1,72 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_wall_vertical_slice_11",
+  "display_name": "Vertical Wall Slice 11",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 50,
+    "row_index": 2,
+    "col_index": 10,
+    "bbox_px": {
+      "x": 623,
+      "y": 188,
+      "w": 50,
+      "h": 96
+    }
+  },
+  "file": {
+    "path": "custodian/content/walls/gothic/blocking_wall_vertical_slice/gothic_wall_vertical_slice_11.png",
+    "pixel_size": {
+      "w": 50,
+      "h": 96
+    }
+  },
+  "classification": {
+    "asset_type": "walls",
+    "semantic_role": "blocking_wall_vertical_slice",
+    "placement_layer": "wall",
+    "tags": [
+      "blocking",
+      "compound",
+      "gothic",
+      "slice",
+      "vertical",
+      "wall"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 3
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 25,
+      "y": 95
+    },
+    "snap": "tile",
+    "allow_mirror_x": true,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 2,
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "compound_wall",
+      "interior_partition",
+      "height_variation",
+      "wall_body"
+    ],
+    "weight": 60,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

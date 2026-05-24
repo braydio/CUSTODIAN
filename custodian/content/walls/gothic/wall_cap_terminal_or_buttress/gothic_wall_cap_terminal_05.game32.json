@@ -1,0 +1,72 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_wall_cap_terminal_05",
+  "display_name": "Wall Cap Terminal 05",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 58,
+    "row_index": 2,
+    "col_index": 18,
+    "bbox_px": {
+      "x": 1240,
+      "y": 179,
+      "w": 40,
+      "h": 107
+    }
+  },
+  "file": {
+    "path": "custodian/content/walls/gothic/wall_cap_terminal_or_buttress/gothic_wall_cap_terminal_05.png",
+    "pixel_size": {
+      "w": 40,
+      "h": 107
+    }
+  },
+  "classification": {
+    "asset_type": "walls",
+    "semantic_role": "wall_cap_terminal_or_buttress",
+    "placement_layer": "wall",
+    "tags": [
+      "blocking",
+      "buttress",
+      "cap",
+      "gothic",
+      "terminal",
+      "wall"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 4
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 20,
+      "y": 106
+    },
+    "snap": "tile",
+    "allow_mirror_x": true,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 2,
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "wall_terminal",
+      "wall_height_break",
+      "wall_cap",
+      "corner_dressing"
+    ],
+    "weight": 35,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

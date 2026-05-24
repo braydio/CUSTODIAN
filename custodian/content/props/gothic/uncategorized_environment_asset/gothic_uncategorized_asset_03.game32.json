@@ -1,0 +1,65 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_uncategorized_asset_03",
+  "display_name": "Uncategorized Gothic Asset 03",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 118,
+    "row_index": 9,
+    "col_index": 0,
+    "bbox_px": {
+      "x": 1268,
+      "y": 840,
+      "w": 10,
+      "h": 10
+    }
+  },
+  "file": {
+    "path": "custodian/content/props/gothic/uncategorized_environment_asset/gothic_uncategorized_asset_03.png",
+    "pixel_size": {
+      "w": 10,
+      "h": 10
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "uncategorized_environment_asset",
+    "placement_layer": "prop",
+    "tags": [
+      "gothic",
+      "manual_review"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 1,
+      "h": 1
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 5,
+      "y": 9
+    },
+    "snap": "tile_or_free",
+    "allow_mirror_x": true,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "collision_shape": "none"
+  },
+  "procgen": {
+    "uses": [
+      "manual_review"
+    ],
+    "weight": 1,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

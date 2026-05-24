@@ -1,0 +1,2950 @@
+{
+  "schema": "custodian.terrain_tiles_manifest.v1",
+  "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/tilesheet_with_metadata.png",
+  "source_sha256": "ff8211906b39e6fafb6e17c382b54c3ed8910c696aed751b9665430652596dd5",
+  "source_size": {
+    "w": 1536,
+    "h": 1024
+  },
+  "generated_tile_size": 32,
+  "resize_mode": "stretch",
+  "resample": "nearest",
+  "atlas": {
+    "path": "terrain_tiles_32_atlas.png",
+    "cols": 16,
+    "tile_size": 32
+  },
+  "extraction": {
+    "left_pad": 6,
+    "right_pad": 5,
+    "label_height": 22,
+    "footer_height": 20,
+    "snap_window": 12,
+    "section_layouts": [
+      {
+        "name": "ground_grasslands",
+        "x0": 8,
+        "x1": 421,
+        "y0": 38,
+        "y1": 170,
+        "count": 5
+      },
+      {
+        "name": "ground_rocky_dirt",
+        "x0": 423,
+        "x1": 858,
+        "y0": 38,
+        "y1": 170,
+        "count": 5
+      },
+      {
+        "name": "ground_scorched_ash",
+        "x0": 860,
+        "x1": 1242,
+        "y0": 38,
+        "y1": 170,
+        "count": 5
+      },
+      {
+        "name": "snow_ice",
+        "x0": 1244,
+        "x1": 1528,
+        "y0": 38,
+        "y1": 170,
+        "count": 5
+      },
+      {
+        "name": "elevation_cliffs_north",
+        "x0": 8,
+        "x1": 590,
+        "y0": 203,
+        "y1": 342,
+        "count": 6
+      },
+      {
+        "name": "elevation_cliffs_south",
+        "x0": 591,
+        "x1": 1107,
+        "y0": 203,
+        "y1": 342,
+        "count": 6
+      },
+      {
+        "name": "elevation_plateaus",
+        "x0": 1109,
+        "x1": 1528,
+        "y0": 203,
+        "y1": 342,
+        "count": 5
+      },
+      {
+        "name": "slopes_ramps",
+        "x0": 8,
+        "x1": 488,
+        "y0": 377,
+        "y1": 510,
+        "count": 6
+      },
+      {
+        "name": "stairs",
+        "x0": 489,
+        "x1": 746,
+        "y0": 377,
+        "y1": 510,
+        "count": 4
+      },
+      {
+        "name": "special_elevation",
+        "x0": 747,
+        "x1": 1107,
+        "y0": 377,
+        "y1": 510,
+        "count": 5
+      },
+      {
+        "name": "water",
+        "x0": 1109,
+        "x1": 1528,
+        "y0": 377,
+        "y1": 510,
+        "count": 5
+      },
+      {
+        "name": "obstacles_natural",
+        "x0": 8,
+        "x1": 466,
+        "y0": 545,
+        "y1": 679,
+        "count": 6
+      },
+      {
+        "name": "vegetation",
+        "x0": 467,
+        "x1": 862,
+        "y0": 545,
+        "y1": 679,
+        "count": 6
+      },
+      {
+        "name": "swamp_mud",
+        "x0": 864,
+        "x1": 1173,
+        "y0": 545,
+        "y1": 679,
+        "count": 5
+      },
+      {
+        "name": "beach_sand",
+        "x0": 1175,
+        "x1": 1528,
+        "y0": 545,
+        "y1": 679,
+        "count": 5
+      },
+      {
+        "name": "barren_wasteland",
+        "x0": 8,
+        "x1": 478,
+        "y0": 713,
+        "y1": 846,
+        "count": 6
+      },
+      {
+        "name": "blocking_terrain",
+        "x0": 480,
+        "x1": 1096,
+        "y0": 713,
+        "y1": 846,
+        "count": 6
+      },
+      {
+        "name": "manmade_flavor",
+        "x0": 1098,
+        "x1": 1528,
+        "y0": 713,
+        "y1": 846,
+        "count": 6
+      }
+    ],
+    "debug_overlay": "debug_extraction_overlay.png"
+  },
+  "tiles": [
+    {
+      "id": "grass_01",
+      "label": "GRASS 01",
+      "category": "ground_grasslands",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "stealth"
+      ],
+      "biome": "grasslands",
+      "description": "Short green grass with small texture variation.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 6,
+        "y": 52,
+        "w": 82,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/grass_01.png",
+      "tile_path": "tiles_32/grass_01.png",
+      "atlas_index": 0,
+      "atlas_coord": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "grass_02",
+      "label": "GRASS 02",
+      "category": "ground_grasslands",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "cover"
+      ],
+      "biome": "grasslands",
+      "description": "Patchy grass with stones and bare soil.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 99,
+        "y": 52,
+        "w": 70,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/grass_02.png",
+      "tile_path": "tiles_32/grass_02.png",
+      "atlas_index": 1,
+      "atlas_coord": {
+        "x": 1,
+        "y": 0
+      }
+    },
+    {
+      "id": "grass_03",
+      "label": "GRASS 03",
+      "category": "ground_grasslands",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "stealth"
+      ],
+      "biome": "grasslands",
+      "description": "Dense mossy grass with darker clumps.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 180,
+        "y": 52,
+        "w": 69,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/grass_03.png",
+      "tile_path": "tiles_32/grass_03.png",
+      "atlas_index": 2,
+      "atlas_coord": {
+        "x": 2,
+        "y": 0
+      }
+    },
+    {
+      "id": "flower_patch",
+      "label": "FLOWER PATCH",
+      "category": "ground_grasslands",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "flavor",
+        "stealth"
+      ],
+      "biome": "grasslands",
+      "description": "Readable flower patch for visual variety.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 260,
+        "y": 52,
+        "w": 68,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/flower_patch.png",
+      "tile_path": "tiles_32/flower_patch.png",
+      "atlas_index": 3,
+      "atlas_coord": {
+        "x": 3,
+        "y": 0
+      }
+    },
+    {
+      "id": "tall_grass",
+      "label": "TALL GRASS",
+      "category": "ground_grasslands",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "stealth"
+      ],
+      "biome": "grasslands",
+      "description": "Tall grass that can imply concealment.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 339,
+        "y": 52,
+        "w": 74,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/tall_grass.png",
+      "tile_path": "tiles_32/tall_grass.png",
+      "atlas_index": 4,
+      "atlas_coord": {
+        "x": 4,
+        "y": 0
+      }
+    },
+    {
+      "id": "dirt",
+      "label": "DIRT",
+      "category": "ground_rocky_dirt",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [],
+      "biome": "dirt",
+      "description": "Plain dirt ground.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 424,
+        "y": 59,
+        "w": 79,
+        "h": 92
+      },
+      "raw_preview_path": "raw_preview_tiles/dirt.png",
+      "tile_path": "tiles_32/dirt.png",
+      "atlas_index": 5,
+      "atlas_coord": {
+        "x": 5,
+        "y": 0
+      }
+    },
+    {
+      "id": "rocky_dirt",
+      "label": "ROCKY DIRT",
+      "category": "ground_rocky_dirt",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [],
+      "biome": "dirt",
+      "description": "Dirt with scattered rocks.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 514,
+        "y": 59,
+        "w": 76,
+        "h": 92
+      },
+      "raw_preview_path": "raw_preview_tiles/rocky_dirt.png",
+      "tile_path": "tiles_32/rocky_dirt.png",
+      "atlas_index": 6,
+      "atlas_coord": {
+        "x": 6,
+        "y": 0
+      }
+    },
+    {
+      "id": "gravel",
+      "label": "GRAVEL",
+      "category": "ground_rocky_dirt",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [],
+      "biome": "rocky",
+      "description": "Loose gravel ground.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 601,
+        "y": 59,
+        "w": 69,
+        "h": 92
+      },
+      "raw_preview_path": "raw_preview_tiles/gravel.png",
+      "tile_path": "tiles_32/gravel.png",
+      "atlas_index": 7,
+      "atlas_coord": {
+        "x": 7,
+        "y": 0
+      }
+    },
+    {
+      "id": "stone_floor",
+      "label": "STONE FLOOR",
+      "category": "ground_rocky_dirt",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "manmade"
+      ],
+      "biome": "stone",
+      "description": "Walkable stone floor tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 681,
+        "y": 59,
+        "w": 74,
+        "h": 92
+      },
+      "raw_preview_path": "raw_preview_tiles/stone_floor.png",
+      "tile_path": "tiles_32/stone_floor.png",
+      "atlas_index": 8,
+      "atlas_coord": {
+        "x": 8,
+        "y": 0
+      }
+    },
+    {
+      "id": "cracked_earth",
+      "label": "CRACKED EARTH",
+      "category": "ground_rocky_dirt",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [],
+      "biome": "dirt",
+      "description": "Dry cracked earth.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 766,
+        "y": 59,
+        "w": 85,
+        "h": 92
+      },
+      "raw_preview_path": "raw_preview_tiles/cracked_earth.png",
+      "tile_path": "tiles_32/cracked_earth.png",
+      "atlas_index": 9,
+      "atlas_coord": {
+        "x": 9,
+        "y": 0
+      }
+    },
+    {
+      "id": "scorched_dirt",
+      "label": "SCORCHED DIRT",
+      "category": "ground_scorched_ash",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "hazard_theme"
+      ],
+      "biome": "scorched",
+      "description": "Blackened dirt.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 862,
+        "y": 52,
+        "w": 72,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/scorched_dirt.png",
+      "tile_path": "tiles_32/scorched_dirt.png",
+      "atlas_index": 10,
+      "atlas_coord": {
+        "x": 10,
+        "y": 0
+      }
+    },
+    {
+      "id": "ash",
+      "label": "ASH",
+      "category": "ground_scorched_ash",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "hazard_theme"
+      ],
+      "biome": "scorched",
+      "description": "Ashy ground.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 945,
+        "y": 52,
+        "w": 65,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/ash.png",
+      "tile_path": "tiles_32/ash.png",
+      "atlas_index": 11,
+      "atlas_coord": {
+        "x": 11,
+        "y": 0
+      }
+    },
+    {
+      "id": "burned_rock",
+      "label": "BURNED ROCK",
+      "category": "ground_scorched_ash",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [
+        "hazard_theme"
+      ],
+      "biome": "scorched",
+      "description": "Burned rocky ground.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 1021,
+        "y": 52,
+        "w": 68,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/burned_rock.png",
+      "tile_path": "tiles_32/burned_rock.png",
+      "atlas_index": 12,
+      "atlas_coord": {
+        "x": 12,
+        "y": 0
+      }
+    },
+    {
+      "id": "lava_crust",
+      "label": "LAVA CRUST",
+      "category": "ground_scorched_ash",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [
+        "hazard",
+        "heat"
+      ],
+      "biome": "lava",
+      "description": "Crusted lava ground, slow and dangerous-looking.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 1100,
+        "y": 52,
+        "w": 64,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/lava_crust.png",
+      "tile_path": "tiles_32/lava_crust.png",
+      "atlas_index": 13,
+      "atlas_coord": {
+        "x": 13,
+        "y": 0
+      }
+    },
+    {
+      "id": "cracked_lava",
+      "label": "CRACKED LAVA",
+      "category": "ground_scorched_ash",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [
+        "hazard",
+        "heat"
+      ],
+      "biome": "lava",
+      "description": "Cracked lava crust.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 1175,
+        "y": 52,
+        "w": 61,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/cracked_lava.png",
+      "tile_path": "tiles_32/cracked_lava.png",
+      "atlas_index": 14,
+      "atlas_coord": {
+        "x": 14,
+        "y": 0
+      }
+    },
+    {
+      "id": "snow",
+      "label": "SNOW",
+      "category": "snow_ice",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "cold"
+      ],
+      "biome": "snow",
+      "description": "Snow ground.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1247,
+        "y": 52,
+        "w": 48,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/snow.png",
+      "tile_path": "tiles_32/snow.png",
+      "atlas_index": 15,
+      "atlas_coord": {
+        "x": 15,
+        "y": 0
+      }
+    },
+    {
+      "id": "snow_drifts",
+      "label": "SNOW DRIFTS",
+      "category": "snow_ice",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [
+        "cold"
+      ],
+      "biome": "snow",
+      "description": "Deep snow drifts.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 1306,
+        "y": 52,
+        "w": 43,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/snow_drifts.png",
+      "tile_path": "tiles_32/snow_drifts.png",
+      "atlas_index": 16,
+      "atlas_coord": {
+        "x": 0,
+        "y": 1
+      }
+    },
+    {
+      "id": "ice",
+      "label": "ICE",
+      "category": "snow_ice",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [
+        "cold",
+        "slippery"
+      ],
+      "biome": "ice",
+      "description": "Ice ground.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 1360,
+        "y": 52,
+        "w": 49,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/ice.png",
+      "tile_path": "tiles_32/ice.png",
+      "atlas_index": 17,
+      "atlas_coord": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    {
+      "id": "frozen_ground",
+      "label": "FROZEN GROUND",
+      "category": "snow_ice",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [
+        "cold"
+      ],
+      "biome": "ice",
+      "description": "Frozen cracked ground.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 1420,
+        "y": 52,
+        "w": 45,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/frozen_ground.png",
+      "tile_path": "tiles_32/frozen_ground.png",
+      "atlas_index": 18,
+      "atlas_coord": {
+        "x": 2,
+        "y": 1
+      }
+    },
+    {
+      "id": "packed_snow",
+      "label": "PACKED SNOW",
+      "category": "snow_ice",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "cold"
+      ],
+      "biome": "snow",
+      "description": "Packed snow path.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1476,
+        "y": 52,
+        "w": 46,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/packed_snow.png",
+      "tile_path": "tiles_32/packed_snow.png",
+      "atlas_index": 19,
+      "atlas_coord": {
+        "x": 3,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_top",
+      "label": "CLIFF TOP",
+      "category": "elevation_cliffs_north",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "elevation"
+      ],
+      "biome": "grasslands",
+      "description": "Top surface of a raised cliff.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 6,
+        "y": 222,
+        "w": 95,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_top.png",
+      "tile_path": "tiles_32/cliff_top.png",
+      "atlas_index": 20,
+      "atlas_coord": {
+        "x": 4,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_edge_n",
+      "label": "CLIFF EDGE N",
+      "category": "elevation_cliffs_north",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "North-facing cliff edge.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 112,
+        "y": 222,
+        "w": 88,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_edge_n.png",
+      "tile_path": "tiles_32/cliff_edge_n.png",
+      "atlas_index": 21,
+      "atlas_coord": {
+        "x": 5,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_edge_ne",
+      "label": "CLIFF EDGE NE",
+      "category": "elevation_cliffs_north",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Northeast cliff edge.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 211,
+        "y": 222,
+        "w": 84,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_edge_ne.png",
+      "tile_path": "tiles_32/cliff_edge_ne.png",
+      "atlas_index": 22,
+      "atlas_coord": {
+        "x": 6,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_edge_nw",
+      "label": "CLIFF EDGE NW",
+      "category": "elevation_cliffs_north",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Northwest cliff edge.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 306,
+        "y": 222,
+        "w": 93,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_edge_nw.png",
+      "tile_path": "tiles_32/cliff_edge_nw.png",
+      "atlas_index": 23,
+      "atlas_coord": {
+        "x": 7,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_corner_ne",
+      "label": "CLIFF CORNER NE",
+      "category": "elevation_cliffs_north",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Northeast cliff corner.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 410,
+        "y": 222,
+        "w": 79,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_corner_ne.png",
+      "tile_path": "tiles_32/cliff_corner_ne.png",
+      "atlas_index": 24,
+      "atlas_coord": {
+        "x": 8,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_corner_nw",
+      "label": "CLIFF CORNER NW",
+      "category": "elevation_cliffs_north",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Northwest cliff corner.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 500,
+        "y": 222,
+        "w": 87,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_corner_nw.png",
+      "tile_path": "tiles_32/cliff_corner_nw.png",
+      "atlas_index": 25,
+      "atlas_coord": {
+        "x": 9,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_edge_s",
+      "label": "CLIFF EDGE S",
+      "category": "elevation_cliffs_south",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "South-facing cliff edge.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 598,
+        "y": 224,
+        "w": 81,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_edge_s.png",
+      "tile_path": "tiles_32/cliff_edge_s.png",
+      "atlas_index": 26,
+      "atlas_coord": {
+        "x": 10,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_edge_se",
+      "label": "CLIFF EDGE SE",
+      "category": "elevation_cliffs_south",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Southeast cliff edge.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 690,
+        "y": 224,
+        "w": 72,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_edge_se.png",
+      "tile_path": "tiles_32/cliff_edge_se.png",
+      "atlas_index": 27,
+      "atlas_coord": {
+        "x": 11,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_edge_sw",
+      "label": "CLIFF EDGE SW",
+      "category": "elevation_cliffs_south",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Southwest cliff edge.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 773,
+        "y": 224,
+        "w": 74,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_edge_sw.png",
+      "tile_path": "tiles_32/cliff_edge_sw.png",
+      "atlas_index": 28,
+      "atlas_coord": {
+        "x": 12,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_corner_se",
+      "label": "CLIFF CORNER SE",
+      "category": "elevation_cliffs_south",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Southeast cliff corner.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 858,
+        "y": 224,
+        "w": 76,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_corner_se.png",
+      "tile_path": "tiles_32/cliff_corner_se.png",
+      "atlas_index": 29,
+      "atlas_coord": {
+        "x": 13,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_corner_sw",
+      "label": "CLIFF CORNER SW",
+      "category": "elevation_cliffs_south",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Southwest cliff corner.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 945,
+        "y": 224,
+        "w": 73,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_corner_sw.png",
+      "tile_path": "tiles_32/cliff_corner_sw.png",
+      "atlas_index": 30,
+      "atlas_coord": {
+        "x": 14,
+        "y": 1
+      }
+    },
+    {
+      "id": "cliff_inner_corner",
+      "label": "CLIFF INNER CORNER",
+      "category": "elevation_cliffs_south",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "inner_corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Inner cliff corner.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 1029,
+        "y": 224,
+        "w": 70,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/cliff_inner_corner.png",
+      "tile_path": "tiles_32/cliff_inner_corner.png",
+      "atlas_index": 31,
+      "atlas_coord": {
+        "x": 15,
+        "y": 1
+      }
+    },
+    {
+      "id": "plateau_top",
+      "label": "PLATEAU TOP",
+      "category": "elevation_plateaus",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "elevation"
+      ],
+      "biome": "grasslands",
+      "description": "Raised plateau top.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1110,
+        "y": 220,
+        "w": 81,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/plateau_top.png",
+      "tile_path": "tiles_32/plateau_top.png",
+      "atlas_index": 32,
+      "atlas_coord": {
+        "x": 0,
+        "y": 2
+      }
+    },
+    {
+      "id": "plateau_edge",
+      "label": "PLATEAU EDGE",
+      "category": "elevation_plateaus",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Raised plateau edge.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 1202,
+        "y": 220,
+        "w": 75,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/plateau_edge.png",
+      "tile_path": "tiles_32/plateau_edge.png",
+      "atlas_index": 33,
+      "atlas_coord": {
+        "x": 1,
+        "y": 2
+      }
+    },
+    {
+      "id": "plateau_corner",
+      "label": "PLATEAU CORNER",
+      "category": "elevation_plateaus",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Raised plateau corner.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 1288,
+        "y": 220,
+        "w": 75,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/plateau_corner.png",
+      "tile_path": "tiles_32/plateau_corner.png",
+      "atlas_index": 34,
+      "atlas_coord": {
+        "x": 2,
+        "y": 2
+      }
+    },
+    {
+      "id": "plateau_inner_corner",
+      "label": "PLATEAU INNER CORNER",
+      "category": "elevation_plateaus",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "inner_corner",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Raised plateau inner corner.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 1374,
+        "y": 220,
+        "w": 70,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/plateau_inner_corner.png",
+      "tile_path": "tiles_32/plateau_inner_corner.png",
+      "atlas_index": 35,
+      "atlas_coord": {
+        "x": 3,
+        "y": 2
+      }
+    },
+    {
+      "id": "low_raise",
+      "label": "LOW RAISE",
+      "category": "elevation_plateaus",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "elevation"
+      ],
+      "biome": "grasslands",
+      "description": "Low raised terrain.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1455,
+        "y": 220,
+        "w": 67,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/low_raise.png",
+      "tile_path": "tiles_32/low_raise.png",
+      "atlas_index": 36,
+      "atlas_coord": {
+        "x": 4,
+        "y": 2
+      }
+    },
+    {
+      "id": "ramp_n",
+      "label": "RAMP N",
+      "category": "slopes_ramps",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "ramp",
+        "direction_n"
+      ],
+      "biome": "grasslands",
+      "description": "North ramp transition.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 6,
+        "y": 389,
+        "w": 77,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/ramp_n.png",
+      "tile_path": "tiles_32/ramp_n.png",
+      "atlas_index": 37,
+      "atlas_coord": {
+        "x": 5,
+        "y": 2
+      }
+    },
+    {
+      "id": "ramp_s",
+      "label": "RAMP S",
+      "category": "slopes_ramps",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "ramp",
+        "direction_s"
+      ],
+      "biome": "grasslands",
+      "description": "South ramp transition.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 94,
+        "y": 389,
+        "w": 70,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/ramp_s.png",
+      "tile_path": "tiles_32/ramp_s.png",
+      "atlas_index": 38,
+      "atlas_coord": {
+        "x": 6,
+        "y": 2
+      }
+    },
+    {
+      "id": "ramp_e",
+      "label": "RAMP E",
+      "category": "slopes_ramps",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "ramp",
+        "direction_e"
+      ],
+      "biome": "grasslands",
+      "description": "East ramp transition.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 175,
+        "y": 389,
+        "w": 68,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/ramp_e.png",
+      "tile_path": "tiles_32/ramp_e.png",
+      "atlas_index": 39,
+      "atlas_coord": {
+        "x": 7,
+        "y": 2
+      }
+    },
+    {
+      "id": "ramp_w",
+      "label": "RAMP W",
+      "category": "slopes_ramps",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "ramp",
+        "direction_w"
+      ],
+      "biome": "grasslands",
+      "description": "West ramp transition.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 254,
+        "y": 389,
+        "w": 70,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/ramp_w.png",
+      "tile_path": "tiles_32/ramp_w.png",
+      "atlas_index": 40,
+      "atlas_coord": {
+        "x": 8,
+        "y": 2
+      }
+    },
+    {
+      "id": "ramp_ne",
+      "label": "RAMP NE",
+      "category": "slopes_ramps",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "ramp",
+        "direction_ne"
+      ],
+      "biome": "grasslands",
+      "description": "Northeast diagonal ramp transition.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 335,
+        "y": 389,
+        "w": 66,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/ramp_ne.png",
+      "tile_path": "tiles_32/ramp_ne.png",
+      "atlas_index": 41,
+      "atlas_coord": {
+        "x": 9,
+        "y": 2
+      }
+    },
+    {
+      "id": "ramp_nw",
+      "label": "RAMP NW",
+      "category": "slopes_ramps",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "ramp",
+        "direction_nw"
+      ],
+      "biome": "grasslands",
+      "description": "Northwest diagonal ramp transition.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 412,
+        "y": 389,
+        "w": 70,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/ramp_nw.png",
+      "tile_path": "tiles_32/ramp_nw.png",
+      "atlas_index": 42,
+      "atlas_coord": {
+        "x": 10,
+        "y": 2
+      }
+    },
+    {
+      "id": "stairs_n",
+      "label": "STAIRS N",
+      "category": "stairs",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "stair",
+        "direction_n"
+      ],
+      "biome": "stone",
+      "description": "North stair transition.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 493,
+        "y": 395,
+        "w": 56,
+        "h": 96
+      },
+      "raw_preview_path": "raw_preview_tiles/stairs_n.png",
+      "tile_path": "tiles_32/stairs_n.png",
+      "atlas_index": 43,
+      "atlas_coord": {
+        "x": 11,
+        "y": 2
+      }
+    },
+    {
+      "id": "stairs_s",
+      "label": "STAIRS S",
+      "category": "stairs",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "stair",
+        "direction_s"
+      ],
+      "biome": "stone",
+      "description": "South stair transition.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 560,
+        "y": 395,
+        "w": 54,
+        "h": 96
+      },
+      "raw_preview_path": "raw_preview_tiles/stairs_s.png",
+      "tile_path": "tiles_32/stairs_s.png",
+      "atlas_index": 44,
+      "atlas_coord": {
+        "x": 12,
+        "y": 2
+      }
+    },
+    {
+      "id": "stairs_e",
+      "label": "STAIRS E",
+      "category": "stairs",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "stair",
+        "direction_e"
+      ],
+      "biome": "stone",
+      "description": "East stair transition.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 625,
+        "y": 395,
+        "w": 53,
+        "h": 96
+      },
+      "raw_preview_path": "raw_preview_tiles/stairs_e.png",
+      "tile_path": "tiles_32/stairs_e.png",
+      "atlas_index": 45,
+      "atlas_coord": {
+        "x": 13,
+        "y": 2
+      }
+    },
+    {
+      "id": "stairs_w",
+      "label": "STAIRS W",
+      "category": "stairs",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "stair",
+        "direction_w"
+      ],
+      "biome": "stone",
+      "description": "West stair transition.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 689,
+        "y": 395,
+        "w": 52,
+        "h": 96
+      },
+      "raw_preview_path": "raw_preview_tiles/stairs_w.png",
+      "tile_path": "tiles_32/stairs_w.png",
+      "atlas_index": 46,
+      "atlas_coord": {
+        "x": 14,
+        "y": 2
+      }
+    },
+    {
+      "id": "bridge",
+      "label": "BRIDGE",
+      "category": "special_elevation",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "bridge"
+      ],
+      "biome": "wood",
+      "description": "Bridge or elevated crossing.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 752,
+        "y": 389,
+        "w": 74,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/bridge.png",
+      "tile_path": "tiles_32/bridge.png",
+      "atlas_index": 47,
+      "atlas_coord": {
+        "x": 15,
+        "y": 2
+      }
+    },
+    {
+      "id": "overhang",
+      "label": "OVERHANG",
+      "category": "special_elevation",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "overhang",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Overhanging elevated terrain.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 837,
+        "y": 389,
+        "w": 61,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/overhang.png",
+      "tile_path": "tiles_32/overhang.png",
+      "atlas_index": 48,
+      "atlas_coord": {
+        "x": 0,
+        "y": 3
+      }
+    },
+    {
+      "id": "ledge",
+      "label": "LEDGE",
+      "category": "special_elevation",
+      "movement": "blocked",
+      "elevation": 1,
+      "flags": [
+        "ledge",
+        "blocks_vision"
+      ],
+      "biome": "grasslands",
+      "description": "Tactical ledge tile.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 909,
+        "y": 389,
+        "w": 56,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/ledge.png",
+      "tile_path": "tiles_32/ledge.png",
+      "atlas_index": 49,
+      "atlas_coord": {
+        "x": 1,
+        "y": 3
+      }
+    },
+    {
+      "id": "terrace_step",
+      "label": "TERRACE STEP",
+      "category": "special_elevation",
+      "movement": "walkable",
+      "elevation": 1,
+      "flags": [
+        "stair",
+        "terrace"
+      ],
+      "biome": "grasslands",
+      "description": "Terraced step.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 976,
+        "y": 389,
+        "w": 55,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/terrace_step.png",
+      "tile_path": "tiles_32/terrace_step.png",
+      "atlas_index": 50,
+      "atlas_coord": {
+        "x": 2,
+        "y": 3
+      }
+    },
+    {
+      "id": "elevator_pad",
+      "label": "ELEVATOR PAD",
+      "category": "special_elevation",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "gate",
+        "transition",
+        "manmade"
+      ],
+      "biome": "industrial",
+      "description": "Elevator or lift pad.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1042,
+        "y": 389,
+        "w": 59,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/elevator_pad.png",
+      "tile_path": "tiles_32/elevator_pad.png",
+      "atlas_index": 51,
+      "atlas_coord": {
+        "x": 3,
+        "y": 3
+      }
+    },
+    {
+      "id": "water_shallow",
+      "label": "WATER SHALLOW",
+      "category": "water",
+      "movement": "water",
+      "elevation": -1,
+      "flags": [
+        "swimmable"
+      ],
+      "biome": "water",
+      "description": "Shallow water.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 3.0,
+      "source_rect": {
+        "x": 1112,
+        "y": 395,
+        "w": 75,
+        "h": 96
+      },
+      "raw_preview_path": "raw_preview_tiles/water_shallow.png",
+      "tile_path": "tiles_32/water_shallow.png",
+      "atlas_index": 52,
+      "atlas_coord": {
+        "x": 4,
+        "y": 3
+      }
+    },
+    {
+      "id": "water_deep",
+      "label": "WATER DEEP",
+      "category": "water",
+      "movement": "water",
+      "elevation": -1,
+      "flags": [
+        "deep_water"
+      ],
+      "biome": "water",
+      "description": "Deep water.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 3.0,
+      "source_rect": {
+        "x": 1198,
+        "y": 395,
+        "w": 69,
+        "h": 96
+      },
+      "raw_preview_path": "raw_preview_tiles/water_deep.png",
+      "tile_path": "tiles_32/water_deep.png",
+      "atlas_index": 53,
+      "atlas_coord": {
+        "x": 5,
+        "y": 3
+      }
+    },
+    {
+      "id": "waves",
+      "label": "WAVES",
+      "category": "water",
+      "movement": "water",
+      "elevation": -1,
+      "flags": [
+        "deep_water"
+      ],
+      "biome": "water",
+      "description": "Wavy water surface.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 3.0,
+      "source_rect": {
+        "x": 1278,
+        "y": 395,
+        "w": 71,
+        "h": 96
+      },
+      "raw_preview_path": "raw_preview_tiles/waves.png",
+      "tile_path": "tiles_32/waves.png",
+      "atlas_index": 54,
+      "atlas_coord": {
+        "x": 6,
+        "y": 3
+      }
+    },
+    {
+      "id": "river",
+      "label": "RIVER",
+      "category": "water",
+      "movement": "water",
+      "elevation": -1,
+      "flags": [
+        "current"
+      ],
+      "biome": "water",
+      "description": "River tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 3.0,
+      "source_rect": {
+        "x": 1360,
+        "y": 395,
+        "w": 70,
+        "h": 96
+      },
+      "raw_preview_path": "raw_preview_tiles/river.png",
+      "tile_path": "tiles_32/river.png",
+      "atlas_index": 55,
+      "atlas_coord": {
+        "x": 7,
+        "y": 3
+      }
+    },
+    {
+      "id": "waterfall",
+      "label": "WATERFALL",
+      "category": "water",
+      "movement": "water",
+      "elevation": -1,
+      "flags": [
+        "waterfall",
+        "blocks_vision"
+      ],
+      "biome": "water",
+      "description": "Waterfall or vertical water drop.",
+      "blocks_movement": false,
+      "blocks_vision": true,
+      "navigation_cost": 3.0,
+      "source_rect": {
+        "x": 1441,
+        "y": 395,
+        "w": 81,
+        "h": 96
+      },
+      "raw_preview_path": "raw_preview_tiles/waterfall.png",
+      "tile_path": "tiles_32/waterfall.png",
+      "atlas_index": 56,
+      "atlas_coord": {
+        "x": 8,
+        "y": 3
+      }
+    },
+    {
+      "id": "boulder_small",
+      "label": "BOULDER SMALL",
+      "category": "obstacles_natural",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "resource_possible"
+      ],
+      "biome": "rocky",
+      "description": "Small blocking boulder.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 6,
+        "y": 562,
+        "w": 77,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/boulder_small.png",
+      "tile_path": "tiles_32/boulder_small.png",
+      "atlas_index": 57,
+      "atlas_coord": {
+        "x": 9,
+        "y": 3
+      }
+    },
+    {
+      "id": "boulder_large",
+      "label": "BOULDER LARGE",
+      "category": "obstacles_natural",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "blocks_vision",
+        "resource_possible"
+      ],
+      "biome": "rocky",
+      "description": "Large blocking boulder.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 94,
+        "y": 562,
+        "w": 70,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/boulder_large.png",
+      "tile_path": "tiles_32/boulder_large.png",
+      "atlas_index": 58,
+      "atlas_coord": {
+        "x": 10,
+        "y": 3
+      }
+    },
+    {
+      "id": "rock_outcrop",
+      "label": "ROCK OUTCROP",
+      "category": "obstacles_natural",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "blocks_vision",
+        "resource_possible"
+      ],
+      "biome": "rocky",
+      "description": "Rock outcrop obstacle.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 175,
+        "y": 562,
+        "w": 68,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/rock_outcrop.png",
+      "tile_path": "tiles_32/rock_outcrop.png",
+      "atlas_index": 59,
+      "atlas_coord": {
+        "x": 11,
+        "y": 3
+      }
+    },
+    {
+      "id": "fallen_log",
+      "label": "FALLEN LOG",
+      "category": "obstacles_natural",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "resource_possible"
+      ],
+      "biome": "forest",
+      "description": "Fallen log obstacle.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 254,
+        "y": 562,
+        "w": 61,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/fallen_log.png",
+      "tile_path": "tiles_32/fallen_log.png",
+      "atlas_index": 60,
+      "atlas_coord": {
+        "x": 12,
+        "y": 3
+      }
+    },
+    {
+      "id": "tree_stump",
+      "label": "TREE STUMP",
+      "category": "obstacles_natural",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "resource_possible"
+      ],
+      "biome": "forest",
+      "description": "Tree stump obstacle.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 326,
+        "y": 562,
+        "w": 58,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/tree_stump.png",
+      "tile_path": "tiles_32/tree_stump.png",
+      "atlas_index": 61,
+      "atlas_coord": {
+        "x": 13,
+        "y": 3
+      }
+    },
+    {
+      "id": "dead_tree",
+      "label": "DEAD TREE",
+      "category": "obstacles_natural",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "blocks_vision",
+        "resource_possible"
+      ],
+      "biome": "forest",
+      "description": "Dead tree obstacle.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 395,
+        "y": 562,
+        "w": 65,
+        "h": 98
+      },
+      "raw_preview_path": "raw_preview_tiles/dead_tree.png",
+      "tile_path": "tiles_32/dead_tree.png",
+      "atlas_index": 62,
+      "atlas_coord": {
+        "x": 14,
+        "y": 3
+      }
+    },
+    {
+      "id": "tree_oak",
+      "label": "TREE OAK",
+      "category": "vegetation",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "blocks_vision",
+        "resource_possible"
+      ],
+      "biome": "forest",
+      "description": "Oak tree prop tile.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 471,
+        "y": 558,
+        "w": 69,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/tree_oak.png",
+      "tile_path": "tiles_32/tree_oak.png",
+      "atlas_index": 63,
+      "atlas_coord": {
+        "x": 15,
+        "y": 3
+      }
+    },
+    {
+      "id": "tree_pine",
+      "label": "TREE PINE",
+      "category": "vegetation",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "blocks_vision",
+        "resource_possible"
+      ],
+      "biome": "forest",
+      "description": "Pine tree prop tile.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 551,
+        "y": 558,
+        "w": 34,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/tree_pine.png",
+      "tile_path": "tiles_32/tree_pine.png",
+      "atlas_index": 64,
+      "atlas_coord": {
+        "x": 0,
+        "y": 4
+      }
+    },
+    {
+      "id": "bush",
+      "label": "BUSH",
+      "category": "vegetation",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "stealth"
+      ],
+      "biome": "forest",
+      "description": "Bush tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 596,
+        "y": 558,
+        "w": 75,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/bush.png",
+      "tile_path": "tiles_32/bush.png",
+      "atlas_index": 65,
+      "atlas_coord": {
+        "x": 1,
+        "y": 4
+      }
+    },
+    {
+      "id": "shrub_cluster",
+      "label": "SHRUB CLUSTER",
+      "category": "vegetation",
+      "movement": "slow",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "stealth"
+      ],
+      "biome": "forest",
+      "description": "Clustered shrubs.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 682,
+        "y": 558,
+        "w": 53,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/shrub_cluster.png",
+      "tile_path": "tiles_32/shrub_cluster.png",
+      "atlas_index": 66,
+      "atlas_coord": {
+        "x": 2,
+        "y": 4
+      }
+    },
+    {
+      "id": "cactus",
+      "label": "CACTUS",
+      "category": "vegetation",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "hazard",
+        "cover"
+      ],
+      "biome": "desert",
+      "description": "Cactus obstacle.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 746,
+        "y": 558,
+        "w": 49,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/cactus.png",
+      "tile_path": "tiles_32/cactus.png",
+      "atlas_index": 67,
+      "atlas_coord": {
+        "x": 3,
+        "y": 4
+      }
+    },
+    {
+      "id": "flowers",
+      "label": "FLOWERS",
+      "category": "vegetation",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "flavor"
+      ],
+      "biome": "grasslands",
+      "description": "Flower vegetation flavor.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 806,
+        "y": 558,
+        "w": 52,
+        "h": 102
+      },
+      "raw_preview_path": "raw_preview_tiles/flowers.png",
+      "tile_path": "tiles_32/flowers.png",
+      "atlas_index": 68,
+      "atlas_coord": {
+        "x": 4,
+        "y": 4
+      }
+    },
+    {
+      "id": "mud",
+      "label": "MUD",
+      "category": "swamp_mud",
+      "movement": "slow",
+      "elevation": -1,
+      "flags": [],
+      "biome": "swamp",
+      "description": "Mud tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 869,
+        "y": 561,
+        "w": 57,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/mud.png",
+      "tile_path": "tiles_32/mud.png",
+      "atlas_index": 69,
+      "atlas_coord": {
+        "x": 5,
+        "y": 4
+      }
+    },
+    {
+      "id": "swamp",
+      "label": "SWAMP",
+      "category": "swamp_mud",
+      "movement": "slow",
+      "elevation": -1,
+      "flags": [
+        "waterlogged"
+      ],
+      "biome": "swamp",
+      "description": "Swamp tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 937,
+        "y": 561,
+        "w": 51,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/swamp.png",
+      "tile_path": "tiles_32/swamp.png",
+      "atlas_index": 70,
+      "atlas_coord": {
+        "x": 6,
+        "y": 4
+      }
+    },
+    {
+      "id": "mossy_ground",
+      "label": "MOSSY GROUND",
+      "category": "swamp_mud",
+      "movement": "slow",
+      "elevation": -1,
+      "flags": [
+        "stealth"
+      ],
+      "biome": "swamp",
+      "description": "Mossy wet ground.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 999,
+        "y": 561,
+        "w": 54,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/mossy_ground.png",
+      "tile_path": "tiles_32/mossy_ground.png",
+      "atlas_index": 71,
+      "atlas_coord": {
+        "x": 7,
+        "y": 4
+      }
+    },
+    {
+      "id": "bog",
+      "label": "BOG",
+      "category": "swamp_mud",
+      "movement": "slow",
+      "elevation": -1,
+      "flags": [
+        "waterlogged"
+      ],
+      "biome": "swamp",
+      "description": "Bog tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.8,
+      "source_rect": {
+        "x": 1064,
+        "y": 561,
+        "w": 44,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/bog.png",
+      "tile_path": "tiles_32/bog.png",
+      "atlas_index": 72,
+      "atlas_coord": {
+        "x": 8,
+        "y": 4
+      }
+    },
+    {
+      "id": "lily_pads",
+      "label": "LILY PADS",
+      "category": "swamp_mud",
+      "movement": "water",
+      "elevation": -1,
+      "flags": [
+        "waterlogged"
+      ],
+      "biome": "swamp",
+      "description": "Lily pad water tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 3.0,
+      "source_rect": {
+        "x": 1119,
+        "y": 561,
+        "w": 48,
+        "h": 99
+      },
+      "raw_preview_path": "raw_preview_tiles/lily_pads.png",
+      "tile_path": "tiles_32/lily_pads.png",
+      "atlas_index": 73,
+      "atlas_coord": {
+        "x": 9,
+        "y": 4
+      }
+    },
+    {
+      "id": "sand",
+      "label": "SAND",
+      "category": "beach_sand",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [],
+      "biome": "beach",
+      "description": "Sand tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1178,
+        "y": 563,
+        "w": 53,
+        "h": 97
+      },
+      "raw_preview_path": "raw_preview_tiles/sand.png",
+      "tile_path": "tiles_32/sand.png",
+      "atlas_index": 74,
+      "atlas_coord": {
+        "x": 10,
+        "y": 4
+      }
+    },
+    {
+      "id": "wet_sand",
+      "label": "WET SAND",
+      "category": "beach_sand",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [],
+      "biome": "beach",
+      "description": "Wet sand tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1242,
+        "y": 563,
+        "w": 58,
+        "h": 97
+      },
+      "raw_preview_path": "raw_preview_tiles/wet_sand.png",
+      "tile_path": "tiles_32/wet_sand.png",
+      "atlas_index": 75,
+      "atlas_coord": {
+        "x": 11,
+        "y": 4
+      }
+    },
+    {
+      "id": "sand_with_rocks",
+      "label": "SAND WITH ROCKS",
+      "category": "beach_sand",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [],
+      "biome": "beach",
+      "description": "Sand with rocks.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1311,
+        "y": 563,
+        "w": 63,
+        "h": 97
+      },
+      "raw_preview_path": "raw_preview_tiles/sand_with_rocks.png",
+      "tile_path": "tiles_32/sand_with_rocks.png",
+      "atlas_index": 76,
+      "atlas_coord": {
+        "x": 12,
+        "y": 4
+      }
+    },
+    {
+      "id": "beach_grass",
+      "label": "BEACH GRASS",
+      "category": "beach_sand",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "flavor"
+      ],
+      "biome": "beach",
+      "description": "Beach grass.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1385,
+        "y": 563,
+        "w": 60,
+        "h": 97
+      },
+      "raw_preview_path": "raw_preview_tiles/beach_grass.png",
+      "tile_path": "tiles_32/beach_grass.png",
+      "atlas_index": 77,
+      "atlas_coord": {
+        "x": 13,
+        "y": 4
+      }
+    },
+    {
+      "id": "coral_shells",
+      "label": "CORAL / SHELLS",
+      "category": "beach_sand",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "flavor"
+      ],
+      "biome": "beach",
+      "description": "Coral and shells.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1456,
+        "y": 563,
+        "w": 66,
+        "h": 97
+      },
+      "raw_preview_path": "raw_preview_tiles/coral_shells.png",
+      "tile_path": "tiles_32/coral_shells.png",
+      "atlas_index": 78,
+      "atlas_coord": {
+        "x": 14,
+        "y": 4
+      }
+    },
+    {
+      "id": "barren_dirt",
+      "label": "BARREN DIRT",
+      "category": "barren_wasteland",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [],
+      "biome": "wasteland",
+      "description": "Barren dirt.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 6,
+        "y": 727,
+        "w": 78,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/barren_dirt.png",
+      "tile_path": "tiles_32/barren_dirt.png",
+      "atlas_index": 79,
+      "atlas_coord": {
+        "x": 15,
+        "y": 4
+      }
+    },
+    {
+      "id": "wasteland",
+      "label": "WASTELAND",
+      "category": "barren_wasteland",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [],
+      "biome": "wasteland",
+      "description": "Wasteland ground.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 95,
+        "y": 727,
+        "w": 69,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/wasteland.png",
+      "tile_path": "tiles_32/wasteland.png",
+      "atlas_index": 80,
+      "atlas_coord": {
+        "x": 0,
+        "y": 5
+      }
+    },
+    {
+      "id": "cracked_wasteland",
+      "label": "CRACKED WASTELAND",
+      "category": "barren_wasteland",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [],
+      "biome": "wasteland",
+      "description": "Cracked wasteland ground.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 175,
+        "y": 727,
+        "w": 74,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/cracked_wasteland.png",
+      "tile_path": "tiles_32/cracked_wasteland.png",
+      "atlas_index": 81,
+      "atlas_coord": {
+        "x": 1,
+        "y": 5
+      }
+    },
+    {
+      "id": "dry_shrub",
+      "label": "DRY SHRUB",
+      "category": "barren_wasteland",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "flavor"
+      ],
+      "biome": "wasteland",
+      "description": "Dry shrub tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 260,
+        "y": 727,
+        "w": 68,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/dry_shrub.png",
+      "tile_path": "tiles_32/dry_shrub.png",
+      "atlas_index": 82,
+      "atlas_coord": {
+        "x": 2,
+        "y": 5
+      }
+    },
+    {
+      "id": "bone_pile",
+      "label": "BONE PILE",
+      "category": "barren_wasteland",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "flavor"
+      ],
+      "biome": "wasteland",
+      "description": "Bone pile flavor tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 339,
+        "y": 727,
+        "w": 62,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/bone_pile.png",
+      "tile_path": "tiles_32/bone_pile.png",
+      "atlas_index": 83,
+      "atlas_coord": {
+        "x": 3,
+        "y": 5
+      }
+    },
+    {
+      "id": "skeleton",
+      "label": "SKELETON",
+      "category": "barren_wasteland",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "flavor"
+      ],
+      "biome": "wasteland",
+      "description": "Skeleton flavor tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 412,
+        "y": 727,
+        "w": 62,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/skeleton.png",
+      "tile_path": "tiles_32/skeleton.png",
+      "atlas_index": 84,
+      "atlas_coord": {
+        "x": 4,
+        "y": 5
+      }
+    },
+    {
+      "id": "mountain",
+      "label": "MOUNTAIN",
+      "category": "blocking_terrain",
+      "movement": "blocked",
+      "elevation": 2,
+      "flags": [
+        "blocks_vision",
+        "terrain_blocker"
+      ],
+      "biome": "mountain",
+      "description": "Impassable mountain.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 485,
+        "y": 733,
+        "w": 81,
+        "h": 94
+      },
+      "raw_preview_path": "raw_preview_tiles/mountain.png",
+      "tile_path": "tiles_32/mountain.png",
+      "atlas_index": 85,
+      "atlas_coord": {
+        "x": 5,
+        "y": 5
+      }
+    },
+    {
+      "id": "high_mountain",
+      "label": "HIGH MOUNTAIN",
+      "category": "blocking_terrain",
+      "movement": "blocked",
+      "elevation": 2,
+      "flags": [
+        "blocks_vision",
+        "terrain_blocker"
+      ],
+      "biome": "mountain",
+      "description": "High impassable mountain.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 577,
+        "y": 733,
+        "w": 91,
+        "h": 94
+      },
+      "raw_preview_path": "raw_preview_tiles/high_mountain.png",
+      "tile_path": "tiles_32/high_mountain.png",
+      "atlas_index": 86,
+      "atlas_coord": {
+        "x": 6,
+        "y": 5
+      }
+    },
+    {
+      "id": "ocean_deep",
+      "label": "OCEAN DEEP",
+      "category": "blocking_terrain",
+      "movement": "blocked",
+      "elevation": -2,
+      "flags": [
+        "deep_water",
+        "terrain_blocker"
+      ],
+      "biome": "ocean",
+      "description": "Deep ocean blocker.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 679,
+        "y": 733,
+        "w": 99,
+        "h": 94
+      },
+      "raw_preview_path": "raw_preview_tiles/ocean_deep.png",
+      "tile_path": "tiles_32/ocean_deep.png",
+      "atlas_index": 87,
+      "atlas_coord": {
+        "x": 7,
+        "y": 5
+      }
+    },
+    {
+      "id": "lava",
+      "label": "LAVA",
+      "category": "blocking_terrain",
+      "movement": "blocked",
+      "elevation": 2,
+      "flags": [
+        "hazard",
+        "heat",
+        "terrain_blocker"
+      ],
+      "biome": "lava",
+      "description": "Lava blocker.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 789,
+        "y": 733,
+        "w": 102,
+        "h": 94
+      },
+      "raw_preview_path": "raw_preview_tiles/lava.png",
+      "tile_path": "tiles_32/lava.png",
+      "atlas_index": 88,
+      "atlas_coord": {
+        "x": 8,
+        "y": 5
+      }
+    },
+    {
+      "id": "impassable_cliff",
+      "label": "IMPASSABLE CLIFF",
+      "category": "blocking_terrain",
+      "movement": "blocked",
+      "elevation": 2,
+      "flags": [
+        "ledge",
+        "blocks_vision",
+        "terrain_blocker"
+      ],
+      "biome": "mountain",
+      "description": "Impassable cliff wall.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 902,
+        "y": 733,
+        "w": 87,
+        "h": 94
+      },
+      "raw_preview_path": "raw_preview_tiles/impassable_cliff.png",
+      "tile_path": "tiles_32/impassable_cliff.png",
+      "atlas_index": 89,
+      "atlas_coord": {
+        "x": 9,
+        "y": 5
+      }
+    },
+    {
+      "id": "void_chasm",
+      "label": "VOID / CHASM",
+      "category": "blocking_terrain",
+      "movement": "blocked",
+      "elevation": -2,
+      "flags": [
+        "chasm",
+        "terrain_blocker"
+      ],
+      "biome": "void",
+      "description": "Void or chasm blocker.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 1000,
+        "y": 733,
+        "w": 94,
+        "h": 94
+      },
+      "raw_preview_path": "raw_preview_tiles/void_chasm.png",
+      "tile_path": "tiles_32/void_chasm.png",
+      "atlas_index": 90,
+      "atlas_coord": {
+        "x": 10,
+        "y": 5
+      }
+    },
+    {
+      "id": "ruined_wall",
+      "label": "RUINED WALL",
+      "category": "manmade_flavor",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "destructible",
+        "manmade"
+      ],
+      "biome": "ruins",
+      "description": "Ruined wall obstacle.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 1105,
+        "y": 727,
+        "w": 53,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/ruined_wall.png",
+      "tile_path": "tiles_32/ruined_wall.png",
+      "atlas_index": 91,
+      "atlas_coord": {
+        "x": 11,
+        "y": 5
+      }
+    },
+    {
+      "id": "ruined_pillar",
+      "label": "RUINED PILLAR",
+      "category": "manmade_flavor",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "destructible",
+        "manmade"
+      ],
+      "biome": "ruins",
+      "description": "Ruined pillar obstacle.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 1169,
+        "y": 727,
+        "w": 65,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/ruined_pillar.png",
+      "tile_path": "tiles_32/ruined_pillar.png",
+      "atlas_index": 92,
+      "atlas_coord": {
+        "x": 12,
+        "y": 5
+      }
+    },
+    {
+      "id": "crate",
+      "label": "CRATE",
+      "category": "manmade_flavor",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "destructible",
+        "manmade"
+      ],
+      "biome": "ruins",
+      "description": "Crate obstacle.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 1245,
+        "y": 727,
+        "w": 72,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/crate.png",
+      "tile_path": "tiles_32/crate.png",
+      "atlas_index": 93,
+      "atlas_coord": {
+        "x": 13,
+        "y": 5
+      }
+    },
+    {
+      "id": "barrel",
+      "label": "BARREL",
+      "category": "manmade_flavor",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "destructible",
+        "manmade"
+      ],
+      "biome": "ruins",
+      "description": "Barrel obstacle.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 1328,
+        "y": 727,
+        "w": 64,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/barrel.png",
+      "tile_path": "tiles_32/barrel.png",
+      "atlas_index": 94,
+      "atlas_coord": {
+        "x": 14,
+        "y": 5
+      }
+    },
+    {
+      "id": "broken_cart",
+      "label": "BROKEN CART",
+      "category": "manmade_flavor",
+      "movement": "blocked",
+      "elevation": 0,
+      "flags": [
+        "cover",
+        "destructible",
+        "manmade"
+      ],
+      "biome": "ruins",
+      "description": "Broken cart obstacle.",
+      "blocks_movement": true,
+      "blocks_vision": true,
+      "navigation_cost": 9999.0,
+      "source_rect": {
+        "x": 1403,
+        "y": 727,
+        "w": 37,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/broken_cart.png",
+      "tile_path": "tiles_32/broken_cart.png",
+      "atlas_index": 95,
+      "atlas_coord": {
+        "x": 15,
+        "y": 5
+      }
+    },
+    {
+      "id": "campfire_ext",
+      "label": "CAMPFIRE EXT",
+      "category": "manmade_flavor",
+      "movement": "walkable",
+      "elevation": 0,
+      "flags": [
+        "flavor",
+        "light"
+      ],
+      "biome": "ruins",
+      "description": "Extinguished or low campfire flavor tile.",
+      "blocks_movement": false,
+      "blocks_vision": false,
+      "navigation_cost": 1.0,
+      "source_rect": {
+        "x": 1451,
+        "y": 727,
+        "w": 71,
+        "h": 100
+      },
+      "raw_preview_path": "raw_preview_tiles/campfire_ext.png",
+      "tile_path": "tiles_32/campfire_ext.png",
+      "atlas_index": 96,
+      "atlas_coord": {
+        "x": 0,
+        "y": 6
+      }
+    }
+  ]
+}

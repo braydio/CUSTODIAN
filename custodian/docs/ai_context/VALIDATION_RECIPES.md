@@ -4,7 +4,7 @@ Canonical validation guide for CUSTODIAN agent work.
 
 Use the narrowest recipe that proves the change, then broaden only when the change affects shared runtime behavior, scenes, imports, or workflow routing.
 
-Prefer RTK wrappers for compact output when they support the command shape. Use the raw command when RTK changes argument ordering or hides information needed for debugging.
+Prefer RTK subcommands for compact output when they support the command shape. RTK is not a blind prefix: use `rtk git status`, `rtk grep ...`, `rtk find ...`, etc. For unsupported commands where token tracking still helps, use `rtk proxy <command> ...`. Use the raw command when RTK changes argument ordering or hides information needed for debugging.
 
 ## Selection Rules
 
@@ -27,13 +27,27 @@ rtk grep "pattern" path
 rtk find path -maxdepth 3 -type f
 ```
 
+Correction examples:
+
+```bash
+# Git status goes through the git subcommand:
+rtk git status
+
+# Exact porcelain status should stay raw:
+git status --short
+
+# Raw ripgrep can stay raw or go through proxy:
+rg -n "pattern" path
+rtk proxy rg -n "pattern" path
+```
+
 RTK grep argument order:
 
 ```bash
 rtk grep "pattern" path --glob "*.md"
 ```
 
-For complex ripgrep expressions, use raw `rg` or:
+For complex ripgrep expressions, use raw `rg` or pass the raw command through `rtk proxy`:
 
 ```bash
 rtk proxy rg -n --glob "*.md" "pattern" path

@@ -1,0 +1,71 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_small_door_insert_04",
+  "display_name": "Small Gothic Door Insert 04",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 91,
+    "row_index": 4,
+    "col_index": 11,
+    "bbox_px": {
+      "x": 1107,
+      "y": 438,
+      "w": 107,
+      "h": 50
+    }
+  },
+  "file": {
+    "path": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_04.png",
+    "pixel_size": {
+      "w": 107,
+      "h": 50
+    }
+  },
+  "classification": {
+    "asset_type": "doors",
+    "semantic_role": "small_door_or_wall_insert",
+    "placement_layer": "door",
+    "tags": [
+      "compound",
+      "door",
+      "gothic",
+      "small_gate",
+      "threshold"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 4,
+      "h": 2
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 53,
+      "y": 49
+    },
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "collision_shape": "none"
+  },
+  "procgen": {
+    "uses": [
+      "secondary_entrance",
+      "interior_door",
+      "service_gate",
+      "secret_threshold"
+    ],
+    "weight": 18,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/props__harvesting_nodes__broken_signal_relay__node__depleted__1f__96.json",
+	"outputs": [
+		"res://content/sprites/props/harvesting_nodes/broken_signal_relay/broken_signal_relay__node__depleted__1f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/props__harvesting_nodes__broken_signal_relay__node__depleted__1f__96.png",
+	"timestamp_utc": "2026-05-19 21:37:40"
+}

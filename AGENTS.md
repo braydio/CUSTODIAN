@@ -13,6 +13,12 @@ Repository-level guidance for CUSTODIAN (post-Godot pivot).
 - Treat `custodian/AGENTS.md` as the local primer for runtime state, design/development routing, context retrieval, docs-drift review, and migration execution.
 - This root file defines repository-wide doctrine and authority order; the `custodian/` primer defines how to operate inside the active Godot runtime subtree.
 
+## Command Routing
+
+- Prefer RTK subcommands for noisy read-only shell work: use forms like `rtk git status`, `rtk git diff`, `rtk git log`, `rtk ls`, `rtk find ...`, and `rtk grep ...`.
+- Do not treat `rtk` as a blind prefix for arbitrary commands. If RTK has no matching subcommand and token tracking is still useful, use `rtk proxy <command> ...`; otherwise run the plain command.
+- Use plain commands when exact raw output is required, when `rtk` is unavailable, or when RTK filtering/argument rewriting could hide important details.
+
 ## Active Runtime
 
 - Active gameplay/runtime code: `custodian/` (Godot 4.x)

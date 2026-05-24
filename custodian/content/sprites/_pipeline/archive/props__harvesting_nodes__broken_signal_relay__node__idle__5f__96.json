@@ -1,0 +1,19 @@
+{
+  "source": "props__harvesting_nodes__broken_signal_relay__node__idle__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "props/harvesting_nodes/broken_signal_relay/broken_signal_relay__node__idle__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ]
+}

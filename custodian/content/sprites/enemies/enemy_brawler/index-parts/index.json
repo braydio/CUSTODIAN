@@ -1,0 +1,1191 @@
+{
+  "asset": "CUSTODIAN enemy grunt modular template parts",
+  "source": "brawler_index.png",
+  "generated_at_utc": "2026-05-21T18:56:00.387769+00:00",
+  "output_dir": "index-parts",
+  "background_cleanup": {
+    "checker_removal": true,
+    "alpha_threshold": 12,
+    "dilate": 2,
+    "min_area": 80,
+    "padding": 2
+  },
+  "canonical_sizes": {
+    "full_body_front": {
+      "w": 64,
+      "h": 64
+    },
+    "full_body_back": {
+      "w": 64,
+      "h": 64
+    },
+    "full_body_side_left": {
+      "w": 64,
+      "h": 64
+    },
+    "full_body_side_right": {
+      "w": 64,
+      "h": 64
+    },
+    "head_front": {
+      "w": 32,
+      "h": 32
+    },
+    "head_back": {
+      "w": 32,
+      "h": 32
+    },
+    "head_side": {
+      "w": 32,
+      "h": 32
+    },
+    "torso_front": {
+      "w": 48,
+      "h": 48
+    },
+    "torso_back": {
+      "w": 48,
+      "h": 48
+    },
+    "torso_side": {
+      "w": 48,
+      "h": 48
+    },
+    "pelvis": {
+      "w": 32,
+      "h": 32
+    },
+    "belt": {
+      "w": 48,
+      "h": 24
+    },
+    "shoulder_pad": {
+      "w": 24,
+      "h": 24
+    },
+    "upper_arm": {
+      "w": 24,
+      "h": 32
+    },
+    "forearm": {
+      "w": 24,
+      "h": 32
+    },
+    "hand": {
+      "w": 16,
+      "h": 16
+    },
+    "thigh": {
+      "w": 24,
+      "h": 32
+    },
+    "shin": {
+      "w": 24,
+      "h": 32
+    },
+    "boot": {
+      "w": 24,
+      "h": 24
+    },
+    "armor_module": {
+      "w": 24,
+      "h": 24
+    },
+    "limb_vertical": {
+      "w": 24,
+      "h": 40
+    },
+    "small_part": {
+      "w": 24,
+      "h": 24
+    },
+    "medium_part": {
+      "w": 32,
+      "h": 32
+    },
+    "large_part": {
+      "w": 48,
+      "h": 48
+    },
+    "unknown": {
+      "w": 32,
+      "h": 32
+    }
+  },
+  "piece_count": 37,
+  "pieces": [
+    {
+      "id": "grunt_template_full_body_side_right_01",
+      "role": "full_body_side_right",
+      "file": "grunt_template_full_body_side_right_01.png",
+      "source_bbox": {
+        "x": 1192,
+        "y": 50,
+        "w": 112,
+        "h": 397
+      },
+      "source_size": {
+        "w": 112,
+        "h": 397
+      },
+      "canonical_size": {
+        "w": 64,
+        "h": 64
+      },
+      "scale": 0.161209,
+      "pasted_at": {
+        "x": 23,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 32,
+        "y": 63
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_full_body_side_left_01",
+      "role": "full_body_side_left",
+      "file": "grunt_template_full_body_side_left_01.png",
+      "source_bbox": {
+        "x": 841,
+        "y": 51,
+        "w": 113,
+        "h": 396
+      },
+      "source_size": {
+        "w": 113,
+        "h": 396
+      },
+      "canonical_size": {
+        "w": 64,
+        "h": 64
+      },
+      "scale": 0.161616,
+      "pasted_at": {
+        "x": 23,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 32,
+        "y": 63
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_full_body_front_01",
+      "role": "full_body_front",
+      "file": "grunt_template_full_body_front_01.png",
+      "source_bbox": {
+        "x": 96,
+        "y": 53,
+        "w": 231,
+        "h": 399
+      },
+      "source_size": {
+        "w": 231,
+        "h": 399
+      },
+      "canonical_size": {
+        "w": 64,
+        "h": 64
+      },
+      "scale": 0.160401,
+      "pasted_at": {
+        "x": 13,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 32,
+        "y": 63
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_full_body_back_01",
+      "role": "full_body_back",
+      "file": "grunt_template_full_body_back_01.png",
+      "source_bbox": {
+        "x": 455,
+        "y": 53,
+        "w": 223,
+        "h": 395
+      },
+      "source_size": {
+        "w": 223,
+        "h": 395
+      },
+      "canonical_size": {
+        "w": 64,
+        "h": 64
+      },
+      "scale": 0.162025,
+      "pasted_at": {
+        "x": 14,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 32,
+        "y": 63
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_head_front_01",
+      "role": "head_front",
+      "file": "grunt_template_head_front_01.png",
+      "source_bbox": {
+        "x": 141,
+        "y": 476,
+        "w": 88,
+        "h": 112
+      },
+      "source_size": {
+        "w": 88,
+        "h": 112
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.285714,
+      "pasted_at": {
+        "x": 3,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_head_side_01",
+      "role": "head_side",
+      "file": "grunt_template_head_side_01.png",
+      "source_bbox": {
+        "x": 466,
+        "y": 476,
+        "w": 92,
+        "h": 107
+      },
+      "source_size": {
+        "w": 92,
+        "h": 107
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.299065,
+      "pasted_at": {
+        "x": 2,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_head_back_01",
+      "role": "head_back",
+      "file": "grunt_template_head_back_01.png",
+      "source_bbox": {
+        "x": 302,
+        "y": 477,
+        "w": 87,
+        "h": 102
+      },
+      "source_size": {
+        "w": 87,
+        "h": 102
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.313725,
+      "pasted_at": {
+        "x": 2,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_head_side_02",
+      "role": "head_side",
+      "file": "grunt_template_head_side_02.png",
+      "source_bbox": {
+        "x": 602,
+        "y": 477,
+        "w": 92,
+        "h": 106
+      },
+      "source_size": {
+        "w": 92,
+        "h": 106
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.301887,
+      "pasted_at": {
+        "x": 2,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_head_side_03",
+      "role": "head_side",
+      "file": "grunt_template_head_side_03.png",
+      "source_bbox": {
+        "x": 1073,
+        "y": 501,
+        "w": 79,
+        "h": 92
+      },
+      "source_size": {
+        "w": 79,
+        "h": 92
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.347826,
+      "pasted_at": {
+        "x": 2,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_head_side_04",
+      "role": "head_side",
+      "file": "grunt_template_head_side_04.png",
+      "source_bbox": {
+        "x": 939,
+        "y": 502,
+        "w": 77,
+        "h": 92
+      },
+      "source_size": {
+        "w": 77,
+        "h": 92
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.347826,
+      "pasted_at": {
+        "x": 2,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_head_side_05",
+      "role": "head_side",
+      "file": "grunt_template_head_side_05.png",
+      "source_bbox": {
+        "x": 821,
+        "y": 507,
+        "w": 83,
+        "h": 90
+      },
+      "source_size": {
+        "w": 83,
+        "h": 90
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.355556,
+      "pasted_at": {
+        "x": 1,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_head_side_06",
+      "role": "head_side",
+      "file": "grunt_template_head_side_06.png",
+      "source_bbox": {
+        "x": 1188,
+        "y": 517,
+        "w": 79,
+        "h": 86
+      },
+      "source_size": {
+        "w": 79,
+        "h": 86
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.372093,
+      "pasted_at": {
+        "x": 1,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_torso_front_01",
+      "role": "torso_front",
+      "file": "grunt_template_torso_front_01.png",
+      "source_bbox": {
+        "x": 109,
+        "y": 592,
+        "w": 166,
+        "h": 165
+      },
+      "source_size": {
+        "w": 166,
+        "h": 165
+      },
+      "canonical_size": {
+        "w": 48,
+        "h": 48
+      },
+      "scale": 0.289157,
+      "pasted_at": {
+        "x": 0,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 24,
+        "y": 47
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_torso_side_01",
+      "role": "torso_side",
+      "file": "grunt_template_torso_side_01.png",
+      "source_bbox": {
+        "x": 551,
+        "y": 592,
+        "w": 107,
+        "h": 165
+      },
+      "source_size": {
+        "w": 107,
+        "h": 165
+      },
+      "canonical_size": {
+        "w": 48,
+        "h": 48
+      },
+      "scale": 0.290909,
+      "pasted_at": {
+        "x": 8,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 24,
+        "y": 47
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_torso_back_01",
+      "role": "torso_back",
+      "file": "grunt_template_torso_back_01.png",
+      "source_bbox": {
+        "x": 338,
+        "y": 599,
+        "w": 155,
+        "h": 155
+      },
+      "source_size": {
+        "w": 155,
+        "h": 155
+      },
+      "canonical_size": {
+        "w": 48,
+        "h": 48
+      },
+      "scale": 0.309677,
+      "pasted_at": {
+        "x": 0,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 24,
+        "y": 47
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_torso_side_02",
+      "role": "torso_side",
+      "file": "grunt_template_torso_side_02.png",
+      "source_bbox": {
+        "x": 775,
+        "y": 616,
+        "w": 97,
+        "h": 183
+      },
+      "source_size": {
+        "w": 97,
+        "h": 183
+      },
+      "canonical_size": {
+        "w": 48,
+        "h": 48
+      },
+      "scale": 0.262295,
+      "pasted_at": {
+        "x": 11,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 24,
+        "y": 47
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_torso_side_03",
+      "role": "torso_side",
+      "file": "grunt_template_torso_side_03.png",
+      "source_bbox": {
+        "x": 945,
+        "y": 616,
+        "w": 87,
+        "h": 207
+      },
+      "source_size": {
+        "w": 87,
+        "h": 207
+      },
+      "canonical_size": {
+        "w": 48,
+        "h": 48
+      },
+      "scale": 0.231884,
+      "pasted_at": {
+        "x": 14,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 24,
+        "y": 47
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_torso_side_04",
+      "role": "torso_side",
+      "file": "grunt_template_torso_side_04.png",
+      "source_bbox": {
+        "x": 1062,
+        "y": 616,
+        "w": 96,
+        "h": 207
+      },
+      "source_size": {
+        "w": 96,
+        "h": 207
+      },
+      "canonical_size": {
+        "w": 48,
+        "h": 48
+      },
+      "scale": 0.231884,
+      "pasted_at": {
+        "x": 13,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 24,
+        "y": 47
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_torso_side_05",
+      "role": "torso_side",
+      "file": "grunt_template_torso_side_05.png",
+      "source_bbox": {
+        "x": 1220,
+        "y": 616,
+        "w": 84,
+        "h": 186
+      },
+      "source_size": {
+        "w": 84,
+        "h": 186
+      },
+      "canonical_size": {
+        "w": 48,
+        "h": 48
+      },
+      "scale": 0.258065,
+      "pasted_at": {
+        "x": 13,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 24,
+        "y": 47
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_armor_module_01",
+      "role": "armor_module",
+      "file": "grunt_template_armor_module_01.png",
+      "source_bbox": {
+        "x": 152,
+        "y": 763,
+        "w": 71,
+        "h": 83
+      },
+      "source_size": {
+        "w": 71,
+        "h": 83
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 24
+      },
+      "scale": 0.289157,
+      "pasted_at": {
+        "x": 1,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_pelvis_01",
+      "role": "pelvis",
+      "file": "grunt_template_pelvis_01.png",
+      "source_bbox": {
+        "x": 355,
+        "y": 763,
+        "w": 129,
+        "h": 106
+      },
+      "source_size": {
+        "w": 129,
+        "h": 106
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.248062,
+      "pasted_at": {
+        "x": 0,
+        "y": 3
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_armor_module_02",
+      "role": "armor_module",
+      "file": "grunt_template_armor_module_02.png",
+      "source_bbox": {
+        "x": 563,
+        "y": 763,
+        "w": 67,
+        "h": 83
+      },
+      "source_size": {
+        "w": 67,
+        "h": 83
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 24
+      },
+      "scale": 0.289157,
+      "pasted_at": {
+        "x": 2,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_shin_01",
+      "role": "shin",
+      "file": "grunt_template_shin_01.png",
+      "source_bbox": {
+        "x": 788,
+        "y": 808,
+        "w": 98,
+        "h": 194
+      },
+      "source_size": {
+        "w": 98,
+        "h": 194
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 32
+      },
+      "scale": 0.164948,
+      "pasted_at": {
+        "x": 4,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_shin_02",
+      "role": "shin",
+      "file": "grunt_template_shin_02.png",
+      "source_bbox": {
+        "x": 1203,
+        "y": 808,
+        "w": 93,
+        "h": 194
+      },
+      "source_size": {
+        "w": 93,
+        "h": 194
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 32
+      },
+      "scale": 0.164948,
+      "pasted_at": {
+        "x": 4,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_shin_03",
+      "role": "shin",
+      "file": "grunt_template_shin_03.png",
+      "source_bbox": {
+        "x": 1081,
+        "y": 811,
+        "w": 93,
+        "h": 201
+      },
+      "source_size": {
+        "w": 93,
+        "h": 201
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 32
+      },
+      "scale": 0.159204,
+      "pasted_at": {
+        "x": 4,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_shin_04",
+      "role": "shin",
+      "file": "grunt_template_shin_04.png",
+      "source_bbox": {
+        "x": 921,
+        "y": 813,
+        "w": 85,
+        "h": 199
+      },
+      "source_size": {
+        "w": 85,
+        "h": 199
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 32
+      },
+      "scale": 0.160804,
+      "pasted_at": {
+        "x": 5,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_armor_module_03",
+      "role": "armor_module",
+      "file": "grunt_template_armor_module_03.png",
+      "source_bbox": {
+        "x": 88,
+        "y": 846,
+        "w": 72,
+        "h": 72
+      },
+      "source_size": {
+        "w": 72,
+        "h": 72
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 24
+      },
+      "scale": 0.333333,
+      "pasted_at": {
+        "x": 0,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_armor_module_04",
+      "role": "armor_module",
+      "file": "grunt_template_armor_module_04.png",
+      "source_bbox": {
+        "x": 180,
+        "y": 849,
+        "w": 63,
+        "h": 70
+      },
+      "source_size": {
+        "w": 63,
+        "h": 70
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 24
+      },
+      "scale": 0.342857,
+      "pasted_at": {
+        "x": 1,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_armor_module_05",
+      "role": "armor_module",
+      "file": "grunt_template_armor_module_05.png",
+      "source_bbox": {
+        "x": 631,
+        "y": 849,
+        "w": 63,
+        "h": 70
+      },
+      "source_size": {
+        "w": 63,
+        "h": 70
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 24
+      },
+      "scale": 0.342857,
+      "pasted_at": {
+        "x": 1,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_armor_module_06",
+      "role": "armor_module",
+      "file": "grunt_template_armor_module_06.png",
+      "source_bbox": {
+        "x": 557,
+        "y": 855,
+        "w": 63,
+        "h": 67
+      },
+      "source_size": {
+        "w": 63,
+        "h": 67
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 24
+      },
+      "scale": 0.358209,
+      "pasted_at": {
+        "x": 0,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_belt_01",
+      "role": "belt",
+      "file": "grunt_template_belt_01.png",
+      "source_bbox": {
+        "x": 330,
+        "y": 857,
+        "w": 175,
+        "h": 84
+      },
+      "source_size": {
+        "w": 175,
+        "h": 84
+      },
+      "canonical_size": {
+        "w": 48,
+        "h": 24
+      },
+      "scale": 0.274286,
+      "pasted_at": {
+        "x": 0,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 24,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_boot_01",
+      "role": "boot",
+      "file": "grunt_template_boot_01.png",
+      "source_bbox": {
+        "x": 187,
+        "y": 928,
+        "w": 60,
+        "h": 96
+      },
+      "source_size": {
+        "w": 60,
+        "h": 96
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 24
+      },
+      "scale": 0.25,
+      "pasted_at": {
+        "x": 4,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_boot_02",
+      "role": "boot",
+      "file": "grunt_template_boot_02.png",
+      "source_bbox": {
+        "x": 549,
+        "y": 928,
+        "w": 59,
+        "h": 96
+      },
+      "source_size": {
+        "w": 59,
+        "h": 96
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 24
+      },
+      "scale": 0.25,
+      "pasted_at": {
+        "x": 4,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_boot_03",
+      "role": "boot",
+      "file": "grunt_template_boot_03.png",
+      "source_bbox": {
+        "x": 105,
+        "y": 929,
+        "w": 58,
+        "h": 95
+      },
+      "source_size": {
+        "w": 58,
+        "h": 95
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 24
+      },
+      "scale": 0.252632,
+      "pasted_at": {
+        "x": 4,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_boot_04",
+      "role": "boot",
+      "file": "grunt_template_boot_04.png",
+      "source_bbox": {
+        "x": 623,
+        "y": 929,
+        "w": 58,
+        "h": 95
+      },
+      "source_size": {
+        "w": 58,
+        "h": 95
+      },
+      "canonical_size": {
+        "w": 24,
+        "h": 24
+      },
+      "scale": 0.252632,
+      "pasted_at": {
+        "x": 4,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 12,
+        "y": 23
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_pelvis_02",
+      "role": "pelvis",
+      "file": "grunt_template_pelvis_02.png",
+      "source_bbox": {
+        "x": 445,
+        "y": 948,
+        "w": 75,
+        "h": 91
+      },
+      "source_size": {
+        "w": 75,
+        "h": 91
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.351648,
+      "pasted_at": {
+        "x": 3,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    },
+    {
+      "id": "grunt_template_pelvis_03",
+      "role": "pelvis",
+      "file": "grunt_template_pelvis_03.png",
+      "source_bbox": {
+        "x": 314,
+        "y": 949,
+        "w": 75,
+        "h": 90
+      },
+      "source_size": {
+        "w": 75,
+        "h": 90
+      },
+      "canonical_size": {
+        "w": 32,
+        "h": 32
+      },
+      "scale": 0.355556,
+      "pasted_at": {
+        "x": 2,
+        "y": 0
+      },
+      "anchor_px": {
+        "x": 16,
+        "y": 31
+      },
+      "notes": "Auto-classified from source sheet. Verify role/name before wiring runtime animation."
+    }
+  ]
+}

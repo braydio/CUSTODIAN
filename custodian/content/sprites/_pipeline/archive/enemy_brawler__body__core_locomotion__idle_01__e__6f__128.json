@@ -1,0 +1,31 @@
+{
+  "source": "enemy_brawler__body__core_locomotion__idle_01__e__6f__128.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "enemies/enemy_brawler/runtime/body/enemy_brawler__body__core_locomotion__idle_01__e__6f__128.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 6
+      }
+    },
+    {
+      "path": "enemies/enemy_brawler/enemy_brawler__body__core_locomotion__idle_01__e__6f__128.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 6
+      }
+    }
+  ],
+  "frame_size": [
+    128,
+    128
+  ],
+  "post_process": [
+    "enemy_runtime_import"
+  ]
+}

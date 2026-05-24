@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/props__harvesting_nodes__fungal_resin_pod__node__depleted__1f__96.json",
+	"outputs": [
+		"res://content/sprites/props/harvesting_nodes/fungal_resin_pod/fungal_resin_pod__node__depleted__1f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/props__harvesting_nodes__fungal_resin_pod__node__depleted__1f__96.png",
+	"timestamp_utc": "2026-05-22 21:46:59"
+}

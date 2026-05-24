@@ -1,0 +1,72 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_floor_mud_gravel_02",
+  "display_name": "Mud Gravel Floor 02",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 18,
+    "row_index": 0,
+    "col_index": 17,
+    "bbox_px": {
+      "x": 1248,
+      "y": 6,
+      "w": 62,
+      "h": 71
+    }
+  },
+  "file": {
+    "path": "custodian/content/tiles/gothic/floors/gothic_floor_mud_gravel_02.png",
+    "pixel_size": {
+      "w": 62,
+      "h": 71
+    }
+  },
+  "classification": {
+    "asset_type": "tiles",
+    "semantic_role": "walkable_floor_variant",
+    "placement_layer": "ground",
+    "tags": [
+      "damaged",
+      "floor",
+      "gothic",
+      "gravel",
+      "mud",
+      "walkable"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 3
+    },
+    "origin_mode": "top_left",
+    "pivot_px": {
+      "x": 0,
+      "y": 0
+    },
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": false
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "collision_shape": "none"
+  },
+  "procgen": {
+    "uses": [
+      "outdoor_ground",
+      "edge_decay",
+      "compound_exterior",
+      "damaged_route"
+    ],
+    "weight": 35,
+    "can_spawn_indoor": false,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

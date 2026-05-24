@@ -1,0 +1,36 @@
+{
+  "schema": "game32.animation.v1",
+  "id": "gothic_banner_flap_10f",
+  "display_name": "Gothic Banner Flap 10 Frame",
+  "path": "custodian/content/animations/gothic/banner_flap_10f.png",
+  "layout": "horizontal_strip",
+  "frames": 10,
+  "frame_size_px": {
+    "w": 114,
+    "h": 130
+  },
+  "fps": 8,
+  "loop": true,
+  "semantic_role": "ambient_banner_flap",
+  "procgen": {
+    "uses": [
+      "wall_dressing",
+      "faction_marker",
+      "wind_animation",
+      "compound_dressing"
+    ],
+    "tags": [
+      "animated",
+      "banner",
+      "gothic",
+      "ambient",
+      "faction_dressing"
+    ],
+    "weight": 8
+  },
+  "source_asset": {
+    "id": "gothic_compound_dressing_04",
+    "path": "custodian/content/props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_04.png",
+    "visual_index": 113
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_landmark_building_06",
+  "display_name": "Gothic Landmark Building 06",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 98,
+    "row_index": 5,
+    "col_index": 5,
+    "bbox_px": {
+      "x": 1380,
+      "y": 530,
+      "w": 52,
+      "h": 144
+    }
+  },
+  "file": {
+    "path": "custodian/content/structures/gothic/large_compound_landmark/gothic_landmark_building_06.png",
+    "pixel_size": {
+      "w": 52,
+      "h": 144
+    }
+  },
+  "classification": {
+    "asset_type": "structures",
+    "semantic_role": "large_compound_landmark",
+    "placement_layer": "structure",
+    "tags": [
+      "blocking",
+      "building",
+      "gothic",
+      "landmark",
+      "objective",
+      "structure"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 5
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 26,
+      "y": 143
+    },
+    "snap": "tile_or_free",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 3,
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "compound_core",
+      "objective_room_exterior",
+      "archive_node",
+      "poi_anchor"
+    ],
+    "weight": 4,
+    "can_spawn_indoor": false,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

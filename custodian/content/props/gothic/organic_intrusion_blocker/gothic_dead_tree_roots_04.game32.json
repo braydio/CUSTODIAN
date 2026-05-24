@@ -1,0 +1,72 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_dead_tree_roots_04",
+  "display_name": "Dead Tree Roots 04",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 102,
+    "row_index": 6,
+    "col_index": 3,
+    "bbox_px": {
+      "x": 473,
+      "y": 553,
+      "w": 124,
+      "h": 159
+    }
+  },
+  "file": {
+    "path": "custodian/content/props/gothic/organic_intrusion_blocker/gothic_dead_tree_roots_04.png",
+    "pixel_size": {
+      "w": 124,
+      "h": 159
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "organic_intrusion_blocker",
+    "placement_layer": "prop",
+    "tags": [
+      "blocking",
+      "gothic",
+      "organic",
+      "prop",
+      "roots",
+      "tree"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 4,
+      "h": 5
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 62,
+      "y": 158
+    },
+    "snap": "tile_or_free",
+    "allow_mirror_x": true,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 2,
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "forest_intrusion",
+      "outdoor_blocker",
+      "compound_overgrowth",
+      "silhouette_breakup"
+    ],
+    "weight": 14,
+    "can_spawn_indoor": false,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

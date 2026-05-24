@@ -134,7 +134,7 @@ Use these prompts to standardize recurring agent work:
 
 Validation recipes live in `docs/ai_context/VALIDATION_RECIPES.md`.
 
-Use the recipes to choose the narrowest command that proves the change. Prefer RTK wrappers for compact output when they support the command shape, and use raw commands when RTK argument rewriting would hide or alter needed output.
+Use the recipes to choose the narrowest command that proves the change. Prefer RTK subcommands for compact output when they support the command shape, such as `rtk git status`, `rtk grep ...`, and `rtk find ...`. Do not treat `rtk` as a blind prefix for arbitrary commands; use `rtk proxy <command> ...` only when RTK has no matching subcommand and token tracking is still useful. Use raw commands when RTK argument rewriting would hide or alter needed output.
 
 When editing a design doc that will drive follow-up implementation, add or refresh a `Next Agent Slice` section with goal, files, constraints, and acceptance checks. This keeps design docs usable as executable work queues without replacing task packets.
 

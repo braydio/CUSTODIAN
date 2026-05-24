@@ -1,0 +1,933 @@
+{
+  "asset": "CUSTODIAN gothic road tiles and overlay artifacts",
+  "source_file": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/roads_paths/source/road_pieces_destroyed.png",
+  "split_x_percent": 74,
+  "split_x_px": 927,
+  "padding": 0,
+  "merge_gap": 4,
+  "min_pixels": 40,
+  "piece_count": 92,
+  "ordering": "row-major, roads first by source position mixed with overlays by sheet position; filename index is global export order",
+  "pieces": [
+    {
+      "index": 1,
+      "section": "overlay",
+      "role": "rubble_debris",
+      "filename": "001_overlay_rubble_debris_01.png",
+      "relative_path": "overlays/001_overlay_rubble_debris_01.png",
+      "source_bbox": { "x": 935, "y": 21, "w": 22, "h": 1212 },
+      "size": { "w": 22, "h": 1212 },
+      "pixels": 2916
+    },
+    {
+      "index": 2,
+      "section": "road",
+      "role": "junction_t",
+      "filename": "002_road_junction_t_01.png",
+      "relative_path": "roads/002_road_junction_t_01.png",
+      "source_bbox": { "x": 30, "y": 49, "w": 251, "h": 146 },
+      "size": { "w": 251, "h": 146 },
+      "pixels": 36520
+    },
+    {
+      "index": 3,
+      "section": "road",
+      "role": "junction_t",
+      "filename": "003_road_junction_t_02.png",
+      "relative_path": "roads/003_road_junction_t_02.png",
+      "source_bbox": { "x": 302, "y": 49, "w": 241, "h": 146 },
+      "size": { "w": 241, "h": 146 },
+      "pixels": 34998
+    },
+    {
+      "index": 4,
+      "section": "road",
+      "role": "straight_v_large",
+      "filename": "004_road_straight_v_large_01.png",
+      "relative_path": "roads/004_road_straight_v_large_01.png",
+      "source_bbox": { "x": 563, "y": 49, "w": 107, "h": 308 },
+      "size": { "w": 107, "h": 308 },
+      "pixels": 32743
+    },
+    {
+      "index": 5,
+      "section": "road",
+      "role": "straight_v_large",
+      "filename": "005_road_straight_v_large_02.png",
+      "relative_path": "roads/005_road_straight_v_large_02.png",
+      "source_bbox": { "x": 689, "y": 49, "w": 85, "h": 308 },
+      "size": { "w": 85, "h": 308 },
+      "pixels": 26090
+    },
+    {
+      "index": 6,
+      "section": "road",
+      "role": "straight_v_large",
+      "filename": "006_road_straight_v_large_03.png",
+      "relative_path": "roads/006_road_straight_v_large_03.png",
+      "source_bbox": { "x": 793, "y": 49, "w": 89, "h": 308 },
+      "size": { "w": 89, "h": 308 },
+      "pixels": 27325
+    },
+    {
+      "index": 7,
+      "section": "overlay",
+      "role": "crack",
+      "filename": "007_overlay_crack_01.png",
+      "relative_path": "overlays/007_overlay_crack_01.png",
+      "source_bbox": { "x": 971, "y": 53, "w": 58, "h": 85 },
+      "size": { "w": 58, "h": 85 },
+      "pixels": 702
+    },
+    {
+      "index": 8,
+      "section": "overlay",
+      "role": "crack",
+      "filename": "008_overlay_crack_02.png",
+      "relative_path": "overlays/008_overlay_crack_02.png",
+      "source_bbox": { "x": 1049, "y": 50, "w": 32, "h": 99 },
+      "size": { "w": 32, "h": 99 },
+      "pixels": 577
+    },
+    {
+      "index": 9,
+      "section": "overlay",
+      "role": "crack",
+      "filename": "009_overlay_crack_03.png",
+      "relative_path": "overlays/009_overlay_crack_03.png",
+      "source_bbox": { "x": 1102, "y": 51, "w": 38, "h": 94 },
+      "size": { "w": 38, "h": 94 },
+      "pixels": 486
+    },
+    {
+      "index": 10,
+      "section": "overlay",
+      "role": "crack",
+      "filename": "010_overlay_crack_04.png",
+      "relative_path": "overlays/010_overlay_crack_04.png",
+      "source_bbox": { "x": 1158, "y": 50, "w": 65, "h": 95 },
+      "size": { "w": 65, "h": 95 },
+      "pixels": 1523
+    },
+    {
+      "index": 11,
+      "section": "overlay",
+      "role": "rune_circle",
+      "filename": "011_overlay_rune_circle_01.png",
+      "relative_path": "overlays/011_overlay_rune_circle_01.png",
+      "source_bbox": { "x": 968, "y": 151, "w": 75, "h": 84 },
+      "size": { "w": 75, "h": 84 },
+      "pixels": 1775
+    },
+    {
+      "index": 12,
+      "section": "overlay",
+      "role": "rune_circle",
+      "filename": "012_overlay_rune_circle_02.png",
+      "relative_path": "overlays/012_overlay_rune_circle_02.png",
+      "source_bbox": { "x": 1063, "y": 161, "w": 78, "h": 75 },
+      "size": { "w": 78, "h": 75 },
+      "pixels": 2899
+    },
+    {
+      "index": 13,
+      "section": "overlay",
+      "role": "rune_circle",
+      "filename": "013_overlay_rune_circle_03.png",
+      "relative_path": "overlays/013_overlay_rune_circle_03.png",
+      "source_bbox": { "x": 1159, "y": 160, "w": 73, "h": 73 },
+      "size": { "w": 73, "h": 73 },
+      "pixels": 1927
+    },
+    {
+      "index": 14,
+      "section": "road",
+      "role": "junction_t",
+      "filename": "014_road_junction_t_03.png",
+      "relative_path": "roads/014_road_junction_t_03.png",
+      "source_bbox": { "x": 30, "y": 211, "w": 251, "h": 146 },
+      "size": { "w": 251, "h": 146 },
+      "pixels": 36199
+    },
+    {
+      "index": 15,
+      "section": "road",
+      "role": "junction_t",
+      "filename": "015_road_junction_t_04.png",
+      "relative_path": "roads/015_road_junction_t_04.png",
+      "source_bbox": { "x": 302, "y": 211, "w": 241, "h": 146 },
+      "size": { "w": 241, "h": 146 },
+      "pixels": 34692
+    },
+    {
+      "index": 16,
+      "section": "overlay",
+      "role": "rune_circle",
+      "filename": "016_overlay_rune_circle_04.png",
+      "relative_path": "overlays/016_overlay_rune_circle_04.png",
+      "source_bbox": { "x": 968, "y": 245, "w": 71, "h": 69 },
+      "size": { "w": 71, "h": 69 },
+      "pixels": 994
+    },
+    {
+      "index": 17,
+      "section": "overlay",
+      "role": "rune_circle",
+      "filename": "017_overlay_rune_circle_05.png",
+      "relative_path": "overlays/017_overlay_rune_circle_05.png",
+      "source_bbox": { "x": 1052, "y": 245, "w": 49, "h": 68 },
+      "size": { "w": 49, "h": 68 },
+      "pixels": 715
+    },
+    {
+      "index": 18,
+      "section": "overlay",
+      "role": "rune_circle",
+      "filename": "018_overlay_rune_circle_06.png",
+      "relative_path": "overlays/018_overlay_rune_circle_06.png",
+      "source_bbox": { "x": 1117, "y": 246, "w": 51, "h": 63 },
+      "size": { "w": 51, "h": 63 },
+      "pixels": 838
+    },
+    {
+      "index": 19,
+      "section": "overlay",
+      "role": "rune_circle",
+      "filename": "019_overlay_rune_circle_07.png",
+      "relative_path": "overlays/019_overlay_rune_circle_07.png",
+      "source_bbox": { "x": 1185, "y": 246, "w": 32, "h": 72 },
+      "size": { "w": 32, "h": 72 },
+      "pixels": 792
+    },
+    {
+      "index": 20,
+      "section": "overlay",
+      "role": "rune_mark",
+      "filename": "020_overlay_rune_mark_01.png",
+      "relative_path": "overlays/020_overlay_rune_mark_01.png",
+      "source_bbox": { "x": 976, "y": 330, "w": 255, "h": 64 },
+      "size": { "w": 255, "h": 64 },
+      "pixels": 6457
+    },
+    {
+      "index": 21,
+      "section": "road",
+      "role": "intersection_large",
+      "filename": "021_road_intersection_large_01.png",
+      "relative_path": "roads/021_road_intersection_large_01.png",
+      "source_bbox": { "x": 30, "y": 375, "w": 200, "h": 251 },
+      "size": { "w": 200, "h": 251 },
+      "pixels": 40416
+    },
+    {
+      "index": 22,
+      "section": "road",
+      "role": "intersection_large",
+      "filename": "022_road_intersection_large_02.png",
+      "relative_path": "roads/022_road_intersection_large_02.png",
+      "source_bbox": { "x": 245, "y": 375, "w": 653, "h": 605 },
+      "size": { "w": 653, "h": 605 },
+      "pixels": 256687
+    },
+    {
+      "index": 23,
+      "section": "overlay",
+      "role": "rune_mark",
+      "filename": "023_overlay_rune_mark_02.png",
+      "relative_path": "overlays/023_overlay_rune_mark_02.png",
+      "source_bbox": { "x": 971, "y": 408, "w": 36, "h": 18 },
+      "size": { "w": 36, "h": 18 },
+      "pixels": 632
+    },
+    {
+      "index": 24,
+      "section": "overlay",
+      "role": "rune_mark",
+      "filename": "024_overlay_rune_mark_03.png",
+      "relative_path": "overlays/024_overlay_rune_mark_03.png",
+      "source_bbox": { "x": 1023, "y": 408, "w": 43, "h": 20 },
+      "size": { "w": 43, "h": 20 },
+      "pixels": 834
+    },
+    {
+      "index": 25,
+      "section": "overlay",
+      "role": "rune_mark",
+      "filename": "025_overlay_rune_mark_04.png",
+      "relative_path": "overlays/025_overlay_rune_mark_04.png",
+      "source_bbox": { "x": 1086, "y": 408, "w": 38, "h": 29 },
+      "size": { "w": 38, "h": 29 },
+      "pixels": 1066
+    },
+    {
+      "index": 26,
+      "section": "overlay",
+      "role": "rune_mark",
+      "filename": "026_overlay_rune_mark_05.png",
+      "relative_path": "overlays/026_overlay_rune_mark_05.png",
+      "source_bbox": { "x": 1138, "y": 405, "w": 31, "h": 38 },
+      "size": { "w": 31, "h": 38 },
+      "pixels": 1137
+    },
+    {
+      "index": 27,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "027_overlay_gothic_corner_trim_01.png",
+      "relative_path": "overlays/027_overlay_gothic_corner_trim_01.png",
+      "source_bbox": { "x": 1183, "y": 413, "w": 32, "h": 30 },
+      "size": { "w": 32, "h": 30 },
+      "pixels": 526
+    },
+    {
+      "index": 28,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "028_overlay_gothic_corner_trim_02.png",
+      "relative_path": "overlays/028_overlay_gothic_corner_trim_02.png",
+      "source_bbox": { "x": 973, "y": 445, "w": 37, "h": 37 },
+      "size": { "w": 37, "h": 37 },
+      "pixels": 756
+    },
+    {
+      "index": 29,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "029_overlay_gothic_corner_trim_03.png",
+      "relative_path": "overlays/029_overlay_gothic_corner_trim_03.png",
+      "source_bbox": { "x": 1025, "y": 444, "w": 38, "h": 43 },
+      "size": { "w": 38, "h": 43 },
+      "pixels": 762
+    },
+    {
+      "index": 30,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "030_overlay_gothic_corner_trim_04.png",
+      "relative_path": "overlays/030_overlay_gothic_corner_trim_04.png",
+      "source_bbox": { "x": 1084, "y": 449, "w": 33, "h": 34 },
+      "size": { "w": 33, "h": 34 },
+      "pixels": 443
+    },
+    {
+      "index": 31,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "031_overlay_gothic_corner_trim_05.png",
+      "relative_path": "overlays/031_overlay_gothic_corner_trim_05.png",
+      "source_bbox": { "x": 1140, "y": 456, "w": 24, "h": 21 },
+      "size": { "w": 24, "h": 21 },
+      "pixels": 272
+    },
+    {
+      "index": 32,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "032_overlay_gothic_corner_trim_06.png",
+      "relative_path": "overlays/032_overlay_gothic_corner_trim_06.png",
+      "source_bbox": { "x": 1188, "y": 453, "w": 25, "h": 29 },
+      "size": { "w": 25, "h": 29 },
+      "pixels": 444
+    },
+    {
+      "index": 33,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "033_overlay_gothic_corner_trim_07.png",
+      "relative_path": "overlays/033_overlay_gothic_corner_trim_07.png",
+      "source_bbox": { "x": 980, "y": 495, "w": 25, "h": 27 },
+      "size": { "w": 25, "h": 27 },
+      "pixels": 393
+    },
+    {
+      "index": 34,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "034_overlay_gothic_corner_trim_08.png",
+      "relative_path": "overlays/034_overlay_gothic_corner_trim_08.png",
+      "source_bbox": { "x": 1029, "y": 498, "w": 23, "h": 22 },
+      "size": { "w": 23, "h": 22 },
+      "pixels": 335
+    },
+    {
+      "index": 35,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "035_overlay_gothic_corner_trim_09.png",
+      "relative_path": "overlays/035_overlay_gothic_corner_trim_09.png",
+      "source_bbox": { "x": 1073, "y": 497, "w": 24, "h": 23 },
+      "size": { "w": 24, "h": 23 },
+      "pixels": 384
+    },
+    {
+      "index": 36,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "036_overlay_gothic_corner_trim_10.png",
+      "relative_path": "overlays/036_overlay_gothic_corner_trim_10.png",
+      "source_bbox": { "x": 1118, "y": 500, "w": 13, "h": 19 },
+      "size": { "w": 13, "h": 19 },
+      "pixels": 163
+    },
+    {
+      "index": 37,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "037_overlay_gothic_corner_trim_11.png",
+      "relative_path": "overlays/037_overlay_gothic_corner_trim_11.png",
+      "source_bbox": { "x": 1154, "y": 500, "w": 12, "h": 19 },
+      "size": { "w": 12, "h": 19 },
+      "pixels": 159
+    },
+    {
+      "index": 38,
+      "section": "overlay",
+      "role": "gothic_corner_trim",
+      "filename": "038_overlay_gothic_corner_trim_12.png",
+      "relative_path": "overlays/038_overlay_gothic_corner_trim_12.png",
+      "source_bbox": { "x": 1192, "y": 497, "w": 18, "h": 24 },
+      "size": { "w": 18, "h": 24 },
+      "pixels": 200
+    },
+    {
+      "index": 39,
+      "section": "overlay",
+      "role": "relic_symbol",
+      "filename": "039_overlay_relic_symbol_01.png",
+      "relative_path": "overlays/039_overlay_relic_symbol_01.png",
+      "source_bbox": { "x": 967, "y": 540, "w": 57, "h": 34 },
+      "size": { "w": 57, "h": 34 },
+      "pixels": 1044
+    },
+    {
+      "index": 40,
+      "section": "overlay",
+      "role": "relic_symbol",
+      "filename": "040_overlay_relic_symbol_02.png",
+      "relative_path": "overlays/040_overlay_relic_symbol_02.png",
+      "source_bbox": { "x": 1047, "y": 541, "w": 22, "h": 36 },
+      "size": { "w": 22, "h": 36 },
+      "pixels": 558
+    },
+    {
+      "index": 41,
+      "section": "overlay",
+      "role": "relic_symbol",
+      "filename": "041_overlay_relic_symbol_03.png",
+      "relative_path": "overlays/041_overlay_relic_symbol_03.png",
+      "source_bbox": { "x": 1084, "y": 539, "w": 39, "h": 40 },
+      "size": { "w": 39, "h": 40 },
+      "pixels": 996
+    },
+    {
+      "index": 42,
+      "section": "overlay",
+      "role": "relic_symbol",
+      "filename": "042_overlay_relic_symbol_04.png",
+      "relative_path": "overlays/042_overlay_relic_symbol_04.png",
+      "source_bbox": { "x": 1139, "y": 539, "w": 27, "h": 36 },
+      "size": { "w": 27, "h": 36 },
+      "pixels": 593
+    },
+    {
+      "index": 43,
+      "section": "overlay",
+      "role": "relic_symbol",
+      "filename": "043_overlay_relic_symbol_05.png",
+      "relative_path": "overlays/043_overlay_relic_symbol_05.png",
+      "source_bbox": { "x": 1175, "y": 540, "w": 50, "h": 30 },
+      "size": { "w": 50, "h": 30 },
+      "pixels": 932
+    },
+    {
+      "index": 44,
+      "section": "overlay",
+      "role": "relic_symbol",
+      "filename": "044_overlay_relic_symbol_06.png",
+      "relative_path": "overlays/044_overlay_relic_symbol_06.png",
+      "source_bbox": { "x": 968, "y": 586, "w": 71, "h": 52 },
+      "size": { "w": 71, "h": 52 },
+      "pixels": 2355
+    },
+    {
+      "index": 45,
+      "section": "overlay",
+      "role": "relic_symbol",
+      "filename": "045_overlay_relic_symbol_07.png",
+      "relative_path": "overlays/045_overlay_relic_symbol_07.png",
+      "source_bbox": { "x": 1057, "y": 594, "w": 28, "h": 38 },
+      "size": { "w": 28, "h": 38 },
+      "pixels": 644
+    },
+    {
+      "index": 46,
+      "section": "overlay",
+      "role": "relic_symbol",
+      "filename": "046_overlay_relic_symbol_08.png",
+      "relative_path": "overlays/046_overlay_relic_symbol_08.png",
+      "source_bbox": { "x": 1096, "y": 592, "w": 75, "h": 37 },
+      "size": { "w": 75, "h": 37 },
+      "pixels": 744
+    },
+    {
+      "index": 47,
+      "section": "overlay",
+      "role": "relic_symbol",
+      "filename": "047_overlay_relic_symbol_09.png",
+      "relative_path": "overlays/047_overlay_relic_symbol_09.png",
+      "source_bbox": { "x": 1184, "y": 589, "w": 35, "h": 46 },
+      "size": { "w": 35, "h": 46 },
+      "pixels": 1027
+    },
+    {
+      "index": 48,
+      "section": "road",
+      "role": "intersection_cross",
+      "filename": "048_road_intersection_cross_01.png",
+      "relative_path": "roads/048_road_intersection_cross_01.png",
+      "source_bbox": { "x": 30, "y": 652, "w": 199, "h": 200 },
+      "size": { "w": 199, "h": 200 },
+      "pixels": 34781
+    },
+    {
+      "index": 49,
+      "section": "overlay",
+      "role": "rubble_debris",
+      "filename": "049_overlay_rubble_debris_02.png",
+      "relative_path": "overlays/049_overlay_rubble_debris_02.png",
+      "source_bbox": { "x": 968, "y": 652, "w": 59, "h": 46 },
+      "size": { "w": 59, "h": 46 },
+      "pixels": 1684
+    },
+    {
+      "index": 50,
+      "section": "overlay",
+      "role": "rubble_debris",
+      "filename": "050_overlay_rubble_debris_03.png",
+      "relative_path": "overlays/050_overlay_rubble_debris_03.png",
+      "source_bbox": { "x": 1038, "y": 650, "w": 46, "h": 46 },
+      "size": { "w": 46, "h": 46 },
+      "pixels": 1221
+    },
+    {
+      "index": 51,
+      "section": "overlay",
+      "role": "rubble_debris",
+      "filename": "051_overlay_rubble_debris_04.png",
+      "relative_path": "overlays/051_overlay_rubble_debris_04.png",
+      "source_bbox": { "x": 1099, "y": 644, "w": 26, "h": 55 },
+      "size": { "w": 26, "h": 55 },
+      "pixels": 879
+    },
+    {
+      "index": 52,
+      "section": "overlay",
+      "role": "rubble_debris",
+      "filename": "052_overlay_rubble_debris_05.png",
+      "relative_path": "overlays/052_overlay_rubble_debris_05.png",
+      "source_bbox": { "x": 1139, "y": 641, "w": 36, "h": 49 },
+      "size": { "w": 36, "h": 49 },
+      "pixels": 931
+    },
+    {
+      "index": 53,
+      "section": "overlay",
+      "role": "rubble_debris",
+      "filename": "053_overlay_rubble_debris_06.png",
+      "relative_path": "overlays/053_overlay_rubble_debris_06.png",
+      "source_bbox": { "x": 1190, "y": 644, "w": 37, "h": 49 },
+      "size": { "w": 37, "h": 49 },
+      "pixels": 1150
+    },
+    {
+      "index": 54,
+      "section": "overlay",
+      "role": "barrier_chain",
+      "filename": "054_overlay_barrier_chain_01.png",
+      "relative_path": "overlays/054_overlay_barrier_chain_01.png",
+      "source_bbox": { "x": 978, "y": 716, "w": 140, "h": 53 },
+      "size": { "w": 140, "h": 53 },
+      "pixels": 2243
+    },
+    {
+      "index": 55,
+      "section": "overlay",
+      "role": "barrier_chain",
+      "filename": "055_overlay_barrier_chain_02.png",
+      "relative_path": "overlays/055_overlay_barrier_chain_02.png",
+      "source_bbox": { "x": 1132, "y": 718, "w": 99, "h": 62 },
+      "size": { "w": 99, "h": 62 },
+      "pixels": 2550
+    },
+    {
+      "index": 56,
+      "section": "overlay",
+      "role": "candle_shrine",
+      "filename": "056_overlay_candle_shrine_01.png",
+      "relative_path": "overlays/056_overlay_candle_shrine_01.png",
+      "source_bbox": { "x": 969, "y": 787, "w": 74, "h": 41 },
+      "size": { "w": 74, "h": 41 },
+      "pixels": 1600
+    },
+    {
+      "index": 57,
+      "section": "overlay",
+      "role": "candle_shrine",
+      "filename": "057_overlay_candle_shrine_02.png",
+      "relative_path": "overlays/057_overlay_candle_shrine_02.png",
+      "source_bbox": { "x": 1059, "y": 791, "w": 72, "h": 36 },
+      "size": { "w": 72, "h": 36 },
+      "pixels": 1466
+    },
+    {
+      "index": 58,
+      "section": "overlay",
+      "role": "candle_shrine",
+      "filename": "058_overlay_candle_shrine_03.png",
+      "relative_path": "overlays/058_overlay_candle_shrine_03.png",
+      "source_bbox": { "x": 1148, "y": 792, "w": 77, "h": 33 },
+      "size": { "w": 77, "h": 33 },
+      "pixels": 1345
+    },
+    {
+      "index": 59,
+      "section": "overlay",
+      "role": "candle_shrine",
+      "filename": "059_overlay_candle_shrine_04.png",
+      "relative_path": "overlays/059_overlay_candle_shrine_04.png",
+      "source_bbox": { "x": 967, "y": 843, "w": 43, "h": 38 },
+      "size": { "w": 43, "h": 38 },
+      "pixels": 1306
+    },
+    {
+      "index": 60,
+      "section": "overlay",
+      "role": "candle_shrine",
+      "filename": "060_overlay_candle_shrine_05.png",
+      "relative_path": "overlays/060_overlay_candle_shrine_05.png",
+      "source_bbox": { "x": 1031, "y": 844, "w": 36, "h": 36 },
+      "size": { "w": 36, "h": 36 },
+      "pixels": 1272
+    },
+    {
+      "index": 61,
+      "section": "overlay",
+      "role": "candle_shrine",
+      "filename": "061_overlay_candle_shrine_06.png",
+      "relative_path": "overlays/061_overlay_candle_shrine_06.png",
+      "source_bbox": { "x": 1081, "y": 843, "w": 29, "h": 33 },
+      "size": { "w": 29, "h": 33 },
+      "pixels": 717
+    },
+    {
+      "index": 62,
+      "section": "overlay",
+      "role": "candle_shrine",
+      "filename": "062_overlay_candle_shrine_07.png",
+      "relative_path": "overlays/062_overlay_candle_shrine_07.png",
+      "source_bbox": { "x": 1125, "y": 860, "w": 36, "h": 13 },
+      "size": { "w": 36, "h": 13 },
+      "pixels": 271
+    },
+    {
+      "index": 63,
+      "section": "overlay",
+      "role": "candle_shrine",
+      "filename": "063_overlay_candle_shrine_08.png",
+      "relative_path": "overlays/063_overlay_candle_shrine_08.png",
+      "source_bbox": { "x": 1125, "y": 842, "w": 38, "h": 13 },
+      "size": { "w": 38, "h": 13 },
+      "pixels": 283
+    },
+    {
+      "index": 64,
+      "section": "overlay",
+      "role": "candle_shrine",
+      "filename": "064_overlay_candle_shrine_09.png",
+      "relative_path": "overlays/064_overlay_candle_shrine_09.png",
+      "source_bbox": { "x": 1179, "y": 843, "w": 12, "h": 41 },
+      "size": { "w": 12, "h": 41 },
+      "pixels": 286
+    },
+    {
+      "index": 65,
+      "section": "overlay",
+      "role": "candle_shrine",
+      "filename": "065_overlay_candle_shrine_10.png",
+      "relative_path": "overlays/065_overlay_candle_shrine_10.png",
+      "source_bbox": { "x": 1203, "y": 837, "w": 18, "h": 47 },
+      "size": { "w": 18, "h": 47 },
+      "pixels": 459
+    },
+    {
+      "index": 66,
+      "section": "road",
+      "role": "pad_square",
+      "filename": "066_road_pad_square_01.png",
+      "relative_path": "roads/066_road_pad_square_01.png",
+      "source_bbox": { "x": 30, "y": 879, "w": 115, "h": 101 },
+      "size": { "w": 115, "h": 101 },
+      "pixels": 11459
+    },
+    {
+      "index": 67,
+      "section": "road",
+      "role": "tile",
+      "filename": "067_road_tile_01.png",
+      "relative_path": "roads/067_road_tile_01.png",
+      "source_bbox": { "x": 174, "y": 879, "w": 50, "h": 101 },
+      "size": { "w": 50, "h": 101 },
+      "pixels": 5032
+    },
+    {
+      "index": 68,
+      "section": "overlay",
+      "role": "blood_splatter",
+      "filename": "068_overlay_blood_splatter_01.png",
+      "relative_path": "overlays/068_overlay_blood_splatter_01.png",
+      "source_bbox": { "x": 977, "y": 899, "w": 26, "h": 17 },
+      "size": { "w": 26, "h": 17 },
+      "pixels": 426
+    },
+    {
+      "index": 69,
+      "section": "overlay",
+      "role": "blood_splatter",
+      "filename": "069_overlay_blood_splatter_02.png",
+      "relative_path": "overlays/069_overlay_blood_splatter_02.png",
+      "source_bbox": { "x": 1032, "y": 899, "w": 81, "h": 27 },
+      "size": { "w": 81, "h": 27 },
+      "pixels": 2184
+    },
+    {
+      "index": 70,
+      "section": "overlay",
+      "role": "blood_splatter",
+      "filename": "070_overlay_blood_splatter_03.png",
+      "relative_path": "overlays/070_overlay_blood_splatter_03.png",
+      "source_bbox": { "x": 1133, "y": 899, "w": 49, "h": 27 },
+      "size": { "w": 49, "h": 27 },
+      "pixels": 1178
+    },
+    {
+      "index": 71,
+      "section": "overlay",
+      "role": "blood_splatter",
+      "filename": "071_overlay_blood_splatter_04.png",
+      "relative_path": "overlays/071_overlay_blood_splatter_04.png",
+      "source_bbox": { "x": 1198, "y": 906, "w": 26, "h": 21 },
+      "size": { "w": 26, "h": 21 },
+      "pixels": 350
+    },
+    {
+      "index": 72,
+      "section": "overlay",
+      "role": "blood_splatter",
+      "filename": "072_overlay_blood_splatter_05.png",
+      "relative_path": "overlays/072_overlay_blood_splatter_05.png",
+      "source_bbox": { "x": 973, "y": 944, "w": 132, "h": 17 },
+      "size": { "w": 132, "h": 17 },
+      "pixels": 1505
+    },
+    {
+      "index": 73,
+      "section": "overlay",
+      "role": "puddle_stain",
+      "filename": "073_overlay_puddle_stain_01.png",
+      "relative_path": "overlays/073_overlay_puddle_stain_01.png",
+      "source_bbox": { "x": 1119, "y": 946, "w": 99, "h": 64 },
+      "size": { "w": 99, "h": 64 },
+      "pixels": 1838
+    },
+    {
+      "index": 74,
+      "section": "overlay",
+      "role": "puddle_stain",
+      "filename": "074_overlay_puddle_stain_02.png",
+      "relative_path": "overlays/074_overlay_puddle_stain_02.png",
+      "source_bbox": { "x": 974, "y": 981, "w": 59, "h": 22 },
+      "size": { "w": 59, "h": 22 },
+      "pixels": 968
+    },
+    {
+      "index": 75,
+      "section": "overlay",
+      "role": "puddle_stain",
+      "filename": "075_overlay_puddle_stain_03.png",
+      "relative_path": "overlays/075_overlay_puddle_stain_03.png",
+      "source_bbox": { "x": 1053, "y": 981, "w": 44, "h": 33 },
+      "size": { "w": 44, "h": 33 },
+      "pixels": 683
+    },
+    {
+      "index": 76,
+      "section": "road",
+      "role": "corner_or_junction",
+      "filename": "076_road_corner_or_junction_01.png",
+      "relative_path": "roads/076_road_corner_or_junction_01.png",
+      "source_bbox": { "x": 30, "y": 1012, "w": 95, "h": 181 },
+      "size": { "w": 95, "h": 181 },
+      "pixels": 17100
+    },
+    {
+      "index": 77,
+      "section": "road",
+      "role": "corner",
+      "filename": "077_road_corner_01.png",
+      "relative_path": "roads/077_road_corner_01.png",
+      "source_bbox": { "x": 147, "y": 1012, "w": 88, "h": 181 },
+      "size": { "w": 88, "h": 181 },
+      "pixels": 15747
+    },
+    {
+      "index": 78,
+      "section": "road",
+      "role": "corner",
+      "filename": "078_road_corner_02.png",
+      "relative_path": "roads/078_road_corner_02.png",
+      "source_bbox": { "x": 257, "y": 1012, "w": 85, "h": 181 },
+      "size": { "w": 85, "h": 181 },
+      "pixels": 15275
+    },
+    {
+      "index": 79,
+      "section": "road",
+      "role": "corner",
+      "filename": "079_road_corner_03.png",
+      "relative_path": "roads/079_road_corner_03.png",
+      "source_bbox": { "x": 366, "y": 1012, "w": 83, "h": 181 },
+      "size": { "w": 83, "h": 181 },
+      "pixels": 14604
+    },
+    {
+      "index": 80,
+      "section": "road",
+      "role": "corner",
+      "filename": "080_road_corner_04.png",
+      "relative_path": "roads/080_road_corner_04.png",
+      "source_bbox": { "x": 471, "y": 1012, "w": 84, "h": 181 },
+      "size": { "w": 84, "h": 181 },
+      "pixels": 15018
+    },
+    {
+      "index": 81,
+      "section": "road",
+      "role": "straight_v_large",
+      "filename": "081_road_straight_v_large_04.png",
+      "relative_path": "roads/081_road_straight_v_large_04.png",
+      "source_bbox": { "x": 576, "y": 1012, "w": 80, "h": 181 },
+      "size": { "w": 80, "h": 181 },
+      "pixels": 13761
+    },
+    {
+      "index": 82,
+      "section": "road",
+      "role": "straight_v",
+      "filename": "082_road_straight_v_01.png",
+      "relative_path": "roads/082_road_straight_v_01.png",
+      "source_bbox": { "x": 675, "y": 1012, "w": 69, "h": 181 },
+      "size": { "w": 69, "h": 181 },
+      "pixels": 11554
+    },
+    {
+      "index": 83,
+      "section": "road",
+      "role": "straight_v",
+      "filename": "083_road_straight_v_02.png",
+      "relative_path": "roads/083_road_straight_v_02.png",
+      "source_bbox": { "x": 763, "y": 1012, "w": 65, "h": 181 },
+      "size": { "w": 65, "h": 181 },
+      "pixels": 10677
+    },
+    {
+      "index": 84,
+      "section": "road",
+      "role": "straight_v",
+      "filename": "084_road_straight_v_03.png",
+      "relative_path": "roads/084_road_straight_v_03.png",
+      "source_bbox": { "x": 843, "y": 1012, "w": 65, "h": 181 },
+      "size": { "w": 65, "h": 181 },
+      "pixels": 10641
+    },
+    {
+      "index": 85,
+      "section": "overlay",
+      "role": "hardware_plate",
+      "filename": "085_overlay_hardware_plate_01.png",
+      "relative_path": "overlays/085_overlay_hardware_plate_01.png",
+      "source_bbox": { "x": 971, "y": 1022, "w": 58, "h": 94 },
+      "size": { "w": 58, "h": 94 },
+      "pixels": 2892
+    },
+    {
+      "index": 86,
+      "section": "overlay",
+      "role": "hardware_plate",
+      "filename": "086_overlay_hardware_plate_02.png",
+      "relative_path": "overlays/086_overlay_hardware_plate_02.png",
+      "source_bbox": { "x": 1033, "y": 1035, "w": 65, "h": 112 },
+      "size": { "w": 65, "h": 112 },
+      "pixels": 3951
+    },
+    {
+      "index": 87,
+      "section": "overlay",
+      "role": "hardware_plate",
+      "filename": "087_overlay_hardware_plate_03.png",
+      "relative_path": "overlays/087_overlay_hardware_plate_03.png",
+      "source_bbox": { "x": 1107, "y": 1031, "w": 63, "h": 93 },
+      "size": { "w": 63, "h": 93 },
+      "pixels": 2999
+    },
+    {
+      "index": 88,
+      "section": "overlay",
+      "role": "hardware_plate",
+      "filename": "088_overlay_hardware_plate_04.png",
+      "relative_path": "overlays/088_overlay_hardware_plate_04.png",
+      "source_bbox": { "x": 1178, "y": 1031, "w": 45, "h": 91 },
+      "size": { "w": 45, "h": 91 },
+      "pixels": 2022
+    },
+    {
+      "index": 89,
+      "section": "overlay",
+      "role": "rail_trim",
+      "filename": "089_overlay_rail_trim_01.png",
+      "relative_path": "overlays/089_overlay_rail_trim_01.png",
+      "source_bbox": { "x": 983, "y": 1136, "w": 42, "h": 67 },
+      "size": { "w": 42, "h": 67 },
+      "pixels": 2714
+    },
+    {
+      "index": 90,
+      "section": "overlay",
+      "role": "rail_trim",
+      "filename": "090_overlay_rail_trim_02.png",
+      "relative_path": "overlays/090_overlay_rail_trim_02.png",
+      "source_bbox": { "x": 1106, "y": 1156, "w": 31, "h": 32 },
+      "size": { "w": 31, "h": 32 },
+      "pixels": 775
+    },
+    {
+      "index": 91,
+      "section": "overlay",
+      "role": "rail_trim",
+      "filename": "091_overlay_rail_trim_03.png",
+      "relative_path": "overlays/091_overlay_rail_trim_03.png",
+      "source_bbox": { "x": 1163, "y": 1140, "w": 32, "h": 53 },
+      "size": { "w": 32, "h": 53 },
+      "pixels": 1693
+    },
+    {
+      "index": 92,
+      "section": "overlay",
+      "role": "rail_trim",
+      "filename": "092_overlay_rail_trim_04.png",
+      "relative_path": "overlays/092_overlay_rail_trim_04.png",
+      "source_bbox": { "x": 1054, "y": 1161, "w": 25, "h": 32 },
+      "size": { "w": 25, "h": 32 },
+      "pixels": 693
+    }
+  ]
+}

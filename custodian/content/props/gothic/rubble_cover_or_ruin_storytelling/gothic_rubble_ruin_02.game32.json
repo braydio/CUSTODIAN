@@ -1,0 +1,72 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_rubble_ruin_02",
+  "display_name": "Rubble Ruin 02",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 104,
+    "row_index": 6,
+    "col_index": 5,
+    "bbox_px": {
+      "x": 796,
+      "y": 546,
+      "w": 100,
+      "h": 161
+    }
+  },
+  "file": {
+    "path": "custodian/content/props/gothic/rubble_cover_or_ruin_storytelling/gothic_rubble_ruin_02.png",
+    "pixel_size": {
+      "w": 100,
+      "h": 161
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "rubble_cover_or_ruin_storytelling",
+    "placement_layer": "prop",
+    "tags": [
+      "cover",
+      "damage",
+      "gothic",
+      "prop",
+      "rubble",
+      "ruin"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 4,
+      "h": 6
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 50,
+      "y": 160
+    },
+    "snap": "tile_or_free",
+    "allow_mirror_x": true,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 2,
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "cover",
+      "ruined_compound",
+      "blocked_route",
+      "environmental_storytelling"
+    ],
+    "weight": 24,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

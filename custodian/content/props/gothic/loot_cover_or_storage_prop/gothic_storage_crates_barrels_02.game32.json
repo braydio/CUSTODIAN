@@ -1,0 +1,72 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_storage_crates_barrels_02",
+  "display_name": "Storage Crates Barrels 02",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 106,
+    "row_index": 7,
+    "col_index": 1,
+    "bbox_px": {
+      "x": 306,
+      "y": 785,
+      "w": 39,
+      "h": 41
+    }
+  },
+  "file": {
+    "path": "custodian/content/props/gothic/loot_cover_or_storage_prop/gothic_storage_crates_barrels_02.png",
+    "pixel_size": {
+      "w": 39,
+      "h": 41
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "loot_cover_or_storage_prop",
+    "placement_layer": "prop",
+    "tags": [
+      "barrel",
+      "cover",
+      "crate",
+      "loot",
+      "prop",
+      "storage"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 2
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 19,
+      "y": 40
+    },
+    "snap": "tile_or_free",
+    "allow_mirror_x": true,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 1,
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "loot_area",
+      "storage_room",
+      "cover",
+      "compound_utility"
+    ],
+    "weight": 24,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}

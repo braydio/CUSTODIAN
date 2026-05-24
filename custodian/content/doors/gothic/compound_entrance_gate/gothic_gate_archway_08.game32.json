@@ -1,0 +1,72 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_gate_archway_08",
+  "display_name": "Gothic Gate Archway 08",
+  "source": {
+    "sheet": "gothic_tilesheet.png",
+    "visual_index": 87,
+    "row_index": 4,
+    "col_index": 7,
+    "bbox_px": {
+      "x": 824,
+      "y": 435,
+      "w": 55,
+      "h": 65
+    }
+  },
+  "file": {
+    "path": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_08.png",
+    "pixel_size": {
+      "w": 55,
+      "h": 65
+    }
+  },
+  "classification": {
+    "asset_type": "doors",
+    "semantic_role": "compound_entrance_gate",
+    "placement_layer": "door",
+    "tags": [
+      "archway",
+      "compound",
+      "door",
+      "entrance",
+      "gate",
+      "gothic"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 3
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 27,
+      "y": 64
+    },
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "collision_shape": "none"
+  },
+  "procgen": {
+    "uses": [
+      "main_entrance",
+      "compound_gate",
+      "sector_threshold",
+      "poi_gate"
+    ],
+    "weight": 12,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "supports_gothic_compound": true,
+    "review_status": "semantic_band_assigned"
+  }
+}
