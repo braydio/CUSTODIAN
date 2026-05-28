@@ -17,6 +17,17 @@ const META_RAMP_ELEVATION := "portal_ramp_elevation"
 const ELEVATION_SOURCE := "portal_ramp"
 const MOVEMENT_SOURCE := "portal_ramp"
 
+const OPERATOR_ARRIVAL_ANIMATION_DELAY_SEC := 0.75
+const OPERATOR_ARRIVAL_BELOW_HORIZON_OFFSET_PX := 5.0
+const PORTAL_SCREEN_VEIL_GROUP := "portal_screen_veil"
+const PORTAL_SCREEN_VEIL_COLOR := Color.BLACK
+
+# Keep destination placement below the visual/trigger horizon so the operator:
+# 1. does not immediately re-trigger the portal on arrival
+# 2. has enough visible body below the portal horizon for the arrival one-shot
+# 3. plays the arrival animation only after the camera has had a moment to settle
+const ARRIVAL_LANDING_OFFSET := Vector2(0.0, OPERATOR_ARRIVAL_BELOW_HORIZON_OFFSET_PX)
+
 @export var linked_portal_path: NodePath
 @export var player_group: String = "player"
 @export var only_players_can_teleport: bool = true
@@ -41,6 +52,11 @@ const MOVEMENT_SOURCE := "portal_ramp"
 @export var require_ramp_elevation_to_teleport: bool = true
 @export var require_body_still_in_trigger_at_teleport_frame: bool = true
 @export var stop_body_velocity_on_arrival: bool = true
+@export var portal_screen_veil_enabled: bool = true
+@export_range(1, 12, 1) var portal_screen_veil_start_frame: int = 9
+@export_range(0.0, 1.0, 0.05) var portal_screen_veil_alpha: float = 1.0
+@export_range(0.02, 1.0, 0.01) var portal_screen_veil_fade_in_seconds: float = 0.20
+@export_range(0.02, 1.0, 0.01) var portal_screen_veil_fade_out_seconds: float = 0.28
 
 @export var ramp_bottom_local_offset: Vector2 = Vector2(0, 34)
 @export var ramp_top_local_offset: Vector2 = Vector2.ZERO
@@ -73,9 +89,13 @@ var _return_to_idle_on_finish: bool = true
 var _teleport_sequence_active: bool = false
 var _busy_until_frame: int = 0
 var _active_body: Node2D = null
+var _arrival_animation_token := 0
 
 var _ramp_body_counts: Dictionary = {}
 var _portal_player_root: Node2D = null
+var _portal_screen_veil_layer: CanvasLayer = null
+var _portal_screen_veil_rect: ColorRect = null
+var _portal_screen_veil_tween: Tween = null
 
 
 func _ready() -> void:
@@ -255,8 +275,11 @@ func _run_teleport_sequence(body: Node2D) -> void:
 	body.set_meta(META_TELEPORT_LOCK_UNTIL, start_frame + lock_frames)
 
 	_play_action("activate")
+	_reset_portal_screen_veil()
 
 	var start_msec := Time.get_ticks_msec()
+	await _wait_for_action_frame(portal_screen_veil_start_frame)
+	await _play_portal_screen_veil_in()
 	await _wait_for_action_frame(activation_teleport_frame)
 
 	if not _is_valid_teleport_body(body):
@@ -287,7 +310,7 @@ func _run_teleport_sequence(body: Node2D) -> void:
 			_finish_teleport_sequence()
 			return
 
-	var destination_position := linked_portal.get_arrival_position(global_position)
+	var destination_position := _get_portal_arrival_position(linked_portal)
 	body.global_position = destination_position
 
 	if stop_body_velocity_on_arrival:
@@ -295,11 +318,9 @@ func _run_teleport_sequence(body: Node2D) -> void:
 			(body as CharacterBody2D).velocity = Vector2.ZERO
 
 	_clear_ramp_state(body)
-
-	if body.has_method("play_portal_arrival_animation"):
-		body.call("play_portal_arrival_animation")
-	else:
-		_set_body_portal_transition_locked(body, false)
+	_set_body_visible(body, false)
+	_set_body_portal_transition_locked(body, true)
+	_schedule_operator_arrival_animation(body)
 
 	var elapsed_seconds := float(Time.get_ticks_msec() - start_msec) / 1000.0
 	var arrival_hold_seconds := maxf(0.0, teleport_sequence_seconds - elapsed_seconds)
@@ -310,12 +331,71 @@ func _run_teleport_sequence(body: Node2D) -> void:
 		arrival_animation_delay_seconds
 	)
 
-	_finish_teleport_sequence()
+	_finish_teleport_sequence(false, false)
 
 
-func _finish_teleport_sequence() -> void:
-	if _active_body != null and is_instance_valid(_active_body):
+func _get_portal_arrival_position(destination_portal: Node2D) -> Vector2:
+	if destination_portal == null:
+		return Vector2.ZERO
+
+	# Prefer a portal-owned landing point when the scene/prop defines one.
+	# The +5px fallback is intentionally below the teleport horizon.
+	var arrival_point := destination_portal.get_node_or_null("ArrivalPoint") as Node2D
+	if arrival_point != null:
+		return arrival_point.global_position + ARRIVAL_LANDING_OFFSET
+
+	if destination_portal.has_method("get_arrival_position"):
+		var custom_position = destination_portal.call("get_arrival_position", global_position)
+		if custom_position is Vector2:
+			return custom_position + ARRIVAL_LANDING_OFFSET
+
+	return destination_portal.global_position + ARRIVAL_LANDING_OFFSET
+
+
+func _schedule_operator_arrival_animation(player: Node2D) -> void:
+	if player == null:
+		return
+
+	_arrival_animation_token += 1
+	var token := _arrival_animation_token
+
+	var tree := get_tree()
+	if tree == null:
+		_play_operator_arrival_animation(player, token)
+		return
+
+	await tree.create_timer(OPERATOR_ARRIVAL_ANIMATION_DELAY_SEC).timeout
+	_play_operator_arrival_animation(player, token)
+
+
+func _play_operator_arrival_animation(player: Node2D, token: int) -> void:
+	if token != _arrival_animation_token:
+		return
+	if player == null or not is_instance_valid(player):
+		return
+
+	_set_body_visible(player, true)
+
+	var played_arrival_animation := false
+
+	if player.has_method("play_portal_arrival_animation"):
+		var result = player.call("play_portal_arrival_animation")
+		played_arrival_animation = not (result is bool) or bool(result)
+	elif player.has_method("play_operator_arrival_animation"):
+		player.call("play_operator_arrival_animation")
+		played_arrival_animation = true
+
+	if not played_arrival_animation:
+		_set_body_portal_transition_locked(player, false)
+
+	_play_portal_screen_veil_out()
+
+
+func _finish_teleport_sequence(unlock_active_body: bool = true, hide_screen_veil: bool = true) -> void:
+	if unlock_active_body and _active_body != null and is_instance_valid(_active_body):
 		_set_body_portal_transition_locked(_active_body, false)
+	if hide_screen_veil:
+		_play_portal_screen_veil_out()
 	_teleport_sequence_active = false
 	_active_body = null
 
@@ -325,6 +405,91 @@ func _set_body_portal_transition_locked(body: Node2D, locked: bool) -> void:
 		return
 	if body.has_method("set_portal_transition_locked"):
 		body.call("set_portal_transition_locked", locked)
+
+
+func _set_body_visible(body: Node2D, visible: bool) -> void:
+	if body == null or not is_instance_valid(body):
+		return
+	body.visible = visible
+
+
+func _play_portal_screen_veil_in() -> void:
+	if not portal_screen_veil_enabled:
+		return
+	var veil := _ensure_portal_screen_veil()
+	if veil == null:
+		return
+	_tween_portal_screen_veil_alpha(portal_screen_veil_alpha, portal_screen_veil_fade_in_seconds)
+	await get_tree().create_timer(portal_screen_veil_fade_in_seconds).timeout
+
+
+func _play_portal_screen_veil_out() -> void:
+	if not portal_screen_veil_enabled:
+		return
+	var veil := _ensure_portal_screen_veil()
+	if veil == null:
+		return
+	_tween_portal_screen_veil_alpha(0.0, portal_screen_veil_fade_out_seconds)
+
+
+func _reset_portal_screen_veil() -> void:
+	if not portal_screen_veil_enabled:
+		return
+	var veil := _ensure_portal_screen_veil()
+	if veil == null:
+		return
+	if _portal_screen_veil_tween != null:
+		_portal_screen_veil_tween.kill()
+	_portal_screen_veil_tween = null
+	veil.color = Color(PORTAL_SCREEN_VEIL_COLOR, 0.0)
+
+
+func _ensure_portal_screen_veil() -> ColorRect:
+	if _portal_screen_veil_rect != null and is_instance_valid(_portal_screen_veil_rect):
+		return _portal_screen_veil_rect
+
+	var tree := get_tree()
+	if tree == null:
+		return null
+
+	var existing_layers := tree.get_nodes_in_group(PORTAL_SCREEN_VEIL_GROUP)
+	for node in existing_layers:
+		if node is CanvasLayer:
+			_portal_screen_veil_layer = node as CanvasLayer
+			_portal_screen_veil_rect = _portal_screen_veil_layer.get_node_or_null("PortalScreenVeilRect") as ColorRect
+			if _portal_screen_veil_rect != null:
+				return _portal_screen_veil_rect
+
+	_portal_screen_veil_layer = CanvasLayer.new()
+	_portal_screen_veil_layer.name = "PortalScreenVeil"
+	_portal_screen_veil_layer.layer = 128
+	_portal_screen_veil_layer.add_to_group(PORTAL_SCREEN_VEIL_GROUP)
+	tree.root.add_child(_portal_screen_veil_layer)
+
+	_portal_screen_veil_rect = ColorRect.new()
+	_portal_screen_veil_rect.name = "PortalScreenVeilRect"
+	_portal_screen_veil_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_portal_screen_veil_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_portal_screen_veil_rect.color = Color(PORTAL_SCREEN_VEIL_COLOR, 0.0)
+	_portal_screen_veil_layer.add_child(_portal_screen_veil_rect)
+	return _portal_screen_veil_rect
+
+
+func _tween_portal_screen_veil_alpha(target_alpha: float, duration: float) -> void:
+	var veil := _ensure_portal_screen_veil()
+	if veil == null:
+		return
+	if _portal_screen_veil_tween != null:
+		_portal_screen_veil_tween.kill()
+	_portal_screen_veil_tween = create_tween()
+	_portal_screen_veil_tween.set_trans(Tween.TRANS_SINE)
+	_portal_screen_veil_tween.set_ease(Tween.EASE_OUT)
+	_portal_screen_veil_tween.tween_property(
+		veil,
+		"color",
+		Color(PORTAL_SCREEN_VEIL_COLOR, clampf(target_alpha, 0.0, 1.0)),
+		maxf(0.01, duration)
+	)
 
 
 func _mark_busy_for_frames(frame_count: int) -> void:

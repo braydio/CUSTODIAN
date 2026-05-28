@@ -21,11 +21,16 @@ class_name ContractWorldLoader
 @export var reposition_camera_from_contract: bool = true
 @export var place_arrn_relays_from_contract: bool = true
 @export var place_tutorial_resource_nodes_from_contract: bool = true
+@export var place_expedition_resource_nodes_from_contract: bool = true
 @export var place_gothic_compound_connection: bool = true
-@export_range(0, 6, 1) var tutorial_resource_node_count: int = 3
+@export_range(0, 7, 1) var tutorial_resource_node_count: int = 3
 @export_range(2, 64, 1) var tutorial_resource_min_distance_tiles: int = 10
 @export_range(4, 96, 1) var tutorial_resource_max_distance_tiles: int = 42
 @export_range(2, 32, 1) var tutorial_resource_min_spacing_tiles: int = 12
+@export_range(0, 24, 1) var expedition_resource_node_count: int = 8
+@export_range(8, 160, 1) var expedition_resource_min_distance_tiles: int = 46
+@export_range(2, 48, 1) var expedition_resource_min_spacing_tiles: int = 10
+@export_range(0.0, 1.0, 0.01) var expedition_resource_min_intensity: float = 0.30
 @export var fallback_tile_size: float = 16.0
 
 const ARRN_RELAY_SCENE := preload("res://game/actors/relay/relay.tscn")
@@ -111,6 +116,8 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_position_item_anchors(level_data, map_instance)
 	if place_tutorial_resource_nodes_from_contract:
 		_position_tutorial_resource_nodes(level_data, map_instance)
+	if place_expedition_resource_nodes_from_contract:
+		_position_expedition_resource_nodes(level_data, map_instance)
 	if place_arrn_relays_from_contract:
 		_position_arrn_relays(level_data, map_instance)
 	if place_gothic_compound_connection:
@@ -420,15 +427,63 @@ func _position_tutorial_resource_nodes(level_data: Dictionary, map_instance: Nod
 		var chosen_tile := _pick_tutorial_resource_tile(candidate_tiles, placed_tiles)
 		if chosen_tile == Vector2i.ZERO:
 			continue
-		var node := RESOURCE_NODE_SCENE.instantiate() as ResourceNode
+		var node := _instantiate_generated_resource_node(
+			items_root,
+			preset,
+			"TutorialResource_%s" % String(preset.get("node_kind", "resource")),
+			"generated_tutorial_resource_node"
+		)
 		if node == null:
 			continue
-		node.name = "TutorialResource_%s" % String(preset.get("node_kind", "resource"))
-		node.add_to_group("generated_tutorial_resource_node")
-		_apply_resource_node_preset(node, preset)
-		items_root.add_child(node)
 		node.global_position = _tile_to_world(map_instance, chosen_tile)
 		placed_tiles.append(chosen_tile)
+
+
+func _position_expedition_resource_nodes(level_data: Dictionary, map_instance: Node) -> void:
+	var items_root := get_node_or_null(items_root_path)
+	if items_root == null:
+		return
+	for child in items_root.get_children():
+		if child.is_in_group("generated_expedition_resource_node"):
+			child.queue_free()
+	if expedition_resource_node_count <= 0:
+		return
+
+	var candidate_tiles := _build_expedition_resource_candidate_tiles(level_data, map_instance)
+	if candidate_tiles.is_empty():
+		return
+
+	var presets := _get_expedition_resource_presets()
+	if presets.is_empty():
+		return
+
+	var placed_tiles: Array[Vector2i] = []
+	for preset_index in range(expedition_resource_node_count):
+		var preset: Dictionary = presets[preset_index % presets.size()]
+		var chosen_tile := _pick_expedition_resource_tile(candidate_tiles, placed_tiles, preset_index)
+		if chosen_tile == Vector2i.ZERO:
+			continue
+		var node := _instantiate_generated_resource_node(
+			items_root,
+			preset,
+			"ExpeditionResource_%02d_%s" % [preset_index + 1, String(preset.get("node_kind", "resource"))],
+			"generated_expedition_resource_node"
+		)
+		if node == null:
+			continue
+		node.global_position = _tile_to_world(map_instance, chosen_tile)
+		placed_tiles.append(chosen_tile)
+
+
+func _instantiate_generated_resource_node(items_root: Node, preset: Dictionary, node_name: String, group_name: String) -> ResourceNode:
+	var node := RESOURCE_NODE_SCENE.instantiate() as ResourceNode
+	if node == null:
+		return null
+	node.name = node_name
+	node.add_to_group(group_name)
+	_apply_resource_node_preset(node, preset)
+	items_root.add_child(node)
+	return node
 
 
 func _build_tutorial_resource_candidate_tiles(level_data: Dictionary, map_instance: Node) -> Array[Vector2i]:
@@ -475,6 +530,102 @@ func _build_tutorial_resource_candidate_tiles(level_data: Dictionary, map_instan
 	return candidates
 
 
+func _build_expedition_resource_candidate_tiles(level_data: Dictionary, map_instance: Node) -> Array[Vector2i]:
+	var candidates: Array[Vector2i] = []
+	var seen: Dictionary = {}
+	var raw_tiles: Array = level_data.get("floor_cells", [])
+	if raw_tiles.is_empty():
+		raw_tiles = level_data.get("random_floor_tiles", [])
+	var player_spawn: Variant = level_data.get("player_spawn")
+	var spawn_tile := player_spawn as Vector2i if player_spawn is Vector2i else Vector2i.ZERO
+	var min_dist_sq := expedition_resource_min_distance_tiles * expedition_resource_min_distance_tiles
+	var compound_rect: Rect2i = level_data.get("compound_rect", Rect2i()) as Rect2i
+	var road_tiles := _build_tile_lookup(level_data.get("main_road_tiles", []))
+	var parking_tiles := _build_tile_lookup(level_data.get("parking_zone_tiles", []))
+
+	for tile_variant in raw_tiles:
+		if not (tile_variant is Vector2i):
+			continue
+		var tile := tile_variant as Vector2i
+		if seen.has(tile):
+			continue
+		seen[tile] = true
+		if not _is_expedition_resource_candidate(tile, spawn_tile, min_dist_sq, compound_rect, road_tiles, parking_tiles, map_instance):
+			continue
+		candidates.append(tile)
+
+	if candidates.is_empty():
+		seen.clear()
+		for tile_variant in raw_tiles:
+			if not (tile_variant is Vector2i):
+				continue
+			var tile := tile_variant as Vector2i
+			if seen.has(tile):
+				continue
+			seen[tile] = true
+			if _is_fallback_expedition_resource_candidate(tile, compound_rect, road_tiles, parking_tiles, map_instance):
+				candidates.append(tile)
+
+	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var a_score := _stable_expedition_resource_tile_score(a, spawn_tile)
+		var b_score := _stable_expedition_resource_tile_score(b, spawn_tile)
+		if a_score == b_score:
+			return a.x == b.x and a.y < b.y or a.x < b.x
+		return a_score < b_score
+	)
+	return candidates
+
+
+func _is_expedition_resource_candidate(
+	tile: Vector2i,
+	spawn_tile: Vector2i,
+	min_dist_sq: int,
+	compound_rect: Rect2i,
+	road_tiles: Dictionary,
+	parking_tiles: Dictionary,
+	map_instance: Node
+) -> bool:
+	if spawn_tile != Vector2i.ZERO and tile.distance_squared_to(spawn_tile) < min_dist_sq:
+		return false
+	if not _is_fallback_expedition_resource_candidate(tile, compound_rect, road_tiles, parking_tiles, map_instance):
+		return false
+	return _get_map_tile_intensity(map_instance, tile) >= expedition_resource_min_intensity
+
+
+func _is_fallback_expedition_resource_candidate(
+	tile: Vector2i,
+	compound_rect: Rect2i,
+	road_tiles: Dictionary,
+	parking_tiles: Dictionary,
+	map_instance: Node
+) -> bool:
+	if compound_rect.size.x > 0 and compound_rect.size.y > 0 and compound_rect.has_point(tile):
+		return false
+	if road_tiles.has(tile) or parking_tiles.has(tile):
+		return false
+	if _is_excluded_resource_region(_get_map_region_type(map_instance, tile)):
+		return false
+	if not _is_walkable_floor_tile(map_instance, tile):
+		return false
+	return _count_walkable_neighbors(map_instance, tile) >= 3
+
+
+func _pick_expedition_resource_tile(candidates: Array[Vector2i], placed_tiles: Array[Vector2i], preset_index: int) -> Vector2i:
+	if candidates.is_empty():
+		return Vector2i.ZERO
+	var start_index := preset_index % candidates.size()
+	for offset in range(candidates.size()):
+		var tile: Vector2i = candidates[(start_index + offset) % candidates.size()]
+		if not _is_far_enough_from_resource_tiles(tile, placed_tiles, expedition_resource_min_spacing_tiles):
+			continue
+		return tile
+	for offset in range(candidates.size()):
+		var tile: Vector2i = candidates[(start_index + offset) % candidates.size()]
+		if _is_far_enough_from_resource_tiles(tile, placed_tiles, maxi(2, int(expedition_resource_min_spacing_tiles / 2))):
+			return tile
+	return Vector2i.ZERO
+
+
 func _pick_tutorial_resource_tile(candidates: Array[Vector2i], placed_tiles: Array[Vector2i]) -> Vector2i:
 	for tile in candidates:
 		if not _is_far_enough_from_resource_tiles(tile, placed_tiles, tutorial_resource_min_spacing_tiles):
@@ -497,6 +648,14 @@ func _is_far_enough_from_resource_tiles(tile: Vector2i, placed_tiles: Array[Vect
 func _stable_resource_tile_score(tile: Vector2i, anchor_tile: Vector2i) -> int:
 	var value := 2166136261
 	for number in [tile.x, tile.y, anchor_tile.x, anchor_tile.y, tutorial_resource_node_count]:
+		value = value ^ int(number)
+		value = (value * 16777619) & 0x7fffffff
+	return value
+
+
+func _stable_expedition_resource_tile_score(tile: Vector2i, anchor_tile: Vector2i) -> int:
+	var value := 2166136261
+	for number in [tile.x, tile.y, anchor_tile.x, anchor_tile.y, expedition_resource_node_count, expedition_resource_min_distance_tiles]:
 		value = value ^ int(number)
 		value = (value * 16777619) & 0x7fffffff
 	return value
@@ -530,6 +689,9 @@ func _get_tutorial_resource_presets() -> Array[Dictionary]:
 			"standing_color": Color(0.25, 0.28, 0.31, 1.0),
 			"depleted_color": Color(0.08, 0.085, 0.09, 1.0),
 			"prompt_resource_label": "STRUCTURAL ALLOY",
+			"idle_sheet_path": "res://content/sprites/props/harvesting_nodes/exposed_alloy_vein/exposed_alloy_vein__node__idle__5f__96.png",
+			"depleted_sheet_path": "res://content/sprites/props/harvesting_nodes/exposed_alloy_vein/exposed_alloy_vein__node__depleted__1f__96.png",
+			"sprite_playback_mode": "harvest_states",
 		},
 		{
 			"node_kind": "machine_wreckage",
@@ -541,8 +703,71 @@ func _get_tutorial_resource_presets() -> Array[Dictionary]:
 			"standing_color": Color(0.18, 0.18, 0.17, 1.0),
 			"depleted_color": Color(0.07, 0.07, 0.065, 1.0),
 			"prompt_resource_label": "RUIN SCRAP",
+			"idle_sheet_path": "res://content/sprites/props/harvesting_nodes/collapsed_machine_shell/collapsed_machine_shell__node__idle__5f__96.png",
+			"depleted_sheet_path": "res://content/sprites/props/harvesting_nodes/collapsed_machine_shell/collapsed_machine_shell__node__depleted__1f__96.png",
+			"sprite_playback_mode": "harvest_states",
+		},
+		{
+			"node_kind": "fungal_resin_pod",
+			"harvest_label": "CUT",
+			"resource_id": "resin_clot",
+			"work_required": 3,
+			"yield_amount": 4,
+			"secondary_yields": {"fiber_moss": 2},
+			"standing_color": Color(0.28, 0.18, 0.09, 1.0),
+			"depleted_color": Color(0.09, 0.06, 0.04, 1.0),
+			"prompt_resource_label": "RESIN CLOT",
+			"idle_sheet_path": "res://content/sprites/props/harvesting_nodes/fungal_resin_pod/fungal_resin_pod__node__idle__5f__96.png",
+			"depleted_sheet_path": "res://content/sprites/props/harvesting_nodes/fungal_resin_pod/fungal_resin_pod__node__depleted__1f__96.png",
+			"sprite_playback_mode": "harvest_states",
+		},
+		{
+			"node_kind": "ruptured_capacitor_bank",
+			"harvest_label": "SALVAGE",
+			"resource_id": "capacitor_dust",
+			"work_required": 3,
+			"yield_amount": 6,
+			"secondary_yields": {"power_components": 1, "ruin_scrap": 1},
+			"standing_color": Color(0.18, 0.2, 0.24, 1.0),
+			"depleted_color": Color(0.06, 0.065, 0.075, 1.0),
+			"prompt_resource_label": "CAPACITOR DUST",
+			"idle_sheet_path": "res://content/sprites/props/harvesting_nodes/ruptured_capacitor_bank/ruptured_capacitor_bank__node__idle__5f__96.png",
+			"depleted_sheet_path": "res://content/sprites/props/harvesting_nodes/ruptured_capacitor_bank/ruptured_capacitor_bank__node__depleted__1f__96.png",
+			"sprite_playback_mode": "harvest_states",
+		},
+		{
+			"node_kind": "broken_signal_relay",
+			"harvest_label": "EXTRACT",
+			"resource_id": "signal_filament",
+			"work_required": 4,
+			"yield_amount": 1,
+			"secondary_yields": {"capacitor_dust": 2, "ruin_scrap": 2},
+			"standing_color": Color(0.1, 0.2, 0.24, 1.0),
+			"depleted_color": Color(0.045, 0.06, 0.065, 1.0),
+			"prompt_resource_label": "SIGNAL FILAMENT",
+			"idle_sheet_path": "res://content/sprites/props/harvesting_nodes/broken_signal_relay/broken_signal_relay__node__idle__5f__96.png",
+			"depleted_sheet_path": "res://content/sprites/props/harvesting_nodes/broken_signal_relay/broken_signal_relay__node__depleted__1f__96.png",
+			"sprite_playback_mode": "harvest_states",
+		},
+		{
+			"node_kind": "shattered_archive_terminal",
+			"harvest_label": "EXTRACT",
+			"resource_id": "memory_glass_fragment",
+			"work_required": 4,
+			"yield_amount": 2,
+			"secondary_yields": {"signal_filament": 1},
+			"standing_color": Color(0.15, 0.16, 0.24, 1.0),
+			"depleted_color": Color(0.05, 0.052, 0.07, 1.0),
+			"prompt_resource_label": "MEMORY GLASS",
+			"idle_sheet_path": "res://content/sprites/props/harvesting_nodes/shattered_archive_terminal/shattered_archive_terminal__node__idle__5f__96.png",
+			"depleted_sheet_path": "res://content/sprites/props/harvesting_nodes/shattered_archive_terminal/shattered_archive_terminal__node__depleted__1f__96.png",
+			"sprite_playback_mode": "harvest_states",
 		},
 	]
+
+
+func _get_expedition_resource_presets() -> Array[Dictionary]:
+	return _get_tutorial_resource_presets()
 
 
 func _apply_resource_node_preset(node: ResourceNode, preset: Dictionary) -> void:
@@ -928,6 +1153,44 @@ func _is_walkable_floor_tile(map_instance: Node, tile: Vector2i) -> bool:
 				return false
 			return true
 	return false
+
+
+func _build_tile_lookup(raw_tiles: Variant) -> Dictionary:
+	var lookup := {}
+	if not (raw_tiles is Array):
+		return lookup
+	for tile_variant in raw_tiles:
+		if tile_variant is Vector2i:
+			lookup[tile_variant as Vector2i] = true
+	return lookup
+
+
+func _get_map_region_type(map_instance: Node, tile: Vector2i) -> String:
+	if map_instance != null and map_instance.has_method("get_region_type_at_tile"):
+		return String(map_instance.call("get_region_type_at_tile", tile))
+	return "exterior"
+
+
+func _get_map_tile_intensity(map_instance: Node, tile: Vector2i) -> float:
+	if map_instance != null and map_instance.has_method("get_intensity_at_tile"):
+		return float(map_instance.call("get_intensity_at_tile", tile))
+	return 0.0
+
+
+func _is_excluded_resource_region(region_type: String) -> bool:
+	return region_type in [
+		"spawn_clearing",
+		"main_road",
+		"parking_zone",
+		"soft_path",
+		"compound_approach",
+		"compound_connector_road",
+		"compound_connector_elevated_road",
+		"compound_connector_ramp",
+		"interior_floor",
+		"interior_wall",
+		"interior_threshold",
+	]
 
 
 func _count_walkable_neighbors(map_instance: Node, tile: Vector2i) -> int:

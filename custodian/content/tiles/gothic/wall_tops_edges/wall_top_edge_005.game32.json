@@ -1,0 +1,80 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "wall_top_edge_005",
+  "display_name": "Wall Top Edge 005",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/tiles/gothic/wall_tops_edges/wall_top_edge_005.png",
+    "section": "tiles",
+    "subtype": "wall_tops_edges",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 237,
+      "h": 50
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/tiles/gothic/wall_tops_edges/wall_top_edge_005.png",
+    "pixel_size": {
+      "w": 237,
+      "h": 50
+    }
+  },
+  "classification": {
+    "asset_type": "walls",
+    "semantic_role": "gothic_wall_top_edge_cap_piece",
+    "placement_layer": "wall_cap",
+    "tags": [
+      "gothic",
+      "wall",
+      "cap",
+      "top",
+      "blocking",
+      "top_edge",
+      "connector",
+      "trim"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 8,
+      "h": 2
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 118,
+      "y": 50
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 1,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "compound_wall",
+      "wall_cap",
+      "wall_top_edge",
+      "gothic_wall_trim"
+    ],
+    "weight": 10,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 16
+}

@@ -292,7 +292,7 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
         return f"environment/props/terminal/runtime/body/{info.basename}"
     if info.owner in {"portal_ring", "hit_spark", "muzzle_flash", "block_spark"} or info.owner.endswith("_spark") or info.owner.endswith("_ring"):
         return f"effects/runtime/{info.basename}"
-    if info.owner in {"hover_buggy", "vehicle", "buggy"}:
+    if _is_vehicle_owner(info.owner):
         return f"vehicles/{info.owner}/runtime/{info.basename}"
     if info.owner in {"turret", "gunner", "repeater", "sniper"} or info.layer == "turret":
         return f"turrets/{info.owner}/{info.basename}"
@@ -322,12 +322,18 @@ def _items_runtime_path(info: SheetInfo) -> str:
     return f"items/{info.layer}/{info.variant}.png"
 
 
+def _is_vehicle_owner(owner: str) -> bool:
+    return owner in {"hover_buggy", "light_buggy", "vehicle", "buggy"} or owner.startswith("vehicle_") or owner.endswith("_buggy")
+
+
 def _build_post_process(info: SheetInfo) -> list[str]:
     post_process: list[str] = []
     if info.owner == "operator" and info.layer == "body":
         post_process.append("operator_curated_resources")
     if info.owner.startswith("enemy_") or info.owner == "drone":
         post_process.append("enemy_runtime_import")
+    if _is_vehicle_owner(info.owner):
+        post_process.append("vehicle_runtime_import")
     return post_process
 
 

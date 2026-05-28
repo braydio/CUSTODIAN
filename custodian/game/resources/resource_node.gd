@@ -31,15 +31,60 @@ signal depleted(node: ResourceNode, resource_id: String, amount: int)
 @export_file("*.png") var strike_fx_sheet_path: String = ""
 @export var play_idle_fx: bool = false
 @export_enum("loop", "harvest_states") var sprite_playback_mode: String = "loop"
-@export_range(0.02, 1.0, 0.01) var state_fx_flash_duration: float = 0.18
+@export_range(0.02, 1.0, 0.01) var state_fx_flash_duration: float = 0.10
+@export_range(1, 60, 1) var strike_fx_fps: float = 14.0
+@export_range(1, 60, 1) var idle_fx_fps: float = 14.0
+@export_range(0, 12, 1) var strike_fx_impact_frame: int = 2
 @export var sprite_frame_size: Vector2i = Vector2i(96, 96)
 @export var sprite_fps: float = 6.0
 @export var sprite_scale: Vector2 = Vector2.ONE
 @export var sprite_position: Vector2 = Vector2(0.0, -48.0)
 
+const DEFAULT_NODE_SPRITE_PATHS := {
+	"blackwood_deadfall": {
+		"idle": "res://content/sprites/props/harvesting_nodes/blackwood_deadfall/blackwood_deadfall__node__idle__5f__96.png",
+		"depleted": "res://content/sprites/props/harvesting_nodes/blackwood_deadfall/blackwood_deadfall__node__depleted__1f__96.png",
+	},
+	"alloy_vein": {
+		"idle": "res://content/sprites/props/harvesting_nodes/exposed_alloy_vein/exposed_alloy_vein__node__idle__5f__96.png",
+		"depleted": "res://content/sprites/props/harvesting_nodes/exposed_alloy_vein/exposed_alloy_vein__node__depleted__1f__96.png",
+	},
+	"machine_wreckage": {
+		"idle": "res://content/sprites/props/harvesting_nodes/collapsed_machine_shell/collapsed_machine_shell__node__idle__5f__96.png",
+		"depleted": "res://content/sprites/props/harvesting_nodes/collapsed_machine_shell/collapsed_machine_shell__node__depleted__1f__96.png",
+	},
+	"fungal_resin_pod": {
+		"idle": "res://content/sprites/props/harvesting_nodes/fungal_resin_pod/fungal_resin_pod__node__idle__5f__96.png",
+		"depleted": "res://content/sprites/props/harvesting_nodes/fungal_resin_pod/fungal_resin_pod__node__depleted__1f__96.png",
+	},
+	"ruptured_capacitor_bank": {
+		"idle": "res://content/sprites/props/harvesting_nodes/ruptured_capacitor_bank/ruptured_capacitor_bank__node__idle__5f__96.png",
+		"depleted": "res://content/sprites/props/harvesting_nodes/ruptured_capacitor_bank/ruptured_capacitor_bank__node__depleted__1f__96.png",
+	},
+	"broken_signal_relay": {
+		"idle": "res://content/sprites/props/harvesting_nodes/broken_signal_relay/broken_signal_relay__node__idle__5f__96.png",
+		"depleted": "res://content/sprites/props/harvesting_nodes/broken_signal_relay/broken_signal_relay__node__depleted__1f__96.png",
+	},
+	"shattered_archive_terminal": {
+		"idle": "res://content/sprites/props/harvesting_nodes/shattered_archive_terminal/shattered_archive_terminal__node__idle__5f__96.png",
+		"depleted": "res://content/sprites/props/harvesting_nodes/shattered_archive_terminal/shattered_archive_terminal__node__depleted__1f__96.png",
+	},
+}
+
+const DEFAULT_RESOURCE_NODE_KINDS := {
+	"blackwood": "blackwood_deadfall",
+	"structural_alloy": "alloy_vein",
+	"ruin_scrap": "machine_wreckage",
+	"resin_clot": "fungal_resin_pod",
+	"capacitor_dust": "ruptured_capacitor_bank",
+	"signal_filament": "broken_signal_relay",
+	"memory_glass_fragment": "shattered_archive_terminal",
+}
+
 @onready var visual: Polygon2D = get_node_or_null("Visual") as Polygon2D
 @onready var node_sprite: AnimatedSprite2D = get_node_or_null("NodeSprite") as AnimatedSprite2D
 @onready var fx_sprite: AnimatedSprite2D = get_node_or_null("FxSprite") as AnimatedSprite2D
+@onready var impact_fx_sprite: AnimatedSprite2D = get_node_or_null("ImpactFxSprite") as AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = get_node_or_null("CollisionShape2D") as CollisionShape2D
 
 var _work_remaining: int = 1
@@ -49,12 +94,14 @@ var _pending_body_state_frame: int = -1
 var _pending_idle_fx_frame: int = -1
 var _pending_visual_depleted: bool = false
 var _defer_harvest_visual_transition: bool = false
+var _strike_impact_fx_played: bool = false
 
 
 func _ready() -> void:
 	add_to_group("resource_nodes")
 	add_to_group("interactable")
 	_work_remaining = max(1, work_required)
+	_apply_default_sprite_paths()
 	_setup_runtime_sprites()
 	_apply_visual_state()
 
@@ -167,8 +214,8 @@ func _setup_runtime_sprites() -> void:
 		fx_sprite.scale = sprite_scale
 		fx_sprite.visible = false
 		var fx_frames := SpriteFrames.new()
-		_add_strip_animation(fx_frames, "idle_fx", idle_fx_sheet_path, true, sprite_fps)
-		_add_strip_animation(fx_frames, "strike_fx", strike_fx_sheet_path, false, sprite_fps)
+		_add_strip_animation(fx_frames, "idle_fx", idle_fx_sheet_path, true, idle_fx_fps)
+		_add_strip_animation(fx_frames, "strike_fx", strike_fx_sheet_path, false, strike_fx_fps)
 		if fx_frames.has_animation("idle_fx") or fx_frames.has_animation("strike_fx"):
 			fx_sprite.sprite_frames = fx_frames
 			if play_idle_fx and fx_frames.has_animation("idle_fx"):
@@ -177,6 +224,53 @@ func _setup_runtime_sprites() -> void:
 			var fx_finished := Callable(self, "_on_fx_animation_finished")
 			if not fx_sprite.animation_finished.is_connected(fx_finished):
 				fx_sprite.animation_finished.connect(fx_finished)
+			var fx_frame_changed := Callable(self, "_on_fx_frame_changed")
+			if not fx_sprite.frame_changed.is_connected(fx_frame_changed):
+				fx_sprite.frame_changed.connect(fx_frame_changed)
+	_setup_impact_fx_sprite()
+
+
+func _apply_default_sprite_paths() -> void:
+	if not idle_sheet_path.is_empty() and not depleted_sheet_path.is_empty():
+		return
+	var preset := _get_default_sprite_path_preset()
+	if preset.is_empty():
+		return
+	if idle_sheet_path.is_empty():
+		idle_sheet_path = String(preset.get("idle", ""))
+	if depleted_sheet_path.is_empty():
+		depleted_sheet_path = String(preset.get("depleted", ""))
+	if sprite_playback_mode == "loop":
+		sprite_playback_mode = "harvest_states"
+
+
+func _get_default_sprite_path_preset() -> Dictionary:
+	var kind := node_kind
+	if not DEFAULT_NODE_SPRITE_PATHS.has(kind):
+		kind = String(DEFAULT_RESOURCE_NODE_KINDS.get(resource_id, ""))
+	if kind.is_empty() or not DEFAULT_NODE_SPRITE_PATHS.has(kind):
+		return {}
+	return DEFAULT_NODE_SPRITE_PATHS[kind]
+
+
+func _setup_impact_fx_sprite() -> void:
+	if impact_fx_sprite == null:
+		impact_fx_sprite = AnimatedSprite2D.new()
+		impact_fx_sprite.name = "ImpactFxSprite"
+		add_child(impact_fx_sprite)
+	if impact_fx_sprite == null:
+		return
+	impact_fx_sprite.position = sprite_position
+	impact_fx_sprite.scale = sprite_scale
+	impact_fx_sprite.visible = false
+	impact_fx_sprite.z_index = max(impact_fx_sprite.z_index, 1)
+	var impact_frames := SpriteFrames.new()
+	_add_strip_animation(impact_frames, "idle_fx", idle_fx_sheet_path, false, idle_fx_fps)
+	if impact_frames.has_animation("idle_fx"):
+		impact_fx_sprite.sprite_frames = impact_frames
+	var impact_finished := Callable(self, "_on_impact_fx_animation_finished")
+	if not impact_fx_sprite.animation_finished.is_connected(impact_finished):
+		impact_fx_sprite.animation_finished.connect(impact_finished)
 
 
 func _add_strip_animation(frames: SpriteFrames, animation_name: String, path: String, loop: bool, fps: float) -> void:
@@ -218,6 +312,7 @@ func _play_strike_fx(harvested_count: int, previous_harvested_count: int) -> voi
 			_play_harvest_state_idle_flash()
 		return
 	_fx_flash_token += 1
+	_strike_impact_fx_played = false
 	fx_sprite.visible = true
 	fx_sprite.play("strike_fx")
 	fx_sprite.set_frame_and_progress(0, 0.0)
@@ -241,7 +336,9 @@ func _hide_fx_after_flash(flash_token: int, finish_transition: bool = false) -> 
 	await get_tree().create_timer(state_fx_flash_duration).timeout
 	if flash_token != _fx_flash_token:
 		return
-	if fx_sprite != null:
+	if impact_fx_sprite != null:
+		impact_fx_sprite.visible = false
+	if fx_sprite != null and str(fx_sprite.animation) != "strike_fx":
 		fx_sprite.visible = false
 	if finish_transition:
 		_finish_harvest_state_transition()
@@ -258,8 +355,9 @@ func _play_harvest_state_idle_flash() -> void:
 		return
 	_fx_flash_token += 1
 	var flash_token: int = _fx_flash_token
-	fx_sprite.visible = true
-	_set_sprite_static_frame(fx_sprite, "idle_fx", _pending_idle_fx_frame)
+	var target_sprite := impact_fx_sprite if impact_fx_sprite != null and impact_fx_sprite.sprite_frames != null else fx_sprite
+	target_sprite.visible = true
+	_set_sprite_static_frame(target_sprite, "idle_fx", _pending_idle_fx_frame)
 	_hide_fx_after_flash(flash_token, true)
 
 
@@ -277,7 +375,10 @@ func _on_fx_animation_finished() -> void:
 		return
 	if sprite_playback_mode == "harvest_states":
 		if str(fx_sprite.animation) == "strike_fx":
-			_play_harvest_state_idle_flash()
+			if not _strike_impact_fx_played:
+				_play_harvest_state_idle_flash()
+			else:
+				_finish_harvest_state_transition()
 		return
 	if _is_depleted:
 		fx_sprite.visible = false
@@ -287,3 +388,23 @@ func _on_fx_animation_finished() -> void:
 		fx_sprite.play("idle_fx")
 	else:
 		fx_sprite.visible = false
+
+
+func _on_fx_frame_changed() -> void:
+	if sprite_playback_mode != "harvest_states":
+		return
+	if fx_sprite == null:
+		return
+	if str(fx_sprite.animation) != "strike_fx":
+		return
+	if _strike_impact_fx_played:
+		return
+	if fx_sprite.frame < strike_fx_impact_frame:
+		return
+	_strike_impact_fx_played = true
+	_play_harvest_state_idle_flash()
+
+
+func _on_impact_fx_animation_finished() -> void:
+	if impact_fx_sprite != null:
+		impact_fx_sprite.visible = false

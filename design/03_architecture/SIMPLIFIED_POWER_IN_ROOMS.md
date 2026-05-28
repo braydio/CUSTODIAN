@@ -1,7 +1,8 @@
 # SIMPLIFIED POWER IN ROOMS — Implementation Spec
 
 **Status:** draft
-**Replaces:** Full Compound Tile System (for power delivery only)
+**Replaces:** Full Compound Tile System (for power delivery only — Phase 1)
+**See also:** `COMPOUND_TILE_SYSTEM.md` — Full Phase 2+ target architecture
 **Last Updated:** 2026-04-21
 
 ---

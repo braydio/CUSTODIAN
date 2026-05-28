@@ -1,7 +1,7 @@
 {
   "schema": "game32.asset.v2",
   "id": "gothic_floor_detail_03",
-  "display_name": "Gothic Floor Detail 03",
+  "display_name": "Pebbled Dark Floor Detail 03",
   "source": {
     "sheet": "gothic_tilesheet.png",
     "visual_index": 23,
@@ -12,10 +12,22 @@
       "y": 93,
       "w": 67,
       "h": 72
-    }
+    },
+    "master_sheet": null,
+    "original_path": "res://content/tiles/gothic/floors/gothic_floor_detail_03.png",
+    "section": "tiles",
+    "subtype": "floors",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 67,
+      "h": 72
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/tiles/gothic/floors/gothic_floor_detail_03.png",
+    "path": "res://content/tiles/gothic/floors/gothic_floor_detail_03.png",
     "pixel_size": {
       "w": 67,
       "h": 72
@@ -23,17 +35,24 @@
   },
   "classification": {
     "asset_type": "tiles",
-    "semantic_role": "floor_overlay_or_special_floor",
-    "placement_layer": "ground_detail",
+    "semantic_role": "pebbled_dark_walkable_floor_variant",
+    "placement_layer": "ground",
     "tags": [
       "detail",
       "drain",
       "floor",
       "gothic",
       "grate",
-      "overlay",
-      "scorch"
-    ]
+      "scorch",
+      "special_floor",
+      "walkable",
+      "industrial_gothic",
+      "pebbled",
+      "rubble",
+      "dirty",
+      "stone"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -49,25 +68,27 @@
     "snap": "tile",
     "allow_mirror_x": false,
     "allow_rotation": false,
-    "y_sort": false
+    "y_sort": false,
+    "review_status": "reviewed"
   },
   "collision": {
     "blocks_movement": false,
     "blocks_sight": false,
     "cover_value": 0,
-    "collision_shape": "none"
+    "collision_shape": "none",
+    "review_status": "reviewed"
   },
   "procgen": {
     "uses": [
-      "floor_detail",
-      "hazard_detail",
-      "industrial_gothic_insert",
-      "damaged_floor"
+      "interior_floor",
+      "ruined_compound_floor",
+      "dirty_transition"
     ],
-    "weight": 20,
+    "weight": 18,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": true,
     "supports_gothic_compound": true,
-    "review_status": "semantic_band_assigned"
-  }
+    "review_status": "reviewed"
+  },
+  "master_index": 29
 }

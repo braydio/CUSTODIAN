@@ -395,6 +395,6 @@ Too much fidelity causes certain truths to become painful or unstable:
 
 ## 15. Credits
 
-This spec expands on the simplified power-in-rooms implementation (SIMPLIFIED_POWER_IN_ROOMS.md) which originated from DOCUMENTATION_DRIFT_REPORT.md discovery.
+This spec expands on the simplified power-in-rooms implementation (SIMPLIFIED_POWER_IN_ROOMS.md) which originated from DOCS_DRIFT_REPORT.md discovery.
 
 The hub doctrine was crystallized in discussion 2026-04-22, with fidelity system addendums integrated 2026-04-22.

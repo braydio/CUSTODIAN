@@ -10,6 +10,7 @@ extends Control
 @export var room_color: Color = Color(0.45, 0.52, 0.30, 0.90)
 @export var player_color: Color = Color(0.72, 0.94, 0.96, 1.0)
 @export var enemy_color: Color = Color(0.86, 0.22, 0.18, 1.0)
+@export var enemy_loot_carrier_color: Color = Color(1.0, 0.72, 0.18, 1.0)
 @export var passive_creature_color: Color = Color(0.42, 0.86, 0.52, 1.0)
 @export var objective_color: Color = Color(0.95, 0.72, 0.24, 1.0)
 @export var terminal_color: Color = Color(0.38, 0.70, 0.96, 1.0)
@@ -25,6 +26,7 @@ extends Control
 @export var utility_marker_radius_px: float = 3.0
 @export var room_marker_radius_px: float = 1.6
 @export var draw_grid: bool = true
+@export var dynamic_redraw_interval: float = 0.08
 
 var map_size: Vector2i = Vector2i.ZERO
 var tile_size: Vector2 = Vector2(32, 32)
@@ -46,6 +48,10 @@ var terminal_nodes: Array[Node2D] = []
 var vehicle_nodes: Array[Node2D] = []
 var turret_nodes: Array[Node2D] = []
 var relay_nodes: Array[Node2D] = []
+var _map_texture_dirty := false
+var _redraw_queued := false
+var _dynamic_redraw_accum := 0.0
+var _last_dynamic_signature := ""
 
 
 func _ready() -> void:
@@ -64,8 +70,7 @@ func set_level_data(data: Dictionary) -> void:
 	compound_ingress = _as_vector2i_array(data.get("compound_ingress", []))
 	compound_buildings = _as_rect2i_array(data.get("compound_buildings", []))
 	region_tiles = data.get("region_tiles", {})
-	_rebuild_map_texture()
-	queue_redraw()
+	_mark_map_texture_dirty()
 
 
 func set_procgen_tilemap(node: Node) -> void:
@@ -74,30 +79,37 @@ func set_procgen_tilemap(node: Node) -> void:
 
 func set_player(node: Node2D) -> void:
 	player_node = node
+	_request_redraw()
 
 
 func set_enemies(nodes: Array[Node2D]) -> void:
 	enemy_nodes = nodes
+	_request_redraw()
 
 
 func set_objectives(nodes: Array[Node2D]) -> void:
 	objective_nodes = nodes
+	_request_redraw()
 
 
 func set_terminals(nodes: Array[Node2D]) -> void:
 	terminal_nodes = nodes
+	_request_redraw()
 
 
 func set_vehicles(nodes: Array[Node2D]) -> void:
 	vehicle_nodes = nodes
+	_request_redraw()
 
 
 func set_turrets(nodes: Array[Node2D]) -> void:
 	turret_nodes = nodes
+	_request_redraw()
 
 
 func set_relays(nodes: Array[Node2D]) -> void:
 	relay_nodes = nodes
+	_request_redraw()
 
 
 func update_tile(tile: Vector2i, terrain_kind: String) -> void:
@@ -111,8 +123,7 @@ func update_tile(tile: Vector2i, terrain_kind: String) -> void:
 		if not wall_cells.has(tile):
 			wall_cells.append(tile)
 		floor_cells.erase(tile)
-	_rebuild_map_texture()
-	queue_redraw()
+	_mark_map_texture_dirty()
 
 
 func get_status_summary() -> Dictionary:
@@ -151,30 +162,36 @@ func local_to_world(local_pos: Vector2) -> Vector2:
 	return Vector2(tile) * tile_size
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	if _map_texture_dirty:
+		_rebuild_map_texture()
+		_map_texture_dirty = false
+		_request_redraw()
+		return
+	_dynamic_redraw_accum += delta
+	if _dynamic_redraw_accum < dynamic_redraw_interval:
+		return
+	_dynamic_redraw_accum = 0.0
+	var signature := _get_dynamic_signature()
+	if signature != _last_dynamic_signature:
+		_last_dynamic_signature = signature
+		_request_redraw()
+
+
+func _mark_map_texture_dirty() -> void:
+	_map_texture_dirty = true
+	_request_redraw()
+
+
+func _request_redraw() -> void:
+	if _redraw_queued:
+		return
+	_redraw_queued = true
 	queue_redraw()
 
 
-func _rebuild_map_texture() -> void:
-	if map_size.x <= 0 or map_size.y <= 0:
-		map_texture = null
-		return
-
-	var image := Image.create(map_size.x, map_size.y, false, Image.FORMAT_RGBA8)
-	image.fill(background_color)
-
-	for tile in floor_cells:
-		if _is_tile_inside(tile):
-			image.set_pixel(tile.x, tile.y, _terrain_color(tile, false))
-
-	for tile in wall_cells:
-		if _is_tile_inside(tile):
-			image.set_pixel(tile.x, tile.y, _terrain_color(tile, true))
-
-	map_texture = ImageTexture.create_from_image(image)
-
-
 func _draw() -> void:
+	_redraw_queued = false
 	draw_rect(Rect2(Vector2.ZERO, size), background_color, true)
 	if map_texture == null or map_size.x <= 0 or map_size.y <= 0:
 		return
@@ -194,6 +211,25 @@ func _draw() -> void:
 	_draw_objective_pips(map_rect)
 	_draw_enemy_pips(map_rect)
 	_draw_player_pip(map_rect)
+
+
+func _rebuild_map_texture() -> void:
+	if map_size.x <= 0 or map_size.y <= 0:
+		map_texture = null
+		return
+
+	var image := Image.create(map_size.x, map_size.y, false, Image.FORMAT_RGBA8)
+	image.fill(background_color)
+
+	for tile in floor_cells:
+		if _is_tile_inside(tile):
+			image.set_pixel(tile.x, tile.y, _terrain_color(tile, false))
+
+	for tile in wall_cells:
+		if _is_tile_inside(tile):
+			image.set_pixel(tile.x, tile.y, _terrain_color(tile, true))
+
+	map_texture = ImageTexture.create_from_image(image)
 
 
 func _get_map_rect() -> Rect2:
@@ -219,6 +255,30 @@ func _global_to_tile(global_position: Vector2) -> Vector2i:
 	)
 
 
+func _get_dynamic_signature() -> String:
+	var parts: Array[String] = []
+	_append_node_signature(parts, "p", player_node)
+	_append_nodes_signature(parts, "e", enemy_nodes)
+	_append_nodes_signature(parts, "o", objective_nodes)
+	_append_nodes_signature(parts, "c", terminal_nodes)
+	_append_nodes_signature(parts, "v", vehicle_nodes)
+	_append_nodes_signature(parts, "t", turret_nodes)
+	_append_nodes_signature(parts, "r", relay_nodes)
+	return "|".join(parts)
+
+
+func _append_nodes_signature(parts: Array[String], prefix: String, nodes: Array[Node2D]) -> void:
+	for node in nodes:
+		_append_node_signature(parts, prefix, node)
+
+
+func _append_node_signature(parts: Array[String], prefix: String, node: Node2D) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	var tile := _global_to_tile(node.global_position)
+	parts.append("%s:%d:%d,%d" % [prefix, node.get_instance_id(), tile.x, tile.y])
+
+
 func _draw_player_pip(map_rect: Rect2) -> void:
 	if player_node == null or not is_instance_valid(player_node):
 		return
@@ -241,6 +301,8 @@ func _draw_enemy_pips(map_rect: Rect2) -> void:
 			var panel_pos := _tile_to_panel(tile, map_rect)
 			if _is_passive_creature_node(enemy):
 				_draw_passive_creature_marker(panel_pos)
+			elif _is_enemy_carrying_loot(enemy):
+				_draw_loot_carrier_marker(panel_pos)
 			else:
 				draw_circle(panel_pos, enemy_pip_radius_px, enemy_color)
 
@@ -255,6 +317,23 @@ func _draw_passive_creature_marker(panel_pos: Vector2) -> void:
 	])
 	draw_colored_polygon(points, passive_creature_color)
 	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), Color(0.02, 0.035, 0.025, 0.95), 1.0)
+
+
+func _draw_loot_carrier_marker(panel_pos: Vector2) -> void:
+	var r := enemy_pip_radius_px + 1.5
+	draw_circle(panel_pos, r + 1.2, Color(0.08, 0.035, 0.0, 0.95))
+	draw_circle(panel_pos, r, enemy_loot_carrier_color)
+	draw_line(panel_pos + Vector2(-r, 0.0), panel_pos + Vector2(r, 0.0), Color(0.15, 0.05, 0.0, 1.0), 1.0)
+
+
+func _is_enemy_carrying_loot(enemy: Node) -> bool:
+	if enemy.has_method("is_carrying_stolen_resources"):
+		return bool(enemy.call("is_carrying_stolen_resources"))
+	if enemy.has_method("get_behavior_snapshot"):
+		var snapshot: Dictionary = enemy.call("get_behavior_snapshot")
+		var blackboard: Dictionary = snapshot.get("blackboard", {})
+		return bool(blackboard.get("carrying_loot", false))
+	return false
 
 
 func _draw_terminal_pips(map_rect: Rect2) -> void:

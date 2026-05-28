@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/enemy_marine__body__unarmed__idle_01__se__4f__96.json",
+	"outputs": [
+		"res://content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__idle_01__se__4f__96.png",
+		"res://content/sprites/enemies/enemy_marine/enemy_marine__body__unarmed__idle_01__se__4f__96.png"
+	],
+	"post_process": [
+		"enemy_runtime_import"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/enemy_marine__body__unarmed__idle_01__se__4f__96.png",
+	"timestamp_utc": "2026-05-26 09:43:28"
+}

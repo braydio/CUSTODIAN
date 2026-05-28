@@ -2,7 +2,6 @@ extends ControllableActor
 
 const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
 const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
-const AttackLightState = preload("res://game/actors/operator/animations/states/attack_light_state.gd")
 const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
 const AttackHeavyState = preload("res://game/actors/operator/animations/states/attack_heavy_state.gd")
 const BlockState = preload("res://game/actors/operator/animations/states/block_state.gd")
@@ -12,6 +11,7 @@ const IdleState = preload("res://game/actors/operator/animations/states/idle_sta
 const WalkState = preload("res://game/actors/operator/animations/states/walk_state.gd")
 const SprintState = preload("res://game/actors/operator/animations/states/sprint_state.gd")
 const DeathState = preload("res://game/actors/operator/animations/states/death_state.gd")
+const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
 const SPEED := 150.0
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
 const MUZZLE_FLASH_SCENE := preload("res://game/actors/effects/muzzle_flash.tscn")
@@ -91,14 +91,11 @@ var last_fire_cooldown := 0.0
 @export var ammo_heavy_magazine_size: int = 8
 @export var ranged_reload_duration: float = 1.7
 @export var interaction_range: float = 84.0
+@export_group("Deprecated Melee Fallbacks", "melee")
 @export var melee_damage: float = 28.0
 @export var melee_range: float = 72.0
 @export var melee_arc_degrees: float = 80.0
 @export var melee_cooldown: float = 0.45
-@export var melee_light_hit_damage: float = 16.0
-@export var melee_light_range: float = 68.0
-@export var melee_light_arc_degrees: float = 88.0
-@export var melee_light_cancel_start: float = 0.34
 @export var melee_fast_hit_damage: float = 7.0
 @export var melee_heavy_hit_damage: float = 34.0
 @export var melee_heavy_range: float = 84.0
@@ -109,9 +106,6 @@ var last_fire_cooldown := 0.0
 @export var melee_hit_stop_scale: float = 0.8
 @export var melee_hit_stop_duration: float = 0.02
 @export var melee_camera_shake_power: float = 1.0
-@export var melee_light_hit_stop_scale: float = 0.86
-@export var melee_light_hit_stop_duration: float = 0.035
-@export var melee_light_camera_shake_power: float = 1.4
 @export var melee_fast_hit_stop_scale: float = 0.88
 @export var melee_fast_hit_stop_duration: float = 0.028
 @export var melee_fast_camera_shake_power: float = 1.4
@@ -123,6 +117,7 @@ var last_fire_cooldown := 0.0
 @export var melee_heavy_hit_stop_duration: float = 0.05
 @export var melee_heavy_camera_shake_power: float = 4.2
 @export var melee_heavy_knockback_force: float = 132.0
+@export_group("", "")
 @export var repair_rate: float = 15.0
 @export var sprint_multiplier: float = 1.7
 @export var stamina_max: float = 100.0
@@ -193,6 +188,9 @@ var visual_idle_direction := Vector2.DOWN
 var arrow_aim_enabled: bool = false
 var stamina: float = 100.0
 var is_sprinting: bool = false
+var is_sneaking: bool = false
+var current_noise_radius_px: float = 0.0
+var stealth_visibility_mult: float = 1.0
 var _sprint_exhausted: bool = false
 var _melee_active: bool = false
 var _melee_attack_kind: String = ""
@@ -210,6 +208,7 @@ var last_armed_weapon_index: int = 0
 var using_unarmed: bool = false
 var pending_weapon_selection: Dictionary = {}
 var _active_attack_profile: OperatorWeaponDefinition = null
+var _active_melee_attack_profile: MeleeAttackProfile = null
 var _missing_animation_warnings: Dictionary = {}
 var _melee_heavy_anticipating: bool = false
 var _melee_fast_combo_step: int = 0
@@ -621,6 +620,8 @@ func _process(delta):
 
 
 func _input(event: InputEvent) -> void:
+	if _is_ui_text_input_focused():
+		return
 	if event is InputEventMouseMotion and not arrow_aim_enabled:
 		var mouse_aim_vector := _get_world_mouse_position() - global_position
 		if mouse_aim_vector.length_squared() > 0.0001:
@@ -630,17 +631,23 @@ func _input(event: InputEvent) -> void:
 func _physics_process(delta):
 	if _is_dead:
 		velocity = Vector2.ZERO
+		is_sneaking = false
+		_update_stealth_noise_snapshot(false)
 		move_and_slide()
 		return
-	if _is_terminal_open():
+	if _is_terminal_open() or _is_ui_text_input_focused():
 		velocity = Vector2.ZERO
 		is_sprinting = false
+		is_sneaking = false
+		_update_stealth_noise_snapshot(false)
 		stamina = min(stamina_max, stamina + stamina_regen_per_second * delta)
 		move_and_slide()
 		return
 	if _is_movement_locked():
 		velocity = Vector2.ZERO
 		is_sprinting = false
+		is_sneaking = false
+		_update_stealth_noise_snapshot(false)
 		move_and_slide()
 		return
 	_refresh_attack_phase_state()
@@ -662,8 +669,11 @@ func _physics_process(delta):
 		_sprint_exhausted = false
 	var can_start_sprint := stamina > stamina_sprint_gate
 	is_sprinting = moving and wants_sprint and not _has_attack_movement_modifier() and not _sprint_exhausted and (was_sprinting or can_start_sprint)
+	is_sneaking = moving and InputMap.has_action("sneak") and Input.is_action_pressed("sneak") and not is_sprinting and not _has_attack_movement_modifier()
 	var movement_profile := get_current_combat_profile()
 	var active_move_speed := SPEED * sprint_multiplier if is_sprinting else SPEED
+	if is_sneaking:
+		active_move_speed *= 0.55
 	if movement_profile != null:
 		active_move_speed *= movement_profile.move_speed_multiplier
 	active_move_speed *= _get_attack_move_multiplier()
@@ -682,6 +692,7 @@ func _physics_process(delta):
 		accel_rate *= movement_profile.acceleration_multiplier
 	velocity = velocity.move_toward(target_velocity, accel_rate * delta)
 	move_and_slide()
+	_update_stealth_noise_snapshot(moving)
 
 	if is_sprinting:
 		stamina = max(0.0, stamina - stamina_drain_per_second * delta)
@@ -1092,7 +1103,7 @@ func _request_attack_intent(intent: String) -> void:
 	match intent:
 		"ranged_fire", "ranged_unfocused_fire", "ranged_focused_fire":
 			_request_ranged_shot()
-		"melee_light", "melee_fast", "melee_heavy", "unarmed_fast", "unarmed_heavy":
+		"melee_fast", "melee_heavy", "unarmed_fast", "unarmed_heavy":
 			_try_melee_attack(intent)
 		_:
 			push_warning("Unsupported attack intent: %s" % intent)
@@ -1130,14 +1141,14 @@ func _get_requested_attack_kind(intent: String = "") -> String:
 		return _attack_kind_from_intent(intent)
 	var wants_heavy: bool = Input.is_key_pressed(KEY_SHIFT)
 	if not wants_heavy:
-		return "light"
+		return "fast"
 	if heavy_attack_blocked_while_sprinting and is_sprinting:
-		return "light"
+		return "fast"
 	if stamina < heavy_attack_stamina_cost:
-		return "light"
+		return "fast"
 	if Input.is_key_pressed(KEY_SHIFT):
 		return "heavy"
-	return "light"
+	return "fast"
 
 
 func _attack_kind_from_intent(intent: String) -> String:
@@ -1150,10 +1161,8 @@ func _attack_kind_from_intent(intent: String) -> String:
 			return "fast"
 		"unarmed_fast":
 			return "fast"
-		"melee_light":
-			return "light"
 		_:
-			return "light"
+			return "fast"
 
 
 func _can_start_attack_now() -> bool:
@@ -1168,15 +1177,53 @@ func _start_attack_by_kind(kind: String) -> void:
 	elif kind == "fast":
 		_start_fast_attack()
 	else:
-		_start_light_attack()
+		_start_fast_attack()
+
+
+func _get_current_melee_attack_profile(kind: String) -> MeleeAttackProfile:
+	var weapon_profile := get_current_combat_profile()
+	if weapon_profile == null:
+		return null
+	match kind:
+		"heavy":
+			return weapon_profile.heavy_attack_profile
+		"fast":
+			return weapon_profile.fast_attack_profile
+		_:
+			return null
+
+
+func _begin_melee_attack_profile(kind: String) -> MeleeAttackProfile:
+	_active_melee_attack_profile = _get_current_melee_attack_profile(kind)
+	return _active_melee_attack_profile
+
+
+func _get_active_melee_movement_profile() -> Dictionary:
+	if _active_melee_attack_profile == null:
+		return {}
+	return {
+		"startup_time": _active_melee_attack_profile.windup_sec,
+		"active_time": _active_melee_attack_profile.active_sec,
+		"startup_move": _active_melee_attack_profile.startup_move_mult,
+		"active_move": _active_melee_attack_profile.active_move_mult,
+		"recovery_move": _active_melee_attack_profile.recovery_move_mult,
+		"turn_locked": _active_melee_attack_profile.turn_locked,
+	}
+
+
+func _get_active_melee_hit_window() -> Dictionary:
+	if _active_melee_attack_profile == null or _active_melee_attack_profile.hit_window_frames.is_empty():
+		return {}
+	var frames: Array[int] = []
+	for frame in _active_melee_attack_profile.hit_window_frames:
+		frames.append(int(frame))
+	return {"frames": frames}
 
 
 func _request_attack_state(kind: String) -> void:
-	var state_name := "attack_light"
+	var state_name := "attack_fast"
 	if kind == "heavy":
 		state_name = "attack_heavy"
-	elif kind == "fast":
-		state_name = "attack_fast"
 	if _animation_state_machine != null and _animation_state_machine.request(state_name, 10):
 		return
 	_start_attack_by_kind(kind)
@@ -1211,28 +1258,12 @@ func _clear_attack_buffer() -> void:
 	_buffered_attack_timer = 0.0
 
 
-func _start_light_attack() -> void:
-	_active_attack_profile = get_current_combat_profile()
-	_melee_active = true
-	_melee_heavy_anticipating = false
-	_melee_fast_combo_step = 0
-	_melee_attack_kind = "light"
-	_melee_attack_key = "melee_light"
-	_notify_camera_attack_windup(false)
-	_melee_elapsed = 0.0
-	_melee_duration = 0.46
-	_melee_forward = _get_melee_forward_direction()
-	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
-	_configure_melee_hitbox(melee_light_hit_damage, melee_light_range, melee_light_arc_degrees)
-	_play_melee_anim_from_key(_melee_attack_key, &"melee_2h_fast")
-	_lock_melee_cooldown(_melee_duration + 0.06)
-
-
 func _start_fast_attack() -> void:
 	_active_attack_profile = get_current_combat_profile()
 	_melee_active = true
 	_melee_heavy_anticipating = false
 	_melee_attack_kind = "fast"
+	var attack_profile: MeleeAttackProfile = _begin_melee_attack_profile("fast")
 	_notify_camera_attack_windup(false)
 	var next_fast_key := "melee_fast_1"
 	var fallback_animation: StringName = &"melee_2h_fast"
@@ -1255,7 +1286,10 @@ func _start_fast_attack() -> void:
 	_melee_elapsed = 0.0
 	_melee_forward = _get_melee_forward_direction()
 	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
-	_configure_melee_hitbox(melee_fast_hit_damage, melee_range, melee_arc_degrees)
+	if attack_profile != null:
+		_configure_melee_hitbox(attack_profile.damage, attack_profile.range_px, attack_profile.arc_degrees)
+	else:
+		_configure_melee_hitbox(melee_fast_hit_damage, melee_range, melee_arc_degrees)
 	_play_melee_anim_from_key(_melee_attack_key, fallback_animation)
 	_melee_duration = _get_current_melee_animation_duration(next_duration, 0.24, next_duration)
 	_lock_melee_cooldown(_melee_duration + 0.04)
@@ -1268,10 +1302,11 @@ func _start_heavy_attack() -> void:
 	_melee_attack_kind = "heavy"
 	var is_unarmed_attack := _is_attack_profile_unarmed(_active_attack_profile)
 	_melee_attack_key = "unarmed_heavy" if is_unarmed_attack else "melee_heavy"
+	_begin_melee_attack_profile("heavy")
 	_notify_camera_attack_windup(true)
 	stamina = max(0.0, stamina - heavy_attack_stamina_cost)
 	_melee_forward = _get_melee_forward_direction()
-	_begin_attack_movement_profile(_melee_attack_key, _melee_forward)
+	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
 	if not is_unarmed_attack and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_heavy_anticipation"):
 		_melee_active = false
 		_melee_heavy_anticipating = true
@@ -1299,18 +1334,23 @@ func _begin_heavy_attack_active_phase() -> void:
 	_melee_heavy_anticipating = false
 	_melee_active = true
 	_melee_elapsed = 0.0
-	_melee_duration = 0.70
-	_configure_melee_hitbox(melee_heavy_hit_damage, melee_heavy_range, melee_heavy_arc_degrees)
-	_play_melee_anim_from_key(_melee_attack_key, &"melee_2h_heavy")
+	var attack_profile: MeleeAttackProfile = _active_melee_attack_profile
+	_melee_duration = attack_profile.recovery_sec if attack_profile != null else 0.70
+	if attack_profile != null:
+		_configure_melee_hitbox(attack_profile.damage, attack_profile.range_px, attack_profile.arc_degrees)
+		_play_melee_anim_from_key(_melee_attack_key, attack_profile.fallback_animation)
+	else:
+		_configure_melee_hitbox(melee_heavy_hit_damage, melee_heavy_range, melee_heavy_arc_degrees)
+		_play_melee_anim_from_key(_melee_attack_key, &"melee_2h_heavy")
 	if melee_cooldown_remaining <= 0.0:
 		_lock_melee_cooldown(_melee_duration + 0.18)
 
 
 func _get_cancel_start_time() -> float:
+	if _active_melee_attack_profile != null:
+		return _active_melee_attack_profile.cancel_start_sec
 	if _melee_attack_kind == "heavy":
 		return melee_heavy_cancel_start
-	if _melee_attack_kind == "light":
-		return melee_light_cancel_start
 	return melee_fast_cancel_start
 
 
@@ -1342,10 +1382,11 @@ func _update_melee_attack(delta: float) -> void:
 	_melee_elapsed = 0.0
 	_melee_duration = 0.0
 	_melee_heavy_anticipating = false
-	_active_attack_profile = null
 	disable_hitbox()
 	_melee_hit_targets.clear()
 	if not _melee_recovery_active:
+		_active_attack_profile = null
+		_active_melee_attack_profile = null
 		_reset_melee_overlay_visuals()
 
 
@@ -1353,9 +1394,11 @@ func _apply_melee_hitbox_tick() -> void:
 	if weapon_hitbox == null:
 		return
 	var weapon_definition = _active_attack_profile if _active_attack_profile != null else _get_equipped_primary_weapon_definition()
-	var window: Dictionary = {}
+	var window: Dictionary = _get_active_melee_hit_window()
 	if weapon_definition != null and weapon_definition.hit_windows is Dictionary:
-		window = weapon_definition.hit_windows.get(_melee_attack_key, {})
+		var weapon_window: Dictionary = weapon_definition.hit_windows.get(_melee_attack_key, {})
+		if not weapon_window.is_empty():
+			window = weapon_window
 	var active_directions := _get_melee_active_hit_directions(animated_sprite.frame if animated_sprite else 0, window)
 	var hit_count := 0
 	for body in weapon_hitbox.get_overlapping_bodies():
@@ -1384,7 +1427,7 @@ func _apply_melee_hitbox_tick() -> void:
 		enemy.take_damage(_melee_damage_current)
 		_melee_hit_targets[enemy_id] = true
 		var knockback_dir := global_position.direction_to(enemy.global_position)
-		var knockback_force := melee_fast_knockback_force if _melee_attack_kind == "fast" else melee_heavy_knockback_force
+		var knockback_force: float = _active_melee_attack_profile.knockback_force if _active_melee_attack_profile != null else (melee_fast_knockback_force if _melee_attack_kind == "fast" else melee_heavy_knockback_force)
 		if enemy.has_method("apply_melee_impact"):
 			enemy.apply_melee_impact(_melee_attack_kind, knockback_dir, knockback_force)
 		else:
@@ -1412,9 +1455,7 @@ func is_attack_state_complete(kind: String) -> bool:
 
 
 func start_attack(attack_key: String) -> void:
-	if attack_key == "melee_light":
-		_start_light_attack()
-	elif attack_key == "melee_fast" or attack_key == "unarmed_fast":
+	if attack_key == "melee_fast" or attack_key == "unarmed_fast":
 		_start_fast_attack()
 	elif attack_key == "melee_heavy" or attack_key == "unarmed_heavy":
 		_start_heavy_attack()
@@ -1433,6 +1474,7 @@ func start_block() -> void:
 	_melee_elapsed = 0.0
 	_melee_duration = 0.0
 	_active_attack_profile = null
+	_active_melee_attack_profile = null
 	disable_hitbox()
 	_melee_hit_targets.clear()
 	_reset_melee_overlay_visuals()
@@ -1566,7 +1608,9 @@ func _get_current_melee_animation_duration(fallback_duration: float, min_duratio
 
 func _lock_melee_cooldown(duration: float) -> void:
 	var profile := _active_attack_profile if _active_attack_profile != null else get_current_combat_profile()
-	if profile != null:
+	if _active_melee_attack_profile != null:
+		duration = max(duration, _active_melee_attack_profile.cooldown_sec)
+	elif profile != null:
 		duration *= profile.recovery_multiplier
 	melee_cooldown_remaining = duration
 	last_fire_cooldown = max(last_fire_cooldown, duration)
@@ -1575,8 +1619,8 @@ func _lock_melee_cooldown(duration: float) -> void:
 
 func _configure_melee_hitbox(damage: float, attack_range: float, attack_arc_degrees: float) -> void:
 	var profile := _active_attack_profile if _active_attack_profile != null else get_current_combat_profile()
-	var damage_multiplier := profile.damage_multiplier if profile != null else 1.0
-	var range_multiplier := profile.range_multiplier if profile != null else 1.0
+	var damage_multiplier := 1.0 if _active_melee_attack_profile != null else (profile.damage_multiplier if profile != null else 1.0)
+	var range_multiplier := 1.0 if _active_melee_attack_profile != null else (profile.range_multiplier if profile != null else 1.0)
 	_melee_damage_current = damage * damage_multiplier
 	_melee_range_current = attack_range * range_multiplier
 	_melee_arc_current = attack_arc_degrees
@@ -1601,9 +1645,11 @@ func _sync_melee_hitbox_window_from_animation() -> void:
 		return
 	var frame: int = animated_sprite.frame
 	var weapon_definition = _get_equipped_primary_weapon_definition()
-	var window: Dictionary = {}
+	var window: Dictionary = _get_active_melee_hit_window()
 	if weapon_definition != null and weapon_definition.hit_windows is Dictionary:
-		window = weapon_definition.hit_windows.get(_melee_attack_key, {})
+		var weapon_window: Dictionary = weapon_definition.hit_windows.get(_melee_attack_key, {})
+		if not weapon_window.is_empty():
+			window = weapon_window
 	if _is_melee_hit_frame_active(frame, window):
 		enable_hitbox()
 	else:
@@ -1795,6 +1841,8 @@ func _update_melee_recovery(delta: float) -> void:
 	if _melee_recovery_timer > 0.0:
 		return
 	_melee_recovery_active = false
+	_active_attack_profile = null
+	_active_melee_attack_profile = null
 	_reset_melee_overlay_visuals()
 
 
@@ -1849,11 +1897,10 @@ func _on_melee_hit_confirmed() -> void:
 func _trigger_camera_shake() -> void:
 	var camera = _get_world_camera()
 	if camera and camera.has_method("shake"):
-		var power := melee_heavy_camera_shake_power
-		if _melee_attack_kind == "light":
-			power = melee_light_camera_shake_power
-		elif _melee_attack_kind == "fast":
-			power = melee_fast_camera_shake_power
+		var power: float = _active_melee_attack_profile.camera_shake_power if _active_melee_attack_profile != null else melee_heavy_camera_shake_power
+		if _active_melee_attack_profile == null:
+			if _melee_attack_kind == "fast":
+				power = melee_fast_camera_shake_power
 		camera.call("shake", power if power > 0.0 else melee_camera_shake_power)
 
 
@@ -1884,14 +1931,12 @@ func _apply_hit_stop() -> void:
 		return
 	_hit_stop_active = true
 	var previous_scale := Engine.time_scale
-	var configured_scale := melee_heavy_hit_stop_scale
-	var configured_duration := melee_heavy_hit_stop_duration
-	if _melee_attack_kind == "light":
-		configured_scale = melee_light_hit_stop_scale
-		configured_duration = melee_light_hit_stop_duration
-	elif _melee_attack_kind == "fast":
-		configured_scale = melee_fast_hit_stop_scale
-		configured_duration = melee_fast_hit_stop_duration
+	var configured_scale: float = _active_melee_attack_profile.hit_stop_scale if _active_melee_attack_profile != null else melee_heavy_hit_stop_scale
+	var configured_duration: float = _active_melee_attack_profile.hit_stop_duration if _active_melee_attack_profile != null else melee_heavy_hit_stop_duration
+	if _active_melee_attack_profile == null:
+		if _melee_attack_kind == "fast":
+			configured_scale = melee_fast_hit_stop_scale
+			configured_duration = melee_fast_hit_stop_duration
 	var target_scale: float = clamp(configured_scale if configured_scale > 0.0 else melee_hit_stop_scale, 0.01, 1.0)
 	Engine.time_scale = min(previous_scale, target_scale)
 	await get_tree().create_timer(configured_duration if configured_duration > 0.0 else melee_hit_stop_duration, true, false, true).timeout
@@ -2316,6 +2361,8 @@ func _is_attack_turn_locked() -> bool:
 
 
 func _get_current_attack_move_profile() -> Dictionary:
+	if _active_melee_attack_profile != null:
+		return _get_active_melee_movement_profile()
 	if current_attack_id.is_empty():
 		return {}
 	return ATTACK_MOVE_PROFILES.get(current_attack_id, {})
@@ -2370,6 +2417,8 @@ func _begin_attack_movement_profile(attack_id: String, facing_dir: Vector2) -> v
 
 
 func _resolve_current_attack_id() -> String:
+	if _active_melee_attack_profile != null and not String(_active_melee_attack_profile.attack_id).is_empty():
+		return String(_active_melee_attack_profile.attack_id)
 	if _melee_attack_key.begins_with("unarmed_heavy"):
 		return "unarmed_heavy"
 	if _melee_attack_key.begins_with("unarmed_fast"):
@@ -2377,8 +2426,6 @@ func _resolve_current_attack_id() -> String:
 	if _melee_attack_kind == "heavy":
 		return "melee_heavy"
 	if _melee_attack_kind == "fast":
-		return "unarmed_fast" if _is_attack_profile_unarmed(_active_attack_profile) else "melee_fast"
-	if _melee_attack_kind == "light":
 		return "unarmed_fast" if _is_attack_profile_unarmed(_active_attack_profile) else "melee_fast"
 	return "melee_fast"
 
@@ -2768,7 +2815,7 @@ func _update_primary_weapon_visual(is_firing: bool) -> void:
 			melee_weapon_overlay_sprite.stop()
 			melee_weapon_overlay_sprite.frame = 0
 	if melee_fx_overlay_sprite:
-		melee_fx_overlay_sprite.visible = (_melee_active and (_melee_attack_kind == "fast" or _melee_attack_kind == "light")) or _melee_recovery_active
+		melee_fx_overlay_sprite.visible = (_melee_active and _melee_attack_kind == "fast") or _melee_recovery_active
 		if not melee_fx_overlay_sprite.visible:
 			melee_fx_overlay_sprite.stop()
 			melee_fx_overlay_sprite.frame = 0
@@ -2906,7 +2953,6 @@ func _setup_animation_state_machine() -> void:
 	var hit_recoil_state := HitRecoilState.new()
 	hit_recoil_state.recoil_duration = operator_light_reaction_stun_duration
 	_animation_state_machine.register_state(hit_recoil_state)
-	_animation_state_machine.register_state(AttackLightState.new())
 	_animation_state_machine.register_state(AttackFastState.new())
 	_animation_state_machine.register_state(AttackHeavyState.new())
 	_animation_state_machine.register_state(DeathState.new())
@@ -3164,6 +3210,39 @@ func get_sprint_status() -> Dictionary:
 	}
 
 
+func get_stealth_snapshot() -> Dictionary:
+	return {
+		"is_sneaking": is_sneaking,
+		"noise_radius_px": current_noise_radius_px,
+		"visibility_mult": stealth_visibility_mult,
+		"global_position": global_position,
+		"velocity": velocity,
+	}
+
+
+func _update_stealth_noise_snapshot(moving: bool) -> void:
+	var attacking := _melee_active or attack_phase != AttackPhase.NONE
+	var firing := _is_ranged_fire_animation_active() or _pending_ranged_shot.size() > 0
+	if firing:
+		current_noise_radius_px = 260.0
+		stealth_visibility_mult = 1.4
+	elif attacking:
+		current_noise_radius_px = 100.0
+		stealth_visibility_mult = 1.0
+	elif is_sprinting:
+		current_noise_radius_px = 110.0
+		stealth_visibility_mult = 1.25
+	elif is_sneaking:
+		current_noise_radius_px = 18.0
+		stealth_visibility_mult = 0.45
+	elif moving:
+		current_noise_radius_px = 45.0
+		stealth_visibility_mult = 1.0
+	else:
+		current_noise_radius_px = 10.0
+		stealth_visibility_mult = 1.0
+
+
 func _get_keyboard_aim_direction() -> Vector2:
 	var aim_input := Vector2(
 		Input.get_action_strength("aim_right") - Input.get_action_strength("aim_left"),
@@ -3319,6 +3398,7 @@ func _interrupt_active_combat_for_damage_reaction() -> void:
 	_melee_recovery_active = false
 	_melee_recovery_timer = 0.0
 	_active_attack_profile = null
+	_active_melee_attack_profile = null
 	_block_phase = &""
 	_block_active = false
 	disable_hitbox()
@@ -3334,6 +3414,8 @@ func _handle_death() -> void:
 	_melee_active = false
 	_melee_attack_kind = ""
 	_melee_attack_key = ""
+	_active_attack_profile = null
+	_active_melee_attack_profile = null
 	fire_cooldown_remaining = 0.0
 	melee_cooldown_remaining = 0.0
 	is_sprinting = false
@@ -3362,17 +3444,41 @@ func _finish_death() -> void:
 	stamina = stamina_max
 	_sprint_exhausted = false
 	_buffered_attack_kind = ""
+	_buffered_attack_timer = 0.0
 	_melee_active = false
 	_melee_attack_kind = ""
 	_melee_attack_key = ""
+	_melee_elapsed = 0.0
+	_melee_duration = 0.0
+	_melee_heavy_anticipating = false
+	_melee_recovery_active = false
+	_melee_recovery_timer = 0.0
+	_active_attack_profile = null
+	_active_melee_attack_profile = null
+	_block_phase = &""
+	_block_active = false
+	_reload_active = false
+	_reload_timer = 0.0
+	_pending_ranged_shot.clear()
+	_portal_transition_locked = false
+	_portal_arrival_animation_active = false
+	_arrn_stabilization_locked = false
 	fire_cooldown_remaining = 0.0
 	melee_cooldown_remaining = 0.0
+	_hit_stop_active = false
 	velocity = Vector2.ZERO
 	disable_hitbox()
+	_melee_hit_targets.clear()
+	_reset_melee_overlay_visuals()
 	update_visuals()
 	_is_dead = false
 	if _animation_state_machine != null:
+		# DeathState is terminal and non-interruptible; respawn must force the
+		# state machine back to an input-eligible state before queued weapon
+		# selections can apply again.
+		_animation_state_machine.current_state = ""
 		_animation_state_machine.request("idle", 0)
+	try_apply_pending_weapon_selection()
 
 func update_visuals():
 	if health_bar:
@@ -3578,3 +3684,13 @@ func _is_terminal_open() -> bool:
 	if ui and ui.has_method("is_terminal_open"):
 		return bool(ui.is_terminal_open())
 	return false
+
+
+func _is_ui_text_input_focused() -> bool:
+	var viewport := get_viewport()
+	if viewport == null:
+		return false
+	var focus_owner := viewport.gui_get_focus_owner()
+	if focus_owner == null:
+		return false
+	return focus_owner is LineEdit or focus_owner is TextEdit

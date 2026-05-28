@@ -1,5 +1,7 @@
 # CUSTODIAN — Sizing Strategy
 
+> **Note:** This is a recommendation document. The 96x96 target size has not been fully audited against runtime sprites. See `PROJECT_STATUS.md` for current sprite status and `_ACTIVE.md` (deprecated) for tracking. This doc should be reviewed for implementation status.
+
 **Created:** 2026-03-19
 
 ---

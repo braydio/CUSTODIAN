@@ -1,4 +1,4 @@
-# `design/20_features/in_progress/CAMPAIGN_FLOW_AND_GAME_LOOP.md`
+# `design/03_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`
 
 # Campaign Flow & Game Loop
 

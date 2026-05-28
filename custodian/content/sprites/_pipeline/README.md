@@ -140,6 +140,19 @@ Current enemy sheets can also use the shared intake path. For wolf directional s
 }
 ```
 
+## Vehicle Example
+
+Hover buggy sheets can be dropped into the inbox with canonical vehicle names. The generator writes them to `res://content/sprites/vehicles/hover_buggy/runtime/` and adds `post_process: ["vehicle_runtime_import"]`, which rebuilds `res://game/actors/vehicles/hover_buggy_idle_frames.tres`.
+
+```text
+hover_buggy__body__idle__omni__1f__256.png
+hover_buggy__body__idle_start__omni__7f__256.png
+hover_buggy__body__idle_loop__omni__6f__256.png
+hover_buggy__body__move__e__6f__256.png
+```
+
+`VehicleBase` currently consumes the animation names `idle`, `idle_start`, `idle_loop`, and `move`, so those action names are the safest inbox targets for hover buggy replacements.
+
 ## Automation
 
 Normalize Aseprite exports into the inbox, then optionally run manifest generation and ingest:
@@ -213,6 +226,7 @@ drone__body__locomotion__idle__s__4f__96.png
 command_terminal__body__interaction__pickup__omni__4f__48.png
 portal_ring__fx__interaction__activate__omni__12f__161.png
 props__harvesting_nodes__blackwood_deadfall__node__idle__6f__96.png
+hover_buggy__body__move__e__6f__256.png
 ```
 
 Saved file examples by domain:
@@ -222,7 +236,7 @@ content/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_
 content/sprites/weapons/carbine_rifle/animations/carbine_rifle__ranged__stance__e__6f__96.png
 content/sprites/enemies/drone/runtime/idle/drone__body__locomotion__idle__s__4f__96.png
 content/sprites/effects/runtime/hit_spark/hit_spark__fx__impact__default__omni__4f__64.png
-content/sprites/vehicles/hover_buggy/runtime/hover_buggy__body__move__east__6f__96.png
+content/sprites/vehicles/hover_buggy/runtime/hover_buggy__body__move__e__6f__256.png
 content/sprites/turrets/gunner/turret-gunner-firing.png
 content/sprites/environment/props/terminal/runtime/body/command_terminal__body__interaction__pickup__omni__4f__48.png
 content/sprites/props/harvesting_nodes/blackwood_deadfall/blackwood_deadfall__node__idle__6f__96.png

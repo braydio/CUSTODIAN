@@ -1,7 +1,9 @@
-[gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3 uid="uid://cx8rk2ac54vfm"]
+[gd_resource type="Resource" script_class="OperatorWeaponDefinition" load_steps=5 format=3 uid="uid://cx8rk2ac54vfm"]
 
 [ext_resource type="Script" uid="uid://dr83ct4e8mal7" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
 [ext_resource type="SpriteFrames" uid="uid://dnf1qpps4kf2r" path="res://game/actors/operator/fallen_star_katana_frames.tres" id="2_weapon_frames"]
+[ext_resource type="Resource" path="res://game/actors/operator/attacks/melee_2h_fast_attack.tres" id="4_fast_attack"]
+[ext_resource type="Resource" path="res://game/actors/operator/attacks/melee_2h_heavy_attack.tres" id="5_heavy_attack"]
 
 [resource]
 script = ExtResource("1_weapon_definition")
@@ -13,7 +15,6 @@ primary_intent = "melee_fast"
 secondary_intent = "melee_heavy"
 frames_resource = ExtResource("2_weapon_frames")
 animation_map = {
-"melee_light": "melee_light",
 "melee_fast": "melee_2h_fast",
 "melee_fast_1": "melee_2h_fast_1",
 "melee_fast_2": "melee_2h_fast_2",
@@ -21,9 +22,6 @@ animation_map = {
 "melee_stance": "melee_stance"
 }
 hit_windows = {
-"melee_light": {
-"frames": [4]
-},
 "melee_fast": {
 "directional_frames": {
 "2": ["north", "northeast"],
@@ -59,10 +57,6 @@ hit_windows = {
 }
 }
 fx_map = {
-"melee_light": {
-"fx_anim": "melee_light_fx",
-"weapon_anim": "melee_light_weapon"
-},
 "melee_fast": {
 "fx_anim": "melee_2h_fast_fx",
 "weapon_anim": "melee_2h_fast_weapon"
@@ -96,3 +90,5 @@ right_hand_socket_position_down = Vector2(11, -8)
 left_hand_socket_position_down = Vector2(3, -2)
 weapon_socket_position_down = Vector2(11, -8)
 muzzle_socket_position_down = Vector2(24, -14)
+fast_attack_profile = ExtResource("4_fast_attack")
+heavy_attack_profile = ExtResource("5_heavy_attack")

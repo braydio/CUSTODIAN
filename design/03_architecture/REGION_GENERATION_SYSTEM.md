@@ -1,4 +1,4 @@
-# `design/20_features/in_progress/REGION_GENERATION_SYSTEM.md`
+# `design/03_architecture/REGION_GENERATION_SYSTEM.md`
 
 # Region Generation System
 

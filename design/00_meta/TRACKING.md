@@ -1,9 +1,9 @@
 # CUSTODIAN Task Tracking
 
-> ⚠️ **IMPORTANT:** The MASTER ROADMAP is the single source of truth for feature planning.  
+> ⚠️ **DEPRECATED:** This file is superseded by `MASTER_ROADMAP.md` as the single source of truth.  
 > **See:** [`MASTER_ROADMAP.md`](MASTER_ROADMAP.md) for all milestones and features.
 
-**Last Updated:** 2026-04-04  
+**Last Updated:** 2026-04-04 (DEPRECATED)  
 **Sprint:** 2026-04-04
 
 ---

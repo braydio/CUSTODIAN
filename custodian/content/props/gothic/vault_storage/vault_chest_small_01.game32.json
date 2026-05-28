@@ -1,0 +1,62 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "vault_chest_small_01",
+  "display_name": "Vault Chest Small 01",
+  "source": {
+    "master_sheet": "custodian/props/gothic/vault_propsheet_03.png",
+    "sheet_cell": {
+      "row": 0,
+      "col": 0,
+      "rows": 2,
+      "cols": 5
+    }
+  },
+  "file": {
+    "path": "custodian/content/props/gothic/vault_storage/vault_chest_small_01.png",
+    "pixel_size": {
+      "w": 160,
+      "h": 128
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "vault_storage_prop",
+    "placement_layer": "prop",
+    "tags": [
+      "vault",
+      "gothic",
+      "prop",
+      "storage",
+      "chest",
+      "loot",
+      "stealable",
+      "closed"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 5,
+      "h": 4
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 80,
+      "y": 127
+    },
+    "snap": "tile_or_free",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 1,
+    "collision_shape": "footprint"
+  },
+  "runtime": {
+    "status": "extracted_from_source_sheet",
+    "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
+  }
+}

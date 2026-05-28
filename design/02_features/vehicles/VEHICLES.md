@@ -1,341 +1,462 @@
-THE FOLLOWING IS VERSION 1.0 - THIS SHOULD BE CONSIDERED A ROUGH DRAFT OF THE LIVE VERSION BELOW
+# Vehicle System
+
+**Status:** review
+**Priority:** high — first pilotable vehicle moving into production
+**Requires:** Godot 4.x, existing player controller, terrain surface multiplier for `actor_kind == "vehicle"`
+**Supersedes:** `design/20_features/in_progress/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md`, `design/02_features/vehicles/implementation.md`, `design/VEHICLES_REVIEW.md`
 
 ---
 
-Below is a **clean, Godot-native implementation roadmap for your FIRST vehicle type** (keep it simple: **light hover vehicle / buggy**).
+## 1. Purpose
+
+Scalable **Vehicle Registry System** supporting `Faction -> Domain -> Chassis -> Role -> Variant -> Loadout`, shipping the first production pilotable vehicle without one-off controller hacks.
+
+### Acceptance Criteria
+
+- Registry loads without errors
+- First production vehicle exists in `vehicle_archetypes.json`
+- Vehicle spawnable from registry ID
+- Operator can enter/exit with Interact
+- While piloted, movement input controls vehicle; while unpiloted, controls Operator
+- Vehicle uses `actor_kind = "vehicle"` for terrain movement multiplier
+- Missing optional InputMap actions don't crash
+- Unsupported domains valid in data but refuse spawn unless `allow_placeholder_spawn == true`
+- Display name generated from classification fields
+- Registry queryable by faction/domain/chassis/role/tier
 
 ---
 
-# 🚧 Phase 0 — Define the FIRST vehicle archetype (lock scope)
+## 2. Design Principle
 
-Start with **one constrained design**:
+Register by classification, not hand-authored name.
 
-### Vehicle Type: Light Hover Buggy
+**Bad:** `heavy_tank_mk2_fast`, `player_car_blue`
 
-* 360° movement (no turning radius complexity yet)
-* Faster than operator
-* No inertia (initially) → same “feel” as player movement
-* One weapon (forward firing)
-* No passengers
-* Instant enter/exit (no animation yet)
-* Visually dormant while unoccupied; idle hover loop begins only after entry
+**Good:**
+```json
+{
+  "id": "raider_ground_buggy_scout_light",
+  "faction": "RAIDER", "domain": "GROUND", "chassis": "BUGGY",
+  "role": "SCOUT", "tier": "LIGHT", "variant": "MK1",
+  "loadout": "UTILITY_LIGHT", "mobility": ["WHEELED"],
+  "traits": ["FAST", "JURYRIGGED", "SALVAGED"]
+}
+```
 
-👉 This avoids physics hell and lets you integrate cleanly.
+Display name generated: `"Raider Light Scout Buggy"`
+Behavior resolved from: `domain + mobility + chassis + role + loadout + traits`
 
 ---
 
-# 🧱 Phase 1 — Core Architecture (THIS IS THE MOST IMPORTANT PART)
+## 3. Taxonomy
 
-## 1. Introduce a shared interface: `ControllableActor`
+### Domains
 
-Your operator and vehicles must conform to the same control contract.
+| Domain | Runtime Support |
+|---|---|
+| `GROUND` | Supported now |
+| `HOVER` | Allowed in data, basic support if present |
+| `STATIC` | Non-pilotable platform |
+| `AIR`, `SEA`, `SPACE`, `SUBTERRANEAN`, `AMPHIBIOUS`, `ORBITAL` | Registry-valid; `VehicleSpawnResolver` refuses spawn unless `allow_placeholder_spawn == true` |
+
+### Chassis
+```
+BUGGY, BIKE, TRIKE, QUAD, SEDAN, VAN, TRUCK, TRACTOR, CRAWLER, TANK, APC,
+MECH, WALKER, HAULER, RIG, TRAIN, DRONE, ROTOR, JET, GLIDER, BOMBER, LIFTER,
+TRANSPORT, INTERCEPTOR, GUNSHIP, SKIFF, BOAT, CUTTER, BARGE, SUB, DESTROYER,
+CARRIER, DREDGER, SHUTTLE, FREIGHTER, CORVETTE, FRIGATE, CRUISER, BATTLESHIP,
+MINER, SCOUT, WRECK, TURRET_BASE
+```
+
+### Roles
+```
+SCOUT, PATROL, RECON, TRANSPORT, HAULER, MINER, SALVAGER, REPAIR, SUPPORT,
+COMMAND, ASSAULT, SIEGE, DEFENSE, ARTILLERY, BREACHER, INTERCEPTOR, ESCORT,
+COLONIZER, EXPLORER, HARVESTER, RECOVERY, CONSTRUCTION, SURVEYOR, MEDICAL,
+FUEL, COVER, HAZARD, OBJECTIVE
+```
+
+### Tiers
+```
+MICRO, LIGHT, MEDIUM, HEAVY, SUPERHEAVY, MASSIVE, RELIC
+```
+
+### Mobility Tags
+```
+TRACKED, WHEELED, LEGGED, HOVER, VTOL, JET, SAIL, SUBMERSIBLE, MAGLEV, WARP
+```
+
+### Quality/Condition Tags
+```
+DAMAGED, RUSTED, FIELD_REPAIRED, MILITARY_SURPLUS, PRISTINE, MODIFIED,
+ARMORED, OVERCLOCKED, JURYRIGGED, SALVAGED, ANCIENT, EXPERIMENTAL, PROTOTYPE
+```
+
+### Interaction Modes
+```
+NONE, COVER_ONLY, HAZARD, OBJECTIVE, ENTERABLE, PILOTABLE, SUMMONED,
+DEPLOYABLE, WRECKAGE, ENEMY_PLATFORM
+```
+
+First production vehicle uses `interaction_mode: PILOTABLE`.
+
+---
+
+## 4. File Layout
+
+### Runtime (`custodian/game/vehicles/`)
+```
+├── vehicle_definition.gd          # Single archetype loader + validator
+├── vehicle_registry.gd            # Registry store + queries
+├── vehicle_controller.gd          # Input routing + state machine
+├── pilotable_vehicle.gd           # PilotableVehicle base (extends CharacterBody2D)
+├── vehicle_seat.gd                # Seat/entry/exit logic
+├── vehicle_input_adapter.gd       # PlayerController -> vehicle intent bridge
+├── vehicle_spawn_resolver.gd      # Definition -> live scene
+├── vehicle_debug_overlay.gd       # Debug display
+└── scenes/
+    └── pilotable_vehicle_base.tscn
+```
+
+### Content data (`custodian/content/vehicles/`)
+```
+├── vehicle_taxonomy.json          # Valid enum values
+├── vehicle_archetypes.json        # Vehicle definitions
+├── vehicle_movement_profiles.json # Movement configs
+├── vehicle_hardpoint_profiles.json
+├── vehicle_loadouts.json
+├── vehicle_visual_kits.json
+└── vehicle_registry_schema.json
+```
+
+### Validation
+```
+custodian/tools/validate_vehicle_registry.gd
+```
+
+---
+
+## 5. Data Schema
+
+### vehicle_archetypes.json
+
+```json
+{
+  "schema_version": 1,
+  "vehicles": {
+    "custodian_ground_buggy_scout_light": {
+      "id": "custodian_ground_buggy_scout_light",
+      "display_name_template": "{faction} {tier} {role} {chassis}",
+      "faction": "CUSTODIAN",
+      "domain": "GROUND",
+      "chassis": "BUGGY",
+      "role": "SCOUT",
+      "tier": "LIGHT",
+      "variant": "MK1",
+      "interaction_mode": "PILOTABLE",
+      "mobility": ["WHEELED"],
+      "tags": ["INDUSTRIAL", "FIELD_REPAIRED", "MILSPEC"],
+      "movement_profile": "ground_wheeled_light",
+      "hardpoint_profile": "utility_light",
+      "loadout": "none",
+      "visual_kit": "custodian_industrial_light",
+      "seat_profile": {
+        "driver_seats": 1,
+        "passenger_seats": 0,
+        "entry_radius": 32,
+        "entry_anchor": "LEFT_SIDE",
+        "exit_anchor": "RIGHT_SIDE"
+      },
+      "footprint": {
+        "cells": [2, 1],
+        "anchor": "BOTTOM_CENTER",
+        "blocks_movement": true,
+        "blocks_projectiles": false,
+        "cover_profile": "LIGHT"
+      },
+      "runtime": {
+        "scene": "res://game/vehicles/scenes/pilotable_vehicle_base.tscn",
+        "spawnable": true,
+        "pilotable": true,
+        "requires_runtime_support": ["GROUND", "WHEELED"]
+      }
+    }
+  }
+}
+```
+
+Replace `custodian_ground_buggy_scout_light` with the actual production vehicle ID if a scene already exists.
+
+### vehicle_movement_profiles.json
+
+```json
+{
+  "schema_version": 1,
+  "profiles": {
+    "ground_wheeled_light": {
+      "domain": "GROUND",
+      "mobility": ["WHEELED"],
+      "max_speed": 175.0,
+      "acceleration": 420.0,
+      "deceleration": 520.0,
+      "turn_response": 10.0,
+      "reverse_multiplier": 0.45,
+      "road_speed_multiplier_enabled": true,
+      "offroad_speed_multiplier": 0.78,
+      "collision_damage_enabled": false
+    }
+  }
+}
+```
+
+### vehicle_hardpoint_profiles.json
+
+```json
+{
+  "schema_version": 1,
+  "profiles": {
+    "utility_light": {
+      "hardpoints": [
+        {
+          "id": "front_light",
+          "type": "FRONT_LIGHT",
+          "socket_path": "Hardpoints/FrontLight",
+          "allowed_families": ["LIGHT", "SCANNER", "UTILITY"]
+        },
+        {
+          "id": "rear_utility",
+          "type": "UTILITY",
+          "socket_path": "Hardpoints/RearUtility",
+          "allowed_families": ["CARGO", "REPAIR", "SCANNER"]
+        }
+      ]
+    }
+  }
+}
+```
+
+### vehicle_loadouts.json
+
+```json
+{
+  "schema_version": 1,
+  "loadouts": {
+    "none": { "items": [] },
+    "scout_sensor_light": {
+      "items": [{"hardpoint": "rear_utility", "equipment": "light_scanner"}]
+    }
+  }
+}
+```
+
+Hardpoints exist in data now. Mounted equipment can be no-op placeholders. Do not bake weapons into vehicle identity.
+
+---
+
+## 6. Core Classes
+
+### VehicleDefinition.gd
 
 ```gdscript
-# controllable_actor.gd
-class_name ControllableActor
-extends CharacterBody2D
+class_name VehicleDefinition extends RefCounted
 
-func process_input(input_vector: Vector2, aim_vector: Vector2, is_firing: bool):
-    pass
+var id, faction, domain, chassis, role, tier, variant: String
+var interaction_mode: String
+var mobility: Array[String]
+var tags: Array[String]
+var movement_profile, hardpoint_profile, loadout, visual_kit: String
+var runtime_scene: String
+var spawnable, pilotable: bool
+var footprint, seat_profile: Dictionary
 
-func get_velocity() -> Vector2:
-    return velocity
+static func from_dict(data: Dictionary) -> VehicleDefinition
+func validate() -> PackedStringArray       # Returns error strings; empty = valid
+func get_display_name() -> String           # "{faction} {tier} {role} {chassis}"
+func is_pilotable() -> bool
+func is_runtime_supported() -> bool
+func has_tag(tag: String) -> bool
+func has_mobility(mobility_tag: String) -> bool
 ```
 
----
+### VehicleRegistry.gd
 
-## 2. Refactor Operator to conform
-
-Your current operator script becomes:
+Autoload or manager node attached to active gameplay scene (consistent with project patterns).
 
 ```gdscript
-extends ControllableActor
-
-func process_input(input_vector, aim_vector, is_firing):
-    velocity = input_vector * move_speed
-    move_and_slide()
-
-    if is_firing:
-        fire_weapon(aim_vector)
+func load_registry(path := "res://content/vehicles/vehicle_archetypes.json") -> void
+func get_vehicle(id: String) -> VehicleDefinition
+func has_vehicle(id: String) -> bool
+func get_all_ids() -> PackedStringArray
+func find_by_role(role: String) -> Array[VehicleDefinition]
+func find_by_chassis(chassis: String) -> Array[VehicleDefinition]
+func find_by_domain(domain: String) -> Array[VehicleDefinition]
+func find_pilotable() -> Array[VehicleDefinition]
 ```
 
----
-
-## 3. Create Vehicle base class
+### VehicleSpawnResolver.gd
 
 ```gdscript
-# vehicle_base.gd
-class_name VehicleBase
-extends ControllableActor
-
-@export var max_speed := 300.0
-
-func process_input(input_vector, aim_vector, is_firing):
-    velocity = input_vector * max_speed
-    move_and_slide()
-
-    if is_firing:
-        fire_weapon(aim_vector)
+func spawn_vehicle(vehicle_id: String, parent: Node, global_position: Vector2) -> Node2D
+func spawn_definition(definition: VehicleDefinition, parent: Node, global_position: Vector2) -> Node2D
 ```
 
----
+Spawn rules:
+1. Lookup definition -> validate -> check `runtime.scene` -> instantiate
+2. If scene has `apply_vehicle_definition()`, call it
+3. Set position, add to parent
+4. Add to groups `vehicles` and (if pilotable) `pilotable_vehicles`
 
-# 🎮 Phase 2 — Control Handoff System (enter/exit vehicle)
-
-This is your **core gameplay mechanic**.
-
-## 1. Player Controller becomes a router
+### PilotableVehicle.gd
 
 ```gdscript
-# player_controller.gd
+class_name PilotableVehicle extends CharacterBody2D
 
-var current_actor: ControllableActor
+enum ControlState { UNOCCUPIED, ENTERING, PILOTED, EXITING, DISABLED }
 
-func _process(delta):
-    var input_vector = get_movement_input()
-    var aim_vector = get_aim_vector()
-    var firing = Input.is_action_pressed("fire")
+var vehicle_definition: VehicleDefinition
+var control_state := ControlState.UNOCCUPIED
+var pilot: Node = null
+var movement_profile: Dictionary = {}
+var current_speed := 0.0
+var facing_direction := Vector2.DOWN
 
-    current_actor.process_input(input_vector, aim_vector, firing)
+func apply_vehicle_definition(definition: VehicleDefinition) -> void
+func can_enter(actor: Node) -> bool
+func enter_vehicle(actor: Node) -> bool
+func exit_vehicle() -> bool
+func route_vehicle_input(input_vector: Vector2, actions: Dictionary, delta: float) -> void
+func disable_vehicle(reason: String = "") -> void
+func is_piloted() -> bool
 ```
+
+Expected node layout:
+```
+PilotableVehicle
+├── CollisionShape2D
+├── Sprite2D or AnimatedSprite2D
+├── EntryArea2D
+│   └── CollisionShape2D
+├── DriverSeat
+└── ExitMarker
+```
+
+Behavior:
+- Unoccupied: no input consumed
+- Entered: Operator visual/control hidden (not deleted), camera follows vehicle
+- PlayerController routes input to vehicle
+- Exit places Operator at valid nearby ExitMarker; if blocked, search nearby; if none valid, deny exit + warning
 
 ---
 
-## 2. Enter vehicle
+## 7. Input Routing
+
+**Rule:** `PlayerController` owns input intent. `PilotableVehicle` owns movement response. Vehicle must not call `Input.is_action_pressed()` directly except for temp debugging.
 
 ```gdscript
-func enter_vehicle(vehicle: VehicleBase):
-    current_actor = vehicle
-    operator.visible = false
+var controlled_vehicle: PilotableVehicle = null
+
+func _physics_process(delta: float) -> void:
+    if controlled_vehicle != null:
+        _route_vehicle_input(delta)
+        return
+    _route_operator_input(delta)
+
+func _route_vehicle_input(delta: float) -> void:
+    var input_vector := Vector2.ZERO
+    input_vector.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+    input_vector.y = Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
+    input_vector = input_vector.normalized()
+
+    var actions := {
+        "primary": Input.is_action_pressed("primary_attack"),
+        "secondary": Input.is_action_pressed("secondary_attack"),
+        "interact_pressed": Input.is_action_just_pressed("interact"),
+        "brake": Input.is_action_pressed("brake") if InputMap.has_action("brake") else false,
+        "exit_pressed": Input.is_action_just_pressed("interact")
+    }
+    controlled_vehicle.route_vehicle_input(input_vector, actions, delta)
 ```
+
+Guard all non-existent InputMap actions with `InputMap.has_action()`.
 
 ---
 
-## 3. Exit vehicle
+## 8. Movement Model
 
+- Input vector -> desired travel direction
+- Accelerate toward target velocity; decelerate when no input
+- Facing follows velocity when `velocity.length() > threshold`
+- Road tiles use existing terrain surface multiplier for `actor_kind = "vehicle"`
+- Off-road penalty from movement profile if no terrain multiplier exists
+- No drifting, fuel, suspension, gearboxes, damage, wheel health, or mounted weapons in first pass
+
+---
+
+## 9. Enter / Exit Contract
+
+### Enter
+1. Operator within EntryArea2D, vehicle pilotable, not disabled, no existing pilot
+2. Store pilot, disable pilot collision + hide visible body
+3. Set `PlayerController.controlled_vehicle`, camera follows vehicle
+4. State -> `PILOTED`
+
+### Exit
+1. Find position from ExitMarker, validate (not inside wall, not overlapping hazard)
+2. Move Operator to exit position, re-enable collision + visibility
+3. Clear `controlled_vehicle`, restore camera to Operator
+4. State -> `UNOCCUPIED`
+
+Camera API needed (if not present):
 ```gdscript
-func exit_vehicle():
-    operator.global_position = current_actor.global_position
-    operator.visible = true
-    current_actor = operator
-```
-
-## Runtime placement
-
-- Runtime vehicle instances under `World` should be repositioned by `ContractWorldLoader` into open compound tiles when a procgen contract becomes active.
-- Vehicles should not remain at editor-authored coordinates once the operator and terminal have been moved into the live contract map.
-
----
-
-## 4. Vehicle interaction trigger
-
-Vehicle scene includes:
-
-```gdscript
-# vehicle_interaction.gd
-func _on_body_entered(body):
-    if body is Operator:
-        show_prompt("Press <interact> to enter")
+func set_follow_target(target: Node2D) -> void
 ```
 
 ---
 
-# 🧭 Phase 3 — Movement Model (keep it simple first)
+## 10. Validation
 
-### Version 1 (DO THIS FIRST):
+`custodian/tools/validate_vehicle_registry.gd` — checks:
+- Duplicate IDs
+- Missing required fields
+- Invalid domain/chassis/role/tier values
+- Missing `runtime.scene` for spawnable vehicles
+- Pilotable vehicle without `seat_profile` or `movement_profile`
+- Hardpoint/movement profile reference missing
+- Unsupported domain marked spawnable without `allow_placeholder_spawn`
 
-* Direct velocity mapping (like player)
-* No acceleration
-* No drift
-
-### Later (upgrade path):
-
-* Acceleration curve
-* Friction
-* Drift / slide
-
----
-
-# 🔫 Phase 4 — Weapon Integration
-
-Reuse your existing weapon system.
-
-### Key idea:
-
-Vehicles use the SAME weapon interface.
-
-```gdscript
-func fire_weapon(aim_vector):
-    weapon.fire(global_position, aim_vector)
+```bash
+cd custodian && godot --headless --path . --script res://tools/validate_vehicle_registry.gd
 ```
 
----
-
-## Optional constraint:
-
-* Vehicle fires ONLY forward:
-
-```gdscript
-var forward = transform.x
-weapon.fire(global_position, forward)
-```
+Create even if headless layout not yet supported; document manual run steps.
 
 ---
 
-# 🧩 Phase 5 — Collision + Hitbox
+## 11. Implementation Order
 
-Vehicles should:
-
-* Have larger collision shape
-* Take damage separately from operator
-* Possibly protect operator
-
-### Minimal implementation:
-
-```gdscript
-@export var health := 100
-
-func take_damage(amount):
-    health -= amount
-    if health <= 0:
-        explode()
-```
+| Step | What |
+|---|---|
+| 1 | JSON data files + schema |
+| 2 | `VehicleDefinition.gd` — loader/validator |
+| 3 | `VehicleRegistry.gd` — store + queries |
+| 4 | Movement profiles + movement model in `PilotableVehicle.gd` |
+| 5 | `PilotableVehicle.gd` + `pilotable_vehicle_base.tscn` |
+| 6 | PlayerController input routing (`_route_vehicle_input`) |
+| 7 | Enter/exit (`VehicleSeat.gd` + EntryArea2D) |
+| 8 | Camera follow target switching |
+| 9 | `VehicleSpawnResolver.gd` |
+| 10 | Wire first production vehicle in archetypes |
+| 11 | `validate_vehicle_registry.gd` |
+| 12 | Documentation updates |
 
 ---
 
-# 💥 Phase 6 — Destruction Behavior
+## 12. Documentation Updates
 
-When destroyed:
+Update:
+- `custodian/docs/ai_context/CURRENT_STATE.md`
+- `custodian/docs/ai_context/FILE_INDEX.md`
 
-```gdscript
-func explode():
-    spawn_explosion_fx()
+Add vehicle registry paths, pilotable vehicle path, spawn resolver path, first production vehicle scene path.
 
-    if player_inside:
-        player_controller.exit_vehicle()
-
-    queue_free()
-```
-
----
-
-# 🎨 Phase 7 — Sprite + Animation (IMPORTANT for your pipeline)
-
-You will need:
-
-### Request from yourself (per your own workflow rules ):
-
-```
-custodian/assets/sprites/vehicles/hover_buggy/
-    buggy_idle.png
-    buggy_move.png
-```
-
-### Requirements:
-
-* Same 2.5D perspective as operator
-* Footprint larger than 32x64 (try ~64x64 or 96x96)
-* Clear forward direction
-
----
-
-# 🧠 Phase 8 — Systems Integration (where this gets interesting)
-
-Tie into your existing systems:
-
-### 1. Power system
-
-* Vehicle may require sector power
-
-### 2. Defense grid
-
-* Vehicles could be deployable units later
-
-### 3. Damage system
-
-* Vehicles interact with sector damage pipeline
-
----
-
-# ⚠️ Common Failure Points (avoid these)
-
-### ❌ Mistake 1: Separate input systems
-
-→ ALWAYS route through one controller
-
-### ❌ Mistake 2: Physics-based movement too early
-
-→ You will lose weeks here
-
-### ❌ Mistake 3: Treating vehicle as UI toggle
-
-→ It must be a real actor in the world
-
----
-
-# 🚀 Phase 9 — Immediate Build Order (DO THIS EXACTLY)
-
-1. Create `ControllableActor`
-2. Refactor operator to use it
-3. Create `VehicleBase`
-4. Implement player controller routing
-5. Add enter/exit
-6. Spawn 1 test vehicle in scene
-7. Bind "E" to enter/exit
-8. Add simple forward weapon
-
----
-
-# 🔄 Phase 10 — Next Vehicle Types (future)
-
-Once this works:
-
-* Tank (turning radius)
-* Mech (slow + heavy + stomp)
-* Drone (flying layer)
-* Transport (multi-seat)
-
----
-
-# ⚡ Critical Insight (this is the real design win)
-
-This system gives you:
-
-* Seamless operator ↔ vehicle transitions
-* Future AI can control vehicles using same interface
-* Deterministic simulation compatibility (huge for your design goals)
-
----
-
-
-# START LIVE VEHICLES.md - THIS IS SOURCE OF TRUTH AND SHOULD BE HARDENED TO DESIGN
-
----
-`
-I wrote **VEHICLES.md** in the canvas.
-
-The roadmap is aligned to the active Godot-first repo guidance, which says runtime authority is now `custodian/`, design work should be documented in `./design/` first, and simulation logic should stay separate from presentation. It also fits your current game pillars: static sectorized base defense, command-vs-field asymmetry, knowledge-over-power progression, and enemy adaptation to player doctrine.  
-
-The main conclusions I locked in are:
-
-* **First vehicle should be the Light Interceptor / Patrol Buggy**
-* **Vehicles should enter after combat/repair/perimeter foundations are readable**
-* **Vehicles should be role-based tools, not raw upgrades**
-* **Each archetype needs operational burden, counterplay, access restrictions, and doctrine interaction**
-* **Heavy vehicles and remote platforms should come much later**
-* **The biggest hidden risks are map-scale collapse, doorway/collision misery, dismount exploits, camera failure at speed, and vehicles becoming the default answer to every problem**
-
-I also built in:
-
-* archetype-by-archetype breakdown
-* implementation order relative to the overall game
-* system dependency mapping
-* counterplay requirements
-* hidden production and runtime pitfalls
-* non-goals for the first implementation
-* data/state structure recommendations
-* asset planning notes
-* testing requirements
-* a current-state reconciliation section
-
-One important caveat: the project design snapshot I could inspect is older than the repo guidance. The broad design material I found was created on **February 9, 2026**, while the active repo guidance I found is from **March 30, 2026**. I do **not** currently have a dated up-to-date devlog or current gamefile snapshot in this conversation, so this roadmap is broad and consistent with project doctrine, but not yet reconciled against the latest live implementation state.  
+Set status to `complete` after validation passes.

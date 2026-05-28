@@ -1,0 +1,19 @@
+{
+  "source": "props__harvesting_nodes__dead_power_node__node__idle__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "props/harvesting_nodes/dead_power_node/dead_power_node__node__idle__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ]
+}

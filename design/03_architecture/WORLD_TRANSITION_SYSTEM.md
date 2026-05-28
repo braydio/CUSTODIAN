@@ -1,4 +1,4 @@
-# `design/20_features/in_progress/WORLD_TRANSITION_SYSTEM.md`
+# `design/03_architecture/WORLD_TRANSITION_SYSTEM.md`
 
 # World Transition System
 

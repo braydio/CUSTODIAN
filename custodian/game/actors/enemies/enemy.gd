@@ -6,6 +6,11 @@ const SCRAP_PICKUP_SCENE := preload("res://game/actors/items/scrap_pickup.tscn")
 const WOLF_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/wolf_animation_library.gd")
 const GRUNT_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/grunt_animation_library.gd")
 const ENEMY_PALETTE_SHADER := preload("res://game/enemies/procgen/enemy_palette_tint.gdshader")
+const ENEMY_BLACKBOARD_SCRIPT := preload("res://game/actors/enemies/components/enemy_blackboard.gd")
+const ENEMY_PERCEPTION_SCRIPT := preload("res://game/actors/enemies/components/enemy_perception_component.gd")
+const ENEMY_OBJECTIVE_SENSOR_SCRIPT := preload("res://game/actors/enemies/components/enemy_objective_sensor.gd")
+const ENEMY_LOOT_CARRIER_SCRIPT := preload("res://game/actors/enemies/components/enemy_loot_carrier.gd")
+const ENEMY_BEHAVIOR_STATE_MACHINE_SCRIPT := preload("res://game/actors/enemies/enemy_behavior_state_machine.gd")
 const AXUL_DIRECTIONAL_SHEET_PATH := "res://content/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt.png"
 const DIRECTIONAL_SUFFIXES := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
 const DIRECTIONAL_ANIMATION_PREFIX := "red_walk"
@@ -100,6 +105,8 @@ enum AssaultState {
 @export var custom_ambient_knockout_rows: int = 2
 @export var custom_ambient_knockout_fps: float = 12.0
 @export var custom_ambient_knockout_scale: Vector2 = Vector2(0.20, 0.20)
+@export var behavior_state_machine_enabled: bool = false
+@export var behavior_profile_id: StringName = &"raider_grunt"
 
 var target: Node2D = null
 var dead := false
@@ -162,10 +169,14 @@ const OBJECTIVE_GROUPS := {
 @onready var visual = $Visual
 @onready var animated_sprite = $AnimatedSprite2D if has_node("AnimatedSprite2D") else null
 @onready var custom_enemy_fx_sprite = $CustomEnemyFxSprite if has_node("CustomEnemyFxSprite") else null
+@onready var behavior_state_machine = $EnemyBehaviorStateMachine if has_node("EnemyBehaviorStateMachine") else null
 
 func _ready():
 	add_to_group("enemies")
 	add_to_group("enemy")
+	if behavior_state_machine_enabled:
+		add_to_group("enemy_behavior_agent")
+		_ensure_behavior_components()
 	if passive:
 		add_to_group("ambient_critter")
 	if _uses_directional_animation_set():
@@ -195,6 +206,8 @@ func _ready():
 	damage_timer = damage_interval
 	_refresh_target()
 	_initialize_navigation()
+	if behavior_state_machine_enabled and behavior_state_machine != null and behavior_state_machine.has_method("setup_profile"):
+		behavior_state_machine.call("setup_profile", behavior_profile_id)
 	_setup_health_bar_style()
 	update_visuals()
 
@@ -252,6 +265,9 @@ func _physics_process(delta):
 		return
 	if _update_attack_windup(delta):
 		return
+	if behavior_state_machine_enabled and behavior_state_machine != null and behavior_state_machine.has_method("physics_update"):
+		if bool(behavior_state_machine.call("physics_update", self, delta)):
+			return
 	if passive:
 		_update_passive_behavior(delta)
 		return
@@ -595,6 +611,8 @@ func take_damage(amount: float):
 		return
 	
 	health -= amount
+	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
+		behavior_state_machine.call("on_damaged", self, amount)
 	_on_assault_damage_taken(amount)
 	_apply_reaction(amount)
 	update_visuals()
@@ -635,6 +653,8 @@ func update_visuals():
 func die():
 	dead = true
 	velocity = Vector2.ZERO
+	if behavior_state_machine != null and behavior_state_machine.has_method("on_enemy_died"):
+		behavior_state_machine.call("on_enemy_died", self)
 	set_threat_highlight(false)
 	if has_node("CollisionShape2D"):
 		$CollisionShape2D.disabled = true
@@ -658,6 +678,107 @@ func is_passive_enemy() -> bool:
 
 func counts_for_wave_cap() -> bool:
 	return counts_as_wave_enemy and not passive
+
+
+func set_behavior_profile(profile_id: Variant) -> void:
+	behavior_profile_id = StringName(str(profile_id))
+	behavior_state_machine_enabled = true
+	add_to_group("enemy_behavior_agent")
+	_ensure_behavior_components()
+	if behavior_state_machine != null and behavior_state_machine.has_method("setup_profile"):
+		behavior_state_machine.call("setup_profile", behavior_profile_id)
+
+
+func get_behavior_snapshot() -> Dictionary:
+	if behavior_state_machine != null and behavior_state_machine.has_method("get_debug_snapshot"):
+		return behavior_state_machine.call("get_debug_snapshot")
+	return {
+		"enabled": behavior_state_machine_enabled,
+		"profile_id": String(behavior_profile_id),
+		"state": "legacy",
+		"carrying_loot": false,
+	}
+
+
+func is_carrying_stolen_resources() -> bool:
+	var carrier := get_node_or_null("EnemyLootCarrier")
+	return carrier != null and carrier.has_method("is_carrying_loot") and bool(carrier.call("is_carrying_loot"))
+
+
+func force_behavior_notice() -> void:
+	_ensure_behavior_components()
+	if behavior_state_machine != null and behavior_state_machine.has_method("force_notice"):
+		behavior_state_machine.call("force_notice", get_tree().get_first_node_in_group("player"))
+
+
+func force_behavior_steal() -> void:
+	_ensure_behavior_components()
+	if behavior_state_machine != null and behavior_state_machine.has_method("force_steal"):
+		behavior_state_machine.call("force_steal")
+
+
+func get_last_move_direction() -> Vector2:
+	return _last_move_direction
+
+
+func behavior_stop() -> void:
+	velocity = Vector2.ZERO
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+
+
+func behavior_move_toward(target_position: Vector2, desired_speed: float) -> void:
+	var direction := Vector2.ZERO
+	if use_pathfinding and navigation_system != null and navigation_system.has_method("get_path_to_target"):
+		direction = _get_pathfinding_direction(target_position, get_physics_process_delta_time())
+	else:
+		direction = (target_position - global_position).normalized()
+	if direction.length_squared() <= 0.0001:
+		behavior_stop()
+		return
+	velocity = direction * desired_speed
+	move_and_slide()
+	_update_stuck_reroute(target_position, get_physics_process_delta_time())
+	_last_move_direction = direction
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, true)
+
+
+func behavior_attack_target() -> void:
+	if target == null:
+		behavior_stop()
+		return
+	behavior_stop()
+	var direction := ((target as Node2D).global_position - global_position).normalized() if target is Node2D else Vector2.ZERO
+	if direction.length_squared() > 0.0001:
+		_last_move_direction = direction
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+	_attack_target(get_physics_process_delta_time())
+
+
+func _ensure_behavior_components() -> void:
+	if get_node_or_null("EnemyBlackboard") == null:
+		var blackboard: Node = ENEMY_BLACKBOARD_SCRIPT.new()
+		blackboard.name = "EnemyBlackboard"
+		add_child(blackboard)
+	if get_node_or_null("EnemyPerceptionComponent") == null:
+		var perception: Node = ENEMY_PERCEPTION_SCRIPT.new()
+		perception.name = "EnemyPerceptionComponent"
+		add_child(perception)
+	if get_node_or_null("EnemyObjectiveSensor") == null:
+		var sensor: Node = ENEMY_OBJECTIVE_SENSOR_SCRIPT.new()
+		sensor.name = "EnemyObjectiveSensor"
+		add_child(sensor)
+	if get_node_or_null("EnemyLootCarrier") == null:
+		var carrier: Node = ENEMY_LOOT_CARRIER_SCRIPT.new()
+		carrier.name = "EnemyLootCarrier"
+		add_child(carrier)
+	if get_node_or_null("EnemyBehaviorStateMachine") == null:
+		var state_machine: Node = ENEMY_BEHAVIOR_STATE_MACHINE_SCRIPT.new()
+		state_machine.name = "EnemyBehaviorStateMachine"
+		add_child(state_machine)
+	behavior_state_machine = get_node_or_null("EnemyBehaviorStateMachine")
 
 
 func set_passive_home_position(home_position: Vector2) -> void:

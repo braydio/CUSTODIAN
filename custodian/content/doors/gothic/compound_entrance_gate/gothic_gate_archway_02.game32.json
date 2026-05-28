@@ -12,10 +12,22 @@
       "y": 445,
       "w": 93,
       "h": 86
-    }
+    },
+    "master_sheet": null,
+    "original_path": "res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_02.png",
+    "section": "doors",
+    "subtype": "doors",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 93,
+      "h": 86
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_02.png",
+    "path": "res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_02.png",
     "pixel_size": {
       "w": 93,
       "h": 86
@@ -23,7 +35,7 @@
   },
   "classification": {
     "asset_type": "doors",
-    "semantic_role": "compound_entrance_gate",
+    "semantic_role": "gothic_portcullis_gate",
     "placement_layer": "door",
     "tags": [
       "archway",
@@ -31,8 +43,12 @@
       "door",
       "entrance",
       "gate",
-      "gothic"
-    ]
+      "gothic",
+      "portcullis",
+      "metal",
+      "barred"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -48,25 +64,28 @@
     "snap": "tile",
     "allow_mirror_x": false,
     "allow_rotation": false,
-    "y_sort": true
+    "y_sort": true,
+    "review_status": "reviewed"
   },
   "collision": {
-    "blocks_movement": false,
+    "blocks_movement": true,
     "blocks_sight": false,
-    "cover_value": 0,
-    "collision_shape": "none"
+    "cover_value": 1,
+    "collision_shape": "footprint",
+    "review_status": "reviewed"
   },
   "procgen": {
     "uses": [
-      "main_entrance",
       "compound_gate",
-      "sector_threshold",
-      "poi_gate"
+      "restricted_area_gate",
+      "portcullis_gate",
+      "sector_threshold"
     ],
-    "weight": 12,
+    "weight": 8,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": true,
     "supports_gothic_compound": true,
-    "review_status": "semantic_band_assigned"
-  }
+    "review_status": "reviewed"
+  },
+  "master_index": 6
 }

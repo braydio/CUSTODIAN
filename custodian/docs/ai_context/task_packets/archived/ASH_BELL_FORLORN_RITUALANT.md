@@ -20,7 +20,7 @@ The project has a loadable Ash-Bell event module with event state, placeholder a
 
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active design/spec docs: `design/FORLORN_RITUALANT_ENCOUNTER.md`, `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md`, `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+- Active design/spec docs: `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` (canonical, companion doc merged), `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 - Active runtime/docs files: `custodian/game/world/events/ash_bell/`, `custodian/content/dialogue/ash_bell/`, `custodian/content/items/lore/`, `custodian/content/procgen/special_rooms/`, `REQUIRED_ASSETS.md`
 - Historical reference only: legacy Python runtime/docs
 

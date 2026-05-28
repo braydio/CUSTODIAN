@@ -19,33 +19,19 @@ if [ -n "$staged_paths" ]; then
 fi
 
 # ──────────────────────────────────────────────
-# 2. Auto-sweep .aseprite / .ase source files
-#    into content/_aseprite/ before commit
+# 2. Warn about .aseprite / .ase source files
+#    outside content/_aseprite/
 # ──────────────────────────────────────────────
-ASEPRITE_TARGET="content/_aseprite"
-
-# Only run if the custodian subdirectory exists
+# This hook used to move files during commit. Hooks should not rewrite the
+# working tree unexpectedly, so this is now advisory only.
 if [ -d "custodian/content" ]; then
-  # Find any .aseprite/.ase files tracked or untracked outside _aseprite/
-  # that are staged or modified in the working tree
-  content_aseprite_files=$(find custodian/content \
-    -not -path "*/_aseprite/*" \
-    \( -name "*.aseprite" -o -name "*.ase" \) \
-    -print 2>/dev/null || true)
+  content_aseprite_files=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '^custodian/content/.*\.(aseprite|ase)$' | grep -v '/_aseprite/' || true)
 
   if [ -n "$content_aseprite_files" ]; then
-    echo "$content_aseprite_files" | while IFS= read -r src; do
-      rel="${src#custodian/content/}"
-      dest="custodian/$ASEPRITE_TARGET/$rel"
-      dest_dir="$(dirname "$dest")"
-      mkdir -p "$dest_dir"
-      mv -v "$src" "$dest"
-      # If it was tracked, remove from old location
-      if git ls-files --error-unmatch "$src" > /dev/null 2>&1; then
-        git rm --cached "$src" > /dev/null 2>&1 || true
-      fi
-    done
-    echo "[pre-commit] Swept .aseprite source files into $ASEPRITE_TARGET/"
+    content_aseprite_count=$(printf "%s\n" "$content_aseprite_files" | wc -l | tr -d ' ')
+    echo "Warning: staged .aseprite/.ase source files are outside content/_aseprite/." >&2
+    echo "Consider moving them after this commit if they are intended source assets. Showing first 25 of $content_aseprite_count:" >&2
+    printf "%s\n" "$content_aseprite_files" | sed -n '1,25p' >&2
   fi
 fi
 

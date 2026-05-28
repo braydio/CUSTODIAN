@@ -1,0 +1,79 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_wall_corner_or_end_014",
+  "display_name": "Gothic Wall Corner Or End 014",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_014.png",
+    "section": "tiles",
+    "subtype": "wall_corner_or_end",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 89,
+      "h": 93
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_014.png",
+    "pixel_size": {
+      "w": 89,
+      "h": 93
+    }
+  },
+  "classification": {
+    "asset_type": "walls",
+    "semantic_role": "gothic_large_curved_wall_corner_piece",
+    "placement_layer": "wall",
+    "tags": [
+      "gothic",
+      "wall",
+      "blocking",
+      "curved",
+      "corner",
+      "large",
+      "stone"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 3,
+      "h": 3
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 44,
+      "y": 93
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 2,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "compound_wall",
+      "large_curved_wall",
+      "wall_corner",
+      "rounded_boundary"
+    ],
+    "weight": 8,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 15
+}

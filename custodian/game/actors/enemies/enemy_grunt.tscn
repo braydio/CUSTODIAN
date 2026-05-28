@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://enemy_grunt_001"]
+[gd_scene load_steps=7 format=3 uid="uid://enemy_grunt_001"]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_perception_component.gd" id="3_perception"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_objective_sensor.gd" id="4_sensor"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_loot_carrier.gd" id="5_carrier"]
+[ext_resource type="Script" path="res://game/actors/enemies/enemy_behavior_state_machine.gd" id="6_behavior"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_grunt"]
 size = Vector2(26, 26)
@@ -20,6 +25,8 @@ material_drop_max = 3
 custom_enemy_animation_set = "enemy_grunt"
 custom_enemy_animation_scale = Vector2(1, 1)
 custom_enemy_fx_scale = Vector2(1, 1)
+behavior_state_machine_enabled = true
+behavior_profile_id = &"raider_grunt"
 
 [node name="Visual" type="ColorRect" parent="."]
 offset_left = -13.0
@@ -47,3 +54,18 @@ scale = Vector2(1, 1)
 visible = false
 position = Vector2(0, -18)
 scale = Vector2(1, 1)
+
+[node name="EnemyBlackboard" type="Node" parent="."]
+script = ExtResource("2_blackboard")
+
+[node name="EnemyPerceptionComponent" type="Node" parent="."]
+script = ExtResource("3_perception")
+
+[node name="EnemyObjectiveSensor" type="Node" parent="."]
+script = ExtResource("4_sensor")
+
+[node name="EnemyLootCarrier" type="Node" parent="."]
+script = ExtResource("5_carrier")
+
+[node name="EnemyBehaviorStateMachine" type="Node" parent="."]
+script = ExtResource("6_behavior")

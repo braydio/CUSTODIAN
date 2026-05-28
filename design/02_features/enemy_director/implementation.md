@@ -1,9 +1,9 @@
 # Enemy Behavior Director — Implementation Plan
 
 **Created:** 2026-03-05
-**Status:** In Progress (Runtime Slice + Telemetry Implemented)
+**Status:** In Progress (Runtime Slice + Telemetry + behavior-variable v1)
 **Depends On:** Wave Spawning System
-**Last Updated:** 2026-04-08
+**Last Updated:** 2026-05-25
 **Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
@@ -38,6 +38,7 @@ This file is the runtime behavior authority for assault orchestration. For facti
 - Director budget application now scales raw threat down before composition generation.
 - This is an intentional move away from "wave defense density" and toward "base-builder under intermittent assault."
 - Runtime enemies now layer a local assault state machine on top of objective targeting: `STAGING -> PROBING -> COMMIT -> REGROUP`.
+- Human-style enemies now have a local behavior-variable extension point: `EnemyBehaviorProfile`, `EnemyBlackboard`, perception, objective scoring, loot carrier, and a finite state machine for idle/patrol/investigate/notice/storage theft/escape.
 
 ### Content-Facing Rule
 
@@ -48,6 +49,26 @@ Enemy plans should eventually reflect more than target efficiency. They should a
 - whether it is trying to classify, jam, seize, purge, or merely overwhelm
 
 The director should remain extensible enough to support ideology-conditioned objective weighting later.
+
+### Behavior Profile Dispatch
+
+Wave/director integration may pass a profile ID into spawned enemies:
+
+```gdscript
+enemy.set_behavior_profile("raider_grunt")
+enemy.set_behavior_profile("iconoclast_looter")
+enemy.set_behavior_profile("zealot_wanderer")
+```
+
+If no explicit profile is supplied, enemies default to `raider_grunt`. V1 keeps this local to the enemy actor rather than moving behavior execution into the director. The director and wave manager decide composition and broad objective pressure; the enemy-local state machine decides moment-to-moment theft, investigation, engagement, and escape.
+
+### V1 Non-Goals
+
+- No full GOAP planner.
+- No faction-wide blackboard.
+- No stealth HUD.
+- No authored vault procgen solve.
+- No replacement of existing drone/grunt combat damage and wave spawn paths.
 
 ---
 

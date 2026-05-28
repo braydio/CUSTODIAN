@@ -1,0 +1,61 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "vault_door_lockplate_01",
+  "display_name": "Vault Door Lockplate 01",
+  "source": {
+    "master_sheet": "custodian/props/gothic/vault_propsheet_04.png",
+    "sheet_cell": {
+      "row": 1,
+      "col": 1,
+      "rows": 2,
+      "cols": 3
+    }
+  },
+  "file": {
+    "path": "custodian/content/doors/gothic/vault/vault_door_lockplate_01.png",
+    "pixel_size": {
+      "w": 64,
+      "h": 64
+    }
+  },
+  "classification": {
+    "asset_type": "doors",
+    "semantic_role": "vault_lock_mechanism",
+    "placement_layer": "door",
+    "tags": [
+      "vault",
+      "gothic",
+      "door",
+      "lock",
+      "lockplate",
+      "mechanism",
+      "overlay"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 2
+    },
+    "origin_mode": "center",
+    "pivot_px": {
+      "x": 32,
+      "y": 32
+    },
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": false
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "collision_shape": "none"
+  },
+  "runtime": {
+    "status": "extracted_from_source_sheet",
+    "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
+  }
+}

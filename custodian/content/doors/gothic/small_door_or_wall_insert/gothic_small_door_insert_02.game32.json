@@ -12,10 +12,22 @@
       "y": 436,
       "w": 29,
       "h": 57
-    }
+    },
+    "master_sheet": null,
+    "original_path": "res://content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.png",
+    "section": "doors",
+    "subtype": "doors",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 29,
+      "h": 57
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.png",
+    "path": "res://content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.png",
     "pixel_size": {
       "w": 29,
       "h": 57
@@ -23,15 +35,19 @@
   },
   "classification": {
     "asset_type": "doors",
-    "semantic_role": "small_door_or_wall_insert",
+    "semantic_role": "gothic_narrow_pillar_door_insert",
     "placement_layer": "door",
     "tags": [
       "compound",
       "door",
       "gothic",
       "small_gate",
-      "threshold"
-    ]
+      "threshold",
+      "narrow",
+      "pillar",
+      "wall_insert"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -47,25 +63,28 @@
     "snap": "tile",
     "allow_mirror_x": false,
     "allow_rotation": false,
-    "y_sort": true
+    "y_sort": true,
+    "review_status": "reviewed"
   },
   "collision": {
-    "blocks_movement": false,
-    "blocks_sight": false,
-    "cover_value": 0,
-    "collision_shape": "none"
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 2,
+    "collision_shape": "footprint",
+    "review_status": "reviewed"
   },
   "procgen": {
     "uses": [
-      "secondary_entrance",
       "interior_door",
-      "service_gate",
-      "secret_threshold"
+      "wall_insert",
+      "narrow_threshold",
+      "service_gate"
     ],
-    "weight": 18,
+    "weight": 8,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": true,
     "supports_gothic_compound": true,
-    "review_status": "semantic_band_assigned"
-  }
+    "review_status": "reviewed"
+  },
+  "master_index": 14
 }

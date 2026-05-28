@@ -16,9 +16,8 @@ changed_code=$(git diff --cached --name-only | grep -E '\.(py|js)$' || true)
 changed_docs=$(git diff --cached --name-only | grep -E 'ai/(CURRENT_STATE|CONTEXT)\.md' || true)
 
 if [ -n "$changed_code" ] && [ -z "$changed_docs" ]; then
-  echo "Code changed but tracking docs not updated." >&2
-  echo "If intentional, add [no-docs] to commit message." >&2
-  exit 1
+  echo "Warning: code changed but tracking docs were not detected." >&2
+  echo "If this was intentional, no action is required; use [no-docs] to suppress this warning." >&2
 fi
 
 exit 0

@@ -267,6 +267,7 @@ var _planet_preview_spin_velocity := Vector2.ZERO
 var _planet_preview_zoom_distance := 3.8
 var _main_hud_hidden := false
 var _debug_hud_visible := false
+var _debug_toggle_key_was_pressed := false
 var _placement_mode_active := false
 var _last_crosshair_aim_dir := Vector2.ZERO
 var _last_crosshair_screen_pos := Vector2.ZERO
@@ -484,20 +485,32 @@ func _register_devconsole_commands() -> void:
 	
 	# Command: debug_hud - Toggle debug HUD visibility
 	if console.has_method("add_command"):
-		console.add_command("debug_hud", _devconsole_toggle_debug_hud)
-		console.add_command("show_cognitive", _devconsole_show_cognitive)
-		console.add_command("test_spawn", _devconsole_test_spawn)
-		console.add_command("spawn_grunt", _devconsole_spawn_grunt)
-		console.add_command("knight_skin", _devconsole_knight_skin)
-		console.add_command("ui_status", _devconsole_ui_status)
-		console.add_command("fab_status", _devconsole_fab_status)
-		console.add_command("fab_recipes", _devconsole_fab_recipes)
-		console.add_command("fab_grant", _devconsole_fab_grant)
-		console.add_command("fab_start", _devconsole_fab_start)
+		_register_devconsole_command(console, "debug_hud", _devconsole_toggle_debug_hud)
+		_register_devconsole_command(console, "show_cognitive", _devconsole_show_cognitive)
+		_register_devconsole_command(console, "test_spawn", _devconsole_test_spawn)
+		_register_devconsole_command(console, "spawn_grunt", _devconsole_spawn_grunt)
+		_register_devconsole_command(console, "knight_skin", _devconsole_knight_skin)
+		_register_devconsole_command(console, "ui_status", _devconsole_ui_status)
+		_register_devconsole_command(console, "fab_status", _devconsole_fab_status)
+		_register_devconsole_command(console, "fab_recipes", _devconsole_fab_recipes)
+		_register_devconsole_command(console, "fab_grant", _devconsole_fab_grant)
+		_register_devconsole_command(console, "fab_start", _devconsole_fab_start)
+		_register_devconsole_command(console, "spawn_looter", _devconsole_spawn_looter)
+		_register_devconsole_command(console, "spawn_looter_near_vault", _devconsole_spawn_looter_near_vault)
+		_register_devconsole_command(console, "vault_add", _devconsole_vault_add)
+		_register_devconsole_command(console, "vault_status", _devconsole_vault_status)
+		_register_devconsole_command(console, "enemy_debug", _devconsole_enemy_debug)
+		_register_devconsole_command(console, "force_enemy_notice", _devconsole_force_enemy_notice)
+		_register_devconsole_command(console, "force_enemy_steal", _devconsole_force_enemy_steal)
 		if ENABLE_MINIMAP:
-			console.add_command("toggle_minimap", _devconsole_toggle_minimap)
-			console.add_command("minimap_status", _devconsole_minimap_status)
+			_register_devconsole_command(console, "toggle_minimap", _devconsole_toggle_minimap)
+			_register_devconsole_command(console, "minimap_status", _devconsole_minimap_status)
 		print("Registered debug commands with DevConsole")
+
+
+func _register_devconsole_command(console: Node, command_name: String, handler: Callable) -> void:
+	console.add_command(command_name, func(...args): return handler.call(args))
+
 
 func _devconsole_toggle_debug_hud(args: Array) -> String:
 	# Toggle debug HUD visibility (camera/aim/time/director/supply/button diagnostics)
@@ -538,6 +551,87 @@ func _devconsole_spawn_grunt(args: Array) -> String:
 		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "grunt", pos))
 		return "Spawned grunt at %s" % str(pos) if spawned else "Failed to spawn grunt"
 	return "EnemyDirector not found or spawn_debug_enemy_type not available"
+
+
+func _devconsole_spawn_looter(args: Array) -> String:
+	var operator = _get_operator_node()
+	if operator == null:
+		return "Operator not found"
+	var offset := Vector2(128.0, 0.0)
+	if args.size() >= 2:
+		offset = Vector2(float(args[0]), float(args[1]))
+	return _spawn_profiled_grunt(operator.global_position + offset, &"iconoclast_looter")
+
+
+func _devconsole_spawn_looter_near_vault(args: Array) -> String:
+	var manager := get_node_or_null("/root/VaultManager")
+	if manager == null or not manager.has_method("get_debug_snapshot"):
+		return "VaultManager unavailable"
+	var snapshot: Dictionary = manager.call("get_debug_snapshot")
+	var storages: Array = snapshot.get("storages", [])
+	if storages.is_empty():
+		return "No vault storage available"
+	var storage: Dictionary = storages[0]
+	var pos := Vector2(storage.get("position", Vector2.ZERO)) + Vector2(96.0, 0.0)
+	return _spawn_profiled_grunt(pos, &"iconoclast_looter")
+
+
+func _spawn_profiled_grunt(pos: Vector2, profile_id: StringName) -> String:
+	var enemy_mgr = get_node_or_null("/root/GameRoot/EnemyDirector")
+	if enemy_mgr != null and enemy_mgr.has_method("spawn_debug_enemy_type"):
+		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "grunt", pos, profile_id))
+		return "Spawned %s grunt at %s" % [String(profile_id), str(pos)] if spawned else "Failed to spawn profiled grunt"
+	return "EnemyDirector not found or spawn_debug_enemy_type not available"
+
+
+func _devconsole_vault_add(args: Array) -> String:
+	if args.size() < 2:
+		return "Usage: vault_add <resource_id> <amount>"
+	var manager := get_node_or_null("/root/VaultManager")
+	if manager == null or not manager.has_method("debug_add"):
+		return "VaultManager unavailable"
+	var resource_id := StringName(str(args[0]).strip_edges())
+	var amount := int(str(args[1]))
+	manager.call("debug_add", resource_id, amount)
+	return _devconsole_vault_status([])
+
+
+func _devconsole_vault_status(args: Array) -> String:
+	var manager := get_node_or_null("/root/VaultManager")
+	if manager == null or not manager.has_method("get_debug_snapshot"):
+		return "VaultManager unavailable"
+	var snapshot: Dictionary = manager.call("get_debug_snapshot")
+	return "VAULT\nResources: %s\nStorage count: %d\nEvents: %s" % [
+		_format_debug_dictionary(snapshot.get("total", {})),
+		int(snapshot.get("storage_count", 0)),
+		str(snapshot.get("recent_events", [])),
+	]
+
+
+func _devconsole_enemy_debug(args: Array) -> String:
+	var lines: Array[String] = ["ENEMY DEBUG"]
+	for enemy in get_tree().get_nodes_in_group("enemy_behavior_agent"):
+		if enemy != null and enemy.has_method("get_behavior_snapshot"):
+			lines.append("%s: %s" % [enemy.name, str(enemy.call("get_behavior_snapshot"))])
+	return "\n".join(lines)
+
+
+func _devconsole_force_enemy_notice(args: Array) -> String:
+	var count := 0
+	for enemy in get_tree().get_nodes_in_group("enemy_behavior_agent"):
+		if enemy != null and enemy.has_method("force_behavior_notice"):
+			enemy.call("force_behavior_notice")
+			count += 1
+	return "Forced notice on %d behavior enemies" % count
+
+
+func _devconsole_force_enemy_steal(args: Array) -> String:
+	var count := 0
+	for enemy in get_tree().get_nodes_in_group("enemy_behavior_agent"):
+		if enemy != null and enemy.has_method("force_behavior_steal"):
+			enemy.call("force_behavior_steal")
+			count += 1
+	return "Forced steal on %d behavior enemies" % count
 
 func _devconsole_knight_skin(args: Array) -> String:
 	var operator = _get_operator_node()
@@ -791,8 +885,13 @@ func _update_debug_panel() -> void:
 	if debug_panel == null:
 		return
 	
-	# Toggle debug panel with F12 (or your preferred key)
-	if Input.is_action_just_pressed("debug_toggle"):
+	var f12_pressed := Input.is_key_pressed(KEY_F12)
+	var debug_toggle_pressed := InputMap.has_action("debug_toggle") and Input.is_action_just_pressed("debug_toggle")
+	if f12_pressed and not _debug_toggle_key_was_pressed:
+		debug_toggle_pressed = true
+	_debug_toggle_key_was_pressed = f12_pressed
+
+	if debug_toggle_pressed:
 		debug_panel.visible = not debug_panel.visible
 	
 	if not debug_panel.visible:
@@ -1509,6 +1608,14 @@ func _make_terminal_texture_style(texture: Texture2D, margin: float, content_mar
 	style.content_margin_bottom = content_margin
 	return style
 
+
+func _make_terminal_input_style() -> StyleBoxTexture:
+	var style := _make_terminal_texture_style(TERMINAL_COMMAND_LINE_TEXTURE, TERMINAL_COMMAND_LINE_SLICE, 8.0)
+	style.content_margin_top = 4.0
+	style.content_margin_bottom = 4.0
+	return style
+
+
 func _apply_terminal_button_assets(button: BaseButton, normal: StyleBoxTexture, hover: StyleBoxTexture, pressed: StyleBoxTexture, disabled: StyleBoxTexture, focus: StyleBoxTexture, icon: Texture2D = null) -> void:
 	if button == null:
 		return
@@ -1617,7 +1724,7 @@ func _apply_terminal_theme():
 	var header_style := _make_terminal_texture_style(TERMINAL_HEADER_ACTIVE_TEXTURE, 4.0, 6.0)
 	var output_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 8.0)
 	var map_style := _make_terminal_texture_style(TERMINAL_MAP_FRAME_TEXTURE, TERMINAL_MAP_SLICE, 10.0)
-	var input_style := _make_terminal_texture_style(TERMINAL_COMMAND_LINE_TEXTURE, TERMINAL_COMMAND_LINE_SLICE, 10.0)
+	var input_style := _make_terminal_input_style()
 	var nav_button_style := _make_terminal_texture_style(TERMINAL_NAV_IDLE_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
 	var nav_button_hover_style := _make_terminal_texture_style(TERMINAL_NAV_HOVER_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
 	var nav_button_active_style := _make_terminal_texture_style(TERMINAL_NAV_ACTIVE_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
@@ -1688,6 +1795,7 @@ func _apply_terminal_theme():
 		terminal_activity_scroll.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
 
 	if terminal_input:
+		terminal_input.custom_minimum_size.y = max(terminal_input.custom_minimum_size.y, 48.0)
 		terminal_input.add_theme_stylebox_override("normal", input_style)
 		terminal_input.add_theme_stylebox_override("focus", input_style)
 		terminal_input.add_theme_color_override("font_color", Color(0.96, 1.0, 0.98, 1.0))
@@ -1915,6 +2023,9 @@ func _on_terminal_input_gui_input(event: InputEvent) -> void:
 		return
 	if not _terminal_open or not _terminal_ready:
 		return
+	if event is InputEventMouseButton or event is InputEventMouseMotion:
+		get_viewport().set_input_as_handled()
+		return
 	if not (event is InputEventKey):
 		return
 	var key_event := event as InputEventKey
@@ -1924,12 +2035,15 @@ func _on_terminal_input_gui_input(event: InputEvent) -> void:
 		KEY_UP:
 			_recall_history_previous()
 			terminal_input.accept_event()
+			get_viewport().set_input_as_handled()
 		KEY_DOWN:
 			_recall_history_next()
 			terminal_input.accept_event()
+			get_viewport().set_input_as_handled()
 		KEY_TAB:
 			if _autocomplete_terminal_input(key_event.shift_pressed):
 				terminal_input.accept_event()
+			get_viewport().set_input_as_handled()
 
 func _recall_history_previous():
 	if _terminal_history.is_empty():
@@ -2197,7 +2311,8 @@ func _apply_terminal_page_theme() -> void:
 	if terminal_hint_label:
 		terminal_hint_label.add_theme_color_override("font_color", Color(0.96, 0.79, 0.54, 0.88) if fabrication_mode else Color(0.54, 0.72, 0.68, 0.88))
 	if terminal_input:
-		var input_style := _make_terminal_texture_style(TERMINAL_COMMAND_LINE_TEXTURE, TERMINAL_COMMAND_LINE_SLICE, 10.0)
+		var input_style := _make_terminal_input_style()
+		terminal_input.custom_minimum_size.y = max(terminal_input.custom_minimum_size.y, 48.0)
 		terminal_input.add_theme_stylebox_override("normal", input_style)
 		terminal_input.add_theme_stylebox_override("focus", input_style)
 		terminal_input.add_theme_color_override("font_color", Color(1.0, 0.96, 0.88, 1.0) if fabrication_mode else Color(0.96, 1.0, 0.98, 1.0))
@@ -2356,12 +2471,15 @@ func _build_terminal_render_context(snapshot: Dictionary) -> Dictionary:
 	var enemies = snapshot.get("enemies", {})
 	var hostile_text := "--"
 	if enemies is Dictionary and not enemies.is_empty():
-		hostile_text = "%d | D%d F%d H%d" % [
+		hostile_text = "%d | D%d F%d H%d S%d L%d" % [
 			int(enemies.get("total", 0)),
 			int(enemies.get("drone", 0)),
 			int(enemies.get("fast", 0)),
 			int(enemies.get("heavy", 0)),
+			int(enemies.get("searching_storage", 0)),
+			int(enemies.get("carrying_loot", 0)),
 		]
+	var vault: Dictionary = snapshot.get("vault", {})
 	var contract: Dictionary = snapshot.get("contract", {})
 	var power_status := _get_power_status_snapshot()
 	var sector_array: Array = snapshot.get("sectors", []) if snapshot.get("sectors", []) is Array else []
@@ -2388,6 +2506,7 @@ func _build_terminal_render_context(snapshot: Dictionary) -> Dictionary:
 		"phase_text": phase_text,
 		"power_summary": power_summary,
 		"contract_lines": _build_terminal_contract_lines(contract),
+		"vault": vault,
 	}
 
 
@@ -2418,7 +2537,7 @@ func _render_terminal_page(context: Dictionary) -> String:
 	var contract_lines: Array[String] = context.get("contract_lines", [])
 	match _terminal_current_page:
 		"OVERVIEW":
-			_render_terminal_overview_widgets(phase_text, hostile_text, int(context.get("compromised_count", 0)), int(context.get("offline_count", 0)), power_status, str(context.get("power_summary", "")), int(context.get("critical_count", 0)), threat_text, assault_value, wave_text, snapshot.get("defense_rating", 0.0), sector_array, contract_lines)
+			_render_terminal_overview_widgets(phase_text, hostile_text, int(context.get("compromised_count", 0)), int(context.get("offline_count", 0)), power_status, str(context.get("power_summary", "")), int(context.get("critical_count", 0)), threat_text, assault_value, wave_text, snapshot.get("defense_rating", 0.0), sector_array, contract_lines, context.get("vault", {}))
 			return "DEFAULT COMMAND SURFACE // SUMMARY, POWER, ASSAULT, PRIORITIES"
 		"STATUS":
 			_render_terminal_status_widgets(snapshot, phase_text, threat_text, str(context.get("power_summary", "")), assault_value, wave_text, hostile_text)
@@ -2505,7 +2624,7 @@ func _set_terminal_widget_mode(page_name: String) -> void:
 		terminal_map_label.visible = not using_widgets
 
 
-func _render_terminal_overview_widgets(phase_text: String, hostile_text: String, compromised_count: int, offline_count: int, power_status: Dictionary, power_summary: String, critical_count: int, threat_text: Variant, assault_value: Variant, wave_text: String, defense_rating: Variant, sector_array: Array, contract_lines: Array[String]) -> void:
+func _render_terminal_overview_widgets(phase_text: String, hostile_text: String, compromised_count: int, offline_count: int, power_status: Dictionary, power_summary: String, critical_count: int, threat_text: Variant, assault_value: Variant, wave_text: String, defense_rating: Variant, sector_array: Array, contract_lines: Array[String], vault: Dictionary = {}) -> void:
 	_set_terminal_rich_text(terminal_overview_operational_body, "\n".join([
 		_terminal_kv("MODE", "COMMAND"),
 		_terminal_kv("PHASE", phase_text),
@@ -2538,6 +2657,13 @@ func _render_terminal_overview_widgets(phase_text: String, hostile_text: String,
 		priority_lines.append("NO PRIORITY SECTORS AVAILABLE")
 	_set_terminal_rich_text(terminal_overview_priority_body, "\n".join(priority_lines))
 	_set_terminal_rich_text(terminal_overview_contract_body, "\n".join(contract_lines))
+	if not vault.is_empty():
+		var vault_total: Dictionary = vault.get("total", {})
+		var vault_events: Array = vault.get("recent_events", [])
+		var vault_line := "VAULT " + _format_debug_dictionary(vault_total)
+		if not vault_events.is_empty():
+			vault_line += "\nLAST " + str(vault_events[0])
+		_set_terminal_rich_text(terminal_overview_contract_body, "\n".join(contract_lines + [vault_line]))
 
 
 func _render_terminal_sector_widgets(sector_array: Array, selected_sector: Dictionary) -> void:

@@ -5,7 +5,7 @@
 ! CUSTODIAN - Is not a tactical wave defense. It is more similar to a roguelike/roguelite, real-time tactical, base-builder in a procedurally generated universe. The wave defense style gameplay is for testing only. Production will be continuous. Please be sure to update this anywhere it is referenced (like below, though it is not required that it be as verbose)!
 
 **Project:** CUSTODIAN - Godot-based contract-driven tactical defense / procgen campaign game  
-**Last Updated:** 2026-05-14
+**Last Updated:** 2026-05-27
 
 ---
 
@@ -16,11 +16,12 @@ design/
 ├── README.md                      # This file - index & overview
 │
 ├── 00_meta/                       # Meta documents (templates, status, tracking)
-│   ├── PROJECT_STATUS.md
+│   ├── MASTER_ROADMAP.md          # Canonical milestone/feature tracking
+│   ├── PROJECT_STATUS.md          # Current project state (as of 2026-05-27)
 │   ├── SIZING_STRATEGY.md
 │   ├── TEMPLATE_*.md
-│   ├── DOCS_DRIFT_REPORT.md       # Doc vs. code integrity tracking
-│   ├── DOCUMENTATION_DRIFT_REPORT.md
+│   ├── DOCS_DRIFT_REPORT.md       # Canonical doc vs. code integrity tracking
+│   ├── LORE_GAMEPLAY_DUMP.md      # Archived - moved from design/ root
 │   ├── GAME_NOTES.md              # Archived - superseded by 03_content/
 │   ├── GAME_NOTES_DRAFT.md        # Archived - superseded draft
 │   └── GAMEPLAY_NOTES.md          # Incorporated into feature docs
@@ -148,7 +149,7 @@ design/
 
 ---
 
-## Active Focus (2026-05-14)
+## Active Focus (2026-05-27)
 
 **Priority 1 - Procgen Handoff Fixes:**
 - Camera bounds from procgen map (not legacy sectors)
@@ -156,12 +157,19 @@ design/
 - Reposition terminal/ammo caches to procgen coords
 - Register camera to "camera" group for game feel
 
-**Priority 2 - Mission Flow:**
+**Priority 2 - Ash-Bell / Forlorn-Ritualant Encounter:**
+- Implementation of Forlorn-Ritualant encounter scene
+- Silence Pressure + Thread Tension mechanics (per DETAILED_SPEC)
+- Dry Fountain apparition and White Thread Knot pickup
+- NPC dialogue system with proximity triggers
+- Procgen rare-room injection
+
+**Priority 3 - Mission Flow:**
 - Mission state machine implementation
 - Free-roam pre-assault loop
 - Manual assault trigger via terminal
 
-**Priority 3 - Polish:**
+**Priority 4 - Polish:**
 - Animation state machine completion
 - Shadow system integration
 - Weapon data system
@@ -178,4 +186,4 @@ design/
 
 ---
 
-*Use `00_meta/TRACKING.md` for day-to-day task management and `00_meta/ROADMAP.md` for milestone planning.*
+*Use `00_meta/MASTER_ROADMAP.md` for both milestone planning and day-to-day task management. `00_meta/TRACKING.md` and `02_features/_ACTIVE.md` are deprecated — see MASTER_ROADMAP.md.*

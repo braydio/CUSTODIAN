@@ -29,9 +29,19 @@ const ANIMATION_SPECS := {
 		"fps": 12.0,
 		"loop": false,
 	},
+	"melee_sw": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__fast_01__sw__10f__96.png",
+		"fps": 12.0,
+		"loop": false,
+	},
 	"melee_w": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__fast_01__w__11f__96.png",
 		"fps": 12.0,
+		"loop": false,
+	},
+	"stagger_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__s__8__96.png",
+		"fps": 10.0,
 		"loop": false,
 	},
 }
@@ -39,6 +49,16 @@ const ANIMATION_SPECS := {
 const FX_ANIMATION_SPECS := {
 	"melee_fx_e": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__fast_01__e__10f__96.png",
+		"fps": 12.0,
+		"loop": false,
+	},
+	"melee_fx_se": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__fast_01__se__10f__96.png",
+		"fps": 12.0,
+		"loop": false,
+	},
+	"melee_fx_sw": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__fast_01__sw__10f__96.png",
 		"fps": 12.0,
 		"loop": false,
 	},
@@ -79,6 +99,8 @@ static func get_move_animation(direction: Vector2) -> StringName:
 
 static func get_attack_animation(direction: Vector2) -> StringName:
 	if direction.x < -0.2:
+		if direction.y > 0.35:
+			return &"melee_sw"
 		return &"melee_w"
 	if direction.y > 0.35 and direction.x >= 0.0:
 		return &"melee_se"
@@ -86,7 +108,13 @@ static func get_attack_animation(direction: Vector2) -> StringName:
 
 
 static func get_attack_fx_animation(direction: Vector2) -> StringName:
-	return &"melee_fx_w" if direction.x < -0.2 else &"melee_fx_e"
+	if direction.x < -0.2:
+		if direction.y > 0.35:
+			return &"melee_fx_sw"
+		return &"melee_fx_w"
+	if direction.y > 0.35:
+		return &"melee_fx_se"
+	return &"melee_fx_e"
 
 
 static func _add_strip_animation(frames: SpriteFrames, animation_name: String, spec: Dictionary) -> void:

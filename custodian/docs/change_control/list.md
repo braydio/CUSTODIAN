@@ -3920,8 +3920,7 @@ Last updated: 2026-05-19
 - `design/` — active Godot feature/system implementation specs
 - `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md` — canonical lore, faction, and game-protocol authority
 - `design/03_content/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target
-- `design/FORLORN_RITUALANT_ENCOUNTER.md` — authored Ash-Bell encounter spec for the Forlorn-Ritualant
-- `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` — detailed authored Ash-Bell / Forlorn-Ritualant implementation spec
+- `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md — canonical Ash-Bell / Forlorn-Ritualant implementation spec (includes merged Toll Count appendix from deleted companion doc)
 
 ## Legacy Reference Only
 
@@ -19037,7 +19036,6 @@ The project has a loadable Ash-Bell event module with event state, placeholder a
 
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active design/spec docs: `design/FORLORN_RITUALANT_ENCOUNTER.md`, `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md`, `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 - Active runtime/docs files: `custodian/game/world/events/ash_bell/`, `custodian/content/dialogue/ash_bell/`, `custodian/content/items/lore/`, `custodian/content/procgen/special_rooms/`, `REQUIRED_ASSETS.md`
 - Historical reference only: legacy Python runtime/docs
 
@@ -19088,7 +19086,7 @@ The project has a loadable Ash-Bell event module with event state, placeholder a
 
 - Next action: wire production Ash-Bell art/audio when supplied, then add special-room insertion support to procgen.
 - Best starting files: `custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn`, `custodian/game/world/events/ash_bell/forlorn_ritualant_site.gd`
-- Required context: `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md`
+- Required context: `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md — canonical Ash-Bell / Forlorn-Ritualant implementation spec (includes merged Toll Count appendix from deleted companion doc)
 - Validation to run: `godot --headless --path custodian --script res://tools/validation/ash_bell_scene_smoke.gd`, then `godot --headless --path custodian --quit`
 - Blockers or open questions: production assets and persistent reward systems are not yet available.
 ```
@@ -28690,8 +28688,7 @@ Last updated: 2026-05-19
 - `design/` — active Godot feature/system implementation specs
 - `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md` — canonical lore, faction, and game-protocol authority
 - `design/03_content/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target
-- `design/FORLORN_RITUALANT_ENCOUNTER.md` — authored Ash-Bell encounter spec for the Forlorn-Ritualant
-- `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` — detailed authored Ash-Bell / Forlorn-Ritualant implementation spec
+- `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md — canonical Ash-Bell / Forlorn-Ritualant implementation spec (includes merged Toll Count appendix from deleted companion doc)
 
 ## Legacy Reference Only
 
@@ -42821,7 +42818,6 @@ The project has a loadable Ash-Bell event module with event state, placeholder a
 
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active design/spec docs: `design/FORLORN_RITUALANT_ENCOUNTER.md`, `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md`, `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 - Active runtime/docs files: `custodian/game/world/events/ash_bell/`, `custodian/content/dialogue/ash_bell/`, `custodian/content/items/lore/`, `custodian/content/procgen/special_rooms/`, `REQUIRED_ASSETS.md`
 - Historical reference only: legacy Python runtime/docs
 
@@ -42872,7 +42868,7 @@ The project has a loadable Ash-Bell event module with event state, placeholder a
 
 - Next action: wire production Ash-Bell art/audio when supplied, then add special-room insertion support to procgen.
 - Best starting files: `custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn`, `custodian/game/world/events/ash_bell/forlorn_ritualant_site.gd`
-- Required context: `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md`
+- Required context: `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md — canonical Ash-Bell / Forlorn-Ritualant implementation spec (includes merged Toll Count appendix from deleted companion doc)
 - Validation to run: `godot --headless --path custodian --script res://tools/validation/ash_bell_scene_smoke.gd`, then `godot --headless --path custodian --quit`
 - Blockers or open questions: production assets and persistent reward systems are not yet available.
 ```

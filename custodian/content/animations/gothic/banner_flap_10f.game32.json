@@ -1,36 +1,78 @@
 {
-  "schema": "game32.animation.v1",
-  "id": "gothic_banner_flap_10f",
-  "display_name": "Gothic Banner Flap 10 Frame",
-  "path": "custodian/content/animations/gothic/banner_flap_10f.png",
-  "layout": "horizontal_strip",
-  "frames": 10,
-  "frame_size_px": {
-    "w": 114,
-    "h": 130
+  "schema": "game32.asset.v2",
+  "id": "banner_flap_10f",
+  "display_name": "Banner Flap 10F",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/animations/gothic/banner_flap_10f.png",
+    "section": "tiles",
+    "subtype": "uncategorized",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 1140,
+      "h": 130
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
-  "fps": 8,
-  "loop": true,
-  "semantic_role": "ambient_banner_flap",
+  "file": {
+    "path": "res://content/animations/gothic/banner_flap_10f.png",
+    "pixel_size": {
+      "w": 1140,
+      "h": 130
+    }
+  },
+  "classification": {
+    "asset_type": "animation",
+    "semantic_role": "gothic_banner_flap_animation",
+    "placement_layer": "wall_dressing",
+    "tags": [
+      "needs_review",
+      "gothic",
+      "banner",
+      "cloth",
+      "animation",
+      "wall_dressing",
+      "nonblocking"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 36,
+      "h": 5
+    },
+    "origin_mode": "top_left",
+    "snap": "tile_or_free",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 0,
+      "y": 0
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "review_status": "reviewed",
+    "collision_shape": "none"
+  },
   "procgen": {
     "uses": [
-      "wall_dressing",
-      "faction_marker",
-      "wind_animation",
-      "compound_dressing"
+      "animated_wall_dressing",
+      "banner_dressing",
+      "gothic_atmosphere"
     ],
-    "tags": [
-      "animated",
-      "banner",
-      "gothic",
-      "ambient",
-      "faction_dressing"
-    ],
-    "weight": 8
+    "weight": 8,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
   },
-  "source_asset": {
-    "id": "gothic_compound_dressing_04",
-    "path": "custodian/content/props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_04.png",
-    "visual_index": 113
-  }
+  "master_index": 4
 }

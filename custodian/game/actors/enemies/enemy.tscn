@@ -1,7 +1,12 @@
-[gd_scene format=3 uid="uid://dgtvm5ncnayht"]
+[gd_scene load_steps=7 format=3 uid="uid://dgtvm5ncnayht"]
 
 [ext_resource type="Script" uid="uid://bh83sfgbwu3yl" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="SpriteFrames" uid="uid://cbmbkih7g80ah" path="res://game/actors/enemies/enemy.tres" id="2_wqcwe"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="3_blackboard"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_perception_component.gd" id="4_perception"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_objective_sensor.gd" id="5_sensor"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_loot_carrier.gd" id="6_carrier"]
+[ext_resource type="Script" path="res://game/actors/enemies/enemy_behavior_state_machine.gd" id="7_behavior"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
 size = Vector2(24, 24)
@@ -42,3 +47,19 @@ scale = Vector2(1.75, 1.75)
 sprite_frames = ExtResource("2_wqcwe")
 animation = &"red_walk_northeast"
 frame_progress = 0.39180666
+
+[node name="EnemyBlackboard" type="Node" parent="."]
+script = ExtResource("3_blackboard")
+
+[node name="EnemyPerceptionComponent" type="Node" parent="."]
+script = ExtResource("4_perception")
+
+[node name="EnemyObjectiveSensor" type="Node" parent="."]
+script = ExtResource("5_sensor")
+
+[node name="EnemyLootCarrier" type="Node" parent="."]
+script = ExtResource("6_carrier")
+
+[node name="EnemyBehaviorStateMachine" type="Node" parent="."]
+script = ExtResource("7_behavior")
+enabled = false

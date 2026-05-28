@@ -1,4 +1,4 @@
-# `design/20_features/in_progress/INTEGRATION_CONTRACT_GLUE_LAYER.md`
+# `design/03_architecture/INTEGRATION_CONTRACT_GLUE_LAYER.md`
 
 # Integration Contract (Glue Layer)
 

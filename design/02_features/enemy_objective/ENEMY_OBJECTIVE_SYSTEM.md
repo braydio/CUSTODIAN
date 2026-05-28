@@ -1,9 +1,9 @@
 # CUSTODIAN — Enemy Objective System Implementation Plan
 
 **Created:** 2026-03-05
-**Status:** ✅ IMPLEMENTED
+**Status:** ✅ IMPLEMENTED + vault-theft v1 in progress
 **Depends On:** Wave Spawning System
-**Last Updated:** 2026-04-08
+**Last Updated:** 2026-05-25
 **Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
@@ -15,6 +15,21 @@ Enemies currently just chase the player. This system gives them **objectives** �
 This creates the core defense gameplay: enemies attack your base, not just you.
 
 This file defines base target-priority behavior. For future ideology-driven target selection and behavior-first lore delivery, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
+
+### Vault Theft Extension
+
+The next runtime slice extends objective selection beyond structure attacks. Human-style enemies may now evaluate vault storage, Operator detection, suspicious noise, and escape routes. This remains a small finite-state behavior layer, not a full GOAP planner.
+
+New objective loop:
+
+```text
+idle/patrol -> investigate noise or choose storage -> open storage -> steal resources -> escape
+idle/patrol -> notice Operator -> engage or flee based on profile/morale
+carrying loot -> prioritize enemy_exit/vault_exit over normal target pressure
+death/interruption while carrying loot -> drop recoverable stolen resource bundle
+```
+
+Simulation authority stays in enemy/vault systems. Minimap and terminal only read behavior/vault snapshots.
 
 ---
 
@@ -57,6 +72,29 @@ Enemy objectives should eventually become part of the game’s storytelling surf
 - relay corruption
 - classification or desecration behavior
 - tactical avoidance of taboo or sealed spaces
+
+### Behavior Variables
+
+Objective selection should be profile driven and inspectable. V1 profile IDs are:
+
+- `raider_grunt`: balanced aggression/theft/self-preservation.
+- `iconoclast_looter`: high theft, medium sabotage, lower aggression.
+- `zealot_wanderer`: high curiosity/aggression, poor detection, low theft.
+
+V1 objective scores are intentionally transparent:
+
+```text
+carrying loot -> exit score dominates
+visible Operator close -> aggression score with proximity bonus
+storage with resources -> theft score minus distance penalty
+heard noise / last known Operator position -> curiosity investigation score
+```
+
+## 2.1 Vault Storage Objectives
+
+Vault storage is represented by `VaultStorage` nodes in group `vault_storage`; `VaultManager` discovers and registers them. The manager is the authority for resource totals, theft, recovery, and permanent loss.
+
+Enemy theft removes resources only after the storage-open and steal timers complete. If the thief reaches an `enemy_exit`/`vault_exit`, the loss is committed permanently. If the thief dies first, it drops a `StolenResourcePickup` that returns the payload to the vault when recovered.
 
 ---
 

@@ -1,4 +1,4 @@
-es the Codex-ready implementation spec.
+This file contains the Codex-ready implementation spec.
 
 Grounding: active runtime is Godot under custodian/, new Godot specs belong in ./design/, and runtime changes should update design docs first. ￼ The existing doctrine also says automation is powerful but dumb, sector-scoped, and should not replace the Custodian’s tactical agency. ￼
 

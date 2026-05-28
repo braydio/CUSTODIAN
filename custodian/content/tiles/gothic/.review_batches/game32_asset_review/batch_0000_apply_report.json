@@ -1,0 +1,232 @@
+{
+  "applied_utc": "2026-05-27T04:59:26+00:00",
+  "review_id": "gothic_tiles_review_batch_0000",
+  "master_schema": "game32.gothic_master_sheet.v1",
+  "total_review_entries": 24,
+  "results": [
+    {
+      "batch_index": 0,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_001.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 1
+    },
+    {
+      "batch_index": 1,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_002.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 2
+    },
+    {
+      "batch_index": 2,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_003.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 3
+    },
+    {
+      "batch_index": 3,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_004.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 4
+    },
+    {
+      "batch_index": 4,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_005.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 5
+    },
+    {
+      "batch_index": 5,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_006.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 6
+    },
+    {
+      "batch_index": 6,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_007.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 7
+    },
+    {
+      "batch_index": 7,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_008.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 8
+    },
+    {
+      "batch_index": 8,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_009.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 9
+    },
+    {
+      "batch_index": 9,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_010.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 10
+    },
+    {
+      "batch_index": 10,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_011.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 11
+    },
+    {
+      "batch_index": 11,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_012.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 12
+    },
+    {
+      "batch_index": 12,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_013.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 13
+    },
+    {
+      "batch_index": 13,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_014.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 14
+    },
+    {
+      "batch_index": 14,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_015.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 15
+    },
+    {
+      "batch_index": 15,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_016.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 16
+    },
+    {
+      "batch_index": 16,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_017.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 17
+    },
+    {
+      "batch_index": 17,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_018.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 18
+    },
+    {
+      "batch_index": 18,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_019.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 19
+    },
+    {
+      "batch_index": 19,
+      "png": "custodian/content/tiles/gothic/decals/floor/floor_detail_020.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 20
+    },
+    {
+      "batch_index": 20,
+      "png": "custodian/content/tiles/gothic/decals/ritual/ritual_floor_decal_001.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 21
+    },
+    {
+      "batch_index": 21,
+      "png": "custodian/content/tiles/gothic/decals/ritual/ritual_floor_decal_002.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 22
+    },
+    {
+      "batch_index": 22,
+      "png": "custodian/content/tiles/gothic/decals/ritual/ritual_floor_decal_003.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 23
+    },
+    {
+      "batch_index": 23,
+      "png": "custodian/content/tiles/gothic/decals/ritual/ritual_floor_decal_004.png",
+      "action": "keep",
+      "status": "updated",
+      "details": "Asset block applied: classification, placement, collision, procgen, display_name",
+      "has_asset_block": true,
+      "master_index": 24
+    }
+  ],
+  "summary": {
+    "updated": 24
+  },
+  "cleanup": {
+    "deleted": 0,
+    "skipped_dry_run": 0,
+    "missing_sidecar": 24
+  }
+}

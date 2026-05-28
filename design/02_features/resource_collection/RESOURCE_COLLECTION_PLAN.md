@@ -77,6 +77,8 @@ Leave compound gate → small exterior ruin zone → collect → return
 
 This gives you the travel loop without building the full world map.
 
+Current implementation slice: the live Godot runtime now takes the first version of this idea inside the existing generated contract map. `ContractWorldLoader` places an export-controlled far-field resource patch away from spawn/compound, avoids road/parking/interior tiles, and uses the compatible resource-node presets as non-respawning local harvest targets.
+
 ### Stage 3 — Resource expedition maps
 
 Later, add actual expedition destinations:

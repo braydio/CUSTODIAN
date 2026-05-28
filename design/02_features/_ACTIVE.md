@@ -1,6 +1,12 @@
 # Active Features — Daily Driver
 
-**Last Updated:** 2026-03-27
+> ⚠️ **DEPRECATED:** This file is superseded by `design/00_meta/MASTER_ROADMAP.md` as the single source of truth for feature planning. All roadmap planning, milestone tracking, and priority queue management now lives there.
+>
+> **Process:** Before adding new features, check `MASTER_ROADMAP.md` first. Update `MASTER_ROADMAP.md` when status changes.
+>
+> This file is retained for reference and will be removed once all readers have migrated.
+
+**Last Updated:** 2026-03-27 (DEPRECATED)
 **Purpose:** Daily driver priority list — what's being worked on right now.
 
 ---

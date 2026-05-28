@@ -9,6 +9,8 @@ Repo-native sprite ingest for the active Godot runtime.
 - Aseprite exports can be staged through `custodian/tools/pipelines/aseprite_inbox.py`.
 - Operator curated body changes can trigger the live `SpriteFrames` rebuild through
   `custodian/tools/pipelines/update_operator_curated_resources.gd`.
+- Hover buggy vehicle sheets can trigger the live vehicle `SpriteFrames` rebuild through
+  `custodian/tools/pipelines/update_vehicle_runtime_resources.gd`.
 - Enemy, weapon, effects, vehicle, and turret outputs are written directly into the
   runtime-owned sprite domains already used by the game.
 
@@ -138,6 +140,16 @@ Enemy runtime import post-process:
 
 That hook runs a headless Godot import pass after writing enemy PNGs so dynamic enemy loaders can read the updated runtime sheets on the next boot. It does not yet build enemy `SpriteFrames` resources; current Shrumb and wolf loaders build those dynamically from their configured PNG paths.
 
+Vehicle runtime import post-process:
+
+```json
+{
+  "post_process": ["vehicle_runtime_import"]
+}
+```
+
+That hook rebuilds the hover buggy `SpriteFrames` resource from canonical sheets in `res://content/sprites/vehicles/hover_buggy/runtime/`. Use inbox names such as `hover_buggy__body__idle__omni__1f__256.png`, `hover_buggy__body__idle_start__omni__7f__256.png`, `hover_buggy__body__idle_loop__omni__6f__256.png`, and `hover_buggy__body__move__e__6f__256.png`.
+
 ## Examples
 
 Example manifests live in:
@@ -173,6 +185,12 @@ Rebuild operator curated resources directly:
 
 ```bash
 python custodian/tools/pipelines/reload_assets.py
+```
+
+Rebuild vehicle runtime resources directly:
+
+```bash
+godot --headless --path custodian --script res://tools/pipelines/update_vehicle_runtime_resources.gd
 ```
 
 Stage aseprite exports into the inbox and optionally run the current ingest:

@@ -1,0 +1,61 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "vault_shelf_supplies_01",
+  "display_name": "Vault Shelf Supplies 01",
+  "source": {
+    "master_sheet": "custodian/props/gothic/vault_propsheet_02.png",
+    "sheet_cell": {
+      "row": 1,
+      "col": 1,
+      "rows": 2,
+      "cols": 3
+    }
+  },
+  "file": {
+    "path": "custodian/content/props/gothic/vault_dressing/vault_shelf_supplies_01.png",
+    "pixel_size": {
+      "w": 128,
+      "h": 128
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "vault_dressing",
+    "placement_layer": "prop",
+    "tags": [
+      "vault",
+      "gothic",
+      "prop",
+      "shelf",
+      "supplies",
+      "storage",
+      "dressing"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 4,
+      "h": 4
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 64,
+      "y": 127
+    },
+    "snap": "tile_or_free",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 1,
+    "collision_shape": "footprint"
+  },
+  "runtime": {
+    "status": "extracted_from_source_sheet",
+    "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
+  }
+}

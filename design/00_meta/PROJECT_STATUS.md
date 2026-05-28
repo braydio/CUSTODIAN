@@ -1,17 +1,22 @@
 # CUSTODIAN — Project Status Summary
 
-**Last Updated:** 2026-03-12
+**Last Updated:** 2026-05-27
 
 ## Current Development Stage
 
-**Playable Godot combat slice with runtime procgen contract world**
+**Playable Godot combat slice with runtime procgen contract world + campaign architecture designed**
 
-The active Godot runtime now boots into a generated contract context:
+The active Godot runtime boots into a generated contract context with full 7-system campaign architecture documented:
 
 - PixelPlanets planet contract generation
 - Procgen map generation promoted into the live world
 - Local in-game terminal with contract/world snapshot and previews
 - Wave combat, turrets, supply drops, sprint, melee, and repair loop foundations
+- Campaign Flow, Hub, World Transition, Region Generation, and Compound Tile systems fully designed
+- Autonomous combat drones (v1 complete)
+- Vehicle registry + piloting system (in review)
+- Elevation tileset (live, metadata-first)
+- Ash-Bell encounter content (Forlorn-Ritualant) spec'd
 
 ## Implemented
 
@@ -20,7 +25,7 @@ The active Godot runtime now boots into a generated contract context:
 | Wave spawning | Done | `wave_manager.gd`, lane spawn nodes, fast/heavy variants |
 | Enemy director | Done | Threat, budget, lane/objective routing |
 | Enemy objectives | Done | Structure-first targeting with player fallback |
-| Enemy runtime visuals | Done | Base / fast / heavy variants now use 8-direction humanoid sheets in live wave spawns |
+| Enemy runtime visuals | Done | Base / fast / heavy variants use 8-direction humanoid sheets |
 | Turrets | Done | 4 archetypes, powered targeting and firing |
 | Player ranged combat | Done | Standard/heavy profiles, ammo, cooldowns |
 | Player melee combat | Done | Fast/heavy/combo timing, hit-stop, camera shake |
@@ -37,24 +42,40 @@ The active Godot runtime now boots into a generated contract context:
 | Game feel: screen shake | Done | Camera shake on hit |
 | Game feel: knockback | Done | Push enemies on melee hit |
 | Game feel: damage flash | Done | White flash on damage |
+| Camera procgen bounds | Done | Camera derives bounds from `World/ProcGenRuntime` tilemaps |
+| Camera snap to player spawn | Done | Camera snaps to procgen player spawn on load |
+| Camera group registration | Done | Camera joins "camera" group for game feel hooks |
+| Terminal repositioned | Done | Terminal moved to procgen coords |
+| Ammo caches repositioned | Done | Caches moved to procgen coords |
+| Weapon data system | Done | JSON weapon stats load from `content/weapons/` |
+| Autonomous combat drones | Done | v1 complete with 4 modes, squad limits, independent HP |
 
 ## In Progress
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Procgen handoff cleanup | Partial | Camera/runtime anchor handoff is largely live; remaining work is mouse aim validation and shadow coupling |
-| Compound identity pass | Partial | Compound has sector-like footprints, but named sector roles are not yet instantiated as real entities |
-| Procgen layout tuning | Partial | Open/cave variety added, but still needs feel iteration |
-| Sector damage integration | Partial | Runtime systems exist; procgen compound and damage semantics still need deeper coupling |
-| Animation overhaul integration | Partial | Runtime uses updated attacks/sprint/drone hooks, but animation set is still evolving |
+| Mouse aim validation | Pending | Needs explicit validation against procgen camera handoff |
+| Shadow system integration | Pending | Node2D procedural approach, TileMap path aspirational |
+| Weapon data factory expansion | Incomplete | Factory reads 10 of 20+ schema fields |
+| Power system values alignment | Minor drift | Design says 0.75 damaged efficiency, code uses 0.6 |
+| Enemy director budget tuning | Minor drift | Code uses 0.65 budget multiplier vs design's 1.5 |
+| Mission state machine | Planned | v0.4.0 milestone — phase enum, transitions, wave binding |
+| Free-roam pre-assault | Design | v0.5.0 milestone — traverse, scavenge, power routing |
+| Compound sectors as entities | Design | v0.6.0 milestone — COMMAND, POWER, DEFENSE, FABRICATION |
+| ARRN relay network | Design | v0.7.0 milestone — 4 relay nodes, SCAN/STABILIZE/SYNC |
+| World expansion & Hub | Design | v0.8.0 milestone — campaign flow, world transitions |
+| Power & logistics | Design | v1.0 milestone — routing, load, blackout mechanics |
+| Vehicle system | Review | v1.1 milestone — first pilotable vehicle, registry |
 
-## Known Issues (Procgen Handoff)
+## Known Issues
 
 | Priority | Issue | Impact |
 |----------|-------|--------|
 | **HIGH** | Mouse/world aim path still needs explicit validation against procgen camera handoff | Bullets/crosshair may drift if any caller still assumes stale world coordinates |
-| **MEDIUM** | Shadow system is still only partially coupled to procgen runtime updates | Visual readability can drift from live wall/floor state |
-| **LOW** | Project docs still described older handoff failures after camera/anchor fixes landed | Roadmap/status guidance drifted from runtime reality |
+| **MEDIUM** | Shadow system is only partially coupled to procgen runtime updates | Visual readability can drift from live wall/floor state |
+| **MEDIUM** | Weapon data factory reads only 10 of 20+ schema fields | Extended stats (crit, stagger, pellets) unused |
+| **LOW** | Power values drift between doc (0.75) and code (0.6) | Tuning-impact only |
+| **LOW** | Enemy director budget multiplier drifted (design 1.5, code 0.65) | Pacing was intentionally tuned |
 
 ## Not Yet Implemented
 
@@ -62,9 +83,12 @@ The active Godot runtime now boots into a generated contract context:
 |---------|----------|-------|
 | Named procgen sectors as real gameplay structures | High | Command/power/defense/fabrication should become authoritative spawned structures |
 | Full assault loop against compound ingress/sector objectives | High | Current spawns route correctly, but objective semantics are still hybrid |
+| Campaign flow state machine | High | Boot → Compound → Hub → Deploy → Mission → Return loop |
+| Hub persistent state | High | Offers, knowledge archive, campaign history |
 | Save/snapshot persistence | Medium | No campaign persistence yet |
 | Fabrication/logistics gameplay | Medium | Economy layer still absent |
 | ARRN relay / campaign progression | Medium | Not yet ported into Godot runtime |
+| Compound tile system (full) | Low | Phase 1 via SIMPLIFIED_POWER_IN_ROOMS; full 15-type system is aspirational |
 
 ## Current Runtime Loop
 
@@ -82,59 +106,37 @@ The active Godot runtime now boots into a generated contract context:
    - map preview
 9. Combat loop proceeds with waves, enemies, turrets, supply drops, repair
 
-**NOTE:** The procgen handoff is functional for camera and world anchors. The remaining cleanup is mouse/world aim validation plus deeper shadow/system coupling.
-
 ## Main Risks / Gaps
 
 - Mouse/world aim path still needs validation against the procgen camera handoff
-- Compound buildings are currently visual/map-space structures, not yet instantiated as named authoritative sector entities.
-- Power and sector systems still reflect legacy/static assumptions in places.
-- Procgen readability is improved, but still needs aesthetic/autotile refinement.
+- Compound buildings are currently visual/map-space structures, not yet instantiated as named authoritative sector entities
+- Power and sector systems still reflect legacy/static assumptions in places
+- Procgen readability is improved, but still needs aesthetic/autotile refinement
 - Shadow coupling to dynamic procgen/runtime updates is still incomplete
+- Campaign architecture is fully designed but not yet implemented — design-code drift risk grows the longer it stays unimplemented
 
 ## Next Priority
 
-1. **FIX: Validate mouse/world aim path** - Confirm all aiming callers resolve correctly against procgen runtime camera state
-2. **FIX: Shadow system integration** - Keep shadow overlay authoritative against live procgen wall/floor changes
-3. **CLEANUP: Update roadmap/status docs** - Keep planning aligned with shipped procgen handoff work
-4. Promote compound pads into real spawned structures (`COMMAND`, `POWER`, `DEFENSE`, etc.)
-5. Bind assault objectives directly to procgen compound ingress/sector targets
+1. **FIX: Validate mouse/world aim path** — Confirm all aiming callers resolve correctly against procgen runtime camera state
+2. **FIX: Shadow system integration** — Keep shadow overlay authoritative against live procgen wall/floor changes
+3. **IMPLEMENT: Mission state machine** — v0.4.0 milestone (GameState phase enum, transitions)
+4. **IMPLEMENT: Free-roam pre-assault** — v0.5.0 milestone (traverse, scavenge, fortification)
+5. Promote compound pads into real spawned structures (`COMMAND`, `POWER`, `DEFENSE`, etc.)
 
 ---
 
-## Free-Roam Pre-Assault Roadmap
+## Milestone Roadmap
 
-**NEW:** See `design/FREE_ROAM_PRE_ASSAULT_WALKTHROUGH.md` for the complete implementation plan to add free-roam exploration and strategic prep before assault begins.
+**See authoritative roadmap:** [`MASTER_ROADMAP.md`](MASTER_ROADMAP.md)
 
-### Quick Summary
-- **Phase 0:** Procgen handoff fixes (camera, firing, group registration)
-- **Phase 1:** Mission state machine (CONTRACT_BRIEFING → FREE_ROAM_PREP → ASSAULT_ACTIVE → POST_ASSAULT → EXFIL)
-- **Phase 2:** Manual assault trigger via terminal command
-- **Phase 3:** Authoritative procgen sectors as interactable entities
-- **Phase 4:** Real prep systems (fabrication, fortification, power routing, scavenging)
-- **Phase 5:** Terminal interface for all prep commands
-
-**Why this matters:** The current runtime immediately starts wave combat after 15 seconds. This roadmap enables players to traverse the map, prepare defenses, scavenge resources, and CHOOSE when to start the assault.
-
----
-
-## Operator Animation State Machine
-
-**NEW:** See `design/OPERATOR_ANIMATION_STATE_MACHINE.md` for the complete state transition mapping and missing state implementation plan.
-
-### Current State
-- State machine is now connected to the operator attack + locomotion request path; block is live, while reload/interact and broader non-combat states are still pending
-- Operator directly controls `AnimatedSprite2D` instead of using state machine
-- Existing states: idle, walk, sprint, attack_fast, attack_heavy, attack_dash, equip_weapon, stagger, death
-
-### Missing States (Priority Order)
-1. **RELOAD** - High priority, ranged weapons need reload
-2. **INTERACT** - High priority, world interaction needs visual
-3. **PICKUP** - Medium priority, scavenging needs visual
-4. **REPAIR** - Medium priority, repair gameplay exists
-5. **CROUCH** - Low priority, tactical option
-
-### Implementation Path
-- Phase 1: Wire state machine to operator + create Block/Reload/Interact states
-- Phase 2: Create Pickup/Repair/Crouch states
-- Phase 3: Polish (victory, emotes)
+| Milestone | Target | Status | Focus |
+|-----------|--------|--------|-------|
+| v0.3.0 | TBD | in_progress | Procgen handoff fixes (mouse aim, shadow) |
+| v0.4.0 | TBD | planned | Mission state machine |
+| v0.5.0 | TBD | design | Free-roam pre-assault |
+| v0.6.0 | TBD | design | Compound sectors as entities |
+| v0.7.0 | TBD | design | ARRN relay network |
+| v0.8.0 | TBD | design | World expansion & Hub |
+| v1.0 | TBD | design | Power & logistics |
+| v1.1 | TBD | design | Vehicle system |
+| v1.2 | TBD | design | Command Terminal UI |

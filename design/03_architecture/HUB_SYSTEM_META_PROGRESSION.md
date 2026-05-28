@@ -1,4 +1,4 @@
-# `design/20_features/in_progress/HUB_SYSTEM_META_PROGRESSION.md`
+# `design/03_architecture/HUB_SYSTEM_META_PROGRESSION.md`
 
 # Hub System (Meta Progression)
 

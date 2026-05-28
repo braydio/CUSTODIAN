@@ -1,0 +1,561 @@
+{
+  "schema": "game32.asset_pack.v1",
+  "id": "gothic_vault_asset_pack_v1",
+  "display_name": "Gothic Vault Asset Pack V1",
+  "source_root": "custodian/props/gothic",
+  "asset_count": 32,
+  "assets": [
+    {
+      "id": "stolen_resource_bundle_01",
+      "path": "custodian/content/sprites/items/stolen_resources/stolen_resource_bundle_01.png",
+      "manifest": "custodian/content/sprites/items/stolen_resources/stolen_resource_bundle_01.game32.json",
+      "asset_type": "sprites",
+      "semantic_role": "stolen_resource_pickup_sprite",
+      "placement_layer": "item",
+      "tags": [
+        "vault",
+        "gothic",
+        "item",
+        "pickup",
+        "stolen_resources",
+        "bundle"
+      ]
+    },
+    {
+      "id": "stolen_resource_bundle_scrap_01",
+      "path": "custodian/content/sprites/items/stolen_resources/stolen_resource_bundle_scrap_01.png",
+      "manifest": "custodian/content/sprites/items/stolen_resources/stolen_resource_bundle_scrap_01.game32.json",
+      "asset_type": "sprites",
+      "semantic_role": "stolen_resource_pickup_sprite",
+      "placement_layer": "item",
+      "tags": [
+        "vault",
+        "gothic",
+        "item",
+        "pickup",
+        "scrap",
+        "stolen_resources",
+        "bundle"
+      ]
+    },
+    {
+      "id": "stolen_resource_bundle_alloy_01",
+      "path": "custodian/content/sprites/items/stolen_resources/stolen_resource_bundle_alloy_01.png",
+      "manifest": "custodian/content/sprites/items/stolen_resources/stolen_resource_bundle_alloy_01.game32.json",
+      "asset_type": "sprites",
+      "semantic_role": "stolen_resource_pickup_sprite",
+      "placement_layer": "item",
+      "tags": [
+        "vault",
+        "gothic",
+        "item",
+        "pickup",
+        "alloy",
+        "stolen_resources",
+        "bundle"
+      ]
+    },
+    {
+      "id": "stolen_resource_bundle_power_01",
+      "path": "custodian/content/sprites/items/stolen_resources/stolen_resource_bundle_power_01.png",
+      "manifest": "custodian/content/sprites/items/stolen_resources/stolen_resource_bundle_power_01.game32.json",
+      "asset_type": "sprites",
+      "semantic_role": "stolen_resource_pickup_sprite",
+      "placement_layer": "item",
+      "tags": [
+        "vault",
+        "gothic",
+        "item",
+        "pickup",
+        "power_components",
+        "stolen_resources",
+        "bundle",
+        "glow"
+      ]
+    },
+    {
+      "id": "vault_resource_pile_scrap_01",
+      "path": "custodian/content/props/gothic/vault_dressing/vault_resource_pile_scrap_01.png",
+      "manifest": "custodian/content/props/gothic/vault_dressing/vault_resource_pile_scrap_01.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_resource_display_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "resource",
+        "scrap",
+        "dressing",
+        "storage_room"
+      ]
+    },
+    {
+      "id": "vault_resource_pile_alloy_01",
+      "path": "custodian/content/props/gothic/vault_dressing/vault_resource_pile_alloy_01.png",
+      "manifest": "custodian/content/props/gothic/vault_dressing/vault_resource_pile_alloy_01.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_resource_display_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "resource",
+        "alloy",
+        "dressing",
+        "storage_room"
+      ]
+    },
+    {
+      "id": "vault_resource_pile_power_components_01",
+      "path": "custodian/content/props/gothic/vault_dressing/vault_resource_pile_power_components_01.png",
+      "manifest": "custodian/content/props/gothic/vault_dressing/vault_resource_pile_power_components_01.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_resource_display_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "resource",
+        "power_components",
+        "dressing",
+        "storage_room",
+        "glow"
+      ]
+    },
+    {
+      "id": "vault_resource_crate_stack_01",
+      "path": "custodian/content/props/gothic/vault_dressing/vault_resource_crate_stack_01.png",
+      "manifest": "custodian/content/props/gothic/vault_dressing/vault_resource_crate_stack_01.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_dressing",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "crate_stack",
+        "storage",
+        "dressing",
+        "cover"
+      ]
+    },
+    {
+      "id": "vault_shelf_supplies_01",
+      "path": "custodian/content/props/gothic/vault_dressing/vault_shelf_supplies_01.png",
+      "manifest": "custodian/content/props/gothic/vault_dressing/vault_shelf_supplies_01.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_dressing",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "shelf",
+        "supplies",
+        "storage",
+        "dressing"
+      ]
+    },
+    {
+      "id": "vault_chest_small_01",
+      "path": "custodian/content/props/gothic/vault_storage/vault_chest_small_01.png",
+      "manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_storage_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "storage",
+        "chest",
+        "loot",
+        "stealable",
+        "closed"
+      ]
+    },
+    {
+      "id": "vault_chest_small_01_open",
+      "path": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_open.png",
+      "manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_open.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_storage_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "storage",
+        "chest",
+        "loot",
+        "stealable",
+        "open",
+        "full"
+      ]
+    },
+    {
+      "id": "vault_chest_small_01_empty",
+      "path": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_empty.png",
+      "manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_empty.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_storage_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "storage",
+        "chest",
+        "loot",
+        "stealable",
+        "open",
+        "empty"
+      ]
+    },
+    {
+      "id": "vault_chest_small_01_damaged",
+      "path": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_damaged.png",
+      "manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_damaged.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_storage_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "storage",
+        "chest",
+        "damaged",
+        "looted"
+      ]
+    },
+    {
+      "id": "vault_resource_crate_01",
+      "path": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01.png",
+      "manifest": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_storage_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "storage",
+        "crate",
+        "stealable",
+        "closed"
+      ]
+    },
+    {
+      "id": "vault_resource_crate_01_open",
+      "path": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_open.png",
+      "manifest": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_open.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_storage_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "storage",
+        "crate",
+        "stealable",
+        "open",
+        "full"
+      ]
+    },
+    {
+      "id": "vault_resource_crate_01_empty",
+      "path": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_empty.png",
+      "manifest": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_empty.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_storage_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "storage",
+        "crate",
+        "stealable",
+        "open",
+        "empty"
+      ]
+    },
+    {
+      "id": "vault_lockbox_01",
+      "path": "custodian/content/props/gothic/vault_storage/vault_lockbox_01.png",
+      "manifest": "custodian/content/props/gothic/vault_storage/vault_lockbox_01.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_storage_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "storage",
+        "lockbox",
+        "safe",
+        "stealable",
+        "closed"
+      ]
+    },
+    {
+      "id": "vault_lockbox_01_open",
+      "path": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_open.png",
+      "manifest": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_open.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_storage_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "storage",
+        "lockbox",
+        "safe",
+        "stealable",
+        "open",
+        "full"
+      ]
+    },
+    {
+      "id": "vault_lockbox_01_empty",
+      "path": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_empty.png",
+      "manifest": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_empty.game32.json",
+      "asset_type": "props",
+      "semantic_role": "vault_storage_prop",
+      "placement_layer": "prop",
+      "tags": [
+        "vault",
+        "gothic",
+        "prop",
+        "storage",
+        "lockbox",
+        "safe",
+        "stealable",
+        "open",
+        "empty"
+      ]
+    },
+    {
+      "id": "vault_door_closed_01",
+      "path": "custodian/content/doors/gothic/vault/vault_door_closed_01.png",
+      "manifest": "custodian/content/doors/gothic/vault/vault_door_closed_01.game32.json",
+      "asset_type": "doors",
+      "semantic_role": "vault_door",
+      "placement_layer": "door",
+      "tags": [
+        "vault",
+        "gothic",
+        "door",
+        "vault_door",
+        "closed",
+        "blocking"
+      ]
+    },
+    {
+      "id": "vault_door_open_01",
+      "path": "custodian/content/doors/gothic/vault/vault_door_open_01.png",
+      "manifest": "custodian/content/doors/gothic/vault/vault_door_open_01.game32.json",
+      "asset_type": "doors",
+      "semantic_role": "vault_door",
+      "placement_layer": "door",
+      "tags": [
+        "vault",
+        "gothic",
+        "door",
+        "vault_door",
+        "open",
+        "passage"
+      ]
+    },
+    {
+      "id": "vault_gate_barred_01",
+      "path": "custodian/content/doors/gothic/vault/vault_gate_barred_01.png",
+      "manifest": "custodian/content/doors/gothic/vault/vault_gate_barred_01.game32.json",
+      "asset_type": "doors",
+      "semantic_role": "vault_gate",
+      "placement_layer": "door",
+      "tags": [
+        "vault",
+        "gothic",
+        "door",
+        "gate",
+        "barred",
+        "closed",
+        "blocking"
+      ]
+    },
+    {
+      "id": "vault_gate_broken_01",
+      "path": "custodian/content/doors/gothic/vault/vault_gate_broken_01.png",
+      "manifest": "custodian/content/doors/gothic/vault/vault_gate_broken_01.game32.json",
+      "asset_type": "doors",
+      "semantic_role": "vault_gate",
+      "placement_layer": "door",
+      "tags": [
+        "vault",
+        "gothic",
+        "door",
+        "gate",
+        "broken",
+        "passage",
+        "damaged"
+      ]
+    },
+    {
+      "id": "vault_door_lockplate_01",
+      "path": "custodian/content/doors/gothic/vault/vault_door_lockplate_01.png",
+      "manifest": "custodian/content/doors/gothic/vault/vault_door_lockplate_01.game32.json",
+      "asset_type": "doors",
+      "semantic_role": "vault_lock_mechanism",
+      "placement_layer": "door",
+      "tags": [
+        "vault",
+        "gothic",
+        "door",
+        "lock",
+        "lockplate",
+        "mechanism",
+        "overlay"
+      ]
+    },
+    {
+      "id": "vault_wall_corner_inner_ne_01",
+      "path": "custodian/content/walls/gothic/vault/vault_wall_corner_inner_ne_01.png",
+      "manifest": "custodian/content/walls/gothic/vault/vault_wall_corner_inner_ne_01.game32.json",
+      "asset_type": "walls",
+      "semantic_role": "vault_wall_corner",
+      "placement_layer": "wall",
+      "tags": [
+        "vault",
+        "gothic",
+        "wall",
+        "corner",
+        "inner",
+        "ne",
+        "blocking"
+      ]
+    },
+    {
+      "id": "vault_wall_corner_inner_nw_01",
+      "path": "custodian/content/walls/gothic/vault/vault_wall_corner_inner_nw_01.png",
+      "manifest": "custodian/content/walls/gothic/vault/vault_wall_corner_inner_nw_01.game32.json",
+      "asset_type": "walls",
+      "semantic_role": "vault_wall_corner",
+      "placement_layer": "wall",
+      "tags": [
+        "vault",
+        "gothic",
+        "wall",
+        "corner",
+        "inner",
+        "nw",
+        "blocking"
+      ]
+    },
+    {
+      "id": "vault_wall_corner_outer_ne_01",
+      "path": "custodian/content/walls/gothic/vault/vault_wall_corner_outer_ne_01.png",
+      "manifest": "custodian/content/walls/gothic/vault/vault_wall_corner_outer_ne_01.game32.json",
+      "asset_type": "walls",
+      "semantic_role": "vault_wall_corner",
+      "placement_layer": "wall",
+      "tags": [
+        "vault",
+        "gothic",
+        "wall",
+        "corner",
+        "outer",
+        "ne",
+        "blocking"
+      ]
+    },
+    {
+      "id": "vault_wall_corner_outer_nw_01",
+      "path": "custodian/content/walls/gothic/vault/vault_wall_corner_outer_nw_01.png",
+      "manifest": "custodian/content/walls/gothic/vault/vault_wall_corner_outer_nw_01.game32.json",
+      "asset_type": "walls",
+      "semantic_role": "vault_wall_corner",
+      "placement_layer": "wall",
+      "tags": [
+        "vault",
+        "gothic",
+        "wall",
+        "corner",
+        "outer",
+        "nw",
+        "blocking"
+      ]
+    },
+    {
+      "id": "vault_wall_end_left_01",
+      "path": "custodian/content/walls/gothic/vault/vault_wall_end_left_01.png",
+      "manifest": "custodian/content/walls/gothic/vault/vault_wall_end_left_01.game32.json",
+      "asset_type": "walls",
+      "semantic_role": "vault_wall_end",
+      "placement_layer": "wall",
+      "tags": [
+        "vault",
+        "gothic",
+        "wall",
+        "endcap",
+        "left",
+        "blocking"
+      ]
+    },
+    {
+      "id": "vault_wall_end_right_01",
+      "path": "custodian/content/walls/gothic/vault/vault_wall_end_right_01.png",
+      "manifest": "custodian/content/walls/gothic/vault/vault_wall_end_right_01.game32.json",
+      "asset_type": "walls",
+      "semantic_role": "vault_wall_end",
+      "placement_layer": "wall",
+      "tags": [
+        "vault",
+        "gothic",
+        "wall",
+        "endcap",
+        "right",
+        "blocking"
+      ]
+    },
+    {
+      "id": "vault_wall_pillar_01",
+      "path": "custodian/content/walls/gothic/vault/vault_wall_pillar_01.png",
+      "manifest": "custodian/content/walls/gothic/vault/vault_wall_pillar_01.game32.json",
+      "asset_type": "walls",
+      "semantic_role": "vault_wall_pillar",
+      "placement_layer": "wall",
+      "tags": [
+        "vault",
+        "gothic",
+        "wall",
+        "pillar",
+        "support",
+        "blocking"
+      ]
+    },
+    {
+      "id": "vault_wall_pillar_02",
+      "path": "custodian/content/walls/gothic/vault/vault_wall_pillar_02.png",
+      "manifest": "custodian/content/walls/gothic/vault/vault_wall_pillar_02.game32.json",
+      "asset_type": "walls",
+      "semantic_role": "vault_wall_pillar",
+      "placement_layer": "wall",
+      "tags": [
+        "vault",
+        "gothic",
+        "wall",
+        "pillar",
+        "support",
+        "blocking",
+        "alternate"
+      ]
+    }
+  ]
+}

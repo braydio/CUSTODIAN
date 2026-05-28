@@ -1,0 +1,81 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_wall_corner_or_end_024",
+  "display_name": "Gothic Wall Corner Or End 024",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_024.png",
+    "section": "tiles",
+    "subtype": "wall_corner_or_end",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 122,
+      "h": 106
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/tiles/gothic/wall_corner_or_end/gothic_wall_corner_or_end_024.png",
+    "pixel_size": {
+      "w": 122,
+      "h": 106
+    }
+  },
+  "classification": {
+    "asset_type": "doors",
+    "semantic_role": "large_gothic_closed_gate_structure",
+    "placement_layer": "door",
+    "tags": [
+      "gothic",
+      "wall",
+      "blocking",
+      "gate",
+      "large",
+      "closed",
+      "metal",
+      "stone",
+      "cyan_accent"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 4,
+      "h": 4
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 61,
+      "y": 106
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 2,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "compound_entrance_gate",
+      "large_gate",
+      "main_gate",
+      "restricted_area_gate"
+    ],
+    "weight": 4,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 23
+}

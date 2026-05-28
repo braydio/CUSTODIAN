@@ -12,10 +12,22 @@
       "y": 6,
       "w": 62,
       "h": 71
-    }
+    },
+    "master_sheet": null,
+    "original_path": "res://content/tiles/gothic/floors/gothic_floor_mud_gravel_02.png",
+    "section": "tiles",
+    "subtype": "floors",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 62,
+      "h": 71
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/tiles/gothic/floors/gothic_floor_mud_gravel_02.png",
+    "path": "res://content/tiles/gothic/floors/gothic_floor_mud_gravel_02.png",
     "pixel_size": {
       "w": 62,
       "h": 71
@@ -23,7 +35,7 @@
   },
   "classification": {
     "asset_type": "tiles",
-    "semantic_role": "walkable_floor_variant",
+    "semantic_role": "mud_gravel_walkable_floor_variant",
     "placement_layer": "ground",
     "tags": [
       "damaged",
@@ -31,8 +43,10 @@
       "gothic",
       "gravel",
       "mud",
-      "walkable"
-    ]
+      "walkable",
+      "outdoor"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -48,13 +62,15 @@
     "snap": "tile",
     "allow_mirror_x": false,
     "allow_rotation": false,
-    "y_sort": false
+    "y_sort": false,
+    "review_status": "reviewed"
   },
   "collision": {
     "blocks_movement": false,
     "blocks_sight": false,
     "cover_value": 0,
-    "collision_shape": "none"
+    "collision_shape": "none",
+    "review_status": "reviewed"
   },
   "procgen": {
     "uses": [
@@ -67,6 +83,7 @@
     "can_spawn_indoor": false,
     "can_spawn_outdoor": true,
     "supports_gothic_compound": true,
-    "review_status": "semantic_band_assigned"
-  }
+    "review_status": "reviewed"
+  },
+  "master_index": 47
 }

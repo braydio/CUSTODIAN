@@ -1,0 +1,70 @@
+{
+  "schema": "custodian.modular_flat_png_pair_review.v1",
+  "root": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/png",
+  "pair_count": 4,
+  "missing": [
+    {
+      "key": "operator_body_mocular_part_fast_attack_strike_01_s_4f",
+      "lower": null,
+      "upper": "operator_body_mocular_upper_fast_attack_strike_01_s_4f__0520953b__sheet.png"
+    }
+  ],
+  "records": [
+    {
+      "id": "operator_body_modular_combined_run_01_e_5f_96",
+      "lower": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/png/operator_body_modular_lower_run_01_e_5f_96__b279cd9b__sheet.png",
+      "upper": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/png/operator_body_modular_upper_run_01_e_5f_96__6a506dc3__sheet.png",
+      "frame_count": 5,
+      "frame_width": 96,
+      "frame_height": 96,
+      "warnings": [],
+      "lower_name": "operator_body_modular_lower_run_01_e_5f_96__b279cd9b__sheet.png",
+      "upper_name": "operator_body_modular_upper_run_01_e_5f_96__6a506dc3__sheet.png",
+      "combined_rel": "combined/operator_body_modular_combined_run_01_e_5f_96.png",
+      "review_rel": "review/operator_body_modular_combined_run_01_e_5f_96_review.png",
+      "gif_rel": "gif/operator_body_modular_combined_run_01_e_5f_96.gif"
+    },
+    {
+      "id": "operator_body_modular_combined_run_01_n_5f_96",
+      "lower": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/png/operator_body_modular_lower_run_01_n_5f_96__f0b6bcab__sheet.png",
+      "upper": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/png/operator_body_modular_upper_run_01_n_5f_96__abc007dc__sheet.png",
+      "frame_count": 5,
+      "frame_width": 96,
+      "frame_height": 96,
+      "warnings": [],
+      "lower_name": "operator_body_modular_lower_run_01_n_5f_96__f0b6bcab__sheet.png",
+      "upper_name": "operator_body_modular_upper_run_01_n_5f_96__abc007dc__sheet.png",
+      "combined_rel": "combined/operator_body_modular_combined_run_01_n_5f_96.png",
+      "review_rel": "review/operator_body_modular_combined_run_01_n_5f_96_review.png",
+      "gif_rel": "gif/operator_body_modular_combined_run_01_n_5f_96.gif"
+    },
+    {
+      "id": "operator_body_modular_combined_run_01_s_5f_96",
+      "lower": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/png/operator_body_modular_lower_run_01_s_5f_96__9338d9bf__sheet.png",
+      "upper": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/png/operator_body_modular_upper_run_01_s_5f_96__479e2ceb__sheet.png",
+      "frame_count": 5,
+      "frame_width": 96,
+      "frame_height": 96,
+      "warnings": [],
+      "lower_name": "operator_body_modular_lower_run_01_s_5f_96__9338d9bf__sheet.png",
+      "upper_name": "operator_body_modular_upper_run_01_s_5f_96__479e2ceb__sheet.png",
+      "combined_rel": "combined/operator_body_modular_combined_run_01_s_5f_96.png",
+      "review_rel": "review/operator_body_modular_combined_run_01_s_5f_96_review.png",
+      "gif_rel": "gif/operator_body_modular_combined_run_01_s_5f_96.gif"
+    },
+    {
+      "id": "operator_body_modular_combined_run_01_w_5f_96",
+      "lower": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/png/operator_body_modular_lower_run_01_w_5f_96__432150d9__sheet.png",
+      "upper": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/png/operator_body_modular_upper_run_01_w_5f_96__aed84d83__sheet.png",
+      "frame_count": 5,
+      "frame_width": 96,
+      "frame_height": 96,
+      "warnings": [],
+      "lower_name": "operator_body_modular_lower_run_01_w_5f_96__432150d9__sheet.png",
+      "upper_name": "operator_body_modular_upper_run_01_w_5f_96__aed84d83__sheet.png",
+      "combined_rel": "combined/operator_body_modular_combined_run_01_w_5f_96.png",
+      "review_rel": "review/operator_body_modular_combined_run_01_w_5f_96_review.png",
+      "gif_rel": "gif/operator_body_modular_combined_run_01_w_5f_96.gif"
+    }
+  ]
+}

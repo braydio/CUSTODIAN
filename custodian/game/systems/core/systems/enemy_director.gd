@@ -163,9 +163,9 @@ func spawn_test_enemy(spawn_position: Vector2) -> bool:
 	return spawn_debug_enemy_type("drone", spawn_position)
 
 
-func spawn_debug_enemy_type(enemy_type: String, spawn_position: Vector2) -> bool:
+func spawn_debug_enemy_type(enemy_type: String, spawn_position: Vector2, behavior_profile: StringName = &"") -> bool:
 	if wave_manager != null and wave_manager.has_method("debug_spawn_enemy_type"):
-		return bool(wave_manager.call("debug_spawn_enemy_type", enemy_type, spawn_position, 1.0))
+		return bool(wave_manager.call("debug_spawn_enemy_type", enemy_type, spawn_position, 1.0, behavior_profile))
 	if enemy_factory != null and enemy_factory.has_method("get_scene_for_type"):
 		var scene_variant: Variant = enemy_factory.call("get_scene_for_type", enemy_type)
 		if scene_variant is PackedScene:
@@ -175,6 +175,8 @@ func spawn_debug_enemy_type(enemy_type: String, spawn_position: Vector2) -> bool
 			var enemy := (scene_variant as PackedScene).instantiate()
 			if enemy is Node2D:
 				(enemy as Node2D).global_position = spawn_position
+			if behavior_profile != &"" and enemy.has_method("set_behavior_profile"):
+				enemy.call("set_behavior_profile", behavior_profile)
 			parent.add_child(enemy)
 			return true
 	return false

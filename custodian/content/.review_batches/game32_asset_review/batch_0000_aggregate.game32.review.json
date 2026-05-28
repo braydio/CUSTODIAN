@@ -1,0 +1,2488 @@
+{
+  "schema": "game32.aggregate_review.v2",
+  "id": "gothic_tiles_review_batch_0000",
+  "created_utc": "2026-05-28T04:37:20+00:00",
+  "instructions": {
+    "edit_this_file": true,
+    "source_of_truth": "entries[].asset is the full manifest that will be written to each .game32.json sidecar.",
+    "workflow": [
+      "Review the contact sheet image.",
+      "Edit each entry.review.action if needed.",
+      "Edit each entry.review.target_png if moving/renaming the PNG.",
+      "Edit each entry.asset directly. It contains the full game32.asset.v2 manifest.",
+      "Save/overwrite this aggregate JSON.",
+      "Run corrections/apply or return to terminal and press Enter."
+    ],
+    "valid_actions": {
+      "keep": "Write edited entry.asset to the sidecar manifest. Do not move PNG.",
+      "move": "Move/rename PNG to review.target_png, then write edited entry.asset to target manifest.",
+      "skip": "Do nothing to this entry.",
+      "delete": "Move PNG, manifest, and optionally import sidecar to trash directory."
+    },
+    "compact_corrections": {
+      "preferred": "Use game32.review_corrections.v1 to edit only changed fields.",
+      "commands": [
+        "game32_review.py corrections --aggregate <aggregate.json> --corrections <corrections.json>",
+        "game32_review.py apply --aggregate <aggregate.json>"
+      ]
+    },
+    "required_asset_blocks": [
+      "schema",
+      "id",
+      "display_name",
+      "source",
+      "file",
+      "classification",
+      "placement",
+      "collision",
+      "procgen",
+      "master_index"
+    ],
+    "path_rule": "review.target_png and asset.file.path may be res://, project-relative, or absolute. Project-relative is recommended."
+  },
+  "project_root": "/home/braydenchaffee/Projects/CUSTODIAN",
+  "scan_root": "custodian/content",
+  "contact_sheet": "custodian/content/.review_batches/game32_asset_review/batch_0000_contact.png",
+  "batch_number": 0,
+  "asset_count": 24,
+  "entries": [
+    {
+      "batch_index": 0,
+      "current": {
+        "png": "custodian/content/_aseprite/sprites/items/resources/enemy_run_8dir_8f.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/_aseprite/sprites/items/resources/enemy_run_8dir_8f.game32.json",
+        "filename": "enemy_run_8dir_8f.png",
+        "parent_dir": "custodian/content/_aseprite/sprites/items/resources",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/_aseprite/sprites/items/resources/enemy_run_8dir_8f.png",
+        "target_manifest": "custodian/content/_aseprite/sprites/items/resources/enemy_run_8dir_8f.game32.json",
+        "delete_import": true,
+        "notes": "Aseprite/source animation sheet. Do not use as runtime procgen asset."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "enemy_run_8dir_8f",
+        "display_name": "Enemy Run 8Dir 8F",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/_aseprite/sprites/items/resources/enemy_run_8dir_8f.png",
+          "section": "sprites",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 18496,
+            "h": 485
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/_aseprite/sprites/items/resources/enemy_run_8dir_8f.png",
+          "pixel_size": {
+            "w": 18496,
+            "h": 485
+          }
+        },
+        "classification": {
+          "asset_type": "reference",
+          "semantic_role": "aseprite_source_enemy_run_sheet_excluded",
+          "placement_layer": "excluded",
+          "tags": [
+            "needs_review",
+            "review_excluded",
+            "source_sheet",
+            "animation_source",
+            "not_runtime_procgen_asset"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 578,
+            "h": 16
+          },
+          "origin_mode": "top_left",
+          "snap": "none",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "review_excluded"
+          ],
+          "weight": 0,
+          "can_spawn_indoor": false,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 1
+      }
+    },
+    {
+      "batch_index": 1,
+      "current": {
+        "png": "custodian/content/_aseprite/sprites/operator/source/_new_operator_lower.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/_aseprite/sprites/operator/source/_new_operator_lower.game32.json",
+        "filename": "_new_operator_lower.png",
+        "parent_dir": "custodian/content/_aseprite/sprites/operator/source",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/_aseprite/sprites/operator/source/_new_operator_lower.png",
+        "target_manifest": "custodian/content/_aseprite/sprites/operator/source/_new_operator_lower.game32.json",
+        "delete_import": true,
+        "notes": "Operator source/lower-body sheet. Excluded from gothic procgen manifest."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "_new_operator_lower",
+        "display_name": " New Operator Lower",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/_aseprite/sprites/operator/source/_new_operator_lower.png",
+          "section": "sprites",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1536,
+            "h": 1024
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/_aseprite/sprites/operator/source/_new_operator_lower.png",
+          "pixel_size": {
+            "w": 1536,
+            "h": 1024
+          }
+        },
+        "classification": {
+          "asset_type": "reference",
+          "semantic_role": "operator_lower_body_source_sheet_excluded",
+          "placement_layer": "excluded",
+          "tags": [
+            "needs_review",
+            "review_excluded",
+            "source_sheet",
+            "operator_source",
+            "not_runtime_procgen_asset"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 48,
+            "h": 32
+          },
+          "origin_mode": "top_left",
+          "snap": "none",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "review_excluded"
+          ],
+          "weight": 0,
+          "can_spawn_indoor": false,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 2
+      }
+    },
+    {
+      "batch_index": 2,
+      "current": {
+        "png": "custodian/content/_aseprite/sprites/operator/source/lower_body_modular.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/_aseprite/sprites/operator/source/lower_body_modular.game32.json",
+        "filename": "lower_body_modular.png",
+        "parent_dir": "custodian/content/_aseprite/sprites/operator/source",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/_aseprite/sprites/operator/source/lower_body_modular.png",
+        "target_manifest": "custodian/content/_aseprite/sprites/operator/source/lower_body_modular.game32.json",
+        "delete_import": true,
+        "notes": "Operator modular lower-body source sheet. Excluded from gothic procgen manifest."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "lower_body_modular",
+        "display_name": "Lower Body Modular",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/_aseprite/sprites/operator/source/lower_body_modular.png",
+          "section": "sprites",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1536,
+            "h": 1024
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/_aseprite/sprites/operator/source/lower_body_modular.png",
+          "pixel_size": {
+            "w": 1536,
+            "h": 1024
+          }
+        },
+        "classification": {
+          "asset_type": "reference",
+          "semantic_role": "operator_lower_body_modular_source_sheet_excluded",
+          "placement_layer": "excluded",
+          "tags": [
+            "needs_review",
+            "review_excluded",
+            "source_sheet",
+            "operator_source",
+            "not_runtime_procgen_asset"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 48,
+            "h": 32
+          },
+          "origin_mode": "top_left",
+          "snap": "none",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "review_excluded"
+          ],
+          "weight": 0,
+          "can_spawn_indoor": false,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 3
+      }
+    },
+    {
+      "batch_index": 3,
+      "current": {
+        "png": "custodian/content/animations/gothic/banner_flap_10f.png",
+        "manifest": "custodian/content/animations/gothic/banner_flap_10f.game32.json",
+        "canonical_manifest": "custodian/content/animations/gothic/banner_flap_10f.game32.json",
+        "filename": "banner_flap_10f.png",
+        "parent_dir": "custodian/content/animations/gothic",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/animations/gothic/banner_flap_10f.png",
+        "target_manifest": "custodian/content/animations/gothic/banner_flap_10f.game32.json",
+        "delete_import": true,
+        "notes": "Animated banner strip. Runtime dressing candidate, not a ground tile."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "banner_flap_10f",
+        "display_name": "Banner Flap 10F",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/animations/gothic/banner_flap_10f.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1140,
+            "h": 130
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/animations/gothic/banner_flap_10f.png",
+          "pixel_size": {
+            "w": 1140,
+            "h": 130
+          }
+        },
+        "classification": {
+          "asset_type": "animation",
+          "semantic_role": "gothic_banner_flap_animation",
+          "placement_layer": "wall_dressing",
+          "tags": [
+            "needs_review",
+            "gothic",
+            "banner",
+            "cloth",
+            "animation",
+            "wall_dressing",
+            "nonblocking"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 36,
+            "h": 5
+          },
+          "origin_mode": "top_left",
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "animated_wall_dressing",
+            "banner_dressing",
+            "gothic_atmosphere"
+          ],
+          "weight": 8,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 4
+      }
+    },
+    {
+      "batch_index": 4,
+      "current": {
+        "png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_01.png",
+        "manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_01.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_01.game32.json",
+        "filename": "gothic_gate_archway_01.png",
+        "parent_dir": "custodian/content/doors/gothic/compound_entrance_gate",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_01.png",
+        "target_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_01.game32.json",
+        "delete_import": true,
+        "notes": "Large open archway gate. Blocks sight/cover on stone posts but center opening should remain passable."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_gate_archway_01",
+        "display_name": "Gothic Gate Archway 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 80,
+          "row_index": 4,
+          "col_index": 0,
+          "bbox_px": {
+            "x": 9,
+            "y": 429,
+            "w": 121,
+            "h": 109
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_01.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 121,
+            "h": 109
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_01.png",
+          "pixel_size": {
+            "w": 121,
+            "h": 109
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "large_gothic_arch_gate_structure",
+          "placement_layer": "door",
+          "tags": [
+            "archway",
+            "compound",
+            "door",
+            "entrance",
+            "gate",
+            "gothic",
+            "arch",
+            "large",
+            "cyan_accent"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 4
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 60,
+            "y": 108
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": true,
+          "cover_value": 2,
+          "collision_shape": "archway_opening",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "main_entrance",
+            "compound_gate",
+            "sector_threshold",
+            "poi_gate",
+            "landmark_gate"
+          ],
+          "weight": 8,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 5
+      }
+    },
+    {
+      "batch_index": 5,
+      "current": {
+        "png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_02.png",
+        "manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_02.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_02.game32.json",
+        "filename": "gothic_gate_archway_02.png",
+        "parent_dir": "custodian/content/doors/gothic/compound_entrance_gate",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_02.png",
+        "target_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_02.game32.json",
+        "delete_import": true,
+        "notes": "Closed/barred portcullis gate."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_gate_archway_02",
+        "display_name": "Gothic Gate Archway 02",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 81,
+          "row_index": 4,
+          "col_index": 1,
+          "bbox_px": {
+            "x": 148,
+            "y": 445,
+            "w": 93,
+            "h": 86
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_02.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 93,
+            "h": 86
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_02.png",
+          "pixel_size": {
+            "w": 93,
+            "h": 86
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "gothic_portcullis_gate",
+          "placement_layer": "door",
+          "tags": [
+            "archway",
+            "compound",
+            "door",
+            "entrance",
+            "gate",
+            "gothic",
+            "portcullis",
+            "metal",
+            "barred"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 3,
+            "h": 3
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 46,
+            "y": 85
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "compound_gate",
+            "restricted_area_gate",
+            "portcullis_gate",
+            "sector_threshold"
+          ],
+          "weight": 8,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 6
+      }
+    },
+    {
+      "batch_index": 6,
+      "current": {
+        "png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_03.png",
+        "manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_03.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_03.game32.json",
+        "filename": "gothic_gate_archway_03.png",
+        "parent_dir": "custodian/content/doors/gothic/compound_entrance_gate",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_03.png",
+        "target_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_03.game32.json",
+        "delete_import": true,
+        "notes": "Large barred archway gate; closed/blocked by default."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_gate_archway_03",
+        "display_name": "Gothic Gate Archway 03",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 82,
+          "row_index": 4,
+          "col_index": 2,
+          "bbox_px": {
+            "x": 249,
+            "y": 435,
+            "w": 101,
+            "h": 101
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_03.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 101,
+            "h": 101
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_03.png",
+          "pixel_size": {
+            "w": 101,
+            "h": 101
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "large_gothic_barred_arch_gate",
+          "placement_layer": "door",
+          "tags": [
+            "archway",
+            "compound",
+            "door",
+            "entrance",
+            "gate",
+            "gothic",
+            "arch",
+            "barred",
+            "portcullis"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 4
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 50,
+            "y": 100
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "main_entrance",
+            "compound_gate",
+            "restricted_area_gate",
+            "portcullis_gate"
+          ],
+          "weight": 7,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 7
+      }
+    },
+    {
+      "batch_index": 7,
+      "current": {
+        "png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_04.png",
+        "manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_04.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_04.game32.json",
+        "filename": "gothic_gate_archway_04.png",
+        "parent_dir": "custodian/content/doors/gothic/compound_entrance_gate",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_04.png",
+        "target_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_04.game32.json",
+        "delete_import": true,
+        "notes": "Iron spike/fence gate."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_gate_archway_04",
+        "display_name": "Gothic Gate Archway 04",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 83,
+          "row_index": 4,
+          "col_index": 3,
+          "bbox_px": {
+            "x": 358,
+            "y": 437,
+            "w": 99,
+            "h": 99
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_04.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 99,
+            "h": 99
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_04.png",
+          "pixel_size": {
+            "w": 99,
+            "h": 99
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "gothic_iron_spike_gate",
+          "placement_layer": "door",
+          "tags": [
+            "archway",
+            "compound",
+            "door",
+            "entrance",
+            "gate",
+            "gothic",
+            "iron",
+            "spikes",
+            "fence",
+            "barrier"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 4
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 49,
+            "y": 98
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "compound_gate",
+            "restricted_area_gate",
+            "fence_gate",
+            "sector_threshold"
+          ],
+          "weight": 9,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 8
+      }
+    },
+    {
+      "batch_index": 8,
+      "current": {
+        "png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_05.png",
+        "manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_05.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_05.game32.json",
+        "filename": "gothic_gate_archway_05.png",
+        "parent_dir": "custodian/content/doors/gothic/compound_entrance_gate",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_05.png",
+        "target_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_05.game32.json",
+        "delete_import": true,
+        "notes": "Open portal-style arch gate; center should remain passable."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_gate_archway_05",
+        "display_name": "Gothic Gate Archway 05",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 84,
+          "row_index": 4,
+          "col_index": 4,
+          "bbox_px": {
+            "x": 472,
+            "y": 431,
+            "w": 109,
+            "h": 105
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_05.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 109,
+            "h": 105
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_05.png",
+          "pixel_size": {
+            "w": 109,
+            "h": 105
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "gothic_cyan_arch_portal_gate",
+          "placement_layer": "door",
+          "tags": [
+            "archway",
+            "compound",
+            "door",
+            "entrance",
+            "gate",
+            "gothic",
+            "arch",
+            "portal",
+            "cyan_accent",
+            "threshold"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 4
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 54,
+            "y": 104
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": true,
+          "cover_value": 2,
+          "collision_shape": "archway_opening",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "compound_gate",
+            "portal_gate",
+            "sector_threshold",
+            "landmark_gate"
+          ],
+          "weight": 6,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 9
+      }
+    },
+    {
+      "batch_index": 9,
+      "current": {
+        "png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_06.png",
+        "manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_06.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_06.game32.json",
+        "filename": "gothic_gate_archway_06.png",
+        "parent_dir": "custodian/content/doors/gothic/compound_entrance_gate",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_06.png",
+        "target_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_06.game32.json",
+        "delete_import": true,
+        "notes": "Large closed main gate; blocks movement by default."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_gate_archway_06",
+        "display_name": "Gothic Gate Archway 06",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 85,
+          "row_index": 4,
+          "col_index": 5,
+          "bbox_px": {
+            "x": 595,
+            "y": 428,
+            "w": 122,
+            "h": 106
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_06.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 122,
+            "h": 106
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_06.png",
+          "pixel_size": {
+            "w": 122,
+            "h": 106
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "large_gothic_closed_main_gate",
+          "placement_layer": "door",
+          "tags": [
+            "archway",
+            "compound",
+            "door",
+            "entrance",
+            "gate",
+            "gothic",
+            "large",
+            "closed",
+            "metal",
+            "main_gate"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 4
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 61,
+            "y": 105
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": true,
+          "cover_value": 2,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "main_entrance",
+            "compound_gate",
+            "restricted_area_gate",
+            "landmark_gate"
+          ],
+          "weight": 6,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 10
+      }
+    },
+    {
+      "batch_index": 10,
+      "current": {
+        "png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_07.png",
+        "manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_07.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_07.game32.json",
+        "filename": "gothic_gate_archway_07.png",
+        "parent_dir": "custodian/content/doors/gothic/compound_entrance_gate",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_07.png",
+        "target_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_07.game32.json",
+        "delete_import": true,
+        "notes": "Small powered/tech gate or wall insert."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_gate_archway_07",
+        "display_name": "Gothic Gate Archway 07",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 86,
+          "row_index": 4,
+          "col_index": 6,
+          "bbox_px": {
+            "x": 727,
+            "y": 430,
+            "w": 76,
+            "h": 91
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_07.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 76,
+            "h": 91
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_07.png",
+          "pixel_size": {
+            "w": 76,
+            "h": 91
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "gothic_powered_small_gate",
+          "placement_layer": "door",
+          "tags": [
+            "archway",
+            "compound",
+            "door",
+            "entrance",
+            "gate",
+            "gothic",
+            "powered",
+            "cyan_accent",
+            "tech",
+            "small_gate"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 3,
+            "h": 3
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 38,
+            "y": 90
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "secondary_entrance",
+            "interior_gate",
+            "locked_gate",
+            "tech_gate"
+          ],
+          "weight": 7,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 11
+      }
+    },
+    {
+      "batch_index": 11,
+      "current": {
+        "png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_08.png",
+        "manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_08.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_08.game32.json",
+        "filename": "gothic_gate_archway_08.png",
+        "parent_dir": "custodian/content/doors/gothic/compound_entrance_gate",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_08.png",
+        "target_manifest": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_08.game32.json",
+        "delete_import": true,
+        "notes": "Small closed door/wall insert."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_gate_archway_08",
+        "display_name": "Gothic Gate Archway 08",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 87,
+          "row_index": 4,
+          "col_index": 7,
+          "bbox_px": {
+            "x": 824,
+            "y": 435,
+            "w": 55,
+            "h": 65
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/compound_entrance_gate/gothic_gate_archway_08.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 55,
+            "h": 65
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/compound_entrance_gate/gothic_gate_archway_08.png",
+          "pixel_size": {
+            "w": 55,
+            "h": 65
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "gothic_small_door_insert",
+          "placement_layer": "door",
+          "tags": [
+            "archway",
+            "compound",
+            "door",
+            "entrance",
+            "gate",
+            "gothic",
+            "small_gate",
+            "wall_insert",
+            "stone",
+            "threshold"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 2,
+            "h": 3
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 27,
+            "y": 64
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": true,
+          "cover_value": 2,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "secondary_entrance",
+            "interior_door",
+            "service_gate",
+            "wall_insert"
+          ],
+          "weight": 10,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 12
+      }
+    },
+    {
+      "batch_index": 12,
+      "current": {
+        "png": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_01.png",
+        "manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_01.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_01.game32.json",
+        "filename": "gothic_small_door_insert_01.png",
+        "parent_dir": "custodian/content/doors/gothic/small_door_or_wall_insert",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_01.png",
+        "target_manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_01.game32.json",
+        "delete_import": true,
+        "notes": "Closed small door insert."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_small_door_insert_01",
+        "display_name": "Small Gothic Door Insert 01",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 88,
+          "row_index": 4,
+          "col_index": 8,
+          "bbox_px": {
+            "x": 894,
+            "y": 432,
+            "w": 69,
+            "h": 68
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_01.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_01.png",
+          "pixel_size": {
+            "w": 69,
+            "h": 68
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "gothic_closed_small_door_insert",
+          "placement_layer": "door",
+          "tags": [
+            "compound",
+            "door",
+            "gothic",
+            "small_gate",
+            "threshold",
+            "closed",
+            "wall_insert"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 3,
+            "h": 3
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 34,
+            "y": 67
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": true,
+          "cover_value": 2,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "secondary_entrance",
+            "interior_door",
+            "service_gate",
+            "secret_threshold"
+          ],
+          "weight": 12,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 13
+      }
+    },
+    {
+      "batch_index": 13,
+      "current": {
+        "png": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.png",
+        "manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.game32.json",
+        "filename": "gothic_small_door_insert_02.png",
+        "parent_dir": "custodian/content/doors/gothic/small_door_or_wall_insert",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.png",
+        "target_manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.game32.json",
+        "delete_import": true,
+        "notes": "Narrow pillar-like door/wall insert."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_small_door_insert_02",
+        "display_name": "Small Gothic Door Insert 02",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 89,
+          "row_index": 4,
+          "col_index": 9,
+          "bbox_px": {
+            "x": 985,
+            "y": 436,
+            "w": 29,
+            "h": 57
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 29,
+            "h": 57
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_02.png",
+          "pixel_size": {
+            "w": 29,
+            "h": 57
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "gothic_narrow_pillar_door_insert",
+          "placement_layer": "door",
+          "tags": [
+            "compound",
+            "door",
+            "gothic",
+            "small_gate",
+            "threshold",
+            "narrow",
+            "pillar",
+            "wall_insert"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 1,
+            "h": 2
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 14,
+            "y": 56
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": true,
+          "cover_value": 2,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "interior_door",
+            "wall_insert",
+            "narrow_threshold",
+            "service_gate"
+          ],
+          "weight": 8,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 14
+      }
+    },
+    {
+      "batch_index": 14,
+      "current": {
+        "png": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_03.png",
+        "manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_03.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_03.game32.json",
+        "filename": "gothic_small_door_insert_03.png",
+        "parent_dir": "custodian/content/doors/gothic/small_door_or_wall_insert",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_03.png",
+        "target_manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_03.game32.json",
+        "delete_import": true,
+        "notes": "Small chain/barrier gate insert."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_small_door_insert_03",
+        "display_name": "Small Gothic Door Insert 03",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 90,
+          "row_index": 4,
+          "col_index": 10,
+          "bbox_px": {
+            "x": 1034,
+            "y": 435,
+            "w": 54,
+            "h": 54
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_03.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 54,
+            "h": 54
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_03.png",
+          "pixel_size": {
+            "w": 54,
+            "h": 54
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "gothic_small_chain_gate_insert",
+          "placement_layer": "door",
+          "tags": [
+            "compound",
+            "door",
+            "gothic",
+            "small_gate",
+            "threshold",
+            "chain",
+            "barrier",
+            "wall_insert"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 2,
+            "h": 2
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 27,
+            "y": 53
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "service_gate",
+            "restricted_area_gate",
+            "small_barrier_gate",
+            "wall_insert"
+          ],
+          "weight": 10,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 15
+      }
+    },
+    {
+      "batch_index": 15,
+      "current": {
+        "png": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_04.png",
+        "manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_04.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_04.game32.json",
+        "filename": "gothic_small_door_insert_04.png",
+        "parent_dir": "custodian/content/doors/gothic/small_door_or_wall_insert",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_04.png",
+        "target_manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_04.game32.json",
+        "delete_import": true,
+        "notes": "Low chain gate/barrier insert."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_small_door_insert_04",
+        "display_name": "Small Gothic Door Insert 04",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 91,
+          "row_index": 4,
+          "col_index": 11,
+          "bbox_px": {
+            "x": 1107,
+            "y": 438,
+            "w": 107,
+            "h": 50
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_04.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 107,
+            "h": 50
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_04.png",
+          "pixel_size": {
+            "w": 107,
+            "h": 50
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "gothic_chain_barrier_door_insert",
+          "placement_layer": "door",
+          "tags": [
+            "compound",
+            "door",
+            "gothic",
+            "small_gate",
+            "threshold",
+            "chain",
+            "barrier",
+            "low_gate",
+            "wall_insert"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 2
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 53,
+            "y": 49
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "service_gate",
+            "restricted_area_gate",
+            "low_barrier_gate",
+            "wall_insert"
+          ],
+          "weight": 10,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 16
+      }
+    },
+    {
+      "batch_index": 16,
+      "current": {
+        "png": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_05.png",
+        "manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_05.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_05.game32.json",
+        "filename": "gothic_small_door_insert_05.png",
+        "parent_dir": "custodian/content/doors/gothic/small_door_or_wall_insert",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_05.png",
+        "target_manifest": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_05.game32.json",
+        "delete_import": true,
+        "notes": "Long low chain gate/barrier insert."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "gothic_small_door_insert_05",
+        "display_name": "Small Gothic Door Insert 05",
+        "source": {
+          "sheet": "gothic_tilesheet.png",
+          "visual_index": 92,
+          "row_index": 4,
+          "col_index": 12,
+          "bbox_px": {
+            "x": 1225,
+            "y": 424,
+            "w": 173,
+            "h": 63
+          },
+          "master_sheet": null,
+          "original_path": "res://content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_05.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 173,
+            "h": 63
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/small_door_or_wall_insert/gothic_small_door_insert_05.png",
+          "pixel_size": {
+            "w": 173,
+            "h": 63
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "gothic_long_chain_barrier_door_insert",
+          "placement_layer": "door",
+          "tags": [
+            "compound",
+            "door",
+            "gothic",
+            "small_gate",
+            "threshold",
+            "chain",
+            "barrier",
+            "low_gate",
+            "long_segment",
+            "wall_insert"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 6,
+            "h": 2
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 86,
+            "y": 62
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "procgen": {
+          "uses": [
+            "service_gate",
+            "restricted_area_gate",
+            "low_barrier_gate",
+            "wall_insert"
+          ],
+          "weight": 8,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "supports_gothic_compound": true,
+          "review_status": "reviewed"
+        },
+        "master_index": 17
+      }
+    },
+    {
+      "batch_index": 17,
+      "current": {
+        "png": "custodian/content/images/demo.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/images/demo.game32.json",
+        "filename": "demo.png",
+        "parent_dir": "custodian/content/images",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/images/demo.png",
+        "target_manifest": "custodian/content/images/demo.game32.json",
+        "delete_import": true,
+        "notes": "Demo/screenshot image; exclude from runtime procgen."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "demo",
+        "display_name": "Demo",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/images/demo.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 794,
+            "h": 600
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/images/demo.png",
+          "pixel_size": {
+            "w": 794,
+            "h": 600
+          }
+        },
+        "classification": {
+          "asset_type": "reference",
+          "semantic_role": "demo_image_excluded",
+          "placement_layer": "excluded",
+          "tags": [
+            "needs_review",
+            "review_excluded",
+            "demo",
+            "screenshot",
+            "not_runtime_asset"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 25,
+            "h": 19
+          },
+          "origin_mode": "top_left",
+          "snap": "none",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "review_excluded"
+          ],
+          "weight": 0,
+          "can_spawn_indoor": false,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 18
+      }
+    },
+    {
+      "batch_index": 18,
+      "current": {
+        "png": "custodian/content/images/demo2.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/images/demo2.game32.json",
+        "filename": "demo2.png",
+        "parent_dir": "custodian/content/images",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/images/demo2.png",
+        "target_manifest": "custodian/content/images/demo2.game32.json",
+        "delete_import": true,
+        "notes": "Demo/screenshot image; exclude from runtime procgen."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "demo2",
+        "display_name": "Demo2",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/images/demo2.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 925,
+            "h": 253
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/images/demo2.png",
+          "pixel_size": {
+            "w": 925,
+            "h": 253
+          }
+        },
+        "classification": {
+          "asset_type": "reference",
+          "semantic_role": "demo_image_excluded",
+          "placement_layer": "excluded",
+          "tags": [
+            "needs_review",
+            "review_excluded",
+            "demo",
+            "screenshot",
+            "not_runtime_asset"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 29,
+            "h": 8
+          },
+          "origin_mode": "top_left",
+          "snap": "none",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "review_excluded"
+          ],
+          "weight": 0,
+          "can_spawn_indoor": false,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 19
+      }
+    },
+    {
+      "batch_index": 19,
+      "current": {
+        "png": "custodian/content/images/demo3.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/images/demo3.game32.json",
+        "filename": "demo3.png",
+        "parent_dir": "custodian/content/images",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/images/demo3.png",
+        "target_manifest": "custodian/content/images/demo3.game32.json",
+        "delete_import": true,
+        "notes": "Demo/screenshot image; exclude from runtime procgen."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "demo3",
+        "display_name": "Demo3",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/images/demo3.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1074,
+            "h": 333
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/images/demo3.png",
+          "pixel_size": {
+            "w": 1074,
+            "h": 333
+          }
+        },
+        "classification": {
+          "asset_type": "reference",
+          "semantic_role": "demo_image_excluded",
+          "placement_layer": "excluded",
+          "tags": [
+            "needs_review",
+            "review_excluded",
+            "demo",
+            "screenshot",
+            "not_runtime_asset"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 34,
+            "h": 11
+          },
+          "origin_mode": "top_left",
+          "snap": "none",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "review_excluded"
+          ],
+          "weight": 0,
+          "can_spawn_indoor": false,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 20
+      }
+    },
+    {
+      "batch_index": 20,
+      "current": {
+        "png": "custodian/content/images/icon.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/images/icon.game32.json",
+        "filename": "icon.png",
+        "parent_dir": "custodian/content/images",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/images/icon.png",
+        "target_manifest": "custodian/content/images/icon.game32.json",
+        "delete_import": true,
+        "notes": "App/UI icon reference; exclude from runtime procgen."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "icon",
+        "display_name": "Icon",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/images/icon.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 646,
+            "h": 611
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/images/icon.png",
+          "pixel_size": {
+            "w": 646,
+            "h": 611
+          }
+        },
+        "classification": {
+          "asset_type": "reference",
+          "semantic_role": "app_icon_reference_excluded",
+          "placement_layer": "excluded",
+          "tags": [
+            "needs_review",
+            "review_excluded",
+            "icon",
+            "ui_reference",
+            "not_runtime_procgen_asset"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 21,
+            "h": 20
+          },
+          "origin_mode": "top_left",
+          "snap": "none",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "review_excluded"
+          ],
+          "weight": 0,
+          "can_spawn_indoor": false,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 21
+      }
+    },
+    {
+      "batch_index": 21,
+      "current": {
+        "png": "custodian/content/items/swords.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/items/swords.game32.json",
+        "filename": "swords.png",
+        "parent_dir": "custodian/content/items",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/items/swords.png",
+        "target_manifest": "custodian/content/items/swords.game32.json",
+        "delete_import": true,
+        "notes": "Sword concept/source sheet; not an atomic runtime procgen asset."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "swords",
+        "display_name": "Swords",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/items/swords.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 1024
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/items/swords.png",
+          "pixel_size": {
+            "w": 1024,
+            "h": 1024
+          }
+        },
+        "classification": {
+          "asset_type": "reference",
+          "semantic_role": "weapon_concept_sheet_excluded",
+          "placement_layer": "excluded",
+          "tags": [
+            "needs_review",
+            "review_excluded",
+            "weapon_sheet",
+            "concept_sheet",
+            "not_runtime_procgen_asset"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 32,
+            "h": 32
+          },
+          "origin_mode": "top_left",
+          "snap": "none",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "review_excluded"
+          ],
+          "weight": 0,
+          "can_spawn_indoor": false,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 22
+      }
+    },
+    {
+      "batch_index": 22,
+      "current": {
+        "png": "custodian/content/masters/gothic/tilesheet_1.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/masters/gothic/tilesheet_1.game32.json",
+        "filename": "tilesheet_1.png",
+        "parent_dir": "custodian/content/masters/gothic",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/masters/gothic/tilesheet_1.png",
+        "target_manifest": "custodian/content/masters/gothic/tilesheet_1.game32.json",
+        "delete_import": true,
+        "notes": "Master/source tilesheet; do not treat as atomic runtime asset."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "tilesheet_1",
+        "display_name": "Tilesheet 1",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/masters/gothic/tilesheet_1.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1448,
+            "h": 1086
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/masters/gothic/tilesheet_1.png",
+          "pixel_size": {
+            "w": 1448,
+            "h": 1086
+          }
+        },
+        "classification": {
+          "asset_type": "reference",
+          "semantic_role": "gothic_master_tilesheet_reference_excluded",
+          "placement_layer": "excluded",
+          "tags": [
+            "needs_review",
+            "review_excluded",
+            "master_sheet",
+            "tilesheet",
+            "source_sheet",
+            "not_runtime_procgen_asset"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 46,
+            "h": 34
+          },
+          "origin_mode": "top_left",
+          "snap": "none",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "review_excluded"
+          ],
+          "weight": 0,
+          "can_spawn_indoor": false,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 23
+      }
+    },
+    {
+      "batch_index": 23,
+      "current": {
+        "png": "custodian/content/masters/terrain/terrain_tilesheet_to_import.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/masters/terrain/terrain_tilesheet_to_import.game32.json",
+        "filename": "terrain_tilesheet_to_import.png",
+        "parent_dir": "custodian/content/masters/terrain",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/masters/terrain/terrain_tilesheet_to_import.png",
+        "target_manifest": "custodian/content/masters/terrain/terrain_tilesheet_to_import.game32.json",
+        "delete_import": true,
+        "notes": "Terrain master/source tilesheet; do not treat as atomic gothic runtime asset."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "terrain_tilesheet_to_import",
+        "display_name": "Terrain Tilesheet To Import",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/masters/terrain/terrain_tilesheet_to_import.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1536,
+            "h": 1024
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "res://content/masters/terrain/terrain_tilesheet_to_import.png",
+          "pixel_size": {
+            "w": 1536,
+            "h": 1024
+          }
+        },
+        "classification": {
+          "asset_type": "reference",
+          "semantic_role": "terrain_master_tilesheet_reference_excluded",
+          "placement_layer": "excluded",
+          "tags": [
+            "needs_review",
+            "review_excluded",
+            "master_sheet",
+            "tilesheet",
+            "terrain_source",
+            "not_runtime_procgen_asset"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 48,
+            "h": 32
+          },
+          "origin_mode": "top_left",
+          "snap": "none",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "reviewed",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "review_excluded"
+          ],
+          "weight": 0,
+          "can_spawn_indoor": false,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 24
+      }
+    }
+  ]
+}

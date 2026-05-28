@@ -2,6 +2,7 @@
 
 **Generated:** 2026-04-21
 **Purpose:** Track discrepancies between design documents and actual implementations
+**Canonical source:** This is the single authoritative drift report. The superseded `DOCUMENTATION_DRIFT_REPORT.md` has been merged into this document and removed.
 
 ---
 

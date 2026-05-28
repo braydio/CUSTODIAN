@@ -1,6 +1,6 @@
 # PROJECT CONTEXT PRIMER — CUSTODIAN
 
-Last updated: 2026-05-03
+Last updated: 2026-05-28
 
 ## Purpose
 
@@ -24,7 +24,7 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 - Active command shell: HUD terminal in `custodian/game/ui/hud/ui.gd`, with terminal helper modules under `custodian/game/ui/terminal/`
 - Contract/runtime coupling: contract planet generation feeds procgen world generation through a shared world profile
 - Input prompts: interaction UI should derive from `InputMap`, not hardcoded keys
-- Operator combat selection: Fists/unarmed is a first-class `OperatorWeaponDefinition` profile selected with `toggle_unarmed`; normal weapon cycling excludes Fists and only cycles armed profiles.
+- Operator combat selection: Fists/unarmed is a first-class `OperatorWeaponDefinition` profile selected with `toggle_unarmed`; normal weapon cycling excludes Fists and only cycles armed profiles. Melee attack physics resolve through `MeleeAttackProfile` resources referenced by each weapon definition, with legacy operator melee exports kept only as fallbacks.
 - Forest Shrumb cognitive drops now have a v1 foundation through `InventoryManager`, `CognitiveState`, `cognitive_pickup`, `shrumb_dropper`, and the live `ambient_shrumb.tscn` actor. Ambient spawning now uses this shrumb actor directly; the former scav droid scene path is removed.
 - Procedural ruin prop variants have a v1 visual-only foundation under `custodian/content/props/ruins/`, using seeded layer assembly from authored sprites, overlays, rubble pieces, and a conservative palette shader. Collision remains authored and stable through `PropDefinition.collision_scene`.
 - Procgen terrain construction now has a dedicated metadata-first `TerrainBuilder` pass under `game/world/procgen/terrain/`; elevation/cliff visuals remain separate from `ElevationMap` height/traversal rules and resolve through registered terrain sources in `procgen_world_tileset.tres`.
@@ -52,8 +52,8 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 
 ## Immediate Priorities
 
-1. Validate Fists selection/combat in play and keep queued selection deterministic.
-2. Move melee timing and active windows into explicit attack profile data.
+1. Validate profile-backed Fists/melee combat in play and keep queued selection deterministic.
+2. Clean remaining animation-state documentation/assets around deprecated `attack_light` compatibility.
 3. Deepen terminal pages with richer live runtime data and interactions.
 4. Preserve and extend planet-to-runtime world coupling as procgen evolves.
 5. Wire true Forest Shrumbs into the intended spawning/procgen path and decide which cognitive readout belongs in HUD/debug.

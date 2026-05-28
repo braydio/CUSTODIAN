@@ -1,6 +1,8 @@
 extends Resource
 class_name OperatorWeaponDefinition
 
+const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
+
 @export var weapon_id: StringName = &"carbine_rifle"
 @export var weapon_type: StringName = &"ranged_2h"
 @export var display_name: String = ""
@@ -62,6 +64,10 @@ class_name OperatorWeaponDefinition
 @export var range_multiplier: float = 1.0
 @export var damage_multiplier: float = 1.0
 @export var stagger_multiplier: float = 1.0
+
+@export_group("Melee Attacks")
+@export var fast_attack_profile: MeleeAttackProfile
+@export var heavy_attack_profile: MeleeAttackProfile
 
 # === RUNTIME STATE ===
 @export_group("Runtime State")

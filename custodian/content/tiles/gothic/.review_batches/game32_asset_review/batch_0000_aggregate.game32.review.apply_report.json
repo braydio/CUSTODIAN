@@ -1,0 +1,160 @@
+{
+  "schema": "game32.aggregate_review_apply_report.v1",
+  "aggregate": "custodian/content/tiles/gothic/.review_batches/game32_asset_review/batch_0000_aggregate.game32.review.json",
+  "applied_utc": "2026-05-27T18:52:24+00:00",
+  "dry_run": false,
+  "results": [
+    {
+      "batch_index": 0,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_009.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_009.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_009.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_009.game32.json"
+    },
+    {
+      "batch_index": 1,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_010.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_010.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_010.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_010.game32.json"
+    },
+    {
+      "batch_index": 2,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_011.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_011.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_011.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_011.game32.json"
+    },
+    {
+      "batch_index": 3,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_013.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_013.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_013.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_013.game32.json"
+    },
+    {
+      "batch_index": 4,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_014.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_014.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_014.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_014.game32.json"
+    },
+    {
+      "batch_index": 5,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_015.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_015.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_015.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_015.game32.json"
+    },
+    {
+      "batch_index": 6,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_016.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_016.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_016.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_016.game32.json"
+    },
+    {
+      "batch_index": 7,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_017.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_017.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_017.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_017.game32.json"
+    },
+    {
+      "batch_index": 8,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_018.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_018.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_018.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_018.game32.json"
+    },
+    {
+      "batch_index": 9,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_019.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_019.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_019.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_019.game32.json"
+    },
+    {
+      "batch_index": 10,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_020.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_020.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_020.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_020.game32.json"
+    },
+    {
+      "batch_index": 11,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_021.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_021.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_021.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_021.game32.json"
+    },
+    {
+      "batch_index": 12,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_022.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_022.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_022.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_022.game32.json"
+    },
+    {
+      "batch_index": 13,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_023.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_023.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_023.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_023.game32.json"
+    },
+    {
+      "batch_index": 14,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_025.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_025.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_025.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_025.game32.json"
+    },
+    {
+      "batch_index": 15,
+      "action": "keep",
+      "old_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_026.png",
+      "old_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_026.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_026.png",
+      "target_manifest": "custodian/content/tiles/gothic/wall_vertical_slice/gothic_wall_vertical_slice_026.game32.json"
+    }
+  ],
+  "master_manifest": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic/gothic_master_sheet.game32.json",
+    "backup": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic/gothic_master_sheet.game32.json.bak-20260527T185224Z",
+    "assets_applied": 16,
+    "assets_skipped_unmatched": 0,
+    "unmatched": [],
+    "total_assets": 617
+  }
+}

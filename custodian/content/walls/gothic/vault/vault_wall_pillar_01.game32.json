@@ -1,0 +1,60 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "vault_wall_pillar_01",
+  "display_name": "Vault Wall Pillar 01",
+  "source": {
+    "master_sheet": "custodian/props/gothic/vault_propsheet_05.png",
+    "sheet_cell": {
+      "row": 1,
+      "col": 2,
+      "rows": 2,
+      "cols": 4
+    }
+  },
+  "file": {
+    "path": "custodian/content/walls/gothic/vault/vault_wall_pillar_01.png",
+    "pixel_size": {
+      "w": 64,
+      "h": 96
+    }
+  },
+  "classification": {
+    "asset_type": "walls",
+    "semantic_role": "vault_wall_pillar",
+    "placement_layer": "wall",
+    "tags": [
+      "vault",
+      "gothic",
+      "wall",
+      "pillar",
+      "support",
+      "blocking"
+    ]
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 2,
+      "h": 3
+    },
+    "origin_mode": "bottom_center",
+    "pivot_px": {
+      "x": 32,
+      "y": 95
+    },
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": true,
+    "cover_value": 3,
+    "collision_shape": "footprint"
+  },
+  "runtime": {
+    "status": "extracted_from_source_sheet",
+    "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
+  }
+}

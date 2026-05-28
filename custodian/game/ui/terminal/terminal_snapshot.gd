@@ -29,6 +29,7 @@ func build(ui: Node) -> Dictionary:
 		"power_pct": power_pct,
 		"arrn": collect_arrn(ui),
 		"tactical_entities": collect_tactical_entities(ui),
+		"vault": collect_vault(ui),
 	}
 
 
@@ -62,7 +63,7 @@ func collect_sectors(ui: Node) -> Array[Dictionary]:
 
 
 func collect_enemies(ui: Node) -> Dictionary:
-	var summary := {"total": 0, "drone": 0, "fast": 0, "heavy": 0}
+	var summary := {"total": 0, "drone": 0, "fast": 0, "heavy": 0, "searching_storage": 0, "carrying_loot": 0}
 	for enemy in ui.get_tree().get_nodes_in_group("enemy"):
 		if enemy == null or not is_instance_valid(enemy):
 			continue
@@ -74,6 +75,14 @@ func collect_enemies(ui: Node) -> Dictionary:
 			summary["heavy"] = int(summary["heavy"]) + 1
 		else:
 			summary["drone"] = int(summary["drone"]) + 1
+		if enemy.has_method("get_behavior_snapshot"):
+			var behavior: Dictionary = enemy.call("get_behavior_snapshot")
+			var state := str(behavior.get("state", ""))
+			if state in ["seek_objective", "open_storage", "steal_resources"]:
+				summary["searching_storage"] = int(summary["searching_storage"]) + 1
+			var blackboard: Dictionary = behavior.get("blackboard", {})
+			if bool(blackboard.get("carrying_loot", false)):
+				summary["carrying_loot"] = int(summary["carrying_loot"]) + 1
 	return summary
 
 
@@ -94,11 +103,25 @@ func collect_tactical_entities(ui: Node) -> Dictionary:
 			})
 	for enemy in ui.get_tree().get_nodes_in_group("enemy"):
 		if enemy is Node2D:
+			var behavior: Dictionary = enemy.call("get_behavior_snapshot") if enemy.has_method("get_behavior_snapshot") else {}
+			var blackboard: Dictionary = behavior.get("blackboard", {}) if behavior is Dictionary else {}
 			entities["enemies"].append({
 				"pos": enemy.global_position,
 				"type": str(enemy.get("enemy_name") if "enemy_name" in enemy else enemy.name),
+				"alert_state": bool(blackboard.get("alerted", false)),
+				"carrying_loot": bool(blackboard.get("carrying_loot", false)),
+				"objective_type": str(blackboard.get("objective_type", "none")),
 			})
 	return entities
+
+
+func collect_vault(ui: Node) -> Dictionary:
+	var manager := ui.get_node_or_null("/root/VaultManager")
+	if manager != null and manager.has_method("get_debug_snapshot"):
+		var snapshot = manager.call("get_debug_snapshot")
+		if snapshot is Dictionary:
+			return snapshot
+	return {}
 
 
 func get_power_utilization_pct(ui: Node) -> float:

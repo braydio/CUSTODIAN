@@ -1,4 +1,8 @@
-# Ash Bell Contiuity themed dialoge, spoken by Drifter, or similar
+# Ash Bell Continuity Dialogue Bank
+
+**Status:** draft — small collection of Ash-Bell themed dialogue lines for the Drifter NPC. Intended to grow as more encounter content is authored.
+**Related:** `design/03_content/THE_ASH-BELL_CONTINUITY.md`
+
 
 ```
 

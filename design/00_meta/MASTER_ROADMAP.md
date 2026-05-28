@@ -379,13 +379,11 @@ Every design doc must include:
 
 1. Update status in this MASTER_ROADMAP.md
 2. Update status in design doc
-3. Update TRACKING.md if in active sprint
 
 ### Finding Design Docs
 
 - Search `design/02_features/[feature_name]/`
 - Check `design/features/implementation/` for code
-- See TRACKING.md for sprint tasks
 
 ---
 
@@ -393,8 +391,6 @@ Every design doc must include:
 
 | File | Purpose |
 |------|---------|
-| `TRACKING.md` | Sprint-level task tracking |
-| `ROADMAP.md` | Detailed milestone breakdowns |
 | `TEMPLATE_SYSTEM.md` | System design template |
 | `TEMPLATE_FEATURE.md` | Feature design template |
 

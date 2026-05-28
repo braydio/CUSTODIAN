@@ -44,6 +44,7 @@ var _pending_spawns: Array[String] = []
 var _external_wave_queue: Array[String] = []
 var _forced_lane: String = ""
 var _forced_objective: String = ""
+var _forced_behavior_profile: StringName = &""
 var _game_state: Node = null
 var _burst_spawns_remaining: int = 0
 var _waiting_for_recovery_clearance: bool = false
@@ -113,6 +114,7 @@ func _sync_phase_state(phase: int) -> void:
 	_waiting_for_recovery_clearance = false
 	_forced_lane = ""
 	_forced_objective = ""
+	_forced_behavior_profile = &""
 
 func _refresh_spawn_nodes() -> void:
 	_spawn_nodes.clear()
@@ -201,6 +203,7 @@ func _complete_wave() -> void:
 	_wave_in_progress = false
 	_forced_lane = ""
 	_forced_objective = ""
+	_forced_behavior_profile = &""
 	wave_completed.emit(wave_number)
 	if active:
 		_waiting_for_recovery_clearance = true
@@ -264,6 +267,7 @@ func _spawn_enemy(enemy_type: String, difficulty: float) -> bool:
 		_configure_enemy_variant(enemy, enemy_type)
 	if not _forced_objective.is_empty() and "attack_objective" in enemy:
 		enemy.set("attack_objective", _forced_objective)
+	_apply_behavior_profile(enemy, enemy_type, _forced_behavior_profile)
 	parent.add_child(enemy)
 	if variant_profile != null and enemy.has_method("apply_variant"):
 		enemy.call("apply_variant", variant_profile)
@@ -271,7 +275,7 @@ func _spawn_enemy(enemy_type: String, difficulty: float) -> bool:
 		enemy.apply_difficulty_modifiers(difficulty, difficulty)
 	return true
 
-func debug_spawn_enemy_type(enemy_type: String = "drone", spawn_position: Vector2 = Vector2.ZERO, difficulty: float = 1.0) -> bool:
+func debug_spawn_enemy_type(enemy_type: String = "drone", spawn_position: Vector2 = Vector2.ZERO, difficulty: float = 1.0, behavior_profile: StringName = &"") -> bool:
 	var parent = get_node_or_null(enemy_container_path)
 	if parent == null:
 		push_warning("[WaveManager] Enemy container missing at %s" % String(enemy_container_path))
@@ -291,6 +295,7 @@ func debug_spawn_enemy_type(enemy_type: String = "drone", spawn_position: Vector
 	var is_fallback_variant := normalized_type != "drone" and packed_scene == drone_scene
 	if is_fallback_variant:
 		_configure_enemy_variant(enemy, normalized_type)
+	_apply_behavior_profile(enemy, normalized_type, behavior_profile)
 	parent.add_child(enemy)
 	if normalized_type == "wolf" and procedural_enemy_variants_enabled and enemy.has_method("apply_variant"):
 		var variant_profile := _build_debug_enemy_variant_profile(normalized_type)
@@ -301,12 +306,13 @@ func debug_spawn_enemy_type(enemy_type: String = "drone", spawn_position: Vector
 	print("[WaveManager] Debug spawned %s at %s" % [normalized_type, spawn_position])
 	return true
 
-func set_external_wave_plan(composition: Array[String], lane: String = "", objective: String = "") -> void:
+func set_external_wave_plan(composition: Array[String], lane: String = "", objective: String = "", behavior_profile: StringName = &"") -> void:
 	_external_wave_queue.clear()
 	for enemy_type in composition:
 		_external_wave_queue.append(String(enemy_type))
 	_forced_lane = lane.strip_edges().to_lower()
 	_forced_objective = objective.strip_edges().to_lower()
+	_forced_behavior_profile = behavior_profile
 
 func get_wave_status() -> Dictionary:
 	var next_wave_in := -1.0
@@ -323,6 +329,7 @@ func get_wave_status() -> Dictionary:
 		"next_wave_in": next_wave_in,
 		"forced_lane": _forced_lane,
 		"forced_objective": _forced_objective,
+		"forced_behavior_profile": String(_forced_behavior_profile),
 		"contract_phase": _game_state.get_phase_name() if _game_state != null else "UNKNOWN",
 	}
 
@@ -361,6 +368,16 @@ func _scene_for_enemy_type(enemy_type: String) -> PackedScene:
 			return drone_scene
 		_:
 			return null
+
+
+func _apply_behavior_profile(enemy: Node, enemy_type: String, profile_id: StringName = &"") -> void:
+	var chosen_profile := profile_id
+	if chosen_profile == &"" and enemy_type == "grunt":
+		chosen_profile = &"raider_grunt"
+	if chosen_profile == &"":
+		return
+	if enemy.has_method("set_behavior_profile"):
+		enemy.call("set_behavior_profile", chosen_profile)
 
 
 func _maybe_debug_spawn_grunt_on_start() -> void:

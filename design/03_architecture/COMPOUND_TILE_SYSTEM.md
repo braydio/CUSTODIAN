@@ -1,9 +1,9 @@
-# `design/20_features/in_progress/COMPOUND_TILE_SYSTEM.md`
+# `design/03_architecture/COMPOUND_TILE_SYSTEM.md`
 
 # Compound Tile System
 
 **Project:** CUSTODIAN
-**Status:** Required After Runtime Stabilization; Can Progress in Parallel with Campaign Systems Once Compound Runtime Authority Is Stable
+**Status:** Phase 2+ Target Architecture (Phase 1 implemented via `SIMPLIFIED_POWER_IN_ROOMS.md`)
 **Priority:** High
 **Depends On:** Runtime World & Camera Stabilization
 **Supports:** Campaign Flow, World Transition, Repair Gameplay, Sector Damage, Turret Placement, Power Routing, Defensive Readability
