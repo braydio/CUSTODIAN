@@ -10,11 +10,11 @@
 
 ## Task
 
-Implement the first playable Sundered Keep slice from `design/SUNDERED_KEEP_PHASE_1.md`: Main Gate, Courtyard, Great Hall, rampart/cliff boundary, and upper/lower traversal stubs.
+Implement the first playable Sundered Keep slice from `design/SUNDERED_KEEP_PHASE_1.md`: Main Gate, Courtyard, Great Hall, rampart/cliff boundary, and upper/lower traversal stubs. Follow-up asset correction: wire the slice to the existing game32 metadata/catalog assets and do not generate or render placeholder art.
 
 ## Outcome
 
-The Godot runtime has a reachable connected Sundered Keep map with generated phase-1 runtime assets, blocking props/walls/cliffs, visual traversal markers, a return gate, an asset manifest, and updated active documentation.
+The Godot runtime has a reachable connected Sundered Keep map with game32-backed Sundered Keep runtime assets, blocking props/walls/cliffs, live traversal assets, a return gate, asset smoke validation, and updated active documentation.
 
 ## Authority
 
@@ -26,22 +26,22 @@ The Godot runtime has a reachable connected Sundered Keep map with generated pha
 
 ## Work Surface
 
-- Files or folders expected to change: `custodian/content/tiles/sundered_keep/`, `custodian/content/props/sundered_keep/`, `custodian/content/levels/sundered_keep/`, `custodian/game/world/sundered_keep/`, `custodian/game/systems/core/systems/contract_world_loader.gd`, active AI context docs.
+- Files or folders expected to change: `custodian/game/world/sundered_keep/`, `custodian/tools/validation/`, active Sundered Keep design docs, and active AI context docs.
 - Files or folders expected to be read but not changed: existing gothic compound map/gate and procgen handoff code.
-- Out-of-scope areas: full multi-floor keep, chapel/library/observatory/dungeon destination maps, bespoke production art pass beyond generated readable runtime tiles.
+- Out-of-scope areas: full multi-floor keep, chapel/library/observatory/dungeon destination maps, new/generated placeholder art, and unrelated asset pipeline churn already present in the worktree.
 
 ## Constraints
 
 - Determinism concerns: authored map generation must be deterministic from fixed placements and must not add random runtime layout variance.
 - Simulation/UI boundary concerns: map collision and traversal belong to world nodes; HUD/terminal logic should not own slice behavior.
-- Asset requirements: phase 1 can ship with generated first-pass runtime PNGs; production art polish may still be desirable after playtest.
+- Asset requirements: use existing Sundered Keep game32 metadata/catalog assets only; do not generate placeholder art or render synthetic placeholder markers for missing assets.
 - Compatibility or migration concerns: preserve the existing gothic compound connection while adding the Sundered Keep entry as a separate connected map.
 - Clarifying questions or assumptions: proceeding under the user's instruction to implement to the full extent possible without waiting for asset confirmation.
 
 ## Implementation Plan
 
-1. Generate the phase-1 folder structure, first-batch PNG assets, and `sundered_keep_assets.json`.
-2. Add an authored `SunderedKeepMap` connected map that builds the first slice with layer groups, sprites, blocking collision, traversal stubs, camera bounds, and return travel.
+1. Review `custodian/content/sundered_keep_manifest.game32.json` and the generated domain manifests/catalog for live candidate assets.
+2. Update `SunderedKeepMap` to resolve terrain/traversal/props through `sundered_keep_game32_assets.gd`, resolve floors/walls from the metadata-backed Sundered Keep folders, and skip missing textures instead of drawing placeholder sprites.
 3. Wire the contract-world loader to place an entry gate to the Sundered Keep near the generated map's compound ingress.
 4. Update design/context docs and validate with Godot import/headless checks.
 
@@ -49,9 +49,9 @@ The Godot runtime has a reachable connected Sundered Keep map with generated pha
 
 - Runtime behavior: a contract world exposes an interactable `ENTER SUNDERED KEEP` gate, moving the operator into the authored keep slice and allowing return to the main map.
 - Documentation: active context and broad design status reflect the new phase-1 runtime slice.
-- Path/reference validation: new `res://` script and asset paths load.
+- Path/reference validation: Sundered Keep map instantiation creates only Sprite2D nodes with live textures.
 - Manual validation: playtest entry/readability remains recommended after headless validation.
-- Automated/headless validation: run Godot import and headless boot where feasible.
+- Automated/headless validation: run Godot import, headless boot, and `tools/validation/sundered_keep_asset_smoke.gd` where feasible.
 
 ## Drift Review
 
@@ -63,9 +63,9 @@ The Godot runtime has a reachable connected Sundered Keep map with generated pha
 
 ## Completion Notes
 
-- Implemented: Generated the Sundered Keep phase-1 runtime asset pack and manifest, added `SunderedKeepMap`, wired `ContractWorldLoader` to place an `ENTER SUNDERED KEEP` gate, and updated active design/context docs.
-- Validated: `cd custodian && godot --headless --import --quit`; `cd custodian && godot --headless --quit`. The runtime boot instantiated the Sundered Keep without missing Sundered Keep resources after a path fix.
-- Deferred: Production art polish, dedicated TileSet/TileMapLayer authoring, enemy encounter composition inside the connected map, save/load persistence for visited connected maps, minimap specialization, and full multi-floor expansion remain beyond phase 1.
+- Implemented: `SunderedKeepMap` now uses the game32 catalog for runtime terrain/traversal/prop paths, routes wall/floor selections to existing metadata-backed assets, uses Great Hall wall candidates in the Great Hall, removes non-asset overlay polygons and traversal marker polygons, skips missing textures instead of drawing red fallback sprites, and adds direct asset smoke validation.
+- Validated: `cd custodian && godot --headless --import --quit`; `cd custodian && godot --headless --quit`; `cd custodian && godot --headless --script tools/validation/sundered_keep_asset_smoke.gd`. The asset smoke check reported `2910` Sprite2D nodes with live textures.
+- Deferred: Manual visual pass, dedicated TileSet/TileMapLayer authoring, enemy encounter composition inside the connected map, save/load persistence for visited connected maps, minimap specialization, and full multi-floor expansion remain beyond phase 1.
 
 ## Next Steps
 

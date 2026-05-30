@@ -88,6 +88,15 @@ godot --headless --quit
 
 Known caveat: current headless validation may exit with existing object/resource leak warnings. Treat new parse errors, missing resources, broken script loads, or changed fatal errors as blockers.
 
+For Sundered Keep asset wiring specifically:
+
+```bash
+cd custodian
+godot --headless --script tools/validation/sundered_keep_asset_smoke.gd
+```
+
+This instantiates the authored Sundered Keep connected map and fails if any `Sprite2D` in the slice has a missing texture.
+
 ## Manual Godot Validation
 
 Use when behavior requires play, input, camera, animation, UI, collision, or visual confirmation.

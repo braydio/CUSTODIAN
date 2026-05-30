@@ -199,9 +199,9 @@ Last updated: 2026-05-30
 - `custodian/content/tiles/roads_paths/runtime/paths/path_piece_manifest.game32.json` — generated runtime footpath/degraded-transition stamp manifest used for `soft_path` overlays
 - `custodian/content/tiles/roads_paths/tools/normalize_road_pieces_game32.py` — pads raw road/path stamps to 32px game-grid canvases and emits separate road/path runtime manifests
 - `custodian/content/tiles/roads_paths/source/ancient_ruined_roads_and_paths.png` — source road/path sheet preserved as the visual source/reference for the runtime exports
-- `custodian/content/tiles/sundered_keep/` — generated first-pass phase-1 runtime tile pack for Sundered Keep floors, walls, cliffs/ocean, doors, stairs, hazards, roofs, and overlays
-- `custodian/content/props/sundered_keep/` — generated first-pass phase-1 runtime prop pack for Sundered Keep courtyard, gatehouse, great hall, exterior, chapel, library, dungeon, and observatory categories
-- `custodian/content/levels/sundered_keep/sundered_keep_assets.json` — manifest for Sundered Keep runtime assets and custom gameplay metadata such as walkability, blockers, hazards, cover, and traversal targets
+- `custodian/content/sundered_keep_manifest.game32.json` — master game32 manifest for the Sundered Keep asset set; indexes terrain, traversal, props, floors, gothic walls, great hall walls, and ramparts
+- `custodian/content/runtime/sundered_keep/sundered_keep_game32_assets.gd` — generated Sundered Keep runtime catalog used by `sundered_keep_map.gd` for terrain, traversal, and prop texture paths
+- `custodian/content/runtime/sundered_keep/` and `custodian/content/tiles/sundered_keep/` — runtime Sundered Keep game32 asset pack for terrain, traversal, props, floors, gothic walls, great hall walls, and ramparts
 - `custodian/content/tiles/interiors/runtime/` — runtime-ready `32x32` constructed-interior floor and military wall tiles registered into procgen source lists by naming convention
 - `custodian/content/tiles/interiors/source/` — oversized/reference interior tile source art preserved for slicing or replacement
 - `custodian/content/tiles/interiors/README.md` — interior tile folder layout, runtime/source split, and remaining art needs
@@ -272,6 +272,7 @@ Last updated: 2026-05-30
 - `custodian/docs/ai_context/prompts/` — reusable prompt templates for common agent tasks
 - `custodian/docs/ai_context/task_packets/` — active and completed task-scoped agent packets
 - `custodian/tools/validation/contract_resource_node_smoke.gd` — headless smoke test that loads `game.tscn`, verifies scarce generated tutorial resource nodes include blackwood/alloy/wreckage, verifies the far-field expedition patch covers every compatible resource-node kind, and checks generated/default node sprites build frames
+- `custodian/tools/validation/sundered_keep_asset_smoke.gd` — headless smoke test that instantiates the Sundered Keep connected map and fails if any slice `Sprite2D` has a missing texture
 - `custodian/tools/validation/grunt_animation_smoke.gd` — targeted smoke check for loading the current `enemy_grunt` body/FX SpriteFrames and selector mappings
 - `custodian/tools/validation/elevation_map_smoke.gd` — targeted smoke check for raised-platform elevation metadata, ramp traversal, blocked edges, and serialized cells
 - `custodian/tools/validation/terrain_builder_smoke.gd` — targeted smoke check for TerrainBuilder determinism, connectivity, elevated access, spawn-valid filtering, baseline visual no-op behavior, directional ramp validation, and registered elevation/cliff TileSet sources
