@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="OperatorWeaponDefinition" load_steps=4 format=3 uid="uid://cxjt0ptnue4pm"]
+[gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3 uid="uid://cxjt0ptnue4pm"]
 
 [ext_resource type="Script" uid="uid://dr83ct4e8mal7" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
 [ext_resource type="Resource" path="res://game/actors/operator/attacks/unarmed_fast_attack.tres" id="2_unarmed_fast"]

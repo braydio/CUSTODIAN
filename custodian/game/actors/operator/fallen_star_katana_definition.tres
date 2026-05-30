@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="OperatorWeaponDefinition" load_steps=5 format=3 uid="uid://cx8rk2ac54vfm"]
+[gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3 uid="uid://cx8rk2ac54vfm"]
 
 [ext_resource type="Script" uid="uid://dr83ct4e8mal7" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
 [ext_resource type="SpriteFrames" uid="uid://dnf1qpps4kf2r" path="res://game/actors/operator/fallen_star_katana_frames.tres" id="2_weapon_frames"]
@@ -10,9 +10,6 @@ script = ExtResource("1_weapon_definition")
 weapon_id = &"fallen_star_katana"
 weapon_type = &"melee_1h"
 display_name = "Fallen Star Katana"
-weapon_kind = "melee"
-primary_intent = "melee_fast"
-secondary_intent = "melee_heavy"
 frames_resource = ExtResource("2_weapon_frames")
 animation_map = {
 "melee_fast": "melee_2h_fast",
