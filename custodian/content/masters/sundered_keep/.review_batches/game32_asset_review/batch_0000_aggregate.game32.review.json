@@ -1,0 +1,416 @@
+{
+  "schema": "game32.aggregate_review.v2",
+  "id": "gothic_tiles_review_batch_0000",
+  "created_utc": "2026-05-30T00:41:07+00:00",
+  "instructions": {
+    "edit_this_file": true,
+    "source_of_truth": "entries[].asset is the full manifest that will be written to each .game32.json sidecar.",
+    "workflow": [
+      "Review the contact sheet image.",
+      "Edit each entry.review.action if needed.",
+      "Edit each entry.review.target_png if moving/renaming the PNG.",
+      "Edit each entry.asset directly. It contains the full game32.asset.v2 manifest.",
+      "Save/overwrite this aggregate JSON.",
+      "Run corrections/apply or return to terminal and press Enter."
+    ],
+    "valid_actions": {
+      "keep": "Write edited entry.asset to the sidecar manifest. Do not move PNG.",
+      "move": "Move/rename PNG to review.target_png, then write edited entry.asset to target manifest.",
+      "skip": "Do nothing to this entry.",
+      "delete": "Move PNG, manifest, and optionally import sidecar to trash directory."
+    },
+    "compact_corrections": {
+      "preferred": "Use game32.review_corrections.v1 to edit only changed fields.",
+      "commands": [
+        "game32_review.py corrections --aggregate <aggregate.json> --corrections <corrections.json>",
+        "game32_review.py apply --aggregate <aggregate.json>"
+      ]
+    },
+    "required_asset_blocks": [
+      "schema",
+      "id",
+      "display_name",
+      "source",
+      "file",
+      "classification",
+      "placement",
+      "collision",
+      "procgen",
+      "master_index"
+    ],
+    "path_rule": "review.target_png and asset.file.path may be res://, project-relative, or absolute. Project-relative is recommended."
+  },
+  "project_root": "/home/braydenchaffee/Projects/CUSTODIAN",
+  "scan_root": "custodian/content/masters/sundered",
+  "contact_sheet": "custodian/content/masters/sundered/.review_batches/game32_asset_review/batch_0000_contact.png",
+  "batch_number": 0,
+  "asset_count": 4,
+  "entries": [
+    {
+      "batch_index": 0,
+      "current": {
+        "png": "custodian/content/masters/sundered/great_hall_walls.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/masters/sundered/great_hall_walls.game32.json",
+        "filename": "great_hall_walls.png",
+        "parent_dir": "custodian/content/masters/sundered",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/masters/sundered/great_hall_walls.png",
+        "target_manifest": "custodian/content/masters/sundered/great_hall_walls.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "great_hall_walls",
+        "display_name": "Great Hall Walls",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/masters/sundered/great_hall_walls.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1254,
+            "h": 1254
+          },
+          "review_source": "placeholder_generated_from_png_path",
+          "review_status": "needs_review"
+        },
+        "file": {
+          "path": "res://content/masters/sundered/great_hall_walls.png",
+          "pixel_size": {
+            "w": 1254,
+            "h": 1254
+          }
+        },
+        "classification": {
+          "asset_type": "walls",
+          "semantic_role": "wall_segment",
+          "placement_layer": "wall",
+          "tags": [
+            "gothic",
+            "wall",
+            "blocking"
+          ],
+          "review_status": "needs_review"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 40,
+            "h": 40
+          },
+          "origin_mode": "bottom_center",
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "pivot_px": {
+            "x": 627,
+            "y": 1254
+          },
+          "review_status": "needs_review"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": true,
+          "cover_value": 2,
+          "review_status": "needs_review",
+          "collision_shape": "tile_rect"
+        },
+        "procgen": {
+          "uses": [
+            "compound_wall",
+            "interior_wall",
+            "boundary"
+          ],
+          "weight": 30,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "review_status": "needs_review",
+          "supports_gothic_compound": true
+        },
+        "master_index": 1
+      }
+    },
+    {
+      "batch_index": 1,
+      "current": {
+        "png": "custodian/content/masters/sundered/sundered_floor_tiles.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/masters/sundered/sundered_floor_tiles.game32.json",
+        "filename": "sundered_floor_tiles.png",
+        "parent_dir": "custodian/content/masters/sundered",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/masters/sundered/sundered_floor_tiles.png",
+        "target_manifest": "custodian/content/masters/sundered/sundered_floor_tiles.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "sundered_floor_tiles",
+        "display_name": "Sundered Floor Tiles",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1448,
+            "h": 1086
+          },
+          "review_source": "placeholder_generated_from_png_path",
+          "review_status": "needs_review"
+        },
+        "file": {
+          "path": "res://content/masters/sundered/sundered_floor_tiles.png",
+          "pixel_size": {
+            "w": 1448,
+            "h": 1086
+          }
+        },
+        "classification": {
+          "asset_type": "tiles",
+          "semantic_role": "walkable_floor_variant",
+          "placement_layer": "ground",
+          "tags": [
+            "gothic",
+            "floor",
+            "walkable"
+          ],
+          "review_status": "needs_review"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 46,
+            "h": 34
+          },
+          "origin_mode": "top_left",
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "needs_review"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "needs_review",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "compound_floor",
+            "courtyard_floor",
+            "interior_floor"
+          ],
+          "weight": 40,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "review_status": "needs_review",
+          "supports_gothic_compound": true
+        },
+        "master_index": 2
+      }
+    },
+    {
+      "batch_index": 2,
+      "current": {
+        "png": "custodian/content/masters/sundered/sundered_ramparts.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/masters/sundered/sundered_ramparts.game32.json",
+        "filename": "sundered_ramparts.png",
+        "parent_dir": "custodian/content/masters/sundered",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/masters/sundered/sundered_ramparts.png",
+        "target_manifest": "custodian/content/masters/sundered/sundered_ramparts.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "sundered_ramparts",
+        "display_name": "Sundered Ramparts",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/masters/sundered/sundered_ramparts.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1448,
+            "h": 1086
+          },
+          "review_source": "placeholder_generated_from_png_path",
+          "review_status": "needs_review"
+        },
+        "file": {
+          "path": "res://content/masters/sundered/sundered_ramparts.png",
+          "pixel_size": {
+            "w": 1448,
+            "h": 1086
+          }
+        },
+        "classification": {
+          "asset_type": "tiles",
+          "semantic_role": "uncategorized_environment_asset",
+          "placement_layer": "ground",
+          "tags": [
+            "needs_review"
+          ],
+          "review_status": "needs_review"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 46,
+            "h": 34
+          },
+          "origin_mode": "top_left",
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "pivot_px": {
+            "x": 0,
+            "y": 0
+          },
+          "review_status": "needs_review"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "review_status": "needs_review",
+          "collision_shape": "none"
+        },
+        "procgen": {
+          "uses": [
+            "compound_floor",
+            "courtyard_floor",
+            "interior_floor"
+          ],
+          "weight": 40,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "review_status": "needs_review",
+          "supports_gothic_compound": true
+        },
+        "master_index": 3
+      }
+    },
+    {
+      "batch_index": 3,
+      "current": {
+        "png": "custodian/content/masters/sundered/sundered_walls_gates.png",
+        "manifest": null,
+        "canonical_manifest": "custodian/content/masters/sundered/sundered_walls_gates.game32.json",
+        "filename": "sundered_walls_gates.png",
+        "parent_dir": "custodian/content/masters/sundered",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/masters/sundered/sundered_walls_gates.png",
+        "target_manifest": "custodian/content/masters/sundered/sundered_walls_gates.game32.json",
+        "delete_import": true,
+        "notes": ""
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "sundered_walls_gates",
+        "display_name": "Sundered Walls Gates",
+        "source": {
+          "master_sheet": null,
+          "original_path": "res://content/masters/sundered/sundered_walls_gates.png",
+          "section": "tiles",
+          "subtype": "uncategorized",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 1536
+          },
+          "review_source": "placeholder_generated_from_png_path",
+          "review_status": "needs_review"
+        },
+        "file": {
+          "path": "res://content/masters/sundered/sundered_walls_gates.png",
+          "pixel_size": {
+            "w": 1024,
+            "h": 1536
+          }
+        },
+        "classification": {
+          "asset_type": "walls",
+          "semantic_role": "wall_segment",
+          "placement_layer": "wall",
+          "tags": [
+            "gothic",
+            "wall",
+            "blocking"
+          ],
+          "review_status": "needs_review"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 32,
+            "h": 48
+          },
+          "origin_mode": "bottom_center",
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "pivot_px": {
+            "x": 512,
+            "y": 1536
+          },
+          "review_status": "needs_review"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": true,
+          "cover_value": 2,
+          "review_status": "needs_review",
+          "collision_shape": "tile_rect"
+        },
+        "procgen": {
+          "uses": [
+            "compound_wall",
+            "interior_wall",
+            "boundary"
+          ],
+          "weight": 30,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": true,
+          "review_status": "needs_review",
+          "supports_gothic_compound": true
+        },
+        "master_index": 4
+      }
+    }
+  ]
+}

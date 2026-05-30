@@ -1,0 +1,80 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_large_environment_prop_013",
+  "display_name": "Gothic Large Environment Prop 013",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/large_environment_prop/gothic_large_environment_prop_013.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 126,
+      "h": 32
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/props/gothic/large_environment_prop/gothic_large_environment_prop_013.png",
+    "pixel_size": {
+      "w": 126,
+      "h": 32
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "low_chain_barrier_prop",
+    "placement_layer": "prop",
+    "tags": [
+      "gothic",
+      "prop",
+      "environment",
+      "chain",
+      "barrier",
+      "low_barrier",
+      "restricted_area",
+      "nonwall_barrier"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 4,
+      "h": 1
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 63,
+      "y": 32
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "barrier_prop",
+      "restricted_area_marker",
+      "compound_dressing",
+      "low_boundary"
+    ],
+    "weight": 10,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 20
+}

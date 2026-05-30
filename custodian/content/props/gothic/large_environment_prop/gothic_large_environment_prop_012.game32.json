@@ -1,0 +1,82 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "gothic_large_environment_prop_012",
+  "display_name": "Gothic Large Environment Prop 012",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/large_environment_prop/gothic_large_environment_prop_012.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 113,
+      "h": 59
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/props/gothic/large_environment_prop/gothic_large_environment_prop_012.png",
+    "pixel_size": {
+      "w": 113,
+      "h": 59
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "broken_control_machine_wreck_prop",
+    "placement_layer": "prop",
+    "tags": [
+      "gothic",
+      "prop",
+      "environment",
+      "machine",
+      "wreck",
+      "control_panel",
+      "debris",
+      "salvage",
+      "industrial",
+      "tech"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 4,
+      "h": 2
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 56,
+      "y": 59
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 1,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "machine_room_dressing",
+      "salvage_dressing",
+      "industrial_rubble",
+      "compound_tech_dressing"
+    ],
+    "weight": 8,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 19
+}

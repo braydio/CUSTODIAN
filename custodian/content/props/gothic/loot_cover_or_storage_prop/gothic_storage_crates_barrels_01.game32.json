@@ -12,10 +12,22 @@
       "y": 724,
       "w": 123,
       "h": 141
-    }
+    },
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/loot_cover_or_storage_prop/gothic_storage_crates_barrels_01.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 123,
+      "h": 141
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/props/gothic/loot_cover_or_storage_prop/gothic_storage_crates_barrels_01.png",
+    "path": "res://content/props/gothic/loot_cover_or_storage_prop/gothic_storage_crates_barrels_01.png",
     "pixel_size": {
       "w": 123,
       "h": 141
@@ -23,7 +35,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "loot_cover_or_storage_prop",
+    "semantic_role": "large_dead_root_storage_obstacle",
     "placement_layer": "prop",
     "tags": [
       "barrel",
@@ -31,8 +43,14 @@
       "crate",
       "loot",
       "prop",
-      "storage"
-    ]
+      "storage",
+      "gothic",
+      "root",
+      "deadwood",
+      "organic_intrusion",
+      "large_obstacle"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -48,25 +66,28 @@
     "snap": "tile_or_free",
     "allow_mirror_x": true,
     "allow_rotation": false,
-    "y_sort": true
+    "y_sort": true,
+    "review_status": "reviewed"
   },
   "collision": {
     "blocks_movement": true,
     "blocks_sight": false,
-    "cover_value": 1,
-    "collision_shape": "footprint"
+    "cover_value": 2,
+    "collision_shape": "footprint",
+    "review_status": "reviewed"
   },
   "procgen": {
     "uses": [
-      "loot_area",
-      "storage_room",
-      "cover",
-      "compound_utility"
+      "organic_intrusion",
+      "forest_intrusion",
+      "large_cover_prop",
+      "blocked_route_dressing"
     ],
-    "weight": 24,
+    "weight": 8,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": true,
     "supports_gothic_compound": true,
-    "review_status": "semantic_band_assigned"
-  }
+    "review_status": "reviewed"
+  },
+  "master_index": 10
 }

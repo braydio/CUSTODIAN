@@ -1,0 +1,589 @@
+{
+  "schema": "game32.aggregate_review.v2",
+  "id": "gothic_tiles_review_batch_0000",
+  "created_utc": "2026-05-29T06:30:15+00:00",
+  "instructions": {
+    "edit_this_file": true,
+    "source_of_truth": "entries[].asset is the full manifest that will be written to each .game32.json sidecar.",
+    "workflow": [
+      "Review the contact sheet image.",
+      "Edit each entry.review.action if needed.",
+      "Edit each entry.review.target_png if moving/renaming the PNG.",
+      "Edit each entry.asset directly. It contains the full game32.asset.v2 manifest.",
+      "Save/overwrite this aggregate JSON.",
+      "Run corrections/apply or return to terminal and press Enter."
+    ],
+    "valid_actions": {
+      "keep": "Write edited entry.asset to the sidecar manifest. Do not move PNG.",
+      "move": "Move/rename PNG to review.target_png, then write edited entry.asset to target manifest.",
+      "skip": "Do nothing to this entry.",
+      "delete": "Move PNG, manifest, and optionally import sidecar to trash directory."
+    },
+    "compact_corrections": {
+      "preferred": "Use game32.review_corrections.v1 to edit only changed fields.",
+      "commands": [
+        "game32_review.py corrections --aggregate <aggregate.json> --corrections <corrections.json>",
+        "game32_review.py apply --aggregate <aggregate.json>"
+      ]
+    },
+    "required_asset_blocks": [
+      "schema",
+      "id",
+      "display_name",
+      "source",
+      "file",
+      "classification",
+      "placement",
+      "collision",
+      "procgen",
+      "master_index"
+    ],
+    "path_rule": "review.target_png and asset.file.path may be res://, project-relative, or absolute. Project-relative is recommended."
+  },
+  "project_root": "/home/braydenchaffee/Projects/CUSTODIAN",
+  "scan_root": "custodian/content/doors/gothic",
+  "contact_sheet": "custodian/content/doors/gothic/.review_batches/game32_asset_review/batch_0000_contact.png",
+  "batch_number": 0,
+  "asset_count": 5,
+  "entries": [
+    {
+      "batch_index": 0,
+      "current": {
+        "png": "custodian/content/doors/gothic/vault/vault_door_closed_01.png",
+        "manifest": "custodian/content/doors/gothic/vault/vault_door_closed_01.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/vault/vault_door_closed_01.game32.json",
+        "filename": "vault_door_closed_01.png",
+        "parent_dir": "custodian/content/doors/gothic/vault",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/vault/vault_door_closed_01.png",
+        "target_manifest": "custodian/content/doors/gothic/vault/vault_door_closed_01.game32.json",
+        "delete_import": true,
+        "notes": "Reviewed as closed vault door; blocks movement and sight by default."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "vault_door_closed_01",
+        "display_name": "Vault Door Closed 01",
+        "source": {
+          "master_sheet": "custodian/props/gothic/vault_propsheet_04.png",
+          "sheet_cell": {
+            "row": 0,
+            "col": 0,
+            "rows": 2,
+            "cols": 3
+          },
+          "original_path": "res://content/doors/gothic/vault/vault_door_closed_01.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 128,
+            "h": 128
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/vault/vault_door_closed_01.png",
+          "pixel_size": {
+            "w": 128,
+            "h": 128
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "vault_closed_door",
+          "placement_layer": "door",
+          "tags": [
+            "vault",
+            "gothic",
+            "door",
+            "vault_door",
+            "closed",
+            "blocking",
+            "high_security",
+            "enemy_theft_target_gate"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 4
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 64,
+            "y": 127
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": true,
+          "cover_value": 3,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "runtime": {
+          "status": "extracted_from_source_sheet",
+          "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
+        },
+        "procgen": {
+          "uses": [
+            "vault_door",
+            "vault_entrance",
+            "locked_storage_room",
+            "high_value_room_gate"
+          ],
+          "weight": 8,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 1
+      }
+    },
+    {
+      "batch_index": 1,
+      "current": {
+        "png": "custodian/content/doors/gothic/vault/vault_door_lockplate_01.png",
+        "manifest": "custodian/content/doors/gothic/vault/vault_door_lockplate_01.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/vault/vault_door_lockplate_01.game32.json",
+        "filename": "vault_door_lockplate_01.png",
+        "parent_dir": "custodian/content/doors/gothic/vault",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/vault/vault_door_lockplate_01.png",
+        "target_manifest": "custodian/content/doors/gothic/vault/vault_door_lockplate_01.game32.json",
+        "delete_import": true,
+        "notes": "Reviewed as nonblocking lockplate/overlay, not a full door."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "vault_door_lockplate_01",
+        "display_name": "Vault Door Lockplate 01",
+        "source": {
+          "master_sheet": "custodian/props/gothic/vault_propsheet_04.png",
+          "sheet_cell": {
+            "row": 1,
+            "col": 1,
+            "rows": 2,
+            "cols": 3
+          },
+          "original_path": "res://content/doors/gothic/vault/vault_door_lockplate_01.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 64,
+            "h": 64
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/vault/vault_door_lockplate_01.png",
+          "pixel_size": {
+            "w": 64,
+            "h": 64
+          }
+        },
+        "classification": {
+          "asset_type": "props",
+          "semantic_role": "vault_door_lockplate_mechanism",
+          "placement_layer": "door_overlay",
+          "tags": [
+            "vault",
+            "gothic",
+            "door",
+            "lock",
+            "lockplate",
+            "mechanism",
+            "overlay",
+            "interactable_candidate"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 2,
+            "h": 2
+          },
+          "origin_mode": "center",
+          "pivot_px": {
+            "x": 32,
+            "y": 32
+          },
+          "snap": "tile_or_free",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": false,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "collision_shape": "none",
+          "review_status": "reviewed"
+        },
+        "runtime": {
+          "status": "extracted_from_source_sheet",
+          "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
+        },
+        "procgen": {
+          "uses": [
+            "vault_lock_overlay",
+            "door_mechanism",
+            "locked_storage_room_detail",
+            "interactable_door_detail"
+          ],
+          "weight": 6,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 2
+      }
+    },
+    {
+      "batch_index": 2,
+      "current": {
+        "png": "custodian/content/doors/gothic/vault/vault_door_open_01.png",
+        "manifest": "custodian/content/doors/gothic/vault/vault_door_open_01.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/vault/vault_door_open_01.game32.json",
+        "filename": "vault_door_open_01.png",
+        "parent_dir": "custodian/content/doors/gothic/vault",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/vault/vault_door_open_01.png",
+        "target_manifest": "custodian/content/doors/gothic/vault/vault_door_open_01.game32.json",
+        "delete_import": true,
+        "notes": "Reviewed as open vault door; passable by default."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "vault_door_open_01",
+        "display_name": "Vault Door Open 01",
+        "source": {
+          "master_sheet": "custodian/props/gothic/vault_propsheet_04.png",
+          "sheet_cell": {
+            "row": 0,
+            "col": 1,
+            "rows": 2,
+            "cols": 3
+          },
+          "original_path": "res://content/doors/gothic/vault/vault_door_open_01.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 128,
+            "h": 128
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/vault/vault_door_open_01.png",
+          "pixel_size": {
+            "w": 128,
+            "h": 128
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "vault_open_door",
+          "placement_layer": "door",
+          "tags": [
+            "vault",
+            "gothic",
+            "door",
+            "vault_door",
+            "open",
+            "passage",
+            "threshold"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 4
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 64,
+            "y": 127
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 0,
+          "collision_shape": "none",
+          "review_status": "reviewed"
+        },
+        "runtime": {
+          "status": "extracted_from_source_sheet",
+          "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
+        },
+        "procgen": {
+          "uses": [
+            "vault_door_open",
+            "vault_entrance",
+            "storage_room_threshold",
+            "open_passage"
+          ],
+          "weight": 5,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 3
+      }
+    },
+    {
+      "batch_index": 3,
+      "current": {
+        "png": "custodian/content/doors/gothic/vault/vault_gate_barred_01.png",
+        "manifest": "custodian/content/doors/gothic/vault/vault_gate_barred_01.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/vault/vault_gate_barred_01.game32.json",
+        "filename": "vault_gate_barred_01.png",
+        "parent_dir": "custodian/content/doors/gothic/vault",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/vault/vault_gate_barred_01.png",
+        "target_manifest": "custodian/content/doors/gothic/vault/vault_gate_barred_01.game32.json",
+        "delete_import": true,
+        "notes": "Reviewed as barred vault gate. Blocks movement; sight can partially pass through bars."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "vault_gate_barred_01",
+        "display_name": "Vault Gate Barred 01",
+        "source": {
+          "master_sheet": "custodian/props/gothic/vault_propsheet_04.png",
+          "sheet_cell": {
+            "row": 0,
+            "col": 2,
+            "rows": 2,
+            "cols": 3
+          },
+          "original_path": "res://content/doors/gothic/vault/vault_gate_barred_01.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 128,
+            "h": 128
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/vault/vault_gate_barred_01.png",
+          "pixel_size": {
+            "w": 128,
+            "h": 128
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "vault_barred_gate_closed",
+          "placement_layer": "door",
+          "tags": [
+            "vault",
+            "gothic",
+            "door",
+            "gate",
+            "barred",
+            "closed",
+            "blocking",
+            "high_security"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 4
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 64,
+            "y": 127
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": true,
+          "blocks_sight": false,
+          "cover_value": 2,
+          "collision_shape": "footprint",
+          "review_status": "reviewed"
+        },
+        "runtime": {
+          "status": "extracted_from_source_sheet",
+          "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
+        },
+        "procgen": {
+          "uses": [
+            "vault_gate",
+            "locked_storage_room",
+            "restricted_area_gate",
+            "high_value_room_gate"
+          ],
+          "weight": 8,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 4
+      }
+    },
+    {
+      "batch_index": 4,
+      "current": {
+        "png": "custodian/content/doors/gothic/vault/vault_gate_broken_01.png",
+        "manifest": "custodian/content/doors/gothic/vault/vault_gate_broken_01.game32.json",
+        "canonical_manifest": "custodian/content/doors/gothic/vault/vault_gate_broken_01.game32.json",
+        "filename": "vault_gate_broken_01.png",
+        "parent_dir": "custodian/content/doors/gothic/vault",
+        "exists": true
+      },
+      "review": {
+        "action": "keep",
+        "target_png": "custodian/content/doors/gothic/vault/vault_gate_broken_01.png",
+        "target_manifest": "custodian/content/doors/gothic/vault/vault_gate_broken_01.game32.json",
+        "delete_import": true,
+        "notes": "Reviewed as broken/passable vault gate."
+      },
+      "asset": {
+        "schema": "game32.asset.v2",
+        "id": "vault_gate_broken_01",
+        "display_name": "Vault Gate Broken 01",
+        "source": {
+          "master_sheet": "custodian/props/gothic/vault_propsheet_04.png",
+          "sheet_cell": {
+            "row": 1,
+            "col": 0,
+            "rows": 2,
+            "cols": 3
+          },
+          "original_path": "res://content/doors/gothic/vault/vault_gate_broken_01.png",
+          "section": "doors",
+          "subtype": "doors",
+          "source_rect_px": {
+            "x": 0,
+            "y": 0,
+            "w": 128,
+            "h": 128
+          },
+          "review_source": "human_llm_compact_review",
+          "review_status": "reviewed"
+        },
+        "file": {
+          "path": "custodian/content/doors/gothic/vault/vault_gate_broken_01.png",
+          "pixel_size": {
+            "w": 128,
+            "h": 128
+          }
+        },
+        "classification": {
+          "asset_type": "doors",
+          "semantic_role": "vault_broken_gate_passage",
+          "placement_layer": "door",
+          "tags": [
+            "vault",
+            "gothic",
+            "door",
+            "gate",
+            "broken",
+            "passage",
+            "damaged",
+            "breached"
+          ],
+          "review_status": "reviewed"
+        },
+        "placement": {
+          "tile_size": 32,
+          "footprint_tiles": {
+            "w": 4,
+            "h": 4
+          },
+          "origin_mode": "bottom_center",
+          "pivot_px": {
+            "x": 64,
+            "y": 127
+          },
+          "snap": "tile",
+          "allow_mirror_x": false,
+          "allow_rotation": false,
+          "y_sort": true,
+          "review_status": "reviewed"
+        },
+        "collision": {
+          "blocks_movement": false,
+          "blocks_sight": false,
+          "cover_value": 1,
+          "collision_shape": "none",
+          "review_status": "reviewed"
+        },
+        "runtime": {
+          "status": "extracted_from_source_sheet",
+          "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
+        },
+        "procgen": {
+          "uses": [
+            "vault_gate_broken",
+            "breached_vault",
+            "damaged_storage_room",
+            "open_passage"
+          ],
+          "weight": 4,
+          "can_spawn_indoor": true,
+          "can_spawn_outdoor": false,
+          "review_status": "reviewed",
+          "supports_gothic_compound": true
+        },
+        "master_index": 5
+      }
+    }
+  ]
+}

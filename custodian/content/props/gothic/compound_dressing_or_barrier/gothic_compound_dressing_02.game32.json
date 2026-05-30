@@ -12,10 +12,22 @@
       "y": 723,
       "w": 117,
       "h": 126
-    }
+    },
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_02.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 117,
+      "h": 126
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_02.png",
+    "path": "res://content/props/gothic/compound_dressing_or_barrier/gothic_compound_dressing_02.png",
     "pixel_size": {
       "w": 117,
       "h": 126
@@ -23,7 +35,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "compound_dressing_or_barrier",
+    "semantic_role": "ruined_arch_rubble_compound_dressing",
     "placement_layer": "prop",
     "tags": [
       "banner",
@@ -32,8 +44,15 @@
       "gothic",
       "machine",
       "prop",
-      "sandbag"
-    ]
+      "sandbag",
+      "rubble",
+      "ruined_arch",
+      "stone",
+      "compound_dressing",
+      "large_obstacle",
+      "salvage"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -49,26 +68,28 @@
     "snap": "tile_or_free",
     "allow_mirror_x": true,
     "allow_rotation": false,
-    "y_sort": true
+    "y_sort": true,
+    "review_status": "reviewed"
   },
   "collision": {
     "blocks_movement": true,
     "blocks_sight": false,
-    "cover_value": 1,
-    "collision_shape": "footprint"
+    "cover_value": 2,
+    "collision_shape": "footprint",
+    "review_status": "reviewed"
   },
   "procgen": {
     "uses": [
       "compound_dressing",
-      "faction_dressing",
-      "barrier",
-      "cover",
-      "machine_poi"
+      "large_rubble_prop",
+      "ruin_storytelling",
+      "blocked_route_dressing"
     ],
-    "weight": 18,
+    "weight": 7,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": true,
     "supports_gothic_compound": true,
-    "review_status": "semantic_band_assigned"
-  }
+    "review_status": "reviewed"
+  },
+  "master_index": 6
 }

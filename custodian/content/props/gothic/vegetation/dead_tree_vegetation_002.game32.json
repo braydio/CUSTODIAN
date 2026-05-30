@@ -1,0 +1,81 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "dead_tree_vegetation_002",
+  "display_name": "Dead Tree Vegetation 002",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/vegetation/dead_tree_vegetation_002.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 108,
+      "h": 60
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/props/gothic/vegetation/dead_tree_vegetation_002.png",
+    "pixel_size": {
+      "w": 108,
+      "h": 60
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "dead_tree_spike_barricade_vegetation",
+    "placement_layer": "prop",
+    "tags": [
+      "gothic",
+      "prop",
+      "environment",
+      "dead_tree",
+      "vegetation",
+      "deadwood",
+      "spikes",
+      "barrier",
+      "outdoor"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 4,
+      "h": 2
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 54,
+      "y": 60
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 1,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "vegetation",
+      "organic_intrusion",
+      "forest_intrusion",
+      "natural_barrier"
+    ],
+    "weight": 8,
+    "can_spawn_indoor": false,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 16
+}

@@ -1,0 +1,173 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/cliff_outer_corner_nw",
+  "name": "cliff_outer_corner_nw",
+  "filename": "cliff_outer_corner_nw.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-05-30T01:02:23+00:00",
+  "source": {
+    "sheet_key": "terrain_cliffs_ocean",
+    "sheet_file": "cliffs_oceans.png",
+    "sheet_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/cliffs_oceans.png",
+    "sheet_sha256": "a58c6dc1fcbc282e5c7f546a32a789074deff5a683c0acf2e9aa05f9f6c4db33",
+    "sheet_asset_index": 9,
+    "sheet_bbox_px": [
+      706,
+      290,
+      207,
+      222
+    ],
+    "source_crop_bbox_px": [
+      716,
+      300,
+      187,
+      202
+    ],
+    "detected_background_colors_rgb": [
+      [
+        248,
+        248,
+        248
+      ],
+      [
+        240,
+        240,
+        240
+      ],
+      [
+        232,
+        232,
+        232
+      ],
+      [
+        240,
+        232,
+        240
+      ],
+      [
+        240,
+        232,
+        232
+      ],
+      [
+        232,
+        232,
+        240
+      ],
+      [
+        240,
+        240,
+        232
+      ],
+      [
+        224,
+        224,
+        224
+      ],
+      [
+        232,
+        240,
+        240
+      ],
+      [
+        216,
+        216,
+        216
+      ]
+    ],
+    "extraction_method": {
+      "background": "alpha_or_checkerboard_dominant_color_removal",
+      "component_join_radius_px": 18,
+      "crop_padding_px": 8,
+      "min_component_area_px": 900
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://content/runtime/sundered_keep/terrain/cliffs/cliff_outer_corner_nw.png",
+    "metadata_path": "res://content/runtime/sundered_keep/terrain/cliffs/cliff_outer_corner_nw.game32.json",
+    "domain": "terrain",
+    "kind": "terrain",
+    "subkind": "cliff_outer_corner",
+    "canvas_px": [
+      64,
+      96
+    ],
+    "canvas_tiles": [
+      2,
+      3
+    ],
+    "content_bbox_px": [
+      2,
+      29,
+      60,
+      65
+    ],
+    "scale_from_source_crop": 0.3508771929824561,
+    "paste_offset_px": [
+      2,
+      29
+    ],
+    "anchor": "bottom_center",
+    "pivot_px": [
+      32,
+      94
+    ],
+    "pivot_normalized": [
+      0.5,
+      0.9792
+    ],
+    "y_sort": true,
+    "draw_order": "terrain_wall",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    }
+  },
+  "gameplay": {
+    "walkable": false,
+    "interactable": false,
+    "traversal": null,
+    "direction": "nw",
+    "state": null,
+    "tags": [
+      "cliff",
+      "corner",
+      "outer_corner",
+      "drop",
+      "sundered_keep"
+    ]
+  },
+  "collision": {
+    "kind": "terrain_drop",
+    "blocks_movement": true,
+    "blocks_projectiles": true,
+    "footprint_tiles_wh": [
+      2,
+      1
+    ],
+    "footprint_cells": [
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 0
+      }
+    ],
+    "origin_tile": {
+      "x": 0,
+      "y": 0,
+      "anchor": "bottom_center"
+    }
+  },
+  "editor": {
+    "display_name": "Cliff Outer Corner Nw",
+    "notes": "Generated from Sundered Keep master sheet; adjust footprint/collision after in-editor placement review if needed."
+  }
+}

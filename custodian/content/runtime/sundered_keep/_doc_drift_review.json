@@ -1,0 +1,32 @@
+{
+  "checked_at_utc": "2026-05-30T01:02:36+00:00",
+  "generated_asset_count": 62,
+  "checks": [
+    {
+      "label": "repo_guidance",
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/AGENTS.md",
+      "exists": true
+    },
+    {
+      "label": "active_ai_context_current_state",
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/docs/ai_context/CURRENT_STATE.md",
+      "exists": true
+    },
+    {
+      "label": "active_ai_context_context",
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/docs/ai_context/CONTEXT.md",
+      "exists": true
+    },
+    {
+      "label": "active_ai_context_file_index",
+      "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/docs/ai_context/FILE_INDEX.md",
+      "exists": true
+    }
+  ],
+  "potential_drift": [
+    "CURRENT_STATE.md does not appear to mention the generated Sundered Keep runtime asset set.",
+    "FILE_INDEX.md does not appear to list content/runtime/sundered_keep outputs.",
+    "CONTEXT.md may not mention the Sundered Keep master/runtime asset workflow."
+  ],
+  "recommended_action": "Add a short note to custodian/docs/ai_context/CURRENT_STATE.md and FILE_INDEX.md that Sundered Keep masters live under content/masters/sundered_keep and generated runtime slices/metadata live under content/runtime/sundered_keep. This is an asset-pipeline update, not a gameplay behavior change."
+}

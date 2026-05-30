@@ -1,0 +1,180 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/main_gate_portcullis_open",
+  "name": "main_gate_portcullis_open",
+  "filename": "main_gate_portcullis_open.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-05-30T01:02:27+00:00",
+  "source": {
+    "sheet_key": "doors_traversal",
+    "sheet_file": "doors_traversal.png",
+    "sheet_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/doors_traversal.png",
+    "sheet_sha256": "b061770339f420206adae0cfe9bef9417247fa5788ea84b03686156005105c1a",
+    "sheet_asset_index": 1,
+    "sheet_bbox_px": [
+      375,
+      36,
+      335,
+      344
+    ],
+    "source_crop_bbox_px": [
+      385,
+      46,
+      315,
+      324
+    ],
+    "detected_background_colors_rgb": [
+      [
+        248,
+        248,
+        248
+      ],
+      [
+        232,
+        232,
+        232
+      ],
+      [
+        240,
+        240,
+        240
+      ],
+      [
+        224,
+        224,
+        224
+      ],
+      [
+        232,
+        232,
+        240
+      ],
+      [
+        216,
+        216,
+        216
+      ],
+      [
+        232,
+        240,
+        240
+      ],
+      [
+        240,
+        240,
+        248
+      ],
+      [
+        224,
+        224,
+        232
+      ],
+      [
+        208,
+        208,
+        208
+      ]
+    ],
+    "extraction_method": {
+      "background": "alpha_or_checkerboard_dominant_color_removal",
+      "component_join_radius_px": 18,
+      "crop_padding_px": 8,
+      "min_component_area_px": 900
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://content/runtime/sundered_keep/doors_traversal/gates/main_gate_portcullis_open.png",
+    "metadata_path": "res://content/runtime/sundered_keep/doors_traversal/gates/main_gate_portcullis_open.game32.json",
+    "domain": "doors_traversal",
+    "kind": "door",
+    "subkind": "main_gate_portcullis",
+    "canvas_px": [
+      128,
+      128
+    ],
+    "canvas_tiles": [
+      4,
+      4
+    ],
+    "content_bbox_px": [
+      4,
+      2,
+      120,
+      124
+    ],
+    "scale_from_source_crop": 0.4025974025974026,
+    "paste_offset_px": [
+      4,
+      2
+    ],
+    "anchor": "bottom_center",
+    "pivot_px": [
+      64,
+      126
+    ],
+    "pivot_normalized": [
+      0.5,
+      0.9844
+    ],
+    "y_sort": true,
+    "draw_order": "architecture",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    }
+  },
+  "gameplay": {
+    "walkable": true,
+    "interactable": true,
+    "traversal": "gate_open",
+    "direction": null,
+    "state": "open",
+    "tags": [
+      "gate",
+      "portcullis",
+      "open",
+      "sundered_keep"
+    ]
+  },
+  "collision": {
+    "kind": "gate_threshold",
+    "blocks_movement": false,
+    "blocks_projectiles": false,
+    "footprint_tiles_wh": [
+      4,
+      1
+    ],
+    "footprint_cells": [
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 0
+      }
+    ],
+    "origin_tile": {
+      "x": 0,
+      "y": 0,
+      "anchor": "bottom_center"
+    }
+  },
+  "editor": {
+    "display_name": "Main Gate Portcullis Open",
+    "notes": "Generated from Sundered Keep master sheet; adjust footprint/collision after in-editor placement review if needed."
+  }
+}

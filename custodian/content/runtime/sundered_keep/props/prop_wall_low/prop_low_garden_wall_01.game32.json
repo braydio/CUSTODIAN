@@ -1,0 +1,175 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/prop_low_garden_wall_01",
+  "name": "prop_low_garden_wall_01",
+  "filename": "prop_low_garden_wall_01.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-05-30T01:02:32+00:00",
+  "source": {
+    "sheet_key": "props_tables_crates",
+    "sheet_file": "tables_crates_props.png",
+    "sheet_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/tables_crates_props.png",
+    "sheet_sha256": "4cbe048b5e05173462889ecb8792a7ab030c4129273cde3c47c955e4c79e04a6",
+    "sheet_asset_index": 7,
+    "sheet_bbox_px": [
+      584,
+      430,
+      253,
+      234
+    ],
+    "source_crop_bbox_px": [
+      594,
+      440,
+      233,
+      214
+    ],
+    "detected_background_colors_rgb": [
+      [
+        248,
+        248,
+        248
+      ],
+      [
+        232,
+        232,
+        232
+      ],
+      [
+        224,
+        224,
+        224
+      ],
+      [
+        240,
+        240,
+        240
+      ],
+      [
+        232,
+        224,
+        232
+      ],
+      [
+        232,
+        224,
+        224
+      ],
+      [
+        216,
+        216,
+        216
+      ],
+      [
+        224,
+        224,
+        232
+      ],
+      [
+        208,
+        208,
+        208
+      ],
+      [
+        232,
+        232,
+        224
+      ]
+    ],
+    "extraction_method": {
+      "background": "alpha_or_checkerboard_dominant_color_removal",
+      "component_join_radius_px": 18,
+      "crop_padding_px": 8,
+      "min_component_area_px": 900
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://content/runtime/sundered_keep/props/prop_wall_low/prop_low_garden_wall_01.png",
+    "metadata_path": "res://content/runtime/sundered_keep/props/prop_wall_low/prop_low_garden_wall_01.game32.json",
+    "domain": "props",
+    "kind": "prop",
+    "subkind": "prop_wall_low",
+    "canvas_px": [
+      96,
+      32
+    ],
+    "canvas_tiles": [
+      3,
+      1
+    ],
+    "content_bbox_px": [
+      32,
+      2,
+      31,
+      28
+    ],
+    "scale_from_source_crop": 0.1414141414141414,
+    "paste_offset_px": [
+      32,
+      2
+    ],
+    "anchor": "bottom_center",
+    "pivot_px": [
+      48,
+      30
+    ],
+    "pivot_normalized": [
+      0.5,
+      0.9375
+    ],
+    "y_sort": true,
+    "draw_order": "prop",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    }
+  },
+  "gameplay": {
+    "walkable": false,
+    "interactable": false,
+    "traversal": null,
+    "direction": null,
+    "state": null,
+    "tags": [
+      "garden_wall",
+      "cover_low",
+      "sundered_keep"
+    ]
+  },
+  "collision": {
+    "kind": "rect_footprint",
+    "blocks_movement": true,
+    "blocks_projectiles": true,
+    "footprint_tiles_wh": [
+      3,
+      1
+    ],
+    "footprint_cells": [
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 0
+      }
+    ],
+    "origin_tile": {
+      "x": 0,
+      "y": 0,
+      "anchor": "bottom_center"
+    }
+  },
+  "editor": {
+    "display_name": "Prop Low Garden Wall 01",
+    "notes": "Generated from Sundered Keep master sheet; adjust footprint/collision after in-editor placement review if needed."
+  }
+}

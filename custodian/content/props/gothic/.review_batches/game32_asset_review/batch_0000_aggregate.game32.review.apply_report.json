@@ -1,0 +1,193 @@
+{
+  "schema": "game32.aggregate_review_apply_report.v1",
+  "aggregate": "custodian/content/props/gothic/.review_batches/game32_asset_review/batch_0000_aggregate.game32.review.json",
+  "applied_utc": "2026-05-30T01:08:28+00:00",
+  "dry_run": false,
+  "results": [
+    {
+      "batch_index": 0,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_propsheet_02.png",
+      "old_manifest": "custodian/content/props/gothic/vault_propsheet_02.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_propsheet_02.png",
+      "target_manifest": "custodian/content/props/gothic/vault_propsheet_02.game32.json"
+    },
+    {
+      "batch_index": 1,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_propsheet_03.png",
+      "old_manifest": "custodian/content/props/gothic/vault_propsheet_03.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_propsheet_03.png",
+      "target_manifest": "custodian/content/props/gothic/vault_propsheet_03.game32.json"
+    },
+    {
+      "batch_index": 2,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_propsheet_04.png",
+      "old_manifest": "custodian/content/props/gothic/vault_propsheet_04.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_propsheet_04.png",
+      "target_manifest": "custodian/content/props/gothic/vault_propsheet_04.game32.json"
+    },
+    {
+      "batch_index": 3,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_propsheet_05.png",
+      "old_manifest": "custodian/content/props/gothic/vault_propsheet_05.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_propsheet_05.png",
+      "target_manifest": "custodian/content/props/gothic/vault_propsheet_05.game32.json"
+    },
+    {
+      "batch_index": 4,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_storage/vault_chest_small_01.png",
+      "old_manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_storage/vault_chest_small_01.png",
+      "target_manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01.game32.json"
+    },
+    {
+      "batch_index": 5,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_damaged.png",
+      "old_manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_damaged.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_damaged.png",
+      "target_manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_damaged.game32.json"
+    },
+    {
+      "batch_index": 6,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_empty.png",
+      "old_manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_empty.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_empty.png",
+      "target_manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_empty.game32.json"
+    },
+    {
+      "batch_index": 7,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_open.png",
+      "old_manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_open.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_open.png",
+      "target_manifest": "custodian/content/props/gothic/vault_storage/vault_chest_small_01_open.game32.json"
+    },
+    {
+      "batch_index": 8,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_storage/vault_lockbox_01.png",
+      "old_manifest": "custodian/content/props/gothic/vault_storage/vault_lockbox_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_storage/vault_lockbox_01.png",
+      "target_manifest": "custodian/content/props/gothic/vault_storage/vault_lockbox_01.game32.json"
+    },
+    {
+      "batch_index": 9,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_empty.png",
+      "old_manifest": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_empty.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_empty.png",
+      "target_manifest": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_empty.game32.json"
+    },
+    {
+      "batch_index": 10,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_open.png",
+      "old_manifest": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_open.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_open.png",
+      "target_manifest": "custodian/content/props/gothic/vault_storage/vault_lockbox_01_open.game32.json"
+    },
+    {
+      "batch_index": 11,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01.png",
+      "old_manifest": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01.png",
+      "target_manifest": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01.game32.json"
+    },
+    {
+      "batch_index": 12,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_empty.png",
+      "old_manifest": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_empty.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_empty.png",
+      "target_manifest": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_empty.game32.json"
+    },
+    {
+      "batch_index": 13,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_open.png",
+      "old_manifest": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_open.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_open.png",
+      "target_manifest": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_open.game32.json"
+    },
+    {
+      "batch_index": 14,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_001.png",
+      "old_manifest": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_001.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_001.png",
+      "target_manifest": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_001.game32.json"
+    },
+    {
+      "batch_index": 15,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_002.png",
+      "old_manifest": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_002.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_002.png",
+      "target_manifest": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_002.game32.json"
+    },
+    {
+      "batch_index": 16,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_003.png",
+      "old_manifest": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_003.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_003.png",
+      "target_manifest": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_003.game32.json"
+    },
+    {
+      "batch_index": 17,
+      "action": "keep",
+      "old_png": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_004.png",
+      "old_manifest": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_004.game32.json",
+      "status": "updated",
+      "target_png": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_004.png",
+      "target_manifest": "custodian/content/props/gothic/vegetation/dead_tree_vegetation_004.game32.json"
+    }
+  ],
+  "master_manifest": {
+    "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic/gothic_master_sheet.game32.json",
+    "backup": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic/gothic_master_sheet.game32.json.bak-20260530T010828Z",
+    "assets_applied": 4,
+    "assets_skipped_unmatched": 14,
+    "unmatched": [
+      "custodian/content/props/gothic/vault_propsheet_02.png",
+      "custodian/content/props/gothic/vault_propsheet_03.png",
+      "custodian/content/props/gothic/vault_propsheet_04.png",
+      "custodian/content/props/gothic/vault_propsheet_05.png",
+      "custodian/content/props/gothic/vault_storage/vault_chest_small_01.png",
+      "custodian/content/props/gothic/vault_storage/vault_chest_small_01_damaged.png",
+      "custodian/content/props/gothic/vault_storage/vault_chest_small_01_empty.png",
+      "custodian/content/props/gothic/vault_storage/vault_chest_small_01_open.png",
+      "custodian/content/props/gothic/vault_storage/vault_lockbox_01.png",
+      "custodian/content/props/gothic/vault_storage/vault_lockbox_01_empty.png",
+      "custodian/content/props/gothic/vault_storage/vault_lockbox_01_open.png",
+      "custodian/content/props/gothic/vault_storage/vault_resource_crate_01.png",
+      "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_empty.png",
+      "custodian/content/props/gothic/vault_storage/vault_resource_crate_01_open.png"
+    ],
+    "total_assets": 617
+  }
+}

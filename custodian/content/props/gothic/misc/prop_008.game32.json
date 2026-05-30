@@ -1,0 +1,81 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "prop_008",
+  "display_name": "Prop 008",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/misc/prop_008.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 140,
+      "h": 43
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/props/gothic/misc/prop_008.png",
+    "pixel_size": {
+      "w": 140,
+      "h": 43
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "mixed_storage_crate_barrel_cluster",
+    "placement_layer": "prop",
+    "tags": [
+      "gothic",
+      "prop",
+      "environment",
+      "crate",
+      "barrel",
+      "storage",
+      "cluster",
+      "loot_cover",
+      "cover"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 5,
+      "h": 2
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 70,
+      "y": 43
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_sight": false,
+    "cover_value": 1,
+    "review_status": "reviewed",
+    "collision_shape": "footprint"
+  },
+  "procgen": {
+    "uses": [
+      "storage_room_dressing",
+      "loot_cover",
+      "cover_prop",
+      "compound_utility"
+    ],
+    "weight": 10,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 22
+}

@@ -12,10 +12,22 @@
       "y": 580,
       "w": 127,
       "h": 132
-    }
+    },
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/organic_intrusion_blocker/gothic_dead_tree_roots_02.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 127,
+      "h": 132
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/props/gothic/organic_intrusion_blocker/gothic_dead_tree_roots_02.png",
+    "path": "res://content/props/gothic/organic_intrusion_blocker/gothic_dead_tree_roots_02.png",
     "pixel_size": {
       "w": 127,
       "h": 132
@@ -23,7 +35,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "organic_intrusion_blocker",
+    "semantic_role": "industrial_organic_root_blocker",
     "placement_layer": "prop",
     "tags": [
       "blocking",
@@ -31,8 +43,14 @@
       "organic",
       "prop",
       "roots",
-      "tree"
-    ]
+      "tree",
+      "dead_tree",
+      "machine_like",
+      "blocker",
+      "cyan_glow",
+      "large_obstacle"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -48,25 +66,29 @@
     "snap": "tile_or_free",
     "allow_mirror_x": true,
     "allow_rotation": false,
-    "y_sort": true
+    "y_sort": true,
+    "review_status": "reviewed"
   },
   "collision": {
     "blocks_movement": true,
     "blocks_sight": true,
     "cover_value": 2,
-    "collision_shape": "footprint"
+    "collision_shape": "footprint",
+    "review_status": "reviewed"
   },
   "procgen": {
     "uses": [
-      "forest_intrusion",
+      "organic_intrusion",
       "outdoor_blocker",
       "compound_overgrowth",
-      "silhouette_breakup"
+      "tech_overgrowth",
+      "large_blocker"
     ],
-    "weight": 14,
+    "weight": 10,
     "can_spawn_indoor": false,
     "can_spawn_outdoor": true,
     "supports_gothic_compound": true,
-    "review_status": "semantic_band_assigned"
-  }
+    "review_status": "reviewed"
+  },
+  "master_index": 5
 }

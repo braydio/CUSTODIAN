@@ -1,0 +1,109 @@
+{
+  "schema": "game32.sundered_keep_master_manifest.v1",
+  "name": "Sundered Keep",
+  "generated_at_utc": "2026-05-30T01:10:28.140017+00:00",
+  "total_asset_count": 140,
+  "section_count": 7,
+  "sections": {
+    "terrain": {
+      "base_path": "res://content/runtime/sundered_keep/terrain",
+      "count": 20,
+      "manifest": "res://content/runtime/sundered_keep/terrain/terrain_manifest.game32.json"
+    },
+    "traversal": {
+      "base_path": "res://content/runtime/sundered_keep/doors_traversal",
+      "count": 14,
+      "manifest": "res://content/runtime/sundered_keep/doors_traversal/traversal_manifest.game32.json"
+    },
+    "props": {
+      "base_path": "res://content/runtime/sundered_keep/props",
+      "count": 28,
+      "manifest": "res://content/runtime/sundered_keep/props/props_manifest.game32.json"
+    },
+    "floors": {
+      "base_path": "res://content/tiles/sundered_keep/floors",
+      "count": 18,
+      "manifest": "res://content/tiles/sundered_keep/floors/floors_manifest.game32.json"
+    },
+    "walls_gothic_castle": {
+      "base_path": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "count": 32,
+      "manifest": "res://content/tiles/sundered_keep/walls/gothic_castle/walls_gothic_castle_manifest.game32.json"
+    },
+    "walls_great_hall": {
+      "base_path": "res://content/tiles/sundered_keep/walls/great_hall",
+      "count": 16,
+      "manifest": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_manifest.game32.json"
+    },
+    "walls_ramparts": {
+      "base_path": "res://content/tiles/sundered_keep/walls/ramparts",
+      "count": 12,
+      "manifest": "res://content/tiles/sundered_keep/walls/ramparts/_manifest.game32.json"
+    }
+  },
+  "summary": {
+    "terrain": {
+      "count": 20,
+      "themes": [
+        "cliffs",
+        "ocean"
+      ]
+    },
+    "traversal": {
+      "count": 14,
+      "themes": [
+        "doors",
+        "gates",
+        "hatches",
+        "stairs"
+      ]
+    },
+    "props": {
+      "count": 28,
+      "themes": [
+        "prop_anchor",
+        "prop_barrier",
+        "prop_column",
+        "prop_debris",
+        "prop_furniture",
+        "prop_hanging",
+        "prop_large",
+        "prop_light",
+        "prop_mechanical",
+        "prop_medium",
+        "prop_observatory",
+        "prop_rock",
+        "prop_rooftop",
+        "prop_rubble",
+        "prop_statue",
+        "prop_storage",
+        "prop_table",
+        "prop_tall",
+        "prop_throne",
+        "prop_tomb",
+        "prop_wall_low"
+      ]
+    },
+    "floors": {
+      "count": 18,
+      "themes": [
+        "cliff",
+        "courtyard",
+        "dungeon",
+        "general"
+      ]
+    },
+    "walls_gothic_castle": {
+      "count": 32,
+      "theme": "gothic_castle"
+    },
+    "walls_great_hall": {
+      "count": 16,
+      "theme": "great_hall"
+    },
+    "walls_ramparts": {
+      "count": 12,
+      "theme": "ramparts"
+    }
+  }
+}

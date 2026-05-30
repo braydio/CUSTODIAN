@@ -9,19 +9,30 @@
       "col": 1,
       "rows": 2,
       "cols": 3
-    }
+    },
+    "original_path": "res://content/doors/gothic/vault/vault_door_lockplate_01.png",
+    "section": "doors",
+    "subtype": "doors",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/doors/gothic/vault/vault_door_lockplate_01.png",
+    "path": "res://content/doors/gothic/vault/vault_door_lockplate_01.png",
     "pixel_size": {
       "w": 64,
       "h": 64
     }
   },
   "classification": {
-    "asset_type": "doors",
-    "semantic_role": "vault_lock_mechanism",
-    "placement_layer": "door",
+    "asset_type": "props",
+    "semantic_role": "vault_door_lockplate_mechanism",
+    "placement_layer": "door_overlay",
     "tags": [
       "vault",
       "gothic",
@@ -29,8 +40,10 @@
       "lock",
       "lockplate",
       "mechanism",
-      "overlay"
-    ]
+      "overlay",
+      "interactable_candidate"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -43,19 +56,35 @@
       "x": 32,
       "y": 32
     },
-    "snap": "tile",
+    "snap": "tile_or_free",
     "allow_mirror_x": false,
     "allow_rotation": false,
-    "y_sort": false
+    "y_sort": false,
+    "review_status": "reviewed"
   },
   "collision": {
     "blocks_movement": false,
     "blocks_sight": false,
     "cover_value": 0,
-    "collision_shape": "none"
+    "collision_shape": "none",
+    "review_status": "reviewed"
   },
   "runtime": {
     "status": "extracted_from_source_sheet",
     "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
-  }
+  },
+  "procgen": {
+    "uses": [
+      "vault_lock_overlay",
+      "door_mechanism",
+      "locked_storage_room_detail",
+      "interactable_door_detail"
+    ],
+    "weight": 6,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": false,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 2
 }

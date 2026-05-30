@@ -1,0 +1,188 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/prop_sea_spray_rock_01",
+  "name": "prop_sea_spray_rock_01",
+  "filename": "prop_sea_spray_rock_01.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-05-30T01:02:36+00:00",
+  "source": {
+    "sheet_key": "props_caskets_misc",
+    "sheet_file": "props_caskets_misc.png",
+    "sheet_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/props_caskets_misc.png",
+    "sheet_sha256": "3936e4edd1c331cf9ec7d4fa0c062980c22f82e00d3c6863f273e3782a59d16a",
+    "sheet_asset_index": 8,
+    "sheet_bbox_px": [
+      800,
+      435,
+      334,
+      296
+    ],
+    "source_crop_bbox_px": [
+      810,
+      445,
+      314,
+      276
+    ],
+    "detected_background_colors_rgb": [
+      [
+        248,
+        248,
+        248
+      ],
+      [
+        232,
+        232,
+        232
+      ],
+      [
+        240,
+        240,
+        240
+      ],
+      [
+        224,
+        224,
+        224
+      ],
+      [
+        216,
+        216,
+        216
+      ],
+      [
+        208,
+        208,
+        208
+      ],
+      [
+        224,
+        224,
+        232
+      ],
+      [
+        200,
+        200,
+        200
+      ],
+      [
+        232,
+        224,
+        232
+      ],
+      [
+        232,
+        232,
+        224
+      ]
+    ],
+    "extraction_method": {
+      "background": "alpha_or_checkerboard_dominant_color_removal",
+      "component_join_radius_px": 18,
+      "crop_padding_px": 8,
+      "min_component_area_px": 900
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://content/runtime/sundered_keep/props/prop_rock/prop_sea_spray_rock_01.png",
+    "metadata_path": "res://content/runtime/sundered_keep/props/prop_rock/prop_sea_spray_rock_01.game32.json",
+    "domain": "props",
+    "kind": "prop",
+    "subkind": "prop_rock",
+    "canvas_px": [
+      96,
+      64
+    ],
+    "canvas_tiles": [
+      3,
+      2
+    ],
+    "content_bbox_px": [
+      13,
+      2,
+      69,
+      60
+    ],
+    "scale_from_source_crop": 0.23076923076923078,
+    "paste_offset_px": [
+      13,
+      2
+    ],
+    "anchor": "bottom_center",
+    "pivot_px": [
+      48,
+      62
+    ],
+    "pivot_normalized": [
+      0.5,
+      0.9688
+    ],
+    "y_sort": true,
+    "draw_order": "prop",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    }
+  },
+  "gameplay": {
+    "walkable": false,
+    "interactable": false,
+    "traversal": null,
+    "direction": null,
+    "state": null,
+    "tags": [
+      "sea_spray",
+      "rock",
+      "coastal",
+      "sundered_keep"
+    ]
+  },
+  "collision": {
+    "kind": "rect_footprint",
+    "blocks_movement": true,
+    "blocks_projectiles": true,
+    "footprint_tiles_wh": [
+      3,
+      2
+    ],
+    "footprint_cells": [
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 1
+      }
+    ],
+    "origin_tile": {
+      "x": 0,
+      "y": 0,
+      "anchor": "bottom_center"
+    }
+  },
+  "editor": {
+    "display_name": "Prop Sea Spray Rock 01",
+    "notes": "Generated from Sundered Keep master sheet; adjust footprint/collision after in-editor placement review if needed."
+  }
+}

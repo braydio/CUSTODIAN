@@ -1,0 +1,77 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "vault_propsheet_02",
+  "display_name": "Vault Propsheet 02",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/vault_propsheet_02.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 1254,
+      "h": 1254
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/props/gothic/vault_propsheet_02.png",
+    "pixel_size": {
+      "w": 1254,
+      "h": 1254
+    }
+  },
+  "classification": {
+    "asset_type": "reference",
+    "semantic_role": "vault_propsheet_source_sheet_excluded",
+    "placement_layer": "excluded",
+    "tags": [
+      "gothic",
+      "prop",
+      "environment",
+      "review_excluded",
+      "source_sheet",
+      "vault_propsheet",
+      "not_runtime_asset",
+      "already_extracted"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 40,
+      "h": 40
+    },
+    "origin_mode": "bottom_center",
+    "snap": "none",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": false,
+    "pivot_px": {
+      "x": 627,
+      "y": 1254
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "review_status": "reviewed",
+    "collision_shape": "none"
+  },
+  "procgen": {
+    "uses": [
+      "review_excluded"
+    ],
+    "weight": 0,
+    "can_spawn_indoor": false,
+    "can_spawn_outdoor": false,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 1
+}

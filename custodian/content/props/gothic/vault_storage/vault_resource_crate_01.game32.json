@@ -9,10 +9,21 @@
       "col": 4,
       "rows": 2,
       "cols": 5
-    }
+    },
+    "original_path": "res://content/props/gothic/vault_storage/vault_resource_crate_01.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 96,
+      "h": 96
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/props/gothic/vault_storage/vault_resource_crate_01.png",
+    "path": "res://content/props/gothic/vault_storage/vault_resource_crate_01.png",
     "pixel_size": {
       "w": 96,
       "h": 96
@@ -20,7 +31,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "vault_storage_prop",
+    "semantic_role": "vault_closed_resource_crate_storage_prop",
     "placement_layer": "prop",
     "tags": [
       "vault",
@@ -29,8 +40,11 @@
       "storage",
       "crate",
       "stealable",
-      "closed"
-    ]
+      "closed",
+      "resource",
+      "enemy_theft_target"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -46,16 +60,33 @@
     "snap": "tile_or_free",
     "allow_mirror_x": false,
     "allow_rotation": false,
-    "y_sort": true
+    "y_sort": true,
+    "review_status": "reviewed"
   },
   "collision": {
     "blocks_movement": true,
     "blocks_sight": false,
     "cover_value": 1,
-    "collision_shape": "footprint"
+    "collision_shape": "footprint",
+    "review_status": "reviewed"
   },
   "runtime": {
     "status": "extracted_from_source_sheet",
     "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
-  }
+  },
+  "procgen": {
+    "uses": [
+      "vault_storage",
+      "resource_storage",
+      "enemy_theft_target",
+      "storage_room_dressing",
+      "closed_container"
+    ],
+    "weight": 10,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": false,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 12
 }

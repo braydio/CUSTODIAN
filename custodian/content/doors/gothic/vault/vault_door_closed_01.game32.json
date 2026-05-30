@@ -9,10 +9,21 @@
       "col": 0,
       "rows": 2,
       "cols": 3
-    }
+    },
+    "original_path": "res://content/doors/gothic/vault/vault_door_closed_01.png",
+    "section": "doors",
+    "subtype": "doors",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 128,
+      "h": 128
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/doors/gothic/vault/vault_door_closed_01.png",
+    "path": "res://content/doors/gothic/vault/vault_door_closed_01.png",
     "pixel_size": {
       "w": 128,
       "h": 128
@@ -20,7 +31,7 @@
   },
   "classification": {
     "asset_type": "doors",
-    "semantic_role": "vault_door",
+    "semantic_role": "vault_closed_door",
     "placement_layer": "door",
     "tags": [
       "vault",
@@ -28,8 +39,11 @@
       "door",
       "vault_door",
       "closed",
-      "blocking"
-    ]
+      "blocking",
+      "high_security",
+      "enemy_theft_target_gate"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -45,16 +59,32 @@
     "snap": "tile",
     "allow_mirror_x": false,
     "allow_rotation": false,
-    "y_sort": true
+    "y_sort": true,
+    "review_status": "reviewed"
   },
   "collision": {
     "blocks_movement": true,
     "blocks_sight": true,
     "cover_value": 3,
-    "collision_shape": "footprint"
+    "collision_shape": "footprint",
+    "review_status": "reviewed"
   },
   "runtime": {
     "status": "extracted_from_source_sheet",
     "notes": "Generated extraction from vault propsheet source. Review collision and footprint before production placement."
-  }
+  },
+  "procgen": {
+    "uses": [
+      "vault_door",
+      "vault_entrance",
+      "locked_storage_room",
+      "high_value_room_gate"
+    ],
+    "weight": 8,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": false,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 1
 }

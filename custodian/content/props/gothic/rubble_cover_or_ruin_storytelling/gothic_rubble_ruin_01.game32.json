@@ -12,10 +12,22 @@
       "y": 557,
       "w": 146,
       "h": 157
-    }
+    },
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/rubble_cover_or_ruin_storytelling/gothic_rubble_ruin_01.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 146,
+      "h": 157
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
   },
   "file": {
-    "path": "custodian/content/props/gothic/rubble_cover_or_ruin_storytelling/gothic_rubble_ruin_01.png",
+    "path": "res://content/props/gothic/rubble_cover_or_ruin_storytelling/gothic_rubble_ruin_01.png",
     "pixel_size": {
       "w": 146,
       "h": 157
@@ -23,7 +35,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "rubble_cover_or_ruin_storytelling",
+    "semantic_role": "large_gothic_ruin_cover_tower",
     "placement_layer": "prop",
     "tags": [
       "cover",
@@ -31,8 +43,12 @@
       "gothic",
       "prop",
       "rubble",
-      "ruin"
-    ]
+      "ruin",
+      "tower",
+      "storytelling",
+      "large_obstacle"
+    ],
+    "review_status": "reviewed"
   },
   "placement": {
     "tile_size": 32,
@@ -48,25 +64,29 @@
     "snap": "tile_or_free",
     "allow_mirror_x": true,
     "allow_rotation": false,
-    "y_sort": true
+    "y_sort": true,
+    "review_status": "reviewed"
   },
   "collision": {
     "blocks_movement": true,
-    "blocks_sight": false,
-    "cover_value": 2,
-    "collision_shape": "footprint"
+    "blocks_sight": true,
+    "cover_value": 3,
+    "collision_shape": "footprint",
+    "review_status": "reviewed"
   },
   "procgen": {
     "uses": [
       "cover",
       "ruined_compound",
       "blocked_route",
-      "environmental_storytelling"
+      "environmental_storytelling",
+      "large_rubble_prop"
     ],
-    "weight": 24,
+    "weight": 16,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": true,
     "supports_gothic_compound": true,
-    "review_status": "semantic_band_assigned"
-  }
+    "review_status": "reviewed"
+  },
+  "master_index": 16
 }

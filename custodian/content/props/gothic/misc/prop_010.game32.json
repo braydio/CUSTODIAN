@@ -1,0 +1,76 @@
+{
+  "schema": "game32.asset.v2",
+  "id": "prop_010",
+  "display_name": "Prop 010",
+  "source": {
+    "master_sheet": null,
+    "original_path": "res://content/props/gothic/misc/prop_010.png",
+    "section": "props",
+    "subtype": "props",
+    "source_rect_px": {
+      "x": 0,
+      "y": 0,
+      "w": 23,
+      "h": 38
+    },
+    "review_source": "human_llm_compact_review",
+    "review_status": "reviewed"
+  },
+  "file": {
+    "path": "res://content/props/gothic/misc/prop_010.png",
+    "pixel_size": {
+      "w": 23,
+      "h": 38
+    }
+  },
+  "classification": {
+    "asset_type": "props",
+    "semantic_role": "small_stone_or_metal_utility_prop",
+    "placement_layer": "prop",
+    "tags": [
+      "gothic",
+      "prop",
+      "environment",
+      "small_prop",
+      "utility",
+      "storage_room_dressing"
+    ],
+    "review_status": "reviewed"
+  },
+  "placement": {
+    "tile_size": 32,
+    "footprint_tiles": {
+      "w": 1,
+      "h": 2
+    },
+    "origin_mode": "bottom_center",
+    "snap": "tile",
+    "allow_mirror_x": false,
+    "allow_rotation": false,
+    "y_sort": true,
+    "pivot_px": {
+      "x": 11,
+      "y": 38
+    },
+    "review_status": "reviewed"
+  },
+  "collision": {
+    "blocks_movement": false,
+    "blocks_sight": false,
+    "cover_value": 0,
+    "review_status": "reviewed",
+    "collision_shape": "none"
+  },
+  "procgen": {
+    "uses": [
+      "storage_room_dressing",
+      "minor_environment_dressing"
+    ],
+    "weight": 8,
+    "can_spawn_indoor": true,
+    "can_spawn_outdoor": true,
+    "review_status": "reviewed",
+    "supports_gothic_compound": true
+  },
+  "master_index": 24
+}

@@ -1,0 +1,168 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/ocean_foam_edge_e",
+  "name": "ocean_foam_edge_e",
+  "filename": "ocean_foam_edge_e.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-05-30T01:02:23+00:00",
+  "source": {
+    "sheet_key": "terrain_cliffs_ocean",
+    "sheet_file": "cliffs_oceans.png",
+    "sheet_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/cliffs_oceans.png",
+    "sheet_sha256": "a58c6dc1fcbc282e5c7f546a32a789074deff5a683c0acf2e9aa05f9f6c4db33",
+    "sheet_asset_index": 16,
+    "sheet_bbox_px": [
+      1141,
+      547,
+      240,
+      225
+    ],
+    "source_crop_bbox_px": [
+      1151,
+      557,
+      220,
+      205
+    ],
+    "detected_background_colors_rgb": [
+      [
+        248,
+        248,
+        248
+      ],
+      [
+        240,
+        240,
+        240
+      ],
+      [
+        232,
+        232,
+        232
+      ],
+      [
+        240,
+        232,
+        240
+      ],
+      [
+        240,
+        232,
+        232
+      ],
+      [
+        232,
+        232,
+        240
+      ],
+      [
+        240,
+        240,
+        232
+      ],
+      [
+        224,
+        224,
+        224
+      ],
+      [
+        232,
+        240,
+        240
+      ],
+      [
+        216,
+        216,
+        216
+      ]
+    ],
+    "extraction_method": {
+      "background": "alpha_or_checkerboard_dominant_color_removal",
+      "component_join_radius_px": 18,
+      "crop_padding_px": 8,
+      "min_component_area_px": 900
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_e.png",
+    "metadata_path": "res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_e.game32.json",
+    "domain": "terrain",
+    "kind": "terrain",
+    "subkind": "ocean_foam_edge",
+    "canvas_px": [
+      32,
+      32
+    ],
+    "canvas_tiles": [
+      1,
+      1
+    ],
+    "content_bbox_px": [
+      2,
+      3,
+      28,
+      26
+    ],
+    "scale_from_source_crop": 0.13725490196078433,
+    "paste_offset_px": [
+      2,
+      3
+    ],
+    "anchor": "center",
+    "pivot_px": [
+      16,
+      16
+    ],
+    "pivot_normalized": [
+      0.5,
+      0.5
+    ],
+    "y_sort": false,
+    "draw_order": "terrain_overlay",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    }
+  },
+  "gameplay": {
+    "walkable": false,
+    "interactable": false,
+    "traversal": null,
+    "direction": "e",
+    "state": null,
+    "tags": [
+      "ocean",
+      "foam",
+      "dir_e",
+      "sundered_keep"
+    ]
+  },
+  "collision": {
+    "kind": "tile",
+    "blocks_movement": true,
+    "blocks_projectiles": false,
+    "footprint_tiles_wh": [
+      1,
+      1
+    ],
+    "footprint_cells": [
+      {
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "origin_tile": {
+      "x": 0,
+      "y": 0,
+      "anchor": "center"
+    }
+  },
+  "editor": {
+    "display_name": "Ocean Foam Edge E",
+    "notes": "Generated from Sundered Keep master sheet; adjust footprint/collision after in-editor placement review if needed."
+  }
+}
