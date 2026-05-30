@@ -1,373 +1,595 @@
 Directory Tree Mapping
-[33mdocs/[0m
-├── ai_context
-│   ├── CONTEXT.md
-│   ├── CURRENT_STATE.md
-│   └── FILE_INDEX.md
-├── animations
-│   ├── animation_index_2.md
-│   ├── animation_index_3.md
-│   └── animation_index.md
-├── ARCHITECTURE.md
-├── ArchitectureOverview.md
-├── ASSET_LAYOUT_CONVENTION.md
-├── CodeStyleGuide.md
-├── cover.png
-├── cover.png.import
-├── GDSCRIPT_STANDARDS.md
-├── GODOT_MCP_SETUP.md
-├── Lore
-├── SCENE_HIERARCHY.md
-├── submissions
-│   ├── ASSET_LIBRARY_SUBMISSION.md
-│   └── ITCH_IO_SUBMISSION.md
-├── TERMINAL_VIEW_LOCAL_MODE.md
-├── TILEMAP_REFERENCE.md
-└── WORLD_SCALE_CONTRACT.md
-[33mgame/[0m
-├── actors
-│   ├── base
-│   │   ├── controllable_actor.gd
-│   │   ├── controllable_actor.gd.uid
-│   │   ├── light_buggy.tscn.txt
-│   │   ├── vehicle_base.gd
-│   │   ├── vehicle_base.gd.uid
-│   │   ├── vehicle_interaction.gd
-│   │   └── vehicle_interaction.gd.uid
-│   ├── custodian
-│   │   ├── custodian.gd
-│   │   ├── custodian.gd.uid
-│   │   └── custodian.tscn
-│   ├── defense
-│   │   ├── bullet.gd
-│   │   ├── bullet.gd.uid
-│   │   ├── bullet.tscn
-│   │   ├── turret.gd
-│   │   ├── turret.gd.uid
-│   │   └── turret.tscn
-│   ├── door
-│   │   ├── door.gd
-│   │   ├── door.gd.uid
-│   │   └── door.tscn
-│   ├── effects
-│   │   ├── blob_shadow.gd
-│   │   ├── blob_shadow.gd.uid
-│   │   ├── block_spark.tscn
-│   │   ├── floating_text.gd
-│   │   ├── floating_text.gd.uid
-│   │   ├── floating_text.tscn
-│   │   ├── impact_spark.gd
-│   │   ├── impact_spark.gd.uid
-│   │   ├── impact_spark.tscn
-│   │   ├── melee_swing.gd
-│   │   ├── melee_swing.gd.uid
-│   │   ├── melee_swing.tscn
-│   │   ├── muzzle_flash_frames.tres
-│   │   ├── muzzle_flash.gd
-│   │   ├── muzzle_flash.gd.uid
-│   │   ├── muzzle_flash.tscn
-│   │   ├── target_ring.gd
-│   │   ├── target_ring.gd.uid
-│   │   └── target_ring.tscn
-│   ├── enemies
-│   │   ├── ambient_scav_droid.tscn
-│   │   ├── ambient_shrumb.tscn
-│   │   ├── archive
-│   │   │   ├── enemy_drone_legacy.gd
-│   │   │   ├── enemy_drone_legacy.gd.uid
-│   │   │   ├── enemy_drone_legacy.tres
-│   │   │   └── README.md
-│   │   ├── enemy_design_01.aseprite
-│   │   ├── enemy.gd
-│   │   ├── enemy.gd.uid
-│   │   ├── enemy.tres
-│   │   ├── enemy.tscn
-│   │   ├── fast_drone.tscn
-│   │   └── heavy_drone.tscn
+/home/braydenchaffee/Projects/CUSTODIAN/custodian
+├── addons
+│   ├── ai_coding_assistant
+│   │   ├── agent
+│   │   ├── agent_tools.gd
+│   │   ├── agent_tools.gd.uid
+│   │   ├── ai_api_manager.gd
+│   │   ├── ai_api_manager.gd.uid
+│   │   ├── ai_assistant_dock.gd
+│   │   ├── ai_assistant_dock.gd.uid
+│   │   ├── ai_provider
+│   │   ├── ai_utils.gd
+│   │   ├── ai_utils.gd.uid
+│   │   ├── analyzer
+│   │   ├── CHANGELOG.md
+│   │   ├── code_analyzer.gd
+│   │   ├── code_analyzer.gd.uid
+│   │   ├── code_templates.gd
+│   │   ├── code_templates.gd.uid
+│   │   ├── config
+│   │   ├── default_config.gd
+│   │   ├── default_config.gd.uid
+│   │   ├── editor
+│   │   ├── editor_integration.gd
+│   │   ├── editor_integration.gd.uid
+│   │   ├── EDITOR_INTEGRATION_GUIDE.md
+│   │   ├── markdownlabel
+│   │   ├── persona
+│   │   ├── plugin.cfg
+│   │   ├── plugin.gd
+│   │   ├── plugin.gd.uid
+│   │   ├── plugin_icon.svg
+│   │   ├── plugin_icon.svg.import
+│   │   ├── project_blueprint.gd
+│   │   ├── project_blueprint.gd.uid
+│   │   ├── README.md
+│   │   ├── setup_guide.gd
+│   │   ├── setup_guide.gd.uid
+│   │   ├── templates
+│   │   ├── ui
+│   │   └── utils
+│   ├── anim_sheet
+│   │   ├── LICENSE.md
+│   │   ├── plugin.cfg
+│   │   ├── plugin.gd
+│   │   ├── plugin.gd.uid
+│   │   ├── README.md
+│   │   ├── sprite_sheet_animator.gd
+│   │   ├── sprite_sheet_animator.gd.uid
+│   │   └── SpriteSheetAnimatorPanel.tscn
+│   ├── aseprite_importer
+│   │   ├── aseprite_animation.gd
+│   │   ├── aseprite_animation.gd.uid
+│   │   ├── aseprite_document.gd
+│   │   ├── aseprite_document.gd.uid
+│   │   ├── aseprite_document_loader.gd
+│   │   ├── aseprite_document_loader.gd.uid
+│   │   ├── editor_plugin.gd
+│   │   ├── editor_plugin.gd.uid
+│   │   ├── import_plugin.gd
+│   │   ├── import_plugin.gd.uid
+│   │   ├── parser
+│   │   └── plugin.cfg
+│   ├── better-terrain
+│   │   ├── BetterTerrain.cs
+│   │   ├── BetterTerrainData.gd
+│   │   ├── BetterTerrainData.gd.uid
+│   │   ├── BetterTerrain.gd
+│   │   ├── BetterTerrain.gd.uid
+│   │   ├── editor
+│   │   ├── icons
+│   │   ├── icon.svg
+│   │   ├── icon.svg.import
+│   │   ├── plugin.cfg
+│   │   ├── TerrainPlugin.gd
+│   │   ├── TerrainPlugin.gd.uid
+│   │   ├── Watcher.gd
+│   │   └── Watcher.gd.uid
+│   ├── copy_all_errors
+│   │   ├── plugin.cfg
+│   │   ├── plugin.gd
+│   │   └── plugin.gd.uid
+│   ├── debug_console
+│   │   ├── core
+│   │   ├── editor
+│   │   ├── game
+│   │   ├── icons
+│   │   ├── plugin.cfg
+│   │   ├── plugin.gd
+│   │   ├── plugin.gd.uid
+│   │   └── tests
+│   ├── dev-console
+│   │   ├── dev-console.gd
+│   │   ├── dev-console.gd.uid
+│   │   ├── dev-console.tscn
+│   │   ├── plugin.cfg
+│   │   ├── plugin.gd
+│   │   ├── plugin.gd.uid
+│   │   └── themes
+│   ├── dynamic_minimap
+│   │   ├── minimap.tscn2465561003.tmp
+│   │   └── minimap.tscn903359771.tmp
+│   ├── fightengine
+│   │   ├── demo
+│   │   ├── fightengine.gd
+│   │   ├── fightengine.gd.uid
+│   │   ├── LICENSE.md
+│   │   ├── plugin.cfg
+│   │   ├── README.md
+│   │   └── scripts
+│   ├── godot_ai
+│   │   ├── client_configurator.gd
+│   │   ├── client_configurator.gd.uid
+│   │   ├── clients
+│   │   ├── connection.gd
+│   │   ├── connection.gd.uid
+│   │   ├── debugger
+│   │   ├── dispatcher.gd
+│   │   ├── dispatcher.gd.uid
+│   │   ├── handlers
+│   │   ├── LICENSE
+│   │   ├── mcp_dock.gd
+│   │   ├── mcp_dock.gd.uid
+│   │   ├── plugin.cfg
+│   │   ├── plugin.gd
+│   │   ├── plugin.gd.uid
+│   │   ├── README.md
+│   │   ├── runtime
+│   │   ├── testing
+│   │   ├── tool_catalog.gd
+│   │   ├── tool_catalog.gd.uid
+│   │   ├── update_reload_runner.gd
+│   │   ├── update_reload_runner.gd.uid
+│   │   └── utils
+│   ├── godotdev_nvim_node_copy
+│   │   ├── assets
+│   │   ├── LICENSE
+│   │   ├── plugin.cfg
+│   │   ├── plugin.gd
+│   │   ├── plugin.gd.uid
+│   │   └── README.md
+│   ├── godot_mcp
+│   │   ├── mcp_client.gd
+│   │   ├── mcp_client.gd.uid
+│   │   ├── plugin.cfg
+│   │   ├── plugin.gd
+│   │   ├── plugin.gd.uid
+│   │   ├── tool_executor.gd
+│   │   ├── tool_executor.gd.uid
+│   │   ├── tools
+│   │   └── utils
+│   ├── indie_game_components
+│   │   ├── components
+│   │   ├── indie_game_components.gd
+│   │   ├── indie_game_components.gd.uid
+│   │   └── plugin.cfg
+│   ├── limboai
+│   │   ├── bin
+│   │   ├── icons
+│   │   ├── LICENSE.md
+│   │   ├── LOGO_LICENSE.md
+│   │   ├── README.md
+│   │   └── version.txt
+│   ├── shader_library
+│   │   ├── api
+│   │   ├── CHANGELOG.md
+│   │   ├── icon.png
+│   │   ├── icon.png.import
+│   │   ├── plugin.cfg
+│   │   ├── plugin.gd
+│   │   ├── plugin.gd.uid
+│   │   ├── README.md
+│   │   └── ui
+│   └── sprite_pipeline
+│       ├── api
+│       ├── cache
+│       ├── CHANGELOG.md
+│       ├── icon.png
+│       ├── icon.svg
+│       ├── LICENSE
+│       ├── plugin.cfg
+│       ├── plugin.gd
+│       ├── README.md
+│       ├── remediation
+│       ├── tests
+│       └── ui
+├── AGENTS.md
+├── asset.cfg
+├── assets
+│   └── tiles
+│       ├── CUSTODIAN-Tilesets.tiled-session
+│       ├── untitled.tmj
+│       └── walls
+├── autoload
+│   ├── build_inventory.gd
+│   ├── build_inventory.gd.uid
+│   ├── fab_pipeline.gd
+│   ├── fab_pipeline.gd.uid
+│   ├── resource_ledger.gd
+│   └── resource_ledger.gd.uid
+├── content
+│   ├── ammo_types
+│   │   └── ammo_types.json
+│   ├── animations
+│   │   └── gothic
+│   ├── _aseprite
+│   │   ├── props
+│   │   ├── sprites
+│   │   ├── tiles
+│   │   └── ui
+│   ├── dialogue
+│   │   └── ash_bell
+│   ├── doors
+│   │   └── gothic
+│   ├── fabrication
+│   │   ├── fab_recipes.json
+│   │   └── REQUIRED_ASSETS.md
+│   ├── gothic_manifest.game32.json
+│   ├── images
+│   │   ├── demo2.game32.json
+│   │   ├── demo2.png
+│   │   ├── demo2.png.import
+│   │   ├── demo3.game32.json
+│   │   ├── demo3.png
+│   │   ├── demo3.png.import
+│   │   ├── demo.game32.json
+│   │   ├── demo.png
+│   │   ├── demo.png.import
+│   │   ├── icon.game32.json
+│   │   ├── icon.png
+│   │   └── icon.png.import
 │   ├── items
-│   │   ├── ammo_cache.gd
-│   │   ├── ammo_cache.gd.uid
-│   │   ├── ammo_cache.tscn
-│   │   ├── scrap_pickup.gd
-│   │   ├── scrap_pickup.gd.uid
-│   │   └── scrap_pickup.tscn
-│   ├── operator
-│   │   ├── animations
-│   │   │   ├── animation_resolver.gd
-│   │   │   ├── animation_resolver.gd.uid
-│   │   │   ├── animation_state_machine.gd
-│   │   │   ├── animation_state_machine.gd.uid
-│   │   │   ├── camera_shake.gd
-│   │   │   ├── camera_shake.gd.uid
-│   │   │   ├── custodian_node_setup.tscn
-│   │   │   ├── events
-│   │   │   │   └── README.md
-│   │   │   ├── README.md
-│   │   │   ├── states
-│   │   │   │   ├── animation_state.gd
-│   │   │   │   ├── animation_state.gd.uid
-│   │   │   │   ├── attack_dash_state.gd
-│   │   │   │   ├── attack_dash_state.gd.uid
-│   │   │   │   ├── attack_fast_state.gd
-│   │   │   │   ├── attack_fast_state.gd.uid
-│   │   │   │   ├── attack_heavy_state.gd
-│   │   │   │   ├── attack_heavy_state.gd.uid
-│   │   │   │   ├── block_state.gd
-│   │   │   │   ├── block_state.gd.uid
-│   │   │   │   ├── death_state.gd
-│   │   │   │   ├── death_state.gd.uid
-│   │   │   │   ├── equip_weapon_state.gd
-│   │   │   │   ├── equip_weapon_state.gd.uid
-│   │   │   │   ├── idle_state.gd
-│   │   │   │   ├── idle_state.gd.uid
-│   │   │   │   ├── sprint_state.gd
-│   │   │   │   ├── sprint_state.gd.uid
-│   │   │   │   ├── stagger_state.gd
-│   │   │   │   ├── stagger_state.gd.uid
-│   │   │   │   ├── walk_state.gd
-│   │   │   │   └── walk_state.gd.uid
-│   │   │   └── transitions
-│   │   │       └── README.md
-│   │   ├── carbine_rifle_mk1_definition.tres
-│   │   ├── fallen_star_katana_definition.tres
-│   │   ├── fallen_star_katana_frames.tres
-│   │   ├── operator.gd
-│   │   ├── operator.gd.uid
-│   │   ├── operator_melee_overlay_frames.tres
-│   │   ├── operator_ranged_fx_frames.tres
-│   │   ├── operator_runtime_frames.tres
-│   │   ├── operator.tscn
-│   │   ├── operator_weapon_definition.gd
-│   │   ├── operator_weapon_definition.gd.uid
-│   │   ├── operator_weapon_frames.tres
-│   │   ├── sword_night_flame_definition.tres
-│   │   └── sword_night_flame_frames.tres
-│   ├── projectiles
-│   │   ├── bullet.gd
-│   │   ├── bullet.gd.uid
-│   │   ├── bullet.tscn
-│   │   ├── energy_shot.gd
-│   │   ├── energy_shot.gd.uid
-│   │   ├── energy_shot.tscn
-│   │   ├── missile.gd
-│   │   ├── missile.gd.uid
-│   │   ├── missile.tscn
-│   │   ├── tracer.gd
-│   │   ├── tracer.gd.uid
-│   │   └── tracer.tscn
-│   ├── sector
-│   │   ├── command_post.gd
-│   │   ├── command_post.gd.uid
-│   │   ├── power_node.gd
-│   │   ├── power_node.gd.uid
-│   │   ├── sector.gd
-│   │   ├── sector.gd.uid
-│   │   ├── sector.tscn
-│   │   ├── turret_blaster.tscn
-│   │   ├── turret.gd
-│   │   ├── turret.gd.uid
-│   │   ├── turret_gunner.tscn
-│   │   ├── turret_repeater.tscn
-│   │   ├── turret_sniper.tscn
-│   │   ├── turret.tscn
-│   │   ├── wall.gd
-│   │   ├── wall.gd.uid
-│   │   └── wall.tscn
-│   ├── terminal
-│   │   ├── command_terminal.gd
-│   │   ├── command_terminal.gd.uid
-│   │   └── command_terminal.tscn
+│   │   ├── lore
+│   │   ├── shrumb_drops
+│   │   ├── swords.game32.json
+│   │   ├── swords.png
+│   │   └── swords.png.import
+│   ├── levels
+│   │   └── sundered_keep
+│   ├── masters
+│   │   ├── gothic
+│   │   ├── sundered
+│   │   ├── sundered_keep
+│   │   └── terrain
+│   ├── metadata
+│   │   └── game32
+│   ├── mods
+│   │   └── data
+│   ├── procgen
+│   │   └── special_rooms
+│   ├── props
+│   │   ├── gothic
+│   │   ├── ruins
+│   │   └── sundered_keep
+│   ├── reference
+│   │   ├── active_art_samplesheet.png
+│   │   └── active_art_samplesheet.png.import
+│   ├── resources
+│   │   └── resource_defs.json
+│   ├── Road_of_Witnesses_Tilemap.png
+│   ├── Road_of_Witnesses_Tilemap.png.import
+│   ├── runtime
+│   │   └── sundered_keep
+│   ├── sprites
+│   │   ├── additional-charsets
+│   │   ├── allies
+│   │   ├── ChatGPT Image May 20, 2026, 01:12:02 AM.png
+│   │   ├── ChatGPT Image May 20, 2026, 01:12:02 AM.png.import
+│   │   ├── computer_terminals.png
+│   │   ├── computer_terminals.png.import
+│   │   ├── dev
+│   │   ├── effects
+│   │   ├── enemies
+│   │   ├── environment
+│   │   ├── items
+│   │   ├── misc
+│   │   ├── modulating
+│   │   ├── operator
+│   │   ├── operator_reloadign.png
+│   │   ├── operator_reloadign.png.import
+│   │   ├── _pipeline
+│   │   ├── props
+│   │   ├── README.md
+│   │   ├── terminal_2phase.png
+│   │   ├── terminal_2phase.png.import
+│   │   ├── turrets
+│   │   ├── vehicles
+│   │   └── weapons
+│   ├── structures
+│   │   └── gothic
+│   ├── sundered_keep_manifest.game32.json
+│   ├── tiles
+│   │   ├── _aseprite
+│   │   ├── Ashen_Forum_Cliffs_Walls_Short.png
+│   │   ├── Ashen_Forum_Cliffs_Walls_Short.png.import
+│   │   ├── Ashen_Forum_Cliffs_Walls_Tall.png
+│   │   ├── Ashen_Forum_Cliffs_Walls_Tall.png.import
+│   │   ├── Ashen_Forum_Floor_Tiles.png
+│   │   ├── Ashen_Forum_Floor_Tiles.png.import
+│   │   ├── compound_ashen_sheet.png
+│   │   ├── compound_ashen_sheet.png.import
+│   │   ├── compound_example.png
+│   │   ├── compound_example.png.import
+│   │   ├── compound_gothic_sheet.png
+│   │   ├── compound_gothic_sheet.png.import
+│   │   ├── debug
+│   │   ├── decals
+│   │   ├── elevation
+│   │   ├── encounters
+│   │   ├── encountersninth_ritualant
+│   │   ├── extract_ready
+│   │   ├── floors
+│   │   ├── gothic
+│   │   ├── Industrial_Paths_and_Roads.png
+│   │   ├── Industrial_Paths_and_Roads.png.import
+│   │   ├── interiors
+│   │   ├── layout-and-design-planning.tiled-session
+│   │   ├── mountain_cliffs
+│   │   ├── procgen
+│   │   ├── roads_paths
+│   │   ├── short_walls_ashen_forum.png
+│   │   ├── short_walls_ashen_forum.png.import
+│   │   ├── short_walls_ashen_forum-sheet.png
+│   │   ├── short_walls_ashen_forum-sheet.png.import
+│   │   ├── source
+│   │   ├── sundered_keep
+│   │   ├── terrain
+│   │   ├── tilesets
+│   │   └── walls
 │   ├── ui
-│   │   ├── damage_popup.gd
-│   │   ├── damage_popup.gd.uid
-│   │   ├── damage_popup.tscn
-│   │   ├── terminal_background.gd
-│   │   ├── terminal_background.gd.uid
-│   │   └── terminal_background.tscn
-│   └── wall
-│       ├── wall_blueprint.gd
-│       ├── wall_blueprint.gd.uid
-│       └── wall_blueprint.tscn
-├── rendering
-│   ├── effects
-│   └── shaders
-│       ├── shaderlib
-│       ├── terminal_crt.gdshader
-│       └── terminal_crt.gdshader.uid
-├── systems
-│   ├── ai
-│   ├── combat
-│   │   └── animation_states
-│   │       ├── hit_recoil_state.gd
-│   │       └── hit_recoil_state.gd.uid
-│   ├── core
-│   │   ├── data
-│   │   ├── player_controller.gd
-│   │   ├── player_controller.gd.uid
-│   │   ├── state
-│   │   │   ├── game_state.gd
-│   │   │   └── game_state.gd.uid
-│   │   └── systems
-│   │       ├── ambient_critter_manager.gd
-│   │       ├── ambient_critter_manager.gd.uid
-│   │       ├── assault_lane.gd
-│   │       ├── assault_lane.gd.uid
-│   │       ├── combat.gd
-│   │       ├── combat.gd.uid
-│   │       ├── contract_world_loader.gd
-│   │       ├── contract_world_loader.gd.uid
-│   │       ├── damageable.gd
-│   │       ├── damageable.gd.uid
-│   │       ├── deerflow_code_generator.gd
-│   │       ├── deerflow_code_generator.gd.uid
-│   │       ├── deerflow_event_designer.gd
-│   │       ├── deerflow_event_designer.gd.uid
-│   │       ├── deerflow_event_registry.gd
-│   │       ├── deerflow_event_registry.gd.uid
-│   │       ├── deerflow_orchestrator.gd
-│   │       ├── deerflow_orchestrator.gd.uid
-│   │       ├── deerflow_state_snapshot.gd
-│   │       ├── deerflow_state_snapshot.gd.uid
-│   │       ├── deerflow_validator.gd
-│   │       ├── deerflow_validator.gd.uid
-│   │       ├── enemy_director.gd
-│   │       ├── enemy_director.gd.uid
-│   │       ├── enemy_factory.gd
-│   │       ├── enemy_factory.gd.uid
-│   │       ├── game_feel_manager.gd
-│   │       ├── game_feel_manager.gd.uid
-│   │       ├── map_loader.gd
-│   │       ├── map_loader.gd.uid
-│   │       ├── navigation_system.gd
-│   │       ├── navigation_system.gd.uid
-│   │       ├── power.gd
-│   │       ├── power.gd.uid
-│   │       ├── shadow_system.gd
-│   │       ├── shadow_system.gd.uid
-│   │       ├── simulation.gd
-│   │       ├── simulation.gd.uid
-│   │       ├── spawn_node.gd
-│   │       ├── spawn_node.gd.uid
-│   │       ├── spawn_node.tscn
-│   │       ├── supply_drop_manager.gd
-│   │       ├── supply_drop_manager.gd.uid
-│   │       ├── threat_model.gd
-│   │       ├── threat_model.gd.uid
-│   │       ├── turret_placement.gd
-│   │       ├── turret_placement.gd.uid
-│   │       ├── wall_build_system.gd
-│   │       ├── wall_build_system.gd.uid
-│   │       ├── wall_build_system.tscn
-│   │       ├── wall_placer.gd
-│   │       ├── wall_placer.gd.uid
-│   │       ├── wall_placer.tscn
-│   │       ├── wave_manager.gd
-│   │       ├── wave_manager.gd.uid
-│   │       ├── weapon_data_loader.gd
-│   │       ├── weapon_data_loader.gd.uid
-│   │       ├── weapon_definition_factory.gd
-│   │       └── weapon_definition_factory.gd.uid
-│   ├── power
-│   ├── repair
-│   └── turret
-├── ui
-│   ├── hud
-│   │   ├── pause_ui.gd
-│   │   ├── pause_ui.gd.uid
-│   │   ├── ui.gd
-│   │   └── ui.gd.uid
-│   └── terminal
-└── world
-    ├── camera.gd
-    ├── camera.gd.uid
-    ├── chunk
-    │   └── chunk
-    │       ├── cel_chunk.gd
-    │       ├── cel_chunk.gd.uid
-    │       ├── cel_extra_chunk.gd
-    │       ├── cel_extra_chunk.gd.uid
-    │       ├── color_profile_chunk.gd
-    │       ├── color_profile_chunk.gd.uid
-    │       ├── external_files_chunk.gd
-    │       ├── external_files_chunk.gd.uid
-    │       ├── layer_chunk.gd
-    │       ├── layer_chunk.gd.uid
-    │       ├── mask_chunk.gd
-    │       ├── mask_chunk.gd.uid
-    │       ├── old_palette_chunk.gd
-    │       ├── old_palette_chunk.gd.uid
-    │       ├── palette_chunk.gd
-    │       ├── palette_chunk.gd.uid
-    │       ├── slice_chunk.gd
-    │       ├── slice_chunk.gd.uid
-    │       ├── tags_chunk.gd
-    │       ├── tags_chunk.gd.uid
-    │       ├── tileset_chunk.gd
-    │       ├── tileset_chunk.gd.uid
-    │       ├── user_data_chunk.gd
-    │       └── user_data_chunk.gd.uid
-    ├── compound
-    │   └── rooms
-    │       ├── graphs
-    │       │   └── default_compound.json
-    │       ├── layout_assembler.gd
-    │       ├── layout_assembler.gd.uid
-    │       ├── README.md
-    │       ├── room_graph.gd
-    │       ├── room_graph.gd.uid
-    │       ├── room_loader.gd
-    │       ├── room_loader.gd.uid
-    │       └── templates
-    │           └── command_post.tmj
-    ├── layouts
-    ├── maps
-    ├── navigation
-    ├── procgen
-    │   ├── assets
-    │   │   ├── procgen.png
-    │   │   ├── procgen.png.import
-    │   │   ├── visualizer.png
-    │   │   └── visualizer.png.import
-    │   ├── custodian_contract_map.gd
-    │   ├── custodian_contract_map.gd.uid
-    │   ├── custodian_contract_map.tscn
-    │   ├── foliage_occlusion_bubble.gdshader
-    │   ├── foliage_occlusion_bubble.gdshader.uid
-    │   ├── generator
-    │   │   ├── automaton.gd
-    │   │   ├── automaton.gd.uid
-    │   │   ├── bsp.gd
-    │   │   ├── bsp.gd.uid
-    │   │   ├── context.gd
-    │   │   ├── context.gd.uid
-    │   │   ├── generator.gd
-    │   │   ├── generator.gd.uid
-    │   │   ├── router.gd
-    │   │   └── router.gd.uid
-    │   ├── plugin.cfg
-    │   ├── plugin.gd
-    │   ├── plugin.gd.uid
-    │   ├── procgen.gd
-    │   ├── procgen.gd.uid
-    │   ├── proc_gen_map_grass_mixed_preview.tscn
-    │   ├── proc_gen_map_grass_preview.tscn
-    │   ├── proc_gen_map_stone_mixed_preview.tscn
-    │   ├── proc_gen_map_stone_preview.tscn
-    │   ├── proc_gen_map.tscn
-    │   ├── proc_gen_tilemap.gd
-    │   ├── proc_gen_tilemap.gd.uid
-    │   ├── proc_gen.tscn
-    │   ├── runtime_wall_segment.gd
-    │   ├── runtime_wall_segment.gd.uid
-    │   ├── visualizer.gd
-    │   └── visualizer.gd.uid
-    ├── sectors
-    │   └── sectors
-    ├── tilemaps
-    │   ├── test_map_32x32.tscn
-    │   ├── test_map.tscn
-    │   └── tilemap.json
-    └── world_manager
-[33mscenes/[0m
-├── game.tscn
-└── test_map.tscn
+│   │   ├── inventory
+│   │   └── terminal
+│   ├── unregistered
+│   │   ├── vault_candle_stand_01.png
+│   │   ├── vault_candle_stand_01.png.import
+│   │   ├── vault_chain_rack_01.png
+│   │   ├── vault_chain_rack_01.png.import
+│   │   ├── vault_lock_mechanism_01.png
+│   │   ├── vault_lock_mechanism_01.png.import
+│   │   ├── vault_loose_chain_01.png
+│   │   ├── vault_loose_chain_01.png.import
+│   │   ├── vault_resource_pile_alloy_01.png
+│   │   ├── vault_resource_pile_alloy_01.png.import
+│   │   ├── vault_resource_pile_scrap_01.png
+│   │   ├── vault_resource_pile_scrap_01.png.import
+│   │   ├── vault_resource_power_component_pile_01.png
+│   │   ├── vault_resource_power_component_pile_01.png.import
+│   │   ├── vault_small_rubble_pile_01.png
+│   │   └── vault_small_rubble_pile_01.png.import
+│   ├── vehicles
+│   │   ├── vehicle_archetypes.json
+│   │   ├── vehicle_hardpoint_profiles.json
+│   │   ├── vehicle_loadouts.json
+│   │   ├── vehicle_movement_profiles.json
+│   │   ├── vehicle_registry_schema.json
+│   │   ├── vehicle_taxonomy.json
+│   │   └── vehicle_visual_kits.json
+│   ├── walls
+│   │   └── gothic
+│   └── weapons
+│       ├── code.json
+│       ├── code.png
+│       ├── code.png.import
+│       ├── data
+│       ├── registry.json
+│       └── weapon_schema.json
+├── dev
+│   ├── test_scenes
+│   │   ├── terminal_demo.tscn
+│   │   ├── test_scene.gd
+│   │   ├── test_scene.gd.uid
+│   │   └── test_scene.tscn
+│   └── test_sprites
+│       └── Knight
+├── docs
+│   ├── AGENT_MIGRATION_PLAYBOOK.md
+│   ├── ai_context
+│   │   ├── AGENT_AUTOMATION_BACKLOG.md
+│   │   ├── AGENT_TASK_PACKET_TEMPLATE.md
+│   │   ├── cleanup_reports
+│   │   ├── CONTEXT.md
+│   │   ├── CURRENT_STATE.md
+│   │   ├── FILE_INDEX.md
+│   │   ├── prompts
+│   │   ├── task_packets
+│   │   └── VALIDATION_RECIPES.md
+│   ├── animations
+│   │   ├── animation_index_2.md
+│   │   ├── animation_index_3.md
+│   │   └── animation_index.md
+│   ├── ARCHITECTURE.md
+│   ├── ArchitectureOverview.md
+│   ├── ASSET_LAYOUT_CONVENTION.md
+│   ├── change_control
+│   │   ├── CHANGE_CONTROL_BUNDLE_SCRIPT.md
+│   │   ├── GOTHIC_COMPOUND_CONNECTED_MAP.md
+│   │   ├── GOTHIC_COMPOUND_LAYOUT_GRAMMAR.md
+│   │   └── list.md
+│   ├── CodeStyleGuide.md
+│   ├── design
+│   │   └── TERMINAL_UI_ASSETS.md
+│   ├── GDSCRIPT_STANDARDS.md
+│   ├── GODOT_MCP_SETUP.md
+│   ├── SCENE_HIERARCHY.md
+│   ├── submissions
+│   │   ├── ASSET_LIBRARY_SUBMISSION.md
+│   │   └── ITCH_IO_SUBMISSION.md
+│   ├── TERMINAL_VIEW_LOCAL_MODE.md
+│   ├── TILEMAP_REFERENCE.md
+│   └── WORLD_SCALE_CONTRACT.md
+├── extract_gothic_master_sheet.py
+├── game
+│   ├── actors
+│   │   ├── allies
+│   │   ├── base
+│   │   ├── custodian
+│   │   ├── defense
+│   │   ├── door
+│   │   ├── effects
+│   │   ├── enemies
+│   │   ├── items
+│   │   ├── operator
+│   │   ├── projectiles
+│   │   ├── relay
+│   │   ├── sector
+│   │   ├── storage
+│   │   ├── terminal
+│   │   ├── ui
+│   │   ├── vehicles
+│   │   └── wall
+│   ├── enemies
+│   │   └── procgen
+│   ├── fabrication
+│   │   ├── fab_job.gd
+│   │   ├── fab_job.gd.uid
+│   │   ├── fab_recipe_database.gd
+│   │   ├── fab_recipe_database.gd.uid
+│   │   ├── fabricator_terminal.gd
+│   │   └── fabricator_terminal.gd.uid
+│   ├── rendering
+│   │   └── shaders
+│   ├── resources
+│   │   ├── resource_node.gd
+│   │   ├── resource_node.gd.uid
+│   │   └── resource_node.tscn
+│   ├── systems
+│   │   ├── cognitive
+│   │   ├── combat
+│   │   ├── core
+│   │   └── drone
+│   ├── ui
+│   │   ├── hud
+│   │   ├── inventory
+│   │   ├── minimap
+│   │   └── terminal
+│   ├── vehicles
+│   │   ├── pilotable_vehicle.gd
+│   │   ├── pilotable_vehicle.gd.uid
+│   │   ├── scenes
+│   │   ├── vehicle_debug_overlay.gd
+│   │   ├── vehicle_debug_overlay.gd.uid
+│   │   ├── vehicle_definition.gd
+│   │   ├── vehicle_definition.gd.uid
+│   │   ├── vehicle_input_adapter.gd
+│   │   ├── vehicle_input_adapter.gd.uid
+│   │   ├── vehicle_registry.gd
+│   │   ├── vehicle_registry.gd.uid
+│   │   ├── vehicle_seat.gd
+│   │   ├── vehicle_seat.gd.uid
+│   │   ├── vehicle_spawn_resolver.gd
+│   │   └── vehicle_spawn_resolver.gd.uid
+│   └── world
+│       ├── camera.gd
+│       ├── camera.gd.uid
+│       ├── chunk
+│       ├── compound
+│       ├── elevation
+│       ├── events
+│       ├── gothic_compound
+│       ├── hub
+│       ├── procgen
+│       ├── sundered_keep
+│       └── tilemaps
+├── gothic_master_sheet.png
+├── gothic_master_sheet.png.import
+├── gothic_out
+│   ├── decals
+│   ├── fx
+│   ├── game32.json
+│   ├── props
+│   ├── sprites
+│   ├── structures
+│   │   └── architecture
+│   ├── tiles
+│   ├── ui
+│   └── unknown
+├── icon.svg
+├── icon.svg.import
+├── images
+│   ├── preview.png
+│   └── preview.png.import
+├── LICENSE
+├── LICENSE.md
+├── project.godot
+├── props
+│   └── gothic
+│       ├── vault_propsheet_01.png
+│       ├── vault_propsheet_01.png.import
+│       ├── vault_propsheet_02.png
+│       ├── vault_propsheet_02.png.import
+│       ├── vault_propsheet_03.png
+│       ├── vault_propsheet_03.png.import
+│       ├── vault_propsheet_04.png
+│       ├── vault_propsheet_04.png.import
+│       ├── vault_propsheet_05.png
+│       └── vault_propsheet_05.png.import
+├── README.md
+├── scenes
+│   ├── game.tscn
+│   ├── hub_road_of_witnesses_prototype.tscn
+│   └── test_map.tscn
+├── scripts
+│   ├── apply_review_to_master.py
+│   └── __pycache__
+│       └── apply_review_to_master.cpython-314.pyc
+└── tools
+    ├── agent
+    │   ├── change_control_bundle.py
+    │   └── __pycache__
+    ├── art
+    │   ├── build_gothic_master_sheet.py
+    │   ├── build_reference_samplesheet.py
+    │   ├── extract_sundered_keep_game32.py
+    │   └── __pycache__
+    ├── aseprite
+    │   ├── logs
+    │   └── slice_compound_gothic_sheet.lua
+    ├── asset_pipeline
+    │   ├── fill_gothic_batch_0000_decals.py
+    │   ├── finalize_gothic_batch_0000_decals.py
+    │   ├── game32_review.py
+    │   ├── __pycache__
+    │   ├── review_game32_png_batches.py
+    │   └── split_vault_tiles.py
+    ├── build_gothic_manifest.py
+    ├── pipelines
+    │   ├── aseprite_inbox.py
+    │   ├── build.ps1
+    │   ├── build.sh
+    │   ├── create_cover.py
+    │   ├── create_icon.py
+    │   ├── examples
+    │   ├── generate_inbox_manifests.py
+    │   ├── ingest.py
+    │   ├── ingest_runtime.gd
+    │   ├── ingest_runtime.gd.uid
+    │   ├── __pycache__
+    │   ├── README.md
+    │   ├── reload_assets.py
+    │   ├── update_operator_curated_resources.gd
+    │   ├── update_operator_curated_resources.gd.uid
+    │   ├── update_vehicle_runtime_resources.gd
+    │   ├── update_vehicle_runtime_resources.gd.uid
+    │   └── validate.ps1
+    ├── prompt-picker.ts
+    ├── tiles
+    │   ├── classify_terrain_cells.py
+    │   ├── preview_terrain_mapping.py
+    │   ├── __pycache__
+    │   ├── register_interior_floor_tiles.py
+    │   └── sliece_custodian_terrain_sheet.py
+    ├── ui
+    │   ├── __pycache__
+    │   ├── resource_prompt_helper.py
+    │   └── terminal_asset_prompt_helper.py
+    ├── validate_vehicle_registry.gd
+    ├── validate_vehicle_registry.gd.uid
+    └── validation
+        ├── ash_bell_scene_smoke.gd
+        ├── ash_bell_scene_smoke.gd.uid
+        ├── compound_road_wall_smoke.gd
+        ├── compound_road_wall_smoke.gd.uid
+        ├── compound_wall_smoke.gd
+        ├── compound_wall_smoke.gd.uid
+        ├── contract_resource_node_smoke.gd
+        ├── contract_resource_node_smoke.gd.uid
+        ├── elevation_map_smoke.gd
+        ├── elevation_map_smoke.gd.uid
+        ├── enemy_behavior_vault_smoke.gd
+        ├── enemy_behavior_vault_smoke.gd.uid
+        ├── grunt_animation_smoke.gd
+        ├── grunt_animation_smoke.gd.uid
+        ├── terrain_builder_smoke.gd
+        └── terrain_builder_smoke.gd.uid
