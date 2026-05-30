@@ -122,100 +122,6 @@ PROPS_CASKETS_MISC_ASSETS = [
     "prop_telescope_broken_01.png",
 ]
 
-# ---------------------------------------------------------------------------
-# Grid-based tile sheets (no checkerboard; extracted by grid cell crop)
-# ---------------------------------------------------------------------------
-
-FLOOR_ASSETS = [
-    "main_courtyard_flagstone_01.png",
-    "main_courtyard_flagstone_02.png",
-    "main_courtyard_flagstone_cracked_01.png",
-    "main_courtyard_flagstone_wet_01.png",
-    "main_courtyard_flagstone_mossy_01.png",
-    "main_gate_threshold_stone_01.png",
-    "great_hall_marble_floor_01.png",
-    "great_hall_marble_floor_cracked_01.png",
-    "great_hall_carpet_runner_vertical_01.png",
-    "great_hall_carpet_runner_horizontal_01.png",
-    "rampart_walkway_floor_01.png",
-    "rampart_walkway_broken_01.png",
-    "cliff_rock_floor_01.png",
-    "cliff_rock_floor_cracked_01.png",
-    "roof_slate_dark_01.png",
-    "dungeon_stone_floor_01.png",
-    "undercroft_wet_stone_floor_01.png",
-    "ocean_void_01.png",
-]
-
-GOTHIC_CASTLE_WALL_ASSETS = [
-    "gothic_castle_wall_straight_n.png",
-    "gothic_castle_wall_straight_e.png",
-    "gothic_castle_wall_straight_s.png",
-    "gothic_castle_wall_straight_w.png",
-    "gothic_castle_wall_inner_corner_ne.png",
-    "gothic_castle_wall_inner_corner_nw.png",
-    "gothic_castle_wall_inner_corner_se.png",
-    "gothic_castle_wall_inner_corner_sw.png",
-    "gothic_castle_wall_outer_corner_ne.png",
-    "gothic_castle_wall_outer_corner_nw.png",
-    "gothic_castle_wall_outer_corner_se.png",
-    "gothic_castle_wall_outer_corner_sw.png",
-    "gothic_castle_wall_endcap_n.png",
-    "gothic_castle_wall_endcap_e.png",
-    "gothic_castle_wall_endcap_s.png",
-    "gothic_castle_wall_endcap_w.png",
-    "gothic_castle_wall_damaged_n.png",
-    "gothic_castle_wall_damaged_e.png",
-    "gothic_castle_wall_damaged_s.png",
-    "gothic_castle_wall_damaged_w.png",
-    "gothic_castle_wall_breach_n.png",
-    "gothic_castle_wall_breach_e.png",
-    "gothic_castle_wall_breach_s.png",
-    "gothic_castle_wall_breach_w.png",
-    "gothic_castle_wall_window_tall_n.png",
-    "gothic_castle_wall_window_tall_e.png",
-    "gothic_castle_wall_window_tall_s.png",
-    "gothic_castle_wall_window_tall_w.png",
-    "gothic_castle_wall_arch_n.png",
-    "gothic_castle_wall_arch_e.png",
-    "gothic_castle_wall_arch_s.png",
-    "gothic_castle_wall_arch_w.png",
-]
-
-GREAT_HALL_WALL_ASSETS = [
-    "great_hall_wall_straight_n.png",
-    "great_hall_wall_straight_e.png",
-    "great_hall_wall_straight_s.png",
-    "great_hall_wall_straight_w.png",
-    "great_hall_wall_column_n.png",
-    "great_hall_wall_column_e.png",
-    "great_hall_wall_column_s.png",
-    "great_hall_wall_column_w.png",
-    "great_hall_wall_banner_n.png",
-    "great_hall_wall_banner_e.png",
-    "great_hall_wall_banner_s.png",
-    "great_hall_wall_banner_w.png",
-    "great_hall_wall_broken_exterior_n.png",
-    "great_hall_wall_broken_exterior_e.png",
-    "great_hall_wall_broken_exterior_s.png",
-    "great_hall_wall_broken_exterior_w.png",
-]
-
-RAMPART_ASSETS = [
-    "rampart_parapet_n.png",
-    "rampart_parapet_e.png",
-    "rampart_parapet_s.png",
-    "rampart_parapet_w.png",
-    "rampart_crenellation_n.png",
-    "rampart_crenellation_e.png",
-    "rampart_crenellation_s.png",
-    "rampart_crenellation_w.png",
-    "rampart_broken_gap_n.png",
-    "rampart_broken_gap_e.png",
-    "rampart_broken_gap_s.png",
-    "rampart_broken_gap_w.png",
-]
-
 @dataclasses.dataclass(frozen=True)
 class SheetSpec:
     key: str
@@ -223,9 +129,6 @@ class SheetSpec:
     assets: Tuple[str, ...]
     default_domain: str
     required: bool = True
-    # Grid-based extraction (tile sheets) — None = scattered sprite extraction
-    grid_rows: Optional[int] = None
-    grid_cols: Optional[int] = None
 
 SHEET_SPECS: Tuple[SheetSpec, ...] = (
     SheetSpec(
@@ -269,39 +172,6 @@ SHEET_SPECS: Tuple[SheetSpec, ...] = (
         ),
         assets=tuple(PROPS_CASKETS_MISC_ASSETS),
         default_domain="props",
-    ),
-    # Grid-based tile sheets (rows/cols indicate regular grid layout)
-    SheetSpec(
-        key="floors",
-        candidates=("sundered_floor_tiles.png",),
-        assets=tuple(FLOOR_ASSETS),
-        default_domain="floors",
-        grid_rows=3,
-        grid_cols=6,
-    ),
-    SheetSpec(
-        key="gothic_castle_walls",
-        candidates=("sundered_walls_gates.png",),
-        assets=tuple(GOTHIC_CASTLE_WALL_ASSETS),
-        default_domain="gothic_castle_walls",
-        grid_rows=8,
-        grid_cols=4,
-    ),
-    SheetSpec(
-        key="great_hall_walls",
-        candidates=("great_hall_walls.png",),
-        assets=tuple(GREAT_HALL_WALL_ASSETS),
-        default_domain="great_hall_walls",
-        grid_rows=4,
-        grid_cols=4,
-    ),
-    SheetSpec(
-        key="ramparts",
-        candidates=("sundered_ramparts.png",),
-        assets=tuple(RAMPART_ASSETS),
-        default_domain="ramparts",
-        grid_rows=3,
-        grid_cols=4,
     ),
 )
 
@@ -451,116 +321,6 @@ def policy_for(filename: str, sheet_domain: str) -> RuntimePolicy:
         y_sort=True, draw_order="prop", walkable=not solid, blocks_movement=solid,
         blocks_projectiles=solid, collision_kind="rect_footprint" if solid else "none",
         interactable=False, tags=tuple(tags) + ("sundered_keep",),
-    )
-
-
-def policy_for_tile(filename: str, domain: str) -> RuntimePolicy:
-    """Return RuntimePolicy for grid-extracted tile assets (floors, walls, ramparts)."""
-    stem = Path(filename).stem
-
-    if domain.startswith("floors") or "floor" in stem.lower():
-        # Determine variant group from name
-        if "great_hall" in stem and "marble" in stem:
-            vg = "great_hall_marble_floor"
-        elif "great_hall" in stem and "carpet" in stem:
-            vg = "great_hall_carpet_runner"
-        elif "main_courtyard" in stem and "flagstone" in stem:
-            vg = "main_courtyard_flagstone"
-        elif "main_gate_threshold" in stem:
-            vg = "main_gate_threshold_stone"
-        elif "rampart_walkway" in stem:
-            vg = "rampart_walkway"
-        elif "cliff_rock" in stem:
-            vg = "cliff_rock_floor"
-        elif "roof_slate" in stem:
-            vg = "roof_slate_dark"
-        elif "dungeon_stone" in stem:
-            vg = "dungeon_stone_floor"
-        elif "undercroft" in stem:
-            vg = "undercroft_wet_stone_floor"
-        elif "ocean_void" in stem:
-            vg = "ocean_void"
-        else:
-            vg = stem
-        # Tune collision for the ocean void (non-walkable)
-        is_void = "ocean_void" in stem
-        return RuntimePolicy(
-            domain="floors", subdir="floors", kind="tile", subkind="floor_tile",
-            canvas_tiles=(1, 1), footprint_tiles=(1, 1), anchor="top_left",
-            y_sort=False, draw_order="ground", walkable=not is_void,
-            blocks_movement=is_void, blocks_projectiles=is_void,
-            collision_kind="none" if not is_void else "tile",
-            tags=("floors", "stone", "sundered_keep") if not is_void else ("floors", "hazard", "non_walkable", "ocean", "sundered_keep", "void"),
-        )
-
-    # Walls and ramparts
-    # gothic castle wall = solid wall module
-    # great hall wall = interior wall module
-    # rampart = exterior rampart module
-    if domain.startswith("gothic_castle") or domain.startswith("great_hall"):
-        # orientation extracted from last suffix
-        orientation = None
-        for suffix in ("_ne", "_nw", "_se", "_sw", "_n", "_e", "_s", "_w"):
-            if stem.endswith(suffix):
-                orientation = suffix[1:]
-                break
-        if "endcap" in stem:
-            vg = "gothic_castle_wall_endcap" if domain.startswith("gothic") else "great_hall_wall_endcap"
-        elif "inner_corner" in stem:
-            vg = "gothic_castle_wall_inner_corner" if domain.startswith("gothic") else "great_hall_wall_inner_corner"
-        elif "outer_corner" in stem:
-            vg = "gothic_castle_wall_outer_corner" if domain.startswith("gothic") else "great_hall_wall_outer_corner"
-        elif "damaged" in stem:
-            vg = "gothic_castle_wall_damaged" if domain.startswith("gothic") else "great_hall_wall_damaged"
-        elif "breach" in stem:
-            vg = "gothic_castle_wall_breach" if domain.startswith("gothic") else "great_hall_wall_breach"
-        elif "arch" in stem:
-            vg = "gothic_castle_wall_arch" if domain.startswith("gothic") else "great_hall_wall_arch"
-        elif "window" in stem:
-            vg = "gothic_castle_wall_window_tall" if domain.startswith("gothic") else "great_hall_wall_window_tall"
-        elif "column" in stem:
-            vg = "great_hall_wall_column"
-        elif "banner" in stem:
-            vg = "great_hall_wall_banner"
-        elif "broken_exterior" in stem:
-            vg = "great_hall_wall_broken_exterior"
-        else:
-            vg = "gothic_castle_wall_straight" if domain.startswith("gothic") else "great_hall_wall_straight"
-        subdir = f"walls/{domain.replace('_walls', '')}"
-        return RuntimePolicy(
-            domain=domain, subdir=subdir, kind="wall", subkind="wall_module",
-            canvas_tiles=(1, 1), footprint_tiles=(1, 1), anchor="bottom_center",
-            y_sort=True, draw_order="architecture", walkable=False,
-            blocks_movement=True, blocks_projectiles=True,
-            collision_kind="solid_base_cell",
-            tags=(f"facing_{orientation}" if orientation else "wall", domain.replace("_", " "), "solid", "sundered_keep", "vertical_sprite", "wall"),
-        )
-
-    # Ramparts
-    if domain.startswith("ramparts"):
-        vg = stem
-        for suffix in ("_ne", "_nw", "_se", "_sw", "_n", "_e", "_s", "_w"):
-            if stem.endswith(suffix):
-                vg = stem[:-(len(suffix))]
-                break
-        subdir = "walls/ramparts"
-        return RuntimePolicy(
-            domain=domain, subdir=subdir, kind="wall", subkind="rampart_module",
-            canvas_tiles=(1, 1), footprint_tiles=(1, 1), anchor="bottom_center",
-            y_sort=True, draw_order="architecture", walkable=False,
-            blocks_movement=True, blocks_projectiles=True,
-            collision_kind="solid_base_cell",
-            tags=("rampart", domain.replace("_", " "), "solid", "sundered_keep", "vertical_sprite", "wall"),
-        )
-
-    # Fallback — shouldn't normally reach here
-    return RuntimePolicy(
-        domain=domain, subdir=domain, kind="tile", subkind="tile",
-        canvas_tiles=(1, 1), footprint_tiles=(1, 1), anchor="top_left",
-        y_sort=False, draw_order="ground", walkable=True,
-        blocks_movement=False, blocks_projectiles=False,
-        collision_kind="none",
-        tags=("tile", domain, "sundered_keep"),
     )
 
 # ---------------------------------------------------------------------------
@@ -1249,133 +1009,6 @@ def extract_sheet(
     return assets_written
 
 
-def extract_grid_sheet(
-    *,
-    spec: SheetSpec,
-    sheet_path: Path,
-    godot_root: Path,
-    out_root: Path,
-    review_dir: Path,
-    args: argparse.Namespace,
-) -> List[Dict[str, Any]]:
-    """Extract assets from a grid-based master sheet (regular rows × cols layout).
-
-    Grid tiles fill their cells completely — no background removal needed.
-    Each cell IS the tile texture. We extract the cell as-is at its natural size.
-    """
-    print(f"[sheet] {spec.key}: {sheet_path} (grid {spec.grid_rows}x{spec.grid_cols})")
-    raw = Image.open(sheet_path).convert("RGBA")
-    w, h = raw.size
-
-    cell_w = w / spec.grid_cols
-    cell_h = h / spec.grid_rows
-
-    source_hash = sha256_file(sheet_path)
-    assets_written: List[Dict[str, Any]] = []
-
-    expected = len(spec.assets)
-    assert spec.grid_rows is not None and spec.grid_cols is not None
-
-    for row in range(spec.grid_rows):
-        for col in range(spec.grid_cols):
-            index = row * spec.grid_cols + col
-            if index >= expected:
-                break
-            asset_name = spec.assets[index]
-            policy = policy_for_tile(asset_name, spec.default_domain)
-
-            # Compute cell bounding box
-            x1 = int(round(col * cell_w))
-            y1 = int(round(row * cell_h))
-            x2 = int(round((col + 1) * cell_w))
-            y2 = int(round((row + 1) * cell_h))
-
-            # Extract the full cell as-is (no background removal)
-            cell = raw.crop((x1, y1, x2, y2))
-            cell_w_px = cell.width
-            cell_h_px = cell.height
-
-            # Grid cell source bbox for metadata
-            cell_box = Component(x1, y1, x2, y2, cell_w_px * cell_h_px)
-            crop_bbox = Component(0, 0, cell_w_px, cell_h_px, cell_w_px * cell_h_px)
-
-            # Use the cell at its natural size — no scaling, no background removal
-            runtime_img = cell
-            norm_info = {
-                "source_content_bbox_px": [0, 0, cell_w_px, cell_h_px],
-                "runtime_content_bbox_px": [0, 0, cell_w_px, cell_h_px],
-                "scale_from_source_crop": 1.0,
-                "paste_offset_px": [0, 0],
-                "pivot_px": [cell_w_px // 2, cell_h_px // 2],
-                "pivot_normalized": [0.5, 0.5],
-            }
-
-            # Determine output path
-            domain_home_map = {
-                "floors": godot_root / "content" / "tiles" / "sundered_keep" / "floors",
-                "gothic_castle_walls": godot_root / "content" / "tiles" / "sundered_keep" / "walls" / "gothic_castle",
-                "great_hall_walls": godot_root / "content" / "tiles" / "sundered_keep" / "walls" / "great_hall",
-                "ramparts": godot_root / "content" / "tiles" / "sundered_keep" / "walls" / "ramparts",
-            }
-            domain_path = domain_home_map.get(spec.default_domain, out_root / spec.default_domain)
-
-            runtime_path = domain_path / asset_name
-            metadata_path = runtime_path.with_suffix(".game32.json")
-
-            # Build metadata
-            metadata = build_metadata(
-                asset_filename=asset_name,
-                sheet_spec=spec,
-                sheet_path=sheet_path,
-                source_hash=source_hash,
-                sheet_index=index,
-                sheet_bbox=cell_box,
-                source_crop_bbox=crop_bbox,
-                runtime_path=runtime_path,
-                metadata_path=metadata_path,
-                godot_root=godot_root,
-                policy=policy,
-                norm_info=norm_info,
-                bg_candidates=[],
-                extraction_args=args,
-            )
-
-            # Add grid-specific info
-            metadata["source"]["cell_grid"] = {
-                "rows": spec.grid_rows,
-                "cols": spec.grid_cols,
-                "row": row,
-                "col": col,
-                "cell_box_px": [x1, y1, x2, y2],
-            }
-            metadata["source"]["extraction_method"]["type"] = "grid_full_cell"
-            metadata["source"]["extraction_method"]["background"] = "none"
-
-            if args.dry_run:
-                print(f"  [dry] {index:02d} {asset_name} -> {rel_res_path(runtime_path, godot_root)}")
-                assets_written.append(metadata)
-                continue
-
-            # Skip existing so we don't overwrite good wall textures
-            skip = runtime_path.exists() and metadata_path.exists()
-            if skip and not args.clean:
-                print(f"  [skip] {index:02d} {asset_name} exists")
-                if metadata_path.exists():
-                    existing_meta = json.loads(metadata_path.read_text(encoding="utf-8"))
-                    assets_written.append(existing_meta)
-                else:
-                    assets_written.append(metadata)
-                continue
-
-            domain_path.mkdir(parents=True, exist_ok=True)
-            runtime_img.save(runtime_path)
-            write_json(metadata_path, metadata, dry_run=False)
-            print(f"  [ok] {index:02d} {asset_name} -> {rel_res_path(runtime_path, godot_root)}")
-            assets_written.append(metadata)
-
-    return assets_written
-
-
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Extract Sundered Keep generated sheets into game32 runtime assets.")
     parser.add_argument("--godot-root", default=None, help="Path to Godot project root, default ~/Projects/CUSTODIAN/custodian or cwd autodetect.")
@@ -1391,7 +1024,6 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--bg-tolerance", type=int, default=24, help="RGB tolerance for checkerboard removal.")
     parser.add_argument("--min-component-area", type=int, default=900, help="Minimum component area after join/dilation.")
     parser.add_argument("--allow-count-mismatch", action="store_true", help="Write what was detected instead of failing on count mismatch.")
-    parser.add_argument("--tiles-out-dir", default=None, help="Output directory for grid-tile sheets. Default: <godot-root>/content/tiles/sundered_keep")
     parser.add_argument("--clean", action="store_true", help="Remove previous generated files under output dir before writing.")
     parser.add_argument("--dry-run", action="store_true", help="Print actions and write nothing.")
     return parser.parse_args(argv)
@@ -1402,13 +1034,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     godot_root = find_godot_root(args.godot_root)
     masters_dir = Path(args.masters_dir).expanduser().resolve() if args.masters_dir else (godot_root / "content" / "masters" / "sundered_keep").resolve()
     out_root = Path(args.out_dir).expanduser().resolve() if args.out_dir else (godot_root / "content" / "runtime" / "sundered_keep").resolve()
-    tiles_root = Path(args.tiles_out_dir).expanduser().resolve() if args.tiles_out_dir else (godot_root / "content" / "tiles" / "sundered_keep").resolve()
     review_dir = out_root / "_extraction_review"
 
     print(f"[root] godot_root={godot_root}")
     print(f"[root] masters_dir={masters_dir}")
-    print(f"[root] runtime_out_dir={out_root}")
-    print(f"[root] tiles_out_dir={tiles_root}")
+    print(f"[root] out_dir={out_root}")
 
     if not masters_dir.exists():
         print(f"[error] masters dir not found: {masters_dir}", file=sys.stderr)
@@ -1416,25 +1046,33 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if args.clean:
         print(f"[clean] {out_root}")
         safe_remove_previous_outputs(out_root, args.dry_run)
-        if tiles_root.exists():
-            print(f"[clean] {tiles_root}")
-            # Only remove game32 metadata files, keep PNGs that already exist
-            for p in tiles_root.rglob("*.game32.json"):
-                if args.dry_run:
-                    print(f"  [dry] would remove {p}")
-                else:
-                    p.unlink()
+
+    explicit_by_key = {
+        "terrain_cliffs_ocean": args.terrain_sheet,
+        "doors_traversal": args.doors_sheet,
+        "props_tables_crates": args.tables_crates_sheet,
+        "props_caskets_misc": args.caskets_misc_sheet,
+    }
 
     used_paths: set = set()
     resolved: List[Tuple[SheetSpec, Path]] = []
     for spec in SHEET_SPECS:
-        # For grid sheets, auto-discover from masters dir (they always use exact filenames)
-        path = resolve_sheet_path(masters_dir, spec, used=used_paths)
+        explicit = explicit_by_key.get(spec.key)
+        if explicit:
+            p = Path(explicit).expanduser()
+            if not p.is_absolute():
+                p = masters_dir / p
+            p = p.resolve()
+            if not p.exists():
+                raise FileNotFoundError(f"Explicit sheet for {spec.key} not found: {p}")
+            path = p
+        else:
+            path = resolve_sheet_path(masters_dir, spec, used=used_paths)
         if path is None:
             candidate_list = ", ".join(spec.candidates)
             raise FileNotFoundError(
                 f"Could not find required sheet for {spec.key}. Looked for: {candidate_list}. "
-                f"Check that the master sheet exists in {masters_dir}."
+                f"Use --{spec.key.replace('_', '-')}-sheet or rename the source sheet."
             )
         if path in used_paths:
             raise RuntimeError(f"Sheet path reused for multiple specs, likely from duplicate filename typo: {path}")
@@ -1442,25 +1080,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         resolved.append((spec, path))
 
     all_assets: List[Dict[str, Any]] = []
-    scatter_assets: List[Dict[str, Any]] = []
-    tile_assets: List[Dict[str, Any]] = []
-
-    errors = 0
-    for spec, sheet_path in resolved:
-        is_grid = spec.grid_rows is not None and spec.grid_cols is not None
-        try:
-            if is_grid:
-                assets = extract_grid_sheet(
-                    spec=spec,
-                    sheet_path=sheet_path,
-                    godot_root=godot_root,
-                    out_root=tiles_root,
-                    review_dir=review_dir,
-                    args=args,
-                )
-                tile_assets.extend(assets)
-            else:
-                assets = extract_sheet(
+    try:
+        for spec, sheet_path in resolved:
+            all_assets.extend(
+                extract_sheet(
                     spec=spec,
                     sheet_path=sheet_path,
                     godot_root=godot_root,
@@ -1468,19 +1091,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                     review_dir=review_dir,
                     args=args,
                 )
-                scatter_assets.extend(assets)
-            all_assets.extend(assets)
-        except Exception as exc:
-            print(f"[error] {spec.key}: {exc}", file=sys.stderr)
-            errors += 1
-
-    if errors:
-        print(f"[error] {errors} sheet(s) failed extraction", file=sys.stderr)
+            )
+    except Exception as exc:
+        print(f"[error] {exc}", file=sys.stderr)
         return 1
 
-    # Generate separate manifests for runtime (scattered sprites) and tiles
-    # --- Runtime manifest ---
-    runtime_manifest = {
+    manifest = {
         "schema": MANIFEST_SCHEMA,
         "set": "sundered_keep",
         "base_tile_px": BASE_TILE_PX,
@@ -1488,7 +1104,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "godot_root": str(godot_root),
         "masters_dir": str(masters_dir),
         "out_dir": str(out_root),
-        "asset_count": len(scatter_assets),
+        "asset_count": len(all_assets),
         "sheets": [
             {
                 "key": spec.key,
@@ -1498,50 +1114,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 "sha256": sha256_file(path),
             }
             for spec, path in resolved
-            if not (spec.grid_rows is not None and spec.grid_cols is not None)
         ],
-        "assets": scatter_assets,
+        "assets": all_assets,
     }
-    runtime_manifest_path = out_root / "game32_manifest.json"
+
+    manifest_path = out_root / "game32_manifest.json"
     registry_path = out_root / "sundered_keep_game32_assets.gd"
-    write_json(runtime_manifest_path, runtime_manifest, args.dry_run)
-    generate_gd_registry(scatter_assets, godot_root, registry_path, args.dry_run)
-
-    # --- Tiles manifest ---
-    tiles_manifest = {
-        "schema": "custodian.game32.asset_manifest.v1",
-        "name": "sundered_keep_game32_tiles",
-        "generated_at_utc": _dt.datetime.now(_dt.timezone.utc).replace(microsecond=0).isoformat(),
-        "generator": "extract_sundered_keep_game32.py",
-        "godot_root": str(godot_root),
-        "masters_dir": str(masters_dir),
-        "out_dir": str(tiles_root),
-        "asset_count": len(tile_assets),
-        "sheets": [
-            {
-                "key": spec.key,
-                "path": str(path),
-                "filename": path.name,
-                "expected_asset_count": len(spec.assets),
-                "sha256": sha256_file(path),
-            }
-            for spec, path in resolved
-            if spec.grid_rows is not None and spec.grid_cols is not None
-        ],
-        "assets": tile_assets,
-    }
-    tiles_manifest_path = tiles_root / "game32_tiles_manifest.json"
-    write_json(tiles_manifest_path, tiles_manifest, args.dry_run)
-
-    # Also write per-domain manifests in each domain directory
-    # (the existing _manifest.game32.json files will be regenerated)
-
+    write_json(manifest_path, manifest, args.dry_run)
+    generate_gd_registry(all_assets, godot_root, registry_path, args.dry_run)
     drift_report = doc_drift_check(godot_root.parent, godot_root, out_root, len(all_assets), args.dry_run)
 
-    print(f"[done] runtime_assets={len(scatter_assets)}, tile_assets={len(tile_assets)}, total={len(all_assets)}")
+    print(f"[done] assets={len(all_assets)}")
     if not args.dry_run:
-        print(f"[done] runtime_manifest={rel_res_path(runtime_manifest_path, godot_root)}")
-        print(f"[done] tiles_manifest={rel_res_path(tiles_manifest_path, godot_root)}")
+        print(f"[done] manifest={rel_res_path(manifest_path, godot_root)}")
         print(f"[done] registry={rel_res_path(registry_path, godot_root)}")
         print(f"[done] review_dir={rel_res_path(review_dir, godot_root)}")
         if drift_report.get("potential_drift"):
