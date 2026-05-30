@@ -4,6 +4,13 @@ class_name SunderedKeepMap
 const TILE_SIZE := 32.0
 const MAP_SIZE_TILES := Vector2i(64, 44)
 const TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_travel_gate.gd")
+const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
+const WALL_ASSET_DIRS := [
+	"res://content/tiles/sundered_keep/walls/gothic_castle",
+	"res://content/tiles/sundered_keep/walls/great_hall",
+	"res://content/tiles/sundered_keep/walls/ramparts",
+	"res://content/tiles/sundered_keep/walls",
+]
 
 @export var entrance_tile: Vector2i = Vector2i(32, 39)
 @export var return_gate_tile: Vector2i = Vector2i(32, 38)
@@ -124,7 +131,7 @@ func _build_ocean_backdrop() -> void:
 			if (x + y) % 3 == 0:
 				_add_tile("TerrainBase", "ocean_dark_water_01", "cliffs", Vector2i(x, y))
 			elif (x * 5 + y * 3) % 11 == 0:
-				_add_tile("TerrainBase", "ocean_whitecap_01", "cliffs", Vector2i(x, y))
+				_add_tile("TerrainBase", "ocean_foam_edge_n", "cliffs", Vector2i(x, y))
 
 
 func _build_main_gate() -> void:
@@ -139,8 +146,6 @@ func _build_main_gate() -> void:
 	_add_prop("PropsStatic", "prop_gate_winch_01", "gatehouse", Vector2i(27, 37))
 	_add_prop("PropsStatic", "prop_torch_wall_gothic_01", "gatehouse", Vector2i(25, 37))
 	_add_prop("PropsStatic", "prop_torch_wall_gothic_01", "gatehouse", Vector2i(38, 37))
-	_add_overlay("rain_puddle_overlay_01", Vector2i(30, 41))
-	_add_overlay("rain_puddle_overlay_02", Vector2i(35, 38))
 
 
 func _build_courtyard() -> void:
@@ -160,9 +165,6 @@ func _build_courtyard() -> void:
 	_add_prop("PropsBlocking", "prop_barrel_wet_01", "courtyard", Vector2i(42, 32))
 	_add_prop("PropsBlocking", "prop_fallen_masonry_01", "courtyard", Vector2i(19, 20))
 	_add_prop("PropsBlocking", "prop_low_garden_wall_01", "courtyard", Vector2i(36, 24))
-	_add_overlay("temporal_echo_overlay_01", Vector2i(33, 26))
-	_add_overlay("moss_overlay_01", Vector2i(20, 34))
-	_add_overlay("crack_overlay_01", Vector2i(44, 20))
 
 
 func _build_great_hall() -> void:
@@ -170,12 +172,11 @@ func _build_great_hall() -> void:
 	_fill_rect(hall, "great_hall_marble_floor_01")
 	_scatter_floor_variants(hall, {
 		"great_hall_marble_floor_cracked_01": 8,
-		"great_hall_marble_floor_wet_01": 17,
 	})
 	for y in range(hall.position.y, hall.end.y):
 		_add_tile("TerrainBase", "great_hall_carpet_runner_vertical_01", "floors", Vector2i(31, y))
 		_add_tile("TerrainBase", "great_hall_carpet_runner_vertical_01", "floors", Vector2i(32, y))
-	_add_room_walls(hall, {"south_open_min": 31, "south_open_max": 33, "east_open_min": 10, "east_open_max": 12})
+	_add_room_walls(hall, {"south_open_min": 31, "south_open_max": 33, "east_open_min": 10, "east_open_max": 12}, "great_hall")
 	_add_sprite("Traversal", "gothic_double_door_closed_n", "doors", Vector2i(31, 18), Vector2.ZERO)
 	_add_blocker(Rect2i(Vector2i(31, 18), Vector2i(2, 1)), "GreatHallDoorBlocker")
 	_add_prop("PropsBlocking", "prop_banquet_table_long_01", "great_hall", Vector2i(23, 10))
@@ -196,7 +197,7 @@ func _build_great_hall() -> void:
 func _build_rampart_and_cliffs() -> void:
 	var rampart := Rect2i(Vector2i(44, 7), Vector2i(16, 6))
 	_fill_rect(rampart, "rampart_walkway_floor_01")
-	_scatter_floor_variants(rampart, {"rampart_walkway_wet_01": 5})
+	_scatter_floor_variants(rampart, {"rampart_walkway_broken_01": 5})
 	_add_wall_run(Rect2i(Vector2i(44, 6), Vector2i(16, 1)), "rampart_crenellation_s")
 	_add_wall_run(Rect2i(Vector2i(58, 7), Vector2i(1, 6)), "rampart_parapet_w")
 	_add_wall_run(Rect2i(Vector2i(44, 12), Vector2i(16, 1)), "rampart_broken_gap_n")
@@ -226,9 +227,6 @@ func _build_traversal_stubs() -> void:
 	_add_sprite("Traversal", "stone_stairs_up_n", "stairs", upper_stair_tile, Vector2.ZERO)
 	_add_sprite("Traversal", "stone_stairs_down_s", "stairs", lower_stair_tile, Vector2.ZERO)
 	_add_sprite("Traversal", "floor_hatch_closed_01", "stairs", hatch_tile, Vector2.ZERO)
-	_add_traversal_marker(upper_stair_tile, "UPPER RAMPART STUB")
-	_add_traversal_marker(lower_stair_tile, "LOWER STAIR STUB")
-	_add_traversal_marker(hatch_tile, "UNDERCROFT HATCH")
 
 
 func _add_return_gate() -> void:
@@ -257,21 +255,48 @@ func _scatter_floor_variants(rect: Rect2i, variants: Dictionary) -> void:
 					break
 
 
-func _add_room_walls(rect: Rect2i, openings: Dictionary) -> void:
+func _add_room_walls(rect: Rect2i, openings: Dictionary, wall_set := "gothic_castle") -> void:
 	for x in range(rect.position.x, rect.end.x):
 		if not _is_opening(x, "north", openings):
-			_add_wall_tile(Vector2i(x, rect.position.y - 1), "gothic_castle_wall_straight_s")
+			_add_wall_tile(Vector2i(x, rect.position.y - 1), _wall_asset(wall_set, "straight_s"))
 		if not _is_opening(x, "south", openings):
-			_add_wall_tile(Vector2i(x, rect.end.y), "gothic_castle_wall_straight_n")
+			_add_wall_tile(Vector2i(x, rect.end.y), _wall_asset(wall_set, "straight_n"))
 	for y in range(rect.position.y, rect.end.y):
 		if not _is_opening(y, "west", openings):
-			_add_wall_tile(Vector2i(rect.position.x - 1, y), "gothic_castle_wall_straight_e")
+			_add_wall_tile(Vector2i(rect.position.x - 1, y), _wall_asset(wall_set, "straight_e"))
 		if not _is_opening(y, "east", openings):
-			_add_wall_tile(Vector2i(rect.end.x, y), "gothic_castle_wall_straight_w")
-	_add_wall_tile(Vector2i(rect.position.x - 1, rect.position.y - 1), "gothic_castle_wall_outer_corner_se")
-	_add_wall_tile(Vector2i(rect.end.x, rect.position.y - 1), "gothic_castle_wall_outer_corner_sw")
-	_add_wall_tile(Vector2i(rect.position.x - 1, rect.end.y), "gothic_castle_wall_outer_corner_ne")
-	_add_wall_tile(Vector2i(rect.end.x, rect.end.y), "gothic_castle_wall_outer_corner_nw")
+			_add_wall_tile(Vector2i(rect.end.x, y), _wall_asset(wall_set, "straight_w"))
+	_add_wall_tile(Vector2i(rect.position.x - 1, rect.position.y - 1), _wall_asset(wall_set, "outer_corner_se"))
+	_add_wall_tile(Vector2i(rect.end.x, rect.position.y - 1), _wall_asset(wall_set, "outer_corner_sw"))
+	_add_wall_tile(Vector2i(rect.position.x - 1, rect.end.y), _wall_asset(wall_set, "outer_corner_ne"))
+	_add_wall_tile(Vector2i(rect.end.x, rect.end.y), _wall_asset(wall_set, "outer_corner_nw"))
+
+
+func _wall_asset(wall_set: String, role: String) -> String:
+	var assets := {
+		"gothic_castle": {
+			"straight_n": "gothic_castle_wall_straight_n",
+			"straight_e": "gothic_castle_wall_straight_e",
+			"straight_s": "gothic_castle_wall_straight_s",
+			"straight_w": "gothic_castle_wall_straight_w",
+			"outer_corner_ne": "gothic_castle_wall_outer_corner_ne",
+			"outer_corner_nw": "gothic_castle_wall_outer_corner_nw",
+			"outer_corner_se": "gothic_castle_wall_outer_corner_se",
+			"outer_corner_sw": "gothic_castle_wall_outer_corner_sw",
+		},
+		"great_hall": {
+			"straight_n": "great_hall_wall_straight_n",
+			"straight_e": "great_hall_wall_straight_e",
+			"straight_s": "great_hall_wall_straight_s",
+			"straight_w": "great_hall_wall_straight_w",
+			"outer_corner_ne": "great_hall_wall_column_n",
+			"outer_corner_nw": "great_hall_wall_column_n",
+			"outer_corner_se": "great_hall_wall_column_s",
+			"outer_corner_sw": "great_hall_wall_column_s",
+		},
+	}
+	var wall_assets: Dictionary = assets.get(wall_set, assets["gothic_castle"])
+	return str(wall_assets.get(role, ""))
 
 
 func _is_opening(value: int, side: String, openings: Dictionary) -> bool:
@@ -298,7 +323,7 @@ func _add_tile(layer_name: String, tile_id: String, category: String, tile: Vect
 
 
 func _add_prop(layer_name: String, prop_id: String, folder: String, tile: Vector2i) -> void:
-	var path := "res://content/props/sundered_keep/%s/%s.png" % [folder, prop_id]
+	var path := _asset_path(prop_id, "props")
 	var texture := _load_texture(path)
 	if texture == null:
 		return
@@ -316,33 +341,15 @@ func _add_prop(layer_name: String, prop_id: String, folder: String, tile: Vector
 
 func _add_sprite(layer_name: String, asset_id: String, category: String, tile: Vector2i, offset: Vector2) -> Sprite2D:
 	var texture := _load_texture(_asset_path(asset_id, category))
+	if texture == null:
+		return null
 	var sprite := Sprite2D.new()
 	sprite.name = asset_id
 	sprite.texture = texture
 	sprite.centered = false
 	sprite.position = _tile_top_left(tile) + offset
-	if texture == null:
-		sprite.modulate = Color(0.8, 0.2, 0.2, 1.0)
 	(_layers[layer_name] as Node2D).add_child(sprite)
 	return sprite
-
-
-func _add_overlay(asset_id: String, tile: Vector2i) -> void:
-	_add_sprite("Overlays", asset_id, "overlays", tile, Vector2.ZERO)
-
-
-func _add_traversal_marker(tile: Vector2i, marker_name: String) -> void:
-	var marker := Polygon2D.new()
-	marker.name = marker_name
-	marker.color = Color(0.36, 0.84, 0.82, 0.30)
-	marker.polygon = PackedVector2Array([
-		Vector2(-16, 0),
-		Vector2(0, -10),
-		Vector2(16, 0),
-		Vector2(0, 10),
-	])
-	marker.position = _tile_center(tile)
-	(_layers["Traversal"] as Node2D).add_child(marker)
 
 
 func _add_blocker(rect: Rect2i, blocker_name: String) -> void:
@@ -361,6 +368,32 @@ func _add_blocker(rect: Rect2i, blocker_name: String) -> void:
 
 
 func _asset_path(asset_id: String, category: String) -> String:
+	if SUNDERED_KEEP_ASSETS.ASSETS.has(asset_id):
+		var entry: Dictionary = SUNDERED_KEEP_ASSETS.ASSETS[asset_id]
+		return str(entry.get("texture", ""))
+	if category == "floors":
+		return "res://content/tiles/sundered_keep/floors/%s.png" % asset_id
+	if category == "walls":
+		for dir in WALL_ASSET_DIRS:
+			var wall_path := "%s/%s.png" % [dir, asset_id]
+			if ResourceLoader.exists(wall_path):
+				return wall_path
+		return "res://content/tiles/sundered_keep/walls/gothic_castle/%s.png" % asset_id
+	if category == "props":
+		var prop_paths := [
+			"res://content/props/sundered_keep/courtyard/%s.png" % asset_id,
+			"res://content/props/sundered_keep/exterior/%s.png" % asset_id,
+			"res://content/props/sundered_keep/gatehouse/%s.png" % asset_id,
+			"res://content/props/sundered_keep/great_hall/%s.png" % asset_id,
+			"res://content/props/sundered_keep/dungeon/%s.png" % asset_id,
+			"res://content/props/sundered_keep/chapel/%s.png" % asset_id,
+			"res://content/props/sundered_keep/library/%s.png" % asset_id,
+			"res://content/props/sundered_keep/observatory/%s.png" % asset_id,
+		]
+		for prop_path in prop_paths:
+			if ResourceLoader.exists(prop_path):
+				return prop_path
+		return "res://content/props/sundered_keep/%s.png" % asset_id
 	return "res://content/tiles/sundered_keep/%s/%s.png" % [category, asset_id]
 
 
