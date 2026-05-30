@@ -22,11 +22,12 @@ The level should be built as a **multi-floor compound**:
 ## Runtime Status
 
 Phase 1 now exists as a connected Godot runtime slice under `custodian/game/world/sundered_keep/sundered_keep_map.gd`.
-The current implementation covers the Main Gate, Courtyard, Great Hall, East Rampart stub, lower/upper traversal markers, cliff/ocean boundary, blocking props, return gate, and a generated first-pass runtime asset pack under:
+The current implementation covers the Main Gate, Courtyard, Great Hall, East Rampart stub, lower/upper traversal assets, cliff/ocean boundary, blocking props, return gate, and the Sundered Keep game32 asset pack under:
 
+- `custodian/content/sundered_keep_manifest.game32.json`
+- `custodian/content/runtime/sundered_keep/`
 - `custodian/content/tiles/sundered_keep/`
 - `custodian/content/props/sundered_keep/`
-- `custodian/content/levels/sundered_keep/sundered_keep_assets.json`
 
 The slice is reachable from the generated contract world through the `ENTER SUNDERED KEEP` travel gate placed by `ContractWorldLoader`.
 Later phases should expand from this grammar into undercroft, dungeon/service works, upper chapel/library/rampart, observatory/keep, rooftops, and detached exterior nodes.

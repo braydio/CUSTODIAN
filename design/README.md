@@ -114,7 +114,6 @@ design/
 │   └── THE_ASH-BELL_CONTINUITY.md # Near-continuity bleed lore
 │
 └── 04_research/                   # Research & exploration
-    ├── DEERFLOW_AUTONOMOUS_CONTENT_SYSTEM.md
     ├── DRONE_ASSETS_NEEDED.md
     └── EDGAR_ROOM_TEMPLATE_SYSTEM.md
 ```

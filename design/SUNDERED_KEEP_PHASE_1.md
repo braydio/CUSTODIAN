@@ -9,12 +9,14 @@ Status: implemented as first runtime slice on 2026-05-30.
 Runtime files:
 
 - `custodian/game/world/sundered_keep/sundered_keep_map.gd`
+- `custodian/content/sundered_keep_manifest.game32.json`
+- `custodian/content/runtime/sundered_keep/sundered_keep_game32_assets.gd`
+- `custodian/content/runtime/sundered_keep/`
 - `custodian/content/tiles/sundered_keep/`
 - `custodian/content/props/sundered_keep/`
-- `custodian/content/levels/sundered_keep/sundered_keep_assets.json`
 - `custodian/game/systems/core/systems/contract_world_loader.gd`
 
-The current slice uses generated first-pass runtime PNGs and an authored connected-map script rather than a Godot `TileMapLayer`/`TileSet` resource. The node tree still follows the requested layer grammar names (`TerrainBase`, `TerrainEdges`, `WallsLow`, `WallsHigh`, `PropsStatic`, `PropsBlocking`, `Traversal`, `Hazards`, `Overlays`, `RoofOccluders`) and includes collision blockers, traversal stubs, camera bounds, entry travel, and return travel.
+The current slice uses the Sundered Keep game32 manifest/catalog assets and an authored connected-map script rather than a Godot `TileMapLayer`/`TileSet` resource. The node tree still follows the requested layer grammar names (`TerrainBase`, `TerrainEdges`, `WallsLow`, `WallsHigh`, `PropsStatic`, `PropsBlocking`, `Traversal`, `Hazards`, `Overlays`, `RoofOccluders`) and includes collision blockers, traversal stubs, camera bounds, entry travel, and return travel.
 
 That slice proves almost every system you need: gothic walls, doors, cliffs, wet floors, props, collision, traversal, verticality, and mood.
 
@@ -28,8 +30,8 @@ sundered_keep_v0
 ├── Courtyard
 ├── Great Hall
 ├── East Rampart stub
-├── Lower stair placeholder
-├── Upper stair placeholder
+├── Lower stair asset stub
+├── Upper stair asset stub
 └── Ocean cliff boundary
 ```
 
@@ -74,7 +76,7 @@ A renaissance gothic castle level set on a mountainous ocean planet, using 32×3
 
 ## First Runtime Slice
 
-Main Gate → Courtyard → Great Hall with cliff boundary, one upper traversal placeholder, and one lower traversal placeholder.
+Main Gate → Courtyard → Great Hall with cliff boundary, one upper traversal asset stub, and one lower traversal asset stub.
 
 ## Runtime Authority
 
@@ -440,7 +442,7 @@ Use this rough layout:
 │ │ columns     tables      broken chandelier    throne    │       │
 │ └───────────────┬───────────────────────────────┬────────┘       │
 │                 │                               │                │
-│        upper stair placeholder          locked keep door          │
+│        upper stair asset stub           locked keep door          │
 │                 │                                                │
 │ ┌───────────────┴──────────── Courtyard ─────────────────┐       │
 │ │ broken statue     fountain       wet flagstone          │       │
@@ -590,13 +592,16 @@ destructible = true
 
 ---
 
-# 12. Suggested manifest format
+# 12. Manifest format
 
-Create:
+Current game32 manifest authority:
 
 ```text
-custodian/content/levels/sundered_keep/sundered_keep_assets.json
+custodian/content/sundered_keep_manifest.game32.json
+custodian/content/runtime/sundered_keep/sundered_keep_game32_assets.gd
 ```
+
+The older custom JSON shape below is retained as historical planning context, not the active runtime authority.
 
 Use this structure:
 
