@@ -1,0 +1,965 @@
+{
+  "schema": "custodian.game32.domain_manifest.v1",
+  "name": "sundered_keep_floors",
+  "generated_at_utc": "2026-05-30T01:10:28.140017+00:00",
+  "domain": "floors",
+  "asset_class": "floor_tile",
+  "domain_home": "res://content/tiles/sundered_keep/floors",
+  "count": 18,
+  "assets": [
+    {
+      "id": "sundered_keep/floors/main_courtyard_flagstone_01",
+      "name": "main_courtyard_flagstone_01",
+      "filename": "main_courtyard_flagstone_01.png",
+      "description": "Main courtyard main courtyard flagstone 01; dark weathered gothic stone floor variant.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "courtyard",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 0,
+          "index": 0,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          26,
+          134,
+          243,
+          351
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          217,
+          217
+        ],
+        "format": "png_rgba",
+        "sha256": "f58873504b34b995e5e57d02e5e7f55e418159e9a9a247b07ef4e150742d8d89"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "courtyard"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/main_courtyard_flagstone_02",
+      "name": "main_courtyard_flagstone_02",
+      "filename": "main_courtyard_flagstone_02.png",
+      "description": "Main courtyard main courtyard flagstone 02; dark weathered gothic stone floor variant.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "courtyard",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_02.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_02.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 1,
+          "index": 1,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          261,
+          133,
+          478,
+          352
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          217,
+          219
+        ],
+        "format": "png_rgba",
+        "sha256": "2864e0439a59ca7dd567db0dbcea602782f5ddb49fdee30eb4e3e50e2b5359d6"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "courtyard"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/main_courtyard_flagstone_cracked_01",
+      "name": "main_courtyard_flagstone_cracked_01",
+      "filename": "main_courtyard_flagstone_cracked_01.png",
+      "description": "Main courtyard main courtyard flagstone cracked 01; dark weathered gothic stone floor variant.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "courtyard",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_cracked_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_cracked_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 2,
+          "index": 2,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          497,
+          134,
+          715,
+          352
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          218,
+          218
+        ],
+        "format": "png_rgba",
+        "sha256": "0112b0a4b05f4ce32597b65b9bdf918e59dae1b846076a5d514ef47304429f0c"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "courtyard"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/main_courtyard_flagstone_wet_01",
+      "name": "main_courtyard_flagstone_wet_01",
+      "filename": "main_courtyard_flagstone_wet_01.png",
+      "description": "Main courtyard main courtyard flagstone wet 01; dark weathered gothic stone floor variant.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "courtyard",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_wet_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_wet_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 3,
+          "index": 3,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          734,
+          134,
+          952,
+          352
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          218,
+          218
+        ],
+        "format": "png_rgba",
+        "sha256": "86c889de4c258b524c9029549c0c76300031857f2dbccab3a2b2b9a499e1de6c"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "courtyard"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/main_courtyard_flagstone_mossy_01",
+      "name": "main_courtyard_flagstone_mossy_01",
+      "filename": "main_courtyard_flagstone_mossy_01.png",
+      "description": "Main courtyard main courtyard flagstone mossy 01; dark weathered gothic stone floor variant.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "courtyard",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_mossy_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_mossy_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 4,
+          "index": 4,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          970,
+          134,
+          1188,
+          352
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          218,
+          218
+        ],
+        "format": "png_rgba",
+        "sha256": "89f65f69e02cc22744eef79dcb74aeca8c8bd4eb809adc1f160a4facbfa74c29"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "courtyard"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/main_gate_threshold_stone_01",
+      "name": "main_gate_threshold_stone_01",
+      "filename": "main_gate_threshold_stone_01.png",
+      "description": "Main gate threshold stone tile for entry transitions, portcullis bases, and gatehouse thresholds.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "general",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_gate_threshold_stone_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/main_gate_threshold_stone_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 5,
+          "index": 5,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          1205,
+          133,
+          1423,
+          352
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          218,
+          219
+        ],
+        "format": "png_rgba",
+        "sha256": "823a2c70bbf26bc0a47a844a516390e3b571a5b249b5d749e84600bd2c9ef6d3"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "general"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/great_hall_marble_floor_01",
+      "name": "great_hall_marble_floor_01",
+      "filename": "great_hall_marble_floor_01.png",
+      "description": "Great hall great hall marble floor 01; ceremonial stone or marble floor variant.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "general",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/great_hall_marble_floor_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/great_hall_marble_floor_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 0,
+          "index": 6,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          26,
+          420,
+          243,
+          639
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          217,
+          219
+        ],
+        "format": "png_rgba",
+        "sha256": "9f2f311feb140c283ac45abd307702add619aef72320817f6070ab7e5f9760f8"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "general"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/great_hall_marble_floor_cracked_01",
+      "name": "great_hall_marble_floor_cracked_01",
+      "filename": "great_hall_marble_floor_cracked_01.png",
+      "description": "Great hall great hall marble floor cracked 01; ceremonial stone or marble floor variant.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "general",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/great_hall_marble_floor_cracked_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/great_hall_marble_floor_cracked_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 1,
+          "index": 7,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          261,
+          420,
+          478,
+          639
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          217,
+          219
+        ],
+        "format": "png_rgba",
+        "sha256": "f150f3a203641122d650c10d861996dcf7213f4403d5a34786b7ccbf6f584ff6"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "general"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/great_hall_carpet_runner_vertical_01",
+      "name": "great_hall_carpet_runner_vertical_01",
+      "filename": "great_hall_carpet_runner_vertical_01.png",
+      "description": "Vertical great-hall crimson carpet runner tile with gothic gold ornamentation.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "general",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_vertical_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_vertical_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 2,
+          "index": 8,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          497,
+          419,
+          715,
+          639
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          218,
+          220
+        ],
+        "format": "png_rgba",
+        "sha256": "d25c66c2e7316701a6266c021fbc470bf4cefdf25264bbe074742946b5a9fe9e"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "general"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/great_hall_carpet_runner_horizontal_01",
+      "name": "great_hall_carpet_runner_horizontal_01",
+      "filename": "great_hall_carpet_runner_horizontal_01.png",
+      "description": "Horizontal great-hall crimson carpet runner tile with gothic gold ornamentation.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "general",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_horizontal_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_horizontal_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 3,
+          "index": 9,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          733,
+          419,
+          952,
+          639
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          219,
+          220
+        ],
+        "format": "png_rgba",
+        "sha256": "6a7aa9b814f5ab81aad55d729027593882a83d00dba6d09573934138e96afbfb"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "general"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/rampart_walkway_floor_01",
+      "name": "rampart_walkway_floor_01",
+      "filename": "rampart_walkway_floor_01.png",
+      "description": "Rampart walkway rampart walkway floor 01; exterior walkable stone tile for battlements.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "general",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/rampart_walkway_floor_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/rampart_walkway_floor_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 4,
+          "index": 10,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          969,
+          419,
+          1188,
+          640
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          219,
+          221
+        ],
+        "format": "png_rgba",
+        "sha256": "5e8ad888f1354bf9e2a0cc79037411706e06d67a5f61cb4955b31e43f27a0361"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "general"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/rampart_walkway_broken_01",
+      "name": "rampart_walkway_broken_01",
+      "filename": "rampart_walkway_broken_01.png",
+      "description": "Rampart walkway rampart walkway broken 01; exterior walkable stone tile for battlements.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "general",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/rampart_walkway_broken_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/rampart_walkway_broken_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 5,
+          "index": 11,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          1206,
+          419,
+          1422,
+          640
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          216,
+          221
+        ],
+        "format": "png_rgba",
+        "sha256": "03627a8bb5907a2e7e363ecd52cfa8497ff41158c7af7f1fba5facdde75a2763"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "general"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/cliff_rock_floor_01",
+      "name": "cliff_rock_floor_01",
+      "filename": "cliff_rock_floor_01.png",
+      "description": "Cliff rock cliff rock floor 01; jagged island rock surface for sheer ocean-side terrain.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "cliff",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/cliff_rock_floor_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/cliff_rock_floor_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 0,
+          "index": 12,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          26,
+          703,
+          243,
+          922
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          217,
+          219
+        ],
+        "format": "png_rgba",
+        "sha256": "a07016061954d21d3f620c2e8c8529eacf8e6a1fecacc2a31f3973320f318088"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "cliff"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/cliff_rock_floor_cracked_01",
+      "name": "cliff_rock_floor_cracked_01",
+      "filename": "cliff_rock_floor_cracked_01.png",
+      "description": "Cliff rock cliff rock floor cracked 01; jagged island rock surface for sheer ocean-side terrain.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "cliff",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/cliff_rock_floor_cracked_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/cliff_rock_floor_cracked_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 1,
+          "index": 13,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          261,
+          703,
+          478,
+          922
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          217,
+          219
+        ],
+        "format": "png_rgba",
+        "sha256": "9c96d18649e9166c9000555fef88de6705ea222ba3102c8b75f0718361eeb058"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "cliff"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/roof_slate_dark_01",
+      "name": "roof_slate_dark_01",
+      "filename": "roof_slate_dark_01.png",
+      "description": "Dark slate roof tile for rooftop floors and elevated keep surfaces.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "general",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/roof_slate_dark_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/roof_slate_dark_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 2,
+          "index": 14,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          497,
+          703,
+          715,
+          922
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          218,
+          219
+        ],
+        "format": "png_rgba",
+        "sha256": "c2550c59361b614e68627ed75a949450f221eca3663cd199fa98ae81f4b11ad6"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "general"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/dungeon_stone_floor_01",
+      "name": "dungeon_stone_floor_01",
+      "filename": "dungeon_stone_floor_01.png",
+      "description": "Dungeon stone floor tile for lower keep prison or service rooms.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "dungeon",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/dungeon_stone_floor_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/dungeon_stone_floor_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 3,
+          "index": 15,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          733,
+          703,
+          951,
+          922
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          218,
+          219
+        ],
+        "format": "png_rgba",
+        "sha256": "0d18158ea17266fcaf3789ae94815a850449fad51285a3cecb2716075f810e38"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "dungeon"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/undercroft_wet_stone_floor_01",
+      "name": "undercroft_wet_stone_floor_01",
+      "filename": "undercroft_wet_stone_floor_01.png",
+      "description": "Wet undercroft stone floor tile with damp shine and lower-level drainage feel.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "general",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/undercroft_wet_stone_floor_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/undercroft_wet_stone_floor_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 4,
+          "index": 16,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          969,
+          703,
+          1188,
+          922
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          219,
+          219
+        ],
+        "format": "png_rgba",
+        "sha256": "2926609c531ee017121b276d595c3f99885f524c1cd5b0873ff13443c57bd5e5"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "general"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/ocean_void_01",
+      "name": "ocean_void_01",
+      "filename": "ocean_void_01.png",
+      "description": "Storm-dark haunted ocean void tile for cliffs, drops, and unreachable surrounding water.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "domain_home": "res://content/tiles/sundered_keep/floors",
+      "theme": "general",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/ocean_void_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/floors/ocean_void_01.game32.json",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_floor_tiles.png",
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 5,
+          "index": 17,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          1206,
+          703,
+          1422,
+          922
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          216,
+          219
+        ],
+        "format": "png_rgba",
+        "sha256": "e9c8aa818d3a4ef49baaf61e7eca3d37dd51fa45636bcd676c0abce33d74ea7d"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_sight": false,
+        "cover_value": 0,
+        "collision_shape": "none",
+        "semantic_role": "walkable_floor",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "floor",
+          "general"
+        ]
+      }
+    }
+  ]
+}

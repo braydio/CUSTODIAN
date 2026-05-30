@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-05-19
+Last updated: 2026-05-30
 
 Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
 
@@ -34,5 +34,6 @@ Completed packets are moved to `archived/`. They are preserved for historical re
 
 ### Recently Complete (awaiting archive)
 
+- `SUNDERED_KEEP_PHASE_1.md` — Implemented the first Sundered Keep connected-map slice with generated runtime assets, Main Gate/Courtyard/Great Hall layout, traversal stubs, and contract-world entry gate.
 - `CHANGE_CONTROL_BUNDLE_SCRIPT.md` — Adds a change-control bundler that writes current git-changed files to `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the bundle to the clipboard when available.
 - `GOTHIC_COMPOUND_LAYOUT_GRAMMAR.md` — Hardens gothic compound asset metadata, zoning, decal quotas, anchoring, footprint placement, and perimeter validation.

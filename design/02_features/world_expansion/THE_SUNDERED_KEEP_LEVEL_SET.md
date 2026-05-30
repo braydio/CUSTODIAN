@@ -1,0 +1,1616 @@
+# Level Set: **The Sundered Keep**
+
+**Project:** CUSTODIAN
+**Status:** Phase 1 Runtime Slice Implemented
+**Last Updated:** 2026-05-30
+
+---
+
+A renaissance-gothic fortress built into the only exposed landmass on a haunted ocean planet. The castle is not merely abandoned; it is **temporally misaligned**. Some rooms are intact, some ruined, some still in the moment before collapse, and others have already drowned. The layout should feel like a vertical dungeon wrapped around a cliff island: every floor has exterior storm exposure, broken parapets, sea views, sudden drop hazards, and impossible architectural overlaps.
+
+The level should be built as a **multi-floor compound**:
+
+1. **Sea-Level Undercroft**
+2. **Lower Level 2: Dungeons / Flooded Service Works**
+3. **Lower Level 1: Cliffside Storage / Old Barracks**
+4. **Main Level: Gate, Courtyard, Great Hall**
+5. **Upper Level 1: Chapel, Library, Ramparts**
+6. **Upper Level 2: Observatory, Inner Keep, High Bridges**
+7. **Rooftops: Bell Tower, Spires, Boss Approach**
+8. **Detached Exterior Nodes: Lighthouse, Sea Cliff Ledge, Secret Grotto, Arena**
+
+## Runtime Status
+
+Phase 1 now exists as a connected Godot runtime slice under `custodian/game/world/sundered_keep/sundered_keep_map.gd`.
+The current implementation covers the Main Gate, Courtyard, Great Hall, East Rampart stub, lower/upper traversal markers, cliff/ocean boundary, blocking props, return gate, and a generated first-pass runtime asset pack under:
+
+- `custodian/content/tiles/sundered_keep/`
+- `custodian/content/props/sundered_keep/`
+- `custodian/content/levels/sundered_keep/sundered_keep_assets.json`
+
+The slice is reachable from the generated contract world through the `ENTER SUNDERED KEEP` travel gate placed by `ContractWorldLoader`.
+Later phases should expand from this grammar into undercroft, dungeon/service works, upper chapel/library/rampart, observatory/keep, rooftops, and detached exterior nodes.
+
+---
+
+# 1. Sea-Level Undercroft
+
+## Layout
+
+The Undercroft is the lowest playable layer, carved directly into black sea-rock beneath the castle. It should feel cramped, wet, and structurally unsafe. It is not a clean basement; it is a blend of old cistern, crypt, drainage channel, collapsed foundation, and forbidden machine-vault.
+
+Recommended footprint:
+
+- Main cavern spine: roughly **34×18 tiles**
+- Two side cistern chambers: **12×10 tiles** each
+- Secret grotto connector: **16×12 tiles**
+- Vertical lift shaft to Lower Level 2: **6×6 tile core**
+- Optional flooded dead-end crypts: **8×8 to 10×12 tiles**
+
+The level should be irregular, not rectangular. Use jagged rock boundaries and castle foundation walls that intrude into the cavern.
+
+## Rooms / zones
+
+### A. Tide Intake Cavern
+
+This is the entry from the sea-facing grotto. It contains broken stone docks, half-submerged steps, barnacled pillars, and old winch machinery.
+
+Gameplay role:
+
+- Low-visibility entry route.
+- Good place for environmental storytelling.
+- Possible stealth/alternate route into castle.
+
+Obstacles:
+
+- Shallow floodwater slows movement.
+- Deep black water is lethal/fall hazard.
+- Broken dock planks create narrow 1-tile bridges.
+- Wave surges can periodically block crossings.
+
+Traversals:
+
+- Stone stepping platforms.
+- Rope ladder up to Lower Level 2.
+- Rusted lift cage, disabled until repaired.
+- Crawl opening into secret grotto.
+
+### B. Foundation Crypt
+
+A haunted burial chamber under the keep. It uses proper gothic masonry rather than natural cavern.
+
+Gameplay role:
+
+- Optional side route.
+- Resource cache.
+- Ambush space.
+
+Obstacles:
+
+- Sarcophagi as cover.
+- Collapsed ceiling rubble.
+- Ghost-light hazard zones.
+- Locked reliquary gate.
+
+Traversals:
+
+- Narrow crypt aisles.
+- Broken stairwell up.
+- One cracked wall that can be destroyed.
+
+### C. Chronal Drain
+
+A temporal anomaly sluice where water flows upward, sideways, or in frozen suspended droplets.
+
+Gameplay role:
+
+- Signature biome identity.
+- Puzzle / traversal room.
+- Introduces temporally adrift planet concept.
+
+Obstacles:
+
+- Time-shear tiles that damage or slow.
+- Repeating lightning reflection pulses.
+- Rewinding debris that reappears after being destroyed.
+
+Traversals:
+
+- Timed platforms.
+- Repairable stabilizer node.
+- One-way drop from Lower Level 1.
+
+## Required tiles
+
+### Floor tiles
+
+- `undercroft_wet_stone_floor_01`
+- `undercroft_wet_stone_floor_cracked_01`
+- `undercroft_slick_black_rock_floor_01`
+- `undercroft_mossy_foundation_floor_01`
+- `undercroft_flood_shallow_01`
+- `undercroft_flood_deep_01`
+- `undercroft_drain_channel_straight_01`
+- `undercroft_drain_channel_corner_01`
+- `undercroft_temporal_sheen_floor_01`
+- `undercroft_barnacle_stone_floor_01`
+
+### Wall tiles
+
+- `undercroft_black_rock_wall_n/e/s/w`
+- `undercroft_black_rock_inner_corner_ne/nw/se/sw`
+- `undercroft_black_rock_outer_corner_ne/nw/se/sw`
+- `undercroft_foundation_wall_n/e/s/w`
+- `undercroft_foundation_wall_cracked_n/e/s/w`
+- `undercroft_arch_support_wall_n/e/s/w`
+- `undercroft_drain_gate_wall_n/e/s/w`
+- `undercroft_collapsed_wall_rubble_n/e/s/w`
+
+### Edge / hazard tiles
+
+- `ocean_void_edge_dark_01`
+- `ocean_foam_edge_rock_01`
+- `deep_water_dropoff_01`
+- `slick_water_hazard_overlay_01`
+- `temporal_rift_floor_hazard_01`
+
+---
+
+# 2. Lower Level 2: Dungeons / Flooded Service Works
+
+## Layout
+
+Lower Level 2 sits just above the Undercroft. It is more constructed than the cavern but still damp and partially ruined. This floor should contain the castle's punishment spaces, old holding cells, mechanical service channels, and storage vaults.
+
+Recommended footprint:
+
+- Main dungeon block: **28×20 tiles**
+- Cell wings: two wings around **8×18 tiles**
+- Central torture/service room: **14×12 tiles**
+- Lower vault corridor: **5-tile-wide spine**
+- Stair core to Lower Level 1: **6×8 tiles**
+
+## Rooms / zones
+
+### A. Cell Wing West
+
+Long, narrow prison corridor with cell doors on one side and sea-leak cracks on the other.
+
+Gameplay role:
+
+- Tight corridor fighting.
+- Enemy funneling.
+- Good place for shield enemies or melee pressure.
+
+Obstacles:
+
+- Iron bars.
+- Locked cell doors.
+- Broken furniture.
+- Puddles that conduct electricity.
+
+Traversals:
+
+- Main corridor.
+- Some cells connect through broken back walls.
+- Crawl-through wall breach to cistern.
+
+### B. Cell Wing East
+
+More damaged and partially collapsed. The outer wall has failed, exposing sheer cliff and storm ocean.
+
+Gameplay role:
+
+- High-risk route.
+- More loot, more fall hazards.
+
+Obstacles:
+
+- Missing floor tiles.
+- Collapsed walls.
+- Wind gust zones near exposed cliff holes.
+- Hanging chains that obscure readability.
+
+Traversals:
+
+- Narrow broken ledges.
+- Temporary plank bridges.
+- Ladder down to Undercroft.
+- Locked iron gate to central chamber.
+
+### C. Service Crucible
+
+A square chamber containing drain machinery, old boiler housings, and a central pressure mechanism.
+
+Gameplay role:
+
+- Mini-objective room.
+- Repair/activate mechanism to drain water or unlock lower vault.
+
+Obstacles:
+
+- Rotating steam jets.
+- Flooded trenches.
+- Broken machine cover.
+- Enemy spawn grates.
+
+Traversals:
+
+- Raised perimeter walkway.
+- Lower trench channels.
+- Repairable bridge section.
+
+## Required tiles
+
+### Floor tiles
+
+- `dungeon_stone_floor_01`
+- `dungeon_stone_floor_cracked_01`
+- `dungeon_stone_floor_mossy_01`
+- `dungeon_blood_stained_floor_01`
+- `dungeon_flooded_floor_shallow_01`
+- `dungeon_cell_floor_dirty_01`
+- `service_channel_floor_01`
+- `service_channel_grate_01`
+- `service_channel_broken_grate_01`
+
+### Wall tiles
+
+- `dungeon_wall_n/e/s/w`
+- `dungeon_wall_damp_n/e/s/w`
+- `dungeon_wall_cracked_n/e/s/w`
+- `dungeon_wall_breach_n/e/s/w`
+- `dungeon_cell_bar_wall_n/e/s/w`
+- `dungeon_cell_door_locked_n/e/s/w`
+- `dungeon_cell_door_open_n/e/s/w`
+- `dungeon_service_wall_pipe_n/e/s/w`
+- `dungeon_service_wall_valve_n/e/s/w`
+
+### Structural tiles
+
+- `iron_bar_divider_horizontal`
+- `iron_bar_divider_vertical`
+- `rusted_gate_horizontal`
+- `rusted_gate_vertical`
+- `collapsed_ceiling_rubble_01`
+- `floor_hole_dark_01`
+- `floor_hole_ocean_visible_01`
+
+---
+
+# 3. Lower Level 1: Cliffside Storage / Old Barracks
+
+## Layout
+
+Lower Level 1 is the first floor that feels like part of the actual castle complex rather than its substructure. It wraps around the lower cliff face, with storage rooms, old barracks, armory halls, servant passages, and cliff balconies.
+
+Recommended footprint:
+
+- Broad horseshoe shape around central rock column.
+- Total playable area roughly **42×28 tiles**.
+- Multiple interior/exterior transitions.
+- At least three vertical links:
+  - Stairs up to Main Level.
+  - Stairs down to Dungeon.
+  - Exterior cliff path to Sea Cliff Ledge.
+
+## Rooms / zones
+
+### A. Cliff Barracks
+
+A ruined soldier lodging area with bunks, weapon racks, tables, and half-collapsed exterior walls.
+
+Gameplay role:
+
+- Mid-density combat.
+- Cover tutorial for destructible props.
+- Lootable supply room.
+
+Obstacles:
+
+- Bunk rows.
+- Fallen beams.
+- Cracked floor near cliff.
+- Weapon racks as partial blockers.
+
+Traversals:
+
+- Main barracks aisles.
+- Broken wall to exterior balcony.
+- Stair up to gatehouse storage.
+
+### B. Lower Armory
+
+A more secure chamber behind locked doors. Contains armor stands, weapon crates, powder barrels, and old renaissance gun racks.
+
+Gameplay role:
+
+- Optional reward room.
+- Requires key from Main Gate or dungeon route.
+
+Obstacles:
+
+- Locked reinforced door.
+- Explosive barrels.
+- Heavy tables.
+- Metal shelving.
+
+Traversals:
+
+- One main door.
+- Hidden cracked wall from service passage.
+- Floor hatch to dungeons.
+
+### C. Servant Spine
+
+A narrow back-of-house corridor connecting multiple castle zones.
+
+Gameplay role:
+
+- Alternate route for flanking.
+- Enemy patrol path.
+- Good for procedural branch generation.
+
+Obstacles:
+
+- Narrow 2-tile corridors.
+- Crates.
+- Locked servant doors.
+- Blind corners.
+
+Traversals:
+
+- Multiple small stairways.
+- Ladder to kitchen/courtyard.
+- Secret door to chapel foundation.
+
+### D. Sea Cliff Ledge Connector
+
+Exterior ledge along the cliff wall. This is dangerous and visually important.
+
+Gameplay role:
+
+- Optional scenic traversal.
+- High risk/high reward.
+- Leads to lighthouse bridge or secret grotto.
+
+Obstacles:
+
+- 1-tile ledges.
+- Wind gust hazard.
+- Falling rock.
+- Ocean void edge.
+
+Traversals:
+
+- Chain bridge.
+- Rope ladder.
+- Climbable broken masonry.
+- Narrow switchback stairs.
+
+## Required tiles
+
+### Floor tiles
+
+- `lower_castle_stone_floor_01`
+- `lower_castle_stone_floor_worn_01`
+- `lower_castle_stone_floor_cracked_01`
+- `barracks_wood_floor_01`
+- `barracks_wood_floor_broken_01`
+- `armory_flagstone_floor_01`
+- `servant_passage_floor_01`
+- `cliff_ledge_stone_path_01`
+- `cliff_ledge_gravel_path_01`
+- `exterior_rain_slick_stone_01`
+
+### Wall tiles
+
+- `lower_castle_wall_n/e/s/w`
+- `lower_castle_wall_window_n/e/s/w`
+- `lower_castle_wall_broken_n/e/s/w`
+- `lower_castle_wall_sea_cracked_n/e/s/w`
+- `barracks_partition_wall_n/e/s/w`
+- `armory_reinforced_wall_n/e/s/w`
+- `servant_passage_wall_n/e/s/w`
+- `cliff_retaining_wall_n/e/s/w`
+
+### Edge / elevation tiles
+
+- `cliff_edge_top_n/e/s/w`
+- `cliff_edge_inner_corner_ne/nw/se/sw`
+- `cliff_edge_outer_corner_ne/nw/se/sw`
+- `cliff_face_vertical_slice_01`
+- `cliff_face_mossy_slice_01`
+- `cliff_face_storm_wet_slice_01`
+- `ocean_drop_shadow_edge_01`
+
+---
+
+# 4. Main Level: Gate, Courtyard, Great Hall
+
+## Layout
+
+This is the main navigable hub of the castle. It should be the largest and most readable level. The player enters through the Main Gate, moves into a broken courtyard, then branches toward the Great Hall, chapel stairs, ramparts, library, or lower service paths.
+
+Recommended footprint:
+
+- Overall main island platform: **56×40 tiles**
+- Main gatehouse: **14×10 tiles**
+- Courtyard: **24×20 tiles**
+- Great Hall: **20×16 tiles**
+- Side corridors and rampart access: **4- to 6-tile-wide paths**
+- Central vertical landmark visible from most areas.
+
+## Rooms / zones
+
+### A. Main Gate
+
+A fortified gothic entry with twin towers, portcullis, collapsed drawbridge fragments, and storm-battered statues.
+
+Gameplay role:
+
+- Primary arrival.
+- Establishes castle silhouette.
+- First controlled combat arena.
+
+Obstacles:
+
+- Portcullis blocks.
+- Broken gate debris.
+- Murder-hole wall props.
+- Barricades.
+- Narrow entry funnel.
+
+Traversals:
+
+- Main gate arch.
+- Side tower stairs.
+- Optional breach through collapsed wall.
+- Locked mechanism room.
+
+### B. Courtyard
+
+An open but cluttered central space with fountain, broken statues, wagons, planters, shattered paving, and rainwater pools.
+
+Gameplay role:
+
+- Main hub.
+- Repeat traversal area.
+- Supports multiple enemy angles.
+
+Obstacles:
+
+- Fountain as central cover.
+- Fallen statue blockers.
+- Rain puddles.
+- Broken carts.
+- Low garden walls.
+- Temporal flicker zones that briefly show the courtyard intact.
+
+Traversals:
+
+- North to Great Hall.
+- East to ramparts.
+- West to chapel/library stairs.
+- South back to gate.
+- Down to Lower Level 1 through service hatch.
+- Up to Upper Level 1 via grand stairs.
+
+### C. Great Hall
+
+A long ceremonial hall with columns, banquet tables, chandeliers, banners, and a raised dais.
+
+Gameplay role:
+
+- Major combat arena.
+- Mid-level objective or key acquisition.
+- Strong visual anchor.
+
+Obstacles:
+
+- Long banquet tables as cover.
+- Pillars as hard blockers.
+- Fallen chandeliers.
+- Burning braziers.
+- Collapsed side wall exposing storm.
+
+Traversals:
+
+- Central aisle.
+- Side aisles behind columns.
+- Dais stairs.
+- Balcony stairs to Upper Level 1.
+- Rear locked door to Custodian's Keep.
+
+### D. Gatehouse Side Towers
+
+Two vertical micro-dungeons attached to the gate.
+
+Gameplay role:
+
+- Optional loot and shortcuts.
+- Enemy archer/ranged positions.
+
+Obstacles:
+
+- Spiral stair choke points.
+- Arrow slit walls.
+- Narrow roof access.
+
+Traversals:
+
+- Spiral stairs up to rampart.
+- Ladder down to storage.
+- Door to wall-walk.
+
+## Required tiles
+
+### Floor tiles
+
+- `main_courtyard_flagstone_01`
+- `main_courtyard_flagstone_cracked_01`
+- `main_courtyard_flagstone_wet_01`
+- `main_courtyard_flagstone_mossy_01`
+- `main_gate_threshold_01`
+- `main_gate_drawbridge_stone_01`
+- `great_hall_marble_floor_01`
+- `great_hall_marble_floor_cracked_01`
+- `great_hall_carpet_runner_01`
+- `great_hall_dais_floor_01`
+- `tower_stair_floor_01`
+- `rain_puddle_overlay_01`
+- `temporal_echo_overlay_01`
+
+### Wall tiles
+
+- `gothic_castle_wall_n/e/s/w`
+- `gothic_castle_wall_window_tall_n/e/s/w`
+- `gothic_castle_wall_arch_n/e/s/w`
+- `gothic_castle_wall_damaged_n/e/s/w`
+- `gothic_castle_wall_buttress_n/e/s/w`
+- `gatehouse_wall_n/e/s/w`
+- `gatehouse_wall_arrow_slit_n/e/s/w`
+- `great_hall_wall_n/e/s/w`
+- `great_hall_wall_columned_n/e/s/w`
+- `great_hall_wall_banner_n/e/s/w`
+- `great_hall_wall_broken_exterior_n/e/s/w`
+
+### Doors / thresholds
+
+- `main_gate_portcullis_closed`
+- `main_gate_portcullis_open`
+- `gothic_double_door_closed`
+- `gothic_double_door_open`
+- `gothic_locked_door_iron`
+- `gothic_service_door_wood`
+- `great_hall_rear_keep_door`
+- `floor_hatch_service_closed`
+- `floor_hatch_service_open`
+
+---
+
+# 5. Upper Level 1: Chapel, Library, Ramparts
+
+## Layout
+
+Upper Level 1 wraps around the main courtyard and Great Hall. It should feel layered: balconies over interior rooms, exterior wall-walks, chapel side chambers, library stacks, and access to the eastern ramparts.
+
+Recommended footprint:
+
+- Perimeter ring: **4–6 tiles wide**
+- Chapel block: **18×16 tiles**
+- Library block: **18×14 tiles**
+- Rampart run: **40+ tiles long**, irregular
+- Multiple drops/views into Main Level.
+
+## Rooms / zones
+
+### A. Chapel of Echoes
+
+A gothic chapel with nave, altar, stained glass, pews, side alcoves, reliquary, and broken roof exposure.
+
+Gameplay role:
+
+- Story room.
+- Ritual objective.
+- Haunted combat with sound/echo theme.
+
+Obstacles:
+
+- Pew rows.
+- Altar platform.
+- Fallen stained-glass shards.
+- Pillars.
+- Ghostly bell-wave hazard.
+
+Traversals:
+
+- Nave center aisle.
+- Side aisles.
+- Confessional crawl route.
+- Balcony stairs.
+- Hidden reliquary door.
+
+### B. Library Atrium
+
+A tall, ruined renaissance library with shelves, ladders, reading balconies, and a central open shaft.
+
+Gameplay role:
+
+- Vertical traversal puzzle.
+- Resource / lore collection.
+- Enemy ranged ambush area.
+
+Obstacles:
+
+- Bookshelves as blockers.
+- Fallen shelving.
+- Burning book piles.
+- Collapsed floors.
+- Central shaft drop.
+
+Traversals:
+
+- Ladder between shelf rows.
+- Balcony walkway.
+- Broken floor bridge.
+- Hidden bookcase door.
+- Stair up to Upper Level 2.
+
+### C. Eastern Ramparts
+
+Exterior defensive wall facing the ocean storm.
+
+Gameplay role:
+
+- Long-range fight.
+- Environmental hazard route.
+- Strong mood scene.
+
+Obstacles:
+
+- Crenellations.
+- Ballista wrecks.
+- Lightning-struck gaps.
+- Wind gust push zones.
+- Missing wall sections.
+
+Traversals:
+
+- Wall-walk path.
+- Tower stairs.
+- Broken bridge to watchtower.
+- Rope bridge to detached sea tower.
+
+### D. Watchtower
+
+Small vertical node attached to ramparts.
+
+Gameplay role:
+
+- Lookout / scouting point.
+- Ranged enemy perch.
+- Optional item.
+
+Obstacles:
+
+- Spiral stairs.
+- Narrow top platform.
+- Broken railing.
+
+Traversals:
+
+- Stair up to roof.
+- Ladder down to rampart storage.
+- Zipline/chain descent to Main Level if you want fast traversal.
+
+## Required tiles
+
+### Floor tiles
+
+- `chapel_stone_floor_01`
+- `chapel_stone_floor_cracked_01`
+- `chapel_altar_floor_01`
+- `chapel_stained_glass_shard_overlay_01`
+- `library_wood_floor_01`
+- `library_wood_floor_broken_01`
+- `library_carpet_runner_01`
+- `library_balcony_floor_01`
+- `rampart_walkway_floor_01`
+- `rampart_walkway_wet_01`
+- `rampart_walkway_broken_01`
+- `tower_interior_floor_01`
+
+### Wall tiles
+
+- `chapel_wall_n/e/s/w`
+- `chapel_wall_stained_glass_n/e/s/w`
+- `chapel_wall_broken_window_n/e/s/w`
+- `chapel_wall_altar_back_n`
+- `library_wall_n/e/s/w`
+- `library_wall_shelves_n/e/s/w`
+- `library_wall_ladder_n/e/s/w`
+- `library_wall_hidden_door_n/e/s/w`
+- `rampart_outer_wall_n/e/s/w`
+- `rampart_inner_wall_n/e/s/w`
+- `rampart_crenellation_n/e/s/w`
+- `rampart_broken_gap_n/e/s/w`
+- `watchtower_wall_curved_n/e/s/w`
+- `watchtower_arrow_slit_n/e/s/w`
+
+### Traversal tiles
+
+- `spiral_stair_up_01`
+- `spiral_stair_down_01`
+- `grand_stair_up_01`
+- `grand_stair_down_01`
+- `library_ladder_vertical_01`
+- `library_ladder_horizontal_01`
+- `broken_bridge_wood_01`
+- `rampart_rope_bridge_01`
+- `drop_shadow_to_main_level_01`
+
+---
+
+# 6. Upper Level 2: Observatory, Inner Keep, High Bridges
+
+## Layout
+
+Upper Level 2 should feel less like a continuous floor and more like connected elevated islands: observatory platforms, keep roofs, high galleries, and bridge spans between towers. The player is high enough that ocean and lightning dominate the background.
+
+Recommended footprint:
+
+- Inner Keep upper block: **20×18 tiles**
+- Observatory: **14×14 circular/square hybrid**
+- High bridge paths: **3–5 tiles wide**
+- Tower platforms: **8×8 to 12×12 tiles**
+- Several broken, non-traversable roof surfaces around playable paths.
+
+## Rooms / zones
+
+### A. Custodian's Keep Upper Halls
+
+A secure inner structure with stronger architecture, locked doors, defensive corridors, and relic-machine panels.
+
+Gameplay role:
+
+- Late-level progression.
+- More dangerous enemy patrols.
+- Gate to boss approach.
+
+Obstacles:
+
+- Reinforced walls.
+- Security doors.
+- Narrow murder corridors.
+- Decorative statues that become blockers.
+- Temporal lock mechanisms.
+
+Traversals:
+
+- Switchback stairs.
+- Locked doors requiring keep sigils.
+- Secret servant wall route.
+- Balcony overlooking Great Hall.
+
+### B. Observatory
+
+A gothic-renaissance astronomy chamber with a broken telescope, rotating star-map floor, and roof open to the storm.
+
+Gameplay role:
+
+- Signature puzzle/combat room.
+- Strong temporal-adrift theme.
+- Unlocks Bell Tower route or lighthouse alignment.
+
+Obstacles:
+
+- Rotating brass mechanisms.
+- Electrified wet floor arcs.
+- Fallen lens fragments.
+- Circular railings.
+- Star-map hazard pulses.
+
+Traversals:
+
+- Central rotating platform.
+- Perimeter walkway.
+- Ladder to roof.
+- Bridge to Bell Tower.
+- Hidden stair down to Library.
+
+### C. High Gallery Bridges
+
+Exterior stone bridges connecting towers.
+
+Gameplay role:
+
+- Tension traversal.
+- Enemy pressure in narrow lanes.
+- Ocean drop spectacle.
+
+Obstacles:
+
+- Missing bridge tiles.
+- Lightning strike zones.
+- Gargoyle blockers.
+- Wind gust intervals.
+- Narrow 2- or 3-tile choke points.
+
+Traversals:
+
+- Stone bridge.
+- Temporary wooden repair bridge.
+- Chain bridge to tower.
+- One-way drop to rampart.
+
+## Required tiles
+
+### Floor tiles
+
+- `keep_upper_stone_floor_01`
+- `keep_upper_stone_floor_polished_01`
+- `keep_upper_stone_floor_cracked_01`
+- `observatory_star_map_floor_center_01`
+- `observatory_star_map_floor_ring_01`
+- `observatory_brass_track_floor_01`
+- `observatory_broken_lens_floor_01`
+- `high_bridge_stone_floor_01`
+- `high_bridge_stone_floor_broken_01`
+- `tower_platform_floor_01`
+- `storm_exposed_floor_wet_01`
+
+### Wall tiles
+
+- `keep_reinforced_wall_n/e/s/w`
+- `keep_reinforced_wall_window_n/e/s/w`
+- `keep_reinforced_wall_locked_panel_n/e/s/w`
+- `observatory_wall_n/e/s/w`
+- `observatory_wall_open_sky_n/e/s/w`
+- `observatory_wall_telescope_mount_n/e/s/w`
+- `tower_high_wall_n/e/s/w`
+- `tower_high_wall_broken_n/e/s/w`
+- `bridge_parapet_n/e/s/w`
+- `bridge_parapet_broken_n/e/s/w`
+
+### Traversal / machine tiles
+
+- `observatory_rotating_platform_center`
+- `observatory_rotating_platform_edge`
+- `brass_mechanism_track_straight`
+- `brass_mechanism_track_corner`
+- `temporal_lock_floor_socket_01`
+- `high_stone_bridge_edge_n/e/s/w`
+- `chain_bridge_high_01`
+- `one_way_drop_marker_01`
+
+---
+
+# 7. Rooftops: Bell Tower, Spires, Boss Approach
+
+## Layout
+
+The rooftops are the highest conventional floor. They should be fragmented and dangerous: steep slate roofs, parapets, collapsed spires, bell tower access, rain-slick tiles, and lightning hazards. This is not an open roof sandbox; it should be a constrained, high-pressure final route.
+
+Recommended footprint:
+
+- Rooftop network: **36×24 tiles total**, broken into segments.
+- Bell Tower base: **12×12 tiles**
+- Bell Tower upper chamber: **8×8 tiles**
+- Spire paths: **2–4 tiles wide**
+- Boss pre-arena: **14×10 tiles**
+
+## Rooms / zones
+
+### A. Great Hall Roof
+
+A sloped roof segment above the main hall, broken by holes, chimneys, gargoyles, and collapsed beams.
+
+Gameplay role:
+
+- Transitional combat.
+- Strong vertical reveal.
+- Introduces roof movement hazards.
+
+Obstacles:
+
+- Roof holes.
+- Chimney blockers.
+- Broken slate.
+- Lightning rods.
+- Gargoyle statues.
+
+Traversals:
+
+- Narrow ridge path.
+- Broken roof beam bridge.
+- Roof hatch down to Great Hall.
+- Ladder up to spire walk.
+
+### B. Bell Tower
+
+Tall vertical tower containing the haunted bell mechanism. The bell should be a major landmark and probably the narrative objective.
+
+Gameplay role:
+
+- Final traversal challenge.
+- Temporal ritual site.
+- Boss unlock or arena trigger.
+
+Obstacles:
+
+- Spiral stair choke.
+- Bell swing hazard.
+- Falling masonry.
+- Sound-wave pulses.
+- Broken clockwork.
+
+Traversals:
+
+- Spiral stairs.
+- Ladder to bell frame.
+- Exterior balcony ring.
+- Bridge to boss approach.
+- Emergency drop to Chapel roof.
+
+### C. Spire Walk
+
+An exposed path between narrow tower peaks.
+
+Gameplay role:
+
+- High-risk traversal.
+- Dramatic finale pacing.
+
+Obstacles:
+
+- One-tile gaps.
+- Wind gusts.
+- Lightning telegraphs.
+- Fragile roof tiles.
+- Flying enemies if applicable.
+
+Traversals:
+
+- 2-tile ridge.
+- Rope bridge.
+- Chain walkway.
+- Broken buttress bridge.
+
+### D. Custodian Arena Approach
+
+A ruined rooftop platform before the arena or transition portal.
+
+Gameplay role:
+
+- Last checkpoint.
+- Build tension before boss.
+
+Obstacles:
+
+- Collapsed parapets.
+- Broken statues.
+- Ritual pylons.
+- Storm hazard rings.
+
+Traversals:
+
+- One entrance from Bell Tower.
+- One locked/ritual exit.
+- Optional shortcut unlock to Main Level.
+
+## Required tiles
+
+### Roof tiles
+
+- `roof_slate_dark_01`
+- `roof_slate_dark_wet_01`
+- `roof_slate_broken_01`
+- `roof_slate_hole_01`
+- `roof_ridge_horizontal_01`
+- `roof_ridge_vertical_01`
+- `roof_ridge_corner_ne/nw/se/sw`
+- `roof_eave_n/e/s/w`
+- `roof_eave_broken_n/e/s/w`
+- `spire_roof_tile_01`
+- `spire_roof_tile_broken_01`
+
+### Wall / parapet tiles
+
+- `rooftop_parapet_n/e/s/w`
+- `rooftop_parapet_broken_n/e/s/w`
+- `bell_tower_wall_n/e/s/w`
+- `bell_tower_wall_arch_window_n/e/s/w`
+- `bell_tower_wall_clockface_n/e/s/w`
+- `spire_wall_n/e/s/w`
+- `spire_wall_broken_n/e/s/w`
+- `gargoyle_parapet_blocker_n/e/s/w`
+
+### Traversal / hazard tiles
+
+- `roof_hatch_closed`
+- `roof_hatch_open`
+- `bell_tower_spiral_stair_up`
+- `bell_tower_spiral_stair_down`
+- `bell_swing_hazard_arc_01`
+- `lightning_strike_telegraph_tile_01`
+- `wind_gust_roof_overlay_01`
+- `fragile_roof_tile_01`
+- `fragile_roof_tile_broken_01`
+
+---
+
+# 8. Detached Exterior Nodes
+
+These are not full floors, but they matter because the map has detached structures and sea-cliff routes.
+
+## A. Old Lighthouse
+
+### Layout
+
+A small tower on a separate sea stack connected by a narrow bridge or cliff path.
+
+Recommended footprint:
+
+- Sea stack top: **12×12 tiles**
+- Lighthouse interior: **7×7 tiles**
+- Lower dock/remnant: **8×6 tiles**
+
+### Obstacles
+
+- Ocean void on all sides.
+- Broken spiral stair.
+- Lantern machinery.
+- Lightning strike hazard.
+- Collapsed railing.
+
+### Traversals
+
+- Rope bridge from rampart or cliff ledge.
+- Interior spiral stairs.
+- Ladder to lantern room.
+- Optional zipline back to castle.
+
+### Tiles needed
+
+- `lighthouse_stone_floor_01`
+- `lighthouse_lantern_floor_01`
+- `lighthouse_wall_curved_n/e/s/w`
+- `lighthouse_window_light_n/e/s/w`
+- `lighthouse_broken_wall_n/e/s/w`
+- `sea_stack_rock_floor_01`
+- `sea_stack_cliff_edge_n/e/s/w`
+- `rope_bridge_ocean_01`
+
+## B. Sea Cliff Ledge
+
+### Layout
+
+A side traversal carved into the cliff. It should be narrow, jagged, and unsafe.
+
+Recommended footprint:
+
+- Long switchback path: **3–5 tiles wide**
+- Several pockets: **6×6 tiles**
+- One collapsed bridge section.
+
+### Obstacles
+
+- Wind gusts.
+- Rockfall.
+- Ocean drop.
+- Slippery moss.
+- Broken retaining walls.
+
+### Traversals
+
+- Switchback stairs.
+- Rope ladder.
+- Handhold cliff face.
+- Narrow stone bridge.
+
+### Tiles needed
+
+- `sea_cliff_path_01`
+- `sea_cliff_path_cracked_01`
+- `sea_cliff_stairs_n/e/s/w`
+- `sea_cliff_switchback_corner_ne/nw/se/sw`
+- `cliff_handhold_wall_n/e/s/w`
+- `rockfall_debris_01`
+- `moss_slip_overlay_01`
+
+## C. Secret Grotto
+
+### Layout
+
+Hidden lower cave reached from Undercroft or cliff ledge.
+
+Recommended footprint:
+
+- Natural cave chamber: **18×14 tiles**
+- Tide pool: **8×8 tiles**
+- Secret shrine pocket: **8×6 tiles**
+
+### Obstacles
+
+- Deep tide pools.
+- Narrow cave chokepoints.
+- Roots/fungal growth.
+- Temporal ghost echoes.
+- Collapsed rock gates.
+
+### Traversals
+
+- Crawl tunnel.
+- Flooded stepping stones.
+- Ladder to Undercroft.
+- Hidden sea exit.
+
+### Tiles needed
+
+- `grotto_black_rock_floor_01`
+- `grotto_tide_pool_shallow_01`
+- `grotto_tide_pool_deep_01`
+- `grotto_wall_n/e/s/w`
+- `grotto_wall_glowing_crack_n/e/s/w`
+- `grotto_secret_shrine_floor_01`
+- `grotto_stepping_stone_01`
+
+## D. Custodian Arena
+
+### Layout
+
+A detached circular or octagonal platform, likely connected by a bridge from upper castle or rooftops.
+
+Recommended footprint:
+
+- Arena platform: **22×22 tiles**
+- Outer ring: **3-tile-wide**
+- Central ritual space: **8×8 tiles**
+- Four hazard pylons at cardinal points.
+
+### Obstacles
+
+- Broken outer ring.
+- Temporal hazard pylons.
+- Ocean drop perimeter.
+- Ritual debris.
+- Boss cover pillars.
+
+### Traversals
+
+- Single main bridge in.
+- Optional post-boss exit portal.
+- Unlockable shortcut bridge back to Main Level.
+
+### Tiles needed
+
+- `arena_stone_floor_outer_ring_01`
+- `arena_stone_floor_inner_01`
+- `arena_stone_floor_cracked_01`
+- `arena_ritual_circle_center_01`
+- `arena_ritual_circle_ring_01`
+- `arena_edge_void_n/e/s/w`
+- `arena_broken_edge_n/e/s/w`
+- `arena_bridge_stone_01`
+- `arena_temporal_pylon_base_01`
+
+---
+
+# Global Traversal Graph
+
+The map should not play as a simple vertical tower. It should have looping paths and shortcuts.
+
+## Primary route
+
+`Main Gate → Courtyard → Great Hall → Chapel / Library → Upper Keep → Observatory → Bell Tower → Rooftop Arena`
+
+## Lower alternate route
+
+`Main Gate → Service Hatch → Lower Barracks → Dungeons → Undercroft → Secret Grotto → Cliff Ledge → Ramparts`
+
+## High alternate route
+
+`Gatehouse Tower → Ramparts → Watchtower → High Bridge → Observatory → Bell Tower`
+
+## Optional lighthouse route
+
+`Sea Cliff Ledge → Rope Bridge → Old Lighthouse → Lantern Activation → Observatory Shortcut`
+
+## Boss route
+
+`Bell Tower → Spire Walk → Custodian Arena`
+
+## Shortcut unlocks
+
+- Undercroft lift to Courtyard.
+- Library hidden door to Chapel.
+- Great Hall balcony to Upper Keep.
+- Rampart ladder to Main Gate.
+- Lighthouse rope bridge to Observatory.
+- Arena post-clear bridge to Courtyard or exit transition.
+
+---
+
+# Required Wall System
+
+For runtime production, do **not** make every room bespoke. Build a modular renaissance-gothic wall kit with variants.
+
+## Core wall families
+
+The following wall families are needed:
+
+1. `gothic_castle_wall`
+2. `gatehouse_wall`
+3. `great_hall_wall`
+4. `chapel_wall`
+5. `library_wall`
+6. `keep_reinforced_wall`
+7. `dungeon_wall`
+8. `undercroft_foundation_wall`
+9. `black_rock_cliff_wall`
+10. `rampart_wall`
+11. `tower_curved_wall`
+12. `roof_parapet_wall`
+13. `lighthouse_wall`
+14. `arena_edge_wall`
+
+## For each wall family, make these runtime tiles
+
+Minimum production set:
+
+```text
+{family}_straight_n.png
+{family}_straight_e.png
+{family}_straight_s.png
+{family}_straight_w.png
+
+{family}_inner_corner_ne.png
+{family}_inner_corner_nw.png
+{family}_inner_corner_se.png
+{family}_inner_corner_sw.png
+
+{family}_outer_corner_ne.png
+{family}_outer_corner_nw.png
+{family}_outer_corner_se.png
+{family}_outer_corner_sw.png
+
+{family}_endcap_n.png
+{family}_endcap_e.png
+{family}_endcap_s.png
+{family}_endcap_w.png
+
+{family}_damaged_n.png
+{family}_damaged_e.png
+{family}_damaged_s.png
+{family}_damaged_w.png
+
+{family}_breach_n.png
+{family}_breach_e.png
+{family}_breach_s.png
+{family}_breach_w.png
+```
+
+## Special wall overlays
+
+```text
+wall_overlay_vines_01.png
+wall_overlay_moss_01.png
+wall_overlay_barnacles_01.png
+wall_overlay_rain_streaks_01.png
+wall_overlay_cracks_01.png
+wall_overlay_temporal_glow_01.png
+wall_overlay_stained_glass_light_01.png
+wall_overlay_shadow_deep_01.png
+```
+
+---
+
+# Required Tile Families
+
+## Ground / floor
+
+```text
+floor_flagstone_clean_01.png
+floor_flagstone_wet_01.png
+floor_flagstone_cracked_01.png
+floor_flagstone_mossy_01.png
+floor_marble_dark_01.png
+floor_marble_cracked_01.png
+floor_wood_dark_01.png
+floor_wood_broken_01.png
+floor_carpet_red_worn_01.png
+floor_carpet_blue_worn_01.png
+floor_dungeon_dirty_01.png
+floor_undercroft_wet_01.png
+floor_roof_slate_01.png
+floor_roof_slate_broken_01.png
+floor_cliff_rock_01.png
+floor_arena_ritual_01.png
+```
+
+## Elevation / cliff
+
+```text
+cliff_edge_n.png
+cliff_edge_e.png
+cliff_edge_s.png
+cliff_edge_w.png
+cliff_inner_corner_ne.png
+cliff_inner_corner_nw.png
+cliff_inner_corner_se.png
+cliff_inner_corner_sw.png
+cliff_outer_corner_ne.png
+cliff_outer_corner_nw.png
+cliff_outer_corner_se.png
+cliff_outer_corner_sw.png
+cliff_face_slice_01.png
+cliff_face_slice_mossy_01.png
+cliff_face_slice_wet_01.png
+cliff_base_foam_01.png
+ocean_void_tile_01.png
+ocean_foam_edge_01.png
+```
+
+## Stairs / ladders / vertical traversal
+
+```text
+stairs_stone_up_n.png
+stairs_stone_up_e.png
+stairs_stone_up_s.png
+stairs_stone_up_w.png
+stairs_stone_down_n.png
+stairs_stone_down_e.png
+stairs_stone_down_s.png
+stairs_stone_down_w.png
+
+stairs_spiral_base_01.png
+stairs_spiral_mid_01.png
+stairs_spiral_top_01.png
+
+ladder_wood_n.png
+ladder_wood_e.png
+ladder_wood_s.png
+ladder_wood_w.png
+
+rope_ladder_n.png
+rope_ladder_e.png
+rope_ladder_s.png
+rope_ladder_w.png
+
+lift_platform_idle_01.png
+lift_platform_active_01.png
+drop_marker_shadow_01.png
+```
+
+## Bridges
+
+```text
+bridge_stone_horizontal_01.png
+bridge_stone_vertical_01.png
+bridge_stone_broken_horizontal_01.png
+bridge_stone_broken_vertical_01.png
+
+bridge_rope_horizontal_01.png
+bridge_rope_vertical_01.png
+bridge_rope_broken_horizontal_01.png
+bridge_rope_broken_vertical_01.png
+
+bridge_chain_horizontal_01.png
+bridge_chain_vertical_01.png
+bridge_chain_broken_horizontal_01.png
+bridge_chain_broken_vertical_01.png
+```
+
+## Doors / gates
+
+```text
+door_gothic_single_closed_n/e/s/w.png
+door_gothic_single_open_n/e/s/w.png
+door_gothic_double_closed_n/e/s/w.png
+door_gothic_double_open_n/e/s/w.png
+door_iron_locked_n/e/s/w.png
+door_iron_open_n/e/s/w.png
+portcullis_closed_n/e/s/w.png
+portcullis_open_n/e/s/w.png
+secret_wall_door_closed_n/e/s/w.png
+secret_wall_door_open_n/e/s/w.png
+floor_hatch_closed_01.png
+floor_hatch_open_01.png
+```
+
+## Hazard / climate overlays
+
+```text
+rain_puddle_overlay_01.png
+storm_splash_overlay_01.png
+lightning_target_overlay_01.png
+wind_gust_overlay_01.png
+temporal_rift_overlay_01.png
+temporal_echo_floor_overlay_01.png
+slick_moss_overlay_01.png
+fall_hazard_shadow_01.png
+deep_water_overlay_01.png
+shallow_water_overlay_01.png
+```
+
+---
+
+# Props Needed to Sell the Setting
+
+## Renaissance gothic castle props
+
+```text
+prop_gothic_statue_broken_01.png
+prop_gothic_statue_intact_01.png
+prop_gargoyle_perch_01.png
+prop_brazier_iron_01.png
+prop_candelabra_large_01.png
+prop_banner_torn_blue_01.png
+prop_banner_torn_gold_01.png
+prop_chandelier_fallen_01.png
+prop_chandelier_hanging_01.png
+prop_marble_column_01.png
+prop_marble_column_broken_01.png
+```
+
+## Great Hall props
+
+```text
+prop_banquet_table_long_01.png
+prop_banquet_table_broken_01.png
+prop_wooden_chair_01.png
+prop_throne_ruined_01.png
+prop_wall_tapestry_01.png
+prop_fireplace_gothic_01.png
+```
+
+## Chapel props
+
+```text
+prop_chapel_pew_01.png
+prop_chapel_altar_01.png
+prop_reliquary_locked_01.png
+prop_confessional_01.png
+prop_stained_glass_debris_01.png
+prop_bell_clapper_relic_01.png
+```
+
+## Library props
+
+```text
+prop_bookshelf_tall_01.png
+prop_bookshelf_broken_01.png
+prop_book_pile_01.png
+prop_reading_table_01.png
+prop_ladder_library_01.png
+prop_globe_temporal_01.png
+```
+
+## Dungeon / undercroft props
+
+```text
+prop_cell_bars_01.png
+prop_chain_hanging_01.png
+prop_sarcophagus_01.png
+prop_torture_rack_01.png
+prop_rusted_pipe_01.png
+prop_valve_wheel_01.png
+prop_drain_grate_01.png
+prop_barnacle_cluster_01.png
+```
+
+## Observatory props
+
+```text
+prop_telescope_broken_01.png
+prop_astrolabe_large_01.png
+prop_brass_orrery_01.png
+prop_star_chart_table_01.png
+prop_lens_fragment_large_01.png
+prop_temporal_machine_panel_01.png
+```
+
+## Rooftop / exterior props
+
+```text
+prop_chimney_gothic_01.png
+prop_lightning_rod_01.png
+prop_roof_gargoyle_01.png
+prop_broken_spire_chunk_01.png
+prop_rope_bridge_anchor_01.png
+prop_lighthouse_lantern_01.png
+prop_lighthouse_lens_broken_01.png
+```
+
+---
+
+# Tilemap Layer Recommendation
+
+Use separate TileMap layers so the level remains maintainable:
+
+1. `terrain_base`
+   Floors, rock, roof, water.
+
+2. `terrain_edges`
+   Cliff edges, ocean edges, void shadows.
+
+3. `walls_low`
+   South-facing / lower wall bodies.
+
+4. `walls_high`
+   North-facing / tall wall crowns, towers, parapets.
+
+5. `props_static`
+   Tables, statues, barrels, shelves, sarcophagi.
+
+6. `props_blocking`
+   Props with collision.
+
+7. `hazards`
+   Lightning, temporal rifts, wind, floodwater.
+
+8. `traversal`
+   Stairs, ladders, bridges, lifts, hatches.
+
+9. `decals`
+   Moss, cracks, puddles, stained glass, blood, dust.
+
+10. `roof_occluders`
+    Optional roof transparency/occlusion layer for interiors.
+
+---
+
+# Production Naming Pattern
+
+All production assets for The Sundered Keep follow this directory convention:
+
+```text
+custodian/content/tiles/sundered_keep/
+custodian/content/props/sundered_keep/
+custodian/content/levels/sundered_keep/
+```
+
+Example runtime asset names:
+
+```text
+custodian/content/tiles/sundered_keep/floors/main_courtyard_flagstone_01.png
+custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_straight_n.png
+custodian/content/tiles/sundered_keep/elevation/cliff_edge_n.png
+custodian/content/props/sundered_keep/chapel/prop_chapel_altar_01.png
+custodian/content/props/sundered_keep/observatory/prop_telescope_broken_01.png
+```
+
+---
+
+# Implementation Roadmap
+
+## Phase 1: Design Finalization
+- [ ] Confirm tile naming conventions with existing vault/compound asset conventions
+- [ ] Create biome region entry in world_expansion/ or Hub biome tables
+- [ ] Map color palette and elevation profile
+
+## Phase 2: Tile Production
+- [ ] Generate core wall families (14 families × 24 tiles each = ~336 wall tiles)
+- [ ] Generate floor tiles per floor zone (~80 tiles)
+- [ ] Generate elevation/cliff tiles (~18 tiles)
+- [ ] Generate traversal tiles (stairs, ladders, bridges)
+- [ ] Generate door/gate tiles
+- [ ] Generate hazard overlay tiles
+
+## Phase 3: Prop Production
+- [ ] Generate gothic castle props (~44 props across 7 categories)
+- [ ] Add game32 manifests for each asset
+
+## Phase 4: Level Assembly
+- [ ] Build each floor as a Tiled scene or procgen template
+- [ ] Wire global traversal graph
+- [ ] Set up TileMap layers per recommendation
+- [ ] Place collision, navigation, and hazard zones
+
+## Phase 5: Runtime Integration
+- [ ] Register level in world transition system
+- [ ] Add to Hub scenario pool if campaign-driven
+- [ ] Integrate temporal anomaly mechanics
+- [ ] Wire boss arena and bell tower objectives
+- [ ] Update ai_context docs with asset references

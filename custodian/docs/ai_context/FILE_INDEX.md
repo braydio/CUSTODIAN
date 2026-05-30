@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-28
+Last updated: 2026-05-30
 
 ## Local Entry And Workflow
 
@@ -53,6 +53,7 @@ Last updated: 2026-05-28
 - `custodian/game/world/procgen/gothic_compound/` — deterministic gothic compound blueprint generator modules: metadata asset definitions, legacy path registry, config, result, validator, generator, and Sprite2D adapter used by the connected-map prototype; current generation uses logical asset definitions, top-left anchoring, footprint-aware placement, render/depth metadata, player-relative large-structure depth sorting, wall/post/gatehouse perimeter grammar, keep-plaza exclusion, service paths, zone-specific decals/grates, clustered exterior scatter, and perimeter topology validation
 - `custodian/game/world/gothic_compound/gothic_compound_map.gd` — authored connected gothic compound destination map that runs the larger gothic blueprint generator, exposes camera bounds, updates player-relative depth sorting, and places the return gate
 - `custodian/game/world/gothic_compound/gothic_compound_travel_gate.gd` — interactable gate used to enter the gothic compound from the main map and return from the compound to the main map
+- `custodian/game/world/sundered_keep/sundered_keep_map.gd` — authored connected Sundered Keep phase-1 destination map with Main Gate, Courtyard, Great Hall, East Rampart stub, cliff/ocean boundary, traversal markers, collision blockers, camera bounds, and return travel
 - `custodian/game/world/compound/rooms/room_graph.gd` — deterministic compound room graph loader/validator with room count clamps, sorted type lookup, seeded template selection, and directional connection-rule checks
 - `custodian/game/world/compound/rooms/room_loader.gd` — deterministic `.tmj` Tiled room-template loader with normalized door metadata, marker/stair extraction, template duplication, and door compatibility checks
 - `custodian/game/world/compound/rooms/layout_assembler.gd` — deterministic compound room layout assembler with stable room IDs, graph-walk door-aligned placement, fixed-grid fallback, graph-rule-enforced compatible door connections, resolved endpoint tiles, intensity estimates, actual tile bounds, and placed-room state
@@ -76,6 +77,15 @@ Last updated: 2026-05-28
 - `custodian/game/systems/core/systems/arrn/knowledge_system.gd` — knowledge track constants and sync-gain calculation
 - `custodian/game/systems/core/systems/arrn/benefits_manager.gd` — ARRN knowledge-level benefit activation and labels
 - `custodian/game/systems/core/systems/contract_world_loader.gd` — contract-world handoff and placement bridge; repositions runtime anchors, places vehicles on generated road parking zones when available, places ARRN relays, instantiates the connected gothic compound map/gate, generates scarce base-map tutorial resource nodes, and places the first far-field expedition-style resource patch after procgen world creation
+- `custodian/game/vehicles/vehicle_definition.gd` — vehicle archetype data loader, display-name generator, tag/mobility helpers, and core definition validation for registry-backed vehicles
+- `custodian/game/vehicles/vehicle_registry.gd` — registry store for `res://content/vehicles/vehicle_archetypes.json`, including ID lookup and faction/domain/chassis/role/tier/pilotable queries
+- `custodian/game/vehicles/vehicle_spawn_resolver.gd` — registry ID to live scene resolver; validates runtime support, instantiates scenes, applies definitions, and assigns vehicle groups
+- `custodian/game/vehicles/pilotable_vehicle.gd` — pilotable `CharacterBody2D` base that owns vehicle movement response, enter/exit state, terrain multiplier lookup with `actor_kind = "vehicle"`, pilot visibility/collision handoff, and interaction prompts
+- `custodian/game/vehicles/vehicle_input_adapter.gd` — guarded InputMap reader used by `PlayerController` for vehicle movement/action intent
+- `custodian/game/vehicles/vehicle_seat.gd` — small seat/entry bridge used by pilotable vehicle scenes
+- `custodian/game/vehicles/scenes/pilotable_vehicle_base.tscn` — reusable base scene layout for registry-backed pilotable vehicles
+- `custodian/content/vehicles/*.json` — vehicle taxonomy, archetypes, movement profiles, hardpoint profiles, loadouts, visual kits, and registry schema data
+- `custodian/tools/validate_vehicle_registry.gd` — headless registry validator for taxonomy values, required fields, referenced profiles/loadouts/kits, runtime scenes, pilotable seat/profile requirements, and unsupported spawnable domains
 - `custodian/game/actors/relay/relay.tscn` — placeholder in-world relay entity scene used by procgen contract handoff
 - `custodian/game/actors/relay/relay.gd` — interactable relay entity that mirrors ARRN state, shows scan/stabilization prompts, and starts stabilization through `ARRNManager`
 - `custodian/game/actors/relay/signal_indicator.gd` — primitive signal-strength visual for relay placeholder scenes
@@ -154,7 +164,10 @@ Last updated: 2026-05-28
 ## Active Interaction/UI Files
 
 - `custodian/game/actors/defense/turret.gd` — turret interaction prompt reads actual interact binding
-- `custodian/game/actors/base/vehicle_base.gd` — vehicle exit prompt reads actual interact binding, and occupied vehicles query procgen road/path surface speed multipliers while driving
+- `custodian/game/actors/base/vehicle_base.gd` — legacy/compatibility vehicle base retained for older scenes and references
+- `custodian/game/actors/vehicles/light_buggy.tscn` — first production vehicle scene, now backed by `PilotableVehicle` and registry ID `custodian_ground_buggy_scout_light`
+- `custodian/game/systems/core/player_controller.gd` — input router for Operator vs vehicle control, including guarded vehicle actions and camera follow-target handoff
+- `custodian/game/world/camera.gd` — world camera controller with `set_follow_target(target)` for Operator/vehicle follow switching
 - `custodian/game/actors/terminal/command_terminal.gd` — in-world `command_terminal` prop interaction and activation/deactivation animation, with fallback compatibility to the older `computer_terminal` sheets and the authored `builder_terminal` pickup/deploy sheet
 - `custodian/game/systems/core/systems/terminal_deployment.gd` — deployable terminal pickup/redeploy runtime for the in-world command terminal prop
 - `custodian/docs/TERMINAL_VIEW_LOCAL_MODE.md` — terminal-related runtime doc reference
@@ -186,6 +199,9 @@ Last updated: 2026-05-28
 - `custodian/content/tiles/roads_paths/runtime/paths/path_piece_manifest.game32.json` — generated runtime footpath/degraded-transition stamp manifest used for `soft_path` overlays
 - `custodian/content/tiles/roads_paths/tools/normalize_road_pieces_game32.py` — pads raw road/path stamps to 32px game-grid canvases and emits separate road/path runtime manifests
 - `custodian/content/tiles/roads_paths/source/ancient_ruined_roads_and_paths.png` — source road/path sheet preserved as the visual source/reference for the runtime exports
+- `custodian/content/tiles/sundered_keep/` — generated first-pass phase-1 runtime tile pack for Sundered Keep floors, walls, cliffs/ocean, doors, stairs, hazards, roofs, and overlays
+- `custodian/content/props/sundered_keep/` — generated first-pass phase-1 runtime prop pack for Sundered Keep courtyard, gatehouse, great hall, exterior, chapel, library, dungeon, and observatory categories
+- `custodian/content/levels/sundered_keep/sundered_keep_assets.json` — manifest for Sundered Keep runtime assets and custom gameplay metadata such as walkability, blockers, hazards, cover, and traversal targets
 - `custodian/content/tiles/interiors/runtime/` — runtime-ready `32x32` constructed-interior floor and military wall tiles registered into procgen source lists by naming convention
 - `custodian/content/tiles/interiors/source/` — oversized/reference interior tile source art preserved for slicing or replacement
 - `custodian/content/tiles/interiors/README.md` — interior tile folder layout, runtime/source split, and remaining art needs

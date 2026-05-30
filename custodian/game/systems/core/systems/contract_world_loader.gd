@@ -23,6 +23,7 @@ class_name ContractWorldLoader
 @export var place_tutorial_resource_nodes_from_contract: bool = true
 @export var place_expedition_resource_nodes_from_contract: bool = true
 @export var place_gothic_compound_connection: bool = true
+@export var place_sundered_keep_connection: bool = true
 @export_range(0, 7, 1) var tutorial_resource_node_count: int = 3
 @export_range(2, 64, 1) var tutorial_resource_min_distance_tiles: int = 10
 @export_range(4, 96, 1) var tutorial_resource_max_distance_tiles: int = 42
@@ -37,6 +38,7 @@ const ARRN_RELAY_SCENE := preload("res://game/actors/relay/relay.tscn")
 const RESOURCE_NODE_SCENE := preload("res://game/resources/resource_node.tscn")
 const GOTHIC_COMPOUND_MAP_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_map.gd")
 const GOTHIC_COMPOUND_TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_travel_gate.gd")
+const SUNDERED_KEEP_MAP_SCRIPT := preload("res://game/world/sundered_keep/sundered_keep_map.gd")
 const SECTOR_TILE_PX := 24.0
 const PROCGEN_SECTOR_LAYOUT := {
 	"ARCHIVE": 0,
@@ -122,6 +124,8 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_position_arrn_relays(level_data, map_instance)
 	if place_gothic_compound_connection:
 		_place_gothic_compound_connection(level_data, map_instance)
+	if place_sundered_keep_connection:
+		_place_sundered_keep_connection(level_data, map_instance)
 	if reposition_camera_from_contract:
 		_refresh_camera(map_instance)
 	_rebuild_navigation(map_instance)
@@ -851,6 +855,47 @@ func _place_gothic_compound_connection(level_data: Dictionary, map_instance: Nod
 	world.add_child(main_gate)
 
 
+func _place_sundered_keep_connection(level_data: Dictionary, map_instance: Node) -> void:
+	var world := get_node_or_null(world_path) as Node2D
+	if world == null:
+		return
+
+	var connected_root := world.get_node_or_null("ConnectedMaps") as Node2D
+	if connected_root == null:
+		connected_root = Node2D.new()
+		connected_root.name = "ConnectedMaps"
+		world.add_child(connected_root)
+	for child in connected_root.get_children():
+		if child.is_in_group("generated_sundered_keep_connection"):
+			child.queue_free()
+	for child in world.get_children():
+		if child.is_in_group("generated_sundered_keep_connection") and child.get_parent() == world:
+			child.queue_free()
+
+	var main_gate_tile := _pick_sundered_keep_gate_tile(level_data, map_instance)
+	if main_gate_tile == Vector2i.ZERO:
+		return
+	var main_gate_position := _tile_to_world(map_instance, main_gate_tile)
+
+	var keep_map := SUNDERED_KEEP_MAP_SCRIPT.new() as Node2D
+	if keep_map == null:
+		return
+	keep_map.name = "SunderedKeepMap"
+	keep_map.add_to_group("generated_sundered_keep_connection")
+	keep_map.global_position = _get_sundered_keep_world_offset(level_data, map_instance)
+	keep_map.call("configure_connection", map_instance, main_gate_position)
+	connected_root.add_child(keep_map)
+
+	var main_gate := GOTHIC_COMPOUND_TRAVEL_GATE_SCRIPT.new() as Node2D
+	if main_gate == null:
+		return
+	main_gate.name = "SunderedKeepTravelGate"
+	main_gate.add_to_group("generated_sundered_keep_connection")
+	main_gate.call("configure", keep_map, 0, "ENTER SUNDERED KEEP")
+	main_gate.global_position = main_gate_position
+	world.add_child(main_gate)
+
+
 func _pick_gothic_compound_gate_tile(level_data: Dictionary, map_instance: Node) -> Vector2i:
 	var compound_rect_variant: Variant = level_data.get("compound_rect")
 	var ingress_tiles: Array[Vector2i] = []
@@ -878,6 +923,34 @@ func _pick_gothic_compound_gate_tile(level_data: Dictionary, map_instance: Node)
 	return Vector2i.ZERO
 
 
+func _pick_sundered_keep_gate_tile(level_data: Dictionary, map_instance: Node) -> Vector2i:
+	var gothic_gate_tile := _pick_gothic_compound_gate_tile(level_data, map_instance)
+	var offsets := [
+		Vector2i(4, 0),
+		Vector2i(-4, 0),
+		Vector2i(0, 4),
+		Vector2i(0, -4),
+		Vector2i(6, 2),
+		Vector2i(-6, 2),
+	]
+	if gothic_gate_tile != Vector2i.ZERO:
+		for offset in offsets:
+			var candidate: Vector2i = gothic_gate_tile + offset
+			if _is_walkable_floor_tile(map_instance, candidate):
+				return candidate
+		return gothic_gate_tile
+
+	var player_spawn: Variant = level_data.get("player_spawn")
+	if player_spawn is Vector2i:
+		var spawn_tile := player_spawn as Vector2i
+		for offset in [Vector2i(0, 12), Vector2i(12, 0), Vector2i(-12, 0), Vector2i(0, -12)]:
+			var candidate: Vector2i = spawn_tile + offset
+			if _is_walkable_floor_tile(map_instance, candidate):
+				return candidate
+		return spawn_tile
+	return Vector2i.ZERO
+
+
 func _get_gothic_compound_world_offset(level_data: Dictionary, map_instance: Node) -> Vector2:
 	var map_size: Vector2i = level_data.get("map_size", Vector2i.ZERO)
 	var tile_size := Vector2(fallback_tile_size, fallback_tile_size)
@@ -885,6 +958,15 @@ func _get_gothic_compound_world_offset(level_data: Dictionary, map_instance: Nod
 		tile_size = (map_instance as ProcGenTilemap).get_runtime_tile_size()
 	var width_px := float(maxi(map_size.x, 96)) * tile_size.x
 	return Vector2(width_px + 1800.0, 0.0)
+
+
+func _get_sundered_keep_world_offset(level_data: Dictionary, map_instance: Node) -> Vector2:
+	var map_size: Vector2i = level_data.get("map_size", Vector2i.ZERO)
+	var tile_size := Vector2(fallback_tile_size, fallback_tile_size)
+	if map_instance is ProcGenTilemap:
+		tile_size = (map_instance as ProcGenTilemap).get_runtime_tile_size()
+	var width_px := float(maxi(map_size.x, 96)) * tile_size.x
+	return Vector2(width_px + 4700.0, 0.0)
 
 
 func _pick_arrn_relay_tile(level_data: Dictionary, anchor: Vector2, used_tiles: Dictionary) -> Vector2i:

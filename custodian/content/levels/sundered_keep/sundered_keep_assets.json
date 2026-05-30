@@ -1,0 +1,2084 @@
+{
+  "level_pack": "sundered_keep",
+  "tile_size": 32,
+  "biome": "sundered_keep",
+  "phase": "phase_1_main_gate_courtyard_great_hall",
+  "tiles": {
+    "floors": [
+      {
+        "id": "main_courtyard_flagstone_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/main_courtyard_flagstone_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "main_courtyard_flagstone_02",
+        "path": "custodian/content/tiles/sundered_keep/floors/main_courtyard_flagstone_02.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "main_courtyard_flagstone_cracked_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/main_courtyard_flagstone_cracked_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "main_courtyard_flagstone_cracked_02",
+        "path": "custodian/content/tiles/sundered_keep/floors/main_courtyard_flagstone_cracked_02.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "main_courtyard_flagstone_wet_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/main_courtyard_flagstone_wet_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "main_courtyard_flagstone_mossy_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/main_courtyard_flagstone_mossy_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "main_gate_threshold_stone_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/main_gate_threshold_stone_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_marble_floor_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/great_hall_marble_floor_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_marble_floor_cracked_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/great_hall_marble_floor_cracked_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_marble_floor_wet_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/great_hall_marble_floor_wet_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_carpet_runner_vertical_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/great_hall_carpet_runner_vertical_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_carpet_runner_horizontal_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/great_hall_carpet_runner_horizontal_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "cliff_rock_floor_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/cliff_rock_floor_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "cliff_rock_floor_cracked_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/cliff_rock_floor_cracked_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "cliff_rock_floor_mossy_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/cliff_rock_floor_mossy_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_walkway_floor_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/rampart_walkway_floor_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_walkway_wet_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/rampart_walkway_wet_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "elevation_level": 0
+      },
+      {
+        "id": "ocean_void_01",
+        "path": "custodian/content/tiles/sundered_keep/floors/ocean_void_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": true,
+        "elevation_level": 0
+      }
+    ],
+    "walls": [
+      {
+        "id": "gothic_castle_wall_straight_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_straight_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_straight_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_straight_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_straight_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_straight_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_straight_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_straight_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_damaged_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_damaged_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_damaged_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_damaged_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_damaged_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_damaged_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_damaged_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_damaged_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_breach_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_breach_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_breach_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_breach_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_breach_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_breach_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_breach_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_breach_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_window_tall_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_window_tall_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_window_tall_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_window_tall_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_window_tall_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_window_tall_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_window_tall_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_window_tall_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_arch_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_arch_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_arch_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_arch_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_arch_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_arch_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_arch_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_arch_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_straight_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_straight_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_straight_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_straight_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_straight_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_straight_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_straight_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_straight_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_column_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_column_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_column_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_column_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_column_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_column_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_column_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_column_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_banner_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_banner_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_banner_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_banner_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_banner_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_banner_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_banner_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_banner_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_broken_exterior_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_broken_exterior_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_broken_exterior_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_broken_exterior_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_broken_exterior_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_broken_exterior_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "great_hall_wall_broken_exterior_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/great_hall_wall_broken_exterior_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_parapet_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_parapet_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_parapet_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_parapet_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_parapet_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_parapet_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_parapet_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_parapet_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_crenellation_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_crenellation_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_crenellation_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_crenellation_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_crenellation_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_crenellation_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_crenellation_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_crenellation_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_broken_gap_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_broken_gap_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_broken_gap_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_broken_gap_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_broken_gap_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_broken_gap_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "rampart_broken_gap_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/rampart_broken_gap_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_inner_corner_ne",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_inner_corner_ne.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_inner_corner_nw",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_inner_corner_nw.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_inner_corner_se",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_inner_corner_se.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_inner_corner_sw",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_inner_corner_sw.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_outer_corner_ne",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_outer_corner_ne.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_outer_corner_nw",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_outer_corner_nw.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_outer_corner_se",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_outer_corner_se.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_outer_corner_sw",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_outer_corner_sw.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_endcap_n",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_endcap_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_endcap_e",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_endcap_e.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_endcap_s",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_endcap_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      },
+      {
+        "id": "gothic_castle_wall_endcap_w",
+        "path": "custodian/content/tiles/sundered_keep/walls/gothic_castle_wall_endcap_w.png",
+        "size": [
+          32,
+          64
+        ],
+        "collision_cell": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectile": true,
+        "elevation_level": 0
+      }
+    ],
+    "cliffs": [
+      {
+        "id": "cliff_edge_n",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_edge_n.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_edge_e",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_edge_e.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_edge_s",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_edge_s.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_edge_w",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_edge_w.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_inner_corner_ne",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_inner_corner_ne.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_inner_corner_nw",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_inner_corner_nw.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_inner_corner_se",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_inner_corner_se.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_inner_corner_sw",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_inner_corner_sw.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_outer_corner_ne",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_outer_corner_ne.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_outer_corner_nw",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_outer_corner_nw.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_outer_corner_se",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_outer_corner_se.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_outer_corner_sw",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_outer_corner_sw.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": false,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_face_slice_01",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_face_slice_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_face_slice_02",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_face_slice_02.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_face_slice_wet_01",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_face_slice_wet_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": false
+      },
+      {
+        "id": "cliff_face_slice_mossy_01",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/cliff_face_slice_mossy_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": false
+      },
+      {
+        "id": "ocean_foam_edge_n",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/ocean_foam_edge_n.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": true
+      },
+      {
+        "id": "ocean_foam_edge_e",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/ocean_foam_edge_e.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": true
+      },
+      {
+        "id": "ocean_foam_edge_s",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/ocean_foam_edge_s.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": true
+      },
+      {
+        "id": "ocean_foam_edge_w",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/ocean_foam_edge_w.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": true
+      },
+      {
+        "id": "ocean_dark_water_01",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/ocean_dark_water_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": true
+      },
+      {
+        "id": "ocean_dark_water_02",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/ocean_dark_water_02.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": true
+      },
+      {
+        "id": "ocean_whitecap_01",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/ocean_whitecap_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": true
+      },
+      {
+        "id": "ocean_whitecap_02",
+        "path": "custodian/content/tiles/sundered_keep/cliffs/ocean_whitecap_02.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": false,
+        "fall_hazard": true,
+        "water_hazard": true
+      }
+    ],
+    "doors": [
+      {
+        "id": "main_gate_portcullis_closed",
+        "path": "custodian/content/tiles/sundered_keep/doors/main_gate_portcullis_closed.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": true,
+        "traversal_target": ""
+      },
+      {
+        "id": "main_gate_portcullis_open",
+        "path": "custodian/content/tiles/sundered_keep/doors/main_gate_portcullis_open.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": false,
+        "traversal_target": ""
+      },
+      {
+        "id": "gothic_double_door_closed_n",
+        "path": "custodian/content/tiles/sundered_keep/doors/gothic_double_door_closed_n.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": true,
+        "traversal_target": ""
+      },
+      {
+        "id": "gothic_double_door_open_n",
+        "path": "custodian/content/tiles/sundered_keep/doors/gothic_double_door_open_n.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": false,
+        "traversal_target": ""
+      },
+      {
+        "id": "gothic_double_door_closed_s",
+        "path": "custodian/content/tiles/sundered_keep/doors/gothic_double_door_closed_s.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": true,
+        "traversal_target": ""
+      },
+      {
+        "id": "gothic_double_door_open_s",
+        "path": "custodian/content/tiles/sundered_keep/doors/gothic_double_door_open_s.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": false,
+        "traversal_target": ""
+      },
+      {
+        "id": "gothic_single_door_closed_n",
+        "path": "custodian/content/tiles/sundered_keep/doors/gothic_single_door_closed_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "blocks_movement": true,
+        "traversal_target": ""
+      },
+      {
+        "id": "gothic_single_door_open_n",
+        "path": "custodian/content/tiles/sundered_keep/doors/gothic_single_door_open_n.png",
+        "size": [
+          32,
+          64
+        ],
+        "blocks_movement": false,
+        "traversal_target": ""
+      },
+      {
+        "id": "gothic_single_door_closed_s",
+        "path": "custodian/content/tiles/sundered_keep/doors/gothic_single_door_closed_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "blocks_movement": true,
+        "traversal_target": ""
+      },
+      {
+        "id": "gothic_single_door_open_s",
+        "path": "custodian/content/tiles/sundered_keep/doors/gothic_single_door_open_s.png",
+        "size": [
+          32,
+          64
+        ],
+        "blocks_movement": false,
+        "traversal_target": ""
+      }
+    ],
+    "stairs": [
+      {
+        "id": "stone_stairs_up_n",
+        "path": "custodian/content/tiles/sundered_keep/stairs/stone_stairs_up_n.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "stone_stairs_up_n"
+      },
+      {
+        "id": "stone_stairs_up_e",
+        "path": "custodian/content/tiles/sundered_keep/stairs/stone_stairs_up_e.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "stone_stairs_up_e"
+      },
+      {
+        "id": "stone_stairs_up_s",
+        "path": "custodian/content/tiles/sundered_keep/stairs/stone_stairs_up_s.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "stone_stairs_up_s"
+      },
+      {
+        "id": "stone_stairs_up_w",
+        "path": "custodian/content/tiles/sundered_keep/stairs/stone_stairs_up_w.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "stone_stairs_up_w"
+      },
+      {
+        "id": "stone_stairs_down_n",
+        "path": "custodian/content/tiles/sundered_keep/stairs/stone_stairs_down_n.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "stone_stairs_down_n"
+      },
+      {
+        "id": "stone_stairs_down_e",
+        "path": "custodian/content/tiles/sundered_keep/stairs/stone_stairs_down_e.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "stone_stairs_down_e"
+      },
+      {
+        "id": "stone_stairs_down_s",
+        "path": "custodian/content/tiles/sundered_keep/stairs/stone_stairs_down_s.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "stone_stairs_down_s"
+      },
+      {
+        "id": "stone_stairs_down_w",
+        "path": "custodian/content/tiles/sundered_keep/stairs/stone_stairs_down_w.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "stone_stairs_down_w"
+      },
+      {
+        "id": "floor_hatch_closed_01",
+        "path": "custodian/content/tiles/sundered_keep/stairs/floor_hatch_closed_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "floor_hatch_closed_01"
+      },
+      {
+        "id": "floor_hatch_open_01",
+        "path": "custodian/content/tiles/sundered_keep/stairs/floor_hatch_open_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "floor_hatch_open_01"
+      },
+      {
+        "id": "ladder_wall_n",
+        "path": "custodian/content/tiles/sundered_keep/stairs/ladder_wall_n.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "ladder_wall_n"
+      },
+      {
+        "id": "ladder_wall_s",
+        "path": "custodian/content/tiles/sundered_keep/stairs/ladder_wall_s.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true,
+        "traversal_target": "ladder_wall_s"
+      }
+    ],
+    "overlays": [
+      {
+        "id": "rain_puddle_overlay_01",
+        "path": "custodian/content/tiles/sundered_keep/overlays/rain_puddle_overlay_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true
+      },
+      {
+        "id": "rain_puddle_overlay_02",
+        "path": "custodian/content/tiles/sundered_keep/overlays/rain_puddle_overlay_02.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true
+      },
+      {
+        "id": "storm_splash_overlay_01",
+        "path": "custodian/content/tiles/sundered_keep/overlays/storm_splash_overlay_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true
+      },
+      {
+        "id": "moss_overlay_01",
+        "path": "custodian/content/tiles/sundered_keep/overlays/moss_overlay_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true
+      },
+      {
+        "id": "crack_overlay_01",
+        "path": "custodian/content/tiles/sundered_keep/overlays/crack_overlay_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true
+      },
+      {
+        "id": "temporal_echo_overlay_01",
+        "path": "custodian/content/tiles/sundered_keep/overlays/temporal_echo_overlay_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "walkable": true
+      }
+    ],
+    "props": [
+      {
+        "id": "prop_courtyard_fountain_broken_01",
+        "path": "custodian/content/props/sundered_keep/courtyard/prop_courtyard_fountain_broken_01.png",
+        "size": [
+          96,
+          96
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_gothic_statue_broken_01",
+        "path": "custodian/content/props/sundered_keep/courtyard/prop_gothic_statue_broken_01.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_gothic_statue_intact_01",
+        "path": "custodian/content/props/sundered_keep/courtyard/prop_gothic_statue_intact_01.png",
+        "size": [
+          64,
+          96
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_broken_cart_01",
+        "path": "custodian/content/props/sundered_keep/courtyard/prop_broken_cart_01.png",
+        "size": [
+          64,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "low",
+        "destructible": true
+      },
+      {
+        "id": "prop_crate_stack_wet_01",
+        "path": "custodian/content/props/sundered_keep/courtyard/prop_crate_stack_wet_01.png",
+        "size": [
+          64,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "low",
+        "destructible": true
+      },
+      {
+        "id": "prop_barrel_wet_01",
+        "path": "custodian/content/props/sundered_keep/courtyard/prop_barrel_wet_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "low",
+        "destructible": true
+      },
+      {
+        "id": "prop_fallen_masonry_01",
+        "path": "custodian/content/props/sundered_keep/courtyard/prop_fallen_masonry_01.png",
+        "size": [
+          64,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_low_garden_wall_01",
+        "path": "custodian/content/props/sundered_keep/courtyard/prop_low_garden_wall_01.png",
+        "size": [
+          64,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "low",
+        "destructible": false
+      },
+      {
+        "id": "prop_gate_winch_01",
+        "path": "custodian/content/props/sundered_keep/gatehouse/prop_gate_winch_01.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_murder_hole_marker_01",
+        "path": "custodian/content/props/sundered_keep/gatehouse/prop_murder_hole_marker_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "blocks_movement": false,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_portcullis_chain_01",
+        "path": "custodian/content/props/sundered_keep/gatehouse/prop_portcullis_chain_01.png",
+        "size": [
+          32,
+          64
+        ],
+        "blocks_movement": false,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_gate_barricade_01",
+        "path": "custodian/content/props/sundered_keep/gatehouse/prop_gate_barricade_01.png",
+        "size": [
+          64,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "low",
+        "destructible": true
+      },
+      {
+        "id": "prop_torch_wall_gothic_01",
+        "path": "custodian/content/props/sundered_keep/gatehouse/prop_torch_wall_gothic_01.png",
+        "size": [
+          32,
+          64
+        ],
+        "blocks_movement": false,
+        "blocks_projectile": false,
+        "cover_type": "low",
+        "destructible": false
+      },
+      {
+        "id": "prop_banquet_table_long_01",
+        "path": "custodian/content/props/sundered_keep/great_hall/prop_banquet_table_long_01.png",
+        "size": [
+          128,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "low",
+        "destructible": true
+      },
+      {
+        "id": "prop_banquet_table_broken_01",
+        "path": "custodian/content/props/sundered_keep/great_hall/prop_banquet_table_broken_01.png",
+        "size": [
+          96,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "low",
+        "destructible": true
+      },
+      {
+        "id": "prop_great_hall_column_01",
+        "path": "custodian/content/props/sundered_keep/great_hall/prop_great_hall_column_01.png",
+        "size": [
+          64,
+          96
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_fallen_chandelier_01",
+        "path": "custodian/content/props/sundered_keep/great_hall/prop_fallen_chandelier_01.png",
+        "size": [
+          96,
+          64
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_throne_ruined_01",
+        "path": "custodian/content/props/sundered_keep/great_hall/prop_throne_ruined_01.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_brazier_iron_01",
+        "path": "custodian/content/props/sundered_keep/great_hall/prop_brazier_iron_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_banner_torn_large_01",
+        "path": "custodian/content/props/sundered_keep/great_hall/prop_banner_torn_large_01.png",
+        "size": [
+          32,
+          96
+        ],
+        "blocks_movement": false,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_gargoyle_perch_01",
+        "path": "custodian/content/props/sundered_keep/exterior/prop_gargoyle_perch_01.png",
+        "size": [
+          32,
+          64
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_lightning_rod_01",
+        "path": "custodian/content/props/sundered_keep/exterior/prop_lightning_rod_01.png",
+        "size": [
+          32,
+          64
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_rope_bridge_anchor_01",
+        "path": "custodian/content/props/sundered_keep/exterior/prop_rope_bridge_anchor_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_sea_spray_rock_01",
+        "path": "custodian/content/props/sundered_keep/exterior/prop_sea_spray_rock_01.png",
+        "size": [
+          32,
+          32
+        ],
+        "blocks_movement": false,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_broken_spire_chunk_01",
+        "path": "custodian/content/props/sundered_keep/exterior/prop_broken_spire_chunk_01.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_bookshelf_tall_01",
+        "path": "custodian/content/props/sundered_keep/library/prop_bookshelf_tall_01.png",
+        "size": [
+          64,
+          96
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_chapel_pew_01",
+        "path": "custodian/content/props/sundered_keep/chapel/prop_chapel_pew_01.png",
+        "size": [
+          64,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_sarcophagus_01",
+        "path": "custodian/content/props/sundered_keep/dungeon/prop_sarcophagus_01.png",
+        "size": [
+          64,
+          32
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      },
+      {
+        "id": "prop_telescope_broken_01",
+        "path": "custodian/content/props/sundered_keep/observatory/prop_telescope_broken_01.png",
+        "size": [
+          64,
+          64
+        ],
+        "blocks_movement": true,
+        "blocks_projectile": false,
+        "cover_type": "",
+        "destructible": false
+      }
+    ]
+  }
+}

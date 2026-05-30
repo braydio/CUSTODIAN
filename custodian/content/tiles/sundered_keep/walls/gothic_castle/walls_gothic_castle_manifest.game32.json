@@ -1,0 +1,1771 @@
+{
+  "schema": "custodian.game32.domain_manifest.v1",
+  "name": "sundered_keep_walls_gothic_castle",
+  "generated_at_utc": "2026-05-30T01:10:28.140017+00:00",
+  "domain": "walls",
+  "asset_class": "wall_module",
+  "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+  "count": 32,
+  "assets": [
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_straight_n",
+      "name": "gothic_castle_wall_straight_n",
+      "filename": "gothic_castle_wall_straight_n.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall straight n.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_n.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_n.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 0,
+          "col": 0,
+          "index": 0,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          58,
+          21,
+          217,
+          190
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          159,
+          169
+        ],
+        "format": "png_rgba",
+        "sha256": "36744ff35a24c0dafc94f81758d227c56a1fcd9b6e7629b5e4b4eef650fad95c"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "n"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_straight_e",
+      "name": "gothic_castle_wall_straight_e",
+      "filename": "gothic_castle_wall_straight_e.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall straight e.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_e.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_e.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 0,
+          "col": 1,
+          "index": 1,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          299,
+          21,
+          458,
+          190
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          159,
+          169
+        ],
+        "format": "png_rgba",
+        "sha256": "698a82cf3b8614b3b3c8e655c9f06e939b8b612f090b66cefd10ed0de885329a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "e"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_straight_s",
+      "name": "gothic_castle_wall_straight_s",
+      "filename": "gothic_castle_wall_straight_s.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall straight s.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_s.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_s.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 0,
+          "col": 2,
+          "index": 2,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          538,
+          21,
+          699,
+          190
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          161,
+          169
+        ],
+        "format": "png_rgba",
+        "sha256": "82d7abacfff8809f57e0971e50695ed1eeeb21e133542051f8f0b6aee5e8226e"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "s"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_straight_w",
+      "name": "gothic_castle_wall_straight_w",
+      "filename": "gothic_castle_wall_straight_w.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall straight w.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_w.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_w.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 0,
+          "col": 3,
+          "index": 3,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          781,
+          21,
+          941,
+          190
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          160,
+          169
+        ],
+        "format": "png_rgba",
+        "sha256": "d91cacacfde84ae4e8b4f0db8082cd14ed28067b8165490349cea2b52fee34d7"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "w"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_inner_corner_ne",
+      "name": "gothic_castle_wall_inner_corner_ne",
+      "filename": "gothic_castle_wall_inner_corner_ne.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall inner corner ne.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_ne.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_ne.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 1,
+          "col": 0,
+          "index": 4,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          56,
+          223,
+          214,
+          379
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          158,
+          156
+        ],
+        "format": "png_rgba",
+        "sha256": "6df27957ebbd1b13a8ac332376d0b3ff9b62a465a1f692f4298409367ff4b8ac"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "ne"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_inner_corner_nw",
+      "name": "gothic_castle_wall_inner_corner_nw",
+      "filename": "gothic_castle_wall_inner_corner_nw.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall inner corner nw.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_nw.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_nw.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 1,
+          "col": 1,
+          "index": 5,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          302,
+          225,
+          458,
+          379
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          156,
+          154
+        ],
+        "format": "png_rgba",
+        "sha256": "9eb3568291f4a1968f6ae02830e6ade9ee907eca1109ded6f913ef72ee5559df"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "nw"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_inner_corner_se",
+      "name": "gothic_castle_wall_inner_corner_se",
+      "filename": "gothic_castle_wall_inner_corner_se.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall inner corner se.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_se.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_se.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 1,
+          "col": 2,
+          "index": 6,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          538,
+          224,
+          696,
+          379
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          158,
+          155
+        ],
+        "format": "png_rgba",
+        "sha256": "bc1b50509ebd543791b05d2773e012c336bcbe7d108549e3bc23b6d8bacdffdd"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "se"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_inner_corner_sw",
+      "name": "gothic_castle_wall_inner_corner_sw",
+      "filename": "gothic_castle_wall_inner_corner_sw.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall inner corner sw.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_sw.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_sw.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 1,
+          "col": 3,
+          "index": 7,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          784,
+          224,
+          941,
+          379
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          157,
+          155
+        ],
+        "format": "png_rgba",
+        "sha256": "46a79cfd57b4c2e1ecd9975ba8df7cd0339e90da17bbde10ef0c9854762cfd2d"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "sw"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_outer_corner_ne",
+      "name": "gothic_castle_wall_outer_corner_ne",
+      "filename": "gothic_castle_wall_outer_corner_ne.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall outer corner ne.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_ne.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_ne.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 2,
+          "col": 0,
+          "index": 8,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          55,
+          390,
+          216,
+          577
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          161,
+          187
+        ],
+        "format": "png_rgba",
+        "sha256": "bac42460b37cf805e6748018c396384104e7d455e944ca364a0b27f5bda8eae2"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "ne"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_outer_corner_nw",
+      "name": "gothic_castle_wall_outer_corner_nw",
+      "filename": "gothic_castle_wall_outer_corner_nw.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall outer corner nw.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_nw.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_nw.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 2,
+          "col": 1,
+          "index": 9,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          297,
+          390,
+          459,
+          577
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          162,
+          187
+        ],
+        "format": "png_rgba",
+        "sha256": "ed22c9ff6aa3723ee8633bae49f47e616389222ebdba3cab9a2fdae885448b0f"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "nw"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_outer_corner_se",
+      "name": "gothic_castle_wall_outer_corner_se",
+      "filename": "gothic_castle_wall_outer_corner_se.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall outer corner se.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_se.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_se.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 2,
+          "col": 2,
+          "index": 10,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          538,
+          390,
+          698,
+          577
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          160,
+          187
+        ],
+        "format": "png_rgba",
+        "sha256": "bdfcc0d1fc6a4a5b5da40c0154ed6ecdb1be66a3999ca02f685577e83b222af7"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "se"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_outer_corner_sw",
+      "name": "gothic_castle_wall_outer_corner_sw",
+      "filename": "gothic_castle_wall_outer_corner_sw.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall outer corner sw.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_sw.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_sw.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 2,
+          "col": 3,
+          "index": 11,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          781,
+          390,
+          942,
+          577
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          161,
+          187
+        ],
+        "format": "png_rgba",
+        "sha256": "650503bf0f9d8a6756b989acf668cb5d80ac16c24aee61462a83ea214edeebe7"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "sw"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_endcap_n",
+      "name": "gothic_castle_wall_endcap_n",
+      "filename": "gothic_castle_wall_endcap_n.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall endcap n.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_n.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_n.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 3,
+          "col": 0,
+          "index": 12,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          56,
+          573,
+          208,
+          760
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          152,
+          187
+        ],
+        "format": "png_rgba",
+        "sha256": "c32470971137ff4d9a33078be40181daaab234b1fadb10029d9fbf9bdc8b0614"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "n"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_endcap_e",
+      "name": "gothic_castle_wall_endcap_e",
+      "filename": "gothic_castle_wall_endcap_e.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall endcap e.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_e.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_e.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 3,
+          "col": 1,
+          "index": 13,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          300,
+          573,
+          458,
+          760
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          158,
+          187
+        ],
+        "format": "png_rgba",
+        "sha256": "b01c052a286e6d219663096f523e7ddc45d581d50b554ee5a38bcbf2dafb6c91"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "e"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_endcap_s",
+      "name": "gothic_castle_wall_endcap_s",
+      "filename": "gothic_castle_wall_endcap_s.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall endcap s.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_s.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_s.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 3,
+          "col": 2,
+          "index": 14,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          539,
+          573,
+          690,
+          760
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          151,
+          187
+        ],
+        "format": "png_rgba",
+        "sha256": "33bd932274a0225bddabee438831b15d4ce0a9517c8228d710222e164f7628a6"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "s"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_endcap_w",
+      "name": "gothic_castle_wall_endcap_w",
+      "filename": "gothic_castle_wall_endcap_w.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall endcap w.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_w.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_w.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 3,
+          "col": 3,
+          "index": 15,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          787,
+          573,
+          941,
+          760
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          154,
+          187
+        ],
+        "format": "png_rgba",
+        "sha256": "88ea04176cc671154b92a66d04d604752a56765bde9c8e39f4b77004a3d2b3a6"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "w"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_damaged_n",
+      "name": "gothic_castle_wall_damaged_n",
+      "filename": "gothic_castle_wall_damaged_n.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall damaged n.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_n.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_n.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 4,
+          "col": 0,
+          "index": 16,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          57,
+          756,
+          209,
+          944
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          152,
+          188
+        ],
+        "format": "png_rgba",
+        "sha256": "0709706eb06a21f18e812cfcad69d4dde6f5dcd5c66caa044755628c4ee3e5d9"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "n"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_damaged_e",
+      "name": "gothic_castle_wall_damaged_e",
+      "filename": "gothic_castle_wall_damaged_e.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall damaged e.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_e.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_e.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 4,
+          "col": 1,
+          "index": 17,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          300,
+          756,
+          456,
+          944
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          156,
+          188
+        ],
+        "format": "png_rgba",
+        "sha256": "f851b9829592417a0e706a489cf80d7dc2eaf6e180486bf2a8a59a1411d25dde"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "e"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_damaged_s",
+      "name": "gothic_castle_wall_damaged_s",
+      "filename": "gothic_castle_wall_damaged_s.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall damaged s.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_s.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_s.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 4,
+          "col": 2,
+          "index": 18,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          542,
+          756,
+          691,
+          944
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          149,
+          188
+        ],
+        "format": "png_rgba",
+        "sha256": "4d334e6f236fd56dae55205705ddc12e4698d146aca99214461b55f566cbc23a"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "s"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_damaged_w",
+      "name": "gothic_castle_wall_damaged_w",
+      "filename": "gothic_castle_wall_damaged_w.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall damaged w.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_w.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_w.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 4,
+          "col": 3,
+          "index": 19,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          785,
+          756,
+          941,
+          944
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          156,
+          188
+        ],
+        "format": "png_rgba",
+        "sha256": "ff2547ebac3fc05e4952fb3d88aa2558033a555c2ef1ab6db1a4e0af90ce9bbf"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "w"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_breach_n",
+      "name": "gothic_castle_wall_breach_n",
+      "filename": "gothic_castle_wall_breach_n.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall breach n.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_n.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_n.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 5,
+          "col": 0,
+          "index": 20,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          57,
+          940,
+          209,
+          1126
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          152,
+          186
+        ],
+        "format": "png_rgba",
+        "sha256": "031c7146e8e87521873f143e6887643f0364c3b4fe4560402906811141b24add"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "n"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_breach_e",
+      "name": "gothic_castle_wall_breach_e",
+      "filename": "gothic_castle_wall_breach_e.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall breach e.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_e.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_e.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 5,
+          "col": 1,
+          "index": 21,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          300,
+          940,
+          456,
+          1125
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          156,
+          185
+        ],
+        "format": "png_rgba",
+        "sha256": "c4f37e155e4a5ddfc0e0d7c4749cdcb628252c41da4ec3fd69a7697101adebe1"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "e"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_breach_s",
+      "name": "gothic_castle_wall_breach_s",
+      "filename": "gothic_castle_wall_breach_s.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall breach s.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_s.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_s.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 5,
+          "col": 2,
+          "index": 22,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          541,
+          940,
+          693,
+          1126
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          152,
+          186
+        ],
+        "format": "png_rgba",
+        "sha256": "33663b088ec31b9e9370ac78f3bbb3ba2e126e17ddab2e02cd14f34cef1d8480"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "s"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_breach_w",
+      "name": "gothic_castle_wall_breach_w",
+      "filename": "gothic_castle_wall_breach_w.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall breach w.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_w.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_w.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 5,
+          "col": 3,
+          "index": 23,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          785,
+          940,
+          941,
+          1126
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          156,
+          186
+        ],
+        "format": "png_rgba",
+        "sha256": "fbbce467312b7ff6e7e966e4cc1c819238b410b8afe472d759fb66e765bbf104"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "w"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_window_tall_n",
+      "name": "gothic_castle_wall_window_tall_n",
+      "filename": "gothic_castle_wall_window_tall_n.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall window tall n.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_n.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_n.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 6,
+          "col": 0,
+          "index": 24,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          56,
+          1136,
+          213,
+          1307
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          157,
+          171
+        ],
+        "format": "png_rgba",
+        "sha256": "0ebe622b0a56da4e795550476e7e89a6f7289029774ff70b3ff15fdafd0ca95c"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "n"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_window_tall_e",
+      "name": "gothic_castle_wall_window_tall_e",
+      "filename": "gothic_castle_wall_window_tall_e.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall window tall e.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_e.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_e.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 6,
+          "col": 1,
+          "index": 25,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          298,
+          1136,
+          456,
+          1307
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          158,
+          171
+        ],
+        "format": "png_rgba",
+        "sha256": "6932df4004754188ad31a7f6867680beae42c1099244cec2fe6263544a832e32"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "e"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_window_tall_s",
+      "name": "gothic_castle_wall_window_tall_s",
+      "filename": "gothic_castle_wall_window_tall_s.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall window tall s.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_s.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_s.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 6,
+          "col": 2,
+          "index": 26,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          539,
+          1136,
+          697,
+          1307
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          158,
+          171
+        ],
+        "format": "png_rgba",
+        "sha256": "121f41826864eca776fd90ca1182a4a908ad41026a0585eb30add73265a356db"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "s"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_window_tall_w",
+      "name": "gothic_castle_wall_window_tall_w",
+      "filename": "gothic_castle_wall_window_tall_w.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall window tall w.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_w.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_w.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 6,
+          "col": 3,
+          "index": 27,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          784,
+          1136,
+          942,
+          1307
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          158,
+          171
+        ],
+        "format": "png_rgba",
+        "sha256": "3101ae0c883d6144ad0feb0bd5062dd4734fc8420607e766ae7ebc8b5ad84d28"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "w"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_arch_n",
+      "name": "gothic_castle_wall_arch_n",
+      "filename": "gothic_castle_wall_arch_n.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall arch n.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_n.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_n.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 7,
+          "col": 0,
+          "index": 28,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          55,
+          1325,
+          218,
+          1496
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          163,
+          171
+        ],
+        "format": "png_rgba",
+        "sha256": "1b31badfb7086b3207015e014a4ec20d5a13063a171da87a9f903dd0c74b2099"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "n"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_arch_e",
+      "name": "gothic_castle_wall_arch_e",
+      "filename": "gothic_castle_wall_arch_e.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall arch e.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_e.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_e.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 7,
+          "col": 1,
+          "index": 29,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          296,
+          1325,
+          459,
+          1496
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          163,
+          171
+        ],
+        "format": "png_rgba",
+        "sha256": "81702b8aff77793c58e822ed280c203042cb7f1a813d658520cb6c73d419350c"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "e"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_arch_s",
+      "name": "gothic_castle_wall_arch_s",
+      "filename": "gothic_castle_wall_arch_s.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall arch s.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_s.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_s.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 7,
+          "col": 2,
+          "index": 30,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          537,
+          1325,
+          699,
+          1496
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          162,
+          171
+        ],
+        "format": "png_rgba",
+        "sha256": "69177f8debfb72bede71fbcd5a762688aea5fd82ad38f96207177e9d59654974"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "s"
+      }
+    },
+    {
+      "id": "sundered_keep/gothic_castle_walls/gothic_castle_wall_arch_w",
+      "name": "gothic_castle_wall_arch_w",
+      "filename": "gothic_castle_wall_arch_w.png",
+      "description": "Exterior gothic castle wall module: gothic castle wall arch w.",
+      "asset_class": "wall_module",
+      "domain": "walls",
+      "domain_home": "res://content/tiles/sundered_keep/walls/gothic_castle",
+      "theme": "gothic_castle",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_w.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_w.game32.json",
+      "source": {
+        "master_sheet": "sundered_walls_gates.png",
+        "master_sheet_path": "res://content/masters/sundered_keep/sundered_walls_gates.png",
+        "sheet_grid": {
+          "rows": 8,
+          "cols": 4,
+          "row": 7,
+          "col": 3,
+          "index": 31,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "crop_box_px": [
+          778,
+          1325,
+          943,
+          1496
+        ]
+      },
+      "image": {
+        "exported_size_px": [
+          165,
+          171
+        ],
+        "format": "png_rgba",
+        "sha256": "32dbd0f18470759dec54b62c791d9f3f2ea9fef79439659a177f127093e6eded"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_sight": true,
+        "cover_value": 75,
+        "collision_shape": "block",
+        "semantic_role": "wall",
+        "placement_layer": "ground",
+        "tags": [
+          "sundered_keep",
+          "wall",
+          "gothic_castle"
+        ],
+        "variant_group": "gothic_castle_wall",
+        "orientation": "w"
+      }
+    }
+  ]
+}
