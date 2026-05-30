@@ -1,671 +1,127 @@
 {
-  "schema": "custodian.game32.domain_manifest.v1",
-  "name": "sundered_keep_ramparts",
-  "generated_at_utc": "2026-05-30T01:10:28.140017+00:00",
-  "domain": "walls",
-  "asset_class": "rampart_module",
-  "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-  "count": 12,
+  "schema": "custodian.game32.section_manifest.v1",
+  "name": "walls_ramparts",
+  "generated_at_utc": "2026-05-30T06:57:19.873908+00:00",
+  "generator": "repair_sundered_keep_section_manifests.py",
+  "set": "sundered_keep",
+  "section": "walls_ramparts",
+  "base_path": "res://content/tiles/sundered_keep/walls/ramparts",
+  "expected_count": 12,
+  "asset_count": 12,
   "assets": [
     {
-      "id": "sundered_keep/ramparts/rampart_parapet_n",
-      "name": "rampart_parapet_n",
-      "filename": "rampart_parapet_n.png",
-      "description": "Exterior rampart module: rampart parapet n.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_n.png",
-      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_n.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 0,
-          "col": 0,
-          "index": 0,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          117,
-          49,
-          208,
-          375
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          91,
-          326
-        ],
-        "format": "png_rgba",
-        "sha256": "10d8713500665d6c5c6481836a99cbfa275dd552cb11240b709b6d36ff39c8da"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_parapet",
-        "orientation": "n"
-      }
-    },
-    {
-      "id": "sundered_keep/ramparts/rampart_parapet_e",
-      "name": "rampart_parapet_e",
-      "filename": "rampart_parapet_e.png",
-      "description": "Exterior rampart module: rampart parapet e.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_e.png",
-      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_e.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 0,
-          "col": 1,
-          "index": 1,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          291,
-          160,
-          695,
-          371
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          404,
-          211
-        ],
-        "format": "png_rgba",
-        "sha256": "8ab86ba45979fd86b20cc5215cb8d3476a448e52bc019d45a67064b773be221c"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_parapet",
-        "orientation": "e"
-      }
-    },
-    {
-      "id": "sundered_keep/ramparts/rampart_parapet_s",
-      "name": "rampart_parapet_s",
-      "filename": "rampart_parapet_s.png",
-      "description": "Exterior rampart module: rampart parapet s.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_s.png",
-      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_s.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 0,
-          "col": 2,
-          "index": 2,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          808,
-          49,
-          897,
-          375
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          89,
-          326
-        ],
-        "format": "png_rgba",
-        "sha256": "4c5ca340c22d3acacd4f2e650a771d985bbb54051bd65b5e438a32118a14051b"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_parapet",
-        "orientation": "s"
-      }
-    },
-    {
-      "id": "sundered_keep/ramparts/rampart_parapet_w",
-      "name": "rampart_parapet_w",
-      "filename": "rampart_parapet_w.png",
-      "description": "Exterior rampart module: rampart parapet w.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_w.png",
-      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_w.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 0,
-          "col": 3,
-          "index": 3,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          983,
-          161,
-          1387,
-          371
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          404,
-          210
-        ],
-        "format": "png_rgba",
-        "sha256": "850e69452a571b966d4da3996f513443eb5752745cf7e50bedcf2baf02c091b4"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_parapet",
-        "orientation": "w"
-      }
-    },
-    {
-      "id": "sundered_keep/ramparts/rampart_crenellation_n",
-      "name": "rampart_crenellation_n",
-      "filename": "rampart_crenellation_n.png",
-      "description": "Exterior rampart module: rampart crenellation n.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_n.png",
-      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_n.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 1,
-          "col": 0,
-          "index": 4,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          114,
-          428,
-          211,
-          699
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          97,
-          271
-        ],
-        "format": "png_rgba",
-        "sha256": "e2b74b0ab26255394ce78389c6a00d556adec3631e830db0d7355954f4e20eeb"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_crenellation",
-        "orientation": "n"
-      }
-    },
-    {
-      "id": "sundered_keep/ramparts/rampart_crenellation_e",
-      "name": "rampart_crenellation_e",
-      "filename": "rampart_crenellation_e.png",
-      "description": "Exterior rampart module: rampart crenellation e.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_e.png",
-      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_e.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 1,
-          "col": 1,
-          "index": 5,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          289,
-          511,
-          694,
-          694
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          405,
-          183
-        ],
-        "format": "png_rgba",
-        "sha256": "0fb8c000f6ca85e27bfb3954238e7e1212004796b7e61081ece91d347d9ae645"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_crenellation",
-        "orientation": "e"
-      }
-    },
-    {
-      "id": "sundered_keep/ramparts/rampart_crenellation_s",
-      "name": "rampart_crenellation_s",
-      "filename": "rampart_crenellation_s.png",
-      "description": "Exterior rampart module: rampart crenellation s.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_s.png",
-      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_s.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 1,
-          "col": 2,
-          "index": 6,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          799,
-          428,
-          897,
-          699
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          98,
-          271
-        ],
-        "format": "png_rgba",
-        "sha256": "3d20b0fddf573de23fcf58149c156d6731551b9f55cae8ee281e66879b7db91b"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_crenellation",
-        "orientation": "s"
-      }
-    },
-    {
-      "id": "sundered_keep/ramparts/rampart_crenellation_w",
-      "name": "rampart_crenellation_w",
-      "filename": "rampart_crenellation_w.png",
-      "description": "Exterior rampart module: rampart crenellation w.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_w.png",
-      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_w.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 1,
-          "col": 3,
-          "index": 7,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          981,
-          511,
-          1395,
-          694
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          414,
-          183
-        ],
-        "format": "png_rgba",
-        "sha256": "9312afd232b45a577f26f06037137c7968019ae40231d312904a81f701f9a2a2"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_crenellation",
-        "orientation": "w"
-      }
-    },
-    {
-      "id": "sundered_keep/ramparts/rampart_broken_gap_n",
-      "name": "rampart_broken_gap_n",
-      "filename": "rampart_broken_gap_n.png",
-      "description": "Exterior rampart module: rampart broken gap n.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_n.png",
-      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_n.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 2,
-          "col": 0,
-          "index": 8,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          112,
-          763,
-          213,
-          1030
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          101,
-          267
-        ],
-        "format": "png_rgba",
-        "sha256": "1bd9419320fae210f6a8ef3b5fb4ab4261a4991d11a0184c5a194b4a3e22fb1a"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_broken_gap",
-        "orientation": "n"
-      }
-    },
-    {
-      "id": "sundered_keep/ramparts/rampart_broken_gap_e",
+      "id": "sundered_keep/rampart_broken_gap_e",
       "name": "rampart_broken_gap_e",
-      "filename": "rampart_broken_gap_e.png",
-      "description": "Exterior rampart module: rampart broken gap e.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_e.png",
       "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_e.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 2,
-          "col": 1,
-          "index": 9,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          289,
-          831,
-          692,
-          1027
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          403,
-          196
-        ],
-        "format": "png_rgba",
-        "sha256": "246dc524f0ca8e2a16819319d954f1ade4bad837d4b220ebafebdabe1247903a"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_broken_gap",
-        "orientation": "e"
-      }
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
     },
     {
-      "id": "sundered_keep/ramparts/rampart_broken_gap_s",
+      "id": "sundered_keep/rampart_broken_gap_n",
+      "name": "rampart_broken_gap_n",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_n.game32.json",
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
+    },
+    {
+      "id": "sundered_keep/rampart_broken_gap_s",
       "name": "rampart_broken_gap_s",
-      "filename": "rampart_broken_gap_s.png",
-      "description": "Exterior rampart module: rampart broken gap s.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_s.png",
       "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_s.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 2,
-          "col": 2,
-          "index": 10,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          795,
-          763,
-          897,
-          1030
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          102,
-          267
-        ],
-        "format": "png_rgba",
-        "sha256": "32e32bac5774e1e920cf655574dd9160bd62620c893967c4fa861cbc306ec29c"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_broken_gap",
-        "orientation": "s"
-      }
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
     },
     {
-      "id": "sundered_keep/ramparts/rampart_broken_gap_w",
+      "id": "sundered_keep/rampart_broken_gap_w",
       "name": "rampart_broken_gap_w",
-      "filename": "rampart_broken_gap_w.png",
-      "description": "Exterior rampart module: rampart broken gap w.",
-      "asset_class": "rampart_module",
-      "domain": "walls",
-      "domain_home": "res://content/tiles/sundered_keep/walls/ramparts",
-      "theme": "ramparts",
-      "runtime_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_w.png",
       "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_w.game32.json",
-      "source": {
-        "master_sheet": "sundered_ramparts.png",
-        "master_sheet_path": "res://content/masters/sundered_keep/sundered_ramparts.png",
-        "sheet_grid": {
-          "rows": 3,
-          "cols": 4,
-          "row": 2,
-          "col": 3,
-          "index": 11,
-          "order": "reading_order_left_to_right_top_to_bottom"
-        },
-        "crop_box_px": [
-          980,
-          833,
-          1384,
-          1027
-        ]
-      },
-      "image": {
-        "exported_size_px": [
-          404,
-          194
-        ],
-        "format": "png_rgba",
-        "sha256": "c1d4311a1d571a2a25fb8f8b4bb892ebecaeeeddff800b1fecc76366aa40b6d3"
-      },
-      "game32": {
-        "tile_size_px": 32,
-        "walkable": false,
-        "blocks_movement": true,
-        "blocks_sight": true,
-        "cover_value": 50,
-        "collision_shape": "block",
-        "semantic_role": "rampart",
-        "placement_layer": "ground",
-        "tags": [
-          "sundered_keep",
-          "wall",
-          "rampart"
-        ],
-        "variant_group": "rampart_broken_gap",
-        "orientation": "w"
-      }
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
+    },
+    {
+      "id": "sundered_keep/rampart_crenellation_e",
+      "name": "rampart_crenellation_e",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_e.game32.json",
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
+    },
+    {
+      "id": "sundered_keep/rampart_crenellation_n",
+      "name": "rampart_crenellation_n",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_n.game32.json",
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
+    },
+    {
+      "id": "sundered_keep/rampart_crenellation_s",
+      "name": "rampart_crenellation_s",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_s.game32.json",
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
+    },
+    {
+      "id": "sundered_keep/rampart_crenellation_w",
+      "name": "rampart_crenellation_w",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_w.game32.json",
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
+    },
+    {
+      "id": "sundered_keep/rampart_parapet_e",
+      "name": "rampart_parapet_e",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_e.game32.json",
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
+    },
+    {
+      "id": "sundered_keep/rampart_parapet_n",
+      "name": "rampart_parapet_n",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_n.game32.json",
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
+    },
+    {
+      "id": "sundered_keep/rampart_parapet_s",
+      "name": "rampart_parapet_s",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_s.game32.json",
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
+    },
+    {
+      "id": "sundered_keep/rampart_parapet_w",
+      "name": "rampart_parapet_w",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_w.game32.json",
+      "runtime_path": null,
+      "asset_class": null,
+      "domain": null,
+      "game32": {}
     }
-  ]
+  ],
+  "doc_drift_check": {
+    "status": "ok",
+    "expected_count": 12,
+    "actual_count": 12,
+    "recommendation": "If actual_count differs from expected_count, inspect missing sidecar .game32.json files or regenerate the Sundered Keep asset metadata."
+  }
 }
