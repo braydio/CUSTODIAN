@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "utility_light": {
+      "hardpoints": [
+        {
+          "id": "front_light",
+          "type": "FRONT_LIGHT",
+          "socket_path": "Hardpoints/FrontLight",
+          "allowed_families": ["LIGHT", "SCANNER", "UTILITY"]
+        },
+        {
+          "id": "rear_utility",
+          "type": "UTILITY",
+          "socket_path": "Hardpoints/RearUtility",
+          "allowed_families": ["CARGO", "REPAIR", "SCANNER"]
+        }
+      ]
+    }
+  }
+}

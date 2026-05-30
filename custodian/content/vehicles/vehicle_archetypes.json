@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "vehicles": {
+    "custodian_ground_buggy_scout_light": {
+      "id": "custodian_ground_buggy_scout_light",
+      "display_name_template": "{faction} {tier} {role} {chassis}",
+      "faction": "CUSTODIAN",
+      "domain": "GROUND",
+      "chassis": "BUGGY",
+      "role": "SCOUT",
+      "tier": "LIGHT",
+      "variant": "MK1",
+      "interaction_mode": "PILOTABLE",
+      "mobility": ["WHEELED"],
+      "tags": ["INDUSTRIAL", "FIELD_REPAIRED", "MILSPEC"],
+      "movement_profile": "ground_wheeled_light",
+      "hardpoint_profile": "utility_light",
+      "loadout": "none",
+      "visual_kit": "custodian_hover_buggy_light",
+      "seat_profile": {
+        "driver_seats": 1,
+        "passenger_seats": 0,
+        "entry_radius": 64,
+        "entry_anchor": "LEFT_SIDE",
+        "exit_anchor": "RIGHT_SIDE"
+      },
+      "footprint": {
+        "cells": [2, 1],
+        "anchor": "BOTTOM_CENTER",
+        "blocks_movement": true,
+        "blocks_projectiles": false,
+        "cover_profile": "LIGHT"
+      },
+      "runtime": {
+        "scene": "res://game/actors/vehicles/light_buggy.tscn",
+        "spawnable": true,
+        "pilotable": true,
+        "requires_runtime_support": ["GROUND", "WHEELED"]
+      }
+    }
+  }
+}

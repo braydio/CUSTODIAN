@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "loadouts": {
+    "none": {
+      "items": []
+    },
+    "scout_sensor_light": {
+      "items": [
+        {
+          "hardpoint": "rear_utility",
+          "equipment": "light_scanner"
+        }
+      ]
+    }
+  }
+}

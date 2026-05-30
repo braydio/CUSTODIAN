@@ -109,6 +109,7 @@ var target_zoom: Vector2
 
 # References
 var operator_ref: Node2D = null
+var follow_target: Node2D = null
 var _runtime_map: Node = null
 var map_bounds := Rect2()
 
@@ -163,6 +164,7 @@ func _ready():
 	
 	# Find operator
 	operator_ref = get_node_or_null("/root/GameRoot/World/Operator")
+	follow_target = operator_ref
 	_last_position = global_position
 	
 	# Rebuild bounds after delay
@@ -224,17 +226,18 @@ func _unhandled_input(event):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 func _update_movement(delta: float):
-	if operator_ref == null:
+	var target := _get_follow_target()
+	if target == null:
 		return
 	
 	# Calculate velocity
-	var new_pos = operator_ref.global_position
+	var new_pos = target.global_position
 	_velocity = (new_pos - _last_position) / delta
 	_last_position = new_pos
 
 
 func _update_state_machine(delta: float):
-	if operator_ref == null:
+	if _get_follow_target() == null:
 		return
 
 	if _state_hold_remaining > 0.0:
@@ -318,7 +321,7 @@ func _has_interaction_focus() -> bool:
 
 
 func _update_lookahead(delta: float):
-	if not lookahead_enabled or operator_ref == null:
+	if not lookahead_enabled or _get_follow_target() == null:
 		_lookahead = Vector2.ZERO
 		return
 	
@@ -330,7 +333,7 @@ func _update_lookahead(delta: float):
 
 
 func _update_bob(delta: float):
-	if not bob_enabled or operator_ref == null:
+	if not bob_enabled or _get_follow_target() == null:
 		_current_bob = 0.0
 		return
 	
@@ -351,7 +354,8 @@ func _update_bob(delta: float):
 
 
 func _update_threat_offset(delta: float):
-	if not threat_framing_enabled or operator_ref == null or current_state == CameraState.IDLE:
+	var target := _get_follow_target()
+	if not threat_framing_enabled or target == null or current_state == CameraState.IDLE:
 		_threat_offset = _threat_offset.lerp(Vector2.ZERO, threat_offset_damping)
 		return
 
@@ -365,7 +369,7 @@ func _update_threat_offset(delta: float):
 		if enemy.has_method("is_passive_enemy") and enemy.is_passive_enemy():
 			continue
 		var enemy_node := enemy as Node2D
-		var to_enemy := enemy_node.global_position - operator_ref.global_position
+		var to_enemy := enemy_node.global_position - target.global_position
 		if to_enemy.length() > threat_scan_radius:
 			continue
 		threat_center += enemy_node.global_position
@@ -374,7 +378,7 @@ func _update_threat_offset(delta: float):
 	var target_offset := Vector2.ZERO
 	if threat_count > 0:
 		threat_center /= float(threat_count)
-		var bias = threat_center - operator_ref.global_position
+		var bias = threat_center - target.global_position
 		if bias.length_squared() > 0.001:
 			target_offset = bias.normalized() * min(threat_offset_strength, bias.length() * 0.20)
 
@@ -407,11 +411,12 @@ func _update_zoom(delta: float):
 
 
 func _apply_camera_position(delta: float):
-	if not follow_enabled or operator_ref == null:
+	var target := _get_follow_target()
+	if not follow_enabled or target == null:
 		return
 	
 	# Calculate target position
-	var target_pos = operator_ref.global_position
+	var target_pos = target.global_position
 	
 	# Add offset (off-center)
 	target_pos += player_offset
@@ -585,6 +590,8 @@ func set_runtime_map(map_instance: Node) -> void:
 		add_to_group("camera")
 	if operator_ref == null or not is_instance_valid(operator_ref):
 		operator_ref = get_node_or_null("/root/GameRoot/World/Operator")
+	if follow_target == null or not is_instance_valid(follow_target):
+		follow_target = operator_ref
 	_runtime_map = map_instance
 	_rebuild_bounds()
 	on_sector_entry()
@@ -714,8 +721,30 @@ func toggle_follow():
 	print("CAMERA FOLLOW: ", "ON" if follow_enabled else "OFF")
 	if follow_enabled:
 		dragging = false
-		if operator_ref != null:
-			global_position = operator_ref.global_position + player_offset
+		var target := _get_follow_target()
+		if target != null:
+			global_position = target.global_position + player_offset
+
+
+func set_follow_target(target: Node2D) -> void:
+	if target == null:
+		follow_target = operator_ref
+	else:
+		follow_target = target
+	follow_enabled = true
+	_last_position = follow_target.global_position if follow_target != null else global_position
+	_velocity = Vector2.ZERO
+	_lookahead = Vector2.ZERO
+	_threat_offset = Vector2.ZERO
+
+
+func _get_follow_target() -> Node2D:
+	if follow_target != null and is_instance_valid(follow_target):
+		return follow_target
+	if operator_ref == null or not is_instance_valid(operator_ref):
+		operator_ref = get_node_or_null("/root/GameRoot/World/Operator")
+	follow_target = operator_ref
+	return follow_target
 
 
 func is_auto_zoom_enabled() -> bool:

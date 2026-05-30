@@ -1,18 +1,21 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
-[ext_resource type="Script" path="res://game/actors/base/vehicle_base.gd" id="1_vehicle"]
+[ext_resource type="Script" path="res://game/vehicles/pilotable_vehicle.gd" id="1_vehicle"]
 [ext_resource type="SpriteFrames" path="res://game/actors/vehicles/hover_buggy_idle_frames.tres" id="2_frames"]
+[ext_resource type="Script" path="res://game/vehicles/vehicle_seat.gd" id="3_seat"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_buggy"]
 radius = 28.0
 height = 64.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_entry"]
+radius = 64.0
+
 [node name="LightBuggy" type="CharacterBody2D"]
 script = ExtResource("1_vehicle")
-max_speed = 280.0
-vehicle_health = 100.0
-vehicle_max_health = 100.0
-interaction_prompt = "ENTER BUGGY"
+fallback_vehicle_id = "custodian_ground_buggy_scout_light"
+max_health = 100.0
+current_health = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 10)
@@ -25,6 +28,25 @@ animation = &"idle"
 
 [node name="WeaponSocket" type="Node2D" parent="."]
 position = Vector2(0, -8)
+
+[node name="EntryArea2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EntryArea2D"]
+shape = SubResource("CircleShape2D_entry")
+
+[node name="DriverSeat" type="Node2D" parent="."]
+script = ExtResource("3_seat")
+
+[node name="ExitMarker" type="Marker2D" parent="."]
+position = Vector2(48, 4)
+
+[node name="Hardpoints" type="Node2D" parent="."]
+
+[node name="FrontLight" type="Marker2D" parent="Hardpoints"]
+position = Vector2(0, -34)
+
+[node name="RearUtility" type="Marker2D" parent="Hardpoints"]
+position = Vector2(0, 28)
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 offset_left = -36.0

@@ -1,6 +1,6 @@
 # Vehicle System
 
-**Status:** review
+**Status:** complete
 **Priority:** high — first pilotable vehicle moving into production
 **Requires:** Godot 4.x, existing player controller, terrain surface multiplier for `actor_kind == "vehicle"`
 **Supersedes:** `design/20_features/in_progress/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md`, `design/02_features/vehicles/implementation.md`, `design/VEHICLES_REVIEW.md`

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "required_vehicle_fields": [
+    "id",
+    "faction",
+    "domain",
+    "chassis",
+    "role",
+    "tier",
+    "variant",
+    "interaction_mode",
+    "mobility",
+    "movement_profile",
+    "hardpoint_profile",
+    "loadout",
+    "visual_kit",
+    "runtime"
+  ],
+  "required_runtime_fields": ["scene", "spawnable", "pilotable"]
+}

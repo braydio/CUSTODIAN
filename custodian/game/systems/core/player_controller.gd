@@ -9,8 +9,11 @@ class_name PlayerController
 @export var operator_path: NodePath = ^"../operator"
 @export var camera_path: NodePath = ^"../Camera2D"
 
+const VehicleInputAdapter = preload("res://game/vehicles/vehicle_input_adapter.gd")
+
 var operator: Node = null
 var current_vehicle: Node = null
+var controlled_vehicle: Node = null
 var is_in_vehicle: bool = false
 
 
@@ -56,7 +59,7 @@ func try_enter_nearby_vehicle() -> void:
 		return
 	
 	var nearby = _find_nearby_vehicle()
-	if nearby and nearby.can_be_entered():
+	if nearby and _vehicle_can_be_entered(nearby):
 		enter_vehicle(nearby)
 
 
@@ -64,17 +67,21 @@ func try_enter_nearby_vehicle() -> void:
 func enter_vehicle(vehicle: Node) -> void:
 	if is_in_vehicle or not vehicle:
 		return
-	
+
+	var entered := false
+	if vehicle.has_method("enter_vehicle"):
+		entered = bool(vehicle.call("enter_vehicle", operator))
+	elif vehicle.has_method("enter"):
+		vehicle.call("enter", operator)
+		entered = true
+
+	if not entered:
+		return
+
 	current_vehicle = vehicle
+	controlled_vehicle = vehicle
 	is_in_vehicle = true
-	
-	# Hide operator
-	if operator and operator.has_method("set_visible"):
-		operator.set_visible(false)
-	
-	# Tell vehicle we've entered
-	if vehicle.has_method("enter"):
-		vehicle.enter(operator)
+	_set_camera_follow_target(vehicle)
 	
 	print("Entered vehicle: ", vehicle.name)
 
@@ -83,39 +90,41 @@ func enter_vehicle(vehicle: Node) -> void:
 func exit_vehicle() -> void:
 	if not is_in_vehicle or not current_vehicle:
 		return
-	
-	# Get exit position before exiting
-	var exit_pos = Vector2.ZERO
-	if current_vehicle.has_method("exit"):
-		exit_pos = current_vehicle.exit()
-	else:
-		exit_pos = current_vehicle.global_position
-	
-	# Position operator at exit
-	if operator:
-		operator.global_position = exit_pos
-		if operator.has_method("set_visible"):
-			operator.set_visible(true)
-	
+
+	var exited := false
+	if current_vehicle.has_method("exit_vehicle"):
+		exited = bool(current_vehicle.call("exit_vehicle"))
+	elif current_vehicle.has_method("exit"):
+		var exit_pos: Vector2 = current_vehicle.call("exit")
+		if operator:
+			operator.global_position = exit_pos
+			if operator.has_method("set_visible"):
+				operator.set_visible(true)
+		exited = true
+
+	if not exited:
+		return
+
 	# Clear vehicle reference
 	current_vehicle = null
+	controlled_vehicle = null
 	is_in_vehicle = false
+	_set_camera_follow_target(operator)
 	
 	print("Exited vehicle")
 
 
 ## Route input to vehicle (called each frame when in vehicle).
 func _route_vehicle_input(delta: float) -> void:
-	if not current_vehicle or not current_vehicle.has_method("process_input"):
+	if not current_vehicle:
 		return
 	
-	# Get input
-	var input_dir = _get_movement_input()
-	var aim_dir = _get_aim_input()
-	var firing = Input.is_action_pressed("fire")
-	
-	# Send to vehicle
-	current_vehicle.process_input(input_dir, aim_dir, firing)
+	var input_dir := VehicleInputAdapter.read_movement_vector()
+	var actions := VehicleInputAdapter.read_actions()
+	if current_vehicle.has_method("route_vehicle_input"):
+		current_vehicle.call("route_vehicle_input", input_dir, actions, delta)
+	elif current_vehicle.has_method("process_input"):
+		current_vehicle.call("process_input", input_dir, _get_aim_input(), bool(actions.get("primary", false)))
 
 
 ## Find nearest vehicle within range.
@@ -127,10 +136,13 @@ func _find_nearby_vehicle() -> Node:
 	var nearest: Node = null
 	var nearest_dist: float = range
 	
-	for node in get_tree().get_nodes_in_group("vehicle"):
-		if not node.has_method("can_be_entered"):
+	var candidates: Array[Node] = []
+	candidates.append_array(get_tree().get_nodes_in_group("pilotable_vehicles"))
+	candidates.append_array(get_tree().get_nodes_in_group("vehicle"))
+	for node in candidates:
+		if node == null or not (node is Node2D):
 			continue
-		if not node.can_be_entered():
+		if not _vehicle_can_be_entered(node):
 			continue
 		
 		var dist = operator.global_position.distance_to(node.global_position)
@@ -171,7 +183,9 @@ func _get_world_mouse_position() -> Vector2:
 ## Get camera node.
 func _get_camera():
 	if camera_path:
-		return get_node(camera_path)
+		var camera := get_node_or_null(camera_path)
+		if camera != null:
+			return camera
 	return get_node_or_null("../Camera2D")
 
 
@@ -193,14 +207,18 @@ func on_vehicle_destroyed() -> void:
 			if operator.has_method("set_visible"):
 				operator.set_visible(true)
 		current_vehicle = null
+		controlled_vehicle = null
 		is_in_vehicle = false
+		_set_camera_follow_target(operator)
 		print("Vehicle destroyed - ejected")
 
 
 ## Show interaction prompt for nearby vehicle.
 func get_interaction_prompt() -> String:
 	if is_in_vehicle:
-		return "Press E to exit"
+		if current_vehicle and current_vehicle.has_method("get_interaction_prompt"):
+			return String(current_vehicle.call("get_interaction_prompt"))
+		return "PRESS %s TO EXIT" % _get_action_prompt_key(&"interact", "INTERACT")
 	
 	var nearby = _find_nearby_vehicle()
 	if nearby and nearby.has_method("get_interaction_prompt"):
@@ -216,3 +234,32 @@ func should_show_prompt() -> bool:
 	
 	var nearby = _find_nearby_vehicle()
 	return nearby != null
+
+
+func _vehicle_can_be_entered(vehicle: Node) -> bool:
+	if vehicle == null:
+		return false
+	if vehicle.has_method("can_enter"):
+		return bool(vehicle.call("can_enter", operator))
+	if vehicle.has_method("can_be_entered"):
+		return bool(vehicle.call("can_be_entered"))
+	return false
+
+
+func _set_camera_follow_target(target: Node) -> void:
+	var camera = _get_camera()
+	if camera != null and camera.has_method("set_follow_target"):
+		camera.call("set_follow_target", target)
+
+
+func _get_action_prompt_key(action_name: StringName, fallback: String) -> String:
+	if not InputMap.has_action(action_name):
+		return fallback
+	for event in InputMap.action_get_events(action_name):
+		if event is InputEventKey:
+			var key_event := event as InputEventKey
+			var keycode := key_event.physical_keycode if key_event.physical_keycode != 0 else key_event.keycode
+			var label := OS.get_keycode_string(keycode)
+			if not label.is_empty():
+				return label.to_upper()
+	return fallback
