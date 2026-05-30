@@ -42,12 +42,12 @@ var region_tiles: Dictionary = {}
 var map_texture: ImageTexture = null
 var procgen_tilemap: Node = null
 var player_node: Node2D = null
-var enemy_nodes: Array[Node2D] = []
-var objective_nodes: Array[Node2D] = []
-var terminal_nodes: Array[Node2D] = []
-var vehicle_nodes: Array[Node2D] = []
-var turret_nodes: Array[Node2D] = []
-var relay_nodes: Array[Node2D] = []
+var enemy_nodes: Array = []
+var objective_nodes: Array = []
+var terminal_nodes: Array = []
+var vehicle_nodes: Array = []
+var turret_nodes: Array = []
+var relay_nodes: Array = []
 var _map_texture_dirty := false
 var _redraw_queued := false
 var _dynamic_redraw_accum := 0.0
@@ -82,33 +82,33 @@ func set_player(node: Node2D) -> void:
 	_request_redraw()
 
 
-func set_enemies(nodes: Array[Node2D]) -> void:
-	enemy_nodes = nodes
+func set_enemies(nodes: Array) -> void:
+	enemy_nodes = _filter_valid_node2d_array(nodes)
 	_request_redraw()
 
 
-func set_objectives(nodes: Array[Node2D]) -> void:
-	objective_nodes = nodes
+func set_objectives(nodes: Array) -> void:
+	objective_nodes = _filter_valid_node2d_array(nodes)
 	_request_redraw()
 
 
-func set_terminals(nodes: Array[Node2D]) -> void:
-	terminal_nodes = nodes
+func set_terminals(nodes: Array) -> void:
+	terminal_nodes = _filter_valid_node2d_array(nodes)
 	_request_redraw()
 
 
-func set_vehicles(nodes: Array[Node2D]) -> void:
-	vehicle_nodes = nodes
+func set_vehicles(nodes: Array) -> void:
+	vehicle_nodes = _filter_valid_node2d_array(nodes)
 	_request_redraw()
 
 
-func set_turrets(nodes: Array[Node2D]) -> void:
-	turret_nodes = nodes
+func set_turrets(nodes: Array) -> void:
+	turret_nodes = _filter_valid_node2d_array(nodes)
 	_request_redraw()
 
 
-func set_relays(nodes: Array[Node2D]) -> void:
-	relay_nodes = nodes
+func set_relays(nodes: Array) -> void:
+	relay_nodes = _filter_valid_node2d_array(nodes)
 	_request_redraw()
 
 
@@ -267,20 +267,20 @@ func _get_dynamic_signature() -> String:
 	return "|".join(parts)
 
 
-func _append_nodes_signature(parts: Array[String], prefix: String, nodes: Array[Node2D]) -> void:
+func _append_nodes_signature(parts: Array[String], prefix: String, nodes: Array) -> void:
 	for node in nodes:
 		_append_node_signature(parts, prefix, node)
 
 
-func _append_node_signature(parts: Array[String], prefix: String, node: Node2D) -> void:
-	if node == null or not is_instance_valid(node):
+func _append_node_signature(parts: Array[String], prefix: String, node) -> void:
+	if not _is_valid_node2d(node):
 		return
 	var tile := _global_to_tile(node.global_position)
 	parts.append("%s:%d:%d,%d" % [prefix, node.get_instance_id(), tile.x, tile.y])
 
 
 func _draw_player_pip(map_rect: Rect2) -> void:
-	if player_node == null or not is_instance_valid(player_node):
+	if not _is_valid_node2d(player_node):
 		return
 	var tile := _global_to_tile(player_node.global_position)
 	if not _is_tile_inside(tile):
@@ -292,7 +292,7 @@ func _draw_player_pip(map_rect: Rect2) -> void:
 
 func _draw_enemy_pips(map_rect: Rect2) -> void:
 	for enemy in enemy_nodes:
-		if enemy == null or not is_instance_valid(enemy):
+		if not _is_valid_node2d(enemy):
 			continue
 		if enemy.has_method("is_dead") and bool(enemy.call("is_dead")):
 			continue
@@ -338,7 +338,7 @@ func _is_enemy_carrying_loot(enemy: Node) -> bool:
 
 func _draw_terminal_pips(map_rect: Rect2) -> void:
 	for terminal in terminal_nodes:
-		if terminal == null or not is_instance_valid(terminal):
+		if not _is_valid_node2d(terminal):
 			continue
 		var tile := _global_to_tile(terminal.global_position)
 		if _is_tile_inside(tile):
@@ -347,7 +347,7 @@ func _draw_terminal_pips(map_rect: Rect2) -> void:
 
 func _draw_vehicle_pips(map_rect: Rect2) -> void:
 	for vehicle in vehicle_nodes:
-		if vehicle == null or not is_instance_valid(vehicle):
+		if not _is_valid_node2d(vehicle):
 			continue
 		var tile := _global_to_tile(vehicle.global_position)
 		if _is_tile_inside(tile):
@@ -356,7 +356,7 @@ func _draw_vehicle_pips(map_rect: Rect2) -> void:
 
 func _draw_turret_pips(map_rect: Rect2) -> void:
 	for turret in turret_nodes:
-		if turret == null or not is_instance_valid(turret):
+		if not _is_valid_node2d(turret):
 			continue
 		var tile := _global_to_tile(turret.global_position)
 		if _is_tile_inside(tile):
@@ -365,7 +365,7 @@ func _draw_turret_pips(map_rect: Rect2) -> void:
 
 func _draw_relay_pips(map_rect: Rect2) -> void:
 	for relay in relay_nodes:
-		if relay == null or not is_instance_valid(relay):
+		if not _is_valid_node2d(relay):
 			continue
 		var tile := _global_to_tile(relay.global_position)
 		if _is_tile_inside(tile):
@@ -428,7 +428,7 @@ func _is_passive_creature_node(node: Node) -> bool:
 func _count_hostile_enemy_nodes() -> int:
 	var count := 0
 	for enemy in enemy_nodes:
-		if enemy != null and is_instance_valid(enemy) and not _is_passive_creature_node(enemy):
+		if _is_valid_node2d(enemy) and not _is_passive_creature_node(enemy):
 			count += 1
 	return count
 
@@ -436,14 +436,14 @@ func _count_hostile_enemy_nodes() -> int:
 func _count_passive_creature_nodes() -> int:
 	var count := 0
 	for enemy in enemy_nodes:
-		if enemy != null and is_instance_valid(enemy) and _is_passive_creature_node(enemy):
+		if _is_valid_node2d(enemy) and _is_passive_creature_node(enemy):
 			count += 1
 	return count
 
 
 func _draw_objective_pips(map_rect: Rect2) -> void:
 	for objective in objective_nodes:
-		if objective == null or not is_instance_valid(objective):
+		if not _is_valid_node2d(objective):
 			continue
 		var tile := _global_to_tile(objective.global_position)
 		if _is_tile_inside(tile):
@@ -481,6 +481,21 @@ func _draw_grid(map_rect: Rect2) -> void:
 	while y <= map_rect.end.y:
 		draw_line(Vector2(map_rect.position.x, y), Vector2(map_rect.end.x, y), grid_color, 1.0)
 		y += step
+
+
+func _filter_valid_node2d_array(nodes: Array) -> Array:
+	var filtered: Array = []
+	for node in nodes:
+		if _is_valid_node2d(node):
+			filtered.append(node)
+	return filtered
+
+
+func _is_valid_node2d(node) -> bool:
+	return node != null \
+		and is_instance_valid(node) \
+		and node is Node2D \
+		and not (node as Node).is_queued_for_deletion()
 
 
 func _tile_rect_to_panel(tile_rect: Rect2i, map_rect: Rect2) -> Rect2:
