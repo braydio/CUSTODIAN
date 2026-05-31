@@ -5290,6 +5290,6 @@
   ],
   "generated_by": "slice_compound_gothic_sheet.lua",
   "schema": "custodian.compound_sheet_slices.v1",
-  "source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/compound_gothic_sheet.png",
+  "source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/source/gothic_compound/compound_gothic_sheet.png",
   "tile_size": 32
 }

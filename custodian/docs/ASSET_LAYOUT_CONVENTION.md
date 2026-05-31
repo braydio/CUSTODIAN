@@ -1,6 +1,6 @@
 # Asset Layout and Naming Convention
 
-Last updated: 2026-05-09
+Last updated: 2026-05-31
 
 ## Scope
 
@@ -14,6 +14,8 @@ This convention covers current Godot runtime assets in `res://content/` with a c
 content/
   _aseprite/            # ALL .aseprite/.ase source files, mirroring content tree
   _pipeline/            # staged intake only, never read by runtime scenes
+  metadata/             # shared authored/generated metadata and game32 sidecars
+  runtime/              # generated runtime catalogs/packs not owned by sprites/tiles
   sprites/
     <entity>/
       runtime/            # files directly loaded by scenes/resources
@@ -31,9 +33,25 @@ content/
     enemies/
     raw/
   tiles/
+    <feature>/
+      runtime/          # tile art directly consumed by TileSets/scripts
+      source/           # oversized/reference art and raw exports
+      legacy/           # retained generated/history copies
   ui/
   raw/
+  unregistered/         # imported art quarantine; not runtime authority
 ```
+
+For the full content-root domain map, see `res://content/README.md`.
+
+## Content Root Domain Rules
+
+- Do not add new runtime assets loose at `res://content/`, `res://content/sprites/`, or `res://content/tiles/`.
+- Runtime art belongs in the owning feature domain, usually `sprites/<owner>/runtime/`, `sprites/environment/props/<prop_id>/runtime/`, `tiles/<feature>/runtime/`, `props/<set>/`, or a documented generated runtime pack under `runtime/`.
+- Source and master art belongs in `source/`, `masters/`, or `content/_aseprite/` for `.aseprite` / `.ase` files.
+- `_pipeline/` is ingest staging/history and should not be referenced by runtime scenes, resources, or scripts.
+- `unregistered/` is quarantine. Promote assets out of it only by assigning an owning runtime/source domain, updating references/manifests, and verifying Godot import paths.
+- `legacy/` folders are historical or compatibility surfaces. Keep them local to the feature they explain, and document why they are retained in a local README when possible.
 
 ## Aseprite Source File Convention
 
@@ -113,6 +131,24 @@ new sheet is ingested, imported, wired, and verified.
 Do not remove `_pipeline/archive/`, source art, normalized previews, or logs during this cleanup. Those preserve
 history and debugging context. Also do not remove intentional alternate variants such as `heavy_02`, `alt`, or
 weapon-specific variants unless the mapping has explicitly superseded them.
+
+## Duplicate Handling Rule
+
+Exact duplicate bytes are a migration signal, not deletion approval. Before removing one side of a duplicate group,
+identify the canonical runtime consumer and scan for all `res://` references.
+
+Treat these duplicate classes as intentionally retained unless a task-specific migration says otherwise:
+
+- `_pipeline/archive/` and `_pipeline/normalized/` copies kept for ingest history and debugging.
+- `source/`, `masters/`, and `_aseprite/` files kept as authoring inputs.
+- `legacy/` generated copies kept for reproduction or compatibility.
+- Compatibility runtime paths still referenced by scenes, scripts, resources, or manifests.
+
+Use the read-only audit before cleanup:
+
+```sh
+python3 custodian/tools/validation/content_asset_audit.py --limit 20
+```
 
 ## Operator Runtime Assets (Linked)
 

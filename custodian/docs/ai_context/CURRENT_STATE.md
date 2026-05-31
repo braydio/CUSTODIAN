@@ -1,6 +1,6 @@
 # CURRENT STATE — CUSTODIAN
 
-Last updated: 2026-05-30
+Last updated: 2026-05-31
 
 ## Runtime Status
 
@@ -193,6 +193,7 @@ Last updated: 2026-05-30
 
 ## Asset Source Cleanup
 
+- Content directory stabilization now has a first migration pass: `res://content/README.md` documents stable content domains, `docs/ASSET_LAYOUT_CONVENTION.md` defines duplicate/migration safety rules, and `custodian/tools/validation/content_asset_audit.py` reports loose content-root files, loose sprite/tile-domain files, unregistered quarantine files, and exact duplicate groups. The loose Road of Witnesses map now lives under `res://content/levels/hub/`; loose terminal/operator/enemy-scout/tile source files now live under owner-specific `source/` folders; and prior `res://content/unregistered/` vault art now lives under `res://content/props/gothic/vault_dressing/source/unregistered/` for later manifest promotion.
 - A canonical `content/_aseprite/` directory now exists as the single home for all `.aseprite` and `.ase` source files, mirroring the content tree.
 - `tools/aseprite/sweep_aseprite.sh` — one-time sweep to move all 213 existing `.aseprite` files into `_aseprite/` (run with `--apply --git`).
 - `tools/aseprite/watch_aseprite.sh` — optional inotify daemon for instant move-on-save.

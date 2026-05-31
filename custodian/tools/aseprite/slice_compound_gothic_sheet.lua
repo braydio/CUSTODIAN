@@ -2,7 +2,7 @@
 -- CUSTODIAN gothic compound slicer
 --
 -- Run from repo root:
---   aseprite -b ./custodian/content/tiles/compound_gothic_sheet.png \
+--   aseprite -b ./custodian/content/tiles/source/gothic_compound/compound_gothic_sheet.png \
 --     --script ./custodian/tools/aseprite/slice_compound_gothic_sheet.lua \
 --     --script-param repo="$PWD"
 --
@@ -26,7 +26,7 @@ local BASE_H = 1024
 local TILE_SIZE = 32
 
 local PARAM_REPO = app.params["repo"] or os.getenv("PWD") or "."
-local SOURCE_PATH = app.params["source"] or (PARAM_REPO .. "/custodian/content/tiles/compound_gothic_sheet.png")
+local SOURCE_PATH = app.params["source"] or (PARAM_REPO .. "/custodian/content/tiles/source/gothic_compound/compound_gothic_sheet.png")
 local CUSTODIAN_ROOT = PARAM_REPO .. "/custodian"
 
 local MANIFEST_PATH =

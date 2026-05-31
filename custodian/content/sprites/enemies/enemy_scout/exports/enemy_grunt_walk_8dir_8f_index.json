@@ -1,6 +1,6 @@
 {
   "asset": "CUSTODIAN enemy grunt 8-direction walk generated from template sheet",
-  "source_file": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/ChatGPT Image May 20, 2026, 01:12:02 AM.png",
+  "source_file": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/enemies/enemy_scout/source/enemy_scout_chatgpt_source_2026_05_20.png",
   "output_file": "enemy_grunt_walk_8dir_8f.png",
   "frame_size": { "w": 204, "h": 381 },
   "directions": ["south", "southeast", "east", "northeast", "north", "northwest", "west", "southwest"],

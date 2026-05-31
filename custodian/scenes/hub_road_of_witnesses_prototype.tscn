@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3]
 
-[ext_resource type="Texture2D" path="res://content/Hubworld/Road_of_Witnesses_Tilemap.png" id="1_map"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/Road_of_Witnesses_Tilemap.png" id="1_map"]
 [ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="2_operator"]
 [ext_resource type="Script" path="res://game/world/camera.gd" id="3_camera"]
 [ext_resource type="Script" path="res://game/systems/core/player_controller.gd" id="4_player_controller"]

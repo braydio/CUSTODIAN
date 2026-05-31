@@ -3,7 +3,7 @@ class_name RoadOfWitnessesPrototype
 
 const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occlusion_bubble.gdshader")
 
-const MAP_TEXTURE_PATH := "res://content/Hubworld/Road_of_Witnesses_Tilemap.png"
+const MAP_TEXTURE_PATH := "res://content/levels/hub/Road_of_Witnesses_Tilemap.png"
 const PLAYER_PATH := ^"/root/GameRoot/World/Operator"
 const CAMERA_PATH := ^"/root/GameRoot/World/Camera2D"
 

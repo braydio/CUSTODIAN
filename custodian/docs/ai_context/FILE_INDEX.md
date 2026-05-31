@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-30
+Last updated: 2026-05-31
 
 ## Local Entry And Workflow
 
@@ -34,6 +34,7 @@ Last updated: 2026-05-30
 - `custodian/docs/ai_context/task_packets/GOTHIC_COMPOUND_OCCLUSION_AND_SCALE.md` — completed packet for gothic compound player/building occlusion, larger map bounds, and service-path complexity
 - `custodian/docs/ai_context/task_packets/ELEVATION_SUITE_V1.md` — packet for metadata-first elevation support, procgen elevation stamping, traversal validation, existing elevation/cliff tile audit, TileSet source wiring, and remaining movement/pathing follow-up
 - `custodian/docs/ai_context/task_packets/TERRAIN_BUILDER_ELEVATION_INTEGRATION.md` — completed packet for the dedicated terrain builder, elevation metadata, blocked terrain, and connectivity validation pass
+- `custodian/docs/ai_context/task_packets/CONTENT_DIRECTORY_STABILIZATION.md` — active packet for content-root layout documentation, duplicate audit coverage, and deferred asset path migration planning
 
 ## Active Runtime Entry
 
@@ -183,7 +184,12 @@ Last updated: 2026-05-30
 - `custodian/tools/pipelines/update_operator_curated_resources.gd` — rebuilds operator runtime `SpriteFrames` from curated/source sheets
 - `custodian/tools/pipelines/update_vehicle_runtime_resources.gd` — rebuilds hover buggy vehicle `SpriteFrames` from canonical runtime sheets with current hover buggy source/runtime fallbacks
 - `custodian/tools/validation/enemy_behavior_vault_smoke.gd` — targeted smoke check for vault storage resource removal/recovery, behavior profile defaults, and stolen-resource loot carrier drop behavior
+- `custodian/tools/validation/content_asset_audit.py` — read-only content-root audit for loose files, unregistered quarantine files, and exact duplicate groups
 - `custodian/tools/art/build_reference_samplesheet.py` — Pillow-based utility that samples active runtime-facing tiles, walls, floors, ruin props, and environment prop sheets into a labeled design-reference PNG
+- `custodian/content/README.md` — stable content-root domain map and duplicate policy for runtime/source/legacy/quarantine asset placement
+- `custodian/content/levels/hub/Road_of_Witnesses_Tilemap.png` — level-owned source map image for the Road of Witnesses prototype scene
+- `custodian/content/props/gothic/vault_dressing/source/unregistered/` — vault-owned source quarantine for unregistered vault prop art pending manifest/runtime promotion
+- `custodian/content/tiles/source/ashen_forum/`, `custodian/content/tiles/source/compound_ashen/`, `custodian/content/tiles/source/gothic_compound/`, and `custodian/content/tiles/source/roads_paths/` — source/master tile-sheet homes for previously loose top-level tile art
 - `custodian/content/reference/active_art_samplesheet.png` — generated design-reference sheet containing deterministic samples from active art directories; regenerate with `python3 custodian/tools/art/build_reference_samplesheet.py`
 - `tools/tiles/extract_wall_parts.py` — offline wall module extractor that reads canonical wall source art, writes per-part PNGs, a packed source atlas, and JSON metadata
 - `tools/tiles/compose_wall_variants.py` — offline deterministic wall-run composer that reads generated wall part metadata/atlas and writes composed wall variant sheets
