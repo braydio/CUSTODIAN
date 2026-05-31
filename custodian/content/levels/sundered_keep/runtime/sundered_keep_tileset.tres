@@ -1,0 +1,980 @@
+[gd_resource type="TileSet" format=3 uid="uid://bcrix1fo3j10h"]
+
+[ext_resource type="Texture2D" uid="uid://in4arlnlr00d" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_e.png" id="1_cliff_edge_e"]
+[ext_resource type="Texture2D" uid="uid://b5ckd54qdjjc4" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_n.png" id="2_cliff_edge_n"]
+[ext_resource type="Texture2D" uid="uid://dr5tbgnm2a4kb" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_s.png" id="3_cliff_edge_s"]
+[ext_resource type="Texture2D" uid="uid://c026jf35vkm2w" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_edge_w.png" id="4_cliff_edge_w"]
+[ext_resource type="Texture2D" uid="uid://cnkrxlmxv66ok" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_face_slice_01.png" id="5_cliff_face_slice_01"]
+[ext_resource type="Texture2D" uid="uid://cr7f3ynup4i2g" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_face_slice_mossy_01.png" id="6_cliff_face_slice_mossy_01"]
+[ext_resource type="Texture2D" uid="uid://dgotg44b3iyqd" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_face_slice_wet_01.png" id="7_cliff_face_slice_wet_01"]
+[ext_resource type="Texture2D" uid="uid://imhsnd43h03b" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_inner_corner_ne.png" id="8_cliff_inner_corner_ne"]
+[ext_resource type="Texture2D" uid="uid://buufke5wmgqxy" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_inner_corner_nw.png" id="9_cliff_inner_corner_nw"]
+[ext_resource type="Texture2D" uid="uid://dj5b4nq1hxhm2" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_inner_corner_se.png" id="10_cliff_inner_corner_se"]
+[ext_resource type="Texture2D" uid="uid://blq606ximrpmm" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_inner_corner_sw.png" id="11_cliff_inner_corner_sw"]
+[ext_resource type="Texture2D" uid="uid://c6tyghruob0hr" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_outer_corner_ne.png" id="12_cliff_outer_corner_ne"]
+[ext_resource type="Texture2D" uid="uid://bxscrxv1y040m" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_outer_corner_nw.png" id="13_cliff_outer_corner_nw"]
+[ext_resource type="Texture2D" uid="uid://7hi78u1jw27y" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_outer_corner_se.png" id="14_cliff_outer_corner_se"]
+[ext_resource type="Texture2D" uid="uid://o0d3bxjp0sfv" path="res://content/runtime/sundered_keep/terrain/cliffs/cliff_outer_corner_sw.png" id="15_cliff_outer_corner_sw"]
+[ext_resource type="Texture2D" uid="uid://doivpp1vdcwnp" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_dark_water_01.png" id="16_ocean_dark_water_01"]
+[ext_resource type="Texture2D" uid="uid://bsavns7r4ov83" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_e.png" id="17_ocean_foam_edge_e"]
+[ext_resource type="Texture2D" uid="uid://b4i1baxicmt3c" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_n.png" id="18_ocean_foam_edge_n"]
+[ext_resource type="Texture2D" uid="uid://c4khj6vhi4hyh" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_s.png" id="19_ocean_foam_edge_s"]
+[ext_resource type="Texture2D" uid="uid://d2ltots2sc0xo" path="res://content/runtime/sundered_keep/terrain/ocean/ocean_foam_edge_w.png" id="20_ocean_foam_edge_w"]
+[ext_resource type="Texture2D" uid="uid://bspoy728kmfe1" path="res://content/runtime/sundered_keep/doors_traversal/hatches/floor_hatch_closed_01.png" id="21_floor_hatch_closed_01"]
+[ext_resource type="Texture2D" uid="uid://cx8th2bquso6" path="res://content/runtime/sundered_keep/doors_traversal/hatches/floor_hatch_open_01.png" id="22_floor_hatch_open_01"]
+[ext_resource type="Texture2D" uid="uid://cneuf45exul1y" path="res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_closed_n.png" id="23_gothic_double_door_closed_n"]
+[ext_resource type="Texture2D" uid="uid://b4ipaupwmba86" path="res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_closed_s.png" id="24_gothic_double_door_closed_s"]
+[ext_resource type="Texture2D" uid="uid://bcv4mku2eddu8" path="res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_open_n.png" id="25_gothic_double_door_open_n"]
+[ext_resource type="Texture2D" uid="uid://panejpor8ipi" path="res://content/runtime/sundered_keep/doors_traversal/doors/gothic_double_door_open_s.png" id="26_gothic_double_door_open_s"]
+[ext_resource type="Texture2D" uid="uid://dkhku20jhpmbx" path="res://content/runtime/sundered_keep/doors_traversal/gates/main_gate_portcullis_closed.png" id="27_main_gate_portcullis_closed"]
+[ext_resource type="Texture2D" uid="uid://bvo6px3u3us8" path="res://content/runtime/sundered_keep/doors_traversal/gates/main_gate_portcullis_open.png" id="28_main_gate_portcullis_open"]
+[ext_resource type="Texture2D" uid="uid://dtlfdtucyxapt" path="res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_down_n.png" id="29_stone_stairs_down_n"]
+[ext_resource type="Texture2D" uid="uid://cuq1rcurx4cyx" path="res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_down_s.png" id="30_stone_stairs_down_s"]
+[ext_resource type="Texture2D" uid="uid://bidwga8mjfi4w" path="res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_e.png" id="31_stone_stairs_up_e"]
+[ext_resource type="Texture2D" uid="uid://cpasoeaccento" path="res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_n.png" id="32_stone_stairs_up_n"]
+[ext_resource type="Texture2D" uid="uid://dqd1ym7pai20y" path="res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_s.png" id="33_stone_stairs_up_s"]
+[ext_resource type="Texture2D" uid="uid://dqd2ltxxphl6j" path="res://content/runtime/sundered_keep/doors_traversal/stairs/stone_stairs_up_w.png" id="34_stone_stairs_up_w"]
+[ext_resource type="Texture2D" uid="uid://0okybbyju5cn" path="res://content/runtime/sundered_keep/props/prop_hanging/prop_banner_torn_large_01.png" id="35_prop_banner_torn_large_01"]
+[ext_resource type="Texture2D" uid="uid://cqvdo3xdkyvkq" path="res://content/runtime/sundered_keep/props/prop_table/prop_banquet_table_broken_01.png" id="36_prop_banquet_table_broken_01"]
+[ext_resource type="Texture2D" uid="uid://j462g3x0edqa" path="res://content/runtime/sundered_keep/props/prop_table/prop_banquet_table_long_01.png" id="37_prop_banquet_table_long_01"]
+[ext_resource type="Texture2D" uid="uid://s3guhtmvj73v" path="res://content/runtime/sundered_keep/props/prop_storage/prop_barrel_wet_01.png" id="38_prop_barrel_wet_01"]
+[ext_resource type="Texture2D" uid="uid://53wnaaojexu1" path="res://content/runtime/sundered_keep/props/prop_furniture/prop_bookshelf_tall_01.png" id="39_prop_bookshelf_tall_01"]
+[ext_resource type="Texture2D" uid="uid://d4dg3fbouuveq" path="res://content/runtime/sundered_keep/props/prop_light/prop_brazier_iron_01.png" id="40_prop_brazier_iron_01"]
+[ext_resource type="Texture2D" uid="uid://b80axsgrh2bc5" path="res://content/runtime/sundered_keep/props/prop_medium/prop_broken_cart_01.png" id="41_prop_broken_cart_01"]
+[ext_resource type="Texture2D" uid="uid://de8vbt33tw157" path="res://content/runtime/sundered_keep/props/prop_rubble/prop_broken_spire_chunk_01.png" id="42_prop_broken_spire_chunk_01"]
+[ext_resource type="Texture2D" uid="uid://c4h43w7teb3pj" path="res://content/runtime/sundered_keep/props/prop_furniture/prop_chapel_pew_01.png" id="43_prop_chapel_pew_01"]
+[ext_resource type="Texture2D" uid="uid://jeqkmktm2mod" path="res://content/runtime/sundered_keep/props/prop_large/prop_courtyard_fountain_broken_01.png" id="44_prop_courtyard_fountain_broken_01"]
+[ext_resource type="Texture2D" uid="uid://jdmlgebrwwqp" path="res://content/runtime/sundered_keep/props/prop_storage/prop_crate_stack_wet_01.png" id="45_prop_crate_stack_wet_01"]
+[ext_resource type="Texture2D" uid="uid://l51u5fy27wur" path="res://content/runtime/sundered_keep/props/prop_debris/prop_fallen_chandelier_01.png" id="46_prop_fallen_chandelier_01"]
+[ext_resource type="Texture2D" uid="uid://bkie78vl52d5o" path="res://content/runtime/sundered_keep/props/prop_rubble/prop_fallen_masonry_01.png" id="47_prop_fallen_masonry_01"]
+[ext_resource type="Texture2D" uid="uid://dgfguyqqpscga" path="res://content/runtime/sundered_keep/props/prop_statue/prop_gargoyle_perch_01.png" id="48_prop_gargoyle_perch_01"]
+[ext_resource type="Texture2D" uid="uid://c5frll57r024d" path="res://content/runtime/sundered_keep/props/prop_barrier/prop_gate_barricade_01.png" id="49_prop_gate_barricade_01"]
+[ext_resource type="Texture2D" uid="uid://b2tjncpmuow88" path="res://content/runtime/sundered_keep/props/prop_mechanical/prop_gate_winch_01.png" id="50_prop_gate_winch_01"]
+[ext_resource type="Texture2D" uid="uid://djj1pbhcrdq5q" path="res://content/runtime/sundered_keep/props/prop_tall/prop_gothic_statue_broken_01.png" id="51_prop_gothic_statue_broken_01"]
+[ext_resource type="Texture2D" uid="uid://bqk38ctuqm5yj" path="res://content/runtime/sundered_keep/props/prop_tall/prop_gothic_statue_intact_01.png" id="52_prop_gothic_statue_intact_01"]
+[ext_resource type="Texture2D" uid="uid://4jcl80g7nt4" path="res://content/runtime/sundered_keep/props/prop_column/prop_great_hall_column_01.png" id="53_prop_great_hall_column_01"]
+[ext_resource type="Texture2D" uid="uid://c7mbp58uy1pgm" path="res://content/runtime/sundered_keep/props/prop_rooftop/prop_lightning_rod_01.png" id="54_prop_lightning_rod_01"]
+[ext_resource type="Texture2D" uid="uid://dext25wo2mbil" path="res://content/runtime/sundered_keep/props/prop_wall_low/prop_low_garden_wall_01.png" id="55_prop_low_garden_wall_01"]
+[ext_resource type="Texture2D" uid="uid://cov0nkmqlby24" path="res://content/runtime/sundered_keep/props/prop_hanging/prop_portcullis_chain_01.png" id="56_prop_portcullis_chain_01"]
+[ext_resource type="Texture2D" uid="uid://bjss1j2e2dh5p" path="res://content/runtime/sundered_keep/props/prop_anchor/prop_rope_bridge_anchor_01.png" id="57_prop_rope_bridge_anchor_01"]
+[ext_resource type="Texture2D" uid="uid://cal50sunt8pbh" path="res://content/runtime/sundered_keep/props/prop_tomb/prop_sarcophagus_01.png" id="58_prop_sarcophagus_01"]
+[ext_resource type="Texture2D" uid="uid://bi8evg3uakx2o" path="res://content/runtime/sundered_keep/props/prop_rock/prop_sea_spray_rock_01.png" id="59_prop_sea_spray_rock_01"]
+[ext_resource type="Texture2D" uid="uid://cq06pvwl3ykhb" path="res://content/runtime/sundered_keep/props/prop_observatory/prop_telescope_broken_01.png" id="60_prop_telescope_broken_01"]
+[ext_resource type="Texture2D" uid="uid://y5le3lidnk5v" path="res://content/runtime/sundered_keep/props/prop_throne/prop_throne_ruined_01.png" id="61_prop_throne_ruined_01"]
+[ext_resource type="Texture2D" uid="uid://cs6w0uvqeittc" path="res://content/runtime/sundered_keep/props/prop_light/prop_torch_wall_gothic_01.png" id="62_prop_torch_wall_gothic_01"]
+[ext_resource type="Texture2D" uid="uid://c7v36y6xs6ieo" path="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_01.png" id="63_main_courtyard_flagstone_01"]
+[ext_resource type="Texture2D" uid="uid://dl7u7dyqvcecs" path="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_02.png" id="64_main_courtyard_flagstone_02"]
+[ext_resource type="Texture2D" uid="uid://nqo1ar1dpq0o" path="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_cracked_01.png" id="65_main_courtyard_flagstone_cracked_01"]
+[ext_resource type="Texture2D" uid="uid://b4mvrus3afpk8" path="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_wet_01.png" id="66_main_courtyard_flagstone_wet_01"]
+[ext_resource type="Texture2D" uid="uid://dur55rbhw37mx" path="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_mossy_01.png" id="67_main_courtyard_flagstone_mossy_01"]
+[ext_resource type="Texture2D" uid="uid://c5cdgk8wa5obk" path="res://content/tiles/sundered_keep/floors/main_gate_threshold_stone_01.png" id="68_main_gate_threshold_stone_01"]
+[ext_resource type="Texture2D" uid="uid://c70ol15cqqddh" path="res://content/tiles/sundered_keep/floors/great_hall_marble_floor_01.png" id="69_great_hall_marble_floor_01"]
+[ext_resource type="Texture2D" uid="uid://crd8q5q8coitb" path="res://content/tiles/sundered_keep/floors/great_hall_marble_floor_cracked_01.png" id="70_great_hall_marble_floor_cracked_01"]
+[ext_resource type="Texture2D" uid="uid://bo8hp3sj7ie2c" path="res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_vertical_01.png" id="71_great_hall_carpet_runner_vertical_01"]
+[ext_resource type="Texture2D" uid="uid://cji6uk15pa6ud" path="res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_horizontal_01.png" id="72_great_hall_carpet_runner_horizontal_01"]
+[ext_resource type="Texture2D" uid="uid://c374whm1dnl6b" path="res://content/tiles/sundered_keep/floors/rampart_walkway_floor_01.png" id="73_rampart_walkway_floor_01"]
+[ext_resource type="Texture2D" uid="uid://bvwrkgkaysmor" path="res://content/tiles/sundered_keep/floors/rampart_walkway_broken_01.png" id="74_rampart_walkway_broken_01"]
+[ext_resource type="Texture2D" uid="uid://e23tj0fcrx53" path="res://content/tiles/sundered_keep/floors/cliff_rock_floor_01.png" id="75_cliff_rock_floor_01"]
+[ext_resource type="Texture2D" uid="uid://cyk2e4pv4lf1l" path="res://content/tiles/sundered_keep/floors/cliff_rock_floor_cracked_01.png" id="76_cliff_rock_floor_cracked_01"]
+[ext_resource type="Texture2D" uid="uid://digtwjlmhidsf" path="res://content/tiles/sundered_keep/floors/roof_slate_dark_01.png" id="77_roof_slate_dark_01"]
+[ext_resource type="Texture2D" uid="uid://bp5oobc2cnsns" path="res://content/tiles/sundered_keep/floors/dungeon_stone_floor_01.png" id="78_dungeon_stone_floor_01"]
+[ext_resource type="Texture2D" uid="uid://yruac8e1pq5y" path="res://content/tiles/sundered_keep/floors/undercroft_wet_stone_floor_01.png" id="79_undercroft_wet_stone_floor_01"]
+[ext_resource type="Texture2D" uid="uid://dyr7abfexbs40" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_n.png" id="81_gothic_castle_wall_straight_n"]
+[ext_resource type="Texture2D" uid="uid://cnjipk82qn0vw" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_s.png" id="83_gothic_castle_wall_straight_s"]
+[ext_resource type="Texture2D" uid="uid://c3hi4oh56vr0" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_straight_w.png" id="84_gothic_castle_wall_straight_w"]
+[ext_resource type="Texture2D" uid="uid://k17g0au5qi6s" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_ne.png" id="85_gothic_castle_wall_inner_corner_ne"]
+[ext_resource type="Texture2D" uid="uid://be3w5725vxhqw" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_nw.png" id="86_gothic_castle_wall_inner_corner_nw"]
+[ext_resource type="Texture2D" uid="uid://bmgo5qng7ba7d" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_se.png" id="87_gothic_castle_wall_inner_corner_se"]
+[ext_resource type="Texture2D" uid="uid://c4ndv0axarhxu" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_inner_corner_sw.png" id="88_gothic_castle_wall_inner_corner_sw"]
+[ext_resource type="Texture2D" uid="uid://du75absmbkwi2" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_ne.png" id="89_gothic_castle_wall_outer_corner_ne"]
+[ext_resource type="Texture2D" uid="uid://bym2ar5e7pewv" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_nw.png" id="90_gothic_castle_wall_outer_corner_nw"]
+[ext_resource type="Texture2D" uid="uid://caahe6able01p" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_se.png" id="91_gothic_castle_wall_outer_corner_se"]
+[ext_resource type="Texture2D" uid="uid://b4kcy03ghsfow" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_outer_corner_sw.png" id="92_gothic_castle_wall_outer_corner_sw"]
+[ext_resource type="Texture2D" uid="uid://c17vgqhp2p2vy" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_n.png" id="93_gothic_castle_wall_endcap_n"]
+[ext_resource type="Texture2D" uid="uid://djub3n53jc8v6" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_e.png" id="94_gothic_castle_wall_endcap_e"]
+[ext_resource type="Texture2D" uid="uid://oiv1ggg47upt" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_s.png" id="95_gothic_castle_wall_endcap_s"]
+[ext_resource type="Texture2D" uid="uid://c4lk88rsknpbu" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_endcap_w.png" id="96_gothic_castle_wall_endcap_w"]
+[ext_resource type="Texture2D" uid="uid://c4sab0gxacq0o" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_n.png" id="97_gothic_castle_wall_damaged_n"]
+[ext_resource type="Texture2D" uid="uid://bv6pd3ghcuojk" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_e.png" id="98_gothic_castle_wall_damaged_e"]
+[ext_resource type="Texture2D" uid="uid://cgg8uf15mpl2q" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_s.png" id="99_gothic_castle_wall_damaged_s"]
+[ext_resource type="Texture2D" uid="uid://c4cdwhkdjslua" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_damaged_w.png" id="100_gothic_castle_wall_damaged_w"]
+[ext_resource type="Texture2D" uid="uid://cyy3i0imv6rij" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_n.png" id="101_gothic_castle_wall_breach_n"]
+[ext_resource type="Texture2D" uid="uid://b2hat0ciaxsmp" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_e.png" id="102_gothic_castle_wall_breach_e"]
+[ext_resource type="Texture2D" uid="uid://b22kbl5cxydqc" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_s.png" id="103_gothic_castle_wall_breach_s"]
+[ext_resource type="Texture2D" uid="uid://cqt3vrrk5h0s5" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_breach_w.png" id="104_gothic_castle_wall_breach_w"]
+[ext_resource type="Texture2D" uid="uid://bdko75vrlefx2" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_n.png" id="105_gothic_castle_wall_window_tall_n"]
+[ext_resource type="Texture2D" uid="uid://c72wodfkhu46s" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_e.png" id="106_gothic_castle_wall_window_tall_e"]
+[ext_resource type="Texture2D" uid="uid://oaw1x8ltulix" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_s.png" id="107_gothic_castle_wall_window_tall_s"]
+[ext_resource type="Texture2D" uid="uid://b01dm5kocr0r0" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_window_tall_w.png" id="108_gothic_castle_wall_window_tall_w"]
+[ext_resource type="Texture2D" uid="uid://0byak4eh8rww" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_n.png" id="109_gothic_castle_wall_arch_n"]
+[ext_resource type="Texture2D" uid="uid://hx6b0n5sk2dr" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_e.png" id="110_gothic_castle_wall_arch_e"]
+[ext_resource type="Texture2D" uid="uid://cix3vgu7bni7b" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_s.png" id="111_gothic_castle_wall_arch_s"]
+[ext_resource type="Texture2D" uid="uid://khdl38xafj1g" path="res://content/tiles/sundered_keep/walls/gothic_castle/gothic_castle_wall_arch_w.png" id="112_gothic_castle_wall_arch_w"]
+[ext_resource type="Texture2D" uid="uid://bc112h6440b6d" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_straight_n.png" id="113_great_hall_wall_straight_n"]
+[ext_resource type="Texture2D" uid="uid://b0b84g87q3omn" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_straight_e.png" id="114_great_hall_wall_straight_e"]
+[ext_resource type="Texture2D" uid="uid://d2di7ar41oekd" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_straight_s.png" id="115_great_hall_wall_straight_s"]
+[ext_resource type="Texture2D" uid="uid://5s403eeqdl2g" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_straight_w.png" id="116_great_hall_wall_straight_w"]
+[ext_resource type="Texture2D" uid="uid://w6wusiql8bhc" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_column_n.png" id="117_great_hall_wall_column_n"]
+[ext_resource type="Texture2D" uid="uid://dnj63t4ptnu7t" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_column_e.png" id="118_great_hall_wall_column_e"]
+[ext_resource type="Texture2D" uid="uid://dqf637pf13ttd" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_column_s.png" id="119_great_hall_wall_column_s"]
+[ext_resource type="Texture2D" uid="uid://b1aju3q425ha3" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_column_w.png" id="120_great_hall_wall_column_w"]
+[ext_resource type="Texture2D" uid="uid://bf7xnxquousdr" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_banner_n.png" id="121_great_hall_wall_banner_n"]
+[ext_resource type="Texture2D" uid="uid://b5p3x1kmocha7" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_banner_e.png" id="122_great_hall_wall_banner_e"]
+[ext_resource type="Texture2D" uid="uid://bab1n678iyudw" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_banner_s.png" id="123_great_hall_wall_banner_s"]
+[ext_resource type="Texture2D" uid="uid://lxtn3a4aj8ha" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_banner_w.png" id="124_great_hall_wall_banner_w"]
+[ext_resource type="Texture2D" uid="uid://br5gs6l40egl2" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_broken_exterior_n.png" id="125_great_hall_wall_broken_exterior_n"]
+[ext_resource type="Texture2D" uid="uid://2smyx1y7kfm" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_broken_exterior_e.png" id="126_great_hall_wall_broken_exterior_e"]
+[ext_resource type="Texture2D" uid="uid://c72bktjfdcuk4" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_broken_exterior_s.png" id="127_great_hall_wall_broken_exterior_s"]
+[ext_resource type="Texture2D" uid="uid://1f5ws8lvg6cj" path="res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_broken_exterior_w.png" id="128_great_hall_wall_broken_exterior_w"]
+[ext_resource type="Texture2D" uid="uid://cq0mji7pnqwsq" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_n.png" id="129_rampart_parapet_n"]
+[ext_resource type="Texture2D" uid="uid://sc8wv2f01w5c" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_e.png" id="130_rampart_parapet_e"]
+[ext_resource type="Texture2D" uid="uid://rumi8sf0xx4d" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_s.png" id="131_rampart_parapet_s"]
+[ext_resource type="Texture2D" uid="uid://d3yd4lcmj5dqd" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_w.png" id="132_rampart_parapet_w"]
+[ext_resource type="Texture2D" uid="uid://6xo7vf41m5rm" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_n.png" id="133_rampart_crenellation_n"]
+[ext_resource type="Texture2D" uid="uid://bslgbus4afrbe" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_e.png" id="134_rampart_crenellation_e"]
+[ext_resource type="Texture2D" uid="uid://b2g80i5re5w3x" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_s.png" id="135_rampart_crenellation_s"]
+[ext_resource type="Texture2D" uid="uid://3d0o7bmq5wks" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_w.png" id="136_rampart_crenellation_w"]
+[ext_resource type="Texture2D" uid="uid://bb0n4ky461mxa" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_n.png" id="137_rampart_broken_gap_n"]
+[ext_resource type="Texture2D" uid="uid://dm2e7ogwamr4" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_e.png" id="138_rampart_broken_gap_e"]
+[ext_resource type="Texture2D" uid="uid://sfrfkccmgij" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_s.png" id="139_rampart_broken_gap_s"]
+[ext_resource type="Texture2D" uid="uid://bwhe0tfkpg2d2" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_broken_gap_w.png" id="140_rampart_broken_gap_w"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
+texture = ExtResource("75_cliff_rock_floor_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2"]
+texture = ExtResource("76_cliff_rock_floor_cracked_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_11"]
+texture = ExtResource("67_main_courtyard_flagstone_mossy_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_101"]
+texture = ExtResource("21_floor_hatch_closed_01")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_102"]
+texture = ExtResource("22_floor_hatch_open_01")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_103"]
+texture = ExtResource("23_gothic_double_door_closed_n")
+texture_region_size = Vector2i(96, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_104"]
+texture = ExtResource("24_gothic_double_door_closed_s")
+texture_region_size = Vector2i(96, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_105"]
+texture = ExtResource("25_gothic_double_door_open_n")
+texture_region_size = Vector2i(96, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_106"]
+texture = ExtResource("26_gothic_double_door_open_s")
+texture_region_size = Vector2i(96, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_107"]
+texture = ExtResource("27_main_gate_portcullis_closed")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_108"]
+texture = ExtResource("28_main_gate_portcullis_open")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_109"]
+texture = ExtResource("29_stone_stairs_down_n")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_110"]
+texture = ExtResource("30_stone_stairs_down_s")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_12"]
+texture = ExtResource("66_main_courtyard_flagstone_wet_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_111"]
+texture = ExtResource("31_stone_stairs_up_e")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_112"]
+texture = ExtResource("32_stone_stairs_up_n")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_113"]
+texture = ExtResource("33_stone_stairs_up_s")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_114"]
+texture = ExtResource("34_stone_stairs_up_w")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_115"]
+texture = ExtResource("35_prop_banner_torn_large_01")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_116"]
+texture = ExtResource("36_prop_banquet_table_broken_01")
+texture_region_size = Vector2i(160, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_117"]
+texture = ExtResource("37_prop_banquet_table_long_01")
+texture_region_size = Vector2i(160, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_118"]
+texture = ExtResource("38_prop_barrel_wet_01")
+texture_region_size = Vector2i(32, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_119"]
+texture = ExtResource("39_prop_bookshelf_tall_01")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_120"]
+texture = ExtResource("40_prop_brazier_iron_01")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_13"]
+texture = ExtResource("68_main_gate_threshold_stone_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_121"]
+texture = ExtResource("41_prop_broken_cart_01")
+texture_region_size = Vector2i(96, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_122"]
+texture = ExtResource("42_prop_broken_spire_chunk_01")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_123"]
+texture = ExtResource("43_prop_chapel_pew_01")
+texture_region_size = Vector2i(96, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_124"]
+texture = ExtResource("44_prop_courtyard_fountain_broken_01")
+texture_region_size = Vector2i(96, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_125"]
+texture = ExtResource("45_prop_crate_stack_wet_01")
+texture_region_size = Vector2i(96, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_126"]
+texture = ExtResource("46_prop_fallen_chandelier_01")
+texture_region_size = Vector2i(96, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_127"]
+texture = ExtResource("47_prop_fallen_masonry_01")
+texture_region_size = Vector2i(96, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_128"]
+texture = ExtResource("48_prop_gargoyle_perch_01")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_129"]
+texture = ExtResource("50_prop_gate_winch_01")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_130"]
+texture = ExtResource("51_prop_gothic_statue_broken_01")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_14"]
+texture = ExtResource("16_ocean_dark_water_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_131"]
+texture = ExtResource("52_prop_gothic_statue_intact_01")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_132"]
+texture = ExtResource("53_prop_great_hall_column_01")
+texture_region_size = Vector2i(32, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_133"]
+texture = ExtResource("54_prop_lightning_rod_01")
+texture_region_size = Vector2i(32, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_134"]
+texture = ExtResource("56_prop_portcullis_chain_01")
+texture_region_size = Vector2i(32, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_135"]
+texture = ExtResource("57_prop_rope_bridge_anchor_01")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_136"]
+texture = ExtResource("58_prop_sarcophagus_01")
+texture_region_size = Vector2i(128, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_137"]
+texture = ExtResource("59_prop_sea_spray_rock_01")
+texture_region_size = Vector2i(96, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_138"]
+texture = ExtResource("60_prop_telescope_broken_01")
+texture_region_size = Vector2i(96, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_139"]
+texture = ExtResource("61_prop_throne_ruined_01")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_140"]
+texture = ExtResource("62_prop_torch_wall_gothic_01")
+texture_region_size = Vector2i(32, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_15"]
+texture = ExtResource("17_ocean_foam_edge_e")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_16"]
+texture = ExtResource("18_ocean_foam_edge_n")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_17"]
+texture = ExtResource("19_ocean_foam_edge_s")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_18"]
+texture = ExtResource("20_ocean_foam_edge_w")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_20"]
+texture = ExtResource("74_rampart_walkway_broken_01")
+texture_region_size = Vector2i(216, 221)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3"]
+texture = ExtResource("78_dungeon_stone_floor_01")
+texture_region_size = Vector2i(218, 219)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_21"]
+texture = ExtResource("73_rampart_walkway_floor_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_22"]
+texture = ExtResource("77_roof_slate_dark_01")
+texture_region_size = Vector2i(218, 219)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_23"]
+texture = ExtResource("79_undercroft_wet_stone_floor_01")
+texture_region_size = Vector2i(219, 219)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_24"]
+texture = ExtResource("110_gothic_castle_wall_arch_e")
+texture_region_size = Vector2i(163, 171)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_25"]
+texture = ExtResource("109_gothic_castle_wall_arch_n")
+texture_region_size = Vector2i(163, 171)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_26"]
+texture = ExtResource("111_gothic_castle_wall_arch_s")
+texture_region_size = Vector2i(162, 171)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_27"]
+texture = ExtResource("112_gothic_castle_wall_arch_w")
+texture_region_size = Vector2i(165, 171)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_28"]
+texture = ExtResource("102_gothic_castle_wall_breach_e")
+texture_region_size = Vector2i(156, 185)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_29"]
+texture = ExtResource("101_gothic_castle_wall_breach_n")
+texture_region_size = Vector2i(152, 186)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_30"]
+texture = ExtResource("103_gothic_castle_wall_breach_s")
+texture_region_size = Vector2i(152, 186)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4"]
+texture = ExtResource("72_great_hall_carpet_runner_horizontal_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_31"]
+texture = ExtResource("104_gothic_castle_wall_breach_w")
+texture_region_size = Vector2i(156, 186)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_32"]
+texture = ExtResource("98_gothic_castle_wall_damaged_e")
+texture_region_size = Vector2i(156, 188)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_33"]
+texture = ExtResource("97_gothic_castle_wall_damaged_n")
+texture_region_size = Vector2i(152, 188)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_34"]
+texture = ExtResource("99_gothic_castle_wall_damaged_s")
+texture_region_size = Vector2i(149, 188)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_35"]
+texture = ExtResource("100_gothic_castle_wall_damaged_w")
+texture_region_size = Vector2i(156, 188)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_36"]
+texture = ExtResource("94_gothic_castle_wall_endcap_e")
+texture_region_size = Vector2i(158, 187)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_37"]
+texture = ExtResource("93_gothic_castle_wall_endcap_n")
+texture_region_size = Vector2i(152, 187)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_38"]
+texture = ExtResource("95_gothic_castle_wall_endcap_s")
+texture_region_size = Vector2i(151, 187)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_39"]
+texture = ExtResource("96_gothic_castle_wall_endcap_w")
+texture_region_size = Vector2i(154, 187)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_40"]
+texture = ExtResource("85_gothic_castle_wall_inner_corner_ne")
+texture_region_size = Vector2i(158, 156)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5"]
+texture = ExtResource("71_great_hall_carpet_runner_vertical_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_41"]
+texture = ExtResource("86_gothic_castle_wall_inner_corner_nw")
+texture_region_size = Vector2i(156, 154)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_42"]
+texture = ExtResource("87_gothic_castle_wall_inner_corner_se")
+texture_region_size = Vector2i(158, 155)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_43"]
+texture = ExtResource("88_gothic_castle_wall_inner_corner_sw")
+texture_region_size = Vector2i(157, 155)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_44"]
+texture = ExtResource("89_gothic_castle_wall_outer_corner_ne")
+texture_region_size = Vector2i(161, 187)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_45"]
+texture = ExtResource("90_gothic_castle_wall_outer_corner_nw")
+texture_region_size = Vector2i(162, 187)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_46"]
+texture = ExtResource("91_gothic_castle_wall_outer_corner_se")
+texture_region_size = Vector2i(160, 187)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_47"]
+texture = ExtResource("92_gothic_castle_wall_outer_corner_sw")
+texture_region_size = Vector2i(161, 187)
+0:0/0 = 0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_2ikvo"]
+load_path = "res://.godot/imported/gothic_castle_wall_straight_e.png-789972bd35c995becf2d17420227755c.ctex"
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_48"]
+texture = SubResource("CompressedTexture2D_2ikvo")
+margins = Vector2i(100, 7)
+texture_region_size = Vector2i(51, 55)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_49"]
+texture = ExtResource("81_gothic_castle_wall_straight_n")
+texture_region_size = Vector2i(159, 169)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_50"]
+texture = ExtResource("83_gothic_castle_wall_straight_s")
+texture_region_size = Vector2i(161, 169)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6"]
+texture = ExtResource("69_great_hall_marble_floor_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_51"]
+texture = ExtResource("84_gothic_castle_wall_straight_w")
+texture_region_size = Vector2i(160, 169)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_52"]
+texture = ExtResource("106_gothic_castle_wall_window_tall_e")
+texture_region_size = Vector2i(158, 171)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_53"]
+texture = ExtResource("105_gothic_castle_wall_window_tall_n")
+texture_region_size = Vector2i(157, 171)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_54"]
+texture = ExtResource("107_gothic_castle_wall_window_tall_s")
+texture_region_size = Vector2i(158, 171)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_55"]
+texture = ExtResource("108_gothic_castle_wall_window_tall_w")
+texture_region_size = Vector2i(158, 171)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_56"]
+texture = ExtResource("122_great_hall_wall_banner_e")
+texture_region_size = Vector2i(203, 275)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_57"]
+texture = ExtResource("121_great_hall_wall_banner_n")
+texture_region_size = Vector2i(259, 275)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_58"]
+texture = ExtResource("123_great_hall_wall_banner_s")
+texture_region_size = Vector2i(214, 275)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_59"]
+texture = ExtResource("124_great_hall_wall_banner_w")
+texture_region_size = Vector2i(248, 275)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_60"]
+texture = ExtResource("126_great_hall_wall_broken_exterior_e")
+texture_region_size = Vector2i(203, 260)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7"]
+texture = ExtResource("70_great_hall_marble_floor_cracked_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_61"]
+texture = ExtResource("125_great_hall_wall_broken_exterior_n")
+texture_region_size = Vector2i(259, 260)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_62"]
+texture = ExtResource("127_great_hall_wall_broken_exterior_s")
+texture_region_size = Vector2i(214, 259)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_63"]
+texture = ExtResource("128_great_hall_wall_broken_exterior_w")
+texture_region_size = Vector2i(248, 260)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_64"]
+texture = ExtResource("118_great_hall_wall_column_e")
+texture_region_size = Vector2i(203, 263)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_65"]
+texture = ExtResource("117_great_hall_wall_column_n")
+texture_region_size = Vector2i(259, 263)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_66"]
+texture = ExtResource("119_great_hall_wall_column_s")
+texture_region_size = Vector2i(214, 263)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_67"]
+texture = ExtResource("120_great_hall_wall_column_w")
+texture_region_size = Vector2i(248, 263)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_68"]
+texture = ExtResource("114_great_hall_wall_straight_e")
+texture_region_size = Vector2i(203, 280)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_69"]
+texture = ExtResource("113_great_hall_wall_straight_n")
+texture_region_size = Vector2i(259, 280)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_70"]
+texture = ExtResource("115_great_hall_wall_straight_s")
+texture_region_size = Vector2i(214, 280)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_8"]
+texture = ExtResource("63_main_courtyard_flagstone_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_71"]
+texture = ExtResource("116_great_hall_wall_straight_w")
+texture_region_size = Vector2i(248, 280)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_72"]
+texture = ExtResource("49_prop_gate_barricade_01")
+texture_region_size = Vector2i(96, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_73"]
+texture = ExtResource("55_prop_low_garden_wall_01")
+texture_region_size = Vector2i(96, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_74"]
+texture = ExtResource("138_rampart_broken_gap_e")
+texture_region_size = Vector2i(403, 196)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_75"]
+texture = ExtResource("137_rampart_broken_gap_n")
+texture_region_size = Vector2i(101, 267)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_76"]
+texture = ExtResource("139_rampart_broken_gap_s")
+texture_region_size = Vector2i(102, 267)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_77"]
+texture = ExtResource("140_rampart_broken_gap_w")
+texture_region_size = Vector2i(404, 194)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_78"]
+texture = ExtResource("134_rampart_crenellation_e")
+texture_region_size = Vector2i(405, 183)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_79"]
+texture = ExtResource("133_rampart_crenellation_n")
+texture_region_size = Vector2i(97, 271)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_80"]
+texture = ExtResource("135_rampart_crenellation_s")
+texture_region_size = Vector2i(98, 271)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_9"]
+texture = ExtResource("64_main_courtyard_flagstone_02")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_81"]
+texture = ExtResource("136_rampart_crenellation_w")
+texture_region_size = Vector2i(414, 183)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_82"]
+texture = ExtResource("130_rampart_parapet_e")
+texture_region_size = Vector2i(404, 211)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_83"]
+texture = ExtResource("129_rampart_parapet_n")
+texture_region_size = Vector2i(91, 326)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_84"]
+texture = ExtResource("131_rampart_parapet_s")
+texture_region_size = Vector2i(89, 326)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_85"]
+texture = ExtResource("132_rampart_parapet_w")
+texture_region_size = Vector2i(404, 210)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_86"]
+texture = ExtResource("1_cliff_edge_e")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_87"]
+texture = ExtResource("2_cliff_edge_n")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_88"]
+texture = ExtResource("3_cliff_edge_s")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_89"]
+texture = ExtResource("4_cliff_edge_w")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_90"]
+texture = ExtResource("5_cliff_face_slice_01")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_10"]
+texture = ExtResource("65_main_courtyard_flagstone_cracked_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_91"]
+texture = ExtResource("6_cliff_face_slice_mossy_01")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_92"]
+texture = ExtResource("7_cliff_face_slice_wet_01")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_93"]
+texture = ExtResource("8_cliff_inner_corner_ne")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_94"]
+texture = ExtResource("9_cliff_inner_corner_nw")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_95"]
+texture = ExtResource("10_cliff_inner_corner_se")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_96"]
+texture = ExtResource("11_cliff_inner_corner_sw")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_97"]
+texture = ExtResource("12_cliff_outer_corner_ne")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_98"]
+texture = ExtResource("13_cliff_outer_corner_nw")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_99"]
+texture = ExtResource("14_cliff_outer_corner_se")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_100"]
+texture = ExtResource("15_cliff_outer_corner_sw")
+texture_region_size = Vector2i(64, 96)
+0:0/0 = 0
+
+[resource]
+sources/0 = SubResource("TileSetAtlasSource_1")
+sources/1 = SubResource("TileSetAtlasSource_2")
+sources/2 = SubResource("TileSetAtlasSource_3")
+sources/3 = SubResource("TileSetAtlasSource_4")
+sources/4 = SubResource("TileSetAtlasSource_5")
+sources/5 = SubResource("TileSetAtlasSource_6")
+sources/6 = SubResource("TileSetAtlasSource_7")
+sources/7 = SubResource("TileSetAtlasSource_8")
+sources/8 = SubResource("TileSetAtlasSource_9")
+sources/9 = SubResource("TileSetAtlasSource_10")
+sources/10 = SubResource("TileSetAtlasSource_11")
+sources/11 = SubResource("TileSetAtlasSource_12")
+sources/12 = SubResource("TileSetAtlasSource_13")
+sources/13 = SubResource("TileSetAtlasSource_14")
+sources/14 = SubResource("TileSetAtlasSource_15")
+sources/15 = SubResource("TileSetAtlasSource_16")
+sources/16 = SubResource("TileSetAtlasSource_17")
+sources/17 = SubResource("TileSetAtlasSource_18")
+sources/19 = SubResource("TileSetAtlasSource_20")
+sources/20 = SubResource("TileSetAtlasSource_21")
+sources/21 = SubResource("TileSetAtlasSource_22")
+sources/22 = SubResource("TileSetAtlasSource_23")
+sources/23 = SubResource("TileSetAtlasSource_24")
+sources/24 = SubResource("TileSetAtlasSource_25")
+sources/25 = SubResource("TileSetAtlasSource_26")
+sources/26 = SubResource("TileSetAtlasSource_27")
+sources/27 = SubResource("TileSetAtlasSource_28")
+sources/28 = SubResource("TileSetAtlasSource_29")
+sources/29 = SubResource("TileSetAtlasSource_30")
+sources/30 = SubResource("TileSetAtlasSource_31")
+sources/31 = SubResource("TileSetAtlasSource_32")
+sources/32 = SubResource("TileSetAtlasSource_33")
+sources/33 = SubResource("TileSetAtlasSource_34")
+sources/34 = SubResource("TileSetAtlasSource_35")
+sources/35 = SubResource("TileSetAtlasSource_36")
+sources/36 = SubResource("TileSetAtlasSource_37")
+sources/37 = SubResource("TileSetAtlasSource_38")
+sources/38 = SubResource("TileSetAtlasSource_39")
+sources/39 = SubResource("TileSetAtlasSource_40")
+sources/40 = SubResource("TileSetAtlasSource_41")
+sources/41 = SubResource("TileSetAtlasSource_42")
+sources/42 = SubResource("TileSetAtlasSource_43")
+sources/43 = SubResource("TileSetAtlasSource_44")
+sources/44 = SubResource("TileSetAtlasSource_45")
+sources/45 = SubResource("TileSetAtlasSource_46")
+sources/46 = SubResource("TileSetAtlasSource_47")
+sources/47 = SubResource("TileSetAtlasSource_48")
+sources/48 = SubResource("TileSetAtlasSource_49")
+sources/49 = SubResource("TileSetAtlasSource_50")
+sources/50 = SubResource("TileSetAtlasSource_51")
+sources/51 = SubResource("TileSetAtlasSource_52")
+sources/52 = SubResource("TileSetAtlasSource_53")
+sources/53 = SubResource("TileSetAtlasSource_54")
+sources/54 = SubResource("TileSetAtlasSource_55")
+sources/55 = SubResource("TileSetAtlasSource_56")
+sources/56 = SubResource("TileSetAtlasSource_57")
+sources/57 = SubResource("TileSetAtlasSource_58")
+sources/58 = SubResource("TileSetAtlasSource_59")
+sources/59 = SubResource("TileSetAtlasSource_60")
+sources/60 = SubResource("TileSetAtlasSource_61")
+sources/61 = SubResource("TileSetAtlasSource_62")
+sources/62 = SubResource("TileSetAtlasSource_63")
+sources/63 = SubResource("TileSetAtlasSource_64")
+sources/64 = SubResource("TileSetAtlasSource_65")
+sources/65 = SubResource("TileSetAtlasSource_66")
+sources/66 = SubResource("TileSetAtlasSource_67")
+sources/67 = SubResource("TileSetAtlasSource_68")
+sources/68 = SubResource("TileSetAtlasSource_69")
+sources/69 = SubResource("TileSetAtlasSource_70")
+sources/70 = SubResource("TileSetAtlasSource_71")
+sources/71 = SubResource("TileSetAtlasSource_72")
+sources/72 = SubResource("TileSetAtlasSource_73")
+sources/73 = SubResource("TileSetAtlasSource_74")
+sources/74 = SubResource("TileSetAtlasSource_75")
+sources/75 = SubResource("TileSetAtlasSource_76")
+sources/76 = SubResource("TileSetAtlasSource_77")
+sources/77 = SubResource("TileSetAtlasSource_78")
+sources/78 = SubResource("TileSetAtlasSource_79")
+sources/79 = SubResource("TileSetAtlasSource_80")
+sources/80 = SubResource("TileSetAtlasSource_81")
+sources/81 = SubResource("TileSetAtlasSource_82")
+sources/82 = SubResource("TileSetAtlasSource_83")
+sources/83 = SubResource("TileSetAtlasSource_84")
+sources/84 = SubResource("TileSetAtlasSource_85")
+sources/85 = SubResource("TileSetAtlasSource_86")
+sources/86 = SubResource("TileSetAtlasSource_87")
+sources/87 = SubResource("TileSetAtlasSource_88")
+sources/88 = SubResource("TileSetAtlasSource_89")
+sources/89 = SubResource("TileSetAtlasSource_90")
+sources/90 = SubResource("TileSetAtlasSource_91")
+sources/91 = SubResource("TileSetAtlasSource_92")
+sources/92 = SubResource("TileSetAtlasSource_93")
+sources/93 = SubResource("TileSetAtlasSource_94")
+sources/94 = SubResource("TileSetAtlasSource_95")
+sources/95 = SubResource("TileSetAtlasSource_96")
+sources/96 = SubResource("TileSetAtlasSource_97")
+sources/97 = SubResource("TileSetAtlasSource_98")
+sources/98 = SubResource("TileSetAtlasSource_99")
+sources/99 = SubResource("TileSetAtlasSource_100")
+sources/100 = SubResource("TileSetAtlasSource_101")
+sources/101 = SubResource("TileSetAtlasSource_102")
+sources/102 = SubResource("TileSetAtlasSource_103")
+sources/103 = SubResource("TileSetAtlasSource_104")
+sources/104 = SubResource("TileSetAtlasSource_105")
+sources/105 = SubResource("TileSetAtlasSource_106")
+sources/106 = SubResource("TileSetAtlasSource_107")
+sources/107 = SubResource("TileSetAtlasSource_108")
+sources/108 = SubResource("TileSetAtlasSource_109")
+sources/109 = SubResource("TileSetAtlasSource_110")
+sources/110 = SubResource("TileSetAtlasSource_111")
+sources/111 = SubResource("TileSetAtlasSource_112")
+sources/112 = SubResource("TileSetAtlasSource_113")
+sources/113 = SubResource("TileSetAtlasSource_114")
+sources/114 = SubResource("TileSetAtlasSource_115")
+sources/115 = SubResource("TileSetAtlasSource_116")
+sources/116 = SubResource("TileSetAtlasSource_117")
+sources/117 = SubResource("TileSetAtlasSource_118")
+sources/118 = SubResource("TileSetAtlasSource_119")
+sources/119 = SubResource("TileSetAtlasSource_120")
+sources/120 = SubResource("TileSetAtlasSource_121")
+sources/121 = SubResource("TileSetAtlasSource_122")
+sources/122 = SubResource("TileSetAtlasSource_123")
+sources/123 = SubResource("TileSetAtlasSource_124")
+sources/124 = SubResource("TileSetAtlasSource_125")
+sources/125 = SubResource("TileSetAtlasSource_126")
+sources/126 = SubResource("TileSetAtlasSource_127")
+sources/127 = SubResource("TileSetAtlasSource_128")
+sources/128 = SubResource("TileSetAtlasSource_129")
+sources/129 = SubResource("TileSetAtlasSource_130")
+sources/130 = SubResource("TileSetAtlasSource_131")
+sources/131 = SubResource("TileSetAtlasSource_132")
+sources/132 = SubResource("TileSetAtlasSource_133")
+sources/133 = SubResource("TileSetAtlasSource_134")
+sources/134 = SubResource("TileSetAtlasSource_135")
+sources/135 = SubResource("TileSetAtlasSource_136")
+sources/136 = SubResource("TileSetAtlasSource_137")
+sources/137 = SubResource("TileSetAtlasSource_138")
+sources/138 = SubResource("TileSetAtlasSource_139")
+sources/139 = SubResource("TileSetAtlasSource_140")

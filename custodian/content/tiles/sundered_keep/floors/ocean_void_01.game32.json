@@ -1,0 +1,132 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/ocean_void_01",
+  "name": "ocean_void_01",
+  "filename": "ocean_void_01.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-05-30T04:03:00+00:00",
+  "source": {
+    "sheet_key": "floors",
+    "sheet_file": "sundered_floor_tiles.png",
+    "sheet_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/sundered_floor_tiles.png",
+    "sheet_sha256": "e747a8598a18b2c6977f66e34e6b52b13a0b343c58b987a20ba3c618f9a4e5a2",
+    "sheet_asset_index": 17,
+    "sheet_bbox_px": [
+      1207,
+      724,
+      241,
+      362
+    ],
+    "source_crop_bbox_px": [
+      0,
+      0,
+      241,
+      362
+    ],
+    "detected_background_colors_rgb": [],
+    "extraction_method": {
+      "background": "none",
+      "component_join_radius_px": 18,
+      "crop_padding_px": 8,
+      "min_component_area_px": 900,
+      "type": "grid_full_cell"
+    },
+    "cell_grid": {
+      "rows": 3,
+      "cols": 6,
+      "row": 2,
+      "col": 5,
+      "cell_box_px": [
+        1207,
+        724,
+        1448,
+        1086
+      ]
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://content/tiles/sundered_keep/floors/ocean_void_01.png",
+    "metadata_path": "res://content/tiles/sundered_keep/floors/ocean_void_01.game32.json",
+    "domain": "floors",
+    "kind": "tile",
+    "subkind": "floor_tile",
+    "canvas_px": [
+      32,
+      32
+    ],
+    "canvas_tiles": [
+      1,
+      1
+    ],
+    "content_bbox_px": [
+      0,
+      0,
+      241,
+      362
+    ],
+    "scale_from_source_crop": 1.0,
+    "paste_offset_px": [
+      0,
+      0
+    ],
+    "anchor": "top_left",
+    "pivot_px": [
+      120,
+      181
+    ],
+    "pivot_normalized": [
+      0.5,
+      0.5
+    ],
+    "y_sort": false,
+    "draw_order": "ground",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    }
+  },
+  "gameplay": {
+    "walkable": false,
+    "interactable": false,
+    "traversal": null,
+    "direction": null,
+    "state": null,
+    "tags": [
+      "floors",
+      "hazard",
+      "non_walkable",
+      "ocean",
+      "sundered_keep",
+      "void"
+    ]
+  },
+  "collision": {
+    "kind": "tile",
+    "blocks_movement": true,
+    "blocks_projectiles": true,
+    "footprint_tiles_wh": [
+      1,
+      1
+    ],
+    "footprint_cells": [
+      {
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "origin_tile": {
+      "x": 0,
+      "y": 0,
+      "anchor": "top_left"
+    }
+  },
+  "editor": {
+    "display_name": "Ocean Void 01",
+    "notes": "Generated from Sundered Keep master sheet; adjust footprint/collision after in-editor placement review if needed."
+  }
+}

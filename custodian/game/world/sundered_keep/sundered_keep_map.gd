@@ -2,30 +2,70 @@ extends Node2D
 class_name SunderedKeepMap
 
 const TILE_SIZE := 32.0
-const MAP_SIZE_TILES := Vector2i(64, 44)
+const DEFAULT_LEVEL_DATA_PATH := "res://content/levels/sundered_keep/sundered_keep_front_gate_large.json"
 const TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_travel_gate.gd")
 const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
+const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
+const SUNDERED_KEEP_TILEMAP_LOADER := preload("res://game/world/sundered_keep/sundered_keep_tilemap_loader.gd")
+
+const SUNDERED_GATE_KEY_ID := &"sundered_gate_key"
+const SUNDERED_GATE_KEY_NAME := "Sundered Gate Key"
+const SUNDERED_GATE_KEY_FLAVOR := "A corroded winch key stamped with the keep's split-ring seal."
+
 const WALL_ASSET_DIRS := [
+	"res://content/tiles/sundered_keep/walls/gatehouse",
 	"res://content/tiles/sundered_keep/walls/gothic_castle",
 	"res://content/tiles/sundered_keep/walls/great_hall",
 	"res://content/tiles/sundered_keep/walls/ramparts",
 	"res://content/tiles/sundered_keep/walls",
 ]
 
-@export var entrance_tile: Vector2i = Vector2i(32, 39)
-@export var return_gate_tile: Vector2i = Vector2i(32, 38)
-@export var upper_stair_tile: Vector2i = Vector2i(21, 19)
-@export var lower_stair_tile: Vector2i = Vector2i(16, 29)
-@export var hatch_tile: Vector2i = Vector2i(15, 30)
+@export var level_data_path: String = DEFAULT_LEVEL_DATA_PATH
+@export var entrance_tile: Vector2i = Vector2i(56, 76)
+@export var return_gate_tile: Vector2i = Vector2i(42, 58)
+@export var main_gate_tile: Vector2i = Vector2i(54, 50)
+@export var great_hall_door_tile: Vector2i = Vector2i(55, 30)
+@export var upper_stair_tile: Vector2i = Vector2i(55, 17)
+@export var lower_stair_tile: Vector2i = Vector2i(20, 37)
+@export var hatch_tile: Vector2i = Vector2i(25, 39)
+@export var return_mooring_origin_tile: Vector2i = Vector2i(39, 56)
+@export var key_pickup_tile: Vector2i = Vector2i(73, 56)
 
 var main_map: Node = null
 var main_return_position: Vector2 = Vector2.ZERO
+var map_size_tiles := Vector2i(112, 80)
 
 var _built := false
 var _camera_bounds := Rect2()
 var _layers: Dictionary = {}
 var _textures: Dictionary = {}
 var _return_gate: Node2D = null
+var _return_mooring_interaction: Node2D = null
+var _return_mooring_active_overlay: Sprite2D = null
+var _main_gate_interaction: Node2D = null
+var _great_hall_door_interaction: Node2D = null
+var _key_pickup_interaction: Node2D = null
+var _main_gate_closed_sprite: Sprite2D = null
+var _main_gate_open_sprite: Sprite2D = null
+var _main_gate_blockers: Array[Node] = []
+var _great_hall_door_closed_sprite: Sprite2D = null
+var _great_hall_door_open_sprite: Sprite2D = null
+var _great_hall_door_blockers: Array[Node] = []
+var _main_gate_open := false
+var _great_hall_door_open := false
+var _has_sundered_gate_key := false
+var _return_mooring_created := false
+var _level_id := ""
+var _stats := {
+	"floors": 0,
+	"edges": 0,
+	"walls": 0,
+	"props": 0,
+	"blockers": 0,
+	"interactables": 0,
+	"modules": 0,
+	"missing_assets": 0,
+}
 
 
 func _ready() -> void:
@@ -63,28 +103,81 @@ func return_to_main(actor: Node) -> void:
 	_refresh_camera(main_map, actor)
 
 
+func get_sundered_keep_debug_state() -> Dictionary:
+	return {
+		"level_id": _level_id,
+		"map_size_tiles": map_size_tiles,
+		"floor_sprites": int(_stats["floors"]),
+		"edge_sprites": int(_stats["edges"]),
+		"wall_sprites": int(_stats["walls"]),
+		"prop_sprites": int(_stats["props"]),
+		"blocker_bodies": int(_stats["blockers"]),
+		"interactable_areas": int(_stats["interactables"]),
+		"module_count": int(_stats["modules"]),
+		"missing_assets": int(_stats["missing_assets"]),
+		"main_gate_open": _main_gate_open,
+		"great_hall_door_open": _great_hall_door_open,
+		"has_sundered_gate_key": _player_has_sundered_gate_key(),
+		"key_pickup_exists": _key_pickup_interaction != null and is_instance_valid(_key_pickup_interaction),
+		"return_mooring_created": _return_mooring_created,
+	}
+
+
+func debug_print_layout_summary() -> void:
+	var state := get_sundered_keep_debug_state()
+	print("[SunderedKeepDataTilemap] Built %s size=%s floors=%d edges=%d walls=%d props=%d blockers=%d interactables=%d modules=%d missing_assets=%d gate_open=%s key=%s return_mooring=%s" % [
+		str(state["level_id"]),
+		str(state["map_size_tiles"]),
+		int(state["floor_sprites"]),
+		int(state["edge_sprites"]),
+		int(state["wall_sprites"]),
+		int(state["prop_sprites"]),
+		int(state["blocker_bodies"]),
+		int(state["interactable_areas"]),
+		int(state["module_count"]),
+		int(state["missing_assets"]),
+		str(state["main_gate_open"]),
+		str(state["has_sundered_gate_key"]),
+		str(state["return_mooring_created"]),
+	])
+
+
 func _build_once() -> void:
 	if _built:
 		return
 	_built = true
+	var loader: RefCounted = SUNDERED_KEEP_TILEMAP_LOADER.new()
+	var level_data: Dictionary = loader.call("load_level", level_data_path)
+	if not level_data.is_empty():
+		_build_from_level_data(level_data)
+		debug_print_layout_summary()
+		return
+
 	_camera_bounds = Rect2(
 		Vector2(-TILE_SIZE * 2.0, -TILE_SIZE * 2.0),
-		Vector2(float(MAP_SIZE_TILES.x + 4) * TILE_SIZE, float(MAP_SIZE_TILES.y + 4) * TILE_SIZE)
+		Vector2(float(map_size_tiles.x + 4) * TILE_SIZE, float(map_size_tiles.y + 4) * TILE_SIZE)
 	)
 	_create_layers()
 	_build_ocean_backdrop()
-	_build_main_gate()
-	_build_courtyard()
+	_build_cliff_island_foundation()
+	_build_storm_causeway()
+	_build_return_mooring(return_mooring_origin_tile)
+	_build_main_gate_lock()
+	_build_sundered_gate_key_pickup(key_pickup_tile)
+	_build_irregular_courtyard()
 	_build_great_hall()
-	_build_rampart_and_cliffs()
+	_build_east_rampart()
+	_build_west_service_path()
 	_build_traversal_stubs()
 	_add_return_gate()
+	debug_print_layout_summary()
 
 
 func _create_layers() -> void:
-	var names := [
+	_create_layers_from_names([
 		"TerrainBase",
 		"TerrainEdges",
+		"FloorDetail",
 		"WallsLow",
 		"WallsHigh",
 		"PropsStatic",
@@ -92,12 +185,18 @@ func _create_layers() -> void:
 		"Traversal",
 		"Hazards",
 		"Overlays",
+		"Effects",
+		"WorldUI",
 		"RoofOccluders",
 		"Collision",
-	]
+	])
+
+
+func _create_layers_from_names(names: Array) -> void:
 	var z_by_name := {
-		"TerrainBase": -80,
-		"TerrainEdges": -70,
+		"TerrainBase": -90,
+		"TerrainEdges": -75,
+		"FloorDetail": -60,
 		"WallsLow": -35,
 		"WallsHigh": -15,
 		"PropsStatic": -5,
@@ -105,122 +204,589 @@ func _create_layers() -> void:
 		"Traversal": 8,
 		"Hazards": 10,
 		"Overlays": 15,
+		"Effects": 25,
+		"WorldUI": 45,
 		"RoofOccluders": 60,
 		"Collision": 0,
 	}
 	for layer_name in names:
+		if _layers.has(str(layer_name)):
+			continue
 		var layer := Node2D.new()
-		layer.name = layer_name
+		layer.name = str(layer_name)
 		layer.z_as_relative = false
-		layer.z_index = int(z_by_name[layer_name])
+		layer.z_index = int(z_by_name.get(str(layer_name), 0))
 		add_child(layer)
-		_layers[layer_name] = layer
+		_layers[str(layer_name)] = layer
+
+
+func _build_from_level_data(data: Dictionary) -> void:
+	_level_id = str(data.get("level_id", "sundered_keep_front_gate_large"))
+	map_size_tiles = _array_to_vector2i(data.get("map_size_tiles", [112, 80]), map_size_tiles)
+	entrance_tile = _array_to_vector2i(data.get("start_tile", [entrance_tile.x, entrance_tile.y]), entrance_tile)
+	return_gate_tile = _array_to_vector2i(data.get("return_gate_tile", [return_gate_tile.x, return_gate_tile.y]), return_gate_tile)
+	main_gate_tile = _array_to_vector2i(data.get("main_gate_tile", [main_gate_tile.x, main_gate_tile.y]), main_gate_tile)
+	great_hall_door_tile = _array_to_vector2i(data.get("great_hall_door_tile", [great_hall_door_tile.x, great_hall_door_tile.y]), great_hall_door_tile)
+	upper_stair_tile = _array_to_vector2i(data.get("upper_stair_tile", [upper_stair_tile.x, upper_stair_tile.y]), upper_stair_tile)
+	lower_stair_tile = _array_to_vector2i(data.get("lower_stair_tile", [lower_stair_tile.x, lower_stair_tile.y]), lower_stair_tile)
+	hatch_tile = _array_to_vector2i(data.get("hatch_tile", [hatch_tile.x, hatch_tile.y]), hatch_tile)
+	return_mooring_origin_tile = _array_to_vector2i(data.get("return_mooring_origin_tile", [return_mooring_origin_tile.x, return_mooring_origin_tile.y]), return_mooring_origin_tile)
+	key_pickup_tile = _array_to_vector2i(data.get("key_pickup_tile", [key_pickup_tile.x, key_pickup_tile.y]), key_pickup_tile)
+
+	var bounds_array: Array = data.get("camera_bounds_tiles", [0, 0, map_size_tiles.x, map_size_tiles.y])
+	_camera_bounds = Rect2(
+		Vector2(float(bounds_array[0]) * TILE_SIZE, float(bounds_array[1]) * TILE_SIZE),
+		Vector2(float(bounds_array[2]) * TILE_SIZE, float(bounds_array[3]) * TILE_SIZE)
+	)
+	_create_layers_from_names(data.get("layers", []))
+	_build_ocean_backdrop()
+
+	for op in data.get("ops", []):
+		_apply_level_op(op)
+
+	for marker in data.get("markers", []):
+		_apply_marker(marker)
+	for interactable in data.get("interactables", []):
+		_apply_interactable(interactable)
+	for blocker in data.get("blockers", []):
+		_apply_blocker(blocker)
+
+	_build_stateful_gates_from_level_data()
+	_build_traversal_stubs()
+	_add_return_gate()
+
+
+func _apply_level_op(op: Dictionary) -> void:
+	match str(op.get("type", "")):
+		"fill_rect":
+			_apply_fill_rect(op)
+		"fill_weighted_rect":
+			_apply_fill_weighted_rect(op)
+		"paint_cells":
+			_apply_paint_cells(op)
+		"stamp_prop":
+			_apply_stamp_prop(op)
+		"stamp_module":
+			_apply_stamp_module(op)
+		"stamp_wall":
+			_apply_stamp_wall(op)
+		"blocker_rect":
+			_apply_blocker(op)
+		"interactable":
+			_apply_interactable(op)
+		"marker":
+			_apply_marker(op)
+		_:
+			push_warning("[SunderedKeepDataTilemap] Unknown op type: %s" % str(op.get("type", "")))
+
+
+func _apply_fill_rect(op: Dictionary) -> void:
+	var rect := _array_to_rect2i(op.get("rect", [0, 0, 0, 0]))
+	var layer := str(op.get("layer", "TerrainBase"))
+	var asset_id := str(op.get("asset_id", ""))
+	var category := str(op.get("category", _category_for_layer_asset(layer, asset_id)))
+	for y in range(rect.position.y, rect.end.y):
+		for x in range(rect.position.x, rect.end.x):
+			_add_tile(layer, asset_id, category, Vector2i(x, y))
+
+
+func _apply_fill_weighted_rect(op: Dictionary) -> void:
+	var rect := _array_to_rect2i(op.get("rect", [0, 0, 0, 0]))
+	var layer := str(op.get("layer", "TerrainBase"))
+	var assets: Array = op.get("assets", [])
+	if assets.is_empty():
+		return
+	for y in range(rect.position.y, rect.end.y):
+		for x in range(rect.position.x, rect.end.x):
+			var asset_id := _weighted_asset_for_tile(assets, x, y)
+			var category := str(op.get("category", _category_for_layer_asset(layer, asset_id)))
+			_add_tile(layer, asset_id, category, Vector2i(x, y))
+
+
+func _apply_paint_cells(op: Dictionary) -> void:
+	var layer := str(op.get("layer", "TerrainBase"))
+	var asset_id := str(op.get("asset_id", ""))
+	var category := str(op.get("category", _category_for_layer_asset(layer, asset_id)))
+	for cell in op.get("cells", []):
+		_add_tile(layer, asset_id, category, _array_to_vector2i(cell, Vector2i.ZERO))
+
+
+func _apply_stamp_prop(op: Dictionary) -> void:
+	var layer := str(op.get("layer", "PropsStatic"))
+	var tile := _array_to_vector2i(op.get("tile", [0, 0]), Vector2i.ZERO)
+	_add_prop(layer, str(op.get("asset_id", "")), tile)
+	if bool(op.get("blocks_movement", false)) and layer != "PropsBlocking":
+		var size := _array_to_vector2i(op.get("footprint", [1, 1]), Vector2i.ONE)
+		_add_blocker(Rect2i(tile, size), str(op.get("blocker_name", "%sBlocker" % str(op.get("asset_id", "")))))
+
+
+func _apply_stamp_module(op: Dictionary) -> void:
+	var module_id := str(op.get("module_id", ""))
+	var origin := _array_to_vector2i(op.get("origin", [0, 0]), Vector2i.ZERO)
+	if module_id == "return_mooring_3x3_01":
+		_stats["modules"] = int(_stats["modules"]) + 1
+		_build_return_mooring(origin)
+	else:
+		push_warning("[SunderedKeepDataTilemap] Unknown module: %s" % module_id)
+
+
+func _apply_stamp_wall(op: Dictionary) -> void:
+	var rect := _array_to_rect2i(op.get("rect", [0, 0, 1, 1]))
+	var asset_id := str(op.get("asset_id", ""))
+	for y in range(rect.position.y, rect.end.y):
+		for x in range(rect.position.x, rect.end.x):
+			_add_wall_tile(Vector2i(x, y), asset_id)
+
+
+func _apply_blocker(op: Dictionary) -> void:
+	var rect := _array_to_rect2i(op.get("rect", [0, 0, 1, 1]))
+	var name := str(op.get("name", "LevelBlocker"))
+	var role := str(op.get("role", ""))
+	if role == "main_gate":
+		_main_gate_blockers.append(_add_blocker(rect, name))
+	elif role == "great_hall_door":
+		_great_hall_door_blockers.append(_add_blocker(rect, name))
+	else:
+		_add_blocker(rect, name)
+
+
+func _apply_interactable(op: Dictionary) -> void:
+	var tile := _array_to_vector2i(op.get("tile", [0, 0]), Vector2i.ZERO)
+	var kind := StringName(str(op.get("kind", "")))
+	var node_name := str(op.get("name", "%sInteraction" % str(kind)))
+	var prompt := str(op.get("prompt", "INTERACT"))
+	var distance := float(op.get("distance", 84.0))
+	var interactable := _add_interactable(node_name, kind, prompt, tile, distance)
+	match kind:
+		&"return_mooring":
+			_return_mooring_interaction = interactable
+		&"sundered_gate_key":
+			_key_pickup_interaction = interactable
+		&"main_gate":
+			_main_gate_interaction = interactable
+		&"great_hall_door":
+			_great_hall_door_interaction = interactable
+
+
+func _apply_marker(marker: Dictionary) -> void:
+	var marker_id := str(marker.get("id", ""))
+	var tile := _array_to_vector2i(marker.get("tile", [0, 0]), Vector2i.ZERO)
+	match marker_id:
+		"spawn":
+			entrance_tile = tile
+		"return_gate":
+			return_gate_tile = tile
+		"main_gate":
+			main_gate_tile = tile
+		"great_hall_door":
+			great_hall_door_tile = tile
+
+
+func _build_stateful_gates_from_level_data() -> void:
+	_add_tile("Overlays", "main_gate_portcullis_shadow_01", "overlays", main_gate_tile + Vector2i(1, 1))
+	_main_gate_closed_sprite = _add_sprite("Traversal", "main_gate_portcullis_closed", "doors", main_gate_tile, Vector2.ZERO)
+	_main_gate_open_sprite = _add_sprite("Traversal", "main_gate_portcullis_open", "doors", main_gate_tile, Vector2.ZERO)
+	if _main_gate_interaction == null:
+		_main_gate_interaction = _add_interactable("MainGateInteraction", &"main_gate", "OPEN MAIN GATE", main_gate_tile + Vector2i(2, 1), 96.0)
+	_set_main_gate_open(false)
+	_build_great_hall_door(great_hall_door_tile)
+
+
+func _weighted_asset_for_tile(assets: Array, x: int, y: int) -> String:
+	var total_weight := 0
+	for entry in assets:
+		total_weight += max(1, int((entry as Dictionary).get("weight", 1)))
+	var roll: int = abs((x * 928371 + y * 364479 + total_weight * 97) % max(1, total_weight))
+	var cursor := 0
+	for entry in assets:
+		var asset_entry := entry as Dictionary
+		cursor += max(1, int(asset_entry.get("weight", 1)))
+		if roll < cursor:
+			return str(asset_entry.get("asset_id", ""))
+	return str((assets[0] as Dictionary).get("asset_id", ""))
+
+
+func _category_for_layer_asset(layer: String, asset_id: String) -> String:
+	if asset_id.begins_with("return_mooring_floor"):
+		return "return_mooring_floor"
+	if asset_id.begins_with("return_mooring_"):
+		return "return_mooring_overlay"
+	if asset_id.begins_with("entrance_causeway"):
+		return "entrance"
+	if asset_id == "ocean_void_01" or asset_id.contains("_floor") or asset_id.contains("_flagstone") or asset_id.contains("_threshold") or asset_id.contains("_carpet"):
+		return "floors"
+	if asset_id.begins_with("ocean_") or asset_id.begins_with("cliff_"):
+		return "cliffs"
+	if layer.begins_with("Wall"):
+		return "walls"
+	return "floors"
+
+
+func _array_to_vector2i(value, fallback: Vector2i) -> Vector2i:
+	if not (value is Array) or (value as Array).size() < 2:
+		return fallback
+	return Vector2i(int(value[0]), int(value[1]))
+
+
+func _array_to_rect2i(value) -> Rect2i:
+	if not (value is Array) or (value as Array).size() < 4:
+		return Rect2i()
+	return Rect2i(Vector2i(int(value[0]), int(value[1])), Vector2i(int(value[2]), int(value[3])))
 
 
 func _build_ocean_backdrop() -> void:
 	var backdrop := ColorRect.new()
 	backdrop.name = "StormOceanBackdrop"
 	backdrop.color = Color(0.014, 0.035, 0.064, 1.0)
-	backdrop.size = Vector2(float(MAP_SIZE_TILES.x) * TILE_SIZE, float(MAP_SIZE_TILES.y) * TILE_SIZE)
+	backdrop.size = Vector2(float(map_size_tiles.x) * TILE_SIZE, float(map_size_tiles.y) * TILE_SIZE)
 	backdrop.z_as_relative = false
-	backdrop.z_index = -120
+	backdrop.z_index = -130
 	add_child(backdrop)
 
-	for y in range(MAP_SIZE_TILES.y):
-		for x in range(MAP_SIZE_TILES.x):
-			if (x + y) % 3 == 0:
+	for y in range(map_size_tiles.y):
+		for x in range(map_size_tiles.x):
+			if ((x * 17 + y * 31) % 41) == 0:
 				_add_tile("TerrainBase", "ocean_dark_water_01", "cliffs", Vector2i(x, y))
-			elif (x * 5 + y * 3) % 11 == 0:
-				_add_tile("TerrainBase", "ocean_foam_edge_n", "cliffs", Vector2i(x, y))
 
 
-func _build_main_gate() -> void:
-	_fill_rect(Rect2i(Vector2i(25, 36), Vector2i(14, 7)), "main_gate_threshold_stone_01")
-	_fill_rect(Rect2i(Vector2i(29, 39), Vector2i(6, 5)), "main_courtyard_flagstone_wet_01")
-	_add_wall_run(Rect2i(Vector2i(24, 35), Vector2i(16, 2)), "gothic_castle_wall_straight_s")
-	_add_wall_run(Rect2i(Vector2i(24, 36), Vector2i(1, 7)), "gothic_castle_wall_straight_e")
-	_add_wall_run(Rect2i(Vector2i(39, 36), Vector2i(1, 7)), "gothic_castle_wall_straight_w")
-	_add_sprite("Traversal", "main_gate_portcullis_closed", "doors", Vector2i(31, 36), Vector2.ZERO)
-	_add_blocker(Rect2i(Vector2i(31, 36), Vector2i(2, 1)), "MainPortcullisBlocker")
-	_add_prop("PropsBlocking", "prop_gate_barricade_01", "gatehouse", Vector2i(34, 40))
-	_add_prop("PropsStatic", "prop_gate_winch_01", "gatehouse", Vector2i(27, 37))
-	_add_prop("PropsStatic", "prop_torch_wall_gothic_01", "gatehouse", Vector2i(25, 37))
-	_add_prop("PropsStatic", "prop_torch_wall_gothic_01", "gatehouse", Vector2i(38, 37))
+func _build_cliff_island_foundation() -> void:
+	_fill_polygon_spans({
+		8: [Vector2i(25, 49)],
+		9: [Vector2i(23, 55)],
+		10: [Vector2i(21, 58)],
+		11: [Vector2i(20, 59)],
+		12: [Vector2i(19, 60)],
+		13: [Vector2i(18, 61)],
+		14: [Vector2i(18, 61)],
+		15: [Vector2i(17, 61)],
+		16: [Vector2i(17, 62)],
+		17: [Vector2i(17, 62)],
+		18: [Vector2i(17, 62)],
+		19: [Vector2i(17, 61)],
+		20: [Vector2i(16, 61)],
+		21: [Vector2i(16, 61)],
+		22: [Vector2i(16, 60)],
+		23: [Vector2i(16, 59)],
+		24: [Vector2i(17, 59)],
+		25: [Vector2i(17, 59)],
+		26: [Vector2i(18, 58)],
+		27: [Vector2i(18, 59)],
+		28: [Vector2i(18, 60)],
+		29: [Vector2i(17, 61)],
+		30: [Vector2i(16, 61)],
+		31: [Vector2i(15, 60)],
+		32: [Vector2i(15, 59)],
+		33: [Vector2i(16, 59)],
+		34: [Vector2i(16, 58)],
+		35: [Vector2i(17, 58)],
+		36: [Vector2i(17, 57)],
+		37: [Vector2i(18, 56)],
+		38: [Vector2i(19, 55)],
+		39: [Vector2i(20, 55)],
+		40: [Vector2i(22, 54)],
+		41: [Vector2i(24, 53)],
+		42: [Vector2i(27, 51)],
+		43: [Vector2i(30, 50)],
+		44: [Vector2i(34, 48)],
+		45: [Vector2i(30, 50)],
+		46: [Vector2i(27, 55)],
+		47: [Vector2i(27, 55)],
+		48: [Vector2i(28, 54)],
+		49: [Vector2i(32, 49)],
+		50: [Vector2i(36, 45)],
+		51: [Vector2i(38, 43)],
+		52: [Vector2i(39, 42)],
+	}, "cliff_rock_floor_01")
+	_fill_polygon_spans({
+		13: [Vector2i(24, 54)],
+		14: [Vector2i(22, 56)],
+		15: [Vector2i(21, 57)],
+		16: [Vector2i(20, 58)],
+		17: [Vector2i(20, 58)],
+		18: [Vector2i(20, 57)],
+		19: [Vector2i(21, 56)],
+		20: [Vector2i(21, 55)],
+		21: [Vector2i(22, 54)],
+		22: [Vector2i(23, 53)],
+		28: [Vector2i(20, 55)],
+		29: [Vector2i(19, 57)],
+		30: [Vector2i(18, 58)],
+		31: [Vector2i(17, 58)],
+		32: [Vector2i(17, 57)],
+		33: [Vector2i(18, 56)],
+		34: [Vector2i(18, 55)],
+		35: [Vector2i(19, 54)],
+		36: [Vector2i(20, 53)],
+		37: [Vector2i(21, 52)],
+		38: [Vector2i(23, 51)],
+		39: [Vector2i(25, 50)],
+		40: [Vector2i(28, 49)],
+	}, "cliff_rock_floor_cracked_01")
+
+	_fill_polygon_spans({
+		44: [Vector2i(36, 45)],
+		45: [Vector2i(32, 49)],
+		46: [Vector2i(27, 54)],
+		47: [Vector2i(27, 55)],
+		48: [Vector2i(28, 54)],
+		49: [Vector2i(32, 49)],
+		50: [Vector2i(36, 45)],
+		51: [Vector2i(38, 43)],
+		52: [Vector2i(39, 42)],
+	}, "cliff_rock_floor_01")
+
+	_fill_polygon_spans({
+		28: [Vector2i(22, 55)],
+		29: [Vector2i(20, 57)],
+		30: [Vector2i(18, 59)],
+		31: [Vector2i(17, 58)],
+		32: [Vector2i(17, 57)],
+		33: [Vector2i(18, 57)],
+		34: [Vector2i(18, 56)],
+		35: [Vector2i(19, 55)],
+		36: [Vector2i(20, 54)],
+		37: [Vector2i(20, 53)],
+		38: [Vector2i(22, 52)],
+		39: [Vector2i(24, 51)],
+		40: [Vector2i(26, 50)],
+		41: [Vector2i(29, 48)],
+		42: [Vector2i(33, 46)],
+		43: [Vector2i(36, 43)],
+	}, "main_courtyard_flagstone_01")
+
+	# Collapsed sea cuts and irregular island corners.
+	_add_ocean_hole(Rect2i(Vector2i(12, 8), Vector2i(10, 9)), "NorthwestSeaCut")
+	_add_ocean_hole(Rect2i(Vector2i(55, 8), Vector2i(8, 10)), "NortheastSeaCut")
+	_add_ocean_hole(Rect2i(Vector2i(11, 39), Vector2i(9, 8)), "SouthwestSeaCut")
+	_add_ocean_hole(Rect2i(Vector2i(56, 38), Vector2i(7, 9)), "SoutheastSeaCut")
+	_add_ocean_hole(Rect2i(Vector2i(49, 18), Vector2i(6, 6)), "RampartSeaCut")
+	_add_ocean_hole(Rect2i(Vector2i(13, 20), Vector2i(5, 7)), "WestGallerySeaCut")
+	_add_ocean_hole(Rect2i(Vector2i(57, 27), Vector2i(5, 8)), "EastCourtyardSeaCut")
+
+	_add_cliff_edges()
+	_add_ocean_boundaries()
 
 
-func _build_courtyard() -> void:
-	var courtyard := Rect2i(Vector2i(18, 19), Vector2i(28, 17))
-	_fill_rect(courtyard, "main_courtyard_flagstone_01")
-	_scatter_floor_variants(courtyard, {
-		"main_courtyard_flagstone_cracked_01": 7,
-		"main_courtyard_flagstone_wet_01": 9,
+func _build_storm_causeway() -> void:
+	var causeway_tiles := {}
+	for y in range(45, 54):
+		var half_width := 2
+		if y == 45:
+			half_width = 3
+		elif y >= 52:
+			half_width = 1
+		for x in range(40 - half_width, 40 + half_width + 1):
+			var tile := Vector2i(x, y)
+			causeway_tiles[tile] = true
+			var floor_id := "entrance_causeway_floor_cracked_01" if ((x * 13 + y * 7) % 4) == 0 else "entrance_causeway_floor_01"
+			_add_tile("FloorDetail", floor_id, "entrance", tile)
+	_add_causeway_edge_line(causeway_tiles)
+	for tile in [Vector2i(39, 54), Vector2i(40, 54), Vector2i(41, 54), Vector2i(38, 55), Vector2i(39, 55), Vector2i(40, 55), Vector2i(41, 55), Vector2i(42, 55)]:
+		_add_tile("FloorDetail", "entrance_causeway_broken_gap_01", "entrance", tile)
+	_add_blocker(Rect2i(Vector2i(38, 54), Vector2i(5, 2)), "SubmergedCausewayBlocker")
+	_add_prop("PropsStatic", "prop_sea_spray_rock_01", Vector2i(36, 50))
+	_add_prop("PropsStatic", "prop_broken_spire_chunk_01", Vector2i(44, 49))
+
+
+func _build_return_mooring(origin_tile: Vector2i) -> void:
+	_return_mooring_created = true
+	_fill_rect(Rect2i(origin_tile, Vector2i(5, 5)), "main_gate_threshold_stone_01")
+	_add_wall_run(Rect2i(origin_tile + Vector2i(0, 0), Vector2i(5, 1)), "gothic_castle_wall_straight_s")
+	_add_wall_run(Rect2i(origin_tile + Vector2i(0, 0), Vector2i(1, 5)), "rampart_parapet_e")
+	_add_wall_run(Rect2i(origin_tile + Vector2i(4, 0), Vector2i(1, 3)), "rampart_parapet_w")
+
+	var layout := [
+		["return_mooring_floor_corner_nw", "return_mooring_floor_ring_n", "return_mooring_floor_corner_ne"],
+		["return_mooring_floor_ring_w", "return_mooring_floor_center_01", "return_mooring_floor_ring_e"],
+		["return_mooring_floor_corner_sw", "return_mooring_floor_ring_s", "return_mooring_floor_corner_se"],
+	]
+	for row in range(3):
+		for col in range(3):
+			_add_tile("FloorDetail", str(layout[row][col]), "return_mooring_floor", origin_tile + Vector2i(col + 1, row + 1))
+
+	var center_tile := origin_tile + Vector2i(2, 2)
+	_add_tile("Overlays", "return_mooring_glow_overlay_01", "return_mooring_overlay", center_tile)
+	_return_mooring_active_overlay = _add_tile("Effects", "return_mooring_active_overlay_01", "return_mooring_overlay", center_tile)
+	_add_tile("WorldUI", "return_mooring_prompt_marker_01", "return_mooring_overlay", center_tile)
+	_add_prop("PropsBlocking", "prop_return_beacon_01", origin_tile + Vector2i(2, 1))
+	_add_prop("PropsBlocking", "prop_return_console_ruined_01", origin_tile + Vector2i(4, 3))
+	_add_blocker(Rect2i(origin_tile + Vector2i(2, 1), Vector2i.ONE), "ReturnMooringBeaconBlocker")
+	_add_blocker(Rect2i(origin_tile + Vector2i(4, 3), Vector2i(2, 1)), "ReturnMooringConsoleBlocker")
+	_add_return_mooring_interaction(center_tile)
+	_set_return_mooring_active(true)
+
+
+func _add_return_mooring_interaction(center_tile: Vector2i) -> void:
+	_return_mooring_interaction = _add_interactable(
+		"ReturnMooringInteraction",
+		&"return_mooring",
+		"RETURN TO MAIN MAP",
+		center_tile,
+		72.0
+	)
+
+
+func _set_return_mooring_active(active: bool) -> void:
+	if _return_mooring_active_overlay != null:
+		_return_mooring_active_overlay.visible = active
+
+
+func _build_main_gate_lock() -> void:
+	_fill_rect(Rect2i(Vector2i(30, 39), Vector2i(20, 6)), "main_gate_threshold_stone_01")
+	_add_wall_run(Rect2i(Vector2i(31, 40), Vector2i(7, 1)), "gothic_castle_wall_straight_s")
+	_add_wall_run(Rect2i(Vector2i(42, 40), Vector2i(7, 1)), "gothic_castle_wall_straight_s")
+	_add_wall_run(Rect2i(Vector2i(29, 42), Vector2i(1, 5)), "rampart_parapet_e")
+	_add_wall_run(Rect2i(Vector2i(50, 42), Vector2i(1, 5)), "rampart_parapet_w")
+	_add_wall_run(Rect2i(Vector2i(30, 43), Vector2i(8, 1)), "gothic_castle_wall_straight_s")
+	_add_wall_run(Rect2i(Vector2i(42, 43), Vector2i(8, 1)), "gothic_castle_wall_straight_s")
+	_add_prop("PropsStatic", "prop_torch_wall_gothic_01", Vector2i(34, 41))
+	_add_prop("PropsStatic", "prop_torch_wall_gothic_01", Vector2i(45, 41))
+	_add_prop("PropsStatic", "prop_portcullis_chain_01", Vector2i(39, 41))
+	_main_gate_closed_sprite = _add_sprite("Traversal", "main_gate_portcullis_closed", "doors", main_gate_tile, Vector2.ZERO)
+	_main_gate_open_sprite = _add_sprite("Traversal", "main_gate_portcullis_open", "doors", main_gate_tile, Vector2.ZERO)
+	_main_gate_interaction = _add_interactable("MainGateInteraction", &"main_gate", "OPEN MAIN GATE", main_gate_tile + Vector2i(2, 1), 96.0)
+	_set_main_gate_open(false)
+
+
+func _build_sundered_gate_key_pickup(tile: Vector2i) -> void:
+	_fill_rect(Rect2i(tile + Vector2i(-2, -1), Vector2i(5, 3)), "main_gate_threshold_stone_01")
+	_add_wall_run(Rect2i(tile + Vector2i(-2, -2), Vector2i(5, 1)), "gothic_castle_wall_straight_s")
+	_add_prop("PropsStatic", "prop_gate_winch_01", tile)
+	_add_prop("PropsStatic", "prop_crate_stack_wet_01", tile + Vector2i(2, 1))
+	_key_pickup_interaction = _add_interactable(
+		"SunderedGateKeyPickup",
+		&"sundered_gate_key",
+		"TAKE %s" % SUNDERED_GATE_KEY_NAME.to_upper(),
+		tile,
+		76.0
+	)
+
+
+func _build_irregular_courtyard() -> void:
+	_fill_polygon_spans({
+		27: [Vector2i(25, 53)],
+		28: [Vector2i(23, 55)],
+		29: [Vector2i(22, 56)],
+		30: [Vector2i(21, 57)],
+		31: [Vector2i(21, 57)],
+		32: [Vector2i(20, 56)],
+		33: [Vector2i(20, 55)],
+		34: [Vector2i(21, 56)],
+		35: [Vector2i(22, 56)],
+		36: [Vector2i(23, 55)],
+		37: [Vector2i(24, 54)],
+		38: [Vector2i(27, 52)],
+		39: [Vector2i(31, 49)],
+	}, "main_courtyard_flagstone_01")
+	_scatter_floor_variants(Rect2i(Vector2i(21, 27), Vector2i(36, 13)), {
+		"main_courtyard_flagstone_cracked_01": 6,
+		"main_courtyard_flagstone_wet_01": 10,
 		"main_courtyard_flagstone_mossy_01": 13,
 	})
-	_add_room_walls(courtyard, {"south_open_min": 30, "south_open_max": 34, "north_open_min": 31, "north_open_max": 33})
-	_add_prop("PropsBlocking", "prop_courtyard_fountain_broken_01", "courtyard", Vector2i(30, 27))
-	_add_prop("PropsBlocking", "prop_gothic_statue_broken_01", "courtyard", Vector2i(22, 24))
-	_add_prop("PropsBlocking", "prop_gothic_statue_intact_01", "courtyard", Vector2i(42, 24))
-	_add_prop("PropsBlocking", "prop_broken_cart_01", "courtyard", Vector2i(23, 31))
-	_add_prop("PropsBlocking", "prop_crate_stack_wet_01", "courtyard", Vector2i(39, 31))
-	_add_prop("PropsBlocking", "prop_barrel_wet_01", "courtyard", Vector2i(42, 32))
-	_add_prop("PropsBlocking", "prop_fallen_masonry_01", "courtyard", Vector2i(19, 20))
-	_add_prop("PropsBlocking", "prop_low_garden_wall_01", "courtyard", Vector2i(36, 24))
+	_add_wall_run(Rect2i(Vector2i(22, 26), Vector2i(11, 1)), "gothic_castle_wall_damaged_s")
+	_add_wall_run(Rect2i(Vector2i(45, 26), Vector2i(11, 1)), "gothic_castle_wall_breach_s")
+	_add_wall_run(Rect2i(Vector2i(20, 30), Vector2i(1, 7)), "rampart_parapet_e")
+	_add_wall_run(Rect2i(Vector2i(57, 29), Vector2i(1, 3)), "rampart_parapet_w")
+	_add_wall_run(Rect2i(Vector2i(57, 35), Vector2i(1, 2)), "rampart_parapet_w")
+	_add_wall_run(Rect2i(Vector2i(30, 39), Vector2i(8, 1)), "gothic_castle_wall_breach_n")
+	_add_wall_run(Rect2i(Vector2i(43, 39), Vector2i(8, 1)), "gothic_castle_wall_damaged_n")
+
+	_add_prop("PropsBlocking", "prop_courtyard_fountain_broken_01", Vector2i(38, 33))
+	_add_prop("PropsBlocking", "prop_gothic_statue_broken_01", Vector2i(25, 30))
+	_add_prop("PropsBlocking", "prop_gothic_statue_intact_01", Vector2i(52, 31))
+	_add_prop("PropsBlocking", "prop_broken_cart_01", Vector2i(29, 37))
+	_add_prop("PropsBlocking", "prop_crate_stack_wet_01", Vector2i(50, 37))
+	_add_prop("PropsBlocking", "prop_barrel_wet_01", Vector2i(53, 36))
+	_add_prop("PropsBlocking", "prop_fallen_masonry_01", Vector2i(22, 27))
+	_add_prop("PropsBlocking", "prop_low_garden_wall_01", Vector2i(44, 30))
+	_add_prop("PropsStatic", "prop_torch_wall_gothic_01", Vector2i(33, 27))
+	_add_prop("PropsStatic", "prop_torch_wall_gothic_01", Vector2i(47, 27))
 
 
 func _build_great_hall() -> void:
-	var hall := Rect2i(Vector2i(20, 5), Vector2i(24, 14))
-	_fill_rect(hall, "great_hall_marble_floor_01")
-	_scatter_floor_variants(hall, {
-		"great_hall_marble_floor_cracked_01": 8,
+	_fill_polygon_spans({
+		10: [Vector2i(28, 54)],
+		11: [Vector2i(27, 55)],
+		12: [Vector2i(27, 56)],
+		13: [Vector2i(27, 56)],
+		14: [Vector2i(27, 55)],
+		15: [Vector2i(27, 55)],
+		16: [Vector2i(27, 54)],
+		17: [Vector2i(28, 54)],
+		18: [Vector2i(28, 53)],
+		19: [Vector2i(29, 53)],
+		20: [Vector2i(30, 52)],
+		21: [Vector2i(31, 50)],
+		22: [Vector2i(32, 49)],
+		23: [Vector2i(33, 48)],
+	}, "great_hall_marble_floor_01")
+	_scatter_floor_variants(Rect2i(Vector2i(28, 10), Vector2i(27, 14)), {
+		"great_hall_marble_floor_cracked_01": 7,
 	})
-	for y in range(hall.position.y, hall.end.y):
-		_add_tile("TerrainBase", "great_hall_carpet_runner_vertical_01", "floors", Vector2i(31, y))
-		_add_tile("TerrainBase", "great_hall_carpet_runner_vertical_01", "floors", Vector2i(32, y))
-	_add_room_walls(hall, {"south_open_min": 31, "south_open_max": 33, "east_open_min": 10, "east_open_max": 12}, "great_hall")
-	_add_sprite("Traversal", "gothic_double_door_closed_n", "doors", Vector2i(31, 18), Vector2.ZERO)
-	_add_blocker(Rect2i(Vector2i(31, 18), Vector2i(2, 1)), "GreatHallDoorBlocker")
-	_add_prop("PropsBlocking", "prop_banquet_table_long_01", "great_hall", Vector2i(23, 10))
-	_add_prop("PropsBlocking", "prop_banquet_table_long_01", "great_hall", Vector2i(35, 10))
-	_add_prop("PropsBlocking", "prop_banquet_table_broken_01", "great_hall", Vector2i(23, 14))
-	_add_prop("PropsBlocking", "prop_great_hall_column_01", "great_hall", Vector2i(21, 7))
-	_add_prop("PropsBlocking", "prop_great_hall_column_01", "great_hall", Vector2i(41, 7))
-	_add_prop("PropsBlocking", "prop_great_hall_column_01", "great_hall", Vector2i(21, 16))
-	_add_prop("PropsBlocking", "prop_great_hall_column_01", "great_hall", Vector2i(41, 16))
-	_add_prop("PropsBlocking", "prop_fallen_chandelier_01", "great_hall", Vector2i(30, 13))
-	_add_prop("PropsBlocking", "prop_throne_ruined_01", "great_hall", Vector2i(31, 6))
-	_add_prop("PropsStatic", "prop_brazier_iron_01", "great_hall", Vector2i(28, 7))
-	_add_prop("PropsStatic", "prop_brazier_iron_01", "great_hall", Vector2i(35, 7))
-	_add_prop("PropsStatic", "prop_banner_torn_large_01", "great_hall", Vector2i(25, 5))
-	_add_prop("PropsStatic", "prop_banner_torn_large_01", "great_hall", Vector2i(38, 5))
+	for y in range(11, 23):
+		_add_tile("FloorDetail", "great_hall_carpet_runner_vertical_01", "floors", Vector2i(39, y))
+		_add_tile("FloorDetail", "great_hall_carpet_runner_vertical_01", "floors", Vector2i(40, y))
+	_add_room_walls(Rect2i(Vector2i(27, 10), Vector2i(30, 16)), {"south_open_min": 39, "south_open_max": 40, "east_open_min": 17, "east_open_max": 20}, "great_hall")
+
+	# Collapsed east wall exposes ocean and creates a side choke.
+	_add_ocean_hole(Rect2i(Vector2i(52, 15), Vector2i(5, 5)), "GreatHallCollapsedSeaCut")
+	_add_wall_run(Rect2i(Vector2i(51, 14), Vector2i(1, 6)), "great_hall_wall_broken_exterior_w")
+	for y in range(15, 20):
+		_add_tile("TerrainEdges", "ocean_foam_edge_w", "cliffs", Vector2i(52, y))
+
+	_build_great_hall_door(Vector2i(39, 25))
+	_add_prop("PropsBlocking", "prop_banquet_table_long_01", Vector2i(31, 14))
+	_add_prop("PropsBlocking", "prop_banquet_table_long_01", Vector2i(46, 14))
+	_add_prop("PropsBlocking", "prop_banquet_table_broken_01", Vector2i(33, 19))
+	_add_prop("PropsBlocking", "prop_great_hall_column_01", Vector2i(29, 12))
+	_add_prop("PropsBlocking", "prop_great_hall_column_01", Vector2i(50, 12))
+	_add_prop("PropsBlocking", "prop_great_hall_column_01", Vector2i(29, 21))
+	_add_prop("PropsBlocking", "prop_great_hall_column_01", Vector2i(48, 21))
+	_add_prop("PropsBlocking", "prop_fallen_chandelier_01", Vector2i(39, 18))
+	_add_prop("PropsBlocking", "prop_throne_ruined_01", Vector2i(39, 10))
+	_add_prop("PropsStatic", "prop_brazier_iron_01", Vector2i(35, 11))
+	_add_prop("PropsStatic", "prop_brazier_iron_01", Vector2i(44, 11))
+	_add_prop("PropsStatic", "prop_banner_torn_large_01", Vector2i(32, 10))
+	_add_prop("PropsStatic", "prop_banner_torn_large_01", Vector2i(48, 10))
 
 
-func _build_rampart_and_cliffs() -> void:
-	var rampart := Rect2i(Vector2i(44, 7), Vector2i(16, 6))
-	_fill_rect(rampart, "rampart_walkway_floor_01")
-	_scatter_floor_variants(rampart, {"rampart_walkway_broken_01": 5})
-	_add_wall_run(Rect2i(Vector2i(44, 6), Vector2i(16, 1)), "rampart_crenellation_s")
-	_add_wall_run(Rect2i(Vector2i(58, 7), Vector2i(1, 6)), "rampart_parapet_w")
-	_add_wall_run(Rect2i(Vector2i(44, 12), Vector2i(16, 1)), "rampart_broken_gap_n")
-	_add_prop("PropsBlocking", "prop_gargoyle_perch_01", "exterior", Vector2i(57, 7))
-	_add_prop("PropsStatic", "prop_lightning_rod_01", "exterior", Vector2i(52, 8))
-	_add_prop("PropsStatic", "prop_rope_bridge_anchor_01", "exterior", Vector2i(45, 10))
-	_add_prop("PropsStatic", "prop_sea_spray_rock_01", "exterior", Vector2i(59, 15))
-	_add_prop("PropsBlocking", "prop_broken_spire_chunk_01", "exterior", Vector2i(55, 13))
+func _build_east_rampart() -> void:
+	_fill_rect(Rect2i(Vector2i(56, 20), Vector2i(6, 24)), "rampart_walkway_floor_01")
+	_scatter_floor_variants(Rect2i(Vector2i(56, 20), Vector2i(6, 24)), {"rampart_walkway_broken_01": 5})
+	_add_wall_run(Rect2i(Vector2i(56, 19), Vector2i(6, 1)), "rampart_crenellation_s")
+	_add_wall_run(Rect2i(Vector2i(61, 20), Vector2i(1, 9)), "rampart_parapet_w")
+	_add_wall_run(Rect2i(Vector2i(61, 32), Vector2i(1, 7)), "rampart_broken_gap_w")
+	_add_wall_run(Rect2i(Vector2i(56, 43), Vector2i(6, 1)), "rampart_broken_gap_n")
+	_add_prop("PropsBlocking", "prop_gargoyle_perch_01", Vector2i(60, 21))
+	_add_prop("PropsStatic", "prop_lightning_rod_01", Vector2i(59, 25))
+	_add_prop("PropsStatic", "prop_rope_bridge_anchor_01", Vector2i(56, 34))
+	_add_prop("PropsStatic", "prop_sea_spray_rock_01", Vector2i(62, 37))
+	_add_prop("PropsBlocking", "prop_broken_spire_chunk_01", Vector2i(58, 39))
+	for y in range(20, 44):
+		_add_tile("TerrainEdges", "ocean_foam_edge_e", "cliffs", Vector2i(62, y))
 
-	for x in range(14, 61):
-		_add_tile("TerrainEdges", "cliff_edge_n", "cliffs", Vector2i(x, 4))
-		_add_tile("TerrainEdges", "cliff_face_slice_01", "cliffs", Vector2i(x, 3))
-	for y in range(4, 41):
-		_add_tile("TerrainEdges", "cliff_edge_e", "cliffs", Vector2i(60, y))
-		_add_tile("TerrainEdges", "cliff_face_slice_wet_01", "cliffs", Vector2i(61, y))
-	for x in range(9, 61):
-		_add_tile("TerrainEdges", "ocean_foam_edge_s", "cliffs", Vector2i(x, 41))
-	for y in range(8, 42):
-		_add_tile("TerrainEdges", "ocean_foam_edge_e", "cliffs", Vector2i(9, y))
-	_add_blocker(Rect2i(Vector2i(60, 4), Vector2i(3, 38)), "EastOceanBoundary")
-	_add_blocker(Rect2i(Vector2i(9, 40), Vector2i(52, 3)), "SouthOceanBoundary")
-	_add_blocker(Rect2i(Vector2i(9, 4), Vector2i(2, 38)), "WestOceanBoundary")
-	_add_blocker(Rect2i(Vector2i(10, 3), Vector2i(52, 2)), "NorthOceanBoundary")
+
+func _build_west_service_path() -> void:
+	_fill_polygon_spans({
+		29: [Vector2i(16, 21)],
+		30: [Vector2i(15, 22)],
+		31: [Vector2i(15, 22)],
+		32: [Vector2i(15, 21)],
+		33: [Vector2i(16, 21)],
+		34: [Vector2i(16, 22)],
+		35: [Vector2i(17, 23)],
+		36: [Vector2i(17, 24)],
+		37: [Vector2i(18, 25)],
+		38: [Vector2i(19, 27)],
+		39: [Vector2i(20, 29)],
+		40: [Vector2i(21, 31)],
+	}, "cliff_rock_floor_cracked_01")
+	_add_wall_run(Rect2i(Vector2i(14, 30), Vector2i(1, 7)), "rampart_parapet_e")
+	_add_prop("PropsBlocking", "prop_sarcophagus_01", Vector2i(18, 34))
+	_add_prop("PropsStatic", "prop_bookshelf_tall_01", Vector2i(20, 31))
+	_add_prop("PropsBlocking", "prop_fallen_masonry_01", Vector2i(21, 38))
+	for y in range(29, 41):
+		_add_tile("TerrainEdges", "cliff_edge_w", "cliffs", Vector2i(15, y))
 
 
 func _build_traversal_stubs() -> void:
@@ -229,14 +795,48 @@ func _build_traversal_stubs() -> void:
 	_add_sprite("Traversal", "floor_hatch_closed_01", "stairs", hatch_tile, Vector2.ZERO)
 
 
+func _build_great_hall_door(tile: Vector2i) -> void:
+	great_hall_door_tile = tile
+	_great_hall_door_closed_sprite = _add_sprite("Traversal", "gothic_double_door_closed_n", "doors", tile, Vector2.ZERO)
+	_great_hall_door_open_sprite = _add_sprite("Traversal", "gothic_double_door_open_n", "doors", tile, Vector2.ZERO)
+	_great_hall_door_interaction = _add_interactable("GreatHallDoorInteraction", &"great_hall_door", "OPEN GREAT HALL DOOR", tile + Vector2i(1, 1), 88.0)
+	_set_great_hall_door_open(false)
+
+
 func _add_return_gate() -> void:
 	_return_gate = TRAVEL_GATE_SCRIPT.new() as Node2D
 	if _return_gate == null:
 		return
 	_return_gate.name = "ReturnToMainMapGate"
 	_return_gate.call("configure", self, 1, "RETURN TO MAIN MAP")
+	_return_gate.visible = false
 	_return_gate.position = _tile_center(return_gate_tile)
 	add_child(_return_gate)
+
+
+func _add_cliff_edges() -> void:
+	for x in range(18, 56):
+		_add_tile("TerrainEdges", "cliff_edge_n", "cliffs", Vector2i(x, 8))
+	for x in range(19, 58):
+		_add_tile("TerrainEdges", "cliff_edge_s", "cliffs", Vector2i(x, 45))
+	for y in range(13, 42):
+		_add_tile("TerrainEdges", "cliff_edge_w", "cliffs", Vector2i(12, y))
+		_add_tile("TerrainEdges", "cliff_edge_e", "cliffs", Vector2i(62, y))
+
+
+func _add_ocean_boundaries() -> void:
+	_add_blocker(Rect2i(Vector2i(0, 0), Vector2i(80, 6)), "NorthOceanBoundary")
+	_add_blocker(Rect2i(Vector2i(0, 54), Vector2i(38, 2)), "SouthOceanBoundaryWest")
+	_add_blocker(Rect2i(Vector2i(43, 54), Vector2i(37, 2)), "SouthOceanBoundaryEast")
+	_add_blocker(Rect2i(Vector2i(0, 0), Vector2i(9, 56)), "WestOceanBoundary")
+	_add_blocker(Rect2i(Vector2i(68, 0), Vector2i(12, 56)), "EastOceanBoundary")
+
+
+func _fill_polygon_spans(rows: Dictionary, tile_id: String) -> void:
+	for y in rows.keys():
+		for span in rows[y]:
+			for x in range(span.x, span.y + 1):
+				_add_tile("TerrainBase", tile_id, "floors", Vector2i(x, int(y)))
 
 
 func _fill_rect(rect: Rect2i, tile_id: String) -> void:
@@ -245,13 +845,37 @@ func _fill_rect(rect: Rect2i, tile_id: String) -> void:
 			_add_tile("TerrainBase", tile_id, "floors", Vector2i(x, y))
 
 
+func _add_ocean_hole(rect: Rect2i, blocker_name: String) -> void:
+	_fill_rect(rect, "ocean_void_01")
+	_add_blocker(rect, blocker_name)
+
+
+func _add_causeway_edge_line(causeway_tiles: Dictionary) -> void:
+	var directions := {
+		"ne": Vector2i(1, -1),
+		"nw": Vector2i(-1, -1),
+		"se": Vector2i(1, 1),
+		"sw": Vector2i(-1, 1),
+		"n": Vector2i(0, -1),
+		"e": Vector2i(1, 0),
+		"s": Vector2i(0, 1),
+		"w": Vector2i(-1, 0),
+	}
+	for tile in causeway_tiles.keys():
+		var tile_pos := tile as Vector2i
+		for suffix in directions.keys():
+			var neighbor: Vector2i = tile_pos + directions[suffix]
+			if not causeway_tiles.has(neighbor):
+				_add_tile("FloorDetail", "entrance_causeway_edge_%s" % suffix, "entrance", tile_pos)
+
+
 func _scatter_floor_variants(rect: Rect2i, variants: Dictionary) -> void:
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
 			for tile_id in variants.keys():
 				var divisor := int(variants[tile_id])
 				if divisor > 0 and ((x * 31 + y * 17 + tile_id.length()) % divisor) == 0:
-					_add_tile("TerrainBase", tile_id, "floors", Vector2i(x, y))
+					_add_tile("FloorDetail", tile_id, "floors", Vector2i(x, y))
 					break
 
 
@@ -266,33 +890,21 @@ func _add_room_walls(rect: Rect2i, openings: Dictionary, wall_set := "gothic_cas
 			_add_wall_tile(Vector2i(rect.position.x - 1, y), _wall_asset(wall_set, "straight_e"))
 		if not _is_opening(y, "east", openings):
 			_add_wall_tile(Vector2i(rect.end.x, y), _wall_asset(wall_set, "straight_w"))
-	_add_wall_tile(Vector2i(rect.position.x - 1, rect.position.y - 1), _wall_asset(wall_set, "outer_corner_se"))
-	_add_wall_tile(Vector2i(rect.end.x, rect.position.y - 1), _wall_asset(wall_set, "outer_corner_sw"))
-	_add_wall_tile(Vector2i(rect.position.x - 1, rect.end.y), _wall_asset(wall_set, "outer_corner_ne"))
-	_add_wall_tile(Vector2i(rect.end.x, rect.end.y), _wall_asset(wall_set, "outer_corner_nw"))
 
 
 func _wall_asset(wall_set: String, role: String) -> String:
 	var assets := {
 		"gothic_castle": {
 			"straight_n": "gothic_castle_wall_straight_n",
-			"straight_e": "gothic_castle_wall_straight_e",
+			"straight_e": "rampart_parapet_e",
 			"straight_s": "gothic_castle_wall_straight_s",
-			"straight_w": "gothic_castle_wall_straight_w",
-			"outer_corner_ne": "gothic_castle_wall_outer_corner_ne",
-			"outer_corner_nw": "gothic_castle_wall_outer_corner_nw",
-			"outer_corner_se": "gothic_castle_wall_outer_corner_se",
-			"outer_corner_sw": "gothic_castle_wall_outer_corner_sw",
+			"straight_w": "rampart_parapet_w",
 		},
 		"great_hall": {
 			"straight_n": "great_hall_wall_straight_n",
-			"straight_e": "great_hall_wall_straight_e",
-			"straight_s": "great_hall_wall_straight_s",
-			"straight_w": "great_hall_wall_straight_w",
-			"outer_corner_ne": "great_hall_wall_column_n",
-			"outer_corner_nw": "great_hall_wall_column_n",
-			"outer_corner_se": "great_hall_wall_column_s",
-			"outer_corner_sw": "great_hall_wall_column_s",
+			"straight_e": "rampart_parapet_e",
+			"straight_s": "great_hall_wall_straight_test",
+			"straight_w": "rampart_parapet_w",
 		},
 	}
 	var wall_assets: Dictionary = assets.get(wall_set, assets["gothic_castle"])
@@ -314,29 +926,36 @@ func _add_wall_run(rect: Rect2i, tile_id: String) -> void:
 
 
 func _add_wall_tile(tile: Vector2i, tile_id: String) -> void:
-	_add_sprite("WallsHigh", tile_id, "walls", tile, Vector2(0.0, -32.0))
+	var sprite := _add_sprite("WallsHigh", tile_id, "walls", tile, Vector2(0.0, -32.0))
+	if sprite != null:
+		_stats["walls"] = int(_stats["walls"]) + 1
 	_add_blocker(Rect2i(tile, Vector2i.ONE), "WallBlocker")
 
 
 func _add_tile(layer_name: String, tile_id: String, category: String, tile: Vector2i) -> Sprite2D:
-	return _add_sprite(layer_name, tile_id, category, tile, Vector2.ZERO)
+	var sprite := _add_sprite(layer_name, tile_id, category, tile, Vector2.ZERO)
+	if sprite != null and (category == "floors" or category == "return_mooring_floor" or (category == "entrance" and tile_id.contains("_floor"))):
+		_stats["floors"] = int(_stats["floors"]) + 1
+	elif sprite != null and (layer_name == "TerrainEdges" or tile_id.contains("_edge_")):
+		_stats["edges"] = int(_stats["edges"]) + 1
+	return sprite
 
 
-func _add_prop(layer_name: String, prop_id: String, folder: String, tile: Vector2i) -> void:
-	var path := _asset_path(prop_id, "props")
-	var texture := _load_texture(path)
+func _add_prop(layer_name: String, prop_id: String, tile: Vector2i) -> Sprite2D:
+	var texture := _load_texture(_asset_path(prop_id, "props"))
 	if texture == null:
-		return
+		return null
 	var sprite := Sprite2D.new()
 	sprite.name = prop_id
 	sprite.texture = texture
 	sprite.centered = false
-	sprite.position = _tile_top_left(tile) + Vector2(0.0, TILE_SIZE - float(texture.get_height()))
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.position = _tile_top_left(tile) + Vector2((TILE_SIZE - float(texture.get_width())) * 0.5, TILE_SIZE - float(texture.get_height()))
 	(_layers[layer_name] as Node2D).add_child(sprite)
+	_stats["props"] = int(_stats["props"]) + 1
 	if layer_name == "PropsBlocking":
-		var width_tiles := maxi(1, int(ceil(float(texture.get_width()) / TILE_SIZE)))
-		var height_tiles := maxi(1, int(ceil(float(min(texture.get_height(), 64)) / TILE_SIZE)))
-		_add_blocker(Rect2i(tile, Vector2i(width_tiles, height_tiles)), "%sBlocker" % prop_id)
+		_add_blocker(Rect2i(tile, Vector2i.ONE), "%sBlocker" % prop_id)
+	return sprite
 
 
 func _add_sprite(layer_name: String, asset_id: String, category: String, tile: Vector2i, offset: Vector2) -> Sprite2D:
@@ -347,12 +966,17 @@ func _add_sprite(layer_name: String, asset_id: String, category: String, tile: V
 	sprite.name = asset_id
 	sprite.texture = texture
 	sprite.centered = false
-	sprite.position = _tile_top_left(tile) + offset
+	if category == "floors" or category == "return_mooring_floor" or category == "return_mooring_overlay":
+		sprite.position = _tile_top_left(tile) + offset
+	else:
+		var tex_size := texture.get_size()
+		sprite.position = _tile_top_left(tile) + Vector2((TILE_SIZE - tex_size.x) * 0.5, TILE_SIZE - tex_size.y) + offset
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	(_layers[layer_name] as Node2D).add_child(sprite)
 	return sprite
 
 
-func _add_blocker(rect: Rect2i, blocker_name: String) -> void:
+func _add_blocker(rect: Rect2i, blocker_name: String) -> StaticBody2D:
 	var body := StaticBody2D.new()
 	body.name = blocker_name
 	body.collision_layer = 1
@@ -365,6 +989,119 @@ func _add_blocker(rect: Rect2i, blocker_name: String) -> void:
 	body.position = _tile_top_left(rect.position)
 	body.add_child(shape)
 	(_layers["Collision"] as Node2D).add_child(body)
+	_stats["blockers"] = int(_stats["blockers"]) + 1
+	return body
+
+
+func _add_interactable(node_name: String, kind: StringName, prompt: String, tile: Vector2i, distance: float) -> Node2D:
+	var interactable := SUNDERED_KEEP_INTERACTABLE.new() as Node2D
+	interactable.name = node_name
+	interactable.position = _tile_center(tile)
+	interactable.call("configure", self, kind, prompt, distance)
+	add_child(interactable)
+	_stats["interactables"] = int(_stats["interactables"]) + 1
+	return interactable
+
+
+func _handle_sundered_interaction(kind: StringName, actor: Node) -> void:
+	match kind:
+		&"return_mooring":
+			return_to_main(actor)
+		&"sundered_gate_key":
+			_grant_sundered_gate_key()
+		&"main_gate":
+			_try_open_main_gate()
+		&"great_hall_door":
+			_try_open_great_hall_door()
+
+
+func _player_has_sundered_gate_key() -> bool:
+	var inventory := get_node_or_null("/root/InventoryManager")
+	if inventory != null and inventory.has_method("has_item"):
+		return bool(inventory.call("has_item", SUNDERED_GATE_KEY_ID, 1))
+	return _has_sundered_gate_key
+
+
+func _grant_sundered_gate_key() -> void:
+	if _player_has_sundered_gate_key():
+		return
+	_has_sundered_gate_key = true
+	var inventory := get_node_or_null("/root/InventoryManager")
+	if inventory != null and inventory.has_method("add_item"):
+		inventory.call("add_item", SUNDERED_GATE_KEY_ID, 1)
+	if _key_pickup_interaction != null and is_instance_valid(_key_pickup_interaction):
+		_key_pickup_interaction.remove_from_group("interactable")
+		_key_pickup_interaction.visible = false
+	print("[SunderedKeep] Acquired %s: %s" % [SUNDERED_GATE_KEY_NAME, SUNDERED_GATE_KEY_FLAVOR])
+
+
+func _try_open_main_gate() -> void:
+	if _main_gate_open:
+		return
+	if not _player_has_sundered_gate_key():
+		print("[SunderedKeep] Requires %s. The portcullis winch is locked." % SUNDERED_GATE_KEY_NAME)
+		return
+	_set_main_gate_open(true)
+
+
+func _set_main_gate_open(open: bool) -> void:
+	_main_gate_open = open
+	if _main_gate_closed_sprite != null:
+		_main_gate_closed_sprite.visible = not open
+	if _main_gate_open_sprite != null:
+		_main_gate_open_sprite.visible = open
+	if open:
+		_clear_main_gate_blockers()
+		if _main_gate_interaction != null:
+			_main_gate_interaction.remove_from_group("interactable")
+			_main_gate_interaction.visible = false
+	else:
+		_add_main_gate_blockers()
+
+
+func _try_open_great_hall_door() -> void:
+	if _great_hall_door_open:
+		return
+	_set_great_hall_door_open(true)
+
+
+func _set_great_hall_door_open(open: bool) -> void:
+	_great_hall_door_open = open
+	if _great_hall_door_closed_sprite != null:
+		_great_hall_door_closed_sprite.visible = not open
+	if _great_hall_door_open_sprite != null:
+		_great_hall_door_open_sprite.visible = open
+	if open:
+		_clear_great_hall_door_blockers()
+		if _great_hall_door_interaction != null:
+			_great_hall_door_interaction.remove_from_group("interactable")
+			_great_hall_door_interaction.visible = false
+	else:
+		_add_great_hall_door_blockers()
+
+
+func _add_great_hall_door_blockers() -> void:
+	_clear_great_hall_door_blockers()
+	_great_hall_door_blockers.append(_add_blocker(Rect2i(great_hall_door_tile, Vector2i(2, 1)), "GreatHallDoorBlocker"))
+
+
+func _clear_great_hall_door_blockers() -> void:
+	for blocker in _great_hall_door_blockers:
+		if blocker != null and is_instance_valid(blocker):
+			blocker.queue_free()
+	_great_hall_door_blockers.clear()
+
+
+func _add_main_gate_blockers() -> void:
+	_clear_main_gate_blockers()
+	_main_gate_blockers.append(_add_blocker(Rect2i(main_gate_tile, Vector2i(4, 2)), "MainPortcullisBlocker"))
+
+
+func _clear_main_gate_blockers() -> void:
+	for blocker in _main_gate_blockers:
+		if blocker != null and is_instance_valid(blocker):
+			blocker.queue_free()
+	_main_gate_blockers.clear()
 
 
 func _asset_path(asset_id: String, category: String) -> String:
@@ -373,6 +1110,14 @@ func _asset_path(asset_id: String, category: String) -> String:
 		return str(entry.get("texture", ""))
 	if category == "floors":
 		return "res://content/tiles/sundered_keep/floors/%s.png" % asset_id
+	if category == "entrance":
+		return "res://content/tiles/sundered_keep/entrance/%s.png" % asset_id
+	if category == "return_mooring_floor":
+		return "res://content/tiles/sundered_keep/return_mooring/floors/%s.png" % asset_id
+	if category == "return_mooring_overlay":
+		return "res://content/tiles/sundered_keep/return_mooring/overlays/%s.png" % asset_id
+	if category == "overlays":
+		return "res://content/tiles/sundered_keep/overlays/%s.png" % asset_id
 	if category == "walls":
 		for dir in WALL_ASSET_DIRS:
 			var wall_path := "%s/%s.png" % [dir, asset_id]
@@ -381,19 +1126,32 @@ func _asset_path(asset_id: String, category: String) -> String:
 		return "res://content/tiles/sundered_keep/walls/gothic_castle/%s.png" % asset_id
 	if category == "props":
 		var prop_paths := [
-			"res://content/props/sundered_keep/courtyard/%s.png" % asset_id,
-			"res://content/props/sundered_keep/exterior/%s.png" % asset_id,
-			"res://content/props/sundered_keep/gatehouse/%s.png" % asset_id,
-			"res://content/props/sundered_keep/great_hall/%s.png" % asset_id,
-			"res://content/props/sundered_keep/dungeon/%s.png" % asset_id,
-			"res://content/props/sundered_keep/chapel/%s.png" % asset_id,
-			"res://content/props/sundered_keep/library/%s.png" % asset_id,
-			"res://content/props/sundered_keep/observatory/%s.png" % asset_id,
+			"res://content/props/sundered_keep/return_mooring/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_anchor/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_barrier/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_column/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_debris/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_furniture/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_hanging/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_large/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_light/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_mechanical/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_medium/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_observatory/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_rock/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_rooftop/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_rubble/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_statue/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_storage/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_table/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_tall/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_throne/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_tomb/%s.png" % asset_id,
+			"res://content/runtime/sundered_keep/props/prop_wall_low/%s.png" % asset_id,
 		]
 		for prop_path in prop_paths:
 			if ResourceLoader.exists(prop_path):
 				return prop_path
-		return "res://content/props/sundered_keep/%s.png" % asset_id
 	return "res://content/tiles/sundered_keep/%s/%s.png" % [category, asset_id]
 
 
@@ -402,6 +1160,7 @@ func _load_texture(path: String) -> Texture2D:
 		return _textures[path] as Texture2D
 	if not ResourceLoader.exists(path):
 		push_warning("[SunderedKeepMap] Missing texture: %s" % path)
+		_stats["missing_assets"] = int(_stats["missing_assets"]) + 1
 		_textures[path] = null
 		return null
 	var texture := load(path) as Texture2D

@@ -31,7 +31,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "vault_open_full_lockbox_storage_prop",
+    "semantic_role": "small_dead_bramble_shrub_prop",
     "placement_layer": "prop",
     "tags": [
       "vault",
@@ -43,7 +43,12 @@
       "stealable",
       "open",
       "full",
-      "loot"
+      "loot",
+      "deadwood",
+      "bramble",
+      "shrub",
+      "organic_intrusion",
+      "nonblocking"
     ],
     "review_status": "reviewed"
   },
@@ -77,13 +82,11 @@
   },
   "procgen": {
     "uses": [
-      "vault_storage",
-      "loot_container",
-      "enemy_theft_target",
-      "small_storage",
-      "open_container"
+      "vegetation",
+      "organic_intrusion",
+      "minor_environment_dressing"
     ],
-    "weight": 6,
+    "weight": 14,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": false,
     "review_status": "reviewed",

@@ -1,0 +1,2274 @@
+{
+  "schema": "custodian.game32.asset_manifest.v1",
+  "name": "sundered_keep_floor_tiles",
+  "generated_at_utc": "2026-05-30T04:21:55+00:00",
+  "generator": "extract_sundered_floor_tiles.py",
+  "game32": {
+    "tile_size_px": 32,
+    "coordinate_system": "grid32_top_down_2_5d",
+    "runtime": "Godot 4.x",
+    "usage": {
+      "floors": "snap top-left to 32x32 grid cell",
+      "metadata_authority": "content/metadata/game32/sundered_keep_floor_tiles.game32.json"
+    }
+  },
+  "source": {
+    "sheet": {
+      "path": "res://content/masters/sundered/sundered_floor_tiles.png",
+      "size_px": [
+        1448,
+        1086
+      ],
+      "sha256": "e747a8598a18b2c6977f66e34e6b52b13a0b343c58b987a20ba3c618f9a4e5a2",
+      "grid": {
+        "rows": 3,
+        "cols": 6
+      }
+    }
+  },
+  "outputs": {
+    "domain_home": "res://content/tiles/sundered_keep/floors",
+    "count": 18
+  },
+  "assets": [
+    {
+      "id": "sundered_keep/floors/main_courtyard_flagstone_01",
+      "name": "main_courtyard_flagstone_01",
+      "filename": "main_courtyard_flagstone_01.png",
+      "description": "Primary worn gothic courtyard flagstone floor tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 0,
+          "index": 0,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          28,
+          135,
+          241,
+          349
+        ],
+        "crop_box_px": [
+          28,
+          135,
+          241,
+          349
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "f57cb79d370bb58551709ff75300b823674e359f87c585a06977cbf1177e217c",
+        "fit": {
+          "scale": 0.15023474178403756,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            1,
+            213,
+            214
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "courtyard",
+          "flagstone",
+          "floor_tile",
+          "grid32",
+          "stone",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/main_courtyard_flagstone_02",
+      "name": "main_courtyard_flagstone_02",
+      "filename": "main_courtyard_flagstone_02.png",
+      "description": "Alternate worn gothic courtyard flagstone floor tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_02.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 1,
+          "index": 1,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          263,
+          135,
+          476,
+          349
+        ],
+        "crop_box_px": [
+          263,
+          135,
+          476,
+          349
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "6cc3d4064e03d9b4f06ea99474568cf3cfd7027368ec85a55f424eb146d4c6c1",
+        "fit": {
+          "scale": 0.15023474178403756,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            1,
+            213,
+            214
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "courtyard",
+          "flagstone",
+          "floor_tile",
+          "grid32",
+          "stone",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/main_courtyard_flagstone_cracked_01",
+      "name": "main_courtyard_flagstone_cracked_01",
+      "filename": "main_courtyard_flagstone_cracked_01.png",
+      "description": "Cracked courtyard flagstone tile for damaged exterior keep surfaces.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_cracked_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 2,
+          "index": 2,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          499,
+          135,
+          713,
+          349
+        ],
+        "crop_box_px": [
+          499,
+          135,
+          713,
+          349
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "24f47a3fafafc850a7a56bff4e6f52e3ce8694ce82bb7819c13ed2747b4c868a",
+        "fit": {
+          "scale": 0.14953271028037382,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            1,
+            214,
+            214
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "courtyard",
+          "damaged",
+          "flagstone",
+          "floor_tile",
+          "grid32",
+          "stone",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/main_courtyard_flagstone_wet_01",
+      "name": "main_courtyard_flagstone_wet_01",
+      "filename": "main_courtyard_flagstone_wet_01.png",
+      "description": "Wet dark courtyard flagstone tile for rain, sea spray, and damp exterior zones.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_wet_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 3,
+          "index": 3,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          735,
+          135,
+          950,
+          349
+        ],
+        "crop_box_px": [
+          735,
+          135,
+          950,
+          349
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "4b20b37e26ffa177b99b053fe6095a7b211d5f5bde711bb91d7e3d83c940d615",
+        "fit": {
+          "scale": 0.14953271028037382,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            1,
+            1,
+            215,
+            214
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "courtyard",
+          "flagstone",
+          "floor_tile",
+          "grid32",
+          "stone",
+          "sundered_keep",
+          "wet"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/main_courtyard_flagstone_mossy_01",
+      "name": "main_courtyard_flagstone_mossy_01",
+      "filename": "main_courtyard_flagstone_mossy_01.png",
+      "description": "Mossy courtyard flagstone tile for overgrown keep edges.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_mossy_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 4,
+          "index": 4,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          971,
+          135,
+          1186,
+          349
+        ],
+        "crop_box_px": [
+          971,
+          135,
+          1186,
+          349
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "d942caec85c6e7cedf8b95bb96092a044e1d2ad7fde09c691ec34c3f2975b3b8",
+        "fit": {
+          "scale": 0.14953271028037382,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            1,
+            1,
+            215,
+            214
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "courtyard",
+          "flagstone",
+          "floor_tile",
+          "grid32",
+          "moss",
+          "stone",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/main_gate_threshold_stone_01",
+      "name": "main_gate_threshold_stone_01",
+      "filename": "main_gate_threshold_stone_01.png",
+      "description": "Heavy threshold stone tile for main gate and portcullis entry transitions.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/main_gate_threshold_stone_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 0,
+          "col": 5,
+          "index": 5,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          1207,
+          135,
+          1421,
+          349
+        ],
+        "crop_box_px": [
+          1207,
+          135,
+          1421,
+          349
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "c668f80a9424a505965c7fc1217572650ac7d19492ec25e41441ceb6184a6b10",
+        "fit": {
+          "scale": 0.14953271028037382,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            214,
+            214
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "floor_tile",
+          "gatehouse",
+          "grid32",
+          "sundered_keep",
+          "threshold",
+          "transition"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/great_hall_marble_floor_01",
+      "name": "great_hall_marble_floor_01",
+      "filename": "great_hall_marble_floor_01.png",
+      "description": "Ceremonial great hall marble floor tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/great_hall_marble_floor_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 0,
+          "index": 6,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          28,
+          421,
+          241,
+          638
+        ],
+        "crop_box_px": [
+          28,
+          421,
+          241,
+          638
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "c9c6afcebe2af0f823c1b6874ed91cf3d0fc23a11296b1768ccbe347b40a351e",
+        "fit": {
+          "scale": 0.14883720930232558,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            1,
+            213,
+            216
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "floor_tile",
+          "great_hall",
+          "grid32",
+          "interior",
+          "marble",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/great_hall_marble_floor_cracked_01",
+      "name": "great_hall_marble_floor_cracked_01",
+      "filename": "great_hall_marble_floor_cracked_01.png",
+      "description": "Cracked ceremonial marble floor tile for ruined great hall sections.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/great_hall_marble_floor_cracked_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 1,
+          "index": 7,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          263,
+          421,
+          476,
+          638
+        ],
+        "crop_box_px": [
+          263,
+          421,
+          476,
+          638
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "529a31fc78d2fcaa23b177ffe85e23a438e7dbf49c77f2b674cc16f3d1752ca6",
+        "fit": {
+          "scale": 0.14883720930232558,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            1,
+            213,
+            216
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "damaged",
+          "floor_tile",
+          "great_hall",
+          "grid32",
+          "interior",
+          "marble",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/great_hall_carpet_runner_vertical_01",
+      "name": "great_hall_carpet_runner_vertical_01",
+      "filename": "great_hall_carpet_runner_vertical_01.png",
+      "description": "Vertical crimson-and-gold great hall carpet runner tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_vertical_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 2,
+          "index": 8,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          499,
+          421,
+          713,
+          638
+        ],
+        "crop_box_px": [
+          499,
+          421,
+          713,
+          638
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "f7e5afd5c9563c489b14ba0bc7c2be681006f963a77192d9bd5094535c979719",
+        "fit": {
+          "scale": 0.14814814814814814,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            214,
+            216
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "carpet",
+          "decorative",
+          "floor_tile",
+          "great_hall",
+          "grid32",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/great_hall_carpet_runner_horizontal_01",
+      "name": "great_hall_carpet_runner_horizontal_01",
+      "filename": "great_hall_carpet_runner_horizontal_01.png",
+      "description": "Horizontal crimson-and-gold great hall carpet runner tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_horizontal_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 3,
+          "index": 9,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          735,
+          421,
+          950,
+          638
+        ],
+        "crop_box_px": [
+          735,
+          421,
+          950,
+          638
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "dc1d3e95fe8c9767552275a251919166c42466dbf20c25953c041603eaf55929",
+        "fit": {
+          "scale": 0.14814814814814814,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            215,
+            216
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "carpet",
+          "decorative",
+          "floor_tile",
+          "great_hall",
+          "grid32",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/rampart_walkway_floor_01",
+      "name": "rampart_walkway_floor_01",
+      "filename": "rampart_walkway_floor_01.png",
+      "description": "Exterior rampart walkway floor tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/rampart_walkway_floor_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 4,
+          "index": 10,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          971,
+          421,
+          1186,
+          638
+        ],
+        "crop_box_px": [
+          971,
+          421,
+          1186,
+          638
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "9d1ebf378fee1ff1961cb02cc0bf58b9540247a5b760f961df1800b472f7e963",
+        "fit": {
+          "scale": 0.14746543778801843,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            215,
+            217
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "exterior",
+          "floor_tile",
+          "grid32",
+          "rampart",
+          "sundered_keep",
+          "walkway"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/rampart_walkway_broken_01",
+      "name": "rampart_walkway_broken_01",
+      "filename": "rampart_walkway_broken_01.png",
+      "description": "Broken exterior rampart walkway tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/rampart_walkway_broken_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 1,
+          "col": 5,
+          "index": 11,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          1207,
+          421,
+          1421,
+          638
+        ],
+        "crop_box_px": [
+          1207,
+          421,
+          1421,
+          638
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "12a9e2142e9c8089f3e9fef13bba81fc399e084e9fb6f2fe7a2bfb02e41899fa",
+        "fit": {
+          "scale": 0.14746543778801843,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            1,
+            0,
+            213,
+            217
+          ],
+          "resized_px": [
+            31,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "damaged",
+          "exterior",
+          "floor_tile",
+          "grid32",
+          "rampart",
+          "sundered_keep",
+          "walkway"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/cliff_rock_floor_01",
+      "name": "cliff_rock_floor_01",
+      "filename": "cliff_rock_floor_01.png",
+      "description": "Jagged cliff rock ground tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/cliff_rock_floor_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 0,
+          "index": 12,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          28,
+          705,
+          241,
+          920
+        ],
+        "crop_box_px": [
+          28,
+          705,
+          241,
+          920
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "4e00a5253c8d134a66c053baef85edd4387f06bcc44ef44a2e1f6670ffa41ff0",
+        "fit": {
+          "scale": 0.14953271028037382,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            1,
+            213,
+            215
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "cliff",
+          "exterior",
+          "floor_tile",
+          "grid32",
+          "rock",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/cliff_rock_floor_cracked_01",
+      "name": "cliff_rock_floor_cracked_01",
+      "filename": "cliff_rock_floor_cracked_01.png",
+      "description": "Cracked jagged cliff rock ground tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/cliff_rock_floor_cracked_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 1,
+          "index": 13,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          263,
+          705,
+          476,
+          920
+        ],
+        "crop_box_px": [
+          263,
+          705,
+          476,
+          920
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "4f71df1612fae45bbed72749d072e59ff7307350fd062cb9674198ebcd9b0225",
+        "fit": {
+          "scale": 0.14953271028037382,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            1,
+            213,
+            215
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "cliff",
+          "damaged",
+          "exterior",
+          "floor_tile",
+          "grid32",
+          "rock",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/roof_slate_dark_01",
+      "name": "roof_slate_dark_01",
+      "filename": "roof_slate_dark_01.png",
+      "description": "Dark slate roof tile for elevated keep surfaces.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/roof_slate_dark_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 2,
+          "index": 14,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          499,
+          705,
+          713,
+          920
+        ],
+        "crop_box_px": [
+          499,
+          705,
+          713,
+          920
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "146be753bb45e4c0836610225d61cc1c002df2cae3c647ec10231da529fe9d04",
+        "fit": {
+          "scale": 0.14883720930232558,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            213,
+            215
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "elevated",
+          "floor_tile",
+          "grid32",
+          "roof",
+          "slate",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/dungeon_stone_floor_01",
+      "name": "dungeon_stone_floor_01",
+      "filename": "dungeon_stone_floor_01.png",
+      "description": "Dark dungeon stone floor tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/dungeon_stone_floor_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 3,
+          "index": 15,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          735,
+          705,
+          950,
+          920
+        ],
+        "crop_box_px": [
+          735,
+          705,
+          950,
+          920
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "fa9cded60ecab56b9dc4245578337079cf984d9aada96eacc606d8044467a48e",
+        "fit": {
+          "scale": 0.14883720930232558,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            214,
+            215
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "dungeon",
+          "floor_tile",
+          "grid32",
+          "interior",
+          "sundered_keep"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/undercroft_wet_stone_floor_01",
+      "name": "undercroft_wet_stone_floor_01",
+      "filename": "undercroft_wet_stone_floor_01.png",
+      "description": "Wet undercroft stone floor tile.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/undercroft_wet_stone_floor_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 4,
+          "index": 16,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          971,
+          705,
+          1186,
+          920
+        ],
+        "crop_box_px": [
+          971,
+          705,
+          1186,
+          920
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "a372fcc1c739cc825c2c149a5b094b0ae28f92161dad9b60853ed557ef4f4113",
+        "fit": {
+          "scale": 0.14883720930232558,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            215,
+            215
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "walkable",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "floor_tile",
+          "grid32",
+          "interior",
+          "sundered_keep",
+          "undercroft",
+          "wet"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/floors/ocean_void_01",
+      "name": "ocean_void_01",
+      "filename": "ocean_void_01.png",
+      "description": "Dark ocean void tile for unreachable water or drop-edge zones.",
+      "asset_class": "floor_tile",
+      "domain": "floors",
+      "runtime_path": "res://content/tiles/sundered_keep/floors/ocean_void_01.png",
+      "source": {
+        "master_sheet": "sundered_floor_tiles.png",
+        "master_sheet_path": "res://content/masters/sundered/sundered_floor_tiles.png",
+        "master_sheet_size_px": [
+          1448,
+          1086
+        ],
+        "sheet_grid": {
+          "rows": 3,
+          "cols": 6,
+          "row": 2,
+          "col": 5,
+          "index": 17,
+          "order": "reading_order_left_to_right_top_to_bottom"
+        },
+        "detected_cell_box_px": [
+          1207,
+          705,
+          1421,
+          920
+        ],
+        "crop_box_px": [
+          1207,
+          705,
+          1421,
+          920
+        ]
+      },
+      "image": {
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "format": "png_rgba",
+        "sha256": "70f654c51da3f0f5b3ec2c923e53fa2054cc1c1ee950879e60236d09fe38c22a",
+        "fit": {
+          "scale": 0.14953271028037382,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            1,
+            1,
+            213,
+            215
+          ],
+          "resized_px": [
+            32,
+            32
+          ]
+        },
+        "background": "transparent"
+      },
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "z_layer": "ground",
+        "z_index": 0,
+        "y_sort": false,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "traversal": "void_blocked",
+        "collision": {
+          "enabled": true,
+          "profile": "void_blocker",
+          "shape": "rect",
+          "rect_px": [
+            0,
+            0,
+            32,
+            32
+          ]
+        },
+        "navigation": {
+          "can_pathfind": false,
+          "cost": null,
+          "avoidance": "blocked"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "ground",
+            "floor"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false
+        },
+        "tags": [
+          "blocked",
+          "floor_tile",
+          "grid32",
+          "hazard",
+          "ocean",
+          "sundered_keep",
+          "void"
+        ]
+      }
+    }
+  ],
+  "doc_drift_check": {
+    "checked_at_utc": "2026-05-30T04:21:55+00:00",
+    "status": "ok",
+    "missing_count": 0,
+    "checks": [
+      {
+        "key": "custodian_root",
+        "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian",
+        "exists": true,
+        "type": "dir"
+      },
+      {
+        "key": "content_dir",
+        "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content",
+        "exists": true,
+        "type": "dir"
+      },
+      {
+        "key": "active_runtime_docs",
+        "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/docs",
+        "exists": true,
+        "type": "dir"
+      },
+      {
+        "key": "active_ai_context",
+        "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/docs/ai_context",
+        "exists": true,
+        "type": "dir"
+      },
+      {
+        "key": "current_state_doc",
+        "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/docs/ai_context/CURRENT_STATE.md",
+        "exists": true,
+        "type": "file"
+      },
+      {
+        "key": "repo_design_dir",
+        "path": "/home/braydenchaffee/Projects/CUSTODIAN/design",
+        "exists": true,
+        "type": "dir"
+      },
+      {
+        "key": "agents_md",
+        "path": "/home/braydenchaffee/Projects/CUSTODIAN/AGENTS.md",
+        "exists": true,
+        "type": "file"
+      }
+    ],
+    "recommendation": "If these floor tiles are accepted into runtime, add a short note to custodian/docs/ai_context/CURRENT_STATE.md with the new floor tile domain path and metadata manifest path."
+  }
+}

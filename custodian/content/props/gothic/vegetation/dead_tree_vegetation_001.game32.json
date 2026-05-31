@@ -24,9 +24,9 @@
     }
   },
   "classification": {
-    "asset_type": "props",
-    "semantic_role": "dead_tree_vegetation_cluster",
-    "placement_layer": "prop",
+    "asset_type": "reference",
+    "semantic_role": "misc_prop_composite_source_strip_excluded",
+    "placement_layer": "excluded",
     "tags": [
       "gothic",
       "prop",
@@ -36,7 +36,11 @@
       "deadwood",
       "organic_intrusion",
       "outdoor",
-      "scatter"
+      "scatter",
+      "review_excluded",
+      "composite_sheet",
+      "prop_source_strip",
+      "not_runtime_asset"
     ],
     "review_status": "reviewed"
   },
@@ -47,10 +51,10 @@
       "h": 4
     },
     "origin_mode": "bottom_center",
-    "snap": "tile",
+    "snap": "none",
     "allow_mirror_x": false,
     "allow_rotation": false,
-    "y_sort": true,
+    "y_sort": false,
     "pivot_px": {
       "x": 104,
       "y": 117
@@ -58,22 +62,19 @@
     "review_status": "reviewed"
   },
   "collision": {
-    "blocks_movement": true,
+    "blocks_movement": false,
     "blocks_sight": false,
-    "cover_value": 1,
+    "cover_value": 0,
     "review_status": "reviewed",
-    "collision_shape": "footprint"
+    "collision_shape": "none"
   },
   "procgen": {
     "uses": [
-      "vegetation",
-      "organic_intrusion",
-      "forest_intrusion",
-      "outdoor_dressing"
+      "review_excluded"
     ],
-    "weight": 10,
+    "weight": 0,
     "can_spawn_indoor": false,
-    "can_spawn_outdoor": true,
+    "can_spawn_outdoor": false,
     "review_status": "reviewed",
     "supports_gothic_compound": true
   },

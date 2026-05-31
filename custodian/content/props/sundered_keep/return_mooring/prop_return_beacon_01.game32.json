@@ -1,0 +1,49 @@
+{
+  "schema": "custodian.game32.asset.v1",
+  "id": "prop_return_beacon_01",
+  "name": "prop_return_beacon_01",
+  "set": "sundered_keep",
+  "domain": "return_mooring_prop",
+  "asset_class": "prop",
+  "generated_at_utc": "2026-05-30T08:55:36.753855+00:00",
+  "generator": "custodian/tools/art/extract_return_mooring_game32.py",
+  "source": {
+    "sheet_path": "res://content/masters/sundered_keep/return_mooring_tilesheet.png",
+    "crop_box_px": [
+      280,
+      734,
+      389,
+      1014
+    ]
+  },
+  "runtime_path": "res://content/props/sundered_keep/return_mooring/prop_return_beacon_01.png",
+  "size_px": [
+    32,
+    64
+  ],
+  "tile_size_px": 32,
+  "anchor": "bottom_center",
+  "layer": "PropsBlocking",
+  "gameplay": {
+    "walkable": false,
+    "blocks_movement": true,
+    "blocks_projectile": false,
+    "interactable": false,
+    "non_blocking_overlay": false,
+    "animated_optional": false
+  },
+  "import": {
+    "filter": "nearest",
+    "mipmaps": false,
+    "repeat": false
+  },
+  "notes": "Tall return beacon. Small blocker, bottom-center anchored.",
+  "collision": {
+    "collision_cell_px": [
+      32,
+      32
+    ],
+    "shape": "rect",
+    "anchor": "bottom_center"
+  }
+}

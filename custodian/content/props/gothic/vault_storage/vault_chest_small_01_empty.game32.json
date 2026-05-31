@@ -31,7 +31,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "vault_empty_chest_storage_prop",
+    "semantic_role": "orange_wall_lantern_unit",
     "placement_layer": "prop",
     "tags": [
       "vault",
@@ -44,7 +44,12 @@
       "open",
       "empty",
       "looted",
-      "interactable_state"
+      "interactable_state",
+      "lamp",
+      "lantern",
+      "orange_glow",
+      "wall_light",
+      "light_source"
     ],
     "review_status": "reviewed"
   },
@@ -66,10 +71,10 @@
     "review_status": "reviewed"
   },
   "collision": {
-    "blocks_movement": true,
+    "blocks_movement": false,
     "blocks_sight": false,
-    "cover_value": 1,
-    "collision_shape": "footprint",
+    "cover_value": 0,
+    "collision_shape": "none",
     "review_status": "reviewed"
   },
   "runtime": {
@@ -78,12 +83,12 @@
   },
   "procgen": {
     "uses": [
-      "vault_storage",
-      "empty_container",
-      "looted_container",
-      "storage_room_dressing"
+      "wall_light",
+      "interior_light",
+      "vault_dressing",
+      "gothic_dressing"
     ],
-    "weight": 6,
+    "weight": 10,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": false,
     "review_status": "reviewed",

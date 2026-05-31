@@ -24,9 +24,9 @@
     }
   },
   "classification": {
-    "asset_type": "reference",
-    "semantic_role": "vault_propsheet_source_sheet_excluded",
-    "placement_layer": "excluded",
+    "asset_type": "props",
+    "semantic_role": "cyan_gothic_lantern_stand",
+    "placement_layer": "prop",
     "tags": [
       "gothic",
       "prop",
@@ -35,7 +35,12 @@
       "source_sheet",
       "vault_propsheet",
       "not_runtime_asset",
-      "already_extracted"
+      "already_extracted",
+      "lamp",
+      "lantern",
+      "cyan_glow",
+      "light_source",
+      "tech"
     ],
     "review_status": "reviewed"
   },
@@ -65,9 +70,12 @@
   },
   "procgen": {
     "uses": [
-      "review_excluded"
+      "light_source",
+      "gothic_dressing",
+      "tech_light",
+      "vault_dressing"
     ],
-    "weight": 0,
+    "weight": 8,
     "can_spawn_indoor": false,
     "can_spawn_outdoor": false,
     "review_status": "reviewed",

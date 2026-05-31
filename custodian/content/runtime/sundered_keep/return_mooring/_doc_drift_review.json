@@ -1,0 +1,19 @@
+{
+  "schema": "custodian.doc_drift_review.v1",
+  "subject": "sundered_keep_return_mooring",
+  "generated_at_utc": "2026-05-30T08:55:36.775994+00:00",
+  "status": "ok",
+  "missing_count": 0,
+  "missing": [],
+  "runtime_outputs": {
+    "tiles": "custodian/content/tiles/sundered_keep/return_mooring/",
+    "props": "custodian/content/props/sundered_keep/return_mooring/",
+    "module_manifest": "custodian/content/runtime/sundered_keep/return_mooring/return_mooring_module.game32.json",
+    "metadata_authority": "custodian/content/metadata/game32/return_mooring.game32.json"
+  },
+  "recommended_doc_updates": [
+    "custodian/docs/ai_context/CURRENT_STATE.md",
+    "custodian/docs/ai_context/FILE_INDEX.md"
+  ],
+  "note": "If this return mooring is accepted into active Sundered Keep runtime, document the new module and its runtime paths in the AI context docs."
+}

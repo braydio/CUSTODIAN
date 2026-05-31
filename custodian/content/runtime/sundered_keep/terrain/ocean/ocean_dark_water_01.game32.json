@@ -5,7 +5,7 @@
   "filename": "ocean_dark_water_01.png",
   "set": "sundered_keep",
   "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-  "created_utc": "2026-05-30T01:02:23+00:00",
+  "created_utc": "2026-05-30T04:15:53+00:00",
   "source": {
     "sheet_key": "terrain_cliffs_ocean",
     "sheet_file": "cliffs_oceans.png",
@@ -99,15 +99,15 @@
       1
     ],
     "content_bbox_px": [
-      2,
-      3,
-      28,
-      26
+      0,
+      0,
+      32,
+      32
     ],
-    "scale_from_source_crop": 0.12173913043478261,
+    "scale_from_source_crop": 1.0,
     "paste_offset_px": [
-      2,
-      3
+      0,
+      0
     ],
     "anchor": "center",
     "pivot_px": [

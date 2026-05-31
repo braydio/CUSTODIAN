@@ -1,7 +1,7 @@
 {
   "schema": "game32.aggregate_review_apply_report.v1",
   "aggregate": "custodian/content/props/gothic/.review_batches/game32_asset_review/batch_0000_aggregate.game32.review.json",
-  "applied_utc": "2026-05-30T01:08:28+00:00",
+  "applied_utc": "2026-05-30T06:53:41+00:00",
   "dry_run": false,
   "results": [
     {
@@ -169,7 +169,7 @@
   ],
   "master_manifest": {
     "path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic/gothic_master_sheet.game32.json",
-    "backup": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic/gothic_master_sheet.game32.json.bak-20260530T010828Z",
+    "backup": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/gothic/gothic_master_sheet.game32.json.bak-20260530T065341Z",
     "assets_applied": 4,
     "assets_skipped_unmatched": 14,
     "unmatched": [

@@ -89,6 +89,7 @@ const TERMINAL_COMPLETION_TOKENS := [
 
 # Custom minimap feature flag.
 const ENABLE_MINIMAP := true
+const MINIMAP_TOGGLE_ACTION := &"toggle_minimap"
 
 const SECTOR_DISPLAY_NAMES := {
 	"COMMAND": "Command Center",
@@ -268,6 +269,7 @@ var _planet_preview_zoom_distance := 3.8
 var _main_hud_hidden := false
 var _debug_hud_visible := false
 var _debug_toggle_key_was_pressed := false
+var _minimap_visible := true
 var _placement_mode_active := false
 var _last_crosshair_aim_dir := Vector2.ZERO
 var _last_crosshair_screen_pos := Vector2.ZERO
@@ -312,6 +314,8 @@ const TERMINAL_ACTIVITY_SCROLL_FOLLOW_MARGIN := 24.0
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	if minimap:
+		_minimap_visible = minimap.visible
 	_set_main_hud_hidden(false)
 	_create_debug_panel()
 	_register_devconsole_commands()
@@ -796,8 +800,8 @@ func _devconsole_toggle_minimap(args: Array) -> String:
 		minimap = get_node_or_null("/root/GameRoot/UI/Minimap")
 	if minimap == null:
 		return "Minimap node not found. Check scene tree path."
-	minimap.visible = !minimap.visible
-	return "Minimap: " + ("VISIBLE" if minimap.visible else "HIDDEN")
+	_set_minimap_visible(not _minimap_visible)
+	return "Minimap: " + ("VISIBLE" if _minimap_visible else "HIDDEN")
 
 func _devconsole_minimap_status(args: Array) -> String:
 	# Show minimap status and configuration
@@ -808,7 +812,7 @@ func _devconsole_minimap_status(args: Array) -> String:
 		minimap = get_node_or_null("/root/GameRoot/UI/Minimap")
 	if minimap == null:
 		return "Minimap node not found. Check scene tree path."
-	var status = "Minimap: " + ("VISIBLE" if minimap.visible else "HIDDEN") + "\n"
+	var status = "Minimap: " + ("VISIBLE" if _minimap_visible and minimap.visible else "HIDDEN") + "\n"
 	if minimap.has_method("get_status_summary"):
 		var summary: Dictionary = minimap.call("get_status_summary")
 		status += "Procgen connected: " + str(summary.get("procgen_connected", false)) + "\n"
@@ -1236,7 +1240,6 @@ func _update_crosshair() -> void:
 
 func _get_essential_hud_nodes() -> Array:
 	return [
-		minimap,
 		contract_phase_label,
 		lives_label,
 		cooldown_bar,
@@ -1269,11 +1272,31 @@ func _set_main_hud_hidden(hidden: bool) -> void:
 	for node in _get_essential_hud_nodes():
 		if node:
 			node.visible = not hidden
+	if minimap:
+		minimap.visible = not hidden and _minimap_visible
 	for node in _get_debug_hud_nodes():
 		if node:
 			node.visible = not hidden and _debug_hud_visible
 	if crosshair_label:
 		crosshair_label.visible = false
+
+
+func _handle_minimap_toggle_input(event: InputEvent) -> bool:
+	if not ENABLE_MINIMAP or minimap == null:
+		return false
+	if not InputMap.has_action(MINIMAP_TOGGLE_ACTION):
+		return false
+	if not event.is_action_pressed(MINIMAP_TOGGLE_ACTION):
+		return false
+	_set_minimap_visible(not _minimap_visible)
+	get_viewport().set_input_as_handled()
+	return true
+
+
+func _set_minimap_visible(visible: bool) -> void:
+	_minimap_visible = visible
+	if minimap:
+		minimap.visible = visible and not _main_hud_hidden
 
 func enter_placement_mode_ui() -> void:
 	if _placement_mode_active:
@@ -1465,6 +1488,8 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _handle_minimap_toggle_input(event):
+		return
 	if not _terminal_open or not _terminal_ready or terminal_input == null or not terminal_input.editable:
 		return
 	if event is InputEventMouseButton:

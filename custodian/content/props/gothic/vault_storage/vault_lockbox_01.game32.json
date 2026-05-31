@@ -31,8 +31,8 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "vault_closed_lockbox_storage_prop",
-    "placement_layer": "prop",
+    "semantic_role": "small_wall_light_plate",
+    "placement_layer": "wall_dressing",
     "tags": [
       "vault",
       "gothic",
@@ -43,7 +43,11 @@
       "stealable",
       "closed",
       "loot",
-      "enemy_theft_target"
+      "enemy_theft_target",
+      "wall_light",
+      "small_light",
+      "plate",
+      "nonblocking"
     ],
     "review_status": "reviewed"
   },
@@ -65,10 +69,10 @@
     "review_status": "reviewed"
   },
   "collision": {
-    "blocks_movement": true,
+    "blocks_movement": false,
     "blocks_sight": false,
-    "cover_value": 1,
-    "collision_shape": "footprint",
+    "cover_value": 0,
+    "collision_shape": "none",
     "review_status": "reviewed"
   },
   "runtime": {
@@ -77,13 +81,11 @@
   },
   "procgen": {
     "uses": [
-      "vault_storage",
-      "loot_container",
-      "enemy_theft_target",
-      "locked_container",
-      "small_storage"
+      "wall_light",
+      "interior_light",
+      "small_wall_dressing"
     ],
-    "weight": 9,
+    "weight": 8,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": false,
     "review_status": "reviewed",

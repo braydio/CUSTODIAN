@@ -26283,9 +26283,9 @@
         }
       },
       "classification": {
-        "asset_type": "props",
-        "semantic_role": "dead_tree_vegetation_cluster",
-        "placement_layer": "prop",
+        "asset_type": "reference",
+        "semantic_role": "misc_prop_composite_source_strip_excluded",
+        "placement_layer": "excluded",
         "tags": [
           "gothic",
           "prop",
@@ -26295,7 +26295,11 @@
           "deadwood",
           "organic_intrusion",
           "outdoor",
-          "scatter"
+          "scatter",
+          "review_excluded",
+          "composite_sheet",
+          "prop_source_strip",
+          "not_runtime_asset"
         ],
         "review_status": "reviewed"
       },
@@ -26306,10 +26310,10 @@
           "h": 4
         },
         "origin_mode": "bottom_center",
-        "snap": "tile",
+        "snap": "none",
         "allow_mirror_x": false,
         "allow_rotation": false,
-        "y_sort": true,
+        "y_sort": false,
         "pivot_px": {
           "x": 104,
           "y": 117
@@ -26317,22 +26321,19 @@
         "review_status": "reviewed"
       },
       "collision": {
-        "blocks_movement": true,
+        "blocks_movement": false,
         "blocks_sight": false,
-        "cover_value": 1,
+        "cover_value": 0,
         "review_status": "reviewed",
-        "collision_shape": "footprint"
+        "collision_shape": "none"
       },
       "procgen": {
         "uses": [
-          "vegetation",
-          "organic_intrusion",
-          "forest_intrusion",
-          "outdoor_dressing"
+          "review_excluded"
         ],
-        "weight": 10,
+        "weight": 0,
         "can_spawn_indoor": false,
-        "can_spawn_outdoor": true,
+        "can_spawn_outdoor": false,
         "review_status": "reviewed",
         "supports_gothic_compound": true
       },
@@ -26365,7 +26366,7 @@
       },
       "classification": {
         "asset_type": "props",
-        "semantic_role": "dead_tree_spike_barricade_vegetation",
+        "semantic_role": "small_wooden_crate_prop",
         "placement_layer": "prop",
         "tags": [
           "gothic",
@@ -26376,7 +26377,12 @@
           "deadwood",
           "spikes",
           "barrier",
-          "outdoor"
+          "outdoor",
+          "crate",
+          "wood",
+          "storage",
+          "small_cover",
+          "loot_cover"
         ],
         "review_status": "reviewed"
       },
@@ -26406,12 +26412,11 @@
       },
       "procgen": {
         "uses": [
-          "vegetation",
-          "organic_intrusion",
-          "forest_intrusion",
-          "natural_barrier"
+          "storage_room_dressing",
+          "loot_cover",
+          "small_cover_prop"
         ],
-        "weight": 8,
+        "weight": 14,
         "can_spawn_indoor": false,
         "can_spawn_outdoor": true,
         "review_status": "reviewed",
@@ -26446,7 +26451,7 @@
       },
       "classification": {
         "asset_type": "props",
-        "semantic_role": "small_dead_tree_debris_vegetation",
+        "semantic_role": "small_barrel_prop",
         "placement_layer": "prop",
         "tags": [
           "gothic",
@@ -26456,7 +26461,11 @@
           "vegetation",
           "deadwood",
           "small_debris",
-          "nonblocking"
+          "nonblocking",
+          "barrel",
+          "storage",
+          "small_cover",
+          "loot_cover"
         ],
         "review_status": "reviewed"
       },
@@ -26478,20 +26487,19 @@
         "review_status": "reviewed"
       },
       "collision": {
-        "blocks_movement": false,
+        "blocks_movement": true,
         "blocks_sight": false,
-        "cover_value": 0,
+        "cover_value": 1,
         "review_status": "reviewed",
-        "collision_shape": "none"
+        "collision_shape": "footprint"
       },
       "procgen": {
         "uses": [
-          "vegetation",
-          "organic_intrusion",
-          "minor_environment_dressing",
-          "floor_dressing"
+          "storage_room_dressing",
+          "loot_cover",
+          "small_cover_prop"
         ],
-        "weight": 12,
+        "weight": 14,
         "can_spawn_indoor": false,
         "can_spawn_outdoor": true,
         "review_status": "reviewed",
@@ -26526,7 +26534,7 @@
       },
       "classification": {
         "asset_type": "props",
-        "semantic_role": "small_dead_tree_debris_vegetation",
+        "semantic_role": "small_bundle_or_pot_prop",
         "placement_layer": "prop",
         "tags": [
           "gothic",
@@ -26536,7 +26544,11 @@
           "vegetation",
           "deadwood",
           "small_debris",
-          "nonblocking"
+          "nonblocking",
+          "small_storage",
+          "bundle",
+          "pot",
+          "minor_cover"
         ],
         "review_status": "reviewed"
       },
@@ -26566,12 +26578,10 @@
       },
       "procgen": {
         "uses": [
-          "vegetation",
-          "organic_intrusion",
-          "minor_environment_dressing",
-          "floor_dressing"
+          "storage_room_dressing",
+          "minor_environment_dressing"
         ],
-        "weight": 12,
+        "weight": 10,
         "can_spawn_indoor": false,
         "can_spawn_outdoor": true,
         "review_status": "reviewed",

@@ -89,9 +89,9 @@
           }
         },
         "classification": {
-          "asset_type": "reference",
-          "semantic_role": "vault_propsheet_source_sheet_excluded",
-          "placement_layer": "excluded",
+          "asset_type": "props",
+          "semantic_role": "paired_orange_gothic_lantern_stand",
+          "placement_layer": "prop",
           "tags": [
             "gothic",
             "prop",
@@ -100,7 +100,12 @@
             "source_sheet",
             "vault_propsheet",
             "not_runtime_asset",
-            "already_extracted"
+            "already_extracted",
+            "lamp",
+            "lantern",
+            "orange_glow",
+            "light_source",
+            "dressing"
           ],
           "review_status": "reviewed"
         },
@@ -130,9 +135,12 @@
         },
         "procgen": {
           "uses": [
-            "review_excluded"
+            "light_source",
+            "gothic_dressing",
+            "interior_light",
+            "vault_dressing"
           ],
-          "weight": 0,
+          "weight": 10,
           "can_spawn_indoor": false,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -184,9 +192,9 @@
           }
         },
         "classification": {
-          "asset_type": "reference",
-          "semantic_role": "vault_propsheet_source_sheet_excluded",
-          "placement_layer": "excluded",
+          "asset_type": "props",
+          "semantic_role": "single_orange_gothic_lantern_stand",
+          "placement_layer": "prop",
           "tags": [
             "gothic",
             "prop",
@@ -195,7 +203,12 @@
             "source_sheet",
             "vault_propsheet",
             "not_runtime_asset",
-            "already_extracted"
+            "already_extracted",
+            "lamp",
+            "lantern",
+            "orange_glow",
+            "light_source",
+            "dressing"
           ],
           "review_status": "reviewed"
         },
@@ -225,9 +238,12 @@
         },
         "procgen": {
           "uses": [
-            "review_excluded"
+            "light_source",
+            "gothic_dressing",
+            "interior_light",
+            "vault_dressing"
           ],
-          "weight": 0,
+          "weight": 12,
           "can_spawn_indoor": false,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -279,9 +295,9 @@
           }
         },
         "classification": {
-          "asset_type": "reference",
-          "semantic_role": "vault_propsheet_source_sheet_excluded",
-          "placement_layer": "excluded",
+          "asset_type": "props",
+          "semantic_role": "cyan_gothic_lantern_stand",
+          "placement_layer": "prop",
           "tags": [
             "gothic",
             "prop",
@@ -290,7 +306,12 @@
             "source_sheet",
             "vault_propsheet",
             "not_runtime_asset",
-            "already_extracted"
+            "already_extracted",
+            "lamp",
+            "lantern",
+            "cyan_glow",
+            "light_source",
+            "tech"
           ],
           "review_status": "reviewed"
         },
@@ -320,9 +341,12 @@
         },
         "procgen": {
           "uses": [
-            "review_excluded"
+            "light_source",
+            "gothic_dressing",
+            "tech_light",
+            "vault_dressing"
           ],
-          "weight": 0,
+          "weight": 8,
           "can_spawn_indoor": false,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -374,9 +398,9 @@
           }
         },
         "classification": {
-          "asset_type": "reference",
-          "semantic_role": "vault_propsheet_source_sheet_excluded",
-          "placement_layer": "excluded",
+          "asset_type": "props",
+          "semantic_role": "small_orange_gothic_lantern_stand",
+          "placement_layer": "prop",
           "tags": [
             "gothic",
             "prop",
@@ -385,7 +409,12 @@
             "source_sheet",
             "vault_propsheet",
             "not_runtime_asset",
-            "already_extracted"
+            "already_extracted",
+            "lamp",
+            "lantern",
+            "orange_glow",
+            "light_source",
+            "small_dressing"
           ],
           "review_status": "reviewed"
         },
@@ -415,9 +444,11 @@
         },
         "procgen": {
           "uses": [
-            "review_excluded"
+            "light_source",
+            "gothic_dressing",
+            "interior_light"
           ],
-          "weight": 0,
+          "weight": 12,
           "can_spawn_indoor": false,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -476,7 +507,7 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "vault_closed_chest_storage_prop",
+          "semantic_role": "paired_cyan_gothic_lantern_stand",
           "placement_layer": "prop",
           "tags": [
             "vault",
@@ -488,7 +519,12 @@
             "stealable",
             "closed",
             "enemy_theft_target",
-            "interactable_candidate"
+            "interactable_candidate",
+            "lamp",
+            "lantern",
+            "cyan_glow",
+            "light_source",
+            "tech"
           ],
           "review_status": "reviewed"
         },
@@ -510,10 +546,10 @@
           "review_status": "reviewed"
         },
         "collision": {
-          "blocks_movement": true,
+          "blocks_movement": false,
           "blocks_sight": false,
-          "cover_value": 1,
-          "collision_shape": "footprint",
+          "cover_value": 0,
+          "collision_shape": "none",
           "review_status": "reviewed"
         },
         "runtime": {
@@ -522,13 +558,12 @@
         },
         "procgen": {
           "uses": [
-            "vault_storage",
-            "loot_container",
-            "enemy_theft_target",
-            "storage_room_dressing",
-            "closed_container"
+            "light_source",
+            "gothic_dressing",
+            "tech_light",
+            "vault_dressing"
           ],
-          "weight": 10,
+          "weight": 8,
           "can_spawn_indoor": true,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -586,9 +621,9 @@
           }
         },
         "classification": {
-          "asset_type": "props",
-          "semantic_role": "vault_damaged_chest_storage_prop",
-          "placement_layer": "prop",
+          "asset_type": "reference",
+          "semantic_role": "light_effect_composite_source_sheet_excluded",
+          "placement_layer": "excluded",
           "tags": [
             "vault",
             "gothic",
@@ -598,7 +633,11 @@
             "damaged",
             "looted",
             "broken",
-            "storytelling"
+            "storytelling",
+            "review_excluded",
+            "composite_sheet",
+            "light_source_sheet",
+            "not_runtime_asset"
           ],
           "review_status": "reviewed"
         },
@@ -613,17 +652,17 @@
             "x": 80,
             "y": 127
           },
-          "snap": "tile_or_free",
+          "snap": "none",
           "allow_mirror_x": false,
           "allow_rotation": false,
-          "y_sort": true,
+          "y_sort": false,
           "review_status": "reviewed"
         },
         "collision": {
-          "blocks_movement": true,
+          "blocks_movement": false,
           "blocks_sight": false,
-          "cover_value": 1,
-          "collision_shape": "footprint",
+          "cover_value": 0,
+          "collision_shape": "none",
           "review_status": "reviewed"
         },
         "runtime": {
@@ -632,14 +671,10 @@
         },
         "procgen": {
           "uses": [
-            "vault_storage",
-            "damaged_storage",
-            "looted_container",
-            "storage_room_dressing",
-            "environmental_storytelling"
+            "review_excluded"
           ],
-          "weight": 5,
-          "can_spawn_indoor": true,
+          "weight": 0,
+          "can_spawn_indoor": false,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
           "supports_gothic_compound": true
@@ -697,7 +732,7 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "vault_empty_chest_storage_prop",
+          "semantic_role": "orange_wall_lantern_unit",
           "placement_layer": "prop",
           "tags": [
             "vault",
@@ -710,7 +745,12 @@
             "open",
             "empty",
             "looted",
-            "interactable_state"
+            "interactable_state",
+            "lamp",
+            "lantern",
+            "orange_glow",
+            "wall_light",
+            "light_source"
           ],
           "review_status": "reviewed"
         },
@@ -732,10 +772,10 @@
           "review_status": "reviewed"
         },
         "collision": {
-          "blocks_movement": true,
+          "blocks_movement": false,
           "blocks_sight": false,
-          "cover_value": 1,
-          "collision_shape": "footprint",
+          "cover_value": 0,
+          "collision_shape": "none",
           "review_status": "reviewed"
         },
         "runtime": {
@@ -744,12 +784,12 @@
         },
         "procgen": {
           "uses": [
-            "vault_storage",
-            "empty_container",
-            "looted_container",
-            "storage_room_dressing"
+            "wall_light",
+            "interior_light",
+            "vault_dressing",
+            "gothic_dressing"
           ],
-          "weight": 6,
+          "weight": 10,
           "can_spawn_indoor": true,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -807,9 +847,9 @@
           }
         },
         "classification": {
-          "asset_type": "props",
-          "semantic_role": "vault_open_full_chest_storage_prop",
-          "placement_layer": "prop",
+          "asset_type": "reference",
+          "semantic_role": "light_effect_composite_source_sheet_excluded",
+          "placement_layer": "excluded",
           "tags": [
             "vault",
             "gothic",
@@ -820,7 +860,11 @@
             "stealable",
             "open",
             "full",
-            "enemy_theft_target"
+            "enemy_theft_target",
+            "review_excluded",
+            "composite_sheet",
+            "light_source_sheet",
+            "not_runtime_asset"
           ],
           "review_status": "reviewed"
         },
@@ -835,17 +879,17 @@
             "x": 80,
             "y": 127
           },
-          "snap": "tile_or_free",
+          "snap": "none",
           "allow_mirror_x": false,
           "allow_rotation": false,
-          "y_sort": true,
+          "y_sort": false,
           "review_status": "reviewed"
         },
         "collision": {
-          "blocks_movement": true,
+          "blocks_movement": false,
           "blocks_sight": false,
-          "cover_value": 1,
-          "collision_shape": "footprint",
+          "cover_value": 0,
+          "collision_shape": "none",
           "review_status": "reviewed"
         },
         "runtime": {
@@ -854,14 +898,10 @@
         },
         "procgen": {
           "uses": [
-            "vault_storage",
-            "loot_container",
-            "enemy_theft_target",
-            "open_container",
-            "storage_room_dressing"
+            "review_excluded"
           ],
-          "weight": 8,
-          "can_spawn_indoor": true,
+          "weight": 0,
+          "can_spawn_indoor": false,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
           "supports_gothic_compound": true
@@ -919,8 +959,8 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "vault_closed_lockbox_storage_prop",
-          "placement_layer": "prop",
+          "semantic_role": "small_wall_light_plate",
+          "placement_layer": "wall_dressing",
           "tags": [
             "vault",
             "gothic",
@@ -931,7 +971,11 @@
             "stealable",
             "closed",
             "loot",
-            "enemy_theft_target"
+            "enemy_theft_target",
+            "wall_light",
+            "small_light",
+            "plate",
+            "nonblocking"
           ],
           "review_status": "reviewed"
         },
@@ -953,10 +997,10 @@
           "review_status": "reviewed"
         },
         "collision": {
-          "blocks_movement": true,
+          "blocks_movement": false,
           "blocks_sight": false,
-          "cover_value": 1,
-          "collision_shape": "footprint",
+          "cover_value": 0,
+          "collision_shape": "none",
           "review_status": "reviewed"
         },
         "runtime": {
@@ -965,13 +1009,11 @@
         },
         "procgen": {
           "uses": [
-            "vault_storage",
-            "loot_container",
-            "enemy_theft_target",
-            "locked_container",
-            "small_storage"
+            "wall_light",
+            "interior_light",
+            "small_wall_dressing"
           ],
-          "weight": 9,
+          "weight": 8,
           "can_spawn_indoor": true,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -1030,7 +1072,7 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "vault_empty_lockbox_storage_prop",
+          "semantic_role": "large_dead_root_storage_obstacle",
           "placement_layer": "prop",
           "tags": [
             "vault",
@@ -1042,7 +1084,12 @@
             "stealable",
             "open",
             "empty",
-            "looted"
+            "looted",
+            "root",
+            "deadwood",
+            "organic_intrusion",
+            "large_obstacle",
+            "cover"
           ],
           "review_status": "reviewed"
         },
@@ -1064,10 +1111,10 @@
           "review_status": "reviewed"
         },
         "collision": {
-          "blocks_movement": false,
+          "blocks_movement": true,
           "blocks_sight": false,
-          "cover_value": 0,
-          "collision_shape": "none",
+          "cover_value": 2,
+          "collision_shape": "footprint",
           "review_status": "reviewed"
         },
         "runtime": {
@@ -1076,12 +1123,12 @@
         },
         "procgen": {
           "uses": [
-            "vault_storage",
-            "empty_container",
-            "looted_container",
-            "small_storage"
+            "organic_intrusion",
+            "forest_intrusion",
+            "large_cover_prop",
+            "blocked_route_dressing"
           ],
-          "weight": 5,
+          "weight": 8,
           "can_spawn_indoor": true,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -1140,7 +1187,7 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "vault_open_full_lockbox_storage_prop",
+          "semantic_role": "small_dead_bramble_shrub_prop",
           "placement_layer": "prop",
           "tags": [
             "vault",
@@ -1152,7 +1199,12 @@
             "stealable",
             "open",
             "full",
-            "loot"
+            "loot",
+            "deadwood",
+            "bramble",
+            "shrub",
+            "organic_intrusion",
+            "nonblocking"
           ],
           "review_status": "reviewed"
         },
@@ -1186,13 +1238,11 @@
         },
         "procgen": {
           "uses": [
-            "vault_storage",
-            "loot_container",
-            "enemy_theft_target",
-            "small_storage",
-            "open_container"
+            "vegetation",
+            "organic_intrusion",
+            "minor_environment_dressing"
           ],
-          "weight": 6,
+          "weight": 14,
           "can_spawn_indoor": true,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -1251,7 +1301,7 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "vault_closed_resource_crate_storage_prop",
+          "semantic_role": "stone_rubble_pile_prop",
           "placement_layer": "prop",
           "tags": [
             "vault",
@@ -1262,7 +1312,12 @@
             "stealable",
             "closed",
             "resource",
-            "enemy_theft_target"
+            "enemy_theft_target",
+            "rubble",
+            "stone",
+            "debris",
+            "small_obstacle",
+            "cover"
           ],
           "review_status": "reviewed"
         },
@@ -1296,13 +1351,11 @@
         },
         "procgen": {
           "uses": [
-            "vault_storage",
-            "resource_storage",
-            "enemy_theft_target",
-            "storage_room_dressing",
-            "closed_container"
+            "rubble_prop",
+            "small_cover_prop",
+            "damaged_room_dressing"
           ],
-          "weight": 10,
+          "weight": 14,
           "can_spawn_indoor": true,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -1361,7 +1414,7 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "vault_empty_resource_crate_storage_prop",
+          "semantic_role": "large_stone_rubble_pile_prop",
           "placement_layer": "prop",
           "tags": [
             "vault",
@@ -1373,7 +1426,12 @@
             "open",
             "empty",
             "resource",
-            "looted"
+            "looted",
+            "rubble",
+            "stone",
+            "debris",
+            "large_obstacle",
+            "cover"
           ],
           "review_status": "reviewed"
         },
@@ -1397,7 +1455,7 @@
         "collision": {
           "blocks_movement": true,
           "blocks_sight": false,
-          "cover_value": 1,
+          "cover_value": 2,
           "collision_shape": "footprint",
           "review_status": "reviewed"
         },
@@ -1407,13 +1465,11 @@
         },
         "procgen": {
           "uses": [
-            "vault_storage",
-            "resource_storage",
-            "empty_container",
-            "looted_container",
-            "storage_room_dressing"
+            "large_rubble_prop",
+            "blocked_route_dressing",
+            "damaged_room_dressing"
           ],
-          "weight": 5,
+          "weight": 10,
           "can_spawn_indoor": true,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -1472,7 +1528,7 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "vault_open_resource_crate_storage_prop",
+          "semantic_role": "large_stone_rubble_pile_prop",
           "placement_layer": "prop",
           "tags": [
             "vault",
@@ -1484,7 +1540,12 @@
             "open",
             "full",
             "resource",
-            "enemy_theft_target"
+            "enemy_theft_target",
+            "rubble",
+            "stone",
+            "debris",
+            "large_obstacle",
+            "cover"
           ],
           "review_status": "reviewed"
         },
@@ -1508,7 +1569,7 @@
         "collision": {
           "blocks_movement": true,
           "blocks_sight": false,
-          "cover_value": 1,
+          "cover_value": 2,
           "collision_shape": "footprint",
           "review_status": "reviewed"
         },
@@ -1518,13 +1579,11 @@
         },
         "procgen": {
           "uses": [
-            "vault_storage",
-            "resource_storage",
-            "enemy_theft_target",
-            "open_container",
-            "storage_room_dressing"
+            "large_rubble_prop",
+            "blocked_route_dressing",
+            "damaged_room_dressing"
           ],
-          "weight": 7,
+          "weight": 10,
           "can_spawn_indoor": true,
           "can_spawn_outdoor": false,
           "review_status": "reviewed",
@@ -1576,9 +1635,9 @@
           }
         },
         "classification": {
-          "asset_type": "props",
-          "semantic_role": "dead_tree_vegetation_cluster",
-          "placement_layer": "prop",
+          "asset_type": "reference",
+          "semantic_role": "misc_prop_composite_source_strip_excluded",
+          "placement_layer": "excluded",
           "tags": [
             "gothic",
             "prop",
@@ -1588,7 +1647,11 @@
             "deadwood",
             "organic_intrusion",
             "outdoor",
-            "scatter"
+            "scatter",
+            "review_excluded",
+            "composite_sheet",
+            "prop_source_strip",
+            "not_runtime_asset"
           ],
           "review_status": "reviewed"
         },
@@ -1599,10 +1662,10 @@
             "h": 4
           },
           "origin_mode": "bottom_center",
-          "snap": "tile",
+          "snap": "none",
           "allow_mirror_x": false,
           "allow_rotation": false,
-          "y_sort": true,
+          "y_sort": false,
           "pivot_px": {
             "x": 104,
             "y": 117
@@ -1610,22 +1673,19 @@
           "review_status": "reviewed"
         },
         "collision": {
-          "blocks_movement": true,
+          "blocks_movement": false,
           "blocks_sight": false,
-          "cover_value": 1,
+          "cover_value": 0,
           "review_status": "reviewed",
-          "collision_shape": "footprint"
+          "collision_shape": "none"
         },
         "procgen": {
           "uses": [
-            "vegetation",
-            "organic_intrusion",
-            "forest_intrusion",
-            "outdoor_dressing"
+            "review_excluded"
           ],
-          "weight": 10,
+          "weight": 0,
           "can_spawn_indoor": false,
-          "can_spawn_outdoor": true,
+          "can_spawn_outdoor": false,
           "review_status": "reviewed",
           "supports_gothic_compound": true
         },
@@ -1676,7 +1736,7 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "dead_tree_spike_barricade_vegetation",
+          "semantic_role": "small_wooden_crate_prop",
           "placement_layer": "prop",
           "tags": [
             "gothic",
@@ -1687,7 +1747,12 @@
             "deadwood",
             "spikes",
             "barrier",
-            "outdoor"
+            "outdoor",
+            "crate",
+            "wood",
+            "storage",
+            "small_cover",
+            "loot_cover"
           ],
           "review_status": "reviewed"
         },
@@ -1717,12 +1782,11 @@
         },
         "procgen": {
           "uses": [
-            "vegetation",
-            "organic_intrusion",
-            "forest_intrusion",
-            "natural_barrier"
+            "storage_room_dressing",
+            "loot_cover",
+            "small_cover_prop"
           ],
-          "weight": 8,
+          "weight": 14,
           "can_spawn_indoor": false,
           "can_spawn_outdoor": true,
           "review_status": "reviewed",
@@ -1775,7 +1839,7 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "small_dead_tree_debris_vegetation",
+          "semantic_role": "small_barrel_prop",
           "placement_layer": "prop",
           "tags": [
             "gothic",
@@ -1785,7 +1849,11 @@
             "vegetation",
             "deadwood",
             "small_debris",
-            "nonblocking"
+            "nonblocking",
+            "barrel",
+            "storage",
+            "small_cover",
+            "loot_cover"
           ],
           "review_status": "reviewed"
         },
@@ -1807,20 +1875,19 @@
           "review_status": "reviewed"
         },
         "collision": {
-          "blocks_movement": false,
+          "blocks_movement": true,
           "blocks_sight": false,
-          "cover_value": 0,
+          "cover_value": 1,
           "review_status": "reviewed",
-          "collision_shape": "none"
+          "collision_shape": "footprint"
         },
         "procgen": {
           "uses": [
-            "vegetation",
-            "organic_intrusion",
-            "minor_environment_dressing",
-            "floor_dressing"
+            "storage_room_dressing",
+            "loot_cover",
+            "small_cover_prop"
           ],
-          "weight": 12,
+          "weight": 14,
           "can_spawn_indoor": false,
           "can_spawn_outdoor": true,
           "review_status": "reviewed",
@@ -1873,7 +1940,7 @@
         },
         "classification": {
           "asset_type": "props",
-          "semantic_role": "small_dead_tree_debris_vegetation",
+          "semantic_role": "small_bundle_or_pot_prop",
           "placement_layer": "prop",
           "tags": [
             "gothic",
@@ -1883,7 +1950,11 @@
             "vegetation",
             "deadwood",
             "small_debris",
-            "nonblocking"
+            "nonblocking",
+            "small_storage",
+            "bundle",
+            "pot",
+            "minor_cover"
           ],
           "review_status": "reviewed"
         },
@@ -1913,12 +1984,10 @@
         },
         "procgen": {
           "uses": [
-            "vegetation",
-            "organic_intrusion",
-            "minor_environment_dressing",
-            "floor_dressing"
+            "storage_room_dressing",
+            "minor_environment_dressing"
           ],
-          "weight": 12,
+          "weight": 10,
           "can_spawn_indoor": false,
           "can_spawn_outdoor": true,
           "review_status": "reviewed",

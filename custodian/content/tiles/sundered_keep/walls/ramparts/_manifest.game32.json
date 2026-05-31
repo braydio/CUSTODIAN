@@ -1,7 +1,7 @@
 {
   "schema": "custodian.game32.section_manifest.v1",
   "name": "walls_ramparts",
-  "generated_at_utc": "2026-05-30T06:57:19.873908+00:00",
+  "generated_at_utc": "2026-05-30T07:30:01+00:00",
   "generator": "repair_sundered_keep_section_manifests.py",
   "set": "sundered_keep",
   "section": "walls_ramparts",
@@ -16,7 +16,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          192,
+          64
+        ],
+        "sha256": "55266200c123ddfbb02a3f24f88ff92409c614f735eca7a0d4928be755d2f24c",
+        "file_size": 20688,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            192,
+            64
+          ],
+          "resized_px": [
+            192,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_broken_gap_n",
@@ -25,7 +50,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          64,
+          64
+        ],
+        "sha256": "b04280034096a20d8eab86dcc9ba2fe8455cd54061be0be996750479e82b4832",
+        "file_size": 5237,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "resized_px": [
+            64,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_broken_gap_s",
@@ -34,7 +84,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          64,
+          64
+        ],
+        "sha256": "9efe3343fc92023dc9dd0df2f3f52cffbcc427f9aed0f5c64274e1e39520c251",
+        "file_size": 5264,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "resized_px": [
+            64,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_broken_gap_w",
@@ -43,7 +118,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          224,
+          64
+        ],
+        "sha256": "f9558c1fcf675be21735cfbe1e82044216f8ae0ed31fc3317e8a37353b8d736f",
+        "file_size": 20996,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            224,
+            64
+          ],
+          "resized_px": [
+            224,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_crenellation_e",
@@ -52,7 +152,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          224,
+          64
+        ],
+        "sha256": "a6def03365a90c90f488f1296af4ec38719d452ac73b938164263c620c7a7477",
+        "file_size": 24576,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            224,
+            64
+          ],
+          "resized_px": [
+            224,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_crenellation_n",
@@ -61,7 +186,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          64,
+          64
+        ],
+        "sha256": "abb06a1a5c514ba663cee4f14b244bbdcac71d617745dcc8593a0eb154818e32",
+        "file_size": 4370,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "resized_px": [
+            64,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_crenellation_s",
@@ -70,7 +220,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          64,
+          64
+        ],
+        "sha256": "84f611447367c5502b7819b0dc0c35dc7ce6eb1c2ed62f3f4edb7a7deb61e516",
+        "file_size": 4296,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "resized_px": [
+            64,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_crenellation_w",
@@ -79,7 +254,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          256,
+          64
+        ],
+        "sha256": "d33269fe624e94ee5980710af761fb0696546581a06bcad5d779191969bb438e",
+        "file_size": 24979,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            256,
+            64
+          ],
+          "resized_px": [
+            256,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_parapet_e",
@@ -88,7 +288,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          192,
+          64
+        ],
+        "sha256": "c155e09c997665cfcca22150243d95a892e698263a1ee31ea992ded4666b232a",
+        "file_size": 16725,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            192,
+            64
+          ],
+          "resized_px": [
+            192,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_parapet_n",
@@ -97,7 +322,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          64,
+          64
+        ],
+        "sha256": "2c7dec7374826bc43fe5bd4f7acee7622d72949875fee76eaf9023bcecc531b3",
+        "file_size": 3848,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "resized_px": [
+            64,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_parapet_s",
@@ -106,7 +356,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          64,
+          64
+        ],
+        "sha256": "06105215beadfe0837da3f0e4b220ca3cbf1c2b058dd705aa05a7309205c4e44",
+        "file_size": 3408,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            64,
+            64
+          ],
+          "resized_px": [
+            64,
+            64
+          ]
+        }
+      }
     },
     {
       "id": "sundered_keep/rampart_parapet_w",
@@ -115,7 +390,32 @@
       "runtime_path": null,
       "asset_class": null,
       "domain": null,
-      "game32": {}
+      "game32": {},
+      "image": {
+        "runtime_canvas_px": [
+          192,
+          64
+        ],
+        "sha256": "1e84ac0687ad460f344163ca68f2be6cf0334e95e44dcca05609ff332f65f118",
+        "file_size": 19078,
+        "fit": {
+          "scale": 1.0,
+          "paste_xy": [
+            0,
+            0
+          ],
+          "trimmed_source_box": [
+            0,
+            0,
+            192,
+            64
+          ],
+          "resized_px": [
+            192,
+            64
+          ]
+        }
+      }
     }
   ],
   "doc_drift_check": {

@@ -1,0 +1,169 @@
+{
+  "schema": "custodian.game32.domain_manifest.v1",
+  "name": "gatehouse",
+  "generated_at_utc": "2026-05-30T09:59:20+00:00",
+  "generator": "extract_sundered_keep_entrance_gatehouse_game32.py",
+  "set": "sundered_keep",
+  "domain_home": "res://content/tiles/sundered_keep/walls/gatehouse",
+  "asset_count": 2,
+  "assets": [
+    {
+      "id": "sundered_keep/walls_gatehouse/gatehouse_wall_broken_left_01",
+      "name": "gatehouse_wall_broken_left_01",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gatehouse/gatehouse_wall_broken_left_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gatehouse/gatehouse_wall_broken_left_01.game32.json",
+      "asset_class": "wall_module",
+      "domain": "walls_gatehouse",
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          64,
+          96
+        ],
+        "logical_footprint_cells": [
+          2,
+          1
+        ],
+        "logical_footprint_px": [
+          64,
+          32
+        ],
+        "anchor": "bottom_center",
+        "pivot": "bottom_center",
+        "placement_rule": "snap_bottom_to_grid32",
+        "orientation": "left",
+        "variant_group": "gatehouse_wall_broken_left",
+        "z_layer": "architecture",
+        "z_index": 34,
+        "y_sort": true,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectiles": true,
+        "blocks_vision": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "traversal": "blocked",
+        "collision": {
+          "enabled": true,
+          "profile": "solid_base_2x1",
+          "shape": "rect",
+          "rect_px": [
+            0,
+            0,
+            64,
+            32
+          ],
+          "applies_to": "logical_base_cell"
+        },
+        "navigation": {
+          "can_pathfind": false,
+          "cost": null,
+          "avoidance": "blocked"
+        },
+        "combat": {
+          "cover_profile": "high",
+          "line_of_sight_profile": "occluding",
+          "projectile_profile": "blocking"
+        },
+        "render": {
+          "allowed_layers": [
+            "architecture",
+            "walls"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false,
+          "shadow_policy": "baked_in_source",
+          "occluder_recommended": true
+        },
+        "tags": [
+          "sundered_keep",
+          "gatehouse",
+          "wall",
+          "broken",
+          "left",
+          "solid",
+          "vertical_sprite"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/walls_gatehouse/gatehouse_wall_broken_right_01",
+      "name": "gatehouse_wall_broken_right_01",
+      "runtime_path": "res://content/tiles/sundered_keep/walls/gatehouse/gatehouse_wall_broken_right_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/walls/gatehouse/gatehouse_wall_broken_right_01.game32.json",
+      "asset_class": "wall_module",
+      "domain": "walls_gatehouse",
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          64,
+          96
+        ],
+        "logical_footprint_cells": [
+          2,
+          1
+        ],
+        "logical_footprint_px": [
+          64,
+          32
+        ],
+        "anchor": "bottom_center",
+        "pivot": "bottom_center",
+        "placement_rule": "snap_bottom_to_grid32",
+        "orientation": "right",
+        "variant_group": "gatehouse_wall_broken_right",
+        "z_layer": "architecture",
+        "z_index": 34,
+        "y_sort": true,
+        "walkable": false,
+        "blocks_movement": true,
+        "blocks_projectiles": true,
+        "blocks_vision": true,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "traversal": "blocked",
+        "collision": {
+          "enabled": true,
+          "profile": "solid_base_2x1",
+          "shape": "rect",
+          "rect_px": [
+            0,
+            0,
+            64,
+            32
+          ],
+          "applies_to": "logical_base_cell"
+        },
+        "navigation": {
+          "can_pathfind": false,
+          "cost": null,
+          "avoidance": "blocked"
+        },
+        "combat": {
+          "cover_profile": "high",
+          "line_of_sight_profile": "occluding",
+          "projectile_profile": "blocking"
+        },
+        "render": {
+          "allowed_layers": [
+            "architecture",
+            "walls"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false,
+          "shadow_policy": "baked_in_source",
+          "occluder_recommended": true
+        },
+        "tags": [
+          "sundered_keep",
+          "gatehouse",
+          "wall",
+          "broken",
+          "right",
+          "solid",
+          "vertical_sprite"
+        ]
+      }
+    }
+  ]
+}

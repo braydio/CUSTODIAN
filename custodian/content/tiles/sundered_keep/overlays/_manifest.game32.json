@@ -1,0 +1,155 @@
+{
+  "schema": "custodian.game32.domain_manifest.v1",
+  "name": "overlays",
+  "generated_at_utc": "2026-05-30T09:59:20+00:00",
+  "generator": "extract_sundered_keep_entrance_gatehouse_game32.py",
+  "set": "sundered_keep",
+  "domain_home": "res://content/tiles/sundered_keep/overlays",
+  "asset_count": 2,
+  "assets": [
+    {
+      "id": "sundered_keep/overlays/entrance_causeway_shadow_01",
+      "name": "entrance_causeway_shadow_01",
+      "runtime_path": "res://content/tiles/sundered_keep/overlays/entrance_causeway_shadow_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/overlays/entrance_causeway_shadow_01.game32.json",
+      "asset_class": "overlay_tile",
+      "domain": "overlays",
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          32,
+          32
+        ],
+        "logical_footprint_cells": [
+          1,
+          1
+        ],
+        "logical_footprint_px": [
+          32,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "orientation": null,
+        "variant_group": "entrance_causeway_shadow",
+        "z_layer": "overlay",
+        "z_index": 45,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "traversal": "overlay",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null,
+          "applies_to": "none"
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "overlay",
+            "decals"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false,
+          "shadow_policy": "baked_in_source",
+          "occluder_recommended": false
+        },
+        "tags": [
+          "sundered_keep",
+          "entrance",
+          "causeway",
+          "shadow",
+          "overlay"
+        ]
+      }
+    },
+    {
+      "id": "sundered_keep/overlays/main_gate_portcullis_shadow_01",
+      "name": "main_gate_portcullis_shadow_01",
+      "runtime_path": "res://content/tiles/sundered_keep/overlays/main_gate_portcullis_shadow_01.png",
+      "metadata_path": "res://content/tiles/sundered_keep/overlays/main_gate_portcullis_shadow_01.game32.json",
+      "asset_class": "overlay_tile",
+      "domain": "overlays",
+      "game32": {
+        "tile_size_px": 32,
+        "runtime_canvas_px": [
+          64,
+          32
+        ],
+        "logical_footprint_cells": [
+          2,
+          1
+        ],
+        "logical_footprint_px": [
+          64,
+          32
+        ],
+        "anchor": "top_left",
+        "pivot": "top_left",
+        "placement_rule": "snap_to_grid32",
+        "orientation": null,
+        "variant_group": "main_gate_portcullis_shadow",
+        "z_layer": "overlay",
+        "z_index": 46,
+        "y_sort": false,
+        "walkable": true,
+        "blocks_movement": false,
+        "blocks_projectiles": false,
+        "blocks_vision": false,
+        "fall_hazard": false,
+        "water_hazard": false,
+        "traversal": "overlay",
+        "collision": {
+          "enabled": false,
+          "profile": "none",
+          "shape": "none",
+          "rect_px": null,
+          "applies_to": "none"
+        },
+        "navigation": {
+          "can_pathfind": true,
+          "cost": 1.0,
+          "avoidance": "normal"
+        },
+        "combat": {
+          "cover_profile": "none",
+          "line_of_sight_profile": "transparent",
+          "projectile_profile": "passable"
+        },
+        "render": {
+          "allowed_layers": [
+            "overlay",
+            "decals"
+          ],
+          "import_filter": "nearest_or_disabled_in_godot",
+          "mipmaps": false,
+          "shadow_policy": "baked_in_source",
+          "occluder_recommended": false
+        },
+        "tags": [
+          "sundered_keep",
+          "gatehouse",
+          "portcullis",
+          "shadow",
+          "overlay"
+        ]
+      }
+    }
+  ]
+}

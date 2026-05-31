@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://b7qtkckmpaga2"]
+
+[ext_resource type="TileSet" uid="uid://bcrix1fo3j10h" path="res://content/levels/sundered_keep/runtime/sundered_keep_tileset.tres" id="1"]
+
+[node name="SunderedKeepFirstSlice" type="Node2D" unique_id=1627795651]
+
+[node name="Ground" type="TileMapLayer" parent="." unique_id=102718488]
+tile_set = ExtResource("1")
+
+[node name="Walls" type="TileMapLayer" parent="." unique_id=362878407]
+tile_set = ExtResource("1")
+
+[node name="Terrain" type="TileMapLayer" parent="." unique_id=2145867271]
+tile_set = ExtResource("1")
+
+[node name="Traversal" type="TileMapLayer" parent="." unique_id=164246767]
+tile_set = ExtResource("1")
+
+[node name="Props" type="TileMapLayer" parent="." unique_id=1363821695]
+tile_set = ExtResource("1")

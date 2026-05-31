@@ -9,8 +9,6 @@ Generated assets: `62`
 - `OK` — active_ai_context_file_index: `/home/braydenchaffee/Projects/CUSTODIAN/custodian/docs/ai_context/FILE_INDEX.md`
 
 ## Potential drift
-- CURRENT_STATE.md does not appear to mention the generated Sundered Keep runtime asset set.
-- FILE_INDEX.md does not appear to list content/runtime/sundered_keep outputs.
 - CONTEXT.md may not mention the Sundered Keep master/runtime asset workflow.
 
 ## Recommended action

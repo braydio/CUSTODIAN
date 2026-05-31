@@ -1,0 +1,134 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/great_hall_wall_straight_e",
+  "name": "great_hall_wall_straight_e",
+  "filename": "great_hall_wall_straight_e.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-05-30T07:30:01+00:00",
+  "source": {
+    "sheet_key": "great_hall_walls",
+    "sheet_file": "great_hall_walls.png",
+    "sheet_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/great_hall_walls.png",
+    "sheet_sha256": "4a68d08e6796184afc17970a28ef9f15a382887f6d1d87a17b1d02c3aa1e858f",
+    "sheet_asset_index": 1,
+    "sheet_bbox_px": [
+      314,
+      0,
+      313,
+      314
+    ],
+    "source_crop_bbox_px": [
+      0,
+      0,
+      313,
+      314
+    ],
+    "detected_background_colors_rgb": [],
+    "extraction_method": {
+      "background": "none",
+      "component_join_radius_px": 18,
+      "crop_padding_px": 8,
+      "min_component_area_px": 900,
+      "type": "grid_full_cell"
+    },
+    "cell_grid": {
+      "rows": 4,
+      "cols": 4,
+      "row": 0,
+      "col": 1,
+      "cell_box_px": [
+        314,
+        0,
+        627,
+        314
+      ]
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_straight_e.png",
+    "metadata_path": "res://content/tiles/sundered_keep/walls/great_hall/great_hall_wall_straight_e.game32.json",
+    "domain": "great_hall_walls",
+    "kind": "wall",
+    "subkind": "wall_module",
+    "canvas_px": [
+      320,
+      64
+    ],
+    "canvas_tiles": [
+      1,
+      1
+    ],
+    "content_bbox_px": [
+      0,
+      0,
+      320,
+      64
+    ],
+    "scale_from_source_crop": 1.0,
+    "paste_offset_px": [
+      0,
+      0
+    ],
+    "anchor": "bottom_center",
+    "pivot_px": [
+      160,
+      64
+    ],
+    "pivot_normalized": [
+      0.5,
+      1.0
+    ],
+    "y_sort": true,
+    "draw_order": "architecture",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    },
+    "sha256": "74836e0f9b9d3c02b0816d20897364a7bdd00672c4415798c7c2da6c172065ca",
+    "file_size": 6891
+  },
+  "gameplay": {
+    "walkable": false,
+    "interactable": false,
+    "traversal": null,
+    "direction": "e",
+    "state": null,
+    "tags": [
+      "facing_e",
+      "great hall walls",
+      "solid",
+      "sundered_keep",
+      "vertical_sprite",
+      "wall"
+    ]
+  },
+  "collision": {
+    "kind": "solid_base_cell",
+    "blocks_movement": true,
+    "blocks_projectiles": true,
+    "footprint_tiles_wh": [
+      1,
+      1
+    ],
+    "footprint_cells": [
+      {
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "origin_tile": {
+      "x": 0,
+      "y": 0,
+      "anchor": "bottom_center"
+    }
+  },
+  "editor": {
+    "display_name": "Great Hall Wall Straight E",
+    "notes": "Generated from Sundered Keep master sheet; adjust footprint/collision after in-editor placement review if needed."
+  }
+}

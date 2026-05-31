@@ -31,7 +31,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "vault_closed_resource_crate_storage_prop",
+    "semantic_role": "stone_rubble_pile_prop",
     "placement_layer": "prop",
     "tags": [
       "vault",
@@ -42,7 +42,12 @@
       "stealable",
       "closed",
       "resource",
-      "enemy_theft_target"
+      "enemy_theft_target",
+      "rubble",
+      "stone",
+      "debris",
+      "small_obstacle",
+      "cover"
     ],
     "review_status": "reviewed"
   },
@@ -76,13 +81,11 @@
   },
   "procgen": {
     "uses": [
-      "vault_storage",
-      "resource_storage",
-      "enemy_theft_target",
-      "storage_room_dressing",
-      "closed_container"
+      "rubble_prop",
+      "small_cover_prop",
+      "damaged_room_dressing"
     ],
-    "weight": 10,
+    "weight": 14,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": false,
     "review_status": "reviewed",

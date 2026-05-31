@@ -31,7 +31,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "vault_closed_chest_storage_prop",
+    "semantic_role": "paired_cyan_gothic_lantern_stand",
     "placement_layer": "prop",
     "tags": [
       "vault",
@@ -43,7 +43,12 @@
       "stealable",
       "closed",
       "enemy_theft_target",
-      "interactable_candidate"
+      "interactable_candidate",
+      "lamp",
+      "lantern",
+      "cyan_glow",
+      "light_source",
+      "tech"
     ],
     "review_status": "reviewed"
   },
@@ -65,10 +70,10 @@
     "review_status": "reviewed"
   },
   "collision": {
-    "blocks_movement": true,
+    "blocks_movement": false,
     "blocks_sight": false,
-    "cover_value": 1,
-    "collision_shape": "footprint",
+    "cover_value": 0,
+    "collision_shape": "none",
     "review_status": "reviewed"
   },
   "runtime": {
@@ -77,13 +82,12 @@
   },
   "procgen": {
     "uses": [
-      "vault_storage",
-      "loot_container",
-      "enemy_theft_target",
-      "storage_room_dressing",
-      "closed_container"
+      "light_source",
+      "gothic_dressing",
+      "tech_light",
+      "vault_dressing"
     ],
-    "weight": 10,
+    "weight": 8,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": false,
     "review_status": "reviewed",

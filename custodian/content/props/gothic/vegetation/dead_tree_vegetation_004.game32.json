@@ -25,7 +25,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "small_dead_tree_debris_vegetation",
+    "semantic_role": "small_bundle_or_pot_prop",
     "placement_layer": "prop",
     "tags": [
       "gothic",
@@ -35,7 +35,11 @@
       "vegetation",
       "deadwood",
       "small_debris",
-      "nonblocking"
+      "nonblocking",
+      "small_storage",
+      "bundle",
+      "pot",
+      "minor_cover"
     ],
     "review_status": "reviewed"
   },
@@ -65,12 +69,10 @@
   },
   "procgen": {
     "uses": [
-      "vegetation",
-      "organic_intrusion",
-      "minor_environment_dressing",
-      "floor_dressing"
+      "storage_room_dressing",
+      "minor_environment_dressing"
     ],
-    "weight": 12,
+    "weight": 10,
     "can_spawn_indoor": false,
     "can_spawn_outdoor": true,
     "review_status": "reviewed",

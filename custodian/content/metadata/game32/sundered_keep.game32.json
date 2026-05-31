@@ -1,7 +1,7 @@
 {
   "schema": "custodian.game32.asset_manifest.v1",
   "name": "sundered_keep_game32_assets",
-  "generated_at_utc": "2026-05-30T00:43:24+00:00",
+  "generated_at_utc": "2026-05-30T07:30:24+00:00",
   "generator": "extract_sundered_keep_assets.py",
   "game32": {
     "tile_size_px": 32,
@@ -138,12 +138,13 @@
       },
       "image": {
         "exported_size_px": [
-          217,
-          217
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "f58873504b34b995e5e57d02e5e7f55e418159e9a9a247b07ef4e150742d8d89"
+        "background": "transparent",
+        "sha256": "f57cb79d370bb58551709ff75300b823674e359f87c585a06977cbf1177e217c",
+        "file_size": 2458
       },
       "game32": {
         "tile_size_px": 32,
@@ -243,12 +244,13 @@
       },
       "image": {
         "exported_size_px": [
-          217,
-          219
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "2864e0439a59ca7dd567db0dbcea602782f5ddb49fdee30eb4e3e50e2b5359d6"
+        "background": "transparent",
+        "sha256": "6cc3d4064e03d9b4f06ea99474568cf3cfd7027368ec85a55f424eb146d4c6c1",
+        "file_size": 2722
       },
       "game32": {
         "tile_size_px": 32,
@@ -348,12 +350,13 @@
       },
       "image": {
         "exported_size_px": [
-          218,
-          218
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "0112b0a4b05f4ce32597b65b9bdf918e59dae1b846076a5d514ef47304429f0c"
+        "background": "transparent",
+        "sha256": "24f47a3fafafc850a7a56bff4e6f52e3ce8694ce82bb7819c13ed2747b4c868a",
+        "file_size": 2640
       },
       "game32": {
         "tile_size_px": 32,
@@ -454,12 +457,13 @@
       },
       "image": {
         "exported_size_px": [
-          218,
-          218
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "86c889de4c258b524c9029549c0c76300031857f2dbccab3a2b2b9a499e1de6c"
+        "background": "transparent",
+        "sha256": "4b20b37e26ffa177b99b053fe6095a7b211d5f5bde711bb91d7e3d83c940d615",
+        "file_size": 2826
       },
       "game32": {
         "tile_size_px": 32,
@@ -560,12 +564,13 @@
       },
       "image": {
         "exported_size_px": [
-          218,
-          218
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "89f65f69e02cc22744eef79dcb74aeca8c8bd4eb809adc1f160a4facbfa74c29"
+        "background": "transparent",
+        "sha256": "d942caec85c6e7cedf8b95bb96092a044e1d2ad7fde09c691ec34c3f2975b3b8",
+        "file_size": 2651
       },
       "game32": {
         "tile_size_px": 32,
@@ -666,12 +671,13 @@
       },
       "image": {
         "exported_size_px": [
-          218,
-          219
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "823a2c70bbf26bc0a47a844a516390e3b571a5b249b5d749e84600bd2c9ef6d3"
+        "background": "transparent",
+        "sha256": "c668f80a9424a505965c7fc1217572650ac7d19492ec25e41441ceb6184a6b10",
+        "file_size": 2581
       },
       "game32": {
         "tile_size_px": 32,
@@ -771,12 +777,13 @@
       },
       "image": {
         "exported_size_px": [
-          217,
-          219
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "9f2f311feb140c283ac45abd307702add619aef72320817f6070ab7e5f9760f8"
+        "background": "transparent",
+        "sha256": "c9c6afcebe2af0f823c1b6874ed91cf3d0fc23a11296b1768ccbe347b40a351e",
+        "file_size": 2420
       },
       "game32": {
         "tile_size_px": 32,
@@ -876,12 +883,13 @@
       },
       "image": {
         "exported_size_px": [
-          217,
-          219
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "f150f3a203641122d650c10d861996dcf7213f4403d5a34786b7ccbf6f584ff6"
+        "background": "transparent",
+        "sha256": "529a31fc78d2fcaa23b177ffe85e23a438e7dbf49c77f2b674cc16f3d1752ca6",
+        "file_size": 2425
       },
       "game32": {
         "tile_size_px": 32,
@@ -982,12 +990,13 @@
       },
       "image": {
         "exported_size_px": [
-          218,
-          220
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "d25c66c2e7316701a6266c021fbc470bf4cefdf25264bbe074742946b5a9fe9e"
+        "background": "transparent",
+        "sha256": "f7e5afd5c9563c489b14ba0bc7c2be681006f963a77192d9bd5094535c979719",
+        "file_size": 2293
       },
       "game32": {
         "tile_size_px": 32,
@@ -1089,12 +1098,13 @@
       },
       "image": {
         "exported_size_px": [
-          219,
-          220
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "6a7aa9b814f5ab81aad55d729027593882a83d00dba6d09573934138e96afbfb"
+        "background": "transparent",
+        "sha256": "dc1d3e95fe8c9767552275a251919166c42466dbf20c25953c041603eaf55929",
+        "file_size": 2331
       },
       "game32": {
         "tile_size_px": 32,
@@ -1196,12 +1206,13 @@
       },
       "image": {
         "exported_size_px": [
-          219,
-          221
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "5e8ad888f1354bf9e2a0cc79037411706e06d67a5f61cb4955b31e43f27a0361"
+        "background": "transparent",
+        "sha256": "9d1ebf378fee1ff1961cb02cc0bf58b9540247a5b760f961df1800b472f7e963",
+        "file_size": 2665
       },
       "game32": {
         "tile_size_px": 32,
@@ -1301,12 +1312,13 @@
       },
       "image": {
         "exported_size_px": [
-          216,
-          221
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "03627a8bb5907a2e7e363ecd52cfa8497ff41158c7af7f1fba5facdde75a2763"
+        "background": "transparent",
+        "sha256": "12a9e2142e9c8089f3e9fef13bba81fc399e084e9fb6f2fe7a2bfb02e41899fa",
+        "file_size": 2894
       },
       "game32": {
         "tile_size_px": 32,
@@ -1407,12 +1419,13 @@
       },
       "image": {
         "exported_size_px": [
-          217,
-          219
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "a07016061954d21d3f620c2e8c8529eacf8e6a1fecacc2a31f3973320f318088"
+        "background": "transparent",
+        "sha256": "4e00a5253c8d134a66c053baef85edd4387f06bcc44ef44a2e1f6670ffa41ff0",
+        "file_size": 2760
       },
       "game32": {
         "tile_size_px": 32,
@@ -1514,12 +1527,13 @@
       },
       "image": {
         "exported_size_px": [
-          217,
-          219
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "9c96d18649e9166c9000555fef88de6705ea222ba3102c8b75f0718361eeb058"
+        "background": "transparent",
+        "sha256": "4f71df1612fae45bbed72749d072e59ff7307350fd062cb9674198ebcd9b0225",
+        "file_size": 2792
       },
       "game32": {
         "tile_size_px": 32,
@@ -1620,12 +1634,13 @@
       },
       "image": {
         "exported_size_px": [
-          218,
-          219
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "c2550c59361b614e68627ed75a949450f221eca3663cd199fa98ae81f4b11ad6"
+        "background": "transparent",
+        "sha256": "146be753bb45e4c0836610225d61cc1c002df2cae3c647ec10231da529fe9d04",
+        "file_size": 2471
       },
       "game32": {
         "tile_size_px": 32,
@@ -1727,12 +1742,13 @@
       },
       "image": {
         "exported_size_px": [
-          218,
-          219
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "0d18158ea17266fcaf3789ae94815a850449fad51285a3cecb2716075f810e38"
+        "background": "transparent",
+        "sha256": "fa9cded60ecab56b9dc4245578337079cf984d9aada96eacc606d8044467a48e",
+        "file_size": 2286
       },
       "game32": {
         "tile_size_px": 32,
@@ -1832,12 +1848,13 @@
       },
       "image": {
         "exported_size_px": [
-          219,
-          219
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "2926609c531ee017121b276d595c3f99885f524c1cd5b0873ff13443c57bd5e5"
+        "background": "transparent",
+        "sha256": "a372fcc1c739cc825c2c149a5b094b0ae28f92161dad9b60853ed557ef4f4113",
+        "file_size": 2506
       },
       "game32": {
         "tile_size_px": 32,
@@ -1938,12 +1955,13 @@
       },
       "image": {
         "exported_size_px": [
-          216,
-          219
+          32,
+          32
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "e9c8aa818d3a4ef49baaf61e7eca3d37dd51fa45636bcd676c0abce33d74ea7d"
+        "background": "transparent",
+        "sha256": "70f654c51da3f0f5b3ec2c923e53fa2054cc1c1ee950879e60236d09fe38c22a",
+        "file_size": 2779
       },
       "game32": {
         "tile_size_px": 32,
@@ -2046,12 +2064,13 @@
       },
       "image": {
         "exported_size_px": [
-          159,
-          169
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "36744ff35a24c0dafc94f81758d227c56a1fcd9b6e7629b5e4b4eef650fad95c"
+        "background": "transparent",
+        "sha256": "97ababc4ce7c209f7deca41ed923c62e953342884d309277d9acfcb3d405abb9",
+        "file_size": 7832
       },
       "game32": {
         "tile_size_px": 32,
@@ -2154,12 +2173,13 @@
       },
       "image": {
         "exported_size_px": [
-          159,
-          169
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "698a82cf3b8614b3b3c8e655c9f06e939b8b612f090b66cefd10ed0de885329a"
+        "background": "transparent",
+        "sha256": "fea396e8d35fe154eeddeeff6f01e4099832dcecdf076fbf121c76b7966ab636",
+        "file_size": 7772
       },
       "game32": {
         "tile_size_px": 32,
@@ -2262,12 +2282,13 @@
       },
       "image": {
         "exported_size_px": [
-          161,
-          169
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "82d7abacfff8809f57e0971e50695ed1eeeb21e133542051f8f0b6aee5e8226e"
+        "background": "transparent",
+        "sha256": "a726701fd4d7111e949460b2b5ebb9aea60ab6cf9bf547888ec04b7275293855",
+        "file_size": 7808
       },
       "game32": {
         "tile_size_px": 32,
@@ -2370,12 +2391,13 @@
       },
       "image": {
         "exported_size_px": [
-          160,
-          169
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "d91cacacfde84ae4e8b4f0db8082cd14ed28067b8165490349cea2b52fee34d7"
+        "background": "transparent",
+        "sha256": "33efc3de7633b890068507c83886fbf8dc4bc25abf7a815ff9eb826a3eca23ae",
+        "file_size": 7864
       },
       "game32": {
         "tile_size_px": 32,
@@ -2478,12 +2500,13 @@
       },
       "image": {
         "exported_size_px": [
-          158,
-          156
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "6df27957ebbd1b13a8ac332376d0b3ff9b62a465a1f692f4298409367ff4b8ac"
+        "background": "transparent",
+        "sha256": "bcc0b9802997de49fac58866b47883bda2177fb433d3df46637ceb3a9c9b4623",
+        "file_size": 7485
       },
       "game32": {
         "tile_size_px": 32,
@@ -2586,12 +2609,13 @@
       },
       "image": {
         "exported_size_px": [
-          156,
-          154
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "9eb3568291f4a1968f6ae02830e6ade9ee907eca1109ded6f913ef72ee5559df"
+        "background": "transparent",
+        "sha256": "6aec32fef7c9154738c06e82bfbbc07443d7e386d4f42ebb2caed8bec29694db",
+        "file_size": 7349
       },
       "game32": {
         "tile_size_px": 32,
@@ -2694,12 +2718,13 @@
       },
       "image": {
         "exported_size_px": [
-          158,
-          155
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "bc1b50509ebd543791b05d2773e012c336bcbe7d108549e3bc23b6d8bacdffdd"
+        "background": "transparent",
+        "sha256": "f33eab6563835cbc2707c729f5c2851165803ae7df07d710d08990e861c12008",
+        "file_size": 7486
       },
       "game32": {
         "tile_size_px": 32,
@@ -2802,12 +2827,13 @@
       },
       "image": {
         "exported_size_px": [
-          157,
-          155
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "46a79cfd57b4c2e1ecd9975ba8df7cd0339e90da17bbde10ef0c9854762cfd2d"
+        "background": "transparent",
+        "sha256": "673d96d3e12e6920179b29ee84352d0103d7e7322a7e0bbdb24c97ae45edf998",
+        "file_size": 7445
       },
       "game32": {
         "tile_size_px": 32,
@@ -2910,12 +2936,13 @@
       },
       "image": {
         "exported_size_px": [
-          161,
-          187
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "bac42460b37cf805e6748018c396384104e7d455e944ca364a0b27f5bda8eae2"
+        "background": "transparent",
+        "sha256": "6c3bca585f6214416241193e876d726457a1be96ebf47f2c518b3af938a6377d",
+        "file_size": 8380
       },
       "game32": {
         "tile_size_px": 32,
@@ -3018,12 +3045,13 @@
       },
       "image": {
         "exported_size_px": [
-          162,
-          187
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "ed22c9ff6aa3723ee8633bae49f47e616389222ebdba3cab9a2fdae885448b0f"
+        "background": "transparent",
+        "sha256": "4107c26db9020d9388fa548cde98957fe1d5909cbb7264c8ea93ac405ef18ecb",
+        "file_size": 8564
       },
       "game32": {
         "tile_size_px": 32,
@@ -3126,12 +3154,13 @@
       },
       "image": {
         "exported_size_px": [
-          160,
-          187
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "bdfcc0d1fc6a4a5b5da40c0154ed6ecdb1be66a3999ca02f685577e83b222af7"
+        "background": "transparent",
+        "sha256": "e405e7da7cff129c4901432c56f4de018b200e3fa6c73578f9448845eb069327",
+        "file_size": 8460
       },
       "game32": {
         "tile_size_px": 32,
@@ -3234,12 +3263,13 @@
       },
       "image": {
         "exported_size_px": [
-          161,
-          187
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "650503bf0f9d8a6756b989acf668cb5d80ac16c24aee61462a83ea214edeebe7"
+        "background": "transparent",
+        "sha256": "2eef4d0e82f885018149c8524e1e4d7e65f1aac2a4206db7501678330c22d9a1",
+        "file_size": 8520
       },
       "game32": {
         "tile_size_px": 32,
@@ -3342,12 +3372,13 @@
       },
       "image": {
         "exported_size_px": [
-          152,
-          187
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "c32470971137ff4d9a33078be40181daaab234b1fadb10029d9fbf9bdc8b0614"
+        "background": "transparent",
+        "sha256": "ee0570ede2403903aaa72b60c082c0201bdafa71730481996bd5b9c555411f6f",
+        "file_size": 7294
       },
       "game32": {
         "tile_size_px": 32,
@@ -3450,12 +3481,13 @@
       },
       "image": {
         "exported_size_px": [
-          158,
-          187
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "b01c052a286e6d219663096f523e7ddc45d581d50b554ee5a38bcbf2dafb6c91"
+        "background": "transparent",
+        "sha256": "1c4cfbb4ed129cc51ef2c200e3de2f64c41759a3d566ea6ba76f38b439f0d057",
+        "file_size": 7500
       },
       "game32": {
         "tile_size_px": 32,
@@ -3558,12 +3590,13 @@
       },
       "image": {
         "exported_size_px": [
-          151,
-          187
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "33bd932274a0225bddabee438831b15d4ce0a9517c8228d710222e164f7628a6"
+        "background": "transparent",
+        "sha256": "25e6a6234f7b3d34d1c22ce076ad16a284260d559a305cc2f4f1a0b1052f4f12",
+        "file_size": 7191
       },
       "game32": {
         "tile_size_px": 32,
@@ -3666,12 +3699,13 @@
       },
       "image": {
         "exported_size_px": [
-          154,
-          187
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "88ea04176cc671154b92a66d04d604752a56765bde9c8e39f4b77004a3d2b3a6"
+        "background": "transparent",
+        "sha256": "1ea5868ec86a420e7749088c193e96a253d691d0dc2fca668e734bf238256561",
+        "file_size": 7531
       },
       "game32": {
         "tile_size_px": 32,
@@ -3774,12 +3808,13 @@
       },
       "image": {
         "exported_size_px": [
-          152,
-          188
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "0709706eb06a21f18e812cfcad69d4dde6f5dcd5c66caa044755628c4ee3e5d9"
+        "background": "transparent",
+        "sha256": "7662659483f8b20ea4673553fed81ff0e4ea3b6c3bdb05991b57b48761343604",
+        "file_size": 8108
       },
       "game32": {
         "tile_size_px": 32,
@@ -3884,12 +3919,13 @@
       },
       "image": {
         "exported_size_px": [
-          156,
-          188
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "f851b9829592417a0e706a489cf80d7dc2eaf6e180486bf2a8a59a1411d25dde"
+        "background": "transparent",
+        "sha256": "2d9c22ea54d7d3f7fc0e54fc2e4e9b5cf0857288fc6a4e09965194589a47f38c",
+        "file_size": 8035
       },
       "game32": {
         "tile_size_px": 32,
@@ -3994,12 +4030,13 @@
       },
       "image": {
         "exported_size_px": [
-          149,
-          188
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "4d334e6f236fd56dae55205705ddc12e4698d146aca99214461b55f566cbc23a"
+        "background": "transparent",
+        "sha256": "8c49972835a662b9b50480a7e9e6a7e35b89712b26008444b26a69e1c6d8f8c0",
+        "file_size": 7835
       },
       "game32": {
         "tile_size_px": 32,
@@ -4104,12 +4141,13 @@
       },
       "image": {
         "exported_size_px": [
-          156,
-          188
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "ff2547ebac3fc05e4952fb3d88aa2558033a555c2ef1ab6db1a4e0af90ce9bbf"
+        "background": "transparent",
+        "sha256": "0129e473c1749df995582a1933832f77905c73d5520a4e44a3bf310c9ba84053",
+        "file_size": 8110
       },
       "game32": {
         "tile_size_px": 32,
@@ -4214,12 +4252,13 @@
       },
       "image": {
         "exported_size_px": [
-          152,
-          186
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "031c7146e8e87521873f143e6887643f0364c3b4fe4560402906811141b24add"
+        "background": "transparent",
+        "sha256": "470e0523ce7ae66cb686c2d80d0da44fcb99106aa48f3291a082a136625fad81",
+        "file_size": 6638
       },
       "game32": {
         "tile_size_px": 32,
@@ -4322,12 +4361,13 @@
       },
       "image": {
         "exported_size_px": [
-          156,
-          185
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "c4f37e155e4a5ddfc0e0d7c4749cdcb628252c41da4ec3fd69a7697101adebe1"
+        "background": "transparent",
+        "sha256": "bf788715e689acf2811b78e881562fb64d8bda7d48f9fb46ffba68d86cf3f15e",
+        "file_size": 7316
       },
       "game32": {
         "tile_size_px": 32,
@@ -4430,12 +4470,13 @@
       },
       "image": {
         "exported_size_px": [
-          152,
-          186
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "33663b088ec31b9e9370ac78f3bbb3ba2e126e17ddab2e02cd14f34cef1d8480"
+        "background": "transparent",
+        "sha256": "e4b4f9fff466210e35f4939d68d8d7e910b7732d97a6ef3c25bc2e3fb009cd19",
+        "file_size": 6644
       },
       "game32": {
         "tile_size_px": 32,
@@ -4538,12 +4579,13 @@
       },
       "image": {
         "exported_size_px": [
-          156,
-          186
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "fbbce467312b7ff6e7e966e4cc1c819238b410b8afe472d759fb66e765bbf104"
+        "background": "transparent",
+        "sha256": "72d7e52c1e95ab674d28d90b63395a2c87d63cffc1dc4a01e8a98c1df5c733eb",
+        "file_size": 7145
       },
       "game32": {
         "tile_size_px": 32,
@@ -4646,12 +4688,13 @@
       },
       "image": {
         "exported_size_px": [
-          157,
-          171
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "0ebe622b0a56da4e795550476e7e89a6f7289029774ff70b3ff15fdafd0ca95c"
+        "background": "transparent",
+        "sha256": "60de1e35df83702867aa485dbc34ad324a60b72300b6642e2630549e5b159671",
+        "file_size": 7941
       },
       "game32": {
         "tile_size_px": 32,
@@ -4756,12 +4799,13 @@
       },
       "image": {
         "exported_size_px": [
-          158,
-          171
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "6932df4004754188ad31a7f6867680beae42c1099244cec2fe6263544a832e32"
+        "background": "transparent",
+        "sha256": "bfee621bb987162f1c363b2986c119160d55031e46fb43d8a8fee3f6b00ad244",
+        "file_size": 8093
       },
       "game32": {
         "tile_size_px": 32,
@@ -4866,12 +4910,13 @@
       },
       "image": {
         "exported_size_px": [
-          158,
-          171
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "121f41826864eca776fd90ca1182a4a908ad41026a0585eb30add73265a356db"
+        "background": "transparent",
+        "sha256": "2472da916a4756547e8cbe7cfdd6f44e1c801250371c059258bbb14b7fbedac0",
+        "file_size": 8009
       },
       "game32": {
         "tile_size_px": 32,
@@ -4976,12 +5021,13 @@
       },
       "image": {
         "exported_size_px": [
-          158,
-          171
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "3101ae0c883d6144ad0feb0bd5062dd4734fc8420607e766ae7ebc8b5ad84d28"
+        "background": "transparent",
+        "sha256": "c107912bdbb3e701a61c79d72ab62db699f43e8e0ecb45f2080b9f9a4ea56646",
+        "file_size": 8077
       },
       "game32": {
         "tile_size_px": 32,
@@ -5086,12 +5132,13 @@
       },
       "image": {
         "exported_size_px": [
-          163,
-          171
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "1b31badfb7086b3207015e014a4ec20d5a13063a171da87a9f903dd0c74b2099"
+        "background": "transparent",
+        "sha256": "c9cc4d2b92274b9b3d4fbdfca7506c332e792f6697411fde32a309bf5e056bef",
+        "file_size": 7491
       },
       "game32": {
         "tile_size_px": 32,
@@ -5194,12 +5241,13 @@
       },
       "image": {
         "exported_size_px": [
-          163,
-          171
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "81702b8aff77793c58e822ed280c203042cb7f1a813d658520cb6c73d419350c"
+        "background": "transparent",
+        "sha256": "cc49a80823511f108145eeef6f51ae60b5630726af00d699f3932a52b6b635f4",
+        "file_size": 7084
       },
       "game32": {
         "tile_size_px": 32,
@@ -5302,12 +5350,13 @@
       },
       "image": {
         "exported_size_px": [
-          162,
-          171
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "69177f8debfb72bede71fbcd5a762688aea5fd82ad38f96207177e9d59654974"
+        "background": "transparent",
+        "sha256": "f00a3edc51f29f3219a6a68c9a4aeefbf009eaa089ff61cb6068cae2dc63e164",
+        "file_size": 7359
       },
       "game32": {
         "tile_size_px": 32,
@@ -5410,12 +5459,13 @@
       },
       "image": {
         "exported_size_px": [
-          165,
-          171
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "32dbd0f18470759dec54b62c791d9f3f2ea9fef79439659a177f127093e6eded"
+        "background": "transparent",
+        "sha256": "ebf4d247d683fe1d00182b3db274c4c3e7c0df023a0752bbb69377e70d3daa89",
+        "file_size": 7472
       },
       "game32": {
         "tile_size_px": 32,
@@ -5518,12 +5568,13 @@
       },
       "image": {
         "exported_size_px": [
-          259,
-          280
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "0682835cdc61c592aacf67014906ff1fe0c6655fa868517c42d3a46355491c68"
+        "background": "transparent",
+        "sha256": "6f5584f2671fb0362b9f13854de0c6121ae5d495da07afbc5e141eb4541acd60",
+        "file_size": 8017
       },
       "game32": {
         "tile_size_px": 32,
@@ -5626,12 +5677,13 @@
       },
       "image": {
         "exported_size_px": [
-          203,
-          280
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "0d2deb2c946f8272308e73a7ca8468cae48d88e993efd94690cf400791d6929d"
+        "background": "transparent",
+        "sha256": "74836e0f9b9d3c02b0816d20897364a7bdd00672c4415798c7c2da6c172065ca",
+        "file_size": 6891
       },
       "game32": {
         "tile_size_px": 32,
@@ -5734,12 +5786,13 @@
       },
       "image": {
         "exported_size_px": [
-          214,
-          280
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "6325b6dc874e5e021032af7ba1ca57fadaeb9fb354e6660a8c7d91a8d9ee0226"
+        "background": "transparent",
+        "sha256": "0b2899d3cc5def865cd1a2d9e76ac31f05f718e5f790f21a6317194793364436",
+        "file_size": 6956
       },
       "game32": {
         "tile_size_px": 32,
@@ -5842,12 +5895,13 @@
       },
       "image": {
         "exported_size_px": [
-          248,
-          280
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "9b92bed4b53a3fdc1230b8d7981202cc21f1748d2e42b48936d3518e64368575"
+        "background": "transparent",
+        "sha256": "d3c5aafe58dec5be847f980587f791388a7f2a257a9cdb2959a53d30501ff31b",
+        "file_size": 7448
       },
       "game32": {
         "tile_size_px": 32,
@@ -5950,12 +6004,13 @@
       },
       "image": {
         "exported_size_px": [
-          259,
-          263
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "e07f804abe8ddfce1cf3337d1bee6a1ebb4270faba09c89cc665be747eb9bfec"
+        "background": "transparent",
+        "sha256": "30d233efd339ecc0c690a2620c948eb40a1f1878c9d8fc4f6621c1d845613797",
+        "file_size": 7727
       },
       "game32": {
         "tile_size_px": 32,
@@ -6060,12 +6115,13 @@
       },
       "image": {
         "exported_size_px": [
-          203,
-          263
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "4ac32d449b06f4dbc6623b2365c25a4779475f5b79aaece0641b2b868c7702c2"
+        "background": "transparent",
+        "sha256": "d20943d92e638306b9cbbf553205b07ae5a134be59a79762817a69bc2b45e06f",
+        "file_size": 6568
       },
       "game32": {
         "tile_size_px": 32,
@@ -6170,12 +6226,13 @@
       },
       "image": {
         "exported_size_px": [
-          214,
-          263
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "5651aa6e653150f594056c2a42cae8f4c9531e232f3a667194b81a4352e5cbe6"
+        "background": "transparent",
+        "sha256": "c146a016e7c58de6f83437c14c81693cde2450729cbdc3cfd61c465ea40ae9e6",
+        "file_size": 6796
       },
       "game32": {
         "tile_size_px": 32,
@@ -6280,12 +6337,13 @@
       },
       "image": {
         "exported_size_px": [
-          248,
-          263
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "a4a4a389d30098748f3f32cc38210b42d5e31627d67eea179ff5ed0f3334f3f6"
+        "background": "transparent",
+        "sha256": "e799e937922f95eeb87c41c779654a69fbbe2b83f1939c823cfbf2997092c4ae",
+        "file_size": 7112
       },
       "game32": {
         "tile_size_px": 32,
@@ -6390,12 +6448,13 @@
       },
       "image": {
         "exported_size_px": [
-          259,
-          275
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "083c9442d045908f02509a41cc3403cb0c88aa02280b7a05b00a8605714e71b2"
+        "background": "transparent",
+        "sha256": "79a9cdffdad7d2050a342ac57d524b488b9bce5675f140bf75454c457ab7a332",
+        "file_size": 7849
       },
       "game32": {
         "tile_size_px": 32,
@@ -6501,12 +6560,13 @@
       },
       "image": {
         "exported_size_px": [
-          203,
-          275
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "5c7187f6e4a44dc5c145220266ff05950247b705c8d2945ef2e8db0ceb6bb938"
+        "background": "transparent",
+        "sha256": "2ccfed3124d3f2582de18024f07b41406933601e5701bb014e383edded0169d5",
+        "file_size": 6716
       },
       "game32": {
         "tile_size_px": 32,
@@ -6612,12 +6672,13 @@
       },
       "image": {
         "exported_size_px": [
-          214,
-          275
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "47441db9bcd1b8fde422d9ef1799b5ebef965e8abf6869c7e0957b99a2e7d47f"
+        "background": "transparent",
+        "sha256": "e4593eb37491e5a10e8f7eeab86b411f5d4db5ddb7ec5440dfec1d49c61c047b",
+        "file_size": 6924
       },
       "game32": {
         "tile_size_px": 32,
@@ -6723,12 +6784,13 @@
       },
       "image": {
         "exported_size_px": [
-          248,
-          275
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "b3785758bece95d833572f024c3f0a98fd047ea8307fe789e98870ca638569dd"
+        "background": "transparent",
+        "sha256": "6ed33b60670798b7f3e1fa8193c6df6bbfb1d82384a8bf2dd01dfda2ed7a984d",
+        "file_size": 7332
       },
       "game32": {
         "tile_size_px": 32,
@@ -6834,12 +6896,13 @@
       },
       "image": {
         "exported_size_px": [
-          259,
-          260
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "f91d4ca4bbc06497dff10e52a2b3a9c6780259d8e54d6d7cd8c7d5f68af454ac"
+        "background": "transparent",
+        "sha256": "b1682bee04f02f0f1fcc7fc506851180231a375728d98c93e78a300ff3d08ccd",
+        "file_size": 7476
       },
       "game32": {
         "tile_size_px": 32,
@@ -6944,12 +7007,13 @@
       },
       "image": {
         "exported_size_px": [
-          203,
-          260
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "3d849b72d8a27d6145165cda89f4d95f6c06c08afe770885f36da580ec0cdc2a"
+        "background": "transparent",
+        "sha256": "48d9d0505ad0497faa0ae91b90ab5557a72656d7dde7b1f6c85acd79b04ee849",
+        "file_size": 6728
       },
       "game32": {
         "tile_size_px": 32,
@@ -7054,12 +7118,13 @@
       },
       "image": {
         "exported_size_px": [
-          214,
-          259
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "24df47743f2b78a5b2aaa5b9875fb6c4aad61cb11e0e15f22c85683557b0b2b2"
+        "background": "transparent",
+        "sha256": "00d36edde35627208898b1fc8ded6c8408559e90d6e0cb5be2f9949f0a7a17e6",
+        "file_size": 6754
       },
       "game32": {
         "tile_size_px": 32,
@@ -7164,12 +7229,13 @@
       },
       "image": {
         "exported_size_px": [
-          248,
-          260
+          320,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "f40e02965edd56f85c941326c6fe27a1360009e0db33a2a363fe343e5ea3f440"
+        "background": "transparent",
+        "sha256": "e9c743beb8bbbc9a066cc76f33752cabfa9ba2dd48cf2d9412950e8a7d89d64a",
+        "file_size": 7329
       },
       "game32": {
         "tile_size_px": 32,
@@ -7274,12 +7340,13 @@
       },
       "image": {
         "exported_size_px": [
-          91,
-          326
+          64,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "10d8713500665d6c5c6481836a99cbfa275dd552cb11240b709b6d36ff39c8da"
+        "background": "transparent",
+        "sha256": "2c7dec7374826bc43fe5bd4f7acee7622d72949875fee76eaf9023bcecc531b3",
+        "file_size": 3848
       },
       "game32": {
         "tile_size_px": 32,
@@ -7384,12 +7451,13 @@
       },
       "image": {
         "exported_size_px": [
-          404,
-          211
+          192,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "8ab86ba45979fd86b20cc5215cb8d3476a448e52bc019d45a67064b773be221c"
+        "background": "transparent",
+        "sha256": "c155e09c997665cfcca22150243d95a892e698263a1ee31ea992ded4666b232a",
+        "file_size": 16725
       },
       "game32": {
         "tile_size_px": 32,
@@ -7494,12 +7562,13 @@
       },
       "image": {
         "exported_size_px": [
-          89,
-          326
+          64,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "4c5ca340c22d3acacd4f2e650a771d985bbb54051bd65b5e438a32118a14051b"
+        "background": "transparent",
+        "sha256": "06105215beadfe0837da3f0e4b220ca3cbf1c2b058dd705aa05a7309205c4e44",
+        "file_size": 3408
       },
       "game32": {
         "tile_size_px": 32,
@@ -7604,12 +7673,13 @@
       },
       "image": {
         "exported_size_px": [
-          404,
-          210
+          192,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "850e69452a571b966d4da3996f513443eb5752745cf7e50bedcf2baf02c091b4"
+        "background": "transparent",
+        "sha256": "1e84ac0687ad460f344163ca68f2be6cf0334e95e44dcca05609ff332f65f118",
+        "file_size": 19078
       },
       "game32": {
         "tile_size_px": 32,
@@ -7714,12 +7784,13 @@
       },
       "image": {
         "exported_size_px": [
-          97,
-          271
+          64,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "e2b74b0ab26255394ce78389c6a00d556adec3631e830db0d7355954f4e20eeb"
+        "background": "transparent",
+        "sha256": "abb06a1a5c514ba663cee4f14b244bbdcac71d617745dcc8593a0eb154818e32",
+        "file_size": 4370
       },
       "game32": {
         "tile_size_px": 32,
@@ -7824,12 +7895,13 @@
       },
       "image": {
         "exported_size_px": [
-          405,
-          183
+          224,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "0fb8c000f6ca85e27bfb3954238e7e1212004796b7e61081ece91d347d9ae645"
+        "background": "transparent",
+        "sha256": "a6def03365a90c90f488f1296af4ec38719d452ac73b938164263c620c7a7477",
+        "file_size": 24576
       },
       "game32": {
         "tile_size_px": 32,
@@ -7934,12 +8006,13 @@
       },
       "image": {
         "exported_size_px": [
-          98,
-          271
+          64,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "3d20b0fddf573de23fcf58149c156d6731551b9f55cae8ee281e66879b7db91b"
+        "background": "transparent",
+        "sha256": "84f611447367c5502b7819b0dc0c35dc7ce6eb1c2ed62f3f4edb7a7deb61e516",
+        "file_size": 4296
       },
       "game32": {
         "tile_size_px": 32,
@@ -8044,12 +8117,13 @@
       },
       "image": {
         "exported_size_px": [
-          414,
-          183
+          256,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "9312afd232b45a577f26f06037137c7968019ae40231d312904a81f701f9a2a2"
+        "background": "transparent",
+        "sha256": "d33269fe624e94ee5980710af761fb0696546581a06bcad5d779191969bb438e",
+        "file_size": 24979
       },
       "game32": {
         "tile_size_px": 32,
@@ -8154,12 +8228,13 @@
       },
       "image": {
         "exported_size_px": [
-          101,
-          267
+          64,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "1bd9419320fae210f6a8ef3b5fb4ab4261a4991d11a0184c5a194b4a3e22fb1a"
+        "background": "transparent",
+        "sha256": "b04280034096a20d8eab86dcc9ba2fe8455cd54061be0be996750479e82b4832",
+        "file_size": 5237
       },
       "game32": {
         "tile_size_px": 32,
@@ -8264,12 +8339,13 @@
       },
       "image": {
         "exported_size_px": [
-          403,
-          196
+          192,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "246dc524f0ca8e2a16819319d954f1ade4bad837d4b220ebafebdabe1247903a"
+        "background": "transparent",
+        "sha256": "55266200c123ddfbb02a3f24f88ff92409c614f735eca7a0d4928be755d2f24c",
+        "file_size": 20688
       },
       "game32": {
         "tile_size_px": 32,
@@ -8374,12 +8450,13 @@
       },
       "image": {
         "exported_size_px": [
-          102,
-          267
+          64,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "32e32bac5774e1e920cf655574dd9160bd62620c893967c4fa861cbc306ec29c"
+        "background": "transparent",
+        "sha256": "9efe3343fc92023dc9dd0df2f3f52cffbcc427f9aed0f5c64274e1e39520c251",
+        "file_size": 5264
       },
       "game32": {
         "tile_size_px": 32,
@@ -8484,12 +8561,13 @@
       },
       "image": {
         "exported_size_px": [
-          404,
-          194
+          224,
+          64
         ],
         "format": "png_rgba",
-        "background": "transparent_after_edge_flood_cleanup",
-        "sha256": "c1d4311a1d571a2a25fb8f8b4bb892ebecaeeeddff800b1fecc76366aa40b6d3"
+        "background": "transparent",
+        "sha256": "f9558c1fcf675be21735cfbe1e82044216f8ae0ed31fc3317e8a37353b8d736f",
+        "file_size": 20996
       },
       "game32": {
         "tile_size_px": 32,

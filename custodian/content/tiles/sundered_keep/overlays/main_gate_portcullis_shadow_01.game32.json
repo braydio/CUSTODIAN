@@ -1,0 +1,107 @@
+{
+  "schema": "custodian.game32.asset.v1",
+  "id": "sundered_keep/overlays/main_gate_portcullis_shadow_01",
+  "name": "main_gate_portcullis_shadow_01",
+  "filename": "main_gate_portcullis_shadow_01.png",
+  "description": "Two-cell shadow overlay cast by the main gate portcullis.",
+  "asset_class": "overlay_tile",
+  "domain": "overlays",
+  "domain_home": "res://content/tiles/sundered_keep/overlays",
+  "runtime_path": "res://content/tiles/sundered_keep/overlays/main_gate_portcullis_shadow_01.png",
+  "source": {
+    "master_sheet": "sundered_keep_entrance_gatehouse.png",
+    "master_sheet_path": "res://content/masters/sundered_keep/sundered_keep_entrance_gatehouse.png",
+    "crop_box_px": [
+      542,
+      522,
+      896,
+      631
+    ],
+    "source_crop_size_px": [
+      354,
+      109
+    ],
+    "normalization": {
+      "output_size_px": [
+        64,
+        32
+      ],
+      "background_cleanup": "border_connected_checkerboard_to_alpha",
+      "overlay_alpha_rebuild": true
+    }
+  },
+  "image": {
+    "runtime_canvas_px": [
+      64,
+      32
+    ],
+    "format": "png_rgba",
+    "sha256": "3771943e68d5c264d444e4a8e37503e84a42343e574ff82a97ea8eefe590bff9",
+    "file_sha256": "98cea23ec895d20fff26f710eaded0a9f29a2d88df8df20ac6168fe77991c56e",
+    "background": "transparent"
+  },
+  "game32": {
+    "tile_size_px": 32,
+    "runtime_canvas_px": [
+      64,
+      32
+    ],
+    "logical_footprint_cells": [
+      2,
+      1
+    ],
+    "logical_footprint_px": [
+      64,
+      32
+    ],
+    "anchor": "top_left",
+    "pivot": "top_left",
+    "placement_rule": "snap_to_grid32",
+    "orientation": null,
+    "variant_group": "main_gate_portcullis_shadow",
+    "z_layer": "overlay",
+    "z_index": 46,
+    "y_sort": false,
+    "walkable": true,
+    "blocks_movement": false,
+    "blocks_projectiles": false,
+    "blocks_vision": false,
+    "fall_hazard": false,
+    "water_hazard": false,
+    "traversal": "overlay",
+    "collision": {
+      "enabled": false,
+      "profile": "none",
+      "shape": "none",
+      "rect_px": null,
+      "applies_to": "none"
+    },
+    "navigation": {
+      "can_pathfind": true,
+      "cost": 1.0,
+      "avoidance": "normal"
+    },
+    "combat": {
+      "cover_profile": "none",
+      "line_of_sight_profile": "transparent",
+      "projectile_profile": "passable"
+    },
+    "render": {
+      "allowed_layers": [
+        "overlay",
+        "decals"
+      ],
+      "import_filter": "nearest_or_disabled_in_godot",
+      "mipmaps": false,
+      "shadow_policy": "baked_in_source",
+      "occluder_recommended": false
+    },
+    "tags": [
+      "sundered_keep",
+      "gatehouse",
+      "portcullis",
+      "shadow",
+      "overlay"
+    ]
+  }
+}

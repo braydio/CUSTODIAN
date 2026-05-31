@@ -1,0 +1,109 @@
+{
+  "schema": "custodian.game32.asset.v1",
+  "id": "sundered_keep/entrance/entrance_causeway_floor_cracked_01",
+  "name": "entrance_causeway_floor_cracked_01",
+  "filename": "entrance_causeway_floor_cracked_01.png",
+  "description": "Cracked walkable causeway floor tile for damaged entrance approach sections.",
+  "asset_class": "floor_tile",
+  "domain": "entrance",
+  "domain_home": "res://content/tiles/sundered_keep/entrance",
+  "runtime_path": "res://content/tiles/sundered_keep/entrance/entrance_causeway_floor_cracked_01.png",
+  "source": {
+    "master_sheet": "sundered_keep_entrance_gatehouse.png",
+    "master_sheet_path": "res://content/masters/sundered_keep/sundered_keep_entrance_gatehouse.png",
+    "crop_box_px": [
+      279,
+      51,
+      477,
+      240
+    ],
+    "source_crop_size_px": [
+      198,
+      189
+    ],
+    "normalization": {
+      "output_size_px": [
+        32,
+        32
+      ],
+      "background_cleanup": "border_connected_checkerboard_to_alpha",
+      "overlay_alpha_rebuild": false
+    }
+  },
+  "image": {
+    "runtime_canvas_px": [
+      32,
+      32
+    ],
+    "format": "png_rgba",
+    "sha256": "1e859ecadf0a72358fa9e9e0ed5c72dd95efe50e63575b57cb9df9be1ec3484e",
+    "file_sha256": "fdb71039bb8d2a8245c43b294fa79dd43e0a7e81cc2c0eca88350ed229857598",
+    "background": "transparent"
+  },
+  "game32": {
+    "tile_size_px": 32,
+    "runtime_canvas_px": [
+      32,
+      32
+    ],
+    "logical_footprint_cells": [
+      1,
+      1
+    ],
+    "logical_footprint_px": [
+      32,
+      32
+    ],
+    "anchor": "top_left",
+    "pivot": "top_left",
+    "placement_rule": "snap_to_grid32",
+    "orientation": null,
+    "variant_group": "entrance_causeway_floor_cracked",
+    "z_layer": "ground",
+    "z_index": 0,
+    "y_sort": false,
+    "walkable": true,
+    "blocks_movement": false,
+    "blocks_projectiles": false,
+    "blocks_vision": false,
+    "fall_hazard": false,
+    "water_hazard": false,
+    "traversal": "walkable",
+    "collision": {
+      "enabled": false,
+      "profile": "none",
+      "shape": "none",
+      "rect_px": null,
+      "applies_to": "none"
+    },
+    "navigation": {
+      "can_pathfind": true,
+      "cost": 1.0,
+      "avoidance": "normal"
+    },
+    "combat": {
+      "cover_profile": "none",
+      "line_of_sight_profile": "transparent",
+      "projectile_profile": "passable"
+    },
+    "render": {
+      "allowed_layers": [
+        "ground",
+        "floor"
+      ],
+      "import_filter": "nearest_or_disabled_in_godot",
+      "mipmaps": false,
+      "shadow_policy": "baked_in_source",
+      "occluder_recommended": false
+    },
+    "tags": [
+      "sundered_keep",
+      "entrance",
+      "causeway",
+      "floor",
+      "stone",
+      "cracked",
+      "damaged"
+    ]
+  }
+}

@@ -31,7 +31,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "vault_empty_lockbox_storage_prop",
+    "semantic_role": "large_dead_root_storage_obstacle",
     "placement_layer": "prop",
     "tags": [
       "vault",
@@ -43,7 +43,12 @@
       "stealable",
       "open",
       "empty",
-      "looted"
+      "looted",
+      "root",
+      "deadwood",
+      "organic_intrusion",
+      "large_obstacle",
+      "cover"
     ],
     "review_status": "reviewed"
   },
@@ -65,10 +70,10 @@
     "review_status": "reviewed"
   },
   "collision": {
-    "blocks_movement": false,
+    "blocks_movement": true,
     "blocks_sight": false,
-    "cover_value": 0,
-    "collision_shape": "none",
+    "cover_value": 2,
+    "collision_shape": "footprint",
     "review_status": "reviewed"
   },
   "runtime": {
@@ -77,12 +82,12 @@
   },
   "procgen": {
     "uses": [
-      "vault_storage",
-      "empty_container",
-      "looted_container",
-      "small_storage"
+      "organic_intrusion",
+      "forest_intrusion",
+      "large_cover_prop",
+      "blocked_route_dressing"
     ],
-    "weight": 5,
+    "weight": 8,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": false,
     "review_status": "reviewed",

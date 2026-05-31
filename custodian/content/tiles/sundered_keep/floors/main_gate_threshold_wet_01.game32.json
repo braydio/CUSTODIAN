@@ -1,0 +1,108 @@
+{
+  "schema": "custodian.game32.asset.v1",
+  "id": "sundered_keep/floors/main_gate_threshold_wet_01",
+  "name": "main_gate_threshold_wet_01",
+  "filename": "main_gate_threshold_wet_01.png",
+  "description": "Wet main gate threshold floor tile for the storm-soaked portcullis approach.",
+  "asset_class": "floor_tile",
+  "domain": "floors",
+  "domain_home": "res://content/tiles/sundered_keep/floors",
+  "runtime_path": "res://content/tiles/sundered_keep/floors/main_gate_threshold_wet_01.png",
+  "source": {
+    "master_sheet": "sundered_keep_entrance_gatehouse.png",
+    "master_sheet_path": "res://content/masters/sundered_keep/sundered_keep_entrance_gatehouse.png",
+    "crop_box_px": [
+      471,
+      307,
+      659,
+      453
+    ],
+    "source_crop_size_px": [
+      188,
+      146
+    ],
+    "normalization": {
+      "output_size_px": [
+        32,
+        32
+      ],
+      "background_cleanup": "border_connected_checkerboard_to_alpha",
+      "overlay_alpha_rebuild": false
+    }
+  },
+  "image": {
+    "runtime_canvas_px": [
+      32,
+      32
+    ],
+    "format": "png_rgba",
+    "sha256": "20f00e214738199627b39678d72af52df1a2421af69ea60bdd31bd2aee063367",
+    "file_sha256": "a962e3a28c9498e087f0ee2e208224c2e580223570c1ec659f3bd281367b4556",
+    "background": "transparent"
+  },
+  "game32": {
+    "tile_size_px": 32,
+    "runtime_canvas_px": [
+      32,
+      32
+    ],
+    "logical_footprint_cells": [
+      1,
+      1
+    ],
+    "logical_footprint_px": [
+      32,
+      32
+    ],
+    "anchor": "top_left",
+    "pivot": "top_left",
+    "placement_rule": "snap_to_grid32",
+    "orientation": null,
+    "variant_group": "main_gate_threshold_wet",
+    "z_layer": "ground",
+    "z_index": 0,
+    "y_sort": false,
+    "walkable": true,
+    "blocks_movement": false,
+    "blocks_projectiles": false,
+    "blocks_vision": false,
+    "fall_hazard": false,
+    "water_hazard": false,
+    "traversal": "walkable",
+    "collision": {
+      "enabled": false,
+      "profile": "none",
+      "shape": "none",
+      "rect_px": null,
+      "applies_to": "none"
+    },
+    "navigation": {
+      "can_pathfind": true,
+      "cost": 1.0,
+      "avoidance": "normal"
+    },
+    "combat": {
+      "cover_profile": "none",
+      "line_of_sight_profile": "transparent",
+      "projectile_profile": "passable"
+    },
+    "render": {
+      "allowed_layers": [
+        "ground",
+        "floor"
+      ],
+      "import_filter": "nearest_or_disabled_in_godot",
+      "mipmaps": false,
+      "shadow_policy": "baked_in_source",
+      "occluder_recommended": false
+    },
+    "tags": [
+      "sundered_keep",
+      "entrance",
+      "gatehouse",
+      "threshold",
+      "floor",
+      "wet"
+    ]
+  }
+}

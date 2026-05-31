@@ -30,9 +30,9 @@
     }
   },
   "classification": {
-    "asset_type": "props",
-    "semantic_role": "vault_open_full_chest_storage_prop",
-    "placement_layer": "prop",
+    "asset_type": "reference",
+    "semantic_role": "light_effect_composite_source_sheet_excluded",
+    "placement_layer": "excluded",
     "tags": [
       "vault",
       "gothic",
@@ -43,7 +43,11 @@
       "stealable",
       "open",
       "full",
-      "enemy_theft_target"
+      "enemy_theft_target",
+      "review_excluded",
+      "composite_sheet",
+      "light_source_sheet",
+      "not_runtime_asset"
     ],
     "review_status": "reviewed"
   },
@@ -58,17 +62,17 @@
       "x": 80,
       "y": 127
     },
-    "snap": "tile_or_free",
+    "snap": "none",
     "allow_mirror_x": false,
     "allow_rotation": false,
-    "y_sort": true,
+    "y_sort": false,
     "review_status": "reviewed"
   },
   "collision": {
-    "blocks_movement": true,
+    "blocks_movement": false,
     "blocks_sight": false,
-    "cover_value": 1,
-    "collision_shape": "footprint",
+    "cover_value": 0,
+    "collision_shape": "none",
     "review_status": "reviewed"
   },
   "runtime": {
@@ -77,14 +81,10 @@
   },
   "procgen": {
     "uses": [
-      "vault_storage",
-      "loot_container",
-      "enemy_theft_target",
-      "open_container",
-      "storage_room_dressing"
+      "review_excluded"
     ],
-    "weight": 8,
-    "can_spawn_indoor": true,
+    "weight": 0,
+    "can_spawn_indoor": false,
     "can_spawn_outdoor": false,
     "review_status": "reviewed",
     "supports_gothic_compound": true

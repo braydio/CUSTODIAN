@@ -31,7 +31,7 @@
   },
   "classification": {
     "asset_type": "props",
-    "semantic_role": "vault_open_resource_crate_storage_prop",
+    "semantic_role": "large_stone_rubble_pile_prop",
     "placement_layer": "prop",
     "tags": [
       "vault",
@@ -43,7 +43,12 @@
       "open",
       "full",
       "resource",
-      "enemy_theft_target"
+      "enemy_theft_target",
+      "rubble",
+      "stone",
+      "debris",
+      "large_obstacle",
+      "cover"
     ],
     "review_status": "reviewed"
   },
@@ -67,7 +72,7 @@
   "collision": {
     "blocks_movement": true,
     "blocks_sight": false,
-    "cover_value": 1,
+    "cover_value": 2,
     "collision_shape": "footprint",
     "review_status": "reviewed"
   },
@@ -77,13 +82,11 @@
   },
   "procgen": {
     "uses": [
-      "vault_storage",
-      "resource_storage",
-      "enemy_theft_target",
-      "open_container",
-      "storage_room_dressing"
+      "large_rubble_prop",
+      "blocked_route_dressing",
+      "damaged_room_dressing"
     ],
-    "weight": 7,
+    "weight": 10,
     "can_spawn_indoor": true,
     "can_spawn_outdoor": false,
     "review_status": "reviewed",

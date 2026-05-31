@@ -1,0 +1,205 @@
+{
+  "schema": "custodian.sundered_keep.level_tilemap.v1",
+  "level_id": "sundered_keep_front_gate_large",
+  "display_name": "Sundered Keep - Front Gate",
+  "tile_size": 32,
+  "map_size_tiles": [112, 80],
+  "camera_bounds_tiles": [0, 0, 112, 80],
+  "start_tile": [56, 76],
+  "return_gate_tile": [42, 58],
+  "main_gate_tile": [54, 50],
+  "great_hall_door_tile": [55, 30],
+  "upper_stair_tile": [79, 31],
+  "lower_stair_tile": [30, 45],
+  "hatch_tile": [42, 40],
+  "return_mooring_origin_tile": [39, 56],
+  "key_pickup_tile": [73, 56],
+  "layers": [
+    "TerrainBase",
+    "TerrainEdges",
+    "FloorDetail",
+    "WallsLow",
+    "WallsHigh",
+    "PropsStatic",
+    "PropsBlocking",
+    "Traversal",
+    "Hazards",
+    "Overlays",
+    "Effects",
+    "WorldUI",
+    "RoofOccluders",
+    "Collision"
+  ],
+  "ops": [
+    {
+      "type": "fill_weighted_rect",
+      "layer": "TerrainBase",
+      "rect": [51, 73, 11, 5],
+      "assets": [
+        {"asset_id": "entrance_causeway_floor_01", "weight": 5},
+        {"asset_id": "entrance_causeway_floor_cracked_01", "weight": 2}
+      ]
+    },
+    {
+      "type": "fill_weighted_rect",
+      "layer": "TerrainBase",
+      "rect": [55, 60, 3, 13],
+      "assets": [
+        {"asset_id": "entrance_causeway_floor_01", "weight": 4},
+        {"asset_id": "entrance_causeway_floor_cracked_01", "weight": 2}
+      ]
+    },
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [52, 66, 3, 4], "asset_id": "entrance_causeway_floor_cracked_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [58, 63, 4, 3], "asset_id": "entrance_causeway_floor_cracked_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [54, 78, 6, 2], "asset_id": "entrance_causeway_broken_gap_01"},
+
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [55, 60, 1, 13], "asset_id": "entrance_causeway_edge_w"},
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [57, 60, 1, 13], "asset_id": "entrance_causeway_edge_e"},
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [51, 73, 11, 1], "asset_id": "entrance_causeway_edge_n"},
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [51, 77, 11, 1], "asset_id": "entrance_causeway_edge_s"},
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [52, 66, 1, 4], "asset_id": "entrance_causeway_edge_w"},
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [61, 63, 1, 3], "asset_id": "entrance_causeway_edge_e"},
+    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_edge_n", "cells": [[55, 60], [56, 60], [57, 60], [52, 66], [53, 66], [54, 66], [58, 63], [59, 63], [60, 63], [61, 63]]},
+    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_edge_s", "cells": [[55, 72], [56, 72], [57, 72], [52, 69], [53, 69], [54, 69], [58, 65], [59, 65], [60, 65], [61, 65]]},
+
+    {
+      "type": "fill_weighted_rect",
+      "layer": "TerrainBase",
+      "rect": [44, 56, 25, 8],
+      "assets": [
+        {"asset_id": "main_gate_threshold_stone_01", "weight": 5},
+        {"asset_id": "main_gate_threshold_wet_01", "weight": 2},
+        {"asset_id": "gatehouse_floor_dark_01", "weight": 1}
+      ]
+    },
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [39, 57, 8, 7], "asset_id": "main_gate_threshold_wet_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [69, 55, 9, 8], "asset_id": "gatehouse_floor_dark_01"},
+    {"type": "stamp_module", "module_id": "return_mooring_3x3_01", "origin": [39, 56]},
+    {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_gate_winch_01", "tile": [73, 56]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_crate_stack_wet_01", "tile": [76, 58]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_gate_barricade_01", "tile": [48, 60]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_broken_cart_01", "tile": [62, 61]},
+
+    {
+      "type": "fill_weighted_rect",
+      "layer": "TerrainBase",
+      "rect": [38, 47, 37, 12],
+      "assets": [
+        {"asset_id": "gatehouse_floor_dark_01", "weight": 5},
+        {"asset_id": "gatehouse_floor_murder_hole_01", "weight": 1},
+        {"asset_id": "main_gate_threshold_stone_01", "weight": 2}
+      ]
+    },
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [50, 44, 13, 6], "asset_id": "gatehouse_floor_dark_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [54, 50, 4, 2], "asset_id": "main_gate_threshold_wet_01"},
+    {"type": "stamp_wall", "asset_id": "gatehouse_wall_broken_left_01", "rect": [40, 48, 1, 3]},
+    {"type": "stamp_wall", "asset_id": "gatehouse_wall_broken_right_01", "rect": [71, 48, 1, 3]},
+    {"type": "stamp_wall", "asset_id": "gothic_castle_wall_straight_s", "rect": [38, 50, 16, 1]},
+    {"type": "stamp_wall", "asset_id": "gothic_castle_wall_straight_s", "rect": [58, 50, 17, 1]},
+    {"type": "stamp_wall", "asset_id": "rampart_parapet_e", "rect": [49, 44, 1, 8]},
+    {"type": "stamp_wall", "asset_id": "rampart_parapet_w", "rect": [63, 44, 1, 8]},
+    {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_torch_wall_gothic_01", "tile": [50, 49]},
+    {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_torch_wall_gothic_01", "tile": [62, 49]},
+    {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_portcullis_chain_01", "tile": [56, 49]},
+
+    {
+      "type": "fill_weighted_rect",
+      "layer": "TerrainBase",
+      "rect": [35, 32, 43, 15],
+      "assets": [
+        {"asset_id": "main_courtyard_flagstone_01", "weight": 5},
+        {"asset_id": "main_courtyard_flagstone_02", "weight": 3},
+        {"asset_id": "main_courtyard_flagstone_cracked_01", "weight": 2},
+        {"asset_id": "main_courtyard_flagstone_wet_01", "weight": 1},
+        {"asset_id": "main_courtyard_flagstone_mossy_01", "weight": 1}
+      ]
+    },
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [29, 38, 9, 10], "asset_id": "main_courtyard_flagstone_cracked_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [73, 35, 9, 8], "asset_id": "main_courtyard_flagstone_mossy_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [51, 28, 11, 4], "asset_id": "main_gate_threshold_stone_01"},
+    {"type": "stamp_wall", "asset_id": "gothic_castle_wall_damaged_s", "rect": [35, 31, 18, 1]},
+    {"type": "stamp_wall", "asset_id": "gothic_castle_wall_breach_s", "rect": [61, 31, 17, 1]},
+    {"type": "stamp_wall", "asset_id": "rampart_parapet_e", "rect": [34, 33, 1, 9]},
+    {"type": "stamp_wall", "asset_id": "rampart_parapet_w", "rect": [82, 35, 1, 6]},
+    {"type": "stamp_wall", "asset_id": "gothic_castle_wall_breach_n", "rect": [36, 47, 12, 1]},
+    {"type": "stamp_wall", "asset_id": "gothic_castle_wall_damaged_n", "rect": [65, 47, 12, 1]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_courtyard_fountain_broken_01", "tile": [56, 39]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_gothic_statue_broken_01", "tile": [40, 36]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_gothic_statue_intact_01", "tile": [72, 37]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_low_garden_wall_01", "tile": [51, 42]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_fallen_masonry_01", "tile": [36, 33]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_broken_cart_01", "tile": [68, 44]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_barrel_wet_01", "tile": [47, 45]},
+
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [22, 42, 14, 18], "asset_id": "cliff_rock_floor_cracked_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [29, 35, 9, 8], "asset_id": "main_courtyard_flagstone_wet_01"},
+    {"type": "fill_rect", "layer": "TerrainEdges", "rect": [21, 42, 1, 18], "asset_id": "cliff_edge_w"},
+    {"type": "fill_rect", "layer": "TerrainEdges", "rect": [22, 60, 14, 1], "asset_id": "cliff_edge_s"},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_fallen_masonry_01", "tile": [25, 50]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_sea_spray_rock_01", "tile": [22, 56]},
+
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [78, 36, 9, 18], "asset_id": "rampart_walkway_floor_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [70, 42, 8, 8], "asset_id": "rampart_walkway_broken_01"},
+    {"type": "stamp_wall", "asset_id": "rampart_crenellation_s", "rect": [78, 35, 9, 1]},
+    {"type": "stamp_wall", "asset_id": "rampart_parapet_w", "rect": [87, 36, 1, 15]},
+    {"type": "stamp_wall", "asset_id": "rampart_broken_gap_w", "rect": [87, 50, 1, 4]},
+    {"type": "fill_rect", "layer": "TerrainEdges", "rect": [88, 36, 1, 18], "asset_id": "ocean_foam_edge_e"},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_gargoyle_perch_01", "tile": [85, 38]},
+    {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_rope_bridge_anchor_01", "tile": [79, 53]},
+
+    {
+      "type": "fill_weighted_rect",
+      "layer": "TerrainBase",
+      "rect": [39, 12, 36, 17],
+      "assets": [
+        {"asset_id": "great_hall_marble_floor_01", "weight": 5},
+        {"asset_id": "great_hall_marble_floor_cracked_01", "weight": 2}
+      ]
+    },
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [43, 9, 28, 4], "asset_id": "great_hall_marble_floor_01"},
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [55, 12, 2, 17], "asset_id": "great_hall_carpet_runner_vertical_01"},
+    {"type": "stamp_wall", "asset_id": "great_hall_wall_straight_n", "rect": [39, 11, 36, 1]},
+    {"type": "stamp_wall", "asset_id": "rampart_parapet_e", "rect": [38, 12, 1, 17]},
+    {"type": "stamp_wall", "asset_id": "rampart_parapet_w", "rect": [75, 12, 1, 8]},
+    {"type": "stamp_wall", "asset_id": "great_hall_wall_broken_exterior_w", "rect": [75, 22, 1, 6]},
+    {"type": "stamp_wall", "asset_id": "great_hall_wall_straight_test", "rect": [39, 29, 16, 1]},
+    {"type": "stamp_wall", "asset_id": "great_hall_wall_straight_test", "rect": [57, 29, 18, 1]},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [76, 20, 6, 7], "asset_id": "ocean_void_01"},
+    {"type": "fill_rect", "layer": "TerrainEdges", "rect": [76, 20, 1, 7], "asset_id": "ocean_foam_edge_w"},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_great_hall_column_01", "tile": [42, 15]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_great_hall_column_01", "tile": [69, 15]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_great_hall_column_01", "tile": [42, 24]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_great_hall_column_01", "tile": [68, 24]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_banquet_table_long_01", "tile": [47, 17]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_banquet_table_long_01", "tile": [62, 17]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_banquet_table_broken_01", "tile": [47, 23]},
+    {"type": "stamp_prop", "layer": "PropsBlocking", "asset_id": "prop_throne_ruined_01", "tile": [55, 10]},
+    {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_brazier_iron_01", "tile": [52, 13]},
+    {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_brazier_iron_01", "tile": [60, 13]},
+
+    {"type": "blocker_rect", "name": "SubmergedCausewayBlocker", "rect": [54, 78, 6, 2]},
+    {"type": "blocker_rect", "name": "LowerWestOceanBlocker", "rect": [0, 60, 39, 20]},
+    {"type": "blocker_rect", "name": "LowerEastOceanBlocker", "rect": [79, 55, 33, 25]},
+    {"type": "blocker_rect", "name": "WestOceanBoundary", "rect": [0, 0, 18, 80]},
+    {"type": "blocker_rect", "name": "EastOceanBoundary", "rect": [94, 0, 18, 80]},
+    {"type": "blocker_rect", "name": "NorthOceanBoundary", "rect": [0, 0, 112, 8]},
+    {"type": "blocker_rect", "name": "GreatHallCollapsedOceanBlocker", "rect": [76, 20, 6, 7]}
+  ],
+  "interactables": [
+    {"name": "SunderedGateKeyPickup", "kind": "sundered_gate_key", "prompt": "SUNDERED GATE KEY", "tile": [73, 56], "distance": 76.0},
+    {"name": "MainGateInteraction", "kind": "main_gate", "prompt": "OPEN MAIN GATE", "tile": [56, 51], "distance": 96.0}
+  ],
+  "blockers": [],
+  "markers": [
+    {"id": "spawn", "tile": [56, 76]},
+    {"id": "return_gate", "tile": [42, 58]},
+    {"id": "return_mooring", "tile": [41, 58]},
+    {"id": "key_winch", "tile": [73, 56]},
+    {"id": "main_gate", "tile": [54, 50]},
+    {"id": "courtyard", "tile": [56, 39]},
+    {"id": "great_hall_door", "tile": [55, 30]},
+    {"id": "great_hall", "tile": [56, 20]},
+    {"id": "west_service_path", "tile": [30, 50]},
+    {"id": "east_rampart", "tile": [82, 48]}
+  ]
+}

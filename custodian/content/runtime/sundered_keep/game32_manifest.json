@@ -2,7 +2,7 @@
   "schema": "game32.manifest.v1",
   "set": "sundered_keep",
   "base_tile_px": 32,
-  "generated_at_utc": "2026-05-30T01:02:36+00:00",
+  "generated_at_utc": "2026-05-30T04:16:00+00:00",
   "godot_root": "/home/braydenchaffee/Projects/CUSTODIAN/custodian",
   "masters_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep",
   "out_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/runtime/sundered_keep",
@@ -45,7 +45,7 @@
       "filename": "cliff_edge_n.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -217,7 +217,7 @@
       "filename": "cliff_edge_e.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -389,7 +389,7 @@
       "filename": "cliff_edge_s.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -561,7 +561,7 @@
       "filename": "cliff_edge_w.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -733,7 +733,7 @@
       "filename": "cliff_inner_corner_ne.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -906,7 +906,7 @@
       "filename": "cliff_inner_corner_nw.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -1079,7 +1079,7 @@
       "filename": "cliff_inner_corner_se.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -1252,7 +1252,7 @@
       "filename": "cliff_inner_corner_sw.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -1425,7 +1425,7 @@
       "filename": "cliff_outer_corner_ne.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -1598,7 +1598,7 @@
       "filename": "cliff_outer_corner_nw.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -1771,7 +1771,7 @@
       "filename": "cliff_outer_corner_se.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -1944,7 +1944,7 @@
       "filename": "cliff_outer_corner_sw.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -2117,7 +2117,7 @@
       "filename": "cliff_face_slice_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -2289,7 +2289,7 @@
       "filename": "cliff_face_slice_wet_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -2461,7 +2461,7 @@
       "filename": "cliff_face_slice_mossy_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -2633,7 +2633,7 @@
       "filename": "ocean_foam_edge_n.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -2727,15 +2727,15 @@
           1
         ],
         "content_bbox_px": [
-          2,
-          6,
-          28,
-          20
+          0,
+          0,
+          32,
+          32
         ],
-        "scale_from_source_crop": 0.1278538812785388,
+        "scale_from_source_crop": 1.0,
         "paste_offset_px": [
-          2,
-          6
+          0,
+          0
         ],
         "anchor": "center",
         "pivot_px": [
@@ -2801,7 +2801,7 @@
       "filename": "ocean_foam_edge_e.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -2895,15 +2895,15 @@
           1
         ],
         "content_bbox_px": [
-          2,
-          3,
-          28,
-          26
+          0,
+          0,
+          32,
+          32
         ],
-        "scale_from_source_crop": 0.13725490196078433,
+        "scale_from_source_crop": 1.0,
         "paste_offset_px": [
-          2,
-          3
+          0,
+          0
         ],
         "anchor": "center",
         "pivot_px": [
@@ -2969,7 +2969,7 @@
       "filename": "ocean_foam_edge_s.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -3063,15 +3063,15 @@
           1
         ],
         "content_bbox_px": [
-          2,
-          3,
-          28,
-          26
+          0,
+          0,
+          32,
+          32
         ],
-        "scale_from_source_crop": 0.12844036697247707,
+        "scale_from_source_crop": 1.0,
         "paste_offset_px": [
-          2,
-          3
+          0,
+          0
         ],
         "anchor": "center",
         "pivot_px": [
@@ -3137,7 +3137,7 @@
       "filename": "ocean_foam_edge_w.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -3231,15 +3231,15 @@
           1
         ],
         "content_bbox_px": [
-          2,
-          2,
-          28,
-          27
+          0,
+          0,
+          32,
+          32
         ],
-        "scale_from_source_crop": 0.1339712918660287,
+        "scale_from_source_crop": 1.0,
         "paste_offset_px": [
-          2,
-          2
+          0,
+          0
         ],
         "anchor": "center",
         "pivot_px": [
@@ -3305,7 +3305,7 @@
       "filename": "ocean_dark_water_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:23+00:00",
+      "created_utc": "2026-05-30T04:08:14+00:00",
       "source": {
         "sheet_key": "terrain_cliffs_ocean",
         "sheet_file": "cliffs_oceans.png",
@@ -3399,15 +3399,15 @@
           1
         ],
         "content_bbox_px": [
-          2,
-          3,
-          28,
-          26
+          0,
+          0,
+          32,
+          32
         ],
-        "scale_from_source_crop": 0.12173913043478261,
+        "scale_from_source_crop": 1.0,
         "paste_offset_px": [
-          2,
-          3
+          0,
+          0
         ],
         "anchor": "center",
         "pivot_px": [
@@ -3473,7 +3473,7 @@
       "filename": "main_gate_portcullis_closed.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -3653,7 +3653,7 @@
       "filename": "main_gate_portcullis_open.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -3833,7 +3833,7 @@
       "filename": "gothic_double_door_closed_n.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -4010,7 +4010,7 @@
       "filename": "gothic_double_door_open_n.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -4187,7 +4187,7 @@
       "filename": "gothic_double_door_closed_s.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -4364,7 +4364,7 @@
       "filename": "gothic_double_door_open_s.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -4541,7 +4541,7 @@
       "filename": "stone_stairs_up_n.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -4721,7 +4721,7 @@
       "filename": "stone_stairs_up_e.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -4901,7 +4901,7 @@
       "filename": "stone_stairs_up_s.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -5081,7 +5081,7 @@
       "filename": "stone_stairs_up_w.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -5261,7 +5261,7 @@
       "filename": "stone_stairs_down_n.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -5441,7 +5441,7 @@
       "filename": "stone_stairs_down_s.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -5621,7 +5621,7 @@
       "filename": "floor_hatch_closed_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -5800,7 +5800,7 @@
       "filename": "floor_hatch_open_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:27+00:00",
+      "created_utc": "2026-05-30T04:08:19+00:00",
       "source": {
         "sheet_key": "doors_traversal",
         "sheet_file": "doors_traversal.png",
@@ -5979,7 +5979,7 @@
       "filename": "prop_courtyard_fountain_broken_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -6179,7 +6179,7 @@
       "filename": "prop_gothic_statue_broken_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -6346,7 +6346,7 @@
       "filename": "prop_gothic_statue_intact_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -6513,7 +6513,7 @@
       "filename": "prop_broken_cart_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -6700,7 +6700,7 @@
       "filename": "prop_crate_stack_wet_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -6880,7 +6880,7 @@
       "filename": "prop_barrel_wet_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -7047,7 +7047,7 @@
       "filename": "prop_fallen_masonry_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -7234,7 +7234,7 @@
       "filename": "prop_low_garden_wall_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -7409,7 +7409,7 @@
       "filename": "prop_gate_winch_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -7588,7 +7588,7 @@
       "filename": "prop_portcullis_chain_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -7755,7 +7755,7 @@
       "filename": "prop_gate_barricade_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -7931,7 +7931,7 @@
       "filename": "prop_torch_wall_gothic_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -8099,7 +8099,7 @@
       "filename": "prop_banquet_table_long_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -8303,7 +8303,7 @@
       "filename": "prop_banquet_table_broken_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:32+00:00",
+      "created_utc": "2026-05-30T04:08:24+00:00",
       "source": {
         "sheet_key": "props_tables_crates",
         "sheet_file": "tables_crates_props.png",
@@ -8507,7 +8507,7 @@
       "filename": "prop_great_hall_column_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -8674,7 +8674,7 @@
       "filename": "prop_fallen_chandelier_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -8862,7 +8862,7 @@
       "filename": "prop_throne_ruined_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -9041,7 +9041,7 @@
       "filename": "prop_brazier_iron_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -9209,7 +9209,7 @@
       "filename": "prop_banner_torn_large_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -9377,7 +9377,7 @@
       "filename": "prop_gargoyle_perch_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -9544,7 +9544,7 @@
       "filename": "prop_lightning_rod_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -9711,7 +9711,7 @@
       "filename": "prop_rope_bridge_anchor_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -9890,7 +9890,7 @@
       "filename": "prop_sea_spray_rock_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -10078,7 +10078,7 @@
       "filename": "prop_broken_spire_chunk_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -10258,7 +10258,7 @@
       "filename": "prop_bookshelf_tall_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -10425,7 +10425,7 @@
       "filename": "prop_chapel_pew_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -10600,7 +10600,7 @@
       "filename": "prop_sarcophagus_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
@@ -10796,7 +10796,7 @@
       "filename": "prop_telescope_broken_01.png",
       "set": "sundered_keep",
       "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
-      "created_utc": "2026-05-30T01:02:36+00:00",
+      "created_utc": "2026-05-30T04:08:28+00:00",
       "source": {
         "sheet_key": "props_caskets_misc",
         "sheet_file": "props_caskets_misc.png",
