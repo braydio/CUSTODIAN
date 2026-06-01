@@ -1,5 +1,7 @@
 extends Node
 
+const GAME_OVER_MODAL_SCENE := preload("res://game/ui/game_over/game_over_modal.tscn")
+
 enum Phase {
 	CONTRACT_BRIEFING,
 	FREE_ROAM_PREP,
@@ -11,8 +13,10 @@ enum Phase {
 signal phase_changed(old_phase: int, new_phase: int)
 signal resources_changed()
 signal lives_changed(lives_left: int)
+signal game_over_triggered(reason: String, stats: Dictionary)
 
 @export var total_lives: int = 3
+@export var game_over_menu_scene_path: String = "res://ui/main_menu.tscn"
 var lives_remaining: int = total_lives
 
 var tick := 0
@@ -27,6 +31,7 @@ var contract_ready: bool = false
 
 var materials: int = 0
 var defense_rating: float = 0.0
+var _game_over_modal: Control = null
 
 
 func _ready() -> void:
@@ -99,6 +104,12 @@ func trigger_game_over(reason: String = "Command Post destroyed") -> void:
 	game_over = true
 	paused = true
 	game_over_reason = reason
+	var tree := get_tree()
+	if tree != null:
+		tree.paused = true
+	var stats := _get_stats_snapshot()
+	game_over_triggered.emit(game_over_reason, stats)
+	_show_game_over_modal(game_over_reason, stats)
 
 func lose_life(reason: String = "Operator eliminated") -> int:
 	if lives_remaining <= 0:
@@ -113,3 +124,60 @@ func reset_lives() -> void:
 	var effective_total: int = max(1, total_lives)
 	lives_remaining = effective_total
 	lives_changed.emit(lives_remaining)
+
+
+func reset_run_state(reset_stats: bool = true) -> void:
+	var tree := get_tree()
+	if tree != null:
+		tree.paused = false
+	paused = false
+	game_over = false
+	game_over_reason = ""
+	tick = 0
+	current_phase = Phase.CONTRACT_BRIEFING
+	phase_start_tick = 0
+	assault_started_tick = -1
+	contract_ready = false
+	materials = 0
+	defense_rating = 0.0
+	reset_lives()
+	if reset_stats:
+		var stats_node := get_node_or_null("/root/GameStats")
+		if stats_node != null and stats_node.has_method("reset"):
+			stats_node.call("reset")
+	_clear_game_over_modal()
+
+
+func _show_game_over_modal(reason: String, stats: Dictionary) -> void:
+	_clear_game_over_modal()
+	var tree := get_tree()
+	if tree == null:
+		return
+	var modal := GAME_OVER_MODAL_SCENE.instantiate()
+	_game_over_modal = modal
+	if modal.has_method("configure"):
+		modal.call("configure", reason, stats, game_over_menu_scene_path)
+	var parent := tree.current_scene
+	if parent == null:
+		parent = tree.root
+	parent.add_child(modal)
+
+
+func _clear_game_over_modal() -> void:
+	if _game_over_modal != null and is_instance_valid(_game_over_modal):
+		_game_over_modal.queue_free()
+	_game_over_modal = null
+
+
+func _get_stats_snapshot() -> Dictionary:
+	var stats_node := get_node_or_null("/root/GameStats")
+	if stats_node != null and stats_node.has_method("get_snapshot"):
+		var snapshot = stats_node.call("get_snapshot")
+		if snapshot is Dictionary:
+			return snapshot
+	return {
+		"waves_survived": 0,
+		"enemies_destroyed": 0,
+		"power_failures": 0,
+		"turrets_lost": 0,
+	}

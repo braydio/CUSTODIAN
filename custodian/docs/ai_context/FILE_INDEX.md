@@ -15,6 +15,7 @@ Last updated: 2026-05-31
 - `custodian/tools/agent/change_control_bundle.py` — utility that bundles current git-changed files into `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the markdown bundle to the clipboard when a clipboard command is available
 - `custodian/docs/ai_context/task_packets/AGENT_WORKFLOW_AUTOMATION.md` — completed packet for task-packet next steps, ownership rules, and automation backlog
 - `custodian/docs/ai_context/task_packets/VALIDATION_RECIPES.md` — completed packet for canonical validation recipes and prompt-template cleanup
+- `custodian/docs/ai_context/task_packets/GAME_OVER_FLOW.md` — active packet for the first runtime game-over UX slice, including modal display, stats snapshot, restart/menu behavior, and validation.
 - `custodian/docs/ai_context/task_packets/archived/COMPOUND_ROOM_ASSEMBLY_CONTRACT.md` — completed packet for deterministic compound room graph, loader, and layout assembler contract hardening
 - `custodian/docs/ai_context/task_packets/archived/COMPOUND_ROOM_GRAPH_WALK_LAYOUT.md` — completed packet for the first graph-walk, door-aligned compound room layout pass
 - `custodian/docs/ai_context/task_packets/PORTAL_COLLISION_DEBUG_TUNING.md` — completed packet for visualizing portal prop collision and correcting portal-ring side blocker positions
@@ -54,7 +55,8 @@ Last updated: 2026-05-31
 - `custodian/game/world/procgen/gothic_compound/` — deterministic gothic compound blueprint generator modules: metadata asset definitions, legacy path registry, config, result, validator, generator, and Sprite2D adapter used by the connected-map prototype; current generation uses logical asset definitions, top-left anchoring, footprint-aware placement, render/depth metadata, player-relative large-structure depth sorting, wall/post/gatehouse perimeter grammar, keep-plaza exclusion, service paths, zone-specific decals/grates, clustered exterior scatter, and perimeter topology validation
 - `custodian/game/world/gothic_compound/gothic_compound_map.gd` — authored connected gothic compound destination map that runs the larger gothic blueprint generator, exposes camera bounds, updates player-relative depth sorting, and places the return gate
 - `custodian/game/world/gothic_compound/gothic_compound_travel_gate.gd` — interactable gate used to enter the gothic compound from the main map and return from the compound to the main map
-- `custodian/game/world/sundered_keep/sundered_keep_map.gd` — authored connected Sundered Keep destination map that preserves Return Mooring, local `sundered_gate_key` pickup, openable/collision-gated Main Gate, openable Great Hall double door, camera bounds, debug state, and return travel while building the active large front-gate layout from JSON level data
+- `custodian/game/world/sundered_keep/sundered_keep_map.gd` — authored connected Sundered Keep destination map that preserves Return Mooring, local `sundered_gate_key` pickup, openable/collision-gated Main Gate, openable Great Hall double door, camera bounds, debug state, return travel, and the local gate-open siege loop while building the active large front-gate layout from JSON level data
+- `custodian/game/world/sundered_keep/sundered_keep_siege_objective.gd` — local Sundered Keep `Damageable` objective marker used by the gatehouse siege loop for attack targets, integrity state, repair, and debug readout
 - `custodian/game/world/sundered_keep/sundered_keep_tilemap_loader.gd` — small JSON loader for `custodian.sundered_keep.level_tilemap.v1` level data used by the Sundered Keep Sprite2D tilemap build path
 - `custodian/game/world/sundered_keep/sundered_keep_interactable.gd` — small InputMap-aware interactable bridge used by the Sundered Keep Return Mooring, gate key pickup, Main Gate, and Great Hall door interaction nodes
 - `custodian/game/world/compound/rooms/room_graph.gd` — deterministic compound room graph loader/validator with room count clamps, sorted type lookup, seeded template selection, and directional connection-rule checks
@@ -99,6 +101,10 @@ Last updated: 2026-05-31
 - `custodian/game/systems/drone/drone_command_profile.gd` — V1 drone tuning and mode constants for HP, speed, range, burst cadence, retreat threshold, and leash behavior
 - `custodian/game/systems/drone/drone_targeting.gd` — deterministic local target selection helper for non-passive enemies near the Custodian or hold point
 - `custodian/game/systems/drone/drone_squad_state.gd` — lightweight resource tracking active/destroyed drone IDs and current squad mode
+- `custodian/game/systems/core/state/game_state.gd` — fail-state and phase authority autoload; now pauses and mounts the game-over modal on `trigger_game_over(...)`, preserves the existing debug fields, and exposes `reset_run_state(...)` for restart flows.
+- `custodian/game/systems/core/state/game_stats.gd` — run-stat autoload for waves survived, enemies destroyed, power failures, and turrets lost snapshots used by the game-over modal.
+- `custodian/game/ui/game_over/game_over_modal.tscn` — centered pause-safe game-over modal showing fail reason, stats, Restart Facility, and Return to Menu.
+- `custodian/game/ui/game_over/game_over_modal.gd` — modal controller that reads configured stats, restarts via `GameState.reset_run_state()`, and falls back to the configured main scene when no production menu scene exists.
 - `custodian/autoload/resource_ledger.gd` — fabrication resource accounting autoload for canonical CUSTODIAN-flavored resource totals and payment checks, with legacy generic inputs normalized forward to flavored IDs
 - `custodian/autoload/build_inventory.gd` — completed build-token inventory autoload used by fabrication outputs before placement exists
 - `custodian/autoload/fab_pipeline.gd` — recipe loading, resource payment, queued fabrication jobs, and output completion autoload
@@ -115,7 +121,7 @@ Last updated: 2026-05-31
 - `custodian/game/actors/storage/vault_storage.tscn` — placeholder vault storage scene used by debug fallback vault placement
 - `custodian/game/actors/items/stolen_resource_pickup.gd` — recoverable stolen-resource bundle that returns payloads to `VaultManager` when picked up by the player
 - `custodian/game/actors/items/stolen_resource_pickup.tscn` — placeholder pickup scene for dropped stolen vault resources
-- `custodian/game/actors/enemies/enemy.gd` — shared active enemy actor, now including `apply_variant(profile)` support for procedural wolf profiles, wolf sheet playback, custom active-enemy body/FX strip playback for the `enemy_grunt` scene, and opt-in behavior-variable state machine hooks
+- `custodian/game/actors/enemies/enemy.gd` — shared active enemy actor, now including `apply_variant(profile)` support for procedural wolf profiles, wolf sheet playback, custom active-enemy body/FX strip playback for the `enemy_grunt` scene, opt-in behavior-variable state machine hooks, and game-over stat recording on enemy death
 - `custodian/game/actors/enemies/enemy_grunt.tscn` — first live grunt enemy scene using canonical `enemy_grunt` runtime body strips plus a `CustomEnemyFxSprite` melee overlay and opt-in behavior/vault-theft components
 - `custodian/game/actors/enemies/components/enemy_behavior_profile.gd` — inspectable profile resource factory for raider, iconoclast looter, and zealot behavior variables
 - `custodian/game/actors/enemies/components/enemy_blackboard.gd` — enemy-local behavior memory for Operator sightings, objective target, carried loot, morale, patrol, and investigation state
@@ -131,7 +137,7 @@ Last updated: 2026-05-31
 - `custodian/game/enemies/procgen/enemy_palette_tint.gdshader` — palette/glow/contrast shader used by procedural enemy visuals
 - `custodian/game/systems/core/systems/enemy_factory.gd` — wave composition factory with deterministic local composition rolls and `"wolf"` plus `"grunt"` type support
 - `custodian/game/systems/core/systems/enemy_director.gd` — live directed-wave planner that scales threat into assault budget, chooses lane/objective, passes a deterministic composition queue into `WaveManager`, and forwards optional behavior-profile debug spawns
-- `custodian/game/systems/core/systems/wave_manager.gd` — wave spawning system that applies procedural wolf variant profiles to spawned enemies when `"wolf"` entries are selected, can spawn the dedicated `EnemyGrunt` scene for `"grunt"` entries, owns fallback point/burst tuning, and exposes a behavior-profile-aware debug spawn helper used by DevConsole/startup review
+- `custodian/game/systems/core/systems/wave_manager.gd` — wave spawning system that applies procedural wolf variant profiles to spawned enemies when `"wolf"` entries are selected, can spawn the dedicated `EnemyGrunt` scene for `"grunt"` entries, owns fallback point/burst tuning, records survived waves to `GameStats`, and exposes a behavior-profile-aware debug spawn helper used by DevConsole/startup review
 - `custodian/game/actors/items/cognitive_pickup.tscn` — generic pickup scene for cognitive item drops
 - `custodian/game/actors/items/cognitive_pickup.gd` — pickup flow that increments `InventoryManager`, applies `CognitiveState`, animates the 4-frame item sheet, and emits popup/log feedback
 - `custodian/game/actors/items/shrumb_dropper.gd` — reusable Forest Shrumb cognitive drop table component
@@ -209,6 +215,7 @@ Last updated: 2026-05-31
 - `custodian/content/tiles/roads_paths/source/ancient_ruined_roads_and_paths.png` — source road/path sheet preserved as the visual source/reference for the runtime exports
 - `custodian/content/sundered_keep_manifest.game32.json` — master game32 manifest for the Sundered Keep asset set; indexes terrain, traversal, props, floors, gothic walls, great hall walls, and ramparts
 - `custodian/content/levels/sundered_keep/sundered_keep_front_gate_large.json` — data source for the active `112x80` Sundered Keep front-gate layout, including storm causeway, outer landing, Return Mooring/key alcoves, gatehouse, courtyard, service/rampart branches, Great Hall front, blockers, markers, and interactables
+- `custodian/content/levels/sundered_keep/gatehouse_siege_config.json` — data source for the Sundered Keep gate-open siege loop, including objective HP/groups, repair interactables, spawn markers, deterministic wave composition, pressure cadence, and local defense turret tuning
 - `custodian/content/levels/sundered_keep/sundered_keep_assets.json` — level-pack asset reference index for Sundered Keep tile/proxy asset IDs
 - `custodian/content/runtime/sundered_keep/sundered_keep_game32_assets.gd` — generated Sundered Keep runtime catalog used by `sundered_keep_map.gd` for terrain, traversal, and prop texture paths
 - `custodian/content/runtime/sundered_keep/` and `custodian/content/tiles/sundered_keep/` — runtime Sundered Keep game32 asset pack for terrain, traversal, props, floors, gothic walls, great hall walls, ramparts, and Return Mooring tile overlays
@@ -218,7 +225,7 @@ Last updated: 2026-05-31
 - `custodian/content/runtime/sundered_keep/return_mooring/return_mooring_module.game32.json` and `custodian/content/metadata/game32/return_mooring.game32.json` — Return Mooring module and metadata manifests referenced by the Sundered Keep asset set
 - `custodian/tools/validation/sundered_keep_asset_smoke.gd` — validates Sundered Keep map Sprite2D textures resolve to live assets
 - `custodian/tools/validation/sundered_keep_layout_smoke.gd` — validates the Sundered Keep Return Mooring, key, portcullis, Great Hall door, blockers, and texture basics
-- `custodian/tools/validation/sundered_keep_large_layout_smoke.gd` — validates the large JSON layout source, minimum map size, pre-gate reachability, closed-gate route blocking, post-key gate opening, Great Hall door opening, and missing asset count
+- `custodian/tools/validation/sundered_keep_large_layout_smoke.gd` — validates the large JSON layout source, minimum map size, pre-gate reachability, closed-gate route blocking, post-key gate opening, gate-open siege activation, objective damage/repair, defense turret creation, Great Hall door opening, and missing asset count
 - `custodian/content/tiles/interiors/runtime/` — runtime-ready `32x32` constructed-interior floor and military wall tiles registered into procgen source lists by naming convention
 - `custodian/content/tiles/interiors/source/` — oversized/reference interior tile source art preserved for slicing or replacement
 - `custodian/content/tiles/interiors/README.md` — interior tile folder layout, runtime/source split, and remaining art needs
@@ -291,6 +298,7 @@ Last updated: 2026-05-31
 - `custodian/tools/validation/contract_resource_node_smoke.gd` — headless smoke test that loads `game.tscn`, verifies scarce generated tutorial resource nodes include blackwood/alloy/wreckage, verifies the far-field expedition patch covers every compatible resource-node kind, and checks generated/default node sprites build frames
 - `custodian/tools/validation/sundered_keep_asset_smoke.gd` — headless smoke test that instantiates the Sundered Keep connected map and fails if any slice `Sprite2D` has a missing texture
 - `custodian/tools/validation/sundered_keep_layout_smoke.gd` — headless smoke test for Return Mooring, Sundered Gate Key pickup, closed-gate blocker, blocked no-key gate interaction, Great Hall door blocker, and blocker removal after opening the Main Gate and Great Hall door
+- `custodian/tools/validation/sundered_keep_large_layout_smoke.gd` — headless smoke test for the large Sundered Keep layout, gate reachability, gate-open siege activation, objective damage/repair, local spawn markers, and defense turret creation
 - `custodian/tools/validation/grunt_animation_smoke.gd` — targeted smoke check for loading the current `enemy_grunt` body/FX SpriteFrames and selector mappings
 - `custodian/tools/validation/elevation_map_smoke.gd` — targeted smoke check for raised-platform elevation metadata, ramp traversal, blocked edges, and serialized cells
 - `custodian/tools/validation/terrain_builder_smoke.gd` — targeted smoke check for TerrainBuilder determinism, connectivity, elevated access, spawn-valid filtering, baseline visual no-op behavior, directional ramp validation, and registered elevation/cliff TileSet sources

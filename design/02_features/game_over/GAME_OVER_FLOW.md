@@ -204,3 +204,33 @@ recoverable (fast restart)
 ```
 
 Restart should take **< 1 second**.
+
+---
+
+# Runtime Implementation Notes
+
+Status: first runtime slice implemented.
+
+Implemented under:
+
+```
+custodian/game/systems/core/state/game_state.gd
+custodian/game/systems/core/state/game_stats.gd
+custodian/game/ui/game_over/game_over_modal.tscn
+custodian/game/ui/game_over/game_over_modal.gd
+custodian/tools/validation/game_over_flow_smoke.gd
+```
+
+Notes:
+
+- `GameState` remains the fail-state authority and emits `game_over_triggered`.
+- `GameStats` tracks waves survived, enemies destroyed, power failures, and turrets lost.
+- `WaveManager` records completed waves and enemy death records enemy destruction.
+- `GameOverModal` pauses over the current scene and can restart the facility.
+- Return-to-menu uses `res://ui/main_menu.tscn` if it exists; until a menu scene exists it falls back to the configured main scene.
+
+Deferred:
+
+- Dedicated defeat VFX/audio.
+- Total power-grid collapse trigger.
+- Production main-menu destination.

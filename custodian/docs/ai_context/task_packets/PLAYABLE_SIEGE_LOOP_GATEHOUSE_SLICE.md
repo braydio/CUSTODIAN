@@ -24,7 +24,11 @@ Active runtime:
 
 Active design authority:
 
-- `design/20_features/in_progress/`
+- `design/00_meta/`
+- `design/01_systems/`
+- `design/02_features/`
+- `design/03_architecture/`
+- `design/20_levels/in_progress/`
 - `python-sim/design/MASTER_DESIGN_DOCTRINE.md` as locked master doctrine/reference
 - `custodian/docs/ai_context/` for active AI context tracking
 
@@ -101,13 +105,14 @@ Do not mark any design doc complete unless the acceptance checks for that system
 Read these before implementation:
 
 ```text
-design/20_features/in_progress/WAVE_SPAWNING_SYSTEM.md
-design/20_features/in_progress/ENEMY_OBJECTIVE_SYSTEM.md
-design/20_features/in_progress/ENEMY_BEHAVIOR_DIRECTOR.md
-design/20_features/in_progress/TURRET_SYSTEM.md
-design/20_features/in_progress/SECTOR_DAMAGE_SYSTEM.md
-design/20_features/in_progress/COMBAT_FEEL_SYSTEM.md
-design/20_features/in_progress/REPAIR_GAMEPLAY_SYSTEM.md
+design/02_features/wave_spawning/WAVE_SPAWNING_SYSTEM.md
+design/02_features/enemy_objective/ENEMY_OBJECTIVE_SYSTEM.md
+design/02_features/enemy_director/implementation.md
+design/02_features/turret/implementation.md
+design/02_features/sector_damage/implementation.md
+design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md
+design/02_features/repair/implementation.md
+design/20_levels/in_progress/SUNDERED_KEEP_LARGE_FRONT_GATE.md
 ```
 
 If any are missing, record that in the drift report and continue with the closest existing active design source.
@@ -288,13 +293,42 @@ When the full task is later implemented, respond with:
 - `custodian/docs/ai_context/task_packets/` already exists or was created for this packet.
 - Phase 1 did not inspect runtime gameplay systems beyond the requested guidance/context commands.
 - Initial `git status --short` showed pre-existing modified/deleted/untracked files outside this packet; they were not changed by this phase.
+- Packet normalized to uppercase snake case as `PLAYABLE_SIEGE_LOOP_GATEHOUSE_SLICE.md` before implementation.
+
+## Implementation Notes
+
+- Added a local Sundered Keep siege loop that starts when the keyed Main Gate opens.
+- Added Sundered Keep-owned objective markers for `command_post` and `power_node` targeting so existing enemy objective logic has runtime targets inside the authored connected map.
+- Added `custodian/content/levels/sundered_keep/gatehouse_siege_config.json` for objective HP/groups, repair interactables, local spawn markers, deterministic wave compositions, pressure cadence, and defense turret tuning.
+- Added local `SpawnNode` markers and bridge calls to existing `EnemyDirector.spawn_debug_enemy_type()` / `WaveManager.debug_spawn_enemy_type()`.
+- Added a gatehouse defense turret using the existing defense turret scene, configured as local unpowered siege support.
+- Added repair interactables for the Gatehouse Core and Return Mooring objective states.
+- Added a world-space siege debug label and extended `get_sundered_keep_debug_state()` with siege state.
+
+## Manual Test Steps
+
+1. Start the game and use the current debug start near the Sundered Keep entrance.
+2. Enter Sundered Keep through the main-map travel gate.
+3. Pick up the Sundered Gate Key at the winch/key alcove.
+4. Open the Main Gate and confirm the siege debug label changes to active.
+5. Watch enemies spawn near the gatehouse/courtyard approaches and confirm the defense turret engages enemies in range.
+6. Let siege pressure damage the Gatehouse Core or Return Mooring objective.
+7. Use the repair interactables and confirm objective HP rises in the debug label.
+8. Open the Great Hall door and confirm its blocker is removed.
+
+## Completion Notes
+
+- Implemented: Gate-open siege activation, local objectives, enemy pressure spawn bridge, repair loop, defense turret participation, debug state/readout, and expanded smoke coverage.
+- Validated: `cd custodian && godot --headless --script tools/validation/sundered_keep_large_layout_smoke.gd`; `cd custodian && godot --headless --quit` exited successfully with the repo's known object/resource leak warnings; `python -m json.tool custodian/content/levels/sundered_keep/sundered_keep_front_gate_large.json`; `python -m json.tool custodian/content/levels/sundered_keep/gatehouse_siege_config.json`; stale packet-path/design-path grep for edited AI context files.
+- Drift fixed: normalized packet filename to uppercase snake case, replaced stale old in-progress design-directory packet references with current design paths, indexed the packet in `task_packets/README.md`, updated `CURRENT_STATE.md`, updated `FILE_INDEX.md`, and corrected remaining lowercase packet references in Phase 1 notes.
+- Deferred: Manual in-editor playtest, save/load persistence for gate/key/siege state, richer authored encounter pacing, production art/audio, and final UI presentation beyond the world-space debug label.
 
 ## Phase 1 Exit Criteria
 
 This Phase 1 is complete when:
 
-* `custodian/docs/ai_context/task_packets/playable_siege_loop_gatehouse_slice.md` exists.
+* `custodian/docs/ai_context/task_packets/PLAYABLE_SIEGE_LOOP_GATEHOUSE_SLICE.md` exists.
 * The packet includes objective, assumptions, non-goals, acceptance checks, drift checks, validation expectations, and final response format.
 * No runtime gameplay code has been changed.
-* `git diff -- custodian/docs/ai_context/task_packets/playable_siege_loop_gatehouse_slice.md` shows the created packet.
+* `git diff -- custodian/docs/ai_context/task_packets/PLAYABLE_SIEGE_LOOP_GATEHOUSE_SLICE.md` shows the created packet.
 * Any missing expected template/context file is noted in the command output or appended under the packet section `Phase 1 Notes`.

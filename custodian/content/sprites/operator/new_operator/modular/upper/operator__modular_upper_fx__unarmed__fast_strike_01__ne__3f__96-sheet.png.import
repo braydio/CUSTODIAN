@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bf7ns7cg5yss5"
-path="res://.godot/imported/operator__modular_upper_body__unarmed__fast_strike_01__e__3f__96.png-00cf63e358166db9b76d7f17959f403b.ctex"
+uid="uid://b5rlt3swm7533"
+path="res://.godot/imported/operator__modular_upper_fx__unarmed__fast_strike_01__ne__3f__96-sheet.png-89ef2a78e133934607b0f0becc6a742f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/new_operator/modular/fast_attack/operator__modular_upper_body__unarmed__fast_strike_01__e__3f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__fast_strike_01__e__3f__96.png-00cf63e358166db9b76d7f17959f403b.ctex"]
+source_file="res://content/sprites/operator/new_operator/modular/upper/operator__modular_upper_fx__unarmed__fast_strike_01__ne__3f__96-sheet.png"
+dest_files=["res://.godot/imported/operator__modular_upper_fx__unarmed__fast_strike_01__ne__3f__96-sheet.png-89ef2a78e133934607b0f0becc6a742f.ctex"]
 
 [params]
 

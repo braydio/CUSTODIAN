@@ -3,10 +3,14 @@ class_name SunderedKeepMap
 
 const TILE_SIZE := 32.0
 const DEFAULT_LEVEL_DATA_PATH := "res://content/levels/sundered_keep/sundered_keep_front_gate_large.json"
+const DEFAULT_SIEGE_CONFIG_PATH := "res://content/levels/sundered_keep/gatehouse_siege_config.json"
 const TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_travel_gate.gd")
 const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
 const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
 const SUNDERED_KEEP_TILEMAP_LOADER := preload("res://game/world/sundered_keep/sundered_keep_tilemap_loader.gd")
+const SUNDERED_KEEP_SIEGE_OBJECTIVE := preload("res://game/world/sundered_keep/sundered_keep_siege_objective.gd")
+const SPAWN_NODE_SCRIPT := preload("res://game/systems/core/systems/spawn_node.gd")
+const DEFENSE_TURRET_SCENE := preload("res://game/actors/defense/turret.tscn")
 
 const SUNDERED_GATE_KEY_ID := &"sundered_gate_key"
 const SUNDERED_GATE_KEY_NAME := "Sundered Gate Key"
@@ -21,6 +25,7 @@ const WALL_ASSET_DIRS := [
 ]
 
 @export var level_data_path: String = DEFAULT_LEVEL_DATA_PATH
+@export var siege_config_path: String = DEFAULT_SIEGE_CONFIG_PATH
 @export var entrance_tile: Vector2i = Vector2i(56, 76)
 @export var return_gate_tile: Vector2i = Vector2i(42, 58)
 @export var main_gate_tile: Vector2i = Vector2i(54, 50)
@@ -55,6 +60,16 @@ var _main_gate_open := false
 var _great_hall_door_open := false
 var _has_sundered_gate_key := false
 var _return_mooring_created := false
+var _siege_started := false
+var _siege_wave_index := 0
+var _siege_pressure_tick := 0
+var _siege_state := "dormant"
+var _siege_objectives: Dictionary = {}
+var _siege_spawn_nodes: Array[Node2D] = []
+var _siege_config: Dictionary = {}
+var _siege_timer: Timer = null
+var _siege_debug_label: Label = null
+var _siege_turret: Node2D = null
 var _level_id := ""
 var _stats := {
 	"floors": 0,
@@ -120,6 +135,13 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"has_sundered_gate_key": _player_has_sundered_gate_key(),
 		"key_pickup_exists": _key_pickup_interaction != null and is_instance_valid(_key_pickup_interaction),
 		"return_mooring_created": _return_mooring_created,
+		"siege_started": _siege_started,
+		"siege_state": _siege_state,
+		"siege_wave_index": _siege_wave_index,
+		"siege_pressure_tick": _siege_pressure_tick,
+		"siege_objectives": _get_siege_objective_states(),
+		"siege_spawn_nodes": _siege_spawn_nodes.size(),
+		"siege_turret_exists": _siege_turret != null and is_instance_valid(_siege_turret),
 	}
 
 
@@ -252,6 +274,7 @@ func _build_from_level_data(data: Dictionary) -> void:
 		_apply_blocker(blocker)
 
 	_build_stateful_gates_from_level_data()
+	_build_siege_runtime_slice()
 	_build_traversal_stubs()
 	_add_return_gate()
 
@@ -1013,6 +1036,10 @@ func _handle_sundered_interaction(kind: StringName, actor: Node) -> void:
 			_try_open_main_gate()
 		&"great_hall_door":
 			_try_open_great_hall_door()
+		&"repair_gatehouse":
+			_repair_siege_objective("gatehouse_core")
+		&"repair_mooring":
+			_repair_siege_objective("return_mooring")
 
 
 func _player_has_sundered_gate_key() -> bool:
@@ -1055,8 +1082,270 @@ func _set_main_gate_open(open: bool) -> void:
 		if _main_gate_interaction != null:
 			_main_gate_interaction.remove_from_group("interactable")
 			_main_gate_interaction.visible = false
+		_start_siege()
 	else:
 		_add_main_gate_blockers()
+
+
+func _build_siege_runtime_slice() -> void:
+	if _siege_debug_label != null:
+		return
+	_siege_config = _load_siege_config()
+	for objective_data in _siege_config.get("objectives", []):
+		var objective := objective_data as Dictionary
+		var id := str(objective.get("id", "objective_%d" % _siege_objectives.size()))
+		var base_tile := _siege_anchor_tile(str(objective.get("tile_offset_from", "main_gate")))
+		var objective_tile := base_tile + _array_to_vector2i(objective.get("tile_offset", [0, 0]), Vector2i.ZERO)
+		_siege_objectives[id] = _add_siege_objective(
+			id,
+			str(objective.get("label", id.capitalize())),
+			str(objective.get("group", "command_post")),
+			objective_tile,
+			float(objective.get("hp", 100.0))
+		)
+		var repair_kind := StringName(str(objective.get("repair_kind", "repair_%s" % id)))
+		var repair_prompt := str(objective.get("repair_prompt", "REPAIR %s" % str(objective.get("label", id)).to_upper()))
+		var repair_tile := base_tile + _array_to_vector2i(objective.get("repair_tile_offset", [0, 1]), Vector2i.DOWN)
+		_add_interactable("%sRepairInteraction" % id.to_pascal_case(), repair_kind, repair_prompt, repair_tile, float(objective.get("repair_distance", 84.0)))
+	for spawn_data in _siege_config.get("spawns", []):
+		var spawn := spawn_data as Dictionary
+		var spawn_tile := _siege_anchor_tile(str(spawn.get("tile_offset_from", "main_gate"))) + _array_to_vector2i(spawn.get("tile_offset", [0, 0]), Vector2i.ZERO)
+		_add_siege_spawn_node(str(spawn.get("lane", "sundered_keep")), spawn_tile)
+	_build_siege_defense_turret()
+	_build_siege_debug_label()
+	_update_siege_debug_label()
+
+
+func _add_siege_objective(id: String, label: String, group_name: String, tile: Vector2i, hp: float) -> Node2D:
+	var objective := SUNDERED_KEEP_SIEGE_OBJECTIVE.new() as Node2D
+	objective.name = "%sObjective" % id.to_pascal_case()
+	objective.call("configure", id, label, group_name, hp)
+	objective.position = _tile_center(tile)
+	add_child(objective)
+	var callback := Callable(self, "_on_siege_objective_changed")
+	if objective.has_signal("damaged") and not objective.is_connected("damaged", callback):
+		objective.connect("damaged", callback)
+	if objective.has_signal("repaired") and not objective.is_connected("repaired", callback):
+		objective.connect("repaired", callback)
+	return objective
+
+
+func _add_siege_spawn_node(lane: String, tile: Vector2i) -> void:
+	var spawn_node := SPAWN_NODE_SCRIPT.new() as Node2D
+	spawn_node.name = "SunderedKeepSpawn_%02d" % _siege_spawn_nodes.size()
+	spawn_node.set("lane", lane)
+	spawn_node.position = _tile_center(tile)
+	add_child(spawn_node)
+	_siege_spawn_nodes.append(spawn_node)
+
+
+func _build_siege_defense_turret() -> void:
+	if DEFENSE_TURRET_SCENE == null:
+		return
+	_siege_turret = DEFENSE_TURRET_SCENE.instantiate() as Node2D
+	if _siege_turret == null:
+		return
+	var turret_config: Dictionary = _siege_config.get("defense_turret", {})
+	_siege_turret.name = "GatehouseDefenseTurret"
+	var turret_tile := _siege_anchor_tile(str(turret_config.get("tile_offset_from", "main_gate"))) + _array_to_vector2i(turret_config.get("tile_offset", [-6, -2]), Vector2i(-6, -2))
+	_siege_turret.position = _tile_center(turret_tile)
+	_siege_turret.set("power_required", bool(turret_config.get("power_required", false)))
+	_siege_turret.set("range", float(turret_config.get("range", 360.0)))
+	_siege_turret.set("damage", float(turret_config.get("damage", 9.0)))
+	add_child(_siege_turret)
+	var base_sprite := _siege_turret.get_node_or_null("BaseSprite") as Sprite2D
+	var barrel_sprite := _siege_turret.get_node_or_null("Barrel/BarrelSprite") as Sprite2D
+	if base_sprite != null and barrel_sprite != null and barrel_sprite.texture == null:
+		barrel_sprite.texture = base_sprite.texture
+		barrel_sprite.scale = Vector2(0.45, 0.45)
+
+
+func _build_siege_debug_label() -> void:
+	_siege_debug_label = Label.new()
+	_siege_debug_label.name = "SiegeDebugLabel"
+	_siege_debug_label.position = _tile_top_left(main_gate_tile + Vector2i(-8, -5))
+	_siege_debug_label.z_as_relative = false
+	_siege_debug_label.z_index = 80
+	add_child(_siege_debug_label)
+
+
+func _start_siege() -> void:
+	if _siege_started:
+		return
+	_siege_started = true
+	_siege_state = "active"
+	_siege_wave_index = 0
+	_siege_pressure_tick = 0
+	_spawn_siege_wave()
+	if _siege_timer == null:
+		_siege_timer = Timer.new()
+		_siege_timer.name = "SiegePressureTimer"
+		_siege_timer.wait_time = max(0.5, float(_siege_config.get("pressure_interval_seconds", 5.0)))
+		_siege_timer.one_shot = false
+		_siege_timer.timeout.connect(_on_siege_timer_timeout)
+		add_child(_siege_timer)
+	else:
+		_siege_timer.wait_time = max(0.5, float(_siege_config.get("pressure_interval_seconds", 5.0)))
+	_siege_timer.start()
+	_update_siege_debug_label()
+	print("[SunderedKeep] Siege active: gatehouse objectives exposed, defensive turret online, enemy pressure started.")
+
+
+func _on_siege_timer_timeout() -> void:
+	if not _siege_started:
+		return
+	_siege_pressure_tick += 1
+	_apply_siege_pressure()
+	if _siege_config.get("extra_wave_pressure_ticks", [2, 5]).has(_siege_pressure_tick):
+		_spawn_siege_wave()
+	_update_siege_debug_label()
+
+
+func _spawn_siege_wave() -> void:
+	_siege_wave_index += 1
+	var waves: Array = _siege_config.get("waves", [])
+	var wave_data: Dictionary = waves[min(_siege_wave_index - 1, waves.size() - 1)] if not waves.is_empty() else {"composition": ["drone", "drone", "grunt"]}
+	var composition: Array = wave_data.get("composition", ["drone"])
+	var enemy_director := get_node_or_null("/root/GameRoot/EnemyDirector")
+	for index in range(composition.size()):
+		var spawn_node := _siege_spawn_nodes[index % max(1, _siege_spawn_nodes.size())]
+		var spawn_position := spawn_node.global_position + Vector2(float(index % 2) * 18.0, float(index) * 6.0)
+		var enemy_type := str(composition[index])
+		if enemy_director != null and enemy_director.has_method("spawn_debug_enemy_type"):
+			enemy_director.call("spawn_debug_enemy_type", enemy_type, spawn_position, &"raider_grunt")
+		else:
+			var wave_manager := get_node_or_null("/root/GameRoot/WaveManager")
+			if wave_manager != null and wave_manager.has_method("debug_spawn_enemy_type"):
+				wave_manager.call("debug_spawn_enemy_type", enemy_type, spawn_position, 1.0 + float(_siege_wave_index) * 0.2, &"raider_grunt")
+
+
+func _apply_siege_pressure() -> void:
+	var objective := _most_intact_siege_objective()
+	if objective == null:
+		_siege_state = "collapsed"
+		if _siege_timer != null:
+			_siege_timer.stop()
+		return
+	if objective.has_method("take_damage"):
+		var damage_amount := float(_siege_config.get("pressure_damage_base", 9.0)) + float(_siege_wave_index) * float(_siege_config.get("pressure_damage_per_wave", 2.0))
+		objective.call("take_damage", damage_amount)
+	if _all_siege_objectives_destroyed():
+		_siege_state = "collapsed"
+		if _siege_timer != null:
+			_siege_timer.stop()
+
+
+func _repair_siege_objective(objective_id: String) -> void:
+	var objective: Node = _siege_objectives.get(objective_id, null)
+	if objective == null or not is_instance_valid(objective):
+		return
+	if objective.has_method("repair"):
+		objective.call("repair", float(_siege_config.get("repair_amount", 35.0)))
+	_siege_state = "active" if _siege_started else "dormant"
+	_update_siege_debug_label()
+	print("[SunderedKeep] Repaired %s" % objective_id)
+
+
+func _most_intact_siege_objective() -> Node:
+	var best: Node = null
+	var best_hp := -1.0
+	for objective in _siege_objectives.values():
+		if objective == null or not is_instance_valid(objective):
+			continue
+		if objective.has_method("is_dead") and bool(objective.call("is_dead")):
+			continue
+		var hp := float(objective.get("current_health")) if "current_health" in objective else 0.0
+		if hp > best_hp:
+			best_hp = hp
+			best = objective
+	return best
+
+
+func _all_siege_objectives_destroyed() -> bool:
+	for objective in _siege_objectives.values():
+		if objective != null and is_instance_valid(objective):
+			if not objective.has_method("is_dead") or not bool(objective.call("is_dead")):
+				return false
+	return true
+
+
+func _get_siege_objective_states() -> Array[Dictionary]:
+	var states: Array[Dictionary] = []
+	for objective in _siege_objectives.values():
+		if objective != null and is_instance_valid(objective) and objective.has_method("get_objective_status"):
+			states.append(objective.call("get_objective_status"))
+	return states
+
+
+func _on_siege_objective_changed(_amount: float, _new_hp: float) -> void:
+	_update_siege_debug_label()
+
+
+func _update_siege_debug_label() -> void:
+	if _siege_debug_label == null:
+		return
+	var lines := [
+		"SUNDERED KEEP SIEGE: %s" % _siege_state.to_upper(),
+		"Wave %d | Pressure %d" % [_siege_wave_index, _siege_pressure_tick],
+	]
+	for objective_state in _get_siege_objective_states():
+		lines.append("%s: %d/%d %s" % [
+			str(objective_state.get("name", "Objective")),
+			int(round(float(objective_state.get("hp", 0.0)))),
+			int(round(float(objective_state.get("max_hp", 0.0)))),
+			str(objective_state.get("state", "")),
+		])
+	_siege_debug_label.text = "\n".join(lines)
+
+
+func _load_siege_config() -> Dictionary:
+	if ResourceLoader.exists(siege_config_path):
+		var file := FileAccess.open(siege_config_path, FileAccess.READ)
+		if file != null:
+			var parsed = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary and str((parsed as Dictionary).get("schema", "")) == "custodian.sundered_keep.gatehouse_siege.v1":
+				return parsed as Dictionary
+			push_warning("[SunderedKeep] Invalid siege config: %s" % siege_config_path)
+	else:
+		push_warning("[SunderedKeep] Missing siege config: %s" % siege_config_path)
+	return _default_siege_config()
+
+
+func _default_siege_config() -> Dictionary:
+	return {
+		"pressure_interval_seconds": 5.0,
+		"pressure_damage_base": 9.0,
+		"pressure_damage_per_wave": 2.0,
+		"repair_amount": 35.0,
+		"objectives": [
+			{"id": "gatehouse_core", "label": "Gatehouse Core", "group": "command_post", "tile_offset_from": "main_gate", "tile_offset": [2, -2], "hp": 180.0, "repair_kind": "repair_gatehouse", "repair_prompt": "REPAIR GATEHOUSE CORE", "repair_tile_offset": [5, -1], "repair_distance": 86.0},
+			{"id": "return_mooring", "label": "Return Mooring", "group": "power_node", "tile_offset_from": "return_mooring_origin", "tile_offset": [2, 2], "hp": 140.0, "repair_kind": "repair_mooring", "repair_prompt": "REPAIR RETURN MOORING", "repair_tile_offset": [2, 4], "repair_distance": 82.0},
+		],
+		"spawns": [
+			{"lane": "sundered_keep", "tile_offset_from": "main_gate", "tile_offset": [-7, -1]},
+			{"lane": "sundered_keep", "tile_offset_from": "main_gate", "tile_offset": [8, -1]},
+			{"lane": "sundered_keep", "tile_offset_from": "great_hall_door", "tile_offset": [0, 6]},
+		],
+		"waves": [
+			{"composition": ["drone", "drone", "grunt"]},
+			{"composition": ["grunt", "drone", "fast", "drone"]},
+			{"composition": ["grunt", "grunt", "heavy"]},
+		],
+		"extra_wave_pressure_ticks": [2, 5],
+		"defense_turret": {"tile_offset_from": "main_gate", "tile_offset": [-6, -2], "range": 360.0, "damage": 9.0, "power_required": false},
+	}
+
+
+func _siege_anchor_tile(anchor_id: String) -> Vector2i:
+	match anchor_id:
+		"return_mooring_origin":
+			return return_mooring_origin_tile
+		"great_hall_door":
+			return great_hall_door_tile
+		"entrance":
+			return entrance_tile
+		_:
+			return main_gate_tile
 
 
 func _try_open_great_hall_door() -> void:

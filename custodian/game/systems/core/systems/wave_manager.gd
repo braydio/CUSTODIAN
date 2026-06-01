@@ -204,6 +204,9 @@ func _complete_wave() -> void:
 	_forced_lane = ""
 	_forced_objective = ""
 	_forced_behavior_profile = &""
+	var game_stats := get_node_or_null("/root/GameStats")
+	if game_stats != null and game_stats.has_method("record_wave_survived"):
+		game_stats.call("record_wave_survived", wave_number)
 	wave_completed.emit(wave_number)
 	if active:
 		_waiting_for_recovery_clearance = true

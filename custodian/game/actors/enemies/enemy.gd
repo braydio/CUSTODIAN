@@ -661,6 +661,9 @@ func die():
 	var camera = get_node_or_null("/root/GameRoot/World/Camera2D")
 	if camera and camera.has_method("on_enemy_killed"):
 		camera.call("on_enemy_killed")
+	var game_stats := get_node_or_null("/root/GameStats")
+	if game_stats != null and game_stats.has_method("record_enemy_destroyed"):
+		game_stats.call("record_enemy_destroyed", enemy_name)
 	_spawn_material_pickup()
 	print("ENEMY DESTROYED: ", enemy_name)
 	if _uses_procedural_variant_animation_set() and _has_animation(String(WOLF_DEATH_ANIMATION)):

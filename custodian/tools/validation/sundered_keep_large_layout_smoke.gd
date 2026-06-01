@@ -51,6 +51,24 @@ func _init() -> void:
 	_assert(state["main_gate_open"] == true, "main gate did not open after key acquisition")
 	_assert(map.get_node_or_null("Collision/MainPortcullisBlocker") == null, "main gate blocker remained after opening")
 	_assert(_reachable(map, floors, Vector2i(56, 76), Vector2i(60, 39)), "courtyard is not reachable after gate opens")
+	_assert(state["siege_started"] == true, "opening the main gate did not start the siege state")
+	_assert(str(state["siege_state"]) == "active", "siege state did not become active")
+	_assert(int(state["siege_spawn_nodes"]) >= 3, "siege spawn nodes were not created")
+	_assert(bool(state["siege_turret_exists"]), "gatehouse defense turret was not created")
+	var objectives: Array = state["siege_objectives"]
+	_assert(objectives.size() >= 2, "siege objectives were not created")
+	var first_objective: Dictionary = objectives[0]
+	var initial_hp := float(first_objective.get("hp", 0.0))
+	map.call("_apply_siege_pressure")
+	state = map.get_sundered_keep_debug_state()
+	objectives = state["siege_objectives"]
+	var damaged_hp := float((objectives[0] as Dictionary).get("hp", 0.0))
+	_assert(damaged_hp < initial_hp, "siege pressure did not damage an objective")
+	map.call("_repair_siege_objective", str((objectives[0] as Dictionary).get("id", "")))
+	state = map.get_sundered_keep_debug_state()
+	objectives = state["siege_objectives"]
+	var repaired_hp := float((objectives[0] as Dictionary).get("hp", 0.0))
+	_assert(repaired_hp > damaged_hp, "repair interaction did not restore objective state")
 
 	_assert(_has_blocker_covering_tile(map, Vector2i(55, 30)), "Great Hall door does not start blocking its threshold")
 	map.call("_try_open_great_hall_door")
