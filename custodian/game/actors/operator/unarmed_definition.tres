@@ -13,39 +13,39 @@ weapon_kind = "unarmed"
 primary_intent = "unarmed_fast"
 secondary_intent = "unarmed_heavy"
 animation_map = {
-"melee_fast": "unarmed_attack_fast",
-"melee_fast_1": "unarmed_attack_fast",
-"melee_fast_2": "unarmed_attack_fast",
+"melee_fast": "unarmed_fast_strike",
+"melee_fast_1": "unarmed_fast_strike",
+"melee_fast_2": "unarmed_fast_strike",
 "melee_heavy": "unarmed_attack_heavy",
 "melee_stance": "unarmed_idle",
-"unarmed_fast": "unarmed_attack_fast",
-"unarmed_fast_1": "unarmed_attack_fast",
-"unarmed_fast_2": "unarmed_attack_fast",
+"unarmed_fast": "unarmed_fast_strike",
+"unarmed_fast_1": "unarmed_fast_strike",
+"unarmed_fast_2": "unarmed_fast_strike",
 "unarmed_heavy": "unarmed_attack_heavy",
 "unarmed_light_hitreact": "unarmed_light_hitreact",
 "unarmed_stance": "unarmed_stance"
 }
 hit_windows = {
 "melee_fast": {
-"frames": [3]
+"frames": [2]
 },
 "melee_fast_1": {
-"frames": [3]
+"frames": [2]
 },
 "melee_fast_2": {
-"frames": [3]
+"frames": [2]
 },
 "melee_heavy": {
 "frames": [4, 5]
 },
 "unarmed_fast": {
-"frames": [3]
+"frames": [2]
 },
 "unarmed_fast_1": {
-"frames": [3]
+"frames": [2]
 },
 "unarmed_fast_2": {
-"frames": [3]
+"frames": [2]
 },
 "unarmed_heavy": {
 "frames": [4, 5]
@@ -53,22 +53,22 @@ hit_windows = {
 }
 fx_map = {
 "melee_fast": {
-"fx_anim": "unarmed_attack_fast_fx"
+"fx_anim": "unarmed_fast_strike_fx"
 },
 "melee_fast_1": {
-"fx_anim": "unarmed_attack_fast_fx"
+"fx_anim": "unarmed_fast_strike_fx"
 },
 "melee_fast_2": {
-"fx_anim": "unarmed_attack_fast_fx"
+"fx_anim": "unarmed_fast_strike_fx"
 },
 "unarmed_fast": {
-"fx_anim": "unarmed_attack_fast_fx"
+"fx_anim": "unarmed_fast_strike_fx"
 },
 "unarmed_fast_1": {
-"fx_anim": "unarmed_attack_fast_fx"
+"fx_anim": "unarmed_fast_strike_fx"
 },
 "unarmed_fast_2": {
-"fx_anim": "unarmed_attack_fast_fx"
+"fx_anim": "unarmed_fast_strike_fx"
 },
 "unarmed_heavy": {
 "fx_anim": "unarmed_attack_heavy_fx"
