@@ -146,7 +146,7 @@ func spawn_asset(cell: Vector2i, def: Dictionary) -> Sprite2D:
 	_register_occupancy(cell, footprint, blocks_cells)
 	if blocks_cells:
 		_add_collision_rect(sprite, footprint)
-	if bool(def.get("depth_sort", false)):
+	if bool(def.get("depth_sort", false)) or str(def.get("kind", "prop")) == "prop":
 		_register_depth_sorted_asset(sprite, cell, footprint, def)
 	return sprite
 
@@ -160,13 +160,9 @@ func update_depth_sort(actor: Node2D) -> void:
 		if sprite == null or not is_instance_valid(sprite):
 			continue
 		var footprint: Vector2i = entry.get("footprint", Vector2i.ONE)
-		var x_padding := float(entry.get("x_padding", 16.0))
 		var horizon_ratio := float(entry.get("horizon_ratio", 0.75))
-		var asset_min_x := sprite.global_position.x - x_padding
-		var asset_max_x := sprite.global_position.x + float(footprint.x * tile_size) + x_padding
 		var horizon_y := sprite.global_position.y + float(footprint.y * tile_size) * horizon_ratio
-		var overlaps_x := actor_pos.x >= asset_min_x and actor_pos.x <= asset_max_x
-		sprite.z_index = int(entry.get("behind_z", 40)) if overlaps_x and actor_pos.y <= horizon_y else int(entry.get("front_z", 1))
+		sprite.z_index = int(entry.get("front_z", 1)) if actor_pos.y > horizon_y else int(entry.get("behind_z", 40))
 
 
 func _layer_for_kind(kind: String) -> Node2D:

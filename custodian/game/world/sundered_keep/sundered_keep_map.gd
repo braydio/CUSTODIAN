@@ -9,8 +9,11 @@ const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sunde
 const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
 const SUNDERED_KEEP_TILEMAP_LOADER := preload("res://game/world/sundered_keep/sundered_keep_tilemap_loader.gd")
 const SUNDERED_KEEP_SIEGE_OBJECTIVE := preload("res://game/world/sundered_keep/sundered_keep_siege_objective.gd")
+const PROP_OPERATOR_DEPTH_SORT := preload("res://game/world/prop_operator_depth_sort.gd")
 const SPAWN_NODE_SCRIPT := preload("res://game/systems/core/systems/spawn_node.gd")
 const DEFENSE_TURRET_SCENE := preload("res://game/actors/defense/turret.tscn")
+const CUSTODIAN_HUD_SCENE := preload("res://game/ui/hud/custodian_hud.tscn")
+const UI_CATALOG := preload("res://game/ui/theme/black_reliquary_asset_catalog.gd")
 
 const SUNDERED_GATE_KEY_ID := &"sundered_gate_key"
 const SUNDERED_GATE_KEY_NAME := "Sundered Gate Key"
@@ -70,6 +73,7 @@ var _siege_config: Dictionary = {}
 var _siege_timer: Timer = null
 var _siege_debug_label: Label = null
 var _siege_turret: Node2D = null
+var _hud: Node = null
 var _level_id := ""
 var _stats := {
 	"floors": 0,
@@ -87,6 +91,12 @@ func _ready() -> void:
 	add_to_group("connected_map")
 	add_to_group("sundered_keep_map")
 	_build_once()
+	_ensure_hud()
+	set_process(true)
+
+
+func _process(_delta: float) -> void:
+	_update_hud_prompt()
 
 
 func configure_connection(p_main_map: Node, p_main_return_position: Vector2) -> void:
@@ -434,6 +444,8 @@ func _category_for_layer_asset(layer: String, asset_id: String) -> String:
 		return "return_mooring_floor"
 	if asset_id.begins_with("return_mooring_"):
 		return "return_mooring_overlay"
+	if asset_id.begins_with("entrance_causeway_surface"):
+		return "causeway_surfaces"
 	if asset_id.begins_with("entrance_causeway"):
 		return "entrance"
 	if asset_id == "ocean_void_01" or asset_id.contains("_floor") or asset_id.contains("_flagstone") or asset_id.contains("_threshold") or asset_id.contains("_carpet"):
@@ -652,6 +664,7 @@ func _add_return_mooring_interaction(center_tile: Vector2i) -> void:
 func _set_return_mooring_active(active: bool) -> void:
 	if _return_mooring_active_overlay != null:
 		_return_mooring_active_overlay.visible = active
+	_refresh_hud_state()
 
 
 func _build_main_gate_lock() -> void:
@@ -975,10 +988,20 @@ func _add_prop(layer_name: String, prop_id: String, tile: Vector2i) -> Sprite2D:
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	sprite.position = _tile_top_left(tile) + Vector2((TILE_SIZE - float(texture.get_width())) * 0.5, TILE_SIZE - float(texture.get_height()))
 	(_layers[layer_name] as Node2D).add_child(sprite)
+	_attach_operator_depth_sort(sprite, float(texture.get_height()))
 	_stats["props"] = int(_stats["props"]) + 1
 	if layer_name == "PropsBlocking":
 		_add_blocker(Rect2i(tile, Vector2i.ONE), "%sBlocker" % prop_id)
 	return sprite
+
+
+func _attach_operator_depth_sort(sprite: Sprite2D, y_offset: float) -> void:
+	if sprite == null:
+		return
+	var depth_sort := PROP_OPERATOR_DEPTH_SORT.new()
+	depth_sort.name = "OperatorDepthSort"
+	sprite.add_child(depth_sort)
+	depth_sort.configure(sprite, y_offset)
 
 
 func _add_sprite(layer_name: String, asset_id: String, category: String, tile: Vector2i, offset: Vector2) -> Sprite2D:
@@ -1026,6 +1049,89 @@ func _add_interactable(node_name: String, kind: StringName, prompt: String, tile
 	return interactable
 
 
+func _ensure_hud() -> void:
+	if _hud != null and is_instance_valid(_hud):
+		return
+	_hud = CUSTODIAN_HUD_SCENE.instantiate()
+	if _hud == null:
+		push_warning("[SunderedKeep] Unable to instantiate CustodianHUD")
+		return
+	_hud.name = "SunderedKeepCustodianHUD"
+	add_child(_hud)
+	_refresh_hud_state()
+
+
+func _refresh_hud_state() -> void:
+	if _hud == null or not is_instance_valid(_hud):
+		return
+	_hud.set_phase("FREE ROAM PREP" if not _siege_started else "GATEHOUSE SIEGE")
+	_hud.set_objective("Hold the gatehouse" if _siege_started else ("Enter the keep" if _main_gate_open else "Open the main gate"))
+	_hud.set_key_item_status(_player_has_sundered_gate_key(), SUNDERED_GATE_KEY_NAME)
+	_hud.set_main_gate_status(_main_gate_open, not _player_has_sundered_gate_key())
+	_hud.set_return_mooring_status(_return_mooring_created, _return_mooring_created)
+	if _siege_debug_label != null:
+		_hud.set_debug_text(_siege_debug_label.text)
+
+
+func _update_hud_prompt() -> void:
+	if _hud == null or not is_instance_valid(_hud):
+		return
+	var operator_ref := get_node_or_null("/root/GameRoot/World/Operator")
+	if operator_ref == null or not ("interaction_target" in operator_ref):
+		return
+	var target: Node = operator_ref.get("interaction_target")
+	if target == null or not is_instance_valid(target):
+		return
+	var input_hint := _get_interact_prompt_key()
+	if target == _return_mooring_interaction:
+		_hud.show_interaction(
+			"RETURN MOORING",
+			"Return to main map",
+			input_hint,
+			UI_CATALOG.ICON_RETURN_MOORING
+		)
+	elif target == _main_gate_interaction:
+		if _main_gate_open:
+			_hud.hide_interaction()
+		elif _player_has_sundered_gate_key():
+			_hud.show_interaction(
+				"MAIN PORTCULLIS",
+				"Open gate",
+				input_hint,
+				UI_CATALOG.ICON_GATE_OPEN
+			)
+		else:
+			_hud.show_interaction(
+				"MAIN PORTCULLIS",
+				"Requires Sundered Gate Key",
+				input_hint,
+				UI_CATALOG.ICON_GATE_LOCKED
+			)
+	elif target == _key_pickup_interaction:
+		_hud.show_interaction(
+			"SUNDERED GATE KEY",
+			"Take key",
+			input_hint,
+			UI_CATALOG.ICON_KEY_ITEM
+		)
+	elif target == _great_hall_door_interaction:
+		_hud.show_interaction(
+			"GREAT HALL",
+			"Open door",
+			input_hint,
+			UI_CATALOG.ICON_OBJECTIVE
+		)
+
+
+func _get_interact_prompt_key() -> String:
+	for event in InputMap.action_get_events("interact"):
+		if event is InputEventKey:
+			var key_event := event as InputEventKey
+			var keycode := key_event.physical_keycode if key_event.physical_keycode != 0 else key_event.keycode
+			return OS.get_keycode_string(keycode)
+	return "G"
+
+
 func _handle_sundered_interaction(kind: StringName, actor: Node) -> void:
 	match kind:
 		&"return_mooring":
@@ -1059,6 +1165,7 @@ func _grant_sundered_gate_key() -> void:
 	if _key_pickup_interaction != null and is_instance_valid(_key_pickup_interaction):
 		_key_pickup_interaction.remove_from_group("interactable")
 		_key_pickup_interaction.visible = false
+	_refresh_hud_state()
 	print("[SunderedKeep] Acquired %s: %s" % [SUNDERED_GATE_KEY_NAME, SUNDERED_GATE_KEY_FLAVOR])
 
 
@@ -1066,6 +1173,13 @@ func _try_open_main_gate() -> void:
 	if _main_gate_open:
 		return
 	if not _player_has_sundered_gate_key():
+		if _hud != null and is_instance_valid(_hud):
+			_hud.show_interaction(
+				"MAIN PORTCULLIS",
+				"Requires Sundered Gate Key",
+				_get_interact_prompt_key(),
+				UI_CATALOG.ICON_GATE_LOCKED
+			)
 		print("[SunderedKeep] Requires %s. The portcullis winch is locked." % SUNDERED_GATE_KEY_NAME)
 		return
 	_set_main_gate_open(true)
@@ -1085,6 +1199,7 @@ func _set_main_gate_open(open: bool) -> void:
 		_start_siege()
 	else:
 		_add_main_gate_blockers()
+	_refresh_hud_state()
 
 
 func _build_siege_runtime_slice() -> void:
@@ -1166,6 +1281,7 @@ func _build_siege_debug_label() -> void:
 	_siege_debug_label.position = _tile_top_left(main_gate_tile + Vector2i(-8, -5))
 	_siege_debug_label.z_as_relative = false
 	_siege_debug_label.z_index = 80
+	_siege_debug_label.visible = false
 	add_child(_siege_debug_label)
 
 
@@ -1188,6 +1304,7 @@ func _start_siege() -> void:
 		_siege_timer.wait_time = max(0.5, float(_siege_config.get("pressure_interval_seconds", 5.0)))
 	_siege_timer.start()
 	_update_siege_debug_label()
+	_refresh_hud_state()
 	print("[SunderedKeep] Siege active: gatehouse objectives exposed, defensive turret online, enemy pressure started.")
 
 
@@ -1296,6 +1413,8 @@ func _update_siege_debug_label() -> void:
 			str(objective_state.get("state", "")),
 		])
 	_siege_debug_label.text = "\n".join(lines)
+	if _hud != null and is_instance_valid(_hud):
+		_hud.set_debug_text(_siege_debug_label.text)
 
 
 func _load_siege_config() -> Dictionary:
@@ -1401,6 +1520,8 @@ func _asset_path(asset_id: String, category: String) -> String:
 		return "res://content/tiles/sundered_keep/floors/%s.png" % asset_id
 	if category == "entrance":
 		return "res://content/tiles/sundered_keep/entrance/%s.png" % asset_id
+	if category == "causeway_surfaces":
+		return "res://content/tiles/sundered_keep/entrance/causeway_surfaces/%s.png" % asset_id
 	if category == "return_mooring_floor":
 		return "res://content/tiles/sundered_keep/return_mooring/floors/%s.png" % asset_id
 	if category == "return_mooring_overlay":
