@@ -34,7 +34,7 @@
     {
       "type": "fill_weighted_rect",
       "layer": "TerrainBase",
-      "rect": [51, 73, 11, 5],
+      "rect": [52, 49, 9, 21],
       "assets": [
         {"asset_id": "entrance_causeway_floor_01", "weight": 5},
         {"asset_id": "entrance_causeway_floor_cracked_01", "weight": 2}
@@ -43,24 +43,27 @@
     {
       "type": "fill_weighted_rect",
       "layer": "TerrainBase",
-      "rect": [55, 60, 3, 13],
+      "rect": [48, 70, 17, 8],
       "assets": [
-        {"asset_id": "entrance_causeway_floor_01", "weight": 4},
+        {"asset_id": "entrance_causeway_floor_01", "weight": 5},
         {"asset_id": "entrance_causeway_floor_cracked_01", "weight": 2}
       ]
     },
-    {"type": "fill_rect", "layer": "TerrainBase", "rect": [52, 66, 3, 4], "asset_id": "entrance_causeway_floor_cracked_01"},
-    {"type": "fill_rect", "layer": "TerrainBase", "rect": [58, 63, 4, 3], "asset_id": "entrance_causeway_floor_cracked_01"},
-    {"type": "fill_rect", "layer": "TerrainBase", "rect": [54, 78, 6, 2], "asset_id": "entrance_causeway_broken_gap_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [52, 64, 4, 6], "asset_id": "entrance_causeway_floor_cracked_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [57, 58, 4, 7], "asset_id": "entrance_causeway_floor_cracked_01"},
+    {"type": "fill_rect", "layer": "TerrainBase", "rect": [48, 78, 17, 2], "asset_id": "entrance_causeway_broken_gap_01"},
 
-    {"type": "fill_rect", "layer": "FloorDetail", "rect": [55, 60, 1, 13], "asset_id": "entrance_causeway_edge_w"},
-    {"type": "fill_rect", "layer": "FloorDetail", "rect": [57, 60, 1, 13], "asset_id": "entrance_causeway_edge_e"},
-    {"type": "fill_rect", "layer": "FloorDetail", "rect": [51, 73, 11, 1], "asset_id": "entrance_causeway_edge_n"},
-    {"type": "fill_rect", "layer": "FloorDetail", "rect": [51, 77, 11, 1], "asset_id": "entrance_causeway_edge_s"},
-    {"type": "fill_rect", "layer": "FloorDetail", "rect": [52, 66, 1, 4], "asset_id": "entrance_causeway_edge_w"},
-    {"type": "fill_rect", "layer": "FloorDetail", "rect": [61, 63, 1, 3], "asset_id": "entrance_causeway_edge_e"},
-    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_edge_n", "cells": [[55, 60], [56, 60], [57, 60], [52, 66], [53, 66], [54, 66], [58, 63], [59, 63], [60, 63], [61, 63]]},
-    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_edge_s", "cells": [[55, 72], [56, 72], [57, 72], [52, 69], [53, 69], [54, 69], [58, 65], [59, 65], [60, 65], [61, 65]]},
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [52, 50, 1, 20], "asset_id": "entrance_causeway_surface_w"},
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [60, 50, 1, 20], "asset_id": "entrance_causeway_surface_e"},
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [48, 71, 1, 6], "asset_id": "entrance_causeway_surface_w_02"},
+    {"type": "fill_rect", "layer": "FloorDetail", "rect": [64, 71, 1, 6], "asset_id": "entrance_causeway_surface_e_02"},
+    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_surface_n", "cells": [[53, 49], [54, 49], [55, 49], [56, 49], [57, 49], [58, 49], [59, 49], [49, 70], [50, 70], [51, 70], [61, 70], [62, 70], [63, 70]]},
+    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_surface_n_02", "cells": [[55, 70], [56, 70], [57, 70]]},
+    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_surface_s", "cells": [[49, 77], [50, 77], [51, 77], [52, 77], [53, 77], [54, 77], [55, 77], [56, 77], [57, 77], [58, 77], [59, 77], [60, 77], [61, 77], [62, 77], [63, 77]]},
+    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_surface_nw", "cells": [[52, 49], [48, 70]]},
+    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_surface_ne", "cells": [[60, 49], [64, 70]]},
+    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_surface_sw", "cells": [[48, 77]]},
+    {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_surface_se", "cells": [[64, 77]]},
 
     {
       "type": "fill_weighted_rect",
@@ -177,7 +180,7 @@
     {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_brazier_iron_01", "tile": [52, 13]},
     {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_brazier_iron_01", "tile": [60, 13]},
 
-    {"type": "blocker_rect", "name": "SubmergedCausewayBlocker", "rect": [54, 78, 6, 2]},
+    {"type": "blocker_rect", "name": "SubmergedCausewayBlocker", "rect": [48, 78, 17, 2]},
     {"type": "blocker_rect", "name": "LowerWestOceanBlocker", "rect": [0, 60, 39, 20]},
     {"type": "blocker_rect", "name": "LowerEastOceanBlocker", "rect": [79, 55, 33, 25]},
     {"type": "blocker_rect", "name": "WestOceanBoundary", "rect": [0, 0, 18, 80]},
