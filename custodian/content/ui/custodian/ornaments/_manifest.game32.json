@@ -1,0 +1,71 @@
+{
+  "schema": "custodian.game32.ui_domain_manifest.v1",
+  "set": "ui_black_reliquary",
+  "domain": "ornament",
+  "base_path": "res://content/ui/custodian/ornaments",
+  "asset_count": 4,
+  "assets": [
+    {
+      "id": "ui_corner_ornament_ne",
+      "runtime_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_ne.png",
+      "metadata_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_ne.game32.json",
+      "size_px": [
+        53,
+        59
+      ],
+      "ui_role": "corner_ornament",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "corner",
+        "ne"
+      ]
+    },
+    {
+      "id": "ui_corner_ornament_nw",
+      "runtime_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_nw.png",
+      "metadata_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_nw.game32.json",
+      "size_px": [
+        58,
+        61
+      ],
+      "ui_role": "corner_ornament",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "corner",
+        "nw"
+      ]
+    },
+    {
+      "id": "ui_corner_ornament_se",
+      "runtime_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_se.png",
+      "metadata_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_se.game32.json",
+      "size_px": [
+        58,
+        61
+      ],
+      "ui_role": "corner_ornament",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "corner",
+        "se"
+      ]
+    },
+    {
+      "id": "ui_corner_ornament_sw",
+      "runtime_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_sw.png",
+      "metadata_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_sw.game32.json",
+      "size_px": [
+        60,
+        61
+      ],
+      "ui_role": "corner_ornament",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "corner",
+        "sw"
+      ]
+    }
+  ],
+  "generated_at_utc": "2026-06-02T03:47:46.726927+00:00",
+  "generator": "custodian/tools/art/extract_ui_black_reliquary_game32.py"
+}

@@ -1,0 +1,100 @@
+{
+  "schema": "custodian.game32.ui_domain_manifest.v1",
+  "set": "ui_black_reliquary",
+  "domain": "minimap_marker",
+  "base_path": "res://content/ui/custodian/minimap",
+  "asset_count": 6,
+  "assets": [
+    {
+      "id": "minimap_marker_player",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_player.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_player.game32.json",
+      "size_px": [
+        62,
+        73
+      ],
+      "ui_role": "map_marker",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "player",
+        "cyan"
+      ]
+    },
+    {
+      "id": "minimap_marker_gate_locked",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_gate_locked.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_gate_locked.game32.json",
+      "size_px": [
+        64,
+        67
+      ],
+      "ui_role": "map_marker",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "gate",
+        "locked"
+      ]
+    },
+    {
+      "id": "minimap_marker_return_mooring",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_return_mooring.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_return_mooring.game32.json",
+      "size_px": [
+        52,
+        69
+      ],
+      "ui_role": "map_marker",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "return",
+        "mooring"
+      ]
+    },
+    {
+      "id": "minimap_marker_objective",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_objective.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_objective.game32.json",
+      "size_px": [
+        54,
+        19
+      ],
+      "ui_role": "map_marker",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "objective"
+      ]
+    },
+    {
+      "id": "minimap_marker_stair_up",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_stair_up.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_stair_up.game32.json",
+      "size_px": [
+        17,
+        37
+      ],
+      "ui_role": "map_marker",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "stairs",
+        "up"
+      ]
+    },
+    {
+      "id": "minimap_marker_stair_down",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_stair_down.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_stair_down.game32.json",
+      "size_px": [
+        50,
+        55
+      ],
+      "ui_role": "map_marker",
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "stairs",
+        "down"
+      ]
+    }
+  ],
+  "generated_at_utc": "2026-06-02T03:47:46.726790+00:00",
+  "generator": "custodian/tools/art/extract_ui_black_reliquary_game32.py"
+}

@@ -1,0 +1,1001 @@
+{
+  "schema": "custodian.game32.ui_pack_manifest.v1",
+  "set": "ui_black_reliquary",
+  "display_name": "CUSTODIAN Gothic Brass UI Kit",
+  "source_sheet": "res://content/masters/ui/ui_black_reliquary_components.png",
+  "base_path": "res://content/ui/custodian",
+  "asset_count": 58,
+  "domains": {
+    "panel_piece": 18,
+    "divider": 2,
+    "ornament": 4,
+    "icon": 10,
+    "prompt": 6,
+    "minimap": 10,
+    "minimap_marker": 6,
+    "panel": 2
+  },
+  "assets": [
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_tl",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_tl.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_tl.game32.json",
+      "size_px": [
+        75,
+        77
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_t",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_t.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_t.game32.json",
+      "size_px": [
+        144,
+        77
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_tr",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_tr.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_tr.game32.json",
+      "size_px": [
+        75,
+        77
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_l",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_l.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_l.game32.json",
+      "size_px": [
+        75,
+        143
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_c",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_c.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_c.game32.json",
+      "size_px": [
+        144,
+        143
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "center"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_r",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_r.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_r.game32.json",
+      "size_px": [
+        75,
+        143
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_bl",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_bl.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_bl.game32.json",
+      "size_px": [
+        75,
+        75
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_b",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_b.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_b.game32.json",
+      "size_px": [
+        144,
+        75
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold_piece_br",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_br.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_dark_gold_piece_br.game32.json",
+      "size_px": [
+        75,
+        75
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "dark_gold",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_tl",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_tl.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_tl.game32.json",
+      "size_px": [
+        73,
+        77
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_t",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_t.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_t.game32.json",
+      "size_px": [
+        146,
+        78
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_tr",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_tr.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_tr.game32.json",
+      "size_px": [
+        71,
+        77
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_l",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_l.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_l.game32.json",
+      "size_px": [
+        72,
+        143
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_c",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_c.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_c.game32.json",
+      "size_px": [
+        146,
+        143
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "center"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_r",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_r.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_r.game32.json",
+      "size_px": [
+        70,
+        143
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_bl",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_bl.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_bl.game32.json",
+      "size_px": [
+        73,
+        75
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_b",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_b.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_b.game32.json",
+      "size_px": [
+        146,
+        75
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "edge"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep_piece_br",
+      "domain": "panel_piece",
+      "ui_role": "nine_slice_piece",
+      "runtime_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_br.png",
+      "metadata_path": "res://content/ui/custodian/panels/pieces/ui_panel_9slice_deep_piece_br.game32.json",
+      "size_px": [
+        71,
+        75
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "panel",
+        "deep",
+        "corner"
+      ]
+    },
+    {
+      "id": "ui_divider_gold_horizontal",
+      "domain": "divider",
+      "ui_role": "separator",
+      "runtime_path": "res://content/ui/custodian/dividers/ui_divider_gold_horizontal.png",
+      "metadata_path": "res://content/ui/custodian/dividers/ui_divider_gold_horizontal.game32.json",
+      "size_px": [
+        321,
+        24
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "gold",
+        "horizontal"
+      ]
+    },
+    {
+      "id": "ui_divider_gold_vertical",
+      "domain": "divider",
+      "ui_role": "separator",
+      "runtime_path": "res://content/ui/custodian/dividers/ui_divider_gold_vertical.png",
+      "metadata_path": "res://content/ui/custodian/dividers/ui_divider_gold_vertical.game32.json",
+      "size_px": [
+        23,
+        90
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "gold",
+        "vertical"
+      ]
+    },
+    {
+      "id": "ui_corner_ornament_ne",
+      "domain": "ornament",
+      "ui_role": "corner_ornament",
+      "runtime_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_ne.png",
+      "metadata_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_ne.game32.json",
+      "size_px": [
+        53,
+        59
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "corner",
+        "ne"
+      ]
+    },
+    {
+      "id": "ui_corner_ornament_nw",
+      "domain": "ornament",
+      "ui_role": "corner_ornament",
+      "runtime_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_nw.png",
+      "metadata_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_nw.game32.json",
+      "size_px": [
+        58,
+        61
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "corner",
+        "nw"
+      ]
+    },
+    {
+      "id": "ui_corner_ornament_se",
+      "domain": "ornament",
+      "ui_role": "corner_ornament",
+      "runtime_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_se.png",
+      "metadata_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_se.game32.json",
+      "size_px": [
+        58,
+        61
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "corner",
+        "se"
+      ]
+    },
+    {
+      "id": "ui_corner_ornament_sw",
+      "domain": "ornament",
+      "ui_role": "corner_ornament",
+      "runtime_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_sw.png",
+      "metadata_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_sw.game32.json",
+      "size_px": [
+        60,
+        61
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "corner",
+        "sw"
+      ]
+    },
+    {
+      "id": "icon_gate_locked",
+      "domain": "icon",
+      "ui_role": "world_icon",
+      "runtime_path": "res://content/ui/custodian/icons/icon_gate_locked.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_gate_locked.game32.json",
+      "size_px": [
+        126,
+        114
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "gate",
+        "locked",
+        "red"
+      ]
+    },
+    {
+      "id": "icon_gate_open",
+      "domain": "icon",
+      "ui_role": "world_icon",
+      "runtime_path": "res://content/ui/custodian/icons/icon_gate_open.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_gate_open.game32.json",
+      "size_px": [
+        113,
+        111
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "gate",
+        "open",
+        "cyan"
+      ]
+    },
+    {
+      "id": "icon_stairs_up",
+      "domain": "icon",
+      "ui_role": "world_icon",
+      "runtime_path": "res://content/ui/custodian/icons/icon_stairs_up.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_stairs_up.game32.json",
+      "size_px": [
+        98,
+        113
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "stairs",
+        "up",
+        "green"
+      ]
+    },
+    {
+      "id": "icon_stairs_down",
+      "domain": "icon",
+      "ui_role": "world_icon",
+      "runtime_path": "res://content/ui/custodian/icons/icon_stairs_down.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_stairs_down.game32.json",
+      "size_px": [
+        93,
+        95
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "stairs",
+        "down",
+        "purple"
+      ]
+    },
+    {
+      "id": "icon_return_mooring",
+      "domain": "icon",
+      "ui_role": "world_icon",
+      "runtime_path": "res://content/ui/custodian/icons/icon_return_mooring.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_return_mooring.game32.json",
+      "size_px": [
+        120,
+        99
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "return",
+        "mooring",
+        "cyan"
+      ]
+    },
+    {
+      "id": "icon_key_item",
+      "domain": "icon",
+      "ui_role": "world_icon",
+      "runtime_path": "res://content/ui/custodian/icons/icon_key_item.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_key_item.game32.json",
+      "size_px": [
+        46,
+        109
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "key",
+        "item"
+      ]
+    },
+    {
+      "id": "icon_choke_point",
+      "domain": "icon",
+      "ui_role": "world_icon",
+      "runtime_path": "res://content/ui/custodian/icons/icon_choke_point.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_choke_point.game32.json",
+      "size_px": [
+        108,
+        107
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "choke",
+        "point"
+      ]
+    },
+    {
+      "id": "icon_hazard",
+      "domain": "icon",
+      "ui_role": "world_icon",
+      "runtime_path": "res://content/ui/custodian/icons/icon_hazard.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_hazard.game32.json",
+      "size_px": [
+        107,
+        108
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "hazard",
+        "red"
+      ]
+    },
+    {
+      "id": "icon_objective",
+      "domain": "icon",
+      "ui_role": "world_icon",
+      "runtime_path": "res://content/ui/custodian/icons/icon_objective.png",
+      "metadata_path": "res://content/ui/custodian/icons/icon_objective.game32.json",
+      "size_px": [
+        102,
+        110
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "objective",
+        "gold"
+      ]
+    },
+    {
+      "id": "compass_rose_small",
+      "domain": "icon",
+      "ui_role": "map_icon",
+      "runtime_path": "res://content/ui/custodian/icons/compass_rose_small.png",
+      "metadata_path": "res://content/ui/custodian/icons/compass_rose_small.game32.json",
+      "size_px": [
+        111,
+        127
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "compass",
+        "map"
+      ]
+    },
+    {
+      "id": "plaque_header_small",
+      "domain": "prompt",
+      "ui_role": "header_plaque",
+      "runtime_path": "res://content/ui/custodian/prompts/plaque_header_small.png",
+      "metadata_path": "res://content/ui/custodian/prompts/plaque_header_small.game32.json",
+      "size_px": [
+        199,
+        60
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "plaque",
+        "header"
+      ]
+    },
+    {
+      "id": "plaque_body_small",
+      "domain": "prompt",
+      "ui_role": "body_panel",
+      "runtime_path": "res://content/ui/custodian/prompts/plaque_body_small.png",
+      "metadata_path": "res://content/ui/custodian/prompts/plaque_body_small.game32.json",
+      "size_px": [
+        237,
+        234
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "plaque",
+        "body"
+      ]
+    },
+    {
+      "id": "input_key_badge",
+      "domain": "prompt",
+      "ui_role": "input_badge",
+      "runtime_path": "res://content/ui/custodian/prompts/input_key_badge.png",
+      "metadata_path": "res://content/ui/custodian/prompts/input_key_badge.game32.json",
+      "size_px": [
+        75,
+        78
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "input",
+        "badge"
+      ]
+    },
+    {
+      "id": "lock_badge_small",
+      "domain": "prompt",
+      "ui_role": "lock_badge",
+      "runtime_path": "res://content/ui/custodian/prompts/lock_badge_small.png",
+      "metadata_path": "res://content/ui/custodian/prompts/lock_badge_small.game32.json",
+      "size_px": [
+        79,
+        78
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "lock",
+        "badge"
+      ]
+    },
+    {
+      "id": "status_badge_ready",
+      "domain": "prompt",
+      "ui_role": "status_badge",
+      "runtime_path": "res://content/ui/custodian/prompts/status_badge_ready.png",
+      "metadata_path": "res://content/ui/custodian/prompts/status_badge_ready.game32.json",
+      "size_px": [
+        141,
+        60
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "ready",
+        "green"
+      ]
+    },
+    {
+      "id": "status_badge_active",
+      "domain": "prompt",
+      "ui_role": "status_badge",
+      "runtime_path": "res://content/ui/custodian/prompts/status_badge_active.png",
+      "metadata_path": "res://content/ui/custodian/prompts/status_badge_active.game32.json",
+      "size_px": [
+        152,
+        61
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "active",
+        "cyan"
+      ]
+    },
+    {
+      "id": "minimap_frame_corner_tl",
+      "domain": "minimap",
+      "ui_role": "frame_corner",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_frame_corner_tl.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_frame_corner_tl.game32.json",
+      "size_px": [
+        57,
+        59
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "minimap",
+        "corner",
+        "tl"
+      ]
+    },
+    {
+      "id": "minimap_frame_corner_tr",
+      "domain": "minimap",
+      "ui_role": "frame_corner",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_frame_corner_tr.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_frame_corner_tr.game32.json",
+      "size_px": [
+        67,
+        67
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "minimap",
+        "corner",
+        "tr"
+      ]
+    },
+    {
+      "id": "minimap_frame_corner_bl",
+      "domain": "minimap",
+      "ui_role": "frame_corner",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_frame_corner_bl.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_frame_corner_bl.game32.json",
+      "size_px": [
+        57,
+        58
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "minimap",
+        "corner",
+        "bl"
+      ]
+    },
+    {
+      "id": "minimap_frame_corner_br",
+      "domain": "minimap",
+      "ui_role": "frame_corner",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_frame_corner_br.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_frame_corner_br.game32.json",
+      "size_px": [
+        67,
+        58
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "minimap",
+        "corner",
+        "br"
+      ]
+    },
+    {
+      "id": "minimap_frame_edge_top",
+      "domain": "minimap",
+      "ui_role": "frame_edge",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_frame_edge_top.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_frame_edge_top.game32.json",
+      "size_px": [
+        186,
+        17
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "minimap",
+        "edge",
+        "top"
+      ]
+    },
+    {
+      "id": "minimap_frame_edge_bottom",
+      "domain": "minimap",
+      "ui_role": "frame_edge",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_frame_edge_bottom.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_frame_edge_bottom.game32.json",
+      "size_px": [
+        186,
+        23
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "minimap",
+        "edge",
+        "bottom"
+      ]
+    },
+    {
+      "id": "minimap_frame_edge_left",
+      "domain": "minimap",
+      "ui_role": "frame_edge",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_frame_edge_left.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_frame_edge_left.game32.json",
+      "size_px": [
+        26,
+        107
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "minimap",
+        "edge",
+        "left"
+      ]
+    },
+    {
+      "id": "minimap_frame_edge_right",
+      "domain": "minimap",
+      "ui_role": "frame_edge",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_frame_edge_right.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_frame_edge_right.game32.json",
+      "size_px": [
+        27,
+        121
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "minimap",
+        "edge",
+        "right"
+      ]
+    },
+    {
+      "id": "minimap_fill_dark",
+      "domain": "minimap",
+      "ui_role": "map_fill",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_fill_dark.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_fill_dark.game32.json",
+      "size_px": [
+        174,
+        161
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "minimap",
+        "fill"
+      ]
+    },
+    {
+      "id": "minimap_title_plaque",
+      "domain": "minimap",
+      "ui_role": "title_plaque",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_title_plaque.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_title_plaque.game32.json",
+      "size_px": [
+        268,
+        56
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "minimap",
+        "title"
+      ]
+    },
+    {
+      "id": "minimap_marker_player",
+      "domain": "minimap_marker",
+      "ui_role": "map_marker",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_player.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_player.game32.json",
+      "size_px": [
+        62,
+        73
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "player",
+        "cyan"
+      ]
+    },
+    {
+      "id": "minimap_marker_gate_locked",
+      "domain": "minimap_marker",
+      "ui_role": "map_marker",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_gate_locked.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_gate_locked.game32.json",
+      "size_px": [
+        64,
+        67
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "gate",
+        "locked"
+      ]
+    },
+    {
+      "id": "minimap_marker_return_mooring",
+      "domain": "minimap_marker",
+      "ui_role": "map_marker",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_return_mooring.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_return_mooring.game32.json",
+      "size_px": [
+        52,
+        69
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "return",
+        "mooring"
+      ]
+    },
+    {
+      "id": "minimap_marker_objective",
+      "domain": "minimap_marker",
+      "ui_role": "map_marker",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_objective.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_objective.game32.json",
+      "size_px": [
+        54,
+        19
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "objective"
+      ]
+    },
+    {
+      "id": "minimap_marker_stair_up",
+      "domain": "minimap_marker",
+      "ui_role": "map_marker",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_stair_up.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_stair_up.game32.json",
+      "size_px": [
+        17,
+        37
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "stairs",
+        "up"
+      ]
+    },
+    {
+      "id": "minimap_marker_stair_down",
+      "domain": "minimap_marker",
+      "ui_role": "map_marker",
+      "runtime_path": "res://content/ui/custodian/minimap/minimap_marker_stair_down.png",
+      "metadata_path": "res://content/ui/custodian/minimap/minimap_marker_stair_down.game32.json",
+      "size_px": [
+        50,
+        55
+      ],
+      "godot_node_hint": "TextureRect",
+      "tags": [
+        "stairs",
+        "down"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_dark_gold",
+      "domain": "panel",
+      "ui_role": "nine_patch_panel",
+      "runtime_path": "res://content/ui/black_reliquary/panels/ui_panel_9slice_dark_gold.png",
+      "metadata_path": "res://content/ui/black_reliquary/panels/ui_panel_9slice_dark_gold.game32.json",
+      "size_px": [
+        294,
+        295
+      ],
+      "godot_node_hint": "NinePatchRect",
+      "tags": [
+        "panel",
+        "ninepatch",
+        "dark_gold"
+      ]
+    },
+    {
+      "id": "ui_panel_9slice_deep",
+      "domain": "panel",
+      "ui_role": "nine_patch_panel",
+      "runtime_path": "res://content/ui/black_reliquary/panels/ui_panel_9slice_deep.png",
+      "metadata_path": "res://content/ui/black_reliquary/panels/ui_panel_9slice_deep.game32.json",
+      "size_px": [
+        290,
+        296
+      ],
+      "godot_node_hint": "NinePatchRect",
+      "tags": [
+        "panel",
+        "ninepatch",
+        "deep"
+      ]
+    }
+  ],
+  "recommended_godot_paths": {
+    "theme_scripts": "res://game/ui/theme/",
+    "components": "res://game/ui/components/",
+    "hud": "res://game/ui/hud/"
+  },
+  "notes": [
+    "Use assembled ui_panel_9slice_dark_gold/ui_panel_9slice_deep with NinePatchRect.",
+    "Use panel pieces only if building custom frame controls.",
+    "Use icons for HUD/world callouts/minimap markers.",
+    "Do not bake HUD text into map art."
+  ],
+  "doc_drift_check": {
+    "status": "needs_doc_update_if_accepted",
+    "recommended_docs": [
+      "custodian/docs/ai_context/CURRENT_STATE.md",
+      "custodian/docs/ai_context/CONTEXT.md",
+      "custodian/docs/ai_context/FILE_INDEX.md"
+    ]
+  },
+  "generated_at_utc": "2026-06-02T03:47:46.727430+00:00",
+  "generator": "custodian/tools/art/extract_ui_black_reliquary_game32.py"
+}

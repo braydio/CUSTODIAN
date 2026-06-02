@@ -1,0 +1,41 @@
+{
+  "schema": "custodian.game32.ui_asset.v1",
+  "id": "ui_corner_ornament_se",
+  "name": "ui_corner_ornament_se",
+  "set": "ui_black_reliquary",
+  "domain": "ornament",
+  "ui_role": "corner_ornament",
+  "godot_node_hint": "TextureRect",
+  "runtime_path": "res://content/ui/custodian/ornaments/ui_corner_ornament_se.png",
+  "source": {
+    "sheet_path": "res://content/masters/ui/ui_black_reliquary_components.png",
+    "crop_box_px": [
+      536,
+      499,
+      597,
+      562
+    ],
+    "reference_sheet_size_px": [
+      1448,
+      1086
+    ]
+  },
+  "size_px": [
+    58,
+    61
+  ],
+  "anchor": "top_left",
+  "import": {
+    "filter": "nearest",
+    "mipmaps": false,
+    "repeat": false
+  },
+  "ninepatch": null,
+  "tags": [
+    "corner",
+    "se"
+  ],
+  "notes": "",
+  "generated_at_utc": "2026-06-02T03:47:46.539101+00:00",
+  "generator": "custodian/tools/art/extract_ui_black_reliquary_game32.py"
+}
