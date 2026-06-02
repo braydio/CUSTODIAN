@@ -1,0 +1,1879 @@
+{
+  "name": "sundered_keep_causeway_entrance_extracted_assets",
+  "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+  "output_root": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance",
+  "source_image_size": [
+    1448,
+    1086
+  ],
+  "source_grid": {
+    "cols": 50,
+    "rows": 37,
+    "cell_px_approx": [
+      28.96,
+      29.35135135135135
+    ]
+  },
+  "runtime_tile_px": 32,
+  "degrid_applied": true,
+  "resample": "lanczos",
+  "asset_count": 58,
+  "assets": [
+    {
+      "name": "ocean_dark_water_01",
+      "category": "water",
+      "kind": "tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/water/ocean_dark_water_01.png",
+      "relative_path": "water/ocean_dark_water_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        3,
+        24,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        87,
+        704,
+        116,
+        734
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "z_hint": "ground",
+      "notes": "Base dark sea tile."
+    },
+    {
+      "name": "ocean_dark_water_02",
+      "category": "water",
+      "kind": "tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/water/ocean_dark_water_02.png",
+      "relative_path": "water/ocean_dark_water_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        42,
+        27,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        1216,
+        792,
+        1245,
+        822
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "z_hint": "ground",
+      "notes": "Alternate dark sea tile with slightly different current texture."
+    },
+    {
+      "name": "ocean_current_streak_01",
+      "category": "water",
+      "kind": "decal_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/water/ocean_current_streak_01.png",
+      "relative_path": "water/ocean_current_streak_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        34,
+        25,
+        2,
+        1
+      ],
+      "source_px_crop": [
+        985,
+        734,
+        1043,
+        763
+      ],
+      "target_size": [
+        64,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        1
+      ],
+      "collision": "none",
+      "z_hint": "ground",
+      "notes": "Long pale current streak over dark water."
+    },
+    {
+      "name": "ocean_foam_open_01",
+      "category": "water",
+      "kind": "decal_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/water/ocean_foam_open_01.png",
+      "relative_path": "water/ocean_foam_open_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        6,
+        15,
+        2,
+        1
+      ],
+      "source_px_crop": [
+        174,
+        440,
+        232,
+        470
+      ],
+      "target_size": [
+        64,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        1
+      ],
+      "collision": "none",
+      "z_hint": "ground",
+      "notes": "Foam streak sitting in open water."
+    },
+    {
+      "name": "ocean_foam_edge_left_01",
+      "category": "water_edges",
+      "kind": "edge_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/water_edges/ocean_foam_edge_left_01.png",
+      "relative_path": "water_edges/ocean_foam_edge_left_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        13,
+        15,
+        2,
+        2
+      ],
+      "source_px_crop": [
+        376,
+        440,
+        434,
+        499
+      ],
+      "target_size": [
+        64,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        2
+      ],
+      "collision": "none",
+      "z_hint": "ground",
+      "notes": "Foam where water meets the left cliff/causeway rocks."
+    },
+    {
+      "name": "ocean_foam_edge_right_01",
+      "category": "water_edges",
+      "kind": "edge_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/water_edges/ocean_foam_edge_right_01.png",
+      "relative_path": "water_edges/ocean_foam_edge_right_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        34,
+        15,
+        2,
+        2
+      ],
+      "source_px_crop": [
+        985,
+        440,
+        1043,
+        499
+      ],
+      "target_size": [
+        64,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        2
+      ],
+      "collision": "none",
+      "z_hint": "ground",
+      "notes": "Foam where water meets the right cliff/causeway rocks."
+    },
+    {
+      "name": "ocean_foam_edge_bottom_left_01",
+      "category": "water_edges",
+      "kind": "edge_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/water_edges/ocean_foam_edge_bottom_left_01.png",
+      "relative_path": "water_edges/ocean_foam_edge_bottom_left_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        15,
+        30,
+        2,
+        2
+      ],
+      "source_px_crop": [
+        434,
+        881,
+        492,
+        939
+      ],
+      "target_size": [
+        64,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        2
+      ],
+      "collision": "none",
+      "z_hint": "ground",
+      "notes": "Lower causeway edge foam, useful near bridge supports."
+    },
+    {
+      "name": "ocean_foam_edge_bottom_right_01",
+      "category": "water_edges",
+      "kind": "edge_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/water_edges/ocean_foam_edge_bottom_right_01.png",
+      "relative_path": "water_edges/ocean_foam_edge_bottom_right_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        32,
+        30,
+        2,
+        2
+      ],
+      "source_px_crop": [
+        927,
+        881,
+        985,
+        939
+      ],
+      "target_size": [
+        64,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        2
+      ],
+      "collision": "none",
+      "z_hint": "ground",
+      "notes": "Lower right causeway edge foam."
+    },
+    {
+      "name": "cliff_face_dark_01",
+      "category": "cliffs",
+      "kind": "tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/cliffs/cliff_face_dark_01.png",
+      "relative_path": "cliffs/cliff_face_dark_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        10,
+        10,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        290,
+        294,
+        319,
+        323
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Dark vertical cliff face / rock wall tile."
+    },
+    {
+      "name": "cliff_face_dark_02",
+      "category": "cliffs",
+      "kind": "tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/cliffs/cliff_face_dark_02.png",
+      "relative_path": "cliffs/cliff_face_dark_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        13,
+        12,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        376,
+        352,
+        405,
+        382
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Alternate dark cliff face."
+    },
+    {
+      "name": "cliff_face_wet_01",
+      "category": "cliffs",
+      "kind": "tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/cliffs/cliff_face_wet_01.png",
+      "relative_path": "cliffs/cliff_face_wet_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        15,
+        20,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        434,
+        587,
+        463,
+        616
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Wet cliff face near causeway edge."
+    },
+    {
+      "name": "cliff_rock_cluster_01",
+      "category": "cliffs",
+      "kind": "macro_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/cliffs/cliff_rock_cluster_01.png",
+      "relative_path": "cliffs/cliff_rock_cluster_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        12,
+        17,
+        2,
+        2
+      ],
+      "source_px_crop": [
+        348,
+        499,
+        405,
+        558
+      ],
+      "target_size": [
+        64,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Jagged rock cluster for cliff side variation."
+    },
+    {
+      "name": "cliff_rock_cluster_02",
+      "category": "cliffs",
+      "kind": "macro_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/cliffs/cliff_rock_cluster_02.png",
+      "relative_path": "cliffs/cliff_rock_cluster_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        34,
+        12,
+        2,
+        2
+      ],
+      "source_px_crop": [
+        985,
+        352,
+        1043,
+        411
+      ],
+      "target_size": [
+        64,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Right-side jagged rock cluster."
+    },
+    {
+      "name": "cliff_top_mossy_edge_01",
+      "category": "cliff_edges",
+      "kind": "edge_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/cliff_edges/cliff_top_mossy_edge_01.png",
+      "relative_path": "cliff_edges/cliff_top_mossy_edge_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        1,
+        8,
+        2,
+        1
+      ],
+      "source_px_crop": [
+        29,
+        235,
+        87,
+        264
+      ],
+      "target_size": [
+        64,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Mossy top edge where keep wall meets lower rock face."
+    },
+    {
+      "name": "cliff_top_mossy_edge_02",
+      "category": "cliff_edges",
+      "kind": "edge_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/cliff_edges/cliff_top_mossy_edge_02.png",
+      "relative_path": "cliff_edges/cliff_top_mossy_edge_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        39,
+        8,
+        2,
+        1
+      ],
+      "source_px_crop": [
+        1129,
+        235,
+        1187,
+        264
+      ],
+      "target_size": [
+        64,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Alternate mossy top cliff/wall transition."
+    },
+    {
+      "name": "causeway_floor_center_01",
+      "category": "causeway_floor",
+      "kind": "tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_center_01.png",
+      "relative_path": "causeway_floor/causeway_floor_center_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        24,
+        18,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        695,
+        528,
+        724,
+        558
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "walkable",
+      "z_hint": "ground",
+      "notes": "Main large stone floor tile."
+    },
+    {
+      "name": "causeway_floor_center_02",
+      "category": "causeway_floor",
+      "kind": "tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_center_02.png",
+      "relative_path": "causeway_floor/causeway_floor_center_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        22,
+        28,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        637,
+        822,
+        666,
+        851
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "walkable",
+      "z_hint": "ground",
+      "notes": "Alternate floor tile."
+    },
+    {
+      "name": "causeway_floor_center_03",
+      "category": "causeway_floor",
+      "kind": "tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_center_03.png",
+      "relative_path": "causeway_floor/causeway_floor_center_03.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        26,
+        30,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        753,
+        881,
+        782,
+        910
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "walkable",
+      "z_hint": "ground",
+      "notes": "Alternate lower bridge floor."
+    },
+    {
+      "name": "causeway_floor_cracked_01",
+      "category": "causeway_floor",
+      "kind": "tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_cracked_01.png",
+      "relative_path": "causeway_floor/causeway_floor_cracked_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        24,
+        20,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        695,
+        587,
+        724,
+        616
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "walkable",
+      "z_hint": "ground",
+      "notes": "Cracked walkway stone."
+    },
+    {
+      "name": "causeway_floor_mossy_01",
+      "category": "causeway_floor",
+      "kind": "tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_mossy_01.png",
+      "relative_path": "causeway_floor/causeway_floor_mossy_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        25,
+        16,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        724,
+        470,
+        753,
+        499
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "walkable",
+      "z_hint": "ground",
+      "notes": "Moss-stained walkway stone."
+    },
+    {
+      "name": "causeway_floor_puddle_01",
+      "category": "causeway_floor",
+      "kind": "decal_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_puddle_01.png",
+      "relative_path": "causeway_floor/causeway_floor_puddle_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        25,
+        11,
+        2,
+        1
+      ],
+      "source_px_crop": [
+        724,
+        323,
+        782,
+        352
+      ],
+      "target_size": [
+        64,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        1
+      ],
+      "collision": "walkable",
+      "z_hint": "ground",
+      "notes": "Dark puddle / wet stone decal."
+    },
+    {
+      "name": "causeway_floor_puddle_02",
+      "category": "causeway_floor",
+      "kind": "decal_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_puddle_02.png",
+      "relative_path": "causeway_floor/causeway_floor_puddle_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        24,
+        33,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        695,
+        969,
+        724,
+        998
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "walkable",
+      "z_hint": "ground",
+      "notes": "Small puddle / dark wet patch."
+    },
+    {
+      "name": "causeway_floor_grate_01",
+      "category": "causeway_floor",
+      "kind": "decal_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_grate_01.png",
+      "relative_path": "causeway_floor/causeway_floor_grate_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        17,
+        10,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        492,
+        294,
+        521,
+        323
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "walkable",
+      "z_hint": "ground",
+      "notes": "Iron floor grate."
+    },
+    {
+      "name": "causeway_floor_grate_02",
+      "category": "causeway_floor",
+      "kind": "decal_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_floor/causeway_floor_grate_02.png",
+      "relative_path": "causeway_floor/causeway_floor_grate_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        29,
+        14,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        840,
+        411,
+        869,
+        440
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "walkable",
+      "z_hint": "ground",
+      "notes": "Alternate iron floor grate."
+    },
+    {
+      "name": "causeway_edge_left_vertical_01",
+      "category": "causeway_edges",
+      "kind": "edge_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_edges/causeway_edge_left_vertical_01.png",
+      "relative_path": "causeway_edges/causeway_edge_left_vertical_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        19,
+        24,
+        1,
+        2
+      ],
+      "source_px_crop": [
+        550,
+        704,
+        579,
+        763
+      ],
+      "target_size": [
+        32,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        2
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Left vertical curb/parapet edge."
+    },
+    {
+      "name": "causeway_edge_right_vertical_01",
+      "category": "causeway_edges",
+      "kind": "edge_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_edges/causeway_edge_right_vertical_01.png",
+      "relative_path": "causeway_edges/causeway_edge_right_vertical_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        30,
+        24,
+        1,
+        2
+      ],
+      "source_px_crop": [
+        869,
+        704,
+        898,
+        763
+      ],
+      "target_size": [
+        32,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        2
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Right vertical curb/parapet edge."
+    },
+    {
+      "name": "causeway_edge_top_horizontal_01",
+      "category": "causeway_edges",
+      "kind": "edge_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_edges/causeway_edge_top_horizontal_01.png",
+      "relative_path": "causeway_edges/causeway_edge_top_horizontal_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        21,
+        9,
+        3,
+        1
+      ],
+      "source_px_crop": [
+        608,
+        264,
+        695,
+        294
+      ],
+      "target_size": [
+        96,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        3,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Horizontal threshold curb near gate landing."
+    },
+    {
+      "name": "causeway_edge_bottom_horizontal_01",
+      "category": "causeway_edges",
+      "kind": "edge_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_edges/causeway_edge_bottom_horizontal_01.png",
+      "relative_path": "causeway_edges/causeway_edge_bottom_horizontal_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        20,
+        35,
+        3,
+        1
+      ],
+      "source_px_crop": [
+        579,
+        1027,
+        666,
+        1057
+      ],
+      "target_size": [
+        96,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        3,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Lower bridge curb cap."
+    },
+    {
+      "name": "causeway_parapet_post_01",
+      "category": "causeway_edges",
+      "kind": "corner_or_post",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_edges/causeway_parapet_post_01.png",
+      "relative_path": "causeway_edges/causeway_parapet_post_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        19,
+        22,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        550,
+        646,
+        579,
+        675
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Square stone parapet post."
+    },
+    {
+      "name": "causeway_parapet_post_02",
+      "category": "causeway_edges",
+      "kind": "corner_or_post",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_edges/causeway_parapet_post_02.png",
+      "relative_path": "causeway_edges/causeway_parapet_post_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        30,
+        22,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        869,
+        646,
+        898,
+        675
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Alternate square parapet post."
+    },
+    {
+      "name": "causeway_corner_block_left_01",
+      "category": "causeway_edges",
+      "kind": "corner_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_edges/causeway_corner_block_left_01.png",
+      "relative_path": "causeway_edges/causeway_corner_block_left_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        17,
+        19,
+        2,
+        2
+      ],
+      "source_px_crop": [
+        492,
+        558,
+        550,
+        616
+      ],
+      "target_size": [
+        64,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Angled left-side causeway corner/buttress block."
+    },
+    {
+      "name": "causeway_corner_block_right_01",
+      "category": "causeway_edges",
+      "kind": "corner_tile",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_edges/causeway_corner_block_right_01.png",
+      "relative_path": "causeway_edges/causeway_corner_block_right_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        31,
+        19,
+        2,
+        2
+      ],
+      "source_px_crop": [
+        898,
+        558,
+        956,
+        616
+      ],
+      "target_size": [
+        64,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Angled right-side causeway corner/buttress block."
+    },
+    {
+      "name": "causeway_diagonal_wall_left_01",
+      "category": "causeway_edges",
+      "kind": "diagonal_edge",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_edges/causeway_diagonal_wall_left_01.png",
+      "relative_path": "causeway_edges/causeway_diagonal_wall_left_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        17,
+        12,
+        2,
+        2
+      ],
+      "source_px_crop": [
+        492,
+        352,
+        550,
+        411
+      ],
+      "target_size": [
+        64,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Diagonal wall edge for upper-left bend."
+    },
+    {
+      "name": "causeway_diagonal_wall_right_01",
+      "category": "causeway_edges",
+      "kind": "diagonal_edge",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/causeway_edges/causeway_diagonal_wall_right_01.png",
+      "relative_path": "causeway_edges/causeway_diagonal_wall_right_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        31,
+        12,
+        2,
+        2
+      ],
+      "source_px_crop": [
+        898,
+        352,
+        956,
+        411
+      ],
+      "target_size": [
+        64,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "z_hint": "ground",
+      "notes": "Diagonal wall edge for upper-right bend."
+    },
+    {
+      "name": "keep_wall_face_01",
+      "category": "keep_walls",
+      "kind": "wall_module",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/keep_walls/keep_wall_face_01.png",
+      "relative_path": "keep_walls/keep_wall_face_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        1,
+        5,
+        2,
+        3
+      ],
+      "source_px_crop": [
+        29,
+        147,
+        87,
+        235
+      ],
+      "target_size": [
+        64,
+        96
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        3
+      ],
+      "collision": "solid",
+      "z_hint": "wall",
+      "notes": "Dark keep wall face, 2x3 runtime tiles."
+    },
+    {
+      "name": "keep_wall_face_02",
+      "category": "keep_walls",
+      "kind": "wall_module",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/keep_walls/keep_wall_face_02.png",
+      "relative_path": "keep_walls/keep_wall_face_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        36,
+        5,
+        2,
+        3
+      ],
+      "source_px_crop": [
+        1043,
+        147,
+        1100,
+        235
+      ],
+      "target_size": [
+        64,
+        96
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        3
+      ],
+      "collision": "solid",
+      "z_hint": "wall",
+      "notes": "Alternate keep wall face."
+    },
+    {
+      "name": "keep_wall_top_crenelation_01",
+      "category": "keep_walls",
+      "kind": "wall_cap",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/keep_walls/keep_wall_top_crenelation_01.png",
+      "relative_path": "keep_walls/keep_wall_top_crenelation_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        1,
+        2,
+        2,
+        1
+      ],
+      "source_px_crop": [
+        29,
+        59,
+        87,
+        88
+      ],
+      "target_size": [
+        64,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "wall",
+      "notes": "Crenelated top wall cap."
+    },
+    {
+      "name": "keep_wall_top_crenelation_02",
+      "category": "keep_walls",
+      "kind": "wall_cap",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/keep_walls/keep_wall_top_crenelation_02.png",
+      "relative_path": "keep_walls/keep_wall_top_crenelation_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        41,
+        2,
+        2,
+        1
+      ],
+      "source_px_crop": [
+        1187,
+        59,
+        1245,
+        88
+      ],
+      "target_size": [
+        64,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        1
+      ],
+      "collision": "solid",
+      "z_hint": "wall",
+      "notes": "Alternate crenelated wall cap."
+    },
+    {
+      "name": "keep_buttress_vertical_01",
+      "category": "keep_walls",
+      "kind": "buttress",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/keep_walls/keep_buttress_vertical_01.png",
+      "relative_path": "keep_walls/keep_buttress_vertical_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        15,
+        4,
+        2,
+        5
+      ],
+      "source_px_crop": [
+        434,
+        117,
+        492,
+        264
+      ],
+      "target_size": [
+        64,
+        160
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        5
+      ],
+      "collision": "solid",
+      "z_hint": "wall",
+      "notes": "Tall gatehouse buttress / vertical support."
+    },
+    {
+      "name": "keep_buttress_vertical_02",
+      "category": "keep_walls",
+      "kind": "buttress",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/keep_walls/keep_buttress_vertical_02.png",
+      "relative_path": "keep_walls/keep_buttress_vertical_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        33,
+        4,
+        2,
+        5
+      ],
+      "source_px_crop": [
+        956,
+        117,
+        1014,
+        264
+      ],
+      "target_size": [
+        64,
+        160
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        5
+      ],
+      "collision": "solid",
+      "z_hint": "wall",
+      "notes": "Right tall gatehouse buttress."
+    },
+    {
+      "name": "gatehouse_main_portcullis_01",
+      "category": "gatehouse",
+      "kind": "gate",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/gatehouse/gatehouse_main_portcullis_01.png",
+      "relative_path": "gatehouse/gatehouse_main_portcullis_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        22,
+        3,
+        6,
+        5
+      ],
+      "source_px_crop": [
+        637,
+        88,
+        811,
+        235
+      ],
+      "target_size": [
+        192,
+        160
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        6,
+        5
+      ],
+      "collision": "door_or_gate",
+      "z_hint": "wall",
+      "notes": "Main arched gatehouse with portcullis."
+    },
+    {
+      "name": "gatehouse_steps_front_01",
+      "category": "gatehouse",
+      "kind": "stairs",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/gatehouse/gatehouse_steps_front_01.png",
+      "relative_path": "gatehouse/gatehouse_steps_front_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        21,
+        9,
+        7,
+        1
+      ],
+      "source_px_crop": [
+        608,
+        264,
+        811,
+        294
+      ],
+      "target_size": [
+        224,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        7,
+        1
+      ],
+      "collision": "walkable",
+      "z_hint": "ground",
+      "notes": "Wide front gate steps / threshold."
+    },
+    {
+      "name": "gothic_side_door_left_01",
+      "category": "gatehouse",
+      "kind": "door",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/gatehouse/gothic_side_door_left_01.png",
+      "relative_path": "gatehouse/gothic_side_door_left_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        16,
+        5,
+        2,
+        3
+      ],
+      "source_px_crop": [
+        463,
+        147,
+        521,
+        235
+      ],
+      "target_size": [
+        64,
+        96
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        3
+      ],
+      "collision": "door_or_wall",
+      "z_hint": "wall",
+      "notes": "Left arched side door."
+    },
+    {
+      "name": "gothic_side_door_right_01",
+      "category": "gatehouse",
+      "kind": "door",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/gatehouse/gothic_side_door_right_01.png",
+      "relative_path": "gatehouse/gothic_side_door_right_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        29,
+        5,
+        2,
+        3
+      ],
+      "source_px_crop": [
+        840,
+        147,
+        898,
+        235
+      ],
+      "target_size": [
+        64,
+        96
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        2,
+        3
+      ],
+      "collision": "door_or_wall",
+      "z_hint": "wall",
+      "notes": "Right arched side door."
+    },
+    {
+      "name": "gatehouse_roof_peak_01",
+      "category": "gatehouse",
+      "kind": "roof_or_upper_wall",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/gatehouse/gatehouse_roof_peak_01.png",
+      "relative_path": "gatehouse/gatehouse_roof_peak_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        22,
+        0,
+        6,
+        3
+      ],
+      "source_px_crop": [
+        637,
+        0,
+        811,
+        88
+      ],
+      "target_size": [
+        192,
+        96
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        6,
+        3
+      ],
+      "collision": "solid",
+      "z_hint": "roof",
+      "notes": "Upper triangular gatehouse roof/stone peak."
+    },
+    {
+      "name": "side_bastion_left_01",
+      "category": "bastions",
+      "kind": "macro_structure",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/bastions/side_bastion_left_01.png",
+      "relative_path": "bastions/side_bastion_left_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        16,
+        19,
+        5,
+        5
+      ],
+      "source_px_crop": [
+        463,
+        558,
+        608,
+        704
+      ],
+      "target_size": [
+        160,
+        160
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        5,
+        5
+      ],
+      "collision": "solid",
+      "z_hint": "wall",
+      "notes": "Left side defense platform / bastion."
+    },
+    {
+      "name": "side_bastion_right_01",
+      "category": "bastions",
+      "kind": "macro_structure",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/bastions/side_bastion_right_01.png",
+      "relative_path": "bastions/side_bastion_right_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        29,
+        19,
+        5,
+        5
+      ],
+      "source_px_crop": [
+        840,
+        558,
+        985,
+        704
+      ],
+      "target_size": [
+        160,
+        160
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        5,
+        5
+      ],
+      "collision": "solid",
+      "z_hint": "wall",
+      "notes": "Right side defense platform / bastion."
+    },
+    {
+      "name": "lower_guard_post_left_01",
+      "category": "bastions",
+      "kind": "macro_structure",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/bastions/lower_guard_post_left_01.png",
+      "relative_path": "bastions/lower_guard_post_left_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        17,
+        30,
+        3,
+        4
+      ],
+      "source_px_crop": [
+        492,
+        881,
+        579,
+        998
+      ],
+      "target_size": [
+        96,
+        128
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        3,
+        4
+      ],
+      "collision": "solid",
+      "z_hint": "wall",
+      "notes": "Lower left guard post / bridge support."
+    },
+    {
+      "name": "lower_guard_post_right_01",
+      "category": "bastions",
+      "kind": "macro_structure",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/bastions/lower_guard_post_right_01.png",
+      "relative_path": "bastions/lower_guard_post_right_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        30,
+        30,
+        3,
+        4
+      ],
+      "source_px_crop": [
+        869,
+        881,
+        956,
+        998
+      ],
+      "target_size": [
+        96,
+        128
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        3,
+        4
+      ],
+      "collision": "solid",
+      "z_hint": "wall",
+      "notes": "Lower right guard post / bridge support."
+    },
+    {
+      "name": "brazier_lit_01",
+      "category": "props",
+      "kind": "prop",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/props/brazier_lit_01.png",
+      "relative_path": "props/brazier_lit_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        21,
+        22,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        608,
+        646,
+        637,
+        675
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "soft_block",
+      "z_hint": "prop",
+      "notes": "Small lit brazier / fire bowl."
+    },
+    {
+      "name": "brazier_lit_02",
+      "category": "props",
+      "kind": "prop",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/props/brazier_lit_02.png",
+      "relative_path": "props/brazier_lit_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        28,
+        22,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        811,
+        646,
+        840,
+        675
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "soft_block",
+      "z_hint": "prop",
+      "notes": "Alternate lit brazier."
+    },
+    {
+      "name": "gate_sconce_left_01",
+      "category": "props",
+      "kind": "prop",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/props/gate_sconce_left_01.png",
+      "relative_path": "props/gate_sconce_left_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        21,
+        6,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        608,
+        176,
+        637,
+        205
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "z_hint": "prop",
+      "notes": "Gate-side flame sconce."
+    },
+    {
+      "name": "gate_sconce_right_01",
+      "category": "props",
+      "kind": "prop",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/props/gate_sconce_right_01.png",
+      "relative_path": "props/gate_sconce_right_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        28,
+        6,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        811,
+        176,
+        840,
+        205
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "z_hint": "prop",
+      "notes": "Right gate-side flame sconce."
+    },
+    {
+      "name": "banner_red_vertical_01",
+      "category": "props",
+      "kind": "hanging_banner",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/props/banner_red_vertical_01.png",
+      "relative_path": "props/banner_red_vertical_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        18,
+        5,
+        1,
+        3
+      ],
+      "source_px_crop": [
+        521,
+        147,
+        550,
+        235
+      ],
+      "target_size": [
+        32,
+        96
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        3
+      ],
+      "collision": "none",
+      "z_hint": "wall_decal",
+      "notes": "Long red vertical banner."
+    },
+    {
+      "name": "banner_red_vertical_02",
+      "category": "props",
+      "kind": "hanging_banner",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/props/banner_red_vertical_02.png",
+      "relative_path": "props/banner_red_vertical_02.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        32,
+        5,
+        1,
+        3
+      ],
+      "source_px_crop": [
+        927,
+        147,
+        956,
+        235
+      ],
+      "target_size": [
+        32,
+        96
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        3
+      ],
+      "collision": "none",
+      "z_hint": "wall_decal",
+      "notes": "Alternate long red vertical banner."
+    },
+    {
+      "name": "banner_red_small_01",
+      "category": "props",
+      "kind": "hanging_banner",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/props/banner_red_small_01.png",
+      "relative_path": "props/banner_red_small_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        18,
+        21,
+        1,
+        2
+      ],
+      "source_px_crop": [
+        521,
+        616,
+        550,
+        675
+      ],
+      "target_size": [
+        32,
+        64
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        2
+      ],
+      "collision": "none",
+      "z_hint": "wall_decal",
+      "notes": "Small red banner in side platform."
+    },
+    {
+      "name": "shield_wall_crest_01",
+      "category": "props",
+      "kind": "wall_decal",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/props/shield_wall_crest_01.png",
+      "relative_path": "props/shield_wall_crest_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        44,
+        4,
+        1,
+        1
+      ],
+      "source_px_crop": [
+        1274,
+        117,
+        1303,
+        147
+      ],
+      "target_size": [
+        32,
+        32
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "z_hint": "wall_decal",
+      "notes": "Wall-mounted shield crest."
+    },
+    {
+      "name": "chain_or_black_post_01",
+      "category": "props",
+      "kind": "vertical_prop",
+      "output_path": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/tiles/sundered_keep/causeway_entrance/props/chain_or_black_post_01.png",
+      "relative_path": "props/chain_or_black_post_01.png",
+      "source_image": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/masters/sundered_keep/causeway_design_master_hd.png",
+      "source_cells": [
+        20,
+        7,
+        1,
+        3
+      ],
+      "source_px_crop": [
+        579,
+        205,
+        608,
+        294
+      ],
+      "target_size": [
+        32,
+        96
+      ],
+      "runtime_tile_px": 32,
+      "runtime_tile_footprint": [
+        1,
+        3
+      ],
+      "collision": "soft_block",
+      "z_hint": "prop",
+      "notes": "Dark chain/post near gate approach."
+    }
+  ]
+}

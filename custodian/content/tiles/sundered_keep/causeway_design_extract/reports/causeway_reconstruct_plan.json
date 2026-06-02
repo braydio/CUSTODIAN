@@ -1,0 +1,559 @@
+{
+  "schema": "custodian.sundered_keep.causeway_reconstruction_plan.v2",
+  "tile_size": 32,
+  "map_size_tiles": [
+    40,
+    48
+  ],
+  "coordinate_system": "tile_xy_top_left",
+  "design_intent": {
+    "primary_route": "outer landing -> central causeway -> gatehouse threshold -> forecourt",
+    "readability_rule": "Keep central 4-tile lane mostly walkable and visually distinct.",
+    "blocker_rule": "Use buttresses, edges, water, and walls as collision boundaries."
+  },
+  "layers": [
+    "TerrainBase",
+    "FloorDetail",
+    "TerrainEdges",
+    "Traversal",
+    "WallsHigh",
+    "PropsStatic",
+    "PropsBlocking",
+    "WorldUI"
+  ],
+  "ops": [
+    {
+      "op": "fill_rect",
+      "asset": "sundered_water_dark_01",
+      "layer": "TerrainBase",
+      "rect": [
+        0,
+        0,
+        40,
+        48
+      ],
+      "note": "Base dark water/void."
+    },
+    {
+      "op": "scatter_rect",
+      "asset": "sundered_water_dark_ripple_01",
+      "layer": "TerrainBase",
+      "rect": [
+        0,
+        0,
+        40,
+        48
+      ],
+      "note": "Sparse water variation."
+    },
+    {
+      "op": "fill_rect",
+      "asset": "outer_landing_floor_center_01",
+      "layer": "FloorDetail",
+      "rect": [
+        11,
+        38,
+        18,
+        7
+      ]
+    },
+    {
+      "op": "scatter_rect",
+      "asset": "outer_landing_floor_dark_01",
+      "layer": "FloorDetail",
+      "rect": [
+        11,
+        38,
+        18,
+        7
+      ]
+    },
+    {
+      "op": "repeat_horizontal",
+      "asset": "outer_landing_edge_n_01",
+      "layer": "TerrainEdges",
+      "tile": [
+        11,
+        37
+      ],
+      "count": 6,
+      "step": [
+        3,
+        0
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "outer_landing_corner_nw_01",
+      "layer": "TerrainEdges",
+      "tile": [
+        9,
+        37
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "outer_landing_corner_ne_01",
+      "layer": "TerrainEdges",
+      "tile": [
+        29,
+        37
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "outer_landing_side_tower_w_01",
+      "layer": "WallsHigh",
+      "tile": [
+        10,
+        40
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "outer_landing_side_tower_e_01",
+      "layer": "WallsHigh",
+      "tile": [
+        28,
+        40
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "outer_landing_edge_w_01",
+      "layer": "TerrainEdges",
+      "tile": [
+        10,
+        40
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "outer_landing_edge_e_01",
+      "layer": "TerrainEdges",
+      "tile": [
+        30,
+        40
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "mooring_bollards_w_01",
+      "layer": "PropsStatic",
+      "tile": [
+        8,
+        40
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "mooring_bollards_e_01",
+      "layer": "PropsStatic",
+      "tile": [
+        31,
+        40
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "mooring_ring_w_01",
+      "layer": "PropsStatic",
+      "tile": [
+        17,
+        38
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "mooring_ring_e_01",
+      "layer": "PropsStatic",
+      "tile": [
+        22,
+        38
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "landing_grate_01",
+      "layer": "PropsStatic",
+      "tile": [
+        12,
+        42
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "landing_grate_alt_01",
+      "layer": "PropsStatic",
+      "tile": [
+        26,
+        42
+      ]
+    },
+    {
+      "op": "fill_rect",
+      "asset": "causeway_floor_center_01",
+      "layer": "FloorDetail",
+      "rect": [
+        18,
+        12,
+        4,
+        27
+      ]
+    },
+    {
+      "op": "scatter_rect",
+      "asset": "causeway_floor_center_worn_01",
+      "layer": "FloorDetail",
+      "rect": [
+        18,
+        12,
+        4,
+        27
+      ]
+    },
+    {
+      "op": "scatter_rect",
+      "asset": "causeway_floor_center_dark_01",
+      "layer": "FloorDetail",
+      "rect": [
+        18,
+        12,
+        4,
+        27
+      ]
+    },
+    {
+      "op": "scatter_rect",
+      "asset": "causeway_floor_cracked_01",
+      "layer": "FloorDetail",
+      "rect": [
+        18,
+        12,
+        4,
+        27
+      ]
+    },
+    {
+      "op": "repeat_vertical",
+      "asset": "causeway_edge_w_01",
+      "layer": "TerrainEdges",
+      "tile": [
+        17,
+        13
+      ],
+      "count": 12,
+      "step": [
+        0,
+        2
+      ]
+    },
+    {
+      "op": "repeat_vertical",
+      "asset": "causeway_edge_e_01",
+      "layer": "TerrainEdges",
+      "tile": [
+        22,
+        13
+      ],
+      "count": 12,
+      "step": [
+        0,
+        2
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "causeway_buttress_w_01",
+      "layer": "WallsHigh",
+      "tile": [
+        15,
+        15
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "causeway_buttress_e_01",
+      "layer": "WallsHigh",
+      "tile": [
+        23,
+        15
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "causeway_buttress_w_low_01",
+      "layer": "WallsHigh",
+      "tile": [
+        15,
+        24
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "causeway_buttress_e_low_01",
+      "layer": "WallsHigh",
+      "tile": [
+        23,
+        24
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "causeway_edge_w_broken_01",
+      "layer": "TerrainEdges",
+      "tile": [
+        17,
+        28
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "causeway_edge_e_broken_01",
+      "layer": "TerrainEdges",
+      "tile": [
+        22,
+        28
+      ]
+    },
+    {
+      "op": "fill_rect",
+      "asset": "gatehouse_threshold_floor_01",
+      "layer": "FloorDetail",
+      "rect": [
+        16,
+        10,
+        8,
+        3
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "gatehouse_steps_n_01",
+      "layer": "Traversal",
+      "tile": [
+        17,
+        9
+      ]
+    },
+    {
+      "op": "fill_rect",
+      "asset": "gatehouse_entry_floor_01",
+      "layer": "FloorDetail",
+      "rect": [
+        16,
+        6,
+        8,
+        4
+      ]
+    },
+    {
+      "op": "scatter_rect",
+      "asset": "forecourt_floor_center_01",
+      "layer": "FloorDetail",
+      "rect": [
+        7,
+        2,
+        26,
+        7
+      ]
+    },
+    {
+      "op": "scatter_rect",
+      "asset": "forecourt_floor_variant_01",
+      "layer": "FloorDetail",
+      "rect": [
+        7,
+        2,
+        26,
+        7
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "gatehouse_side_pillar_w_01",
+      "layer": "WallsHigh",
+      "tile": [
+        13,
+        8
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "gatehouse_side_pillar_e_01",
+      "layer": "WallsHigh",
+      "tile": [
+        25,
+        8
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "gatehouse_wall_face_01",
+      "layer": "WallsHigh",
+      "tile": [
+        12,
+        5
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "gatehouse_wall_face_alt_01",
+      "layer": "WallsHigh",
+      "tile": [
+        25,
+        5
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "gatehouse_wall_socket_01",
+      "layer": "WallsHigh",
+      "tile": [
+        16,
+        8
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "gatehouse_wall_socket_e_01",
+      "layer": "WallsHigh",
+      "tile": [
+        23,
+        8
+      ]
+    },
+    {
+      "op": "repeat_horizontal",
+      "asset": "rampart_crenellation_s_01",
+      "layer": "WallsHigh",
+      "tile": [
+        2,
+        4
+      ],
+      "count": 12,
+      "step": [
+        3,
+        0
+      ]
+    },
+    {
+      "op": "repeat_horizontal",
+      "asset": "rampart_wall_horizontal_01",
+      "layer": "WallsHigh",
+      "tile": [
+        2,
+        7
+      ],
+      "count": 12,
+      "step": [
+        3,
+        0
+      ]
+    },
+    {
+      "op": "repeat_horizontal",
+      "asset": "rampart_trim_underwall_01",
+      "layer": "TerrainEdges",
+      "tile": [
+        2,
+        10
+      ],
+      "count": 12,
+      "step": [
+        3,
+        0
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "rampart_corner_chunk_01",
+      "layer": "WallsHigh",
+      "tile": [
+        0,
+        3
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "gothic_torch_post_01",
+      "layer": "PropsStatic",
+      "tile": [
+        16,
+        5
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "gothic_torch_post_alt_01",
+      "layer": "PropsStatic",
+      "tile": [
+        24,
+        5
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "rubble_pile_01",
+      "layer": "PropsBlocking",
+      "tile": [
+        7,
+        6
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "rubble_pile_alt_01",
+      "layer": "PropsBlocking",
+      "tile": [
+        30,
+        6
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "metal_grate_floor_01",
+      "layer": "PropsStatic",
+      "tile": [
+        30,
+        2
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "sundered_water_marker_post_01",
+      "layer": "PropsStatic",
+      "tile": [
+        2,
+        17
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "sundered_water_marker_post_01",
+      "layer": "PropsStatic",
+      "tile": [
+        5,
+        23
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "sundered_water_marker_post_01",
+      "layer": "PropsStatic",
+      "tile": [
+        34,
+        17
+      ]
+    },
+    {
+      "op": "place",
+      "asset": "sundered_water_marker_post_01",
+      "layer": "PropsStatic",
+      "tile": [
+        31,
+        25
+      ]
+    }
+  ]
+}
