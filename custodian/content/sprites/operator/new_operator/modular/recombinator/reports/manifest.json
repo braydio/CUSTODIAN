@@ -2,7 +2,7 @@
   "schema": "custodian.operator_modular_combo_check.lower_upper_dirs.v4_action_fanout",
   "src": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular",
   "lower_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/lower",
-  "upper_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/upper",
+  "upper_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/fast_attack",
   "check_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/recombinator",
   "lower_domains": [
     "idle",
