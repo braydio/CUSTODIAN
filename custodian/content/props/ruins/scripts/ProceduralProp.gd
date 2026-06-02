@@ -319,6 +319,8 @@ func apply_depth_sort(player_feet_y: float) -> void:
 func resolve_depth_sort_z_index(player_feet_y: float) -> int:
 	if definition == null:
 		return 0
+	if not definition.depth_sort_enabled:
+		return z_index
 	if definition.portal_platform_enabled:
 		var platform_horizon_y := global_position.y + definition.portal_platform_top_offset.y
 		return definition.depth_sort_front_z_index if player_feet_y <= platform_horizon_y else definition.depth_sort_behind_z_index

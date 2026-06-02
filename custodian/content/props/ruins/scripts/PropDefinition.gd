@@ -41,9 +41,9 @@ class_name PropDefinition
 @export var collision_debug_outline_color: Color = Color(1.0, 0.85, 0.2, 0.9)
 @export var collision_debug_z_index: int = 99
 
-# Optional local depth sorting for tall props. The prop root z-index is flipped
-# around the player so the sprite can sit behind the operator when appropriate.
-@export var depth_sort_enabled: bool = false
+# Local depth sorting for prop roots. Individual definitions can tune the
+# baseline and z values, or opt out when a prop needs bespoke handling.
+@export var depth_sort_enabled: bool = true
 @export var depth_sort_base_y_offset: float = 0.0
 @export var depth_sort_behind_z_index: int = 1
 @export var depth_sort_front_z_index: int = 3
