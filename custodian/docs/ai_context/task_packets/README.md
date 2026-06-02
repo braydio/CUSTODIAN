@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-05-31
+Last updated: 2026-06-01
 
 Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
 
@@ -36,6 +36,8 @@ Completed packets are moved to `archived/`. They are preserved for historical re
 
 ### Recently Complete (awaiting archive)
 
+- `OPERATOR_MODULAR_LOWER_BODY_RUNTIME.md` — Added the modular operator runtime module builder/folder, generated lower-body locomotion modules, wired Fists movement defaults to module strips, corrected fast-strike east/west `96px` runtime slicing, and tracked missing modular source sheets.
+- `OPERATOR_MODULAR_FAST_ACTION_RUNTIME.md` — Created the dedicated operator action-runtime folder, generated modular-derived unarmed fast strike body/FX sheets, wired Fists fast attack through existing shared attack states, and tracked missing source art.
 - `CONTENT_DIRECTORY_STABILIZATION.md` — Documented content-root domains, added a duplicate/loose-file audit, moved the Road of Witnesses prototype map out of loose content root, moved remaining loose sprite/tile source files into owner folders, and cleared `content/unregistered/` by moving vault art into vault-owned source quarantine.
 - `SUNDERED_KEEP_PHASE_1.md` — Implemented the first Sundered Keep connected-map slice with generated runtime assets, Main Gate/Courtyard/Great Hall layout, traversal stubs, and contract-world entry gate.
 - `CHANGE_CONTROL_BUNDLE_SCRIPT.md` — Adds a change-control bundler that writes current git-changed files to `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the bundle to the clipboard when available.

@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-05-31
+Last updated: 2026-06-01
 
 ## Local Entry And Workflow
 
@@ -16,6 +16,7 @@ Last updated: 2026-05-31
 - `custodian/docs/ai_context/task_packets/AGENT_WORKFLOW_AUTOMATION.md` — completed packet for task-packet next steps, ownership rules, and automation backlog
 - `custodian/docs/ai_context/task_packets/VALIDATION_RECIPES.md` — completed packet for canonical validation recipes and prompt-template cleanup
 - `custodian/docs/ai_context/task_packets/GAME_OVER_FLOW.md` — active packet for the first runtime game-over UX slice, including modal display, stats snapshot, restart/menu behavior, and validation.
+- `custodian/docs/ai_context/task_packets/BLACK_RELIQUARY_UI.md` — completed packet for the Black Reliquary gothic/brass HUD component and Sundered Keep prompt integration slice.
 - `custodian/docs/ai_context/task_packets/archived/COMPOUND_ROOM_ASSEMBLY_CONTRACT.md` — completed packet for deterministic compound room graph, loader, and layout assembler contract hardening
 - `custodian/docs/ai_context/task_packets/archived/COMPOUND_ROOM_GRAPH_WALK_LAYOUT.md` — completed packet for the first graph-walk, door-aligned compound room layout pass
 - `custodian/docs/ai_context/task_packets/PORTAL_COLLISION_DEBUG_TUNING.md` — completed packet for visualizing portal prop collision and correcting portal-ring side blocker positions
@@ -30,6 +31,8 @@ Last updated: 2026-05-31
 - `custodian/docs/ai_context/task_packets/RESOURCE_ID_CANONICALIZATION.md` — completed packet for making CUSTODIAN-flavored resource IDs canonical across node drops, ledger storage, recipes, UI, and docs
 - `custodian/docs/ai_context/task_packets/ENEMY_GRUNT_RUNTIME_WIRING.md` — completed packet for verifying `enemy_grunt` asset usage and wiring it as a live wave-spawned enemy type
 - `custodian/docs/ai_context/task_packets/ENEMY_GRUNT_SPRITE_INGEST_2026_05_17.md` — completed packet for ingesting pending `enemy_grunt` sheets, fixing generated compatibility manifest layout, and expanding directional grunt playback
+- `custodian/docs/ai_context/task_packets/OPERATOR_MODULAR_FAST_ACTION_RUNTIME.md` — completed packet for the dedicated operator action-runtime folder and modular-derived unarmed fast strike wiring
+- `custodian/docs/ai_context/task_packets/OPERATOR_MODULAR_LOWER_BODY_RUNTIME.md` — packet for the modular operator lower-body runtime module folder, builder, default Fists movement wiring, and missing source-art tracking
 - `custodian/docs/ai_context/task_packets/archived/GOTHIC_COMPOUND_CONNECTED_MAP.md` — completed packet for the first connected gothic compound destination reachable from the generated main map
 - `custodian/docs/ai_context/task_packets/archived/GOTHIC_COMPOUND_PERIMETER_AND_READABILITY_PASS.md` — completed packet for the focused gothic compound perimeter, gate, plaza, decal, and exterior cluster readability pass
 - `custodian/docs/ai_context/task_packets/GOTHIC_COMPOUND_OCCLUSION_AND_SCALE.md` — completed packet for gothic compound player/building occlusion, larger map bounds, and service-path complexity
@@ -52,7 +55,8 @@ Last updated: 2026-05-31
 - `custodian/game/world/procgen/terrain/terrain_debug_overlay.gd` — optional debug draw helper that visualizes terrain height/traversal metadata from a TerrainBuilder result
 - `custodian/game/world/elevation/elevation_map.gd` — script-owned elevation metadata map for cell height, traversal type, ramp/stair direction, builder-result ingestion, serialization, spawn validity, and directional cardinal traversal checks
 - `custodian/game/world/procgen/portal_teleporter.gd` — Area2D trigger component used by procgen portal-ring props to teleport the player to their linked endpoint with a physics-frame cooldown, one runtime-built `PortalStateSprite` for idle/activation/arrival playback, delayed destination arrival playback, and a 2.5D stair/platform impostor for top-only portal access plus mirrored north-side dual approach when enabled
-- `custodian/game/world/procgen/gothic_compound/` — deterministic gothic compound blueprint generator modules: metadata asset definitions, legacy path registry, config, result, validator, generator, and Sprite2D adapter used by the connected-map prototype; current generation uses logical asset definitions, top-left anchoring, footprint-aware placement, render/depth metadata, player-relative large-structure depth sorting, wall/post/gatehouse perimeter grammar, keep-plaza exclusion, service paths, zone-specific decals/grates, clustered exterior scatter, and perimeter topology validation
+- `custodian/game/world/prop_operator_depth_sort.gd` — reusable authored-prop depth component that compares the operator Y position against a prop baseline and flips the prop between behind/in-front z indices without owning gameplay state
+- `custodian/game/world/procgen/gothic_compound/` — deterministic gothic compound blueprint generator modules: metadata asset definitions, legacy path registry, config, result, validator, generator, and Sprite2D adapter used by the connected-map prototype; current generation uses logical asset definitions, top-left anchoring, footprint-aware placement, render/depth metadata, operator-relative prop depth sorting, wall/post/gatehouse perimeter grammar, keep-plaza exclusion, service paths, zone-specific decals/grates, clustered exterior scatter, and perimeter topology validation
 - `custodian/game/world/gothic_compound/gothic_compound_map.gd` — authored connected gothic compound destination map that runs the larger gothic blueprint generator, exposes camera bounds, updates player-relative depth sorting, and places the return gate
 - `custodian/game/world/gothic_compound/gothic_compound_travel_gate.gd` — interactable gate used to enter the gothic compound from the main map and return from the compound to the main map
 - `custodian/game/world/sundered_keep/sundered_keep_map.gd` — authored connected Sundered Keep destination map that preserves Return Mooring, local `sundered_gate_key` pickup, openable/collision-gated Main Gate, openable Great Hall double door, camera bounds, debug state, return travel, and the local gate-open siege loop while building the active large front-gate layout from JSON level data
@@ -81,7 +85,7 @@ Last updated: 2026-05-31
 - `custodian/game/systems/core/systems/arrn/stabilization_task.gd` — tick-counted field relay stabilization task state
 - `custodian/game/systems/core/systems/arrn/knowledge_system.gd` — knowledge track constants and sync-gain calculation
 - `custodian/game/systems/core/systems/arrn/benefits_manager.gd` — ARRN knowledge-level benefit activation and labels
-- `custodian/game/systems/core/systems/contract_world_loader.gd` — contract-world handoff and placement bridge; repositions runtime anchors, places vehicles on generated road parking zones when available, places ARRN relays, instantiates connected gothic compound and Sundered Keep maps/gates, temporarily supports starting the Operator next to the Sundered Keep travel gate for review, generates scarce base-map tutorial resource nodes, and places the first far-field expedition-style resource patch after procgen world creation
+- `custodian/game/systems/core/systems/contract_world_loader.gd` — contract-world handoff and placement bridge; repositions runtime anchors, places vehicles on generated road parking zones when available, places ARRN relays, instantiates connected gothic compound and Sundered Keep maps/gates, places an optional spawn-adjacent Sundered Keep debug gateway, temporarily supports starting the Operator next to the Sundered Keep travel gate for review, generates scarce base-map tutorial resource nodes, and places the first far-field expedition-style resource patch after procgen world creation
 - `custodian/game/vehicles/vehicle_definition.gd` — vehicle archetype data loader, display-name generator, tag/mobility helpers, and core definition validation for registry-backed vehicles
 - `custodian/game/vehicles/vehicle_registry.gd` — registry store for `res://content/vehicles/vehicle_archetypes.json`, including ID lookup and faction/domain/chassis/role/tier/pilotable queries
 - `custodian/game/vehicles/vehicle_spawn_resolver.gd` — registry ID to live scene resolver; validates runtime support, instantiates scenes, applies definitions, and assigns vehicle groups
@@ -142,6 +146,14 @@ Last updated: 2026-05-31
 - `custodian/game/actors/items/cognitive_pickup.gd` — pickup flow that increments `InventoryManager`, applies `CognitiveState`, animates the 4-frame item sheet, and emits popup/log feedback
 - `custodian/game/actors/items/shrumb_dropper.gd` — reusable Forest Shrumb cognitive drop table component
 - `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, fabrication page rendering, page orchestration, and essentials-first HUD/debug visibility logic, including DevConsole debug commands such as `spawn_grunt`, `spawn_looter`, `vault_add`, `vault_status`, and `enemy_debug`
+- `custodian/game/ui/theme/black_reliquary_palette.gd` — shared Black Reliquary HUD palette constants.
+- `custodian/game/ui/theme/black_reliquary_styles.gd` — reusable Black Reliquary UI style helpers, NinePatch configuration, texture loading, and fallback panel styles.
+- `custodian/game/ui/theme/black_reliquary_asset_catalog.gd` — centralized `res://content/ui/black_reliquary/` asset paths for panels, icons, prompt plaques, minimap art, and markers.
+- `custodian/game/ui/components/black_reliquary_panel.tscn` and `.gd` — reusable NinePatch-backed dark/brass panel with StyleBox fallback.
+- `custodian/game/ui/components/black_reliquary_prompt.tscn` and `.gd` — styled interaction prompt plaque that renders title/body/key hint as Godot labels.
+- `custodian/game/ui/components/black_reliquary_icon_label.tscn` and `.gd` — reusable icon-only, label-only, or icon+label status row component.
+- `custodian/game/ui/components/black_reliquary_minimap_frame.tscn` and `.gd` — Black Reliquary tactical minimap plate with simplified marker placeholders.
+- `custodian/game/ui/hud/custodian_hud.tscn` and `.gd` — reusable Black Reliquary gameplay HUD shell currently instanced locally by Sundered Keep.
 - `custodian/game/ui/minimap/minimap_panel.tscn` — custom HUD tactical minimap panel instanced under `UI`
 - `custodian/game/ui/minimap/minimap_controller.gd` — discovers runtime procgen/player/enemy/objective nodes and feeds minimap data to the view
 - `custodian/game/ui/minimap/minimap_view.gd` — data-driven minimap renderer that caches procgen floor/wall terrain and draws tactical pips, including a distinct marker for enemies carrying stolen resources
@@ -187,7 +199,10 @@ Last updated: 2026-05-31
 - `custodian/tools/pipelines/generate_inbox_manifests.py` — deterministic inbox manifest generator that infers JSON sidecars from canonical filenames, image dimensions, flat item filenames, harvesting-node filenames, and hover buggy vehicle filenames, then runs the ingest pipeline
 - `custodian/tools/pipelines/aseprite_inbox.py` — staging helper that moves aseprite PNG exports into the sprite inbox, prompts for incomplete canonical filename blocks, and can chain manifest generation / ingest
 - `custodian/tools/pipelines/reload_assets.py` — direct operator curated-resource rebuild entrypoint
-- `custodian/tools/pipelines/update_operator_curated_resources.gd` — rebuilds operator runtime `SpriteFrames` from curated/source sheets
+- `custodian/tools/pipelines/update_operator_curated_resources.gd` — rebuilds operator runtime `SpriteFrames` from curated/source sheets, including modular-derived unarmed fast strike action sheets
+- `custodian/tools/pipelines/build_operator_modular_runtime.py` — builds stable runtime sheets from `content/sprites/operator/new_operator/modular/`, including lower-body locomotion modules and modular fast-action body/FX strips with fallback/canvas normalization
+- `custodian/content/sprites/operator/runtime/modules/new_operator/` — runtime home for new operator modular parts; current lower-body locomotion modules feed Fists idle/walk/run defaults while a future layered rig can consume the same module folder directly
+- `custodian/content/sprites/operator/runtime/actions/unarmed/fast_attack/` — runtime-dedicated action body/overlay strips generated from `new_operator/modular/fast_attack/` for `unarmed_fast_strike*` body and FX playback
 - `custodian/tools/pipelines/update_vehicle_runtime_resources.gd` — rebuilds hover buggy vehicle `SpriteFrames` from canonical runtime sheets with current hover buggy source/runtime fallbacks
 - `custodian/tools/validation/enemy_behavior_vault_smoke.gd` — targeted smoke check for vault storage resource removal/recovery, behavior profile defaults, and stolen-resource loot carrier drop behavior
 - `custodian/tools/validation/content_asset_audit.py` — read-only content-root audit for loose files, unregistered quarantine files, and exact duplicate groups
@@ -214,16 +229,19 @@ Last updated: 2026-05-31
 - `custodian/content/tiles/roads_paths/tools/normalize_road_pieces_game32.py` — pads raw road/path stamps to 32px game-grid canvases and emits separate road/path runtime manifests
 - `custodian/content/tiles/roads_paths/source/ancient_ruined_roads_and_paths.png` — source road/path sheet preserved as the visual source/reference for the runtime exports
 - `custodian/content/sundered_keep_manifest.game32.json` — master game32 manifest for the Sundered Keep asset set; indexes terrain, traversal, props, floors, gothic walls, great hall walls, and ramparts
-- `custodian/content/levels/sundered_keep/sundered_keep_front_gate_large.json` — data source for the active `112x80` Sundered Keep front-gate layout, including storm causeway, outer landing, Return Mooring/key alcoves, gatehouse, courtyard, service/rampart branches, Great Hall front, blockers, markers, and interactables
+- `custodian/content/levels/sundered_keep/sundered_keep_front_gate_large.json` — data source for the active `112x80` Sundered Keep front-gate layout, including widened/lengthened storm causeway substrate, directional causeway surface edge placement, outer landing, Return Mooring/key alcoves, gatehouse, courtyard, service/rampart branches, Great Hall front, blockers, markers, and interactables
 - `custodian/content/levels/sundered_keep/gatehouse_siege_config.json` — data source for the Sundered Keep gate-open siege loop, including objective HP/groups, repair interactables, spawn markers, deterministic wave composition, pressure cadence, and local defense turret tuning
+- `custodian/content/ui/black_reliquary/` — current gothic/brass HUD asset kit: panels, icons, markers, minimap frame/fill, prompt plaques, and dividers.
 - `custodian/content/levels/sundered_keep/sundered_keep_assets.json` — level-pack asset reference index for Sundered Keep tile/proxy asset IDs
 - `custodian/content/runtime/sundered_keep/sundered_keep_game32_assets.gd` — generated Sundered Keep runtime catalog used by `sundered_keep_map.gd` for terrain, traversal, and prop texture paths
 - `custodian/content/runtime/sundered_keep/` and `custodian/content/tiles/sundered_keep/` — runtime Sundered Keep game32 asset pack for terrain, traversal, props, floors, gothic walls, great hall walls, ramparts, and Return Mooring tile overlays
-- `custodian/content/tiles/sundered_keep/entrance/` — entrance/causeway runtime tiles, including walkable causeway floor/cracked floor, blocked broken-gap continuation, and directional/diagonal causeway edge overlays
+- `custodian/content/tiles/sundered_keep/entrance/` — entrance/causeway runtime tiles, including walkable causeway floor/cracked floor, blocked broken-gap continuation, and entrance/gatehouse overlays
+- `custodian/content/tiles/sundered_keep/entrance/causeway_surfaces/` — stable runtime home for `32x32` directional walkable causeway surface/edge tiles extracted from the causeway master sheet and used by `sundered_keep_front_gate_large.json`
 - `custodian/content/tiles/sundered_keep/return_mooring/` — Return Mooring runtime floor ring/corner/center tiles plus glow, active, and prompt overlays
 - `custodian/content/props/sundered_keep/return_mooring/` — Return Mooring beacon and ruined console prop PNGs plus game32 sidecars
 - `custodian/content/runtime/sundered_keep/return_mooring/return_mooring_module.game32.json` and `custodian/content/metadata/game32/return_mooring.game32.json` — Return Mooring module and metadata manifests referenced by the Sundered Keep asset set
 - `custodian/tools/validation/sundered_keep_asset_smoke.gd` — validates Sundered Keep map Sprite2D textures resolve to live assets
+- `custodian/tools/validation/black_reliquary_ui_smoke.gd` — validates required Black Reliquary UI assets plus reusable HUD/component scene loading.
 - `custodian/tools/validation/sundered_keep_layout_smoke.gd` — validates the Sundered Keep Return Mooring, key, portcullis, Great Hall door, blockers, and texture basics
 - `custodian/tools/validation/sundered_keep_large_layout_smoke.gd` — validates the large JSON layout source, minimum map size, pre-gate reachability, closed-gate route blocking, post-key gate opening, gate-open siege activation, objective damage/repair, defense turret creation, Great Hall door opening, and missing asset count
 - `custodian/content/tiles/interiors/runtime/` — runtime-ready `32x32` constructed-interior floor and military wall tiles registered into procgen source lists by naming convention

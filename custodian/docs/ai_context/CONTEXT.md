@@ -22,6 +22,7 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 - Main scene: `res://scenes/game.tscn`
 - Runtime authority: Godot only
 - Active command shell: HUD terminal in `custodian/game/ui/hud/ui.gd`, with terminal helper modules under `custodian/game/ui/terminal/`
+- Current gameplay HUD style: Black Reliquary gothic/brass UI. Assets live in `custodian/content/ui/black_reliquary/`; reusable theme/components/HUD scenes live under `custodian/game/ui/`. Prompt text must be real Godot labels, not baked into images.
 - Contract/runtime coupling: contract planet generation feeds procgen world generation through a shared world profile
 - Input prompts: interaction UI should derive from `InputMap`, not hardcoded keys
 - Operator combat selection: Fists/unarmed is a first-class `OperatorWeaponDefinition` profile selected with `toggle_unarmed`; normal weapon cycling excludes Fists and only cycles armed profiles. Melee attack physics resolve through `MeleeAttackProfile` resources referenced by each weapon definition, with legacy operator melee exports kept only as fallbacks.
@@ -37,6 +38,7 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 - Simulation layer: deterministic Godot runtime systems
 - Cognitive layer: autoloaded inventory ledger and cognitive state values expose drop/combat modifier getters, with only pickup/drop feedback wired in v1
 - UI layer: HUD + command terminal pages/widgets; terminal command, snapshot, map preview, and planet preview helpers live under `game/ui/terminal/`
+- Black Reliquary UI layer: `game/ui/theme/` centralizes palette/styles/assets, `game/ui/components/` owns reusable panels/prompts/minimap/icon labels, and `game/ui/hud/custodian_hud.tscn` is the first local gameplay HUD shell used by Sundered Keep.
 - Actor layer: operator, enemies, structures, defenses, ambient entities
 
 ## Working Rules
@@ -58,8 +60,9 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 3. Deepen terminal pages with richer live runtime data and interactions.
 4. Preserve and extend planet-to-runtime world coupling as procgen evolves.
 5. Continue Sundered Keep follow-up with encounter composition, save/load persistence for gate/key state, and eventual TileSet/TileMapLayer authoring if the JSON-driven Sprite2D authored map becomes hard to maintain.
-6. Wire true Forest Shrumbs into the intended spawning/procgen path and decide which cognitive readout belongs in HUD/debug.
-7. Author ruin prop slices, overlay/rubble assets, and `PropDefinition` resources for the procedural prop system.
+6. Keep Sundered Keep prompts and normal-play status surfaces on the Black Reliquary HUD API; avoid reintroducing giant debug labels during normal gameplay.
+7. Wire true Forest Shrumbs into the intended spawning/procgen path and decide which cognitive readout belongs in HUD/debug.
+8. Author ruin prop slices, overlay/rubble assets, and `PropDefinition` resources for the procedural prop system.
 
 ## Update Expectation
 
