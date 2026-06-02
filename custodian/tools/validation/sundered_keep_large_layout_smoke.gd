@@ -31,8 +31,14 @@ func _init() -> void:
 
 	var floors := _collect_walkable_floor_tiles(map)
 	_assert(floors.has(Vector2i(56, 76)), "spawn tile is not walkable")
+	_assert(floors.has(Vector2i(48, 76)), "widened west causeway edge is not walkable")
+	_assert(floors.has(Vector2i(64, 76)), "widened east causeway edge is not walkable")
+	_assert(floors.has(Vector2i(52, 49)), "lengthened upper causeway west edge is not walkable")
+	_assert(floors.has(Vector2i(60, 49)), "lengthened upper causeway east edge is not walkable")
 	_assert(floors.has(Vector2i(41, 58)), "return mooring center is not walkable")
 	_assert(floors.has(Vector2i(73, 56)), "key/winch tile is not walkable")
+	var causeway_surface_count := _count_sprites_with_prefix(map, "FloorDetail", "entrance_causeway_surface_")
+	_assert(causeway_surface_count >= 70, "directional causeway surface edge tiles were not placed; count=%d" % causeway_surface_count)
 
 	_assert(not _has_blocker_covering_tile(map, Vector2i(56, 76)), "spawn tile is blocked")
 	_assert(_reachable(map, floors, Vector2i(56, 76), Vector2i(41, 58)), "return mooring is not reachable before gate opens")
@@ -144,6 +150,23 @@ func _collect_missing_sprite_textures(node: Node, path := "") -> Array[String]:
 	for child in node.get_children():
 		missing.append_array(_collect_missing_sprite_textures(child, current_path))
 	return missing
+
+
+func _count_sprites_with_prefix(map: Node, layer_name: String, prefix: String) -> int:
+	var layer := map.get_node_or_null(layer_name)
+	if layer == null:
+		return 0
+	var count := 0
+	for child in layer.get_children():
+		if not (child is Sprite2D):
+			continue
+		var sprite := child as Sprite2D
+		if sprite.name.contains(prefix):
+			count += 1
+			continue
+		if sprite.texture != null and sprite.texture.resource_path.contains(prefix):
+			count += 1
+	return count
 
 
 func _has_blocker_covering_tile(map: Node, tile: Vector2i) -> bool:

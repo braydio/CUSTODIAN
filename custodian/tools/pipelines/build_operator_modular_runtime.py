@@ -1,0 +1,302 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import re
+from dataclasses import dataclass
+from pathlib import Path
+from shutil import copy2
+
+from PIL import Image
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+SOURCE_ROOT = PROJECT_ROOT / "content/sprites/operator/new_operator/modular"
+RUNTIME_ROOT = PROJECT_ROOT / "content/sprites/operator/runtime"
+MODULE_ROOT = RUNTIME_ROOT / "modules/new_operator"
+ACTION_ROOT = RUNTIME_ROOT / "actions/unarmed/fast_attack"
+
+DIRECTIONS = ("s", "se", "e", "ne", "n", "nw", "w", "sw")
+DIRECTION_TO_SUFFIX = {
+    "s": "down",
+    "se": "down_right",
+    "e": "right",
+    "ne": "up_right",
+    "n": "up",
+    "nw": "up_left",
+    "w": "left",
+    "sw": "down_left",
+}
+
+
+@dataclass(frozen=True)
+class SheetSpec:
+    path: Path
+    frames: int
+    direction: str
+    frame_width: int
+    frame_height: int
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Build stable runtime assets from modular operator source sheets.")
+    parser.add_argument("--source-root", type=Path, default=SOURCE_ROOT)
+    parser.add_argument("--module-root", type=Path, default=MODULE_ROOT)
+    parser.add_argument("--action-root", type=Path, default=ACTION_ROOT)
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+
+    source_root = args.source_root
+    module_root = args.module_root
+    action_root = args.action_root
+
+    if not source_root.exists():
+        raise SystemExit(f"missing source root: {source_root}")
+
+    generated: list[Path] = []
+    generated.extend(_build_lower_body_modules(source_root, module_root, args.dry_run))
+    generated.extend(_build_fast_attack_runtime(source_root, action_root, args.dry_run))
+
+    for path in generated:
+        print(path.relative_to(PROJECT_ROOT))
+    print(f"built {len(generated)} modular operator runtime sheets")
+    return 0
+
+
+def _build_lower_body_modules(source_root: Path, module_root: Path, dry_run: bool) -> list[Path]:
+    generated: list[Path] = []
+    lower_root = module_root / "lower_body"
+
+    for direction in DIRECTIONS:
+        generated.extend(
+            _copy_lower_module(
+                source_root,
+                lower_root,
+                canonical_action="run_01",
+                direction=direction,
+                output_group="locomotion/run_01",
+                fallbacks=("action_01",),
+                dry_run=dry_run,
+            )
+        )
+        generated.extend(
+            _copy_lower_module(
+                source_root,
+                lower_root,
+                canonical_action="walk_01",
+                direction=direction,
+                output_group="locomotion/walk_01",
+                fallbacks=("action_01", "run_01"),
+                dry_run=dry_run,
+            )
+        )
+        generated.extend(
+            _copy_lower_module(
+                source_root,
+                lower_root,
+                canonical_action="idle_01",
+                direction=direction,
+                output_group="locomotion/idle_01",
+                fallbacks=("action_01", "run_01"),
+                dry_run=dry_run,
+            )
+        )
+
+    return generated
+
+
+def _copy_lower_module(
+    source_root: Path,
+    lower_root: Path,
+    canonical_action: str,
+    direction: str,
+    output_group: str,
+    fallbacks: tuple[str, ...],
+    dry_run: bool,
+) -> list[Path]:
+    source_spec = _resolve_lower_source(source_root, canonical_action, direction, fallbacks)
+    if source_spec is None:
+        return []
+
+    output_name = f"operator__modular_lower_body__unarmed__{canonical_action}__{direction}__{source_spec.frames}f__96.png"
+    output_path = lower_root / output_group / output_name
+    if dry_run:
+        return [output_path]
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    _write_or_copy_sheet(source_spec.path, output_path, source_spec.frames, target_frame_width=96, target_frame_height=96)
+    return [output_path]
+
+
+def _resolve_lower_source(
+    source_root: Path,
+    action: str,
+    direction: str,
+    fallbacks: tuple[str, ...],
+) -> SheetSpec | None:
+    if action == "idle_01":
+        south_idle = source_root / "idle/operator__modular_lower_body__idle__s__5f__96.png"
+        if direction == "s" and south_idle.exists():
+            return _sheet_spec_from_path(south_idle, direction)
+
+    search_actions = (action, *fallbacks)
+    search_dirs = (
+        source_root / "lower",
+        source_root / action.replace("_01", ""),
+        source_root / "run",
+        source_root / "walk",
+        source_root / "fast_attack",
+    )
+    for search_action in search_actions:
+        for directory in search_dirs:
+            pattern = f"operator__modular_lower_body*__{search_action}__{direction}__*f__96.png"
+            matches = sorted(directory.glob(pattern)) if directory.exists() else []
+            if matches:
+                return _sheet_spec_from_path(matches[0], direction)
+    return None
+
+
+def _build_fast_attack_runtime(source_root: Path, action_root: Path, dry_run: bool) -> list[Path]:
+    generated: list[Path] = []
+    fast_root = source_root / "fast_attack"
+    for direction in DIRECTIONS:
+        upper = _find_part(fast_root, "upper_body", "fast_strike_01", direction)
+        lower = _find_part(fast_root, "lower_body", "fast_strike_01", direction)
+        if lower is None:
+            lower = _find_part(fast_root, "lower_body", "fast_windup_01", direction)
+        if upper is not None and lower is not None:
+            output = action_root / "body" / f"operator__body__unarmed__fast_strike_01__{direction}__3f__96.png"
+            if not dry_run:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                _composite_horizontal_strips(lower, upper, output, frames=3, target_frame_width=96, target_frame_height=96)
+            generated.append(output)
+
+        windup_upper = _find_part(fast_root, "upper_body", "fast_windup_01", direction)
+        windup_lower = _find_part(fast_root, "lower_body", "fast_windup_01", direction)
+        if windup_upper is not None and windup_lower is not None:
+            output = action_root / "body" / f"operator__body__unarmed__fast_windup_01__{direction}__3f__96.png"
+            if not dry_run:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                _composite_horizontal_strips(
+                    windup_lower, windup_upper, output, frames=3, target_frame_width=96, target_frame_height=96
+                )
+            generated.append(output)
+
+        fx = _find_part(fast_root, "upper_fx", "fast_strike_01", direction)
+        if fx is not None:
+            output = action_root / "overlay" / f"operator__fx__unarmed__fast_strike_01__{direction}__3f__96.png"
+            if not dry_run:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                _write_or_copy_sheet(fx, output, frames=3, target_frame_width=96, target_frame_height=96)
+            generated.append(output)
+    return generated
+
+
+def _find_part(root: Path, part: str, action: str, direction: str) -> Path | None:
+    matches = sorted(root.glob(f"operator__modular_{part}__unarmed__{action}__{direction}__*f__96.png"))
+    return matches[0] if matches else None
+
+
+def _sheet_spec_from_path(path: Path, direction: str) -> SheetSpec:
+    match = re.search(r"__(\d+)f__96\.png$", path.name)
+    if match is None:
+        raise ValueError(f"cannot parse frame count from {path}")
+    frames = int(match.group(1))
+    with Image.open(path) as image:
+        frame_width = image.width // frames
+        frame_height = image.height
+    return SheetSpec(path=path, frames=frames, direction=direction, frame_width=frame_width, frame_height=frame_height)
+
+
+def _write_or_copy_sheet(
+    source: Path,
+    output: Path,
+    frames: int,
+    target_frame_width: int,
+    target_frame_height: int,
+) -> None:
+    with Image.open(source) as image:
+        image = image.convert("RGBA")
+        source_frame_width = image.width // frames
+        source_frame_height = image.height
+        if source_frame_width == target_frame_width and source_frame_height == target_frame_height:
+            copy2(source, output)
+            return
+
+        result = Image.new("RGBA", (target_frame_width * frames, target_frame_height), (0, 0, 0, 0))
+        for frame_index in range(frames):
+            frame = image.crop(
+                (
+                    frame_index * source_frame_width,
+                    0,
+                    (frame_index + 1) * source_frame_width,
+                    source_frame_height,
+                )
+            )
+            frame = _fit_frame_to_canvas(frame, target_frame_width, target_frame_height)
+            result.alpha_composite(frame, (frame_index * target_frame_width, 0))
+        result.save(output)
+
+
+def _composite_horizontal_strips(
+    lower: Path,
+    upper: Path,
+    output: Path,
+    frames: int,
+    target_frame_width: int,
+    target_frame_height: int,
+) -> None:
+    with Image.open(lower) as lower_image, Image.open(upper) as upper_image:
+        lower_image = lower_image.convert("RGBA")
+        upper_image = upper_image.convert("RGBA")
+        lower_frame_width = lower_image.width // frames
+        upper_frame_width = upper_image.width // frames
+        result = Image.new("RGBA", (target_frame_width * frames, target_frame_height), (0, 0, 0, 0))
+
+        for frame_index in range(frames):
+            lower_frame = lower_image.crop(
+                (
+                    frame_index * lower_frame_width,
+                    0,
+                    (frame_index + 1) * lower_frame_width,
+                    lower_image.height,
+                )
+            )
+            upper_frame = upper_image.crop(
+                (
+                    frame_index * upper_frame_width,
+                    0,
+                    (frame_index + 1) * upper_frame_width,
+                    upper_image.height,
+                )
+            )
+            composed = Image.new("RGBA", (target_frame_width, target_frame_height), (0, 0, 0, 0))
+            composed.alpha_composite(_fit_frame_to_canvas(lower_frame, target_frame_width, target_frame_height))
+            composed.alpha_composite(_fit_frame_to_canvas(upper_frame, target_frame_width, target_frame_height))
+            result.alpha_composite(composed, (frame_index * target_frame_width, 0))
+
+        result.save(output)
+
+
+def _fit_frame_to_canvas(frame: Image.Image, target_width: int, target_height: int) -> Image.Image:
+    frame = frame.convert("RGBA")
+    if frame.width == target_width and frame.height == target_height:
+        return frame
+
+    bbox = frame.getbbox()
+    if bbox is None:
+        return Image.new("RGBA", (target_width, target_height), (0, 0, 0, 0))
+
+    if frame.width > target_width or frame.height > target_height:
+        left = max(0, min(frame.width - target_width, (bbox[0] + bbox[2] - target_width) // 2))
+        top = max(0, min(frame.height - target_height, (bbox[1] + bbox[3] - target_height) // 2))
+        frame = frame.crop((left, top, left + target_width, top + target_height))
+    else:
+        canvas = Image.new("RGBA", (target_width, target_height), (0, 0, 0, 0))
+        canvas.alpha_composite(frame, ((target_width - frame.width) // 2, (target_height - frame.height) // 2))
+        frame = canvas
+    return frame
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

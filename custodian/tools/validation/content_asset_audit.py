@@ -45,6 +45,11 @@ INTENTIONAL_DUPLICATE_MARKERS = (
     "/masters/",
     "/reference/",
     "/source/",
+    "/sprites/operator/new_operator/modular/lower/",
+    "/sprites/operator/new_operator/modular/png/",
+    "/sprites/operator/new_operator/modular/recombinator/",
+    "/sprites/operator/new_operator/modular/run/",
+    "/sprites/operator/runtime/modules/new_operator/",
 )
 
 LOOSE_DOMAIN_DIRS = {
