@@ -1,0 +1,200 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://game/ui/hud/custodian_hud.gd" id="1_hud"]
+[ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_panel.tscn" id="2_panel"]
+[ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_prompt.tscn" id="3_prompt"]
+[ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_minimap_frame.tscn" id="4_minimap"]
+[ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_icon_label.tscn" id="5_icon_label"]
+
+[node name="CustodianHUD" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_hud")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TopLeftPanel" parent="Root" instance=ExtResource("2_panel")]
+custom_minimum_size = Vector2(308, 126)
+layout_mode = 1
+anchors_preset = 0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 326.0
+offset_bottom = 144.0
+
+[node name="Margin" type="MarginContainer" parent="Root/TopLeftPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 16
+
+[node name="Content" type="VBoxContainer" parent="Root/TopLeftPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LocationTitle" type="Label" parent="Root/TopLeftPanel/Margin/Content"]
+layout_mode = 2
+text = "Location: SUNDERED KEEP"
+
+[node name="PhaseLabel" type="Label" parent="Root/TopLeftPanel/Margin/Content"]
+layout_mode = 2
+text = "Phase: FREE ROAM PREP"
+
+[node name="ObjectiveSummary" type="Label" parent="Root/TopLeftPanel/Margin/Content"]
+layout_mode = 2
+text = "Objective: Open the main gate"
+autowrap_mode = 3
+
+[node name="TopCenterVitals" parent="Root" instance=ExtResource("2_panel")]
+custom_minimum_size = Vector2(270, 92)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -135.0
+offset_top = 18.0
+offset_right = 135.0
+offset_bottom = 110.0
+grow_horizontal = 2
+
+[node name="Margin" type="MarginContainer" parent="Root/TopCenterVitals"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="Root/TopCenterVitals/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="HealthLabel" type="Label" parent="Root/TopCenterVitals/Margin/Content"]
+layout_mode = 2
+text = "HEALTH 100/100"
+
+[node name="HealthBar" type="ProgressBar" parent="Root/TopCenterVitals/Margin/Content"]
+custom_minimum_size = Vector2(220, 12)
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="StaminaLabel" type="Label" parent="Root/TopCenterVitals/Margin/Content"]
+layout_mode = 2
+text = "STAMINA: READY"
+
+[node name="TopRightPanel" parent="Root" instance=ExtResource("2_panel")]
+custom_minimum_size = Vector2(250, 274)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -272.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = 292.0
+grow_horizontal = 0
+
+[node name="Margin" type="MarginContainer" parent="Root/TopRightPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="BlackReliquaryMinimapFrame" parent="Root/TopRightPanel/Margin" instance=ExtResource("4_minimap")]
+layout_mode = 2
+
+[node name="BottomLeftPrompt" type="Control" parent="Root"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -138.0
+offset_right = 420.0
+offset_bottom = -28.0
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="BlackReliquaryPrompt" parent="Root/BottomLeftPrompt" instance=ExtResource("3_prompt")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BottomRightStatus" parent="Root" instance=ExtResource("2_panel")]
+custom_minimum_size = Vector2(330, 126)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -350.0
+offset_top = -150.0
+offset_right = -18.0
+offset_bottom = -28.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Margin" type="MarginContainer" parent="Root/BottomRightStatus"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="Root/BottomRightStatus/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="KeyItemStatus" parent="Root/BottomRightStatus/Margin/Content" instance=ExtResource("5_icon_label")]
+layout_mode = 2
+
+[node name="GateStatus" parent="Root/BottomRightStatus/Margin/Content" instance=ExtResource("5_icon_label")]
+layout_mode = 2
+
+[node name="ReturnMooringStatus" parent="Root/BottomRightStatus/Margin/Content" instance=ExtResource("5_icon_label")]
+layout_mode = 2
+
+[node name="DebugOverlay" type="Panel" parent="Root"]
+custom_minimum_size = Vector2(320, 120)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -60.0
+offset_right = 160.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="Root/DebugOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="DebugLabel" type="Label" parent="Root/DebugOverlay/Margin"]
+layout_mode = 2
+text = "DEBUG"
+autowrap_mode = 3

@@ -24,6 +24,7 @@ class_name ContractWorldLoader
 @export var place_expedition_resource_nodes_from_contract: bool = true
 @export var place_gothic_compound_connection: bool = true
 @export var place_sundered_keep_connection: bool = true
+@export var place_debug_sundered_keep_gateway: bool = true
 @export var debug_start_near_sundered_keep_entrance: bool = true
 @export var debug_sundered_keep_start_offset: Vector2 = Vector2(48.0, 0.0)
 @export_range(0, 7, 1) var tutorial_resource_node_count: int = 3
@@ -897,10 +898,34 @@ func _place_sundered_keep_connection(level_data: Dictionary, map_instance: Node)
 	main_gate.global_position = main_gate_position
 	world.add_child(main_gate)
 
+	if place_debug_sundered_keep_gateway:
+		_place_debug_sundered_keep_gateway(world, keep_map, level_data, map_instance, main_gate_tile)
+
 	if debug_start_near_sundered_keep_entrance:
 		var operator := get_node_or_null(operator_path) as Node2D
 		if operator != null:
 			operator.global_position = main_gate.global_position + debug_sundered_keep_start_offset
+
+
+func _place_debug_sundered_keep_gateway(
+	world: Node2D,
+	keep_map: Node2D,
+	level_data: Dictionary,
+	map_instance: Node,
+	fallback_gate_tile: Vector2i
+) -> void:
+	var debug_tile := _pick_sundered_keep_debug_gateway_tile(level_data, map_instance, fallback_gate_tile)
+	if debug_tile == Vector2i.ZERO:
+		return
+
+	var debug_gate := GOTHIC_COMPOUND_TRAVEL_GATE_SCRIPT.new() as Node2D
+	if debug_gate == null:
+		return
+	debug_gate.name = "DebugSunderedKeepTravelGate"
+	debug_gate.add_to_group("generated_sundered_keep_connection")
+	debug_gate.call("configure", keep_map, 0, "DEBUG: ENTER SUNDERED KEEP")
+	debug_gate.global_position = _tile_to_world(map_instance, debug_tile)
+	world.add_child(debug_gate)
 
 
 func _pick_gothic_compound_gate_tile(level_data: Dictionary, map_instance: Node) -> Vector2i:
@@ -956,6 +981,24 @@ func _pick_sundered_keep_gate_tile(level_data: Dictionary, map_instance: Node) -
 				return candidate
 		return spawn_tile
 	return Vector2i.ZERO
+
+
+func _pick_sundered_keep_debug_gateway_tile(level_data: Dictionary, map_instance: Node, fallback_gate_tile: Vector2i) -> Vector2i:
+	var player_spawn: Variant = level_data.get("player_spawn")
+	if player_spawn is Vector2i:
+		var spawn_tile := player_spawn as Vector2i
+		for offset in [Vector2i(3, 0), Vector2i(-3, 0), Vector2i(0, 3), Vector2i(0, -3), Vector2i(5, 2), Vector2i(-5, 2)]:
+			var candidate: Vector2i = spawn_tile + offset
+			if _is_walkable_floor_tile(map_instance, candidate):
+				return candidate
+		if _is_walkable_floor_tile(map_instance, spawn_tile):
+			return spawn_tile
+
+	for offset in [Vector2i(2, 2), Vector2i(-2, 2), Vector2i(2, -2), Vector2i(-2, -2), Vector2i(4, 0), Vector2i(-4, 0)]:
+		var fallback_candidate: Vector2i = fallback_gate_tile + offset
+		if _is_walkable_floor_tile(map_instance, fallback_candidate):
+			return fallback_candidate
+	return fallback_gate_tile
 
 
 func _get_gothic_compound_world_offset(level_data: Dictionary, map_instance: Node) -> Vector2:

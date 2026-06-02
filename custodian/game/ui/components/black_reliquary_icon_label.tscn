@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/ui/components/black_reliquary_icon_label.gd" id="1_icon_label"]
+
+[node name="BlackReliquaryIconLabel" type="HBoxContainer"]
+custom_minimum_size = Vector2(96, 32)
+theme_override_constants/separation = 8
+script = ExtResource("1_icon_label")
+
+[node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+stretch_mode = 5
+expand_mode = 1
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+vertical_alignment = 1
