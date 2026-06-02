@@ -1,16 +1,33 @@
 #!/usr/bin/env python3
 """
-Review modular upper/lower operator animation pairs.
+Review modular upper/lower/fx operator animation pairs.
+
+Generates composited previews of modular body parts (upper + lower)
+and FX overlays (upper body + FX effects).
+
+Supports two naming conventions:
+  Legacy: operator__body__modular__lower__run_01__e__5f__96.png
+          operator__body__modular__upper__run_01__e__5f__96.png
+  Modern: operator__modular_upper_body__unarmed__fast_windup_01__e__3f__96.png
+          operator__modular_lower_body__unarmed__fast_windup_01__e__3f__96.png
+          operator__modular_upper_fx__unarmed__fast_strike_01__e__3f__96.png
 
 Example:
+  # Legacy runtime modular
   python tools/review_modular_body_pairs.py \
     --root custodian/content/sprites/operator/runtime/modular \
     --out .ai/modular_body_review \
     --open
 
-Works with names like:
-  operator__body__modular__lower__run_01__e__5f__96.png
-  operator__body__modular__upper__run_01__e__5f__96.png
+  # Fast attack suite with FX
+  python tools/review_modular_body_pairs.py \
+    --root custodian/content/sprites/operator/new_operator/modular/fast_attack \
+    --out .ai/fast_attack_fx_review \
+    --open
+
+  # Exclude FX pairing (body pairs only)
+  python tools/review_modular_body_pairs.py \
+    --root path/to/dir --out .ai/review --no-fx
 """
 
 from __future__ import annotations
@@ -27,8 +44,23 @@ from typing import Dict, List, Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
 
-PART_RE = re.compile(r"__(upper|lower)__")
-META_RE = re.compile(r"__(?P<frames>\d+)f__(?P<frame_w>\d+)\.png$", re.IGNORECASE)
+# Matches modern naming: __modular_upper_body__, __modular_lower_body__, __modular_upper_fx__
+# Also matches legacy naming: __upper__, __lower__
+PART_RE = re.compile(
+    r"__("
+    r"modular_upper_body|modular_lower_body|modular_upper_fx|"
+    r"upper|lower"
+    r")__"
+)
+# Map raw part name -> simplified tag
+PART_TAG = {
+    "modular_upper_body": "upper",
+    "modular_lower_body": "lower",
+    "modular_upper_fx": "fx",
+    "upper": "upper",
+    "lower": "lower",
+}
+META_RE = re.compile(r"__(?P<frames>\d+)f(?:__?(?P<frame_w>\d+))?\.png$", re.IGNORECASE)
 
 
 def parse_args() -> argparse.Namespace:
@@ -45,7 +77,7 @@ def parse_args() -> argparse.Namespace:
         "--frame-width",
         type=int,
         default=None,
-        help="Fallback frame width if filename lacks __5f__96.",
+        help="Fallback frame width if filename lacks __Nf__W metadata.",
     )
     p.add_argument(
         "--open", action="store_true", help="Open generated index.html with xdg-open."
@@ -57,6 +89,13 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--upper-offset-y", type=int, default=0)
     p.add_argument("--lower-offset-x", type=int, default=0)
     p.add_argument("--lower-offset-y", type=int, default=0)
+    p.add_argument("--fx-offset-x", type=int, default=0)
+    p.add_argument("--fx-offset-y", type=int, default=0)
+    p.add_argument(
+        "--no-fx",
+        action="store_true",
+        help="Skip FX pair generation (body upper+lower only).",
+    )
     return p.parse_args()
 
 
@@ -69,10 +108,14 @@ def rel(path: Path, base: Path) -> str:
 
 def part_for_name(path: Path) -> Optional[str]:
     m = PART_RE.search(path.name)
-    return m.group(1) if m else None
+    if not m:
+        return None
+    raw = m.group(1)
+    return PART_TAG.get(raw, raw)
 
 
 def key_for_name(path: Path) -> str:
+    """Normalize filename to a grouping key by replacing the body-part tag with __PART__."""
     return PART_RE.sub("__PART__", path.name)
 
 
@@ -94,7 +137,21 @@ def parse_sheet_meta(
 
     if m:
         frames = int(m.group("frames"))
-        frame_w = int(m.group("frame_w"))
+        frame_w_str = m.group("frame_w")
+        if frame_w_str is not None:
+            frame_w = int(frame_w_str)
+        elif fallback_frame_w is not None:
+            frame_w = fallback_frame_w
+            warnings.append(
+                f"{path.name}: has frame count but no width metadata; "
+                f"using fallback frame width {frame_w}."
+            )
+        else:
+            frame_w = img.width // frames
+            warnings.append(
+                f"{path.name}: no width metadata and no --frame-width; "
+                f"inferred {frame_w}px per frame from {img.width}px / {frames} frames."
+            )
     elif fallback_frame_w:
         frame_w = fallback_frame_w
         frames = img.width // frame_w
@@ -112,13 +169,13 @@ def parse_sheet_meta(
         )
 
     expected_w = frames * frame_w
-    if img.width != expected_w:
+    if img.width < expected_w:
         inferred = img.width // frame_w
         warnings.append(
-            f"{path.name}: width {img.width} != {frames} * {frame_w} ({expected_w}); "
-            f"using min declared/inferred frames."
+            f"{path.name}: width {img.width} < {frames} * {frame_w} ({expected_w}); "
+            f"using inferred frames={inferred}."
         )
-        frames = min(frames, inferred)
+        frames = inferred
 
     return frames, frame_w, warnings
 
@@ -187,6 +244,7 @@ def composite_pair(
     upper_path: Path,
     args: argparse.Namespace,
 ) -> Tuple[Image.Image, List[Image.Image], Dict]:
+    """Composite lower + upper body into a combined character sheet."""
     warnings: List[str] = []
 
     lower = Image.open(lower_path).convert("RGBA")
@@ -234,6 +292,69 @@ def composite_pair(
         "frame_height": canvas_h,
         "lower_source_frame_width": lower_fw,
         "upper_source_frame_width": upper_fw,
+        "pair_type": "body",
+        "warnings": warnings,
+    }
+
+    return combined_strip, combined_frames, meta
+
+
+def composite_fx_pair(
+    body_path: Path,
+    fx_path: Path,
+    args: argparse.Namespace,
+) -> Tuple[Image.Image, List[Image.Image], Dict]:
+    """Composite upper body + upper FX effects into an FX overlay sheet."""
+    warnings: List[str] = []
+
+    body_img = Image.open(body_path).convert("RGBA")
+    fx_img = Image.open(fx_path).convert("RGBA")
+
+    body_frames, body_fw, w1 = parse_sheet_meta(body_path, body_img, args.frame_width)
+    fx_frames, fx_fw, w2 = parse_sheet_meta(fx_path, fx_img, args.frame_width)
+    warnings.extend(w1)
+    warnings.extend(w2)
+
+    frame_count = min(body_frames, fx_frames)
+    if body_frames != fx_frames:
+        warnings.append(
+            f"Frame count mismatch: body={body_frames}, fx={fx_frames}; using {frame_count}."
+        )
+
+    canvas_w = max(body_fw, fx_fw)
+    canvas_h = max(body_img.height, fx_img.height)
+
+    combined_strip = Image.new("RGBA", (canvas_w * frame_count, canvas_h), (0, 0, 0, 0))
+    combined_frames: List[Image.Image] = []
+
+    for i in range(frame_count):
+        frame = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
+
+        body_frame = body_img.crop(
+            (i * body_fw, 0, (i + 1) * body_fw, body_img.height)
+        )
+        fx_frame = fx_img.crop((i * fx_fw, 0, (i + 1) * fx_fw, fx_img.height))
+
+        bx = ((canvas_w - body_fw) // 2) + args.upper_offset_x
+        by = args.upper_offset_y
+        fx_x = ((canvas_w - fx_fw) // 2) + args.fx_offset_x
+        fx_y = args.fx_offset_y
+
+        frame.alpha_composite(body_frame, (bx, by))
+        frame.alpha_composite(fx_frame, (fx_x, fx_y))
+
+        combined_strip.alpha_composite(frame, (i * canvas_w, 0))
+        combined_frames.append(frame)
+
+    meta = {
+        "body": str(body_path),
+        "fx": str(fx_path),
+        "frame_count": frame_count,
+        "frame_width": canvas_w,
+        "frame_height": canvas_h,
+        "body_source_frame_width": body_fw,
+        "fx_source_frame_width": fx_fw,
+        "pair_type": "fx",
         "warnings": warnings,
     }
 
@@ -246,6 +367,7 @@ def make_review_sheet(
     combined_frames: List[Image.Image],
     args: argparse.Namespace,
 ) -> Image.Image:
+    """Build a review sheet showing lower row, upper row, combined row."""
     lower = Image.open(lower_path).convert("RGBA")
     upper = Image.open(upper_path).convert("RGBA")
 
@@ -301,6 +423,68 @@ def make_review_sheet(
     return sheet
 
 
+def make_fx_review_sheet(
+    body_path: Path,
+    fx_path: Path,
+    combined_frames: List[Image.Image],
+    args: argparse.Namespace,
+) -> Image.Image:
+    """Build a review sheet showing upper body row, FX row, body+FX combined row."""
+    body_img = Image.open(body_path).convert("RGBA")
+    fx_img = Image.open(fx_path).convert("RGBA")
+
+    body_frames, body_fw, _ = parse_sheet_meta(body_path, body_img, args.frame_width)
+    fx_frames, fx_fw, _ = parse_sheet_meta(fx_path, fx_img, args.frame_width)
+    frame_count = min(body_frames, fx_frames, len(combined_frames))
+
+    scale = args.scale
+    label_w = 92
+    pad = 8
+    gap = 6
+    frame_w = combined_frames[0].width
+    frame_h = combined_frames[0].height
+
+    cell_w = frame_w * scale + gap
+    row_h = frame_h * scale + gap
+    w = label_w + pad + frame_count * cell_w + pad
+    h = pad + 3 * row_h + pad
+
+    sheet = Image.new("RGBA", (w, h), (18, 18, 22, 255))
+    draw = ImageDraw.Draw(sheet)
+    font = ImageFont.load_default()
+
+    rows = [
+        ("body (upper)", body_img, body_fw),
+        ("fx", fx_img, fx_fw),
+        ("body+fx", None, frame_w),
+    ]
+
+    for row_i, (label, source, fw) in enumerate(rows):
+        y = pad + row_i * row_h
+        draw.text((pad, y + 6), label, fill=(230, 230, 230, 255), font=font)
+
+        for i in range(frame_count):
+            if label == "body+fx":
+                frame = combined_frames[i]
+            else:
+                frame = Image.new("RGBA", (frame_w, frame_h), (0, 0, 0, 0))
+                crop = source.crop((i * fw, 0, (i + 1) * fw, source.height))
+                xoff = (frame_w - fw) // 2
+                frame.alpha_composite(crop, (xoff, 0))
+
+            preview = alpha_on_checker(frame, scale)
+            x = label_w + pad + i * cell_w
+            sheet.alpha_composite(preview, (x, y))
+            draw.rectangle(
+                [x, y, x + preview.width - 1, y + preview.height - 1],
+                outline=(150, 150, 150, 255),
+                width=1,
+            )
+            draw.text((x + 3, y + 3), str(i + 1), fill=(255, 255, 255, 255), font=font)
+
+    return sheet
+
+
 def make_gif(
     frames: List[Image.Image], out_path: Path, args: argparse.Namespace
 ) -> None:
@@ -320,7 +504,11 @@ def make_gif(
 
 
 def write_html(index_path: Path, records: List[Dict], root: Path) -> None:
-    rows = []
+    has_fx = any(r.get("pair_type") == "fx" for r in records)
+    has_body = any(r.get("pair_type") != "fx" for r in records)
+
+    body_rows = []
+    fx_rows = []
     for rec in records:
         warnings = rec.get("warnings") or []
         warning_html = ""
@@ -331,11 +519,22 @@ def write_html(index_path: Path, records: List[Dict], root: Path) -> None:
                 + "</ul>"
             )
 
-        rows.append(f"""
-        <section class="card">
-          <h2>{html.escape(rec["id"])}</h2>
-          <p><b>Lower:</b> {html.escape(rec["lower"])}</p>
-          <p><b>Upper:</b> {html.escape(rec["upper"])}</p>
+        is_fx = rec.get("pair_type") == "fx"
+        if is_fx:
+            sources = (
+                f"<p><b>Body (upper):</b> {html.escape(rec.get('body', ''))}</p>\n"
+                f"<p><b>FX:</b> {html.escape(rec.get('fx', ''))}</p>"
+            )
+        else:
+            sources = (
+                f"<p><b>Lower:</b> {html.escape(rec.get('lower', ''))}</p>\n"
+                f"<p><b>Upper:</b> {html.escape(rec.get('upper', ''))}</p>"
+            )
+
+        card = f"""
+        <section class="card{' fx-card' if is_fx else ''}">
+          <h2>{'🎯 ' if is_fx else ''}{html.escape(rec["id"])}</h2>
+          {sources}
           <p><b>Frames:</b> {rec["frame_count"]} &nbsp; <b>Frame:</b> {rec["frame_width"]}×{rec["frame_height"]}</p>
           {warning_html}
           <div class="media">
@@ -349,14 +548,24 @@ def write_html(index_path: Path, records: List[Dict], root: Path) -> None:
             </div>
           </div>
         </section>
-        """)
+        """
+        if is_fx:
+            fx_rows.append(card)
+        else:
+            body_rows.append(card)
+
+    sections = []
+    if body_rows:
+        sections.append(f"<h2>Body Pairs (upper+lower)</h2>\n{''.join(body_rows)}")
+    if fx_rows:
+        sections.append(f"<h2>FX Overlays (upper body + FX)</h2>\n{''.join(fx_rows)}")
 
     index_path.write_text(
         f"""<!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>Modular body pair review</title>
+<title>Modular body pair + FX review</title>
 <style>
   body {{
     background: #111216;
@@ -370,6 +579,10 @@ def write_html(index_path: Path, records: List[Dict], root: Path) -> None:
     padding: 16px;
     margin-bottom: 24px;
     background: #1a1c22;
+  }}
+  .fx-card {{
+    border-color: #6a4c9c;
+    background: #1e1530;
   }}
   img {{
     image-rendering: pixelated;
@@ -389,9 +602,9 @@ def write_html(index_path: Path, records: List[Dict], root: Path) -> None:
 </style>
 </head>
 <body>
-<h1>Modular upper/lower body review</h1>
+<h1>Modular body pair + FX review</h1>
 <p>Generated from: <code>{html.escape(str(root))}</code></p>
-{''.join(rows)}
+{''.join(sections)}
 </body>
 </html>
 """,
@@ -420,16 +633,23 @@ def main() -> int:
     for p in sorted(root.rglob("*.png")):
         if p.name.endswith(".import"):
             continue
+        # Skip known non-body files (wall tests, sheet compilations)
+        if p.name.endswith("-sheet.png") or p.name.endswith("_ALTERNATE.png"):
+            continue
+        # Skip .uid metadata files that happen to match the glob
+        if p.name.endswith(".uid"):
+            continue
         part = part_for_name(p)
         if not part:
             continue
         key = key_for_name(p)
-        buckets.setdefault(key, {"upper": [], "lower": []})[part].append(p)
+        buckets.setdefault(key, {"upper": [], "lower": [], "fx": []})[part].append(p)
 
     records: List[Dict] = []
     missing: List[str] = []
     used_pairs = set()
 
+    # Phase 1: Body pair generation (upper + lower)
     for key, parts in sorted(buckets.items()):
         lowers = parts.get("lower", [])
         uppers = parts.get("upper", [])
@@ -445,9 +665,11 @@ def main() -> int:
                 continue
             used_pairs.add(pair_key)
 
-            base_name = lower_path.name.replace(
-                "__lower__", "__combined__"
-            ).removesuffix(".png")
+            base_name = lower_path.name
+            for old, new in [("__modular_lower_body__", "__body_combined__"),
+                              ("__lower__", "__combined__")]:
+                base_name = base_name.replace(old, new)
+            base_name = base_name.removesuffix(".png")
             slug = safe_slug(base_name)
             if any(r["id"] == slug for r in records):
                 slug = f"{slug}_{short_hash(str(lower_path))}"
@@ -486,6 +708,67 @@ def main() -> int:
                 "gif_rel": rel(gif_path, out),
             }
             records.append(rec)
+
+    # Phase 2: FX overlay pairs (upper body + upper fx)
+    if not args.no_fx:
+        for key, parts in sorted(buckets.items()):
+            uppers = parts.get("upper", [])
+            fxs = parts.get("fx", [])
+
+            if not uppers or not fxs:
+                continue
+
+            for fx_path in fxs:
+                # Find the best-matching upper body by pair_score
+                body_path = max(uppers, key=lambda u: pair_score(fx_path, u))
+                fx_pair_key = (body_path, fx_path)
+                if fx_pair_key in used_pairs:
+                    continue
+                used_pairs.add(fx_pair_key)
+
+                base_name = fx_path.name
+                for old, new in [("__modular_upper_fx__", "__body_plus_fx__"),
+                                  ("__fx__", "__body_plus_fx__")]:
+                    base_name = base_name.replace(old, new)
+                base_name = base_name.removesuffix(".png")
+                slug = safe_slug(base_name)
+                if any(r["id"] == slug for r in records):
+                    slug = f"{slug}_fx_{short_hash(str(fx_path))}"
+
+                try:
+                    combined_strip, combined_frames, meta = composite_fx_pair(
+                        body_path, fx_path, args
+                    )
+                    review_sheet = make_fx_review_sheet(
+                        body_path, fx_path, combined_frames, args
+                    )
+                except Exception as e:
+                    print(
+                        f"ERROR processing FX pair:\n  body={body_path}\n  fx={fx_path}\n  {e}",
+                        file=sys.stderr,
+                    )
+                    continue
+
+                combined_path = combined_dir / f"{slug}.png"
+                review_path = review_dir / f"{slug}_review.png"
+                gif_path = gif_dir / f"{slug}.gif"
+
+                combined_strip.save(combined_path)
+                review_sheet.save(review_path)
+                make_gif(combined_frames, gif_path, args)
+
+                rec = {
+                    "id": slug,
+                    **meta,
+                    "body": rel(body_path, root),
+                    "fx": rel(fx_path, root),
+                    "combined": rel(combined_path, out),
+                    "review": rel(review_path, out),
+                    "gif": rel(gif_path, out),
+                    "review_rel": rel(review_path, out),
+                    "gif_rel": rel(gif_path, out),
+                }
+                records.append(rec)
 
     manifest_path = out / "manifest.json"
     index_path = out / "index.html"
