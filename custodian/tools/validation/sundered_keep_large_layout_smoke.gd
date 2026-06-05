@@ -40,8 +40,19 @@ func _init() -> void:
 	var raised_bridge_rect := Rect2i(Vector2i(52, 49), Vector2i(9, 21))
 	_assert(int(state["elevation_cells"]) >= 300, "authored elevation regions were not loaded")
 	_assert(int(state["bridge_elevation_height"]) == 1, "raised bridge debug elevation is not height 1")
+	_assert(int(state["underpass_region_count"]) >= 2, "authored underpass regions were not loaded")
+	_assert(int(state["shore_walk_region_count"]) >= 3, "authored lower-shore walk regions were not loaded")
+	_assert(int(state["interior_occlusion_region_count"]) >= 2, "authored keep interior occlusion regions were not loaded")
+	_assert(int(state["roof_occluder_count"]) >= 2, "roof occluder nodes were not created")
 	_assert(map.get_elevation_at_tile(Vector2i(56, 60)) == 1, "bridge deck elevation is not height 1")
 	_assert(map.get_elevation_at_tile(Vector2i(56, 76)) == 0, "lower shore/spawn elevation is not height 0")
+	_assert(map.get_elevation_at_tile(Vector2i(50, 64)) == 0, "west underpass lane is not height 0")
+	_assert(map.get_elevation_at_tile(Vector2i(62, 64)) == 0, "east underpass lane is not height 0")
+	_assert(bool(map.call("is_tile_in_underpass_region", Vector2i(50, 64))), "west lower lane is not marked as an underpass region")
+	_assert(bool(map.call("is_tile_in_underpass_region", Vector2i(62, 64))), "east lower lane is not marked as an underpass region")
+	_assert(bool(map.call("is_tile_in_shore_walk_region", Vector2i(56, 76))), "spawn/lower approach is not marked as shore walk")
+	_assert(map.can_traverse_elevation(Vector2i(50, 64), Vector2i(50, 65)), "west underpass lane does not allow same-height traversal")
+	_assert(map.can_traverse_elevation(Vector2i(62, 64), Vector2i(62, 65)), "east underpass lane does not allow same-height traversal")
 	_assert(map.can_traverse_elevation(Vector2i(56, 70), Vector2i(56, 69)), "south ramp does not bridge lower shore to raised bridge")
 	_assert(map.can_traverse_elevation(Vector2i(51, 64), Vector2i(52, 64)), "west side stair does not bridge lower lane to raised bridge")
 	_assert(map.can_traverse_elevation(Vector2i(61, 64), Vector2i(60, 64)), "east side stair does not bridge lower lane to raised bridge")
@@ -67,6 +78,8 @@ func _init() -> void:
 	_assert(placeholder_low_wall_count >= 20, "placeholder void-edge readability sprites were not placed; count=%d" % placeholder_low_wall_count)
 	var entrance_overlay_count := _count_sprites_with_path_fragment(map, "Overlays", "entrance/overlays/")
 	_assert(entrance_overlay_count >= 4, "entrance wall overlays were not placed; count=%d" % entrance_overlay_count)
+	_assert(_count_polygon_nodes_named(map, "UnderpassShadow_") >= 2, "underpass shadow overlays were not created")
+	_assert(_count_sprites_with_path_fragment(map, "WallsLow", "entrance/cliffs/cliff_wall_plain_32") >= 16, "underpass cliff-face supports were not placed")
 	var entrance_prop_count := _count_sprites_with_path_fragment(map, "PropsStatic", "entrance/props/")
 	_assert(entrance_prop_count >= 4, "entrance-local causeway props were not placed; count=%d" % entrance_prop_count)
 	var brazier_flicker_count := _count_nodes_named(map, "BrazierFlicker")
@@ -88,6 +101,19 @@ func _init() -> void:
 	_assert(bool(marine_ambush.get("exists", false)), "Great Hall marine ambush was not spawned")
 	_assert(bool(marine_ambush.get("dash_ready", false)), "Great Hall marine dash body animation is not ready")
 	_assert(bool(marine_ambush.get("dash_fx_ready", false)), "Great Hall marine dash FX animation is not ready")
+	var validation_operator := Node2D.new()
+	validation_operator.name = "SunderedKeepValidationOperator"
+	validation_operator.add_to_group("player")
+	root.add_child(validation_operator)
+	validation_operator.global_position = map.to_global(Vector2((56.5) * TILE_SIZE, (20.5) * TILE_SIZE))
+	map.call("_update_actor_elevation")
+	state = map.get_sundered_keep_debug_state()
+	_assert(str(state["active_interior_region_id"]) == "great_hall", "Great Hall roof did not cut away when validation operator entered interior")
+	validation_operator.global_position = map.to_global(Vector2((56.5) * TILE_SIZE, (76.5) * TILE_SIZE))
+	map.call("_update_actor_elevation")
+	state = map.get_sundered_keep_debug_state()
+	_assert(str(state["active_interior_region_id"]).is_empty(), "Great Hall roof did not restore when validation operator left interior")
+	validation_operator.queue_free()
 	var ambush_node := map.get_node_or_null("GreatHallMarineAmbush")
 	_assert(ambush_node != null, "GreatHallMarineAmbush node missing")
 	if ambush_node != null:
@@ -279,6 +305,15 @@ func _count_nodes_with_name_prefix(node: Node, prefix: String) -> int:
 		count += 1
 	for child in node.get_children():
 		count += _count_nodes_with_name_prefix(child, prefix)
+	return count
+
+
+func _count_polygon_nodes_named(node: Node, prefix: String) -> int:
+	var count := 0
+	if node is Polygon2D and node.name.begins_with(prefix):
+		count += 1
+	for child in node.get_children():
+		count += _count_polygon_nodes_named(child, prefix)
 	return count
 
 

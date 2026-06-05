@@ -75,6 +75,11 @@ var _layers: Dictionary = {}
 var _textures: Dictionary = {}
 var _elevation_map: Node = null
 var _last_actor_elevation_tile := Vector2i(-9999, -9999)
+var _underpass_regions: Array[Dictionary] = []
+var _shore_walk_regions: Array[Dictionary] = []
+var _interior_occlusion_regions: Array[Dictionary] = []
+var _roof_occluders: Dictionary = {}
+var _active_interior_region_id := ""
 var _brazier_flicker_frames: SpriteFrames = null
 var _hanging_brazier_frames: Dictionary = {}
 var _return_gate: Node2D = null
@@ -180,6 +185,18 @@ func can_traverse_elevation(from_tile: Vector2i, to_tile: Vector2i) -> bool:
 	return bool(_elevation_map.call("can_traverse", from_tile, to_tile))
 
 
+func is_tile_in_underpass_region(tile: Vector2i) -> bool:
+	return _tile_in_authored_regions(tile, _underpass_regions)
+
+
+func is_tile_in_shore_walk_region(tile: Vector2i) -> bool:
+	return _tile_in_authored_regions(tile, _shore_walk_regions)
+
+
+func get_active_interior_region_id() -> String:
+	return _active_interior_region_id
+
+
 func enter_from_main(actor: Node) -> void:
 	if actor is Node2D:
 		(actor as Node2D).global_position = get_entry_position()
@@ -206,6 +223,11 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"missing_assets": int(_stats["missing_assets"]),
 		"elevation_cells": _get_elevation_cell_count(),
 		"bridge_elevation_height": get_elevation_at_tile(Vector2i(56, 60)),
+		"underpass_region_count": _underpass_regions.size(),
+		"shore_walk_region_count": _shore_walk_regions.size(),
+		"interior_occlusion_region_count": _interior_occlusion_regions.size(),
+		"roof_occluder_count": _roof_occluders.size(),
+		"active_interior_region_id": _active_interior_region_id,
 		"main_gate_open": _main_gate_open,
 		"great_hall_door_open": _great_hall_door_open,
 		"has_sundered_gate_key": _player_has_sundered_gate_key(),
@@ -340,10 +362,12 @@ func _build_from_level_data(data: Dictionary) -> void:
 	_create_layers_from_names(data.get("layers", []))
 	_build_ocean_backdrop()
 	_build_elevation_from_level_data(data)
+	_build_underpass_and_shore_regions(data)
 
 	for op in data.get("ops", []):
 		_apply_level_op(op)
 
+	_build_interior_occlusion_regions(data)
 	for marker in data.get("markers", []):
 		_apply_marker(marker)
 	for interactable in data.get("interactables", []):
@@ -536,6 +560,89 @@ func _build_elevation_from_level_data(data: Dictionary) -> void:
 				_elevation_map.call("set_cell", Vector2i(x, y), height, traversal_type, direction)
 
 
+func _build_underpass_and_shore_regions(data: Dictionary) -> void:
+	_underpass_regions = _parse_authored_rect_regions(data.get("underpass_regions", []))
+	_shore_walk_regions = _parse_authored_rect_regions(data.get("shore_walk_regions", []))
+	for region in _underpass_regions:
+		_add_underpass_shadow(region)
+
+
+func _build_interior_occlusion_regions(data: Dictionary) -> void:
+	_interior_occlusion_regions.clear()
+	_roof_occluders.clear()
+	var layer := _layers.get("RoofOccluders", null) as Node2D
+	if layer == null:
+		return
+	for region_value in data.get("interior_occlusion_regions", []):
+		if not (region_value is Dictionary):
+			continue
+		var source := region_value as Dictionary
+		var interior_rect := _array_to_rect2i(source.get("interior_rect", [0, 0, 0, 0]))
+		var roof_rect := _array_to_rect2i(source.get("roof_rect", [0, 0, 0, 0]))
+		if interior_rect.size.x <= 0 or interior_rect.size.y <= 0 or roof_rect.size.x <= 0 or roof_rect.size.y <= 0:
+			continue
+		var region := {
+			"id": str(source.get("id", "interior_%d" % _interior_occlusion_regions.size())),
+			"interior_rect": interior_rect,
+			"roof_rect": roof_rect,
+			"exterior_alpha": float(source.get("exterior_alpha", 0.88)),
+			"cutaway_alpha": float(source.get("cutaway_alpha", 0.08)),
+		}
+		_interior_occlusion_regions.append(region)
+		var occluder := _add_rect_overlay(
+			layer,
+			"RoofOccluder_%s" % str(region["id"]),
+			roof_rect,
+			Color(0.025, 0.027, 0.032, float(region["exterior_alpha"]))
+		)
+		occluder.set_meta("interior_region_id", String(region["id"]))
+		_roof_occluders[String(region["id"])] = occluder
+
+
+func _parse_authored_rect_regions(values: Array) -> Array[Dictionary]:
+	var regions: Array[Dictionary] = []
+	for region_value in values:
+		if not (region_value is Dictionary):
+			continue
+		var source := region_value as Dictionary
+		var rect := _array_to_rect2i(source.get("rect", [0, 0, 0, 0]))
+		if rect.size.x <= 0 or rect.size.y <= 0:
+			continue
+		regions.append({
+			"id": str(source.get("id", "region_%d" % regions.size())),
+			"rect": rect,
+			"shadow_alpha": float(source.get("shadow_alpha", 0.36)),
+		})
+	return regions
+
+
+func _add_underpass_shadow(region: Dictionary) -> void:
+	var layer := _layers.get("FloorDetail", null) as Node2D
+	if layer == null:
+		return
+	_add_rect_overlay(
+		layer,
+		"UnderpassShadow_%s" % str(region.get("id", "")),
+		region["rect"] as Rect2i,
+		Color(0.0, 0.0, 0.0, float(region.get("shadow_alpha", 0.36)))
+	)
+
+
+func _add_rect_overlay(layer: Node2D, overlay_name: String, rect: Rect2i, color: Color) -> Polygon2D:
+	var overlay := Polygon2D.new()
+	overlay.name = overlay_name
+	overlay.position = _tile_top_left(rect.position)
+	overlay.polygon = PackedVector2Array([
+		Vector2.ZERO,
+		Vector2(float(rect.size.x) * TILE_SIZE, 0.0),
+		Vector2(float(rect.size.x) * TILE_SIZE, float(rect.size.y) * TILE_SIZE),
+		Vector2(0.0, float(rect.size.y) * TILE_SIZE),
+	])
+	overlay.color = color
+	layer.add_child(overlay)
+	return overlay
+
+
 func _ensure_elevation_map() -> void:
 	if _elevation_map != null and is_instance_valid(_elevation_map):
 		return
@@ -554,19 +661,57 @@ func _get_elevation_cell_count() -> int:
 func _update_actor_elevation() -> void:
 	if _elevation_map == null or get_tree() == null:
 		return
-	var actor := get_node_or_null("/root/GameRoot/World/Operator")
+	var actor := _find_operator_actor()
 	if actor == null:
-		for player_node in get_tree().get_nodes_in_group("player"):
-			if player_node is Node2D:
-				actor = player_node
-				break
-	if actor == null or not (actor is Node2D) or not actor.has_method("set_fake_elevation"):
 		return
 	var actor_tile := _global_to_tile((actor as Node2D).global_position)
 	if actor_tile == _last_actor_elevation_tile:
 		return
 	_last_actor_elevation_tile = actor_tile
-	actor.call("set_fake_elevation", float(get_elevation_at_tile(actor_tile)) * ELEVATION_STEP_PX)
+	_update_roof_occlusion_for_tile(actor_tile)
+	if actor.has_method("set_fake_elevation"):
+		actor.call("set_fake_elevation", float(get_elevation_at_tile(actor_tile)) * ELEVATION_STEP_PX)
+
+
+func _find_operator_actor() -> Node2D:
+	var actor := get_node_or_null("/root/GameRoot/World/Operator")
+	if actor is Node2D:
+		return actor as Node2D
+	if get_tree() == null:
+		return null
+	for player_node in get_tree().get_nodes_in_group("player"):
+		if player_node is Node2D:
+			return player_node as Node2D
+	return null
+
+
+func _update_roof_occlusion_for_tile(actor_tile: Vector2i) -> void:
+	var active_region_id := ""
+	for region in _interior_occlusion_regions:
+		var interior_rect := region["interior_rect"] as Rect2i
+		if interior_rect.has_point(actor_tile):
+			active_region_id = String(region["id"])
+			break
+	if active_region_id == _active_interior_region_id:
+		return
+	_active_interior_region_id = active_region_id
+	for region in _interior_occlusion_regions:
+		var region_id := String(region["id"])
+		var occluder := _roof_occluders.get(region_id, null) as Polygon2D
+		if occluder == null:
+			continue
+		var alpha := float(region["cutaway_alpha"]) if region_id == active_region_id else float(region["exterior_alpha"])
+		var color := occluder.color
+		color.a = alpha
+		occluder.color = color
+
+
+func _tile_in_authored_regions(tile: Vector2i, regions: Array[Dictionary]) -> bool:
+	for region in regions:
+		var rect := region["rect"] as Rect2i
+		if rect.has_point(tile):
+			return true
+	return false
 
 
 func _weighted_asset_for_tile(assets: Array, x: int, y: int) -> String:

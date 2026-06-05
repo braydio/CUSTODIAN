@@ -43,6 +43,31 @@
     {"id": "east_bridge_parapet_north", "rect": [61, 50, 1, 12], "height": 1, "traversal_type": "blocked"},
     {"id": "east_bridge_parapet_south", "rect": [61, 66, 1, 4], "height": 1, "traversal_type": "blocked"}
   ],
+  "underpass_regions": [
+    {"id": "west_shadowed_underbridge_walk", "rect": [49, 62, 3, 8], "shadow_alpha": 0.42},
+    {"id": "east_shadowed_underbridge_walk", "rect": [61, 62, 3, 8], "shadow_alpha": 0.42}
+  ],
+  "shore_walk_regions": [
+    {"id": "lower_storm_shore_approach", "rect": [48, 70, 17, 8]},
+    {"id": "return_mooring_lower_shore", "rect": [39, 57, 8, 7]},
+    {"id": "key_winch_lower_shore", "rect": [69, 55, 9, 8]}
+  ],
+  "interior_occlusion_regions": [
+    {
+      "id": "great_hall",
+      "interior_rect": [39, 12, 36, 17],
+      "roof_rect": [38, 9, 38, 21],
+      "exterior_alpha": 0.88,
+      "cutaway_alpha": 0.08
+    },
+    {
+      "id": "great_hall_right_turn_hallway",
+      "interior_rect": [56, 26, 18, 3],
+      "roof_rect": [56, 24, 20, 6],
+      "exterior_alpha": 0.86,
+      "cutaway_alpha": 0.06
+    }
+  ],
   "ops": [
     {
       "type": "fill_weighted_rect",
@@ -110,6 +135,11 @@
     {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_surface_ne", "cells": [[64, 70]]},
     {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_surface_sw", "cells": [[48, 77]]},
     {"type": "paint_cells", "layer": "FloorDetail", "asset_id": "entrance_causeway_surface_se", "cells": [[64, 77]]},
+    {"type": "fill_rect", "layer": "WallsLow", "category": "entrance_cliffs", "rect": [49, 62, 1, 8], "asset_id": "cliff_wall_plain_32"},
+    {"type": "fill_rect", "layer": "WallsLow", "category": "entrance_cliffs", "rect": [63, 62, 1, 8], "asset_id": "cliff_wall_plain_32"},
+    {"type": "paint_cells", "layer": "WallsLow", "category": "entrance_cliffs", "asset_id": "castle_wall_support_constructed_cliffside_01", "cells": [[50, 63], [62, 63], [50, 67], [62, 67]]},
+    {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_fallen_masonry_01", "tile": [49, 66]},
+    {"type": "stamp_prop", "layer": "PropsStatic", "asset_id": "prop_fallen_masonry_01", "tile": [63, 66]},
     {"type": "fill_rect", "layer": "WallsLow", "rect": [51, 50, 1, 12], "asset_id": "causeway_keep_wall_face_plain_01"},
     {"type": "fill_rect", "layer": "WallsLow", "rect": [51, 66, 1, 4], "asset_id": "causeway_keep_wall_face_plain_01"},
     {"type": "fill_rect", "layer": "WallsLow", "rect": [61, 50, 1, 12], "asset_id": "causeway_keep_wall_face_plain_01"},
