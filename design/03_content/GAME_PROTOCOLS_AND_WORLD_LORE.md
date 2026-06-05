@@ -63,7 +63,7 @@ These are canonically true, but their full detail can be expanded later without 
 - The civilization-wide collapse is called **the Great Severance**.
 - The internal name for the metaphysical pressure behind the Severance is **The Unarrival**.
 - Pre-collapse society depended on a provenance and interpretation lattice referred to here as the **Civic Mesh**.
-- Custodians were continuity authorities: archivists, adjudicators, field operators, forensic restorers, and doctrinal auditors.
+- Custodians were continuity authorities: archivists, adjudicators, field operators, forensic restorers, and doctrinal auditors. Above all, they were built to answer dead authority — to follow provenance signals not because they understand the source, but because responding to authorized institutional residue is their primary function.
 - Custodians are provenance-preservation systems; they can detect the wound as impossible records and orphaned causes, but they do not fully understand the supernatural source.
 - The Hub is the surviving adjudication layer of the Custodian order.
 - Many surviving cultures are coherent but wrong; they are built on stable misinterpretations of intact machinery and partial records.
@@ -218,9 +218,9 @@ Their job was to:
 - preserve chain-of-trust between systems
 - intervene where local reality had drifted beyond recoverable truth
 
-They were part archivist, part field technician, part stabilization operator, part doctrinal judge, part systems operator.
+They were part archivist, part field technician, part stabilization operator, part doctrinal judge, part systems operator. Above all, they were built to answer dead authority — to detect and follow authorized institutional residue even when the originating institution no longer exists. A Custodian does not need to understand a signal to obey it. The authority in the signal is sufficient.
 
-Custodians are not omniscient lore machines. Because they operate Archive fields and preserve provenance, they can feel the shape of the Severance wound without seeing The Unarrival directly. To a Custodian, supernatural horror first appears as reality-level checksum failure: a source that both exists and never existed, a witness that precedes an event, or an artifact whose origin refuses to be filed. To extend the Lattice is to feel the Pale pressing in, to know the field is finite, and to choose what is worth preserving before the rupture.
+Custodians are not omniscient lore machines. Because they operate Archive fields and preserve provenance, they can feel the shape of the Severance wound without seeing The Unarrival directly. To a Custodian, supernatural horror first appears as reality-level checksum failure: a source that both exists and never existed, a witness that precedes an event, an artifact whose origin refuses to be filed, or a pale signal that leaks recognition of an authority that should not still be received. To extend the Lattice is to feel the Pale pressing in, to know the field is finite, and to choose what is worth preserving before the rupture.
 
 ### What the Player Is
 
@@ -233,6 +233,7 @@ That is why:
 - factions may hate or fear the player on political grounds, not only combat grounds
 - the player’s presence destabilizes local claims about reality
 - every campaign the player undertakes extends—and ultimately accelerates—the Lattice’s collapse
+- terminals and field nodes may recognize the player by authority lineage before any physical contact — the recognition precedes the meeting
 
 ### What the Hub Is
 

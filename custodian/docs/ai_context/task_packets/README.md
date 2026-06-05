@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-06-01
+Last updated: 2026-06-04
 
 Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
 
@@ -36,6 +36,13 @@ Completed packets are moved to `archived/`. They are preserved for historical re
 
 ### Recently Complete (awaiting archive)
 
+- `OPERATOR_RANGED_READY_INPUT.md` — Changed ranged secondary into held ranged-ready/aim, moved right mouse off block, kept primary as the ranged fire confirm while ready, and added focused smoke validation.
+- `DEBUG_SCREEN_UI.md` — Added the dedicated F12/`debug_hud` tabbed debug screen, moved diagnostics out of scattered normal HUD labels, and added focused smoke validation.
+- `UI_COMPACT_DEBUG_GATING.md` — Reduced normal-play HUD footprint, changed Black Reliquary vitals to a header-style strip, tightened prompt/minimap component minima, and moved unformatted diagnostics behind explicit debug HUD visibility.
+- `CUSTODIAN_HOME_BEGINNING.md` — Moved the first-objective design into the Home architecture docs and added the dedicated Home beginning scene with Field Terminal witness-contact interaction, Black Reliquary HUD presentation, validation, and required asset tracking.
+- `AUTHORED_VAULT_GRUNT_LOOT_MARINE_WIRING.md` — Placed the first authored gothic vault room, added the practical salvage grunt loot table, and wired `enemy_marine` as a late-unlock idle-backed wave enemy with missing non-idle assets tracked.
+- `VAULT_STORAGE_RAIDING_REVIEW_RUNTIME.md` — Reviewed vault/resource raiding specs, created the permanent vault storage runtime sprite home, added storage integrity/visual states, and wired enemy storage sabotage alongside theft.
+- `OPERATOR_MODULAR_LAYERED_RUNTIME_RIG.md` — Added the first optional upper/lower modular locomotion layer rig for Fists idle/walk/run, generated upper-body runtime modules with fallbacks, and tracked remaining modular source-art gaps.
 - `OPERATOR_MODULAR_LOWER_BODY_RUNTIME.md` — Added the modular operator runtime module builder/folder, generated lower-body locomotion modules, wired Fists movement defaults to module strips, corrected fast-strike east/west `96px` runtime slicing, and tracked missing modular source sheets.
 - `OPERATOR_MODULAR_FAST_ACTION_RUNTIME.md` — Created the dedicated operator action-runtime folder, generated modular-derived unarmed fast strike body/FX sheets, wired Fists fast attack through existing shared attack states, and tracked missing source art.
 - `CONTENT_DIRECTORY_STABILIZATION.md` — Documented content-root domains, added a duplicate/loose-file audit, moved the Road of Witnesses prototype map out of loose content root, moved remaining loose sprite/tile source files into owner folders, and cleared `content/unregistered/` by moving vault art into vault-owned source quarantine.

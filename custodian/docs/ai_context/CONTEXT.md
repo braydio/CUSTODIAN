@@ -1,6 +1,6 @@
 # PROJECT CONTEXT PRIMER — CUSTODIAN
 
-Last updated: 2026-05-30
+Last updated: 2026-06-04
 
 ## Purpose
 
@@ -20,12 +20,13 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 
 - Engine: Godot 4.x
 - Main scene: `res://scenes/game.tscn`
+- Beginning/Home scene: `res://scenes/home_custodian_begin.tscn` implements Objective 01, tracing the Custodian-band frequency to a damaged Field Terminal and establishing witness contact; it is a dedicated scene and not yet the application main scene.
 - Runtime authority: Godot only
 - Active command shell: HUD terminal in `custodian/game/ui/hud/ui.gd`, with terminal helper modules under `custodian/game/ui/terminal/`
-- Current gameplay HUD style: Black Reliquary gothic/brass UI. Assets live in `custodian/content/ui/black_reliquary/`; reusable theme/components/HUD scenes live under `custodian/game/ui/`. Prompt text must be real Godot labels, not baked into images.
+- Current gameplay HUD style: compact Black Reliquary gothic/brass UI. Assets live in `custodian/content/ui/black_reliquary/`; reusable theme/components/HUD scenes live under `custodian/game/ui/`. Prompt text must be real Godot labels, not baked into images, and debug diagnostics should live in the dedicated F12/`debug_hud` debug screen instead of normal HUD labels.
 - Contract/runtime coupling: contract planet generation feeds procgen world generation through a shared world profile
 - Input prompts: interaction UI should derive from `InputMap`, not hardcoded keys
-- Operator combat selection: Fists/unarmed is a first-class `OperatorWeaponDefinition` profile selected with `toggle_unarmed`; normal weapon cycling excludes Fists and only cycles armed profiles. Melee attack physics resolve through `MeleeAttackProfile` resources referenced by each weapon definition, with legacy operator melee exports kept only as fallbacks.
+- Operator combat selection: Fists/unarmed is a first-class `OperatorWeaponDefinition` profile selected with `toggle_unarmed`; normal weapon cycling excludes Fists and only cycles armed profiles. Melee attack physics resolve through `MeleeAttackProfile` resources referenced by each weapon definition, with legacy operator melee exports kept only as fallbacks. Ranged secondary is now held ranged-ready/aim, not fire; primary fires the ranged weapon only while ranged-ready is active, using fallback ranged stance/fire assets until true modular upper/body/cape/weapon/FX ranged clips exist.
 - Forest Shrumb cognitive drops now have a v1 foundation through `InventoryManager`, `CognitiveState`, `cognitive_pickup`, `shrumb_dropper`, and the live `ambient_shrumb.tscn` actor. Ambient spawning now uses this shrumb actor directly; the former scav droid scene path is removed.
 - Procedural ruin prop variants have a v1 visual-only foundation under `custodian/content/props/ruins/`, using seeded layer assembly from authored sprites, overlays, rubble pieces, and a conservative palette shader. Collision remains authored and stable through `PropDefinition.collision_scene`.
 - Procgen terrain construction now has a dedicated metadata-first `TerrainBuilder` pass under `game/world/procgen/terrain/`; elevation/cliff visuals remain separate from `ElevationMap` height/traversal rules and resolve through registered terrain sources in `procgen_world_tileset.tres`.
@@ -38,7 +39,9 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 - Simulation layer: deterministic Godot runtime systems
 - Cognitive layer: autoloaded inventory ledger and cognitive state values expose drop/combat modifier getters, with only pickup/drop feedback wired in v1
 - UI layer: HUD + command terminal pages/widgets; terminal command, snapshot, map preview, and planet preview helpers live under `game/ui/terminal/`
-- Black Reliquary UI layer: `game/ui/theme/` centralizes palette/styles/assets, `game/ui/components/` owns reusable panels/prompts/minimap/icon labels, and `game/ui/hud/custodian_hud.tscn` is the first local gameplay HUD shell used by Sundered Keep.
+- Black Reliquary UI layer: `game/ui/theme/` centralizes palette/styles/assets, `game/ui/components/` owns reusable compact panels/prompts/minimap/icon labels, and `game/ui/hud/custodian_hud.tscn` is the first local gameplay HUD shell used by Sundered Keep and Home.
+- Debug UI layer: `game/ui/hud/debug_screen.tscn` owns F12/`debug_hud` diagnostics as a read-only tabbed overlay fed by `game/ui/hud/ui.gd`.
+- Home beginning layer: `game/world/home/` owns the first Field Terminal witness-contact slice, using the Road of Witnesses prototype map and Black Reliquary HUD as the current presentation shell.
 - Actor layer: operator, enemies, structures, defenses, ambient entities
 
 ## Working Rules
@@ -60,9 +63,10 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 3. Deepen terminal pages with richer live runtime data and interactions.
 4. Preserve and extend planet-to-runtime world coupling as procgen evolves.
 5. Continue Sundered Keep follow-up with encounter composition, save/load persistence for gate/key state, and eventual TileSet/TileMapLayer authoring if the JSON-driven Sprite2D authored map becomes hard to maintain.
-6. Keep Sundered Keep prompts and normal-play status surfaces on the Black Reliquary HUD API; avoid reintroducing giant debug labels during normal gameplay.
-7. Wire true Forest Shrumbs into the intended spawning/procgen path and decide which cognitive readout belongs in HUD/debug.
-8. Author ruin prop slices, overlay/rubble assets, and `PropDefinition` resources for the procedural prop system.
+6. Keep Sundered Keep/Home prompts and normal-play status surfaces on the compact Black Reliquary HUD API; route diagnostics to the dedicated debug screen instead of reintroducing giant panels or debug labels during normal gameplay.
+7. Decide when the Home beginning scene should become the boot/default entry, then wire it into the world-transition/campaign-flow spine without regressing the current contract/procgen sandbox.
+8. Wire true Forest Shrumbs into the intended spawning/procgen path and decide which cognitive readout belongs in HUD/debug.
+9. Author ruin prop slices, overlay/rubble assets, and `PropDefinition` resources for the procedural prop system.
 
 ## Update Expectation
 

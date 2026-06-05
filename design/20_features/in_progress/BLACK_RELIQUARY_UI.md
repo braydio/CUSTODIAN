@@ -1,7 +1,7 @@
 # Black Reliquary UI
 
 Status: complete  
-Last updated: 2026-06-02
+Last updated: 2026-06-04
 
 ## Summary
 
@@ -13,7 +13,7 @@ Black Reliquary is the current CUSTODIAN gothic/brass runtime UI style. It repla
 - Centralized Godot asset paths live in `custodian/game/ui/theme/black_reliquary_asset_catalog.gd`.
 - Palette and reusable style helpers live in `custodian/game/ui/theme/black_reliquary_palette.gd` and `custodian/game/ui/theme/black_reliquary_styles.gd`.
 - Reusable components live under `custodian/game/ui/components/`.
-- The first HUD scene is `custodian/game/ui/hud/custodian_hud.tscn`, controlled by `custodian_hud.gd`.
+- The first HUD scene is `custodian/game/ui/hud/custodian_hud.tscn`, controlled by `custodian_hud.gd`; normal-play vitals should stay header-sized, not occupy large blocking panels.
 
 ## Behavior Rules
 
@@ -21,7 +21,8 @@ Black Reliquary is the current CUSTODIAN gothic/brass runtime UI style. It repla
 - HUD panels should use `NinePatchRect` when the Black Reliquary panel textures resolve, with fallback `StyleBoxFlat` styling when they do not.
 - Runtime code should use `BlackReliquaryAssetCatalog` instead of scattering `res://content/ui/black_reliquary/` strings through gameplay scripts.
 - Sundered Keep prompts should use `CustodianHUD.show_interaction(...)` through the new HUD API.
-- Normal gameplay should not show giant world-space debug labels. Debug text may exist behind `set_debug_overlay_visible(...)` or an explicit debug surface.
+- Normal gameplay should not show giant world-space debug labels. Debug text may exist behind `set_debug_overlay_visible(...)` only for local authored HUDs or inside the dedicated debug screen.
+- Legacy command-terminal HUD diagnostics should live in the dedicated `res://game/ui/hud/debug_screen.tscn` surface opened by F12 or `debug_hud`; normal play should show only essentials such as health, stamina, prompts, status plaques, and tactical minimap.
 - The minimap frame should use simplified tactical markers and the Black Reliquary minimap art, not raw level screenshots.
 
 ## Sundered Keep Integration
@@ -42,6 +43,7 @@ Use:
 ```bash
 cd custodian
 godot --headless --script res://tools/validation/black_reliquary_ui_smoke.gd
+godot --headless --script res://tools/validation/debug_screen_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_asset_smoke.gd
 ```
 

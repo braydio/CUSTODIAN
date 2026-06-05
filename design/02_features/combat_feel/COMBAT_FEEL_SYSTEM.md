@@ -126,12 +126,18 @@ Required events:
 
 Attack input is profile-relative, not state-relative:
 
-- `ranged.primary` -> `ranged_fire`
-- `ranged.secondary` -> reserved for a future aimed/focused shot
+- `ranged.secondary` held -> `ranged_ready`
+- `ranged.primary` while `ranged_ready` -> `ranged_fire`
+- `ranged.secondary` tap -> reserved for later quick-raise or snapshot behavior; no shot in V1
 - `melee.primary` -> `melee_fast`
 - `melee.secondary` -> `melee_heavy`
 - `unarmed.primary` -> `unarmed_fast`
 - `unarmed.secondary` -> `unarmed_heavy`
+
+Ranged secondary is a mode/intent hold, not the default fire button. While it is held, the operator should face
+aim direction, show the ranged weapon layer, and keep movement available; primary confirms the shot through the
+existing ranged fire path. Lower-body locomotion remains movement-owned so modular upper-body, weapon, cape, and FX
+clips can act independently from idle/walk/run.
 
 Unarmed/Fists is a selectable weapon profile. It must not create separate unarmed combat states; `unarmed_fast`
 and `unarmed_heavy` reuse the shared `attack_fast` and `attack_heavy` states while resolving profile-specific

@@ -56,6 +56,8 @@ The current runtime is functional, but animation ownership is still inverted.
 - the state machine is connected, but the full non-combat graph is not finished yet
 - block is now live; reload/interact/repair states are still pending live integration
 - authored melee locomotion is still partial; only stance + attack clips are currently body-authored
+- ranged secondary is a held `ranged_ready` mode; primary fires only while that mode is active, so ranged upper-body,
+  weapon, cape, and FX animation should layer over movement-owned lower-body idle/walk/run.
 
 ## Files In Scope
 
@@ -219,6 +221,7 @@ Expected shape:
 animation_map = {
     "melee_fast": "melee_2h_fast",
     "melee_heavy": "melee_2h_heavy",
+    "ranged_ready": "ranged_2h_stance",
     "ranged_stance": "ranged_2h_stance",
     "ranged_fire": "ranged_2h_fire"
 }
@@ -549,6 +552,7 @@ Recommended runtime key mapping:
 
 - `melee_fast` -> `melee_2h_fast`
 - `melee_heavy` -> `melee_2h_heavy`
+- `ranged_ready` -> `ranged_2h_stance`
 - `ranged_stance` -> `ranged_2h_stance`
 - `ranged_fire` -> `ranged_2h_fire`
 
