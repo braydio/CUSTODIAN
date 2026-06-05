@@ -1,6 +1,8 @@
 extends SceneTree
 
 const BODY_FRAMES_PATH := "res://game/actors/operator/operator_runtime_frames.tres"
+const MODULAR_LOWER_BODY_FRAMES_PATH := "res://game/actors/operator/operator_modular_lower_body_frames.tres"
+const MODULAR_UPPER_BODY_FRAMES_PATH := "res://game/actors/operator/operator_modular_upper_body_frames.tres"
 const WEAPON_FRAMES_PATH := "res://game/actors/operator/operator_weapon_frames.tres"
 const MELEE_OVERLAY_FRAMES_PATH := "res://game/actors/operator/operator_melee_overlay_frames.tres"
 
@@ -137,10 +139,12 @@ const UNARMED_FAST_STRIKE_FX_SLICES := [
 
 func _init() -> void:
 	var body_frames := load(BODY_FRAMES_PATH) as SpriteFrames
+	var modular_lower_body_frames := _load_or_create_sprite_frames(MODULAR_LOWER_BODY_FRAMES_PATH)
+	var modular_upper_body_frames := _load_or_create_sprite_frames(MODULAR_UPPER_BODY_FRAMES_PATH)
 	var weapon_frames := load(WEAPON_FRAMES_PATH) as SpriteFrames
 	var melee_overlay_frames := load(MELEE_OVERLAY_FRAMES_PATH) as SpriteFrames
 
-	if body_frames == null or weapon_frames == null or melee_overlay_frames == null:
+	if body_frames == null or modular_lower_body_frames == null or modular_upper_body_frames == null or weapon_frames == null or melee_overlay_frames == null:
 		push_error("Failed to load one or more operator SpriteFrames resources.")
 		quit(1)
 		return
@@ -193,6 +197,9 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "unarmed_walk_up", UNARMED_WALK_NORTH_SHEET, 7, 0, 96, 96, 10.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_walk_left", UNARMED_WALK_WEST_SHEET, 5, 0, 96, 96, 10.0, true)
 	_replace_animation_entries(body_frames, UNARMED_MODULAR_LOWER_LOCOMOTION_SLICES)
+	_replace_animation_entries(modular_lower_body_frames, UNARMED_MODULAR_LOWER_LOCOMOTION_SLICES)
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_locomotion_entries("upper_body"))
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_upper_action_entries())
 	_replace_animation_if_exists(body_frames, "unarmed_death", UNARMED_DEATH_BODY_SHEET, 6, 0, 96, 96, 7.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival_down", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
@@ -229,6 +236,8 @@ func _init() -> void:
 		return
 
 	ResourceSaver.save(body_frames, BODY_FRAMES_PATH)
+	ResourceSaver.save(modular_lower_body_frames, MODULAR_LOWER_BODY_FRAMES_PATH)
+	ResourceSaver.save(modular_upper_body_frames, MODULAR_UPPER_BODY_FRAMES_PATH)
 	ResourceSaver.save(weapon_frames, WEAPON_FRAMES_PATH)
 	ResourceSaver.save(melee_overlay_frames, MELEE_OVERLAY_FRAMES_PATH)
 	quit()
@@ -349,6 +358,100 @@ func _replace_animation_entries(sprite_frames: SpriteFrames, entries: Array) -> 
 			float(entry.get("fps", 12.0)),
 			bool(entry.get("loop", false))
 		)
+
+
+func _build_modular_locomotion_entries(part: String) -> Array:
+	var part_prefix := "operator__modular_%s__unarmed" % part
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/locomotion" % part
+	var entries: Array = []
+	var action_specs := [
+		{"action": "idle_01", "base": "unarmed_idle", "fps": 8.0},
+		{"action": "walk_01", "base": "unarmed_walk", "fps": 10.0},
+		{"action": "run_01", "base": "unarmed_run", "fps": 12.0},
+	]
+	var direction_specs := [
+		{"dir": "s", "suffix": "down", "alias_base": true},
+		{"dir": "se", "suffix": "down_right"},
+		{"dir": "e", "suffix": "right"},
+		{"dir": "ne", "suffix": "up_right"},
+		{"dir": "n", "suffix": "up"},
+		{"dir": "nw", "suffix": "up_left"},
+		{"dir": "w", "suffix": "left"},
+		{"dir": "sw", "suffix": "down_left"},
+	]
+	for action_spec in action_specs:
+		var action := str(action_spec["action"])
+		var base := str(action_spec["base"])
+		for direction_spec in direction_specs:
+			var dir := str(direction_spec["dir"])
+			var path := "%s/%s/%s__%s__%s__5f__96.png" % [root, action, part_prefix, action, dir]
+			if bool(direction_spec.get("alias_base", false)) and action != "run_01":
+				entries.append({
+					"animation": base,
+					"path": path,
+					"frames": 5,
+					"frame_width": 96,
+					"frame_height": 96,
+					"fps": float(action_spec["fps"]),
+					"loop": true,
+				})
+			entries.append({
+				"animation": "%s_%s" % [base, str(direction_spec["suffix"])],
+				"path": path,
+				"frames": 5,
+				"frame_width": 96,
+				"frame_height": 96,
+				"fps": float(action_spec["fps"]),
+				"loop": true,
+			})
+	return entries
+
+
+func _build_modular_upper_action_entries() -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/upper_body/actions/unarmed/fast_attack/fast_strike_01"
+	var entries: Array = []
+	var direction_specs := [
+		{"dir": "s", "suffix": "down", "alias_base": true},
+		{"dir": "se", "suffix": "down_right"},
+		{"dir": "e", "suffix": "right"},
+		{"dir": "ne", "suffix": "up_right"},
+		{"dir": "n", "suffix": "up"},
+		{"dir": "nw", "suffix": "up_left"},
+		{"dir": "w", "suffix": "left"},
+		{"dir": "sw", "suffix": "down_left"},
+	]
+	for direction_spec in direction_specs:
+		var dir := str(direction_spec["dir"])
+		var path := "%s/operator__modular_upper_body__unarmed__fast_strike_01__%s__3f__96.png" % [root, dir]
+		if bool(direction_spec.get("alias_base", false)):
+			entries.append({
+				"animation": "unarmed_fast_strike_upper",
+				"path": path,
+				"frames": 3,
+				"frame_width": 96,
+				"frame_height": 96,
+				"fps": 12.0,
+				"loop": false,
+			})
+		entries.append({
+			"animation": "unarmed_fast_strike_upper_%s" % str(direction_spec["suffix"]),
+			"path": path,
+			"frames": 3,
+			"frame_width": 96,
+			"frame_height": 96,
+			"fps": 12.0,
+			"loop": false,
+		})
+	return entries
+
+
+func _load_or_create_sprite_frames(resource_path: String) -> SpriteFrames:
+	if not ResourceLoader.exists(resource_path) and not FileAccess.file_exists(ProjectSettings.globalize_path(resource_path)):
+		return SpriteFrames.new()
+	var frames := load(resource_path) as SpriteFrames
+	if frames != null:
+		return frames
+	return SpriteFrames.new()
 
 
 func _load_texture(texture_path: String) -> Texture2D:

@@ -46,6 +46,7 @@ INTENTIONAL_DUPLICATE_MARKERS = (
     "/reference/",
     "/source/",
     "/sprites/operator/new_operator/modular/lower/",
+    "/sprites/operator/new_operator/modular/fast_attack/operator__modular_upper_body__unarmed__run_01",
     "/sprites/operator/new_operator/modular/png/",
     "/sprites/operator/new_operator/modular/recombinator/",
     "/sprites/operator/new_operator/modular/run/",

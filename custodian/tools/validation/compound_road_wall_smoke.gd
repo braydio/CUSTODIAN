@@ -34,7 +34,7 @@ func _run() -> void:
 		await process_frame
 	assert(not tilemap.debug_get_generated_floor_cells().is_empty(), "ProcGenTilemap did not generate floor state.")
 
-	var protected := tilemap.debug_get_protected_passable_road_cells()
+	var protected: Array[Vector2i] = tilemap.debug_get_protected_passable_road_cells()
 	assert(not protected.is_empty(), "Expected protected road/passable cells.")
 
 	for tile in protected:

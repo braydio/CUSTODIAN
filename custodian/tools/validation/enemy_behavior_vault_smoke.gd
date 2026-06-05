@@ -24,11 +24,17 @@ func _init() -> void:
 	_assert_eq(int(storage.resources.get(&"ruin_scrap", 0)), 2, "storage should retain leftover scrap")
 	storage.add_resources(stolen)
 	_assert_eq(int(storage.resources.get(&"ruin_scrap", 0)), 12, "recovered payload should restore storage")
+	_assert_true(storage.apply_enemy_damage(25, null), "storage should accept enemy damage")
+	_assert_eq(int(storage.integrity), 75, "storage integrity should decrease after damage")
+	storage.apply_enemy_damage(100, null)
+	_assert_true(storage.is_destroyed(), "storage should report destroyed after lethal sabotage damage")
+	_assert_true(not storage.has_resources(), "destroyed storage should clear resources")
 
 	var profile = PROFILE_SCRIPT.create_profile(&"iconoclast_looter")
 	_assert_true(profile != null, "profile factory should create iconoclast profile")
 	_assert_true(bool(profile.get("can_steal_resources")), "iconoclast should be able to steal")
 	_assert_true(float(profile.get("theft_weight")) > float(profile.get("aggression_weight")), "iconoclast theft weight should exceed aggression")
+	_assert_true(bool(profile.get("can_sabotage_storage")), "iconoclast should be able to sabotage storage")
 
 	var enemy := Node2D.new()
 	enemy.name = "SmokeEnemy"

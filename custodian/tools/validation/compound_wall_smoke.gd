@@ -32,8 +32,8 @@ func _run() -> void:
 		await process_frame
 	assert(not tilemap.debug_get_generated_floor_cells().is_empty(), "ProcGenTilemap did not generate floor state.")
 
-	var walls := tilemap.debug_get_generated_wall_cells()
-	var floors := tilemap.debug_get_generated_floor_cells()
+	var walls: Dictionary = tilemap.debug_get_generated_wall_cells()
+	var floors: Dictionary = tilemap.debug_get_generated_floor_cells()
 	var protected_tiles := {}
 
 	for tile in tilemap.get_main_road_tiles():

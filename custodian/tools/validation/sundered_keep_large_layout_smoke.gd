@@ -27,7 +27,7 @@ func _init() -> void:
 	_assert(map.get_node_or_null("ReturnMooringInteraction") != null, "return mooring interaction missing")
 	_assert(map.get_node_or_null("SunderedGateKeyPickup") != null, "Sundered Gate Key pickup missing")
 	_assert(map.get_node_or_null("MainGateInteraction") != null, "main gate interaction missing")
-	_assert(map.get_node_or_null("Collision/MainPortcullisBlocker") != null, "closed portcullis blocker missing")
+	_assert(map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") != null, "closed prefab gate blocker missing")
 
 	var floors := _collect_walkable_floor_tiles(map)
 	_assert(floors.has(Vector2i(56, 76)), "spawn tile is not walkable")
@@ -37,10 +37,74 @@ func _init() -> void:
 	_assert(floors.has(Vector2i(60, 49)), "lengthened upper causeway east edge is not walkable")
 	_assert(floors.has(Vector2i(41, 58)), "return mooring center is not walkable")
 	_assert(floors.has(Vector2i(73, 56)), "key/winch tile is not walkable")
+	var raised_bridge_rect := Rect2i(Vector2i(52, 49), Vector2i(9, 21))
+	_assert(int(state["elevation_cells"]) >= 300, "authored elevation regions were not loaded")
+	_assert(int(state["bridge_elevation_height"]) == 1, "raised bridge debug elevation is not height 1")
+	_assert(map.get_elevation_at_tile(Vector2i(56, 60)) == 1, "bridge deck elevation is not height 1")
+	_assert(map.get_elevation_at_tile(Vector2i(56, 76)) == 0, "lower shore/spawn elevation is not height 0")
+	_assert(map.can_traverse_elevation(Vector2i(56, 70), Vector2i(56, 69)), "south ramp does not bridge lower shore to raised bridge")
+	_assert(map.can_traverse_elevation(Vector2i(51, 64), Vector2i(52, 64)), "west side stair does not bridge lower lane to raised bridge")
+	_assert(map.can_traverse_elevation(Vector2i(61, 64), Vector2i(60, 64)), "east side stair does not bridge lower lane to raised bridge")
+	_assert(not map.can_traverse_elevation(Vector2i(52, 70), Vector2i(52, 69)), "non-ramp bridge edge allows a height climb")
+	_assert(_all_elevation_pockets_connected(map), "authored elevation contains isolated height pockets without a transition path")
+	_assert(_stair_art_matches_elevation_transition(map), "stair art exists away from the authored ramp elevation transition")
 	var causeway_surface_count := _count_sprites_with_prefix(map, "FloorDetail", "entrance_causeway_surface_")
-	_assert(causeway_surface_count >= 70, "directional causeway surface edge tiles were not placed; count=%d" % causeway_surface_count)
+	_assert(causeway_surface_count >= 30, "directional causeway shore/ocean edge tiles were not placed; count=%d" % causeway_surface_count)
+	var raised_bridge_surface_count := _count_sprites_with_path_fragment_in_rect(map, "FloorDetail", "entrance/causeway_surfaces/", raised_bridge_rect)
+	_assert(raised_bridge_surface_count == 0, "directional causeway shore/ocean edge tiles leaked onto raised bridge; count=%d" % raised_bridge_surface_count)
+	var curated_causeway_floor_count := _count_sprites_with_path_fragment(map, "TerrainBase", "entrance/causeway_floors/cobblestone_")
+	_assert(curated_causeway_floor_count >= 260, "curated cobblestone causeway floors were not placed; count=%d" % curated_causeway_floor_count)
+	var curated_causeway_detail_count := _count_sprites_with_path_fragment(map, "FloorDetail", "entrance/causeway_floors/cobblestone_")
+	_assert(curated_causeway_detail_count >= 6, "curated cobblestone causeway stair details were not placed; count=%d" % curated_causeway_detail_count)
+	var curated_causeway_prop_count := _count_sprites_with_path_fragment(map, "PropsStatic", "props/sundered_keep/causeway/")
+	_assert(curated_causeway_prop_count >= 4, "curated causeway props were not placed; count=%d" % curated_causeway_prop_count)
+	var entrance_wall_count := _count_sprites_with_path_fragment(map, "WallsHigh", "entrance/causeway_walls/")
+	entrance_wall_count += _count_sprites_with_path_fragment(map, "WallsLow", "entrance/causeway_walls/")
+	_assert(entrance_wall_count >= 30, "entrance causeway wall dressing was not placed; count=%d" % entrance_wall_count)
+	var placeholder_high_wall_count := _count_sprites_with_path_fragment(map, "WallsHigh", "placeholders/walls/PLACEHOLDER_sundered_keep_labyrinth_")
+	var placeholder_low_wall_count := _count_sprites_with_path_fragment(map, "WallsLow", "placeholders/walls/PLACEHOLDER_sundered_keep_labyrinth_")
+	_assert(placeholder_high_wall_count >= 40, "placeholder keep wall readability sprites were not placed; count=%d" % placeholder_high_wall_count)
+	_assert(placeholder_low_wall_count >= 20, "placeholder void-edge readability sprites were not placed; count=%d" % placeholder_low_wall_count)
+	var entrance_overlay_count := _count_sprites_with_path_fragment(map, "Overlays", "entrance/overlays/")
+	_assert(entrance_overlay_count >= 4, "entrance wall overlays were not placed; count=%d" % entrance_overlay_count)
+	var entrance_prop_count := _count_sprites_with_path_fragment(map, "PropsStatic", "entrance/props/")
+	_assert(entrance_prop_count >= 4, "entrance-local causeway props were not placed; count=%d" % entrance_prop_count)
+	var brazier_flicker_count := _count_nodes_named(map, "BrazierFlicker")
+	_assert(brazier_flicker_count >= 4, "brazier flicker animations were not attached; count=%d" % brazier_flicker_count)
+	var hanging_brazier_count := _count_direct_animated_children(map, "PropsStatic")
+	_assert(hanging_brazier_count >= 4, "bridge hanging brazier overhang props were not placed; count=%d" % hanging_brazier_count)
+	var gatehouse_prefab_count := _count_sprites_with_path_fragment(map, "WallsHigh", "entrance/prefabs/gateway_prefab_structure")
+	_assert(gatehouse_prefab_count >= 1, "large prefab gatehouse was not placed")
+	_assert(_count_nodes_named(map, "GatewayPrefabOpenGate") == 1, "prefab gate opening animation was not placed")
+	_assert(_animated_sprite_frame_count(map, "GreatHallDoorOpenAnimation", "open") == 8, "Great Hall door prefab animation was not built as an 8-frame strip")
+	_assert(_node_has_child_named(map, "GreatHallDoorOpenAnimation", "OperatorDepthSort"), "Great Hall door is missing operator-relative depth sorting")
+	_assert(_count_sprites_with_path_fragment(map, "Traversal", "main_gate_portcullis_") == 0, "old small portcullis runtime sprites are still present")
+	var great_hall_horizontal_carpet := _count_sprites_with_path_fragment_in_rect(map, "FloorDetail", "great_hall_carpet_runner_horizontal_01", Rect2i(Vector2i(56, 26), Vector2i(18, 2)))
+	_assert(great_hall_horizontal_carpet >= 30, "Great Hall post-door carpet does not turn right into the hallway; count=%d" % great_hall_horizontal_carpet)
+	_assert(_has_blocker_covering_tile(map, Vector2i(71, 25)), "Great Hall right-turn hallway north wall lacks collision")
+	_assert(_has_blocker_covering_tile(map, Vector2i(71, 29)), "Great Hall right-turn hallway south wall lacks collision")
+	_assert(not _has_blocker_covering_tile(map, Vector2i(71, 27)), "Great Hall right-turn hallway walking lane is blocked")
+	var marine_ambush: Dictionary = state["great_hall_marine_ambush"]
+	_assert(bool(marine_ambush.get("exists", false)), "Great Hall marine ambush was not spawned")
+	_assert(bool(marine_ambush.get("dash_ready", false)), "Great Hall marine dash body animation is not ready")
+	_assert(bool(marine_ambush.get("dash_fx_ready", false)), "Great Hall marine dash FX animation is not ready")
+	var ambush_node := map.get_node_or_null("GreatHallMarineAmbush")
+	_assert(ambush_node != null, "GreatHallMarineAmbush node missing")
+	if ambush_node != null:
+		ambush_node.call("force_dash_for_validation")
+		await process_frame
+		var marine := map.get_node_or_null("GreatHallDashMarine")
+		var marine_sprite := marine.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D if marine != null else null
+		_assert(marine_sprite != null and marine_sprite.animation == "marine_dash_attack_e", "Great Hall marine did not play dash attack animation")
 
 	_assert(not _has_blocker_covering_tile(map, Vector2i(56, 76)), "spawn tile is blocked")
+	_assert(_has_blocker_covering_tile(map, Vector2i(51, 55)), "west bridge parapet wall lacks collision")
+	_assert(_has_blocker_covering_tile(map, Vector2i(61, 55)), "east bridge parapet wall lacks collision")
+	_assert(_has_blocker_covering_tile(map, Vector2i(45, 38)), "west labyrinth partition lacks collision")
+	_assert(_has_blocker_covering_tile(map, Vector2i(67, 38)), "east labyrinth partition lacks collision")
+	_assert(not _has_blocker_covering_tile(map, Vector2i(56, 43)), "central courtyard labyrinth lane is blocked")
+	_assert(not _has_blocker_covering_tile(map, Vector2i(51, 64)), "west side stair opening is blocked")
+	_assert(not _has_blocker_covering_tile(map, Vector2i(61, 64)), "east side stair opening is blocked")
 	_assert(_reachable(map, floors, Vector2i(56, 76), Vector2i(41, 58)), "return mooring is not reachable before gate opens")
 	_assert(_reachable(map, floors, Vector2i(56, 76), Vector2i(73, 56)), "key/winch is not reachable before gate opens")
 	_assert(not _reachable(map, floors, Vector2i(56, 76), Vector2i(60, 39)), "courtyard is reachable before the gate opens")
@@ -55,7 +119,7 @@ func _init() -> void:
 	await process_frame
 	state = map.get_sundered_keep_debug_state()
 	_assert(state["main_gate_open"] == true, "main gate did not open after key acquisition")
-	_assert(map.get_node_or_null("Collision/MainPortcullisBlocker") == null, "main gate blocker remained after opening")
+	_assert(map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") == null, "prefab gate blocker remained after opening")
 	_assert(_reachable(map, floors, Vector2i(56, 76), Vector2i(60, 39)), "courtyard is not reachable after gate opens")
 	_assert(state["siege_started"] == true, "opening the main gate did not start the siege state")
 	_assert(str(state["siege_state"]) == "active", "siege state did not become active")
@@ -167,6 +231,153 @@ func _count_sprites_with_prefix(map: Node, layer_name: String, prefix: String) -
 		if sprite.texture != null and sprite.texture.resource_path.contains(prefix):
 			count += 1
 	return count
+
+
+func _count_sprites_with_path_fragment(map: Node, layer_name: String, fragment: String) -> int:
+	var layer := map.get_node_or_null(layer_name)
+	if layer == null:
+		return 0
+	var count := 0
+	for child in layer.get_children():
+		if not (child is Sprite2D):
+			continue
+		var sprite := child as Sprite2D
+		if sprite.texture != null and sprite.texture.resource_path.contains(fragment):
+			count += 1
+	return count
+
+
+func _count_sprites_with_path_fragment_in_rect(map: Node, layer_name: String, fragment: String, rect: Rect2i) -> int:
+	var layer := map.get_node_or_null(layer_name)
+	if layer == null:
+		return 0
+	var count := 0
+	for child in layer.get_children():
+		if not (child is Sprite2D):
+			continue
+		var sprite := child as Sprite2D
+		if sprite.texture == null or not sprite.texture.resource_path.contains(fragment):
+			continue
+		var tile := Vector2i(floor(sprite.position.x / TILE_SIZE), floor(sprite.position.y / TILE_SIZE))
+		if rect.has_point(tile):
+			count += 1
+	return count
+
+
+func _count_nodes_named(node: Node, node_name: String) -> int:
+	var count := 0
+	if node.name == node_name:
+		count += 1
+	for child in node.get_children():
+		count += _count_nodes_named(child, node_name)
+	return count
+
+
+func _count_nodes_with_name_prefix(node: Node, prefix: String) -> int:
+	var count := 0
+	if node.name.contains(prefix):
+		count += 1
+	for child in node.get_children():
+		count += _count_nodes_with_name_prefix(child, prefix)
+	return count
+
+
+func _animated_sprite_frame_count(node: Node, node_name: String, animation_name: StringName) -> int:
+	if node.name == node_name and node is AnimatedSprite2D:
+		var frames := (node as AnimatedSprite2D).sprite_frames
+		if frames == null or not frames.has_animation(animation_name):
+			return 0
+		return frames.get_frame_count(animation_name)
+	for child in node.get_children():
+		var count := _animated_sprite_frame_count(child, node_name, animation_name)
+		if count > 0:
+			return count
+	return 0
+
+
+func _node_has_child_named(node: Node, node_name: String, child_name: String) -> bool:
+	if node.name == node_name:
+		return node.get_node_or_null(child_name) != null
+	for child in node.get_children():
+		if _node_has_child_named(child, node_name, child_name):
+			return true
+	return false
+
+
+func _count_direct_animated_children(map: Node, layer_name: String) -> int:
+	var layer := map.get_node_or_null(layer_name)
+	if layer == null:
+		return 0
+	var count := 0
+	for child in layer.get_children():
+		if child is AnimatedSprite2D:
+			count += 1
+	return count
+
+
+func _all_elevation_pockets_connected(map: Node) -> bool:
+	var elevation_map: Node = map.get_elevation_map()
+	if elevation_map == null:
+		return false
+	var cells: Dictionary = elevation_map.call("get_cells")
+	var walkable_cells: Dictionary = {}
+	for cell_value in cells.keys():
+		if not (cell_value is Vector2i):
+			continue
+		var cell := cell_value as Vector2i
+		if not bool(elevation_map.call("is_blocked", cell)):
+			walkable_cells[cell] = true
+	if walkable_cells.is_empty():
+		return true
+	var start := walkable_cells.keys()[0] as Vector2i
+	var queue: Array[Vector2i] = [start]
+	var seen := {start: true}
+	var directions := [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.DOWN, Vector2i.UP]
+	while not queue.is_empty():
+		var current := queue.pop_front() as Vector2i
+		for direction in directions:
+			var next_tile: Vector2i = current + direction
+			if seen.has(next_tile) or not walkable_cells.has(next_tile):
+				continue
+			if not bool(elevation_map.call("can_traverse", current, next_tile)):
+				continue
+			seen[next_tile] = true
+			queue.append(next_tile)
+	return seen.size() == walkable_cells.size()
+
+
+func _stair_art_matches_elevation_transition(map: Node) -> bool:
+	var allowed_tiles := {
+		Vector2i(54, 69): true,
+		Vector2i(55, 69): true,
+		Vector2i(56, 69): true,
+		Vector2i(57, 69): true,
+		Vector2i(58, 69): true,
+		Vector2i(52, 63): true,
+		Vector2i(52, 64): true,
+		Vector2i(52, 65): true,
+		Vector2i(60, 63): true,
+		Vector2i(60, 64): true,
+		Vector2i(60, 65): true,
+		Vector2i(54, 70): true,
+		Vector2i(55, 70): true,
+		Vector2i(57, 70): true,
+		Vector2i(58, 70): true,
+	}
+	for layer_name in ["TerrainBase", "FloorDetail"]:
+		var layer := map.get_node_or_null(layer_name)
+		if layer == null:
+			continue
+		for child in layer.get_children():
+			if not (child is Sprite2D):
+				continue
+			var sprite := child as Sprite2D
+			if not sprite.name.begins_with("cobblestone_stairs"):
+				continue
+			var tile := Vector2i(floor(sprite.position.x / TILE_SIZE), floor(sprite.position.y / TILE_SIZE))
+			if not allowed_tiles.has(tile):
+				return false
+	return true
 
 
 func _has_blocker_covering_tile(map: Node, tile: Vector2i) -> bool:

@@ -55,6 +55,8 @@ def main() -> int:
 
     generated: list[Path] = []
     generated.extend(_build_lower_body_modules(source_root, module_root, args.dry_run))
+    generated.extend(_build_upper_body_modules(source_root, module_root, args.dry_run))
+    generated.extend(_build_upper_body_action_modules(source_root, module_root, args.dry_run))
     generated.extend(_build_fast_attack_runtime(source_root, action_root, args.dry_run))
 
     for path in generated:
@@ -105,6 +107,87 @@ def _build_lower_body_modules(source_root: Path, module_root: Path, dry_run: boo
     return generated
 
 
+def _build_upper_body_action_modules(source_root: Path, module_root: Path, dry_run: bool) -> list[Path]:
+    generated: list[Path] = []
+    fast_root = source_root / "fast_attack"
+    output_root = module_root / "upper_body/actions/unarmed/fast_attack/fast_strike_01"
+    for direction in DIRECTIONS:
+        upper = _find_part(fast_root, "upper_body", "fast_strike_01", direction)
+        if upper is None:
+            continue
+        output = output_root / f"operator__modular_upper_body__unarmed__fast_strike_01__{direction}__3f__96.png"
+        if not dry_run:
+            output.parent.mkdir(parents=True, exist_ok=True)
+            _write_or_copy_sheet(upper, output, frames=3, target_frame_width=96, target_frame_height=96)
+        generated.append(output)
+    return generated
+
+
+def _build_upper_body_modules(source_root: Path, module_root: Path, dry_run: bool) -> list[Path]:
+    generated: list[Path] = []
+    upper_root = module_root / "upper_body"
+
+    for direction in DIRECTIONS:
+        generated.extend(
+            _copy_upper_module(
+                source_root,
+                upper_root,
+                canonical_action="run_01",
+                direction=direction,
+                output_group="locomotion/run_01",
+                fallbacks=("action_01",),
+                dry_run=dry_run,
+            )
+        )
+        generated.extend(
+            _copy_upper_module(
+                source_root,
+                upper_root,
+                canonical_action="walk_01",
+                direction=direction,
+                output_group="locomotion/walk_01",
+                fallbacks=("action_01", "run_01"),
+                dry_run=dry_run,
+            )
+        )
+        generated.extend(
+            _copy_upper_module(
+                source_root,
+                upper_root,
+                canonical_action="idle_01",
+                direction=direction,
+                output_group="locomotion/idle_01",
+                fallbacks=("action_01", "run_01"),
+                dry_run=dry_run,
+            )
+        )
+
+    return generated
+
+
+def _copy_upper_module(
+    source_root: Path,
+    upper_root: Path,
+    canonical_action: str,
+    direction: str,
+    output_group: str,
+    fallbacks: tuple[str, ...],
+    dry_run: bool,
+) -> list[Path]:
+    source_spec = _resolve_upper_source(source_root, canonical_action, direction, fallbacks)
+    if source_spec is None:
+        return []
+
+    output_name = f"operator__modular_upper_body__unarmed__{canonical_action}__{direction}__{source_spec.frames}f__96.png"
+    output_path = upper_root / output_group / output_name
+    if dry_run:
+        return [output_path]
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    _write_or_copy_sheet(source_spec.path, output_path, source_spec.frames, target_frame_width=96, target_frame_height=96)
+    return [output_path]
+
+
 def _copy_lower_module(
     source_root: Path,
     lower_root: Path,
@@ -135,9 +218,9 @@ def _resolve_lower_source(
     fallbacks: tuple[str, ...],
 ) -> SheetSpec | None:
     if action == "idle_01":
-        south_idle = source_root / "idle/operator__modular_lower_body__idle__s__5f__96.png"
-        if direction == "s" and south_idle.exists():
-            return _sheet_spec_from_path(south_idle, direction)
+        idle_matches = sorted((source_root / "idle").glob(f"operator__modular_lower_body__idle__{direction}__*f__96.png"))
+        if idle_matches:
+            return _sheet_spec_from_path(idle_matches[0], direction)
 
     search_actions = (action, *fallbacks)
     search_dirs = (
@@ -154,6 +237,46 @@ def _resolve_lower_source(
             if matches:
                 return _sheet_spec_from_path(matches[0], direction)
     return None
+
+
+def _resolve_upper_source(
+    source_root: Path,
+    action: str,
+    direction: str,
+    fallbacks: tuple[str, ...],
+) -> SheetSpec | None:
+    search_actions = (action, *fallbacks)
+    search_dirs = (
+        source_root / "upper",
+        source_root / action.replace("_01", ""),
+        source_root / "run",
+        source_root / "walk",
+        source_root / "idle",
+        source_root / "png",
+        source_root / "fast_attack",
+    )
+    for search_action in search_actions:
+        for candidate_direction in _direction_fallbacks(direction):
+            for directory in search_dirs:
+                pattern = f"operator__modular_upper_body*__{search_action}__{candidate_direction}__*f__96.png"
+                matches = sorted(directory.glob(pattern)) if directory.exists() else []
+                if matches:
+                    return _sheet_spec_from_path(matches[0], direction)
+    return None
+
+
+def _direction_fallbacks(direction: str) -> tuple[str, ...]:
+    fallback_map = {
+        "s": ("s", "se", "sw", "e", "w"),
+        "se": ("se", "s", "e"),
+        "e": ("e", "se", "s"),
+        "ne": ("ne", "n", "e"),
+        "n": ("n", "ne", "nw", "e", "w"),
+        "nw": ("nw", "n", "w"),
+        "w": ("w", "sw", "s"),
+        "sw": ("sw", "s", "w"),
+    }
+    return fallback_map.get(direction, (direction,))
 
 
 def _build_fast_attack_runtime(source_root: Path, action_root: Path, dry_run: bool) -> list[Path]:
