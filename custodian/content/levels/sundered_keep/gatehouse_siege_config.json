@@ -10,12 +10,12 @@
       "label": "Gatehouse Core",
       "group": "command_post",
       "tile_offset_from": "main_gate",
-      "tile_offset": [2, -2],
+      "tile_offset": [2, 4],
       "hp": 180.0,
       "repair_kind": "repair_gatehouse",
       "repair_prompt": "REPAIR GATEHOUSE CORE",
-      "repair_tile_offset": [5, -1],
-      "repair_distance": 86.0
+      "repair_tile_offset": [2, 7],
+      "repair_distance": 96.0
     },
     {
       "id": "return_mooring",
@@ -61,7 +61,7 @@
   "extra_wave_pressure_ticks": [2, 5],
   "defense_turret": {
     "tile_offset_from": "main_gate",
-    "tile_offset": [-6, -2],
+    "tile_offset": [-5, 4],
     "range": 360.0,
     "damage": 9.0,
     "power_required": false

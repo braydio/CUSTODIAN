@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "asset_pack": "PLACEHOLDER_custodian_runtime_road_pieces",
+  "source_image": "generated placeholder diagnostics",
+  "export_root": "res://content/tiles/roads_paths/runtime/placeholders/roads",
+  "piece_count": 7,
+  "direction_bitmask": {
+    "n": 1,
+    "e": 2,
+    "s": 4,
+    "w": 8
+  },
+  "procgen_notes": {
+    "purpose": "Temporary high-contrast runtime road overlay diagnostics. Replace with production road art after layout review.",
+    "naming_rule": "PLACEHOLDER_roads_mask_<connection_bitmask>.png"
+  },
+  "pieces": [
+    {
+      "id": "PLACEHOLDER_roads_mask_03",
+      "file": "pieces/PLACEHOLDER_roads_mask_03.png",
+      "name": "PLACEHOLDER_roads_mask_03",
+      "kind": "corner",
+      "width_class": "placeholder",
+      "connections": ["n", "e"],
+      "connection_bitmask": 3,
+      "tags": ["road", "placeholder", "corner"]
+    },
+    {
+      "id": "PLACEHOLDER_roads_mask_05",
+      "file": "pieces/PLACEHOLDER_roads_mask_05.png",
+      "name": "PLACEHOLDER_roads_mask_05",
+      "kind": "straight",
+      "width_class": "placeholder",
+      "connections": ["n", "s"],
+      "connection_bitmask": 5,
+      "tags": ["road", "placeholder", "straight", "vertical"]
+    },
+    {
+      "id": "PLACEHOLDER_roads_mask_06",
+      "file": "pieces/PLACEHOLDER_roads_mask_06.png",
+      "name": "PLACEHOLDER_roads_mask_06",
+      "kind": "corner",
+      "width_class": "placeholder",
+      "connections": ["e", "s"],
+      "connection_bitmask": 6,
+      "tags": ["road", "placeholder", "corner"]
+    },
+    {
+      "id": "PLACEHOLDER_roads_mask_09",
+      "file": "pieces/PLACEHOLDER_roads_mask_09.png",
+      "name": "PLACEHOLDER_roads_mask_09",
+      "kind": "corner",
+      "width_class": "placeholder",
+      "connections": ["n", "w"],
+      "connection_bitmask": 9,
+      "tags": ["road", "placeholder", "corner"]
+    },
+    {
+      "id": "PLACEHOLDER_roads_mask_10",
+      "file": "pieces/PLACEHOLDER_roads_mask_10.png",
+      "name": "PLACEHOLDER_roads_mask_10",
+      "kind": "straight",
+      "width_class": "placeholder",
+      "connections": ["e", "w"],
+      "connection_bitmask": 10,
+      "tags": ["road", "placeholder", "straight", "horizontal"]
+    },
+    {
+      "id": "PLACEHOLDER_roads_mask_12",
+      "file": "pieces/PLACEHOLDER_roads_mask_12.png",
+      "name": "PLACEHOLDER_roads_mask_12",
+      "kind": "corner",
+      "width_class": "placeholder",
+      "connections": ["s", "w"],
+      "connection_bitmask": 12,
+      "tags": ["road", "placeholder", "corner"]
+    },
+    {
+      "id": "PLACEHOLDER_roads_mask_15",
+      "file": "pieces/PLACEHOLDER_roads_mask_15.png",
+      "name": "PLACEHOLDER_roads_mask_15",
+      "kind": "cross",
+      "width_class": "placeholder",
+      "connections": ["n", "e", "s", "w"],
+      "connection_bitmask": 15,
+      "tags": ["road", "placeholder", "cross"]
+    }
+  ]
+}

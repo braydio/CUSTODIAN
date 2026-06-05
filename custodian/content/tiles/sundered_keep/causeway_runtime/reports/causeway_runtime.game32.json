@@ -1,0 +1,3742 @@
+{
+  "schema": "custodian.game32.sundered_keep.causeway_runtime.v1",
+  "tile_size": 32,
+  "source_masters": {
+    "tiles": "custodian/content/masters/sundered_keep/causeway_tiles_master.png",
+    "walls": "custodian/content/masters/sundered_keep/causeway_walls_master.png"
+  },
+  "output_root": "custodian/content/tiles/sundered_keep/causeway_runtime",
+  "asset_count": 61,
+  "domains": [
+    "causeway_edges",
+    "causeway_floor",
+    "cliffs",
+    "gatehouse",
+    "keep_walls",
+    "ocean",
+    "props"
+  ],
+  "assets": [
+    {
+      "id": "ocean_dark_water_01",
+      "texture": "ocean/ocean_dark_water_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        22,
+        94,
+        158,
+        158
+      ],
+      "domain": "ocean",
+      "kind": "water_base",
+      "tags": [
+        "water",
+        "repeatable"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "water",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "water_void",
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainBase",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": true,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "ocean_dark_water_02",
+      "texture": "ocean/ocean_dark_water_02.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        198,
+        94,
+        160,
+        158
+      ],
+      "domain": "ocean",
+      "kind": "water_base_variant",
+      "tags": [
+        "water",
+        "repeatable",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "water",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "water_void",
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainBase",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": true,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "ocean_current_streak_01",
+      "texture": "ocean/ocean_current_streak_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        376,
+        94,
+        160,
+        158
+      ],
+      "domain": "ocean",
+      "kind": "current_streak",
+      "tags": [
+        "water",
+        "overlay",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "water",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "water_void",
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainBase",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "ocean_foam_open_01",
+      "texture": "ocean/ocean_foam_open_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        560,
+        94,
+        162,
+        158
+      ],
+      "domain": "ocean",
+      "kind": "foam_open",
+      "tags": [
+        "water",
+        "foam"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "TerrainOverlay",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "ocean_foam_edge_left_01",
+      "texture": "ocean/ocean_foam_edge_left_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        746,
+        94,
+        202,
+        158
+      ],
+      "domain": "ocean",
+      "kind": "foam_edge_left",
+      "tags": [
+        "water",
+        "foam",
+        "edge"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "TerrainOverlay",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "ocean_foam_edge_right_01",
+      "texture": "ocean/ocean_foam_edge_right_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        966,
+        94,
+        198,
+        158
+      ],
+      "domain": "ocean",
+      "kind": "foam_edge_right",
+      "tags": [
+        "water",
+        "foam",
+        "edge"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "TerrainOverlay",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "ocean_foam_edge_bottom_01",
+      "texture": "ocean/ocean_foam_edge_bottom_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        1182,
+        94,
+        196,
+        158
+      ],
+      "domain": "ocean",
+      "kind": "foam_edge_bottom",
+      "tags": [
+        "water",
+        "foam",
+        "edge"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "TerrainOverlay",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "cliff_face_dark_01",
+      "texture": "cliffs/cliff_face_dark_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        22,
+        314,
+        154,
+        142
+      ],
+      "domain": "cliffs",
+      "kind": "cliff_face",
+      "tags": [
+        "cliff",
+        "face"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "cliff_face_dark_02",
+      "texture": "cliffs/cliff_face_dark_02.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        198,
+        314,
+        160,
+        142
+      ],
+      "domain": "cliffs",
+      "kind": "cliff_face",
+      "tags": [
+        "cliff",
+        "face",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "cliff_face_wet_01",
+      "texture": "cliffs/cliff_face_wet_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        378,
+        314,
+        160,
+        142
+      ],
+      "domain": "cliffs",
+      "kind": "cliff_face_wet",
+      "tags": [
+        "cliff",
+        "wet",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "cliff_rock_cluster_01",
+      "texture": "cliffs/cliff_rock_cluster_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        566,
+        314,
+        154,
+        142
+      ],
+      "domain": "cliffs",
+      "kind": "rock_cluster",
+      "tags": [
+        "cliff",
+        "rocks",
+        "cluster"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsBlocking",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "cliff_rock_cluster_02",
+      "texture": "cliffs/cliff_rock_cluster_02.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        746,
+        314,
+        156,
+        142
+      ],
+      "domain": "cliffs",
+      "kind": "rock_cluster",
+      "tags": [
+        "cliff",
+        "rocks",
+        "cluster",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsBlocking",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "cliff_top_mossy_edge_01",
+      "texture": "cliffs/cliff_top_mossy_edge_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        928,
+        314,
+        186,
+        142
+      ],
+      "domain": "cliffs",
+      "kind": "cliff_top_mossy_edge",
+      "tags": [
+        "cliff",
+        "top",
+        "mossy"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        32
+      ],
+      "footprint_tiles": [
+        2,
+        1
+      ],
+      "collision": "edge",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "cliff_top_mossy_edge_02",
+      "texture": "cliffs/cliff_top_mossy_edge_02.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        1130,
+        314,
+        198,
+        142
+      ],
+      "domain": "cliffs",
+      "kind": "cliff_top_mossy_edge",
+      "tags": [
+        "cliff",
+        "top",
+        "mossy",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        32
+      ],
+      "footprint_tiles": [
+        2,
+        1
+      ],
+      "collision": "edge",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_floor_center_01",
+      "texture": "causeway_floor/causeway_floor_center_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        22,
+        519,
+        158,
+        126
+      ],
+      "domain": "causeway_floor",
+      "kind": "floor_center",
+      "tags": [
+        "floor",
+        "causeway",
+        "repeatable"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": true,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_floor_center_02",
+      "texture": "causeway_floor/causeway_floor_center_02.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        210,
+        519,
+        158,
+        126
+      ],
+      "domain": "causeway_floor",
+      "kind": "floor_center",
+      "tags": [
+        "floor",
+        "causeway",
+        "repeatable",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": true,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_floor_center_03",
+      "texture": "causeway_floor/causeway_floor_center_03.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        398,
+        519,
+        158,
+        126
+      ],
+      "domain": "causeway_floor",
+      "kind": "floor_center",
+      "tags": [
+        "floor",
+        "causeway",
+        "repeatable",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": true,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_floor_cracked_01",
+      "texture": "causeway_floor/causeway_floor_cracked_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        586,
+        519,
+        158,
+        126
+      ],
+      "domain": "causeway_floor",
+      "kind": "floor_cracked",
+      "tags": [
+        "floor",
+        "causeway",
+        "cracked",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_floor_mossy_01",
+      "texture": "causeway_floor/causeway_floor_mossy_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        774,
+        519,
+        158,
+        126
+      ],
+      "domain": "causeway_floor",
+      "kind": "floor_mossy",
+      "tags": [
+        "floor",
+        "causeway",
+        "mossy",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_floor_puddle_01",
+      "texture": "causeway_floor/causeway_floor_puddle_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        964,
+        519,
+        158,
+        126
+      ],
+      "domain": "causeway_floor",
+      "kind": "floor_puddle",
+      "tags": [
+        "floor",
+        "causeway",
+        "puddle",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_floor_puddle_02",
+      "texture": "causeway_floor/causeway_floor_puddle_02.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        1150,
+        519,
+        154,
+        126
+      ],
+      "domain": "causeway_floor",
+      "kind": "floor_puddle",
+      "tags": [
+        "floor",
+        "causeway",
+        "puddle",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_floor_grate_01",
+      "texture": "causeway_floor/causeway_floor_grate_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        22,
+        676,
+        142,
+        110
+      ],
+      "domain": "causeway_floor",
+      "kind": "floor_grate_square",
+      "tags": [
+        "floor",
+        "causeway",
+        "grate"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_floor_grate_02",
+      "texture": "causeway_floor/causeway_floor_grate_02.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        192,
+        676,
+        142,
+        110
+      ],
+      "domain": "causeway_floor",
+      "kind": "floor_grate_round",
+      "tags": [
+        "floor",
+        "causeway",
+        "grate"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "FloorDetail",
+        "z_index_hint": -20,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_edge_left_vertical_01",
+      "texture": "causeway_edges/causeway_edge_left_vertical_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        588,
+        710,
+        44,
+        85
+      ],
+      "domain": "causeway_edges",
+      "kind": "edge_left_vertical",
+      "tags": [
+        "edge",
+        "causeway",
+        "vertical"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "edge",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_edge_right_vertical_01",
+      "texture": "causeway_edges/causeway_edge_right_vertical_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        722,
+        710,
+        44,
+        85
+      ],
+      "domain": "causeway_edges",
+      "kind": "edge_right_vertical",
+      "tags": [
+        "edge",
+        "causeway",
+        "vertical"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "edge",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_edge_top_horizontal_01",
+      "texture": "causeway_edges/causeway_edge_top_horizontal_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        852,
+        730,
+        218,
+        55
+      ],
+      "domain": "causeway_edges",
+      "kind": "edge_top_horizontal",
+      "tags": [
+        "edge",
+        "causeway",
+        "horizontal"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        96,
+        32
+      ],
+      "footprint_tiles": [
+        3,
+        1
+      ],
+      "collision": "edge",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_edge_bottom_horizontal_01",
+      "texture": "causeway_edges/causeway_edge_bottom_horizontal_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        1106,
+        730,
+        252,
+        55
+      ],
+      "domain": "causeway_edges",
+      "kind": "edge_bottom_horizontal",
+      "tags": [
+        "edge",
+        "causeway",
+        "horizontal"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        96,
+        32
+      ],
+      "footprint_tiles": [
+        3,
+        1
+      ],
+      "collision": "edge",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "terrain_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_parapet_post_01",
+      "texture": "causeway_edges/causeway_parapet_post_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        32,
+        868,
+        92,
+        96
+      ],
+      "domain": "causeway_edges",
+      "kind": "parapet_post",
+      "tags": [
+        "post",
+        "causeway",
+        "parapet"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsBlocking",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_parapet_post_02",
+      "texture": "causeway_edges/causeway_parapet_post_02.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        160,
+        868,
+        92,
+        96
+      ],
+      "domain": "causeway_edges",
+      "kind": "parapet_post",
+      "tags": [
+        "post",
+        "causeway",
+        "parapet",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          32,
+          32
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsBlocking",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_corner_block_nw_01",
+      "texture": "causeway_edges/causeway_corner_block_nw_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        318,
+        866,
+        102,
+        100
+      ],
+      "domain": "causeway_edges",
+      "kind": "corner_nw",
+      "tags": [
+        "corner",
+        "causeway",
+        "nw"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_corner_block_ne_01",
+      "texture": "causeway_edges/causeway_corner_block_ne_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        444,
+        866,
+        102,
+        100
+      ],
+      "domain": "causeway_edges",
+      "kind": "corner_ne",
+      "tags": [
+        "corner",
+        "causeway",
+        "ne"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_corner_block_sw_01",
+      "texture": "causeway_edges/causeway_corner_block_sw_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        570,
+        866,
+        102,
+        100
+      ],
+      "domain": "causeway_edges",
+      "kind": "corner_sw",
+      "tags": [
+        "corner",
+        "causeway",
+        "sw"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_corner_block_se_01",
+      "texture": "causeway_edges/causeway_corner_block_se_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        696,
+        866,
+        102,
+        100
+      ],
+      "domain": "causeway_edges",
+      "kind": "corner_se",
+      "tags": [
+        "corner",
+        "causeway",
+        "se"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_diagonal_wall_nw_01",
+      "texture": "causeway_edges/causeway_diagonal_wall_nw_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        884,
+        866,
+        104,
+        100
+      ],
+      "domain": "causeway_edges",
+      "kind": "diagonal_wall_nw",
+      "tags": [
+        "diagonal",
+        "wall",
+        "causeway",
+        "nw"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_diagonal_wall_ne_01",
+      "texture": "causeway_edges/causeway_diagonal_wall_ne_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        1002,
+        866,
+        104,
+        100
+      ],
+      "domain": "causeway_edges",
+      "kind": "diagonal_wall_ne",
+      "tags": [
+        "diagonal",
+        "wall",
+        "causeway",
+        "ne"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_diagonal_wall_sw_01",
+      "texture": "causeway_edges/causeway_diagonal_wall_sw_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        1150,
+        866,
+        104,
+        100
+      ],
+      "domain": "causeway_edges",
+      "kind": "diagonal_wall_sw",
+      "tags": [
+        "diagonal",
+        "wall",
+        "causeway",
+        "sw"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "causeway_diagonal_wall_se_01",
+      "texture": "causeway_edges/causeway_diagonal_wall_se_01.png",
+      "source_master": "tiles",
+      "source_rect_px": [
+        1266,
+        866,
+        104,
+        100
+      ],
+      "domain": "causeway_edges",
+      "kind": "diagonal_wall_se",
+      "tags": [
+        "diagonal",
+        "wall",
+        "causeway",
+        "se"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        64
+      ],
+      "footprint_tiles": [
+        2,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "TerrainEdges",
+        "z_index_hint": -10,
+        "y_sort": false,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "keep_wall_face_01",
+      "texture": "keep_walls/keep_wall_face_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        30,
+        66,
+        186,
+        174
+      ],
+      "domain": "keep_walls",
+      "kind": "wall_face",
+      "tags": [
+        "keep",
+        "wall",
+        "face"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        128,
+        128
+      ],
+      "footprint_tiles": [
+        4,
+        4
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          128,
+          128
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          128,
+          128
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "keep_wall_face_02",
+      "texture": "keep_walls/keep_wall_face_02.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        260,
+        66,
+        186,
+        174
+      ],
+      "domain": "keep_walls",
+      "kind": "wall_face",
+      "tags": [
+        "keep",
+        "wall",
+        "face",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        128,
+        128
+      ],
+      "footprint_tiles": [
+        4,
+        4
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          128,
+          128
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          128,
+          128
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "keep_wall_top_crenellation_01",
+      "texture": "keep_walls/keep_wall_top_crenellation_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        505,
+        116,
+        184,
+        94
+      ],
+      "domain": "keep_walls",
+      "kind": "top_crenellation",
+      "tags": [
+        "keep",
+        "wall",
+        "crenellation"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        128,
+        64
+      ],
+      "footprint_tiles": [
+        4,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          128,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          128,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "keep_wall_top_crenellation_02",
+      "texture": "keep_walls/keep_wall_top_crenellation_02.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        770,
+        116,
+        186,
+        94
+      ],
+      "domain": "keep_walls",
+      "kind": "top_crenellation",
+      "tags": [
+        "keep",
+        "wall",
+        "crenellation",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        128,
+        64
+      ],
+      "footprint_tiles": [
+        4,
+        2
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          128,
+          64
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          128,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "keep_buttress_vertical_left_01",
+      "texture": "keep_walls/keep_buttress_vertical_left_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        1044,
+        66,
+        100,
+        174
+      ],
+      "domain": "keep_walls",
+      "kind": "vertical_buttress_left",
+      "tags": [
+        "keep",
+        "buttress",
+        "vertical"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        128
+      ],
+      "footprint_tiles": [
+        2,
+        4
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          128
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          128
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "keep_buttress_vertical_right_01",
+      "texture": "keep_walls/keep_buttress_vertical_right_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        1256,
+        66,
+        100,
+        174
+      ],
+      "domain": "keep_walls",
+      "kind": "vertical_buttress_right",
+      "tags": [
+        "keep",
+        "buttress",
+        "vertical"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        128
+      ],
+      "footprint_tiles": [
+        2,
+        4
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          128
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          128
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "gatehouse_main_portcullis_01",
+      "texture": "gatehouse/gatehouse_main_portcullis_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        44,
+        310,
+        292,
+        192
+      ],
+      "domain": "gatehouse",
+      "kind": "main_portcullis",
+      "tags": [
+        "gatehouse",
+        "portcullis",
+        "macro"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        192,
+        192
+      ],
+      "footprint_tiles": [
+        6,
+        6
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          192,
+          192
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          192,
+          192
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "gatehouse_steps_front_01",
+      "texture": "gatehouse/gatehouse_steps_front_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        404,
+        326,
+        266,
+        174
+      ],
+      "domain": "gatehouse",
+      "kind": "steps_front",
+      "tags": [
+        "gatehouse",
+        "stairs",
+        "walkable"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        192,
+        96
+      ],
+      "footprint_tiles": [
+        6,
+        3
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "Traversal",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "top_left",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          192,
+          96
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "gothic_side_door_left_01",
+      "texture": "gatehouse/gothic_side_door_left_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        720,
+        340,
+        122,
+        160
+      ],
+      "domain": "gatehouse",
+      "kind": "side_door_left",
+      "tags": [
+        "door",
+        "gothic",
+        "left"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        96
+      ],
+      "footprint_tiles": [
+        2,
+        3
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          96
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "gothic_side_door_right_01",
+      "texture": "gatehouse/gothic_side_door_right_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        878,
+        340,
+        122,
+        160
+      ],
+      "domain": "gatehouse",
+      "kind": "side_door_right",
+      "tags": [
+        "door",
+        "gothic",
+        "right"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        64,
+        96
+      ],
+      "footprint_tiles": [
+        2,
+        3
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          64,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          64,
+          96
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "gatehouse_roof_peak_01",
+      "texture": "gatehouse/gatehouse_roof_peak_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        1032,
+        326,
+        292,
+        174
+      ],
+      "domain": "gatehouse",
+      "kind": "roof_peak",
+      "tags": [
+        "gatehouse",
+        "roof",
+        "macro"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        192,
+        96
+      ],
+      "footprint_tiles": [
+        6,
+        3
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          192,
+          96
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          192,
+          96
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "side_bastion_left_01",
+      "texture": "gatehouse/side_bastion_left_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        50,
+        565,
+        178,
+        160
+      ],
+      "domain": "gatehouse",
+      "kind": "side_bastion_left",
+      "tags": [
+        "bastion",
+        "left",
+        "macro"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        128,
+        128
+      ],
+      "footprint_tiles": [
+        4,
+        4
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          128,
+          128
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          128,
+          128
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "side_bastion_right_01",
+      "texture": "gatehouse/side_bastion_right_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        284,
+        565,
+        178,
+        160
+      ],
+      "domain": "gatehouse",
+      "kind": "side_bastion_right",
+      "tags": [
+        "bastion",
+        "right",
+        "macro"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        128,
+        128
+      ],
+      "footprint_tiles": [
+        4,
+        4
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          128,
+          128
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          128,
+          128
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "lower_guard_post_left_01",
+      "texture": "gatehouse/lower_guard_post_left_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        502,
+        570,
+        126,
+        160
+      ],
+      "domain": "gatehouse",
+      "kind": "lower_guard_post_left",
+      "tags": [
+        "guard_post",
+        "left"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        96,
+        128
+      ],
+      "footprint_tiles": [
+        3,
+        4
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          128
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          128
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "lower_guard_post_right_01",
+      "texture": "gatehouse/lower_guard_post_right_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        674,
+        570,
+        126,
+        160
+      ],
+      "domain": "gatehouse",
+      "kind": "lower_guard_post_right",
+      "tags": [
+        "guard_post",
+        "right"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        96,
+        128
+      ],
+      "footprint_tiles": [
+        3,
+        4
+      ],
+      "collision": "solid",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          96,
+          128
+        ],
+        "offset_px": [
+          0,
+          0
+        ],
+        "layers": [
+          "solid"
+        ]
+      },
+      "render": {
+        "recommended_layer": "WallsHigh",
+        "z_index_hint": 20,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          96,
+          128
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "brazier_lit_01",
+      "texture": "props/brazier_lit_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        846,
+        604,
+        84,
+        96
+      ],
+      "domain": "props",
+      "kind": "brazier_lit",
+      "tags": [
+        "brazier",
+        "lit",
+        "fire"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "partial",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          20,
+          20
+        ],
+        "offset_px": [
+          5,
+          8
+        ],
+        "layers": [
+          "prop_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "anchor": "center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "brazier_lit_02",
+      "texture": "props/brazier_lit_02.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        980,
+        604,
+        84,
+        96
+      ],
+      "domain": "props",
+      "kind": "brazier_lit",
+      "tags": [
+        "brazier",
+        "lit",
+        "fire",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "partial",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          20,
+          20
+        ],
+        "offset_px": [
+          5,
+          8
+        ],
+        "layers": [
+          "prop_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "anchor": "center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "gate_sconce_left_01",
+      "texture": "props/gate_sconce_left_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        1136,
+        580,
+        78,
+        130
+      ],
+      "domain": "props",
+      "kind": "gate_sconce_left",
+      "tags": [
+        "sconce",
+        "fire",
+        "left"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "partial",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          20,
+          41
+        ],
+        "offset_px": [
+          5,
+          16
+        ],
+        "layers": [
+          "prop_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "gate_sconce_right_01",
+      "texture": "props/gate_sconce_right_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        1260,
+        580,
+        78,
+        130
+      ],
+      "domain": "props",
+      "kind": "gate_sconce_right",
+      "tags": [
+        "sconce",
+        "fire",
+        "right"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "partial",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          20,
+          41
+        ],
+        "offset_px": [
+          5,
+          16
+        ],
+        "layers": [
+          "prop_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "banner_red_vertical_01",
+      "texture": "props/banner_red_vertical_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        88,
+        798,
+        68,
+        188
+      ],
+      "domain": "props",
+      "kind": "banner_red_vertical",
+      "tags": [
+        "banner",
+        "red",
+        "vertical"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        128
+      ],
+      "footprint_tiles": [
+        1,
+        4
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          128
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "banner_red_vertical_02",
+      "texture": "props/banner_red_vertical_02.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        306,
+        798,
+        68,
+        188
+      ],
+      "domain": "props",
+      "kind": "banner_red_vertical",
+      "tags": [
+        "banner",
+        "red",
+        "vertical",
+        "variant"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        128
+      ],
+      "footprint_tiles": [
+        1,
+        4
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          128
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": true
+      },
+      "notes": ""
+    },
+    {
+      "id": "banner_red_small_01",
+      "texture": "props/banner_red_small_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        496,
+        846,
+        86,
+        128
+      ],
+      "domain": "props",
+      "kind": "banner_red_small",
+      "tags": [
+        "banner",
+        "red",
+        "small"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        64
+      ],
+      "footprint_tiles": [
+        1,
+        2
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          64
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "shield_wall_crest_01",
+      "texture": "props/shield_wall_crest_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        666,
+        846,
+        92,
+        120
+      ],
+      "domain": "props",
+      "kind": "shield_wall_crest",
+      "tags": [
+        "shield",
+        "crest",
+        "wall"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        32
+      ],
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "collision": "none",
+      "collision_shape": {
+        "type": "none"
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "anchor": "center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          32
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    },
+    {
+      "id": "chain_or_black_post_01",
+      "texture": "props/chain_or_black_post_01.png",
+      "source_master": "walls",
+      "source_rect_px": [
+        848,
+        808,
+        70,
+        176
+      ],
+      "domain": "props",
+      "kind": "chain_or_black_post",
+      "tags": [
+        "chain",
+        "post",
+        "vertical"
+      ],
+      "tile_size": 32,
+      "runtime_size_px": [
+        32,
+        96
+      ],
+      "footprint_tiles": [
+        1,
+        3
+      ],
+      "collision": "partial",
+      "collision_shape": {
+        "type": "rect",
+        "size_px": [
+          20,
+          62
+        ],
+        "offset_px": [
+          5,
+          24
+        ],
+        "layers": [
+          "prop_blocker"
+        ]
+      },
+      "render": {
+        "recommended_layer": "PropsStatic",
+        "z_index_hint": 10,
+        "y_sort": true,
+        "anchor": "bottom_center",
+        "texture_filter": "nearest",
+        "pixel_snap": true
+      },
+      "game32": {
+        "schema": "game32.asset.v1",
+        "frame_count": 1,
+        "frame_size_px": [
+          32,
+          96
+        ],
+        "grid_px": 32,
+        "atlas": false,
+        "runtime_canvas_multiple_of_32": true,
+        "repeatable": false,
+        "variant": false
+      },
+      "notes": ""
+    }
+  ]
+}

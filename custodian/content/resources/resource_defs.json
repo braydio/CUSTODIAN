@@ -11,6 +11,18 @@
 		"label": "Ruin Scrap",
 		"description": "Fabrication feedstock recovered from wreckage and broken machinery."
 	},
+	"spent_charge_cell": {
+		"label": "Spent Charge Cell",
+		"description": "A dull power cell with almost no charge remaining. Its stamped manufacture date appears twice, eighteen years apart."
+	},
+	"frayed_signal_filament": {
+		"label": "Frayed Signal Filament",
+		"description": "A hair-thin conductor pulled from a ruined comm hood. It still twitches toward active transmitters."
+	},
+	"cracked_field_tag": {
+		"label": "Cracked Field Tag",
+		"description": "A cracked field tag with a scraped identity and the same name stamped again in a different hand."
+	},
 	"power_components": {
 		"label": "Power Components",
 		"description": "Rare salvage used for powered systems and fabricator upgrades."
@@ -30,6 +42,10 @@
 	"memory_glass_fragment": {
 		"label": "Memory Glass Fragment",
 		"description": "Brittle archive material that preserves damaged command-state traces."
+	},
+	"white_thread_knot": {
+		"label": "White Thread Knot",
+		"description": "A clean white thread tied around a trigger finger. It has no dirt, no blood, and no visible knot."
 	},
 	"fiber_moss": {
 		"label": "Fiber Moss",
