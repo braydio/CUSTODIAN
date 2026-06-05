@@ -4,6 +4,7 @@ const TerminalCommandRouterScript := preload("res://game/ui/terminal/terminal_co
 const TerminalSnapshotScript := preload("res://game/ui/terminal/terminal_snapshot.gd")
 const TerminalMapPreviewScript := preload("res://game/ui/terminal/terminal_map_preview.gd")
 const TerminalPlanetPreviewScript := preload("res://game/ui/terminal/terminal_planet_preview.gd")
+const DebugScreenScene := preload("res://game/ui/hud/debug_screen.tscn")
 
 const TERMINAL_PANEL_FRAME_TEXTURE := preload("res://content/ui/terminal/panels/panel_frame_medium_9slice.png")
 const TERMINAL_HEADER_ACTIVE_TEXTURE := preload("res://content/ui/terminal/overlays/Header_Bar_Active.png")
@@ -110,6 +111,7 @@ const SECTOR_DISPLAY_NAMES := {
 
 @onready var power_label = get_node_or_null("PowerDisplay/Label")
 @onready var power_bar = get_node_or_null("PowerDisplay/PowerBar")
+@onready var power_display = get_node_or_null("PowerDisplay")
 @onready var contract_phase_label = get_node_or_null("ContractPhaseLabel")
 @onready var lives_label = get_node_or_null("LivesLabel")
 @onready var camera_follow_label = get_node_or_null("CameraFollowLabel")
@@ -269,6 +271,7 @@ var _planet_preview_zoom_distance := 3.8
 var _main_hud_hidden := false
 var _debug_hud_visible := false
 var _debug_toggle_key_was_pressed := false
+var _debug_screen: Control = null
 var _minimap_visible := true
 var _placement_mode_active := false
 var _last_crosshair_aim_dir := Vector2.ZERO
@@ -418,48 +421,15 @@ func _ready():
 	_refresh_terminal_page_buttons()
 
 func _create_debug_panel() -> void:
-	# Create debug panel for inventory and cognitive state
-	var debug_panel := VBoxContainer.new()
-	debug_panel.name = "DebugPanel"
-	debug_panel.visible = false  # Hidden by default, toggle with debug key
-	debug_panel.position = Vector2(10, 10)
-	debug_panel.add_theme_stylebox_override("panel", _create_debug_panel_style())
-	
-	# Inventory section
-	var inv_label := Label.new()
-	inv_label.name = "InventoryLabel"
-	inv_label.text = "INVENTORY"
-	inv_label.add_theme_font_size_override("font_size", 14)
-	debug_panel.add_child(inv_label)
-	
-	var inv_display := Label.new()
-	inv_display.name = "InventoryDisplay"
-	inv_display.text = "Loading..."
-	inv_display.autowrap_mode = 2
-	debug_panel.add_child(inv_display)
-	
-	# Cognitive state section
-	var cog_label := Label.new()
-	cog_label.name = "CognitiveLabel"
-	cog_label.text = "COGNITIVE STATE"
-	cog_label.add_theme_font_size_override("font_size", 14)
-	cog_label.add_theme_constant_override("margin_top", 10)
-	debug_panel.add_child(cog_label)
-	
-	var cog_display := Label.new()
-	cog_display.name = "CognitiveDisplay"
-	cog_display.text = "Loading..."
-	cog_display.autowrap_mode = 2
-	debug_panel.add_child(cog_display)
-	
-	# Add to scene
-	if get_tree().current_scene:
-		get_tree().current_scene.call_deferred("add_child", debug_panel)
-	
-	# Store references
-	set_meta("debug_panel", debug_panel)
-	set_meta("inv_display", inv_display)
-	set_meta("cog_display", cog_display)
+	if _debug_screen != null:
+		return
+	_debug_screen = DebugScreenScene.instantiate() as Control
+	if _debug_screen == null:
+		push_warning("[UI] Failed to instantiate debug screen")
+		return
+	_debug_screen.name = "DebugScreen"
+	_debug_screen.visible = false
+	add_child(_debug_screen)
 
 
 func _create_debug_panel_style() -> StyleBoxFlat:
@@ -517,10 +487,15 @@ func _register_devconsole_command(console: Node, command_name: String, handler: 
 
 
 func _devconsole_toggle_debug_hud(args: Array) -> String:
-	# Toggle debug HUD visibility (camera/aim/time/director/supply/button diagnostics)
-	_debug_hud_visible = not _debug_hud_visible
-	_set_main_hud_hidden(_main_hud_hidden)
-	return "Debug HUD: " + ("ON" if _debug_hud_visible else "OFF")
+	var next_visible := not _debug_hud_visible
+	if args.size() > 0:
+		var mode := str(args[0]).strip_edges().to_lower()
+		if mode in ["on", "true", "1", "show", "open"]:
+			next_visible = true
+		elif mode in ["off", "false", "0", "hide", "close"]:
+			next_visible = false
+	_set_debug_screen_visible(next_visible)
+	return "Debug screen: " + ("ON" if _debug_hud_visible else "OFF")
 
 func _devconsole_show_cognitive(args: Array) -> String:
 	# Show cognitive state from CognitiveState autoload
@@ -885,10 +860,6 @@ func _setup_terminal_main_scroll() -> void:
 
 
 func _update_debug_panel() -> void:
-	var debug_panel = get_meta("debug_panel", null)
-	if debug_panel == null:
-		return
-	
 	var f12_pressed := Input.is_key_pressed(KEY_F12)
 	var debug_toggle_pressed := InputMap.has_action("debug_toggle") and Input.is_action_just_pressed("debug_toggle")
 	if f12_pressed and not _debug_toggle_key_was_pressed:
@@ -896,54 +867,180 @@ func _update_debug_panel() -> void:
 	_debug_toggle_key_was_pressed = f12_pressed
 
 	if debug_toggle_pressed:
-		debug_panel.visible = not debug_panel.visible
-	
-	if not debug_panel.visible:
+		_set_debug_screen_visible(not _debug_hud_visible)
+
+	if not _debug_hud_visible or _debug_screen == null:
 		return
-	
-	# Update inventory display
-	var inv_display = get_meta("inv_display", null)
-	if inv_display != null:
-		var inventory = get_node_or_null("/root/InventoryManager")
-		if inventory != null:
-			var items = inventory.get_all_items()
-			var text = ""
-			if items.keys().size() == 0:
-				text = "Empty"
-			else:
-				for item_id in items.keys():
-					var count = items[item_id]
-					var display_name = item_id.capitalize()
-					match String(item_id):
-						&"faint_recollection":
-							display_name = "Faint Recollection"
-						&"residual_instinct":
-							display_name = "Residual Instinct"
-						&"ancient_bearing":
-							display_name = "Ancient Bearing"
-					text += "%s: %d\n" % [display_name, count]
-			inv_display.text = text if text != "" else "Empty"
-		else:
-			inv_display.text = "No InventoryManager"
-	
-	# Update cognitive state display
-	var cog_display = get_meta("cog_display", null)
-	if cog_display != null:
-		var cognitive = get_node_or_null("/root/CognitiveState")
-		if cognitive != null:
-			if cognitive.has_method("get_weights"):
-				var weights = cognitive.call("get_weights")
-				var dominant = cognitive.call("get_dominant_state") if cognitive.has_method("get_dominant_state") else "UNKNOWN"
-				cog_display.text = "Recollection: %.2f\nInstinct: %.2f\nBearing: %.2f\n\nDominant: %s" % [
-					float(weights.get("recollection", 0.0)),
-					float(weights.get("instinct", 0.0)),
-					float(weights.get("bearing", 0.0)),
-					String(dominant)
-				]
-			else:
-				cog_display.text = "CognitiveState: incomplete API"
-		else:
-			cog_display.text = "No CognitiveState"
+	_debug_screen.call("update_snapshot", _build_debug_snapshot())
+
+
+func _set_debug_screen_visible(p_visible: bool) -> void:
+	_debug_hud_visible = p_visible
+	if _debug_screen != null and _debug_screen.has_method("set_debug_visible"):
+		_debug_screen.call("set_debug_visible", p_visible)
+	_set_main_hud_hidden(_main_hud_hidden)
+
+
+func _build_debug_snapshot() -> Dictionary:
+	var game_state := _get_game_state()
+	var operator := _get_operator_node()
+	var power_system := get_node_or_null("/root/GameRoot/Power")
+	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	var director_status := _get_local_director_status()
+	var scene_name := "none"
+	if get_tree().current_scene != null:
+		scene_name = get_tree().current_scene.name
+	var phase_name := "UNKNOWN"
+	if game_state != null and game_state.has_method("get_phase_name"):
+		phase_name = str(game_state.call("get_phase_name")).replace("_", " ")
+	return {
+		"summary": "Scene %s | Phase %s | Debug diagnostics are isolated from normal HUD." % [scene_name, phase_name],
+		"runtime": _build_debug_runtime_snapshot(game_state, scene_name),
+		"player": _build_debug_player_snapshot(operator),
+		"combat": _build_debug_combat_snapshot(operator, director_status),
+		"world": _build_debug_world_snapshot(camera),
+		"systems": _build_debug_systems_snapshot(power_system, director_status),
+		"inventory": _build_debug_inventory_snapshot(),
+	}
+
+
+func _build_debug_runtime_snapshot(game_state: Node, scene_name: String) -> Dictionary:
+	var phase_name := "UNKNOWN"
+	var game_over := false
+	var game_over_reason := ""
+	if game_state != null:
+		if game_state.has_method("get_phase_name"):
+			phase_name = str(game_state.call("get_phase_name")).replace("_", " ")
+		if "game_over" in game_state:
+			game_over = bool(game_state.get("game_over"))
+		if "game_over_reason" in game_state:
+			game_over_reason = str(game_state.get("game_over_reason"))
+	return {
+		"scene": scene_name,
+		"phase": phase_name,
+		"time_scale": Engine.time_scale,
+		"fps": Engine.get_frames_per_second(),
+		"terminal_open": _terminal_open,
+		"terminal_ready": _terminal_ready,
+		"minimap_visible": _minimap_visible,
+		"placement_mode": _placement_mode_active,
+		"game_over": game_over,
+		"game_over_reason": game_over_reason,
+	}
+
+
+func _build_debug_player_snapshot(operator: Node) -> Dictionary:
+	if operator == null:
+		return {"operator": "missing"}
+	var health_value := 0.0
+	var max_health_value := 0.0
+	if operator.has_method("get_health"):
+		health_value = float(operator.call("get_health"))
+	elif "health" in operator:
+		health_value = float(operator.get("health"))
+	if operator.has_method("get_max_health"):
+		max_health_value = float(operator.call("get_max_health"))
+	elif "max_health" in operator:
+		max_health_value = float(operator.get("max_health"))
+	var sprint := {}
+	if operator.has_method("get_sprint_status"):
+		sprint = operator.call("get_sprint_status")
+	return {
+		"name": operator.name,
+		"position": (operator as Node2D).global_position if operator is Node2D else Vector2.ZERO,
+		"health": "%d/%d" % [int(round(health_value)), int(round(max_health_value))],
+		"stamina": "%.0f/%.0f" % [float(sprint.get("stamina", 0.0)), float(sprint.get("stamina_max", 0.0))],
+		"sprinting": bool(sprint.get("is_sprinting", false)),
+		"exhausted": bool(sprint.get("sprint_exhausted", false)),
+		"interaction": str(operator.call("get_interaction_prompt")) if operator.has_method("get_interaction_prompt") else "",
+	}
+
+
+func _build_debug_combat_snapshot(operator: Node, director_status: Dictionary) -> Dictionary:
+	var result := {
+		"weapon": "unavailable",
+		"ammo": "unavailable",
+		"cooldown": "unavailable",
+		"director": director_status,
+	}
+	if operator != null and operator.has_method("get_weapon_status"):
+		var ws: Dictionary = operator.call("get_weapon_status")
+		result["weapon"] = str(ws.get("weapon_name", ws.get("primary_weapon_id", "HOLSTERED")))
+		result["loadout"] = str(ws.get("loadout_mode", "unknown"))
+		result["equipped"] = bool(ws.get("equipped", false))
+		result["aim_mode"] = str(ws.get("aim_mode", "unknown"))
+		result["ammo"] = "%d/%d +%d" % [
+			int(ws.get("ammo_standard_loaded", 0)),
+			int(ws.get("ammo_standard_magazine_size", 0)),
+			int(ws.get("ammo_standard", 0)),
+		]
+		result["cooldown"] = "%.2fs" % float(ws.get("cooldown_remaining", 0.0))
+		result["blocking"] = bool(ws.get("blocking", false))
+	return result
+
+
+func _build_debug_world_snapshot(camera: Node) -> Dictionary:
+	var enemy_count := get_tree().get_nodes_in_group("enemy").size()
+	var behavior_enemy_count := get_tree().get_nodes_in_group("enemy_behavior_agent").size()
+	var result := {
+		"enemies": enemy_count,
+		"behavior_enemies": behavior_enemy_count,
+		"terminals": get_tree().get_nodes_in_group("command_terminal").size(),
+		"interactables": get_tree().get_nodes_in_group("interactable").size(),
+	}
+	if camera != null:
+		result["camera_position"] = (camera as Node2D).global_position if camera is Node2D else Vector2.ZERO
+		if "follow_enabled" in camera:
+			result["camera_follow"] = bool(camera.get("follow_enabled"))
+		if "auto_zoom_enabled" in camera:
+			result["camera_auto_zoom"] = bool(camera.get("auto_zoom_enabled"))
+		if camera is Camera2D:
+			result["camera_zoom"] = (camera as Camera2D).zoom
+	return result
+
+
+func _build_debug_systems_snapshot(power_system: Node, director_status: Dictionary) -> Dictionary:
+	var result := {
+		"director": director_status,
+		"supply_drop": "unavailable",
+		"vault": "unavailable",
+	}
+	if power_system != null and power_system.has_method("get_power_status"):
+		var status: Dictionary = power_system.call("get_power_status")
+		result["power"] = "%d/%d | net %.1f/tick" % [
+			int(round(float(status.get("total", 0.0)))),
+			int(round(float(status.get("max", 0.0)))),
+			float(status.get("net", 0.0)),
+		]
+	var supply_manager := get_node_or_null("/root/GameRoot/SupplyDropManager")
+	if supply_manager != null and supply_manager.has_method("get_status"):
+		result["supply_drop"] = supply_manager.call("get_status")
+	var vault_manager := get_node_or_null("/root/VaultManager")
+	if vault_manager != null and vault_manager.has_method("get_debug_snapshot"):
+		result["vault"] = vault_manager.call("get_debug_snapshot")
+	return result
+
+
+func _build_debug_inventory_snapshot() -> Dictionary:
+	var result := {}
+	var inventory := get_node_or_null("/root/InventoryManager")
+	if inventory != null and inventory.has_method("get_all_items"):
+		result["items"] = inventory.call("get_all_items")
+	else:
+		result["items"] = "InventoryManager unavailable"
+	var cognitive := get_node_or_null("/root/CognitiveState")
+	if cognitive != null and cognitive.has_method("get_weights"):
+		result["cognitive_weights"] = cognitive.call("get_weights")
+		result["dominant_cognitive_state"] = cognitive.call("get_dominant_state") if cognitive.has_method("get_dominant_state") else "UNKNOWN"
+	else:
+		result["cognitive_state"] = "CognitiveState unavailable"
+	var ledger := get_node_or_null("/root/ResourceLedger")
+	if ledger != null and ledger.has_method("get_snapshot"):
+		result["resources"] = ledger.call("get_snapshot")
+	var build_inventory := get_node_or_null("/root/BuildInventory")
+	if build_inventory != null and build_inventory.has_method("get_snapshot"):
+		result["build_tokens"] = build_inventory.call("get_snapshot")
+	return result
 
 
 func _process(delta):
@@ -952,7 +1049,7 @@ func _process(delta):
 	_process_terminal_command_queue(delta)
 	_update_debug_panel()
 
-	var show_debug_hud := not _main_hud_hidden and _debug_hud_visible
+	var show_debug_hud := false
 	var power_system = get_node_or_null("/root/GameRoot/Power")
 	if show_debug_hud and power_system and power_label and power_bar:
 		var status: Dictionary = power_system.get_power_status()
@@ -1240,10 +1337,7 @@ func _update_crosshair() -> void:
 
 func _get_essential_hud_nodes() -> Array:
 	return [
-		contract_phase_label,
 		lives_label,
-		cooldown_bar,
-		cooldown_label,
 		stamina_bar,
 		stamina_label,
 	]
@@ -1251,8 +1345,10 @@ func _get_essential_hud_nodes() -> Array:
 
 func _get_debug_hud_nodes() -> Array:
 	return [
+		power_display,
 		power_label,
 		power_bar,
+		contract_phase_label,
 		camera_follow_label,
 		camera_zoom_label,
 		time_scale_label,
@@ -1260,6 +1356,8 @@ func _get_debug_hud_nodes() -> Array:
 		weapon_label,
 		primary_weapon_button,
 		ammo_label,
+		cooldown_bar,
+		cooldown_label,
 		director_label,
 		supply_drop_label,
 		crosshair_label,
@@ -1276,7 +1374,7 @@ func _set_main_hud_hidden(hidden: bool) -> void:
 		minimap.visible = not hidden and _minimap_visible
 	for node in _get_debug_hud_nodes():
 		if node:
-			node.visible = not hidden and _debug_hud_visible
+			node.visible = false
 	if crosshair_label:
 		crosshair_label.visible = false
 

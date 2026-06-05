@@ -292,10 +292,10 @@ const PROP_SCATTERER_SCRIPT := preload("res://content/props/ruins/scripts/PropSc
 const PORTAL_TELEPORTER_SCRIPT := preload("res://game/world/procgen/portal_teleporter.gd")
 const PORTAL_DEFINITION_ID := &"portal_ring_01"
 const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
-const ROAD_PIECE_MANIFEST_PATH := "res://content/tiles/roads_paths/runtime/roads/road_piece_manifest.game32.json"
-const ROAD_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/roads"
-const PATH_PIECE_MANIFEST_PATH := "res://content/tiles/roads_paths/runtime/paths/path_piece_manifest.game32.json"
-const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/paths"
+const ROAD_PIECE_MANIFEST_PATH := "res://content/tiles/roads_paths/runtime/placeholders/roads/PLACEHOLDER_road_piece_manifest.game32.json"
+const ROAD_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeholders/roads"
+const PATH_PIECE_MANIFEST_PATH := "res://content/tiles/roads_paths/runtime/placeholders/paths/PLACEHOLDER_path_piece_manifest.game32.json"
+const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeholders/paths"
 @export var foliage_parent_path: NodePath = NodePath("NavigationRegion2D/FoliageLayer")
 @export var foliage_density: float = 0.12
 @export var foliage_min_wall_distance: int = 1
@@ -564,13 +564,18 @@ func _fill_tilemaps() -> void:
 		_carve_main_roads(map_size)
 	if use_cohesive_wall_visuals:
 		_apply_wall_visuals(map_size)
+	_protect_compound_ingress_tiles(map_size)
 	_enforce_road_walkability(map_size)
+	_prune_small_edge_road_components(map_size)
 	_refresh_road_path_visuals()
 	_capture_generated_tile_state(map_size)
 	if elevation_metadata_enabled:
 		_apply_terrain_builder(map_size)
+		_protect_compound_ingress_tiles(map_size)
 		_enforce_road_walkability(map_size)
+		_repair_road_surface_components(map_size, maxi(1, intent_main_road_half_width - 1))
 		_apply_compound_connector_elevation(map_size)
+		_prune_small_edge_road_components(map_size)
 		_refresh_road_path_visuals()
 		_capture_generated_tile_state(map_size)
 	if enable_streaming_reveal:
@@ -1173,15 +1178,15 @@ func _carve_main_roads(map_size: Vector2i) -> void:
 			_carve_main_road_path(trunk_anchor, target, maxi(1, road_width - 1), map_size)
 		required_road_anchors.append(target)
 
-	var edge_anchor := _pick_road_edge_anchor(spawn, map_size)
-	_carve_main_road_path(edge_anchor, trunk_anchor, road_width, map_size)
-	required_road_anchors.append(edge_anchor)
 	if intent_compound_connector_corridor_enabled:
 		_carve_compound_connector_corridor(spawn, trunk_anchor, map_size)
 	if not _compound_connector_centerline_tiles.is_empty():
 		required_road_anchors.append(_compound_connector_centerline_tiles.back())
 	_repair_road_connectivity(required_road_anchors, trunk_anchor, road_width, map_size)
-	_stamp_parking_zone(_pick_parking_anchor(spawn, trunk_anchor, map_size), map_size)
+	var parking_anchor := _pick_parking_anchor(spawn, trunk_anchor, map_size)
+	_carve_main_road_path(spawn, parking_anchor, maxi(1, road_width - 1), map_size)
+	_stamp_parking_zone(parking_anchor, map_size)
+	_repair_road_surface_components(map_size, maxi(1, road_width - 1))
 
 
 func _pick_primary_road_compound_anchor(spawn: Vector2i) -> Vector2i:
@@ -1212,6 +1217,86 @@ func _repair_road_connectivity(required_anchors: Array[Vector2i], root_anchor: V
 			continue
 		_carve_main_road_path(root, anchor, maxi(1, width), map_size)
 		connected = _collect_connected_road_tiles(root)
+
+
+func _repair_road_surface_components(map_size: Vector2i, width: int) -> void:
+	var components := _collect_road_surface_components()
+	if components.size() <= 1:
+		return
+	components.sort_custom(func(a: Array[Vector2i], b: Array[Vector2i]) -> bool:
+		return a.size() > b.size()
+	)
+	var primary: Array[Vector2i] = components[0]
+	for index in range(1, components.size()):
+		var component: Array[Vector2i] = components[index]
+		var pair := _find_nearest_road_component_pair(primary, component)
+		if pair.size() != 2:
+			continue
+		_carve_main_road_path(pair[0], pair[1], maxi(1, width), map_size)
+		primary = _dict_keys_as_vector2i_array(_collect_connected_road_tiles(primary[0]))
+
+
+func _collect_road_surface_components() -> Array[Array]:
+	var components: Array[Array] = []
+	var remaining := {}
+	for tile_variant in _main_road_tiles.keys():
+		if tile_variant is Vector2i:
+			remaining[tile_variant] = true
+	while not remaining.is_empty():
+		var start := remaining.keys()[0] as Vector2i
+		var component: Array[Vector2i] = []
+		var frontier: Array[Vector2i] = [start]
+		remaining.erase(start)
+		while not frontier.is_empty():
+			var tile: Vector2i = frontier.pop_front()
+			component.append(tile)
+			for direction in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+				var next: Vector2i = tile + direction
+				if not remaining.has(next):
+					continue
+				remaining.erase(next)
+				frontier.append(next)
+		components.append(component)
+	return components
+
+
+func _find_nearest_road_component_pair(primary: Array[Vector2i], component: Array[Vector2i]) -> Array[Vector2i]:
+	if primary.is_empty() or component.is_empty():
+		return []
+	var best_from := primary[0]
+	var best_to := component[0]
+	var best_dist := best_from.distance_squared_to(best_to)
+	for from_tile in primary:
+		for to_tile in component:
+			var dist := from_tile.distance_squared_to(to_tile)
+			if dist < best_dist:
+				best_dist = dist
+				best_from = from_tile
+				best_to = to_tile
+	return [best_from, best_to]
+
+
+func _prune_small_edge_road_components(map_size: Vector2i) -> void:
+	for component_variant in _collect_road_surface_components():
+		var component := component_variant as Array[Vector2i]
+		if component.size() >= 32 or not _road_component_touches_edge(component, map_size):
+			continue
+		for tile in component:
+			_main_road_tiles.erase(tile)
+			_road_centerline_tiles.erase(tile)
+			_road_visual_tiles.erase(tile)
+			_parking_zone_tiles.erase(tile)
+			var region := get_region_type_at_tile(tile)
+			if region == "main_road" or region == "compound_connector_road" or region == "parking_zone":
+				_region_tiles.erase(tile)
+			_remove_road_piece_decal(tile)
+
+
+func _road_component_touches_edge(component: Array[Vector2i], map_size: Vector2i) -> bool:
+	for tile in component:
+		if tile.x <= 2 or tile.y <= 2 or tile.x >= map_size.x - 3 or tile.y >= map_size.y - 3:
+			return true
+	return false
 
 
 func _collect_connected_road_tiles(root: Vector2i) -> Dictionary:
@@ -1378,6 +1463,17 @@ func _stamp_compound_connector_wall(center: Vector2i, outward_axis: Vector2i, ma
 			continue
 		_set_wall_tile(tile)
 		_set_region_tile(tile, "compound_connector_wall", "compound_ingress")
+
+
+func _protect_compound_ingress_tiles(map_size: Vector2i) -> void:
+	for ingress in _last_compound_ingress:
+		if not _is_tile_inside_map(ingress, map_size, 1):
+			continue
+		_set_road_path_tile(ingress, "road")
+		_main_road_tiles[ingress] = true
+		_road_centerline_tiles[ingress] = true
+		_road_visual_tiles[ingress] = true
+		_set_region_tile(ingress, "compound_ingress", "compound_approach")
 
 
 func _stamp_parking_zone(center: Vector2i, map_size: Vector2i) -> void:
@@ -1713,7 +1809,9 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 
 	for x in range(rect.position.x, rect.end.x):
 		for y in range(rect.position.y, rect.end.y):
-			_set_floor_tile(Vector2i(x, y))
+			var compound_tile := Vector2i(x, y)
+			_set_floor_tile(compound_tile)
+			_clear_road_blocking_wall(compound_tile)
 
 	var ingress_set := {}
 	for tile in ingress:
@@ -2198,6 +2296,65 @@ func get_main_road_tiles() -> Array[Vector2i]:
 
 func get_parking_zone_tiles() -> Array[Vector2i]:
 	return _dict_keys_as_vector2i_array(_parking_zone_tiles)
+
+
+func debug_get_generated_floor_cells() -> Dictionary:
+	return _generated_floor_cells.duplicate(true)
+
+
+func debug_get_generated_wall_cells() -> Dictionary:
+	return _generated_wall_cells.duplicate(true)
+
+
+func debug_get_compound_ingress_footprints() -> Array[Vector2i]:
+	var footprints: Array[Vector2i] = []
+	for ingress in _last_compound_ingress:
+		footprints.append(ingress)
+	return footprints
+
+
+func debug_get_protected_passable_road_cells() -> Array[Vector2i]:
+	var protected: Array[Vector2i] = []
+	for tile in get_main_road_tiles():
+		protected.append(tile)
+	for tile in get_parking_zone_tiles():
+		if not protected.has(tile):
+			protected.append(tile)
+	for tile in debug_get_compound_ingress_footprints():
+		if not protected.has(tile):
+			protected.append(tile)
+	return protected
+
+
+func debug_has_wall_visual_at(tile: Vector2i) -> bool:
+	return walls_tilemap != null and walls_tilemap.get_cell_source_id(tile) >= 0
+
+
+func debug_has_wall_authority_at(tile: Vector2i) -> bool:
+	if _generated_wall_cells.has(tile):
+		return true
+	return debug_runtime_wall_body_exists(tile)
+
+
+func debug_runtime_wall_body_exists(tile: Vector2i) -> bool:
+	if walls_tilemap == null:
+		return false
+	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
+	return collision_root != null and collision_root.has_node(NodePath(_runtime_wall_body_name(tile)))
+
+
+func debug_get_road_piece_decal_count() -> int:
+	return _road_piece_nodes.size()
+
+
+func debug_get_road_piece_decal_texture_paths() -> Array[String]:
+	var paths: Array[String] = []
+	for node in _road_piece_nodes:
+		var sprite := node as Sprite2D
+		if sprite == null or sprite.texture == null:
+			continue
+		paths.append(sprite.texture.resource_path)
+	return paths
 
 
 func get_movement_surface_multiplier_at_tile(tile: Vector2i, actor_kind: String = "operator") -> float:

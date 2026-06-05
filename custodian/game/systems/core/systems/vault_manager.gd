@@ -4,6 +4,8 @@ const VAULT_STORAGE_SCENE := preload("res://game/actors/storage/vault_storage.ts
 
 signal vault_resources_changed(total: Dictionary)
 signal storage_opened(storage: Node, enemy: Node)
+signal storage_damaged(storage: Node, enemy: Node, amount: int)
+signal storage_destroyed(storage: Node, enemy: Node)
 signal resources_stolen(enemy: Node, resources: Dictionary)
 signal stolen_resources_recovered(resources: Dictionary)
 signal stolen_resources_lost(enemy: Node, resources: Dictionary)
@@ -63,6 +65,28 @@ func find_best_storage_for_enemy(enemy: Node) -> Node:
 	return best
 
 
+func find_best_damageable_storage_for_enemy(enemy: Node) -> Node:
+	var best: Node = null
+	var best_score := -INF
+	var enemy_pos := Vector2.ZERO
+	if enemy is Node2D:
+		enemy_pos = (enemy as Node2D).global_position
+	for storage in _storages:
+		if storage == null or not is_instance_valid(storage):
+			continue
+		if "can_be_damaged_by_enemies" in storage and not bool(storage.get("can_be_damaged_by_enemies")):
+			continue
+		if storage.has_method("is_destroyed") and bool(storage.call("is_destroyed")):
+			continue
+		var resource_score := float(storage.call("get_resource_score")) if storage.has_method("get_resource_score") else 0.0
+		var integrity_score := float(storage.get("integrity")) if "integrity" in storage else 100.0
+		var score := resource_score + integrity_score * 0.25 - enemy_pos.distance_to((storage as Node2D).global_position) / 32.0
+		if score > best_score:
+			best_score = score
+			best = storage
+	return best
+
+
 func steal_from_storage(storage: Node, max_types: int, max_units: int, enemy: Node = null) -> Dictionary:
 	if storage == null or not is_instance_valid(storage):
 		return {}
@@ -75,6 +99,25 @@ func steal_from_storage(storage: Node, max_types: int, max_units: int, enemy: No
 		resources_stolen.emit(enemy, stolen.duplicate(true))
 		_emit_totals()
 	return stolen
+
+
+func damage_storage(storage: Node, amount: int, enemy: Node = null) -> bool:
+	if storage == null or not is_instance_valid(storage):
+		return false
+	if not storage.has_method("apply_enemy_damage"):
+		return false
+	var was_destroyed := bool(storage.call("is_destroyed")) if storage.has_method("is_destroyed") else false
+	var applied := bool(storage.call("apply_enemy_damage", amount, enemy))
+	if not applied:
+		return false
+	_record_event("damaged %s for %d by %s" % [storage.name, amount, enemy.name if enemy != null else "enemy"])
+	storage_damaged.emit(storage, enemy, amount)
+	var is_destroyed := bool(storage.call("is_destroyed")) if storage.has_method("is_destroyed") else false
+	if is_destroyed and not was_destroyed:
+		_record_event("destroyed %s by %s" % [storage.name, enemy.name if enemy != null else "enemy"])
+		storage_destroyed.emit(storage, enemy)
+	_emit_totals()
+	return true
 
 
 func recover_resources(resources: Dictionary) -> void:

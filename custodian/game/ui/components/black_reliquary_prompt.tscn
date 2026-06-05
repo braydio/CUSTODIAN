@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://game/ui/components/black_reliquary_prompt.gd" id="1_prompt"]
 
 [node name="BlackReliquaryPrompt" type="Control"]
-custom_minimum_size = Vector2(360, 108)
+custom_minimum_size = Vector2(320, 92)
 layout_mode = 3
 anchors_preset = 0
 mouse_filter = 2
@@ -19,7 +19,7 @@ grow_vertical = 2
 theme_override_constants/separation = -2
 
 [node name="HeaderPlaque" type="NinePatchRect" parent="Stack"]
-custom_minimum_size = Vector2(320, 34)
+custom_minimum_size = Vector2(288, 30)
 layout_mode = 2
 mouse_filter = 2
 
@@ -29,14 +29,14 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 16.0
-offset_right = -16.0
+offset_right = -14.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "INTERACTION"
 vertical_alignment = 1
 
 [node name="BodyPlaque" type="NinePatchRect" parent="Stack"]
-custom_minimum_size = Vector2(360, 74)
+custom_minimum_size = Vector2(320, 62)
 layout_mode = 2
 mouse_filter = 2
 
@@ -46,16 +46,16 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 16.0
-offset_top = 10.0
-offset_right = -16.0
-offset_bottom = -10.0
+offset_top = 8.0
+offset_right = -14.0
+offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 alignment = 1
 
 [node name="Icon" type="TextureRect" parent="Stack/BodyPlaque/BodyRow"]
-custom_minimum_size = Vector2(42, 42)
+custom_minimum_size = Vector2(34, 34)
 layout_mode = 2
 stretch_mode = 5
 expand_mode = 1
@@ -68,7 +68,7 @@ vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="KeyBadge" type="TextureRect" parent="Stack/BodyPlaque/BodyRow"]
-custom_minimum_size = Vector2(44, 44)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 stretch_mode = 5
 expand_mode = 1

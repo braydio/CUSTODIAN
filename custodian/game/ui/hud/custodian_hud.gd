@@ -8,6 +8,7 @@ const Styles := preload("res://game/ui/theme/black_reliquary_styles.gd")
 @onready var location_title: Label = get_node_or_null("Root/TopLeftPanel/Margin/Content/LocationTitle")
 @onready var phase_label: Label = get_node_or_null("Root/TopLeftPanel/Margin/Content/PhaseLabel")
 @onready var objective_summary: Label = get_node_or_null("Root/TopLeftPanel/Margin/Content/ObjectiveSummary")
+@onready var vitals_header: PanelContainer = get_node_or_null("Root/TopCenterVitals")
 @onready var health_label: Label = get_node_or_null("Root/TopCenterVitals/Margin/Content/HealthLabel")
 @onready var health_bar: ProgressBar = get_node_or_null("Root/TopCenterVitals/Margin/Content/HealthBar")
 @onready var stamina_label: Label = get_node_or_null("Root/TopCenterVitals/Margin/Content/StaminaLabel")
@@ -27,7 +28,7 @@ var _last_prompt_frame := -1
 func _ready() -> void:
 	_apply_theme()
 	set_health(100, 100)
-	set_stamina_label("STAMINA: READY")
+	set_stamina_label("STA READY")
 	set_phase("FREE ROAM PREP")
 	set_objective("Open the main gate")
 	set_key_item_status(false)
@@ -47,7 +48,7 @@ func set_health(current: int, max_value: int) -> void:
 	_health_current = max(0, current)
 	_health_max = max(1, max_value)
 	if health_label != null:
-		health_label.text = "HEALTH %d/%d" % [_health_current, _health_max]
+		health_label.text = "%d/%d" % [_health_current, _health_max]
 		var ratio := float(_health_current) / float(_health_max)
 		if ratio <= 0.3:
 			health_label.add_theme_color_override("font_color", Palette.DANGER)
@@ -63,6 +64,11 @@ func set_health(current: int, max_value: int) -> void:
 func set_stamina_label(text: String) -> void:
 	if stamina_label != null:
 		stamina_label.text = text
+
+
+func set_location(text: String) -> void:
+	if location_title != null:
+		location_title.text = "Location: %s" % text
 
 
 func set_phase(text: String) -> void:
@@ -107,6 +113,22 @@ func set_return_mooring_status(active: bool, attuned: bool) -> void:
 		return_mooring_status.call("configure", Catalog.ICON_RETURN_MOORING, text, Vector2(24, 24), Palette.BLUE_TECH if active else Palette.MUTED_TEXT)
 
 
+func set_status_line(slot: String, icon_path: String, text: String, color: Color = Palette.BODY_TEXT) -> void:
+	var target: Node = null
+	match slot:
+		"key", "top", "primary":
+			target = key_item_status
+		"gate", "middle", "secondary":
+			target = gate_status
+		"return", "bottom", "tertiary":
+			target = return_mooring_status
+		_:
+			push_warning("[CustodianHUD] Unknown status slot: %s" % slot)
+			return
+	if target != null:
+		target.call("configure", icon_path, text, Vector2(24, 24), color)
+
+
 func set_minimap_visible(p_visible: bool) -> void:
 	if minimap_frame != null:
 		(minimap_frame as CanvasItem).visible = p_visible
@@ -128,8 +150,18 @@ func _apply_theme() -> void:
 	Styles.apply_label(location_title, Palette.GOLD_TEXT, 18, true)
 	Styles.apply_label(phase_label, Palette.GOLD_TEXT, 13)
 	Styles.apply_label(objective_summary, Palette.BODY_TEXT, 14)
-	Styles.apply_label(health_label, Palette.BODY_TEXT, 13)
-	Styles.apply_label(stamina_label, Palette.MUTED_TEXT, 12)
+	Styles.apply_label(health_label, Palette.BODY_TEXT, 12, true)
+	Styles.apply_label(stamina_label, Palette.MUTED_TEXT, 11)
+	if vitals_header != null:
+		var header_style := StyleBoxFlat.new()
+		header_style.bg_color = Palette.PANEL_DEEP
+		header_style.border_color = Palette.BORDER_DIM
+		header_style.border_width_bottom = 1
+		header_style.corner_radius_bottom_left = 2
+		header_style.corner_radius_bottom_right = 2
+		header_style.corner_radius_top_left = 2
+		header_style.corner_radius_top_right = 2
+		vitals_header.add_theme_stylebox_override("panel", header_style)
 	if health_bar != null:
 		health_bar.show_percentage = false
 		health_bar.add_theme_stylebox_override("background", Styles.bar_background_style())
@@ -161,4 +193,4 @@ func _refresh_operator_status() -> void:
 		var mode: String = "SPRINT" if bool(sprint_status.get("is_sprinting", false)) else "READY"
 		if bool(sprint_status.get("sprint_exhausted", false)):
 			mode = "RECOVER"
-		set_stamina_label("STAMINA %d%% | %s" % [int(round(stamina_pct)), mode])
+		set_stamina_label("STA %d%% %s" % [int(round(stamina_pct)), mode])

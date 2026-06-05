@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://enemy_grunt_001"]
+[gd_scene load_steps=7 format=3 uid="uid://enemy_marine_001"]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
@@ -7,44 +7,42 @@
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_loot_carrier.gd" id="5_carrier"]
 [ext_resource type="Script" path="res://game/actors/enemies/enemy_behavior_state_machine.gd" id="6_behavior"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_grunt"]
-size = Vector2(26, 26)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_marine"]
+size = Vector2(28, 28)
 
-[node name="EnemyGrunt" type="CharacterBody2D"]
+[node name="EnemyMarine" type="CharacterBody2D"]
 z_index = 2
 script = ExtResource("1_enemy")
-enemy_name = "GRUNT"
-speed = 84.0
-health = 78.0
-max_health = 78.0
-damage = 13.0
-base_tint = Color(0.72, 0.28, 0.22, 1)
-attack_windup_duration = 0.42
-material_drop_min = 1
-material_drop_max = 3
-loot_table_id = "practical_salvage_x_grunt"
-loot_table = [{"resource_id": "ruin_scrap", "min": 1, "max": 3, "chance": 1.0, "label": "bent plating and stripped field brackets"}, {"resource_id": "spent_charge_cell", "min": 1, "max": 1, "chance": 0.35, "label": "cheap sidearm or chest-rig cell"}, {"resource_id": "frayed_signal_filament", "min": 1, "max": 1, "chance": 0.2, "label": "helmet comms conductor"}, {"resource_id": "cracked_field_tag", "min": 1, "max": 1, "chance": 0.15, "label": "scraped patrol identity tag"}, {"resource_id": "power_components", "min": 1, "max": 1, "chance": 0.1, "label": "tiny regulator or heat-warped relay"}, {"resource_id": "memory_glass_fragment", "min": 1, "max": 1, "chance": 0.04, "label": "impossible patrol-order sliver"}, {"resource_id": "white_thread_knot", "min": 1, "max": 1, "chance": 0.01, "label": "clean white thread clue"}]
-custom_enemy_animation_set = "enemy_grunt"
+enemy_name = "MARINE"
+speed = 76.0
+health = 96.0
+max_health = 96.0
+damage = 15.0
+base_tint = Color(0.38, 0.48, 0.52, 1)
+attack_windup_duration = 0.45
+material_drop_min = 2
+material_drop_max = 4
+custom_enemy_animation_set = "enemy_marine"
 custom_enemy_animation_scale = Vector2(1, 1)
 custom_enemy_fx_scale = Vector2(1, 1)
 behavior_state_machine_enabled = true
 behavior_profile_id = &"raider_grunt"
 
 [node name="Visual" type="ColorRect" parent="."]
-offset_left = -13.0
-offset_top = -13.0
-offset_right = 13.0
-offset_bottom = 13.0
-color = Color(0.72, 0.28, 0.22, 1)
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+color = Color(0.38, 0.48, 0.52, 0.35)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_grunt")
+shape = SubResource("RectangleShape2D_marine")
 
 [node name="HealthBar" type="ProgressBar" parent="."]
-offset_left = -16.0
-offset_top = -32.0
-offset_right = 16.0
-offset_bottom = -26.0
+offset_left = -17.0
+offset_top = -34.0
+offset_right = 17.0
+offset_bottom = -28.0
 value = 100.0
 show_percentage = false
 

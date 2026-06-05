@@ -10,16 +10,42 @@ const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sund
 const SUNDERED_KEEP_TILEMAP_LOADER := preload("res://game/world/sundered_keep/sundered_keep_tilemap_loader.gd")
 const SUNDERED_KEEP_SIEGE_OBJECTIVE := preload("res://game/world/sundered_keep/sundered_keep_siege_objective.gd")
 const PROP_OPERATOR_DEPTH_SORT := preload("res://game/world/prop_operator_depth_sort.gd")
+const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const SPAWN_NODE_SCRIPT := preload("res://game/systems/core/systems/spawn_node.gd")
 const DEFENSE_TURRET_SCENE := preload("res://game/actors/defense/turret.tscn")
 const CUSTODIAN_HUD_SCENE := preload("res://game/ui/hud/custodian_hud.tscn")
 const UI_CATALOG := preload("res://game/ui/theme/black_reliquary_asset_catalog.gd")
+const ENEMY_MARINE_SCENE := preload("res://game/actors/enemies/enemy_marine.tscn")
+const SUNDERED_KEEP_MARINE_AMBUSH := preload("res://game/world/sundered_keep/sundered_keep_marine_ambush.gd")
+
+const ELEVATION_STEP_PX := 24.0
+const CAUSEWAY_BRAZIER_FLICKER_PATH := "res://content/tiles/sundered_keep/entrance/props/causeway_lit_brazier_flicker_01.png"
+const CAUSEWAY_BRAZIER_FLICKER_FRAME_SIZE := Vector2i(48, 64)
+const CAUSEWAY_BRAZIER_FLICKER_FRAMES := 9
+const CAUSEWAY_BRAZIER_FLICKER_FPS := 9.0
+const HANGING_BRAZIER_FRAME_SIZE := Vector2i(34, 96)
+const HANGING_BRAZIER_FRAMES := 9
+const HANGING_BRAZIER_FPS := 9.0
+const GATEHOUSE_PREFAB_OPEN_PATH := "res://content/tiles/sundered_keep/entrance/prefabs/gateway_prefab_spritesheet_open_gate.png"
+const GATEHOUSE_PREFAB_OPEN_FRAME_SIZE := Vector2i(264, 445)
+const GATEHOUSE_PREFAB_OPEN_FRAMES := 8
+const GATEHOUSE_PREFAB_OPEN_FPS := 10.0
+const GREAT_HALL_DOOR_OPEN_PATH := "res://content/tiles/sundered_keep/entrance/prefabs/open_great_doors_prefab_sheet.png"
+const GREAT_HALL_DOOR_OPEN_FRAME_SIZE := Vector2i(246, 297)
+const GREAT_HALL_DOOR_OPEN_FRAMES := 8
+const GREAT_HALL_DOOR_OPEN_FPS := 10.0
+# Sundered Keep readability placeholders live here until production keep-wall art is supplied.
+# Every asset in this directory should keep the PLACEHOLDER_ filename prefix.
+const PLACEHOLDER_KEEP_WALL_HOME := "res://content/tiles/sundered_keep/placeholders/walls"
+const PLACEHOLDER_KEEP_WALL_PREFIX := "PLACEHOLDER_sundered_keep_labyrinth_"
+const GREAT_HALL_MARINE_SPAWN_TILE := Vector2i(71, 27)
 
 const SUNDERED_GATE_KEY_ID := &"sundered_gate_key"
 const SUNDERED_GATE_KEY_NAME := "Sundered Gate Key"
 const SUNDERED_GATE_KEY_FLAVOR := "A corroded winch key stamped with the keep's split-ring seal."
 
 const WALL_ASSET_DIRS := [
+	"res://content/tiles/sundered_keep/entrance/causeway_walls",
 	"res://content/tiles/sundered_keep/walls/gatehouse",
 	"res://content/tiles/sundered_keep/walls/gothic_castle",
 	"res://content/tiles/sundered_keep/walls/great_hall",
@@ -47,6 +73,10 @@ var _built := false
 var _camera_bounds := Rect2()
 var _layers: Dictionary = {}
 var _textures: Dictionary = {}
+var _elevation_map: Node = null
+var _last_actor_elevation_tile := Vector2i(-9999, -9999)
+var _brazier_flicker_frames: SpriteFrames = null
+var _hanging_brazier_frames: Dictionary = {}
 var _return_gate: Node2D = null
 var _return_mooring_interaction: Node2D = null
 var _return_mooring_active_overlay: Sprite2D = null
@@ -54,10 +84,11 @@ var _main_gate_interaction: Node2D = null
 var _great_hall_door_interaction: Node2D = null
 var _key_pickup_interaction: Node2D = null
 var _main_gate_closed_sprite: Sprite2D = null
-var _main_gate_open_sprite: Sprite2D = null
+var _main_gate_open_sprite: AnimatedSprite2D = null
+var _main_gate_open_frames: SpriteFrames = null
 var _main_gate_blockers: Array[Node] = []
-var _great_hall_door_closed_sprite: Sprite2D = null
-var _great_hall_door_open_sprite: Sprite2D = null
+var _great_hall_door_closed_sprite: AnimatedSprite2D = null
+var _great_hall_door_open_sprite: AnimatedSprite2D = null
 var _great_hall_door_blockers: Array[Node] = []
 var _main_gate_open := false
 var _great_hall_door_open := false
@@ -74,6 +105,8 @@ var _siege_timer: Timer = null
 var _siege_debug_label: Label = null
 var _siege_turret: Node2D = null
 var _hud: Node = null
+var _great_hall_marine_ambush: Node = null
+var _great_hall_door_open_frames: SpriteFrames = null
 var _level_id := ""
 var _stats := {
 	"floors": 0,
@@ -97,6 +130,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_update_hud_prompt()
+	_update_actor_elevation()
 
 
 func configure_connection(p_main_map: Node, p_main_return_position: Vector2) -> void:
@@ -114,6 +148,36 @@ func get_return_gate_position() -> Vector2:
 
 func get_camera_bounds() -> Rect2:
 	return Rect2(to_global(_camera_bounds.position), _camera_bounds.size)
+
+
+func get_elevation_map() -> Node:
+	return _elevation_map
+
+
+func get_elevation_data_at_tile(tile: Vector2i) -> Dictionary:
+	if _elevation_map == null:
+		return {
+			"height": 0,
+			"traversal_type": "walkable",
+			"direction": "none",
+		}
+	return _elevation_map.call("get_cell_data", tile) as Dictionary
+
+
+func get_elevation_at_tile(tile: Vector2i) -> int:
+	if _elevation_map == null:
+		return 0
+	return int(_elevation_map.call("get_height", tile))
+
+
+func get_elevation_at_global(global_position: Vector2) -> int:
+	return get_elevation_at_tile(_global_to_tile(global_position))
+
+
+func can_traverse_elevation(from_tile: Vector2i, to_tile: Vector2i) -> bool:
+	if _elevation_map == null:
+		return true
+	return bool(_elevation_map.call("can_traverse", from_tile, to_tile))
 
 
 func enter_from_main(actor: Node) -> void:
@@ -140,6 +204,8 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"interactable_areas": int(_stats["interactables"]),
 		"module_count": int(_stats["modules"]),
 		"missing_assets": int(_stats["missing_assets"]),
+		"elevation_cells": _get_elevation_cell_count(),
+		"bridge_elevation_height": get_elevation_at_tile(Vector2i(56, 60)),
 		"main_gate_open": _main_gate_open,
 		"great_hall_door_open": _great_hall_door_open,
 		"has_sundered_gate_key": _player_has_sundered_gate_key(),
@@ -152,6 +218,7 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"siege_objectives": _get_siege_objective_states(),
 		"siege_spawn_nodes": _siege_spawn_nodes.size(),
 		"siege_turret_exists": _siege_turret != null and is_instance_valid(_siege_turret),
+		"great_hall_marine_ambush": _get_great_hall_marine_ambush_state(),
 	}
 
 
@@ -272,6 +339,7 @@ func _build_from_level_data(data: Dictionary) -> void:
 	)
 	_create_layers_from_names(data.get("layers", []))
 	_build_ocean_backdrop()
+	_build_elevation_from_level_data(data)
 
 	for op in data.get("ops", []):
 		_apply_level_op(op)
@@ -284,6 +352,7 @@ func _build_from_level_data(data: Dictionary) -> void:
 		_apply_blocker(blocker)
 
 	_build_stateful_gates_from_level_data()
+	_build_great_hall_marine_ambush()
 	_build_siege_runtime_slice()
 	_build_traversal_stubs()
 	_add_return_gate()
@@ -299,6 +368,8 @@ func _apply_level_op(op: Dictionary) -> void:
 			_apply_paint_cells(op)
 		"stamp_prop":
 			_apply_stamp_prop(op)
+		"stamp_prefab":
+			_apply_stamp_prefab(op)
 		"stamp_module":
 			_apply_stamp_module(op)
 		"stamp_wall":
@@ -347,10 +418,23 @@ func _apply_paint_cells(op: Dictionary) -> void:
 func _apply_stamp_prop(op: Dictionary) -> void:
 	var layer := str(op.get("layer", "PropsStatic"))
 	var tile := _array_to_vector2i(op.get("tile", [0, 0]), Vector2i.ZERO)
-	_add_prop(layer, str(op.get("asset_id", "")), tile)
+	var category := str(op.get("category", "props"))
+	var asset_id := str(op.get("asset_id", ""))
+	if _is_hanging_brazier_prop(asset_id):
+		_add_animated_hanging_brazier_prop(layer, asset_id, tile, category)
+		return
+	_add_prop(layer, asset_id, tile, category)
 	if bool(op.get("blocks_movement", false)) and layer != "PropsBlocking":
 		var size := _array_to_vector2i(op.get("footprint", [1, 1]), Vector2i.ONE)
 		_add_blocker(Rect2i(tile, size), str(op.get("blocker_name", "%sBlocker" % str(op.get("asset_id", "")))))
+
+
+func _apply_stamp_prefab(op: Dictionary) -> void:
+	var layer := str(op.get("layer", "WallsHigh"))
+	var asset_id := str(op.get("asset_id", ""))
+	var category := str(op.get("category", _category_for_layer_asset(layer, asset_id)))
+	var tile := _array_to_vector2i(op.get("tile", [0, 0]), Vector2i.ZERO)
+	_add_sprite(layer, asset_id, category, tile, Vector2.ZERO)
 
 
 func _apply_stamp_module(op: Dictionary) -> void:
@@ -416,13 +500,73 @@ func _apply_marker(marker: Dictionary) -> void:
 
 
 func _build_stateful_gates_from_level_data() -> void:
-	_add_tile("Overlays", "main_gate_portcullis_shadow_01", "overlays", main_gate_tile + Vector2i(1, 1))
-	_main_gate_closed_sprite = _add_sprite("Traversal", "main_gate_portcullis_closed", "doors", main_gate_tile, Vector2.ZERO)
-	_main_gate_open_sprite = _add_sprite("Traversal", "main_gate_portcullis_open", "doors", main_gate_tile, Vector2.ZERO)
+	_build_main_gate_prefab()
 	if _main_gate_interaction == null:
 		_main_gate_interaction = _add_interactable("MainGateInteraction", &"main_gate", "OPEN MAIN GATE", main_gate_tile + Vector2i(2, 1), 96.0)
 	_set_main_gate_open(false)
 	_build_great_hall_door(great_hall_door_tile)
+
+
+func _build_main_gate_prefab() -> void:
+	var prefab_tile := _main_gate_prefab_tile()
+	_main_gate_closed_sprite = _add_sprite("WallsHigh", "gateway_prefab_structure", "entrance_prefabs", prefab_tile, Vector2.ZERO)
+	_main_gate_open_sprite = _add_main_gate_open_animation(prefab_tile)
+
+
+func _main_gate_prefab_tile() -> Vector2i:
+	return main_gate_tile + Vector2i(2, 8)
+
+
+func _build_elevation_from_level_data(data: Dictionary) -> void:
+	_ensure_elevation_map()
+	_elevation_map.call("clear")
+	var regions: Array = data.get("elevation_regions", [])
+	for region_value in regions:
+		if not (region_value is Dictionary):
+			continue
+		var region := region_value as Dictionary
+		var rect := _array_to_rect2i(region.get("rect", [0, 0, 0, 0]))
+		if rect.size.x <= 0 or rect.size.y <= 0:
+			continue
+		var height := int(region.get("height", 0))
+		var traversal_type := str(region.get("traversal_type", region.get("traversal", ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE)))
+		var direction := str(region.get("direction", ELEVATION_MAP_SCRIPT.DIRECTION_NONE))
+		for y in range(rect.position.y, rect.end.y):
+			for x in range(rect.position.x, rect.end.x):
+				_elevation_map.call("set_cell", Vector2i(x, y), height, traversal_type, direction)
+
+
+func _ensure_elevation_map() -> void:
+	if _elevation_map != null and is_instance_valid(_elevation_map):
+		return
+	_elevation_map = ELEVATION_MAP_SCRIPT.new()
+	_elevation_map.name = "ElevationMap"
+	add_child(_elevation_map)
+
+
+func _get_elevation_cell_count() -> int:
+	if _elevation_map == null:
+		return 0
+	var cells: Dictionary = _elevation_map.call("get_cells")
+	return cells.size()
+
+
+func _update_actor_elevation() -> void:
+	if _elevation_map == null or get_tree() == null:
+		return
+	var actor := get_node_or_null("/root/GameRoot/World/Operator")
+	if actor == null:
+		for player_node in get_tree().get_nodes_in_group("player"):
+			if player_node is Node2D:
+				actor = player_node
+				break
+	if actor == null or not (actor is Node2D) or not actor.has_method("set_fake_elevation"):
+		return
+	var actor_tile := _global_to_tile((actor as Node2D).global_position)
+	if actor_tile == _last_actor_elevation_tile:
+		return
+	_last_actor_elevation_tile = actor_tile
+	actor.call("set_fake_elevation", float(get_elevation_at_tile(actor_tile)) * ELEVATION_STEP_PX)
 
 
 func _weighted_asset_for_tile(assets: Array, x: int, y: int) -> String:
@@ -444,8 +588,18 @@ func _category_for_layer_asset(layer: String, asset_id: String) -> String:
 		return "return_mooring_floor"
 	if asset_id.begins_with("return_mooring_"):
 		return "return_mooring_overlay"
+	if asset_id.begins_with("banner_tall_wall_overlay") or asset_id.begins_with("shield_crest_wall_overlay"):
+		return "entrance_overlays"
+	if asset_id.begins_with("gateway_prefab"):
+		return "entrance_prefabs"
+	if asset_id.begins_with(PLACEHOLDER_KEEP_WALL_PREFIX):
+		return "placeholder_keep_walls"
+	if asset_id.begins_with("castle_wall_support_constructed_cliffside") or asset_id.begins_with("flaming_brazier_hanging_pillar"):
+		return "entrance_cliffs"
 	if asset_id.begins_with("entrance_causeway_surface"):
 		return "causeway_surfaces"
+	if asset_id.begins_with("cobblestone_") or asset_id.begins_with("causeway_floor_cobblestone"):
+		return "causeway_floors"
 	if asset_id.begins_with("entrance_causeway"):
 		return "entrance"
 	if asset_id == "ocean_void_01" or asset_id.contains("_floor") or asset_id.contains("_flagstone") or asset_id.contains("_threshold") or asset_id.contains("_carpet"):
@@ -678,8 +832,7 @@ func _build_main_gate_lock() -> void:
 	_add_prop("PropsStatic", "prop_torch_wall_gothic_01", Vector2i(34, 41))
 	_add_prop("PropsStatic", "prop_torch_wall_gothic_01", Vector2i(45, 41))
 	_add_prop("PropsStatic", "prop_portcullis_chain_01", Vector2i(39, 41))
-	_main_gate_closed_sprite = _add_sprite("Traversal", "main_gate_portcullis_closed", "doors", main_gate_tile, Vector2.ZERO)
-	_main_gate_open_sprite = _add_sprite("Traversal", "main_gate_portcullis_open", "doors", main_gate_tile, Vector2.ZERO)
+	_build_main_gate_prefab()
 	_main_gate_interaction = _add_interactable("MainGateInteraction", &"main_gate", "OPEN MAIN GATE", main_gate_tile + Vector2i(2, 1), 96.0)
 	_set_main_gate_open(false)
 
@@ -833,8 +986,8 @@ func _build_traversal_stubs() -> void:
 
 func _build_great_hall_door(tile: Vector2i) -> void:
 	great_hall_door_tile = tile
-	_great_hall_door_closed_sprite = _add_sprite("Traversal", "gothic_double_door_closed_n", "doors", tile, Vector2.ZERO)
-	_great_hall_door_open_sprite = _add_sprite("Traversal", "gothic_double_door_open_n", "doors", tile, Vector2.ZERO)
+	_great_hall_door_closed_sprite = _add_great_hall_door_animation(tile)
+	_great_hall_door_open_sprite = null
 	_great_hall_door_interaction = _add_interactable("GreatHallDoorInteraction", &"great_hall_door", "OPEN GREAT HALL DOOR", tile + Vector2i(1, 1), 88.0)
 	_set_great_hall_door_open(false)
 
@@ -970,15 +1123,15 @@ func _add_wall_tile(tile: Vector2i, tile_id: String) -> void:
 
 func _add_tile(layer_name: String, tile_id: String, category: String, tile: Vector2i) -> Sprite2D:
 	var sprite := _add_sprite(layer_name, tile_id, category, tile, Vector2.ZERO)
-	if sprite != null and (category == "floors" or category == "return_mooring_floor" or (category == "entrance" and tile_id.contains("_floor"))):
+	if sprite != null and (category == "floors" or category == "causeway_floors" or category == "return_mooring_floor" or (category == "entrance" and tile_id.contains("_floor"))):
 		_stats["floors"] = int(_stats["floors"]) + 1
 	elif sprite != null and (layer_name == "TerrainEdges" or tile_id.contains("_edge_")):
 		_stats["edges"] = int(_stats["edges"]) + 1
 	return sprite
 
 
-func _add_prop(layer_name: String, prop_id: String, tile: Vector2i) -> Sprite2D:
-	var texture := _load_texture(_asset_path(prop_id, "props"))
+func _add_prop(layer_name: String, prop_id: String, tile: Vector2i, category := "props") -> Sprite2D:
+	var texture := _load_texture(_asset_path(prop_id, category))
 	if texture == null:
 		return null
 	var sprite := Sprite2D.new()
@@ -988,20 +1141,210 @@ func _add_prop(layer_name: String, prop_id: String, tile: Vector2i) -> Sprite2D:
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	sprite.position = _tile_top_left(tile) + Vector2((TILE_SIZE - float(texture.get_width())) * 0.5, TILE_SIZE - float(texture.get_height()))
 	(_layers[layer_name] as Node2D).add_child(sprite)
-	_attach_operator_depth_sort(sprite, float(texture.get_height()))
+	var depth_height := float(texture.get_height())
+	if _is_brazier_prop(prop_id):
+		depth_height = max(depth_height, float(CAUSEWAY_BRAZIER_FLICKER_FRAME_SIZE.y))
+		_attach_brazier_flicker(sprite, texture.get_size())
+	_attach_operator_depth_sort(sprite, depth_height)
 	_stats["props"] = int(_stats["props"]) + 1
 	if layer_name == "PropsBlocking":
 		_add_blocker(Rect2i(tile, Vector2i.ONE), "%sBlocker" % prop_id)
 	return sprite
 
 
-func _attach_operator_depth_sort(sprite: Sprite2D, y_offset: float) -> void:
+func _is_brazier_prop(prop_id: String) -> bool:
+	return prop_id == "causeway_lit_brazier_bowl_01" or prop_id == "brazier_lit_01"
+
+
+func _is_hanging_brazier_prop(prop_id: String) -> bool:
+	return prop_id.begins_with("flaming_brazier_hanging_pillar")
+
+
+func _add_animated_hanging_brazier_prop(layer_name: String, prop_id: String, tile: Vector2i, category := "entrance_cliffs") -> AnimatedSprite2D:
+	var texture_path := _asset_path(prop_id, category)
+	var texture := _load_texture(texture_path)
+	if texture == null:
+		return null
+	var frames := _get_hanging_brazier_frames(prop_id, texture)
+	if frames == null:
+		return null
+	var sprite := AnimatedSprite2D.new()
+	sprite.name = prop_id
+	sprite.sprite_frames = frames
+	sprite.animation = "flicker"
+	sprite.autoplay = "flicker"
+	sprite.centered = false
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.position = _tile_top_left(tile) + Vector2(
+		(TILE_SIZE - float(HANGING_BRAZIER_FRAME_SIZE.x)) * 0.5,
+		TILE_SIZE - float(HANGING_BRAZIER_FRAME_SIZE.y)
+	)
+	(_layers[layer_name] as Node2D).add_child(sprite)
+	_attach_operator_depth_sort(sprite, float(HANGING_BRAZIER_FRAME_SIZE.y))
+	_stats["props"] = int(_stats["props"]) + 1
+	sprite.play("flicker")
+	return sprite
+
+
+func _get_hanging_brazier_frames(prop_id: String, texture: Texture2D) -> SpriteFrames:
+	if _hanging_brazier_frames.has(prop_id):
+		return _hanging_brazier_frames[prop_id] as SpriteFrames
+	var frames := SpriteFrames.new()
+	frames.add_animation("flicker")
+	frames.set_animation_loop("flicker", true)
+	frames.set_animation_speed("flicker", HANGING_BRAZIER_FPS)
+	var frame_count := mini(HANGING_BRAZIER_FRAMES, int(floor(float(texture.get_width()) / float(HANGING_BRAZIER_FRAME_SIZE.x))))
+	for frame_index in range(frame_count):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(
+			float(frame_index * HANGING_BRAZIER_FRAME_SIZE.x),
+			0.0,
+			float(HANGING_BRAZIER_FRAME_SIZE.x),
+			float(HANGING_BRAZIER_FRAME_SIZE.y)
+		)
+		frames.add_frame("flicker", atlas)
+	_hanging_brazier_frames[prop_id] = frames
+	return frames
+
+
+func _add_main_gate_open_animation(tile: Vector2i) -> AnimatedSprite2D:
+	var frames := _get_main_gate_open_frames()
+	if frames == null:
+		return null
+	var sprite := AnimatedSprite2D.new()
+	sprite.name = "GatewayPrefabOpenGate"
+	sprite.sprite_frames = frames
+	sprite.animation = "open"
+	sprite.centered = false
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.position = _tile_top_left(tile) + Vector2(
+		(TILE_SIZE - float(GATEHOUSE_PREFAB_OPEN_FRAME_SIZE.x)) * 0.5,
+		TILE_SIZE - float(GATEHOUSE_PREFAB_OPEN_FRAME_SIZE.y)
+	)
+	(_layers["WallsHigh"] as Node2D).add_child(sprite)
+	return sprite
+
+
+func _get_main_gate_open_frames() -> SpriteFrames:
+	if _main_gate_open_frames != null:
+		return _main_gate_open_frames
+	var texture := _load_texture(GATEHOUSE_PREFAB_OPEN_PATH)
+	if texture == null:
+		return null
+	var frames := SpriteFrames.new()
+	frames.add_animation("open")
+	frames.set_animation_loop("open", false)
+	frames.set_animation_speed("open", GATEHOUSE_PREFAB_OPEN_FPS)
+	var frame_count := mini(GATEHOUSE_PREFAB_OPEN_FRAMES, int(floor(float(texture.get_width()) / float(GATEHOUSE_PREFAB_OPEN_FRAME_SIZE.x))))
+	for frame_index in range(frame_count):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(
+			float(frame_index * GATEHOUSE_PREFAB_OPEN_FRAME_SIZE.x),
+			0.0,
+			float(GATEHOUSE_PREFAB_OPEN_FRAME_SIZE.x),
+			float(GATEHOUSE_PREFAB_OPEN_FRAME_SIZE.y)
+		)
+		frames.add_frame("open", atlas)
+	_main_gate_open_frames = frames
+	return _main_gate_open_frames
+
+
+func _add_great_hall_door_animation(tile: Vector2i) -> AnimatedSprite2D:
+	var frames := _get_great_hall_door_open_frames()
+	if frames == null:
+		return null
+	var sprite := AnimatedSprite2D.new()
+	sprite.name = "GreatHallDoorOpenAnimation"
+	sprite.sprite_frames = frames
+	sprite.animation = "open"
+	sprite.centered = false
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.position = _tile_top_left(tile) + Vector2(
+		(TILE_SIZE - float(GREAT_HALL_DOOR_OPEN_FRAME_SIZE.x)) * 0.5,
+		TILE_SIZE - float(GREAT_HALL_DOOR_OPEN_FRAME_SIZE.y)
+	)
+	(_layers["Traversal"] as Node2D).add_child(sprite)
+	_attach_operator_depth_sort(sprite, float(GREAT_HALL_DOOR_OPEN_FRAME_SIZE.y - 8), 1, 12)
+	return sprite
+
+
+func _get_great_hall_door_open_frames() -> SpriteFrames:
+	if _great_hall_door_open_frames != null:
+		return _great_hall_door_open_frames
+	var texture := _load_texture(GREAT_HALL_DOOR_OPEN_PATH)
+	if texture == null:
+		return null
+	var frames := SpriteFrames.new()
+	frames.add_animation("open")
+	frames.set_animation_loop("open", false)
+	frames.set_animation_speed("open", GREAT_HALL_DOOR_OPEN_FPS)
+	var frame_count := mini(GREAT_HALL_DOOR_OPEN_FRAMES, int(floor(float(texture.get_width()) / float(GREAT_HALL_DOOR_OPEN_FRAME_SIZE.x))))
+	for frame_index in range(frame_count):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(
+			float(frame_index * GREAT_HALL_DOOR_OPEN_FRAME_SIZE.x),
+			0.0,
+			float(GREAT_HALL_DOOR_OPEN_FRAME_SIZE.x),
+			float(GREAT_HALL_DOOR_OPEN_FRAME_SIZE.y)
+		)
+		frames.add_frame("open", atlas)
+	_great_hall_door_open_frames = frames
+	return _great_hall_door_open_frames
+
+
+func _attach_brazier_flicker(sprite: Sprite2D, base_size: Vector2) -> void:
+	var frames := _get_brazier_flicker_frames()
+	if frames == null:
+		return
+	var flicker := AnimatedSprite2D.new()
+	flicker.name = "BrazierFlicker"
+	flicker.sprite_frames = frames
+	flicker.animation = "flicker"
+	flicker.autoplay = "flicker"
+	flicker.centered = false
+	flicker.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	flicker.position = Vector2(
+		(base_size.x - float(CAUSEWAY_BRAZIER_FLICKER_FRAME_SIZE.x)) * 0.5,
+		base_size.y - float(CAUSEWAY_BRAZIER_FLICKER_FRAME_SIZE.y)
+	)
+	sprite.add_child(flicker)
+	flicker.play("flicker")
+
+
+func _get_brazier_flicker_frames() -> SpriteFrames:
+	if _brazier_flicker_frames != null:
+		return _brazier_flicker_frames
+	var texture := _load_texture(CAUSEWAY_BRAZIER_FLICKER_PATH)
+	if texture == null:
+		return null
+	var frames := SpriteFrames.new()
+	frames.add_animation("flicker")
+	frames.set_animation_loop("flicker", true)
+	frames.set_animation_speed("flicker", CAUSEWAY_BRAZIER_FLICKER_FPS)
+	for frame_index in range(CAUSEWAY_BRAZIER_FLICKER_FRAMES):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(
+			float(frame_index * CAUSEWAY_BRAZIER_FLICKER_FRAME_SIZE.x),
+			0.0,
+			float(CAUSEWAY_BRAZIER_FLICKER_FRAME_SIZE.x),
+			float(CAUSEWAY_BRAZIER_FLICKER_FRAME_SIZE.y)
+		)
+		frames.add_frame("flicker", atlas)
+	_brazier_flicker_frames = frames
+	return _brazier_flicker_frames
+
+
+func _attach_operator_depth_sort(sprite: Node2D, y_offset: float, behind_z := 1, front_z := 3) -> void:
 	if sprite == null:
 		return
 	var depth_sort := PROP_OPERATOR_DEPTH_SORT.new()
 	depth_sort.name = "OperatorDepthSort"
 	sprite.add_child(depth_sort)
-	depth_sort.configure(sprite, y_offset)
+	depth_sort.configure(sprite, y_offset, behind_z, front_z)
 
 
 func _add_sprite(layer_name: String, asset_id: String, category: String, tile: Vector2i, offset: Vector2) -> Sprite2D:
@@ -1191,6 +1534,12 @@ func _set_main_gate_open(open: bool) -> void:
 		_main_gate_closed_sprite.visible = not open
 	if _main_gate_open_sprite != null:
 		_main_gate_open_sprite.visible = open
+		if open:
+			_main_gate_open_sprite.frame = 0
+			_main_gate_open_sprite.play("open")
+		else:
+			_main_gate_open_sprite.stop()
+			_main_gate_open_sprite.frame = 0
 	if open:
 		_clear_main_gate_blockers()
 		if _main_gate_interaction != null:
@@ -1437,7 +1786,7 @@ func _default_siege_config() -> Dictionary:
 		"pressure_damage_per_wave": 2.0,
 		"repair_amount": 35.0,
 		"objectives": [
-			{"id": "gatehouse_core", "label": "Gatehouse Core", "group": "command_post", "tile_offset_from": "main_gate", "tile_offset": [2, -2], "hp": 180.0, "repair_kind": "repair_gatehouse", "repair_prompt": "REPAIR GATEHOUSE CORE", "repair_tile_offset": [5, -1], "repair_distance": 86.0},
+			{"id": "gatehouse_core", "label": "Gatehouse Core", "group": "command_post", "tile_offset_from": "main_gate", "tile_offset": [2, 4], "hp": 180.0, "repair_kind": "repair_gatehouse", "repair_prompt": "REPAIR GATEHOUSE CORE", "repair_tile_offset": [2, 7], "repair_distance": 96.0},
 			{"id": "return_mooring", "label": "Return Mooring", "group": "power_node", "tile_offset_from": "return_mooring_origin", "tile_offset": [2, 2], "hp": 140.0, "repair_kind": "repair_mooring", "repair_prompt": "REPAIR RETURN MOORING", "repair_tile_offset": [2, 4], "repair_distance": 82.0},
 		],
 		"spawns": [
@@ -1451,7 +1800,7 @@ func _default_siege_config() -> Dictionary:
 			{"composition": ["grunt", "grunt", "heavy"]},
 		],
 		"extra_wave_pressure_ticks": [2, 5],
-		"defense_turret": {"tile_offset_from": "main_gate", "tile_offset": [-6, -2], "range": 360.0, "damage": 9.0, "power_required": false},
+		"defense_turret": {"tile_offset_from": "main_gate", "tile_offset": [-5, 4], "range": 360.0, "damage": 9.0, "power_required": false},
 	}
 
 
@@ -1476,7 +1825,13 @@ func _try_open_great_hall_door() -> void:
 func _set_great_hall_door_open(open: bool) -> void:
 	_great_hall_door_open = open
 	if _great_hall_door_closed_sprite != null:
-		_great_hall_door_closed_sprite.visible = not open
+		_great_hall_door_closed_sprite.visible = true
+		if open:
+			_great_hall_door_closed_sprite.frame = 0
+			_great_hall_door_closed_sprite.play("open")
+		else:
+			_great_hall_door_closed_sprite.stop()
+			_great_hall_door_closed_sprite.frame = 0
 	if _great_hall_door_open_sprite != null:
 		_great_hall_door_open_sprite.visible = open
 	if open:
@@ -1502,7 +1857,7 @@ func _clear_great_hall_door_blockers() -> void:
 
 func _add_main_gate_blockers() -> void:
 	_clear_main_gate_blockers()
-	_main_gate_blockers.append(_add_blocker(Rect2i(main_gate_tile, Vector2i(4, 2)), "MainPortcullisBlocker"))
+	_main_gate_blockers.append(_add_blocker(Rect2i(main_gate_tile + Vector2i(-1, 0), Vector2i(6, 3)), "PrefabGatehouseGateBlocker"))
 
 
 func _clear_main_gate_blockers() -> void:
@@ -1510,6 +1865,52 @@ func _clear_main_gate_blockers() -> void:
 		if blocker != null and is_instance_valid(blocker):
 			blocker.queue_free()
 	_main_gate_blockers.clear()
+
+
+func _build_great_hall_marine_ambush() -> void:
+	if _great_hall_marine_ambush != null and is_instance_valid(_great_hall_marine_ambush):
+		return
+	var marine := ENEMY_MARINE_SCENE.instantiate() as CharacterBody2D
+	if marine == null:
+		push_warning("[SunderedKeep] Unable to instantiate Great Hall marine ambush")
+		return
+	marine.name = "GreatHallDashMarine"
+	marine.position = _tile_center(GREAT_HALL_MARINE_SPAWN_TILE)
+	marine.set("enemy_name", "GREAT HALL MARINE")
+	marine.set("damage", 18.0)
+	marine.set("damage_interval", 1.4)
+	marine.set("attack_windup_duration", 0.30)
+	marine.set("behavior_state_machine_enabled", false)
+	marine.set("custom_enemy_fx_scale", Vector2.ONE)
+	add_child(marine)
+	if marine.has_method("_ensure_directional_animations"):
+		marine.call("_ensure_directional_animations")
+	if marine.has_method("_ensure_custom_enemy_fx_animations"):
+		marine.call("_ensure_custom_enemy_fx_animations")
+
+	var ambush := SUNDERED_KEEP_MARINE_AMBUSH.new()
+	ambush.name = "GreatHallMarineAmbush"
+	add_child(ambush)
+	ambush.call("configure", marine, null)
+	_great_hall_marine_ambush = ambush
+
+
+func _get_great_hall_marine_ambush_state() -> Dictionary:
+	if _great_hall_marine_ambush == null or not is_instance_valid(_great_hall_marine_ambush):
+		return {
+			"exists": false,
+			"state": "missing",
+			"dash_ready": false,
+			"dash_fx_ready": false,
+		}
+	if _great_hall_marine_ambush.has_method("get_debug_state"):
+		return _great_hall_marine_ambush.call("get_debug_state") as Dictionary
+	return {
+		"exists": true,
+		"state": "unknown",
+		"dash_ready": false,
+		"dash_fx_ready": false,
+	}
 
 
 func _asset_path(asset_id: String, category: String) -> String:
@@ -1522,6 +1923,18 @@ func _asset_path(asset_id: String, category: String) -> String:
 		return "res://content/tiles/sundered_keep/entrance/%s.png" % asset_id
 	if category == "causeway_surfaces":
 		return "res://content/tiles/sundered_keep/entrance/causeway_surfaces/%s.png" % asset_id
+	if category == "causeway_floors":
+		return "res://content/tiles/sundered_keep/entrance/causeway_floors/%s.png" % asset_id
+	if category == "entrance_cliffs":
+		return "res://content/tiles/sundered_keep/entrance/cliffs/%s.png" % asset_id
+	if category == "entrance_overlays":
+		return "res://content/tiles/sundered_keep/entrance/overlays/%s.png" % asset_id
+	if category == "entrance_props":
+		return "res://content/tiles/sundered_keep/entrance/props/%s.png" % asset_id
+	if category == "entrance_prefabs":
+		return "res://content/tiles/sundered_keep/entrance/prefabs/%s.png" % asset_id
+	if category == "placeholder_keep_walls":
+		return "%s/%s.png" % [PLACEHOLDER_KEEP_WALL_HOME, asset_id]
 	if category == "return_mooring_floor":
 		return "res://content/tiles/sundered_keep/return_mooring/floors/%s.png" % asset_id
 	if category == "return_mooring_overlay":
@@ -1536,6 +1949,7 @@ func _asset_path(asset_id: String, category: String) -> String:
 		return "res://content/tiles/sundered_keep/walls/gothic_castle/%s.png" % asset_id
 	if category == "props":
 		var prop_paths := [
+			"res://content/props/sundered_keep/causeway/%s.png" % asset_id,
 			"res://content/props/sundered_keep/return_mooring/%s.png" % asset_id,
 			"res://content/runtime/sundered_keep/props/prop_anchor/%s.png" % asset_id,
 			"res://content/runtime/sundered_keep/props/prop_barrier/%s.png" % asset_id,
@@ -1584,6 +1998,11 @@ func _tile_top_left(tile: Vector2i) -> Vector2:
 
 func _tile_center(tile: Vector2i) -> Vector2:
 	return _tile_top_left(tile) + Vector2(TILE_SIZE * 0.5, TILE_SIZE * 0.5)
+
+
+func _global_to_tile(global_position: Vector2) -> Vector2i:
+	var local_position := to_local(global_position)
+	return Vector2i(floori(local_position.x / TILE_SIZE), floori(local_position.y / TILE_SIZE))
 
 
 func _refresh_camera(map_instance: Node, actor: Node) -> void:

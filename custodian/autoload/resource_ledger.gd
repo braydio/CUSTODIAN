@@ -10,11 +10,15 @@ const CANONICAL_RESOURCE_IDS := [
 	"blackwood",
 	"structural_alloy",
 	"ruin_scrap",
+	"spent_charge_cell",
+	"frayed_signal_filament",
+	"cracked_field_tag",
 	"power_components",
 	"resin_clot",
 	"capacitor_dust",
 	"signal_filament",
 	"memory_glass_fragment",
+	"white_thread_knot",
 	"fiber_moss",
 ]
 const LEGACY_RESOURCE_ALIASES := {
@@ -98,15 +102,19 @@ func debug_grant(resources: Dictionary = {}) -> void:
 	var grant := resources
 	if grant.is_empty():
 		grant = {
-			"blackwood": 20,
-			"ruin_scrap": 30,
-			"structural_alloy": 12,
-			"power_components": 2,
-			"capacitor_dust": 6,
-			"signal_filament": 1,
-			"memory_glass_fragment": 2,
-			"resin_clot": 4,
-		}
+		"blackwood": 20,
+		"ruin_scrap": 30,
+		"spent_charge_cell": 2,
+		"frayed_signal_filament": 2,
+		"cracked_field_tag": 1,
+		"structural_alloy": 12,
+		"power_components": 2,
+		"capacitor_dust": 6,
+		"signal_filament": 1,
+		"memory_glass_fragment": 2,
+		"white_thread_knot": 1,
+		"resin_clot": 4,
+	}
 	for resource_id_variant in grant.keys():
 		add(str(resource_id_variant), int(grant[resource_id_variant]))
 

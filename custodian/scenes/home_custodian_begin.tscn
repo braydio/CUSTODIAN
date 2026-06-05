@@ -1,0 +1,76 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/world/home/custodian_home_begin.gd" id="1_home"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/Road_of_Witnesses_Tilemap.png" id="2_map"]
+[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="3_operator"]
+[ext_resource type="Script" path="res://game/world/camera.gd" id="4_camera"]
+[ext_resource type="Script" path="res://game/systems/core/player_controller.gd" id="5_player_controller"]
+[ext_resource type="Script" path="res://game/world/hub/road_of_witnesses_prototype.gd" id="6_road"]
+[ext_resource type="Script" path="res://game/world/home/field_terminal_interactable.gd" id="7_terminal"]
+[ext_resource type="PackedScene" path="res://game/ui/hud/custodian_hud.tscn" id="8_hud"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_terminal"]
+size = Vector2(40, 28)
+
+[node name="GameRoot" type="Node2D"]
+script = ExtResource("1_home")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="RoadOfWitnessesPrototype" type="Node2D" parent="World"]
+script = ExtResource("6_road")
+
+[node name="Background" type="Sprite2D" parent="World/RoadOfWitnessesPrototype"]
+texture = ExtResource("2_map")
+centered = true
+
+[node name="CollisionRoot" type="StaticBody2D" parent="World/RoadOfWitnessesPrototype"]
+
+[node name="ForegroundOcclusion" type="Node2D" parent="World/RoadOfWitnessesPrototype"]
+
+[node name="Projectiles" type="Node2D" parent="World"]
+
+[node name="Enemies" type="Node2D" parent="World"]
+
+[node name="Items" type="Node2D" parent="World"]
+
+[node name="SignalNeedle" type="Line2D" parent="World"]
+z_index = 12
+width = 3.0
+default_color = Color(0.22, 0.84, 0.91, 0.65)
+
+[node name="FieldTerminal" type="Node2D" parent="World"]
+position = Vector2(0, -430)
+script = ExtResource("7_terminal")
+
+[node name="Body" type="StaticBody2D" parent="World/FieldTerminal"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/FieldTerminal/Body"]
+position = Vector2(0, 8)
+shape = SubResource("RectangleShape2D_terminal")
+
+[node name="Cabinet" type="Polygon2D" parent="World/FieldTerminal"]
+color = Color(0.08, 0.08, 0.075, 1)
+polygon = PackedVector2Array(-22, 20, 22, 20, 17, -4, -17, -4)
+
+[node name="Screen" type="Polygon2D" parent="World/FieldTerminal"]
+color = Color(0.11, 0.49, 0.54, 1)
+polygon = PackedVector2Array(-13, -5, 13, -5, 10, -19, -10, -19)
+
+[node name="StatusStrip" type="Polygon2D" parent="World/FieldTerminal"]
+color = Color(0.72, 0.57, 0.26, 1)
+polygon = PackedVector2Array(-16, 21, 16, 21, 16, 23, -16, 23)
+
+[node name="Operator" parent="World" instance=ExtResource("3_operator")]
+position = Vector2(-6, 482)
+
+[node name="PlayerController" type="Node" parent="World"]
+script = ExtResource("5_player_controller")
+operator_path = NodePath("../Operator")
+
+[node name="Camera2D" type="Camera2D" parent="World"]
+position = Vector2(0, 160)
+script = ExtResource("4_camera")
+current = true
+
+[node name="CustodianHUD" parent="." instance=ExtResource("8_hud")]

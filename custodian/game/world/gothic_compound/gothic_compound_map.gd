@@ -6,6 +6,7 @@ const TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_com
 const GOTHIC_CONTEXT_SCRIPT := preload("res://game/world/procgen/gothic_compound/gothic_compound_sprite_context.gd")
 const GOTHIC_CONFIG_SCRIPT := preload("res://game/world/procgen/gothic_compound/gothic_compound_config.gd")
 const GOTHIC_GENERATOR_SCRIPT := preload("res://game/world/procgen/gothic_compound/gothic_compound_generator.gd")
+const VAULT_STORAGE_SCENE := preload("res://game/actors/storage/vault_storage.tscn")
 
 @export var map_size_tiles: Vector2i = Vector2i(82, 60)
 @export var world_seed: int = 947113
@@ -19,6 +20,7 @@ var _built := false
 var _camera_bounds := Rect2()
 var _context: Node2D = null
 var _return_gate: Node2D = null
+var _vault_room_root: Node2D = null
 
 
 func _ready() -> void:
@@ -104,6 +106,7 @@ func _build_blueprint_compound() -> void:
 		var gate_cell: Vector2i = result.get("gate_cell")
 		entrance_tile = gate_cell + Vector2i(0, -2)
 		return_gate_tile = gate_cell + Vector2i(0, -1)
+		_add_authored_vault_room(result)
 	else:
 		push_warning("[GothicCompoundMap] Blueprint generation failed; using default travel positions")
 
@@ -116,6 +119,80 @@ func _add_return_gate() -> void:
 	_return_gate.call("configure", self, 1, "RETURN TO MAIN MAP")
 	_return_gate.position = _tile_to_local(return_gate_tile)
 	add_child(_return_gate)
+
+
+func _add_authored_vault_room(result: Variant) -> void:
+	if VAULT_STORAGE_SCENE == null or result == null:
+		return
+	var rect: Rect2i = result.get("rect")
+	if rect.size.x <= 0 or rect.size.y <= 0:
+		return
+	_vault_room_root = Node2D.new()
+	_vault_room_root.name = "AuthoredVaultRoom"
+	_vault_room_root.add_to_group("authored_vault_room")
+	_vault_room_root.add_to_group("vault_room")
+	add_child(_vault_room_root)
+
+	var room_size := Vector2i(12, 8)
+	var room_origin := Vector2i(
+		clampi(rect.position.x + rect.size.x - room_size.x - 5, rect.position.x + 4, rect.position.x + rect.size.x - room_size.x - 2),
+		clampi(rect.position.y + 6, rect.position.y + 4, rect.position.y + rect.size.y - room_size.y - 4)
+	)
+	_add_vault_room_floor(room_origin, room_size)
+	_add_vault_storage("gothic_vault_ruin_scrap", "Ruin Scrap Lockbox", room_origin + Vector2i(3, 3), {&"ruin_scrap": 52, &"structural_alloy": 4})
+	_add_vault_storage("gothic_vault_alloy_cache", "Alloy Cache", room_origin + Vector2i(7, 3), {&"structural_alloy": 14, &"ruin_scrap": 16})
+	_add_vault_storage("gothic_vault_power_cache", "Power Component Cache", room_origin + Vector2i(5, 6), {&"power_components": 4, &"capacitor_dust": 3, &"ruin_scrap": 10})
+
+	var exit_marker := Marker2D.new()
+	exit_marker.name = "VaultEnemyExit"
+	exit_marker.add_to_group("vault_exit")
+	exit_marker.add_to_group("enemy_exit")
+	exit_marker.position = _tile_to_local(room_origin + Vector2i(room_size.x / 2, room_size.y + 1))
+	_vault_room_root.add_child(exit_marker)
+
+
+func _add_vault_room_floor(room_origin: Vector2i, room_size: Vector2i) -> void:
+	var floor := Polygon2D.new()
+	floor.name = "VaultRoomFloor"
+	floor.color = Color(0.12, 0.115, 0.105, 1.0)
+	floor.z_as_relative = false
+	floor.z_index = -40
+	var top_left := _tile_to_local(room_origin)
+	var extent := Vector2(float(room_size.x) * TILE_SIZE, float(room_size.y) * TILE_SIZE)
+	floor.polygon = PackedVector2Array([
+		top_left,
+		top_left + Vector2(extent.x, 0.0),
+		top_left + extent,
+		top_left + Vector2(0.0, extent.y),
+	])
+	_vault_room_root.add_child(floor)
+
+	var threshold := Polygon2D.new()
+	threshold.name = "VaultRoomThreshold"
+	threshold.color = Color(0.28, 0.24, 0.18, 1.0)
+	threshold.z_as_relative = false
+	threshold.z_index = -39
+	var threshold_left := _tile_to_local(room_origin + Vector2i(room_size.x / 2 - 1, room_size.y))
+	threshold.polygon = PackedVector2Array([
+		threshold_left,
+		threshold_left + Vector2(3.0 * TILE_SIZE, 0.0),
+		threshold_left + Vector2(3.0 * TILE_SIZE, TILE_SIZE * 0.35),
+		threshold_left + Vector2(0.0, TILE_SIZE * 0.35),
+	])
+	_vault_room_root.add_child(threshold)
+
+
+func _add_vault_storage(storage_id: String, display_name: String, tile: Vector2i, starting_resources: Dictionary) -> void:
+	var storage := VAULT_STORAGE_SCENE.instantiate()
+	if storage == null:
+		return
+	storage.name = storage_id.to_pascal_case()
+	storage.set("storage_id", StringName(storage_id))
+	storage.set("display_name", display_name)
+	storage.set("starting_resources", starting_resources)
+	if storage is Node2D:
+		(storage as Node2D).position = _tile_to_local(tile)
+	_vault_room_root.add_child(storage)
 
 
 func _tile_to_local(tile: Vector2i) -> Vector2:

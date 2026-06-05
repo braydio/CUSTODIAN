@@ -40,6 +40,11 @@ class_name EnemyBehaviorProfile
 @export var drop_loot_on_hit_chance: float = 0.25
 @export var abandon_loot_on_panic: bool = true
 
+@export_category("Storage Sabotage")
+@export var can_sabotage_storage: bool = true
+@export var sabotage_seconds: float = 2.5
+@export var sabotage_damage: int = 10
+
 @export_category("Morale")
 @export var morale_max: float = 100.0
 @export var morale_panic_threshold: float = 25.0
@@ -70,6 +75,7 @@ static func create_profile(id: StringName) -> Resource:
 			profile.hearing_range_px = 190.0
 			profile.max_total_resource_units = 28
 			profile.loot_escape_speed_mult = 0.95
+			profile.sabotage_damage = 8
 		&"zealot_wanderer":
 			profile.profile_id = &"zealot_wanderer"
 			profile.display_name = "Zealot Wanderer"
@@ -82,6 +88,8 @@ static func create_profile(id: StringName) -> Resource:
 			profile.hearing_range_px = 135.0
 			profile.detection_gain_per_sec = 1.15
 			profile.can_steal_resources = false
+			profile.can_sabotage_storage = true
+			profile.sabotage_damage = 14
 		_:
 			profile.profile_id = &"raider_grunt"
 			profile.display_name = "Raider Grunt"

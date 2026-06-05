@@ -2,6 +2,9 @@ extends RefCounted
 class_name GruntAnimationLibrary
 
 const GRUNT_FRAME_SIZE := Vector2i(96, 96)
+const MARINE_FRAME_SIZE := Vector2i(96, 96)
+const MARINE_DASH_FRAME_SIZE := Vector2i(156, 156)
+const MARINE_IDLE_DIRECTIONS := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
 
 const ANIMATION_SPECS := {
 	"idle_s": {
@@ -71,6 +74,8 @@ const FX_ANIMATION_SPECS := {
 
 static var _cached_frames: SpriteFrames = null
 static var _cached_fx_frames: SpriteFrames = null
+static var _cached_marine_frames: SpriteFrames = null
+static var _cached_marine_fx_frames: SpriteFrames = null
 
 
 static func get_grunt_sprite_frames() -> SpriteFrames:
@@ -91,6 +96,43 @@ static func get_grunt_fx_sprite_frames() -> SpriteFrames:
 		_add_strip_animation(frames, String(animation_name), FX_ANIMATION_SPECS[animation_name])
 	_cached_fx_frames = frames
 	return _cached_fx_frames
+
+
+static func get_marine_sprite_frames() -> SpriteFrames:
+	if _cached_marine_frames != null:
+		return _cached_marine_frames
+	var frames := SpriteFrames.new()
+	for direction in MARINE_IDLE_DIRECTIONS:
+		var suffix := String(direction)
+		var spec := {
+			"path": "res://content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__idle_01__%s__4f__96.png" % suffix,
+			"fps": 6.0,
+			"loop": true,
+			"frame_size": MARINE_FRAME_SIZE,
+		}
+		_add_strip_animation(frames, "marine_idle_%s" % suffix, spec)
+	_add_strip_animation(frames, "marine_dash_attack_e", {
+		"path": "res://content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__dash_attack_01__e__8f__156.png",
+		"fps": 13.0,
+		"loop": false,
+		"frame_size": MARINE_DASH_FRAME_SIZE,
+	})
+	_cached_marine_frames = frames
+	return _cached_marine_frames
+
+
+static func get_marine_fx_sprite_frames() -> SpriteFrames:
+	if _cached_marine_fx_frames != null:
+		return _cached_marine_fx_frames
+	var frames := SpriteFrames.new()
+	_add_strip_animation(frames, "marine_dash_attack_fx_e", {
+		"path": "res://content/sprites/enemies/enemy_marine/runtime/fx/enemy_marine__fx__unarmed__dash_attack_01__e__8f__156.png",
+		"fps": 13.0,
+		"loop": false,
+		"frame_size": MARINE_DASH_FRAME_SIZE,
+	})
+	_cached_marine_fx_frames = frames
+	return _cached_marine_fx_frames
 
 
 static func get_move_animation(direction: Vector2) -> StringName:
@@ -117,6 +159,18 @@ static func get_attack_fx_animation(direction: Vector2) -> StringName:
 	return &"melee_fx_e"
 
 
+static func get_marine_idle_animation(direction: Vector2) -> StringName:
+	return StringName("marine_idle_%s" % _get_direction_suffix(direction))
+
+
+static func get_marine_dash_attack_animation(_direction: Vector2) -> StringName:
+	return &"marine_dash_attack_e"
+
+
+static func get_marine_dash_attack_fx_animation(_direction: Vector2) -> StringName:
+	return &"marine_dash_attack_fx_e"
+
+
 static func _add_strip_animation(frames: SpriteFrames, animation_name: String, spec: Dictionary) -> void:
 	var path := String(spec["path"])
 	if not ResourceLoader.exists(path):
@@ -127,8 +181,9 @@ static func _add_strip_animation(frames: SpriteFrames, animation_name: String, s
 		push_warning("[GruntAnimationLibrary] Grunt sheet is not a Texture2D: %s" % path)
 		return
 	var tex := texture as Texture2D
-	var frame_width := GRUNT_FRAME_SIZE.x
-	var frame_height := GRUNT_FRAME_SIZE.y
+	var frame_size: Vector2i = spec.get("frame_size", GRUNT_FRAME_SIZE)
+	var frame_width := frame_size.x
+	var frame_height := frame_size.y
 	var frame_count := int(tex.get_width() / frame_width)
 	if frame_count <= 0 or tex.get_height() < frame_height:
 		push_warning("[GruntAnimationLibrary] Grunt sheet has unexpected dimensions: %s" % path)
@@ -143,3 +198,12 @@ static func _add_strip_animation(frames: SpriteFrames, animation_name: String, s
 		atlas.atlas = tex
 		atlas.region = Rect2(float(frame_index * frame_width), 0.0, float(frame_width), float(frame_height))
 		frames.add_frame(animation_name, atlas)
+
+
+static func _get_direction_suffix(direction: Vector2) -> StringName:
+	if direction.length_squared() <= 0.0001:
+		return &"s"
+	var angle := wrapf(direction.angle(), 0.0, TAU)
+	var sector := int(round(angle / (PI / 4.0))) % 8
+	var angle_to_suffix := [&"e", &"se", &"s", &"sw", &"w", &"nw", &"n", &"ne"]
+	return angle_to_suffix[sector]

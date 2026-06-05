@@ -20,6 +20,7 @@ const WOLF_ATTACK_ANIMATION := &"bite_east"
 const WOLF_DEATH_ANIMATION := &"death_east"
 const WOLF_SPECIAL_ANIMATION := &"howl_east"
 const CUSTOM_ENEMY_GRUNT := &"enemy_grunt"
+const CUSTOM_ENEMY_MARINE := &"enemy_marine"
 const GRUNT_IDLE_ANIMATION := &"idle_s"
 const GRUNT_MOVE_ANIMATION := &"run_w"
 const GRUNT_ATTACK_ANIMATION := &"melee_e"
@@ -65,6 +66,9 @@ enum AssaultState {
 @export var counts_as_wave_enemy: bool = true
 @export var material_drop_min: int = 0
 @export var material_drop_max: int = 0
+@export var material_drop_fallback_enabled: bool = true
+@export var loot_table_id: String = ""
+@export var loot_table: Array[Dictionary] = []
 @export var passive_wander_radius: float = 72.0
 @export var passive_wander_interval_min: float = 0.8
 @export var passive_wander_interval_max: float = 2.6
@@ -664,7 +668,9 @@ func die():
 	var game_stats := get_node_or_null("/root/GameStats")
 	if game_stats != null and game_stats.has_method("record_enemy_destroyed"):
 		game_stats.call("record_enemy_destroyed", enemy_name)
-	_spawn_material_pickup()
+	var awarded_typed_loot := _award_loot_table()
+	if not awarded_typed_loot and material_drop_fallback_enabled:
+		_spawn_material_pickup()
 	print("ENEMY DESTROYED: ", enemy_name)
 	if _uses_procedural_variant_animation_set() and _has_animation(String(WOLF_DEATH_ANIMATION)):
 		call_deferred("_play_procedural_variant_death")
@@ -891,6 +897,38 @@ func _spawn_material_pickup() -> void:
 		get_tree().current_scene.add_child(pickup)
 	if pickup is Node2D:
 		(pickup as Node2D).global_position = global_position
+
+
+func _award_loot_table() -> bool:
+	if loot_table.is_empty():
+		return false
+	var tree := get_tree()
+	var ledger := tree.root.get_node_or_null("ResourceLedger") if tree != null and tree.root != null else null
+	if ledger == null or not ledger.has_method("add"):
+		return false
+	var awarded: Dictionary = {}
+	for entry in loot_table:
+		if not (entry is Dictionary):
+			continue
+		var resource_id := str(entry.get("resource_id", entry.get("id", ""))).strip_edges()
+		if resource_id.is_empty():
+			continue
+		var chance := clampf(float(entry.get("chance", 1.0)), 0.0, 1.0)
+		if chance < 1.0 and randf() > chance:
+			continue
+		var min_amount: int = max(0, int(entry.get("min", entry.get("amount", 0))))
+		var max_amount: int = max(min_amount, int(entry.get("max", min_amount)))
+		if max_amount <= 0:
+			continue
+		var amount := randi_range(min_amount, max_amount)
+		if amount <= 0:
+			continue
+		ledger.call("add", resource_id, amount)
+		awarded[resource_id] = int(awarded.get(resource_id, 0)) + amount
+	if awarded.is_empty():
+		return true
+	print("ENEMY LOOT: ", enemy_name, " table=", loot_table_id, " drops=", awarded)
+	return true
 
 
 func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
@@ -1132,7 +1170,7 @@ func _uses_procedural_variant_animation_set() -> bool:
 
 
 func _uses_custom_enemy_animation_set() -> bool:
-	return custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT) and animated_sprite != null
+	return [String(CUSTOM_ENEMY_GRUNT), String(CUSTOM_ENEMY_MARINE)].has(custom_enemy_animation_set) and animated_sprite != null
 
 
 func _uses_custom_ambient_animation_set() -> bool:
@@ -1245,6 +1283,8 @@ func _get_directional_animation_name(suffix: StringName) -> String:
 
 func _has_directional_animation_assets() -> bool:
 	if _uses_custom_enemy_animation_set():
+		if custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
+			return _has_animation("marine_idle_s")
 		return _has_animation(String(GRUNT_IDLE_ANIMATION)) and _has_animation(String(GRUNT_MOVE_ANIMATION))
 	if _uses_custom_ambient_animation_set():
 		return _has_animation(String(CUSTOM_AMBIENT_EAST_ANIMATION)) and _has_animation(String(CUSTOM_AMBIENT_NORTH_ANIMATION)) and _has_animation(String(CUSTOM_AMBIENT_SOUTH_ANIMATION))
@@ -1259,12 +1299,19 @@ func _ensure_custom_enemy_animations() -> void:
 		return
 	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
 		animated_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_grunt_sprite_frames()
+	elif custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
+		animated_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_marine_sprite_frames()
 
 
 func _ensure_custom_enemy_fx_animations() -> void:
-	if not _uses_custom_enemy_animation_set() or custom_enemy_fx_sprite == null:
+	if custom_enemy_fx_sprite == null:
 		return
-	custom_enemy_fx_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_grunt_fx_sprite_frames()
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+		custom_enemy_fx_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_grunt_fx_sprite_frames()
+	elif custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
+		custom_enemy_fx_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_marine_fx_sprite_frames()
+	else:
+		return
 	custom_enemy_fx_sprite.scale = custom_enemy_fx_scale
 	custom_enemy_fx_sprite.visible = false
 
@@ -1406,6 +1453,9 @@ func _update_custom_ambient_animation(direction: Vector2, is_moving: bool) -> vo
 func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_attack: bool = false) -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
+		_update_marine_enemy_animation(direction, force_attack)
+		return
 	var facing := direction
 	if facing.length_squared() <= 0.0001:
 		facing = _last_move_direction
@@ -1437,17 +1487,40 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 	animated_sprite.set_frame_and_progress(0, 0.0)
 
 
+func _update_marine_enemy_animation(direction: Vector2, force_attack: bool = false) -> void:
+	var facing := direction
+	if facing.length_squared() <= 0.0001:
+		facing = _last_move_direction
+	animated_sprite.scale = custom_enemy_animation_scale
+	_base_sprite_scale = animated_sprite.scale
+	animated_sprite.flip_h = false
+	if force_attack:
+		var dash_animation := GRUNT_ANIMATION_LIBRARY.get_marine_dash_attack_animation(facing)
+		if _has_animation(String(dash_animation)):
+			animated_sprite.flip_h = facing.x < -0.05
+			_play_animation(String(dash_animation), true)
+			_play_custom_enemy_attack_fx(facing)
+			return
+	var animation_name := GRUNT_ANIMATION_LIBRARY.get_marine_idle_animation(facing)
+	if not _has_animation(String(animation_name)):
+		animation_name = &"marine_idle_s"
+	if _has_animation(String(animation_name)):
+		_play_animation(String(animation_name), false)
+
+
 func _play_custom_enemy_attack_fx(facing: Vector2) -> void:
 	if custom_enemy_fx_sprite == null or custom_enemy_fx_sprite.sprite_frames == null:
 		return
 	var fx_animation := GRUNT_ANIMATION_LIBRARY.get_attack_fx_animation(facing)
-	if not custom_enemy_fx_sprite.sprite_frames.has_animation(String(fx_animation)):
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
+		fx_animation = GRUNT_ANIMATION_LIBRARY.get_marine_dash_attack_fx_animation(facing)
+	elif not custom_enemy_fx_sprite.sprite_frames.has_animation(String(fx_animation)):
 		fx_animation = GRUNT_ATTACK_FX_ANIMATION
 	if not custom_enemy_fx_sprite.sprite_frames.has_animation(String(fx_animation)):
 		return
 	custom_enemy_fx_sprite.visible = true
 	custom_enemy_fx_sprite.scale = custom_enemy_fx_scale
-	custom_enemy_fx_sprite.flip_h = false
+	custom_enemy_fx_sprite.flip_h = facing.x < -0.05 and custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE)
 	custom_enemy_fx_sprite.play(String(fx_animation))
 
 

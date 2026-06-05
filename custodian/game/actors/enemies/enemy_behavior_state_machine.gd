@@ -11,6 +11,7 @@ const ENGAGE_OPERATOR := &"engage_operator"
 const SEEK_OBJECTIVE := &"seek_objective"
 const OPEN_STORAGE := &"open_storage"
 const STEAL_RESOURCES := &"steal_resources"
+const SABOTAGE_STORAGE := &"sabotage_storage"
 const ESCAPE_WITH_LOOT := &"escape_with_loot"
 const FLEE := &"flee"
 const STUNNED := &"stunned"
@@ -83,6 +84,8 @@ func physics_update(enemy: Node2D, delta: float) -> bool:
 			_update_open_storage(enemy, delta)
 		STEAL_RESOURCES:
 			_update_steal_resources(enemy, delta)
+		SABOTAGE_STORAGE:
+			_update_sabotage_storage(enemy, delta)
 		ESCAPE_WITH_LOOT:
 			_update_escape_with_loot(enemy, delta)
 		FLEE:
@@ -222,11 +225,17 @@ func _update_seek_objective(enemy: Node2D, _delta: float) -> void:
 	if storage == null or not is_instance_valid(storage):
 		_apply_objective_choice(objective_sensor.choose_objective(enemy, profile, blackboard))
 		return
-	if storage.has_method("has_resources") and not bool(storage.call("has_resources")):
+	var sabotaging: bool = blackboard.current_objective_type == &"vault_storage_sabotage"
+	if sabotaging and storage.has_method("is_destroyed") and bool(storage.call("is_destroyed")):
+		change_state(IDLE)
+		return
+	if not sabotaging and storage.has_method("has_resources") and not bool(storage.call("has_resources")):
 		change_state(IDLE)
 		return
 	if enemy.global_position.distance_to(storage.global_position) > storage_interact_range_px:
 		enemy.call("behavior_move_toward", storage.global_position, profile.objective_speed)
+	elif sabotaging:
+		change_state(SABOTAGE_STORAGE)
 	else:
 		change_state(OPEN_STORAGE)
 
@@ -260,6 +269,24 @@ func _update_steal_resources(enemy: Node2D, delta: float) -> void:
 		change_state(ESCAPE_WITH_LOOT)
 	else:
 		change_state(IDLE)
+
+
+func _update_sabotage_storage(enemy: Node2D, delta: float) -> void:
+	if _evaluate_operator_interrupt_for_storage():
+		change_state(NOTICE)
+		return
+	enemy.call("behavior_stop")
+	_storage_timer += delta
+	if _storage_timer < profile.sabotage_seconds:
+		return
+	var storage: Node = blackboard.get("target_storage")
+	var manager := _get_vault_manager(enemy)
+	if manager == null or storage == null:
+		change_state(IDLE)
+		return
+	if manager.has_method("damage_storage"):
+		manager.call("damage_storage", storage, profile.sabotage_damage, enemy)
+	change_state(IDLE)
 
 
 func _update_escape_with_loot(enemy: Node2D, _delta: float) -> void:
@@ -323,6 +350,10 @@ func _apply_objective_choice(objective: Dictionary) -> void:
 			change_state(NOTICE)
 		&"storage":
 			blackboard.current_objective_type = &"vault_storage"
+			blackboard.current_objective = blackboard.target_storage
+			change_state(SEEK_OBJECTIVE)
+		&"sabotage_storage":
+			blackboard.current_objective_type = &"vault_storage_sabotage"
 			blackboard.current_objective = blackboard.target_storage
 			change_state(SEEK_OBJECTIVE)
 		&"investigate":

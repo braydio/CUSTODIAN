@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://game/ui/components/black_reliquary_minimap_frame.gd" id="1_minimap"]
 
 [node name="BlackReliquaryMinimapFrame" type="Control"]
-custom_minimum_size = Vector2(224, 244)
+custom_minimum_size = Vector2(182, 198)
 layout_mode = 3
 anchors_preset = 0
 mouse_filter = 2
@@ -23,9 +23,9 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_left = 12.0
-offset_top = 10.0
+offset_top = 8.0
 offset_right = -12.0
-offset_bottom = 34.0
+offset_bottom = 30.0
 grow_horizontal = 2
 mouse_filter = 2
 
@@ -46,9 +46,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 14.0
-offset_top = 44.0
+offset_top = 38.0
 offset_right = -14.0
-offset_bottom = -14.0
+offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 2
 clip_contents = true

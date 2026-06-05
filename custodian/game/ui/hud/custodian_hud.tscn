@@ -20,24 +20,24 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="TopLeftPanel" parent="Root" instance=ExtResource("2_panel")]
-custom_minimum_size = Vector2(308, 126)
+custom_minimum_size = Vector2(282, 94)
 layout_mode = 1
 anchors_preset = 0
-offset_left = 18.0
-offset_top = 18.0
-offset_right = 326.0
-offset_bottom = 144.0
+offset_left = 14.0
+offset_top = 12.0
+offset_right = 296.0
+offset_bottom = 106.0
 
 [node name="Margin" type="MarginContainer" parent="Root/TopLeftPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
 
 [node name="Content" type="VBoxContainer" parent="Root/TopLeftPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
 [node name="LocationTitle" type="Label" parent="Root/TopLeftPanel/Margin/Content"]
 layout_mode = 2
@@ -52,36 +52,37 @@ layout_mode = 2
 text = "Objective: Open the main gate"
 autowrap_mode = 3
 
-[node name="TopCenterVitals" parent="Root" instance=ExtResource("2_panel")]
-custom_minimum_size = Vector2(270, 92)
+[node name="TopCenterVitals" type="PanelContainer" parent="Root"]
+custom_minimum_size = Vector2(260, 38)
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -135.0
-offset_top = 18.0
-offset_right = 135.0
-offset_bottom = 110.0
+offset_left = -130.0
+offset_top = 10.0
+offset_right = 130.0
+offset_bottom = 48.0
 grow_horizontal = 2
 
 [node name="Margin" type="MarginContainer" parent="Root/TopCenterVitals"]
 layout_mode = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
 
-[node name="Content" type="VBoxContainer" parent="Root/TopCenterVitals/Margin"]
+[node name="Content" type="HBoxContainer" parent="Root/TopCenterVitals/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
 [node name="HealthLabel" type="Label" parent="Root/TopCenterVitals/Margin/Content"]
 layout_mode = 2
 text = "HEALTH 100/100"
 
 [node name="HealthBar" type="ProgressBar" parent="Root/TopCenterVitals/Margin/Content"]
-custom_minimum_size = Vector2(220, 12)
+custom_minimum_size = Vector2(78, 8)
 layout_mode = 2
+size_flags_horizontal = 3
 value = 100.0
 show_percentage = false
 
@@ -90,23 +91,23 @@ layout_mode = 2
 text = "STAMINA: READY"
 
 [node name="TopRightPanel" parent="Root" instance=ExtResource("2_panel")]
-custom_minimum_size = Vector2(250, 274)
+custom_minimum_size = Vector2(196, 218)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -272.0
-offset_top = 18.0
-offset_right = -18.0
-offset_bottom = 292.0
+offset_left = -210.0
+offset_top = 12.0
+offset_right = -14.0
+offset_bottom = 230.0
 grow_horizontal = 0
 
 [node name="Margin" type="MarginContainer" parent="Root/TopRightPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
 [node name="BlackReliquaryMinimapFrame" parent="Root/TopRightPanel/Margin" instance=ExtResource("4_minimap")]
 layout_mode = 2
@@ -117,9 +118,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
-offset_top = -138.0
-offset_right = 420.0
-offset_bottom = -28.0
+offset_top = -112.0
+offset_right = 380.0
+offset_bottom = -22.0
 grow_vertical = 0
 mouse_filter = 2
 
@@ -132,30 +133,30 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="BottomRightStatus" parent="Root" instance=ExtResource("2_panel")]
-custom_minimum_size = Vector2(330, 126)
+custom_minimum_size = Vector2(282, 96)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -350.0
-offset_top = -150.0
-offset_right = -18.0
-offset_bottom = -28.0
+offset_left = -296.0
+offset_top = -116.0
+offset_right = -14.0
+offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 0
 
 [node name="Margin" type="MarginContainer" parent="Root/BottomRightStatus"]
 layout_mode = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
 
 [node name="Content" type="VBoxContainer" parent="Root/BottomRightStatus/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 7
+theme_override_constants/separation = 3
 
 [node name="KeyItemStatus" parent="Root/BottomRightStatus/Margin/Content" instance=ExtResource("5_icon_label")]
 layout_mode = 2

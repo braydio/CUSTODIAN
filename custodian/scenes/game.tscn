@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" path="res://game/actors/enemies/fast_drone.tscn" id="16_fast_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/heavy_drone.tscn" id="17_heavy_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_grunt.tscn" id="18_grunt_enemy"]
+[ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_marine.tscn" id="18_marine_enemy"]
 [ext_resource type="PackedScene" uid="uid://chxttfh575v5i" path="res://game/actors/sector/turret_gunner.tscn" id="19_turret_gunner"]
 [ext_resource type="PackedScene" path="res://game/actors/sector/turret_blaster.tscn" id="20_turret_blaster"]
 [ext_resource type="PackedScene" path="res://game/actors/sector/turret_repeater.tscn" id="21_turret_repeater"]
@@ -273,6 +274,7 @@ drone_scene = ExtResource("6_enemy")
 fast_drone_scene = ExtResource("16_fast_enemy")
 heavy_drone_scene = ExtResource("17_heavy_enemy")
 grunt_scene = ExtResource("18_grunt_enemy")
+marine_scene = ExtResource("18_marine_enemy")
 debug_spawn_grunt_on_start = true
 
 [node name="EnemyDirector" type="Node" parent="." unique_id=987111453]
