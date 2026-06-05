@@ -89,6 +89,12 @@ show_percentage = false
 position = Vector2(0, 13)
 script = ExtResource("29_blob_shadow")
 
+[node name="DodgeFXBackSprite" type="AnimatedSprite2D" parent="."]
+visible = false
+z_index = -1
+position = Vector2(297.99997, 2.000002)
+offset = Vector2(0, 114)
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1317416612]
 position = Vector2(297.99997, 2.000002)
 rotation = -0.00045306538

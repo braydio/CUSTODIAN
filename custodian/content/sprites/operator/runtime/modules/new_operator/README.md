@@ -8,7 +8,23 @@ Runtime scenes and `SpriteFrames` resources should reference this folder, not th
 
 ```sh
 python3 custodian/tools/pipelines/build_operator_modular_runtime.py
+godot --headless --path custodian --script res://tools/pipelines/update_operator_curated_resources.gd
 ```
+
+Modular Operator PNGs can also be dropped into the shared sprite inbox when they use canonical names such as:
+
+```text
+operator__modular_upper_body__unarmed__idle_01__s__5f__96.png
+operator__modular_lower_body__unarmed__walk_01__e__5f__96.png
+```
+
+Then run:
+
+```sh
+python3 custodian/tools/pipelines/generate_inbox_manifests.py
+```
+
+Generated manifests route `operator__modular_*` files into `res://content/sprites/operator/new_operator/modular/` and run `operator_modular_runtime`, which rebuilds this runtime module folder and refreshes the live `operator_modular_lower_body_frames.tres` / `operator_modular_upper_body_frames.tres` resources.
 
 ## Layout
 
@@ -29,9 +45,9 @@ upper_body/
         fast_strike_01/
 ```
 
-The operator scene has optional `ModularLowerBodySprite` and `ModularUpperBodySprite` layers. The lower-body layer owns movement presentation (`idle_01`, `walk_01`, `run_01`). The upper-body layer normally follows locomotion, but can switch to directional action clips independently; unarmed fast strike currently uses `upper_body/actions/unarmed/fast_attack/fast_strike_01/`.
+The operator scene has optional `ModularLowerBodySprite` and `ModularUpperBodySprite` layers. The lower-body layer owns movement presentation (`idle_01`, `walk_01`, `run_01`) and resolves direction from movement. The upper-body layer owns action/aim presentation and resolves direction from aim/action state, so the lower body can walk north while the upper body faces south. Unarmed fast strike currently uses `upper_body/actions/unarmed/fast_attack/fast_strike_01/`.
 
-The legacy body `AnimatedSprite2D` remains the timing/source-of-truth sprite for attack state, hit windows, portal arrival, ranged states, and any non-modular fallback state. During the first modular fast-strike pass it is hidden visually while still driving the attack timeline.
+The legacy body `AnimatedSprite2D` remains the timing/source-of-truth sprite for attack state, hit windows, portal arrival, ranged states, and any non-modular fallback state. It is hidden visually when modular layers cover the current unarmed locomotion state, including Fists idle.
 
 ## Fallback Policy
 

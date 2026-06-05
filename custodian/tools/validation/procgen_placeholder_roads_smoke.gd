@@ -51,7 +51,11 @@ func _run() -> void:
 		assert(path.begins_with(PLACEHOLDER_ROAD_ROOT), "Road decal did not use placeholder runtime art: %s" % path)
 		assert(path.get_file().begins_with("PLACEHOLDER_"), "Road placeholder file is not clearly named: %s" % path)
 
-	print("[ProcgenPlaceholderRoadsSmoke] ok roads=%d parking=%d decals=%d" % [road_tiles.size(), parking_tiles.size(), decal_paths.size()])
+	var role_counts := tilemap.debug_get_road_piece_decal_role_counts()
+	for role in ["center", "left_1", "left_2", "right_1", "right_2"]:
+		assert(int(role_counts.get(role, 0)) > 0, "Expected road lane placeholder role '%s' to spawn, got roles=%s" % [role, str(role_counts)])
+
+	print("[ProcgenPlaceholderRoadsSmoke] ok roads=%d parking=%d decals=%d roles=%s" % [road_tiles.size(), parking_tiles.size(), decal_paths.size(), str(role_counts)])
 	quit(0)
 
 

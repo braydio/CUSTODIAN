@@ -91,23 +91,23 @@ layout_mode = 2
 text = "STAMINA: READY"
 
 [node name="TopRightPanel" parent="Root" instance=ExtResource("2_panel")]
-custom_minimum_size = Vector2(196, 218)
+custom_minimum_size = Vector2(142, 160)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -210.0
+offset_left = -156.0
 offset_top = 12.0
 offset_right = -14.0
-offset_bottom = 230.0
+offset_bottom = 172.0
 grow_horizontal = 0
 
 [node name="Margin" type="MarginContainer" parent="Root/TopRightPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
 
 [node name="BlackReliquaryMinimapFrame" parent="Root/TopRightPanel/Margin" instance=ExtResource("4_minimap")]
 layout_mode = 2

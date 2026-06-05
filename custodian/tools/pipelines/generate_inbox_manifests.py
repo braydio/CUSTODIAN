@@ -278,6 +278,8 @@ def _build_outputs(info: SheetInfo) -> list[dict]:
 
 def _canonical_runtime_path(info: SheetInfo) -> str:
     if info.owner == "operator":
+        if info.layer in {"modular_lower_body", "modular_upper_body", "modular_upper_fx"}:
+            return f"operator/new_operator/modular/{_operator_modular_source_bucket(info)}/{info.basename}"
         if info.layer == "body":
             return f"operator/runtime/body/{info.action_group}/{info.basename}"
         if info.layer == "weapon":
@@ -318,6 +320,21 @@ def _compatibility_outputs(info: SheetInfo) -> list[dict]:
 	return outputs
 
 
+def _operator_modular_source_bucket(info: SheetInfo) -> str:
+    action = info.variant if info.action_group == "unarmed" and info.variant else info.action_group
+    if action.startswith("dodge"):
+        return "dodge"
+    if action.startswith("idle"):
+        return "idle"
+    if action.startswith("walk"):
+        return "walk"
+    if action.startswith("run") or action.startswith("action"):
+        return "run"
+    if action.startswith("fast_"):
+        return "fast_attack"
+    return action
+
+
 def _items_runtime_path(info: SheetInfo) -> str:
     return f"items/{info.layer}/{info.variant}.png"
 
@@ -330,6 +347,8 @@ def _build_post_process(info: SheetInfo) -> list[str]:
     post_process: list[str] = []
     if info.owner == "operator" and info.layer == "body":
         post_process.append("operator_curated_resources")
+    if info.owner == "operator" and info.layer in {"modular_lower_body", "modular_upper_body", "modular_upper_fx"}:
+        post_process.append("operator_modular_runtime")
     if info.owner.startswith("enemy_") or info.owner == "drone":
         post_process.append("enemy_runtime_import")
     if _is_vehicle_owner(info.owner):

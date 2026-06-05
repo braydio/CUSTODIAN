@@ -122,11 +122,18 @@ func _find_procgen_tilemap() -> Node:
 	for node in nodes:
 		if node != null and is_instance_valid(node):
 			return node
+	for group_name in ["sundered_keep_map", "connected_map"]:
+		for node in get_tree().get_nodes_in_group(group_name):
+			if node != null and is_instance_valid(node) and node.has_method("get_level_data"):
+				return node
 
 	var root := get_tree().current_scene
 	if root == null:
 		return null
-	return _find_child_by_script_class(root, "ProcGenTilemap")
+	var procgen := _find_child_by_script_class(root, "ProcGenTilemap")
+	if procgen != null:
+		return procgen
+	return _find_child_with_method(root, "get_level_data")
 
 
 func _find_child_by_script_class(root: Node, class_name_text: String) -> Node:
@@ -137,6 +144,18 @@ func _find_child_by_script_class(root: Node, class_name_text: String) -> Node:
 		return root
 	for child in root.get_children():
 		var found := _find_child_by_script_class(child, class_name_text)
+		if found != null:
+			return found
+	return null
+
+
+func _find_child_with_method(root: Node, method_name: String) -> Node:
+	if root == null:
+		return null
+	if root.has_method(method_name):
+		return root
+	for child in root.get_children():
+		var found := _find_child_with_method(child, method_name)
 		if found != null:
 			return found
 	return null
@@ -218,3 +237,41 @@ func _refresh_dynamic_nodes() -> void:
 		minimap_view.call("set_turrets", turrets)
 	if minimap_view.has_method("set_relays"):
 		minimap_view.call("set_relays", relays)
+	if procgen_tilemap == null or not is_instance_valid(procgen_tilemap):
+		_update_dynamic_bounds(player, enemies, objectives, terminals, vehicles, turrets, relays)
+
+
+func _update_dynamic_bounds(
+	player: Node2D,
+	enemies: Array[Node2D],
+	objectives: Array[Node2D],
+	terminals: Array[Node2D],
+	vehicles: Array[Node2D],
+	turrets: Array[Node2D],
+	relays: Array[Node2D]
+) -> void:
+	if minimap_view == null or not minimap_view.has_method("set_world_bounds"):
+		return
+	var nodes: Array[Node2D] = []
+	if player != null:
+		nodes.append(player)
+	nodes.append_array(enemies)
+	nodes.append_array(objectives)
+	nodes.append_array(terminals)
+	nodes.append_array(vehicles)
+	nodes.append_array(turrets)
+	nodes.append_array(relays)
+	if nodes.is_empty():
+		return
+	var min_pos := nodes[0].global_position
+	var max_pos := nodes[0].global_position
+	for node in nodes:
+		min_pos.x = minf(min_pos.x, node.global_position.x)
+		min_pos.y = minf(min_pos.y, node.global_position.y)
+		max_pos.x = maxf(max_pos.x, node.global_position.x)
+		max_pos.y = maxf(max_pos.y, node.global_position.y)
+	var margin := Vector2(384.0, 384.0)
+	var rect := Rect2(min_pos - margin, (max_pos - min_pos) + margin * 2.0)
+	rect.size.x = maxf(rect.size.x, 1024.0)
+	rect.size.y = maxf(rect.size.y, 1024.0)
+	minimap_view.call("set_world_bounds", rect)

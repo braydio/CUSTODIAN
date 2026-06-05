@@ -82,6 +82,10 @@ Operator curated body updates can trigger the runtime `SpriteFrames` rebuild aut
 }
 ```
 
+Modular Operator layer sheets should use `operator__modular_lower_body__...` or `operator__modular_upper_body__...` canonical names. The manifest generator routes those files into `operator/new_operator/modular/` and runs `operator_modular_runtime`, which rebuilds the stable runtime module sheets and refreshes the live modular `SpriteFrames`.
+
+Dodge body drops can be full-body or modular. Full-body dodge uses `operator__body__locomotion__dodge__n__4f__96.png` plus `operator__body__locomotion__dodge_recovery__n__4f__96.png`. The aim-back hop uses `operator__body__locomotion__dodge_backstep__s__4f__96.png` plus `operator__body__locomotion__dodge_backstep_recovery__s__4f__96.png`. Modular dodge source names that start with `dodge` route to `operator/new_operator/modular/dodge/`.
+
 ## Terminal Prop Example
 
 Current and future terminal prop sheets should use the `command_terminal` / `fabricator_terminal` prefix convention and write into the prop-owned runtime body folder:

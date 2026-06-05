@@ -9,13 +9,20 @@ enum State {
 }
 
 @export var trigger_radius: float = 300.0
-@export var attack_range: float = 78.0
+@export var attack_range: float = 132.0
 @export var approach_speed: float = 74.0
-@export var dash_speed: float = 380.0
-@export var dash_duration: float = 0.30
-@export var dash_hit_time: float = 0.15
-@export var dash_recover_duration: float = 0.65
-@export var dash_damage: float = 22.0
+@export var dash_speed: float = 830.0
+@export var dash_duration: float = 0.18
+@export var dash_hit_active_start_ratio: float = 0.34
+@export var dash_hit_active_end_ratio: float = 0.82
+@export var dash_hit_forward_reach_px: float = 24.0
+@export var dash_hit_lateral_reach_px: float = 18.0
+@export var dash_recover_duration: float = 0.42
+@export var dash_damage: float = 28.0
+@export var dash_knockback_px: float = 95.0
+@export var dash_victim_hitstop: float = 0.09
+@export var dash_camera_shake_strength: float = 0.45
+@export var dash_camera_shake_duration: float = 0.16
 
 var marine: CharacterBody2D = null
 var target: Node2D = null
@@ -24,6 +31,7 @@ var _dash_direction := Vector2.LEFT
 var _dash_timer := 0.0
 var _recover_timer := 0.0
 var _dash_hit_applied := false
+var _dash_start_position := Vector2.ZERO
 
 
 func configure(p_marine: CharacterBody2D, p_target: Node2D = null) -> void:
@@ -101,6 +109,7 @@ func _start_dash(direction: Vector2) -> void:
 	_dash_direction = direction.normalized() if direction.length_squared() > 0.0001 else Vector2.LEFT
 	_dash_timer = dash_duration
 	_dash_hit_applied = false
+	_dash_start_position = marine.global_position
 	state = State.DASH
 	marine.velocity = _dash_direction * dash_speed
 	_play_marine_dash(_dash_direction)
@@ -110,11 +119,11 @@ func _update_dash(delta: float) -> void:
 	_dash_timer = maxf(0.0, _dash_timer - delta)
 	marine.velocity = _dash_direction * dash_speed
 	marine.move_and_slide()
-	var elapsed := dash_duration - _dash_timer
-	if not _dash_hit_applied and elapsed >= dash_hit_time:
+	if not _dash_hit_applied and _is_dash_hit_window_active() and _target_is_in_dash_contact_window():
 		_dash_hit_applied = true
 		_apply_dash_damage()
-	if _dash_timer <= 0.0:
+	var traveled := marine.global_position.distance_to(_dash_start_position)
+	if marine.get_slide_collision_count() > 0 or traveled >= dash_speed * dash_duration or _dash_timer <= 0.0:
 		marine.velocity = Vector2.ZERO
 		_recover_timer = dash_recover_duration
 		state = State.RECOVER
@@ -130,10 +139,33 @@ func _update_recover(delta: float) -> void:
 func _apply_dash_damage() -> void:
 	if target == null or not is_instance_valid(target):
 		return
-	if marine.global_position.distance_to(target.global_position) > attack_range + 34.0:
+	if not _target_is_in_dash_contact_window():
 		return
 	if target.has_method("take_damage"):
 		target.call("take_damage", dash_damage)
+	if target.has_method("apply_enemy_dash_impact"):
+		target.call("apply_enemy_dash_impact", _dash_direction, dash_knockback_px, dash_victim_hitstop)
+	var camera := marine.get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera != null and camera.has_method("shake"):
+		camera.call("shake", dash_camera_shake_strength * 10.0, dash_camera_shake_duration)
+
+
+func _is_dash_hit_window_active() -> bool:
+	var progress := clampf(1.0 - (_dash_timer / maxf(0.01, dash_duration)), 0.0, 1.0)
+	var active_start := clampf(dash_hit_active_start_ratio, 0.0, 1.0)
+	var active_end := clampf(dash_hit_active_end_ratio, active_start, 1.0)
+	return progress >= active_start and progress <= active_end
+
+
+func _target_is_in_dash_contact_window() -> bool:
+	if target == null or not is_instance_valid(target):
+		return false
+	var to_target := target.global_position - marine.global_position
+	var forward_distance := to_target.dot(_dash_direction)
+	if forward_distance < -4.0 or forward_distance > dash_hit_forward_reach_px:
+		return false
+	var lateral_distance := absf(to_target.cross(_dash_direction))
+	return lateral_distance <= dash_hit_lateral_reach_px
 
 
 func _stop_marine() -> void:

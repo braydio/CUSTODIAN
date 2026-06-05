@@ -1,6 +1,6 @@
 # PROJECT CONTEXT PRIMER — CUSTODIAN
 
-Last updated: 2026-06-04
+Last updated: 2026-06-05
 
 ## Purpose
 
@@ -23,14 +23,15 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 - Beginning/Home scene: `res://scenes/home_custodian_begin.tscn` implements Objective 01, tracing the Custodian-band frequency to a damaged Field Terminal and establishing witness contact; it is a dedicated scene and not yet the application main scene.
 - Runtime authority: Godot only
 - Active command shell: HUD terminal in `custodian/game/ui/hud/ui.gd`, with terminal helper modules under `custodian/game/ui/terminal/`
-- Current gameplay HUD style: compact Black Reliquary gothic/brass UI. Assets live in `custodian/content/ui/black_reliquary/`; reusable theme/components/HUD scenes live under `custodian/game/ui/`. Prompt text must be real Godot labels, not baked into images, and debug diagnostics should live in the dedicated F12/`debug_hud` debug screen instead of normal HUD labels.
+- Current gameplay HUD style: compact Black Reliquary gothic/brass UI. Assets live in `custodian/content/ui/black_reliquary/`; reusable theme/components/HUD scenes live under `custodian/game/ui/`. Prompt text must be real Godot labels, not baked into images, the minimap frame should embed the shared live tactical minimap renderer rather than static marker art, debug diagnostics should live in the dedicated F12/`debug_hud` debug screen instead of normal HUD labels, and terminal focus must mask gameplay overlays so HUD/debug surfaces do not draw over the terminal interface.
 - Contract/runtime coupling: contract planet generation feeds procgen world generation through a shared world profile
 - Input prompts: interaction UI should derive from `InputMap`, not hardcoded keys
-- Operator combat selection: Fists/unarmed is a first-class `OperatorWeaponDefinition` profile selected with `toggle_unarmed`; normal weapon cycling excludes Fists and only cycles armed profiles. Melee attack physics resolve through `MeleeAttackProfile` resources referenced by each weapon definition, with legacy operator melee exports kept only as fallbacks. Ranged secondary is now held ranged-ready/aim, not fire; primary fires the ranged weapon only while ranged-ready is active, using fallback ranged stance/fire assets until true modular upper/body/cape/weapon/FX ranged clips exist.
+- Operator combat selection: Fists/unarmed is a first-class `OperatorWeaponDefinition` profile selected with `toggle_unarmed`; normal weapon cycling excludes Fists and only cycles armed profiles. Melee attack physics resolve through `MeleeAttackProfile` resources referenced by each weapon definition, with legacy operator melee exports kept only as fallbacks. Ranged secondary is held ranged-ready/aim, not fire; primary fires the ranged weapon while ranged-ready is active and can quick panic-shot along current facing from a ranged loadout when aim is not held, using fallback ranged stance/fire assets until true modular upper/body/cape/weapon/FX ranged clips exist. Operator movement now supports WASD/left stick movement, mouse/right-stick aim, and movement-first dodge with idle aiming backstep.
 - Forest Shrumb cognitive drops now have a v1 foundation through `InventoryManager`, `CognitiveState`, `cognitive_pickup`, `shrumb_dropper`, and the live `ambient_shrumb.tscn` actor. Ambient spawning now uses this shrumb actor directly; the former scav droid scene path is removed.
 - Procedural ruin prop variants have a v1 visual-only foundation under `custodian/content/props/ruins/`, using seeded layer assembly from authored sprites, overlays, rubble pieces, and a conservative palette shader. Collision remains authored and stable through `PropDefinition.collision_scene`.
 - Procgen terrain construction now has a dedicated metadata-first `TerrainBuilder` pass under `game/world/procgen/terrain/`; elevation/cliff visuals remain separate from `ElevationMap` height/traversal rules and resolve through registered terrain sources in `procgen_world_tileset.tres`.
-- Sundered Keep is a live authored connected-map destination under `game/world/sundered_keep/`. Its active front-gate level is now built from `content/levels/sundered_keep/sundered_keep_front_gate_large.json` through `sundered_keep_tilemap_loader.gd`, giving the map `112x80` tile bounds, a southern broken-causeway spawn, outer landing, pre-gate Return Mooring/key alcoves, gatehouse, locked portcullis, vestibule, courtyard, rampart/service branches, and Great Hall front. Interaction state remains in `sundered_keep_map.gd`: real game32 Return Mooring assets provide diegetic return travel, the Main Gate starts closed with a four-tile/two-row collision blocker and requires local/inventory item `sundered_gate_key`, and the Great Hall entry has its own openable double-door blocker. Temporary review mode is active in `ContractWorldLoader`: `debug_start_near_sundered_keep_entrance` starts the Operator next to the main-map Sundered Keep travel gate.
+- Sundered Keep is a live authored connected-map destination under `game/world/sundered_keep/`. Its active front-gate level is now built from `content/levels/sundered_keep/sundered_keep_front_gate_large.json` through `sundered_keep_tilemap_loader.gd`, giving the map `112x80` tile bounds, a southern broken-causeway spawn, outer landing, pre-gate Return Mooring/key alcoves, gatehouse, locked portcullis, vestibule, courtyard, rampart/service branches, and Great Hall front. Interaction state remains in `sundered_keep_map.gd`: real game32 Return Mooring assets provide diegetic return travel, the Main Gate starts closed with a four-tile/two-row collision blocker and requires local/inventory item `sundered_gate_key`, the Great Hall entry has its own openable double-door blocker, and the map exports live minimap floor/wall data plus tile/world conversion methods for the compact HUD minimap. Temporary review mode is active in `ContractWorldLoader`: `debug_start_near_sundered_keep_entrance` starts the Operator next to the main-map Sundered Keep travel gate.
+- Enemy marine dash is now a documented heavy commitment attack, not just forced sprite playback: windup/telegraph locks direction, dash travel owns the only active hit window, impact/recovery enforce a punish window, and feel comes from hitstop, knockback, camera shake, and Operator impact-lock feedback. Current runtime uses the east body/FX strip as fallback while directional dash body/FX sheets and the dash audio stack are tracked in `REQUIRED_ASSETS.md`.
 
 ## Active Architecture Snapshot
 
@@ -39,10 +40,12 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 - Simulation layer: deterministic Godot runtime systems
 - Cognitive layer: autoloaded inventory ledger and cognitive state values expose drop/combat modifier getters, with only pickup/drop feedback wired in v1
 - UI layer: HUD + command terminal pages/widgets; terminal command, snapshot, map preview, and planet preview helpers live under `game/ui/terminal/`
-- Black Reliquary UI layer: `game/ui/theme/` centralizes palette/styles/assets, `game/ui/components/` owns reusable compact panels/prompts/minimap/icon labels, and `game/ui/hud/custodian_hud.tscn` is the first local gameplay HUD shell used by Sundered Keep and Home.
+- Black Reliquary UI layer: `game/ui/theme/` centralizes palette/styles/assets, `game/ui/components/` owns reusable compact panels/prompts/minimap/icon labels, and `game/ui/hud/custodian_hud.tscn` is the first local gameplay HUD shell used by Sundered Keep and Home. The Black Reliquary minimap component wraps `game/ui/minimap/minimap_panel.tscn` so it stays live while using gothic/brass chrome.
 - Debug UI layer: `game/ui/hud/debug_screen.tscn` owns F12/`debug_hud` diagnostics as a read-only tabbed overlay fed by `game/ui/hud/ui.gd`.
+- Terminal overlay policy: `game/ui/hud/ui.gd` owns terminal-open suppression for legacy HUD labels, minimap/crosshair, `gameplay_overlay` HUD scenes, and the debug screen; terminal close restores the prior overlay/debug state.
 - Home beginning layer: `game/world/home/` owns the first Field Terminal witness-contact slice, using the Road of Witnesses prototype map and Black Reliquary HUD as the current presentation shell.
 - Actor layer: operator, enemies, structures, defenses, ambient entities
+- Enemy dash layer: `enemy_marine.tscn` enables the shared enemy phased dash values; `enemy.gd` owns the generic marine dash phases and impact feedback; `operator.gd` exposes `apply_enemy_dash_impact(...)`; Sundered Keep's local hallway ambush mirrors the same heavy dash tuning.
 
 ## Working Rules
 
@@ -58,15 +61,16 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 
 ## Immediate Priorities
 
-1. Validate profile-backed Fists/melee combat in play and keep queued selection deterministic.
-2. Clean remaining animation-state documentation/assets around deprecated `attack_light` compatibility.
-3. Deepen terminal pages with richer live runtime data and interactions.
-4. Preserve and extend planet-to-runtime world coupling as procgen evolves.
-5. Continue Sundered Keep follow-up with encounter composition, save/load persistence for gate/key state, and eventual TileSet/TileMapLayer authoring if the JSON-driven Sprite2D authored map becomes hard to maintain.
-6. Keep Sundered Keep/Home prompts and normal-play status surfaces on the compact Black Reliquary HUD API; route diagnostics to the dedicated debug screen instead of reintroducing giant panels or debug labels during normal gameplay.
-7. Decide when the Home beginning scene should become the boot/default entry, then wire it into the world-transition/campaign-flow spine without regressing the current contract/procgen sandbox.
-8. Wire true Forest Shrumbs into the intended spawning/procgen path and decide which cognitive readout belongs in HUD/debug.
-9. Author ruin prop slices, overlay/rubble assets, and `PropDefinition` resources for the procedural prop system.
+1. Create or ingest the enemy marine heavy dash directional body sheets, FX overlay sheets, and five-part audio stack now tracked in `REQUIRED_ASSETS.md`.
+2. Validate profile-backed Fists/melee combat in play and keep queued selection deterministic.
+3. Clean remaining animation-state documentation/assets around deprecated `attack_light` compatibility.
+4. Deepen terminal pages with richer live runtime data and interactions.
+5. Preserve and extend planet-to-runtime world coupling as procgen evolves.
+6. Continue Sundered Keep follow-up with encounter composition, save/load persistence for gate/key state, and eventual TileSet/TileMapLayer authoring if the JSON-driven Sprite2D authored map becomes hard to maintain.
+7. Keep Sundered Keep/Home prompts and normal-play status surfaces on the compact Black Reliquary HUD API; route diagnostics to the dedicated debug screen instead of reintroducing giant panels or debug labels during normal gameplay.
+8. Decide when the Home beginning scene should become the boot/default entry, then wire it into the world-transition/campaign-flow spine without regressing the current contract/procgen sandbox.
+9. Wire true Forest Shrumbs into the intended spawning/procgen path and decide which cognitive readout belongs in HUD/debug.
+10. Author ruin prop slices, overlay/rubble assets, and `PropDefinition` resources for the procedural prop system.
 
 ## Update Expectation
 

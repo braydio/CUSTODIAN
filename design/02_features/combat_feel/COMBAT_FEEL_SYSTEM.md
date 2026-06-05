@@ -139,6 +139,43 @@ aim direction, show the ranged weapon layer, and keep movement available; primar
 existing ranged fire path. Lower-body locomotion remains movement-owned so modular upper-body, weapon, cape, and FX
 clips can act independently from idle/walk/run.
 
+Sidearm fallback:
+
+- The Operator owns a separate `sidearm_weapon_definition` inventory slot.
+- If a primary ranged definition exists, held ranged-ready uses that primary ranged weapon even when the current loadout is melee/unarmed.
+- If no primary ranged definition exists and the sidearm slot is equipped, held ranged-ready uses the default `sidearm_pistol` profile from `pistol_mk1.json`.
+- Sidearm V1 deliberately maps to the current ranged placeholder stance/fire/reload animations until production pistol clips are supplied.
+
+### Runtime control contract
+
+Current V1 bindings:
+
+- move: `WASD` / Xbox left stick
+- aim/look: mouse world cursor / Xbox right stick
+- hold ranged-ready: right mouse / Xbox LT
+- primary fire or melee confirm: left mouse / Xbox RT
+- dodge/backstep: `Space` / Xbox B
+- interact: `E` / Xbox A
+- inventory: `Tab` or `I` / Xbox Y
+- reload: `R` / Xbox X
+- quick item: `Q` / D-pad up
+- cycle item left/right: `Z` / `C` / D-pad left/right
+- pause: `Esc` / Start/Menu
+- map/objectives: `M` / View/Back
+
+Facing priority is:
+
+1. aim direction while ranged-ready/aim is active or the right stick is expressing aim
+2. movement direction while not aiming
+3. last facing direction while idle
+
+Dodge direction is movement-first. If movement input is active, dodge follows movement even while aiming. If idle
+and aiming, dodge resolves opposite aim direction as a short combat backstep. If idle and not aiming, dodge follows
+the current facing direction. Runtime V1 supports a split impulse/recovery sequence so the impulse can play
+`operator_dodge_step` and the timing-granular recovery can play `operator_dodge_recovery`; aim-hop variants can use
+`operator_dodge_backstep` and `operator_dodge_backstep_recovery`. The current authored north-facing dodge body/FX strip
+remains the fallback for every direction until the full directional dodge/recovery suite is supplied.
+
 Unarmed/Fists is a selectable weapon profile. It must not create separate unarmed combat states; `unarmed_fast`
 and `unarmed_heavy` reuse the shared `attack_fast` and `attack_heavy` states while resolving profile-specific
 animations, hit windows, FX, and stat multipliers through `unarmed_definition.tres`.

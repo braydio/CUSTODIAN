@@ -57,7 +57,8 @@ func _on_restart_pressed() -> void:
 		game_state.call("reset_run_state")
 	else:
 		get_tree().paused = false
-	get_tree().reload_current_scene()
+	if get_tree().current_scene != null:
+		get_tree().reload_current_scene()
 
 
 func _on_menu_pressed() -> void:

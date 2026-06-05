@@ -245,6 +245,14 @@ def _resolve_upper_source(
     direction: str,
     fallbacks: tuple[str, ...],
 ) -> SheetSpec | None:
+    if action == "idle_01":
+        for candidate_direction in _direction_fallbacks(direction):
+            idle_matches = sorted(
+                (source_root / "idle").glob(f"operator__modular_upper_body__idle__{candidate_direction}__*f__96.png")
+            )
+            if idle_matches:
+                return _sheet_spec_from_path(idle_matches[0], direction)
+
     search_actions = (action, *fallbacks)
     search_dirs = (
         source_root / "upper",

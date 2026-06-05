@@ -2,6 +2,7 @@ extends SceneTree
 
 const SUPPORTED_IMAGE_EXTENSIONS := [".png"]
 const POST_PROCESS_OPERATOR_CURATED := "operator_curated_resources"
+const POST_PROCESS_OPERATOR_MODULAR_RUNTIME := "operator_modular_runtime"
 const POST_PROCESS_ENEMY_RUNTIME_IMPORT := "enemy_runtime_import"
 const POST_PROCESS_VEHICLE_RUNTIME_IMPORT := "vehicle_runtime_import"
 
@@ -385,6 +386,37 @@ func _run_post_process(step: String) -> Dictionary:
 			)
 			if exit_code != 0:
 				return {"ok": false, "error": "operator curated rebuild failed:\n%s" % "\n".join(output)}
+			return {"ok": true}
+		POST_PROCESS_OPERATOR_MODULAR_RUNTIME:
+			if _dry_run:
+				print("[DRY RUN] post_process %s" % step)
+				return {"ok": true}
+			var build_output: Array = []
+			var build_exit_code := OS.execute(
+				"python3",
+				[
+					ProjectSettings.globalize_path("res://tools/pipelines/build_operator_modular_runtime.py")
+				],
+				build_output,
+				true
+			)
+			if build_exit_code != 0:
+				return {"ok": false, "error": "operator modular runtime build failed:\n%s" % "\n".join(build_output)}
+			var curated_output: Array = []
+			var curated_exit_code := OS.execute(
+				"godot",
+				[
+					"--headless",
+					"--path",
+					_project_root,
+					"--script",
+					"res://tools/pipelines/update_operator_curated_resources.gd"
+				],
+				curated_output,
+				true
+			)
+			if curated_exit_code != 0:
+				return {"ok": false, "error": "operator modular SpriteFrames rebuild failed:\n%s" % "\n".join(curated_output)}
 			return {"ok": true}
 		POST_PROCESS_ENEMY_RUNTIME_IMPORT:
 			if _dry_run:

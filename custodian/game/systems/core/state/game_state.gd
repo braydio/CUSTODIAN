@@ -15,7 +15,7 @@ signal resources_changed()
 signal lives_changed(lives_left: int)
 signal game_over_triggered(reason: String, stats: Dictionary)
 
-@export var total_lives: int = 3
+@export var total_lives: int = 1
 @export var game_over_menu_scene_path: String = "res://ui/main_menu.tscn"
 var lives_remaining: int = total_lives
 
@@ -111,7 +111,7 @@ func trigger_game_over(reason: String = "Command Post destroyed") -> void:
 	game_over_triggered.emit(game_over_reason, stats)
 	_show_game_over_modal(game_over_reason, stats)
 
-func lose_life(reason: String = "Operator eliminated") -> int:
+func lose_life(reason: String = "Custodian eliminated") -> int:
 	if lives_remaining <= 0:
 		return 0
 	lives_remaining = max(0, lives_remaining - 1)

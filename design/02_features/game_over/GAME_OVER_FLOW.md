@@ -226,7 +226,11 @@ Notes:
 - `GameState` remains the fail-state authority and emits `game_over_triggered`.
 - `GameStats` tracks waves survived, enemies destroyed, power failures, and turrets lost.
 - `WaveManager` records completed waves and enemy death records enemy destruction.
-- `GameOverModal` pauses over the current scene and can restart the facility.
+- `GameOverModal` pauses over the current scene and presents a full-screen loss overlay with a clear Restart button.
+- Restart resets `GameState`/`GameStats`, unpauses, and reloads the current scene.
+- Custodian death currently uses immediate game over (`GameState.total_lives = 1`).
+- Sundered Keep siege objective collapse calls `GameState.trigger_game_over(...)` and mounts this same modal.
+- Default life-loss copy is Custodian-facing: `Custodian eliminated`.
 - Return-to-menu uses `res://ui/main_menu.tscn` if it exists; until a menu scene exists it falls back to the configured main scene.
 
 Deferred:

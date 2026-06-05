@@ -24,7 +24,7 @@ func grid_to_world(cell: Vector2i) -> Vector2:
 func clear_cell(cell: Vector2i) -> void:
 	blocked.erase(cell)
 	walkable.erase(cell)
-	for layer_name in ["TerrainLayer", "RoadLayer", "WallLayer", "PropLayer", "DecalLayer", "MarkerLayer"]:
+	for layer_name in ["TerrainLayer", "RoadLayer", "WallLayer", "DepthSortLayer", "PropLayer", "DecalLayer", "MarkerLayer"]:
 		var layer := _get_layer(layer_name)
 		var node_name := _cell_node_name(cell)
 		var child := layer.get_node_or_null(NodePath(node_name))
@@ -111,8 +111,10 @@ func spawn_marker(cell: Vector2i, asset, marker_type: String) -> void:
 
 
 func _ensure_layers() -> void:
-	for layer_name in ["TerrainLayer", "RoadLayer", "WallLayer", "PropLayer", "DecalLayer", "MarkerLayer"]:
-		_get_layer(layer_name)
+	for layer_name in ["TerrainLayer", "RoadLayer", "WallLayer", "DepthSortLayer", "PropLayer", "DecalLayer", "MarkerLayer"]:
+		var layer := _get_layer(layer_name)
+		if layer_name == "DepthSortLayer":
+			layer.y_sort_enabled = true
 
 
 func _get_layer(layer_name: String) -> Node2D:
@@ -123,32 +125,41 @@ func _get_layer(layer_name: String) -> Node2D:
 		layer = Node2D.new()
 		layer.name = layer_name
 		add_child(layer)
+	if layer_name == "DepthSortLayer":
+		layer.y_sort_enabled = true
 	_layers[layer_name] = layer
 	return layer
 
 
-func spawn_asset(cell: Vector2i, def: Dictionary) -> Sprite2D:
-	var parent := _layer_for_kind(str(def.get("kind", "prop")))
+func spawn_asset(cell: Vector2i, def: Dictionary) -> Node2D:
+	var dynamic_occluder := _is_dynamic_occluder(def)
+	var parent := _get_layer("DepthSortLayer") if dynamic_occluder else _layer_for_kind(str(def.get("kind", "prop")))
 	var sprite := Sprite2D.new()
 	var footprint: Vector2i = def.get("footprint", Vector2i.ONE)
 	var asset_path := str(def.get("path", ""))
-	sprite.name = _unique_node_name(cell, def)
+	sprite.name = "Visual"
 	sprite.texture = load(asset_path) as Texture2D if ResourceLoader.exists(asset_path) else null
 	sprite.centered = false
-	sprite.position = grid_to_world(cell)
-	sprite.z_as_relative = false
-	sprite.z_index = int(def.get("z", 0))
-	sprite.set_meta("origin_cell", cell)
-	sprite.set_meta("footprint", footprint)
-	sprite.set_meta("asset_path", asset_path)
-	parent.add_child(sprite)
+	var root := _build_spawn_root(cell, def, footprint, dynamic_occluder)
+	root.z_as_relative = false
+	root.z_index = int(def.get("z", 0))
+	root.set_meta("origin_cell", cell)
+	root.set_meta("footprint", footprint)
+	root.set_meta("asset_path", asset_path)
+	parent.add_child(root)
+	if dynamic_occluder:
+		sprite.position = -_base_sort_offset(footprint, def)
+		root.add_child(sprite)
+	else:
+		sprite.position = Vector2.ZERO
+		root.add_child(sprite)
 	var blocks_cells := bool(def.get("blocks", false))
 	_register_occupancy(cell, footprint, blocks_cells)
 	if blocks_cells:
-		_add_collision_rect(sprite, footprint)
-	if bool(def.get("depth_sort", false)) or str(def.get("kind", "prop")) == "prop":
-		_register_depth_sorted_asset(sprite, cell, footprint, def)
-	return sprite
+		_add_collision_rect(root, footprint, dynamic_occluder, def)
+	if dynamic_occluder:
+		_register_depth_sorted_asset(root, cell, footprint, def)
+	return root
 
 
 func update_depth_sort(actor: Node2D) -> void:
@@ -156,13 +167,11 @@ func update_depth_sort(actor: Node2D) -> void:
 		return
 	var actor_pos := actor.global_position
 	for entry in _depth_sorted_assets:
-		var sprite := entry.get("node") as Sprite2D
-		if sprite == null or not is_instance_valid(sprite):
+		var node := entry.get("node") as Node2D
+		if node == null or not is_instance_valid(node):
 			continue
-		var footprint: Vector2i = entry.get("footprint", Vector2i.ONE)
-		var horizon_ratio := float(entry.get("horizon_ratio", 0.75))
-		var horizon_y := sprite.global_position.y + float(footprint.y * tile_size) * horizon_ratio
-		sprite.z_index = int(entry.get("front_z", 1)) if actor_pos.y > horizon_y else int(entry.get("behind_z", 40))
+		var sort_y := node.global_position.y + float(entry.get("sort_y_offset", 0.0))
+		node.z_index = int(entry.get("behind_operator_z", 1)) if actor_pos.y > sort_y else int(entry.get("in_front_of_operator_z", 40))
 
 
 func _layer_for_kind(kind: String) -> Node2D:
@@ -181,6 +190,35 @@ func _layer_for_kind(kind: String) -> Node2D:
 			return _get_layer("PropLayer")
 
 
+func _build_spawn_root(cell: Vector2i, def: Dictionary, footprint: Vector2i, dynamic_occluder: bool) -> Node2D:
+	var root := Node2D.new()
+	root.name = _unique_node_name(cell, def)
+	root.position = grid_to_world(cell)
+	if dynamic_occluder:
+		root.position += _base_sort_offset(footprint, def)
+	return root
+
+
+func _base_sort_offset(footprint: Vector2i, def: Dictionary) -> Vector2:
+	var offset := Vector2(0.0, float(footprint.y * tile_size))
+	if def.has("base_sort_offset"):
+		var custom_offset: Variant = def.get("base_sort_offset")
+		if custom_offset is Vector2:
+			offset = custom_offset
+	return offset
+
+
+func _is_dynamic_occluder(def: Dictionary) -> bool:
+	var kind := str(def.get("kind", "prop"))
+	if kind == "tile" or kind == "road" or kind == "decal" or kind == "marker":
+		return false
+	if bool(def.get("depth_sort", false)):
+		return true
+	if kind == "wall":
+		return true
+	return kind == "prop" and int(def.get("z", 0)) >= 0
+
+
 func _register_occupancy(origin: Vector2i, footprint: Vector2i, blocks_cells: bool) -> void:
 	if not blocks_cells:
 		return
@@ -189,14 +227,14 @@ func _register_occupancy(origin: Vector2i, footprint: Vector2i, blocks_cells: bo
 			mark_blocked(Vector2i(x, y), true)
 
 
-func _register_depth_sorted_asset(sprite: Sprite2D, origin: Vector2i, footprint: Vector2i, def: Dictionary) -> void:
+func _register_depth_sorted_asset(node: Node2D, origin: Vector2i, footprint: Vector2i, def: Dictionary) -> void:
 	_depth_sorted_assets.append({
-		"node": sprite,
+		"node": node,
 		"origin": origin,
 		"footprint": footprint,
-		"front_z": int(def.get("front_z", 1)),
-		"behind_z": int(def.get("behind_z", int(def.get("z", 40)))),
-		"horizon_ratio": float(def.get("horizon_ratio", 0.75)),
+		"behind_operator_z": int(def.get("front_z", 1)),
+		"in_front_of_operator_z": int(def.get("behind_z", int(def.get("z", 40)))),
+		"sort_y_offset": float(def.get("sort_y_offset", 0.0)),
 		"x_padding": float(def.get("x_padding", float(tile_size))),
 	})
 
@@ -211,11 +249,9 @@ func _prune_depth_sorted_assets() -> void:
 
 
 ## Adds a StaticBody2D collision rectangle centered on the asset footprint.
-## The parent Sprite2D uses top-left anchoring (sprite.centered = false,
-## positioned at grid_to_world(origin_cell)). The collision body must be
-## offset by rect.size * 0.5 so its world-space center aligns with the
-## footprint center.
-func _add_collision_rect(parent: Node2D, size: Vector2i) -> void:
+## Flat assets use top-left roots. Dynamic occluders use roots at their
+## base/sort line, so their lower physical footprint is offset upward.
+func _add_collision_rect(parent: Node2D, size: Vector2i, base_rooted: bool = false, def: Dictionary = {}) -> void:
 	var body := StaticBody2D.new()
 	body.name = "Collision"
 	body.collision_layer = 1
@@ -225,6 +261,8 @@ func _add_collision_rect(parent: Node2D, size: Vector2i) -> void:
 	rect.size = Vector2(float(size.x * tile_size), float(size.y * tile_size))
 	shape.shape = rect
 	body.position = rect.size * 0.5
+	if base_rooted:
+		body.position -= _base_sort_offset(size, def)
 	body.add_child(shape)
 	parent.add_child(body)
 

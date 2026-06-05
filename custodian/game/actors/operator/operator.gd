@@ -131,6 +131,11 @@ var last_fire_cooldown := 0.0
 @export var unarmed_move_multiplier: float = 1.12
 @export var ranged_firing_move_multiplier: float = 0.72
 @export var ranged_ready_move_multiplier: float = 0.88
+@export var dodge_speed: float = 480.0
+@export var dodge_duration: float = 0.20
+@export var dodge_recovery_duration: float = 0.16
+@export var dodge_cooldown: float = 0.42
+@export var dodge_stamina_cost: float = 16.0
 @export var heavy_attack_stamina_cost: float = 14.0
 @export var heavy_attack_blocked_while_sprinting: bool = true
 @export var block_move_multiplier: float = 0.6
@@ -160,6 +165,8 @@ var last_fire_cooldown := 0.0
 @export var primary_weapon_definition = null
 @export var melee_weapon_definition = null
 @export var unarmed_definition: OperatorWeaponDefinition = preload("res://game/actors/operator/unarmed_definition.tres")
+@export var sidearm_weapon_definition: OperatorWeaponDefinition = preload("res://game/actors/operator/sidearm_pistol_definition.tres")
+@export var sidearm_slot_equipped: bool = true
 @export var idle_long_loop_threshold: int = 20
 @export var primary_weapon_frames_resource: SpriteFrames
 @export var placeholder_sprite_position: Vector2 = Vector2(0, -18)
@@ -233,6 +240,13 @@ var _ammo_heavy_loaded: int = 0
 var _pending_ranged_shot: Dictionary = {}
 var _ranged_ready_active: bool = false
 var _ranged_ready_weapon_definition: OperatorWeaponDefinition = null
+var _dodge_active: bool = false
+var _dodge_recovery_active: bool = false
+var _dodge_timer: float = 0.0
+var _dodge_recovery_timer: float = 0.0
+var _dodge_cooldown_remaining: float = 0.0
+var _dodge_direction: Vector2 = Vector2.DOWN
+var _dodge_backstep_active: bool = false
 var _combat_target: Node2D = null
 var _target_ring: Node2D = null
 var _idle_loop_counter := 0
@@ -242,9 +256,11 @@ var _animation_state_machine = null
 var _portal_transition_locked := false
 var _portal_arrival_animation_active := false
 var _arrn_stabilization_locked := false
+var _enemy_impact_lock_timer: float = 0.0
 var _is_dead := false
 var _body_recoil_offset := Vector2.ZERO
 var _animated_sprite_base_position := Vector2.ZERO
+var _dodge_fx_back_base_position := Vector2.ZERO
 var _modular_lower_body_base_position := Vector2.ZERO
 var _modular_upper_body_base_position := Vector2.ZERO
 var _melee_weapon_overlay_base_position := Vector2.ZERO
@@ -313,6 +329,28 @@ const LOADOUT_RANGED := &"ranged"
 const RANGED_FIRE_WALK_ANIMATION := &"ranged_2h_fire_walk"
 const RANGED_FIRE_WALK_FRAME_WIDTH := 96
 const RANGED_FIRE_WALK_BASE_FPS := 10.0
+const DODGE_STEP_ANIMATION := &"operator_dodge_step"
+const DODGE_RECOVERY_ANIMATION := &"operator_dodge_recovery"
+const DODGE_BACKSTEP_ANIMATION := &"operator_dodge_backstep"
+const DODGE_BACKSTEP_RECOVERY_ANIMATION := &"operator_dodge_backstep_recovery"
+const DODGE_STEP_RUNTIME_SHEET_PATH := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge__n__4f__96.png"
+const DODGE_RECOVERY_RUNTIME_SHEET_PATH := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_recovery__n__4f__96.png"
+const DODGE_BACKSTEP_RUNTIME_SHEET_PATH := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_backstep__s__4f__96.png"
+const DODGE_BACKSTEP_RECOVERY_RUNTIME_SHEET_PATH := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_backstep_recovery__s__4f__96.png"
+const DODGE_STEP_SHEET_PATH := "res://content/sprites/operator/new_operator/modular/dodge/operator__body__full__dodge_step_01__n__5f__96.png"
+const DODGE_STEP_FX_ANIMATION := &"operator_dodge_step_fx"
+const DODGE_STEP_FX_SHEET_PATH := "res://content/sprites/operator/new_operator/modular/dodge/operator__fx__full__dodge_step_01__n__5f__96.png"
+const DODGE_FX_BACK_ALPHA := 0.72
+const DODGE_FX_BACK_OFFSET_BY_DIRECTION := {
+	"up": Vector2(0, 14),
+	"up_right": Vector2(-10, 10),
+	"right": Vector2(-16, 2),
+	"down_right": Vector2(-10, -6),
+	"down": Vector2(0, -12),
+	"down_left": Vector2(10, -6),
+	"left": Vector2(16, 2),
+	"up_left": Vector2(10, 10),
+}
 const PORTAL_ARRIVAL_ANIMATION := &"unarmed_arrival"
 const PORTAL_ARRIVAL_DOWN_ANIMATION := &"unarmed_arrival_down"
 const BODY_RECOIL_RECOVERY_RATE := 18.0
@@ -339,6 +377,7 @@ const KNIGHT_TEST_ANIMATION_SPECS := {
 @onready var health_bar = $HealthBar
 @onready var visual = $Visual
 @onready var animated_sprite = $AnimatedSprite2D if has_node("AnimatedSprite2D") else null
+@onready var dodge_fx_back_sprite: AnimatedSprite2D = $DodgeFXBackSprite if has_node("DodgeFXBackSprite") else null
 @onready var modular_lower_body_sprite = $ModularLowerBodySprite if has_node("ModularLowerBodySprite") else null
 @onready var modular_upper_body_sprite = $ModularUpperBodySprite if has_node("ModularUpperBodySprite") else null
 @onready var right_hand_socket = $RightHandSocket if has_node("RightHandSocket") else null
@@ -379,6 +418,12 @@ func _ready():
 			animated_sprite.animation_finished.connect(_on_operator_animation_finished)
 		_ensure_runtime_body_animations()
 		_apply_knight_test_skin_if_requested()
+	if dodge_fx_back_sprite:
+		dodge_fx_back_sprite.visible = false
+		dodge_fx_back_sprite.z_index = -1
+		dodge_fx_back_sprite.modulate = Color(1.0, 1.0, 1.0, DODGE_FX_BACK_ALPHA)
+		if dodge_fx_back_sprite.sprite_frames == null:
+			dodge_fx_back_sprite.sprite_frames = SpriteFrames.new()
 	if modular_lower_body_sprite:
 		modular_lower_body_sprite.visible = false
 		modular_lower_body_sprite.modulate = Color(1.3, 1.3, 1.3, 1)
@@ -460,6 +505,9 @@ func _hide_custom_operator_visual_layers() -> void:
 	if ranged_fx_overlay_sprite:
 		ranged_fx_overlay_sprite.visible = false
 		ranged_fx_overlay_sprite.stop()
+	if dodge_fx_back_sprite:
+		dodge_fx_back_sprite.visible = false
+		dodge_fx_back_sprite.stop()
 	if melee_weapon_overlay_sprite:
 		melee_weapon_overlay_sprite.visible = false
 		melee_weapon_overlay_sprite.stop()
@@ -594,6 +642,7 @@ func _draw_socket_marker(pos: Vector2, color: Color, label: String) -> void:
 func _process(delta):
 	fire_cooldown_remaining = max(0.0, fire_cooldown_remaining - delta)
 	melee_cooldown_remaining = max(0.0, melee_cooldown_remaining - delta)
+	_dodge_cooldown_remaining = max(0.0, _dodge_cooldown_remaining - delta)
 	current_recoil = max(0.0, current_recoil - recoil_decay * delta)
 	_update_pending_ranged_shot(delta)
 	_update_body_recoil(delta)
@@ -606,7 +655,14 @@ func _process(delta):
 	_update_target_ring()
 	_update_interaction_target()
 	if _is_dead:
+		_cancel_dodge()
 		_exit_ranged_ready()
+		return
+	if _enemy_impact_lock_timer > 0.0:
+		_cancel_dodge()
+		_exit_ranged_ready()
+		_update_aim()
+		_update_animation()
 		return
 	_handle_interact_input()
 	if _is_terminal_open():
@@ -623,6 +679,7 @@ func _process(delta):
 	_handle_reload_input()
 	_update_aim()
 	_update_ranged_ready_state()
+	_handle_dodge_input()
 	_update_animation()
 	if Input.is_action_just_pressed("build"):
 		if _try_terminal_deploy_or_pickup():
@@ -655,12 +712,30 @@ func _physics_process(delta):
 		_update_stealth_noise_snapshot(false)
 		move_and_slide()
 		return
+	if _enemy_impact_lock_timer > 0.0:
+		_enemy_impact_lock_timer = maxf(0.0, _enemy_impact_lock_timer - delta)
+		is_sprinting = false
+		is_sneaking = false
+		velocity = velocity.move_toward(Vector2.ZERO, move_deceleration * 0.55 * delta)
+		_update_stealth_noise_snapshot(false)
+		move_and_slide()
+		return
 	if _is_terminal_open() or _is_ui_text_input_focused():
 		velocity = Vector2.ZERO
 		is_sprinting = false
 		is_sneaking = false
 		_update_stealth_noise_snapshot(false)
 		stamina = min(stamina_max, stamina + stamina_regen_per_second * delta)
+		move_and_slide()
+		return
+	if _dodge_active:
+		_update_dodge(delta)
+		_update_stealth_noise_snapshot(true)
+		move_and_slide()
+		return
+	if _dodge_recovery_active:
+		_update_dodge_recovery(delta)
+		_update_stealth_noise_snapshot(false)
 		move_and_slide()
 		return
 	if _is_movement_locked():
@@ -672,15 +747,13 @@ func _physics_process(delta):
 		return
 	_refresh_attack_phase_state()
 
-	var direction: Vector2 = Vector2.ZERO
-	direction.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
-	direction.y = Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
-	var input_direction: Vector2 = direction.normalized() if direction.length_squared() > 0.0001 else Vector2.ZERO
+	var input_direction := _get_move_input_vector()
 
 	# Track movement direction for animations
 	if input_direction != Vector2.ZERO:
 		movement_direction = input_direction
-		visual_idle_direction = input_direction
+		if not _is_aiming_for_facing():
+			visual_idle_direction = input_direction
 
 	var moving = input_direction != Vector2.ZERO
 	var wants_sprint = Input.is_key_pressed(KEY_CTRL)
@@ -731,8 +804,12 @@ func _physics_process(delta):
 
 
 func _update_aim():
-	var keyboard_aim := _get_keyboard_aim_direction()
-	if arrow_aim_enabled:
+	var controller_aim := _get_controller_aim_direction()
+	if controller_aim != Vector2.ZERO:
+		aim_direction = controller_aim
+		visual_idle_direction = controller_aim
+	elif arrow_aim_enabled:
+		var keyboard_aim := _get_keyboard_aim_direction()
 		if keyboard_aim != Vector2.ZERO:
 			aim_direction = keyboard_aim
 			visual_idle_direction = keyboard_aim
@@ -744,7 +821,7 @@ func _update_aim():
 	var weapon_display_angle := _get_ranged_weapon_socket_rotation(aim_direction)
 	
 	# Rotate barrel instead of entire body
-	if primary_weapon_socket and _is_using_ranged_2h_primary() and not _is_facing_up(aim_direction):
+	if primary_weapon_socket and _is_using_ranged_weapon_visual() and not _is_facing_up(aim_direction):
 		primary_weapon_socket.rotation = weapon_display_angle + deg_to_rad(current_recoil * 0.12)
 	elif primary_weapon_socket:
 		primary_weapon_socket.rotation = 0.0
@@ -760,7 +837,13 @@ func _update_animation():
 			_portal_arrival_animation_active = false
 		else:
 			return
-	
+	if _dodge_active:
+		_play_dodge_animation()
+		return
+	if _dodge_recovery_active:
+		_play_dodge_recovery_animation()
+		return
+
 	# Check if currently firing or attacking (lock to cursor)
 	var is_firing = _is_ranged_fire_animation_active()
 	var current_animation := String(animated_sprite.animation)
@@ -813,7 +896,7 @@ func _update_animation():
 	_update_primary_weapon_visual(is_firing)
 
 	var ranged_fire_anim := _get_current_ranged_body_fire_animation(is_moving and not is_sprinting)
-	if is_firing and not facing_up and _is_using_ranged_2h_primary() and animated_sprite.sprite_frames.has_animation(ranged_fire_anim):
+	if is_firing and not facing_up and _is_using_ranged_weapon_visual() and animated_sprite.sprite_frames.has_animation(ranged_fire_anim):
 		_hide_modular_locomotion_layers()
 		animated_sprite.speed_scale = _get_body_animation_speed_scale(ranged_fire_anim)
 		if animated_sprite.animation != ranged_fire_anim or not animated_sprite.is_playing():
@@ -839,7 +922,7 @@ func _update_animation():
 				animated_sprite.flip_h = facing_left and not run_anim.ends_with("_left")
 				if animated_sprite.animation != run_anim:
 					animated_sprite.play(run_anim)
-				_sync_modular_locomotion_layers("unarmed_run", animation_dir)
+				_sync_modular_locomotion_layers("unarmed_run", movement_direction, _get_modular_upper_locomotion_direction(animation_dir))
 				_update_idle_loop_tracking(false, "")
 				return
 			if animated_sprite.sprite_frames.has_animation("run_right"):
@@ -857,7 +940,7 @@ func _update_animation():
 				animated_sprite.flip_h = facing_left and not unarmed_walk_anim.ends_with("_left")
 				if animated_sprite.animation != unarmed_walk_anim:
 					animated_sprite.play(unarmed_walk_anim)
-				_sync_modular_locomotion_layers("unarmed_walk", animation_dir)
+				_sync_modular_locomotion_layers("unarmed_walk", movement_direction, _get_modular_upper_locomotion_direction(animation_dir))
 				_update_idle_loop_tracking(false, "")
 				return
 		if not _is_using_ranged_2h_primary() and direction_suffix == "down" and animated_sprite.sprite_frames.has_animation("walk_down_default"):
@@ -879,6 +962,9 @@ func _update_animation():
 				animated_sprite.play("walk_right")
 			_update_idle_loop_tracking(false, "")
 	else:
+		if _is_current_profile_unarmed() and _sync_modular_locomotion_layers("unarmed_idle", visual_idle_direction, _get_modular_upper_locomotion_direction(animation_dir)):
+			_update_idle_loop_tracking(true, "unarmed_idle")
+			return
 		var melee_body_stance_anim := _get_authored_melee_body_stance_animation()
 		if _is_melee_loadout_active() and not melee_body_stance_anim.is_empty():
 			var resolved_stance_anim := AnimationResolver.resolve(String(melee_body_stance_anim), animation_dir, animated_sprite)
@@ -890,14 +976,11 @@ func _update_animation():
 				_update_idle_loop_tracking(false, "")
 				return
 		var ranged_stance_anim := _get_weapon_animation_name(_get_active_ranged_weapon_definition(), "ranged_stance", &"ranged_2h_stance")
-		if not facing_up and animated_sprite.sprite_frames.has_animation(ranged_stance_anim) and _is_using_ranged_2h_primary():
+		if not facing_up and animated_sprite.sprite_frames.has_animation(ranged_stance_anim) and _is_using_ranged_weapon_visual():
 			_hide_modular_locomotion_layers()
 			if animated_sprite.animation != ranged_stance_anim:
 				animated_sprite.play(ranged_stance_anim)
 			_update_idle_loop_tracking(false, "")
-			return
-		if _is_current_profile_unarmed() and _sync_modular_locomotion_layers("unarmed_idle", animation_dir):
-			_update_idle_loop_tracking(true, "unarmed_idle")
 			return
 		var idle_anim = "idle_" + direction_suffix
 		if _should_play_idle_long() and animated_sprite.sprite_frames.has_animation("idle_long"):
@@ -915,7 +998,7 @@ func _update_animation():
 			_update_idle_loop_tracking(true, "idle_right")
 
 
-func _sync_modular_locomotion_layers(base_animation: String, direction: Vector2, speed_scale: float = 1.0) -> bool:
+func _sync_modular_locomotion_layers(base_animation: String, lower_direction: Vector2, upper_direction: Vector2 = Vector2.ZERO, speed_scale: float = 1.0) -> bool:
 	if not modular_locomotion_layers_enabled:
 		_hide_modular_locomotion_layers()
 		return false
@@ -928,10 +1011,13 @@ func _sync_modular_locomotion_layers(base_animation: String, direction: Vector2,
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
 		_hide_modular_locomotion_layers()
 		return false
-	if not _sync_modular_lower_body_layer(base_animation, direction, speed_scale):
+	var resolved_upper_direction := upper_direction
+	if resolved_upper_direction.length_squared() <= 0.0001:
+		resolved_upper_direction = lower_direction
+	if not _sync_modular_lower_body_layer(base_animation, lower_direction, speed_scale):
 		_hide_modular_locomotion_layers()
 		return false
-	if not _sync_modular_upper_body_layer(base_animation, direction, speed_scale, false):
+	if not _sync_modular_upper_body_layer(base_animation, resolved_upper_direction, speed_scale, false):
 		_hide_modular_locomotion_layers()
 		return false
 
@@ -967,6 +1053,16 @@ func _get_modular_lower_body_motion_base() -> String:
 	if is_sprinting:
 		return "unarmed_run"
 	return "unarmed_walk"
+
+
+func _get_modular_upper_locomotion_direction(fallback_direction: Vector2) -> Vector2:
+	if aim_direction.length_squared() > 0.0001:
+		return aim_direction.normalized()
+	if visual_idle_direction.length_squared() > 0.0001:
+		return visual_idle_direction.normalized()
+	if fallback_direction.length_squared() > 0.0001:
+		return fallback_direction.normalized()
+	return Vector2.DOWN
 
 
 func _sync_modular_lower_body_layer(base_animation: String, direction: Vector2, speed_scale: float) -> bool:
@@ -1235,10 +1331,22 @@ func _handle_attack_input() -> void:
 		_request_current_profile_intent(false)
 		return
 	if _is_ranged_loadout_active():
+		if _is_attack_primary_just_pressed() and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
+			_request_panic_ranged_shot()
 		return
 	if _is_attack_primary_just_pressed():
 		_request_current_profile_intent(true)
 		return
+
+
+func _request_panic_ranged_shot() -> void:
+	var fallback_direction := visual_idle_direction
+	if movement_direction.length_squared() > 0.0001:
+		fallback_direction = movement_direction
+	if fallback_direction.length_squared() <= 0.0001:
+		fallback_direction = Vector2.RIGHT
+	aim_direction = fallback_direction.normalized()
+	_request_ranged_shot()
 
 
 func _request_current_profile_intent(primary: bool) -> void:
@@ -1274,19 +1382,22 @@ func _try_melee_attack(intent: String = ""):
 
 
 func _is_attack_primary_just_pressed() -> bool:
-	return Input.is_action_just_pressed("attack_primary") \
+	return Input.is_action_just_pressed("fire_primary") \
+		or Input.is_action_just_pressed("attack_primary") \
 		or Input.is_action_just_pressed("attack") \
 		or Input.is_action_just_pressed("melee_attack")
 
 
 func _is_attack_primary_pressed() -> bool:
-	return Input.is_action_pressed("attack_primary") \
+	return Input.is_action_pressed("fire_primary") \
+		or Input.is_action_pressed("attack_primary") \
 		or Input.is_action_pressed("attack") \
 		or Input.is_action_pressed("melee_attack")
 
 
 func _is_attack_secondary_just_pressed() -> bool:
-	return Input.is_action_just_pressed("attack_secondary") \
+	return Input.is_action_just_pressed("aim_hold") \
+		or Input.is_action_just_pressed("attack_secondary") \
 		or (Input.is_key_pressed(KEY_SHIFT) and _is_attack_primary_just_pressed())
 
 
@@ -1295,7 +1406,8 @@ func _is_attack_secondary_chord_just_pressed() -> bool:
 
 
 func _is_attack_secondary_pressed() -> bool:
-	return Input.is_action_pressed("attack_secondary")
+	return Input.is_action_pressed("aim_hold") \
+		or Input.is_action_pressed("attack_secondary")
 
 
 func _can_enter_ranged_ready() -> bool:
@@ -1303,7 +1415,7 @@ func _can_enter_ranged_ready() -> bool:
 		return false
 	if _reload_active or _is_block_state_active() or _melee_active or _melee_heavy_anticipating or _melee_recovery_active:
 		return false
-	return _get_active_ranged_weapon_definition() != null
+	return _get_ranged_ready_candidate_weapon_definition() != null
 
 
 func _update_ranged_ready_state() -> void:
@@ -1314,11 +1426,12 @@ func _update_ranged_ready_state() -> void:
 
 
 func _enter_ranged_ready() -> void:
-	var ranged_weapon := _get_active_ranged_weapon_definition()
+	var ranged_weapon := _get_ranged_ready_candidate_weapon_definition()
 	if ranged_weapon == null:
 		return
 	_ranged_ready_active = true
 	_ranged_ready_weapon_definition = ranged_weapon
+	_clamp_loaded_ammo_to_current_weapon()
 	if aim_direction.length_squared() > 0.0001:
 		visual_idle_direction = aim_direction
 	_apply_active_weapon_frames()
@@ -2176,8 +2289,203 @@ func _handle_aim_input_toggle() -> void:
 
 
 func _handle_reload_input() -> void:
-	if Input.is_action_just_pressed("reload_weapon"):
+	if _is_action_just_pressed_any(["reload_weapon", "reload"]):
 		_try_start_reload()
+
+
+func _is_action_just_pressed_any(action_names: Array) -> bool:
+	for action_name in action_names:
+		var normalized_name := StringName(str(action_name))
+		if InputMap.has_action(normalized_name) and Input.is_action_just_pressed(normalized_name):
+			return true
+	return false
+
+
+func _is_action_pressed_any(action_names: Array) -> bool:
+	for action_name in action_names:
+		var normalized_name := StringName(str(action_name))
+		if InputMap.has_action(normalized_name) and Input.is_action_pressed(normalized_name):
+			return true
+	return false
+
+
+func _handle_dodge_input() -> void:
+	if not _is_action_just_pressed_any(["dodge"]):
+		return
+	_try_start_dodge()
+
+
+func _try_start_dodge() -> bool:
+	if not _can_start_dodge():
+		return false
+	_dodge_direction = _resolve_dodge_direction()
+	_dodge_backstep_active = _is_dodge_backstep_request(_dodge_direction)
+	_dodge_active = true
+	_dodge_recovery_active = false
+	_dodge_timer = maxf(0.05, dodge_duration)
+	_dodge_recovery_timer = 0.0
+	_dodge_cooldown_remaining = maxf(dodge_cooldown, _dodge_timer + maxf(0.0, dodge_recovery_duration))
+	stamina = maxf(0.0, stamina - dodge_stamina_cost)
+	is_sprinting = false
+	is_sneaking = false
+	_exit_ranged_ready()
+	_cancel_reload()
+	velocity = _dodge_direction * dodge_speed
+	movement_direction = _dodge_direction
+	visual_idle_direction = aim_direction.normalized() if _is_aiming_for_facing() and aim_direction.length_squared() > 0.0001 else _dodge_direction
+	_play_dodge_animation(true)
+	return true
+
+
+func _can_start_dodge() -> bool:
+	if _dodge_active or _dodge_recovery_active or _dodge_cooldown_remaining > 0.0:
+		return false
+	if _is_dead or _enemy_impact_lock_timer > 0.0 or _is_terminal_open() or _is_ui_text_input_focused():
+		return false
+	if _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
+		return false
+	if _melee_active or _melee_heavy_anticipating or _melee_recovery_active or _is_block_state_active():
+		return false
+	return stamina >= dodge_stamina_cost
+
+
+func _resolve_dodge_direction() -> Vector2:
+	var move_vector := _get_move_input_vector()
+	if move_vector.length_squared() > 0.04:
+		return move_vector.normalized()
+	if _is_aiming_for_facing() and aim_direction.length_squared() > 0.0001:
+		return -aim_direction.normalized()
+	if visual_idle_direction.length_squared() > 0.0001:
+		return visual_idle_direction.normalized()
+	if movement_direction.length_squared() > 0.0001:
+		return movement_direction.normalized()
+	return Vector2.DOWN
+
+
+func _is_dodge_backstep_request(dodge_direction: Vector2) -> bool:
+	if not _is_aiming_for_facing() or aim_direction.length_squared() <= 0.0001:
+		return false
+	return dodge_direction.normalized().dot(-aim_direction.normalized()) > 0.95
+
+
+func _update_dodge(delta: float) -> void:
+	_dodge_timer = maxf(0.0, _dodge_timer - delta)
+	var remaining_ratio := _dodge_timer / maxf(0.05, dodge_duration)
+	var eased_speed := dodge_speed * lerpf(0.45, 1.0, remaining_ratio)
+	velocity = _dodge_direction * eased_speed
+	if _dodge_timer <= 0.0:
+		_dodge_active = false
+		_hide_dodge_fx()
+		_start_dodge_recovery()
+
+
+func _start_dodge_recovery() -> void:
+	_dodge_recovery_timer = maxf(0.0, dodge_recovery_duration)
+	if _dodge_recovery_timer <= 0.0 or not _has_dodge_recovery_animation():
+		_dodge_recovery_active = false
+		velocity = velocity.move_toward(Vector2.ZERO, move_deceleration * get_physics_process_delta_time())
+		return
+	_dodge_recovery_active = true
+	_play_dodge_recovery_animation(true)
+
+
+func _update_dodge_recovery(delta: float) -> void:
+	_dodge_recovery_timer = maxf(0.0, _dodge_recovery_timer - delta)
+	velocity = velocity.move_toward(Vector2.ZERO, move_deceleration * delta)
+	if _dodge_recovery_timer <= 0.0:
+		_dodge_recovery_active = false
+		_dodge_backstep_active = false
+
+
+func _cancel_dodge() -> void:
+	_dodge_active = false
+	_dodge_recovery_active = false
+	_dodge_timer = 0.0
+	_dodge_recovery_timer = 0.0
+	_dodge_backstep_active = false
+	_hide_dodge_fx()
+
+
+func _play_dodge_animation(force_restart: bool = false) -> void:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+	_hide_modular_locomotion_layers()
+	_update_primary_weapon_visual(false)
+	animated_sprite.flip_h = _is_facing_left(_dodge_direction)
+	animated_sprite.speed_scale = 1.0
+	var animation_name := _get_dodge_step_animation()
+	if animated_sprite.sprite_frames.has_animation(animation_name):
+		if force_restart or animated_sprite.animation != animation_name or not animated_sprite.is_playing():
+			if force_restart:
+				animated_sprite.set_frame_and_progress(0, 0.0)
+			animated_sprite.play(animation_name)
+	_play_dodge_fx(force_restart)
+
+
+func _play_dodge_recovery_animation(force_restart: bool = false) -> void:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+	_hide_modular_locomotion_layers()
+	_update_primary_weapon_visual(false)
+	animated_sprite.flip_h = _is_facing_left(_dodge_direction)
+	animated_sprite.speed_scale = 1.0
+	var animation_name := _get_dodge_recovery_animation()
+	if not animated_sprite.sprite_frames.has_animation(animation_name):
+		return
+	if force_restart or animated_sprite.animation != animation_name or not animated_sprite.is_playing():
+		if force_restart:
+			animated_sprite.set_frame_and_progress(0, 0.0)
+		animated_sprite.play(animation_name)
+
+
+func _get_dodge_step_animation() -> StringName:
+	if _dodge_backstep_active and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(DODGE_BACKSTEP_ANIMATION):
+		return DODGE_BACKSTEP_ANIMATION
+	return DODGE_STEP_ANIMATION
+
+
+func _get_dodge_recovery_animation() -> StringName:
+	if _dodge_backstep_active and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(DODGE_BACKSTEP_RECOVERY_ANIMATION):
+		return DODGE_BACKSTEP_RECOVERY_ANIMATION
+	return DODGE_RECOVERY_ANIMATION
+
+
+func _has_dodge_recovery_animation() -> bool:
+	return animated_sprite != null \
+		and animated_sprite.sprite_frames != null \
+		and animated_sprite.sprite_frames.has_animation(_get_dodge_recovery_animation())
+
+
+func _play_dodge_fx(force_restart: bool = false) -> void:
+	if dodge_fx_back_sprite == null or dodge_fx_back_sprite.sprite_frames == null:
+		return
+	if not dodge_fx_back_sprite.sprite_frames.has_animation(DODGE_STEP_FX_ANIMATION):
+		return
+	dodge_fx_back_sprite.visible = true
+	dodge_fx_back_sprite.z_index = -1
+	dodge_fx_back_sprite.modulate = Color(1.0, 1.0, 1.0, DODGE_FX_BACK_ALPHA)
+	dodge_fx_back_sprite.position = _dodge_fx_back_base_position + _body_recoil_offset + _fake_elevation_visual_offset + _get_dodge_fx_back_offset(_dodge_direction)
+	dodge_fx_back_sprite.flip_h = _is_facing_left(_dodge_direction)
+	dodge_fx_back_sprite.speed_scale = 1.0
+	if force_restart or dodge_fx_back_sprite.animation != DODGE_STEP_FX_ANIMATION or not dodge_fx_back_sprite.is_playing():
+		if force_restart:
+			dodge_fx_back_sprite.set_frame_and_progress(0, 0.0)
+		dodge_fx_back_sprite.play(DODGE_STEP_FX_ANIMATION)
+
+
+func _hide_dodge_fx() -> void:
+	if dodge_fx_back_sprite == null:
+		return
+	dodge_fx_back_sprite.visible = false
+	dodge_fx_back_sprite.stop()
+	dodge_fx_back_sprite.frame = 0
+	dodge_fx_back_sprite.speed_scale = 1.0
+	dodge_fx_back_sprite.position = _dodge_fx_back_base_position + _body_recoil_offset + _fake_elevation_visual_offset
+
+
+func _get_dodge_fx_back_offset(direction: Vector2) -> Vector2:
+	var direction_suffix := _get_direction_suffix(direction)
+	return DODGE_FX_BACK_OFFSET_BY_DIRECTION.get(direction_suffix, Vector2.ZERO)
 
 
 func get_current_combat_profile() -> OperatorWeaponDefinition:
@@ -2394,11 +2702,39 @@ func _is_ranged_context_active() -> bool:
 func _get_active_ranged_weapon_definition() -> OperatorWeaponDefinition:
 	if _ranged_ready_weapon_definition != null:
 		return _ranged_ready_weapon_definition
+	return _get_primary_ranged_weapon_definition()
+
+
+func _get_primary_ranged_weapon_definition() -> OperatorWeaponDefinition:
 	if primary_weapon_definition is OperatorWeaponDefinition:
 		var ranged_weapon := primary_weapon_definition as OperatorWeaponDefinition
 		if ranged_weapon.weapon_kind == "ranged" or String(ranged_weapon.weapon_type).begins_with("ranged"):
 			return ranged_weapon
 	return null
+
+
+func _get_sidearm_weapon_definition() -> OperatorWeaponDefinition:
+	if not sidearm_slot_equipped:
+		return null
+	if sidearm_weapon_definition == null:
+		return null
+	if sidearm_weapon_definition.weapon_kind == "ranged" or String(sidearm_weapon_definition.weapon_type).begins_with("ranged"):
+		return sidearm_weapon_definition
+	return null
+
+
+func _get_ranged_ready_candidate_weapon_definition() -> OperatorWeaponDefinition:
+	var primary_ranged := _get_primary_ranged_weapon_definition()
+	if primary_ranged != null:
+		return primary_ranged
+	var sidearm := _get_sidearm_weapon_definition()
+	if sidearm != null:
+		return sidearm
+	return primary_ranged
+
+
+func _is_using_sidearm_ranged() -> bool:
+	return _is_ranged_ready_active() and _ranged_ready_weapon_definition == _get_sidearm_weapon_definition()
 
 
 func _is_using_melee_weapon_sprite() -> bool:
@@ -2538,6 +2874,16 @@ func _spawn_damage_popup(amount: float) -> void:
 
 func _has_ammo() -> bool:
 	return _has_loaded_ammo()
+
+
+func _is_using_ranged_weapon_visual() -> bool:
+	if not _is_ranged_context_active():
+		return false
+	var weapon_definition = _get_active_ranged_weapon_definition() if _is_ranged_ready_active() else _get_equipped_primary_weapon_definition()
+	if weapon_definition is OperatorWeaponDefinition:
+		var weapon_type := String((weapon_definition as OperatorWeaponDefinition).weapon_type)
+		return (weapon_definition as OperatorWeaponDefinition).weapon_kind == "ranged" or weapon_type.begins_with("ranged")
+	return primary_weapon_equipped and equipped_primary_weapon_id == PRIMARY_WEAPON_CARBINE
 
 
 func _is_using_ranged_2h_primary() -> bool:
@@ -2730,17 +3076,84 @@ func _update_pending_ranged_shot(delta: float) -> void:
 func _ensure_runtime_body_animations() -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
-	if animated_sprite.sprite_frames.has_animation(RANGED_FIRE_WALK_ANIMATION):
-		return
 	var runtime_frames := animated_sprite.sprite_frames.duplicate() as SpriteFrames
 	if runtime_frames == null:
 		return
-	animated_sprite.sprite_frames = runtime_frames
-	var fire_walk_texture: Texture2D = _load_optional_texture(ranged_2h_fire_walk_sheet_path, null)
-	if fire_walk_texture == null:
+	var changed := false
+	if not runtime_frames.has_animation(RANGED_FIRE_WALK_ANIMATION):
+		var fire_walk_texture: Texture2D = _load_optional_texture(ranged_2h_fire_walk_sheet_path, null)
+		if fire_walk_texture != null:
+			var fire_walk_frame_count: int = max(1, fire_walk_texture.get_width() / RANGED_FIRE_WALK_FRAME_WIDTH)
+			_add_sheet_animation(runtime_frames, String(RANGED_FIRE_WALK_ANIMATION), fire_walk_texture, fire_walk_frame_count, true, RANGED_FIRE_WALK_BASE_FPS)
+			changed = true
+	changed = _ensure_optional_sheet_animation(
+		runtime_frames,
+		DODGE_STEP_ANIMATION,
+		[DODGE_STEP_RUNTIME_SHEET_PATH, DODGE_STEP_SHEET_PATH],
+		false,
+		18.0
+	) or changed
+	changed = _ensure_optional_sheet_animation(
+		runtime_frames,
+		DODGE_RECOVERY_ANIMATION,
+		[DODGE_RECOVERY_RUNTIME_SHEET_PATH],
+		false,
+		18.0
+	) or changed
+	changed = _ensure_optional_sheet_animation(
+		runtime_frames,
+		DODGE_BACKSTEP_ANIMATION,
+		[DODGE_BACKSTEP_RUNTIME_SHEET_PATH],
+		false,
+		18.0
+	) or changed
+	changed = _ensure_optional_sheet_animation(
+		runtime_frames,
+		DODGE_BACKSTEP_RECOVERY_ANIMATION,
+		[DODGE_BACKSTEP_RECOVERY_RUNTIME_SHEET_PATH],
+		false,
+		18.0
+	) or changed
+	if changed:
+		animated_sprite.sprite_frames = runtime_frames
+	_ensure_dodge_fx_animation()
+
+
+func _ensure_optional_sheet_animation(
+	runtime_frames: SpriteFrames,
+	animation_name: StringName,
+	sheet_paths: Array,
+	loop: bool,
+	fps: float
+) -> bool:
+	if runtime_frames.has_animation(animation_name):
+		return false
+	for sheet_path in sheet_paths:
+		var texture: Texture2D = _load_optional_texture(String(sheet_path), null)
+		if texture == null:
+			continue
+		var frame_count: int = max(1, texture.get_width() / 96)
+		_add_sheet_animation(runtime_frames, String(animation_name), texture, frame_count, loop, fps)
+		return true
+	return false
+
+
+func _ensure_dodge_fx_animation() -> void:
+	if dodge_fx_back_sprite == null:
 		return
-	var frame_count: int = max(1, fire_walk_texture.get_width() / RANGED_FIRE_WALK_FRAME_WIDTH)
-	_add_sheet_animation(runtime_frames, String(RANGED_FIRE_WALK_ANIMATION), fire_walk_texture, frame_count, true, RANGED_FIRE_WALK_BASE_FPS)
+	if dodge_fx_back_sprite.sprite_frames == null:
+		dodge_fx_back_sprite.sprite_frames = SpriteFrames.new()
+	if dodge_fx_back_sprite.sprite_frames.has_animation(DODGE_STEP_FX_ANIMATION):
+		return
+	var fx_texture: Texture2D = _load_optional_texture(DODGE_STEP_FX_SHEET_PATH, null)
+	if fx_texture == null:
+		return
+	var runtime_fx_frames := dodge_fx_back_sprite.sprite_frames.duplicate() as SpriteFrames
+	if runtime_fx_frames == null:
+		return
+	var frame_count: int = max(1, fx_texture.get_width() / 96)
+	_add_sheet_animation(runtime_fx_frames, String(DODGE_STEP_FX_ANIMATION), fx_texture, frame_count, false, 18.0)
+	dodge_fx_back_sprite.sprite_frames = runtime_fx_frames
 
 
 func _update_body_recoil(delta: float) -> void:
@@ -2769,6 +3182,9 @@ func _apply_body_recoil_impulse(direction: Vector2) -> void:
 func _apply_body_recoil_offset() -> void:
 	if animated_sprite:
 		animated_sprite.position = _animated_sprite_base_position + _body_recoil_offset + _fake_elevation_visual_offset
+	if dodge_fx_back_sprite:
+		var dodge_offset := _get_dodge_fx_back_offset(_dodge_direction) if _dodge_active else Vector2.ZERO
+		dodge_fx_back_sprite.position = _dodge_fx_back_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_offset
 	if modular_lower_body_sprite:
 		modular_lower_body_sprite.position = _modular_lower_body_base_position + _body_recoil_offset + _fake_elevation_visual_offset
 	if modular_upper_body_sprite:
@@ -2837,6 +3253,8 @@ func _load_optional_texture(path: String, fallback: Texture2D) -> Texture2D:
 		var imported := load(path)
 		if imported is Texture2D:
 			return imported as Texture2D
+	if not FileAccess.file_exists(path):
+		return fallback
 	var image := Image.load_from_file(ProjectSettings.globalize_path(path))
 	if image != null and not image.is_empty():
 		return ImageTexture.create_from_image(image)
@@ -2858,9 +3276,13 @@ func _has_active_idle_input() -> bool:
 		or Input.is_action_pressed("aim_down") \
 		or Input.is_action_pressed("attack") \
 		or Input.is_action_pressed("attack_primary") \
+		or Input.is_action_pressed("fire_primary") \
 		or Input.is_action_pressed("attack_secondary") \
+		or Input.is_action_pressed("aim_hold") \
+		or Input.is_action_pressed("dodge") \
 		or Input.is_action_pressed("toggle_unarmed") \
 		or Input.is_action_pressed("reload_weapon") \
+		or Input.is_action_pressed("reload") \
 		or Input.is_action_pressed("block") \
 		or Input.is_action_pressed("interact") \
 		or Input.is_action_pressed("repair") \
@@ -2889,6 +3311,9 @@ func _apply_placeholder_runtime_layout() -> void:
 	if animated_sprite:
 		animated_sprite.position = placeholder_sprite_position
 		animated_sprite.offset = placeholder_sprite_offset
+	if dodge_fx_back_sprite:
+		dodge_fx_back_sprite.position = placeholder_sprite_position
+		dodge_fx_back_sprite.offset = placeholder_sprite_offset
 	if modular_lower_body_sprite:
 		modular_lower_body_sprite.position = placeholder_sprite_position
 		modular_lower_body_sprite.offset = placeholder_sprite_offset
@@ -2926,6 +3351,8 @@ func _apply_placeholder_runtime_layout() -> void:
 func _capture_runtime_visual_base_positions() -> void:
 	if animated_sprite:
 		_animated_sprite_base_position = animated_sprite.position
+	if dodge_fx_back_sprite:
+		_dodge_fx_back_base_position = dodge_fx_back_sprite.position
 	if modular_lower_body_sprite:
 		_modular_lower_body_base_position = modular_lower_body_sprite.position
 	if modular_upper_body_sprite:
@@ -2940,7 +3367,7 @@ func _apply_dynamic_weapon_socket_layout(weapon_definition = null) -> void:
 	if weapon_definition == null:
 		weapon_definition = _get_active_ranged_weapon_definition() if _is_ranged_ready_active() else _get_equipped_primary_weapon_definition()
 	var aim_state := _get_weapon_aim_state()
-	var facing_left := _is_facing_left(aim_direction) and _is_using_ranged_2h_primary()
+	var facing_left := _is_facing_left(aim_direction) and _is_using_ranged_weapon_visual()
 	
 	# Get positions from weapon definition
 	var right_pos = _mirror_socket_vector_if_needed(
@@ -3081,7 +3508,7 @@ func _update_primary_weapon_visual(is_firing: bool) -> void:
 			if primary_weapon_sprite.animation != melee_stance_anim or not primary_weapon_sprite.is_playing():
 				primary_weapon_sprite.play(melee_stance_anim)
 		return
-	if not _is_using_ranged_2h_primary():
+	if not _is_using_ranged_weapon_visual():
 		if primary_weapon_socket:
 			primary_weapon_socket.rotation = 0.0
 		primary_weapon_sprite.visible = false
@@ -3175,7 +3602,7 @@ func _refresh_primary_weapon_state() -> void:
 		var melee_stance_anim := _get_weapon_animation_name(_get_equipped_primary_weapon_definition(), "melee_stance", &"melee_stance")
 		if primary_weapon_sprite.sprite_frames and primary_weapon_sprite.sprite_frames.has_animation(melee_stance_anim):
 			primary_weapon_sprite.play(melee_stance_anim)
-	elif _is_using_ranged_2h_primary():
+	elif _is_using_ranged_weapon_visual():
 		var ranged_stance_anim := _get_weapon_animation_name(_get_active_ranged_weapon_definition(), "ranged_stance", &"ranged_2h_stance")
 		if primary_weapon_sprite.sprite_frames and primary_weapon_sprite.sprite_frames.has_animation(ranged_stance_anim):
 			primary_weapon_sprite.play(ranged_stance_anim)
@@ -3320,8 +3747,9 @@ func _initialize_magazines() -> void:
 
 
 func _get_standard_magazine_size() -> int:
-	if primary_weapon_definition != null and primary_weapon_definition is OperatorWeaponDefinition:
-		return max(1, (primary_weapon_definition as OperatorWeaponDefinition).get_stat_int("magazine_size", ammo_standard_magazine_size))
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	if weapon_definition != null:
+		return max(1, weapon_definition.get_stat_int("magazine_size", ammo_standard_magazine_size))
 	return ammo_standard_magazine_size
 
 
@@ -3341,20 +3769,30 @@ func _get_current_reserve_ammo() -> int:
 	return ammo_standard
 
 
+func _clamp_loaded_ammo_to_current_weapon() -> void:
+	var capacity := _get_current_magazine_size()
+	if _ammo_standard_loaded <= capacity:
+		return
+	var overflow := _ammo_standard_loaded - capacity
+	_ammo_standard_loaded = capacity
+	ammo_standard = min(ammo_standard_max, ammo_standard + overflow)
+
+
 func _has_loaded_ammo() -> bool:
-	if not _is_ranged_loadout_active():
+	if not _is_ranged_context_active():
 		return false
 	return _get_current_loaded_ammo() > 0
 
 
 func _get_current_reload_duration() -> float:
-	if primary_weapon_definition != null and primary_weapon_definition is OperatorWeaponDefinition:
-		return max(0.05, (primary_weapon_definition as OperatorWeaponDefinition).get_stat_float("reload_time_sec", ranged_reload_duration))
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	if weapon_definition != null:
+		return max(0.05, weapon_definition.get_stat_float("reload_time_sec", ranged_reload_duration))
 	return ranged_reload_duration
 
 
 func _can_reload() -> bool:
-	if not _is_ranged_loadout_active() or _reload_active:
+	if not _is_ranged_context_active() or _reload_active:
 		return false
 	if _melee_active or _melee_heavy_anticipating or _melee_recovery_active or _is_block_state_active():
 		return false
@@ -3487,6 +3925,34 @@ func _update_stealth_noise_snapshot(moving: bool) -> void:
 		stealth_visibility_mult = 1.0
 
 
+func _get_move_input_vector() -> Vector2:
+	var move_input := Vector2(
+		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
+		Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
+	)
+	if move_input.length_squared() <= 0.0001:
+		return Vector2.ZERO
+	if move_input.length() > 1.0:
+		return move_input.normalized()
+	return move_input
+
+
+func _get_controller_aim_direction() -> Vector2:
+	var aim_input := Vector2(
+		Input.get_action_strength("aim_right") - Input.get_action_strength("aim_left"),
+		Input.get_action_strength("aim_down") - Input.get_action_strength("aim_up")
+	)
+	if aim_input.length_squared() <= 0.04:
+		return Vector2.ZERO
+	return aim_input.normalized()
+
+
+func _is_aiming_for_facing() -> bool:
+	return _is_ranged_ready_active() \
+		or _is_action_pressed_any(["aim_hold", "attack_secondary"]) \
+		or _get_controller_aim_direction() != Vector2.ZERO
+
+
 func _get_keyboard_aim_direction() -> Vector2:
 	var aim_input := Vector2(
 		Input.get_action_strength("aim_right") - Input.get_action_strength("aim_left"),
@@ -3528,7 +3994,7 @@ func equip_primary_carbine() -> void:
 func _create_weapon_from_factory(weapon_id: String) -> void:
 	if weapon_factory and weapon_factory.has_method("create_weapon_definition"):
 		primary_weapon_definition = weapon_factory.create_weapon_definition(weapon_id)
-		_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_unfocused_fire", "ranged_focused_fire")
+		_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_unfocused_fire", "ranged_ready")
 		_rebuild_armed_weapon_list()
 		_initialize_magazines()
 		print("[Operator] Loaded weapon: ", weapon_id, " | Magazine: ", _get_current_magazine_size())
@@ -3587,6 +4053,21 @@ func take_damage(amount: float):
 		await get_tree().create_timer(0.1).timeout
 		if not _is_dead:
 			update_visuals()
+
+
+func apply_enemy_dash_impact(direction: Vector2, knockback_px: float, victim_hitstop_sec: float) -> void:
+	if _is_dead:
+		return
+	var impact_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector2.DOWN
+	_enemy_impact_lock_timer = maxf(_enemy_impact_lock_timer, maxf(0.16, victim_hitstop_sec + 0.13))
+	_last_damage_reaction_direction = impact_direction
+	_interrupt_active_combat_for_damage_reaction()
+	velocity = impact_direction * (knockback_px / maxf(0.16, _enemy_impact_lock_timer))
+	if _animation_state_machine != null:
+		_animation_state_machine.request("hit_recoil", 24)
+	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera != null and camera.has_method("on_damage_taken"):
+		camera.call("on_damage_taken", impact_direction)
 
 func _request_damage_reaction(_amount: float) -> void:
 	if _animation_state_machine == null:
@@ -3676,7 +4157,7 @@ func _handle_death() -> void:
 			animated_sprite.play(death_animation)
 	var gs = get_node_or_null("/root/GameState")
 	if gs and gs.has_method("lose_life"):
-		gs.lose_life("Operator eliminated after a fatal strike")
+		gs.lose_life("Custodian eliminated after a fatal strike")
 	await get_tree().create_timer(1.6).timeout
 	_finish_death()
 

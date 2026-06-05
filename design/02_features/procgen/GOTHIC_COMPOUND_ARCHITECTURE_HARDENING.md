@@ -22,8 +22,8 @@ Reviewing the live codebase at `custodian/game/world/procgen/gothic_compound/`:
 
 | File | Status |
 |------|--------|
-| `gothic_compound_asset_defs.gd` | **Done.** Logical IDs, paths, kind, footprint, anchor, blocks, z. Top-left anchoring established. |
-| `gothic_compound_sprite_context.gd` | **Done.** `sprite.centered = false`, `grid_to_world(cell)` for all spawns, metadata-aware collision, `_layer_for_kind()`. |
+| `gothic_compound_asset_defs.gd` | **Done.** Logical IDs, paths, kind, footprint, anchor, blocks, z. Flat terrain/road/decal anchoring is top-left; occluding wall/prop metadata drives base-line depth sorting. |
+| `gothic_compound_sprite_context.gd` | **Done.** `sprite.centered = false`, `grid_to_world(cell)` for flat spawns, base-rooted dynamic wall/prop/gatehouse occluders, metadata-aware collision, `_layer_for_kind()`. |
 | `gothic_compound_generator.gd` | **Mostly done.** Zones defined, command keep placement is zone-aware, roads use chunked `_carve_horizontal_road_chunks()`, fixed light pools, quota-based small decals, exterior scatter checks `required_walkable`. |
 | `gothic_compound_config.gd` | **Done.** `decorative_scatter_chance` already lowered to `0.012`. |
 | `gothic_compound_result.gd` | **Done.** `flags` dict, `placement_errors` array. |

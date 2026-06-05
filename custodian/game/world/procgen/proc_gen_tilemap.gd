@@ -401,6 +401,7 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 var _foliage_parent: Node2D = null
 var _road_piece_parent: Node2D = null
 var _road_piece_defs_by_mask: Dictionary = {}
+var _road_piece_defs_by_role: Dictionary = {}
 var _path_piece_defs_by_mask: Dictionary = {}
 var _road_piece_nodes: Array[Node2D] = []
 var _road_piece_nodes_by_key: Dictionary = {}
@@ -1573,7 +1574,37 @@ func _find_or_create_road_piece_parent() -> Node2D:
 
 func _load_road_piece_manifest() -> void:
 	_road_piece_defs_by_mask = _load_surface_piece_manifest(road_piece_manifest_path, ROAD_PIECE_EXPORT_ROOT, false)
+	_road_piece_defs_by_role = _load_road_lane_role_manifest(road_piece_manifest_path, ROAD_PIECE_EXPORT_ROOT)
 	_path_piece_defs_by_mask = _load_surface_piece_manifest(path_piece_manifest_path, PATH_PIECE_EXPORT_ROOT, true)
+
+
+func _load_road_lane_role_manifest(manifest_path: String, export_root: String) -> Dictionary:
+	var defs_by_role: Dictionary = {}
+	if manifest_path.is_empty() or not FileAccess.file_exists(manifest_path):
+		return defs_by_role
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+	if not (parsed is Dictionary):
+		return defs_by_role
+	var pieces: Variant = (parsed as Dictionary).get("pieces", [])
+	if not (pieces is Array):
+		return defs_by_role
+	for piece_variant in pieces as Array:
+		if not (piece_variant is Dictionary):
+			continue
+		var piece := piece_variant as Dictionary
+		var lane_role := String(piece.get("lane_role", "")).strip_edges().to_lower()
+		var file_path := String(piece.get("file", ""))
+		if lane_role.is_empty() or file_path.is_empty():
+			continue
+		var res_path := export_root + "/" + file_path
+		if not ResourceLoader.exists(res_path):
+			continue
+		var stored := piece.duplicate(true)
+		stored["res_path"] = res_path
+		var defs: Array = defs_by_role.get(lane_role, [])
+		defs.append(stored)
+		defs_by_role[lane_role] = defs
+	return defs_by_role
 
 
 func _load_surface_piece_manifest(manifest_path: String, export_root: String, path_pieces_only: bool) -> Dictionary:
@@ -1637,14 +1668,20 @@ func _remove_road_piece_decal(tile: Vector2i) -> void:
 
 
 func _spawn_road_piece_decals() -> void:
-	if not road_piece_decals_enabled or _road_piece_defs_by_mask.is_empty():
+	if not road_piece_decals_enabled or (_road_piece_defs_by_mask.is_empty() and _road_piece_defs_by_role.is_empty()):
 		return
 	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
 		_road_piece_parent = _find_or_create_road_piece_parent()
-	for tile_variant in _road_visual_tiles.keys():
-		if not (tile_variant is Vector2i):
-			continue
-		_reveal_surface_piece_decal(tile_variant as Vector2i, "road")
+	if not _road_piece_defs_by_role.is_empty():
+		for tile_variant in _main_road_tiles.keys():
+			if not (tile_variant is Vector2i):
+				continue
+			_reveal_road_lane_piece_decal(tile_variant as Vector2i)
+	else:
+		for tile_variant in _road_visual_tiles.keys():
+			if not (tile_variant is Vector2i):
+				continue
+			_reveal_surface_piece_decal(tile_variant as Vector2i, "road")
 	for tile_variant in _path_visual_tiles.keys():
 		if not (tile_variant is Vector2i):
 			continue
@@ -1652,8 +1689,86 @@ func _spawn_road_piece_decals() -> void:
 
 
 func _reveal_road_piece_decal(tile: Vector2i) -> void:
-	_reveal_surface_piece_decal(tile, "road")
+	if not _road_piece_defs_by_role.is_empty():
+		_reveal_road_lane_piece_decal(tile)
+	else:
+		_reveal_surface_piece_decal(tile, "road")
 	_reveal_surface_piece_decal(tile, "path")
+
+
+func _reveal_road_lane_piece_decal(tile: Vector2i) -> void:
+	if not road_piece_decals_enabled or _road_piece_defs_by_role.is_empty():
+		return
+	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
+		_road_piece_parent = _find_or_create_road_piece_parent()
+	if not _main_road_tiles.has(tile):
+		return
+	var role := _get_road_lane_role(tile)
+	var piece := _select_road_lane_piece_definition(tile, role)
+	if piece.is_empty():
+		return
+	_spawn_road_piece_decal(tile, piece, "road")
+
+
+func _get_road_lane_role(tile: Vector2i) -> String:
+	var center := _find_nearest_road_centerline_tile(tile)
+	if center == Vector2i.ZERO and not _road_centerline_tiles.has(Vector2i.ZERO):
+		return "center"
+	var offset := tile - center
+	if offset == Vector2i.ZERO:
+		return "center"
+	var signed_offset := _get_signed_road_lane_offset(center, offset)
+	if signed_offset == 0:
+		return "center"
+	var distance := mini(2, absi(signed_offset))
+	if signed_offset < 0:
+		return "left_%d" % distance
+	return "right_%d" % distance
+
+
+func _find_nearest_road_centerline_tile(tile: Vector2i) -> Vector2i:
+	if _road_centerline_tiles.has(tile):
+		return tile
+	var radius := maxi(intent_main_road_half_width, intent_compound_connector_half_width)
+	radius = maxi(radius, maxi(intent_parking_zone_half_extents_tiles.x, intent_parking_zone_half_extents_tiles.y))
+	var best := Vector2i.ZERO
+	var best_dist := 999999
+	for center_variant in _road_centerline_tiles.keys():
+		if not (center_variant is Vector2i):
+			continue
+		var center := center_variant as Vector2i
+		var delta := tile - center
+		if absi(delta.x) > radius + 1 or absi(delta.y) > radius + 1:
+			continue
+		var dist := delta.length_squared()
+		if dist < best_dist:
+			best = center
+			best_dist = dist
+	return best
+
+
+func _get_signed_road_lane_offset(center: Vector2i, offset: Vector2i) -> int:
+	var horizontal_links := int(_road_centerline_tiles.has(center + Vector2i.LEFT)) + int(_road_centerline_tiles.has(center + Vector2i.RIGHT))
+	var vertical_links := int(_road_centerline_tiles.has(center + Vector2i.UP)) + int(_road_centerline_tiles.has(center + Vector2i.DOWN))
+	if horizontal_links > vertical_links:
+		return offset.y
+	if vertical_links > horizontal_links:
+		return -offset.x
+	if absi(offset.x) > absi(offset.y):
+		return -offset.x
+	return offset.y
+
+
+func _select_road_lane_piece_definition(tile: Vector2i, lane_role: String) -> Dictionary:
+	var exact: Array = _road_piece_defs_by_role.get(lane_role, [])
+	if exact.is_empty() and (lane_role == "left_2" or lane_role == "right_2"):
+		exact = _road_piece_defs_by_role.get(lane_role.substr(0, lane_role.length() - 1) + "1", [])
+	if exact.is_empty():
+		exact = _road_piece_defs_by_role.get("center", [])
+	if exact.is_empty():
+		return {}
+	var index := _tile_noise_hash(tile + Vector2i(719, 1471)) % exact.size()
+	return (exact[index] as Dictionary).duplicate(true)
 
 
 func _reveal_surface_piece_decal(tile: Vector2i, surface_kind: String) -> void:
@@ -1734,6 +1849,8 @@ func _spawn_road_piece_decal(tile: Vector2i, piece: Dictionary, surface_kind: St
 	sprite.global_position = _tile_to_world_position(tile)
 	sprite.z_index = road_piece_z_index
 	sprite.z_as_relative = false
+	if piece.has("lane_role"):
+		sprite.set_meta("lane_role", String(piece.get("lane_role", "")))
 	_road_piece_parent.add_child(sprite)
 	_road_piece_nodes.append(sprite)
 	_road_piece_nodes_by_key[key] = sprite
@@ -2355,6 +2472,18 @@ func debug_get_road_piece_decal_texture_paths() -> Array[String]:
 			continue
 		paths.append(sprite.texture.resource_path)
 	return paths
+
+
+func debug_get_road_piece_decal_role_counts() -> Dictionary:
+	var counts: Dictionary = {}
+	for node in _road_piece_nodes:
+		if not node.has_meta("lane_role"):
+			continue
+		var role := String(node.get_meta("lane_role", ""))
+		if role.is_empty():
+			continue
+		counts[role] = int(counts.get(role, 0)) + 1
+	return counts
 
 
 func get_movement_surface_multiplier_at_tile(tile: Vector2i, actor_kind: String = "operator") -> float:

@@ -211,7 +211,10 @@ func _update_engage_operator(enemy: Node2D, _delta: float) -> void:
 			change_state(PATROL)
 		return
 	enemy.set("target", operator)
-	if enemy.global_position.distance_to(operator.global_position) > 40.0:
+	var attack_range := 40.0
+	if enemy.has_method("get_behavior_attack_range"):
+		attack_range = float(enemy.call("get_behavior_attack_range"))
+	if enemy.global_position.distance_to(operator.global_position) > attack_range:
 		enemy.call("behavior_move_toward", operator.global_position, profile.engage_speed)
 	else:
 		enemy.call("behavior_attack_target")

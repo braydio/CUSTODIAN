@@ -26,6 +26,8 @@ var _last_prompt_frame := -1
 
 
 func _ready() -> void:
+	add_to_group("custodian_hud")
+	add_to_group("gameplay_overlay")
 	_apply_theme()
 	set_health(100, 100)
 	set_stamina_label("STA READY")

@@ -19,6 +19,10 @@ const RANGED_RUN_WEAPON_SHEET := "res://content/sprites/operator/runtime/curated
 const RANGED_RUN_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged_2h__run_01__w__5f__96.png"
 const RANGED_RUN_WEST_WEAPON_SHEET := "res://content/sprites/operator/runtime/curated/weapon/ranged_2h/carbine_rifle_mk1/operator__weapon__ranged_2h__run_01__w__5f__96.png"
 const RANGED_STANCE_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
+const DODGE_STEP_BODY_SHEET := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge__n__4f__96.png"
+const DODGE_RECOVERY_BODY_SHEET := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_recovery__n__4f__96.png"
+const DODGE_BACKSTEP_BODY_SHEET := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_backstep__s__4f__96.png"
+const DODGE_BACKSTEP_RECOVERY_BODY_SHEET := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_backstep_recovery__s__4f__96.png"
 const HEAVY_ANTICIPATION_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_anticipation_body.png"
 const FAST_ATTACK_1_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/fast_attack_1_right_body.png"
 const FAST_ATTACK_2_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/fast_attack_2_right_body.png"
@@ -207,6 +211,10 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "ranged_2h_stance", RANGED_STANCE_EAST_BODY_SHEET, 12, 0, 96, 96, 8.0, true)
 	_replace_animation_if_exists(body_frames, "ranged_2h_run_right", RANGED_RUN_BODY_SHEET, 5, 0, 96, 96, 14.0, true)
 	_replace_animation_if_exists(body_frames, "ranged_2h_run_left", RANGED_RUN_WEST_BODY_SHEET, 5, 0, 96, 96, 14.0, true)
+	_replace_animation_if_exists(body_frames, "operator_dodge_step", DODGE_STEP_BODY_SHEET, 4, 0, 96, 96, 18.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_recovery", DODGE_RECOVERY_BODY_SHEET, 4, 0, 96, 96, 18.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_backstep", DODGE_BACKSTEP_BODY_SHEET, 4, 0, 96, 96, 18.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_backstep_recovery", DODGE_BACKSTEP_RECOVERY_BODY_SHEET, 4, 0, 96, 96, 18.0, false)
 
 	_replace_animation_if_exists(weapon_frames, "equipped_run_right", RANGED_RUN_WEAPON_SHEET, 5, 0, 96, 96, 14.0, true)
 	_replace_animation_if_exists(weapon_frames, "equipped_run_left", RANGED_RUN_WEST_WEAPON_SHEET, 5, 0, 96, 96, 14.0, true)

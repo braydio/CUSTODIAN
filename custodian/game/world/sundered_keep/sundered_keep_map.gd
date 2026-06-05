@@ -103,6 +103,7 @@ var _siege_started := false
 var _siege_wave_index := 0
 var _siege_pressure_tick := 0
 var _siege_state := "dormant"
+var _siege_game_over_triggered := false
 var _siege_objectives: Dictionary = {}
 var _siege_spawn_nodes: Array[Node2D] = []
 var _siege_config: Dictionary = {}
@@ -112,6 +113,8 @@ var _siege_turret: Node2D = null
 var _hud: Node = null
 var _great_hall_marine_ambush: Node = null
 var _great_hall_door_open_frames: SpriteFrames = null
+var _minimap_floor_cells: Dictionary = {}
+var _minimap_wall_cells: Dictionary = {}
 var _level_id := ""
 var _stats := {
 	"floors": 0,
@@ -235,6 +238,7 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"return_mooring_created": _return_mooring_created,
 		"siege_started": _siege_started,
 		"siege_state": _siege_state,
+		"siege_game_over_triggered": _siege_game_over_triggered,
 		"siege_wave_index": _siege_wave_index,
 		"siege_pressure_tick": _siege_pressure_tick,
 		"siege_objectives": _get_siege_objective_states(),
@@ -242,6 +246,40 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"siege_turret_exists": _siege_turret != null and is_instance_valid(_siege_turret),
 		"great_hall_marine_ambush": _get_great_hall_marine_ambush_state(),
 	}
+
+
+func get_level_data() -> Dictionary:
+	return {
+		"map_size": map_size_tiles,
+		"tile_size": Vector2(TILE_SIZE, TILE_SIZE),
+		"floor_cells": _minimap_floor_cells.keys(),
+		"wall_cells": _minimap_wall_cells.keys(),
+		"rooms": [entrance_tile, return_mooring_origin_tile, main_gate_tile, great_hall_door_tile],
+		"interior_rooms": _interior_regions_as_rects(),
+		"compound_rect": Rect2i(),
+		"compound_ingress": [],
+		"compound_buildings": [],
+		"region_tiles": {},
+	}
+
+
+func global_to_minimap_tile(global_position: Vector2) -> Vector2i:
+	return Vector2i(
+		clampi(int(floor(global_position.x / TILE_SIZE)), 0, map_size_tiles.x - 1),
+		clampi(int(floor(global_position.y / TILE_SIZE)), 0, map_size_tiles.y - 1)
+	)
+
+
+func minimap_tile_to_global(tile: Vector2i) -> Vector2:
+	return _tile_center(tile)
+
+
+func _interior_regions_as_rects() -> Array[Rect2i]:
+	var result: Array[Rect2i] = []
+	for region in _interior_occlusion_regions:
+		if region.has("rect"):
+			result.append(region["rect"] as Rect2i)
+	return result
 
 
 func debug_print_layout_summary() -> void:
@@ -1263,6 +1301,8 @@ func _add_wall_tile(tile: Vector2i, tile_id: String) -> void:
 	var sprite := _add_sprite("WallsHigh", tile_id, "walls", tile, Vector2(0.0, -32.0))
 	if sprite != null:
 		_stats["walls"] = int(_stats["walls"]) + 1
+		_minimap_wall_cells[tile] = true
+		_minimap_floor_cells.erase(tile)
 	_add_blocker(Rect2i(tile, Vector2i.ONE), "WallBlocker")
 
 
@@ -1270,6 +1310,8 @@ func _add_tile(layer_name: String, tile_id: String, category: String, tile: Vect
 	var sprite := _add_sprite(layer_name, tile_id, category, tile, Vector2.ZERO)
 	if sprite != null and (category == "floors" or category == "causeway_floors" or category == "return_mooring_floor" or (category == "entrance" and tile_id.contains("_floor"))):
 		_stats["floors"] = int(_stats["floors"]) + 1
+		if not _minimap_wall_cells.has(tile):
+			_minimap_floor_cells[tile] = true
 	elif sprite != null and (layer_name == "TerrainEdges" or tile_id.contains("_edge_")):
 		_stats["edges"] = int(_stats["edges"]) + 1
 	return sprite
@@ -1784,6 +1826,7 @@ func _start_siege() -> void:
 		return
 	_siege_started = true
 	_siege_state = "active"
+	_siege_game_over_triggered = false
 	_siege_wave_index = 0
 	_siege_pressure_tick = 0
 	_spawn_siege_wave()
@@ -1833,17 +1876,25 @@ func _spawn_siege_wave() -> void:
 func _apply_siege_pressure() -> void:
 	var objective := _most_intact_siege_objective()
 	if objective == null:
-		_siege_state = "collapsed"
-		if _siege_timer != null:
-			_siege_timer.stop()
+		_collapse_siege("Sundered Keep objectives destroyed")
 		return
 	if objective.has_method("take_damage"):
 		var damage_amount := float(_siege_config.get("pressure_damage_base", 9.0)) + float(_siege_wave_index) * float(_siege_config.get("pressure_damage_per_wave", 2.0))
 		objective.call("take_damage", damage_amount)
 	if _all_siege_objectives_destroyed():
-		_siege_state = "collapsed"
-		if _siege_timer != null:
-			_siege_timer.stop()
+		_collapse_siege("Sundered Keep objectives destroyed")
+
+
+func _collapse_siege(reason: String) -> void:
+	_siege_state = "collapsed"
+	_siege_game_over_triggered = true
+	if _siege_timer != null:
+		_siege_timer.stop()
+	_update_siege_debug_label()
+	_refresh_hud_state()
+	var game_state := get_node_or_null("/root/GameState")
+	if game_state != null and game_state.has_method("trigger_game_over") and not bool(game_state.get("game_over")):
+		game_state.call("trigger_game_over", reason)
 
 
 func _repair_siege_objective(objective_id: String) -> void:

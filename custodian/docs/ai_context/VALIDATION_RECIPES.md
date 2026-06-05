@@ -136,6 +136,21 @@ python3 -m py_compile tools/tiles/extract_wall_parts.py tools/tiles/compose_wall
 
 Then run the specific generator command documented in the relevant design or README file.
 
+## Fabrication Balance Pipeline Validation
+
+Use for the offline fabrication/resource economy simulator and proposal generator.
+
+```bash
+python -m py_compile custodian/tools/balance/fabrication_balance_pipeline.py
+python custodian/tools/balance/fabrication_balance_pipeline.py --seeds 100
+```
+
+Check:
+
+- `reports/fabrication_balance/fabrication_balance_report.md` exists and lists affordability, optimality, bottlenecks, and lore-drop review.
+- `reports/fabrication_balance/proposed_changes.json` is proposal-only JSON and does not imply runtime data was applied.
+- Lore violations are understood before using `--strict-lore` in automated checks.
+
 ## Review Validation
 
 Use for code review, docs drift review, or handoff review.

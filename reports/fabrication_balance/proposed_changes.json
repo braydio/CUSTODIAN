@@ -1,0 +1,89 @@
+{
+  "changes": [
+    {
+      "current": {
+        "cost": {
+          "memory_glass_fragment": 1,
+          "power_components": 3,
+          "ruin_scrap": 18,
+          "signal_filament": 2,
+          "structural_alloy": 10
+        }
+      },
+      "id": "archive_sensor_pylon",
+      "proposed": {
+        "cost": {
+          "memory_glass_fragment": 1,
+          "power_components": 2,
+          "ruin_scrap": 14,
+          "signal_filament": 2,
+          "structural_alloy": 8
+        }
+      },
+      "reason": "recipe_below_affordability_threshold_in_30_minute_runs",
+      "target": "recipe"
+    },
+    {
+      "current": {
+        "cost": {
+          "blackwood": 10,
+          "ruin_scrap": 4
+        }
+      },
+      "id": "barricade_light",
+      "proposed": {
+        "cost": {
+          "blackwood": 12,
+          "ruin_scrap": 5
+        }
+      },
+      "reason": "recipe_chosen_across_too_many_runs_and_builds",
+      "target": "recipe"
+    },
+    {
+      "current": {
+        "drops": [
+          {
+            "chance": 0.65,
+            "max": 2,
+            "min": 1,
+            "resource_id": "signal_filament",
+            "story": "relay harness pulled loose during sabotage"
+          },
+          {
+            "chance": 0.85,
+            "max": 3,
+            "min": 1,
+            "resource_id": "ruin_scrap",
+            "story": "cut brackets and smashed signal-box housings"
+          },
+          {
+            "chance": 0.18,
+            "max": 1,
+            "min": 1,
+            "resource_id": "memory_glass_fragment",
+            "story": "stolen archive glass from the command relay"
+          }
+        ],
+        "enemy_role": "grunt_saboteur",
+        "sabotage_target": "signal_relay"
+      },
+      "id": "grunt_saboteur_signal",
+      "proposed": {
+        "allowed_resources": [
+          "signal_filament",
+          "ruin_scrap",
+          "memory_glass_fragment"
+        ],
+        "drop_identity": "sabotage_target_salvage",
+        "enemy_role": "grunt_saboteur",
+        "rule": "Saboteur drops should reveal the target they were sabotaging."
+      },
+      "reason": "drop_tells_story_rule",
+      "target": "drop_table"
+    }
+  ],
+  "proposal_only": true,
+  "scenario_id": "default_fabrication_run",
+  "schema": "custodian.fabrication_balance.proposals.v1"
+}

@@ -63,11 +63,11 @@ Secondary input holds the operator in ranged-ready, keeps movement available, ma
 
 ## Completion Notes
 
-- Implemented: right mouse `attack_secondary` now holds ranged-ready/aim, `R` remains block, carbine secondary intent maps to `ranged_ready`, and operator runtime state uses primary fire only while ranged-ready is active.
+- Implemented: right mouse and Xbox LT `attack_secondary` now hold ranged-ready/aim, left mouse and Xbox RT `attack_primary` confirm fire, `R` remains block, carbine secondary intent maps to `ranged_ready`, and operator runtime state uses primary fire only while ranged-ready is active.
 - Implemented: ranged-ready can temporarily present the carried ranged weapon from non-ranged loadouts without forcing a permanent loadout switch, faces aim direction, applies the ranged-ready move multiplier, and keeps lower-body locomotion available.
 - Validated: `godot --headless --path custodian --script res://tools/validation/operator_ranged_ready_input_smoke.gd`.
 - Validated: `godot --headless --path custodian --quit` completed after project load; Godot still reports existing exit resource-leak warnings.
-- Deferred: true modular ranged-ready/fire upper-body, cape, weapon, muzzle-flash, and smoke production clips are tracked in `REQUIRED_ASSETS.md`; secondary tap quick-shot and controller trigger bindings remain Phase 2 work.
+- Deferred: true modular ranged-ready/fire upper-body, cape, weapon, muzzle-flash, and smoke production clips are tracked in `REQUIRED_ASSETS.md`; secondary tap quick-shot remains Phase 2 work.
 
 ## Next Steps
 

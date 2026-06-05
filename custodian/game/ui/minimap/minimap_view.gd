@@ -52,6 +52,7 @@ var _map_texture_dirty := false
 var _redraw_queued := false
 var _dynamic_redraw_accum := 0.0
 var _last_dynamic_signature := ""
+var _world_bounds := Rect2()
 
 
 func _ready() -> void:
@@ -60,6 +61,7 @@ func _ready() -> void:
 
 
 func set_level_data(data: Dictionary) -> void:
+	_world_bounds = Rect2()
 	map_size = data.get("map_size", Vector2i.ZERO)
 	tile_size = data.get("tile_size", Vector2(32, 32))
 	floor_cells = _as_vector2i_array(data.get("floor_cells", []))
@@ -75,6 +77,27 @@ func set_level_data(data: Dictionary) -> void:
 
 func set_procgen_tilemap(node: Node) -> void:
 	procgen_tilemap = node
+
+
+func set_world_bounds(bounds: Rect2) -> void:
+	if procgen_tilemap != null and is_instance_valid(procgen_tilemap):
+		return
+	if bounds.size.x <= 0.001 or bounds.size.y <= 0.001:
+		return
+	if _world_bounds == bounds:
+		return
+	_world_bounds = bounds
+	map_size = Vector2i(64, 64)
+	tile_size = Vector2(bounds.size.x / 64.0, bounds.size.y / 64.0)
+	floor_cells.clear()
+	wall_cells.clear()
+	rooms.clear()
+	interior_rooms.clear()
+	compound_rect = Rect2i()
+	compound_ingress.clear()
+	compound_buildings.clear()
+	region_tiles.clear()
+	_mark_map_texture_dirty()
 
 
 func set_player(node: Node2D) -> void:
@@ -159,6 +182,11 @@ func local_to_world(local_pos: Vector2) -> Vector2:
 	)
 	if procgen_tilemap != null and procgen_tilemap.has_method("minimap_tile_to_global"):
 		return procgen_tilemap.call("minimap_tile_to_global", tile)
+	if _world_bounds.size.x > 0.001 and _world_bounds.size.y > 0.001:
+		return _world_bounds.position + Vector2(
+			(float(tile.x) + 0.5) / float(map_size.x) * _world_bounds.size.x,
+			(float(tile.y) + 0.5) / float(map_size.y) * _world_bounds.size.y
+		)
 	return Vector2(tile) * tile_size
 
 
@@ -193,11 +221,14 @@ func _request_redraw() -> void:
 func _draw() -> void:
 	_redraw_queued = false
 	draw_rect(Rect2(Vector2.ZERO, size), background_color, true)
-	if map_texture == null or map_size.x <= 0 or map_size.y <= 0:
+	if map_size.x <= 0 or map_size.y <= 0:
 		return
 
 	var map_rect := _get_map_rect()
-	draw_texture_rect(map_texture, map_rect, false)
+	if map_texture != null:
+		draw_texture_rect(map_texture, map_rect, false)
+	elif _world_bounds.size.x > 0.001:
+		draw_rect(map_rect, Color(0.055, 0.070, 0.064, 0.92), true)
 
 	if draw_grid:
 		_draw_grid(map_rect)
@@ -216,6 +247,11 @@ func _draw() -> void:
 func _rebuild_map_texture() -> void:
 	if map_size.x <= 0 or map_size.y <= 0:
 		map_texture = null
+		return
+	if _world_bounds.size.x > 0.001 and (procgen_tilemap == null or not is_instance_valid(procgen_tilemap)):
+		var dynamic_image := Image.create(map_size.x, map_size.y, false, Image.FORMAT_RGBA8)
+		dynamic_image.fill(Color(0.055, 0.070, 0.064, 0.92))
+		map_texture = ImageTexture.create_from_image(dynamic_image)
 		return
 
 	var image := Image.create(map_size.x, map_size.y, false, Image.FORMAT_RGBA8)
@@ -249,6 +285,12 @@ func _tile_to_panel(tile: Vector2i, map_rect: Rect2) -> Vector2:
 func _global_to_tile(global_position: Vector2) -> Vector2i:
 	if procgen_tilemap != null and procgen_tilemap.has_method("global_to_minimap_tile"):
 		return procgen_tilemap.call("global_to_minimap_tile", global_position)
+	if _world_bounds.size.x > 0.001 and _world_bounds.size.y > 0.001:
+		var normalized := (global_position - _world_bounds.position) / _world_bounds.size
+		return Vector2i(
+			clampi(int(floor(normalized.x * float(map_size.x))), 0, maxi(0, map_size.x - 1)),
+			clampi(int(floor(normalized.y * float(map_size.y))), 0, maxi(0, map_size.y - 1))
+		)
 	return Vector2i(
 		int(round(global_position.x / maxf(1.0, tile_size.x))),
 		int(round(global_position.y / maxf(1.0, tile_size.y)))

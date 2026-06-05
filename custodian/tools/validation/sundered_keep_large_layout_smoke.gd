@@ -30,6 +30,12 @@ func _init() -> void:
 	_assert(map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") != null, "closed prefab gate blocker missing")
 
 	var floors := _collect_walkable_floor_tiles(map)
+	var minimap_data: Dictionary = map.call("get_level_data")
+	_assert(minimap_data.get("map_size", Vector2i.ZERO) == map_size, "Sundered Keep minimap data did not export map size")
+	_assert((minimap_data.get("floor_cells", []) as Array).size() >= 500, "Sundered Keep minimap data exported too few floor cells")
+	_assert((minimap_data.get("wall_cells", []) as Array).size() >= 40, "Sundered Keep minimap data exported too few wall cells")
+	_assert(map.call("global_to_minimap_tile", Vector2(56.5 * TILE_SIZE, 76.5 * TILE_SIZE)) == Vector2i(56, 76), "Sundered Keep minimap global-to-tile conversion failed")
+	_assert(map.call("minimap_tile_to_global", Vector2i(56, 76)) == Vector2(56.5 * TILE_SIZE, 76.5 * TILE_SIZE), "Sundered Keep minimap tile-to-global conversion failed")
 	_assert(floors.has(Vector2i(56, 76)), "spawn tile is not walkable")
 	_assert(floors.has(Vector2i(48, 76)), "widened west causeway edge is not walkable")
 	_assert(floors.has(Vector2i(64, 76)), "widened east causeway edge is not walkable")
@@ -172,6 +178,20 @@ func _init() -> void:
 	state = map.get_sundered_keep_debug_state()
 	_assert(state["great_hall_door_open"] == true, "Great Hall door did not open")
 	_assert(not _has_blocker_covering_tile(map, Vector2i(55, 30)), "opened Great Hall door still blocks its threshold")
+
+	var game_state := root.get_node_or_null("GameState")
+	_assert(game_state != null, "GameState autoload missing for Sundered Keep game-over validation")
+	if game_state != null:
+		game_state.call("reset_run_state")
+		map.call("_collapse_siege", "Smoke siege collapse")
+		await process_frame
+		state = map.get_sundered_keep_debug_state()
+		_assert(str(state["siege_state"]) == "collapsed", "siege collapse did not update local siege state")
+		_assert(bool(state["siege_game_over_triggered"]), "siege collapse did not mark game-over handoff")
+		_assert(bool(game_state.get("game_over")), "siege collapse did not trigger global game over")
+		_assert(str(game_state.get("game_over_reason")) == "Smoke siege collapse", "siege collapse did not preserve game-over reason")
+		_assert(_find_node_named(root, "GameOverModal") != null, "siege collapse did not mount GameOverModal")
+		game_state.call("reset_run_state")
 
 	print("[SunderedKeepLargeLayoutSmoke] OK: large JSON layout, reachability, gate, mooring, key, and doors validated")
 	quit(0)
@@ -436,6 +456,16 @@ func _has_blocker_covering_tile(map: Node, tile: Vector2i) -> bool:
 			if rect.has_point(point):
 				return true
 	return false
+
+
+func _find_node_named(node: Node, target_name: String) -> Node:
+	if node.name == target_name:
+		return node
+	for child in node.get_children():
+		var found := _find_node_named(child, target_name)
+		if found != null:
+			return found
+	return null
 
 
 func _array_to_vector2i(value) -> Vector2i:

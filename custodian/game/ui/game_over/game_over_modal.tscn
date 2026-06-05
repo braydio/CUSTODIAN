@@ -20,20 +20,20 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.015, 0.018, 0.02, 0.82)
+color = Color(0.006, 0.008, 0.01, 0.94)
 
 [node name="Panel" type="Panel" parent="."]
-custom_minimum_size = Vector2(420, 300)
+custom_minimum_size = Vector2(560, 390)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -210.0
-offset_top = -150.0
-offset_right = 210.0
-offset_bottom = 150.0
+offset_left = -280.0
+offset_top = -195.0
+offset_right = 280.0
+offset_bottom = 195.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -51,17 +51,25 @@ theme_override_constants/margin_bottom = 24
 
 [node name="Content" type="VBoxContainer" parent="Panel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
 alignment = 1
 
 [node name="TitleLabel" type="Label" parent="Panel/Margin/Content"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.95, 0.72, 0.42, 1)
+theme_override_font_sizes/font_size = 34
 text = "FACILITY LOST"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="Panel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.76, 0.78, 1)
+text = "Custodian link terminated."
 horizontal_alignment = 1
 
 [node name="ReasonLabel" type="Label" parent="Panel/Margin/Content"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.9, 0.84, 1)
 text = "The command nexus has fallen."
 horizontal_alignment = 1
 autowrap_mode = 3
@@ -72,18 +80,22 @@ theme_override_constants/separation = 5
 
 [node name="WavesLabel" type="Label" parent="Panel/Margin/Content/StatsContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.83, 0.82, 1)
 text = "Waves Survived: 0"
 
 [node name="EnemiesLabel" type="Label" parent="Panel/Margin/Content/StatsContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.83, 0.82, 1)
 text = "Enemies Destroyed: 0"
 
 [node name="PowerFailuresLabel" type="Label" parent="Panel/Margin/Content/StatsContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.83, 0.82, 1)
 text = "Power Failures: 0"
 
 [node name="TurretsLostLabel" type="Label" parent="Panel/Margin/Content/StatsContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.83, 0.82, 1)
 text = "Turrets Lost: 0"
 
 [node name="ButtonContainer" type="HBoxContainer" parent="Panel/Margin/Content"]

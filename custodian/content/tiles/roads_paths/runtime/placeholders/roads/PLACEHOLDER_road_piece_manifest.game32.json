@@ -3,7 +3,13 @@
   "asset_pack": "PLACEHOLDER_custodian_runtime_road_pieces",
   "source_image": "generated placeholder diagnostics",
   "export_root": "res://content/tiles/roads_paths/runtime/placeholders/roads",
-  "piece_count": 7,
+  "piece_count": 12,
+  "tile_contract": {
+    "tile_size": [32, 32],
+    "placement_model": "lane_offset_from_centerline",
+    "lane_roles": ["center", "left_1", "left_2", "right_1", "right_2"],
+    "fallback": "connection_bitmask"
+  },
   "direction_bitmask": {
     "n": 1,
     "e": 2,
@@ -11,10 +17,66 @@
     "w": 8
   },
   "procgen_notes": {
-    "purpose": "Temporary high-contrast runtime road overlay diagnostics. Replace with production road art after layout review.",
-    "naming_rule": "PLACEHOLDER_roads_mask_<connection_bitmask>.png"
+    "purpose": "Temporary high-contrast runtime road overlay diagnostics. Replace with production 32x32 lane-role road tiles after layout review.",
+    "naming_rule": "PLACEHOLDER_roads_lane_<center|left_1|left_2|right_1|right_2>.png",
+    "legacy_bitmask_rule": "PLACEHOLDER_roads_mask_<connection_bitmask>.png"
   },
   "pieces": [
+    {
+      "id": "PLACEHOLDER_roads_lane_center",
+      "file": "pieces/PLACEHOLDER_roads_mask_15.png",
+      "name": "PLACEHOLDER_roads_lane_center",
+      "kind": "lane",
+      "width_class": "placeholder_lane",
+      "lane_role": "center",
+      "lane_offset": 0,
+      "tile_size": [32, 32],
+      "tags": ["road", "placeholder", "lane", "center"]
+    },
+    {
+      "id": "PLACEHOLDER_roads_lane_left_1",
+      "file": "pieces/PLACEHOLDER_roads_mask_05.png",
+      "name": "PLACEHOLDER_roads_lane_left_1",
+      "kind": "lane",
+      "width_class": "placeholder_lane",
+      "lane_role": "left_1",
+      "lane_offset": -1,
+      "tile_size": [32, 32],
+      "tags": ["road", "placeholder", "lane", "left"]
+    },
+    {
+      "id": "PLACEHOLDER_roads_lane_left_2",
+      "file": "pieces/PLACEHOLDER_roads_mask_09.png",
+      "name": "PLACEHOLDER_roads_lane_left_2",
+      "kind": "lane",
+      "width_class": "placeholder_lane",
+      "lane_role": "left_2",
+      "lane_offset": -2,
+      "tile_size": [32, 32],
+      "tags": ["road", "placeholder", "lane", "left"]
+    },
+    {
+      "id": "PLACEHOLDER_roads_lane_right_1",
+      "file": "pieces/PLACEHOLDER_roads_mask_10.png",
+      "name": "PLACEHOLDER_roads_lane_right_1",
+      "kind": "lane",
+      "width_class": "placeholder_lane",
+      "lane_role": "right_1",
+      "lane_offset": 1,
+      "tile_size": [32, 32],
+      "tags": ["road", "placeholder", "lane", "right"]
+    },
+    {
+      "id": "PLACEHOLDER_roads_lane_right_2",
+      "file": "pieces/PLACEHOLDER_roads_mask_06.png",
+      "name": "PLACEHOLDER_roads_lane_right_2",
+      "kind": "lane",
+      "width_class": "placeholder_lane",
+      "lane_role": "right_2",
+      "lane_offset": 2,
+      "tile_size": [32, 32],
+      "tags": ["road", "placeholder", "lane", "right"]
+    },
     {
       "id": "PLACEHOLDER_roads_mask_03",
       "file": "pieces/PLACEHOLDER_roads_mask_03.png",

@@ -19,6 +19,7 @@ const REQUIRED_SCENES := [
 	"res://game/ui/components/black_reliquary_panel.tscn",
 	"res://game/ui/components/black_reliquary_prompt.tscn",
 	"res://game/ui/components/black_reliquary_minimap_frame.tscn",
+	"res://game/ui/minimap/minimap_panel.tscn",
 ]
 
 

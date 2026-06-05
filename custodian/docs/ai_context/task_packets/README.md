@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-06-04
+Last updated: 2026-06-05
 
 Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
 
@@ -36,6 +36,14 @@ Completed packets are moved to `archived/`. They are preserved for historical re
 
 ### Recently Complete (awaiting archive)
 
+- `OPERATOR_DODGE_PIPELINE_AND_SIDEARM.md` — Added split dodge/recovery runtime and pipeline support, introduced the default pistol sidearm slot for no-primary ranged-ready fallback, mapped sidearm V1 to current ranged placeholder animations, and tracked missing production dodge/sidearm clips.
+- `OPERATOR_MODULAR_IDLE_AND_INGEST.md` — Fixed Fists idle so the modular lower/upper layer stack renders before legacy authored-body fallback, separated lower movement direction from upper action/aim direction, and routed modular Operator sprite inbox files through the live module rebuild/SpriteFrames refresh path.
+- `ROAD_TILE_LANE_ROLE_PLACEHOLDERS.md` — Updated procgen road overlays to use the 32x32 lane-role contract `center`, `left_1`, `left_2`, `right_1`, and `right_2`, with placeholder manifest aliases and focused smoke validation.
+- `FABRICATION_BALANCE_PIPELINE.md` — Added a deterministic offline fabrication/resource balance pipeline with explicit 30-minute scenario inputs, build/drop-rate simulation, lore-aware drop-table checks, Markdown report output, and JSON-only balance proposals.
+- `OPERATOR_TWIN_STICK_DODGE_INPUT.md` — Added keyboard/mouse plus Xbox twin-stick movement/aim bindings, held ranged-ready aliases, RT/LMB panic ranged shot support, movement-first dodge, idle aiming backstep, focused smoke coverage, and missing directional dodge asset tracking.
+- `ENEMY_MARINE_DASH_ATTACK.md` — Hardened enemy marine dash as a heavy commitment move with locked windup telegraph, dash-only hit window, hitstop/knockback/camera feedback, recovery punish window, Sundered Keep ambush tuning, validation coverage, and required body/FX/audio asset tracking.
+- `TERMINAL_OVERLAY_SUPPRESSION.md` — Hid compact gameplay HUD/debug overlays while the terminal interface is open and added focused smoke coverage for open/close restoration.
+- `BLACK_RELIQUARY_LIVE_MINIMAP.md` — Made the Black Reliquary HUD minimap compact and live by embedding the shared tactical minimap renderer and exporting Sundered Keep authored floor/wall minimap data.
 - `OPERATOR_RANGED_READY_INPUT.md` — Changed ranged secondary into held ranged-ready/aim, moved right mouse off block, kept primary as the ranged fire confirm while ready, and added focused smoke validation.
 - `DEBUG_SCREEN_UI.md` — Added the dedicated F12/`debug_hud` tabbed debug screen, moved diagnostics out of scattered normal HUD labels, and added focused smoke validation.
 - `UI_COMPACT_DEBUG_GATING.md` — Reduced normal-play HUD footprint, changed Black Reliquary vitals to a header-style strip, tightened prompt/minimap component minima, and moved unformatted diagnostics behind explicit debug HUD visibility.

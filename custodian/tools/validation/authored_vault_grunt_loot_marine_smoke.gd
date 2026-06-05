@@ -83,7 +83,47 @@ func _validate_marine_idle(root: Node) -> void:
 	var fx_sprite := marine.get_node_or_null("CustomEnemyFxSprite") as AnimatedSprite2D
 	_assert_true(fx_sprite != null and fx_sprite.sprite_frames != null, "marine should build dash FX SpriteFrames")
 	_assert_true(fx_sprite.sprite_frames.has_animation("marine_dash_attack_fx_e"), "marine should include east dash attack FX animation")
+	_assert_true(bool(marine.get("marine_dash_enabled")), "marine dash should be enabled")
+	_assert_true(absf(float(marine.get("marine_dash_windup_time")) - 0.32) < 0.001, "marine dash windup should match heavy dash spec")
+	_assert_true(absf(float(marine.get("marine_dash_time")) - 0.18) < 0.001, "marine dash travel time should match heavy dash spec")
+	_assert_true(absf(float(marine.get("marine_dash_recovery_time")) - 0.42) < 0.001, "marine dash recovery should match heavy dash spec")
+	_assert_true(absf(float(marine.get("marine_dash_distance_px")) - 150.0) < 0.001, "marine dash distance should match heavy dash spec")
+	_assert_true(absf(float(marine.get("marine_dash_damage")) - 28.0) < 0.001, "marine dash damage should match heavy dash spec")
+	_assert_true(absf(float(marine.get("marine_dash_knockback_px")) - 95.0) < 0.001, "marine dash knockback should match heavy dash spec")
+	_assert_true(absf(float(marine.get("marine_dash_hit_active_start_ratio")) - 0.34) < 0.001, "marine dash hit window should not start during launch anticipation")
+	_assert_true(absf(float(marine.get("marine_dash_hit_active_end_ratio")) - 0.82) < 0.001, "marine dash hit window should end before recovery")
+	_assert_true(absf(float(marine.get("marine_dash_hit_forward_reach_px")) - 24.0) < 0.001, "marine dash forward contact should be tight")
+	_assert_true(absf(float(marine.get("marine_dash_hit_lateral_reach_px")) - 18.0) < 0.001, "marine dash lateral contact should be tight")
+	_assert_true(marine.has_method("get_behavior_attack_range"), "marine should expose behavior attack range")
+	_assert_true(float(marine.call("get_behavior_attack_range")) >= 132.0, "marine behavior attack range should allow readable dash windup")
+	_validate_marine_dash_hit_gate(root, marine)
 	marine.queue_free()
+
+
+func _validate_marine_dash_hit_gate(root: Node, marine: Node) -> void:
+	var target := CharacterBody2D.new()
+	target.name = "MarineDashGateTarget"
+	target.add_to_group("player")
+	root.add_child(target)
+	marine.set("target", target)
+	marine.set("global_position", Vector2.ZERO)
+	marine.set("_marine_dash_phase", &"dash")
+	marine.set("_marine_dash_direction", Vector2.RIGHT)
+	marine.set("_marine_dash_timer", float(marine.get("marine_dash_time")) * 0.80)
+	target.global_position = Vector2(12.0, 0.0)
+	marine.call("_try_apply_marine_dash_hit")
+	_assert_true((marine.get("_marine_dash_hit_targets") as Array).is_empty(), "marine dash should not hit before active frames")
+	marine.set("_marine_dash_timer", float(marine.get("marine_dash_time")) * 0.50)
+	target.global_position = Vector2(34.0, 0.0)
+	marine.call("_try_apply_marine_dash_hit")
+	_assert_true((marine.get("_marine_dash_hit_targets") as Array).is_empty(), "marine dash should not hit beyond close contact")
+	target.global_position = Vector2(12.0, 26.0)
+	marine.call("_try_apply_marine_dash_hit")
+	_assert_true((marine.get("_marine_dash_hit_targets") as Array).is_empty(), "marine dash should not hit outside lateral contact")
+	target.global_position = Vector2(12.0, 0.0)
+	marine.call("_try_apply_marine_dash_hit")
+	_assert_true(not (marine.get("_marine_dash_hit_targets") as Array).is_empty(), "marine dash should hit during active close contact")
+	target.queue_free()
 
 
 func _validate_authored_vault_room(root: Node) -> void:

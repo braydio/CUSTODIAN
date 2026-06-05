@@ -87,7 +87,10 @@ Examples:
 ```text
 operator__body__locomotion__walk__n__8f__96.png
 operator__body__locomotion__sprint__se__8f__96.png
-operator__body__locomotion__dodge__w__6f__96.png
+operator__body__locomotion__dodge__n__4f__96.png
+operator__body__locomotion__dodge_recovery__n__4f__96.png
+operator__body__locomotion__dodge_backstep__s__4f__96.png
+operator__body__locomotion__dodge_backstep_recovery__s__4f__96.png
 operator__body__locomotion__roll__nw__8f__96.png
 operator__body__melee__fast_01__n__6f__96.png
 operator__weapon__melee__fast_01__n__6f__96.png
@@ -103,6 +106,8 @@ Fields:
 - `action_group`: `locomotion`, `melee`, `defense`, `ranged`, `reaction`, `death`, `impact`
 - `variant`: specific animation, such as `walk`, `fast_01`, `block_enter`, `hit_light`
 - `direction`: `n`, `ne`, `e`, `se`, `s`, `sw`, `w`, `nw`, or `omni`
+
+Operator dodge is intentionally split into phase tracks. Use `dodge` for the impulse phase and `dodge_recovery` for the granular recovery/timing phase. The aim-hop fallback uses `dodge_backstep` and `dodge_backstep_recovery`; those should be authored as the Operator stepping or hopping backward away from the current aim direction.
 - `frames`: authored frame count, such as `6f`
 - `frame_size`: square frame size in pixels, such as `96`
 

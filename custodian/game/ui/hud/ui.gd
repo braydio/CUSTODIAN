@@ -876,9 +876,13 @@ func _update_debug_panel() -> void:
 
 func _set_debug_screen_visible(p_visible: bool) -> void:
 	_debug_hud_visible = p_visible
-	if _debug_screen != null and _debug_screen.has_method("set_debug_visible"):
-		_debug_screen.call("set_debug_visible", p_visible)
+	_apply_debug_screen_visibility()
 	_set_main_hud_hidden(_main_hud_hidden)
+
+
+func _apply_debug_screen_visibility() -> void:
+	if _debug_screen != null and _debug_screen.has_method("set_debug_visible"):
+		_debug_screen.call("set_debug_visible", _debug_hud_visible and not _terminal_open)
 
 
 func _build_debug_snapshot() -> Dictionary:
@@ -1263,6 +1267,9 @@ func _process(delta):
 			interaction_label.visible = true
 			interaction_label.text = prompt
 			return
+		if _terminal_open:
+			interaction_label.visible = false
+			return
 		var player_controller = get_node_or_null("/root/GameRoot/World/PlayerController")
 		if player_controller and player_controller.has_method("should_show_prompt") and bool(player_controller.should_show_prompt()):
 			if player_controller.has_method("get_interaction_prompt"):
@@ -1271,11 +1278,6 @@ func _process(delta):
 			var operator_ref = get_node_or_null("/root/GameRoot/World/Operator")
 			if operator_ref and operator_ref.has_method("get_interaction_prompt"):
 				prompt = str(operator_ref.get_interaction_prompt())
-		if _terminal_open:
-			if _terminal_ready:
-				prompt = "TERMINAL ACTIVE: TYPE COMMANDS | ESC CLOSE"
-			else:
-				prompt = "TERMINAL BOOTING..."
 		interaction_label.visible = not prompt.is_empty()
 		if interaction_label.visible:
 			interaction_label.text = prompt
@@ -1367,16 +1369,18 @@ func _get_debug_hud_nodes() -> Array:
 
 func _set_main_hud_hidden(hidden: bool) -> void:
 	_main_hud_hidden = hidden
+	var effective_hidden := hidden or _terminal_open
 	for node in _get_essential_hud_nodes():
 		if node:
-			node.visible = not hidden
+			node.visible = not effective_hidden
 	if minimap:
-		minimap.visible = not hidden and _minimap_visible
+		minimap.visible = not effective_hidden and _minimap_visible
 	for node in _get_debug_hud_nodes():
 		if node:
 			node.visible = false
 	if crosshair_label:
 		crosshair_label.visible = false
+	_set_external_gameplay_overlays_hidden(effective_hidden)
 
 
 func _handle_minimap_toggle_input(event: InputEvent) -> bool:
@@ -1394,7 +1398,17 @@ func _handle_minimap_toggle_input(event: InputEvent) -> bool:
 func _set_minimap_visible(visible: bool) -> void:
 	_minimap_visible = visible
 	if minimap:
-		minimap.visible = visible and not _main_hud_hidden
+		minimap.visible = visible and not _main_hud_hidden and not _terminal_open
+
+
+func _set_external_gameplay_overlays_hidden(hidden: bool) -> void:
+	for node in get_tree().get_nodes_in_group("gameplay_overlay"):
+		if node == self:
+			continue
+		if node is CanvasItem:
+			(node as CanvasItem).visible = not hidden
+		elif "visible" in node:
+			node.set("visible", not hidden)
 
 func enter_placement_mode_ui() -> void:
 	if _placement_mode_active:
@@ -1448,6 +1462,8 @@ func open_command_terminal(service_url: String = ""):
 	if not service_url.strip_edges().is_empty():
 		_terminal_service_url = service_url.strip_edges()
 	_terminal_open = true
+	_set_main_hud_hidden(_main_hud_hidden)
+	_apply_debug_screen_visibility()
 	_set_terminal_page(_terminal_current_page if _terminal_page_buttons.has(_terminal_current_page) else "OVERVIEW")
 	if terminal_panel:
 		terminal_panel.visible = true
@@ -1493,6 +1509,8 @@ func close_command_terminal():
 			exit_placement_mode_ui()
 		return
 	_terminal_open = false
+	_set_main_hud_hidden(_main_hud_hidden)
+	_apply_debug_screen_visibility()
 	_terminal_command_queue.clear()
 	_terminal_command_queue_tick = 0.0
 	_set_terminal_input_enabled(false)

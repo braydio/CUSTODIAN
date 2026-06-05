@@ -37,10 +37,27 @@ func _init() -> void:
 			var reason_label := modal.get_node_or_null("Panel/Margin/Content/ReasonLabel")
 			if reason_label == null or str(reason_label.text) != "Smoke test failure":
 				failures.append("GameOverModal reason label did not update")
+			var restart_button := modal.get_node_or_null("Panel/Margin/Content/ButtonContainer/RestartButton") as Button
+			if restart_button == null:
+				failures.append("GameOverModal restart button missing")
+			elif restart_button.text.strip_edges().is_empty() or not restart_button.text.to_lower().contains("restart"):
+				failures.append("GameOverModal restart button label should clearly say restart")
 
-		game_state.call("reset_run_state")
+		if modal != null:
+			var restart_button := modal.get_node_or_null("Panel/Margin/Content/ButtonContainer/RestartButton") as Button
+			if restart_button != null:
+				restart_button.pressed.emit()
+				await process_frame
+
 		_assert_equal(paused, false, "tree unpaused after reset", failures)
 		_assert_equal(game_state.get("game_over"), false, "game_over reset", failures)
+		if _find_modal(root) != null:
+			failures.append("GameOverModal should clear after restart")
+		game_state.set("lives_remaining", 1)
+		game_state.call("lose_life")
+		await process_frame
+		_assert_equal(game_state.get("game_over_reason"), "Custodian eliminated", "default Custodian defeat reason", failures)
+		game_state.call("reset_run_state")
 
 	var standalone := MODAL_SCENE.instantiate()
 	if standalone == null:
