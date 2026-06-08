@@ -8,23 +8,26 @@ const ItemCatalog := preload("res://game/ui/inventory/inventory_item_catalog.gd"
 const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 const Styles := preload("res://game/ui/theme/black_reliquary_styles.gd")
 
-const CATEGORY_ORDER := ["all", "key", "relic", "cognitive", "carried"]
+const CATEGORY_ORDER := ["all", "key", "relic", "cognitive", "carried", "resources"]
 const CATEGORY_LABELS := {
 	"all": "ALL CARRIED",
 	"key": "KEY OBJECTS",
 	"relic": "RELICS",
 	"cognitive": "COGNITIVE",
 	"carried": "MISCELLANY",
+	"resources": "MATERIAL RESOURCES",
 }
 
 @export var inventory: Inventory
 
 var _inventory_manager: Node = null
+var _resource_ledger: Node = null
 var _selected_category := "all"
 var _selected_item_id := ""
 var _entries: Array[Dictionary] = []
 var _category_buttons: Dictionary = {}
 var _item_buttons: Array[Button] = []
+var _resource_defs: Dictionary = {}
 
 var _frame: PanelContainer
 var _category_list: VBoxContainer
@@ -44,6 +47,8 @@ func _ready() -> void:
 	add_to_group("gameplay_overlay")
 	_build_interface()
 	_connect_live_inventory()
+	_connect_resource_ledger()
+	_load_resource_defs()
 	visible = false
 
 
@@ -62,6 +67,26 @@ func close() -> void:
 	visible = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	closed.emit()
+
+
+func _connect_resource_ledger() -> void:
+	_resource_ledger = get_node_or_null("/root/ResourceLedger")
+	if _resource_ledger != null and _resource_ledger.has_signal("changed"):
+		var callback := Callable(self, "_refresh_entries")
+		if not _resource_ledger.is_connected("changed", callback):
+			_resource_ledger.connect("changed", callback)
+
+
+func _load_resource_defs() -> void:
+	var path := "res://content/resources/resource_defs.json"
+	if not FileAccess.file_exists(path):
+		return
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if parsed is Dictionary:
+		_resource_defs = parsed as Dictionary
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -248,6 +273,12 @@ func _connect_live_inventory() -> void:
 
 func _refresh_entries() -> void:
 	_entries.clear()
+	_load_carried_items()
+	_load_resources()
+	_rebuild_item_grid()
+
+
+func _load_carried_items() -> void:
 	if inventory != null:
 		for index in range(inventory.max_slots):
 			var slot: Dictionary = inventory.get_item_at(index)
@@ -257,15 +288,39 @@ func _refresh_entries() -> void:
 			var definition := ItemCatalog.get_definition(StringName(item.item_id))
 			definition["display_name"] = item.display_name
 			definition["description"] = item.description
-			_entries.append({"item_id": item.item_id, "quantity": int(slot.get("quantity", 0)), "definition": definition})
-	elif _inventory_manager != null and _inventory_manager.has_method("get_all_items"):
+			_entries.append({"item_id": item.item_id, "quantity": int(slot.get("quantity", 0)), "category": "carried", "definition": definition})
+		return
+	if _inventory_manager != null and _inventory_manager.has_method("get_all_items"):
 		var items: Dictionary = _inventory_manager.call("get_all_items")
 		var ids: Array = items.keys()
 		ids.sort_custom(func(a, b): return String(a) < String(b))
 		for item_id_value in ids:
 			var item_id := String(item_id_value)
-			_entries.append({"item_id": item_id, "quantity": int(items[item_id_value]), "definition": ItemCatalog.get_definition(StringName(item_id))})
-	_rebuild_item_grid()
+			var definition := ItemCatalog.get_definition(StringName(item_id))
+			var category := str(definition.get("category", "carried"))
+			_entries.append({"item_id": item_id, "quantity": int(items[item_id_value]), "category": category, "definition": definition})
+
+
+func _load_resources() -> void:
+	if _resource_ledger == null or not _resource_ledger.has_method("get_snapshot"):
+		return
+	var snapshot: Dictionary = _resource_ledger.call("get_snapshot")
+	var resource_ids: Array = snapshot.keys()
+	resource_ids.sort()
+	for resource_id in resource_ids:
+		var quantity := int(snapshot[resource_id])
+		if quantity <= 0:
+			continue
+		var def: Dictionary = _resource_defs.get(resource_id, {})
+		var definition := {
+			"item_id": resource_id,
+			"display_name": str(def.get("label", resource_id.replace("_", " ").capitalize())),
+			"description": str(def.get("description", "A recovered material resource.")),
+			"category": "resources",
+			"rarity": "material",
+			"provenance": "FIELD RECOVERY / REFINED MATERIAL",
+		}
+		_entries.append({"item_id": resource_id, "quantity": quantity, "category": "resources", "definition": definition})
 
 
 func _rebuild_item_grid() -> void:

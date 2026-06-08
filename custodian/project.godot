@@ -33,6 +33,7 @@ _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 DebugCore="*uid://ctmkncwpk2qma"
 CommandRegistry="*uid://ce5ap1y1kwavq"
 GameConsoleManager="*uid://dsr8e7vkd3scc"
+MusicManager="*res://autoload/music_manager.gd"
 
 [dev_console]
 
