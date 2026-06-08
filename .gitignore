@@ -4,6 +4,7 @@
 # =======================
 # GODOT (all Godot projects)
 # =======================
+*.db
 .godot/
 .import/
 .android/
