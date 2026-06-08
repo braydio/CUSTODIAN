@@ -110,7 +110,14 @@ enum AssaultState {
 @export var marine_dash_hit_active_end_ratio: float = 0.82
 @export var marine_dash_hit_forward_reach_px: float = 24.0
 @export var marine_dash_hit_lateral_reach_px: float = 18.0
-@export var marine_dash_engage_range: float = 132.0
+@export var marine_dash_launch_band_min: float = 105.0
+@export var marine_dash_launch_band_max: float = 225.0
+@export var marine_dash_charge_extra_windup: float = 0.48
+@export var marine_dash_charge_distance_bonus: float = 0.65
+@export var marine_dash_charge_damage_bonus: float = 0.55
+@export var marine_dash_prediction_time: float = 0.24
+@export var marine_dash_reset_time: float = 0.55
+@export var marine_dash_reset_speed: float = 92.0
 @export var custom_ambient_animation_enabled: bool = false
 @export_file("*.png") var custom_ambient_east_sheet_path: String = ""
 @export var custom_ambient_east_frame_size: Vector2i = Vector2i(64, 83)
@@ -172,6 +179,15 @@ var _marine_dash_start_position: Vector2 = Vector2.ZERO
 var _marine_dash_hit_targets: Array[int] = []
 var _marine_dash_warning_line: Line2D = null
 var _marine_dash_attacker_hitstop_timer: float = 0.0
+var _marine_dash_charge_ratio: float = 0.0
+var _marine_dash_distance_share: float = 0.5
+var _marine_dash_current_distance: float = 150.0
+var _marine_dash_current_damage: float = 28.0
+var _marine_dash_target_lock_done: bool = false
+var _marine_dash_last_attack_hit: bool = false
+var _marine_dash_reset_timer: float = 0.0
+var _marine_dash_reset_direction: Vector2 = Vector2.UP
+var _marine_dash_reset_side: float = 1.0
 
 # Pathfinding
 var navigation_system: Node = null
@@ -368,36 +384,73 @@ func _should_use_marine_dash_attack() -> bool:
 func _attack_marine_dash_target(delta: float) -> void:
 	if not _marine_dash_phase.is_empty():
 		return
+	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
+		return
+	var target_node := target as Node2D
+	if target_node == null:
+		return
+	var distance := global_position.distance_to(target_node.global_position)
+	if distance < marine_dash_launch_band_min:
+		_start_marine_dash_reset(true)
+		return
 	damage_timer += delta
 	if damage_timer < marine_dash_cooldown:
 		return
-	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
-		return
 	damage_timer = 0.0
-	var target_node := target as Node2D
 	var direction := (target_node.global_position - global_position).normalized() if target_node != null else _last_move_direction
-	_start_marine_dash_windup(direction)
+	_start_marine_dash_windup(direction, distance)
 
 
-func _start_marine_dash_windup(direction: Vector2) -> void:
+func _start_marine_dash_windup(direction: Vector2, target_distance: float = -1.0) -> void:
+	_configure_marine_dash_charge(target_distance)
 	_marine_dash_phase = &"windup"
-	_marine_dash_timer = maxf(0.01, marine_dash_windup_time)
+	_marine_dash_timer = maxf(0.01, marine_dash_windup_time + marine_dash_charge_extra_windup * _marine_dash_charge_ratio)
 	_marine_dash_direction = direction.normalized() if direction.length_squared() > 0.0001 else _last_move_direction.normalized()
 	if _marine_dash_direction.length_squared() <= 0.0001:
 		_marine_dash_direction = Vector2.RIGHT
 	_marine_dash_start_position = global_position
 	_marine_dash_hit_targets.clear()
+	_marine_dash_target_lock_done = false
+	_marine_dash_last_attack_hit = false
 	_last_move_direction = _marine_dash_direction
 	velocity = Vector2.ZERO
 	clear_path()
 	_show_marine_dash_telegraph(true)
 	if _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_marine_dash_direction, false, true)
+		_set_marine_dash_animation_speed(maxf(0.45, marine_dash_windup_time / maxf(marine_dash_windup_time, _marine_dash_timer)))
+
+
+func _configure_marine_dash_charge(target_distance: float) -> void:
+	var resolved_distance := target_distance
+	if resolved_distance < 0.0 and target is Node2D:
+		resolved_distance = global_position.distance_to((target as Node2D).global_position)
+	if resolved_distance < 0.0:
+		resolved_distance = marine_dash_distance_px
+	var distance_need := clampf((resolved_distance - marine_dash_distance_px * 0.72) / maxf(1.0, marine_dash_launch_band_max - marine_dash_distance_px * 0.72), 0.0, 1.0)
+	var target_velocity := _get_marine_dash_target_velocity()
+	var approach_direction := ((target as Node2D).global_position - global_position).normalized() if target is Node2D else _last_move_direction
+	var retreat_factor := clampf(target_velocity.dot(approach_direction) / 180.0, 0.0, 1.0)
+	_marine_dash_charge_ratio = clampf(maxf(distance_need, 0.52 if not _marine_dash_last_attack_hit else 0.0), 0.0, 1.0)
+	_marine_dash_distance_share = clampf(0.28 + distance_need * 0.42 + retreat_factor * 0.22, 0.25, 0.82)
+	var damage_share := 1.0 - _marine_dash_distance_share
+	_marine_dash_current_distance = marine_dash_distance_px * (1.0 + marine_dash_charge_distance_bonus * _marine_dash_charge_ratio * _marine_dash_distance_share)
+	_marine_dash_current_damage = marine_dash_damage * (1.0 + marine_dash_charge_damage_bonus * _marine_dash_charge_ratio * damage_share)
+
+
+func _get_marine_dash_target_velocity() -> Vector2:
+	if target is CharacterBody2D:
+		return (target as CharacterBody2D).velocity
+	if target != null and "velocity" in target:
+		var target_velocity: Variant = target.get("velocity")
+		if target_velocity is Vector2:
+			return target_velocity as Vector2
+	return Vector2.ZERO
 
 
 func _update_marine_dash_attack(delta: float) -> bool:
 	if _marine_dash_phase.is_empty():
-		return false
+		return _update_marine_dash_reset(delta)
 	if _marine_dash_attacker_hitstop_timer > 0.0:
 		_marine_dash_attacker_hitstop_timer = maxf(0.0, _marine_dash_attacker_hitstop_timer - delta)
 		velocity = Vector2.ZERO
@@ -406,6 +459,7 @@ func _update_marine_dash_attack(delta: float) -> bool:
 	match _marine_dash_phase:
 		&"windup":
 			velocity = Vector2.ZERO
+			_update_marine_dash_target_lock()
 			_update_marine_dash_telegraph()
 			if _marine_dash_timer <= 0.0:
 				_start_marine_dash_travel()
@@ -419,6 +473,7 @@ func _update_marine_dash_attack(delta: float) -> bool:
 			velocity = Vector2.ZERO
 			if _marine_dash_timer <= 0.0:
 				_finish_marine_dash_attack()
+				_start_marine_dash_reset(false)
 		_:
 			_finish_marine_dash_attack()
 	return true
@@ -429,17 +484,18 @@ func _start_marine_dash_travel() -> void:
 	_marine_dash_timer = maxf(0.01, marine_dash_time)
 	_marine_dash_start_position = global_position
 	_show_marine_dash_telegraph(false)
+	_set_marine_dash_animation_speed(1.0)
 	if _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_marine_dash_direction, false, true)
 
 
 func _update_marine_dash_travel(delta: float) -> void:
-	var dash_speed := marine_dash_distance_px / maxf(0.01, marine_dash_time)
+	var dash_speed := _marine_dash_current_distance / maxf(0.01, marine_dash_time)
 	velocity = _marine_dash_direction * dash_speed
 	move_and_slide()
 	_try_apply_marine_dash_hit()
 	var traveled := global_position.distance_to(_marine_dash_start_position)
-	if get_slide_collision_count() > 0 or traveled >= marine_dash_distance_px or _marine_dash_timer <= 0.0:
+	if get_slide_collision_count() > 0 or traveled >= _marine_dash_current_distance or _marine_dash_timer <= 0.0:
 		_start_marine_dash_impact_lock()
 
 
@@ -460,7 +516,9 @@ func _finish_marine_dash_attack() -> void:
 	_marine_dash_timer = 0.0
 	_marine_dash_attacker_hitstop_timer = 0.0
 	_marine_dash_hit_targets.clear()
+	_marine_dash_target_lock_done = false
 	_show_marine_dash_telegraph(false)
+	_set_marine_dash_animation_speed(1.0)
 	velocity = Vector2.ZERO
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
@@ -499,10 +557,11 @@ func _is_marine_dash_hit_window_active() -> bool:
 
 
 func _apply_marine_dash_hit(hit_node: Node2D) -> void:
+	_marine_dash_last_attack_hit = true
 	if hit_node.has_method("receive_projectile_hit"):
-		hit_node.call("receive_projectile_hit", marine_dash_damage, team)
+		hit_node.call("receive_projectile_hit", _marine_dash_current_damage, team)
 	elif hit_node.has_method("take_damage"):
-		hit_node.call("take_damage", marine_dash_damage)
+		hit_node.call("take_damage", _marine_dash_current_damage)
 	var knockback_direction := _marine_dash_direction.normalized()
 	if hit_node is CharacterBody2D:
 		var body := hit_node as CharacterBody2D
@@ -555,6 +614,8 @@ func _show_marine_dash_telegraph(p_visible: bool) -> void:
 		_marine_dash_warning_line.z_index = 20
 		add_child(_marine_dash_warning_line)
 	_marine_dash_warning_line.visible = true
+	_marine_dash_warning_line.width = 2.0
+	_marine_dash_warning_line.default_color = Color(1.0, 0.55, 0.12, 0.42)
 	_update_marine_dash_telegraph()
 	if animated_sprite != null:
 		animated_sprite.modulate = Color(1.0, 0.64, 0.28, 1.0)
@@ -565,7 +626,70 @@ func _update_marine_dash_telegraph() -> void:
 		return
 	_marine_dash_warning_line.clear_points()
 	_marine_dash_warning_line.add_point(Vector2.ZERO)
-	_marine_dash_warning_line.add_point(_marine_dash_direction * marine_dash_distance_px)
+	_marine_dash_warning_line.add_point(_marine_dash_direction * _marine_dash_current_distance)
+
+
+func _update_marine_dash_target_lock() -> void:
+	if _marine_dash_target_lock_done or target == null or not is_instance_valid(target) or not (target is Node2D):
+		return
+	var total_windup := maxf(0.01, marine_dash_windup_time + marine_dash_charge_extra_windup * _marine_dash_charge_ratio)
+	var progress := clampf(1.0 - (_marine_dash_timer / total_windup), 0.0, 1.0)
+	if progress < 0.67:
+		return
+	var target_node := target as Node2D
+	var predicted_position := target_node.global_position + _get_marine_dash_target_velocity() * (marine_dash_prediction_time + 0.12 * _marine_dash_charge_ratio)
+	var predicted_direction := (predicted_position - global_position).normalized()
+	if predicted_direction.length_squared() > 0.0001:
+		_marine_dash_direction = predicted_direction
+		_last_move_direction = predicted_direction
+		_marine_dash_target_lock_done = true
+		if _marine_dash_warning_line != null:
+			_marine_dash_warning_line.width = 3.0
+			_marine_dash_warning_line.default_color = Color(1.0, 0.32, 0.08, 0.78)
+
+
+func _start_marine_dash_reset(back_away: bool) -> void:
+	if target == null or not is_instance_valid(target) or not (target is Node2D):
+		return
+	var to_target := ((target as Node2D).global_position - global_position).normalized()
+	if to_target.length_squared() <= 0.0001:
+		to_target = _last_move_direction.normalized()
+	_marine_dash_reset_side *= -1.0
+	var lateral := Vector2(-to_target.y, to_target.x) * _marine_dash_reset_side
+	_marine_dash_reset_direction = (lateral * 0.82 - to_target * (0.58 if back_away else 0.18)).normalized()
+	_marine_dash_reset_timer = maxf(_marine_dash_reset_timer, marine_dash_reset_time * (0.75 if back_away else 1.0))
+
+
+func _update_marine_dash_reset(delta: float) -> bool:
+	if _marine_dash_reset_timer <= 0.0 or _stagger_timer > 0.0 or _recoil_timer > 0.0:
+		return false
+	_marine_dash_reset_timer = maxf(0.0, _marine_dash_reset_timer - delta)
+	velocity = _marine_dash_reset_direction * marine_dash_reset_speed
+	move_and_slide()
+	_last_move_direction = _marine_dash_reset_direction
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, true)
+	return true
+
+
+func _set_marine_dash_animation_speed(speed_scale: float) -> void:
+	if animated_sprite != null:
+		animated_sprite.speed_scale = speed_scale
+	if custom_enemy_fx_sprite != null:
+		custom_enemy_fx_sprite.speed_scale = speed_scale
+
+
+func get_marine_dash_debug_state() -> Dictionary:
+	return {
+		"phase": String(_marine_dash_phase),
+		"charge_ratio": _marine_dash_charge_ratio,
+		"distance_share": _marine_dash_distance_share,
+		"damage_share": 1.0 - _marine_dash_distance_share,
+		"distance": _marine_dash_current_distance,
+		"damage": _marine_dash_current_damage,
+		"target_locked": _marine_dash_target_lock_done,
+		"reset_timer": _marine_dash_reset_timer,
+	}
 
 func _refresh_target():
 	if passive:
@@ -629,7 +753,7 @@ func _get_attack_range(node: Node2D) -> float:
 	if _variant_profile != null:
 		return float(_variant_profile.get("attack_range"))
 	if _should_use_marine_dash_attack() and node.is_in_group("player"):
-		return marine_dash_engage_range
+		return marine_dash_launch_band_max
 	if node.is_in_group("player"):
 		return 40.0
 	return structure_attack_range
@@ -637,7 +761,7 @@ func _get_attack_range(node: Node2D) -> float:
 
 func get_behavior_attack_range() -> float:
 	if _should_use_marine_dash_attack():
-		return marine_dash_engage_range
+		return marine_dash_launch_band_max
 	return 40.0
 
 
@@ -1743,7 +1867,7 @@ func _update_marine_enemy_animation(direction: Vector2, force_attack: bool = fal
 	_base_sprite_scale = animated_sprite.scale
 	animated_sprite.flip_h = false
 	if force_attack:
-		var dash_animation := GRUNT_ANIMATION_LIBRARY.get_marine_dash_attack_animation(facing)
+		var dash_animation := GRUNT_ANIMATION_LIBRARY.get_marine_dash_phase_animation(_marine_dash_phase, facing)
 		if _has_animation(String(dash_animation)):
 			animated_sprite.flip_h = facing.x < -0.05
 			_play_animation(String(dash_animation), true)

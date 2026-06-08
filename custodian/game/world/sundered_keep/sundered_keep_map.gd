@@ -17,6 +17,7 @@ const CUSTODIAN_HUD_SCENE := preload("res://game/ui/hud/custodian_hud.tscn")
 const UI_CATALOG := preload("res://game/ui/theme/black_reliquary_asset_catalog.gd")
 const ENEMY_MARINE_SCENE := preload("res://game/actors/enemies/enemy_marine.tscn")
 const SUNDERED_KEEP_MARINE_AMBUSH := preload("res://game/world/sundered_keep/sundered_keep_marine_ambush.gd")
+const SIDEARM_PISTOL_DEFINITION := preload("res://game/actors/operator/sidearm_pistol_definition.tres")
 
 const ELEVATION_STEP_PX := 24.0
 const CAUSEWAY_BRAZIER_FLICKER_PATH := "res://content/tiles/sundered_keep/entrance/props/causeway_lit_brazier_flicker_01.png"
@@ -43,6 +44,8 @@ const GREAT_HALL_MARINE_SPAWN_TILE := Vector2i(71, 27)
 const SUNDERED_GATE_KEY_ID := &"sundered_gate_key"
 const SUNDERED_GATE_KEY_NAME := "Sundered Gate Key"
 const SUNDERED_GATE_KEY_FLAVOR := "A corroded winch key stamped with the keep's split-ring seal."
+const SIDEARM_LOCKER_ITEM_NAME := "P-9 Field Sidearm"
+const SIDEARM_LOCKER_PICKUP_MESSAGE := "P-9 FIELD SIDEARM ACQUIRED"
 
 const WALL_ASSET_DIRS := [
 	"res://content/tiles/sundered_keep/entrance/causeway_walls",
@@ -64,6 +67,7 @@ const WALL_ASSET_DIRS := [
 @export var hatch_tile: Vector2i = Vector2i(25, 39)
 @export var return_mooring_origin_tile: Vector2i = Vector2i(39, 56)
 @export var key_pickup_tile: Vector2i = Vector2i(73, 56)
+@export var sidearm_locker_tile: Vector2i = Vector2i(73, 27)
 
 var main_map: Node = null
 var main_return_position: Vector2 = Vector2.ZERO
@@ -80,6 +84,7 @@ var _shore_walk_regions: Array[Dictionary] = []
 var _interior_occlusion_regions: Array[Dictionary] = []
 var _roof_occluders: Dictionary = {}
 var _active_interior_region_id := ""
+var _active_interior_region_ids: Array[String] = []
 var _brazier_flicker_frames: SpriteFrames = null
 var _hanging_brazier_frames: Dictionary = {}
 var _return_gate: Node2D = null
@@ -88,6 +93,7 @@ var _return_mooring_active_overlay: Sprite2D = null
 var _main_gate_interaction: Node2D = null
 var _great_hall_door_interaction: Node2D = null
 var _key_pickup_interaction: Node2D = null
+var _sidearm_locker_interaction: Node2D = null
 var _main_gate_closed_sprite: Sprite2D = null
 var _main_gate_open_sprite: AnimatedSprite2D = null
 var _main_gate_open_frames: SpriteFrames = null
@@ -98,6 +104,7 @@ var _great_hall_door_blockers: Array[Node] = []
 var _main_gate_open := false
 var _great_hall_door_open := false
 var _has_sundered_gate_key := false
+var _sidearm_locker_opened := false
 var _return_mooring_created := false
 var _siege_started := false
 var _siege_wave_index := 0
@@ -106,6 +113,9 @@ var _siege_state := "dormant"
 var _siege_game_over_triggered := false
 var _siege_objectives: Dictionary = {}
 var _siege_spawn_nodes: Array[Node2D] = []
+var _siege_live_enemies: Dictionary = {}
+var _siege_required_enemy_ids: Dictionary = {}
+var _siege_wave_spawning := false
 var _siege_config: Dictionary = {}
 var _siege_timer: Timer = null
 var _siege_debug_label: Label = null
@@ -201,12 +211,14 @@ func get_active_interior_region_id() -> String:
 
 
 func enter_from_main(actor: Node) -> void:
+	_set_hud_active(true)
 	if actor is Node2D:
 		(actor as Node2D).global_position = get_entry_position()
 	_refresh_camera(self, actor)
 
 
 func return_to_main(actor: Node) -> void:
+	_set_hud_active(false)
 	if actor is Node2D:
 		(actor as Node2D).global_position = main_return_position
 	_refresh_camera(main_map, actor)
@@ -231,10 +243,18 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"interior_occlusion_region_count": _interior_occlusion_regions.size(),
 		"roof_occluder_count": _roof_occluders.size(),
 		"active_interior_region_id": _active_interior_region_id,
+		"active_interior_region_ids": _active_interior_region_ids.duplicate(),
+		"roof_occluder_alphas": _get_roof_occluder_alphas(),
 		"main_gate_open": _main_gate_open,
 		"great_hall_door_open": _great_hall_door_open,
 		"has_sundered_gate_key": _player_has_sundered_gate_key(),
 		"key_pickup_exists": _key_pickup_interaction != null and is_instance_valid(_key_pickup_interaction),
+		"sidearm_locker_opened": _sidearm_locker_opened,
+		"sidearm_locker_exists": _sidearm_locker_interaction != null and is_instance_valid(_sidearm_locker_interaction),
+		"sidearm_locker_available": not _sidearm_locker_opened \
+			and _sidearm_locker_interaction != null \
+			and is_instance_valid(_sidearm_locker_interaction) \
+			and _sidearm_locker_interaction.is_in_group("interactable"),
 		"return_mooring_created": _return_mooring_created,
 		"siege_started": _siege_started,
 		"siege_state": _siege_state,
@@ -243,6 +263,8 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"siege_pressure_tick": _siege_pressure_tick,
 		"siege_objectives": _get_siege_objective_states(),
 		"siege_spawn_nodes": _siege_spawn_nodes.size(),
+		"siege_live_enemies": _siege_live_enemies.size(),
+		"siege_required_enemies": _siege_required_enemy_ids.size(),
 		"siege_turret_exists": _siege_turret != null and is_instance_valid(_siege_turret),
 		"great_hall_marine_ambush": _get_great_hall_marine_ambush_state(),
 	}
@@ -325,6 +347,7 @@ func _build_once() -> void:
 	_build_sundered_gate_key_pickup(key_pickup_tile)
 	_build_irregular_courtyard()
 	_build_great_hall()
+	_build_sidearm_locker()
 	_build_east_rampart()
 	_build_west_service_path()
 	_build_traversal_stubs()
@@ -415,6 +438,7 @@ func _build_from_level_data(data: Dictionary) -> void:
 
 	_build_stateful_gates_from_level_data()
 	_build_great_hall_marine_ambush()
+	_build_sidearm_locker()
 	_build_siege_runtime_slice()
 	_build_traversal_stubs()
 	_add_return_gate()
@@ -545,6 +569,8 @@ func _apply_interactable(op: Dictionary) -> void:
 			_main_gate_interaction = interactable
 		&"great_hall_door":
 			_great_hall_door_interaction = interactable
+		&"sidearm_locker":
+			_sidearm_locker_interaction = interactable
 
 
 func _apply_marker(marker: Dictionary) -> void:
@@ -559,6 +585,8 @@ func _apply_marker(marker: Dictionary) -> void:
 			main_gate_tile = tile
 		"great_hall_door":
 			great_hall_door_tile = tile
+		"sidearm_locker":
+			sidearm_locker_tile = tile
 
 
 func _build_stateful_gates_from_level_data() -> void:
@@ -724,24 +752,33 @@ func _find_operator_actor() -> Node2D:
 
 
 func _update_roof_occlusion_for_tile(actor_tile: Vector2i) -> void:
-	var active_region_id := ""
+	var active_region_ids: Array[String] = []
 	for region in _interior_occlusion_regions:
 		var interior_rect := region["interior_rect"] as Rect2i
 		if interior_rect.has_point(actor_tile):
-			active_region_id = String(region["id"])
-			break
-	if active_region_id == _active_interior_region_id:
+			active_region_ids.append(String(region["id"]))
+	if active_region_ids == _active_interior_region_ids:
 		return
-	_active_interior_region_id = active_region_id
+	_active_interior_region_ids = active_region_ids
+	_active_interior_region_id = active_region_ids[0] if not active_region_ids.is_empty() else ""
 	for region in _interior_occlusion_regions:
 		var region_id := String(region["id"])
 		var occluder := _roof_occluders.get(region_id, null) as Polygon2D
 		if occluder == null:
 			continue
-		var alpha := float(region["cutaway_alpha"]) if region_id == active_region_id else float(region["exterior_alpha"])
+		var alpha := float(region["cutaway_alpha"]) if active_region_ids.has(region_id) else float(region["exterior_alpha"])
 		var color := occluder.color
 		color.a = alpha
 		occluder.color = color
+
+
+func _get_roof_occluder_alphas() -> Dictionary:
+	var result := {}
+	for region_id in _roof_occluders:
+		var occluder := _roof_occluders[region_id] as Polygon2D
+		if occluder != null:
+			result[String(region_id)] = occluder.color.a
+	return result
 
 
 func _tile_in_authored_regions(tile: Vector2i, regions: Array[Dictionary]) -> bool:
@@ -1030,6 +1067,19 @@ func _build_sundered_gate_key_pickup(tile: Vector2i) -> void:
 		&"sundered_gate_key",
 		"TAKE %s" % SUNDERED_GATE_KEY_NAME.to_upper(),
 		tile,
+		76.0
+	)
+
+
+func _build_sidearm_locker() -> void:
+	if _sidearm_locker_interaction != null and is_instance_valid(_sidearm_locker_interaction):
+		return
+	_add_prop("PropsStatic", "prop_crate_stack_wet_01", sidearm_locker_tile + Vector2i(0, -1))
+	_sidearm_locker_interaction = _add_interactable(
+		"SidearmLockerInteraction",
+		&"sidearm_locker",
+		"OPEN FIELD-RETENTION LOCKER",
+		sidearm_locker_tile,
 		76.0
 	)
 
@@ -1588,7 +1638,17 @@ func _ensure_hud() -> void:
 		return
 	_hud.name = "SunderedKeepCustodianHUD"
 	add_child(_hud)
+	_set_hud_active(false)
 	_refresh_hud_state()
+
+
+func _set_hud_active(active: bool) -> void:
+	if _hud == null or not is_instance_valid(_hud):
+		return
+	if _hud.has_method("set_context_active"):
+		_hud.call("set_context_active", active)
+	else:
+		_hud.visible = active
 
 
 func _refresh_hud_state() -> void:
@@ -1605,6 +1665,8 @@ func _refresh_hud_state() -> void:
 
 func _update_hud_prompt() -> void:
 	if _hud == null or not is_instance_valid(_hud):
+		return
+	if _hud.has_method("is_context_active") and not bool(_hud.call("is_context_active")):
 		return
 	var operator_ref := get_node_or_null("/root/GameRoot/World/Operator")
 	if operator_ref == null or not ("interaction_target" in operator_ref):
@@ -1651,6 +1713,13 @@ func _update_hud_prompt() -> void:
 			input_hint,
 			UI_CATALOG.ICON_OBJECTIVE
 		)
+	elif target == _sidearm_locker_interaction and not _sidearm_locker_opened:
+		_hud.show_interaction(
+			"CUSTODIAN LOCKER",
+			"Recover P-9 Field Sidearm",
+			input_hint,
+			UI_CATALOG.ICON_OBJECTIVE
+		)
 
 
 func _get_interact_prompt_key() -> String:
@@ -1672,6 +1741,8 @@ func _handle_sundered_interaction(kind: StringName, actor: Node) -> void:
 			_try_open_main_gate()
 		&"great_hall_door":
 			_try_open_great_hall_door()
+		&"sidearm_locker":
+			_grant_sidearm_locker(actor)
 		&"repair_gatehouse":
 			_repair_siege_objective("gatehouse_core")
 		&"repair_mooring":
@@ -1697,6 +1768,34 @@ func _grant_sundered_gate_key() -> void:
 		_key_pickup_interaction.visible = false
 	_refresh_hud_state()
 	print("[SunderedKeep] Acquired %s: %s" % [SUNDERED_GATE_KEY_NAME, SUNDERED_GATE_KEY_FLAVOR])
+
+
+func _grant_sidearm_locker(actor: Node) -> void:
+	if _sidearm_locker_opened:
+		return
+	var grant_target := actor
+	if grant_target == null or not grant_target.has_method("grant_sidearm"):
+		grant_target = _find_operator_actor()
+	if grant_target == null or not grant_target.has_method("grant_sidearm"):
+		push_warning("[SunderedKeep] Sidearm locker opened without a valid Operator grant target")
+		return
+	var grant_result: Dictionary = grant_target.call("grant_sidearm", SIDEARM_PISTOL_DEFINITION)
+	if not bool(grant_result.get("granted", false)):
+		push_warning("[SunderedKeep] Sidearm locker could not grant the P-9 Field Sidearm")
+		return
+	_sidearm_locker_opened = true
+	if _sidearm_locker_interaction != null and is_instance_valid(_sidearm_locker_interaction):
+		_sidearm_locker_interaction.remove_from_group("interactable")
+		_sidearm_locker_interaction.visible = false
+	if _hud != null and is_instance_valid(_hud):
+		_hud.show_interaction(
+			SIDEARM_LOCKER_PICKUP_MESSAGE,
+			"Custodian service imprint accepted",
+			_get_interact_prompt_key(),
+			UI_CATALOG.ICON_OBJECTIVE
+		)
+	_refresh_hud_state()
+	print("[SunderedKeep] %s: %s recovered from sealed field-retention locker." % [SIDEARM_LOCKER_PICKUP_MESSAGE, SIDEARM_LOCKER_ITEM_NAME])
 
 
 func _try_open_main_gate() -> void:
@@ -1829,6 +1928,8 @@ func _start_siege() -> void:
 	_siege_game_over_triggered = false
 	_siege_wave_index = 0
 	_siege_pressure_tick = 0
+	_siege_live_enemies.clear()
+	_siege_required_enemy_ids.clear()
 	_spawn_siege_wave()
 	if _siege_timer == null:
 		_siege_timer = Timer.new()
@@ -1846,7 +1947,7 @@ func _start_siege() -> void:
 
 
 func _on_siege_timer_timeout() -> void:
-	if not _siege_started:
+	if not _siege_started or _siege_state != "active":
 		return
 	_siege_pressure_tick += 1
 	_apply_siege_pressure()
@@ -1857,6 +1958,7 @@ func _on_siege_timer_timeout() -> void:
 
 func _spawn_siege_wave() -> void:
 	_siege_wave_index += 1
+	_siege_wave_spawning = true
 	var waves: Array = _siege_config.get("waves", [])
 	var wave_data: Dictionary = waves[min(_siege_wave_index - 1, waves.size() - 1)] if not waves.is_empty() else {"composition": ["drone", "drone", "grunt"]}
 	var composition: Array = wave_data.get("composition", ["drone"])
@@ -1865,15 +1967,68 @@ func _spawn_siege_wave() -> void:
 		var spawn_node := _siege_spawn_nodes[index % max(1, _siege_spawn_nodes.size())]
 		var spawn_position := spawn_node.global_position + Vector2(float(index % 2) * 18.0, float(index) * 6.0)
 		var enemy_type := str(composition[index])
+		var enemy_container := get_node_or_null("/root/GameRoot/World/Enemies")
+		var existing_enemy_ids := _child_instance_ids(enemy_container)
+		var spawned := false
 		if enemy_director != null and enemy_director.has_method("spawn_debug_enemy_type"):
-			enemy_director.call("spawn_debug_enemy_type", enemy_type, spawn_position, &"raider_grunt")
+			spawned = bool(enemy_director.call("spawn_debug_enemy_type", enemy_type, spawn_position, &"raider_grunt"))
 		else:
 			var wave_manager := get_node_or_null("/root/GameRoot/WaveManager")
 			if wave_manager != null and wave_manager.has_method("debug_spawn_enemy_type"):
-				wave_manager.call("debug_spawn_enemy_type", enemy_type, spawn_position, 1.0 + float(_siege_wave_index) * 0.2, &"raider_grunt")
+				spawned = bool(wave_manager.call("debug_spawn_enemy_type", enemy_type, spawn_position, 1.0 + float(_siege_wave_index) * 0.2, &"raider_grunt"))
+		if spawned:
+			_track_new_siege_enemy(enemy_container, existing_enemy_ids)
+	_siege_wave_spawning = false
+
+
+func _child_instance_ids(parent: Node) -> Dictionary:
+	var result := {}
+	if parent == null:
+		return result
+	for child in parent.get_children():
+		result[child.get_instance_id()] = true
+	return result
+
+
+func _track_new_siege_enemy(enemy_container: Node, existing_enemy_ids: Dictionary) -> void:
+	if enemy_container == null:
+		return
+	for child in enemy_container.get_children():
+		var instance_id := child.get_instance_id()
+		if existing_enemy_ids.has(instance_id):
+			continue
+		_siege_live_enemies[instance_id] = child
+		if _siege_wave_index == 1:
+			_siege_required_enemy_ids[instance_id] = true
+		child.tree_exited.connect(_on_siege_enemy_tree_exited.bind(instance_id), CONNECT_ONE_SHOT)
+		return
+
+
+func _on_siege_enemy_tree_exited(instance_id: int) -> void:
+	_siege_live_enemies.erase(instance_id)
+	_siege_required_enemy_ids.erase(instance_id)
+	if not _siege_wave_spawning:
+		call_deferred("_check_siege_secured")
+
+
+func _check_siege_secured() -> void:
+	if _siege_started and _siege_state == "active" and not _siege_wave_spawning and _siege_required_enemy_ids.is_empty():
+		_complete_siege()
+
+
+func _complete_siege() -> void:
+	_siege_started = false
+	_siege_state = "secured"
+	if _siege_timer != null:
+		_siege_timer.stop()
+	_update_siege_debug_label()
+	_refresh_hud_state()
+	print("[SunderedKeep] Siege secured: enemy pressure stopped.")
 
 
 func _apply_siege_pressure() -> void:
+	if not _siege_started or _siege_state != "active":
+		return
 	var objective := _most_intact_siege_objective()
 	if objective == null:
 		_collapse_siege("Sundered Keep objectives destroyed")
@@ -1886,6 +2041,7 @@ func _apply_siege_pressure() -> void:
 
 
 func _collapse_siege(reason: String) -> void:
+	_siege_started = false
 	_siege_state = "collapsed"
 	_siege_game_over_triggered = true
 	if _siege_timer != null:

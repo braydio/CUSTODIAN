@@ -166,7 +166,7 @@ var last_fire_cooldown := 0.0
 @export var melee_weapon_definition = null
 @export var unarmed_definition: OperatorWeaponDefinition = preload("res://game/actors/operator/unarmed_definition.tres")
 @export var sidearm_weapon_definition: OperatorWeaponDefinition = preload("res://game/actors/operator/sidearm_pistol_definition.tres")
-@export var sidearm_slot_equipped: bool = true
+@export var sidearm_slot_equipped: bool = false
 @export var idle_long_loop_threshold: int = 20
 @export var primary_weapon_frames_resource: SpriteFrames
 @export var placeholder_sprite_position: Vector2 = Vector2(0, -18)
@@ -263,6 +263,8 @@ var _animated_sprite_base_position := Vector2.ZERO
 var _dodge_fx_back_base_position := Vector2.ZERO
 var _modular_lower_body_base_position := Vector2.ZERO
 var _modular_upper_body_base_position := Vector2.ZERO
+var _modular_sidearm_base_position := Vector2.ZERO
+var _modular_upper_fx_base_position := Vector2.ZERO
 var _melee_weapon_overlay_base_position := Vector2.ZERO
 var _melee_fx_overlay_base_position := Vector2.ZERO
 var _last_damage_reaction_direction := Vector2.DOWN
@@ -270,6 +272,12 @@ var _production_body_frames: SpriteFrames = null
 var _knight_test_frames: SpriteFrames = null
 var _knight_test_skin_active: bool = false
 var _modular_upper_action_animation: StringName = &""
+var _modular_sidearm_action_animation: StringName = &""
+var _modular_sidearm_fx_animation: StringName = &""
+var _sidearm_draw_active: bool = false
+var _sidearm_action_phase: StringName = &"holstered"
+var _sidearm_action_phase_started: bool = false
+var _sidearm_action_direction: Vector2 = Vector2.DOWN
 var fake_elevation: float = 0.0
 var movement_surface_multiplier: float = 1.0
 var _base_world_z_index: int = 2
@@ -340,6 +348,15 @@ const DODGE_BACKSTEP_RECOVERY_RUNTIME_SHEET_PATH := "res://content/sprites/opera
 const DODGE_STEP_SHEET_PATH := "res://content/sprites/operator/new_operator/modular/dodge/operator__body__full__dodge_step_01__n__5f__96.png"
 const DODGE_STEP_FX_ANIMATION := &"operator_dodge_step_fx"
 const DODGE_STEP_FX_SHEET_PATH := "res://content/sprites/operator/new_operator/modular/dodge/operator__fx__full__dodge_step_01__n__5f__96.png"
+const DODGE_FULL_NORTH_ANIMATION := &"operator_dodge_full_north"
+const DODGE_FULL_SOUTH_ANIMATION := &"operator_dodge_full_south"
+const DODGE_FULL_NORTH_SHEET_PATH := "res://content/sprites/operator/runtime/actions/dodge/body/operator__body__full__dodge_01__n__9f__96.png"
+const DODGE_FULL_SOUTH_SHEET_PATH := "res://content/sprites/operator/runtime/actions/dodge/body/operator__body__full__dodge_01__s__9f__96.png"
+const DODGE_FULL_NORTH_FX_ANIMATION := &"operator_dodge_full_fx_north"
+const DODGE_FULL_SOUTH_FX_ANIMATION := &"operator_dodge_full_fx_south"
+const DODGE_FULL_NORTH_FX_SHEET_PATH := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__n__9f__96.png"
+const DODGE_FULL_SOUTH_FX_SHEET_PATH := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__s__9f__96.png"
+const DODGE_FULL_SEQUENCE_FPS := 25.0
 const DODGE_FX_BACK_ALPHA := 0.72
 const DODGE_FX_BACK_OFFSET_BY_DIRECTION := {
 	"up": Vector2(0, 14),
@@ -380,6 +397,8 @@ const KNIGHT_TEST_ANIMATION_SPECS := {
 @onready var dodge_fx_back_sprite: AnimatedSprite2D = $DodgeFXBackSprite if has_node("DodgeFXBackSprite") else null
 @onready var modular_lower_body_sprite = $ModularLowerBodySprite if has_node("ModularLowerBodySprite") else null
 @onready var modular_upper_body_sprite = $ModularUpperBodySprite if has_node("ModularUpperBodySprite") else null
+@onready var modular_sidearm_sprite = $ModularSidearmSprite if has_node("ModularSidearmSprite") else null
+@onready var modular_upper_fx_sprite = $ModularUpperFxSprite if has_node("ModularUpperFxSprite") else null
 @onready var right_hand_socket = $RightHandSocket if has_node("RightHandSocket") else null
 @onready var left_hand_socket = $LeftHandSocket if has_node("LeftHandSocket") else null
 @onready var primary_weapon_socket = $PrimaryWeaponSocket if has_node("PrimaryWeaponSocket") else null
@@ -871,6 +890,10 @@ func _update_animation():
 	var facing_left := _is_facing_left(animation_dir)
 	var facing_up := _is_facing_up(animation_dir)
 
+	if _is_using_sidearm_ranged() and not is_reloading and _sync_modular_sidearm_presentation(is_firing):
+		_update_idle_loop_tracking(false, "")
+		return
+
 	# Don't override attack animation while playing
 	if is_attacking or is_block_anim or _melee_recovery_active or _is_equip_weapon_state_active():
 		var active_animation_name := String(animated_sprite.animation)
@@ -962,6 +985,9 @@ func _update_animation():
 				animated_sprite.play("walk_right")
 			_update_idle_loop_tracking(false, "")
 	else:
+		if _sync_modular_ranged_2h_stance_presentation(animation_dir):
+			_update_idle_loop_tracking(true, "ranged_2h_stance_modular")
+			return
 		if _is_current_profile_unarmed() and _sync_modular_locomotion_layers("unarmed_idle", visual_idle_direction, _get_modular_upper_locomotion_direction(animation_dir)):
 			_update_idle_loop_tracking(true, "unarmed_idle")
 			return
@@ -1056,13 +1082,111 @@ func _get_modular_lower_body_motion_base() -> String:
 
 
 func _get_modular_upper_locomotion_direction(fallback_direction: Vector2) -> Vector2:
-	if aim_direction.length_squared() > 0.0001:
+	if _is_ranged_ready_active() and aim_direction.length_squared() > 0.0001:
 		return aim_direction.normalized()
-	if visual_idle_direction.length_squared() > 0.0001:
-		return visual_idle_direction.normalized()
 	if fallback_direction.length_squared() > 0.0001:
 		return fallback_direction.normalized()
+	if visual_idle_direction.length_squared() > 0.0001:
+		return visual_idle_direction.normalized()
 	return Vector2.DOWN
+
+
+func _sync_modular_sidearm_presentation(_is_firing: bool) -> bool:
+	if not modular_locomotion_layers_enabled:
+		return false
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null or modular_sidearm_sprite == null or modular_upper_fx_sprite == null:
+		return false
+	if _sidearm_action_phase in [&"drawing", &"firing"] and _is_sidearm_action_finished():
+		_sidearm_action_phase = &"held"
+		_sidearm_action_phase_started = false
+		_sidearm_draw_active = false
+	var firing := _sidearm_action_phase == &"firing"
+	var holding := _sidearm_action_phase == &"held"
+	var action_direction := aim_direction if holding else _sidearm_action_direction
+	var action := "fire" if firing else "draw"
+	var start_action := not holding and not _sidearm_action_phase_started
+	if not _sync_sidearm_action_sprite(modular_lower_body_sprite, "sidearm_%s_lower" % action, action_direction, holding, start_action):
+		return false
+	if not _sync_sidearm_action_sprite(modular_upper_body_sprite, "sidearm_%s_upper" % action, action_direction, holding, start_action):
+		return false
+	if not _sync_sidearm_action_sprite(modular_sidearm_sprite, "sidearm_%s" % action, action_direction, holding, start_action):
+		return false
+	_sync_sidearm_action_sprite(modular_upper_fx_sprite, "sidearm_%s_fx" % action, action_direction, holding, start_action)
+	if start_action:
+		_sidearm_action_phase_started = true
+	animated_sprite.visible = false
+	return true
+
+
+func _sync_modular_ranged_2h_stance_presentation(direction: Vector2) -> bool:
+	if not modular_locomotion_layers_enabled or not _is_ranged_ready_active() or not _is_using_ranged_2h_primary():
+		return false
+	if velocity.length() > 0.01 or _reload_active or _is_ranged_fire_animation_active():
+		return false
+	if not _sync_modular_lower_body_layer("ranged_2h_stance_modular", direction, 1.0):
+		return false
+	if not _sync_modular_upper_body_layer("ranged_2h_stance_modular", direction, 1.0, false):
+		return false
+	if not _sync_modular_ranged_weapon_layer(direction):
+		return false
+	animated_sprite.visible = false
+	if primary_weapon_sprite:
+		primary_weapon_sprite.visible = false
+	if ranged_fx_overlay_sprite:
+		ranged_fx_overlay_sprite.visible = false
+	return true
+
+
+func _sync_modular_ranged_weapon_layer(direction: Vector2) -> bool:
+	if modular_sidearm_sprite == null or modular_sidearm_sprite.sprite_frames == null:
+		return false
+	var animation := AnimationResolver.resolve("ranged_2h_stance_modular", direction, modular_sidearm_sprite)
+	if not _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, animation):
+		return false
+	modular_sidearm_sprite.visible = true
+	modular_sidearm_sprite.flip_h = false
+	modular_sidearm_sprite.speed_scale = 1.0
+	if modular_sidearm_sprite.animation != animation or not modular_sidearm_sprite.is_playing():
+		modular_sidearm_sprite.play(animation)
+	return true
+
+
+func _sync_sidearm_action_sprite(sprite: AnimatedSprite2D, base: String, direction: Vector2, hold_last_frame: bool, start_action: bool = false) -> bool:
+	if sprite == null or sprite.sprite_frames == null:
+		return false
+	var animation := _resolve_sidearm_directional_animation(base, direction, sprite)
+	if not _has_playable_sprite_animation(sprite.sprite_frames, animation):
+		sprite.visible = false
+		return false
+	sprite.visible = true
+	sprite.flip_h = false
+	sprite.speed_scale = 1.0
+	if hold_last_frame:
+		sprite.stop()
+		sprite.animation = animation
+		sprite.frame = sprite.sprite_frames.get_frame_count(animation) - 1
+	elif start_action or sprite.animation != animation:
+		sprite.play(animation)
+	return true
+
+
+func _is_sidearm_action_finished() -> bool:
+	var expected_prefix := "sidearm_fire" if _sidearm_action_phase == &"firing" else "sidearm_draw"
+	for sprite in [modular_lower_body_sprite, modular_upper_body_sprite, modular_sidearm_sprite]:
+		if sprite == null or not String(sprite.animation).begins_with(expected_prefix):
+			return false
+		if sprite.is_playing():
+			return false
+	return true
+
+
+func _resolve_sidearm_directional_animation(base: String, direction: Vector2, sprite: AnimatedSprite2D) -> StringName:
+	var vertical := "up" if direction.y < 0.0 else "down"
+	var horizontal := "left" if direction.x < 0.0 else "right"
+	var candidate := StringName("%s_%s_%s" % [base, vertical, horizontal])
+	if sprite != null and sprite.sprite_frames != null and _has_playable_sprite_animation(sprite.sprite_frames, candidate):
+		return candidate
+	return StringName(base)
 
 
 func _sync_modular_lower_body_layer(base_animation: String, direction: Vector2, speed_scale: float) -> bool:
@@ -1101,12 +1225,18 @@ func _sync_modular_upper_body_layer(base_animation: String, direction: Vector2, 
 
 func _hide_modular_locomotion_layers() -> void:
 	_modular_upper_action_animation = &""
+	_modular_sidearm_action_animation = &""
+	_modular_sidearm_fx_animation = &""
 	if animated_sprite:
 		animated_sprite.visible = true
 	if modular_lower_body_sprite:
 		modular_lower_body_sprite.visible = false
 	if modular_upper_body_sprite:
 		modular_upper_body_sprite.visible = false
+	if modular_sidearm_sprite:
+		modular_sidearm_sprite.visible = false
+	if modular_upper_fx_sprite:
+		modular_upper_fx_sprite.visible = false
 
 
 func _clear_modular_upper_action_layer() -> void:
@@ -1240,6 +1370,12 @@ func _request_ranged_shot() -> void:
 	if not _has_loaded_ammo():
 		_try_start_reload()
 		return
+	if _is_using_sidearm_ranged():
+		if _sidearm_action_phase != &"held":
+			return
+		_sidearm_action_phase = &"firing"
+		_sidearm_action_phase_started = false
+		_sidearm_action_direction = _get_attack_aim_direction()
 	var profile := _get_current_ranged_profile()
 	last_fire_cooldown = float(profile["cooldown"])
 	fire_cooldown_remaining = last_fire_cooldown
@@ -1429,8 +1565,16 @@ func _enter_ranged_ready() -> void:
 	var ranged_weapon := _get_ranged_ready_candidate_weapon_definition()
 	if ranged_weapon == null:
 		return
+	var entering_sidearm := not _ranged_ready_active and ranged_weapon == _get_sidearm_weapon_definition()
 	_ranged_ready_active = true
 	_ranged_ready_weapon_definition = ranged_weapon
+	if entering_sidearm:
+		_sidearm_draw_active = true
+		_sidearm_action_phase = &"drawing"
+		_sidearm_action_phase_started = false
+		_sidearm_action_direction = aim_direction
+		_modular_upper_action_animation = &""
+		_modular_sidearm_action_animation = &""
 	_clamp_loaded_ammo_to_current_weapon()
 	if aim_direction.length_squared() > 0.0001:
 		visual_idle_direction = aim_direction
@@ -1444,6 +1588,15 @@ func _exit_ranged_ready() -> void:
 		return
 	_ranged_ready_active = false
 	_ranged_ready_weapon_definition = null
+	_sidearm_draw_active = false
+	_sidearm_action_phase = &"holstered"
+	_sidearm_action_phase_started = false
+	if modular_sidearm_sprite:
+		modular_sidearm_sprite.visible = false
+		modular_sidearm_sprite.stop()
+	if modular_upper_fx_sprite:
+		modular_upper_fx_sprite.visible = false
+		modular_upper_fx_sprite.stop()
 	_apply_active_weapon_frames()
 	_apply_dynamic_weapon_socket_layout()
 	_update_primary_weapon_visual(false)
@@ -2375,7 +2528,6 @@ func _update_dodge(delta: float) -> void:
 	velocity = _dodge_direction * eased_speed
 	if _dodge_timer <= 0.0:
 		_dodge_active = false
-		_hide_dodge_fx()
 		_start_dodge_recovery()
 
 
@@ -2395,6 +2547,7 @@ func _update_dodge_recovery(delta: float) -> void:
 	if _dodge_recovery_timer <= 0.0:
 		_dodge_recovery_active = false
 		_dodge_backstep_active = false
+		_hide_dodge_fx()
 
 
 func _cancel_dodge() -> void:
@@ -2429,6 +2582,8 @@ func _play_dodge_recovery_animation(force_restart: bool = false) -> void:
 	_update_primary_weapon_visual(false)
 	animated_sprite.flip_h = _is_facing_left(_dodge_direction)
 	animated_sprite.speed_scale = 1.0
+	if _is_full_dodge_animation(animated_sprite.animation):
+		return
 	var animation_name := _get_dodge_recovery_animation()
 	if not animated_sprite.sprite_frames.has_animation(animation_name):
 		return
@@ -2439,9 +2594,24 @@ func _play_dodge_recovery_animation(force_restart: bool = false) -> void:
 
 
 func _get_dodge_step_animation() -> StringName:
+	var full_animation := _get_full_dodge_animation()
+	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(full_animation):
+		return full_animation
 	if _dodge_backstep_active and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(DODGE_BACKSTEP_ANIMATION):
 		return DODGE_BACKSTEP_ANIMATION
 	return DODGE_STEP_ANIMATION
+
+
+func _get_full_dodge_animation() -> StringName:
+	return DODGE_FULL_NORTH_ANIMATION if _dodge_direction.y < -0.05 else DODGE_FULL_SOUTH_ANIMATION
+
+
+func _get_full_dodge_fx_animation() -> StringName:
+	return DODGE_FULL_NORTH_FX_ANIMATION if _dodge_direction.y < -0.05 else DODGE_FULL_SOUTH_FX_ANIMATION
+
+
+func _is_full_dodge_animation(animation_name: StringName) -> bool:
+	return animation_name == DODGE_FULL_NORTH_ANIMATION or animation_name == DODGE_FULL_SOUTH_ANIMATION
 
 
 func _get_dodge_recovery_animation() -> StringName:
@@ -2453,13 +2623,19 @@ func _get_dodge_recovery_animation() -> StringName:
 func _has_dodge_recovery_animation() -> bool:
 	return animated_sprite != null \
 		and animated_sprite.sprite_frames != null \
-		and animated_sprite.sprite_frames.has_animation(_get_dodge_recovery_animation())
+		and (
+			animated_sprite.sprite_frames.has_animation(_get_full_dodge_animation())
+			or animated_sprite.sprite_frames.has_animation(_get_dodge_recovery_animation())
+		)
 
 
 func _play_dodge_fx(force_restart: bool = false) -> void:
 	if dodge_fx_back_sprite == null or dodge_fx_back_sprite.sprite_frames == null:
 		return
-	if not dodge_fx_back_sprite.sprite_frames.has_animation(DODGE_STEP_FX_ANIMATION):
+	var animation_name := _get_full_dodge_fx_animation()
+	if not dodge_fx_back_sprite.sprite_frames.has_animation(animation_name):
+		animation_name = DODGE_STEP_FX_ANIMATION
+	if not dodge_fx_back_sprite.sprite_frames.has_animation(animation_name):
 		return
 	dodge_fx_back_sprite.visible = true
 	dodge_fx_back_sprite.z_index = -1
@@ -2467,10 +2643,10 @@ func _play_dodge_fx(force_restart: bool = false) -> void:
 	dodge_fx_back_sprite.position = _dodge_fx_back_base_position + _body_recoil_offset + _fake_elevation_visual_offset + _get_dodge_fx_back_offset(_dodge_direction)
 	dodge_fx_back_sprite.flip_h = _is_facing_left(_dodge_direction)
 	dodge_fx_back_sprite.speed_scale = 1.0
-	if force_restart or dodge_fx_back_sprite.animation != DODGE_STEP_FX_ANIMATION or not dodge_fx_back_sprite.is_playing():
+	if force_restart or dodge_fx_back_sprite.animation != animation_name or not dodge_fx_back_sprite.is_playing():
 		if force_restart:
 			dodge_fx_back_sprite.set_frame_and_progress(0, 0.0)
-		dodge_fx_back_sprite.play(DODGE_STEP_FX_ANIMATION)
+		dodge_fx_back_sprite.play(animation_name)
 
 
 func _hide_dodge_fx() -> void:
@@ -2724,17 +2900,50 @@ func _get_sidearm_weapon_definition() -> OperatorWeaponDefinition:
 
 
 func _get_ranged_ready_candidate_weapon_definition() -> OperatorWeaponDefinition:
-	var primary_ranged := _get_primary_ranged_weapon_definition()
-	if primary_ranged != null:
-		return primary_ranged
+	var equipped_weapon = _get_equipped_primary_weapon_definition()
+	if equipped_weapon is OperatorWeaponDefinition:
+		var equipped_definition := equipped_weapon as OperatorWeaponDefinition
+		if equipped_definition.weapon_kind == "ranged" or String(equipped_definition.weapon_type).begins_with("ranged"):
+			return equipped_definition
 	var sidearm := _get_sidearm_weapon_definition()
 	if sidearm != null:
 		return sidearm
-	return primary_ranged
+	return null
 
 
 func _is_using_sidearm_ranged() -> bool:
 	return _is_ranged_ready_active() and _ranged_ready_weapon_definition == _get_sidearm_weapon_definition()
+
+
+func grant_sidearm(definition: OperatorWeaponDefinition = null) -> Dictionary:
+	if definition != null:
+		sidearm_weapon_definition = definition
+	if sidearm_weapon_definition == null:
+		return {
+			"granted": false,
+			"weapon_id": &"",
+			"loaded": _ammo_standard_loaded,
+			"reserve": ammo_standard,
+		}
+	_configure_weapon_definition_defaults(sidearm_weapon_definition, "P-9 Sidearm", "ranged", "ranged_unfocused_fire", "ranged_ready")
+	sidearm_slot_equipped = true
+	var sidearm_capacity: int = max(1, sidearm_weapon_definition.get_stat_int("magazine_size", ammo_standard_magazine_size))
+	if _ammo_standard_loaded <= 0:
+		_ammo_standard_loaded = sidearm_capacity
+	elif _ammo_standard_loaded < sidearm_capacity and ammo_standard <= 0:
+		_ammo_standard_loaded = sidearm_capacity
+	var sidearm_reserve: int = _get_sidearm_initial_reserve(sidearm_weapon_definition)
+	if ammo_standard <= 0 and sidearm_reserve > 0:
+		ammo_standard = min(ammo_standard_max, sidearm_reserve)
+	_refresh_primary_weapon_state()
+	_update_primary_weapon_visual(false)
+	update_visuals()
+	return {
+		"granted": true,
+		"weapon_id": sidearm_weapon_definition.weapon_id,
+		"loaded": _ammo_standard_loaded,
+		"reserve": ammo_standard,
+	}
 
 
 func _is_using_melee_weapon_sprite() -> bool:
@@ -3114,6 +3323,20 @@ func _ensure_runtime_body_animations() -> void:
 		false,
 		18.0
 	) or changed
+	changed = _ensure_optional_sheet_animation(
+		runtime_frames,
+		DODGE_FULL_NORTH_ANIMATION,
+		[DODGE_FULL_NORTH_SHEET_PATH],
+		false,
+		DODGE_FULL_SEQUENCE_FPS
+	) or changed
+	changed = _ensure_optional_sheet_animation(
+		runtime_frames,
+		DODGE_FULL_SOUTH_ANIMATION,
+		[DODGE_FULL_SOUTH_SHEET_PATH],
+		false,
+		DODGE_FULL_SEQUENCE_FPS
+	) or changed
 	if changed:
 		animated_sprite.sprite_frames = runtime_frames
 	_ensure_dodge_fx_animation()
@@ -3143,17 +3366,15 @@ func _ensure_dodge_fx_animation() -> void:
 		return
 	if dodge_fx_back_sprite.sprite_frames == null:
 		dodge_fx_back_sprite.sprite_frames = SpriteFrames.new()
-	if dodge_fx_back_sprite.sprite_frames.has_animation(DODGE_STEP_FX_ANIMATION):
-		return
-	var fx_texture: Texture2D = _load_optional_texture(DODGE_STEP_FX_SHEET_PATH, null)
-	if fx_texture == null:
-		return
 	var runtime_fx_frames := dodge_fx_back_sprite.sprite_frames.duplicate() as SpriteFrames
 	if runtime_fx_frames == null:
 		return
-	var frame_count: int = max(1, fx_texture.get_width() / 96)
-	_add_sheet_animation(runtime_fx_frames, String(DODGE_STEP_FX_ANIMATION), fx_texture, frame_count, false, 18.0)
-	dodge_fx_back_sprite.sprite_frames = runtime_fx_frames
+	var changed := false
+	changed = _ensure_optional_sheet_animation(runtime_fx_frames, DODGE_FULL_NORTH_FX_ANIMATION, [DODGE_FULL_NORTH_FX_SHEET_PATH], false, DODGE_FULL_SEQUENCE_FPS) or changed
+	changed = _ensure_optional_sheet_animation(runtime_fx_frames, DODGE_FULL_SOUTH_FX_ANIMATION, [DODGE_FULL_SOUTH_FX_SHEET_PATH], false, DODGE_FULL_SEQUENCE_FPS) or changed
+	changed = _ensure_optional_sheet_animation(runtime_fx_frames, DODGE_STEP_FX_ANIMATION, [DODGE_STEP_FX_SHEET_PATH], false, 18.0) or changed
+	if changed:
+		dodge_fx_back_sprite.sprite_frames = runtime_fx_frames
 
 
 func _update_body_recoil(delta: float) -> void:
@@ -3189,6 +3410,10 @@ func _apply_body_recoil_offset() -> void:
 		modular_lower_body_sprite.position = _modular_lower_body_base_position + _body_recoil_offset + _fake_elevation_visual_offset
 	if modular_upper_body_sprite:
 		modular_upper_body_sprite.position = _modular_upper_body_base_position + _body_recoil_offset + _fake_elevation_visual_offset
+	if modular_sidearm_sprite:
+		modular_sidearm_sprite.position = _modular_sidearm_base_position + _body_recoil_offset + _fake_elevation_visual_offset
+	if modular_upper_fx_sprite:
+		modular_upper_fx_sprite.position = _modular_upper_fx_base_position + _body_recoil_offset + _fake_elevation_visual_offset
 	if melee_weapon_overlay_sprite:
 		melee_weapon_overlay_sprite.position = _melee_weapon_overlay_base_position + _body_recoil_offset + _fake_elevation_visual_offset
 	if melee_fx_overlay_sprite:
@@ -3320,6 +3545,12 @@ func _apply_placeholder_runtime_layout() -> void:
 	if modular_upper_body_sprite:
 		modular_upper_body_sprite.position = placeholder_sprite_position
 		modular_upper_body_sprite.offset = placeholder_sprite_offset
+	if modular_sidearm_sprite:
+		modular_sidearm_sprite.position = placeholder_sprite_position
+		modular_sidearm_sprite.offset = placeholder_sprite_offset
+	if modular_upper_fx_sprite:
+		modular_upper_fx_sprite.position = placeholder_sprite_position
+		modular_upper_fx_sprite.offset = placeholder_sprite_offset
 	if melee_weapon_overlay_sprite:
 		melee_weapon_overlay_sprite.position = placeholder_sprite_position
 		melee_weapon_overlay_sprite.offset = placeholder_sprite_offset
@@ -3357,6 +3588,10 @@ func _capture_runtime_visual_base_positions() -> void:
 		_modular_lower_body_base_position = modular_lower_body_sprite.position
 	if modular_upper_body_sprite:
 		_modular_upper_body_base_position = modular_upper_body_sprite.position
+	if modular_sidearm_sprite:
+		_modular_sidearm_base_position = modular_sidearm_sprite.position
+	if modular_upper_fx_sprite:
+		_modular_upper_fx_base_position = modular_upper_fx_sprite.position
 	if melee_weapon_overlay_sprite:
 		_melee_weapon_overlay_base_position = melee_weapon_overlay_sprite.position
 	if melee_fx_overlay_sprite:
@@ -3475,6 +3710,16 @@ func _update_primary_weapon_visual(is_firing: bool) -> void:
 		_hide_custom_operator_visual_layers()
 		if primary_weapon_socket:
 			primary_weapon_socket.rotation = 0.0
+		return
+	if _is_using_sidearm_ranged():
+		if primary_weapon_socket:
+			primary_weapon_socket.rotation = 0.0
+		if primary_weapon_sprite:
+			primary_weapon_sprite.visible = false
+			primary_weapon_sprite.stop()
+		if ranged_fx_overlay_sprite:
+			ranged_fx_overlay_sprite.visible = false
+			ranged_fx_overlay_sprite.stop()
 		return
 	var is_melee_mode = _is_using_melee_weapon_sprite() and not _is_ranged_ready_active()
 	var show_attack_weapon_overlay := is_melee_mode and (_melee_active or _melee_heavy_anticipating or _melee_recovery_active)
@@ -3767,6 +4012,16 @@ func _get_current_loaded_ammo() -> int:
 
 func _get_current_reserve_ammo() -> int:
 	return ammo_standard
+
+
+func _get_sidearm_initial_reserve(weapon_definition: OperatorWeaponDefinition) -> int:
+	if weapon_definition == null:
+		return 0
+	var weapon_data := weapon_definition.get_weapon_data()
+	var ammo_data: Variant = weapon_data.get("ammo", {})
+	if ammo_data is Dictionary and (ammo_data as Dictionary).has("reserve"):
+		return max(0, int((ammo_data as Dictionary)["reserve"]))
+	return max(0, weapon_definition.reserve_ammo)
 
 
 func _clamp_loaded_ammo_to_current_weapon() -> void:

@@ -1,0 +1,116 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/labyrinth_keep/moss_drip_02",
+  "name": "moss_drip_02",
+  "filename": "moss_drip_02.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-06-05T14:13:39+00:00",
+  "source": {
+    "sheet_key": "sundered_keep_labyrinth_keep_generated_boundaries_and_walls",
+    "sheet_file": "a_clean_top_down_isometric_style_game_art_sprite_2.png",
+    "sheet_path": "/mnt/data/ghostwriter_images/generated/a_clean_top_down_isometric_style_game_art_sprite_2.png",
+    "sheet_sha256": "bb04f1698f92a1b3199744cb77377545d348eca99dbecb7ddb041df1a522dda6",
+    "source_crop_bbox_px": [
+      202,
+      767,
+      333,
+      1043
+    ],
+    "detected_background_colors_rgb": [
+      [
+        254,
+        254,
+        254
+      ],
+      [
+        245,
+        245,
+        245
+      ]
+    ],
+    "extraction_method": {
+      "type": "manual_bbox_from_generated_sheet",
+      "background": "edge_flood_fill_near_white_checkerboard",
+      "crop_padding_px": 4,
+      "target_canvas_px_multiples_of": 32,
+      "mirror_horizontal": false
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://custodian/content/tiles/sundered_keep/walls/labyrinth_keep/overlays/moss_drip_02.png",
+    "metadata_path": "res://custodian/content/tiles/sundered_keep/walls/labyrinth_keep/overlays/moss_drip_02.game32.json",
+    "domain": "labyrinth_keep_overlays",
+    "kind": "overlay",
+    "subkind": "moss_drip",
+    "canvas_px": [
+      64,
+      128
+    ],
+    "canvas_tiles": [
+      2,
+      4
+    ],
+    "content_bbox_px": [
+      5,
+      0,
+      59,
+      128
+    ],
+    "scale_from_source_crop": 0.556522,
+    "paste_offset_px": [
+      5,
+      0
+    ],
+    "anchor": "center",
+    "pivot_px": [
+      32,
+      64
+    ],
+    "pivot_normalized": [
+      0.5,
+      0.5
+    ],
+    "y_sort": false,
+    "draw_order": "wall_overlay",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    },
+    "sha256": "d8fd1ff7ddafd933691aba89e1f293cb3d5a08dcba5bb0001a4812b573a4f1f4",
+    "file_size": 10095
+  },
+  "gameplay": {
+    "walkable": true,
+    "interactable": false,
+    "traversal": null,
+    "direction": null,
+    "state": "dressing",
+    "tags": [
+      "sundered_keep",
+      "labyrinth_keep",
+      "overlay",
+      "moss_drip",
+      "dressing"
+    ]
+  },
+  "collision": {
+    "kind": "none",
+    "blocks_movement": false,
+    "blocks_projectiles": false,
+    "footprint_tiles_wh": [
+      0,
+      0
+    ],
+    "footprint_cells": [],
+    "origin_tile": null
+  },
+  "editor": {
+    "display_name": "Moss Drip 02",
+    "notes": "Sparse hanging moss wall dressing overlay. Review footprint/collision after first in-editor placement pass."
+  }
+}

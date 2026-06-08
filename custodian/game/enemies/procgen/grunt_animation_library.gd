@@ -3,7 +3,8 @@ class_name GruntAnimationLibrary
 
 const GRUNT_FRAME_SIZE := Vector2i(96, 96)
 const MARINE_FRAME_SIZE := Vector2i(96, 96)
-const MARINE_DASH_FRAME_SIZE := Vector2i(156, 156)
+const MARINE_DASH_FRAME_SIZE := Vector2i(128, 128)
+const MARINE_DASH_FX_FRAME_SIZE := Vector2i(156, 156)
 const MARINE_IDLE_DIRECTIONS := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
 
 const ANIMATION_SPECS := {
@@ -111,9 +112,21 @@ static func get_marine_sprite_frames() -> SpriteFrames:
 			"frame_size": MARINE_FRAME_SIZE,
 		}
 		_add_strip_animation(frames, "marine_idle_%s" % suffix, spec)
-	_add_strip_animation(frames, "marine_dash_attack_e", {
-		"path": "res://content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__dash_attack_01__e__8f__156.png",
-		"fps": 13.0,
+	_add_strip_animation(frames, "marine_dash_charge_e", {
+		"path": "res://content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__dash_attack_charge_01__e__5f__128.png",
+		"fps": 12.0,
+		"loop": false,
+		"frame_size": MARINE_DASH_FRAME_SIZE,
+	})
+	_add_strip_animation(frames, "marine_dash_inflight_e", {
+		"path": "res://content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__dash_attack_inflight_01__e__5f__128.png",
+		"fps": 20.0,
+		"loop": false,
+		"frame_size": MARINE_DASH_FRAME_SIZE,
+	})
+	_add_strip_animation(frames, "marine_dash_recovery_e", {
+		"path": "res://content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__dash_attack_recovery_01__e__5f__128.png",
+		"fps": 12.0,
 		"loop": false,
 		"frame_size": MARINE_DASH_FRAME_SIZE,
 	})
@@ -129,7 +142,7 @@ static func get_marine_fx_sprite_frames() -> SpriteFrames:
 		"path": "res://content/sprites/enemies/enemy_marine/runtime/fx/enemy_marine__fx__unarmed__dash_attack_01__e__8f__156.png",
 		"fps": 13.0,
 		"loop": false,
-		"frame_size": MARINE_DASH_FRAME_SIZE,
+		"frame_size": MARINE_DASH_FX_FRAME_SIZE,
 	})
 	_cached_marine_fx_frames = frames
 	return _cached_marine_fx_frames
@@ -164,7 +177,20 @@ static func get_marine_idle_animation(direction: Vector2) -> StringName:
 
 
 static func get_marine_dash_attack_animation(_direction: Vector2) -> StringName:
-	return &"marine_dash_attack_e"
+	return &"marine_dash_inflight_e"
+
+
+static func get_marine_dash_phase_animation(phase: StringName, _direction: Vector2 = Vector2.RIGHT) -> StringName:
+	match phase:
+		&"windup":
+			return &"marine_dash_charge_e"
+		&"dash":
+			return &"marine_dash_inflight_e"
+		&"impact_lock":
+			return &"marine_dash_inflight_e"
+		&"recovery":
+			return &"marine_dash_recovery_e"
+	return &"marine_dash_inflight_e"
 
 
 static func get_marine_dash_attack_fx_animation(_direction: Vector2) -> StringName:

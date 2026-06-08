@@ -1,7 +1,7 @@
 # Enemy Marine Dash Attack
 
-Status: implemented-v1  
-Last updated: 2026-06-05
+Status: implemented-v2
+Last updated: 2026-06-07
 
 ## Summary
 
@@ -12,6 +12,32 @@ stand / ready -> deep compression -> full-body missile -> impact -> skid / punis
 ```
 
 The move should feel like armored mass crossing space violently. Its threat comes from readable windup, sudden acceleration, hitstop, knockback, camera feedback, and recovery commitment, not from damage alone.
+
+V2 makes the dash a tactical choice instead of the marine's entire locomotion loop. The marine seeks a readable launch band, alternates its lateral reset direction after each commitment, and chooses quick or charged launches based on range and its previous result.
+
+## Tactical Loop
+
+```text
+approach -> launch-band evaluation -> quick/charged windup -> target lock -> dash -> recovery -> lateral reset
+```
+
+- Preferred launch band: roughly `105-225px`.
+- If too close, the marine backs off and sidesteps instead of immediately trampling again.
+- After every dash, the marine performs a short lateral reset before another commitment.
+- A successful hit biases the next attack toward a quick pressure dash.
+- A miss biases the next attack toward a charged predictive dash.
+- Selection is deterministic from combat state; it does not use random rolls.
+
+## Charge Budget
+
+Charged launches extend the windup and receive one bounded charge budget. That budget is split between distance and damage, so the marine cannot maximize both:
+
+- A distant or retreating target spends more charge on distance.
+- A nearby or laterally moving target spends more charge on impact damage.
+- The final third of windup is a targeting-lock phase. The marine predicts a short amount of target movement once, updates the warning line, then commits without steering.
+- Quick launches use the base distance and damage with the shortest telegraph.
+
+The third phase is intentionally simple: predictive target lock is the extra mechanic. It rewards changing direction after the lock instead of merely outrunning the dash.
 
 ## Runtime Ownership
 
@@ -67,6 +93,14 @@ marine_dash_hit_active_start_ratio = 0.34
 marine_dash_hit_active_end_ratio = 0.82
 marine_dash_hit_forward_reach_px = 24.0
 marine_dash_hit_lateral_reach_px = 18.0
+marine_dash_launch_band_min = 105.0
+marine_dash_launch_band_max = 225.0
+marine_dash_charge_extra_windup = 0.48
+marine_dash_charge_distance_bonus = 0.65
+marine_dash_charge_damage_bonus = 0.55
+marine_dash_prediction_time = 0.24
+marine_dash_reset_time = 0.55
+marine_dash_reset_speed = 92.0
 ```
 
 Rules:
@@ -79,6 +113,10 @@ Rules:
 - Attacker cannot steer during dash.
 - Attacker is vulnerable during recovery.
 - On wall collision, stop dash early and play impact/recovery.
+- Charged windup increases either distance or damage through a shared budget, never both at full strength.
+- The final windup third performs one predictive lock; dash travel still cannot steer.
+- The warning line changes from faint amber to a brighter locked line when prediction commits.
+- Every completed dash enters a lateral reset before another dash can begin.
 
 ## Animation Direction
 

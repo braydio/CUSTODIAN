@@ -1,0 +1,138 @@
+{
+  "schema": "game32.asset.v1",
+  "asset_id": "sundered_keep/labyrinth_keep/collapsed_sea_cut_02",
+  "name": "collapsed_sea_cut_02",
+  "filename": "collapsed_sea_cut_02.png",
+  "set": "sundered_keep",
+  "theme": "renaissance_gothic_castle_oceanscape_haunted_temporally_adrift",
+  "created_utc": "2026-06-05T14:13:39+00:00",
+  "source": {
+    "sheet_key": "sundered_keep_labyrinth_keep_generated_boundaries_and_walls",
+    "sheet_file": "a_clean_top_down_isometric_style_game_art_sprite_2.png",
+    "sheet_path": "/mnt/data/ghostwriter_images/generated/a_clean_top_down_isometric_style_game_art_sprite_2.png",
+    "sheet_sha256": "bb04f1698f92a1b3199744cb77377545d348eca99dbecb7ddb041df1a522dda6",
+    "source_crop_bbox_px": [
+      929,
+      68,
+      1115,
+      408
+    ],
+    "detected_background_colors_rgb": [
+      [
+        254,
+        254,
+        254
+      ],
+      [
+        245,
+        245,
+        245
+      ]
+    ],
+    "extraction_method": {
+      "type": "manual_bbox_from_generated_sheet",
+      "background": "edge_flood_fill_near_white_checkerboard",
+      "crop_padding_px": 4,
+      "target_canvas_px_multiples_of": 32,
+      "mirror_horizontal": false
+    }
+  },
+  "runtime": {
+    "base_tile_px": 32,
+    "path": "res://custodian/content/tiles/sundered_keep/walls/labyrinth_keep/collapsed_sea_cut_02.png",
+    "metadata_path": "res://custodian/content/tiles/sundered_keep/walls/labyrinth_keep/collapsed_sea_cut_02.game32.json",
+    "domain": "labyrinth_keep_walls",
+    "kind": "void_boundary",
+    "subkind": "collapsed_sea_cut",
+    "canvas_px": [
+      128,
+      224
+    ],
+    "canvas_tiles": [
+      4,
+      7
+    ],
+    "content_bbox_px": [
+      9,
+      0,
+      119,
+      224
+    ],
+    "scale_from_source_crop": 0.674699,
+    "paste_offset_px": [
+      9,
+      0
+    ],
+    "anchor": "bottom_center",
+    "pivot_px": [
+      64,
+      224
+    ],
+    "pivot_normalized": [
+      0.5,
+      1.0
+    ],
+    "y_sort": true,
+    "draw_order": "void_boundary",
+    "godot_import_hints": {
+      "filter": false,
+      "mipmaps": false,
+      "repeat": false,
+      "compress_mode": "lossless",
+      "pixel_snap": true
+    },
+    "sha256": "8fb0a2d92ce5d1d1e43c881736dacb4a284e59e01b91ebaa6cd91802046532b5",
+    "file_size": 55925
+  },
+  "gameplay": {
+    "walkable": false,
+    "interactable": false,
+    "traversal": null,
+    "direction": "s",
+    "state": "collapsed",
+    "tags": [
+      "sundered_keep",
+      "labyrinth_keep",
+      "void_boundary",
+      "collapsed_sea_cut",
+      "s",
+      "collapsed"
+    ]
+  },
+  "collision": {
+    "kind": "void_blocker_visual_boundary",
+    "blocks_movement": true,
+    "blocks_projectiles": true,
+    "footprint_tiles_wh": [
+      4,
+      1
+    ],
+    "footprint_cells": [
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 0
+      }
+    ],
+    "origin_tile": {
+      "x": 0,
+      "y": 0,
+      "anchor": "bottom_center"
+    }
+  },
+  "editor": {
+    "display_name": "Collapsed Sea Cut 02",
+    "notes": "Collapsed keep edge variation with denser broken stone stack. Review footprint/collision after first in-editor placement pass."
+  }
+}

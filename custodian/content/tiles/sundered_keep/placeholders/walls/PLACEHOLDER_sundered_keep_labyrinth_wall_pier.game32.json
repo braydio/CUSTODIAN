@@ -1,0 +1,10 @@
+{
+  "asset_id": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
+  "name": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
+  "filename": "PLACEHOLDER_sundered_keep_labyrinth_wall_pier.png",
+  "kind": "wall",
+  "subkind": "placeholder_wall_pier",
+  "walkable": false,
+  "blocks_movement": true,
+  "runtime_path": "res://content/tiles/sundered_keep/placeholders/walls/PLACEHOLDER_sundered_keep_labyrinth_wall_pier.png"
+}

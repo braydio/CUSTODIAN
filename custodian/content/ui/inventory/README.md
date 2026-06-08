@@ -1,8 +1,17 @@
 # Inventory UI System
 
-Bare-minimum inventory UI system for CUSTODIAN.
+Black Reliquary field-ledger inventory UI for CUSTODIAN.
+
+The live game overlay reads `/root/InventoryManager`. The local `Inventory`
+node/API is retained only for isolated test scenes or compatibility callers.
 
 ## Asset Files
+
+Production replacement assets should be placed under
+`content/ui/inventory/runtime/` using the canonical paths in
+`runtime/inventory_ui_asset_manifest.json`. Runtime code uses those files
+automatically when present and falls back to the existing Black Reliquary/legacy
+textures while production art is missing.
 
 ### UI Textures
 - `content/ui/inventory/frame_inventory.png` - 9-slice panel background (400x500)
@@ -56,7 +65,10 @@ inventory.inventory_changed.connect(callback)
 ## InventoryUI Usage
 
 ```gdscript
-# Open inventory
+# Open live inventory
+inventory_ui.open()
+
+# Open compatibility/local inventory
 inventory_ui.open(my_inventory)
 
 # Close inventory
@@ -69,12 +81,12 @@ inventory_ui.closed.connect(callback)
 
 ## Visual Style
 
-Matches existing terminal UI:
-- Dark grey background (40, 44, 52)
-- Blue-grey bracket borders (80, 90, 110)
-- Highlight blue for selection (100, 180, 255)
-- 64x64 item slots in 5-column grid
-- 20 slot capacity (configurable)
+Uses the current Black Reliquary/CUSTODIAN style:
+- darkened full-screen backdrop
+- brass/gold reliquary frame
+- category rail, carried-object grid, and detail inspector
+- live text for all item names, quantities, classifications, and descriptions
+- production image assets resolved through `inventory_asset_catalog.gd`
 
 ## Future Enhancements (Not Implemented)
 

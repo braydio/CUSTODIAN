@@ -2,8 +2,8 @@
   "schema": "game32.sundered_keep_master_manifest.v1",
   "name": "Sundered Keep",
   "generated_at_utc": "2026-05-30T01:10:28.140017+00:00",
-  "total_asset_count": 140,
-  "section_count": 7,
+  "total_asset_count": 144,
+  "section_count": 8,
   "sections": {
     "terrain": {
       "base_path": "res://content/runtime/sundered_keep/terrain",
@@ -39,6 +39,11 @@
       "base_path": "res://content/tiles/sundered_keep/walls/ramparts",
       "count": 12,
       "manifest": "res://content/tiles/sundered_keep/walls/ramparts/_manifest.game32.json"
+    },
+    "placeholder_readability": {
+      "base_path": "res://content/tiles/sundered_keep/placeholders/walls",
+      "count": 4,
+      "manifest": "res://content/tiles/sundered_keep/placeholders/walls/placeholders_manifest.game32.json"
     }
   },
   "summary": {
@@ -104,6 +109,10 @@
     "walls_ramparts": {
       "count": 12,
       "theme": "ramparts"
+    },
+    "placeholder_readability": {
+      "count": 4,
+      "theme": "temporary_readability"
     }
   }
 }

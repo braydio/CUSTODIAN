@@ -163,6 +163,12 @@
   },
   "editor": {
     "display_name": "Ocean Foam Edge E",
-    "notes": "Generated from Sundered Keep master sheet; adjust footprint/collision after in-editor placement review if needed."
+    "notes": "Live Sundered Keep ocean runtime remapped from the cosmic ocean pack. Source asset: cosmic_ocean_shore_w_foam_01 (mirror_x)."
+  },
+  "source_remap": {
+    "source_dir": "custodian/content/tiles/terrain/cosmic_ocean/game32",
+    "source_png": "cosmic_ocean_shore_w_foam_01.png",
+    "source_asset_id": "cosmic_ocean_shore_w_foam_01",
+    "transform": "mirror_x"
   }
 }

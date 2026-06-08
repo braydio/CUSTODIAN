@@ -1,13 +1,38 @@
 extends SceneTree
 
 const SUNDERED_KEEP_MAP := preload("res://game/world/sundered_keep/sundered_keep_map.gd")
+const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
 const LEVEL_PATH := "res://content/levels/sundered_keep/sundered_keep_front_gate_large.json"
+const PRESERVATION_PATH := "res://content/levels/sundered_keep/sundered_keep_front_gate_large.before_cheatsheet_relayout.json"
 const TILE_SIZE := 32.0
 
 
 func _init() -> void:
 	var level_data := _load_level_data()
 	_assert(not level_data.is_empty(), "large front-gate JSON did not load")
+	var preserved_level_data := _load_json(PRESERVATION_PATH)
+	_assert(not preserved_level_data.is_empty(), "pre-relayout preservation JSON did not load")
+	_assert(str(level_data.get("layout_revision", "")) == "cheatsheet_relayout_v1", "cheat-sheet layout revision metadata is missing")
+	for zone_id in [
+		"approach_bridge_h1", "lower_shore_h0", "west_underbridge_lane_h0", "east_underbridge_lane_h0",
+		"return_mooring", "gatehouse_core", "main_gate_threshold", "courtyard", "west_service_yard",
+		"east_rampart", "great_hall_exterior_roof", "great_hall_interior", "great_hall_right_turn_hallway",
+	]:
+		_assert(_has_zone(level_data, zone_id), "missing authored cheat-sheet zone: %s" % zone_id)
+	for critical_key in [
+		"interactables", "markers", "interior_occlusion_regions", "underpass_regions", "shore_walk_regions",
+		"return_mooring_origin_tile", "key_pickup_tile", "main_gate_tile", "great_hall_door_tile",
+	]:
+		_assert(level_data.get(critical_key) == preserved_level_data.get(critical_key), "gameplay-critical V1 metadata changed silently: %s" % critical_key)
+	for coverage in level_data.get("blocker_visual_coverage", []):
+		_assert(not (coverage as Dictionary).get("visible_coverage", []).is_empty(), "blocker lacks authored visible coverage: %s" % str((coverage as Dictionary).get("blocker_name", "")))
+	for placeholder_id in [
+		"PLACEHOLDER_sundered_keep_labyrinth_void_edge",
+		"PLACEHOLDER_sundered_keep_labyrinth_wall_corner",
+		"PLACEHOLDER_sundered_keep_labyrinth_wall_pier",
+		"PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s",
+	]:
+		_assert(SUNDERED_KEEP_ASSETS.ASSETS.has(placeholder_id), "placeholder is not registered in runtime asset map: %s" % placeholder_id)
 	var map_size := _array_to_vector2i(level_data.get("map_size_tiles", [0, 0]))
 	_assert(map_size.x >= 96 and map_size.y >= 72, "map size is below large-layout minimum")
 
@@ -54,6 +79,7 @@ func _init() -> void:
 	_assert(map.get_elevation_at_tile(Vector2i(56, 76)) == 0, "lower shore/spawn elevation is not height 0")
 	_assert(map.get_elevation_at_tile(Vector2i(50, 64)) == 0, "west underpass lane is not height 0")
 	_assert(map.get_elevation_at_tile(Vector2i(62, 64)) == 0, "east underpass lane is not height 0")
+	_assert(map.get_elevation_at_tile(Vector2i(82, 48)) == 1, "east rampart is not height 1")
 	_assert(bool(map.call("is_tile_in_underpass_region", Vector2i(50, 64))), "west lower lane is not marked as an underpass region")
 	_assert(bool(map.call("is_tile_in_underpass_region", Vector2i(62, 64))), "east lower lane is not marked as an underpass region")
 	_assert(bool(map.call("is_tile_in_shore_walk_region", Vector2i(56, 76))), "spawn/lower approach is not marked as shore walk")
@@ -62,6 +88,8 @@ func _init() -> void:
 	_assert(map.can_traverse_elevation(Vector2i(56, 70), Vector2i(56, 69)), "south ramp does not bridge lower shore to raised bridge")
 	_assert(map.can_traverse_elevation(Vector2i(51, 64), Vector2i(52, 64)), "west side stair does not bridge lower lane to raised bridge")
 	_assert(map.can_traverse_elevation(Vector2i(61, 64), Vector2i(60, 64)), "east side stair does not bridge lower lane to raised bridge")
+	_assert(map.can_traverse_elevation(Vector2i(56, 46), Vector2i(56, 47)), "gatehouse stair does not bridge courtyard to gatehouse deck")
+	_assert(map.can_traverse_elevation(Vector2i(75, 44), Vector2i(76, 44)), "east rampart stair does not bridge courtyard to high ground")
 	_assert(not map.can_traverse_elevation(Vector2i(52, 70), Vector2i(52, 69)), "non-ramp bridge edge allows a height climb")
 	_assert(_all_elevation_pockets_connected(map), "authored elevation contains isolated height pockets without a transition path")
 	_assert(_stair_art_matches_elevation_transition(map), "stair art exists away from the authored ramp elevation transition")
@@ -115,6 +143,13 @@ func _init() -> void:
 	map.call("_update_actor_elevation")
 	state = map.get_sundered_keep_debug_state()
 	_assert(str(state["active_interior_region_id"]) == "great_hall", "Great Hall roof did not cut away when validation operator entered interior")
+	validation_operator.global_position = map.to_global(Vector2((60.5) * TILE_SIZE, (27.5) * TILE_SIZE))
+	map.call("_update_actor_elevation")
+	state = map.get_sundered_keep_debug_state()
+	var active_interior_ids: Array = state["active_interior_region_ids"]
+	var roof_alphas: Dictionary = state["roof_occluder_alphas"]
+	_assert(active_interior_ids.has("great_hall") and active_interior_ids.has("great_hall_right_turn_hallway"), "overlapping Great Hall roof regions did not cut away together")
+	_assert(float(roof_alphas.get("great_hall", 1.0)) < 0.1 and float(roof_alphas.get("great_hall_right_turn_hallway", 1.0)) < 0.1, "overlapping Great Hall roof occluders remained visible")
 	validation_operator.global_position = map.to_global(Vector2((56.5) * TILE_SIZE, (76.5) * TILE_SIZE))
 	map.call("_update_actor_elevation")
 	state = map.get_sundered_keep_debug_state()
@@ -125,6 +160,9 @@ func _init() -> void:
 	if ambush_node != null:
 		ambush_node.call("force_dash_for_validation")
 		await process_frame
+		state = map.get_sundered_keep_debug_state()
+		marine_ambush = state["great_hall_marine_ambush"]
+		_assert(str(marine_ambush.get("state", "")) == "active", "Great Hall ambush did not hand control to the shared marine AI")
 		var marine := map.get_node_or_null("GreatHallDashMarine")
 		var marine_sprite := marine.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D if marine != null else null
 		_assert(marine_sprite != null and marine_sprite.animation == "marine_dash_attack_e", "Great Hall marine did not play dash attack animation")
@@ -171,6 +209,31 @@ func _init() -> void:
 	objectives = state["siege_objectives"]
 	var repaired_hp := float((objectives[0] as Dictionary).get("hp", 0.0))
 	_assert(repaired_hp > damaged_hp, "repair interaction did not restore objective state")
+	var validation_enemies := Node.new()
+	validation_enemies.name = "ValidationSiegeEnemies"
+	root.add_child(validation_enemies)
+	var validation_siege_enemy := Node.new()
+	validation_enemies.add_child(validation_siege_enemy)
+	map.call("_track_new_siege_enemy", validation_enemies, {})
+	map.set("_siege_wave_index", 2)
+	var validation_reinforcement := Node.new()
+	validation_enemies.add_child(validation_reinforcement)
+	var required_enemy_id := validation_siege_enemy.get_instance_id()
+	map.call("_track_new_siege_enemy", validation_enemies, {required_enemy_id: true})
+	validation_siege_enemy.queue_free()
+	await process_frame
+	await process_frame
+	state = map.get_sundered_keep_debug_state()
+	_assert(str(state["siege_state"]) == "secured", "clearing tracked siege enemies did not enter secured state")
+	_assert(state["siege_started"] == false, "clearing tracked siege enemies left siege active")
+	objectives = state["siege_objectives"]
+	var secured_hp := float((objectives[0] as Dictionary).get("hp", 0.0))
+	map.call("_apply_siege_pressure")
+	state = map.get_sundered_keep_debug_state()
+	objectives = state["siege_objectives"]
+	_assert(is_equal_approx(float((objectives[0] as Dictionary).get("hp", 0.0)), secured_hp), "siege pressure damaged an objective after completion")
+	validation_reinforcement.queue_free()
+	validation_enemies.queue_free()
 
 	_assert(_has_blocker_covering_tile(map, Vector2i(55, 30)), "Great Hall door does not start blocking its threshold")
 	map.call("_try_open_great_hall_door")
@@ -198,13 +261,24 @@ func _init() -> void:
 
 
 func _load_level_data() -> Dictionary:
-	var file := FileAccess.open(LEVEL_PATH, FileAccess.READ)
+	return _load_json(LEVEL_PATH)
+
+
+func _load_json(path: String) -> Dictionary:
+	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		return {}
 	var parsed = JSON.parse_string(file.get_as_text())
 	if parsed is Dictionary:
 		return parsed as Dictionary
 	return {}
+
+
+func _has_zone(level_data: Dictionary, zone_id: String) -> bool:
+	for zone in level_data.get("layout_zones", []):
+		if str((zone as Dictionary).get("id", "")) == zone_id:
+			return true
+	return false
 
 
 func _assert(condition: bool, message: String) -> void:
@@ -418,6 +492,24 @@ func _stair_art_matches_elevation_transition(map: Node) -> bool:
 		Vector2i(55, 70): true,
 		Vector2i(57, 70): true,
 		Vector2i(58, 70): true,
+		Vector2i(54, 47): true,
+		Vector2i(55, 47): true,
+		Vector2i(56, 47): true,
+		Vector2i(57, 47): true,
+		Vector2i(58, 47): true,
+		Vector2i(54, 48): true,
+		Vector2i(55, 48): true,
+		Vector2i(56, 48): true,
+		Vector2i(57, 48): true,
+		Vector2i(58, 48): true,
+		Vector2i(76, 42): true,
+		Vector2i(77, 42): true,
+		Vector2i(76, 43): true,
+		Vector2i(77, 43): true,
+		Vector2i(76, 44): true,
+		Vector2i(77, 44): true,
+		Vector2i(76, 45): true,
+		Vector2i(77, 45): true,
 	}
 	for layer_name in ["TerrainBase", "FloorDetail"]:
 		var layer := map.get_node_or_null(layer_name)

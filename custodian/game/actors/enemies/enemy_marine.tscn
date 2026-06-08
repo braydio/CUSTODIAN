@@ -44,7 +44,14 @@ marine_dash_hit_active_start_ratio = 0.34
 marine_dash_hit_active_end_ratio = 0.82
 marine_dash_hit_forward_reach_px = 24.0
 marine_dash_hit_lateral_reach_px = 18.0
-marine_dash_engage_range = 132.0
+marine_dash_launch_band_min = 105.0
+marine_dash_launch_band_max = 225.0
+marine_dash_charge_extra_windup = 0.48
+marine_dash_charge_distance_bonus = 0.65
+marine_dash_charge_damage_bonus = 0.55
+marine_dash_prediction_time = 0.24
+marine_dash_reset_time = 0.55
+marine_dash_reset_speed = 92.0
 behavior_state_machine_enabled = true
 behavior_profile_id = &"raider_grunt"
 

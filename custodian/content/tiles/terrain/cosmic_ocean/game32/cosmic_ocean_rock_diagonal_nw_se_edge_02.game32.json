@@ -1,0 +1,102 @@
+{
+  "asset_family": "sundered_keep.cosmic_ocean_shore",
+  "autotile": {
+    "connects_to": [
+      "cosmic_ocean_void",
+      "foam_shore",
+      "masonry_boundary",
+      "rock_boundary",
+      "collapsed_keep_edge"
+    ],
+    "edge_profile": {
+      "diagonal": "nw_to_se_foam_shore",
+      "e": "void",
+      "feature": "cosmic_ocean",
+      "n": "void",
+      "s": "void",
+      "w": "void"
+    },
+    "rotation_allowed": false
+  },
+  "classification": {
+    "material": "cosmic_ocean_void",
+    "role": "rock_diagonal_nw_se_edge",
+    "tags": [
+      "cosmic_ocean",
+      "void",
+      "sundered_keep",
+      "shore",
+      "rock_diagonal_nw_se_edge",
+      "rock",
+      "diagonal"
+    ],
+    "theme": "end_of_universe_sci_fi_ruin",
+    "variant": 2
+  },
+  "collision": {
+    "blocks_movement": true,
+    "blocks_projectiles": false,
+    "collision_shape": "full_tile",
+    "physics_layer": "environment_void_boundary",
+    "reason": "Cosmic ocean, collapsed sea cut, cliff edge, or void boundary. Actors should not path through it.",
+    "walkable": false
+  },
+  "display_name": "cosmic ocean rock diagonal nw se edge 02",
+  "file": {
+    "pixel_size": [
+      32,
+      32
+    ],
+    "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_rock_diagonal_nw_se_edge_02.png",
+    "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_rock_diagonal_nw_se_edge_02__raw.png",
+    "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_rock_diagonal_nw_se_edge_02.game32.json",
+    "source_crop_px": [
+      114,
+      152
+    ]
+  },
+  "id": "cosmic_ocean_rock_diagonal_nw_se_edge_02",
+  "placement": {
+    "anchor": "tile_origin_top_left",
+    "biome": "sundered_keep",
+    "runtime_tile_px": [
+      32,
+      32
+    ],
+    "terrain": "cosmic_ocean_void",
+    "tilemap_layer": "wall_boundary_overlay",
+    "use_as": "ruined_keep_void_boundary",
+    "z_index": -60
+  },
+  "procgen": {
+    "allowed_zones": [
+      "return_causeway_void_edges",
+      "sundered_keep_cliff_edges",
+      "temporal_isles_void_ocean",
+      "great_hall_collapsed_sea_cut"
+    ],
+    "avoid_adjacent_roles": [
+      "void_black_hole"
+    ],
+    "can_spawn": true,
+    "notes": "Use as unwalkable cosmic-ocean or collapsed-keep boundary tile.",
+    "weight": 0.75
+  },
+  "schema": "game32.tile_manifest.v2",
+  "source": {
+    "bbox_px": {
+      "h": 152,
+      "w": 114,
+      "x": 1117,
+      "y": 877
+    },
+    "col": 8,
+    "detected_grid": {
+      "cols": 8,
+      "rows": 7
+    },
+    "row": 6,
+    "sheet_file": "Sprite-0019",
+    "sheet_path": "Sprite-0019"
+  }
+}

@@ -1,7 +1,7 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://y4e3lyg1nsiu"]
+[gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" uid="uid://dq3plr8cwaw78" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/fire_body.png" id="1_fire"]
-[ext_resource type="Texture2D" uid="uid://cvpkw2im1oht2" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/operator_reloading.png" id="2_reload"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/fire_body.png" id="1_fire"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/body/ranged_2h/operator_reloading.png" id="2_reload"]
 
 [sub_resource type="Image" id="Image_3i6gm"]
 data = {
@@ -15,37 +15,37 @@ data = {
 [sub_resource type="ImageTexture" id="ImageTexture_hidden"]
 image = SubResource("Image_3i6gm")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fire_fx_0"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_4tbmh"]
 atlas = ExtResource("1_fire")
 region = Rect2(0, 192, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fire_fx_1"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_vj8gw"]
 atlas = ExtResource("1_fire")
 region = Rect2(96, 192, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fire_fx_2"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ehrin"]
 atlas = ExtResource("1_fire")
 region = Rect2(192, 192, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fire_fx_3"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_2htk2"]
 atlas = ExtResource("1_fire")
 region = Rect2(288, 192, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_reload_fx_0"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_6w71a"]
 atlas = ExtResource("2_reload")
-region = Rect2(0, 192, 96, 96)
+region = Rect2(0, 96, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_reload_fx_1"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_eka5d"]
 atlas = ExtResource("2_reload")
-region = Rect2(96, 192, 96, 96)
+region = Rect2(96, 96, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_reload_fx_2"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_irlyf"]
 atlas = ExtResource("2_reload")
-region = Rect2(192, 192, 96, 96)
+region = Rect2(192, 96, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_reload_fx_3"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_xpypb"]
 atlas = ExtResource("2_reload")
-region = Rect2(288, 192, 96, 96)
+region = Rect2(288, 96, 96, 96)
 
 [resource]
 animations = [{
@@ -64,16 +64,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fire_fx_0")
+"texture": SubResource("AtlasTexture_4tbmh")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fire_fx_1")
+"texture": SubResource("AtlasTexture_vj8gw")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fire_fx_2")
+"texture": SubResource("AtlasTexture_ehrin")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fire_fx_3")
+"texture": SubResource("AtlasTexture_2htk2")
 }],
 "loop": false,
 "name": &"ranged_2h_fire_fx",
@@ -81,16 +81,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_reload_fx_0")
+"texture": SubResource("AtlasTexture_6w71a")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_reload_fx_1")
+"texture": SubResource("AtlasTexture_eka5d")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_reload_fx_2")
+"texture": SubResource("AtlasTexture_irlyf")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_reload_fx_3")
+"texture": SubResource("AtlasTexture_xpypb")
 }],
 "loop": false,
 "name": &"ranged_2h_reload_fx",

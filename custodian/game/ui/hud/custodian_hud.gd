@@ -23,6 +23,8 @@ const Styles := preload("res://game/ui/theme/black_reliquary_styles.gd")
 var _health_current := 100
 var _health_max := 100
 var _last_prompt_frame := -1
+var _context_active := true
+var _externally_suppressed := false
 
 
 func _ready() -> void:
@@ -136,6 +138,22 @@ func set_minimap_visible(p_visible: bool) -> void:
 		(minimap_frame as CanvasItem).visible = p_visible
 
 
+func set_context_active(active: bool) -> void:
+	_context_active = active
+	if not active:
+		hide_interaction()
+	_apply_effective_visibility()
+
+
+func set_external_overlay_hidden(hidden: bool) -> void:
+	_externally_suppressed = hidden
+	_apply_effective_visibility()
+
+
+func is_context_active() -> bool:
+	return _context_active
+
+
 func set_debug_overlay_visible(p_visible: bool) -> void:
 	if debug_overlay != null:
 		debug_overlay.visible = p_visible
@@ -196,3 +214,7 @@ func _refresh_operator_status() -> void:
 		if bool(sprint_status.get("sprint_exhausted", false)):
 			mode = "RECOVER"
 		set_stamina_label("STA %d%% %s" % [int(round(stamina_pct)), mode])
+
+
+func _apply_effective_visibility() -> void:
+	visible = _context_active and not _externally_suppressed

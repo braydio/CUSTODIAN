@@ -96,8 +96,45 @@ func _validate_marine_idle(root: Node) -> void:
 	_assert_true(absf(float(marine.get("marine_dash_hit_lateral_reach_px")) - 18.0) < 0.001, "marine dash lateral contact should be tight")
 	_assert_true(marine.has_method("get_behavior_attack_range"), "marine should expose behavior attack range")
 	_assert_true(float(marine.call("get_behavior_attack_range")) >= 132.0, "marine behavior attack range should allow readable dash windup")
+	_validate_marine_tactical_dash(root, marine)
 	_validate_marine_dash_hit_gate(root, marine)
 	marine.queue_free()
+
+
+func _validate_marine_tactical_dash(root: Node, marine: Node) -> void:
+	var target := CharacterBody2D.new()
+	target.name = "MarineTacticalDashTarget"
+	target.add_to_group("player")
+	root.add_child(target)
+	marine.set("target", target)
+	marine.global_position = Vector2.ZERO
+	target.global_position = Vector2(125.0, 0.0)
+	target.velocity = Vector2.ZERO
+	marine.set("_marine_dash_last_attack_hit", true)
+	marine.call("_configure_marine_dash_charge", 125.0)
+	var quick_state: Dictionary = marine.call("get_marine_dash_debug_state")
+	target.global_position = Vector2(220.0, 0.0)
+	target.velocity = Vector2(120.0, 0.0)
+	marine.set("_marine_dash_last_attack_hit", false)
+	marine.call("_configure_marine_dash_charge", 220.0)
+	var charged_state: Dictionary = marine.call("get_marine_dash_debug_state")
+	_assert_true(float(charged_state["charge_ratio"]) > float(quick_state["charge_ratio"]), "far retreating target should produce a longer charged dash than close post-hit pressure")
+	_assert_true(is_equal_approx(float(charged_state["distance_share"]) + float(charged_state["damage_share"]), 1.0), "marine charge budget should split cleanly between distance and damage")
+	_assert_true(float(charged_state["distance_share"]) < 1.0 and float(charged_state["damage_share"]) < 1.0, "marine charge should not maximize distance and damage together")
+	target.velocity = Vector2(0.0, 150.0)
+	marine.set("_marine_dash_phase", &"windup")
+	marine.set("_marine_dash_target_lock_done", false)
+	var total_windup := float(marine.get("marine_dash_windup_time")) + float(marine.get("marine_dash_charge_extra_windup")) * float(charged_state["charge_ratio"])
+	marine.set("_marine_dash_timer", total_windup * 0.32)
+	marine.call("_update_marine_dash_target_lock")
+	var locked_state: Dictionary = marine.call("get_marine_dash_debug_state")
+	var locked_direction: Vector2 = marine.get("_marine_dash_direction")
+	_assert_true(bool(locked_state["target_locked"]), "marine final windup phase should lock a predicted target direction")
+	_assert_true(locked_direction.y > 0.0, "marine predictive lock should lead a laterally moving target")
+	marine.call("_finish_marine_dash_attack")
+	marine.call("_start_marine_dash_reset", false)
+	_assert_true(float((marine.call("get_marine_dash_debug_state") as Dictionary)["reset_timer"]) > 0.0, "marine should enter a lateral reset after a dash")
+	target.queue_free()
 
 
 func _validate_marine_dash_hit_gate(root: Node, marine: Node) -> void:

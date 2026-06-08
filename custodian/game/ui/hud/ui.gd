@@ -1405,7 +1405,9 @@ func _set_external_gameplay_overlays_hidden(hidden: bool) -> void:
 	for node in get_tree().get_nodes_in_group("gameplay_overlay"):
 		if node == self:
 			continue
-		if node is CanvasItem:
+		if node.has_method("set_external_overlay_hidden"):
+			node.call("set_external_overlay_hidden", hidden)
+		elif node is CanvasItem:
 			(node as CanvasItem).visible = not hidden
 		elif "visible" in node:
 			node.set("visible", not hidden)

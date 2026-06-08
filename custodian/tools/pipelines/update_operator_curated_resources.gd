@@ -3,8 +3,11 @@ extends SceneTree
 const BODY_FRAMES_PATH := "res://game/actors/operator/operator_runtime_frames.tres"
 const MODULAR_LOWER_BODY_FRAMES_PATH := "res://game/actors/operator/operator_modular_lower_body_frames.tres"
 const MODULAR_UPPER_BODY_FRAMES_PATH := "res://game/actors/operator/operator_modular_upper_body_frames.tres"
+const MODULAR_SIDEARM_FRAMES_PATH := "res://game/actors/operator/operator_modular_sidearm_frames.tres"
+const MODULAR_UPPER_FX_FRAMES_PATH := "res://game/actors/operator/operator_modular_upper_fx_frames.tres"
 const WEAPON_FRAMES_PATH := "res://game/actors/operator/operator_weapon_frames.tres"
 const MELEE_OVERLAY_FRAMES_PATH := "res://game/actors/operator/operator_melee_overlay_frames.tres"
+const RANGED_FX_FRAMES_PATH := "res://game/actors/operator/operator_ranged_fx_frames.tres"
 
 const BASE_WALK_SHEET := "res://content/sprites/operator/runtime/animation_base/body/core_locomotion/walking_base.png"
 const BASE_RUN_SHEET := "res://content/sprites/operator/runtime/animation_base/body/core_locomotion/running_base.png"
@@ -23,7 +26,21 @@ const DODGE_STEP_BODY_SHEET := "res://content/sprites/operator/runtime/body/loco
 const DODGE_RECOVERY_BODY_SHEET := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_recovery__n__4f__96.png"
 const DODGE_BACKSTEP_BODY_SHEET := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_backstep__s__4f__96.png"
 const DODGE_BACKSTEP_RECOVERY_BODY_SHEET := "res://content/sprites/operator/runtime/body/locomotion/operator__body__locomotion__dodge_backstep_recovery__s__4f__96.png"
+const DODGE_FULL_NORTH_BODY_SHEET := "res://content/sprites/operator/runtime/actions/dodge/body/operator__body__full__dodge_01__n__9f__96.png"
+const DODGE_FULL_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/actions/dodge/body/operator__body__full__dodge_01__s__9f__96.png"
+const DODGE_FULL_NORTH_FX_SHEET := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__n__9f__96.png"
+const DODGE_FULL_SOUTH_FX_SHEET := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__s__9f__96.png"
 const HEAVY_ANTICIPATION_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_anticipation_body.png"
+const HEAVY_ATTACK_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_attack_right_3layer_7f.png"
+const BLOCK_ENTER_BODY_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/block_enter_body_4f.png"
+const BLOCK_HOLD_BODY_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/block_hold_body_1f.png"
+const BLOCK_EXIT_BODY_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/block_exit_body_2f.png"
+const BLOCK_ENTER_WEAPON_SHEET := "res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_enter_weapon_4f.png"
+const BLOCK_HOLD_WEAPON_SHEET := "res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_hold_weapon_1f.png"
+const BLOCK_EXIT_WEAPON_SHEET := "res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_exit_weapon_2f.png"
+const RELOAD_BODY_SHEET := "res://content/sprites/operator/runtime/curated/body/ranged_2h/reload_body.png"
+const FIRE_BODY_SHEET := "res://content/sprites/operator/runtime/curated/body/ranged_2h/fire_body.png"
+const OPERATOR_RELOADING_SHEET := "res://content/sprites/operator/runtime/curated/body/ranged_2h/operator_reloading.png"
 const FAST_ATTACK_1_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/fast_attack_1_right_body.png"
 const FAST_ATTACK_2_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/fast_attack_2_right_body.png"
 const FAST_RECOVERY_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/fast_recovery_body.png"
@@ -38,10 +55,6 @@ const UNARMED_FAST_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/bo
 const UNARMED_FAST_FX_EAST_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__e__3f__96.png"
 const UNARMED_FAST_NORTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_01__n__6f__96.png"
 const UNARMED_FAST_FX_NORTH_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__n__6f__96.png"
-const UNARMED_FAST_RECOVERY_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_recovery_01__e__3f__96.png"
-const UNARMED_FAST_RECOVERY_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_recovery_01__w__3f__96.png"
-const UNARMED_FAST_RECOVERY_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_recovery_01__s__2f__96.png"
-const UNARMED_FAST_RECOVERY_NORTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__fast_recovery_01__n__2f__96.png"
 const UNARMED_FAST_RECOVERY_NORTH_FX_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_recovery_01__n__2f__96.png"
 const UNARMED_HEAVY_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__heavy_01__e__7f__96.png"
 const UNARMED_HEAVY_FX_EAST_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__e__7f__96.png"
@@ -70,6 +83,9 @@ const UNARMED_LIGHT_HITREACT_FX_SOUTH_SHEET := "res://content/sprites/operator/r
 var _had_rebuild_error := false
 
 const WALK_BASE_SLICES := [
+	{"animation": "walk_down_left", "start": 0, "count": 8, "fps": 10.0},
+	{"animation": "walk_left", "start": 8, "count": 8, "fps": 10.0},
+	{"animation": "walk_up_left", "start": 16, "count": 8, "fps": 10.0},
 	{"animation": "walk_up", "start": 56, "count": 8, "fps": 10.0},
 	{"animation": "walk_up_right", "start": 48, "count": 8, "fps": 10.0},
 	{"animation": "walk_right", "start": 40, "count": 8, "fps": 10.0},
@@ -77,6 +93,9 @@ const WALK_BASE_SLICES := [
 	{"animation": "walk_down_default", "start": 24, "count": 8, "fps": 10.0},
 ]
 const RUN_BASE_SLICES := [
+	{"animation": "run_down_left", "start": 0, "count": 16, "fps": 14.0},
+	{"animation": "run_left", "start": 16, "count": 16, "fps": 14.0},
+	{"animation": "run_up_left", "start": 32, "count": 16, "fps": 14.0},
 	{"animation": "run_up", "start": 112, "count": 16, "fps": 14.0},
 	{"animation": "run_up_right", "start": 96, "count": 16, "fps": 14.0},
 	{"animation": "run_right", "start": 80, "count": 16, "fps": 14.0},
@@ -84,6 +103,9 @@ const RUN_BASE_SLICES := [
 	{"animation": "run_down", "start": 48, "count": 16, "fps": 14.0},
 ]
 const LIGHT_ATTACK_BASE_SLICES := [
+	{"animation": "melee_2h_fast_down_left", "start": 0, "count": 7, "fps": 12.0},
+	{"animation": "melee_2h_fast_left", "start": 7, "count": 7, "fps": 12.0},
+	{"animation": "melee_2h_fast_up_left", "start": 14, "count": 7, "fps": 12.0},
 	{"animation": "melee_2h_fast_up", "start": 49, "count": 7, "fps": 12.0},
 	{"animation": "melee_2h_fast_up_right", "start": 42, "count": 7, "fps": 12.0},
 	{"animation": "melee_2h_fast_right", "start": 35, "count": 7, "fps": 12.0},
@@ -140,15 +162,29 @@ const UNARMED_FAST_STRIKE_FX_SLICES := [
 	{"animation": "unarmed_fast_strike_fx_left", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__w__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
 	{"animation": "unarmed_fast_strike_fx_down_left", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__sw__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
 ]
+const UNARMED_FAST_RECOVERY_BODY_SLICES := [
+	{"animation": "unarmed_attack_fast_recovery", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_recovery_01__e__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 15.0},
+	{"animation": "unarmed_attack_fast_recovery_down", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_recovery_01__s__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 15.0},
+	{"animation": "unarmed_attack_fast_recovery_down_right", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_recovery_01__se__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 15.0},
+	{"animation": "unarmed_attack_fast_recovery_right", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_recovery_01__e__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 15.0},
+	{"animation": "unarmed_attack_fast_recovery_up_right", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_recovery_01__ne__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 15.0},
+	{"animation": "unarmed_attack_fast_recovery_up", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_recovery_01__n__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 15.0},
+	{"animation": "unarmed_attack_fast_recovery_up_left", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_recovery_01__nw__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 15.0},
+	{"animation": "unarmed_attack_fast_recovery_left", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_recovery_01__w__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 15.0},
+	{"animation": "unarmed_attack_fast_recovery_down_left", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_recovery_01__sw__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 15.0},
+]
 
 func _init() -> void:
 	var body_frames := load(BODY_FRAMES_PATH) as SpriteFrames
 	var modular_lower_body_frames := _load_or_create_sprite_frames(MODULAR_LOWER_BODY_FRAMES_PATH)
 	var modular_upper_body_frames := _load_or_create_sprite_frames(MODULAR_UPPER_BODY_FRAMES_PATH)
+	var modular_sidearm_frames := _load_or_create_sprite_frames(MODULAR_SIDEARM_FRAMES_PATH)
+	var modular_upper_fx_frames := _load_or_create_sprite_frames(MODULAR_UPPER_FX_FRAMES_PATH)
 	var weapon_frames := load(WEAPON_FRAMES_PATH) as SpriteFrames
 	var melee_overlay_frames := load(MELEE_OVERLAY_FRAMES_PATH) as SpriteFrames
+	var ranged_fx_frames := load(RANGED_FX_FRAMES_PATH) as SpriteFrames
 
-	if body_frames == null or modular_lower_body_frames == null or modular_upper_body_frames == null or weapon_frames == null or melee_overlay_frames == null:
+	if body_frames == null or modular_lower_body_frames == null or modular_upper_body_frames == null or modular_sidearm_frames == null or modular_upper_fx_frames == null or weapon_frames == null or melee_overlay_frames == null or ranged_fx_frames == null:
 		push_error("Failed to load one or more operator SpriteFrames resources.")
 		quit(1)
 		return
@@ -160,6 +196,8 @@ func _init() -> void:
 	_replace_animation(body_frames, "melee_2h_fast_right", BASE_FAST_ATTACK_RIGHT_SHEET, 12, 0, 96, 128, 12.0, false)
 	_replace_animation_if_exists(body_frames, "melee_2h_fast_up", BASE_FAST_ATTACK_NORTH_BODY_SHEET, 6, 0, 96, 96, 12.0, false)
 	_replace_animation(body_frames, "melee_2h_heavy_anticipation", HEAVY_ANTICIPATION_SHEET, 5, 0, 96, 96, 11.0, false)
+	_replace_animation(body_frames, "melee_2h_heavy", HEAVY_ATTACK_SHEET, 7, 0, 96, 96, 11.0, false)
+	_replace_animation(body_frames, "melee_2h_heavy_right", HEAVY_ATTACK_SHEET, 7, 0, 96, 96, 11.0, false)
 	_replace_animation(body_frames, "melee_2h_fast_1_right", FAST_ATTACK_1_SHEET, 6, 0, 96, 96, 12.0, false)
 	_replace_animation(body_frames, "melee_2h_fast_2_right", FAST_ATTACK_2_SHEET, 5, 0, 96, 96, 12.0, false)
 	_replace_animation(body_frames, "melee_2h_fast_recovery", FAST_RECOVERY_SHEET, 2, 0, 96, 96, 10.0, false)
@@ -169,11 +207,7 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_left", UNARMED_FAST_WEST_BODY_SHEET, 5, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_up", UNARMED_FAST_NORTH_BODY_SHEET, 6, 0, 96, 96, 12.0, false)
 	_replace_animation_entries(body_frames, UNARMED_FAST_STRIKE_BODY_SLICES)
-	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_recovery", UNARMED_FAST_RECOVERY_EAST_BODY_SHEET, 3, 0, 96, 96, 15.0, false)
-	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_recovery_right", UNARMED_FAST_RECOVERY_EAST_BODY_SHEET, 3, 0, 96, 96, 15.0, false)
-	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_recovery_left", UNARMED_FAST_RECOVERY_WEST_BODY_SHEET, 3, 0, 96, 96, 15.0, false)
-	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_recovery_down", UNARMED_FAST_RECOVERY_SOUTH_BODY_SHEET, 2, 0, 96, 96, 10.0, false)
-	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_recovery_up", UNARMED_FAST_RECOVERY_NORTH_BODY_SHEET, 2, 0, 96, 96, 10.0, false)
+	_replace_animation_entries(body_frames, UNARMED_FAST_RECOVERY_BODY_SLICES)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_heavy", UNARMED_HEAVY_EAST_BODY_SHEET, 7, 0, 96, 96, 10.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_heavy_right", UNARMED_HEAVY_EAST_BODY_SHEET, 7, 0, 96, 96, 10.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_heavy_left", UNARMED_HEAVY_WEST_BODY_SHEET, 7, 0, 96, 96, 10.0, false)
@@ -202,8 +236,20 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "unarmed_walk_left", UNARMED_WALK_WEST_SHEET, 5, 0, 96, 96, 10.0, true)
 	_replace_animation_entries(body_frames, UNARMED_MODULAR_LOWER_LOCOMOTION_SLICES)
 	_replace_animation_entries(modular_lower_body_frames, UNARMED_MODULAR_LOWER_LOCOMOTION_SLICES)
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_sidearm_entries("lower_body", "sidearm_draw_lower", "draw_sidearm_01"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_sidearm_entries("lower_body", "sidearm_fire_lower", "fire_sidearm_01"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_locomotion_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_upper_action_entries())
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_draw_upper", "draw_sidearm_01"))
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_fire_upper", "fire_sidearm_01"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_stance_entries("lower_body"))
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_ranged_stance_entries("upper_body"))
+	_replace_animation_entries(modular_sidearm_frames, _build_modular_sidearm_entries("sidearm", "sidearm_draw", "draw_sidearm_01"))
+	_replace_animation_entries(modular_sidearm_frames, _build_modular_sidearm_entries("sidearm", "sidearm_fire", "fire_sidearm_01"))
+	_replace_animation_entries(modular_sidearm_frames, _build_modular_ranged_stance_entries("ranged_weapon"))
+	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_fire_fx", "fx_01"))
+	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_draw_fx", "draw_sidearm_01"))
+	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_fire_fx", "fire_sidearm_01"))
 	_replace_animation_if_exists(body_frames, "unarmed_death", UNARMED_DEATH_BODY_SHEET, 6, 0, 96, 96, 7.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival_down", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
@@ -215,11 +261,19 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "operator_dodge_recovery", DODGE_RECOVERY_BODY_SHEET, 4, 0, 96, 96, 18.0, false)
 	_replace_animation_if_exists(body_frames, "operator_dodge_backstep", DODGE_BACKSTEP_BODY_SHEET, 4, 0, 96, 96, 18.0, false)
 	_replace_animation_if_exists(body_frames, "operator_dodge_backstep_recovery", DODGE_BACKSTEP_RECOVERY_BODY_SHEET, 4, 0, 96, 96, 18.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_full_north", DODGE_FULL_NORTH_BODY_SHEET, 9, 0, 96, 96, 25.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_full_south", DODGE_FULL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 25.0, false)
+	_replace_animation_if_exists(body_frames, "ranged_2h_reload", RELOAD_BODY_SHEET, 4, 0, 96, 96, 10.0, false)
+	_replace_animation(body_frames, "melee_2h_block_enter", BLOCK_ENTER_BODY_SHEET, 4, 0, 96, 96, 10.0, false)
+	_replace_animation(body_frames, "melee_2h_block_hold", BLOCK_HOLD_BODY_SHEET, 1, 0, 96, 96, 1.0, true)
+	_replace_animation(body_frames, "melee_2h_block_exit", BLOCK_EXIT_BODY_SHEET, 2, 0, 96, 96, 10.0, false)
 
 	_replace_animation_if_exists(weapon_frames, "equipped_run_right", RANGED_RUN_WEAPON_SHEET, 5, 0, 96, 96, 14.0, true)
 	_replace_animation_if_exists(weapon_frames, "equipped_run_left", RANGED_RUN_WEST_WEAPON_SHEET, 5, 0, 96, 96, 14.0, true)
 
 	_replace_animation(melee_overlay_frames, "melee_2h_heavy_anticipation_weapon", HEAVY_ANTICIPATION_SHEET, 5, 1, 96, 96, 11.0, false)
+	_replace_animation(melee_overlay_frames, "melee_2h_heavy_weapon", HEAVY_ATTACK_SHEET, 7, 1, 96, 96, 11.0, false)
+	_replace_animation(melee_overlay_frames, "melee_2h_heavy_fx", HEAVY_ATTACK_SHEET, 7, 2, 96, 96, 11.0, false)
 	_replace_animation(melee_overlay_frames, "melee_2h_fast_1_weapon", FAST_ATTACK_1_SHEET, 6, 1, 96, 96, 12.0, false)
 	_replace_animation(melee_overlay_frames, "melee_2h_fast_1_fx", FAST_ATTACK_1_SHEET, 6, 2, 96, 96, 12.0, false)
 	_replace_animation(melee_overlay_frames, "melee_2h_fast_2_weapon", FAST_ATTACK_2_SHEET, 5, 1, 96, 96, 12.0, false)
@@ -238,7 +292,12 @@ func _init() -> void:
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_attack_heavy_fx_down", UNARMED_HEAVY_FX_SOUTH_SHEET, 7, 0, 96, 96, 10.0, false)
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_attack_heavy_fx_up", UNARMED_HEAVY_FX_NORTH_SHEET, 8, 0, 96, 96, 11.5, false)
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_light_hitreact_fx_down", UNARMED_LIGHT_HITREACT_FX_SOUTH_SHEET, 3, 0, 96, 96, 10.0, false)
+	_replace_animation(melee_overlay_frames, "melee_2h_block_enter_weapon", BLOCK_ENTER_WEAPON_SHEET, 4, 0, 96, 96, 10.0, false)
+	_replace_animation(melee_overlay_frames, "melee_2h_block_hold_weapon", BLOCK_HOLD_WEAPON_SHEET, 1, 0, 96, 96, 1.0, true)
+	_replace_animation(melee_overlay_frames, "melee_2h_block_exit_weapon", BLOCK_EXIT_WEAPON_SHEET, 2, 0, 96, 96, 10.0, false)
 
+	_replace_animation(ranged_fx_frames, "ranged_2h_fire_fx", FIRE_BODY_SHEET, 4, 2, 96, 96, 14.0, false)
+	_replace_animation(ranged_fx_frames, "ranged_2h_reload_fx", OPERATOR_RELOADING_SHEET, 4, 1, 96, 96, 10.0, false)
 	if _had_rebuild_error:
 		quit(1)
 		return
@@ -246,8 +305,11 @@ func _init() -> void:
 	ResourceSaver.save(body_frames, BODY_FRAMES_PATH)
 	ResourceSaver.save(modular_lower_body_frames, MODULAR_LOWER_BODY_FRAMES_PATH)
 	ResourceSaver.save(modular_upper_body_frames, MODULAR_UPPER_BODY_FRAMES_PATH)
+	ResourceSaver.save(modular_sidearm_frames, MODULAR_SIDEARM_FRAMES_PATH)
+	ResourceSaver.save(modular_upper_fx_frames, MODULAR_UPPER_FX_FRAMES_PATH)
 	ResourceSaver.save(weapon_frames, WEAPON_FRAMES_PATH)
 	ResourceSaver.save(melee_overlay_frames, MELEE_OVERLAY_FRAMES_PATH)
+	ResourceSaver.save(ranged_fx_frames, RANGED_FX_FRAMES_PATH)
 	quit()
 
 
@@ -450,6 +512,60 @@ func _build_modular_upper_action_entries() -> Array:
 			"fps": 12.0,
 			"loop": false,
 		})
+	return entries
+
+
+func _build_modular_sidearm_entries(part: String, base: String, action: String) -> Array:
+	var action_root := "actions/%s" % action if part == "sidearm" else "actions/sidearm/%s" % action
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/%s" % [part, action_root]
+	var part_prefix := "operator__modular_%s__sidearm__%s" % [part, action]
+	var entries: Array = []
+	var direction_specs := [
+		{"dir": "ne", "suffix": "up_right"},
+		{"dir": "nw", "suffix": "up_left"},
+		{"dir": "se", "suffix": "down_right", "alias_base": true},
+		{"dir": "sw", "suffix": "down_left"},
+	]
+	for direction_spec in direction_specs:
+		var path := "%s/%s__%s__5f__96.png" % [root, part_prefix, str(direction_spec["dir"])]
+		if not _texture_file_exists(path):
+			continue
+		if bool(direction_spec.get("alias_base", false)):
+			entries.append({
+				"animation": base,
+				"path": path,
+				"frames": 5,
+				"frame_width": 96,
+				"frame_height": 96,
+				"fps": 12.0,
+				"loop": false,
+			})
+		entries.append({
+			"animation": "%s_%s" % [base, str(direction_spec["suffix"])],
+			"path": path,
+			"frames": 5,
+			"frame_width": 96,
+			"frame_height": 96,
+			"fps": 12.0,
+			"loop": false,
+		})
+	return entries
+
+
+func _build_modular_ranged_stance_entries(part: String) -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/ranged_2h/stance_01" % part
+	var entries: Array = []
+	for direction_spec in [
+		{"dir": "e", "suffix": "right", "alias_base": true},
+		{"dir": "n", "suffix": "up"},
+		{"dir": "w", "suffix": "left"},
+	]:
+		var path := "%s/operator__modular_%s__ranged_2h__stance_01__%s__5f__96.png" % [root, part, str(direction_spec["dir"])]
+		if not _texture_file_exists(path):
+			continue
+		if bool(direction_spec.get("alias_base", false)):
+			entries.append({"animation": "ranged_2h_stance_modular", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true})
+		entries.append({"animation": "ranged_2h_stance_modular_%s" % str(direction_spec["suffix"]), "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true})
 	return entries
 
 

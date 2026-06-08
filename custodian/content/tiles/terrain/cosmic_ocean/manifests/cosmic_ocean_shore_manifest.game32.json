@@ -1,0 +1,1328 @@
+{
+  "display_name": "Sundered Keep Cosmic Ocean Shore Tiles",
+  "generated_by": "extract_cosmic_ocean_shore_game32.lua",
+  "id": "sundered_keep_cosmic_ocean_shore_tiles",
+  "output": {
+    "game32_dir": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32",
+    "manifest_dir": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/manifests",
+    "raw_dir": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw",
+    "root": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles",
+    "runtime_tile_px": [
+      32,
+      32
+    ]
+  },
+  "schema": "game32.aggregate_manifest.v2",
+  "source": {
+    "canvas_px": [
+      1254,
+      1254
+    ],
+    "detected_grid": {
+      "cols": 8,
+      "rows": 7
+    },
+    "sheet_file": "Sprite-0019",
+    "sheet_path": "Sprite-0019"
+  },
+  "tiles": [
+    {
+      "bbox_px": {
+        "h": 151,
+        "w": 147,
+        "x": 22,
+        "y": 18
+      },
+      "col": 1,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_fill_blue_nebula_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_fill_blue_nebula_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_fill_blue_nebula_01__raw.png",
+      "role": "void_fill_blue_nebula",
+      "row": 1,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_fill_blue_nebula_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 151,
+        "w": 150,
+        "x": 182,
+        "y": 18
+      },
+      "col": 2,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_fill_blue_cloud_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_fill_blue_cloud_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_fill_blue_cloud_01__raw.png",
+      "role": "void_fill_blue_cloud",
+      "row": 1,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_fill_blue_cloud_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 151,
+        "w": 150,
+        "x": 346,
+        "y": 18
+      },
+      "col": 3,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_fill_starfield_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_fill_starfield_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_fill_starfield_01__raw.png",
+      "role": "void_fill_starfield",
+      "row": 1,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_fill_starfield_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 151,
+        "w": 134,
+        "x": 511,
+        "y": 18
+      },
+      "col": 4,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_fill_deep_space_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_fill_deep_space_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_fill_deep_space_01__raw.png",
+      "role": "void_fill_deep_space",
+      "row": 1,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_fill_deep_space_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 151,
+        "w": 141,
+        "x": 658,
+        "y": 18
+      },
+      "col": 5,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_vortex_blue_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_vortex_blue_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_vortex_blue_01__raw.png",
+      "role": "void_vortex_blue",
+      "row": 1,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_vortex_blue_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 151,
+        "w": 141,
+        "x": 813,
+        "y": 18
+      },
+      "col": 6,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_nebula_violet_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_nebula_violet_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_nebula_violet_01__raw.png",
+      "role": "void_nebula_violet",
+      "row": 1,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_nebula_violet_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 151,
+        "w": 137,
+        "x": 967,
+        "y": 18
+      },
+      "col": 7,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_vortex_violet_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_vortex_violet_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_vortex_violet_01__raw.png",
+      "role": "void_vortex_violet",
+      "row": 1,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_vortex_violet_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 151,
+        "w": 114,
+        "x": 1117,
+        "y": 18
+      },
+      "col": 8,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_fill_sparse_starfield_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_fill_sparse_starfield_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_fill_sparse_starfield_01__raw.png",
+      "role": "void_fill_sparse_starfield",
+      "row": 1,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_fill_sparse_starfield_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 145,
+        "w": 147,
+        "x": 22,
+        "y": 183
+      },
+      "col": 1,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "foam_shore",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_n_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_n_foam_01__raw.png",
+      "role": "shore_n_foam",
+      "row": 2,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 145,
+        "w": 150,
+        "x": 182,
+        "y": 183
+      },
+      "col": 2,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "foam_shore",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_n_foam_02",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_foam_02.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_n_foam_02__raw.png",
+      "role": "shore_n_foam",
+      "row": 2,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_foam_02.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 145,
+        "w": 150,
+        "x": 346,
+        "y": 183
+      },
+      "col": 3,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "foam_shore",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_n_cavern_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_cavern_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_n_cavern_foam_01__raw.png",
+      "role": "shore_n_cavern_foam",
+      "row": 2,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_cavern_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 145,
+        "w": 134,
+        "x": 511,
+        "y": 183
+      },
+      "col": 4,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "foam_shore",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_n_jagged_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_jagged_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_n_jagged_foam_01__raw.png",
+      "role": "shore_n_jagged_foam",
+      "row": 2,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_jagged_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 145,
+        "w": 141,
+        "x": 658,
+        "y": 183
+      },
+      "col": 5,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "foam_shore",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_n_vortex_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_vortex_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_n_vortex_foam_01__raw.png",
+      "role": "shore_n_vortex_foam",
+      "row": 2,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_vortex_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 145,
+        "w": 141,
+        "x": 813,
+        "y": 183
+      },
+      "col": 6,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "foam_shore",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_n_lightning_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_lightning_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_n_lightning_foam_01__raw.png",
+      "role": "shore_n_lightning_foam",
+      "row": 2,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_lightning_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 145,
+        "w": 137,
+        "x": 967,
+        "y": 183
+      },
+      "col": 7,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "foam_shore",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_n_violet_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_violet_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_n_violet_foam_01__raw.png",
+      "role": "shore_n_violet_foam",
+      "row": 2,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_violet_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 145,
+        "w": 114,
+        "x": 1117,
+        "y": 183
+      },
+      "col": 8,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "foam_shore",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_n_cliff_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_cliff_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_n_cliff_foam_01__raw.png",
+      "role": "shore_n_cliff_foam",
+      "row": 2,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_n_cliff_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 147,
+        "x": 22,
+        "y": 343
+      },
+      "col": 1,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "foam_shore"
+      },
+      "id": "cosmic_ocean_shore_w_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_w_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_w_foam_01__raw.png",
+      "role": "shore_w_foam",
+      "row": 3,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_w_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 150,
+        "x": 182,
+        "y": 343
+      },
+      "col": 2,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "foam_shore"
+      },
+      "id": "cosmic_ocean_shore_w_foam_02",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_w_foam_02.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_w_foam_02__raw.png",
+      "role": "shore_w_foam",
+      "row": 3,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_w_foam_02.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 150,
+        "x": 346,
+        "y": 343
+      },
+      "col": 3,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "foam_shore"
+      },
+      "id": "cosmic_ocean_shore_w_foam_03",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_w_foam_03.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_w_foam_03__raw.png",
+      "role": "shore_w_foam",
+      "row": 3,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_w_foam_03.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 134,
+        "x": 511,
+        "y": 343
+      },
+      "col": 4,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "masonry_boundary"
+      },
+      "id": "cosmic_ocean_masonry_w_void_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_w_void_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_w_void_edge_01__raw.png",
+      "role": "masonry_w_void_edge",
+      "row": 3,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_w_void_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 141,
+        "x": 658,
+        "y": 343
+      },
+      "col": 5,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "masonry_boundary"
+      },
+      "id": "cosmic_ocean_masonry_w_void_edge_02",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_w_void_edge_02.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_w_void_edge_02__raw.png",
+      "role": "masonry_w_void_edge",
+      "row": 3,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_w_void_edge_02.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 141,
+        "x": 813,
+        "y": 343
+      },
+      "col": 6,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "masonry_boundary"
+      },
+      "id": "cosmic_ocean_masonry_w_broken_void_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_w_broken_void_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_w_broken_void_edge_01__raw.png",
+      "role": "masonry_w_broken_void_edge",
+      "row": 3,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_w_broken_void_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 137,
+        "x": 967,
+        "y": 343
+      },
+      "col": 7,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "masonry_boundary"
+      },
+      "id": "cosmic_ocean_masonry_w_dark_void_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_w_dark_void_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_w_dark_void_edge_01__raw.png",
+      "role": "masonry_w_dark_void_edge",
+      "row": 3,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_w_dark_void_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 114,
+        "x": 1117,
+        "y": 343
+      },
+      "col": 8,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "masonry_boundary"
+      },
+      "id": "cosmic_ocean_masonry_w_rock_void_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_w_rock_void_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_w_rock_void_edge_01__raw.png",
+      "role": "masonry_w_rock_void_edge",
+      "row": 3,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_w_rock_void_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 170,
+        "w": 147,
+        "x": 22,
+        "y": 517
+      },
+      "col": 1,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "foam_shore",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_s_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_s_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_s_foam_01__raw.png",
+      "role": "shore_s_foam",
+      "row": 4,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_s_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 170,
+        "w": 150,
+        "x": 182,
+        "y": 517
+      },
+      "col": 2,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "foam_shore",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_s_foam_02",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_s_foam_02.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_s_foam_02__raw.png",
+      "role": "shore_s_foam",
+      "row": 4,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_s_foam_02.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 170,
+        "w": 150,
+        "x": 346,
+        "y": 517
+      },
+      "col": 3,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "foam_shore",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_shore_s_drip_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_s_drip_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_shore_s_drip_foam_01__raw.png",
+      "role": "shore_s_drip_foam",
+      "row": 4,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_shore_s_drip_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 170,
+        "w": 134,
+        "x": 511,
+        "y": 517
+      },
+      "col": 4,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "masonry_boundary",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_masonry_s_low_wall_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_s_low_wall_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_s_low_wall_edge_01__raw.png",
+      "role": "masonry_s_low_wall_edge",
+      "row": 4,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_s_low_wall_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 170,
+        "w": 141,
+        "x": 658,
+        "y": 517
+      },
+      "col": 5,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "masonry_boundary",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_masonry_s_gate_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_s_gate_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_s_gate_edge_01__raw.png",
+      "role": "masonry_s_gate_edge",
+      "row": 4,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_s_gate_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 170,
+        "w": 141,
+        "x": 813,
+        "y": 517
+      },
+      "col": 6,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "masonry_boundary",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_masonry_s_arch_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_s_arch_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_s_arch_edge_01__raw.png",
+      "role": "masonry_s_arch_edge",
+      "row": 4,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_s_arch_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 170,
+        "w": 137,
+        "x": 967,
+        "y": 517
+      },
+      "col": 7,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "masonry_boundary",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_masonry_s_cobble_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_s_cobble_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_s_cobble_edge_01__raw.png",
+      "role": "masonry_s_cobble_edge",
+      "row": 4,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_s_cobble_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 170,
+        "w": 114,
+        "x": 1117,
+        "y": 517
+      },
+      "col": 8,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "masonry_boundary",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_masonry_s_rock_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_s_rock_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_s_rock_edge_01__raw.png",
+      "role": "masonry_s_rock_edge",
+      "row": 4,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_s_rock_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 147,
+        "x": 22,
+        "y": 702
+      },
+      "col": 1,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "foam_shore",
+        "w": "foam_shore"
+      },
+      "id": "cosmic_ocean_corner_sw_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_corner_sw_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_corner_sw_foam_01__raw.png",
+      "role": "corner_sw_foam",
+      "row": 5,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_corner_sw_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 150,
+        "x": 182,
+        "y": 702
+      },
+      "col": 2,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "foam_shore",
+        "s": "void",
+        "w": "foam_shore"
+      },
+      "id": "cosmic_ocean_corner_nw_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_corner_nw_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_corner_nw_foam_01__raw.png",
+      "role": "corner_nw_foam",
+      "row": 5,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_corner_nw_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 150,
+        "x": 346,
+        "y": 702
+      },
+      "col": 3,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "foam_shore",
+        "s": "void",
+        "w": "foam_shore"
+      },
+      "id": "cosmic_ocean_corner_nw_foam_02",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_corner_nw_foam_02.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_corner_nw_foam_02__raw.png",
+      "role": "corner_nw_foam",
+      "row": 5,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_corner_nw_foam_02.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 134,
+        "x": 511,
+        "y": 702
+      },
+      "col": 4,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "foam_shore",
+        "w": "foam_shore"
+      },
+      "id": "cosmic_ocean_masonry_corner_sw_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_corner_sw_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_corner_sw_edge_01__raw.png",
+      "role": "masonry_corner_sw_edge",
+      "row": 5,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_corner_sw_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 141,
+        "x": 658,
+        "y": 702
+      },
+      "col": 5,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "masonry_boundary",
+        "w": "masonry_boundary"
+      },
+      "id": "cosmic_ocean_masonry_corner_low_wall_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_corner_low_wall_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_corner_low_wall_01__raw.png",
+      "role": "masonry_corner_low_wall",
+      "row": 5,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_corner_low_wall_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 141,
+        "x": 813,
+        "y": 702
+      },
+      "col": 6,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "masonry_boundary",
+        "w": "masonry_boundary"
+      },
+      "id": "cosmic_ocean_masonry_corner_arch_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_corner_arch_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_corner_arch_edge_01__raw.png",
+      "role": "masonry_corner_arch_edge",
+      "row": 5,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_corner_arch_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 137,
+        "x": 967,
+        "y": 702
+      },
+      "col": 7,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "masonry_boundary",
+        "w": "masonry_boundary"
+      },
+      "id": "cosmic_ocean_masonry_corner_floor_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_corner_floor_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_corner_floor_edge_01__raw.png",
+      "role": "masonry_corner_floor_edge",
+      "row": 5,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_corner_floor_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 158,
+        "w": 114,
+        "x": 1117,
+        "y": 702
+      },
+      "col": 8,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "masonry_boundary",
+        "w": "masonry_boundary"
+      },
+      "id": "cosmic_ocean_masonry_corner_rock_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_corner_rock_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_corner_rock_edge_01__raw.png",
+      "role": "masonry_corner_rock_edge",
+      "row": 5,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_corner_rock_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 152,
+        "w": 147,
+        "x": 22,
+        "y": 877
+      },
+      "col": 1,
+      "edge_profile": {
+        "diagonal": "nw_to_se_foam_shore",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_diagonal_nw_se_foam_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_diagonal_nw_se_foam_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_diagonal_nw_se_foam_01__raw.png",
+      "role": "diagonal_nw_se_foam",
+      "row": 6,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_diagonal_nw_se_foam_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 152,
+        "w": 150,
+        "x": 182,
+        "y": 877
+      },
+      "col": 2,
+      "edge_profile": {
+        "diagonal": "nw_to_se_foam_shore",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_diagonal_nw_se_foam_02",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_diagonal_nw_se_foam_02.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_diagonal_nw_se_foam_02__raw.png",
+      "role": "diagonal_nw_se_foam",
+      "row": 6,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_diagonal_nw_se_foam_02.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 152,
+        "w": 150,
+        "x": 346,
+        "y": 877
+      },
+      "col": 3,
+      "edge_profile": {
+        "diagonal": "nw_to_se_foam_shore",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_diagonal_nw_se_foam_03",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_diagonal_nw_se_foam_03.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_diagonal_nw_se_foam_03__raw.png",
+      "role": "diagonal_nw_se_foam",
+      "row": 6,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_diagonal_nw_se_foam_03.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 152,
+        "w": 134,
+        "x": 511,
+        "y": 877
+      },
+      "col": 4,
+      "edge_profile": {
+        "diagonal": "nw_to_se_foam_shore",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_diagonal_nw_se_foam_04",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_diagonal_nw_se_foam_04.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_diagonal_nw_se_foam_04__raw.png",
+      "role": "diagonal_nw_se_foam",
+      "row": 6,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_diagonal_nw_se_foam_04.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 152,
+        "w": 141,
+        "x": 658,
+        "y": 877
+      },
+      "col": 5,
+      "edge_profile": {
+        "diagonal": "nw_to_se_foam_shore",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_masonry_diagonal_nw_se_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_diagonal_nw_se_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_diagonal_nw_se_edge_01__raw.png",
+      "role": "masonry_diagonal_nw_se_edge",
+      "row": 6,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_diagonal_nw_se_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 152,
+        "w": 141,
+        "x": 813,
+        "y": 877
+      },
+      "col": 6,
+      "edge_profile": {
+        "diagonal": "nw_to_se_masonry_boundary",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_masonry_diagonal_broken_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_diagonal_broken_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_masonry_diagonal_broken_edge_01__raw.png",
+      "role": "masonry_diagonal_broken_edge",
+      "row": 6,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_masonry_diagonal_broken_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 152,
+        "w": 137,
+        "x": 967,
+        "y": 877
+      },
+      "col": 7,
+      "edge_profile": {
+        "diagonal": "nw_to_se_foam_shore",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_rock_diagonal_nw_se_edge_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_rock_diagonal_nw_se_edge_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_rock_diagonal_nw_se_edge_01__raw.png",
+      "role": "rock_diagonal_nw_se_edge",
+      "row": 6,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_rock_diagonal_nw_se_edge_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 152,
+        "w": 114,
+        "x": 1117,
+        "y": 877
+      },
+      "col": 8,
+      "edge_profile": {
+        "diagonal": "nw_to_se_foam_shore",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_rock_diagonal_nw_se_edge_02",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_rock_diagonal_nw_se_edge_02.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_rock_diagonal_nw_se_edge_02__raw.png",
+      "role": "rock_diagonal_nw_se_edge",
+      "row": 6,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_rock_diagonal_nw_se_edge_02.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 184,
+        "w": 147,
+        "x": 22,
+        "y": 1045
+      },
+      "col": 1,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_vortex_blue_large_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_vortex_blue_large_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_vortex_blue_large_01__raw.png",
+      "role": "void_vortex_blue_large",
+      "row": 7,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_vortex_blue_large_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 184,
+        "w": 150,
+        "x": 182,
+        "y": 1045
+      },
+      "col": 2,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_vortex_violet_large_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_vortex_violet_large_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_vortex_violet_large_01__raw.png",
+      "role": "void_vortex_violet_large",
+      "row": 7,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_vortex_violet_large_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 184,
+        "w": 150,
+        "x": 346,
+        "y": 1045
+      },
+      "col": 3,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_nebula_blue_large_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_nebula_blue_large_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_nebula_blue_large_01__raw.png",
+      "role": "void_nebula_blue_large",
+      "row": 7,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_nebula_blue_large_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 184,
+        "w": 134,
+        "x": 511,
+        "y": 1045
+      },
+      "col": 4,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_nebula_violet_large_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_nebula_violet_large_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_nebula_violet_large_01__raw.png",
+      "role": "void_nebula_violet_large",
+      "row": 7,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_nebula_violet_large_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 184,
+        "w": 141,
+        "x": 658,
+        "y": 1045
+      },
+      "col": 5,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_black_hole_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_black_hole_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_black_hole_01__raw.png",
+      "role": "void_black_hole",
+      "row": 7,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_black_hole_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 184,
+        "w": 141,
+        "x": 813,
+        "y": 1045
+      },
+      "col": 6,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_star_cluster_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_star_cluster_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_star_cluster_01__raw.png",
+      "role": "void_star_cluster",
+      "row": 7,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_star_cluster_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 184,
+        "w": 137,
+        "x": 967,
+        "y": 1045
+      },
+      "col": 7,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_galaxy_violet_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_galaxy_violet_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_galaxy_violet_01__raw.png",
+      "role": "void_galaxy_violet",
+      "row": 7,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_galaxy_violet_01.game32.json"
+    },
+    {
+      "bbox_px": {
+        "h": 184,
+        "w": 114,
+        "x": 1117,
+        "y": 1045
+      },
+      "col": 8,
+      "edge_profile": {
+        "diagonal": "none",
+        "e": "void",
+        "feature": "cosmic_ocean",
+        "n": "void",
+        "s": "void",
+        "w": "void"
+      },
+      "id": "cosmic_ocean_void_galaxy_blue_01",
+      "png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_galaxy_blue_01.png",
+      "raw_png": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/raw/cosmic_ocean_void_galaxy_blue_01__raw.png",
+      "role": "void_galaxy_blue",
+      "row": 7,
+      "sidecar": "/home/braydenchaffee/custodian_cosmic_ocean_shore_tiles/game32/cosmic_ocean_void_galaxy_blue_01.game32.json"
+    }
+  ],
+  "usage": {
+    "base_tile_px": 32,
+    "engine": "Godot 4",
+    "intended_tilemaps": [
+      "void_base",
+      "void_boundary_overlay",
+      "wall_boundary_overlay"
+    ],
+    "notes": "All exported game32 PNGs are 32x32. Raw crops are preserved for repainting, review, or higher-resolution resampling."
+  }
+}

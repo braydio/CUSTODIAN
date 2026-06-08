@@ -15,6 +15,7 @@ SOURCE_ROOT = PROJECT_ROOT / "content/sprites/operator/new_operator/modular"
 RUNTIME_ROOT = PROJECT_ROOT / "content/sprites/operator/runtime"
 MODULE_ROOT = RUNTIME_ROOT / "modules/new_operator"
 ACTION_ROOT = RUNTIME_ROOT / "actions/unarmed/fast_attack"
+DODGE_ROOT = RUNTIME_ROOT / "actions/dodge"
 
 DIRECTIONS = ("s", "se", "e", "ne", "n", "nw", "w", "sw")
 DIRECTION_TO_SUFFIX = {
@@ -57,6 +58,9 @@ def main() -> int:
     generated.extend(_build_lower_body_modules(source_root, module_root, args.dry_run))
     generated.extend(_build_upper_body_modules(source_root, module_root, args.dry_run))
     generated.extend(_build_upper_body_action_modules(source_root, module_root, args.dry_run))
+    generated.extend(_build_sidearm_action_modules(source_root, module_root, args.dry_run))
+    generated.extend(_build_ranged_2h_stance_modules(source_root, module_root, args.dry_run))
+    generated.extend(_build_full_dodge_runtime(source_root, DODGE_ROOT, args.dry_run))
     generated.extend(_build_fast_attack_runtime(source_root, action_root, args.dry_run))
 
     for path in generated:
@@ -120,6 +124,66 @@ def _build_upper_body_action_modules(source_root: Path, module_root: Path, dry_r
             output.parent.mkdir(parents=True, exist_ok=True)
             _write_or_copy_sheet(upper, output, frames=3, target_frame_width=96, target_frame_height=96)
         generated.append(output)
+    return generated
+
+
+def _build_sidearm_action_modules(source_root: Path, module_root: Path, dry_run: bool) -> list[Path]:
+    generated: list[Path] = []
+    sidearm_root = source_root / "sidearm"
+    layer_specs = {
+        "modular_lower_body": ("operator__modular_lower_body__sidearm", module_root / "lower_body/actions/sidearm"),
+        "modular_upper_body": ("operator__modular_upper_body__sidearm", module_root / "upper_body/actions/sidearm"),
+        "modular_upper_fx": ("operator__modular_upper_fx__sidearm", module_root / "upper_fx/actions/sidearm"),
+        "modular_sidearm": ("operator__weapon__sidearm_pistol", module_root / "sidearm/actions"),
+    }
+    for output_layer, (source_prefix, output_root) in layer_specs.items():
+        for source in sorted(sidearm_root.glob(f"{source_prefix}__*__*__*f__*.png")):
+            spec = _sheet_spec_from_path(source, _direction_from_path(source))
+            action = _action_from_path(source)
+            output_name = f"operator__{output_layer}__sidearm__{action}__{spec.direction}__{spec.frames}f__96.png"
+            output = output_root / action / output_name
+            if not dry_run:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                _write_or_copy_sheet(spec.path, output, frames=spec.frames, target_frame_width=96, target_frame_height=96)
+            generated.append(output)
+    return generated
+
+
+def _build_ranged_2h_stance_modules(source_root: Path, module_root: Path, dry_run: bool) -> list[Path]:
+    generated: list[Path] = []
+    ranged_root = source_root / "ranged"
+    layer_specs = {
+        "lower_body": "operator__modular_lower_body__stance__ranged_2h",
+        "upper_body": "operator__modular_upper_body__stance__ranged_2h",
+        "ranged_weapon": "operator__modular_upper_body__weapon__ranged_2h",
+    }
+    for output_layer, source_prefix in layer_specs.items():
+        output_root = module_root / output_layer / "actions/ranged_2h/stance_01"
+        for direction in ("e", "n", "w"):
+            matches = sorted(ranged_root.glob(f"{source_prefix}__{direction}__5f__96*.png"))
+            if not matches:
+                continue
+            output = output_root / f"operator__modular_{output_layer}__ranged_2h__stance_01__{direction}__5f__96.png"
+            if not dry_run:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                _write_or_copy_sheet(matches[0], output, frames=5, target_frame_width=96, target_frame_height=96)
+            generated.append(output)
+    return generated
+
+
+def _build_full_dodge_runtime(source_root: Path, dodge_root: Path, dry_run: bool) -> list[Path]:
+    generated: list[Path] = []
+    source_dodge_root = source_root / "dodge"
+    for layer, output_layer in (("body", "body"), ("fx", "fx")):
+        for direction in ("n", "s"):
+            source = source_dodge_root / f"operator__{layer}__full__dodge_01__{direction}__9f__96.png"
+            if not source.exists():
+                continue
+            output = dodge_root / output_layer / f"operator__{output_layer}__full__dodge_01__{direction}__9f__96.png"
+            if not dry_run:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                _write_or_copy_sheet(source, output, frames=9, target_frame_width=96, target_frame_height=96)
+            generated.append(output)
     return generated
 
 
@@ -320,6 +384,17 @@ def _build_fast_attack_runtime(source_root: Path, action_root: Path, dry_run: bo
                 output.parent.mkdir(parents=True, exist_ok=True)
                 _write_or_copy_sheet(fx, output, frames=3, target_frame_width=96, target_frame_height=96)
             generated.append(output)
+
+        recovery_upper = _find_part(fast_root, "upper_body", "fast_recovery_01", direction)
+        recovery_lower = _find_part(fast_root, "lower_body", "fast_recovery_01", direction)
+        if recovery_upper is not None and recovery_lower is not None:
+            output = action_root / "body" / f"operator__body__unarmed__fast_recovery_01__{direction}__3f__96.png"
+            if not dry_run:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                _composite_horizontal_strips(
+                    recovery_lower, recovery_upper, output, frames=3, target_frame_width=96, target_frame_height=96
+                )
+            generated.append(output)
     return generated
 
 
@@ -329,7 +404,7 @@ def _find_part(root: Path, part: str, action: str, direction: str) -> Path | Non
 
 
 def _sheet_spec_from_path(path: Path, direction: str) -> SheetSpec:
-    match = re.search(r"__(\d+)f__96\.png$", path.name)
+    match = re.search(r"__(\d+)f__(\d+)\.png$", path.name)
     if match is None:
         raise ValueError(f"cannot parse frame count from {path}")
     frames = int(match.group(1))
@@ -337,6 +412,27 @@ def _sheet_spec_from_path(path: Path, direction: str) -> SheetSpec:
         frame_width = image.width // frames
         frame_height = image.height
     return SheetSpec(path=path, frames=frames, direction=direction, frame_width=frame_width, frame_height=frame_height)
+
+
+def _direction_from_path(path: Path) -> str:
+    match = re.search(r"__([a-z]+)__\d+f__\d+\.png$", path.name)
+    if match is None:
+        raise ValueError(f"cannot parse direction from {path}")
+    return match.group(1)
+
+
+def _action_from_path(path: Path) -> str:
+    parts = path.stem.split("__")
+    if len(parts) < 7:
+        raise ValueError(f"cannot parse action from {path}")
+    return parts[3]
+
+
+def _normalized_module_name(path: Path, frames: int, direction: str, output_layer: str) -> str:
+    parts = path.stem.split("__")
+    if len(parts) < 7:
+        raise ValueError(f"cannot normalize module name from {path}")
+    return "__".join((parts[0], output_layer, *parts[2:-3], direction, f"{frames}f", "96")) + ".png"
 
 
 def _write_or_copy_sheet(

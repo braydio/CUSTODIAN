@@ -1,0 +1,54 @@
+{
+  "schema": "custodian.inventory_ui.assets.v1",
+  "root": "res://content/ui/inventory/runtime",
+  "replacement_rule": "Production assets placed at canonical_path are used automatically without scene edits.",
+  "assets": {
+    "frame": {
+      "canonical_path": "res://content/ui/inventory/runtime/panels/inventory_frame_9slice.png",
+      "fallback_path": "res://content/ui/black_reliquary/panels/ui_panel_9slice_dark_gold.png",
+      "nine_patch_margins": [32, 32, 32, 32]
+    },
+    "panel_deep": {
+      "canonical_path": "res://content/ui/inventory/runtime/panels/inventory_panel_deep_9slice.png",
+      "fallback_path": "res://content/ui/black_reliquary/panels/ui_panel_9slice_deep.png",
+      "nine_patch_margins": [32, 32, 32, 32]
+    },
+    "slot_empty": {
+      "canonical_path": "res://content/ui/inventory/runtime/slots/inventory_slot_empty.png",
+      "fallback_path": "res://content/ui/inventory/slot_empty.png"
+    },
+    "slot_hover": {
+      "canonical_path": "res://content/ui/inventory/runtime/slots/inventory_slot_hover.png",
+      "fallback_path": "res://content/ui/inventory/slot_highlighted.png"
+    },
+    "slot_selected": {
+      "canonical_path": "res://content/ui/inventory/runtime/slots/inventory_slot_selected.png",
+      "fallback_path": "res://content/ui/inventory/slot_highlighted.png"
+    },
+    "icon_unknown": {
+      "canonical_path": "res://content/ui/inventory/runtime/icons/icon_unknown.png",
+      "fallback_path": "res://content/ui/inventory/icons/icon_placeholder.png"
+    },
+    "ornament_nw": {
+      "canonical_path": "res://content/ui/inventory/runtime/ornaments/inventory_ornament_nw.png",
+      "fallback_path": "res://content/ui/black_reliquary/dividers/ui_corner_ornament_nw.png"
+    },
+    "ornament_ne": {
+      "canonical_path": "res://content/ui/inventory/runtime/ornaments/inventory_ornament_ne.png",
+      "fallback_path": "res://content/ui/black_reliquary/dividers/ui_corner_ornament_ne.png"
+    },
+    "ornament_sw": {
+      "canonical_path": "res://content/ui/inventory/runtime/ornaments/inventory_ornament_sw.png",
+      "fallback_path": "res://content/ui/black_reliquary/dividers/ui_corner_ornament_sw.png"
+    },
+    "ornament_se": {
+      "canonical_path": "res://content/ui/inventory/runtime/ornaments/inventory_ornament_se.png",
+      "fallback_path": "res://content/ui/black_reliquary/dividers/ui_corner_ornament_se.png"
+    }
+  },
+  "item_icon_contract": {
+    "canonical_pattern": "res://content/ui/inventory/runtime/icons/icon_{item_id}.png",
+    "legacy_pattern": "res://content/ui/inventory/icons/icon_{item_id}.png",
+    "recommended_size_px": [64, 64]
+  }
+}

@@ -139,12 +139,25 @@ aim direction, show the ranged weapon layer, and keep movement available; primar
 existing ranged fire path. Lower-body locomotion remains movement-owned so modular upper-body, weapon, cape, and FX
 clips can act independently from idle/walk/run.
 
+Upper-body facing is state-owned rather than cursor-owned by default. During ordinary idle/walk/run, upper and lower
+body face the locomotion direction together. Ranged-ready, including the sidearm fallback, grants aim direction to
+the upper-body/weapon/FX presentation, and directional actions may claim their authored action direction without
+changing lower-body locomotion ownership.
+
+The current two-handed ranged-ready idle presentation uses the supplied modular lower-body, upper-body, and weapon
+stance layers for east, north, and west. South and diagonals resolve to the nearest available authored stance.
+Movement, fire, recover, and reload continue through their established legacy body/overlay paths until matching
+modular action layers are supplied.
+
 Sidearm fallback:
 
 - The Operator owns a separate `sidearm_weapon_definition` inventory slot.
-- If a primary ranged definition exists, held ranged-ready uses that primary ranged weapon even when the current loadout is melee/unarmed.
-- If no primary ranged definition exists and the sidearm slot is equipped, held ranged-ready uses the default `sidearm_pistol` profile from `pistol_mk1.json`.
-- Sidearm V1 deliberately maps to the current ranged placeholder stance/fire/reload animations until production pistol clips are supplied.
+- The sidearm slot starts locked. Holding ranged-ready while melee/unarmed is selected does nothing until the P-9 Field Sidearm is recovered from the Sundered Keep Great Hall field-retention locker.
+- Looting the locker calls `Operator.grant_sidearm(...)`, equips the sidearm fallback slot, and initializes its loaded/reserve ammunition without changing the current melee/unarmed selection.
+- If the currently selected/equipped weapon is ranged, held ranged-ready uses it.
+- If the selected weapon is melee/unarmed and the sidearm slot is equipped, held ranged-ready uses the default `sidearm_pistol` profile from `pistol_mk1.json`, even when a carbine is carried in another loadout slot.
+- Sidearm-ready is visually exclusive from primary-ranged ready: the carried carbine/primary weapon overlay and its FX are hidden while the baked modular sidearm action stack is active.
+- Modular sidearm draw/fire lower-body, upper-body, weapon, and FX layers are live for NE/NW/SE/SW. Draw must complete before a shot can begin, the complete draw pose holds on its final frame while ranged-ready remains held, and each completed fire action returns to that held pose. Pure cardinal aim selects the nearest authored diagonal; legacy ranged placeholders remain the fallback for missing reload/recovery coverage.
 
 ### Runtime control contract
 
@@ -171,10 +184,12 @@ Facing priority is:
 
 Dodge direction is movement-first. If movement input is active, dodge follows movement even while aiming. If idle
 and aiming, dodge resolves opposite aim direction as a short combat backstep. If idle and not aiming, dodge follows
-the current facing direction. Runtime V1 supports a split impulse/recovery sequence so the impulse can play
-`operator_dodge_step` and the timing-granular recovery can play `operator_dodge_recovery`; aim-hop variants can use
-`operator_dodge_backstep` and `operator_dodge_backstep_recovery`. The current authored north-facing dodge body/FX strip
-remains the fallback for every direction until the full directional dodge/recovery suite is supplied.
+the current facing direction. The live presentation now prefers the authored north/south 9-frame full dodge body and
+FX sequences and lets each sequence continue through the existing deterministic impulse/recovery timers without
+restarting the visual at the recovery boundary. Upward movement selects north; horizontal/downward movement selects
+south, with horizontal mirroring for left. Runtime V1 retains split `operator_dodge_step` /
+`operator_dodge_recovery` and optional aim-backstep tracks as compatibility fallbacks until the full directional suite
+is supplied.
 
 Unarmed/Fists is a selectable weapon profile. It must not create separate unarmed combat states; `unarmed_fast`
 and `unarmed_heavy` reuse the shared `attack_fast` and `attack_heavy` states while resolving profile-specific

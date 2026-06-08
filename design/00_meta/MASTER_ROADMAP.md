@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-04-04  
 **Status:** active  
-**Last Updated:** 2026-04-04
+**Last Updated:** 2026-06-07
 
 ---
 
@@ -103,7 +103,7 @@ Milestones are major release checkpoints. Each has:
 ## Current Roadmap
 
 ### Milestone v0.3.0 - Procgen Handoff Fixes
-**Target:** TBD (remaining: mouse aim + shadow integration)  
+**Target:** TBD (remaining: shadow + weapon data integration)  
 **Status:** in_progress
 
 | Feature | Status | Priority |
@@ -113,7 +113,7 @@ Milestones are major release checkpoints. Each has:
 | Terminal repositioned to procgen coords | complete | P1 |
 | Ammo caches repositioned to procgen coords | complete | P1 |
 | Camera joins "camera" group | complete | P0 |
-| Mouse aim uses correct world position | pending | P1 |
+| Mouse aim uses correct world position | complete | P1 |
 | Shadow system integration | pending | P2 |
 | Weapon data system integration | pending | P2 |
 
@@ -221,6 +221,12 @@ Milestones are major release checkpoints. Each has:
 | Animation base idle | **NEW - backlog** | P2 | GAMEPLAY_NOTES.md |
 | Animation base stance (melee/ranged) | **NEW - backlog** | P2 | GAMEPLAY_NOTES.md |
 | Shadow system | pending | P2 | Design doc |
+| **Operator sidearm draw/fire animation** | complete | P1 | Pipeline — 32 sheets (4 layers × 4 diagonal dirs × draw+fire) wired to modular frame system |
+| **Marine dash 128×128 split-phase** | complete | P1 | Pipeline — 3-phase charge/inflight/recovery from 156px single strip; only E direction available |
+| **Operator sidearm: remaining directions** | backlog | P2 | N, S, E, W cardinal directions needed for all 4 layers × 2 actions = 32 missing sheets |
+| **Operator sidearm: reload animation** | backlog | P3 | No dedicated reload art exists |
+| **Operator sidearm: recovery animation** | backlog | P3 | No recovery art after firing |
+| **Marine dash: 8-direction split art** | backlog | P2 | Currently only E direction; needs SE/SW/NE/NW/N/S/W to match idle coverage |
 
 **Docs:** `02_features/operator/implementation.md`, `02_features/shadow/implementation.md`
 

@@ -90,6 +90,8 @@ func _validate_sidearm_profile() -> void:
 	_assert_true(SIDEARM_DEFINITION.weapon_type == &"ranged_sidearm", "sidearm should not masquerade as a 2h ranged primary")
 	_assert_true(SIDEARM_DEFINITION.weapon_data_path == "res://content/weapons/data/pistol_mk1.json", "sidearm should use the pistol default profile")
 	_assert_true(SIDEARM_DEFINITION.animation_map.get("ranged_stance", "") == "ranged_2h_stance", "sidearm V1 should use current ranged placeholder stance")
+	_assert_true(is_equal_approx(SIDEARM_DEFINITION.get_stat_float("damage", 0.0), 18.0), "sidearm should resolve to 18 damage")
+	_assert_true(SIDEARM_DEFINITION.get_stat_int("magazine_size", 0) == 12, "sidearm should resolve to 12 magazine size")
 
 
 func _validate_operator_ranged_ready(root: Node) -> void:
@@ -99,16 +101,26 @@ func _validate_operator_ranged_ready(root: Node) -> void:
 
 	operator.set("combat_loadout_mode", "melee")
 	operator.set("primary_weapon_equipped", false)
+	operator.set("using_unarmed", true)
 	operator.set("aim_direction", Vector2.RIGHT)
 	operator.call("_exit_ranged_ready")
 
-	_assert_true(operator.call("_get_active_ranged_weapon_definition") != null, "operator should find the carried ranged weapon for held ready")
-	_assert_true(bool(operator.call("_can_enter_ranged_ready")), "operator should be able to enter ranged-ready from non-ranged loadout")
+	_assert_true(not bool(operator.get("sidearm_slot_equipped")), "sidearm slot should start locked")
+	_assert_true(operator.call("_get_ranged_ready_candidate_weapon_definition") == null, "locked sidearm should not be a ranged-ready fallback")
+	_assert_true(not bool(operator.call("_can_enter_ranged_ready")), "locked sidearm should not enter ranged-ready from melee/unarmed fallback")
+	operator.call("_enter_ranged_ready")
+	_assert_true(not bool(operator.call("_is_ranged_ready_active")), "locked sidearm enter request should do nothing")
+
+	var grant_result: Dictionary = operator.call("grant_sidearm", SIDEARM_DEFINITION)
+	_assert_true(bool(grant_result.get("granted", false)), "grant_sidearm should unlock/equip the sidearm slot")
+	_assert_true(bool(operator.get("sidearm_slot_equipped")), "sidearm slot should be equipped after grant")
+	_assert_true(operator.call("_get_ranged_ready_candidate_weapon_definition") == SIDEARM_DEFINITION, "granted sidearm should be the melee/unarmed fallback")
+	_assert_true(bool(operator.call("_can_enter_ranged_ready")), "operator should be able to enter ranged-ready after sidearm grant")
 
 	operator.call("_enter_ranged_ready")
 	_assert_true(bool(operator.call("_is_ranged_ready_active")), "entering ranged-ready should set the ready state")
 	_assert_true(bool(operator.call("_is_ranged_context_active")), "ranged-ready should create an active ranged context")
-	_assert_true(bool(operator.call("_is_using_ranged_2h_primary")), "ranged-ready should show the ranged weapon layer")
+	_assert_true(not bool(operator.call("_is_using_ranged_2h_primary")), "sidearm-ready should not report the carried 2h primary")
 	_assert_true(bool(operator.call("_is_using_ranged_weapon_visual")), "ranged-ready should show a ranged visual layer")
 	_assert_true((operator.call("_resolve_dodge_direction") as Vector2).is_equal_approx(Vector2.LEFT), "idle aiming dodge should hop back away from aim")
 
@@ -118,18 +130,21 @@ func _validate_operator_ranged_ready(root: Node) -> void:
 	_assert_true((operator.call("_resolve_dodge_direction") as Vector2).is_equal_approx(Vector2.DOWN), "fully idle dodge should use current facing")
 	_validate_dodge_fx_overlay(operator)
 	_validate_sidearm_ranged_ready(operator)
+	_validate_selected_primary_priority(operator)
 	operator.queue_free()
 
 
 func _validate_sidearm_ranged_ready(operator: Node) -> void:
 	operator.call("_exit_ranged_ready")
-	operator.set("primary_weapon_definition", null)
-	operator.set("primary_weapon_equipped", false)
+	operator.set("primary_weapon_definition", CARBINE_DEFINITION)
+	operator.set("primary_weapon_equipped", true)
 	operator.set("sidearm_weapon_definition", SIDEARM_DEFINITION)
 	operator.set("sidearm_slot_equipped", true)
 	operator.set("combat_loadout_mode", "melee")
+	operator.set("equipped_primary_weapon_id", "fists")
+	operator.set("using_unarmed", true)
 	operator.set("aim_direction", Vector2.RIGHT)
-	_assert_true(bool(operator.call("_can_enter_ranged_ready")), "operator should be able to ready sidearm with no ranged primary equipped")
+	_assert_true(bool(operator.call("_can_enter_ranged_ready")), "operator should be able to ready sidearm while a carried carbine is not selected")
 	operator.call("_enter_ranged_ready")
 	_assert_true(bool(operator.call("_is_ranged_ready_active")), "sidearm should enter ranged-ready")
 	_assert_true(operator.call("_get_active_ranged_weapon_definition") == SIDEARM_DEFINITION, "active ranged weapon should be the sidearm slot")
@@ -141,6 +156,23 @@ func _validate_sidearm_ranged_ready(operator: Node) -> void:
 	operator.call("_exit_ranged_ready")
 
 
+func _validate_selected_primary_priority(operator: Node) -> void:
+	operator.call("_exit_ranged_ready")
+	operator.set("primary_weapon_definition", CARBINE_DEFINITION)
+	operator.set("primary_weapon_equipped", true)
+	operator.set("sidearm_weapon_definition", SIDEARM_DEFINITION)
+	operator.set("sidearm_slot_equipped", true)
+	operator.set("combat_loadout_mode", "ranged")
+	operator.set("equipped_primary_weapon_id", "carbine_rifle")
+	operator.set("using_unarmed", false)
+	operator.set("aim_direction", Vector2.RIGHT)
+	_assert_true(operator.call("_get_ranged_ready_candidate_weapon_definition") == CARBINE_DEFINITION, "actively selected ranged primary should take priority over sidearm")
+	operator.call("_enter_ranged_ready")
+	_assert_true(operator.call("_get_active_ranged_weapon_definition") == CARBINE_DEFINITION, "active ranged weapon should remain the selected primary")
+	_assert_true(bool(operator.call("_is_using_ranged_2h_primary")), "selected carbine should still report as ranged_2h primary")
+	operator.call("_exit_ranged_ready")
+
+
 func _validate_dodge_fx_overlay(operator: Node) -> void:
 	var body_sprite := operator.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	var dodge_fx := operator.get_node_or_null("DodgeFXBackSprite") as AnimatedSprite2D
@@ -149,21 +181,26 @@ func _validate_dodge_fx_overlay(operator: Node) -> void:
 	if body_sprite == null or dodge_fx == null:
 		return
 	_assert_true(dodge_fx.z_index < body_sprite.z_index, "dodge FX should render behind/under the Custodian body")
-	_assert_true(dodge_fx.sprite_frames != null and dodge_fx.sprite_frames.has_animation(&"operator_dodge_step_fx"), "dodge FX sprite should own the dodge FX animation")
+	_assert_true(dodge_fx.sprite_frames != null and dodge_fx.sprite_frames.has_animation(&"operator_dodge_full_fx_south"), "dodge FX sprite should own the authored 9-frame south dodge FX animation")
+	_assert_true(body_sprite.sprite_frames.has_animation(&"operator_dodge_full_north"), "body should own the authored 9-frame north dodge animation")
+	_assert_true(body_sprite.sprite_frames.has_animation(&"operator_dodge_full_south"), "body should own the authored 9-frame south dodge animation")
+	_assert_true(body_sprite.sprite_frames.get_frame_count(&"operator_dodge_full_north") == 9, "north dodge should use all 9 authored frames")
+	_assert_true(body_sprite.sprite_frames.get_frame_count(&"operator_dodge_full_south") == 9, "south dodge should use all 9 authored frames")
 	operator.set("stamina", 100.0)
 	operator.set("visual_idle_direction", Vector2.RIGHT)
 	operator.set("aim_direction", Vector2.RIGHT)
 	_add_placeholder_animation(body_sprite.sprite_frames, &"operator_dodge_recovery")
 	_assert_true(bool(operator.call("_try_start_dodge")), "operator should start a deterministic dodge")
-	_assert_true(String(body_sprite.animation) == "operator_dodge_step", "dodge should start the body dodge track")
-	_assert_true(String(dodge_fx.animation) == "operator_dodge_step_fx", "dodge should start the synchronized FX track")
+	_assert_true(String(body_sprite.animation) == "operator_dodge_full_south", "east/horizontal dodge should start the authored south body track")
+	_assert_true(String(dodge_fx.animation) == "operator_dodge_full_fx_south", "east/horizontal dodge should start the synchronized authored south FX track")
 	_assert_true(body_sprite.frame == 0, "body dodge should restart on frame 0")
 	_assert_true(dodge_fx.frame == 0, "dodge FX should restart on frame 0")
 	_assert_true(dodge_fx.visible, "dodge FX should be visible during dodge")
 	_assert_true(dodge_fx.position.x < body_sprite.position.x, "east dodge FX should be offset behind the Custodian")
 	operator.call("_update_dodge", 1.0)
 	_assert_true(bool(operator.get("_dodge_recovery_active")), "finishing dodge should enter recovery when a recovery animation exists")
-	_assert_true(String(body_sprite.animation) == "operator_dodge_recovery", "dodge recovery should play as the second phase")
+	_assert_true(String(body_sprite.animation) == "operator_dodge_full_south", "authored full dodge should continue through recovery instead of restarting a split track")
+	_assert_true(dodge_fx.visible, "authored dodge FX should continue through recovery")
 	operator.call("_cancel_dodge")
 	_assert_true(not dodge_fx.visible, "canceling dodge should hide the dodge FX")
 

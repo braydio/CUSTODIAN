@@ -1,83 +1,13 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://game/ui/inventory/inventory_ui.gd" id="1_inventory_ui"]
-[ext_resource type="Script" path="res://game/ui/inventory/inventory.gd" id="2_inventory"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
-bg_color = Color(0.15625, 0.171875, 0.203125, 1)
-border_color = Color(0.3125, 0.351563, 0.429688, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-content_margin_left = 4
-content_margin_top = 4
-content_margin_right = 4
-content_margin_bottom = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2"]
-bg_color = Color(0.175781, 0.195313, 0.234375, 1)
-border_color = Color(0.3125, 0.351563, 0.429688, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
 
 [node name="InventoryUI" type="Control"]
-custom_minimum_size = Vector2(400, 500)
+process_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_inventory_ui")
-
-[node name="Panel" type="Panel" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -250.0
-offset_right = 200.0
-offset_bottom = 250.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_1")
-
-[node name="TitleBar" type="HBoxContainer" parent="Panel"]
-layout_mode = 2
-self_modulate = Color(1, 1, 1, 1)
-
-[node name="TitleLabel" type="Label" parent="Panel/TitleBar"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "INVENTORY"
-horizontal_alignment = 1
-
-[node name="CloseButton" type="Button" parent="Panel/TitleBar"]
-layout_mode = 2
-custom_minimum_size = Vector2(24, 24)
-size_flags_horizontal = 0
-text = "X"
-
-[node name="MarginContainer" type="MarginContainer" parent="Panel"]
-layout_mode = 2
-offset_top = 40.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
-
-[node name="GridContainer" type="GridContainer" parent="Panel/MarginContainer"]
-layout_mode = 2
-columns = 5
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_2")
-
-[node name="Inventory" type="Node" parent="."]
-script = ExtResource("2_inventory")

@@ -7,8 +7,9 @@ const REQUIRED_NODES := [
 	"MainGateInteraction",
 	"GreatHallDoorInteraction",
 	"SunderedGateKeyPickup",
+	"SidearmLockerInteraction",
 	"ReturnToMainMapGate",
-	"Collision/MainPortcullisBlocker",
+	"Collision/PrefabGatehouseGateBlocker",
 	"Collision/GreatHallDoorBlocker",
 ]
 const TILE_SIZE := 32.0
@@ -31,6 +32,8 @@ func _init() -> void:
 	_assert(state["main_gate_open"] == false, "main gate must start closed")
 	_assert(state["great_hall_door_open"] == false, "great hall door must start closed")
 	_assert(state["key_pickup_exists"] == true, "key pickup missing")
+	_assert(state["sidearm_locker_exists"] == true, "sidearm locker missing")
+	_assert(state["sidearm_locker_opened"] == false, "sidearm locker must start unopened")
 	_assert(state["return_mooring_created"] == true, "return mooring was not created")
 	_assert((state["map_size_tiles"] as Vector2i).x >= 96, "Sundered Keep map width did not expand")
 	_assert((state["map_size_tiles"] as Vector2i).y >= 72, "Sundered Keep map height did not expand")
@@ -46,7 +49,7 @@ func _init() -> void:
 
 	map.call("_try_open_main_gate")
 	await process_frame
-	_assert(map.get_node_or_null("Collision/MainPortcullisBlocker") != null, "gate opened without key")
+	_assert(map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") != null, "gate opened without key")
 	_assert(_has_blocker_covering_tile(map, Vector2i(55, 50)), "closed portcullis does not block the gate opening")
 	_assert(_has_blocker_covering_tile(map, Vector2i(53, 50)), "left gate curtain can be walked around")
 	_assert(_has_blocker_covering_tile(map, Vector2i(58, 50)), "right gate curtain can be walked around")
@@ -56,7 +59,7 @@ func _init() -> void:
 	await process_frame
 	state = map.get_sundered_keep_debug_state()
 	_assert(state["main_gate_open"] == true, "main gate did not open after key acquisition")
-	_assert(map.get_node_or_null("Collision/MainPortcullisBlocker") == null, "gate blocker remained after opening")
+	_assert(map.get_node_or_null("Collision/PrefabGatehouseGateBlocker") == null, "gate blocker remained after opening")
 	_assert(not _has_blocker_covering_tile(map, Vector2i(55, 50)), "opened gate still blocks the route")
 	_assert(_has_blocker_covering_tile(map, Vector2i(53, 50)), "left gate curtain was removed with the gate")
 	_assert(_has_blocker_covering_tile(map, Vector2i(58, 50)), "right gate curtain was removed with the gate")

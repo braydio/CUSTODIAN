@@ -1,7 +1,7 @@
 # Black Reliquary UI
 
 Status: complete  
-Last updated: 2026-06-05
+Last updated: 2026-06-06
 
 ## Summary
 
@@ -26,10 +26,47 @@ Black Reliquary is the current CUSTODIAN gothic/brass runtime UI style. It repla
 - Normal gameplay should not show giant world-space debug labels. Debug text may exist behind `set_debug_overlay_visible(...)` only for local authored HUDs or inside the dedicated debug screen.
 - Legacy command-terminal HUD diagnostics should live in the dedicated `res://game/ui/hud/debug_screen.tscn` surface opened by F12 or `debug_hud`; normal play should show only essentials such as health, stamina, prompts, status plaques, and tactical minimap.
 - The minimap frame should embed the live shared minimap renderer with simplified tactical pips. Do not use raw level screenshots or static marker mockups for normal play.
+- Authored-map-specific quest, status, prompt, and minimap HUDs must be hidden outside their owning map. External suppression such as the terminal interface must preserve that map-context visibility instead of blindly restoring every gameplay overlay.
+
+## Inventory Overlay
+
+The live inventory overlay is a Black Reliquary field ledger, not a generic RPG
+backpack or fabrication menu. It reads carried stackable/key/lore items from the
+autoloaded `InventoryManager`; resources and build tokens remain owned by their
+separate ledgers.
+
+Required presentation:
+
+- full-screen darkened backdrop with a centered wide reliquary frame
+- compact category rail, carried-item grid, and selected-item detail inspector
+- readable item name, classification, count, rarity, description, and provenance
+- keyboard/mouse and controller focus support
+- empty-state copy that still reads as an intentional CUSTODIAN interface
+- production assets resolved through a centralized inventory asset catalog
+- canonical production assets may replace fallbacks by landing at the documented
+  runtime paths without requiring scene or script edits
+
+The overlay must connect to `/root/InventoryManager` and update when its
+`inventory_changed` signal fires. The older local `Inventory` resource remains a
+compatibility input for isolated UI tests, but must not be the live-game source
+of truth.
+
+Canonical asset contract:
+
+```text
+custodian/content/ui/inventory/runtime/
+├── panels/
+├── slots/
+├── icons/
+└── ornaments/
+```
+
+See `custodian/content/ui/inventory/runtime/inventory_ui_asset_manifest.json` for
+the exact production filenames and current Black Reliquary/legacy fallbacks.
 
 ## Sundered Keep Integration
 
-`custodian/game/world/sundered_keep/sundered_keep_map.gd` currently creates a safe local `CustodianHUD` instance because there is not yet a global Black Reliquary HUD singleton. The integration is intentionally easy to replace later: Sundered Keep owns gate/key/siege state and exports authored minimap floor/wall cells, while the HUD only renders health, stamina, phase, objective, prompt, live minimap, and status plaques.
+`custodian/game/world/sundered_keep/sundered_keep_map.gd` currently creates a safe local `CustodianHUD` instance because there is not yet a global Black Reliquary HUD singleton. The integration is intentionally easy to replace later: Sundered Keep owns gate/key/siege state, exports authored minimap floor/wall cells, and activates its local HUD only while the player is inside the keep. The HUD only renders health, stamina, phase, objective, prompt, live minimap, and status plaques.
 
 Required prompt mappings:
 
@@ -49,6 +86,7 @@ godot --headless --script res://tools/validation/black_reliquary_live_minimap_sm
 godot --headless --script res://tools/validation/debug_screen_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_asset_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_large_layout_smoke.gd
+godot --headless --script res://tools/validation/sundered_keep_hud_scope_smoke.gd
 ```
 
 The smoke tests check the Black Reliquary asset root, required panel/icon/prompt/minimap assets, reusable HUD/component scenes, live minimap mounting, and Sundered Keep authored minimap data export.
