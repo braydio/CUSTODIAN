@@ -140,6 +140,17 @@ const UNARMED_MODULAR_LOWER_LOCOMOTION_SLICES := [
 	{"animation": "unarmed_run_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/run_01/operator__modular_lower_body__unarmed__run_01__w__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": true},
 	{"animation": "unarmed_run_down_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/run_01/operator__modular_lower_body__unarmed__run_01__sw__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": true},
 ]
+const UNARMED_FAST_WINDUP_BODY_SLICES := [
+	{"animation": "unarmed_attack_fast_windup", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__s__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
+	{"animation": "unarmed_attack_fast_windup_down", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__s__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
+	{"animation": "unarmed_attack_fast_windup_down_right", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__se__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
+	{"animation": "unarmed_attack_fast_windup_right", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__e__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
+	{"animation": "unarmed_attack_fast_windup_up_right", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__ne__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
+	{"animation": "unarmed_attack_fast_windup_up", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__n__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
+	{"animation": "unarmed_attack_fast_windup_up_left", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__nw__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
+	{"animation": "unarmed_attack_fast_windup_left", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__w__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
+	{"animation": "unarmed_attack_fast_windup_down_left", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__sw__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
+]
 const UNARMED_FAST_STRIKE_BODY_SLICES := [
 	{"animation": "unarmed_fast_strike", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_strike_01__s__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
 	{"animation": "unarmed_fast_strike_down", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_strike_01__s__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
@@ -206,6 +217,7 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_right", UNARMED_FAST_EAST_BODY_SHEET, 5, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_left", UNARMED_FAST_WEST_BODY_SHEET, 5, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_fast_up", UNARMED_FAST_NORTH_BODY_SHEET, 6, 0, 96, 96, 12.0, false)
+	_replace_animation_entries(body_frames, UNARMED_FAST_WINDUP_BODY_SLICES)
 	_replace_animation_entries(body_frames, UNARMED_FAST_STRIKE_BODY_SLICES)
 	_replace_animation_entries(body_frames, UNARMED_FAST_RECOVERY_BODY_SLICES)
 	_replace_animation_if_exists(body_frames, "unarmed_attack_heavy", UNARMED_HEAVY_EAST_BODY_SHEET, 7, 0, 96, 96, 10.0, false)
