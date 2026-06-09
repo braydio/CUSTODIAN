@@ -51,6 +51,9 @@ enum AssaultState {
 @export var attack_objective: String = "breach_command"
 @export var attack_windup_duration: float = 0.10
 @export var hit_recoil_duration: float = 0.12
+@export var melee_hit_range_grace_multiplier: float = 1.15
+@export var melee_hit_range_grace_px: float = 10.0
+@export var melee_hit_arc_degrees: float = 95.0
 @export var stagger_duration: float = 0.35
 @export var stagger_damage_threshold: float = 24.0
 @export var assault_staging_duration_min: float = 1.25
@@ -150,6 +153,9 @@ var _pending_attack_damage: float = 0.0
 var _stagger_timer: float = 0.0
 var _recoil_timer: float = 0.0
 var _windup_attack_is_strong: bool = false
+var _pending_attack_forward: Vector2 = Vector2.DOWN
+var _pending_attack_range_px: float = 0.0
+var _pending_attack_arc_degrees: float = 95.0
 var _threat_highlight_enabled: bool = false
 var _threat_highlight_time: float = 0.0
 var _base_sprite_scale: Vector2 = Vector2.ONE
@@ -557,21 +563,13 @@ func _is_marine_dash_hit_window_active() -> bool:
 
 
 func _apply_marine_dash_hit(hit_node: Node2D) -> void:
-	_marine_dash_last_attack_hit = true
-
-	var hit_result: Dictionary = {}
-
-	if hit_node.has_method("receive_projectile_hit"):
-		var result: Variant = hit_node.call("receive_projectile_hit", _marine_dash_current_damage, team)
-		if result is Dictionary:
-			hit_result = result
-	elif hit_node.has_method("take_damage"):
-		if hit_node.has_method("is_dodge_invulnerable") and bool(hit_node.call("is_dodge_invulnerable")):
-			return
-		hit_node.call("take_damage", _marine_dash_current_damage)
+	var hit_result := _apply_enemy_hit_to_target(hit_node, _marine_dash_current_damage, &"dash")
 
 	if bool(hit_result.get("dodged", false)):
+		_marine_dash_last_attack_hit = false
 		return
+
+	_marine_dash_last_attack_hit = true
 
 	var knockback_direction := _marine_dash_direction.normalized()
 	if hit_node is CharacterBody2D:
@@ -1317,6 +1315,7 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 	_pending_attack_damage = queued_damage
 	_attack_windup_timer = max(0.01, attack_windup_duration)
 	_windup_attack_is_strong = is_strong
+	_capture_pending_attack_context()
 	velocity = Vector2.ZERO
 	if _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_last_move_direction, false, true)
@@ -1324,6 +1323,25 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 		_update_procedural_variant_animation(_last_move_direction, false, true)
 	elif _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
+
+
+func _capture_pending_attack_context() -> void:
+	_pending_attack_range_px = 40.0
+	_pending_attack_arc_degrees = melee_hit_arc_degrees
+
+	if target is Node2D:
+		var target_node := target as Node2D
+		_pending_attack_range_px = _get_attack_range(target_node)
+
+		var to_target := target_node.global_position - global_position
+		if to_target.length_squared() > 0.0001:
+			_pending_attack_forward = to_target.normalized()
+			return
+
+	if _last_move_direction.length_squared() > 0.0001:
+		_pending_attack_forward = _last_move_direction.normalized()
+	else:
+		_pending_attack_forward = Vector2.DOWN
 
 
 func _update_attack_windup(delta: float) -> bool:
@@ -1339,25 +1357,98 @@ func _update_attack_windup(delta: float) -> bool:
 
 func _execute_queued_attack() -> void:
 	if dead:
+		_clear_pending_attack_context()
 		return
 	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
+		_clear_pending_attack_context()
 		return
 
-	# Re-check distance — windup may have completed while target moved out of range
 	var target_node := target as Node2D if target is Node2D else null
-	if target_node != null:
-		var distance := global_position.distance_to(target_node.global_position)
-		var attack_range := _get_attack_range(target_node)
-		if distance > attack_range * 1.25:
-			_pending_attack_damage = 0.0
-			_windup_attack_is_strong = false
-			return
+	if target_node == null:
+		_clear_pending_attack_context()
+		return
 
-	if target.has_method("take_damage"):
-		target.take_damage(_pending_attack_damage)
-		print("Enemy hit ", target.name, " for ", _pending_attack_damage, " damage!")
+	if not _can_pending_attack_connect(target_node):
+		_clear_pending_attack_context()
+		return
+
+	var hit_result := _apply_enemy_hit_to_target(target_node, _pending_attack_damage, &"melee")
+	if bool(hit_result.get("dodged", false)):
+		pass  # clean whiff
+	elif bool(hit_result.get("blocked", false)):
+		pass  # blocked, handled by receiver
+	elif float(hit_result.get("applied_damage", 0.0)) > 0.0:
+		print("Enemy hit ", target.name, " for ", hit_result.get("applied_damage", 0.0), " damage!")
+	_clear_pending_attack_context()
+
+
+func _clear_pending_attack_context() -> void:
 	_pending_attack_damage = 0.0
 	_windup_attack_is_strong = false
+	_pending_attack_forward = Vector2.DOWN
+	_pending_attack_range_px = 0.0
+	_pending_attack_arc_degrees = melee_hit_arc_degrees
+
+
+func _can_pending_attack_connect(target_node: Node2D) -> bool:
+	if _pending_attack_range_px <= 0.0:
+		_pending_attack_range_px = _get_attack_range(target_node)
+
+	var grace_range := _pending_attack_range_px * melee_hit_range_grace_multiplier + melee_hit_range_grace_px
+	var distance := global_position.distance_to(target_node.global_position)
+	if distance > grace_range:
+		return false
+
+	var to_target := (target_node.global_position - global_position).normalized()
+	var dot := _pending_attack_forward.dot(to_target)
+	var angle_rad := deg_to_rad(_pending_attack_arc_degrees * 0.5)
+	if dot < cos(angle_rad):
+		return false
+
+	return true
+
+
+func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringName = &"melee") -> Dictionary:
+	if hit_node == null or not is_instance_valid(hit_node):
+		return {
+			"result": &"no_target",
+			"hit_kind": hit_kind,
+			"dodged": false,
+			"blocked": false,
+			"applied_damage": 0.0,
+		}
+
+	if hit_node.has_method("receive_enemy_hit"):
+		var result: Variant = hit_node.call("receive_enemy_hit", amount, hit_kind, team)
+		if result is Dictionary:
+			return result as Dictionary
+
+	if hit_node.has_method("is_dodge_invulnerable") and bool(hit_node.call("is_dodge_invulnerable")):
+		return {
+			"result": &"dodged",
+			"hit_kind": hit_kind,
+			"dodged": true,
+			"blocked": false,
+			"applied_damage": 0.0,
+		}
+
+	if hit_node.has_method("take_damage"):
+		hit_node.call("take_damage", amount)
+		return {
+			"result": &"damaged",
+			"hit_kind": hit_kind,
+			"dodged": false,
+			"blocked": false,
+			"applied_damage": max(0.0, amount),
+		}
+
+	return {
+		"result": &"no_receiver",
+		"hit_kind": hit_kind,
+		"dodged": false,
+		"blocked": false,
+		"applied_damage": 0.0,
+	}
 
 
 func _apply_reaction(amount: float) -> void:

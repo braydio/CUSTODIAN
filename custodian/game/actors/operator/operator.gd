@@ -4341,19 +4341,23 @@ func toggle_primary_carbine() -> void:
 	equip_primary_carbine()
 
 
-func receive_projectile_hit(amount: float, _attacker_team: String = "neutral") -> Dictionary:
-	if _should_ignore_incoming_damage_for_dodge("receive_projectile_hit"):
+func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker_team: String = "enemy") -> Dictionary:
+	if _should_ignore_incoming_damage_for_dodge(String(hit_kind)):
 		return {
-			"blocked": false,
+			"result": &"dodged",
+			"hit_kind": hit_kind,
 			"dodged": true,
+			"blocked": false,
 			"applied_damage": 0.0,
 		}
 
 	if _is_blocking() and stamina >= block_stamina_cost_per_hit:
 		stamina = max(0.0, stamina - block_stamina_cost_per_hit)
 		return {
-			"blocked": true,
+			"result": &"blocked",
+			"hit_kind": hit_kind,
 			"dodged": false,
+			"blocked": true,
 			"applied_damage": 0.0,
 		}
 
@@ -4364,10 +4368,16 @@ func receive_projectile_hit(amount: float, _attacker_team: String = "neutral") -
 
 	take_damage(amount)
 	return {
-		"blocked": false,
+		"result": &"damaged",
+		"hit_kind": hit_kind,
 		"dodged": false,
+		"blocked": false,
 		"applied_damage": max(0.0, amount),
 	}
+
+
+func receive_projectile_hit(amount: float, _attacker_team: String = "neutral") -> Dictionary:
+	return receive_enemy_hit(amount, &"projectile", _attacker_team)
 
 func take_damage(amount: float):
 	if _is_dead:
