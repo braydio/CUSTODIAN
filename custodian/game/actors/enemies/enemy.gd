@@ -1342,6 +1342,17 @@ func _execute_queued_attack() -> void:
 		return
 	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
 		return
+
+	# Re-check distance — windup may have completed while target moved out of range
+	var target_node := target as Node2D if target is Node2D else null
+	if target_node != null:
+		var distance := global_position.distance_to(target_node.global_position)
+		var attack_range := _get_attack_range(target_node)
+		if distance > attack_range * 1.25:
+			_pending_attack_damage = 0.0
+			_windup_attack_is_strong = false
+			return
+
 	if target.has_method("take_damage"):
 		target.take_damage(_pending_attack_damage)
 		print("Enemy hit ", target.name, " for ", _pending_attack_damage, " damage!")
