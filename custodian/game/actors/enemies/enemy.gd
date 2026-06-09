@@ -558,10 +558,21 @@ func _is_marine_dash_hit_window_active() -> bool:
 
 func _apply_marine_dash_hit(hit_node: Node2D) -> void:
 	_marine_dash_last_attack_hit = true
+
+	var hit_result: Dictionary = {}
+
 	if hit_node.has_method("receive_projectile_hit"):
-		hit_node.call("receive_projectile_hit", _marine_dash_current_damage, team)
+		var result: Variant = hit_node.call("receive_projectile_hit", _marine_dash_current_damage, team)
+		if result is Dictionary:
+			hit_result = result
 	elif hit_node.has_method("take_damage"):
+		if hit_node.has_method("is_dodge_invulnerable") and bool(hit_node.call("is_dodge_invulnerable")):
+			return
 		hit_node.call("take_damage", _marine_dash_current_damage)
+
+	if bool(hit_result.get("dodged", false)):
+		return
+
 	var knockback_direction := _marine_dash_direction.normalized()
 	if hit_node is CharacterBody2D:
 		var body := hit_node as CharacterBody2D

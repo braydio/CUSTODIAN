@@ -133,9 +133,11 @@ var last_fire_cooldown := 0.0
 @export var ranged_ready_move_multiplier: float = 0.88
 @export var dodge_speed: float = 480.0
 @export var dodge_duration: float = 0.20
+@export var dodge_iframe_duration: float = 0.16
 @export var dodge_recovery_duration: float = 0.16
 @export var dodge_cooldown: float = 0.42
 @export var dodge_stamina_cost: float = 16.0
+@export var dodge_iframe_debug_enabled: bool = false
 @export var heavy_attack_stamina_cost: float = 14.0
 @export var heavy_attack_blocked_while_sprinting: bool = true
 @export var block_move_multiplier: float = 0.6
@@ -244,6 +246,7 @@ var _ranged_ready_weapon_definition: OperatorWeaponDefinition = null
 var _dodge_active: bool = false
 var _dodge_recovery_active: bool = false
 var _dodge_timer: float = 0.0
+var _dodge_iframe_timer: float = 0.0
 var _dodge_recovery_timer: float = 0.0
 var _dodge_cooldown_remaining: float = 0.0
 var _dodge_direction: Vector2 = Vector2.DOWN
@@ -663,6 +666,7 @@ func _process(delta):
 	fire_cooldown_remaining = max(0.0, fire_cooldown_remaining - delta)
 	melee_cooldown_remaining = max(0.0, melee_cooldown_remaining - delta)
 	_dodge_cooldown_remaining = max(0.0, _dodge_cooldown_remaining - delta)
+	_dodge_iframe_timer = maxf(0.0, _dodge_iframe_timer - delta)
 	current_recoil = max(0.0, current_recoil - recoil_decay * delta)
 	_update_pending_ranged_shot(delta)
 	_update_body_recoil(delta)
@@ -2526,6 +2530,7 @@ func _try_start_dodge() -> bool:
 	_dodge_active = true
 	_dodge_recovery_active = false
 	_dodge_timer = maxf(0.05, dodge_duration)
+	_dodge_iframe_timer = minf(maxf(0.0, dodge_iframe_duration), _dodge_timer)
 	_dodge_recovery_timer = 0.0
 	_dodge_cooldown_remaining = maxf(dodge_cooldown, _dodge_timer + maxf(0.0, dodge_recovery_duration))
 	stamina = maxf(0.0, stamina - dodge_stamina_cost)
@@ -2582,6 +2587,7 @@ func _update_dodge(delta: float) -> void:
 
 
 func _start_dodge_recovery() -> void:
+	_dodge_iframe_timer = 0.0
 	_dodge_recovery_timer = maxf(0.0, dodge_recovery_duration)
 	if _dodge_recovery_timer <= 0.0 or not _has_dodge_recovery_animation():
 		_dodge_recovery_active = false
@@ -2604,9 +2610,26 @@ func _cancel_dodge() -> void:
 	_dodge_active = false
 	_dodge_recovery_active = false
 	_dodge_timer = 0.0
+	_dodge_iframe_timer = 0.0
 	_dodge_recovery_timer = 0.0
 	_dodge_backstep_active = false
 	_hide_dodge_fx()
+
+
+func _is_dodge_invulnerable() -> bool:
+	return _dodge_active and _dodge_iframe_timer > 0.0 and not _is_dead
+
+
+func is_dodge_invulnerable() -> bool:
+	return _is_dodge_invulnerable()
+
+
+func _should_ignore_incoming_damage_for_dodge(source: String = "") -> bool:
+	if not _is_dodge_invulnerable():
+		return false
+	if dodge_iframe_debug_enabled:
+		print("[Operator] Dodge i-frame avoided incoming damage: ", source)
+	return true
 
 
 func _play_dodge_animation(force_restart: bool = false) -> void:
@@ -4319,24 +4342,38 @@ func toggle_primary_carbine() -> void:
 
 
 func receive_projectile_hit(amount: float, _attacker_team: String = "neutral") -> Dictionary:
+	if _should_ignore_incoming_damage_for_dodge("receive_projectile_hit"):
+		return {
+			"blocked": false,
+			"dodged": true,
+			"applied_damage": 0.0,
+		}
+
 	if _is_blocking() and stamina >= block_stamina_cost_per_hit:
 		stamina = max(0.0, stamina - block_stamina_cost_per_hit)
 		return {
 			"blocked": true,
+			"dodged": false,
 			"applied_damage": 0.0,
 		}
+
 	if _is_block_state_active():
 		_block_phase = &"exit"
 		_block_active = false
 		_play_block_animation(&"melee_2h_block_exit")
+
 	take_damage(amount)
 	return {
 		"blocked": false,
+		"dodged": false,
 		"applied_damage": max(0.0, amount),
 	}
 
 func take_damage(amount: float):
 	if _is_dead:
+		return
+
+	if _should_ignore_incoming_damage_for_dodge("take_damage"):
 		return
 
 	health = max(0.0, health - amount)
@@ -4365,6 +4402,10 @@ func take_damage(amount: float):
 func apply_enemy_dash_impact(direction: Vector2, knockback_px: float, victim_hitstop_sec: float) -> void:
 	if _is_dead:
 		return
+
+	if _should_ignore_incoming_damage_for_dodge("apply_enemy_dash_impact"):
+		return
+
 	var impact_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector2.DOWN
 	_enemy_impact_lock_timer = maxf(_enemy_impact_lock_timer, maxf(0.16, victim_hitstop_sec + 0.13))
 	_last_damage_reaction_direction = impact_direction
