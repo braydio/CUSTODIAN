@@ -1593,7 +1593,7 @@
     },
     {
       "type": "stamp_wall",
-      "asset_id": "gothic_castle_wall_damaged_s",
+      "asset_id": "great_hall_wall_broken_exterior_s",
       "rect": [
         35,
         31,
@@ -1603,7 +1603,7 @@
     },
     {
       "type": "stamp_wall",
-      "asset_id": "gothic_castle_wall_breach_s",
+      "asset_id": "great_hall_wall_broken_exterior_s",
       "rect": [
         61,
         31,
@@ -1633,7 +1633,7 @@
     },
     {
       "type": "stamp_wall",
-      "asset_id": "gothic_castle_wall_breach_n",
+      "asset_id": "great_hall_wall_broken_exterior_n",
       "rect": [
         36,
         47,
@@ -1643,7 +1643,7 @@
     },
     {
       "type": "stamp_wall",
-      "asset_id": "gothic_castle_wall_damaged_n",
+      "asset_id": "great_hall_wall_broken_exterior_n",
       "rect": [
         65,
         47,

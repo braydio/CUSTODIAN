@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_panel.tscn" id="2_panel"]
 [ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_prompt.tscn" id="3_prompt"]
 [ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_minimap_frame.tscn" id="4_minimap"]
-[ext_resource type="PackedScene" path="res://game/ui/components/black_reliquary_icon_label.tscn" id="5_icon_label"]
 
 [node name="CustodianHUD" type="CanvasLayer"]
 layer = 20
@@ -19,76 +18,45 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TopLeftPanel" parent="Root" instance=ExtResource("2_panel")]
-custom_minimum_size = Vector2(282, 94)
+[node name="TopLeftVitals" parent="Root" instance=ExtResource("2_panel")]
+custom_minimum_size = Vector2(224, 112)
 layout_mode = 1
 anchors_preset = 0
 offset_left = 14.0
 offset_top = 12.0
-offset_right = 296.0
-offset_bottom = 106.0
+offset_right = 238.0
+offset_bottom = 124.0
 
-[node name="Margin" type="MarginContainer" parent="Root/TopLeftPanel"]
+[node name="Margin" type="MarginContainer" parent="Root/TopLeftVitals"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 14
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 10
 
-[node name="Content" type="VBoxContainer" parent="Root/TopLeftPanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="Root/TopLeftVitals/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="LocationTitle" type="Label" parent="Root/TopLeftPanel/Margin/Content"]
-layout_mode = 2
-text = "Location: SUNDERED KEEP"
-
-[node name="PhaseLabel" type="Label" parent="Root/TopLeftPanel/Margin/Content"]
-layout_mode = 2
-text = "Phase: FREE ROAM PREP"
-
-[node name="ObjectiveSummary" type="Label" parent="Root/TopLeftPanel/Margin/Content"]
-layout_mode = 2
-text = "Objective: Open the main gate"
-autowrap_mode = 3
-
-[node name="TopCenterVitals" type="PanelContainer" parent="Root"]
-custom_minimum_size = Vector2(260, 38)
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -130.0
-offset_top = 10.0
-offset_right = 130.0
-offset_bottom = 48.0
-grow_horizontal = 2
-
-[node name="Margin" type="MarginContainer" parent="Root/TopCenterVitals"]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 6
-
-[node name="Content" type="HBoxContainer" parent="Root/TopCenterVitals/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="HealthLabel" type="Label" parent="Root/TopCenterVitals/Margin/Content"]
+[node name="HealthLabel" type="Label" parent="Root/TopLeftVitals/Margin/Content"]
 layout_mode = 2
 text = "HEALTH 100/100"
 
-[node name="HealthBar" type="ProgressBar" parent="Root/TopCenterVitals/Margin/Content"]
-custom_minimum_size = Vector2(78, 8)
+[node name="HealthBar" type="ProgressBar" parent="Root/TopLeftVitals/Margin/Content"]
+custom_minimum_size = Vector2(180, 10)
 layout_mode = 2
-size_flags_horizontal = 3
 value = 100.0
 show_percentage = false
 
-[node name="StaminaLabel" type="Label" parent="Root/TopCenterVitals/Margin/Content"]
+[node name="StaminaLabel" type="Label" parent="Root/TopLeftVitals/Margin/Content"]
 layout_mode = 2
-text = "STAMINA: READY"
+text = "STAMINA READY 100%"
+
+[node name="StaminaBar" type="ProgressBar" parent="Root/TopLeftVitals/Margin/Content"]
+custom_minimum_size = Vector2(180, 10)
+layout_mode = 2
+value = 100.0
+show_percentage = false
 
 [node name="TopRightPanel" parent="Root" instance=ExtResource("2_panel")]
 custom_minimum_size = Vector2(142, 160)
@@ -131,41 +99,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="BottomRightStatus" parent="Root" instance=ExtResource("2_panel")]
-custom_minimum_size = Vector2(282, 96)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -296.0
-offset_top = -116.0
-offset_right = -14.0
-offset_bottom = -20.0
-grow_horizontal = 0
-grow_vertical = 0
-
-[node name="Margin" type="MarginContainer" parent="Root/BottomRightStatus"]
-layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 10
-
-[node name="Content" type="VBoxContainer" parent="Root/BottomRightStatus/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 3
-
-[node name="KeyItemStatus" parent="Root/BottomRightStatus/Margin/Content" instance=ExtResource("5_icon_label")]
-layout_mode = 2
-
-[node name="GateStatus" parent="Root/BottomRightStatus/Margin/Content" instance=ExtResource("5_icon_label")]
-layout_mode = 2
-
-[node name="ReturnMooringStatus" parent="Root/BottomRightStatus/Margin/Content" instance=ExtResource("5_icon_label")]
-layout_mode = 2
 
 [node name="DebugOverlay" type="Panel" parent="Root"]
 custom_minimum_size = Vector2(320, 120)

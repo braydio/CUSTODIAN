@@ -56,6 +56,32 @@ def generated_op(op_type: str, **values: Any) -> dict[str, Any]:
     return {"type": op_type, "generated_by": "cheatsheet_relayout_v1", **values}
 
 
+def remap_asset_id(asset_id: str) -> str:
+    remap = {
+        "gothic_castle_wall_damaged_s": "great_hall_wall_broken_exterior_s",
+        "gothic_castle_wall_breach_s": "great_hall_wall_broken_exterior_s",
+        "gothic_castle_wall_breach_n": "great_hall_wall_broken_exterior_n",
+        "gothic_castle_wall_damaged_n": "great_hall_wall_broken_exterior_n",
+    }
+    return remap.get(asset_id, asset_id)
+
+
+def remap_base_ops(base_ops: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    remapped: list[dict[str, Any]] = []
+    for op in base_ops:
+        updated = copy.deepcopy(op)
+        asset_id = updated.get("asset_id")
+        if asset_id:
+            updated["asset_id"] = remap_asset_id(str(asset_id))
+        assets = updated.get("assets")
+        if isinstance(assets, list):
+            for entry in assets:
+                if isinstance(entry, dict) and entry.get("asset_id"):
+                    entry["asset_id"] = remap_asset_id(str(entry["asset_id"]))
+        remapped.append(updated)
+    return remapped
+
+
 def build_layout_zones() -> list[dict[str, Any]]:
     return [
         {"id": "approach_bridge_h1", "rect": rect(52, 49, 9, 21), "height": 1, "role": "main_route"},
@@ -184,7 +210,7 @@ def main() -> None:
     preserved_v1 = load_json(PRESERVATION_PATH)
     migrated = copy.deepcopy(current)
 
-    base_ops = copy.deepcopy(preserved_v1.get("ops", []))
+    base_ops = remap_base_ops(copy.deepcopy(preserved_v1.get("ops", [])))
     generated_ops = build_generated_ops()
     migrated.update(
         {

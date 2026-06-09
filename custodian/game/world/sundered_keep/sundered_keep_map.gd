@@ -1654,6 +1654,7 @@ func _set_hud_active(active: bool) -> void:
 func _refresh_hud_state() -> void:
 	if _hud == null or not is_instance_valid(_hud):
 		return
+	_hud.call("set_location", "SUNDERED KEEP FRONT GATE")
 	_hud.set_phase("FREE ROAM PREP" if not _siege_started else "GATEHOUSE SIEGE")
 	_hud.set_objective("Hold the gatehouse" if _siege_started else ("Enter the keep" if _main_gate_open else "Open the main gate"))
 	_hud.set_key_item_status(_player_has_sundered_gate_key(), SUNDERED_GATE_KEY_NAME)

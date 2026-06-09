@@ -5,7 +5,7 @@ Last updated: 2026-06-06
 
 ## Summary
 
-Black Reliquary is the current CUSTODIAN gothic/brass runtime UI style. It replaces debug-looking normal-play HUD text with dark charcoal panels, brass/gold borders, compact icons, styled interaction prompts, a compact live tactical minimap, and objective/status plaques.
+Black Reliquary is the current CUSTODIAN gothic/brass runtime UI style. It replaces debug-looking normal-play HUD text with dark charcoal panels, brass/gold borders, compact icons, styled interaction prompts, a compact live tactical minimap, and now a split inventory-status surface: the play HUD stays lean while the inventory menu carries the broader field/status/log presentation.
 
 ## Runtime Ownership
 
@@ -45,6 +45,10 @@ Required presentation:
 - production assets resolved through a centralized inventory asset catalog
 - canonical production assets may replace fallbacks by landing at the documented
   runtime paths without requiring scene or script edits
+- a status page with a large Black Reliquary-flavored live minimap, current
+  location/phase/objective/key/gate/return snapshots, and vitals context
+- a second page with a quest/history log that records the same status updates in
+  readable chronological form
 
 The overlay must connect to `/root/InventoryManager` and update when its
 `inventory_changed` signal fires. The older local `Inventory` resource remains a
@@ -66,7 +70,7 @@ the exact production filenames and current Black Reliquary/legacy fallbacks.
 
 ## Sundered Keep Integration
 
-`custodian/game/world/sundered_keep/sundered_keep_map.gd` currently creates a safe local `CustodianHUD` instance because there is not yet a global Black Reliquary HUD singleton. The integration is intentionally easy to replace later: Sundered Keep owns gate/key/siege state, exports authored minimap floor/wall cells, and activates its local HUD only while the player is inside the keep. The HUD only renders health, stamina, phase, objective, prompt, live minimap, and status plaques.
+`custodian/game/world/sundered_keep/sundered_keep_map.gd` currently creates a safe local `CustodianHUD` instance because there is not yet a global Black Reliquary HUD singleton. The integration is intentionally easy to replace later: Sundered Keep owns gate/key/siege state, exports authored minimap floor/wall cells, and activates its local HUD only while the player is inside the keep. The play HUD now keeps only the minimap and left-corner vitals; the richer phase/objective/key/gate/return status has moved into the inventory status page and its quest/history log.
 
 Required prompt mappings:
 

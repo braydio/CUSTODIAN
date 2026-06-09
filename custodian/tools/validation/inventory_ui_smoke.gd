@@ -23,10 +23,40 @@ func _initialize() -> void:
 	inventory_ui.call("open")
 	await process_frame
 	_assert(inventory_ui.visible, "inventory UI did not become visible")
+	var status_page := _find_node_named(inventory_ui, "StatusPage") as Control
+	var history_page := _find_node_named(inventory_ui, "HistoryPage") as Control
+	var ledger_page := _find_node_named(inventory_ui, "LedgerPage") as Control
+	_assert(status_page != null, "status page root missing")
+	_assert(_find_node_named(inventory_ui, "StatusButton") != null, "status tab button missing")
+	_assert(_find_node_named(inventory_ui, "HistoryButton") != null, "history tab button missing")
+	_assert(_find_node_named(inventory_ui, "LedgerButton") != null, "ledger tab button missing")
+	_assert(status_page.visible, "inventory did not open to the status page")
+	_assert(_find_node_named(inventory_ui, "HistoryLog") != null, "history log control missing")
+	inventory_ui.call("set_location", "SUNDERED KEEP FRONT GATE")
+	inventory_ui.call("set_phase", "APPROACH")
+	inventory_ui.call("set_objective", "REACH THE MAIN GATE")
+	inventory_ui.call("set_key_item_status", true, "Sundered Gate Key")
+	inventory_ui.call("set_main_gate_status", false, true)
+	inventory_ui.call("set_return_mooring_status", true, true)
+	inventory_ui.call("set_health", 72, 100)
+	inventory_ui.call("set_stamina_status", "READY", 64.0)
+	inventory_ui.call("record_history_entry", "QUEST UPDATE", "Entered the front gate approach and confirmed the field ledger.", Color(0.82, 0.76, 0.62))
+	await process_frame
+	_assert(_find_label_with_text(inventory_ui, "SUNDERED KEEP FRONT GATE") != null, "status page did not render location text")
+	_assert(_find_label_with_text(inventory_ui, "STAMINA READY 64%") != null, "status page did not render stamina text")
+	var history_log := _find_node_named(inventory_ui, "HistoryLog") as RichTextLabel
+	_assert(history_log != null and history_log.text.contains("QUEST UPDATE"), "history log did not record the quest update")
+	inventory_ui.call("_select_page", "ledger")
+	await process_frame
+	_assert(ledger_page != null and ledger_page.visible, "ledger page did not become visible")
 	_assert(_find_node_named(inventory_ui, "Item_faint_recollection") != null, "live inventory item was not rendered")
 	_assert(_find_node_named(inventory_ui, "Item_sundered_gate_key") != null, "Sundered Gate Key was not rendered")
 	var detail_name := _find_label_with_text(inventory_ui, "FAINT RECOLLECTION")
-	_assert(detail_name != null, "default detail selection did not render a known item")
+	_assert(detail_name != null, "ledger default selection did not render a known item")
+	inventory_ui.call("_select_page", "history")
+	await process_frame
+	_assert(history_page != null and history_page.visible, "history page did not become visible")
+	_assert(history_log != null and history_log.visible, "history log did not become visible")
 	inventory_manager.call("add_item", &"ancient_bearing", 3)
 	await process_frame
 	_assert(_find_node_named(inventory_ui, "Item_ancient_bearing") != null, "inventory did not update after live ledger change")
