@@ -1,3 +1,15 @@
+# Operator Aseprite Anchor Guides
+  - Guide meanings:
+    -   magenta = centerline / main foot anchor x
+    -   green   = foot line
+    -   orange  = ground line
+    -   cyan    = head / neck / chest
+    -   yellow  = shoulders
+    -   blue    = hips
+    -   purple  = knees
+    -   white   = exact anchor crosshairs
+  
+
 # Operator Origin:
   Feet Anchor - Centered on 48px 84px
     > Ground is 85px
