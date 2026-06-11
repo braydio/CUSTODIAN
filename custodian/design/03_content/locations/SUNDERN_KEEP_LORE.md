@@ -4,12 +4,14 @@
 > **Post-collapse name:** Sundern Keep (also rendered as *Sundered Keep* in runtime data)
 > **Design ID:** sundered_keep
 > **Status:** Design reference — not all elements are implemented in runtime
+> **Cross-reference:** See `design/00_canon/CORE_LORE.md` for master lore canon, `design/03_content/factions/` for faction profiles
+> **Terminology note:** "Penitents of Static" corrected to "Pale Bell Penitents" (early) per ASH_BELL_AND_DESIGN_GUIDANCE.md. "The Severance" corrected to "The Severing" (public term). "Unnarrival" → "Unnarrival" (canonical spelling).
 
 ---
 
 ## One-Line Identity
 
-**Sundern Keep is a continuity fortress built to hold a strategic Lattice aperture, now temporally adrift after the Great Severance caused several incompatible versions of the same keep to converge into one playable ruin.**
+**Sundern Keep is a continuity fortress built to hold a strategic Lattice aperture, now temporally adrift after the Great Severing caused several incompatible versions of the same keep to converge into one playable ruin.**
 
 It looks like a castle because later cultures misunderstood it as a fortress-monastery. It was originally:
 
@@ -36,13 +38,13 @@ It was connected to verified transit: personnel, packets, tools, archive matter,
 The keep is not stable territory. It is a bounded Lattice field whose local history keeps trying to resolve into a single version, but never fully can. CUSTODIAN is about keeping Lattice reality pockets alive long enough for meaning to exist inside them — not permanently saving the world.
 
 ### Provenance Failure
-Its main wound is not "time travel" in the simple sense. The keep has broken relationships between **object, origin, witness, time, use, and meaning**. This is consistent with the canon Severance framework: The Unarrival damaged reality's ability to maintain shared cause, memory, witness, and origin; information collapse is the observable symptom; knowledge recovery is provenance stabilization.
+Its main wound is not "time travel" in the simple sense. The keep has broken relationships between **object, origin, witness, time, use, and meaning**. This is consistent with the canon Severing framework: The Unnarrival damaged reality's ability to maintain shared cause, memory, witness, and origin; information collapse is the observable symptom; knowledge recovery is provenance stabilization.
 
 ---
 
 ## What Happened Here
 
-Before the Severance, Sundern Keep was not called a keep.
+Before the Severing, Sundern Keep was not called a keep.
 
 It was something like:
 
@@ -50,9 +52,9 @@ It was something like:
 
 Its job was to protect and adjudicate a major transit node. Anything passing through had to be verified: personnel, archive freight, field operators, sealed records, dead matter, machine cores, and emergency command authority.
 
-Then the Great Severance hit.
+Then the Great Severing hit.
 
-The keep did not simply collapse. It was caught mid-function. Its systems were verifying transit, sealing gates, routing authority, and preserving witness records when The Unarrival damaged the causal substrate. Because of this, different procedural states of the keep became lodged together.
+The keep did not simply collapse. It was caught mid-function. Its systems were verifying transit, sealing gates, routing authority, and preserving witness records when The Unnarrival damaged the causal substrate. Because of this, different procedural states of the keep became lodged together.
 
 The keep is now simultaneously:
 
@@ -60,7 +62,7 @@ The keep is now simultaneously:
 2. **During the assault** — gates falling, alarms active, defenders dying.
 3. **After abandonment** — ruined, flooded, scavenged, mythologized.
 4. **Later misremembered** — treated as a holy castle, cursed keep, or forbidden court.
-5. **Unarrived** — containing structures, corpses, and records whose origins cannot be placed.
+5. **Unnarrived** — containing structures, corpses, and records whose origins cannot be placed.
 
 ---
 
@@ -93,7 +95,7 @@ The West Gate prevented the breach.
 The West Gate was built because the breach had already been prevented.
 ```
 
-This lets the keep tie directly into The Unarrival without revealing what The Unarrival is. The Unarrival remains ambiguous, appearing through events without origins, artifacts that precede manufacture, sealed rooms with fresh blood, saints awaited after their relics exist, and similar scars.
+This lets the keep tie directly into The Unnarrival without revealing what The Unnarrival is. The Unnarrival remains ambiguous, appearing through events without origins, artifacts that precede manufacture, sealed rooms with fresh blood, saints awaited after their relics exist, and similar scars.
 
 ---
 
@@ -215,7 +217,7 @@ TEMPORAL BANDWIDTH: MULTIPLE
 PROVENANCE CONVERGENCE: FAILED
 ```
 
-**Gameplay:** Traversal across exposed aperture architecture — narrow ribs, gap jumps, gravity-anchor platforms, partially collapsed transit cradles. Enemies here are sparse but significant: Feral Defense Remnants still trying to route transit that will never come, or Penitents of Static jamming the aperture to prevent any single reading from stabilizing.
+**Gameplay:** Traversal across exposed aperture architecture — narrow ribs, gap jumps, gravity-anchor platforms, partially collapsed transit cradles. Enemies here are sparse but significant: Feral Defense Remnants still trying to route transit that will never come, or Pale Bell Penitents jamming the aperture to prevent any single reading from stabilizing.
 
 **Runtime status:** Not yet implemented. Requires new visual assets (aperture ribs, alignment pylons, Lattice field effects) distinct from the castle stonework of earlier zones.
 
@@ -284,7 +286,7 @@ OBJECT: WEST GATE
 INSTALLATION: ABSENT
 SEAL: CONFIRMED
 BREACH: PREVENTED
-CLASSIFICATION: UNARRIVED SOURCE
+CLASSIFICATION: UNNARRIVED SOURCE
 ```
 
 **Runtime status:** Not yet implemented. The level has a main gate (south) and great hall doors, but no West Gate area.
@@ -303,7 +305,7 @@ Best mid-zone antagonist. They believe every object must be returned to its corr
 
 **Runtime alignment:** Choir of Provenance is established in canon docs but not yet present in Sundern Keep runtime.
 
-### Penitents of Static
+### Pale Bell Penitents
 Best for signal/anomaly areas. They treat contradictory records as holy mercy. They jam systems, corrupt readouts.
 
 **Runtime alignment:** Not yet present.
@@ -389,7 +391,7 @@ At the West Gate:
 ```
 LATTICE STATUS: FRAYING
 PALE INDEX: ACTIVE
-ANOMALOUS ACTIVITY: UNARRIVED SOURCE
+ANOMALOUS ACTIVITY: UNNARRIVED SOURCE
 AUTHORITY: SEALED
 GATE: NOT BUILT / CLOSED
 ```
