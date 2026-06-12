@@ -27,7 +27,7 @@ func get_debug_state() -> Dictionary:
 	return {
 		"exists": marine != null and is_instance_valid(marine),
 		"state": _state_name(),
-		"dash_ready": _has_animation("marine_dash_attack_e"),
+		"dash_ready": _has_animation("marine_dash_charge_e") and _has_animation("marine_dash_inflight_e") and _has_animation("marine_dash_recovery_e"),
 		"dash_fx_ready": _has_fx_animation("marine_dash_attack_fx_e"),
 	}
 
