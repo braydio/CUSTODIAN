@@ -89,18 +89,18 @@ marine_dash_attacker_hitstop = 0.045
 marine_dash_victim_hitstop = 0.09
 marine_dash_camera_shake_strength = 0.45
 marine_dash_camera_shake_duration = 0.16
-marine_dash_hit_active_start_ratio = 0.34
-marine_dash_hit_active_end_ratio = 0.82
-marine_dash_hit_forward_reach_px = 24.0
-marine_dash_hit_lateral_reach_px = 18.0
-marine_dash_launch_band_min = 105.0
-marine_dash_launch_band_max = 225.0
-marine_dash_charge_extra_windup = 0.48
-marine_dash_charge_distance_bonus = 0.65
-marine_dash_charge_damage_bonus = 0.55
-marine_dash_prediction_time = 0.24
-marine_dash_reset_time = 0.55
-marine_dash_reset_speed = 92.0
+marine_dash_hit_active_start_ratio = 0.28
+marine_dash_hit_active_end_ratio = 0.9
+marine_dash_hit_forward_reach_px = 30.0
+marine_dash_hit_lateral_reach_px = 22.0
+marine_dash_launch_band_min = 96.0
+marine_dash_launch_band_max = 240.0
+marine_dash_charge_extra_windup = 0.56
+marine_dash_charge_distance_bonus = 0.72
+marine_dash_charge_damage_bonus = 0.66
+marine_dash_prediction_time = 0.3
+marine_dash_reset_time = 0.48
+marine_dash_reset_speed = 100.0
 ```
 
 Rules:
