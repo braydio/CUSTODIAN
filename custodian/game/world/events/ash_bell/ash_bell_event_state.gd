@@ -77,6 +77,34 @@ func calm_thread(amount: int) -> void:
 		pressure_changed.emit(silence_pressure, thread_tension)
 
 
+func set_thread_tension(value: int, reason: StringName = &"unknown") -> void:
+	var previous := thread_tension
+	thread_tension = clampi(value, 0, 100)
+	if thread_tension == previous:
+		return
+
+	pressure_changed.emit(silence_pressure, thread_tension)
+
+	if thread_tension >= 100:
+		set_resolution(Resolution.CUT_THREAD)
+
+
+func set_silence_pressure(value: int, reason: StringName = &"unknown") -> void:
+	var previous := silence_pressure
+	silence_pressure = clampi(value, 0, 100)
+	if silence_pressure == previous:
+		return
+
+	pressure_changed.emit(silence_pressure, thread_tension)
+	_apply_pressure_thresholds(reason)
+
+
+func is_completed() -> bool:
+	return resolution == Resolution.RITUALANT_DISSOLVED \
+		or resolution == Resolution.SITE_STABILIZED \
+		or resolution == Resolution.SITE_DEFILED
+
+
 func mark_dialogue_seen(node_id: StringName) -> void:
 	seen_dialogue[node_id] = true
 

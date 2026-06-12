@@ -1,10 +1,10 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene format=3 uid="uid://d16xvgyky6xs7"]
 
-[ext_resource type="Script" path="res://game/world/events/ash_bell/forlorn_ritualant_site.gd" id="1_site"]
-[ext_resource type="Script" path="res://game/world/events/ash_bell/forlorn_ritualant_npc.gd" id="2_npc"]
-[ext_resource type="Script" path="res://game/world/events/ash_bell/ash_bell_interactable.gd" id="3_interactable"]
-[ext_resource type="Script" path="res://game/world/events/ash_bell/white_thread_hazard.gd" id="4_thread"]
-[ext_resource type="Script" path="res://game/world/events/ash_bell/ash_bell_trigger.gd" id="5_trigger"]
+[ext_resource type="Script" uid="uid://1a3fhraa5vab" path="res://game/world/events/ash_bell/forlorn_ritualant_site.gd" id="1_site"]
+[ext_resource type="Script" uid="uid://dbcasxp4tc1gk" path="res://game/world/events/ash_bell/forlorn_ritualant_npc.gd" id="2_npc"]
+[ext_resource type="Script" uid="uid://cf3qh3ejcbmpq" path="res://game/world/events/ash_bell/ash_bell_interactable.gd" id="3_interactable"]
+[ext_resource type="Script" uid="uid://ccv8ls026wv1q" path="res://game/world/events/ash_bell/white_thread_hazard.gd" id="4_thread"]
+[ext_resource type="Script" uid="uid://c5gb0sly0vtfh" path="res://game/world/events/ash_bell/ash_bell_trigger.gd" id="5_trigger"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_room_north"]
 size = Vector2(1120, 32)
@@ -15,17 +15,17 @@ size = Vector2(480, 32)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_room_side"]
 size = Vector2(32, 864)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ritualant"]
-size = Vector2(26, 28)
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_interact"]
-radius = 28.0
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_thread"]
 size = Vector2(220, 128)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_clapper"]
 radius = 18.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ritualant"]
+size = Vector2(26, 28)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_interact"]
+radius = 28.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_intro"]
 radius = 160.0
@@ -36,7 +36,7 @@ size = Vector2(220, 150)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_exit"]
 size = Vector2(260, 72)
 
-[node name="ForlornRitualantSite" type="Node2D"]
+[node name="ForlornRitualantSite" type="Node2D" unique_id=1649470245]
 script = ExtResource("1_site")
 forlorn_ritualant_path = NodePath("NPCs/ForlornRitualant")
 dry_fountain_ghost_path = NodePath("Props/DryFountainGhost")
@@ -47,7 +47,7 @@ ghost_procession_path = NodePath("VFX/GhostProcession")
 debug_label_path = NodePath("Debug/AshBellDebugLabel")
 dialogue_label_path = NodePath("Debug/AshBellDialogueLabel")
 
-[node name="Floor" type="ColorRect" parent="."]
+[node name="Floor" type="ColorRect" parent="." unique_id=1225912591]
 z_index = -30
 offset_left = -560.0
 offset_top = -432.0
@@ -55,260 +55,258 @@ offset_right = 560.0
 offset_bottom = 432.0
 color = Color(0.095, 0.086, 0.075, 1)
 
-[node name="Walls" type="Node2D" parent="."]
+[node name="Walls" type="Node2D" parent="." unique_id=1687049799]
 z_index = -20
 
-[node name="NorthWall" type="StaticBody2D" parent="Walls"]
+[node name="NorthWall" type="StaticBody2D" parent="Walls" unique_id=945578912]
 position = Vector2(0, -416)
 
-[node name="Visual" type="ColorRect" parent="Walls/NorthWall"]
+[node name="Visual" type="ColorRect" parent="Walls/NorthWall" unique_id=1503050646]
 offset_left = -560.0
 offset_top = -16.0
 offset_right = 560.0
 offset_bottom = 16.0
 color = Color(0.045, 0.041, 0.039, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/NorthWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/NorthWall" unique_id=717728398]
 shape = SubResource("RectangleShape2D_room_north")
 
-[node name="SouthWall" type="StaticBody2D" parent="Walls"]
+[node name="SouthWall" type="StaticBody2D" parent="Walls" unique_id=1266914114]
 position = Vector2(0, 416)
 
-[node name="VisualLeft" type="ColorRect" parent="Walls/SouthWall"]
+[node name="VisualLeft" type="ColorRect" parent="Walls/SouthWall" unique_id=463604627]
 offset_left = -560.0
 offset_top = -16.0
 offset_right = -80.0
 offset_bottom = 16.0
 color = Color(0.045, 0.041, 0.039, 1)
 
-[node name="VisualRight" type="ColorRect" parent="Walls/SouthWall"]
+[node name="VisualRight" type="ColorRect" parent="Walls/SouthWall" unique_id=1340132109]
 offset_left = 80.0
 offset_top = -16.0
 offset_right = 560.0
 offset_bottom = 16.0
 color = Color(0.045, 0.041, 0.039, 1)
 
-[node name="DoorwayThreshold" type="ColorRect" parent="Walls/SouthWall"]
+[node name="DoorwayThreshold" type="ColorRect" parent="Walls/SouthWall" unique_id=1701801804]
 offset_left = -80.0
 offset_top = -10.0
 offset_right = 80.0
 offset_bottom = 10.0
 color = Color(0.16, 0.145, 0.12, 1)
 
-[node name="CollisionLeft" type="CollisionShape2D" parent="Walls/SouthWall"]
+[node name="CollisionLeft" type="CollisionShape2D" parent="Walls/SouthWall" unique_id=127495625]
 position = Vector2(-320, 0)
 shape = SubResource("RectangleShape2D_room_south_segment")
 
-[node name="CollisionRight" type="CollisionShape2D" parent="Walls/SouthWall"]
+[node name="CollisionRight" type="CollisionShape2D" parent="Walls/SouthWall" unique_id=1941695750]
 position = Vector2(320, 0)
 shape = SubResource("RectangleShape2D_room_south_segment")
 
-[node name="WestWall" type="StaticBody2D" parent="Walls"]
+[node name="WestWall" type="StaticBody2D" parent="Walls" unique_id=957573078]
 position = Vector2(-544, 0)
 
-[node name="Visual" type="ColorRect" parent="Walls/WestWall"]
+[node name="Visual" type="ColorRect" parent="Walls/WestWall" unique_id=148758621]
 offset_left = -16.0
 offset_top = -432.0
 offset_right = 16.0
 offset_bottom = 432.0
 color = Color(0.045, 0.041, 0.039, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WestWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WestWall" unique_id=1111121747]
 shape = SubResource("RectangleShape2D_room_side")
 
-[node name="EastWall" type="StaticBody2D" parent="Walls"]
+[node name="EastWall" type="StaticBody2D" parent="Walls" unique_id=1366154025]
 position = Vector2(544, 0)
 
-[node name="Visual" type="ColorRect" parent="Walls/EastWall"]
+[node name="Visual" type="ColorRect" parent="Walls/EastWall" unique_id=735045039]
 offset_left = -16.0
 offset_top = -432.0
 offset_right = 16.0
 offset_bottom = 432.0
 color = Color(0.045, 0.041, 0.039, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/EastWall"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/EastWall" unique_id=1793133981]
 shape = SubResource("RectangleShape2D_room_side")
 
-[node name="Props" type="Node2D" parent="."]
+[node name="Props" type="Node2D" parent="." unique_id=911271864]
 z_index = -10
 
-[node name="EmptyBellFrame" type="Node2D" parent="Props"]
+[node name="EmptyBellFrame" type="Node2D" parent="Props" unique_id=2085719359]
 position = Vector2(0, -270)
 
-[node name="LeftPost" type="ColorRect" parent="Props/EmptyBellFrame"]
+[node name="LeftPost" type="ColorRect" parent="Props/EmptyBellFrame" unique_id=1604952075]
 offset_left = -50.0
 offset_top = -64.0
 offset_right = -34.0
 offset_bottom = 64.0
 color = Color(0.12, 0.105, 0.085, 1)
 
-[node name="RightPost" type="ColorRect" parent="Props/EmptyBellFrame"]
+[node name="RightPost" type="ColorRect" parent="Props/EmptyBellFrame" unique_id=303662208]
 offset_left = 34.0
 offset_top = -64.0
 offset_right = 50.0
 offset_bottom = 64.0
 color = Color(0.12, 0.105, 0.085, 1)
 
-[node name="Yoke" type="ColorRect" parent="Props/EmptyBellFrame"]
+[node name="Yoke" type="ColorRect" parent="Props/EmptyBellFrame" unique_id=115872154]
 offset_left = -58.0
 offset_top = -66.0
 offset_right = 58.0
 offset_bottom = -50.0
 color = Color(0.12, 0.105, 0.085, 1)
 
-[node name="DryFountainGhost" type="ColorRect" parent="Props"]
+[node name="DryFountainGhost" type="ColorRect" parent="Props" unique_id=221404565]
 offset_left = -96.0
 offset_top = -112.0
 offset_right = 96.0
 offset_bottom = 16.0
 color = Color(0.42, 0.45, 0.43, 0.35)
 
-[node name="DryFountainBlackWater" type="ColorRect" parent="Props"]
+[node name="DryFountainBlackWater" type="ColorRect" parent="Props" unique_id=1797154712]
 offset_left = -70.0
 offset_top = -92.0
 offset_right = 70.0
 offset_bottom = -20.0
 color = Color(0.01, 0.008, 0.012, 0.72)
 
-[node name="WhiteThreadVisual" type="ColorRect" parent="Props"]
+[node name="WhiteThreadVisual" type="ColorRect" parent="Props" unique_id=1696580518]
 offset_left = -110.0
 offset_top = -210.0
 offset_right = 110.0
 offset_bottom = -82.0
 color = Color(0.88, 0.84, 0.72, 0.16)
 
-[node name="WhiteThreadHazard" type="Area2D" parent="Props"]
+[node name="WhiteThreadHazard" type="Area2D" parent="Props" unique_id=351032665]
 position = Vector2(0, -146)
 script = ExtResource("4_thread")
 site_path = NodePath("../..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/WhiteThreadHazard"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/WhiteThreadHazard" unique_id=533190785]
 shape = SubResource("RectangleShape2D_thread")
 
-[node name="BronzeClapperPickup" type="Area2D" parent="Props"]
+[node name="BronzeClapperPickup" type="Area2D" parent="Props" unique_id=451224377]
 position = Vector2(0, -144)
 script = ExtResource("3_interactable")
 interaction_kind = 6
 site_path = NodePath("../..")
 prompt_text = "TAKE BELL-CLAPPER"
 
-[node name="Visual" type="ColorRect" parent="Props/BronzeClapperPickup"]
+[node name="Visual" type="ColorRect" parent="Props/BronzeClapperPickup" unique_id=27475693]
 offset_left = -18.0
 offset_top = -8.0
 offset_right = 18.0
 offset_bottom = 8.0
 color = Color(0.67, 0.49, 0.27, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/BronzeClapperPickup"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/BronzeClapperPickup" unique_id=914984636]
 shape = SubResource("CircleShape2D_clapper")
 
-[node name="BlackBanners" type="Node2D" parent="Props"]
+[node name="BlackBanners" type="Node2D" parent="Props" unique_id=340412067]
 
-[node name="BannerWest" type="ColorRect" parent="Props/BlackBanners"]
+[node name="BannerWest" type="ColorRect" parent="Props/BlackBanners" unique_id=691110751]
 offset_left = -300.0
 offset_top = -280.0
 offset_right = -268.0
 offset_bottom = -160.0
 color = Color(0.015, 0.014, 0.013, 1)
 
-[node name="BannerEast" type="ColorRect" parent="Props/BlackBanners"]
+[node name="BannerEast" type="ColorRect" parent="Props/BlackBanners" unique_id=1543638237]
 offset_left = 268.0
 offset_top = -280.0
 offset_right = 300.0
 offset_bottom = -160.0
 color = Color(0.015, 0.014, 0.013, 1)
 
-[node name="NPCs" type="Node2D" parent="."]
+[node name="NPCs" type="Node2D" parent="." unique_id=1416789592]
 z_index = 2
 
-[node name="ForlornRitualant" type="CharacterBody2D" parent="NPCs"]
+[node name="ForlornRitualant" type="CharacterBody2D" parent="NPCs" unique_id=1922357376]
 position = Vector2(0, -154)
 script = ExtResource("2_npc")
 site_path = NodePath("../..")
 
-[node name="Visual" type="ColorRect" parent="NPCs/ForlornRitualant"]
+[node name="Visual" type="ColorRect" parent="NPCs/ForlornRitualant" unique_id=138411830]
 offset_left = -16.0
 offset_top = -24.0
 offset_right = 16.0
 offset_bottom = 12.0
 color = Color(0.22, 0.21, 0.19, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/ForlornRitualant"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/ForlornRitualant" unique_id=580563031]
 position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_ritualant")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/ForlornRitualant"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/ForlornRitualant" unique_id=1302765729]
 visible = false
 
-[node name="RitualantInteract" type="Area2D" parent="NPCs"]
+[node name="RitualantInteract" type="Area2D" parent="NPCs" unique_id=321342900]
 position = Vector2(0, -154)
 script = ExtResource("3_interactable")
-interaction_kind = 0
 site_path = NodePath("../..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/RitualantInteract"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/RitualantInteract" unique_id=1100459778]
 shape = SubResource("CircleShape2D_interact")
 
-[node name="TouchThreadInteract" type="Area2D" parent="NPCs"]
+[node name="TouchThreadInteract" type="Area2D" parent="NPCs" unique_id=1255823245]
 position = Vector2(-74, -138)
 script = ExtResource("3_interactable")
 interaction_kind = 4
 site_path = NodePath("../..")
 prompt_text = "TOUCH WHITE THREAD"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/TouchThreadInteract"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/TouchThreadInteract" unique_id=1639990276]
 shape = SubResource("CircleShape2D_interact")
 
-[node name="Triggers" type="Node2D" parent="."]
+[node name="Triggers" type="Node2D" parent="." unique_id=168594331]
 
-[node name="ProximityIntroTrigger" type="Area2D" parent="Triggers"]
+[node name="ProximityIntroTrigger" type="Area2D" parent="Triggers" unique_id=1097650950]
 position = Vector2(0, -44)
 script = ExtResource("5_trigger")
-trigger_kind = 0
 site_path = NodePath("../..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ProximityIntroTrigger"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ProximityIntroTrigger" unique_id=1861666005]
 shape = SubResource("CircleShape2D_intro")
 
-[node name="DryFountainZone" type="Area2D" parent="Triggers"]
+[node name="DryFountainZone" type="Area2D" parent="Triggers" unique_id=402193183]
 position = Vector2(0, -50)
 script = ExtResource("5_trigger")
 trigger_kind = 1
 site_path = NodePath("../..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/DryFountainZone"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/DryFountainZone" unique_id=101333452]
 shape = SubResource("RectangleShape2D_fountain")
 
-[node name="ExitTrigger" type="Area2D" parent="Triggers"]
+[node name="ExitTrigger" type="Area2D" parent="Triggers" unique_id=2141076623]
 position = Vector2(0, 320)
 script = ExtResource("5_trigger")
 trigger_kind = 2
 site_path = NodePath("../..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitTrigger"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Triggers/ExitTrigger" unique_id=682861400]
 shape = SubResource("RectangleShape2D_exit")
 
-[node name="VFX" type="Node2D" parent="."]
+[node name="VFX" type="Node2D" parent="." unique_id=957109267]
 
-[node name="UnarrivedApparition" type="ColorRect" parent="VFX"]
+[node name="UnarrivedApparition" type="ColorRect" parent="VFX" unique_id=2142402911]
 offset_left = -16.0
 offset_top = 56.0
 offset_right = 16.0
 offset_bottom = 152.0
-color = Color(0.82, 0.78, 0.66, 0.0)
+color = Color(0.82, 0.78, 0.66, 0)
 
-[node name="GhostProcession" type="Node2D" parent="VFX"]
+[node name="GhostProcession" type="Node2D" parent="VFX" unique_id=942465580]
 
-[node name="Line" type="ColorRect" parent="VFX/GhostProcession"]
+[node name="Line" type="ColorRect" parent="VFX/GhostProcession" unique_id=734095685]
 offset_left = -360.0
 offset_top = 98.0
 offset_right = 360.0
 offset_bottom = 126.0
 color = Color(0.68, 0.66, 0.58, 0.18)
 
-[node name="Debug" type="Node2D" parent="."]
+[node name="Debug" type="Node2D" parent="." unique_id=409010644]
 
-[node name="AshBellDialogueLabel" type="Label" parent="Debug"]
+[node name="AshBellDialogueLabel" type="Label" parent="Debug" unique_id=550316652]
 offset_left = -250.0
 offset_top = 262.0
 offset_right = 250.0
@@ -316,10 +314,12 @@ offset_bottom = 306.0
 text = "Forlorn-Ritualant waits beneath no bell."
 horizontal_alignment = 1
 
-[node name="AshBellDebugLabel" type="Label" parent="Debug"]
+[node name="AshBellDebugLabel" type="Label" parent="Debug" unique_id=511448229]
 visible = false
 offset_left = -540.0
 offset_top = -420.0
 offset_right = -330.0
 offset_bottom = -330.0
 text = "ASH-BELL"
+
+[node name="Stagecraft" type="Node2D" parent="." unique_id=523588827]

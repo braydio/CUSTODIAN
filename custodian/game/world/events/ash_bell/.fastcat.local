@@ -1,0 +1,958 @@
+=== ash_bell_dev_spawner.gd ===
+extends Node
+
+@export var enabled: bool = true
+@export var encounter_scene: PackedScene
+@export var operator_path: NodePath = NodePath("/root/GameRoot/World/Operator")
+@export var spawn_parent_path: NodePath = NodePath("/root/GameRoot/World")
+@export var contract_loader_path: NodePath = NodePath("/root/GameRoot/ContractWorldLoader")
+@export var spawn_offset: Vector2 = Vector2(0.0, -720.0)
+@export var spawn_delay_seconds: float = 0.0
+@export var wait_for_runtime_map: bool = true
+@export var max_wait_frames: int = 240
+
+var _spawned: Node2D = null
+
+
+func _ready() -> void:
+	if not enabled:
+		return
+	call_deferred("_spawn_after_world_ready")
+
+
+func _spawn_after_world_ready() -> void:
+	if spawn_delay_seconds > 0.0:
+		await get_tree().create_timer(spawn_delay_seconds).timeout
+	await _wait_for_live_world()
+
+	if _spawned != null and is_instance_valid(_spawned):
+		return
+
+	var parent := get_node_or_null(spawn_parent_path)
+	var operator := get_node_or_null(operator_path) as Node2D
+	if parent == null or operator == null or encounter_scene == null:
+		push_warning("[AshBellDevSpawner] Missing parent, operator, or encounter_scene.")
+		return
+
+	var instance := encounter_scene.instantiate() as Node2D
+	if instance == null:
+		push_warning("[AshBellDevSpawner] Encounter scene did not instantiate as Node2D.")
+		return
+
+	parent.add_child(instance)
+	instance.global_position = operator.global_position + spawn_offset
+	_spawned = instance
+	print("[AshBellDevSpawner] Spawned Ash-Bell encounter at ", instance.global_position)
+
+
+func _wait_for_live_world() -> void:
+	for _frame_index in range(max(1, max_wait_frames)):
+		var operator := get_node_or_null(operator_path) as Node2D
+		if operator == null:
+			await get_tree().process_frame
+			continue
+		if not wait_for_runtime_map:
+			return
+		var loader := get_node_or_null(contract_loader_path)
+		if loader != null and loader.has_method("get_active_map_instance"):
+			var active_map = loader.call("get_active_map_instance")
+			if active_map != null:
+				return
+		await get_tree().process_frame
+
+
+=== ash_bell_event_state.gd ===
+class_name AshBellEventState
+extends Resource
+
+signal pressure_changed(silence_pressure: int, thread_tension: int)
+signal fountain_state_changed(new_state: int)
+signal resolution_changed(new_resolution: int)
+signal knowledge_unlocked(knowledge_id: StringName)
+
+enum FountainState {
+	ABSENT,
+	GHOST,
+	BLACK_WATER,
+	CRACKED_ANCHORED,
+}
+
+enum Resolution {
+	UNSEEN,
+	SEEN,
+	SPOKE_TO_RITUALANT,
+	TOUCHED_THREAD,
+	TOOK_CLAPPER,
+	CUT_THREAD,
+	RANG_SILENCE,
+	PROVOKED_RITUALANT,
+	RITUALANT_DISSOLVED,
+	SITE_STABILIZED,
+	SITE_DEFILED,
+}
+
+@export var silence_pressure: int = 0
+@export var thread_tension: int = 0
+@export var fountain_state: int = FountainState.ABSENT
+@export var resolution: int = Resolution.UNSEEN
+
+var seen_dialogue: Dictionary = {}
+var unlocked_knowledge: Dictionary = {}
+var has_clapper: bool = false
+var has_thread_knot: bool = false
+var apparition_seen: bool = false
+var ritualant_hostile: bool = false
+
+
+func add_silence_pressure(amount: int, reason: StringName = &"unknown") -> void:
+	if amount == 0:
+		return
+
+	var previous := silence_pressure
+	silence_pressure = clampi(silence_pressure + amount, 0, 100)
+	if silence_pressure == previous:
+		return
+
+	pressure_changed.emit(silence_pressure, thread_tension)
+	_apply_pressure_thresholds(reason)
+
+
+func add_thread_tension(amount: int, reason: StringName = &"unknown") -> void:
+	if amount == 0:
+		return
+
+	var previous := thread_tension
+	thread_tension = clampi(thread_tension + amount, 0, 100)
+	if thread_tension != previous:
+		pressure_changed.emit(silence_pressure, thread_tension)
+
+	if thread_tension >= 100:
+		set_resolution(Resolution.CUT_THREAD)
+		add_silence_pressure(25, &"thread_snap")
+
+
+func calm_thread(amount: int) -> void:
+	if amount <= 0:
+		return
+
+	var previous := thread_tension
+	thread_tension = clampi(thread_tension - amount, 0, 100)
+	if thread_tension != previous:
+		pressure_changed.emit(silence_pressure, thread_tension)
+
+
+func mark_dialogue_seen(node_id: StringName) -> void:
+	seen_dialogue[node_id] = true
+
+
+func has_seen_dialogue(node_id: StringName) -> bool:
+	return bool(seen_dialogue.get(node_id, false))
+
+
+func unlock_knowledge(knowledge_id: StringName) -> void:
+	if bool(unlocked_knowledge.get(knowledge_id, false)):
+		return
+
+	unlocked_knowledge[knowledge_id] = true
+	knowledge_unlocked.emit(knowledge_id)
+
+
+func set_fountain_state(new_state: int) -> void:
+	if fountain_state == new_state:
+		return
+
+	fountain_state = new_state
+	fountain_state_changed.emit(fountain_state)
+
+
+func set_resolution(new_resolution: int) -> void:
+	if resolution == new_resolution:
+		return
+
+	resolution = new_resolution
+	resolution_changed.emit(resolution)
+
+
+func _apply_pressure_thresholds(_reason: StringName) -> void:
+	if silence_pressure >= 60 and fountain_state < FountainState.BLACK_WATER:
+		set_fountain_state(FountainState.BLACK_WATER)
+	elif silence_pressure >= 45 and fountain_state < FountainState.GHOST:
+		set_fountain_state(FountainState.GHOST)
+
+	if silence_pressure >= 90 and not ritualant_hostile:
+		ritualant_hostile = true
+		set_resolution(Resolution.PROVOKED_RITUALANT)
+
+
+=== ash_bell_interactable.gd ===
+class_name AshBellInteractable
+extends Area2D
+
+enum InteractionKind {
+	RITUALANT,
+	ASK_BELL,
+	ASK_THREAD,
+	ASK_ORRA,
+	TOUCH_THREAD,
+	CUT_THREAD,
+	TAKE_CLAPPER,
+	DRY_FOUNTAIN,
+	RING_CLAPPER,
+}
+
+@export var interaction_kind: int = InteractionKind.RITUALANT
+@export var site_path: NodePath
+@export var interaction_distance: float = 84.0
+@export var prompt_text: String = ""
+
+@onready var site: ForlornRitualantSite = get_node_or_null(site_path)
+
+
+func _ready() -> void:
+	add_to_group("interactable")
+
+
+func get_interaction_prompt() -> String:
+	if not prompt_text.strip_edges().is_empty():
+		return prompt_text
+	match interaction_kind:
+		InteractionKind.RITUALANT:
+			return "LISTEN TO FORLORN-RITUALANT"
+		InteractionKind.ASK_BELL:
+			return "ASK: BELL?"
+		InteractionKind.ASK_THREAD:
+			return "ASK: THREAD?"
+		InteractionKind.ASK_ORRA:
+			return "ASK: ORRA?"
+		InteractionKind.TOUCH_THREAD:
+			return "TOUCH WHITE THREAD"
+		InteractionKind.CUT_THREAD:
+			return "CUT WHITE THREAD"
+		InteractionKind.TAKE_CLAPPER:
+			return "TAKE BELL-CLAPPER"
+		InteractionKind.DRY_FOUNTAIN:
+			return "INSPECT DRY FOUNTAIN"
+		InteractionKind.RING_CLAPPER:
+			return "RING SILENCE"
+		_:
+			return "INTERACT"
+
+
+func get_interaction_position() -> Vector2:
+	return global_position
+
+
+func get_interaction_distance() -> float:
+	return interaction_distance
+
+
+func interact(_actor: Node) -> void:
+	if site == null:
+		push_warning("AshBellInteractable has no site reference.")
+		return
+
+	match interaction_kind:
+		InteractionKind.RITUALANT:
+			site.interact_with_ritualant()
+		InteractionKind.ASK_BELL:
+			site.ask_about_bell()
+		InteractionKind.ASK_THREAD:
+			site.ask_about_thread()
+		InteractionKind.ASK_ORRA:
+			site.ask_about_orra()
+		InteractionKind.TOUCH_THREAD:
+			site.touch_thread()
+		InteractionKind.CUT_THREAD:
+			site.cut_thread()
+		InteractionKind.TAKE_CLAPPER:
+			site.take_clapper()
+		InteractionKind.DRY_FOUNTAIN:
+			site.event_state.set_fountain_state(AshBellEventState.FountainState.GHOST)
+			site.event_state.add_silence_pressure(3, &"fountain_touched")
+		InteractionKind.RING_CLAPPER:
+			site.event_state.set_resolution(AshBellEventState.Resolution.RANG_SILENCE)
+			site.event_state.add_silence_pressure(35, &"rang_silence")
+			site.call("_show_unarrived_apparition")
+
+
+=== ash_bell_trigger.gd ===
+class_name AshBellTrigger
+extends Area2D
+
+enum TriggerKind {
+	INTRO,
+	FOUNTAIN,
+	EXIT,
+	GHOST_PROCESSION,
+}
+
+@export var trigger_kind: int = TriggerKind.INTRO
+@export var site_path: NodePath
+
+@onready var site: ForlornRitualantSite = get_node_or_null(site_path)
+
+
+func _ready() -> void:
+	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
+
+
+func _on_body_entered(body: Node) -> void:
+	if site == null or body == null or not body.is_in_group("player"):
+		return
+
+	match trigger_kind:
+		TriggerKind.INTRO:
+			site.trigger_intro()
+		TriggerKind.FOUNTAIN:
+			site.set_player_inside_fountain(true)
+		TriggerKind.EXIT:
+			site.exit_site()
+		TriggerKind.GHOST_PROCESSION:
+			site.event_state.add_silence_pressure(5, &"procession_lane_crossed")
+
+
+func _on_body_exited(body: Node) -> void:
+	if site == null or body == null or not body.is_in_group("player"):
+		return
+	if trigger_kind == TriggerKind.FOUNTAIN:
+		site.set_player_inside_fountain(false)
+
+
+=== forlorn_ritualant_npc.gd ===
+class_name ForlornRitualantNPC
+extends CharacterBody2D
+
+signal defeated_nonlethal
+signal defeated_violent
+signal attack_started
+signal clapper_impact
+signal thread_pull_started
+
+enum Phase {
+	KNEELING,
+	RISING,
+	HOSTILE,
+	DISSOLVING,
+	GONE,
+}
+
+@export var max_hp: int = 160
+@export var move_speed: float = 42.0
+@export var attack_range: float = 46.0
+@export var attack_cooldown: float = 2.2
+@export var survive_to_dissolve_seconds: float = 90.0
+@export var target_path: NodePath
+@export var site_path: NodePath
+@export var animated_sprite_path: NodePath
+
+@onready var target: Node2D = get_node_or_null(target_path)
+@onready var site: ForlornRitualantSite = get_node_or_null(site_path)
+@onready var animated_sprite: AnimatedSprite2D = get_node_or_null(animated_sprite_path)
+@onready var visual: CanvasItem = get_node_or_null("Visual")
+
+var phase: int = Phase.KNEELING
+var hp: int
+var _attack_timer: float = 0.0
+var _hostile_elapsed: float = 0.0
+
+
+func _ready() -> void:
+	add_to_group("ash_bell_forlorn_ritualant")
+	hp = max_hp
+	_play_anim(&"kneel_idle")
+
+
+func _physics_process(delta: float) -> void:
+	if phase != Phase.HOSTILE:
+		return
+
+	_hostile_elapsed += delta
+	if _hostile_elapsed >= survive_to_dissolve_seconds:
+		dissolve()
+		return
+
+	_attack_timer = maxf(0.0, _attack_timer - delta)
+	if target == null:
+		target = get_tree().get_first_node_in_group("player") as Node2D
+	if target == null:
+		return
+
+	var to_target := target.global_position - global_position
+	var distance := to_target.length()
+	if distance > attack_range:
+		velocity = to_target.normalized() * move_speed
+		move_and_slide()
+		return
+
+	velocity = Vector2.ZERO
+	if _attack_timer <= 0.0:
+		_choose_attack(distance)
+
+
+func become_hostile() -> void:
+	if phase == Phase.HOSTILE or phase == Phase.GONE:
+		return
+
+	phase = Phase.RISING
+	_play_anim(&"rise")
+	_set_visual_color(Color(0.42, 0.36, 0.27, 1.0))
+	await get_tree().create_timer(0.8).timeout
+	if phase == Phase.RISING:
+		phase = Phase.HOSTILE
+		_attack_timer = 0.5
+		_play_anim(&"hostile_idle")
+		_set_visual_color(Color(0.50, 0.43, 0.32, 1.0))
+
+
+func take_damage(amount: float) -> void:
+	apply_damage(int(ceil(amount)))
+
+
+func apply_damage(amount: int, damage_tags: Array[StringName] = []) -> void:
+	if phase == Phase.GONE or phase == Phase.DISSOLVING:
+		return
+
+	if phase != Phase.HOSTILE:
+		become_hostile()
+
+	hp = maxi(0, hp - amount)
+	if hp <= 0:
+		if damage_tags.has(&"thread_anchor"):
+			dissolve()
+		else:
+			die_violently()
+
+
+func dissolve() -> void:
+	if phase == Phase.GONE:
+		return
+
+	phase = Phase.DISSOLVING
+	velocity = Vector2.ZERO
+	_play_anim(&"dissolve")
+	if site != null:
+		site.event_state.set_resolution(AshBellEventState.Resolution.RITUALANT_DISSOLVED)
+	defeated_nonlethal.emit()
+	await get_tree().create_timer(1.25).timeout
+	phase = Phase.GONE
+	queue_free()
+
+
+func die_violently() -> void:
+	phase = Phase.GONE
+	velocity = Vector2.ZERO
+	defeated_violent.emit()
+	if site != null:
+		site.defile_site()
+	queue_free()
+
+
+func _choose_attack(distance: float) -> void:
+	_attack_timer = attack_cooldown
+	if site != null and site.event_state.thread_tension >= 60:
+		_thread_pull()
+		return
+	if distance <= attack_range:
+		_clapper_swing()
+
+
+func _clapper_swing() -> void:
+	attack_started.emit()
+	_play_anim(&"clapper_swing")
+	await get_tree().create_timer(0.42).timeout
+	clapper_impact.emit()
+	if site != null:
+		site.event_state.add_silence_pressure(8, &"clapper_impact")
+	if target != null and target.has_method("take_damage"):
+		target.call("take_damage", 8.0)
+
+
+func _thread_pull() -> void:
+	thread_pull_started.emit()
+	_play_anim(&"thread_pull")
+	if site != null:
+		site.event_state.add_thread_tension(5, &"ritualant_thread_pull")
+
+
+func _play_anim(anim_name: StringName) -> void:
+	if animated_sprite == null:
+		return
+	if animated_sprite.sprite_frames != null and animated_sprite.sprite_frames.has_animation(anim_name):
+		animated_sprite.play(anim_name)
+
+
+func _set_visual_color(color: Color) -> void:
+	if visual != null:
+		visual.modulate = color
+
+
+=== forlorn_ritualant_site.gd ===
+class_name ForlornRitualantSite
+extends Node2D
+
+signal encounter_completed(resolution: int)
+signal request_dialogue(dialogue_id: StringName, node_id: StringName)
+signal request_item_grant(item_id: StringName)
+signal request_knowledge_unlock(knowledge_id: StringName)
+
+@export var dialogue_id: StringName = &"ash_bell_forlorn_ritualant"
+@export var event_state: AshBellEventState
+
+@export_group("Node Paths")
+@export var forlorn_ritualant_path: NodePath
+@export var dry_fountain_ghost_path: NodePath
+@export var dry_fountain_black_water_path: NodePath
+@export var upward_ash_path: NodePath
+@export var downward_ash_path: NodePath
+@export var unarrived_apparition_path: NodePath
+@export var bronze_clapper_pickup_path: NodePath
+@export var ghost_procession_path: NodePath
+@export var debug_label_path: NodePath
+@export var dialogue_label_path: NodePath
+
+@onready var forlorn_ritualant: Node = get_node_or_null(forlorn_ritualant_path)
+@onready var dry_fountain_ghost: CanvasItem = get_node_or_null(dry_fountain_ghost_path)
+@onready var dry_fountain_black_water: CanvasItem = get_node_or_null(dry_fountain_black_water_path)
+@onready var upward_ash: GPUParticles2D = get_node_or_null(upward_ash_path)
+@onready var downward_ash: GPUParticles2D = get_node_or_null(downward_ash_path)
+@onready var unarrived_apparition: CanvasItem = get_node_or_null(unarrived_apparition_path)
+@onready var bronze_clapper_pickup: Area2D = get_node_or_null(bronze_clapper_pickup_path)
+@onready var ghost_procession: Node2D = get_node_or_null(ghost_procession_path)
+@onready var debug_label: Label = get_node_or_null(debug_label_path)
+@onready var dialogue_label: Label = get_node_or_null(dialogue_label_path)
+
+const DIALOGUE := {
+	&"proximity_intro": [
+		"Do not speak during the toll.",
+		"The west gate was shut before the third ringing.",
+		"Mothers pressed their children beneath the banners.",
+		"And still the ash came.",
+	],
+	&"first_interaction": [
+		"The Fountain should be beneath us.",
+		"Dry stone. Black water. Names counted without mouths.",
+		"But the basin is gone.",
+		"Then the dead are uncounted.",
+	],
+	&"ask_bell": [
+		"There were eight for the living.",
+		"One for the misplaced.",
+		"The Ninth had no bronze, no rope, no tower.",
+		"Yet all knelt when it answered.",
+	],
+	&"ask_thread": [
+		"For the wrist.",
+		"For the name.",
+		"For the poor child who wakes before her mother is born.",
+		"When the thread snaps, Orra knows you are loose.",
+	],
+	&"ask_orra": [
+		"Saint Orra comes late.",
+		"After the blade.",
+		"After the order.",
+		"After the gate is shut.",
+		"She blesses only what cannot be saved.",
+		"Do not pray for her arrival.",
+		"That is how the Bell learns your name.",
+	],
+	&"attack_response": [
+		"Ahh, Custodian.",
+		"So fear found you early.",
+	],
+	&"cut_thread_response": [
+		"No.",
+		"Not the thread.",
+		"The Unarrived will come looking.",
+	],
+	&"peaceful_exit": [
+		"Go gently.",
+		"Some gates are closed by footsteps.",
+	],
+}
+
+var _intro_triggered: bool = false
+var _player_inside_fountain: bool = false
+var _fountain_stand_time: float = 0.0
+var _completed: bool = false
+var _dialogue_sequence: int = 0
+
+
+func _ready() -> void:
+	add_to_group("ash_bell_site")
+	if event_state == null:
+		event_state = AshBellEventState.new()
+
+	event_state.pressure_changed.connect(_on_pressure_changed)
+	event_state.fountain_state_changed.connect(_on_fountain_state_changed)
+	event_state.resolution_changed.connect(_on_resolution_changed)
+	event_state.knowledge_unlocked.connect(_on_knowledge_unlocked)
+	request_dialogue.connect(_on_request_dialogue)
+	request_item_grant.connect(_on_request_item_grant)
+	request_knowledge_unlock.connect(_on_request_knowledge_unlock)
+
+	_set_initial_visibility()
+	_update_debug()
+
+
+func _process(delta: float) -> void:
+	if _player_inside_fountain:
+		_fountain_stand_time += delta
+		if _fountain_stand_time >= 2.0:
+			_fountain_stand_time = 0.0
+			event_state.add_silence_pressure(1, &"standing_in_dry_fountain")
+
+	_update_debug()
+
+
+func trigger_intro() -> void:
+	if _intro_triggered:
+		return
+
+	_intro_triggered = true
+	event_state.set_resolution(AshBellEventState.Resolution.SEEN)
+	request_dialogue.emit(dialogue_id, &"proximity_intro")
+
+
+func interact_with_ritualant() -> void:
+	event_state.mark_dialogue_seen(&"first_interaction")
+	event_state.set_resolution(AshBellEventState.Resolution.SPOKE_TO_RITUALANT)
+	event_state.set_fountain_state(AshBellEventState.FountainState.GHOST)
+	event_state.unlock_knowledge(&"ash_bell_dry_fountain")
+	request_dialogue.emit(dialogue_id, &"first_interaction")
+
+
+func ask_about_bell() -> void:
+	event_state.mark_dialogue_seen(&"ask_bell")
+	event_state.unlock_knowledge(&"ash_bell_ninth_bell")
+	request_dialogue.emit(dialogue_id, &"ask_bell")
+
+
+func ask_about_thread() -> void:
+	event_state.mark_dialogue_seen(&"ask_thread")
+	event_state.unlock_knowledge(&"ash_bell_white_thread")
+	request_dialogue.emit(dialogue_id, &"ask_thread")
+
+
+func ask_about_orra() -> void:
+	event_state.mark_dialogue_seen(&"ask_orra")
+	event_state.unlock_knowledge(&"ash_bell_unarrived_saint")
+	request_dialogue.emit(dialogue_id, &"ask_orra")
+
+
+func touch_thread() -> void:
+	event_state.has_thread_knot = true
+	event_state.calm_thread(12)
+	event_state.add_silence_pressure(-4, &"thread_touched")
+	event_state.set_resolution(AshBellEventState.Resolution.TOUCHED_THREAD)
+	event_state.unlock_knowledge(&"ash_bell_white_thread")
+	request_item_grant.emit(&"white_thread_knot")
+
+	if event_state.fountain_state == AshBellEventState.FountainState.GHOST:
+		event_state.set_fountain_state(AshBellEventState.FountainState.CRACKED_ANCHORED)
+
+
+func cut_thread() -> void:
+	event_state.thread_tension = 100
+	event_state.set_resolution(AshBellEventState.Resolution.CUT_THREAD)
+	event_state.add_silence_pressure(25, &"thread_cut")
+	request_dialogue.emit(dialogue_id, &"cut_thread_response")
+	_show_unarrived_apparition()
+	_start_hostile_phase()
+
+
+func take_clapper() -> void:
+	if event_state.has_clapper:
+		return
+
+	event_state.has_clapper = true
+	event_state.set_resolution(AshBellEventState.Resolution.TOOK_CLAPPER)
+	event_state.unlock_knowledge(&"ash_bell_ninth_bell")
+	request_item_grant.emit(&"bell_clapper_without_bell")
+
+	if bronze_clapper_pickup != null:
+		bronze_clapper_pickup.queue_free()
+
+
+func player_attacked_in_room() -> void:
+	event_state.add_silence_pressure(15, &"player_attack")
+	if not event_state.ritualant_hostile:
+		request_dialogue.emit(dialogue_id, &"attack_response")
+		_start_hostile_phase()
+
+
+func player_fired_weapon_in_room() -> void:
+	event_state.add_silence_pressure(22, &"player_firearm")
+	if not event_state.ritualant_hostile:
+		request_dialogue.emit(dialogue_id, &"attack_response")
+		_start_hostile_phase()
+
+
+func player_crossed_thread(move_kind: StringName) -> void:
+	match move_kind:
+		&"walk":
+			event_state.add_thread_tension(3, &"walk_thread")
+		&"run":
+			event_state.add_thread_tension(7, &"run_thread")
+		&"dodge":
+			event_state.add_thread_tension(12, &"dodge_thread")
+		_:
+			event_state.add_thread_tension(3, &"cross_thread")
+
+
+func set_player_inside_fountain(is_inside: bool) -> void:
+	_player_inside_fountain = is_inside
+	if not is_inside:
+		_fountain_stand_time = 0.0
+
+
+func exit_site() -> void:
+	if _completed:
+		return
+
+	if event_state.resolution == AshBellEventState.Resolution.SPOKE_TO_RITUALANT:
+		request_dialogue.emit(dialogue_id, &"peaceful_exit")
+
+	_complete_if_ready()
+
+
+func stabilize_site() -> void:
+	event_state.set_resolution(AshBellEventState.Resolution.SITE_STABILIZED)
+	event_state.unlock_knowledge(&"ash_bell_bellfall_containment")
+	_complete_if_ready()
+
+
+func defile_site() -> void:
+	event_state.set_resolution(AshBellEventState.Resolution.SITE_DEFILED)
+	event_state.add_silence_pressure(100, &"site_defiled")
+	_show_unarrived_apparition()
+	_complete_if_ready()
+
+
+func _start_hostile_phase() -> void:
+	event_state.ritualant_hostile = true
+	event_state.set_resolution(AshBellEventState.Resolution.PROVOKED_RITUALANT)
+
+	if forlorn_ritualant != null and forlorn_ritualant.has_method("become_hostile"):
+		forlorn_ritualant.call("become_hostile")
+
+	_set_downward_ash_enabled(true)
+	_trigger_ghost_procession()
+
+
+func _show_unarrived_apparition() -> void:
+	event_state.apparition_seen = true
+	event_state.unlock_knowledge(&"ash_bell_unarrived_saint")
+
+	if unarrived_apparition == null:
+		return
+
+	unarrived_apparition.visible = true
+	var tween := create_tween()
+	tween.tween_property(unarrived_apparition, "modulate:a", 0.85, 0.15)
+	tween.tween_interval(1.35)
+	tween.tween_property(unarrived_apparition, "modulate:a", 0.0, 0.45)
+	tween.tween_callback(func() -> void:
+		if is_instance_valid(unarrived_apparition):
+			unarrived_apparition.visible = false
+	)
+
+
+func _trigger_ghost_procession() -> void:
+	if ghost_procession == null:
+		return
+
+	if ghost_procession.has_method("play_once"):
+		ghost_procession.call("play_once")
+	else:
+		ghost_procession.visible = true
+
+
+func _set_initial_visibility() -> void:
+	if dry_fountain_ghost != null:
+		dry_fountain_ghost.visible = false
+		dry_fountain_ghost.modulate.a = 0.0
+
+	if dry_fountain_black_water != null:
+		dry_fountain_black_water.visible = false
+		dry_fountain_black_water.modulate.a = 0.0
+
+	if unarrived_apparition != null:
+		unarrived_apparition.visible = false
+		unarrived_apparition.modulate.a = 0.0
+
+	if ghost_procession != null:
+		ghost_procession.visible = false
+
+	_set_downward_ash_enabled(false)
+
+
+func _set_downward_ash_enabled(enabled: bool) -> void:
+	if upward_ash != null:
+		upward_ash.emitting = not enabled
+
+	if downward_ash != null:
+		downward_ash.emitting = enabled
+
+
+func _on_pressure_changed(_silence_pressure: int, _thread_tension: int) -> void:
+	if event_state.silence_pressure >= 25 and upward_ash != null:
+		upward_ash.speed_scale = 0.55
+
+	if event_state.silence_pressure >= 75:
+		_trigger_ghost_procession()
+
+	if event_state.silence_pressure >= 90 and not event_state.ritualant_hostile:
+		_start_hostile_phase()
+
+
+func _on_fountain_state_changed(new_state: int) -> void:
+	match new_state:
+		AshBellEventState.FountainState.ABSENT:
+			_fade_canvas_item(dry_fountain_ghost, false)
+			_fade_canvas_item(dry_fountain_black_water, false)
+		AshBellEventState.FountainState.GHOST:
+			_fade_canvas_item(dry_fountain_ghost, true)
+			_fade_canvas_item(dry_fountain_black_water, false)
+		AshBellEventState.FountainState.BLACK_WATER:
+			_fade_canvas_item(dry_fountain_ghost, true)
+			_fade_canvas_item(dry_fountain_black_water, true)
+		AshBellEventState.FountainState.CRACKED_ANCHORED:
+			_fade_canvas_item(dry_fountain_ghost, true)
+			_fade_canvas_item(dry_fountain_black_water, false)
+
+
+func _fade_canvas_item(item: CanvasItem, show: bool) -> void:
+	if item == null:
+		return
+
+	item.visible = true
+	var target_alpha := 1.0 if show else 0.0
+	var tween := create_tween()
+	tween.tween_property(item, "modulate:a", target_alpha, 0.45)
+	if not show:
+		tween.tween_callback(func() -> void:
+			if is_instance_valid(item):
+				item.visible = false
+		)
+
+
+func _on_resolution_changed(new_resolution: int) -> void:
+	match new_resolution:
+		AshBellEventState.Resolution.RITUALANT_DISSOLVED, \
+		AshBellEventState.Resolution.SITE_STABILIZED, \
+		AshBellEventState.Resolution.SITE_DEFILED:
+			_complete_if_ready()
+
+
+func _on_knowledge_unlocked(knowledge_id: StringName) -> void:
+	request_knowledge_unlock.emit(knowledge_id)
+
+
+func _complete_if_ready() -> void:
+	if _completed:
+		return
+
+	_completed = true
+	encounter_completed.emit(event_state.resolution)
+
+
+func _on_request_dialogue(_dialogue_id: StringName, node_id: StringName) -> void:
+	_dialogue_sequence += 1
+	var sequence := _dialogue_sequence
+	var lines: Array = DIALOGUE.get(node_id, [])
+	if lines.is_empty():
+		return
+
+	for line_index in range(lines.size()):
+		if sequence != _dialogue_sequence:
+			return
+		_set_dialogue_text("Forlorn-Ritualant: %s" % String(lines[line_index]))
+		if line_index < lines.size() - 1:
+			await get_tree().create_timer(2.0).timeout
+
+
+func _on_request_item_grant(item_id: StringName) -> void:
+	print("[AshBell] item grant requested: ", item_id)
+
+
+func _on_request_knowledge_unlock(knowledge_id: StringName) -> void:
+	print("[AshBell] knowledge unlock requested: ", knowledge_id)
+
+
+func _set_dialogue_text(text: String) -> void:
+	if dialogue_label != null:
+		dialogue_label.text = text
+	print("[AshBell] ", text)
+
+
+func _update_debug() -> void:
+	if debug_label == null:
+		return
+
+	debug_label.text = "ASH-BELL\npressure=%s\nthread=%s\nfountain=%s\nres=%s" % [
+		event_state.silence_pressure,
+		event_state.thread_tension,
+		event_state.fountain_state,
+		event_state.resolution,
+	]
+
+
+=== white_thread_hazard.gd ===
+class_name WhiteThreadHazard
+extends Area2D
+
+@export var site_path: NodePath
+@export var slow_multiplier: float = 0.88
+@export var tension_tick_interval: float = 0.75
+
+@onready var site: ForlornRitualantSite = get_node_or_null(site_path)
+
+var _bodies_inside: Dictionary = {}
+var _tick_timer: float = 0.0
+
+
+func _ready() -> void:
+	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
+
+
+func _physics_process(delta: float) -> void:
+	_tick_timer = maxf(0.0, _tick_timer - delta)
+	for body_variant in _bodies_inside.keys():
+		var body := body_variant as Node
+		if body == null or not is_instance_valid(body):
+			_bodies_inside.erase(body_variant)
+			continue
+		if not body.is_in_group("player"):
+			continue
+		if _tick_timer <= 0.0 and site != null:
+			site.player_crossed_thread(_infer_move_kind(body))
+		_apply_slow(body)
+	if _tick_timer <= 0.0:
+		_tick_timer = tension_tick_interval
+
+
+func _on_body_entered(body: Node) -> void:
+	_bodies_inside[body] = true
+
+
+func _on_body_exited(body: Node) -> void:
+	_bodies_inside.erase(body)
+
+
+func _infer_move_kind(body: Node) -> StringName:
+	if body.has_method("is_dodging") and bool(body.call("is_dodging")):
+		return &"dodge"
+	if "is_sprinting" in body and bool(body.get("is_sprinting")):
+		return &"run"
+	if body.has_method("is_sprinting") and bool(body.call("is_sprinting")):
+		return &"run"
+	return &"walk"
+
+
+func _apply_slow(body: Node) -> void:
+	if body.has_method("apply_external_speed_multiplier"):
+		body.call("apply_external_speed_multiplier", slow_multiplier, 0.15)
+
+

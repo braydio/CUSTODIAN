@@ -21,6 +21,19 @@ signal request_knowledge_unlock(knowledge_id: StringName)
 @export var debug_label_path: NodePath
 @export var dialogue_label_path: NodePath
 
+@export_group("Optional Stagecraft Paths")
+@export var silence_veil_path: NodePath
+@export var pressure_halo_path: NodePath
+@export var thread_visual_path: NodePath
+@export var fountain_ring_path: NodePath
+@export var bell_shadow_path: NodePath
+
+@export_group("Encounter Tuning")
+@export var fountain_pressure_tick_seconds: float = 2.0
+@export var fountain_pressure_per_tick: int = 1
+@export var fountain_stabilize_seconds: float = 4.5
+@export var peaceful_exit_requires_thread_touch: bool = false
+
 @onready var forlorn_ritualant: Node = get_node_or_null(forlorn_ritualant_path)
 @onready var dry_fountain_ghost: CanvasItem = get_node_or_null(dry_fountain_ghost_path)
 @onready var dry_fountain_black_water: CanvasItem = get_node_or_null(dry_fountain_black_water_path)
@@ -31,6 +44,12 @@ signal request_knowledge_unlock(knowledge_id: StringName)
 @onready var ghost_procession: Node2D = get_node_or_null(ghost_procession_path)
 @onready var debug_label: Label = get_node_or_null(debug_label_path)
 @onready var dialogue_label: Label = get_node_or_null(dialogue_label_path)
+
+@onready var silence_veil: CanvasItem = get_node_or_null(silence_veil_path)
+@onready var pressure_halo: CanvasItem = get_node_or_null(pressure_halo_path)
+@onready var thread_visual: CanvasItem = get_node_or_null(thread_visual_path)
+@onready var fountain_ring: CanvasItem = get_node_or_null(fountain_ring_path)
+@onready var bell_shadow: CanvasItem = get_node_or_null(bell_shadow_path)
 
 const DIALOGUE := {
 	&"proximity_intro": [
@@ -87,6 +106,8 @@ var _fountain_stand_time: float = 0.0
 var _completed: bool = false
 var _dialogue_sequence: int = 0
 
+var _fountain_stabilize_time: float = 0.0
+
 
 func _ready() -> void:
 	add_to_group("ash_bell_site")
@@ -102,16 +123,30 @@ func _ready() -> void:
 	request_knowledge_unlock.connect(_on_request_knowledge_unlock)
 
 	_set_initial_visibility()
+	_update_event_atmosphere()
 	_update_debug()
 
 
 func _process(delta: float) -> void:
 	if _player_inside_fountain:
 		_fountain_stand_time += delta
-		if _fountain_stand_time >= 2.0:
-			_fountain_stand_time = 0.0
-			event_state.add_silence_pressure(1, &"standing_in_dry_fountain")
 
+		if _fountain_stand_time >= fountain_pressure_tick_seconds:
+			_fountain_stand_time = 0.0
+			event_state.add_silence_pressure(fountain_pressure_per_tick, &"standing_in_dry_fountain")
+
+		if event_state.has_thread_knot \
+				and not event_state.ritualant_hostile \
+				and event_state.fountain_state == AshBellEventState.FountainState.CRACKED_ANCHORED:
+			_fountain_stabilize_time += delta
+			if _fountain_stabilize_time >= fountain_stabilize_seconds:
+				stabilize_site()
+		else:
+			_fountain_stabilize_time = 0.0
+	else:
+		_fountain_stabilize_time = 0.0
+
+	_update_event_atmosphere()
 	_update_debug()
 
 
@@ -163,7 +198,10 @@ func touch_thread() -> void:
 
 
 func cut_thread() -> void:
-	event_state.thread_tension = 100
+	if event_state.ritualant_hostile:
+		return
+
+	event_state.set_thread_tension(100, &"thread_cut")
 	event_state.set_resolution(AshBellEventState.Resolution.CUT_THREAD)
 	event_state.add_silence_pressure(25, &"thread_cut")
 	request_dialogue.emit(dialogue_id, &"cut_thread_response")
@@ -182,6 +220,24 @@ func take_clapper() -> void:
 
 	if bronze_clapper_pickup != null:
 		bronze_clapper_pickup.queue_free()
+
+
+func inspect_dry_fountain() -> void:
+	if event_state.fountain_state == AshBellEventState.FountainState.ABSENT:
+		event_state.set_fountain_state(AshBellEventState.FountainState.GHOST)
+
+	event_state.add_silence_pressure(3, &"fountain_touched")
+	event_state.unlock_knowledge(&"ash_bell_dry_fountain")
+
+
+func ring_clapper() -> void:
+	if not event_state.has_clapper:
+		return
+
+	event_state.set_resolution(AshBellEventState.Resolution.RANG_SILENCE)
+	event_state.add_silence_pressure(35, &"rang_silence")
+	_show_unarrived_apparition()
+	_trigger_ghost_procession()
 
 
 func player_attacked_in_room() -> void:
@@ -220,10 +276,17 @@ func exit_site() -> void:
 	if _completed:
 		return
 
-	if event_state.resolution == AshBellEventState.Resolution.SPOKE_TO_RITUALANT:
-		request_dialogue.emit(dialogue_id, &"peaceful_exit")
+	if event_state.ritualant_hostile:
+		return
 
-	_complete_if_ready()
+	if event_state.resolution == AshBellEventState.Resolution.SPOKE_TO_RITUALANT \
+			or event_state.resolution == AshBellEventState.Resolution.TOUCHED_THREAD \
+			or event_state.resolution == AshBellEventState.Resolution.TOOK_CLAPPER:
+		if peaceful_exit_requires_thread_touch and not event_state.has_thread_knot:
+			return
+
+		request_dialogue.emit(dialogue_id, &"peaceful_exit")
+		_complete_if_ready()
 
 
 func stabilize_site() -> void:
@@ -297,6 +360,52 @@ func _set_initial_visibility() -> void:
 	_set_downward_ash_enabled(false)
 
 
+func _update_event_atmosphere() -> void:
+	if event_state == null:
+		return
+
+	var pressure := clampf(float(event_state.silence_pressure) / 100.0, 0.0, 1.0)
+	var tension := clampf(float(event_state.thread_tension) / 100.0, 0.0, 1.0)
+
+	if silence_veil != null:
+		silence_veil.visible = pressure > 0.02
+		silence_veil.modulate.a = lerpf(0.0, 0.45, pressure)
+
+	if pressure_halo != null:
+		pressure_halo.visible = pressure > 0.02
+		pressure_halo.modulate.a = lerpf(0.0, 0.85, pressure)
+
+	if thread_visual != null:
+		thread_visual.visible = event_state.resolution >= AshBellEventState.Resolution.SEEN
+		thread_visual.modulate.a = lerpf(0.25, 1.0, tension)
+
+	if fountain_ring != null:
+		fountain_ring.visible = event_state.fountain_state != AshBellEventState.FountainState.ABSENT
+		match event_state.fountain_state:
+			AshBellEventState.FountainState.GHOST:
+				fountain_ring.modulate = Color(0.55, 0.72, 1.0, lerpf(0.35, 0.75, pressure))
+			AshBellEventState.FountainState.BLACK_WATER:
+				fountain_ring.modulate = Color(0.05, 0.08, 0.12, lerpf(0.65, 1.0, pressure))
+			AshBellEventState.FountainState.CRACKED_ANCHORED:
+				fountain_ring.modulate = Color(0.95, 0.82, 0.42, 0.8)
+			_:
+				fountain_ring.modulate.a = 0.0
+
+	if bell_shadow != null:
+		bell_shadow.visible = true
+		bell_shadow.modulate.a = lerpf(0.25, 0.75, pressure)
+
+	if upward_ash != null:
+		upward_ash.amount_ratio = lerpf(0.25, 1.0, pressure)
+		upward_ash.speed_scale = lerpf(0.22, 0.62, pressure)
+
+	if downward_ash != null and downward_ash.emitting:
+		downward_ash.amount_ratio = lerpf(0.35, 1.0, pressure)
+
+	if ghost_procession != null and ghost_procession.visible:
+		ghost_procession.modulate.a = lerpf(0.25, 0.72, pressure)
+
+
 func _set_downward_ash_enabled(enabled: bool) -> void:
 	if upward_ash != null:
 		upward_ash.emitting = not enabled
@@ -306,6 +415,8 @@ func _set_downward_ash_enabled(enabled: bool) -> void:
 
 
 func _on_pressure_changed(_silence_pressure: int, _thread_tension: int) -> void:
+	_update_event_atmosphere()
+
 	if event_state.silence_pressure >= 25 and upward_ash != null:
 		upward_ash.speed_scale = 0.55
 
