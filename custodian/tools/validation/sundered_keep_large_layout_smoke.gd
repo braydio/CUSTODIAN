@@ -165,7 +165,7 @@ func _init() -> void:
 		_assert(str(marine_ambush.get("state", "")) == "active", "Great Hall ambush did not hand control to the shared marine AI")
 		var marine := map.get_node_or_null("GreatHallDashMarine")
 		var marine_sprite := marine.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D if marine != null else null
-		_assert(marine_sprite != null and marine_sprite.animation == "marine_dash_attack_e", "Great Hall marine did not play dash attack animation")
+		_assert(marine_sprite != null and marine_sprite.animation == "marine_dash_charge_e", "Great Hall marine did not play dash windup animation")
 
 	_assert(not _has_blocker_covering_tile(map, Vector2i(56, 76)), "spawn tile is blocked")
 	_assert(_has_blocker_covering_tile(map, Vector2i(51, 55)), "west bridge parapet wall lacks collision")
