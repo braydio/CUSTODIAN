@@ -109,18 +109,18 @@ enum AssaultState {
 @export var marine_dash_camera_shake_duration: float = 0.16
 @export var marine_dash_cooldown: float = 1.25
 @export var marine_dash_hit_radius: float = 24.0
-@export var marine_dash_hit_active_start_ratio: float = 0.34
-@export var marine_dash_hit_active_end_ratio: float = 0.82
-@export var marine_dash_hit_forward_reach_px: float = 24.0
-@export var marine_dash_hit_lateral_reach_px: float = 18.0
-@export var marine_dash_launch_band_min: float = 105.0
-@export var marine_dash_launch_band_max: float = 225.0
-@export var marine_dash_charge_extra_windup: float = 0.48
-@export var marine_dash_charge_distance_bonus: float = 0.65
-@export var marine_dash_charge_damage_bonus: float = 0.55
-@export var marine_dash_prediction_time: float = 0.24
-@export var marine_dash_reset_time: float = 0.55
-@export var marine_dash_reset_speed: float = 92.0
+@export var marine_dash_hit_active_start_ratio: float = 0.28
+@export var marine_dash_hit_active_end_ratio: float = 0.9
+@export var marine_dash_hit_forward_reach_px: float = 30.0
+@export var marine_dash_hit_lateral_reach_px: float = 22.0
+@export var marine_dash_launch_band_min: float = 96.0
+@export var marine_dash_launch_band_max: float = 240.0
+@export var marine_dash_charge_extra_windup: float = 0.56
+@export var marine_dash_charge_distance_bonus: float = 0.72
+@export var marine_dash_charge_damage_bonus: float = 0.66
+@export var marine_dash_prediction_time: float = 0.3
+@export var marine_dash_reset_time: float = 0.48
+@export var marine_dash_reset_speed: float = 100.0
 @export var custom_ambient_animation_enabled: bool = false
 @export_file("*.png") var custom_ambient_east_sheet_path: String = ""
 @export var custom_ambient_east_frame_size: Vector2i = Vector2i(64, 83)
@@ -433,7 +433,7 @@ func _configure_marine_dash_charge(target_distance: float) -> void:
 		resolved_distance = global_position.distance_to((target as Node2D).global_position)
 	if resolved_distance < 0.0:
 		resolved_distance = marine_dash_distance_px
-	var distance_need := clampf((resolved_distance - marine_dash_distance_px * 0.72) / maxf(1.0, marine_dash_launch_band_max - marine_dash_distance_px * 0.72), 0.0, 1.0)
+	var distance_need := clampf((resolved_distance - marine_dash_distance_px * 0.66) / maxf(1.0, marine_dash_launch_band_max - marine_dash_distance_px * 0.66), 0.0, 1.0)
 	var target_velocity := _get_marine_dash_target_velocity()
 	var approach_direction := ((target as Node2D).global_position - global_position).normalized() if target is Node2D else _last_move_direction
 	var retreat_factor := clampf(target_velocity.dot(approach_direction) / 180.0, 0.0, 1.0)
@@ -522,6 +522,10 @@ func _finish_marine_dash_attack() -> void:
 	_marine_dash_timer = 0.0
 	_marine_dash_attacker_hitstop_timer = 0.0
 	_marine_dash_hit_targets.clear()
+	_marine_dash_charge_ratio = 0.0
+	_marine_dash_distance_share = 0.5
+	_marine_dash_current_distance = marine_dash_distance_px
+	_marine_dash_current_damage = marine_dash_damage
 	_marine_dash_target_lock_done = false
 	_show_marine_dash_telegraph(false)
 	_set_marine_dash_animation_speed(1.0)
@@ -542,11 +546,12 @@ func _try_apply_marine_dash_hit() -> void:
 	if _marine_dash_hit_targets.has(target_id):
 		return
 	var to_target := target_node.global_position - global_position
+	var charge_multiplier := 1.0 + 0.22 * _marine_dash_charge_ratio
 	var forward_distance := to_target.dot(_marine_dash_direction)
-	if forward_distance < -4.0 or forward_distance > marine_dash_hit_forward_reach_px:
+	if forward_distance < -4.0 or forward_distance > marine_dash_hit_forward_reach_px * charge_multiplier:
 		return
 	var lateral_distance := absf(to_target.cross(_marine_dash_direction))
-	if lateral_distance > marine_dash_hit_lateral_reach_px:
+	if lateral_distance > marine_dash_hit_lateral_reach_px * (1.0 + 0.15 * _marine_dash_charge_ratio):
 		return
 	_marine_dash_hit_targets.append(target_id)
 	_apply_marine_dash_hit(target_node)
@@ -643,10 +648,10 @@ func _update_marine_dash_target_lock() -> void:
 		return
 	var total_windup := maxf(0.01, marine_dash_windup_time + marine_dash_charge_extra_windup * _marine_dash_charge_ratio)
 	var progress := clampf(1.0 - (_marine_dash_timer / total_windup), 0.0, 1.0)
-	if progress < 0.67:
+	if progress < 0.62:
 		return
 	var target_node := target as Node2D
-	var predicted_position := target_node.global_position + _get_marine_dash_target_velocity() * (marine_dash_prediction_time + 0.12 * _marine_dash_charge_ratio)
+	var predicted_position := target_node.global_position + _get_marine_dash_target_velocity() * (marine_dash_prediction_time + 0.14 * _marine_dash_charge_ratio)
 	var predicted_direction := (predicted_position - global_position).normalized()
 	if predicted_direction.length_squared() > 0.0001:
 		_marine_dash_direction = predicted_direction
