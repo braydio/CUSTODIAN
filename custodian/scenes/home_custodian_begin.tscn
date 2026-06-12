@@ -1,76 +1,74 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene format=3 uid="uid://fxo77x8sii2s"]
 
-[ext_resource type="Script" path="res://game/world/home/custodian_home_begin.gd" id="1_home"]
-[ext_resource type="Texture2D" path="res://content/levels/hub/Road_of_Witnesses_Tilemap.png" id="2_map"]
-[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="3_operator"]
-[ext_resource type="Script" path="res://game/world/camera.gd" id="4_camera"]
-[ext_resource type="Script" path="res://game/systems/core/player_controller.gd" id="5_player_controller"]
-[ext_resource type="Script" path="res://game/world/hub/road_of_witnesses_prototype.gd" id="6_road"]
-[ext_resource type="Script" path="res://game/world/home/field_terminal_interactable.gd" id="7_terminal"]
+[ext_resource type="Script" uid="uid://i5sl1dpc4fyt" path="res://game/world/home/custodian_home_begin.gd" id="1_home"]
+[ext_resource type="Texture2D" uid="uid://cnxg8pupb5w7j" path="res://content/levels/hub/Road_of_Witnesses_Tilemap.png" id="2_map"]
+[ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="3_operator"]
+[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="4_camera"]
+[ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="5_player_controller"]
+[ext_resource type="Script" uid="uid://c3sk1ii78dnsj" path="res://game/world/hub/road_of_witnesses_prototype.gd" id="6_road"]
+[ext_resource type="Script" uid="uid://dgh1x7abx0kc5" path="res://game/world/home/field_terminal_interactable.gd" id="7_terminal"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/custodian_hud.tscn" id="8_hud"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_terminal"]
 size = Vector2(40, 28)
 
-[node name="GameRoot" type="Node2D"]
+[node name="GameRoot" type="Node2D" unique_id=1694497596]
 script = ExtResource("1_home")
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=2088348928]
 
-[node name="RoadOfWitnessesPrototype" type="Node2D" parent="World"]
+[node name="RoadOfWitnessesPrototype" type="Node2D" parent="World" unique_id=1958478777]
 script = ExtResource("6_road")
 
-[node name="Background" type="Sprite2D" parent="World/RoadOfWitnessesPrototype"]
+[node name="Background" type="Sprite2D" parent="World/RoadOfWitnessesPrototype" unique_id=1243258401]
 texture = ExtResource("2_map")
-centered = true
 
-[node name="CollisionRoot" type="StaticBody2D" parent="World/RoadOfWitnessesPrototype"]
+[node name="CollisionRoot" type="StaticBody2D" parent="World/RoadOfWitnessesPrototype" unique_id=1694641095]
 
-[node name="ForegroundOcclusion" type="Node2D" parent="World/RoadOfWitnessesPrototype"]
+[node name="ForegroundOcclusion" type="Node2D" parent="World/RoadOfWitnessesPrototype" unique_id=1254504189]
 
-[node name="Projectiles" type="Node2D" parent="World"]
+[node name="Projectiles" type="Node2D" parent="World" unique_id=1255352717]
 
-[node name="Enemies" type="Node2D" parent="World"]
+[node name="Enemies" type="Node2D" parent="World" unique_id=833399380]
 
-[node name="Items" type="Node2D" parent="World"]
+[node name="Items" type="Node2D" parent="World" unique_id=1562080290]
 
-[node name="SignalNeedle" type="Line2D" parent="World"]
+[node name="SignalNeedle" type="Line2D" parent="World" unique_id=1264563304]
 z_index = 12
 width = 3.0
 default_color = Color(0.22, 0.84, 0.91, 0.65)
 
-[node name="FieldTerminal" type="Node2D" parent="World"]
+[node name="FieldTerminal" type="Node2D" parent="World" unique_id=1634072936]
 position = Vector2(0, -430)
 script = ExtResource("7_terminal")
 
-[node name="Body" type="StaticBody2D" parent="World/FieldTerminal"]
+[node name="Body" type="StaticBody2D" parent="World/FieldTerminal" unique_id=405266522]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/FieldTerminal/Body"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/FieldTerminal/Body" unique_id=1845463992]
 position = Vector2(0, 8)
 shape = SubResource("RectangleShape2D_terminal")
 
-[node name="Cabinet" type="Polygon2D" parent="World/FieldTerminal"]
+[node name="Cabinet" type="Polygon2D" parent="World/FieldTerminal" unique_id=877072847]
 color = Color(0.08, 0.08, 0.075, 1)
 polygon = PackedVector2Array(-22, 20, 22, 20, 17, -4, -17, -4)
 
-[node name="Screen" type="Polygon2D" parent="World/FieldTerminal"]
+[node name="Screen" type="Polygon2D" parent="World/FieldTerminal" unique_id=602974147]
 color = Color(0.11, 0.49, 0.54, 1)
 polygon = PackedVector2Array(-13, -5, 13, -5, 10, -19, -10, -19)
 
-[node name="StatusStrip" type="Polygon2D" parent="World/FieldTerminal"]
+[node name="StatusStrip" type="Polygon2D" parent="World/FieldTerminal" unique_id=332092105]
 color = Color(0.72, 0.57, 0.26, 1)
 polygon = PackedVector2Array(-16, 21, 16, 21, 16, 23, -16, 23)
 
-[node name="Operator" parent="World" instance=ExtResource("3_operator")]
+[node name="Operator" parent="World" unique_id=340039786 instance=ExtResource("3_operator")]
 position = Vector2(-6, 482)
 
-[node name="PlayerController" type="Node" parent="World"]
+[node name="PlayerController" type="Node" parent="World" unique_id=1115052046]
 script = ExtResource("5_player_controller")
 operator_path = NodePath("../Operator")
 
-[node name="Camera2D" type="Camera2D" parent="World"]
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=735449061]
 position = Vector2(0, 160)
 script = ExtResource("4_camera")
-current = true
 
-[node name="CustodianHUD" parent="." instance=ExtResource("8_hud")]
+[node name="CustodianHUD" parent="." unique_id=1246867260 instance=ExtResource("8_hud")]
