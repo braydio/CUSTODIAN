@@ -65,6 +65,13 @@ Canonical tracker for production art, audio, animation, and content assets that 
 | needed | Dry Fountain apparition states | `custodian/content/props/ash_bell/dry_fountain_ghost_96x96.png`, `custodian/content/props/ash_bell/dry_fountain_black_water_96x96.png`, `custodian/content/props/ash_bell/dry_fountain_cracked_96x96.png` | Support ABSENT/GHOST/BLACK_WATER/CRACKED_ANCHORED fountain states. | Current scene fades placeholder ColorRects. |
 | needed | Ash-Bell audio cues | `custodian/content/audio/sfx/ash_bell/thread_strain_*.wav`, `custodian/content/audio/sfx/ash_bell/reverse_chime_*.wav`, `custodian/content/audio/ambience/ash_bell_room_bed_*.wav`, `custodian/content/audio/sfx/ash_bell/silence_pulse_*.wav` | Provide thread strain, reversed chime, room bed, and silence-pulse feedback for the encounter mechanics. | Runtime has state hooks but no audio assets or mixer mute implementation yet. |
 
+## Last Routekeeper Event
+
+| Status | Asset | Target Path | Purpose | Notes |
+|---|---|---|---|---|
+| needed | Last Routekeeper residual projection animations | `custodian/content/sprites/events/last_routekeeper/{last_routekeeper_residual_idle_south_96x96_6f,last_routekeeper_residual_mark_south_96x96_6f,last_routekeeper_residual_fade_south_96x96_8f}.png` | Replace placeholder Polygon2D residual figure used by `LastRoutekeeperEvent`. | One-time Sundered Keep random event: route authority trace of B. Chaffee. |
+| needed | Last Routekeeper route beacon and route-mark props | `custodian/content/tiles/sundered_keep/events/last_routekeeper/{routekeeper_survey_beacon_01,routekeeper_chalk_marks_01,routekeeper_route_hint_marker_01,routekeeper_hologram_pulse_01}.png` plus `.game32.json` sidecars | Replace placeholder beacon/marker visuals used by `LastRoutekeeperEvent` and Sundered Keep hint reveal. | Lower causeway / underpass traversal readability reward. |
+
 ## Procgen Gameplay Feel
 
 | Status | Asset | Target Path | Purpose | Notes |

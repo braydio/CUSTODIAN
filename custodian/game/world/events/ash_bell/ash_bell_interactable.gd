@@ -8,9 +8,9 @@ enum InteractionKind {
 	ASK_ORRA,
 	TOUCH_THREAD,
 	CUT_THREAD,
-	TAKE_CLAPPER,
+	TAKE_STILLING_PIN,
 	DRY_FOUNTAIN,
-	RING_CLAPPER,
+	SET_STILLING_PIN,
 }
 
 @export var interaction_kind: int = InteractionKind.RITUALANT
@@ -69,18 +69,18 @@ func can_interact(_actor: Node = null) -> bool:
 				and not state.ritualant_hostile \
 				and state.resolution != AshBellEventState.Resolution.CUT_THREAD
 
-		InteractionKind.TAKE_CLAPPER:
+		InteractionKind.TAKE_STILLING_PIN:
 			return state.resolution >= AshBellEventState.Resolution.SPOKE_TO_RITUALANT \
-				and not state.has_clapper
+				and not state.has_stilling_pin
 
 		InteractionKind.DRY_FOUNTAIN:
 			return state.resolution >= AshBellEventState.Resolution.SEEN \
 				and state.fountain_state != AshBellEventState.FountainState.BLACK_WATER
 
-		InteractionKind.RING_CLAPPER:
-			return state.has_clapper \
-				and state.resolution >= AshBellEventState.Resolution.TOOK_CLAPPER \
-				and state.resolution != AshBellEventState.Resolution.RANG_SILENCE
+		InteractionKind.SET_STILLING_PIN:
+			return state.has_stilling_pin \
+				and state.resolution >= AshBellEventState.Resolution.TOOK_STILLING_PIN \
+				and state.resolution != AshBellEventState.Resolution.SET_STILLING_PIN
 
 		_:
 			return true
@@ -106,12 +106,12 @@ func get_interaction_prompt() -> String:
 			return "TOUCH WHITE THREAD"
 		InteractionKind.CUT_THREAD:
 			return "CUT WHITE THREAD"
-		InteractionKind.TAKE_CLAPPER:
-			return "TAKE BELL-CLAPPER"
+		InteractionKind.TAKE_STILLING_PIN:
+			return "TAKE STILLING PIN"
 		InteractionKind.DRY_FOUNTAIN:
 			return "INSPECT DRY FOUNTAIN"
-		InteractionKind.RING_CLAPPER:
-			return "RING SILENCE"
+		InteractionKind.SET_STILLING_PIN:
+			return "SET PIN IN BASIN"
 		_:
 			return "INTERACT"
 
@@ -151,14 +151,14 @@ func interact(actor: Node) -> void:
 		InteractionKind.CUT_THREAD:
 			site.cut_thread()
 
-		InteractionKind.TAKE_CLAPPER:
-			site.take_clapper()
+		InteractionKind.TAKE_STILLING_PIN:
+			site.take_stilling_pin()
 
 		InteractionKind.DRY_FOUNTAIN:
 			site.inspect_dry_fountain()
 
-		InteractionKind.RING_CLAPPER:
-			site.ring_clapper()
+		InteractionKind.SET_STILLING_PIN:
+			site.set_stilling_pin()
 
 
 func _refresh_availability(force: bool) -> void:

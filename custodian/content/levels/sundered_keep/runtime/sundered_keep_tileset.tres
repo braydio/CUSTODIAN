@@ -50,6 +50,7 @@
 [ext_resource type="Texture2D" uid="uid://dgfguyqqpscga" path="res://content/runtime/sundered_keep/props/prop_statue/prop_gargoyle_perch_01.png" id="48_prop_gargoyle_perch_01"]
 [ext_resource type="Texture2D" uid="uid://c5frll57r024d" path="res://content/runtime/sundered_keep/props/prop_barrier/prop_gate_barricade_01.png" id="49_prop_gate_barricade_01"]
 [ext_resource type="Texture2D" uid="uid://b2tjncpmuow88" path="res://content/runtime/sundered_keep/props/prop_mechanical/prop_gate_winch_01.png" id="50_prop_gate_winch_01"]
+[ext_resource type="Texture2D" uid="uid://cvdohwuh5nsgx" path="res://content/tiles/sundered_keep/entrance/causeway_walls/causeway_wall_parapet_edge_e_01.png" id="51_2ikvo"]
 [ext_resource type="Texture2D" uid="uid://djj1pbhcrdq5q" path="res://content/runtime/sundered_keep/props/prop_tall/prop_gothic_statue_broken_01.png" id="51_prop_gothic_statue_broken_01"]
 [ext_resource type="Texture2D" uid="uid://bqk38ctuqm5yj" path="res://content/runtime/sundered_keep/props/prop_tall/prop_gothic_statue_intact_01.png" id="52_prop_gothic_statue_intact_01"]
 [ext_resource type="Texture2D" uid="uid://4jcl80g7nt4" path="res://content/runtime/sundered_keep/props/prop_column/prop_great_hall_column_01.png" id="53_prop_great_hall_column_01"]
@@ -129,7 +130,6 @@
 [ext_resource type="Texture2D" uid="uid://cq0mji7pnqwsq" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_n.png" id="129_rampart_parapet_n"]
 [ext_resource type="Texture2D" uid="uid://sc8wv2f01w5c" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_e.png" id="130_rampart_parapet_e"]
 [ext_resource type="Texture2D" uid="uid://rumi8sf0xx4d" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_s.png" id="131_rampart_parapet_s"]
-[ext_resource type="Texture2D" uid="uid://d3yd4lcmj5dqd" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_parapet_w.png" id="132_rampart_parapet_w"]
 [ext_resource type="Texture2D" uid="uid://6xo7vf41m5rm" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_n.png" id="133_rampart_crenellation_n"]
 [ext_resource type="Texture2D" uid="uid://bslgbus4afrbe" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_e.png" id="134_rampart_crenellation_e"]
 [ext_resource type="Texture2D" uid="uid://b2g80i5re5w3x" path="res://content/tiles/sundered_keep/walls/ramparts/rampart_crenellation_s.png" id="135_rampart_crenellation_s"]
@@ -388,6 +388,11 @@ texture_region_size = Vector2i(32, 32)
 texture = ExtResource("20_ocean_foam_edge_w")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x8ysh"]
+texture = ExtResource("51_2ikvo")
+1:0/0 = 0
+1:1/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_20"]
 texture = ExtResource("74_rampart_walkway_broken_01")
@@ -753,8 +758,11 @@ texture = ExtResource("131_rampart_parapet_s")
 texture_region_size = Vector2i(89, 326)
 0:0/0 = 0
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_l50oc"]
+load_path = "res://.godot/imported/rampart_parapet_w.png-84768f2caea19e2bb7c7769f2f0fd8ec.ctex"
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_85"]
-texture = ExtResource("132_rampart_parapet_w")
+texture = SubResource("CompressedTexture2D_l50oc")
 texture_region_size = Vector2i(404, 210)
 0:0/0 = 0
 
@@ -978,3 +986,4 @@ sources/136 = SubResource("TileSetAtlasSource_137")
 sources/137 = SubResource("TileSetAtlasSource_138")
 sources/138 = SubResource("TileSetAtlasSource_139")
 sources/139 = SubResource("TileSetAtlasSource_140")
+sources/18 = SubResource("TileSetAtlasSource_x8ysh")

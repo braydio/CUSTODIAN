@@ -1,17 +1,24 @@
 # Agent Task Packets
 
-Last updated: 2026-06-05
+Last updated: 2026-06-12
 
-Task packets are short, task-scoped planning and handoff files for CUSTODIAN agents.
+Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
+
+## Selection
+
+- Skip packets for narrow, low-risk, single-session work.
+- Use the compact template when scope, constraints, acceptance, or deferred work needs a durable record.
+- Add full-packet sections only for high-risk, multi-session, architecture, ownership, migration, or substantial handoff work.
+- Do not create a packet merely because several files change.
 
 ## Workflow
 
-1. Copy `../AGENT_TASK_PACKET_TEMPLATE.md` into this folder.
-2. Rename it after the task in uppercase snake case, for example `VALIDATION_RECIPES.md`.
-3. Fill the task, outcome, authority, work surface, constraints, plan, and acceptance sections before implementation starts.
-4. Keep the packet current if scope, blockers, validation, next steps, or documentation requirements change.
-5. Before handoff, blocked status, or completion, update `Next Steps` with the next action, best starting files, required context, validation to run, and blockers/open questions.
-6. Mark it `complete` only after implementation, docs updates, feasible validation, completion notes, and next-step notes are done.
+1. Decide whether a packet adds enough value to justify maintaining it.
+2. If so, copy `../AGENT_TASK_PACKET_TEMPLATE.md` into this folder.
+3. Rename it after the task in uppercase snake case, for example `VALIDATION_RECIPES.md`.
+4. Fill the compact fields and delete unused optional sections.
+5. Keep it current when scope, blockers, acceptance, or deferred work materially changes.
+6. Mark it `complete` only after implementation, required docs updates, feasible validation, and completion notes are done.
 
 ## Ownership
 
@@ -36,6 +43,8 @@ Completed packets are moved to `archived/`. They are preserved for historical re
 
 ### Recently Complete (awaiting archive)
 
+- `ASH_BELL_FORLORN_RITUALANT.md` — Added the centralized authored-scene procgen authority reservation API and wired Ash-Bell dev placement to claim its canonical room footprint before instantiation.
+- `PROCGEN_ASCENT_STYLE_FACTION_STORY_V1.md` — Added distance-band world progression, connectivity-safe gradual ascent metadata, deterministic faction activity anchors, environmental story-room candidates, placeholder markers, and enemy ambient routines.
 - `OPERATOR_MODULAR_SIDEARM_PLAYBACK.md` — Corrected facing ownership and wired four-diagonal synchronized sidearm draw/fire lower, upper, pistol, and FX layers with draw-complete gating, held final draw pose, fire-to-held return, and Operator-local alignment.
 - `OPERATOR_MODULAR_SIDEARM_INGEST.md` — Validated the supplied modular sidearm draw filenames, added `modular_sidearm` shared-inbox routing, and built stable lower-body, upper-body, and sidearm weapon-layer runtime modules for `draw_sidearm_01`.
 - `OPERATOR_DODGE_PIPELINE_AND_SIDEARM.md` — Added split dodge/recovery runtime and pipeline support, introduced the default pistol sidearm slot for no-primary ranged-ready fallback, mapped sidearm V1 to current ranged placeholder animations, and tracked missing production dodge/sidearm clips.

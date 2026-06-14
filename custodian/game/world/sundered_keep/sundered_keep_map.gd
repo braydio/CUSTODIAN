@@ -18,6 +18,10 @@ const UI_CATALOG := preload("res://game/ui/theme/black_reliquary_asset_catalog.g
 const ENEMY_MARINE_SCENE := preload("res://game/actors/enemies/enemy_marine.tscn")
 const SUNDERED_KEEP_MARINE_AMBUSH := preload("res://game/world/sundered_keep/sundered_keep_marine_ambush.gd")
 const SIDEARM_PISTOL_DEFINITION := preload("res://game/actors/operator/sidearm_pistol_definition.tres")
+const LAST_ROUTEKEEPER_EVENT := preload("res://game/world/events/last_routekeeper/last_routekeeper_event.gd")
+const LAST_ROUTEKEEPER_EVENT_ID := &"last_routekeeper"
+const LAST_ROUTEKEEPER_TRACE_ITEM_ID := &"routekeeper_trace_note"
+const LAST_ROUTEKEEPER_TRACE_ITEM_NAME := "Routekeeper Trace"
 
 const ELEVATION_STEP_PX := 24.0
 const CAUSEWAY_BRAZIER_FLICKER_PATH := "res://content/tiles/sundered_keep/entrance/props/causeway_lit_brazier_flicker_01.png"
@@ -68,6 +72,11 @@ const WALL_ASSET_DIRS := [
 @export var return_mooring_origin_tile: Vector2i = Vector2i(39, 56)
 @export var key_pickup_tile: Vector2i = Vector2i(73, 56)
 @export var sidearm_locker_tile: Vector2i = Vector2i(73, 27)
+@export var routekeeper_trace_tile: Vector2i = Vector2i(37, 53)
+@export var routekeeper_hint_tile: Vector2i = Vector2i(25, 39)
+@export_range(0, 100, 1) var routekeeper_base_spawn_chance_percent := 4
+@export_range(0, 100, 1) var routekeeper_post_gate_spawn_chance_percent := 12
+@export var force_routekeeper_event := false
 
 var main_map: Node = null
 var main_return_position: Vector2 = Vector2.ZERO
@@ -106,6 +115,10 @@ var _great_hall_door_open := false
 var _has_sundered_gate_key := false
 var _sidearm_locker_opened := false
 var _return_mooring_created := false
+var _last_routekeeper_event: Node2D = null
+var _last_routekeeper_interaction: Node2D = null
+var _last_routekeeper_trace_recovered := false
+var _routekeeper_hint_marker: Node2D = null
 var _siege_started := false
 var _siege_wave_index := 0
 var _siege_pressure_tick := 0
@@ -267,6 +280,10 @@ func get_sundered_keep_debug_state() -> Dictionary:
 		"siege_required_enemies": _siege_required_enemy_ids.size(),
 		"siege_turret_exists": _siege_turret != null and is_instance_valid(_siege_turret),
 		"great_hall_marine_ambush": _get_great_hall_marine_ambush_state(),
+		"last_routekeeper_spawned": _last_routekeeper_event != null and is_instance_valid(_last_routekeeper_event),
+		"last_routekeeper_recovered": _last_routekeeper_trace_recovered,
+		"last_routekeeper_trace_tile": routekeeper_trace_tile,
+		"last_routekeeper_hint_tile": routekeeper_hint_tile,
 	}
 
 
@@ -1721,6 +1738,13 @@ func _update_hud_prompt() -> void:
 			input_hint,
 			UI_CATALOG.ICON_OBJECTIVE
 		)
+	elif target == _last_routekeeper_interaction and not _last_routekeeper_trace_recovered:
+		_hud.show_interaction(
+			"ROUTEKEEPER TRACE",
+			"Recover route survey",
+			input_hint,
+			UI_CATALOG.ICON_OBJECTIVE
+		)
 
 
 func _get_interact_prompt_key() -> String:
@@ -1744,6 +1768,8 @@ func _handle_sundered_interaction(kind: StringName, actor: Node) -> void:
 			_try_open_great_hall_door()
 		&"sidearm_locker":
 			_grant_sidearm_locker(actor)
+		&"last_routekeeper_trace":
+			_recover_last_routekeeper_trace()
 		&"repair_gatehouse":
 			_repair_siege_objective("gatehouse_core")
 		&"repair_mooring":
@@ -1833,6 +1859,7 @@ func _set_main_gate_open(open: bool) -> void:
 			_main_gate_interaction.remove_from_group("interactable")
 			_main_gate_interaction.visible = false
 		_start_siege()
+		_maybe_spawn_last_routekeeper_trace()
 	else:
 		_add_main_gate_blockers()
 	_refresh_hud_state()
@@ -2364,3 +2391,186 @@ func _refresh_camera(map_instance: Node, actor: Node) -> void:
 		camera.call("set_runtime_map", map_instance)
 	elif camera != null and actor is Node2D:
 		camera.global_position = (actor as Node2D).global_position
+
+
+# ---------------------------------------------------------------------------
+# Last Routekeeper Event
+# ---------------------------------------------------------------------------
+
+func _maybe_spawn_last_routekeeper_trace() -> void:
+	if _last_routekeeper_event != null and is_instance_valid(_last_routekeeper_event):
+		return
+	if _last_routekeeper_trace_recovered:
+		return
+	if _world_event_completed(LAST_ROUTEKEEPER_EVENT_ID):
+		_last_routekeeper_trace_recovered = true
+		return
+	if _world_event_spawned(LAST_ROUTEKEEPER_EVENT_ID):
+		return
+	if not force_routekeeper_event and not _passes_last_routekeeper_roll():
+		return
+	_spawn_last_routekeeper_trace()
+
+
+func _passes_last_routekeeper_roll() -> bool:
+	if force_routekeeper_event:
+		return true
+	var chance := routekeeper_post_gate_spawn_chance_percent if _main_gate_open else routekeeper_base_spawn_chance_percent
+	if chance <= 0:
+		return false
+	if chance >= 100:
+		return true
+	var seed := _world_event_seed(LAST_ROUTEKEEPER_EVENT_ID, "%s:%s:%s" % [_level_id, str(routekeeper_trace_tile), str(_main_gate_open)])
+	return int(seed % 100) < chance
+
+
+func _spawn_last_routekeeper_trace() -> void:
+	var event := LAST_ROUTEKEEPER_EVENT.new() as Node2D
+	if event == null:
+		push_warning("[SunderedKeep] Could not instantiate Last Routekeeper event")
+		return
+	event.name = "LastRoutekeeperTrace"
+	event.position = _tile_center(routekeeper_trace_tile)
+	event.call("configure", self, routekeeper_hint_tile)
+	add_child(event)
+	_last_routekeeper_event = event
+	_last_routekeeper_interaction = event.get_node_or_null("LastRoutekeeperTraceInteraction") as Node2D
+	if event.has_signal("trace_recovered"):
+		event.connect("trace_recovered", Callable(self, "_on_last_routekeeper_trace_recovered"))
+	_mark_world_event_spawned(LAST_ROUTEKEEPER_EVENT_ID, {
+		"level_id": _level_id,
+		"trace_tile": routekeeper_trace_tile,
+		"hint_tile": routekeeper_hint_tile,
+	})
+	print("[SunderedKeep] Last Routekeeper trace spawned at %s hint=%s" % [str(routekeeper_trace_tile), str(routekeeper_hint_tile)])
+
+
+func _recover_last_routekeeper_trace() -> void:
+	if _last_routekeeper_trace_recovered:
+		return
+	if _last_routekeeper_event == null or not is_instance_valid(_last_routekeeper_event):
+		return
+
+	var recovery_lines: Array[String] = []
+	if _last_routekeeper_event.has_method("get_recovery_lines"):
+		recovery_lines = _last_routekeeper_event.call("get_recovery_lines")
+
+	for line in recovery_lines:
+		if line.strip_edges() == "":
+			continue
+		print("[Routekeeper] %s" % line.replace("\n", " | "))
+
+	if _last_routekeeper_event.has_method("recover_trace"):
+		_last_routekeeper_event.call("recover_trace")
+	else:
+		_on_last_routekeeper_trace_recovered(routekeeper_hint_tile)
+
+
+func _on_last_routekeeper_trace_recovered(hint_tile: Vector2i) -> void:
+	if _last_routekeeper_trace_recovered:
+		return
+	_last_routekeeper_trace_recovered = true
+	_reveal_routekeeper_hint(hint_tile)
+	_grant_routekeeper_trace_note()
+	_mark_world_event_completed(LAST_ROUTEKEEPER_EVENT_ID, {
+		"level_id": _level_id,
+		"trace_tile": routekeeper_trace_tile,
+		"hint_tile": hint_tile,
+	})
+	if _last_routekeeper_interaction != null and is_instance_valid(_last_routekeeper_interaction):
+		_last_routekeeper_interaction.remove_from_group("interactable")
+		_last_routekeeper_interaction.visible = false
+	if _hud != null and is_instance_valid(_hud):
+		_hud.show_interaction(
+			"ROUTEKEEPER TRACE RECOVERED",
+			"Local traversal hint reconstructed",
+			_get_interact_prompt_key(),
+			UI_CATALOG.ICON_OBJECTIVE
+		)
+	_refresh_hud_state()
+	print("[SunderedKeep] Routekeeper trace recovered. Revealed traversal hint at %s" % str(hint_tile))
+
+
+func _reveal_routekeeper_hint(hint_tile: Vector2i) -> void:
+	_minimap_floor_cells[hint_tile] = true
+
+	if _routekeeper_hint_marker != null and is_instance_valid(_routekeeper_hint_marker):
+		return
+
+	var marker := _add_routekeeper_hint_marker(hint_tile)
+	_routekeeper_hint_marker = marker
+
+
+func _add_routekeeper_hint_marker(tile: Vector2i) -> Node2D:
+	var layer := _layers.get("WorldUI", null) as Node2D
+	if layer == null:
+		return null
+
+	# Prefer production asset later. Placeholder is a small cyan diamond.
+	var marker := Polygon2D.new()
+	marker.name = "RoutekeeperHintMarker"
+	marker.position = _tile_center(tile)
+	marker.polygon = PackedVector2Array([
+		Vector2(0, -12),
+		Vector2(8, 0),
+		Vector2(0, 12),
+		Vector2(-8, 0),
+	])
+	marker.color = Color(0.25, 0.85, 0.95, 0.72)
+	layer.add_child(marker)
+	return marker
+
+
+func _grant_routekeeper_trace_note() -> void:
+	var inventory := get_node_or_null("/root/InventoryManager")
+	if inventory != null and inventory.has_method("add_item"):
+		inventory.call("add_item", LAST_ROUTEKEEPER_TRACE_ITEM_ID, 1)
+
+	var archive := get_node_or_null("/root/ArchiveManager")
+	if archive != null and archive.has_method("add_entry"):
+		archive.call("add_entry", LAST_ROUTEKEEPER_TRACE_ITEM_ID, {
+			"title": LAST_ROUTEKEEPER_TRACE_ITEM_NAME,
+			"source": "Sundered Keep / Return Causeway",
+			"body": "An auxiliary routekeeper marked a return path beneath the broken causeway. Return was not observed.",
+		})
+
+
+# ---------------------------------------------------------------------------
+# WorldEventMemory bridge methods
+# ---------------------------------------------------------------------------
+
+func _world_event_memory() -> Node:
+	return get_node_or_null("/root/WorldEventMemory")
+
+
+func _world_event_spawned(event_id: StringName) -> bool:
+	var memory := _world_event_memory()
+	if memory != null and memory.has_method("has_spawned"):
+		return bool(memory.call("has_spawned", event_id))
+	return false
+
+
+func _world_event_completed(event_id: StringName) -> bool:
+	var memory := _world_event_memory()
+	if memory != null and memory.has_method("is_completed"):
+		return bool(memory.call("is_completed", event_id))
+	return false
+
+
+func _mark_world_event_spawned(event_id: StringName, payload := {}) -> void:
+	var memory := _world_event_memory()
+	if memory != null and memory.has_method("mark_spawned"):
+		memory.call("mark_spawned", event_id, payload)
+
+
+func _mark_world_event_completed(event_id: StringName, payload := {}) -> void:
+	var memory := _world_event_memory()
+	if memory != null and memory.has_method("mark_completed"):
+		memory.call("mark_completed", event_id, payload)
+
+
+func _world_event_seed(event_id: StringName, salt := "") -> int:
+	var memory := _world_event_memory()
+	if memory != null and memory.has_method("get_event_seed"):
+		return int(memory.call("get_event_seed", event_id, salt))
+	return abs(hash("%s:%s" % [String(event_id), salt]))

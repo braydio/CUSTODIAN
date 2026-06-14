@@ -2,6 +2,7 @@ extends CanvasLayer
 
 const TerminalCommandRouterScript := preload("res://game/ui/terminal/terminal_command_router.gd")
 const TerminalSnapshotScript := preload("res://game/ui/terminal/terminal_snapshot.gd")
+const TerminalFabricationViewModelScript := preload("res://game/ui/terminal/fabrication_terminal_view_model.gd")
 const TerminalMapPreviewScript := preload("res://game/ui/terminal/terminal_map_preview.gd")
 const TerminalPlanetPreviewScript := preload("res://game/ui/terminal/terminal_planet_preview.gd")
 const DebugScreenScene := preload("res://game/ui/hud/debug_screen.tscn")
@@ -81,7 +82,7 @@ const TERMINAL_COMPLETION_TOKENS := [
 	"FAB PRIORITY",
 	"FORTIFY", "CONFIG DOCTRINE", "ALLOCATE DEFENSE", "SCAN RELAYS",
 	"STABILIZE RELAY", "SYNC", "FAB ADD", "FAB QUEUE", "FAB CANCEL",
-	"FAB PRIORITY", "REROUTE POWER", "BOOST DEFENSE", "DRONE DEPLOY",
+	"FAB PRIORITY", "BUILD", "BUILD PLACE", "REROUTE POWER", "BOOST DEFENSE", "DRONE DEPLOY",
 	"DEPLOY DRONE", "LOCKDOWN", "PRIORITIZE REPAIR", "STATUS RELAY",
 	"OVERLAY SHOW", "OVERLAY THREAT", "OVERLAY PATH", "OVERLAY POWER", "OVERLAY REPAIR", "OVERLAY CLEAR",
 	"TURRET", "TURRET GUNNER", "TURRET BLASTER", "TURRET REPEATER", "TURRET SNIPER",
@@ -298,10 +299,12 @@ var _terminal_nav_buttons: Array = []
 var _terminal_action_buttons: Array = []
 var _terminal_main_scroll: ScrollContainer = null
 var _terminal_fabrication_queue: Array[String] = []
+var _terminal_fabrication_selected_work_order_id := ""
 var _terminal_policy_preset := "BALANCED"
 var _terminal_activity_autofollow := true
 var _terminal_command_router: TerminalCommandRouter = TerminalCommandRouterScript.new()
 var _terminal_snapshot_builder: TerminalSnapshot = TerminalSnapshotScript.new()
+var _terminal_fabrication_view_model: FabricationTerminalViewModel = TerminalFabricationViewModelScript.new()
 var _terminal_map_preview_renderer: TerminalMapPreview = TerminalMapPreviewScript.new()
 var _terminal_planet_preview_renderer: TerminalPlanetPreview = TerminalPlanetPreviewScript.new()
 
@@ -3100,85 +3103,120 @@ func _render_terminal_settings_widgets() -> void:
 
 
 func _render_terminal_fabrication_widgets() -> void:
-	var ledger := get_node_or_null("/root/ResourceLedger")
-	var build_inventory := get_node_or_null("/root/BuildInventory")
-	var fab_pipeline := get_node_or_null("/root/FabPipeline")
-	if ledger == null or build_inventory == null or fab_pipeline == null:
+	var view: Dictionary = _terminal_fabrication_view_model.build(self, _terminal_fabrication_selected_work_order_id)
+	if view.is_empty():
 		_set_terminal_rich_text(terminal_settings_display_body, "FABRICATION SYSTEM OFFLINE")
 		_set_terminal_rich_text(terminal_settings_input_body, "RESOURCE LEDGER OR PIPELINE MISSING")
 		_set_terminal_rich_text(terminal_settings_map_body, "CHECK AUTLOAD REGISTRATION")
 		return
 
-	var resources: Dictionary = ledger.call("get_snapshot")
-	var build_tokens: Dictionary = build_inventory.call("get_snapshot")
-	var jobs: Array = fab_pipeline.call("get_jobs_snapshot")
-	var recipes: Dictionary = fab_pipeline.call("get_all_recipes")
+	var status: Dictionary = view.get("status", {})
+	var work_orders: Array = view.get("work_orders", [])
+	var selected_work_order: Dictionary = view.get("selected_work_order", {})
+	if _terminal_fabrication_selected_work_order_id.is_empty() and not selected_work_order.is_empty():
+		_terminal_fabrication_selected_work_order_id = str(selected_work_order.get("id", ""))
 
-	var resource_lines: Array[String] = [
-		"RESOURCE LEDGER",
-		"---------------",
+	var display_lines: Array[String] = [
+		"FABRICATION // WORK ORDERS",
+		"-------------------------",
+		"Fabricator: %s" % str(status.get("fabricator_state", "UNKNOWN")),
+		"In Progress: %s" % str(status.get("queue_summary", "unknown")),
+		"Ready Builds: %s" % str(status.get("ready_build_summary", "unknown")),
+		"Next Action: %s" % str(status.get("next_action", "Review the list.")),
 	]
-	for resource_id in resources.keys():
-		resource_lines.append(_terminal_kv(str(resource_id).to_upper(), resources[resource_id]))
-	if resource_lines.size() == 2:
-		resource_lines.append("NO RESOURCES TRACKED")
-	resource_lines.append("")
-	resource_lines.append("BUILD TOKENS")
-	resource_lines.append("------------")
-	for token_id in build_tokens.keys():
-		resource_lines.append(_terminal_kv(str(token_id).to_upper(), build_tokens[token_id]))
-	if build_tokens.is_empty():
-		resource_lines.append("NO BUILD TOKENS")
-	_set_terminal_rich_text(terminal_settings_display_body, "\n".join(resource_lines))
+	var first_hint := str(status.get("first_fabrication_hint", "")).strip_edges()
+	if not first_hint.is_empty():
+		display_lines.append("")
+		display_lines.append(first_hint)
+	if not selected_work_order.is_empty():
+		display_lines.append("")
+		display_lines.append("SELECTED WORK ORDER")
+		display_lines.append("-------------------")
+		display_lines.append(str(selected_work_order.get("display_name", "UNKNOWN")))
+		display_lines.append("Purpose: %s" % str(selected_work_order.get("purpose", "Fabrication support output.")))
+		display_lines.append("Cost: %s" % str(selected_work_order.get("cost_text", "FREE")))
+		display_lines.append("You have: %s" % str(selected_work_order.get("have_text", "none")))
+		display_lines.append(str(selected_work_order.get("missing_text", "Missing Materials: none")))
+		display_lines.append("Result: %s" % str(selected_work_order.get("result_text", "Produces a build output.")))
+		display_lines.append("Action: %s" % str(selected_work_order.get("action_text", "FAB START <work_order_id>")))
+	_set_terminal_rich_text(terminal_settings_display_body, "\n".join(display_lines))
 
-	var command_lines: Array[String] = [
-		"FAB COMMANDS",
-		"------------",
-		"FAB STATUS",
-		"FAB RECIPES",
-		"FAB GRANT [RESOURCE AMOUNT]",
-		"FAB START <RECIPE_ID>",
-		"GOTO SETTINGS",
+	var work_order_lines: Array[String] = [
+		"AVAILABLE WORK ORDERS",
+		"---------------------",
 	]
-	command_lines.append("")
-	command_lines.append("JOBS")
-	command_lines.append("----")
-	if jobs.is_empty():
-		command_lines.append("NO ACTIVE JOBS")
+	if work_orders.is_empty():
+		work_order_lines.append("NO WORK ORDERS LOADED")
 	else:
-		for job_variant in jobs:
+		for work_order_variant in work_orders:
+			if not (work_order_variant is Dictionary):
+				continue
+			var work_order: Dictionary = work_order_variant
+			var selector := ">" if bool(work_order.get("is_selected", false)) else " "
+			work_order_lines.append("%s %-22s %-16s %s" % [
+				selector,
+				str(work_order.get("display_name", "UNKNOWN")),
+				str(work_order.get("state", "UNKNOWN")),
+				str(work_order.get("build_text", "")),
+			])
+			work_order_lines.append("  Purpose: %s" % str(work_order.get("purpose", "Fabrication support output.")))
+			work_order_lines.append("  Cost: %s" % str(work_order.get("cost_text", "FREE")))
+			work_order_lines.append("  You have: %s" % str(work_order.get("have_text", "none")))
+			work_order_lines.append("  %s" % str(work_order.get("missing_text", "Missing Materials: none")))
+			work_order_lines.append("  Result: %s" % str(work_order.get("result_text", "Produces a build output.")))
+			work_order_lines.append("  Command: %s" % str(work_order.get("action_text", "FAB START <work_order_id>")))
+	_set_terminal_rich_text(terminal_settings_input_body, "\n".join(work_order_lines))
+
+	var map_lines: Array[String] = [
+		"IN PROGRESS",
+		"-----------",
+	]
+	var in_progress: Array = view.get("in_progress", [])
+	if in_progress.is_empty():
+		map_lines.append("NO ACTIVE JOBS")
+	else:
+		for job_variant in in_progress:
 			if not (job_variant is Dictionary):
 				continue
 			var job: Dictionary = job_variant
-			command_lines.append("#%d %s %.0f%%" % [
+			map_lines.append("#%d %-24s %s %s" % [
 				int(job.get("job_id", 0)),
-				str(job.get("recipe_id", "")).to_upper(),
-				float(job.get("progress", 0.0)) * 100.0,
+				str(job.get("display_name", "UNKNOWN")),
+				str(job.get("progress_text", "0%")),
+				str(job.get("timing_text", "")),
 			])
-	_set_terminal_rich_text(terminal_settings_input_body, "\n".join(command_lines))
 
-	var recipe_lines: Array[String] = [
-		"RECIPES",
-		"-------",
-	]
-	for recipe_id in recipes.keys():
-		var recipe: Dictionary = recipes[recipe_id]
-		var cost: Dictionary = recipe.get("cost", {})
-		var cost_parts: Array[String] = []
-		for resource_id in cost.keys():
-			cost_parts.append("%s=%s" % [str(resource_id).to_upper(), str(cost[resource_id])])
-		var cost_text := ", ".join(cost_parts) if not cost_parts.is_empty() else "FREE"
-		var lock_text := "LOCKED" if bool(recipe.get("locked", false)) else "READY"
-		recipe_lines.append("%s | %s | %s | %ss | %s" % [
-			str(recipe_id).to_upper(),
-			str(recipe.get("label", recipe_id)),
-			lock_text,
-			str(recipe.get("build_seconds", 0.0)),
-			cost_text,
-		])
-	if recipes.is_empty():
-		recipe_lines.append("NO RECIPES LOADED")
-	_set_terminal_rich_text(terminal_settings_map_body, "\n".join(recipe_lines))
+	map_lines.append("")
+	map_lines.append("READY BUILDS")
+	map_lines.append("------------")
+	var ready_builds: Array = view.get("ready_builds", [])
+	if ready_builds.is_empty():
+		map_lines.append("NO READY BUILDS")
+	else:
+		for ready_build_variant in ready_builds:
+			if not (ready_build_variant is Dictionary):
+				continue
+			var ready_build: Dictionary = ready_build_variant
+			map_lines.append("%s x%d" % [
+				str(ready_build.get("display_name", "READY BUILD")),
+				int(ready_build.get("count", 1)),
+			])
+			map_lines.append("  State: %s" % str(ready_build.get("deployment_state", "STORED")))
+			map_lines.append("  Action: %s" % str(ready_build.get("action_text", "STORED READY BUILD")))
+
+	map_lines.append("")
+	map_lines.append("COMMANDS")
+	map_lines.append("--------")
+	var command_help: Array = view.get("command_help", [])
+	if command_help.is_empty():
+		map_lines.append("FAB START <work_order_id>")
+		map_lines.append("FAB QUEUE")
+		map_lines.append("FAB CANCEL <slot>")
+		map_lines.append("BUILD PLACE <ready_build_id>")
+	else:
+		for command_variant in command_help:
+			map_lines.append(str(command_variant))
+	_set_terminal_rich_text(terminal_settings_map_body, "\n".join(map_lines))
 
 
 func _render_terminal_main_content(snapshot: Dictionary) -> void:
@@ -3192,13 +3230,13 @@ func _render_terminal_main_content(snapshot: Dictionary) -> void:
 	if terminal_map_preview_title_label:
 		terminal_map_preview_title_label.text = "TACTICAL FEED // LIVE MINIMAP"
 	if terminal_page_summary_label:
-		terminal_page_summary_label.text = "FABRICATION PAGE // LIVE PIPELINE" if _terminal_current_page == "FABRICATION" else "TACTICAL PAGE // LIVE CONTRACT"
+		terminal_page_summary_label.text = "FABRICATION PAGE // WORK ORDERS" if _terminal_current_page == "FABRICATION" else "TACTICAL PAGE // LIVE CONTRACT"
 	if terminal_command_title:
 		terminal_command_title.text = "FABRICATION CONTROL" if _terminal_current_page == "FABRICATION" else "TRANSCRIPT"
 	if terminal_nav_title:
-		terminal_nav_title.text = "FAB SHELL" if _terminal_current_page == "FABRICATION" else "NAVIGATION"
+		terminal_nav_title.text = "WORK ORDERS" if _terminal_current_page == "FABRICATION" else "NAVIGATION"
 	if terminal_action_title:
-		terminal_action_title.text = "FAB ACTIONS" if _terminal_current_page == "FABRICATION" else "ACTIONS"
+		terminal_action_title.text = "READY BUILDS" if _terminal_current_page == "FABRICATION" else "ACTIONS"
 	if terminal_header_eyebrow:
 		terminal_header_eyebrow.text = "FABRICATION TERMINAL" if _terminal_current_page == "FABRICATION" else "CUSTODIAN NODE"
 	if terminal_title_label:
@@ -3357,7 +3395,7 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 		_append_terminal_line("REROUTE POWER sector=<NAME> priority=CRITICAL|HIGH|MEDIUM|LOW", "info")
 		return true
 	if cmd_upper == "HELP FABRICATION":
-		_append_terminal_line("FABRICATION PAGE: FAB STATUS, FAB RECIPES, FAB GRANT, FAB START <RECIPE_ID>", "info")
+		_append_terminal_line("FABRICATION PAGE: FAB START <WORK_ORDER_ID>, FAB QUEUE, FAB CANCEL <SLOT>, BUILD PLACE <READY_BUILD_ID>", "info")
 		_append_terminal_line("SET FAB opens the fabrication shell.", "info")
 		return true
 	if cmd_upper == "HELP ARRN":
@@ -3555,6 +3593,42 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 			else:
 				_append_terminal_line("TURRET PLACEMENT FAILED // CHECK MATERIALS OR CAP", "warning")
 			return true
+		"BUILD":
+			if args.is_empty():
+				_append_terminal_line("USE: BUILD PLACE <READY_BUILD_ID>", "warning")
+				return true
+			var build_action := str(args[0]).to_upper()
+			match build_action:
+				"PLACE":
+					if args.size() < 2:
+						_append_terminal_line("USE: BUILD PLACE <READY_BUILD_ID>", "warning")
+						return true
+					var ready_build_id := str(args[1]).strip_edges()
+					if ready_build_id.is_empty():
+						_append_terminal_line("USE: BUILD PLACE <READY_BUILD_ID>", "warning")
+						return true
+					var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
+					if turret_placement == null:
+						_append_terminal_line("TURRET PLACEMENT UNAVAILABLE", "warning")
+						return true
+					if not turret_placement.has_method("get_turret_type_for_build_token"):
+						_append_terminal_line("READY BUILD MAPPING UNAVAILABLE", "warning")
+						return true
+					var turret_type := str(turret_placement.call("get_turret_type_for_build_token", ready_build_id))
+					if turret_type.is_empty():
+						_append_terminal_line("UNKNOWN READY BUILD %s" % ready_build_id.to_upper(), "warning")
+						return true
+					if turret_placement.call("enter_placement_mode", turret_type):
+						_terminal_fabrication_selected_work_order_id = ready_build_id
+						_set_terminal_page("FABRICATION")
+						_append_terminal_line("BUILD PLACEMENT ACTIVE // %s -> %s" % [ready_build_id.to_upper(), turret_type.to_upper()], "success")
+						_append_terminal_line("LEFT CLICK IN WORLD TO PLACE // B CYCLES TYPES // Q OR ESC TO EXIT", "info")
+						return true
+					_append_terminal_line("BUILD PLACE FAILED // CHECK MATERIALS OR CAP", "warning")
+					return true
+				_:
+					_append_terminal_line("USE: BUILD PLACE <READY_BUILD_ID>", "warning")
+					return true
 		"OVERLAY":
 			var overlay_name := str(args[0]).to_lower() if not args.is_empty() else "show"
 			if overlay_name == "show":
@@ -3925,6 +3999,7 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 						_append_terminal_line("CANNOT START %s // INSUFFICIENT RESOURCES" % fab_payload.to_upper(), "warning")
 						return true
 					if bool(start_pipeline.call("try_start_recipe", fab_payload)):
+						_terminal_fabrication_selected_work_order_id = fab_payload
 						_set_terminal_page("FABRICATION")
 						_append_terminal_line("FAB JOB STARTED -> %s" % fab_payload.to_upper(), "success")
 						_refresh_snapshot()

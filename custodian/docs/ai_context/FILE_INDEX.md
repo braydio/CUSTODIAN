@@ -6,13 +6,17 @@ Last updated: 2026-06-05
 
 - `custodian/AGENTS.md` — mandatory local primer for routing, context retrieval, docs-drift review, and migration execution
 - `custodian/docs/AGENT_MIGRATION_PLAYBOOK.md` — detailed migration and drift-remediation workflow
-- `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` — template for non-trivial agent implementation, review, migration, validation, asset workflow, and multi-file docs work
+- `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` — compact-by-default optional task packet template with full-packet expansion guidance for high-risk or multi-session work
 - `custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` — prioritized automation/script backlog for agent workflow validation and safety checks
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` — canonical validation command selection guide for docs, Godot, asset pipeline, tile pipeline, and review work
 - `custodian/docs/ai_context/prompts/README.md` — reusable agent prompt index and usage rules
 - `custodian/docs/ai_context/task_packets/README.md` — task packet workflow and active packet index
 - `REQUIRED_ASSETS.md` — project-level tracker for missing or partial production art, audio, animation, and content assets that implementation work depends on
 - `custodian/tools/agent/change_control_bundle.py` — utility that bundles current git-changed files into `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the markdown bundle to the clipboard when a clipboard command is available
+- `custodian/asset_drop/runtime_ready/README.md` — persistent intake contract for already-runtime-ready assets before they become Godot content authority
+- `custodian/tools/pipelines/runtime_ready_assets.py` — conflict-safe router from the persistent runtime-ready inbox into organized `res://content/` targets, with archives and receipts
+- `custodian/tools/pipelines/watch_runtime_ready_assets.sh` — optional inotify watcher that applies completed runtime-ready drops continuously
+- `custodian/tools/validation/runtime_ready_asset_pipeline_smoke.py` — focused validation for dry-run, routing, archiving, conflict protection, and explicit replacement
 - `custodian/tools/balance/fabrication_balance_pipeline.py` — deterministic offline fabrication/resource simulation pipeline that reads live fab recipes plus scenario JSON and writes a Markdown balance report with JSON-only proposed changes.
 - `custodian/content/balance/scenarios/default_fabrication_run.json` — default 30-minute fabrication/resource balance scenario covering build priorities, drop-rate profiles, resource-node inflows, lore-specced grunt drops, and sabotage-story drop rules.
 - `reports/fabrication_balance/` — generated fabrication balance reports, summaries, and proposal-only JSON outputs from the balance pipeline.
@@ -64,15 +68,27 @@ Last updated: 2026-06-05
 - `custodian/project.godot` — Godot project config and input map
 - `custodian/scenes/game.tscn` — active game scene and terminal layout; currently includes temporary `AshBellDevSpawner` for live Forlorn-Ritualant encounter review, scene-mounted `DroneManager` for allied combat drone V1 spawning, and a temporary grunt startup debug spawn for immediate enemy visual review
 - `custodian/scenes/home_custodian_begin.tscn` — dedicated Home beginning scene for Objective 01, tracing a Custodian-band signal across the Road of Witnesses to the damaged Field Terminal; not yet the application main scene.
+- `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene.
 
 ## Active Runtime Systems
 
 - `custodian/game/world/procgen/custodian_contract_map.gd` — contract generation and planet-linked world profile creation, including deterministic map size/room bands and ambient Shrumb trait profile fields
-- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, constructed interior region carving, semantic intent-zone metadata, connected main-map road/parking-zone surface generation using explicit `roads_paths/runtime/placeholders/{roads,paths}/PLACEHOLDER_*` manifests for temporary road/path decal stamps, 32x32 road lane-role overlay selection from centerline offsets, road-component repair/pruning, wall/collision clearing and speed multiplier queries, long walled main-map connector road carving from compound ingress with deterministic elevation/ramp metadata, dedicated terrain-builder integration, terrain-builder tile visual mapping, elevation metadata ownership/query helpers, intensity queries, foliage placement, decorative ruin prop placement, and paired portal-ring teleport endpoint wiring with portal-specific safe placement filtering
+- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, constructed interior region carving, semantic intent-zone metadata, connected main-map road/parking-zone surface generation using explicit `roads_paths/runtime/placeholders/{roads,paths}/PLACEHOLDER_*` manifests for temporary road/path decal stamps, 32x32 road lane-role overlay selection from centerline offsets, road-component repair/pruning, wall/collision clearing and speed multiplier queries, long walled main-map connector road carving from compound ingress with deterministic elevation/ramp metadata, dedicated terrain-builder integration, terrain-builder tile visual mapping, elevation metadata ownership/query helpers, intensity queries, foliage placement, decorative ruin prop placement, paired portal-ring teleport endpoint wiring, and the centralized `claim_procgen_floor_rect_for_authored_scene_*` API that transfers a footprint from procgen wall/road/elevation authority to authored-scene floor authority
 - `custodian/game/world/procgen/terrain/terrain_builder.gd` — deterministic terrain-construction pass that emits baseline metadata, mountain blockers, industrial elevation platform metadata, symbolic tile IDs for explicit features only, flood-fill connectivity validation, and spawn-valid traversal helpers
 - `custodian/game/world/procgen/terrain/terrain_tile_ids.gd` — centralized symbolic terrain tile IDs for industrial elevation and mountain/cliff art plus placeholder constants; baseline visual no-op is owned by TerrainBuilder, not this file
 - `custodian/game/world/procgen/terrain/terrain_region.gd` — terrain region descriptor for baseline, mountain wall, chasm, and industrial platform debug/validation output
 - `custodian/game/world/procgen/terrain/terrain_debug_overlay.gd` — optional debug draw helper that visualizes terrain height/traversal metadata from a TerrainBuilder result
+- `custodian/content/procgen/world_profiles/sundered_keep_ascent.json` — distance-band profile for procgen style transition, elevation pressure, faction presence, and story-room chance
+- `custodian/game/world/procgen/progression/world_style_band.gd` — data model for one distance/style/elevation band
+- `custodian/game/world/procgen/progression/world_progress_profile.gd` — deterministic profile loader and cell progress sampler
+- `custodian/game/world/procgen/progression/ascent_route_planner.gd` — connectivity-safe gradual ascent field and selected visual ascent-route planner
+- `custodian/game/world/procgen/factions/faction_activity_site.gd` — data model for non-combat faction activity sites
+- `custodian/game/world/procgen/factions/faction_site_placer.gd` — deterministic faction ambient site selector
+- `custodian/game/world/procgen/story/story_room_template.gd` — story-room metadata template model
+- `custodian/game/world/procgen/story/story_room_placer.gd` — deterministic environmental story-room candidate placer
+- `custodian/game/actors/enemies/ambient/ambient_activity_anchor.gd` — claimable non-combat activity anchor used by behavior-driven enemies
+- `custodian/tools/validation/procgen_ascent_style_smoke.gd` — smoke validation for world profile loading and uphill ascent metadata
+- `custodian/tools/validation/faction_story_sites_smoke.gd` — smoke validation for faction ambient site, story-room candidate, and activity-anchor behavior
 - `custodian/game/world/elevation/elevation_map.gd` — script-owned elevation metadata map for cell height, traversal type, ramp/stair direction, builder-result ingestion, serialization, spawn validity, and directional cardinal traversal checks
 - `custodian/game/world/procgen/portal_teleporter.gd` — Area2D trigger component used by procgen portal-ring props to teleport the player to their linked endpoint with a physics-frame cooldown, one runtime-built `PortalStateSprite` for idle/activation/arrival playback, delayed destination arrival playback, and a 2.5D stair/platform impostor for top-only portal access plus mirrored north-side dual approach when enabled
 - `custodian/game/world/prop_operator_depth_sort.gd` — reusable authored-prop depth component that compares the operator Y position against a prop baseline and flips the prop between behind/in-front z indices without owning gameplay state
@@ -98,7 +114,8 @@ Last updated: 2026-06-05
 - `custodian/game/world/events/ash_bell/white_thread_hazard.gd` — soft thread hazard Area2D that increments thread tension and optionally applies player slow hooks
 - `custodian/game/world/events/ash_bell/ash_bell_interactable.gd` — operator interaction bridge for ritualant, thread, clapper, fountain, and silence-ringing actions
 - `custodian/game/world/events/ash_bell/ash_bell_trigger.gd` — Area2D trigger bridge for intro, fountain occupancy, exit, and procession-lane pressure
-- `custodian/game/world/events/ash_bell/ash_bell_dev_spawner.gd` — temporary live-review spawner mounted in `scenes/game.tscn` that places the Ash-Bell site north of the operator after contract world setup for an outside-in doorway approach
+- `custodian/game/world/events/ash_bell/ash_bell_dev_spawner.gd` — temporary live-review spawner mounted in `scenes/game.tscn` that reserves the canonical `35x27` authored-room footprint through the active procgen map, then places the Ash-Bell site north of the operator for an outside-in doorway approach
+- `custodian/tools/validation/procgen_authored_scene_authority_smoke.gd` — focused generated-map smoke proving authored footprint claims remove wall visuals, generated/runtime wall authority, blocked elevation, and stale road authority while forcing floor metadata
 - `custodian/game/systems/core/systems/ambient_critter_manager.gd` — ambient critter spawning, tint, pacing, scale, speed, naming, and trait metadata linked to world profile
 - `custodian/game/systems/core/systems/inventory_manager.gd` — minimal stack-count ledger autoload for cognitive drops and future stackable resources
 - `custodian/game/systems/core/systems/vault_manager.gd` — vault storage authority autoload for registering storage, reporting totals, stealing resources, recovering dropped stolen bundles, committing escaped loot loss, fallback debug vault placement, and enemy exit discovery
@@ -170,7 +187,8 @@ Last updated: 2026-06-05
 - `custodian/game/actors/items/cognitive_pickup.tscn` — generic pickup scene for cognitive item drops
 - `custodian/game/actors/items/cognitive_pickup.gd` — pickup flow that increments `InventoryManager`, applies `CognitiveState`, animates the 4-frame item sheet, and emits popup/log feedback
 - `custodian/game/actors/items/shrumb_dropper.gd` — reusable Forest Shrumb cognitive drop table component
-- `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, fabrication page rendering, page orchestration, essentials-first HUD/debug visibility logic, terminal-open suppression of gameplay HUD/debug overlays, and dedicated debug screen feeding while keeping unformatted diagnostics off the normal HUD, including DevConsole debug commands such as `spawn_grunt`, `spawn_looter`, `vault_add`, `vault_status`, and `enemy_debug`
+- `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, fabrication page rendering, page orchestration, essentials-first HUD/debug visibility logic, terminal-open suppression of gameplay HUD/debug overlays, and dedicated debug screen feeding while keeping unformatted diagnostics off the normal HUD, including DevConsole debug commands such as `spawn_grunt`, `spawn_looter`, `vault_add`, `vault_status`, and `enemy_debug`; the FABRICATION page now uses a work-order translation layer for player-readable recipe, ready-build, and placement commands
+- `custodian/game/ui/terminal/fabrication_terminal_view_model.gd` — player-facing fabrication translation layer that turns raw recipe/resource/build-token state into work orders, selected detail, queue summaries, ready builds, and command help for the terminal HUD
 - `custodian/game/ui/hud/debug_screen.tscn` and `.gd` — dedicated read-only tabbed debug screen opened by F12 or `debug_hud`, with runtime/player/combat/world/systems/inventory snapshots.
 - `custodian/game/ui/theme/black_reliquary_palette.gd` — shared Black Reliquary HUD palette constants.
 - `custodian/game/ui/theme/black_reliquary_styles.gd` — reusable Black Reliquary UI style helpers, NinePatch configuration, texture loading, and fallback panel styles.
@@ -191,6 +209,7 @@ Last updated: 2026-06-05
 - `custodian/content/ui/inventory/runtime/README.md` — inventory production asset naming, placement, and replacement workflow
 - `custodian/tools/validation/inventory_ui_smoke.gd` — validates the live ledger-backed inventory scene, item rendering/update behavior, close behavior, and asset-manifest fallback contract
 - `custodian/docs/ai_context/task_packets/CUSTODIAN_INVENTORY_UI.md` — completed packet for the live professional inventory overlay and production-asset drop-in contract
+- `custodian/docs/ai_context/task_packets/FAB_TERMINAL_READABILITY_PASS.md` — completed packet for the FABRICATION work-order readability pass, including the terminal translation layer and build-placement alias
 - `custodian/game/ui/terminal/terminal_command_router.gd` — command parsing, validation, refresh policy, and dispatch boundary for the HUD terminal
 - `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems, including vault totals and enemy storage-search/loot-carrying counts
 - `custodian/game/ui/terminal/terminal_map_preview.gd` — terminal minimap preview state and click-to-world conversion boundary
@@ -210,6 +229,7 @@ Last updated: 2026-06-05
 - `design/02_features/animation/ENEMY_GRUNT_RUNTIME_WIRING.md` — implementation note documenting the `enemy_grunt` scene, current partial art coverage, and wave wiring acceptance
 - `design/02_features/enemy_objective/GRUNT_LOOT_TABLE.md` — first lore-specced practical salvage and provenance-clue table for baseline grunts, using `ResourceLedger` ids with generic material pickup fallback
 - `custodian/tools/validation/authored_vault_grunt_loot_marine_smoke.gd` — focused headless smoke check for typed grunt loot, marine 8-direction idle frame wiring, heavy dash tuning/export availability, and gothic compound authored vault-room placement
+- `custodian/tools/validation/fabrication_terminal_readability_smoke.gd` — focused headless smoke check for the FABRICATION work-order translation layer, ready-build placement alias, and readable next-action output
 - `custodian/tools/validation/gothic_compound_occlusion_smoke.gd` — focused headless smoke check for gothic compound wall/gatehouse base-rooted occlusion sorting and flat floor/road/decal layer separation
 - `custodian/tools/validation/operator_ranged_ready_input_smoke.gd` — focused headless smoke check for ranged-ready/twin-stick input bindings, carbine secondary intent, operator ranged-ready helper state, and dodge/backstep direction rules
 - `design/features/implementation/UNARMED_TOGGLE.md` — unarmed/Fists selection behavior, state rules, and acceptance tests
@@ -248,6 +268,7 @@ Last updated: 2026-06-05
 - `custodian/tools/art/build_reference_samplesheet.py` — Pillow-based utility that samples active runtime-facing tiles, walls, floors, ruin props, and environment prop sheets into a labeled design-reference PNG
 - `custodian/content/README.md` — stable content-root domain map and duplicate policy for runtime/source/legacy/quarantine asset placement
 - `custodian/content/levels/hub/Road_of_Witnesses_Tilemap.png` — level-owned source map image for the Road of Witnesses prototype scene
+- `custodian/content/levels/hub/twin_solaria/development/twin_solaria_rebuilt_upscaled.png` — project-local development copy of the largest current Twin Solaria composite used by the dedicated backdrop test scene
 - `custodian/content/props/gothic/vault_dressing/source/unregistered/` — vault-owned source quarantine for unregistered vault prop art pending manifest/runtime promotion
 - `custodian/content/tiles/source/ashen_forum/`, `custodian/content/tiles/source/compound_ashen/`, `custodian/content/tiles/source/gothic_compound/`, and `custodian/content/tiles/source/roads_paths/` — source/master tile-sheet homes for previously loose top-level tile art
 - `custodian/content/reference/active_art_samplesheet.png` — generated design-reference sheet containing deterministic samples from active art directories; regenerate with `python3 custodian/tools/art/build_reference_samplesheet.py`
@@ -390,6 +411,8 @@ Last updated: 2026-06-05
 - `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md` — canonical lore, faction, and game-protocol authority
 - `design/03_content/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target
 - `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` — canonical Ash-Bell / Forlorn-Ritualant implementation spec (includes merged Toll Count appendix from deleted companion doc)
+- `design/02_features/LAST_ROUTEKEEPER_EVENT.md` — design spec for The Last Routekeeper: rare, one-time residual-system event inside Sundered Keep
+- `design/02_features/LAST_ROUTEKEEPER_EVENT_CODE.md` — drop-in GDScript, map patches, autoload config, and REQUIRED_ASSETS.md entries for The Last Routekeeper
 
 ## Legacy Reference Only
 

@@ -59,6 +59,12 @@ class_name EnemyBehaviorProfile
 @export var flee_speed: float = 95.0
 @export var objective_speed: float = 70.0
 
+@export_category("Ambient Routine")
+@export var ambient_activity_weight: float = 0.35
+@export var ambient_activity_duration_sec: float = 4.0
+@export var ambient_anchor_search_radius_px: float = 220.0
+@export var noncombat_warning_seconds: float = 0.8
+
 
 static func create_profile(id: StringName) -> Resource:
 	var profile = load("res://game/actors/enemies/components/enemy_behavior_profile.gd").new()
@@ -76,6 +82,8 @@ static func create_profile(id: StringName) -> Resource:
 			profile.max_total_resource_units = 28
 			profile.loot_escape_speed_mult = 0.95
 			profile.sabotage_damage = 8
+			profile.ambient_activity_weight = 0.55
+			profile.noncombat_warning_seconds = 1.1
 		&"zealot_wanderer":
 			profile.profile_id = &"zealot_wanderer"
 			profile.display_name = "Zealot Wanderer"
@@ -90,7 +98,11 @@ static func create_profile(id: StringName) -> Resource:
 			profile.can_steal_resources = false
 			profile.can_sabotage_storage = true
 			profile.sabotage_damage = 14
+			profile.ambient_activity_weight = 0.7
+			profile.noncombat_warning_seconds = 0.5
 		_:
 			profile.profile_id = &"raider_grunt"
 			profile.display_name = "Raider Grunt"
+			profile.ambient_activity_weight = 0.25
+			profile.noncombat_warning_seconds = 0.4
 	return profile

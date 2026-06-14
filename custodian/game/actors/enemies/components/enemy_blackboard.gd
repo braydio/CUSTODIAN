@@ -22,6 +22,10 @@ var patrol_points: Array[Vector2] = []
 var investigation_position: Vector2 = Vector2.ZERO
 var investigation_timer: float = 0.0
 var objective_debug_scores: Dictionary = {}
+var ambient_anchor: Node = null
+var ambient_activity_id: StringName = &"none"
+var ambient_activity_timer: float = 0.0
+var ambient_noncombat_first: bool = true
 
 
 func reset_alerts() -> void:
@@ -31,6 +35,8 @@ func reset_alerts() -> void:
 	operator_ref = null
 	current_objective_type = &"none"
 	current_objective = null
+	ambient_activity_id = &"none"
+	ambient_activity_timer = 0.0
 
 
 func get_debug_snapshot() -> Dictionary:
@@ -43,5 +49,7 @@ func get_debug_snapshot() -> Dictionary:
 		"morale": morale,
 		"last_known_operator_position": last_known_operator_position,
 		"investigation_position": investigation_position,
+		"ambient_activity": String(ambient_activity_id),
+		"ambient_anchor": ambient_anchor.name if ambient_anchor != null and is_instance_valid(ambient_anchor) else "",
 		"scores": objective_debug_scores.duplicate(true),
 	}

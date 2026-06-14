@@ -23,7 +23,11 @@ animation_map = {
 "unarmed_fast_2": "unarmed_fast_strike",
 "unarmed_heavy": "unarmed_attack_heavy",
 "unarmed_light_hitreact": "unarmed_light_hitreact",
-"unarmed_stance": "unarmed_stance"
+"unarmed_stance": "unarmed_stance",
+"melee_2h_block_enter": "unarmed_block_enter",
+"melee_2h_block_hold": "unarmed_block_hold",
+"melee_2h_block_exit": "unarmed_block_exit",
+"melee_2h_block_hitreact": "unarmed_block_hitreact"
 }
 hit_windows = {
 "melee_fast": {

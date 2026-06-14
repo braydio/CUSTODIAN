@@ -3,6 +3,8 @@ class_name TerrainBuilder
 
 const TerrainRegionScript := preload("res://game/world/procgen/terrain/terrain_region.gd")
 const TerrainTileIdsScript := preload("res://game/world/procgen/terrain/terrain_tile_ids.gd")
+const WorldProgressProfileScript := preload("res://game/world/procgen/progression/world_progress_profile.gd")
+const AscentRoutePlannerScript := preload("res://game/world/procgen/progression/ascent_route_planner.gd")
 
 enum TerrainType {
 	GROUND,
@@ -47,6 +49,7 @@ const DIRECTION_WEST := "west"
 const NO_VISUAL_TILE := ""
 
 var _last_result: Dictionary = {}
+var _ascent_route_planner: RefCounted = null
 
 
 func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictionary = {}) -> Dictionary:
@@ -63,6 +66,24 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 		required_cells = _dedupe_cells(cells_to_dedupe)
 
 	var terrain_seed := int(context.get("seed", rng.seed))
+	var world_progress_profile = null
+	if context.has("world_progress_profile") and context["world_progress_profile"] != null:
+		world_progress_profile = context["world_progress_profile"]
+	elif context.has("world_progress_profile_path"):
+		world_progress_profile = WorldProgressProfileScript.load_from_path(String(context["world_progress_profile_path"]))
+	if _ascent_route_planner == null:
+		_ascent_route_planner = AscentRoutePlannerScript.new()
+
+	if bool(context.get("enable_ascent_route", false)) and world_progress_profile != null:
+		var ascent_snapshot := result.duplicate(true)
+		var ascent_region: Dictionary = _ascent_route_planner.call("apply_ascent_route", map_rect, result, context, world_progress_profile)
+		if not ascent_region.is_empty():
+			if _validate_connectivity(result, start_cell, required_cells).get("ok", false):
+				debug_regions.append(ascent_region)
+			else:
+				result = ascent_snapshot
+				warnings.append("WARNING: TerrainBuilder discarded ascent route because connectivity validation failed.")
+
 	if bool(context.get("enable_mountain_boundary", true)):
 		var mountain_snapshot := result.duplicate(true)
 		var mountain_region := _place_mountain_boundary(map_rect, rng, result, required_cells)
@@ -405,6 +426,7 @@ func _build_debug_summary(result: Dictionary) -> Dictionary:
 	var blocked_count := 0
 	var elevated_count := 0
 	var ramp_count := 0
+	var max_height := 0
 	for cell in traversal_by_cell.keys():
 		var traversal := String(traversal_by_cell[cell])
 		if _is_blocked_traversal(traversal):
@@ -413,6 +435,7 @@ func _build_debug_summary(result: Dictionary) -> Dictionary:
 			elevated_count += 1
 		if traversal == TRAVERSAL_RAMP or traversal == TRAVERSAL_STAIR:
 			ramp_count += 1
+		max_height = maxi(max_height, int(height_by_cell.get(cell, HEIGHT_GROUND)))
 	return {
 		"seed": int(result.get("seed", 0)),
 		"map_size": (result.get("map_rect", Rect2i()) as Rect2i).size,
@@ -420,6 +443,7 @@ func _build_debug_summary(result: Dictionary) -> Dictionary:
 		"blocked_cells": blocked_count,
 		"elevated_cells": elevated_count,
 		"ramp_or_stair_cells": ramp_count,
+		"max_height": max_height,
 		"connectivity_ok": bool(result.get("connectivity", {}).get("ok", true)),
 		"fallback_used": bool(result.get("fallback_used", false)),
 	}

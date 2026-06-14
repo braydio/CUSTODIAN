@@ -34,6 +34,7 @@ DebugCore="*uid://ctmkncwpk2qma"
 CommandRegistry="*uid://ce5ap1y1kwavq"
 GameConsoleManager="*uid://dsr8e7vkd3scc"
 MusicManager="*res://autoload/music_manager.gd"
+WorldEventMemory="*res://game/systems/core/state/world_event_memory.gd"
 
 [dev_console]
 

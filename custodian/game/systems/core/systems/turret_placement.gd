@@ -428,6 +428,18 @@ func _get_build_token_for_turret(turret_type: String) -> String:
 	return String(TURRET_BUILD_TOKENS.get(turret_type, ""))
 
 
+func get_turret_type_for_build_token(build_token_id: String) -> String:
+	for turret_type_variant in TURRET_BUILD_TOKENS.keys():
+		var turret_type := str(turret_type_variant)
+		if String(TURRET_BUILD_TOKENS[turret_type_variant]) == build_token_id:
+			return turret_type
+	return ""
+
+
+func get_build_token_for_turret_type(turret_type: String) -> String:
+	return _get_build_token_for_turret(turret_type)
+
+
 func _get_build_inventory() -> Node:
 	return get_node_or_null("/root/BuildInventory")
 

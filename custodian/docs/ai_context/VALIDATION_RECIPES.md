@@ -9,10 +9,11 @@ Prefer RTK subcommands for compact output when they support the command shape. R
 ## Selection Rules
 
 - Doc-only change: validate paths, links, status labels, and discoverability.
-- Agent workflow change: validate `AGENTS.md`, `custodian/AGENTS.md`, `docs/ai_context/*`, task packets, and prompt indexes.
+- Agent workflow change: validate `AGENTS.md`, `custodian/AGENTS.md`, `docs/ai_context/*`, any affected task packets, and prompt indexes.
 - Runtime GDScript change: run a Godot headless check when feasible.
 - Scene or asset import change: run Godot import before headless boot when feasible.
 - Sprite pipeline change: run dry-run ingest first, then targeted ingest only when outputs are intended.
+- Generic runtime-ready asset intake: run the persistent drop router in dry-run mode before apply.
 - Tile pipeline change: run Python syntax checks plus the relevant tile generator command.
 - Commit/staging task: inspect status with RTK, but do not stage or commit without explicit user approval.
 
@@ -67,7 +68,7 @@ Check:
 - referenced files exist or are explicitly described as future work
 - `CURRENT_STATE.md` reflects meaningful workflow/status changes
 - `FILE_INDEX.md` indexes new docs, prompts, task packets, and ownership changes
-- task packet status and completion notes match the actual work state
+- task packet status and completion notes match the actual work state when a packet exists
 
 ## Godot Runtime Validation
 
@@ -97,6 +98,15 @@ godot --headless --script tools/validation/sundered_keep_asset_smoke.gd
 
 This instantiates the authored Sundered Keep connected map and fails if any `Sprite2D` in the slice has a missing texture.
 
+For fabrication terminal readability / work-order translation changes:
+
+```bash
+cd custodian
+godot --headless --script tools/validation/fabrication_terminal_readability_smoke.gd
+```
+
+This validates the live FABRICATION terminal translation layer, the readable next-action text, and the `BUILD PLACE <ready_build_id>` placement alias against the runtime autoloads.
+
 ## Manual Godot Validation
 
 Use when behavior requires play, input, camera, animation, UI, collision, or visual confirmation.
@@ -106,7 +116,7 @@ cd custodian
 godot
 ```
 
-Check the specific acceptance path from the task packet. For runtime gameplay changes, include deterministic concerns in the result notes: fixed-step simulation ownership, input mapping, and whether UI/rendering stayed out of simulation authority.
+Check the specific acceptance path from the task packet when one exists; otherwise use the active spec and task request. For runtime gameplay changes, include deterministic concerns in the result notes: fixed-step simulation ownership, input mapping, and whether UI/rendering stayed out of simulation authority.
 
 ## Sprite Pipeline Validation
 
@@ -125,6 +135,18 @@ python tools/pipelines/ingest.py --dry-run <manifest_or_source>
 ```
 
 Only run non-dry-run ingest when generated files are intended. Successful non-dry-run ingests may stage generated files by default; use `--no-git-add` when inspecting outputs without staging.
+
+## Runtime-Ready Asset Drop Validation
+
+Use for already-runtime-ready assets that do not require specialized sprite processing:
+
+```bash
+python custodian/tools/pipelines/runtime_ready_assets.py --dry-run
+python custodian/tools/validation/runtime_ready_asset_pipeline_smoke.py
+python custodian/tools/pipelines/runtime_ready_assets.py --apply --godot-import
+```
+
+The apply command rejects different existing targets unless `--replace` is intentionally supplied.
 
 ## Tile Pipeline Validation
 
@@ -172,7 +194,7 @@ Findings should prioritize:
 
 ## When Validation Is Deferred
 
-If a feasible validation step cannot run, update the task packet completion notes with:
+If a feasible validation step cannot run, record it in the task packet completion notes when a packet exists, or in the final handoff otherwise:
 
 - command that was skipped or failed
 - reason

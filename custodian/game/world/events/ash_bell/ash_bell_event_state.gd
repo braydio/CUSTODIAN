@@ -18,9 +18,9 @@ enum Resolution {
 	SEEN,
 	SPOKE_TO_RITUALANT,
 	TOUCHED_THREAD,
-	TOOK_CLAPPER,
+	TOOK_STILLING_PIN,
 	CUT_THREAD,
-	RANG_SILENCE,
+	SET_STILLING_PIN,
 	PROVOKED_RITUALANT,
 	RITUALANT_DISSOLVED,
 	SITE_STABILIZED,
@@ -34,7 +34,7 @@ enum Resolution {
 
 var seen_dialogue: Dictionary = {}
 var unlocked_knowledge: Dictionary = {}
-var has_clapper: bool = false
+var has_stilling_pin: bool = false
 var has_thread_knot: bool = false
 var apparition_seen: bool = false
 var ritualant_hostile: bool = false

@@ -16,7 +16,7 @@ signal request_knowledge_unlock(knowledge_id: StringName)
 @export var upward_ash_path: NodePath
 @export var downward_ash_path: NodePath
 @export var unarrived_apparition_path: NodePath
-@export var bronze_clapper_pickup_path: NodePath
+@export var stilling_pin_pickup_path: NodePath
 @export var ghost_procession_path: NodePath
 @export var debug_label_path: NodePath
 @export var dialogue_label_path: NodePath
@@ -40,7 +40,7 @@ signal request_knowledge_unlock(knowledge_id: StringName)
 @onready var upward_ash: GPUParticles2D = get_node_or_null(upward_ash_path)
 @onready var downward_ash: GPUParticles2D = get_node_or_null(downward_ash_path)
 @onready var unarrived_apparition: CanvasItem = get_node_or_null(unarrived_apparition_path)
-@onready var bronze_clapper_pickup: Area2D = get_node_or_null(bronze_clapper_pickup_path)
+@onready var stilling_pin_pickup: Area2D = get_node_or_null(stilling_pin_pickup_path)
 @onready var ghost_procession: Node2D = get_node_or_null(ghost_procession_path)
 @onready var debug_label: Label = get_node_or_null(debug_label_path)
 @onready var dialogue_label: Label = get_node_or_null(dialogue_label_path)
@@ -93,6 +93,15 @@ const DIALOGUE := {
 		"No.",
 		"Not the thread.",
 		"The Unarrived will come looking.",
+	],
+	&"inspect_fountain": [
+		"The basin is dry.",
+		"It still remembers what held it.",
+	],
+	&"set_stilling_pin": [
+		"The pin finds the basin.",
+		"Orra will know you passed this way.",
+		"The dead are counted.",
 	],
 	&"peaceful_exit": [
 		"Go gently.",
@@ -209,17 +218,17 @@ func cut_thread() -> void:
 	_start_hostile_phase()
 
 
-func take_clapper() -> void:
-	if event_state.has_clapper:
+func take_stilling_pin() -> void:
+	if event_state.has_stilling_pin:
 		return
 
-	event_state.has_clapper = true
-	event_state.set_resolution(AshBellEventState.Resolution.TOOK_CLAPPER)
+	event_state.has_stilling_pin = true
+	event_state.set_resolution(AshBellEventState.Resolution.TOOK_STILLING_PIN)
 	event_state.unlock_knowledge(&"ash_bell_ninth_bell")
-	request_item_grant.emit(&"bell_clapper_without_bell")
+	request_item_grant.emit(&"stilling_pin")
 
-	if bronze_clapper_pickup != null:
-		bronze_clapper_pickup.queue_free()
+	if stilling_pin_pickup != null:
+		stilling_pin_pickup.queue_free()
 
 
 func inspect_dry_fountain() -> void:
@@ -228,14 +237,16 @@ func inspect_dry_fountain() -> void:
 
 	event_state.add_silence_pressure(3, &"fountain_touched")
 	event_state.unlock_knowledge(&"ash_bell_dry_fountain")
+	request_dialogue.emit(dialogue_id, &"inspect_fountain")
 
 
-func ring_clapper() -> void:
-	if not event_state.has_clapper:
+func set_stilling_pin() -> void:
+	if not event_state.has_stilling_pin:
 		return
 
-	event_state.set_resolution(AshBellEventState.Resolution.RANG_SILENCE)
-	event_state.add_silence_pressure(35, &"rang_silence")
+	event_state.set_resolution(AshBellEventState.Resolution.SET_STILLING_PIN)
+	event_state.add_silence_pressure(35, &"stilling_pin_set")
+	request_dialogue.emit(dialogue_id, &"set_stilling_pin")
 	_show_unarrived_apparition()
 	_trigger_ghost_procession()
 
@@ -281,7 +292,7 @@ func exit_site() -> void:
 
 	if event_state.resolution == AshBellEventState.Resolution.SPOKE_TO_RITUALANT \
 			or event_state.resolution == AshBellEventState.Resolution.TOUCHED_THREAD \
-			or event_state.resolution == AshBellEventState.Resolution.TOOK_CLAPPER:
+			or event_state.resolution == AshBellEventState.Resolution.TOOK_STILLING_PIN:
 		if peaceful_exit_requires_thread_touch and not event_state.has_thread_knot:
 			return
 
@@ -494,7 +505,12 @@ func _on_request_dialogue(_dialogue_id: StringName, node_id: StringName) -> void
 
 
 func _on_request_item_grant(item_id: StringName) -> void:
-	print("[AshBell] item grant requested: ", item_id)
+	var inventory_manager := get_node_or_null("/root/InventoryManager")
+	if inventory_manager != null and inventory_manager.has_method("add_item"):
+		inventory_manager.call("add_item", item_id, 1)
+		print("[AshBell] item granted to inventory: ", item_id)
+	else:
+		print("[AshBell] InventoryManager not available, item grant skipped: ", item_id)
 
 
 func _on_request_knowledge_unlock(knowledge_id: StringName) -> void:

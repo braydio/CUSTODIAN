@@ -2,6 +2,11 @@
 
 This directory is the Godot-visible content root. Paths here are `res://content/...`, so moving runtime files requires updating every scene, script, resource, manifest, and `.import` sidecar that references the old path.
 
+New already-runtime-ready files should first be dropped into the persistent intake at
+`custodian/asset_drop/runtime_ready/inbox/`, not directly into this tree. The intake
+router validates ownership paths, protects existing files, archives processed sources,
+and then writes accepted files into their organized `content/` destinations.
+
 ## Stable Domains
 
 ```text
@@ -10,6 +15,8 @@ content/
   _pipeline/        # staging/history for ingest tooling; never runtime authority
   ammo_types/       # data-only ammo definitions
   animations/       # animation metadata and authored sequence data
+  audio/            # runtime audio organized by owning feature/event
+  balance/          # deterministic balance scenario/configuration data
   dialogue/         # authored dialogue JSON
   doors/            # door assets and sidecars by set
   fabrication/      # fabrication recipes and schemas

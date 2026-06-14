@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://2kfoju1pkdvc"]
 
-[ext_resource type="Script" path="res://game/ui/game_over/game_over_modal.gd" id="1_game_over_modal"]
+[ext_resource type="Script" uid="uid://ciq44m47klr2b" path="res://game/ui/game_over/game_over_modal.gd" id="1_game_over_modal"]
 
-[node name="GameOverModal" type="Control"]
+[node name="GameOverModal" type="Control" unique_id=1864293370]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -10,10 +10,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 script = ExtResource("1_game_over_modal")
 
-[node name="Backdrop" type="ColorRect" parent="."]
+[node name="Backdrop" type="ColorRect" parent="." unique_id=2096192846]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,7 +21,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.006, 0.008, 0.01, 0.94)
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="Panel" parent="." unique_id=570091042]
 custom_minimum_size = Vector2(560, 390)
 layout_mode = 1
 anchors_preset = 8
@@ -37,7 +36,7 @@ offset_bottom = 195.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Margin" type="MarginContainer" parent="Panel"]
+[node name="Margin" type="MarginContainer" parent="Panel" unique_id=1905223950]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -49,66 +48,66 @@ theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 28
 theme_override_constants/margin_bottom = 24
 
-[node name="Content" type="VBoxContainer" parent="Panel/Margin"]
+[node name="Content" type="VBoxContainer" parent="Panel/Margin" unique_id=202718368]
 layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="Panel/Margin/Content"]
+[node name="TitleLabel" type="Label" parent="Panel/Margin/Content" unique_id=228478734]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.72, 0.42, 1)
 theme_override_font_sizes/font_size = 34
 text = "FACILITY LOST"
 horizontal_alignment = 1
 
-[node name="SubtitleLabel" type="Label" parent="Panel/Margin/Content"]
+[node name="SubtitleLabel" type="Label" parent="Panel/Margin/Content" unique_id=669710330]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.76, 0.78, 1)
 text = "Custodian link terminated."
 horizontal_alignment = 1
 
-[node name="ReasonLabel" type="Label" parent="Panel/Margin/Content"]
+[node name="ReasonLabel" type="Label" parent="Panel/Margin/Content" unique_id=795239342]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.92, 0.9, 0.84, 1)
 text = "The command nexus has fallen."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="StatsContainer" type="VBoxContainer" parent="Panel/Margin/Content"]
+[node name="StatsContainer" type="VBoxContainer" parent="Panel/Margin/Content" unique_id=1283553507]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="WavesLabel" type="Label" parent="Panel/Margin/Content/StatsContainer"]
+[node name="WavesLabel" type="Label" parent="Panel/Margin/Content/StatsContainer" unique_id=437615024]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.83, 0.82, 1)
 text = "Waves Survived: 0"
 
-[node name="EnemiesLabel" type="Label" parent="Panel/Margin/Content/StatsContainer"]
+[node name="EnemiesLabel" type="Label" parent="Panel/Margin/Content/StatsContainer" unique_id=1008511991]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.83, 0.82, 1)
 text = "Enemies Destroyed: 0"
 
-[node name="PowerFailuresLabel" type="Label" parent="Panel/Margin/Content/StatsContainer"]
+[node name="PowerFailuresLabel" type="Label" parent="Panel/Margin/Content/StatsContainer" unique_id=987803318]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.83, 0.82, 1)
 text = "Power Failures: 0"
 
-[node name="TurretsLostLabel" type="Label" parent="Panel/Margin/Content/StatsContainer"]
+[node name="TurretsLostLabel" type="Label" parent="Panel/Margin/Content/StatsContainer" unique_id=1405976273]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.83, 0.82, 1)
 text = "Turrets Lost: 0"
 
-[node name="ButtonContainer" type="HBoxContainer" parent="Panel/Margin/Content"]
+[node name="ButtonContainer" type="HBoxContainer" parent="Panel/Margin/Content" unique_id=595157519]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="RestartButton" type="Button" parent="Panel/Margin/Content/ButtonContainer"]
+[node name="RestartButton" type="Button" parent="Panel/Margin/Content/ButtonContainer" unique_id=1102833049]
 custom_minimum_size = Vector2(150, 36)
 layout_mode = 2
 text = "Restart Facility"
 
-[node name="MenuButton" type="Button" parent="Panel/Margin/Content/ButtonContainer"]
+[node name="MenuButton" type="Button" parent="Panel/Margin/Content/ButtonContainer" unique_id=337862582]
 custom_minimum_size = Vector2(140, 36)
 layout_mode = 2
 text = "Return to Menu"

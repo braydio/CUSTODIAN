@@ -2,6 +2,23 @@
 
 Repo-native sprite ingest for the active Godot runtime.
 
+## Runtime-Ready Asset Drop
+
+Already organized, runtime-ready assets that need no sprite slicing or rebuild hooks can
+use the persistent generic intake:
+
+```bash
+python custodian/tools/pipelines/runtime_ready_assets.py --dry-run
+python custodian/tools/pipelines/runtime_ready_assets.py --apply --godot-import
+custodian/tools/pipelines/watch_runtime_ready_assets.sh
+```
+
+Drop them under `custodian/asset_drop/runtime_ready/inbox/`, mirroring the intended path
+below `res://content/`. See `custodian/asset_drop/runtime_ready/README.md`.
+
+Keep using the specialized sprite pipeline below for sheets requiring parsing,
+compatibility outputs, or runtime resource rebuilds.
+
 ## Status
 
 - Intake path is `res://content/sprites/_pipeline/`.

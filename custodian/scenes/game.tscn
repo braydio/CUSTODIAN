@@ -46,7 +46,7 @@
 [ext_resource type="Script" uid="uid://brs7i5frcn2w5" path="res://game/systems/core/systems/terminal_deployment.gd" id="101_terminal_deployment"]
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
-[ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="203_ash_bell_site"]
+[ext_resource type="PackedScene" uid="uid://d16xvgyky6xs7" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="203_ash_bell_site"]
 [ext_resource type="Script" uid="uid://cv0gyb8rtk8au" path="res://game/world/events/ash_bell/ash_bell_dev_spawner.gd" id="204_ash_bell_spawner"]
 [ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
 

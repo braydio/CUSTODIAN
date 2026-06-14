@@ -30,6 +30,8 @@ static func _ensure_loaded() -> void:
 	for path in ITEM_FILES:
 		_load_file(path)
 	_register_builtin(&"sundered_gate_key", "Sundered Gate Key", "A corroded winch key stamped with the keep's split-ring seal.", "key", "key_item")
+	_register_builtin(&"p9_sidearm", "P-9 Field Sidearm", "A compact P-9 semi-automatic sidearm. Reliable, standard-issue. Can be equipped to the sidearm slot from the Equipment page.", "equipment", "equipment")
+	_register_builtin(&"stilling_pin", "Stilling Pin", "A rusted iron pin that once anchored the Ash-Bell's silence. Setting it in the fountain basin counts the dead.", "key", "relic")
 
 
 static func _load_file(path: String) -> void:
@@ -68,6 +70,8 @@ static func _infer_category(item_id: String, item: Dictionary) -> String:
 	var item_type := str(item.get("type", ""))
 	if item_type.contains("lore") or item.has("mechanical_effects"):
 		return "relic"
+	if item_type == "equipment":
+		return "equipment"
 	if item.has("cognitive_axis") or item_id in ["faint_recollection", "residual_instinct", "ancient_bearing"]:
 		return "cognitive"
 	if item_id.contains("key"):

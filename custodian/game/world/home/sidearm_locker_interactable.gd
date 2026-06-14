@@ -127,16 +127,14 @@ func _open_locker() -> void:
 
 
 func _take_sidearm(actor: Node) -> void:
-	if not actor.has_method("grant_sidearm"):
-		push_warning("[SidearmLocker] Actor %s cannot receive sidearm" % actor.name)
-		return
-	if _sidearm_definition == null:
-		push_warning("[SidearmLocker] Sidearm definition not loaded")
+	var inventory_manager := get_node_or_null("/root/InventoryManager")
+	if inventory_manager == null or not inventory_manager.has_method("add_item"):
+		push_warning("[SidearmLocker] InventoryManager not available")
 		return
 
-	var result: Dictionary = actor.call("grant_sidearm", _sidearm_definition)
-	if not result.get("granted", false):
-		push_warning("[SidearmLocker] Failed to grant sidearm: %s" % result)
+	var result := inventory_manager.call("add_item", &"p9_sidearm", 1)
+	if result <= 0:
+		push_warning("[SidearmLocker] Failed to add P-9 to inventory")
 		return
 
 	_state = LockerState.EMPTY

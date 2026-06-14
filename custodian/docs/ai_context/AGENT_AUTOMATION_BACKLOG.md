@@ -12,14 +12,14 @@ Purpose:
 
 - catch stale doc paths before handoff
 - confirm required AI context files exist
-- confirm task packets include required sections
+- confirm task packets include the compact required fields or valid legacy/full sections
 - confirm prompt templates reference `custodian/AGENTS.md`, not stale paths
 
 Checks:
 
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` exists
 - `custodian/docs/ai_context/prompts/README.md` exists
-- every `custodian/docs/ai_context/task_packets/*.md` contains `Packet Status`, `Task`, `Outcome`, `Acceptance`, `Completion Notes`, and `Next Steps`
+- every new `custodian/docs/ai_context/task_packets/*.md` contains the compact required fields; legacy/full packets remain valid
 - no prompt references `custodian/docs/ai_context/AGENTS.md`, `PAIPELINE.md`, `operator_weapon_definition.tres`, or invalid bare RTK forms that omit the needed RTK subcommand
 - `FILE_INDEX.md` references new workflow docs
 
@@ -36,16 +36,16 @@ Suggested path: `tools/agent/check_task_packets.py`
 
 Purpose:
 
-- enforce packet ownership and handoff quality
+- enforce packet status and handoff quality without requiring packets for every task
 - detect completed packets with empty completion or next-step notes
-- detect in-progress packets with no `Agent/session`
+- detect full packets with incomplete ownership fields
 
 Checks:
 
 - valid status value
-- `Agent/session` present
-- `Last updated` present and parseable as `YYYY-MM-DD`
-- `complete` packets have non-empty `Implemented`, `Validated`, `Deferred`, and `Next Steps`
+- compact required fields are present
+- full packets with ownership metadata have parseable `Last updated` values
+- `complete` packets have non-empty completion and deferred-work notes
 - `blocked` packets have a blocker or open question
 
 Why second:
@@ -66,7 +66,7 @@ Checks:
 
 - every prompt includes `custodian/AGENTS.md`
 - every prompt includes `custodian/docs/ai_context/VALIDATION_RECIPES.md`
-- non-trivial implementation prompts mention task packets
+- implementation prompts describe risk-based packet selection
 - Git prompt requires explicit approval before staging or committing
 - all referenced static paths exist unless they contain placeholders like `[TASK_PACKET]`
 

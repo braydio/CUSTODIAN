@@ -9,7 +9,7 @@ Review documentation for drift against the live runtime in: **[target_system or 
 ## Rules
 - Preserve deterministic fixed-step simulation.
 - Keep rendering/UI separate from simulation authority.
-- Create or update a task packet when the review produces follow-up implementation work.
+- Create or update a compact task packet when the review produces substantial follow-up implementation or handoff work.
 - Update `CURRENT_STATE.md` if behavior changes.
 - Update `FILE_INDEX.md` if ownership or entrypoints change.
 - Follow `custodian/docs/ai_context/VALIDATION_RECIPES.md`.

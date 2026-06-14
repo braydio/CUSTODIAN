@@ -5,65 +5,65 @@
   "pressure_damage_per_wave": 2.0,
   "repair_amount": 35.0,
   "objectives": [
-    {
-      "id": "gatehouse_core",
-      "label": "Gatehouse Core",
-      "group": "command_post",
-      "tile_offset_from": "main_gate",
-      "tile_offset": [2, 4],
-      "hp": 180.0,
-      "repair_kind": "repair_gatehouse",
-      "repair_prompt": "REPAIR GATEHOUSE CORE",
-      "repair_tile_offset": [2, 7],
-      "repair_distance": 96.0
-    },
-    {
-      "id": "return_mooring",
-      "label": "Return Mooring",
-      "group": "power_node",
-      "tile_offset_from": "return_mooring_origin",
-      "tile_offset": [2, 2],
-      "hp": 140.0,
-      "repair_kind": "repair_mooring",
-      "repair_prompt": "REPAIR RETURN MOORING",
-      "repair_tile_offset": [2, 4],
-      "repair_distance": 82.0
-    }
+	{
+	  "id": "gatehouse_core",
+	  "label": "Gatehouse Core",
+	  "group": "command_post",
+	  "tile_offset_from": "main_gate",
+	  "tile_offset": [2, 4],
+	  "hp": 180.0,
+	  "repair_kind": "repair_gatehouse",
+	  "repair_prompt": "REPAIR GATEHOUSE CORE",
+	  "repair_tile_offset": [2, 7],
+	  "repair_distance": 96.0
+	},
+	{
+	  "id": "return_mooring",
+	  "label": "Return Mooring",
+	  "group": "power_node",
+	  "tile_offset_from": "return_mooring_origin",
+	  "tile_offset": [2, 2],
+	  "hp": 140.0,
+	  "repair_kind": "repair_mooring",
+	  "repair_prompt": "REPAIR RETURN MOORING",
+	  "repair_tile_offset": [2, 4],
+	  "repair_distance": 82.0
+	}
   ],
   "spawns": [
-    {
-      "lane": "sundered_keep",
-      "tile_offset_from": "main_gate",
-      "tile_offset": [-7, -1]
-    },
-    {
-      "lane": "sundered_keep",
-      "tile_offset_from": "main_gate",
-      "tile_offset": [8, -1]
-    },
-    {
-      "lane": "sundered_keep",
-      "tile_offset_from": "great_hall_door",
-      "tile_offset": [0, 6]
-    }
+	{
+	  "lane": "sundered_keep",
+	  "tile_offset_from": "main_gate",
+	  "tile_offset": [-7, -1]
+	},
+	{
+	  "lane": "sundered_keep",
+	  "tile_offset_from": "main_gate",
+	  "tile_offset": [8, -1]
+	},
+	{
+	  "lane": "sundered_keep",
+	  "tile_offset_from": "great_hall_door",
+	  "tile_offset": [0, 6]
+	}
   ],
   "waves": [
-    {
-      "composition": ["drone", "drone", "grunt"]
-    },
-    {
-      "composition": ["grunt", "drone", "fast", "drone"]
-    },
-    {
-      "composition": ["grunt", "grunt", "heavy"]
-    }
+	{
+	  "composition": ["drone", "drone", "grunt"]
+	},
+	{
+	  "composition": ["grunt", "drone", "fast", "drone"]
+	},
+	{
+	  "composition": ["grunt", "grunt", "heavy"]
+	}
   ],
   "extra_wave_pressure_ticks": [2, 5],
   "defense_turret": {
-    "tile_offset_from": "main_gate",
-    "tile_offset": [-5, 4],
-    "range": 360.0,
-    "damage": 9.0,
-    "power_required": false
+	"tile_offset_from": "main_gate",
+	"tile_offset": [-5, 4],
+	"range": 360.0,
+	"damage": 9.0,
+	"power_required": false
   }
 }

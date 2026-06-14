@@ -1,171 +1,203 @@
-# AGENTS.md
+# CUSTODIAN AGENTS PRIMER
 
-Repository-level guidance for CUSTODIAN (post-Godot pivot).
+Mandatory entrypoint for any agent or developer working inside `custodian/`.
 
-**CRITICAL:**
- 
-    *Note - FROM Brayden: Please help me stay on task by ending each message or run by stating what we are currently focused on, what the last session comppletede (brief -- 1 sentence or so) and the next items we will be working on or that I need to do
+If you entered from the repository root, stop here first before changing runtime code, docs, assets, pipelines, or design references.
 
+## Mission
 
-## Mandatory Local Routing
+This primer exists to route all work through one consistent authority chain, one current-state summary, and one repeatable process for:
 
-- Any work inside `custodian/` must start with `custodian/AGENTS.md`.
-- Treat `custodian/AGENTS.md` as the local primer for runtime state, design/development routing, context retrieval, docs-drift review, and migration execution.
-- This root file defines repository-wide doctrine and authority order; the `custodian/` primer defines how to operate inside the active Godot runtime subtree.
+- finding the right active docs quickly
+- checking adjacent files before editing
+- detecting documentation drift
+- remediating drift before it compounds
+- executing migrations without leaving stale references behind
 
-## Command Routing
+## First-Read Order
 
-- Prefer RTK subcommands for noisy read-only shell work: use forms like `rtk git status`, `rtk git diff`, `rtk git log`, `rtk ls`, `rtk find ...`, and `rtk grep ...`.
-- Do not treat `rtk` as a blind prefix for arbitrary commands. If RTK has no matching subcommand and token tracking is still useful, use `rtk proxy <command> ...`; otherwise run the plain command.
-- Use plain commands when exact raw output is required, when `rtk` is unavailable, or when RTK filtering/argument rewriting could hide important details.
+Read these in order before making changes:
 
-## Active Runtime
+1. `../design/` for active Godot-native implementation specs
+2. `docs/ai_context/CURRENT_STATE.md` for the latest runtime and documentation state
+3. `docs/ai_context/CONTEXT.md` for project rules and handoff context
+4. `docs/ai_context/FILE_INDEX.md` for high-signal file ownership and entrypoints
+5. `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` and any relevant packet in `docs/ai_context/task_packets/` when the packet-selection rules below call for one
+6. `docs/ai_context/VALIDATION_RECIPES.md` and relevant prompt templates in `docs/ai_context/prompts/`
+7. Relevant runtime/docs files for the feature or asset area you are touching
 
-- Active gameplay/runtime code: `custodian/` (Godot 4.x)
-- Active runtime docs: `custodian/docs/`
-- Active AI context docs: `custodian/docs/ai_context/`
-- Locked master doctrine: `python-sim/design/MASTER_DESIGN_DOCTRINE.md`
+If a conflict appears, prefer this authority order:
 
-## Godot-Native Design Docs
+1. `../design/`
+2. `../python-sim/design/MASTER_DESIGN_DOCTRINE.md`
+3. `docs/*`
+4. legacy Python-era design or AI docs only as historical reference
 
-New Godot implementation specs live in `./design/`. See `design/README.md` for the full tree.
+## Current Design And Development State
 
-```
-design/
-├── 00_meta/            # Tracking, status, templates, drift reports
-├── 01_systems/         # Core system designs (terminal, camera, etc.)
-├── 02_features/        # Feature specs & implementations
-│   ├── animation/
-│   ├── forest_shrumb/
-│   ├── minimap/
-│   ├── procgen/
-│   ├── resource_fabrication/
-│   ├── vehicles/
-│   ├── ... (30+ feature folders)
-│   └── _requests/      # Feature requests (not yet implemented)
-├── 03_architecture/    # High-level architecture
-├── 03_content/         # Lore, factions, world-building
-└── 04_research/        # Exploration notes
-```
+- Active runtime authority is the Godot 4.x project in `custodian/`
+- Active implementation specs live in `../design/`
+- Active AI-facing context pack lives in `docs/ai_context/`
+- Legacy Python runtime and Python AI context are historical reference only
+- Deterministic fixed-step simulation remains a hard constraint
+- Rendering/UI logic should not silently absorb simulation authority
 
-## Legacy Reference
+## Routing Map
 
-- `python-sim/game/` and `python-sim/custodian-terminal/` are preserved terminal-era implementations.
-- Do not treat legacy Python runtime as active gameplay authority.
-- Do not delete legacy assets/docs unless explicitly requested.
+Use this map to land on the right material fast:
 
-## Documentation Source of Truth
+| Need | Read First | Then Check |
+|---|---|---|
+| Runtime feature behavior | `../design/` matching feature/system doc | `game/` scripts and `docs/ai_context/*` |
+| Architecture or ownership | `docs/ai_context/FILE_INDEX.md` | `docs/ARCHITECTURE.md`, `../design/03_architecture/` |
+| Current implementation status | `docs/ai_context/CURRENT_STATE.md` | `../design/TRACKING.md`, active feature docs |
+| Asset layout or content placement | `docs/ASSET_LAYOUT_CONVENTION.md` | nearby `README.md` files in `content/` |
+| Scene/runtime structure | `docs/SCENE_HIERARCHY.md` | `scenes/`, `game/`, `project.godot` |
+| Migration or drift cleanup | `docs/AGENT_MIGRATION_PLAYBOOK.md` | this primer, `docs/ai_context/*` |
+| Validation command selection | `docs/ai_context/VALIDATION_RECIPES.md` | task packet acceptance checks when a packet exists |
+| Reusable agent prompts | `docs/ai_context/prompts/README.md` | task-specific prompt template |
+| Agent workflow automation | `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` | `tools/agent/` when scripts exist |
 
-Use this precedence order:
+## Reusable Context Fetch Pipeline
 
-1. `./design/` (Godot-native implementation specs)
-2. `python-sim/design/MASTER_DESIGN_DOCTRINE.md`
-3. `custodian/docs/*`
-4. `python-sim/design/00_foundations/*` and `python-sim/design/30_playable_game/*`
-5. `python-sim/design/DOC_STATUS.md` for active vs legacy classification
+Before editing, run this retrieval pipeline:
 
-## Change Requirements
+1. Define the work surface.
+   Identify the exact runtime area, doc area, or asset area being changed.
+2. Pull the active authority.
+   Read the matching file in `../design/` first.
+3. Pull current state.
+   Read `docs/ai_context/CURRENT_STATE.md` and `docs/ai_context/FILE_INDEX.md`.
+4. Decide whether a task packet adds value.
+   Skip it for narrow, low-risk, single-session work. Use the compact template when scope, acceptance, or deferred work needs a durable record. Expand it for high-risk, multi-session, architecture, ownership, migration, or substantial handoff work.
+5. Pull validation and prompt guidance.
+   Read `docs/ai_context/VALIDATION_RECIPES.md` and any matching prompt template in `docs/ai_context/prompts/`.
+6. Pull adjacent context.
+   Read neighboring docs, scene files, READMEs, and directly related scripts/assets.
+7. Pull historical context only if still unresolved.
+   Use `../python-sim/` or archived docs only to explain intent, not to override active authority.
+8. Record any mismatch immediately.
+   If names, paths, behavior, or ownership disagree, treat that as drift and remediate before or alongside the main change.
 
-When behavior/architecture changes:
+Minimum adjacency check:
 
-1. Update relevant docs in active sets above.
-2. **For Godot runtime changes:** Update `./design/` with implementation specs FIRST.
-3. Update `custodian/docs/ai_context/` tracker files when runtime state or architecture materially changes.
-4. Optionally update legacy docs (CHANGELOG, DEVLOG) for historical tracking.
+- the file you will edit
+- one upstream authority doc
+- one downstream runtime or content consumer
+- one neighboring doc or index that would become stale if ignored
+- the relevant task packet when the work requires one
+- the validation recipe and prompt template when the work matches one
 
-## AI Context Practice
+## Agent Task Packets
 
-- Maintain the active AI context pack in `custodian/docs/ai_context/`.
-- Minimum update target on meaningful runtime changes: `custodian/docs/ai_context/CURRENT_STATE.md`.
-- Prefer updating the full pack (`CURRENT_STATE.md`, `CONTEXT.md`, `FILE_INDEX.md`) when architecture, authority, or key file ownership changes.
-- For non-trivial implementation, review, migration, validation, asset workflow, or multi-file docs work, create or update an agent task packet from `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` before implementation.
-- Store active packets in `custodian/docs/ai_context/task_packets/` and keep packet status, assumptions, acceptance checks, and completion notes current as the task changes.
-- Use `custodian/docs/ai_context/VALIDATION_RECIPES.md` for validation command selection and `custodian/docs/ai_context/prompts/` for reusable task prompts.
-- Keep local routing docs aligned with the active context pack, especially `custodian/AGENTS.md` and `custodian/README.md`.
-- Treat `python-sim/ai/` as historical reference only.
+Task packets are optional risk-control and handoff records, not mandatory ceremony.
 
-## Clarifications
+Choose the lightest useful level:
 
-- Agents should ask concise clarifying questions when requirements, assets, or intended behavior are ambiguous enough that guessing would risk incorrect work.
-- The user explicitly encourages clarifying questions when needed; do not avoid asking just to appear autonomous.
-- When in doubt during this project, explicitly note the ambiguity and ask the user for details before proceeding further; they prefer responses that surface open questions early instead of silent assumptions.
-- The requester reminded us today that questions are welcome—treat clarification requests as encouraged, especially on large or interdependent tasks.
-- If proceeding with a reasonable temporary assumption, state that assumption clearly and keep the implementation easy to revise.
+- Skip: narrow, low-risk, single-session fixes; obvious validation; small documentation corrections.
+- Compact packet: ordinary non-trivial work where scope, constraints, acceptance, or deferred work should survive the current session.
+- Full packet: multi-session work; architecture or ownership changes; migrations; high-risk runtime or asset-pipeline changes; reviews producing substantial follow-up implementation.
 
-## Determinism
+Do not create a packet merely because a task touches several files.
 
-- Keep fixed-step simulation deterministic.
-- Keep simulation logic separate from rendering and UI logic.
+Task packet workflow:
 
-## Validation
+1. Select skip, compact, or full based on risk and handoff value.
+2. When using a packet, copy `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` into `docs/ai_context/task_packets/` and name it after the task.
+3. Fill the compact fields first; add full-packet sections only when their information is useful.
+4. Keep the packet current when scope, blockers, acceptance, or deferred work materially changes.
+5. Mark it `complete` only after implementation, required documentation, feasible validation, and completion notes are done.
 
-- For doc-only changes, validate paths/references and status labels.
-- For code changes in Godot, run with `cd custodian && godot` when feasible.
+Task packets do not replace design docs. Use `../design/` as implementation authority, and use task packets to make the current agent slice explicit.
 
-## Slash Commands
+## Prompt Templates And Validation
 
-Use slash commands to run the implementation workflows from design docs:
+Reusable prompts live in `docs/ai_context/prompts/`.
 
-| Command | Example |
-|--------|---------|
-| `/implement` | `/implement design/20_features/in_progress/TURRET_SYSTEM.md` |
-| `/build-plan` | `/build-plan design/20_features/in_progress/REPAIR_GAMEPLAY_SYSTEM.md` |
-| `/designaudit` | `/designaudit design/20_features/in_progress` |
+Use these agent work modes:
 
-These commands map to scripts under `~/.codex/scripts/`.
+- Design Audit: compare active design docs, AI context, and runtime files for drift before implementation.
+- Implementation: make the scoped change, update active docs, and run feasible validation.
+- Review: inspect diffs for behavior regressions, determinism risks, stale paths, missing validation, and unsafe workflow assumptions.
 
-## Animation Asset Workflow
+Use these prompts to standardize recurring agent work:
 
-- When gameplay work requires a new or updated animation asset, explicitly ask the user to implement/provide that animation.
-- For each requested animation, include:
-  - exact save path under `custodian/assets/sprites/...`
-  - short description of the animation intent (what it should communicate in gameplay)
-- Do not silently invent missing production art assets; wire placeholders only when explicitly approved.
-- Treat multi-animation or multi-direction master sheets as source assets, not direct runtime assets.
-- For any sheet that contains more than one animation or directional set, rebuild only the concrete runtime slices actually used by the game into `SpriteFrames` resources.
-- Prefer smaller per-animation runtime slices over binding a large master sheet directly to the active runtime.
+- runtime feature implementation
+- runtime change review
+- docs-drift review
+- sprite pipeline updates
+- procgen handoff inspection
+- combat feel tuning
+- git state and commit preparation
 
-## Asset Tracking Workflow (REQUIRED_ASSETS.md)
+Validation recipes live in `docs/ai_context/VALIDATION_RECIPES.md`.
 
-Production asset needs are tracked in `REQUIRED_ASSETS.md`, which exists in **two identical copies**:
-1. `REQUIRED_ASSETS.md` — project root (user-facing visibility)
-2. `design/00_meta/REQUIRED_ASSETS.md` — design directory (agent reference)
+Use the recipes to choose the narrowest command that proves the change. Prefer RTK subcommands for compact output when they support the command shape, such as `rtk git status`, `rtk grep ...`, and `rtk find ...`. Do not treat `rtk` as a blind prefix for arbitrary commands; use `rtk proxy <command> ...` only when RTK has no matching subcommand and token tracking is still useful. Use raw commands when RTK argument rewriting would hide or alter needed output.
 
-### Asset Lifecycle Automation
+When editing a design doc that will drive follow-up implementation, add or refresh a `Next Agent Slice` section with goal, files, constraints, and acceptance checks. This keeps design docs usable as executable work queues without replacing task packets.
 
-- **When you create an asset** that fulfills a `needed` entry: **automatically remove that entry** from both copies. No user approval needed — the asset is done.
-- **When you discover a missing production asset** during implementation: **automatically add it** to both copies with status `needed`, exact target paths, and **inform the user** what was added and why.
-- **When you change an asset's status** (e.g., `needed` → `partial` or `done`), update both copies immediately.
-- **Never let the two copies drift** — they must always be identical.
+Planned automation for these workflows is tracked in `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md`. Add scripts only when they support a listed check or update the backlog with the new rationale.
 
-## Implementation Workflow
+## Docs Drift Review
 
-### Codex Agent (Special)
-- **Can implement IMMEDIATELY** without proposal sheets
-- Copy code from `design/features/implementation/*.md` files
-- Make changes directly to Godot runtime
+Treat any of the following as documentation drift:
 
-### All Other Agents (OpenCode, Claude, etc.)
-1. Create **design document** in `design/` folder
-2. Create **implementation code** in `design/features/implementation/` as proposal
-3. Wait for **human review/approval**
-4. After approval, implement and update design doc status to `complete`
+- a path moved but indexes still point to the old location
+- implementation status changed but `docs/ai_context/` was not updated
+- runtime behavior changed but design/docs still describe the old behavior
+- a migration created duplicate instructions with no clear primary source
+- asset layout changed but submission/layout conventions were left behind
 
-### Required Process for New Features
+Drift review checklist:
 
-```
-design/
-└── features/
-    └── implementation/
-        ├── FEATURE_NAME.md           ← Design doc
-        └── FEATURE_NAME_CODE.md      ← Exact code to copy (PROPOSAL)
-```
+1. Does the active design doc still describe the current implementation target?
+2. Does `docs/ai_context/CURRENT_STATE.md` still describe the live state?
+3. Does `docs/ai_context/FILE_INDEX.md` still point to the right entry files?
+4. Does any README or local guide still route newcomers to deprecated paths?
+5. Did this change create a new local authority that needs to be indexed?
 
-**Template locations:**
-- Design doc: `design/00_meta/TEMPLATE_SYSTEM.md`
-- Implementation: Copy existing `WEAPON_DATA_INTEGRATION_CODE.md` format
+## Drift Remediation Procedure
 
-**Status labels:** `draft` → `review` → `complete`
+When you detect drift, do this automatically unless the user explicitly says not to:
+
+1. Update the primary authority doc first.
+2. Update `docs/ai_context/CURRENT_STATE.md` if runtime state, ownership, or workflow changed.
+3. Update `docs/ai_context/CONTEXT.md` if the working model or guardrails changed.
+4. Update `docs/ai_context/FILE_INDEX.md` if entry files, locations, or ownership changed.
+5. Update the relevant task packet, when one exists, if scope, acceptance, status, or deferred work changed.
+6. Update local routing docs such as `README.md` or folder `README.md` files if discoverability changed.
+7. Note any intentionally deferred cleanup explicitly so the drift is tracked, not hidden.
+
+## Migration Execution Instructions
+
+Use this whenever you are restructuring docs, moving asset guidance, consolidating primers, or changing canonical paths.
+
+1. Define the new canonical destination.
+   Example: `custodian/AGENTS.md` becomes the local entrypoint for all work under `custodian/`.
+2. Add the destination before deleting or de-emphasizing old routes.
+3. Add prominent routing from every high-probability entrypoint.
+   Typical entrypoints: repository `AGENTS.md`, local `README.md`, AI context indexes, and directory `README.md` files.
+4. Migrate current state into the new destination.
+   Do not create an empty shell that only links elsewhere.
+5. Update the indexes and context pack.
+6. Validate that old entrypoints now forward clearly to the new canonical location.
+7. Leave historical docs in place unless removal is explicitly requested.
+
+## Expected Behavior For Agents
+
+- Ask concise clarification questions when ambiguity would risk wrong work.
+- State temporary assumptions when you proceed under uncertainty.
+- Keep deterministic gameplay logic separate from presentation logic.
+- Do not silently promote legacy Python docs back into active authority.
+- When changing behavior or architecture, update docs as part of the same task.
+
+## Migration Shortcut
+
+If the task is “where do I start?” or “what do I read first?”, the answer for `custodian/` work is:
+
+1. `custodian/AGENTS.md`
+2. `custodian/docs/ai_context/CURRENT_STATE.md`
+3. the relevant file in `design/`
 
 ## Agentmemory Note
 

@@ -1,97 +1,64 @@
 # AGENT TASK PACKET TEMPLATE
 
-Template last updated: 2026-05-03
+Template last updated: 2026-06-12
 
-Use this template before implementation, review, migration, or docs work when the task is more than a trivial one-line edit.
+Task packets are optional risk-control and handoff records. Use the lightest level that preserves useful context:
 
-Copy this file into `custodian/docs/ai_context/task_packets/` and name the copy after the task, for example `VALIDATION_RECIPES.md`.
+- Skip: narrow, low-risk, single-session work with obvious acceptance and no meaningful handoff risk.
+- Compact: ordinary non-trivial work where scope, constraints, acceptance, or deferred work should survive the current session.
+- Full: multi-session work; architecture or ownership changes; migrations; high-risk runtime or asset-pipeline work; substantial handoffs.
 
-## Packet Status
+Do not create or expand a packet merely because several files change.
 
-- Status: draft
-- Owner: agent
+Copy this file into `custodian/docs/ai_context/task_packets/` only when a packet adds value. Delete unused optional sections from the copy.
+
+# [TASK NAME]
+
+- Status: `draft`
+- Authority:
+- Goal:
+- Files:
+- Constraints:
+- Acceptance:
+- Completed:
+- Deferred:
+
+Status values: `draft`, `ready`, `in_progress`, `blocked`, `complete`.
+
+## Full Packet Expansion
+
+Add only the sections needed for higher-risk or multi-session work.
+
+### Ownership And Timing
+
+- Owner:
 - Agent/session:
 - Created:
 - Last updated:
 
-Status values:
+### Work Surface
 
-- `draft` - scope is being shaped
-- `ready` - implementation can begin
-- `in_progress` - implementation is active
-- `blocked` - waiting on user input, assets, tooling, or design authority
-- `complete` - implementation, docs, and validation are done
+- Read:
+- Change:
+- Out of scope:
 
-Ownership rules:
+### Plan
 
-- Reuse an existing packet only when its task scope matches the current task.
-- Create a new packet when the current task has a different scope, even if it touches adjacent docs or files.
-- Do not edit another agent's in-progress packet unless the user asks, the packet is the current task surface, or the change is required to resolve direct conflict with your task.
-- Record a stable identifier in `Agent/session`, such as tool name plus date/time or another user-visible handle.
-- Update `Last updated` on every packet edit.
+1.
+2.
+3.
 
-## Task
+### Drift Review
 
-What is being changed?
+- Primary authority:
+- `CURRENT_STATE.md`:
+- `CONTEXT.md`:
+- `FILE_INDEX.md`:
+- Local routing/readmes:
 
-## Outcome
-
-What should be true when this packet is complete?
-
-## Authority
-
-- Root routing:
-- Local routing:
-- Active design/spec docs:
-- Active runtime/docs files:
-- Historical reference only:
-
-## Work Surface
-
-- Files or folders expected to change:
-- Files or folders expected to be read but not changed:
-- Out-of-scope areas:
-
-## Constraints
-
-- Determinism concerns:
-- Simulation/UI boundary concerns:
-- Asset requirements:
-- Compatibility or migration concerns:
-- Clarifying questions or assumptions:
-
-## Implementation Plan
-
-1. 
-2. 
-3. 
-
-## Acceptance
-
-- Runtime behavior:
-- Documentation:
-- Path/reference validation:
-- Manual validation:
-- Automated/headless validation:
-
-## Drift Review
-
-- Does `custodian/docs/ai_context/CURRENT_STATE.md` need an update?
-- Does `custodian/docs/ai_context/CONTEXT.md` need an update?
-- Does `custodian/docs/ai_context/FILE_INDEX.md` need an update?
-- Does `custodian/AGENTS.md` need an update?
-- Do any design docs need an update?
-
-## Completion Notes
-
-- Implemented:
-- Validated:
-- Deferred:
-
-## Next Steps
+### Handoff
 
 - Next action:
 - Best starting files:
-- Required context:
 - Validation to run:
 - Blockers or open questions:

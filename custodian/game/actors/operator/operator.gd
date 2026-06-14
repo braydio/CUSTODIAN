@@ -905,6 +905,8 @@ func _update_animation():
 		animated_sprite.flip_h = facing_left and not active_animation_name.ends_with("_left")
 		if is_attacking and _sync_modular_action_domains():
 			return
+		if is_block_anim and _is_modular_block_active():
+			return
 		_hide_modular_locomotion_layers()
 		return
 
@@ -2016,7 +2018,7 @@ func update_block_state() -> String:
 		return _get_desired_animation_state()
 	match _block_phase:
 		&"enter":
-			if not animated_sprite.is_playing():
+			if _is_block_animation_finished():
 				_block_phase = &"hold"
 				_block_active = true
 				_play_block_animation(&"melee_2h_block_hold")
@@ -2027,8 +2029,14 @@ func update_block_state() -> String:
 				_block_active = false
 				_play_block_animation(&"melee_2h_block_exit")
 			return "block"
+		&"hitreact":
+			if _is_block_animation_finished():
+				_block_phase = &"hold"
+				_block_active = true
+				_play_block_animation(&"melee_2h_block_hold")
+			return "block"
 		&"exit":
-			if not animated_sprite.is_playing():
+			if _is_block_animation_finished():
 				_block_phase = &""
 				_block_active = false
 				return _get_desired_animation_state()
@@ -2040,13 +2048,62 @@ func update_block_state() -> String:
 			return _get_desired_animation_state()
 
 
-func _play_block_animation(animation_name: StringName) -> void:
+func _play_block_animation(phase_key: StringName) -> void:
+	var profile := get_current_combat_profile()
+	var resolved := _get_weapon_animation_name(profile, String(phase_key), phase_key)
+
+	if _is_current_profile_unarmed() and modular_locomotion_layers_enabled \
+		and _play_modular_unarmed_block(String(resolved)):
+		animated_sprite.visible = false
+		return
+
 	if animated_sprite == null:
 		return
+	animated_sprite.visible = true
 	animated_sprite.flip_h = _is_facing_left(aim_direction)
-	if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(animation_name):
-		animated_sprite.play(animation_name)
-	_play_block_weapon_overlay(animation_name)
+	if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(resolved):
+		animated_sprite.play(resolved)
+	if not _is_current_profile_unarmed():
+		_play_block_weapon_overlay(phase_key)
+
+
+func _play_modular_unarmed_block(base_animation: String) -> bool:
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+		return false
+	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
+		return false
+
+	var direction := aim_direction if aim_direction.length_squared() > 0.001 else visual_idle_direction
+	var lower_anim := AnimationResolver.resolve(base_animation, direction, modular_lower_body_sprite)
+	var upper_anim := AnimationResolver.resolve(base_animation, direction, modular_upper_body_sprite)
+
+	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
+		return false
+	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
+		return false
+
+	_hide_modular_locomotion_layers()
+	modular_lower_body_sprite.visible = true
+	modular_lower_body_sprite.speed_scale = 1.0
+	modular_lower_body_sprite.play(lower_anim)
+	modular_upper_body_sprite.visible = true
+	modular_upper_body_sprite.speed_scale = 1.0
+	modular_upper_body_sprite.play(upper_anim)
+	return true
+
+
+func _is_modular_block_active() -> bool:
+	return modular_locomotion_layers_enabled \
+		and _is_current_profile_unarmed() \
+		and modular_lower_body_sprite != null \
+		and modular_lower_body_sprite.visible \
+		and _is_block_state_active()
+
+
+func _is_block_animation_finished() -> bool:
+	if _is_modular_block_active() and modular_upper_body_sprite != null:
+		return not modular_upper_body_sprite.is_playing()
+	return animated_sprite != null and not animated_sprite.is_playing()
 
 
 func _play_block_weapon_overlay(animation_name: StringName) -> void:
@@ -3017,6 +3074,36 @@ func grant_sidearm(definition: OperatorWeaponDefinition = null) -> Dictionary:
 		"loaded": _ammo_standard_loaded,
 		"reserve": ammo_standard,
 	}
+
+
+## Remove the sidearm, returning ammo to reserve and updating visuals.
+## Returns a Dictionary with {released: bool, weapon_id: StringName}.
+func remove_sidearm() -> Dictionary:
+	if not sidearm_slot_equipped:
+		return {"released": false, "weapon_id": &""}
+	
+	var weapon_id := &""
+	if sidearm_weapon_definition != null:
+		weapon_id = sidearm_weapon_definition.weapon_id
+		# Return loaded ammo to reserve
+		var sidearm_capacity: int = max(1, sidearm_weapon_definition.get_stat_int("magazine_size", ammo_standard_magazine_size))
+		if _ammo_standard_loaded > 0:
+			ammo_standard = min(ammo_standard_max, ammo_standard + _ammo_standard_loaded)
+			_ammo_standard_loaded = 0
+	
+	sidearm_slot_equipped = false
+	
+	# Switch out of sidearm ranged mode if active
+	if combat_loadout_mode == LOADOUT_RANGED and _ranged_ready_weapon_definition == _get_sidearm_weapon_definition():
+		_exit_ranged_ready()
+		combat_loadout_mode = LOADOUT_MELEE
+		_refresh_primary_weapon_state()
+	
+	_refresh_primary_weapon_state()
+	_update_primary_weapon_visual(false)
+	update_visuals()
+	
+	return {"released": true, "weapon_id": weapon_id}
 
 
 func _is_using_melee_weapon_sprite() -> bool:
@@ -4353,6 +4440,10 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 
 	if _is_blocking() and stamina >= block_stamina_cost_per_hit:
 		stamina = max(0.0, stamina - block_stamina_cost_per_hit)
+		if _is_current_profile_unarmed():
+			_block_phase = &"hitreact"
+			_block_active = false
+			_play_block_animation(&"melee_2h_block_hitreact")
 		return {
 			"result": &"blocked",
 			"hit_kind": hit_kind,

@@ -4,7 +4,7 @@ extends CharacterBody2D
 signal defeated_nonlethal
 signal defeated_violent
 signal attack_started
-signal clapper_impact
+signal stilling_pin_impact
 signal thread_pull_started
 
 enum Phase {
@@ -132,16 +132,16 @@ func _choose_attack(distance: float) -> void:
 		_thread_pull()
 		return
 	if distance <= attack_range:
-		_clapper_swing()
+		_pin_strike()
 
 
-func _clapper_swing() -> void:
+func _pin_strike() -> void:
 	attack_started.emit()
-	_play_anim(&"clapper_swing")
+	_play_anim(&"pin_strike")
 	await get_tree().create_timer(0.42).timeout
-	clapper_impact.emit()
+	stilling_pin_impact.emit()
 	if site != null:
-		site.event_state.add_silence_pressure(8, &"clapper_impact")
+		site.event_state.add_silence_pressure(8, &"pin_strike")
 	if target != null and target.has_method("take_damage"):
 		target.call("take_damage", 8.0)
 

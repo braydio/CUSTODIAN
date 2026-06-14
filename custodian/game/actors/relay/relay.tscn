@@ -1,31 +1,31 @@
-[gd_scene load_steps=5 format=3 uid="uid://df3gm87vrj14v"]
+[gd_scene format=3 uid="uid://df3gm87vrj14v"]
 
-[ext_resource type="Script" path="res://game/actors/relay/relay.gd" id="1_relay"]
-[ext_resource type="Script" path="res://game/actors/relay/signal_indicator.gd" id="2_signal"]
-[ext_resource type="Script" path="res://game/actors/relay/relay_interaction.gd" id="3_interaction"]
+[ext_resource type="Script" uid="uid://726p0y4i8tha" path="res://game/actors/relay/relay.gd" id="1_relay"]
+[ext_resource type="Script" uid="uid://mlk6w43rvic6" path="res://game/actors/relay/signal_indicator.gd" id="2_signal"]
+[ext_resource type="Script" uid="uid://tiqrc0qfxa0i" path="res://game/actors/relay/relay_interaction.gd" id="3_interaction"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_relay_interaction"]
 radius = 86.0
 
-[node name="RelayNode" type="Node2D"]
+[node name="RelayNode" type="Node2D" unique_id=419268506]
 z_index = 2
 script = ExtResource("1_relay")
 
-[node name="Base" type="Polygon2D" parent="."]
+[node name="Base" type="Polygon2D" parent="." unique_id=721797546]
 position = Vector2(0, -4)
-polygon = PackedVector2Array(-18, 14, -10, -2, 0, -8, 10, -2, 18, 14, 8, 20, -8, 20)
 color = Color(0.15, 0.22, 0.18, 1)
+polygon = PackedVector2Array(-18, 14, -10, -2, 0, -8, 10, -2, 18, 14, 8, 20, -8, 20)
 
-[node name="Mast" type="Polygon2D" parent="."]
+[node name="Mast" type="Polygon2D" parent="." unique_id=1727333415]
 position = Vector2(0, -24)
-polygon = PackedVector2Array(-4, 20, -2, -30, 2, -30, 4, 20, 16, -16, 19, -13, 5, 0, -5, 0, -19, -13, -16, -16)
 color = Color(0, 1, 0.35, 0.94)
+polygon = PackedVector2Array(-4, 20, -2, -30, 2, -30, 4, 20, 16, -16, 19, -13, 5, 0, -5, 0, -19, -13, -16, -16)
 
-[node name="SignalIndicator" type="Node2D" parent="."]
+[node name="SignalIndicator" type="Node2D" parent="." unique_id=1716158039]
 position = Vector2(0, -54)
 script = ExtResource("2_signal")
 
-[node name="PromptLabel" type="Label" parent="."]
+[node name="PromptLabel" type="Label" parent="." unique_id=608853431]
 offset_left = -48.0
 offset_top = -86.0
 offset_right = 48.0
@@ -34,10 +34,10 @@ theme_override_font_sizes/font_size = 10
 text = "R_NORTH"
 horizontal_alignment = 1
 
-[node name="RelayInteraction" type="Area2D" parent="."]
+[node name="RelayInteraction" type="Area2D" parent="." unique_id=1047048952]
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("3_interaction")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RelayInteraction"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RelayInteraction" unique_id=768279427]
 shape = SubResource("CircleShape2D_relay_interaction")

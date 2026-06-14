@@ -1,7 +1,7 @@
 # Review Runtime Change
 
 Read `custodian/AGENTS.md` first.
-Then read `CURRENT_STATE.md`, `FILE_INDEX.md`, the relevant task packet, and the linked design doc.
+Then read `CURRENT_STATE.md`, `FILE_INDEX.md`, any relevant existing task packet, and the linked design doc.
 
 ## Task
 
@@ -24,7 +24,7 @@ Findings first. Prioritize:
 - `custodian/docs/ai_context/CURRENT_STATE.md` - live runtime state
 - `custodian/docs/ai_context/FILE_INDEX.md` - file ownership map
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` - validation command guide
-- Task packet: `custodian/docs/ai_context/task_packets/[TASK_PACKET].md`
+- Task packet, when one exists: `custodian/docs/ai_context/task_packets/[TASK_PACKET].md`
 - Design doc: `design/[feature_path].md`
 
 ## Output

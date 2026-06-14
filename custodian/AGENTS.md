@@ -22,7 +22,7 @@ Read these in order before making changes:
 2. `docs/ai_context/CURRENT_STATE.md` for the latest runtime and documentation state
 3. `docs/ai_context/CONTEXT.md` for project rules and handoff context
 4. `docs/ai_context/FILE_INDEX.md` for high-signal file ownership and entrypoints
-5. `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` and any relevant packet in `docs/ai_context/task_packets/` for non-trivial work
+5. `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` and any relevant packet in `docs/ai_context/task_packets/` when the packet-selection rules below call for one
 6. `docs/ai_context/VALIDATION_RECIPES.md` and relevant prompt templates in `docs/ai_context/prompts/`
 7. Relevant runtime/docs files for the feature or asset area you are touching
 
@@ -54,7 +54,7 @@ Use this map to land on the right material fast:
 | Asset layout or content placement | `docs/ASSET_LAYOUT_CONVENTION.md` | nearby `README.md` files in `content/` |
 | Scene/runtime structure | `docs/SCENE_HIERARCHY.md` | `scenes/`, `game/`, `project.godot` |
 | Migration or drift cleanup | `docs/AGENT_MIGRATION_PLAYBOOK.md` | this primer, `docs/ai_context/*` |
-| Validation command selection | `docs/ai_context/VALIDATION_RECIPES.md` | relevant task packet acceptance checks |
+| Validation command selection | `docs/ai_context/VALIDATION_RECIPES.md` | task packet acceptance checks when a packet exists |
 | Reusable agent prompts | `docs/ai_context/prompts/README.md` | task-specific prompt template |
 | Agent workflow automation | `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` | `tools/agent/` when scripts exist |
 
@@ -68,8 +68,8 @@ Before editing, run this retrieval pipeline:
    Read the matching file in `../design/` first.
 3. Pull current state.
    Read `docs/ai_context/CURRENT_STATE.md` and `docs/ai_context/FILE_INDEX.md`.
-4. Check task packet requirements.
-   For non-trivial implementation, review, migration, validation, asset workflow, or multi-file docs work, create or update a packet from `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` under `docs/ai_context/task_packets/`.
+4. Decide whether a task packet adds value.
+   Skip it for narrow, low-risk, single-session work. Use the compact template when scope, acceptance, or deferred work needs a durable record. Expand it for high-risk, multi-session, architecture, ownership, migration, or substantial handoff work.
 5. Pull validation and prompt guidance.
    Read `docs/ai_context/VALIDATION_RECIPES.md` and any matching prompt template in `docs/ai_context/prompts/`.
 6. Pull adjacent context.
@@ -90,25 +90,23 @@ Minimum adjacency check:
 
 ## Agent Task Packets
 
-Task packets are task-scoped planning and handoff records for work that is large enough to risk ambiguity or documentation drift.
+Task packets are optional risk-control and handoff records, not mandatory ceremony.
 
-Use a packet for:
+Choose the lightest useful level:
 
-- runtime behavior changes
-- architecture or ownership changes
-- validation workflow changes
-- asset pipeline or production asset workflow changes
-- migrations and docs-drift cleanup
-- multi-file documentation changes
-- reviews that produce follow-up implementation work
+- Skip: narrow, low-risk, single-session fixes; obvious validation; small documentation corrections.
+- Compact packet: ordinary non-trivial work where scope, constraints, acceptance, or deferred work should survive the current session.
+- Full packet: multi-session work; architecture or ownership changes; migrations; high-risk runtime or asset-pipeline changes; reviews producing substantial follow-up implementation.
+
+Do not create a packet merely because a task touches several files.
 
 Task packet workflow:
 
-1. Copy `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` into `docs/ai_context/task_packets/`.
-2. Name the copy after the task, for example `VALIDATION_RECIPES.md`.
-3. Fill task, outcome, authority, work surface, constraints, plan, acceptance, and drift review before implementation.
-4. Keep packet status and assumptions current as scope changes.
-5. Mark the packet `complete` only after implementation, documentation updates, feasible validation, and completion notes are done.
+1. Select skip, compact, or full based on risk and handoff value.
+2. When using a packet, copy `docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` into `docs/ai_context/task_packets/` and name it after the task.
+3. Fill the compact fields first; add full-packet sections only when their information is useful.
+4. Keep the packet current when scope, blockers, acceptance, or deferred work materially changes.
+5. Mark it `complete` only after implementation, required documentation, feasible validation, and completion notes are done.
 
 Task packets do not replace design docs. Use `../design/` as implementation authority, and use task packets to make the current agent slice explicit.
 
@@ -166,7 +164,7 @@ When you detect drift, do this automatically unless the user explicitly says not
 2. Update `docs/ai_context/CURRENT_STATE.md` if runtime state, ownership, or workflow changed.
 3. Update `docs/ai_context/CONTEXT.md` if the working model or guardrails changed.
 4. Update `docs/ai_context/FILE_INDEX.md` if entry files, locations, or ownership changed.
-5. Update the relevant task packet if scope, acceptance, status, or deferred work changed.
+5. Update the relevant task packet, when one exists, if scope, acceptance, status, or deferred work changed.
 6. Update local routing docs such as `README.md` or folder `README.md` files if discoverability changed.
 7. Note any intentionally deferred cleanup explicitly so the drift is tracked, not hidden.
 

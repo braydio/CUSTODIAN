@@ -53,6 +53,32 @@ For the full content-root domain map, see `res://content/README.md`.
 - `unregistered/` is quarantine. Promote assets out of it only by assigning an owning runtime/source domain, updating references/manifests, and verifying Godot import paths.
 - `legacy/` folders are historical or compatibility surfaces. Keep them local to the feature they explain, and document why they are retained in a local README when possible.
 
+## Persistent Runtime-Ready Drop
+
+Use `custodian/asset_drop/runtime_ready/inbox/` for new assets that are already ready for
+Godot import. This intake lives outside `res://` and maps mirrored inbox paths into
+`res://content/`:
+
+```text
+custodian/asset_drop/runtime_ready/inbox/tiles/roads_paths/runtime/roads/new_tile.png
+-> res://content/tiles/roads_paths/runtime/roads/new_tile.png
+```
+
+Run a dry-run before applying:
+
+```bash
+python custodian/tools/pipelines/runtime_ready_assets.py --dry-run
+python custodian/tools/pipelines/runtime_ready_assets.py --apply --godot-import
+```
+
+Use a same-name `.runtime.json` sidecar for explicit routing when the inbox path cannot
+express the correct owner. The router archives processed sources and writes receipts.
+It rejects different existing targets unless `--replace` is supplied.
+
+Do not use this generic path for sprite sheets that require normalization, compatibility
+outputs, or `SpriteFrames` rebuild hooks. Those belong in
+`res://content/sprites/_pipeline/inbox/`.
+
 ## Aseprite Source File Convention
 
 **All `.aseprite` and `.ase` source files must live under `content/_aseprite/`.**

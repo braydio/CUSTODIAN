@@ -5,6 +5,7 @@ const ENEMY_BEHAVIOR_PROFILE_SCRIPT := preload("res://game/actors/enemies/compon
 
 const IDLE := &"idle"
 const PATROL := &"patrol"
+const AMBIENT_ACTIVITY := &"ambient_activity"
 const INVESTIGATE := &"investigate"
 const NOTICE := &"notice"
 const ENGAGE_OPERATOR := &"engage_operator"
@@ -24,6 +25,7 @@ const DEAD := &"dead"
 @export var storage_interact_range_px: float = 42.0
 @export var exit_reached_range_px: float = 36.0
 @export var debug_enabled: bool = false
+@export var ambient_anchor_group: StringName = &"ambient_activity_anchor"
 
 var profile: Resource = null
 var blackboard: Node = null
@@ -72,6 +74,8 @@ func physics_update(enemy: Node2D, delta: float) -> bool:
 			_update_idle(enemy, delta)
 		PATROL:
 			_update_patrol(enemy, delta)
+		AMBIENT_ACTIVITY:
+			_update_ambient_activity(enemy, delta)
 		INVESTIGATE:
 			_update_investigate(enemy, delta)
 		NOTICE:
@@ -102,6 +106,8 @@ func physics_update(enemy: Node2D, delta: float) -> bool:
 func change_state(new_state: StringName) -> void:
 	if current_state == new_state and state_time > 0.0:
 		return
+	if current_state == AMBIENT_ACTIVITY and new_state != AMBIENT_ACTIVITY and get_parent() != null:
+		_release_ambient_anchor(get_parent())
 	current_state = new_state
 	state_time = 0.0
 	_storage_timer = 0.0
@@ -141,6 +147,17 @@ func force_notice(operator: Node = null) -> void:
 	change_state(NOTICE)
 
 
+func force_ambient(anchor: Node) -> void:
+	if blackboard == null or anchor == null:
+		return
+	if anchor.has_method("claim") and not bool(anchor.call("claim", get_parent())):
+		return
+	blackboard.ambient_anchor = anchor
+	blackboard.ambient_activity_id = StringName(str(anchor.get("activity_id"))) if "activity_id" in anchor else &"ambient"
+	blackboard.ambient_noncombat_first = bool(anchor.get("noncombat_first")) if "noncombat_first" in anchor else true
+	change_state(AMBIENT_ACTIVITY)
+
+
 func get_debug_snapshot() -> Dictionary:
 	return {
 		"enabled": enabled,
@@ -158,6 +175,8 @@ func _update_idle(enemy: Node2D, _delta: float) -> void:
 		return
 	if _rescore_timer <= 0.0:
 		_rescore_timer = idle_rescore_interval_sec
+		if _try_claim_nearby_ambient_anchor(enemy):
+			return
 		var objective: Dictionary = objective_sensor.call("choose_objective", enemy, profile, blackboard)
 		_apply_objective_choice(objective)
 
@@ -171,6 +190,59 @@ func _update_patrol(enemy: Node2D, _delta: float) -> void:
 	if _rescore_timer <= 0.0:
 		_rescore_timer = idle_rescore_interval_sec
 		_apply_objective_choice(objective_sensor.call("choose_objective", enemy, profile, blackboard))
+
+
+func _update_ambient_activity(enemy: Node2D, delta: float) -> void:
+	if blackboard.is_alerted and blackboard.operator_ref != null:
+		change_state(NOTICE)
+		return
+	var anchor := blackboard.ambient_anchor as Node2D
+	if anchor == null or not is_instance_valid(anchor):
+		change_state(PATROL)
+		return
+	var anchor_pos := anchor.global_position
+	if anchor.has_method("get_anchor_position"):
+		anchor_pos = anchor.call("get_anchor_position")
+	if enemy.global_position.distance_to(anchor_pos) > 18.0:
+		enemy.call("behavior_move_toward", anchor_pos, profile.patrol_speed)
+		return
+	enemy.call("behavior_stop")
+	blackboard.ambient_activity_timer += delta
+	if blackboard.ambient_activity_timer >= profile.ambient_activity_duration_sec:
+		change_state(PATROL)
+
+
+func _try_claim_nearby_ambient_anchor(enemy: Node2D) -> bool:
+	var roll_basis := "%s:%d:%d" % [enemy.name, int(state_time * 10.0), int(profile.ambient_activity_weight * 100.0)]
+	var roll := float((roll_basis.hash() & 0x7fffffff) % 1000) / 1000.0
+	if roll > profile.ambient_activity_weight:
+		return false
+	var best_anchor: Node2D = null
+	var best_dist := INF
+	for anchor in enemy.get_tree().get_nodes_in_group(ambient_anchor_group):
+		if not (anchor is Node2D):
+			continue
+		if anchor.has_method("can_claim") and not bool(anchor.call("can_claim", enemy)):
+			continue
+		var dist := enemy.global_position.distance_to((anchor as Node2D).global_position)
+		if dist <= profile.ambient_anchor_search_radius_px and dist < best_dist:
+			best_dist = dist
+			best_anchor = anchor
+	if best_anchor == null:
+		return false
+	force_ambient(best_anchor)
+	return current_state == AMBIENT_ACTIVITY
+
+
+func _release_ambient_anchor(enemy: Node) -> void:
+	if blackboard == null:
+		return
+	var anchor: Node = blackboard.ambient_anchor
+	if anchor != null and is_instance_valid(anchor) and anchor.has_method("release"):
+		anchor.call("release", enemy)
+	blackboard.ambient_anchor = null
+	blackboard.ambient_activity_id = &"none"
+	blackboard.ambient_activity_timer = 0.0
 
 
 func _update_investigate(enemy: Node2D, _delta: float) -> void:

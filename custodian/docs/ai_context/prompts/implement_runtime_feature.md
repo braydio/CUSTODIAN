@@ -9,7 +9,7 @@ Implement the next slice of: **[feature_name]**
 ## Rules
 - Preserve deterministic fixed-step simulation.
 - Keep rendering/UI separate from simulation authority.
-- Create or update a task packet for non-trivial work.
+- Create or update a compact task packet when durable scope, acceptance, or handoff context adds value; expand it only for high-risk or multi-session work.
 - Update `CURRENT_STATE.md` if behavior changes.
 - Update `FILE_INDEX.md` if ownership or entrypoints change.
 - Follow `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
@@ -20,7 +20,7 @@ Implement the next slice of: **[feature_name]**
 - `custodian/docs/ai_context/FILE_INDEX.md` — File ownership map
 - `custodian/docs/ai_context/CONTEXT.md` — Full context overview
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` — Validation command guide
-- Task packet: `custodian/docs/ai_context/task_packets/[TASK_PACKET].md`
+- Task packet, when selected: `custodian/docs/ai_context/task_packets/[TASK_PACKET].md`
 - Design doc: `design/[feature_path].md` — Feature specification
 
 ## Implementation Notes

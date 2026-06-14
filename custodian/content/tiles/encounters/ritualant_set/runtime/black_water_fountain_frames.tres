@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://od2538tpylf4"]
+
+[ext_resource type="Texture2D" uid="uid://btyhk65uibd24" path="res://content/tiles/encounters/ritualant_set/black_water_fountain__pulse_01__4f__160x160.png" id="1_water_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_water_0"]
+atlas = ExtResource("1_water_sheet")
+region = Rect2(0, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_water_1"]
+atlas = ExtResource("1_water_sheet")
+region = Rect2(160, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_water_2"]
+atlas = ExtResource("1_water_sheet")
+region = Rect2(320, 0, 160, 160)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_water_3"]
+atlas = ExtResource("1_water_sheet")
+region = Rect2(480, 0, 160, 160)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_water_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_water_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_water_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_water_3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

@@ -1,0 +1,238 @@
+{
+  "name": "custodian_placeholder_extras_32",
+  "tile_width": 32,
+  "tile_height": 32,
+  "columns": 4,
+  "rows": 3,
+  "theme": "Extended placeholder kit for elevation, nodes, portals - dark theme with colored labels and PH watermark",
+  "tiles": [
+    {
+      "index": 0,
+      "id": "placeholder_elevation_ramp_up",
+      "atlas_coords": [
+        0,
+        0
+      ],
+      "pixel_coords": [
+        0,
+        0
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "elevation",
+      "label": "ER",
+      "description": "Elevation ramp up tile"
+    },
+    {
+      "index": 1,
+      "id": "placeholder_elevation_ramp_down",
+      "atlas_coords": [
+        1,
+        0
+      ],
+      "pixel_coords": [
+        32,
+        0
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "elevation",
+      "label": "ED",
+      "description": "Elevation ramp down tile"
+    },
+    {
+      "index": 2,
+      "id": "placeholder_elevation_platform",
+      "atlas_coords": [
+        2,
+        0
+      ],
+      "pixel_coords": [
+        64,
+        0
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "elevation",
+      "label": "EP",
+      "description": "Elevated platform tile"
+    },
+    {
+      "index": 3,
+      "id": "placeholder_elevation_void",
+      "atlas_coords": [
+        3,
+        0
+      ],
+      "pixel_coords": [
+        96,
+        0
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "elevation",
+      "label": "EV",
+      "description": "Elevation void / impassable blocker"
+    },
+    {
+      "index": 4,
+      "id": "placeholder_node_harvestable",
+      "atlas_coords": [
+        0,
+        1
+      ],
+      "pixel_coords": [
+        0,
+        32
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "node",
+      "label": "NH",
+      "description": "Harvestable resource node"
+    },
+    {
+      "index": 5,
+      "id": "placeholder_node_depleted",
+      "atlas_coords": [
+        1,
+        1
+      ],
+      "pixel_coords": [
+        32,
+        32
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "node",
+      "label": "ND",
+      "description": "Depleted resource node"
+    },
+    {
+      "index": 6,
+      "id": "placeholder_node_rare",
+      "atlas_coords": [
+        2,
+        1
+      ],
+      "pixel_coords": [
+        64,
+        32
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "node",
+      "label": "NR",
+      "description": "Rare / expedition resource node"
+    },
+    {
+      "index": 7,
+      "id": "placeholder_node_artifact",
+      "atlas_coords": [
+        3,
+        1
+      ],
+      "pixel_coords": [
+        96,
+        32
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "node",
+      "label": "NA",
+      "description": "Archive / artifact node"
+    },
+    {
+      "index": 8,
+      "id": "placeholder_portal_ring",
+      "atlas_coords": [
+        0,
+        2
+      ],
+      "pixel_coords": [
+        0,
+        64
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "portal",
+      "label": "PR",
+      "description": "Portal ring base tile"
+    },
+    {
+      "index": 9,
+      "id": "placeholder_portal_active",
+      "atlas_coords": [
+        1,
+        2
+      ],
+      "pixel_coords": [
+        32,
+        64
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "portal",
+      "label": "PA",
+      "description": "Active portal tile"
+    },
+    {
+      "index": 10,
+      "id": "placeholder_portal_target",
+      "atlas_coords": [
+        2,
+        2
+      ],
+      "pixel_coords": [
+        64,
+        64
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "portal",
+      "label": "PT",
+      "description": "Portal target / destination marker"
+    },
+    {
+      "index": 11,
+      "id": "placeholder_portal_pedestal",
+      "atlas_coords": [
+        3,
+        2
+      ],
+      "pixel_coords": [
+        96,
+        64
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "group": "portal",
+      "label": "PP",
+      "description": "Portal platform / pedestal tile"
+    }
+  ]
+}

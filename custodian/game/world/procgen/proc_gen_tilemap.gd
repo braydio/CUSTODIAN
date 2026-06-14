@@ -13,6 +13,11 @@ extends Node
 const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_wall_segment.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
+const WORLD_PROGRESS_PROFILE_SCRIPT := preload("res://game/world/procgen/progression/world_progress_profile.gd")
+const FACTION_SITE_PLACER_SCRIPT := preload("res://game/world/procgen/factions/faction_site_placer.gd")
+const STORY_ROOM_PLACER_SCRIPT := preload("res://game/world/procgen/story/story_room_placer.gd")
+const AMBIENT_ACTIVITY_ANCHOR_SCRIPT := preload("res://game/actors/enemies/ambient/ambient_activity_anchor.gd")
+const PLACEHOLDER_ATLAS_PATH := "res://content/placeholder_art/placeholder_walls_floors_stairs.png"
 const TILE_ALT_FLIP_H := 4096
 const TILE_ALT_FLIP_V := 8192
 const TILE_ALT_TRANSPOSE := 16384
@@ -397,6 +402,20 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export var elevation_platform_min_size: Vector2i = Vector2i(7, 5)
 @export var elevation_platform_max_size: Vector2i = Vector2i(12, 8)
 @export_group("", "")
+@export_group("World Progression", "world_progress")
+@export var world_progression_enabled: bool = true
+@export_file("*.json") var world_progress_profile_path: String = "res://content/procgen/world_profiles/sundered_keep_ascent.json"
+@export var world_progress_debug_logging: bool = true
+@export var ascent_route_enabled: bool = true
+@export_group("", "")
+@export_group("Faction Ambient Sites", "faction_ambient")
+@export var faction_ambient_sites_enabled: bool = true
+@export_range(0, 64, 1) var faction_ambient_site_count: int = 18
+@export_group("", "")
+@export_group("Story Rooms", "story_room")
+@export var story_rooms_enabled: bool = true
+@export_range(0, 32, 1) var story_room_count: int = 8
+@export_group("", "")
 
 var _foliage_parent: Node2D = null
 var _road_piece_parent: Node2D = null
@@ -418,6 +437,13 @@ var _interior_prop_textures: Array[Texture2D] = []
 var _fruit_texture: Texture2D = null
 var _fruit_sprites: Array[Node2D] = []
 var _planet_world_profile: Dictionary = {}
+var _world_progress_profile = null
+var _world_progress_samples: Dictionary = {}
+var _faction_activity_sites: Array[Dictionary] = []
+var _story_room_sites: Array[Dictionary] = []
+var _faction_site_placer: RefCounted = null
+var _story_room_placer: RefCounted = null
+var _world_progress_marker_parent: Node2D = null
 
 func _ready() -> void:
 	add_to_group("procgen_tilemap")
@@ -441,6 +467,7 @@ func _ready() -> void:
 	_road_piece_parent = _find_or_create_road_piece_parent()
 	_load_road_piece_manifest()
 	_ruin_prop_parent = _find_ruin_prop_parent()
+	_world_progress_marker_parent = _find_or_create_world_progress_marker_parent()
 	_load_foliage_textures()
 	_load_interior_prop_textures()
 	_apply_planet_visual_profile()
@@ -535,11 +562,14 @@ func _fill_tilemaps() -> void:
 		_clear_ruin_props()
 		_clear_horizontal_wall_overlays()
 		_clear_runtime_wall_collision()
+		_clear_world_progression_runtime()
 		_rebuild_runtime_wall_collision_debug()
 	_apply_planet_visual_profile()
 	
 	var map_size = procgen_node.map_size
 	var open_layout_active := _is_open_layout_active()
+	_ensure_world_progress_profile()
+	_ensure_site_placers()
 	
 	for x in range(map_size.x):
 		for y in range(map_size.y):
@@ -579,6 +609,12 @@ func _fill_tilemaps() -> void:
 		_prune_small_edge_road_components(map_size)
 		_refresh_road_path_visuals()
 		_capture_generated_tile_state(map_size)
+	if world_progression_enabled:
+		_build_world_progress_samples(map_size)
+	if faction_ambient_sites_enabled:
+		_place_faction_ambient_sites(map_size)
+	if story_rooms_enabled:
+		_place_story_rooms(map_size)
 	if enable_streaming_reveal:
 		_prepare_streaming_reveal()
 	elif build_runtime_wall_collision:
@@ -1505,6 +1541,100 @@ func _set_road_path_tile(pos: Vector2i, surface_kind: String = "road") -> void:
 	_clear_road_blocking_wall(pos)
 
 
+func claim_procgen_floor_rect_for_authored_scene_world(
+	global_center: Vector2,
+	size_tiles: Vector2i,
+	region_type: String = "authored_scene_floor",
+	zone: String = "authored_scene",
+	margin_tiles: int = 1
+) -> Rect2i:
+	return claim_procgen_floor_rect_for_authored_scene_tiles(
+		_global_to_tile(global_center),
+		size_tiles,
+		region_type,
+		zone,
+		margin_tiles
+	)
+
+
+func claim_procgen_floor_rect_for_authored_scene_tiles(
+	center_tile: Vector2i,
+	size_tiles: Vector2i,
+	region_type: String = "authored_scene_floor",
+	zone: String = "authored_scene",
+	margin_tiles: int = 1
+) -> Rect2i:
+	if floor_tilemap == null or walls_tilemap == null:
+		return Rect2i()
+
+	var footprint_size := Vector2i(maxi(1, size_tiles.x), maxi(1, size_tiles.y))
+	var half_extents := Vector2i(
+		int(floor(float(footprint_size.x) * 0.5)),
+		int(floor(float(footprint_size.y) * 0.5))
+	)
+	var footprint_rect := Rect2i(center_tile - half_extents, footprint_size)
+	var claim_rect := footprint_rect.grow(maxi(0, margin_tiles))
+	var map_size := procgen_node.map_size if procgen_node != null else Vector2i(999999, 999999)
+
+	for x in range(claim_rect.position.x, claim_rect.end.x):
+		for y in range(claim_rect.position.y, claim_rect.end.y):
+			var tile := Vector2i(x, y)
+			if procgen_node != null and not _is_tile_inside_map(tile, map_size, 0):
+				continue
+			_clear_procgen_road_authority_at(tile)
+			_force_authored_scene_floor_authority(tile, region_type, zone, false)
+
+	if build_runtime_wall_collision:
+		_sync_runtime_wall_collision_with_visible_walls()
+	_rebuild_horizontal_wall_overlays()
+	_refresh_shadows()
+	_refresh_navigation_after_wall_change(true)
+	return footprint_rect
+
+
+func _force_authored_scene_floor_authority(tile: Vector2i, region_type: String, zone: String, refresh_collision_debug: bool = true) -> void:
+	var source_id := _select_floor_source_id(tile)
+	var atlas := _select_floor_coord(tile)
+	_generated_floor_cells[tile] = {
+		"source_id": source_id,
+		"atlas": atlas,
+		"alternative": 0,
+	}
+	floor_tilemap.set_cell(tile, source_id, atlas, 0)
+	_clear_procgen_wall_authority_at(tile, refresh_collision_debug)
+	_ensure_elevation_map()
+	elevation_map.call(
+		"set_cell",
+		tile,
+		ELEVATION_MAP_SCRIPT.DEFAULT_HEIGHT,
+		ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE,
+		ELEVATION_MAP_SCRIPT.DIRECTION_NONE
+	)
+	_set_region_tile(tile, region_type, zone)
+
+
+func _clear_procgen_wall_authority_at(tile: Vector2i, refresh_collision_debug: bool = true) -> void:
+	if walls_tilemap != null:
+		walls_tilemap.erase_cell(tile)
+	_wall_health.erase(tile)
+	_generated_wall_cells.erase(tile)
+	if build_runtime_wall_collision:
+		_remove_runtime_wall_body(tile, refresh_collision_debug)
+	_remove_foliage(tile)
+	_remove_road_piece_decal(tile)
+
+
+func _clear_procgen_road_authority_at(tile: Vector2i) -> void:
+	_main_road_tiles.erase(tile)
+	_road_centerline_tiles.erase(tile)
+	_path_centerline_tiles.erase(tile)
+	_road_visual_tiles.erase(tile)
+	_path_visual_tiles.erase(tile)
+	_compound_connector_centerline_tiles.erase(tile)
+	_parking_zone_tiles.erase(tile)
+	_remove_road_piece_decal(tile)
+
+
 func _enforce_road_walkability(map_size: Vector2i) -> void:
 	for tile_variant in _main_road_tiles.keys():
 		if tile_variant is Vector2i:
@@ -1522,13 +1652,7 @@ func _enforce_road_walkability(map_size: Vector2i) -> void:
 
 
 func _clear_road_blocking_wall(pos: Vector2i) -> void:
-	if walls_tilemap != null:
-		walls_tilemap.erase_cell(pos)
-	_wall_health.erase(pos)
-	_generated_wall_cells.erase(pos)
-	if build_runtime_wall_collision:
-		_remove_runtime_wall_body(pos)
-	_remove_foliage(pos)
+	_clear_procgen_wall_authority_at(pos)
 
 
 func _refresh_road_path_visuals() -> void:
@@ -2375,6 +2499,145 @@ func _clear_region_metadata() -> void:
 	_region_tiles.clear()
 
 
+func _ensure_world_progress_profile() -> void:
+	if not world_progression_enabled:
+		_world_progress_profile = null
+		return
+	if _world_progress_profile == null:
+		_world_progress_profile = WORLD_PROGRESS_PROFILE_SCRIPT.load_from_path(world_progress_profile_path)
+	var spawn := get_player_spawn()
+	if spawn != Vector2i.ZERO:
+		_world_progress_profile.origin_cell = spawn
+
+
+func _ensure_site_placers() -> void:
+	if _faction_site_placer == null:
+		_faction_site_placer = FACTION_SITE_PLACER_SCRIPT.new()
+	if _story_room_placer == null:
+		_story_room_placer = STORY_ROOM_PLACER_SCRIPT.new()
+
+
+func _build_world_progress_samples(map_size: Vector2i) -> void:
+	_world_progress_samples.clear()
+	if _world_progress_profile == null:
+		return
+	for x in range(0, map_size.x, 16):
+		for y in range(0, map_size.y, 16):
+			var cell := Vector2i(x, y)
+			_world_progress_samples[cell] = _world_progress_profile.get_cell_progress(cell, procgen_node.seed)
+	if world_progress_debug_logging:
+		print("WorldProgression: profile=%s samples=%s" % [_world_progress_profile.profile_id, _world_progress_samples.size()])
+
+
+func get_world_progress_at_tile(tile: Vector2i) -> Dictionary:
+	_ensure_world_progress_profile()
+	if _world_progress_profile == null:
+		return {}
+	return _world_progress_profile.get_cell_progress(tile, procgen_node.seed if procgen_node != null else 0)
+
+
+func _place_faction_ambient_sites(map_size: Vector2i) -> void:
+	_faction_activity_sites.clear()
+	if _world_progress_profile == null or _faction_site_placer == null:
+		return
+	_faction_activity_sites = _faction_site_placer.call("place_sites", {
+		"seed": _tile_noise_hash(Vector2i(661, 911)),
+		"map_size": map_size,
+		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
+		"blocked_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
+		"required_cells": _collect_terrain_required_cells(map_size),
+		"count": faction_ambient_site_count,
+		"world_progress_profile": _world_progress_profile,
+	})
+	for site in _faction_activity_sites:
+		var cell: Vector2i = site.get("cell", Vector2i.ZERO)
+		if not _is_tile_inside_map(cell, map_size):
+			continue
+		if get_region_type_at_tile(cell) == "exterior":
+			_set_region_tile(cell, "faction_%s_%s" % [String(site.get("faction_id", "none")), String(site.get("activity_id", "ambient"))], "faction_activity")
+		_spawn_ambient_activity_anchor(site)
+
+
+func _place_story_rooms(map_size: Vector2i) -> void:
+	_story_room_sites.clear()
+	if _world_progress_profile == null or _story_room_placer == null:
+		return
+	_story_room_sites = _story_room_placer.call("place_story_rooms", {
+		"seed": _tile_noise_hash(Vector2i(1201, 1709)),
+		"map_size": map_size,
+		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
+		"blocked_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
+		"required_cells": _collect_terrain_required_cells(map_size),
+		"count": story_room_count,
+		"world_progress_profile": _world_progress_profile,
+		"faction_sites": _faction_activity_sites,
+	})
+	for room in _story_room_sites:
+		var cell: Vector2i = room.get("cell", Vector2i.ZERO)
+		if not _is_tile_inside_map(cell, map_size):
+			continue
+		if get_region_type_at_tile(cell) == "exterior":
+			_set_region_tile(cell, "story_room_%s" % String(room.get("story_id", "unknown")), "story_room")
+		_spawn_placeholder_marker(cell, Vector2i(3, 2), "StoryRoom_%s" % String(room.get("story_id", "unknown")))
+
+
+func _find_or_create_world_progress_marker_parent() -> Node2D:
+	var existing := get_node_or_null("WorldProgressMarkers") as Node2D
+	if existing != null:
+		return existing
+	var parent := Node2D.new()
+	parent.name = "WorldProgressMarkers"
+	add_child(parent)
+	return parent
+
+
+func _clear_world_progression_runtime() -> void:
+	_world_progress_samples.clear()
+	_faction_activity_sites.clear()
+	_story_room_sites.clear()
+	if _world_progress_marker_parent == null:
+		_world_progress_marker_parent = _find_or_create_world_progress_marker_parent()
+	for child in _world_progress_marker_parent.get_children():
+		child.queue_free()
+
+
+func _spawn_ambient_activity_anchor(site: Dictionary) -> void:
+	if _world_progress_marker_parent == null:
+		return
+	var anchor := AMBIENT_ACTIVITY_ANCHOR_SCRIPT.new()
+	anchor.name = "Ambient_%s" % String(site.get("site_id", "site"))
+	anchor.faction_id = String(site.get("faction_id", "none"))
+	anchor.activity_id = String(site.get("activity_id", "ambient"))
+	anchor.escalation_radius_px = float(site.get("escalation_radius_tiles", 6)) * get_runtime_tile_size().x
+	anchor.noncombat_first = bool(site.get("noncombat_first", true))
+	_world_progress_marker_parent.add_child(anchor)
+	anchor.global_position = _tile_to_world_position(site.get("cell", Vector2i.ZERO))
+	_add_placeholder_marker_sprite(anchor, Vector2i(2, 2))
+
+
+func _spawn_placeholder_marker(cell: Vector2i, atlas_coord: Vector2i, marker_name: String) -> void:
+	if _world_progress_marker_parent == null:
+		return
+	var marker := Node2D.new()
+	marker.name = marker_name
+	_world_progress_marker_parent.add_child(marker)
+	marker.global_position = _tile_to_world_position(cell)
+	_add_placeholder_marker_sprite(marker, atlas_coord)
+
+
+func _add_placeholder_marker_sprite(parent: Node2D, atlas_coord: Vector2i) -> void:
+	var texture := load(PLACEHOLDER_ATLAS_PATH) as Texture2D
+	if texture == null:
+		return
+	var sprite := Sprite2D.new()
+	sprite.texture = texture
+	sprite.region_enabled = true
+	sprite.region_rect = Rect2(Vector2(atlas_coord * 32), Vector2(32, 32))
+	sprite.modulate = Color(1.0, 1.0, 1.0, 0.72)
+	sprite.z_index = 2
+	parent.add_child(sprite)
+
+
 func _set_region_tile(tile: Vector2i, region_type: String, zone: String) -> void:
 	_region_tiles[tile] = {
 		"region_type": region_type,
@@ -2451,6 +2714,34 @@ func debug_has_wall_authority_at(tile: Vector2i) -> bool:
 	if _generated_wall_cells.has(tile):
 		return true
 	return debug_runtime_wall_body_exists(tile)
+
+
+func debug_get_authored_scene_authority_report(rect: Rect2i) -> Dictionary:
+	var wall_visual_count := 0
+	var wall_authority_count := 0
+	var floor_count := 0
+	var blocked_elevation_count := 0
+	for x in range(rect.position.x, rect.end.x):
+		for y in range(rect.position.y, rect.end.y):
+			var tile := Vector2i(x, y)
+			if debug_has_wall_visual_at(tile):
+				wall_visual_count += 1
+			if debug_has_wall_authority_at(tile):
+				wall_authority_count += 1
+			if _generated_floor_cells.has(tile):
+				floor_count += 1
+			var traversal := String(get_elevation_data_at_tile(tile).get("traversal_type", ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE))
+			if traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_BLOCKED \
+					or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_LEDGE \
+					or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_DROP:
+				blocked_elevation_count += 1
+	return {
+		"rect": rect,
+		"wall_visual_count": wall_visual_count,
+		"wall_authority_count": wall_authority_count,
+		"floor_count": floor_count,
+		"blocked_elevation_count": blocked_elevation_count,
+	}
 
 
 func debug_runtime_wall_body_exists(tile: Vector2i) -> bool:
@@ -2792,6 +3083,9 @@ func _apply_terrain_builder(map_size: Vector2i) -> void:
 		"required_cells": required_cells,
 		"enable_industrial_platform": elevation_platform_stamps_enabled,
 		"enable_mountain_boundary": terrain_builder_mountain_boundary_enabled,
+		"enable_ascent_route": ascent_route_enabled and world_progression_enabled,
+		"world_progress_profile": _world_progress_profile,
+		"world_progress_profile_path": world_progress_profile_path,
 	}
 	_last_terrain_result = _terrain_builder.build_terrain(Rect2i(Vector2i.ZERO, map_size), terrain_rng, context)
 	if elevation_map.has_method("apply_build_result"):
@@ -4534,7 +4828,7 @@ func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true) -> voi
 		_rebuild_runtime_wall_collision_debug()
 
 
-func _remove_runtime_wall_body(tile: Vector2i) -> void:
+func _remove_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true) -> void:
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
 	if collision_root == null:
 		return
@@ -4542,7 +4836,8 @@ func _remove_runtime_wall_body(tile: Vector2i) -> void:
 	if body != null:
 		collision_root.remove_child(body)
 		body.queue_free()
-	_rebuild_runtime_wall_collision_debug()
+	if refresh_debug:
+		_rebuild_runtime_wall_collision_debug()
 
 
 func _runtime_wall_body_name(tile: Vector2i) -> String:
@@ -5171,5 +5466,10 @@ func get_level_data() -> Dictionary:
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"world_profile": get_planet_world_profile(),
+		"world_progression_enabled": world_progression_enabled,
+		"world_progress_profile_id": _world_progress_profile.profile_id if _world_progress_profile != null else "",
+		"world_progress_samples": _world_progress_samples.duplicate(true),
+		"faction_activity_sites": _faction_activity_sites.duplicate(true),
+		"story_room_sites": _story_room_sites.duplicate(true),
 		"intent_zones_enabled": true,
 	}

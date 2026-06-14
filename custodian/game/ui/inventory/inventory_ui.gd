@@ -14,22 +14,31 @@ const IconLabelScene := preload("res://game/ui/components/black_reliquary_icon_l
 const PAGE_STATUS := "status"
 const PAGE_HISTORY := "history"
 const PAGE_LEDGER := "ledger"
+const PAGE_EQUIPMENT := "equipment"
 
-const PAGE_ORDER := [PAGE_STATUS, PAGE_HISTORY, PAGE_LEDGER]
+const PAGE_ORDER := [PAGE_STATUS, PAGE_HISTORY, PAGE_LEDGER, PAGE_EQUIPMENT]
 const PAGE_LABELS := {
 	"status": "STATUS",
 	"history": "HISTORY",
 	"ledger": "LEDGER",
+	"equipment": "EQUIPMENT",
 }
 
-const CATEGORY_ORDER := ["all", "key", "relic", "cognitive", "carried", "resources"]
+const CATEGORY_ORDER := ["all", "key", "relic", "cognitive", "equipment", "carried", "resources"]
 const CATEGORY_LABELS := {
 	"all": "ALL CARRIED",
 	"key": "KEY OBJECTS",
 	"relic": "RELICS",
 	"cognitive": "COGNITIVE",
+	"equipment": "EQUIPMENT",
 	"carried": "MISCELLANY",
 	"resources": "MATERIAL RESOURCES",
+}
+
+## Maps equipment item_ids to their weapon definition resource paths.
+## Add new entries here when adding new equippable weapons.
+const EQUIPMENT_WEAPON_DEFINITIONS := {
+	"p9_sidearm": "res://game/actors/operator/sidearm_pistol_definition.tres",
 }
 
 @export var inventory: Inventory
@@ -67,6 +76,7 @@ var _pages_root: Control
 var _status_page: Control
 var _history_page: Control
 var _ledger_page: Control
+var _equipment_page: Control
 
 var _status_health_label: Label
 var _status_health_bar: ProgressBar
@@ -93,6 +103,13 @@ var _ledger_detail_class: Label
 var _ledger_detail_count: Label
 var _ledger_detail_description: Label
 var _ledger_detail_provenance: Label
+var _ledger_detail_equip_button: Button
+
+var _equipment_slot_container: VBoxContainer
+var _equipment_slot_icon: TextureRect
+var _equipment_slot_name: Label
+var _equipment_slot_status: Label
+var _equipment_action_button: Button
 
 
 func _ready() -> void:
@@ -288,9 +305,11 @@ func _build_interface() -> void:
 	_status_page = _build_status_page()
 	_history_page = _build_history_page()
 	_ledger_page = _build_ledger_page()
+	_equipment_page = _build_equipment_page()
 	_pages_root.add_child(_status_page)
 	_pages_root.add_child(_history_page)
 	_pages_root.add_child(_ledger_page)
+	_pages_root.add_child(_equipment_page)
 
 
 func _build_header() -> Control:
@@ -587,7 +606,103 @@ func _build_ledger_detail_panel() -> Control:
 	_ledger_detail_provenance = _label("PROVENANCE: --", Palette.MUTED_TEXT, 11)
 	_ledger_detail_provenance.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	stack.add_child(_ledger_detail_provenance)
+	_ledger_detail_equip_button = Button.new()
+	_ledger_detail_equip_button.name = "EquipButton"
+	_ledger_detail_equip_button.text = ""
+	_ledger_detail_equip_button.custom_minimum_size = Vector2(0, 38)
+	_ledger_detail_equip_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_ledger_detail_equip_button.disabled = true
+	_ledger_detail_equip_button.visible = false
+	_apply_button_style(_ledger_detail_equip_button)
+	_ledger_detail_equip_button.pressed.connect(_on_equip_button_pressed)
+	stack.add_child(_ledger_detail_equip_button)
 	return detail
+
+
+func _build_equipment_page() -> Control:
+	var page := _panel(true, Vector2(0, 0))
+	page.name = "EquipmentPage"
+	page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	page.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 18)
+	margin.add_theme_constant_override("margin_top", 18)
+	margin.add_theme_constant_override("margin_right", 18)
+	margin.add_theme_constant_override("margin_bottom", 18)
+	page.add_child(margin)
+	var stack := VBoxContainer.new()
+	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	stack.add_theme_constant_override("separation", 14)
+	margin.add_child(stack)
+	
+	stack.add_child(_label("EQUIPMENT SLOTS", Palette.GOLD_TEXT, 14))
+	stack.add_child(_label("Slot equipment from the LEDGER page into active slots to enable their use in the field.", Palette.MUTED_TEXT, 11))
+	
+	# Sidearm slot card
+	var slot_card := _panel(true, Vector2(0, 0))
+	slot_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var card_margin := MarginContainer.new()
+	card_margin.add_theme_constant_override("margin_left", 16)
+	card_margin.add_theme_constant_override("margin_top", 16)
+	card_margin.add_theme_constant_override("margin_right", 16)
+	card_margin.add_theme_constant_override("margin_bottom", 16)
+	slot_card.add_child(card_margin)
+	
+	var card_hbox := HBoxContainer.new()
+	card_hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card_hbox.add_theme_constant_override("separation", 16)
+	card_margin.add_child(card_hbox)
+	
+	# Slot icon
+	var icon_container := MarginContainer.new()
+	icon_container.custom_minimum_size = Vector2(96, 96)
+	card_hbox.add_child(icon_container)
+	_equipment_slot_icon = TextureRect.new()
+	_equipment_slot_icon.custom_minimum_size = Vector2(80, 80)
+	_equipment_slot_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_equipment_slot_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_equipment_slot_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	icon_container.add_child(_equipment_slot_icon)
+	
+	# Slot info
+	var info_stack := VBoxContainer.new()
+	info_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info_stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	info_stack.add_theme_constant_override("separation", 6)
+	card_hbox.add_child(info_stack)
+	
+	info_stack.add_child(_label("SIDEARM SLOT", Palette.BLUE_TECH, 12))
+	_equipment_slot_name = _label("EMPTY", Palette.MUTED_TEXT, 18)
+	info_stack.add_child(_equipment_slot_name)
+	_equipment_slot_status = _label("No sidearm equipped. Find one in the field and equip it from this terminal.", Palette.MUTED_TEXT, 12)
+	_equipment_slot_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	info_stack.add_child(_equipment_slot_status)
+	
+	# Action button
+	_equipment_action_button = Button.new()
+	_equipment_action_button.name = "EquipmentActionButton"
+	_equipment_action_button.text = ""
+	_equipment_action_button.custom_minimum_size = Vector2(180, 38)
+	_equipment_action_button.disabled = true
+	_apply_button_style(_equipment_action_button)
+	_equipment_action_button.pressed.connect(_on_equipment_action_pressed)
+	var button_container := HBoxContainer.new()
+	button_container.size_flags_horizontal = Control.SIZE_SHRINK_END
+	button_container.add_child(_equipment_action_button)
+	info_stack.add_child(button_container)
+	
+	stack.add_child(slot_card)
+	
+	# Future equipment slots will be added here
+	
+	stack.add_child(_build_divider())
+	stack.add_child(_label("INVENTORY EQUIPMENT", Palette.GOLD_TEXT, 12))
+	var inv_note := _label("Unequipped equipment items appear in the LEDGER page under the EQUIPMENT category. Select one and choose EQUIP.", Palette.MUTED_TEXT, 11)
+	inv_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stack.add_child(inv_note)
+	
+	return page
 
 
 func _connect_resource_ledger() -> void:
@@ -604,6 +719,136 @@ func _connect_live_inventory() -> void:
 		var callback := Callable(self, "_refresh_entries")
 		if not _inventory_manager.is_connected("inventory_changed", callback):
 			_inventory_manager.connect("inventory_changed", callback)
+	if _inventory_manager != null and _inventory_manager.has_signal("equipment_changed"):
+		var equip_callback := Callable(self, "_on_equipment_changed")
+		if not _inventory_manager.is_connected("equipment_changed", equip_callback):
+			_inventory_manager.connect("equipment_changed", equip_callback)
+
+
+func _on_equipment_changed(_slot_name: StringName, _item_id: StringName) -> void:
+	_refresh_equipment_page()
+	_refresh_entries()  # Also refresh the ledger in case items were added/removed
+
+
+func _refresh_equipment_page() -> void:
+	if _equipment_slot_name == null or _equipment_slot_status == null or _equipment_slot_icon == null or _equipment_action_button == null:
+		return
+	
+	if _inventory_manager == null or not _inventory_manager.has_method("get_equipped"):
+		_equipment_slot_name.text = "OFFLINE"
+		_equipment_slot_status.text = "Inventory manager unavailable."
+		_equipment_action_button.disabled = true
+		_equipment_action_button.visible = false
+		return
+	
+	var equipped_id := str(_inventory_manager.call("get_equipped", &"sidearm"))
+	if equipped_id == "" or equipped_id.is_empty():
+		# Empty slot
+		_equipment_slot_icon.texture = Assets.texture("icon_unknown")
+		_equipment_slot_name.text = "EMPTY"
+		_equipment_slot_name.modulate = Palette.MUTED_TEXT
+		_equipment_slot_status.text = "No sidearm equipped. Find one in the field and equip it from this terminal."
+		_equipment_action_button.text = ""
+		_equipment_action_button.disabled = true
+		_equipment_action_button.visible = false
+	else:
+		# Equipped
+		var definition := ItemCatalog.get_definition(StringName(equipped_id))
+		var display_name := str(definition.get("display_name", equipped_id))
+		_equipment_slot_icon.texture = Assets.item_icon(StringName(equipped_id))
+		_equipment_slot_name.text = display_name.to_upper()
+		_equipment_slot_name.modulate = Palette.GOLD_TEXT
+		_equipment_slot_status.text = str(definition.get("description", "No description available."))
+		_equipment_action_button.text = "UNEQUIP"
+		_equipment_action_button.disabled = false
+		_equipment_action_button.visible = true
+
+
+func _on_equipment_action_pressed() -> void:
+	if _inventory_manager == null or not _inventory_manager.has_method("get_equipped"):
+		return
+	
+	var equipped_id := str(_inventory_manager.call("get_equipped", &"sidearm"))
+	if equipped_id == "" or equipped_id.is_empty():
+		return
+	
+	# Find the player operator to call remove_sidearm()
+	var operator := get_tree().get_first_node_in_group("player")
+	if operator == null or not operator.has_method("remove_sidearm"):
+		push_warning("[InventoryUI] Cannot unequip sidearm: operator not found or no remove_sidearm method")
+		return
+	
+	# First unequip in InventoryManager (returns item to inventory)
+	var released := bool(_inventory_manager.call("unequip_slot", &"sidearm"))
+	if not released:
+		return
+	
+	# Then remove sidearm from operator
+	operator.call("remove_sidearm")
+	
+	record_history_entry("EQUIPMENT", "Sidearm unequipped and returned to inventory.", Palette.BLUE_TECH)
+	_refresh_equipment_page()
+
+
+func _on_equip_button_pressed() -> void:
+	if _inventory_manager == null or not _inventory_manager.has_method("equip_item"):
+		return
+	if _selected_item_id.is_empty():
+		return
+	
+	var item_id := StringName(_selected_item_id)
+	var slot_name := _get_equipment_slot_for_item(item_id)
+	if slot_name == &"":
+		return
+	
+	# Check if slot is already filled
+	if bool(_inventory_manager.call("is_slot_filled", slot_name)):
+		push_warning("[InventoryUI] Slot %s already filled" % slot_name)
+		return
+	
+	# Find the mapping to weapon definition
+	var def_path := str(EQUIPMENT_WEAPON_DEFINITIONS.get(item_id, ""))
+	if def_path.is_empty():
+		push_warning("[InventoryUI] No weapon definition mapping for item: %s" % item_id)
+		return
+	
+	# Find operator to grant sidearm
+	var operator := get_tree().get_first_node_in_group("player")
+	if operator == null or not operator.has_method("grant_sidearm"):
+		push_warning("[InventoryUI] Cannot equip sidearm: operator not found or no grant_sidearm method")
+		return
+	
+	# Load the weapon definition
+	var weapon_def := load(def_path)
+	if weapon_def == null:
+		push_warning("[InventoryUI] Failed to load weapon definition: %s" % def_path)
+		return
+	
+	# Equip in InventoryManager (removes from inventory)
+	var equipped := bool(_inventory_manager.call("equip_item", item_id, slot_name))
+	if not equipped:
+		return
+	
+	# Grant to operator
+	var result: Dictionary = operator.call("grant_sidearm", weapon_def)
+	if not result.get("granted", false):
+		# Rollback inventory
+		_inventory_manager.call("unequip_slot", slot_name)
+		_inventory_manager.call("add_item", item_id, 1)
+		push_warning("[InventoryUI] Failed to grant sidearm to operator")
+		return
+	
+	record_history_entry("EQUIPMENT", "%s equipped to %s slot." % [str(item_id), str(slot_name)], Palette.GREEN_SIGNAL)
+	_refresh_equipment_page()
+	_refresh_entries()
+
+
+## Given an equipment item_id, return which equipment slot it belongs in.
+## Override this to add new slot mappings.
+func _get_equipment_slot_for_item(item_id: StringName) -> StringName:
+	if EQUIPMENT_WEAPON_DEFINITIONS.has(item_id):
+		return &"sidearm"
+	return &""
 
 
 func _load_resource_defs() -> void:
@@ -734,6 +979,9 @@ func _select_entry(entry: Dictionary) -> void:
 func _show_detail(entry: Dictionary) -> void:
 	if _ledger_detail_icon == null:
 		return
+	if _ledger_detail_equip_button != null:
+		_ledger_detail_equip_button.visible = false
+		_ledger_detail_equip_button.disabled = true
 	if entry.is_empty():
 		_ledger_detail_icon.texture = Assets.texture("icon_unknown")
 		_ledger_detail_name.text = "NO RECORD SELECTED"
@@ -752,6 +1000,37 @@ func _show_detail(entry: Dictionary) -> void:
 	_ledger_detail_count.text = "QUANTITY: %d" % int(entry.get("quantity", 0))
 	_ledger_detail_description.text = str(definition.get("description", "No recovered archive description is available."))
 	_ledger_detail_provenance.text = "PROVENANCE: %s" % str(definition.get("provenance", "LOCAL LEDGER / UNVERIFIED"))
+	
+	# Show equip button for equipment items if the slot is empty
+	_show_equip_button_if_applicable(entry)
+
+
+## Show or hide the equip button for the given entry.
+func _show_equip_button_if_applicable(entry: Dictionary) -> void:
+	if _ledger_detail_equip_button == null or _inventory_manager == null:
+		return
+	var category := str(entry.get("definition", {}).get("category", "carried"))
+	if category != "equipment":
+		_ledger_detail_equip_button.visible = false
+		_ledger_detail_equip_button.disabled = true
+		return
+	
+	var item_id := StringName(str(entry["item_id"]))
+	var slot_name := _get_equipment_slot_for_item(item_id)
+	if slot_name == &"":
+		_ledger_detail_equip_button.visible = false
+		_ledger_detail_equip_button.disabled = true
+		return
+	
+	if _inventory_manager.call("is_slot_filled", slot_name):
+		_ledger_detail_equip_button.text = "SLOT IN USE"
+		_ledger_detail_equip_button.disabled = true
+		_ledger_detail_equip_button.visible = true
+	else:
+		var slot_label := String(slot_name).to_upper()
+		_ledger_detail_equip_button.text = "EQUIP TO %s SLOT" % slot_label
+		_ledger_detail_equip_button.disabled = false
+		_ledger_detail_equip_button.visible = true
 
 
 func _update_category_button_states() -> void:
@@ -772,13 +1051,18 @@ func _focus_current_page() -> void:
 				_item_buttons[0].grab_focus()
 			elif _category_buttons.has(_selected_category):
 				(_category_buttons[_selected_category] as Button).grab_focus()
+		PAGE_EQUIPMENT:
+			if _equipment_action_button != null and _equipment_action_button.visible:
+				_equipment_action_button.grab_focus()
+			elif _page_buttons.has(PAGE_EQUIPMENT):
+				(_page_buttons[PAGE_EQUIPMENT] as Button).grab_focus()
 
 
 func _select_page(page_name: String, focus := true) -> void:
 	_current_page = page_name if PAGE_ORDER.has(page_name) else PAGE_STATUS
 	if _header_status != null:
 		_header_status.text = "PAGE: %s" % PAGE_LABELS.get(_current_page, _current_page.to_upper())
-	for page in [_status_page, _history_page, _ledger_page]:
+	for page in [_status_page, _history_page, _ledger_page, _equipment_page]:
 		if page != null:
 			page.visible = false
 	match _current_page:
@@ -793,8 +1077,12 @@ func _select_page(page_name: String, focus := true) -> void:
 			if _ledger_page != null:
 				_ledger_page.visible = true
 			_rebuild_item_grid()
+		PAGE_EQUIPMENT:
+			if _equipment_page != null:
+				_equipment_page.visible = true
+			_refresh_equipment_page()
 	if _page_hint != null:
-		_page_hint.text = "STATUS FIRST / HISTORY SECOND / LEDGER LAST"
+		_page_hint.text = "STATUS / HISTORY / LEDGER / EQUIPMENT"
 	for page in _page_buttons:
 		_apply_button_style(_page_buttons[page] as Button, page == _current_page)
 	if focus:

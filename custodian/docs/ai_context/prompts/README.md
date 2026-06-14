@@ -2,7 +2,7 @@
 
 Reusable prompts for common CUSTODIAN agent tasks.
 
-Use these prompts after reading `custodian/AGENTS.md`, the active AI context pack, and any task packet for the work. For non-trivial work, create or update a task packet before implementation.
+Use these prompts after reading `custodian/AGENTS.md`, the active AI context pack, and any existing task packet for the work. Create a compact task packet only when durable scope, acceptance, or handoff context adds value; expand it only for high-risk or multi-session work.
 
 ## Templates
 
@@ -17,6 +17,6 @@ Use these prompts after reading `custodian/AGENTS.md`, the active AI context pac
 
 1. Replace bracketed placeholders before acting.
 2. Confirm referenced paths exist.
-3. Attach or update a task packet for non-trivial work.
+3. Attach or update a task packet only when the packet-selection rules in `custodian/AGENTS.md` call for one.
 4. Follow `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
 5. Update `CURRENT_STATE.md`, `CONTEXT.md`, and `FILE_INDEX.md` when workflow, ownership, or runtime state changes.

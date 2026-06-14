@@ -9,13 +9,13 @@ const VALID_VERBS := {
 	"TURRET": true, "REROUTE": true, "GOTO": true, "WAIT": true, "HARDEN": true,
 	"REPAIR": true, "MOVE": true, "RETURN": true, "SYNC": true, "LOCKDOWN": true,
 	"FORTIFY": true, "BOOST": true, "SCAN": true, "STABILIZE": true, "PRIORITIZE": true,
-	"DRONE": true, "POLICY": true, "CONFIG": true, "SET": true, "FAB": true, "SCAVENGE": true,
+	"DRONE": true, "POLICY": true, "CONFIG": true, "SET": true, "FAB": true, "BUILD": true, "SCAVENGE": true,
 }
 
 const SNAPSHOT_REFRESH_VERBS := [
 	"STATUS", "ENEMIES", "WAVE", "SECTORS", "CONTRACT", "PLANET", "MAP",
 	"START", "WALL", "TURRET",
-	"WAIT", "RESET", "REBOOT", "SET", "FAB", "CONFIG",
+	"WAIT", "RESET", "REBOOT", "SET", "FAB", "BUILD", "CONFIG",
 	"FOCUS", "HARDEN", "SCAVENGE", "REPAIR", "DEPLOY",
 	"MOVE", "RETURN", "SYNC", "LOCKDOWN", "OVERLAY", "ALLOCATE_DEFENSE", "REROUTE",
 ]
