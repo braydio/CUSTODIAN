@@ -16,6 +16,7 @@ var _archive_dir: String
 
 var _dry_run := false
 var _skip_post := false
+var _remove_superseded := false
 var _manifest_paths: Array[String] = []
 var _had_error := false
 
@@ -55,6 +56,8 @@ func _parse_args(args: PackedStringArray) -> void:
 				_dry_run = true
 			"--skip-post":
 				_skip_post = true
+			"--remove-superseded":
+				_remove_superseded = true
 			"--manifest":
 				index += 1
 				if index >= args.size():
@@ -122,11 +125,17 @@ func _process_manifest(manifest_path: String) -> bool:
 		return false
 
 	var output_paths: Array[String] = []
+	var cleanup_superseded := _remove_superseded or bool(manifest.get("remove_superseded", false))
 	for output_spec_variant in outputs_data:
 		if not (output_spec_variant is Dictionary):
 			push_error("%s: output entries must be dictionaries" % manifest_path.get_file())
 			return false
-		var output_result := _write_output(manifest_path.get_file(), output_spec_variant as Dictionary, source_frames)
+		var output_result := _write_output(
+			manifest_path.get_file(),
+			output_spec_variant as Dictionary,
+			source_frames,
+			cleanup_superseded
+		)
 		if not output_result.get("ok", false):
 			push_error("%s: %s" % [manifest_path.get_file(), output_result.get("error", "write failed")])
 			return false
@@ -137,7 +146,7 @@ func _process_manifest(manifest_path: String) -> bool:
 	var post_process_steps: Array = manifest.get("post_process", [])
 	if not _skip_post:
 		for step_variant in post_process_steps:
-			var post_result := _run_post_process(str(step_variant))
+			var post_result := _run_post_process(str(step_variant), cleanup_superseded)
 			if not post_result.get("ok", false):
 				push_error("%s: %s" % [manifest_path.get_file(), post_result.get("error", "post-process failed")])
 				return false
@@ -235,7 +244,12 @@ func _parse_frame_size(manifest: Dictionary) -> Dictionary:
 	return {"ok": true, "frame_size": frame_size}
 
 
-func _write_output(manifest_name: String, output_spec: Dictionary, source_frames: Array) -> Dictionary:
+func _write_output(
+	manifest_name: String,
+	output_spec: Dictionary,
+	source_frames: Array,
+	cleanup_superseded: bool
+) -> Dictionary:
 	var relative_path := str(output_spec.get("path", ""))
 	if relative_path.is_empty():
 		return {"ok": false, "error": "every output requires a relative path"}
@@ -253,14 +267,58 @@ func _write_output(manifest_name: String, output_spec: Dictionary, source_frames
 		return image_result
 
 	if _dry_run:
+		if cleanup_superseded:
+			_cleanup_superseded_outputs(output_path, manifest_name, true)
 		print("[DRY RUN] %s" % relative_path)
 		return {"ok": true, "path": output_path}
 
 	DirAccess.make_dir_recursive_absolute(output_path.get_base_dir())
+	if cleanup_superseded:
+		_cleanup_superseded_outputs(output_path, manifest_name, false)
 	var save_error := (image_result["image"] as Image).save_png(output_path)
 	if save_error != OK:
 		return {"ok": false, "error": "failed to save output %s" % relative_path}
 	return {"ok": true, "path": output_path}
+
+
+func _cleanup_superseded_outputs(output_path: String, manifest_name: String, dry_run: bool) -> void:
+	var target_identity := _canonical_output_identity(output_path.get_file())
+	if target_identity.is_empty():
+		return
+	var directory := DirAccess.open(output_path.get_base_dir())
+	if directory == null:
+		return
+	directory.list_dir_begin()
+	var entry := directory.get_next()
+	while entry != "":
+		if not directory.current_is_dir() and entry.ends_with(".png") and entry != output_path.get_file():
+			if _canonical_output_identity(entry) == target_identity:
+				var candidate := _join_path(output_path.get_base_dir(), entry)
+				if dry_run:
+					print("[DRY RUN] remove superseded %s for %s" % [_format_log_path(candidate), manifest_name])
+				else:
+					DirAccess.remove_absolute(candidate)
+					var import_path := candidate + ".import"
+					if FileAccess.file_exists(import_path):
+						DirAccess.remove_absolute(import_path)
+					print("[REMOVED SUPERSEDED] %s" % _format_log_path(candidate))
+		entry = directory.get_next()
+	directory.list_dir_end()
+
+
+func _canonical_output_identity(filename: String) -> String:
+	if not filename.ends_with(".png"):
+		return ""
+	var parts := filename.trim_suffix(".png").split("__")
+	if parts.size() < 5:
+		return ""
+	var frames_token := parts[parts.size() - 2]
+	var size_token := parts[parts.size() - 1]
+	if not frames_token.ends_with("f") or not frames_token.trim_suffix("f").is_valid_int():
+		return ""
+	if not size_token.is_valid_int():
+		return ""
+	return "__".join(parts.slice(0, parts.size() - 2))
 
 
 func _select_frames(source_frames: Array, selector_variant: Variant) -> Dictionary:
@@ -365,7 +423,7 @@ func _write_preview(manifest_path: String, source_frames: Array) -> void:
 	(preview_result["image"] as Image).save_png(preview_path)
 
 
-func _run_post_process(step: String) -> Dictionary:
+func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 	match step:
 		POST_PROCESS_OPERATOR_CURATED:
 			if _dry_run:
@@ -392,11 +450,14 @@ func _run_post_process(step: String) -> Dictionary:
 				print("[DRY RUN] post_process %s" % step)
 				return {"ok": true}
 			var build_output: Array = []
+			var build_args := [
+				ProjectSettings.globalize_path("res://tools/pipelines/build_operator_modular_runtime.py")
+			]
+			if cleanup_superseded:
+				build_args.append("--remove-superseded")
 			var build_exit_code := OS.execute(
 				"python3",
-				[
-					ProjectSettings.globalize_path("res://tools/pipelines/build_operator_modular_runtime.py")
-				],
+				build_args,
 				build_output,
 				true
 			)

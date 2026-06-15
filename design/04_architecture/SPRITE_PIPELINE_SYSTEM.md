@@ -47,6 +47,29 @@ Rules:
 - `archive/` stores processed intake files
 - Godot runtime scenes do not read directly from `_pipeline/`
 
+## Generic Runtime-Ready Intake
+
+Assets that are already runtime-ready but do not need sprite frame parsing, compatibility
+copies, or resource rebuild hooks use the persistent intake surface:
+
+```text
+custodian/asset_drop/runtime_ready/
+  inbox/
+  archive/
+  logs/
+  examples/
+```
+
+The drop area lives outside `res://` so unreviewed files do not become accidental Godot
+runtime authority. Paths under `inbox/` mirror their intended destination below
+`res://content/`; explicit `.runtime.json` sidecars can route ambiguous files. The router
+rejects different existing targets unless replacement is explicitly requested, archives
+processed inputs, writes JSON receipts, and can run a Godot import pass.
+
+This generic intake complements rather than replaces `content/sprites/_pipeline/`.
+Sprite sheets requiring normalization or post-process hooks must continue through the
+specialized sprite pipeline.
+
 ## Manifest-Driven Ingest
 
 Every intake job is driven by explicit metadata. The ingest script must not assume a single universal grid.
@@ -97,6 +120,17 @@ enemy_grunt__body__reaction__stagger__s__5f__96.png
 hit_spark__fx__impact__default__omni__4f__64.png
 ```
 
+Modular Operator sheets use a deliberate specialization:
+
+```text
+operator__<modular_layer>__<loadout>__<action>__<direction>__<frames>f__<frame_size>.png
+```
+
+The inbox routes all supported modular layers through `operator_modular_runtime`. Purpose-built actions keep
+their existing builders; other modular actions are normalized into stable runtime modules below
+`operator/runtime/modules/new_operator/<layer>/actions/<loadout>/<action>/`. This does not automatically add
+new Operator gameplay states or playback mappings.
+
 Compatibility rule:
 
 - Legacy runtime paths may remain while current scenes and rebuild scripts still consume them.
@@ -110,6 +144,9 @@ Replacement rule:
 - If a corrected sheet replaces the same mapped owner/layer/action/variant/direction, remove the superseded runtime PNG and `.import` after the new sheet is imported, wired, and validated.
 - Keep `_pipeline/archive/`, source files, normalized previews, and logs as provenance/history.
 - Do not remove intentional alternate variants such as `heavy_02`, `alt`, or weapon-specific variants unless they are explicitly unmapped and superseded.
+- `--remove-superseded` is the opt-in automated cleanup. It removes only canonical sibling PNGs in the exact
+  output directory with the same semantic identity through direction and a different frame-count or frame-size
+  suffix, plus matching `.import` sidecars. Modular Operator cleanup also applies to generated stable modules.
 
 ## Standard Animation Set Target
 
@@ -178,6 +215,13 @@ That conflicted with the live repo in four ways:
 3. Inspect outputs in the live runtime domain
 4. If the manifest requested `operator_curated_resources`, let the post-process rebuild the operator runtime frames
 5. Validate in Godot
+
+For already runtime-ready non-specialized assets:
+
+1. Drop the file under `custodian/asset_drop/runtime_ready/inbox/<content-domain>/...`
+2. Run `python custodian/tools/pipelines/runtime_ready_assets.py --dry-run`
+3. Run `python custodian/tools/pipelines/runtime_ready_assets.py --apply --godot-import`
+4. Inspect the routed `content/` target and JSON receipt
 
 ## Non-Goals
 

@@ -1,4 +1,4 @@
-Below are **drop-in code changes** for the existing Ash-Bell / Forlorn Ritualant scene. These target the scripts you pasted: `AshBellEventState`, `AshBellInteractable`, `ForlornRitualantSite`, and `WhiteThreadHazard`. Your current event already has pressure, thread tension, fountain states, hostile phase, ghost procession, ash FX, apparition, and clapper pickup wired; these changes make those systems more readable and staged.
+Below are **drop-in code changes** for the existing Ash-Bell / Forlorn Ritualant scene. These target the scripts you pasted: `AshBellEventState`, `AshBellInteractable`, `ForlornRitualantSite`, and `WhiteThreadHazard`. Your current event already has pressure, thread tension, fountain states, hostile phase, ghost procession, ash FX, apparition, and stilling pin pickup wired; these changes make those systems more readable and staged.
 
 ## 1. Replace `ash_bell_interactable.gd`
 
@@ -21,9 +21,9 @@ enum InteractionKind {
 	ASK_ORRA,
 	TOUCH_THREAD,
 	CUT_THREAD,
-	TAKE_CLAPPER,
+	TAKE_STILLING_PIN,
 	DRY_FOUNTAIN,
-	RING_CLAPPER,
+	SET_STILLING_PIN,
 }
 
 @export var interaction_kind: int = InteractionKind.RITUALANT
@@ -82,18 +82,18 @@ func can_interact(_actor: Node = null) -> bool:
 				and not state.ritualant_hostile \
 				and state.resolution != AshBellEventState.Resolution.CUT_THREAD
 
-		InteractionKind.TAKE_CLAPPER:
+		InteractionKind.TAKE_STILLING_PIN:
 			return state.resolution >= AshBellEventState.Resolution.SPOKE_TO_RITUALANT \
-				and not state.has_clapper
+				and not state.has_stilling_pin
 
 		InteractionKind.DRY_FOUNTAIN:
 			return state.resolution >= AshBellEventState.Resolution.SEEN \
 				and state.fountain_state != AshBellEventState.FountainState.BLACK_WATER
 
-		InteractionKind.RING_CLAPPER:
-			return state.has_clapper \
-				and state.resolution >= AshBellEventState.Resolution.TOOK_CLAPPER \
-				and state.resolution != AshBellEventState.Resolution.RANG_SILENCE
+		InteractionKind.SET_STILLING_PIN:
+			return state.has_stilling_pin \
+				and state.resolution >= AshBellEventState.Resolution.TOOK_STILLING_PIN \
+				and state.resolution != AshBellEventState.Resolution.SET_STILLING_PIN
 
 		_:
 			return true
@@ -119,12 +119,12 @@ func get_interaction_prompt() -> String:
 			return "TOUCH WHITE THREAD"
 		InteractionKind.CUT_THREAD:
 			return "CUT WHITE THREAD"
-		InteractionKind.TAKE_CLAPPER:
-			return "TAKE BELL-CLAPPER"
+		InteractionKind.TAKE_STILLING_PIN:
+			return "TAKE STILLING PIN"
 		InteractionKind.DRY_FOUNTAIN:
 			return "INSPECT DRY FOUNTAIN"
-		InteractionKind.RING_CLAPPER:
-			return "RING SILENCE"
+		InteractionKind.SET_STILLING_PIN:
+			return "SET PIN IN BASIN"
 		_:
 			return "INTERACT"
 
@@ -164,14 +164,14 @@ func interact(actor: Node) -> void:
 		InteractionKind.CUT_THREAD:
 			site.cut_thread()
 
-		InteractionKind.TAKE_CLAPPER:
-			site.take_clapper()
+		InteractionKind.TAKE_STILLING_PIN:
+			site.take_stilling_pin()
 
 		InteractionKind.DRY_FOUNTAIN:
 			site.inspect_dry_fountain()
 
-		InteractionKind.RING_CLAPPER:
-			site.ring_clapper()
+		InteractionKind.SET_STILLING_PIN:
+			site.set_stilling_pin()
 
 
 func _refresh_availability(force: bool) -> void:
@@ -191,7 +191,7 @@ func _refresh_availability(force: bool) -> void:
 				(child as CanvasItem).visible = available
 ```
 
-What this fixes: the player will no longer see all prompts at once. “Ask Bell / Thread / Orra” unlocks after speaking to the Ritualant. “Touch Thread,” “Cut Thread,” “Take Clapper,” and “Ring Silence” are gated by actual event state.
+What this fixes: the player will no longer see all prompts at once. “Ask Bell / Thread / Orra” unlocks after speaking to the Ritualant. “Touch Thread,” “Cut Thread,” “Take Stilling Pin,” and “Set Pin in Basin” are gated by actual event state.
 
 ---
 
@@ -342,7 +342,7 @@ This makes the fountain do something more meaningful: if the player touches the 
 
 ### 3D. Add these new public interaction methods
 
-Add these after `take_clapper()`:
+Add these after `take_stilling_pin()`:
 
 ```gdscript
 func inspect_dry_fountain() -> void:
@@ -353,12 +353,12 @@ func inspect_dry_fountain() -> void:
 	event_state.unlock_knowledge(&"ash_bell_dry_fountain")
 
 
-func ring_clapper() -> void:
-	if not event_state.has_clapper:
+func set_stilling_pin() -> void:
+	if not event_state.has_stilling_pin:
 		return
 
-	event_state.set_resolution(AshBellEventState.Resolution.RANG_SILENCE)
-	event_state.add_silence_pressure(35, &"rang_silence")
+	event_state.set_resolution(AshBellEventState.Resolution.SET_STILLING_PIN)
+	event_state.add_silence_pressure(35, &"stilling_pin_set")
 	_show_unarrived_apparition()
 	_trigger_ghost_procession()
 ```
@@ -400,7 +400,7 @@ func exit_site() -> void:
 
 	if event_state.resolution == AshBellEventState.Resolution.SPOKE_TO_RITUALANT \
 			or event_state.resolution == AshBellEventState.Resolution.TOUCHED_THREAD \
-			or event_state.resolution == AshBellEventState.Resolution.TOOK_CLAPPER:
+			or event_state.resolution == AshBellEventState.Resolution.TOOK_STILLING_PIN:
 		if peaceful_exit_requires_thread_touch and not event_state.has_thread_knot:
 			return
 
@@ -826,7 +826,7 @@ Run Godot and verify:
 6. Cutting the thread triggers apparition + hostile phase.
 7. Touching the thread creates the calmer/stabilizing path.
 8. Standing in the fountain after touching thread eventually stabilizes the site.
-9. Taking clapper unlocks Ring Silence.
+9. Taking stilling pin unlocks Set Stilling Pin.
 10. Debug label still updates pressure/thread/fountain/resolution.
 ```
 

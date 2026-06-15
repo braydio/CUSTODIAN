@@ -28,6 +28,17 @@ DIRECTION_TO_SUFFIX = {
     "w": "left",
     "sw": "down_left",
 }
+MODULAR_LAYER_OUTPUTS = {
+    "modular_body_lower": "lower_body",
+    "modular_body_upper": "upper_body",
+    "modular_combined_body": "combined_body",
+    "modular_lower_body": "lower_body",
+    "modular_sidearm": "sidearm",
+    "modular_upper_body": "upper_body",
+    "modular_upper_fx": "upper_fx",
+    "modular_wardrobe_cape": "wardrobe_cape",
+}
+KNOWN_LOADOUTS = {"unarmed", "sidearm", "ranged_2h"}
 
 
 @dataclass(frozen=True)
@@ -45,6 +56,11 @@ def main() -> int:
     parser.add_argument("--module-root", type=Path, default=MODULE_ROOT)
     parser.add_argument("--action-root", type=Path, default=ACTION_ROOT)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--remove-superseded",
+        action="store_true",
+        help="Remove older generated sibling modules with the same semantic animation identity.",
+    )
     args = parser.parse_args()
 
     source_root = args.source_root
@@ -62,6 +78,9 @@ def main() -> int:
     generated.extend(_build_ranged_2h_stance_modules(source_root, module_root, args.dry_run))
     generated.extend(_build_full_dodge_runtime(source_root, DODGE_ROOT, args.dry_run))
     generated.extend(_build_fast_attack_runtime(source_root, action_root, args.dry_run))
+    generated.extend(_build_generic_action_modules(source_root, module_root, args.dry_run))
+    if args.remove_superseded:
+        _remove_superseded_generated(generated, args.dry_run)
 
     for path in generated:
         print(path.relative_to(PROJECT_ROOT))
@@ -396,6 +415,132 @@ def _build_fast_attack_runtime(source_root: Path, action_root: Path, dry_run: bo
                 )
             generated.append(output)
     return generated
+
+
+def _build_generic_action_modules(source_root: Path, module_root: Path, dry_run: bool) -> list[Path]:
+    candidates: dict[tuple[str, str, str, str], tuple[int, SheetSpec]] = {}
+    for source in sorted(source_root.rglob("operator__*.png")):
+        parsed = _parse_generic_modular_source(source)
+        if parsed is None:
+            continue
+        output_layer, loadout, action, spec, priority = parsed
+        if _has_specialized_builder(loadout, action):
+            continue
+        semantic_key = (output_layer, loadout, action, spec.direction)
+        current = candidates.get(semantic_key)
+        if current is None or priority > current[0]:
+            candidates[semantic_key] = (priority, spec)
+
+    generated: list[Path] = []
+    for (output_layer, loadout, action, _), (_, spec) in sorted(candidates.items()):
+        output_name = (
+            f"operator__modular_{output_layer}__{loadout}__{action}"
+            f"__{spec.direction}__{spec.frames}f__96.png"
+        )
+        output = module_root / output_layer / "actions" / loadout / action / output_name
+        if not dry_run:
+            output.parent.mkdir(parents=True, exist_ok=True)
+            _write_or_copy_sheet(spec.path, output, spec.frames, target_frame_width=96, target_frame_height=96)
+        generated.append(output)
+    return generated
+
+
+def _parse_generic_modular_source(source: Path) -> tuple[str, str, str, SheetSpec, int] | None:
+    parts = source.stem.split("__")
+    if len(parts) < 6 or parts[0] != "operator":
+        return None
+    output_layer = MODULAR_LAYER_OUTPUTS.get(parts[1])
+    if output_layer is None:
+        return None
+    try:
+        direction = parts[-3]
+        frames = int(parts[-2].removesuffix("f"))
+        declared_size = int(parts[-1])
+    except ValueError:
+        return None
+    if direction not in DIRECTIONS or frames <= 0 or declared_size <= 0:
+        return None
+
+    action_group = parts[2]
+    variant = "__".join(parts[3:-3])
+    if output_layer == "upper_body" and action_group == "weapon" and variant == "ranged_2h":
+        output_layer = "ranged_weapon"
+        loadout = "ranged_2h"
+        action = "stance_01"
+        priority = 1
+        spec = _sheet_spec_from_path(source, direction)
+        return output_layer, loadout, action, spec, priority
+    if action_group in KNOWN_LOADOUTS and variant:
+        loadout = action_group
+        action = variant
+        priority = 2
+    elif variant in KNOWN_LOADOUTS:
+        loadout = variant
+        action = _canonical_action_name(action_group)
+        priority = 1
+    else:
+        loadout = "unarmed"
+        action = _canonical_action_name(variant or action_group)
+        priority = 0
+
+    spec = _sheet_spec_from_path(source, direction)
+    return output_layer, loadout, action, spec, priority
+
+
+def _canonical_action_name(action: str) -> str:
+    return {
+        "aim": "aim_01",
+        "idle": "idle_01",
+        "run": "run_01",
+        "stance": "stance_01",
+        "walk": "walk_01",
+    }.get(action, action)
+
+
+def _has_specialized_builder(loadout: str, action: str) -> bool:
+    if loadout == "sidearm":
+        return True
+    if loadout == "ranged_2h" and action == "stance_01":
+        return True
+    if loadout != "unarmed":
+        return False
+    return action in {"idle_01", "run_01", "walk_01"} or action.startswith(("dodge", "fast_"))
+
+
+def _remove_superseded_generated(generated: list[Path], dry_run: bool) -> None:
+    generated_set = set(generated)
+    identities = {
+        (output.parent, identity)
+        for output in generated
+        if (identity := _canonical_output_identity(output.name)) is not None
+    }
+    for directory, identity in sorted(identities, key=lambda item: (str(item[0]), item[1])):
+        if not directory.exists():
+            continue
+        for candidate in sorted(directory.glob("*.png")):
+            if candidate in generated_set or _canonical_output_identity(candidate.name) != identity:
+                continue
+            try:
+                display_path = candidate.relative_to(PROJECT_ROOT)
+            except ValueError:
+                display_path = candidate
+            print(f"{'[dry-run] would remove' if dry_run else 'removed'} superseded generated {display_path}")
+            if not dry_run:
+                candidate.unlink()
+                candidate.with_suffix(candidate.suffix + ".import").unlink(missing_ok=True)
+
+
+def _canonical_output_identity(filename: str) -> tuple[str, ...] | None:
+    if not filename.endswith(".png"):
+        return None
+    parts = filename.removesuffix(".png").split("__")
+    if len(parts) < 5:
+        return None
+    if not parts[-2].endswith("f") or not parts[-2].removesuffix("f").isdigit():
+        return None
+    if not parts[-1].isdigit():
+        return None
+    return tuple(parts[:-2])
 
 
 def _find_part(root: Path, part: str, action: str, direction: str) -> Path | None:

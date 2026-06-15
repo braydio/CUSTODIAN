@@ -107,9 +107,9 @@ enum EncounterResolution {
     SEEN,
     SPOKE_TO_RITUALANT,
     TOUCHED_THREAD,
-    TOOK_CLAPPER,
+    TOOK_STILLING_PIN,
     CUT_THREAD,
-    RANG_SILENCE,
+    SET_STILLING_PIN,
     PROVOKED_RITUALANT,
     RITUALANT_DISSOLVED,
     SITE_STABILIZED,
@@ -192,7 +192,7 @@ B = black banner
 t = white thread strands
 F = dry fountain ghost zone
 K = Forlorn-Ritualant
-C = bronze clapper pickup
+C = stilling pin pickup
 E = empty bell-frame footprint
 S = sealed arch / implied west gate
 H = child handprints
@@ -293,17 +293,17 @@ A massive oxidized iron bell-frame without a bell. It should look too heavy for 
 
 Important: no bell. No silhouette of a missing bell unless extremely subtle.
 
-## 5.2 Bronze clapper
+## 5.2 Stilling Pin
 
 Asset:
 
 ```text
-custodian/content/props/ash_bell/bell_clapper_without_bell_32x32.png
+custodian/content/props/ash_bell/stilling_pin_32x32.png
 ```
 
 Description:
 
-A heavy bronze clapper lying across the Forlorn-Ritualant’s lap or just in front of them. It should be visually readable as a bell component even though there is no bell.
+A heavy black iron stilling pin lying across the Forlorn-Ritualant’s lap or just in front of them. It should be visually readable as a bell component even though there is no bell.
 
 Gameplay:
 
@@ -403,7 +403,7 @@ custodian/content/sprites/npcs/ash_bell/forlorn_ritualant_idle_48x64.png
 
 Sprite description:
 
-A gaunt kneeling figure in black funeral cloth, viewed top-down 3/4. Hood low over face. Shoulders narrow. Spine bent. Hands wrapped together with white thread until the fingers look gray and bloodless. Cloth hem pools like ash-soaked robes. A bronze clapper rests before their knees. No visible weapon. Eyes should be faint pale slits only if readable at gameplay scale.
+A gaunt kneeling figure in black funeral cloth, viewed top-down 3/4. Hood low over face. Shoulders narrow. Spine bent. Hands wrapped together with white thread until the fingers look gray and bloodless. Cloth hem pools like ash-soaked robes. A stilling pin rests before their knees. No visible weapon. Eyes should be faint pale slits only if readable at gameplay scale.
 
 Palette:
 
@@ -431,7 +431,7 @@ Frames:
 
 Intent:
 
-The ritualant rises slowly, not aggressively. The white thread pulls taut before the body moves. The robe hangs too long. The bronze clapper drags against stone.
+The ritualant rises slowly, not aggressively. The white thread pulls taut before the body moves. The robe hangs too long. The stilling pin drags against stone.
 
 ## 6.3 Forlorn-Ritualant hostile idle
 
@@ -443,14 +443,14 @@ custodian/content/sprites/npcs/ash_bell/forlorn_ritualant_hostile_idle_48x64.png
 
 Description:
 
-Standing figure, slightly hunched, head lowered. White thread still wrapped around wrists, but now stretched outward as if attached to unseen points. The clapper is held like a ritual weight, not a weapon.
+Standing figure, slightly hunched, head lowered. White thread still wrapped around wrists, but now stretched outward as if attached to unseen points. The stilling pin is held like a ritual weight, not a weapon.
 
 ## 6.4 Forlorn-Ritualant attack animation
 
 Path:
 
 ```text
-custodian/content/sprites/npcs/ash_bell/forlorn_ritualant_clapper_swing_48x64.png
+custodian/content/sprites/npcs/ash_bell/forlorn_ritualant_pin_strike_48x64.png
 ```
 
 Frames:
@@ -658,7 +658,7 @@ Effect:
 
 Add `continuity_pressure += 1`.
 
-## If player takes the clapper peacefully
+## If player takes the stilling pin peacefully
 
 ```text
 Forlorn-Ritualant:
@@ -728,7 +728,7 @@ It rises when the player:
 - fires a gun
 - dodge-rolls through white thread
 - cuts white thread
-- takes the clapper before completing dialogue
+- takes the stilling pin before completing dialogue
 - stands in the Dry Fountain zone too long
 ```
 
@@ -828,7 +828,7 @@ It appears only under these conditions:
 ```text
 - thread snaps
 - player cuts thread
-- player rings the clapper in the Fountain zone
+- player sets the stilling pin in the Fountain zone
 - player defeats Forlorn-Ritualant violently
 ```
 
@@ -880,7 +880,7 @@ Attacks:
    - dodgeable if moving perpendicular
 
 3. Ninth Answer
-   - ritualant raises clapper
+   - ritualant raises stilling pin
    - no bell sound
    - Dry Fountain flashes black water
    - ghost procession crosses room
@@ -923,12 +923,12 @@ Keep rewards informational, not pure power. This matches the CUSTODIAN principle
 
 ```json
 {
-  "id": "bell_clapper_without_bell",
+  "id": "stilling_pin",
   "display_name": "Bell-Clapper Without a Bell",
   "type": "lore_relic",
   "stackable": false,
   "tags": ["ash_bell", "ninth_bell", "continuity"],
-  "description": "A bronze clapper from a bell no archive admits was cast. When moved, it makes no sound. Nearby grief briefly arranges itself into memory.",
+  "description": "A black iron stilling pin from a rite no archive admits was cast. When moved, it makes no sound. Nearby grief briefly arranges itself into memory.",
   "mechanical_effects": {
     "unlock_knowledge_node": "ash_bell_ninth_bell",
     "increase_ash_bell_weight": 0.05
@@ -1231,9 +1231,9 @@ enum Resolution {
 	SEEN,
 	SPOKE_TO_RITUALANT,
 	TOUCHED_THREAD,
-	TOOK_CLAPPER,
+	TOOK_STILLING_PIN,
 	CUT_THREAD,
-	RANG_SILENCE,
+	SET_STILLING_PIN,
 	PROVOKED_RITUALANT,
 	RITUALANT_DISSOLVED,
 	SITE_STABILIZED,
@@ -1247,7 +1247,7 @@ enum Resolution {
 
 var seen_dialogue: Dictionary = {}
 var unlocked_knowledge: Dictionary = {}
-var has_clapper: bool = false
+var has_stilling_pin: bool = false
 var has_thread_knot: bool = false
 var apparition_seen: bool = false
 var ritualant_hostile: bool = false
@@ -1363,7 +1363,7 @@ signal request_knowledge_unlock(knowledge_id: StringName)
 @export var upward_ash_path: NodePath
 @export var downward_ash_path: NodePath
 @export var unarrived_apparition_path: NodePath
-@export var bronze_clapper_pickup_path: NodePath
+@export var stilling_pin_pickup_path: NodePath
 @export var ghost_procession_path: NodePath
 @export var debug_label_path: NodePath
 
@@ -1373,7 +1373,7 @@ signal request_knowledge_unlock(knowledge_id: StringName)
 @onready var upward_ash: GPUParticles2D = get_node_or_null(upward_ash_path)
 @onready var downward_ash: GPUParticles2D = get_node_or_null(downward_ash_path)
 @onready var unarrived_apparition: CanvasItem = get_node_or_null(unarrived_apparition_path)
-@onready var bronze_clapper_pickup: Area2D = get_node_or_null(bronze_clapper_pickup_path)
+@onready var stilling_pin_pickup: Area2D = get_node_or_null(stilling_pin_pickup_path)
 @onready var ghost_procession: Node2D = get_node_or_null(ghost_procession_path)
 @onready var debug_label: Label = get_node_or_null(debug_label_path)
 
@@ -1459,17 +1459,17 @@ func cut_thread() -> void:
 	_start_hostile_phase()
 
 
-func take_clapper() -> void:
-	if event_state.has_clapper:
+func take_stilling_pin() -> void:
+	if event_state.has_stilling_pin:
 		return
 
-	event_state.has_clapper = true
+	event_state.has_stilling_pin = true
 	event_state.set_resolution(AshBellEventState.Resolution.TOOK_CLAPPER)
 	event_state.unlock_knowledge(&"ash_bell_ninth_bell")
-	request_item_grant.emit(&"bell_clapper_without_bell")
+	request_item_grant.emit(&"stilling_pin")
 
-	if bronze_clapper_pickup != null:
-		bronze_clapper_pickup.queue_free()
+	if stilling_pin_pickup != null:
+		stilling_pin_pickup.queue_free()
 
 
 func player_attacked_in_room() -> void:
@@ -1688,7 +1688,7 @@ extends CharacterBody2D
 signal defeated_nonlethal
 signal defeated_violent
 signal attack_started
-signal clapper_impact
+signal stilling_pin_impact
 signal thread_pull_started
 
 enum Phase {
@@ -1819,19 +1819,19 @@ func _choose_attack(distance: float) -> void:
 		return
 
 	if distance <= attack_range:
-		_clapper_swing()
+		_pin_strike()
 
 
-func _clapper_swing() -> void:
+func _pin_strike() -> void:
 	attack_started.emit()
-	_play_anim(&"clapper_swing")
+	_play_anim(&"pin_strike")
 
 	await get_tree().create_timer(0.42).timeout
 
-	clapper_impact.emit()
+	stilling_pin_impact.emit()
 
 	if site != null:
-		site.event_state.add_silence_pressure(8, &"clapper_impact")
+		site.event_state.add_silence_pressure(8, &"stilling_pin_impact")
 
 
 func _thread_pull() -> void:
@@ -1937,9 +1937,9 @@ enum InteractionKind {
 	ASK_ORRA,
 	TOUCH_THREAD,
 	CUT_THREAD,
-	TAKE_CLAPPER,
+	TAKE_STILLING_PIN,
 	DRY_FOUNTAIN,
-	RING_CLAPPER
+	SET_STILLING_PIN
 }
 
 @export var interaction_kind: InteractionKind = InteractionKind.RITUALANT
@@ -1973,13 +1973,13 @@ func interact(_actor: Node) -> void:
 			site.cut_thread()
 
 		InteractionKind.TAKE_CLAPPER:
-			site.take_clapper()
+			site.take_stilling_pin()
 
 		InteractionKind.DRY_FOUNTAIN:
 			site.event_state.set_fountain_state(AshBellEventState.FountainState.GHOST)
 			site.event_state.add_silence_pressure(3, &"fountain_touched")
 
-		InteractionKind.RING_CLAPPER:
+		InteractionKind.SET_STILLING_PIN:
 			site.event_state.set_resolution(AshBellEventState.Resolution.RANG_SILENCE)
 			site.event_state.add_silence_pressure(35, &"rang_silence")
 ```
@@ -2177,7 +2177,7 @@ Legend:
 E = Empty bell-frame
 K = Forlorn-Ritualant
 T = white thread ritual ring
-C = bronze clapper / interactable item
+C = stilling pin / interactable item
 B = black banners
 A = sealed archways with phantom silhouettes during bleed
 F = dry fountain/basin fragments
@@ -2263,7 +2263,7 @@ Before aggression, the room applies subtle non-combat effects:
 - Ambient bell pressure increases near the empty frame.
 - Ash particles drift upward.
 - Player footsteps briefly echo late.
-- The bronze clapper can be inspected but not taken unless the NPC is gone or defeated.
+- The stilling pin can be inspected but not taken unless the NPC is gone or defeated.
 - The Forlorn-Ritualant tracks the player only with their head.
 
 ### Bleed phase trigger
@@ -2272,7 +2272,7 @@ Triggered by:
 
 ```txt
 player_attacks_npc == true
-OR player_steals_clapper == true
+OR player_took_stilling_pin == true
 OR player_uses_continuum_item_near_frame == true
 OR custodian_instability >= HIGH and player_crosses_thread_ring == true
 ```
@@ -2387,7 +2387,7 @@ enum Phase {
 @export var phase: Phase = Phase.DORMANT
 @export var toll_count: int = 0
 @export var player_crossed_thread_ring: bool = false
-@export var clapper_taken: bool = false
+@export var stilling_pin_taken: bool = false
 @export var npc_attacked: bool = false
 @export var listened_fully: bool = false
 @export var answered_wrongly_active: bool = false
@@ -2414,7 +2414,7 @@ signal event_resolved(resolution: String)
 @onready var npc: ForlornRitualantNPC = $ForlornRitualantNPC
 @onready var bleed_controller: AshBellBleedController = $AshBellBleedController
 @onready var thread_ring_area: Area2D = $ThreadRingArea
-@onready var clapper_area: Area2D = $BronzeClapperInteractable
+@onready var stilling_pin_area: Area2D = $StillingPinInteractable
 @onready var room_lock: Node2D = $RoomLock
 @onready var dialogue_anchor: Node2D = $DialogueAnchor
 
@@ -2429,7 +2429,7 @@ func _ready() -> void:
 	thread_ring_area.body_entered.connect(_on_thread_ring_entered)
 	npc.attacked.connect(_on_npc_attacked)
 	npc.dialogue_exhausted.connect(_on_dialogue_exhausted)
-	clapper_area.body_entered.connect(_on_clapper_area_entered)
+	stilling_pin_area.body_entered.connect(_on_stilling_pin_area_entered)
 
 	bleed_controller.set_bleed_intensity(0.0)
 	room_lock.visible = false
@@ -2459,22 +2459,22 @@ func _on_npc_attacked() -> void:
 	event_state.npc_attacked = true
 	start_bleed("npc_attacked")
 
-func _on_clapper_area_entered(body: Node) -> void:
+func _on_stilling_pin_area_entered(body: Node) -> void:
 	if not body.is_in_group("player"):
 		return
 
 	_player = body
 
 	if event_state.phase == AshBellEventState.Phase.LISTENING:
-		# Stealing the clapper before resolution is sacrilege.
-		event_state.clapper_taken = true
-		start_bleed("clapper_disturbed")
+		# Taking the stilling pin before resolution is sacrilege.
+		event_state.stilling_pin_taken = true
+		start_bleed("stilling_pin_disturbed")
 
 func _on_dialogue_exhausted() -> void:
 	event_state.listened_fully = true
 
 	# Mercy resolution: player listened and did not violate ritual.
-	if not event_state.npc_attacked and not event_state.clapper_taken:
+	if not event_state.npc_attacked and not event_state.stilling_pin_taken:
 		resolve_mercy()
 
 func start_bleed(reason: String) -> void:
@@ -2526,7 +2526,7 @@ func resolve_defeated() -> void:
 	_combat_active = false
 	room_lock.visible = false
 	bleed_controller.end_bleed()
-	_spawn_reward("bronze_clapper_without_bell")
+	_spawn_reward("stilling_pin")
 	_spawn_reward("thread_of_the_unarrived")
 	_spawn_reward("ash_bell_memory_shard")
 	event_resolved.emit("defeated")
@@ -2570,7 +2570,7 @@ signal defeated
 
 @export var max_health: int = 140
 @export var move_speed: float = 42.0
-@export var clapper_attack_damage: int = 14
+@export var stilling_pin_attack_damage: int = 14
 @export var ash_wave_damage: int = 10
 
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D
@@ -2844,7 +2844,7 @@ From the earlier design — preserved as a closing statement on why the encounte
 > The encounter does not tell the player "this is another continuity." It gives them:
 >
 > - a bell-frame with no bell,
-> - a clapper with no source,
+> - a stilling pin with no source,
 > - a fountain that is absent but remembered,
 > - a saint who arrives too late,
 > - a gate that never existed here,

@@ -250,10 +250,12 @@ func _init() -> void:
 	_replace_animation_entries(modular_lower_body_frames, UNARMED_MODULAR_LOWER_LOCOMOTION_SLICES)
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_sidearm_entries("lower_body", "sidearm_draw_lower", "draw_sidearm_01"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_sidearm_entries("lower_body", "sidearm_fire_lower", "fire_sidearm_01"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_unarmed_block_entries("lower_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_locomotion_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_upper_action_entries())
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_draw_upper", "draw_sidearm_01"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_fire_upper", "fire_sidearm_01"))
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_unarmed_block_entries("upper_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_stance_entries("lower_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_ranged_stance_entries("upper_body"))
 	_replace_animation_entries(modular_sidearm_frames, _build_modular_sidearm_entries("sidearm", "sidearm_draw", "draw_sidearm_01"))
@@ -262,6 +264,7 @@ func _init() -> void:
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_fire_fx", "fx_01"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_draw_fx", "draw_sidearm_01"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_fire_fx", "fire_sidearm_01"))
+	_replace_animation_entries(modular_upper_fx_frames, _build_modular_unarmed_parry_fx_entries())
 	_replace_animation_if_exists(body_frames, "unarmed_death", UNARMED_DEATH_BODY_SHEET, 6, 0, 96, 96, 7.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival_down", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
@@ -579,6 +582,62 @@ func _build_modular_ranged_stance_entries(part: String) -> Array:
 			entries.append({"animation": "ranged_2h_stance_modular", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true})
 		entries.append({"animation": "ranged_2h_stance_modular_%s" % str(direction_spec["suffix"]), "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true})
 	return entries
+
+
+func _build_modular_unarmed_block_entries(part: String) -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/unarmed" % part
+	var entries: Array = []
+	var action_specs := [
+		{"source": "enter_block_01", "base": "unarmed_block_enter", "frames": 4, "fps": 10.0, "loop": false},
+		{"source": "block_loop_01", "base": "unarmed_block_hold", "frames": 5, "fps": 8.0, "loop": true},
+		{"source": "blocking_hitreact_01", "base": "unarmed_block_hitreact", "frames": 5, "fps": 14.0, "loop": false},
+	]
+	for action_spec in action_specs:
+		var source := str(action_spec["source"])
+		for direction_spec in [
+			{"dir": "e", "suffix": "right", "alias_base": true},
+			{"dir": "w", "suffix": "left"},
+		]:
+			var path := "%s/%s/operator__modular_%s__unarmed__%s__%s__%df__96.png" % [
+				root,
+				source,
+				part,
+				source,
+				str(direction_spec["dir"]),
+				int(action_spec["frames"]),
+			]
+			if not _texture_file_exists(path):
+				continue
+			if bool(direction_spec.get("alias_base", false)):
+				entries.append({
+					"animation": str(action_spec["base"]),
+					"path": path,
+					"frames": int(action_spec["frames"]),
+					"frame_width": 96,
+					"frame_height": 96,
+					"fps": float(action_spec["fps"]),
+					"loop": bool(action_spec["loop"]),
+				})
+			entries.append({
+				"animation": "%s_%s" % [str(action_spec["base"]), str(direction_spec["suffix"])],
+				"path": path,
+				"frames": int(action_spec["frames"]),
+				"frame_width": 96,
+				"frame_height": 96,
+				"fps": float(action_spec["fps"]),
+				"loop": bool(action_spec["loop"]),
+			})
+	return entries
+
+
+func _build_modular_unarmed_parry_fx_entries() -> Array:
+	var path := "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/unarmed/parry_01/operator__modular_upper_fx__unarmed__parry_01__e__5f__96.png"
+	if not _texture_file_exists(path):
+		return []
+	return [
+		{"animation": "unarmed_parry_fx", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 14.0, "loop": false},
+		{"animation": "unarmed_parry_fx_right", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 14.0, "loop": false},
+	]
 
 
 func _load_or_create_sprite_frames(resource_path: String) -> SpriteFrames:

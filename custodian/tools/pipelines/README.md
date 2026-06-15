@@ -26,6 +26,9 @@ compatibility outputs, or runtime resource rebuilds.
 - Aseprite exports can be staged through `custodian/tools/pipelines/aseprite_inbox.py`.
 - Operator curated body changes can trigger the live `SpriteFrames` rebuild through
   `custodian/tools/pipelines/update_operator_curated_resources.gd`.
+- Modular Operator sheets use
+  `operator__<modular_layer>__<loadout>__<action>__<direction>__<frames>f__<frame_size>.png`;
+  generic modular actions become stable runtime modules, while live playback wiring remains deliberate.
 - Hover buggy vehicle sheets can trigger the live vehicle `SpriteFrames` rebuild through
   `custodian/tools/pipelines/update_vehicle_runtime_resources.gd`.
 - Enemy, weapon, effects, vehicle, and turret outputs are written directly into the
@@ -197,6 +200,24 @@ Dry-run validation:
 python custodian/tools/pipelines/ingest.py --dry-run
 ```
 
+Preview and apply cleanup of superseded canonical animation siblings:
+
+```bash
+python custodian/tools/pipelines/ingest.py --dry-run --remove-superseded
+python custodian/tools/pipelines/ingest.py --remove-superseded
+```
+
+For the normal generated-manifest workflow:
+
+```bash
+python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run --remove-superseded
+python custodian/tools/pipelines/generate_inbox_manifests.py --remove-superseded
+```
+
+`--remove-superseded` matches only canonical siblings in the exact output directory whose filename is identical
+through direction and differs only by `__<frames>f__<frame_size>.png`. Their `.import` sidecars are removed too.
+Modular Operator cleanup propagates into stable generated runtime modules.
+
 Skip post-process hooks:
 
 ```bash
@@ -207,6 +228,12 @@ Rebuild operator curated resources directly:
 
 ```bash
 python custodian/tools/pipelines/reload_assets.py
+```
+
+Validate modular Operator routing and generic action output:
+
+```bash
+python custodian/tools/validation/operator_modular_pipeline_smoke.py
 ```
 
 Rebuild vehicle runtime resources directly:

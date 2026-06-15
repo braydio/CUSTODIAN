@@ -199,6 +199,10 @@ Unarmed heavy is the first fists secondary baseline. It should read as a committ
 control/repositioning than weapons but lower reach, damage, and stagger. Parry/counter is deferred to the block
 state path and should not be overloaded onto unarmed secondary.
 
+Unarmed block presentation uses the modular lower/upper body stack: authored entry, looping hold, and blocked-hit
+reaction clips play through the existing block state path, and exit reuses entry in reverse. The supplied parry FX
+may be registered as runtime art, but it must remain untriggered until parry/counter gameplay is implemented.
+
 Asset rule: unarmed body motion and unarmed FX should be separate runtime layers. If an existing clean body strip
 matches the needed motion, reuse it for body frames and put fist impact/trail pixels in an unarmed FX overlay.
 

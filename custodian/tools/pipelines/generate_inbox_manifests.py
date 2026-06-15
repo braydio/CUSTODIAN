@@ -16,6 +16,17 @@ PIPELINE_DIR = PROJECT_DIR / "content" / "sprites" / "_pipeline"
 INBOX_DIR = PIPELINE_DIR / "inbox"
 INGEST_SCRIPT = Path(__file__).resolve().parent / "ingest.py"
 
+OPERATOR_MODULAR_LAYERS = {
+    "modular_body_lower",
+    "modular_body_upper",
+    "modular_combined_body",
+    "modular_lower_body",
+    "modular_sidearm",
+    "modular_upper_body",
+    "modular_upper_fx",
+    "modular_wardrobe_cape",
+}
+
 
 @dataclass(frozen=True)
 class SheetInfo:
@@ -38,6 +49,11 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="Generate manifests only and run ingest in dry-run mode.")
     parser.add_argument("--skip-post", action="store_true", help="Forward --skip-post to ingest.py.")
     parser.add_argument(
+        "--remove-superseded",
+        action="store_true",
+        help="Remove older canonical sibling outputs with the same semantic animation identity.",
+    )
+    parser.add_argument(
         "--manifest",
         action="append",
         default=[],
@@ -57,12 +73,19 @@ def main() -> int:
         manifest_path = png_path.with_suffix(".json")
         if manifest_path.exists() and not args.regen:
             skipped += 1
+            if args.dry_run and args.remove_superseded:
+                existing_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                for superseded in _find_superseded_outputs(existing_manifest):
+                    print(f"[dry-run] would remove superseded {superseded.relative_to(PROJECT_DIR)}")
             continue
 
-        manifest = _build_manifest(png_path)
+        manifest = _build_manifest(png_path, remove_superseded=args.remove_superseded)
         generated += 1
         if args.dry_run:
             print(f"[dry-run] would write {manifest_path.relative_to(PROJECT_DIR)}")
+            if args.remove_superseded:
+                for superseded in _find_superseded_outputs(manifest):
+                    print(f"[dry-run] would remove superseded {superseded.relative_to(PROJECT_DIR)}")
         else:
             manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
             print(f"wrote {manifest_path.relative_to(PROJECT_DIR)}")
@@ -77,6 +100,8 @@ def main() -> int:
     ingest_args = [sys.executable, str(INGEST_SCRIPT)]
     if args.skip_post:
         ingest_args.append("--skip-post")
+    if args.remove_superseded:
+        ingest_args.append("--remove-superseded")
 
     result = subprocess.run(ingest_args, cwd=PROJECT_DIR, check=False)
     return result.returncode
@@ -98,7 +123,7 @@ def _resolve_targets(requested: list[str]) -> list[Path]:
     return [path for path in pngs if path.name in allowed]
 
 
-def _build_manifest(png_path: Path) -> dict:
+def _build_manifest(png_path: Path, *, remove_superseded: bool = False) -> dict:
     info = _inspect_sheet(png_path)
     manifest: dict = {
         "source": png_path.name,
@@ -107,6 +132,8 @@ def _build_manifest(png_path: Path) -> dict:
     }
     if info.source_kind != "copy":
         manifest["frame_size"] = [info.frame_size, info.frame_size]
+    if remove_superseded:
+        manifest["remove_superseded"] = True
     post_process = _build_post_process(info)
     if post_process:
         manifest["post_process"] = post_process
@@ -280,7 +307,7 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
     if info.owner == "operator":
         if _is_operator_modular_sidearm_weapon(info):
             return f"operator/new_operator/modular/sidearm/{info.basename}"
-        if info.layer in {"modular_lower_body", "modular_upper_body", "modular_upper_fx", "modular_sidearm"}:
+        if _is_operator_modular_sheet(info):
             return f"operator/new_operator/modular/{_operator_modular_source_bucket(info)}/{info.basename}"
         if info.layer == "body":
             return f"operator/runtime/body/{info.action_group}/{info.basename}"
@@ -323,7 +350,7 @@ def _compatibility_outputs(info: SheetInfo) -> list[dict]:
 
 
 def _operator_modular_source_bucket(info: SheetInfo) -> str:
-    action = info.variant if info.action_group == "unarmed" and info.variant else info.action_group
+    loadout, action = _operator_modular_loadout_action(info)
     if action.startswith("dodge"):
         return "dodge"
     if action.startswith("idle"):
@@ -334,7 +361,24 @@ def _operator_modular_source_bucket(info: SheetInfo) -> str:
         return "run"
     if action.startswith("fast_"):
         return "fast_attack"
+    if loadout == "sidearm":
+        return "sidearm"
+    if loadout == "ranged_2h":
+        return "ranged"
+    if action.startswith(("block", "blocking_", "enter_block", "exit_block")):
+        return "block"
+    if action.startswith(("hit", "stagger", "knockdown", "recover")):
+        return "reaction"
     return action
+
+
+def _operator_modular_loadout_action(info: SheetInfo) -> tuple[str, str]:
+    known_loadouts = {"unarmed", "sidearm", "ranged_2h"}
+    if info.action_group in known_loadouts and info.variant:
+        return info.action_group, info.variant
+    if info.variant in known_loadouts:
+        return info.variant, info.action_group
+    return "unarmed", info.variant or info.action_group
 
 
 def _items_runtime_path(info: SheetInfo) -> str:
@@ -349,20 +393,48 @@ def _is_operator_modular_sidearm_weapon(info: SheetInfo) -> bool:
     return info.owner == "operator" and info.layer == "weapon" and info.action_group == "sidearm_pistol"
 
 
+def _is_operator_modular_sheet(info: SheetInfo) -> bool:
+    return info.owner == "operator" and info.layer in OPERATOR_MODULAR_LAYERS
+
+
 def _build_post_process(info: SheetInfo) -> list[str]:
     post_process: list[str] = []
     if info.owner == "operator" and info.layer == "body":
         post_process.append("operator_curated_resources")
-    if info.owner == "operator" and (
-        info.layer in {"modular_lower_body", "modular_upper_body", "modular_upper_fx", "modular_sidearm"}
-        or _is_operator_modular_sidearm_weapon(info)
-    ):
+    if _is_operator_modular_sheet(info) or _is_operator_modular_sidearm_weapon(info):
         post_process.append("operator_modular_runtime")
     if info.owner.startswith("enemy_") or info.owner == "drone":
         post_process.append("enemy_runtime_import")
     if _is_vehicle_owner(info.owner):
         post_process.append("vehicle_runtime_import")
     return post_process
+
+
+def _find_superseded_outputs(manifest: dict) -> list[Path]:
+    superseded: list[Path] = []
+    sprites_root = PROJECT_DIR / "content/sprites"
+    for output in manifest.get("outputs", []):
+        target = sprites_root / str(output.get("path", ""))
+        identity = _canonical_output_identity(target.name)
+        if identity is None or not target.parent.exists():
+            continue
+        for candidate in sorted(target.parent.glob("*.png")):
+            if candidate.name != target.name and _canonical_output_identity(candidate.name) == identity:
+                superseded.append(candidate)
+    return superseded
+
+
+def _canonical_output_identity(filename: str) -> tuple[str, ...] | None:
+    if not filename.endswith(".png"):
+        return None
+    parts = filename.removesuffix(".png").split("__")
+    if len(parts) < 5:
+        return None
+    if not parts[-2].endswith("f") or not parts[-2].removesuffix("f").isdigit():
+        return None
+    if not parts[-1].isdigit():
+        return None
+    return tuple(parts[:-2])
 
 
 if __name__ == "__main__":

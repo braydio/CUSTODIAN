@@ -673,8 +673,9 @@ godot --headless --quit
 
 ### V1.1 — HUD Integration
 - Add resource counts to HUD (small panel showing blackwood/structural_alloy/ruin_scrap/power_components)
-- Terminal FABRICATION page showing available recipes and current resources
+- Terminal FABRICATION page showing available work orders, current resources, queue status, ready builds, and the next recommended action
 - Fabrication queue status in terminal
+- Player-facing terminology should prefer "Work Order", "Ready Build", "In Progress", and "Missing Materials" even when the backend keeps recipe IDs and token IDs unchanged
 
 ### V1.2 — Power-Aware Fabrication
 - Fabricator speed/cost scaling based on `power.gd._get_fabrication_effectiveness()`
@@ -699,6 +700,16 @@ Current runtime step: before a separate destination/travel UI exists, `ContractW
 - Resource conversion recipes (e.g., ruin_scrap + power = refined materials)
 - Trading with other survivors / outposts
 - Resource transport via vehicles
+
+## Next Agent Slice
+
+**Goal:** Polish the live FABRICATION work-order screen without changing the fabrication backend.
+
+**Files:** `custodian/game/ui/hud/ui.gd`, `custodian/game/ui/terminal/fabrication_terminal_view_model.gd`, `custodian/game/ui/terminal/terminal_command_router.gd`, `custodian/game/systems/core/systems/turret_placement.gd`
+
+**Constraints:** Keep simulation authority in `FabPipeline`, `ResourceLedger`, and `BuildInventory`; preserve the readable command aliases; do not expose raw recipe dictionaries as the primary player surface.
+
+**Acceptance:** The terminal keeps the work-order layout, sorts useful outputs first, distinguishes deployable ready builds from stored outputs, teaches the fabricate-then-place bridge, and remains compatible with existing `FAB START` and `BUILD PLACE` commands.
 
 ---
 

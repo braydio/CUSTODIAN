@@ -151,6 +151,7 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 - `res://scenes/hub_road_of_witnesses_prototype.tscn` is the current fast-playable authored preview for this district.
 - It uses the authored map image as a background layer with hand-placed collision blockers and a small set of foreground occlusion masks.
 - It is a traversal/readability prototype, not yet a canonical reusable TileMap conversion.
+- `res://scenes/twin_solaria_backdrop_test.tscn` is a separate development-only fidelity preview using the largest current Twin Solaria composite as a gameplay backdrop. It intentionally provides perimeter collision only; internal traversal and collision are not authored.
 
 ---
 

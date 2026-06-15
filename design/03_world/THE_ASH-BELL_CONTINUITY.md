@@ -316,7 +316,7 @@ Witness what we could not stop.”
 ## Bell-Clapper Without a Bell
 
 ```text
-A bronze clapper from an unseen bell.
+A black iron stilling pin from an unseen rite.
 
 No matching bell exists in the capital archives.
 

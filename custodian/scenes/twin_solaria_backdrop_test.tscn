@@ -1,10 +1,10 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene format=3 uid="uid://m3ncud2bfqej"]
 
-[ext_resource type="Script" path="res://game/world/hub/twin_solaria_backdrop_test.gd" id="1_test"]
-[ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/development/twin_solaria_rebuilt_upscaled.png" id="2_backdrop"]
-[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="3_operator"]
-[ext_resource type="Script" path="res://game/world/camera.gd" id="4_camera"]
-[ext_resource type="Script" path="res://game/systems/core/player_controller.gd" id="5_player_controller"]
+[ext_resource type="Script" uid="uid://c5ur2didldcm6" path="res://game/world/hub/twin_solaria_backdrop_test.gd" id="1_test"]
+[ext_resource type="Texture2D" uid="uid://brwkdr53lljxt" path="res://content/levels/hub/twin_solaria/development/twin_solaria_rebuilt_upscaled.png" id="2_backdrop"]
+[ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="3_operator"]
+[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="4_camera"]
+[ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="5_player_controller"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_horizontal"]
 size = Vector2(3700, 100)
@@ -24,48 +24,48 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[node name="GameRoot" type="Node2D"]
+[node name="GameRoot" type="Node2D" unique_id=1264030045]
 script = ExtResource("1_test")
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=73154266]
 
-[node name="TwinSolariaBackdrop" type="Node2D" parent="World"]
+[node name="TwinSolariaBackdrop" type="Node2D" parent="World" unique_id=2001866145]
 
-[node name="Background" type="Sprite2D" parent="World/TwinSolariaBackdrop"]
+[node name="Background" type="Sprite2D" parent="World/TwinSolariaBackdrop" unique_id=1370986300]
 texture = ExtResource("2_backdrop")
 
-[node name="PerimeterCollision" type="StaticBody2D" parent="World/TwinSolariaBackdrop"]
+[node name="PerimeterCollision" type="StaticBody2D" parent="World/TwinSolariaBackdrop" unique_id=1161519368]
 
-[node name="North" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision"]
+[node name="North" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision" unique_id=895018507]
 position = Vector2(0, -1550)
 shape = SubResource("RectangleShape2D_horizontal")
 
-[node name="South" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision"]
+[node name="South" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision" unique_id=1213428364]
 position = Vector2(0, 1550)
 shape = SubResource("RectangleShape2D_horizontal")
 
-[node name="West" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision"]
+[node name="West" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision" unique_id=575671340]
 position = Vector2(-1800, 0)
 shape = SubResource("RectangleShape2D_vertical")
 
-[node name="East" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision"]
+[node name="East" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision" unique_id=1205633648]
 position = Vector2(1800, 0)
 shape = SubResource("RectangleShape2D_vertical")
 
-[node name="Projectiles" type="Node2D" parent="World"]
+[node name="Projectiles" type="Node2D" parent="World" unique_id=635782372]
 
-[node name="Enemies" type="Node2D" parent="World"]
+[node name="Enemies" type="Node2D" parent="World" unique_id=174775461]
 
-[node name="Items" type="Node2D" parent="World"]
+[node name="Items" type="Node2D" parent="World" unique_id=227132140]
 
-[node name="Operator" parent="World" instance=ExtResource("3_operator")]
+[node name="Operator" parent="World" unique_id=11104395 instance=ExtResource("3_operator")]
 position = Vector2(0, 1190)
 
-[node name="PlayerController" type="Node" parent="World"]
+[node name="PlayerController" type="Node" parent="World" unique_id=799445493]
 script = ExtResource("5_player_controller")
 operator_path = NodePath("../Operator")
 
-[node name="Camera2D" type="Camera2D" parent="World"]
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=203879078]
 position = Vector2(0, 1120)
 script = ExtResource("4_camera")
 base_zoom = Vector2(0.72, 0.72)
@@ -75,22 +75,24 @@ lookahead_strength = 28.0
 threat_framing_enabled = false
 map_padding = 0.0
 
-[node name="DevelopmentUI" type="CanvasLayer" parent="."]
+[node name="DevelopmentUI" type="CanvasLayer" parent="." unique_id=1520325930]
 
-[node name="DevelopmentNotice" type="PanelContainer" parent="DevelopmentUI"]
+[node name="DevelopmentNotice" type="PanelContainer" parent="DevelopmentUI" unique_id=1527319881]
 offset_left = 18.0
 offset_top = 18.0
 offset_right = 480.0
 offset_bottom = 92.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_notice")
 
-[node name="Margin" type="MarginContainer" parent="DevelopmentUI/DevelopmentNotice"]
+[node name="Margin" type="MarginContainer" parent="DevelopmentUI/DevelopmentNotice" unique_id=1252307361]
+layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 10
 
-[node name="Text" type="Label" parent="DevelopmentUI/DevelopmentNotice/Margin"]
+[node name="Text" type="Label" parent="DevelopmentUI/DevelopmentNotice/Margin" unique_id=645238351]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.78, 0.88, 0.96, 1)
 theme_override_font_sizes/font_size = 14
 text = "TWIN SOLARIA // DEVELOPMENT BACKDROP TEST

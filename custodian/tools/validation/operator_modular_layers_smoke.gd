@@ -58,6 +58,31 @@ func _init() -> void:
 	if body != null and body.visible:
 		failures.append("legacy body sprite should be hidden while modular unarmed walk/action split is active")
 
+	operator.set("velocity", Vector2.ZERO)
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.call("start_block")
+	_check_layer(lower, "block enter lower", &"unarmed_block_enter_right", failures)
+	_check_layer(upper, "block enter upper", &"unarmed_block_enter_right", failures)
+	if body != null and body.visible:
+		failures.append("legacy body sprite should be hidden while modular unarmed block is active")
+	lower.stop()
+	upper.stop()
+	operator.call("update_block_state")
+	_check_layer(lower, "block hold lower", &"unarmed_block_hold_right", failures)
+	_check_layer(upper, "block hold upper", &"unarmed_block_hold_right", failures)
+	operator.set("_block_active", true)
+	operator.set("stamina", 100.0)
+	var block_result: Dictionary = operator.call("receive_enemy_hit", 10.0, &"melee", "enemy")
+	if not bool(block_result.get("blocked", false)):
+		failures.append("unarmed modular block hit did not resolve as blocked")
+	_check_layer(lower, "block hitreact lower", &"unarmed_block_hitreact_right", failures)
+	_check_layer(upper, "block hitreact upper", &"unarmed_block_hitreact_right", failures)
+	operator.call("_play_block_animation", &"melee_2h_block_exit")
+	if lower.animation != &"unarmed_block_enter_right" or upper.animation != &"unarmed_block_enter_right":
+		failures.append("modular block exit should reuse enter animation in reverse")
+	operator.set("_block_phase", &"")
+	operator.set("_block_active", false)
+
 	operator.set("primary_weapon_equipped", true)
 	operator.set("sidearm_weapon_definition", SIDEARM_DEFINITION)
 	operator.set("sidearm_slot_equipped", true)
