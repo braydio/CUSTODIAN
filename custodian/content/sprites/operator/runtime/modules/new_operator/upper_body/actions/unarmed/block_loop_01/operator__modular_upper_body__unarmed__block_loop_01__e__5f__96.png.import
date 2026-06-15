@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://durt0w6iv65gs"
-path="res://.godot/imported/operator__modular_upper_body__unarmed__enter_block_01__e__4f__96.png-969346c458b93f348279e11563c2e387.ctex"
+uid="uid://dnogov26nm8gj"
+path="res://.godot/imported/operator__modular_upper_body__unarmed__block_loop_01__e__5f__96.png-364ece6a6bd4aa0c413f271a67d05eb5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/new_operator/modular/block/operator__modular_upper_body__unarmed__enter_block_01__e__4f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__enter_block_01__e__4f__96.png-969346c458b93f348279e11563c2e387.ctex"]
+source_file="res://content/sprites/operator/runtime/modules/new_operator/upper_body/actions/unarmed/block_loop_01/operator__modular_upper_body__unarmed__block_loop_01__e__5f__96.png"
+dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__block_loop_01__e__5f__96.png-364ece6a6bd4aa0c413f271a67d05eb5.ctex"]
 
 [params]
 

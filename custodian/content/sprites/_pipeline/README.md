@@ -82,7 +82,41 @@ Operator curated body updates can trigger the runtime `SpriteFrames` rebuild aut
 }
 ```
 
-Modular Operator layer sheets should use `operator__modular_lower_body__...` or `operator__modular_upper_body__...` canonical names. The manifest generator routes those files into `operator/new_operator/modular/` and runs `operator_modular_runtime`, which rebuilds the stable runtime module sheets and refreshes the live modular `SpriteFrames`.
+Modular Operator layer sheets use this canonical specialization:
+
+```text
+operator__<modular_layer>__<loadout>__<action>__<direction>__<frames>f__<frame_size>.png
+```
+
+Supported modular layers include `modular_lower_body`, `modular_upper_body`, `modular_upper_fx`,
+`modular_wardrobe_cape`, `modular_combined_body`, and `modular_sidearm`. Use loadouts such as
+`unarmed`, `sidearm`, or `ranged_2h`; keep the action in the next token.
+
+```text
+operator__modular_lower_body__unarmed__block_loop_01__e__5f__96.png
+operator__modular_upper_body__unarmed__enter_block_01__e__4f__96.png
+operator__modular_wardrobe_cape__unarmed__block_loop_01__e__5f__96.png
+operator__modular_upper_body__ranged_2h__stance_01__w__5f__96.png
+```
+
+The manifest generator routes modular sheets into action-family buckets below
+`operator/new_operator/modular/` and runs `operator_modular_runtime`. The builder creates stable,
+96px-canvas runtime modules below `operator/runtime/modules/new_operator/<layer>/actions/<loadout>/<action>/`.
+Explicit loadout/action names are preferred when both they and a legacy short name exist. Legacy short names
+and the earlier ranged token ordering remain compatibility inputs.
+
+Ingest and runtime-module generation do not automatically grant a new gameplay animation state. Live playback
+must still be registered deliberately in the Operator state machine and curated `SpriteFrames`.
+
+When modular source PNGs already live under `operator/new_operator/modular/`, do not move them back through the
+inbox. Build and refresh them directly:
+
+```bash
+python custodian/tools/pipelines/build_operator_modular_runtime.py --dry-run --remove-superseded
+python custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded
+godot --headless --path custodian --import --quit
+godot --headless --path custodian --script res://tools/pipelines/update_operator_curated_resources.gd
+```
 
 Dodge body drops can be full-body or modular. Full-body dodge uses `operator__body__locomotion__dodge__n__4f__96.png` plus `operator__body__locomotion__dodge_recovery__n__4f__96.png`. The aim-back hop uses `operator__body__locomotion__dodge_backstep__s__4f__96.png` plus `operator__body__locomotion__dodge_backstep_recovery__s__4f__96.png`. Modular dodge source names that start with `dodge` route to `operator/new_operator/modular/dodge/`.
 
@@ -186,7 +220,21 @@ Useful flags:
 python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run
 python custodian/tools/pipelines/generate_inbox_manifests.py --skip-post
 python custodian/tools/pipelines/generate_inbox_manifests.py --regen
+python custodian/tools/pipelines/generate_inbox_manifests.py --remove-superseded
 ```
+
+Use `--remove-superseded` when a replacement changes frame count or frame size. It removes canonical sibling
+PNGs in the exact destination directory that match the same owner/layer/action/variant/direction, plus their
+`.import` sidecars. It also propagates through modular Operator runtime generation.
+
+Preview removals first:
+
+```bash
+python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run --remove-superseded
+```
+
+Archive/history files, files in other directories, and distinct variants such as `heavy_02` and `alt` remain
+untouched.
 
 ## Filename Rules
 

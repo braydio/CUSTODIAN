@@ -7,9 +7,15 @@ This folder is the stable runtime home for modular operator parts generated from
 Runtime scenes and `SpriteFrames` resources should reference this folder, not the modular source folders. Rebuild the generated module sheets with:
 
 ```sh
-python3 custodian/tools/pipelines/build_operator_modular_runtime.py
+python3 custodian/tools/pipelines/build_operator_modular_runtime.py --dry-run --remove-superseded
+python3 custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded
+godot --headless --path custodian --import --quit
 godot --headless --path custodian --script res://tools/pipelines/update_operator_curated_resources.gd
 ```
+
+Use this direct builder workflow when the source PNGs already live under
+`res://content/sprites/operator/new_operator/modular/`. The shared inbox is for new external exports that still
+need routing into that source tree.
 
 Modular Operator PNGs can also be dropped into the shared sprite inbox when they use canonical names such as:
 
@@ -19,6 +25,9 @@ operator__modular_lower_body__unarmed__walk_01__e__5f__96.png
 operator__modular_upper_body__sidearm__draw_sidearm_01__se__5f__96.png
 operator__modular_lower_body__sidearm__draw_sidearm_01__se__5f__96.png
 operator__modular_sidearm__sidearm__draw_sidearm_01__se__5f__96.png
+operator__modular_lower_body__unarmed__block_loop_01__e__5f__96.png
+operator__modular_upper_body__unarmed__enter_block_01__e__4f__96.png
+operator__modular_wardrobe_cape__unarmed__block_loop_01__e__5f__96.png
 ```
 
 Then run:
@@ -28,6 +37,12 @@ python3 custodian/tools/pipelines/generate_inbox_manifests.py
 ```
 
 Generated manifests route `operator__modular_*` files into `res://content/sprites/operator/new_operator/modular/` and run `operator_modular_runtime`, which rebuilds this runtime module folder and refreshes the live `operator_modular_lower_body_frames.tres` / `operator_modular_upper_body_frames.tres` resources. `modular_sidearm` is the canonical weapon-layer token for sidearm actions.
+
+The preferred source contract is
+`operator__<modular_layer>__<loadout>__<action>__<direction>__<frames>f__<frame_size>.png`.
+Generic actions outside the purpose-built locomotion, fast-attack, sidearm, dodge, and ranged-stance builders
+are normalized into `<layer>/actions/<loadout>/<action>/`. This makes new art stable and discoverable without
+silently wiring an unsupported gameplay state.
 
 The builder also normalizes supplied two-handed ranged stance layers into
 `{lower_body,upper_body,ranged_weapon}/actions/ranged_2h/stance_01/`. Current live coverage is E/N/W for idle
@@ -61,9 +76,19 @@ upper_fx/
   actions/
     sidearm/
       fx_01/
+wardrobe_cape/
+  actions/
+    <loadout>/
+      <action>/
 ```
 
 The operator scene has optional `ModularLowerBodySprite` and `ModularUpperBodySprite` layers. The lower-body layer owns movement presentation (`idle_01`, `walk_01`, `run_01`) and resolves direction from movement. The upper-body layer owns action/aim presentation and resolves direction from aim/action state, so the lower body can walk north while the upper body faces south. Unarmed fast strike currently uses `upper_body/actions/unarmed/fast_attack/fast_strike_01/`.
+
+Unarmed block is live on the lower/upper modular stack. `enter_block_01` drives block entry,
+`block_loop_01` drives hold, `blocking_hitreact_01` plays when a hit is blocked, and block exit replays entry
+backwards. Hold and hit-react have authored E/W coverage. Upper-body entry currently has only E, so left-facing
+entry falls back to the base/right clip. `upper_fx/actions/unarmed/parry_01/` is registered in the curated
+resource, but parry gameplay remains deferred and does not trigger it yet.
 
 The legacy body `AnimatedSprite2D` remains the timing/source-of-truth sprite for attack state, hit windows, portal arrival, ranged states, and any non-modular fallback state. It is hidden visually when modular layers cover the current unarmed locomotion state, including Fists idle.
 
