@@ -148,6 +148,20 @@ command_terminal__body__interaction__activate__omni__4f__48.png
 Legacy names remain valid only as compatibility targets for existing scenes/resources. Do not use legacy names for
 new source art unless a manifest also writes the canonical asset.
 
+### Modular Operator Naming
+
+Modular Operator source sheets specialize the canonical pattern as:
+
+```text
+operator__<modular_layer>__<loadout>__<action>__<direction>__<frames>f__<frame_size>.png
+```
+
+Prefer `modular_lower_body`, `modular_upper_body`, `modular_upper_fx`, `modular_wardrobe_cape`,
+`modular_combined_body`, or `modular_sidearm` for the layer. Use an explicit loadout such as `unarmed`,
+`sidearm`, or `ranged_2h`, followed by the action such as `block_loop_01`, `enter_block_01`, or `stance_01`.
+Legacy short names and the earlier ranged token ordering remain accepted as compatibility input, but new art
+should use the explicit loadout/action order.
+
 ## Runtime Replacement Rule
 
 Runtime asset folders represent the active mapped version of each sheet. If a corrected or retimed sheet replaces

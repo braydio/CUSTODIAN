@@ -136,6 +136,19 @@ python tools/pipelines/ingest.py --dry-run <manifest_or_source>
 
 Only run non-dry-run ingest when generated files are intended. Successful non-dry-run ingests may stage generated files by default; use `--no-git-add` when inspecting outputs without staging.
 
+For modular Operator naming/routing and generic action module generation:
+
+```bash
+python custodian/tools/validation/operator_modular_pipeline_smoke.py
+```
+
+For opt-in superseded-animation cleanup:
+
+```bash
+python custodian/tools/validation/sprite_superseded_cleanup_smoke.py
+python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run --remove-superseded
+```
+
 ## Runtime-Ready Asset Drop Validation
 
 Use for already-runtime-ready assets that do not require specialized sprite processing:

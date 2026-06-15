@@ -336,6 +336,8 @@ Last updated: 2026-06-05
 - `design/features/implementation/PROCGEN_WALL_TILE_BRIDGE.md` — implementation spec for integrating generated wall tiles into the procgen TileMap runtime
 - `design/02_features/procgen/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — first runtime slice for single-map indoor/outdoor region-aware procgen
 - `custodian/content/sprites/_pipeline/README.md` — intake contract, canonical sprite naming, and manifest examples
+- `custodian/tools/validation/operator_modular_pipeline_smoke.py` — focused Python smoke for modular Operator inbox routing, compatibility naming, post-process selection, and stable generic action module outputs
+- `custodian/tools/validation/sprite_superseded_cleanup_smoke.py` — end-to-end dry-run/apply smoke for opt-in canonical replacement cleanup and `.import` sidecar removal
 - `custodian/content/sprites/_pipeline/aseprite/` — raw aseprite PNG staging folder before normalization into inbox
 - `custodian/content/sprites/props/harvesting_nodes/blackwood_deadfall/` — runtime 96px idle/depleted harvesting-node sheets for blackwood nodes
 - `custodian/content/sprites/props/harvesting_nodes/exposed_alloy_vein/` — runtime 96px idle/depleted harvesting-node sheets for structural alloy nodes
