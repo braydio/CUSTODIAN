@@ -2074,8 +2074,9 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 		return false
 
 	var direction := aim_direction if aim_direction.length_squared() > 0.001 else visual_idle_direction
-	var lower_anim := AnimationResolver.resolve(base_animation, direction, modular_lower_body_sprite)
-	var upper_anim := AnimationResolver.resolve(base_animation, direction, modular_upper_body_sprite)
+	var resolved_base := "unarmed_block_enter" if base_animation == "unarmed_block_exit" else base_animation
+	var lower_anim := AnimationResolver.resolve(resolved_base, direction, modular_lower_body_sprite)
+	var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)
 
 	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
 		return false
@@ -2085,10 +2086,14 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 	_hide_modular_locomotion_layers()
 	modular_lower_body_sprite.visible = true
 	modular_lower_body_sprite.speed_scale = 1.0
-	modular_lower_body_sprite.play(lower_anim)
 	modular_upper_body_sprite.visible = true
 	modular_upper_body_sprite.speed_scale = 1.0
-	modular_upper_body_sprite.play(upper_anim)
+	if base_animation == "unarmed_block_exit":
+		modular_lower_body_sprite.play_backwards(lower_anim)
+		modular_upper_body_sprite.play_backwards(upper_anim)
+	else:
+		modular_lower_body_sprite.play(lower_anim)
+		modular_upper_body_sprite.play(upper_anim)
 	return true
 
 
