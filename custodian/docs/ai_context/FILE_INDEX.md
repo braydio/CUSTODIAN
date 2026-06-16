@@ -204,6 +204,7 @@ Last updated: 2026-06-05
 - `custodian/game/ui/inventory/inventory_ui.tscn` — hidden live-game Black Reliquary inventory overlay instanced under `UI` and opened with the inventory input action; now the primary status/history/ledger surface with tabbed pages
 - `custodian/game/ui/inventory/inventory_ui.gd` — live `InventoryManager`-backed CUSTODIAN field-ledger overlay with status page, large live minimap, quest/history log, carried-object category rail, detail inspector, focus handling, and compatibility support for isolated local `Inventory` callers
 - `custodian/game/ui/inventory/inventory_asset_catalog.gd` — canonical production inventory UI/item-icon resolver that automatically prefers assets under `content/ui/inventory/runtime/` and falls back to existing Black Reliquary/legacy textures
+- `custodian/game/ui/inventory/shaders/inventory_ember_spark.gdshader` and `materials/blackwood_ember_spark_material.tres` — reusable alpha-bounded inventory ember/spark effect and the blackwood-only default material instance
 - `custodian/game/ui/inventory/inventory_item_catalog.gd` — deterministic carried-item metadata resolver for known item JSON definitions plus readable fallback records for future/unknown ledger IDs
 - `custodian/content/ui/inventory/runtime/inventory_ui_asset_manifest.json` — exact production inventory asset drop-in contract for panels, slots, icons, and ornaments
 - `custodian/content/ui/inventory/runtime/README.md` — inventory production asset naming, placement, and replacement workflow
