@@ -708,9 +708,13 @@ func _build_equipment_page() -> Control:
 func _connect_resource_ledger() -> void:
 	_resource_ledger = get_node_or_null("/root/ResourceLedger")
 	if _resource_ledger != null and _resource_ledger.has_signal("changed"):
-		var callback := Callable(self, "_refresh_entries")
+		var callback := Callable(self, "_on_resource_ledger_changed")
 		if not _resource_ledger.is_connected("changed", callback):
 			_resource_ledger.connect("changed", callback)
+
+
+func _on_resource_ledger_changed(_snapshot: Dictionary) -> void:
+	_refresh_entries()
 
 
 func _connect_live_inventory() -> void:
@@ -921,6 +925,7 @@ func _rebuild_item_grid() -> void:
 	if _ledger_item_grid == null:
 		return
 	for child in _ledger_item_grid.get_children():
+		_ledger_item_grid.remove_child(child)
 		child.queue_free()
 	_item_buttons.clear()
 	var filtered: Array[Dictionary] = []
@@ -949,17 +954,28 @@ func _rebuild_item_grid() -> void:
 
 func _create_item_button(entry: Dictionary) -> Button:
 	var definition: Dictionary = entry["definition"]
+	var item_id := str(entry["item_id"])
 	var button := Button.new()
-	button.name = "Item_%s" % str(entry["item_id"])
+	button.name = "Item_%s" % item_id
 	button.custom_minimum_size = Vector2(112, 128)
 	button.tooltip_text = str(definition.get("description", ""))
-	button.text = "%s\nx%d" % [str(definition.get("display_name", entry["item_id"])).to_upper(), int(entry["quantity"])]
-	button.icon = Assets.item_icon(str(entry["item_id"]))
-	button.expand_icon = true
+	button.text = "\n\n\n%s\nx%d" % [str(definition.get("display_name", entry["item_id"])).to_upper(), int(entry["quantity"])]
 	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var icon := TextureRect.new()
+	icon.name = "ItemIcon"
+	icon.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	icon.position = Vector2(-32.0, 8.0)
+	icon.size = Vector2(64.0, 64.0)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon.texture = Assets.item_icon(item_id)
+	icon.material = _item_icon_material(item_id)
+	button.add_child(icon)
 	button.pressed.connect(_select_entry.bind(entry))
 	button.focus_entered.connect(_select_entry.bind(entry))
-	_apply_button_style(button, str(entry["item_id"]) == _selected_item_id)
+	_apply_button_style(button, item_id == _selected_item_id)
 	return button
 
 
@@ -984,6 +1000,7 @@ func _show_detail(entry: Dictionary) -> void:
 		_ledger_detail_equip_button.disabled = true
 	if entry.is_empty():
 		_ledger_detail_icon.texture = Assets.texture("icon_unknown")
+		_ledger_detail_icon.material = CanvasItemMaterial.new()
 		_ledger_detail_name.text = "NO RECORD SELECTED"
 		_ledger_detail_class.text = "CLASSIFICATION: --"
 		_ledger_detail_count.text = "QUANTITY: --"
@@ -991,7 +1008,9 @@ func _show_detail(entry: Dictionary) -> void:
 		_ledger_detail_provenance.text = "PROVENANCE: --"
 		return
 	var definition: Dictionary = entry["definition"]
-	_ledger_detail_icon.texture = Assets.item_icon(str(entry["item_id"]))
+	var item_id := str(entry["item_id"])
+	_ledger_detail_icon.texture = Assets.item_icon(item_id)
+	_ledger_detail_icon.material = _item_icon_material(item_id)
 	_ledger_detail_name.text = str(definition.get("display_name", entry["item_id"])).to_upper()
 	_ledger_detail_class.text = "CLASSIFICATION: %s / %s" % [
 		str(definition.get("category", "carried")).to_upper(),
@@ -1003,6 +1022,11 @@ func _show_detail(entry: Dictionary) -> void:
 	
 	# Show equip button for equipment items if the slot is empty
 	_show_equip_button_if_applicable(entry)
+
+
+func _item_icon_material(item_id: String) -> Material:
+	var effect_material := Assets.item_material(item_id)
+	return effect_material if effect_material != null else CanvasItemMaterial.new()
 
 
 ## Show or hide the equip button for the given entry.

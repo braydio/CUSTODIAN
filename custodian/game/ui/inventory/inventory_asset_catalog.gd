@@ -4,7 +4,11 @@ extends RefCounted
 const MANIFEST_PATH := "res://content/ui/inventory/runtime/inventory_ui_asset_manifest.json"
 const RUNTIME_ICON_PATTERN := "res://content/ui/inventory/runtime/icons/icon_%s.png"
 const LEGACY_ICON_PATTERN := "res://content/ui/inventory/icons/icon_%s.png"
+const RESOURCE_ICON_PATTERN := "res://content/ui/inventory/icons/resources/icon_%s.png"
 const FALLBACK_ICON := "res://content/ui/inventory/icons/icon_placeholder.png"
+const ITEM_MATERIALS := {
+	"blackwood": "res://game/ui/inventory/materials/blackwood_ember_spark_material.tres",
+}
 
 static var _manifest: Dictionary = {}
 
@@ -24,7 +28,7 @@ static func texture(asset_id: String) -> Texture2D:
 
 
 static func item_icon_path(item_id: String) -> String:
-	for path in [RUNTIME_ICON_PATTERN % item_id, LEGACY_ICON_PATTERN % item_id, FALLBACK_ICON]:
+	for path in [RUNTIME_ICON_PATTERN % item_id, LEGACY_ICON_PATTERN % item_id, RESOURCE_ICON_PATTERN % item_id, FALLBACK_ICON]:
 		if ResourceLoader.exists(path):
 			return path
 	return ""
@@ -32,6 +36,14 @@ static func item_icon_path(item_id: String) -> String:
 
 static func item_icon(item_id: String) -> Texture2D:
 	return _load_texture(item_icon_path(item_id))
+
+
+static func item_material(item_id: String) -> Material:
+	var path := str(ITEM_MATERIALS.get(item_id, ""))
+	if path.is_empty() or not ResourceLoader.exists(path):
+		return null
+	var resource: Resource = load(path)
+	return resource.duplicate(true) as Material if resource is Material else null
 
 
 static func _get_manifest() -> Dictionary:
