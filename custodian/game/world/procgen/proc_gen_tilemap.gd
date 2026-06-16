@@ -16,6 +16,11 @@ const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrai
 const WORLD_PROGRESS_PROFILE_SCRIPT := preload("res://game/world/procgen/progression/world_progress_profile.gd")
 const FACTION_SITE_PLACER_SCRIPT := preload("res://game/world/procgen/factions/faction_site_placer.gd")
 const STORY_ROOM_PLACER_SCRIPT := preload("res://game/world/procgen/story/story_room_placer.gd")
+const ASCENT_SPINE_BUILDER_SCRIPT := preload("res://game/world/procgen/intent/ascent_spine_builder.gd")
+const ASCENT_FIELD_BUILDER_SCRIPT := preload("res://game/world/procgen/intent/ascent_field_builder.gd")
+const REGION_FOOTPRINT_RESERVER_SCRIPT := preload("res://game/world/procgen/intent/region_footprint_reserver.gd")
+const STORY_ROOM_GEOMETRY_STAMPER_SCRIPT := preload("res://game/world/procgen/story/story_room_geometry_stamper.gd")
+const FACTION_SITE_GEOMETRY_STAMPER_SCRIPT := preload("res://game/world/procgen/factions/faction_site_geometry_stamper.gd")
 const AMBIENT_ACTIVITY_ANCHOR_SCRIPT := preload("res://game/actors/enemies/ambient/ambient_activity_anchor.gd")
 const PLACEHOLDER_ATLAS_PATH := "res://content/placeholder_art/placeholder_walls_floors_stairs.png"
 const TILE_ALT_FLIP_H := 4096
@@ -53,10 +58,16 @@ const TERRAIN_TILESET_SOURCES := {
 	"mountain_wall_impassable_32": {"source_id": 59, "layer": "wall"},
 }
 
+enum WorldShapeMode {
+	LEGACY_CAVE,
+	ASCENT_FIELD,
+}
+
 @export var procgen_node: ProcGen
 @export var floor_tilemap: TileMapLayer
 @export var walls_tilemap: TileMapLayer
 @export var nav_region: NavigationRegion2D
+@export var world_shape_mode: WorldShapeMode = WorldShapeMode.ASCENT_FIELD
 
 ## TileSet source IDs (from your TileSet)
 @export var floor_source_id: int = 0
@@ -416,6 +427,12 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export var story_rooms_enabled: bool = true
 @export_range(0, 32, 1) var story_room_count: int = 8
 @export_group("", "")
+@export_group("Worldgen Intent", "worldgen_intent")
+@export var worldgen_intent_enabled: bool = true
+@export_range(1, 16, 1) var worldgen_intent_route_beat_count: int = 7
+@export var worldgen_intent_carve_before_detail: bool = true
+@export var worldgen_intent_debug_logging: bool = true
+@export_group("", "")
 
 var _foliage_parent: Node2D = null
 var _road_piece_parent: Node2D = null
@@ -443,6 +460,14 @@ var _faction_activity_sites: Array[Dictionary] = []
 var _story_room_sites: Array[Dictionary] = []
 var _faction_site_placer: RefCounted = null
 var _story_room_placer: RefCounted = null
+var _faction_site_geometry_stamper: RefCounted = null
+var _story_room_geometry_stamper: RefCounted = null
+var _worldgen_intent_graph = null
+var _worldgen_reserved_regions: Array[Dictionary] = []
+var _worldgen_intent_floor_cells: Dictionary = {}
+var _ascent_field_summary: Dictionary = {}
+var _ascent_field_main_route_cells: Array[Vector2i] = []
+var _ascent_field_vista_cells: Array[Vector2i] = []
 var _world_progress_marker_parent: Node2D = null
 
 func _ready() -> void:
@@ -567,22 +592,17 @@ func _fill_tilemaps() -> void:
 	_apply_planet_visual_profile()
 	
 	var map_size = procgen_node.map_size
-	var open_layout_active := _is_open_layout_active()
 	_ensure_world_progress_profile()
 	_ensure_site_placers()
 	
-	for x in range(map_size.x):
-		for y in range(map_size.y):
-			var pos = Vector2i(x, y)
-			var is_wall = procgen_node.is_full_at(pos)
-			if is_wall and open_layout_active and _should_carve_open(pos):
-				is_wall = false
-			
-			if is_wall:
-				_set_wall_tile(pos)
-			else:
-				_set_floor_tile(pos)
-
+	if world_shape_mode == WorldShapeMode.LEGACY_CAVE:
+		_fill_legacy_cave_substrate(map_size)
+		if worldgen_intent_enabled:
+			_build_worldgen_intent_graph(map_size)
+			if worldgen_intent_carve_before_detail:
+				_apply_worldgen_intent_floor_cells(map_size)
+	else:
+		_fill_ascent_field_substrate(map_size)
 	if enable_compound_zone:
 		_apply_compound_layout(map_size)
 	if interior_region_enabled:
@@ -613,8 +633,16 @@ func _fill_tilemaps() -> void:
 		_build_world_progress_samples(map_size)
 	if faction_ambient_sites_enabled:
 		_place_faction_ambient_sites(map_size)
+		_stamp_worldgen_faction_site_geometry()
 	if story_rooms_enabled:
 		_place_story_rooms(map_size)
+		_stamp_worldgen_story_room_geometry()
+	if intent_main_roads_enabled:
+		_repair_road_surface_components(map_size, maxi(1, intent_main_road_half_width - 1))
+		_enforce_road_walkability(map_size)
+		_prune_small_edge_road_components(map_size)
+		_refresh_road_path_visuals()
+		_capture_generated_tile_state(map_size)
 	if enable_streaming_reveal:
 		_prepare_streaming_reveal()
 	elif build_runtime_wall_collision:
@@ -1449,6 +1477,8 @@ func _carve_road_brush(center: Vector2i, width: int, map_size: Vector2i) -> void
 				continue
 			if is_indoor_tile(tile):
 				continue
+			if _is_road_blocked_by_impassable_authority(tile):
+				continue
 			_main_road_tiles[tile] = true
 			_set_road_path_tile(tile, "road")
 			_set_region_tile(tile, "main_road", "travel")
@@ -1525,6 +1555,8 @@ func _stamp_parking_zone(center: Vector2i, map_size: Vector2i) -> void:
 				continue
 			if is_indoor_tile(tile):
 				continue
+			if _is_road_blocked_by_impassable_authority(tile):
+				continue
 			_main_road_tiles[tile] = true
 			_parking_zone_tiles[tile] = true
 			_set_road_path_tile(tile, "road")
@@ -1536,6 +1568,9 @@ func _stamp_parking_zone(center: Vector2i, map_size: Vector2i) -> void:
 
 func _set_road_path_tile(pos: Vector2i, surface_kind: String = "road") -> void:
 	if floor_tilemap == null or walls_tilemap == null:
+		return
+	if _is_road_blocked_by_impassable_authority(pos):
+		_clear_procgen_road_authority_at(pos)
 		return
 	_set_floor_tile(pos)
 	_clear_road_blocking_wall(pos)
@@ -1639,16 +1674,19 @@ func _enforce_road_walkability(map_size: Vector2i) -> void:
 	for tile_variant in _main_road_tiles.keys():
 		if tile_variant is Vector2i:
 			var tile := tile_variant as Vector2i
-			if _is_tile_inside_map(tile, map_size, 1) and not is_indoor_tile(tile):
-				_set_road_path_tile(tile, "road")
+			if not _is_tile_inside_map(tile, map_size, 1) or is_indoor_tile(tile) or _is_road_blocked_by_impassable_authority(tile):
+				_clear_procgen_road_authority_at(tile)
+				continue
+			_set_road_path_tile(tile, "road")
 	for tile_variant in _region_tiles.keys():
 		if not (tile_variant is Vector2i):
 			continue
 		var tile := tile_variant as Vector2i
 		if get_region_type_at_tile(tile) != "soft_path":
 			continue
-		if _is_tile_inside_map(tile, map_size, 1) and not is_indoor_tile(tile):
-			_set_road_path_tile(tile, "path")
+		if not _is_tile_inside_map(tile, map_size, 1) or is_indoor_tile(tile) or _is_road_blocked_by_impassable_authority(tile):
+			continue
+		_set_road_path_tile(tile, "path")
 
 
 func _clear_road_blocking_wall(pos: Vector2i) -> void:
@@ -1660,6 +1698,9 @@ func _refresh_road_path_visuals() -> void:
 	for tile_variant in _main_road_tiles.keys():
 		if tile_variant is Vector2i:
 			var road_tile := tile_variant as Vector2i
+			if _is_road_blocked_by_impassable_authority(road_tile):
+				_clear_procgen_road_authority_at(road_tile)
+				continue
 			if not _should_preserve_road_floor_visual(road_tile):
 				_set_road_path_tile(road_tile, "road")
 	for tile_variant in _region_tiles.keys():
@@ -1669,8 +1710,28 @@ func _refresh_road_path_visuals() -> void:
 		if _main_road_tiles.has(tile):
 			continue
 		if get_region_type_at_tile(tile) == "soft_path":
+			if _is_road_blocked_by_impassable_authority(tile):
+				continue
 			_set_road_path_tile(tile, "path")
 	_spawn_road_piece_decals()
+
+
+func _is_road_blocked_by_impassable_authority(tile: Vector2i) -> bool:
+	var region_type := get_region_type_at_tile(tile)
+	if region_type == "ascent_field_blocker" \
+			or region_type == "terrain_mountain_wall" \
+			or region_type == "terrain_blocked" \
+			or region_type == "terrain_drop" \
+			or region_type == "terrain_elevation_ledge" \
+			or region_type == "compound_connector_wall":
+		return true
+	var wall_data: Variant = _generated_wall_cells.get(tile, {})
+	if wall_data is Dictionary and String((wall_data as Dictionary).get("authority", "")) == "ascent_field_blocker":
+		return true
+	var traversal := String(get_elevation_data_at_tile(tile).get("traversal_type", ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE))
+	return traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_BLOCKED \
+			or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_LEDGE \
+			or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_DROP
 
 
 func _should_preserve_road_floor_visual(tile: Vector2i) -> bool:
@@ -2517,6 +2578,172 @@ func _ensure_site_placers() -> void:
 		_story_room_placer = STORY_ROOM_PLACER_SCRIPT.new()
 
 
+func _fill_legacy_cave_substrate(map_size: Vector2i) -> void:
+	var open_layout_active := _is_open_layout_active()
+	for x in range(map_size.x):
+		for y in range(map_size.y):
+			var pos = Vector2i(x, y)
+			var is_wall = procgen_node.is_full_at(pos)
+			if is_wall and open_layout_active and _should_carve_open(pos):
+				is_wall = false
+
+			if is_wall:
+				_set_wall_tile(pos)
+			else:
+				_set_floor_tile(pos)
+
+
+func _fill_ascent_field_substrate(map_size: Vector2i) -> void:
+	_build_worldgen_intent_graph(map_size, true)
+	if _worldgen_intent_graph == null:
+		return
+	var builder := ASCENT_FIELD_BUILDER_SCRIPT.new()
+	var field: Dictionary = builder.call("build_field", _worldgen_intent_graph, map_size, procgen_node.seed if procgen_node != null else 0)
+	_worldgen_intent_floor_cells = field.get("floor_cells", {})
+	_worldgen_reserved_regions = field.get("reserved_regions", [])
+	_ascent_field_summary = field.get("debug_summary", {})
+	_ascent_field_main_route_cells = field.get("main_route_cells", [])
+	_ascent_field_vista_cells = field.get("vista_cells", [])
+	_apply_ascent_field_authority(field, map_size)
+
+
+func _apply_ascent_field_authority(field: Dictionary, map_size: Vector2i) -> void:
+	_generated_floor_cells.clear()
+	_generated_wall_cells.clear()
+	var floor_cells: Dictionary = field.get("floor_cells", {})
+	var wall_cells: Dictionary = field.get("wall_cells", {})
+	for key in floor_cells.keys():
+		if not (key is Vector2i):
+			continue
+		var tile := key as Vector2i
+		if not _is_tile_inside_map(tile, map_size, 0):
+			continue
+		_set_ascent_field_floor_authority(tile, "ascent_field_floor", "exterior_ascent")
+	for key in wall_cells.keys():
+		if not (key is Vector2i):
+			continue
+		var tile := key as Vector2i
+		if not _is_tile_inside_map(tile, map_size, 0):
+			continue
+		if _generated_floor_cells.has(tile):
+			continue
+		_set_ascent_field_wall_authority(tile)
+
+
+func _set_ascent_field_floor_authority(tile: Vector2i, region_type: String, zone: String) -> void:
+	var source_id := _select_floor_source_id(tile)
+	var atlas := _select_floor_coord(tile)
+	_generated_floor_cells[tile] = {
+		"source_id": source_id,
+		"atlas": atlas,
+		"alternative": 0,
+		"authority": "ascent_field",
+	}
+	_generated_wall_cells.erase(tile)
+	if floor_tilemap != null:
+		floor_tilemap.set_cell(tile, source_id, atlas, 0)
+	if walls_tilemap != null:
+		walls_tilemap.erase_cell(tile)
+	_wall_health.erase(tile)
+	_set_region_tile(tile, region_type, zone)
+
+
+func _set_ascent_field_wall_authority(tile: Vector2i) -> void:
+	var source = high_walls_source_id if use_high_walls else walls_source_id
+	var coord = _select_wall_coord(tile)
+	_generated_wall_cells[tile] = {
+		"source_id": source,
+		"atlas": coord,
+		"alternative": 0,
+		"authority": "ascent_field_blocker",
+	}
+	_generated_floor_cells.erase(tile)
+	if walls_tilemap != null:
+		walls_tilemap.set_cell(tile, source, coord, 0)
+	if floor_tilemap != null:
+		floor_tilemap.erase_cell(tile)
+	if not _wall_health.has(tile):
+		_wall_health[tile] = wall_tile_max_health
+	_set_region_tile(tile, "ascent_field_blocker", "cliff_ruin_boundary")
+
+
+func _build_worldgen_intent_graph(map_size: Vector2i, force_ascent_field_origin: bool = false) -> void:
+	_worldgen_intent_graph = null
+	_worldgen_reserved_regions.clear()
+	_worldgen_intent_floor_cells.clear()
+	if not worldgen_intent_enabled:
+		return
+
+	_ensure_world_progress_profile()
+	var builder := ASCENT_SPINE_BUILDER_SCRIPT.new()
+	var origin := Vector2i(map_size.x / 2, map_size.y - 12) if force_ascent_field_origin else get_player_spawn()
+	if origin == Vector2i.ZERO:
+		origin = Vector2i(map_size.x / 2, map_size.y - 12)
+	if _world_progress_profile != null:
+		_world_progress_profile.origin_cell = origin
+	_worldgen_intent_graph = builder.call("build", {
+		"seed": procgen_node.seed if procgen_node != null else 0,
+		"map_size": map_size,
+		"origin_cell": origin,
+		"route_beat_count": worldgen_intent_route_beat_count,
+		"world_progress_profile": _world_progress_profile,
+	})
+
+	var reserver := REGION_FOOTPRINT_RESERVER_SCRIPT.new()
+	var reservations: Dictionary = reserver.call("build_reservations", _worldgen_intent_graph, map_size)
+	_worldgen_intent_floor_cells = reservations.get("floor_cells", {})
+	_worldgen_reserved_regions = reservations.get("reserved_regions", [])
+
+	if worldgen_intent_debug_logging:
+		print("[ProcGenTilemap] intent graph nodes=%d edges=%d floor_cells=%d regions=%d" % [
+			_worldgen_intent_graph.nodes.size(),
+			_worldgen_intent_graph.edges.size(),
+			_worldgen_intent_floor_cells.size(),
+			_worldgen_reserved_regions.size(),
+		])
+
+
+func _apply_worldgen_intent_floor_cells(map_size: Vector2i) -> void:
+	if _worldgen_intent_floor_cells.is_empty():
+		return
+	for key in _worldgen_intent_floor_cells.keys():
+		if not (key is Vector2i):
+			continue
+		var tile := key as Vector2i
+		if not _is_tile_inside_map(tile, map_size, 0):
+			continue
+		var source_id := _select_floor_source_id(tile)
+		var atlas := _select_floor_coord(tile)
+		_generated_floor_cells[tile] = {
+			"source_id": source_id,
+			"atlas": atlas,
+			"alternative": 0,
+			"authority": "worldgen_intent",
+		}
+		if floor_tilemap != null:
+			floor_tilemap.set_cell(tile, source_id, atlas, 0)
+		_clear_procgen_wall_authority_at(tile, false)
+		_set_region_tile(tile, "worldgen_intent_floor", "ascent_route")
+	if build_runtime_wall_collision:
+		_sync_runtime_wall_collision_with_visible_walls()
+
+
+func _stamp_worldgen_faction_site_geometry() -> void:
+	if _worldgen_reserved_regions.is_empty():
+		return
+	if _faction_site_geometry_stamper == null:
+		_faction_site_geometry_stamper = FACTION_SITE_GEOMETRY_STAMPER_SCRIPT.new()
+	_faction_site_geometry_stamper.call("stamp_faction_sites", self, _faction_activity_sites, _worldgen_reserved_regions)
+
+
+func _stamp_worldgen_story_room_geometry() -> void:
+	if _worldgen_reserved_regions.is_empty():
+		return
+	if _story_room_geometry_stamper == null:
+		_story_room_geometry_stamper = STORY_ROOM_GEOMETRY_STAMPER_SCRIPT.new()
+	_story_room_geometry_stamper.call("stamp_story_rooms", self, _story_room_sites, _worldgen_reserved_regions)
+
+
 func _build_world_progress_samples(map_size: Vector2i) -> void:
 	_world_progress_samples.clear()
 	if _world_progress_profile == null:
@@ -2593,6 +2820,12 @@ func _find_or_create_world_progress_marker_parent() -> Node2D:
 
 func _clear_world_progression_runtime() -> void:
 	_world_progress_samples.clear()
+	_worldgen_intent_graph = null
+	_worldgen_reserved_regions.clear()
+	_worldgen_intent_floor_cells.clear()
+	_ascent_field_summary.clear()
+	_ascent_field_main_route_cells.clear()
+	_ascent_field_vista_cells.clear()
 	_faction_activity_sites.clear()
 	_story_room_sites.clear()
 	if _world_progress_marker_parent == null:
@@ -2716,6 +2949,14 @@ func debug_has_wall_authority_at(tile: Vector2i) -> bool:
 	return debug_runtime_wall_body_exists(tile)
 
 
+func debug_is_road_blocked_by_impassable_authority(tile: Vector2i) -> bool:
+	return _is_road_blocked_by_impassable_authority(tile)
+
+
+func debug_can_place_foliage_at(tile: Vector2i) -> bool:
+	return _should_place_foliage(tile)
+
+
 func debug_get_authored_scene_authority_report(rect: Rect2i) -> Dictionary:
 	var wall_visual_count := 0
 	var wall_authority_count := 0
@@ -2820,6 +3061,32 @@ func can_traverse_elevation(from_tile: Vector2i, to_tile: Vector2i) -> bool:
 	if elevation_map == null:
 		return abs((to_tile - from_tile).x) + abs((to_tile - from_tile).y) == 1
 	return elevation_map.can_traverse(from_tile, to_tile)
+
+
+func can_actor_move_between_tiles(from_tile: Vector2i, to_tile: Vector2i) -> bool:
+	if elevation_map != null and elevation_map.has_method("can_traverse"):
+		return bool(elevation_map.call("can_traverse", from_tile, to_tile))
+	if _terrain_builder != null and _terrain_builder.has_method("can_move_between"):
+		return bool(_terrain_builder.call("can_move_between", from_tile, to_tile))
+	return abs((to_tile - from_tile).x) + abs((to_tile - from_tile).y) == 1
+
+
+func get_actor_elevation_cost(from_tile: Vector2i, to_tile: Vector2i) -> float:
+	if not can_actor_move_between_tiles(from_tile, to_tile):
+		return INF
+	var from_data := get_elevation_data_at_tile(from_tile)
+	var to_data := get_elevation_data_at_tile(to_tile)
+	var from_height := int(from_data.get("height", 0))
+	var to_height := int(to_data.get("height", 0))
+	var traversal := String(to_data.get("traversal_type", "walkable"))
+	var cost := 1.0
+	if to_height > from_height:
+		cost += 0.35
+	if traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_STAIR:
+		cost += 0.2
+	elif traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_RAMP:
+		cost += 0.15
+	return cost
 
 
 func is_valid_spawn_cell(tile: Vector2i) -> bool:
@@ -3086,6 +3353,9 @@ func _apply_terrain_builder(map_size: Vector2i) -> void:
 		"enable_ascent_route": ascent_route_enabled and world_progression_enabled,
 		"world_progress_profile": _world_progress_profile,
 		"world_progress_profile_path": world_progress_profile_path,
+		"worldgen_intent_graph": _worldgen_intent_graph,
+		"worldgen_reserved_regions": _worldgen_reserved_regions,
+		"worldgen_intent_floor_cells": _worldgen_intent_floor_cells,
 	}
 	_last_terrain_result = _terrain_builder.build_terrain(Rect2i(Vector2i.ZERO, map_size), terrain_rng, context)
 	if elevation_map.has_method("apply_build_result"):
@@ -3115,6 +3385,10 @@ func _collect_terrain_required_cells(map_size: Vector2i) -> Array[Vector2i]:
 	for parking_tile in _parking_zone_tiles.keys():
 		if parking_tile is Vector2i and _is_tile_inside_map(parking_tile as Vector2i, map_size):
 			required.append(parking_tile as Vector2i)
+	if _worldgen_intent_graph != null:
+		for cell in _worldgen_intent_graph.get_required_cells():
+			if _is_tile_inside_map(cell, map_size):
+				required.append(cell)
 	return required
 
 
@@ -4175,6 +4449,8 @@ func _should_place_foliage(pos: Vector2i) -> bool:
 		return false
 	if _is_near_indoor_tile(pos, foliage_indoor_clearance_tiles):
 		return false
+	if _is_no_random_foliage_region_tile(pos):
+		return false
 	if _is_near_wall(pos):
 		return false
 	if _is_inside_foliage_clearance(pos):
@@ -4308,6 +4584,8 @@ func _estimate_local_tree_density(center: Vector2i) -> float:
 				continue
 			if is_indoor_tile(pos) or _is_near_indoor_tile(pos, foliage_indoor_clearance_tiles):
 				continue
+			if _is_no_random_foliage_region_tile(pos):
+				continue
 			if _is_near_wall(pos) or _is_inside_foliage_clearance(pos):
 				continue
 			possible += 1
@@ -4324,6 +4602,8 @@ func _estimate_local_tree_density(center: Vector2i) -> float:
 func _would_place_foliage_at(pos: Vector2i) -> bool:
 	if is_road_surface_tile(pos) or is_parking_zone_tile(pos):
 		return false
+	if _is_no_random_foliage_region_tile(pos):
+		return false
 	var density := foliage_density
 	if _is_inside_compound_zone(pos):
 		density *= foliage_compound_density_multiplier
@@ -4331,6 +4611,24 @@ func _would_place_foliage_at(pos: Vector2i) -> bool:
 		return false
 	var prob := float(_tile_noise_hash(pos + Vector2i(13, 41)) % 1000) / 1000.0
 	return prob < density
+
+
+func _is_no_random_foliage_region_tile(pos: Vector2i) -> bool:
+	var data := get_region_data_at_tile(pos)
+	var region_type := String(data.get("region_type", "exterior"))
+	var zone := String(data.get("zone", "natural"))
+	if zone == "authored_scene" \
+			or zone == "story_room" \
+			or zone == "faction_activity" \
+			or zone == "interior":
+		return true
+	if region_type.contains("authored") \
+			or region_type.contains("story_room") \
+			or region_type.contains("faction_site") \
+			or region_type.contains("ash_bell") \
+			or region_type.contains("forlorn_ritualant"):
+		return true
+	return false
 
 
 func _add_tree_trunk_collision(foliage_sprite: Sprite2D, foliage_size: Vector2) -> void:
@@ -5442,6 +5740,14 @@ func _dict_keys_as_vector2i_array(source: Dictionary) -> Array[Vector2i]:
 	return result
 
 
+func _world_shape_mode_name() -> String:
+	match world_shape_mode:
+		WorldShapeMode.LEGACY_CAVE:
+			return "legacy_cave"
+		_:
+			return "ascent_field"
+
+
 func get_level_data() -> Dictionary:
 	return {
 		"map_size": procgen_node.map_size,
@@ -5466,9 +5772,16 @@ func get_level_data() -> Dictionary:
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"world_profile": get_planet_world_profile(),
+		"world_shape_mode": _world_shape_mode_name(),
 		"world_progression_enabled": world_progression_enabled,
 		"world_progress_profile_id": _world_progress_profile.profile_id if _world_progress_profile != null else "",
 		"world_progress_samples": _world_progress_samples.duplicate(true),
+		"worldgen_intent_enabled": worldgen_intent_enabled,
+		"worldgen_intent_graph": _worldgen_intent_graph.to_dictionary() if _worldgen_intent_graph != null else {},
+		"ascent_field_summary": _ascent_field_summary.duplicate(true),
+		"main_route_cells": _ascent_field_main_route_cells.duplicate(),
+		"vista_cells": _ascent_field_vista_cells.duplicate(),
+		"worldgen_reserved_regions": _worldgen_reserved_regions.duplicate(true),
 		"faction_activity_sites": _faction_activity_sites.duplicate(true),
 		"story_room_sites": _story_room_sites.duplicate(true),
 		"intent_zones_enabled": true,

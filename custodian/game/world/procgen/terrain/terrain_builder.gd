@@ -74,6 +74,16 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 	if _ascent_route_planner == null:
 		_ascent_route_planner = AscentRoutePlannerScript.new()
 
+	if context.has("worldgen_reserved_regions"):
+		var reserved_snapshot := result.duplicate(true)
+		var reserved_region := _apply_reserved_region_elevation(result, context.get("worldgen_reserved_regions", []))
+		if not reserved_region.is_empty():
+			if _validate_connectivity(result, start_cell, required_cells).get("ok", false):
+				debug_regions.append(reserved_region)
+			else:
+				result = reserved_snapshot
+				warnings.append("WARNING: TerrainBuilder discarded worldgen reserved-region elevation because connectivity validation failed.")
+
 	if bool(context.get("enable_ascent_route", false)) and world_progress_profile != null:
 		var ascent_snapshot := result.duplicate(true)
 		var ascent_region: Dictionary = _ascent_route_planner.call("apply_ascent_route", map_rect, result, context, world_progress_profile)
@@ -340,6 +350,54 @@ func _set_result_cell(result: Dictionary, cell: Vector2i, height: int, traversal
 		terrain_type,
 		tile_id
 	)
+
+
+func _apply_reserved_region_elevation(result: Dictionary, reserved_regions: Array) -> Dictionary:
+	var applied_count := 0
+	var elevated_count := 0
+	for raw_region in reserved_regions:
+		if not (raw_region is Dictionary):
+			continue
+		var region := raw_region as Dictionary
+		var rect: Rect2i = region.get("rect", Rect2i())
+		var runtime_height := clampi(int(region.get("runtime_height", HEIGHT_GROUND)), HEIGHT_GROUND, HEIGHT_ELEVATED)
+		var kind := String(region.get("kind", "intent_region"))
+		for x in range(rect.position.x, rect.end.x):
+			for y in range(rect.position.y, rect.end.y):
+				var cell := Vector2i(x, y)
+				if not (result.get("height_by_cell", {}) as Dictionary).has(cell):
+					continue
+				var tile_id := TerrainTileIdsScript.industrial("elevated_floor") if runtime_height > HEIGHT_GROUND else NO_VISUAL_TILE
+				var traversal := TRAVERSAL_WALKABLE
+				if runtime_height > HEIGHT_GROUND and _is_rect_edge_cell(rect, cell):
+					traversal = TRAVERSAL_STAIR
+				_set_result_cell(
+					result,
+					cell,
+					runtime_height,
+					traversal,
+					TerrainType.INDUSTRIAL_PLATFORM if runtime_height > HEIGHT_GROUND else TerrainType.GROUND,
+					tile_id
+				)
+				if kind == "story_room" or kind == "faction_site":
+					(result.get("ramp_dir_by_cell", {}) as Dictionary).erase(cell)
+				applied_count += 1
+				if runtime_height > HEIGHT_GROUND:
+					elevated_count += 1
+	if applied_count <= 0:
+		return {}
+	return {
+		"type": "worldgen_reserved_regions",
+		"cell_count": applied_count,
+		"elevated_count": elevated_count,
+	}
+
+
+func _is_rect_edge_cell(rect: Rect2i, cell: Vector2i) -> bool:
+	return cell.x == rect.position.x \
+			or cell.y == rect.position.y \
+			or cell.x == rect.end.x - 1 \
+			or cell.y == rect.end.y - 1
 
 
 func _validate_connectivity(result: Dictionary, start_cell: Vector2i, required_cells: Array[Vector2i]) -> Dictionary:

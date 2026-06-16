@@ -62,6 +62,7 @@ func _run() -> void:
 				continue
 			assert(tilemap.get_region_type_at_tile(tile) == "test_authored_scene_floor", "Authored scene region metadata missing at %s." % str(tile))
 			assert(not tilemap.is_road_surface_tile(tile), "Authored scene claim retained road authority at %s." % str(tile))
+			assert(not tilemap.debug_can_place_foliage_at(tile), "Authored scene allows random foliage placement at %s." % str(tile))
 
 	print("[ProcgenAuthoredSceneAuthoritySmoke] ok claimed=%s center=%s report=%s" % [str(claimed_rect), str(target_tile), str(report)])
 	quit(0)

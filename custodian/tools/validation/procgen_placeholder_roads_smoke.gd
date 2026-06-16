@@ -44,6 +44,7 @@ func _run() -> void:
 	for tile in road_tiles:
 		assert(not tilemap.debug_has_wall_visual_at(tile), "Road tile has wall visual: %s" % str(tile))
 		assert(not tilemap.debug_has_wall_authority_at(tile), "Road tile has wall authority: %s" % str(tile))
+		assert(not tilemap.debug_is_road_blocked_by_impassable_authority(tile), "Road tile overlaps impassable authority: %s" % str(tile))
 
 	var decal_paths := tilemap.debug_get_road_piece_decal_texture_paths()
 	assert(decal_paths.size() >= 8, "Expected placeholder road/path decals to spawn, got %d." % decal_paths.size())
