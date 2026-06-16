@@ -11,6 +11,8 @@ func _initialize() -> void:
 		inventory_manager.call("clear")
 		inventory_manager.call("add_item", &"faint_recollection", 2)
 		inventory_manager.call("add_item", &"sundered_gate_key", 1)
+	var resource_ledger := root.get_node_or_null("ResourceLedger")
+	_assert(resource_ledger != null, "ResourceLedger autoload missing")
 
 	_validate_asset_manifest()
 
@@ -51,6 +53,32 @@ func _initialize() -> void:
 	_assert(ledger_page != null and ledger_page.visible, "ledger page did not become visible")
 	_assert(_find_node_named(inventory_ui, "Item_faint_recollection") != null, "live inventory item was not rendered")
 	_assert(_find_node_named(inventory_ui, "Item_sundered_gate_key") != null, "Sundered Gate Key was not rendered")
+	if resource_ledger != null:
+		resource_ledger.call("add", &"blackwood", 1)
+		await process_frame
+	var blackwood_button := _find_node_named(inventory_ui, "Item_blackwood")
+	_assert(blackwood_button != null, "blackwood resource item was not rendered")
+	var blackwood_icon := blackwood_button.get_node_or_null("ItemIcon") as TextureRect if blackwood_button != null else null
+	_assert(blackwood_icon != null, "blackwood item icon control missing")
+	_assert(blackwood_icon != null and blackwood_icon.material is ShaderMaterial, "blackwood item icon ember material missing")
+	var blackwood_material := blackwood_icon.material as ShaderMaterial if blackwood_icon != null else null
+	_assert(blackwood_material != null and bool(blackwood_material.get_shader_parameter("use_auto_mask")), "blackwood ember material auto mask is not enabled")
+	_assert(blackwood_material != null and is_equal_approx(float(blackwood_material.get_shader_parameter("ember_intensity")), 0.25), "blackwood ember material intensity changed unexpectedly")
+	_assert(
+		blackwood_icon != null and blackwood_icon.texture != null
+		and blackwood_icon.texture.resource_path == "res://content/ui/inventory/icons/resources/icon_blackwood.png",
+		"blackwood item did not resolve its dedicated resource icon"
+	)
+	var recollection_button := _find_node_named(inventory_ui, "Item_faint_recollection")
+	var recollection_icon := recollection_button.get_node_or_null("ItemIcon") as TextureRect if recollection_button != null else null
+	var recollection_material := recollection_icon.material as ShaderMaterial if recollection_icon != null else null
+	_assert(
+		recollection_icon != null
+		and (recollection_material == null or recollection_material.shader.resource_path != "res://game/ui/inventory/shaders/inventory_ember_spark.gdshader"),
+		"ember material leaked onto another inventory item: %s" % (
+			recollection_material.shader.resource_path if recollection_material != null else "<none>"
+		)
+	)
 	var detail_name := _find_label_with_text(inventory_ui, "FAINT RECOLLECTION")
 	_assert(detail_name != null, "ledger default selection did not render a known item")
 	inventory_ui.call("_select_page", "history")

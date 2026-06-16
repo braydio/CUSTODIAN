@@ -588,9 +588,9 @@ func _build_modular_unarmed_block_entries(part: String) -> Array:
 	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/unarmed" % part
 	var entries: Array = []
 	var action_specs := [
-		{"source": "enter_block_01", "base": "unarmed_block_enter", "frames": 4, "fps": 10.0, "loop": false},
-		{"source": "block_loop_01", "base": "unarmed_block_hold", "frames": 5, "fps": 8.0, "loop": true},
-		{"source": "blocking_hitreact_01", "base": "unarmed_block_hitreact", "frames": 5, "fps": 14.0, "loop": false},
+		{"source": "enter_block_01", "base": "unarmed_block_enter", "fps": 10.0, "loop": false},
+		{"source": "block_loop_01", "base": "unarmed_block_hold", "fps": 8.0, "loop": true},
+		{"source": "blocking_hitreact_01", "base": "unarmed_block_hitreact", "fps": 14.0, "loop": false},
 	]
 	for action_spec in action_specs:
 		var source := str(action_spec["source"])
@@ -598,21 +598,14 @@ func _build_modular_unarmed_block_entries(part: String) -> Array:
 			{"dir": "e", "suffix": "right", "alias_base": true},
 			{"dir": "w", "suffix": "left"},
 		]:
-			var path := "%s/%s/operator__modular_%s__unarmed__%s__%s__%df__96.png" % [
-				root,
-				source,
-				part,
-				source,
-				str(direction_spec["dir"]),
-				int(action_spec["frames"]),
-			]
-			if not _texture_file_exists(path):
+			var sheet := _find_modular_action_sheet(root, part, "unarmed", source, str(direction_spec["dir"]))
+			if sheet.is_empty():
 				continue
 			if bool(direction_spec.get("alias_base", false)):
 				entries.append({
 					"animation": str(action_spec["base"]),
-					"path": path,
-					"frames": int(action_spec["frames"]),
+					"path": str(sheet["path"]),
+					"frames": int(sheet["frames"]),
 					"frame_width": 96,
 					"frame_height": 96,
 					"fps": float(action_spec["fps"]),
@@ -620,14 +613,35 @@ func _build_modular_unarmed_block_entries(part: String) -> Array:
 				})
 			entries.append({
 				"animation": "%s_%s" % [str(action_spec["base"]), str(direction_spec["suffix"])],
-				"path": path,
-				"frames": int(action_spec["frames"]),
+				"path": str(sheet["path"]),
+				"frames": int(sheet["frames"]),
 				"frame_width": 96,
 				"frame_height": 96,
 				"fps": float(action_spec["fps"]),
 				"loop": bool(action_spec["loop"]),
 			})
 	return entries
+
+
+func _find_modular_action_sheet(root: String, part: String, loadout: String, action: String, direction: String) -> Dictionary:
+	var action_root := "%s/%s" % [root, action]
+	var directory := DirAccess.open(action_root)
+	if directory == null:
+		return {}
+	var pattern := RegEx.new()
+	var compile_error := pattern.compile(
+		"^operator__modular_%s__%s__%s__%s__([0-9]+)f__96\\.png$" % [part, loadout, action, direction]
+	)
+	if compile_error != OK:
+		return {}
+	for filename in directory.get_files():
+		var matched := pattern.search(filename)
+		if matched != null:
+			return {
+				"path": "%s/%s" % [action_root, filename],
+				"frames": int(matched.get_string(1)),
+			}
+	return {}
 
 
 func _build_modular_unarmed_parry_fx_entries() -> Array:
