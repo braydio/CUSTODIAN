@@ -86,9 +86,10 @@ The operator scene has optional `ModularLowerBodySprite` and `ModularUpperBodySp
 
 Unarmed block is live on the lower/upper modular stack. `enter_block_01` drives block entry,
 `block_loop_01` drives hold, `blocking_hitreact_01` plays when a hit is blocked, and block exit replays entry
-backwards. Hold and hit-react have authored E/W coverage. Upper-body entry currently has only E, so left-facing
-entry falls back to the base/right clip. `upper_fx/actions/unarmed/parry_01/` is registered in the curated
-resource, but parry gameplay remains deferred and does not trigger it yet.
+backwards. All three actions have authored E/W coverage. Curated block registration discovers each generated
+sheet's current frame count instead of hardcoding it, so replacement sheets built with `--remove-superseded`
+remain valid. `upper_fx/actions/unarmed/parry_01/` is registered in the curated resource, but parry gameplay
+remains deferred and does not trigger it yet.
 
 The legacy body `AnimatedSprite2D` remains the timing/source-of-truth sprite for attack state, hit windows, portal arrival, ranged states, and any non-modular fallback state. It is hidden visually when modular layers cover the current unarmed locomotion state, including Fists idle.
 

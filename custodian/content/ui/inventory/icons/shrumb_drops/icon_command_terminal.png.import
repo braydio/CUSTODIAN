@@ -2,16 +2,12 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://6bm3sfcjp75i"
-path="res://.godot/imported/operator__modular_upper_body__unarmed__enter_block_01__e__4f__96.png-bdefe1e602de391f703e3b72cb65a028.ctex"
-metadata={
-"vram_texture": false
-}
+uid="uid://ucn0jgulnu10"
+valid=false
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/modules/new_operator/upper_body/actions/unarmed/enter_block_01/operator__modular_upper_body__unarmed__enter_block_01__e__4f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__enter_block_01__e__4f__96.png-bdefe1e602de391f703e3b72cb65a028.ctex"]
+source_file="res://content/ui/inventory/icons/shrumb_drops/icon_command_terminal.png"
 
 [params]
 
