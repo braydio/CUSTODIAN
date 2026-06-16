@@ -4,6 +4,19 @@ const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const CARBINE_DEFINITION := preload("res://game/actors/operator/carbine_rifle_mk1_definition.tres")
 const SIDEARM_DEFINITION := preload("res://game/actors/operator/sidearm_pistol_definition.tres")
 
+class ParryProbeAttacker:
+	extends Node2D
+
+	var parry_staggered := false
+	var parry_duration := 0.0
+	var parry_knockback := 0.0
+
+	func apply_parry_stagger(_direction: Vector2, duration: float, knockback_force: float) -> void:
+		parry_staggered = true
+		parry_duration = duration
+		parry_knockback = knockback_force
+
+
 var _failed := false
 
 
@@ -106,14 +119,17 @@ func _validate_operator_ranged_ready(root: Node) -> void:
 	operator.call("_exit_ranged_ready")
 
 	_assert_true(not bool(operator.get("sidearm_slot_equipped")), "sidearm slot should start locked")
+	_assert_true(operator.call("_get_offhand_secondary_mode") == &"parry_guard", "melee/unarmed without sidearm should route secondary to parry/guard")
 	_assert_true(operator.call("_get_ranged_ready_candidate_weapon_definition") == null, "locked sidearm should not be a ranged-ready fallback")
 	_assert_true(not bool(operator.call("_can_enter_ranged_ready")), "locked sidearm should not enter ranged-ready from melee/unarmed fallback")
 	operator.call("_enter_ranged_ready")
 	_assert_true(not bool(operator.call("_is_ranged_ready_active")), "locked sidearm enter request should do nothing")
+	_validate_offhand_parry_guard(operator, root)
 
 	var grant_result: Dictionary = operator.call("grant_sidearm", SIDEARM_DEFINITION)
 	_assert_true(bool(grant_result.get("granted", false)), "grant_sidearm should unlock/equip the sidearm slot")
 	_assert_true(bool(operator.get("sidearm_slot_equipped")), "sidearm slot should be equipped after grant")
+	_assert_true(operator.call("_get_offhand_secondary_mode") == &"sidearm_ready", "melee/unarmed with sidearm should route secondary to sidearm-ready")
 	_assert_true(operator.call("_get_ranged_ready_candidate_weapon_definition") == SIDEARM_DEFINITION, "granted sidearm should be the melee/unarmed fallback")
 	_assert_true(bool(operator.call("_can_enter_ranged_ready")), "operator should be able to enter ranged-ready after sidearm grant")
 
@@ -166,11 +182,49 @@ func _validate_selected_primary_priority(operator: Node) -> void:
 	operator.set("equipped_primary_weapon_id", "carbine_rifle")
 	operator.set("using_unarmed", false)
 	operator.set("aim_direction", Vector2.RIGHT)
+	_assert_true(operator.call("_get_offhand_secondary_mode") == &"primary_ranged_ready", "selected ranged primary should route secondary to primary ranged-ready")
 	_assert_true(operator.call("_get_ranged_ready_candidate_weapon_definition") == CARBINE_DEFINITION, "actively selected ranged primary should take priority over sidearm")
 	operator.call("_enter_ranged_ready")
 	_assert_true(operator.call("_get_active_ranged_weapon_definition") == CARBINE_DEFINITION, "active ranged weapon should remain the selected primary")
 	_assert_true(bool(operator.call("_is_using_ranged_2h_primary")), "selected carbine should still report as ranged_2h primary")
 	operator.call("_exit_ranged_ready")
+
+
+func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
+	operator.set("stamina", 40.0)
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+	operator.set("aim_direction", Vector2.RIGHT)
+	_assert_true(bool(operator.call("_can_start_parry")), "melee/unarmed parry should be available without a sidearm")
+	_assert_true(bool(operator.call("_try_start_parry")), "secondary tap should start parry windup")
+	_assert_true(operator.get("_parry_phase") == &"windup", "parry should begin in windup")
+	_assert_true(operator.get("_block_phase") == &"parry", "block state should host parry without converting it to guard entry")
+	operator.call("_update_parry_guard_timers", 0.05)
+	_assert_true(operator.get("_parry_phase") == &"active", "parry should become active after windup")
+	_assert_true(bool(operator.get("_parry_active")), "parry active flag should be true during the active window")
+
+	var attacker := ParryProbeAttacker.new()
+	root.add_child(attacker)
+	attacker.global_position = operator.global_position + Vector2.RIGHT * 32.0
+	var parried: bool = bool(operator.call("try_parry_incoming_attack", attacker, Vector2.LEFT, {"damage": 12.0}))
+	_assert_true(parried, "front-facing active parry should catch incoming melee")
+	_assert_true(bool(attacker.parry_staggered), "parry should stagger the attacker")
+	_assert_true(is_equal_approx(attacker.parry_duration, float(operator.get("parry_enemy_stagger_sec"))), "parry should use exported stagger duration")
+	_assert_true(is_equal_approx(attacker.parry_knockback, float(operator.get("parry_enemy_knockback"))), "parry should use exported knockback")
+	_assert_true(operator.get("_parry_phase") == &"success", "successful parry should enter success recovery")
+	_assert_true(float(operator.get("_counter_window_timer")) > 0.0, "successful parry should open a counter window")
+	attacker.queue_free()
+
+	operator.set("_parry_active", false)
+	operator.set("_parry_phase", &"")
+	operator.set("_block_active", true)
+	operator.set("_block_phase", &"hold")
+	operator.set("stamina", 40.0)
+	var guard_result: Dictionary = operator.call("try_guard_incoming_attack", 20.0, Vector2.LEFT)
+	_assert_true(bool(guard_result.get("blocked", false)), "held guard should block front-facing incoming attacks")
+	_assert_true(float(guard_result.get("damage", 20.0)) < 20.0, "guard should reduce but not erase incoming damage")
+	_assert_true(float(operator.get("stamina")) < 40.0, "guard should drain stamina on hit")
+	operator.set("_block_active", false)
+	operator.set("_block_phase", &"")
 
 
 func _validate_dodge_fx_overlay(operator: Node) -> void:

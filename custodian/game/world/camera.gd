@@ -173,6 +173,7 @@ func _ready():
 
 
 func _process(delta):
+	_restore_follow_on_player_movement()
 	_update_movement(delta)
 	_update_state_machine(delta)
 	_refresh_contextual_zoom()
@@ -436,6 +437,16 @@ func _apply_camera_position(delta: float):
 	
 	# Apply shake and push
 	global_position += _shake_offset + _push_offset
+
+
+func _restore_follow_on_player_movement() -> void:
+	if follow_enabled or dragging:
+		return
+	if Input.is_action_pressed("move_left") \
+		or Input.is_action_pressed("move_right") \
+		or Input.is_action_pressed("move_up") \
+		or Input.is_action_pressed("move_down"):
+		set_follow_target(_get_follow_target())
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

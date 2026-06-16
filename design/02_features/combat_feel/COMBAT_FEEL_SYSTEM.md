@@ -130,9 +130,18 @@ Attack input is profile-relative, not state-relative:
 - `ranged.primary` while `ranged_ready` -> `ranged_fire`
 - `ranged.secondary` tap -> reserved for later quick-raise or snapshot behavior; no shot in V1
 - `melee.primary` -> `melee_fast`
-- `melee.secondary` -> `melee_heavy`
+- `melee.secondary` chord (`Shift+primary`) -> `melee_heavy`
 - `unarmed.primary` -> `unarmed_fast`
-- `unarmed.secondary` -> `unarmed_heavy`
+- `unarmed.secondary` chord (`Shift+primary`) -> `unarmed_heavy`
+
+Offhand secondary (`attack_secondary` / `aim_hold`, right mouse or Xbox LT) is context-sensitive, not profile-relative:
+
+- selected ranged primary -> hold offhand secondary for primary ranged-ready, primary fires
+- melee/unarmed plus equipped P-9 sidearm -> hold offhand secondary for sidearm-ready, primary fires the P-9
+- melee/unarmed with empty offhand or guard-focused offhand item -> tap offhand secondary for parry, hold through the parry window for guard
+
+The `block` InputMap action may exist as a compatibility/manual action, but the official player-facing defensive control
+is offhand secondary by slot context. Do not route P-9 sidearm and parry onto the same held state.
 
 Ranged secondary is a mode/intent hold, not the default fire button. While it is held, the operator should face
 aim direction, show the ranged weapon layer, and keep movement available; primary confirms the shot through the
@@ -149,15 +158,24 @@ stance layers for east, north, and west. South and diagonals resolve to the near
 Movement, fire, recover, and reload continue through their established legacy body/overlay paths until matching
 modular action layers are supplied.
 
-Sidearm fallback:
+Offhand sidearm:
 
 - The Operator owns a separate `sidearm_weapon_definition` inventory slot.
-- The sidearm slot starts locked. Holding ranged-ready while melee/unarmed is selected does nothing until the P-9 Field Sidearm is recovered from the Sundered Keep Great Hall field-retention locker.
+- The sidearm slot starts locked. Holding offhand secondary while melee/unarmed is selected routes to parry/guard until the P-9 Field Sidearm is recovered from the Sundered Keep Great Hall field-retention locker.
 - Looting the locker calls `Operator.grant_sidearm(...)`, equips the sidearm fallback slot, and initializes its loaded/reserve ammunition without changing the current melee/unarmed selection.
 - If the currently selected/equipped weapon is ranged, held ranged-ready uses it.
-- If the selected weapon is melee/unarmed and the sidearm slot is equipped, held ranged-ready uses the default `sidearm_pistol` profile from `pistol_mk1.json`, even when a carbine is carried in another loadout slot.
+- If the selected weapon is melee/unarmed and the sidearm slot is equipped, held offhand secondary uses the default `sidearm_pistol` profile from `pistol_mk1.json`, even when a carbine is carried in another loadout slot.
 - Sidearm-ready is visually exclusive from primary-ranged ready: the carried carbine/primary weapon overlay and its FX are hidden while the baked modular sidearm action stack is active.
 - Modular sidearm draw/fire lower-body, upper-body, weapon, and FX layers are live for NE/NW/SE/SW. Draw must complete before a shot can begin, the complete draw pose holds on its final frame while ranged-ready remains held, and each completed fire action returns to that held pose. Pure cardinal aim selects the nearest authored diagonal; legacy ranged placeholders remain the fallback for missing reload/recovery coverage.
+
+Parry / guard:
+
+- Empty offhand and `offhand_guard_item_equipped` both route offhand secondary to the defense path.
+- Pressing offhand secondary starts parry windup immediately, then opens a short active parry window.
+- Releasing after the tap plays parry recovery; holding through the active window requests the existing block state and enters guard.
+- A front-facing perfect parry cancels the incoming enemy hit, calls `apply_parry_stagger(...)` on the attacker when available, refunds stamina, and opens a short counter window that boosts the next fast melee/unarmed hit.
+- Guard uses the existing block state presentation, drains stamina per hit, and reduces incoming damage to chip damage instead of fully negating it.
+- Enemy damage application must check parry first, guard second, then damage. Presentation fallbacks are allowed when parry animations are missing, but simulation authority stays in `operator.gd` and `enemy.gd`.
 
 ### Runtime control contract
 
@@ -165,7 +183,7 @@ Current V1 bindings:
 
 - move: `WASD` / Xbox left stick
 - aim/look: mouse world cursor / Xbox right stick
-- hold ranged-ready: right mouse / Xbox LT
+- offhand secondary: right mouse / Xbox LT; contextually primary ranged-ready, P-9 sidearm-ready, or parry/guard
 - primary fire or melee confirm: left mouse / Xbox RT
 - dodge/backstep: `Space` / Xbox B
 - interact: `E` / Xbox A
@@ -195,13 +213,13 @@ Unarmed/Fists is a selectable weapon profile. It must not create separate unarme
 and `unarmed_heavy` reuse the shared `attack_fast` and `attack_heavy` states while resolving profile-specific
 animations, hit windows, FX, and stat multipliers through `unarmed_definition.tres`.
 
-Unarmed heavy is the first fists secondary baseline. It should read as a committed short-range strike with better
-control/repositioning than weapons but lower reach, damage, and stagger. Parry/counter is deferred to the block
-state path and should not be overloaded onto unarmed secondary.
+Unarmed heavy remains available through the secondary chord (`Shift+primary`). Offhand secondary owns parry/guard when
+the sidearm slot is empty or defensive, so a bare Fists build has defensive skill expression without overloading the
+held sidearm-ready state.
 
 Unarmed block presentation uses the modular lower/upper body stack: authored entry, looping hold, and blocked-hit
-reaction clips play through the existing block state path, and exit reuses entry in reverse. The supplied parry FX
-may be registered as runtime art, but it must remain untriggered until parry/counter gameplay is implemented.
+reaction clips play through the existing block state path, and exit reuses entry in reverse. Parry gameplay now uses
+the same state path for timing and falls back to block animations when `unarmed_parry*` clips are missing.
 
 Asset rule: unarmed body motion and unarmed FX should be separate runtime layers. If an existing clean body strip
 matches the needed motion, reuse it for body frames and put fist impact/trail pixels in an unarmed FX overlay.
@@ -441,3 +459,27 @@ Approximate total: ~60 frames.
 
 - Left-facing variants should use flipped right-facing animations unless explicitly overridden.
 - For any missing animation, request user-provided asset implementation and specify save location in `custodian/assets/sprites/...` with a short artistic direction note.
+
+## Next Agent Slice
+
+Goal: replace the current parry presentation fallback with authored unarmed parry body/FX playback and tune the feel in live combat.
+
+Files:
+
+- `custodian/game/actors/operator/operator.gd`
+- `custodian/game/actors/enemies/enemy.gd`
+- `custodian/tools/validation/operator_ranged_ready_input_smoke.gd`
+- `REQUIRED_ASSETS.md`
+- `custodian/content/sprites/operator/new_operator/modular/`
+
+Constraints:
+
+- Keep offhand secondary unambiguous: ranged primary, P-9 sidearm, or parry/guard by slot context.
+- Keep parry/guard simulation in operator/enemy gameplay code; animation and FX remain presentation only.
+- Do not put parry on the P-9 sidearm branch until sidearm/defense tradeoffs are deliberately redesigned.
+
+Acceptance checks:
+
+- `cd custodian && godot --headless --script tools/validation/operator_ranged_ready_input_smoke.gd`
+- `cd custodian && godot --headless --quit`
+- In play, empty offhand tap parries, empty offhand hold guards, P-9 equipped hold readies sidearm, and selected ranged primary hold readies the primary ranged weapon.

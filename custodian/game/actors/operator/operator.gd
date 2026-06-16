@@ -142,6 +142,22 @@ var last_fire_cooldown := 0.0
 @export var heavy_attack_blocked_while_sprinting: bool = true
 @export var block_move_multiplier: float = 0.6
 @export var block_stamina_cost_per_hit: float = 12.0
+@export_group("Parry / Guard")
+@export var offhand_guard_item_equipped: bool = false
+@export var parry_windup_sec: float = 0.045
+@export var parry_active_sec: float = 0.115
+@export var parry_recovery_sec: float = 0.18
+@export var parry_stamina_cost: float = 8.0
+@export var parry_success_stamina_refund: float = 6.0
+@export var parry_enemy_stagger_sec: float = 0.55
+@export var parry_enemy_knockback: float = 44.0
+@export var parry_counter_window_sec: float = 0.45
+@export var parry_counter_damage_multiplier: float = 1.25
+@export var guard_damage_reduction: float = 0.65
+@export var guard_chip_damage_minimum: float = 1.0
+@export var guard_stamina_cost_per_hit: float = 12.0
+@export var guard_break_stamina_threshold: float = 6.0
+@export_group("", "")
 @export var combat_target_range: float = 360.0
 @export var use_tiny_rpg_placeholder_soldier: bool = true
 @export var modular_locomotion_layers_enabled: bool = true
@@ -234,6 +250,12 @@ var _melee_hitbox_active: bool = false
 var _melee_hit_targets: Dictionary = {}
 var _block_phase: StringName = &""
 var _block_active: bool = false
+var _parry_phase: StringName = &""
+var _parry_timer: float = 0.0
+var _parry_active: bool = false
+var _parry_success_lockout: float = 0.0
+var _guard_requested_from_secondary: bool = false
+var _counter_window_timer: float = 0.0
 var _melee_recovery_active: bool = false
 var _melee_recovery_timer: float = 0.0
 var _reload_active: bool = false
@@ -667,6 +689,8 @@ func _process(delta):
 	melee_cooldown_remaining = max(0.0, melee_cooldown_remaining - delta)
 	_dodge_cooldown_remaining = max(0.0, _dodge_cooldown_remaining - delta)
 	_dodge_iframe_timer = maxf(0.0, _dodge_iframe_timer - delta)
+	_parry_success_lockout = maxf(0.0, _parry_success_lockout - delta)
+	_counter_window_timer = maxf(0.0, _counter_window_timer - delta)
 	current_recoil = max(0.0, current_recoil - recoil_decay * delta)
 	_update_pending_ranged_shot(delta)
 	_update_body_recoil(delta)
@@ -702,6 +726,7 @@ func _process(delta):
 	_handle_aim_input_toggle()
 	_handle_reload_input()
 	_update_aim()
+	_handle_offhand_secondary_input(delta)
 	_update_ranged_ready_state()
 	_handle_dodge_input()
 	_update_animation()
@@ -1462,7 +1487,7 @@ func _emit_pending_ranged_shot() -> void:
 
 
 func _handle_attack_input() -> void:
-	if _is_blocking():
+	if _is_block_state_active():
 		return
 	if _is_ranged_ready_active():
 		if _is_attack_primary_just_pressed() and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
@@ -1553,6 +1578,19 @@ func _is_attack_secondary_pressed() -> bool:
 		or Input.is_action_pressed("attack_secondary")
 
 
+func _is_offhand_secondary_just_pressed() -> bool:
+	return Input.is_action_just_pressed("aim_hold") \
+		or Input.is_action_just_pressed("attack_secondary")
+
+
+func _get_offhand_secondary_mode() -> StringName:
+	if _is_ranged_loadout_active():
+		return &"primary_ranged_ready"
+	if _is_melee_loadout_active() and _get_sidearm_weapon_definition() != null:
+		return &"sidearm_ready"
+	return &"parry_guard"
+
+
 func _can_enter_ranged_ready() -> bool:
 	if _is_dead or _is_terminal_open() or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
 		return false
@@ -1562,10 +1600,125 @@ func _can_enter_ranged_ready() -> bool:
 
 
 func _update_ranged_ready_state() -> void:
+	var mode := _get_offhand_secondary_mode()
+	if mode != &"primary_ranged_ready" and mode != &"sidearm_ready":
+		_exit_ranged_ready()
+		return
 	if _is_attack_secondary_pressed() and _can_enter_ranged_ready():
 		_enter_ranged_ready()
 	else:
 		_exit_ranged_ready()
+
+
+func _handle_offhand_secondary_input(delta: float) -> void:
+	if _get_offhand_secondary_mode() != &"parry_guard":
+		_guard_requested_from_secondary = false
+		_update_parry_guard_timers(delta)
+		return
+
+	_update_parry_guard_timers(delta)
+
+	if _is_offhand_secondary_just_pressed():
+		_try_start_parry()
+
+	if _is_attack_secondary_pressed():
+		if _parry_phase == &"expired":
+			_guard_requested_from_secondary = true
+			_request_block_state()
+	else:
+		_guard_requested_from_secondary = false
+		if _is_block_state_active() and _block_phase in [&"enter", &"hold", &"hitreact"]:
+			_block_phase = &"exit"
+			_block_active = false
+			_play_block_animation(&"melee_2h_block_exit")
+
+
+func _try_start_parry() -> bool:
+	if not _can_start_parry():
+		return false
+
+	stamina = maxf(0.0, stamina - parry_stamina_cost)
+	_exit_ranged_ready()
+	_cancel_reload()
+	_clear_attack_buffer()
+	_melee_active = false
+	_melee_heavy_anticipating = false
+	_melee_fast_windup = false
+	_melee_recovery_active = false
+	_melee_attack_kind = ""
+	_melee_attack_key = ""
+	_melee_elapsed = 0.0
+	_melee_duration = 0.0
+	_active_attack_profile = null
+	_active_melee_attack_profile = null
+	disable_hitbox()
+	_melee_hit_targets.clear()
+	_reset_melee_overlay_visuals()
+
+	_parry_phase = &"windup"
+	_parry_timer = maxf(0.0, parry_windup_sec)
+	_parry_active = false
+	_guard_requested_from_secondary = false
+	_block_phase = &"parry"
+	_block_active = false
+	_play_parry_animation(&"unarmed_parry")
+	_request_block_state()
+	return true
+
+
+func _can_start_parry() -> bool:
+	if stamina < parry_stamina_cost:
+		return false
+	if _is_dead or _enemy_impact_lock_timer > 0.0:
+		return false
+	if _is_terminal_open() or _is_ui_text_input_focused() or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
+		return false
+	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active:
+		return false
+	if _dodge_active or _dodge_recovery_active:
+		return false
+	return _is_melee_loadout_active()
+
+
+func _update_parry_guard_timers(delta: float) -> void:
+	if _parry_phase.is_empty():
+		return
+
+	_parry_timer = maxf(0.0, _parry_timer - delta)
+	match _parry_phase:
+		&"windup":
+			if _parry_timer <= 0.0:
+				_parry_phase = &"active"
+				_parry_timer = maxf(0.0, parry_active_sec)
+				_parry_active = true
+		&"active":
+			if _parry_timer <= 0.0:
+				_parry_active = false
+				if _is_attack_secondary_pressed() and _get_offhand_secondary_mode() == &"parry_guard":
+					_parry_phase = &"expired"
+					_guard_requested_from_secondary = true
+					_block_phase = &"expired"
+					_block_active = false
+					_request_block_state()
+				else:
+					_parry_phase = &"recovery"
+					_parry_timer = maxf(0.0, parry_recovery_sec)
+					_play_parry_animation(&"unarmed_parry_recovery")
+		&"success", &"recovery":
+			if _parry_timer <= 0.0:
+				_parry_phase = &""
+				_parry_active = false
+				if _block_phase in [&"parry", &"success", &"recovery"]:
+					_block_phase = &""
+					_block_active = false
+		&"expired":
+			if not _is_attack_secondary_pressed() or _get_offhand_secondary_mode() != &"parry_guard":
+				_parry_phase = &"recovery"
+				_parry_timer = maxf(0.0, parry_recovery_sec)
+				_guard_requested_from_secondary = false
+				_block_phase = &"recovery"
+				_block_active = false
+				_play_parry_animation(&"unarmed_parry_recovery")
 
 
 func _enter_ranged_ready() -> void:
@@ -1994,6 +2147,8 @@ func start_block() -> void:
 		_block_phase = &""
 		_block_active = false
 		return
+	if not _parry_phase.is_empty() and _block_phase in [&"parry", &"success", &"recovery"]:
+		return
 	if _block_phase == &"hold":
 		return
 	_melee_active = false
@@ -2017,6 +2172,17 @@ func update_block_state() -> String:
 		_block_active = false
 		return _get_desired_animation_state()
 	match _block_phase:
+		&"parry", &"success", &"recovery":
+			if _parry_phase.is_empty():
+				_block_phase = &""
+				_block_active = false
+				return _get_desired_animation_state()
+			return "block"
+		&"expired":
+			if _wants_block():
+				start_block()
+				return "block"
+			return "block"
 		&"enter":
 			if _is_block_animation_finished():
 				_block_phase = &"hold"
@@ -2046,6 +2212,133 @@ func update_block_state() -> String:
 				start_block()
 				return "block"
 			return _get_desired_animation_state()
+
+
+func try_parry_incoming_attack(attacker: Node2D, hit_direction: Vector2, hit_data: Dictionary = {}) -> bool:
+	if not _parry_active:
+		return false
+
+	var guard_dir := _get_attack_aim_direction()
+	if guard_dir.length_squared() <= 0.001:
+		guard_dir = visual_idle_direction
+	if guard_dir.length_squared() <= 0.001:
+		guard_dir = Vector2.DOWN
+
+	var incoming_from := -hit_direction.normalized()
+	if incoming_from.length_squared() <= 0.001:
+		incoming_from = global_position.direction_to(attacker.global_position) if attacker != null and is_instance_valid(attacker) else -guard_dir
+	var facing_dot := guard_dir.normalized().dot(incoming_from.normalized())
+	if facing_dot < 0.35:
+		return false
+
+	_on_parry_success(attacker, hit_direction, hit_data)
+	return true
+
+
+func try_guard_incoming_attack(damage: float, hit_direction: Vector2) -> Dictionary:
+	if not _is_blocking():
+		return {"blocked": false, "damage": damage}
+
+	var guard_dir := _get_attack_aim_direction()
+	if guard_dir.length_squared() <= 0.001:
+		guard_dir = visual_idle_direction
+	if guard_dir.length_squared() <= 0.001:
+		guard_dir = Vector2.DOWN
+
+	var incoming_from := -hit_direction.normalized()
+	if incoming_from.length_squared() <= 0.001:
+		incoming_from = guard_dir
+	var facing_dot := guard_dir.normalized().dot(incoming_from.normalized())
+	if facing_dot < 0.15:
+		return {"blocked": false, "damage": damage}
+
+	var stamina_cost := guard_stamina_cost_per_hit
+	if offhand_guard_item_equipped:
+		stamina_cost *= 0.75
+	stamina = maxf(0.0, stamina - stamina_cost)
+
+	var reduction := guard_damage_reduction
+	if offhand_guard_item_equipped:
+		reduction = clampf(reduction + 0.12, 0.0, 0.9)
+	var reduced_damage := maxf(guard_chip_damage_minimum, damage * (1.0 - reduction))
+
+	if stamina <= guard_break_stamina_threshold:
+		_block_phase = &"hitreact"
+		_block_active = false
+		_play_block_animation(&"melee_2h_block_hitreact")
+		reduced_damage = maxf(guard_chip_damage_minimum, damage * 0.65)
+	elif _is_current_profile_unarmed():
+		_block_phase = &"hitreact"
+		_block_active = false
+		_play_block_animation(&"melee_2h_block_hitreact")
+
+	return {
+		"blocked": true,
+		"damage": reduced_damage,
+	}
+
+
+func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dictionary) -> void:
+	_parry_active = false
+	_parry_phase = &"success"
+	_parry_timer = maxf(0.0, parry_recovery_sec)
+	_parry_success_lockout = maxf(_parry_success_lockout, parry_recovery_sec)
+	_counter_window_timer = maxf(_counter_window_timer, parry_counter_window_sec)
+	_block_phase = &"success"
+	_block_active = false
+
+	stamina = min(stamina_max, stamina + parry_success_stamina_refund)
+
+	if attacker != null and is_instance_valid(attacker):
+		var away_from_operator := global_position.direction_to(attacker.global_position)
+		if attacker.has_method("apply_parry_stagger"):
+			attacker.call("apply_parry_stagger", away_from_operator, parry_enemy_stagger_sec, parry_enemy_knockback)
+		elif attacker.has_method("apply_melee_impact"):
+			attacker.call("apply_melee_impact", "parry", away_from_operator, parry_enemy_knockback)
+
+	_play_parry_animation(&"unarmed_parry_success")
+	_spawn_parry_fx()
+	_notify_camera_attack_impact(hit_direction, false)
+
+
+func _play_parry_animation(base_animation: StringName) -> void:
+	var direction := _get_attack_aim_direction()
+	if direction.length_squared() <= 0.001:
+		direction = visual_idle_direction
+	if direction.length_squared() <= 0.001:
+		direction = Vector2.DOWN
+
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+
+	var resolved := AnimationResolver.resolve(String(base_animation), direction, animated_sprite)
+	var fallback := &"unarmed_block_enter"
+	if base_animation == &"unarmed_parry_recovery":
+		fallback = &"unarmed_block_exit"
+	elif base_animation == &"unarmed_parry_success":
+		fallback = &"unarmed_block_hitreact"
+
+	if animated_sprite.sprite_frames.has_animation(resolved):
+		animated_sprite.visible = true
+		animated_sprite.flip_h = _is_facing_left(direction)
+		animated_sprite.play(resolved)
+		_clear_modular_upper_action_layer()
+		return
+
+	_warn_missing_animation_once(String(resolved), String(fallback))
+	_play_block_animation(fallback)
+
+
+func _spawn_parry_fx() -> void:
+	var direction := _get_attack_aim_direction()
+	if direction.length_squared() <= 0.001:
+		direction = visual_idle_direction
+	if direction.length_squared() <= 0.001:
+		direction = Vector2.DOWN
+	var fx_animation := AnimationResolver.resolve("unarmed_parry_fx", direction, melee_fx_overlay_sprite)
+	if not _play_named_melee_fx_overlay(fx_animation):
+		_warn_missing_animation_once(String(fx_animation), "melee impact spark fallback")
+		_spawn_melee_impact(global_position + direction.normalized() * 22.0)
 
 
 func _play_block_animation(phase_key: StringName) -> void:
@@ -2210,6 +2503,9 @@ func _configure_melee_hitbox(damage: float, attack_range: float, attack_arc_degr
 	var damage_multiplier := 1.0 if _active_melee_attack_profile != null else (profile.damage_multiplier if profile != null else 1.0)
 	var range_multiplier := 1.0 if _active_melee_attack_profile != null else (profile.range_multiplier if profile != null else 1.0)
 	_melee_damage_current = damage * damage_multiplier
+	if _counter_window_timer > 0.0 and _melee_attack_kind == "fast":
+		_melee_damage_current *= parry_counter_damage_multiplier
+		_counter_window_timer = 0.0
 	_melee_range_current = attack_range * range_multiplier
 	_melee_arc_current = attack_arc_degrees
 	_melee_hit_targets.clear()
@@ -3035,11 +3331,16 @@ func _get_sidearm_weapon_definition() -> OperatorWeaponDefinition:
 
 
 func _get_ranged_ready_candidate_weapon_definition() -> OperatorWeaponDefinition:
+	var mode := _get_offhand_secondary_mode()
+	if mode == &"parry_guard":
+		return null
 	var equipped_weapon = _get_equipped_primary_weapon_definition()
-	if equipped_weapon is OperatorWeaponDefinition:
+	if mode == &"primary_ranged_ready" and equipped_weapon is OperatorWeaponDefinition:
 		var equipped_definition := equipped_weapon as OperatorWeaponDefinition
 		if equipped_definition.weapon_kind == "ranged" or String(equipped_definition.weapon_type).begins_with("ranged"):
 			return equipped_definition
+	if mode != &"sidearm_ready":
+		return null
 	var sidearm := _get_sidearm_weapon_definition()
 	if sidearm != null:
 		return sidearm
@@ -3615,7 +3916,13 @@ func _sync_fake_elevation_visual_state() -> void:
 
 
 func _wants_block() -> bool:
-	return _is_melee_loadout_active() and Input.is_action_pressed("block") and not _is_terminal_open()
+	if not _is_melee_loadout_active() or _is_terminal_open():
+		return false
+	if Input.is_action_pressed("block"):
+		return true
+	return _get_offhand_secondary_mode() == &"parry_guard" \
+		and _is_attack_secondary_pressed() \
+		and (_guard_requested_from_secondary or _block_phase in [&"enter", &"hold", &"hitreact"])
 
 
 
@@ -4433,28 +4740,45 @@ func toggle_primary_carbine() -> void:
 	equip_primary_carbine()
 
 
-func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker_team: String = "enemy") -> Dictionary:
+func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker_team: String = "enemy", attacker: Node2D = null, hit_direction: Vector2 = Vector2.ZERO) -> Dictionary:
+	var resolved_hit_direction := hit_direction
+	if resolved_hit_direction.length_squared() <= 0.001 and attacker != null and is_instance_valid(attacker):
+		resolved_hit_direction = attacker.global_position.direction_to(global_position)
+	if resolved_hit_direction.length_squared() <= 0.001:
+		resolved_hit_direction = -visual_idle_direction.normalized() if visual_idle_direction.length_squared() > 0.001 else Vector2.DOWN
+
+	if try_parry_incoming_attack(attacker, resolved_hit_direction, {"damage": amount, "hit_kind": hit_kind}):
+		return {
+			"result": &"parried",
+			"hit_kind": hit_kind,
+			"dodged": false,
+			"blocked": false,
+			"parried": true,
+			"applied_damage": 0.0,
+		}
+
 	if _should_ignore_incoming_damage_for_dodge(String(hit_kind)):
 		return {
 			"result": &"dodged",
 			"hit_kind": hit_kind,
 			"dodged": true,
 			"blocked": false,
+			"parried": false,
 			"applied_damage": 0.0,
 		}
 
-	if _is_blocking() and stamina >= block_stamina_cost_per_hit:
-		stamina = max(0.0, stamina - block_stamina_cost_per_hit)
-		if _is_current_profile_unarmed():
-			_block_phase = &"hitreact"
-			_block_active = false
-			_play_block_animation(&"melee_2h_block_hitreact")
+	var guard_result := try_guard_incoming_attack(amount, resolved_hit_direction)
+	if bool(guard_result.get("blocked", false)):
+		var final_damage := float(guard_result.get("damage", amount))
+		if final_damage > 0.0:
+			take_damage(final_damage)
 		return {
 			"result": &"blocked",
 			"hit_kind": hit_kind,
 			"dodged": false,
+			"parried": false,
 			"blocked": true,
-			"applied_damage": 0.0,
+			"applied_damage": max(0.0, final_damage),
 		}
 
 	if _is_block_state_active():
@@ -4467,6 +4791,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		"result": &"damaged",
 		"hit_kind": hit_kind,
 		"dodged": false,
+		"parried": false,
 		"blocked": false,
 		"applied_damage": max(0.0, amount),
 	}

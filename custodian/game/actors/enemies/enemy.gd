@@ -570,7 +570,7 @@ func _is_marine_dash_hit_window_active() -> bool:
 func _apply_marine_dash_hit(hit_node: Node2D) -> void:
 	var hit_result := _apply_enemy_hit_to_target(hit_node, _marine_dash_current_damage, &"dash")
 
-	if bool(hit_result.get("dodged", false)):
+	if bool(hit_result.get("dodged", false)) or bool(hit_result.get("parried", false)):
 		_marine_dash_last_attack_hit = false
 		return
 
@@ -1378,7 +1378,7 @@ func _execute_queued_attack() -> void:
 		return
 
 	var hit_result := _apply_enemy_hit_to_target(target_node, _pending_attack_damage, &"melee")
-	if bool(hit_result.get("dodged", false)):
+	if bool(hit_result.get("dodged", false)) or bool(hit_result.get("parried", false)):
 		pass  # clean whiff
 	elif bool(hit_result.get("blocked", false)):
 		pass  # blocked, handled by receiver
@@ -1420,11 +1420,28 @@ func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringN
 			"hit_kind": hit_kind,
 			"dodged": false,
 			"blocked": false,
+			"parried": false,
 			"applied_damage": 0.0,
 		}
 
+	var hit_direction := Vector2.ZERO
+	if hit_node is Node2D:
+		hit_direction = global_position.direction_to((hit_node as Node2D).global_position)
+
+	if hit_node.has_method("try_parry_incoming_attack"):
+		var parry_result: Variant = hit_node.call("try_parry_incoming_attack", self, hit_direction, {"damage": amount, "hit_kind": hit_kind})
+		if bool(parry_result):
+			return {
+				"result": &"parried",
+				"hit_kind": hit_kind,
+				"dodged": false,
+				"blocked": false,
+				"parried": true,
+				"applied_damage": 0.0,
+			}
+
 	if hit_node.has_method("receive_enemy_hit"):
-		var result: Variant = hit_node.call("receive_enemy_hit", amount, hit_kind, team)
+		var result: Variant = hit_node.call("receive_enemy_hit", amount, hit_kind, team, self, hit_direction)
 		if result is Dictionary:
 			return result as Dictionary
 
@@ -1434,6 +1451,7 @@ func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringN
 			"hit_kind": hit_kind,
 			"dodged": true,
 			"blocked": false,
+			"parried": false,
 			"applied_damage": 0.0,
 		}
 
@@ -1444,6 +1462,7 @@ func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringN
 			"hit_kind": hit_kind,
 			"dodged": false,
 			"blocked": false,
+			"parried": false,
 			"applied_damage": max(0.0, amount),
 		}
 
@@ -1452,6 +1471,7 @@ func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringN
 		"hit_kind": hit_kind,
 		"dodged": false,
 		"blocked": false,
+		"parried": false,
 		"applied_damage": 0.0,
 	}
 
@@ -1475,6 +1495,25 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 		_recoil_timer = max(_recoil_timer, hit_recoil_duration * 1.2)
 	velocity = knockback_direction.normalized() * knockback_force
 	move_and_slide()
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+
+
+func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockback_force: float) -> void:
+	if dead:
+		return
+	_pending_attack_damage = 0.0
+	_finish_marine_dash_attack()
+	_stagger_timer = max(_stagger_timer, duration)
+	_recoil_timer = 0.0
+	var resolved_direction := knockback_direction.normalized() if knockback_direction.length_squared() > 0.0001 else -_last_move_direction.normalized()
+	if resolved_direction.length_squared() <= 0.0001:
+		resolved_direction = Vector2.RIGHT
+	_last_move_direction = resolved_direction
+	velocity = resolved_direction * knockback_force
+	move_and_slide()
+	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
+		behavior_state_machine.call("on_damaged", self, 0.0)
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
 
