@@ -1,12 +1,12 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://3b7b3t3lkqgp"]
 
-[ext_resource type="Script" path="res://game/actors/effects/muzzle_flash.gd" id="1_script"]
-[ext_resource type="SpriteFrames" path="res://game/actors/effects/muzzle_flash_frames.tres" id="2_frames"]
+[ext_resource type="Script" uid="uid://hk1dhbhp3f0t" path="res://game/actors/effects/muzzle_flash.gd" id="1_script"]
+[ext_resource type="SpriteFrames" uid="uid://b6jjs4u0ux5ee" path="res://game/actors/effects/muzzle_flash_frames.tres" id="2_frames"]
 
-[node name="MuzzleFlash" type="Node2D"]
+[node name="MuzzleFlash" type="Node2D" unique_id=1408340756]
 script = ExtResource("1_script")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=225861601]
 position = Vector2(8, 0)
 sprite_frames = ExtResource("2_frames")
 animation = &"flash"
