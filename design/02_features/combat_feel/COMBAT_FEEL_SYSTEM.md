@@ -219,7 +219,8 @@ held sidearm-ready state.
 
 Unarmed block presentation uses the modular lower/upper body stack: authored entry, looping hold, and blocked-hit
 reaction clips play through the existing block state path, and exit reuses entry in reverse. Parry gameplay now uses
-the same state path for timing and falls back to block animations when `unarmed_parry*` clips are missing.
+the same state path for timing, plays the generated modular `parry_01` lower/upper/FX stack when available, and falls
+back to block animations when `unarmed_parry*` clips are missing.
 
 Asset rule: unarmed body motion and unarmed FX should be separate runtime layers. If an existing clean body strip
 matches the needed motion, reuse it for body frames and put fist impact/trail pixels in an unarmed FX overlay.
@@ -462,13 +463,14 @@ Approximate total: ~60 frames.
 
 ## Next Agent Slice
 
-Goal: replace the current parry presentation fallback with authored unarmed parry body/FX playback and tune the feel in live combat.
+Goal: broaden authored parry directional coverage and tune the feel in live combat now that baseline modular parry playback is wired.
 
 Files:
 
 - `custodian/game/actors/operator/operator.gd`
 - `custodian/game/actors/enemies/enemy.gd`
 - `custodian/tools/validation/operator_ranged_ready_input_smoke.gd`
+- `custodian/tools/validation/operator_modular_layers_smoke.gd`
 - `REQUIRED_ASSETS.md`
 - `custodian/content/sprites/operator/new_operator/modular/`
 
@@ -481,5 +483,6 @@ Constraints:
 Acceptance checks:
 
 - `cd custodian && godot --headless --script tools/validation/operator_ranged_ready_input_smoke.gd`
+- `cd custodian && godot --headless --script tools/validation/operator_modular_layers_smoke.gd`
 - `cd custodian && godot --headless --quit`
 - In play, empty offhand tap parries, empty offhand hold guards, P-9 equipped hold readies sidearm, and selected ranged primary hold readies the primary ranged weapon.
