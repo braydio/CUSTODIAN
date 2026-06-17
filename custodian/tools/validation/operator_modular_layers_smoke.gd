@@ -37,6 +37,7 @@ func _init() -> void:
 
 	var lower := operator.get_node_or_null("ModularLowerBodySprite") as AnimatedSprite2D
 	var upper := operator.get_node_or_null("ModularUpperBodySprite") as AnimatedSprite2D
+	var upper_fx := operator.get_node_or_null("ModularUpperFxSprite") as AnimatedSprite2D
 	var body := operator.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	var failures: Array[String] = []
 
@@ -72,7 +73,7 @@ func _init() -> void:
 	_check_layer(upper, "block hold upper", &"unarmed_block_hold_right", failures)
 	operator.set("_block_active", true)
 	operator.set("stamina", 100.0)
-	var block_result: Dictionary = operator.call("receive_enemy_hit", 10.0, &"melee", "enemy")
+	var block_result: Dictionary = operator.call("receive_enemy_hit", 10.0, &"melee", "enemy", null, Vector2.LEFT)
 	if not bool(block_result.get("blocked", false)):
 		failures.append("unarmed modular block hit did not resolve as blocked")
 	_check_layer(lower, "block hitreact lower", &"unarmed_block_hitreact_right", failures)
@@ -83,13 +84,30 @@ func _init() -> void:
 	operator.set("_block_phase", &"")
 	operator.set("_block_active", false)
 
+	operator.set("stamina", 100.0)
+	operator.set("aim_direction", Vector2.UP)
+	operator.set("visual_idle_direction", Vector2.UP)
+	if not bool(operator.call("_try_start_parry")):
+		failures.append("unarmed secondary parry should start through the modular stack")
+	_check_layer(lower, "parry lower", &"unarmed_parry_up", failures)
+	_check_layer(upper, "parry upper", &"unarmed_parry_up", failures)
+	_check_layer(upper_fx, "parry FX", &"unarmed_parry_fx_up", failures)
+	if body != null and body.visible:
+		failures.append("legacy body sprite should be hidden while modular unarmed parry is active")
+	operator.set("_parry_phase", &"")
+	operator.set("_parry_active", false)
+	operator.set("_block_phase", &"")
+	operator.set("_block_active", false)
+	operator.call("_hide_modular_locomotion_layers")
+	operator.set("aim_direction", Vector2(1.0, 1.0).normalized())
+	operator.set("visual_idle_direction", Vector2.DOWN)
+
 	operator.set("primary_weapon_equipped", true)
 	operator.set("sidearm_weapon_definition", SIDEARM_DEFINITION)
 	operator.set("sidearm_slot_equipped", true)
 	operator.call("_enter_ranged_ready")
 	operator.call("_update_animation")
 	var sidearm := operator.get_node_or_null("ModularSidearmSprite") as AnimatedSprite2D
-	var upper_fx := operator.get_node_or_null("ModularUpperFxSprite") as AnimatedSprite2D
 	var primary_weapon := operator.get_node_or_null("PrimaryWeaponSocket/PrimaryWeaponSprite") as AnimatedSprite2D
 	var ranged_fx := operator.get_node_or_null("PrimaryWeaponSocket/RangedFxOverlaySprite") as AnimatedSprite2D
 	_check_layer(lower, "sidearm draw lower", &"sidearm_draw_lower_down_right", failures)

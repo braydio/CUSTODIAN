@@ -255,6 +255,7 @@ var _parry_timer: float = 0.0
 var _parry_active: bool = false
 var _parry_success_lockout: float = 0.0
 var _guard_requested_from_secondary: bool = false
+var _offhand_secondary_was_pressed: bool = false
 var _counter_window_timer: float = 0.0
 var _melee_recovery_active: bool = false
 var _melee_recovery_timer: float = 0.0
@@ -1578,11 +1579,6 @@ func _is_attack_secondary_pressed() -> bool:
 		or Input.is_action_pressed("attack_secondary")
 
 
-func _is_offhand_secondary_just_pressed() -> bool:
-	return Input.is_action_just_pressed("aim_hold") \
-		or Input.is_action_just_pressed("attack_secondary")
-
-
 func _get_offhand_secondary_mode() -> StringName:
 	if _is_ranged_loadout_active():
 		return &"primary_ranged_ready"
@@ -1611,6 +1607,10 @@ func _update_ranged_ready_state() -> void:
 
 
 func _handle_offhand_secondary_input(delta: float) -> void:
+	var offhand_pressed := _is_attack_secondary_pressed()
+	var offhand_just_pressed := offhand_pressed and not _offhand_secondary_was_pressed
+	_offhand_secondary_was_pressed = offhand_pressed
+
 	if _get_offhand_secondary_mode() != &"parry_guard":
 		_guard_requested_from_secondary = false
 		_update_parry_guard_timers(delta)
@@ -1618,10 +1618,10 @@ func _handle_offhand_secondary_input(delta: float) -> void:
 
 	_update_parry_guard_timers(delta)
 
-	if _is_offhand_secondary_just_pressed():
+	if offhand_just_pressed:
 		_try_start_parry()
 
-	if _is_attack_secondary_pressed():
+	if offhand_pressed:
 		if _parry_phase == &"expired":
 			_guard_requested_from_secondary = true
 			_request_block_state()
@@ -2308,16 +2308,22 @@ func _play_parry_animation(base_animation: StringName) -> void:
 	if direction.length_squared() <= 0.001:
 		direction = Vector2.DOWN
 
-	if animated_sprite == null or animated_sprite.sprite_frames == null:
-		return
-
-	var resolved := AnimationResolver.resolve(String(base_animation), direction, animated_sprite)
 	var fallback := &"unarmed_block_enter"
 	if base_animation == &"unarmed_parry_recovery":
 		fallback = &"unarmed_block_exit"
 	elif base_animation == &"unarmed_parry_success":
 		fallback = &"unarmed_block_hitreact"
 
+	if base_animation != &"unarmed_parry_recovery" and _is_current_profile_unarmed() \
+		and modular_locomotion_layers_enabled \
+		and _play_modular_unarmed_parry(String(base_animation), direction):
+		return
+
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		_play_block_animation(fallback)
+		return
+
+	var resolved := AnimationResolver.resolve(String(base_animation), direction, animated_sprite)
 	if animated_sprite.sprite_frames.has_animation(resolved):
 		animated_sprite.visible = true
 		animated_sprite.flip_h = _is_facing_left(direction)
@@ -2329,16 +2335,69 @@ func _play_parry_animation(base_animation: StringName) -> void:
 	_play_block_animation(fallback)
 
 
+func _play_modular_unarmed_parry(base_animation: String, direction: Vector2) -> bool:
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+		return false
+	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
+		return false
+
+	var resolved_base := "unarmed_parry_success" if base_animation == "unarmed_parry_success" else "unarmed_parry"
+	var lower_anim := AnimationResolver.resolve(resolved_base, direction, modular_lower_body_sprite)
+	var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)
+	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
+		return false
+	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
+		return false
+
+	_hide_modular_locomotion_layers()
+	modular_lower_body_sprite.visible = true
+	modular_lower_body_sprite.flip_h = false
+	modular_lower_body_sprite.speed_scale = 1.0
+	modular_lower_body_sprite.play(lower_anim)
+	modular_upper_body_sprite.visible = true
+	modular_upper_body_sprite.flip_h = false
+	modular_upper_body_sprite.speed_scale = 1.0
+	modular_upper_body_sprite.play(upper_anim)
+	_modular_upper_action_animation = upper_anim
+	animated_sprite.visible = false
+
+	if modular_upper_fx_sprite != null and modular_upper_fx_sprite.sprite_frames != null:
+		var fx_anim := AnimationResolver.resolve("unarmed_parry_fx", direction, modular_upper_fx_sprite)
+		if _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_anim):
+			modular_upper_fx_sprite.visible = true
+			modular_upper_fx_sprite.flip_h = false
+			modular_upper_fx_sprite.speed_scale = 1.0
+			modular_upper_fx_sprite.play(fx_anim)
+	return true
+
+
 func _spawn_parry_fx() -> void:
 	var direction := _get_attack_aim_direction()
 	if direction.length_squared() <= 0.001:
 		direction = visual_idle_direction
 	if direction.length_squared() <= 0.001:
 		direction = Vector2.DOWN
+	if _play_modular_parry_fx(direction):
+		return
 	var fx_animation := AnimationResolver.resolve("unarmed_parry_fx", direction, melee_fx_overlay_sprite)
 	if not _play_named_melee_fx_overlay(fx_animation):
 		_warn_missing_animation_once(String(fx_animation), "melee impact spark fallback")
 		_spawn_melee_impact(global_position + direction.normalized() * 22.0)
+
+
+func _play_modular_parry_fx(direction: Vector2) -> bool:
+	if not modular_locomotion_layers_enabled:
+		return false
+	if modular_upper_fx_sprite == null or modular_upper_fx_sprite.sprite_frames == null:
+		return false
+	var fx_animation := AnimationResolver.resolve("unarmed_parry_fx", direction, modular_upper_fx_sprite)
+	if not _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_animation):
+		return false
+	modular_upper_fx_sprite.visible = true
+	modular_upper_fx_sprite.flip_h = false
+	modular_upper_fx_sprite.speed_scale = 1.0
+	modular_upper_fx_sprite.play(fx_animation)
+	return true
 
 
 func _play_block_animation(phase_key: StringName) -> void:

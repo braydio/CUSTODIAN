@@ -244,6 +244,7 @@ Last updated: 2026-06-16
 - `custodian/tools/validation/fabrication_terminal_readability_smoke.gd` — focused headless smoke check for the FABRICATION work-order translation layer, ready-build placement alias, and readable next-action output
 - `custodian/tools/validation/gothic_compound_occlusion_smoke.gd` — focused headless smoke check for gothic compound wall/gatehouse base-rooted occlusion sorting and flat floor/road/decal layer separation
 - `custodian/tools/validation/operator_ranged_ready_input_smoke.gd` — focused headless smoke check for ranged-ready/twin-stick input bindings, offhand secondary mode resolution, parry/guard handshake, carbine secondary intent, operator ranged-ready helper state, and dodge/backstep direction rules
+- `custodian/tools/validation/operator_modular_layers_smoke.gd` — focused modular operator presentation smoke covering unarmed locomotion, block, tap-parry body/FX playback, sidearm layers, and ranged-ready stance layer wiring
 - `design/features/implementation/UNARMED_TOGGLE.md` — unarmed/Fists selection behavior, state rules, and acceptance tests
 - `design/features/implementation/UNARMED_TOGGLE_CODE.md` — implementation notes for the unarmed/Fists profile selection system
 - `design/features/implementation/MINIMAP_SYSTEM.md` — custom data-driven tactical minimap implementation spec

@@ -3,7 +3,7 @@
     {
       "item_id": "faint_recollection",
       "display_name": "Faint Recollection",
-      "description": "A faint recollection shed by forest shrumbs.\nIt stirs toward something once known, but does not gather enough to become it.",
+      "description": "A faint recollection from a creature once kindred to myth.\nThe echo stirs toward the forgotten past, but the Shrumb no longer responds.",
       "stack_size": 999,
       "rarity": "common",
       "cognitive_axis": "recollection",
@@ -12,7 +12,7 @@
     {
       "item_id": "residual_instinct",
       "display_name": "Residual Instinct",
-      "description": "A dull instinct held among forest shrumbs.\nIt compels movement without aim, settling where decision never took hold.",
+      "description": "The Shrumb once looked upon the world and named it.\nNow it only moves through it.\nThis is the residue of a will that wore itself away.",
       "stack_size": 999,
       "rarity": "uncommon",
       "cognitive_axis": "instinct",
@@ -21,7 +21,7 @@
     {
       "item_id": "ancient_bearing",
       "display_name": "Ancient Bearing",
-      "description": "A fragment of orientation from the elder days, carried by the shrumb.\nIt suggests a place once held among the ordered things, though no memory of it remains.",
+      "description": "A remnant of the elder days, the last reminder of its ancient station among the ordered things. This aspect shapes the way the Shrumb orients toward the world. On rare occasions its essence sublimates upon the Shrumb's death, where it will continue to seek the alignment of a station that no longer receives it.",
       "stack_size": 999,
       "rarity": "rare",
       "cognitive_axis": "bearing",

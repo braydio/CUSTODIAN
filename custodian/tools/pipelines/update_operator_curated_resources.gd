@@ -251,11 +251,13 @@ func _init() -> void:
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_sidearm_entries("lower_body", "sidearm_draw_lower", "draw_sidearm_01"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_sidearm_entries("lower_body", "sidearm_fire_lower", "fire_sidearm_01"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_unarmed_block_entries("lower_body"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_unarmed_parry_entries("lower_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_locomotion_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_upper_action_entries())
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_draw_upper", "draw_sidearm_01"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_fire_upper", "fire_sidearm_01"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_unarmed_block_entries("upper_body"))
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_unarmed_parry_entries("upper_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_stance_entries("lower_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_ranged_stance_entries("upper_body"))
 	_replace_animation_entries(modular_sidearm_frames, _build_modular_sidearm_entries("sidearm", "sidearm_draw", "draw_sidearm_01"))
@@ -623,6 +625,25 @@ func _build_modular_unarmed_block_entries(part: String) -> Array:
 	return entries
 
 
+func _build_modular_unarmed_parry_entries(part: String) -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/unarmed" % part
+	var entries: Array = []
+	var sheet := _find_modular_action_sheet(root, part, "unarmed", "parry_01", "n")
+	if sheet.is_empty():
+		return entries
+	for animation in ["unarmed_parry", "unarmed_parry_up", "unarmed_parry_success", "unarmed_parry_success_up"]:
+		entries.append({
+			"animation": animation,
+			"path": str(sheet["path"]),
+			"frames": int(sheet["frames"]),
+			"frame_width": 96,
+			"frame_height": 96,
+			"fps": 14.0,
+			"loop": false,
+		})
+	return entries
+
+
 func _find_modular_action_sheet(root: String, part: String, loadout: String, action: String, direction: String) -> Dictionary:
 	var action_root := "%s/%s" % [root, action]
 	var directory := DirAccess.open(action_root)
@@ -645,13 +666,19 @@ func _find_modular_action_sheet(root: String, part: String, loadout: String, act
 
 
 func _build_modular_unarmed_parry_fx_entries() -> Array:
-	var path := "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/unarmed/parry_01/operator__modular_upper_fx__unarmed__parry_01__e__5f__96.png"
-	if not _texture_file_exists(path):
-		return []
-	return [
-		{"animation": "unarmed_parry_fx", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 14.0, "loop": false},
-		{"animation": "unarmed_parry_fx_right", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 14.0, "loop": false},
-	]
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/unarmed"
+	var entries: Array = []
+	for direction_spec in [
+		{"dir": "n", "suffix": "up", "alias_base": true},
+		{"dir": "e", "suffix": "right"},
+	]:
+		var sheet := _find_modular_action_sheet(root, "upper_fx", "unarmed", "parry_01", str(direction_spec["dir"]))
+		if sheet.is_empty():
+			continue
+		if bool(direction_spec.get("alias_base", false)):
+			entries.append({"animation": "unarmed_parry_fx", "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 14.0, "loop": false})
+		entries.append({"animation": "unarmed_parry_fx_%s" % str(direction_spec["suffix"]), "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 14.0, "loop": false})
+	return entries
 
 
 func _load_or_create_sprite_frames(resource_path: String) -> SpriteFrames:

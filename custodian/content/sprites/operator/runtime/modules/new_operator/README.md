@@ -88,8 +88,8 @@ Unarmed block is live on the lower/upper modular stack. `enter_block_01` drives 
 `block_loop_01` drives hold, `blocking_hitreact_01` plays when a hit is blocked, and block exit replays entry
 backwards. All three actions have authored E/W coverage. Curated block registration discovers each generated
 sheet's current frame count instead of hardcoding it, so replacement sheets built with `--remove-superseded`
-remain valid. `upper_fx/actions/unarmed/parry_01/` is registered in the curated resource, but parry gameplay
-remains deferred and does not trigger it yet.
+remain valid. `parry_01` now drives the live tap-parry pose through the lower/upper modular stack, with
+`upper_fx/actions/unarmed/parry_01/` playing the paired parry FX.
 
 The legacy body `AnimatedSprite2D` remains the timing/source-of-truth sprite for attack state, hit windows, portal arrival, ranged states, and any non-modular fallback state. It is hidden visually when modular layers cover the current unarmed locomotion state, including Fists idle.
 

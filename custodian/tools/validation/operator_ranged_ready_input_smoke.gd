@@ -32,8 +32,10 @@ func _run() -> void:
 	await process_frame
 
 	_validate_input_bindings()
+	_validate_offhand_physical_event_mapping()
 	_validate_carbine_intents()
 	_validate_sidearm_profile()
+	await _validate_offhand_input_actions_trigger_parry(root)
 	await _validate_operator_ranged_ready(root)
 
 	if _failed:
@@ -188,6 +190,73 @@ func _validate_selected_primary_priority(operator: Node) -> void:
 	_assert_true(operator.call("_get_active_ranged_weapon_definition") == CARBINE_DEFINITION, "active ranged weapon should remain the selected primary")
 	_assert_true(bool(operator.call("_is_using_ranged_2h_primary")), "selected carbine should still report as ranged_2h primary")
 	operator.call("_exit_ranged_ready")
+
+
+func _validate_offhand_input_actions_trigger_parry(root: Node) -> void:
+	await _validate_offhand_input_trigger(root, "aim_hold action", func() -> void:
+		Input.action_press("aim_hold")
+	, func() -> void:
+		Input.action_release("aim_hold")
+	)
+	await _validate_offhand_input_trigger(root, "attack_secondary action", func() -> void:
+		Input.action_press("attack_secondary")
+	, func() -> void:
+		Input.action_release("attack_secondary")
+	)
+
+
+func _validate_offhand_physical_event_mapping() -> void:
+	var right_mouse := InputEventMouseButton.new()
+	right_mouse.button_index = MOUSE_BUTTON_RIGHT
+	right_mouse.pressed = true
+	_assert_true(InputMap.event_is_action(right_mouse, "aim_hold"), "right mouse should map to aim_hold")
+	_assert_true(InputMap.event_is_action(right_mouse, "attack_secondary"), "right mouse should map to attack_secondary")
+
+	var left_trigger := InputEventJoypadMotion.new()
+	left_trigger.axis = JOY_AXIS_TRIGGER_LEFT
+	left_trigger.axis_value = 1.0
+	_assert_true(InputMap.event_is_action(left_trigger, "aim_hold"), "left trigger should map to aim_hold")
+	_assert_true(InputMap.event_is_action(left_trigger, "attack_secondary"), "left trigger should map to attack_secondary")
+
+
+func _validate_offhand_input_trigger(root: Node, label: String, press: Callable, release: Callable) -> void:
+	_release_offhand_inputs()
+	var operator := OPERATOR_SCENE.instantiate()
+	root.add_child(operator)
+	await process_frame
+
+	operator.set("combat_loadout_mode", "melee")
+	operator.set("primary_weapon_equipped", false)
+	operator.set("using_unarmed", true)
+	operator.set("sidearm_slot_equipped", false)
+	operator.set("stamina", 40.0)
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+	operator.call("_exit_ranged_ready")
+
+	press.call()
+	operator.call("_process", 0.016)
+	_assert_true(operator.get("_parry_phase") == &"windup", "%s should start parry windup through _process input routing" % label)
+	_assert_true(operator.get("_block_phase") == &"parry", "%s should keep block phase in parry, not guard entry" % label)
+	_assert_true(not bool(operator.call("_is_ranged_ready_active")), "%s should not enter ranged-ready when offhand mode is parry_guard" % label)
+
+	release.call()
+	_release_offhand_inputs()
+	operator.queue_free()
+	await process_frame
+
+
+func _release_offhand_inputs() -> void:
+	Input.action_release("aim_hold")
+	Input.action_release("attack_secondary")
+	var mouse_release := InputEventMouseButton.new()
+	mouse_release.button_index = MOUSE_BUTTON_RIGHT
+	mouse_release.pressed = false
+	Input.parse_input_event(mouse_release)
+	var trigger_release := InputEventJoypadMotion.new()
+	trigger_release.axis = JOY_AXIS_TRIGGER_LEFT
+	trigger_release.axis_value = 0.0
+	Input.parse_input_event(trigger_release)
 
 
 func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
