@@ -1,0 +1,526 @@
+Directory Tree Mapping
+/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular
+├── block
+│   ├── operator__modular_lower_body__blocking_hitreact_01__e__5f__96.png
+│   ├── operator__modular_lower_body__blocking_hitreact_01__e__5f__96.png.import
+│   ├── operator__modular_lower_body__blocking_hitreact_01__w__5f__96.png
+│   ├── operator__modular_lower_body__blocking_hitreact_01__w__5f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__blocking_hitreact_01__e__5f__96.png
+│   ├── operator__modular_lower_body__unarmed__blocking_hitreact_01__e__5f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__blocking_hitreact_01__w__5f__96.png
+│   ├── operator__modular_lower_body__unarmed__blocking_hitreact_01__w__5f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__block_loop_01__e__5f__96.png
+│   ├── operator__modular_lower_body__unarmed__block_loop_01__e__5f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__block_loop_01__w__5f__96.png
+│   ├── operator__modular_lower_body__unarmed__block_loop_01__w__5f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__enter_block_01__e__4f__96.png
+│   ├── operator__modular_lower_body__unarmed__enter_block_01__e__4f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__enter_block_01__w__4f__96.png
+│   ├── operator__modular_lower_body__unarmed__enter_block_01__w__4f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__parry_01__n__5f__96.png
+│   ├── operator__modular_lower_body__unarmed__parry_01__n__5f__96.png.import
+│   ├── operator__modular_upper_body__blocking_hitreact_01__e__5f__96.png
+│   ├── operator__modular_upper_body__blocking_hitreact_01__e__5f__96.png.import
+│   ├── operator__modular_upper_body__blocking_hitreact_01__w__5f__96.png
+│   ├── operator__modular_upper_body__blocking_hitreact_01__w__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__blocking_hitreact_01__e__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__blocking_hitreact_01__e__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__blocking_hitreact_01__w__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__blocking_hitreact_01__w__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__block_loop_01__e__5f__96.gif
+│   ├── operator__modular_upper_body__unarmed__block_loop_01__e__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__block_loop_01__e__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__block_loop_01__w__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__block_loop_01__w__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__enter_block_01__e__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__enter_block_01__e__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__enter_block_01__w__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__enter_block_01__w__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__parry_01__n__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__parry_01__n__5f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__parry_01__e__5f__96.png
+│   ├── operator__modular_upper_fx__unarmed__parry_01__e__5f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__parry_01__n__5f__96.png
+│   └── operator__modular_upper_fx__unarmed__parry_01__n__5f__96.png.import
+├── dodge
+│   ├── operator__body__full__dodge_01__n__9f__96.png
+│   ├── operator__body__full__dodge_01__n__9f__96.png.import
+│   ├── operator__body__full__dodge_01__ne__5f__96.png
+│   ├── operator__body__full__dodge_01__ne__5f__96.png.import
+│   ├── operator__body__full__dodge_01__nw__5f__96.png
+│   ├── operator__body__full__dodge_01__nw__5f__96.png.import
+│   ├── operator__body__full__dodge_01__s__9f__96.png
+│   ├── operator__body__full__dodge_01__s__9f__96.png.import
+│   ├── operator__fx__full__dodge_01__n__9f__96.png
+│   ├── operator__fx__full__dodge_01__n__9f__96.png.import
+│   ├── operator__fx__full__dodge_01__ne__5f__96.png
+│   ├── operator__fx__full__dodge_01__ne__5f__96.png.import
+│   ├── operator__fx__full__dodge_01__nw__5f__96.png
+│   ├── operator__fx__full__dodge_01__nw__5f__96.png.import
+│   ├── operator__fx__full__dodge_01__s__9f__96.png
+│   └── operator__fx__full__dodge_01__s__9f__96.png.import
+├── fast_attack
+│   ├── great_hall_wall_straight_test_original.png
+│   ├── great_hall_wall_straight_test_original.png.import
+│   ├── great_hall_wall_straight_test.png
+│   ├── great_hall_wall_straight_test.png.import
+│   ├── great_hall_wall_straight_tileable.png
+│   ├── great_hall_wall_straight_tileable.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__e__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__e__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__n__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__n__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__ne__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__ne__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__nw__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__nw__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__s__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__s__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__se__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__se__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__sw__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__sw__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__w__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_recovery_01__w__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__e__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__e__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__n__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__n__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__ne__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__ne__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__nw__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__nw__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__s__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__s__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__se__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__se__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__sw__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__sw__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__w__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_strike_01__w__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__e__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__e__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__n__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__n__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__ne__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__ne__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__nw__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__nw__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__s__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__s__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__se__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__se__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__sw__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__sw__3f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__w__3f__96.png
+│   ├── operator__modular_lower_body__unarmed__fast_windup_01__w__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__e__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__e__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__n__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__n__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__ne__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__ne__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__nw__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__nw__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__s__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__s__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__se__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__se__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__sw__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__sw__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__w__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_recovery_01__w__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__e__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__e__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__n__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__n__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__ne__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__ne__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__nw__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__nw__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__s__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__s__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__se__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__se__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__sw__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__sw__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__w__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_strike_01__w__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__e__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__e__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__n__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__n__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__ne__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__ne__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__nw__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__nw__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__s__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__s__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__se__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__se__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__sw__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__sw__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__w__3f__96.png
+│   ├── operator__modular_upper_body__unarmed__fast_windup_01__w__3f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__e__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__e__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__n__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__n__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__s__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__s__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__se__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__se__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__w__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__w__5f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__e__3f__96__ALTERNATE.png
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__e__3f__96__ALTERNATE.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__e__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__e__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__n__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__n__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__ne__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__ne__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__nw__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__nw__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__s__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__s__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__se__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__se__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__sw__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__sw__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__w__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_strike_01__w__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__e__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__e__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__n__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__n__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__ne__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__ne__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__nw__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__nw__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__se__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__se__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__sw__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__sw__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__w__3f__96.png
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__w__3f__96.png.import
+│   ├── operator__modular_upper_fx__unarmed__fast_windup_01__w__3f__9\t.png
+│   ├── Sprite-0004.aseprite
+│   └── Sprite-0004.aseprite.uid
+├── heavy_attack
+│   ├── operator__body__unarmed__heavy_01__s__7f__96.png
+│   ├── operator__body__unarmed__heavy_01__s__7f__96.png.import
+│   ├── operator__fx__unarmed__heavy_01__s__7f__96.png
+│   ├── operator__fx__unarmed__heavy_01__s__7f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__heavy_01__s__7f__96.png
+│   ├── operator__modular_lower_body__unarmed__heavy_01__s__7f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__heavy_01__s__7f__96.png
+│   ├── operator__modular_upper_body__unarmed__heavy_01__s__7f__96.png.import
+│   ├── operator__modular_upper_fzx__unarmed__heavy_01__s__7f__96.png
+│   └── operator__modular_upper_fzx__unarmed__heavy_01__s__7f__96.png.import
+├── idle
+│   ├── operator__full_body__idle__5f__s__96.aseprite
+│   ├── operator__full_body__idle__5f__s__96.aseprite.uid
+│   ├── operator__full_body__idle__5f__se__96.aseprite
+│   ├── operator__full_body__idle__5f__se__96.aseprite.uid
+│   ├── operator__modular_lower_body__idle__e__5f__96.aseprite
+│   ├── operator__modular_lower_body__idle__e__5f__96.aseprite.uid
+│   ├── operator__modular_lower_body__idle__e__5f__96.png
+│   ├── operator__modular_lower_body__idle__e__5f__96.png.import
+│   ├── operator__modular_lower_body__idle__n__5f__96.aseprite
+│   ├── operator__modular_lower_body__idle__n__5f__96.aseprite.uid
+│   ├── operator__modular_lower_body__idle__n__5f__96.png
+│   ├── operator__modular_lower_body__idle__n__5f__96.png.import
+│   ├── operator__modular_lower_body__idle__s__5f__96.png
+│   ├── operator__modular_lower_body__idle__s__5f__96.png.import
+│   ├── operator__modular_lower_body__idle__se__5f__96.png
+│   ├── operator__modular_lower_body__idle__se__5f__96.png.import
+│   ├── operator__modular_lower_body__idle__sw__5f__96.png
+│   ├── operator__modular_lower_body__idle__sw__5f__96.png.import
+│   ├── operator__modular_lower_body__idle__w__5f__96.aseprite
+│   ├── operator__modular_lower_body__idle__w__5f__96.aseprite.uid
+│   ├── operator__modular_lower_body__idle__w__5f__96.png
+│   ├── operator__modular_lower_body__idle__w__5f__96.png.import
+│   ├── operator__modular_upper_body__idle__e__5f__96.png
+│   ├── operator__modular_upper_body__idle__e__5f__96.png.import
+│   ├── operator__modular_upper_body__idle__n__5f__96.png
+│   ├── operator__modular_upper_body__idle__n__5f__96.png.import
+│   ├── operator__modular_upper_body__idle__s__5f__96.png
+│   ├── operator__modular_upper_body__idle__s__5f__96.png.import
+│   ├── operator__modular_upper_body__idle__w__5f__96.png
+│   ├── operator__modular_upper_body__idle__w__5f__96.png.import
+│   ├── operator__modular_upper_body__idle__w__5f__96_temp.png
+│   └── operator__modular_upper_body__idle__w__5f__96_temp.png.import
+├── operator__modular_wardrobe_cape__unarmed__fast_strike_01__n__3f__96.png
+├── operator__modular_wardrobe_cape__unarmed__fast_strike_01__n__3f__96.png.import
+├── png
+│   ├── operator__modular_lower_body__run_01__e__5f__96.png
+│   ├── operator__modular_lower_body__run_01__e__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__n__5f__96.png
+│   ├── operator__modular_lower_body__run_01__n__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__ne__5f__96.png
+│   ├── operator__modular_lower_body__run_01__ne__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__nw__5f__96.png
+│   ├── operator__modular_lower_body__run_01__nw__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__s__5f__96.png
+│   ├── operator__modular_lower_body__run_01__s__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__se__5f__96.png
+│   ├── operator__modular_lower_body__run_01__se__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__sw__5f__96.png
+│   ├── operator__modular_lower_body__run_01__sw__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__w__5f__96.png
+│   ├── operator__modular_lower_body__run_01__w__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__e__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__e__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__n__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__n__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__s__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__s__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__se__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__se__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__w__5f__96.png
+│   └── operator__modular_upper_body__unarmed__run_01__w__5f__96.png.import
+├── ranged
+│   ├── operator__modular_body_lower__aim__ranged_2h__w__6f__96.png
+│   ├── operator__modular_body_lower__aim__ranged_2h__w__6f__96.png.import
+│   ├── operator__modular_body_upper__aim__ranged_2h__w__5f__96.png
+│   ├── operator__modular_body_upper__aim__ranged_2h__w__5f__96.png.import
+│   ├── operator__modular_body_upper__aim__ranged_2h__w__6f__96.png
+│   ├── operator__modular_body_upper__aim__ranged_2h__w__6f__96.png.import
+│   ├── operator__modular_lower_body__stance__ranged_2h__e__5f__96.png
+│   ├── operator__modular_lower_body__stance__ranged_2h__e__5f__96.png.import
+│   ├── operator__modular_lower_body__stance__ranged_2h__n__5f__96.png
+│   ├── operator__modular_lower_body__stance__ranged_2h__n__5f__96.png.import
+│   ├── operator__modular_lower_body__stance__ranged_2h__w__5f__96.png
+│   ├── operator__modular_lower_body__stance__ranged_2h__w__5f__96.png.import
+│   ├── operator__modular_upper_body__stance__ranged_2h__e__5f__96.png
+│   ├── operator__modular_upper_body__stance__ranged_2h__e__5f__96.png.import
+│   ├── operator__modular_upper_body__stance__ranged_2h__n__5f__96.png
+│   ├── operator__modular_upper_body__stance__ranged_2h__n__5f__96.png.import
+│   ├── operator__modular_upper_body__stance__ranged_2h__w__5f__96.png
+│   ├── operator__modular_upper_body__stance__ranged_2h__w__5f__96.png.import
+│   ├── operator__modular_upper_body__weapon__ranged_2h__e__5f__96.png
+│   ├── operator__modular_upper_body__weapon__ranged_2h__e__5f__96.png.import
+│   ├── operator__modular_upper_body__weapon__ranged_2h__n__5f__96.png
+│   ├── operator__modular_upper_body__weapon__ranged_2h__n__5f__96.png.import
+│   ├── operator__modular_upper_body__weapon__ranged_2h__w__5f__96-sheet.png
+│   └── operator__modular_upper_body__weapon__ranged_2h__w__5f__96-sheet.png.import
+├── recombinator
+│   ├── combined
+│   │   ├── operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__ne__5f__96.png
+│   │   ├── operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__ne__5f__96.png.import
+│   │   ├── operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__s__5f__96.png
+│   │   ├── operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__s__5f__96.png.import
+│   │   ├── operator__modular_combined_body__unarmed__run_01__e__5f__96.png
+│   │   ├── operator__modular_combined_body__unarmed__run_01__e__5f__96.png.import
+│   │   ├── operator__modular_combined_body__unarmed__run_01__n__5f__96.png
+│   │   ├── operator__modular_combined_body__unarmed__run_01__n__5f__96.png.import
+│   │   ├── operator__modular_combined_body__unarmed__run_01__s__5f__96.png
+│   │   ├── operator__modular_combined_body__unarmed__run_01__s__5f__96.png.import
+│   │   ├── operator__modular_combined_body__unarmed__run_01__se__5f__96.png
+│   │   ├── operator__modular_combined_body__unarmed__run_01__se__5f__96.png.import
+│   │   ├── operator__modular_combined_body__unarmed__run_01__sw__5f__96.png
+│   │   ├── operator__modular_combined_body__unarmed__run_01__sw__5f__96.png.import
+│   │   ├── operator__modular_combined_body__unarmed__run_01__w__5f__96.png
+│   │   └── operator__modular_combined_body__unarmed__run_01__w__5f__96.png.import
+│   ├── gif
+│   │   ├── operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__ne__5f__96.gif
+│   │   ├── operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__s__5f__96.gif
+│   │   ├── operator__modular_combined_body__unarmed__run_01__e__5f__96.gif
+│   │   ├── operator__modular_combined_body__unarmed__run_01__n__5f__96.gif
+│   │   ├── operator__modular_combined_body__unarmed__run_01__s__5f__96.gif
+│   │   ├── operator__modular_combined_body__unarmed__run_01__se__5f__96.gif
+│   │   ├── operator__modular_combined_body__unarmed__run_01__sw__5f__96.gif
+│   │   └── operator__modular_combined_body__unarmed__run_01__w__5f__96.gif
+│   ├── index.html
+│   ├── parts
+│   │   ├── lower
+│   │   │   ├── operator__modular_lower_body__run_01__e__5f__96.png
+│   │   │   ├── operator__modular_lower_body__run_01__e__5f__96.png.import
+│   │   │   ├── operator__modular_lower_body__run_01__n__5f__96.png
+│   │   │   ├── operator__modular_lower_body__run_01__n__5f__96.png.import
+│   │   │   ├── operator__modular_lower_body__run_01__ne__5f__96.png
+│   │   │   ├── operator__modular_lower_body__run_01__ne__5f__96.png.import
+│   │   │   ├── operator__modular_lower_body__run_01__nw__5f__96.png
+│   │   │   ├── operator__modular_lower_body__run_01__nw__5f__96.png.import
+│   │   │   ├── operator__modular_lower_body__run_01__s__5f__96.png
+│   │   │   ├── operator__modular_lower_body__run_01__s__5f__96.png.import
+│   │   │   ├── operator__modular_lower_body__run_01__se__5f__96.png
+│   │   │   ├── operator__modular_lower_body__run_01__se__5f__96.png.import
+│   │   │   ├── operator__modular_lower_body__run_01__sw__5f__96.png
+│   │   │   ├── operator__modular_lower_body__run_01__sw__5f__96.png.import
+│   │   │   ├── operator__modular_lower_body__run_01__w__5f__96.png
+│   │   │   ├── operator__modular_lower_body__run_01__w__5f__96.png.import
+│   │   │   ├── operator__modular_lower_body__walk_01__e__5f__96.png
+│   │   │   ├── operator__modular_lower_body__walk_01__e__5f__96.png.import
+│   │   │   ├── operator__modular_lower_body__walk_01__w__5f__96.png
+│   │   │   └── operator__modular_lower_body__walk_01__w__5f__96.png.import
+│   │   └── upper
+│   │       ├── operator__modular_upper_body__unarmed__fast_strike_01__ne__3f__96.png
+│   │       ├── operator__modular_upper_body__unarmed__fast_strike_01__ne__3f__96.png.import
+│   │       ├── operator__modular_upper_body__unarmed__fast_strike_01__s__3f__96.png
+│   │       ├── operator__modular_upper_body__unarmed__fast_strike_01__s__3f__96.png.import
+│   │       ├── operator__modular_upper_body__unarmed__run_01__e__5f__96.png
+│   │       ├── operator__modular_upper_body__unarmed__run_01__e__5f__96.png.import
+│   │       ├── operator__modular_upper_body__unarmed__run_01__n__5f__96.png
+│   │       ├── operator__modular_upper_body__unarmed__run_01__n__5f__96.png.import
+│   │       ├── operator__modular_upper_body__unarmed__run_01__s__5f__96.png
+│   │       ├── operator__modular_upper_body__unarmed__run_01__s__5f__96.png.import
+│   │       ├── operator__modular_upper_body__unarmed__run_01__se__5f__96.png
+│   │       ├── operator__modular_upper_body__unarmed__run_01__se__5f__96.png.import
+│   │       ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.png
+│   │       ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.png.import
+│   │       ├── operator__modular_upper_body__unarmed__run_01__w__5f__96.png
+│   │       └── operator__modular_upper_body__unarmed__run_01__w__5f__96.png.import
+│   ├── reports
+│   │   └── manifest.json
+│   └── review
+│       ├── operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__ne__5f__96_review.png
+│       ├── operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__ne__5f__96_review.png.import
+│       ├── operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__s__5f__96_review.png
+│       ├── operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__s__5f__96_review.png.import
+│       ├── operator__modular_combined_body__unarmed__run_01__e__5f__96_review.png
+│       ├── operator__modular_combined_body__unarmed__run_01__e__5f__96_review.png.import
+│       ├── operator__modular_combined_body__unarmed__run_01__n__5f__96_review.png
+│       ├── operator__modular_combined_body__unarmed__run_01__n__5f__96_review.png.import
+│       ├── operator__modular_combined_body__unarmed__run_01__s__5f__96_review.png
+│       ├── operator__modular_combined_body__unarmed__run_01__s__5f__96_review.png.import
+│       ├── operator__modular_combined_body__unarmed__run_01__se__5f__96_review.png
+│       ├── operator__modular_combined_body__unarmed__run_01__se__5f__96_review.png.import
+│       ├── operator__modular_combined_body__unarmed__run_01__sw__5f__96_review.png
+│       ├── operator__modular_combined_body__unarmed__run_01__sw__5f__96_review.png.import
+│       ├── operator__modular_combined_body__unarmed__run_01__w__5f__96_review.png
+│       └── operator__modular_combined_body__unarmed__run_01__w__5f__96_review.png.import
+├── run
+│   ├── operator__modular_lower_body__run_01__e__5f__96.png
+│   ├── operator__modular_lower_body__run_01__e__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__n__5f__96.png
+│   ├── operator__modular_lower_body__run_01__n__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__ne__5f__96.png
+│   ├── operator__modular_lower_body__run_01__ne__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__nw__5f__96.png
+│   ├── operator__modular_lower_body__run_01__nw__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__s__5f__96.png
+│   ├── operator__modular_lower_body__run_01__s__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__se__5f__96.png
+│   ├── operator__modular_lower_body__run_01__se__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__sw__5f__96.png
+│   ├── operator__modular_lower_body__run_01__sw__5f__96.png.import
+│   ├── operator__modular_lower_body__run_01__w__5f__96.png
+│   ├── operator__modular_lower_body__run_01__w__5f__96.png.import
+│   ├── operator__modular_lower_body__unarmed__run_01__s__5f__96.png
+│   ├── operator__modular_lower_body__unarmed__run_01__s__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__e__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__e__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__n__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__n__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__s__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__s__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__se__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__se__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.json
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96-sheet.png
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96-sheet.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__w__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__w__5f__96.png.import
+│   └── temp
+├── sidearm
+│   ├── operator__modular_lower_body__sidearm__draw_sidearm_01__ne__5f__96.png
+│   ├── operator__modular_lower_body__sidearm__draw_sidearm_01__ne__5f__96.png.import
+│   ├── operator__modular_lower_body__sidearm__draw_sidearm_01__nw__5f__96.png
+│   ├── operator__modular_lower_body__sidearm__draw_sidearm_01__nw__5f__96.png.import
+│   ├── operator__modular_lower_body__sidearm__draw_sidearm_01__se__5f__96.png
+│   ├── operator__modular_lower_body__sidearm__draw_sidearm_01__se__5f__96.png.import
+│   ├── operator__modular_lower_body__sidearm__draw_sidearm_01__sw__5f__96.png
+│   ├── operator__modular_lower_body__sidearm__draw_sidearm_01__sw__5f__96.png.import
+│   ├── operator__modular_lower_body__sidearm__fire_sidearm_01__ne__5f__96.png
+│   ├── operator__modular_lower_body__sidearm__fire_sidearm_01__ne__5f__96.png.import
+│   ├── operator__modular_lower_body__sidearm__fire_sidearm_01__nw__5f__96.png
+│   ├── operator__modular_lower_body__sidearm__fire_sidearm_01__nw__5f__96.png.import
+│   ├── operator__modular_lower_body__sidearm__fire_sidearm_01__se__5f__96.png
+│   ├── operator__modular_lower_body__sidearm__fire_sidearm_01__se__5f__96.png.import
+│   ├── operator__modular_lower_body__sidearm__fire_sidearm_01__sw__5f__96.png
+│   ├── operator__modular_lower_body__sidearm__fire_sidearm_01__sw__5f__96.png.import
+│   ├── operator__modular_upper_body__sidearm__draw_sidearm_01__ne__5f__96.png
+│   ├── operator__modular_upper_body__sidearm__draw_sidearm_01__ne__5f__96.png.import
+│   ├── operator__modular_upper_body__sidearm__draw_sidearm_01__nw__5f__96.png
+│   ├── operator__modular_upper_body__sidearm__draw_sidearm_01__nw__5f__96.png.import
+│   ├── operator__modular_upper_body__sidearm__draw_sidearm_01__se__5f__96.png
+│   ├── operator__modular_upper_body__sidearm__draw_sidearm_01__se__5f__96.png.import
+│   ├── operator__modular_upper_body__sidearm__draw_sidearm_01__sw__5f__96.png
+│   ├── operator__modular_upper_body__sidearm__draw_sidearm_01__sw__5f__96.png.import
+│   ├── operator__modular_upper_body__sidearm__fire_sidearm_01__ne__5f__96.png
+│   ├── operator__modular_upper_body__sidearm__fire_sidearm_01__ne__5f__96.png.import
+│   ├── operator__modular_upper_body__sidearm__fire_sidearm_01__nw__5f__96.png
+│   ├── operator__modular_upper_body__sidearm__fire_sidearm_01__nw__5f__96.png.import
+│   ├── operator__modular_upper_body__sidearm__fire_sidearm_01__se__5f__96.png
+│   ├── operator__modular_upper_body__sidearm__fire_sidearm_01__se__5f__96.png.import
+│   ├── operator__modular_upper_body__sidearm__fire_sidearm_01__sw__5f__96.png
+│   ├── operator__modular_upper_body__sidearm__fire_sidearm_01__sw__5f__96.png.import
+│   ├── operator__modular_upper_fx__sidearm__draw_sidearm_01__ne__5f__96.png
+│   ├── operator__modular_upper_fx__sidearm__draw_sidearm_01__ne__5f__96.png.import
+│   ├── operator__modular_upper_fx__sidearm__draw_sidearm_01__nw__5f__96.png
+│   ├── operator__modular_upper_fx__sidearm__draw_sidearm_01__nw__5f__96.png.import
+│   ├── operator__modular_upper_fx__sidearm__draw_sidearm_01__se__5f__96.png
+│   ├── operator__modular_upper_fx__sidearm__draw_sidearm_01__se__5f__96.png.import
+│   ├── operator__modular_upper_fx__sidearm__draw_sidearm_01__sw__5f__96.png
+│   ├── operator__modular_upper_fx__sidearm__draw_sidearm_01__sw__5f__96.png.import
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__e__5f__128.png
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__e__5f__128.png.import
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__e__8f__128.png
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__e__8f__128.png.import
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__ne__5f__96.png
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__ne__5f__96.png.import
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__nw__5f__96.png
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__nw__5f__96.png.import
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__se__5f__96.png
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__se__5f__96.png.import
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__sw__5f__96.png
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__sw__5f__96.png.import
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__w__8f__128.png
+│   ├── operator__modular_upper_fx__sidearm__fire_sidearm_01__w__8f__128.png.import
+│   ├── operator__weapon__sidearm_pistol__draw_sidearm_01__ne__5f__96.png
+│   ├── operator__weapon__sidearm_pistol__draw_sidearm_01__ne__5f__96.png.import
+│   ├── operator__weapon__sidearm_pistol__draw_sidearm_01__nw__5f__96.png
+│   ├── operator__weapon__sidearm_pistol__draw_sidearm_01__nw__5f__96.png.import
+│   ├── operator__weapon__sidearm_pistol__draw_sidearm_01__se__5f__96.png
+│   ├── operator__weapon__sidearm_pistol__draw_sidearm_01__se__5f__96.png.import
+│   ├── operator__weapon__sidearm_pistol__draw_sidearm_01__sw__5f__96.png
+│   ├── operator__weapon__sidearm_pistol__draw_sidearm_01__sw__5f__96.png.import
+│   ├── operator__weapon__sidearm_pistol__fire_sidearm_01__ne__5f__96.png
+│   ├── operator__weapon__sidearm_pistol__fire_sidearm_01__ne__5f__96.png.import
+│   ├── operator__weapon__sidearm_pistol__fire_sidearm_01__nw__5f__96.png
+│   ├── operator__weapon__sidearm_pistol__fire_sidearm_01__nw__5f__96.png.import
+│   ├── operator__weapon__sidearm_pistol__fire_sidearm_01__se__5f__96.png
+│   ├── operator__weapon__sidearm_pistol__fire_sidearm_01__se__5f__96.png.import
+│   ├── operator__weapon__sidearm_pistol__fire_sidearm_01__sw__5f__96.png
+│   └── operator__weapon__sidearm_pistol__fire_sidearm_01__sw__5f__96.png.import
+├── to-png.sh
+├── unarmed_run_check
+│   ├── operator__modular_upper_body__unarmed__run_01__e__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__e__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__n__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__n__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__s__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__s__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__se__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__se__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.png
+│   ├── operator__modular_upper_body__unarmed__run_01__sw__5f__96.png.import
+│   ├── operator__modular_upper_body__unarmed__run_01__w__5f__96.png
+│   └── operator__modular_upper_body__unarmed__run_01__w__5f__96.png.import
+└── walk
+    ├── operator__modular_lower_body__walk_01__e__5f__96.png
+    ├── operator__modular_lower_body__walk_01__e__5f__96.png.import
+    ├── operator__modular_lower_body__walk_01__w__5f__96.png
+    ├── operator__modular_lower_body__walk_01__w__5f__96.png.import
+    ├── operator__modular_upper_body__walk_01__e__5f__96.png
+    ├── operator__modular_upper_body__walk_01__e__5f__96.png.import
+    ├── operator__modular_upper_body__walk_01__w__5f__96.png
+    └── operator__modular_upper_body__walk_01__w__5f__96.png.import

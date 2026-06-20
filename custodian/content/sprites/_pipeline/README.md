@@ -9,6 +9,7 @@ read from here directly.
 content/sprites/_pipeline/
   aseprite/    # Drop raw Aseprite PNG exports here before normalization
   inbox/       # Drop PNG + sidecar JSON manifest pairs here
+  requests/    # Generated production checklists/contracts for future art batches
   normalized/  # Debug previews of the parsed source frames
   logs/        # Last ingest result per manifest
   archive/     # Processed source PNG/JSON pairs
@@ -117,6 +118,33 @@ python custodian/tools/pipelines/build_operator_modular_runtime.py --remove-supe
 godot --headless --path custodian --import --quit
 godot --headless --path custodian --script res://tools/pipelines/update_operator_curated_resources.gd
 ```
+
+Use the contract report to inspect modular production coverage without modifying art:
+
+```bash
+python custodian/tools/validation/operator_animation_contract_report.py
+python custodian/tools/validation/operator_animation_contract_report.py --strict
+```
+
+Use the action preview tool to composite generated runtime modules or action-runtime strips into review images
+under `custodian/animation_review/`:
+
+```bash
+python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --action block_loop_01 --directions e,w --include-fx
+python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --sequence fast_windup_01,fast_strike_01,fast_recovery_01 --include-fx
+```
+
+Those preview images are QA artifacts only; they are not gameplay resources and should not be referenced by
+runtime scenes.
+
+Plan a new character art batch without generating placeholder PNGs:
+
+```bash
+python custodian/tools/pipelines/scaffold_character_contract.py --owner enemy_ritualist --template humanoid_combat --frame-size 96 --directions s,se,e,ne,n,nw,w,sw
+```
+
+This writes checklist, suggested contract, and expected filename files under
+`content/sprites/_pipeline/requests/<owner>/`.
 
 Dodge body drops can be full-body or modular. Full-body dodge uses `operator__body__locomotion__dodge__n__4f__96.png` plus `operator__body__locomotion__dodge_recovery__n__4f__96.png`. The aim-back hop uses `operator__body__locomotion__dodge_backstep__s__4f__96.png` plus `operator__body__locomotion__dodge_backstep_recovery__s__4f__96.png`. Modular dodge source names that start with `dodge` route to `operator/new_operator/modular/dodge/`.
 
