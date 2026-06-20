@@ -638,7 +638,7 @@ func _build_modular_unarmed_parry_entries(part: String) -> Array:
 			"frames": int(sheet["frames"]),
 			"frame_width": 96,
 			"frame_height": 96,
-			"fps": 14.0,
+			"fps": 12.0,
 			"loop": false,
 		})
 	return entries
@@ -676,8 +676,10 @@ func _build_modular_unarmed_parry_fx_entries() -> Array:
 		if sheet.is_empty():
 			continue
 		if bool(direction_spec.get("alias_base", false)):
-			entries.append({"animation": "unarmed_parry_fx", "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 14.0, "loop": false})
-		entries.append({"animation": "unarmed_parry_fx_%s" % str(direction_spec["suffix"]), "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 14.0, "loop": false})
+			entries.append({"animation": "unarmed_parry_fx", "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": false})
+			entries.append({"animation": "PLACEHOLDER_unarmed_parry_success_fx", "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": false})
+		entries.append({"animation": "unarmed_parry_fx_%s" % str(direction_spec["suffix"]), "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": false})
+		entries.append({"animation": "PLACEHOLDER_unarmed_parry_success_fx_%s" % str(direction_spec["suffix"]), "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": false})
 	return entries
 
 

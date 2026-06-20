@@ -29,6 +29,9 @@ compatibility outputs, or runtime resource rebuilds.
 - Modular Operator sheets use
   `operator__<modular_layer>__<loadout>__<action>__<direction>__<frames>f__<frame_size>.png`;
   generic modular actions become stable runtime modules, while live playback wiring remains deliberate.
+- Operator modular source sheets live under `content/sprites/operator/new_operator/modular/`; generated stable
+  modules live under `content/sprites/operator/runtime/modules/new_operator/`. Runtime scenes should not read
+  directly from `_pipeline/` or from QA preview output.
 - Hover buggy vehicle sheets can trigger the live vehicle `SpriteFrames` rebuild through
   `custodian/tools/pipelines/update_vehicle_runtime_resources.gd`.
 - Enemy, weapon, effects, vehicle, and turret outputs are written directly into the
@@ -155,6 +158,18 @@ Optional post-process:
 
 That hook runs the Godot-side rebuild script for operator curated resources.
 
+Modular Operator runtime post-process:
+
+```json
+{
+  "post_process": ["operator_modular_runtime"]
+}
+```
+
+That hook runs `build_operator_modular_runtime.py`, which normalizes supported Operator modular source sheets
+into stable runtime module strips and current action-runtime compatibility outputs. It does not register new
+gameplay states by itself.
+
 Enemy runtime import post-process:
 
 ```json
@@ -187,6 +202,13 @@ custodian/tools/pipelines/examples/
 - `operator_fast_attack_manifest.json`
 
 ## Commands
+
+Generate inbox manifests for staged canonical PNGs:
+
+```bash
+python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run
+python custodian/tools/pipelines/generate_inbox_manifests.py --remove-superseded
+```
 
 Run ingest:
 
@@ -236,6 +258,41 @@ Validate modular Operator routing and generic action output:
 python custodian/tools/validation/operator_modular_pipeline_smoke.py
 ```
 
+Build Operator modular runtime strips directly from existing modular source sheets:
+
+```bash
+python custodian/tools/pipelines/build_operator_modular_runtime.py --dry-run --remove-superseded
+python custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded
+```
+
+Report Operator modular production coverage:
+
+```bash
+python custodian/tools/validation/operator_animation_contract_report.py
+python custodian/tools/validation/operator_animation_contract_report.py --strict
+```
+
+Preview a modular/action runtime sequence for QA review:
+
+```bash
+python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --sequence fast_windup_01,fast_strike_01,fast_recovery_01 --include-fx
+python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --action block_loop_01 --directions e,w --include-fx
+```
+
+Plan animation coverage for a new modular-compatible character without generating art:
+
+```bash
+python custodian/tools/pipelines/scaffold_character_contract.py --owner enemy_ritualist --template humanoid_combat --frame-size 96 --directions s,se,e,ne,n,nw,w,sw
+```
+
+Run pure-Python smoke checks for the new production tools:
+
+```bash
+python custodian/tools/validation/operator_animation_contract_report_smoke.py
+python custodian/tools/validation/operator_action_preview_smoke.py
+python custodian/tools/validation/scaffold_character_contract_smoke.py
+```
+
 Rebuild vehicle runtime resources directly:
 
 ```bash
@@ -254,6 +311,13 @@ python custodian/tools/pipelines/aseprite_inbox.py --run-ingest
 - Preserve source pixels by default.
 - Only resize when the manifest explicitly requests it.
 - Use the canonical `<owner>__<layer>__<action_group>__<variant>__<direction>__<frames>f__<frame_size>.png` naming pattern for new sheets.
+- Treat source sheets, runtime strips, generated modules, curated `SpriteFrames`, and QA preview images as
+  separate artifacts:
+  - source sheets are intake or authored modular sheets
+  - runtime strips are PNGs under the live `content/sprites/<domain>/runtime/` paths
+  - generated modules are stable Operator layer strips under `operator/runtime/modules/new_operator/`
+  - curated resources are Godot `.tres` `SpriteFrames` rebuilt by explicit scripts
+  - QA previews are review-only composites under `custodian/animation_review/`
 - Output into the live runtime domains:
   - `operator/`
   - `weapons/`
