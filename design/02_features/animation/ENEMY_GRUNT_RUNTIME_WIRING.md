@@ -17,7 +17,7 @@ The `enemy_grunt` sprite intake is a new active-enemy art set, not a replacement
 - Animation source: `GruntAnimationLibrary`, which builds `SpriteFrames` from canonical runtime strips.
 - Wave integration: `WaveManager` and `EnemyFactory` may select `grunt` when the scene is wired.
 - Debug spawn: DevConsole command `spawn_grunt [x_offset y_offset]` spawns one near the operator through `EnemyDirector` / `WaveManager`.
-- Startup test: `WaveManager.debug_spawn_grunt_on_start` can place one grunt near the operator at scene start for live visual review.
+- Startup test: `WaveManager.debug_spawn_grunt_on_start` can place one grunt near the initial operator spawn for live visual review, but it waits until the operator crosses `debug_start_grunt_trigger_distance` away from that spawn zone so AFK scene loads are safe.
 - Attack timing: `EnemyGrunt.attack_windup_duration` is `0.42s`, so damage lands around the middle of the common 10-frame/12 FPS melee body and FX strips instead of waiting for the end of the clip. The west melee body source is currently 11 frames and may need a separate follow-up if west-facing attacks feel slightly early or late.
 
 The current art set is partial but expanded:

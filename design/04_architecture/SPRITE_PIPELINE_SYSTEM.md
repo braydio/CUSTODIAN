@@ -5,7 +5,7 @@
 - **Type**: Infrastructure Architecture
 - **Location**: `custodian/tools/pipelines/`
 - **Status**: Active, repo-native intake pipeline
-- **Last Updated**: 2026-05-01
+- **Last Updated**: 2026-06-19
 
 ## Purpose
 
@@ -33,7 +33,9 @@ migrated to that structure first.
 
 ```text
 content/sprites/_pipeline/
+  aseprite/
   inbox/
+  requests/
   normalized/
   logs/
   archive/
@@ -42,6 +44,7 @@ content/sprites/_pipeline/
 Rules:
 
 - `inbox/` is for staged source PNG + JSON manifest pairs
+- `requests/` is for generated production checklists/contracts for future art batches
 - `normalized/` is only for debug previews of parsed frames
 - `logs/` stores ingest results
 - `archive/` stores processed intake files
@@ -182,15 +185,47 @@ Direction rule:
 
 Primary scripts:
 
+- `custodian/tools/pipelines/generate_inbox_manifests.py`
 - `custodian/tools/pipelines/ingest.py`
+- `custodian/tools/pipelines/ingest_runtime.gd`
+- `custodian/tools/pipelines/build_operator_modular_runtime.py`
+- `custodian/tools/pipelines/operator_action_preview.py`
+- `custodian/tools/pipelines/scaffold_character_contract.py`
 - `custodian/tools/pipelines/reload_assets.py`
 - `custodian/tools/pipelines/update_operator_curated_resources.gd`
+- `custodian/tools/pipelines/update_vehicle_runtime_resources.gd`
+- `custodian/tools/validation/operator_animation_contract_report.py`
 
 Current post-process support:
 
 - `operator_curated_resources`
+- `operator_modular_runtime`
+- `enemy_runtime_import`
+- `vehicle_runtime_import`
 
-That hook rebuilds operator runtime `SpriteFrames` after curated body/overlay outputs are updated.
+`operator_curated_resources` rebuilds operator runtime `SpriteFrames` after curated body/overlay outputs are
+updated. `operator_modular_runtime` normalizes supported modular Operator source sheets from
+`res://content/sprites/operator/new_operator/modular/` into generated runtime modules below
+`res://content/sprites/operator/runtime/modules/new_operator/` and current action-runtime compatibility strips.
+`enemy_runtime_import` and `vehicle_runtime_import` run import/resource refresh steps for the active enemy and
+vehicle runtime domains.
+
+Current production QA helpers:
+
+- `operator_animation_contract_report.py` reports required, optional, extra, and suspicious Operator modular
+  animation coverage from source sheets, generated modules, and action-runtime strips.
+- `operator_action_preview.py` composites existing generated modules or action-runtime strips into review-only
+  images under `custodian/animation_review/`.
+- `scaffold_character_contract.py` writes checklist, suggested contract, and expected filename files under
+  `content/sprites/_pipeline/requests/<owner>/` without generating art.
+
+Artifact distinction:
+
+- source sheets are intake PNGs or authored modular PNGs
+- runtime strips are PNGs under the live `content/sprites/<domain>/runtime/` paths
+- generated modules are Operator layer strips under `operator/runtime/modules/new_operator/`
+- curated resources are Godot `.tres` `SpriteFrames` rebuilt by explicit scripts
+- QA preview images are inspection artifacts and must not become runtime dependencies
 
 ## Why The Earlier Proposal Was Rejected
 
@@ -211,10 +246,19 @@ That conflicted with the live repo in four ways:
 ## Intended Workflow
 
 1. Drop source PNG + sidecar manifest into `content/sprites/_pipeline/inbox/`
-2. Run `python custodian/tools/pipelines/ingest.py`
-3. Inspect outputs in the live runtime domain
-4. If the manifest requested `operator_curated_resources`, let the post-process rebuild the operator runtime frames
-5. Validate in Godot
+2. Run `python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run` when manifests need to be generated
+3. Run `python custodian/tools/pipelines/ingest.py`
+4. Inspect outputs in the live runtime domain
+5. If the manifest requested a post-process hook, let it run the matching resource/import refresh
+6. Validate in Godot or with the narrow Python smoke/report tool for the changed surface
+
+For already-authored Operator modular source sheets in `content/sprites/operator/new_operator/modular/`:
+
+1. Run `python custodian/tools/pipelines/build_operator_modular_runtime.py --dry-run --remove-superseded`
+2. Run `python custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded`
+3. Run `python custodian/tools/validation/operator_animation_contract_report.py`
+4. Generate QA previews with `operator_action_preview.py` when visual inspection is needed
+5. Register any new gameplay playback deliberately in runtime/state-machine code and curated resources
 
 For already runtime-ready non-specialized assets:
 

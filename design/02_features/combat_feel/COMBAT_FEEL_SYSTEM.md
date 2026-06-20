@@ -138,7 +138,7 @@ Offhand secondary (`attack_secondary` / `aim_hold`, right mouse or Xbox LT) is c
 
 - selected ranged primary -> hold offhand secondary for primary ranged-ready, primary fires
 - melee/unarmed plus equipped P-9 sidearm -> hold offhand secondary for sidearm-ready, primary fires the P-9
-- melee/unarmed with empty offhand or guard-focused offhand item -> tap offhand secondary for parry, hold through the parry window for guard
+- melee/unarmed with empty offhand or guard-focused offhand item -> hold offhand secondary for guard, primary while held parries
 
 The `block` InputMap action may exist as a compatibility/manual action, but the official player-facing defensive control
 is offhand secondary by slot context. Do not route P-9 sidearm and parry onto the same held state.
@@ -171,8 +171,9 @@ Offhand sidearm:
 Parry / guard:
 
 - Empty offhand and `offhand_guard_item_equipped` both route offhand secondary to the defense path.
-- Pressing offhand secondary starts parry windup immediately, then opens a short active parry window.
-- Releasing after the tap plays parry recovery; holding through the active window requests the existing block state and enters guard.
+- Holding offhand secondary starts guard immediately; the guard becomes fully active after a short guard-ready delay.
+- Pressing primary while offhand secondary is held starts parry windup, then opens a short active parry window.
+- Releasing offhand secondary exits guard. If parry recovery finishes while secondary is still held, the operator returns to guard; if secondary was released, the operator returns to normal stance.
 - A front-facing perfect parry cancels the incoming enemy hit, calls `apply_parry_stagger(...)` on the attacker when available, refunds stamina, and opens a short counter window that boosts the next fast melee/unarmed hit.
 - Guard uses the existing block state presentation, drains stamina per hit, and reduces incoming damage to chip damage instead of fully negating it.
 - Enemy damage application must check parry first, guard second, then damage. Presentation fallbacks are allowed when parry animations are missing, but simulation authority stays in `operator.gd` and `enemy.gd`.
@@ -213,14 +214,17 @@ Unarmed/Fists is a selectable weapon profile. It must not create separate unarme
 and `unarmed_heavy` reuse the shared `attack_fast` and `attack_heavy` states while resolving profile-specific
 animations, hit windows, FX, and stat multipliers through `unarmed_definition.tres`.
 
-Unarmed heavy remains available through the secondary chord (`Shift+primary`). Offhand secondary owns parry/guard when
-the sidearm slot is empty or defensive, so a bare Fists build has defensive skill expression without overloading the
-held sidearm-ready state.
+Unarmed heavy remains available through the secondary chord (`Shift+primary`). Offhand secondary owns guard-ready when
+the sidearm slot is empty or defensive, and primary pressed while guard-ready triggers parry. A bare Fists build has
+defensive skill expression without overloading the held sidearm-ready state.
 
 Unarmed block presentation uses the modular lower/upper body stack: authored entry, looping hold, and blocked-hit
 reaction clips play through the existing block state path, and exit reuses entry in reverse. Parry gameplay now uses
 the same state path for timing, plays the generated modular `parry_01` lower/upper/FX stack when available, and falls
-back to block animations when `unarmed_parry*` clips are missing.
+back to block animations when `unarmed_parry*` clips are missing. The curated `parry_01` playback is intentionally
+registered at 12 FPS for a slightly heavier read. Successful parries route their burst through
+`PLACEHOLDER_unarmed_parry_success_fx*`, currently sourced from the normal parry FX strip and clearly named for
+replacement when the dedicated success FX is supplied.
 
 Asset rule: unarmed body motion and unarmed FX should be separate runtime layers. If an existing clean body strip
 matches the needed motion, reuse it for body frames and put fist impact/trail pixels in an unarmed FX overlay.
@@ -485,4 +489,4 @@ Acceptance checks:
 - `cd custodian && godot --headless --script tools/validation/operator_ranged_ready_input_smoke.gd`
 - `cd custodian && godot --headless --script tools/validation/operator_modular_layers_smoke.gd`
 - `cd custodian && godot --headless --quit`
-- In play, empty offhand tap parries, empty offhand hold guards, P-9 equipped hold readies sidearm, and selected ranged primary hold readies the primary ranged weapon.
+- In play, empty offhand hold guards, empty offhand hold plus primary parries, P-9 equipped hold readies sidearm, P-9 held plus primary fires sidearm, and selected ranged primary hold readies the primary ranged weapon.
