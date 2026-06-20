@@ -1,47 +1,47 @@
 {
 	"blackwood": {
 		"label": "Blackwood",
-		"description": "Petrified deadfall and root mass suitable for crude structures."
+		"description": "Petrified deadfall from a blackwood grove. Unnaturally dense, as though the same tree had fallen time and again to the same place."
 	},
 	"structural_alloy": {
 		"label": "Structural Alloy",
-		"description": "Recovered alloy from exposed veins, braces, and ruin-metal seams."
+		"description": "Recovered alloy from exposed braces, mineral veins, and ruin-metal seams. It holds a dull strength, as if the old structures still remember their shape."
 	},
 	"ruin_scrap": {
 		"label": "Ruin Scrap",
-		"description": "Fabrication feedstock recovered from wreckage and broken machinery."
+		"description": "Scrap feedstock recovered from collapsed ruins and broken machinery. Common material used for basic repairs and components."
 	},
 	"spent_charge_cell": {
 		"label": "Spent Charge Cell",
-		"description": "A dull power cell with almost no charge remaining. Its stamped manufacture date appears twice, eighteen years apart."
+		"description": "A dull power cell with almost no charge remaining. Beneath the grime, its manufacture stamp repeats beside casualty marks no single war could account for."
 	},
 	"frayed_signal_filament": {
 		"label": "Frayed Signal Filament",
-		"description": "A hair-thin conductor pulled from a ruined comm hood. It still twitches toward active transmitters."
+		"description": "A severed signal thread used in old witness relays. Even broken, it bends toward anything still broadcasting."
 	},
 	"cracked_field_tag": {
 		"label": "Cracked Field Tag",
-		"description": "A cracked field tag with a scraped identity and the same name stamped again in a different hand."
+		"description": "A cracked field tag split through the name. The metal is bent inward as if it tried to keep record of the impact."
 	},
 	"power_components": {
 		"label": "Power Components",
-		"description": "Rare salvage used for powered systems and fabricator upgrades."
+		"description": "Salvaged regulators, relays, and sealed cells pulled from powered wreckage. The useful ones still emit a faint hum."
 	},
 	"resin_clot": {
 		"label": "Resin Clot",
-		"description": "Dense fungal resin used for sealing, patching, and crude bonding."
+		"description": "Dense fungal resin harvested from ruin-fed growths. It seals cracks, binds scrap, and refuses to rot."
 	},
 	"capacitor_dust": {
 		"label": "Capacitor Dust",
-		"description": "Conductive residue recovered from ruptured banks and shorted panels."
+		"description": "Conductive dust recovered from ruptured capacitor banks and shorted panels. It clings to anything still carrying charge."
 	},
 	"signal_filament": {
 		"label": "Signal Filament",
-		"description": "Fine relay thread used for sensors, archive links, and signal work."
+		"description": "A hair-thin conductor pulled from a ruined comm hood. It still twitches toward active transmitters."
 	},
 	"memory_glass_fragment": {
 		"label": "Memory Glass Fragment",
-		"description": "Brittle archive material that preserves damaged command-state traces."
+		"description": "A fractured mnemonic pane from a Custodian archive. Its stored recollection has split beyond recovery, but some fragments still answer to authority."
 	},
 	"white_thread_knot": {
 		"label": "White Thread Knot",
