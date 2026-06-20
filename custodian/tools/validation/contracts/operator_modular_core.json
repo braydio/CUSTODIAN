@@ -1,0 +1,121 @@
+{
+  "schema": "custodian.operator_animation_contract.v1",
+  "owner": "operator",
+  "frame_size": 96,
+  "directions": ["s", "se", "e", "ne", "n", "nw", "w", "sw"],
+  "layers": [
+    "lower_body",
+    "upper_body",
+    "upper_fx",
+    "wardrobe_cape",
+    "sidearm",
+    "ranged_weapon",
+    "combined_body"
+  ],
+  "loadouts": ["unarmed", "sidearm", "ranged_2h", "full"],
+  "notes": [
+    "This is a production coverage/reporting contract, not a hard runtime gate.",
+    "Runtime playback still requires deliberate Operator state-machine and SpriteFrames registration.",
+    "Source sheets live under content/sprites/operator/new_operator/modular/; generated modules live under content/sprites/operator/runtime/modules/new_operator/."
+  ],
+  "groups": [
+    {
+      "id": "core_locomotion",
+      "label": "Core locomotion",
+      "required": true,
+      "entries": [
+        {"layer": "lower_body", "loadout": "unarmed", "action": "idle_01", "directions": "all", "frames": {"min": 3, "max": 8}},
+        {"layer": "lower_body", "loadout": "unarmed", "action": "walk_01", "directions": "all", "frames": {"min": 4, "max": 8}},
+        {"layer": "lower_body", "loadout": "unarmed", "action": "run_01", "directions": "all", "frames": 5},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "idle_01", "directions": "all", "frames": {"min": 3, "max": 8}},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "walk_01", "directions": "all", "frames": {"min": 4, "max": 8}},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "run_01", "directions": "all", "frames": 5}
+      ]
+    },
+    {
+      "id": "fast_attack",
+      "label": "Important unarmed fast attack",
+      "required": true,
+      "entries": [
+        {"layer": "lower_body", "loadout": "unarmed", "action": "fast_windup_01", "directions": "all", "frames": 3},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "fast_windup_01", "directions": "all", "frames": 3},
+        {"layer": "lower_body", "loadout": "unarmed", "action": "fast_strike_01", "directions": "all", "frames": 3},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "fast_strike_01", "directions": "all", "frames": 3},
+        {"layer": "upper_fx", "loadout": "unarmed", "action": "fast_strike_01", "directions": "all", "frames": 3},
+        {"layer": "lower_body", "loadout": "unarmed", "action": "fast_recovery_01", "directions": "all", "frames": 3},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "fast_recovery_01", "directions": "all", "frames": 3}
+      ]
+    },
+    {
+      "id": "defense",
+      "label": "Defense and parry",
+      "required": false,
+      "entries": [
+        {"layer": "lower_body", "loadout": "unarmed", "action": "enter_block_01", "directions": ["e", "w"], "frames": {"min": 4, "max": 5}},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "enter_block_01", "directions": ["e", "w"], "frames": 5},
+        {"layer": "lower_body", "loadout": "unarmed", "action": "block_loop_01", "directions": ["e", "w"], "frames": 5},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "block_loop_01", "directions": ["e", "w"], "frames": 5},
+        {"layer": "lower_body", "loadout": "unarmed", "action": "blocking_hitreact_01", "directions": ["e", "w"], "frames": 5},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "blocking_hitreact_01", "directions": ["e", "w"], "frames": 5},
+        {"layer": "lower_body", "loadout": "unarmed", "action": "parry_01", "directions": ["n", "e"], "frames": 5},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "parry_01", "directions": ["n"], "frames": 5},
+        {"layer": "upper_fx", "loadout": "unarmed", "action": "parry_01", "directions": ["n", "e"], "frames": 5}
+      ]
+    },
+    {
+      "id": "dodge",
+      "label": "Full-body dodge runtime",
+      "required": false,
+      "entries": [
+        {"layer": "combined_body", "loadout": "full", "action": "dodge_01", "directions": ["n", "s"], "frames": 9, "pattern": "action_runtime"},
+        {"layer": "upper_fx", "loadout": "full", "action": "dodge_01", "directions": ["n", "s"], "frames": 9, "pattern": "action_runtime"}
+      ]
+    },
+    {
+      "id": "sidearm_actions",
+      "label": "Sidearm draw/fire action modules",
+      "required": false,
+      "entries": [
+        {"layer": "lower_body", "loadout": "sidearm", "action": "draw_sidearm_01", "directions": ["ne", "nw", "se", "sw"], "frames": 5},
+        {"layer": "upper_body", "loadout": "sidearm", "action": "draw_sidearm_01", "directions": ["ne", "nw", "se", "sw"], "frames": 5},
+        {"layer": "sidearm", "loadout": "sidearm", "action": "draw_sidearm_01", "directions": ["ne", "nw", "se", "sw"], "frames": 5},
+        {"layer": "upper_fx", "loadout": "sidearm", "action": "draw_sidearm_01", "directions": ["ne", "nw", "se", "sw"], "frames": 5},
+        {"layer": "lower_body", "loadout": "sidearm", "action": "fire_sidearm_01", "directions": ["ne", "nw", "se", "sw"], "frames": 5},
+        {"layer": "upper_body", "loadout": "sidearm", "action": "fire_sidearm_01", "directions": ["ne", "nw", "se", "sw"], "frames": 5},
+        {"layer": "sidearm", "loadout": "sidearm", "action": "fire_sidearm_01", "directions": ["ne", "nw", "se", "sw"], "frames": 5},
+        {"layer": "upper_fx", "loadout": "sidearm", "action": "fire_sidearm_01", "directions": ["ne", "nw", "se", "sw"], "frames": {"min": 5, "max": 8}}
+      ]
+    },
+    {
+      "id": "ranged_2h_stance",
+      "label": "Ranged 2H stance modules",
+      "required": false,
+      "entries": [
+        {"layer": "lower_body", "loadout": "ranged_2h", "action": "stance_01", "directions": ["e", "n", "w"], "frames": 5},
+        {"layer": "upper_body", "loadout": "ranged_2h", "action": "stance_01", "directions": ["e", "n", "w"], "frames": 5},
+        {"layer": "ranged_weapon", "loadout": "ranged_2h", "action": "stance_01", "directions": ["e", "n", "w"], "frames": 5},
+        {"layer": "lower_body", "loadout": "ranged_2h", "action": "aim_01", "directions": ["w"], "frames": {"min": 5, "max": 6}, "required": false},
+        {"layer": "upper_body", "loadout": "ranged_2h", "action": "aim_01", "directions": ["w"], "frames": 5, "required": false}
+      ]
+    },
+    {
+      "id": "optional_layers",
+      "label": "Optional modular overlays",
+      "required": false,
+      "entries": [
+        {"layer": "wardrobe_cape", "loadout": "unarmed", "action": "fast_strike_01", "directions": ["n"], "frames": 3}
+      ]
+    },
+    {
+      "id": "future_ranged_fire",
+      "label": "Future ranged fire/recoil coverage",
+      "required": false,
+      "entries": [
+        {"layer": "lower_body", "loadout": "ranged_2h", "action": "fire_01", "directions": ["e", "w"], "frames": {"min": 3, "max": 8}},
+        {"layer": "upper_body", "loadout": "ranged_2h", "action": "fire_01", "directions": ["e", "w"], "frames": {"min": 3, "max": 8}},
+        {"layer": "ranged_weapon", "loadout": "ranged_2h", "action": "fire_01", "directions": ["e", "w"], "frames": {"min": 3, "max": 8}},
+        {"layer": "upper_fx", "loadout": "ranged_2h", "action": "recoil_01", "directions": ["e", "w"], "frames": {"min": 3, "max": 8}}
+      ]
+    }
+  ]
+}

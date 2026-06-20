@@ -87,11 +87,21 @@ func _init() -> void:
 	operator.set("stamina", 100.0)
 	operator.set("aim_direction", Vector2.UP)
 	operator.set("visual_idle_direction", Vector2.UP)
-	if not bool(operator.call("_try_start_parry")):
-		failures.append("unarmed secondary parry should start through the modular stack")
+	operator.call("start_block")
+	operator.set("_guard_held_timer", float(operator.get("parry_min_guard_time_sec")))
+	if not bool(operator.call("_can_parry_from_guard")):
+		failures.append("unarmed parry should be available after entering guard")
+	elif not bool(operator.call("_try_start_parry")):
+		failures.append("unarmed primary-from-guard parry should start through the modular stack")
 	_check_layer(lower, "parry lower", &"unarmed_parry_up", failures)
 	_check_layer(upper, "parry upper", &"unarmed_parry_up", failures)
 	_check_layer(upper_fx, "parry FX", &"unarmed_parry_fx_up", failures)
+	_check_animation_speed(lower, &"unarmed_parry_up", 12.0, "parry lower", failures)
+	_check_animation_speed(upper, &"unarmed_parry_up", 12.0, "parry upper", failures)
+	_check_animation_speed(upper_fx, &"unarmed_parry_fx_up", 12.0, "parry FX", failures)
+	operator.call("_spawn_parry_success_fx")
+	_check_layer(upper_fx, "placeholder success parry FX", &"PLACEHOLDER_unarmed_parry_success_fx_up", failures)
+	_check_animation_speed(upper_fx, &"PLACEHOLDER_unarmed_parry_success_fx_up", 12.0, "placeholder success parry FX", failures)
 	if body != null and body.visible:
 		failures.append("legacy body sprite should be hidden while modular unarmed parry is active")
 	operator.set("_parry_phase", &"")
@@ -229,6 +239,23 @@ func _check_held_layer(sprite: AnimatedSprite2D, label: String, expected_animati
 	var expected_frame := sprite.sprite_frames.get_frame_count(expected_animation) - 1
 	if sprite.frame != expected_frame:
 		failures.append("%s frame is %d, expected held frame %d" % [label, sprite.frame, expected_frame])
+
+
+func _check_animation_speed(sprite: AnimatedSprite2D, animation: StringName, expected_speed: float, label: String, failures: Array[String]) -> void:
+	if sprite == null or sprite.sprite_frames == null:
+		failures.append("missing %s modular sprite/frames" % label)
+		return
+	if not sprite.sprite_frames.has_animation(animation):
+		failures.append("%s modular frames missing %s" % [label, String(animation)])
+		return
+	var actual_speed := sprite.sprite_frames.get_animation_speed(animation)
+	if not is_equal_approx(actual_speed, expected_speed):
+		failures.append("%s animation %s speed is %.2f, expected %.2f" % [
+			label,
+			String(animation),
+			actual_speed,
+			expected_speed,
+		])
 
 
 func _check_primary_ranged_layers_hidden(primary_weapon: AnimatedSprite2D, ranged_fx: AnimatedSprite2D, phase: String, failures: Array[String]) -> void:

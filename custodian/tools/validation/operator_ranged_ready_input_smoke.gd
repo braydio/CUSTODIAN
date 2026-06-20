@@ -236,9 +236,16 @@ func _validate_offhand_input_trigger(root: Node, label: String, press: Callable,
 
 	press.call()
 	operator.call("_process", 0.016)
-	_assert_true(operator.get("_parry_phase") == &"windup", "%s should start parry windup through _process input routing" % label)
-	_assert_true(operator.get("_block_phase") == &"parry", "%s should keep block phase in parry, not guard entry" % label)
+	_assert_true(operator.get("_parry_phase") == &"", "%s should not tap-parry from secondary alone" % label)
+	_assert_true(operator.get("_block_phase") in [&"enter", &"hold"], "%s should enter guard through _process input routing" % label)
 	_assert_true(not bool(operator.call("_is_ranged_ready_active")), "%s should not enter ranged-ready when offhand mode is parry_guard" % label)
+	operator.call("_process", float(operator.get("parry_min_guard_time_sec")) + 0.016)
+	Input.action_press("fire_primary")
+	operator.call("_process", 0.016)
+	_assert_true(operator.get("_parry_phase") == &"windup", "%s + primary should start parry windup through _process input routing" % label)
+	_assert_true(operator.get("_block_phase") == &"parry", "%s + primary should host parry in the block state" % label)
+	Input.action_release("fire_primary")
+	Input.action_release("attack_primary")
 
 	release.call()
 	_release_offhand_inputs()
@@ -247,6 +254,8 @@ func _validate_offhand_input_trigger(root: Node, label: String, press: Callable,
 
 
 func _release_offhand_inputs() -> void:
+	Input.action_release("fire_primary")
+	Input.action_release("attack_primary")
 	Input.action_release("aim_hold")
 	Input.action_release("attack_secondary")
 	var mouse_release := InputEventMouseButton.new()
@@ -263,8 +272,12 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	operator.set("stamina", 40.0)
 	operator.set("visual_idle_direction", Vector2.RIGHT)
 	operator.set("aim_direction", Vector2.RIGHT)
+	operator.call("_start_guard_from_secondary")
+	operator.set("_guard_held_timer", float(operator.get("parry_min_guard_time_sec")))
+	_assert_true(operator.get("_block_phase") in [&"enter", &"hold"], "secondary hold should enter guard before parry")
+	_assert_true(bool(operator.call("_can_parry_from_guard")), "melee/unarmed parry should be available from guard without a sidearm")
 	_assert_true(bool(operator.call("_can_start_parry")), "melee/unarmed parry should be available without a sidearm")
-	_assert_true(bool(operator.call("_try_start_parry")), "secondary tap should start parry windup")
+	_assert_true(bool(operator.call("_try_start_parry")), "primary while guarding should start parry windup")
 	_assert_true(operator.get("_parry_phase") == &"windup", "parry should begin in windup")
 	_assert_true(operator.get("_block_phase") == &"parry", "block state should host parry without converting it to guard entry")
 	operator.call("_update_parry_guard_timers", 0.05)
