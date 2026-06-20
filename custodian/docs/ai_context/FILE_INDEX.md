@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-06-16
+Last updated: 2026-06-19
 
 ## Local Entry And Workflow
 
@@ -8,6 +8,7 @@ Last updated: 2026-06-16
 - `custodian/docs/AGENT_MIGRATION_PLAYBOOK.md` — detailed migration and drift-remediation workflow
 - `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` — compact-by-default optional task packet template with full-packet expansion guidance for high-risk or multi-session work
 - `custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` — prioritized automation/script backlog for agent workflow validation and safety checks
+- `custodian/docs/ai_context/AGENT_TOOLING_BY_ASK.md` — ask-specific tooling router for agent work, currently covering modular Operator asset audit/review scripts and their caveats
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` — canonical validation command selection guide for docs, Godot, asset pipeline, tile pipeline, and review work
 - `custodian/docs/ai_context/prompts/README.md` — reusable agent prompt index and usage rules
 - `custodian/docs/ai_context/task_packets/README.md` — task packet workflow and active packet index
@@ -66,7 +67,7 @@ Last updated: 2026-06-16
 ## Active Runtime Entry
 
 - `custodian/project.godot` — Godot project config and input map
-- `custodian/scenes/game.tscn` — active game scene and terminal layout; currently includes temporary `AshBellDevSpawner` for live Forlorn-Ritualant encounter review, scene-mounted `DroneManager` for allied combat drone V1 spawning, and a temporary grunt startup debug spawn for immediate enemy visual review
+- `custodian/scenes/game.tscn` — active game scene and terminal layout; currently includes temporary `AshBellDevSpawner` for live Forlorn-Ritualant encounter review, scene-mounted `DroneManager` for allied combat drone V1 spawning, and a temporary grunt startup debug spawn gated by Operator distance from the initial spawn zone
 - `custodian/scenes/home_custodian_begin.tscn` — dedicated Home beginning scene for Objective 01, tracing a Custodian-band signal across the Road of Witnesses to the damaged Field Terminal; not yet the application main scene.
 - `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene.
 
@@ -194,7 +195,7 @@ Last updated: 2026-06-16
 - `custodian/game/enemies/procgen/enemy_palette_tint.gdshader` — palette/glow/contrast shader used by procedural enemy visuals
 - `custodian/game/systems/core/systems/enemy_factory.gd` — wave composition factory with deterministic local composition rolls and `"wolf"`, `"grunt"`, and late-unlock `"marine"` type support
 - `custodian/game/systems/core/systems/enemy_director.gd` — live directed-wave planner that scales threat into assault budget, chooses lane/objective, passes a deterministic composition queue into `WaveManager`, and forwards optional behavior-profile/debug scene references including marine
-- `custodian/game/systems/core/systems/wave_manager.gd` — wave spawning system that applies procedural wolf variant profiles to spawned enemies when `"wolf"` entries are selected, can spawn dedicated `EnemyGrunt` and `EnemyMarine` scenes for `"grunt"` / `"marine"` entries, owns fallback point/burst tuning, records survived waves to `GameStats`, and exposes a behavior-profile-aware debug spawn helper used by DevConsole/startup review
+- `custodian/game/systems/core/systems/wave_manager.gd` — wave spawning system that applies procedural wolf variant profiles to spawned enemies when `"wolf"` entries are selected, can spawn dedicated `EnemyGrunt` and `EnemyMarine` scenes for `"grunt"` / `"marine"` entries, owns fallback point/burst tuning, records survived waves to `GameStats`, and exposes behavior-profile-aware debug spawn helpers used by DevConsole/startup review; startup review grunt spawning is gated by `debug_start_grunt_trigger_distance` from the initial Operator position
 - `custodian/game/actors/items/cognitive_pickup.tscn` — generic pickup scene for cognitive item drops
 - `custodian/game/actors/items/cognitive_pickup.gd` — pickup flow that increments `InventoryManager`, applies `CognitiveState`, animates the 4-frame item sheet, and emits popup/log feedback
 - `custodian/game/actors/items/shrumb_dropper.gd` — reusable Forest Shrumb cognitive drop table component
@@ -226,14 +227,14 @@ Last updated: 2026-06-16
 - `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems, including vault totals and enemy storage-search/loot-carrying counts
 - `custodian/game/ui/terminal/terminal_map_preview.gd` — terminal minimap preview state and click-to-world conversion boundary
 - `custodian/game/ui/terminal/terminal_planet_preview.gd` — terminal globe viewport, rotation, zoom, and preview input handling
-- `custodian/game/actors/operator/operator.gd` — operator movement including procgen road/path surface speed multipliers, WASD/left-stick movement, mouse/right-stick aim, movement-first dodge with live N/S 9-frame full-dodge body/FX presentation, queued armed/Fists profile selection, context-sensitive offhand secondary routing for primary ranged-ready, P-9 sidearm-ready, or tap parry / held guard, primary-confirmed ranged fire plus ranged panic shot, modular E/N/W two-handed ranged-ready stance playback, profile-backed fast/heavy melee attack runtime logic, optional modular upper/lower locomotion layer synchronization for Fists idle/walk/run, enemy marine dash impact-lock/knockback feedback through `apply_enemy_dash_impact(...)`, and a read-only stealth/noise snapshot for enemy perception
+- `custodian/game/actors/operator/operator.gd` — operator movement including procgen road/path surface speed multipliers, WASD/left-stick movement, mouse/right-stick aim, movement-first dodge with live N/S 9-frame full-dodge body/FX presentation, queued armed/Fists profile selection, context-sensitive offhand secondary routing for primary ranged-ready, P-9 sidearm-ready, or guard-ready with primary-from-guard parry, primary-confirmed ranged fire plus ranged panic shot, modular E/N/W two-handed ranged-ready stance playback, profile-backed fast/heavy melee attack runtime logic, optional modular upper/lower locomotion layer synchronization for Fists idle/walk/run, enemy marine dash impact-lock/knockback feedback through `apply_enemy_dash_impact(...)`, and a read-only stealth/noise snapshot for enemy perception
 - `custodian/game/actors/operator/operator.tscn` — operator scene with legacy body sprite, modular lower/upper body locomotion sprites, weapon/FX overlays, sockets, collision, hitbox root, and health bar
 - `custodian/game/actors/operator/operator_weapon_definition.gd` — weapon/combat profile resource schema, including intents, movement/combat multipliers, and light/fast/heavy `MeleeAttackProfile` references
 - `custodian/game/actors/operator/carbine_rifle_mk1_definition.tres` — starter ranged weapon definition; secondary intent is `ranged_ready`, while primary fire is requested only during held ranged-ready
 - `custodian/game/systems/combat/melee_attack_profile.gd` — reusable melee attack physics profile for damage, range, arc, knockback, timing, movement, hit-stop, camera shake, animation fallback, and hit-window data
 - `custodian/game/actors/operator/attacks/*.tres` — default operator melee/Fists attack profile resources wired into weapon definitions
 - `custodian/game/actors/operator/unarmed_definition.tres` — Fists/unarmed combat profile used by `toggle_unarmed`, now referencing unarmed fast/heavy attack profiles
-- `custodian/project.godot` — canonical runtime input bindings, including WASD/left-stick movement, mouse/right-stick aim, `fire_primary` / compatibility `attack_primary` on left mouse / Xbox RT, context-sensitive offhand secondary `aim_hold` / compatibility `attack_secondary` on right mouse / Xbox LT for ranged-ready, sidearm-ready, or parry/guard by slot context, `dodge` on Space / Xbox B, `interact` on E / Xbox A, `reload` on R / Xbox X, inventory on Tab/I / Xbox Y, quick item and item cycling, pause, map, `toggle_unarmed`, and `build`
+- `custodian/project.godot` — canonical runtime input bindings, including WASD/left-stick movement, mouse/right-stick aim, `fire_primary` / compatibility `attack_primary` on left mouse / Xbox RT, context-sensitive offhand secondary `aim_hold` / compatibility `attack_secondary` on right mouse / Xbox LT for ranged-ready, sidearm-ready, or guard-ready by slot context, `dodge` on Space / Xbox B, `interact` on E / Xbox A, `reload` on R / Xbox X, inventory on Tab/I / Xbox Y, quick item and item cycling, pause, map, `toggle_unarmed`, and `build`
 - `custodian/game/actors/operator/animations/animation_state_machine.gd` — deterministic operator animation state transition manager with priorities, elapsed time, and same-state re-entry support
 - `custodian/game/actors/operator/animations/states/attack_light_state.gd` — default unmodified melee attack animation state
 - `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md` — active combat feel doctrine, including animation-driven attack loop, profile-relative attack intents, context-sensitive offhand secondary routing, twin-stick ranged-ready/sidearm-ready/parry-guard control contract, and movement-first dodge/backstep rules
@@ -244,7 +245,8 @@ Last updated: 2026-06-16
 - `custodian/tools/validation/fabrication_terminal_readability_smoke.gd` — focused headless smoke check for the FABRICATION work-order translation layer, ready-build placement alias, and readable next-action output
 - `custodian/tools/validation/gothic_compound_occlusion_smoke.gd` — focused headless smoke check for gothic compound wall/gatehouse base-rooted occlusion sorting and flat floor/road/decal layer separation
 - `custodian/tools/validation/operator_ranged_ready_input_smoke.gd` — focused headless smoke check for ranged-ready/twin-stick input bindings, offhand secondary mode resolution, parry/guard handshake, carbine secondary intent, operator ranged-ready helper state, and dodge/backstep direction rules
-- `custodian/tools/validation/operator_modular_layers_smoke.gd` — focused modular operator presentation smoke covering unarmed locomotion, block, tap-parry body/FX playback, sidearm layers, and ranged-ready stance layer wiring
+- `custodian/tools/validation/operator_modular_layers_smoke.gd` — focused modular operator presentation smoke covering unarmed locomotion, block, primary-from-guard parry body/FX playback, sidearm layers, and ranged-ready stance layer wiring
+- `custodian/tools/validation/wave_manager_debug_grunt_spawn_gate_smoke.gd` — focused WaveManager smoke proving the startup debug grunt stays despawned inside the Operator spawn threshold and appears once after the Operator crosses it
 - `design/features/implementation/UNARMED_TOGGLE.md` — unarmed/Fists selection behavior, state rules, and acceptance tests
 - `design/features/implementation/UNARMED_TOGGLE_CODE.md` — implementation notes for the unarmed/Fists profile selection system
 - `design/features/implementation/MINIMAP_SYSTEM.md` — custom data-driven tactical minimap implementation spec
@@ -272,6 +274,11 @@ Last updated: 2026-06-16
 - `custodian/tools/pipelines/reload_assets.py` — direct operator curated-resource rebuild entrypoint
 - `custodian/tools/pipelines/update_operator_curated_resources.gd` — rebuilds operator runtime `SpriteFrames` from curated/source sheets, including modular-derived unarmed fast strike action sheets and separate modular lower/upper body locomotion frame resources
 - `custodian/tools/pipelines/build_operator_modular_runtime.py` — builds stable runtime sheets from `content/sprites/operator/new_operator/modular/`, including lower-body locomotion modules, upper-body locomotion modules, legacy `operator__modular_upper_body__idle__...` source compatibility, and modular fast-action body/FX strips with fallback/canvas normalization
+- `custodian/tools/validation/contracts/operator_modular_core.json` — editable Operator modular animation coverage contract for required/optional locomotion, combat, defense, dodge, sidearm, ranged, and optional layer coverage
+- `custodian/tools/validation/operator_animation_contract_report.py` — read-only Operator modular production report for missing, optional, suspicious, extra, source/runtime drift, and next-batch animation coverage
+- `custodian/tools/pipelines/operator_action_preview.py` — generalized Operator modular/action-runtime preview compositor that writes review-only strips/grids to `custodian/animation_review/`
+- `custodian/tools/pipelines/scaffold_character_contract.py` — new-character checklist/contract/expected-filename scaffold helper that writes planning files under `content/sprites/_pipeline/requests/<owner>/`
+- `tools/check_operator_modular_assets.py`, `tools/refresh_combo_check_src.sh`, `tools/modular_combo_check.py`, `tools/review_modular_body_pairs.py`, and `tools/review_modular_flat_png_pairs.py` — modular Operator asset audit and visual review helpers; see `custodian/docs/ai_context/AGENT_TOOLING_BY_ASK.md` before choosing one
 - `custodian/content/sprites/operator/runtime/modules/new_operator/` — runtime home for new operator modular parts; lower/upper locomotion module strips feed the first layered Fists idle/walk/run rig
 - `custodian/content/sprites/operator/runtime/actions/unarmed/fast_attack/` — runtime-dedicated action body/overlay strips generated from `new_operator/modular/fast_attack/` for `unarmed_fast_strike*` body and FX playback
 - `custodian/content/sprites/environment/props/vault_storage/runtime/` — permanent runtime home for vault construction/resource-storage prop state sprites consumed by `VaultStorage`
@@ -349,7 +356,11 @@ Last updated: 2026-06-16
 - `design/features/implementation/PROCGEN_WALL_TILE_BRIDGE.md` — implementation spec for integrating generated wall tiles into the procgen TileMap runtime
 - `design/02_features/procgen/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — first runtime slice for single-map indoor/outdoor region-aware procgen
 - `custodian/content/sprites/_pipeline/README.md` — intake contract, canonical sprite naming, and manifest examples
+- `custodian/docs/SPRITE_PIPELINE_CHEATSHEET.md` — short operator-facing pipeline guide for checking needed assets, validating drops, ingesting/building into runtime, and proving outputs
 - `custodian/tools/validation/operator_modular_pipeline_smoke.py` — focused Python smoke for modular Operator inbox routing, compatibility naming, post-process selection, and stable generic action module outputs
+- `custodian/tools/validation/operator_animation_contract_report_smoke.py` — pure-Python smoke for the Operator animation contract report and strict-mode success on synthetic strips
+- `custodian/tools/validation/operator_action_preview_smoke.py` — pure-Python smoke for generalized Operator action preview compositing on synthetic lower/upper/FX strips
+- `custodian/tools/validation/scaffold_character_contract_smoke.py` — pure-Python smoke for new-character scaffold output creation and expected filename content
 - `custodian/tools/validation/sprite_superseded_cleanup_smoke.py` — end-to-end dry-run/apply smoke for opt-in canonical replacement cleanup and `.import` sidecar removal
 - `custodian/content/sprites/_pipeline/aseprite/` — raw aseprite PNG staging folder before normalization into inbox
 - `custodian/content/sprites/props/harvesting_nodes/blackwood_deadfall/` — runtime 96px idle/depleted harvesting-node sheets for blackwood nodes

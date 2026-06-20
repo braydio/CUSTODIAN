@@ -125,6 +125,7 @@ Use for sprite intake, runtime animation slices, and curated operator resources.
 Read first:
 
 - `custodian/content/sprites/_pipeline/README.md`
+- `custodian/docs/SPRITE_PIPELINE_CHEATSHEET.md`
 - `custodian/docs/ASSET_LAYOUT_CONVENTION.md`
 
 Typical dry-run shape:
@@ -141,6 +142,38 @@ For modular Operator naming/routing and generic action module generation:
 ```bash
 python custodian/tools/validation/operator_modular_pipeline_smoke.py
 ```
+
+For modular Operator contract coverage, suspicious filename/frame metadata, and next-batch reporting:
+
+```bash
+python custodian/tools/validation/operator_animation_contract_report.py
+python custodian/tools/validation/operator_animation_contract_report.py --strict
+python custodian/tools/validation/operator_animation_contract_report_smoke.py
+```
+
+`--strict` is expected to fail while required art coverage or required metadata is incomplete. Treat that as a
+production coverage report, not as a reason to fake missing assets.
+
+For modular Operator action QA previews:
+
+```bash
+python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --action block_loop_01 --directions e,w --include-fx
+python custodian/tools/pipelines/operator_action_preview.py --loadout unarmed --sequence fast_windup_01,fast_strike_01,fast_recovery_01 --include-fx
+python custodian/tools/validation/operator_action_preview_smoke.py
+```
+
+Preview output under `custodian/animation_review/` is review-only and should not become runtime authority.
+
+For new modular-compatible character production planning:
+
+```bash
+python custodian/tools/pipelines/scaffold_character_contract.py --owner enemy_ritualist --template humanoid_combat --frame-size 96 --directions s,se,e,ne,n,nw,w,sw
+python custodian/tools/validation/scaffold_character_contract_smoke.py
+```
+
+For modular Operator asset inventory and visual review tool selection, read:
+
+- `custodian/docs/ai_context/AGENT_TOOLING_BY_ASK.md`
 
 For opt-in superseded-animation cleanup:
 
