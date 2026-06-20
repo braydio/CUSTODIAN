@@ -27,6 +27,7 @@ signal all_waves_completed()
 @export var procedural_enemy_variants_enabled: bool = true
 @export var debug_spawn_grunt_on_start: bool = false
 @export var debug_start_grunt_offset: Vector2 = Vector2(96.0, 0.0)
+@export var debug_start_grunt_trigger_distance: float = 360.0
 
 @export var enemy_container_path: NodePath = NodePath("/root/GameRoot/World/Enemies")
 @export var game_state_path: NodePath = NodePath("/root/GameState")
@@ -400,7 +401,13 @@ func _maybe_debug_spawn_grunt_on_start() -> void:
 	if not (operator is Node2D):
 		push_warning("[WaveManager] Debug grunt startup spawn skipped; operator missing at %s" % String(operator_path))
 		return
-	var spawn_position := (operator as Node2D).global_position + debug_start_grunt_offset
+	var spawn_origin := (operator as Node2D).global_position
+	if debug_start_grunt_trigger_distance > 0.0:
+		while is_instance_valid(operator) and (operator as Node2D).global_position.distance_to(spawn_origin) < debug_start_grunt_trigger_distance:
+			await get_tree().process_frame
+		if not is_instance_valid(operator):
+			return
+	var spawn_position := spawn_origin + debug_start_grunt_offset
 	debug_spawn_enemy_type("grunt", spawn_position, 1.0)
 
 

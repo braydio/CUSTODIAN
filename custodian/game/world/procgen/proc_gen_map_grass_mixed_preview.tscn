@@ -1,9 +1,7 @@
 [gd_scene format=3 uid="uid://ebv81sll7gr"]
 
-[ext_resource type="PackedScene" path="res://game/world/procgen/proc_gen_map.tscn" id="1_base"]
+[ext_resource type="PackedScene" uid="uid://dqma145fdalvd" path="res://game/world/procgen/proc_gen_map.tscn" id="1_base"]
 
-[node name="ProcGenMapGrassMixedPreview" instance=ExtResource("1_base")]
+[node name="ProcGenMapGrassMixedPreview" unique_id=153598162 instance=ExtResource("1_base")]
 floor_source_id = 0
-alternate_floor_source_ids = Array[int]([9])
 full_grid_floor_source_ids = Array[int]([9])
-

@@ -31,6 +31,9 @@
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch5.png" id="29_debris_5"]
 [ext_resource type="SpriteFrames" path="res://content/tiles/encounters/ritualant_set/runtime/dry_fountain_ghost_frames.tres" id="30_ghost_anim"]
 [ext_resource type="SpriteFrames" path="res://content/tiles/encounters/ritualant_set/runtime/black_water_fountain_frames.tres" id="31_water_anim"]
+[ext_resource type="Texture2D" uid="uid://bhau2r6xsxguv" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_floor_underlay_32x27.png" id="32_floor"]
+[ext_resource type="Texture2D" uid="uid://bij7ld07xkfka" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_perimeter_rubble_35x27.png" id="33_rubble"]
+[ext_resource type="Texture2D" uid="uid://b245g1ri2p4be" path="res://content/tiles/encounters/ritualant_set/white_thread_hazard_runtime_01.png" id="34_thread_hazard"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_room_north"]
 size = Vector2(1120, 32)
@@ -82,6 +85,13 @@ scale_min = 0.3
 scale_max = 1.0
 lifetime_randomness = 0.4
 
+[sub_resource type="LabelSettings" id="LabelSettings_dialogue"]
+font_size = 20
+outline_size = 6
+outline_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(1, 1)
+shadow_color = Color(0, 0, 0, 0.5)
+
 [node name="ForlornRitualantSite" type="Node2D" unique_id=1649470245]
 script = ExtResource("1_site")
 forlorn_ritualant_path = NodePath("NPCs/ForlornRitualant")
@@ -93,20 +103,24 @@ unarrived_apparition_path = NodePath("VFX/UnarrivedApparition")
 stilling_pin_pickup_path = NodePath("Props/StillingPinPickup")
 ghost_procession_path = NodePath("VFX/GhostProcession")
 debug_label_path = NodePath("Debug/AshBellDebugLabel")
-dialogue_label_path = NodePath("Debug/AshBellDialogueLabel")
+dialogue_label_path = NodePath("Debug/DialogueContainer/AshBellDialogueLabel")
 silence_veil_path = NodePath("FX/SilenceVeil")
 pressure_halo_path = NodePath("FX/PressureHalo")
 thread_visual_path = NodePath("FX/ThreadVisual")
 fountain_ring_path = NodePath("FX/FountainRing")
 bell_shadow_path = NodePath("FX/BellShadow")
 
-[node name="Floor" type="ColorRect" parent="." unique_id=1225912591]
+[node name="Floor" type="Sprite2D" parent="."]
+position = Vector2(0, 0)
+texture = ExtResource("32_floor")
+centered = true
 z_index = -30
-offset_left = -560.0
-offset_top = -432.0
-offset_right = 560.0
-offset_bottom = 432.0
-color = Color(0.095, 0.086, 0.075, 1)
+
+[node name="PerimeterRubble" type="Sprite2D" parent="."]
+position = Vector2(0, 0)
+texture = ExtResource("33_rubble")
+centered = true
+z_index = -29
 
 [node name="FloorDebris1" type="Sprite2D" parent="."]
 position = Vector2(-220, -180)
@@ -254,10 +268,11 @@ z_index = 0
 
 [node name="WhiteThreadVisual" type="Sprite2D" parent="Props"]
 position = Vector2(0, -146)
-texture = ExtResource("14_thread_slack")
+texture = ExtResource("34_thread_hazard")
 centered = true
 z_index = 3
 modulate = Color(1, 1, 1, 0.16)
+
 
 [node name="WhiteThreadHazard" type="Area2D" parent="Props" unique_id=351032665]
 position = Vector2(0, -146)
@@ -522,13 +537,27 @@ z_index = 12
 
 [node name="Debug" type="Node2D" parent="." unique_id=409010644]
 
-[node name="AshBellDialogueLabel" type="Label" parent="Debug" unique_id=550316652]
-offset_left = -250.0
-offset_top = 262.0
-offset_right = 250.0
-offset_bottom = 306.0
+[node name="DialogueContainer" type="Node2D" parent="Debug"]
+position = Vector2(0, 210)
+
+[node name="Background" type="ColorRect" parent="Debug/DialogueContainer"]
+offset_left = -300.0
+offset_top = -32.0
+offset_right = 300.0
+offset_bottom = 32.0
+color = Color(0, 0, 0, 0.75)
+z_index = 1
+
+[node name="AshBellDialogueLabel" type="Label" parent="Debug/DialogueContainer"]
+offset_left = -280.0
+offset_top = -22.0
+offset_right = 280.0
+offset_bottom = 22.0
 text = "Forlorn-Ritualant waits beneath no bell."
 horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+label_settings = SubResource("LabelSettings_dialogue")
 
 [node name="AshBellDebugLabel" type="Label" parent="Debug" unique_id=511448229]
 visible = false

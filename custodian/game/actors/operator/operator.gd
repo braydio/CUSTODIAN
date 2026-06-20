@@ -144,9 +144,12 @@ var last_fire_cooldown := 0.0
 @export var block_stamina_cost_per_hit: float = 12.0
 @export_group("Parry / Guard")
 @export var offhand_guard_item_equipped: bool = false
-@export var parry_windup_sec: float = 0.045
-@export var parry_active_sec: float = 0.115
-@export var parry_recovery_sec: float = 0.18
+@export var guard_weak_start_sec: float = 0.0
+@export var guard_full_active_sec: float = 0.10
+@export var parry_min_guard_time_sec: float = 0.04
+@export var parry_windup_sec: float = 0.02
+@export var parry_active_sec: float = 0.10
+@export var parry_recovery_sec: float = 0.16
 @export var parry_stamina_cost: float = 8.0
 @export var parry_success_stamina_refund: float = 6.0
 @export var parry_enemy_stagger_sec: float = 0.55
@@ -255,6 +258,7 @@ var _parry_timer: float = 0.0
 var _parry_active: bool = false
 var _parry_success_lockout: float = 0.0
 var _guard_requested_from_secondary: bool = false
+var _guard_held_timer: float = 0.0
 var _offhand_secondary_was_pressed: bool = false
 var _counter_window_timer: float = 0.0
 var _melee_recovery_active: bool = false
@@ -1613,24 +1617,64 @@ func _handle_offhand_secondary_input(delta: float) -> void:
 
 	if _get_offhand_secondary_mode() != &"parry_guard":
 		_guard_requested_from_secondary = false
+		_guard_held_timer = 0.0
 		_update_parry_guard_timers(delta)
 		return
 
 	_update_parry_guard_timers(delta)
 
 	if offhand_just_pressed:
-		_try_start_parry()
+		_start_guard_from_secondary()
 
 	if offhand_pressed:
-		if _parry_phase == &"expired":
+		_guard_held_timer += delta
+		if _parry_phase.is_empty():
 			_guard_requested_from_secondary = true
-			_request_block_state()
+			if _can_parry_from_guard() and _is_attack_primary_just_pressed():
+				_try_start_parry()
+			elif _block_phase.is_empty() or _block_phase == &"exit":
+				_request_block_state()
+			elif _block_phase == &"enter" and _guard_held_timer >= guard_full_active_sec:
+				_block_phase = &"hold"
+				_block_active = true
+				_play_block_animation(&"melee_2h_block_hold")
 	else:
 		_guard_requested_from_secondary = false
+		_guard_held_timer = 0.0
 		if _is_block_state_active() and _block_phase in [&"enter", &"hold", &"hitreact"]:
 			_block_phase = &"exit"
 			_block_active = false
 			_play_block_animation(&"melee_2h_block_exit")
+
+
+func _start_guard_from_secondary() -> void:
+	if not _can_start_guard_from_secondary():
+		return
+	_guard_requested_from_secondary = true
+	_guard_held_timer = maxf(0.0, guard_weak_start_sec)
+	_request_block_state()
+
+
+func _can_start_guard_from_secondary() -> bool:
+	if _is_dead or _enemy_impact_lock_timer > 0.0:
+		return false
+	if _is_terminal_open() or _is_ui_text_input_focused() or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
+		return false
+	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active:
+		return false
+	if _dodge_active or _dodge_recovery_active:
+		return false
+	return _is_melee_loadout_active()
+
+
+func _can_parry_from_guard() -> bool:
+	if not _can_start_parry():
+		return false
+	if _guard_held_timer < parry_min_guard_time_sec:
+		return false
+	if not _parry_phase.is_empty():
+		return false
+	return _block_phase in [&"enter", &"hold", &"hitreact"]
 
 
 func _try_start_parry() -> bool:
@@ -1694,31 +1738,31 @@ func _update_parry_guard_timers(delta: float) -> void:
 		&"active":
 			if _parry_timer <= 0.0:
 				_parry_active = false
-				if _is_attack_secondary_pressed() and _get_offhand_secondary_mode() == &"parry_guard":
-					_parry_phase = &"expired"
-					_guard_requested_from_secondary = true
-					_block_phase = &"expired"
-					_block_active = false
-					_request_block_state()
-				else:
-					_parry_phase = &"recovery"
-					_parry_timer = maxf(0.0, parry_recovery_sec)
-					_play_parry_animation(&"unarmed_parry_recovery")
+				_parry_phase = &"recovery"
+				_parry_timer = maxf(0.0, parry_recovery_sec)
+				_block_phase = &"recovery"
+				_block_active = false
+				_play_parry_animation(&"unarmed_parry_recovery")
 		&"success", &"recovery":
 			if _parry_timer <= 0.0:
 				_parry_phase = &""
 				_parry_active = false
-				if _block_phase in [&"parry", &"success", &"recovery"]:
+				if _is_attack_secondary_pressed() and _get_offhand_secondary_mode() == &"parry_guard":
+					_guard_requested_from_secondary = true
+					_block_phase = &"enter"
+					_block_active = false
+					_play_block_animation(&"melee_2h_block_enter")
+					_request_block_state()
+				elif _block_phase in [&"parry", &"success", &"recovery"]:
 					_block_phase = &""
 					_block_active = false
 		&"expired":
-			if not _is_attack_secondary_pressed() or _get_offhand_secondary_mode() != &"parry_guard":
-				_parry_phase = &"recovery"
-				_parry_timer = maxf(0.0, parry_recovery_sec)
-				_guard_requested_from_secondary = false
-				_block_phase = &"recovery"
-				_block_active = false
-				_play_parry_animation(&"unarmed_parry_recovery")
+			_parry_phase = &"recovery"
+			_parry_timer = maxf(0.0, parry_recovery_sec)
+			_guard_requested_from_secondary = false
+			_block_phase = &"recovery"
+			_block_active = false
+			_play_parry_animation(&"unarmed_parry_recovery")
 
 
 func _enter_ranged_ready() -> void:
@@ -2297,7 +2341,7 @@ func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dicti
 			attacker.call("apply_melee_impact", "parry", away_from_operator, parry_enemy_knockback)
 
 	_play_parry_animation(&"unarmed_parry_success")
-	_spawn_parry_fx()
+	_spawn_parry_success_fx()
 	_notify_camera_attack_impact(hit_direction, false)
 
 
@@ -2371,13 +2415,15 @@ func _play_modular_unarmed_parry(base_animation: String, direction: Vector2) -> 
 	return true
 
 
-func _spawn_parry_fx() -> void:
+func _spawn_parry_success_fx() -> void:
 	var direction := _get_attack_aim_direction()
 	if direction.length_squared() <= 0.001:
 		direction = visual_idle_direction
 	if direction.length_squared() <= 0.001:
 		direction = Vector2.DOWN
-	if _play_modular_parry_fx(direction):
+	if _play_modular_parry_fx(direction, "PLACEHOLDER_unarmed_parry_success_fx"):
+		return
+	if _play_modular_parry_fx(direction, "unarmed_parry_fx"):
 		return
 	var fx_animation := AnimationResolver.resolve("unarmed_parry_fx", direction, melee_fx_overlay_sprite)
 	if not _play_named_melee_fx_overlay(fx_animation):
@@ -2385,12 +2431,12 @@ func _spawn_parry_fx() -> void:
 		_spawn_melee_impact(global_position + direction.normalized() * 22.0)
 
 
-func _play_modular_parry_fx(direction: Vector2) -> bool:
+func _play_modular_parry_fx(direction: Vector2, base_animation: String = "unarmed_parry_fx") -> bool:
 	if not modular_locomotion_layers_enabled:
 		return false
 	if modular_upper_fx_sprite == null or modular_upper_fx_sprite.sprite_frames == null:
 		return false
-	var fx_animation := AnimationResolver.resolve("unarmed_parry_fx", direction, modular_upper_fx_sprite)
+	var fx_animation := AnimationResolver.resolve(base_animation, direction, modular_upper_fx_sprite)
 	if not _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_animation):
 		return false
 	modular_upper_fx_sprite.visible = true
