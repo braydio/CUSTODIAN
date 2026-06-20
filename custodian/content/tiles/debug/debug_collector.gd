@@ -137,15 +137,19 @@ func _update_overlays(debug_bus: Node) -> void:
 	for turret in get_tree().get_nodes_in_group("turret"):
 		if not (turret is Node2D):
 			continue
+		var range_radius := _get_defense_range(turret)
+		if range_radius <= 0.0:
+			continue
 		ranges.append({
 			"pos": turret.global_position,
-			"radius": turret.range,
+			"radius": range_radius,
 			"color": Color(1, 0.2, 0.2, 0.5),
 		})
-		if turret.target != null and is_instance_valid(turret.target):
+		var turret_target := _get_defense_target(turret)
+		if turret_target != null and is_instance_valid(turret_target):
 			targeting.append({
 				"from": turret.global_position,
-				"to": turret.target.global_position,
+				"to": turret_target.global_position,
 				"color": Color(1.0, 0.85, 0.2, 0.7),
 				"width": 2.0,
 			})
@@ -203,6 +207,32 @@ func _build_inspector_data(target: Object) -> Dictionary:
 			"Speed": "%.1f" % enemy.speed,
 		}
 	return {}
+
+
+func _get_defense_range(defense_node: Object) -> float:
+	if defense_node == null:
+		return 0.0
+	if "range" in defense_node:
+		return float(defense_node.get("range"))
+	if "profile" in defense_node:
+		var profile: Variant = defense_node.get("profile")
+		if profile != null:
+			if "drone_weapon_range" in profile:
+				return float(profile.get("drone_weapon_range"))
+			if "drone_engage_range" in profile:
+				return float(profile.get("drone_engage_range"))
+	return 0.0
+
+
+func _get_defense_target(defense_node: Object) -> Node2D:
+	if defense_node == null:
+		return null
+	if not ("target" in defense_node):
+		return null
+	var target_variant: Variant = defense_node.get("target")
+	if target_variant is Node2D:
+		return target_variant as Node2D
+	return null
 
 func _entity_name(entity: Object) -> String:
 	if entity == null:
