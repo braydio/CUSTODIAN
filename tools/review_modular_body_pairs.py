@@ -28,6 +28,10 @@ Example:
   # Exclude FX pairing (body pairs only)
   python tools/review_modular_body_pairs.py \
     --root path/to/dir --out .ai/review --no-fx
+
+  # Include alpha-bbox fit analysis in the manifest and HTML
+  python tools/review_modular_body_pairs.py \
+    --root path/to/dir --out .ai/review --fit-debug
 """
 
 from __future__ import annotations
@@ -95,6 +99,22 @@ def parse_args() -> argparse.Namespace:
         "--no-fx",
         action="store_true",
         help="Skip FX pair generation (body upper+lower only).",
+    )
+    p.add_argument(
+        "--fit-debug",
+        action="store_true",
+        help="Analyze alpha bounding boxes for each composed frame and write fit data to manifest/HTML.",
+    )
+    p.add_argument(
+        "--fit-verbose",
+        action="store_true",
+        help="Print per-frame fit-debug details for every generated pair.",
+    )
+    p.add_argument(
+        "--fit-gap-threshold",
+        type=int,
+        default=3,
+        help="Flag pairings with vertical gap magnitude >= this many pixels. Default: 3.",
     )
     return p.parse_args()
 
@@ -239,6 +259,113 @@ def alpha_on_checker(src: Image.Image, scale: int) -> Image.Image:
     return bg
 
 
+def alpha_bbox(img: Image.Image) -> Optional[Tuple[int, int, int, int]]:
+    alpha = img.convert("RGBA").getchannel("A")
+    return alpha.getbbox()
+
+
+def _nontransparent_pixels(alpha: Image.Image, bbox: Tuple[int, int, int, int]) -> int:
+    l, t, r, b = bbox
+    crop = alpha.crop((l, t, r, b))
+    transparent_pixels = crop.histogram()[0]
+    return crop.width * crop.height - transparent_pixels
+
+
+def bbox_stats(img: Image.Image) -> Dict:
+    alpha = img.convert("RGBA").getchannel("A")
+    bbox = alpha.getbbox()
+    if bbox is None:
+        return {
+            "bbox": None,
+            "nontransparent_width": 0,
+            "nontransparent_height": 0,
+            "nontransparent_pixels": 0,
+        }
+
+    l, t, r, b = bbox
+    return {
+        "bbox": [l, t, r, b],
+        "nontransparent_width": r - l,
+        "nontransparent_height": b - t,
+        "nontransparent_pixels": _nontransparent_pixels(alpha, bbox),
+    }
+
+
+def row_alpha_ranges(img: Image.Image, rows: List[int]) -> List[Dict]:
+    rgba = img.convert("RGBA")
+    out: List[Dict] = []
+    for y in rows:
+        if y < 0 or y >= rgba.height:
+            continue
+        xs = [x for x in range(rgba.width) if rgba.getpixel((x, y))[3] > 0]
+        if xs:
+            out.append(
+                {
+                    "y": y,
+                    "x_min": min(xs),
+                    "x_max": max(xs),
+                    "width": max(xs) - min(xs) + 1,
+                }
+            )
+        else:
+            out.append({"y": y, "x_min": None, "x_max": None, "width": 0})
+    return out
+
+
+def edge_contact_debug(lower_frame: Image.Image, upper_frame: Image.Image) -> Dict:
+    """Analyze how two stacked transparent frames meet."""
+    upper_bbox = alpha_bbox(upper_frame)
+    lower_bbox = alpha_bbox(lower_frame)
+
+    upper_rows: List[int] = []
+    lower_rows: List[int] = []
+    if upper_bbox:
+        _, _, _, upper_bottom = upper_bbox
+        upper_rows = [upper_bottom - 3, upper_bottom - 2, upper_bottom - 1]
+    if lower_bbox:
+        _, lower_top, _, _ = lower_bbox
+        lower_rows = [lower_top, lower_top + 1, lower_top + 2]
+
+    vertical_gap = (lower_bbox[1] - upper_bbox[3]) if upper_bbox and lower_bbox else None
+    h_delta = (
+        ((upper_bbox[0] + upper_bbox[2]) / 2)
+        - ((lower_bbox[0] + lower_bbox[2]) / 2)
+        if upper_bbox and lower_bbox
+        else None
+    )
+
+    return {
+        "upper_bbox": bbox_stats(upper_frame),
+        "lower_bbox": bbox_stats(lower_frame),
+        "upper_lowest_3_rows": row_alpha_ranges(upper_frame, upper_rows),
+        "lower_top_3_rows": row_alpha_ranges(lower_frame, lower_rows),
+        "vertical_gap_px": vertical_gap,
+        "horizontal_center_delta_px": h_delta,
+    }
+
+
+def print_fit_debug(record_id: str, frame_debug: List[Dict]) -> None:
+    print()
+    print(f"fit debug: {record_id}")
+    for item in frame_debug:
+        print(f"  frame {item['frame']}:")
+        print(f"    upper bbox: {item['upper_bbox']}")
+        print(f"    lower bbox: {item['lower_bbox']}")
+        print(f"    vertical_gap_px: {item['vertical_gap_px']}")
+        print(f"    horizontal_center_delta_px: {item['horizontal_center_delta_px']}")
+
+
+def fit_debug_summary(record: Dict, threshold: int) -> Tuple[int, int]:
+    fit_debug = record.get("fit_debug") or []
+    flagged = [
+        item
+        for item in fit_debug
+        if item.get("vertical_gap_px") is not None
+        and abs(item["vertical_gap_px"]) >= threshold
+    ]
+    return len(flagged), len(fit_debug)
+
+
 def composite_pair(
     lower_path: Path,
     upper_path: Path,
@@ -266,6 +393,7 @@ def composite_pair(
 
     combined_strip = Image.new("RGBA", (canvas_w * frame_count, canvas_h), (0, 0, 0, 0))
     combined_frames: List[Image.Image] = []
+    fit_debug_frames: Optional[List[Dict]] = [] if args.fit_debug else None
 
     for i in range(frame_count):
         frame = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
@@ -284,6 +412,14 @@ def composite_pair(
         combined_strip.alpha_composite(frame, (i * canvas_w, 0))
         combined_frames.append(frame)
 
+        if fit_debug_frames is not None:
+            fit_debug_frames.append(
+                {
+                    "frame": i,
+                    **edge_contact_debug(lower_frame, upper_frame),
+                }
+            )
+
     meta = {
         "lower": str(lower_path),
         "upper": str(upper_path),
@@ -295,6 +431,8 @@ def composite_pair(
         "pair_type": "body",
         "warnings": warnings,
     }
+    if fit_debug_frames is not None:
+        meta["fit_debug"] = fit_debug_frames
 
     return combined_strip, combined_frames, meta
 
@@ -326,6 +464,7 @@ def composite_fx_pair(
 
     combined_strip = Image.new("RGBA", (canvas_w * frame_count, canvas_h), (0, 0, 0, 0))
     combined_frames: List[Image.Image] = []
+    fit_debug_frames: Optional[List[Dict]] = [] if args.fit_debug else None
 
     for i in range(frame_count):
         frame = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
@@ -346,6 +485,14 @@ def composite_fx_pair(
         combined_strip.alpha_composite(frame, (i * canvas_w, 0))
         combined_frames.append(frame)
 
+        if fit_debug_frames is not None:
+            fit_debug_frames.append(
+                {
+                    "frame": i,
+                    **edge_contact_debug(body_frame, fx_frame),
+                }
+            )
+
     meta = {
         "body": str(body_path),
         "fx": str(fx_path),
@@ -357,6 +504,8 @@ def composite_fx_pair(
         "pair_type": "fx",
         "warnings": warnings,
     }
+    if fit_debug_frames is not None:
+        meta["fit_debug"] = fit_debug_frames
 
     return combined_strip, combined_frames, meta
 
@@ -519,6 +668,33 @@ def write_html(index_path: Path, records: List[Dict], root: Path) -> None:
                 + "</ul>"
             )
 
+        fit_html = ""
+        if rec.get("fit_debug"):
+            threshold = int(rec.get("fit_gap_threshold", 3))
+            flagged_count, total_count = fit_debug_summary(rec, threshold)
+            lines = []
+            for item in rec["fit_debug"]:
+                gap = item.get("vertical_gap_px")
+                hdelta = item.get("horizontal_center_delta_px")
+                flag = " *" if gap is not None and abs(gap) >= threshold else ""
+                hdelta_text = f"{hdelta:+.0f}px" if hdelta is not None else "None"
+                lines.append(
+                    f"frame {item['frame']}: gap={gap}px h-center={hdelta_text} "
+                    f"upper={item['upper_bbox']['nontransparent_width']}x{item['upper_bbox']['nontransparent_height']} "
+                    f"lower={item['lower_bbox']['nontransparent_width']}x{item['lower_bbox']['nontransparent_height']}{flag}"
+                )
+
+            summary_style = " style=\"color:#ff8a8a\"" if flagged_count else ""
+            fit_html = (
+                "<div class=\"fit-debug\">"
+                "<h3>Fit Analysis</h3>"
+                f"<p{summary_style}>{flagged_count}/{total_count} frames exceed gap threshold "
+                f"(+/-{threshold}px)</p>"
+                "<pre>"
+                + "\n".join(html.escape(line) for line in lines)
+                + "</pre></div>"
+            )
+
         is_fx = rec.get("pair_type") == "fx"
         if is_fx:
             sources = (
@@ -537,6 +713,7 @@ def write_html(index_path: Path, records: List[Dict], root: Path) -> None:
           {sources}
           <p><b>Frames:</b> {rec["frame_count"]} &nbsp; <b>Frame:</b> {rec["frame_width"]}×{rec["frame_height"]}</p>
           {warning_html}
+          {fit_html}
           <div class="media">
             <div>
               <h3>Animated preview</h3>
@@ -599,6 +776,20 @@ def write_html(index_path: Path, records: List[Dict], root: Path) -> None:
   h1, h2, h3 {{ margin-top: 0; }}
   p {{ margin: 4px 0; }}
   li {{ color: #ffcf78; }}
+  .fit-debug {{
+    background: #101116;
+    border: 1px solid #3a4050;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 10px 0;
+  }}
+  .fit-debug h3 {{ font-size: 14px; margin-bottom: 6px; }}
+  .fit-debug pre {{
+    white-space: pre-wrap;
+    font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: #d4d7e0;
+    margin: 0;
+  }}
 </style>
 </head>
 <body>
@@ -706,7 +897,10 @@ def main() -> int:
                 "gif": rel(gif_path, out),
                 "review_rel": rel(review_path, out),
                 "gif_rel": rel(gif_path, out),
+                "fit_gap_threshold": args.fit_gap_threshold,
             }
+            if args.fit_verbose and rec.get("fit_debug"):
+                print_fit_debug(rec["id"], rec["fit_debug"])
             records.append(rec)
 
     # Phase 2: FX overlay pairs (upper body + upper fx)
@@ -767,7 +961,10 @@ def main() -> int:
                     "gif": rel(gif_path, out),
                     "review_rel": rel(review_path, out),
                     "gif_rel": rel(gif_path, out),
+                    "fit_gap_threshold": args.fit_gap_threshold,
                 }
+                if args.fit_verbose and rec.get("fit_debug"):
+                    print_fit_debug(rec["id"], rec["fit_debug"])
                 records.append(rec)
 
     manifest_path = out / "manifest.json"
@@ -780,6 +977,8 @@ def main() -> int:
                 "root": str(root),
                 "output": str(out),
                 "pair_count": len(records),
+                "fit_debug": bool(args.fit_debug),
+                "fit_gap_threshold": args.fit_gap_threshold,
                 "missing_pairs": missing,
                 "records": records,
             },
@@ -800,6 +999,31 @@ def main() -> int:
             print(f"  - {m}")
         if args.strict:
             return 1
+
+    if args.fit_debug:
+        bad_pairs = []
+        for record in records:
+            flagged_count, total_count = fit_debug_summary(
+                record, args.fit_gap_threshold
+            )
+            if flagged_count:
+                bad_pairs.append((record["id"], flagged_count, total_count))
+
+        print()
+        if bad_pairs:
+            print(
+                f"Fit-debug: {len(bad_pairs)}/{len(records)} pairings exceed "
+                f"gap threshold (+/-{args.fit_gap_threshold}px):"
+            )
+            for record_id, flagged_count, total_count in sorted(bad_pairs)[:20]:
+                print(f"  - {record_id}: {flagged_count}/{total_count} frames flagged")
+            if len(bad_pairs) > 20:
+                print(f"  ... and {len(bad_pairs) - 20} more")
+        else:
+            print(
+                f"Fit-debug: all pairings within gap threshold "
+                f"(+/-{args.fit_gap_threshold}px)"
+            )
 
     if args.open:
         subprocess.run(["xdg-open", str(index_path)], check=False)
