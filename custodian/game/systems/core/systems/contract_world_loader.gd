@@ -24,8 +24,8 @@ class_name ContractWorldLoader
 @export var place_expedition_resource_nodes_from_contract: bool = true
 @export var place_gothic_compound_connection: bool = true
 @export var place_sundered_keep_connection: bool = true
-@export var place_debug_sundered_keep_gateway: bool = true
-@export var debug_start_near_sundered_keep_entrance: bool = true
+@export var place_debug_sundered_keep_gateway: bool = false
+@export var debug_start_near_sundered_keep_entrance: bool = false
 @export var debug_sundered_keep_start_offset: Vector2 = Vector2(48.0, 0.0)
 @export_range(0, 7, 1) var tutorial_resource_node_count: int = 3
 @export_range(2, 64, 1) var tutorial_resource_min_distance_tiles: int = 10

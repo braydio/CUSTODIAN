@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" uid="uid://d16xvgyky6xs7" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="1_site"]
+
+[node name="GameRoot" type="Node2D"]
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Projectiles" type="Node2D" parent="World"]
+
+[node name="ForlornRitualantSite" parent="World" instance=ExtResource("1_site")]
+
+[node name="Camera2D" type="Camera2D" parent="World"]
+enabled = true
+zoom = Vector2(0.85, 0.85)
+
+[node name="StandaloneNote" type="Label" parent="World"]
+z_index = 100
+offset_left = -520.0
+offset_top = -465.0
+offset_right = 520.0
+offset_bottom = -405.0
+text = "Forlorn Ritualant standalone visual/debug scene. Normal game startup no longer auto-spawns this encounter."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2

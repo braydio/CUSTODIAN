@@ -20,7 +20,7 @@ Normal gameplay uses compact vitals/objective/prompt UI. Diagnostic camera/phase
 
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active design/spec docs: `design/20_features/in_progress/BLACK_RELIQUARY_UI.md`, `design/03_architecture/HOME_CUSTODIAN_FIELD_TERMINAL.md`
+- Active design/spec docs: `design/02_features/terminal/BLACK_RELIQUARY_UI.md`, `design/03_architecture/HOME_CUSTODIAN_FIELD_TERMINAL.md`
 - Active runtime/docs files: `custodian/game/ui/hud/`, `custodian/scenes/game.tscn`, `custodian/docs/ai_context/*`
 - Historical reference only: legacy Python runtime
 

@@ -1,6 +1,6 @@
 # UID Duplicate Error Fix
 
-**Date:** 2026-03-31
+**Date:** 2026-06-22
 **Issue:** Godot UID system conflicts when duplicate files exist with shared UIDs
 
 ---
@@ -9,51 +9,44 @@
 
 When you copy sprite files between directories (e.g., `default_locomotion/` → `default/`), Godot's UID system assigns UIDs based on file content hash. If the source files had identical content, they get the same UID — but now point to different source files.
 
-**Affected pairs:**
-| Source A | Source B | Shared UID |
-|----------|----------|------------|
-| `default/run_right_body.png` | `default_locomotion/run_right_body.png` | uid://cnmplpgp62rvr |
-| `default/walk_down_body.png` | `default_locomotion/walk_down_body.png` | (same UID) |
-| `default/walk_right_body.png` | `default_locomotion/walk_right_body.png` | (same UID) |
-| `default/walk_up_body.png` | `default_locomotion/walk_up_body.png` | (same UID) |
-| `enemy.tres` | `archive/enemy_drone_legacy.tres` | (shared UID) |
+**Affected duplicate domains:**
+
+| Canonical location | Noncanonical location | Role |
+|---|---|---|
+| `custodian/content/sprites/operator/runtime/curated/body/default/` | `custodian/content/sprites/operator/runtime/curated/body/default_locomotion/` | normalized active files vs. legacy staging |
+| `custodian/content/tiles/interiors/runtime/` | `custodian/content/tiles/interiors/temp/` | runtime tiles vs. temporary source/staging |
+| `custodian/content/props/gothic/` | `custodian/props/gothic/` | runtime props vs. legacy duplicate |
+
+The historical `enemy.tres` / `archive/enemy_drone_legacy.tres` collision should be handled with the same
+noncanonical-metadata workflow if it recurs.
 
 ---
 
 ## Fix Strategy
 
-### Option A: Quick Fix — Regenerate UIDs (Recommended)
+### Option A: Regenerate Noncanonical Imports (Recommended)
 
-**For each duplicate pair:**
+For each duplicate pair:
 
-1. Open the `.import` file in a text editor
-2. Change the `uid="uid://..."` to a new unique value
-3. Save and restart Godot — it will regenerate
+1. Confirm which side is canonical using the table above and search runtime resources/scenes for references.
+2. Delete only the `.import` metadata on the noncanonical side. Do not delete the source PNG.
+3. Clear `custodian/.godot/imported/`.
+4. Start Godot once so it regenerates valid import metadata and UIDs.
 
-**Example fix for `run_right_body.png`:**
-
-In `default/run_right_body.png.import`:
-```ini
-uid="uid://cnmplpgp62rvr"  # BAD — conflicts with default_locomotion/
-```
-Change to:
-```ini
-uid="uid://unique_NEW_uid_123"  # GOOD — unique
-```
-
-**How to generate new UID:**
-- Use any random 12-character hex string after `uid://`
-- Example: `uid://a1b2c3d4e5f6`
+Do not hand-write or invent UID strings. Godot owns generated import UIDs.
 
 ---
 
 ### Option B: Full Fix — Remove Duplicate Files
 
-If `default/` and `default_locomotion/` contain identical sprites, consolidate to one location:
+If a later migration explicitly removes duplicate source art, consolidate only after all runtime references have
+been moved to the canonical location:
 
-1. Delete the entire `default_locomotion/` folder (or move to archive)
-2. Delete the `.import` cache: `rm -rf .godot/imported/`
-3. Restart Godot — it will re-import all files with fresh UIDs
+1. Update all runtime references to the canonical location.
+2. Validate scenes and resources.
+3. Delete or archive the noncanonical source only when that removal is explicitly in scope.
+4. Delete the `.import` cache: `rm -rf custodian/.godot/imported/`.
+5. Restart Godot so it reimports the project.
 
 **Pros:** Clean, no more duplicates
 **Cons:** If files ARE different, this breaks references
@@ -62,32 +55,25 @@ If `default/` and `default_locomotion/` contain identical sprites, consolidate t
 
 ## Step-by-Step Fix (Option A)
 
-### 1. Fix Sprite UIDs (5 files in `default/` folder)
+### 1. Confirm Runtime References
 
-Edit these files and change the UID to be unique:
+Search scenes, resources, and scripts before removing metadata:
 
-| File | Current UID | New UID Suggestion |
-|------|-------------|---------------------|
-| `default/run_right_body.png.import` | uid://cnmplpgp62rvr | uid://drunr001 |
-| `default/walk_down_body.png.import` | (same) | uid://dwnkd001 |
-| `default/walk_right_body.png.import` | (same) | uid://dwnkr001 |
-| `default/walk_up_body.png.import` | (same) | uid://dwnku001 |
-
-**Script to find UIDs:**
 ```bash
-cd ~/Projects/CUSTODIAN/custodian/assets/sprites/operator/runtime/curated/body/default
-grep -h "uid=" *.import | sort -u
+cd ~/Projects/CUSTODIAN
+rg -n "default_locomotion|tiles/interiors/temp|props/gothic" custodian \
+  -g '*.tscn' -g '*.tres' -g '*.gd'
 ```
 
-### 2. Fix Enemy .tres UID
+### 2. Remove Noncanonical Import Metadata
 
-In `entities/enemies/archive/enemy_drone_legacy.tres`:
-- Add `uid="uid://unique_NEW_uid"` to the first line after `[gd_resource]`
+Delete the colliding `.png.import` files under:
 
-Or simply delete the legacy file if not used:
-```bash
-rm custodian/entities/enemies/archive/enemy_drone_legacy.tres
-```
+- `custodian/content/sprites/operator/runtime/curated/body/default_locomotion/`
+- `custodian/content/tiles/interiors/temp/`
+- `custodian/props/gothic/`
+
+Keep the PNGs unless production-art deletion is separately authorized.
 
 ### 3. Clear Godot Import Cache
 
@@ -95,7 +81,7 @@ After fixing UIDs:
 ```bash
 cd ~/Projects/CUSTODIAN/custodian
 rm -rf .godot/imported/
-# Then restart Godot — it will re-import everything
+godot --headless --path . --editor --quit
 ```
 
 ---
@@ -110,7 +96,9 @@ Restart Godot and check for warnings in output:
 
 ## Prevention
 
-When copying sprite files in Godot:
-1. **Don't copy .import files** — copy only the source .png files
-2. **Or** use Godot's built-in duplicate rather than filesystem copy
-3. **Or** run `rm -rf .godot/imported/` after any bulk file operations
+When copying source art:
+
+1. Do not copy `.import` files; copy only source assets.
+2. Prefer Godot's filesystem-aware move/duplicate operations when practical.
+3. Keep runtime and staging ownership explicit in local READMEs.
+4. Reimport and check the editor log after bulk asset operations.

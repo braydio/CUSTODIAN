@@ -38,6 +38,11 @@ var _hostile_elapsed: float = 0.0
 func _ready() -> void:
 	add_to_group("ash_bell_forlorn_ritualant")
 	hp = max_hp
+	# Production sprites active; hide the collapsed-robes placeholder entirely.
+	if animated_sprite != null and animated_sprite.sprite_frames != null:
+		animated_sprite.visible = true
+		if visual != null:
+			visual.visible = false
 	_play_anim(&"kneel_idle")
 
 

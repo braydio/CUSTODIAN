@@ -21,6 +21,14 @@ var patrol_points: Array[Vector2] = []
 
 var investigation_position: Vector2 = Vector2.ZERO
 var investigation_timer: float = 0.0
+var target_visible: bool = false
+var target_last_seen_position: Vector2 = Vector2.ZERO
+var target_last_heard_position: Vector2 = Vector2.ZERO
+var pursuit_timer: float = 0.0
+var search_timer: float = 0.0
+var search_point_index: int = 0
+var leash_radius_px: float = 700.0
+var camp_id: StringName = &""
 var objective_debug_scores: Dictionary = {}
 var ambient_anchor: Node = null
 var ambient_activity_id: StringName = &"none"
@@ -49,6 +57,10 @@ func get_debug_snapshot() -> Dictionary:
 		"morale": morale,
 		"last_known_operator_position": last_known_operator_position,
 		"investigation_position": investigation_position,
+		"target_visible": target_visible,
+		"pursuit_timer": pursuit_timer,
+		"search_timer": search_timer,
+		"camp_id": String(camp_id),
 		"ambient_activity": String(ambient_activity_id),
 		"ambient_anchor": ambient_anchor.name if ambient_anchor != null and is_instance_valid(ambient_anchor) else "",
 		"scores": objective_debug_scores.duplicate(true),

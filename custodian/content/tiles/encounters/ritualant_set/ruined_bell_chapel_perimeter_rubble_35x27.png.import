@@ -2,12 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bij7ld07xkfka"
-valid=false
+uid="uid://dx4tuf4rd0xf7"
+path="res://.godot/imported/ruined_bell_chapel_perimeter_rubble_35x27.png-e5448f54797c74d77d84b251ce183542.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_perimeter_rubble_35x27.png"
+dest_files=["res://.godot/imported/ruined_bell_chapel_perimeter_rubble_35x27.png-e5448f54797c74d77d84b251ce183542.ctex"]
 
 [params]
 

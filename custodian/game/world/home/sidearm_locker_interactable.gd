@@ -132,8 +132,8 @@ func _take_sidearm(actor: Node) -> void:
 		push_warning("[SidearmLocker] InventoryManager not available")
 		return
 
-	var result := inventory_manager.call("add_item", &"p9_sidearm", 1)
-	if result <= 0:
+	var result: Variant = inventory_manager.call("add_item", &"p9_sidearm", 1)
+	if int(result) <= 0:
 		push_warning("[SidearmLocker] Failed to add P-9 to inventory")
 		return
 

@@ -42,20 +42,50 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 @export var magazine_size: int = 28
 @export var reload_time_sec: float = 1.7
 @export var range_px: float = 300.0
+@export var effective_range_px: float = 180.0
+@export var max_range_px: float = 320.0
+@export var damage_falloff_start_px: float = 170.0
+@export var damage_falloff_end_px: float = 320.0
+@export var min_falloff_damage_mult: float = 0.5
 @export var accuracy: float = 0.86
 @export var spread_deg: float = 2.0
 @export var recoil: float = 0.35
 @export var projectile_speed_px: float = 950.0
 @export var penetration: int = 1
 
-@export_group("Ammo")
-@export var ammo_type: String = "kinetic"
-@export var reserve_ammo: int = 112
+@export_group("Ammo Economy")
+@export var ammo_type: String = "kinetic_light"
+@export var reserve_ammo: int = 48
+@export var max_reserve_ammo: int = 72
+@export var ammo_per_shot: int = 1
+@export var pickup_weight: float = 1.0
 @export var reload_style: String = "magazine"
 @export var movement_speed_penalty: float = 0.0
 @export var movement_accuracy_penalty: float = 0.0
 @export var animation_fire_frame: int = 0
 @export var recoil_animation: StringName = &"recoil_standard"
+
+@export_group("Heat")
+@export var heat_enabled: bool = true
+@export var heat_max: float = 100.0
+@export var heat_per_shot: float = 12.0
+@export var heat_decay_per_sec: float = 28.0
+@export var heat_decay_delay_sec: float = 0.25
+@export var overheat_threshold: float = 100.0
+@export var overheat_lockout_sec: float = 1.35
+@export var heat_spread_mult_at_max: float = 1.7
+@export var heat_recoil_mult_at_max: float = 1.4
+@export var heat_ui_warn_threshold: float = 70.0
+@export var heat_per_shot_mult: float = 1.0
+@export var heat_decay_mult: float = 1.0
+@export var overheat_lockout_mult: float = 1.0
+
+@export_group("Noise")
+@export var shot_noise_radius_px: float = 360.0
+@export var shot_loudness: float = 1.0
+@export var suppressed: bool = false
+@export var suppressed_radius_mult: float = 0.35
+@export var alert_threat_value: float = 1.0
 
 @export_group("Combat Profile")
 @export var move_speed_multiplier: float = 1.0
@@ -112,6 +142,41 @@ func get_handling_float(stat_name: String, fallback: float = 0.0) -> float:
 	var handling: Variant = get_weapon_data().get("handling", {})
 	if handling is Dictionary and handling.has(stat_name):
 		return float(handling[stat_name])
+	return fallback
+
+
+func get_ammo_value(stat_name: String, fallback: Variant = null) -> Variant:
+	var ammo: Variant = get_weapon_data().get("ammo", {})
+	if ammo is Dictionary and ammo.has(stat_name):
+		return ammo[stat_name]
+	return fallback
+
+
+func get_heat_float(stat_name: String, fallback: float = 0.0) -> float:
+	var heat: Variant = get_weapon_data().get("heat", {})
+	if heat is Dictionary and heat.has(stat_name):
+		return float(heat[stat_name])
+	return fallback
+
+
+func get_heat_bool(stat_name: String, fallback: bool = false) -> bool:
+	var heat: Variant = get_weapon_data().get("heat", {})
+	if heat is Dictionary and heat.has(stat_name):
+		return bool(heat[stat_name])
+	return fallback
+
+
+func get_noise_float(stat_name: String, fallback: float = 0.0) -> float:
+	var noise: Variant = get_weapon_data().get("noise", {})
+	if noise is Dictionary and noise.has(stat_name):
+		return float(noise[stat_name])
+	return fallback
+
+
+func get_noise_bool(stat_name: String, fallback: bool = false) -> bool:
+	var noise: Variant = get_weapon_data().get("noise", {})
+	if noise is Dictionary and noise.has(stat_name):
+		return bool(noise[stat_name])
 	return fallback
 
 

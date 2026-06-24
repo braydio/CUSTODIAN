@@ -49,7 +49,7 @@ func _on_body_entered(body: Node):
 		return
 	if body.has_method("receive_projectile_hit") and (_is_world_blocker(body) or _can_hit(body)):
 		var impact_position := _resolve_impact_position(body)
-		var result_variant: Variant = body.call("receive_projectile_hit", damage, team)
+		body.call("receive_projectile_hit", damage, team)
 		_apply_game_feel(body, 40.0 if not _is_world_blocker(body) else 0.0)
 		_spawn_impact_at(impact_position)
 		queue_free()
@@ -141,10 +141,10 @@ func _resolve_impact_position(body: Node = null) -> Vector2:
 
 
 func _resolve_body_contact_point(body: Node2D) -> Vector2:
-	var fallback := global_position - direction * max(4.0, bullet_radius * 2.0)
-	var strike_direction := direction.normalized()
+	var fallback: Vector2 = global_position - direction * max(4.0, bullet_radius * 2.0)
+	var strike_direction: Vector2 = direction.normalized()
 	if strike_direction == Vector2.ZERO:
-		var to_body := body.global_position - global_position
+		var to_body: Vector2 = body.global_position - global_position
 		strike_direction = to_body.normalized()
 	if strike_direction == Vector2.ZERO:
 		return fallback

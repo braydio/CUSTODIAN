@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://game/world/events/ash_bell/shaders/void_ocean_underlay.gdshader" id="1_shader"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/darkness = 0.18
+shader_parameter/contrast_soften = 0.25
+shader_parameter/drift_strength = 0.007
+shader_parameter/drift_speed = 0.045
+shader_parameter/pulse_strength = 0.025
+shader_parameter/vignette_strength = 0.34
+shader_parameter/cold_tint = Color(0.62, 0.82, 1, 1)
+shader_parameter/violet_tint = Color(0.42, 0.24, 0.78, 1)

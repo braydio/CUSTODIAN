@@ -6,11 +6,11 @@ class_name WorldgenIntentDebugOverlay
 @export var show_edges: bool = true
 @export var show_regions: bool = true
 
-var graph = null
+var graph: WorldgenIntentGraph = null
 var reserved_regions: Array[Dictionary] = []
 
 
-func set_debug_data(p_graph, p_regions: Array[Dictionary]) -> void:
+func set_debug_data(p_graph: WorldgenIntentGraph, p_regions: Array[Dictionary]) -> void:
 	graph = p_graph
 	reserved_regions = p_regions
 	queue_redraw()
@@ -22,8 +22,8 @@ func _draw() -> void:
 
 	if show_edges:
 		for edge in graph.edges:
-			var from_node := graph.get_node_by_id(edge.from_id)
-			var to_node := graph.get_node_by_id(edge.to_id)
+			var from_node: WorldgenIntentNode = graph.get_node_by_id(edge.from_id) as WorldgenIntentNode
+			var to_node: WorldgenIntentNode = graph.get_node_by_id(edge.to_id) as WorldgenIntentNode
 			if from_node == null or to_node == null:
 				continue
 			draw_line(_tile_to_local(from_node.cell), _tile_to_local(to_node.cell), Color(0.5, 0.8, 1.0, 0.55), 3.0)

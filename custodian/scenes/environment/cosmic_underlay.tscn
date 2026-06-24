@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/environment/cosmic_underlay.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/forlorn_ritualant/cosmic-underlay.png" id="2_texture"]
+
+[node name="CosmicUnderlay" type="Node2D"]
+z_index = -100
+script = ExtResource("1_script")
+drift_amplitude = Vector2(8, 5)
+drift_speed = Vector2(0.035, 0.025)
+pulse_strength = 0.012
+pulse_speed = 0.18
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+modulate = Color(0.72, 0.82, 1, 0.86)
+z_index = -100
+texture = ExtResource("2_texture")

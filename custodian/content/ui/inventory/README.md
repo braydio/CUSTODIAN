@@ -20,6 +20,7 @@ textures while production art is missing.
 
 ### Item Icons
 - `content/ui/inventory/icons/icon_placeholder.png` - Generic item icon (48x48)
+- `content/ui/inventory/icons/icon_p9_sidearm.svg` - Temporary P-9 sidearm equipment icon; canonical runtime PNG overrides it automatically
 
 ## Script Files
 
@@ -84,18 +85,18 @@ inventory_ui.closed.connect(callback)
 Uses the current Black Reliquary/CUSTODIAN style:
 - darkened full-screen backdrop
 - brass/gold reliquary frame
-- category rail, carried-object grid, and detail inspector
+- compact category rail, fixed-layout carried-object cards, and structured detail inspector
+- functional P-9 sidearm equip/unequip on the Equipment page
 - live text for all item names, quantities, classifications, and descriptions
 - production image assets resolved through `inventory_asset_catalog.gd`
 
 ## Future Enhancements (Not Implemented)
 
-- Equipment slots (armor, weapons)
+- Additional equipment slots beyond the live sidearm slot
 - Drag-and-drop
 - Item rarities with visual effects
-- Inventory categories/tabs
 - Scroll bar for more slots
-- Context menu (drop, use, equip)
+- Context menu (drop and use; sidearm equip is already live)
 - Item comparison tooltips
 - Hotbar/quick slots
 - Item stacking with max stack sizes

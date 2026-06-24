@@ -1,6 +1,6 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://bntuttfw58gdy"]
 
-[ext_resource type="Texture2D" uid="uid://hn8rjb1irilx" path="res://content/tiles/encounters/ritualant_set/dry_fountain_ghost__loop_01__4f__160x148.png" id="1_ghost_sheet"]
+[ext_resource type="Texture2D" uid="uid://cdmdq0bq36imp" path="res://content/tiles/encounters/ritualant_set/dry_fountain_ghost__loop_01__4f__160x148.png" id="1_ghost_sheet"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ghost_0"]
 atlas = ExtResource("1_ghost_sheet")
@@ -33,7 +33,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ghost_3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }]

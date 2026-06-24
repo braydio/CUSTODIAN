@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="CUSTODIAN"
-run/main_scene="uid://c0x7mhq5n2kd8"
-config/features=PackedStringArray("4.6", "Forward Plus")
+run/main_scene="res://scenes/game.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -35,6 +35,7 @@ CommandRegistry="*uid://ce5ap1y1kwavq"
 GameConsoleManager="*uid://dsr8e7vkd3scc"
 MusicManager="*res://autoload/music_manager.gd"
 WorldEventMemory="*res://game/systems/core/state/world_event_memory.gd"
+NoiseEventBus="*res://game/systems/stealth/noise_event_bus.gd"
 
 [dev_console]
 

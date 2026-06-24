@@ -20,7 +20,7 @@ Sundered Keep uses a local reusable `CustodianHUD` scene with Black Reliquary pa
 
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active design/spec docs: `design/20_features/in_progress/BLACK_RELIQUARY_UI.md`
+- Active design/spec docs: `design/02_features/terminal/BLACK_RELIQUARY_UI.md`
 - Active runtime/docs files: `custodian/game/ui/`, `custodian/game/world/sundered_keep/sundered_keep_map.gd`, `custodian/docs/ai_context/*`
 - Historical reference only: `python-sim/`
 

@@ -308,8 +308,8 @@ const PROP_SCATTERER_SCRIPT := preload("res://content/props/ruins/scripts/PropSc
 const PORTAL_TELEPORTER_SCRIPT := preload("res://game/world/procgen/portal_teleporter.gd")
 const PORTAL_DEFINITION_ID := &"portal_ring_01"
 const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
-const ROAD_PIECE_MANIFEST_PATH := "res://content/tiles/roads_paths/runtime/placeholders/roads/PLACEHOLDER_road_piece_manifest.game32.json"
-const ROAD_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeholders/roads"
+const ROAD_PIECE_MANIFEST_PATH := "res://content/tiles/roads_paths/runtime/roads/lane/road_lane_piece_manifest.game32.json"
+const ROAD_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/roads/lane"
 const PATH_PIECE_MANIFEST_PATH := "res://content/tiles/roads_paths/runtime/placeholders/paths/PLACEHOLDER_path_piece_manifest.game32.json"
 const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeholders/paths"
 @export var foliage_parent_path: NodePath = NodePath("NavigationRegion2D/FoliageLayer")
@@ -539,6 +539,14 @@ func generate() -> void:
 		return
 	
 	procgen_node.generate()
+
+
+func get_floor_tilemap() -> TileMapLayer:
+	return floor_tilemap
+
+
+func get_walls_tilemap() -> TileMapLayer:
+	return walls_tilemap
 
 
 func apply_planet_world_profile(profile: Dictionary) -> void:
@@ -3284,6 +3292,8 @@ func _flush_navigation_rebuild() -> void:
 	var rebuilt := false
 	for navigation_node in get_tree().get_nodes_in_group("navigation"):
 		if navigation_node != null and navigation_node.has_method("rebuild"):
+			if navigation_node.has_method("set_runtime_tilemaps"):
+				navigation_node.call("set_runtime_tilemaps", floor_tilemap, walls_tilemap)
 			navigation_node.call("rebuild")
 			rebuilt = true
 	if not rebuilt and nav_region != null:

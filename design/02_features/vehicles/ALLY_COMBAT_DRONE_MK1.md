@@ -4,10 +4,12 @@ Grounding: active runtime is Godot under custodian/, new Godot specs belong in .
 
 # CUSTODIAN Feature Spec: Autonomous Combat Drones
 
-Status: review
+Status: deprecated planning prompt; V1 authority moved
 Runtime target: Godot 4.x
 Feature owner: combat / allied automation
 Primary goal: add player-assist combat drones that are effective, fragile, deterministic, and doctrine-compatible.
+
+> Runtime V1 is complete. Use `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md` for the durable feature authority and `design/02_features/combat_feel/COMBAT_RESOURCE_AND_READABILITY_SYSTEM.md` for pending battery, repair, presentation, and redeployment integration. Paths below are retained as historical planning text and must not override those documents.
 
 ## 0. Codex Task
 
@@ -17,7 +19,7 @@ Do not make them smarter than the player.
 Do not let them replace Command Center authority, power routing, or sector autopilot.
 Create/update:
 
-- design/20_features/in_progress/AUTONOMOUS_COMBAT_DRONES.md
+- design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md
 - - design/features/implementation/AUTONOMOUS_COMBAT_DRONES_CODE.md
 - - custodian/game/actors/allies/combat_drone.gd
 - - custodian/game/actors/allies/combat_drone.tscn

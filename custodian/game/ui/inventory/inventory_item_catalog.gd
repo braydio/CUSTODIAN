@@ -30,7 +30,7 @@ static func _ensure_loaded() -> void:
 	for path in ITEM_FILES:
 		_load_file(path)
 	_register_builtin(&"sundered_gate_key", "Sundered Gate Key", "A corroded winch key stamped with the keep's split-ring seal.", "key", "key_item")
-	_register_builtin(&"p9_sidearm", "P-9 Field Sidearm", "A compact P-9 semi-automatic sidearm. Reliable, standard-issue. Can be equipped to the sidearm slot from the Equipment page.", "equipment", "equipment")
+	_register_builtin(&"p9_sidearm", "P-9 Field Sidearm", "Compact emergency weapon recognized by Custodian service imprint. Equip it in the Sidearm slot to replace offhand guard/parry with sidearm-ready.", "equipment", "equipment")
 	_register_builtin(&"stilling_pin", "Stilling Pin", "A rusted iron pin that once anchored the Ash-Bell's silence. Setting it in the fountain basin counts the dead.", "key", "relic")
 
 

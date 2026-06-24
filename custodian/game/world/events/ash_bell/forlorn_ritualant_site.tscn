@@ -5,35 +5,32 @@
 [ext_resource type="Script" uid="uid://cf3qh3ejcbmpq" path="res://game/world/events/ash_bell/ash_bell_interactable.gd" id="3_interactable"]
 [ext_resource type="Script" uid="uid://ccv8ls026wv1q" path="res://game/world/events/ash_bell/white_thread_hazard.gd" id="4_thread"]
 [ext_resource type="Script" uid="uid://c5gb0sly0vtfh" path="res://game/world/events/ash_bell/ash_bell_trigger.gd" id="5_trigger"]
-[ext_resource type="Script" path="res://game/world/events/ash_bell/ash_bell_stagecraft.gd" id="6_stagecraft"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/broken_bell_hanging_01.png" id="7_bell_hanging"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/dry_fountain_ghost_01.png" id="8_fountain_ghost"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/dry_fountain_basin_01.png" id="9_fountain_basin"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/dry_fountain_black_water_01.png" id="10_fountain_water"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/collapsed_ritualant_cloth_01.png" id="11_ritualant_cloth"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/unnarrived_apparration_01.png" id="12_apparition"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/unnarrived_apparition_group_01.png" id="13_apparition_group"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/white_thread_slack.png" id="14_thread_slack"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/white_thread_taught.png" id="15_thread_taught"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/white_thread_lit_01.png" id="16_thread_lit"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/bell_medallian_01.png" id="17_clapper"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/blue_votive_candles_large.png" id="18_candle_large"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/blue_votive_candles_small.png" id="19_candle_small"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/pressure_halo_01.png" id="20_halo"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/pressure_halo_faint_01.png" id="21_halo_faint"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/fountain_cracked_anchored_ring_01.png" id="22_anchored_ring"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ash_upward_fx_01.png" id="23_ash_up"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ash_downard_fx_01.png" id="24_ash_down"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch1.png" id="25_debris_1"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch2.png" id="26_debris_2"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch3.png" id="27_debris_3"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch4.png" id="28_debris_4"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch5.png" id="29_debris_5"]
-[ext_resource type="SpriteFrames" path="res://content/tiles/encounters/ritualant_set/runtime/dry_fountain_ghost_frames.tres" id="30_ghost_anim"]
-[ext_resource type="SpriteFrames" path="res://content/tiles/encounters/ritualant_set/runtime/black_water_fountain_frames.tres" id="31_water_anim"]
-[ext_resource type="Texture2D" uid="uid://bhau2r6xsxguv" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_floor_underlay_32x27.png" id="32_floor"]
-[ext_resource type="Texture2D" uid="uid://bij7ld07xkfka" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_perimeter_rubble_35x27.png" id="33_rubble"]
-[ext_resource type="Texture2D" uid="uid://b245g1ri2p4be" path="res://content/tiles/encounters/ritualant_set/white_thread_hazard_runtime_01.png" id="34_thread_hazard"]
+[ext_resource type="Script" uid="uid://ckp0rt645spmt" path="res://game/world/events/ash_bell/ash_bell_stagecraft.gd" id="6_stagecraft"]
+[ext_resource type="Texture2D" uid="uid://derkpwrl0fai4" path="res://content/tiles/encounters/ritualant_set/broken_bell_hanging_01.png" id="7_bell_hanging"]
+[ext_resource type="Texture2D" uid="uid://crat3a4jfu3a7" path="res://content/tiles/encounters/ritualant_set/dry_fountain_basin_01.png" id="9_fountain_basin"]
+[ext_resource type="Texture2D" uid="uid://210r0r7vfxmh" path="res://content/tiles/encounters/ritualant_set/collapsed_ritualant_cloth_01.png" id="11_ritualant_cloth"]
+[ext_resource type="Texture2D" uid="uid://dlrsnvc1qx1i5" path="res://content/tiles/encounters/ritualant_set/unnarrived_apparration_01.png" id="12_apparition"]
+[ext_resource type="Texture2D" uid="uid://7dk36xf3i7aw" path="res://content/tiles/encounters/ritualant_set/white_thread_slack.png" id="14_thread_slack"]
+[ext_resource type="Texture2D" uid="uid://csmroq7k7xplh" path="res://content/tiles/encounters/ritualant_set/bell_medallian_01.png" id="17_clapper"]
+[ext_resource type="Texture2D" uid="uid://l0kpiy0hewp0" path="res://content/tiles/encounters/ritualant_set/blue_votive_candles_large.png" id="18_candle_large"]
+[ext_resource type="Texture2D" uid="uid://dkxugd0v6pk0t" path="res://content/tiles/encounters/ritualant_set/blue_votive_candles_small.png" id="19_candle_small"]
+[ext_resource type="Texture2D" uid="uid://2jp5b7xs8qt6" path="res://content/tiles/encounters/ritualant_set/pressure_halo_01.png" id="20_halo"]
+[ext_resource type="Texture2D" uid="uid://blj7707bepq5y" path="res://content/tiles/encounters/ritualant_set/fountain_cracked_anchored_ring_01.png" id="22_anchored_ring"]
+[ext_resource type="Texture2D" uid="uid://bl1fp3kjmwo58" path="res://content/tiles/encounters/ritualant_set/ash_upward_fx_01.png" id="23_ash_up"]
+[ext_resource type="Texture2D" uid="uid://e15gdt3lo12y" path="res://content/tiles/encounters/ritualant_set/ash_downard_fx_01.png" id="24_ash_down"]
+[ext_resource type="Texture2D" uid="uid://h1tbxl2xgtpb" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch1.png" id="25_debris_1"]
+[ext_resource type="Texture2D" uid="uid://b45s6xleqi45s" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch2.png" id="26_debris_2"]
+[ext_resource type="Texture2D" uid="uid://bnwbgusjufw2r" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch3.png" id="27_debris_3"]
+[ext_resource type="Texture2D" uid="uid://d4aqsykye0i" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch4.png" id="28_debris_4"]
+[ext_resource type="Texture2D" uid="uid://cj5jrprp3kx2v" path="res://content/tiles/encounters/ritualant_set/ash_debris_patch5.png" id="29_debris_5"]
+[ext_resource type="SpriteFrames" uid="uid://bntuttfw58gdy" path="res://content/tiles/encounters/ritualant_set/runtime/dry_fountain_ghost_frames.tres" id="30_ghost_anim"]
+[ext_resource type="SpriteFrames" uid="uid://od2538tpylf4" path="res://content/tiles/encounters/ritualant_set/runtime/black_water_fountain_frames.tres" id="31_water_anim"]
+[ext_resource type="Texture2D" uid="uid://bvq6boqnolokb" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_floor_underlay_32x27.png" id="32_floor"]
+[ext_resource type="Texture2D" uid="uid://dx4tuf4rd0xf7" path="res://content/tiles/encounters/ritualant_set/ruined_bell_chapel_perimeter_rubble_35x27.png" id="33_rubble"]
+[ext_resource type="Texture2D" uid="uid://b0utvxnyell2y" path="res://content/tiles/encounters/ritualant_set/white_thread_hazard_runtime_01.png" id="34_thread_hazard"]
+[ext_resource type="SpriteFrames" path="res://content/tiles/encounters/ritualant_set/runtime/forlorn_ritualant_animations.tres" id="35_npc_animations"]
+[ext_resource type="Texture2D" uid="uid://baylmb3pm0scg" path="res://content/tiles/encounters/ritualant_set/stilling_pin_pickup_01.png" id="36_pin"]
+[ext_resource type="PackedScene" path="res://scenes/environment/forlorn_ritualant_shader_fx.tscn" id="37_shader_fx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_room_north"]
 size = Vector2(1120, 32)
@@ -50,11 +47,11 @@ size = Vector2(220, 128)
 [sub_resource type="CircleShape2D" id="CircleShape2D_clapper"]
 radius = 18.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ritualant"]
-size = Vector2(26, 28)
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_interact"]
 radius = 28.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ritualant"]
+size = Vector2(26, 28)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_intro"]
 radius = 160.0
@@ -66,30 +63,27 @@ size = Vector2(220, 150)
 size = Vector2(260, 72)
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ash_up"]
+lifetime_randomness = 0.3
 direction = Vector3(0, -1, 0)
-spread = 45.0
-gravity = Vector3(0, -10, 0)
 initial_velocity_min = 12.0
 initial_velocity_max = 28.0
+gravity = Vector3(0, -10, 0)
 scale_min = 0.4
 scale_max = 1.2
-lifetime_randomness = 0.3
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ash_down"]
+lifetime_randomness = 0.4
 direction = Vector3(0, 1, 0)
 spread = 60.0
-gravity = Vector3(0, 8, 0)
 initial_velocity_min = 6.0
 initial_velocity_max = 18.0
+gravity = Vector3(0, 8, 0)
 scale_min = 0.3
-scale_max = 1.0
-lifetime_randomness = 0.4
 
 [sub_resource type="LabelSettings" id="LabelSettings_dialogue"]
 font_size = 20
 outline_size = 6
 outline_color = Color(0, 0, 0, 1)
-shadow_offset = Vector2(1, 1)
 shadow_color = Color(0, 0, 0, 0.5)
 
 [node name="ForlornRitualantSite" type="Node2D" unique_id=1649470245]
@@ -110,52 +104,50 @@ thread_visual_path = NodePath("FX/ThreadVisual")
 fountain_ring_path = NodePath("FX/FountainRing")
 bell_shadow_path = NodePath("FX/BellShadow")
 
-[node name="Floor" type="Sprite2D" parent="."]
-position = Vector2(0, 0)
-texture = ExtResource("32_floor")
-centered = true
+[node name="ForlornRitualantShaderFX" parent="." instance=ExtResource("37_shader_fx")]
+
+[node name="Floor" type="Sprite2D" parent="." unique_id=1737574996]
 z_index = -30
+texture = ExtResource("32_floor")
 
-[node name="PerimeterRubble" type="Sprite2D" parent="."]
-position = Vector2(0, 0)
+[node name="PerimeterRubble" type="Sprite2D" parent="." unique_id=1562758724]
+z_index = -29
 texture = ExtResource("33_rubble")
-centered = true
-z_index = -29
 
-[node name="FloorDebris1" type="Sprite2D" parent="."]
-position = Vector2(-220, -180)
-texture = ExtResource("25_debris_1")
-scale = Vector2(0.7, 0.7)
-z_index = -29
+[node name="FloorDebris1" type="Sprite2D" parent="." unique_id=986184121]
 modulate = Color(1, 1, 1, 0.5)
-
-[node name="FloorDebris2" type="Sprite2D" parent="."]
-position = Vector2(180, -260)
-texture = ExtResource("26_debris_2")
-scale = Vector2(0.6, 0.6)
 z_index = -29
+position = Vector2(-220, -180)
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("25_debris_1")
+
+[node name="FloorDebris2" type="Sprite2D" parent="." unique_id=1947411893]
 modulate = Color(1, 1, 1, 0.35)
-
-[node name="FloorDebris3" type="Sprite2D" parent="."]
-position = Vector2(320, 60)
-texture = ExtResource("27_debris_3")
-scale = Vector2(0.8, 0.8)
 z_index = -29
+position = Vector2(180, -260)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("26_debris_2")
+
+[node name="FloorDebris3" type="Sprite2D" parent="." unique_id=1320599338]
 modulate = Color(1, 1, 1, 0.4)
-
-[node name="FloorDebris4" type="Sprite2D" parent="."]
-position = Vector2(-400, 140)
-texture = ExtResource("28_debris_4")
-scale = Vector2(0.5, 0.5)
 z_index = -29
+position = Vector2(320, 60)
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("27_debris_3")
+
+[node name="FloorDebris4" type="Sprite2D" parent="." unique_id=1877188550]
 modulate = Color(1, 1, 1, 0.3)
-
-[node name="FloorDebris5" type="Sprite2D" parent="."]
-position = Vector2(-60, 300)
-texture = ExtResource("29_debris_5")
-scale = Vector2(0.75, 0.75)
 z_index = -29
+position = Vector2(-400, 140)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("28_debris_4")
+
+[node name="FloorDebris5" type="Sprite2D" parent="." unique_id=804567435]
 modulate = Color(1, 1, 1, 0.45)
+z_index = -29
+position = Vector2(-60, 300)
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("29_debris_5")
 
 [node name="Walls" type="Node2D" parent="." unique_id=1687049799]
 z_index = -20
@@ -237,42 +229,30 @@ z_index = -10
 [node name="EmptyBellFrame" type="Node2D" parent="Props" unique_id=2085719359]
 position = Vector2(0, -270)
 
-[node name="BrokenBell" type="Sprite2D" parent="Props/EmptyBellFrame"]
-position = Vector2(0, 0)
-texture = ExtResource("7_bell_hanging")
-centered = true
+[node name="BrokenBell" type="Sprite2D" parent="Props/EmptyBellFrame" unique_id=867722433]
 z_index = 1
+texture = ExtResource("7_bell_hanging")
 
-[node name="DryFountainGhost" type="AnimatedSprite2D" parent="Props"]
+[node name="DryFountainGhost" type="AnimatedSprite2D" parent="Props" unique_id=781760984]
+z_index = 1
 position = Vector2(0, -48)
 sprite_frames = ExtResource("30_ghost_anim")
-animation = &"default"
-playing = true
-centered = true
-z_index = 1
 
-[node name="DryFountainBlackWater" type="AnimatedSprite2D" parent="Props"]
-position = Vector2(0, -50)
-sprite_frames = ExtResource("31_water_anim")
-animation = &"default"
-playing = true
-centered = true
+[node name="DryFountainBlackWater" type="AnimatedSprite2D" parent="Props" unique_id=709958326]
 visible = false
 z_index = 2
+position = Vector2(0, -50)
+sprite_frames = ExtResource("31_water_anim")
 
-[node name="DryFountainBasin" type="Sprite2D" parent="Props"]
+[node name="DryFountainBasin" type="Sprite2D" parent="Props" unique_id=336034093]
 position = Vector2(0, -44)
 texture = ExtResource("9_fountain_basin")
-centered = true
-z_index = 0
 
-[node name="WhiteThreadVisual" type="Sprite2D" parent="Props"]
+[node name="WhiteThreadVisual" type="Sprite2D" parent="Props" unique_id=970696632]
+modulate = Color(1, 1, 1, 0.16)
+z_index = 3
 position = Vector2(0, -146)
 texture = ExtResource("34_thread_hazard")
-centered = true
-z_index = 3
-modulate = Color(1, 1, 1, 0.16)
-
 
 [node name="WhiteThreadHazard" type="Area2D" parent="Props" unique_id=351032665]
 position = Vector2(0, -146)
@@ -290,62 +270,56 @@ interaction_kind = 6
 site_path = NodePath("../..")
 prompt_text = "TAKE STILLING PIN"
 
-[node name="Visual" type="Sprite2D" parent="Props/StillingPinPickup"]
-position = Vector2(0, 0)
-texture = ExtResource("17_clapper")
-centered = true
+[node name="Visual" type="Sprite2D" parent="Props/StillingPinPickup" unique_id=663728905]
 z_index = 1
+texture = ExtResource("36_pin")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Props/StillingPinPickup" unique_id=914984636]
 shape = SubResource("CircleShape2D_clapper")
 
-[node name="DryFountainInteract" type="Area2D" parent="Props"]
+[node name="DryFountainInteract" type="Area2D" parent="Props" unique_id=1512923439]
 position = Vector2(0, -44)
 script = ExtResource("3_interactable")
 interaction_kind = 7
 site_path = NodePath("../..")
 prompt_text = "INSPECT DRY FOUNTAIN"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/DryFountainInteract"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/DryFountainInteract" unique_id=1079433826]
 shape = SubResource("CircleShape2D_interact")
 
-[node name="SetStillingPinInteract" type="Area2D" parent="Props"]
+[node name="SetStillingPinInteract" type="Area2D" parent="Props" unique_id=1259104849]
 position = Vector2(0, -44)
 script = ExtResource("3_interactable")
 interaction_kind = 8
 site_path = NodePath("../..")
 prompt_text = "SET PIN IN BASIN"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/SetStillingPinInteract"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Props/SetStillingPinInteract" unique_id=435349878]
 shape = SubResource("CircleShape2D_interact")
 
 [node name="BlackBanners" type="Node2D" parent="Props" unique_id=340412067]
 
-[node name="CandleWest" type="Sprite2D" parent="Props/BlackBanners"]
+[node name="CandleWest" type="Sprite2D" parent="Props/BlackBanners" unique_id=1641799443]
+z_index = 1
 position = Vector2(-380, -250)
 texture = ExtResource("18_candle_large")
-centered = true
-z_index = 1
 
-[node name="CandleEast" type="Sprite2D" parent="Props/BlackBanners"]
+[node name="CandleEast" type="Sprite2D" parent="Props/BlackBanners" unique_id=218147337]
+z_index = 1
 position = Vector2(380, -250)
 texture = ExtResource("18_candle_large")
-centered = true
-z_index = 1
 
-[node name="CandleWestSmall" type="Sprite2D" parent="Props/BlackBanners"]
+[node name="CandleWestSmall" type="Sprite2D" parent="Props/BlackBanners" unique_id=1607948690]
+modulate = Color(1, 1, 1, 0.7)
+z_index = 1
 position = Vector2(-284, -160)
 texture = ExtResource("19_candle_small")
-centered = true
-z_index = 1
-modulate = Color(1, 1, 1, 0.7)
 
-[node name="CandleEastSmall" type="Sprite2D" parent="Props/BlackBanners"]
+[node name="CandleEastSmall" type="Sprite2D" parent="Props/BlackBanners" unique_id=1151641280]
+modulate = Color(1, 1, 1, 0.7)
+z_index = 1
 position = Vector2(284, -160)
 texture = ExtResource("19_candle_small")
-centered = true
-z_index = 1
-modulate = Color(1, 1, 1, 0.7)
 
 [node name="NPCs" type="Node2D" parent="." unique_id=1416789592]
 z_index = 2
@@ -354,19 +328,20 @@ z_index = 2
 position = Vector2(0, -154)
 script = ExtResource("2_npc")
 site_path = NodePath("../..")
+animated_sprite_path = NodePath("AnimatedSprite2D")
 
-[node name="Visual" type="Sprite2D" parent="NPCs/ForlornRitualant"]
-position = Vector2(0, 0)
-texture = ExtResource("11_ritualant_cloth")
-centered = true
+[node name="Visual" type="Sprite2D" parent="NPCs/ForlornRitualant" unique_id=79598284]
 z_index = 1
+texture = ExtResource("11_ritualant_cloth")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/ForlornRitualant" unique_id=580563031]
 position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_ritualant")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/ForlornRitualant" unique_id=1302765729]
-visible = false
+z_index = 2
+sprite_frames = ExtResource("35_npc_animations")
+animation = &""
 
 [node name="RitualantInteract" type="Area2D" parent="NPCs" unique_id=321342900]
 position = Vector2(0, -154)
@@ -386,44 +361,44 @@ prompt_text = "TOUCH WHITE THREAD"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/TouchThreadInteract" unique_id=1639990276]
 shape = SubResource("CircleShape2D_interact")
 
-[node name="AskBellInteract" type="Area2D" parent="NPCs"]
+[node name="AskBellInteract" type="Area2D" parent="NPCs" unique_id=271793634]
 position = Vector2(-40, -140)
 script = ExtResource("3_interactable")
 interaction_kind = 1
 site_path = NodePath("../..")
 prompt_text = "ASK: BELL?"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/AskBellInteract"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/AskBellInteract" unique_id=351997683]
 shape = SubResource("CircleShape2D_interact")
 
-[node name="AskThreadInteract" type="Area2D" parent="NPCs"]
+[node name="AskThreadInteract" type="Area2D" parent="NPCs" unique_id=1435024224]
 position = Vector2(0, -170)
 script = ExtResource("3_interactable")
 interaction_kind = 2
 site_path = NodePath("../..")
 prompt_text = "ASK: THREAD?"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/AskThreadInteract"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/AskThreadInteract" unique_id=1050710001]
 shape = SubResource("CircleShape2D_interact")
 
-[node name="AskOrraInteract" type="Area2D" parent="NPCs"]
+[node name="AskOrraInteract" type="Area2D" parent="NPCs" unique_id=323304799]
 position = Vector2(40, -140)
 script = ExtResource("3_interactable")
 interaction_kind = 3
 site_path = NodePath("../..")
 prompt_text = "ASK: ORRA?"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/AskOrraInteract"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/AskOrraInteract" unique_id=1677265150]
 shape = SubResource("CircleShape2D_interact")
 
-[node name="CutThreadInteract" type="Area2D" parent="NPCs"]
+[node name="CutThreadInteract" type="Area2D" parent="NPCs" unique_id=374370415]
 position = Vector2(74, -138)
 script = ExtResource("3_interactable")
 interaction_kind = 5
 site_path = NodePath("../..")
 prompt_text = "CUT WHITE THREAD"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/CutThreadInteract"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NPCs/CutThreadInteract" unique_id=403252225]
 shape = SubResource("CircleShape2D_interact")
 
 [node name="Triggers" type="Node2D" parent="." unique_id=168594331]
@@ -456,13 +431,12 @@ shape = SubResource("RectangleShape2D_exit")
 
 [node name="VFX" type="Node2D" parent="." unique_id=957109267]
 
-[node name="UnarrivedApparition" type="Sprite2D" parent="VFX"]
+[node name="UnarrivedApparition" type="Sprite2D" parent="VFX" unique_id=543975640]
+visible = false
+modulate = Color(0.82, 0.78, 0.66, 0)
+z_index = 5
 position = Vector2(0, 104)
 texture = ExtResource("12_apparition")
-centered = true
-visible = false
-modulate = Color(0.82, 0.78, 0.66, 0.0)
-z_index = 5
 
 [node name="GhostProcession" type="Node2D" parent="VFX" unique_id=942465580]
 
@@ -473,91 +447,82 @@ offset_right = 360.0
 offset_bottom = 126.0
 color = Color(0.68, 0.66, 0.58, 0.18)
 
-[node name="FX" type="Node2D" parent="."]
+[node name="FX" type="Node2D" parent="." unique_id=1031441431]
 z_index = 15
 
-[node name="SilenceVeil" type="ColorRect" parent="FX"]
+[node name="SilenceVeil" type="ColorRect" parent="FX" unique_id=336882271]
 offset_left = -560.0
 offset_top = -432.0
 offset_right = 560.0
 offset_bottom = 432.0
-color = Color(0.0, 0.0, 0.0, 0.0)
 mouse_filter = 2
+color = Color(0, 0, 0, 0)
 
-[node name="PressureHalo" type="Sprite2D" parent="FX"]
-position = Vector2(0, -50)
-texture = ExtResource("20_halo")
-centered = true
+[node name="PressureHalo" type="Sprite2D" parent="FX" unique_id=729085093]
 visible = false
 z_index = 1
-
-[node name="FountainRing" type="Sprite2D" parent="FX"]
 position = Vector2(0, -50)
-texture = ExtResource("22_anchored_ring")
-centered = true
+texture = ExtResource("20_halo")
+
+[node name="FountainRing" type="Sprite2D" parent="FX" unique_id=890111455]
 visible = false
 z_index = 2
+position = Vector2(0, -50)
+texture = ExtResource("22_anchored_ring")
 
-[node name="BellShadow" type="Sprite2D" parent="FX"]
-position = Vector2(0, -270)
-texture = ExtResource("7_bell_hanging")
-centered = true
+[node name="BellShadow" type="Sprite2D" parent="FX" unique_id=820408508]
 visible = false
 modulate = Color(0, 0, 0, 0.3)
-z_index = 0
+position = Vector2(0, -270)
+texture = ExtResource("7_bell_hanging")
 
-[node name="ThreadVisual" type="Sprite2D" parent="FX"]
-position = Vector2(0, -146)
-texture = ExtResource("14_thread_slack")
-centered = true
+[node name="ThreadVisual" type="Sprite2D" parent="FX" unique_id=626267026]
 visible = false
 z_index = 3
+position = Vector2(0, -146)
+texture = ExtResource("14_thread_slack")
 
-[node name="UpwardAsh" type="GPUParticles2D" parent="FX"]
-position = Vector2(0, -50)
-emitting = true
-amount = 12
-lifetime = 3.5
-one_shot = false
-preprocess = 1.0
-texture = ExtResource("23_ash_up")
-process_material = SubResource("ParticleProcessMaterial_ash_up")
+[node name="UpwardAsh" type="GPUParticles2D" parent="FX" unique_id=2070752940]
 z_index = 10
+position = Vector2(0, -50)
+amount = 12
+texture = ExtResource("23_ash_up")
+lifetime = 3.5
+preprocess = 1.0
+process_material = SubResource("ParticleProcessMaterial_ash_up")
 
-[node name="DownwardAsh" type="GPUParticles2D" parent="FX"]
+[node name="DownwardAsh" type="GPUParticles2D" parent="FX" unique_id=1524584337]
+z_index = 12
 position = Vector2(0, -50)
 emitting = false
 amount = 20
-lifetime = 4.0
-one_shot = false
-preprocess = 0.0
 texture = ExtResource("24_ash_down")
+lifetime = 4.0
 process_material = SubResource("ParticleProcessMaterial_ash_down")
-z_index = 12
 
 [node name="Debug" type="Node2D" parent="." unique_id=409010644]
 
-[node name="DialogueContainer" type="Node2D" parent="Debug"]
+[node name="DialogueContainer" type="Node2D" parent="Debug" unique_id=1722286022]
 position = Vector2(0, 210)
 
-[node name="Background" type="ColorRect" parent="Debug/DialogueContainer"]
+[node name="Background" type="ColorRect" parent="Debug/DialogueContainer" unique_id=636911536]
+z_index = 1
 offset_left = -300.0
 offset_top = -32.0
 offset_right = 300.0
 offset_bottom = 32.0
 color = Color(0, 0, 0, 0.75)
-z_index = 1
 
-[node name="AshBellDialogueLabel" type="Label" parent="Debug/DialogueContainer"]
+[node name="AshBellDialogueLabel" type="Label" parent="Debug/DialogueContainer" unique_id=1592804111]
 offset_left = -280.0
 offset_top = -22.0
 offset_right = 280.0
 offset_bottom = 22.0
 text = "Forlorn-Ritualant waits beneath no bell."
+label_settings = SubResource("LabelSettings_dialogue")
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
-label_settings = SubResource("LabelSettings_dialogue")
 
 [node name="AshBellDebugLabel" type="Label" parent="Debug" unique_id=511448229]
 visible = false
@@ -568,5 +533,5 @@ offset_bottom = -330.0
 text = "ASH-BELL"
 
 [node name="Stagecraft" type="Node2D" parent="." unique_id=523588827]
-script = ExtResource("6_stagecraft")
 z_index = 40
+script = ExtResource("6_stagecraft")

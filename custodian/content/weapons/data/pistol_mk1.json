@@ -18,14 +18,19 @@
   },
 
   "stats": {
-    "damage": 18,
+    "damage": 8,
     "fire_rate_rps": 3.5,
-    "range_px": 120,
+    "range_px": 220,
+    "effective_range_px": 110,
+    "max_range_px": 220,
+    "damage_falloff_start_px": 100,
+    "damage_falloff_end_px": 220,
+    "min_falloff_damage_mult": 0.45,
     "accuracy": 0.78,
-    "spread_deg": 4.5,
-    "recoil": 0.55,
-    "reload_time_sec": 1.1,
-    "magazine_size": 12,
+    "spread_deg": 3.2,
+    "recoil": 0.35,
+    "reload_time_sec": 1.4,
+    "magazine_size": 10,
     "projectile_speed_px": 750,
     "penetration": 1,
     "crit_chance": 0.05,
@@ -34,9 +39,12 @@
   },
 
   "ammo": {
-    "ammo_type": "kinetic",
-    "capacity": 12,
-    "reserve": 48,
+    "ammo_type": "kinetic_light",
+    "magazine_size": 10,
+    "starting_reserve": 30,
+    "max_reserve": 60,
+    "ammo_per_shot": 1,
+    "pickup_weight": 1.0,
     "reload_style": "magazine"
   },
 
@@ -46,7 +54,32 @@
     "ads_time_sec": 0.08,
     "movement_speed_penalty": 0.0,
     "movement_accuracy_penalty": 0.0,
+    "standing_spread_mult": 0.85,
+    "walking_spread_mult": 1.25,
+    "sprinting_spread_mult": 2.1,
+    "panic_spread_mult": 1.8,
+    "sneak_spread_mult": 0.75,
     "sprint_allowed": true
+  },
+
+  "heat": {
+    "enabled": true,
+    "max": 100,
+    "per_shot": 8,
+    "decay_per_sec": 34,
+    "decay_delay_sec": 0.2,
+    "overheat_threshold": 100,
+    "overheat_lockout_sec": 0.85,
+    "spread_mult_at_max": 1.45,
+    "recoil_mult_at_max": 1.25
+  },
+
+  "noise": {
+    "shot_radius_px": 260,
+    "shot_loudness": 1.0,
+    "suppressed": false,
+    "suppressed_radius_mult": 0.35,
+    "alert_threat_value": 0.7
   },
 
   "fire_modes": ["semi"],

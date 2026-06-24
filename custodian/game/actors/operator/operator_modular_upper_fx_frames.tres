@@ -1,15 +1,15 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://c14dm7vyys2wy"]
+[gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" uid="uid://b7eol5to6x1io" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/draw_sidearm_01/operator__modular_upper_fx__sidearm__draw_sidearm_01__se__5f__96.png" id="1_odlm6"]
-[ext_resource type="Texture2D" uid="uid://bw1s3cplqtd2n" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/draw_sidearm_01/operator__modular_upper_fx__sidearm__draw_sidearm_01__sw__5f__96.png" id="2_3ewpm"]
-[ext_resource type="Texture2D" uid="uid://dfr4lna6c7uem" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/draw_sidearm_01/operator__modular_upper_fx__sidearm__draw_sidearm_01__nw__5f__96.png" id="3_th0ss"]
-[ext_resource type="Texture2D" uid="uid://djgyolvllaeu2" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/draw_sidearm_01/operator__modular_upper_fx__sidearm__draw_sidearm_01__ne__5f__96.png" id="4_u00kn"]
-[ext_resource type="Texture2D" uid="uid://bnoiq37w3tq03" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/fire_sidearm_01/operator__modular_upper_fx__sidearm__fire_sidearm_01__se__5f__96.png" id="5_oeuul"]
-[ext_resource type="Texture2D" uid="uid://cix8lkpks2tg8" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/fire_sidearm_01/operator__modular_upper_fx__sidearm__fire_sidearm_01__sw__5f__96.png" id="6_stygw"]
-[ext_resource type="Texture2D" uid="uid://c8wwuxorq0mr4" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/fire_sidearm_01/operator__modular_upper_fx__sidearm__fire_sidearm_01__nw__5f__96.png" id="7_ooyv1"]
-[ext_resource type="Texture2D" uid="uid://molyu6e1emim" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/fire_sidearm_01/operator__modular_upper_fx__sidearm__fire_sidearm_01__ne__5f__96.png" id="8_nu6ss"]
-[ext_resource type="Texture2D" uid="uid://ccqyye7slknub" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/unarmed/parry_01/operator__modular_upper_fx__unarmed__parry_01__e__5f__96.png" id="9_3ewpm"]
-[ext_resource type="Texture2D" uid="uid://bwhelsu5b2lgd" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/unarmed/parry_01/operator__modular_upper_fx__unarmed__parry_01__n__5f__96.png" id="9_th0ss"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/draw_sidearm_01/operator__modular_upper_fx__sidearm__draw_sidearm_01__se__5f__96.png" id="1_odlm6"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/draw_sidearm_01/operator__modular_upper_fx__sidearm__draw_sidearm_01__sw__5f__96.png" id="2_3ewpm"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/draw_sidearm_01/operator__modular_upper_fx__sidearm__draw_sidearm_01__nw__5f__96.png" id="3_th0ss"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/draw_sidearm_01/operator__modular_upper_fx__sidearm__draw_sidearm_01__ne__5f__96.png" id="4_u00kn"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/fire_sidearm_01/operator__modular_upper_fx__sidearm__fire_sidearm_01__se__5f__96.png" id="5_oeuul"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/fire_sidearm_01/operator__modular_upper_fx__sidearm__fire_sidearm_01__sw__5f__96.png" id="6_stygw"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/fire_sidearm_01/operator__modular_upper_fx__sidearm__fire_sidearm_01__nw__5f__96.png" id="7_ooyv1"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/fire_sidearm_01/operator__modular_upper_fx__sidearm__fire_sidearm_01__ne__5f__96.png" id="8_nu6ss"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/unarmed/parry_01/operator__modular_upper_fx__unarmed__parry_01__e__5f__96.png" id="9_3ewpm"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/unarmed/parry_01/operator__modular_upper_fx__unarmed__parry_01__n__5f__96.png" id="9_th0ss"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_th0ss"]
 atlas = ExtResource("9_th0ss")
@@ -349,7 +349,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ooyv1")
 }],
-"loop": false,
+"loop": 0,
 "name": &"PLACEHOLDER_unarmed_parry_success_fx",
 "speed": 12.0
 }, {
@@ -369,7 +369,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_piwwy")
 }],
-"loop": false,
+"loop": 0,
 "name": &"PLACEHOLDER_unarmed_parry_success_fx_right",
 "speed": 12.0
 }, {
@@ -389,12 +389,12 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pn0vp")
 }],
-"loop": false,
+"loop": 0,
 "name": &"PLACEHOLDER_unarmed_parry_success_fx_up",
 "speed": 12.0
 }, {
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }, {
@@ -414,7 +414,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gv4st")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_draw_fx",
 "speed": 12.0
 }, {
@@ -434,7 +434,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4wwfs")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_draw_fx_down_left",
 "speed": 12.0
 }, {
@@ -454,7 +454,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_i46gi")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_draw_fx_down_right",
 "speed": 12.0
 }, {
@@ -474,7 +474,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_sbkoj")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_draw_fx_up_left",
 "speed": 12.0
 }, {
@@ -494,7 +494,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_2t850")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_draw_fx_up_right",
 "speed": 12.0
 }, {
@@ -514,7 +514,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_d2qpa")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_fire_fx",
 "speed": 12.0
 }, {
@@ -534,7 +534,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_kjst3")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_fire_fx_down_left",
 "speed": 12.0
 }, {
@@ -554,7 +554,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3s3ft")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_fire_fx_down_right",
 "speed": 12.0
 }, {
@@ -574,7 +574,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_e8o5k")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_fire_fx_up_left",
 "speed": 12.0
 }, {
@@ -594,7 +594,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0tsfe")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_fire_fx_up_right",
 "speed": 12.0
 }, {
@@ -614,7 +614,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_uf50t")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_parry_fx",
 "speed": 12.0
 }, {
@@ -634,7 +634,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gfwv2")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_parry_fx_right",
 "speed": 12.0
 }, {
@@ -654,7 +654,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_mvoj0")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_parry_fx_up",
 "speed": 12.0
 }]

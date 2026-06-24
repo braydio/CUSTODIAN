@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-06-19
+Last updated: 2026-06-21
 
 ## Local Entry And Workflow
 
@@ -43,7 +43,7 @@ Last updated: 2026-06-19
 - `custodian/docs/ai_context/task_packets/PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` — completed packet for wall-top preprocessing support in the atlas builder
 - `custodian/docs/ai_context/task_packets/ASH_BELL_FORLORN_RITUALANT.md` — packet for the first authored Ash-Bell / Forlorn-Ritualant event implementation slice and deferred production asset/procgen integration work
 - `custodian/docs/ai_context/task_packets/SEVERANCE_UNARRIVAL_LORE_REVISION.md` — completed packet for the Severance root-cause canon revision and Forlorn-Ritualant rename pass
-- `custodian/docs/ai_context/task_packets/AUTONOMOUS_COMBAT_DRONES.md` — packet for the first allied combat drone runtime slice and deferred production art/command UI work
+- `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md` — complete V1 allied combat drone authority; deferred logistics and presentation are tracked by the combat resource/readability umbrella
 - `custodian/docs/ai_context/task_packets/ARRN_RUNTIME_IMPLEMENTATION.md` — completed packet for the first Automated Relay Routing Network runtime implementation
 - `custodian/docs/ai_context/task_packets/RESOURCE_ID_CANONICALIZATION.md` — completed packet for making CUSTODIAN-flavored resource IDs canonical across node drops, ledger storage, recipes, UI, and docs
 - `custodian/docs/ai_context/task_packets/ENEMY_GRUNT_RUNTIME_WIRING.md` — completed packet for verifying `enemy_grunt` asset usage and wiring it as a live wave-spawned enemy type
@@ -67,7 +67,7 @@ Last updated: 2026-06-19
 ## Active Runtime Entry
 
 - `custodian/project.godot` — Godot project config and input map
-- `custodian/scenes/game.tscn` — active game scene and terminal layout; currently includes temporary `AshBellDevSpawner` for live Forlorn-Ritualant encounter review, scene-mounted `DroneManager` for allied combat drone V1 spawning, and a temporary grunt startup debug spawn gated by Operator distance from the initial spawn zone
+- `custodian/scenes/game.tscn` — active game scene and terminal layout; no longer auto-spawns the Forlorn-Ritualant dev encounter, and still includes scene-mounted `DroneManager` for allied combat drone V1 spawning plus a temporary grunt startup debug spawn gated by Operator distance from the initial spawn zone
 - `custodian/scenes/home_custodian_begin.tscn` — dedicated Home beginning scene for Objective 01, tracing a Custodian-band signal across the Road of Witnesses to the damaged Field Terminal; not yet the application main scene.
 - `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene.
 
@@ -119,14 +119,21 @@ Last updated: 2026-06-19
 - `custodian/game/world/compound/rooms/layout_assembler.gd` — deterministic compound room layout assembler with stable room IDs, graph-walk door-aligned placement, fixed-grid fallback, graph-rule-enforced compatible door connections, resolved endpoint tiles, intensity estimates, actual tile bounds, and placed-room state
 - `custodian/game/world/compound/rooms/graphs/default_compound.json` — default compound room graph referencing command post, hangar, corridor, storage, and landing pad template names
 - `custodian/game/world/compound/rooms/templates/` — Tiled `.tmj` compound room template directory; currently only `command_post.tmj` exists, with additional templates tracked in `REQUIRED_ASSETS.md`
-- `custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn` — placeholder authored Ash-Bell special-room scene with Forlorn-Ritualant NPC, bell-frame/fountain/thread/clapper placeholders, south doorway, triggers, and debug dialogue labels
+- `custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn` — placeholder authored Ash-Bell special-room scene with Forlorn-Ritualant NPC, bell-frame/fountain/thread/clapper placeholders, south doorway, triggers, and local dialogue labels
 - `custodian/game/world/events/ash_bell/forlorn_ritualant_site.gd` — Ash-Bell encounter controller for silence pressure, thread/fountain state, dialogue/item/knowledge signals, apparition/procession placeholders, and completion state
 - `custodian/game/world/events/ash_bell/ash_bell_event_state.gd` — local Resource state model for Ash-Bell silence pressure, thread tension, fountain state, resolution, and knowledge flags
 - `custodian/game/world/events/ash_bell/forlorn_ritualant_npc.gd` — Forlorn-Ritualant NPC controller with kneeling, hostile, dissolve, clapper swing, and thread-pull hooks
 - `custodian/game/world/events/ash_bell/white_thread_hazard.gd` — soft thread hazard Area2D that increments thread tension and optionally applies player slow hooks
 - `custodian/game/world/events/ash_bell/ash_bell_interactable.gd` — operator interaction bridge for ritualant, thread, clapper, fountain, and silence-ringing actions
 - `custodian/game/world/events/ash_bell/ash_bell_trigger.gd` — Area2D trigger bridge for intro, fountain occupancy, exit, and procession-lane pressure
-- `custodian/game/world/events/ash_bell/ash_bell_dev_spawner.gd` — temporary live-review spawner mounted in `scenes/game.tscn` that reserves the canonical `35x27` authored-room footprint through the active procgen map, then places the Ash-Bell site north of the operator for an outside-in doorway approach
+- `custodian/game/world/events/ash_bell/ash_bell_dev_spawner.gd` — opt-in temporary live-review spawner for reserving the canonical `35x27` authored-room footprint through the active procgen map, then placing the Ash-Bell site north of the operator for an outside-in doorway approach; not mounted by normal `scenes/game.tscn` startup
+- `custodian/scenes/debug/forlorn_ritualant_site_debug.tscn` — standalone visual/debug launch scene for the Forlorn-Ritualant site with a camera and note, kept separate from normal game startup
+- `custodian/scenes/environment/cosmic_underlay.tscn` and `custodian/scripts/environment/cosmic_underlay.gd` — reusable world-space cosmic void underlay with subtle drift/pulse controls, kept as a base environment component without collision or gameplay authority
+- `custodian/scenes/environment/forlorn_ritualant_shader_fx.tscn` and `custodian/scripts/environment/forlorn_ritualant_shader_fx.gd` — Forlorn-Ritualant visual-only FX layer combining the cosmic underlay, room-edge shadow/rim mask sprites, and temporal haze with exported `ShaderMaterial` intensity controls
+- `custodian/game/world/events/ash_bell/shaders/` and `custodian/game/world/events/ash_bell/materials/` — encounter-local CanvasItem shaders/materials for void-ocean drift, room-edge haze, and temporal overlap haze
+- `custodian/content/masks/forlorn_ritualant/room_silhouette_mask.png` — presentation-only alpha mask derived from current room art for edge shadow/rim rendering; not collision or gameplay authority
+- `design/02_features/FORLORN_RITUALANT_COSMIC_UNDERLAY.md` — scene-layering note for the Forlorn-Ritualant underlay, transparent-edge room-art requirement, and reuse contract
+- `design/02_features/FORLORN_RITUALANT_SHADER_FX.md` — shader FX design note for the Forlorn-Ritualant void-ocean, edge shadow/rim, temporal haze, and mask contracts
 - `custodian/tools/validation/procgen_authored_scene_authority_smoke.gd` — focused generated-map smoke proving authored footprint claims remove wall visuals, generated/runtime wall authority, blocked elevation, and stale road authority while forcing floor metadata
 - `custodian/game/systems/core/systems/ambient_critter_manager.gd` — ambient critter spawning, tint, pacing, scale, speed, naming, and trait metadata linked to world profile
 - `custodian/game/systems/core/systems/inventory_manager.gd` — minimal stack-count ledger autoload for cognitive drops and future stackable resources
@@ -137,7 +144,7 @@ Last updated: 2026-06-19
 - `custodian/game/systems/core/systems/arrn/stabilization_task.gd` — tick-counted field relay stabilization task state
 - `custodian/game/systems/core/systems/arrn/knowledge_system.gd` — knowledge track constants and sync-gain calculation
 - `custodian/game/systems/core/systems/arrn/benefits_manager.gd` — ARRN knowledge-level benefit activation and labels
-- `custodian/game/systems/core/systems/contract_world_loader.gd` — contract-world handoff and placement bridge; repositions runtime anchors, places vehicles on generated road parking zones when available, places ARRN relays, instantiates connected gothic compound and Sundered Keep maps/gates, places an optional spawn-adjacent Sundered Keep debug gateway, temporarily supports starting the Operator next to the Sundered Keep travel gate for review, generates scarce base-map tutorial resource nodes, and places the first far-field expedition-style resource patch after procgen world creation
+- `custodian/game/systems/core/systems/contract_world_loader.gd` — contract-world handoff and placement bridge; repositions runtime anchors, places vehicles on generated road parking zones when available, places ARRN relays, instantiates connected gothic compound and Sundered Keep maps/gates, keeps the optional spawn-adjacent Sundered Keep debug gateway/review start disabled by default, generates scarce base-map tutorial resource nodes, and places the first far-field expedition-style resource patch after procgen world creation
 - `custodian/game/vehicles/vehicle_definition.gd` — vehicle archetype data loader, display-name generator, tag/mobility helpers, and core definition validation for registry-backed vehicles
 - `custodian/game/vehicles/vehicle_registry.gd` — registry store for `res://content/vehicles/vehicle_archetypes.json`, including ID lookup and faction/domain/chassis/role/tier/pilotable queries
 - `custodian/game/vehicles/vehicle_spawn_resolver.gd` — registry ID to live scene resolver; validates runtime support, instantiates scenes, applies definitions, and assigns vehicle groups
@@ -214,14 +221,14 @@ Last updated: 2026-06-19
 - `custodian/game/ui/minimap/minimap_controller.gd` — discovers runtime procgen or authored map providers plus player/enemy/objective/utility nodes and feeds live minimap data to the view.
 - `custodian/game/ui/minimap/minimap_view.gd` — data-driven minimap renderer that caches procgen/authored floor-wall terrain, supports actor-bounds fallback maps, and draws tactical pips, including a distinct marker for enemies carrying stolen resources.
 - `custodian/game/ui/inventory/inventory_ui.tscn` — hidden live-game Black Reliquary inventory overlay instanced under `UI` and opened with the inventory input action; now the primary status/history/ledger surface with tabbed pages
-- `custodian/game/ui/inventory/inventory_ui.gd` — live `InventoryManager`-backed CUSTODIAN field-ledger overlay with status page, large live minimap, quest/history log, carried-object category rail, detail inspector, focus handling, and compatibility support for isolated local `Inventory` callers
+- `custodian/game/ui/inventory/inventory_ui.gd` — live `InventoryManager`-backed field-ledger overlay with compact status/history/ledger/equipment pages, readable item cards and inspection metadata, functional P-9 equip/unequip controls, focus handling, and compatibility support for isolated local `Inventory` callers
 - `custodian/game/ui/inventory/inventory_asset_catalog.gd` — canonical production inventory UI/item-icon resolver that automatically prefers assets under `content/ui/inventory/runtime/` and falls back to existing Black Reliquary/legacy textures
 - `custodian/game/ui/inventory/shaders/inventory_ember_spark.gdshader` and `materials/blackwood_ember_spark_material.tres` — reusable alpha-bounded inventory ember/spark effect and the blackwood-only default material instance
 - `custodian/game/ui/inventory/inventory_item_catalog.gd` — deterministic carried-item metadata resolver for known item JSON definitions plus readable fallback records for future/unknown ledger IDs
 - `custodian/content/ui/inventory/runtime/inventory_ui_asset_manifest.json` — exact production inventory asset drop-in contract for panels, slots, icons, and ornaments
 - `custodian/content/ui/inventory/runtime/README.md` — inventory production asset naming, placement, and replacement workflow
 - `custodian/tools/validation/inventory_ui_smoke.gd` — validates the live ledger-backed inventory scene, item rendering/update behavior, close behavior, and asset-manifest fallback contract
-- `custodian/docs/ai_context/task_packets/CUSTODIAN_INVENTORY_UI.md` — completed packet for the live professional inventory overlay and production-asset drop-in contract
+- `custodian/docs/ai_context/task_packets/archived/CUSTODIAN_INVENTORY_UI.md` — completed packet for the live professional inventory overlay and production-asset drop-in contract
 - `custodian/docs/ai_context/task_packets/FAB_TERMINAL_READABILITY_PASS.md` — completed packet for the FABRICATION work-order readability pass, including the terminal translation layer and build-placement alias
 - `custodian/game/ui/terminal/terminal_command_router.gd` — command parsing, validation, refresh policy, and dispatch boundary for the HUD terminal
 - `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems, including vault totals and enemy storage-search/loot-carrying counts
@@ -434,8 +441,16 @@ Last updated: 2026-06-19
 - `custodian/docs/GDSCRIPT_STANDARDS.md` — scripting standards
 - `custodian/docs/AGENT_MIGRATION_PLAYBOOK.md` — migration and docs-drift cleanup procedure
 - `design/` — active Godot feature/system implementation specs
-- `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md` — canonical lore, faction, and game-protocol authority
-- `design/03_content/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target
+- `design/02_features/combat_feel/RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` — implemented V1 authority for typed/capped ammunition, projectile range/falloff, weapon heat, positional noise, enemy perception/search/leash behavior, ambient hostile camps, and the deferred vehicle-weapon contract
+- `custodian/game/systems/stealth/noise_event.gd` and `noise_event_bus.gd` — generic positional noise payload and autoload signal authority used by gunfire and future loud world actions
+- `custodian/game/systems/spawning/ambient_enemy_camp.gd` and `ambient_enemy_spawner.gd` — activation-limited authored hostile camps and marker-driven generated-placement bridge
+- `custodian/tools/validation/ranged_combat_balance_smoke.gd` — focused weapon data, heat/noise contract, projectile falloff, and noise-signal smoke coverage
+- `custodian/docs/ai_context/task_packets/RANGED_COMBAT_BALANCE_AND_STEALTH.md` — completed high-risk implementation record for the ranged balance, stealth/noise, perception, and ambient-camp slice
+- `design/02_features/combat_feel/COMBAT_RESOURCE_AND_READABILITY_SYSTEM.md` — in-progress cross-system authority that records completed combat-resource/readability slices by durable owner and queues production feedback, Field Patch healing, hit taxonomy/riposte, durability, traps, and drone logistics
+- `custodian/docs/ai_context/task_packets/archived/COMBAT_RESOURCE_READABILITY_SPEC_NORMALIZATION.md` — completed migration record for retiring the root draft, routing completed V1 slices to permanent feature authorities, and establishing the current in-progress umbrella
+- `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md` — canonical lore, faction, and game-protocol authority
+- `design/03_world/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target
+- `design/03_world/THE_DISPERSED_FLEETS.md` — historical lore reference: the first post-Severance military expeditions that vanished without trace; design-shaping material, not an implementation target
 - `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` — canonical Ash-Bell / Forlorn-Ritualant implementation spec (includes merged Toll Count appendix from deleted companion doc)
 - `design/02_features/LAST_ROUTEKEEPER_EVENT.md` — design spec for The Last Routekeeper: rare, one-time residual-system event inside Sundered Keep
 - `design/02_features/LAST_ROUTEKEEPER_EVENT_CODE.md` — drop-in GDScript, map patches, autoload config, and REQUIRED_ASSETS.md entries for The Last Routekeeper

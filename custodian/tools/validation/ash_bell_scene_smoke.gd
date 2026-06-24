@@ -22,6 +22,11 @@ func _run() -> void:
 
 	root.add_child(scene)
 	await process_frame
+
+	var dialogue_callback := Callable(scene, "_on_request_dialogue")
+	if scene.request_dialogue.is_connected(dialogue_callback):
+		scene.request_dialogue.disconnect(dialogue_callback)
+
 	if not scene.has_method("trigger_intro"):
 		push_error("Ash-Bell scene is missing trigger_intro().")
 		quit(1)
@@ -30,23 +35,37 @@ func _run() -> void:
 	scene.call("trigger_intro")
 	scene.call("interact_with_ritualant")
 	scene.call("touch_thread")
-	scene.call("take_clapper")
+	scene.call("take_stilling_pin")
+	scene.call("set_stilling_pin")
 
 	if "event_state" not in scene:
 		push_error("Ash-Bell scene is missing event_state.")
 		quit(1)
 		return
 
-	var event_state = scene.get("event_state")
+	var event_state: AshBellEventState = scene.get("event_state") as AshBellEventState
 	if event_state == null:
 		push_error("Ash-Bell event_state was not initialized.")
 		quit(1)
 		return
 
-	if not bool(event_state.get("has_clapper")):
-		push_error("Ash-Bell clapper interaction did not update state.")
+	if not event_state.has_thread_knot:
+		push_error("Ash-Bell thread interaction did not update state.")
 		quit(1)
 		return
 
-	print("[AshBellSmoke] scene loaded and core interactions updated state.")
+	if not event_state.has_stilling_pin:
+		push_error("Ash-Bell stilling pin pickup did not update state.")
+		quit(1)
+		return
+
+	if event_state.resolution != AshBellEventState.Resolution.SET_STILLING_PIN:
+		push_error("Ash-Bell stilling pin placement did not update resolution.")
+		quit(1)
+		return
+
+	print("[AshBellSmoke] scene loaded and current core interactions updated state.")
+	root.remove_child(scene)
+	scene.free()
+	await process_frame
 	quit(0)

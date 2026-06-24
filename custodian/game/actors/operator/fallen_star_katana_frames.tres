@@ -33,7 +33,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_katana_stance_3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"melee_stance",
 "speed": 7.0
 }]

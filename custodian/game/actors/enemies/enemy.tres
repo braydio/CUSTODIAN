@@ -671,7 +671,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_574g6")
 }],
-"loop": true,
+"loop": 1,
 "name": &"drone_firing",
 "speed": 6.0
 }, {
@@ -748,7 +748,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_43r8n")
 }],
-"loop": true,
+"loop": 1,
 "name": &"drone_idle",
 "speed": 6.0
 }, {
@@ -813,7 +813,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_r0gp3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"drone_missiles",
 "speed": 5.0
 }, {
@@ -827,7 +827,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7jda8")
 }],
-"loop": true,
+"loop": 1,
 "name": &"read_walk_east",
 "speed": 5.0
 }, {
@@ -841,7 +841,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_oyx4f")
 }],
-"loop": true,
+"loop": 1,
 "name": &"red_walk_north",
 "speed": 5.0
 }, {
@@ -855,7 +855,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xg5ku")
 }],
-"loop": true,
+"loop": 1,
 "name": &"red_walk_northeast",
 "speed": 5.0
 }, {
@@ -869,7 +869,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bdye8")
 }],
-"loop": true,
+"loop": 1,
 "name": &"red_walk_northwest",
 "speed": 5.0
 }, {
@@ -883,7 +883,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vamlu")
 }],
-"loop": true,
+"loop": 1,
 "name": &"red_walk_south",
 "speed": 5.0
 }, {
@@ -897,7 +897,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_qbote")
 }],
-"loop": true,
+"loop": 1,
 "name": &"red_walk_southeast",
 "speed": 5.0
 }, {
@@ -911,7 +911,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_w1blt")
 }],
-"loop": true,
+"loop": 1,
 "name": &"red_walk_southwest",
 "speed": 5.0
 }, {
@@ -925,7 +925,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_5wcex")
 }],
-"loop": true,
+"loop": 1,
 "name": &"red_walk_west",
 "speed": 5.0
 }, {
@@ -1218,7 +1218,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_cq8ea")
 }],
-"loop": true,
+"loop": 1,
 "name": &"small_8_dir",
 "speed": 5.0
 }]

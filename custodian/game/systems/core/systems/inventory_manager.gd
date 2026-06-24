@@ -12,7 +12,7 @@ var _items: Dictionary = {}
 ## Empty slot = &"" (empty StringName). Extensible for future slots.
 var _equipment_slots: Dictionary = {}
 
-const SIDARM_SLOT := &"sidearm"
+const SIDEARM_SLOT := &"sidearm"
 const DEFAULT_EQUIPMENT_SLOTS: Array[StringName] = [&"sidearm"]
 
 
@@ -68,6 +68,7 @@ func clear() -> void:
 	_items.clear()
 	_equipment_slots.clear()
 	inventory_changed.emit()
+	equipment_changed.emit(SIDEARM_SLOT, &"")
 
 
 ## Equipment API — extensible slot-based system for equipping items.

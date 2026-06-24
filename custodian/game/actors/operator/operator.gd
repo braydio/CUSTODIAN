@@ -83,11 +83,11 @@ var last_fire_cooldown := 0.0
 
 @export var muzzle_offset: float = 24.0
 @export var aim_crosshair_color: Color = Color(0.9, 0.9, 0.9, 1.0)
-@export var ammo_standard: int = 120
-@export var ammo_heavy: int = 32
-@export var ammo_standard_max: int = 240
-@export var ammo_heavy_max: int = 80
-@export var ammo_standard_magazine_size: int = 28
+@export var ammo_standard: int = 48
+@export var ammo_heavy: int = 12
+@export var ammo_standard_max: int = 72
+@export var ammo_heavy_max: int = 16
+@export var ammo_standard_magazine_size: int = 24
 @export var ammo_heavy_magazine_size: int = 8
 @export var ranged_reload_duration: float = 1.7
 @export var interaction_range: float = 84.0
@@ -160,6 +160,7 @@ var last_fire_cooldown := 0.0
 @export var guard_chip_damage_minimum: float = 1.0
 @export var guard_stamina_cost_per_hit: float = 12.0
 @export var guard_break_stamina_threshold: float = 6.0
+@export var guard_exit_speed_scale: float = 1.6
 @export_group("", "")
 @export var combat_target_range: float = 360.0
 @export var use_tiny_rpg_placeholder_soldier: bool = true
@@ -267,6 +268,13 @@ var _reload_active: bool = false
 var _reload_timer: float = 0.0
 var _ammo_standard_loaded: int = 0
 var _ammo_heavy_loaded: int = 0
+var ammo_reserve_by_type: Dictionary = {}
+var ammo_capacity_by_type: Dictionary = {}
+var loaded_ammo_by_weapon_id: Dictionary = {}
+var weapon_heat_by_id: Dictionary = {}
+var weapon_heat_delay_by_id: Dictionary = {}
+var weapon_overheat_by_id: Dictionary = {}
+var last_ranged_fire_failure: StringName = &""
 var _pending_ranged_shot: Dictionary = {}
 var _ranged_ready_active: bool = false
 var _ranged_ready_weapon_definition: OperatorWeaponDefinition = null
@@ -357,6 +365,11 @@ func _get_current_ranged_profile() -> Dictionary:
 	resolved_profile["speed"] = weapon_definition.get_stat_float("projectile_speed_px", float(resolved_profile.get("speed", 780.0)))
 	resolved_profile["spread"] = weapon_definition.get_stat_float("spread_deg", float(resolved_profile.get("spread", 2.0)))
 	resolved_profile["recoil_kick"] = weapon_definition.get_stat_float("recoil", float(resolved_profile.get("recoil_kick", 1.2)))
+	resolved_profile["effective_range_px"] = weapon_definition.get_stat_float("effective_range_px", weapon_definition.get_stat_float("range_px", 180.0))
+	resolved_profile["max_range_px"] = weapon_definition.get_stat_float("max_range_px", weapon_definition.get_stat_float("range_px", 320.0))
+	resolved_profile["falloff_start_px"] = weapon_definition.get_stat_float("damage_falloff_start_px", float(resolved_profile["effective_range_px"]))
+	resolved_profile["falloff_end_px"] = weapon_definition.get_stat_float("damage_falloff_end_px", float(resolved_profile["max_range_px"]))
+	resolved_profile["min_damage_multiplier"] = weapon_definition.get_stat_float("min_falloff_damage_mult", 0.5)
 	return resolved_profile
 
 const PRIMARY_WEAPON_NONE := ""
@@ -697,6 +710,7 @@ func _process(delta):
 	_parry_success_lockout = maxf(0.0, _parry_success_lockout - delta)
 	_counter_window_timer = maxf(0.0, _counter_window_timer - delta)
 	current_recoil = max(0.0, current_recoil - recoil_decay * delta)
+	_update_weapon_heat(delta)
 	_update_pending_ranged_shot(delta)
 	_update_body_recoil(delta)
 	_update_attack_buffer(delta)
@@ -885,6 +899,9 @@ func _update_aim():
 
 func _update_animation():
 	if animated_sprite == null:
+		return
+	if animated_sprite.sprite_frames == null:
+		_hide_modular_locomotion_layers()
 		return
 	if _portal_arrival_animation_active:
 		if animated_sprite.animation != PORTAL_ARRIVAL_ANIMATION and animated_sprite.animation != PORTAL_ARRIVAL_DOWN_ANIMATION:
@@ -1403,8 +1420,13 @@ func _request_ranged_shot() -> void:
 	if not _is_ranged_context_active():
 		return
 	if _reload_active:
+		last_ranged_fire_failure = &"reloading"
+		return
+	if _is_active_weapon_overheated():
+		last_ranged_fire_failure = &"overheated"
 		return
 	if not _has_loaded_ammo():
+		last_ranged_fire_failure = &"reload_started" if _get_current_reserve_ammo() > 0 else &"no_ammo"
 		_try_start_reload()
 		return
 	if _is_using_sidearm_ranged():
@@ -1414,6 +1436,7 @@ func _request_ranged_shot() -> void:
 		_sidearm_action_phase_started = false
 		_sidearm_action_direction = _get_attack_aim_direction()
 	var profile := _get_current_ranged_profile()
+	last_ranged_fire_failure = &""
 	last_fire_cooldown = float(profile["cooldown"])
 	fire_cooldown_remaining = last_fire_cooldown
 	# Apply cognitive attack recovery modifier (instinct reduces cooldown)
@@ -1443,6 +1466,8 @@ func _emit_pending_ranged_shot() -> void:
 	if direction.length_squared() <= 0.0001:
 		return
 	var spread := float(profile.get("spread", 0.0)) + (current_recoil * 0.2)
+	spread *= _get_movement_spread_multiplier()
+	spread *= _get_heat_spread_multiplier()
 	# Apply cognitive accuracy bonus (bearing reduces spread)
 	var cognitive := get_node_or_null("/root/CognitiveState")
 	if cognitive != null and cognitive.has_method("get_player_accuracy_bonus"):
@@ -1461,8 +1486,10 @@ func _emit_pending_ranged_shot() -> void:
 	var muzzle_check := _get_muzzle_obstruction(direction, spawn_position)
 	if not muzzle_check.is_empty():
 		_spawn_ranged_impact_at(muzzle_check.get("position", spawn_position))
-		current_recoil += float(profile.get("recoil_kick", 1.2))
+		current_recoil += float(profile.get("recoil_kick", 1.2)) * _get_heat_recoil_multiplier()
 		_consume_ammo()
+		_apply_heat_for_shot()
+		_emit_weapon_noise(spawn_position)
 		_spawn_muzzle_flash(direction)
 		_apply_body_recoil_impulse(direction)
 		return
@@ -1470,6 +1497,10 @@ func _emit_pending_ranged_shot() -> void:
 		bullet.set_direction(direction)
 	bullet.speed = float(profile.get("speed", 780.0))
 	bullet.damage = float(profile.get("damage", 16.0))
+	bullet.max_range_px = float(profile.get("max_range_px", 320.0))
+	bullet.falloff_start_px = float(profile.get("falloff_start_px", 180.0))
+	bullet.falloff_end_px = float(profile.get("falloff_end_px", 320.0))
+	bullet.min_damage_multiplier = float(profile.get("min_damage_multiplier", 0.5))
 	bullet.bullet_radius = float(profile.get("radius", 3.0))
 	bullet.bullet_color = profile.get("color", Color(1.0, 0.9, 0.35, 1.0))
 	bullet.impact_scene = IMPACT_SPARK_SCENE
@@ -1485,8 +1516,10 @@ func _emit_pending_ranged_shot() -> void:
 		get_tree().current_scene.add_child(bullet)
 	bullet.global_position = spawn_position
 
-	current_recoil += float(profile.get("recoil_kick", 1.2))
+	current_recoil += float(profile.get("recoil_kick", 1.2)) * _get_heat_recoil_multiplier()
 	_consume_ammo()
+	_apply_heat_for_shot()
+	_emit_weapon_noise(spawn_position)
 	_spawn_muzzle_flash(direction)
 	_apply_body_recoil_impulse(direction)
 
@@ -2473,9 +2506,27 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 
 	var direction := aim_direction if aim_direction.length_squared() > 0.001 else visual_idle_direction
 	var resolved_base := "unarmed_block_enter" if base_animation == "unarmed_block_exit" else base_animation
+
+	if base_animation == "unarmed_block_exit":
+		# Exit: lower body uses directional locomotion (modular walking),
+		# only upper body plays the exit animation (enter played backwards).
+		var lower_base := _get_modular_lower_body_motion_base()
+		var lower_direction := movement_direction if velocity.length() > 0.01 else visual_idle_direction
+		if not _sync_modular_lower_body_layer(lower_base, lower_direction, 1.0):
+			return false
+		var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)
+		if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
+			return false
+		modular_upper_body_sprite.visible = true
+		modular_upper_body_sprite.flip_h = false
+		modular_upper_body_sprite.speed_scale = guard_exit_speed_scale
+		modular_upper_body_sprite.play_backwards(upper_anim)
+		animated_sprite.visible = false
+		return true
+
+	# Enter / hold / hitreact: both layers play the same animation
 	var lower_anim := AnimationResolver.resolve(resolved_base, direction, modular_lower_body_sprite)
 	var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)
-
 	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
 		return false
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
@@ -2486,12 +2537,8 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 	modular_lower_body_sprite.speed_scale = 1.0
 	modular_upper_body_sprite.visible = true
 	modular_upper_body_sprite.speed_scale = 1.0
-	if base_animation == "unarmed_block_exit":
-		modular_lower_body_sprite.play_backwards(lower_anim)
-		modular_upper_body_sprite.play_backwards(upper_anim)
-	else:
-		modular_lower_body_sprite.play(lower_anim)
-		modular_upper_body_sprite.play(upper_anim)
+	modular_lower_body_sprite.play(lower_anim)
+	modular_upper_body_sprite.play(upper_anim)
 	return true
 
 
@@ -2570,6 +2617,8 @@ func _warn_missing_animation_once(animation_name: String, fallback_name: String)
 
 
 func _has_playable_sprite_animation(sprite_frames: SpriteFrames, animation_name: StringName) -> bool:
+	if sprite_frames == null:
+		return false
 	return sprite_frames.has_animation(animation_name) and sprite_frames.get_frame_count(animation_name) > 0
 
 
@@ -3468,22 +3517,20 @@ func grant_sidearm(definition: OperatorWeaponDefinition = null) -> Dictionary:
 		}
 	_configure_weapon_definition_defaults(sidearm_weapon_definition, "P-9 Sidearm", "ranged", "ranged_unfocused_fire", "ranged_ready")
 	sidearm_slot_equipped = true
-	var sidearm_capacity: int = max(1, sidearm_weapon_definition.get_stat_int("magazine_size", ammo_standard_magazine_size))
-	if _ammo_standard_loaded <= 0:
-		_ammo_standard_loaded = sidearm_capacity
-	elif _ammo_standard_loaded < sidearm_capacity and ammo_standard <= 0:
-		_ammo_standard_loaded = sidearm_capacity
+	_register_weapon_ammo_state(sidearm_weapon_definition, true)
+	var sidearm_type := _get_weapon_ammo_type(sidearm_weapon_definition)
 	var sidearm_reserve: int = _get_sidearm_initial_reserve(sidearm_weapon_definition)
-	if ammo_standard <= 0 and sidearm_reserve > 0:
-		ammo_standard = min(ammo_standard_max, sidearm_reserve)
+	if int(ammo_reserve_by_type.get(sidearm_type, 0)) <= 0 and sidearm_reserve > 0:
+		ammo_reserve_by_type[sidearm_type] = min(int(ammo_capacity_by_type.get(sidearm_type, sidearm_reserve)), sidearm_reserve)
+	_sync_legacy_ammo_fields()
 	_refresh_primary_weapon_state()
 	_update_primary_weapon_visual(false)
 	update_visuals()
 	return {
 		"granted": true,
 		"weapon_id": sidearm_weapon_definition.weapon_id,
-		"loaded": _ammo_standard_loaded,
-		"reserve": ammo_standard,
+		"loaded": int(loaded_ammo_by_weapon_id.get(_get_weapon_state_key(sidearm_weapon_definition), 0)),
+		"reserve": int(ammo_reserve_by_type.get(sidearm_type, 0)),
 	}
 
 
@@ -3496,11 +3543,12 @@ func remove_sidearm() -> Dictionary:
 	var weapon_id := &""
 	if sidearm_weapon_definition != null:
 		weapon_id = sidearm_weapon_definition.weapon_id
-		# Return loaded ammo to reserve
-		var sidearm_capacity: int = max(1, sidearm_weapon_definition.get_stat_int("magazine_size", ammo_standard_magazine_size))
-		if _ammo_standard_loaded > 0:
-			ammo_standard = min(ammo_standard_max, ammo_standard + _ammo_standard_loaded)
-			_ammo_standard_loaded = 0
+		var sidearm_key := _get_weapon_state_key(sidearm_weapon_definition)
+		var sidearm_type := _get_weapon_ammo_type(sidearm_weapon_definition)
+		var loaded := int(loaded_ammo_by_weapon_id.get(sidearm_key, 0))
+		ammo_reserve_by_type[sidearm_type] = min(int(ammo_capacity_by_type.get(sidearm_type, 0)), int(ammo_reserve_by_type.get(sidearm_type, 0)) + loaded)
+		loaded_ammo_by_weapon_id.erase(sidearm_key)
+		_sync_legacy_ammo_fields()
 	
 	sidearm_slot_equipped = false
 	
@@ -4557,23 +4605,79 @@ func _is_authored_melee_body_stance_active() -> bool:
 	return not body_stance_anim.is_empty() and animated_sprite.animation == body_stance_anim
 
 
-func _consume_ammo():
-	_ammo_standard_loaded = max(0, _ammo_standard_loaded - 1)
+func _consume_ammo() -> void:
+	var key := _get_active_weapon_state_key()
+	var cost := _get_current_ammo_per_shot()
+	loaded_ammo_by_weapon_id[key] = max(0, int(loaded_ammo_by_weapon_id.get(key, 0)) - cost)
+	_sync_legacy_ammo_fields()
 
 
 func _initialize_magazines() -> void:
-	var standard_load: int = min(_get_standard_magazine_size(), ammo_standard)
-	_ammo_standard_loaded = max(0, standard_load)
-	ammo_standard = max(0, ammo_standard - standard_load)
-	var heavy_load: int = min(_get_heavy_magazine_size(), ammo_heavy)
-	_ammo_heavy_loaded = max(0, heavy_load)
-	ammo_heavy = max(0, ammo_heavy - heavy_load)
+	ammo_capacity_by_type = {
+		"kinetic_light": ammo_standard_max,
+		"kinetic_heavy": ammo_heavy_max,
+		"energy_cell": 40,
+		"shell": 16,
+		"scrap_charge": 16,
+	}
+	ammo_reserve_by_type = {
+		"kinetic_light": clampi(ammo_standard, 0, ammo_standard_max),
+		"kinetic_heavy": clampi(ammo_heavy, 0, ammo_heavy_max),
+		"energy_cell": 0,
+		"shell": 0,
+		"scrap_charge": 0,
+	}
+	loaded_ammo_by_weapon_id.clear()
+	_register_weapon_ammo_state(primary_weapon_definition, true)
+	if sidearm_slot_equipped:
+		_register_weapon_ammo_state(sidearm_weapon_definition, true)
+	_sync_legacy_ammo_fields()
+
+
+func _normalize_ammo_type(ammo_type: String) -> String:
+	return "kinetic_light" if ammo_type == "kinetic" or ammo_type.is_empty() else ammo_type
+
+
+func _get_weapon_ammo_type(weapon_definition: OperatorWeaponDefinition) -> String:
+	if weapon_definition == null:
+		return "kinetic_light"
+	return _normalize_ammo_type(String(weapon_definition.get_ammo_value("ammo_type", weapon_definition.ammo_type)))
+
+
+func _get_weapon_state_key(weapon_definition: OperatorWeaponDefinition) -> String:
+	if weapon_definition == null:
+		return "fallback_ranged"
+	return String(weapon_definition.weapon_id) if not String(weapon_definition.weapon_id).is_empty() else str(weapon_definition.get_instance_id())
+
+
+func _get_active_weapon_state_key() -> String:
+	return _get_weapon_state_key(_get_active_ranged_weapon_definition())
+
+
+func _register_weapon_ammo_state(weapon_definition: OperatorWeaponDefinition, fill_magazine: bool = false) -> void:
+	if weapon_definition == null:
+		return
+	var ammo_type := _get_weapon_ammo_type(weapon_definition)
+	var max_reserve := int(weapon_definition.get_ammo_value("max_reserve", weapon_definition.max_reserve_ammo))
+	ammo_capacity_by_type[ammo_type] = max(int(ammo_capacity_by_type.get(ammo_type, 0)), max_reserve)
+	if not ammo_reserve_by_type.has(ammo_type):
+		var starting_reserve := int(weapon_definition.get_ammo_value("starting_reserve", weapon_definition.get_ammo_value("reserve", weapon_definition.reserve_ammo)))
+		ammo_reserve_by_type[ammo_type] = clampi(starting_reserve, 0, int(ammo_capacity_by_type[ammo_type]))
+	var key := _get_weapon_state_key(weapon_definition)
+	if not loaded_ammo_by_weapon_id.has(key):
+		loaded_ammo_by_weapon_id[key] = _get_weapon_magazine_size(weapon_definition) if fill_magazine else 0
+
+
+func _get_weapon_magazine_size(weapon_definition: OperatorWeaponDefinition) -> int:
+	if weapon_definition == null:
+		return ammo_standard_magazine_size
+	return max(1, int(weapon_definition.get_ammo_value("magazine_size", weapon_definition.get_ammo_value("capacity", weapon_definition.get_stat_int("magazine_size", weapon_definition.magazine_size)))))
 
 
 func _get_standard_magazine_size() -> int:
 	var weapon_definition := _get_active_ranged_weapon_definition()
 	if weapon_definition != null:
-		return max(1, weapon_definition.get_stat_int("magazine_size", ammo_standard_magazine_size))
+		return _get_weapon_magazine_size(weapon_definition)
 	return ammo_standard_magazine_size
 
 
@@ -4586,11 +4690,22 @@ func _get_current_magazine_size() -> int:
 
 
 func _get_current_loaded_ammo() -> int:
-	return _ammo_standard_loaded
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	_register_weapon_ammo_state(weapon_definition)
+	return int(loaded_ammo_by_weapon_id.get(_get_weapon_state_key(weapon_definition), 0))
 
 
 func _get_current_reserve_ammo() -> int:
-	return ammo_standard
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	_register_weapon_ammo_state(weapon_definition)
+	return int(ammo_reserve_by_type.get(_get_weapon_ammo_type(weapon_definition), 0))
+
+
+func _get_current_ammo_per_shot() -> int:
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	if weapon_definition == null:
+		return 1
+	return max(1, int(weapon_definition.get_ammo_value("ammo_per_shot", weapon_definition.ammo_per_shot)))
 
 
 func _get_sidearm_initial_reserve(weapon_definition: OperatorWeaponDefinition) -> int:
@@ -4598,18 +4713,22 @@ func _get_sidearm_initial_reserve(weapon_definition: OperatorWeaponDefinition) -
 		return 0
 	var weapon_data := weapon_definition.get_weapon_data()
 	var ammo_data: Variant = weapon_data.get("ammo", {})
-	if ammo_data is Dictionary and (ammo_data as Dictionary).has("reserve"):
-		return max(0, int((ammo_data as Dictionary)["reserve"]))
+	if ammo_data is Dictionary:
+		return max(0, int((ammo_data as Dictionary).get("starting_reserve", (ammo_data as Dictionary).get("reserve", weapon_definition.reserve_ammo))))
 	return max(0, weapon_definition.reserve_ammo)
 
 
 func _clamp_loaded_ammo_to_current_weapon() -> void:
 	var capacity := _get_current_magazine_size()
-	if _ammo_standard_loaded <= capacity:
+	var key := _get_active_weapon_state_key()
+	var loaded := int(loaded_ammo_by_weapon_id.get(key, 0))
+	if loaded <= capacity:
 		return
-	var overflow := _ammo_standard_loaded - capacity
-	_ammo_standard_loaded = capacity
-	ammo_standard = min(ammo_standard_max, ammo_standard + overflow)
+	var ammo_type := _get_weapon_ammo_type(_get_active_ranged_weapon_definition())
+	var overflow := loaded - capacity
+	loaded_ammo_by_weapon_id[key] = capacity
+	ammo_reserve_by_type[ammo_type] = min(int(ammo_capacity_by_type.get(ammo_type, 0)), int(ammo_reserve_by_type.get(ammo_type, 0)) + overflow)
+	_sync_legacy_ammo_fields()
 
 
 func _has_loaded_ammo() -> bool:
@@ -4656,10 +4775,15 @@ func _finish_reload() -> void:
 	if not _reload_active:
 		return
 	var capacity: int = _get_current_magazine_size()
-	var needed_standard: int = max(0, capacity - _ammo_standard_loaded)
-	var transfer_standard: int = min(needed_standard, ammo_standard)
-	_ammo_standard_loaded += transfer_standard
-	ammo_standard -= transfer_standard
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	var key := _get_weapon_state_key(weapon_definition)
+	var ammo_type := _get_weapon_ammo_type(weapon_definition)
+	var loaded := int(loaded_ammo_by_weapon_id.get(key, 0))
+	var reserve := int(ammo_reserve_by_type.get(ammo_type, 0))
+	var transfer: int = mini(maxi(0, capacity - loaded), reserve)
+	loaded_ammo_by_weapon_id[key] = loaded + transfer
+	ammo_reserve_by_type[ammo_type] = reserve - transfer
+	_sync_legacy_ammo_fields()
 	_cancel_reload()
 
 
@@ -4669,12 +4793,8 @@ func _cancel_reload() -> void:
 
 
 func add_ammo(standard: int, heavy: int) -> Dictionary:
-	var old_std = ammo_standard
-	var old_hvy = ammo_heavy
-	ammo_standard = min(ammo_standard_max, ammo_standard + max(0, standard))
-	ammo_heavy = min(ammo_heavy_max, ammo_heavy + max(0, heavy))
-	var gained_std = ammo_standard - old_std
-	var gained_hvy = ammo_heavy - old_hvy
+	var gained_std := add_ammo_type("kinetic_light", standard)
+	var gained_hvy := add_ammo_type("kinetic_heavy", heavy)
 	print("AMMO CACHE COLLECTED: +", gained_std, " STD / +", gained_hvy, " HVY")
 	return {
 		"standard": gained_std,
@@ -4682,8 +4802,134 @@ func add_ammo(standard: int, heavy: int) -> Dictionary:
 	}
 
 
+func add_ammo_type(ammo_type: String, amount: int) -> int:
+	var normalized := _normalize_ammo_type(ammo_type)
+	var capacity := int(ammo_capacity_by_type.get(normalized, 0))
+	if capacity <= 0:
+		return 0
+	var old_amount := int(ammo_reserve_by_type.get(normalized, 0))
+	ammo_reserve_by_type[normalized] = clampi(old_amount + max(0, amount), 0, capacity)
+	_sync_legacy_ammo_fields()
+	return int(ammo_reserve_by_type[normalized]) - old_amount
+
+
+func _sync_legacy_ammo_fields() -> void:
+	ammo_standard = int(ammo_reserve_by_type.get("kinetic_light", ammo_standard))
+	ammo_heavy = int(ammo_reserve_by_type.get("kinetic_heavy", ammo_heavy))
+	ammo_standard_max = int(ammo_capacity_by_type.get("kinetic_light", ammo_standard_max))
+	ammo_heavy_max = int(ammo_capacity_by_type.get("kinetic_heavy", ammo_heavy_max))
+	_ammo_standard_loaded = int(loaded_ammo_by_weapon_id.get(_get_active_weapon_state_key(), _ammo_standard_loaded))
+
+
+func _get_active_heat_key() -> String:
+	return _get_active_weapon_state_key()
+
+
+func _get_active_weapon_heat() -> float:
+	return float(weapon_heat_by_id.get(_get_active_heat_key(), 0.0))
+
+
+func _is_active_weapon_overheated() -> bool:
+	return float(weapon_overheat_by_id.get(_get_active_heat_key(), 0.0)) > 0.0
+
+
+func _apply_heat_for_shot() -> void:
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	if weapon_definition == null or not weapon_definition.get_heat_bool("enabled", weapon_definition.heat_enabled):
+		return
+	var key := _get_weapon_state_key(weapon_definition)
+	var heat_max := maxf(1.0, weapon_definition.get_heat_float("max", weapon_definition.heat_max))
+	var heat_per_shot := weapon_definition.get_heat_float("per_shot", weapon_definition.heat_per_shot) * weapon_definition.heat_per_shot_mult
+	var new_heat := minf(heat_max, float(weapon_heat_by_id.get(key, 0.0)) + heat_per_shot)
+	weapon_heat_by_id[key] = new_heat
+	weapon_heat_delay_by_id[key] = weapon_definition.get_heat_float("decay_delay_sec", weapon_definition.heat_decay_delay_sec)
+	var threshold := weapon_definition.get_heat_float("overheat_threshold", weapon_definition.overheat_threshold)
+	if new_heat >= threshold and float(weapon_overheat_by_id.get(key, 0.0)) <= 0.0:
+		weapon_overheat_by_id[key] = weapon_definition.get_heat_float("overheat_lockout_sec", weapon_definition.overheat_lockout_sec) * weapon_definition.overheat_lockout_mult
+
+
+func _update_weapon_heat(delta: float) -> void:
+	for weapon_variant in [primary_weapon_definition, sidearm_weapon_definition]:
+		if not (weapon_variant is OperatorWeaponDefinition):
+			continue
+		var weapon_definition := weapon_variant as OperatorWeaponDefinition
+		if not weapon_definition.get_heat_bool("enabled", weapon_definition.heat_enabled):
+			continue
+		var key := _get_weapon_state_key(weapon_definition)
+		var delay := maxf(0.0, float(weapon_heat_delay_by_id.get(key, 0.0)) - delta)
+		weapon_heat_delay_by_id[key] = delay
+		var previous_lockout := float(weapon_overheat_by_id.get(key, 0.0))
+		var lockout := maxf(0.0, previous_lockout - delta)
+		weapon_overheat_by_id[key] = lockout
+		if delay > 0.0:
+			continue
+		var decay := weapon_definition.get_heat_float("decay_per_sec", weapon_definition.heat_decay_per_sec) * weapon_definition.heat_decay_mult
+		if lockout > 0.0:
+			decay *= 1.5
+		weapon_heat_by_id[key] = maxf(0.0, float(weapon_heat_by_id.get(key, 0.0)) - decay * delta)
+		if previous_lockout > 0.0 and lockout <= 0.0:
+			var heat_max := maxf(1.0, weapon_definition.get_heat_float("max", weapon_definition.heat_max))
+			weapon_heat_by_id[key] = minf(float(weapon_heat_by_id[key]), heat_max * 0.7)
+
+
+func _get_heat_ratio() -> float:
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	if weapon_definition == null:
+		return 0.0
+	return clampf(_get_active_weapon_heat() / maxf(1.0, weapon_definition.get_heat_float("max", weapon_definition.heat_max)), 0.0, 1.0)
+
+
+func _get_heat_spread_multiplier() -> float:
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	if weapon_definition == null:
+		return 1.0
+	return lerpf(1.0, weapon_definition.get_heat_float("spread_mult_at_max", weapon_definition.heat_spread_mult_at_max), _get_heat_ratio())
+
+
+func _get_heat_recoil_multiplier() -> float:
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	if weapon_definition == null:
+		return 1.0
+	return lerpf(1.0, weapon_definition.get_heat_float("recoil_mult_at_max", weapon_definition.heat_recoil_mult_at_max), _get_heat_ratio())
+
+
+func _get_movement_spread_multiplier() -> float:
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	if weapon_definition == null:
+		return 1.0
+	if is_sneaking:
+		return weapon_definition.get_handling_float("sneak_spread_mult", 0.75)
+	if is_sprinting:
+		return weapon_definition.get_handling_float("sprinting_spread_mult", 2.25)
+	if velocity.length_squared() > 1.0:
+		return weapon_definition.get_handling_float("walking_spread_mult", 1.35)
+	return weapon_definition.get_handling_float("standing_spread_mult", 0.85)
+
+
+func _emit_weapon_noise(position: Vector2) -> void:
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	if weapon_definition == null:
+		return
+	var bus := get_node_or_null("/root/NoiseEventBus")
+	if bus == null or not bus.has_method("emit_at"):
+		return
+	var suppressed := weapon_definition.get_noise_bool("suppressed", weapon_definition.suppressed)
+	var radius := weapon_definition.get_noise_float("shot_radius_px", weapon_definition.shot_noise_radius_px)
+	if suppressed:
+		radius *= weapon_definition.get_noise_float("suppressed_radius_mult", weapon_definition.suppressed_radius_mult)
+	bus.call("emit_at", self, position, radius, &"gunshot", weapon_definition.get_noise_float("alert_threat_value", weapon_definition.alert_threat_value), weapon_definition.get_noise_float("shot_loudness", weapon_definition.shot_loudness), suppressed, &"player")
+
+
 func get_weapon_status() -> Dictionary:
 	var profile := _get_current_ranged_profile()
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	var ammo_type := _get_weapon_ammo_type(weapon_definition)
+	var heat_max := maxf(1.0, weapon_definition.get_heat_float("max", weapon_definition.heat_max)) if weapon_definition != null else 100.0
+	var heat := _get_active_weapon_heat()
+	var noise_radius := weapon_definition.get_noise_float("shot_radius_px", weapon_definition.shot_noise_radius_px) if weapon_definition != null else 0.0
+	var is_suppressed := weapon_definition.get_noise_bool("suppressed", weapon_definition.suppressed) if weapon_definition != null else false
+	if is_suppressed and weapon_definition != null:
+		noise_radius *= weapon_definition.get_noise_float("suppressed_radius_mult", weapon_definition.suppressed_radius_mult)
 	var cooldown_total = max(last_fire_cooldown, float(profile["cooldown"]))
 	var weapon_name := "CARBINE"
 	var combat_profile := get_current_combat_profile()
@@ -4708,6 +4954,21 @@ func get_weapon_status() -> Dictionary:
 		"cooldown_remaining": fire_cooldown_remaining,
 		"cooldown_total": cooldown_total,
 		"reloading": _reload_active,
+		"last_fire_failure": String(last_ranged_fire_failure),
+		"ammo_type": ammo_type,
+		"loaded_ammo": _get_current_loaded_ammo(),
+		"reserve_ammo": _get_current_reserve_ammo(),
+		"max_reserve_ammo": int(ammo_capacity_by_type.get(ammo_type, 0)),
+		"magazine_size": _get_current_magazine_size(),
+		"heat": heat,
+		"heat_max": heat_max,
+		"heat_ratio": heat / heat_max,
+		"overheated": _is_active_weapon_overheated(),
+		"overheat_remaining": float(weapon_overheat_by_id.get(_get_active_heat_key(), 0.0)),
+		"noise_radius_px": noise_radius,
+		"suppressed": is_suppressed,
+		"effective_range_px": float(profile.get("effective_range_px", 0.0)),
+		"max_range_px": float(profile.get("max_range_px", 0.0)),
 		"ammo_standard": ammo_standard,
 		"ammo_heavy": ammo_heavy,
 		"ammo_standard_loaded": _ammo_standard_loaded,
@@ -4733,6 +4994,11 @@ func get_stealth_snapshot() -> Dictionary:
 		"visibility_mult": stealth_visibility_mult,
 		"global_position": global_position,
 		"velocity": velocity,
+		"is_sprinting": is_sprinting,
+		"is_firing": _is_ranged_fire_animation_active() or not _pending_ranged_shot.is_empty(),
+		"is_dodging": _dodge_active or _dodge_recovery_active,
+		"cover_visibility_mult": 1.0,
+		"light_visibility_mult": 1.0,
 	}
 
 
@@ -4740,7 +5006,7 @@ func _update_stealth_noise_snapshot(moving: bool) -> void:
 	var attacking := _melee_active or attack_phase != AttackPhase.NONE
 	var firing := _is_ranged_fire_animation_active() or _pending_ranged_shot.size() > 0
 	if firing:
-		current_noise_radius_px = 260.0
+		current_noise_radius_px = 45.0
 		stealth_visibility_mult = 1.4
 	elif attacking:
 		current_noise_radius_px = 100.0
@@ -4756,7 +5022,7 @@ func _update_stealth_noise_snapshot(moving: bool) -> void:
 		stealth_visibility_mult = 1.0
 	else:
 		current_noise_radius_px = 10.0
-		stealth_visibility_mult = 1.0
+		stealth_visibility_mult = 0.9
 
 
 func _get_move_input_vector() -> Vector2:
@@ -4830,7 +5096,11 @@ func _create_weapon_from_factory(weapon_id: String) -> void:
 		primary_weapon_definition = weapon_factory.create_weapon_definition(weapon_id)
 		_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_unfocused_fire", "ranged_ready")
 		_rebuild_armed_weapon_list()
-		_initialize_magazines()
+		if ammo_reserve_by_type.is_empty():
+			_initialize_magazines()
+		else:
+			_register_weapon_ammo_state(primary_weapon_definition, true)
+			_sync_legacy_ammo_fields()
 		print("[Operator] Loaded weapon: ", weapon_id, " | Magazine: ", _get_current_magazine_size())
 
 

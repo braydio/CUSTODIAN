@@ -105,8 +105,8 @@ func _validate_sidearm_profile() -> void:
 	_assert_true(SIDEARM_DEFINITION.weapon_type == &"ranged_sidearm", "sidearm should not masquerade as a 2h ranged primary")
 	_assert_true(SIDEARM_DEFINITION.weapon_data_path == "res://content/weapons/data/pistol_mk1.json", "sidearm should use the pistol default profile")
 	_assert_true(SIDEARM_DEFINITION.animation_map.get("ranged_stance", "") == "ranged_2h_stance", "sidearm V1 should use current ranged placeholder stance")
-	_assert_true(is_equal_approx(SIDEARM_DEFINITION.get_stat_float("damage", 0.0), 18.0), "sidearm should resolve to 18 damage")
-	_assert_true(SIDEARM_DEFINITION.get_stat_int("magazine_size", 0) == 12, "sidearm should resolve to 12 magazine size")
+	_assert_true(is_equal_approx(SIDEARM_DEFINITION.get_stat_float("damage", 0.0), 8.0), "sidearm should resolve to the tuned 8 damage")
+	_assert_true(SIDEARM_DEFINITION.get_stat_int("magazine_size", 0) == 10, "sidearm should resolve to the tuned 10-round magazine")
 
 
 func _validate_operator_ranged_ready(root: Node) -> void:
@@ -169,8 +169,8 @@ func _validate_sidearm_ranged_ready(operator: Node) -> void:
 	_assert_true(not bool(operator.call("_is_using_ranged_2h_primary")), "sidearm should not report as the 2h primary")
 	_assert_true(bool(operator.call("_is_using_ranged_weapon_visual")), "sidearm should still use the ranged visual presentation")
 	var profile: Dictionary = operator.call("_get_current_ranged_profile")
-	_assert_true(is_equal_approx(float(profile.get("damage", 0.0)), 18.0), "sidearm should read pistol damage profile")
-	_assert_true(operator.call("_get_current_magazine_size") == 12, "sidearm should read pistol magazine size")
+	_assert_true(is_equal_approx(float(profile.get("damage", 0.0)), 8.0), "sidearm should read tuned pistol damage profile")
+	_assert_true(operator.call("_get_current_magazine_size") == 10, "sidearm should read tuned pistol magazine size")
 	operator.call("_exit_ranged_ready")
 
 

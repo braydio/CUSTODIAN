@@ -98,4 +98,4 @@ PY
 - Persist `sundered_gate_key`, Main Gate open state, and Great Hall door state if connected maps become save/load persistent.
 - Add encounter composition and tactical cover review after the layout stabilizes visually.
 - Consider a dedicated TileSet/TileMapLayer authoring path if the JSON/Sprite2D level data becomes difficult to inspect or edit.
-- Replace temporary review spawn behavior in `ContractWorldLoader.debug_start_near_sundered_keep_entrance` when Sundered Keep review no longer needs immediate access.
+- Keep `ContractWorldLoader.debug_start_near_sundered_keep_entrance` disabled for normal contract progression; re-enable it only for focused Sundered Keep visual review.

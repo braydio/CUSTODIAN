@@ -20,7 +20,7 @@ Normal gameplay keeps debug diagnostics off the HUD. Debug mode now opens a tabb
 
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active design/spec docs: `design/20_features/in_progress/BLACK_RELIQUARY_UI.md`
+- Active design/spec docs: `design/02_features/terminal/BLACK_RELIQUARY_UI.md`
 - Active runtime/docs files: `custodian/game/ui/hud/`, `custodian/docs/ai_context/*`
 - Historical reference only: legacy Python runtime
 

@@ -1,0 +1,22 @@
+{
+  "source": "operator__modular_lower_body__unarmed__fast_strike_01__ne__3f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/new_operator/modular/fast_attack/operator__modular_lower_body__unarmed__fast_strike_01__ne__3f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 3
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "post_process": [
+    "operator_modular_runtime"
+  ]
+}

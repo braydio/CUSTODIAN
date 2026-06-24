@@ -21,6 +21,11 @@
     "damage": 45,
     "fire_rate_rps": 1.2,
     "range_px": 60,
+    "effective_range_px": 90,
+    "max_range_px": 180,
+    "damage_falloff_start_px": 80,
+    "damage_falloff_end_px": 180,
+    "min_falloff_damage_mult": 0.3,
     "accuracy": 0.45,
     "spread_deg": 18.0,
     "recoil": 1.2,
@@ -35,9 +40,11 @@
   },
 
   "ammo": {
-    "ammo_type": "kinetic",
-    "capacity": 6,
-    "reserve": 24,
+    "ammo_type": "shell",
+    "magazine_size": 6,
+    "starting_reserve": 12,
+    "max_reserve": 16,
+    "ammo_per_shot": 1,
     "reload_style": "magazine"
   },
 
@@ -49,6 +56,9 @@
     "movement_accuracy_penalty": 0.25,
     "sprint_allowed": false
   },
+
+  "heat": {"enabled": true, "max": 100, "per_shot": 24, "decay_per_sec": 24, "decay_delay_sec": 0.35, "overheat_threshold": 100, "overheat_lockout_sec": 1.25, "spread_mult_at_max": 1.5, "recoil_mult_at_max": 1.4},
+  "noise": {"shot_radius_px": 480, "shot_loudness": 1.15, "suppressed": false, "suppressed_radius_mult": 0.35, "alert_threat_value": 1.15},
 
   "fire_modes": ["pump"],
 

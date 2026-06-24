@@ -10,8 +10,8 @@ signal next_drop_countdown(seconds: float)
 @export var min_drops_per_wave: int = 1
 @export var max_drops_per_wave: int = 3
 
-@export var standard_ammo_per_drop: int = 28
-@export var heavy_ammo_per_drop: int = 8
+@export var standard_ammo_per_drop: int = 16
+@export var heavy_ammo_per_drop: int = 3
 
 @export var container_path: NodePath = NodePath("/root/GameRoot/World/Items")
 

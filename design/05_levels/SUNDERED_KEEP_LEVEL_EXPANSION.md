@@ -22,7 +22,7 @@ The current composition pass prioritizes silhouette and route logic over new ass
 
 The causeway edge line uses `custodian/content/tiles/sundered_keep/entrance/entrance_causeway_edge_*.png` for cardinal and diagonal exposed borders. The southern submerged continuation uses `entrance_causeway_broken_gap_01` plus collision blockers so it reads as the old mainland route without becoming walkable.
 
-For current visual review, `ContractWorldLoader.debug_start_near_sundered_keep_entrance` is enabled and places the Operator beside the main-map Sundered Keep travel gate after contract generation.
+Normal contract startup now leaves the Operator at the generated-map spawn so the procedural world, road, terrain, resource, vehicle, and connected-map placement layers are visible before Sundered Keep entry. `ContractWorldLoader.debug_start_near_sundered_keep_entrance` and `place_debug_sundered_keep_gateway` remain available as opt-in review flags, but are disabled by default.
 
 ## Return Mooring
 
@@ -66,7 +66,7 @@ godot --headless --script res://tools/validation/sundered_keep_layout_smoke.gd
 ## Future Work
 
 - Persist Sundered Keep key/gate state across save/load and connected-map unloading.
-- Disable `ContractWorldLoader.debug_start_near_sundered_keep_entrance` before normal contract progression review.
+- Re-enable `ContractWorldLoader.debug_start_near_sundered_keep_entrance` only for focused Sundered Keep visual review, then disable it again before normal contract progression checks.
 - Add encounter composition and combat pacing now that the courtyard loop and Great Hall choke points exist.
 - Continue visual playtesting for cliff-edge readability and remaining rectangular wall/floor impressions.
 - Decide whether to mirror the authored Sprite2D grammar into a TileSet/TileMapLayer workflow for easier long-term tile editing.

@@ -9,6 +9,8 @@ const AMBIENT_ACTIVITY := &"ambient_activity"
 const INVESTIGATE := &"investigate"
 const NOTICE := &"notice"
 const ENGAGE_OPERATOR := &"engage_operator"
+const SEARCH := &"search"
+const RETURN_HOME := &"return_home"
 const SEEK_OBJECTIVE := &"seek_objective"
 const OPEN_STORAGE := &"open_storage"
 const STEAL_RESOURCES := &"steal_resources"
@@ -82,6 +84,10 @@ func physics_update(enemy: Node2D, delta: float) -> bool:
 			_update_notice(enemy, delta)
 		ENGAGE_OPERATOR:
 			_update_engage_operator(enemy, delta)
+		SEARCH:
+			_update_search(enemy, delta)
+		RETURN_HOME:
+			_update_return_home(enemy, delta)
 		SEEK_OBJECTIVE:
 			_update_seek_objective(enemy, delta)
 		OPEN_STORAGE:
@@ -145,6 +151,15 @@ func force_notice(operator: Node = null) -> void:
 		blackboard.has_seen_operator = true
 		blackboard.is_alerted = true
 	change_state(NOTICE)
+
+
+func setup_ambient_home(home_position: Vector2, camp_id: StringName, leash_radius_px: float) -> void:
+	_resolve_components()
+	if blackboard == null:
+		return
+	blackboard.home_position = home_position
+	blackboard.camp_id = camp_id
+	blackboard.leash_radius_px = maxf(64.0, leash_radius_px)
 
 
 func force_ambient(anchor: Node) -> void:
@@ -281,6 +296,15 @@ func _update_engage_operator(enemy: Node2D, _delta: float) -> void:
 			change_state(INVESTIGATE)
 		else:
 			change_state(PATROL)
+		return
+	if not blackboard.target_visible:
+		blackboard.pursuit_timer = maxf(0.0, blackboard.pursuit_timer - _delta)
+		if enemy.global_position.distance_to(blackboard.home_position) > blackboard.leash_radius_px or blackboard.pursuit_timer <= 0.0:
+			blackboard.search_timer = float(profile.get("investigation_memory_sec"))
+			blackboard.search_point_index = 0
+			change_state(SEARCH)
+			return
+		enemy.call("behavior_move_toward", blackboard.target_last_seen_position, profile.engage_speed)
 		return
 	enemy.set("target", operator)
 	var attack_range := 40.0
@@ -436,6 +460,40 @@ func _apply_objective_choice(objective: Dictionary) -> void:
 		_:
 			if current_state == IDLE:
 				change_state(PATROL)
+
+
+func _update_search(enemy: Node2D, delta: float) -> void:
+	if blackboard.target_visible and blackboard.operator_ref != null:
+		change_state(ENGAGE_OPERATOR)
+		return
+	blackboard.search_timer = maxf(0.0, blackboard.search_timer - delta)
+	if blackboard.search_timer <= 0.0 or enemy.global_position.distance_to(blackboard.home_position) > blackboard.leash_radius_px:
+		blackboard.is_alerted = false
+		blackboard.operator_ref = null
+		change_state(RETURN_HOME)
+		return
+	var offsets: Array[Vector2] = [Vector2.ZERO, Vector2(48, 0), Vector2(-48, 0), Vector2(0, 48), Vector2(0, -48)]
+	var index: int = int(blackboard.search_point_index) % offsets.size()
+	var search_point: Vector2 = blackboard.target_last_seen_position + offsets[index]
+	if enemy.global_position.distance_to(search_point) <= 18.0:
+		blackboard.search_point_index += 1
+		index = blackboard.search_point_index % offsets.size()
+		search_point = blackboard.target_last_seen_position + offsets[index]
+	enemy.call("behavior_move_toward", search_point, profile.investigate_speed)
+
+
+func _update_return_home(enemy: Node2D, _delta: float) -> void:
+	if blackboard.is_suspicious and blackboard.investigation_timer > 0.0:
+		var heard_within_leash: bool = blackboard.home_position.distance_to(blackboard.investigation_position) <= blackboard.leash_radius_px
+		if heard_within_leash:
+			change_state(INVESTIGATE)
+			return
+	if enemy.global_position.distance_to(blackboard.home_position) <= 18.0:
+		enemy.call("behavior_stop")
+		blackboard.reset_alerts()
+		change_state(PATROL)
+		return
+	enemy.call("behavior_move_toward", blackboard.home_position, profile.patrol_speed)
 
 
 func _resolve_components() -> void:

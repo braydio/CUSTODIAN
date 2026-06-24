@@ -1,6 +1,6 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://od2538tpylf4"]
 
-[ext_resource type="Texture2D" uid="uid://btyhk65uibd24" path="res://content/tiles/encounters/ritualant_set/black_water_fountain__pulse_01__4f__160x160.png" id="1_water_sheet"]
+[ext_resource type="Texture2D" uid="uid://c2k5684k6hvfo" path="res://content/tiles/encounters/ritualant_set/black_water_fountain__pulse_01__4f__160x160.png" id="1_water_sheet"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_water_0"]
 atlas = ExtResource("1_water_sheet")
@@ -33,7 +33,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_water_3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }]

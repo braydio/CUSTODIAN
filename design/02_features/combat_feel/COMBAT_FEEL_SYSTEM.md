@@ -161,8 +161,8 @@ modular action layers are supplied.
 Offhand sidearm:
 
 - The Operator owns a separate `sidearm_weapon_definition` inventory slot.
-- The sidearm slot starts locked. Holding offhand secondary while melee/unarmed is selected routes to parry/guard until the P-9 Field Sidearm is recovered from the Sundered Keep Great Hall field-retention locker.
-- Looting the locker calls `Operator.grant_sidearm(...)`, equips the sidearm fallback slot, and initializes its loaded/reserve ammunition without changing the current melee/unarmed selection.
+- The sidearm slot starts empty. Holding offhand secondary while melee/unarmed is selected routes to parry/guard until the recovered P-9 Field Sidearm is explicitly equipped from the status/inventory Equipment page.
+- Looting the Sundered Keep Great Hall field-retention locker adds `p9_sidearm` to carried `InventoryManager` equipment. Equipping it fills the sidearm slot and calls `Operator.grant_sidearm(...)`; unequipping clears the slot, calls `remove_sidearm()`, and restores parry/guard.
 - If the currently selected/equipped weapon is ranged, held ranged-ready uses it.
 - If the selected weapon is melee/unarmed and the sidearm slot is equipped, held offhand secondary uses the default `sidearm_pistol` profile from `pistol_mk1.json`, even when a carbine is carried in another loadout slot.
 - Sidearm-ready is visually exclusive from primary-ranged ready: the carried carbine/primary weapon overlay and its FX are hidden while the baked modular sidearm action stack is active.

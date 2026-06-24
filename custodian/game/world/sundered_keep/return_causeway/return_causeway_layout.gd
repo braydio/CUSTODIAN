@@ -20,6 +20,10 @@ class_name ReturnCausewayLayout
 const TILE_SIZE := 32.0
 const MAP_SIZE_TILES := Vector2i(96, 72)
 const ELEVATION_STEP_PX := 24.0
+const DISTANT_KEEP_BACKGROUND_PATH := "res://content/backgrounds/sundered_keep/distant_sundered_keep.png"
+const DISTANT_KEEP_SCROLL_SCALE := Vector2(0.18, 0.12)
+const FAR_MIST_SCROLL_SCALE := Vector2(0.28, 0.18)
+const DISTANT_KEEP_TINT := Color(0.78, 0.82, 0.88, 0.76)
 
 # Asset catalog.
 const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
@@ -142,6 +146,7 @@ func _build_once() -> void:
 
 	_create_layers()
 	_ensure_elevation_map()
+	_build_parallax_backdrop()
 	_build_ocean_backdrop()
 	_build_arrival_beach()
 	_build_return_mooring()
@@ -187,6 +192,60 @@ func _create_layers() -> void:
 
 
 # -- Sector Builders -----------------------------------------------------------
+
+func _build_parallax_backdrop() -> void:
+	var texture := _load_texture(DISTANT_KEEP_BACKGROUND_PATH)
+	if texture == null:
+		return
+
+	var map_pixel_size: Vector2 = Vector2(float(MAP_SIZE_TILES.x) * TILE_SIZE, float(MAP_SIZE_TILES.y) * TILE_SIZE)
+
+	var parallax_root := Node2D.new()
+	parallax_root.name = "ParallaxRoot"
+	parallax_root.z_as_relative = false
+	parallax_root.z_index = -128
+	add_child(parallax_root)
+
+	var distant_keep_layer := Parallax2D.new()
+	distant_keep_layer.name = "DistantKeep_Parallax2D"
+	distant_keep_layer.scroll_scale = DISTANT_KEEP_SCROLL_SCALE
+	distant_keep_layer.z_as_relative = false
+	distant_keep_layer.z_index = -126
+	parallax_root.add_child(distant_keep_layer)
+
+	var distant_keep := Sprite2D.new()
+	distant_keep.name = "DistantSunderedKeepLandmark"
+	distant_keep.texture = texture
+	distant_keep.centered = true
+	distant_keep.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	distant_keep.texture_repeat = CanvasItem.TEXTURE_REPEAT_DISABLED
+	distant_keep.modulate = DISTANT_KEEP_TINT
+	distant_keep.position = Vector2(map_pixel_size.x * 0.5, 520.0)
+	distant_keep.scale = Vector2.ONE
+	distant_keep.z_as_relative = false
+	distant_keep.z_index = -126
+	distant_keep_layer.add_child(distant_keep)
+
+	var mist_layer := Parallax2D.new()
+	mist_layer.name = "FarMist_Parallax2D"
+	mist_layer.scroll_scale = FAR_MIST_SCROLL_SCALE
+	mist_layer.z_as_relative = false
+	mist_layer.z_index = -112
+	parallax_root.add_child(mist_layer)
+
+	var mist_band := Polygon2D.new()
+	mist_band.name = "DistantKeepBaseMist"
+	mist_band.polygon = PackedVector2Array([
+		Vector2(-TILE_SIZE * 2.0, 765.0),
+		Vector2(map_pixel_size.x + TILE_SIZE * 2.0, 765.0),
+		Vector2(map_pixel_size.x + TILE_SIZE * 2.0, 960.0),
+		Vector2(-TILE_SIZE * 2.0, 960.0),
+	])
+	mist_band.color = Color(0.09, 0.12, 0.15, 0.58)
+	mist_band.z_as_relative = false
+	mist_band.z_index = -112
+	mist_layer.add_child(mist_band)
+
 
 func _build_ocean_backdrop() -> void:
 	# Full-map dark ocean backdrop.

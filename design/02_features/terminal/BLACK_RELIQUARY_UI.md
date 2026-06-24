@@ -1,7 +1,7 @@
 # Black Reliquary UI
 
 Status: complete  
-Last updated: 2026-06-06
+Last updated: 2026-06-21
 
 ## Summary
 
@@ -32,14 +32,20 @@ Black Reliquary is the current CUSTODIAN gothic/brass runtime UI style. It repla
 
 The live inventory overlay is a Black Reliquary field ledger, not a generic RPG
 backpack or fabrication menu. It reads carried stackable/key/lore items from the
-autoloaded `InventoryManager`; resources and build tokens remain owned by their
-separate ledgers.
+autoloaded `InventoryManager` and presents `ResourceLedger` materials read-only;
+resource and build-token simulation remain owned by their separate ledgers.
 
 Required presentation:
 
 - full-screen darkened backdrop with a centered wide reliquary frame
-- compact category rail, carried-item grid, and selected-item detail inspector
-- readable item name, classification, count, rarity, description, and provenance
+- shortened single-line header and compact page tabs
+- slim category rail plus a truthful filter/sort/view status row
+- deterministic class/name ordering and category-specific empty-state copy
+- fixed 136x154 item cards with dedicated icon, two-line name, quantity, and
+  type-stamp regions so text never overlaps art
+- class-specific framing, distinct selected/hovered/disabled states, and no
+  stack count on key-object cards
+- readable item name, classification, count, use, description, and provenance
 - keyboard/mouse and controller focus support
 - empty-state copy that still reads as an intentional CUSTODIAN interface
 - production assets resolved through a centralized inventory asset catalog
@@ -49,6 +55,9 @@ Required presentation:
   location/phase/objective/key/gate/return snapshots, and vitals context
 - a second page with a quest/history log that records the same status updates in
   readable chronological form
+- an Equipment page whose sidearm slot moves a carried P-9 into/out of
+  `InventoryManager` equipment and calls the Operator equip-time hooks; recovery
+  alone must never activate the sidearm combat action
 
 The overlay must connect to `/root/InventoryManager` and update when its
 `inventory_changed` signal fires. The older local `Inventory` resource remains a
@@ -94,3 +103,19 @@ godot --headless --script res://tools/validation/sundered_keep_hud_scope_smoke.g
 ```
 
 The smoke tests check the Black Reliquary asset root, required panel/icon/prompt/minimap assets, reusable HUD/component scenes, live minimap mounting, and Sundered Keep authored minimap data export.
+
+## Next Agent Slice
+
+Goal: perform an in-editor visual review at supported target resolutions and
+replace fallback inventory panel/slot/icon art when production assets arrive.
+
+Files: `custodian/game/ui/inventory/inventory_ui.gd`,
+`custodian/content/ui/inventory/runtime/`, and the runtime asset manifest.
+
+Constraints: keep all text live, keep inventory/resource/equipment authority in
+their existing runtime systems, and preserve controller focus plus P-9 equipment
+gating.
+
+Acceptance: no card text overlaps at target resolutions; category, hover,
+selection, disabled, empty, and equipment states remain readable; focused UI and
+sidearm smoke tests pass.

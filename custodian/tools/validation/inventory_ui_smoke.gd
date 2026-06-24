@@ -3,6 +3,18 @@ extends SceneTree
 const INVENTORY_SCENE := "res://game/ui/inventory/inventory_ui.tscn"
 const ASSET_MANIFEST := "res://content/ui/inventory/runtime/inventory_ui_asset_manifest.json"
 
+class MockOperator:
+	extends Node
+	var sidearm_equipped := false
+
+	func grant_sidearm(_definition: Resource = null) -> Dictionary:
+		sidearm_equipped = true
+		return {"granted": true}
+
+	func remove_sidearm() -> Dictionary:
+		sidearm_equipped = false
+		return {"released": true}
+
 
 func _initialize() -> void:
 	var inventory_manager := root.get_node_or_null("InventoryManager")
@@ -11,6 +23,10 @@ func _initialize() -> void:
 		inventory_manager.call("clear")
 		inventory_manager.call("add_item", &"faint_recollection", 2)
 		inventory_manager.call("add_item", &"sundered_gate_key", 1)
+		inventory_manager.call("add_item", &"p9_sidearm", 1)
+	var mock_operator := MockOperator.new()
+	mock_operator.add_to_group("player")
+	root.add_child(mock_operator)
 	var resource_ledger := root.get_node_or_null("ResourceLedger")
 	_assert(resource_ledger != null, "ResourceLedger autoload missing")
 
@@ -28,10 +44,12 @@ func _initialize() -> void:
 	var status_page := _find_node_named(inventory_ui, "StatusPage") as Control
 	var history_page := _find_node_named(inventory_ui, "HistoryPage") as Control
 	var ledger_page := _find_node_named(inventory_ui, "LedgerPage") as Control
+	var equipment_page := _find_node_named(inventory_ui, "EquipmentPage") as Control
 	_assert(status_page != null, "status page root missing")
 	_assert(_find_node_named(inventory_ui, "StatusButton") != null, "status tab button missing")
 	_assert(_find_node_named(inventory_ui, "HistoryButton") != null, "history tab button missing")
 	_assert(_find_node_named(inventory_ui, "LedgerButton") != null, "ledger tab button missing")
+	_assert(_find_node_named(inventory_ui, "EquipmentButton") != null, "equipment tab button missing")
 	_assert(status_page.visible, "inventory did not open to the status page")
 	_assert(_find_node_named(inventory_ui, "HistoryLog") != null, "history log control missing")
 	inventory_ui.call("set_location", "SUNDERED KEEP FRONT GATE")
@@ -53,6 +71,37 @@ func _initialize() -> void:
 	_assert(ledger_page != null and ledger_page.visible, "ledger page did not become visible")
 	_assert(_find_node_named(inventory_ui, "Item_faint_recollection") != null, "live inventory item was not rendered")
 	_assert(_find_node_named(inventory_ui, "Item_sundered_gate_key") != null, "Sundered Gate Key was not rendered")
+	_assert(_find_node_named(inventory_ui, "Item_p9_sidearm") != null, "P-9 equipment item was not rendered")
+	var item_grid := _find_node_named(inventory_ui, "ItemGrid")
+	_assert(item_grid != null and not item_grid.get_children().is_empty(), "ledger item grid missing")
+	_assert(item_grid != null and item_grid.get_child(0).name == "Item_sundered_gate_key", "ledger should sort by class and display name")
+	var key_quantity := (_find_node_named(inventory_ui, "Item_sundered_gate_key") as Button).get_node_or_null("ItemQuantity") as Label
+	_assert(key_quantity != null and not key_quantity.visible, "key-object cards should not display stack quantity")
+	var p9_name := (_find_node_named(inventory_ui, "Item_p9_sidearm") as Button).get_node_or_null("ItemName") as Label
+	_assert(p9_name != null and p9_name.text == "P-9 FIELD SIDEARM", "item card should keep its name in a dedicated text region")
+	var p9_icon := (_find_node_named(inventory_ui, "Item_p9_sidearm") as Button).get_node_or_null("ItemIcon") as TextureRect
+	_assert(p9_icon != null and p9_icon.texture != null and p9_icon.texture.resource_path.ends_with("icon_p9_sidearm.svg"), "P-9 should resolve its placeholder sidearm icon")
+	inventory_ui.call("_select_category", "relic")
+	await process_frame
+	_assert(_find_label_with_text(inventory_ui, "NO RECOVERED RELICS REGISTERED") != null, "empty relic category should use field-ledger empty-state language")
+	inventory_ui.call("_select_category", "all")
+	await process_frame
+	inventory_ui.call("_select_page", "equipment")
+	await process_frame
+	_assert(equipment_page != null and equipment_page.visible, "equipment page did not become visible")
+	var equipment_action := _find_node_named(inventory_ui, "EquipmentActionButton") as Button
+	_assert(equipment_action != null and equipment_action.text == "EQUIP SIDEARM" and not equipment_action.disabled, "equipment page should offer the carried P-9")
+	equipment_action.emit_signal("pressed")
+	await process_frame
+	_assert(str(inventory_manager.call("get_equipped", &"sidearm")) == "p9_sidearm", "equipment page should fill the sidearm slot")
+	_assert(mock_operator.sidearm_equipped, "equipment page should activate the Operator sidearm gate")
+	_assert(equipment_action.text == "UNEQUIP", "filled equipment slot should offer unequip")
+	equipment_action.emit_signal("pressed")
+	await process_frame
+	_assert(str(inventory_manager.call("get_equipped", &"sidearm")).is_empty(), "equipment page should clear the sidearm slot")
+	_assert(not mock_operator.sidearm_equipped, "unequip should disable the Operator sidearm gate")
+	inventory_ui.call("_select_page", "ledger")
+	await process_frame
 	if resource_ledger != null:
 		resource_ledger.call("add", &"blackwood", 1)
 		await process_frame

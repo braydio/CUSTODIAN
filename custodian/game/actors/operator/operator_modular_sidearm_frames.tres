@@ -1,16 +1,16 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://b5xhlg30ktgo6"]
+[gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" uid="uid://c72peu0faummh" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/draw_sidearm_01/operator__modular_sidearm__sidearm__draw_sidearm_01__se__5f__96.png" id="1_2ob6c"]
-[ext_resource type="Texture2D" uid="uid://dknfyelkqrale" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__e__5f__96.png" id="1_aflv3"]
-[ext_resource type="Texture2D" uid="uid://d20vsfn7gq4fc" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__w__5f__96.png" id="2_cwdr7"]
-[ext_resource type="Texture2D" uid="uid://danpctu0mdxou" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/fire_sidearm_01/operator__modular_sidearm__sidearm__fire_sidearm_01__se__5f__96.png" id="2_gioow"]
-[ext_resource type="Texture2D" uid="uid://clkayqxndr05x" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/draw_sidearm_01/operator__modular_sidearm__sidearm__draw_sidearm_01__sw__5f__96.png" id="2_qkht3"]
-[ext_resource type="Texture2D" uid="uid://c45sqfk05vmvn" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__n__5f__96.png" id="3_beyj7"]
-[ext_resource type="Texture2D" uid="uid://df3cq7bufxjga" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/fire_sidearm_01/operator__modular_sidearm__sidearm__fire_sidearm_01__ne__5f__96.png" id="3_cgiiv"]
-[ext_resource type="Texture2D" uid="uid://cq7cxtvemq82y" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/draw_sidearm_01/operator__modular_sidearm__sidearm__draw_sidearm_01__nw__5f__96.png" id="3_rtk06"]
-[ext_resource type="Texture2D" uid="uid://bxgo7kcgvi1gh" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/draw_sidearm_01/operator__modular_sidearm__sidearm__draw_sidearm_01__ne__5f__96.png" id="4_xd84y"]
-[ext_resource type="Texture2D" uid="uid://ca5emqydeyujx" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/fire_sidearm_01/operator__modular_sidearm__sidearm__fire_sidearm_01__sw__5f__96.png" id="6_aflv3"]
-[ext_resource type="Texture2D" uid="uid://1gk853agillw" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/fire_sidearm_01/operator__modular_sidearm__sidearm__fire_sidearm_01__nw__5f__96.png" id="7_cwdr7"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/draw_sidearm_01/operator__modular_sidearm__sidearm__draw_sidearm_01__se__5f__96.png" id="1_2ob6c"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__e__5f__96.png" id="1_aflv3"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__w__5f__96.png" id="2_cwdr7"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/fire_sidearm_01/operator__modular_sidearm__sidearm__fire_sidearm_01__se__5f__96.png" id="2_gioow"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/draw_sidearm_01/operator__modular_sidearm__sidearm__draw_sidearm_01__sw__5f__96.png" id="2_qkht3"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__n__5f__96.png" id="3_beyj7"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/fire_sidearm_01/operator__modular_sidearm__sidearm__fire_sidearm_01__ne__5f__96.png" id="3_cgiiv"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/draw_sidearm_01/operator__modular_sidearm__sidearm__draw_sidearm_01__nw__5f__96.png" id="3_rtk06"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/draw_sidearm_01/operator__modular_sidearm__sidearm__draw_sidearm_01__ne__5f__96.png" id="4_xd84y"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/fire_sidearm_01/operator__modular_sidearm__sidearm__fire_sidearm_01__sw__5f__96.png" id="6_aflv3"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/fire_sidearm_01/operator__modular_sidearm__sidearm__fire_sidearm_01__nw__5f__96.png" id="7_cwdr7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_aflv3"]
 atlas = ExtResource("1_aflv3")
@@ -295,7 +295,7 @@ region = Rect2(384, 0, 96, 96)
 [resource]
 animations = [{
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }, {
@@ -315,7 +315,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_h6v7v")
 }],
-"loop": true,
+"loop": 1,
 "name": &"ranged_2h_stance_modular",
 "speed": 8.0
 }, {
@@ -335,7 +335,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_u1une")
 }],
-"loop": true,
+"loop": 1,
 "name": &"ranged_2h_stance_modular_left",
 "speed": 8.0
 }, {
@@ -355,7 +355,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7ix11")
 }],
-"loop": true,
+"loop": 1,
 "name": &"ranged_2h_stance_modular_right",
 "speed": 8.0
 }, {
@@ -375,7 +375,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_mwn45")
 }],
-"loop": true,
+"loop": 1,
 "name": &"ranged_2h_stance_modular_up",
 "speed": 8.0
 }, {
@@ -395,7 +395,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3p6fs")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_draw",
 "speed": 12.0
 }, {
@@ -415,7 +415,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vjxfm")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_draw_down_left",
 "speed": 12.0
 }, {
@@ -435,7 +435,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_qk068")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_draw_down_right",
 "speed": 12.0
 }, {
@@ -455,7 +455,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ugjmb")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_draw_up_left",
 "speed": 12.0
 }, {
@@ -475,7 +475,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_o74a1")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_draw_up_right",
 "speed": 12.0
 }, {
@@ -495,7 +495,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_strev")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_fire",
 "speed": 12.0
 }, {
@@ -515,7 +515,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lwghj")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_fire_down_left",
 "speed": 12.0
 }, {
@@ -535,7 +535,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_m4mim")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_fire_down_right",
 "speed": 12.0
 }, {
@@ -555,7 +555,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_v65wx")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_fire_up_left",
 "speed": 12.0
 }, {
@@ -575,7 +575,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_p6bjj")
 }],
-"loop": false,
+"loop": 0,
 "name": &"sidearm_fire_up_right",
 "speed": 12.0
 }]

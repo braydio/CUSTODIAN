@@ -21,7 +21,7 @@ region = Rect2(192, 0, 64, 64)
 [resource]
 animations = [{
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }, {
@@ -38,7 +38,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_flash_3")
 }],
-"loop": false,
+"loop": 0,
 "name": &"flash",
 "speed": 24.0
 }]

@@ -6,7 +6,7 @@
 - Owner: agent
 - Agent/session: Codex 2026-06-06
 - Created: 2026-06-06
-- Last updated: 2026-06-06
+- Last updated: 2026-06-21
 
 ## Task
 
@@ -14,7 +14,7 @@ Implement the Sundered Keep P-9 Field Sidearm unlock from `design/SIDEARM_UNLOCK
 
 ## Outcome
 
-The Operator starts with the sidearm fallback locked, receives the P-9 from a Sundered Keep Great Hall locker/chest, and uses the sidearm only as the ranged-ready fallback when no primary ranged weapon is actively selected.
+The Operator starts with an empty sidearm slot, recovers the P-9 as carried equipment from a Sundered Keep Great Hall locker, and uses it only after explicit Equipment-page equip.
 
 ## Authority
 
@@ -64,7 +64,7 @@ The Operator starts with the sidearm fallback locked, receives the P-9 from a Su
 
 ## Completion Notes
 
-- Implemented: the Operator starts with the sidearm locked; `grant_sidearm(...)` unlocks the P-9, initializes ammunition when needed, refreshes weapon state, and preserves the selected melee/unarmed loadout. Sundered Keep now builds a one-time field-retention locker at authored tile `[73, 27]`; it only consumes the locker after a successful Operator grant and then disables interaction for the run.
+- Implemented: the Operator starts with the sidearm inactive. Sundered Keep's one-time field-retention locker at `[73, 27]` adds `p9_sidearm` to carried inventory. The inventory Equipment page fills/clears the sidearm slot and calls `grant_sidearm(...)` / `remove_sidearm()` at equip boundaries, so recovery alone never overrides parry/guard.
 - Validated: Operator ranged-ready smoke covers locked/granted behavior, pistol profile values, non-`ranged_2h` classification, and selected-primary priority. The focused Sundered Keep unlock smoke covers locker availability, successful one-time grant, melee selection preservation, fallback activation, and opened/non-interactable state. Sundered Keep asset, layout, and large-layout smokes pass.
 - Deferred: manual editor playtest and production art. The locker currently uses a wet-crate stand-in, and the modular sidearm ready/fire/recover/reload directional suite remains incomplete; both needs are tracked identically in the two `REQUIRED_ASSETS.md` copies.
 

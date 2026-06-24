@@ -1,30 +1,30 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://wph1x1ed1sxm"]
+[gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" uid="uid://1xdsyxgk2lji" path="res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_enter_weapon_4f.png" id="1_n6d7b"]
-[ext_resource type="Texture2D" uid="uid://b6fninfyttyj1" path="res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_exit_weapon_2f.png" id="2_5qaxa"]
-[ext_resource type="Texture2D" uid="uid://c357e8jtfg6cj" path="res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_hold_weapon_1f.png" id="3_5x5e1"]
-[ext_resource type="Texture2D" uid="uid://d128x8wlowba6" path="res://content/sprites/operator/runtime/curated/body/melee_2h/fast_attack_1_right_body.png" id="4_m0xd6"]
-[ext_resource type="Texture2D" uid="uid://cov4a1e0i27ah" path="res://content/sprites/operator/runtime/curated/body/melee_2h/fast_attack_2_right_body.png" id="4_yb58s"]
-[ext_resource type="Texture2D" uid="uid://d3id0i5jp1tog" path="res://content/sprites/operator/runtime/curated/body/melee_2h/fast_recovery_body.png" id="6_m0xd6"]
-[ext_resource type="Texture2D" uid="uid://ds846q2i2ul2r" path="res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_attack_right_3layer_7f.png" id="8_0rblj"]
-[ext_resource type="Texture2D" uid="uid://dngkywh4mvvr1" path="res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_anticipation_body.png" id="8_6r37m"]
-[ext_resource type="Texture2D" uid="uid://bqooimimdx4bg" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__s__6f__96.png" id="10_w2rep"]
-[ext_resource type="Texture2D" uid="uid://dbimnjse87w7q" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__e__3f__96.png" id="11_esjq4"]
-[ext_resource type="Texture2D" uid="uid://dysuxnf0jkxje" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__n__6f__96.png" id="11_somh8"]
-[ext_resource type="Texture2D" uid="uid://c1lmhrugqjxej" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__e__7f__96.png" id="12_esjq4"]
-[ext_resource type="Texture2D" uid="uid://co1foe8sg8l81" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_recovery_01__n__2f__96.png" id="13_5wtfu"]
-[ext_resource type="Texture2D" uid="uid://b6pl8er8dv3p7" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__light_hitreact_01__s__3f__96.png" id="13_e64xy"]
-[ext_resource type="Texture2D" uid="uid://bder0uh5lag0r" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__s__7f__96.png" id="14_w7xvn"]
-[ext_resource type="Texture2D" uid="uid://bw8y24ai3eu6e" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__w__7f__96.png" id="15_mqkm6"]
-[ext_resource type="Texture2D" uid="uid://lsvn7yxr3ec3" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__n__8f__96.png" id="16_mqkm6"]
-[ext_resource type="Texture2D" uid="uid://cd28cnan7ge36" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__s__3f__96.png" id="17_n6d7b"]
-[ext_resource type="Texture2D" uid="uid://cxw1l715id0bv" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__sw__3f__96.png" id="18_5qaxa"]
-[ext_resource type="Texture2D" uid="uid://cj45p2dfd7dyk" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__se__3f__96.png" id="19_5x5e1"]
-[ext_resource type="Texture2D" uid="uid://e30152wc7oe3" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__w__3f__96.png" id="20_0rblj"]
-[ext_resource type="Texture2D" uid="uid://6fcmk6ooqihi" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__e__3f__96.png" id="21_wutb4"]
-[ext_resource type="Texture2D" uid="uid://dr1nshdvgpjs0" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__n__3f__96.png" id="22_136ub"]
-[ext_resource type="Texture2D" uid="uid://b6xeaonq0pjah" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__nw__3f__96.png" id="23_ch2tb"]
-[ext_resource type="Texture2D" uid="uid://4x6i50kgb5xl" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__ne__3f__96.png" id="24_3ti28"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_enter_weapon_4f.png" id="1_n6d7b"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_exit_weapon_2f.png" id="2_5qaxa"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_hold_weapon_1f.png" id="3_5x5e1"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/body/melee_2h/fast_attack_1_right_body.png" id="4_m0xd6"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/body/melee_2h/fast_attack_2_right_body.png" id="4_yb58s"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/body/melee_2h/fast_recovery_body.png" id="6_m0xd6"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_attack_right_3layer_7f.png" id="8_0rblj"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_anticipation_body.png" id="8_6r37m"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__s__6f__96.png" id="10_w2rep"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__e__3f__96.png" id="11_esjq4"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_01__n__6f__96.png" id="11_somh8"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__e__7f__96.png" id="12_esjq4"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__fast_recovery_01__n__2f__96.png" id="13_5wtfu"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__light_hitreact_01__s__3f__96.png" id="13_e64xy"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__s__7f__96.png" id="14_w7xvn"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__w__7f__96.png" id="15_mqkm6"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__n__8f__96.png" id="16_mqkm6"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__s__3f__96.png" id="17_n6d7b"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__sw__3f__96.png" id="18_5qaxa"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__se__3f__96.png" id="19_5x5e1"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__w__3f__96.png" id="20_0rblj"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__e__3f__96.png" id="21_wutb4"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__n__3f__96.png" id="22_136ub"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__nw__3f__96.png" id="23_ch2tb"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/unarmed/fast_attack/overlay/operator__fx__unarmed__fast_strike_01__ne__3f__96.png" id="24_3ti28"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n6d7b"]
 atlas = ExtResource("1_n6d7b")
@@ -553,7 +553,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0rblj")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_block_enter_weapon",
 "speed": 10.0
 }, {
@@ -564,7 +564,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_136ub")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_block_exit_weapon",
 "speed": 10.0
 }, {
@@ -572,7 +572,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ch2tb")
 }],
-"loop": true,
+"loop": 1,
 "name": &"melee_2h_block_hold_weapon",
 "speed": 1.0
 }, {
@@ -595,7 +595,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_1n56i")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_fast_1_fx",
 "speed": 12.0
 }, {
@@ -618,7 +618,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_eqv3b")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_fast_1_weapon",
 "speed": 12.0
 }, {
@@ -638,7 +638,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pxxq0")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_fast_2_fx",
 "speed": 12.0
 }, {
@@ -658,12 +658,12 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0bjxh")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_fast_2_weapon",
 "speed": 12.0
 }, {
 "frames": [],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_fast_fx",
 "speed": 12.0
 }, {
@@ -674,7 +674,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bgn8k")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_fast_recovery_fx",
 "speed": 10.0
 }, {
@@ -685,12 +685,12 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_klbl6")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_fast_recovery_weapon",
 "speed": 10.0
 }, {
 "frames": [],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_fast_weapon",
 "speed": 12.0
 }, {
@@ -710,7 +710,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_k12wt")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_heavy_anticipation_weapon",
 "speed": 11.0
 }, {
@@ -736,7 +736,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_kb2w2")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_heavy_fx",
 "speed": 11.0
 }, {
@@ -762,7 +762,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_kmaox")
 }],
-"loop": false,
+"loop": 0,
 "name": &"melee_2h_heavy_weapon",
 "speed": 11.0
 }, {
@@ -785,7 +785,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ujrku")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_attack_fast_fx_down",
 "speed": 12.0
 }, {
@@ -799,7 +799,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_m7ovs")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_attack_fast_fx_right",
 "speed": 12.0
 }, {
@@ -822,7 +822,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_texyy")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_attack_fast_fx_up",
 "speed": 12.0
 }, {
@@ -833,7 +833,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_kx7g7")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_attack_fast_recovery_fx_up",
 "speed": 10.0
 }, {
@@ -859,7 +859,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_821r5")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_attack_heavy_fx_down",
 "speed": 10.0
 }, {
@@ -885,7 +885,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ac10p")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_attack_heavy_fx_left",
 "speed": 10.0
 }, {
@@ -911,7 +911,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ejask")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_attack_heavy_fx_right",
 "speed": 10.0
 }, {
@@ -940,7 +940,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_qffxo")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_attack_heavy_fx_up",
 "speed": 11.5
 }, {
@@ -954,7 +954,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_86j8s")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_fast_strike_fx",
 "speed": 12.0
 }, {
@@ -968,7 +968,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3re21")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_fast_strike_fx_down",
 "speed": 12.0
 }, {
@@ -982,7 +982,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_g58l6")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_fast_strike_fx_down_left",
 "speed": 12.0
 }, {
@@ -996,7 +996,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_t1epi")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_fast_strike_fx_down_right",
 "speed": 12.0
 }, {
@@ -1010,7 +1010,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_qek3r")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_fast_strike_fx_left",
 "speed": 12.0
 }, {
@@ -1024,7 +1024,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_nm4ga")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_fast_strike_fx_right",
 "speed": 12.0
 }, {
@@ -1038,7 +1038,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lbvx2")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_fast_strike_fx_up",
 "speed": 12.0
 }, {
@@ -1052,7 +1052,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xuciu")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_fast_strike_fx_up_left",
 "speed": 12.0
 }, {
@@ -1066,7 +1066,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_qglb1")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_fast_strike_fx_up_right",
 "speed": 12.0
 }, {
@@ -1080,7 +1080,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_wonai")
 }],
-"loop": false,
+"loop": 0,
 "name": &"unarmed_light_hitreact_fx_down",
 "speed": 10.0
 }]

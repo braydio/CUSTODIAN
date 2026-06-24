@@ -5,6 +5,7 @@ const MANIFEST_PATH := "res://content/ui/inventory/runtime/inventory_ui_asset_ma
 const RUNTIME_ICON_PATTERN := "res://content/ui/inventory/runtime/icons/icon_%s.png"
 const LEGACY_ICON_PATTERN := "res://content/ui/inventory/icons/icon_%s.png"
 const RESOURCE_ICON_PATTERN := "res://content/ui/inventory/icons/resources/icon_%s.png"
+const PLACEHOLDER_SVG_ICON_PATTERN := "res://content/ui/inventory/icons/icon_%s.svg"
 const FALLBACK_ICON := "res://content/ui/inventory/icons/icon_placeholder.png"
 const ITEM_MATERIALS := {
 	"blackwood": "res://game/ui/inventory/materials/blackwood_ember_spark_material.tres",
@@ -28,7 +29,7 @@ static func texture(asset_id: String) -> Texture2D:
 
 
 static func item_icon_path(item_id: String) -> String:
-	for path in [RUNTIME_ICON_PATTERN % item_id, LEGACY_ICON_PATTERN % item_id, RESOURCE_ICON_PATTERN % item_id, FALLBACK_ICON]:
+	for path in [RUNTIME_ICON_PATTERN % item_id, LEGACY_ICON_PATTERN % item_id, RESOURCE_ICON_PATTERN % item_id, PLACEHOLDER_SVG_ICON_PATTERN % item_id, FALLBACK_ICON]:
 		if ResourceLoader.exists(path):
 			return path
 	return ""

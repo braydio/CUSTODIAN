@@ -1,11 +1,9 @@
 {
 	"manifest": "res://content/sprites/_pipeline/inbox/operator__fx__unarmed__heavy_01__s__7f__96.json",
 	"outputs": [
-		"res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__heavy_01__s__7f__96.png"
+		"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__heavy_01__s__7f__96.png"
 	],
-	"post_process": [
-		"operator_curated_resources"
-	],
+	"post_process": [],
 	"source": "res://content/sprites/_pipeline/inbox/operator__fx__unarmed__heavy_01__s__7f__96.png",
-	"timestamp_utc": "2026-05-02 03:55:12"
+	"timestamp_utc": "2026-06-22 01:52:19"
 }

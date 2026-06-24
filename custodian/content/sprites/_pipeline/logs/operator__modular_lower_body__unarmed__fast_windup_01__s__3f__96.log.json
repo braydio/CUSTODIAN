@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_lower_body__unarmed__fast_windup_01__s__3f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/fast_attack/operator__modular_lower_body__unarmed__fast_windup_01__s__3f__96.png"
+	],
+	"post_process": [
+		"operator_modular_runtime"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_lower_body__unarmed__fast_windup_01__s__3f__96.png",
+	"timestamp_utc": "2026-06-24 02:57:40"
+}

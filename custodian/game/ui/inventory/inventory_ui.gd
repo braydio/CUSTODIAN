@@ -10,6 +10,7 @@ const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 const Styles := preload("res://game/ui/theme/black_reliquary_styles.gd")
 const MinimapFrameScene := preload("res://game/ui/components/black_reliquary_minimap_frame.tscn")
 const IconLabelScene := preload("res://game/ui/components/black_reliquary_icon_label.tscn")
+const SYSTEM_TECH := Color("#5a9ea0")
 
 const PAGE_STATUS := "status"
 const PAGE_HISTORY := "history"
@@ -31,8 +32,25 @@ const CATEGORY_LABELS := {
 	"relic": "RELICS",
 	"cognitive": "COGNITIVE",
 	"equipment": "EQUIPMENT",
-	"carried": "MISCELLANY",
-	"resources": "MATERIAL RESOURCES",
+	"carried": "MISC",
+	"resources": "MATERIALS",
+}
+const CATEGORY_EMPTY_COPY := {
+	"all": "NO CARRIED OBJECTS RECORDED.\n\nFIELD LEDGER AWAITS RECOVERED EVIDENCE.",
+	"key": "NO KEY OBJECTS REGISTERED.\n\nACCESS RECORDS REMAIN UNRESOLVED.",
+	"relic": "NO RECOVERED RELICS REGISTERED.\n\nPROVENANCE CHANNEL REMAINS SILENT.",
+	"cognitive": "NO COGNITIVE RESIDUE REGISTERED.\n\nCONTEXT RECOVERY HAS NOT STABILIZED.",
+	"equipment": "NO UNEQUIPPED FIELD GEAR REGISTERED.\n\nRECOVERED EQUIPMENT WILL APPEAR HERE.",
+	"carried": "NO MISCELLANEOUS OBJECTS REGISTERED.",
+	"resources": "NO MATERIAL RESOURCES REGISTERED.\n\nFIELD RECOVERY BINS ARE EMPTY.",
+}
+const CATEGORY_SORT_ORDER := {
+	"key": 0,
+	"relic": 1,
+	"cognitive": 2,
+	"equipment": 3,
+	"carried": 4,
+	"resources": 5,
 }
 
 ## Maps equipment item_ids to their weapon definition resource paths.
@@ -97,11 +115,13 @@ var _ledger_category_list: VBoxContainer
 var _ledger_item_grid: GridContainer
 var _ledger_count_label: Label
 var _ledger_empty_label: Label
+var _ledger_filter_label: Label
 var _ledger_detail_icon: TextureRect
 var _ledger_detail_name: Label
 var _ledger_detail_class: Label
 var _ledger_detail_count: Label
 var _ledger_detail_description: Label
+var _ledger_detail_use: Label
 var _ledger_detail_provenance: Label
 var _ledger_detail_equip_button: Button
 
@@ -168,8 +188,8 @@ func set_phase(text: String) -> void:
 	if _status_cache["phase"] == text:
 		return
 	_status_cache["phase"] = text
-	_update_status_row(_status_phase_row, Catalog.ICON_OBJECTIVE, "PHASE: %s" % text, Palette.BLUE_TECH)
-	_append_history_entry("PHASE", text, Palette.BLUE_TECH)
+	_update_status_row(_status_phase_row, Catalog.ICON_OBJECTIVE, "PHASE: %s" % text, SYSTEM_TECH)
+	_append_history_entry("PHASE", text, SYSTEM_TECH)
 
 
 func set_objective(text: String) -> void:
@@ -238,8 +258,8 @@ func set_return_mooring_status(active: bool, attuned: bool) -> void:
 	if _status_cache["return"] == text:
 		return
 	_status_cache["return"] = text
-	_update_status_row(_status_return_row, Catalog.ICON_RETURN_MOORING, text, Palette.BLUE_TECH if active else Palette.MUTED_TEXT)
-	_append_history_entry("RETURN MOORING", text, Palette.BLUE_TECH if active else Palette.MUTED_TEXT)
+	_update_status_row(_status_return_row, Catalog.ICON_RETURN_MOORING, text, SYSTEM_TECH if active else Palette.MUTED_TEXT)
+	_append_history_entry("RETURN MOORING", text, SYSTEM_TECH if active else Palette.MUTED_TEXT)
 
 
 func set_status_line(slot: String, icon_path: String, text: String, color: Color = Palette.BODY_TEXT) -> void:
@@ -288,7 +308,7 @@ func _build_interface() -> void:
 	var stack := VBoxContainer.new()
 	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	stack.add_theme_constant_override("separation", 12)
+	stack.add_theme_constant_override("separation", 8)
 	outer.add_child(stack)
 
 	stack.add_child(_build_header())
@@ -314,19 +334,16 @@ func _build_interface() -> void:
 
 func _build_header() -> Control:
 	var header := HBoxContainer.new()
-	header.custom_minimum_size.y = 64
+	header.custom_minimum_size.y = 46
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var title_stack := VBoxContainer.new()
-	title_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var eyebrow := _label("CUSTODIAN FIELD LEDGER / STATUS ACCESS", Palette.MUTED_TEXT, 12)
-	var title := _label("RELIQUARY INVENTORY", Palette.GOLD_TEXT, 25)
-	title_stack.add_child(eyebrow)
-	title_stack.add_child(title)
-	header.add_child(title_stack)
-	_header_status = _label("PAGE: STATUS", Palette.BLUE_TECH, 13)
+	var title := _label("CUSTODIAN FIELD LEDGER / RELIQUARY INVENTORY", Palette.GOLD_TEXT, 18)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	header.add_child(title)
+	_header_status = _label("PAGE: STATUS", SYSTEM_TECH, 13)
 	_header_status.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	header.add_child(_header_status)
-	_count_label = _label("0 RECORDS", Palette.BLUE_TECH, 13)
+	_count_label = _label("0 RECORDS", SYSTEM_TECH, 13)
 	_count_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	header.add_child(_count_label)
 	var close_button := Button.new()
@@ -354,7 +371,7 @@ func _build_page_rail() -> Control:
 		_apply_button_style(button)
 		_page_buttons[page] = button
 		rail.add_child(button)
-	_page_hint = _label("STATUS FIRST / HISTORY SECOND / LEDGER LAST", Palette.MUTED_TEXT, 11)
+	_page_hint = _label("FIELD ACCESS REGISTER", Palette.MUTED_TEXT, 11)
 	_page_hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_page_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	rail.add_child(_page_hint)
@@ -503,7 +520,7 @@ func _build_ledger_page() -> Control:
 	stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stack.add_theme_constant_override("separation", 10)
 	margin.add_child(stack)
-	stack.add_child(_label("RECOVERED OBJECT REGISTER", Palette.GOLD_TEXT, 12))
+	stack.add_child(_label("RECOVERED OBJECTS", Palette.GOLD_TEXT, 12))
 	stack.add_child(_build_ledger_body())
 	return page
 
@@ -514,7 +531,7 @@ func _build_ledger_body() -> Control:
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_theme_constant_override("separation", 12)
 
-	var categories := _panel(true, Vector2(180, 0))
+	var categories := _panel(true, Vector2(142, 0))
 	var category_margin := MarginContainer.new()
 	category_margin.add_theme_constant_override("margin_left", 12)
 	category_margin.add_theme_constant_override("margin_top", 14)
@@ -524,19 +541,19 @@ func _build_ledger_body() -> Control:
 	_ledger_category_list = VBoxContainer.new()
 	_ledger_category_list.add_theme_constant_override("separation", 8)
 	category_margin.add_child(_ledger_category_list)
-	_ledger_category_list.add_child(_label("CLASSIFICATION", Palette.GOLD_TEXT, 12))
+	_ledger_category_list.add_child(_label("CLASS", Palette.GOLD_TEXT, 12))
 	for category in CATEGORY_ORDER:
 		var button := Button.new()
 		button.text = CATEGORY_LABELS[category]
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		button.custom_minimum_size.y = 42
+		button.custom_minimum_size.y = 36
 		button.pressed.connect(_select_category.bind(category))
 		_apply_button_style(button)
 		_category_buttons[category] = button
 		_ledger_category_list.add_child(button)
 	body.add_child(categories)
 
-	var records := _panel(true, Vector2(520, 0))
+	var records := _panel(true, Vector2(570, 0))
 	records.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var record_margin := MarginContainer.new()
 	record_margin.add_theme_constant_override("margin_left", 14)
@@ -549,13 +566,21 @@ func _build_ledger_body() -> Control:
 	record_stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	record_stack.add_theme_constant_override("separation", 10)
 	record_margin.add_child(record_stack)
-	record_stack.add_child(_label("FIELD REGISTER", Palette.GOLD_TEXT, 12))
+	record_stack.add_child(_label("CARRIED REGISTER", Palette.GOLD_TEXT, 12))
+	var controls := HBoxContainer.new()
+	controls.add_theme_constant_override("separation", 18)
+	_ledger_filter_label = _label("FILTER: ALL CARRIED", Palette.MUTED_TEXT, 10)
+	controls.add_child(_ledger_filter_label)
+	controls.add_child(_label("SORT: CLASS / NAME", Palette.MUTED_TEXT, 10))
+	controls.add_child(_label("VIEW: GRID", Palette.MUTED_TEXT, 10))
+	record_stack.add_child(controls)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	record_stack.add_child(scroll)
 	_ledger_item_grid = GridContainer.new()
-	_ledger_item_grid.columns = 4
+	_ledger_item_grid.name = "ItemGrid"
+	_ledger_item_grid.columns = 3
 	_ledger_item_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_ledger_item_grid.add_theme_constant_override("h_separation", 8)
 	_ledger_item_grid.add_theme_constant_override("v_separation", 8)
@@ -572,7 +597,7 @@ func _build_ledger_body() -> Control:
 
 
 func _build_ledger_detail_panel() -> Control:
-	var detail := _panel(true, Vector2(310, 0))
+	var detail := _panel(true, Vector2(330, 0))
 	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 18)
 	margin.add_theme_constant_override("margin_top", 18)
@@ -584,7 +609,7 @@ func _build_ledger_detail_panel() -> Control:
 	stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stack.add_theme_constant_override("separation", 10)
 	margin.add_child(stack)
-	stack.add_child(_label("INSPECTED RECORD", Palette.GOLD_TEXT, 12))
+	stack.add_child(_label("INSPECTION RECORD", Palette.GOLD_TEXT, 12))
 	_ledger_detail_icon = TextureRect.new()
 	_ledger_detail_icon.custom_minimum_size = Vector2(112, 112)
 	_ledger_detail_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -594,11 +619,15 @@ func _build_ledger_detail_panel() -> Control:
 	_ledger_detail_name = _label("NO RECORD SELECTED", Palette.BODY_TEXT, 20)
 	_ledger_detail_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	stack.add_child(_ledger_detail_name)
-	_ledger_detail_class = _label("CLASSIFICATION: --", Palette.BLUE_TECH, 12)
+	_ledger_detail_class = _label("CLASSIFICATION: --", SYSTEM_TECH, 12)
 	stack.add_child(_ledger_detail_class)
 	_ledger_detail_count = _label("QUANTITY: --", Palette.GOLD_TEXT, 13)
 	stack.add_child(_ledger_detail_count)
 	stack.add_child(_build_divider())
+	_ledger_detail_use = _label("USED FOR: UNKNOWN", Palette.MUTED_TEXT, 11)
+	_ledger_detail_use.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stack.add_child(_ledger_detail_use)
+	stack.add_child(_label("DESCRIPTION", Palette.MUTED_TEXT, 10))
 	_ledger_detail_description = _label("Select a recovered object to inspect its ledger record.", Palette.BODY_TEXT, 14)
 	_ledger_detail_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_ledger_detail_description.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -672,7 +701,7 @@ func _build_equipment_page() -> Control:
 	info_stack.add_theme_constant_override("separation", 6)
 	card_hbox.add_child(info_stack)
 	
-	info_stack.add_child(_label("SIDEARM SLOT", Palette.BLUE_TECH, 12))
+	info_stack.add_child(_label("SIDEARM SLOT", SYSTEM_TECH, 12))
 	_equipment_slot_name = _label("EMPTY", Palette.MUTED_TEXT, 18)
 	info_stack.add_child(_equipment_slot_name)
 	_equipment_slot_status = _label("No sidearm equipped. Find one in the field and equip it from this terminal.", Palette.MUTED_TEXT, 12)
@@ -747,14 +776,18 @@ func _refresh_equipment_page() -> void:
 	
 	var equipped_id := str(_inventory_manager.call("get_equipped", &"sidearm"))
 	if equipped_id == "" or equipped_id.is_empty():
-		# Empty slot
-		_equipment_slot_icon.texture = Assets.texture("icon_unknown")
-		_equipment_slot_name.text = "EMPTY"
-		_equipment_slot_name.modulate = Palette.MUTED_TEXT
-		_equipment_slot_status.text = "No sidearm equipped. Find one in the field and equip it from this terminal."
-		_equipment_action_button.text = ""
-		_equipment_action_button.disabled = true
-		_equipment_action_button.visible = false
+		var sidearm_available := bool(_inventory_manager.call("has_item", &"p9_sidearm", 1))
+		_equipment_slot_icon.texture = Assets.item_icon(&"p9_sidearm") if sidearm_available else Assets.texture("icon_unknown")
+		_equipment_slot_name.text = "P-9 FIELD SIDEARM / AVAILABLE" if sidearm_available else "EMPTY"
+		_equipment_slot_name.modulate = Palette.BODY_TEXT if sidearm_available else Palette.MUTED_TEXT
+		_equipment_slot_status.text = (
+			"Recovered and carried. Equip the P-9 to claim the offhand action; while empty, offhand remains guard/parry."
+			if sidearm_available else
+			"No sidearm recovered. The offhand action remains guard/parry."
+		)
+		_equipment_action_button.text = "EQUIP SIDEARM" if sidearm_available else "NO SIDEARM AVAILABLE"
+		_equipment_action_button.disabled = not sidearm_available
+		_equipment_action_button.visible = true
 	else:
 		# Equipped
 		var definition := ItemCatalog.get_definition(StringName(equipped_id))
@@ -774,6 +807,7 @@ func _on_equipment_action_pressed() -> void:
 	
 	var equipped_id := str(_inventory_manager.call("get_equipped", &"sidearm"))
 	if equipped_id == "" or equipped_id.is_empty():
+		_equip_item_to_slot(&"p9_sidearm", &"sidearm")
 		return
 	
 	# Find the player operator to call remove_sidearm()
@@ -790,7 +824,7 @@ func _on_equipment_action_pressed() -> void:
 	# Then remove sidearm from operator
 	operator.call("remove_sidearm")
 	
-	record_history_entry("EQUIPMENT", "Sidearm unequipped and returned to inventory.", Palette.BLUE_TECH)
+	record_history_entry("EQUIPMENT", "Sidearm unequipped and returned to inventory.", SYSTEM_TECH)
 	_refresh_equipment_page()
 
 
@@ -804,8 +838,13 @@ func _on_equip_button_pressed() -> void:
 	var slot_name := _get_equipment_slot_for_item(item_id)
 	if slot_name == &"":
 		return
+	_equip_item_to_slot(item_id, slot_name)
+
+
+func _equip_item_to_slot(item_id: StringName, slot_name: StringName) -> void:
+	if _inventory_manager == null or not _inventory_manager.has_method("equip_item"):
+		return
 	
-	# Check if slot is already filled
 	if bool(_inventory_manager.call("is_slot_filled", slot_name)):
 		push_warning("[InventoryUI] Slot %s already filled" % slot_name)
 		return
@@ -836,9 +875,8 @@ func _on_equip_button_pressed() -> void:
 	# Grant to operator
 	var result: Dictionary = operator.call("grant_sidearm", weapon_def)
 	if not result.get("granted", false):
-		# Rollback inventory
+		# unequip_slot already returns the item to carried inventory.
 		_inventory_manager.call("unequip_slot", slot_name)
-		_inventory_manager.call("add_item", item_id, 1)
 		push_warning("[InventoryUI] Failed to grant sidearm to operator")
 		return
 	
@@ -933,6 +971,8 @@ func _rebuild_item_grid() -> void:
 		var definition: Dictionary = entry["definition"]
 		if _selected_category == "all" or str(definition.get("category", "carried")) == _selected_category:
 			filtered.append(entry)
+	filtered.sort_custom(_sort_ledger_entries)
+	_ledger_empty_label.text = str(CATEGORY_EMPTY_COPY.get(_selected_category, CATEGORY_EMPTY_COPY["all"]))
 	_ledger_empty_label.visible = filtered.is_empty()
 	_ledger_item_grid.visible = not filtered.is_empty()
 	for entry in filtered:
@@ -957,15 +997,15 @@ func _create_item_button(entry: Dictionary) -> Button:
 	var item_id := str(entry["item_id"])
 	var button := Button.new()
 	button.name = "Item_%s" % item_id
-	button.custom_minimum_size = Vector2(112, 128)
+	button.custom_minimum_size = Vector2(136, 154)
 	button.tooltip_text = str(definition.get("description", ""))
-	button.text = "\n\n\n%s\nx%d" % [str(definition.get("display_name", entry["item_id"])).to_upper(), int(entry["quantity"])]
-	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	button.text = ""
+	button.set_meta("inventory_category", str(definition.get("category", "carried")))
 	var icon := TextureRect.new()
 	icon.name = "ItemIcon"
 	icon.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	icon.position = Vector2(-32.0, 8.0)
-	icon.size = Vector2(64.0, 64.0)
+	icon.position = Vector2(-38.0, 16.0)
+	icon.size = Vector2(76.0, 76.0)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -973,14 +1013,38 @@ func _create_item_button(entry: Dictionary) -> Button:
 	icon.texture = Assets.item_icon(item_id)
 	icon.material = _item_icon_material(item_id)
 	button.add_child(icon)
+	var stamp := _label(_category_stamp(str(definition.get("category", "carried"))), Palette.MUTED_TEXT, 9)
+	stamp.name = "ItemStamp"
+	stamp.position = Vector2(8, 6)
+	stamp.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	button.add_child(stamp)
+	var name_label := _label(str(definition.get("display_name", entry["item_id"])).to_upper(), Palette.BODY_TEXT, 10)
+	name_label.name = "ItemName"
+	name_label.position = Vector2(8, 96)
+	name_label.size = Vector2(120, 34)
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	button.add_child(name_label)
+	var quantity := _label("x%d" % int(entry["quantity"]), Palette.GOLD_TEXT, 10)
+	quantity.name = "ItemQuantity"
+	quantity.position = Vector2(8, 132)
+	quantity.size = Vector2(120, 16)
+	quantity.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	quantity.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	quantity.visible = str(definition.get("category", "carried")) != "key"
+	button.add_child(quantity)
 	button.pressed.connect(_select_entry.bind(entry))
 	button.focus_entered.connect(_select_entry.bind(entry))
-	_apply_button_style(button, item_id == _selected_item_id)
+	_apply_item_button_style(button, str(definition.get("category", "carried")), item_id == _selected_item_id)
 	return button
 
 
 func _select_category(category: String) -> void:
 	_selected_category = category
+	if _ledger_filter_label != null:
+		_ledger_filter_label.text = "FILTER: %s" % str(CATEGORY_LABELS.get(category, category.to_upper()))
 	_rebuild_item_grid()
 	_focus_current_page()
 
@@ -989,7 +1053,11 @@ func _select_entry(entry: Dictionary) -> void:
 	_selected_item_id = str(entry.get("item_id", ""))
 	_show_detail(entry)
 	for button in _item_buttons:
-		_apply_button_style(button, button.name == "Item_%s" % _selected_item_id)
+		_apply_item_button_style(
+			button,
+			str(button.get_meta("inventory_category", "carried")),
+			button.name == "Item_%s" % _selected_item_id
+		)
 
 
 func _show_detail(entry: Dictionary) -> void:
@@ -1005,6 +1073,7 @@ func _show_detail(entry: Dictionary) -> void:
 		_ledger_detail_class.text = "CLASSIFICATION: --"
 		_ledger_detail_count.text = "QUANTITY: --"
 		_ledger_detail_description.text = "Select a recovered object to inspect its ledger record."
+		_ledger_detail_use.text = "USED FOR: UNKNOWN"
 		_ledger_detail_provenance.text = "PROVENANCE: --"
 		return
 	var definition: Dictionary = entry["definition"]
@@ -1017,6 +1086,7 @@ func _show_detail(entry: Dictionary) -> void:
 		str(definition.get("rarity", "unclassified")).to_upper(),
 	]
 	_ledger_detail_count.text = "QUANTITY: %d" % int(entry.get("quantity", 0))
+	_ledger_detail_use.text = "USED FOR: %s" % _usage_label(definition)
 	_ledger_detail_description.text = str(definition.get("description", "No recovered archive description is available."))
 	_ledger_detail_provenance.text = "PROVENANCE: %s" % str(definition.get("provenance", "LOCAL LEDGER / UNVERIFIED"))
 	
@@ -1192,17 +1262,58 @@ func _apply_button_style(button: Button, selected := false) -> void:
 	var normal := Styles.panel_style(true)
 	normal.border_color = Palette.GOLD_TEXT if selected else Palette.BORDER_DIM
 	normal.bg_color = Color(0.08, 0.095, 0.09, 0.98) if selected else Palette.PANEL_DEEP
+	normal.border_width_left = 2 if selected else 1
+	normal.border_width_top = 2 if selected else 1
+	normal.border_width_right = 2 if selected else 1
+	normal.border_width_bottom = 2 if selected else 1
 	var hover := normal.duplicate()
 	hover.border_color = Palette.GOLD_TEXT
 	hover.bg_color = Color(0.12, 0.13, 0.11, 0.98)
+	var disabled := normal.duplicate()
+	disabled.border_color = Color(Palette.BORDER_DIM, 0.45)
+	disabled.bg_color = Color(0.025, 0.03, 0.03, 0.88)
 	button.add_theme_stylebox_override("normal", normal)
 	button.add_theme_stylebox_override("hover", hover)
 	button.add_theme_stylebox_override("focus", hover)
 	button.add_theme_stylebox_override("pressed", hover)
+	button.add_theme_stylebox_override("disabled", disabled)
 	button.add_theme_color_override("font_color", Palette.GOLD_TEXT if selected else Palette.BODY_TEXT)
 	button.add_theme_color_override("font_hover_color", Palette.GOLD_TEXT)
 	button.add_theme_color_override("font_focus_color", Palette.GOLD_TEXT)
+	button.add_theme_color_override("font_disabled_color", Palette.MUTED_TEXT)
 	button.add_theme_font_size_override("font_size", 11)
+
+
+func _apply_item_button_style(button: Button, category: String, selected := false) -> void:
+	var normal := Styles.panel_style(true)
+	var category_color := _category_accent(category)
+	normal.border_color = Palette.GOLD_TEXT if selected else category_color
+	normal.bg_color = Color(0.08, 0.095, 0.09, 0.98) if selected else Palette.PANEL_DEEP
+	var base_width := 2 if category in ["key", "equipment"] else 1
+	var border_width := 2 if selected else base_width
+	normal.border_width_left = border_width
+	normal.border_width_top = border_width
+	normal.border_width_right = border_width
+	normal.border_width_bottom = border_width
+	var hover := normal.duplicate()
+	hover.border_color = Palette.GOLD_TEXT.lightened(0.12)
+	hover.bg_color = Color(0.12, 0.13, 0.11, 0.98)
+	var disabled := normal.duplicate()
+	disabled.border_color = Color(category_color, 0.3)
+	disabled.bg_color = Color(0.025, 0.03, 0.03, 0.88)
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("focus", hover)
+	button.add_theme_stylebox_override("pressed", hover)
+	button.add_theme_stylebox_override("disabled", disabled)
+	button.add_theme_color_override("font_color", Palette.GOLD_TEXT if selected else Palette.BODY_TEXT)
+	button.add_theme_color_override("font_hover_color", Palette.GOLD_TEXT)
+	button.add_theme_color_override("font_focus_color", Palette.GOLD_TEXT)
+	button.add_theme_color_override("font_disabled_color", Palette.MUTED_TEXT)
+	button.add_theme_font_size_override("font_size", 11)
+	var name_label := button.get_node_or_null("ItemName") as Label
+	if name_label != null:
+		name_label.add_theme_color_override("font_color", Palette.GOLD_TEXT if selected else Palette.BODY_TEXT)
 
 
 func _panel(deep: bool, minimum_size: Vector2) -> PanelContainer:
@@ -1275,3 +1386,61 @@ func _contains_item(entries: Array[Dictionary], item_id: String) -> bool:
 		if str(entry.get("item_id", "")) == item_id:
 			return true
 	return false
+
+
+func _sort_ledger_entries(a: Dictionary, b: Dictionary) -> bool:
+	var a_definition: Dictionary = a.get("definition", {})
+	var b_definition: Dictionary = b.get("definition", {})
+	var a_category := str(a_definition.get("category", "carried"))
+	var b_category := str(b_definition.get("category", "carried"))
+	var a_order := int(CATEGORY_SORT_ORDER.get(a_category, 99))
+	var b_order := int(CATEGORY_SORT_ORDER.get(b_category, 99))
+	if a_order != b_order:
+		return a_order < b_order
+	var a_name := str(a_definition.get("display_name", a.get("item_id", ""))).to_lower()
+	var b_name := str(b_definition.get("display_name", b.get("item_id", ""))).to_lower()
+	if a_name != b_name:
+		return a_name < b_name
+	return str(a.get("item_id", "")) < str(b.get("item_id", ""))
+
+
+func _category_accent(category: String) -> Color:
+	match category:
+		"key":
+			return Color("#8f7744")
+		"relic":
+			return Color("#aaa17f")
+		"cognitive":
+			return Color(SYSTEM_TECH, 0.78)
+		"equipment":
+			return Color("#9b824c")
+		"resources":
+			return Color(Palette.BORDER_DIM, 0.68)
+	return Palette.BORDER_DIM
+
+
+func _category_stamp(category: String) -> String:
+	return {
+		"resources": "MAT",
+		"relic": "REL",
+		"key": "KEY",
+		"cognitive": "COG",
+		"equipment": "EQP",
+	}.get(category, "MISC")
+
+
+func _usage_label(definition: Dictionary) -> String:
+	if definition.has("used_for"):
+		return str(definition["used_for"]).to_upper()
+	match str(definition.get("category", "carried")):
+		"resources":
+			return "REPAIRS / FABRICATION / FIELD COMPONENTS"
+		"equipment":
+			return "ACTIVE LOADOUT SLOT"
+		"key":
+			return "FIELD ACCESS"
+		"cognitive":
+			return "COGNITIVE STATE"
+		"relic":
+			return "CONTEXT / RITUAL EVIDENCE"
+	return "UNKNOWN"

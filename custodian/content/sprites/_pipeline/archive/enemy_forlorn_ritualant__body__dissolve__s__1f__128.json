@@ -1,0 +1,17 @@
+{
+  "source": "enemy_forlorn_ritualant__body__dissolve__s__1f__128.png",
+  "mode": "copy",
+  "outputs": [
+    {
+      "path": "enemies/enemy_forlorn_ritualant/runtime/body/enemy_forlorn_ritualant__body__dissolve__s__1f__128.png",
+      "layout": "copy"
+    },
+    {
+      "path": "enemies/enemy_forlorn_ritualant/enemy_forlorn_ritualant__body__dissolve__s__1f__128.png",
+      "layout": "copy"
+    }
+  ],
+  "post_process": [
+    "enemy_runtime_import"
+  ]
+}

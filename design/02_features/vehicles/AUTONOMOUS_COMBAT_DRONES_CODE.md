@@ -23,4 +23,4 @@ cd custodian
 godot --headless --quit
 ```
 
-Known deferred work remains in `design/20_features/in_progress/AUTONOMOUS_COMBAT_DRONES.md`.
+Known deferred work remains in `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md` and is summarized by `design/02_features/combat_feel/COMBAT_RESOURCE_AND_READABILITY_SYSTEM.md`.

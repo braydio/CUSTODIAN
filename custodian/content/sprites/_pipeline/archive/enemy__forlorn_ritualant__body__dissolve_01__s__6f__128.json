@@ -1,0 +1,19 @@
+{
+  "source": "enemy__forlorn_ritualant__body__dissolve_01__s__6f__128.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "enemies/enemy/runtime/forlorn_ritualant/enemy__forlorn_ritualant__body__dissolve_01__s__6f__128.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 6
+      }
+    }
+  ],
+  "frame_size": [
+    128,
+    128
+  ]
+}

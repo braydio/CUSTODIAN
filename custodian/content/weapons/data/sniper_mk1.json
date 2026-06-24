@@ -21,6 +21,11 @@
     "damage": 95,
     "fire_rate_rps": 0.6,
     "range_px": 800,
+    "effective_range_px": 360,
+    "max_range_px": 520,
+    "damage_falloff_start_px": 360,
+    "damage_falloff_end_px": 520,
+    "min_falloff_damage_mult": 0.7,
     "accuracy": 0.98,
     "spread_deg": 0.3,
     "recoil": 2.0,
@@ -34,9 +39,11 @@
   },
 
   "ammo": {
-    "ammo_type": "kinetic",
-    "capacity": 5,
-    "reserve": 15,
+    "ammo_type": "kinetic_heavy",
+    "magazine_size": 5,
+    "starting_reserve": 8,
+    "max_reserve": 12,
+    "ammo_per_shot": 1,
     "reload_style": "magazine"
   },
 
@@ -48,6 +55,9 @@
     "movement_accuracy_penalty": 0.5,
     "sprint_allowed": false
   },
+
+  "heat": {"enabled": true, "max": 100, "per_shot": 55, "decay_per_sec": 18, "decay_delay_sec": 0.5, "overheat_threshold": 100, "overheat_lockout_sec": 1.8, "spread_mult_at_max": 1.5, "recoil_mult_at_max": 1.5},
+  "noise": {"shot_radius_px": 620, "shot_loudness": 1.35, "suppressed": false, "suppressed_radius_mult": 0.35, "alert_threat_value": 1.35},
 
   "fire_modes": ["bolt"],
 

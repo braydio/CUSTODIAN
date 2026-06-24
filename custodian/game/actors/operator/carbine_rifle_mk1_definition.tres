@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3 uid="uid://b1lx6jd375ry7"]
 
 [ext_resource type="Script" uid="uid://dr83ct4e8mal7" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
-[ext_resource type="SpriteFrames" uid="uid://c5pkngb0jt7k4" path="res://game/actors/operator/operator_weapon_frames.tres" id="2_weapon_frames"]
+[ext_resource type="SpriteFrames" uid="uid://cb538kgeo3ysb" path="res://game/actors/operator/operator_weapon_frames.tres" id="2_weapon_frames"]
 
 [resource]
 script = ExtResource("1_weapon_definition")

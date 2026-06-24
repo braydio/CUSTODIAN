@@ -17,7 +17,6 @@ const CUSTODIAN_HUD_SCENE := preload("res://game/ui/hud/custodian_hud.tscn")
 const UI_CATALOG := preload("res://game/ui/theme/black_reliquary_asset_catalog.gd")
 const ENEMY_MARINE_SCENE := preload("res://game/actors/enemies/enemy_marine.tscn")
 const SUNDERED_KEEP_MARINE_AMBUSH := preload("res://game/world/sundered_keep/sundered_keep_marine_ambush.gd")
-const SIDEARM_PISTOL_DEFINITION := preload("res://game/actors/operator/sidearm_pistol_definition.tres")
 const LAST_ROUTEKEEPER_EVENT := preload("res://game/world/events/last_routekeeper/last_routekeeper_event.gd")
 const LAST_ROUTEKEEPER_EVENT_ID := &"last_routekeeper"
 const LAST_ROUTEKEEPER_TRACE_ITEM_ID := &"routekeeper_trace_note"
@@ -50,6 +49,7 @@ const SUNDERED_GATE_KEY_NAME := "Sundered Gate Key"
 const SUNDERED_GATE_KEY_FLAVOR := "A corroded winch key stamped with the keep's split-ring seal."
 const SIDEARM_LOCKER_ITEM_NAME := "P-9 Field Sidearm"
 const SIDEARM_LOCKER_PICKUP_MESSAGE := "P-9 FIELD SIDEARM ACQUIRED"
+const SIDEARM_LOCKER_ITEM_ID := &"p9_sidearm"
 
 const WALL_ASSET_DIRS := [
 	"res://content/tiles/sundered_keep/entrance/causeway_walls",
@@ -1797,19 +1797,14 @@ func _grant_sundered_gate_key() -> void:
 	print("[SunderedKeep] Acquired %s: %s" % [SUNDERED_GATE_KEY_NAME, SUNDERED_GATE_KEY_FLAVOR])
 
 
-func _grant_sidearm_locker(actor: Node) -> void:
+func _grant_sidearm_locker(_actor: Node) -> void:
 	if _sidearm_locker_opened:
 		return
-	var grant_target := actor
-	if grant_target == null or not grant_target.has_method("grant_sidearm"):
-		grant_target = _find_operator_actor()
-	if grant_target == null or not grant_target.has_method("grant_sidearm"):
-		push_warning("[SunderedKeep] Sidearm locker opened without a valid Operator grant target")
+	var inventory := get_node_or_null("/root/InventoryManager")
+	if inventory == null or not inventory.has_method("add_item"):
+		push_warning("[SunderedKeep] Sidearm locker opened without InventoryManager")
 		return
-	var grant_result: Dictionary = grant_target.call("grant_sidearm", SIDEARM_PISTOL_DEFINITION)
-	if not bool(grant_result.get("granted", false)):
-		push_warning("[SunderedKeep] Sidearm locker could not grant the P-9 Field Sidearm")
-		return
+	inventory.call("add_item", SIDEARM_LOCKER_ITEM_ID, 1)
 	_sidearm_locker_opened = true
 	if _sidearm_locker_interaction != null and is_instance_valid(_sidearm_locker_interaction):
 		_sidearm_locker_interaction.remove_from_group("interactable")
@@ -1817,7 +1812,7 @@ func _grant_sidearm_locker(actor: Node) -> void:
 	if _hud != null and is_instance_valid(_hud):
 		_hud.show_interaction(
 			SIDEARM_LOCKER_PICKUP_MESSAGE,
-			"Custodian service imprint accepted",
+			"Custodian service imprint accepted / equip from Equipment",
 			_get_interact_prompt_key(),
 			UI_CATALOG.ICON_OBJECTIVE
 		)

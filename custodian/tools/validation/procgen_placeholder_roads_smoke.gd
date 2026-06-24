@@ -1,7 +1,7 @@
 extends SceneTree
 
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
-const PLACEHOLDER_ROAD_ROOT := "res://content/tiles/roads_paths/runtime/placeholders/"
+const PRODUCTION_LANE_ROOT := "res://content/tiles/roads_paths/runtime/roads/lane/"
 
 
 func _init() -> void:
@@ -47,10 +47,12 @@ func _run() -> void:
 		assert(not tilemap.debug_is_road_blocked_by_impassable_authority(tile), "Road tile overlaps impassable authority: %s" % str(tile))
 
 	var decal_paths := tilemap.debug_get_road_piece_decal_texture_paths()
-	assert(decal_paths.size() >= 8, "Expected placeholder road/path decals to spawn, got %d." % decal_paths.size())
+	assert(decal_paths.size() >= 8, "Expected road/path decals to spawn, got %d." % decal_paths.size())
+	var lane_decal_count := 0
 	for path in decal_paths:
-		assert(path.begins_with(PLACEHOLDER_ROAD_ROOT), "Road decal did not use placeholder runtime art: %s" % path)
-		assert(path.get_file().begins_with("PLACEHOLDER_"), "Road placeholder file is not clearly named: %s" % path)
+		if path.begins_with(PRODUCTION_LANE_ROOT):
+			lane_decal_count += 1
+	assert(lane_decal_count >= 4, "Expected production lane road decals to spawn, got %d out of %d total." % [lane_decal_count, decal_paths.size()])
 
 	var role_counts := tilemap.debug_get_road_piece_decal_role_counts()
 	for role in ["center", "left_1", "left_2", "right_1", "right_2"]:

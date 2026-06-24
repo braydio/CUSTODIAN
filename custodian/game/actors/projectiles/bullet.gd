@@ -9,12 +9,17 @@ extends Area2D
 @export var team: String = "player"  # player, defense, enemy, or neutral
 @export var crit_chance: float = 0.0
 @export var crit_multiplier: float = 1.5
+@export var max_range_px: float = 320.0
+@export var falloff_start_px: float = 180.0
+@export var falloff_end_px: float = 320.0
+@export var min_damage_multiplier: float = 0.45
 
 const BLOCK_SPARK_SCENE := preload("res://game/actors/effects/block_spark.tscn")
 
 var direction := Vector2.RIGHT
 var shooter: Node = null
 var age := 0.0
+var _distance_traveled := 0.0
 
 @onready var visual = get_node_or_null("Visual")
 @onready var collision_shape = get_node_or_null("CollisionShape2D")
@@ -35,15 +40,20 @@ func set_direction(dir: Vector2):
 func _physics_process(delta):
 	var from: Vector2 = global_position
 	var to: Vector2 = global_position + direction * speed * delta
+	var traveled_this_step := from.distance_to(to)
 	var hit: Dictionary = _sweep_projectile(from, to)
 	if not hit.is_empty():
-		global_position = hit.get("position", to)
+		var hit_position: Vector2 = hit.get("position", to)
+		traveled_this_step = from.distance_to(hit_position)
+		global_position = hit_position
 		var collider: Object = hit.get("collider", null)
 		if collider is Node and _handle_body_hit(collider as Node, global_position):
 			return
+		traveled_this_step += hit_position.distance_to(to)
 	global_position = to
+	_distance_traveled += traveled_this_step
 	age += delta
-	if age >= max_lifetime:
+	if age >= max_lifetime or _distance_traveled >= max_range_px:
 		queue_free()
 
 
@@ -55,7 +65,7 @@ func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
 	if body == shooter:
 		return false
 	if body.has_method("receive_projectile_hit") and (_is_world_blocker(body) or _can_hit(body)):
-		var result_variant: Variant = body.call("receive_projectile_hit", damage, team)
+		var result_variant: Variant = body.call("receive_projectile_hit", get_scaled_damage(), team)
 		var was_blocked: bool = _extract_blocked_result(result_variant)
 		_apply_game_feel(body, 0.0)
 		if was_blocked:
@@ -72,7 +82,7 @@ func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
 		return false
 
 	if body.has_method("take_damage"):
-		var final_damage: float = damage
+		var final_damage: float = get_scaled_damage()
 		if crit_chance > 0.0 and randf() < crit_chance:
 			final_damage *= crit_multiplier
 		body.take_damage(final_damage)
@@ -86,6 +96,13 @@ func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
 		queue_free()
 		return true
 	return false
+
+
+func get_scaled_damage() -> float:
+	if falloff_end_px <= falloff_start_px:
+		return damage
+	var t := clampf((_distance_traveled - falloff_start_px) / (falloff_end_px - falloff_start_px), 0.0, 1.0)
+	return damage * lerpf(1.0, min_damage_multiplier, t)
 
 
 func _sweep_projectile(from: Vector2, to: Vector2) -> Dictionary:

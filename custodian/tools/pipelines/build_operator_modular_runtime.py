@@ -33,6 +33,7 @@ MODULAR_LAYER_OUTPUTS = {
     "modular_body_upper": "upper_body",
     "modular_combined_body": "combined_body",
     "modular_lower_body": "lower_body",
+    "modular_ranged_weapon": "ranged_weapon",
     "modular_sidearm": "sidearm",
     "modular_upper_body": "upper_body",
     "modular_upper_fx": "upper_fx",
@@ -172,14 +173,24 @@ def _build_ranged_2h_stance_modules(source_root: Path, module_root: Path, dry_ru
     generated: list[Path] = []
     ranged_root = source_root / "ranged"
     layer_specs = {
+        # Old naming: operator__modular_<bodypart>__stance__ranged_2h__<dir>__5f__96.png
         "lower_body": "operator__modular_lower_body__stance__ranged_2h",
         "upper_body": "operator__modular_upper_body__stance__ranged_2h",
         "ranged_weapon": "operator__modular_upper_body__weapon__ranged_2h",
     }
+    # New naming: operator__modular_<layer>__ranged_2h__stance_01__<dir>__5f__96.png
+    new_style_prefixes = {
+        "lower_body": "operator__modular_lower_body__ranged_2h__stance_01",
+        "upper_body": "operator__modular_upper_body__ranged_2h__stance_01",
+        "ranged_weapon": "operator__modular_ranged_weapon__ranged_2h__stance_01",
+    }
     for output_layer, source_prefix in layer_specs.items():
         output_root = module_root / output_layer / "actions/ranged_2h/stance_01"
-        for direction in ("e", "n", "w"):
+        for direction in DIRECTIONS:
             matches = sorted(ranged_root.glob(f"{source_prefix}__{direction}__5f__96*.png"))
+            new_prefix = new_style_prefixes.get(output_layer)
+            if not matches and new_prefix:
+                matches = sorted(ranged_root.glob(f"{new_prefix}__{direction}__5f__96*.png"))
             if not matches:
                 continue
             output = output_root / f"operator__modular_{output_layer}__ranged_2h__stance_01__{direction}__5f__96.png"
@@ -472,7 +483,7 @@ def _parse_generic_modular_source(source: Path) -> tuple[str, str, str, SheetSpe
         return output_layer, loadout, action, spec, priority
     if action_group in KNOWN_LOADOUTS and variant:
         loadout = action_group
-        action = variant
+        action = _canonical_action_name(variant)
         priority = 2
     elif variant in KNOWN_LOADOUTS:
         loadout = variant

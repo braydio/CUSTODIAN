@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/enemy_forlorn_ritualant__body__rise__s__4f__128.json",
+	"outputs": [
+		"res://content/sprites/enemies/enemy_forlorn_ritualant/runtime/body/enemy_forlorn_ritualant__body__rise__s__4f__128.png",
+		"res://content/sprites/enemies/enemy_forlorn_ritualant/enemy_forlorn_ritualant__body__rise__s__4f__128.png"
+	],
+	"post_process": [
+		"enemy_runtime_import"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/enemy_forlorn_ritualant__body__rise__s__4f__128.png",
+	"timestamp_utc": "2026-06-20 22:25:01"
+}

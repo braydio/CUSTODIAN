@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-04-04  
 **Status:** active  
-**Last Updated:** 2026-06-07
+**Last Updated:** 2026-06-21
 
 ---
 
@@ -248,6 +248,28 @@ Milestones are major release checkpoints. Each has:
 **Docs:** 
 - `01_systems/COMMAND_TERMINAL_UI.md`
 - `03_architecture/COMPOUND_TILE_SYSTEM.md`
+
+---
+
+### Cross-cutting Combat Resource and Readability
+**Status:** in_progress
+
+| Feature | Status | Priority |
+|---------|--------|----------|
+| Typed ammo, magazines, range/falloff | complete | P0 |
+| Weapon heat, overheat, positional gunshot noise | complete | P0 |
+| Production combat-pressure feedback | in_progress | P1 |
+| Field Patch healing | planned | P1 |
+| Hit taxonomy and full riposte | planned | P1 |
+| Durability and field repair | backlog | P2 |
+| Physical vault theft | complete | P1 |
+| Portable turret placement | complete | P1 |
+| Trap deployment | backlog | P2 |
+| Allied combat drone V1 | complete | P1 |
+| Drone battery/repair/redeployment | backlog | P2 |
+
+**Doc:** `02_features/combat_feel/COMBAT_RESOURCE_AND_READABILITY_SYSTEM.md`
+**Depends on:** Combat system, resource fabrication, enemy objectives, turret placement
 
 ---
 

@@ -46,9 +46,8 @@
 [ext_resource type="Script" uid="uid://brs7i5frcn2w5" path="res://game/systems/core/systems/terminal_deployment.gd" id="101_terminal_deployment"]
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
-[ext_resource type="PackedScene" uid="uid://d16xvgyky6xs7" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="203_ash_bell_site"]
-[ext_resource type="Script" uid="uid://cv0gyb8rtk8au" path="res://game/world/events/ash_bell/ash_bell_dev_spawner.gd" id="204_ash_bell_spawner"]
 [ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
+[ext_resource type="Script" uid="uid://brgprv506ntpi" path="res://game/systems/spawning/ambient_enemy_camp.gd" id="207_ambient_camp"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 
@@ -165,17 +164,17 @@ lane = "west"
 
 [node name="AmmoCacheA" parent="World/Items" unique_id=1977245667 instance=ExtResource("10_cache")]
 position = Vector2(-920, -520)
-standard_ammo = 32
+standard_ammo = 8
 
 [node name="AmmoCacheB" parent="World/Items" unique_id=892279798 instance=ExtResource("10_cache")]
 position = Vector2(420, 300)
-standard_ammo = 24
-heavy_ammo = 10
+standard_ammo = 8
+heavy_ammo = 2
 
 [node name="AmmoCacheC" parent="World/Items" unique_id=228248645 instance=ExtResource("10_cache")]
 position = Vector2(1600, -140)
-standard_ammo = 36
-heavy_ammo = 6
+standard_ammo = 12
+heavy_ammo = 2
 
 [node name="AmmoCacheD" parent="World/Items" unique_id=655756500 instance=ExtResource("10_cache")]
 position = Vector2(40, -520)
@@ -183,18 +182,14 @@ position = Vector2(40, -520)
 [node name="ContractMap" parent="World" unique_id=1103719919 instance=ExtResource("26_contract_map")]
 visible = false
 
-[node name="AshBellDevSpawner" type="Node" parent="World" unique_id=1172024673]
-script = ExtResource("204_ash_bell_spawner")
-encounter_scene = ExtResource("203_ash_bell_site")
-
 [node name="Operator" parent="World" unique_id=2047803984 instance=ExtResource("2_operator")]
 position = Vector2(717.45905, -485.33954)
 muzzle_offset = 24.0
 aim_crosshair_color = Color(0.9, 0.9, 0.9, 1)
-ammo_standard = 120
-ammo_heavy = 32
-ammo_standard_max = 240
-ammo_heavy_max = 80
+ammo_standard = 48
+ammo_heavy = 12
+ammo_standard_max = 72
+ammo_heavy_max = 16
 interaction_range = 84.0
 repair_rate = 15.0
 sprint_multiplier = 1.7
@@ -229,6 +224,20 @@ placeholder_collision_height = 22.0
 placeholder_melee_hitbox_radius = 22.0
 placeholder_healthbar_top = -54.0
 placeholder_healthbar_bottom = -48.0
+
+[node name="AmbientHostileCampEast" type="Node2D" parent="World" unique_id=1994972853]
+position = Vector2(1220, -500)
+script = ExtResource("207_ambient_camp")
+camp_id = &"east_road_watch"
+enemy_scene = ExtResource("18_grunt_enemy")
+enemy_count_max = 3
+
+[node name="AmbientHostileCampWest" type="Node2D" parent="World" unique_id=1275453240]
+position = Vector2(-220, -500)
+script = ExtResource("207_ambient_camp")
+camp_id = &"west_ruin_watch"
+enemy_scene = ExtResource("18_grunt_enemy")
+enemy_count_max = 3
 
 [node name="PlayerController" type="Node" parent="World" unique_id=2047803985]
 script = ExtResource("42_player_controller")

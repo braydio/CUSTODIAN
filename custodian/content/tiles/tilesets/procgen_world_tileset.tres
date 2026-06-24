@@ -15,12 +15,12 @@
 [ext_resource type="Texture2D" uid="uid://ynl0dotgprii" path="res://content/tiles/walls/generated/procgen_wall_tiles_32.png" id="12_procgen_wall"]
 [ext_resource type="Texture2D" uid="uid://bhqodrke8woqn" path="res://content/tiles/interiors/runtime/wall_military_32.png" id="16_interior_wall_military"]
 [ext_resource type="Texture2D" uid="uid://b7x1todkk8wk5" path="res://content/tiles/interiors/runtime/wall_military_corner_32.png" id="17_interior_wall_corner"]
-[ext_resource type="Texture2D" uid="uid://b4aflkmxdahtm" path="res://content/tiles/interiors/temp/floor_concrete_01_32.png" id="18_interior_floor_concrete_01_32"]
-[ext_resource type="Texture2D" uid="uid://bwbomlqovynyj" path="res://content/tiles/interiors/temp/floor_concrete_02_32.png" id="19_interior_floor_concrete_02_32"]
-[ext_resource type="Texture2D" uid="uid://bsfl73emk1o00" path="res://content/tiles/interiors/temp/floor_concrete_03_32.png" id="20_interior_floor_concrete_03_32"]
-[ext_resource type="Texture2D" uid="uid://bjhu3fn2yld8o" path="res://content/tiles/interiors/temp/floor_concrete_04_32.png" id="21_interior_floor_concrete_04_32"]
-[ext_resource type="Texture2D" uid="uid://bm3hp2p0tgi6a" path="res://content/tiles/interiors/temp/floor_concrete_05_32.png" id="22_interior_floor_concrete_05_32"]
-[ext_resource type="Texture2D" uid="uid://6ris1x6gvvpi" path="res://content/tiles/interiors/temp/floor_concrete_06_32.png" id="23_interior_floor_concrete_06_32"]
+[ext_resource type="Texture2D" uid="uid://byvj7e7be3po5" path="res://content/tiles/interiors/temp/floor_concrete_01_32.png" id="18_interior_floor_concrete_01_32"]
+[ext_resource type="Texture2D" uid="uid://4o84sr0n7sgs" path="res://content/tiles/interiors/temp/floor_concrete_02_32.png" id="19_interior_floor_concrete_02_32"]
+[ext_resource type="Texture2D" uid="uid://dqkdq1t718udq" path="res://content/tiles/interiors/temp/floor_concrete_03_32.png" id="20_interior_floor_concrete_03_32"]
+[ext_resource type="Texture2D" uid="uid://bumoopfspu4ja" path="res://content/tiles/interiors/temp/floor_concrete_04_32.png" id="21_interior_floor_concrete_04_32"]
+[ext_resource type="Texture2D" uid="uid://d1ek1yjkykcs0" path="res://content/tiles/interiors/temp/floor_concrete_05_32.png" id="22_interior_floor_concrete_05_32"]
+[ext_resource type="Texture2D" uid="uid://cs3bly06x1q1m" path="res://content/tiles/interiors/temp/floor_concrete_06_32.png" id="23_interior_floor_concrete_06_32"]
 [ext_resource type="Texture2D" uid="uid://dvnmos4hmypij" path="res://content/tiles/interiors/runtime/floor_panel_32.png" id="25_interior_floor_panel_32"]
 [ext_resource type="Texture2D" uid="uid://dydx6e6kcw2im" path="res://content/tiles/interiors/runtime/threshold_metal_horizontal_32.png" id="26_interior_threshold_metal_horizontal_32"]
 [ext_resource type="Texture2D" uid="uid://6lopp1cks268" path="res://content/tiles/interiors/runtime/threshold_metal_vertical_32.png" id="27_interior_threshold_metal_vertical_32"]
@@ -490,19 +490,35 @@ texture = ExtResource("6_h74cr")
 texture = ExtResource("7_360cd")
 16:13/0 = 0
 15:13/0 = 0
-15:14/0 = 0
-14:14/0 = 0
 13:14/0 = 0
 12:14/0 = 0
 11:14/0 = 0
 10:14/0 = 0
-9:14/0 = 0
-9:15/0 = 0
 11:12/0 = 0
 13:16/0 = 0
 15:16/0 = 0
 14:15/0 = 0
 15:15/0 = 0
+7:14/0 = 0
+6:14/0 = 0
+6:15/0 = 0
+7:15/0 = 0
+10:13/0 = 0
+11:13/0 = 0
+11:15/0 = 0
+10:15/0 = 0
+2:15/0 = 0
+3:15/0 = 0
+3:16/0 = 0
+2:16/0 = 0
+14:13/0 = 0
+14:12/0 = 0
+14:11/0 = 0
+15:11/0 = 0
+15:12/0 = 0
+17:13/0 = 0
+17:12/0 = 0
+16:12/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_65d2a"]
 texture = ExtResource("8_j1o54")

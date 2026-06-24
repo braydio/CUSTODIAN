@@ -31,6 +31,8 @@
         "stats": {"$ref": "#/definitions/weapon_stats"},
         "ammo": {"$ref": "#/definitions/ammo_config"},
         "handling": {"$ref": "#/definitions/handling_config"},
+        "heat": {"$ref": "#/definitions/heat_config"},
+        "noise": {"$ref": "#/definitions/noise_config"},
         "fire_modes": {"type": "array", "items": {"type": "string", "enum": ["semi", "auto", "burst", "pump", "bolt"]}},
         "animation": {"$ref": "#/definitions/animation_config"},
         "projectile": {"$ref": "#/definitions/projectile_config"},
@@ -60,6 +62,11 @@
         "damage": {"type": "number", "minimum": 0},
         "fire_rate_rps": {"type": "number", "minimum": 0, "description": "Rounds per second"},
         "range_px": {"type": "number", "minimum": 0, "description": "Effective range in pixels"},
+        "effective_range_px": {"type": "number", "minimum": 0},
+        "max_range_px": {"type": "number", "minimum": 0},
+        "damage_falloff_start_px": {"type": "number", "minimum": 0},
+        "damage_falloff_end_px": {"type": "number", "minimum": 0},
+        "min_falloff_damage_mult": {"type": "number", "minimum": 0, "maximum": 1},
         "accuracy": {"type": "number", "minimum": 0, "maximum": 1},
         "spread_deg": {"type": "number", "minimum": 0, "description": "Degrees of spread"},
         "recoil": {"type": "number", "minimum": 0},
@@ -76,11 +83,16 @@
 
     "ammo_config": {
       "type": "object",
-      "required": ["ammo_type", "capacity"],
+      "required": ["ammo_type"],
       "properties": {
         "ammo_type": {"type": "string", "description": "Reference to ammo_types.json"},
         "capacity": {"type": "integer", "minimum": 1, "description": "Magazine capacity"},
         "reserve": {"type": "integer", "minimum": 0, "description": "Starting reserve ammo"},
+        "magazine_size": {"type": "integer", "minimum": 1},
+        "starting_reserve": {"type": "integer", "minimum": 0},
+        "max_reserve": {"type": "integer", "minimum": 0},
+        "ammo_per_shot": {"type": "integer", "minimum": 1},
+        "pickup_weight": {"type": "number", "minimum": 0},
         "reload_style": {"type": "string", "enum": ["magazine", "shell", "single"]}
       }
     },
@@ -94,7 +106,38 @@
         "ads_time_sec": {"type": "number", "minimum": 0, "description": "Seconds to aim down sight"},
         "movement_speed_penalty": {"type": "number", "minimum": -1, "maximum": 1},
         "movement_accuracy_penalty": {"type": "number", "minimum": 0, "maximum": 1},
+        "standing_spread_mult": {"type": "number", "minimum": 0},
+        "walking_spread_mult": {"type": "number", "minimum": 0},
+        "sprinting_spread_mult": {"type": "number", "minimum": 0},
+        "panic_spread_mult": {"type": "number", "minimum": 0},
+        "sneak_spread_mult": {"type": "number", "minimum": 0},
         "sprint_allowed": {"type": "boolean"}
+      }
+    },
+
+    "heat_config": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "max": {"type": "number", "exclusiveMinimum": 0},
+        "per_shot": {"type": "number", "minimum": 0},
+        "decay_per_sec": {"type": "number", "minimum": 0},
+        "decay_delay_sec": {"type": "number", "minimum": 0},
+        "overheat_threshold": {"type": "number", "minimum": 0},
+        "overheat_lockout_sec": {"type": "number", "minimum": 0},
+        "spread_mult_at_max": {"type": "number", "minimum": 1},
+        "recoil_mult_at_max": {"type": "number", "minimum": 1}
+      }
+    },
+
+    "noise_config": {
+      "type": "object",
+      "properties": {
+        "shot_radius_px": {"type": "number", "minimum": 0},
+        "shot_loudness": {"type": "number", "minimum": 0},
+        "suppressed": {"type": "boolean"},
+        "suppressed_radius_mult": {"type": "number", "minimum": 0, "maximum": 1},
+        "alert_threat_value": {"type": "number", "minimum": 0}
       }
     },
 
