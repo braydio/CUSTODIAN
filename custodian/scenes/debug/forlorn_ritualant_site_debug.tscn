@@ -1,20 +1,19 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://dxxpdmuw43686"]
 
 [ext_resource type="PackedScene" uid="uid://d16xvgyky6xs7" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="1_site"]
 
-[node name="GameRoot" type="Node2D"]
+[node name="GameRoot" type="Node2D" unique_id=718179526]
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=1632140414]
 
-[node name="Projectiles" type="Node2D" parent="World"]
+[node name="Projectiles" type="Node2D" parent="World" unique_id=1759746494]
 
-[node name="ForlornRitualantSite" parent="World" instance=ExtResource("1_site")]
+[node name="ForlornRitualantSite" parent="World" unique_id=813125816 instance=ExtResource("1_site")]
 
-[node name="Camera2D" type="Camera2D" parent="World"]
-enabled = true
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=782622763]
 zoom = Vector2(0.85, 0.85)
 
-[node name="StandaloneNote" type="Label" parent="World"]
+[node name="StandaloneNote" type="Label" parent="World" unique_id=710441179]
 z_index = 100
 offset_left = -520.0
 offset_top = -465.0

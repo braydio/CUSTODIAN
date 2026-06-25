@@ -204,22 +204,33 @@ When archive/recon/contract data is surfaced, fidelity and confidence should int
 **Purpose:** Primary tactical management
 
 **Layout:**
-- Left: Sector list table
-- Center: Selected sector detail
-- Right: Local incidents, travel context, linked systems
+- Top center: large shared tactical minimap, sized as the page centerpiece rather than a debug preview.
+- The minimap title should include the current sector focus (`TACTICAL MAP // FOCUS: <SECTOR>`) when on this page.
+- Bottom/center: aligned sector table with stable columns: `NAME | STATE | HP | POWER | PRIORITY | THREAT`.
+- Detail card: selected sector summary that answers what is selected, what is wrong, and what actions are available.
+- Right shell region: transcript/event log remains available but visually secondary to tactical map/table/detail content.
+- The full shell must fit inside a 1366x768 viewport with safe margins; nav labels, top status, bottom helper text, and scrollbars must remain inside their panels.
 
 **Sector list columns:**
-- Sector, category, status, power, defense, hostiles, operator present, priority
+- Name, state, HP, power allocation/capacity or known tier, priority, threat.
+- Rows must not wrap into each other; long names truncate with an ellipsis.
+- Selected sector must be obvious via row marker/color and minimap marker highlight.
+- Severity colors: operational/stable green-cyan, degraded/warning amber, damaged/critical/assault red, unknown gray-blue.
 
 **Sector detail fields:**
-- Name, critical/peripheral flag, structural damage, defense slots, powered/offline systems
-- Hostile estimate, activity states, ingress/egress routes
-- Travel time from command, travel time from player location
-- Autopilot effectiveness, notes
+- Strong header in the form `<NAME> // <STATE>`.
+- HP numeric value plus compact bar, power draw/capacity, priority, threat state, active defenses, incidents/notes.
+- Missing data should render as `UNKNOWN` or `NONE REPORTED`; do not fabricate tactical precision.
 
 **Actions:**
-- OPEN POWER VIEW, OPEN DEFENSE VIEW, PIN SECTOR, SET PRIORITY, TRACK INCIDENTS
-- If in Command Center: POWER TOGGLE, PRIORITIZE DEFENSE, PRIORITIZE SENSORS, LOAD SHED, TARGET PRIORITY
+- OPEN POWER VIEW, PIN SECTOR, SET PRIORITY, TRACK INCIDENTS.
+- Actions render as command controls/links with aligned `READY`, `DISABLED`, or future `LOCKED` state labels.
+- Clicking a sector table row or sector minimap marker should focus the SECTORS page on that sector when snapshot world positions are available.
+
+**Event log and top status:**
+- Event log colors follow severity categories: command/system cyan, power amber, threat/assault red, stable/accepted green.
+- Repeated focus-shift messages should compress into a single `FOCUS SHIFTED: A → B` line where possible.
+- Negative net grid power must not render as an ambiguous bare `POWER:-N`; label it as grid deficit or net grid value.
 
 ---
 

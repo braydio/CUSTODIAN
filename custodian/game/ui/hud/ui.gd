@@ -313,7 +313,7 @@ const PLANET_PREVIEW_ZOOM_MAX := 6.2
 const PLANET_PREVIEW_ZOOM_STEP := 0.3
 const TERMINAL_LOG_LIMIT := 1000
 const TERMINAL_COMMAND_QUEUE_INTERVAL := 0.12
-const TERMINAL_MAP_PREVIEW_SIZE := 256
+const TERMINAL_MAP_PREVIEW_SIZE := 320
 const CROSSHAIR_WORLD_DISTANCE := 110.0
 const CROSSHAIR_SCREEN_MARGIN := 22.0
 const TERMINAL_ACTIVITY_SCROLL_FOLLOW_MARGIN := 24.0
@@ -1903,7 +1903,7 @@ func _apply_terminal_theme():
 
 	if terminal_target_label:
 		terminal_target_label.add_theme_color_override("font_color", Color(0.76, 0.92, 0.86, 0.95))
-		terminal_target_label.add_theme_font_size_override("font_size", 11)
+		terminal_target_label.add_theme_font_size_override("font_size", 10)
 	if terminal_page_summary_label:
 		terminal_page_summary_label.add_theme_color_override("font_color", Color(0.62, 0.78, 0.72, 0.92))
 		terminal_page_summary_label.add_theme_font_size_override("font_size", 11)
@@ -1913,7 +1913,7 @@ func _apply_terminal_theme():
 			continue
 		output.add_theme_stylebox_override("normal", map_style if output == terminal_map_label else output_style)
 		output.add_theme_color_override("font_color", Color(0.82, 0.92, 0.88, 1.0))
-		output.add_theme_font_size_override("font_size", 14)
+		output.add_theme_font_size_override("font_size", 13 if output == terminal_map_label else 11)
 		if output is RichTextLabel:
 			output.fit_content = false
 			output.scroll_active = true
@@ -2018,6 +2018,26 @@ func _append_terminal_line(line: String, level: String = "info", sector: String 
 		"level": level,
 		"sector": sector,
 	}
+	if line.begins_with("FOCUS SHIFTED TO ") and not _terminal_log_entries.is_empty():
+		var last_index := _terminal_log_entries.size() - 1
+		var last_entry: Dictionary = _terminal_log_entries[last_index]
+		var last_line := str(last_entry.get("line", ""))
+		var from_sector := ""
+		if last_line.begins_with("FOCUS SHIFTED TO "):
+			from_sector = last_line.trim_prefix("FOCUS SHIFTED TO ").strip_edges()
+		elif last_line.begins_with("FOCUS SHIFTED: "):
+			var arrow_index := last_line.rfind("→")
+			if arrow_index > 0:
+				from_sector = last_line.substr(15, arrow_index - 15).strip_edges()
+		if not from_sector.is_empty():
+			var to_sector := line.trim_prefix("FOCUS SHIFTED TO ").strip_edges()
+			last_entry["time"] = entry["time"]
+			last_entry["line"] = "FOCUS SHIFTED: %s → %s" % [from_sector, to_sector]
+			last_entry["level"] = level
+			last_entry["sector"] = sector
+			_terminal_log_entries[last_index] = last_entry
+			_render_terminal_output()
+			return
 	_terminal_log_entries.append(entry)
 	if _terminal_log_entries.size() > TERMINAL_LOG_LIMIT:
 		_terminal_log_entries = _terminal_log_entries.slice(_terminal_log_entries.size() - TERMINAL_LOG_LIMIT, _terminal_log_entries.size())
@@ -2065,13 +2085,13 @@ func _is_terminal_activity_near_bottom() -> bool:
 
 func _get_terminal_log_color(level: String) -> String:
 	match level:
-		"success":
+		"success", "accepted", "stable":
 			return "#7DDE9B"
-		"warning":
+		"warning", "power":
 			return "#E8C86D"
-		"critical":
+		"critical", "threat", "assault":
 			return "#F07A7A"
-		"command":
+		"command", "system":
 			return "#9EDBFF"
 		"queued":
 			return "#B7B6FF"
@@ -2083,12 +2103,12 @@ func _escape_bbcode(value: String) -> String:
 
 func _on_terminal_activity_meta_clicked(meta: Variant) -> void:
 	var meta_text := str(meta)
+	if meta_text.begins_with("terminal_action:"):
+		_handle_terminal_action_link(meta_text.trim_prefix("terminal_action:"))
+		return
 	if not meta_text.begins_with("sector:"):
 		return
-	_terminal_highlight_sector = meta_text.trim_prefix("sector:")
-	_set_terminal_page("SECTORS")
-	_append_terminal_line("FOCUS SHIFTED TO %s" % _display_sector_name(_terminal_highlight_sector).to_upper(), "success", _terminal_highlight_sector)
-	_refresh_snapshot()
+	select_sector(meta_text.trim_prefix("sector:"))
 
 func _render_terminal_status(text: String):
 	if terminal_status_label:
@@ -2327,20 +2347,21 @@ func _render_terminal_header(snapshot: Dictionary) -> void:
 	var power_status := _get_power_status_snapshot()
 	var reserve_rate := float(power_status.get("net", 0.0)) * 60.0
 	var rate_text := _format_terminal_rate(Engine.time_scale)
-	var archive_state := "NOMINAL" if contract_seed >= 0 else "UNSYNCED"
-	var reserve_text := "%+0.1f/s" % reserve_rate
+	var phase_short := _terminal_truncate(phase_text, 12)
+	var grid_text := "GRID:%+0.0f NET" % reserve_rate
+	if reserve_rate < 0.0:
+		grid_text = "GRID DEFICIT:%0.0f" % abs(reserve_rate)
 	if terminal_header_eyebrow:
 		terminal_header_eyebrow.text = "CUSTODIAN // COMMAND LINK | MODE: COMMAND | FIDELITY: FULL | PAGE: %s" % _terminal_current_page
 	if terminal_title_label:
 		terminal_title_label.text = "%s // %s" % [planet_key, "CONTRACT-%04d" % contract_seed if contract_seed >= 0 else "NO CONTRACT LOCK"]
 	if terminal_target_label:
 		var threat_color := _get_threat_color(threat_label)
-		terminal_target_label.text = "T:%s | THREAT:%s | ASSAULT:%s | POWER:%s | ARCHIVE:%s | RATE:%s" % [
+		terminal_target_label.text = "T:%s  THREAT:%s  PHASE:%s  %s  RATE:%s" % [
 			str(snapshot.get("time", "--:--:--")),
 			threat_label,
-			phase_text,
-			reserve_text,
-			archive_state,
+			phase_short,
+			grid_text,
 			rate_text,
 		]
 		terminal_target_label.add_theme_color_override("font_color", Color(threat_color))
@@ -2415,6 +2436,76 @@ func _terminal_kv(label: String, value) -> String:
 	return "%-12s %s" % [label.to_upper(), str(value)]
 
 
+func _terminal_truncate(value: String, max_chars: int) -> String:
+	var compact := value.strip_edges()
+	if compact.length() <= max_chars:
+		return compact
+	if max_chars <= 1:
+		return "…"
+	return compact.substr(0, max_chars - 1) + "…"
+
+
+func format_sector_state(sector: Dictionary) -> String:
+	var status := str(sector.get("status", "UNKNOWN")).strip_edges().to_upper()
+	if status.is_empty():
+		return "UNKNOWN"
+	return status
+
+
+func format_power(sector: Dictionary) -> String:
+	if sector.has("power_allocated") or sector.has("power_standard"):
+		var allocated := float(sector.get("power_allocated", 0.0))
+		var capacity := float(sector.get("power_standard", 0.0))
+		if is_equal_approx(allocated, round(allocated)) and is_equal_approx(capacity, round(capacity)):
+			return "%d/%d" % [int(round(allocated)), int(round(capacity))]
+		return "%.1f/%.1f" % [allocated, capacity]
+	var tier := str(sector.get("power_tier", "UNKNOWN")).strip_edges().to_upper()
+	return "UNKNOWN" if tier.is_empty() else tier
+
+
+func _sector_threat_state(sector: Dictionary) -> String:
+	var status := format_sector_state(sector)
+	var hp_pct := int(sector.get("hp_pct", 100))
+	if status in ["ASSAULT", "CRITICAL", "COMPROMISED", "OFFLINE"]:
+		return status
+	if hp_pct <= 30:
+		return "CRITICAL"
+	if hp_pct < 70:
+		return "LOW"
+	if status in ["DAMAGED", "DEGRADED", "WARNING"]:
+		return "LOW"
+	return "NONE"
+
+
+func severity_color(value: String) -> String:
+	var key := value.strip_edges().to_upper()
+	if key in ["OPERATIONAL", "STABLE", "ONLINE", "NOMINAL", "NONE"]:
+		return "#7DDE9B"
+	if key in ["DEGRADED", "WARNING", "LOW", "ELEVATED"]:
+		return "#E8C86D"
+	if key in ["DAMAGED", "CRITICAL", "ASSAULT", "COMPROMISED", "OFFLINE"]:
+		return "#F07A7A"
+	if key in ["SELECTED", "PINNED"]:
+		return "#9EDBFF"
+	return "#7F9EAF"
+
+
+func _format_sector_hp(sector: Dictionary) -> String:
+	if not sector.has("hp_pct"):
+		return "UNK"
+	return "%3d%%" % int(sector.get("hp_pct", 0))
+
+
+func _format_sector_bar(sector: Dictionary, width: int = 12) -> String:
+	if not sector.has("hp_pct"):
+		return "[color=#5F7580]%s[/color]" % "·".repeat(width)
+	var hp_pct: int = clampi(int(sector.get("hp_pct", 0)), 0, 100)
+	var filled: int = clampi(int(round(float(width) * float(hp_pct) / 100.0)), 0, width)
+	var empty: int = max(0, width - filled)
+	var color := severity_color("CRITICAL" if hp_pct <= 30 else ("WARNING" if hp_pct < 70 else "STABLE"))
+	return "[color=%s]%s[/color][color=#2F4A52]%s[/color]" % [color, "█".repeat(filled), "░".repeat(empty)]
+
+
 func _terminal_divider() -> String:
 	return "=============================="
 
@@ -2475,6 +2566,7 @@ func _apply_terminal_page_theme() -> void:
 		output.add_theme_color_override("font_color", Color(1.0, 0.90, 0.76, 1.0) if fabrication_mode else Color(0.82, 0.92, 0.88, 1.0))
 		if output is RichTextLabel:
 			output.add_theme_color_override("selection_color", Color(0.98, 0.72, 0.28, 0.92) if fabrication_mode else Color(0.68, 0.92, 0.80, 0.92))
+			output.add_theme_font_size_override("font_size", 12 if output == terminal_output else 13)
 	if terminal_background and fabrication_mode:
 		terminal_background.modulate = Color(1.0, 0.92, 0.72, 1.0)
 	elif terminal_background:
@@ -2529,7 +2621,8 @@ func _set_terminal_rich_text(target: Node, text: String) -> void:
 	if target is RichTextLabel:
 		target.clear()
 		target.append_text(text)
-		call_deferred("_scroll_terminal_rich_text_to_bottom", target)
+		if target != terminal_sector_list_body and target != terminal_sector_detail_body:
+			call_deferred("_scroll_terminal_rich_text_to_bottom", target)
 	elif target is Label:
 		target.text = text
 
@@ -2813,47 +2906,130 @@ func _render_terminal_overview_widgets(phase_text: String, hostile_text: String,
 
 
 func _render_terminal_sector_widgets(sector_array: Array, selected_sector: Dictionary) -> void:
+	refresh_sector_table(sector_array)
+	refresh_sector_detail(selected_sector)
+
+
+func refresh_sector_table(sector_array: Array) -> void:
 	var list_lines: Array[String] = [
-		"SECTOR             HP   PWR       PRI  STATUS",
-		"------------------ ---- --------- ---- ----------------",
+		"[color=#9CCEBB][code]  NAME            STATE       HP   POWER   PRIORITY THREAT[/code][/color]",
+		"[color=#33565C][code]  ──────────────  ──────────  ───  ─────── ──────── ────────[/code][/color]",
 	]
 	for sector_variant in sector_array:
 		if not (sector_variant is Dictionary):
 			continue
 		var sector: Dictionary = sector_variant
 		var raw_name := str(sector.get("name", sector.get("id", "SECTOR")))
-		var display := _display_sector_name(raw_name)
-		var status := str(sector.get("status", "UNKNOWN")).to_upper()
-		var prefix := " "
-		if _terminal_highlight_sector == raw_name:
-			prefix = ">"
-		list_lines.append("%s %-18s %3s%% %-9s %3s  %s" % [
+		var display := _terminal_truncate(_display_sector_name(raw_name).to_upper(), 14)
+		var state := _terminal_truncate(format_sector_state(sector), 10)
+		var threat := _terminal_truncate(_sector_threat_state(sector), 8)
+		var priority := str(sector.get("power_priority", "UNK"))
+		var selected := _resolve_terminal_sector_name(raw_name) == _terminal_highlight_sector
+		var row_color := "#F2F1D0" if selected else severity_color(state)
+		var prefix := "▶" if selected else " "
+		var row := "%s %-14s  %-10s  %3s  %-7s %8s %-8s" % [
 			prefix,
-			display.to_upper(),
-			str(sector.get("hp_pct", "?")),
-			str(sector.get("power_tier", "UNKNOWN")).to_upper(),
-			str(sector.get("power_priority", "?")),
-			status,
+			display,
+			state,
+			_format_sector_hp(sector),
+			_terminal_truncate(format_power(sector), 7),
+			_terminal_truncate(priority, 8),
+			threat,
+		]
+		list_lines.append("[url=sector:%s][color=%s][code]%s[/code][/color][/url]" % [
+			_escape_bbcode(raw_name),
+			row_color,
+			_escape_bbcode(row),
 		])
+	if sector_array.is_empty():
+		list_lines.append("[color=#7F9EAF][code]   NO SECTOR DATA AVAILABLE[/code][/color]")
 	_set_terminal_rich_text(terminal_sector_list_body, "\n".join(list_lines))
+
+
+func refresh_sector_detail(selected_sector: Dictionary) -> void:
 	var detail_lines: Array[String] = []
 	if not selected_sector.is_empty():
+		var raw_name := str(selected_sector.get("name", "SECTOR"))
+		var state := format_sector_state(selected_sector)
+		var threat := _sector_threat_state(selected_sector)
+		var action_sector := _escape_bbcode(raw_name)
+		var power_enabled := selected_sector.has("power_allocated") or selected_sector.has("power_standard") or selected_sector.has("power_tier")
 		detail_lines = [
-			_terminal_kv("NAME", _display_sector_name(str(selected_sector.get("name", "SECTOR"))).to_upper()),
-			_terminal_kv("STATUS", str(selected_sector.get("status", "UNKNOWN")).to_upper()),
-			_terminal_kv("HP", "%s%%" % str(selected_sector.get("hp_pct", "?"))),
-			_terminal_kv("POWER", "%s / %s" % [str(selected_sector.get("power_allocated", 0.0)), str(selected_sector.get("power_standard", 0.0))]),
-			_terminal_kv("PRIORITY", str(selected_sector.get("power_priority", "?"))),
+			"[color=#DCEBE5][code]%s // %s[/code][/color]" % [
+				_escape_bbcode(_terminal_truncate(_display_sector_name(raw_name).to_upper(), 18)),
+				_escape_bbcode(state),
+			],
 			"",
-			"AVAILABLE ACTIONS",
-			"OPEN POWER VIEW",
-			"PIN SECTOR",
-			"SET PRIORITY",
-			"TRACK INCIDENTS",
+			"HP           [color=#DCEBE5]%s[/color]  %s" % [
+				_escape_bbcode(_format_sector_hp(selected_sector)),
+				_format_sector_bar(selected_sector, 16),
+			],
+			"POWER        [color=#DCEBE5]%s[/color]" % _escape_bbcode(format_power(selected_sector)),
+			"PRIORITY     [color=#DCEBE5]%s[/color]" % _escape_bbcode(str(selected_sector.get("power_priority", "UNKNOWN"))),
+			"THREAT       [color=%s]%s[/color]" % [
+				severity_color(threat),
+				_escape_bbcode(threat),
+			],
+			"DEFENSES     [color=#DCEBE5]%s[/color]" % _escape_bbcode(_sector_defense_summary(raw_name)),
+			"INCIDENTS    [color=%s]%s[/color]" % [
+				severity_color(state),
+				_escape_bbcode(_sector_incident_summary(selected_sector)),
+			],
+			"",
+			_terminal_section("AVAILABLE COMMANDS"),
+			_terminal_action_link("OPEN POWER VIEW", "open_power:%s" % action_sector, power_enabled),
+			_terminal_action_link("PIN SECTOR", "pin:%s" % action_sector, true),
+			_terminal_action_link("SET PRIORITY", "set_priority:%s" % action_sector, power_enabled),
+			_terminal_action_link("TRACK INCIDENTS", "track_incidents:%s" % action_sector, true),
 		]
 	else:
-		detail_lines = ["NO SECTOR SELECTED"]
+		detail_lines = [
+			"[color=#7F9EAF]NO SECTOR SELECTED[/color]",
+			"Select a sector row or minimap marker.",
+			"",
+			_terminal_action_link("OPEN POWER VIEW", "open_power:", false),
+			_terminal_action_link("PIN SECTOR", "pin:", false),
+			_terminal_action_link("SET PRIORITY", "set_priority:", false),
+			_terminal_action_link("TRACK INCIDENTS", "track_incidents:", false),
+		]
 	_set_terminal_rich_text(terminal_sector_detail_body, "\n".join(detail_lines))
+
+
+func _terminal_action_link(label: String, action: String, enabled: bool) -> String:
+	if not enabled:
+		return "[color=#4E6268][code]  %-18s  DISABLED[/code][/color]" % label
+	return "[url=terminal_action:%s][color=#9EDBFF][code]› %-18s  READY[/code][/color][/url]" % [
+		_escape_bbcode(action),
+		label,
+	]
+
+
+func _sector_defense_summary(sector_name: String) -> String:
+	var resolved := _resolve_terminal_sector_name(sector_name)
+	if resolved.is_empty():
+		return "UNKNOWN"
+	var count := 0
+	for turret in get_tree().get_nodes_in_group("turret"):
+		if turret == null:
+			continue
+		var parent := turret.get_parent()
+		while parent != null:
+			var parent_name := str(parent.get("sector_name") if "sector_name" in parent else parent.name).strip_edges().to_upper()
+			if parent_name == resolved:
+				count += 1
+				break
+			parent = parent.get_parent()
+	return "%d ACTIVE" % count if count > 0 else "NONE REPORTED"
+
+
+func _sector_incident_summary(sector: Dictionary) -> String:
+	var state := format_sector_state(sector)
+	var hp_pct := int(sector.get("hp_pct", 100))
+	if state in ["DAMAGED", "DEGRADED", "WARNING", "CRITICAL", "ASSAULT", "COMPROMISED", "OFFLINE"]:
+		return state
+	if hp_pct < 100:
+		return "REPAIR RECOMMENDED"
+	return "NO ACTIVE INCIDENTS"
 
 
 func _render_terminal_power_widgets(power_status: Dictionary, sector_array: Array) -> void:
@@ -3228,11 +3404,22 @@ func _render_terminal_main_content(snapshot: Dictionary) -> void:
 	if terminal_planet_title_label:
 		terminal_planet_title_label.text = "PLANET CONTRACT // SURFACE GLOBE"
 	if terminal_map_preview_title_label:
-		terminal_map_preview_title_label.text = "TACTICAL FEED // LIVE MINIMAP"
+		if _terminal_current_page == "SECTORS":
+			var focus_label := "NO SECTOR"
+			if not _terminal_highlight_sector.is_empty():
+				focus_label = _terminal_truncate(_display_sector_name(_terminal_highlight_sector).to_upper(), 18)
+			terminal_map_preview_title_label.text = "TACTICAL MAP // FOCUS: %s" % focus_label
+		else:
+			terminal_map_preview_title_label.text = "TACTICAL FEED // LIVE MINIMAP"
 	if terminal_page_summary_label:
-		terminal_page_summary_label.text = "FABRICATION PAGE // WORK ORDERS" if _terminal_current_page == "FABRICATION" else "TACTICAL PAGE // LIVE CONTRACT"
+		if _terminal_current_page == "FABRICATION":
+			terminal_page_summary_label.text = "FABRICATION PAGE // WORK ORDERS"
+		elif _terminal_current_page == "SECTORS":
+			terminal_page_summary_label.text = "TACTICAL MANAGEMENT // SECTOR HEALTH, POWER, PRIORITY"
+		else:
+			terminal_page_summary_label.text = "TACTICAL PAGE // LIVE CONTRACT"
 	if terminal_command_title:
-		terminal_command_title.text = "FABRICATION CONTROL" if _terminal_current_page == "FABRICATION" else "TRANSCRIPT"
+		terminal_command_title.text = "FABRICATION CONTROL" if _terminal_current_page == "FABRICATION" else ("EVENT LOG" if _terminal_current_page == "SECTORS" else "TRANSCRIPT")
 	if terminal_nav_title:
 		terminal_nav_title.text = "WORK ORDERS" if _terminal_current_page == "FABRICATION" else "NAVIGATION"
 	if terminal_action_title:
@@ -4160,6 +4347,11 @@ func _on_terminal_map_preview_gui_input(event: InputEvent) -> void:
 		var click_world_pos := _terminal_map_local_to_world(button_event.position)
 		_terminal_map_hover_world_pos = click_world_pos
 		if button_event.button_index == MOUSE_BUTTON_LEFT and button_event.pressed:
+			if _terminal_current_page == "SECTORS" and select_sector_from_world_position(click_world_pos):
+				if terminal_input:
+					terminal_input.grab_focus()
+				terminal_map_preview.accept_event()
+				return
 			if _apply_terminal_map_placement(click_world_pos):
 				_refresh_snapshot()
 			if terminal_input:
@@ -4364,7 +4556,7 @@ func _build_map_preview_texture(contract: Dictionary, snapshot: Dictionary = {})
 		return _build_placeholder_preview("NO LEVEL DATA")
 
 	var image := Image.create(TERMINAL_MAP_PREVIEW_SIZE, TERMINAL_MAP_PREVIEW_SIZE, false, Image.FORMAT_RGBA8)
-	image.fill(Color(0.04, 0.07, 0.06, 1.0))
+	image.fill(Color(0.035, 0.055, 0.055, 1.0))
 
 	var points: Array[Vector2] = []
 	var room_points: Array = level_data.get("rooms", [])
@@ -4429,13 +4621,13 @@ func _build_map_preview_texture(contract: Dictionary, snapshot: Dictionary = {})
 	_draw_preview_path_lines(image, corridor_points, min_x, min_y, scale, draw_offset)
 	for p in floor_points:
 		if p is Vector2i:
-			draw_point.call(p, Color(0.17, 0.21, 0.20, 1.0), 1)
+			draw_point.call(p, Color(0.20, 0.25, 0.24, 1.0), 1)
 	for p in room_points:
 		if p is Vector2i:
-			draw_point.call(p, Color(0.16, 0.66, 0.60, 1.0), 2)
+			draw_point.call(p, Color(0.22, 0.72, 0.66, 1.0), 2)
 	for p in corridor_points:
 		if p is Vector2i:
-			draw_point.call(p, Color(0.52, 0.78, 0.94, 0.95), 1)
+			draw_point.call(p, Color(0.58, 0.82, 0.96, 0.95), 1)
 	if player_spawn is Vector2i:
 		draw_point.call(player_spawn, Color(0.9, 0.95, 0.25, 1.0), 2)
 
@@ -4445,14 +4637,22 @@ func _build_map_preview_texture(contract: Dictionary, snapshot: Dictionary = {})
 			if not (sector is Dictionary):
 				continue
 			var hp_pct := int(sector.get("hp_pct", 100))
-			if hp_pct >= 100:
-				continue
 			var sector_pos = sector.get("world_pos", null)
-			if sector_pos is Vector2:
-				var tint := Color(0.85, 0.24, 0.24, 0.65 if hp_pct < 70 else 0.32)
-				_draw_preview_world_marker(image, Vector2(sector_pos), tint, 5, points, min_x, min_y, scale, draw_offset)
-			if _terminal_highlight_sector == str(sector.get("name", "")) and sector_pos is Vector2:
-				_draw_preview_world_ring(image, Vector2(sector_pos), Color(0.95, 0.96, 0.38, 0.95), 7, points, min_x, min_y, scale, draw_offset)
+			if not (sector_pos is Vector2):
+				continue
+			var raw_name := str(sector.get("name", ""))
+			var resolved_name := _resolve_terminal_sector_name(raw_name)
+			var state := format_sector_state(sector)
+			var tint := Color(0.40, 0.84, 0.76, 0.82)
+			if state in ["DAMAGED", "CRITICAL", "ASSAULT", "COMPROMISED", "OFFLINE"] or hp_pct < 70:
+				tint = Color(0.94, 0.28, 0.28, 0.86)
+			elif state in ["DEGRADED", "WARNING"] or hp_pct < 100:
+				tint = Color(0.92, 0.70, 0.28, 0.82)
+			var selected := resolved_name == _terminal_highlight_sector
+			_draw_preview_world_marker(image, Vector2(sector_pos), tint, 7 if selected else 4, points, min_x, min_y, scale, draw_offset)
+			if selected:
+				_draw_preview_world_ring(image, Vector2(sector_pos), Color(0.95, 0.96, 0.38, 0.98), 10, points, min_x, min_y, scale, draw_offset)
+				_draw_preview_world_ring(image, Vector2(sector_pos), Color(0.40, 0.90, 1.0, 0.80), 14, points, min_x, min_y, scale, draw_offset)
 
 	var tactical_entities = snapshot.get("tactical_entities", {})
 	if tactical_entities is Dictionary:
@@ -4710,6 +4910,73 @@ func _resolve_terminal_sector_name(raw_name: String) -> String:
 			if _display_sector_name(mapped_sector_name).to_upper() == display_name:
 				return mapped_sector_name
 	return ""
+
+
+func select_sector(raw_name: String) -> bool:
+	var resolved_name := _resolve_terminal_sector_name(raw_name)
+	if resolved_name.is_empty():
+		_append_terminal_line("UNKNOWN SECTOR %s" % raw_name.to_upper(), "warning")
+		return false
+	_terminal_highlight_sector = resolved_name
+	_set_terminal_page("SECTORS")
+	_append_terminal_line("FOCUS SHIFTED TO %s" % _display_sector_name(_terminal_highlight_sector).to_upper(), "success", _terminal_highlight_sector)
+	_refresh_snapshot()
+	return true
+
+
+func select_sector_from_world_position(world_position: Vector2) -> bool:
+	var closest_name := ""
+	var closest_distance_sq := INF
+	for sector_variant in _collect_sector_snapshot():
+		if not (sector_variant is Dictionary):
+			continue
+		var sector: Dictionary = sector_variant
+		var sector_pos = sector.get("world_pos", null)
+		if not (sector_pos is Vector2):
+			continue
+		var distance_sq := Vector2(sector_pos).distance_squared_to(world_position)
+		if distance_sq < closest_distance_sq:
+			closest_distance_sq = distance_sq
+			closest_name = str(sector.get("name", ""))
+	if closest_name.is_empty():
+		_append_terminal_line("MINIMAP SECTOR SELECTION UNAVAILABLE", "warning")
+		return false
+	return select_sector(closest_name)
+
+
+func _handle_terminal_action_link(action_payload: String) -> void:
+	var parts := action_payload.split(":", true, 1)
+	var action := str(parts[0]).strip_edges().to_lower()
+	var sector_name := str(parts[1]).strip_edges() if parts.size() > 1 else _terminal_highlight_sector
+	var resolved_name := _resolve_terminal_sector_name(sector_name)
+	match action:
+		"open_power":
+			if not resolved_name.is_empty():
+				_terminal_highlight_sector = resolved_name
+			_set_terminal_page("POWER")
+			_append_terminal_line("POWER VIEW OPENED%s" % (" // %s" % _display_sector_name(resolved_name).to_upper() if not resolved_name.is_empty() else ""), "command", resolved_name)
+		"pin":
+			if not resolved_name.is_empty():
+				select_sector(resolved_name)
+			else:
+				_append_terminal_line("PIN SECTOR REQUIRES A SELECTED SECTOR", "warning")
+		"set_priority":
+			if resolved_name.is_empty():
+				_append_terminal_line("SET PRIORITY REQUIRES A SELECTED SECTOR", "warning")
+				return
+			_terminal_highlight_sector = resolved_name
+			_append_terminal_line("USE: REROUTE POWER sector=%s priority=CRITICAL|HIGH|MEDIUM|LOW" % _display_sector_name(resolved_name).to_upper(), "info", resolved_name)
+			if terminal_input is LineEdit:
+				terminal_input.text = "REROUTE POWER sector=%s priority=HIGH" % _display_sector_name(resolved_name).to_upper()
+				terminal_input.caret_column = terminal_input.text.length()
+				terminal_input.grab_focus()
+		"track_incidents":
+			if not resolved_name.is_empty():
+				_terminal_highlight_sector = resolved_name
+			_set_terminal_page("INCIDENTS")
+			_append_terminal_line("INCIDENT TRACKING FOCUSED%s" % (" // %s" % _display_sector_name(resolved_name).to_upper() if not resolved_name.is_empty() else ""), "command", resolved_name)
+		_:
+			_append_terminal_line("UNKNOWN TERMINAL ACTION %s" % action_payload.to_upper(), "warning", resolved_name)
 
 
 func _set_terminal_time_scale(rate: float) -> void:

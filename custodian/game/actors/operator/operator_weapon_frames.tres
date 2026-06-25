@@ -109,7 +109,7 @@ region = Rect2(288, 96, 96, 96)
 [resource]
 animations = [{
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }, {
@@ -129,7 +129,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_5m2nl")
 }],
-"loop": true,
+"loop": 1,
 "name": &"equipped_run_left",
 "speed": 14.0
 }, {
@@ -149,7 +149,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ngvnn")
 }],
-"loop": true,
+"loop": 1,
 "name": &"equipped_run_right",
 "speed": 14.0
 }, {
@@ -157,7 +157,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("ImageTexture_ia4b2")
 }],
-"loop": false,
+"loop": 0,
 "name": &"hidden",
 "speed": 1.0
 }, {
@@ -174,7 +174,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fire_3")
 }],
-"loop": false,
+"loop": 0,
 "name": &"ranged_2h_fire",
 "speed": 12.0
 }, {
@@ -191,7 +191,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_reload_3")
 }],
-"loop": false,
+"loop": 0,
 "name": &"ranged_2h_reload",
 "speed": 10.0
 }, {
@@ -208,7 +208,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_stance_3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"ranged_2h_stance",
 "speed": 7.0
 }]

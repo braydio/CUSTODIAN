@@ -501,6 +501,7 @@ def _parse_generic_modular_source(source: Path) -> tuple[str, str, str, SheetSpe
 def _canonical_action_name(action: str) -> str:
     return {
         "aim": "aim_01",
+        "fire": "fire_01",
         "idle": "idle_01",
         "run": "run_01",
         "stance": "stance_01",

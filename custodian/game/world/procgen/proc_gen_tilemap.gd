@@ -458,6 +458,7 @@ var _world_progress_profile = null
 var _world_progress_samples: Dictionary = {}
 var _faction_activity_sites: Array[Dictionary] = []
 var _story_room_sites: Array[Dictionary] = []
+var _special_room_sites: Array[Dictionary] = []
 var _faction_site_placer: RefCounted = null
 var _story_room_placer: RefCounted = null
 var _faction_site_geometry_stamper: RefCounted = null
@@ -2836,6 +2837,7 @@ func _clear_world_progression_runtime() -> void:
 	_ascent_field_vista_cells.clear()
 	_faction_activity_sites.clear()
 	_story_room_sites.clear()
+	_special_room_sites.clear()
 	if _world_progress_marker_parent == null:
 		_world_progress_marker_parent = _find_or_create_world_progress_marker_parent()
 	for child in _world_progress_marker_parent.get_children():
@@ -2901,6 +2903,16 @@ func get_region_data_at_tile(tile: Vector2i) -> Dictionary:
 		"region_type": "exterior",
 		"zone": "natural",
 	}
+
+
+func register_special_room_site(site: Dictionary) -> void:
+	if site.is_empty():
+		return
+	_special_room_sites.append(site.duplicate(true))
+
+
+func get_special_room_sites() -> Array[Dictionary]:
+	return _special_room_sites.duplicate(true)
 
 
 func is_road_surface_tile(tile: Vector2i) -> bool:
@@ -5628,6 +5640,10 @@ func minimap_tile_to_global(tile: Vector2i) -> Vector2:
 	return floor_tilemap.to_global(floor_tilemap.map_to_local(tile))
 
 
+func tile_to_global_position(tile: Vector2i) -> Vector2:
+	return minimap_tile_to_global(tile)
+
+
 func _tile_to_chunk(tile: Vector2i) -> Vector2i:
 	return Vector2i(
 		int(floor(float(tile.x) / max(1.0, float(streaming_chunk_size_tiles)))),
@@ -5794,5 +5810,6 @@ func get_level_data() -> Dictionary:
 		"worldgen_reserved_regions": _worldgen_reserved_regions.duplicate(true),
 		"faction_activity_sites": _faction_activity_sites.duplicate(true),
 		"story_room_sites": _story_room_sites.duplicate(true),
+		"special_room_sites": _special_room_sites.duplicate(true),
 		"intent_zones_enabled": true,
 	}

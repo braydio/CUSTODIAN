@@ -50,6 +50,7 @@
 [ext_resource type="Script" uid="uid://brgprv506ntpi" path="res://game/systems/spawning/ambient_enemy_camp.gd" id="207_ambient_camp"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
+metadata/_edit_vertical_guides_ = [-1047.0]
 
 [node name="DebugController" type="Node" parent="." unique_id=744681739]
 script = ExtResource("29_debug_controller")
@@ -467,14 +468,14 @@ horizontal_alignment = 1
 visible = false
 offset_left = 72.0
 offset_top = 40.0
-offset_right = 1208.0
-offset_bottom = 684.0
+offset_right = 1294.0
+offset_bottom = 704.0
 
 [node name="Header" type="Panel" parent="UI/TerminalPanel" unique_id=1714410557]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 1128.0
+offset_right = 1214.0
 offset_bottom = 56.0
 
 [node name="Eyebrow" type="Label" parent="UI/TerminalPanel/Header" unique_id=1814410557]
@@ -498,7 +499,7 @@ horizontal_alignment = 1
 layout_mode = 0
 offset_left = 824.0
 offset_top = 12.0
-offset_right = 1112.0
+offset_right = 1198.0
 offset_bottom = 44.0
 text = "SIM: 60 TPS | THREAT: LOW | POWER: --"
 horizontal_alignment = 2
@@ -507,12 +508,12 @@ horizontal_alignment = 2
 layout_mode = 0
 offset_left = 8.0
 offset_top = 72.0
-offset_right = 1128.0
-offset_bottom = 592.0
-theme_override_constants/separation = 14
+offset_right = 1214.0
+offset_bottom = 612.0
+theme_override_constants/separation = 10
 
 [node name="NavRail" type="VBoxContainer" parent="UI/TerminalPanel/Body" unique_id=-2137803084]
-custom_minimum_size = Vector2(220, 0)
+custom_minimum_size = Vector2(204, 0)
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -641,7 +642,7 @@ layout_mode = 2
 text = "TACTICAL MINIMAP"
 
 [node name="MapPreview" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1591864208 instance=ExtResource("200_minimap")]
-custom_minimum_size = Vector2(0, 168)
+custom_minimum_size = Vector2(0, 250)
 layout_mode = 2
 mouse_filter = 0
 enable_expand_toggle = false
@@ -825,11 +826,12 @@ layout_mode = 2
 text = "SECTOR LIST"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorListPanel/Margin/Content" unique_id=-2137803025]
-custom_minimum_size = Vector2(0, 292)
+custom_minimum_size = Vector2(0, 224)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
+autowrap_mode = 0
 
 [node name="SectorDetailPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets" unique_id=-2137803024]
 layout_mode = 2
@@ -851,7 +853,7 @@ layout_mode = 2
 text = "SECTOR DETAIL"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorDetailPanel/Margin/Content" unique_id=-2137803020]
-custom_minimum_size = Vector2(0, 292)
+custom_minimum_size = Vector2(0, 224)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -1631,7 +1633,7 @@ text = "NO DATA"
 fit_content = true
 
 [node name="CommandColumn" type="VBoxContainer" parent="UI/TerminalPanel/Body" unique_id=1757164212]
-custom_minimum_size = Vector2(360, 0)
+custom_minimum_size = Vector2(270, 0)
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -1645,7 +1647,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TerminalOutput" type="RichTextLabel" parent="UI/TerminalPanel/Body/CommandColumn/ActivityScroll" unique_id=668276365]
-custom_minimum_size = Vector2(420, 520)
+custom_minimum_size = Vector2(280, 456)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 2
@@ -1677,18 +1679,18 @@ text = "READY"
 [node name="Hint" type="Label" parent="UI/TerminalPanel" unique_id=1026997078]
 layout_mode = 0
 offset_left = 16.0
-offset_top = 604.0
-offset_right = 1112.0
-offset_bottom = 628.0
-text = "Type directly into the command line. Drag globe to inspect. Click tactical minimap to place while building. Esc closes."
+offset_top = 624.0
+offset_right = 1198.0
+offset_bottom = 648.0
+text = "Command line accepts typed orders. SECTORS: click sector links or minimap markers to focus. Esc closes."
 
 [node name="TerminalBackground" type="TextureRect" parent="UI" unique_id=999999999]
 visible = false
 z_index = -10
 offset_left = 100.0
 offset_top = 72.0
-offset_right = 1180.0
-offset_bottom = 666.0
+offset_right = 1266.0
+offset_bottom = 686.0
 mouse_filter = 2
 stretch_mode = 1
 script = ExtResource("36_terminal_background")

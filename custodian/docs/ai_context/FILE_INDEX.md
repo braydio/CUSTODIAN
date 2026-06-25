@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-06-21
+Last updated: 2026-06-24
 
 ## Local Entry And Workflow
 
@@ -79,6 +79,8 @@ Last updated: 2026-06-21
 - `custodian/game/world/procgen/terrain/terrain_tile_ids.gd` — centralized symbolic terrain tile IDs for industrial elevation and mountain/cliff art plus placeholder constants; baseline visual no-op is owned by TerrainBuilder, not this file
 - `custodian/game/world/procgen/terrain/terrain_region.gd` — terrain region descriptor for baseline, mountain wall, chasm, and industrial platform debug/validation output
 - `custodian/game/world/procgen/terrain/terrain_debug_overlay.gd` — optional debug draw helper that visualizes terrain height/traversal metadata from a TerrainBuilder result
+- `custodian/game/systems/intel/intel_projector.gd` — pure intel-fidelity projection helper that maps one deterministic sector truth dictionary into FULL, DEGRADED, FRAGMENTED, or LOST player-facing views without mutating simulation state.
+- `custodian/game/systems/intel/intel_demo_state.gd` — isolated deterministic dev incident state used by the intel-fidelity demo scene to prove truth/projection separation before runtime integration.
 - `custodian/content/procgen/world_profiles/sundered_keep_ascent.json` — distance-band profile for procgen style transition, elevation pressure, faction presence, and story-room chance
 - `custodian/game/world/procgen/progression/world_style_band.gd` — data model for one distance/style/elevation band
 - `custodian/game/world/procgen/progression/world_progress_profile.gd` — deterministic profile loader and cell progress sampler
@@ -127,6 +129,7 @@ Last updated: 2026-06-21
 - `custodian/game/world/events/ash_bell/ash_bell_interactable.gd` — operator interaction bridge for ritualant, thread, clapper, fountain, and silence-ringing actions
 - `custodian/game/world/events/ash_bell/ash_bell_trigger.gd` — Area2D trigger bridge for intro, fountain occupancy, exit, and procession-lane pressure
 - `custodian/game/world/events/ash_bell/ash_bell_dev_spawner.gd` — opt-in temporary live-review spawner for reserving the canonical `35x27` authored-room footprint through the active procgen map, then placing the Ash-Bell site north of the operator for an outside-in doorway approach; not mounted by normal `scenes/game.tscn` startup
+- `custodian/game/world/procgen/special_rooms/special_room_runtime_inserter.gd` — generic deterministic special-room insertion path used by `CustodianContractMap` after an accepted generated map is selected; loads `res://content/procgen/special_rooms/*.json`, claims authored floor authority, instances scenes, and reports inserted `special_room_sites`
 - `custodian/scenes/debug/forlorn_ritualant_site_debug.tscn` — standalone visual/debug launch scene for the Forlorn-Ritualant site with a camera and note, kept separate from normal game startup
 - `custodian/scenes/environment/cosmic_underlay.tscn` and `custodian/scripts/environment/cosmic_underlay.gd` — reusable world-space cosmic void underlay with subtle drift/pulse controls, kept as a base environment component without collision or gameplay authority
 - `custodian/scenes/environment/forlorn_ritualant_shader_fx.tscn` and `custodian/scripts/environment/forlorn_ritualant_shader_fx.gd` — Forlorn-Ritualant visual-only FX layer combining the cosmic underlay, room-edge shadow/rim mask sprites, and temporal haze with exported `ShaderMaterial` intensity controls
@@ -206,9 +209,10 @@ Last updated: 2026-06-21
 - `custodian/game/actors/items/cognitive_pickup.tscn` — generic pickup scene for cognitive item drops
 - `custodian/game/actors/items/cognitive_pickup.gd` — pickup flow that increments `InventoryManager`, applies `CognitiveState`, animates the 4-frame item sheet, and emits popup/log feedback
 - `custodian/game/actors/items/shrumb_dropper.gd` — reusable Forest Shrumb cognitive drop table component
-- `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, fabrication page rendering, page orchestration, essentials-first HUD/debug visibility logic, terminal-open suppression of gameplay HUD/debug overlays, and dedicated debug screen feeding while keeping unformatted diagnostics off the normal HUD, including DevConsole debug commands such as `spawn_grunt`, `spawn_looter`, `vault_add`, `vault_status`, and `enemy_debug`; the FABRICATION page now uses a work-order translation layer for player-readable recipe, ready-build, and placement commands
+- `custodian/game/ui/hud/ui.gd` — active command terminal HUD integration, SECTORS tactical-management table/detail/action rendering, fabrication page rendering, page orchestration, essentials-first HUD/debug visibility logic, terminal-open suppression of gameplay HUD/debug overlays, and dedicated debug screen feeding while keeping unformatted diagnostics off the normal HUD, including DevConsole debug commands such as `spawn_grunt`, `spawn_looter`, `vault_add`, `vault_status`, and `enemy_debug`; the FABRICATION page uses a work-order translation layer for player-readable recipe, ready-build, and placement commands
 - `custodian/game/ui/terminal/fabrication_terminal_view_model.gd` — player-facing fabrication translation layer that turns raw recipe/resource/build-token state into work orders, selected detail, queue summaries, ready builds, and command help for the terminal HUD
 - `custodian/game/ui/hud/debug_screen.tscn` and `.gd` — dedicated read-only tabbed debug screen opened by F12 or `debug_hud`, with runtime/player/combat/world/systems/inventory snapshots.
+- `custodian/game/ui/intel_demo/intel_fidelity_demo.tscn` and `.gd` — dev-only playable/readable intel-fidelity demo scene that shows actual sector truth beside the player-facing projection at different fidelity levels; not wired into the live terminal, minimap, combat, enemies, or main scene.
 - `custodian/game/ui/theme/black_reliquary_palette.gd` — shared Black Reliquary HUD palette constants.
 - `custodian/game/ui/theme/black_reliquary_styles.gd` — reusable Black Reliquary UI style helpers, NinePatch configuration, texture loading, and fallback panel styles.
 - `custodian/game/ui/theme/black_reliquary_asset_catalog.gd` — centralized `res://content/ui/black_reliquary/` asset paths for panels, icons, prompt plaques, minimap art, and markers.
@@ -251,6 +255,7 @@ Last updated: 2026-06-21
 - `custodian/tools/validation/authored_vault_grunt_loot_marine_smoke.gd` — focused headless smoke check for typed grunt loot, marine 8-direction idle frame wiring, heavy dash tuning/export availability, and gothic compound authored vault-room placement
 - `custodian/tools/validation/fabrication_terminal_readability_smoke.gd` — focused headless smoke check for the FABRICATION work-order translation layer, ready-build placement alias, and readable next-action output
 - `custodian/tools/validation/gothic_compound_occlusion_smoke.gd` — focused headless smoke check for gothic compound wall/gatehouse base-rooted occlusion sorting and flat floor/road/decal layer separation
+- `custodian/tools/validation/intel_projector_smoke.gd` — focused headless smoke check proving FULL, DEGRADED, FRAGMENTED, and LOST intel projections all derive from the same unmodified sector truth.
 - `custodian/tools/validation/operator_ranged_ready_input_smoke.gd` — focused headless smoke check for ranged-ready/twin-stick input bindings, offhand secondary mode resolution, parry/guard handshake, carbine secondary intent, operator ranged-ready helper state, and dodge/backstep direction rules
 - `custodian/tools/validation/operator_modular_layers_smoke.gd` — focused modular operator presentation smoke covering unarmed locomotion, block, primary-from-guard parry body/FX playback, sidearm layers, and ranged-ready stance layer wiring
 - `custodian/tools/validation/wave_manager_debug_grunt_spawn_gate_smoke.gd` — focused WaveManager smoke proving the startup debug grunt stays despawned inside the Operator spawn threshold and appears once after the Operator crosses it
@@ -383,7 +388,7 @@ Last updated: 2026-06-21
 - `custodian/content/items/shrumb_drops/shrumb_drops.json` — v1 cognitive item definitions for Faint Recollection, Residual Instinct, and Ancient Bearing
 - `custodian/content/dialogue/ash_bell/forlorn_ritualant_dialogue.json` — Ash-Bell Forlorn-Ritualant dialogue data using Ninth Bell, Dry Fountain, white thread, black banners, and Unarrived Saint motifs without explicit alternate-continuity language
 - `custodian/content/items/lore/ash_bell_items.json` — lore item definitions for Bell-Clapper Without a Bell, White Thread Knot, and Prayer to the Unarrived Saint
-- `custodian/content/procgen/special_rooms/ash_bell_forlorn_ritualant_room.json` — metadata for future rare procgen insertion of the authored Ash-Bell Forlorn-Ritualant site
+- `custodian/content/procgen/special_rooms/ash_bell_forlorn_ritualant_room.json` — live special-room definition for normal contract-map insertion of the authored Ash-Bell Forlorn-Ritualant site
 - `custodian/content/sprites/items/faint_recollection.png` — animated 4-frame pickup sheet for Faint Recollection
 - `custodian/content/sprites/items/faded_instinct.png` — animated 4-frame pickup sheet currently used for `residual_instinct`
 - `custodian/content/sprites/items/ancient_bearing.png` — animated 4-frame pickup sheet for Ancient Bearing
@@ -452,6 +457,7 @@ Last updated: 2026-06-21
 - `design/03_world/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target
 - `design/03_world/THE_DISPERSED_FLEETS.md` — historical lore reference: the first post-Severance military expeditions that vanished without trace; design-shaping material, not an implementation target
 - `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` — canonical Ash-Bell / Forlorn-Ritualant implementation spec (includes merged Toll Count appendix from deleted companion doc)
+- `design/02_features/procgen/SPECIAL_ROOM_INSERTION.md` — live V1 design note for generated-map special-room definitions, deterministic placement, authored-footprint claiming, and validation
 - `design/02_features/LAST_ROUTEKEEPER_EVENT.md` — design spec for The Last Routekeeper: rare, one-time residual-system event inside Sundered Keep
 - `design/02_features/LAST_ROUTEKEEPER_EVENT_CODE.md` — drop-in GDScript, map patches, autoload config, and REQUIRED_ASSETS.md entries for The Last Routekeeper
 

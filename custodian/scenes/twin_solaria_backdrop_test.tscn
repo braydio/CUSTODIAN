@@ -60,6 +60,45 @@ shape = SubResource("RectangleShape2D_vertical")
 
 [node name="Operator" parent="World" unique_id=11104395 instance=ExtResource("3_operator")]
 position = Vector2(0, 1190)
+muzzle_offset = 24.0
+aim_crosshair_color = Color(0.9, 0.9, 0.9, 1)
+ammo_standard = 48
+ammo_heavy = 12
+ammo_standard_max = 72
+ammo_heavy_max = 16
+interaction_range = 84.0
+repair_rate = 15.0
+sprint_multiplier = 1.7
+stamina_max = 100.0
+stamina_drain_per_second = 32.0
+stamina_regen_per_second = 22.0
+stamina_sprint_gate = 10.0
+move_acceleration = 1200.0
+move_deceleration = 1500.0
+movement_turn_response = 14.0
+heavy_attack_stamina_cost = 14.0
+heavy_attack_blocked_while_sprinting = true
+block_move_multiplier = 0.6
+block_stamina_cost_per_hit = 12.0
+combat_target_range = 360.0
+idle_main_sheet_path = "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
+ranged_2h_stance_sheet_path = "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
+ranged_2h_aim_sheet_path = "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_aim_raise.png"
+idle_long_loop_threshold = 20
+placeholder_sprite_position = Vector2(0, -18)
+placeholder_sprite_offset = Vector2(0, 0)
+right_hand_socket_position = Vector2(10, -16)
+left_hand_socket_position = Vector2(12, -28)
+primary_weapon_socket_position = Vector2(12, -28)
+primary_weapon_sprite_position = Vector2(0, 0)
+primary_weapon_sprite_scale = Vector2(1, 1)
+primary_weapon_muzzle_socket_position = Vector2(20, 2)
+placeholder_collision_offset = Vector2(0, 12)
+placeholder_collision_radius = 7.0
+placeholder_collision_height = 22.0
+placeholder_melee_hitbox_radius = 22.0
+placeholder_healthbar_top = -54.0
+placeholder_healthbar_bottom = -48.0
 
 [node name="PlayerController" type="Node" parent="World" unique_id=799445493]
 script = ExtResource("5_player_controller")

@@ -20,6 +20,11 @@ signal contract_generated(contract: Dictionary)
 @export_range(1, 128, 1) var generated_room_count_max: int = 22
 @export_range(0.0, 1.0, 0.01) var min_connected_room_ratio: float = 0.75
 @export var require_compound_ingress_connectivity: bool = true
+@export_group("Special Rooms", "special_room_")
+@export var special_room_insertion_enabled: bool = true
+@export var special_room_definitions_path: String = "res://content/procgen/special_rooms"
+@export_range(0, 8, 1) var special_room_max_per_run: int = 1
+@export_group("", "")
 
 enum MapGenerationMode {
 	PROCGEN_ONLY,
@@ -206,6 +211,9 @@ var _active_map: ProcGenTilemap = null
 var _map_level_data_ready: bool = false
 var _map_level_data: Dictionary = {}
 var _latest_contract: Dictionary = {}
+var _special_room_inserter: SpecialRoomRuntimeInserter = null
+
+const SPECIAL_ROOM_INSERTER_SCRIPT := preload("res://game/world/procgen/special_rooms/special_room_runtime_inserter.gd")
 
 func _ready() -> void:
 	if auto_generate_on_ready:
@@ -288,6 +296,9 @@ func generate_contract(seed_value: int) -> void:
 
 	if not map_generated:
 		push_warning("[CustodianContractMap] Falling back to best available procgen map after %d attempts" % max(1, map_generation_attempts))
+	var special_room_sites := _insert_special_rooms(map_instance, level_data, map_seed)
+	if not special_room_sites.is_empty():
+		level_data["special_room_sites"] = special_room_sites.duplicate(true)
 	var contract := {
 		"contract_seed": int(contract_seed),
 		"world_profile": world_profile.duplicate(true),
@@ -529,6 +540,24 @@ func _apply_map_generation_profile(map_instance: ProcGenTilemap, attempt_index: 
 	procgen.automaton_noise_rate = 0.48 + _rng.randf_range(0.0, 0.10)
 	procgen.automaton_corridor_fixed_width_expand = 1
 	procgen.automaton_corridor_non_fixed_width_expand = 1 + ((attempt_index + 1) % 2)
+
+
+func _insert_special_rooms(map_instance: ProcGenTilemap, level_data: Dictionary, map_seed: int) -> Array[Dictionary]:
+	if not special_room_insertion_enabled or special_room_max_per_run <= 0:
+		return []
+	if map_instance == null:
+		return []
+	if _special_room_inserter == null:
+		_special_room_inserter = SPECIAL_ROOM_INSERTER_SCRIPT.new()
+	var inserted: Array[Dictionary] = _special_room_inserter.insert_special_rooms({
+		"map_instance": map_instance,
+		"parent": map_instance,
+		"level_data": level_data,
+		"seed": map_seed,
+		"definitions_path": special_room_definitions_path,
+		"max_rooms": special_room_max_per_run,
+	})
+	return inserted
 
 
 func _build_planet_world_profile(planet_key: String, planet_seed: int) -> Dictionary:
