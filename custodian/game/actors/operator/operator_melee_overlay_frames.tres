@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://c7id7i351c62w"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://cnep0jb7f332i"]
 
 [ext_resource type="Texture2D" uid="uid://1xdsyxgk2lji" path="res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_enter_weapon_4f.png" id="1_n6d7b"]
 [ext_resource type="Texture2D" uid="uid://b6fninfyttyj1" path="res://content/sprites/operator/runtime/curated/overlay/melee_2h/block_exit_weapon_2f.png" id="2_5qaxa"]

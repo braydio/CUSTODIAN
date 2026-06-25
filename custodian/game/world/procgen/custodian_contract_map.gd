@@ -253,15 +253,35 @@ func generate_contract(seed_value: int) -> void:
 	var best_map_instance: ProcGenTilemap = null
 	var best_level_data: Dictionary = {}
 	var best_map_score: float = -1.0
+	var _attempt_total_start := Time.get_ticks_msec()
 	for attempt in range(max(1, map_generation_attempts)):
+		var _attempt_start := Time.get_ticks_msec()
 		var attempt_seed: int = map_seed + attempt * 7919
 		var candidate_map := await _instantiate_map(attempt_seed, attempt, world_profile)
+		var _t_instantiate := Time.get_ticks_msec() - _attempt_start
 		if candidate_map == null:
+			print("[CustodianContractMap] Attempt %d: instantiate_map=null (%.1fs)" % [attempt, _t_instantiate / 1000.0])
 			continue
 		var candidate_level_data := await _generate_map_level_data(candidate_map)
+		var _t_generate := Time.get_ticks_msec() - _attempt_start - _t_instantiate
 		var candidate_metrics := _get_map_layout_metrics(candidate_map, candidate_level_data)
+		var _t_metrics := Time.get_ticks_msec() - _attempt_start - _t_instantiate - _t_generate
 		var candidate_score := _score_map_layout(candidate_metrics)
-		if _is_map_layout_acceptable(candidate_metrics):
+		var accepted := _is_map_layout_acceptable(candidate_metrics)
+		var _t_total_attempt := Time.get_ticks_msec() - _attempt_start
+		print("[CustodianContractMap] Attempt %d: instantiate=%.1fs generate=%.1fs metrics=%.1fs total=%.1fs valid=%s connected=%.2f ingress=%.2f accepted=%s score=%.2f" % [
+			attempt,
+			_t_instantiate / 1000.0,
+			_t_generate / 1000.0,
+			_t_metrics / 1000.0,
+			_t_total_attempt / 1000.0,
+			str(candidate_metrics.get("valid", false)),
+			float(candidate_metrics.get("connected_ratio", 0.0)),
+			float(candidate_metrics.get("ingress_ratio", 0.0)),
+			str(accepted),
+			candidate_score,
+		])
+		if accepted:
 			if best_map_instance != null and best_map_instance != candidate_map:
 				await _dispose_node(best_map_instance)
 			best_map_instance = candidate_map
@@ -284,6 +304,7 @@ func generate_contract(seed_value: int) -> void:
 			await _dispose_node(candidate_map)
 			if _active_map == candidate_map:
 				_active_map = null
+	print("[CustodianContractMap] Attempt loop total: %.1fs across %d attempts" % [(Time.get_ticks_msec() - _attempt_total_start) / 1000.0, max(1, map_generation_attempts)])
 
 	if not map_generated:
 		map_instance = best_map_instance
@@ -294,8 +315,10 @@ func generate_contract(seed_value: int) -> void:
 		push_error("[CustodianContractMap] Could not generate a usable procgen map")
 		return
 
+	_active_map = map_instance
 	if not map_generated:
 		push_warning("[CustodianContractMap] Falling back to best available procgen map after %d attempts" % max(1, map_generation_attempts))
+	level_data = await _generate_final_map_level_data(map_instance)
 	var special_room_sites := _insert_special_rooms(map_instance, level_data, map_seed)
 	if not special_room_sites.is_empty():
 		level_data["special_room_sites"] = special_room_sites.duplicate(true)
@@ -322,34 +345,34 @@ func generate_contract(seed_value: int) -> void:
 func generate_edgar_contract(seed_value: int) -> Dictionary:
 	if not is_node_ready():
 		await ready
-	
+
 	contract_seed = seed_value
 	_rng.seed = int(seed_value)
-	
+
 	await _clear_previous_instances()
-	
+
 	_init_edgar_systems()
-	
+
 	var planet_key: String = _pick_planet_key(_rng)
 	var planet_seed: int = int(_rng.randi())
 	var world_profile := _build_planet_world_profile(planet_key, planet_seed)
 	var planet_instance: Node = _instantiate_contracted_planet(planet_key, planet_seed)
 	var planet_scene_path := _get_planet_scene_path(planet_key)
-	
+
 	var layout: Dictionary = _generate_edgar_layout()
-	
+
 	if layout.is_empty() or layout.get("rooms", []).is_empty():
 		push_warning("[CustodianContractMap] Edgar layout generation failed, falling back to procgen")
 		await generate_contract(seed_value)
 		return _latest_contract
-	
+
 	var level_data := {
 		"generation_mode": "edgar",
 		"layout": layout,
 		"room_count": layout.get("room_count", 0),
 		"world_profile": world_profile.duplicate(true),
 	}
-	
+
 	var contract := {
 		"contract_seed": int(contract_seed),
 		"world_profile": world_profile.duplicate(true),
@@ -367,7 +390,7 @@ func generate_edgar_contract(seed_value: int) -> Dictionary:
 		},
 		"edgar_layout": layout,
 	}
-	
+
 	_latest_contract = contract
 	contract_generated.emit(contract)
 	return contract
@@ -379,7 +402,7 @@ func _init_edgar_systems() -> void:
 		var loaded := _room_loader.load_templates_from_directory(room_templates_path)
 		if loaded == 0:
 			push_warning("[RoomLoader] No templates loaded from: " + room_templates_path)
-	
+
 	if _room_graph == null:
 		_room_graph = RoomGraph.new(_rng)
 		if not _room_graph.load_from_json_file(room_graph_path):
@@ -389,15 +412,15 @@ func _init_edgar_systems() -> void:
 func _generate_edgar_layout() -> Dictionary:
 	if _room_loader == null or _room_graph == null:
 		_init_edgar_systems()
-	
+
 	if _room_loader.get_all_templates().is_empty():
 		push_error("[CustodianContractMap] No room templates loaded")
 		return {}
-	
+
 	if not _room_graph.validate():
 		push_error("[CustodianContractMap] Room graph validation failed")
 		return {}
-	
+
 	var assembler := LayoutAssembler.new(_room_loader, _room_graph, _rng)
 	return assembler.generate_layout(contract_seed)
 
@@ -486,21 +509,66 @@ func _instantiate_map(map_seed: int, attempt_index: int = 0, planet_world_profil
 	if not (map_instance is ProcGenTilemap):
 		return null
 
+	map_instance.generation_evaluation_mode = true
+	_disable_duplicate_tilemap_outputs(map_instance, map_instance)
+	var procgen: ProcGen = map_instance.procgen_node
+	if procgen == null:
+		procgen = _find_procgen_node(map_instance)
+	if procgen != null:
+		procgen.auto_generate_on_ready = false
+		procgen.generate_seed = false
+		procgen.seed = map_seed
+
 	map_root.add_child(map_instance)
 	if not map_instance.is_node_ready():
 		await map_instance.ready
 
-	# ProcGen may auto-generate in its own _ready before ProcGenTilemap drives generation.
-	# Ensure we only trigger after any in-flight generation has completed.
+	if map_instance.procgen_node == null:
+		map_instance.procgen_node = _find_procgen_node(map_instance)
+
 	if map_instance.procgen_node:
-		while map_instance.procgen_node.is_generating():
-			await get_tree().process_frame
+		map_instance.procgen_node.auto_generate_on_ready = false
+		map_instance.procgen_node.generate_seed = false
+		map_instance.procgen_node.seed = map_seed
+		if map_instance.procgen_node.is_generating():
+			push_warning("[CustodianContractMap] Candidate map had in-flight ProcGen work after auto-generation was disabled")
+			while map_instance.procgen_node.is_generating():
+				await get_tree().process_frame
 		_apply_map_generation_profile(map_instance, attempt_index, planet_world_profile)
+		map_instance.set_seed(map_seed)
 
 	(map_instance as Node2D).position = map_offset
-	map_instance.set_seed(map_seed)
 	_active_map = map_instance
 	return map_instance
+
+
+func _disable_duplicate_tilemap_outputs(node: Node, owner_map: ProcGenTilemap) -> void:
+	for child in node.get_children():
+		if child is ProcGenTilemap and child != owner_map:
+			(child as ProcGenTilemap).generation_output_enabled = false
+		_disable_duplicate_tilemap_outputs(child, owner_map)
+
+
+func _find_procgen_node(node: Node) -> ProcGen:
+	if node is ProcGen:
+		return node as ProcGen
+	for child in node.get_children():
+		var found := _find_procgen_node(child)
+		if found != null:
+			return found
+	return null
+
+
+func _generate_final_map_level_data(map_instance: ProcGenTilemap) -> Dictionary:
+	if map_instance == null:
+		return {}
+	if not map_instance.generation_evaluation_mode:
+		return map_instance.get_level_data()
+	var _final_start := Time.get_ticks_msec()
+	map_instance.generation_evaluation_mode = false
+	var level_data := await _generate_map_level_data(map_instance)
+	print("[CustodianContractMap] Final visual map generation: %.1fs" % ((Time.get_ticks_msec() - _final_start) / 1000.0))
+	return level_data
 
 
 func _generate_map_level_data(map_instance: ProcGenTilemap) -> Dictionary:

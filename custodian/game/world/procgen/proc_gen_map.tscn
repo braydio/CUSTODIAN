@@ -93,6 +93,7 @@ interior_doorway_source_ids = Array[int]([28, 29])
 interior_wall_source_ids = Array[int]([16, 30, 31])
 interior_wall_source_id = 16
 interior_wall_corner_source_id = 17
+generation_output_enabled = false
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=2086078231]
 visible = true

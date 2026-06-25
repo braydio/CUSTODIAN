@@ -4,7 +4,7 @@ extends Node
 ##
 ## Attach to a node with:
 ## - ProcGen child (the generator)
-## - TileMapLayer child named "Floor" 
+## - TileMapLayer child named "Floor"
 ## - TileMapLayer child named "Walls"
 ## - NavigationRegion2D (optional, for auto-bake)
 ##
@@ -68,6 +68,8 @@ enum WorldShapeMode {
 @export var walls_tilemap: TileMapLayer
 @export var nav_region: NavigationRegion2D
 @export var world_shape_mode: WorldShapeMode = WorldShapeMode.ASCENT_FIELD
+@export var generation_evaluation_mode: bool = false
+@export var generation_output_enabled: bool = true
 
 ## TileSet source IDs (from your TileSet)
 @export var floor_source_id: int = 0
@@ -472,17 +474,19 @@ var _ascent_field_vista_cells: Array[Vector2i] = []
 var _world_progress_marker_parent: Node2D = null
 
 func _ready() -> void:
+	if not generation_output_enabled:
+		return
 	add_to_group("procgen_tilemap")
 	# Auto-find ProcGen if not assigned
 	if not procgen_node:
 		procgen_node = find_child("ProcGen", true, false) as ProcGen
-	
+
 	if not floor_tilemap:
 		floor_tilemap = find_child("Floor", true, false) as TileMapLayer
-		
+
 	if not walls_tilemap:
 		walls_tilemap = find_child("Walls", true, false) as TileMapLayer
-	
+
 	if not nav_region:
 		nav_region = find_child("NavigationRegion2D", true, false) as NavigationRegion2D
 
@@ -497,7 +501,7 @@ func _ready() -> void:
 	_load_foliage_textures()
 	_load_interior_prop_textures()
 	_apply_planet_visual_profile()
-	
+
 	if procgen_node:
 		procgen_node.finished.connect(_on_procgen_finished)
 
@@ -531,14 +535,17 @@ func _is_attached_to_runtime_world() -> bool:
 
 
 func generate() -> void:
+	if not generation_output_enabled:
+		push_warning("ProcGenTilemap: generation output is disabled")
+		return
 	if not procgen_node:
 		push_error("ProcGenTilemap: No ProcGen node assigned")
 		return
-	
+
 	if not floor_tilemap or not walls_tilemap:
 		push_error("ProcGenTilemap: Missing TileMapLayer references")
 		return
-	
+
 	procgen_node.generate()
 
 
@@ -572,18 +579,34 @@ signal minimap_tile_changed(tile: Vector2i, terrain_kind: String)
 
 
 func _on_procgen_finished() -> void:
+	var _t_start := Time.get_ticks_msec()
 	_fill_tilemaps()
+	var _t_fill := Time.get_ticks_msec() - _t_start
 	_refresh_shadows()
-	
-	if auto_bake_nav and nav_region:
+	var _t_shadows := Time.get_ticks_msec() - _t_start - _t_fill
+
+	var _t_nav := 0
+	if auto_bake_nav and nav_region and not generation_evaluation_mode:
 		nav_region.bake_navigation_polygon(false)
-	
+		_t_nav = Time.get_ticks_msec() - _t_start - _t_fill - _t_shadows
+
 	# Emit level data for game systems to use
 	var data = get_level_data()
 	level_data_ready.emit(data)
 
+	print("[ProcGen] === PIPELINE TIMING ===")
+	print("[ProcGen]   fill_tilemaps: %d ms" % _t_fill)
+	print("[ProcGen]   refresh_shadows: %d ms" % _t_shadows)
+	if _t_nav > 0:
+		print("[ProcGen]   nav_bake: %d ms" % _t_nav)
+	print("[ProcGen]   TOTAL: %d ms" % (Time.get_ticks_msec() - _t_start))
+
 
 func _fill_tilemaps() -> void:
+	var _t_start := Time.get_ticks_msec()
+	var _marks := {}
+	var _last := _t_start
+
 	if clear_first:
 		floor_tilemap.clear()
 		walls_tilemap.clear()
@@ -598,28 +621,42 @@ func _fill_tilemaps() -> void:
 		_clear_runtime_wall_collision()
 		_clear_world_progression_runtime()
 		_rebuild_runtime_wall_collision_debug()
+	_marks["setup_clear"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
 	_apply_planet_visual_profile()
-	
+
 	var map_size = procgen_node.map_size
 	_ensure_world_progress_profile()
 	_ensure_site_placers()
-	
+	_marks["planet_profile"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
 	if world_shape_mode == WorldShapeMode.LEGACY_CAVE:
 		_fill_legacy_cave_substrate(map_size)
 		if worldgen_intent_enabled:
 			_build_worldgen_intent_graph(map_size)
 			if worldgen_intent_carve_before_detail:
 				_apply_worldgen_intent_floor_cells(map_size)
+		_marks["substrate_legacy"] = Time.get_ticks_msec() - _last
 	else:
 		_fill_ascent_field_substrate(map_size)
+		_marks["substrate_ascent"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
 	if enable_compound_zone:
 		_apply_compound_layout(map_size)
 	if interior_region_enabled:
 		_apply_constructed_interior_region(map_size)
 	if intent_spawn_clearing_enabled:
 		_stamp_spawn_clearing(map_size)
+	_marks["compound_interior_spawn"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
 	if intent_soft_paths_enabled:
 		_carve_interest_paths(map_size)
+	_marks["interest_paths"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
 	if intent_main_roads_enabled:
 		_carve_main_roads(map_size)
 	if use_cohesive_wall_visuals:
@@ -629,6 +666,9 @@ func _fill_tilemaps() -> void:
 	_prune_small_edge_road_components(map_size)
 	_refresh_road_path_visuals()
 	_capture_generated_tile_state(map_size)
+	_marks["roads_walls_capture"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
 	if elevation_metadata_enabled:
 		_apply_terrain_builder(map_size)
 		_protect_compound_ingress_tiles(map_size)
@@ -638,6 +678,9 @@ func _fill_tilemaps() -> void:
 		_prune_small_edge_road_components(map_size)
 		_refresh_road_path_visuals()
 		_capture_generated_tile_state(map_size)
+	_marks["terrain_elevation"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
 	if world_progression_enabled:
 		_build_world_progress_samples(map_size)
 	if faction_ambient_sites_enabled:
@@ -646,25 +689,46 @@ func _fill_tilemaps() -> void:
 	if story_rooms_enabled:
 		_place_story_rooms(map_size)
 		_stamp_worldgen_story_room_geometry()
+	_marks["progress_faction_story"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
 	if intent_main_roads_enabled:
 		_repair_road_surface_components(map_size, maxi(1, intent_main_road_half_width - 1))
 		_enforce_road_walkability(map_size)
 		_prune_small_edge_road_components(map_size)
 		_refresh_road_path_visuals()
 		_capture_generated_tile_state(map_size)
+	_marks["roads_pass2"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
 	if enable_streaming_reveal:
 		_prepare_streaming_reveal()
 	elif build_runtime_wall_collision:
 		_rebuild_runtime_wall_collision(map_size)
-	if enable_streaming_reveal:
-		_generate_ruin_props(map_size)
-		_generate_interior_props(map_size)
-	else:
-		_generate_foliage(map_size)
-		_generate_ruin_props(map_size)
-		_generate_interior_props(map_size)
-	if not enable_streaming_reveal:
+	_marks["streaming_reveal_or_walls"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
+	if not generation_evaluation_mode:
+		if enable_streaming_reveal:
+			_generate_ruin_props(map_size)
+			_generate_interior_props(map_size)
+		else:
+			_generate_foliage(map_size)
+			_generate_ruin_props(map_size)
+			_generate_interior_props(map_size)
+	_marks["props_foliage"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
+	if not generation_evaluation_mode and not enable_streaming_reveal:
 		_rebuild_horizontal_wall_overlays()
+	_marks["horiz_wall_overlays"] = Time.get_ticks_msec() - _last
+
+	# Print timing summary
+	var _total := Time.get_ticks_msec() - _t_start
+	print("[ProcGen] === FILL_TILEMAPS PHASES ===")
+	for _k in _marks:
+		print("[ProcGen]   %s: %d ms" % [_k, _marks[_k]])
+	print("[ProcGen]   FILL_TILEMAPS TOTAL: %d ms" % _total)
 
 
 func set_seed(new_seed: int) -> void:
@@ -3631,7 +3695,7 @@ func _clear_foliage() -> void:
 		if is_instance_valid(node):
 			node.queue_free()
 	_foliage_nodes.clear()
-	
+
 	# Clear fruit sprites too
 	for sprite in _fruit_sprites:
 		if is_instance_valid(sprite):
@@ -4557,7 +4621,7 @@ func _place_foliage(pos: Vector2i) -> void:
 	}
 	if intent_mark_foliage_cover and get_region_type_at_tile(pos) == "exterior":
 		_set_region_tile(pos, "foliage_cover", foliage_kind)
-	
+
 	# Optionally spawn fruit on this foliage
 	if enable_fruit_spawning and _fruit_texture != null and _should_place_fruit(pos, foliage_kind):
 		_place_fruit(sprite, pos, texture_size, foliage_kind)
@@ -4676,11 +4740,11 @@ func _should_place_fruit(pos: Vector2i, foliage_kind: String) -> bool:
 func _place_fruit(foliage_sprite: Sprite2D, foliage_tile: Vector2i, foliage_size: Vector2, foliage_kind: String) -> void:
 	if _fruit_texture == null:
 		return
-	
+
 	var sprite := Sprite2D.new()
 	sprite.texture = _fruit_texture
 	sprite.modulate = _get_planet_profile_color("foliage_tint", Color.WHITE)
-	
+
 	# Slice the square fruit sheet correctly; the previous code only split horizontally.
 	var frame_x := _tile_noise_hash(foliage_tile + Vector2i(23, 47)) % fruit_tiles_wide
 	var frame_y := _tile_noise_hash(foliage_tile + Vector2i(61, 11)) % fruit_tiles_high
@@ -4691,7 +4755,7 @@ func _place_fruit(foliage_sprite: Sprite2D, foliage_tile: Vector2i, foliage_size
 	sprite.region_enabled = true
 	sprite.region_rect = Rect2(frame_x * frame_size.x, frame_y * frame_size.y, frame_size.x, frame_size.y)
 	sprite.centered = true
-	
+
 	# Anchor fruit to the plant itself so it doesn't float or desync.
 	var x_jitter := (float(_tile_noise_hash(foliage_tile + Vector2i(31, 59)) % 100) / 100.0 - 0.5)
 	var y_jitter := (float(_tile_noise_hash(foliage_tile + Vector2i(71, 29)) % 100) / 100.0 - 0.5)
@@ -4709,7 +4773,7 @@ func _place_fruit(foliage_sprite: Sprite2D, foliage_tile: Vector2i, foliage_size
 	sprite.position = fruit_offset
 	sprite.z_index = 1
 	sprite.z_as_relative = true
-	
+
 	foliage_sprite.add_child(sprite)
 	_fruit_sprites.append(sprite)
 
@@ -4748,7 +4812,7 @@ func _load_foliage_textures() -> void:
 	for texture in extra_foliage_textures:
 		if texture != null:
 			_foliage_textures.append(texture)
-	
+
 	if enable_fruit_spawning:
 		if ResourceLoader.exists(FRUIT_TEXTURE_PATH):
 			_fruit_texture = load(FRUIT_TEXTURE_PATH) as Texture2D
@@ -5673,12 +5737,12 @@ func get_player_spawn() -> Vector2i:
 	var rooms = procgen_node.get_rooms()
 	if rooms.is_empty():
 		return Vector2i(procgen_node.map_size / 2)
-	
+
 	var largest: Rect2i = rooms[0]
 	for room in rooms:
 		if room.get_area() > largest.get_area():
 			largest = room
-	
+
 	return Vector2i(largest.get_center())
 
 
@@ -5686,10 +5750,10 @@ func get_player_spawn() -> Vector2i:
 func get_room_centers() -> Array[Vector2i]:
 	var rooms = procgen_node.get_rooms()
 	var centers: Array[Vector2i] = []
-	
+
 	for room in rooms:
 		centers.append(Vector2i(room.get_center()))
-	
+
 	return centers
 
 
@@ -5697,22 +5761,22 @@ func get_room_centers() -> Array[Vector2i]:
 func get_rooms_by_distance_from_spawn() -> Array[Vector2i]:
 	var player_pos = get_player_spawn()
 	var rooms = procgen_node.get_rooms()
-	
+
 	# Create array of [center, distance] pairs
 	var room_distances: Array = []
 	for room in rooms:
 		var center = Vector2i(room.get_center())
 		var dist = center.distance_to(player_pos)
 		room_distances.append({"center": center, "distance": dist})
-	
+
 	# Sort by distance (furthest first)
 	room_distances.sort_custom(func(a, b): return a.distance > b.distance)
-	
+
 	# Extract just centers
 	var sorted_centers: Array[Vector2i] = []
 	for rd in room_distances:
 		sorted_centers.append(rd.center)
-	
+
 	return sorted_centers
 
 
@@ -5720,14 +5784,14 @@ func get_rooms_by_distance_from_spawn() -> Array[Vector2i]:
 func get_random_floor_tiles_in_rooms(count: int = 10) -> Array[Vector2i]:
 	var rooms = procgen_node.get_rooms()
 	var floor_tiles: Array[Vector2i] = []
-	
+
 	for room in rooms:
 		for x in range(room.position.x + 1, room.position.x + room.size.x - 1):
 			for y in range(room.position.y + 1, room.position.y + room.size.y - 1):
 				var pos = Vector2i(x, y)
 				if not procgen_node.is_full_at(pos) and is_valid_spawn_cell(pos):
 					floor_tiles.append(pos)
-	
+
 	floor_tiles.shuffle()
 	return floor_tiles.slice(0, min(count, floor_tiles.size()))
 
@@ -5735,10 +5799,10 @@ func get_random_floor_tiles_in_rooms(count: int = 10) -> Array[Vector2i]:
 ## Returns corridor endpoints (good for wave spawns)
 func get_corridor_spawn_points(count: int = 5) -> Array[Vector2i]:
 	var corridors = procgen_node.get_corridor_areas()
-	
+
 	# Find dead-ends (corridor tiles with only 1 neighbor)
 	var dead_ends: Array[Vector2i] = []
-	
+
 	for pos in corridors:
 		var neighbor_count = 0
 		var neighbors = [
@@ -5748,11 +5812,11 @@ func get_corridor_spawn_points(count: int = 5) -> Array[Vector2i]:
 		for n in neighbors:
 			if n in corridors:
 				neighbor_count += 1
-		
+
 		if neighbor_count <= 1:
 			if is_valid_spawn_cell(pos):
 				dead_ends.append(pos)
-	
+
 	dead_ends.shuffle()
 	return dead_ends.slice(0, min(count, dead_ends.size()))
 

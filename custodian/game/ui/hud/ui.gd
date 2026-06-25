@@ -829,7 +829,7 @@ func _setup_terminal_main_scroll() -> void:
 		_terminal_main_scroll.name = "MainContentScroll"
 		_terminal_main_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		_terminal_main_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		_terminal_main_scroll.follow_focus = true
+		_terminal_main_scroll.follow_focus = false
 		terminal_map_column.add_child(_terminal_main_scroll)
 		var insert_index := terminal_map_column.get_child_count() - 1
 		if terminal_page_summary_label and terminal_page_summary_label.get_parent() == terminal_map_column:
@@ -1917,7 +1917,6 @@ func _apply_terminal_theme():
 		if output is RichTextLabel:
 			output.fit_content = false
 			output.scroll_active = true
-			output.scroll_following = true
 			output.bbcode_enabled = true
 	if terminal_widget_stack:
 		var widget_panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 8.0)
@@ -1931,11 +1930,12 @@ func _apply_terminal_theme():
 				rich_text.custom_minimum_size.y = min(rich_text.custom_minimum_size.y, 86.0)
 			rich_text.fit_content = false
 			rich_text.scroll_active = true
-			rich_text.scroll_following = true
+			rich_text.scroll_following = false
 			rich_text.bbcode_enabled = true
 		for label in terminal_widget_stack.find_children("*", "Label", true, false):
 			label.add_theme_color_override("font_color", Color(0.63, 0.83, 0.74, 0.92))
 			label.add_theme_font_size_override("font_size", 11)
+	terminal_output.scroll_following = true
 	if terminal_activity_scroll:
 		terminal_activity_scroll.add_theme_stylebox_override("panel", output_style)
 		terminal_activity_scroll.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
@@ -2581,11 +2581,13 @@ func _apply_terminal_page_theme() -> void:
 			rich_text.add_theme_font_size_override("font_size", 13)
 			rich_text.fit_content = false
 			rich_text.scroll_active = true
-			rich_text.scroll_following = true
+			rich_text.scroll_following = false
 			rich_text.bbcode_enabled = true
 		for label in terminal_widget_stack.find_children("*", "Label", true, false):
 			label.add_theme_color_override("font_color", Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
 			label.add_theme_font_size_override("font_size", 11)
+	if terminal_output is RichTextLabel:
+		terminal_output.scroll_following = true
 
 
 func _refresh_terminal_page_buttons() -> void:
@@ -2615,13 +2617,13 @@ func _on_terminal_action_button_pressed(command_text: String) -> void:
 	_queue_terminal_command(command_text)
 
 
-func _set_terminal_rich_text(target: Node, text: String) -> void:
+func _set_terminal_rich_text(target: Node, text: String, auto_scroll_bottom: bool = false) -> void:
 	if target == null:
 		return
 	if target is RichTextLabel:
 		target.clear()
 		target.append_text(text)
-		if target != terminal_sector_list_body and target != terminal_sector_detail_body:
+		if auto_scroll_bottom and target != terminal_sector_list_body and target != terminal_sector_detail_body:
 			call_deferred("_scroll_terminal_rich_text_to_bottom", target)
 	elif target is Label:
 		target.text = text
@@ -2641,7 +2643,7 @@ func _scroll_terminal_rich_text_to_bottom(target: Node) -> void:
 
 
 func _render_terminal_text_output(lines: Array[String]) -> void:
-	_set_terminal_rich_text(terminal_map_label, "\n".join(lines))
+	_set_terminal_rich_text(terminal_map_label, "\n".join(lines), false)
 
 
 func _build_terminal_contract_lines(contract: Dictionary) -> Array[String]:

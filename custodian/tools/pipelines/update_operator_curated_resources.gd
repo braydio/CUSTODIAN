@@ -260,10 +260,17 @@ func _init() -> void:
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_unarmed_parry_entries("upper_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_stance_entries("lower_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_ranged_stance_entries("upper_body"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_aim_entries("lower_body"))
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_ranged_aim_entries("upper_body"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_fire_entries("lower_body"))
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_ranged_fire_entries("upper_body"))
 	_replace_animation_entries(modular_sidearm_frames, _build_modular_sidearm_entries("sidearm", "sidearm_draw", "draw_sidearm_01"))
 	_replace_animation_entries(modular_sidearm_frames, _build_modular_sidearm_entries("sidearm", "sidearm_fire", "fire_sidearm_01"))
 	_replace_animation_entries(modular_sidearm_frames, _build_modular_ranged_stance_entries("ranged_weapon"))
+	_replace_animation_entries(modular_sidearm_frames, _build_modular_ranged_aim_entries("ranged_weapon"))
+	_replace_animation_entries(modular_sidearm_frames, _build_modular_ranged_fire_entries("ranged_weapon"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_fire_fx", "fx_01"))
+	_replace_animation_entries(modular_upper_fx_frames, _build_modular_ranged_fire_entries("upper_fx"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_draw_fx", "draw_sidearm_01"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_fire_fx", "fire_sidearm_01"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_unarmed_parry_fx_entries())
@@ -572,11 +579,10 @@ func _build_modular_sidearm_entries(part: String, base: String, action: String) 
 func _build_modular_ranged_stance_entries(part: String) -> Array:
 	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/ranged_2h/stance_01" % part
 	var entries: Array = []
-	for direction_spec in [
-		{"dir": "e", "suffix": "right", "alias_base": true},
-		{"dir": "n", "suffix": "up"},
-		{"dir": "w", "suffix": "left"},
-	]:
+	# Scans all 8 directions — only registers sheets that exist on disk.
+	# The AnimationResolver fallback chain means if a specific diagonal
+	# is missing, it'll fall back to cardinal (right/left/up).
+	for direction_spec in _RANGED_ALL_DIRECTION_SPECS():
 		var path := "%s/operator__modular_%s__ranged_2h__stance_01__%s__5f__96.png" % [root, part, str(direction_spec["dir"])]
 		if not _texture_file_exists(path):
 			continue
@@ -584,6 +590,45 @@ func _build_modular_ranged_stance_entries(part: String) -> Array:
 			entries.append({"animation": "ranged_2h_stance_modular", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true})
 		entries.append({"animation": "ranged_2h_stance_modular_%s" % str(direction_spec["suffix"]), "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true})
 	return entries
+
+
+func _build_modular_ranged_aim_entries(part: String) -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/ranged_2h/aim_01" % part
+	var entries: Array = []
+	for direction_spec in _RANGED_ALL_DIRECTION_SPECS():
+		var path := "%s/operator__modular_%s__ranged_2h__aim_01__%s__5f__96.png" % [root, part, str(direction_spec["dir"])]
+		if not _texture_file_exists(path):
+			continue
+		if bool(direction_spec.get("alias_base", false)):
+			entries.append({"animation": "ranged_2h_aim_modular", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": false})
+		entries.append({"animation": "ranged_2h_aim_modular_%s" % str(direction_spec["suffix"]), "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": false})
+	return entries
+
+
+func _build_modular_ranged_fire_entries(part: String) -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/ranged_2h/fire_01" % part
+	var entries: Array = []
+	for direction_spec in _RANGED_ALL_DIRECTION_SPECS():
+		var path := "%s/operator__modular_%s__ranged_2h__fire_01__%s__5f__96.png" % [root, part, str(direction_spec["dir"])]
+		if not _texture_file_exists(path):
+			continue
+		if bool(direction_spec.get("alias_base", false)):
+			entries.append({"animation": "ranged_2h_fire_modular", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": false})
+		entries.append({"animation": "ranged_2h_fire_modular_%s" % str(direction_spec["suffix"]), "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": false})
+	return entries
+
+
+static func _RANGED_ALL_DIRECTION_SPECS() -> Array:
+	return [
+		{"dir": "e",  "suffix": "right",     "alias_base": true},
+		{"dir": "ne", "suffix": "up_right"},
+		{"dir": "n",  "suffix": "up"},
+		{"dir": "nw", "suffix": "up_left"},
+		{"dir": "w",  "suffix": "left"},
+		{"dir": "sw", "suffix": "down_left"},
+		{"dir": "s",  "suffix": "down"},
+		{"dir": "se", "suffix": "down_right"},
+	]
 
 
 func _build_modular_unarmed_block_entries(part: String) -> Array:

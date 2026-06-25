@@ -55,7 +55,14 @@ var _ascent_route_planner: RefCounted = null
 
 
 func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictionary = {}) -> Dictionary:
+	var _t_start := Time.get_ticks_msec()
+	var _marks := {}
+	var _last := _t_start
+	
 	var result := _build_baseline(map_rect, context)
+	_marks["build_baseline"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+	
 	var debug_regions: Array = []
 	var warnings: Array[String] = []
 	var fallback_used := false
@@ -87,6 +94,8 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 				result = reserved_snapshot
 				var conn_detail := "start=%s reachable=%d missing=%s" % [str(start_cell), reserved_conn.get("reachable_count", 0), str(reserved_conn.get("missing_required", []))]
 				warnings.append("WARNING: TerrainBuilder discarded reserved-region elevation: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
+	_marks["reserved_region"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
 
 	if bool(context.get("enable_ascent_route", false)) and world_progress_profile != null:
 		var ascent_snapshot := result.duplicate(true)
@@ -99,6 +108,8 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 				result = ascent_snapshot
 				var conn_detail := "start=%s reachable=%d missing=%s" % [str(start_cell), ascent_conn.get("reachable_count", 0), str(ascent_conn.get("missing_required", []))]
 				warnings.append("WARNING: TerrainBuilder discarded ascent route: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
+	_marks["ascent_route"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
 
 	if bool(context.get("enable_mountain_boundary", true)):
 		var mountain_snapshot := result.duplicate(true)
@@ -111,6 +122,8 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 				result = mountain_snapshot
 				var conn_detail := "start=%s reachable=%d missing=%s" % [str(start_cell), mountain_conn.get("reachable_count", 0), str(mountain_conn.get("missing_required", []))]
 				warnings.append("WARNING: TerrainBuilder discarded mountain boundary: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
+	_marks["mountain_boundary"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
 
 	if bool(context.get("enable_industrial_platform", true)):
 		var platform_snapshot := result.duplicate(true)
@@ -123,8 +136,13 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 				result = platform_snapshot
 				var conn_detail := "start=%s reachable=%d missing=%s" % [str(start_cell), platform_conn.get("reachable_count", 0), str(platform_conn.get("missing_required", []))]
 				warnings.append("WARNING: TerrainBuilder discarded elevated platform: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
+	_marks["industrial_platform"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
 
 	var connectivity := _validate_connectivity(result, start_cell, required_cells)
+	_marks["connectivity_validate"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+	
 	if not bool(connectivity.get("ok", true)):
 		var missing_str: String = str(connectivity.get("missing_required", []))
 		var reachable_count: int = connectivity.get("reachable_count", 0)
@@ -137,6 +155,8 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 		# Attempt rescue: clear blockers along shortest path from start to each missing required cell.
 		# This preserves terrain features while guaranteeing connectivity.
 		var rescued := _rescue_connectivity(result, start_cell, connectivity.get("missing_required", []))
+		_marks["rescue_connectivity"] = Time.get_ticks_msec() - _last
+		_last = Time.get_ticks_msec()
 		if rescued:
 			connectivity = _validate_connectivity(result, start_cell, required_cells)
 			var rescued_str: String = str(connectivity.get("missing_required", []))
@@ -154,6 +174,9 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 			fallback_used = true
 			warnings.append("WARNING: TerrainBuilder fell back to baseline terrain after connectivity validation failed (rescue failed). seed=%s start=%s reachable=%d missing=%s" % [terrain_seed, str(start_cell), reachable_count, missing_str])
 
+	_marks["connectivity_rescue"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
 	result["debug_regions"] = debug_regions
 	result["regions"] = debug_regions
 	result["warnings"] = warnings
@@ -163,6 +186,12 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 	result["map_rect"] = map_rect
 	result["debug_summary"] = _build_debug_summary(result)
 	_last_result = result.duplicate(true)
+	
+	var _total := Time.get_ticks_msec() - _t_start
+	print("[TerrainBuilder] === PHASES ===")
+	for _k in _marks:
+		print("[TerrainBuilder]   %s: %d ms" % [_k, _marks[_k]])
+	print("[TerrainBuilder]   TOTAL: %d ms" % _total)
 	return result
 
 

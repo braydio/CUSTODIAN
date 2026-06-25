@@ -1,40 +1,38 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene format=3 uid="uid://drxju3yitl16u"]
 
-[ext_resource type="Texture2D" path="res://content/levels/hub/Road_of_Witnesses_Tilemap.png" id="1_map"]
-[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="2_operator"]
-[ext_resource type="Script" path="res://game/world/camera.gd" id="3_camera"]
-[ext_resource type="Script" path="res://game/systems/core/player_controller.gd" id="4_player_controller"]
-[ext_resource type="Script" path="res://game/world/hub/road_of_witnesses_prototype.gd" id="5_hub"]
+[ext_resource type="Texture2D" uid="uid://cnxg8pupb5w7j" path="res://content/levels/hub/Road_of_Witnesses_Tilemap.png" id="1_map"]
+[ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="2_operator"]
+[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="3_camera"]
+[ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="4_player_controller"]
+[ext_resource type="Script" uid="uid://c3sk1ii78dnsj" path="res://game/world/hub/road_of_witnesses_prototype.gd" id="5_hub"]
 
-[node name="GameRoot" type="Node2D"]
+[node name="GameRoot" type="Node2D" unique_id=1009637021]
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=760113168]
 
-[node name="RoadOfWitnessesPrototype" type="Node2D" parent="World"]
+[node name="RoadOfWitnessesPrototype" type="Node2D" parent="World" unique_id=844589422]
 script = ExtResource("5_hub")
 
-[node name="Background" type="Sprite2D" parent="World/RoadOfWitnessesPrototype"]
+[node name="Background" type="Sprite2D" parent="World/RoadOfWitnessesPrototype" unique_id=1409003512]
 texture = ExtResource("1_map")
-centered = true
 
-[node name="CollisionRoot" type="StaticBody2D" parent="World/RoadOfWitnessesPrototype"]
+[node name="CollisionRoot" type="StaticBody2D" parent="World/RoadOfWitnessesPrototype" unique_id=776028645]
 
-[node name="ForegroundOcclusion" type="Node2D" parent="World/RoadOfWitnessesPrototype"]
+[node name="ForegroundOcclusion" type="Node2D" parent="World/RoadOfWitnessesPrototype" unique_id=1095076264]
 
-[node name="Projectiles" type="Node2D" parent="World"]
+[node name="Projectiles" type="Node2D" parent="World" unique_id=950278485]
 
-[node name="Enemies" type="Node2D" parent="World"]
+[node name="Enemies" type="Node2D" parent="World" unique_id=49759810]
 
-[node name="Items" type="Node2D" parent="World"]
+[node name="Items" type="Node2D" parent="World" unique_id=374622078]
 
-[node name="Operator" parent="World" instance=ExtResource("2_operator")]
+[node name="Operator" parent="World" unique_id=1179547434 instance=ExtResource("2_operator")]
 position = Vector2(-6, 482)
 
-[node name="PlayerController" type="Node" parent="World"]
+[node name="PlayerController" type="Node" parent="World" unique_id=757220632]
 script = ExtResource("4_player_controller")
 operator_path = NodePath("../Operator")
 
-[node name="Camera2D" type="Camera2D" parent="World"]
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=1128629070]
 position = Vector2(0, 160)
 script = ExtResource("3_camera")
-current = true
