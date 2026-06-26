@@ -472,6 +472,7 @@ var _ascent_field_summary: Dictionary = {}
 var _ascent_field_main_route_cells: Array[Vector2i] = []
 var _ascent_field_vista_cells: Array[Vector2i] = []
 var _world_progress_marker_parent: Node2D = null
+var _debug_generation_id: int = 0
 
 func _ready() -> void:
 	if not generation_output_enabled:
@@ -579,6 +580,18 @@ signal minimap_tile_changed(tile: Vector2i, terrain_kind: String)
 
 
 func _on_procgen_finished() -> void:
+	_debug_generation_id += 1
+	var mode := "EVAL_CANDIDATE" if generation_evaluation_mode else "FINAL_VISUAL"
+	var seed_text := "unknown"
+	if procgen_node != null:
+		seed_text = str(procgen_node.seed)
+	print("[ProcGenTilemap] GEN_BEGIN id=%d mode=%s seed=%s path=%s output_enabled=%s" % [
+		_debug_generation_id,
+		mode,
+		seed_text,
+		str(get_path()),
+		str(generation_output_enabled),
+	])
 	var _t_start := Time.get_ticks_msec()
 	_fill_tilemaps()
 	var _t_fill := Time.get_ticks_msec() - _t_start
@@ -594,7 +607,16 @@ func _on_procgen_finished() -> void:
 	var data = get_level_data()
 	level_data_ready.emit(data)
 
+	print("[ProcGenTilemap] GEN_END id=%d mode=%s seed=%s total=%dms" % [
+		_debug_generation_id,
+		mode,
+		seed_text,
+		Time.get_ticks_msec() - _t_start,
+	])
+
 	print("[ProcGen] === PIPELINE TIMING ===")
+	print("[ProcGen]   mode: %s" % mode)
+	print("[ProcGen]   seed: %s" % seed_text)
 	print("[ProcGen]   fill_tilemaps: %d ms" % _t_fill)
 	print("[ProcGen]   refresh_shadows: %d ms" % _t_shadows)
 	if _t_nav > 0:
@@ -709,6 +731,7 @@ func _fill_tilemaps() -> void:
 	_last = Time.get_ticks_msec()
 
 	if not generation_evaluation_mode:
+		print("[ProcGenTilemap] props_foliage RUN mode=FINAL_VISUAL")
 		if enable_streaming_reveal:
 			_generate_ruin_props(map_size)
 			_generate_interior_props(map_size)
@@ -716,6 +739,8 @@ func _fill_tilemaps() -> void:
 			_generate_foliage(map_size)
 			_generate_ruin_props(map_size)
 			_generate_interior_props(map_size)
+	else:
+		print("[ProcGenTilemap] props_foliage SKIP mode=EVAL_CANDIDATE")
 	_marks["props_foliage"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 

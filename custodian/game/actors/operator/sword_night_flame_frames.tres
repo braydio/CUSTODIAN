@@ -12,7 +12,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_sword_trimmed")
 }],
-"loop": true,
+"loop": 1,
 "name": &"melee_stance",
 "speed": 1.0
 }]

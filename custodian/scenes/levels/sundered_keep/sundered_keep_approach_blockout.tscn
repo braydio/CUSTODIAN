@@ -1,0 +1,141 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="1_74ujp"]
+[ext_resource type="Script" path="res://game/actors/operator/operator.gd" id="2_4dbst"]
+[ext_resource type="Resource" path="res://game/actors/operator/carbine_rifle_mk1_definition.tres" id="3_mf083"]
+[ext_resource type="Resource" path="res://game/actors/operator/fallen_star_katana_definition.tres" id="4_wx1e4"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_weapon_frames.tres" id="5_drxsd"]
+[ext_resource type="Script" path="res://scripts/levels/sundered_keep/overlook_camera_director.gd" id="6_w6hvf"]
+
+[node name="SunderedKeepApproach" type="Node2D" unique_id=2124663311]
+
+[node name="UnderlayRoot" type="Node2D" parent="." unique_id=917830279]
+
+[node name="OceanUnderlay" type="Polygon2D" parent="UnderlayRoot" unique_id=953243488]
+color = Color(0.03, 0.07, 0.08, 1)
+polygon = PackedVector2Array(-900, -700, 1200, -700, 1200, 700, -900, 700)
+
+[node name="CliffDepthUnderlay" type="Polygon2D" parent="UnderlayRoot" unique_id=408161908]
+color = Color(0.06, 0.055, 0.045, 1)
+polygon = PackedVector2Array(-500, -440, 780, -380, 680, 520, -420, 560)
+
+[node name="FogUnderlay" type="Polygon2D" parent="UnderlayRoot" unique_id=176818875]
+color = Color(0.25, 0.3, 0.32, 0.22)
+polygon = PackedVector2Array(-900, -620, 1200, -620, 1200, -260, -900, -260)
+
+[node name="PlayableRoot" type="Node2D" parent="." unique_id=386159946]
+
+[node name="MainlandApproachPath" type="Polygon2D" parent="PlayableRoot" unique_id=485601331]
+color = Color(0.22, 0.19, 0.12, 1)
+polygon = PackedVector2Array(-280, 520, 80, 520, 170, 280, 80, 120, -140, 120, -300, 300)
+
+[node name="HillClimbPath" type="Polygon2D" parent="PlayableRoot" unique_id=1145314263]
+color = Color(0.25, 0.22, 0.15, 1)
+polygon = PackedVector2Array(-140, 120, 130, 120, 210, -120, -190, -120)
+
+[node name="OverlookLedge" type="Polygon2D" parent="PlayableRoot" unique_id=376286041]
+color = Color(0.2, 0.18, 0.13, 1)
+polygon = PackedVector2Array(-260, -120, 280, -120, 320, -320, -320, -320)
+
+[node name="LateralTraversePath" type="Polygon2D" parent="PlayableRoot" unique_id=475065060]
+color = Color(0.19, 0.17, 0.12, 1)
+polygon = PackedVector2Array(260, -260, 780, -260, 780, -80, 300, -80)
+
+[node name="FortressWallMass" type="Polygon2D" parent="PlayableRoot" unique_id=1243627799]
+color = Color(0.13, 0.13, 0.13, 1)
+polygon = PackedVector2Array(650, -420, 1000, -420, 1000, -40, 760, -40, 760, -250, 650, -250)
+
+[node name="PlayableCollision_Mainland" type="StaticBody2D" parent="PlayableRoot" unique_id=126779805]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayableRoot/PlayableCollision_Mainland" unique_id=869171774]
+polygon = PackedVector2Array(-280, 520, 80, 520, 170, 280, 80, 120, -140, 120, -300, 300)
+
+[node name="PlayableCollision_Hill" type="StaticBody2D" parent="PlayableRoot" unique_id=216979457]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayableRoot/PlayableCollision_Hill" unique_id=958622136]
+polygon = PackedVector2Array(-140, 120, 130, 120, 210, -120, -190, -120)
+
+[node name="PlayableCollision_Overlook" type="StaticBody2D" parent="PlayableRoot" unique_id=351286694]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayableRoot/PlayableCollision_Overlook" unique_id=912280306]
+polygon = PackedVector2Array(-260, -120, 280, -120, 320, -320, -320, -320)
+
+[node name="PlayableCollision_Lateral" type="StaticBody2D" parent="PlayableRoot" unique_id=1516967974]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayableRoot/PlayableCollision_Lateral" unique_id=1687918984]
+polygon = PackedVector2Array(260, -260, 780, -260, 780, -80, 300, -80)
+
+[node name="VistaRoot" type="Node2D" parent="." unique_id=295103279]
+modulate = Color(1, 1, 1, 0)
+
+[node name="HorizonSky" type="Polygon2D" parent="VistaRoot" unique_id=1601092135]
+color = Color(0.06, 0.075, 0.09, 1)
+polygon = PackedVector2Array(-900, -700, 1200, -700, 1200, -320, -900, -320)
+
+[node name="FarSea" type="Polygon2D" parent="VistaRoot" unique_id=728633185]
+color = Color(0.025, 0.06, 0.07, 1)
+polygon = PackedVector2Array(-900, -520, 1200, -520, 1200, -260, -900, -260)
+
+[node name="DistantSunderedKeep" type="Polygon2D" parent="VistaRoot" unique_id=38139242]
+color = Color(0.035, 0.035, 0.04, 1)
+polygon = PackedVector2Array(-220, -510, -120, -610, -20, -560, 40, -670, 130, -550, 260, -500, 280, -420, -260, -420)
+
+[node name="VistaFogBand" type="Polygon2D" parent="VistaRoot" unique_id=1524823992]
+color = Color(0.32, 0.36, 0.38, 0.45)
+polygon = PackedVector2Array(-900, -380, 1200, -380, 1200, -220, -900, -220)
+
+[node name="OcclusionRoot" type="Node2D" parent="." unique_id=1783180488]
+modulate = Color(1, 1, 1, 0)
+
+[node name="CliffOccluder" type="Polygon2D" parent="OcclusionRoot" unique_id=1812464217]
+color = Color(0.045, 0.04, 0.035, 1)
+polygon = PackedVector2Array(520, -420, 1040, -420, 1040, 120, 700, 120, 660, -120, 520, -120)
+
+[node name="WallShadowOccluder" type="Polygon2D" parent="OcclusionRoot" unique_id=130473189]
+color = Color(0.01, 0.01, 0.012, 0.85)
+polygon = PackedVector2Array(-900, -360, 1200, -360, 1200, -230, -900, -230)
+
+[node name="Markers" type="Node2D" parent="." unique_id=1634408156]
+
+[node name="MainlandStart" type="Marker2D" parent="Markers" unique_id=1796947700]
+position = Vector2(-80, 430)
+
+[node name="RevealStart" type="Marker2D" parent="Markers" unique_id=892130272]
+position = Vector2(-40, 80)
+
+[node name="RevealFull" type="Marker2D" parent="Markers" unique_id=1942964190]
+position = Vector2(0, -250)
+
+[node name="TraverseStart" type="Marker2D" parent="Markers" unique_id=1942831246]
+position = Vector2(260, -180)
+
+[node name="TraverseEnd" type="Marker2D" parent="Markers" unique_id=686708471]
+position = Vector2(760, -170)
+
+[node name="ReturnTopdown" type="Marker2D" parent="Markers" unique_id=2003215372]
+position = Vector2(720, -80)
+
+[node name="Operator" type="CharacterBody2D" parent="." unique_id=1868101329 instance=ExtResource("1_74ujp")]
+z_index = 2
+position = Vector2(-80, 430)
+script = ExtResource("2_4dbst")
+use_tiny_rpg_placeholder_soldier = false
+primary_weapon_definition = ExtResource("3_mf083")
+melee_weapon_definition = ExtResource("4_wx1e4")
+primary_weapon_frames_resource = ExtResource("5_drxsd")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=540676725]
+position = Vector2(0, 120)
+
+[node name="OverlookCameraDirector" type="Node" parent="." unique_id=1893352112 node_paths=PackedStringArray("player", "camera", "reveal_start_marker", "reveal_full_marker", "traverse_start_marker", "traverse_end_marker", "return_topdown_marker", "vista_root", "occlusion_root", "fog_band")]
+script = ExtResource("6_w6hvf")
+player = NodePath("../Operator")
+camera = NodePath("../Camera2D")
+reveal_start_marker = NodePath("../Markers/RevealStart")
+reveal_full_marker = NodePath("../Markers/RevealFull")
+traverse_start_marker = NodePath("../Markers/TraverseStart")
+traverse_end_marker = NodePath("../Markers/TraverseEnd")
+return_topdown_marker = NodePath("../Markers/ReturnTopdown")
+vista_root = NodePath("../VistaRoot")
+occlusion_root = NodePath("../OcclusionRoot")
+fog_band = NodePath("../VistaRoot/VistaFogBand")

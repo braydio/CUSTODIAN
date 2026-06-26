@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="5_player_controller"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_horizontal"]
-size = Vector2(3700, 100)
+size = Vector2(973, 100)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vertical"]
 size = Vector2(100, 3000)
@@ -40,8 +40,12 @@ texture = ExtResource("2_backdrop")
 position = Vector2(0, -1550)
 shape = SubResource("RectangleShape2D_horizontal")
 
+[node name="North2" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision" unique_id=2089719760]
+position = Vector2(-189, -923)
+shape = SubResource("RectangleShape2D_horizontal")
+
 [node name="South" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision" unique_id=1213428364]
-position = Vector2(0, 1550)
+position = Vector2(32, 1419)
 shape = SubResource("RectangleShape2D_horizontal")
 
 [node name="West" type="CollisionShape2D" parent="World/TwinSolariaBackdrop/PerimeterCollision" unique_id=575671340]
@@ -59,7 +63,7 @@ shape = SubResource("RectangleShape2D_vertical")
 [node name="Items" type="Node2D" parent="World" unique_id=227132140]
 
 [node name="Operator" parent="World" unique_id=11104395 instance=ExtResource("3_operator")]
-position = Vector2(0, 1190)
+position = Vector2(-137, 1141)
 muzzle_offset = 24.0
 aim_crosshair_color = Color(0.9, 0.9, 0.9, 1)
 ammo_standard = 48

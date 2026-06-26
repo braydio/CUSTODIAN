@@ -16,6 +16,7 @@ func _ready() -> void:
 	super._ready()
 	if not is_in_group("power_node"):
 		add_to_group("power_node")
+	_sync_power_world_state()
 
 
 func get_power_output() -> float:
@@ -28,6 +29,7 @@ func get_power_output() -> float:
 
 func _on_state_changed(new_state: String) -> void:
 	super._on_state_changed(new_state)
+	_sync_power_world_state()
 	match new_state:
 		"operational":
 			print("[PowerNode] ", node_name, " operational - 100% output")
@@ -41,6 +43,16 @@ func _on_state_changed(new_state: String) -> void:
 
 func _on_destroyed() -> void:
 	super._on_destroyed()
+	_sync_power_world_state()
 	var power_system = get_node_or_null("/root/GameRoot/Power")
 	if power_system and power_system.has_method("on_power_node_destroyed"):
 		power_system.on_power_node_destroyed(self)
+
+
+func _sync_power_world_state() -> void:
+	var graph := get_node_or_null("/root/WorldStateGraph")
+	if graph == null:
+		return
+	var key_base := "power_node/%s" % String(sector_name).strip_edges().to_lower().replace(" ", "_")
+	graph.call("set_state", "%s/online" % key_base, not is_dead())
+	graph.call("set_state", "%s/output" % key_base, get_power_output())

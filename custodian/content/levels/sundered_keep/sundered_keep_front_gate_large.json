@@ -13,6 +13,24 @@
 	112,
 	80
   ],
+  "underlay": {
+	"texture_path": "res://content/masters/sundered_keep/sundered_keep_main_overlay.png",
+	"rect_tiles": [
+	  0,
+	  0,
+	  112,
+	  80
+	],
+	"z_index": -120,
+	"modulate": [
+	  1.0,
+	  1.0,
+	  1.0,
+	  1.0
+	],
+	"expand_camera_bounds": false
+  },
+  "authoring_mask_path": "res://content/levels/sundered_keep/sundered_keep_overlay_authoring.json",
   "start_tile": [
 	56,
 	76
@@ -50,6 +68,7 @@
 	56
   ],
   "layers": [
+	"Underlay",
 	"TerrainBase",
 	"TerrainEdges",
 	"FloorDetail",

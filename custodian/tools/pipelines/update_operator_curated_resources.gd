@@ -576,46 +576,41 @@ func _build_modular_sidearm_entries(part: String, base: String, action: String) 
 	return entries
 
 
-func _build_modular_ranged_stance_entries(part: String) -> Array:
-	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/ranged_2h/stance_01" % part
+func _build_modular_ranged_action_entries(part: String, action_spec: Dictionary) -> Array:
+	# Shared builder: scans all 8 directions, uses _find_modular_action_sheet
+	# so frame count is parsed dynamically from the runtime filename.
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/ranged_2h" % part
+	var source_action := str(action_spec["source"])
+	var base_anim := str(action_spec["base_anim"])
+	var fps := float(action_spec["fps"])
+	var loop := bool(action_spec["loop"])
 	var entries: Array = []
-	# Scans all 8 directions — only registers sheets that exist on disk.
-	# The AnimationResolver fallback chain means if a specific diagonal
-	# is missing, it'll fall back to cardinal (right/left/up).
 	for direction_spec in _RANGED_ALL_DIRECTION_SPECS():
-		var path := "%s/operator__modular_%s__ranged_2h__stance_01__%s__5f__96.png" % [root, part, str(direction_spec["dir"])]
-		if not _texture_file_exists(path):
+		var sheet := _find_modular_action_sheet(root, part, "ranged_2h", source_action, str(direction_spec["dir"]))
+		if sheet.is_empty():
 			continue
 		if bool(direction_spec.get("alias_base", false)):
-			entries.append({"animation": "ranged_2h_stance_modular", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true})
-		entries.append({"animation": "ranged_2h_stance_modular_%s" % str(direction_spec["suffix"]), "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true})
+			entries.append({"animation": base_anim, "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": fps, "loop": loop})
+		entries.append({"animation": "%s_%s" % [base_anim, str(direction_spec["suffix"])], "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": fps, "loop": loop})
 	return entries
+
+
+func _build_modular_ranged_stance_entries(part: String) -> Array:
+	return _build_modular_ranged_action_entries(part, {
+		"source": "stance_01", "base_anim": "ranged_2h_stance_modular", "fps": 8.0, "loop": true,
+	})
 
 
 func _build_modular_ranged_aim_entries(part: String) -> Array:
-	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/ranged_2h/aim_01" % part
-	var entries: Array = []
-	for direction_spec in _RANGED_ALL_DIRECTION_SPECS():
-		var path := "%s/operator__modular_%s__ranged_2h__aim_01__%s__5f__96.png" % [root, part, str(direction_spec["dir"])]
-		if not _texture_file_exists(path):
-			continue
-		if bool(direction_spec.get("alias_base", false)):
-			entries.append({"animation": "ranged_2h_aim_modular", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": false})
-		entries.append({"animation": "ranged_2h_aim_modular_%s" % str(direction_spec["suffix"]), "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": false})
-	return entries
+	return _build_modular_ranged_action_entries(part, {
+		"source": "aim_01", "base_anim": "ranged_2h_aim_modular", "fps": 8.0, "loop": false,
+	})
 
 
 func _build_modular_ranged_fire_entries(part: String) -> Array:
-	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/ranged_2h/fire_01" % part
-	var entries: Array = []
-	for direction_spec in _RANGED_ALL_DIRECTION_SPECS():
-		var path := "%s/operator__modular_%s__ranged_2h__fire_01__%s__5f__96.png" % [root, part, str(direction_spec["dir"])]
-		if not _texture_file_exists(path):
-			continue
-		if bool(direction_spec.get("alias_base", false)):
-			entries.append({"animation": "ranged_2h_fire_modular", "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": false})
-		entries.append({"animation": "ranged_2h_fire_modular_%s" % str(direction_spec["suffix"]), "path": path, "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": false})
-	return entries
+	return _build_modular_ranged_action_entries(part, {
+		"source": "fire_01", "base_anim": "ranged_2h_fire_modular", "fps": 10.0, "loop": false,
+	})
 
 
 static func _RANGED_ALL_DIRECTION_SPECS() -> Array:

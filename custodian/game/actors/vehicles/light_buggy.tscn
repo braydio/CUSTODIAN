@@ -1,8 +1,8 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene format=3 uid="uid://b2nvudqe2mljd"]
 
-[ext_resource type="Script" path="res://game/vehicles/pilotable_vehicle.gd" id="1_vehicle"]
-[ext_resource type="SpriteFrames" path="res://game/actors/vehicles/hover_buggy_idle_frames.tres" id="2_frames"]
-[ext_resource type="Script" path="res://game/vehicles/vehicle_seat.gd" id="3_seat"]
+[ext_resource type="Script" uid="uid://bbashm32vudln" path="res://game/vehicles/pilotable_vehicle.gd" id="1_vehicle"]
+[ext_resource type="SpriteFrames" uid="uid://dpnh0apa41g7g" path="res://game/actors/vehicles/hover_buggy_idle_frames.tres" id="2_frames"]
+[ext_resource type="Script" uid="uid://ck3wib5ngvr01" path="res://game/vehicles/vehicle_seat.gd" id="3_seat"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_buggy"]
 radius = 28.0
@@ -11,44 +11,41 @@ height = 64.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_entry"]
 radius = 64.0
 
-[node name="LightBuggy" type="CharacterBody2D"]
+[node name="LightBuggy" type="CharacterBody2D" unique_id=1517962398]
 script = ExtResource("1_vehicle")
-fallback_vehicle_id = "custodian_ground_buggy_scout_light"
-max_health = 100.0
-current_health = 100.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1024933905]
 position = Vector2(0, 10)
 shape = SubResource("CapsuleShape2D_buggy")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1733376397]
 position = Vector2(0, -8)
 sprite_frames = ExtResource("2_frames")
 animation = &"idle"
 
-[node name="WeaponSocket" type="Node2D" parent="."]
+[node name="WeaponSocket" type="Node2D" parent="." unique_id=1088168590]
 position = Vector2(0, -8)
 
-[node name="EntryArea2D" type="Area2D" parent="."]
+[node name="EntryArea2D" type="Area2D" parent="." unique_id=1418418750]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EntryArea2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EntryArea2D" unique_id=1959780907]
 shape = SubResource("CircleShape2D_entry")
 
-[node name="DriverSeat" type="Node2D" parent="."]
+[node name="DriverSeat" type="Node2D" parent="." unique_id=1221635527]
 script = ExtResource("3_seat")
 
-[node name="ExitMarker" type="Marker2D" parent="."]
+[node name="ExitMarker" type="Marker2D" parent="." unique_id=804282256]
 position = Vector2(48, 4)
 
-[node name="Hardpoints" type="Node2D" parent="."]
+[node name="Hardpoints" type="Node2D" parent="." unique_id=800960612]
 
-[node name="FrontLight" type="Marker2D" parent="Hardpoints"]
+[node name="FrontLight" type="Marker2D" parent="Hardpoints" unique_id=174506640]
 position = Vector2(0, -34)
 
-[node name="RearUtility" type="Marker2D" parent="Hardpoints"]
+[node name="RearUtility" type="Marker2D" parent="Hardpoints" unique_id=1774816720]
 position = Vector2(0, 28)
 
-[node name="HealthBar" type="ProgressBar" parent="."]
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=216754701]
 offset_left = -36.0
 offset_top = -52.0
 offset_right = 36.0

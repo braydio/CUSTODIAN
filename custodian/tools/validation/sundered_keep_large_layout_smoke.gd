@@ -42,6 +42,8 @@ func _init() -> void:
 
 	var state := map.get_sundered_keep_debug_state()
 	_assert(str(state["level_id"]) == "sundered_keep_front_gate_large", "map did not build the large front-gate level")
+	_assert(bool(state["underlay_present"]), "level shape underlay was not built")
+	_assert(str(state["underlay_texture_path"]) == "res://content/masters/sundered_keep/sundered_keep_main_overlay.png", "level shape underlay path drifted")
 	_assert(int(state["missing_assets"]) == 0, "large layout has missing asset references")
 	_assert(int(state["floor_sprites"]) > 500, "large layout placed too few floor sprites")
 	_assert(int(state["wall_sprites"]) > 40, "large layout placed too few wall sprites")

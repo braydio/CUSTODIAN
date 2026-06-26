@@ -15,6 +15,12 @@ func _init() -> void:
 		quit(1)
 		return
 
+	var underlay := map.get_node_or_null("Underlay/LevelShapeUnderlay") as Sprite2D
+	if underlay == null or underlay.texture == null:
+		push_error("[SunderedKeepAssetSmoke] Missing level shape underlay sprite or texture")
+		quit(1)
+		return
+
 	print("[SunderedKeepAssetSmoke] OK: %d Sprite2D nodes have live textures" % _count_sprites(map))
 	quit(0)
 

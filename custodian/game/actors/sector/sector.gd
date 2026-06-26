@@ -50,6 +50,7 @@ func _ready() -> void:
 	_build_geometry()
 	super._ready()
 	update_visuals()
+	_sync_world_state_graph()
 
 
 func _set_power_cost() -> void:
@@ -202,13 +203,19 @@ func _add_wall_collision(x: float, y: float, width: float, height: float) -> voi
 
 
 func take_damage(amount: float) -> void:
+	var previous_health := current_health
 	super.take_damage(amount)
 	update_visuals()
+	if current_health < previous_health:
+		_emit_sector_telemetry("sector_damage", previous_health - current_health)
 
 
 func repair(amount: float) -> void:
+	var previous_health := current_health
 	super.repair(amount)
 	update_visuals()
+	if current_health > previous_health:
+		_emit_sector_telemetry("sector_repair", current_health - previous_health)
 
 
 func heal(amount: float) -> void:
@@ -241,6 +248,7 @@ func toggle_power() -> void:
 	powered = !powered
 	apply_power_allocation(power)
 	update_visuals()
+	_sync_world_state_graph()
 
 
 func get_integrity_modifier() -> float:
@@ -257,6 +265,39 @@ func get_power_efficiency() -> float:
 
 func get_effective_output() -> float:
 	return clamp(effective_output, 0.0, 1.0)
+
+
+func _emit_sector_telemetry(kind: String, amount: float) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null:
+		observatory.call("log_event", kind, {
+			"sector_id": _telemetry_sector_id(),
+			"amount": amount,
+			"state": state,
+		})
+
+	var world_history := get_node_or_null("/root/WorldHistory")
+	if world_history != null:
+		world_history.call("record", _telemetry_sector_id(), kind, global_position, {
+			"amount": amount,
+			"state": state,
+		})
+
+	_sync_world_state_graph()
+
+
+func _sync_world_state_graph() -> void:
+	var graph := get_node_or_null("/root/WorldStateGraph")
+	if graph == null:
+		return
+	var sector_id := _telemetry_sector_id()
+	graph.call("set_state", "sector/%s/state" % sector_id, state)
+	graph.call("set_state", "sector/%s/health_ratio" % sector_id, get_efficiency())
+	graph.call("set_state", "sector/%s/powered" % sector_id, has_power)
+
+
+func _telemetry_sector_id() -> String:
+	return String(sector_name).strip_edges().to_lower().replace(" ", "_")
 
 
 func get_power_priority() -> int:
@@ -306,11 +347,13 @@ func update_visuals() -> void:
 
 
 func _on_state_changed(_new_state: String) -> void:
+	_sync_world_state_graph()
 	apply_power_allocation(power)
 	update_visuals()
 
 
 func _on_destroyed() -> void:
+	_sync_world_state_graph()
 	super._on_destroyed()
 	print("SECTOR DESTROYED: ", sector_name)
 	power = 0.0

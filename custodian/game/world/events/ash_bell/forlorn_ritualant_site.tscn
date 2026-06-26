@@ -31,15 +31,6 @@
 [ext_resource type="Texture2D" uid="uid://baylmb3pm0scg" path="res://content/tiles/encounters/ritualant_set/stilling_pin_pickup_01.png" id="36_pin"]
 [ext_resource type="PackedScene" path="res://scenes/environment/forlorn_ritualant_shader_fx.tscn" id="37_shader_fx"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_room_north"]
-size = Vector2(1120, 32)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_room_south_segment"]
-size = Vector2(480, 32)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_room_side"]
-size = Vector2(32, 864)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_thread"]
 size = Vector2(220, 128)
 
@@ -147,80 +138,6 @@ z_index = -29
 position = Vector2(-60, 300)
 scale = Vector2(0.75, 0.75)
 texture = ExtResource("29_debris_5")
-
-[node name="Walls" type="Node2D" parent="." unique_id=1687049799]
-z_index = -20
-
-[node name="NorthWall" type="StaticBody2D" parent="Walls" unique_id=945578912]
-position = Vector2(0, -416)
-
-[node name="Visual" type="ColorRect" parent="Walls/NorthWall" unique_id=1503050646]
-offset_left = -560.0
-offset_top = -16.0
-offset_right = 560.0
-offset_bottom = 16.0
-color = Color(0.045, 0.041, 0.039, 1)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/NorthWall" unique_id=717728398]
-shape = SubResource("RectangleShape2D_room_north")
-
-[node name="SouthWall" type="StaticBody2D" parent="Walls" unique_id=1266914114]
-position = Vector2(0, 416)
-
-[node name="VisualLeft" type="ColorRect" parent="Walls/SouthWall" unique_id=463604627]
-offset_left = -560.0
-offset_top = -16.0
-offset_right = -80.0
-offset_bottom = 16.0
-color = Color(0.045, 0.041, 0.039, 1)
-
-[node name="VisualRight" type="ColorRect" parent="Walls/SouthWall" unique_id=1340132109]
-offset_left = 80.0
-offset_top = -16.0
-offset_right = 560.0
-offset_bottom = 16.0
-color = Color(0.045, 0.041, 0.039, 1)
-
-[node name="DoorwayThreshold" type="ColorRect" parent="Walls/SouthWall" unique_id=1701801804]
-offset_left = -80.0
-offset_top = -10.0
-offset_right = 80.0
-offset_bottom = 10.0
-color = Color(0.16, 0.145, 0.12, 1)
-
-[node name="CollisionLeft" type="CollisionShape2D" parent="Walls/SouthWall" unique_id=127495625]
-position = Vector2(-320, 0)
-shape = SubResource("RectangleShape2D_room_south_segment")
-
-[node name="CollisionRight" type="CollisionShape2D" parent="Walls/SouthWall" unique_id=1941695750]
-position = Vector2(320, 0)
-shape = SubResource("RectangleShape2D_room_south_segment")
-
-[node name="WestWall" type="StaticBody2D" parent="Walls" unique_id=957573078]
-position = Vector2(-544, 0)
-
-[node name="Visual" type="ColorRect" parent="Walls/WestWall" unique_id=148758621]
-offset_left = -16.0
-offset_top = -432.0
-offset_right = 16.0
-offset_bottom = 432.0
-color = Color(0.045, 0.041, 0.039, 1)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/WestWall" unique_id=1111121747]
-shape = SubResource("RectangleShape2D_room_side")
-
-[node name="EastWall" type="StaticBody2D" parent="Walls" unique_id=1366154025]
-position = Vector2(544, 0)
-
-[node name="Visual" type="ColorRect" parent="Walls/EastWall" unique_id=735045039]
-offset_left = -16.0
-offset_top = -432.0
-offset_right = 16.0
-offset_bottom = 432.0
-color = Color(0.045, 0.041, 0.039, 1)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/EastWall" unique_id=1793133981]
-shape = SubResource("RectangleShape2D_room_side")
 
 [node name="Props" type="Node2D" parent="." unique_id=911271864]
 z_index = -10

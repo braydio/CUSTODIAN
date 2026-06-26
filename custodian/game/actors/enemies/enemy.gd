@@ -94,6 +94,7 @@ enum AssaultState {
 @export var custom_enemy_animation_set: String = ""
 @export var custom_enemy_animation_scale: Vector2 = Vector2.ONE
 @export var custom_enemy_fx_scale: Vector2 = Vector2.ONE
+var simulation_tier: String = "active"
 @export var marine_dash_enabled: bool = false
 @export var marine_dash_windup_time: float = 0.32
 @export var marine_dash_time: float = 0.18
@@ -227,6 +228,7 @@ const OBJECTIVE_GROUPS := {
 func _ready():
 	add_to_group("enemies")
 	add_to_group("enemy")
+	add_to_group("interest_managed")
 	if behavior_state_machine_enabled:
 		add_to_group("enemy_behavior_agent")
 		_ensure_behavior_components()
@@ -1056,6 +1058,18 @@ func die():
 	var awarded_typed_loot := _award_loot_table()
 	if not awarded_typed_loot and material_drop_fallback_enabled:
 		_spawn_material_pickup()
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null:
+		observatory.call("increment", "enemies_destroyed", 1)
+		observatory.call("log_event", "enemy_killed", {
+			"enemy": enemy_name,
+			"position": global_position,
+		})
+	var world_history := get_node_or_null("/root/WorldHistory")
+	if world_history != null:
+		world_history.call("record", "", "enemy_killed", global_position, {
+			"enemy": enemy_name,
+		})
 	print("ENEMY DESTROYED: ", enemy_name)
 	if _uses_procedural_variant_animation_set() and _has_animation(String(WOLF_DEATH_ANIMATION)):
 		call_deferred("_play_procedural_variant_death")
@@ -1068,6 +1082,12 @@ func die():
 
 func is_passive_enemy() -> bool:
 	return passive
+
+
+func set_simulation_tier(tier: String) -> void:
+	if simulation_tier == tier:
+		return
+	simulation_tier = tier
 
 
 func counts_for_wave_cap() -> bool:

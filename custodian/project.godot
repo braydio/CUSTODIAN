@@ -36,6 +36,11 @@ GameConsoleManager="*uid://dsr8e7vkd3scc"
 MusicManager="*res://autoload/music_manager.gd"
 WorldEventMemory="*res://game/systems/core/state/world_event_memory.gd"
 NoiseEventBus="*res://game/systems/stealth/noise_event_bus.gd"
+DevObservatory="*res://game/systems/debug/dev_observatory.gd"
+WorldStateGraph="*res://game/systems/world/world_state_graph.gd"
+WorldHistory="*res://game/systems/world/world_history.gd"
+SimulationInterestManager="*res://game/systems/simulation/simulation_interest_manager.gd"
+SectorHeatmap="*res://game/systems/world/sector_heatmap.gd"
 
 [dev_console]
 
@@ -245,6 +250,11 @@ map={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":77,"key_label":0,"unicode":109,"location":0,"echo":false,"script":null)
 , Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":4,"pressure":0.0,"pressed":false,"script":null)
+]
+}
+debug_observatory={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":120,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
 quick_item={

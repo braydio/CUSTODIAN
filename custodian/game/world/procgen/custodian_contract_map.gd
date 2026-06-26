@@ -234,6 +234,12 @@ func generate_contract(seed_value: int) -> void:
 	if not is_node_ready():
 		await ready
 
+	print("[CustodianContractMap] CONTRACT_BEGIN node=%s instance=%s seed=%s" % [
+		str(get_path()),
+		str(get_instance_id()),
+		str(seed_value),
+	])
+
 	contract_seed = seed_value
 	_rng.seed = int(seed_value)
 
@@ -562,18 +568,34 @@ func _find_procgen_node(node: Node) -> ProcGen:
 func _generate_final_map_level_data(map_instance: ProcGenTilemap) -> Dictionary:
 	if map_instance == null:
 		return {}
+	print("[CustodianContractMap] FINAL_VISUAL_BEGIN map_path=%s eval_mode_before=%s" % [
+		str(map_instance.get_path()),
+		str(map_instance.generation_evaluation_mode),
+	])
 	if not map_instance.generation_evaluation_mode:
+		print("[CustodianContractMap] FINAL_VISUAL_ALREADY_READY")
 		return map_instance.get_level_data()
 	var _final_start := Time.get_ticks_msec()
 	map_instance.generation_evaluation_mode = false
 	var level_data := await _generate_map_level_data(map_instance)
-	print("[CustodianContractMap] Final visual map generation: %.1fs" % ((Time.get_ticks_msec() - _final_start) / 1000.0))
+	print("[CustodianContractMap] FINAL_VISUAL_END total=%.1fs" % [
+		(Time.get_ticks_msec() - _final_start) / 1000.0
+	])
 	return level_data
 
 
 func _generate_map_level_data(map_instance: ProcGenTilemap) -> Dictionary:
 	_map_level_data_ready = false
 	_map_level_data = {}
+	var mode := "EVAL_CANDIDATE" if map_instance.generation_evaluation_mode else "FINAL_VISUAL"
+	var seed_text := "unknown"
+	if map_instance.procgen_node != null:
+		seed_text = str(map_instance.procgen_node.seed)
+	print("[CustodianContractMap] GENERATE_BEGIN mode=%s seed=%s map_path=%s" % [
+		mode,
+		seed_text,
+		str(map_instance.get_path()),
+	])
 
 	map_instance.level_data_ready.connect(_on_map_level_data_ready, CONNECT_ONE_SHOT)
 	map_instance.generate()
@@ -581,6 +603,10 @@ func _generate_map_level_data(map_instance: ProcGenTilemap) -> Dictionary:
 	while not _map_level_data_ready:
 		await get_tree().process_frame
 
+	print("[CustodianContractMap] GENERATE_END mode=%s seed=%s" % [
+		mode,
+		seed_text,
+	])
 	return _map_level_data
 
 

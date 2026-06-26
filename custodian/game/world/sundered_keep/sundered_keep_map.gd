@@ -21,6 +21,7 @@ const LAST_ROUTEKEEPER_EVENT := preload("res://game/world/events/last_routekeepe
 const LAST_ROUTEKEEPER_EVENT_ID := &"last_routekeeper"
 const LAST_ROUTEKEEPER_TRACE_ITEM_ID := &"routekeeper_trace_note"
 const LAST_ROUTEKEEPER_TRACE_ITEM_NAME := "Routekeeper Trace"
+const DEFAULT_LEVEL_UNDERLAY_PATH := "res://content/masters/sundered_keep/sundered_keep_main_overlay.png"
 
 const ELEVATION_STEP_PX := 24.0
 const CAUSEWAY_BRAZIER_FLICKER_PATH := "res://content/tiles/sundered_keep/entrance/props/causeway_lit_brazier_flicker_01.png"
@@ -62,6 +63,7 @@ const WALL_ASSET_DIRS := [
 
 @export var level_data_path: String = DEFAULT_LEVEL_DATA_PATH
 @export var siege_config_path: String = DEFAULT_SIEGE_CONFIG_PATH
+@export_file("*.png") var level_underlay_path: String = DEFAULT_LEVEL_UNDERLAY_PATH
 @export var entrance_tile: Vector2i = Vector2i(56, 76)
 @export var return_gate_tile: Vector2i = Vector2i(42, 58)
 @export var main_gate_tile: Vector2i = Vector2i(54, 50)
@@ -139,6 +141,10 @@ var _great_hall_door_open_frames: SpriteFrames = null
 var _minimap_floor_cells: Dictionary = {}
 var _minimap_wall_cells: Dictionary = {}
 var _level_id := ""
+var _level_underlay_sprite: Sprite2D = null
+var _level_underlay_rect_tiles := Rect2i()
+var _level_underlay_texture_path := ""
+var _level_authoring_mask_path := ""
 var _stats := {
 	"floors": 0,
 	"edges": 0,
@@ -241,6 +247,10 @@ func get_sundered_keep_debug_state() -> Dictionary:
 	return {
 		"level_id": _level_id,
 		"map_size_tiles": map_size_tiles,
+		"underlay_present": _level_underlay_sprite != null and is_instance_valid(_level_underlay_sprite),
+		"underlay_texture_path": _level_underlay_texture_path,
+		"underlay_rect_tiles": _level_underlay_rect_tiles,
+		"authoring_mask_path": _level_authoring_mask_path,
 		"floor_sprites": int(_stats["floors"]),
 		"edge_sprites": int(_stats["edges"]),
 		"wall_sprites": int(_stats["walls"]),
@@ -356,6 +366,7 @@ func _build_once() -> void:
 		Vector2(float(map_size_tiles.x + 4) * TILE_SIZE, float(map_size_tiles.y + 4) * TILE_SIZE)
 	)
 	_create_layers()
+	_build_level_underlay()
 	_build_ocean_backdrop()
 	_build_cliff_island_foundation()
 	_build_storm_causeway()
@@ -374,6 +385,7 @@ func _build_once() -> void:
 
 func _create_layers() -> void:
 	_create_layers_from_names([
+		"Underlay",
 		"TerrainBase",
 		"TerrainEdges",
 		"FloorDetail",
@@ -393,6 +405,7 @@ func _create_layers() -> void:
 
 func _create_layers_from_names(names: Array) -> void:
 	var z_by_name := {
+		"Underlay": -120,
 		"TerrainBase": -90,
 		"TerrainEdges": -75,
 		"FloorDetail": -60,
@@ -421,6 +434,7 @@ func _create_layers_from_names(names: Array) -> void:
 
 func _build_from_level_data(data: Dictionary) -> void:
 	_level_id = str(data.get("level_id", "sundered_keep_front_gate_large"))
+	_level_authoring_mask_path = str(data.get("authoring_mask_path", ""))
 	map_size_tiles = _array_to_vector2i(data.get("map_size_tiles", [112, 80]), map_size_tiles)
 	entrance_tile = _array_to_vector2i(data.get("start_tile", [entrance_tile.x, entrance_tile.y]), entrance_tile)
 	return_gate_tile = _array_to_vector2i(data.get("return_gate_tile", [return_gate_tile.x, return_gate_tile.y]), return_gate_tile)
@@ -438,6 +452,7 @@ func _build_from_level_data(data: Dictionary) -> void:
 		Vector2(float(bounds_array[2]) * TILE_SIZE, float(bounds_array[3]) * TILE_SIZE)
 	)
 	_create_layers_from_names(data.get("layers", []))
+	_build_level_underlay(data.get("underlay", {}))
 	_build_ocean_backdrop()
 	_build_elevation_from_level_data(data)
 	_build_underpass_and_shore_regions(data)
@@ -858,6 +873,66 @@ func _array_to_rect2i(value) -> Rect2i:
 	if not (value is Array) or (value as Array).size() < 4:
 		return Rect2i()
 	return Rect2i(Vector2i(int(value[0]), int(value[1])), Vector2i(int(value[2]), int(value[3])))
+
+
+func _array_to_color(value, fallback: Color) -> Color:
+	if not (value is Array):
+		return fallback
+	var components := value as Array
+	if components.size() < 3:
+		return fallback
+	var alpha := float(components[3]) if components.size() >= 4 else fallback.a
+	return Color(float(components[0]), float(components[1]), float(components[2]), alpha)
+
+
+func _build_level_underlay(config: Dictionary = {}) -> void:
+	var layer := _layers.get("Underlay", null) as Node2D
+	if layer == null:
+		layer = Node2D.new()
+		layer.name = "Underlay"
+		layer.z_as_relative = false
+		layer.z_index = -120
+		add_child(layer)
+		_layers["Underlay"] = layer
+	for child in layer.get_children():
+		child.queue_free()
+
+	_level_underlay_sprite = null
+	_level_underlay_rect_tiles = Rect2i()
+	_level_underlay_texture_path = ""
+
+	var texture_path := str(config.get("texture_path", level_underlay_path))
+	if texture_path.is_empty():
+		return
+
+	var rect_tiles := _array_to_rect2i(config.get("rect_tiles", [0, 0, map_size_tiles.x, map_size_tiles.y]))
+	if rect_tiles.size.x <= 0 or rect_tiles.size.y <= 0:
+		return
+
+	layer.z_index = int(config.get("z_index", layer.z_index))
+	var texture := _load_texture(texture_path)
+	if texture == null:
+		return
+
+	var sprite := Sprite2D.new()
+	sprite.name = "LevelShapeUnderlay"
+	sprite.centered = false
+	sprite.texture = texture
+	sprite.position = _tile_top_left(rect_tiles.position)
+	sprite.scale = Vector2(
+		(float(rect_tiles.size.x) * TILE_SIZE) / max(1.0, float(texture.get_width())),
+		(float(rect_tiles.size.y) * TILE_SIZE) / max(1.0, float(texture.get_height()))
+	)
+	sprite.modulate = _array_to_color(config.get("modulate", [1.0, 1.0, 1.0, 1.0]), Color.WHITE)
+	layer.add_child(sprite)
+
+	_level_underlay_sprite = sprite
+	_level_underlay_rect_tiles = rect_tiles
+	_level_underlay_texture_path = texture_path
+
+	if bool(config.get("expand_camera_bounds", false)):
+		var underlay_rect := Rect2(_tile_top_left(rect_tiles.position), Vector2(rect_tiles.size) * TILE_SIZE)
+		_camera_bounds = _camera_bounds.merge(underlay_rect)
 
 
 func _build_ocean_backdrop() -> void:

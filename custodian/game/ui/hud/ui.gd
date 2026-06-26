@@ -42,6 +42,8 @@ const TERMINAL_BUTTON_SLICE := 10.0
 const TERMINAL_COMMAND_LINE_SLICE := 8.0
 const TERMINAL_SCANLINE_ALPHA := 0.05
 const TERMINAL_NOISE_ALPHA := 0.025
+const TERMINAL_DECOR_OVERLAY_Z := 5
+const TERMINAL_COMMAND_ENTRY_Z := 10
 const TERMINAL_BACKDROP_COLOR := Color(0.015, 0.025, 0.03, 0.78)
 const TERMINAL_DENSE_PANEL_MODULATE := Color(1.0, 1.0, 1.0, 0.82)
 
@@ -1848,7 +1850,7 @@ func _ensure_terminal_texture_overlays() -> void:
 		scanline_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		scanline_rect.stretch_mode = TextureRect.STRETCH_TILE
 		scanline_rect.modulate = Color(1.0, 1.0, 1.0, TERMINAL_SCANLINE_ALPHA)
-		scanline_rect.z_index = 20
+		scanline_rect.z_index = TERMINAL_DECOR_OVERLAY_Z
 	var noise_overlay := terminal_panel.get_node_or_null("StarterNoiseOverlay")
 	if noise_overlay == null:
 		noise_overlay = TextureRect.new()
@@ -1862,10 +1864,20 @@ func _ensure_terminal_texture_overlays() -> void:
 		noise_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		noise_rect.stretch_mode = TextureRect.STRETCH_TILE
 		noise_rect.modulate = Color(1.0, 1.0, 1.0, TERMINAL_NOISE_ALPHA)
-		noise_rect.z_index = 21
+		noise_rect.z_index = TERMINAL_DECOR_OVERLAY_Z + 1
+
+func _raise_terminal_command_entry_layer() -> void:
+	var input_row := get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow")
+	for control in [input_row, terminal_input, terminal_status_label]:
+		if control == null or not (control is CanvasItem):
+			continue
+		var canvas_item := control as CanvasItem
+		canvas_item.z_index = TERMINAL_COMMAND_ENTRY_Z
+		canvas_item.z_as_relative = true
 
 func _apply_terminal_theme():
 	_ensure_terminal_texture_overlays()
+	_raise_terminal_command_entry_layer()
 	var panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 10.0)
 	var header_style := _make_terminal_texture_style(TERMINAL_HEADER_ACTIVE_TEXTURE, 4.0, 6.0)
 	var output_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 8.0)
@@ -1935,7 +1947,8 @@ func _apply_terminal_theme():
 		for label in terminal_widget_stack.find_children("*", "Label", true, false):
 			label.add_theme_color_override("font_color", Color(0.63, 0.83, 0.74, 0.92))
 			label.add_theme_font_size_override("font_size", 11)
-	terminal_output.scroll_following = true
+	if terminal_output:
+		terminal_output.scroll_following = true
 	if terminal_activity_scroll:
 		terminal_activity_scroll.add_theme_stylebox_override("panel", output_style)
 		terminal_activity_scroll.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
@@ -3792,7 +3805,7 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 					if args.size() < 2:
 						_append_terminal_line("USE: BUILD PLACE <READY_BUILD_ID>", "warning")
 						return true
-					var ready_build_id := str(args[1]).strip_edges()
+					var ready_build_id := _normalize_terminal_fab_identifier(str(args[1]))
 					if ready_build_id.is_empty():
 						_append_terminal_line("USE: BUILD PLACE <READY_BUILD_ID>", "warning")
 						return true
@@ -4158,7 +4171,7 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 						_append_terminal_line("RESOURCE LEDGER UNAVAILABLE", "warning")
 						return true
 					if args.size() >= 3:
-						var resource_id := str(args[1]).strip_edges()
+						var resource_id := _normalize_terminal_fab_identifier(str(args[1]))
 						var amount := int(str(args[2]))
 						if resource_id.is_empty() or amount <= 0:
 							_append_terminal_line("USE: FAB GRANT <RESOURCE> <AMOUNT>", "warning")
@@ -4174,26 +4187,27 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 					_refresh_snapshot()
 					return true
 				"START":
-					if fab_payload.is_empty():
+					var recipe_id := _normalize_terminal_fab_identifier(fab_payload)
+					if recipe_id.is_empty():
 						_append_terminal_line("USE: FAB START <RECIPE_ID>", "warning")
 						return true
 					var start_pipeline := get_node_or_null("/root/FabPipeline")
 					if start_pipeline == null:
 						_append_terminal_line("FAB PIPELINE UNAVAILABLE", "warning")
 						return true
-					if not bool(start_pipeline.call("has_recipe", fab_payload)):
-						_append_terminal_line("UNKNOWN RECIPE %s" % fab_payload.to_upper(), "warning")
+					if not bool(start_pipeline.call("has_recipe", recipe_id)):
+						_append_terminal_line("UNKNOWN RECIPE %s" % recipe_id.to_upper(), "warning")
 						return true
-					if not bool(start_pipeline.call("can_start_recipe", fab_payload)):
-						_append_terminal_line("CANNOT START %s // INSUFFICIENT RESOURCES" % fab_payload.to_upper(), "warning")
+					if not bool(start_pipeline.call("can_start_recipe", recipe_id)):
+						_append_terminal_line("CANNOT START %s // INSUFFICIENT RESOURCES" % recipe_id.to_upper(), "warning")
 						return true
-					if bool(start_pipeline.call("try_start_recipe", fab_payload)):
-						_terminal_fabrication_selected_work_order_id = fab_payload
+					if bool(start_pipeline.call("try_start_recipe", recipe_id)):
+						_terminal_fabrication_selected_work_order_id = recipe_id
 						_set_terminal_page("FABRICATION")
-						_append_terminal_line("FAB JOB STARTED -> %s" % fab_payload.to_upper(), "success")
+						_append_terminal_line("FAB JOB STARTED -> %s" % recipe_id.to_upper(), "success")
 						_refresh_snapshot()
 						return true
-					_append_terminal_line("FAB START FAILED -> %s" % fab_payload.to_upper(), "warning")
+					_append_terminal_line("FAB START FAILED -> %s" % recipe_id.to_upper(), "warning")
 				_:
 					_set_terminal_page("FABRICATION")
 					_append_terminal_line("FAB COMMANDS: STATUS | RECIPES | GRANT | START | QUEUE | CANCEL", "info")
@@ -4984,6 +4998,10 @@ func _handle_terminal_action_link(action_payload: String) -> void:
 func _set_terminal_time_scale(rate: float) -> void:
 	Engine.time_scale = clampf(rate, 0.1, 10.0)
 	_last_time_scale = -1.0
+
+
+func _normalize_terminal_fab_identifier(value: String) -> String:
+	return value.strip_edges().to_lower()
 
 
 func _reset_terminal_local_state(include_boot_lines: bool) -> void:

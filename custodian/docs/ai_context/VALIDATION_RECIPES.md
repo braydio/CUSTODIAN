@@ -98,6 +98,16 @@ godot --headless --script tools/validation/sundered_keep_asset_smoke.gd
 
 This instantiates the authored Sundered Keep connected map and fails if any `Sprite2D` in the slice has a missing texture.
 
+For the Sundered Keep overlay-authoring guide pipeline:
+
+```bash
+python custodian/tools/levels/generate_sundered_keep_overlay_authoring.py
+cd custodian
+godot --headless --script tools/validation/sundered_keep_overlay_authoring_smoke.gd
+```
+
+This regenerates the deterministic tile-space guide from the master overlay and verifies the standalone review scene plus the live map linkage still load cleanly.
+
 For fabrication terminal readability / work-order translation changes:
 
 ```bash

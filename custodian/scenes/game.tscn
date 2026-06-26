@@ -48,6 +48,7 @@
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
 [ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
 [ext_resource type="Script" uid="uid://brgprv506ntpi" path="res://game/systems/spawning/ambient_enemy_camp.gd" id="207_ambient_camp"]
+[ext_resource type="PackedScene" path="res://game/ui/debug/dev_observatory_overlay.tscn" id="208_observatory_overlay"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
@@ -59,6 +60,8 @@ script = ExtResource("29_debug_controller")
 script = ExtResource("33_debug_collector")
 
 [node name="DevUI" parent="." unique_id=227687621 instance=ExtResource("30_dev_ui")]
+
+[node name="DevObservatoryOverlay" parent="." instance=ExtResource("208_observatory_overlay")]
 
 [node name="World" type="Node2D" parent="." unique_id=932635855]
 
