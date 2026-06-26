@@ -24,6 +24,7 @@ Keep ranged weapons strong in deliberate bursts without allowing unlimited scree
 - Existing enemy behavior now tracks last seen/heard positions, pursuit memory, deterministic search offsets, home position, camp ID, and a leash. Hard leash applies after LOS is broken.
 - `AmbientEnemyCamp` supports authored activation-limited camps; `AmbientEnemySpawner` supports procgen/authored marker groups. The main test scene contains two hostile grunt camps outside wave spawning.
 - `get_weapon_status()` exposes canonical ammo, heat, overheat, noise, suppression, and range values while retaining legacy keys.
+- Primary/two-handed ranged-ready now uses a composition split instead of baked ranged locomotion requirements. Lower body stays movement-owned on the reusable `unarmed_{idle,walk,run}` modular locomotion clips, upper body plus temporary ranged-weapon layers stay aim/loadout-owned, FX stays action-owned, and the legacy full-body ranged sprite only appears when that modular ranged upper/weapon stack is unavailable. Accepted primary ranged shots can still play modular upper/weapon/FX fire layers when matching clips exist, with projectile emission, ammo, heat, range/falloff, and noise authority unchanged.
 
 ## Phase Mapping
 
@@ -45,6 +46,7 @@ Keep ranged weapons strong in deliberate bursts without allowing unlimited scree
 ## Runtime Files
 
 - `custodian/game/actors/operator/operator.gd`
+- `custodian/tools/validation/operator_primary_ranged_modular_fire_smoke.gd`
 - `custodian/game/actors/operator/operator_weapon_definition.gd`
 - `custodian/game/actors/projectiles/bullet.gd`
 - `custodian/content/weapons/weapon_schema.json`

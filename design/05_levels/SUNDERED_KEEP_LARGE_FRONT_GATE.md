@@ -30,11 +30,58 @@ storm ocean
 ## Runtime Behavior
 
 - `custodian/game/world/sundered_keep/sundered_keep_tilemap_loader.gd` loads `custodian.sundered_keep.level_tilemap.v1` JSON.
-- `custodian/game/world/sundered_keep/sundered_keep_map.gd` applies level ops to Sprite2D layers and keeps simulation/state behavior local to the map script.
+- `custodian/game/world/sundered_keep/sundered_keep_map.gd` applies level ops to Sprite2D layers, supports a top-level `underlay` world-space image contract, and keeps simulation/state behavior local to the map script.
 - Return Mooring behavior remains diegetic return travel through existing connected-map return logic.
 - The Main Gate still starts closed, checks `sundered_gate_key`, swaps closed/open portcullis sprites, and removes the portcullis collision blocker after opening.
 - Side gatehouse blockers remain after the portcullis opens so the player cannot walk around the gate curtain.
 - The Great Hall door remains a separate openable blocker.
+
+## Underlay Contract
+
+The active front-gate JSON may declare:
+
+- `underlay.texture_path`
+- `underlay.rect_tiles`
+- optional `underlay.z_index`
+- optional `underlay.modulate`
+- optional `underlay.expand_camera_bounds`
+
+This is presentation-only. It gives the level a silhouette plate and shape anchor beneath the authored tile/prop layers, but it does not own collision, traversal, blockers, interactables, or elevation authority.
+
+## Overlay Authoring Pipeline
+
+The master overlay now also has a deterministic authoring-guide pipeline:
+
+- generator: `custodian/tools/levels/generate_sundered_keep_overlay_authoring.py`
+- generated guide: `custodian/content/levels/sundered_keep/sundered_keep_overlay_authoring.json`
+- review scene: `custodian/scenes/debug/sundered_keep_overlay_authoring_review.tscn`
+
+The generator reads the overlay alpha, samples it into the authored tile grid, and emits:
+
+- suggested floor footprint spans/rects
+- suggested border-void spans/rects
+- suggested enclosed-void spans/rects
+- a centroid anchor for the main keep mass
+
+This remains authoring guidance, not direct gameplay authority. Designers can use it to reshape floor fills, blocker coverage, elevation bands, and route grammar so the playable layout follows the master silhouette more closely without letting decorative pixels own collision.
+
+## Review Workflow
+
+From the repository root:
+
+```bash
+python custodian/tools/levels/generate_sundered_keep_overlay_authoring.py
+cd custodian
+godot scenes/debug/sundered_keep_overlay_authoring_review.tscn
+```
+
+The review scene draws:
+
+- green: suggested solid footprint
+- red: edge-connected void outside the keep mass
+- yellow: enclosed void pockets
+
+Use this scene to compare the authored live map against the master silhouette before changing blockers, floors, or elevation metadata.
 
 ## Asset Rules
 
@@ -99,3 +146,25 @@ PY
 - Add encounter composition and tactical cover review after the layout stabilizes visually.
 - Consider a dedicated TileSet/TileMapLayer authoring path if the JSON/Sprite2D level data becomes difficult to inspect or edit.
 - Keep `ContractWorldLoader.debug_start_near_sundered_keep_entrance` disabled for normal contract progression; re-enable it only for focused Sundered Keep visual review.
+
+## Next Agent Slice
+
+Goal: consume the generated overlay-authoring guide to tighten authored floor/blocker/elevation data where the live front gate still drifts from the master silhouette.
+
+Files:
+
+- `custodian/content/levels/sundered_keep/sundered_keep_overlay_authoring.json`
+- `custodian/content/levels/sundered_keep/sundered_keep_front_gate_large.json`
+- `custodian/game/world/sundered_keep/sundered_keep_map.gd`
+
+Constraints:
+
+- Keep overlay-derived data advisory until a reviewed authored change is accepted.
+- Do not let the PNG directly own collision, traversal, interactables, or elevation.
+- Prefer deterministic JSON edits and focused smokes over ad hoc scene-only tweaks.
+
+Acceptance:
+
+- any consumed overlay-derived edits remain visible in the review scene
+- Sundered Keep smokes still pass
+- docs/context stay aligned with the chosen authoring contract
