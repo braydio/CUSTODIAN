@@ -153,10 +153,13 @@ body face the locomotion direction together. Ranged-ready, including the sidearm
 the upper-body/weapon/FX presentation, and directional actions may claim their authored action direction without
 changing lower-body locomotion ownership.
 
-The current two-handed ranged-ready idle presentation uses the supplied modular lower-body, upper-body, and weapon
-stance layers for east, north, and west. South and diagonals resolve to the nearest available authored stance.
-Movement, fire, recover, and reload continue through their established legacy body/overlay paths until matching
-modular action layers are supplied.
+The current two-handed ranged-ready presentation is compositional, not a baked locomotion requirement. Lower body
+remains movement-owned and reuses the existing modular `unarmed_idle`, `unarmed_walk`, and `unarmed_run` clips across
+loadouts; upper body and weapon stance are loadout-owned and follow aim direction. For example, moving north while
+aiming east plays lower-body north locomotion with east-facing ranged upper/weapon stance. Legacy full-body ranged
+sprites only render when the modular ranged upper/weapon stack is unavailable, so modular lower legs are never shown
+on top of a full-body fallback. Primary ranged fire may layer modular upper/weapon/FX action clips over the continuing
+lower-body locomotion when those clips exist; reload and missing action coverage retain legacy fallback presentation.
 
 Offhand sidearm:
 

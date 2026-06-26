@@ -70,15 +70,17 @@ func _init() -> void:
 	_check_hidden(primary_weapon, "legacy primary weapon should hide during modular ranged-ready idle", failures)
 	_check_hidden(ranged_fx, "legacy ranged fx should hide during modular ranged-ready idle", failures)
 
-	operator.set("velocity", Vector2.RIGHT * 32.0)
-	operator.set("movement_direction", Vector2.RIGHT)
-	operator.set("aim_direction", Vector2.UP)
+	operator.set("velocity", Vector2.UP * 32.0)
+	operator.set("movement_direction", Vector2.UP)
+	operator.set("aim_direction", Vector2.RIGHT)
 	operator.call("_update_animation")
 
-	_check_layer(lower, "ranged-ready move lower", &"unarmed_walk_right", failures)
-	_check_layer(upper, "ranged-ready move upper", &"ranged_2h_stance_modular_up", failures)
-	_check_layer(weapon, "ranged-ready move weapon", &"ranged_2h_stance_modular_up", failures)
+	_check_layer(lower, "ranged-ready move lower", &"unarmed_run_up", failures)
+	_check_layer(upper, "ranged-ready move upper", &"ranged_2h_stance_modular_right", failures)
+	_check_layer(weapon, "ranged-ready move weapon", &"ranged_2h_stance_modular_right", failures)
 	_check_hidden(body, "legacy body should stay hidden during modular ranged-ready movement", failures)
+	if body != null and body.sprite_frames != null and body.sprite_frames.has_animation(&"ranged_run_east"):
+		failures.append("ranged-ready modular movement should not require baked ranged_run_east")
 
 	var upper_frames := upper.sprite_frames
 	upper.sprite_frames = SpriteFrames.new()

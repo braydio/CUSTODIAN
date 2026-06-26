@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7ahkdsxoc5ks"
-path="res://.godot/imported/behemoth_combat_mech__walk_01__s__5f__128.png-76460c8c8d7350d61de752cddaa1a5c9.ctex"
+uid="uid://bo7ryc1538hec"
+path="res://.godot/imported/behemoth_combat_mech__walk_01__se__5f__128.png-6d4a5765a65a56eb1e9a575f20598633.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/allies/allied_behemoth/behemoth_combat_mech__walk_01__s__5f__128.png"
-dest_files=["res://.godot/imported/behemoth_combat_mech__walk_01__s__5f__128.png-76460c8c8d7350d61de752cddaa1a5c9.ctex"]
+source_file="res://content/sprites/allies/allied_behemoth/behemoth_combat_mech__walk_01__se__5f__128.png"
+dest_files=["res://.godot/imported/behemoth_combat_mech__walk_01__se__5f__128.png-6d4a5765a65a56eb1e9a575f20598633.ctex"]
 
 [params]
 

@@ -1498,7 +1498,7 @@ func _resolve_sidearm_directional_animation(base: String, direction: Vector2, sp
 func _sync_modular_lower_body_layer(base_animation: String, direction: Vector2, speed_scale: float) -> bool:
 	if modular_lower_body_sprite == null or modular_lower_body_sprite.sprite_frames == null:
 		return false
-	var lower_animation := AnimationResolver.resolve(base_animation, direction, modular_lower_body_sprite)
+	var lower_animation := _resolve_modular_lower_body_locomotion_animation(base_animation, direction)
 	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_animation):
 		return false
 	modular_lower_body_sprite.visible = true
@@ -1507,6 +1507,21 @@ func _sync_modular_lower_body_layer(base_animation: String, direction: Vector2, 
 	if modular_lower_body_sprite.animation != lower_animation or not modular_lower_body_sprite.is_playing():
 		modular_lower_body_sprite.play(lower_animation)
 	return true
+
+
+func _resolve_modular_lower_body_locomotion_animation(base_animation: String, direction: Vector2) -> StringName:
+	var frames: SpriteFrames = modular_lower_body_sprite.sprite_frames if modular_lower_body_sprite != null else null
+	if frames == null:
+		return StringName(base_animation)
+	var direct_animation := AnimationResolver.resolve(base_animation, direction, modular_lower_body_sprite)
+	if _has_playable_sprite_animation(frames, direct_animation):
+		return direct_animation
+	if base_animation == "unarmed_walk":
+		for fallback_base in ["unarmed_run", "unarmed_idle"]:
+			var fallback_animation := AnimationResolver.resolve(fallback_base, direction, modular_lower_body_sprite)
+			if _has_playable_sprite_animation(frames, fallback_animation):
+				return fallback_animation
+	return direct_animation
 
 
 func _sync_modular_upper_body_layer(base_animation: String, direction: Vector2, speed_scale: float, action_once: bool) -> bool:

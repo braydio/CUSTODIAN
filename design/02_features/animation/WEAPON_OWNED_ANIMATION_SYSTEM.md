@@ -58,6 +58,11 @@ The current runtime is functional, but animation ownership is still inverted.
 - authored melee locomotion is still partial; only stance + attack clips are currently body-authored
 - ranged secondary is a held `ranged_ready` mode; primary fires only while that mode is active, so ranged upper-body,
   weapon, cape, and FX animation should layer over movement-owned lower-body idle/walk/run.
+- primary ranged-ready uses a composition contract: lower body is movement-owned and can reuse the existing modular
+  `unarmed_{idle,walk,run}` locomotion clips, upper body and weapon are loadout-owned and aim-owned, FX is action-owned,
+  and legacy full-body ranged sprites are fallback only. Do not show modular lower-body legs while a legacy full-body
+  ranged sprite is visible; if the modular ranged upper/weapon stack is missing, hide modular lower-body layers and use
+  the full-body fallback instead.
 
 ## Files In Scope
 
