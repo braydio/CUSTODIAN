@@ -201,6 +201,8 @@ Use this whenever you are restructuring docs, moving asset guidance, consolidati
 - Keep deterministic gameplay logic separate from presentation logic.
 - Do not silently promote legacy Python docs back into active authority.
 - When changing behavior or architecture, update docs as part of the same task.
+- Treat Dear ImGui as CUSTODIAN dev tooling only. Use `custodian/debug/debug_bus.gd`, `debug_snapshot_collector.gd`, and `debug_imgui_console.gd` for Director Console work; do not build player HUD, terminal, inventory, dialogue, or pause-menu UI in ImGui.
+- Debug ImGui panels must consume read-only snapshots from `DebugBus`. Mutation must go through debug overrides or queued commands that gameplay systems drain at safe boundaries, never direct per-frame panel writes into deterministic systems.
 
 ## Migration Shortcut
 

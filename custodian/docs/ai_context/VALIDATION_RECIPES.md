@@ -124,6 +124,15 @@ cd custodian
 godot --headless --script res://tools/validation/lighting_system_smoke.gd
 ```
 
+For the Dear ImGui Director Console dev-tooling layer:
+
+```bash
+cd custodian
+godot --headless --script res://tools/validation/director_console_imgui_smoke.gd
+```
+
+This validates the `/root/ImGui` plugin autoload, the F3 debug bus autoload, the read-only snapshot collector autoload, and the Director Console front-end wiring without requiring a rendered editor window.
+
 This instantiates the standalone lighting playground and checks the `WorldLightingDirector`, `CanvasModulate`,
 `DirectionalLight2D`, reusable light rigs, `LightingZone2D`, `LightOccluder2D`, and transient additive flash pool.
 

@@ -14,6 +14,8 @@ Replace print/debug spam with a deterministic-safe, opt-in dev layer that keeps 
 - **No print spam** from gameplay systems. Debug data is written to a bus, not to console/render.
 - **No debug draw inside systems.** All overlays rendered by a dedicated dev layer.
 - **Opt-in and toggleable.** Debug UI and overlays can be fully disabled.
+- **Dear ImGui is dev tooling only.** Do not use ImGui for the player HUD, terminal UI, inventory, dialogue, pause menus, or any shipped game-facing interface.
+- **Debug mutation is queued.** ImGui panels may write to debug overrides or `DebugBus.queue_command(...)`; gameplay systems apply commands only at explicit safe boundaries.
 
 ## Architecture (One-Way Data Flow)
 
@@ -24,24 +26,28 @@ Debug Data Extraction (pure data, read-only)
     ↓
 DebugBus (autoload singleton)
     ↓
-DebugController (input + mode switching)
+DebugSnapshotCollector (post-tick/read-only snapshots)
     ↓
-DevUI (CanvasLayer)
+DebugImguiConsole / DevUI
     ↓
 DebugDraw (Node2D overlays)
 ```
 
 ## Nodes and Files
 
-New runtime assets (proposed):
+Current runtime assets:
 
 - `custodian/debug/debug_bus.gd` (autoload singleton)
+- `custodian/debug/debug_snapshot_collector.gd` (autoload singleton)
+- `custodian/debug/debug_imgui_console.gd` (autoload singleton)
+- `custodian/addons/dear-imgui-godot/` (third-party Dear ImGui plugin for dev panels)
+
+Planned/additional runtime assets:
+
 - `custodian/debug/debug_controller.gd`
-- `custodian/debug/dev_ui.tscn`
-- `custodian/debug/dev_ui.gd`
 - `custodian/debug/debug_draw.gd`
 - `custodian/debug/inspector_probe.gd`
-- `custodian/debug/debug_collector.gd`
+- `custodian/debug/dev_ui.tscn` / `custodian/debug/dev_ui.gd` only if a Godot `Control`-based debug surface is needed later
 
 Scene integration (runtime):
 
@@ -63,6 +69,8 @@ Core fields:
 - `stats: Dictionary` (category → key → value)
 - `events: Array[String]` (max 100)
 - `overlays: Dictionary` (layer → array of primitive specs)
+- `debug_overrides: Dictionary`
+- `command_queue: Array[Dictionary]`
 - `selected_entity: Node` (locked)
 - `hovered_entity: Node` (current hover)
 - `minimal_mode: bool` (stats-only)
@@ -73,12 +81,40 @@ API surface:
 - `push_event(category: String, msg: String)`
 - `clear_frame_overlays()`
 - `set_overlay(layer: String, items: Array)`
+- `set_category(category: String, value)`
+- `set_debug_override(key: String, value)`
+- `queue_command(command: Dictionary)`
+- `drain_commands()`
 
 Rules:
 
 - `push_event()` is a no-op when `enabled == false`.
 - `events` is bounded (default 100). Oldest dropped first.
 - Overlays are frame-scoped; cleared once per frame by controller.
+- Debug commands are not applied by UI code. Runtime systems drain and apply them at safe boundaries.
+
+## Dear ImGui Director Console
+
+Dear ImGui is the approved front-end for fast CUSTODIAN developer tooling. It is immediate-mode debug UI, not game UI. The first live slice is the **CUSTODIAN Director Console**:
+
+- F3 toggles `/root/DebugBus.enabled`.
+- Shift+F3 toggles minimal stats mode.
+- World/ProcGen tab shows seed/profile, generation mode, terrain fallback/connectivity, required/missing cell counts, and rescue-carved cells.
+- Sectors tab shows a table of sector intelligence snapshots.
+- Events tab shows bounded debug/observatory timeline events.
+- Combat, Actors, and Animation tabs are scaffolds for read-only tuning visibility and later adapter-specific details.
+
+Data flow is one-way by default:
+
+```
+Gameplay systems
+    -> read-only snapshot methods / groups
+    -> DebugSnapshotCollector
+    -> DebugBus
+    -> DebugImguiConsole
+```
+
+If a panel needs a dev action such as spawning, seed regeneration, or profile swapping, it must queue a command on `DebugBus` instead of directly mutating core systems from ImGui layout code.
 
 ## Input Model
 
