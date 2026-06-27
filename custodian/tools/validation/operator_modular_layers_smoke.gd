@@ -40,6 +40,7 @@ func _init() -> void:
 	_check_hidden(body, "legacy body should be hidden during modular unarmed idle", failures)
 
 	operator.set("velocity", Vector2.RIGHT * 32.0)
+	operator.set("is_sprinting", false)
 	operator.set("movement_direction", Vector2.RIGHT)
 	operator.set("aim_direction", Vector2.RIGHT)
 	operator.call("_update_animation")
@@ -71,6 +72,7 @@ func _init() -> void:
 	_check_hidden(ranged_fx, "legacy ranged fx should hide during modular ranged-ready idle", failures)
 
 	operator.set("velocity", Vector2.UP * 32.0)
+	operator.set("is_sprinting", true)
 	operator.set("movement_direction", Vector2.UP)
 	operator.set("aim_direction", Vector2.RIGHT)
 	operator.call("_update_animation")

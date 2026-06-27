@@ -19,6 +19,9 @@ var health: float = 45.0
 var destroyed: bool = false
 var target: Node2D = null
 
+# When false, _update_weapon skips firing. Toggled by allied_infantry_droid.
+var fire_at_will: bool = true
+
 var _slot_index: int = 0
 var _hold_position: Vector2 = Vector2.ZERO
 var _fire_cooldown_timer: float = 0.0
@@ -131,6 +134,9 @@ func _should_retreat() -> bool:
 
 
 func _update_weapon() -> void:
+	if not fire_at_will:
+		_burst_remaining = 0
+		return
 	if target == null or not is_instance_valid(target):
 		_burst_remaining = 0
 		return

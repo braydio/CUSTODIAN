@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/actors/allies/allied_infantry_droid.gd" id="1_droid"]
+[ext_resource type="SpriteFrames" path="res://content/sprites/allies/allied_infantry_droid/runtime/allied_infantry_droid_animations.tres" id="2_frames"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_droid"]
+radius = 8.0
+
+[node name="AlliedInfantryDroid" type="CharacterBody2D"]
+z_index = 3
+script = ExtResource("1_droid")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_frames")
+animation = &"idle_e"
+playing = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_droid")
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(10, 0)
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -16.0
+offset_top = -18.0
+offset_right = 16.0
+offset_bottom = -12.0
+value = 100.0
+show_percentage = false

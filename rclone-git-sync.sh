@@ -3,10 +3,43 @@ set -euo pipefail
 
 REPO_DIR="$(git rev-parse --show-toplevel)"
 G_DRIVE_REMOTE="git-gdrive-sync:git-backups/home/braydenchaffee/Projects/CUSTODIAN"
+ACTION="${1:-sync}"  # "sync" (default, local→remote) or "restore" (remote→local)
 
-echo "Syncing $REPO_DIR to G-Drive..."
+# --- Pre-flight checks ---
 
-# Build exclude args array
+if ! command -v rclone &> /dev/null; then
+  echo "ERROR: rclone is not installed."
+  exit 1
+fi
+
+if ! rclone listremotes 2>/dev/null | grep -q "git-gdrive-sync:"; then
+  echo "ERROR: rclone remote 'git-gdrive-sync' is not configured."
+  echo "  Run: rclone config create git-gdrive-sync drive ..."
+  exit 1
+fi
+
+# --- Mode ---
+
+case "$ACTION" in
+  sync)
+    echo "Syncing $REPO_DIR → G-Drive (local is source)..."
+    DIRECTION=("$REPO_DIR" "$G_DRIVE_REMOTE")
+    ;;
+  restore)
+    echo "Restoring G-Drive → $REPO_DIR (remote is source)..."
+    echo "  WARNING: This overwrites local files not in the backup."
+    DIRECTION=("$G_DRIVE_REMOTE" "$REPO_DIR")
+    ;;
+  *)
+    echo "Usage: $0 [sync|restore]"
+    echo "  sync    (default)  Copy local changes to G-Drive"
+    echo "  restore            Pull G-Drive backup down to local"
+    exit 1
+    ;;
+esac
+
+# --- Exclude args ---
+
 EXCLUDE_ARGS=(
   # Baseline safety — always exclude these regardless of .gitignore
   --exclude ".git/**"
@@ -14,9 +47,12 @@ EXCLUDE_ARGS=(
   --exclude ".venv/**"
   --exclude "__pycache__/**"
   --exclude "node_modules/**"
+  --exclude ".import/**"
 
-  # Respect .gitignore files throughout the tree
-  --gitignore
+  # Note: full .gitignore compatibility requires rclone's --gitignore flag which
+  # is only available in rclone sync, not copy. The explicit excludes above cover
+  # the high-noise patterns. For additional gitignore-like rules, add them to
+  # a .rcloneignore file — it will be picked up if present.
 
   # Keep rclone metadata for faster re-syncs
   --metadata
@@ -34,6 +70,8 @@ if [ -f "$REPO_DIR/.rcloneignore" ]; then
   echo "  Using .rcloneignore for additional exclude patterns."
 fi
 
-rclone sync "$REPO_DIR" "$G_DRIVE_REMOTE" "${EXCLUDE_ARGS[@]}" --progress
+# --- Execute ---
 
-echo "G-Drive sync complete."
+rclone copy "${DIRECTION[@]}" "${EXCLUDE_ARGS[@]}" --progress
+
+echo "G-Drive ${ACTION} complete."

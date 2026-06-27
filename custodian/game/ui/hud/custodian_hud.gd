@@ -9,6 +9,10 @@ const Styles := preload("res://game/ui/theme/black_reliquary_styles.gd")
 @onready var health_bar: ProgressBar = get_node_or_null("Root/TopLeftVitals/Margin/Content/HealthBar")
 @onready var stamina_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/StaminaLabel")
 @onready var stamina_bar: ProgressBar = get_node_or_null("Root/TopLeftVitals/Margin/Content/StaminaBar")
+@onready var weapon_icon_frame: PanelContainer = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponIconFrame")
+@onready var weapon_icon: TextureRect = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponIconFrame/WeaponIcon")
+@onready var weapon_name_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponText/WeaponNameLabel")
+@onready var weapon_ammo_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponText/WeaponAmmoLabel")
 @onready var minimap_frame: Node = get_node_or_null("Root/TopRightPanel/Margin/BlackReliquaryMinimapFrame")
 @onready var prompt: Node = get_node_or_null("Root/BottomLeftPrompt/BlackReliquaryPrompt")
 @onready var debug_overlay: Panel = get_node_or_null("Root/DebugOverlay")
@@ -16,6 +20,8 @@ const Styles := preload("res://game/ui/theme/black_reliquary_styles.gd")
 
 var _health_current := 100
 var _health_max := 100
+var _last_weapon_status_text := ""
+var _last_weapon_icon: Texture2D = null
 var _last_prompt_frame := -1
 var _context_active := true
 var _externally_suppressed := false
@@ -27,6 +33,7 @@ func _ready() -> void:
 	_apply_theme()
 	set_health(100, 100)
 	set_stamina_status("READY", 100.0)
+	set_weapon_status("CARBINE", 24, 24, 48, null, false, false)
 	set_location("FIELD OPERATIONS")
 	set_phase("FREE ROAM PREP")
 	set_objective("Open the main gate")
@@ -76,6 +83,45 @@ func set_stamina_status(text: String, percent: float) -> void:
 		stamina_bar.add_theme_stylebox_override("background", Styles.bar_background_style())
 		stamina_bar.add_theme_stylebox_override("fill", Styles.bar_fill_style(Palette.EVRFOREST_PALE_GREEN))
 	_forward_inventory_status("set_stamina_status", [text, safe_percent])
+
+
+func set_weapon_status(
+	weapon_name: String,
+	loaded: int,
+	magazine_size: int,
+	reserve: int,
+	icon_texture: Texture2D = null,
+	reloading: bool = false,
+	overheated: bool = false
+) -> void:
+	var display_name := weapon_name.strip_edges().to_upper()
+	if display_name.is_empty():
+		display_name = "UNARMED"
+	display_name = _fit_hud_text(display_name, 18)
+	var ammo_text := "MELEE READY"
+	if magazine_size > 0:
+		ammo_text = "MAG %d/%d  RES %d" % [maxi(0, loaded), maxi(1, magazine_size), maxi(0, reserve)]
+		if reloading:
+			ammo_text = "RELOADING  %d/%d" % [maxi(0, loaded), maxi(1, magazine_size)]
+		elif overheated:
+			ammo_text = "OVERHEATED  %d/%d" % [maxi(0, loaded), maxi(1, magazine_size)]
+	var combined := "%s|%s" % [display_name, ammo_text]
+	if combined != _last_weapon_status_text:
+		if weapon_name_label != null:
+			weapon_name_label.text = display_name
+		if weapon_ammo_label != null:
+			weapon_ammo_label.text = ammo_text
+			if overheated:
+				weapon_ammo_label.add_theme_color_override("font_color", Palette.DANGER)
+			elif reloading or loaded <= 0 and magazine_size > 0:
+				weapon_ammo_label.add_theme_color_override("font_color", Palette.GOLD_TEXT)
+			else:
+				weapon_ammo_label.add_theme_color_override("font_color", Palette.BODY_TEXT)
+		_last_weapon_status_text = combined
+	if weapon_icon != null and icon_texture != _last_weapon_icon:
+		weapon_icon.texture = icon_texture
+		weapon_icon.visible = icon_texture != null
+		_last_weapon_icon = icon_texture
 
 
 func set_location(text: String) -> void:
@@ -150,11 +196,17 @@ func set_debug_text(text: String) -> void:
 
 
 func _apply_theme() -> void:
-	for label in [health_label, stamina_label, debug_label]:
+	for label in [health_label, stamina_label, weapon_name_label, weapon_ammo_label, debug_label]:
 		Styles.apply_label(label, Palette.BODY_TEXT, 14)
 	Styles.apply_label(health_label, Palette.BODY_TEXT, 13, true)
 	Styles.apply_label(stamina_label, Palette.EVRFOREST_PALE_GREEN, 12, true)
+	Styles.apply_label(weapon_name_label, Palette.GOLD_TEXT, 11, true)
+	Styles.apply_label(weapon_ammo_label, Palette.BODY_TEXT, 11, true)
 	Styles.apply_label(debug_label, Palette.BODY_TEXT, 14)
+	if weapon_icon_frame != null:
+		weapon_icon_frame.add_theme_stylebox_override("panel", Styles.panel_style(true))
+	if weapon_icon != null:
+		weapon_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	if debug_overlay != null:
 		debug_overlay.add_theme_stylebox_override("panel", Styles.panel_style(true))
 
@@ -183,6 +235,28 @@ func _refresh_operator_status() -> void:
 		if bool(sprint_status.get("sprint_exhausted", false)):
 			mode = "RECOVER"
 		set_stamina_status(mode, stamina_pct)
+	if operator_ref.has_method("get_weapon_status"):
+		var weapon_status: Dictionary = operator_ref.call("get_weapon_status")
+		var icon_texture: Texture2D = null
+		if operator_ref.has_method("get_active_weapon_icon_texture"):
+			var icon_variant: Variant = operator_ref.call("get_active_weapon_icon_texture")
+			if icon_variant is Texture2D:
+				icon_texture = icon_variant as Texture2D
+		set_weapon_status(
+			str(weapon_status.get("weapon_name", "UNARMED")),
+			int(weapon_status.get("loaded_ammo", 0)),
+			int(weapon_status.get("magazine_size", 0)),
+			int(weapon_status.get("reserve_ammo", 0)),
+			icon_texture,
+			bool(weapon_status.get("reloading", false)),
+			bool(weapon_status.get("overheated", false))
+		)
+
+
+func _fit_hud_text(text: String, max_chars: int) -> String:
+	if text.length() <= max_chars:
+		return text
+	return text.substr(0, maxi(1, max_chars - 1)) + "."
 
 
 func _forward_inventory_status(method_name: String, args: Array) -> void:

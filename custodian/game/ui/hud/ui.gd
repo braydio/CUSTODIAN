@@ -236,6 +236,7 @@ var _last_aim_mode := ""
 var _last_primary_equipped: bool = false
 var _last_primary_weapon_id := ""
 var _last_loadout_mode := ""
+var _last_legacy_weapon_hud_text := ""
 var _last_ammo_text := ""
 var _last_health_text := ""
 var _last_cooldown_pct := -1.0
@@ -1175,6 +1176,24 @@ func _process(delta):
 				if ammo_text != _last_ammo_text:
 					ammo_label.text = ammo_text
 					_last_ammo_text = ammo_text
+			elif ammo_label:
+				var weapon_name := _fit_legacy_hud_text(str(ws.get("weapon_name", "WEAPON")).to_upper(), 12)
+				var magazine_size := int(ws.get("magazine_size", 0))
+				var loaded := int(ws.get("loaded_ammo", 0))
+				var reserve := int(ws.get("reserve_ammo", 0))
+				var reloading := bool(ws.get("reloading", false))
+				var overheated := bool(ws.get("overheated", false))
+				var ammo_text := "%s  MELEE READY" % weapon_name
+				if magazine_size > 0:
+					ammo_text = "%s  MAG %d/%d  RES %d" % [weapon_name, loaded, magazine_size, reserve]
+				if reloading and magazine_size > 0:
+					ammo_text = "%s  RELOADING %d/%d" % [weapon_name, loaded, magazine_size]
+				elif overheated and magazine_size > 0:
+					ammo_text = "%s  OVERHEATED %d/%d" % [weapon_name, loaded, magazine_size]
+				if ammo_text != _last_legacy_weapon_hud_text:
+					ammo_label.text = ammo_text
+					_last_legacy_weapon_hud_text = ammo_text
+				ammo_label.visible = true
 			if cooldown_bar and cooldown_label:
 				var cooldown_total = max(0.001, float(ws.get("cooldown_total", 0.001)))
 				var cooldown_remaining = max(0.0, float(ws.get("cooldown_remaining", 0.0)))
@@ -1347,7 +1366,14 @@ func _get_essential_hud_nodes() -> Array:
 		lives_label,
 		stamina_bar,
 		stamina_label,
+		ammo_label,
 	]
+
+
+func _fit_legacy_hud_text(text: String, max_chars: int) -> String:
+	if text.length() <= max_chars:
+		return text
+	return text.substr(0, maxi(1, max_chars - 1)) + "."
 
 
 func _get_debug_hud_nodes() -> Array:

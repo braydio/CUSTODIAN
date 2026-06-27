@@ -147,6 +147,8 @@ def _inspect_sheet(png_path: Path) -> SheetInfo:
     if len(parts) >= 6 and parts[0] == "props" and parts[1] == "harvesting_nodes":
         return _inspect_harvesting_node_sheet(png_path, parts)
     if len(parts) < 6:
+        if _is_allied_actor_owner(parts[0]):
+            return _inspect_simple_actor_sheet(png_path, parts)
         if len(parts) < 2:
             raise RuntimeError(
                 f"{basename}: expected canonical sprite name or item filename"
@@ -230,6 +232,73 @@ def _inspect_item_sheet(png_path: Path, parts: list[str]) -> SheetInfo:
         frame_size=frame_size,
         source_kind="strip",
     )
+
+
+def _inspect_simple_actor_sheet(png_path: Path, parts: list[str]) -> SheetInfo:
+    basename = png_path.name
+    if len(parts) not in {3, 5}:
+        raise RuntimeError(
+            f"{basename}: simple actor filenames should follow <actor>__<animation>__<direction>.png"
+            " or <actor>__<animation>__<direction>__<frames>f__<size>.png"
+        )
+
+    owner = parts[0]
+    animation = parts[1]
+    direction = parts[2]
+    with Image.open(png_path) as image:
+        width, height = image.size
+
+    if len(parts) == 5:
+        frame_count = _parse_token_count(parts[3], "f", basename)
+        frame_size = _parse_token_count(parts[4], "", basename)
+    else:
+        frame_size = height
+        if frame_size <= 0 or width % frame_size != 0:
+            raise RuntimeError(
+                f"{basename}: simple actor sheet width {width} must be divisible by inferred frame size {frame_size}"
+            )
+        frame_count = width // frame_size
+
+    if height != frame_size:
+        raise RuntimeError(
+            f"{basename}: simple actor strip height {height} must equal frame size {frame_size}"
+        )
+    if width % frame_size != 0:
+        raise RuntimeError(
+            f"{basename}: simple actor strip width {width} must be divisible by frame size {frame_size}"
+        )
+    if width // frame_size != frame_count:
+        frame_count = width // frame_size
+
+    layer = "fx" if animation.startswith("fx_") else "body"
+    variant = animation.removeprefix("fx_")
+    action_group = _simple_actor_action_group(variant, layer)
+    source_kind = "copy" if frame_count == 1 else "strip"
+    return SheetInfo(
+        basename=basename,
+        owner=owner,
+        layer=layer,
+        action_group=action_group,
+        variant=variant,
+        direction=direction,
+        frame_count=frame_count,
+        frame_size=frame_size,
+        source_kind=source_kind,
+    )
+
+
+def _simple_actor_action_group(animation: str, layer: str) -> str:
+    if layer == "fx":
+        return "fx"
+    if animation in {"idle", "walk", "run", "turn"}:
+        return "locomotion"
+    if animation in {"aim", "fire", "reload"}:
+        return "ranged"
+    if animation in {"windup", "active", "strike", "recover", "guard", "parry"}:
+        return "combat"
+    if animation in {"hit", "stagger", "death", "disabled", "wake", "sleep"}:
+        return "state"
+    return "misc"
 
 
 def _inspect_harvesting_node_sheet(png_path: Path, parts: list[str]) -> SheetInfo:
@@ -317,6 +386,8 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
             return f"operator/runtime/overlays/{info.action_group}/{info.basename}"
     if info.owner == "enemy" or info.owner.startswith("enemy_") or info.owner == "drone":
         return f"enemies/{info.owner}/runtime/{info.layer}/{info.basename}"
+    if _is_allied_actor_owner(info.owner):
+        return f"allies/{info.owner}/runtime/{info.layer}/{info.basename}"
     if info.owner in {"fallen_star_katana", "carbine_rifle", "carbine_rifle_mk1"}:
         return f"weapons/{info.owner}/animations/{info.basename}"
     if info.owner in {"command_terminal", "fabricator_terminal", "computer_terminal", "builder_terminal"}:
@@ -405,9 +476,24 @@ def _build_post_process(info: SheetInfo) -> list[str]:
         post_process.append("operator_modular_runtime")
     if info.owner.startswith("enemy_") or info.owner == "drone":
         post_process.append("enemy_runtime_import")
+    if _is_allied_actor_owner(info.owner):
+        post_process.append(f"actor_spriteframes:allies:{info.owner}")
     if _is_vehicle_owner(info.owner):
         post_process.append("vehicle_runtime_import")
     return post_process
+
+
+def _is_allied_actor_owner(owner: str) -> bool:
+    return (
+        owner.startswith("allied_")
+        or owner
+        in {
+            "combat_droid",
+            "routebreaker_frame",
+            "field_turret",
+            "repair_drone",
+        }
+    )
 
 
 def _find_superseded_outputs(manifest: dict) -> list[Path]:

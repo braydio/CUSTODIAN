@@ -13,7 +13,7 @@ signal contract_generated(contract: Dictionary)
 @export var map_scene: PackedScene = preload("res://game/world/procgen/proc_gen_map.tscn")
 @export var planet_offset: Vector2 = Vector2(-420, -320)
 @export var map_offset: Vector2 = Vector2.ZERO
-@export var map_generation_attempts: int = 6
+@export var map_generation_attempts: int = 12
 @export var generated_map_size_min: Vector2i = Vector2i(160, 160)
 @export var generated_map_size_max: Vector2i = Vector2i(224, 224)
 @export_range(1, 128, 1) var generated_room_count_min: int = 12
@@ -259,6 +259,7 @@ func generate_contract(seed_value: int) -> void:
 	var best_map_instance: ProcGenTilemap = null
 	var best_level_data: Dictionary = {}
 	var best_map_score: float = -1.0
+	var best_map_terrain_failed := true
 	var _attempt_total_start := Time.get_ticks_msec()
 	for attempt in range(max(1, map_generation_attempts)):
 		var _attempt_start := Time.get_ticks_msec()
@@ -275,7 +276,8 @@ func generate_contract(seed_value: int) -> void:
 		var candidate_score := _score_map_layout(candidate_metrics)
 		var accepted := _is_map_layout_acceptable(candidate_metrics)
 		var _t_total_attempt := Time.get_ticks_msec() - _attempt_start
-		print("[CustodianContractMap] Attempt %d: instantiate=%.1fs generate=%.1fs metrics=%.1fs total=%.1fs valid=%s connected=%.2f ingress=%.2f accepted=%s score=%.2f" % [
+		var candidate_terrain_failed := _is_terrain_failed_candidate(candidate_metrics)
+		print("[CustodianContractMap] Attempt %d: instantiate=%.1fs generate=%.1fs metrics=%.1fs total=%.1fs valid=%s connected=%.2f ingress=%.2f terrain_fallback=%s terrain_connectivity=%s accepted=%s score=%.2f" % [
 			attempt,
 			_t_instantiate / 1000.0,
 			_t_generate / 1000.0,
@@ -284,6 +286,8 @@ func generate_contract(seed_value: int) -> void:
 			str(candidate_metrics.get("valid", false)),
 			float(candidate_metrics.get("connected_ratio", 0.0)),
 			float(candidate_metrics.get("ingress_ratio", 0.0)),
+			str(candidate_metrics.get("terrain_fallback", false)),
+			str(candidate_metrics.get("terrain_connectivity", true)),
 			str(accepted),
 			candidate_score,
 		])
@@ -293,18 +297,20 @@ func generate_contract(seed_value: int) -> void:
 			best_map_instance = candidate_map
 			best_level_data = candidate_level_data
 			best_map_score = candidate_score
+			best_map_terrain_failed = candidate_terrain_failed
 			best_attempt_seed = attempt_seed
 			map_instance = candidate_map
 			level_data = candidate_level_data
 			map_seed = attempt_seed
 			map_generated = true
 			break
-		elif best_map_instance == null or candidate_score > best_map_score:
+		elif best_map_instance == null or _is_better_fallback_candidate(candidate_score, candidate_terrain_failed, best_map_score, best_map_terrain_failed):
 			if best_map_instance != null and best_map_instance != candidate_map:
 				await _dispose_node(best_map_instance)
 			best_map_instance = candidate_map
 			best_level_data = candidate_level_data
 			best_map_score = candidate_score
+			best_map_terrain_failed = candidate_terrain_failed
 			best_attempt_seed = attempt_seed
 		else:
 			await _dispose_node(candidate_map)
@@ -729,6 +735,10 @@ func _round_map_dimension(value: int) -> int:
 func _is_map_layout_acceptable(metrics: Dictionary) -> bool:
 	if not bool(metrics.get("valid", false)):
 		return false
+	if bool(metrics.get("terrain_fallback", false)):
+		return false
+	if not bool(metrics.get("terrain_connectivity", true)):
+		return false
 	if float(metrics.get("connected_ratio", 0.0)) < min_connected_room_ratio:
 		return false
 	if require_compound_ingress_connectivity and float(metrics.get("ingress_ratio", 0.0)) < 1.0:
@@ -739,22 +749,45 @@ func _is_map_layout_acceptable(metrics: Dictionary) -> bool:
 func _score_map_layout(metrics: Dictionary) -> float:
 	if not bool(metrics.get("valid", false)):
 		return -1.0
-	return float(metrics.get("connected_ratio", 0.0)) + float(metrics.get("ingress_ratio", 0.0)) * 0.1
+	var score := float(metrics.get("connected_ratio", 0.0)) + float(metrics.get("ingress_ratio", 0.0)) * 0.1
+	if bool(metrics.get("terrain_fallback", false)):
+		score -= 1.0
+	if not bool(metrics.get("terrain_connectivity", true)):
+		score -= 1.0
+	return score
+
+
+func _is_terrain_failed_candidate(metrics: Dictionary) -> bool:
+	return bool(metrics.get("terrain_fallback", false)) or not bool(metrics.get("terrain_connectivity", true))
+
+
+func _is_better_fallback_candidate(candidate_score: float, candidate_terrain_failed: bool, best_score: float, best_terrain_failed: bool) -> bool:
+	if candidate_terrain_failed != best_terrain_failed:
+		return not candidate_terrain_failed
+	return candidate_score > best_score
 
 
 func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionary) -> Dictionary:
+	var terrain_builder: Dictionary = level_data.get("terrain_builder", {})
+	var terrain_connectivity := bool(terrain_builder.get("connectivity_ok", true))
+	var terrain_fallback := bool(terrain_builder.get("fallback_used", false))
+	var base_metrics := {
+		"valid": false,
+		"terrain_connectivity": terrain_connectivity,
+		"terrain_fallback": terrain_fallback,
+	}
 	if map_instance == null or map_instance.procgen_node == null:
-		return {"valid": false}
+		return base_metrics
 	var spawn_variant: Variant = level_data.get("player_spawn", Vector2i.ZERO)
 	if not (spawn_variant is Vector2i):
-		return {"valid": false}
+		return base_metrics
 	var spawn_tile := spawn_variant as Vector2i
 	if not _is_layout_walkable_tile(map_instance, spawn_tile):
-		return {"valid": false}
+		return base_metrics
 
 	var reachable := _flood_fill_walkable(map_instance, level_data, spawn_tile)
 	if reachable.is_empty():
-		return {"valid": false}
+		return base_metrics
 
 	var rooms_total := 0
 	var rooms_connected := 0
@@ -765,7 +798,7 @@ func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionar
 		if reachable.has(room_item):
 			rooms_connected += 1
 	if rooms_total <= 0:
-		return {"valid": false}
+		return base_metrics
 
 	var connected_ratio := float(rooms_connected) / float(rooms_total)
 	var ingress_total := 0
@@ -785,6 +818,8 @@ func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionar
 		"valid": true,
 		"connected_ratio": connected_ratio,
 		"ingress_ratio": ingress_ratio,
+		"terrain_connectivity": terrain_connectivity,
+		"terrain_fallback": terrain_fallback,
 	}
 
 

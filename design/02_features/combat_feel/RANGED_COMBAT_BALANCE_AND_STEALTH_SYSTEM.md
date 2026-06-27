@@ -23,7 +23,7 @@ Keep ranged weapons strong in deliberate bursts without allowing unlimited scree
 - Existing enemy perception retains raycast LOS and now consumes noise events. Enemies investigate the event position rather than receiving permanent knowledge of the Operator.
 - Existing enemy behavior now tracks last seen/heard positions, pursuit memory, deterministic search offsets, home position, camp ID, and a leash. Hard leash applies after LOS is broken.
 - `AmbientEnemyCamp` supports authored activation-limited camps; `AmbientEnemySpawner` supports procgen/authored marker groups. The main test scene contains two hostile grunt camps outside wave spawning.
-- `get_weapon_status()` exposes canonical ammo, heat, overheat, noise, suppression, and range values while retaining legacy keys.
+- `get_weapon_status()` exposes canonical ammo, heat, overheat, noise, suppression, range values, and whether a ranged magazine is currently active while retaining legacy keys.
 - Primary/two-handed ranged-ready now uses a composition split instead of baked ranged locomotion requirements. Lower body stays movement-owned on the reusable `unarmed_{idle,walk,run}` modular locomotion clips, upper body plus temporary ranged-weapon layers stay aim/loadout-owned, FX stays action-owned, and the legacy full-body ranged sprite only appears when that modular ranged upper/weapon stack is unavailable. Accepted primary ranged shots can still play modular upper/weapon/FX fire layers when matching clips exist, with projectile emission, ammo, heat, range/falloff, and noise authority unchanged.
 
 ## Phase Mapping
@@ -86,7 +86,7 @@ A future `VehicleWeaponDefinition` should own `weapon_id`, weapon data path, mou
 
 ## Deferred
 
-- Production heat bar, dry-fire/overheat audio, and final player feedback
+- Production heat bar, dry-fire/overheat audio, and final player feedback beyond the first normal-play magazine/reserve HUD readout
 - Suppressor item/mod inventory
 - Cover and lighting visibility modifiers
 - Large-scale procedural enemy bases and streaming/pooling

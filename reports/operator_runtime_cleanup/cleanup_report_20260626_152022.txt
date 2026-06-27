@@ -1,0 +1,98 @@
+Operator runtime cleanup
+Repo: /home/braydenchaffee/Projects/CUSTODIAN
+Mode: DRY-RUN
+Report: reports/operator_runtime_cleanup/cleanup_report_20260626_152022.txt
+
+WARNING: git working tree has changes. This script quarantines files, but review git diff/status after.
+
+Protected canonical runtime path:
+  custodian/content/sprites/operator/runtime/modules/new_operator
+
+MOVE candidate: custodian/content/sprites/operator/runtime/live_review :: runtime visual review exports, not canonical runtime
+MOVE candidate: custodian/content/sprites/operator/new_operator/modular/recombinator/review :: recombinator review images
+MOVE candidate: custodian/content/sprites/operator/new_operator/modular/recombinator/gif :: recombinator preview gifs
+MOVE candidate: custodian/content/sprites/operator/new_operator/modular/run/temp :: temporary run folder
+
+Scanning orphan .import files...
+
+Scanning obvious cleanup file patterns...
+MOVE file: custodian/content/sprites/operator/new_operator/modular/block/operator__modular_upper_body__unarmed__block_loop_01__e__5f__96.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/fast_attack/operator__modular_upper_fx__unarmed__fast_strike_01__e__3f__96__ALTERNATE.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/fast_attack/operator__modular_upper_fx__unarmed__fast_strike_01__e__3f__96__ALTERNATE.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/idle/operator__modular_upper_body__idle__w__5f__96_temp.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/idle/operator__modular_upper_body__idle__w__5f__96_temp.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/gif/operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__ne__5f__96.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/gif/operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__s__5f__96.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/gif/operator__modular_combined_body__unarmed__run_01__e__5f__96.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/gif/operator__modular_combined_body__unarmed__run_01__n__5f__96.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/gif/operator__modular_combined_body__unarmed__run_01__s__5f__96.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/gif/operator__modular_combined_body__unarmed__run_01__se__5f__96.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/gif/operator__modular_combined_body__unarmed__run_01__sw__5f__96.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/gif/operator__modular_combined_body__unarmed__run_01__w__5f__96.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/index.html :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__ne__5f__96_review.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__ne__5f__96_review.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__s__5f__96_review.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__fast_strike_01__on_run_01__s__5f__96_review.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__e__5f__96_review.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__e__5f__96_review.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__n__5f__96_review.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__n__5f__96_review.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__s__5f__96_review.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__s__5f__96_review.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__se__5f__96_review.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__se__5f__96_review.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__sw__5f__96_review.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__sw__5f__96_review.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__w__5f__96_review.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/new_operator/modular/recombinator/review/operator__modular_combined_body__unarmed__run_01__w__5f__96_review.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_fire_loop-sheet.png.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_fire_loop-sheet.png.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/body/running.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/curated/body/ranged_2h/hover_buggy_base-Recovered-Recovered.aseprite.uid :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/curated/_run_down_default.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/idle-long.gif :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate1.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate1.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate2.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate2.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate3.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate3.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate4.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate4.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate5.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate5.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate.png :: preview gif/html/review/temp/recovered/duplicate artifact
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_idle_main_alternate.png.import :: preview gif/html/review/temp/recovered/duplicate artifact
+
+Scanning runtime Aseprite leftovers...
+MOVE file: custodian/content/sprites/operator/runtime/animation_base/body/core_locomotion/8_direction_walking.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/animation_base/body/melee/light_attack_base.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/animation_base/body/ranged/reloading_base.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/body/default/operator_body_default_run.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/body/melee_fast/operator_body_melee_fast_baked.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/body/melee_heavy/operator_body_melee_heavy_2h_baked_katana-sheet.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/body/melee_heavy/operator_body_melee_heavy_baked.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/body/modular_lower/idle_lower_8dir.aseprite :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/body/modular_lower/idle_lower_8dir.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/body/ranged_2h/walking down.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/body/ranged_2h/walking down_source.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/body/ranged_2h/walking up.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__walk_01__s__5f__96.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/curated/body/ranged_2h/fire_south_body.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/curated/body/ranged_2h/fire_walk_shuffle.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/curated/body/ranged_2h/hover_buggy_base-Recovered-Recovered.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/curated/_run_down_default.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/idle/idle-main.aseprite.uid :: Aseprite source/uid inside runtime tree
+MOVE file: custodian/content/sprites/operator/runtime/idle/operator_stance_melee_2h.aseprite.uid :: Aseprite source/uid inside runtime tree
+
+Cleanup staging complete.
+Dry-run only. To apply:
+  tools/cleanup_operator_runtime.sh --apply
+
+Next validation commands:
+  python3 custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded
+  godot --headless --path custodian --import --quit
+  godot --headless --path custodian --script res://tools/pipelines/update_operator_curated_resources.gd
+  godot --headless --path custodian --script res://tools/validation/operator_modular_layers_smoke.gd
+  python3 custodian/tools/validation/operator_animation_contract_report.py --json > reports/operator_runtime_cleanup/operator_animation_contract_report_20260626_152022.json

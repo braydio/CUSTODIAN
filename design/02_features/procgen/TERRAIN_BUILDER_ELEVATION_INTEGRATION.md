@@ -20,9 +20,15 @@ The terrain builder owns baseline terrain metadata, blocked mountain/cliff terra
 - Baseline ground fills all current procgen floor cells.
 - One deterministic mountain wall region can be stamped as blocked terrain.
 - One deterministic industrial raised platform can be stamped with a single ramp/stair access.
-- Connectivity validation prevents terrain features from isolating spawn/objective cells.
+- Connectivity validation prevents terrain features from isolating spawn/objective cells. Required cells are semantic
+  anchors: spawn, early room centers, interior thresholds, compound ingress, intent graph required cells, and
+  deterministic road/parking samples rather than every road or parking tile. If the final feature stack still
+  disconnects required cells, the rescue pass force-carves deterministic walkable corridors from the start cell to
+  every missing required cell before fallback is allowed.
 - Spawn/prop candidate helpers reject blocked/drop/ledge cells.
-- Debug logging reports terrain seed, map size, blocked/elevated/ramp counts, region counts, and fallback state.
+- Debug logging reports terrain seed, generation mode, map size, required/missing cell counts, rescue-carved cell
+  count, blocked/elevated/ramp counts, region counts, and fallback state. Candidate-evaluation rollback warnings are
+  retained in the TerrainBuilder result but are not pushed as immediate warnings unless fallback/fatal conditions occur.
 
 ## Non-Goals
 
@@ -83,4 +89,12 @@ The smoke validation script checks deterministic output, connectivity, ramp acce
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/terrain_builder_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 ```
+
+## Current Runtime Notes
+
+- The rescue pass updates the same metadata consumed by validation: `blocked_cells`, `height_by_cell`,
+  `traversal_by_cell`, and `ramp_dir_by_cell`.
+- `ProcGenTilemap.get_level_data()` exports TerrainBuilder fallback/connectivity status so contract candidate scoring
+  can reject terrain fallback maps before final visual generation.

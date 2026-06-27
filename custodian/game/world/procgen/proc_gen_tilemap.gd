@@ -70,6 +70,7 @@ enum WorldShapeMode {
 @export var world_shape_mode: WorldShapeMode = WorldShapeMode.ASCENT_FIELD
 @export var generation_evaluation_mode: bool = false
 @export var generation_output_enabled: bool = true
+@export var enable_final_foliage: bool = true
 
 ## TileSet source IDs (from your TileSet)
 @export var floor_source_id: int = 0
@@ -731,12 +732,13 @@ func _fill_tilemaps() -> void:
 	_last = Time.get_ticks_msec()
 
 	if not generation_evaluation_mode:
-		print("[ProcGenTilemap] props_foliage RUN mode=FINAL_VISUAL")
+		print("[ProcGenTilemap] props_foliage %s mode=FINAL_VISUAL" % ("RUN" if enable_final_foliage else "SKIP"))
 		if enable_streaming_reveal:
 			_generate_ruin_props(map_size)
 			_generate_interior_props(map_size)
 		else:
-			_generate_foliage(map_size)
+			if enable_final_foliage:
+				_generate_foliage(map_size)
 			_generate_ruin_props(map_size)
 			_generate_interior_props(map_size)
 	else:
@@ -3467,6 +3469,7 @@ func _apply_terrain_builder(map_size: Vector2i) -> void:
 		"worldgen_intent_graph": _worldgen_intent_graph,
 		"worldgen_reserved_regions": _worldgen_reserved_regions,
 		"worldgen_intent_floor_cells": _worldgen_intent_floor_cells,
+		"generation_mode": "EVAL_CANDIDATE" if generation_evaluation_mode else "FINAL_VISUAL",
 	}
 	_last_terrain_result = _terrain_builder.build_terrain(Rect2i(Vector2i.ZERO, map_size), terrain_rng, context)
 	if elevation_map.has_method("apply_build_result"):
@@ -3490,17 +3493,55 @@ func _collect_terrain_required_cells(map_size: Vector2i) -> Array[Vector2i]:
 	for ingress in _last_compound_ingress:
 		if _is_tile_inside_map(ingress, map_size):
 			required.append(ingress)
-	for road_tile in _main_road_tiles.keys():
-		if road_tile is Vector2i and _is_tile_inside_map(road_tile as Vector2i, map_size):
-			required.append(road_tile as Vector2i)
-	for parking_tile in _parking_zone_tiles.keys():
-		if parking_tile is Vector2i and _is_tile_inside_map(parking_tile as Vector2i, map_size):
-			required.append(parking_tile as Vector2i)
+	required.append_array(_sample_required_anchor_cells_from_dict(_main_road_tiles, map_size, 16))
+	required.append_array(_sample_required_anchor_cells_from_dict(_parking_zone_tiles, map_size, 8))
 	if _worldgen_intent_graph != null:
 		for cell in _worldgen_intent_graph.get_required_cells():
 			if _is_tile_inside_map(cell, map_size):
 				required.append(cell)
-	return required
+	return _dedupe_vector2i_array(required)
+
+
+func _sample_required_anchor_cells_from_dict(source: Dictionary, map_size: Vector2i, max_count: int) -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	if max_count <= 0 or source.is_empty():
+		return cells
+
+	for key in source.keys():
+		if key is Vector2i:
+			var cell := key as Vector2i
+			if _is_tile_inside_map(cell, map_size):
+				cells.append(cell)
+
+	if cells.is_empty():
+		return cells
+
+	cells.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		if a.x != b.x:
+			return a.x < b.x
+		return a.y < b.y
+	)
+
+	if cells.size() <= max_count:
+		return cells
+
+	var sampled: Array[Vector2i] = []
+	for index in range(max_count):
+		var t := 0.0 if max_count == 1 else float(index) / float(max_count - 1)
+		var source_index := clampi(int(round(t * float(cells.size() - 1))), 0, cells.size() - 1)
+		sampled.append(cells[source_index])
+	return _dedupe_vector2i_array(sampled)
+
+
+func _dedupe_vector2i_array(cells: Array[Vector2i]) -> Array[Vector2i]:
+	var seen := {}
+	var result: Array[Vector2i] = []
+	for cell in cells:
+		if seen.has(cell):
+			continue
+		seen[cell] = true
+		result.append(cell)
+	return result
 
 
 func _apply_terrain_visuals(terrain_result: Dictionary) -> void:
@@ -3540,6 +3581,9 @@ func _apply_terrain_visuals(terrain_result: Dictionary) -> void:
 			if tile_id.is_empty():
 				continue
 			_set_region_tile(cell, "terrain_elevated_floor", "elevated")
+		elif traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE and tile_id == "rescue_walkable_ground":
+			if not rendered_tile:
+				_set_floor_tile_and_generated_state(cell, "terrain_rescue_floor", "walkable")
 
 
 func _apply_compound_connector_elevation(map_size: Vector2i) -> void:
@@ -3674,9 +3718,13 @@ func _log_terrain_builder_summary(terrain_result: Dictionary) -> void:
 	if not terrain_builder_debug_logging:
 		return
 	var summary: Dictionary = terrain_result.get("debug_summary", {})
-	print("TerrainBuilder: seed=%s map_size=%s regions=%s blocked=%s elevated=%s ramps=%s connectivity=%s fallback=%s" % [
+	print("TerrainBuilder: seed=%s mode=%s map_size=%s required=%s missing=%s rescue_carved=%s regions=%s blocked=%s elevated=%s ramps=%s connectivity=%s fallback=%s" % [
 		str(summary.get("seed", 0)),
+		str(summary.get("generation_mode", "FINAL_VISUAL")),
 		str(summary.get("map_size", Vector2i.ZERO)),
+		str(summary.get("required_cell_count", 0)),
+		str(summary.get("missing_required_count", 0)),
+		str(summary.get("rescue_carved_cells", 0)),
 		str(summary.get("regions", 0)),
 		str(summary.get("blocked_cells", 0)),
 		str(summary.get("elevated_cells", 0)),
@@ -3684,6 +3732,8 @@ func _log_terrain_builder_summary(terrain_result: Dictionary) -> void:
 		str(summary.get("connectivity_ok", true)),
 		str(summary.get("fallback_used", false)),
 	])
+	if generation_evaluation_mode and not bool(summary.get("fallback_used", false)):
+		return
 	for warning in terrain_result.get("warnings", []):
 		push_warning(str(warning))
 
@@ -5884,6 +5934,7 @@ func get_level_data() -> Dictionary:
 		"interior_thresholds": _last_interior_thresholds,
 		"region_tiles": _region_tiles.duplicate(true),
 		"elevation_cells": elevation_map.get_serialized_cells() if elevation_map != null else [],
+		"terrain_builder": _get_terrain_builder_level_data(),
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"world_profile": get_planet_world_profile(),
@@ -5901,4 +5952,21 @@ func get_level_data() -> Dictionary:
 		"story_room_sites": _story_room_sites.duplicate(true),
 		"special_room_sites": _special_room_sites.duplicate(true),
 		"intent_zones_enabled": true,
+	}
+
+
+func _get_terrain_builder_level_data() -> Dictionary:
+	if _last_terrain_result.is_empty():
+		return {
+			"connectivity_ok": true,
+			"fallback_used": false,
+		}
+	var connectivity: Dictionary = _last_terrain_result.get("connectivity", {})
+	var summary: Dictionary = _last_terrain_result.get("debug_summary", {})
+	return {
+		"connectivity_ok": bool(connectivity.get("ok", summary.get("connectivity_ok", true))),
+		"fallback_used": bool(_last_terrain_result.get("fallback_used", summary.get("fallback_used", false))),
+		"reachable_count": int(connectivity.get("reachable_count", 0)),
+		"missing_required": connectivity.get("missing_required", []).duplicate(),
+		"summary": summary.duplicate(true),
 	}

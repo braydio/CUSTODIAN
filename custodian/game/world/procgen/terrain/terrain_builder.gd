@@ -66,6 +66,7 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 	var debug_regions: Array = []
 	var warnings: Array[String] = []
 	var fallback_used := false
+	var rescue_carved_cells := 0
 
 	var required_cells: Array[Vector2i] = _normalize_cell_array(context.get("required_cells", []))
 	var start_cell := _resolve_start_cell(map_rect, result, context, required_cells)
@@ -75,6 +76,8 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 		required_cells = _dedupe_cells(cells_to_dedupe)
 
 	var terrain_seed := int(context.get("seed", rng.seed))
+	var generation_mode := String(context.get("generation_mode", "FINAL_VISUAL"))
+	var quiet_candidate_warnings := generation_mode == "EVAL_CANDIDATE"
 	var world_progress_profile = null
 	if context.has("world_progress_profile") and context["world_progress_profile"] != null:
 		world_progress_profile = context["world_progress_profile"]
@@ -146,28 +149,31 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 	if not bool(connectivity.get("ok", true)):
 		var missing_str: String = str(connectivity.get("missing_required", []))
 		var reachable_count: int = connectivity.get("reachable_count", 0)
-		push_warning("TerrainBuilder connectivity failed.")
-		push_warning("  seed=%s map_rect=%s" % [terrain_seed, str(map_rect)])
-		push_warning("  start_cell=%s" % str(start_cell))
-		push_warning("  reachable_cells=%d missing_required=%s" % [reachable_count, missing_str])
+		if not quiet_candidate_warnings:
+			push_warning("TerrainBuilder connectivity failed.")
+			push_warning("  seed=%s map_rect=%s" % [terrain_seed, str(map_rect)])
+			push_warning("  start_cell=%s" % str(start_cell))
+			push_warning("  reachable_cells=%d missing_required=%s" % [reachable_count, missing_str])
 		if DEBUG_CONNECTIVITY_MAP:
 			_debug_print_connectivity_map(result, connectivity)
 		# Attempt rescue: clear blockers along shortest path from start to each missing required cell.
 		# This preserves terrain features while guaranteeing connectivity.
 		var rescued := _rescue_connectivity(result, start_cell, connectivity.get("missing_required", []))
+		rescue_carved_cells = rescued
 		_marks["rescue_connectivity"] = Time.get_ticks_msec() - _last
 		_last = Time.get_ticks_msec()
 		if rescued:
 			connectivity = _validate_connectivity(result, start_cell, required_cells)
 			var rescued_str: String = str(connectivity.get("missing_required", []))
-			push_warning("  rescue carved %d cells, re-validated: missing=%s reachable=%d" % [rescued, rescued_str, connectivity.get("reachable_count", 0)])
+			if not quiet_candidate_warnings:
+				push_warning("  rescue carved %d cells, re-validated: missing=%s reachable=%d" % [rescued, rescued_str, connectivity.get("reachable_count", 0)])
 			if not bool(connectivity.get("ok", true)):
 				result = _build_baseline(map_rect, context)
 				connectivity = _validate_connectivity(result, start_cell, required_cells)
 				fallback_used = true
 				warnings.append("WARNING: TerrainBuilder fell back to baseline terrain after connectivity validation failed. seed=%s start=%s reachable=%d missing=%s" % [terrain_seed, str(start_cell), reachable_count, missing_str])
 			else:
-				warnings.append("TerrainBuilder rescued connectivity by carving path to %d missing cells. seed=%s" % [rescued, terrain_seed])
+				warnings.append("TerrainBuilder rescued connectivity by carving %d cells toward missing required targets. seed=%s" % [rescued, terrain_seed])
 		else:
 			result = _build_baseline(map_rect, context)
 			connectivity = _validate_connectivity(result, start_cell, required_cells)
@@ -184,6 +190,10 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 	result["fallback_used"] = fallback_used
 	result["seed"] = terrain_seed
 	result["map_rect"] = map_rect
+	result["generation_mode"] = generation_mode
+	result["required_cell_count"] = required_cells.size()
+	result["missing_required_count"] = (connectivity.get("missing_required", []) as Array).size()
+	result["rescue_carved_cells"] = rescue_carved_cells
 	result["debug_summary"] = _build_debug_summary(result)
 	_last_result = result.duplicate(true)
 	
@@ -574,6 +584,10 @@ func _build_debug_summary(result: Dictionary) -> Dictionary:
 		"max_height": max_height,
 		"connectivity_ok": bool(result.get("connectivity", {}).get("ok", true)),
 		"fallback_used": bool(result.get("fallback_used", false)),
+		"required_cell_count": int(result.get("required_cell_count", 0)),
+		"missing_required_count": int(result.get("missing_required_count", 0)),
+		"rescue_carved_cells": int(result.get("rescue_carved_cells", 0)),
+		"generation_mode": String(result.get("generation_mode", "FINAL_VISUAL")),
 	}
 
 
@@ -582,96 +596,54 @@ func _rescue_connectivity(result: Dictionary, start_cell: Vector2i, missing_requ
 		return 0
 	if not _has_cell(result, start_cell):
 		return 0
-	var traversal_by_cell: Dictionary = result.get("traversal_by_cell", {})
-	var height_by_cell: Dictionary = result.get("height_by_cell", {})
 	var carved := 0
-
-	# BFS from start cell to get the reachable walkable set
-	var open: Array[Vector2i] = [start_cell]
-	var visited := {start_cell: true}
-	var parent := {}
-	while not open.is_empty():
-		var current := open.pop_front() as Vector2i
-		for dir: Vector2i in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
-			var next: Vector2i = current + dir
-			if visited.has(next):
-				continue
-			if not _has_cell(result, next):
-				continue
-			var traversal := String(traversal_by_cell.get(next, TRAVERSAL_BLOCKED))
-			if _is_blocked_traversal(traversal):
-				# Record blocked cell as a candidate path node
-				parent[next] = current
-				visited[next] = true
-				continue
-			visited[next] = true
-			parent[next] = current
-			open.append(next)
-
-	# For each missing required cell, trace path from reachable side
-	var target_lookup := {}
-	for cell in missing_required:
-		if cell is Vector2i:
-			target_lookup[cell as Vector2i] = true
-
-	# Find the best reachable cell near each target by BFS from targets
 	for target in missing_required:
 		if not (target is Vector2i):
 			continue
 		var t := target as Vector2i
 		if not _has_cell(result, t):
 			continue
-		# Already walkable? skip
-		if not _is_blocked_traversal(String(traversal_by_cell.get(t, TRAVERSAL_BLOCKED))):
-			continue
-
-		# BFS outward from target to find nearest reachable walkable cell
-		var bfs_open: Array[Vector2i] = [t]
-		var bfs_visited := {t: true}
-		var bfs_parent := {}
-		var found := false
-		var reachable_cell := Vector2i.ZERO
-		while not bfs_open.is_empty() and not found:
-			var cur := bfs_open.pop_front() as Vector2i
-			for dir: Vector2i in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
-				var nxt: Vector2i = cur + dir
-				if bfs_visited.has(nxt):
-					continue
-				if not _has_cell(result, nxt):
-					continue
-				bfs_visited[nxt] = true
-				bfs_parent[nxt] = cur
-				# Is this cell in the walkable reachable set?
-				var nxt_traversal := String(traversal_by_cell.get(nxt, TRAVERSAL_BLOCKED))
-				if not _is_blocked_traversal(nxt_traversal) and visited.has(nxt):
-					reachable_cell = nxt
-					found = true
-					break
-				bfs_open.append(nxt)
-
-		if not found:
-			continue
-
-		# Trace path from reachable_cell back to target, clearing blockers
-		var path_cell := t
-		var path: Array[Vector2i] = []
-		while path_cell != reachable_cell:
-			path.append(path_cell)
-			path_cell = bfs_parent.get(path_cell, reachable_cell)
-			if path_cell == reachable_cell:
-				break
-		path.append(reachable_cell)
-
-		# Carve the path (make cells walkable)
-		for cell in path:
-			if _is_blocked_traversal(String(traversal_by_cell.get(cell, TRAVERSAL_BLOCKED))):
-				_set_result_cell(result, cell, HEIGHT_GROUND, TRAVERSAL_WALKABLE, TerrainType.GROUND, NO_VISUAL_TILE)
-				carved += 1
-			elif not traversal_by_cell.has(cell):
-				_set_result_cell(result, cell, HEIGHT_GROUND, TRAVERSAL_WALKABLE, TerrainType.GROUND, NO_VISUAL_TILE)
-				carved += 1
-
+		carved += _carve_manhattan_corridor(result, start_cell, t, 2)
 	return carved
+
+
+func _carve_manhattan_corridor(result: Dictionary, from_cell: Vector2i, to_cell: Vector2i, radius: int = 1) -> int:
+	var carved := 0
+	var cursor := from_cell
+	carved += _force_walkable_disk(result, cursor, radius)
+	while cursor.x != to_cell.x:
+		cursor.x += 1 if to_cell.x > cursor.x else -1
+		carved += _force_walkable_disk(result, cursor, radius)
+	while cursor.y != to_cell.y:
+		cursor.y += 1 if to_cell.y > cursor.y else -1
+		carved += _force_walkable_disk(result, cursor, radius)
+	return carved
+
+
+func _force_walkable_disk(result: Dictionary, center: Vector2i, radius: int) -> int:
+	var carved := 0
+	for dy in range(-radius, radius + 1):
+		for dx in range(-radius, radius + 1):
+			var cell := center + Vector2i(dx, dy)
+			if _force_walkable_cell(result, cell):
+				carved += 1
+	return carved
+
+
+func _force_walkable_cell(result: Dictionary, cell: Vector2i) -> bool:
+	var height_by_cell: Dictionary = result.get("height_by_cell", {})
+	var traversal_by_cell: Dictionary = result.get("traversal_by_cell", {})
+	var ramp_dir_by_cell: Dictionary = result.get("ramp_dir_by_cell", {})
+	var blocked_cells: Dictionary = result.get("blocked_cells", {})
+	var changed := not _has_cell(result, cell)
+	if int(height_by_cell.get(cell, HEIGHT_GROUND)) != HEIGHT_GROUND:
+		changed = true
+	if String(traversal_by_cell.get(cell, TRAVERSAL_WALKABLE)) != TRAVERSAL_WALKABLE:
+		changed = true
+	if blocked_cells.has(cell) or ramp_dir_by_cell.has(cell):
+		changed = true
+	_set_result_cell(result, cell, HEIGHT_GROUND, TRAVERSAL_WALKABLE, TerrainType.GROUND, "rescue_walkable_ground")
+	return changed
 
 
 func _debug_print_connectivity_map(result: Dictionary, connectivity: Dictionary) -> void:

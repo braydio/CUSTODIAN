@@ -1,28 +1,28 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://cnalouxj8to4t"]
 
-[ext_resource type="Script" path="res://game/actors/allies/combat_drone.gd" id="1_drone"]
+[ext_resource type="Script" uid="uid://dpq4nsgr28c5s" path="res://game/actors/allies/combat_drone.gd" id="1_drone"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_drone"]
 radius = 8.0
 
-[node name="CombatDrone" type="CharacterBody2D"]
+[node name="CombatDrone" type="CharacterBody2D" unique_id=120589354]
 z_index = 3
 script = ExtResource("1_drone")
 
-[node name="Visual" type="ColorRect" parent="."]
+[node name="Visual" type="ColorRect" parent="." unique_id=1136197115]
 offset_left = -8.0
 offset_top = -8.0
 offset_right = 8.0
 offset_bottom = 8.0
 color = Color(0.35, 0.82, 0.95, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=145731405]
 shape = SubResource("CircleShape2D_drone")
 
-[node name="Muzzle" type="Marker2D" parent="."]
+[node name="Muzzle" type="Marker2D" parent="." unique_id=2134176071]
 position = Vector2(10, 0)
 
-[node name="HealthBar" type="ProgressBar" parent="."]
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=99271746]
 offset_left = -16.0
 offset_top = -18.0
 offset_right = 16.0

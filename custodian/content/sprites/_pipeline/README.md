@@ -303,6 +303,8 @@ Non-item examples:
 operator__body__melee__fast_01__n__6f__96.png
 enemy_wolf__body__locomotion__run__4dir__32f__64.png
 drone__body__locomotion__idle__s__4f__96.png
+allied_infantry_droid__body__locomotion__idle__e__5f__96.png
+allied_infantry_droid__fx__ranged__muzzle_flash__e__5f__96.png
 command_terminal__body__interaction__pickup__omni__4f__48.png
 portal_ring__fx__interaction__activate__omni__12f__161.png
 props__harvesting_nodes__blackwood_deadfall__node__idle__6f__96.png
@@ -315,6 +317,8 @@ Saved file examples by domain:
 content/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_1h__fast_weapon__n__6f__96.png
 content/sprites/weapons/carbine_rifle/animations/carbine_rifle__ranged__stance__e__6f__96.png
 content/sprites/enemies/drone/runtime/idle/drone__body__locomotion__idle__s__4f__96.png
+content/sprites/allies/allied_infantry_droid/runtime/body/allied_infantry_droid__body__locomotion__idle__e__5f__96.png
+content/sprites/allies/allied_infantry_droid/runtime/fx/allied_infantry_droid__fx__ranged__muzzle_flash__e__5f__96.png
 content/sprites/effects/runtime/hit_spark/hit_spark__fx__impact__default__omni__4f__64.png
 content/sprites/vehicles/hover_buggy/runtime/hover_buggy__body__move__e__6f__256.png
 content/sprites/turrets/gunner/turret-gunner-firing.png
@@ -323,3 +327,52 @@ content/sprites/props/harvesting_nodes/blackwood_deadfall/blackwood_deadfall__no
 content/sprites/items/resources/blackwood_node.png
 content/sprites/items/shrumb_drops/faint_recollection.png
 ```
+
+## Generic Actor SpriteFrames
+
+Non-Operator animated actors use a simpler body/FX convention than the Operator modular runtime. Put body
+silhouette and baked weapon poses in `body`; keep muzzle flashes, impact sparks, projectiles, shield hits, and
+explosions in `fx`.
+
+Allied actor inbox filenames use the same canonical naming pattern:
+
+```text
+<actor_slug>__body__<action_group>__<animation>__<direction>__<frames>f__<frame_size>.png
+<actor_slug>__fx__<action_group>__<animation>__<direction>__<frames>f__<frame_size>.png
+```
+
+For example:
+
+```text
+allied_infantry_droid__body__locomotion__idle__e__5f__96.png
+allied_infantry_droid__body__locomotion__run__w__6f__96.png
+allied_infantry_droid__body__ranged__fire__e__5f__96.png
+allied_infantry_droid__fx__ranged__muzzle_flash__e__5f__96.png
+```
+
+For quick iteration, allied actors also accept the simple compatibility form:
+
+```text
+allied_infantry_droid__idle__e__5f__96.png
+allied_infantry_droid__fx_muzzle_flash__e__5f__96.png
+```
+
+The canonical form is preferred for production batches because it keeps layer and action-group intent explicit.
+
+Successful ingest routes these to:
+
+```text
+res://content/sprites/allies/allied_infantry_droid/runtime/body/
+res://content/sprites/allies/allied_infantry_droid/runtime/fx/
+```
+
+Then it rebuilds:
+
+```text
+res://game/actors/allies/allied_infantry_droid/allied_infantry_droid_body_frames.tres
+res://game/actors/allies/allied_infantry_droid/allied_infantry_droid_fx_frames.tres
+```
+
+Inside each `SpriteFrames` resource, animation names are `<animation>_<direction>`, such as `idle_e`,
+`run_w`, `fire_e`, and `muzzle_flash_e`. Keep swappable equipment, upper/lower body separation, and curated
+fallback state-machine work in the Operator-specific pipeline unless another actor truly needs that complexity.

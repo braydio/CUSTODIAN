@@ -41,6 +41,7 @@ WorldStateGraph="*res://game/systems/world/world_state_graph.gd"
 WorldHistory="*res://game/systems/world/world_history.gd"
 SimulationInterestManager="*res://game/systems/simulation/simulation_interest_manager.gd"
 SectorHeatmap="*res://game/systems/world/sector_heatmap.gd"
+ImGui="*uid://csvdmevoaejje"
 
 [dev_console]
 
@@ -57,7 +58,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/better-terrain/plugin.cfg", "res://addons/debug_console/plugin.cfg", "res://addons/dev-console/plugin.cfg", "res://addons/fightengine/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/godotdev_nvim_node_copy/plugin.cfg", "res://addons/indie_game_components/plugin.cfg", "res://addons/shader_library/plugin.cfg")
+enabled=PackedStringArray("res://addons/better-terrain/plugin.cfg", "res://addons/dear-imgui-godot/plugin.cfg", "res://addons/debug_console/plugin.cfg", "res://addons/dev-console/plugin.cfg", "res://addons/fightengine/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/godotdev_nvim_node_copy/plugin.cfg", "res://addons/indie_game_components/plugin.cfg", "res://addons/shader_library/plugin.cfg")
 
 [input]
 

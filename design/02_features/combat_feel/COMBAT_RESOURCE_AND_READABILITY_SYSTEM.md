@@ -22,7 +22,7 @@ below; this document does not duplicate their runtime ownership.
 
 | System | State | Runtime result | Durable authority |
 |---|---|---|---|
-| Typed ammunition, magazines, reload, range/falloff | complete-v1 | Capped typed reserves and persistent per-weapon magazines; projectile range and falloff are live | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
+| Typed ammunition, magazines, reload, range/falloff | complete-v1 | Capped typed reserves and persistent per-weapon magazines; projectile range and falloff are live; normal-play HUD now exposes active weapon icon plus magazine/reserve count | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
 | Weapon heat and overheat | complete-v1 | Per-weapon heat, delayed decay, spread/recoil scaling, overheat lockout, and status hooks are live | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
 | Positional gunshot noise | complete-v1 | `NoiseEventBus` drives local enemy investigation, LOS-loss search, and leash return | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
 | Global attention/escalation | pending | No shared attention meter, alarm network, reinforcement pressure, or ritual acceleration from noise | This document |
@@ -132,6 +132,8 @@ Runtime durability belongs to item/deployable state, never shared resource data.
 
 - Add normal-play heat/overheat/reload/dry-fire feedback without moving weapon
   state into UI.
+- Keep active weapon magazine/reserve count visible in the compact HUD as a
+  read-only consumer of `Operator.get_weapon_status()`.
 - Tune rifle burst cadence, cache supply, sidearm distinction, and movement
   handling in play.
 - Decide whether explicit vent input adds value beyond current lockout cooling.

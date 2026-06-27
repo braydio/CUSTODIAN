@@ -117,6 +117,27 @@ godot --headless --script tools/validation/fabrication_terminal_readability_smok
 
 This validates the live FABRICATION terminal translation layer, the readable next-action text, and the `BUILD PLACE <ready_build_id>` placement alias against the runtime autoloads.
 
+For the native Godot lighting layer:
+
+```bash
+cd custodian
+godot --headless --script res://tools/validation/lighting_system_smoke.gd
+```
+
+This instantiates the standalone lighting playground and checks the `WorldLightingDirector`, `CanvasModulate`,
+`DirectionalLight2D`, reusable light rigs, `LightingZone2D`, `LightOccluder2D`, and transient additive flash pool.
+
+For TerrainBuilder/procgen connectivity changes:
+
+```bash
+cd custodian
+godot --headless --script res://tools/validation/terrain_builder_smoke.gd
+godot --headless --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
+```
+
+The first command validates TerrainBuilder determinism and metadata behavior. The second generates representative
+candidate-mode maps and verifies required-cell counts stay bounded while terrain connectivity remains enforced.
+
 ## Manual Godot Validation
 
 Use when behavior requires play, input, camera, animation, UI, collision, or visual confirmation.
@@ -163,6 +184,15 @@ python custodian/tools/validation/operator_animation_contract_report_smoke.py
 
 `--strict` is expected to fail while required art coverage or required metadata is incomplete. Treat that as a
 production coverage report, not as a reason to fake missing assets.
+
+For the focused modular Operator ingest loop, use the thin repo-root wrapper. It defaults to dry-run; `--apply` runs
+shared-inbox manifest generation, rebuilds modular Operator runtime sheets, runs Godot import, refreshes curated
+SpriteFrames, runs the modular layer smoke, and writes an animation contract JSON report.
+
+```bash
+tools/operator_ingest.sh --dry-run
+tools/operator_ingest.sh --apply
+```
 
 For modular Operator action QA previews:
 

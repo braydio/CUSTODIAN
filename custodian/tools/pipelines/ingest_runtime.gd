@@ -5,6 +5,7 @@ const POST_PROCESS_OPERATOR_CURATED := "operator_curated_resources"
 const POST_PROCESS_OPERATOR_MODULAR_RUNTIME := "operator_modular_runtime"
 const POST_PROCESS_ENEMY_RUNTIME_IMPORT := "enemy_runtime_import"
 const POST_PROCESS_VEHICLE_RUNTIME_IMPORT := "vehicle_runtime_import"
+const POST_PROCESS_ACTOR_SPRITEFRAMES_PREFIX := "actor_spriteframes:"
 
 var _project_root: String
 var _sprites_root: String
@@ -424,6 +425,9 @@ func _write_preview(manifest_path: String, source_frames: Array) -> void:
 
 
 func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
+	if step.begins_with(POST_PROCESS_ACTOR_SPRITEFRAMES_PREFIX):
+		return _run_actor_spriteframes_post_process(step)
+
 	match step:
 		POST_PROCESS_OPERATOR_CURATED:
 			if _dry_run:
@@ -520,6 +524,35 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 			return {"ok": true}
 		_:
 			return {"ok": false, "error": "unsupported post_process step %s" % step}
+
+
+func _run_actor_spriteframes_post_process(step: String) -> Dictionary:
+	var parts := step.split(":")
+	if parts.size() != 3:
+		return {"ok": false, "error": "actor_spriteframes post_process expects actor_spriteframes:<domain>:<owner>"}
+
+	if _dry_run:
+		print("[DRY RUN] post_process %s" % step)
+		return {"ok": true}
+
+	var output: Array = []
+	var exit_code := OS.execute(
+		"python3",
+		[
+			ProjectSettings.globalize_path("res://tools/pipelines/build_actor_spriteframes.py"),
+			"--domain",
+			str(parts[1]),
+			"--owner",
+			str(parts[2])
+		],
+		output,
+		true
+	)
+	if exit_code != 0:
+		return {"ok": false, "error": "actor SpriteFrames rebuild failed:\n%s" % "\n".join(output)}
+	for line in output:
+		print(line)
+	return {"ok": true}
 
 
 func _write_log(manifest_path: String, source_path: String, outputs: Array[String], post_process_steps: Array) -> void:

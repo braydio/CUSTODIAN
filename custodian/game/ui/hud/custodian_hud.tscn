@@ -19,13 +19,13 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="TopLeftVitals" parent="Root" instance=ExtResource("2_panel")]
-custom_minimum_size = Vector2(224, 112)
+custom_minimum_size = Vector2(224, 154)
 layout_mode = 1
 anchors_preset = 0
 offset_left = 14.0
 offset_top = 12.0
 offset_right = 238.0
-offset_bottom = 124.0
+offset_bottom = 166.0
 
 [node name="Margin" type="MarginContainer" parent="Root/TopLeftVitals"]
 layout_mode = 2
@@ -57,6 +57,36 @@ custom_minimum_size = Vector2(180, 10)
 layout_mode = 2
 value = 100.0
 show_percentage = false
+
+[node name="WeaponStatusRow" type="HBoxContainer" parent="Root/TopLeftVitals/Margin/Content"]
+custom_minimum_size = Vector2(180, 38)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="WeaponIconFrame" type="PanelContainer" parent="Root/TopLeftVitals/Margin/Content/WeaponStatusRow"]
+custom_minimum_size = Vector2(34, 34)
+layout_mode = 2
+
+[node name="WeaponIcon" type="TextureRect" parent="Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponIconFrame"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+stretch_mode = 5
+expand_mode = 1
+
+[node name="WeaponText" type="VBoxContainer" parent="Root/TopLeftVitals/Margin/Content/WeaponStatusRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="WeaponNameLabel" type="Label" parent="Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponText"]
+layout_mode = 2
+text = "CARBINE"
+text_overrun_behavior = 3
+
+[node name="WeaponAmmoLabel" type="Label" parent="Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponText"]
+layout_mode = 2
+text = "MAG 24/24  RES 48"
+text_overrun_behavior = 3
 
 [node name="TopRightPanel" parent="Root" instance=ExtResource("2_panel")]
 custom_minimum_size = Vector2(142, 160)

@@ -6,6 +6,8 @@
 [ext_resource type="Resource" path="res://game/actors/operator/fallen_star_katana_definition.tres" id="4_wx1e4"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_weapon_frames.tres" id="5_drxsd"]
 [ext_resource type="Script" path="res://scripts/levels/sundered_keep/overlook_camera_director.gd" id="6_w6hvf"]
+[ext_resource type="PackedScene" path="res://game/actors/allies/allied_infantry_droid.tscn" id="7_droid"]
+[ext_resource type="Script" path="res://game/systems/drone/drone_manager.gd" id="8_drone_mgr"]
 
 [node name="SunderedKeepApproach" type="Node2D" unique_id=2124663311]
 
@@ -125,6 +127,7 @@ melee_weapon_definition = ExtResource("4_wx1e4")
 primary_weapon_frames_resource = ExtResource("5_drxsd")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=540676725]
+current = true
 position = Vector2(0, 120)
 
 [node name="OverlookCameraDirector" type="Node" parent="." unique_id=1893352112 node_paths=PackedStringArray("player", "camera", "reveal_start_marker", "reveal_full_marker", "traverse_start_marker", "traverse_end_marker", "return_topdown_marker", "vista_root", "occlusion_root", "fog_band")]
@@ -139,3 +142,10 @@ return_topdown_marker = NodePath("../Markers/ReturnTopdown")
 vista_root = NodePath("../VistaRoot")
 occlusion_root = NodePath("../OcclusionRoot")
 fog_band = NodePath("../VistaRoot/VistaFogBand")
+
+[node name="DroneManager" type="Node" parent="."]
+script = ExtResource("8_drone_mgr")
+operator_path = NodePath("../Operator")
+spawn_on_ready = true
+initial_active_drones = 1
+drone_scene = ExtResource("7_droid")

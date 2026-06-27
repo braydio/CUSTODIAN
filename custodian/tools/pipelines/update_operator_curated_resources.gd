@@ -112,34 +112,6 @@ const LIGHT_ATTACK_BASE_SLICES := [
 	{"animation": "melee_2h_fast_down_right", "start": 28, "count": 7, "fps": 12.0},
 	{"animation": "melee_2h_fast_down", "start": 21, "count": 7, "fps": 12.0},
 ]
-const UNARMED_MODULAR_LOWER_LOCOMOTION_SLICES := [
-	{"animation": "unarmed_idle", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/idle_01/operator__modular_lower_body__unarmed__idle_01__s__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true},
-	{"animation": "unarmed_idle_down", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/idle_01/operator__modular_lower_body__unarmed__idle_01__s__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true},
-	{"animation": "unarmed_idle_down_right", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/idle_01/operator__modular_lower_body__unarmed__idle_01__se__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true},
-	{"animation": "unarmed_idle_right", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/idle_01/operator__modular_lower_body__unarmed__idle_01__e__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true},
-	{"animation": "unarmed_idle_up_right", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/idle_01/operator__modular_lower_body__unarmed__idle_01__ne__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true},
-	{"animation": "unarmed_idle_up", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/idle_01/operator__modular_lower_body__unarmed__idle_01__n__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true},
-	{"animation": "unarmed_idle_up_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/idle_01/operator__modular_lower_body__unarmed__idle_01__nw__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true},
-	{"animation": "unarmed_idle_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/idle_01/operator__modular_lower_body__unarmed__idle_01__w__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true},
-	{"animation": "unarmed_idle_down_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/idle_01/operator__modular_lower_body__unarmed__idle_01__sw__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 8.0, "loop": true},
-	{"animation": "unarmed_walk", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__s__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": true},
-	{"animation": "unarmed_walk_down", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__s__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": true},
-	{"animation": "unarmed_walk_down_right", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__se__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": true},
-	{"animation": "unarmed_walk_right", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__e__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": true},
-	{"animation": "unarmed_walk_up_right", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__ne__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": true},
-	{"animation": "unarmed_walk_up", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__n__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": true},
-	{"animation": "unarmed_walk_up_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__nw__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": true},
-	{"animation": "unarmed_walk_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__w__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": true},
-	{"animation": "unarmed_walk_down_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__sw__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 10.0, "loop": true},
-	{"animation": "unarmed_run_down", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/run_01/operator__modular_lower_body__unarmed__run_01__s__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": true},
-	{"animation": "unarmed_run_down_right", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/run_01/operator__modular_lower_body__unarmed__run_01__se__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": true},
-	{"animation": "unarmed_run_right", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/run_01/operator__modular_lower_body__unarmed__run_01__e__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": true},
-	{"animation": "unarmed_run_up_right", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/run_01/operator__modular_lower_body__unarmed__run_01__ne__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": true},
-	{"animation": "unarmed_run_up", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/run_01/operator__modular_lower_body__unarmed__run_01__n__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": true},
-	{"animation": "unarmed_run_up_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/run_01/operator__modular_lower_body__unarmed__run_01__nw__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": true},
-	{"animation": "unarmed_run_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/run_01/operator__modular_lower_body__unarmed__run_01__w__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": true},
-	{"animation": "unarmed_run_down_left", "path": "res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/run_01/operator__modular_lower_body__unarmed__run_01__sw__5f__96.png", "frames": 5, "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": true},
-]
 const UNARMED_FAST_WINDUP_BODY_SLICES := [
 	{"animation": "unarmed_attack_fast_windup", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__s__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
 	{"animation": "unarmed_attack_fast_windup_down", "path": "res://content/sprites/operator/runtime/actions/unarmed/fast_attack/body/operator__body__unarmed__fast_windup_01__s__3f__96.png", "frames": 3, "frame_width": 96, "frame_height": 96, "fps": 12.0},
@@ -246,8 +218,8 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "unarmed_walk_right", UNARMED_WALK_EAST_SHEET, 5, 0, 96, 96, 10.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_walk_up", UNARMED_WALK_NORTH_SHEET, 7, 0, 96, 96, 10.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_walk_left", UNARMED_WALK_WEST_SHEET, 5, 0, 96, 96, 10.0, true)
-	_replace_animation_entries(body_frames, UNARMED_MODULAR_LOWER_LOCOMOTION_SLICES)
-	_replace_animation_entries(modular_lower_body_frames, UNARMED_MODULAR_LOWER_LOCOMOTION_SLICES)
+	_replace_animation_entries(body_frames, _build_modular_locomotion_entries("lower_body"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_locomotion_entries("lower_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_sidearm_entries("lower_body", "sidearm_draw_lower", "draw_sidearm_01"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_sidearm_entries("lower_body", "sidearm_fire_lower", "fire_sidearm_01"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_unarmed_block_entries("lower_body"))
@@ -478,12 +450,18 @@ func _build_modular_locomotion_entries(part: String) -> Array:
 		var base := str(action_spec["base"])
 		for direction_spec in direction_specs:
 			var dir := str(direction_spec["dir"])
-			var path := "%s/%s/%s__%s__%s__5f__96.png" % [root, action, part_prefix, action, dir]
+			var sheet := _find_modular_action_sheet(root, part, "unarmed", action, dir)
+			if sheet.is_empty():
+				continue
+			var path := str(sheet.get("path", ""))
+			var frame_count := int(sheet.get("frames", 0))
+			if path.is_empty() or frame_count <= 0:
+				continue
 			if bool(direction_spec.get("alias_base", false)) and action != "run_01":
 				entries.append({
 					"animation": base,
 					"path": path,
-					"frames": 5,
+					"frames": frame_count,
 					"frame_width": 96,
 					"frame_height": 96,
 					"fps": float(action_spec["fps"]),
@@ -492,7 +470,7 @@ func _build_modular_locomotion_entries(part: String) -> Array:
 			entries.append({
 				"animation": "%s_%s" % [base, str(direction_spec["suffix"])],
 				"path": path,
-				"frames": 5,
+				"frames": frame_count,
 				"frame_width": 96,
 				"frame_height": 96,
 				"fps": float(action_spec["fps"]),

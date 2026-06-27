@@ -183,7 +183,66 @@ custodian/content/sprites/operator/runtime/actions/
 Runtime playback still requires deliberate state-machine and resource registration. A generated PNG is not
 automatically a new gameplay animation.
 
-## 5. Refresh Godot Runtime Resources
+## 5. Build A Simple Actor From Inbox PNGs
+
+Use this for non-Operator actors such as allied infantry droids, combat droids, and routebreaker-style mechs.
+Do not use the Operator modular upper/lower/weapon path unless the actor actually needs swappable equipment.
+
+Drop canonical strips into:
+
+```text
+custodian/content/sprites/_pipeline/inbox/
+```
+
+Name them with `body` and `fx` layers:
+
+```text
+allied_infantry_droid__body__locomotion__idle__e__5f__96.png
+allied_infantry_droid__body__locomotion__run__w__6f__96.png
+allied_infantry_droid__body__ranged__fire__e__5f__96.png
+allied_infantry_droid__fx__ranged__muzzle_flash__e__5f__96.png
+```
+
+For quick iteration, simple allied names also work:
+
+```text
+allied_infantry_droid__idle__e__5f__96.png
+allied_infantry_droid__fx_muzzle_flash__e__5f__96.png
+```
+
+Use the canonical form for production batches.
+
+Then run:
+
+```bash
+python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run
+python custodian/tools/pipelines/generate_inbox_manifests.py
+```
+
+The ingest routes sheets into:
+
+```text
+custodian/content/sprites/allies/<actor_slug>/runtime/body/
+custodian/content/sprites/allies/<actor_slug>/runtime/fx/
+```
+
+and rebuilds:
+
+```text
+custodian/game/actors/allies/<actor_slug>/<actor_slug>_body_frames.tres
+custodian/game/actors/allies/<actor_slug>/<actor_slug>_fx_frames.tres
+```
+
+The generated `SpriteFrames` animation names are `<animation>_<direction>`, for example `idle_e`, `run_w`,
+`fire_e`, and `muzzle_flash_e`.
+
+You can rebuild resources from existing runtime strips without ingesting new PNGs:
+
+```bash
+python custodian/tools/pipelines/build_actor_spriteframes.py --domain allies --owner allied_infantry_droid
+```
+
+## 6. Refresh Godot Runtime Resources
 
 For Operator curated SpriteFrames:
 
@@ -212,7 +271,7 @@ cd custodian
 godot --headless --import --quit
 ```
 
-## 6. Prove The Pipeline Still Works
+## 7. Prove The Pipeline Still Works
 
 Run the focused Python smokes:
 
@@ -248,4 +307,3 @@ godot --headless --script tools/validation/operator_modular_layers_smoke.gd
 | Rebuild existing Operator modular source sheets | `build_operator_modular_runtime.py` |
 | Refresh Operator SpriteFrames | `reload_assets.py` or `update_operator_curated_resources.gd` |
 | Validate pure Python tooling | the three new `*_smoke.py` scripts |
-

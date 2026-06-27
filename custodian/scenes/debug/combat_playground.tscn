@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://0ers1x33nbw5"]
+
+[ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="1_operator"]
+[ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_grunt.tscn" id="6_grunt"]
+[ext_resource type="PackedScene" path="res://game/actors/allies/allied_infantry_droid.tscn" id="7_droid"]
+[ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="8_drone_mgr"]
+[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="9_camera"]
+
+[sub_resource type="RectangleShape2D" id="wall_horiz"]
+size = Vector2(800, 12)
+
+[sub_resource type="RectangleShape2D" id="wall_vert"]
+size = Vector2(12, 500)
+
+[node name="GameRoot" type="Node2D" unique_id=901664120]
+
+[node name="World" type="Node2D" parent="." unique_id=907988681]
+
+[node name="Operator" parent="World" unique_id=794954565 instance=ExtResource("1_operator")]
+position = Vector2(-250, 0)
+muzzle_offset = 24.0
+aim_crosshair_color = Color(0.9, 0.9, 0.9, 1)
+ammo_standard = 48
+ammo_heavy = 12
+ammo_standard_max = 72
+ammo_heavy_max = 16
+interaction_range = 84.0
+repair_rate = 15.0
+sprint_multiplier = 1.7
+stamina_max = 100.0
+stamina_drain_per_second = 32.0
+stamina_regen_per_second = 22.0
+stamina_sprint_gate = 10.0
+move_acceleration = 1200.0
+move_deceleration = 1500.0
+movement_turn_response = 14.0
+heavy_attack_stamina_cost = 14.0
+heavy_attack_blocked_while_sprinting = true
+block_move_multiplier = 0.6
+block_stamina_cost_per_hit = 12.0
+combat_target_range = 360.0
+idle_main_sheet_path = "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
+ranged_2h_stance_sheet_path = "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
+ranged_2h_aim_sheet_path = "res://content/sprites/operator/runtime/body/ranged_2h/operator_body_ranged_2h_aim_raise.png"
+idle_long_loop_threshold = 20
+placeholder_sprite_position = Vector2(0, -18)
+placeholder_sprite_offset = Vector2(0, 0)
+right_hand_socket_position = Vector2(10, -16)
+left_hand_socket_position = Vector2(12, -28)
+primary_weapon_socket_position = Vector2(12, -28)
+primary_weapon_sprite_position = Vector2(0, 0)
+primary_weapon_sprite_scale = Vector2(1, 1)
+primary_weapon_muzzle_socket_position = Vector2(20, 2)
+placeholder_collision_offset = Vector2(0, 12)
+placeholder_collision_radius = 7.0
+placeholder_collision_height = 22.0
+placeholder_melee_hitbox_radius = 22.0
+placeholder_healthbar_top = -54.0
+placeholder_healthbar_bottom = -48.0
+
+[node name="Allies" type="Node2D" parent="World" unique_id=1591275264]
+
+[node name="Enemies" type="Node2D" parent="World" unique_id=202153685]
+
+[node name="EnemyGrunt1" parent="World/Enemies" unique_id=2021626867 instance=ExtResource("6_grunt")]
+position = Vector2(250, -80)
+
+[node name="EnemyGrunt2" parent="World/Enemies" unique_id=1937450435 instance=ExtResource("6_grunt")]
+position = Vector2(250, 80)
+
+[node name="EnemyGrunt3" parent="World/Enemies" unique_id=1291940480 instance=ExtResource("6_grunt")]
+position = Vector2(360, 0)
+
+[node name="ArenaWalls" type="Node2D" parent="World" unique_id=1609943741]
+
+[node name="WallTop" type="StaticBody2D" parent="World/ArenaWalls" unique_id=1316317996]
+position = Vector2(0, -250)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/ArenaWalls/WallTop" unique_id=783518502]
+shape = SubResource("wall_horiz")
+
+[node name="WallBottom" type="StaticBody2D" parent="World/ArenaWalls" unique_id=1092295047]
+position = Vector2(0, 250)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/ArenaWalls/WallBottom" unique_id=911537329]
+shape = SubResource("wall_horiz")
+
+[node name="WallLeft" type="StaticBody2D" parent="World/ArenaWalls" unique_id=555323716]
+position = Vector2(-400, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/ArenaWalls/WallLeft" unique_id=2120435111]
+shape = SubResource("wall_vert")
+
+[node name="WallRight" type="StaticBody2D" parent="World/ArenaWalls" unique_id=2143388057]
+position = Vector2(400, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/ArenaWalls/WallRight" unique_id=1500468544]
+shape = SubResource("wall_vert")
+
+[node name="Background" type="Polygon2D" parent="World" unique_id=778566060]
+color = Color(0.12, 0.12, 0.14, 1)
+polygon = PackedVector2Array(-400, -250, 400, -250, 400, 250, -400, 250)
+
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=1270439915]
+zoom = Vector2(1.5, 1.5)
+script = ExtResource("9_camera")
+
+[node name="DroneManager" type="Node" parent="World" unique_id=2136447624]
+script = ExtResource("8_drone_mgr")
+initial_active_drones = 1
+drone_scene = ExtResource("7_droid")

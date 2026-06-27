@@ -8,5 +8,8 @@ process_mode = 1
 position = Vector2(33, 93)
 script = ExtResource("1_8j6p3")
 
+[node name="OperatorSpawn" type="Marker2D" parent="." unique_id=882317614]
+position = Vector2(1456, 2032)
+
 [node name="AmbientShrumb" parent="." unique_id=1301915438 instance=ExtResource("2_1jux3")]
 position = Vector2(1428, 720)

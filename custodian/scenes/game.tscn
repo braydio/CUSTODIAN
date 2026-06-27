@@ -399,10 +399,10 @@ text = "EQUIP CARBINE"
 
 [node name="AmmoLabel" type="Label" parent="UI" unique_id=1735120534]
 offset_left = 20.0
-offset_top = 248.0
-offset_right = 360.0
-offset_bottom = 272.0
-text = "AMMO: 0/0 +0"
+offset_top = 68.0
+offset_right = 300.0
+offset_bottom = 92.0
+text = "CARBINE  MAG 0/0  RES 0"
 
 [node name="CooldownBar" type="ProgressBar" parent="UI" unique_id=129306331]
 offset_left = 20.0
