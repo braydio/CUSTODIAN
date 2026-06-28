@@ -4,6 +4,8 @@ const OUT_SCENE := "res://scenes/levels/sundered_keep/sundered_keep_approach_blo
 const CAMERA_DIRECTOR_SCRIPT := "res://scripts/levels/sundered_keep/overlook_camera_director.gd"
 const OPERATOR_SCENE := "res://game/actors/operator/operator.tscn"
 
+const BG := "res://content/backgrounds/sundered_keep/"
+
 func _init() -> void:
 	var root := Node2D.new()
 	root.name = "SunderedKeepApproach"
@@ -84,215 +86,113 @@ func _init() -> void:
 	quit()
 
 
+# ---------------------------------------------------------------------------
+# UnderlayRoot — always-visible ocean, cliff depth, atmospheric fog
+# ---------------------------------------------------------------------------
 func _build_underlay(parent: Node2D, owner: Node) -> void:
-	var ocean := _poly(
-		"OceanUnderlay",
-		PackedVector2Array([
-			Vector2(-900, -700),
-			Vector2(1200, -700),
-			Vector2(1200, 700),
-			Vector2(-900, 700),
-		]),
-		Color(0.03, 0.07, 0.08, 1.0)
-	)
-	parent.add_child(ocean)
-	ocean.owner = owner
+	_sprite_rect(parent, owner, "OceanUnderlay",
+		BG + "ocean_underlay.png",
+		Rect2(-900, -700, 2100, 1400), 0)
 
-	var abyss := _poly(
-		"CliffDepthUnderlay",
-		PackedVector2Array([
-			Vector2(-500, -440),
-			Vector2(780, -380),
-			Vector2(680, 520),
-			Vector2(-420, 560),
-		]),
-		Color(0.06, 0.055, 0.045, 1.0)
-	)
-	parent.add_child(abyss)
-	abyss.owner = owner
+	_sprite_rect(parent, owner, "CliffDepthUnderlay",
+		BG + "cliff_depth_underlay.png",
+		Rect2(-500, -440, 520, 540), 1)
 
-	var fog := _poly(
-		"FogUnderlay",
-		PackedVector2Array([
-			Vector2(-900, -620),
-			Vector2(1200, -620),
-			Vector2(1200, -260),
-			Vector2(-900, -260),
-		]),
-		Color(0.25, 0.30, 0.32, 0.22)
-	)
-	parent.add_child(fog)
-	fog.owner = owner
+	_sprite_rect(parent, owner, "FogUnderlay",
+		BG + "approach/playable/underlay_fog_band.png",
+		Rect2(-900, -620, 2172, 724), 2)
 
 
+# ---------------------------------------------------------------------------
+# PlayableRoot — walkable path Sprite2D + collision StaticBody2D polygons
+# ---------------------------------------------------------------------------
 func _build_playable(parent: Node2D, owner: Node) -> void:
-	var mainland := _poly(
-		"MainlandApproachPath",
+	# Visual path sprites — replace old Polygon2D placeholders with authored art
+	_sprite_rect(parent, owner, "MainlandApproachPath",
+		BG + "approach/playable/mainland_approach_path.png",
+		Rect2(-300, 120, 470, 400), 0)
+
+	_sprite_rect(parent, owner, "HillClimbPath",
+		BG + "approach/playable/hill_climb_path.png",
+		Rect2(-190, -120, 400, 240), 1)
+
+	_sprite_rect(parent, owner, "OverlookLedge",
+		BG + "approach/playable/overlook_ledge.png",
+		Rect2(-320, -320, 640, 240), 2)
+
+	_sprite_rect(parent, owner, "LateralTraversePath",
+		BG + "approach/playable/lateral_traverse_path.png",
+		Rect2(260, -260, 520, 180), 3)
+
+	# FortressWallMass — authored art exists (360×380)
+	_sprite_rect(parent, owner, "FortressWallMass",
+		BG + "approach/playable/fortress_wall_mass.png",
+		Rect2(650, -420, 360, 380), 10)
+
+	# Collision polygons — unchanged from original, kept as StaticBody2D only
+	_add_collision_polygon(parent, owner, "PlayableCollision_Mainland",
 		PackedVector2Array([
-			Vector2(-280, 520),
-			Vector2(80, 520),
-			Vector2(170, 280),
-			Vector2(80, 120),
-			Vector2(-140, 120),
-			Vector2(-300, 300),
-		]),
-		Color(0.22, 0.19, 0.12, 1.0)
-	)
-	parent.add_child(mainland)
-	mainland.owner = owner
+			Vector2(-280, 520), Vector2(80, 520), Vector2(170, 280),
+			Vector2(80, 120), Vector2(-140, 120), Vector2(-300, 300),
+		]), Vector2.ZERO)
 
-	var hill := _poly(
-		"HillClimbPath",
+	_add_collision_polygon(parent, owner, "PlayableCollision_Hill",
 		PackedVector2Array([
-			Vector2(-140, 120),
-			Vector2(130, 120),
-			Vector2(210, -120),
-			Vector2(-190, -120),
-		]),
-		Color(0.25, 0.22, 0.15, 1.0)
-	)
-	parent.add_child(hill)
-	hill.owner = owner
+			Vector2(-140, 120), Vector2(130, 120), Vector2(210, -120), Vector2(-190, -120),
+		]), Vector2.ZERO)
 
-	var overlook := _poly(
-		"OverlookLedge",
+	_add_collision_polygon(parent, owner, "PlayableCollision_Overlook",
 		PackedVector2Array([
-			Vector2(-260, -120),
-			Vector2(280, -120),
-			Vector2(320, -320),
-			Vector2(-320, -320),
-		]),
-		Color(0.20, 0.18, 0.13, 1.0)
-	)
-	parent.add_child(overlook)
-	overlook.owner = owner
+			Vector2(-260, -120), Vector2(280, -120), Vector2(320, -320), Vector2(-320, -320),
+		]), Vector2.ZERO)
 
-	var lateral := _poly(
-		"LateralTraversePath",
+	_add_collision_polygon(parent, owner, "PlayableCollision_Lateral",
 		PackedVector2Array([
-			Vector2(260, -260),
-			Vector2(780, -260),
-			Vector2(780, -80),
-			Vector2(300, -80),
-		]),
-		Color(0.19, 0.17, 0.12, 1.0)
-	)
-	parent.add_child(lateral)
-	lateral.owner = owner
-
-	var wall := _poly(
-		"FortressWallMass",
-		PackedVector2Array([
-			Vector2(650, -420),
-			Vector2(1000, -420),
-			Vector2(1000, -40),
-			Vector2(760, -40),
-			Vector2(760, -250),
-			Vector2(650, -250),
-		]),
-		Color(0.13, 0.13, 0.13, 1.0)
-	)
-	parent.add_child(wall)
-	wall.owner = owner
-
-	_add_collision_polygon(parent, owner, "PlayableCollision_Mainland", mainland.polygon, mainland.position)
-	_add_collision_polygon(parent, owner, "PlayableCollision_Hill", hill.polygon, hill.position)
-	_add_collision_polygon(parent, owner, "PlayableCollision_Overlook", overlook.polygon, overlook.position)
-	_add_collision_polygon(parent, owner, "PlayableCollision_Lateral", lateral.polygon, lateral.position)
+			Vector2(260, -260), Vector2(780, -260), Vector2(780, -80), Vector2(300, -80),
+		]), Vector2.ZERO)
 
 
+# ---------------------------------------------------------------------------
+# VistaRoot — horizon layers, alpha-faded by director.modulate
+# ---------------------------------------------------------------------------
 func _build_vista(parent: Node2D, owner: Node) -> void:
 	parent.modulate.a = 0.0
 
-	var sky := _poly(
-		"HorizonSky",
-		PackedVector2Array([
-			Vector2(-900, -700),
-			Vector2(1200, -700),
-			Vector2(1200, -320),
-			Vector2(-900, -320),
-		]),
-		Color(0.06, 0.075, 0.09, 1.0)
-	)
-	parent.add_child(sky)
-	sky.owner = owner
+	_sprite_rect(parent, owner, "HorizonSky",
+		BG + "horizon_sky.png",
+		Rect2(-900, -700, 2100, 380), 0)
 
-	var sea := _poly(
-		"FarSea",
-		PackedVector2Array([
-			Vector2(-900, -520),
-			Vector2(1200, -520),
-			Vector2(1200, -260),
-			Vector2(-900, -260),
-		]),
-		Color(0.025, 0.06, 0.07, 1.0)
-	)
-	parent.add_child(sea)
-	sea.owner = owner
+	_sprite_rect(parent, owner, "FarSea",
+		BG + "far_sea.png",
+		Rect2(-900, -520, 2100, 260), 1)
 
-	var keep := _poly(
-		"DistantSunderedKeep",
-		PackedVector2Array([
-			Vector2(-220, -510),
-			Vector2(-120, -610),
-			Vector2(-20, -560),
-			Vector2(40, -670),
-			Vector2(130, -550),
-			Vector2(260, -500),
-			Vector2(280, -420),
-			Vector2(-260, -420),
-		]),
-		Color(0.035, 0.035, 0.04, 1.0)
-	)
-	parent.add_child(keep)
-	keep.owner = owner
+	_sprite_rect(parent, owner, "DistantSunderedKeep",
+		BG + "distant_sundered_keep.png",
+		Rect2(-260, -670, 540, 250), 2)
 
-	var fog := _poly(
-		"VistaFogBand",
-		PackedVector2Array([
-			Vector2(-900, -380),
-			Vector2(1200, -380),
-			Vector2(1200, -220),
-			Vector2(-900, -220),
-		]),
-		Color(0.32, 0.36, 0.38, 0.45)
-	)
-	parent.add_child(fog)
-	fog.owner = owner
+	_sprite_rect(parent, owner, "VistaFogBand",
+		BG + "vista_fog_band.png",
+		Rect2(-900, -380, 2100, 160), 3)
 
 
+# ---------------------------------------------------------------------------
+# OcclusionRoot — cliff/wall blockers, alpha-faded by director.modulate
+# ---------------------------------------------------------------------------
 func _build_occlusion(parent: Node2D, owner: Node) -> void:
 	parent.modulate.a = 0.0
 
-	var cliff_wall := _poly(
-		"CliffOccluder",
-		PackedVector2Array([
-			Vector2(520, -420),
-			Vector2(1040, -420),
-			Vector2(1040, 120),
-			Vector2(700, 120),
-			Vector2(660, -120),
-			Vector2(520, -120),
-		]),
-		Color(0.045, 0.04, 0.035, 1.0)
-	)
-	parent.add_child(cliff_wall)
-	cliff_wall.owner = owner
+	_sprite_rect(parent, owner, "CliffOccluder",
+		BG + "approach/playable/cliff_occluder.png",
+		Rect2(520, -420, 520, 540), 0)
 
-	var upper_shadow := _poly(
-		"WallShadowOccluder",
-		PackedVector2Array([
-			Vector2(-900, -360),
-			Vector2(1200, -360),
-			Vector2(1200, -230),
-			Vector2(-900, -230),
-		]),
-		Color(0.01, 0.01, 0.012, 0.85)
-	)
-	parent.add_child(upper_shadow)
-	upper_shadow.owner = owner
+	_sprite_rect(parent, owner, "WallShadowOccluder",
+		BG + "approach/playable/wall_shadow_occluder.png",
+		Rect2(-900, -360, 2100, 130), 1)
 
 
+# ---------------------------------------------------------------------------
+# Markers — Marker2D waypoints for the camera director
+# ---------------------------------------------------------------------------
 func _build_markers(parent: Node2D, owner: Node) -> void:
 	_marker(parent, owner, "MainlandStart", Vector2(-80, 430))
 	_marker(parent, owner, "RevealStart", Vector2(-40, 80))
@@ -302,6 +202,9 @@ func _build_markers(parent: Node2D, owner: Node) -> void:
 	_marker(parent, owner, "ReturnTopdown", Vector2(720, -80))
 
 
+# ---------------------------------------------------------------------------
+# Director wiring — connects exports to scene nodes
+# ---------------------------------------------------------------------------
 func _wire_director(director: Node, root: Node2D) -> void:
 	var markers := root.get_node("Markers")
 
@@ -317,6 +220,36 @@ func _wire_director(director: Node, root: Node2D) -> void:
 	director.set("fog_band", root.get_node("VistaRoot/VistaFogBand"))
 
 	director.set("player", root.get_node("Operator"))
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+func _sprite_rect(
+	parent: Node2D, owner: Node,
+	name: String, texture_path: String,
+	rect: Rect2, z_index := 0
+) -> Sprite2D:
+	var sprite := Sprite2D.new()
+	sprite.name = name
+	sprite.centered = false
+	sprite.position = rect.position
+	sprite.z_index = z_index
+
+	var texture := load(texture_path) as Texture2D
+	if texture == null:
+		push_warning("[SunderedKeepApproach] Missing texture for %s: %s" % [name, texture_path])
+	else:
+		sprite.texture = texture
+		var actual := Vector2i(texture.get_width(), texture.get_height())
+		var expected := Vector2i(int(rect.size.x), int(rect.size.y))
+		if actual != expected:
+			push_warning("[SunderedKeepApproach] Size mismatch for %s: expected %s, actual %s" \
+				% [name, str(expected), str(actual)])
+
+	parent.add_child(sprite)
+	sprite.owner = owner
+	return sprite
 
 
 func _poly(name: String, points: PackedVector2Array, color: Color) -> Polygon2D:
@@ -336,7 +269,10 @@ func _marker(parent: Node2D, owner: Node, name: String, pos: Vector2) -> Marker2
 	return m
 
 
-func _add_collision_polygon(parent: Node2D, owner: Node, name: String, points: PackedVector2Array, pos: Vector2) -> void:
+func _add_collision_polygon(
+	parent: Node2D, owner: Node,
+	name: String, points: PackedVector2Array, pos: Vector2
+) -> void:
 	var body := StaticBody2D.new()
 	body.name = name
 	body.position = pos
