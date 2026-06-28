@@ -1,0 +1,131 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://game/world/approaches/sundered_keep/sundered_keep_approach.gd" id="1_approach"]
+[ext_resource type="Script" path="res://game/world/approaches/sundered_keep/sundered_keep_vista_controller.gd" id="2_vista"]
+[ext_resource type="Script" path="res://game/world/approaches/sundered_keep/sundered_keep_transition_trigger.gd" id="3_trigger"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/return_causeway/path/mainland_approach_path.png" id="4_mainland"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/return_causeway/path/hill_climb_path.png" id="5_hill"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/return_causeway/path/overlook_ledge.png" id="6_ledge"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/return_causeway/path/lateral_traverse_path.png" id="7_lateral"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/return_causeway/path/fortress_wall_mass.png" id="8_wall"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/return_causeway/occlusion/cliff_occluder.png" id="9_cliff"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/return_causeway/occlusion/wall_shadow_occluder.png" id="10_shadow"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/return_causeway/underlay/underlay_fog_band.png" id="11_fog"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/distant_sundered_keep.png" id="12_keep"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_exit"]
+size = Vector2(144, 190)
+
+[node name="SunderedKeepApproach" type="Node2D"]
+script = ExtResource("1_approach")
+
+[node name="EntrySpawn" type="Marker2D" parent="."]
+position = Vector2(-80, 430)
+
+[node name="ProgressStart" type="Marker2D" parent="."]
+position = Vector2(-40, 80)
+
+[node name="ProgressEnd" type="Marker2D" parent="."]
+position = Vector2(760, -170)
+
+[node name="VistaUnderlay" type="Node2D" parent="."]
+z_index = -300
+z_as_relative = false
+
+[node name="DistantKeepProxy" type="Sprite2D" parent="VistaUnderlay"]
+position = Vector2(-260, -670)
+texture = ExtResource("12_keep")
+centered = false
+
+[node name="UnderlayFogBand" type="Sprite2D" parent="VistaUnderlay"]
+z_index = 1
+position = Vector2(-900, -620)
+texture = ExtResource("11_fog")
+centered = false
+
+[node name="PathSprites" type="Node2D" parent="."]
+z_as_relative = false
+
+[node name="MainlandApproachPath" type="Sprite2D" parent="PathSprites"]
+position = Vector2(-300, 120)
+texture = ExtResource("4_mainland")
+centered = false
+
+[node name="HillClimbPath" type="Sprite2D" parent="PathSprites"]
+z_index = 1
+position = Vector2(-190, -120)
+texture = ExtResource("5_hill")
+centered = false
+
+[node name="OverlookLedge" type="Sprite2D" parent="PathSprites"]
+z_index = 2
+position = Vector2(-320, -320)
+texture = ExtResource("6_ledge")
+centered = false
+
+[node name="LateralTraversePath" type="Sprite2D" parent="PathSprites"]
+z_index = 3
+position = Vector2(260, -260)
+texture = ExtResource("7_lateral")
+centered = false
+
+[node name="FortressWallMass" type="Sprite2D" parent="PathSprites"]
+z_index = 10
+position = Vector2(650, -420)
+texture = ExtResource("8_wall")
+centered = false
+
+[node name="Occlusion" type="Node2D" parent="."]
+z_index = 100
+z_as_relative = false
+
+[node name="CliffOccluder" type="Sprite2D" parent="Occlusion"]
+position = Vector2(520, -420)
+texture = ExtResource("9_cliff")
+centered = false
+
+[node name="WallShadowOccluder" type="Sprite2D" parent="Occlusion"]
+z_index = 1
+position = Vector2(-900, -360)
+texture = ExtResource("10_shadow")
+centered = false
+
+[node name="Collision" type="Node2D" parent="."]
+
+[node name="PlayableCollision_Mainland" type="StaticBody2D" parent="Collision"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Collision/PlayableCollision_Mainland"]
+polygon = PackedVector2Array(-280, 520, 80, 520, 170, 280, 80, 120, -140, 120, -300, 300)
+
+[node name="PlayableCollision_Hill" type="StaticBody2D" parent="Collision"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Collision/PlayableCollision_Hill"]
+polygon = PackedVector2Array(-140, 120, 130, 120, 210, -120, -190, -120)
+
+[node name="PlayableCollision_Overlook" type="StaticBody2D" parent="Collision"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Collision/PlayableCollision_Overlook"]
+polygon = PackedVector2Array(-260, -120, 280, -120, 320, -320, -320, -320)
+
+[node name="PlayableCollision_Lateral" type="StaticBody2D" parent="Collision"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Collision/PlayableCollision_Lateral"]
+polygon = PackedVector2Array(260, -260, 780, -260, 780, -80, 300, -80)
+
+[node name="VistaController" type="Node" parent="." node_paths=PackedStringArray("start_marker_path", "end_marker_path", "cliff_occluder_path", "wall_shadow_occluder_path", "underlay_fog_path", "distant_keep_path")]
+script = ExtResource("2_vista")
+start_marker_path = NodePath("../ProgressStart")
+end_marker_path = NodePath("../ProgressEnd")
+cliff_occluder_path = NodePath("../Occlusion/CliffOccluder")
+wall_shadow_occluder_path = NodePath("../Occlusion/WallShadowOccluder")
+underlay_fog_path = NodePath("../VistaUnderlay/UnderlayFogBand")
+distant_keep_path = NodePath("../VistaUnderlay/DistantKeepProxy")
+
+[node name="ExitTransitionTrigger" type="Area2D" parent="." node_paths=PackedStringArray("vista_controller_path")]
+position = Vector2(760, -170)
+script = ExtResource("3_trigger")
+target_scene_path = "res://game/world/sundered_keep/sundered_keep_map.gd"
+vista_controller_path = NodePath("../VistaController")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitTransitionTrigger"]
+shape = SubResource("RectangleShape2D_exit")

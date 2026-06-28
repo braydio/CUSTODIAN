@@ -3,9 +3,9 @@
 Read `custodian/AGENTS.md` first.
 Then read `CURRENT_STATE.md`, `FILE_INDEX.md`, any relevant existing task packet, and the linked design doc.
 
-## Task
+## Task: {{change_or_diff_scope}}
 
-Review this runtime change: **[change_or_diff_scope]**
+Review this runtime change: {{change_or_diff_scope}}
 
 ## Review Priority
 

@@ -4,15 +4,16 @@ class_name ReturnCausewayLayout
 
 
 # ------------------------------------------------------------------------------
-# Return Causeway Prologue Level — Procedural Tilemap Builder
+# Return Causeway legacy standalone/reference approach — Procedural Tilemap Builder
 #
 # Builds the player's arrival approach to Sundered Keep as an authored
 # vertical slice: Arrival Beach → Return Mooring → Broken Causeway →
 # Shore Path / Buried Terminal → Intact Causeway → Gatehouse Threshold →
 # Outer Keep Yard → Transition to Sundered Keep Main Map.
 #
-# Architecture follows the same patterns as SunderedKeepMap but is a
-# self-contained prologue that does not require the siege/HUD system.
+# Architecture follows the same patterns as SunderedKeepMap but remains a
+# self-contained fallback/reference. The active procgen ingress bridge uses
+# game/world/approaches/sundered_keep/ for the reveal/fade approach.
 # ------------------------------------------------------------------------------
 
 # -- Constants ---------------------------------------------------------------

@@ -3,8 +3,8 @@
 Read `custodian/AGENTS.md` first.
 Then read `CURRENT_STATE.md`, `FILE_INDEX.md`, and the linked design doc.
 
-## Task
-Tune combat feel for: **[weapon_type or enemy_type]**
+## Task: {{weapon_or_enemy_type}}
+Tune combat feel for: {{weapon_or_enemy_type}}
 
 ## Rules
 - Preserve deterministic fixed-step simulation.

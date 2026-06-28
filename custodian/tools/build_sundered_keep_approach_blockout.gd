@@ -12,21 +12,25 @@ func _init() -> void:
 
 	var underlay_root := Node2D.new()
 	underlay_root.name = "UnderlayRoot"
+	_set_absolute_z(underlay_root, -300)
 	root.add_child(underlay_root)
 	underlay_root.owner = root
 
 	var playable_root := Node2D.new()
 	playable_root.name = "PlayableRoot"
+	_set_absolute_z(playable_root, 0)
 	root.add_child(playable_root)
 	playable_root.owner = root
 
 	var vista_root := Node2D.new()
 	vista_root.name = "VistaRoot"
+	_set_absolute_z(vista_root, -200)
 	root.add_child(vista_root)
 	vista_root.owner = root
 
 	var occlusion_root := Node2D.new()
 	occlusion_root.name = "OcclusionRoot"
+	_set_absolute_z(occlusion_root, 100)
 	root.add_child(occlusion_root)
 	occlusion_root.owner = root
 
@@ -46,6 +50,7 @@ func _init() -> void:
 		var op := operator_packed.instantiate() as Node2D
 		op.name = "Operator"
 		op.position = markers.get_node("MainlandStart").position
+		_set_absolute_z(op, 50)
 		root.add_child(op)
 		op.owner = root
 
@@ -252,12 +257,9 @@ func _sprite_rect(
 	return sprite
 
 
-func _poly(name: String, points: PackedVector2Array, color: Color) -> Polygon2D:
-	var p := Polygon2D.new()
-	p.name = name
-	p.polygon = points
-	p.color = color
-	return p
+func _set_absolute_z(node: CanvasItem, z_index: int) -> void:
+	node.z_index = z_index
+	node.z_as_relative = false
 
 
 func _marker(parent: Node2D, owner: Node, name: String, pos: Vector2) -> Marker2D:

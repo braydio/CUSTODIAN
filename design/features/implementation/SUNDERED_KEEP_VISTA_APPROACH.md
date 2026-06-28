@@ -1,6 +1,6 @@
 # Sundered Keep Vista Approach
 
-- **Status:** complete (all 8 phases)
+- **Status:** complete and smoke-validated (all 8 phases)
 - **Owner:** rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Generator:** `custodian/tools/build_sundered_keep_approach_blockout.gd`
@@ -11,7 +11,17 @@
 
 A visual-only camera/composition sequence for the Sundered Keep approach. The player enters from mainland top-down, climbs a hill as the horizon reveals the Sundered Keep vista, traverses laterally along a cliff face (occluding the vista), then returns to normal top-down play.
 
-**Hard constraint:** Rendering/camera only. No collision, navigation, combat, enemy AI, or deterministic simulation state. Collision stays on existing `StaticBody2D` + `CollisionPolygon2D` polygons. All visual Polygon2D placeholders must be replaced with Sprite2D assets; polygons remain as collision authority only.
+**Hard constraint:** Rendering/camera only. No navigation, combat, enemy AI, or deterministic simulation state. Collision stays on existing `StaticBody2D` + `CollisionPolygon2D` polygons. Runtime visuals are authored `Sprite2D` matte/terrain assets; polygons remain as collision authority only.
+
+## Runtime Ingress Chain
+
+Normal contract-world access now routes through:
+
+```
+Procgen world placement -> WorldIngressSite -> authored Sundered Keep approach/vista -> final fade -> SunderedKeepMap
+```
+
+`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` owns the authored reveal/vista/fade approach using the transparent path, underlay, and occlusion Sprite2D assets under `res://content/sprites/world/return_causeway/`. `res://game/world/sundered_keep/sundered_keep_map.gd` remains the real gameplay destination after the fade. The old direct `SunderedKeepTravelGate` path is retained only behind `place_debug_sundered_keep_gateway` for review.
 
 ## Scene Architecture
 
@@ -38,6 +48,8 @@ SunderedKeepApproach
 | Operator | 50 | Player character |
 | OcclusionRoot | 100 | Cliff/wall occluders that hide vista during traverse |
 | Camera/Director | — | No visual concern |
+
+The builder writes these visual roots and the Operator with `z_as_relative=false` so draw order does not depend on scene-tree insertion or inherited z values.
 
 ### Camera states & markers
 
@@ -229,7 +241,7 @@ Verify at each state:
 - [x] All four camera states render correctly when walking the operator through the markers
 - [x] Vista/occlusion/fog alpha transitions are smooth and complete
 - [x] Collision is unchanged — player cannot leave the walkable path
-- [x] Smoke test passes: all Sprite2D nodes exist with non-null textures, director exports are wired
+- [x] Smoke test passes: all Sprite2D nodes exist with non-null textures, root/Operator z-order is absolute, playable collision polygons exist, and director exports are wired
 - [x] Scene regenerates cleanly from builder
 - [x] Scene loads via F6 in-game (debug shortcut)
 
@@ -238,6 +250,7 @@ Verify at each state:
 - **Goal:** All phases complete. No remaining implementation work.
 - **Future opportunities:**
   - In-editor visual review of the approach blockout scene (open `sundered_keep_approach_blockout.tscn` and walk the operator)
+  - In-editor visual review of the procgen ingress -> `sundered_keep_approach.tscn` -> `SunderedKeepMap` flow
+  - Replace the current ingress tile fallback with a specific coast/keep ingress reservation in the procgen intent graph
   - Ensure the approach transitions smoothly back to the main game scene after completion
-  - Connect the approach entrance to the Sundered Keep front-gate area in the world generator
 - **Constraint:** Rendering-only. No collision changes. No combat/nav/AI.

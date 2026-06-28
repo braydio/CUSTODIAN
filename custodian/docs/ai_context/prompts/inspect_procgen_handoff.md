@@ -3,8 +3,8 @@
 Read `custodian/AGENTS.md` first.
 Then read `CURRENT_STATE.md`, `FILE_INDEX.md`, and the linked design doc.
 
-## Task
-Inspect and document the handoff between: **[procgen_system]** → **[target_system]**
+## Task: {{procgen_system}} → {{target_system}}
+Inspect and document the handoff between: {{procgen_system}} → {{target_system}}
 
 ## Rules
 - Preserve deterministic fixed-step simulation.

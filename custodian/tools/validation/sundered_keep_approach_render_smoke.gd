@@ -34,6 +34,13 @@ const MARKER_NAMES := ["MainlandStart", "RevealStart", "RevealFull", "TraverseSt
 
 const COLLISION_BODIES := ["PlayableCollision_Mainland", "PlayableCollision_Hill", "PlayableCollision_Overlook", "PlayableCollision_Lateral"]
 
+const ROOT_Z_ORDER := {
+	UnderlayRoot = -300,
+	VistaRoot = -200,
+	PlayableRoot = 0,
+	OcclusionRoot = 100,
+}
+
 
 func _init() -> void:
 	# Load and instantiate the packed scene
@@ -61,6 +68,11 @@ func _init() -> void:
 	# --- Check all Sprite2D nodes in OcclusionRoot ---
 	_check_sprite_root(scene, "OcclusionRoot", OCCLUSION_SPRITES, errors)
 
+	# --- Check absolute root render ordering ---
+	for root_name: String in ROOT_Z_ORDER:
+		_check_absolute_z(scene, root_name, ROOT_Z_ORDER[root_name] as int, errors)
+		_check_no_polygon2d(scene.get_node_or_null(root_name), root_name, errors)
+
 	# --- Check VistaRoot starts with alpha 0.0 ---
 	var vista_root := scene.get_node_or_null("VistaRoot") as Node2D
 	if vista_root == null:
@@ -79,6 +91,8 @@ func _init() -> void:
 	var operator := scene.get_node_or_null("Operator")
 	if operator == null:
 		errors.append("Operator node missing")
+	elif operator is CanvasItem:
+		_check_absolute_z(scene, "Operator", 50, errors)
 
 	# --- Check Camera exists ---
 	var camera := scene.get_node_or_null("Camera2D") as Camera2D
@@ -133,6 +147,9 @@ func _init() -> void:
 			if exported == null:
 				errors.append("Director export '%s' is null, expected %s" % [export_name, expected_path])
 
+		if operator is Node2D and camera != null and vista_root != null and occlusion_root != null:
+			_check_director_alpha_path(director, operator as Node2D, vista_root, occlusion_root, errors)
+
 	# --- Report ---
 	if errors.is_empty():
 		print("[SunderedKeepApproachRenderSmoke] PASS")
@@ -161,6 +178,51 @@ func _check_sprite_root(parent: Node, root_name: String, expected: Dictionary, e
 		if not node.texture.resource_path.contains(texture_fragment):
 			errors.append("%s/%s texture path does not contain '%s': %s" \
 				% [root_name, sprite_name, texture_fragment, node.texture.resource_path])
+
+
+func _check_absolute_z(parent: Node, node_path: String, expected_z: int, errors: Array[String]) -> void:
+	var node := parent.get_node_or_null(node_path) as CanvasItem
+	if node == null:
+		errors.append("%s missing or not CanvasItem" % node_path)
+		return
+	if node.z_index != expected_z:
+		errors.append("%s.z_index expected %d, got %d" % [node_path, expected_z, node.z_index])
+	if node.z_as_relative:
+		errors.append("%s.z_as_relative expected false" % node_path)
+
+
+func _check_no_polygon2d(node: Node, label: String, errors: Array[String]) -> void:
+	if node == null:
+		return
+	for child: Node in node.get_children():
+		if child is Polygon2D:
+			errors.append("%s contains visual Polygon2D child: %s" % [label, child.name])
+		_check_no_polygon2d(child, "%s/%s" % [label, child.name], errors)
+
+
+func _check_director_alpha_path(
+	director: Node,
+	operator: Node2D,
+	vista_root: CanvasItem,
+	occlusion_root: CanvasItem,
+	errors: Array[String]
+) -> void:
+	operator.global_position = Vector2(0, -250)
+	director.call("_process", 1.0)
+	if vista_root.modulate.a < 0.95:
+		errors.append("Director reveal did not fade vista in; alpha=%s" % vista_root.modulate.a)
+
+	operator.global_position = Vector2(520, -180)
+	director.call("_process", 1.0)
+	if occlusion_root.modulate.a <= 0.0:
+		errors.append("Director traverse did not begin occlusion fade; alpha=%s" % occlusion_root.modulate.a)
+	if vista_root.modulate.a > 0.6:
+		errors.append("Director traverse did not reduce vista alpha; alpha=%s" % vista_root.modulate.a)
+
+	operator.global_position = Vector2(760, -80)
+	director.call("_process", 1.0)
+	if vista_root.modulate.a > 0.05:
+		errors.append("Director return did not fade vista back out; alpha=%s" % vista_root.modulate.a)
 
 
 func _fail(message: String) -> void:

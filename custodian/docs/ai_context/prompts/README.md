@@ -10,6 +10,7 @@ Use these prompts after reading `custodian/AGENTS.md`, the active AI context pac
 - `review_docs_drift.md` - documentation drift review against live runtime files.
 - `update_sprite_pipeline.md` - sprite intake and runtime animation pipeline work.
 - `inspect_procgen_handoff.md` - procgen handoff and integration inspection.
+- `flip_spritesheet_frames.md` - mirror a spritesheet horizontally/vertically using `custodian/tools/art/png_flip_frames.py`.
 - `tune_combat_feel.md` - combat timing/feel tuning review or implementation.
 - `scan_git_commit.md` - git state grouping and commit preparation; requires explicit user approval before staging or committing.
 

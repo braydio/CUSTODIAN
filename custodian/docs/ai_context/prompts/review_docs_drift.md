@@ -3,8 +3,8 @@
 Read `custodian/AGENTS.md` first.
 Then read `CURRENT_STATE.md`, `FILE_INDEX.md`, and the linked design doc.
 
-## Task
-Review documentation for drift against the live runtime in: **[target_system or feature]**
+## Task: {{target_system_or_feature}}
+Review documentation for drift against the live runtime in: {{target_system_or_feature}}
 
 ## Rules
 - Preserve deterministic fixed-step simulation.

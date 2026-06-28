@@ -3,8 +3,8 @@
 Read `custodian/AGENTS.md` first.
 Then read `CURRENT_STATE.md`, `FILE_INDEX.md`, and the linked design doc.
 
-## Task
-Implement the next slice of: **[feature_name]**
+## Task: {{feature_name}}
+Implement the next slice of: {{feature_name}}
 
 ## Rules
 - Preserve deterministic fixed-step simulation.

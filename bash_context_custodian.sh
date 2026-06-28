@@ -1,6 +1,4 @@
-export CUSTODIAN_REPO="$HOME/Projects/CUSTODIAN"
-export CUSTODIAN_GODOT="$HOME/Projects/CUSTODIAN/custodian"
-
-alias croot='cd "$CUSTODIAN_REPO"'
-alias cgodot='cd "$CUSTODIAN_GODOT"'
-alias cpack='$CUSTODIAN_REPO/scripts/ai/pack-context.sh'
+# DEPRECATED — use tools/custodian_aliases.sh instead.
+#
+# Source the canonical aliases file:
+source "${HOME}/Projects/CUSTODIAN/tools/custodian_aliases.sh"

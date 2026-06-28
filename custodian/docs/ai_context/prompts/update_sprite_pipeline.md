@@ -3,8 +3,8 @@
 Read `custodian/AGENTS.md` first.
 Then read `CURRENT_STATE.md`, `FILE_INDEX.md`, and the linked design doc.
 
-## Task
-Update the sprite pipeline for: **[target_actor or system]**
+## Task: {{target_actor_or_system}}
+Update the sprite pipeline for: {{target_actor_or_system}}
 
 ## Rules
 - Preserve deterministic fixed-step simulation.

@@ -42,6 +42,9 @@ const RESOURCE_NODE_SCENE := preload("res://game/resources/resource_node.tscn")
 const GOTHIC_COMPOUND_MAP_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_map.gd")
 const GOTHIC_COMPOUND_TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_travel_gate.gd")
 const SUNDERED_KEEP_MAP_SCRIPT := preload("res://game/world/sundered_keep/sundered_keep_map.gd")
+const WORLD_INGRESS_SITE_SCRIPT := preload("res://game/world/procgen/ingress/world_ingress_site.gd")
+const SUNDERED_KEEP_APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
+const SUNDERED_KEEP_TARGET_SCENE_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
 const SECTOR_TILE_PX := 24.0
 const PROCGEN_SECTOR_LAYOUT := {
 	"ARCHIVE": 0,
@@ -875,36 +878,47 @@ func _place_sundered_keep_connection(level_data: Dictionary, map_instance: Node)
 		if child.is_in_group("generated_sundered_keep_connection") and child.get_parent() == world:
 			child.queue_free()
 
-	var main_gate_tile := _pick_sundered_keep_gate_tile(level_data, map_instance)
-	if main_gate_tile == Vector2i.ZERO:
+	var ingress_tile := _pick_sundered_keep_gate_tile(level_data, map_instance)
+	if ingress_tile == Vector2i.ZERO:
 		return
-	var main_gate_position := _tile_to_world(map_instance, main_gate_tile)
+	var ingress_position := _tile_to_world(map_instance, ingress_tile)
 
-	var keep_map := SUNDERED_KEEP_MAP_SCRIPT.new() as Node2D
-	if keep_map == null:
+	var ingress := WORLD_INGRESS_SITE_SCRIPT.new() as Area2D
+	if ingress == null:
 		return
-	keep_map.name = "SunderedKeepMap"
-	keep_map.add_to_group("generated_sundered_keep_connection")
-	keep_map.global_position = _get_sundered_keep_world_offset(level_data, map_instance)
-	keep_map.call("configure_connection", map_instance, main_gate_position)
-	connected_root.add_child(keep_map)
-
-	var main_gate := GOTHIC_COMPOUND_TRAVEL_GATE_SCRIPT.new() as Node2D
-	if main_gate == null:
-		return
-	main_gate.name = "SunderedKeepTravelGate"
-	main_gate.add_to_group("generated_sundered_keep_connection")
-	main_gate.call("configure", keep_map, 0, "ENTER SUNDERED KEEP")
-	main_gate.global_position = main_gate_position
-	world.add_child(main_gate)
+	ingress.name = "SunderedKeepIngressSite"
+	ingress.add_to_group("generated_sundered_keep_connection")
+	ingress.call("configure", &"sundered_keep", SUNDERED_KEEP_APPROACH_SCENE, SUNDERED_KEEP_TARGET_SCENE_PATH, &"")
+	ingress.set("prompt_text", "APPROACH SUNDERED KEEP")
+	ingress.global_position = ingress_position
+	world.add_child(ingress)
 
 	if place_debug_sundered_keep_gateway:
-		_place_debug_sundered_keep_gateway(world, keep_map, level_data, map_instance, main_gate_tile)
+		var keep_map := _create_debug_sundered_keep_map(connected_root, level_data, map_instance, ingress_position)
+		if keep_map != null:
+			_place_debug_sundered_keep_gateway(world, keep_map, level_data, map_instance, ingress_tile)
 
 	if debug_start_near_sundered_keep_entrance:
 		var operator := get_node_or_null(operator_path) as Node2D
 		if operator != null:
-			operator.global_position = main_gate.global_position + debug_sundered_keep_start_offset
+			operator.global_position = ingress.global_position + debug_sundered_keep_start_offset
+
+
+func _create_debug_sundered_keep_map(
+	connected_root: Node2D,
+	level_data: Dictionary,
+	map_instance: Node,
+	return_position: Vector2
+) -> Node2D:
+	var keep_map := SUNDERED_KEEP_MAP_SCRIPT.new() as Node2D
+	if keep_map == null:
+		return null
+	keep_map.name = "SunderedKeepMap"
+	keep_map.add_to_group("generated_sundered_keep_connection")
+	keep_map.global_position = _get_sundered_keep_world_offset(level_data, map_instance)
+	keep_map.call("configure_connection", map_instance, return_position)
+	connected_root.add_child(keep_map)
+	return keep_map
 
 
 func _place_debug_sundered_keep_gateway(

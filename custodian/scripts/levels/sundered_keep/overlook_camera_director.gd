@@ -94,6 +94,12 @@ func _get_state_from_player_position() -> ViewState:
 
 	# Assumption: this approach flows upward/north first, then laterally east.
 	# In Godot 2D, lower Y is north/up.
+	if p.x >= return_topdown_marker.global_position.x:
+		return ViewState.RETURN_TOPDOWN
+
+	if p.x >= traverse_start_marker.global_position.x and p.x < traverse_end_marker.global_position.x:
+		return ViewState.LATERAL_TRAVERSE
+
 	if p.y > reveal_start_marker.global_position.y:
 		return ViewState.MAINLAND_TOPDOWN
 
@@ -102,12 +108,6 @@ func _get_state_from_player_position() -> ViewState:
 
 	if p.y <= reveal_full_marker.global_position.y and p.x < traverse_start_marker.global_position.x:
 		return ViewState.OVERLOOK_VISTA
-
-	if p.x >= traverse_start_marker.global_position.x and p.x < traverse_end_marker.global_position.x:
-		return ViewState.LATERAL_TRAVERSE
-
-	if p.x >= return_topdown_marker.global_position.x:
-		return ViewState.RETURN_TOPDOWN
 
 	return state
 

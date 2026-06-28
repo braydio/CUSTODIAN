@@ -1,47 +1,61 @@
-clear
+# ── Custodian Aliases & Commands ──────────────────────────────────────────
+#
+# Source this file from your .bashrc / .zshrc:
+#   source "$HOME/Projects/CUSTODIAN/tools/custodian_aliases.sh"
+#
+# Project root variables ──────────────────────────────────────────────────
+export CUSTODIAN_REPO="${HOME}/Projects/CUSTODIAN"
+export CUSTODIAN_GODOT="${CUSTODIAN_REPO}/custodian"
 
-# ── Project root variable (change once if location moves) ──────────────
-export CUSTODIAN_DIR="/home/braydenchaffee/Projects/CUSTODIAN/custodian"
+# Quick navigation ────────────────────────────────────────────────────────
+alias croot='cd "${CUSTODIAN_REPO}"'
+alias cgodot='cd "${CUSTODIAN_GODOT}"'
+alias cpack='"${CUSTODIAN_REPO}/scripts/ai/pack-context.sh"'
 
-# ── Usage log helper ───────────────────────────────────────────────────
+# Usage log helper ────────────────────────────────────────────────────────
 _update_usage() {
   local name="$1"
   local usage_file="${HOME}/.custodian_alias_usage.log"
   echo "$(date '+%Y-%m-%d %H:%M:%S') - ${name}" >>"${usage_file}"
 }
 
-# ── Commands ───────────────────────────────────────────────────────────
+# Commands ────────────────────────────────────────────────────────────────
 
-# -- Show the Custodian outline color guide
+# -- Show the Custodian operator color guide
 opcolor() {
-  bat "${CUSTODIAN_DIR}/OPERATOR_COLOR.md"
+  bat "${CUSTODIAN_GODOT}/OPERATOR_COLOR.MD"
 }
 
-# Generate json sidecars if needed (dry run)
+# -- Generate JSON sidecar manifests (dry run — preview only)
 dryjson() {
   _update_usage "dryjson"
-  python "${CUSTODIAN_DIR}/tools/pipelines/generate_inbox_manifests.py" --dry-run
+  python "${CUSTODIAN_GODOT}/tools/pipelines/generate_inbox_manifests.py" --dry-run
 }
 
-# Generate json sidecars if needed (live)
+# -- Generate JSON sidecar manifests (live — writes files)
 runjson() {
   _update_usage "runjson"
-  python "${CUSTODIAN_DIR}/tools/pipelines/generate_inbox_manifests.py"
+  python "${CUSTODIAN_GODOT}/tools/pipelines/generate_inbox_manifests.py"
 }
 
-# Run sprite ingest pipeline
+# -- Run sprite ingest pipeline
 runsprite() {
   _update_usage "runsprite"
-  python "${CUSTODIAN_DIR}/tools/pipelines/ingest.py"
+  python "${CUSTODIAN_GODOT}/tools/pipelines/ingest.py"
 }
 
-# List current assets in sprite pipeline inbox
+# -- List current assets in sprite pipeline inbox
 listbox() {
   _update_usage "listbox"
-  eza "${CUSTODIAN_DIR}/content/sprites/_pipeline/inbox"
+  eza "${CUSTODIAN_GODOT}/content/sprites/_pipeline/inbox"
 }
 
-# ── Usage tally ───────────────────────────────────────────────────────
+# -- Run the prompt menu interactively
+promptmenu() {
+  bash "${CUSTODIAN_REPO}/scripts/prompt-menu.sh"
+}
+
+# Usage tally ─────────────────────────────────────────────────────────────
 alias_usage() {
   local usage_file="${HOME}/.custodian_alias_usage.log"
   if [[ ! -f "$usage_file" ]]; then
@@ -49,14 +63,14 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite listbox; do
+  for cmd in dryjson runjson runsprite listbox opcolor promptmenu; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
-    printf "  %-12s %d\n" "$cmd:" "$count"
+    printf "  %-12s %d\n" "${cmd}:" "${count}"
   done
   echo "---"
-  echo "Total: $(wc -l <"$usage_file") invocations"
+  echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "Custodian Commands: dryjson, runjson, runsprite, listbox"
-echo "Type 'alias_usage' to see how many times you've used each."
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, listbox, promptmenu"
+echo "  Type 'alias_usage' for usage counts."
