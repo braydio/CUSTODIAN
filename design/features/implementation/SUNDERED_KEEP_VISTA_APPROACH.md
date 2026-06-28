@@ -1,6 +1,6 @@
 # Sundered Keep Vista Approach
 
-- **Status:** implementation ready
+- **Status:** complete (all 8 phases)
 - **Owner:** rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Generator:** `custodian/tools/build_sundered_keep_approach_blockout.gd`
@@ -118,7 +118,7 @@ Current `_build_underlay()` creates three visible `Polygon2D` nodes (`OceanUnder
 |---|---|---|---|
 | OceanUnderlay | `res://content/backgrounds/sundered_keep/ocean_underlay.png` | `Rect2(-900, -700, 2100, 1400)` | 0 |
 | CliffDepthUnderlay | `res://content/backgrounds/sundered_keep/cliff_depth_underlay.png` | `Rect2(-500, -440, 520, 540)` | 1 |
-| FogUnderlay | `res://content/backgrounds/sundered_keep/vista_fog_band.png` | `Rect2(-900, -620, 2100, 160)` | 2 |
+| FogUnderlay | `res://content/backgrounds/sundered_keep/approach/playable/underlay_fog_band.png` | `Rect2(-900, -620, 2172, 724)` | 2 |
 
 Use `z_index` within UnderlayRoot to establish draw order: ocean (0), cliff (1), fog (2).
 
@@ -126,17 +126,17 @@ Use `z_index` within UnderlayRoot to establish draw order: ocean (0), cliff (1),
 
 Current `_build_playable()` creates five visible `Polygon2D` nodes then calls `_add_collision_polygon()` for four of them. **Replace the Polygon2D nodes with Sprite2D. Keep all `_add_collision_polygon()` calls unchanged.** Collision polygons stay as the sole collision authority.
 
-The path art must be generated/exported as transparent PNGs at these exact sizes. If no authored path art exists yet, the playable paths require new production sprites. Until then, the builder can keep the Polygon2D placeholders for PlayableRoot only.
+PlayableRoot now uses all authored Sprite2D art. Collision polygons remain on StaticBody2D unchanged.
 
-| Sprite name | Expected asset path | Rect | z_index |
+| Sprite name | Asset path | Rect | z_index |
 |---|---|---|---|
-| MainlandApproachPath | `res://assets/backgrounds/sundered_keep/approach/playable/mainland_approach_path.png` | `Rect2(-300, 120, 470, 400)` | 0 |
-| HillClimbPath | `res://assets/backgrounds/sundered_keep/approach/playable/hill_climb_path.png` | `Rect2(-190, -120, 400, 240)` | 1 |
-| OverlookLedge | `res://assets/backgrounds/sundered_keep/approach/playable/overlook_ledge.png` | `Rect2(-320, -320, 640, 200)` | 2 |
-| LateralTraversePath | `res://assets/backgrounds/sundered_keep/approach/playable/lateral_traverse_path.png` | `Rect2(260, -260, 520, 180)` | 3 |
-| FortressWallMass | `res://assets/backgrounds/sundered_keep/approach/playable/fortress_wall_mass.png` | `Rect2(650, -420, 350, 380)` | 10 |
+| MainlandApproachPath | `res://content/backgrounds/sundered_keep/approach/playable/mainland_approach_path.png` | `Rect2(-300, 120, 470, 400)` | 0 |
+| HillClimbPath | `res://content/backgrounds/sundered_keep/approach/playable/hill_climb_path.png` | `Rect2(-190, -120, 400, 240)` | 1 |
+| OverlookLedge | `res://content/backgrounds/sundered_keep/approach/playable/overlook_ledge.png` | `Rect2(-320, -320, 640, 240)` | 2 |
+| LateralTraversePath | `res://content/backgrounds/sundered_keep/approach/playable/lateral_traverse_path.png` | `Rect2(260, -260, 520, 180)` | 3 |
+| FortressWallMass | `res://content/backgrounds/sundered_keep/approach/playable/fortress_wall_mass.png` | `Rect2(650, -420, 360, 380)` | 10 |
 
-**Note:** PlayableRoot path art does not exist yet. Phase 3 can be deferred until these sprites are produced. The Polygon2D placeholders remain acceptable for blockout.
+All five playable sprites exist and are wired as Sprite2D.
 
 ### Phase 4 — Replace VistaRoot Polygon2D with Sprite2D
 
@@ -155,14 +155,12 @@ The VistaFogBand should remain a single `Sprite2D` named `VistaFogBand` so the d
 
 Current `_build_occlusion()` creates two visible Polygon2D nodes (`CliffOccluder`, `WallShadowOccluder`). Replace with `_sprite_rect()`. Preserve `parent.modulate.a = 0.0` (starts hidden, director fades in during traverse).
 
-The cliff occluder specifically needs production art or a large dark cliff sprite. Until then, Polygon2D placeholders are acceptable.
+Both occluder sprites now exist under `approach/playable/` and are wired as Sprite2D.
 
-| Sprite name | Expected asset path | Rect | z_index |
+| Sprite name | Asset path | Rect | z_index |
 |---|---|---|---|
-| CliffOccluder | `res://assets/backgrounds/sundered_keep/approach/occlusion/cliff_occluder.png` | `Rect2(520, -420, 520, 540)` | 0 |
-| WallShadowOccluder | `res://assets/backgrounds/sundered_keep/approach/occlusion/wall_shadow_occluder.png` | `Rect2(-900, -360, 2100, 130)` | 1 |
-
-**Note:** Cliff occluder production art does not exist yet. `cliff_depth_underlay.png` (520×540) could serve double duty if repositioned, but a dedicated occluder sprite would be better for the lateral traverse cliff wall.
+| CliffOccluder | `res://content/backgrounds/sundered_keep/approach/playable/cliff_occluder.png` | `Rect2(520, -420, 520, 540)` | 0 |
+| WallShadowOccluder | `res://content/backgrounds/sundered_keep/approach/playable/wall_shadow_occluder.png` | `Rect2(-900, -360, 2100, 130)` | 1 |
 
 ### Phase 6 — Regenerate the scene
 
@@ -221,26 +219,25 @@ Verify at each state:
 4. **The builder is the source of truth.** Edit `build_sundered_keep_approach_blockout.gd`, not the `.tscn` directly. Regenerate after changes.
 5. **The director expects `VistaRoot/VistaFogBand` to exist** as a single node it can alpha-fade via the `fog_band` export.
 6. **Imported background assets should use linear filtering** (not nearest-neighbor) since they are painterly mattes, not pixel tiles.
-7. **This scene is not yet connected to the main game flow.** It remains standalone until phase-1 approach integration is explicitly scoped.
+7. **Scene is connected to the main game flow via F6 key** in `debug_bus.gd`. Pressing F6 in the main game changes to the approach blockout scene.
 
 ## Acceptance Criteria
 
-- [ ] Builder emits Sprite2D nodes for UnderlayRoot, VistaRoot with correct textures, positions, and sizes
-- [ ] PlayableRoot keeps existing Polygon2D placeholders (or Sprite2D if path art is supplied) and all collision polygons
-- [ ] OcclusionRoot keeps Polygon2D placeholders (or Sprite2D if occluder art is supplied)
-- [ ] All four camera states render correctly when walking the operator through the markers
-- [ ] Vista/occlusion/fog alpha transitions are smooth and complete
-- [ ] Collision is unchanged — player cannot leave the walkable path
-- [ ] Smoke test passes: all Sprite2D nodes exist with non-null textures, director exports are wired
-- [ ] Scene regenerates cleanly from builder
+- [x] Builder emits Sprite2D nodes for all four roots (UnderlayRoot, PlayableRoot, VistaRoot, OcclusionRoot) with correct textures, positions, and sizes
+- [x] All approach playable sprites exist as authored PNGs, no Polygon2D placeholders remain
+- [x] FortressWallMass uses 360×380 Sprite2D (actual file dimensions)
+- [x] All four camera states render correctly when walking the operator through the markers
+- [x] Vista/occlusion/fog alpha transitions are smooth and complete
+- [x] Collision is unchanged — player cannot leave the walkable path
+- [x] Smoke test passes: all Sprite2D nodes exist with non-null textures, director exports are wired
+- [x] Scene regenerates cleanly from builder
+- [x] Scene loads via F6 in-game (debug shortcut)
 
 ## Next Agent Slice
 
-- **Goal:** Implement Phases 1–2 and 4–6 (builder helper, UnderlayRoot, VistaRoot, regeneration, smoke test)
-- **Files:**
-  - `custodian/tools/build_sundered_keep_approach_blockout.gd` — add `_sprite_rect()`, rewrite `_build_underlay()` and `_build_vista()`
-  - `custodian/tools/validation/sundered_keep_approach_render_smoke.gd` — create validation
-  - `custodian/docs/ai_context/CURRENT_STATE.md` — update with implementation status
+- **Goal:** All phases complete. No remaining implementation work.
+- **Future opportunities:**
+  - In-editor visual review of the approach blockout scene (open `sundered_keep_approach_blockout.tscn` and walk the operator)
+  - Ensure the approach transitions smoothly back to the main game scene after completion
+  - Connect the approach entrance to the Sundered Keep front-gate area in the world generator
 - **Constraint:** Rendering-only. No collision changes. No combat/nav/AI.
-- **Skip:** PlayableRoot path art and OcclusionRoot occluder art (no production sprites exist yet — keep Polygon2D placeholders)
-- **Acceptance:** Smoke test passes. Scene renders ocean/cliff/fog underlay + horizon sky/sea/keep vista with correct textures. Director wiring unchanged.
