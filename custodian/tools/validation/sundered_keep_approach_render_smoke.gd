@@ -30,6 +30,23 @@ const OCCLUSION_SPRITES := {
 	WallShadowOccluder = "wall_shadow_occluder.png",
 }
 
+const EXPECTED_SPRITE_RECTS := {
+	"UnderlayRoot/OceanUnderlay": Rect2(-900, -700, 2100, 1400),
+	"UnderlayRoot/CliffDepthUnderlay": Rect2(-500, -440, 520, 540),
+	"UnderlayRoot/FogUnderlay": Rect2(-900, -620, 2172, 724),
+	"PlayableRoot/MainlandApproachPath": Rect2(-300, 120, 470, 400),
+	"PlayableRoot/HillClimbPath": Rect2(-190, -120, 400, 240),
+	"PlayableRoot/OverlookLedge": Rect2(-320, -320, 640, 240),
+	"PlayableRoot/LateralTraversePath": Rect2(260, -260, 520, 180),
+	"PlayableRoot/FortressWallMass": Rect2(650, -420, 360, 380),
+	"VistaRoot/HorizonSky": Rect2(-900, -700, 2100, 380),
+	"VistaRoot/FarSea": Rect2(-900, -520, 2100, 260),
+	"VistaRoot/DistantSunderedKeep": Rect2(-260, -670, 540, 250),
+	"VistaRoot/VistaFogBand": Rect2(-900, -380, 2100, 160),
+	"OcclusionRoot/CliffOccluder": Rect2(520, -420, 520, 540),
+	"OcclusionRoot/WallShadowOccluder": Rect2(-900, -360, 2100, 130),
+}
+
 const MARKER_NAMES := ["MainlandStart", "RevealStart", "RevealFull", "TraverseStart", "TraverseEnd", "ReturnTopdown"]
 
 const COLLISION_BODIES := ["PlayableCollision_Mainland", "PlayableCollision_Hill", "PlayableCollision_Overlook", "PlayableCollision_Lateral"]
@@ -178,6 +195,36 @@ func _check_sprite_root(parent: Node, root_name: String, expected: Dictionary, e
 		if not node.texture.resource_path.contains(texture_fragment):
 			errors.append("%s/%s texture path does not contain '%s': %s" \
 				% [root_name, sprite_name, texture_fragment, node.texture.resource_path])
+		_check_sprite_render_rect("%s/%s" % [root_name, sprite_name], node, errors)
+
+
+func _check_sprite_render_rect(sprite_path: String, sprite: Sprite2D, errors: Array[String]) -> void:
+	if not EXPECTED_SPRITE_RECTS.has(sprite_path):
+		errors.append("%s has no expected render Rect2 in smoke table" % sprite_path)
+		return
+	var expected := EXPECTED_SPRITE_RECTS[sprite_path] as Rect2
+	if not _vec2_nearly_equal(sprite.position, expected.position):
+		errors.append("%s.position expected %s, got %s" % [sprite_path, expected.position, sprite.position])
+	if sprite.texture == null:
+		errors.append("%s has null texture during render-rect check" % sprite_path)
+		return
+	var actual_size := Vector2(
+		float(sprite.texture.get_width()) * sprite.scale.x,
+		float(sprite.texture.get_height()) * sprite.scale.y
+	)
+	if not _vec2_nearly_equal(actual_size, expected.size):
+		errors.append("%s rendered size expected %s, got %s from texture=%sx%s scale=%s" % [
+			sprite_path,
+			expected.size,
+			actual_size,
+			sprite.texture.get_width(),
+			sprite.texture.get_height(),
+			sprite.scale,
+		])
+
+
+func _vec2_nearly_equal(a: Vector2, b: Vector2, epsilon := 0.01) -> bool:
+	return absf(a.x - b.x) <= epsilon and absf(a.y - b.y) <= epsilon
 
 
 func _check_absolute_z(parent: Node, node_path: String, expected_z: int, errors: Array[String]) -> void:

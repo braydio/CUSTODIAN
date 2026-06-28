@@ -21,6 +21,10 @@ func _init() -> void:
 	map_instance.name = "ProcGenRuntime"
 	world.add_child(map_instance)
 
+	var connected_maps := Node2D.new()
+	connected_maps.name = "ConnectedMaps"
+	world.add_child(connected_maps)
+
 	var loader := CONTRACT_WORLD_LOADER_SCRIPT.new()
 	loader.name = "ContractWorldLoader"
 	game_root.add_child(loader)
@@ -63,6 +67,14 @@ func _init() -> void:
 			errors.append("WorldIngressSite did not instantiate authored approach")
 		elif actor.global_position.distance_to(ingress.global_position) > 0.01:
 			errors.append("WorldIngressSite did not align approach entry to ingress; actor=%s ingress=%s" % [actor.global_position, ingress.global_position])
+		if map_instance.visible:
+			errors.append("WorldIngressSite did not hide ProcGenRuntime while approach is active")
+		if map_instance.process_mode != Node.PROCESS_MODE_DISABLED:
+			errors.append("WorldIngressSite did not disable ProcGenRuntime processing while approach is active")
+		if connected_maps.visible:
+			errors.append("WorldIngressSite did not hide ConnectedMaps while approach is active")
+		if connected_maps.process_mode != Node.PROCESS_MODE_DISABLED:
+			errors.append("WorldIngressSite did not disable ConnectedMaps processing while approach is active")
 
 	if world.get_node_or_null("SunderedKeepTravelGate") != null:
 		errors.append("Normal path still placed SunderedKeepTravelGate")

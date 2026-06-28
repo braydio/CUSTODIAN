@@ -291,6 +291,8 @@ func generate_contract(seed_value: int) -> void:
 			str(accepted),
 			candidate_score,
 		])
+		if not accepted:
+			print("[CustodianContractMap]   layout_debug: %s" % _format_layout_metric_debug(candidate_metrics))
 		if accepted:
 			if best_map_instance != null and best_map_instance != candidate_map:
 				await _dispose_node(best_map_instance)
@@ -775,6 +777,15 @@ func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionar
 		"valid": false,
 		"terrain_connectivity": terrain_connectivity,
 		"terrain_fallback": terrain_fallback,
+		"spawn_tile": level_data.get("player_spawn", Vector2i.ZERO),
+		"rooms_total": 0,
+		"rooms_connected": 0,
+		"rooms_exact_walkable": 0,
+		"rooms_represented": 0,
+		"ingress_total": 0,
+		"ingress_connected": 0,
+		"reachable_count": 0,
+		"unreachable_room_samples": [],
 	}
 	if map_instance == null or map_instance.procgen_node == null:
 		return base_metrics
@@ -782,21 +793,45 @@ func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionar
 	if not (spawn_variant is Vector2i):
 		return base_metrics
 	var spawn_tile := spawn_variant as Vector2i
+	base_metrics["spawn_tile"] = spawn_tile
 	if not _is_layout_walkable_tile(map_instance, spawn_tile):
 		return base_metrics
 
 	var reachable := _flood_fill_walkable(map_instance, level_data, spawn_tile)
 	if reachable.is_empty():
 		return base_metrics
+	base_metrics["reachable_count"] = reachable.size()
 
 	var rooms_total := 0
 	var rooms_connected := 0
+	var rooms_exact_walkable := 0
+	var rooms_represented := 0
+	var unreachable_room_samples: Array[Dictionary] = []
 	for room_item in level_data.get("rooms_by_distance", []):
 		if not (room_item is Vector2i):
 			continue
 		rooms_total += 1
-		if reachable.has(room_item):
+		var room_anchor := room_item as Vector2i
+		if _is_layout_walkable_tile(map_instance, room_anchor):
+			rooms_exact_walkable += 1
+		var representative := _find_nearest_walkable_layout_tile(map_instance, level_data, room_anchor)
+		if representative == Vector2i.ZERO:
+			if unreachable_room_samples.size() < 10:
+				unreachable_room_samples.append({
+					"anchor": room_anchor,
+					"representative": null,
+					"reason": "no nearby walkable representative",
+				})
+			continue
+		rooms_represented += 1
+		if reachable.has(representative):
 			rooms_connected += 1
+		elif unreachable_room_samples.size() < 10:
+			unreachable_room_samples.append({
+				"anchor": room_anchor,
+				"representative": representative,
+				"reason": "representative unreachable from spawn",
+			})
 	if rooms_total <= 0:
 		return base_metrics
 
@@ -820,6 +855,15 @@ func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionar
 		"ingress_ratio": ingress_ratio,
 		"terrain_connectivity": terrain_connectivity,
 		"terrain_fallback": terrain_fallback,
+		"spawn_tile": spawn_tile,
+		"rooms_total": rooms_total,
+		"rooms_connected": rooms_connected,
+		"rooms_exact_walkable": rooms_exact_walkable,
+		"rooms_represented": rooms_represented,
+		"ingress_total": ingress_total,
+		"ingress_connected": ingress_connected,
+		"reachable_count": reachable.size(),
+		"unreachable_room_samples": unreachable_room_samples,
 	}
 
 
@@ -852,3 +896,53 @@ func _is_layout_walkable_tile(map_instance: ProcGenTilemap, tile: Vector2i) -> b
 	if map_instance != null and map_instance.procgen_node != null:
 		return not map_instance.procgen_node.is_full_at(tile)
 	return false
+
+
+func _find_nearest_walkable_layout_tile(map_instance: ProcGenTilemap, level_data: Dictionary, anchor: Vector2i, max_radius := 8) -> Vector2i:
+	var map_size: Vector2i = level_data.get("map_size", Vector2i.ZERO)
+	if map_size == Vector2i.ZERO and map_instance != null and map_instance.procgen_node != null:
+		map_size = map_instance.procgen_node.map_size
+	if _is_tile_inside_map(anchor, map_size) and _is_layout_walkable_tile(map_instance, anchor):
+		return anchor
+
+	var best_tile := Vector2i.ZERO
+	var best_distance := INF
+	for radius in range(1, max_radius + 1):
+		for dx in range(-radius, radius + 1):
+			for dy in range(-radius, radius + 1):
+				if absi(dx) != radius and absi(dy) != radius:
+					continue
+				var candidate := anchor + Vector2i(dx, dy)
+				if not _is_tile_inside_map(candidate, map_size):
+					continue
+				if not _is_layout_walkable_tile(map_instance, candidate):
+					continue
+				var distance := candidate.distance_squared_to(anchor)
+				if distance < best_distance:
+					best_distance = distance
+					best_tile = candidate
+		if best_tile != Vector2i.ZERO:
+			return best_tile
+	return Vector2i.ZERO
+
+
+func _is_tile_inside_map(tile: Vector2i, map_size: Vector2i) -> bool:
+	if map_size == Vector2i.ZERO:
+		return true
+	return tile.x >= 0 and tile.y >= 0 and tile.x < map_size.x and tile.y < map_size.y
+
+
+func _format_layout_metric_debug(metrics: Dictionary) -> String:
+	return "spawn=%s reachable=%d rooms=%d/%d represented=%d exact_walkable=%d ingress=%d/%d connected=%.2f ingress_ratio=%.2f unreachable_samples=%s" % [
+		str(metrics.get("spawn_tile", Vector2i.ZERO)),
+		int(metrics.get("reachable_count", 0)),
+		int(metrics.get("rooms_connected", 0)),
+		int(metrics.get("rooms_total", 0)),
+		int(metrics.get("rooms_represented", 0)),
+		int(metrics.get("rooms_exact_walkable", 0)),
+		int(metrics.get("ingress_connected", 0)),
+		int(metrics.get("ingress_total", 0)),
+		float(metrics.get("connected_ratio", 0.0)),
+		float(metrics.get("ingress_ratio", 0.0)),
+		str(metrics.get("unreachable_room_samples", [])),
+	]

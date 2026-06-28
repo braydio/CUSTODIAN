@@ -69,7 +69,6 @@
 [ext_resource type="Texture2D" uid="uid://b4mvrus3afpk8" path="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_wet_01.png" id="66_main_courtyard_flagstone_wet_01"]
 [ext_resource type="Texture2D" uid="uid://dur55rbhw37mx" path="res://content/tiles/sundered_keep/floors/main_courtyard_flagstone_mossy_01.png" id="67_main_courtyard_flagstone_mossy_01"]
 [ext_resource type="Texture2D" uid="uid://c5cdgk8wa5obk" path="res://content/tiles/sundered_keep/floors/main_gate_threshold_stone_01.png" id="68_main_gate_threshold_stone_01"]
-[ext_resource type="Texture2D" uid="uid://c70ol15cqqddh" path="res://content/tiles/sundered_keep/floors/great_hall_marble_floor_01.png" id="69_great_hall_marble_floor_01"]
 [ext_resource type="Texture2D" uid="uid://crd8q5q8coitb" path="res://content/tiles/sundered_keep/floors/great_hall_marble_floor_cracked_01.png" id="70_great_hall_marble_floor_cracked_01"]
 [ext_resource type="Texture2D" uid="uid://bo8hp3sj7ie2c" path="res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_vertical_01.png" id="71_great_hall_carpet_runner_vertical_01"]
 [ext_resource type="Texture2D" uid="uid://cji6uk15pa6ud" path="res://content/tiles/sundered_keep/floors/great_hall_carpet_runner_horizontal_01.png" id="72_great_hall_carpet_runner_horizontal_01"]
@@ -569,7 +568,6 @@ texture_region_size = Vector2i(161, 169)
 0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6"]
-texture = ExtResource("69_great_hall_marble_floor_01")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 

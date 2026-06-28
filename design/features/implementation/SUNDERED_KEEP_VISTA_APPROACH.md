@@ -1,6 +1,6 @@
 # Sundered Keep Vista Approach
 
-- **Status:** complete and smoke-validated (all 8 phases)
+- **Status:** complete, smoke-validated, and source-asset audited
 - **Owner:** rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Generator:** `custodian/tools/build_sundered_keep_approach_blockout.gd`
@@ -11,7 +11,7 @@
 
 A visual-only camera/composition sequence for the Sundered Keep approach. The player enters from mainland top-down, climbs a hill as the horizon reveals the Sundered Keep vista, traverses laterally along a cliff face (occluding the vista), then returns to normal top-down play.
 
-**Hard constraint:** Rendering/camera only. No navigation, combat, enemy AI, or deterministic simulation state. Collision stays on existing `StaticBody2D` + `CollisionPolygon2D` polygons. Runtime visuals are authored `Sprite2D` matte/terrain assets; polygons remain as collision authority only.
+**Hard constraint:** Rendering/camera only. No navigation, combat, enemy AI, or deterministic simulation state. Collision stays on existing `StaticBody2D` + `CollisionPolygon2D` polygons. Runtime visuals are authored `Sprite2D` matte/terrain assets; polygons remain as collision authority only. Sprite2D assets are fit to their target `Rect2` as a builder-side safety net, but production source PNGs must still export at the documented dimensions. Playable terrain art must keep transparent pixels outside the authored terrain shape unless the full rectangle is intentionally terrain.
 
 ## Runtime Ingress Chain
 
@@ -21,7 +21,7 @@ Normal contract-world access now routes through:
 Procgen world placement -> WorldIngressSite -> authored Sundered Keep approach/vista -> final fade -> SunderedKeepMap
 ```
 
-`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` owns the authored reveal/vista/fade approach using the transparent path, underlay, and occlusion Sprite2D assets under `res://content/sprites/world/return_causeway/`. `res://game/world/sundered_keep/sundered_keep_map.gd` remains the real gameplay destination after the fade. The old direct `SunderedKeepTravelGate` path is retained only behind `place_debug_sundered_keep_gateway` for review.
+`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` owns the authored reveal/vista/fade approach using the transparent path, underlay, and occlusion Sprite2D assets under `res://content/sprites/world/return_causeway/`. The runtime approach isolates presentation from the generated world: `WorldIngressSite` hides and disables `ProcGenRuntime` and `ConnectedMaps` while the approach is active, the approach scene draws an opaque dark backdrop, and `sundered_keep_approach.gd` fits all path/fog/occlusion sprites to explicit design `Rect2`s instead of using raw PNG dimensions. Occluders start at alpha `0.0`; `SunderedKeepVistaController` fades them in by progress. `res://game/world/sundered_keep/sundered_keep_map.gd` remains the real gameplay destination after the fade. The old direct `SunderedKeepTravelGate` path is retained only behind `place_debug_sundered_keep_gateway` for review.
 
 ## Scene Architecture
 
@@ -94,11 +94,26 @@ The following painterly matte/background assets already exist at `res://content/
 
 These live under `content/` not `assets/`. Use `res://content/backgrounds/sundered_keep/` paths.
 
+## Asset Export Contract
+
+The generated scene uses top-left anchored `Sprite2D` nodes (`centered=false`) and scales each texture to its intended world `Rect2`. This protects runtime layout if a source image drifts, but size drift still emits a warning and should be fixed at the source.
+
+Run the source audit before accepting visual changes:
+
+```bash
+cd custodian
+python3 tools/validation/sundered_keep_approach_asset_audit.py
+```
+
+The audit checks all approach PNG dimensions and fails if any PlayableRoot terrain asset has no alpha channel or is fully opaque. PlayableRoot PNGs should generally be transparent outside the visible path/terrain silhouette so the editor/game view does not show stacked rectangular plates.
+
+The live ingress approach has a separate runtime fitting table in `res://game/world/approaches/sundered_keep/sundered_keep_approach.gd`. It intentionally scales `res://content/sprites/world/return_causeway/` path/underlay/occlusion PNGs into target world rectangles, including a thin `2100x130` `WallShadowOccluder`, so oversized generated overlay exports cannot appear as raw black curtains over the scene.
+
 ## Implementation Phases
 
 ### Phase 1 — Add `_sprite_rect()` helper to builder
 
-In `custodian/tools/build_sundered_keep_approach_blockout.gd`, add a helper that creates a `Sprite2D` with centered=false, positioned at rect top-left, loading the texture, and warning if missing or size-mismatched. Then rewrite `_build_underlay()`, `_build_playable()`, `_build_vista()`, `_build_occlusion()` to emit `Sprite2D` nodes instead of visible `Polygon2D` placeholders.
+In `custodian/tools/build_sundered_keep_approach_blockout.gd`, add a helper that creates a `Sprite2D` with centered=false, positioned at rect top-left, loading the texture, scaling it to the requested `Rect2.size`, and warning if missing or size-mismatched. Then rewrite `_build_underlay()`, `_build_playable()`, `_build_vista()`, `_build_occlusion()` to emit `Sprite2D` nodes instead of visible `Polygon2D` placeholders.
 
 **Helper pattern:**
 ```gdscript
@@ -115,8 +130,10 @@ func _sprite_rect(parent: Node2D, owner: Node, name: String, texture_path: Strin
         sprite.texture = texture
         var actual := Vector2i(texture.get_width(), texture.get_height())
         var expected := Vector2i(int(rect.size.x), int(rect.size.y))
+        if actual.x > 0 and actual.y > 0:
+            sprite.scale = Vector2(rect.size.x / float(actual.x), rect.size.y / float(actual.y))
         if actual != expected:
-            push_warning("Size mismatch for %s: expected %s, got %s" % [name, str(expected), str(actual)])
+            push_warning("Size mismatch for %s: expected %s, got %s; scaling to fit Rect2." % [name, str(expected), str(actual)])
     parent.add_child(sprite)
     sprite.owner = owner
     return sprite
@@ -193,6 +210,8 @@ Checks:
 - Packed scene loads successfully
 - All expected Sprite2D nodes exist per root (UnderlayRoot, PlayableRoot, VistaRoot, OcclusionRoot)
 - Each Sprite2D has a non-null texture
+- Each Sprite2D position matches its expected `Rect2.position`
+- Each Sprite2D texture size multiplied by scale matches its expected `Rect2.size`
 - `Operator` node exists
 - `Camera2D` node exists
 - `OverlookCameraDirector` node exists with wired exports: `player`, `camera`, `vista_root`, `occlusion_root`, `fog_band`
@@ -238,10 +257,11 @@ Verify at each state:
 - [x] Builder emits Sprite2D nodes for all four roots (UnderlayRoot, PlayableRoot, VistaRoot, OcclusionRoot) with correct textures, positions, and sizes
 - [x] All approach playable sprites exist as authored PNGs, no Polygon2D placeholders remain
 - [x] FortressWallMass uses 360×380 Sprite2D (actual file dimensions)
+- [x] Source asset audit verifies expected PNG dimensions and alpha-bearing PlayableRoot exports
 - [x] All four camera states render correctly when walking the operator through the markers
 - [x] Vista/occlusion/fog alpha transitions are smooth and complete
 - [x] Collision is unchanged — player cannot leave the walkable path
-- [x] Smoke test passes: all Sprite2D nodes exist with non-null textures, root/Operator z-order is absolute, playable collision polygons exist, and director exports are wired
+- [x] Smoke test passes: all Sprite2D nodes exist with non-null textures, root/Operator z-order is absolute, playable collision polygons exist, director exports are wired, and Sprite2D render rects match their intended world rectangles
 - [x] Scene regenerates cleanly from builder
 - [x] Scene loads via F6 in-game (debug shortcut)
 

@@ -36,11 +36,13 @@ func _load_target_scene(actor: Node) -> void:
 		push_error("[SunderedKeepTransitionTrigger] Missing world root")
 		return
 
+	_set_world_branch_visible(world.get_node_or_null("ProcGenRuntime"), false)
 	var connected_root := world.get_node_or_null("ConnectedMaps") as Node2D
 	if connected_root == null:
 		connected_root = Node2D.new()
 		connected_root.name = "ConnectedMaps"
 		world.add_child(connected_root)
+	_set_world_branch_visible(connected_root, true)
 
 	var target := connected_root.get_node_or_null("SunderedKeepMap")
 	if target == null:
@@ -88,3 +90,11 @@ func _configure_target_connection(target: Node, world: Node2D) -> void:
 
 func _is_player_body(body: Node) -> bool:
 	return body.is_in_group("player") or body.is_in_group("operator") or String(body.name) == "Operator"
+
+
+func _set_world_branch_visible(branch: Node, value: bool) -> void:
+	if branch == null:
+		return
+	if branch is CanvasItem:
+		(branch as CanvasItem).visible = value
+	branch.process_mode = Node.PROCESS_MODE_INHERIT if value else Node.PROCESS_MODE_DISABLED

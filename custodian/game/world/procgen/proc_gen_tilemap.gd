@@ -3404,8 +3404,11 @@ func _flush_navigation_rebuild() -> void:
 
 
 func _capture_generated_tile_state(map_size: Vector2i) -> void:
-	_generated_floor_cells.clear()
-	_generated_wall_cells.clear()
+	if not enable_streaming_reveal:
+		_generated_floor_cells.clear()
+		_generated_wall_cells.clear()
+	# Streaming reveal keeps undiscovered authoritative cells unpainted, so merge
+	# visible TileMap cells without clearing the dictionaries in that mode.
 	for x in range(map_size.x):
 		for y in range(map_size.y):
 			var pos := Vector2i(x, y)
@@ -3416,6 +3419,7 @@ func _capture_generated_tile_state(map_size: Vector2i) -> void:
 					"atlas": floor_tilemap.get_cell_atlas_coords(pos),
 					"alternative": floor_tilemap.get_cell_alternative_tile(pos),
 				}
+				_generated_wall_cells.erase(pos)
 			var wall_source := walls_tilemap.get_cell_source_id(pos)
 			if wall_source >= 0:
 				_generated_wall_cells[pos] = {
@@ -3423,6 +3427,7 @@ func _capture_generated_tile_state(map_size: Vector2i) -> void:
 					"atlas": walls_tilemap.get_cell_atlas_coords(pos),
 					"alternative": walls_tilemap.get_cell_alternative_tile(pos),
 				}
+				_generated_floor_cells.erase(pos)
 
 
 func _ensure_elevation_map() -> void:
@@ -3582,8 +3587,21 @@ func _apply_terrain_visuals(terrain_result: Dictionary) -> void:
 				continue
 			_set_region_tile(cell, "terrain_elevated_floor", "elevated")
 		elif traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE and tile_id == "rescue_walkable_ground":
-			if not rendered_tile:
-				_set_floor_tile_and_generated_state(cell, "terrain_rescue_floor", "walkable")
+			_ensure_walkable_terrain_floor_authority(cell, rendered_tile, "terrain_rescue_floor", "walkable")
+		elif _is_walkable_terrain_traversal(traversal):
+			_ensure_walkable_terrain_floor_authority(cell, rendered_tile, "terrain_walkable_floor", "walkable")
+
+
+func _is_walkable_terrain_traversal(traversal: String) -> bool:
+	return traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE \
+			or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_RAMP \
+			or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_STAIR
+
+
+func _ensure_walkable_terrain_floor_authority(cell: Vector2i, rendered_tile: bool, region_type: String, zone: String) -> void:
+	if rendered_tile and _generated_floor_cells.has(cell) and not _generated_wall_cells.has(cell):
+		return
+	_set_floor_tile_and_generated_state(cell, region_type, zone)
 
 
 func _apply_compound_connector_elevation(map_size: Vector2i) -> void:
@@ -5834,6 +5852,9 @@ func get_room_centers() -> Array[Vector2i]:
 
 ## Returns room centers sorted by distance from player spawn (far = objective)
 func get_rooms_by_distance_from_spawn() -> Array[Vector2i]:
+	if world_shape_mode == WorldShapeMode.ASCENT_FIELD:
+		return _get_ascent_objective_anchors_by_distance_from_spawn()
+
 	var player_pos = get_player_spawn()
 	var rooms = procgen_node.get_rooms()
 
@@ -5853,6 +5874,69 @@ func get_rooms_by_distance_from_spawn() -> Array[Vector2i]:
 		sorted_centers.append(rd.center)
 
 	return sorted_centers
+
+
+func _get_ascent_objective_anchors_by_distance_from_spawn() -> Array[Vector2i]:
+	var player_pos := get_player_spawn()
+	var map_size := procgen_node.map_size if procgen_node != null else Vector2i.ZERO
+	var anchors: Array[Vector2i] = []
+
+	anchors.append_array(_sample_vector2i_array(_ascent_field_main_route_cells, map_size, 18))
+	anchors.append_array(_sample_vector2i_array(_ascent_field_vista_cells, map_size, 6))
+
+	if _worldgen_intent_graph != null:
+		for cell in _worldgen_intent_graph.get_required_cells():
+			if _is_tile_inside_map(cell, map_size):
+				anchors.append(cell)
+
+	for threshold in _last_interior_thresholds:
+		if _is_tile_inside_map(threshold, map_size):
+			anchors.append(threshold)
+
+	for ingress in _last_compound_ingress:
+		if _is_tile_inside_map(ingress, map_size):
+			anchors.append(ingress)
+
+	anchors = _dedupe_vector2i_array(anchors)
+	var walkable_anchors: Array[Vector2i] = []
+	for anchor in anchors:
+		if is_valid_spawn_cell(anchor):
+			walkable_anchors.append(anchor)
+
+	if walkable_anchors.is_empty():
+		walkable_anchors = _sample_vector2i_array(_dict_keys_as_vector2i_array(_generated_floor_cells), map_size, 18)
+
+	var anchor_distances: Array = []
+	for anchor in walkable_anchors:
+		anchor_distances.append({
+			"center": anchor,
+			"distance": anchor.distance_to(player_pos),
+		})
+	anchor_distances.sort_custom(func(a, b): return a.distance > b.distance)
+
+	var sorted_anchors: Array[Vector2i] = []
+	for item in anchor_distances:
+		sorted_anchors.append(item.center)
+	return sorted_anchors
+
+
+func _sample_vector2i_array(source: Array[Vector2i], map_size: Vector2i, max_count: int) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	if source.is_empty() or max_count <= 0:
+		return result
+	if source.size() <= max_count:
+		for cell in source:
+			if _is_tile_inside_map(cell, map_size):
+				result.append(cell)
+		return result
+
+	var last_index := source.size() - 1
+	for i in range(max_count):
+		var sample_index := int(round(float(i) * float(last_index) / float(max_count - 1)))
+		var cell := source[sample_index]
+		if _is_tile_inside_map(cell, map_size):
+			result.append(cell)
+	return result
 
 
 ## Returns random floor tiles in rooms (for pickups, ammo, etc)

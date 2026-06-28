@@ -56,6 +56,14 @@ func play_final_fade() -> void:
 	await tween.finished
 
 
+func refresh_bindings() -> void:
+	_resolve_nodes()
+
+
+func apply_progress(t: float) -> void:
+	_apply_progress(t)
+
+
 func _resolve_nodes() -> void:
 	_player = get_node_or_null(player_path) as Node2D
 	_start = get_node_or_null(start_marker_path) as Node2D
@@ -64,6 +72,20 @@ func _resolve_nodes() -> void:
 	_shadow = get_node_or_null(wall_shadow_occluder_path) as CanvasItem
 	_fog = get_node_or_null(underlay_fog_path) as CanvasItem
 	_keep = get_node_or_null(distant_keep_path) as CanvasItem
+	var approach_root := get_parent()
+	if approach_root != null:
+		if _start == null:
+			_start = approach_root.get_node_or_null("ProgressStart") as Node2D
+		if _end == null:
+			_end = approach_root.get_node_or_null("ProgressEnd") as Node2D
+		if _cliff == null:
+			_cliff = approach_root.get_node_or_null("Occlusion/CliffOccluder") as CanvasItem
+		if _shadow == null:
+			_shadow = approach_root.get_node_or_null("Occlusion/WallShadowOccluder") as CanvasItem
+		if _fog == null:
+			_fog = approach_root.get_node_or_null("VistaUnderlay/UnderlayFogBand") as CanvasItem
+		if _keep == null:
+			_keep = approach_root.get_node_or_null("VistaUnderlay/DistantKeepProxy") as CanvasItem
 
 
 func _apply_progress(t: float) -> void:

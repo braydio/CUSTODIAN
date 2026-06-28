@@ -248,8 +248,15 @@ func _sprite_rect(
 		sprite.texture = texture
 		var actual := Vector2i(texture.get_width(), texture.get_height())
 		var expected := Vector2i(int(rect.size.x), int(rect.size.y))
+		if actual.x <= 0 or actual.y <= 0:
+			push_warning("[SunderedKeepApproach] Invalid texture size for %s: %s" % [name, str(actual)])
+		else:
+			sprite.scale = Vector2(
+				rect.size.x / float(actual.x),
+				rect.size.y / float(actual.y)
+			)
 		if actual != expected:
-			push_warning("[SunderedKeepApproach] Size mismatch for %s: expected %s, actual %s" \
+			push_warning("[SunderedKeepApproach] Size mismatch for %s: expected %s, actual %s; scaling to fit Rect2." \
 				% [name, str(expected), str(actual)])
 
 	parent.add_child(sprite)

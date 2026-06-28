@@ -75,6 +75,7 @@ func _enter_approach(actor: Node) -> void:
 		approach.name = "%s_Approach" % String(ingress_id)
 		world.add_child(approach)
 		_align_approach_entry_to_ingress(approach)
+	_set_procgen_world_visible(false)
 
 	if approach.has_method("configure_ingress"):
 		approach.call("configure_ingress", {
@@ -97,6 +98,19 @@ func _align_approach_entry_to_ingress(approach: Node) -> void:
 	var approach_2d := approach as Node2D
 	var entry_position: Vector2 = approach.call("get_entry_position")
 	approach_2d.global_position += global_position - entry_position
+
+
+func _set_procgen_world_visible(value: bool) -> void:
+	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ProcGenRuntime"), value)
+	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ConnectedMaps"), value)
+
+
+func _set_world_branch_visible(branch: Node, value: bool) -> void:
+	if branch == null:
+		return
+	if branch is CanvasItem:
+		(branch as CanvasItem).visible = value
+	branch.process_mode = Node.PROCESS_MODE_INHERIT if value else Node.PROCESS_MODE_DISABLED
 
 
 func _ensure_collision() -> void:
