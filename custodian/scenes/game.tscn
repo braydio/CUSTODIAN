@@ -37,7 +37,7 @@
 [ext_resource type="Script" uid="uid://bg78eihw40m6g" path="res://game/systems/core/systems/navigation_system.gd" id="40_navigation"]
 [ext_resource type="Script" uid="uid://din0buhray3ph" path="res://content/tiles/debug/navigation_debug.gd" id="41_nav_debug"]
 [ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="42_player_controller"]
-[ext_resource type="PackedScene" path="res://game/actors/vehicles/light_buggy.tscn" id="43_light_buggy"]
+[ext_resource type="PackedScene" uid="uid://b2nvudqe2mljd" path="res://game/actors/vehicles/light_buggy.tscn" id="43_light_buggy"]
 [ext_resource type="PackedScene" path="res://game/systems/core/systems/wall_build_system.tscn" id="99_wall_build_system"]
 [ext_resource type="PackedScene" path="res://game/systems/core/systems/wall_placer.tscn" id="99_wall_placer"]
 [ext_resource type="Script" uid="uid://cm60nou56jgt7" path="res://game/systems/core/systems/weapon_definition_factory.gd" id="99_weapon_factory"]
@@ -61,7 +61,7 @@ script = ExtResource("33_debug_collector")
 
 [node name="DevUI" parent="." unique_id=227687621 instance=ExtResource("30_dev_ui")]
 
-[node name="DevObservatoryOverlay" parent="." instance=ExtResource("208_observatory_overlay")]
+[node name="DevObservatoryOverlay" parent="." unique_id=1030058335 instance=ExtResource("208_observatory_overlay")]
 
 [node name="World" type="Node2D" parent="." unique_id=932635855]
 
