@@ -4,6 +4,7 @@ const COND_FIRST_USE_EVER := 4
 
 var _layout_connected := false
 var _imgui_available := false
+var _active_tab := "World"
 
 
 func _ready() -> void:
@@ -47,26 +48,23 @@ func _on_imgui_layout() -> void:
 	_draw_header(imgui, bus)
 	if bool(bus.get("minimal_mode")):
 		_draw_minimal(imgui, bus)
-	elif bool(imgui.call("begin_tab_bar", "director_tabs")):
-		if bool(imgui.call("begin_tab_item", "World")):
-			_draw_world_tab(imgui, bus)
-			imgui.call("end_tab_item")
-		if bool(imgui.call("begin_tab_item", "Sectors")):
-			_draw_sector_tab(imgui, bus)
-			imgui.call("end_tab_item")
-		if bool(imgui.call("begin_tab_item", "Combat")):
-			_draw_combat_tab(imgui, bus)
-			imgui.call("end_tab_item")
-		if bool(imgui.call("begin_tab_item", "Actors")):
-			_draw_actor_tab(imgui, bus)
-			imgui.call("end_tab_item")
-		if bool(imgui.call("begin_tab_item", "Animation")):
-			_draw_animation_tab(imgui, bus)
-			imgui.call("end_tab_item")
-		if bool(imgui.call("begin_tab_item", "Events")):
-			_draw_events_tab(imgui, bus)
-			imgui.call("end_tab_item")
-		imgui.call("end_tab_bar")
+	else:
+		_draw_tab_selector(imgui)
+		if imgui.has_method("separator"):
+			imgui.call("separator")
+		match _active_tab:
+			"World":
+				_draw_world_tab(imgui, bus)
+			"Sectors":
+				_draw_sector_tab(imgui, bus)
+			"Combat":
+				_draw_combat_tab(imgui, bus)
+			"Actors":
+				_draw_actor_tab(imgui, bus)
+			"Animation":
+				_draw_animation_tab(imgui, bus)
+			"Events":
+				_draw_events_tab(imgui, bus)
 
 	imgui.call("end")
 
@@ -77,6 +75,17 @@ func _draw_header(imgui: Node, bus: Node) -> void:
 		imgui.call("text", "Dear ImGui unavailable; install/enable addons/dear-imgui-godot.")
 	if imgui.has_method("separator"):
 		imgui.call("separator")
+
+
+func _draw_tab_selector(imgui: Node) -> void:
+	var labels: Array[String] = ["World", "Sectors", "Combat", "Actors", "Animation", "Events"]
+	for index in range(labels.size()):
+		var label: String = labels[index]
+		var button_label: String = "[%s]" % label if label == _active_tab else label
+		if bool(imgui.call("button", button_label, 0.0, 0.0)):
+			_active_tab = label
+		if imgui.has_method("same_line") and index < labels.size() - 1:
+			imgui.call("same_line")
 
 
 func _draw_minimal(imgui: Node, bus: Node) -> void:
@@ -108,26 +117,22 @@ func _draw_world_tab(imgui: Node, bus: Node) -> void:
 
 func _draw_sector_tab(imgui: Node, bus: Node) -> void:
 	var sectors: Array = _category(bus, "SECTORS", []) as Array
-	if imgui.has_method("begin_table") and bool(imgui.call("begin_table", "sector_table", 7)):
-		for label in ["Sector", "Threat", "Enemies", "Power", "Defenses", "Damage", "Pathable"]:
-			imgui.call("table_setup_column", label)
-		imgui.call("table_headers_row")
-		for sector_variant in sectors:
-			if not (sector_variant is Dictionary):
-				continue
-			var sector := sector_variant as Dictionary
-			imgui.call("table_next_row")
-			_table_text(imgui, str(sector.get("name", "?")))
-			_table_text(imgui, str(sector.get("threat", "?")))
-			_table_text(imgui, str(sector.get("enemy_count", 0)))
-			_table_text(imgui, str(sector.get("power", "?")))
-			_table_text(imgui, str(sector.get("defenses", "?")))
-			_table_text(imgui, "%s%%" % str(sector.get("damage_pct", 0)))
-			_table_text(imgui, str(sector.get("pathable", false)))
-		imgui.call("end_table")
-	else:
-		for sector_variant in sectors:
-			imgui.call("text", str(sector_variant))
+	imgui.call("text", "Sector | Threat | Enemies | Power | Defenses | Damage | Pathable")
+	if imgui.has_method("separator"):
+		imgui.call("separator")
+	for sector_variant in sectors:
+		if not (sector_variant is Dictionary):
+			continue
+		var sector := sector_variant as Dictionary
+		imgui.call("text", "%s | %s | %s | %s | %s | %s%% | %s" % [
+			str(sector.get("name", "?")),
+			str(sector.get("threat", "?")),
+			str(sector.get("enemy_count", 0)),
+			str(sector.get("power", "?")),
+			str(sector.get("defenses", "?")),
+			str(sector.get("damage_pct", 0)),
+			str(sector.get("pathable", false)),
+		])
 
 
 func _draw_combat_tab(imgui: Node, bus: Node) -> void:
@@ -181,11 +186,6 @@ func _draw_events_tab(imgui: Node, bus: Node) -> void:
 	var events: Array = bus.get("events")
 	for index in range(events.size() - 1, maxi(-1, events.size() - 80), -1):
 		imgui.call("text", str(events[index]))
-
-
-func _table_text(imgui: Node, text: String) -> void:
-	imgui.call("table_next_column")
-	imgui.call("text", text)
 
 
 func _category(bus: Node, category: String, fallback: Variant) -> Variant:

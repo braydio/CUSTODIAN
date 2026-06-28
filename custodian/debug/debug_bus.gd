@@ -47,6 +47,8 @@ func _input(event: InputEvent) -> void:
 		elif key_event.keycode == KEY_F5 or key_event.physical_keycode == KEY_F5:
 			toggle_selected_entity(hovered_entity)
 			get_viewport().set_input_as_handled()
+		elif key_event.keycode == KEY_F6 or key_event.physical_keycode == KEY_F6:
+			_load_approach_blockout()
 
 
 func set_stat(category: String, key: String, value: Variant) -> void:
@@ -86,7 +88,7 @@ func import_observatory_events(observatory_events: Array[Dictionary]) -> void:
 	for entry in observatory_events:
 		var kind := str(entry.get("kind", "EVENT"))
 		var seconds := float(entry.get("time", 0)) / 1000.0
-		var data := entry.get("data", {})
+		var data: Variant = entry.get("data", {})
 		var line := "[%.2f] %s: %s" % [seconds, kind, JSON.stringify(data)]
 		if events.has(line):
 			continue
@@ -190,3 +192,11 @@ func _refresh_selected_entity_snapshot() -> void:
 		return
 	if inspector_data.has(selected_entity.get_instance_id()):
 		selected_entity_snapshot = (inspector_data[selected_entity.get_instance_id()] as Dictionary).duplicate(true)
+
+
+func _load_approach_blockout() -> void:
+	const APPROACH_SCENE := "res://scenes/levels/sundered_keep/sundered_keep_approach_blockout.tscn"
+	print("[DebugBus] Loading Sundered Keep Approach Blockout...")
+	var err := get_tree().change_scene_to_file(APPROACH_SCENE)
+	if err != OK:
+		push_error("[DebugBus] Failed to load approach blockout: %d" % err)
