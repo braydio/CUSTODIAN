@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3453r58hbc54"
-path="res://.godot/imported/operator__modular_upper_body__unarmed__run_01__n__5f__96.png-ed850b3f578c3f075fa4d23a15d828d7.ctex"
+uid="uid://du7becjwbuhqw"
+path="res://.godot/imported/operator__modular_upper_body__unarmed__run_01__sw__5f__96.png-9f150364a585b246e4cd8bffc2a215ae.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/new_operator/modular/run/operator__modular_upper_body__unarmed__run_01__n__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__run_01__n__5f__96.png-ed850b3f578c3f075fa4d23a15d828d7.ctex"]
+source_file="res://content/sprites/_pipeline/inbox/operator__modular_upper_body__unarmed__run_01__sw__5f__96.png"
+dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__run_01__sw__5f__96.png-9f150364a585b246e4cd8bffc2a215ae.ctex"]
 
 [params]
 

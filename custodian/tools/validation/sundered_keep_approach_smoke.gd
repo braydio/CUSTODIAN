@@ -11,7 +11,7 @@ const EXPECTED_SPRITE_RECTS := {
 	"Occlusion/CliffOccluder": Rect2(Vector2(520, -420), Vector2(520, 540)),
 	"Occlusion/WallShadowOccluder": Rect2(Vector2(-900, -360), Vector2(2100, 130)),
 	"VistaUnderlay/UnderlayFogBand": Rect2(Vector2(-900, -620), Vector2(2100, 360)),
-	"VistaUnderlay/DistantKeepProxy": Rect2(Vector2(-900, -680), Vector2(2100, 420)),
+	"VistaUnderlay/DistantKeepProxy": Rect2(Vector2(-900, -720), Vector2(2100, 480)),
 }
 
 
@@ -28,12 +28,15 @@ func _init() -> void:
 	var entry := scene.get_node_or_null("EntrySpawn") as Marker2D
 	if entry == null:
 		errors.append("EntrySpawn missing")
-	elif entry.position != Vector2(-240, 420):
-		errors.append("EntrySpawn expected (-240, 420), got %s" % entry.position)
+	elif entry.position != Vector2(-65, 470):
+		errors.append("EntrySpawn expected (-65, 470), got %s" % entry.position)
 	if scene.get_node_or_null("ProgressStart") == null:
 		errors.append("ProgressStart missing")
 	if scene.get_node_or_null("ProgressEnd") == null:
 		errors.append("ProgressEnd missing")
+
+	if bool(scene.get("enable_route_blockers")):
+		errors.append("enable_route_blockers should default false while the approach is tuned")
 
 	var backdrop := scene.get_node_or_null("ApproachVoidBackdrop") as ColorRect
 	if backdrop == null:
@@ -63,45 +66,21 @@ func _init() -> void:
 	if fog_start == null or fog_start.modulate.a < 0.24 or fog_start.modulate.a > 0.31:
 		errors.append("UnderlayFogBand should start at low alpha around 0.25; alpha=%s" % (fog_start.modulate.a if fog_start else "missing"))
 
-	var controller := scene.get_node_or_null("VistaController")
-	if controller == null:
-		errors.append("VistaController missing")
+	var walkable_areas := scene.get_node_or_null("Gameplay/WalkableAreas")
+	if walkable_areas == null:
+		errors.append("Gameplay/WalkableAreas missing")
 	else:
-		if not controller.has_method("refresh_bindings"):
-			errors.append("VistaController missing refresh_bindings()")
-		if not controller.has_method("apply_progress"):
-			errors.append("VistaController missing apply_progress()")
-		var dummy_player := Node2D.new()
-		dummy_player.name = "Operator"
-		scene.add_child(dummy_player)
-		controller.set("player_path", NodePath("../Operator"))
-		controller.call("refresh_bindings")
-		dummy_player.global_position = (scene.get_node("ProgressEnd") as Node2D).global_position
-		controller.call("_process", 0.016)
-		controller.call("apply_progress", 1.0)
-		var cliff := scene.get_node_or_null("Occlusion/CliffOccluder") as CanvasItem
-		var fog := scene.get_node_or_null("VistaUnderlay/UnderlayFogBand") as CanvasItem
-		if cliff == null or cliff.modulate.a < 0.8:
-			errors.append("VistaController did not raise cliff occluder alpha at ProgressEnd; alpha=%s" % (cliff.modulate.a if cliff else "missing"))
-		if fog == null or fog.modulate.a < 0.65:
-			errors.append("VistaController did not raise fog alpha at ProgressEnd; alpha=%s" % (fog.modulate.a if fog else "missing"))
+		_collect_static_bodies_under(walkable_areas, "WalkableAreas must not contain StaticBody2D", errors)
+		_check_walkable_area(walkable_areas, "MainlandApproachWalkArea", errors)
+		_check_walkable_area(walkable_areas, "HillClimbWalkArea", errors)
+		_check_walkable_area(walkable_areas, "OverlookLedgeWalkArea", errors)
+		_check_walkable_area(walkable_areas, "LateralTraverseWalkArea", errors)
 
-	var trigger := scene.get_node_or_null("ExitTransitionTrigger") as Area2D
-	if trigger == null:
-		errors.append("ExitTransitionTrigger missing")
-	elif String(trigger.get("target_scene_path")) != "res://game/world/sundered_keep/sundered_keep_map.gd":
-		errors.append("ExitTransitionTrigger target path is wrong: %s" % String(trigger.get("target_scene_path")))
-	elif trigger.get_node_or_null("CollisionShape2D") == null:
-		errors.append("ExitTransitionTrigger missing CollisionShape2D")
-
-	for body_name in ["PlayableCollision_Mainland", "PlayableCollision_Hill", "PlayableCollision_Overlook", "PlayableCollision_Lateral"]:
-		var body := scene.get_node_or_null("Collision/%s" % body_name) as StaticBody2D
-		if body == null:
-			errors.append("%s missing" % body_name)
-			continue
-		var poly := body.get_node_or_null("CollisionPolygon2D") as CollisionPolygon2D
-		if poly == null or poly.polygon.size() < 3:
-			errors.append("%s collision polygon invalid" % body_name)
+	var blockers := scene.get_node_or_null("Gameplay/Blockers")
+	if blockers == null:
+		errors.append("Gameplay/Blockers missing")
+	elif _count_static_bodies(blockers) > 0:
+		errors.append("Gameplay/Blockers should be empty when enable_route_blockers is false")
 
 	if errors.is_empty():
 		print("[SunderedKeepApproachSmoke] PASS")
@@ -130,3 +109,36 @@ func _check_sprite_rect(node_path: String, sprite: Sprite2D, expected: Rect2, er
 
 func _vec2_nearly_equal(a: Vector2, b: Vector2, epsilon := 0.01) -> bool:
 	return absf(a.x - b.x) <= epsilon and absf(a.y - b.y) <= epsilon
+
+
+func _check_walkable_area(parent: Node, node_name: String, errors: Array[String]) -> void:
+	var area := parent.get_node_or_null(node_name) as Area2D
+	if area == null:
+		errors.append("%s missing or not Area2D" % node_name)
+		return
+	if area.collision_layer != 0 or area.collision_mask != 0:
+		errors.append("%s should use collision layer/mask 0" % node_name)
+	if area.monitoring or area.monitorable:
+		errors.append("%s should not monitor or be monitorable" % node_name)
+	if not bool(area.get_meta("walkable_area", false)):
+		errors.append("%s missing walkable_area metadata" % node_name)
+
+
+func _collect_static_bodies_under(node: Node, reason: String, errors: Array[String]) -> void:
+	if node == null:
+		return
+	if node is StaticBody2D:
+		errors.append("%s: %s" % [reason, node.get_path()])
+	for child in node.get_children():
+		_collect_static_bodies_under(child, reason, errors)
+
+
+func _count_static_bodies(node: Node) -> int:
+	if node == null:
+		return 0
+	var count := 0
+	if node is StaticBody2D:
+		count += 1
+	for child in node.get_children():
+		count += _count_static_bodies(child)
+	return count

@@ -384,10 +384,15 @@ func _build_broken_causeway() -> void:
 
 func _build_causeway_underbridge() -> void:
 	# Space under the elevated causeway deck at height 0.
-	# This is the path connecting beach to shore path.
+	# This is the walkable path connecting beach to shore path.
 	var under_rect := Rect2i(Vector2i(40, 43), Vector2i(10, 10))
 	_fill_rect(under_rect, "cliff_rock_floor_cracked_01")
-	_add_blocker(Rect2i(Vector2i(40, 43), Vector2i(10, 10)), "UnderbridgeBlocker")
+
+	# IMPORTANT:
+	# Do not place a full StaticBody2D over this rect.
+	# The old UnderbridgeBlocker made the visible walk path behave like collision.
+	# If supports are needed later, add small support blockers that do not cover
+	# the route corridor.
 
 
 func _build_shore_path() -> void:
