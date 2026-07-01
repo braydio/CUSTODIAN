@@ -4,7 +4,8 @@ Status: implemented-v1
 
 ## Runtime Additions
 
-- `CombatDrone` is a `CharacterBody2D` allied actor with placeholder `ColorRect` visual, health bar, collision, and muzzle marker.
+- `CombatDrone` is a `CharacterBody2D` allied actor with movement, targeting, firing, health, collision, and muzzle logic.
+- `AlliedInfantryDroid` subclasses `CombatDrone`, replaces the placeholder `ColorRect` with `AnimatedSprite2D` playback, and exposes `T` fire-at-will / hold-fire toggling.
 - `DroneManager` is scene-mounted under `GameRoot/World` and spawns two drones into `GameRoot/World/Allies`.
 - `DroneCommandProfile` centralizes V1 tuning and mode constants.
 - `DroneTargeting` performs deterministic nearest-target selection against non-passive enemies.
@@ -12,7 +13,7 @@ Status: implemented-v1
 
 ## Integration
 
-`custodian/scenes/game.tscn` now references the drone scene and manager script. The manager uses `../Operator` as its anchor and defaults to two active drones.
+`custodian/scenes/game.tscn` now references the animated allied infantry droid scene and manager script. The manager uses `../Operator` as its anchor and defaults to two active droids.
 
 ## Validation
 

@@ -14,27 +14,31 @@ func _init() -> void:
 
 	var bad: Array[String] = []
 
-	var path_sprites := scene.get_node_or_null("PathSprites")
-	var vista_underlay := scene.get_node_or_null("VistaUnderlay")
-	var occlusion := scene.get_node_or_null("Occlusion")
-	var walkable_areas := scene.get_node_or_null("Gameplay/WalkableAreas")
-	var blockers := scene.get_node_or_null("Gameplay/Blockers")
+	for visual_root_path in ["UnderlayRoot", "VistaRoot", "PlayableRoot", "OcclusionRoot"]:
+		var visual_root := scene.get_node_or_null(visual_root_path)
+		if visual_root == null:
+			bad.append("Missing %s" % visual_root_path)
+			continue
+		_collect_collision_under(visual_root, "%s must be visual only" % visual_root_path, bad)
 
-	if path_sprites == null:
-		bad.append("Missing PathSprites")
-	if vista_underlay == null:
-		bad.append("Missing VistaUnderlay")
-	if occlusion == null:
-		bad.append("Missing Occlusion")
-	if walkable_areas == null:
-		bad.append("Missing Gameplay/WalkableAreas")
-	if blockers == null:
-		bad.append("Missing Gameplay/Blockers")
+	var boundary := scene.get_node_or_null("Collision/PathBoundaryCollision") as StaticBody2D
+	if boundary == null:
+		bad.append("Missing Collision/PathBoundaryCollision")
+	else:
+		var segment_count := 0
+		for child in boundary.get_children():
+			var shape := child as CollisionShape2D
+			if shape == null:
+				bad.append("PathBoundaryCollision child is not CollisionShape2D: %s" % child.get_path())
+				continue
+			if not (shape.shape is SegmentShape2D):
+				bad.append("PathBoundaryCollision child must use SegmentShape2D: %s" % shape.get_path())
+				continue
+			segment_count += 1
+		if segment_count < 13:
+			bad.append("Expected at least 13 boundary rail segments, got %d" % segment_count)
 
-	_collect_collision_under(path_sprites, "PathSprites must be visual only", bad)
-	_collect_collision_under(vista_underlay, "VistaUnderlay must be visual only", bad)
-	_collect_collision_under(occlusion, "Occlusion must be visual only", bad)
-	_collect_static_bodies_under(walkable_areas, "WalkableAreas must not contain StaticBody2D", bad)
+	_collect_filled_collision_polygons(scene, bad)
 
 	if not bad.is_empty():
 		for item in bad:
@@ -61,15 +65,13 @@ func _collect_collision_under(node: Node, reason: String, bad: Array[String]) ->
 		_collect_collision_under(child, reason, bad)
 
 
-func _collect_static_bodies_under(node: Node, reason: String, bad: Array[String]) -> void:
-	if node == null:
-		return
-
-	if node is StaticBody2D:
-		bad.append("%s: %s" % [reason, node.get_path()])
-
+func _collect_filled_collision_polygons(node: Node, bad: Array[String]) -> void:
+	if node is CollisionPolygon2D:
+		var polygon := node as CollisionPolygon2D
+		if polygon.build_mode == CollisionPolygon2D.BUILD_SOLIDS:
+			bad.append("Filled CollisionPolygon2D solid is not allowed for approach path boundary: %s" % polygon.get_path())
 	for child in node.get_children():
-		_collect_static_bodies_under(child, reason, bad)
+		_collect_filled_collision_polygons(child, bad)
 
 
 func _fail(message: String) -> void:

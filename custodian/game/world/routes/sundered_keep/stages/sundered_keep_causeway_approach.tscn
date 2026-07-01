@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/world/routes/sundered_keep/stages/sundered_keep_causeway_approach.gd" id="1_causeway"]
+
+[node name="SunderedKeepCausewayApproach" type="Node2D"]
+script = ExtResource("1_causeway")

@@ -4,4 +4,3 @@
 
 [node name="SunderedKeepApproach" type="Node2D"]
 script = ExtResource("1_script")
-enable_route_blockers = false

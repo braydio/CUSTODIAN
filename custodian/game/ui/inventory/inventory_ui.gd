@@ -176,6 +176,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_update_ledger_grid_columns()
+
+
 func set_location(text: String) -> void:
 	if _status_cache["location"] == text:
 		return
@@ -293,12 +298,14 @@ func _build_interface() -> void:
 	_frame.offset_top = 18.0
 	_frame.offset_right = -18.0
 	_frame.offset_bottom = -18.0
-	_frame.add_theme_stylebox_override("panel", Styles.panel_style())
+	_frame.add_theme_stylebox_override("panel", _inventory_panel_style(false))
 	add_child(_frame)
 	_add_frame_texture(_frame)
 	_add_corner_ornaments(_frame)
 
 	var outer := MarginContainer.new()
+	outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	outer.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	outer.add_theme_constant_override("margin_left", 28)
 	outer.add_theme_constant_override("margin_top", 24)
 	outer.add_theme_constant_override("margin_right", 28)
@@ -318,6 +325,7 @@ func _build_interface() -> void:
 
 	_pages_root = Control.new()
 	_pages_root.name = "PageRoot"
+	_pages_root.clip_contents = true
 	_pages_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_pages_root.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stack.add_child(_pages_root)
@@ -326,10 +334,19 @@ func _build_interface() -> void:
 	_history_page = _build_history_page()
 	_ledger_page = _build_ledger_page()
 	_equipment_page = _build_equipment_page()
-	_pages_root.add_child(_status_page)
-	_pages_root.add_child(_history_page)
-	_pages_root.add_child(_ledger_page)
-	_pages_root.add_child(_equipment_page)
+	_mount_page(_status_page)
+	_mount_page(_history_page)
+	_mount_page(_ledger_page)
+	_mount_page(_equipment_page)
+
+
+func _mount_page(page: Control) -> void:
+	if page == null:
+		return
+	page.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	page.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_pages_root.add_child(page)
 
 
 func _build_header() -> Control:
@@ -460,6 +477,8 @@ func _build_history_page() -> Control:
 	page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	page.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var margin := MarginContainer.new()
+	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	margin.add_theme_constant_override("margin_left", 18)
 	margin.add_theme_constant_override("margin_top", 18)
 	margin.add_theme_constant_override("margin_right", 18)
@@ -510,6 +529,8 @@ func _build_ledger_page() -> Control:
 	page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	page.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var margin := MarginContainer.new()
+	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	margin.add_theme_constant_override("margin_left", 18)
 	margin.add_theme_constant_override("margin_top", 18)
 	margin.add_theme_constant_override("margin_right", 18)
@@ -531,8 +552,12 @@ func _build_ledger_body() -> Control:
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_theme_constant_override("separation", 12)
 
-	var categories := _panel(true, Vector2(142, 0))
+	var categories := _panel(true, Vector2(132, 0))
+	categories.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	categories.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var category_margin := MarginContainer.new()
+	category_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	category_margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	category_margin.add_theme_constant_override("margin_left", 12)
 	category_margin.add_theme_constant_override("margin_top", 14)
 	category_margin.add_theme_constant_override("margin_right", 12)
@@ -553,9 +578,12 @@ func _build_ledger_body() -> Control:
 		_ledger_category_list.add_child(button)
 	body.add_child(categories)
 
-	var records := _panel(true, Vector2(570, 0))
+	var records := _panel(true, Vector2(0, 0))
 	records.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	records.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var record_margin := MarginContainer.new()
+	record_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	record_margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	record_margin.add_theme_constant_override("margin_left", 14)
 	record_margin.add_theme_constant_override("margin_top", 14)
 	record_margin.add_theme_constant_override("margin_right", 14)
@@ -597,44 +625,67 @@ func _build_ledger_body() -> Control:
 
 
 func _build_ledger_detail_panel() -> Control:
-	var detail := _panel(true, Vector2(330, 0))
+	var detail := _panel(true, Vector2(320, 0))
+	detail.size_flags_horizontal = Control.SIZE_SHRINK_END
+	detail.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
 	var margin := MarginContainer.new()
+	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	margin.add_theme_constant_override("margin_left", 18)
 	margin.add_theme_constant_override("margin_top", 18)
 	margin.add_theme_constant_override("margin_right", 18)
 	margin.add_theme_constant_override("margin_bottom", 18)
 	detail.add_child(margin)
+
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	margin.add_child(scroll)
+
 	var stack := VBoxContainer.new()
 	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stack.add_theme_constant_override("separation", 10)
-	margin.add_child(stack)
+	scroll.add_child(stack)
+
 	stack.add_child(_label("INSPECTION RECORD", Palette.GOLD_TEXT, 12))
+
 	_ledger_detail_icon = TextureRect.new()
-	_ledger_detail_icon.custom_minimum_size = Vector2(112, 112)
+	_ledger_detail_icon.custom_minimum_size = Vector2(96, 96)
 	_ledger_detail_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_ledger_detail_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_ledger_detail_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	stack.add_child(_ledger_detail_icon)
-	_ledger_detail_name = _label("NO RECORD SELECTED", Palette.BODY_TEXT, 20)
+
+	_ledger_detail_name = _label("NO RECORD SELECTED", Palette.BODY_TEXT, 18)
 	_ledger_detail_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	stack.add_child(_ledger_detail_name)
+
 	_ledger_detail_class = _label("CLASSIFICATION: --", SYSTEM_TECH, 12)
+	_ledger_detail_class.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	stack.add_child(_ledger_detail_class)
+
 	_ledger_detail_count = _label("QUANTITY: --", Palette.GOLD_TEXT, 13)
 	stack.add_child(_ledger_detail_count)
+
 	stack.add_child(_build_divider())
+
 	_ledger_detail_use = _label("USED FOR: UNKNOWN", Palette.MUTED_TEXT, 11)
 	_ledger_detail_use.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	stack.add_child(_ledger_detail_use)
+
 	stack.add_child(_label("DESCRIPTION", Palette.MUTED_TEXT, 10))
+
 	_ledger_detail_description = _label("Select a recovered object to inspect its ledger record.", Palette.BODY_TEXT, 14)
 	_ledger_detail_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_ledger_detail_description.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_ledger_detail_description.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	_ledger_detail_description.custom_minimum_size = Vector2(0, 96)
 	stack.add_child(_ledger_detail_description)
+
 	_ledger_detail_provenance = _label("PROVENANCE: --", Palette.MUTED_TEXT, 11)
 	_ledger_detail_provenance.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	stack.add_child(_ledger_detail_provenance)
+
 	_ledger_detail_equip_button = Button.new()
 	_ledger_detail_equip_button.name = "EquipButton"
 	_ledger_detail_equip_button.text = ""
@@ -654,6 +705,8 @@ func _build_equipment_page() -> Control:
 	page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	page.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var margin := MarginContainer.new()
+	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	margin.add_theme_constant_override("margin_left", 18)
 	margin.add_theme_constant_override("margin_top", 18)
 	margin.add_theme_constant_override("margin_right", 18)
@@ -962,6 +1015,7 @@ func _load_resources() -> void:
 func _rebuild_item_grid() -> void:
 	if _ledger_item_grid == null:
 		return
+	_update_ledger_grid_columns()
 	for child in _ledger_item_grid.get_children():
 		_ledger_item_grid.remove_child(child)
 		child.queue_free()
@@ -990,6 +1044,23 @@ func _rebuild_item_grid() -> void:
 				_show_detail(entry)
 				break
 	_update_category_button_states()
+
+
+func _update_ledger_grid_columns() -> void:
+	if _ledger_item_grid == null:
+		return
+
+	var parent_control := _ledger_item_grid.get_parent_control()
+	if parent_control == null:
+		return
+
+	var available_width := parent_control.size.x
+	if available_width <= 0.0:
+		return
+
+	var card_width := 144.0
+	var columns := int(floor(available_width / card_width))
+	_ledger_item_grid.columns = clampi(columns, 1, 4)
 
 
 func _create_item_button(entry: Dictionary) -> Button:
@@ -1319,8 +1390,14 @@ func _apply_item_button_style(button: Button, category: String, selected := fals
 func _panel(deep: bool, minimum_size: Vector2) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = minimum_size
-	panel.add_theme_stylebox_override("panel", Styles.panel_style(deep))
+	panel.add_theme_stylebox_override("panel", _inventory_panel_style(deep))
 	return panel
+
+
+func _inventory_panel_style(deep := false) -> StyleBoxFlat:
+	var style := Styles.panel_style(deep)
+	style.bg_color.a = 0.96 if deep else 0.98
+	return style
 
 
 func _label(text: String, color: Color, size: int) -> Label:
@@ -1345,7 +1422,8 @@ func _add_frame_texture(parent: Control) -> void:
 	frame_texture.show_behind_parent = true
 	frame_texture.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	frame_texture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	Styles.configure_nine_patch(frame_texture, path)
+	if Styles.configure_nine_patch(frame_texture, path):
+		frame_texture.draw_center = false
 	parent.add_child(frame_texture)
 	parent.move_child(frame_texture, 0)
 

@@ -1,9 +1,10 @@
 # Sundered Keep Vista Approach
 
-- **Status:** complete, smoke-validated, and source-asset audited
+- **Status:** runtime production approach implemented and smoke-validated; source-asset audit reports current export-size drift
 - **Owner:** rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
-- **Generator:** `custodian/tools/build_sundered_keep_approach_blockout.gd`
+- **Production runtime scene:** `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn`
+- **Reference generator:** `custodian/tools/build_sundered_keep_approach_blockout.gd`
 - **Director:** `custodian/scripts/levels/sundered_keep/overlook_camera_director.gd`
 - **Generated scene:** `custodian/scenes/levels/sundered_keep/sundered_keep_approach_blockout.tscn`
 
@@ -11,7 +12,7 @@
 
 A visual-only camera/composition sequence for the Sundered Keep approach. The player enters from mainland top-down, climbs a hill as the horizon reveals the Sundered Keep vista, traverses laterally along a cliff face (occluding the vista), then returns to normal top-down play.
 
-**Hard constraint:** Rendering/camera only. No navigation, combat, enemy AI, or deterministic simulation state. Collision stays on existing `StaticBody2D` + `CollisionPolygon2D` polygons. Runtime visuals are authored `Sprite2D` matte/terrain assets; polygons remain as collision authority only. Sprite2D assets are fit to their target `Rect2` as a builder-side safety net, but production source PNGs must still export at the documented dimensions. Playable terrain art must keep transparent pixels outside the authored terrain shape unless the full rectangle is intentionally terrain.
+**Hard constraint:** Rendering/camera/traversal only. No navigation, combat, enemy AI, or deterministic simulation state. The production runtime scene uses fitted `Sprite2D` matte/terrain assets and a single perimeter-rail `StaticBody2D` made from `SegmentShape2D` rails. Filled path-shaped `CollisionPolygon2D` solids are not valid walkable-boundary collision because they block the path itself. Sprite2D assets are fit to their target `Rect2`; the rect is runtime layout authority. Playable terrain art must keep transparent pixels outside the authored terrain shape unless the full rectangle is intentionally terrain.
 
 ## Runtime Ingress Chain
 
@@ -21,21 +22,20 @@ Normal contract-world access now routes through:
 Procgen world placement -> WorldIngressSite -> authored Sundered Keep approach/vista -> final fade -> SunderedKeepMap
 ```
 
-`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` owns the authored reveal/vista/fade approach using the transparent path, underlay, and occlusion Sprite2D assets under `res://content/sprites/world/return_causeway/`. The runtime approach isolates presentation from the generated world: `WorldIngressSite` hides and disables `ProcGenRuntime` and `ConnectedMaps` while the approach is active, the approach scene draws an opaque dark backdrop, and `sundered_keep_approach.gd` fits all path/fog/occlusion sprites to explicit design `Rect2`s instead of using raw PNG dimensions. Path sprites render below the Operator, occluders start hidden, and route blockers default disabled while the layout is still being tuned; the live walkable rectangles are metadata-only `Area2D` nodes with no collision. `res://game/world/sundered_keep/sundered_keep_map.gd` remains the real gameplay destination after the fade. The old direct `SunderedKeepTravelGate` path is retained only behind `place_debug_sundered_keep_gateway` for review.
+`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` is now the full production runtime approach, using ocean/cliff/fog underlay, horizon sky, far sea, distant keep, vista fog, playable path art, occluders, perimeter collision rails, progress markers, `SunderedKeepVistaController`, and `SunderedKeepTransitionTrigger`. The runtime approach isolates presentation from the generated world: `WorldIngressSite` hides and disables `ProcGenRuntime` and `ConnectedMaps` while the approach is active, the approach scene fits all sprites to explicit design `Rect2`s instead of using raw PNG dimensions, and the distant keep renders at its intended hero silhouette rect rather than stretching across the screen. `res://game/world/sundered_keep/sundered_keep_map.gd` remains the real gameplay destination after the fade. The old direct `SunderedKeepTravelGate` path is retained only behind `place_debug_sundered_keep_gateway` for review.
 
 ## Scene Architecture
 
 ```
 SunderedKeepApproach
-├── UnderlayRoot          z=-300  — always-visible ocean/cliff/fog mattes
-├── VistaRoot             z=-200  — alpha-faded horizon layers (modulate.a driven by director)
-│   └── VistaFogBand      Node2D parent so director alpha-fades left+right together
-├── PlayableRoot          z=0     — walkable path Sprite2D + collision StaticBody2D
-├── OcclusionRoot         z=100   — alpha-faded blocking layers (modulate.a driven by director)
-├── Markers               — Marker2D waypoints for camera director
-├── Operator              — instanced from operator.tscn at MainlandStart
-├── Camera2D              — active game camera
-└── OverlookCameraDirector — drives camera offset/zoom + vista/occlusion/fog alpha from player position vs markers
+├── UnderlayRoot          z=-300  — ocean/cliff/fog mattes
+├── VistaRoot             z=-200  — horizon sky, far sea, distant keep, vista fog
+├── PlayableRoot          z=0     — walkable path Sprite2D art
+├── OcclusionRoot         z=100   — cliff/wall occluders
+├── Collision             — PathBoundaryCollision SegmentShape2D rails
+├── Markers               — EntrySpawn, RevealStart, RevealFull, TraverseStart, TraverseEnd, ReturnTopdown
+├── VistaController       — drives vista, fog, occlusion, and distant keep alpha
+└── ExitTransitionTrigger — final handoff to SunderedKeepMap
 ```
 
 ### Z-order
@@ -44,12 +44,11 @@ SunderedKeepApproach
 |------|---------|-------|
 | UnderlayRoot | -300 | Behind everything |
 | VistaRoot | -200 | Horizon sky, far sea, distant keep, fog band |
-| PlayableRoot | 0 | Walkable terrain with collision |
-| Operator | 50 | Player character |
+| PlayableRoot | 0 | Walkable terrain art |
 | OcclusionRoot | 100 | Cliff/wall occluders that hide vista during traverse |
-| Camera/Director | — | No visual concern |
+| Collision/VistaController/ExitTransitionTrigger | — | No visual concern |
 
-The builder writes these visual roots and the Operator with `z_as_relative=false` so draw order does not depend on scene-tree insertion or inherited z values.
+The production runtime script self-heals these visual roots with `z_as_relative=false` so draw order does not depend on scene-tree insertion or inherited z values. The blockout scene remains reference/dev-only.
 
 ### Camera states & markers
 
@@ -96,7 +95,7 @@ These live under `content/` not `assets/`. Use `res://content/backgrounds/sunder
 
 ## Asset Export Contract
 
-The generated scene uses top-left anchored `Sprite2D` nodes (`centered=false`) and scales each texture to its intended world `Rect2`. This protects runtime layout if a source image drifts, but size drift still emits a warning and should be fixed at the source.
+The production runtime scene and generated reference blockout both use top-left anchored `Sprite2D` nodes (`centered=false`) and scale each texture to its intended world `Rect2`. This protects runtime layout if a source image drifts, but size drift still emits a warning and should be fixed at the source.
 
 Run the source audit before accepting visual changes:
 
@@ -105,11 +104,11 @@ cd custodian
 python3 tools/validation/sundered_keep_approach_asset_audit.py
 ```
 
-The audit checks all approach PNG dimensions and fails if any PlayableRoot terrain asset has no alpha channel or is fully opaque. PlayableRoot PNGs should generally be transparent outside the visible path/terrain silhouette so the editor/game view does not show stacked rectangular plates.
+The audit checks all full-composition PNGs and fails if any PlayableRoot terrain asset has no alpha channel or is fully opaque. It also reports source export-size drift, such as oversized fog/keep exports, so the runtime can keep fitting by rect while asset cleanup remains explicit. PlayableRoot PNGs should generally be transparent outside the visible path/terrain silhouette so the editor/game view does not show stacked rectangular plates.
 
-The live ingress approach has a separate runtime fitting table in `res://game/world/approaches/sundered_keep/sundered_keep_approach.gd`. It intentionally scales `res://content/sprites/world/return_causeway/` path/underlay/occlusion PNGs into target world rectangles, including a thin `2100x130` `WallShadowOccluder`, so oversized generated overlay exports cannot appear as raw black curtains over the scene.
+The live ingress approach has a runtime fitting table in `res://game/world/approaches/sundered_keep/sundered_keep_approach.gd`. It intentionally scales `res://content/sprites/world/return_causeway/` path/underlay/occlusion PNGs and `res://content/backgrounds/sundered_keep/` vista mattes into target world rectangles, including a thin `2100x130` `WallShadowOccluder`, so oversized generated overlay exports cannot appear as raw black curtains over the scene.
 
-## Implementation Phases
+## Reference Blockout Implementation
 
 ### Phase 1 — Add `_sprite_rect()` helper to builder
 
@@ -267,10 +266,11 @@ Verify at each state:
 
 ## Next Agent Slice
 
-- **Goal:** All phases complete. No remaining implementation work.
+- **Goal:** Production runtime full-composition approach is implemented. Remaining work is asset export cleanup and manual play review.
 - **Future opportunities:**
+  - Re-export `underlay_fog_band.png`, `distant_sundered_keep.png`, `overlook_ledge.png`, and `fortress_wall_mass.png` to match the documented production rect/source contract if desired
   - In-editor visual review of the approach blockout scene (open `sundered_keep_approach_blockout.tscn` and walk the operator)
   - In-editor visual review of the procgen ingress -> `sundered_keep_approach.tscn` -> `SunderedKeepMap` flow
   - Replace the current ingress tile fallback with a specific coast/keep ingress reservation in the procgen intent graph
   - Ensure the approach transitions smoothly back to the main game scene after completion
-- **Constraint:** Rendering-only. No collision changes. No combat/nav/AI.
+- **Constraint:** Rendering/camera/traversal only. No combat/nav/AI.

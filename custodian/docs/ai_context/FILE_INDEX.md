@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-06-24
+Last updated: 2026-06-29
 
 ## Local Entry And Workflow
 
@@ -124,9 +124,19 @@ Last updated: 2026-06-24
 - `custodian/game/world/gothic_compound/gothic_compound_map.gd` — authored connected gothic compound destination map that runs the larger gothic blueprint generator, exposes camera bounds, updates player-relative depth sorting, places the return gate, and now adds an `AuthoredVaultRoom` with three `VaultStorage` caches plus `VaultEnemyExit`
 - `custodian/game/world/gothic_compound/gothic_compound_travel_gate.gd` — interactable gate used to enter the gothic compound from the main map and return from the compound to the main map; Sundered Keep normal access now uses `WorldIngressSite` instead, with this gate retained for the optional debug direct gateway
 - `custodian/game/world/procgen/ingress/world_ingress_site.gd` — generic procgen-to-authored-approach Area2D boundary; currently used by Sundered Keep so generated world placement opens an approach scene rather than directly instancing the final map
-- `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn` and `.gd` — authored Sundered Keep ingress approach scene with Entry/Progress markers, script-built Sprite2D path/underlay/occlusion art, metadata-only walkable `Area2D` rectangles, and route blockers disabled by default while the approach layout is tuned
-- `custodian/game/world/approaches/sundered_keep/sundered_keep_vista_controller.gd` — progress-based visual controller for the Sundered Keep approach; fades cliff occlusion, wall shadow, fog, and distant keep proxy without owning gameplay simulation
+- `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn` and `.gd` — production Sundered Keep ingress approach scene with full ocean/sky/far-sea/distant-keep/fog/path/occlusion Sprite2D composition, Entry/Reveal/Traverse/Return markers, perimeter `SegmentShape2D` rail collision, `VistaController`, and `ExitTransitionTrigger`
+- `custodian/game/world/approaches/sundered_keep/sundered_keep_vista_controller.gd` — progress-based visual controller for the Sundered Keep approach; fades VistaRoot, fog underlay, vista fog, occlusion root, cliff occlusion, wall shadow, and distant keep without owning gameplay simulation
 - `custodian/game/world/approaches/sundered_keep/sundered_keep_transition_trigger.gd` — final Area2D trigger for the Sundered Keep approach; plays the vista fade and then creates/activates the real `SunderedKeepMap`
+- `custodian/game/world/routes/level_stage.gd` — base `LevelStage` class for route-level stage organization; defines `configure_stage()`, `get_entry_spawn()`, `get_camera_bounds()`, `complete_stage()`, and the `stage_complete` signal
+- `custodian/game/world/routes/level_route.gd` — base `LevelRoute` controller with `register_stage()`, `_load_stage()`, `_on_stage_complete()` stage advancement, and `final_target_scene` instantiation via `_enter_front_gate()`
+- `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.gd` — route controller registering vista_one, pre_level, grand_vista, and causeway_approach stages with `sundered_keep_map.tscn` as final target
+- `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.tscn` — thin route scene wrapper (script only)
+- `custodian/game/world/routes/sundered_keep/stages/sundered_keep_vista_one.gd` / `.tscn` — auto-advance first vista presentation with horizon sky, far sea, distant keep, and vista fog band
+- `custodian/game/world/routes/sundered_keep/stages/sundered_keep_pre_level.gd` / `.tscn` — gameplay preamble stub with EntrySpawn and ExitToGrandVistaTrigger
+- `custodian/game/world/routes/sundered_keep/stages/sundered_keep_grand_vista.gd` / `.tscn` — auto-advance/skippable panorama presentation with graceful missing-texture handling for grand vista textures
+- `custodian/game/world/routes/sundered_keep/stages/sundered_keep_causeway_approach.gd` / `.tscn` — LevelStage-converted approach scene with full underlay/path/occlusion/collision/VistaController logic, exit trigger replaced with `ExitToFrontGate` Area2D emitting `stage_complete`
+- `custodian/tools/validation/sundered_keep_approach_route_smoke.gd` — validation smoke for route system: base classes, route registration, all 4 stage instantiation, causeway approach structure checks, vista controller path verification, and stage advancement signal simulation
+- `custodian/game/world/sundered_keep/sundered_keep_map.tscn` — wrapper scene for `sundered_keep_map.gd` to provide a `PackedScene` for the route's `final_target_scene`
 - `custodian/game/world/sundered_keep/sundered_keep_map.gd` — authored connected Sundered Keep destination map that preserves Return Mooring, local `sundered_gate_key` pickup, openable/collision-gated animated prefab Main Gate, animated/depth-sorted Great Hall doorway, right-turn Great Hall hallway marine ambush wiring, authored elevation/underpass/shore/interior-occlusion metadata/query helpers, operator fake-elevation application, visual underpass shadow overlays, data-driven Great Hall roof occluder cutaway, live minimap floor/wall provider methods, a JSON-driven world-space `Underlay` image contract for level silhouette/feel, debug exposure of the linked overlay-authoring guide JSON, map-local HUD activation on enter/return travel, camera bounds, debug state, local gate-open siege loop, and explicit `PLACEHOLDER_KEEP_WALL_HOME` routing for temporary labyrinth wall/void-edge readability art while building the active large front-gate layout from JSON level data
 - `custodian/game/world/sundered_keep/sundered_keep_overlay_authoring_debug.gd` — review-only overlay debug renderer that reads the generated Sundered Keep authoring-mask JSON and draws suggested footprint / border-void / enclosed-void rects over the live map
 - `custodian/game/world/sundered_keep/sundered_keep_marine_ambush.gd` — Sundered Keep-local encounter controller that keeps the Great Hall marine idle until the player approaches, advances it down the post-door hallway, and uses the heavy marine dash timing, damage, knockback, hitstop, and camera feedback values with the current east body/FX lunge when in range.
@@ -180,12 +190,15 @@ Last updated: 2026-06-24
 - `custodian/game/actors/relay/relay.gd` — interactable relay entity that mirrors ARRN state, shows scan/stabilization prompts, and starts stabilization through `ARRNManager`
 - `custodian/game/actors/relay/signal_indicator.gd` — primitive signal-strength visual for relay placeholder scenes
 - `custodian/game/actors/relay/relay_interaction.gd` — relay interaction area bridge for future scene-level interaction expansion
-- `custodian/game/actors/allies/combat_drone.tscn` — placeholder allied combat drone scene with health bar, collision, muzzle marker, and ColorRect visual
-- `custodian/game/actors/allies/combat_drone.gd` — fragile allied combat drone actor that follows/orbits the Custodian, supports FOLLOW/HOLD/INTERCEPT/RECALL modes, acquires local enemies, fires defense bullets, and can be destroyed
-- `custodian/game/systems/drone/drone_manager.gd` — scene-mounted drone squad manager that spawns up to two drones near the operator and exposes squad mode/state APIs
+- `custodian/game/actors/allies/combat_drone.tscn` — base allied combat drone scene with health bar, collision, muzzle marker, and fallback ColorRect visual
+- `custodian/game/actors/allies/combat_drone.gd` — fragile allied combat drone actor that follows/orbits the Custodian, supports FOLLOW/HOLD/INTERCEPT/RECALL modes, acquires local enemies, fires defense bullets, can be destroyed, and exposes fire-at-will state
+- `custodian/game/actors/allies/allied_infantry_droid.tscn` — active main-scene allied droid presentation with animated SpriteFrames, muzzle marker, health bar, and inherited combat behavior
+- `custodian/game/actors/allies/allied_infantry_droid.gd` — animated `CombatDrone` subclass with facing-aware idle/run/destroyed playback and `T` fire-at-will / hold-fire toggling
+- `custodian/game/systems/drone/drone_manager.gd` — scene-mounted drone squad manager that spawns up to two animated allied droids near the operator and exposes squad mode/state APIs
 - `custodian/game/systems/drone/drone_command_profile.gd` — V1 drone tuning and mode constants for HP, speed, range, burst cadence, retreat threshold, and leash behavior
 - `custodian/game/systems/drone/drone_targeting.gd` — deterministic local target selection helper for non-passive enemies near the Custodian or hold point
 - `custodian/game/systems/drone/drone_squad_state.gd` — lightweight resource tracking active/destroyed drone IDs and current squad mode
+- `custodian/tools/validation/main_scene_allied_droid_smoke.gd` — focused smoke proving `game.tscn` routes `DroneManager` to the animated allied droid scene with inherited combat behavior and `T` fire-at-will toggling
 - `custodian/game/systems/core/state/game_state.gd` — fail-state and phase authority autoload; now pauses and mounts the game-over modal on `trigger_game_over(...)`, preserves the existing debug fields, and exposes `reset_run_state(...)` for restart flows.
 - `custodian/game/systems/core/state/game_stats.gd` — run-stat autoload for waves survived, enemies destroyed, power failures, and turrets lost snapshots used by the game-over modal.
 - `custodian/game/ui/game_over/game_over_modal.tscn` — centered pause-safe game-over modal showing fail reason, stats, Restart Facility, and Return to Menu.
@@ -245,13 +258,13 @@ Last updated: 2026-06-24
 - `custodian/game/ui/minimap/minimap_controller.gd` — discovers runtime procgen or authored map providers plus player/enemy/objective/utility nodes and feeds live minimap data to the view.
 - `custodian/game/ui/minimap/minimap_view.gd` — data-driven minimap renderer that caches procgen/authored floor-wall terrain, supports actor-bounds fallback maps, and draws tactical pips, including a distinct marker for enemies carrying stolen resources.
 - `custodian/game/ui/inventory/inventory_ui.tscn` — hidden live-game Black Reliquary inventory overlay instanced under `UI` and opened with the inventory input action; now the primary status/history/ledger surface with tabbed pages
-- `custodian/game/ui/inventory/inventory_ui.gd` — live `InventoryManager`-backed field-ledger overlay with compact status/history/ledger/equipment pages, readable item cards and inspection metadata, functional P-9 equip/unequip controls, focus handling, and compatibility support for isolated local `Inventory` callers
+- `custodian/game/ui/inventory/inventory_ui.gd` — live `InventoryManager`-backed field-ledger overlay with compact status/history/ledger/equipment pages, clipped full-rect page mounting, responsive ledger grid columns, scroll-contained inspection metadata, functional P-9 equip/unequip controls, focus handling, and compatibility support for isolated local `Inventory` callers
 - `custodian/game/ui/inventory/inventory_asset_catalog.gd` — canonical production inventory UI/item-icon resolver that automatically prefers assets under `content/ui/inventory/runtime/` and falls back to existing Black Reliquary/legacy textures
 - `custodian/game/ui/inventory/shaders/inventory_ember_spark.gdshader` and `materials/blackwood_ember_spark_material.tres` — reusable alpha-bounded inventory ember/spark effect and the blackwood-only default material instance
 - `custodian/game/ui/inventory/inventory_item_catalog.gd` — deterministic carried-item metadata resolver for known item JSON definitions plus readable fallback records for future/unknown ledger IDs
 - `custodian/content/ui/inventory/runtime/inventory_ui_asset_manifest.json` — exact production inventory asset drop-in contract for panels, slots, icons, and ornaments
 - `custodian/content/ui/inventory/runtime/README.md` — inventory production asset naming, placement, and replacement workflow
-- `custodian/tools/validation/inventory_ui_smoke.gd` — validates the live ledger-backed inventory scene, item rendering/update behavior, close behavior, and asset-manifest fallback contract
+- `custodian/tools/validation/inventory_ui_smoke.gd` — validates the live ledger-backed inventory scene, layout containment hooks, item rendering/update behavior, close behavior, and asset-manifest fallback contract
 - `custodian/docs/ai_context/task_packets/archived/CUSTODIAN_INVENTORY_UI.md` — completed packet for the live professional inventory overlay and production-asset drop-in contract
 - `custodian/docs/ai_context/task_packets/FAB_TERMINAL_READABILITY_PASS.md` — completed packet for the FABRICATION work-order readability pass, including the terminal translation layer and build-placement alias
 - `custodian/game/ui/terminal/terminal_command_router.gd` — command parsing, validation, refresh policy, and dispatch boundary for the HUD terminal

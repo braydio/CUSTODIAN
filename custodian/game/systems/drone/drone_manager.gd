@@ -1,7 +1,7 @@
 extends Node
 class_name DroneManager
 
-const DEFAULT_DRONE_SCENE := preload("res://game/actors/allies/combat_drone.tscn")
+const DEFAULT_DRONE_SCENE := preload("res://game/actors/allies/allied_infantry_droid.tscn")
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 const DroneSquadStateScript := preload("res://game/systems/drone/drone_squad_state.gd")
 

@@ -1,11 +1,11 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene format=3 uid="uid://0yrfcy7jaglx"]
 
-[ext_resource type="Script" path="res://tools/validation/lighting_playground.gd" id="1_playground"]
-[ext_resource type="Script" path="res://game/world/lighting/world_lighting_director.gd" id="2_director"]
-[ext_resource type="Script" path="res://game/world/lighting/lighting_profile.gd" id="3_profile"]
+[ext_resource type="Script" uid="uid://5vfwqdtbppb4" path="res://tools/validation/lighting_playground.gd" id="1_playground"]
+[ext_resource type="Script" uid="uid://b4nd4yrjdaflb" path="res://game/world/lighting/world_lighting_director.gd" id="2_director"]
+[ext_resource type="Script" uid="uid://d4lk2cibgc1h7" path="res://game/world/lighting/lighting_profile.gd" id="3_profile"]
 [ext_resource type="PackedScene" path="res://game/world/lighting/light_rig_2d.tscn" id="4_light_rig"]
-[ext_resource type="Script" path="res://game/world/lighting/lighting_zone_2d.gd" id="5_zone"]
-[ext_resource type="Script" path="res://game/world/lighting/transient_light_pool.gd" id="6_transient_pool"]
+[ext_resource type="Script" uid="uid://cpeqb27a6msbf" path="res://game/world/lighting/lighting_zone_2d.gd" id="5_zone"]
+[ext_resource type="Script" uid="uid://gak7onvrpws1" path="res://game/world/lighting/transient_light_pool.gd" id="6_transient_pool"]
 
 [sub_resource type="Resource" id="LightingProfile_causeway"]
 script = ExtResource("3_profile")
@@ -13,7 +13,6 @@ ambient_color = Color(0.23, 0.25, 0.29, 1)
 directional_color = Color(0.78, 0.84, 0.96, 1)
 directional_energy = 0.65
 directional_rotation_degrees = -32.0
-cosmic_underlay_alpha = 0.0
 fog_alpha = 0.18
 transition_seconds = 0.65
 
@@ -37,66 +36,64 @@ cosmic_underlay_alpha = 0.68
 fog_alpha = 0.52
 transition_seconds = 0.9
 
-[sub_resource type="RectangleShape2D" id="ZoneShape"]
-size = Vector2(240, 180)
-
 [sub_resource type="RectangleShape2D" id="PlayerShape"]
 size = Vector2(22, 38)
 
-[sub_resource type="OccluderPolygon2D" id="OccluderWall"]
-polygon = PackedVector2Array(-96, -20, 96, -20, 96, 20, -96, 20)
-closed = true
+[sub_resource type="RectangleShape2D" id="ZoneShape"]
+size = Vector2(240, 180)
 
 [sub_resource type="RectangleShape2D" id="WallShape"]
 size = Vector2(192, 40)
 
-[node name="LightingPlayground" type="Node2D"]
+[sub_resource type="OccluderPolygon2D" id="OccluderWall"]
+polygon = PackedVector2Array(-96, -20, 96, -20, 96, 20, -96, 20)
+
+[node name="LightingPlayground" type="Node2D" unique_id=3631953]
 script = ExtResource("1_playground")
 profiles = Array[ExtResource("3_profile")]([SubResource("LightingProfile_causeway"), SubResource("LightingProfile_interior"), SubResource("LightingProfile_cosmic")])
 
-[node name="CanvasModulate" type="CanvasModulate" parent="."]
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=480529175]
 color = Color(0.23, 0.25, 0.29, 1)
 
-[node name="DirectionalLight2D" type="DirectionalLight2D" parent="."]
+[node name="DirectionalLight2D" type="DirectionalLight2D" parent="." unique_id=523227266]
 rotation = -0.558505
 color = Color(0.78, 0.84, 0.96, 1)
 energy = 0.65
 
-[node name="WorldLightingDirector" type="Node2D" parent="."]
+[node name="WorldLightingDirector" type="Node2D" parent="." unique_id=1295791519]
 script = ExtResource("2_director")
 canvas_modulate_path = NodePath("../CanvasModulate")
 directional_light_path = NodePath("../DirectionalLight2D")
 default_profile = SubResource("LightingProfile_causeway")
 
-[node name="TransientLightPool" type="Node2D" parent="."]
+[node name="TransientLightPool" type="Node2D" parent="." unique_id=1542312684]
 script = ExtResource("6_transient_pool")
 pool_size = 12
 
-[node name="Ground" type="Polygon2D" parent="."]
+[node name="Ground" type="Polygon2D" parent="." unique_id=981657343]
 color = Color(0.105882, 0.113725, 0.12549, 1)
 polygon = PackedVector2Array(-420, -260, 420, -260, 420, 260, -420, 260)
 
-[node name="PlayerPlaceholder" type="CharacterBody2D" parent="."]
+[node name="PlayerPlaceholder" type="CharacterBody2D" parent="." unique_id=764012085]
 position = Vector2(-120, 40)
 
-[node name="PlayerBody" type="Polygon2D" parent="PlayerPlaceholder"]
+[node name="PlayerBody" type="Polygon2D" parent="PlayerPlaceholder" unique_id=103898291]
 position = Vector2(0, -18)
 color = Color(0.82, 0.86, 0.88, 1)
 polygon = PackedVector2Array(-11, -20, 11, -20, 11, 20, -11, 20)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerPlaceholder"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerPlaceholder" unique_id=2063843330]
 shape = SubResource("PlayerShape")
 
-[node name="TerminalGlowRig" parent="." instance=ExtResource("4_light_rig")]
+[node name="TerminalGlowRig" parent="." unique_id=372839715 instance=ExtResource("4_light_rig")]
 position = Vector2(-220, -100)
 light_color = Color(0.35, 0.9, 0.78, 1)
 energy = 1.2
 pulse_enabled = true
 pulse_speed = 1.4
-pulse_amount = 0.12
 glow_scale = 1.5
 
-[node name="BeaconGlowRig" parent="." instance=ExtResource("4_light_rig")]
+[node name="BeaconGlowRig" parent="." unique_id=1510379615 instance=ExtResource("4_light_rig")]
 position = Vector2(160, -130)
 light_color = Color(0.98, 0.75, 0.38, 1)
 energy = 1.55
@@ -105,40 +102,36 @@ pulse_speed = 2.2
 pulse_amount = 0.18
 glow_scale = 1.85
 
-[node name="CosmicFissureRig" parent="." instance=ExtResource("4_light_rig")]
+[node name="CosmicFissureRig" parent="." unique_id=2014359527 instance=ExtResource("4_light_rig")]
 position = Vector2(180, 120)
 light_color = Color(0.25, 0.62, 1, 1)
-energy = 1.0
 pulse_enabled = true
 pulse_speed = 0.85
 pulse_amount = 0.22
 glow_scale = 2.1
 
-[node name="LightingZone2D" type="Area2D" parent="."]
+[node name="LightingZone2D" type="Area2D" parent="." unique_id=807107586]
 position = Vector2(190, 115)
 script = ExtResource("5_zone")
 profile = SubResource("LightingProfile_cosmic")
 profile_priority = 10
-blend_on_enter = true
 director_path = NodePath("../WorldLightingDirector")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="LightingZone2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LightingZone2D" unique_id=1181920952]
 shape = SubResource("ZoneShape")
 
-[node name="OccluderWallBody" type="StaticBody2D" parent="."]
+[node name="OccluderWallBody" type="StaticBody2D" parent="." unique_id=1661760264]
 position = Vector2(0, 10)
 
-[node name="WallVisual" type="Polygon2D" parent="OccluderWallBody"]
+[node name="WallVisual" type="Polygon2D" parent="OccluderWallBody" unique_id=76429827]
 color = Color(0.18, 0.18, 0.2, 1)
 polygon = PackedVector2Array(-96, -20, 96, -20, 96, 20, -96, 20)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="OccluderWallBody"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OccluderWallBody" unique_id=962493979]
 shape = SubResource("WallShape")
 
-[node name="LightOccluder2D" type="LightOccluder2D" parent="OccluderWallBody"]
+[node name="LightOccluder2D" type="LightOccluder2D" parent="OccluderWallBody" unique_id=1799312726]
 occluder = SubResource("OccluderWall")
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(0, 0)
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1457829680]
 zoom = Vector2(1.2, 1.2)
-enabled = true

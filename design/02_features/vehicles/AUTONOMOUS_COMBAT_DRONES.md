@@ -6,7 +6,7 @@ Feature owner: combat / allied automation
 
 ## Summary
 
-Autonomous combat drones are fragile player-assist companions. V1 mounts a `DroneManager` in the active scene and spawns up to two allied drones near the Custodian. They use placeholder visuals, follow/orbit the player, acquire nearby non-passive enemies, fire short deterministic support bursts, and can be destroyed.
+Autonomous combat drones are fragile player-assist companions. V1 mounts a `DroneManager` in the active scene and spawns up to two allied droid companions near the Custodian. The shared combat actor owns follow/orbit, local target acquisition, support bursts, HP, and destruction; the active main-scene presentation uses the animated allied infantry droid scene with `T` fire-at-will / hold-fire toggling.
 
 ## Doctrine Rules
 
@@ -18,6 +18,8 @@ Autonomous combat drones are fragile player-assist companions. V1 mounts a `Dron
 
 - `custodian/game/actors/allies/combat_drone.gd`
 - `custodian/game/actors/allies/combat_drone.tscn`
+- `custodian/game/actors/allies/allied_infantry_droid.gd`
+- `custodian/game/actors/allies/allied_infantry_droid.tscn`
 - `custodian/game/systems/drone/drone_manager.gd`
 - `custodian/game/systems/drone/drone_command_profile.gd`
 - `custodian/game/systems/drone/drone_targeting.gd`
@@ -48,7 +50,7 @@ Autonomous combat drones are fragile player-assist companions. V1 mounts a `Dron
 
 ## Deferred
 
-- Production drone sprite/animation/audio.
+- Full production allied-droid/mech audio and expanded directional animation coverage.
 - Dedicated terminal command UI for drone modes.
 - Fabricator/drone bay reserve deployment.
 - Repair or redeploy during combat.

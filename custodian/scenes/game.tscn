@@ -49,6 +49,7 @@
 [ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
 [ext_resource type="Script" uid="uid://brgprv506ntpi" path="res://game/systems/spawning/ambient_enemy_camp.gd" id="207_ambient_camp"]
 [ext_resource type="PackedScene" path="res://game/ui/debug/dev_observatory_overlay.tscn" id="208_observatory_overlay"]
+[ext_resource type="PackedScene" path="res://game/actors/allies/allied_infantry_droid.tscn" id="209_allied_droid"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
@@ -262,6 +263,7 @@ script = ExtResource("101_terminal_deployment")
 
 [node name="DroneManager" type="Node" parent="World" unique_id=1022301414]
 script = ExtResource("206_drone_manager")
+drone_scene = ExtResource("209_allied_droid")
 
 [node name="CommandTerminal" parent="World" unique_id=2021499921 instance=ExtResource("27_command_terminal")]
 position = Vector2(804, -492)

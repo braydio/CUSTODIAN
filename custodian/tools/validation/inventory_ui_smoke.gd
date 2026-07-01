@@ -45,6 +45,10 @@ func _initialize() -> void:
 	var history_page := _find_node_named(inventory_ui, "HistoryPage") as Control
 	var ledger_page := _find_node_named(inventory_ui, "LedgerPage") as Control
 	var equipment_page := _find_node_named(inventory_ui, "EquipmentPage") as Control
+	var page_root := _find_node_named(inventory_ui, "PageRoot") as Control
+	var production_frame := _find_node_named(inventory_ui, "ProductionFrame") as NinePatchRect
+	_assert(page_root != null and page_root.clip_contents, "PageRoot should clip overflowing page content")
+	_assert(production_frame != null and not production_frame.draw_center, "production frame should not draw a center mural behind panels")
 	_assert(status_page != null, "status page root missing")
 	_assert(_find_node_named(inventory_ui, "StatusButton") != null, "status tab button missing")
 	_assert(_find_node_named(inventory_ui, "HistoryButton") != null, "history tab button missing")
@@ -74,7 +78,10 @@ func _initialize() -> void:
 	_assert(_find_node_named(inventory_ui, "Item_p9_sidearm") != null, "P-9 equipment item was not rendered")
 	var item_grid := _find_node_named(inventory_ui, "ItemGrid")
 	_assert(item_grid != null and not item_grid.get_children().is_empty(), "ledger item grid missing")
+	_assert(item_grid is GridContainer and (item_grid as GridContainer).columns >= 1 and (item_grid as GridContainer).columns <= 4, "ledger item grid columns should be responsive and clamped")
 	_assert(item_grid != null and item_grid.get_child(0).name == "Item_sundered_gate_key", "ledger should sort by class and display name")
+	var detail_equip_button := _find_node_named(inventory_ui, "EquipButton")
+	_assert(detail_equip_button != null and _has_scroll_ancestor(detail_equip_button), "ledger inspection controls should live inside a ScrollContainer")
 	var key_quantity := (_find_node_named(inventory_ui, "Item_sundered_gate_key") as Button).get_node_or_null("ItemQuantity") as Label
 	_assert(key_quantity != null and not key_quantity.visible, "key-object cards should not display stack quantity")
 	var p9_name := (_find_node_named(inventory_ui, "Item_p9_sidearm") as Button).get_node_or_null("ItemName") as Label
@@ -182,3 +189,12 @@ func _find_label_with_text(node: Node, needle: String) -> Label:
 		if found != null:
 			return found
 	return null
+
+
+func _has_scroll_ancestor(node: Node) -> bool:
+	var current := node.get_parent()
+	while current != null:
+		if current is ScrollContainer:
+			return true
+		current = current.get_parent()
+	return false

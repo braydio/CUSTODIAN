@@ -21,26 +21,26 @@ ROOT = Path(__file__).resolve().parents[2]
 EXPECTED_SIZES = {
     "content/backgrounds/sundered_keep/ocean_underlay.png": (2100, 1400),
     "content/backgrounds/sundered_keep/cliff_depth_underlay.png": (520, 540),
-    "content/backgrounds/sundered_keep/approach/playable/underlay_fog_band.png": (2172, 724),
-    "content/backgrounds/sundered_keep/approach/playable/mainland_approach_path.png": (470, 400),
-    "content/backgrounds/sundered_keep/approach/playable/hill_climb_path.png": (400, 240),
-    "content/backgrounds/sundered_keep/approach/playable/overlook_ledge.png": (640, 240),
-    "content/backgrounds/sundered_keep/approach/playable/lateral_traverse_path.png": (520, 180),
-    "content/backgrounds/sundered_keep/approach/playable/fortress_wall_mass.png": (360, 380),
+    "content/sprites/world/return_causeway/underlay/underlay_fog_band.png": (2100, 360),
     "content/backgrounds/sundered_keep/horizon_sky.png": (2100, 380),
     "content/backgrounds/sundered_keep/far_sea.png": (2100, 260),
     "content/backgrounds/sundered_keep/distant_sundered_keep.png": (540, 250),
     "content/backgrounds/sundered_keep/vista_fog_band.png": (2100, 160),
-    "content/backgrounds/sundered_keep/approach/playable/cliff_occluder.png": (520, 540),
-    "content/backgrounds/sundered_keep/approach/playable/wall_shadow_occluder.png": (2100, 130),
+    "content/sprites/world/return_causeway/path/mainland_approach_path.png": (470, 400),
+    "content/sprites/world/return_causeway/path/hill_climb_path.png": (400, 240),
+    "content/sprites/world/return_causeway/path/overlook_ledge.png": (640, 200),
+    "content/sprites/world/return_causeway/path/lateral_traverse_path.png": (520, 180),
+    "content/sprites/world/return_causeway/path/fortress_wall_mass.png": (350, 380),
+    "content/sprites/world/return_causeway/occlusion/cliff_occluder.png": (520, 540),
+    "content/sprites/world/return_causeway/occlusion/wall_shadow_occluder.png": (2100, 130),
 }
 
 PLAYABLE_ALPHA_REQUIRED = {
-    "content/backgrounds/sundered_keep/approach/playable/mainland_approach_path.png",
-    "content/backgrounds/sundered_keep/approach/playable/hill_climb_path.png",
-    "content/backgrounds/sundered_keep/approach/playable/overlook_ledge.png",
-    "content/backgrounds/sundered_keep/approach/playable/lateral_traverse_path.png",
-    "content/backgrounds/sundered_keep/approach/playable/fortress_wall_mass.png",
+    "content/sprites/world/return_causeway/path/mainland_approach_path.png",
+    "content/sprites/world/return_causeway/path/hill_climb_path.png",
+    "content/sprites/world/return_causeway/path/overlook_ledge.png",
+    "content/sprites/world/return_causeway/path/lateral_traverse_path.png",
+    "content/sprites/world/return_causeway/path/fortress_wall_mass.png",
 }
 
 

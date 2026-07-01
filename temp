@@ -1,0 +1,5 @@
+python3 make_clean_causeway_mask.py \
+  ./sundered_keep_main_overlay-production.png \
+  --out custodian/content/backgrounds/sundered_keep/causeway_approach/causeway_approach_logic_mask.png \
+  --preview reports/causeway_approach_logic_mask_preview.png \
+  --normalized-bg custodian/content/backgrounds/sundered_keep/causeway_approach/causeway_approach_background.png
