@@ -24,6 +24,8 @@ Procgen world placement -> WorldIngressSite -> authored Sundered Keep approach/v
 
 `ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` is now the full production runtime approach, using ocean/cliff/fog underlay, horizon sky, far sea, distant keep, vista fog, the second-beat `GrandVistaRoot`, playable path art, occluders, perimeter collision rails, progress markers, `SunderedKeepVistaController`, and `SunderedKeepTransitionTrigger`. The runtime approach isolates presentation from the generated world: `WorldIngressSite` hides and disables `ProcGenRuntime` and `ConnectedMaps` while the approach is active, the approach scene fits all sprites to explicit design `Rect2`s instead of using raw PNG dimensions, and the distant keep renders at its intended hero silhouette rect rather than stretching across the screen. `res://game/world/sundered_keep/sundered_keep_map.gd` remains the real gameplay destination after the fade. The old direct `SunderedKeepTravelGate` path is retained only behind `place_debug_sundered_keep_gateway` for review.
 
+Ingress transitions must be deferred out of `Area2D.body_entered` physics callbacks before instancing this scene. The approach also defers its dynamic `StaticBody2D` boundary rails and final exit `Area2D` setup by one frame so Godot does not register or toggle physics shapes while flushing queries.
+
 ## Scene Architecture
 
 ```

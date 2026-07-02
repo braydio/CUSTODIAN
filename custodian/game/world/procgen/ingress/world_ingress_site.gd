@@ -9,6 +9,7 @@ class_name WorldIngressSite
 @export_range(32.0, 192.0, 1.0) var interaction_distance: float = 92.0
 
 var _triggered := false
+var _approach_enter_deferred := false
 var _sprite: Sprite2D = null
 
 
@@ -45,6 +46,22 @@ func get_interaction_distance() -> float:
 
 func _on_body_entered(body: Node) -> void:
 	if _triggered:
+		return
+	if _approach_enter_deferred:
+		return
+	if body == null:
+		return
+	if not _is_player_body(body):
+		return
+	_approach_enter_deferred = true
+	call_deferred("_enter_approach_deferred", body)
+
+
+func _enter_approach_deferred(body: Node) -> void:
+	_approach_enter_deferred = false
+	if _triggered:
+		return
+	if not is_instance_valid(body):
 		return
 	if not _is_player_body(body):
 		return

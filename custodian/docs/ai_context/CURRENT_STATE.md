@@ -36,7 +36,9 @@ Last updated: 2026-07-01
   intentionally not required because the current production underlay remains acceptable; they are optional future polish
   only. Collision is a single `PathBoundaryCollision` `StaticBody2D` made from `SegmentShape2D` perimeter rails, not
   filled walkable polygons, and `GrandVistaRoot` is visual-only with no collision, navigation, or deterministic simulation
-  authority.
+  authority. Procgen ingress now defers the approach transition out of `Area2D.body_entered`, and the approach defers
+  dynamic boundary/exit-trigger physics setup by one frame to avoid Godot physics-query flush errors while keeping the
+  perimeter rails active.
 - Sundered Keep access now follows the explicit ingress chain:
   procgen world placement -> `WorldIngressSite` -> authored Sundered Keep approach/vista -> final fade ->
   `SunderedKeepMap`. Procgen owns where the ingress appears, the approach owns the reveal/vista/fade presentation,

@@ -111,10 +111,8 @@ func _ready() -> void:
 	_remove_stale_proxy_nodes()
 	_ensure_roots()
 	_build_visuals()
-	_build_collision()
 	_ensure_vista_controller()
-	_ensure_exit_transition_trigger()
-	_apply_ingress_config_to_trigger()
+	call_deferred("_finish_physics_setup")
 
 
 func configure_ingress(config: Dictionary) -> void:
@@ -126,6 +124,14 @@ func get_entry_position() -> Vector2:
 	if entry_spawn != null:
 		return entry_spawn.global_position
 	return global_position + ENTRY_SPAWN_POS
+
+
+func _finish_physics_setup() -> void:
+	if not is_inside_tree():
+		return
+	_build_collision()
+	_ensure_exit_transition_trigger()
+	_apply_ingress_config_to_trigger()
 
 
 func _remove_stale_proxy_nodes() -> void:
@@ -422,8 +428,8 @@ func _ensure_exit_transition_trigger() -> void:
 	exit_transition_trigger.position = TRAVERSE_END_POS
 	exit_transition_trigger.target_scene_path = TARGET_SCENE_PATH
 	exit_transition_trigger.vista_controller_path = NodePath("../VistaController")
-	exit_transition_trigger.monitoring = true
-	exit_transition_trigger.monitorable = true
+	exit_transition_trigger.set_deferred("monitoring", true)
+	exit_transition_trigger.set_deferred("monitorable", true)
 
 	var shape := exit_transition_trigger.get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if shape == null:
@@ -436,6 +442,7 @@ func _ensure_exit_transition_trigger() -> void:
 		shape.shape = rectangle
 	rectangle.size = Vector2(144.0, 190.0)
 	shape.position = Vector2.ZERO
+	shape.set_deferred("disabled", false)
 
 
 func _apply_ingress_config_to_trigger() -> void:

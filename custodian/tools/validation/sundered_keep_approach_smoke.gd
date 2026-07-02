@@ -58,6 +58,7 @@ func _init() -> void:
 		return
 	root.add_child(scene)
 	await process_frame
+	await process_frame
 
 	var errors: Array[String] = []
 
