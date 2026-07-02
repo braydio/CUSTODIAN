@@ -1,6 +1,6 @@
 # Sundered Keep Vista Approach
 
-- **Status:** runtime production approach implemented and smoke-validated; source-asset audit reports current export-size drift
+- **Status:** runtime production approach implemented, grand-vista presentation beat wired, and smoke/audit validated
 - **Owner:** rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Production runtime scene:** `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn`
@@ -10,9 +10,9 @@
 
 ## Summary
 
-A visual-only camera/composition sequence for the Sundered Keep approach. The player enters from mainland top-down, climbs a hill as the horizon reveals the Sundered Keep vista, traverses laterally along a cliff face (occluding the vista), then returns to normal top-down play.
+A visual-only camera/composition sequence for the Sundered Keep approach. The player enters from mainland top-down, climbs a hill as the horizon reveals the Sundered Keep traversal vista, reaches a second hero-overlook beat where `GrandVistaRoot` fades in with the generated panorama/fog/spray/parapet layer, traverses laterally along a cliff face, then returns to normal top-down play.
 
-**Hard constraint:** Rendering/camera/traversal only. No navigation, combat, enemy AI, or deterministic simulation state. The production runtime scene uses fitted `Sprite2D` matte/terrain assets and a single perimeter-rail `StaticBody2D` made from `SegmentShape2D` rails. Filled path-shaped `CollisionPolygon2D` solids are not valid walkable-boundary collision because they block the path itself. Sprite2D assets are fit to their target `Rect2`; the rect is runtime layout authority. Playable terrain art must keep transparent pixels outside the authored terrain shape unless the full rectangle is intentionally terrain.
+**Hard constraint:** Rendering/camera/traversal only. No navigation, combat, enemy AI, or deterministic simulation state. The production runtime scene uses fitted `Sprite2D` matte/terrain assets and a single perimeter-rail `StaticBody2D` made from `SegmentShape2D` rails. `GrandVistaRoot` is presentation-only and must not become collision, navigation, or sim authority. Filled path-shaped `CollisionPolygon2D` solids are not valid walkable-boundary collision because they block the path itself. Sprite2D assets are fit to their target `Rect2`; the rect is runtime layout authority. Playable terrain art must keep transparent pixels outside the authored terrain shape unless the full rectangle is intentionally terrain.
 
 ## Runtime Ingress Chain
 
@@ -22,19 +22,20 @@ Normal contract-world access now routes through:
 Procgen world placement -> WorldIngressSite -> authored Sundered Keep approach/vista -> final fade -> SunderedKeepMap
 ```
 
-`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` is now the full production runtime approach, using ocean/cliff/fog underlay, horizon sky, far sea, distant keep, vista fog, playable path art, occluders, perimeter collision rails, progress markers, `SunderedKeepVistaController`, and `SunderedKeepTransitionTrigger`. The runtime approach isolates presentation from the generated world: `WorldIngressSite` hides and disables `ProcGenRuntime` and `ConnectedMaps` while the approach is active, the approach scene fits all sprites to explicit design `Rect2`s instead of using raw PNG dimensions, and the distant keep renders at its intended hero silhouette rect rather than stretching across the screen. `res://game/world/sundered_keep/sundered_keep_map.gd` remains the real gameplay destination after the fade. The old direct `SunderedKeepTravelGate` path is retained only behind `place_debug_sundered_keep_gateway` for review.
+`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` is now the full production runtime approach, using ocean/cliff/fog underlay, horizon sky, far sea, distant keep, vista fog, the second-beat `GrandVistaRoot`, playable path art, occluders, perimeter collision rails, progress markers, `SunderedKeepVistaController`, and `SunderedKeepTransitionTrigger`. The runtime approach isolates presentation from the generated world: `WorldIngressSite` hides and disables `ProcGenRuntime` and `ConnectedMaps` while the approach is active, the approach scene fits all sprites to explicit design `Rect2`s instead of using raw PNG dimensions, and the distant keep renders at its intended hero silhouette rect rather than stretching across the screen. `res://game/world/sundered_keep/sundered_keep_map.gd` remains the real gameplay destination after the fade. The old direct `SunderedKeepTravelGate` path is retained only behind `place_debug_sundered_keep_gateway` for review.
 
 ## Scene Architecture
 
 ```
 SunderedKeepApproach
 ├── UnderlayRoot          z=-300  — ocean/cliff/fog mattes
+├── GrandVistaRoot        z=-220  — hero overlook panorama/fog/spray/parapet, presentation-only
 ├── VistaRoot             z=-200  — horizon sky, far sea, distant keep, vista fog
 ├── PlayableRoot          z=0     — walkable path Sprite2D art
 ├── OcclusionRoot         z=100   — cliff/wall occluders
 ├── Collision             — PathBoundaryCollision SegmentShape2D rails
-├── Markers               — EntrySpawn, RevealStart, RevealFull, TraverseStart, TraverseEnd, ReturnTopdown
-├── VistaController       — drives vista, fog, occlusion, and distant keep alpha
+├── Markers               — EntrySpawn, RevealStart, RevealFull, SecondVistaStart, SecondVistaFull, SecondVistaEnd, TraverseStart, TraverseEnd, ReturnTopdown
+├── VistaController       — drives vista, grand vista, fog, occlusion, and distant keep alpha
 └── ExitTransitionTrigger — final handoff to SunderedKeepMap
 ```
 
@@ -43,6 +44,7 @@ SunderedKeepApproach
 | Root | z_index | Notes |
 |------|---------|-------|
 | UnderlayRoot | -300 | Behind everything |
+| GrandVistaRoot | -220 | Second-beat hero overlook panorama layer; starts hidden and is visual-only |
 | VistaRoot | -200 | Horizon sky, far sea, distant keep, fog band |
 | PlayableRoot | 0 | Walkable terrain art |
 | OcclusionRoot | 100 | Cliff/wall occluders that hide vista during traverse |
@@ -69,6 +71,9 @@ State transitions are driven by player position against Marker2D waypoints. Appr
 | MainlandStart | `(-80, 430)` |
 | RevealStart | `(-40, 80)` |
 | RevealFull | `(0, -250)` |
+| SecondVistaStart | `(-40, -180)` |
+| SecondVistaFull | `(0, -280)` |
+| SecondVistaEnd | `(240, -220)` |
 | TraverseStart | `(260, -180)` |
 | TraverseEnd | `(760, -170)` |
 | ReturnTopdown | `(720, -80)` |
@@ -93,6 +98,35 @@ The following painterly matte/background assets already exist at `res://content/
 
 These live under `content/` not `assets/`. Use `res://content/backgrounds/sundered_keep/` paths.
 
+## Grand Vista Presentation Beat
+
+`GrandVistaRoot` is a second presentation layer in the same production approach scene. It fades in as the player reaches the overlook ledge and fades out as the player leaves toward the lateral traverse. It does not define terrain, collision, navigation, encounters, or exit logic; traversal remains owned by path sprites plus perimeter `SegmentShape2D` rails.
+
+The approach also applies `res://game/world/approaches/sundered_keep/soft_rect_feather.gdshader` to horizon, sea, fog, distant-keep, cliff-depth, and grand-vista plates so fitted matte rectangles feather at their UV edges instead of reading as hard cards. Low-opacity `Polygon2D` grounding shadows sit under the walkable chunks to tie the path art into the void/ocean composition; these are visual-only and are not collision authority.
+
+| Sprite name | Asset path | Rect | z_index | Tint |
+|---|---|---|---|---|
+| GrandVistaPanorama | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_panorama.png` | `Rect2(-1280, -920, 2560, 1440)` | 0 | feathered, alpha 0.88 |
+| GrandVistaOceanSprayOverlay | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_ocean_spray_overlay.png` | `Rect2(-1280, -160, 2560, 720)` | 1 | feathered, alpha 0.58 |
+| GrandVistaFogOverlay | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_fog_overlay.png` | `Rect2(-1280, -520, 2560, 480)` | 2 | feathered, alpha 0.48 |
+| GrandVistaShadowVignette | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_shadow_vignette.png` | `Rect2(-1280, -920, 2560, 1440)` | 3 | feathered, alpha 0.42 |
+| GrandVistaForegroundParapet | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png` | `Rect2(-1280, 260, 2560, 360)` | 20 | feathered, alpha 0.92 |
+
+`SunderedKeepVistaController` derives the second-beat fade from `SecondVistaStart`, `SecondVistaFull`, and `SecondVistaEnd`: alpha rises from start to full, then falls from full to end. The panorama is intentionally awe-scale, while the parapet and spray overlays require real PNG alpha so they frame the camera reward without rectangular plates.
+
+### Grand Vista Glue Overlays
+
+The saved grand-vista glue overlays are wired under `GrandVistaRoot/GrandVistaGlueRoot`, so they inherit the same second-vista fade and disappear before the top-down `SunderedKeepMap` is shown. They are low-alpha blend layers, not new scenery or collision authority.
+
+| Sprite name | Asset path | Rect | z_index | Tint |
+|---|---|---|---|---|
+| GrandVistaHorizonSeamFog | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_horizon_seam_fog.png` | `Rect2(-1280, -460, 2560, 320)` | 30 | alpha 0.45 |
+| GrandVistaPathContactShadow | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_path_contact_shadow.png` | `Rect2(-1280, -160, 2560, 720)` | 35 | alpha 0.50 |
+| GrandVistaEdgeSprayWrap | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_edge_spray_wrap.png` | `Rect2(-1280, -160, 2560, 720)` | 40 | alpha 0.35 |
+| GrandVistaForegroundEdgeMask | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_edge_mask.png` | `Rect2(-1280, 220, 2560, 420)` | 80 | alpha 0.55 |
+
+The underlay correction patch candidates `approach_cliff_depth_patch.png` and `causeway_underside_shadow.png` are intentionally not required by runtime or validation. The current production underlay remains the active background authority; those patch assets are optional future polish only.
+
 ## Asset Export Contract
 
 The production runtime scene and generated reference blockout both use top-left anchored `Sprite2D` nodes (`centered=false`) and scale each texture to its intended world `Rect2`. This protects runtime layout if a source image drifts, but size drift still emits a warning and should be fixed at the source.
@@ -104,9 +138,11 @@ cd custodian
 python3 tools/validation/sundered_keep_approach_asset_audit.py
 ```
 
-The audit checks all full-composition PNGs and fails if any PlayableRoot terrain asset has no alpha channel or is fully opaque. It also reports source export-size drift, such as oversized fog/keep exports, so the runtime can keep fitting by rect while asset cleanup remains explicit. PlayableRoot PNGs should generally be transparent outside the visible path/terrain silhouette so the editor/game view does not show stacked rectangular plates.
+The audit checks all full-composition PNGs and fails if any PlayableRoot terrain asset has no alpha channel or is fully opaque. It also checks the grand vista PNGs and requires real alpha on `grand_vista_foreground_parapet.png`, `grand_vista_ocean_spray_overlay.png`, and the four saved glue overlays. PlayableRoot PNGs should generally be transparent outside the visible path/terrain silhouette so the editor/game view does not show stacked rectangular plates.
 
 The live ingress approach has a runtime fitting table in `res://game/world/approaches/sundered_keep/sundered_keep_approach.gd`. It intentionally scales `res://content/sprites/world/return_causeway/` path/underlay/occlusion PNGs and `res://content/backgrounds/sundered_keep/` vista mattes into target world rectangles, including a thin `2100x130` `WallShadowOccluder`, so oversized generated overlay exports cannot appear as raw black curtains over the scene.
+
+The actual `SunderedKeepMap` remains the top-down gameplay destination. It must not instantiate `GrandVistaRoot`, grand-vista sprites, or grand-vista textures; `sundered_keep_approach_smoke.gd` instantiates the map and fails if those presentation assets appear in the gameplay scene.
 
 ## Reference Blockout Implementation
 

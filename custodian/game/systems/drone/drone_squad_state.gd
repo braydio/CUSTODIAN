@@ -6,6 +6,8 @@ const DroneCommandProfileScript := preload("res://game/systems/drone/drone_comma
 @export var max_active_drones: int = 2
 @export var max_reserve_drones: int = 0
 @export var current_mode: int = DroneCommandProfileScript.Mode.FOLLOW
+@export var fire_at_will: bool = true
+@export var current_follow_distance: int = DroneCommandProfileScript.FollowDistance.CLOSE
 
 var active_drone_ids: Array[String] = []
 var destroyed_drone_ids: Array[String] = []
@@ -30,10 +32,37 @@ func set_mode(mode: int) -> void:
 	current_mode = mode
 
 
+func set_fire_at_will(enabled: bool) -> void:
+	fire_at_will = enabled
+
+
+func toggle_fire_at_will() -> bool:
+	fire_at_will = not fire_at_will
+	return fire_at_will
+
+
+func set_follow_distance(mode: int) -> void:
+	current_follow_distance = mode
+
+
+func cycle_follow_distance() -> int:
+	match current_follow_distance:
+		DroneCommandProfileScript.FollowDistance.CLOSE:
+			current_follow_distance = DroneCommandProfileScript.FollowDistance.FAR
+		DroneCommandProfileScript.FollowDistance.FAR:
+			current_follow_distance = DroneCommandProfileScript.FollowDistance.FREE_ROAM
+		_:
+			current_follow_distance = DroneCommandProfileScript.FollowDistance.CLOSE
+	return current_follow_distance
+
+
 func get_summary() -> Dictionary:
 	return {
 		"mode": DroneCommandProfileScript.mode_name(current_mode),
+		"follow_distance": DroneCommandProfileScript.follow_distance_name(current_follow_distance),
+		"fire_at_will": fire_at_will,
 		"active": active_drone_ids.duplicate(),
 		"destroyed": destroyed_drone_ids.duplicate(),
 		"reserve": max_reserve_drones,
+		"max_active": max_active_drones,
 	}

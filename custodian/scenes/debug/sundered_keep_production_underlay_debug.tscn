@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://dowtwdpnevbng"]
+
+[ext_resource type="Texture2D" uid="uid://cybggelxxmx5g" path="res://content/masters/sundered_keep/sundered_keep_main_overlay-production.png" id="1_underlay"]
+
+[node name="SunderedKeepProductionUnderlayDebug" type="Node2D" unique_id=2038541171]
+
+[node name="World" type="Node2D" parent="." unique_id=1623670609]
+
+[node name="ProductionUnderlay" type="Sprite2D" parent="World" unique_id=1894369976]
+centered = false
+texture = ExtResource("1_underlay")
+scale = Vector2(0.710776, 0.731429)
+
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=1156275913]
+position = Vector2(1792, 1280)
+enabled = true
+zoom = Vector2(0.32, 0.32)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1273294170]
+
+[node name="ReviewNote" type="Label" parent="CanvasLayer" unique_id=259179170]
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 900.0
+offset_bottom = 58.0
+text = "Sundered Keep production underlay debug: production PNG fitted to gameplay rect 112x80 tiles"
+horizontal_alignment = 1
+vertical_alignment = 1

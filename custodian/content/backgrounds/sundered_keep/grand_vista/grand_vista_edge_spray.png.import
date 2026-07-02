@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cybggelxxmx5g"
-path="res://.godot/imported/sundered_keep_main_overlay-production.png-77d4a0dcabf0ecb4be6e563f7f4873e6.ctex"
+uid="uid://dcl0nbf7x5g15"
+path="res://.godot/imported/grand_vista_edge_spray.png-b12aec512b7b92e9cb88f50b8ddd7685.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/masters/sundered_keep/sundered_keep_main_overlay-production.png"
-dest_files=["res://.godot/imported/sundered_keep_main_overlay-production.png-77d4a0dcabf0ecb4be6e563f7f4873e6.ctex"]
+source_file="res://content/backgrounds/sundered_keep/grand_vista/grand_vista_edge_spray.png"
+dest_files=["res://.godot/imported/grand_vista_edge_spray.png-b12aec512b7b92e9cb88f50b8ddd7685.ctex"]
 
 [params]
 

@@ -3,10 +3,10 @@ class_name DroneTargeting
 
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 
-func acquire_target(drone: Node2D, anchor: Node2D, mode: int, profile: Resource) -> Node2D:
+func acquire_target(drone: Node2D, anchor: Node2D, mode: int, profile: Resource, max_range_override: float = -1.0) -> Node2D:
 	if drone == null or anchor == null or profile == null:
 		return null
-	var max_range: float = profile.drone_engage_range
+	var max_range: float = max_range_override if max_range_override > 0.0 else profile.drone_engage_range
 	var best: Node2D = null
 	var best_score := INF
 	for candidate in drone.get_tree().get_nodes_in_group("enemy"):

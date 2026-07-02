@@ -13,9 +13,10 @@ extends CombatDrone
 ## - destroyed_e
 ## - destroyed_w
 
-@export var toggle_key: Key = KEY_T
+@export var show_status_label: bool = true
 
 @onready var anim_sprite: AnimatedSprite2D = get_node_or_null("AnimatedSprite2D")
+@onready var status_label: Label = get_node_or_null("StatusLabel")
 
 var _last_facing_east: bool = true
 
@@ -38,34 +39,6 @@ func _ready() -> void:
 	_update_visuals()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if destroyed:
-		return
-	if get_tree().paused:
-		return
-
-	if event is InputEventKey:
-		var key_event := event as InputEventKey
-		if key_event.pressed and not key_event.echo and key_event.keycode == toggle_key:
-			_toggle_combat_mode()
-			get_viewport().set_input_as_handled()
-
-
-func _toggle_combat_mode() -> void:
-	# fire_at_will is inherited from CombatDrone.
-	# Do not redeclare it in this child script.
-	fire_at_will = not fire_at_will
-
-	# CombatDrone._update_weapon() already respects fire_at_will, but clear
-	# queued burst state immediately so HOLD FIRE feels instant.
-	if not fire_at_will:
-		_burst_remaining = 0
-		_burst_gap_timer = 0.0
-
-	print("[Droid] Combat mode: ", "FIRE AT WILL" if fire_at_will else "HOLD FIRE")
-	_update_visuals()
-
-
 func _update_visuals() -> void:
 	# Override CombatDrone's ColorRect visual path.
 	if anim_sprite == null:
@@ -75,6 +48,7 @@ func _update_visuals() -> void:
 	_update_animation()
 	_update_sprite_tint()
 	_update_health_bar()
+	_update_status_label()
 
 
 func _update_facing() -> void:
@@ -134,6 +108,17 @@ func _update_health_bar() -> void:
 	health_bar.value = health_ratio * 100.0
 	health_bar.modulate = _get_health_tint(health_ratio)
 	health_bar.visible = not destroyed
+
+
+func _update_status_label() -> void:
+	if status_label == null:
+		return
+	status_label.visible = show_status_label and not destroyed
+	if not status_label.visible:
+		return
+	var fire_text := "FIRE" if fire_at_will else "HOLD"
+	var follow_text := get_follow_distance_name().replace("FREE_ROAM", "ROAM")
+	status_label.text = "%s / %s" % [fire_text, follow_text]
 
 
 func _get_health_ratio() -> float:

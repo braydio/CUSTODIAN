@@ -19,8 +19,9 @@ var health: float = 45.0
 var destroyed: bool = false
 var target: Node2D = null
 
-# When false, _update_weapon skips firing. Toggled by allied_infantry_droid.
+# When false, _update_weapon skips firing. Owned by DroneManager squad commands.
 var fire_at_will: bool = true
+var follow_distance_mode: int = DroneCommandProfileScript.FollowDistance.CLOSE
 
 var _slot_index: int = 0
 var _hold_position: Vector2 = Vector2.ZERO
@@ -53,13 +54,33 @@ func configure(index: int, anchor_node: Node2D, manager_node: Node, command_prof
 		profile = command_profile
 	drone_id = "DRONE_%02d" % (index + 1)
 	_apply_profile()
-	set_mode(DroneCommandProfileScript.Mode.FOLLOW)
 
 
 func set_mode(mode: int) -> void:
 	squad_mode = mode
 	if mode == DroneCommandProfileScript.Mode.HOLD:
 		_hold_position = global_position
+
+
+func set_fire_at_will(enabled: bool) -> void:
+	fire_at_will = enabled
+	if not fire_at_will:
+		_burst_remaining = 0
+		_burst_gap_timer = 0.0
+
+
+func set_follow_distance_mode(mode: int) -> void:
+	follow_distance_mode = mode
+	if follow_distance_mode == DroneCommandProfileScript.FollowDistance.FREE_ROAM:
+		_hold_position = global_position
+
+
+func get_follow_distance_name() -> String:
+	return DroneCommandProfileScript.follow_distance_name(follow_distance_mode)
+
+
+func get_fire_mode_name() -> String:
+	return "FIRE AT WILL" if fire_at_will else "HOLD FIRE"
 
 
 func _physics_process(delta: float) -> void:
@@ -77,11 +98,12 @@ func _refresh_target() -> void:
 	if squad_mode == DroneCommandProfileScript.Mode.RECALL:
 		target = null
 		return
+	var engage_range := _get_engage_range()
 	if target != null and is_instance_valid(target) and not _targeting.is_invalid_enemy(target):
 		var range_origin := anchor.global_position if anchor != null else global_position
-		if target.global_position.distance_to(range_origin) <= profile.drone_engage_range:
+		if target.global_position.distance_to(range_origin) <= engage_range:
 			return
-	target = _targeting.acquire_target(self, anchor, squad_mode, profile)
+	target = _targeting.acquire_target(self, anchor, squad_mode, profile, engage_range)
 
 
 func _update_movement(delta: float) -> void:
@@ -103,7 +125,7 @@ func _get_desired_position() -> Vector2:
 			retreat_dir = (anchor.global_position - target.global_position).normalized()
 		if retreat_dir.length_squared() <= 0.001:
 			retreat_dir = Vector2.RIGHT.rotated(float(_slot_index) * PI)
-		return anchor.global_position + retreat_dir * profile.follow_orbit_radius
+		return anchor.global_position + retreat_dir * _get_follow_radius()
 	match squad_mode:
 		DroneCommandProfileScript.Mode.HOLD:
 			if _hold_position.distance_to(anchor.global_position) > profile.hold_leash_range:
@@ -118,13 +140,46 @@ func _get_desired_position() -> Vector2:
 		DroneCommandProfileScript.Mode.RECALL:
 			return anchor.global_position + _get_orbit_offset().normalized() * profile.recall_distance
 		_:
+			if follow_distance_mode == DroneCommandProfileScript.FollowDistance.FREE_ROAM:
+				return _get_free_roam_desired_position()
 			return anchor.global_position + _get_orbit_offset()
 
 
-func _get_orbit_offset() -> Vector2:
+func _get_free_roam_desired_position() -> Vector2:
+	if global_position.distance_to(anchor.global_position) > profile.free_roam_leash_range:
+		return anchor.global_position + _get_orbit_offset(profile.follow_free_roam_radius)
+	if target != null and is_instance_valid(target):
+		var away_from_anchor := (target.global_position - anchor.global_position).normalized()
+		if away_from_anchor.length_squared() > 0.001:
+			return target.global_position - away_from_anchor * profile.free_roam_standoff
+	if _hold_position.distance_to(anchor.global_position) <= profile.free_roam_leash_range:
+		return _hold_position
+	return anchor.global_position + _get_orbit_offset(profile.follow_free_roam_radius)
+
+
+func _get_orbit_offset(radius: float = -1.0) -> Vector2:
+	var resolved_radius := radius if radius >= 0.0 else _get_follow_radius()
 	var side := -1.0 if _slot_index % 2 == 0 else 1.0
-	var ring := float(_slot_index / 2) * 18.0
-	return Vector2(side * (profile.follow_orbit_radius + ring), -24.0)
+	var ring: float = float(floori(float(_slot_index) / 2.0)) * profile.follow_slot_spacing
+	return Vector2(side * (resolved_radius + ring), profile.follow_y_offset)
+
+
+func _get_follow_radius() -> float:
+	match follow_distance_mode:
+		DroneCommandProfileScript.FollowDistance.CLOSE:
+			return profile.follow_close_radius
+		DroneCommandProfileScript.FollowDistance.FAR:
+			return profile.follow_far_radius
+		DroneCommandProfileScript.FollowDistance.FREE_ROAM:
+			return profile.follow_free_roam_radius
+		_:
+			return profile.follow_orbit_radius
+
+
+func _get_engage_range() -> float:
+	if follow_distance_mode == DroneCommandProfileScript.FollowDistance.FREE_ROAM:
+		return profile.free_roam_engage_range
+	return profile.drone_engage_range
 
 
 func _should_retreat() -> bool:

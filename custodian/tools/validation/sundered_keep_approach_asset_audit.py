@@ -21,16 +21,25 @@ ROOT = Path(__file__).resolve().parents[2]
 EXPECTED_SIZES = {
     "content/backgrounds/sundered_keep/ocean_underlay.png": (2100, 1400),
     "content/backgrounds/sundered_keep/cliff_depth_underlay.png": (520, 540),
-    "content/sprites/world/return_causeway/underlay/underlay_fog_band.png": (2100, 360),
+    "content/sprites/world/return_causeway/underlay/underlay_fog_band.png": (2172, 724),
     "content/backgrounds/sundered_keep/horizon_sky.png": (2100, 380),
     "content/backgrounds/sundered_keep/far_sea.png": (2100, 260),
     "content/backgrounds/sundered_keep/distant_sundered_keep.png": (540, 250),
     "content/backgrounds/sundered_keep/vista_fog_band.png": (2100, 160),
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_panorama.png": (1672, 941),
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_fog_overlay.png": (1672, 941),
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png": (1672, 941),
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_shadow_vignette.png": (1672, 941),
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_ocean_spray_overlay.png": (1672, 941),
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_horizon_seam_fog.png": (3546, 443),
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_path_contact_shadow.png": (3546, 443),
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_edge_mask.png": (1672, 941),
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_edge_spray_wrap.png": (1656, 925),
     "content/sprites/world/return_causeway/path/mainland_approach_path.png": (470, 400),
     "content/sprites/world/return_causeway/path/hill_climb_path.png": (400, 240),
-    "content/sprites/world/return_causeway/path/overlook_ledge.png": (640, 200),
+    "content/sprites/world/return_causeway/path/overlook_ledge.png": (640, 240),
     "content/sprites/world/return_causeway/path/lateral_traverse_path.png": (520, 180),
-    "content/sprites/world/return_causeway/path/fortress_wall_mass.png": (350, 380),
+    "content/sprites/world/return_causeway/path/fortress_wall_mass.png": (360, 380),
     "content/sprites/world/return_causeway/occlusion/cliff_occluder.png": (520, 540),
     "content/sprites/world/return_causeway/occlusion/wall_shadow_occluder.png": (2100, 130),
 }
@@ -41,6 +50,15 @@ PLAYABLE_ALPHA_REQUIRED = {
     "content/sprites/world/return_causeway/path/overlook_ledge.png",
     "content/sprites/world/return_causeway/path/lateral_traverse_path.png",
     "content/sprites/world/return_causeway/path/fortress_wall_mass.png",
+}
+
+GRAND_VISTA_ALPHA_REQUIRED = {
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png",
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_ocean_spray_overlay.png",
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_horizon_seam_fog.png",
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_path_contact_shadow.png",
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_edge_mask.png",
+    "content/backgrounds/sundered_keep/grand_vista/grand_vista_edge_spray_wrap.png",
 }
 
 
@@ -72,6 +90,15 @@ def main() -> int:
                     errors.append(f"{rel_path} has no alpha channel; re-export playable terrain with transparency outside the terrain shape")
                 elif extrema[0] >= 255:
                     errors.append(f"{rel_path} is fully opaque; re-export playable terrain with transparent non-terrain pixels")
+
+            if rel_path in GRAND_VISTA_ALPHA_REQUIRED:
+                extrema = _alpha_extrema(image)
+                if extrema is None:
+                    errors.append(f"{rel_path} has no alpha channel; re-export grand-vista overlay with real transparency")
+                elif extrema[0] >= 255:
+                    errors.append(f"{rel_path} is fully opaque; remove baked checkerboard/matte and preserve real alpha")
+                elif extrema[1] <= 0:
+                    errors.append(f"{rel_path} is fully transparent; overlay needs visible nontransparent pixels")
 
     if errors:
         for error in errors:

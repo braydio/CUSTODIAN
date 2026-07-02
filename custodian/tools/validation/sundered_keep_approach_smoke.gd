@@ -1,11 +1,13 @@
 extends SceneTree
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
+const KEEP_SCENE := preload("res://game/world/sundered_keep/sundered_keep_map.tscn")
 const EXPECTED_BOUNDARY_SEGMENTS := 13
 
 const EXPECTED_ROOTS := {
 	"UnderlayRoot": -300,
 	"VistaRoot": -200,
+	"GrandVistaRoot": -220,
 	"PlayableRoot": 0,
 	"OcclusionRoot": 100,
 }
@@ -18,6 +20,15 @@ const EXPECTED_SPRITE_RECTS := {
 	"VistaRoot/FarSea": Rect2(Vector2(-900, -520), Vector2(2100, 260)),
 	"VistaRoot/DistantSunderedKeep": Rect2(Vector2(-260, -670), Vector2(540, 250)),
 	"VistaRoot/VistaFogBand": Rect2(Vector2(-900, -380), Vector2(2100, 160)),
+	"GrandVistaRoot/GrandVistaPanorama": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
+	"GrandVistaRoot/GrandVistaOceanSprayOverlay": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
+	"GrandVistaRoot/GrandVistaFogOverlay": Rect2(Vector2(-1280, -520), Vector2(2560, 480)),
+	"GrandVistaRoot/GrandVistaShadowVignette": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
+	"GrandVistaRoot/GrandVistaForegroundParapet": Rect2(Vector2(-1280, 260), Vector2(2560, 360)),
+	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaHorizonSeamFog": Rect2(Vector2(-1280, -460), Vector2(2560, 320)),
+	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaPathContactShadow": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
+	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaEdgeSprayWrap": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
+	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaForegroundEdgeMask": Rect2(Vector2(-1280, 220), Vector2(2560, 420)),
 	"PlayableRoot/MainlandApproachPath": Rect2(Vector2(-300, 120), Vector2(470, 400)),
 	"PlayableRoot/HillClimbPath": Rect2(Vector2(-190, -120), Vector2(400, 240)),
 	"PlayableRoot/OverlookLedge": Rect2(Vector2(-320, -320), Vector2(640, 200)),
@@ -34,6 +45,9 @@ const EXPECTED_MARKERS := {
 	"TraverseStart": Vector2(260, -180),
 	"TraverseEnd": Vector2(760, -170),
 	"ReturnTopdown": Vector2(720, -80),
+	"SecondVistaStart": Vector2(-40, -180),
+	"SecondVistaFull": Vector2(0, -280),
+	"SecondVistaEnd": Vector2(240, -220),
 }
 
 
@@ -81,6 +95,11 @@ func _init() -> void:
 	var vista_root := scene.get_node_or_null("VistaRoot") as CanvasItem
 	if vista_root == null or vista_root.modulate.a > 0.01:
 		errors.append("VistaRoot should start hidden; alpha=%s" % (vista_root.modulate.a if vista_root else "missing"))
+	var grand_vista_root := scene.get_node_or_null("GrandVistaRoot") as CanvasItem
+	if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
+		errors.append("GrandVistaRoot should start hidden; alpha=%s" % (grand_vista_root.modulate.a if grand_vista_root else "missing"))
+	if grand_vista_root != null:
+		_collect_collision_nodes(grand_vista_root, "GrandVistaRoot must be visual-only", errors)
 	var occlusion_root := scene.get_node_or_null("OcclusionRoot") as CanvasItem
 	if occlusion_root == null or occlusion_root.modulate.a > 0.01:
 		errors.append("OcclusionRoot should start hidden; alpha=%s" % (occlusion_root.modulate.a if occlusion_root else "missing"))
@@ -126,12 +145,25 @@ func _init() -> void:
 		errors.append("VistaController missing")
 	else:
 		_check_controller_path(controller, "vista_root_path", NodePath("../VistaRoot"), errors)
+		_check_controller_path(controller, "grand_vista_root_path", NodePath("../GrandVistaRoot"), errors)
 		_check_controller_path(controller, "vista_fog_band_path", NodePath("../VistaRoot/VistaFogBand"), errors)
 		_check_controller_path(controller, "fog_underlay_path", NodePath("../UnderlayRoot/FogUnderlay"), errors)
 		_check_controller_path(controller, "occlusion_root_path", NodePath("../OcclusionRoot"), errors)
 		_check_controller_path(controller, "cliff_occluder_path", NodePath("../OcclusionRoot/CliffOccluder"), errors)
 		_check_controller_path(controller, "wall_shadow_occluder_path", NodePath("../OcclusionRoot/WallShadowOccluder"), errors)
 		_check_controller_path(controller, "distant_keep_path", NodePath("../VistaRoot/DistantSunderedKeep"), errors)
+		_check_controller_path(controller, "second_vista_start_marker_path", NodePath("../Markers/SecondVistaStart"), errors)
+		_check_controller_path(controller, "second_vista_full_marker_path", NodePath("../Markers/SecondVistaFull"), errors)
+		_check_controller_path(controller, "second_vista_end_marker_path", NodePath("../Markers/SecondVistaEnd"), errors)
+		controller.apply_progress(0.0)
+		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
+			errors.append("VistaController should keep GrandVistaRoot hidden before second vista")
+		controller.apply_progress(0.15)
+		if grand_vista_root == null or grand_vista_root.modulate.a < 0.85:
+			errors.append("VistaController did not reveal GrandVistaRoot near second vista full progress")
+		controller.apply_progress(0.55)
+		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
+			errors.append("VistaController did not fade GrandVistaRoot after second vista")
 		controller.apply_progress(0.45)
 		if vista_root == null or vista_root.modulate.a < 0.9:
 			errors.append("VistaController did not reveal VistaRoot at overlook progress")
@@ -149,6 +181,15 @@ func _init() -> void:
 			errors.append("ExitTransitionTrigger missing CollisionShape2D")
 		if trigger.vista_controller_path != NodePath("../VistaController"):
 			errors.append("ExitTransitionTrigger vista_controller_path is not wired")
+
+	var keep_scene := KEEP_SCENE.instantiate() as Node2D
+	if keep_scene == null:
+		errors.append("Could not instantiate SunderedKeepMap")
+	else:
+		root.add_child(keep_scene)
+		await process_frame
+		_collect_forbidden_grand_vista_nodes(keep_scene, errors)
+		keep_scene.queue_free()
 
 	if errors.is_empty():
 		print("[SunderedKeepApproachSmoke] PASS")
@@ -188,6 +229,25 @@ func _collect_filled_collision_polygons(node: Node, errors: Array[String]) -> vo
 			errors.append("Filled CollisionPolygon2D solid is not allowed for approach path boundary: %s" % polygon.get_path())
 	for child in node.get_children():
 		_collect_filled_collision_polygons(child, errors)
+
+
+func _collect_collision_nodes(node: Node, context: String, errors: Array[String]) -> void:
+	if node is CollisionObject2D or node is CollisionShape2D or node is CollisionPolygon2D:
+		errors.append("%s; found collision node %s" % [context, node.get_path()])
+	for child in node.get_children():
+		_collect_collision_nodes(child, context, errors)
+
+
+func _collect_forbidden_grand_vista_nodes(node: Node, errors: Array[String]) -> void:
+	var node_name := String(node.name)
+	if node_name.begins_with("GrandVista") or node_name == "GrandVistaRoot":
+		errors.append("SunderedKeepMap must not contain grand-vista presentation node: %s" % node.get_path())
+	if node is Sprite2D:
+		var sprite := node as Sprite2D
+		if sprite.texture != null and sprite.texture.resource_path.find("/grand_vista/") >= 0:
+			errors.append("SunderedKeepMap must not use grand-vista texture: %s -> %s" % [node.get_path(), sprite.texture.resource_path])
+	for child in node.get_children():
+		_collect_forbidden_grand_vista_nodes(child, errors)
 
 
 func _vec2_nearly_equal(a: Vector2, b: Vector2, epsilon := 0.01) -> bool:

@@ -1,6 +1,9 @@
-[gd_scene format=3 uid="uid://dxxpdmuw43686"]
+[gd_scene load_steps=5 format=3 uid="uid://dxxpdmuw43686"]
 
 [ext_resource type="PackedScene" uid="uid://d16xvgyky6xs7" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="1_site"]
+[ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="2_operator"]
+[ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="3_camera"]
+[ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="4_player_controller"]
 
 [node name="GameRoot" type="Node2D" unique_id=718179526]
 
@@ -10,8 +13,17 @@
 
 [node name="ForlornRitualantSite" parent="World" unique_id=813125816 instance=ExtResource("1_site")]
 
+[node name="Operator" parent="World" unique_id=2047803984 instance=ExtResource("2_operator")]
+position = Vector2(0, 420)
+
+[node name="PlayerController" type="Node" parent="World" unique_id=2047803985]
+script = ExtResource("4_player_controller")
+operator_path = NodePath("../Operator")
+camera_path = NodePath("../Camera2D")
+
 [node name="Camera2D" type="Camera2D" parent="World" unique_id=782622763]
-zoom = Vector2(0.85, 0.85)
+position = Vector2(0, 420)
+script = ExtResource("3_camera")
 
 [node name="StandaloneNote" type="Label" parent="World" unique_id=710441179]
 z_index = 100
@@ -19,7 +31,7 @@ offset_left = -520.0
 offset_top = -465.0
 offset_right = 520.0
 offset_bottom = -405.0
-text = "Forlorn Ritualant standalone visual/debug scene. Normal game startup no longer auto-spawns this encounter."
+text = "Forlorn Ritualant gameplay debug scene. Operator spawns at south entrance with gameplay camera/controller."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2

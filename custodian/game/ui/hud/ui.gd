@@ -1131,7 +1131,7 @@ func _process(delta):
 			_last_auto_zoom_state = auto_zoom_enabled
 
 	if show_debug_hud and time_scale_label and Engine.time_scale != _last_time_scale:
-		time_scale_label.text = "TIME SCALE: %.1fX (T)" % Engine.time_scale
+		time_scale_label.text = "TIME SCALE: %.1fX (Y)" % Engine.time_scale
 		_last_time_scale = Engine.time_scale
 
 	var operator = get_node_or_null("/root/GameRoot/World/Operator")

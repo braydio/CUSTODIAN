@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cybggelxxmx5g"
-path="res://.godot/imported/sundered_keep_main_overlay-production.png-77d4a0dcabf0ecb4be6e563f7f4873e6.ctex"
+uid="uid://ce3wk1vnw8btw"
+path="res://.godot/imported/grand_vista_shadow_vignette.png-d6768bf95f6d5ce2be20eaa7ad242850.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/masters/sundered_keep/sundered_keep_main_overlay-production.png"
-dest_files=["res://.godot/imported/sundered_keep_main_overlay-production.png-77d4a0dcabf0ecb4be6e563f7f4873e6.ctex"]
+source_file="res://content/backgrounds/sundered_keep/grand_vista/grand_vista_shadow_vignette.png"
+dest_files=["res://.godot/imported/grand_vista_shadow_vignette.png-d6768bf95f6d5ce2be20eaa7ad242850.ctex"]
 
 [params]
 

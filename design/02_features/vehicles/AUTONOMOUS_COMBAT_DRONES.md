@@ -1,12 +1,12 @@
 # Autonomous Combat Drones
 
-Status: complete-v1
+Status: complete-v2
 Runtime target: Godot 4.x
 Feature owner: combat / allied automation
 
 ## Summary
 
-Autonomous combat drones are fragile player-assist companions. V1 mounts a `DroneManager` in the active scene and spawns up to two allied droid companions near the Custodian. The shared combat actor owns follow/orbit, local target acquisition, support bursts, HP, and destruction; the active main-scene presentation uses the animated allied infantry droid scene with `T` fire-at-will / hold-fire toggling.
+Autonomous combat drones are fragile player-assist companions. V2 mounts a `DroneManager` in the active scene and spawns up to two allied droid companions near the Custodian. The shared combat actor owns follow/orbit, local target acquisition, support bursts, HP, and destruction; the active main-scene presentation uses the animated allied infantry droid scene with squad-wide fire discipline and follow-distance commands owned by `DroneManager`.
 
 ## Doctrine Rules
 
@@ -25,13 +25,31 @@ Autonomous combat drones are fragile player-assist companions. V1 mounts a `Dron
 - `custodian/game/systems/drone/drone_targeting.gd`
 - `custodian/game/systems/drone/drone_squad_state.gd`
 - `custodian/scenes/game.tscn`
+- `custodian/project.godot`
+- `custodian/tools/validation/drone_follower_commands_smoke.gd`
 
-## V1 Modes
+## V1 Tactical Modes
 
 - `FOLLOW`: default orbit around the Custodian, attacks enemies near the Custodian.
 - `HOLD`: stays near its current hold point but leashes back if the Custodian moves too far away.
 - `INTERCEPT`: moves toward a standoff point between the Custodian and the nearest local enemy.
 - `RECALL`: returns close to the Custodian and stops attacking.
+
+## V2 Follower Commands
+
+`DroneManager` is the only runtime input authority for squad follower commands. Individual droid instances must not poll raw keys or mark input handled.
+
+- `drone_toggle_fire` defaults to `T`: toggles every live drone between `FIRE AT WILL` and `HOLD FIRE`.
+- `drone_cycle_follow_distance` defaults to `G`: cycles every live drone through `CLOSE`, `FAR`, and `FREE_ROAM`.
+- `time_shift` moved from `T` to `Y` so drone fire discipline has an explicit InputMap action and no raw key bypass.
+- Newly spawned drones inherit the current squad fire discipline and follow distance.
+- Hold fire clears queued bursts immediately through `CombatDrone.set_fire_at_will(false)`.
+
+Follow distances:
+
+- `CLOSE`: tight escort orbit around the Operator, about `42px`.
+- `FAR`: wider backline/support orbit, about `118px`.
+- `FREE_ROAM`: local enemy pressure within `free_roam_engage_range`, still leashed to the Operator by `free_roam_leash_range`; this is not independent scouting.
 
 ## V1 Tuning
 
@@ -47,6 +65,11 @@ Autonomous combat drones are fragile player-assist companions. V1 mounts a `Dron
 - Burst gap: `0.09`
 - Retreat threshold: `28%`
 - Collision radius: `8`
+- Close follow radius: `42`
+- Far follow radius: `118`
+- Free-roam follow radius: `180`
+- Free-roam leash: `420`
+- Free-roam engage range: `360`
 
 ## Deferred
 
