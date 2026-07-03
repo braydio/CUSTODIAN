@@ -10,7 +10,7 @@
 
 ## Summary
 
-A visual-only camera/composition sequence for the Sundered Keep approach. The player enters from mainland top-down, climbs a hill as the horizon reveals the Sundered Keep traversal vista, reaches a second hero-overlook beat where `GrandVistaRoot` fades in with the generated panorama/fog/spray/parapet layer, traverses laterally along a cliff face, then returns to normal top-down play.
+A visual-only camera/composition sequence for the Sundered Keep approach. The player enters from mainland top-down, climbs a hill as the horizon reveals the Sundered Keep traversal vista, moves through a playable traversal section with `GrandVistaRoot` still hidden, reaches a later hero-overlook beat where `GrandVistaRoot` fades in with the generated panorama/fog/spray/parapet layer, then the second vista fades out before the final exit handoff to normal top-down Sundered Keep play.
 
 **Hard constraint:** Rendering/camera/traversal only. No navigation, combat, enemy AI, or deterministic simulation state. The production runtime scene uses fitted `Sprite2D` matte/terrain assets and a single perimeter-rail `StaticBody2D` made from `SegmentShape2D` rails. `GrandVistaRoot` is presentation-only and must not become collision, navigation, or sim authority. Filled path-shaped `CollisionPolygon2D` solids are not valid walkable-boundary collision because they block the path itself. Sprite2D assets are fit to their target `Rect2`; the rect is runtime layout authority. Playable terrain art must keep transparent pixels outside the authored terrain shape unless the full rectangle is intentionally terrain.
 
@@ -62,9 +62,10 @@ State transitions are driven by player position against Marker2D waypoints. Appr
 |---|---|---|---|---|
 | 1 — Mainland Topdown | normal_offset (0,0), normal_zoom (1,1) | 0.0 | 0.0 | Player starts at MainlandStart (y≈430) |
 | 2 — Hill Reveal Blend | reveal_offset (0,-140), reveal_zoom (0.86) | 0→1 smoothstep | 0.0 | Player enters RevealStart (y≈80) to RevealFull (y≈-250) |
-| 3 — Overlook Vista | reveal_offset, reveal_zoom | 1.0 | 0.0 | Player between RevealFull and TraverseStart |
-| 4 — Lateral Traverse | traverse_offset (0,-48), traverse_zoom (0.96) | 1→0.35 | 0→1 | Player passes TraverseStart (x≈260) |
-| 5 — Return Topdown | normal_offset, normal_zoom | 0.35 (fading) | 1.0 | Player passes TraverseEnd (x≈760) toward ReturnTopdown |
+| 3 — Overlook Vista | reveal_offset, reveal_zoom | 1.0 | 0.0 | Player reaches RevealFull |
+| 4 — Playable Traverse | traverse_offset (0,-48), traverse_zoom (0.96) | 1→0.35 | 0→1 | Player passes TraverseStart (x≈260); `GrandVistaRoot` remains hidden |
+| 5 — Grand Hero Vista | traverse_offset, traverse_zoom | 0.35 | rising occlusion | Player reaches SecondVistaStart/SecondVistaFull; `GrandVistaRoot` fades in, then fades out by SecondVistaEnd |
+| 6 — Return Topdown | normal_offset, normal_zoom | 0.35 (fading) | 1.0 | Player passes TraverseEnd (x≈760) toward ReturnTopdown |
 
 **Marker positions** (from builder):
 
@@ -73,9 +74,9 @@ State transitions are driven by player position against Marker2D waypoints. Appr
 | MainlandStart | `(-80, 430)` |
 | RevealStart | `(-40, 80)` |
 | RevealFull | `(0, -250)` |
-| SecondVistaStart | `(-40, -180)` |
-| SecondVistaFull | `(0, -280)` |
-| SecondVistaEnd | `(240, -220)` |
+| SecondVistaStart | `(420, -180)` |
+| SecondVistaFull | `(560, -185)` |
+| SecondVistaEnd | `(700, -175)` |
 | TraverseStart | `(260, -180)` |
 | TraverseEnd | `(760, -170)` |
 | ReturnTopdown | `(720, -80)` |
@@ -114,7 +115,7 @@ The approach also applies `res://game/world/approaches/sundered_keep/soft_rect_f
 | GrandVistaShadowVignette | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_shadow_vignette.png` | `Rect2(-1280, -920, 2560, 1440)` | 3 | feathered, alpha 0.42 |
 | GrandVistaForegroundParapet | `res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png` | `Rect2(-1280, 260, 2560, 360)` | 20 | feathered, alpha 0.92 |
 
-`SunderedKeepVistaController` derives the second-beat fade from `SecondVistaStart`, `SecondVistaFull`, and `SecondVistaEnd`: alpha rises from start to full, then falls from full to end. The panorama is intentionally awe-scale, while the parapet and spray overlays require real PNG alpha so they frame the camera reward without rectangular plates.
+`SunderedKeepVistaController` derives the second-beat fade from `SecondVistaStart`, `SecondVistaFull`, and `SecondVistaEnd`: alpha remains `0` before the later second-vista window, rises from start to full, falls from full to end, and returns to `0` after end. `GrandVistaRoot` must not appear during the first approach reveal or the playable traversal gap before the later hero overlook. The panorama is intentionally awe-scale, while the parapet and spray overlays require real PNG alpha so they frame the camera reward without rectangular plates.
 
 ### Grand Vista Glue Overlays
 

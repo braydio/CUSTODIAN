@@ -20,15 +20,19 @@ The terrain builder owns baseline terrain metadata, blocked mountain/cliff terra
 - Baseline ground fills all current procgen floor cells.
 - One deterministic mountain wall region can be stamped as blocked terrain.
 - One deterministic industrial raised platform can be stamped with a single ramp/stair access.
+- Baseline connectivity is validated and rescued before terrain feature passes run, so reserved-region elevation,
+  ascent-route terrain, mountain boundaries, and platforms are only discarded when they newly break an already-normalized
+  baseline rather than being blamed for pre-existing disconnected floor islands.
 - Connectivity validation prevents terrain features from isolating spawn/objective cells. Required cells are semantic
   anchors: spawn, early room centers, interior thresholds, compound ingress, intent graph required cells, and
   deterministic road/parking samples rather than every road or parking tile. If the final feature stack still
   disconnects required cells, the rescue pass force-carves deterministic walkable corridors from the start cell to
   every missing required cell before fallback is allowed.
 - Spawn/prop candidate helpers reject blocked/drop/ledge cells.
-- Debug logging reports terrain seed, generation mode, map size, required/missing cell counts, rescue-carved cell
-  count, blocked/elevated/ramp counts, region counts, and fallback state. Candidate-evaluation rollback warnings are
-  retained in the TerrainBuilder result but are not pushed as immediate warnings unless fallback/fatal conditions occur.
+- Debug logging reports terrain seed, generation mode, map size, required/missing cell counts, total and baseline
+  rescue-carved cell counts, blocked/elevated/ramp counts, region counts, and fallback state. Candidate-evaluation
+  rollback warnings are retained in the TerrainBuilder result but are not pushed as immediate warnings unless
+  fallback/fatal conditions occur.
 
 ## Non-Goals
 
@@ -96,5 +100,5 @@ godot --headless --path . --script res://tools/validation/procgen_terrain_requir
 
 - The rescue pass updates the same metadata consumed by validation: `blocked_cells`, `height_by_cell`,
   `traversal_by_cell`, and `ramp_dir_by_cell`.
-- `ProcGenTilemap.get_level_data()` exports TerrainBuilder fallback/connectivity status so contract candidate scoring
-  can reject terrain fallback maps before final visual generation.
+- `ProcGenTilemap.get_level_data()` exports TerrainBuilder fallback/connectivity/rescue status so contract candidate
+  scoring can reject terrain fallback maps and excessive rescue-carve maps before final visual generation.

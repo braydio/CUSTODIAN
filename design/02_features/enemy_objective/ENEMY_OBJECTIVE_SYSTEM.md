@@ -86,9 +86,15 @@ V1 objective scores are intentionally transparent:
 ```text
 carrying loot -> exit score dominates
 visible Operator close -> aggression score with proximity bonus
+unseen Operator inside awareness bubble -> notice score overrides storage/theft and enters notice before engage
 storage with resources -> theft score minus distance penalty
 heard noise / last known Operator position -> curiosity investigation score
 ```
+
+The awareness bubble exists for debug-spawn and close-contact readability: a behavior grunt that is walking to storage
+must not ignore the Custodian standing beside it. Crossing the profile's `operator_awareness_bubble_px` marks the
+Operator on the blackboard, runs the normal `notice` frame, then switches to `engage_operator`. This is deterministic
+proximity awareness, not a separate random perception roll.
 
 ## 2.1 Vault Storage Objectives
 
