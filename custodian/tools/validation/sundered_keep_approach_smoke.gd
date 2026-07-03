@@ -45,9 +45,9 @@ const EXPECTED_MARKERS := {
 	"TraverseStart": Vector2(260, -180),
 	"TraverseEnd": Vector2(760, -170),
 	"ReturnTopdown": Vector2(720, -80),
-	"SecondVistaStart": Vector2(-40, -180),
-	"SecondVistaFull": Vector2(0, -280),
-	"SecondVistaEnd": Vector2(240, -220),
+	"SecondVistaStart": Vector2(420, -180),
+	"SecondVistaFull": Vector2(560, -185),
+	"SecondVistaEnd": Vector2(700, -175),
 }
 
 
@@ -156,18 +156,45 @@ func _init() -> void:
 		_check_controller_path(controller, "second_vista_start_marker_path", NodePath("../Markers/SecondVistaStart"), errors)
 		_check_controller_path(controller, "second_vista_full_marker_path", NodePath("../Markers/SecondVistaFull"), errors)
 		_check_controller_path(controller, "second_vista_end_marker_path", NodePath("../Markers/SecondVistaEnd"), errors)
+		var reveal_start_progress := _marker_progress(scene, "RevealStart", errors)
+		var reveal_full_progress := _marker_progress(scene, "RevealFull", errors)
+		var traverse_start_progress := _marker_progress(scene, "TraverseStart", errors)
+		var traverse_end_progress := _marker_progress(scene, "TraverseEnd", errors)
+		var second_start_progress := _marker_progress(scene, "SecondVistaStart", errors)
+		var second_full_progress := _marker_progress(scene, "SecondVistaFull", errors)
+		var second_end_progress := _marker_progress(scene, "SecondVistaEnd", errors)
+		_check_marker_order(
+			reveal_start_progress,
+			reveal_full_progress,
+			traverse_start_progress,
+			traverse_end_progress,
+			second_start_progress,
+			second_full_progress,
+			second_end_progress,
+			errors
+		)
 		controller.apply_progress(0.0)
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController should keep GrandVistaRoot hidden before second vista")
 		controller.apply_progress(0.15)
-		if grand_vista_root == null or grand_vista_root.modulate.a < 0.85:
-			errors.append("VistaController did not reveal GrandVistaRoot near second vista full progress")
-		controller.apply_progress(0.55)
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
-			errors.append("VistaController did not fade GrandVistaRoot after second vista")
+			errors.append("VistaController should not reveal GrandVistaRoot during first approach reveal")
+		if vista_root == null or vista_root.modulate.a < 0.25:
+			errors.append("VistaController should be revealing VistaRoot during first approach reveal")
 		controller.apply_progress(0.45)
 		if vista_root == null or vista_root.modulate.a < 0.9:
 			errors.append("VistaController did not reveal VistaRoot at overlook progress")
+		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
+			errors.append("VistaController should keep GrandVistaRoot hidden through gameplay traversal progress")
+		controller.apply_progress(maxf(reveal_full_progress, second_start_progress - 0.05))
+		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
+			errors.append("VistaController should keep GrandVistaRoot hidden before second vista marker window")
+		controller.apply_progress(second_full_progress)
+		if grand_vista_root == null or grand_vista_root.modulate.a < 0.85:
+			errors.append("VistaController did not reveal GrandVistaRoot at second vista full marker")
+		controller.apply_progress(minf(1.0, second_end_progress + 0.05))
+		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
+			errors.append("VistaController did not hide GrandVistaRoot after second vista marker window")
 		controller.apply_progress(1.0)
 		if occlusion_root == null or occlusion_root.modulate.a < 0.9:
 			errors.append("VistaController did not raise OcclusionRoot alpha at traversal progress")
@@ -221,6 +248,46 @@ func _check_controller_path(controller: SunderedKeepVistaController, property_na
 	var actual := controller.get(property_name) as NodePath
 	if actual != expected:
 		errors.append("VistaController.%s expected %s, got %s" % [property_name, expected, actual])
+
+
+func _marker_progress(scene: Node2D, marker_name: String, errors: Array[String]) -> float:
+	var start := scene.get_node_or_null("Markers/RevealStart") as Node2D
+	var end := scene.get_node_or_null("Markers/ReturnTopdown") as Node2D
+	var marker := scene.get_node_or_null("Markers/%s" % marker_name) as Node2D
+	if start == null or end == null or marker == null:
+		errors.append("Cannot calculate marker progress for %s" % marker_name)
+		return 0.0
+	var progress_axis := end.global_position - start.global_position
+	var total := progress_axis.length()
+	if total <= 0.01:
+		errors.append("Cannot calculate marker progress because RevealStart/ReturnTopdown axis is degenerate")
+		return 0.0
+	var along := (marker.global_position - start.global_position).dot(progress_axis.normalized())
+	return clampf(along / total, 0.0, 1.0)
+
+
+func _check_marker_order(
+	reveal_start_progress: float,
+	reveal_full_progress: float,
+	traverse_start_progress: float,
+	traverse_end_progress: float,
+	second_start_progress: float,
+	second_full_progress: float,
+	second_end_progress: float,
+	errors: Array[String]
+) -> void:
+	if not (reveal_start_progress < reveal_full_progress):
+		errors.append("RevealStart progress must be before RevealFull progress")
+	if not (reveal_full_progress < traverse_start_progress):
+		errors.append("RevealFull progress must be before playable traversal start")
+	if not (traverse_start_progress < second_start_progress):
+		errors.append("SecondVistaStart must come after playable traversal has begun")
+	if second_start_progress - reveal_full_progress < 0.25:
+		errors.append("SecondVistaStart must leave a real gameplay traversal gap after RevealFull")
+	if not (second_start_progress < second_full_progress and second_full_progress < second_end_progress):
+		errors.append("Second vista markers must progress Start < Full < End")
+	if second_end_progress > traverse_end_progress + 0.02:
+		errors.append("SecondVistaEnd should finish before or near TraverseEnd/ReturnTopdown progress")
 
 
 func _collect_filled_collision_polygons(node: Node, errors: Array[String]) -> void:

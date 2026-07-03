@@ -16,6 +16,8 @@ class_name EnemyBehaviorProfile
 @export var detection_decay_per_sec: float = 0.8
 @export var detection_notice_threshold: float = 0.35
 @export var detection_alert_threshold: float = 1.0
+@export var operator_awareness_bubble_px: float = 170.0
+@export var operator_awareness_score: float = 160.0
 
 @export_category("Operator Stealth Modifiers")
 @export var crouch_detection_mult: float = 0.45
@@ -79,6 +81,8 @@ static func create_profile(id: StringName) -> Resource:
 			profile.curiosity_weight = 0.35
 			profile.vision_range_px = 240.0
 			profile.hearing_range_px = 190.0
+			profile.operator_awareness_bubble_px = 190.0
+			profile.operator_awareness_score = 175.0
 			profile.max_total_resource_units = 28
 			profile.loot_escape_speed_mult = 0.95
 			profile.sabotage_damage = 8

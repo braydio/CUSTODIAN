@@ -340,6 +340,9 @@ func _update_seek_objective(enemy: Node2D, _delta: float) -> void:
 
 
 func _update_open_storage(enemy: Node2D, delta: float) -> void:
+	if _evaluate_operator_interrupt_for_storage():
+		change_state(NOTICE)
+		return
 	enemy.call("behavior_stop")
 	_storage_timer += delta
 	var storage: Node = blackboard.get("target_storage")
@@ -351,6 +354,9 @@ func _update_open_storage(enemy: Node2D, delta: float) -> void:
 
 
 func _update_steal_resources(enemy: Node2D, delta: float) -> void:
+	if _evaluate_operator_interrupt_for_storage():
+		change_state(NOTICE)
+		return
 	enemy.call("behavior_stop")
 	_storage_timer += delta
 	if _storage_timer < profile.stealing_seconds:
@@ -436,6 +442,21 @@ func _evaluate_interrupts(enemy: Node2D) -> bool:
 
 
 func _evaluate_operator_interrupt_for_storage() -> bool:
+	var operator := blackboard.operator_ref as Node2D
+	if operator == null or not is_instance_valid(operator):
+		operator = _find_operator()
+	if operator == null:
+		return false
+	var distance := (get_parent() as Node2D).global_position.distance_to(operator.global_position) if get_parent() is Node2D else INF
+	var close_enough := distance <= float(profile.get("operator_awareness_bubble_px"))
+	if close_enough:
+		blackboard.operator_ref = operator
+		blackboard.last_known_operator_position = operator.global_position
+		blackboard.target_last_seen_position = operator.global_position
+		blackboard.has_seen_operator = true
+		blackboard.is_alerted = true
+		blackboard.is_suspicious = true
+		return true
 	if not blackboard.is_alerted or blackboard.operator_ref == null:
 		return false
 	return profile.aggression_weight >= profile.theft_weight or blackboard.morale <= profile.morale_panic_threshold
@@ -512,6 +533,13 @@ func _get_vault_manager(enemy: Node) -> Node:
 	if manager != null:
 		return manager
 	return enemy.get_tree().get_first_node_in_group("vault_manager")
+
+
+func _find_operator() -> Node2D:
+	var parent := get_parent()
+	if parent == null or not parent.is_inside_tree():
+		return null
+	return parent.get_tree().get_first_node_in_group("player") as Node2D
 
 
 func _stable_damage_roll(enemy: Node) -> float:

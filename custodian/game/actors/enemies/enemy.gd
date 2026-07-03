@@ -25,6 +25,7 @@ const GRUNT_IDLE_ANIMATION := &"idle_s"
 const GRUNT_MOVE_ANIMATION := &"run_w"
 const GRUNT_ATTACK_ANIMATION := &"melee_e"
 const GRUNT_ATTACK_FX_ANIMATION := &"melee_fx_e"
+const GRUNT_STAGGER_ANIMATION := &"stagger_s"
 const CUSTOM_AMBIENT_EAST_ANIMATION := &"ambient_slink_east"
 const CUSTOM_AMBIENT_NORTH_ANIMATION := &"ambient_slink_north"
 const CUSTOM_AMBIENT_SOUTH_ANIMATION := &"ambient_slink_south"
@@ -2026,6 +2027,11 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 		if _has_animation(String(move_animation)):
 			animated_sprite.flip_h = false
 			_play_animation(String(move_animation), false)
+			return
+	if _stagger_timer > 0.0:
+		if _has_animation(String(GRUNT_STAGGER_ANIMATION)):
+			animated_sprite.flip_h = false
+			_play_animation(String(GRUNT_STAGGER_ANIMATION), false)
 			return
 	animated_sprite.flip_h = false
 	if not _has_animation(String(GRUNT_IDLE_ANIMATION)):

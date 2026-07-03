@@ -3736,13 +3736,14 @@ func _log_terrain_builder_summary(terrain_result: Dictionary) -> void:
 	if not terrain_builder_debug_logging:
 		return
 	var summary: Dictionary = terrain_result.get("debug_summary", {})
-	print("TerrainBuilder: seed=%s mode=%s map_size=%s required=%s missing=%s rescue_carved=%s regions=%s blocked=%s elevated=%s ramps=%s connectivity=%s fallback=%s" % [
+	print("TerrainBuilder: seed=%s mode=%s map_size=%s required=%s missing=%s rescue_carved=%s baseline_rescue=%s regions=%s blocked=%s elevated=%s ramps=%s connectivity=%s fallback=%s" % [
 		str(summary.get("seed", 0)),
 		str(summary.get("generation_mode", "FINAL_VISUAL")),
 		str(summary.get("map_size", Vector2i.ZERO)),
 		str(summary.get("required_cell_count", 0)),
 		str(summary.get("missing_required_count", 0)),
 		str(summary.get("rescue_carved_cells", 0)),
+		str(summary.get("baseline_rescue_carved_cells", 0)),
 		str(summary.get("regions", 0)),
 		str(summary.get("blocked_cells", 0)),
 		str(summary.get("elevated_cells", 0)),
@@ -6050,6 +6051,8 @@ func _get_terrain_builder_level_data() -> Dictionary:
 	return {
 		"connectivity_ok": bool(connectivity.get("ok", summary.get("connectivity_ok", true))),
 		"fallback_used": bool(_last_terrain_result.get("fallback_used", summary.get("fallback_used", false))),
+		"rescue_carved_cells": int(_last_terrain_result.get("rescue_carved_cells", summary.get("rescue_carved_cells", 0))),
+		"baseline_rescue_carved_cells": int(_last_terrain_result.get("baseline_rescue_carved_cells", summary.get("baseline_rescue_carved_cells", 0))),
 		"reachable_count": int(connectivity.get("reachable_count", 0)),
 		"missing_required": connectivity.get("missing_required", []).duplicate(),
 		"summary": summary.duplicate(true),

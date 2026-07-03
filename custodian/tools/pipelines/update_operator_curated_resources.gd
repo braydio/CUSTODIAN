@@ -646,12 +646,45 @@ func _build_modular_unarmed_block_entries(part: String) -> Array:
 func _build_modular_unarmed_parry_entries(part: String) -> Array:
 	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/unarmed" % part
 	var entries: Array = []
-	var sheet := _find_modular_action_sheet(root, part, "unarmed", "parry_01", "n")
-	if sheet.is_empty():
-		return entries
-	for animation in ["unarmed_parry", "unarmed_parry_up", "unarmed_parry_success", "unarmed_parry_success_up"]:
+	var direction_specs := [
+		{"dir": "n", "suffix": "up", "alias_base": true},
+		{"dir": "e", "suffix": "right"},
+		{"dir": "w", "suffix": "left"},
+	]
+	for direction_spec in direction_specs:
+		var sheet := _find_modular_action_sheet(root, part, "unarmed", "parry_01", str(direction_spec["dir"]))
+		if sheet.is_empty():
+			continue
+		if bool(direction_spec.get("alias_base", false)):
+			entries.append({
+				"animation": "unarmed_parry",
+				"path": str(sheet["path"]),
+				"frames": int(sheet["frames"]),
+				"frame_width": 96,
+				"frame_height": 96,
+				"fps": 12.0,
+				"loop": false,
+			})
+			entries.append({
+				"animation": "unarmed_parry_success",
+				"path": str(sheet["path"]),
+				"frames": int(sheet["frames"]),
+				"frame_width": 96,
+				"frame_height": 96,
+				"fps": 12.0,
+				"loop": false,
+			})
 		entries.append({
-			"animation": animation,
+			"animation": "unarmed_parry_%s" % str(direction_spec["suffix"]),
+			"path": str(sheet["path"]),
+			"frames": int(sheet["frames"]),
+			"frame_width": 96,
+			"frame_height": 96,
+			"fps": 12.0,
+			"loop": false,
+		})
+		entries.append({
+			"animation": "unarmed_parry_success_%s" % str(direction_spec["suffix"]),
 			"path": str(sheet["path"]),
 			"frames": int(sheet["frames"]),
 			"frame_width": 96,
@@ -689,6 +722,7 @@ func _build_modular_unarmed_parry_fx_entries() -> Array:
 	for direction_spec in [
 		{"dir": "n", "suffix": "up", "alias_base": true},
 		{"dir": "e", "suffix": "right"},
+		{"dir": "w", "suffix": "left"},
 	]:
 		var sheet := _find_modular_action_sheet(root, "upper_fx", "unarmed", "parry_01", str(direction_spec["dir"]))
 		if sheet.is_empty():

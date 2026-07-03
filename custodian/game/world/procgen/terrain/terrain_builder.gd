@@ -78,6 +78,32 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 	var terrain_seed := int(context.get("seed", rng.seed))
 	var generation_mode := String(context.get("generation_mode", "FINAL_VISUAL"))
 	var quiet_candidate_warnings := generation_mode == "EVAL_CANDIDATE"
+	var baseline_rescue_carved_cells := 0
+	var baseline_connectivity := _validate_connectivity(result, start_cell, required_cells)
+	if not bool(baseline_connectivity.get("ok", true)):
+		var baseline_missing: Array = baseline_connectivity.get("missing_required", [])
+		var baseline_reachable := int(baseline_connectivity.get("reachable_count", 0))
+		baseline_rescue_carved_cells = _rescue_connectivity(result, start_cell, baseline_missing)
+		rescue_carved_cells += baseline_rescue_carved_cells
+		baseline_connectivity = _validate_connectivity(result, start_cell, required_cells)
+		warnings.append("WARNING: TerrainBuilder baseline connectivity was disconnected before terrain features. seed=%s start=%s reachable=%d missing=%s baseline_rescue_carved=%d" % [
+			terrain_seed,
+			str(start_cell),
+			baseline_reachable,
+			str(baseline_missing),
+			baseline_rescue_carved_cells,
+		])
+		if not quiet_candidate_warnings:
+			push_warning("TerrainBuilder baseline connectivity was disconnected before terrain features.")
+			push_warning("  seed=%s start=%s reachable=%d missing=%s baseline_rescue_carved=%d" % [
+				terrain_seed,
+				str(start_cell),
+				baseline_reachable,
+				str(baseline_missing),
+				baseline_rescue_carved_cells,
+			])
+		if DEBUG_CONNECTIVITY_MAP:
+			_debug_print_connectivity_map(result, baseline_connectivity)
 	var world_progress_profile = null
 	if context.has("world_progress_profile") and context["world_progress_profile"] != null:
 		world_progress_profile = context["world_progress_profile"]
@@ -96,7 +122,7 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 			else:
 				result = reserved_snapshot
 				var conn_detail := "start=%s reachable=%d missing=%s" % [str(start_cell), reserved_conn.get("reachable_count", 0), str(reserved_conn.get("missing_required", []))]
-				warnings.append("WARNING: TerrainBuilder discarded reserved-region elevation: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
+				warnings.append("WARNING: TerrainBuilder discarded reserved-region elevation because it newly broke connectivity: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
 	_marks["reserved_region"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 
@@ -110,7 +136,7 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 			else:
 				result = ascent_snapshot
 				var conn_detail := "start=%s reachable=%d missing=%s" % [str(start_cell), ascent_conn.get("reachable_count", 0), str(ascent_conn.get("missing_required", []))]
-				warnings.append("WARNING: TerrainBuilder discarded ascent route: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
+				warnings.append("WARNING: TerrainBuilder discarded ascent route because it newly broke connectivity: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
 	_marks["ascent_route"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 
@@ -124,7 +150,7 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 			else:
 				result = mountain_snapshot
 				var conn_detail := "start=%s reachable=%d missing=%s" % [str(start_cell), mountain_conn.get("reachable_count", 0), str(mountain_conn.get("missing_required", []))]
-				warnings.append("WARNING: TerrainBuilder discarded mountain boundary: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
+				warnings.append("WARNING: TerrainBuilder discarded mountain boundary because it newly broke connectivity: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
 	_marks["mountain_boundary"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 
@@ -138,7 +164,7 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 			else:
 				result = platform_snapshot
 				var conn_detail := "start=%s reachable=%d missing=%s" % [str(start_cell), platform_conn.get("reachable_count", 0), str(platform_conn.get("missing_required", []))]
-				warnings.append("WARNING: TerrainBuilder discarded elevated platform: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
+				warnings.append("WARNING: TerrainBuilder discarded elevated platform because it newly broke connectivity: %s. seed=%s map=%s" % [conn_detail, terrain_seed, str(map_rect)])
 	_marks["industrial_platform"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 
@@ -159,7 +185,7 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 		# Attempt rescue: clear blockers along shortest path from start to each missing required cell.
 		# This preserves terrain features while guaranteeing connectivity.
 		var rescued := _rescue_connectivity(result, start_cell, connectivity.get("missing_required", []))
-		rescue_carved_cells = rescued
+		rescue_carved_cells += rescued
 		_marks["rescue_connectivity"] = Time.get_ticks_msec() - _last
 		_last = Time.get_ticks_msec()
 		if rescued:
@@ -194,6 +220,7 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 	result["required_cell_count"] = required_cells.size()
 	result["missing_required_count"] = (connectivity.get("missing_required", []) as Array).size()
 	result["rescue_carved_cells"] = rescue_carved_cells
+	result["baseline_rescue_carved_cells"] = baseline_rescue_carved_cells
 	result["debug_summary"] = _build_debug_summary(result)
 	_last_result = result.duplicate(true)
 	
@@ -587,6 +614,7 @@ func _build_debug_summary(result: Dictionary) -> Dictionary:
 		"required_cell_count": int(result.get("required_cell_count", 0)),
 		"missing_required_count": int(result.get("missing_required_count", 0)),
 		"rescue_carved_cells": int(result.get("rescue_carved_cells", 0)),
+		"baseline_rescue_carved_cells": int(result.get("baseline_rescue_carved_cells", 0)),
 		"generation_mode": String(result.get("generation_mode", "FINAL_VISUAL")),
 	}
 

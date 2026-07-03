@@ -3,6 +3,8 @@ extends SceneTree
 const VAULT_STORAGE_SCRIPT := preload("res://game/actors/storage/vault_storage.gd")
 const LOOT_CARRIER_SCRIPT := preload("res://game/actors/enemies/components/enemy_loot_carrier.gd")
 const PROFILE_SCRIPT := preload("res://game/actors/enemies/components/enemy_behavior_profile.gd")
+const BLACKBOARD_SCRIPT := preload("res://game/actors/enemies/components/enemy_blackboard.gd")
+const OBJECTIVE_SENSOR_SCRIPT := preload("res://game/actors/enemies/components/enemy_objective_sensor.gd")
 
 var _failed := false
 
@@ -35,6 +37,7 @@ func _init() -> void:
 	_assert_true(bool(profile.get("can_steal_resources")), "iconoclast should be able to steal")
 	_assert_true(float(profile.get("theft_weight")) > float(profile.get("aggression_weight")), "iconoclast theft weight should exceed aggression")
 	_assert_true(bool(profile.get("can_sabotage_storage")), "iconoclast should be able to sabotage storage")
+	_assert_true(float(profile.get("operator_awareness_bubble_px")) > 0.0, "profile should expose close-operator awareness bubble")
 
 	var enemy := Node2D.new()
 	enemy.name = "SmokeEnemy"
@@ -46,6 +49,7 @@ func _init() -> void:
 	_assert_true(carrier.is_carrying_loot(), "loot carrier should report payload")
 	carrier.drop_payload(enemy)
 	_assert_true(not carrier.is_carrying_loot(), "loot carrier should clear payload after drop")
+	_assert_operator_bubble_overrides_storage(root, profile)
 
 	if _failed:
 		push_error("enemy_behavior_vault_smoke failed")
@@ -53,6 +57,27 @@ func _init() -> void:
 		return
 	print("enemy_behavior_vault_smoke passed")
 	quit()
+
+
+func _assert_operator_bubble_overrides_storage(root: Node2D, profile: Resource) -> void:
+	var enemy := Node2D.new()
+	enemy.name = "BubbleEnemy"
+	enemy.global_position = Vector2.ZERO
+	root.add_child(enemy)
+	var operator := Node2D.new()
+	operator.name = "Operator"
+	operator.global_position = Vector2(float(profile.get("operator_awareness_bubble_px")) * 0.5, 0.0)
+	operator.add_to_group("player")
+	root.add_child(operator)
+	var blackboard := BLACKBOARD_SCRIPT.new()
+	enemy.add_child(blackboard)
+	blackboard.operator_ref = operator
+	var sensor := OBJECTIVE_SENSOR_SCRIPT.new()
+	enemy.add_child(sensor)
+	var objective: Dictionary = sensor.choose_objective(enemy, profile, blackboard)
+	_assert_eq(StringName(str(objective.get("type", "none"))), &"operator", "close Operator should override storage objective")
+	_assert_true(bool(blackboard.get("is_alerted")), "close Operator bubble should mark blackboard alerted")
+	_assert_true(blackboard.get("operator_ref") == operator, "close Operator bubble should set operator_ref")
 
 
 func _assert_true(value: bool, message: String) -> void:

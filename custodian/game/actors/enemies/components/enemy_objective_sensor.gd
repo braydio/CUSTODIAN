@@ -30,13 +30,21 @@ func choose_objective(enemy: Node2D, profile: Resource, blackboard: Node) -> Dic
 func score_operator(enemy: Node2D, profile: Resource, blackboard: Node) -> float:
 	var operator_ref: Node = blackboard.get("operator_ref")
 	if operator_ref == null or not is_instance_valid(operator_ref):
-		return 0.0
-	if not bool(blackboard.get("is_alerted")) and not bool(blackboard.get("has_seen_operator")):
+		operator_ref = _find_operator(enemy)
+	if operator_ref == null or not is_instance_valid(operator_ref):
 		return 0.0
 	var operator := operator_ref as Node2D
 	if operator == null:
 		return 0.0
-	var proximity := clampf(1.0 - enemy.global_position.distance_to(operator.global_position) / maxf(1.0, float(profile.get("vision_range_px"))), 0.0, 1.0)
+	var distance := enemy.global_position.distance_to(operator.global_position)
+	var awareness_radius := float(profile.get("operator_awareness_bubble_px"))
+	if not bool(blackboard.get("is_alerted")) and not bool(blackboard.get("has_seen_operator")):
+		if distance > awareness_radius:
+			return 0.0
+		_mark_operator_awareness(operator, blackboard)
+		var bubble_proximity := clampf(1.0 - distance / maxf(1.0, awareness_radius), 0.0, 1.0)
+		return float(profile.get("operator_awareness_score")) + bubble_proximity * 35.0
+	var proximity := clampf(1.0 - distance / maxf(1.0, float(profile.get("vision_range_px"))), 0.0, 1.0)
 	return float(profile.get("aggression_weight")) * 100.0 + proximity * 45.0
 
 
@@ -94,9 +102,25 @@ func score_investigation(_enemy: Node2D, profile: Resource, blackboard: Node) ->
 
 
 func _get_vault_manager(enemy: Node) -> Node:
-	if enemy == null or enemy.get_tree() == null:
+	if enemy == null or not enemy.is_inside_tree():
 		return null
 	var autoload := enemy.get_node_or_null("/root/VaultManager")
 	if autoload != null:
 		return autoload
 	return enemy.get_tree().get_first_node_in_group("vault_manager")
+
+
+func _find_operator(enemy: Node) -> Node2D:
+	if enemy == null or not enemy.is_inside_tree():
+		return null
+	return enemy.get_tree().get_first_node_in_group("player") as Node2D
+
+
+func _mark_operator_awareness(operator: Node2D, blackboard: Node) -> void:
+	blackboard.operator_ref = operator
+	blackboard.last_known_operator_position = operator.global_position
+	blackboard.target_last_seen_position = operator.global_position
+	blackboard.investigation_position = operator.global_position
+	blackboard.has_seen_operator = true
+	blackboard.is_alerted = true
+	blackboard.is_suspicious = true

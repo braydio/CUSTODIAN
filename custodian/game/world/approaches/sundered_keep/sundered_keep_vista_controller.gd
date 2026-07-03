@@ -163,14 +163,22 @@ func _apply_progress(t: float) -> void:
 func _get_second_vista_alpha(t: float) -> float:
 	if _start == null or _end == null or _second_vista_start == null or _second_vista_full == null or _second_vista_end == null:
 		return 0.0
+
 	var start_progress := _marker_progress(_second_vista_start)
 	var full_progress := _marker_progress(_second_vista_full)
 	var end_progress := _marker_progress(_second_vista_end)
-	if is_equal_approx(start_progress, full_progress) or is_equal_approx(full_progress, end_progress):
+
+	if not (start_progress < full_progress and full_progress < end_progress):
+		push_warning("[SunderedKeepVistaController] Second vista marker progress is invalid: start=%s full=%s end=%s" % [start_progress, full_progress, end_progress])
 		return 0.0
-	var fade_in := smoothstep(start_progress, full_progress, t)
-	var fade_out := smoothstep(full_progress, end_progress, t)
-	return clampf(fade_in * (1.0 - fade_out), 0.0, 1.0)
+
+	if t < start_progress:
+		return 0.0
+	if t <= full_progress:
+		return smoothstep(start_progress, full_progress, t)
+	if t <= end_progress:
+		return 1.0 - smoothstep(full_progress, end_progress, t)
+	return 0.0
 
 
 func _marker_progress(marker: Node2D) -> float:

@@ -8,11 +8,15 @@ const REQUIRED_BODY_ANIMATIONS := {
 	"run_w": 10,
 	"melee_e": 10,
 	"melee_se": 10,
+	"melee_sw": 10,
 	"melee_w": 11,
+	"stagger_s": 8,
 }
 
 const REQUIRED_FX_ANIMATIONS := {
 	"melee_fx_e": 10,
+	"melee_fx_se": 10,
+	"melee_fx_sw": 10,
 	"melee_fx_w": 10,
 }
 

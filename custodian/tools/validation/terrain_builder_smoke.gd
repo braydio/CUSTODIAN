@@ -68,6 +68,7 @@ func _init() -> void:
 	assert(_has_accessible_platform(first))
 	assert(_no_invalid_spawn_cells(first))
 	_assert_baseline_visual_noop()
+	_assert_disconnected_baseline_is_rescued_before_features()
 	_test_directional_ramp_validation()
 
 	var elevation_map := ElevationMapScript.new()
@@ -105,6 +106,42 @@ func _assert_baseline_visual_noop() -> void:
 	assert(String(tile_by_cell.get(blocked_cell, "__missing__")) == TerrainBuilderScript.NO_VISUAL_TILE)
 	assert(String(result.get("traversal_by_cell", {}).get(floor_cell, "")) == TerrainBuilderScript.TRAVERSAL_WALKABLE)
 	assert(String(result.get("traversal_by_cell", {}).get(blocked_cell, "")) == TerrainBuilderScript.TRAVERSAL_BLOCKED)
+
+
+func _assert_disconnected_baseline_is_rescued_before_features() -> void:
+	var map_rect := Rect2i(Vector2i.ZERO, Vector2i(36, 20))
+	var floor_cells: Array[Vector2i] = []
+	for x in range(2, 11):
+		for y in range(2, 11):
+			floor_cells.append(Vector2i(x, y))
+	for x in range(24, 33):
+		for y in range(2, 11):
+			floor_cells.append(Vector2i(x, y))
+	var required_cells: Array[Vector2i] = [
+		Vector2i(4, 4),
+		Vector2i(28, 4),
+	]
+	var result := _build_with_seed(map_rect, 303, {
+		"seed": 303,
+		"floor_cells": floor_cells,
+		"blocked_cells": [],
+		"start_cell": required_cells[0],
+		"required_cells": required_cells,
+		"worldgen_reserved_regions": [
+			{
+				"rect": Rect2i(Vector2i(5, 5), Vector2i(3, 3)),
+				"runtime_height": TerrainBuilderScript.HEIGHT_ELEVATED,
+				"kind": "test_reserved_region",
+			},
+		],
+		"enable_industrial_platform": false,
+		"enable_mountain_boundary": false,
+	})
+	var summary: Dictionary = result.get("debug_summary", {})
+	assert(bool(summary.get("connectivity_ok", false)), "Disconnected baseline should be rescued before terrain features.")
+	assert(int(summary.get("baseline_rescue_carved_cells", 0)) > 0, "Expected baseline rescue to be counted separately.")
+	assert(int(summary.get("rescue_carved_cells", 0)) >= int(summary.get("baseline_rescue_carved_cells", 0)))
+	assert(int(summary.get("regions", 0)) > 0, "Feature regions should survive after baseline connectivity rescue.")
 
 
 func _test_directional_ramp_validation() -> void:

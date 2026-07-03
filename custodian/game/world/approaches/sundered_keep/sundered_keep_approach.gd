@@ -62,9 +62,9 @@ const REVEAL_FULL_POS := Vector2(0.0, -250.0)
 const TRAVERSE_START_POS := Vector2(260.0, -180.0)
 const TRAVERSE_END_POS := Vector2(760.0, -170.0)
 const RETURN_TOPDOWN_POS := Vector2(720.0, -80.0)
-const SECOND_VISTA_START_POS := Vector2(-40.0, -180.0)
-const SECOND_VISTA_FULL_POS := Vector2(0.0, -280.0)
-const SECOND_VISTA_END_POS := Vector2(240.0, -220.0)
+const SECOND_VISTA_START_POS := Vector2(420.0, -180.0)
+const SECOND_VISTA_FULL_POS := Vector2(560.0, -185.0)
+const SECOND_VISTA_END_POS := Vector2(700.0, -175.0)
 
 const BOUNDARY_SEGMENTS := [
 	[Vector2(-280.0, 520.0), Vector2(80.0, 520.0)],
