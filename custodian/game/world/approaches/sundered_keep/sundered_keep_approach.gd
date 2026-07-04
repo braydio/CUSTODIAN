@@ -280,18 +280,18 @@ func _build_visuals() -> void:
 
 	_add_grounding_shadow("MainlandApproachShadow", PackedVector2Array([
 		Vector2(-315.0, 145.0), Vector2(190.0, 250.0), Vector2(120.0, 535.0), Vector2(-330.0, 535.0)
-	]), -8, Color(0.02, 0.025, 0.035, 0.30))
+	]), -32, Color(0.02, 0.025, 0.035, 0.30))
 	_add_grounding_shadow("OverlookLedgeShadow", PackedVector2Array([
 		Vector2(-360.0, -300.0), Vector2(340.0, -315.0), Vector2(330.0, -108.0), Vector2(-280.0, -96.0)
-	]), -7, Color(0.015, 0.02, 0.03, 0.36))
+	]), -31, Color(0.015, 0.02, 0.03, 0.36))
 	_add_grounding_shadow("LateralTraverseShadow", PackedVector2Array([
 		Vector2(245.0, -250.0), Vector2(800.0, -268.0), Vector2(805.0, -72.0), Vector2(275.0, -74.0)
-	]), -6, Color(0.015, 0.02, 0.03, 0.34))
+	]), -30, Color(0.015, 0.02, 0.03, 0.34))
 
-	_add_fitted_sprite(playable_root, "MainlandApproachPath", MAINLAND_APPROACH_PATH, RECT_MAINLAND_APPROACH, 0, Color.WHITE)
-	_add_fitted_sprite(playable_root, "HillClimbPath", HILL_CLIMB_PATH, RECT_HILL_CLIMB, 1, Color.WHITE)
-	_add_fitted_sprite(playable_root, "OverlookLedge", OVERLOOK_LEDGE_PATH, RECT_OVERLOOK_LEDGE, 2, Color.WHITE)
-	_add_fitted_sprite(playable_root, "LateralTraversePath", LATERAL_TRAVERSE_PATH, RECT_LATERAL_TRAVERSE, 3, Color.WHITE)
+	_add_fitted_sprite(playable_root, "MainlandApproachPath", MAINLAND_APPROACH_PATH, RECT_MAINLAND_APPROACH, -24, Color.WHITE)
+	_add_fitted_sprite(playable_root, "HillClimbPath", HILL_CLIMB_PATH, RECT_HILL_CLIMB, -23, Color.WHITE)
+	_add_fitted_sprite(playable_root, "OverlookLedge", OVERLOOK_LEDGE_PATH, RECT_OVERLOOK_LEDGE, -22, Color.WHITE)
+	_add_fitted_sprite(playable_root, "LateralTraversePath", LATERAL_TRAVERSE_PATH, RECT_LATERAL_TRAVERSE, -21, Color.WHITE)
 	_add_fitted_sprite(playable_root, "FortressWallMass", FORTRESS_WALL_MASS_PATH, RECT_FORTRESS_WALL_MASS, 30, Color.WHITE)
 
 	_add_fitted_sprite(occlusion_root, "CliffOccluder", CLIFF_OCCLUDER_PATH, RECT_CLIFF_OCCLUDER, 120, Color(1.0, 1.0, 1.0, 0.0))

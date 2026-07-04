@@ -54,6 +54,21 @@ For complex ripgrep expressions, use raw `rg` or pass the raw command through `r
 rtk proxy rg -n --glob "*.md" "pattern" path
 ```
 
+## Architecture / Documentation Organization Validation
+
+Use for architecture docs, ownership map, task packet, and folder scaffold changes.
+
+```bash
+python custodian/tools/validation/architecture_ownership_smoke.py
+```
+
+This validates:
+
+- new architecture docs exist (`ARCHITECTURE.md`, `ARCHITECTURE_OWNERSHIP_MAP.md`, `ARCHITECTURE_ORGANIZATION_PASS.md`)
+- scaffold README.md files exist
+- no stale `design/03_architecture` references remain inside `design/04_architecture/`
+- reports line counts for overburdened coordinator files (warning only)
+
 ## Doc-Only Validation
 
 Use for markdown, routing, task packet, and context-pack edits.
@@ -97,6 +112,15 @@ godot --headless --script tools/validation/sundered_keep_asset_smoke.gd
 ```
 
 This instantiates the authored Sundered Keep connected map and fails if any `Sprite2D` in the slice has a missing texture.
+
+For the walkable Sundered Keep underlay-only gameplay debug scene:
+
+```bash
+cd custodian
+godot --headless --script tools/validation/sundered_keep_underlay_gameplay_debug_smoke.gd
+```
+
+This loads `res://scenes/debug/sundered_keep_production_underlay_debug.tscn`, verifies the scene uses only the active main underlay texture without instantiating `SunderedKeepMap` or authored tile sprites, confirms the real Operator/controller/projectile/camera runtime shell, and checks gameplay camera zoom/bounds rather than authoring-review zoom.
 
 For the Sundered Keep overlay-authoring guide pipeline:
 

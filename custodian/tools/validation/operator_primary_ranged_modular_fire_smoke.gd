@@ -35,18 +35,44 @@ func _init() -> void:
 
 	var failures: Array[String] = []
 
-	_install_test_frames(lower, &"ranged_2h_fire_lower_right")
-	_install_test_frames(upper, &"ranged_2h_fire_upper_right")
-	_install_test_frames(weapon, &"ranged_2h_fire_weapon_right")
-	_install_test_frames(fx, &"ranged_2h_fire_fx_right")
+	_install_test_frames(lower, [
+		&"unarmed_idle_right",
+		&"ranged_2h_fire_lower_right",
+	])
+	_install_test_frames(upper, [
+		&"ranged_2h_stance_modular_right",
+		&"ranged_2h_stance_modular_up",
+		&"ranged_2h_stance_modular_left",
+		&"ranged_2h_stance_modular_down",
+		&"ranged_2h_fire_upper_right",
+	])
+	_install_test_frames(weapon, [
+		&"ranged_2h_stance_modular_right",
+		&"ranged_2h_stance_modular_up",
+		&"ranged_2h_stance_modular_left",
+		&"ranged_2h_stance_modular_down",
+		&"ranged_2h_fire_weapon_right",
+	])
+	_install_test_frames(fx, [
+		&"ranged_2h_fire_fx_right",
+	])
 
 	if not bool(operator.call("_begin_modular_primary_ranged_fire_presentation")):
 		failures.append("primary ranged modular fire presentation did not start")
 
-	_check_layer(lower, &"ranged_2h_fire_lower_right", "lower", failures)
+	_check_layer(lower, &"unarmed_idle_right", "lower", failures)
 	_check_layer(upper, &"ranged_2h_fire_upper_right", "upper", failures)
 	_check_layer(weapon, &"ranged_2h_fire_weapon_right", "weapon", failures)
 	_check_layer(fx, &"ranged_2h_fire_fx_right", "fx", failures)
+
+	if weapon != null:
+		var muzzle_position: Vector2 = operator.call("_get_ranged_muzzle_position", Vector2.RIGHT)
+		var expected_muzzle := weapon.global_position + Vector2(32.0, -10.0)
+		if muzzle_position.distance_to(expected_muzzle) > 0.01:
+			failures.append("primary modular muzzle is %s, expected %s" % [
+				str(muzzle_position),
+				str(expected_muzzle),
+			])
 
 	var legacy_body := operator.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	if legacy_body != null and legacy_body.visible:
@@ -60,6 +86,19 @@ func _init() -> void:
 	if bool(operator.call("_is_primary_ranged_fire_presentation_active")):
 		failures.append("primary ranged modular fire presentation did not end after timer tick")
 
+	operator.call("_end_modular_primary_ranged_fire_presentation")
+	operator.set("sidearm_slot_equipped", true)
+	operator.set("_ranged_ready_active", true)
+	operator.set("_ranged_ready_weapon_definition", operator.get("sidearm_weapon_definition"))
+	operator.set("_sidearm_action_phase", &"firing")
+	var sidearm_muzzle_position: Vector2 = operator.call("_get_ranged_muzzle_position", Vector2(1.0, 1.0).normalized())
+	var expected_sidearm_muzzle := weapon.global_position + Vector2(35.0, -13.0) if weapon != null else Vector2.INF
+	if weapon != null and sidearm_muzzle_position.distance_to(expected_sidearm_muzzle) > 0.01:
+		failures.append("sidearm modular muzzle is %s, expected %s" % [
+			str(sidearm_muzzle_position),
+			str(expected_sidearm_muzzle),
+		])
+
 	scene_root.queue_free()
 
 	if not failures.is_empty():
@@ -72,21 +111,21 @@ func _init() -> void:
 	quit()
 
 
-func _install_test_frames(sprite: AnimatedSprite2D, animation_name: StringName) -> void:
+func _install_test_frames(sprite: AnimatedSprite2D, animation_names: Array[StringName]) -> void:
 	if sprite == null:
 		return
 
 	var frames := SpriteFrames.new()
-	frames.add_animation(animation_name)
-	frames.set_animation_speed(animation_name, 12.0)
-	frames.set_animation_loop(animation_name, false)
-
 	var image := Image.create(4, 4, false, Image.FORMAT_RGBA8)
 	image.fill(Color.WHITE)
 	var texture := ImageTexture.create_from_image(image)
 
-	for i in range(3):
-		frames.add_frame(animation_name, texture)
+	for animation_name in animation_names:
+		frames.add_animation(animation_name)
+		frames.set_animation_speed(animation_name, 12.0)
+		frames.set_animation_loop(animation_name, false)
+		for i in range(3):
+			frames.add_frame(animation_name, texture)
 
 	sprite.sprite_frames = frames
 

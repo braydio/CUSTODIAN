@@ -71,6 +71,8 @@ enum WorldShapeMode {
 @export var generation_evaluation_mode: bool = false
 @export var generation_output_enabled: bool = true
 @export var enable_final_foliage: bool = true
+@export var foliage_deferred_spawn_enabled: bool = true
+@export_range(64, 4096, 64) var foliage_spawn_batch_size: int = 512
 
 ## TileSet source IDs (from your TileSet)
 @export var floor_source_id: int = 0
@@ -304,6 +306,7 @@ const FOLIAGE_ASSET_PATHS := [
 
 const FRUIT_TEXTURE_PATH := "res://content/sprites/environment/foliage/fruit_sheet.png"
 const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occlusion_bubble.gdshader")
+const PROCGEN_FOLIAGE_SPAWNER_SCRIPT := preload("res://game/world/procgen/foliage/procgen_foliage_spawner.gd")
 const FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES := 8
 const DEFAULT_RUIN_PROP_SCENE := preload("res://content/props/ruins/scenes/ProceduralProp.tscn")
 const DEFAULT_RUIN_PROP_SPAWN_SET := preload("res://content/props/ruins/data/ruin_prop_spawn_set.tres")
@@ -453,9 +456,13 @@ var _interior_prop_nodes: Array[Node2D] = []
 var _portal_teleporters: Array[Area2D] = []
 var _foliage_nodes: Dictionary = {}
 var _foliage_textures: Array[Texture2D] = []
+var _pending_foliage_tiles: Array[Vector2i] = []
+var _foliage_spawn_generation: int = 0
+var _foliage_deferred_start_msec: int = 0
 var _interior_prop_textures: Array[Texture2D] = []
 var _fruit_texture: Texture2D = null
 var _fruit_sprites: Array[Node2D] = []
+var _foliage_spawner: ProcgenFoliageSpawner = null
 var _planet_world_profile: Dictionary = {}
 var _world_progress_profile = null
 var _world_progress_samples: Dictionary = {}
@@ -732,18 +739,25 @@ func _fill_tilemaps() -> void:
 	_last = Time.get_ticks_msec()
 
 	if not generation_evaluation_mode:
-		print("[ProcGenTilemap] props_foliage %s mode=FINAL_VISUAL" % ("RUN" if enable_final_foliage else "SKIP"))
 		if enable_streaming_reveal:
+			print("[ProcGenTilemap] props_foliage SKIP mode=FINAL_VISUAL_STREAMING_REVEAL")
+			_marks["props_foliage"] = 0
+			_last = Time.get_ticks_msec()
 			_generate_ruin_props(map_size)
 			_generate_interior_props(map_size)
 		else:
+			print("[ProcGenTilemap] props_foliage %s mode=FINAL_VISUAL" % ("RUN" if enable_final_foliage else "SKIP"))
 			if enable_final_foliage:
 				_generate_foliage(map_size)
+			_marks["props_foliage"] = Time.get_ticks_msec() - _last
+			_last = Time.get_ticks_msec()
 			_generate_ruin_props(map_size)
 			_generate_interior_props(map_size)
+		_marks["props_visual"] = Time.get_ticks_msec() - _last
 	else:
 		print("[ProcGenTilemap] props_foliage SKIP mode=EVAL_CANDIDATE")
-	_marks["props_foliage"] = Time.get_ticks_msec() - _last
+		_marks["props_foliage"] = 0
+		_marks["props_visual"] = 0
 	_last = Time.get_ticks_msec()
 
 	if not generation_evaluation_mode and not enable_streaming_reveal:
@@ -3757,44 +3771,78 @@ func _log_terrain_builder_summary(terrain_result: Dictionary) -> void:
 		push_warning(str(warning))
 
 
-func _generate_foliage(map_size: Vector2i) -> void:
-	if _foliage_parent == null:
-		push_warning("[Foliage] Missing FoliageLayer, skipping foliage spawn")
-		return
-	_clear_foliage()
-	if _foliage_textures.is_empty():
-		push_warning("[Foliage] No foliage textures loaded, skipping foliage spawn")
-		return
-	if enable_streaming_reveal:
-		if foliage_debug_logging:
-			print("[Foliage] Streaming reveal active; foliage will spawn during tile reveal")
-		return
+func _ensure_foliage_spawner() -> void:
+	if _foliage_spawner == null:
+		_foliage_spawner = PROCGEN_FOLIAGE_SPAWNER_SCRIPT.new()
 
-	var placed := 0
-	for pos in _generated_floor_cells.keys():
-		if _should_place_foliage(pos):
-			_place_foliage(pos)
-			placed += 1
-	if foliage_debug_logging:
-		print("[Foliage] Placed %d sprites under %s" % [placed, _foliage_parent.get_path()])
+
+func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dictionary:
+	return {
+		"host": self,
+		"map_size": map_size,
+		"foliage_parent": _foliage_parent,
+		"foliage_nodes": _foliage_nodes,
+		"fruit_sprites": _fruit_sprites,
+		"foliage_textures": _foliage_textures,
+		"fruit_texture": _fruit_texture,
+		"generated_floor_cells": _generated_floor_cells,
+		"generated_wall_cells": _generated_wall_cells,
+		"region_tiles": _region_tiles,
+		"last_compound_buildings": _last_compound_buildings,
+		"last_compound_rect": _last_compound_rect,
+		"pending_foliage_tiles": _pending_foliage_tiles,
+		"enable_streaming_reveal": enable_streaming_reveal,
+		"foliage_debug_logging": foliage_debug_logging,
+		"foliage_deferred_spawn_enabled": foliage_deferred_spawn_enabled,
+		"foliage_spawn_batch_size": foliage_spawn_batch_size,
+		"foliage_density": foliage_density,
+		"foliage_compound_density_multiplier": foliage_compound_density_multiplier,
+		"foliage_indoor_clearance_tiles": foliage_indoor_clearance_tiles,
+		"foliage_min_wall_distance": foliage_min_wall_distance,
+		"foliage_spawn_clearance_radius": foliage_spawn_clearance_radius,
+		"foliage_compound_building_clearance": foliage_compound_building_clearance,
+		"foliage_jitter_amplitude": foliage_jitter_amplitude,
+		"foliage_behind_z_index": foliage_behind_z_index,
+		"foliage_front_z_index": foliage_front_z_index,
+		"foliage_player_occlusion_radius": foliage_player_occlusion_radius,
+		"foliage_player_occlusion_softness": foliage_player_occlusion_softness,
+		"foliage_player_occlusion_alpha": foliage_player_occlusion_alpha,
+		"foliage_occlusion_shader": FOLIAGE_OCCLUSION_SHADER,
+		"foliage_occlusion_max_shader_bubbles": FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES,
+		"foliage_tree_trunk_collision_size": foliage_tree_trunk_collision_size,
+		"foliage_tree_trunk_collision_offset": foliage_tree_trunk_collision_offset,
+		"foliage_probabilistic_tree_collision": foliage_probabilistic_tree_collision,
+		"foliage_tree_collision_density_radius": foliage_tree_collision_density_radius,
+		"foliage_sparse_tree_collision_threshold": foliage_sparse_tree_collision_threshold,
+		"foliage_dense_tree_collision_threshold": foliage_dense_tree_collision_threshold,
+		"foliage_dense_tree_collision_chance": foliage_dense_tree_collision_chance,
+		"intent_mark_foliage_cover": intent_mark_foliage_cover,
+		"enable_fruit_spawning": enable_fruit_spawning,
+		"fruit_spawn_chance_tree": fruit_spawn_chance_tree,
+		"fruit_spawn_chance_shrub": fruit_spawn_chance_shrub,
+		"fruit_tiles_wide": fruit_tiles_wide,
+		"fruit_tiles_high": fruit_tiles_high,
+		"tile_noise_hash": Callable(self, "_tile_noise_hash"),
+		"tile_to_world_position": Callable(self, "_tile_to_world_position"),
+		"get_planet_profile_color": Callable(self, "_get_planet_profile_color"),
+		"get_player_spawn": Callable(self, "get_player_spawn"),
+		"is_road_surface_tile": Callable(self, "is_road_surface_tile"),
+		"is_parking_zone_tile": Callable(self, "is_parking_zone_tile"),
+		"is_indoor_tile": Callable(self, "is_indoor_tile"),
+		"get_region_type_at_tile": Callable(self, "get_region_type_at_tile"),
+		"get_region_data_at_tile": Callable(self, "get_region_data_at_tile"),
+		"set_region_tile": Callable(self, "_set_region_tile"),
+	}
+
+
+func _generate_foliage(map_size: Vector2i) -> void:
+	_ensure_foliage_spawner()
+	_foliage_spawner.generate(_build_foliage_spawner_context(map_size))
 
 
 func _clear_foliage() -> void:
-	for entry in _foliage_nodes.values():
-		var node: Node = null
-		if entry is Dictionary:
-			node = entry.get("node", null) as Node
-		elif entry is Node:
-			node = entry as Node
-		if is_instance_valid(node):
-			node.queue_free()
-	_foliage_nodes.clear()
-
-	# Clear fruit sprites too
-	for sprite in _fruit_sprites:
-		if is_instance_valid(sprite):
-			sprite.queue_free()
-	_fruit_sprites.clear()
+	_ensure_foliage_spawner()
+	_foliage_spawner.clear(_build_foliage_spawner_context())
 
 
 func _generate_ruin_props(map_size: Vector2i) -> void:

@@ -48,6 +48,16 @@ const ANIMATION_SPECS := {
 		"fps": 10.0,
 		"loop": false,
 	},
+	"crit_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__crit_01__s__8f__96.png",
+		"fps": 10.0,
+		"loop": false,
+	},
+	"crit_recovery_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__crit_recovery_01__s__5f__96.png",
+		"fps": 8.0,
+		"loop": false,
+	},
 }
 
 const FX_ANIMATION_SPECS := {
@@ -68,6 +78,11 @@ const FX_ANIMATION_SPECS := {
 	},
 	"melee_fx_w": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__fast_01__w__10f__96.png",
+		"fps": 12.0,
+		"loop": false,
+	},
+	"crit_fx_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__crit_01__s__8f__96.png",
 		"fps": 12.0,
 		"loop": false,
 	},

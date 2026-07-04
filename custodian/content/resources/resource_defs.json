@@ -9,7 +9,7 @@
 	},
 	"ruin_scrap": {
 		"label": "Ruin Scrap",
-		"description": "Scrap feedstock recovered from collapsed ruins and broken machinery. Common material used for basic repairs and components."
+		"description": "Scrap feedstock recovered from collapsed ruins and broken machinery. Some pieces still bear levy marks from the first desperate years after the Severance."
 	},
 	"spent_charge_cell": {
 		"label": "Spent Charge Cell",
@@ -21,7 +21,7 @@
 	},
 	"cracked_field_tag": {
 		"label": "Cracked Field Tag",
-		"description": "A cracked field tag split through the name. The metal is bent inward as if it tried to keep record of the impact."
+		"description": "A cracked field tag split clean through the name. The service number was enough for the ledger. The rest was lost to the Mandate Wars."
 	},
 	"power_components": {
 		"label": "Power Components",
@@ -41,7 +41,7 @@
 	},
 	"memory_glass_fragment": {
 		"label": "Memory Glass Fragment",
-		"description": "A fractured mnemonic pane from a Custodian archive. Its stored recollection has split beyond recovery, but some fragments still answer to authority."
+		"description": "Brittle glass from an Archive Engine's mnemonic substrate. It once held local provenance in support of a Lattice. After the field failed, each fracture retained a different history of the same ruin, and none will yield to the others."
 	},
 	"white_thread_knot": {
 		"label": "White Thread Knot",

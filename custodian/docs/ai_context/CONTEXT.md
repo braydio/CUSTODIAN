@@ -1,6 +1,6 @@
 # PROJECT CONTEXT PRIMER — CUSTODIAN
 
-Last updated: 2026-06-21
+Last updated: 2026-07-03
 
 ## Purpose
 
@@ -51,6 +51,16 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 - Actor layer: operator, enemies, structures, defenses, ambient entities
 - Enemy dash layer: `enemy_marine.tscn` enables the shared enemy phased dash values; `enemy.gd` owns the generic marine dash phases and impact feedback; `operator.gd` exposes `apply_enemy_dash_impact(...)`; Sundered Keep's local hallway ambush mirrors the same heavy dash tuning.
 - Stealth/perception layer: Operator movement exposes a read-only stealth snapshot, discrete loud actions publish through `NoiseEventBus`, enemy perception owns LOS/hearing, and the existing enemy behavior state machine owns investigate/pursue/search/return-home transitions. UI remains a read-only consumer of weapon status.
+
+## Architecture Organization Status
+
+An explicit architecture organization pass is now documented and tracked.
+- `custodian/docs/ARCHITECTURE.md` defines 9 runtime layers with ownership boundaries
+- `custodian/docs/ai_context/ARCHITECTURE_OWNERSHIP_MAP.md` answers "who owns what" for every major runtime concern
+- `custodian/docs/ai_context/task_packets/ARCHITECTURE_ORGANIZATION_PASS.md` defines 6 migration phases and extraction candidates
+- Large files (`proc_gen_tilemap.gd`, `custodian_contract_map.gd`, `contract_world_loader.gd`, `enemy.gd`, `game_state.gd`) should be treated as coordinator/facade candidates rather than permanent dumping grounds
+- No runtime code has been moved yet — the organization pass is currently documentation and scaffold only
+- The `docs/ai_context/VALIDATION_RECIPES.md` now includes architecture documentation validation commands
 
 ## Working Rules
 

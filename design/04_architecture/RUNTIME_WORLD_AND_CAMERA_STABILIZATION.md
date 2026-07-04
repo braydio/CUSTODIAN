@@ -1,4 +1,4 @@
-# 📄 `design/03_architecture/RUNTIME_WORLD_CAMERA_STABILIZATION.md`
+# 📄 `design/04_architecture/RUNTIME_WORLD_CAMERA_STABILIZATION.md`
 
 # Runtime World & Camera Stabilization
 

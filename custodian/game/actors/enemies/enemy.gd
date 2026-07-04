@@ -26,6 +26,9 @@ const GRUNT_MOVE_ANIMATION := &"run_w"
 const GRUNT_ATTACK_ANIMATION := &"melee_e"
 const GRUNT_ATTACK_FX_ANIMATION := &"melee_fx_e"
 const GRUNT_STAGGER_ANIMATION := &"stagger_s"
+const GRUNT_CRIT_ANIMATION := &"crit_s"
+const GRUNT_CRIT_RECOVERY_ANIMATION := &"crit_recovery_s"
+const GRUNT_CRIT_FX_ANIMATION := &"crit_fx_s"
 const CUSTOM_AMBIENT_EAST_ANIMATION := &"ambient_slink_east"
 const CUSTOM_AMBIENT_NORTH_ANIMATION := &"ambient_slink_north"
 const CUSTOM_AMBIENT_SOUTH_ANIMATION := &"ambient_slink_south"
@@ -57,6 +60,9 @@ enum AssaultState {
 @export var melee_hit_arc_degrees: float = 95.0
 @export var stagger_duration: float = 0.35
 @export var stagger_damage_threshold: float = 24.0
+@export var crit_damage_threshold: float = 48.0
+@export var crit_hit_duration: float = 0.8
+@export var crit_recovery_duration: float = 0.625
 @export var assault_staging_duration_min: float = 1.25
 @export var assault_staging_duration_max: float = 2.75
 @export var assault_probe_duration_min: float = 2.5
@@ -95,6 +101,7 @@ enum AssaultState {
 @export var custom_enemy_animation_set: String = ""
 @export var custom_enemy_animation_scale: Vector2 = Vector2.ONE
 @export var custom_enemy_fx_scale: Vector2 = Vector2.ONE
+@export var grunt_parry_critical_window_min_sec: float = 0.8
 var simulation_tier: String = "active"
 @export var marine_dash_enabled: bool = false
 @export var marine_dash_windup_time: float = 0.32
@@ -154,6 +161,10 @@ var _attack_windup_timer: float = 0.0
 var _pending_attack_damage: float = 0.0
 var _stagger_timer: float = 0.0
 var _recoil_timer: float = 0.0
+var _crit_timer: float = 0.0
+var _crit_recovery_timer: float = 0.0
+var _parry_critical_window_timer: float = 0.0
+var _parry_stagger_placeholder_logged: bool = false
 var _windup_attack_is_strong: bool = false
 var _pending_attack_forward: Vector2 = Vector2.DOWN
 var _pending_attack_range_px: float = 0.0
@@ -1001,12 +1012,15 @@ func apply_difficulty_modifiers(hp_scale: float, damage_scale: float):
 func take_damage(amount: float):
 	if dead:
 		return
-	
+		
 	health -= amount
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call("on_damaged", self, amount)
 	_on_assault_damage_taken(amount)
-	_apply_reaction(amount)
+	if _is_grunt_parry_critical_window_active():
+		_start_crit_reaction()
+	else:
+		_apply_reaction(amount)
 	update_visuals()
 	_spawn_damage_popup(amount)
 	
@@ -1498,7 +1512,9 @@ func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringN
 
 
 func _apply_reaction(amount: float) -> void:
-	if amount >= stagger_damage_threshold:
+	if amount >= crit_damage_threshold:
+		_start_crit_reaction()
+	elif amount >= stagger_damage_threshold:
 		_start_stagger_reaction()
 	else:
 		_start_hit_recoil_reaction()
@@ -1527,6 +1543,11 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 	_finish_marine_dash_attack()
 	_stagger_timer = max(_stagger_timer, duration)
 	_recoil_timer = 0.0
+	_crit_timer = 0.0
+	_crit_recovery_timer = 0.0
+	if _uses_grunt_critical_window():
+		_parry_critical_window_timer = maxf(_parry_critical_window_timer, _get_grunt_parry_critical_window_duration(duration))
+		_log_grunt_stagger_placeholder()
 	var resolved_direction := knockback_direction.normalized() if knockback_direction.length_squared() > 0.0001 else -_last_move_direction.normalized()
 	if resolved_direction.length_squared() <= 0.0001:
 		resolved_direction = Vector2.RIGHT
@@ -1537,6 +1558,27 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 		behavior_state_machine.call("on_damaged", self, 0.0)
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
+
+
+func _uses_grunt_critical_window() -> bool:
+	return custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT) \
+		and _has_animation(String(GRUNT_STAGGER_ANIMATION)) \
+		and _has_animation(String(GRUNT_CRIT_ANIMATION))
+
+
+func _is_grunt_parry_critical_window_active() -> bool:
+	return _uses_grunt_critical_window() and _parry_critical_window_timer > 0.0
+
+
+func _get_grunt_parry_critical_window_duration(duration: float) -> float:
+	return maxf(maxf(duration, grunt_parry_critical_window_min_sec), _get_animation_duration(String(GRUNT_STAGGER_ANIMATION)))
+
+
+func _log_grunt_stagger_placeholder() -> void:
+	if _parry_stagger_placeholder_logged:
+		return
+	_parry_stagger_placeholder_logged = true
+	push_warning("[EnemyGrunt] Parry stagger critical window is holding the last stagger frame as a placeholder. Needs authored staggered/critical-open animation.")
 
 
 func _start_hit_recoil_reaction() -> void:
@@ -1556,6 +1598,21 @@ func _start_stagger_reaction() -> void:
 		_update_directional_animation(_last_move_direction, false)
 
 
+func _start_crit_reaction() -> void:
+	_crit_timer = max(_crit_timer, crit_hit_duration)
+	_crit_recovery_timer = 0.0
+	_parry_critical_window_timer = 0.0
+	_recoil_timer = 0.0
+	_stagger_timer = 0.0
+	_attack_windup_timer = 0.0
+	_pending_attack_damage = 0.0
+	_finish_marine_dash_attack()
+	velocity = Vector2.ZERO
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+	_play_custom_enemy_crit_fx()
+
+
 func _spawn_damage_popup(amount: float) -> void:
 	var popup := DAMAGE_POPUP_SCENE.instantiate()
 	popup.text = str(int(amount))
@@ -1564,6 +1621,27 @@ func _spawn_damage_popup(amount: float) -> void:
 
 
 func _update_reaction_timers(delta: float) -> bool:
+	if _crit_timer > 0.0:
+		_crit_timer = max(0.0, _crit_timer - delta)
+		velocity = Vector2.ZERO
+		if _crit_timer <= 0.0:
+			_crit_recovery_timer = max(_crit_recovery_timer, crit_recovery_duration)
+		if _uses_directional_animation_set():
+			_update_directional_animation(_last_move_direction, false)
+		return true
+	if _crit_recovery_timer > 0.0:
+		_crit_recovery_timer = max(0.0, _crit_recovery_timer - delta)
+		velocity = Vector2.ZERO
+		if _uses_directional_animation_set():
+			_update_directional_animation(_last_move_direction, false)
+		return true
+	if _parry_critical_window_timer > 0.0:
+		_parry_critical_window_timer = max(0.0, _parry_critical_window_timer - delta)
+		_stagger_timer = max(0.0, _stagger_timer - delta)
+		velocity = Vector2.ZERO
+		if _uses_directional_animation_set():
+			_update_directional_animation(_last_move_direction, false)
+		return true
 	if _stagger_timer > 0.0:
 		_stagger_timer = max(0.0, _stagger_timer - delta)
 		velocity = Vector2.ZERO
@@ -1731,6 +1809,17 @@ func _has_animation(name: String) -> bool:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return false
 	return animated_sprite.sprite_frames.has_animation(name)
+
+
+func _get_animation_duration(name: String) -> float:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return 0.0
+	if not animated_sprite.sprite_frames.has_animation(name):
+		return 0.0
+	var speed: float = animated_sprite.sprite_frames.get_animation_speed(name)
+	if speed <= 0.0:
+		return 0.0
+	return float(animated_sprite.sprite_frames.get_frame_count(name)) / speed
 
 
 func _play_animation(name: String, allow_restart: bool = true) -> void:
@@ -2011,6 +2100,24 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 		facing = _last_move_direction
 	animated_sprite.scale = custom_enemy_animation_scale
 	_base_sprite_scale = animated_sprite.scale
+	if _crit_timer > 0.0:
+		if _has_animation(String(GRUNT_CRIT_ANIMATION)):
+			animated_sprite.flip_h = false
+			_play_animation(String(GRUNT_CRIT_ANIMATION), false)
+		return
+	if _crit_recovery_timer > 0.0:
+		if _has_animation(String(GRUNT_CRIT_RECOVERY_ANIMATION)):
+			animated_sprite.flip_h = false
+			_play_animation(String(GRUNT_CRIT_RECOVERY_ANIMATION), false)
+			return
+	if _is_grunt_parry_critical_window_active():
+		_play_grunt_parry_stagger_placeholder()
+		return
+	if _stagger_timer > 0.0:
+		if _has_animation(String(GRUNT_STAGGER_ANIMATION)):
+			animated_sprite.flip_h = false
+			_play_animation(String(GRUNT_STAGGER_ANIMATION), false)
+			return
 	if force_attack:
 		var attack_animation := GRUNT_ANIMATION_LIBRARY.get_attack_animation(facing)
 		if not _has_animation(String(attack_animation)):
@@ -2028,11 +2135,6 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 			animated_sprite.flip_h = false
 			_play_animation(String(move_animation), false)
 			return
-	if _stagger_timer > 0.0:
-		if _has_animation(String(GRUNT_STAGGER_ANIMATION)):
-			animated_sprite.flip_h = false
-			_play_animation(String(GRUNT_STAGGER_ANIMATION), false)
-			return
 	animated_sprite.flip_h = false
 	if not _has_animation(String(GRUNT_IDLE_ANIMATION)):
 		return
@@ -2040,6 +2142,22 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 		animated_sprite.play(String(GRUNT_IDLE_ANIMATION))
 	animated_sprite.stop()
 	animated_sprite.set_frame_and_progress(0, 0.0)
+
+
+func _play_grunt_parry_stagger_placeholder() -> void:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return
+	if not _has_animation(String(GRUNT_STAGGER_ANIMATION)):
+		return
+	animated_sprite.flip_h = false
+	if _stagger_timer > 0.0 and (animated_sprite.animation != String(GRUNT_STAGGER_ANIMATION) or animated_sprite.is_playing()):
+		_play_animation(String(GRUNT_STAGGER_ANIMATION), false)
+		return
+	if animated_sprite.animation != String(GRUNT_STAGGER_ANIMATION):
+		animated_sprite.play(String(GRUNT_STAGGER_ANIMATION))
+	var last_frame: int = max(0, animated_sprite.sprite_frames.get_frame_count(String(GRUNT_STAGGER_ANIMATION)) - 1)
+	animated_sprite.stop()
+	animated_sprite.set_frame_and_progress(last_frame, 0.0)
 
 
 func _update_marine_enemy_animation(direction: Vector2, force_attack: bool = false) -> void:
@@ -2077,6 +2195,17 @@ func _play_custom_enemy_attack_fx(facing: Vector2) -> void:
 	custom_enemy_fx_sprite.scale = custom_enemy_fx_scale
 	custom_enemy_fx_sprite.flip_h = facing.x < -0.05 and custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE)
 	custom_enemy_fx_sprite.play(String(fx_animation))
+
+
+func _play_custom_enemy_crit_fx() -> void:
+	if custom_enemy_fx_sprite == null or custom_enemy_fx_sprite.sprite_frames == null:
+		return
+	if not custom_enemy_fx_sprite.sprite_frames.has_animation(String(GRUNT_CRIT_FX_ANIMATION)):
+		return
+	custom_enemy_fx_sprite.visible = true
+	custom_enemy_fx_sprite.scale = custom_enemy_fx_scale
+	custom_enemy_fx_sprite.flip_h = false
+	custom_enemy_fx_sprite.play(String(GRUNT_CRIT_FX_ANIMATION))
 
 
 func _on_custom_enemy_fx_finished() -> void:

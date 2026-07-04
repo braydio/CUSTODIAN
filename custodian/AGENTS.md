@@ -49,7 +49,7 @@ Use this map to land on the right material fast:
 | Need | Read First | Then Check |
 |---|---|---|
 | Runtime feature behavior | `../design/` matching feature/system doc | `game/` scripts and `docs/ai_context/*` |
-| Architecture or ownership | `docs/ai_context/FILE_INDEX.md` | `docs/ARCHITECTURE.md`, `../design/03_architecture/` |
+| Architecture or ownership | `docs/ai_context/FILE_INDEX.md` | `docs/ARCHITECTURE.md`, `docs/ai_context/ARCHITECTURE_OWNERSHIP_MAP.md`, `../design/04_architecture/` |
 | Current implementation status | `docs/ai_context/CURRENT_STATE.md` | `../design/TRACKING.md`, active feature docs |
 | Asset layout or content placement | `docs/ASSET_LAYOUT_CONVENTION.md` | nearby `README.md` files in `content/` |
 | Scene/runtime structure | `docs/SCENE_HIERARCHY.md` | `scenes/`, `game/`, `project.godot` |

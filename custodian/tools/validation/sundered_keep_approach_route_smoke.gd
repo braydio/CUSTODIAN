@@ -14,6 +14,16 @@ const CAUSEWAY_EXPECTED_ROOTS := {
 	"OcclusionRoot": 100,
 }
 
+const CAUSEWAY_EXPECTED_SPRITE_Z := {
+	"PlayableRoot/MainlandApproachPath": -24,
+	"PlayableRoot/HillClimbPath": -23,
+	"PlayableRoot/OverlookLedge": -22,
+	"PlayableRoot/LateralTraversePath": -21,
+	"PlayableRoot/FortressWallMass": 30,
+	"OcclusionRoot/CliffOccluder": 120,
+	"OcclusionRoot/WallShadowOccluder": 130,
+}
+
 const CAUSEWAY_EXPECTED_MARKERS := {
 	"EntrySpawn": Vector2(-80, 430),
 	"RevealStart": Vector2(-40, 80),
@@ -144,17 +154,27 @@ func _check_causeway_approach(errors: Array[String]) -> Node:
 		if root_node.z_as_relative:
 			errors.append("Causeway %s should use z_as_relative=false" % root_path)
 
-	var markers := scene.get_node_or_null("Markers")
-	if markers == null:
-		errors.append("Causeway Markers missing")
-	else:
-		for marker_name: String in CAUSEWAY_EXPECTED_MARKERS:
-			var marker := markers.get_node_or_null(marker_name) as Marker2D
-			if marker == null:
-				errors.append("Causeway Markers/%s missing" % marker_name)
-				continue
-			if not _vec2_nearly_equal(marker.position, CAUSEWAY_EXPECTED_MARKERS[marker_name] as Vector2):
-				errors.append("Causeway Markers/%s expected %s, got %s" % [marker_name, CAUSEWAY_EXPECTED_MARKERS[marker_name], marker.position])
+		var markers := scene.get_node_or_null("Markers")
+		if markers == null:
+			errors.append("Causeway Markers missing")
+		else:
+			for marker_name: String in CAUSEWAY_EXPECTED_MARKERS:
+				var marker := markers.get_node_or_null(marker_name) as Marker2D
+				if marker == null:
+					errors.append("Causeway Markers/%s missing" % marker_name)
+					continue
+				if not _vec2_nearly_equal(marker.position, CAUSEWAY_EXPECTED_MARKERS[marker_name] as Vector2):
+					errors.append("Causeway Markers/%s expected %s, got %s" % [marker_name, CAUSEWAY_EXPECTED_MARKERS[marker_name], marker.position])
+
+	for sprite_path: String in CAUSEWAY_EXPECTED_SPRITE_Z:
+		var sprite := scene.get_node_or_null(sprite_path) as Sprite2D
+		if sprite == null:
+			errors.append("Causeway %s missing or not Sprite2D" % sprite_path)
+			continue
+		if sprite.z_as_relative:
+			errors.append("Causeway %s should use z_as_relative=false" % sprite_path)
+		if sprite.z_index != int(CAUSEWAY_EXPECTED_SPRITE_Z[sprite_path]):
+			errors.append("Causeway %s z_index expected %d, got %d" % [sprite_path, int(CAUSEWAY_EXPECTED_SPRITE_Z[sprite_path]), sprite.z_index])
 
 	var boundary := scene.get_node_or_null("Collision/PathBoundaryCollision") as StaticBody2D
 	if boundary == null:

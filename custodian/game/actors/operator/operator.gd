@@ -150,6 +150,7 @@ var last_fire_cooldown := 0.0
 @export var parry_windup_sec: float = 0.02
 @export var parry_active_sec: float = 0.10
 @export var parry_recovery_sec: float = 0.16
+@export var parry_success_recovery_sec: float = 0.03
 @export var parry_stamina_cost: float = 8.0
 @export var parry_success_stamina_refund: float = 6.0
 @export var parry_enemy_stagger_sec: float = 0.55
@@ -264,6 +265,8 @@ var _parry_timer: float = 0.0
 var _parry_active: bool = false
 var _parry_success_lockout: float = 0.0
 var _guard_requested_from_secondary: bool = false
+var _guard_repress_required_after_parry_success: bool = false
+var _post_parry_neutral_placeholder_logged: bool = false
 var _guard_held_timer: float = 0.0
 var _offhand_secondary_was_pressed: bool = false
 var _counter_window_timer: float = 0.0
@@ -430,6 +433,18 @@ const BODY_RECOIL_PROFILE_PIXELS := {
 	"recoil_shotgun": 1.5,
 	"recoil_sniper": 2.0,
 	"recoil_minigun": 0.6,
+}
+const MODULAR_PRIMARY_RANGED_MUZZLE_OFFSETS := {
+	"right": Vector2(32.0, -10.0),
+	"left": Vector2(-32.0, -10.0),
+	"down_right": Vector2(31.0, 1.0),
+	"down_left": Vector2(-31.0, 1.0),
+}
+const MODULAR_SIDEARM_MUZZLE_OFFSETS := {
+	"up_right": Vector2(34.0, -17.0),
+	"up_left": Vector2(-34.0, -17.0),
+	"down_right": Vector2(35.0, -13.0),
+	"down_left": Vector2(-35.0, -13.0),
 }
 const KNIGHT_TEST_ANIMATION_SPECS := {
 	"idle": {"file": "Idle.png", "fps": 8.0, "loop": true},
@@ -1685,7 +1700,9 @@ func _get_ranged_weapon_socket_rotation(dir: Vector2) -> float:
 	return clampf(raw_angle, -limit, limit)
 
 
-func _get_ranged_muzzle_origin() -> Vector2:
+func _get_ranged_muzzle_origin(direction: Vector2 = Vector2.ZERO) -> Vector2:
+	if _get_modular_ranged_muzzle_position(direction) != Vector2.INF:
+		return global_position
 	if primary_weapon_socket != null:
 		return primary_weapon_socket.global_position
 	return global_position
@@ -1694,7 +1711,7 @@ func _get_ranged_muzzle_origin() -> Vector2:
 func _get_muzzle_obstruction(direction: Vector2, muzzle_position: Vector2) -> Dictionary:
 	if direction.length_squared() <= 0.0001:
 		return {}
-	var from: Vector2 = _get_ranged_muzzle_origin()
+	var from: Vector2 = _get_ranged_muzzle_origin(direction)
 	var to: Vector2 = muzzle_position + direction.normalized() * max(0.0, ranged_muzzle_obstruction_margin)
 	if from.distance_squared_to(to) <= 1.0:
 		return {}
@@ -1813,9 +1830,7 @@ func _emit_pending_ranged_shot() -> void:
 	if bullet == null:
 		return
 
-	var spawn_position: Vector2 = global_position + direction * muzzle_offset
-	if barrel:
-		spawn_position = barrel.global_position
+	var spawn_position: Vector2 = _get_ranged_muzzle_position(direction)
 	var muzzle_check := _get_muzzle_obstruction(direction, spawn_position)
 	if not muzzle_check.is_empty():
 		_spawn_ranged_impact_at(muzzle_check.get("position", spawn_position))
@@ -1859,6 +1874,7 @@ func _emit_pending_ranged_shot() -> void:
 
 func _handle_attack_input() -> void:
 	if _is_block_state_active():
+		_try_queue_parry_counter_from_block()
 		return
 	if _is_ranged_ready_active():
 		if _is_attack_primary_just_pressed() and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
@@ -1918,6 +1934,23 @@ func _try_melee_attack(intent: String = ""):
 		_request_attack_state(requested_kind)
 		return
 	_buffer_attack(requested_kind)
+
+
+func _try_queue_parry_counter_from_block() -> void:
+	if _block_phase != &"success" or _parry_phase != &"success":
+		return
+	if _counter_window_timer <= 0.0:
+		return
+	if not _is_attack_primary_just_pressed():
+		return
+	var profile := get_current_combat_profile()
+	if profile == null:
+		return
+	var intent := profile.primary_intent
+	if not ["melee_fast", "melee_heavy", "unarmed_fast", "unarmed_heavy"].has(intent):
+		return
+	_buffer_attack(_get_requested_attack_kind(intent))
+	_parry_timer = minf(_parry_timer, 0.016)
 
 
 func _is_attack_primary_just_pressed() -> bool:
@@ -1983,6 +2016,7 @@ func _handle_offhand_secondary_input(delta: float) -> void:
 
 	if _get_offhand_secondary_mode() != &"parry_guard":
 		_guard_requested_from_secondary = false
+		_guard_repress_required_after_parry_success = false
 		_guard_held_timer = 0.0
 		_update_parry_guard_timers(delta)
 		return
@@ -1993,6 +2027,12 @@ func _handle_offhand_secondary_input(delta: float) -> void:
 		_start_guard_from_secondary()
 
 	if offhand_pressed:
+		if _guard_repress_required_after_parry_success:
+			if _parry_phase.is_empty() and _block_phase in [&"enter", &"hold", &"hitreact", &"parry", &"success", &"recovery", &"exit"]:
+				_block_phase = &""
+				_block_active = false
+				_guard_requested_from_secondary = false
+			return
 		_guard_held_timer += delta
 		if _parry_phase.is_empty():
 			_guard_requested_from_secondary = true
@@ -2006,6 +2046,7 @@ func _handle_offhand_secondary_input(delta: float) -> void:
 				_play_block_animation(&"melee_2h_block_hold")
 	else:
 		_guard_requested_from_secondary = false
+		_guard_repress_required_after_parry_success = false
 		_guard_held_timer = 0.0
 		if _is_block_state_active() and _block_phase in [&"enter", &"hold", &"hitreact"]:
 			_block_phase = &"exit"
@@ -2019,6 +2060,8 @@ func _start_guard_from_secondary() -> void:
 	_guard_requested_from_secondary = true
 	_guard_held_timer = maxf(0.0, guard_weak_start_sec)
 	_request_block_state()
+	if _block_phase.is_empty():
+		start_block()
 
 
 func _can_start_guard_from_secondary() -> bool:
@@ -2111,9 +2154,16 @@ func _update_parry_guard_timers(delta: float) -> void:
 				_play_parry_animation(&"unarmed_parry_recovery")
 		&"success", &"recovery":
 			if _parry_timer <= 0.0:
+				var completed_phase := _parry_phase
 				_parry_phase = &""
 				_parry_active = false
-				if _is_attack_secondary_pressed() and _get_offhand_secondary_mode() == &"parry_guard":
+				if _block_phase == &"success" and not _buffered_attack_kind.is_empty() and _counter_window_timer > 0.0:
+					_block_phase = &""
+					_block_active = false
+					_request_attack_state(_consume_buffered_attack())
+				elif completed_phase == &"success":
+					_enter_post_parry_neutral_lock()
+				elif _is_attack_secondary_pressed() and _get_offhand_secondary_mode() == &"parry_guard":
 					_guard_requested_from_secondary = true
 					_block_phase = &"enter"
 					_block_active = false
@@ -2129,6 +2179,16 @@ func _update_parry_guard_timers(delta: float) -> void:
 			_block_phase = &"recovery"
 			_block_active = false
 			_play_parry_animation(&"unarmed_parry_recovery")
+
+
+func _enter_post_parry_neutral_lock() -> void:
+	_guard_requested_from_secondary = false
+	_guard_repress_required_after_parry_success = _is_attack_secondary_pressed()
+	_block_phase = &""
+	_block_active = false
+	if not _post_parry_neutral_placeholder_logged:
+		_post_parry_neutral_placeholder_logged = true
+		push_warning("[Operator] Successful parry is exiting through placeholder post_parry_neutral_lock with no authored parry_success_to_neutral animation. Add the dedicated 5-frame success-to-neutral upper-body/FX set.")
 
 
 func _enter_ranged_ready() -> void:
@@ -2692,11 +2752,13 @@ func try_guard_incoming_attack(damage: float, hit_direction: Vector2) -> Diction
 func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dictionary) -> void:
 	_parry_active = false
 	_parry_phase = &"success"
-	_parry_timer = maxf(0.0, parry_recovery_sec)
-	_parry_success_lockout = maxf(_parry_success_lockout, parry_recovery_sec)
+	var success_recovery := maxf(0.0, parry_success_recovery_sec)
+	_parry_timer = success_recovery
+	_parry_success_lockout = maxf(_parry_success_lockout, success_recovery)
 	_counter_window_timer = maxf(_counter_window_timer, parry_counter_window_sec)
 	_block_phase = &"success"
 	_block_active = false
+	_guard_repress_required_after_parry_success = _is_attack_secondary_pressed()
 
 	stamina = min(stamina_max, stamina + parry_success_stamina_refund)
 
@@ -4031,9 +4093,7 @@ func _spawn_muzzle_flash(direction: Vector2):
 	var flash = MUZZLE_FLASH_SCENE.instantiate()
 	if flash == null:
 		return
-	var spawn_position: Vector2 = global_position + direction * (muzzle_offset - 4.0)
-	if barrel:
-		spawn_position = barrel.global_position
+	var spawn_position: Vector2 = _get_ranged_muzzle_position(direction)
 	flash.rotation = direction.angle()
 	var parent = get_node_or_null("/root/GameRoot/World/Projectiles")
 	if parent:
@@ -4041,6 +4101,43 @@ func _spawn_muzzle_flash(direction: Vector2):
 	else:
 		get_tree().current_scene.add_child(flash)
 	flash.global_position = spawn_position
+
+
+func _get_ranged_muzzle_position(direction: Vector2) -> Vector2:
+	var modular_position := _get_modular_ranged_muzzle_position(direction)
+	if modular_position != Vector2.INF:
+		return modular_position
+	if barrel:
+		return barrel.global_position
+	return global_position + direction.normalized() * muzzle_offset
+
+
+func _get_modular_ranged_muzzle_position(direction: Vector2) -> Vector2:
+	if modular_sidearm_sprite == null:
+		return Vector2.INF
+	var suffix := ""
+	if _is_using_sidearm_ranged() and _sidearm_action_phase == &"firing":
+		suffix = _get_sidearm_muzzle_suffix(direction)
+		if MODULAR_SIDEARM_MUZZLE_OFFSETS.has(suffix):
+			return modular_sidearm_sprite.global_position + MODULAR_SIDEARM_MUZZLE_OFFSETS[suffix]
+	elif _is_primary_ranged_fire_presentation_active() or _is_primary_ranged_fire_recover_presentation_active():
+		suffix = String(_primary_ranged_fire_suffix_for_direction(direction))
+		if MODULAR_PRIMARY_RANGED_MUZZLE_OFFSETS.has(suffix):
+			return modular_sidearm_sprite.global_position + MODULAR_PRIMARY_RANGED_MUZZLE_OFFSETS[suffix]
+	return Vector2.INF
+
+
+func _get_sidearm_muzzle_suffix(direction: Vector2) -> String:
+	var resolved := direction
+	if resolved.length_squared() <= 0.0001:
+		resolved = _sidearm_action_direction
+	if resolved.length_squared() <= 0.0001:
+		resolved = aim_direction
+	if resolved.length_squared() <= 0.0001:
+		resolved = Vector2.DOWN
+	var vertical := "up" if resolved.y < 0.0 else "down"
+	var horizontal := "left" if resolved.x < 0.0 else "right"
+	return "%s_%s" % [vertical, horizontal]
 
 
 func _spawn_damage_popup(amount: float) -> void:
@@ -4426,6 +4523,7 @@ func _wants_block() -> bool:
 		return true
 	return _get_offhand_secondary_mode() == &"parry_guard" \
 		and _is_attack_secondary_pressed() \
+		and not _guard_repress_required_after_parry_success \
 		and (_guard_requested_from_secondary or _block_phase in [&"enter", &"hold", &"hitreact"])
 
 

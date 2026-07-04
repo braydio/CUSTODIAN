@@ -38,6 +38,16 @@ const EXPECTED_SPRITE_RECTS := {
 	"OcclusionRoot/WallShadowOccluder": Rect2(Vector2(-900, -360), Vector2(2100, 130)),
 }
 
+const EXPECTED_SPRITE_Z := {
+	"PlayableRoot/MainlandApproachPath": -24,
+	"PlayableRoot/HillClimbPath": -23,
+	"PlayableRoot/OverlookLedge": -22,
+	"PlayableRoot/LateralTraversePath": -21,
+	"PlayableRoot/FortressWallMass": 30,
+	"OcclusionRoot/CliffOccluder": 120,
+	"OcclusionRoot/WallShadowOccluder": 130,
+}
+
 const EXPECTED_MARKERS := {
 	"EntrySpawn": Vector2(-80, 430),
 	"RevealStart": Vector2(-40, 80),
@@ -87,11 +97,13 @@ func _init() -> void:
 		if sprite.texture == null:
 			errors.append("%s has null texture" % node_path)
 			continue
-		if sprite.centered:
-			errors.append("%s should use centered=false" % node_path)
-		if sprite.z_as_relative:
-			errors.append("%s should use z_as_relative=false" % node_path)
-		_check_sprite_rect(node_path, sprite, EXPECTED_SPRITE_RECTS[node_path] as Rect2, errors)
+			if sprite.centered:
+				errors.append("%s should use centered=false" % node_path)
+			if sprite.z_as_relative:
+				errors.append("%s should use z_as_relative=false" % node_path)
+			if EXPECTED_SPRITE_Z.has(node_path) and sprite.z_index != int(EXPECTED_SPRITE_Z[node_path]):
+				errors.append("%s z_index expected %d, got %d" % [node_path, int(EXPECTED_SPRITE_Z[node_path]), sprite.z_index])
+			_check_sprite_rect(node_path, sprite, EXPECTED_SPRITE_RECTS[node_path] as Rect2, errors)
 
 	var vista_root := scene.get_node_or_null("VistaRoot") as CanvasItem
 	if vista_root == null or vista_root.modulate.a > 0.01:

@@ -1,7 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://dowtwdpnevbng"]
+[gd_scene format=3 uid="uid://cqcf6m4xb1of7"]
 
-[ext_resource type="Script" path="res://scenes/debug/sundered_keep_production_underlay_debug.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://content/masters/sundered_keep/sundered_keep_main_overlay.png" id="2_underlay"]
+[ext_resource type="Script" uid="uid://lb313uxyu3ah" path="res://scenes/debug/sundered_keep_production_underlay_debug.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://brxbwbx8w52mb" path="res://content/masters/sundered_keep/sundered_keep_main_overlay.png" id="2_underlay"]
 [ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="3_operator"]
 [ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="4_player_controller"]
 [ext_resource type="Script" uid="uid://cyoadqv7g5hc6" path="res://game/world/camera.gd" id="5_camera"]
@@ -12,52 +12,52 @@ size = Vector2(3712, 64)
 [sub_resource type="RectangleShape2D" id="left_right_bounds"]
 size = Vector2(64, 2688)
 
-[node name="GameRoot" type="Node2D"]
+[node name="GameRoot" type="Node2D" unique_id=1337409801]
 script = ExtResource("1_script")
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=472091604]
 
-[node name="Projectiles" type="Node2D" parent="World"]
+[node name="Projectiles" type="Node2D" parent="World" unique_id=1415583063]
 
-[node name="Items" type="Node2D" parent="World"]
+[node name="Items" type="Node2D" parent="World" unique_id=940149340]
 
-[node name="Enemies" type="Node2D" parent="World"]
+[node name="Enemies" type="Node2D" parent="World" unique_id=66003870]
 
-[node name="Allies" type="Node2D" parent="World"]
+[node name="Allies" type="Node2D" parent="World" unique_id=2111658357]
 
-[node name="SunderedKeepMainUnderlay" type="Sprite2D" parent="World"]
+[node name="SunderedKeepMainUnderlay" type="Sprite2D" parent="World" unique_id=1552749801]
 z_index = -120
 scale = Vector2(0.710776, 0.731429)
 texture = ExtResource("2_underlay")
 centered = false
 
-[node name="UnderlayWalkBounds" type="Node2D" parent="World"]
+[node name="UnderlayWalkBounds" type="Node2D" parent="World" unique_id=669515610]
 
-[node name="North" type="StaticBody2D" parent="World/UnderlayWalkBounds"]
+[node name="North" type="StaticBody2D" parent="World/UnderlayWalkBounds" unique_id=866232282]
 position = Vector2(1792, -32)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/UnderlayWalkBounds/North"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/UnderlayWalkBounds/North" unique_id=191143392]
 shape = SubResource("top_bottom_bounds")
 
-[node name="South" type="StaticBody2D" parent="World/UnderlayWalkBounds"]
+[node name="South" type="StaticBody2D" parent="World/UnderlayWalkBounds" unique_id=1445275263]
 position = Vector2(1792, 2592)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/UnderlayWalkBounds/South"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/UnderlayWalkBounds/South" unique_id=1571261339]
 shape = SubResource("top_bottom_bounds")
 
-[node name="West" type="StaticBody2D" parent="World/UnderlayWalkBounds"]
+[node name="West" type="StaticBody2D" parent="World/UnderlayWalkBounds" unique_id=613836448]
 position = Vector2(-32, 1280)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/UnderlayWalkBounds/West"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/UnderlayWalkBounds/West" unique_id=673207492]
 shape = SubResource("left_right_bounds")
 
-[node name="East" type="StaticBody2D" parent="World/UnderlayWalkBounds"]
+[node name="East" type="StaticBody2D" parent="World/UnderlayWalkBounds" unique_id=531315038]
 position = Vector2(3616, 1280)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/UnderlayWalkBounds/East"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/UnderlayWalkBounds/East" unique_id=1407398363]
 shape = SubResource("left_right_bounds")
 
-[node name="Operator" parent="World" instance=ExtResource("3_operator")]
+[node name="Operator" parent="World" unique_id=1621744059 instance=ExtResource("3_operator")]
 position = Vector2(1808, 2448)
 muzzle_offset = 24.0
 aim_crosshair_color = Color(0.9, 0.9, 0.9, 1)
@@ -89,17 +89,11 @@ placeholder_sprite_position = Vector2(0, -18)
 placeholder_sprite_offset = Vector2(0, 0)
 right_hand_socket_position = Vector2(10, -16)
 
-[node name="PlayerController" type="Node" parent="World"]
+[node name="PlayerController" type="Node" parent="World" unique_id=1009316953]
 script = ExtResource("4_player_controller")
 operator_path = NodePath("../Operator")
-camera_path = NodePath("../Camera2D")
 
-[node name="Camera2D" type="Camera2D" parent="World"]
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=1486532182]
 position = Vector2(1808, 2448)
 zoom = Vector2(0.84, 0.84)
 script = ExtResource("5_camera")
-base_zoom = Vector2(0.84, 0.84)
-move_zoom = Vector2(0.9, 0.9)
-ranged_zoom = Vector2(0.9, 0.9)
-ranged_move_zoom = Vector2(0.94, 0.94)
-auto_zoom_enabled = true

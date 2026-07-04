@@ -11,6 +11,8 @@ const REQUIRED_BODY_ANIMATIONS := {
 	"melee_sw": 10,
 	"melee_w": 11,
 	"stagger_s": 8,
+	"crit_s": 8,
+	"crit_recovery_s": 5,
 }
 
 const REQUIRED_FX_ANIMATIONS := {
@@ -18,6 +20,7 @@ const REQUIRED_FX_ANIMATIONS := {
 	"melee_fx_se": 10,
 	"melee_fx_sw": 10,
 	"melee_fx_w": 10,
+	"crit_fx_s": 8,
 }
 
 

@@ -1,4 +1,4 @@
-# `design/03_architecture/COMPOUND_TILE_SYSTEM.md`
+# `design/04_architecture/COMPOUND_TILE_SYSTEM.md`
 
 # Compound Tile System
 
