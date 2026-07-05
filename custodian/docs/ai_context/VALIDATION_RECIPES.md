@@ -171,6 +171,17 @@ godot --headless --script res://tools/validation/procgen_terrain_required_cells_
 The first command validates TerrainBuilder determinism and metadata behavior. The second generates representative
 candidate-mode maps and verifies required-cell counts stay bounded while terrain connectivity remains enforced.
 
+For foliage extraction / deferred spawn changes:
+
+```bash
+cd custodian
+godot --headless --script res://tools/validation/procgen_foliage_spawner_smoke.gd
+godot --headless --script res://tools/validation/procgen_deferred_foliage_smoke.gd
+```
+
+The first command validates the extracted foliage service's deterministic generate/remove/clear lifecycle. The second
+checks that final-visual foliage queues batch into placed nodes over subsequent frames.
+
 ## Manual Godot Validation
 
 Use when behavior requires play, input, camera, animation, UI, collision, or visual confirmation.
@@ -217,6 +228,17 @@ python custodian/tools/validation/operator_animation_contract_report_smoke.py
 
 `--strict` is expected to fail while required art coverage or required metadata is incomplete. Treat that as a
 production coverage report, not as a reason to fake missing assets.
+
+For live modular Operator defense/ranged presentation wiring:
+
+```bash
+cd custodian
+godot --headless --script res://tools/validation/operator_modular_defense_ranged_smoke.gd
+```
+
+This instantiates the Operator and verifies east-facing parry recovery resolves to modular lower/upper recovery
+clips, and east two-handed ranged-ready stance uses the modular upper/weapon stack instead of falling through to
+legacy full-body presentation.
 
 For the focused modular Operator ingest loop, use the thin repo-root wrapper. It defaults to dry-run; `--apply` runs
 shared-inbox manifest generation, rebuilds modular Operator runtime sheets, runs Godot import, refreshes curated

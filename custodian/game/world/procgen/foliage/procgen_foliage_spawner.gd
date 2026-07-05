@@ -24,15 +24,21 @@ func generate(context: Dictionary) -> Dictionary:
 			print("[Foliage] Streaming reveal active; foliage will spawn during tile reveal")
 		return _result(0, true, "streaming_reveal", started, true)
 
-	var placed := 0
 	var generated_floor_cells: Dictionary = context.get("generated_floor_cells", {})
-	for key in generated_floor_cells.keys():
-		if not key is Vector2i:
-			continue
-		var pos := key as Vector2i
-		if _should_place_foliage(context, pos):
-			if place_at(context, pos):
-				placed += 1
+	var pending_foliage_tiles: Array = context.get("pending_foliage_tiles", [])
+	pending_foliage_tiles.clear()
+	var candidates := _collect_candidate_tiles(context, generated_floor_cells)
+
+	if bool(context.get("foliage_deferred_spawn_enabled", false)):
+		pending_foliage_tiles.append_array(candidates)
+		if bool(context.get("foliage_debug_logging", false)):
+			print("[Foliage] Queued %d foliage candidates for deferred spawn" % pending_foliage_tiles.size())
+		return _result(0, false, "deferred_spawn_queued", started, true)
+
+	var placed := 0
+	for pos in candidates:
+		if place_at(context, pos):
+			placed += 1
 
 	if bool(context.get("foliage_debug_logging", false)):
 		print("[Foliage] Placed %d sprites under %s" % [placed, foliage_parent.get_path()])
@@ -57,6 +63,9 @@ func clear(context: Dictionary) -> void:
 			sprite.queue_free()
 	fruit_sprites.clear()
 
+	var pending_foliage_tiles: Array = context.get("pending_foliage_tiles", [])
+	pending_foliage_tiles.clear()
+
 
 func remove_at(context: Dictionary, pos: Vector2i) -> void:
 	var foliage_nodes: Dictionary = context.get("foliage_nodes", {})
@@ -73,6 +82,24 @@ func remove_at(context: Dictionary, pos: Vector2i) -> void:
 	var region_tiles: Dictionary = context.get("region_tiles", {})
 	if get_region_type.is_valid() and str(get_region_type.call(pos)) == "foliage_cover":
 		region_tiles.erase(pos)
+
+
+func process_pending(context: Dictionary) -> Dictionary:
+	var started := Time.get_ticks_msec()
+	var pending_foliage_tiles: Array = context.get("pending_foliage_tiles", [])
+	if pending_foliage_tiles.is_empty():
+		return _result(0, true, "no_pending_tiles", started, true)
+	var batch_size := maxi(1, int(context.get("foliage_spawn_batch_size", 512)))
+	var placed := 0
+	while placed < batch_size and not pending_foliage_tiles.is_empty():
+		var pos_variant = pending_foliage_tiles.pop_front()
+		if not pos_variant is Vector2i:
+			continue
+		if place_at(context, pos_variant as Vector2i):
+			placed += 1
+	if bool(context.get("foliage_debug_logging", false)):
+		print("[Foliage] Spawned batch placed=%d remaining=%d batch_size=%d" % [placed, pending_foliage_tiles.size(), batch_size])
+	return _result(placed, pending_foliage_tiles.is_empty(), "deferred_spawn_batch", started, true)
 
 
 func can_place_at(context: Dictionary, pos: Vector2i) -> bool:
@@ -99,6 +126,22 @@ func _should_place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 	if _is_inside_foliage_clearance(context, pos):
 		return false
 	return _would_place_foliage_at(context, pos)
+
+
+func _collect_candidate_tiles(context: Dictionary, generated_floor_cells: Dictionary) -> Array[Vector2i]:
+	var candidates: Array[Vector2i] = []
+	for key in generated_floor_cells.keys():
+		if not key is Vector2i:
+			continue
+		var pos := key as Vector2i
+		if _should_place_foliage(context, pos):
+			candidates.append(pos)
+	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		if a.y == b.y:
+			return a.x < b.x
+		return a.y < b.y
+	)
+	return candidates
 
 
 func _is_near_wall(context: Dictionary, pos: Vector2i) -> bool:

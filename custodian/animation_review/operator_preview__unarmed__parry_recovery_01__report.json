@@ -1,0 +1,24 @@
+{
+  "loadout": "unarmed",
+  "actions": [
+    "parry_recovery_01"
+  ],
+  "directions": [
+    "e"
+  ],
+  "include_fx": true,
+  "output_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/animation_review",
+  "grid": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/animation_review/operator_preview__unarmed__parry_recovery_01__grid.png",
+  "previews": [
+    {
+      "action": "parry_recovery_01",
+      "direction": "e",
+      "body_source": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/modules/new_operator/lower_body/actions/unarmed/parry_recovery_01/operator__modular_lower_body__unarmed__parry_recovery_01__e__5f__96.png + /home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/runtime/modules/new_operator/upper_body/actions/unarmed/parry_recovery_01/operator__modular_upper_body__unarmed__parry_recovery_01__e__5f__96.png",
+      "fx_source": null,
+      "missing_layers": [
+        "upper_fx"
+      ],
+      "frames": 5
+    }
+  ]
+}

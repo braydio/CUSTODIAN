@@ -646,52 +646,60 @@ func _build_modular_unarmed_block_entries(part: String) -> Array:
 func _build_modular_unarmed_parry_entries(part: String) -> Array:
 	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/unarmed" % part
 	var entries: Array = []
+	var action_specs := [
+		{"source": "parry_01", "base": "unarmed_parry", "success": true, "fps": 12.0, "loop": false},
+		{"source": "success_01", "base": "unarmed_parry_success_01", "success": false, "fps": 12.0, "loop": false},
+	]
 	var direction_specs := [
 		{"dir": "n", "suffix": "up", "alias_base": true},
 		{"dir": "e", "suffix": "right"},
 		{"dir": "w", "suffix": "left"},
 	]
-	for direction_spec in direction_specs:
-		var sheet := _find_modular_action_sheet(root, part, "unarmed", "parry_01", str(direction_spec["dir"]))
-		if sheet.is_empty():
-			continue
-		if bool(direction_spec.get("alias_base", false)):
+	for action_spec in action_specs:
+		for direction_spec in direction_specs:
+			var sheet := _find_modular_action_sheet(root, part, "unarmed", str(action_spec["source"]), str(direction_spec["dir"]))
+			if sheet.is_empty():
+				continue
+			var base := str(action_spec["base"])
+			if bool(direction_spec.get("alias_base", false)):
+				entries.append({
+					"animation": base,
+					"path": str(sheet["path"]),
+					"frames": int(sheet["frames"]),
+					"frame_width": 96,
+					"frame_height": 96,
+					"fps": float(action_spec["fps"]),
+					"loop": bool(action_spec["loop"]),
+				})
+				if bool(action_spec["success"]):
+					entries.append({
+						"animation": "unarmed_parry_success",
+						"path": str(sheet["path"]),
+						"frames": int(sheet["frames"]),
+						"frame_width": 96,
+						"frame_height": 96,
+						"fps": float(action_spec["fps"]),
+						"loop": bool(action_spec["loop"]),
+					})
 			entries.append({
-				"animation": "unarmed_parry",
+				"animation": "%s_%s" % [base, str(direction_spec["suffix"])],
 				"path": str(sheet["path"]),
 				"frames": int(sheet["frames"]),
 				"frame_width": 96,
 				"frame_height": 96,
-				"fps": 12.0,
-				"loop": false,
+				"fps": float(action_spec["fps"]),
+				"loop": bool(action_spec["loop"]),
 			})
-			entries.append({
-				"animation": "unarmed_parry_success",
-				"path": str(sheet["path"]),
-				"frames": int(sheet["frames"]),
-				"frame_width": 96,
-				"frame_height": 96,
-				"fps": 12.0,
-				"loop": false,
-			})
-		entries.append({
-			"animation": "unarmed_parry_%s" % str(direction_spec["suffix"]),
-			"path": str(sheet["path"]),
-			"frames": int(sheet["frames"]),
-			"frame_width": 96,
-			"frame_height": 96,
-			"fps": 12.0,
-			"loop": false,
-		})
-		entries.append({
-			"animation": "unarmed_parry_success_%s" % str(direction_spec["suffix"]),
-			"path": str(sheet["path"]),
-			"frames": int(sheet["frames"]),
-			"frame_width": 96,
-			"frame_height": 96,
-			"fps": 12.0,
-			"loop": false,
-		})
+			if bool(action_spec["success"]):
+				entries.append({
+					"animation": "unarmed_parry_success_%s" % str(direction_spec["suffix"]),
+					"path": str(sheet["path"]),
+					"frames": int(sheet["frames"]),
+					"frame_width": 96,
+					"frame_height": 96,
+					"fps": float(action_spec["fps"]),
+					"loop": bool(action_spec["loop"]),
+				})
 	return entries
 
 
@@ -719,19 +727,27 @@ func _find_modular_action_sheet(root: String, part: String, loadout: String, act
 func _build_modular_unarmed_parry_fx_entries() -> Array:
 	var root := "res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/unarmed"
 	var entries: Array = []
+	var action_specs := [
+		{"source": "parry_01", "base": "unarmed_parry_fx", "success": true, "fps": 12.0, "loop": false},
+		{"source": "success_01", "base": "unarmed_parry_success_01_fx", "success": false, "fps": 12.0, "loop": false},
+	]
 	for direction_spec in [
 		{"dir": "n", "suffix": "up", "alias_base": true},
 		{"dir": "e", "suffix": "right"},
 		{"dir": "w", "suffix": "left"},
 	]:
-		var sheet := _find_modular_action_sheet(root, "upper_fx", "unarmed", "parry_01", str(direction_spec["dir"]))
-		if sheet.is_empty():
-			continue
-		if bool(direction_spec.get("alias_base", false)):
-			entries.append({"animation": "unarmed_parry_fx", "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": false})
-			entries.append({"animation": "PLACEHOLDER_unarmed_parry_success_fx", "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": false})
-		entries.append({"animation": "unarmed_parry_fx_%s" % str(direction_spec["suffix"]), "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": false})
-		entries.append({"animation": "PLACEHOLDER_unarmed_parry_success_fx_%s" % str(direction_spec["suffix"]), "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": 12.0, "loop": false})
+		for action_spec in action_specs:
+			var sheet := _find_modular_action_sheet(root, "upper_fx", "unarmed", str(action_spec["source"]), str(direction_spec["dir"]))
+			if sheet.is_empty():
+				continue
+			var base := str(action_spec["base"])
+			if bool(direction_spec.get("alias_base", false)):
+				entries.append({"animation": base, "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": float(action_spec["fps"]), "loop": bool(action_spec["loop"])})
+				if bool(action_spec["success"]):
+					entries.append({"animation": "PLACEHOLDER_unarmed_parry_success_fx", "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": float(action_spec["fps"]), "loop": bool(action_spec["loop"])})
+			entries.append({"animation": "%s_%s" % [base, str(direction_spec["suffix"])], "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": float(action_spec["fps"]), "loop": bool(action_spec["loop"])})
+			if bool(action_spec["success"]):
+				entries.append({"animation": "PLACEHOLDER_unarmed_parry_success_fx_%s" % str(direction_spec["suffix"]), "path": str(sheet["path"]), "frames": int(sheet["frames"]), "frame_width": 96, "frame_height": 96, "fps": float(action_spec["fps"]), "loop": bool(action_spec["loop"])})
 	return entries
 
 

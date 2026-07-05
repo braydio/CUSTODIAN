@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://i2idx8vlbx5h"
-path="res://.godot/imported/operator__modular_upper_body__unarmed__run_01__n__5f__96.png-88c88ef519b13cf6e6cbfd0ca2d96682.ctex"
+uid="uid://chw1a8ikjth0e"
+path="res://.godot/imported/operator__modular_lower_body__unarmed__parry_recovery_01__e__5f__96.png-c5fd7be3572f587652cc678464ed8bfe.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/run_01/operator__modular_upper_body__unarmed__run_01__n__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__run_01__n__5f__96.png-88c88ef519b13cf6e6cbfd0ca2d96682.ctex"]
+source_file="res://content/sprites/_pipeline/normalized/operator__modular_lower_body__unarmed__parry_recovery_01__e__5f__96.png"
+dest_files=["res://.godot/imported/operator__modular_lower_body__unarmed__parry_recovery_01__e__5f__96.png-c5fd7be3572f587652cc678464ed8bfe.ctex"]
 
 [params]
 

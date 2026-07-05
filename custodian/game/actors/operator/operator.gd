@@ -266,7 +266,6 @@ var _parry_active: bool = false
 var _parry_success_lockout: float = 0.0
 var _guard_requested_from_secondary: bool = false
 var _guard_repress_required_after_parry_success: bool = false
-var _post_parry_neutral_placeholder_logged: bool = false
 var _guard_held_timer: float = 0.0
 var _offhand_secondary_was_pressed: bool = false
 var _counter_window_timer: float = 0.0
@@ -1246,14 +1245,14 @@ func _has_modular_ranged_ready_upper_stack() -> bool:
 		return false
 	if modular_sidearm_sprite == null or modular_sidearm_sprite.sprite_frames == null:
 		return false
-	for direction in [Vector2.RIGHT, Vector2.UP, Vector2.LEFT, Vector2.DOWN]:
-		var upper_animation := AnimationResolver.resolve("ranged_2h_stance_modular", direction, modular_upper_body_sprite)
-		if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
-			return false
-		var weapon_animation := AnimationResolver.resolve("ranged_2h_stance_modular", direction, modular_sidearm_sprite)
-		if not _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, weapon_animation):
-			return false
-	return true
+	var direction := aim_direction if aim_direction.length_squared() > 0.0001 else visual_idle_direction
+	if direction.length_squared() <= 0.0001:
+		direction = Vector2.RIGHT
+	var upper_animation := AnimationResolver.resolve("ranged_2h_stance_modular", direction, modular_upper_body_sprite)
+	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
+		return false
+	var weapon_animation := AnimationResolver.resolve("ranged_2h_stance_modular", direction, modular_sidearm_sprite)
+	return _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, weapon_animation)
 
 
 func _sync_modular_sidearm_presentation(_is_firing: bool) -> bool:
@@ -2151,7 +2150,7 @@ func _update_parry_guard_timers(delta: float) -> void:
 				_parry_timer = maxf(0.0, parry_recovery_sec)
 				_block_phase = &"recovery"
 				_block_active = false
-				_play_parry_animation(&"unarmed_parry_recovery")
+				_play_parry_animation(&"unarmed_parry_success_01")
 		&"success", &"recovery":
 			if _parry_timer <= 0.0:
 				var completed_phase := _parry_phase
@@ -2178,7 +2177,7 @@ func _update_parry_guard_timers(delta: float) -> void:
 			_guard_requested_from_secondary = false
 			_block_phase = &"recovery"
 			_block_active = false
-			_play_parry_animation(&"unarmed_parry_recovery")
+			_play_parry_animation(&"unarmed_parry_success_01")
 
 
 func _enter_post_parry_neutral_lock() -> void:
@@ -2186,9 +2185,7 @@ func _enter_post_parry_neutral_lock() -> void:
 	_guard_repress_required_after_parry_success = _is_attack_secondary_pressed()
 	_block_phase = &""
 	_block_active = false
-	if not _post_parry_neutral_placeholder_logged:
-		_post_parry_neutral_placeholder_logged = true
-		push_warning("[Operator] Successful parry is exiting through placeholder post_parry_neutral_lock with no authored parry_success_to_neutral animation. Add the dedicated 5-frame success-to-neutral upper-body/FX set.")
+	_play_parry_animation(&"unarmed_parry_success_01")
 
 
 func _enter_ranged_ready() -> void:
@@ -2782,12 +2779,12 @@ func _play_parry_animation(base_animation: StringName) -> void:
 		direction = Vector2.DOWN
 
 	var fallback := &"unarmed_block_enter"
-	if base_animation == &"unarmed_parry_recovery":
-		fallback = &"unarmed_block_exit"
-	elif base_animation == &"unarmed_parry_success":
+	if base_animation == &"unarmed_parry_success":
 		fallback = &"unarmed_block_hitreact"
+	elif base_animation == &"unarmed_parry_success_01":
+		fallback = &"unarmed_block_exit"
 
-	if base_animation != &"unarmed_parry_recovery" and _is_current_profile_unarmed() \
+	if _is_current_profile_unarmed() \
 		and modular_locomotion_layers_enabled \
 		and _play_modular_unarmed_parry(String(base_animation), direction):
 		return
@@ -2814,7 +2811,7 @@ func _play_modular_unarmed_parry(base_animation: String, direction: Vector2) -> 
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
 
-	var resolved_base := "unarmed_parry_success" if base_animation == "unarmed_parry_success" else "unarmed_parry"
+	var resolved_base := "unarmed_parry_success" if base_animation == "unarmed_parry_success" else base_animation
 	var lower_anim := AnimationResolver.resolve(resolved_base, direction, modular_lower_body_sprite)
 	var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)
 	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
@@ -2835,7 +2832,8 @@ func _play_modular_unarmed_parry(base_animation: String, direction: Vector2) -> 
 	animated_sprite.visible = false
 
 	if modular_upper_fx_sprite != null and modular_upper_fx_sprite.sprite_frames != null:
-		var fx_anim := AnimationResolver.resolve("unarmed_parry_fx", direction, modular_upper_fx_sprite)
+		var fx_base := "unarmed_parry_success_01_fx" if base_animation == "unarmed_parry_success_01" else "unarmed_parry_fx"
+		var fx_anim := AnimationResolver.resolve(fx_base, direction, modular_upper_fx_sprite)
 		if _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_anim):
 			modular_upper_fx_sprite.visible = true
 			modular_upper_fx_sprite.flip_h = false

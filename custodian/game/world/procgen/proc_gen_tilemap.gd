@@ -518,6 +518,8 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if _generated_floor_cells.is_empty() and _generated_wall_cells.is_empty():
 		return
+	if enable_final_foliage and not _pending_foliage_tiles.is_empty():
+		_process_foliage_spawn_queue()
 	if not _is_attached_to_runtime_world():
 		return
 
@@ -536,6 +538,19 @@ func _process(_delta: float) -> void:
 
 	if enable_streaming_reveal:
 		_process_streaming_reveal_queue()
+
+
+func _process_foliage_spawn_queue() -> void:
+	if _pending_foliage_tiles.is_empty():
+		return
+	_ensure_foliage_spawner()
+	if _foliage_deferred_start_msec == 0:
+		_foliage_deferred_start_msec = Time.get_ticks_msec()
+	var result: Dictionary = _foliage_spawner.process_pending(_build_foliage_spawner_context())
+	if bool(result.get("deferred", false)) and _pending_foliage_tiles.is_empty():
+		if foliage_debug_logging:
+			print("[ProcGenTilemap] foliage_deferred_spawn_complete elapsed=%dms" % (Time.get_ticks_msec() - _foliage_deferred_start_msec))
+		_foliage_deferred_start_msec = 0
 
 
 func _is_attached_to_runtime_world() -> bool:
@@ -3837,12 +3852,17 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 
 func _generate_foliage(map_size: Vector2i) -> void:
 	_ensure_foliage_spawner()
-	_foliage_spawner.generate(_build_foliage_spawner_context(map_size))
+	var result: Dictionary = _foliage_spawner.generate(_build_foliage_spawner_context(map_size))
+	if bool(result.get("deferred", false)) and not _pending_foliage_tiles.is_empty():
+		_foliage_deferred_start_msec = Time.get_ticks_msec()
+	else:
+		_foliage_deferred_start_msec = 0
 
 
 func _clear_foliage() -> void:
 	_ensure_foliage_spawner()
 	_foliage_spawner.clear(_build_foliage_spawner_context())
+	_foliage_deferred_start_msec = 0
 
 
 func _generate_ruin_props(map_size: Vector2i) -> void:
@@ -4655,269 +4675,82 @@ func _interior_prop_jitter(pos: Vector2i) -> Vector2:
 
 
 func _remove_foliage(pos: Vector2i) -> void:
-	var entry = _foliage_nodes.get(pos, null)
-	var node: Node2D = null
-	if entry is Dictionary:
-		node = entry.get("node", null) as Node2D
-	elif entry is Node2D:
-		node = entry as Node2D
-	if node != null and is_instance_valid(node):
-		node.queue_free()
-	_foliage_nodes.erase(pos)
-	if get_region_type_at_tile(pos) == "foliage_cover":
-		_region_tiles.erase(pos)
+	_ensure_foliage_spawner()
+	_foliage_spawner.remove_at(_build_foliage_spawner_context(), pos)
 
 
 func _should_place_foliage(pos: Vector2i) -> bool:
-	if foliage_density <= 0.0:
-		return false
-	if is_road_surface_tile(pos) or is_parking_zone_tile(pos):
-		return false
-	if is_indoor_tile(pos):
-		return false
-	if _is_near_indoor_tile(pos, foliage_indoor_clearance_tiles):
-		return false
-	if _is_no_random_foliage_region_tile(pos):
-		return false
-	if _is_near_wall(pos):
-		return false
-	if _is_inside_foliage_clearance(pos):
-		return false
-	return _would_place_foliage_at(pos)
+	_ensure_foliage_spawner()
+	return _foliage_spawner.can_place_at(_build_foliage_spawner_context(), pos)
 
 
 func _is_near_wall(pos: Vector2i) -> bool:
-	if _generated_wall_cells.is_empty():
-		return false
-	for x in range(-foliage_min_wall_distance, foliage_min_wall_distance + 1):
-		for y in range(-foliage_min_wall_distance, foliage_min_wall_distance + 1):
-			if _generated_wall_cells.has(pos + Vector2i(x, y)):
-				return true
-	return false
+	_ensure_foliage_spawner()
+	return _foliage_spawner._is_near_wall(_build_foliage_spawner_context(), pos)
 
 
 func _is_inside_foliage_clearance(pos: Vector2i) -> bool:
-	if foliage_spawn_clearance_radius > 0:
-		var spawn_tile := get_player_spawn()
-		if abs(pos.x - spawn_tile.x) <= foliage_spawn_clearance_radius and abs(pos.y - spawn_tile.y) <= foliage_spawn_clearance_radius:
-			return true
-	for building in _last_compound_buildings:
-		var expanded := building.grow(foliage_compound_building_clearance)
-		if expanded.has_point(pos):
-			return true
-	return false
+	_ensure_foliage_spawner()
+	return _foliage_spawner._is_inside_foliage_clearance(_build_foliage_spawner_context(), pos)
 
 
 func _is_near_indoor_tile(pos: Vector2i, clearance_tiles: int) -> bool:
-	if clearance_tiles <= 0:
-		return false
-	if _region_tiles.is_empty():
-		return false
-	for x in range(-clearance_tiles, clearance_tiles + 1):
-		for y in range(-clearance_tiles, clearance_tiles + 1):
-			if is_indoor_tile(pos + Vector2i(x, y)):
-				return true
-	return false
+	_ensure_foliage_spawner()
+	return _foliage_spawner._is_near_indoor_tile(_build_foliage_spawner_context(), pos, clearance_tiles)
 
 
 func _is_inside_compound_zone(pos: Vector2i) -> bool:
-	return _last_compound_rect.size.x > 0 and _last_compound_rect.size.y > 0 and _last_compound_rect.has_point(pos)
+	_ensure_foliage_spawner()
+	return _foliage_spawner._is_inside_compound_zone(_build_foliage_spawner_context(), pos)
 
 
 func _place_foliage(pos: Vector2i) -> void:
-	if _foliage_parent == null or _foliage_nodes.has(pos):
-		return
-	var texture := _pick_foliage_texture(pos)
-	if texture == null:
-		return
-	var sprite := Sprite2D.new()
-	sprite.texture = texture
-	sprite.modulate = _get_planet_profile_color("foliage_tint", Color.WHITE)
-	var world_pos := _tile_to_world_position(pos) + _foliage_jitter(pos)
-	sprite.position = _foliage_parent.to_local(world_pos)
-	sprite.z_index = foliage_behind_z_index
-	sprite.z_as_relative = false
-	var material := ShaderMaterial.new()
-	material.shader = FOLIAGE_OCCLUSION_SHADER
-	material.set_shader_parameter("bubble_radius", foliage_player_occlusion_radius)
-	material.set_shader_parameter("bubble_softness", foliage_player_occlusion_softness)
-	material.set_shader_parameter("bubble_alpha", foliage_player_occlusion_alpha)
-	material.set_shader_parameter("bubble_enabled", false)
-	material.set_shader_parameter("bubble_count", 0)
-	for bubble_index in range(FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES):
-		material.set_shader_parameter("bubble_center_%d" % bubble_index, Vector2.ZERO)
-	sprite.material = material
-	_foliage_parent.add_child(sprite)
-	var texture_size := texture.get_size()
-	var foliage_kind := _classify_foliage(texture_size)
-	var has_trunk_collision := foliage_kind == "tree" and _should_add_tree_trunk_collision(pos)
-	if has_trunk_collision:
-		_add_tree_trunk_collision(sprite, texture_size)
-	_foliage_nodes[pos] = {
-		"node": sprite,
-		"world_pos": world_pos,
-		"base_y": world_pos.y + texture_size.y * 0.5,
-		"size": texture_size,
-		"kind": foliage_kind,
-		"has_collision": has_trunk_collision,
-	}
-	if intent_mark_foliage_cover and get_region_type_at_tile(pos) == "exterior":
-		_set_region_tile(pos, "foliage_cover", foliage_kind)
-
-	# Optionally spawn fruit on this foliage
-	if enable_fruit_spawning and _fruit_texture != null and _should_place_fruit(pos, foliage_kind):
-		_place_fruit(sprite, pos, texture_size, foliage_kind)
+	_ensure_foliage_spawner()
+	_foliage_spawner.place_at(_build_foliage_spawner_context(), pos)
 
 
 func _pick_foliage_texture(pos: Vector2i) -> Texture2D:
-	if _foliage_textures.is_empty():
-		return null
-	var idx := _tile_noise_hash(pos + Vector2i(19, 73)) % _foliage_textures.size()
-	return _foliage_textures[idx]
+	_ensure_foliage_spawner()
+	return _foliage_spawner._pick_foliage_texture(_build_foliage_spawner_context(), pos)
 
 
 func _classify_foliage(foliage_size: Vector2) -> String:
-	if foliage_size.y >= 96.0:
-		return "tree"
-	return "shrub"
+	return "tree" if foliage_size.y >= 96.0 else "shrub"
 
 
 func _should_add_tree_trunk_collision(pos: Vector2i) -> bool:
-	if not foliage_probabilistic_tree_collision:
-		return true
-	var local_tree_density := _estimate_local_tree_density(pos)
-	if local_tree_density <= foliage_sparse_tree_collision_threshold:
-		return true
-	var dense_threshold := maxf(foliage_sparse_tree_collision_threshold + 0.01, foliage_dense_tree_collision_threshold)
-	var density_t := clampf(
-		(local_tree_density - foliage_sparse_tree_collision_threshold) / (dense_threshold - foliage_sparse_tree_collision_threshold),
-		0.0,
-		1.0
-	)
-	var collision_chance := lerpf(1.0, foliage_dense_tree_collision_chance, density_t)
-	var roll := float(_tile_noise_hash(pos + Vector2i(1459, 811)) % 1000) / 1000.0
-	return roll < collision_chance
+	_ensure_foliage_spawner()
+	return _foliage_spawner._should_add_tree_trunk_collision(_build_foliage_spawner_context(), pos)
 
 
 func _estimate_local_tree_density(center: Vector2i) -> float:
-	var radius: int = maxi(1, foliage_tree_collision_density_radius)
-	var possible := 0
-	var tree_count := 0
-	for x in range(-radius, radius + 1):
-		for y in range(-radius, radius + 1):
-			var pos := center + Vector2i(x, y)
-			if not _generated_floor_cells.has(pos):
-				continue
-			if is_road_surface_tile(pos) or is_parking_zone_tile(pos):
-				continue
-			if is_indoor_tile(pos) or _is_near_indoor_tile(pos, foliage_indoor_clearance_tiles):
-				continue
-			if _is_no_random_foliage_region_tile(pos):
-				continue
-			if _is_near_wall(pos) or _is_inside_foliage_clearance(pos):
-				continue
-			possible += 1
-			if not _would_place_foliage_at(pos):
-				continue
-			var texture := _pick_foliage_texture(pos)
-			if texture != null and _classify_foliage(texture.get_size()) == "tree":
-				tree_count += 1
-	if possible <= 0:
-		return 0.0
-	return float(tree_count) / float(possible)
+	_ensure_foliage_spawner()
+	return _foliage_spawner._estimate_local_tree_density(_build_foliage_spawner_context(), center)
 
 
 func _would_place_foliage_at(pos: Vector2i) -> bool:
-	if is_road_surface_tile(pos) or is_parking_zone_tile(pos):
-		return false
-	if _is_no_random_foliage_region_tile(pos):
-		return false
-	var density := foliage_density
-	if _is_inside_compound_zone(pos):
-		density *= foliage_compound_density_multiplier
-	if density <= 0.0:
-		return false
-	var prob := float(_tile_noise_hash(pos + Vector2i(13, 41)) % 1000) / 1000.0
-	return prob < density
+	_ensure_foliage_spawner()
+	return _foliage_spawner._would_place_foliage_at(_build_foliage_spawner_context(), pos)
 
 
 func _is_no_random_foliage_region_tile(pos: Vector2i) -> bool:
-	var data := get_region_data_at_tile(pos)
-	var region_type := String(data.get("region_type", "exterior"))
-	var zone := String(data.get("zone", "natural"))
-	if zone == "authored_scene" \
-			or zone == "story_room" \
-			or zone == "faction_activity" \
-			or zone == "interior":
-		return true
-	if region_type.contains("authored") \
-			or region_type.contains("story_room") \
-			or region_type.contains("faction_site") \
-			or region_type.contains("ash_bell") \
-			or region_type.contains("forlorn_ritualant"):
-		return true
-	return false
+	_ensure_foliage_spawner()
+	return _foliage_spawner._is_no_random_foliage_region_tile(_build_foliage_spawner_context(), pos)
 
 
 func _add_tree_trunk_collision(foliage_sprite: Sprite2D, foliage_size: Vector2) -> void:
-	if foliage_sprite == null:
-		return
-	var body := StaticBody2D.new()
-	body.name = "TrunkCollision"
-	var shape := CollisionShape2D.new()
-	var rectangle := RectangleShape2D.new()
-	rectangle.size = foliage_tree_trunk_collision_size
-	shape.shape = rectangle
-	body.position = Vector2(0, foliage_size.y * 0.5) + foliage_tree_trunk_collision_offset
-	body.add_child(shape)
-	foliage_sprite.add_child(body)
+	_ensure_foliage_spawner()
+	_foliage_spawner._add_tree_trunk_collision(_build_foliage_spawner_context(), foliage_sprite, foliage_size)
 
 
 func _should_place_fruit(pos: Vector2i, foliage_kind: String) -> bool:
-	var fruit_prob := float(_tile_noise_hash(pos + Vector2i(17, 89)) % 1000) / 1000.0
-	var chance := fruit_spawn_chance_tree if foliage_kind == "tree" else fruit_spawn_chance_shrub
-	return fruit_prob < chance
+	_ensure_foliage_spawner()
+	return _foliage_spawner._should_place_fruit(_build_foliage_spawner_context(), pos, foliage_kind)
 
 
 func _place_fruit(foliage_sprite: Sprite2D, foliage_tile: Vector2i, foliage_size: Vector2, foliage_kind: String) -> void:
-	if _fruit_texture == null:
-		return
-
-	var sprite := Sprite2D.new()
-	sprite.texture = _fruit_texture
-	sprite.modulate = _get_planet_profile_color("foliage_tint", Color.WHITE)
-
-	# Slice the square fruit sheet correctly; the previous code only split horizontally.
-	var frame_x := _tile_noise_hash(foliage_tile + Vector2i(23, 47)) % fruit_tiles_wide
-	var frame_y := _tile_noise_hash(foliage_tile + Vector2i(61, 11)) % fruit_tiles_high
-	var frame_size := Vector2(
-		float(_fruit_texture.get_size().x) / float(max(1, fruit_tiles_wide)),
-		float(_fruit_texture.get_size().y) / float(max(1, fruit_tiles_high))
-	)
-	sprite.region_enabled = true
-	sprite.region_rect = Rect2(frame_x * frame_size.x, frame_y * frame_size.y, frame_size.x, frame_size.y)
-	sprite.centered = true
-
-	# Anchor fruit to the plant itself so it doesn't float or desync.
-	var x_jitter := (float(_tile_noise_hash(foliage_tile + Vector2i(31, 59)) % 100) / 100.0 - 0.5)
-	var y_jitter := (float(_tile_noise_hash(foliage_tile + Vector2i(71, 29)) % 100) / 100.0 - 0.5)
-	var fruit_offset := Vector2.ZERO
-	if foliage_kind == "tree":
-		fruit_offset = Vector2(
-			x_jitter * foliage_size.x * 0.18,
-			-foliage_size.y * 0.18 + y_jitter * foliage_size.y * 0.04
-		)
-	else:
-		fruit_offset = Vector2(
-			x_jitter * foliage_size.x * 0.16,
-			-foliage_size.y * 0.12 + y_jitter * foliage_size.y * 0.03
-		)
-	sprite.position = fruit_offset
-	sprite.z_index = 1
-	sprite.z_as_relative = true
-
-	foliage_sprite.add_child(sprite)
-	_fruit_sprites.append(sprite)
+	_ensure_foliage_spawner()
+	_foliage_spawner._place_fruit(_build_foliage_spawner_context(), foliage_sprite, foliage_tile, foliage_size, foliage_kind)
 
 
 func _tile_to_world_position(pos: Vector2i) -> Vector2:
@@ -4936,13 +4769,8 @@ func _get_tile_size() -> Vector2:
 
 
 func _foliage_jitter(pos: Vector2i) -> Vector2:
-	var seed := _tile_noise_hash(pos + Vector2i(7, 13))
-	var x_unit := float(seed % 21) - 10.0
-	var y_unit := float((seed / 21) % 11) - 5.0
-	return Vector2(
-		x_unit * (foliage_jitter_amplitude.x / 10.0),
-		y_unit * (foliage_jitter_amplitude.y / 5.0)
-	)
+	_ensure_foliage_spawner()
+	return _foliage_spawner._foliage_jitter(_build_foliage_spawner_context(), pos)
 
 
 func _load_foliage_textures() -> void:

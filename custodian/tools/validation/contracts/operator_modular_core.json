@@ -29,7 +29,7 @@
         {"layer": "lower_body", "loadout": "unarmed", "action": "run_01", "directions": "all", "frames": 5},
         {"layer": "upper_body", "loadout": "unarmed", "action": "idle_01", "directions": "all", "frames": {"min": 3, "max": 8}},
         {"layer": "upper_body", "loadout": "unarmed", "action": "walk_01", "directions": "all", "frames": {"min": 4, "max": 8}},
-        {"layer": "upper_body", "loadout": "unarmed", "action": "run_01", "directions": "all", "frames": 5}
+        {"layer": "upper_body", "loadout": "unarmed", "action": "run_01", "directions": "all", "frames": {"min": 5, "max": 6}}
       ]
     },
     {
@@ -59,7 +59,10 @@
         {"layer": "upper_body", "loadout": "unarmed", "action": "blocking_hitreact_01", "directions": ["e", "w"], "frames": 5},
         {"layer": "lower_body", "loadout": "unarmed", "action": "parry_01", "directions": ["n", "e"], "frames": 5},
         {"layer": "upper_body", "loadout": "unarmed", "action": "parry_01", "directions": ["n"], "frames": 5},
-        {"layer": "upper_fx", "loadout": "unarmed", "action": "parry_01", "directions": ["n", "e"], "frames": 5}
+        {"layer": "upper_fx", "loadout": "unarmed", "action": "parry_01", "directions": ["n", "e"], "frames": 5},
+        {"layer": "lower_body", "loadout": "unarmed", "action": "success_01", "directions": ["e", "w"], "frames": 5},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "success_01", "directions": ["e", "w"], "frames": 5},
+        {"layer": "upper_fx", "loadout": "unarmed", "action": "success_01", "directions": ["e", "w"], "frames": 5}
       ]
     },
     {

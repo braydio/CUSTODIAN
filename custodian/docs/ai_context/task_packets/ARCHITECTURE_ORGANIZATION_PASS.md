@@ -29,7 +29,8 @@ Use `custodian/docs/ARCHITECTURE.md` as the detailed map and `custodian/docs/ai_
 ## Iteration 1
 
 - Foliage generation extracted to `custodian/game/world/procgen/foliage/procgen_foliage_spawner.gd`.
-- `ProcGenTilemap` remains the facade and host for world/procgen query Callables.
+- `ProcGenTilemap` remains the facade and host for world/procgen query Callables and deferred foliage queue processing.
+- Foliage policy now owns deterministic generate/clear/remove logic plus deferred batch draining in the service.
 - Remaining follow-up: foliage occlusion runtime update can be extracted later only if it stays presentation-only and safe.
 
 ## Acceptance Criteria

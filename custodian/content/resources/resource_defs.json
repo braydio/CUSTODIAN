@@ -5,11 +5,11 @@
 	},
 	"structural_alloy": {
 		"label": "Structural Alloy",
-		"description": "Recovered alloy from exposed braces, mineral veins, and ruin-metal seams. It holds a dull strength, as if the old structures still remember their shape."
+		"description": "Recovered alloy from exposed braces, mineral veins, and ruin-metal seams. It holds a dull strength, as if the old structures still remembered their shape."
 	},
 	"ruin_scrap": {
 		"label": "Ruin Scrap",
-		"description": "Scrap feedstock recovered from collapsed ruins and broken machinery. Some pieces still bear levy marks from the first desperate years after the Severance."
+		"description": "Scrap feedstock recovered from collapsed ruins and broken machinery. Some pieces still bear levy marks from the first desperate years following the Severance."
 	},
 	"spent_charge_cell": {
 		"label": "Spent Charge Cell",
@@ -41,7 +41,7 @@
 	},
 	"memory_glass_fragment": {
 		"label": "Memory Glass Fragment",
-		"description": "Brittle glass from an Archive Engine's mnemonic substrate. It once held local provenance in support of a Lattice. After the field failed, each fracture retained a different history of the same ruin, and none will yield to the others."
+		"description": "Brittle glass from an Archive Engine's mnemonic substrate. It once held local provenance in support of a Lattice. After the field failed, each fragment retained a different history of the same ruin, and none will yield to the others."
 	},
 	"white_thread_knot": {
 		"label": "White Thread Knot",
