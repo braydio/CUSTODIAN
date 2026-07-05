@@ -7,7 +7,7 @@ Status: implemented-v2
 - `CombatDrone` is a `CharacterBody2D` allied actor with movement, targeting, firing, health, collision, and muzzle logic.
 - `AlliedInfantryDroid` subclasses `CombatDrone`, replaces the placeholder `ColorRect` with `AnimatedSprite2D` playback, and displays a small fire/follow status label. It no longer owns raw input.
 - `DroneManager` is scene-mounted under `GameRoot/World`, spawns two drones into `GameRoot/World/Allies`, and owns squad command input.
-- `DroneCommandProfile` centralizes V1 tuning, tactical mode constants, and V2 follow-distance tuning.
+- `DroneCommandProfile` centralizes V1 tuning, tactical mode constants, V2 follow-distance band tuning, separation, and free-roam patrol timing.
 - `DroneTargeting` performs deterministic nearest-target selection against non-passive enemies with an optional range override for free roam.
 - `DroneSquadState` tracks active/destroyed drone IDs, current tactical mode, squad fire discipline, and current follow distance.
 
@@ -18,7 +18,8 @@ Status: implemented-v2
 - `time_shift` moved from `T` to `Y` to avoid input-map drift.
 - `DroneManager` propagates tactical mode, fire discipline, and follow distance to existing live drones and to future spawned drones.
 - `CombatDrone.set_fire_at_will(false)` clears queued burst state immediately.
-- Free roam uses deterministic local target pressure and remains leashed to the Operator.
+- `CombatDrone` resolves `CLOSE` and `FAR` as soft follow bands with Operator/drone separation instead of exact orbit offsets.
+- `FREE_ROAM` periodically chooses deterministic local patrol goals around the Operator, pressures enemies inside `free_roam_engage_range`, and remains leashed by `free_roam_leash_range`.
 
 ## Integration
 

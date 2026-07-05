@@ -1,25 +1,21 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bv4rbouwv1420"]
 
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/ocean_underlay.png" id="1_lwtrt"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/cliff_depth_underlay.png" id="2_udeuy"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/playable/underlay_fog_band.png" id="3_d76ru"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/playable/mainland_approach_path.png" id="4_ab1oa"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/playable/hill_climb_path.png" id="5_dr1xd"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/playable/overlook_ledge.png" id="6_45u1k"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/playable/lateral_traverse_path.png" id="7_f5riw"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/playable/fortress_wall_mass.png" id="8_lie7k"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/horizon_sky.png" id="9_6wj8h"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/far_sea.png" id="10_2qy1j"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/distant_sundered_keep.png" id="11_8xmgb"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/vista_fog_band.png" id="12_d0xt5"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/playable/cliff_occluder.png" id="13_1gslj"]
-[ext_resource type="Texture2D" path="res://content/backgrounds/sundered_keep/approach/playable/wall_shadow_occluder.png" id="14_h5fpc"]
-[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="15_f8wu4"]
-[ext_resource type="Script" path="res://game/actors/operator/operator.gd" id="16_74hp3"]
-[ext_resource type="Resource" path="res://game/actors/operator/carbine_rifle_mk1_definition.tres" id="17_c0so6"]
-[ext_resource type="Resource" path="res://game/actors/operator/fallen_star_katana_definition.tres" id="18_q2que"]
-[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_weapon_frames.tres" id="19_22jfe"]
-[ext_resource type="Script" path="res://scripts/levels/sundered_keep/overlook_camera_director.gd" id="20_gsqsa"]
+[ext_resource type="Texture2D" uid="uid://di7drnbxt0y87" path="res://content/backgrounds/sundered_keep/ocean_underlay.png" id="1_lwtrt"]
+[ext_resource type="Texture2D" uid="uid://c82k3aqiylqhc" path="res://content/backgrounds/sundered_keep/cliff_depth_underlay.png" id="2_udeuy"]
+[ext_resource type="Texture2D" uid="uid://chfiecym3yund" path="res://content/backgrounds/sundered_keep/approach/playable/underlay_fog_band.png" id="3_d76ru"]
+[ext_resource type="Texture2D" uid="uid://bf5v652idf211" path="res://content/backgrounds/sundered_keep/approach/playable/mainland_approach_path.png" id="4_ab1oa"]
+[ext_resource type="Texture2D" uid="uid://b577eeu0o4f87" path="res://content/backgrounds/sundered_keep/approach/playable/hill_climb_path.png" id="5_dr1xd"]
+[ext_resource type="Texture2D" uid="uid://cs47js8wgl7nj" path="res://content/backgrounds/sundered_keep/approach/playable/overlook_ledge.png" id="6_45u1k"]
+[ext_resource type="Texture2D" uid="uid://bwti2qvfhhjjl" path="res://content/backgrounds/sundered_keep/approach/playable/lateral_traverse_path.png" id="7_f5riw"]
+[ext_resource type="Texture2D" uid="uid://5451bn2ji6fy" path="res://content/backgrounds/sundered_keep/approach/playable/fortress_wall_mass.png" id="8_lie7k"]
+[ext_resource type="Texture2D" uid="uid://dijsng8f0y3nq" path="res://content/backgrounds/sundered_keep/horizon_sky.png" id="9_6wj8h"]
+[ext_resource type="Texture2D" uid="uid://7kqejvg74ril" path="res://content/backgrounds/sundered_keep/far_sea.png" id="10_2qy1j"]
+[ext_resource type="Texture2D" uid="uid://bnrnxw7n6fri5" path="res://content/backgrounds/sundered_keep/distant_sundered_keep.png" id="11_8xmgb"]
+[ext_resource type="Texture2D" uid="uid://cojwp03dvgc8s" path="res://content/backgrounds/sundered_keep/vista_fog_band.png" id="12_d0xt5"]
+[ext_resource type="Texture2D" uid="uid://sfk8g0ceinws" path="res://content/backgrounds/sundered_keep/approach/playable/cliff_occluder.png" id="13_1gslj"]
+[ext_resource type="Texture2D" uid="uid://dq0sd56i8cs7v" path="res://content/backgrounds/sundered_keep/approach/playable/wall_shadow_occluder.png" id="14_h5fpc"]
+[ext_resource type="PackedScene" uid="uid://d3xbaxlif3364" path="res://game/actors/operator/operator.tscn" id="15_f8wu4"]
+[ext_resource type="Script" uid="uid://b5bwsie4t24a7" path="res://scripts/levels/sundered_keep/overlook_camera_director.gd" id="20_gsqsa"]
 
 [node name="SunderedKeepApproach" type="Node2D" unique_id=275265009]
 
@@ -160,15 +156,10 @@ position = Vector2(760, -170)
 [node name="ReturnTopdown" type="Marker2D" parent="Markers" unique_id=1302594350]
 position = Vector2(720, -80)
 
-[node name="Operator" type="CharacterBody2D" parent="." unique_id=1868101329 instance=ExtResource("15_f8wu4")]
+[node name="Operator" parent="." unique_id=1868101329 instance=ExtResource("15_f8wu4")]
 z_index = 50
 z_as_relative = false
 position = Vector2(-80, 430)
-script = ExtResource("16_74hp3")
-use_tiny_rpg_placeholder_soldier = false
-primary_weapon_definition = ExtResource("17_c0so6")
-melee_weapon_definition = ExtResource("18_q2que")
-primary_weapon_frames_resource = ExtResource("19_22jfe")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=437408886]
 position = Vector2(0, 120)

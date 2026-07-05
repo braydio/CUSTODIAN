@@ -14,6 +14,7 @@ signal phase_changed(old_phase: int, new_phase: int)
 signal resources_changed()
 signal lives_changed(lives_left: int)
 signal game_over_triggered(reason: String, stats: Dictionary)
+signal contract_failed(result: Dictionary)
 
 @export var total_lives: int = 1
 @export var game_over_menu_scene_path: String = "res://ui/main_menu.tscn"
@@ -28,6 +29,8 @@ var current_phase: int = Phase.CONTRACT_BRIEFING
 var phase_start_tick: int = 0
 var assault_started_tick: int = -1
 var contract_ready: bool = false
+var contract_generation_failed: bool = false
+var contract_failure_result: Dictionary = {}
 
 var materials: int = 0
 var defense_rating: float = 0.0
@@ -62,12 +65,21 @@ func get_phase_name(phase: int = -1) -> String:
 
 func mark_contract_ready() -> void:
 	contract_ready = true
+	contract_generation_failed = false
+	contract_failure_result = {}
 	if current_phase == Phase.CONTRACT_BRIEFING:
 		set_phase(Phase.FREE_ROAM_PREP)
 
 
+func mark_contract_failed(result: Dictionary = {}) -> void:
+	contract_ready = false
+	contract_generation_failed = true
+	contract_failure_result = result.duplicate(true)
+	contract_failed.emit(contract_failure_result)
+
+
 func can_start_assault() -> bool:
-	return contract_ready and not game_over and current_phase == Phase.FREE_ROAM_PREP
+	return contract_ready and not contract_generation_failed and not game_over and current_phase == Phase.FREE_ROAM_PREP
 
 
 func start_assault() -> bool:
@@ -138,6 +150,8 @@ func reset_run_state(reset_stats: bool = true) -> void:
 	phase_start_tick = 0
 	assault_started_tick = -1
 	contract_ready = false
+	contract_generation_failed = false
+	contract_failure_result = {}
 	materials = 0
 	defense_rating = 0.0
 	reset_lives()

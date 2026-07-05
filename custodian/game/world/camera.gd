@@ -623,6 +623,14 @@ func snap_to_player_spawn(spawn_position: Vector2) -> void:
 
 
 func _rebuild_bounds():
+	var world_loader = get_tree().get_first_node_in_group("contract_world_loader")
+	if world_loader != null:
+		if world_loader.has_method("is_contract_activation_aborted") and bool(world_loader.call("is_contract_activation_aborted")):
+			map_bounds = Rect2()
+			return
+		if world_loader.has_method("is_contract_world_pending") and bool(world_loader.call("is_contract_world_pending")):
+			map_bounds = Rect2()
+			return
 	if not _rebuild_bounds_from_connected_map() and not _rebuild_bounds_from_procgen():
 		map_bounds = Rect2()
 		push_warning("[Camera] Map bounds rebuild failed; disabling camera clamp for this session")

@@ -12,7 +12,9 @@ func _init() -> void:
 
 func _run() -> void:
 	_verify_squad_state()
+	_verify_follow_profile_contract()
 	_verify_combat_drone_fire_cancel()
+	await _verify_follow_bands_and_free_roam_goals()
 	await _verify_manager_propagation_and_spawn_inheritance()
 	print("[DroneFollowerCommandsSmoke] ok")
 	quit(0)
@@ -33,6 +35,17 @@ func _verify_squad_state() -> void:
 	assert(summary.get("max_active") == state.max_active_drones, "Summary should include max_active.")
 
 
+func _verify_follow_profile_contract() -> void:
+	var profile := DroneCommandProfileScript.new()
+	assert(profile.follow_close_min_radius < profile.follow_close_max_radius, "CLOSE follow band should have min < max.")
+	assert(profile.follow_far_min_radius < profile.follow_far_max_radius, "FAR follow band should have min < max.")
+	assert(profile.follow_far_min_radius > profile.follow_close_min_radius, "FAR should start outside CLOSE.")
+	assert(profile.follow_far_radius > profile.follow_close_radius, "FAR preferred radius should be larger than CLOSE.")
+	assert(profile.free_roam_min_radius < profile.free_roam_max_radius, "FREE_ROAM patrol band should have min < max.")
+	assert(profile.free_roam_leash_range >= profile.free_roam_max_radius, "FREE_ROAM leash should contain patrol band.")
+	assert(profile.free_roam_repath_min > 0.0 and profile.free_roam_repath_max >= profile.free_roam_repath_min, "FREE_ROAM repath timing should be positive and ordered.")
+
+
 func _verify_combat_drone_fire_cancel() -> void:
 	var droid := ALLIED_DROID_SCENE.instantiate()
 	assert(droid is CombatDrone, "Allied droid should inherit CombatDrone.")
@@ -43,6 +56,50 @@ func _verify_combat_drone_fire_cancel() -> void:
 	assert(int(droid.get("_burst_remaining")) == 0, "set_fire_at_will(false) should clear queued burst count.")
 	assert(is_zero_approx(float(droid.get("_burst_gap_timer"))), "set_fire_at_will(false) should clear burst gap timer.")
 	droid.free()
+
+
+func _verify_follow_bands_and_free_roam_goals() -> void:
+	var scene_root := Node2D.new()
+	scene_root.name = "DroneFollowContractRoot"
+	root.add_child(scene_root)
+
+	var operator := CharacterBody2D.new()
+	operator.name = "Operator"
+	scene_root.add_child(operator)
+	operator.global_position = Vector2(1000.0, 1000.0)
+	operator.velocity = Vector2(90.0, 0.0)
+
+	var droid := ALLIED_DROID_SCENE.instantiate()
+	scene_root.add_child(droid)
+	droid.global_position = operator.global_position + Vector2(8.0, 0.0)
+	droid.call("configure", 0, operator, null, DroneCommandProfileScript.new())
+	await process_frame
+
+	droid.call("set_follow_distance_mode", DroneCommandProfileScript.FollowDistance.CLOSE)
+	var close_goal: Vector2 = droid.call("_get_desired_position")
+	var close_distance := close_goal.distance_to(operator.global_position)
+	assert(close_distance >= droid.profile.follow_player_separation_radius - 0.1, "CLOSE should keep the droid out of the Operator's feet.")
+
+	droid.call("set_follow_distance_mode", DroneCommandProfileScript.FollowDistance.FAR)
+	var far_goal: Vector2 = droid.call("_get_desired_position")
+	var far_distance := far_goal.distance_to(operator.global_position)
+	assert(far_distance >= droid.profile.follow_far_min_radius - 0.1, "FAR should resolve to the backline follow band.")
+	assert(far_distance > close_distance + 40.0, "FAR should visibly hang back compared to CLOSE.")
+
+	droid.call("set_follow_distance_mode", DroneCommandProfileScript.FollowDistance.FREE_ROAM)
+	droid.set("_roam_repath_timer", 0.0)
+	var roam_goal_a: Vector2 = droid.call("_get_desired_position")
+	var roam_distance_a := roam_goal_a.distance_to(operator.global_position)
+	assert(roam_distance_a >= droid.profile.free_roam_min_radius - 0.1, "FREE_ROAM should choose a local patrol goal outside escort range.")
+	assert(roam_distance_a <= droid.profile.free_roam_leash_range + 0.1, "FREE_ROAM goal should stay inside leash.")
+
+	droid.set("_roam_repath_timer", 0.0)
+	var roam_goal_b: Vector2 = droid.call("_get_desired_position")
+	assert(roam_goal_b.distance_to(roam_goal_a) > 8.0, "FREE_ROAM should periodically choose a new patrol goal without enemies.")
+	assert(roam_goal_b.distance_to(operator.global_position) <= droid.profile.free_roam_leash_range + 0.1, "New FREE_ROAM goal should also stay leashed.")
+
+	scene_root.queue_free()
+	await process_frame
 
 
 func _verify_manager_propagation_and_spawn_inheritance() -> void:

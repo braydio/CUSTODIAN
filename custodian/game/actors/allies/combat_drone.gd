@@ -29,6 +29,9 @@ var _fire_cooldown_timer: float = 0.0
 var _burst_remaining: int = 0
 var _burst_gap_timer: float = 0.0
 var _targeting: RefCounted = DroneTargetingScript.new()
+var _roam_goal: Vector2 = Vector2.ZERO
+var _roam_repath_timer: float = 0.0
+var _roam_sequence: int = 0
 
 @onready var visual: ColorRect = get_node_or_null("Visual")
 @onready var health_bar: ProgressBar = get_node_or_null("HealthBar")
@@ -72,7 +75,8 @@ func set_fire_at_will(enabled: bool) -> void:
 func set_follow_distance_mode(mode: int) -> void:
 	follow_distance_mode = mode
 	if follow_distance_mode == DroneCommandProfileScript.FollowDistance.FREE_ROAM:
-		_hold_position = global_position
+		_roam_goal = Vector2.ZERO
+		_roam_repath_timer = 0.0
 
 
 func get_follow_distance_name() -> String:
@@ -88,6 +92,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_fire_cooldown_timer = maxf(0.0, _fire_cooldown_timer - delta)
 	_burst_gap_timer = maxf(0.0, _burst_gap_timer - delta)
+	_roam_repath_timer = maxf(0.0, _roam_repath_timer - delta)
 	_refresh_target()
 	_update_movement(delta)
 	_update_weapon()
@@ -129,39 +134,97 @@ func _get_desired_position() -> Vector2:
 	match squad_mode:
 		DroneCommandProfileScript.Mode.HOLD:
 			if _hold_position.distance_to(anchor.global_position) > profile.hold_leash_range:
-				return anchor.global_position + _get_orbit_offset()
+				return _get_follow_desired_position()
 			return _hold_position
 		DroneCommandProfileScript.Mode.INTERCEPT:
 			if target != null and is_instance_valid(target):
 				var away_from_anchor := (target.global_position - anchor.global_position).normalized()
 				if away_from_anchor.length_squared() > 0.001:
 					return target.global_position - away_from_anchor * profile.intercept_standoff
-			return anchor.global_position + _get_orbit_offset()
+			return _get_follow_desired_position()
 		DroneCommandProfileScript.Mode.RECALL:
 			return anchor.global_position + _get_orbit_offset().normalized() * profile.recall_distance
 		_:
 			if follow_distance_mode == DroneCommandProfileScript.FollowDistance.FREE_ROAM:
 				return _get_free_roam_desired_position()
-			return anchor.global_position + _get_orbit_offset()
+			return _get_follow_desired_position()
 
 
 func _get_free_roam_desired_position() -> Vector2:
 	if global_position.distance_to(anchor.global_position) > profile.free_roam_leash_range:
-		return anchor.global_position + _get_orbit_offset(profile.follow_free_roam_radius)
+		_roam_repath_timer = 0.0
+		return _apply_separation(anchor.global_position + _get_orbit_offset(profile.follow_free_roam_radius))
 	if target != null and is_instance_valid(target):
 		var away_from_anchor := (target.global_position - anchor.global_position).normalized()
 		if away_from_anchor.length_squared() > 0.001:
-			return target.global_position - away_from_anchor * profile.free_roam_standoff
-	if _hold_position.distance_to(anchor.global_position) <= profile.free_roam_leash_range:
-		return _hold_position
-	return anchor.global_position + _get_orbit_offset(profile.follow_free_roam_radius)
+			return _clamp_to_free_roam_leash(target.global_position - away_from_anchor * profile.free_roam_standoff)
+	if _should_pick_new_roam_goal():
+		_pick_next_roam_goal()
+	return _apply_separation(_clamp_to_free_roam_leash(_roam_goal))
+
+
+func _get_follow_desired_position() -> Vector2:
+	var band := _get_follow_band()
+	var preferred_radius := float(band.get("preferred", _get_follow_radius()))
+	var minimum_radius := float(band.get("min", maxf(0.0, preferred_radius - 32.0)))
+	var maximum_radius := float(band.get("max", preferred_radius + 48.0))
+	var slot_goal := anchor.global_position + _get_orbit_offset(preferred_radius)
+	var anchor_distance := global_position.distance_to(anchor.global_position)
+	var goal := slot_goal
+
+	if anchor_distance >= minimum_radius and anchor_distance <= maximum_radius:
+		if global_position.distance_to(slot_goal) <= profile.follow_arrive_distance:
+			goal = global_position
+	elif anchor_distance < minimum_radius:
+		var away_from_anchor := global_position - anchor.global_position
+		if away_from_anchor.length_squared() <= 0.001:
+			away_from_anchor = slot_goal - anchor.global_position
+		if away_from_anchor.length_squared() <= 0.001:
+			away_from_anchor = Vector2.RIGHT.rotated(float(_slot_index) * PI)
+		goal = anchor.global_position + away_from_anchor.normalized() * minimum_radius
+
+	return _apply_separation(goal)
+
+
+func _get_follow_band() -> Dictionary:
+	match follow_distance_mode:
+		DroneCommandProfileScript.FollowDistance.CLOSE:
+			return {
+				"min": profile.follow_close_min_radius,
+				"max": profile.follow_close_max_radius,
+				"preferred": profile.follow_close_radius,
+			}
+		DroneCommandProfileScript.FollowDistance.FAR:
+			return {
+				"min": profile.follow_far_min_radius,
+				"max": profile.follow_far_max_radius,
+				"preferred": profile.follow_far_radius,
+			}
+		DroneCommandProfileScript.FollowDistance.FREE_ROAM:
+			return {
+				"min": profile.free_roam_min_radius,
+				"max": profile.free_roam_max_radius,
+				"preferred": profile.follow_free_roam_radius,
+			}
+		_:
+			return {
+				"min": maxf(0.0, profile.follow_orbit_radius - 28.0),
+				"max": profile.follow_orbit_radius + 64.0,
+				"preferred": profile.follow_orbit_radius,
+			}
 
 
 func _get_orbit_offset(radius: float = -1.0) -> Vector2:
-	var resolved_radius := radius if radius >= 0.0 else _get_follow_radius()
+	var resolved_radius: float = radius if radius >= 0.0 else _get_follow_radius()
 	var side := -1.0 if _slot_index % 2 == 0 else 1.0
 	var ring: float = float(floori(float(_slot_index) / 2.0)) * profile.follow_slot_spacing
-	return Vector2(side * (resolved_radius + ring), profile.follow_y_offset)
+	var offset: Vector2 = Vector2(side * (resolved_radius + ring), profile.follow_y_offset)
+	var anchor_velocity := _get_anchor_velocity()
+	if anchor_velocity.length_squared() > 16.0:
+		var trailing: Vector2 = -anchor_velocity.normalized() * resolved_radius
+		var lateral: Vector2 = anchor_velocity.normalized().orthogonal() * side * (profile.follow_slot_spacing + ring)
+		offset = trailing + lateral + Vector2(0.0, profile.follow_y_offset)
+	return offset
 
 
 func _get_follow_radius() -> float:
@@ -180,6 +243,77 @@ func _get_engage_range() -> float:
 	if follow_distance_mode == DroneCommandProfileScript.FollowDistance.FREE_ROAM:
 		return profile.free_roam_engage_range
 	return profile.drone_engage_range
+
+
+func _get_anchor_velocity() -> Vector2:
+	if anchor == null or not is_instance_valid(anchor):
+		return Vector2.ZERO
+	var value = anchor.get("velocity")
+	if value is Vector2:
+		return value
+	return Vector2.ZERO
+
+
+func _should_pick_new_roam_goal() -> bool:
+	if _roam_goal == Vector2.ZERO:
+		return true
+	if _roam_repath_timer <= 0.0:
+		return true
+	if global_position.distance_to(_roam_goal) <= profile.follow_arrive_distance:
+		return true
+	if _roam_goal.distance_to(anchor.global_position) > profile.free_roam_leash_range:
+		return true
+	return false
+
+
+func _pick_next_roam_goal() -> void:
+	var angle_seed := float((_roam_sequence * 137 + _slot_index * 71 + 23) % 360)
+	var radius_t := float((_roam_sequence * 53 + _slot_index * 29 + 11) % 100) / 99.0
+	var radius := lerpf(profile.free_roam_min_radius, profile.free_roam_max_radius, radius_t)
+	var angle := deg_to_rad(angle_seed)
+	_roam_goal = anchor.global_position + Vector2(cos(angle), sin(angle)) * radius
+	_roam_goal = _clamp_to_free_roam_leash(_roam_goal)
+	var repath_t := float((_roam_sequence * 41 + _slot_index * 17 + 7) % 100) / 99.0
+	_roam_repath_timer = lerpf(profile.free_roam_repath_min, profile.free_roam_repath_max, repath_t)
+	_roam_sequence += 1
+
+
+func _clamp_to_free_roam_leash(position: Vector2) -> Vector2:
+	var from_anchor := position - anchor.global_position
+	if from_anchor.length() <= profile.free_roam_leash_range:
+		return position
+	if from_anchor.length_squared() <= 0.001:
+		return anchor.global_position
+	return anchor.global_position + from_anchor.normalized() * profile.free_roam_leash_range
+
+
+func _apply_separation(goal: Vector2) -> Vector2:
+	var separated_goal := goal
+	var from_anchor := separated_goal - anchor.global_position
+	if from_anchor.length() < profile.follow_player_separation_radius:
+		if from_anchor.length_squared() <= 0.001:
+			from_anchor = _get_orbit_offset(maxf(profile.follow_player_separation_radius, _get_follow_radius()))
+		separated_goal = anchor.global_position + from_anchor.normalized() * profile.follow_player_separation_radius
+
+	var drones := get_tree().get_nodes_in_group("allied_drone")
+	drones.sort_custom(func(a: Node, b: Node) -> bool:
+		return String(a.get("drone_id")) < String(b.get("drone_id"))
+	)
+	for other in drones:
+		if other == self or not (other is Node2D) or not is_instance_valid(other):
+			continue
+		if other.has_method("is_dead") and bool(other.call("is_dead")):
+			continue
+		var other_position := (other as Node2D).global_position
+		var delta := separated_goal - other_position
+		var distance := delta.length()
+		if distance >= profile.drone_separation_radius:
+			continue
+		if delta.length_squared() <= 0.001:
+			delta = Vector2.RIGHT.rotated(float(_slot_index + 1) * PI * 0.5)
+		var push: float = (profile.drone_separation_radius - distance) * profile.drone_separation_strength
+		separated_goal += delta.normalized() * push
+	return separated_goal
 
 
 func _should_retreat() -> bool:

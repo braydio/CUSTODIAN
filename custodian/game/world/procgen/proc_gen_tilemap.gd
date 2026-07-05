@@ -452,6 +452,7 @@ var _ruin_prop_scatterer: PropScatterer = null
 var elevation_map: Node = null
 var _terrain_builder: RefCounted = null
 var _last_terrain_result: Dictionary = {}
+var _last_pre_terrain_connectivity: Dictionary = {}
 var _interior_prop_nodes: Array[Node2D] = []
 var _portal_teleporters: Array[Area2D] = []
 var _foliage_nodes: Dictionary = {}
@@ -3480,6 +3481,7 @@ func _clear_elevation_metadata() -> void:
 	_ensure_elevation_map()
 	elevation_map.clear()
 	_last_terrain_result.clear()
+	_last_pre_terrain_connectivity.clear()
 
 
 func _apply_terrain_builder(map_size: Vector2i) -> void:
@@ -3488,7 +3490,9 @@ func _apply_terrain_builder(map_size: Vector2i) -> void:
 	var terrain_rng := RandomNumberGenerator.new()
 	var terrain_seed := _tile_noise_hash(Vector2i(1901, 2909))
 	terrain_rng.seed = terrain_seed
-	var required_cells := _collect_terrain_required_cells(map_size)
+	var required_cell_entries := _collect_terrain_required_cell_entries(map_size)
+	var required_cells := _terrain_required_entries_to_cells(required_cell_entries)
+	_last_pre_terrain_connectivity = _compute_pre_terrain_connectivity(map_size, required_cell_entries)
 	var context := {
 		"seed": terrain_seed,
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
@@ -3514,26 +3518,133 @@ func _apply_terrain_builder(map_size: Vector2i) -> void:
 
 
 func _collect_terrain_required_cells(map_size: Vector2i) -> Array[Vector2i]:
-	var required: Array[Vector2i] = []
+	return _terrain_required_entries_to_cells(_collect_terrain_required_cell_entries(map_size))
+
+
+func _collect_terrain_required_cell_entries(map_size: Vector2i) -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
 	var spawn := get_player_spawn()
 	if _is_tile_inside_map(spawn, map_size):
-		required.append(spawn)
+		entries.append({"tile": spawn, "source": "spawn"})
 	for center in get_rooms_by_distance_from_spawn().slice(0, 4):
 		if _is_tile_inside_map(center, map_size):
-			required.append(center)
+			entries.append({"tile": center, "source": "room_center"})
 	for threshold in _last_interior_thresholds:
 		if _is_tile_inside_map(threshold, map_size):
-			required.append(threshold)
+			entries.append({"tile": threshold, "source": "interior_threshold"})
 	for ingress in _last_compound_ingress:
 		if _is_tile_inside_map(ingress, map_size):
-			required.append(ingress)
-	required.append_array(_sample_required_anchor_cells_from_dict(_main_road_tiles, map_size, 16))
-	required.append_array(_sample_required_anchor_cells_from_dict(_parking_zone_tiles, map_size, 8))
+			entries.append({"tile": ingress, "source": "compound_ingress"})
+	entries.append_array(_sample_required_anchor_entries_from_dict(_main_road_tiles, map_size, 16, "road_sample"))
+	entries.append_array(_sample_required_anchor_entries_from_dict(_parking_zone_tiles, map_size, 8, "parking_sample"))
 	if _worldgen_intent_graph != null:
 		for cell in _worldgen_intent_graph.get_required_cells():
 			if _is_tile_inside_map(cell, map_size):
-				required.append(cell)
+				entries.append({"tile": cell, "source": "intent_graph_required"})
+	return _dedupe_terrain_required_entries(entries)
+
+
+func _terrain_required_entries_to_cells(entries: Array[Dictionary]) -> Array[Vector2i]:
+	var required: Array[Vector2i] = []
+	for entry in entries:
+		var tile_variant: Variant = entry.get("tile", Vector2i.ZERO)
+		if tile_variant is Vector2i:
+			required.append(tile_variant as Vector2i)
 	return _dedupe_vector2i_array(required)
+
+
+func _dedupe_terrain_required_entries(entries: Array[Dictionary]) -> Array[Dictionary]:
+	var seen := {}
+	var result: Array[Dictionary] = []
+	for entry in entries:
+		var tile_variant: Variant = entry.get("tile", Vector2i.ZERO)
+		if not (tile_variant is Vector2i):
+			continue
+		var tile := tile_variant as Vector2i
+		if seen.has(tile):
+			continue
+		seen[tile] = true
+		result.append({
+			"tile": tile,
+			"source": String(entry.get("source", "unknown")),
+		})
+	return result
+
+
+func _sample_required_anchor_entries_from_dict(source: Dictionary, map_size: Vector2i, max_count: int, source_label: String) -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
+	for cell in _sample_required_anchor_cells_from_dict(source, map_size, max_count):
+		entries.append({"tile": cell, "source": source_label})
+	return entries
+
+
+func _compute_pre_terrain_connectivity(map_size: Vector2i, required_cell_entries: Array[Dictionary]) -> Dictionary:
+	var spawn := get_player_spawn()
+	var required_cells := _terrain_required_entries_to_cells(required_cell_entries)
+	var reachable := _flood_fill_pre_terrain_floor(map_size, spawn)
+	var missing_samples: Array[Dictionary] = []
+	var missing_count := 0
+	var connected_count := 0
+	var entry_by_tile := {}
+	for entry in required_cell_entries:
+		var tile_variant: Variant = entry.get("tile", Vector2i.ZERO)
+		if tile_variant is Vector2i and not entry_by_tile.has(tile_variant):
+			entry_by_tile[tile_variant] = entry
+	for cell in required_cells:
+		if reachable.has(cell):
+			connected_count += 1
+			continue
+		missing_count += 1
+		if missing_samples.size() < 10:
+			var entry: Dictionary = entry_by_tile.get(cell, {"tile": cell, "source": "unknown"})
+			missing_samples.append({
+				"tile": cell,
+				"source": String(entry.get("source", "unknown")),
+				"reason": "unreachable_from_spawn",
+				"has_floor": _generated_floor_cells.has(cell),
+				"has_wall": _generated_wall_cells.has(cell),
+			})
+	var ratio := 1.0
+	if required_cells.size() > 0:
+		ratio = float(connected_count) / float(required_cells.size())
+	return {
+		"pre_terrain_spawn_tile": spawn,
+		"pre_terrain_required_cell_count": required_cells.size(),
+		"pre_terrain_missing_required_count": missing_count,
+		"pre_terrain_reachable_floor_count": reachable.size(),
+		"pre_terrain_connected_required_ratio": ratio,
+		"pre_terrain_missing_required_samples": missing_samples,
+		"pre_terrain_total_floor_cells": _generated_floor_cells.size(),
+		"pre_terrain_total_wall_cells": _generated_wall_cells.size(),
+	}
+
+
+func _flood_fill_pre_terrain_floor(map_size: Vector2i, start_cell: Vector2i) -> Dictionary:
+	var reachable := {}
+	if not _is_pre_terrain_walkable_cell(start_cell, map_size):
+		return reachable
+	var open: Array[Vector2i] = [start_cell]
+	reachable[start_cell] = true
+	var directions: Array[Vector2i] = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
+	while not open.is_empty():
+		var current: Vector2i = open.pop_back()
+		for direction in directions:
+			var next := current + direction
+			if reachable.has(next) or not _is_pre_terrain_walkable_cell(next, map_size):
+				continue
+			reachable[next] = true
+			open.append(next)
+	return reachable
+
+
+func _is_pre_terrain_walkable_cell(cell: Vector2i, map_size: Vector2i) -> bool:
+	if not _is_tile_inside_map(cell, map_size):
+		return false
+	if not _generated_floor_cells.has(cell):
+		return false
+	if _generated_wall_cells.has(cell):
+		return false
+	return true
 
 
 func _sample_required_anchor_cells_from_dict(source: Dictionary, map_size: Vector2i, max_count: int) -> Array[Vector2i]:
@@ -5895,6 +6006,7 @@ func get_level_data() -> Dictionary:
 		"interior_thresholds": _last_interior_thresholds,
 		"region_tiles": _region_tiles.duplicate(true),
 		"elevation_cells": elevation_map.get_serialized_cells() if elevation_map != null else [],
+		"pre_terrain_connectivity": _last_pre_terrain_connectivity.duplicate(true),
 		"terrain_builder": _get_terrain_builder_level_data(),
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
@@ -5921,6 +6033,7 @@ func _get_terrain_builder_level_data() -> Dictionary:
 		return {
 			"connectivity_ok": true,
 			"fallback_used": false,
+			"pre_terrain_connectivity": _last_pre_terrain_connectivity.duplicate(true),
 		}
 	var connectivity: Dictionary = _last_terrain_result.get("connectivity", {})
 	var summary: Dictionary = _last_terrain_result.get("debug_summary", {})
@@ -5931,5 +6044,6 @@ func _get_terrain_builder_level_data() -> Dictionary:
 		"baseline_rescue_carved_cells": int(_last_terrain_result.get("baseline_rescue_carved_cells", summary.get("baseline_rescue_carved_cells", 0))),
 		"reachable_count": int(connectivity.get("reachable_count", 0)),
 		"missing_required": connectivity.get("missing_required", []).duplicate(),
+		"pre_terrain_connectivity": _last_pre_terrain_connectivity.duplicate(true),
 		"summary": summary.duplicate(true),
 	}

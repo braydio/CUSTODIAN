@@ -61,6 +61,8 @@ const DEFENSE_TURRET_LAYOUT := {
 
 var _contract_map_node: Node = null
 var _active_procgen_map: Node = null
+var _contract_generation_failed: bool = false
+var _last_failure_result: Dictionary = {}
 
 
 func _ready() -> void:
@@ -70,14 +72,28 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	var callback := Callable(self, "_on_contract_generated")
+	var failure_callback := Callable(self, "_on_contract_generation_failed")
 	if _contract_map_node != null and is_instance_valid(_contract_map_node):
 		if _contract_map_node.is_connected("contract_generated", callback):
 			_contract_map_node.disconnect("contract_generated", callback)
+		if _contract_map_node.has_signal("contract_generation_failed") and _contract_map_node.is_connected("contract_generation_failed", failure_callback):
+			_contract_map_node.disconnect("contract_generation_failed", failure_callback)
+	var enemy_root := get_node_or_null("/root/GameRoot/World/Enemies")
+	var enemy_callback := Callable(self, "_on_failed_enemy_child_entered")
+	if enemy_root != null and enemy_root.is_connected("child_entered_tree", enemy_callback):
+		enemy_root.disconnect("child_entered_tree", enemy_callback)
+	var node_added_callback := Callable(self, "_on_failed_runtime_node_added")
+	if get_tree() != null and get_tree().is_connected("node_added", node_added_callback):
+		get_tree().disconnect("node_added", node_added_callback)
 	_contract_map_node = null
 	_active_procgen_map = null
+	_contract_generation_failed = false
+	_last_failure_result = {}
 
 
 func _bind_contract_map() -> void:
+	if _contract_generation_failed:
+		return
 	_contract_map_node = get_node_or_null(contract_map_path)
 	if _contract_map_node == null:
 		push_warning("[ContractWorldLoader] ContractMap not found at %s" % String(contract_map_path))
@@ -89,16 +105,29 @@ func _bind_contract_map() -> void:
 	var callback := Callable(self, "_on_contract_generated")
 	if not _contract_map_node.is_connected("contract_generated", callback):
 		_contract_map_node.connect("contract_generated", callback)
+	if _contract_map_node.has_signal("contract_generation_failed"):
+		var failure_callback := Callable(self, "_on_contract_generation_failed")
+		if not _contract_map_node.is_connected("contract_generation_failed", failure_callback):
+			_contract_map_node.connect("contract_generation_failed", failure_callback)
 
 	if _contract_map_node.has_method("get_latest_contract"):
 		var latest: Variant = _contract_map_node.call("get_latest_contract")
 		if latest is Dictionary and not (latest as Dictionary).is_empty():
 			_on_contract_generated(latest)
+	if _contract_map_node.has_method("get_latest_generation_failure"):
+		var failure: Variant = _contract_map_node.call("get_latest_generation_failure")
+		if failure is Dictionary and not (failure as Dictionary).is_empty():
+			_on_contract_generation_failed(failure as Dictionary)
 
 
 func _on_contract_generated(contract: Dictionary) -> void:
+	_contract_generation_failed = false
+	_last_failure_result = {}
 	var map_block: Dictionary = contract.get("map", {}) as Dictionary
 	var level_data: Dictionary = map_block.get("level_data", {}) as Dictionary
+	if bool(level_data.get("generation_failed", false)):
+		_on_contract_generation_failed(level_data)
+		return
 	var map_instance_variant: Variant = map_block.get("instance")
 	if not (map_instance_variant is Node):
 		push_warning("[ContractWorldLoader] Contract map instance missing or invalid")
@@ -138,10 +167,126 @@ func _on_contract_generated(contract: Dictionary) -> void:
 	_mark_contract_ready()
 
 
+func _on_contract_generation_failed(result: Dictionary) -> void:
+	_contract_generation_failed = true
+	_last_failure_result = result.duplicate(true)
+	_active_procgen_map = null
+	print("[ContractWorldLoader] Contract generation failed; runtime world activation aborted %s" % str(result))
+	_mark_contract_failed(result)
+	_stop_combat_activation()
+
+
+func is_contract_activation_aborted() -> bool:
+	return _contract_generation_failed
+
+
+func is_contract_world_pending() -> bool:
+	return _active_procgen_map == null and not _contract_generation_failed
+
+
+func get_last_failure_result() -> Dictionary:
+	return _last_failure_result.duplicate(true)
+
+
 func _mark_contract_ready() -> void:
 	var game_state := get_node_or_null("/root/GameState")
 	if game_state != null and game_state.has_method("mark_contract_ready"):
 		game_state.call("mark_contract_ready")
+
+
+func _mark_contract_failed(result: Dictionary) -> void:
+	var game_state := get_node_or_null("/root/GameState")
+	if game_state != null and game_state.has_method("mark_contract_failed"):
+		game_state.call("mark_contract_failed", result)
+
+
+func _stop_combat_activation() -> void:
+	var node_added_callback := Callable(self, "_on_failed_runtime_node_added")
+	if get_tree() != null and not get_tree().is_connected("node_added", node_added_callback):
+		get_tree().connect("node_added", node_added_callback)
+	var wave_manager := get_node_or_null("/root/GameRoot/WaveManager")
+	if wave_manager != null:
+		wave_manager.set("active", false)
+		wave_manager.set("debug_spawn_grunt_on_start", false)
+		_disable_runtime_node(wave_manager)
+	var supply_drop_manager := get_node_or_null("/root/GameRoot/SupplyDropManager")
+	if supply_drop_manager != null:
+		supply_drop_manager.set("_active", false)
+		var drop_timer: Variant = supply_drop_manager.get("_timer")
+		if drop_timer is Timer:
+			(drop_timer as Timer).stop()
+		var countdown_timer: Variant = supply_drop_manager.get("_countdown_timer")
+		if countdown_timer is Timer:
+			(countdown_timer as Timer).stop()
+		_disable_runtime_node(supply_drop_manager)
+	var ambient_critter_manager := get_node_or_null("/root/GameRoot/AmbientCritterManager")
+	if ambient_critter_manager != null:
+		ambient_critter_manager.set("ambient_spawn_enabled", false)
+		ambient_critter_manager.set("critter_count", 0)
+		ambient_critter_manager.set("ambient_max_count", 0)
+		if ambient_critter_manager.has_method("_clear_spawned_critters"):
+			ambient_critter_manager.call("_clear_spawned_critters")
+		_disable_runtime_node(ambient_critter_manager)
+	for spawn_node in get_tree().get_nodes_in_group("enemy_spawn"):
+		if spawn_node is Node:
+			spawn_node.set("active", false)
+			_disable_runtime_node(spawn_node)
+	for camp in get_tree().get_nodes_in_group("ambient_enemy_camp"):
+		if camp is Node:
+			camp.set("initially_active", false)
+			camp.set("respawn_enabled", false)
+			_disable_runtime_node(camp)
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if enemy is Node:
+			_remove_failed_enemy(enemy)
+	var enemy_root := get_node_or_null("/root/GameRoot/World/Enemies")
+	if enemy_root != null:
+		enemy_root.process_mode = Node.PROCESS_MODE_DISABLED
+		var enemy_callback := Callable(self, "_on_failed_enemy_child_entered")
+		if not enemy_root.is_connected("child_entered_tree", enemy_callback):
+			enemy_root.connect("child_entered_tree", enemy_callback)
+		for child in enemy_root.get_children():
+			_disable_runtime_node(child)
+
+
+func _on_failed_enemy_child_entered(node: Node) -> void:
+	if not _contract_generation_failed:
+		return
+	_remove_failed_enemy(node)
+
+
+func _on_failed_runtime_node_added(node: Node) -> void:
+	if not _contract_generation_failed or node == null:
+		return
+	call_deferred("_disable_failed_runtime_node_if_needed", node)
+
+
+func _disable_failed_runtime_node_if_needed(node: Node) -> void:
+	if not _contract_generation_failed or node == null or not is_instance_valid(node):
+		return
+	if node.is_in_group("enemy"):
+		_remove_failed_enemy(node)
+	elif node.is_in_group("enemy_spawn") or node.is_in_group("ambient_enemy_camp"):
+		_disable_runtime_node(node)
+
+
+func _remove_failed_enemy(node: Node) -> void:
+	if node == null or not is_instance_valid(node):
+		return
+	_disable_runtime_node(node)
+	if not node.is_queued_for_deletion():
+		node.queue_free()
+
+
+func _disable_runtime_node(node: Node) -> void:
+	if node == null:
+		return
+	node.process_mode = Node.PROCESS_MODE_DISABLED
+	node.set_process(false)
+	node.set_physics_process(false)
+	for child in node.get_children():
+		if child is Node:
+			_disable_runtime_node(child)
 
 
 func _position_static_sectors_from_contract(level_data: Dictionary, map_instance: Node) -> bool:

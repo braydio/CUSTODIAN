@@ -6,7 +6,7 @@ Feature owner: combat / allied automation
 
 ## Summary
 
-Autonomous combat drones are fragile player-assist companions. V2 mounts a `DroneManager` in the active scene and spawns up to two allied droid companions near the Custodian. The shared combat actor owns follow/orbit, local target acquisition, support bursts, HP, and destruction; the active main-scene presentation uses the animated allied infantry droid scene with squad-wide fire discipline and follow-distance commands owned by `DroneManager`.
+Autonomous combat drones are fragile player-assist companions. V2 mounts a `DroneManager` in the active scene and spawns up to two allied droid companions near the Custodian. The shared combat actor owns soft follow bands, local patrol/free-roam goals, local target acquisition, support bursts, HP, and destruction; the active main-scene presentation uses the animated allied infantry droid scene with squad-wide fire discipline and follow-distance commands owned by `DroneManager`.
 
 ## Doctrine Rules
 
@@ -45,11 +45,11 @@ Autonomous combat drones are fragile player-assist companions. V2 mounts a `Dron
 - Newly spawned drones inherit the current squad fire discipline and follow distance.
 - Hold fire clears queued bursts immediately through `CombatDrone.set_fire_at_will(false)`.
 
-Follow distances:
+Follow distances are movement contracts, not exact orbit offsets:
 
-- `CLOSE`: tight escort orbit around the Operator, about `42px`.
-- `FAR`: wider backline/support orbit, about `118px`.
-- `FREE_ROAM`: local enemy pressure within `free_roam_engage_range`, still leashed to the Operator by `free_roam_leash_range`; this is not independent scouting.
+- `CLOSE`: bodyguard escort band near the Operator, with player separation so drones do not stand inside the Operator's feet.
+- `FAR`: backline/support band that trails or stands off visibly farther than `CLOSE`.
+- `FREE_ROAM`: local patrol around the Operator. The drone periodically selects deterministic roam goals within the Operator leash, pressures local enemies, and returns to the leash if separated. It is not independent scouting.
 
 ## V1 Tuning
 
@@ -65,11 +65,16 @@ Follow distances:
 - Burst gap: `0.09`
 - Retreat threshold: `28%`
 - Collision radius: `8`
-- Close follow radius: `42`
-- Far follow radius: `118`
-- Free-roam follow radius: `180`
-- Free-roam leash: `420`
-- Free-roam engage range: `360`
+- Close follow preferred radius: `72`
+- Close follow band: `56-118`
+- Far follow preferred radius: `190`
+- Far follow band: `145-285`
+- Player separation radius: `54`
+- Drone separation radius: `36`
+- Free-roam patrol band: `180-380`
+- Free-roam repath window: `1.2-2.4s`
+- Free-roam leash: `520`
+- Free-roam engage range: `420`
 
 ## Deferred
 

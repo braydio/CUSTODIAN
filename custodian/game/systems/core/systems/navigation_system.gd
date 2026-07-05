@@ -45,6 +45,14 @@ func _initialize_navigation_deferred() -> void:
 
 
 func _initialize_navigation() -> void:
+	var world_loader = get_tree().get_first_node_in_group("contract_world_loader")
+	if world_loader != null:
+		if world_loader.has_method("is_contract_activation_aborted") and bool(world_loader.call("is_contract_activation_aborted")):
+			print("[NavigationSystem] Contract generation failed; navigation initialization skipped")
+			return
+		if world_loader.has_method("is_contract_world_pending") and bool(world_loader.call("is_contract_world_pending")):
+			return
+
 	if floor_tilemap_path != NodePath():
 		floor_tilemap = get_node_or_null(floor_tilemap_path)
 	
@@ -264,5 +272,9 @@ func rebuild() -> void:
 		astar.clear()
 	_walkable_tiles.clear()
 	_initialized = false
+	var world_loader = get_tree().get_first_node_in_group("contract_world_loader")
+	if world_loader != null and world_loader.has_method("is_contract_activation_aborted") and bool(world_loader.call("is_contract_activation_aborted")):
+		print("[NavigationSystem] Contract generation failed; navigation rebuild skipped")
+		return
 	_initialize_navigation()
 	navigation_dirty.emit()

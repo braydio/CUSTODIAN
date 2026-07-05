@@ -6,6 +6,7 @@ class_name CustodianContractMap
 ## 2) a procgen map instance + derived level data
 
 signal contract_generated(contract: Dictionary)
+signal contract_generation_failed(result: Dictionary)
 
 @export var auto_generate_on_ready: bool = true
 @export var contract_seed: int = 0
@@ -21,6 +22,8 @@ signal contract_generated(contract: Dictionary)
 @export_range(0.0, 1.0, 0.01) var min_connected_room_ratio: float = 0.75
 @export var require_compound_ingress_connectivity: bool = true
 @export var terrain_rescue_reject_threshold: int = 200
+@export_range(0.0, 1.0, 0.01) var pre_terrain_required_connectivity_min: float = 0.95
+@export var allow_degraded_best_candidate_fallback: bool = false
 @export_group("Special Rooms", "special_room_")
 @export var special_room_insertion_enabled: bool = true
 @export var special_room_definitions_path: String = "res://content/procgen/special_rooms"
@@ -212,6 +215,7 @@ var _active_map: ProcGenTilemap = null
 var _map_level_data_ready: bool = false
 var _map_level_data: Dictionary = {}
 var _latest_contract: Dictionary = {}
+var _latest_generation_failure: Dictionary = {}
 var _special_room_inserter: SpecialRoomRuntimeInserter = null
 
 const SPECIAL_ROOM_INSERTER_SCRIPT := preload("res://game/world/procgen/special_rooms/special_room_runtime_inserter.gd")
@@ -229,6 +233,7 @@ func _exit_tree() -> void:
 	_map_level_data_ready = false
 	_map_level_data = {}
 	_latest_contract = {}
+	_latest_generation_failure = {}
 
 
 func generate_contract(seed_value: int) -> void:
@@ -261,6 +266,8 @@ func generate_contract(seed_value: int) -> void:
 	var best_level_data: Dictionary = {}
 	var best_map_score: float = -1.0
 	var best_map_terrain_failed := true
+	var best_attempt_index := -1
+	var best_attempt_metrics: Dictionary = {}
 	var _attempt_total_start := Time.get_ticks_msec()
 	var attempts_run := 0
 	var accepted_attempt := -1
@@ -281,20 +288,25 @@ func generate_contract(seed_value: int) -> void:
 		var accepted := _is_map_layout_acceptable(candidate_metrics)
 		var _t_total_attempt := Time.get_ticks_msec() - _attempt_start
 		var candidate_terrain_failed := _is_terrain_failed_candidate(candidate_metrics)
-		print("[CustodianContractMap] Attempt %d: instantiate=%.1fs generate=%.1fs metrics=%.1fs total=%.1fs valid=%s connected=%.2f ingress=%.2f terrain_fallback=%s terrain_connectivity=%s terrain_rescue=%d terrain_rescue_limit=%d terrain_rescue_ok=%s accepted=%s score=%.2f" % [
+		print("[CustodianContractMap] Attempt %d: instantiate=%.1fs generate=%.1fs metrics=%.1fs total=%.1fs layout_valid=%s candidate_valid=%s connected=%.2f ingress=%.2f pre_terrain_connected=%.2f pre_terrain_missing=%d baseline_rescue=%d terrain_fallback=%s terrain_connectivity=%s terrain_rescue=%d terrain_rescue_limit=%d terrain_rescue_ok=%s rejection_reasons=%s accepted=%s score=%.2f" % [
 			attempt,
 			_t_instantiate / 1000.0,
 			_t_generate / 1000.0,
 			_t_metrics / 1000.0,
 			_t_total_attempt / 1000.0,
-			str(candidate_metrics.get("valid", false)),
+			str(candidate_metrics.get("layout_valid", false)),
+			str(candidate_metrics.get("candidate_valid", false)),
 			float(candidate_metrics.get("connected_ratio", 0.0)),
 			float(candidate_metrics.get("ingress_ratio", 0.0)),
+			float(candidate_metrics.get("pre_terrain_connected_required_ratio", 1.0)),
+			int(candidate_metrics.get("pre_terrain_missing_required_count", 0)),
+			int(candidate_metrics.get("terrain_baseline_rescue_carved", 0)),
 			str(candidate_metrics.get("terrain_fallback", false)),
 			str(candidate_metrics.get("terrain_connectivity", true)),
 			int(candidate_metrics.get("terrain_rescue_carved", 0)),
 			terrain_rescue_reject_threshold,
 			str(bool(candidate_metrics.get("terrain_rescue_ok", true))),
+			str(candidate_metrics.get("rejection_reasons", [])),
 			str(accepted),
 			candidate_score,
 		])
@@ -308,13 +320,15 @@ func generate_contract(seed_value: int) -> void:
 			best_map_score = candidate_score
 			best_map_terrain_failed = candidate_terrain_failed
 			best_attempt_seed = attempt_seed
+			best_attempt_index = attempt
+			best_attempt_metrics = candidate_metrics.duplicate(true)
 			map_instance = candidate_map
 			level_data = candidate_level_data
 			map_seed = attempt_seed
 			map_generated = true
 			accepted_attempt = attempt
 			break
-		elif not candidate_terrain_failed and (best_map_instance == null or _is_better_fallback_candidate(candidate_score, candidate_terrain_failed, best_map_score, best_map_terrain_failed)):
+		elif best_map_instance == null or _is_better_fallback_candidate(candidate_score, candidate_terrain_failed, best_map_score, best_map_terrain_failed):
 			if best_map_instance != null and best_map_instance != candidate_map:
 				await _dispose_node(best_map_instance)
 			best_map_instance = candidate_map
@@ -322,6 +336,8 @@ func generate_contract(seed_value: int) -> void:
 			best_map_score = candidate_score
 			best_map_terrain_failed = candidate_terrain_failed
 			best_attempt_seed = attempt_seed
+			best_attempt_index = attempt
+			best_attempt_metrics = candidate_metrics.duplicate(true)
 		else:
 			await _dispose_node(candidate_map)
 			if _active_map == candidate_map:
@@ -333,22 +349,54 @@ func generate_contract(seed_value: int) -> void:
 		accepted_attempt,
 	])
 
-	if not map_generated:
+	var using_degraded_fallback := false
+	if not map_generated and allow_degraded_best_candidate_fallback and _can_use_degraded_fallback(best_attempt_metrics):
 		map_instance = best_map_instance
 		level_data = best_level_data
 		map_seed = best_attempt_seed
+		using_degraded_fallback = true
+		print("[CustodianContractMap] DEGRADED_FALLBACK_ACCEPTED terrain_rescue=%d limit=%d" % [
+			int(best_attempt_metrics.get("terrain_rescue_carved", 0)),
+			terrain_rescue_reject_threshold,
+		])
+	elif not map_generated:
+		var failure := _build_generation_failure_result(
+			"no_accepted_candidate",
+			attempts_run,
+			best_attempt_index,
+			best_map_score,
+			best_attempt_metrics
+		)
+		if best_map_instance != null:
+			await _dispose_node(best_map_instance)
+		_active_map = null
+		_latest_contract = {}
+		_latest_generation_failure = failure
+		push_error("[CustodianContractMap] Contract generation failed safely: %s" % str(failure))
+		contract_generation_failed.emit(failure)
+		return
 
 	if map_instance == null:
-		push_error("[CustodianContractMap] Could not generate a usable procgen map")
+		var failure := _build_generation_failure_result(
+			"no_map_instance",
+			attempts_run,
+			best_attempt_index,
+			best_map_score,
+			best_attempt_metrics
+		)
+		_active_map = null
+		_latest_contract = {}
+		_latest_generation_failure = failure
+		push_error("[CustodianContractMap] Contract generation failed safely: %s" % str(failure))
+		contract_generation_failed.emit(failure)
 		return
 
 	_active_map = map_instance
-	if not map_generated:
-		push_warning("[CustodianContractMap] Falling back to best available procgen map after %d attempts; terrain_rescue_limit=%d may have rejected candidates" % [
-			max(1, map_generation_attempts),
-			terrain_rescue_reject_threshold,
-		])
 	level_data = await _generate_final_map_level_data(map_instance)
+	if using_degraded_fallback:
+		level_data["degraded_fallback"] = true
+		level_data["degraded_reason"] = "terrain_rescue_above_limit"
+		level_data["degraded_attempt_metrics"] = best_attempt_metrics.duplicate(true)
 	var special_room_sites := _insert_special_rooms(map_instance, level_data, map_seed)
 	if not special_room_sites.is_empty():
 		level_data["special_room_sites"] = special_room_sites.duplicate(true)
@@ -369,6 +417,7 @@ func generate_contract(seed_value: int) -> void:
 		},
 	}
 	_latest_contract = contract
+	_latest_generation_failure = {}
 	contract_generated.emit(contract)
 
 
@@ -457,6 +506,10 @@ func _generate_edgar_layout() -> Dictionary:
 
 func get_latest_contract() -> Dictionary:
 	return _latest_contract
+
+
+func get_latest_generation_failure() -> Dictionary:
+	return _latest_generation_failure
 
 
 func _clear_previous_instances() -> void:
@@ -751,7 +804,11 @@ func _round_map_dimension(value: int) -> int:
 
 
 func _is_map_layout_acceptable(metrics: Dictionary) -> bool:
-	if not bool(metrics.get("valid", false)):
+	if not bool(metrics.get("layout_valid", false)):
+		return false
+	if not bool(metrics.get("candidate_valid", false)):
+		return false
+	if float(metrics.get("pre_terrain_connected_required_ratio", 1.0)) < pre_terrain_required_connectivity_min:
 		return false
 	if bool(metrics.get("terrain_fallback", false)):
 		return false
@@ -767,9 +824,11 @@ func _is_map_layout_acceptable(metrics: Dictionary) -> bool:
 
 
 func _score_map_layout(metrics: Dictionary) -> float:
-	if not bool(metrics.get("valid", false)):
+	if not bool(metrics.get("layout_valid", false)):
 		return -1.0
 	var score := float(metrics.get("connected_ratio", 0.0)) + float(metrics.get("ingress_ratio", 0.0)) * 0.1
+	if float(metrics.get("pre_terrain_connected_required_ratio", 1.0)) < pre_terrain_required_connectivity_min:
+		score -= 1.0
 	if bool(metrics.get("terrain_fallback", false)):
 		score -= 1.0
 	if not bool(metrics.get("terrain_connectivity", true)):
@@ -782,6 +841,7 @@ func _score_map_layout(metrics: Dictionary) -> float:
 func _is_terrain_failed_candidate(metrics: Dictionary) -> bool:
 	return bool(metrics.get("terrain_fallback", false)) \
 			or not bool(metrics.get("terrain_connectivity", true)) \
+			or float(metrics.get("pre_terrain_connected_required_ratio", 1.0)) < pre_terrain_required_connectivity_min \
 			or int(metrics.get("terrain_rescue_carved", 0)) > terrain_rescue_reject_threshold
 
 
@@ -791,19 +851,67 @@ func _is_better_fallback_candidate(candidate_score: float, candidate_terrain_fai
 	return candidate_score > best_score
 
 
+func _can_use_degraded_fallback(metrics: Dictionary) -> bool:
+	if metrics.is_empty():
+		return false
+	if bool(metrics.get("terrain_fallback", false)):
+		return false
+	if not bool(metrics.get("terrain_connectivity", true)):
+		return false
+	if float(metrics.get("connected_ratio", 0.0)) < min_connected_room_ratio:
+		return false
+	if require_compound_ingress_connectivity and float(metrics.get("ingress_ratio", 0.0)) < 1.0:
+		return false
+	return int(metrics.get("terrain_rescue_carved", 0)) > terrain_rescue_reject_threshold
+
+
+func _build_generation_failure_result(
+	failure_reason: String,
+	attempts_run: int,
+	best_rejected_attempt: int,
+	best_rejected_score: float,
+	best_rejected_metrics: Dictionary
+) -> Dictionary:
+	return {
+		"generation_failed": true,
+		"failure_reason": failure_reason,
+		"attempts_run": attempts_run,
+		"max_attempts": max(1, map_generation_attempts),
+		"best_rejected_attempt": best_rejected_attempt,
+		"best_rejected_score": best_rejected_score,
+		"best_rejected_terrain_rescue": int(best_rejected_metrics.get("terrain_rescue_carved", 0)),
+		"best_rejected_baseline_rescue": int(best_rejected_metrics.get("terrain_baseline_rescue_carved", 0)),
+		"best_rejected_pre_terrain_required_connectivity": float(best_rejected_metrics.get("pre_terrain_connected_required_ratio", 1.0)),
+		"best_rejected_pre_terrain_missing": int(best_rejected_metrics.get("pre_terrain_missing_required_count", 0)),
+		"best_rejected_reasons": best_rejected_metrics.get("rejection_reasons", []).duplicate(true),
+	}
+
+
 func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionary) -> Dictionary:
 	var terrain_builder: Dictionary = level_data.get("terrain_builder", {})
+	var pre_terrain: Dictionary = level_data.get("pre_terrain_connectivity", terrain_builder.get("pre_terrain_connectivity", {}))
 	var terrain_connectivity := bool(terrain_builder.get("connectivity_ok", true))
 	var terrain_fallback := bool(terrain_builder.get("fallback_used", false))
 	var terrain_rescue_carved := int(terrain_builder.get("rescue_carved_cells", terrain_builder.get("summary", {}).get("rescue_carved_cells", 0)))
+	var terrain_baseline_rescue_carved := int(terrain_builder.get("baseline_rescue_carved_cells", terrain_builder.get("summary", {}).get("baseline_rescue_carved_cells", 0)))
 	var terrain_rescue_ok := terrain_rescue_carved <= terrain_rescue_reject_threshold
+	var pre_terrain_connected_ratio := float(pre_terrain.get("pre_terrain_connected_required_ratio", 1.0))
+	var pre_terrain_missing_count := int(pre_terrain.get("pre_terrain_missing_required_count", 0))
 	var base_metrics := {
 		"valid": false,
+		"layout_valid": false,
+		"candidate_valid": false,
+		"rejection_reasons": [],
 		"terrain_connectivity": terrain_connectivity,
 		"terrain_fallback": terrain_fallback,
 		"terrain_rescue_carved": terrain_rescue_carved,
+		"terrain_baseline_rescue_carved": terrain_baseline_rescue_carved,
 		"terrain_rescue_limit": terrain_rescue_reject_threshold,
 		"terrain_rescue_ok": terrain_rescue_ok,
+		"pre_terrain_connected_required_ratio": pre_terrain_connected_ratio,
+		"pre_terrain_missing_required_count": pre_terrain_missing_count,
+		"pre_terrain_required_cell_count": int(pre_terrain.get("pre_terrain_required_cell_count", 0)),
+		"pre_terrain_missing_required_samples": pre_terrain.get("pre_terrain_missing_required_samples", []).duplicate(true),
 		"spawn_tile": level_data.get("player_spawn", Vector2i.ZERO),
 		"rooms_total": 0,
 		"rooms_connected": 0,
@@ -815,17 +923,21 @@ func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionar
 		"unreachable_room_samples": [],
 	}
 	if map_instance == null or map_instance.procgen_node == null:
+		base_metrics["rejection_reasons"] = ["missing_map_instance"]
 		return base_metrics
 	var spawn_variant: Variant = level_data.get("player_spawn", Vector2i.ZERO)
 	if not (spawn_variant is Vector2i):
+		base_metrics["rejection_reasons"] = ["missing_spawn_tile"]
 		return base_metrics
 	var spawn_tile := spawn_variant as Vector2i
 	base_metrics["spawn_tile"] = spawn_tile
 	if not _is_layout_walkable_tile(map_instance, spawn_tile):
+		base_metrics["rejection_reasons"] = ["spawn_not_walkable"]
 		return base_metrics
 
 	var reachable := _flood_fill_walkable(map_instance, level_data, spawn_tile)
 	if reachable.is_empty():
+		base_metrics["rejection_reasons"] = ["no_reachable_walkable_tiles"]
 		return base_metrics
 	base_metrics["reachable_count"] = reachable.size()
 
@@ -860,6 +972,7 @@ func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionar
 				"reason": "representative unreachable from spawn",
 			})
 	if rooms_total <= 0:
+		base_metrics["rejection_reasons"] = ["no_room_anchors"]
 		return base_metrics
 
 	var connected_ratio := float(rooms_connected) / float(rooms_total)
@@ -875,16 +988,38 @@ func _get_map_layout_metrics(map_instance: ProcGenTilemap, level_data: Dictionar
 	var ingress_ratio := 1.0
 	if ingress_total > 0:
 		ingress_ratio = float(ingress_connected) / float(ingress_total)
+	var rejection_reasons: Array[String] = []
+	if pre_terrain_connected_ratio < pre_terrain_required_connectivity_min:
+		rejection_reasons.append("pre_terrain_required_connectivity")
+	if terrain_fallback:
+		rejection_reasons.append("terrain_fallback")
+	if not terrain_connectivity:
+		rejection_reasons.append("terrain_connectivity")
+	if terrain_rescue_carved > terrain_rescue_reject_threshold:
+		rejection_reasons.append("terrain_rescue")
+	if connected_ratio < min_connected_room_ratio:
+		rejection_reasons.append("connected_room_ratio")
+	if require_compound_ingress_connectivity and ingress_ratio < 1.0:
+		rejection_reasons.append("compound_ingress_connectivity")
+	var candidate_valid := rejection_reasons.is_empty()
 
 	return {
 		"valid": true,
+		"layout_valid": true,
+		"candidate_valid": candidate_valid,
+		"rejection_reasons": rejection_reasons,
 		"connected_ratio": connected_ratio,
 		"ingress_ratio": ingress_ratio,
 		"terrain_connectivity": terrain_connectivity,
 		"terrain_fallback": terrain_fallback,
 		"terrain_rescue_carved": terrain_rescue_carved,
+		"terrain_baseline_rescue_carved": terrain_baseline_rescue_carved,
 		"terrain_rescue_limit": terrain_rescue_reject_threshold,
 		"terrain_rescue_ok": terrain_rescue_ok,
+		"pre_terrain_connected_required_ratio": pre_terrain_connected_ratio,
+		"pre_terrain_missing_required_count": pre_terrain_missing_count,
+		"pre_terrain_required_cell_count": int(pre_terrain.get("pre_terrain_required_cell_count", 0)),
+		"pre_terrain_missing_required_samples": pre_terrain.get("pre_terrain_missing_required_samples", []).duplicate(true),
 		"spawn_tile": spawn_tile,
 		"rooms_total": rooms_total,
 		"rooms_connected": rooms_connected,
@@ -963,7 +1098,7 @@ func _is_tile_inside_map(tile: Vector2i, map_size: Vector2i) -> bool:
 
 
 func _format_layout_metric_debug(metrics: Dictionary) -> String:
-	return "spawn=%s reachable=%d rooms=%d/%d represented=%d exact_walkable=%d ingress=%d/%d connected=%.2f ingress_ratio=%.2f terrain_rescue=%d terrain_rescue_limit=%d terrain_rescue_ok=%s unreachable_samples=%s" % [
+	return "spawn=%s reachable=%d rooms=%d/%d represented=%d exact_walkable=%d ingress=%d/%d connected=%.2f ingress_ratio=%.2f pre_terrain_connected=%.2f pre_terrain_missing=%d pre_terrain_missing_samples=%s baseline_rescue=%d terrain_rescue=%d terrain_rescue_limit=%d terrain_rescue_ok=%s rejection_reasons=%s unreachable_samples=%s" % [
 		str(metrics.get("spawn_tile", Vector2i.ZERO)),
 		int(metrics.get("reachable_count", 0)),
 		int(metrics.get("rooms_connected", 0)),
@@ -974,8 +1109,13 @@ func _format_layout_metric_debug(metrics: Dictionary) -> String:
 		int(metrics.get("ingress_total", 0)),
 		float(metrics.get("connected_ratio", 0.0)),
 		float(metrics.get("ingress_ratio", 0.0)),
+		float(metrics.get("pre_terrain_connected_required_ratio", 1.0)),
+		int(metrics.get("pre_terrain_missing_required_count", 0)),
+		str(metrics.get("pre_terrain_missing_required_samples", [])),
+		int(metrics.get("terrain_baseline_rescue_carved", 0)),
 		int(metrics.get("terrain_rescue_carved", 0)),
 		int(metrics.get("terrain_rescue_limit", terrain_rescue_reject_threshold)),
 		str(bool(metrics.get("terrain_rescue_ok", true))),
+		str(metrics.get("rejection_reasons", [])),
 		str(metrics.get("unreachable_room_samples", [])),
 	]

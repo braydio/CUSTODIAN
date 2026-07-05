@@ -2150,7 +2150,7 @@ func _update_parry_guard_timers(delta: float) -> void:
 				_parry_timer = maxf(0.0, parry_recovery_sec)
 				_block_phase = &"recovery"
 				_block_active = false
-				_play_parry_animation(&"unarmed_parry_success_01")
+				_play_parry_animation(&"unarmed_block_exit")
 		&"success", &"recovery":
 			if _parry_timer <= 0.0:
 				var completed_phase := _parry_phase
@@ -2177,7 +2177,7 @@ func _update_parry_guard_timers(delta: float) -> void:
 			_guard_requested_from_secondary = false
 			_block_phase = &"recovery"
 			_block_active = false
-			_play_parry_animation(&"unarmed_parry_success_01")
+			_play_parry_animation(&"unarmed_block_exit")
 
 
 func _enter_post_parry_neutral_lock() -> void:
