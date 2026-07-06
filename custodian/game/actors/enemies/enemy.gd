@@ -29,6 +29,8 @@ const GRUNT_STAGGER_ANIMATION := &"stagger_s"
 const GRUNT_CRIT_ANIMATION := &"crit_s"
 const GRUNT_CRIT_RECOVERY_ANIMATION := &"crit_recovery_s"
 const GRUNT_CRIT_FX_ANIMATION := &"crit_fx_s"
+const GRUNT_DEATH_ANIMATION := &"death_s"
+const GRUNT_FLINCH_ANIMATION := &"flinch_s"
 const CUSTOM_AMBIENT_EAST_ANIMATION := &"ambient_slink_east"
 const CUSTOM_AMBIENT_NORTH_ANIMATION := &"ambient_slink_north"
 const CUSTOM_AMBIENT_SOUTH_ANIMATION := &"ambient_slink_south"
@@ -1092,6 +1094,9 @@ func die():
 	if _uses_custom_ambient_animation_set() and _has_animation(String(CUSTOM_AMBIENT_KO_ANIMATION)):
 		call_deferred("_play_custom_ambient_knockout")
 		return
+	if _uses_custom_enemy_animation_set() and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT) and _has_animation(String(GRUNT_DEATH_ANIMATION)):
+		call_deferred("_play_grunt_death")
+		return
 	queue_free()
 
 
@@ -2113,6 +2118,11 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 	if _is_grunt_parry_critical_window_active():
 		_play_grunt_parry_stagger_placeholder()
 		return
+	if _recoil_timer > 0.0:
+		if _has_animation(String(GRUNT_FLINCH_ANIMATION)):
+			animated_sprite.flip_h = false
+			_play_animation(String(GRUNT_FLINCH_ANIMATION), false)
+			return
 	if _stagger_timer > 0.0:
 		if _has_animation(String(GRUNT_STAGGER_ANIMATION)):
 			animated_sprite.flip_h = false
@@ -2252,6 +2262,17 @@ func _play_procedural_variant_death() -> void:
 		queue_free()
 		return
 	animated_sprite.play(String(WOLF_DEATH_ANIMATION))
+	await animated_sprite.animation_finished
+	queue_free()
+
+
+func _play_grunt_death() -> void:
+	if animated_sprite == null or not _has_animation(String(GRUNT_DEATH_ANIMATION)):
+		queue_free()
+		return
+	animated_sprite.stop()
+	animated_sprite.flip_h = false
+	animated_sprite.play(String(GRUNT_DEATH_ANIMATION))
 	await animated_sprite.animation_finished
 	queue_free()
 

@@ -239,7 +239,7 @@ Last updated: 2026-07-04
 - `custodian/game/enemies/procgen/enemy_variant_profile.gd` — data-only procedural enemy profile resource generated from seed, biome, threat, family, tier, and affixes
 - `custodian/game/enemies/procgen/enemy_variant_factory.gd` — deterministic procedural wolf profile composer with separate RNG streams, family/tier/affix rolls, palettes, safety clamps, and DPS normalization
 - `custodian/game/enemies/procgen/wolf_animation_library.gd` — runtime `SpriteFrames` builder that slices the current wolf PNG sheets into idle/run/bite/death/howl animations
-- `custodian/game/enemies/procgen/grunt_animation_library.gd` — runtime `SpriteFrames` builder and directional selector for canonical `enemy_grunt` idle/run/melee body strips, grunt melee FX overlay strips, the `enemy_marine` 8-direction idle suite, and marine east dash body/FX strips
+- `custodian/game/enemies/procgen/grunt_animation_library.gd` — runtime `SpriteFrames` builder and directional selector for canonical `enemy_grunt` idle/run/melee/stagger/crit/crit_recovery body strips, death and flinch body strips, grunt melee FX overlay strips, the `enemy_marine` 8-direction idle suite, and marine east dash body/FX strips
 - `design/02_features/enemy_objective/ENEMY_MARINE_DASH_ATTACK.md` — implementation design for the enemy marine heavy dash attack contract, timing values, animation/FX/audio direction, and validation expectations.
 - `custodian/game/enemies/procgen/enemy_palette_tint.gdshader` — palette/glow/contrast shader used by procedural enemy visuals
 - `custodian/game/systems/core/systems/enemy_factory.gd` — wave composition factory with deterministic local composition rolls and `"wolf"`, `"grunt"`, and late-unlock `"marine"` type support

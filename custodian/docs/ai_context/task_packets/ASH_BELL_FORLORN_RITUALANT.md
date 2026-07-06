@@ -64,7 +64,7 @@ Fix procgen authority clashes beneath authored/special-room scenes and wire the 
 
 - Implemented: Added `ProcGenTilemap.claim_procgen_floor_rect_for_authored_scene_world/tiles`, shared procgen wall-authority clearing, authored floor/elevation/region forcing, stale road-authority clearing, collision/overlay/shadow/navigation refresh, debug authority reporting, and Ash-Bell pre-instantiation reservation of its canonical `35x27` footprint.
 - Validated: `procgen_authored_scene_authority_smoke.gd` passes against a real generated visible wall/runtime body; `procgen_placeholder_roads_smoke.gd` passes; `elevation_map_smoke.gd` passes; full headless boot passes and logs Ash-Bell placement followed by navigation rebuild; focused `git diff --check` passes.
-- Deferred: Generic special-room insertion should call the new API. Existing `terrain_builder_smoke.gd` still reports its pre-existing missing TileSet source `32`. Existing `ash_bell_scene_smoke.gd` currently times out after calling the now-missing `ForlornRitualantSite.take_clapper()` method from unrelated current-worktree Ash-Bell changes.
+- Deferred: Generic special-room insertion should call the new API. The previously noted `terrain_builder_smoke.gd` missing TileSet source `32` issue is now resolved. Existing `ash_bell_scene_smoke.gd` currently times out after calling the now-missing `ForlornRitualantSite.take_clapper()` method from unrelated current-worktree Ash-Bell changes.
 
 ## Next Steps
 

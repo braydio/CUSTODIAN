@@ -170,6 +170,13 @@ godot --headless --script res://tools/validation/procgen_terrain_required_cells_
 
 The first command validates TerrainBuilder determinism and metadata behavior. The second generates representative
 candidate-mode maps and verifies required-cell counts stay bounded while terrain connectivity remains enforced.
+For a batch run that captures per-step exit codes while teeing a timestamped log, use:
+
+```bash
+custodian/tools/validation/run_procgen_validation_suite.sh
+```
+
+This wrapper fails the shell command if any included smoke fails, so assertion or script failures are not hidden by log piping.
 
 For foliage extraction / deferred spawn changes:
 

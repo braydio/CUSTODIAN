@@ -58,6 +58,16 @@ const ANIMATION_SPECS := {
 		"fps": 8.0,
 		"loop": false,
 	},
+	"death_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__death_01__s__5__96.png",
+		"fps": 10.0,
+		"loop": false,
+	},
+	"flinch_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__flinch_01__s__6__96.png",
+		"fps": 12.0,
+		"loop": false,
+	},
 }
 
 const FX_ANIMATION_SPECS := {

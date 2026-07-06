@@ -34,6 +34,8 @@ const REQUIRED_TERRAIN_SOURCE_IDS := {
 	59: "mountain_wall_impassable_32",
 }
 
+var _failed := false
+
 
 func _init() -> void:
 	var map_rect := Rect2i(Vector2i.ZERO, Vector2i(48, 36))
@@ -59,14 +61,14 @@ func _init() -> void:
 
 	var first := _build_with_seed(map_rect, 424242, context)
 	var second := _build_with_seed(map_rect, 424242, context)
-	assert(_signature(first) == _signature(second))
-	assert(bool(first.get("connectivity", {}).get("ok", false)))
+	_require(_signature(first) == _signature(second), "TerrainBuilder should be deterministic for the same seed and context.")
+	_require(bool(first.get("connectivity", {}).get("ok", false)), "Primary terrain result should be connected.")
 	var summary: Dictionary = first.get("debug_summary", {})
-	assert(int(summary.get("required_cell_count", 0)) == required_cells.size())
-	assert(int(summary.get("missing_required_count", -1)) == 0)
-	assert(String(summary.get("generation_mode", "")) == "FINAL_VISUAL")
-	assert(_has_accessible_platform(first))
-	assert(_no_invalid_spawn_cells(first))
+	_require(int(summary.get("required_cell_count", 0)) == required_cells.size(), "Required-cell count should match smoke input.")
+	_require(int(summary.get("missing_required_count", -1)) == 0, "No required cells should be missing in the primary terrain result.")
+	_require(String(summary.get("generation_mode", "")) == "FINAL_VISUAL", "TerrainBuilder smoke should run final visual mode.")
+	_require(_has_accessible_platform(first), "Elevated terrain should remain accessible when generated.")
+	_require(_no_invalid_spawn_cells(first), "Blocked/drop/ledge terrain cells should not be valid spawn cells.")
 	_assert_baseline_visual_noop()
 	_assert_disconnected_baseline_is_rescued_before_features()
 	_test_directional_ramp_validation()
@@ -74,8 +76,13 @@ func _init() -> void:
 	var elevation_map := ElevationMapScript.new()
 	elevation_map.apply_build_result(first)
 	for cell in first.get("blocked_cells", {}).keys():
-		assert(not elevation_map.is_valid_spawn_cell(cell))
+		_require(not elevation_map.is_valid_spawn_cell(cell), "ElevationMap should reject blocked spawn cell %s." % [str(cell)])
 	_assert_tileset_sources()
+
+	if _failed:
+		print("[TerrainBuilderSmoke] failed")
+		quit(1)
+		return
 
 	print("[TerrainBuilderSmoke] ok signature_hash=%s summary=%s" % [str(_signature(first).hash()), str(first.get("debug_summary", {}))])
 	quit(0)
@@ -102,10 +109,10 @@ func _assert_baseline_visual_noop() -> void:
 		"enable_mountain_boundary": false,
 	})
 	var tile_by_cell: Dictionary = result.get("tile_by_cell", {})
-	assert(String(tile_by_cell.get(floor_cell, "__missing__")) == TerrainBuilderScript.NO_VISUAL_TILE)
-	assert(String(tile_by_cell.get(blocked_cell, "__missing__")) == TerrainBuilderScript.NO_VISUAL_TILE)
-	assert(String(result.get("traversal_by_cell", {}).get(floor_cell, "")) == TerrainBuilderScript.TRAVERSAL_WALKABLE)
-	assert(String(result.get("traversal_by_cell", {}).get(blocked_cell, "")) == TerrainBuilderScript.TRAVERSAL_BLOCKED)
+	_require(String(tile_by_cell.get(floor_cell, "__missing__")) == TerrainBuilderScript.NO_VISUAL_TILE, "Baseline floor should not receive a visual terrain tile.")
+	_require(String(tile_by_cell.get(blocked_cell, "__missing__")) == TerrainBuilderScript.NO_VISUAL_TILE, "Baseline blocked cell should not receive a visual terrain tile.")
+	_require(String(result.get("traversal_by_cell", {}).get(floor_cell, "")) == TerrainBuilderScript.TRAVERSAL_WALKABLE, "Baseline floor traversal should stay walkable.")
+	_require(String(result.get("traversal_by_cell", {}).get(blocked_cell, "")) == TerrainBuilderScript.TRAVERSAL_BLOCKED, "Baseline blocked traversal should stay blocked.")
 
 
 func _assert_disconnected_baseline_is_rescued_before_features() -> void:
@@ -138,10 +145,10 @@ func _assert_disconnected_baseline_is_rescued_before_features() -> void:
 		"enable_mountain_boundary": false,
 	})
 	var summary: Dictionary = result.get("debug_summary", {})
-	assert(bool(summary.get("connectivity_ok", false)), "Disconnected baseline should be rescued before terrain features.")
-	assert(int(summary.get("baseline_rescue_carved_cells", 0)) > 0, "Expected baseline rescue to be counted separately.")
-	assert(int(summary.get("rescue_carved_cells", 0)) >= int(summary.get("baseline_rescue_carved_cells", 0)))
-	assert(int(summary.get("regions", 0)) > 0, "Feature regions should survive after baseline connectivity rescue.")
+	_require(bool(summary.get("connectivity_ok", false)), "Disconnected baseline should be rescued before terrain features.")
+	_require(int(summary.get("baseline_rescue_carved_cells", 0)) > 0, "Expected baseline rescue to be counted separately.")
+	_require(int(summary.get("rescue_carved_cells", 0)) >= int(summary.get("baseline_rescue_carved_cells", 0)), "Total rescue should include baseline rescue.")
+	_require(int(summary.get("regions", 0)) > 0, "Feature regions should survive after baseline connectivity rescue.")
 
 
 func _test_directional_ramp_validation() -> void:
@@ -162,13 +169,13 @@ func _test_directional_ramp_validation() -> void:
 		},
 	}
 
-	assert(builder._can_move_between_in_result(valid_result, ground, ramp), "Destination ramp should allow approach from its ramp-facing side.")
+	_require(builder._can_move_between_in_result(valid_result, ground, ramp), "Destination ramp should allow approach from its ramp-facing side.")
 
 	var invalid_result := valid_result.duplicate(true)
 	invalid_result["ramp_dir_by_cell"] = {
 		ramp: TerrainBuilderScript.DIRECTION_EAST,
 	}
-	assert(not builder._can_move_between_in_result(invalid_result, ground, ramp), "Destination ramp should reject approach from the wrong side.")
+	_require(not builder._can_move_between_in_result(invalid_result, ground, ramp), "Destination ramp should reject approach from the wrong side.")
 
 	var stair_result := valid_result.duplicate(true)
 	stair_result["traversal_by_cell"] = {
@@ -176,7 +183,7 @@ func _test_directional_ramp_validation() -> void:
 		ramp: TerrainBuilderScript.TRAVERSAL_STAIR,
 	}
 	stair_result["ramp_dir_by_cell"] = {}
-	assert(builder._can_move_between_in_result(stair_result, ground, ramp), "Stair should allow one-level transition without directional ramp rule.")
+	_require(builder._can_move_between_in_result(stair_result, ground, ramp), "Stair should allow one-level transition without directional ramp rule.")
 
 
 func _signature(result: Dictionary) -> String:
@@ -231,9 +238,24 @@ func _no_invalid_spawn_cells(result: Dictionary) -> bool:
 
 func _assert_tileset_sources() -> void:
 	var tileset := load(TILESET_PATH) as TileSet
-	assert(tileset != null)
+	_require(tileset != null, "Could not load active procgen TileSet at %s." % [TILESET_PATH])
+	if tileset == null:
+		return
 	for source_id in REQUIRED_TERRAIN_SOURCE_IDS.keys():
+		var label := String(REQUIRED_TERRAIN_SOURCE_IDS[source_id])
+		if not tileset.has_source(int(source_id)):
+			_require(false, "Missing terrain TileSet source id %d for %s." % [int(source_id), label])
+			continue
 		var source := tileset.get_source(int(source_id)) as TileSetAtlasSource
-		assert(source != null)
-		assert(source.has_tile(Vector2i.ZERO))
-		assert(source.texture != null)
+		_require(source != null, "Terrain TileSet source id %d for %s is not an atlas source." % [int(source_id), label])
+		if source == null:
+			continue
+		_require(source.has_tile(Vector2i.ZERO), "Terrain TileSet source id %d for %s has no tile at (0, 0)." % [int(source_id), label])
+		_require(source.texture != null, "Terrain TileSet source id %d for %s has no texture." % [int(source_id), label])
+
+
+func _require(condition: bool, message: String) -> void:
+	if condition:
+		return
+	_failed = true
+	push_error("[TerrainBuilderSmoke] " + message)

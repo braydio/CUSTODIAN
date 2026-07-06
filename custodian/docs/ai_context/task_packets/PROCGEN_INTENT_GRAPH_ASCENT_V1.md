@@ -84,7 +84,7 @@ The existing generator remains available as filler/detail generation, not the pr
 - Road stamping/enforcement now refuses impassable ascent-field blockers, terrain blocked/drop/ledge cells, mountain-wall authority, and compound connector wall rails instead of clearing them; `procgen_placeholder_roads_smoke.gd` asserts road cells do not overlap this blocker authority.
 - Elevation traversal query API is live; actor/enemy pathfinding enforcement is deferred.
 - `procgen_ascent_style_smoke.gd` exports a debug image to `user://procgen_ascent_field_debug.png`.
-- `terrain_builder_smoke.gd` exits 0 and prints its ok summary, but still logs the existing TileSet source id 32 assertion/error during its source audit.
+- The previous `terrain_builder_smoke.gd` TileSet source id 32 audit error has been resolved by restoring terrain source registrations.
 - Headless Godot checks still report existing object/resource leak warnings at process exit.
 - Full headless boot exits 0; current contract generation logs a fallback-to-best-available procgen map warning after candidate attempts.
 
@@ -96,6 +96,6 @@ Validation run:
 - `godot --headless --script res://tools/validation/procgen_placeholder_roads_smoke.gd` — PASS after late road-component repair and impassable-overlap assertion.
 - `godot --headless --script res://tools/validation/faction_story_sites_smoke.gd` — PASS.
 - `godot --headless --script res://tools/validation/procgen_authored_scene_authority_smoke.gd` — PASS with authored-footprint foliage rejection assertion.
-- `godot --headless --script res://tools/validation/terrain_builder_smoke.gd` — exits 0 with ok summary; logs existing TileSet source id audit error.
+- `godot --headless --script res://tools/validation/terrain_builder_smoke.gd` — historical run exited 0 with ok summary; the later TileSet source id audit error is now resolved.
 - `godot --headless --script res://tools/validation/elevation_map_smoke.gd` — PASS.
 - `godot --headless --path . --quit` — PASS with existing warnings.

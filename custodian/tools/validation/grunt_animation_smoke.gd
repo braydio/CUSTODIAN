@@ -13,6 +13,8 @@ const REQUIRED_BODY_ANIMATIONS := {
 	"stagger_s": 8,
 	"crit_s": 8,
 	"crit_recovery_s": 5,
+	"death_s": 12,
+	"flinch_s": 6,
 }
 
 const REQUIRED_FX_ANIMATIONS := {

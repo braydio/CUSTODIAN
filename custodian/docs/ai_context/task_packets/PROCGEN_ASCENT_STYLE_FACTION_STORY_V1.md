@@ -64,7 +64,7 @@ Procgen deterministically exports gradual world-style progression, a connectivit
 
 - Implemented: distance profile, gradual ascent field/route, faction sites, runtime ambient anchors, story-room candidates/markers, enemy ambient state, and level-data export.
 - Validated: new focused smokes pass; elevation and enemy-behavior smokes pass; full headless boot passes with ascent active and connectivity intact.
-- Deferred: full story-room geometry, production marker art, and actor elevation path costs. Existing `terrain_builder_smoke.gd` still reports its pre-existing missing TileSet source-id 32 assertion while completing its terrain checks.
+- Deferred: full story-room geometry, production marker art, and actor elevation path costs. The previously noted `terrain_builder_smoke.gd` TileSet source-id 32 assertion was resolved by restoring the terrain TileSet source registrations.
 
 ## Next Steps
 

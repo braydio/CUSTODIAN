@@ -28,6 +28,34 @@
 [ext_resource type="Texture2D" uid="uid://hs3vtx31aldc" path="res://content/tiles/interiors/runtime/doorway_military_vertical_32.png" id="29_interior_doorway_military_vertical_32"]
 [ext_resource type="Texture2D" uid="uid://dic0d6rntlrei" path="res://content/tiles/interiors/runtime/wall_military_horizontal_32.png" id="30_interior_wall_military_horizontal_32"]
 [ext_resource type="Texture2D" uid="uid://bb46damyed3ml" path="res://content/tiles/interiors/runtime/wall_military_vertical_32.png" id="31_interior_wall_military_vertical_32"]
+[ext_resource type="Texture2D" uid="uid://b17m541huknsh" path="res://content/tiles/elevation/industrial/ground_flat_32.png" id="32_terrain_ground_flat"]
+[ext_resource type="Texture2D" uid="uid://cdn03el5v5acl" path="res://content/tiles/elevation/industrial/elevated_floor_32.png" id="33_terrain_elevated_floor"]
+[ext_resource type="Texture2D" uid="uid://byrwvva4wo7bi" path="res://content/tiles/elevation/industrial/elevation_edge_north_32.png" id="34_terrain_elevation_edge_north"]
+[ext_resource type="Texture2D" uid="uid://0ofyg8kninss" path="res://content/tiles/elevation/industrial/elevation_edge_south_32.png" id="35_terrain_elevation_edge_south"]
+[ext_resource type="Texture2D" uid="uid://pkw1fy50x6tw" path="res://content/tiles/elevation/industrial/elevation_edge_east_32.png" id="36_terrain_elevation_edge_east"]
+[ext_resource type="Texture2D" uid="uid://dbgubcfni5w3y" path="res://content/tiles/elevation/industrial/elevation_edge_west_32.png" id="37_terrain_elevation_edge_west"]
+[ext_resource type="Texture2D" uid="uid://d0qgdbfu6bb4e" path="res://content/tiles/elevation/industrial/ramp_north_32.png" id="38_terrain_ramp_north"]
+[ext_resource type="Texture2D" uid="uid://d1mbmxndh1d1a" path="res://content/tiles/elevation/industrial/ramp_south_32.png" id="39_terrain_ramp_south"]
+[ext_resource type="Texture2D" uid="uid://d30tvna257hyc" path="res://content/tiles/elevation/industrial/ramp_east_32.png" id="40_terrain_ramp_east"]
+[ext_resource type="Texture2D" uid="uid://gxhlnrrl2ga7" path="res://content/tiles/elevation/industrial/ramp_west_32.png" id="41_terrain_ramp_west"]
+[ext_resource type="Texture2D" uid="uid://dvx3aj0d0e64a" path="res://content/tiles/elevation/industrial/cliff_shadow_32.png" id="42_terrain_cliff_shadow"]
+[ext_resource type="Texture2D" uid="uid://b2w5d4gwkhr22" path="res://content/tiles/elevation/industrial/stair_metal_32.png" id="43_terrain_stair_metal"]
+[ext_resource type="Texture2D" uid="uid://b22btwwb5c532" path="res://content/tiles/mountain_cliffs/rock_ground_flat_32.png" id="44_terrain_rock_ground_flat"]
+[ext_resource type="Texture2D" uid="uid://br8pa3kgoducl" path="res://content/tiles/mountain_cliffs/rock_plateau_raised_32.png" id="45_terrain_rock_plateau_raised"]
+[ext_resource type="Texture2D" uid="uid://cgsxkwue1i8qe" path="res://content/tiles/mountain_cliffs/cliff_edge_north_32.png" id="46_terrain_cliff_edge_north"]
+[ext_resource type="Texture2D" uid="uid://cpwcy33aptc7r" path="res://content/tiles/mountain_cliffs/cliff_edge_south_32.png" id="47_terrain_cliff_edge_south"]
+[ext_resource type="Texture2D" uid="uid://348455pcwoxj" path="res://content/tiles/mountain_cliffs/cliff_edge_east_32.png" id="48_terrain_cliff_edge_east"]
+[ext_resource type="Texture2D" uid="uid://harkf5hy3lyk" path="res://content/tiles/mountain_cliffs/cliff_edge_west_32.png" id="49_terrain_cliff_edge_west"]
+[ext_resource type="Texture2D" uid="uid://d2eabmm38l8m5" path="res://content/tiles/mountain_cliffs/cliff_outer_nw_32.png" id="50_terrain_cliff_outer_nw"]
+[ext_resource type="Texture2D" uid="uid://51yevfvn7nik" path="res://content/tiles/mountain_cliffs/cliff_outer_ne_32.png" id="51_terrain_cliff_outer_ne"]
+[ext_resource type="Texture2D" uid="uid://4p72fc801leo" path="res://content/tiles/mountain_cliffs/cliff_outer_sw_32.png" id="52_terrain_cliff_outer_sw"]
+[ext_resource type="Texture2D" uid="uid://cwkrnwcc6s1aj" path="res://content/tiles/mountain_cliffs/cliff_outer_se_32.png" id="53_terrain_cliff_outer_se"]
+[ext_resource type="Texture2D" uid="uid://c6cewfu0crsl1" path="res://content/tiles/mountain_cliffs/cliff_inner_nw_32.png" id="54_terrain_cliff_inner_nw"]
+[ext_resource type="Texture2D" uid="uid://b6ayon8e7d8eq" path="res://content/tiles/mountain_cliffs/cliff_inner_ne_32.png" id="55_terrain_cliff_inner_ne"]
+[ext_resource type="Texture2D" uid="uid://6ftw38rykrof" path="res://content/tiles/mountain_cliffs/cliff_inner_sw_32.png" id="56_terrain_cliff_inner_sw"]
+[ext_resource type="Texture2D" uid="uid://bco25ygbemthp" path="res://content/tiles/mountain_cliffs/cliff_inner_se_32.png" id="57_terrain_cliff_inner_se"]
+[ext_resource type="Texture2D" uid="uid://cliwxmu2nu8u1" path="res://content/tiles/mountain_cliffs/cliff_chasm_drop_32.png" id="58_terrain_cliff_chasm_drop"]
+[ext_resource type="Texture2D" uid="uid://dp628vtsbmwso" path="res://content/tiles/mountain_cliffs/mountain_wall_impassable_32.png" id="59_terrain_mountain_wall_impassable"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_floor"]
 texture = ExtResource("1_floor")
@@ -483,8 +511,98 @@ texture = ExtResource("31_interior_wall_military_vertical_32")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_ground_flat"]
+texture = ExtResource("32_terrain_ground_flat")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_elevated_floor"]
+texture = ExtResource("33_terrain_elevated_floor")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_elevation_edge_north"]
+texture = ExtResource("34_terrain_elevation_edge_north")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_elevation_edge_south"]
+texture = ExtResource("35_terrain_elevation_edge_south")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_elevation_edge_east"]
+texture = ExtResource("36_terrain_elevation_edge_east")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_elevation_edge_west"]
+texture = ExtResource("37_terrain_elevation_edge_west")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_ramp_north"]
+texture = ExtResource("38_terrain_ramp_north")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_ramp_south"]
+texture = ExtResource("39_terrain_ramp_south")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hjl3i"]
 texture = ExtResource("6_h74cr")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_ramp_east"]
+texture = ExtResource("40_terrain_ramp_east")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_ramp_west"]
+texture = ExtResource("41_terrain_ramp_west")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_shadow"]
+texture = ExtResource("42_terrain_cliff_shadow")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_stair_metal"]
+texture = ExtResource("43_terrain_stair_metal")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_rock_ground_flat"]
+texture = ExtResource("44_terrain_rock_ground_flat")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_rock_plateau_raised"]
+texture = ExtResource("45_terrain_rock_plateau_raised")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_edge_north"]
+texture = ExtResource("46_terrain_cliff_edge_north")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_edge_south"]
+texture = ExtResource("47_terrain_cliff_edge_south")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_edge_east"]
+texture = ExtResource("48_terrain_cliff_edge_east")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_edge_west"]
+texture = ExtResource("49_terrain_cliff_edge_west")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yhthm"]
 texture = ExtResource("7_360cd")
@@ -519,6 +637,56 @@ texture = ExtResource("7_360cd")
 17:13/0 = 0
 17:12/0 = 0
 16:12/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_outer_nw"]
+texture = ExtResource("50_terrain_cliff_outer_nw")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_outer_ne"]
+texture = ExtResource("51_terrain_cliff_outer_ne")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_outer_sw"]
+texture = ExtResource("52_terrain_cliff_outer_sw")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_outer_se"]
+texture = ExtResource("53_terrain_cliff_outer_se")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_inner_nw"]
+texture = ExtResource("54_terrain_cliff_inner_nw")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_inner_ne"]
+texture = ExtResource("55_terrain_cliff_inner_ne")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_inner_sw"]
+texture = ExtResource("56_terrain_cliff_inner_sw")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_inner_se"]
+texture = ExtResource("57_terrain_cliff_inner_se")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_cliff_chasm_drop"]
+texture = ExtResource("58_terrain_cliff_chasm_drop")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_terrain_mountain_wall_impassable"]
+texture = ExtResource("59_terrain_mountain_wall_impassable")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_65d2a"]
 texture = ExtResource("8_j1o54")
@@ -680,3 +848,31 @@ sources/28 = SubResource("TileSetAtlasSource_interior_doorway_military_horizonta
 sources/29 = SubResource("TileSetAtlasSource_interior_doorway_military_vertical_32")
 sources/30 = SubResource("TileSetAtlasSource_interior_wall_military_horizontal_32")
 sources/31 = SubResource("TileSetAtlasSource_interior_wall_military_vertical_32")
+sources/32 = SubResource("TileSetAtlasSource_terrain_ground_flat")
+sources/33 = SubResource("TileSetAtlasSource_terrain_elevated_floor")
+sources/34 = SubResource("TileSetAtlasSource_terrain_elevation_edge_north")
+sources/35 = SubResource("TileSetAtlasSource_terrain_elevation_edge_south")
+sources/36 = SubResource("TileSetAtlasSource_terrain_elevation_edge_east")
+sources/37 = SubResource("TileSetAtlasSource_terrain_elevation_edge_west")
+sources/38 = SubResource("TileSetAtlasSource_terrain_ramp_north")
+sources/39 = SubResource("TileSetAtlasSource_terrain_ramp_south")
+sources/40 = SubResource("TileSetAtlasSource_terrain_ramp_east")
+sources/41 = SubResource("TileSetAtlasSource_terrain_ramp_west")
+sources/42 = SubResource("TileSetAtlasSource_terrain_cliff_shadow")
+sources/43 = SubResource("TileSetAtlasSource_terrain_stair_metal")
+sources/44 = SubResource("TileSetAtlasSource_terrain_rock_ground_flat")
+sources/45 = SubResource("TileSetAtlasSource_terrain_rock_plateau_raised")
+sources/46 = SubResource("TileSetAtlasSource_terrain_cliff_edge_north")
+sources/47 = SubResource("TileSetAtlasSource_terrain_cliff_edge_south")
+sources/48 = SubResource("TileSetAtlasSource_terrain_cliff_edge_east")
+sources/49 = SubResource("TileSetAtlasSource_terrain_cliff_edge_west")
+sources/50 = SubResource("TileSetAtlasSource_terrain_cliff_outer_nw")
+sources/51 = SubResource("TileSetAtlasSource_terrain_cliff_outer_ne")
+sources/52 = SubResource("TileSetAtlasSource_terrain_cliff_outer_sw")
+sources/53 = SubResource("TileSetAtlasSource_terrain_cliff_outer_se")
+sources/54 = SubResource("TileSetAtlasSource_terrain_cliff_inner_nw")
+sources/55 = SubResource("TileSetAtlasSource_terrain_cliff_inner_ne")
+sources/56 = SubResource("TileSetAtlasSource_terrain_cliff_inner_sw")
+sources/57 = SubResource("TileSetAtlasSource_terrain_cliff_inner_se")
+sources/58 = SubResource("TileSetAtlasSource_terrain_cliff_chasm_drop")
+sources/59 = SubResource("TileSetAtlasSource_terrain_mountain_wall_impassable")
