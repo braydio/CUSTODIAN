@@ -5,7 +5,7 @@
 **Status:** active  
 **Last Updated:** 2026-05-21  
 **Supersedes:** `design/GAME_NOTES.md`, `design/GAME_NOTES_DRAFT.md` as canonical authority  
-**Related Docs:** `design/03_content/LATTICE_DOCTRINE.md`, `design/03_content/PROCEDURAL_LORE_GENERATION.md`, `design/03_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/03_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/02_features/arrn/implementation.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
+**Related Docs:** `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/03_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/03_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/02_features/arrn/implementation.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
 
 ---
 

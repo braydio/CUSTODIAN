@@ -4,7 +4,7 @@
 **Created:** 2026-04-08  
 **Status:** active  
 **Last Updated:** 2026-04-08  
-**Parent Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`  
+**Parent Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`  
 **Primary Downstream Consumers:** `design/03_architecture/REGION_GENERATION_SYSTEM.md`, `design/02_features/pixel_planet/PIXEL_PLANET_CONTRACT_SYSTEM.md`, `design/02_features/procgen/AUTHORED_TILED_ROOM_PIPELINE.md`, `design/02_features/enemy_director/implementation.md`, `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`
 
 ---

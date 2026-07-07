@@ -318,9 +318,12 @@ var _last_damage_reaction_direction := Vector2.DOWN
 var _production_body_frames: SpriteFrames = null
 var _knight_test_frames: SpriteFrames = null
 var _knight_test_skin_active: bool = false
+var _modular_lower_action_animation: StringName = &""
 var _modular_upper_action_animation: StringName = &""
+var _modular_upper_fx_action_animation: StringName = &""
 var _modular_sidearm_action_animation: StringName = &""
 var _modular_sidearm_fx_animation: StringName = &""
+var _warned_missing_modular_fast_attack_fx: bool = false
 var _sidearm_draw_active: bool = false
 var _sidearm_action_phase: StringName = &"holstered"
 var _sidearm_action_phase_started: bool = false
@@ -1166,6 +1169,8 @@ func _sync_modular_action_domains() -> bool:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
+	if _sync_modular_fast_attack_phase(&"strike"):
+		return true
 	var lower_base := _get_modular_lower_body_motion_base()
 	var lower_direction := movement_direction if velocity.length() > 0.01 else visual_idle_direction
 	if not _sync_modular_lower_body_layer(lower_base, lower_direction, 1.0):
@@ -1173,6 +1178,88 @@ func _sync_modular_action_domains() -> bool:
 	if not _sync_modular_upper_body_layer("unarmed_fast_strike_upper", _melee_forward, _get_melee_animation_speed_scale(_melee_attack_key), true):
 		return false
 
+	animated_sprite.visible = false
+	return true
+
+
+func _has_modular_fast_attack_layer(layer_sprite: AnimatedSprite2D, base_animation: String, direction: Vector2) -> bool:
+	if layer_sprite == null or layer_sprite.sprite_frames == null:
+		return false
+	var resolved := AnimationResolver.resolve(base_animation, direction, layer_sprite)
+	return _has_playable_sprite_animation(layer_sprite.sprite_frames, resolved)
+
+
+func _sync_modular_fast_attack_layer(
+	layer_sprite: AnimatedSprite2D,
+	base_animation: String,
+	direction: Vector2,
+	speed_scale: float,
+	restart_once: bool
+) -> bool:
+	if layer_sprite == null or layer_sprite.sprite_frames == null:
+		return false
+	var resolved := AnimationResolver.resolve(base_animation, direction, layer_sprite)
+	if not _has_playable_sprite_animation(layer_sprite.sprite_frames, resolved):
+		return false
+	layer_sprite.visible = true
+	layer_sprite.flip_h = false
+	layer_sprite.speed_scale = speed_scale
+	if restart_once:
+		if layer_sprite.animation != resolved:
+			layer_sprite.play(resolved)
+	else:
+		if layer_sprite.animation != resolved or not layer_sprite.is_playing():
+			layer_sprite.play(resolved)
+	return true
+
+
+func _sync_modular_fast_attack_phase(phase: StringName) -> bool:
+	if not modular_locomotion_layers_enabled:
+		return false
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+		return false
+	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
+		return false
+	var lower_base := ""
+	var upper_base := ""
+	var fx_base := ""
+	match phase:
+		&"windup":
+			lower_base = "unarmed_fast_windup_lower"
+			upper_base = "unarmed_fast_windup_upper"
+		&"strike":
+			lower_base = "unarmed_fast_strike_lower"
+			upper_base = "unarmed_fast_strike_upper"
+			fx_base = "unarmed_fast_strike_fx_modular"
+		&"recovery":
+			lower_base = "unarmed_fast_recovery_lower"
+			upper_base = "unarmed_fast_recovery_upper"
+		_:
+			return false
+	if not _has_modular_fast_attack_layer(modular_lower_body_sprite, lower_base, _melee_forward):
+		return false
+	if not _has_modular_fast_attack_layer(modular_upper_body_sprite, upper_base, _melee_forward):
+		return false
+	var speed := _get_melee_animation_speed_scale(_melee_attack_key)
+	var restart_once := phase == &"windup" or phase == &"strike" or phase == &"recovery"
+	if not _sync_modular_fast_attack_layer(modular_lower_body_sprite, lower_base, _melee_forward, speed, restart_once):
+		return false
+	if not _sync_modular_fast_attack_layer(modular_upper_body_sprite, upper_base, _melee_forward, speed, restart_once):
+		return false
+	_modular_lower_action_animation = AnimationResolver.resolve(lower_base, _melee_forward, modular_lower_body_sprite)
+	_modular_upper_action_animation = AnimationResolver.resolve(upper_base, _melee_forward, modular_upper_body_sprite)
+	_modular_upper_fx_action_animation = &""
+	if not fx_base.is_empty():
+		if _sync_modular_fast_attack_layer(modular_upper_fx_sprite, fx_base, _melee_forward, speed, restart_once):
+			_modular_upper_fx_action_animation = AnimationResolver.resolve(fx_base, _melee_forward, modular_upper_fx_sprite)
+		else:
+			if modular_upper_fx_sprite:
+				modular_upper_fx_sprite.visible = false
+			if not _warned_missing_modular_fast_attack_fx:
+				_warned_missing_modular_fast_attack_fx = true
+				push_warning("Missing modular unarmed fast strike upper_fx for direction; body layers will play without FX.")
+	elif modular_upper_fx_sprite:
+		modular_upper_fx_sprite.visible = false
 	animated_sprite.visible = false
 	return true
 
@@ -1623,7 +1710,9 @@ func _sync_modular_upper_body_layer(base_animation: String, direction: Vector2, 
 
 
 func _hide_modular_locomotion_layers() -> void:
+	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
+	_modular_upper_fx_action_animation = &""
 	_modular_sidearm_action_animation = &""
 	_modular_sidearm_fx_animation = &""
 	if animated_sprite:
@@ -1642,6 +1731,21 @@ func _clear_modular_upper_action_layer() -> void:
 	_modular_upper_action_animation = &""
 	if modular_upper_body_sprite:
 		modular_upper_body_sprite.visible = false
+
+
+func _clear_modular_fast_attack_layers() -> void:
+	_modular_lower_action_animation = &""
+	_modular_upper_action_animation = &""
+	_modular_upper_fx_action_animation = &""
+	if modular_lower_body_sprite:
+		modular_lower_body_sprite.visible = false
+		modular_lower_body_sprite.stop()
+	if modular_upper_body_sprite:
+		modular_upper_body_sprite.visible = false
+		modular_upper_body_sprite.stop()
+	if modular_upper_fx_sprite:
+		modular_upper_fx_sprite.visible = false
+		modular_upper_fx_sprite.stop()
 
 
 func _get_direction_suffix(dir: Vector2) -> String:
@@ -2359,7 +2463,9 @@ func _clear_attack_buffer() -> void:
 func _start_fast_attack() -> void:
 	_active_attack_profile = get_current_combat_profile()
 	_melee_active = true
+	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
+	_modular_upper_fx_action_animation = &""
 	_melee_heavy_anticipating = false
 	_melee_fast_windup = false
 	_melee_attack_kind = "fast"
@@ -2418,7 +2524,10 @@ func _try_start_fast_attack_windup() -> bool:
 	animated_sprite.flip_h = _is_facing_left(_melee_forward)
 	animated_sprite.speed_scale = _get_melee_animation_speed_scale(_melee_attack_key)
 	animated_sprite.play(windup_anim)
-	_clear_modular_upper_action_layer()
+	if _sync_modular_fast_attack_phase(&"windup"):
+		animated_sprite.visible = false
+	else:
+		_clear_modular_fast_attack_layers()
 	_lock_melee_cooldown(0.60)
 	return true
 
@@ -3199,6 +3308,18 @@ func _sync_melee_overlay_frames() -> void:
 			frame_count = modular_upper_body_sprite.sprite_frames.get_frame_count(modular_upper_body_sprite.animation)
 		if frame_count > 0:
 			modular_upper_body_sprite.frame = mini(animated_sprite.frame, frame_count - 1)
+	if modular_lower_body_sprite and modular_lower_body_sprite.visible and not _modular_lower_action_animation.is_empty():
+		var lower_frame_count: int = 0
+		if modular_lower_body_sprite.sprite_frames:
+			lower_frame_count = modular_lower_body_sprite.sprite_frames.get_frame_count(modular_lower_body_sprite.animation)
+		if lower_frame_count > 0:
+			modular_lower_body_sprite.frame = mini(animated_sprite.frame, lower_frame_count - 1)
+	if modular_upper_fx_sprite and modular_upper_fx_sprite.visible and not _modular_upper_fx_action_animation.is_empty():
+		var fx_frame_count: int = 0
+		if modular_upper_fx_sprite.sprite_frames:
+			fx_frame_count = modular_upper_fx_sprite.sprite_frames.get_frame_count(modular_upper_fx_sprite.animation)
+		if fx_frame_count > 0:
+			modular_upper_fx_sprite.frame = mini(animated_sprite.frame, fx_frame_count - 1)
 	if primary_weapon_sprite and primary_weapon_sprite.visible and _is_authored_melee_body_stance_active():
 		primary_weapon_sprite.flip_h = animated_sprite.flip_h
 		primary_weapon_sprite.frame = animated_sprite.frame
@@ -3215,6 +3336,8 @@ func _reset_melee_overlay_visuals() -> void:
 		melee_fx_overlay_sprite.stop()
 		melee_fx_overlay_sprite.frame = 0
 		melee_fx_overlay_sprite.speed_scale = 1.0
+	if not _melee_active and not _melee_fast_windup and not _melee_recovery_active:
+		_clear_modular_fast_attack_layers()
 
 
 func _play_named_melee_weapon_overlay(animation_name: StringName) -> bool:
@@ -3242,7 +3365,6 @@ func _play_named_melee_fx_overlay(animation_name: StringName) -> bool:
 func _play_fast_attack_recovery() -> void:
 	if animated_sprite == null or not animated_sprite.sprite_frames:
 		return
-	_clear_modular_upper_action_layer()
 	if _is_attack_profile_unarmed(_active_attack_profile):
 		var recovery_animation := AnimationResolver.resolve("unarmed_attack_fast_recovery", _melee_forward, animated_sprite)
 		if _melee_forward.x < -0.05 and animated_sprite.sprite_frames.has_animation("unarmed_attack_fast_recovery_left"):
@@ -3250,6 +3372,10 @@ func _play_fast_attack_recovery() -> void:
 		if animated_sprite.sprite_frames.has_animation(recovery_animation):
 			animated_sprite.flip_h = _is_facing_left(_melee_forward) and recovery_animation != &"unarmed_attack_fast_recovery_left"
 			animated_sprite.play(recovery_animation)
+		if _sync_modular_fast_attack_phase(&"recovery"):
+			animated_sprite.visible = false
+		else:
+			_clear_modular_fast_attack_layers()
 		if melee_weapon_overlay_sprite:
 			melee_weapon_overlay_sprite.visible = false
 		var recovery_fx := AnimationResolver.resolve("unarmed_attack_fast_recovery_fx", _melee_forward, melee_fx_overlay_sprite)

@@ -83,7 +83,8 @@ The Operator keeps shared movement/action state ownership but can play modular-d
 
 - Implemented: created `content/sprites/operator/runtime/actions/unarmed/fast_attack/` with generated body/overlay strips; wired `unarmed_fast_strike*` body and FX animations through `update_operator_curated_resources.gd`; remapped Fists/unarmed fast intents to `unarmed_fast_strike`; adjusted the 3-frame hit window to frame `2`; tracked missing production modular lower-body and windup FX art in both required-asset trackers.
 - Validated: generated sheet dimensions checked with Pillow; `REQUIRED_ASSETS.md` copies verified identical; `godot --headless --path custodian --import --quit`; `godot --headless --path custodian --script res://tools/pipelines/update_operator_curated_resources.gd`; targeted `rg` scan confirmed new animation names in runtime/body and overlay `SpriteFrames`; `godot --headless --path custodian --quit`; `content_asset_audit.py --limit 0`.
-- Deferred: full live modular layered rendering, separate windup/strike action state, authored fast strike north/south lower-body source sheets, authored fast windup FX sheets, and in-editor/playtest visual timing review.
+- Originally deferred in this slice: live layered rendering beyond baked strike playback, broader phase separation, windup FX coverage, and in-editor/playtest visual timing review.
+- Supersession note, 2026-07-06: live modular layered rendering is now wired for unarmed fast windup, strike, and recovery body layers. Authored N/S lower-body strike sheets now exist and are registered. The remaining fast-windup FX tracker entry is narrowed to the optional missing south sheet because windup FX is not part of the current runtime fast-attack phase contract.
 
 ## Next Steps
 

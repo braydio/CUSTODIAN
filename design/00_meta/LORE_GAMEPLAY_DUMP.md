@@ -1,7 +1,7 @@
-# Archived — Content migrated to `design/03_content/LATTICE_DOCTRINE.md`
+# Archived — Content migrated to `design/03_world/LATTICE_DOCTRINE.md`
 
 **Status:** superseded / archived  
-**Migrated to:** `design/03_content/LATTICE_DOCTRINE.md`  
+**Migrated to:** `design/03_world/LATTICE_DOCTRINE.md`  
 
 This was a raw conversation dump. The content has been formalized into a proper design document. See the new location for the authoritative version.
 

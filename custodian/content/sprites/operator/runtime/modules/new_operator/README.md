@@ -64,7 +64,9 @@ upper_body/
   actions/
     unarmed/
       fast_attack/
+        fast_windup_01/
         fast_strike_01/
+        fast_recovery_01/
     sidearm/
       draw_sidearm_01/
       fire_sidearm_01/
@@ -82,7 +84,7 @@ wardrobe_cape/
       <action>/
 ```
 
-The operator scene has optional `ModularLowerBodySprite` and `ModularUpperBodySprite` layers. The lower-body layer owns movement presentation (`idle_01`, `walk_01`, `run_01`) and resolves direction from movement. The upper-body layer owns action/aim presentation and resolves direction from aim/action state, so the lower body can walk north while the upper body faces south. Unarmed fast strike currently uses `upper_body/actions/unarmed/fast_attack/fast_strike_01/`.
+The operator scene has optional `ModularLowerBodySprite` and `ModularUpperBodySprite` layers. The lower-body layer owns movement presentation (`idle_01`, `walk_01`, `run_01`) and resolves direction from movement. The upper-body layer owns action/aim presentation and resolves direction from aim/action state, so the lower body can walk north while the upper body faces south. Unarmed fast attack uses modular lower/upper body sheets for windup, strike, and recovery when the requested phase/direction has both body layers. Strike also uses `upper_fx/actions/unarmed/fast_attack/fast_strike_01/` when present.
 
 Unarmed block is live on the lower/upper modular stack. `enter_block_01` drives block entry,
 `block_loop_01` drives hold, `blocking_hitreact_01` plays when a hit is blocked, and block exit replays entry
@@ -99,7 +101,7 @@ The legacy body `AnimatedSprite2D` remains the timing/source-of-truth sprite for
 - `walk_01` prefers `modular_lower_body walk_01`, then falls back to `action_01`, then `run_01`.
 - `idle_01` prefers authored idle where available, then falls back to `action_01`, then `run_01`.
 - Upper-body locomotion prefers matching authored upper sheets, then falls back through `action_01` and available upper `run_01` by direction or nearest direction.
-- Upper-body unarmed fast strike uses authored `modular_upper_body fast_strike_01` sheets for all 8 directions and resolves direction from attack aim, not lower-body movement.
+- Unarmed fast attack body phases prefer authored lower/upper modular `fast_windup_01`, `fast_strike_01`, and `fast_recovery_01` sheets per direction. Missing body coverage falls back to the previous legacy path for that phase/direction; missing strike FX does not block modular body playback.
 
 Missing true source sheets are tracked in `REQUIRED_ASSETS.md`.
 

@@ -134,16 +134,23 @@ def _build_lower_body_modules(source_root: Path, module_root: Path, dry_run: boo
 def _build_upper_body_action_modules(source_root: Path, module_root: Path, dry_run: bool) -> list[Path]:
     generated: list[Path] = []
     fast_root = source_root / "fast_attack"
-    output_root = module_root / "upper_body/actions/unarmed/fast_attack/fast_strike_01"
-    for direction in DIRECTIONS:
-        upper = _find_part(fast_root, "upper_body", "fast_strike_01", direction)
-        if upper is None:
-            continue
-        output = output_root / f"operator__modular_upper_body__unarmed__fast_strike_01__{direction}__3f__96.png"
-        if not dry_run:
-            output.parent.mkdir(parents=True, exist_ok=True)
-            _write_or_copy_sheet(upper, output, frames=3, target_frame_width=96, target_frame_height=96)
-        generated.append(output)
+    layer_actions = {
+        "lower_body": ("fast_windup_01", "fast_strike_01", "fast_recovery_01"),
+        "upper_body": ("fast_windup_01", "fast_strike_01", "fast_recovery_01"),
+        "upper_fx": ("fast_strike_01",),
+    }
+    for layer, actions in layer_actions.items():
+        for action in actions:
+            output_root = module_root / layer / "actions/unarmed/fast_attack" / action
+            for direction in DIRECTIONS:
+                source = _find_part(fast_root, layer, action, direction)
+                if source is None:
+                    continue
+                output = output_root / f"operator__modular_{layer}__unarmed__{action}__{direction}__3f__96.png"
+                if not dry_run:
+                    output.parent.mkdir(parents=True, exist_ok=True)
+                    _write_or_copy_sheet(source, output, frames=3, target_frame_width=96, target_frame_height=96)
+                generated.append(output)
     return generated
 
 

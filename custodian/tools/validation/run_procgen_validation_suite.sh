@@ -6,6 +6,13 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 LOG_DIR="$ROOT_DIR/logs"
 LOG_FILE="$LOG_DIR/procgen-validation-$(date +%Y%m%d-%H%M%S).log"
 overall_code=0
+run_slow="${RUN_SLOW_PROCGEN:-0}"
+
+for arg in "$@"; do
+	if [[ "$arg" == "--full" ]]; then
+		run_slow=1
+	fi
+done
 
 mkdir -p "$LOG_DIR"
 exec > >(tee "$LOG_FILE") 2>&1
@@ -31,6 +38,12 @@ cd "$ROOT_DIR/custodian" || exit 1
 run_step terrain_builder_smoke godot --headless --path . --script res://tools/validation/terrain_builder_smoke.gd
 run_step procgen_terrain_required_cells_smoke godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 run_step procgen_foliage_spawner_smoke godot --headless --path . --script res://tools/validation/procgen_foliage_spawner_smoke.gd
+if [[ "$run_slow" == "1" ]]; then
+	run_step procgen_contract_rescue_diagnostic_smoke godot --headless --path . --script res://tools/validation/procgen_contract_rescue_diagnostic_smoke.gd
+else
+	echo
+	echo "=== procgen_contract_rescue_diagnostic_smoke skipped; set RUN_SLOW_PROCGEN=1 or pass --full ==="
+fi
 
 if [[ "$overall_code" -ne 0 ]]; then
 	echo "procgen validation failed; see $LOG_FILE"

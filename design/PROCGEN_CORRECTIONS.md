@@ -840,6 +840,8 @@ In `_fill_tilemaps()` or the main generation handoff, after the base generator h
 
 Current TerrainBuilder already supports required cells and an optional ascent route, but it chooses its own path against existing floors. Patch the context in `ProcGenTilemap._apply_terrain_builder()` so intent graph required cells become required connectivity anchors.
 
+Implementation status as of 2026-07-06: this phase is live. `ProcGenTilemap` now collects semantic required-cell entries for ascent, intent graph, compound ingress/connector, road, parking, interior threshold, and authored claims; exports layout/baseline/semantic pre-TerrainBuilder connectivity diagnostics; and repairs missing semantic required samples plus component bridges in procgen authority before `TerrainBuilder` receives the baseline floor/wall graph. Production-sized contract diagnostics should show `baseline_rescue=0` for representative fixed seeds rather than relying on TerrainBuilder rescue as the route generator.
+
 ### In `ProcGenTilemap` — add required cells from intent graph
 
 Find wherever `required_cells` is built. Add:

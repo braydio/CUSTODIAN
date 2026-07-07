@@ -170,6 +170,19 @@ godot --headless --script res://tools/validation/procgen_terrain_required_cells_
 
 The first command validates TerrainBuilder determinism and metadata behavior. The second generates representative
 candidate-mode maps and verifies required-cell counts stay bounded while terrain connectivity remains enforced.
+For production-sized contract rescue diagnostics, use the slow suite mode from the repository root:
+
+```bash
+RUN_SLOW_PROCGEN=1 bash custodian/tools/validation/run_procgen_validation_suite.sh
+```
+
+This includes `procgen_contract_rescue_diagnostic_smoke.gd`, which generates fixed production-sized candidate attempts
+at `176x176`, `208x224`, and `224x224`, prints required-cell source/reason classification, compares layout walkability,
+TerrainBuilder baseline floor/wall walkability, and semantic required walkability, reports component/bridge diagnostics,
+and fails if baseline rescue, pre-terrain required connectivity, candidate acceptance, or forced failure-safe emission
+regresses. The expected production rescue baseline is no TerrainBuilder baseline rescue for the selected seeds; authority
+repair should happen in procgen before TerrainBuilder receives the floor/wall graph.
+
 For a batch run that captures per-step exit codes while teeing a timestamped log, use:
 
 ```bash
@@ -177,6 +190,8 @@ custodian/tools/validation/run_procgen_validation_suite.sh
 ```
 
 This wrapper fails the shell command if any included smoke fails, so assertion or script failures are not hidden by log piping.
+Pass `--full` or set `RUN_SLOW_PROCGEN=1` to include the production contract rescue diagnostic; the default suite skips it
+to stay quick.
 
 For foliage extraction / deferred spawn changes:
 
@@ -246,6 +261,17 @@ godot --headless --script res://tools/validation/operator_modular_defense_ranged
 This instantiates the Operator and verifies east-facing parry recovery resolves to modular lower/upper recovery
 clips, and east two-handed ranged-ready stance uses the modular upper/weapon stack instead of falling through to
 legacy full-body presentation.
+
+For live modular Operator fast-attack playback wiring:
+
+```bash
+cd custodian
+godot --headless --script res://tools/validation/operator_modular_fast_attack_smoke.gd
+```
+
+This checks existing fast-attack source/runtime PNG coverage against the lower-body, upper-body, and upper-FX
+`SpriteFrames` resources, then instantiates the Operator and verifies windup, strike, and recovery helpers play the
+modular layers for every direction where body coverage exists while preserving legacy fallback/timing ownership.
 
 For the focused modular Operator ingest loop, use the thin repo-root wrapper. It defaults to dry-run; `--apply` runs
 shared-inbox manifest generation, rebuilds modular Operator runtime sheets, runs Godot import, refreshes curated

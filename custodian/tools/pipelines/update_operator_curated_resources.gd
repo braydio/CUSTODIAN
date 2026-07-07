@@ -222,10 +222,11 @@ func _init() -> void:
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_locomotion_entries("lower_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_sidearm_entries("lower_body", "sidearm_draw_lower", "draw_sidearm_01"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_sidearm_entries("lower_body", "sidearm_fire_lower", "fire_sidearm_01"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_fast_attack_entries("lower_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_unarmed_block_entries("lower_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_unarmed_parry_entries("lower_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_locomotion_entries("upper_body"))
-	_replace_animation_entries(modular_upper_body_frames, _build_modular_upper_action_entries())
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_fast_attack_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_draw_upper", "draw_sidearm_01"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_fire_upper", "fire_sidearm_01"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_unarmed_block_entries("upper_body"))
@@ -245,6 +246,7 @@ func _init() -> void:
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_ranged_fire_entries("upper_fx"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_draw_fx", "draw_sidearm_01"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_fire_fx", "fire_sidearm_01"))
+	_replace_animation_entries(modular_upper_fx_frames, _build_modular_fast_attack_entries("upper_fx"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_unarmed_parry_fx_entries())
 	_replace_animation_if_exists(body_frames, "unarmed_death", UNARMED_DEATH_BODY_SHEET, 6, 0, 96, 96, 7.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
@@ -479,9 +481,29 @@ func _build_modular_locomotion_entries(part: String) -> Array:
 	return entries
 
 
-func _build_modular_upper_action_entries() -> Array:
-	var root := "res://content/sprites/operator/runtime/modules/new_operator/upper_body/actions/unarmed/fast_attack/fast_strike_01"
+func _build_modular_fast_attack_entries(part: String) -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/unarmed/fast_attack" % part
 	var entries: Array = []
+	var action_specs := []
+	match part:
+		"lower_body":
+			action_specs = [
+				{"source": "fast_windup_01", "base": "unarmed_fast_windup_lower", "fps": 12.0},
+				{"source": "fast_strike_01", "base": "unarmed_fast_strike_lower", "fps": 12.0},
+				{"source": "fast_recovery_01", "base": "unarmed_fast_recovery_lower", "fps": 15.0},
+			]
+		"upper_body":
+			action_specs = [
+				{"source": "fast_windup_01", "base": "unarmed_fast_windup_upper", "fps": 12.0},
+				{"source": "fast_strike_01", "base": "unarmed_fast_strike_upper", "fps": 12.0},
+				{"source": "fast_recovery_01", "base": "unarmed_fast_recovery_upper", "fps": 15.0},
+			]
+		"upper_fx":
+			action_specs = [
+				{"source": "fast_strike_01", "base": "unarmed_fast_strike_fx_modular", "fps": 12.0},
+			]
+		_:
+			return entries
 	var direction_specs := [
 		{"dir": "s", "suffix": "down", "alias_base": true},
 		{"dir": "se", "suffix": "down_right"},
@@ -492,28 +514,32 @@ func _build_modular_upper_action_entries() -> Array:
 		{"dir": "w", "suffix": "left"},
 		{"dir": "sw", "suffix": "down_left"},
 	]
-	for direction_spec in direction_specs:
-		var dir := str(direction_spec["dir"])
-		var path := "%s/operator__modular_upper_body__unarmed__fast_strike_01__%s__3f__96.png" % [root, dir]
-		if bool(direction_spec.get("alias_base", false)):
+	for action_spec in action_specs:
+		var source := str(action_spec["source"])
+		for direction_spec in direction_specs:
+			var sheet := _find_modular_action_sheet(root, part, "unarmed", source, str(direction_spec["dir"]))
+			if sheet.is_empty():
+				continue
+			var base := str(action_spec["base"])
+			if bool(direction_spec.get("alias_base", false)):
+				entries.append({
+					"animation": base,
+					"path": str(sheet["path"]),
+					"frames": int(sheet["frames"]),
+					"frame_width": 96,
+					"frame_height": 96,
+					"fps": float(action_spec["fps"]),
+					"loop": false,
+				})
 			entries.append({
-				"animation": "unarmed_fast_strike_upper",
-				"path": path,
-				"frames": 3,
+				"animation": "%s_%s" % [base, str(direction_spec["suffix"])],
+				"path": str(sheet["path"]),
+				"frames": int(sheet["frames"]),
 				"frame_width": 96,
 				"frame_height": 96,
-				"fps": 12.0,
+				"fps": float(action_spec["fps"]),
 				"loop": false,
 			})
-		entries.append({
-			"animation": "unarmed_fast_strike_upper_%s" % str(direction_spec["suffix"]),
-			"path": path,
-			"frames": 3,
-			"frame_width": 96,
-			"frame_height": 96,
-			"fps": 12.0,
-			"loop": false,
-		})
 	return entries
 
 

@@ -7,6 +7,12 @@ const CONTRACT_WORLD_LOADER_SCRIPT := preload("res://game/systems/core/systems/c
 const SEEDS := [420777, 420778, 420779]
 const MAP_SIZE := Vector2i(112, 92)
 const MAX_REASONABLE_REQUIRED_CELLS := 96
+const VALID_MISSING_REASONS := [
+	"unreachable_from_spawn",
+	"not_walkable_pre_terrain",
+	"missing_from_floor_authority",
+	"blocked_by_wall_authority",
+]
 
 
 func _init() -> void:
@@ -31,11 +37,11 @@ func _run() -> void:
 		assert(pre_missing_count >= 0, "Expected pre-terrain missing count for seed %d." % seed)
 		assert(pre_terrain.has("pre_terrain_connected_required_ratio"), "Expected pre-terrain connectivity ratio for seed %d." % seed)
 		if pre_missing_count > 0:
-			var samples: Array = pre_terrain.get("pre_terrain_missing_required_samples", [])
-			assert(not samples.is_empty(), "Expected classified missing pre-terrain samples for seed %d." % seed)
-			for sample in samples:
-				assert(sample is Dictionary and String(sample.get("source", "")).length() > 0, "Missing pre-terrain sample classification for seed %d: %s" % [seed, str(sample)])
-				assert(String(sample.get("reason", "")) == "unreachable_from_spawn", "Missing pre-terrain sample reason for seed %d: %s" % [seed, str(sample)])
+				var samples: Array = pre_terrain.get("pre_terrain_missing_required_samples", [])
+				assert(not samples.is_empty(), "Expected classified missing pre-terrain samples for seed %d." % seed)
+				for sample in samples:
+					assert(sample is Dictionary and String(sample.get("source", "")).length() > 0, "Missing pre-terrain sample classification for seed %d: %s" % [seed, str(sample)])
+					assert(VALID_MISSING_REASONS.has(String(sample.get("reason", ""))), "Unexpected missing pre-terrain sample reason for seed %d: %s" % [seed, str(sample)])
 		assert(bool(summary.get("connectivity_ok", false)), "Terrain connectivity failed for seed %d: %s" % [seed, str(summary)])
 		assert(not bool(summary.get("fallback_used", true)), "Terrain fallback used for seed %d: %s" % [seed, str(summary)])
 		assert(missing_count == 0, "TerrainBuilder still has missing required cells for seed %d: %s" % [seed, str(summary)])

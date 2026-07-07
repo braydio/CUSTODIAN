@@ -33,7 +33,7 @@
 	},
 	"capacitor_dust": {
 		"label": "Capacitor Dust",
-		"description": "Conductive dust recovered from ruptured capacitor banks and shorted panels. It clings to anything still carrying charge."
+		"description": "Conductive dust found in ruptured capacitors and dead machine housings.\nIt gathers in the seams of post-Severance machines, like ash from a war left to smolder."
 	},
 	"signal_filament": {
 		"label": "Signal Filament",
