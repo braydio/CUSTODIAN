@@ -12,6 +12,7 @@
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_upper_body_frames.tres" id="31_modular_upper_body_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_sidearm_frames.tres" id="32_modular_sidearm_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_upper_fx_frames.tres" id="33_modular_upper_fx_frames"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_cape_frames.tres" id="34_modular_cape_frames"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ytitt"]
 radius = 11.0
@@ -102,6 +103,12 @@ position = Vector2(297.99997, 2.000002)
 rotation = -0.00045306538
 sprite_frames = ExtResource("25_runtime_frames")
 offset = Vector2(0, 114)
+
+[node name="ModularCapeSprite" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(0, -18)
+sprite_frames = ExtResource("34_modular_cape_frames")
+animation = &"ranged_2h_aim_cape"
 
 [node name="ModularLowerBodySprite" type="AnimatedSprite2D" parent="."]
 visible = false

@@ -15,7 +15,7 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 const SPEED := 150.0
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
 const MUZZLE_FLASH_SCENE := preload("res://game/actors/effects/muzzle_flash.tscn")
-const IMPACT_SPARK_SCENE := preload("res://game/actors/effects/impact_spark.tscn")
+@export var impact_scene: PackedScene = preload("res://game/actors/effects/impact_spark.tscn")
 const MELEE_SWING_SCENE := preload("res://game/actors/effects/melee_swing.tscn")
 const TARGET_RING_SCENE := preload("res://game/actors/effects/target_ring.tscn")
 const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
@@ -170,6 +170,8 @@ var last_fire_cooldown := 0.0
 @export var modular_primary_ranged_fire_enabled: bool = true
 @export var modular_primary_ranged_fire_fps: float = 14.0
 @export var modular_primary_ranged_fire_recover_hold_sec: float = 0.04
+@export var modular_primary_ranged_aim_fps: float = 8.0
+@export var modular_primary_ranged_aim_cape_enabled: bool = true
 @export_group("", "")
 @export_file("*.png") var idle_main_sheet_path := "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
 @export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
@@ -308,6 +310,7 @@ var _is_dead := false
 var _body_recoil_offset := Vector2.ZERO
 var _animated_sprite_base_position := Vector2.ZERO
 var _dodge_fx_back_base_position := Vector2.ZERO
+var _modular_cape_base_position := Vector2.ZERO
 var _modular_lower_body_base_position := Vector2.ZERO
 var _modular_upper_body_base_position := Vector2.ZERO
 var _modular_sidearm_base_position := Vector2.ZERO
@@ -465,6 +468,7 @@ const KNIGHT_TEST_ANIMATION_SPECS := {
 @onready var visual = $Visual
 @onready var animated_sprite = $AnimatedSprite2D if has_node("AnimatedSprite2D") else null
 @onready var dodge_fx_back_sprite: AnimatedSprite2D = $DodgeFXBackSprite if has_node("DodgeFXBackSprite") else null
+@onready var modular_cape_sprite: AnimatedSprite2D = $ModularCapeSprite if has_node("ModularCapeSprite") else null
 @onready var modular_lower_body_sprite = $ModularLowerBodySprite if has_node("ModularLowerBodySprite") else null
 @onready var modular_upper_body_sprite = $ModularUpperBodySprite if has_node("ModularUpperBodySprite") else null
 @onready var modular_sidearm_sprite = $ModularSidearmSprite if has_node("ModularSidearmSprite") else null
@@ -513,6 +517,9 @@ func _ready():
 		dodge_fx_back_sprite.modulate = Color(1.0, 1.0, 1.0, DODGE_FX_BACK_ALPHA)
 		if dodge_fx_back_sprite.sprite_frames == null:
 			dodge_fx_back_sprite.sprite_frames = SpriteFrames.new()
+	if modular_cape_sprite:
+		modular_cape_sprite.visible = false
+		modular_cape_sprite.modulate = Color(1.3, 1.3, 1.3, 1)
 	if modular_lower_body_sprite:
 		modular_lower_body_sprite.visible = false
 		modular_lower_body_sprite.modulate = Color(1.3, 1.3, 1.3, 1)
@@ -743,7 +750,7 @@ func _process(delta):
 	_update_melee_attack(delta)
 	_update_melee_recovery(delta)
 	_update_reload(delta)
-	_tick_primary_ranged_fire_presentation(delta)
+	_tick_primary_ranged_action_presentation(delta)
 	_update_animation_state_machine(delta)
 	_update_combat_target()
 	_update_target_ring()
@@ -930,12 +937,13 @@ func _update_animation():
 	if animated_sprite.sprite_frames == null:
 		_hide_modular_locomotion_layers()
 		return
-	if _is_primary_ranged_fire_presentation_active():
-		var lower_base := _get_modular_lower_body_motion_base()
-		if _can_reuse_modular_lower_body_for_current_loadout():
-			_sync_modular_lower_body_locomotion(lower_base, movement_direction if velocity.length() > 0.01 else visual_idle_direction)
-		else:
-			_hide_modular_locomotion_layers()
+	if _is_primary_ranged_aim_presentation_active() or _is_primary_ranged_fire_presentation_active():
+		if _is_primary_ranged_fire_presentation_active():
+			var lower_base := _get_modular_lower_body_motion_base()
+			if _can_reuse_modular_lower_body_for_current_loadout():
+				_sync_modular_lower_body_locomotion(lower_base, movement_direction if velocity.length() > 0.01 else visual_idle_direction)
+			else:
+				_hide_modular_locomotion_layers()
 		return
 	if _portal_arrival_animation_active:
 		if animated_sprite.animation != PORTAL_ARRIVAL_ANIMATION and animated_sprite.animation != PORTAL_ARRIVAL_DOWN_ANIMATION:
@@ -1312,6 +1320,7 @@ func _sync_modular_ranged_ready_upper_layers(direction: Vector2) -> bool:
 		primary_weapon_sprite.visible = false
 	if ranged_fx_overlay_sprite != null:
 		ranged_fx_overlay_sprite.visible = false
+	_hide_modular_cape_layer()
 	return true
 
 
@@ -1427,6 +1436,7 @@ func _sync_modular_ranged_ready_movement_presentation(
 		ranged_fx_overlay_sprite.visible = false
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
+	_hide_modular_cape_layer()
 	return true
 
 
@@ -1448,15 +1458,19 @@ func _is_primary_ranged_fire_presentation_active() -> bool:
 	return _primary_ranged_action_phase == &"firing"
 
 
-func _tick_primary_ranged_fire_presentation(delta: float) -> void:
-	if not _is_primary_ranged_fire_presentation_active():
+func _is_primary_ranged_aim_presentation_active() -> bool:
+	return _primary_ranged_action_phase == &"aiming"
+
+
+func _tick_primary_ranged_action_presentation(delta: float) -> void:
+	if not (_is_primary_ranged_aim_presentation_active() or _is_primary_ranged_fire_presentation_active()):
 		return
 
 	_primary_ranged_action_timer -= delta
 	if _primary_ranged_action_timer > 0.0:
 		return
 
-	_primary_ranged_action_phase = &"recover"
+	_primary_ranged_action_phase = &"recover" if _is_primary_ranged_fire_presentation_active() else &""
 	_primary_ranged_action_timer = 0.0
 	_update_animation()
 
@@ -1528,6 +1542,59 @@ func _begin_modular_primary_ranged_fire_presentation() -> bool:
 	_primary_ranged_action_phase = &"firing"
 	_primary_ranged_action_timer = max(0.04, longest_duration + modular_primary_ranged_fire_recover_hold_sec)
 	_hide_legacy_primary_ranged_presentation_for_modular_fire()
+	_hide_modular_cape_layer()
+	return true
+
+
+func _begin_modular_primary_ranged_aim_presentation() -> bool:
+	if not modular_primary_ranged_fire_enabled:
+		return false
+	if not modular_locomotion_layers_enabled:
+		return false
+	if _is_using_sidearm_ranged():
+		return false
+	if not _is_ranged_ready_active() or not _is_using_ranged_2h_primary():
+		return false
+	if _reload_active or _is_ranged_fire_animation_active():
+		return false
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null or modular_sidearm_sprite == null:
+		return false
+	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null or modular_sidearm_sprite.sprite_frames == null:
+		return false
+
+	var action_direction := aim_direction
+	if action_direction.length_squared() <= 0.0001:
+		action_direction = visual_idle_direction
+	if action_direction.length_squared() <= 0.0001:
+		action_direction = Vector2.RIGHT
+
+	var lower_animation := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_lower_body_sprite)
+	var upper_animation := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_upper_body_sprite)
+	var weapon_animation := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_sidearm_sprite)
+	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_animation):
+		return false
+	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
+		return false
+	if not _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, weapon_animation):
+		return false
+
+	var longest_duration := 0.0
+	var lower_result := _play_modular_action_animation(modular_lower_body_sprite, "ranged_2h_aim_modular", action_direction, modular_primary_ranged_aim_fps)
+	longest_duration = max(longest_duration, float(lower_result.get("duration", 0.0)))
+
+	var upper_result := _play_modular_action_animation(modular_upper_body_sprite, "ranged_2h_aim_modular", action_direction, modular_primary_ranged_aim_fps)
+	longest_duration = max(longest_duration, float(upper_result.get("duration", 0.0)))
+
+	var weapon_result := _play_modular_action_animation(modular_sidearm_sprite, "ranged_2h_aim_modular", action_direction, modular_primary_ranged_aim_fps)
+	longest_duration = max(longest_duration, float(weapon_result.get("duration", 0.0)))
+	var cape_result := _play_optional_modular_cape_animation("ranged_2h_aim_cape", action_direction, modular_primary_ranged_aim_fps)
+	longest_duration = max(longest_duration, float(cape_result.get("duration", 0.0)))
+
+	_primary_ranged_action_phase = &"aiming"
+	_primary_ranged_action_timer = max(0.04, longest_duration)
+	_hide_legacy_primary_ranged_presentation_for_modular_fire()
+	if modular_upper_fx_sprite:
+		modular_upper_fx_sprite.visible = false
 	return true
 
 
@@ -1599,6 +1666,50 @@ func _play_first_available_modular_fire_animation(
 		return {"played": true, "duration": duration, "animation": animation_name}
 
 	return {"played": false, "duration": 0.0}
+
+
+func _play_modular_action_animation(
+	sprite: AnimatedSprite2D,
+	base_animation: String,
+	direction: Vector2,
+	target_fps: float
+) -> Dictionary:
+	if sprite == null or sprite.sprite_frames == null:
+		return {"played": false, "duration": 0.0}
+	var animation_name := AnimationResolver.resolve(base_animation, direction, sprite)
+	if not _has_playable_sprite_animation(sprite.sprite_frames, animation_name):
+		return {"played": false, "duration": 0.0}
+
+	var frame_count := sprite.sprite_frames.get_frame_count(animation_name)
+	sprite.visible = true
+	sprite.flip_h = false
+	sprite.animation = animation_name
+	sprite.frame = 0
+
+	var source_speed := sprite.sprite_frames.get_animation_speed(animation_name)
+	if source_speed <= 0.0:
+		source_speed = target_fps
+	sprite.speed_scale = target_fps / max(0.01, source_speed)
+	sprite.play(animation_name)
+
+	var duration: float = float(frame_count) / max(1.0, target_fps)
+	return {"played": true, "duration": duration, "animation": animation_name}
+
+
+func _play_optional_modular_cape_animation(base_animation: String, direction: Vector2, target_fps: float) -> Dictionary:
+	if not modular_primary_ranged_aim_cape_enabled:
+		_hide_modular_cape_layer()
+		return {"played": false, "duration": 0.0}
+	var result := _play_modular_action_animation(modular_cape_sprite, base_animation, direction, target_fps)
+	if not bool(result.get("played", false)):
+		_hide_modular_cape_layer()
+	return result
+
+
+func _hide_modular_cape_layer() -> void:
+	if modular_cape_sprite:
+		modular_cape_sprite.visible = false
+		modular_cape_sprite.stop()
 
 
 func _primary_ranged_fire_suffix_for_direction(direction: Vector2) -> StringName:
@@ -1725,6 +1836,7 @@ func _hide_modular_locomotion_layers() -> void:
 		modular_sidearm_sprite.visible = false
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
+	_hide_modular_cape_layer()
 
 
 func _clear_modular_upper_action_layer() -> void:
@@ -1746,6 +1858,7 @@ func _clear_modular_fast_attack_layers() -> void:
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
 		modular_upper_fx_sprite.stop()
+	_hide_modular_cape_layer()
 
 
 func _get_direction_suffix(dir: Vector2) -> String:
@@ -1856,11 +1969,11 @@ func _is_ranged_fire_blocker(collider: Object) -> bool:
 
 
 func _spawn_ranged_impact_at(impact_position: Vector2) -> void:
-	if IMPACT_SPARK_SCENE == null:
+	if impact_scene == null:
 		return
 	var parent = get_node_or_null("/root/GameRoot/World/Projectiles")
 	var target = parent if parent != null else get_tree().current_scene
-	var spark = IMPACT_SPARK_SCENE.instantiate()
+	var spark = impact_scene.instantiate()
 	if spark == null:
 		return
 	target.add_child(spark)
@@ -1954,7 +2067,7 @@ func _emit_pending_ranged_shot() -> void:
 	bullet.min_damage_multiplier = float(profile.get("min_damage_multiplier", 0.5))
 	bullet.bullet_radius = float(profile.get("radius", 3.0))
 	bullet.bullet_color = profile.get("color", Color(1.0, 0.9, 0.35, 1.0))
-	bullet.impact_scene = IMPACT_SPARK_SCENE
+	bullet.impact_scene = impact_scene
 	bullet.shooter = self
 	# Apply cognitive crit bonus (bearing increases crit chance)
 	if cognitive != null and cognitive.has_method("get_player_crit_bonus"):
@@ -2312,6 +2425,8 @@ func _enter_ranged_ready() -> void:
 	_apply_active_weapon_frames()
 	_apply_dynamic_weapon_socket_layout(ranged_weapon)
 	_update_primary_weapon_visual(false)
+	if not entering_sidearm:
+		_begin_modular_primary_ranged_aim_presentation()
 
 
 func _exit_ranged_ready() -> void:
@@ -2329,6 +2444,7 @@ func _exit_ranged_ready() -> void:
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
 		modular_upper_fx_sprite.stop()
+	_hide_modular_cape_layer()
 	_apply_active_weapon_frames()
 	_apply_dynamic_weapon_socket_layout()
 	_update_primary_weapon_visual(false)
@@ -3415,7 +3531,7 @@ func _spawn_melee_impact(pos: Vector2):
 	var parent = get_node_or_null("/root/GameRoot/World/Projectiles")
 	var target = parent if parent else get_tree().current_scene
 	
-	var spark = IMPACT_SPARK_SCENE.instantiate()
+	var spark = impact_scene.instantiate()
 	if spark:
 		target.add_child(spark)
 		spark.global_position = pos
@@ -4597,6 +4713,8 @@ func _apply_body_recoil_offset() -> void:
 	if dodge_fx_back_sprite:
 		var dodge_offset := _get_dodge_fx_back_offset(_dodge_direction) if _dodge_active else Vector2.ZERO
 		dodge_fx_back_sprite.position = _dodge_fx_back_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_offset
+	if modular_cape_sprite:
+		modular_cape_sprite.position = _modular_cape_base_position + _body_recoil_offset + _fake_elevation_visual_offset
 	if modular_lower_body_sprite:
 		modular_lower_body_sprite.position = _modular_lower_body_base_position + _body_recoil_offset + _fake_elevation_visual_offset
 	if modular_upper_body_sprite:
@@ -4737,6 +4855,9 @@ func _apply_placeholder_runtime_layout() -> void:
 	if dodge_fx_back_sprite:
 		dodge_fx_back_sprite.position = placeholder_sprite_position
 		dodge_fx_back_sprite.offset = placeholder_sprite_offset
+	if modular_cape_sprite:
+		modular_cape_sprite.position = placeholder_sprite_position
+		modular_cape_sprite.offset = placeholder_sprite_offset
 	if modular_lower_body_sprite:
 		modular_lower_body_sprite.position = placeholder_sprite_position
 		modular_lower_body_sprite.offset = placeholder_sprite_offset
@@ -4782,6 +4903,8 @@ func _capture_runtime_visual_base_positions() -> void:
 		_animated_sprite_base_position = animated_sprite.position
 	if dodge_fx_back_sprite:
 		_dodge_fx_back_base_position = dodge_fx_back_sprite.position
+	if modular_cape_sprite:
+		_modular_cape_base_position = modular_cape_sprite.position
 	if modular_lower_body_sprite:
 		_modular_lower_body_base_position = modular_lower_body_sprite.position
 	if modular_upper_body_sprite:
@@ -4904,7 +5027,7 @@ func _get_body_animation_aim_state() -> StringName:
 
 
 func _update_primary_weapon_visual(is_firing: bool) -> void:
-	if _is_primary_ranged_fire_presentation_active():
+	if _is_primary_ranged_aim_presentation_active() or _is_primary_ranged_fire_presentation_active():
 		_hide_legacy_primary_ranged_presentation_for_modular_fire()
 		return
 	if _knight_test_skin_active:

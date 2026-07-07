@@ -41,6 +41,8 @@ func _check_scene_loads(path: String) -> void:
 	if instance == null:
 		_failures.append("Scene did not instantiate: %s" % path)
 		return
+	if path == HUD_SCENE:
+		_check_hud_instance(instance)
 	if path == HOME_SCENE:
 		_check_home_instance(instance)
 	instance.queue_free()
@@ -63,3 +65,13 @@ func _check_home_instance(instance: Node) -> void:
 	for method_name in ["get_interaction_prompt", "get_interaction_position", "get_interaction_distance", "interact", "establish_witness"]:
 		if not terminal.has_method(method_name):
 			_failures.append("FieldTerminal missing method: %s" % method_name)
+
+
+func _check_hud_instance(instance: Node) -> void:
+	for node_path in [
+		"Root/TopLeftVitals",
+		"Root/TopLeftLoadout",
+		"Root/TopRightPanel",
+	]:
+		if instance.get_node_or_null(NodePath(node_path)) == null:
+			_failures.append("HUD scene missing node: %s" % node_path)

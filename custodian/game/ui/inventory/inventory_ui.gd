@@ -830,7 +830,7 @@ func _refresh_equipment_page() -> void:
 	var equipped_id := str(_inventory_manager.call("get_equipped", &"sidearm"))
 	if equipped_id == "" or equipped_id.is_empty():
 		var sidearm_available := bool(_inventory_manager.call("has_item", &"p9_sidearm", 1))
-		_equipment_slot_icon.texture = Assets.item_icon(&"p9_sidearm") if sidearm_available else Assets.texture("icon_unknown")
+		_equipment_slot_icon.texture = Assets.item_portrait(&"p9_sidearm") if sidearm_available else Assets.texture("icon_unknown")
 		_equipment_slot_name.text = "P-9 FIELD SIDEARM / AVAILABLE" if sidearm_available else "EMPTY"
 		_equipment_slot_name.modulate = Palette.BODY_TEXT if sidearm_available else Palette.MUTED_TEXT
 		_equipment_slot_status.text = (
@@ -845,7 +845,7 @@ func _refresh_equipment_page() -> void:
 		# Equipped
 		var definition := ItemCatalog.get_definition(StringName(equipped_id))
 		var display_name := str(definition.get("display_name", equipped_id))
-		_equipment_slot_icon.texture = Assets.item_icon(StringName(equipped_id))
+		_equipment_slot_icon.texture = Assets.item_portrait(StringName(equipped_id))
 		_equipment_slot_name.text = display_name.to_upper()
 		_equipment_slot_name.modulate = Palette.GOLD_TEXT
 		_equipment_slot_status.text = str(definition.get("description", "No description available."))
@@ -1081,7 +1081,7 @@ func _create_item_button(entry: Dictionary) -> Button:
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	icon.texture = Assets.item_icon(item_id)
+	icon.texture = Assets.item_portrait(item_id)
 	icon.material = _item_icon_material(item_id)
 	button.add_child(icon)
 	var stamp := _label(_category_stamp(str(definition.get("category", "carried"))), Palette.MUTED_TEXT, 9)
@@ -1149,7 +1149,7 @@ func _show_detail(entry: Dictionary) -> void:
 		return
 	var definition: Dictionary = entry["definition"]
 	var item_id := str(entry["item_id"])
-	_ledger_detail_icon.texture = Assets.item_icon(item_id)
+	_ledger_detail_icon.texture = Assets.item_portrait(item_id)
 	_ledger_detail_icon.material = _item_icon_material(item_id)
 	_ledger_detail_name.text = str(definition.get("display_name", entry["item_id"])).to_upper()
 	_ledger_detail_class.text = "CLASSIFICATION: %s / %s" % [

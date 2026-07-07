@@ -442,7 +442,7 @@ def _build_generic_action_modules(source_root: Path, module_root: Path, dry_run:
         if parsed is None:
             continue
         output_layer, loadout, action, spec, priority = parsed
-        if _has_specialized_builder(loadout, action):
+        if _has_specialized_builder(output_layer, loadout, action):
             continue
         semantic_key = (output_layer, loadout, action, spec.direction)
         current = candidates.get(semantic_key)
@@ -516,11 +516,13 @@ def _canonical_action_name(action: str) -> str:
     }.get(action, action)
 
 
-def _has_specialized_builder(loadout: str, action: str) -> bool:
+def _has_specialized_builder(output_layer: str, loadout: str, action: str) -> bool:
     if loadout == "sidearm":
         return True
     if loadout == "ranged_2h" and action == "stance_01":
         return True
+    if output_layer == "wardrobe_cape":
+        return False
     if loadout != "unarmed":
         return False
     return action in {"idle_01", "run_01", "walk_01"} or action.startswith(("dodge", "fast_"))

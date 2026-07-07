@@ -20,7 +20,8 @@ textures while production art is missing.
 
 ### Item Icons
 - `content/ui/inventory/icons/icon_placeholder.png` - Generic item icon (48x48)
-- `content/ui/inventory/icons/icon_p9_sidearm.svg` - Temporary P-9 sidearm equipment icon; canonical runtime PNG overrides it automatically
+- `content/weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__portrait__inventory__default__omni__1f__512.png` - P-9 sidearm inventory portrait used by the ledger and equipment detail cards
+- `content/weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__icon__hud__default__omni__1f__64.png` - Smaller P-9 sidearm HUD icon used in the loadout panel
 
 ## Script Files
 

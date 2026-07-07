@@ -87,7 +87,10 @@ func _initialize() -> void:
 	var p9_name := (_find_node_named(inventory_ui, "Item_p9_sidearm") as Button).get_node_or_null("ItemName") as Label
 	_assert(p9_name != null and p9_name.text == "P-9 FIELD SIDEARM", "item card should keep its name in a dedicated text region")
 	var p9_icon := (_find_node_named(inventory_ui, "Item_p9_sidearm") as Button).get_node_or_null("ItemIcon") as TextureRect
-	_assert(p9_icon != null and p9_icon.texture != null and p9_icon.texture.resource_path.ends_with("icon_p9_sidearm.svg"), "P-9 should resolve its placeholder sidearm icon")
+	_assert(
+		p9_icon != null and p9_icon.texture != null and p9_icon.texture.resource_path.ends_with("p9_custodian_sidearm__portrait__inventory__default__omni__1f__512.png"),
+		"P-9 should resolve its production inventory portrait"
+	)
 	inventory_ui.call("_select_category", "relic")
 	await process_frame
 	_assert(_find_label_with_text(inventory_ui, "NO RECOVERED RELICS REGISTERED") != null, "empty relic category should use field-ledger empty-state language")

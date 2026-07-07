@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7xjmghh73qe2"
-path="res://.godot/imported/operator__modular_lower_body__unarmed__success_01__w__5f__96.png-4ff51a2fb190aac8ad38987e9af4ecd1.ctex"
+uid="uid://0kybfius7d3e"
+path="res://.godot/imported/operator__modular_wardrobe_cape__unarmed__fast_recovery_01__n__3f__96.png-f375b7db1753835f9b6db2a25fcde18d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__modular_lower_body__unarmed__success_01__w__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__unarmed__success_01__w__5f__96.png-4ff51a2fb190aac8ad38987e9af4ecd1.ctex"]
+source_file="res://content/sprites/operator/new_operator/modular/fast_attack/operator__modular_wardrobe_cape__unarmed__fast_recovery_01__n__3f__96.png"
+dest_files=["res://.godot/imported/operator__modular_wardrobe_cape__unarmed__fast_recovery_01__n__3f__96.png-f375b7db1753835f9b6db2a25fcde18d.ctex"]
 
 [params]
 

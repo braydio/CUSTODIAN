@@ -1,9 +1,9 @@
 class_name CustodianHUD
 extends CanvasLayer
 
-const Catalog := preload("res://game/ui/theme/black_reliquary_asset_catalog.gd")
 const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 const Styles := preload("res://game/ui/theme/black_reliquary_styles.gd")
+const InventoryAssets := preload("res://game/ui/inventory/inventory_asset_catalog.gd")
 
 @onready var health_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/HealthLabel")
 @onready var health_bar: ProgressBar = get_node_or_null("Root/TopLeftVitals/Margin/Content/HealthBar")
@@ -13,6 +13,12 @@ const Styles := preload("res://game/ui/theme/black_reliquary_styles.gd")
 @onready var weapon_icon: TextureRect = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponIconFrame/WeaponIcon")
 @onready var weapon_name_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponText/WeaponNameLabel")
 @onready var weapon_ammo_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponText/WeaponAmmoLabel")
+@onready var loadout_primary_icon: TextureRect = get_node_or_null("Root/TopLeftLoadout/Margin/Content/PrimaryRow/IconFrame/Icon")
+@onready var loadout_primary_name: Label = get_node_or_null("Root/TopLeftLoadout/Margin/Content/PrimaryRow/Text/Name")
+@onready var loadout_primary_status: Label = get_node_or_null("Root/TopLeftLoadout/Margin/Content/PrimaryRow/Text/Status")
+@onready var loadout_secondary_icon: TextureRect = get_node_or_null("Root/TopLeftLoadout/Margin/Content/SecondaryRow/IconFrame/Icon")
+@onready var loadout_secondary_name: Label = get_node_or_null("Root/TopLeftLoadout/Margin/Content/SecondaryRow/Text/Name")
+@onready var loadout_secondary_status: Label = get_node_or_null("Root/TopLeftLoadout/Margin/Content/SecondaryRow/Text/Status")
 @onready var minimap_frame: Node = get_node_or_null("Root/TopRightPanel/Margin/BlackReliquaryMinimapFrame")
 @onready var prompt: Node = get_node_or_null("Root/BottomLeftPrompt/BlackReliquaryPrompt")
 @onready var debug_overlay: Panel = get_node_or_null("Root/DebugOverlay")
@@ -22,9 +28,12 @@ var _health_current := 100
 var _health_max := 100
 var _last_weapon_status_text := ""
 var _last_weapon_icon: Texture2D = null
+var _last_primary_loadout_text := ""
+var _last_secondary_loadout_text := ""
 var _last_prompt_frame := -1
 var _context_active := true
 var _externally_suppressed := false
+var _inventory_manager: Node = null
 
 
 func _ready() -> void:
@@ -34,6 +43,7 @@ func _ready() -> void:
 	set_health(100, 100)
 	set_stamina_status("READY", 100.0)
 	set_weapon_status("CARBINE", 24, 24, 48, null, false, false)
+	_refresh_loadout_section()
 	set_location("FIELD OPERATIONS")
 	set_phase("FREE ROAM PREP")
 	set_objective("Open the main gate")
@@ -202,11 +212,19 @@ func _apply_theme() -> void:
 	Styles.apply_label(stamina_label, Palette.EVRFOREST_PALE_GREEN, 12, true)
 	Styles.apply_label(weapon_name_label, Palette.GOLD_TEXT, 11, true)
 	Styles.apply_label(weapon_ammo_label, Palette.BODY_TEXT, 11, true)
+	Styles.apply_label(loadout_primary_name, Palette.GOLD_TEXT, 11, true)
+	Styles.apply_label(loadout_primary_status, Palette.BODY_TEXT, 10, true)
+	Styles.apply_label(loadout_secondary_name, Palette.BODY_TEXT, 10, true)
+	Styles.apply_label(loadout_secondary_status, Palette.BODY_TEXT, 9, true)
 	Styles.apply_label(debug_label, Palette.BODY_TEXT, 14)
 	if weapon_icon_frame != null:
 		weapon_icon_frame.add_theme_stylebox_override("panel", Styles.panel_style(true))
 	if weapon_icon != null:
 		weapon_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if loadout_primary_icon != null:
+		loadout_primary_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if loadout_secondary_icon != null:
+		loadout_secondary_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	if debug_overlay != null:
 		debug_overlay.add_theme_stylebox_override("panel", Styles.panel_style(true))
 
@@ -251,6 +269,67 @@ func _refresh_operator_status() -> void:
 			bool(weapon_status.get("reloading", false)),
 			bool(weapon_status.get("overheated", false))
 		)
+
+
+func _refresh_loadout_section(operator_ref: Node = null) -> void:
+	if loadout_primary_name == null or loadout_primary_status == null or loadout_secondary_name == null or loadout_secondary_status == null:
+		return
+	if operator_ref == null:
+		operator_ref = get_node_or_null("/root/GameRoot/World/Operator")
+	if operator_ref == null:
+		return
+	if _inventory_manager == null:
+		_inventory_manager = get_node_or_null("/root/InventoryManager")
+
+	var weapon_status: Dictionary = {}
+	if operator_ref.has_method("get_weapon_status"):
+		weapon_status = operator_ref.call("get_weapon_status")
+	var primary_name := str(weapon_status.get("weapon_name", "UNARMED")).to_upper()
+	var primary_ammo := "MELEE READY"
+	if int(weapon_status.get("magazine_size", 0)) > 0:
+		primary_ammo = "MAG %d/%d  RES %d" % [
+			maxi(0, int(weapon_status.get("loaded_ammo", 0))),
+			maxi(1, int(weapon_status.get("magazine_size", 0))),
+			maxi(0, int(weapon_status.get("reserve_ammo", 0))),
+		]
+		if bool(weapon_status.get("reloading", false)):
+			primary_ammo = "RELOADING"
+		elif bool(weapon_status.get("overheated", false)):
+			primary_ammo = "OVERHEATED"
+	var primary_key := "%s|%s" % [primary_name, primary_ammo]
+	if primary_key != _last_primary_loadout_text:
+		loadout_primary_name.text = _fit_hud_text(primary_name, 18)
+		loadout_primary_status.text = primary_ammo
+		_last_primary_loadout_text = primary_key
+	if loadout_primary_icon != null and weapon_status.has("weapon_name"):
+		if operator_ref.has_method("get_active_weapon_icon_texture"):
+			var primary_icon_variant: Variant = operator_ref.call("get_active_weapon_icon_texture")
+			loadout_primary_icon.texture = primary_icon_variant if primary_icon_variant is Texture2D else null
+
+	var sidearm_equipped := false
+	var sidearm_available := false
+	if _inventory_manager != null and _inventory_manager.has_method("get_equipped"):
+		var equipped_id := str(_inventory_manager.call("get_equipped", &"sidearm"))
+		sidearm_equipped = equipped_id == "p9_sidearm"
+		sidearm_available = sidearm_equipped or bool(_inventory_manager.call("has_item", &"p9_sidearm", 1))
+	var secondary_name := "P-9 FIELD SIDEARM"
+	var secondary_status := "EMPTY"
+	var secondary_icon: Texture2D = InventoryAssets.item_hud_icon(&"p9_sidearm") if sidearm_available else null
+	if sidearm_equipped:
+		secondary_status = "EQUIPPED"
+	elif sidearm_available:
+		secondary_status = "RECOVERED"
+	else:
+		secondary_name = "SIDEARM SLOT"
+		secondary_status = "UNFILLED"
+	var secondary_key := "%s|%s|%s" % [secondary_name, secondary_status, str(sidearm_equipped)]
+	if secondary_key != _last_secondary_loadout_text:
+		loadout_secondary_name.text = _fit_hud_text(secondary_name, 18)
+		loadout_secondary_status.text = secondary_status
+		_last_secondary_loadout_text = secondary_key
+	if loadout_secondary_icon != null:
+		loadout_secondary_icon.texture = secondary_icon
+		loadout_secondary_icon.visible = secondary_icon != null
 
 
 func _fit_hud_text(text: String, max_chars: int) -> String:

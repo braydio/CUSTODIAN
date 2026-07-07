@@ -7,6 +7,12 @@ const LEGACY_ICON_PATTERN := "res://content/ui/inventory/icons/icon_%s.png"
 const RESOURCE_ICON_PATTERN := "res://content/ui/inventory/icons/resources/icon_%s.png"
 const PLACEHOLDER_SVG_ICON_PATTERN := "res://content/ui/inventory/icons/icon_%s.svg"
 const FALLBACK_ICON := "res://content/ui/inventory/icons/icon_placeholder.png"
+const SPECIAL_ITEM_PORTRAITS := {
+	"p9_sidearm": "res://content/weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__portrait__inventory__default__omni__1f__512.png",
+}
+const SPECIAL_ITEM_HUD_ICONS := {
+	"p9_sidearm": "res://content/weapons/p9_custodian_sidearm/runtime/portrait/p9_custodian_sidearm__icon__hud__default__omni__1f__64.png",
+}
 const ITEM_MATERIALS := {
 	"blackwood": "res://game/ui/inventory/materials/blackwood_ember_spark_material.tres",
 }
@@ -37,6 +43,28 @@ static func item_icon_path(item_id: String) -> String:
 
 static func item_icon(item_id: String) -> Texture2D:
 	return _load_texture(item_icon_path(item_id))
+
+
+static func item_portrait_path(item_id: String) -> String:
+	var special := str(SPECIAL_ITEM_PORTRAITS.get(item_id, ""))
+	if not special.is_empty() and ResourceLoader.exists(special):
+		return special
+	return item_icon_path(item_id)
+
+
+static func item_portrait(item_id: String) -> Texture2D:
+	return _load_texture(item_portrait_path(item_id))
+
+
+static func item_hud_icon_path(item_id: String) -> String:
+	var special := str(SPECIAL_ITEM_HUD_ICONS.get(item_id, ""))
+	if not special.is_empty() and ResourceLoader.exists(special):
+		return special
+	return item_icon_path(item_id)
+
+
+static func item_hud_icon(item_id: String) -> Texture2D:
+	return _load_texture(item_hud_icon_path(item_id))
 
 
 static func item_material(item_id: String) -> Material:
