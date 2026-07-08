@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name CombatDrone
 
-const BULLET_SCENE := preload("res://game/actors/defense/bullet.tscn")
+const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 const DroneTargetingScript := preload("res://game/systems/drone/drone_targeting.gd")
 
@@ -360,12 +360,25 @@ func _fire_once() -> void:
 	bullet.set("team", "defense")
 	bullet.set("shooter", self)
 	bullet.set("bullet_color", Color(0.35, 0.95, 1.0, 1.0))
+	bullet.set("max_range_px", profile.drone_weapon_range)
+	bullet.set("falloff_start_px", profile.drone_weapon_range)
+	bullet.set("falloff_end_px", profile.drone_weapon_range)
+	bullet.set("terrain_ballistics_provider", _find_terrain_ballistics_provider())
 	var container := get_node_or_null("/root/GameRoot/World/Projectiles")
 	if container != null:
 		container.add_child(bullet)
 	else:
 		get_tree().current_scene.add_child(bullet)
 	bullet.global_position = spawn_position
+
+
+func get_terrain_ballistics_provider() -> Node:
+	return _find_terrain_ballistics_provider()
+
+
+func _find_terrain_ballistics_provider() -> Node:
+	var providers := get_tree().get_nodes_in_group("terrain_ballistics_provider")
+	return providers[0] if not providers.is_empty() else null
 
 
 func take_damage(amount: float) -> void:

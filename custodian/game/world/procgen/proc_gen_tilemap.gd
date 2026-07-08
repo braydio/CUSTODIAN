@@ -13,6 +13,7 @@ extends Node
 const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_wall_segment.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
+const TERRAIN_BALLISTICS_SCRIPT := preload("res://game/world/procgen/terrain/terrain_ballistics.gd")
 const REQUIRED_CELL_CLASSIFIER_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_required_cell_classifier.gd")
 const PRETERRAIN_DIAGNOSTICS_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_preterrain_diagnostics.gd")
 const PRETERRAIN_AUTHORITY_REPAIR_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_preturn_authority_repair.gd")
@@ -490,6 +491,7 @@ func _ready() -> void:
 	if not generation_output_enabled:
 		return
 	add_to_group("procgen_tilemap")
+	add_to_group("terrain_ballistics_provider")
 	# Auto-find ProcGen if not assigned
 	if not procgen_node:
 		procgen_node = find_child("ProcGen", true, false) as ProcGen
@@ -4961,6 +4963,43 @@ func _get_tile_size() -> Vector2:
 	if floor_tilemap != null and floor_tilemap.tile_set != null:
 		return Vector2(floor_tilemap.tile_set.tile_size)
 	return Vector2(16, 16)
+
+
+func get_terrain_ballistics_context() -> Dictionary:
+	if _last_terrain_result.is_empty():
+		return {}
+	return {
+		"height_by_cell": _last_terrain_result.get("height_by_cell", {}),
+		"traversal_by_cell": _last_terrain_result.get("traversal_by_cell", {}),
+		"terrain_type_by_cell": _last_terrain_result.get("terrain_type_by_cell", {}),
+		"tile_by_cell": _last_terrain_result.get("tile_by_cell", {}),
+		"edge_profile_by_cell": _last_terrain_result.get("edge_profile_by_cell", {}),
+		"tile_size": get_runtime_tile_size(),
+		"world_to_tile": Callable(self, "_global_to_tile"),
+		"tile_to_world": Callable(self, "tile_to_global_position"),
+	}
+
+
+func can_trace_projectile(from_world: Vector2, to_world: Vector2) -> Dictionary:
+	var context := get_terrain_ballistics_context()
+	if context.is_empty():
+		return {
+			"allowed": true,
+			"blocked_by": "no_terrain_context",
+			"blocked_at_world": to_world,
+		}
+	return TERRAIN_BALLISTICS_SCRIPT.trace_projectile_tiles(context, from_world, to_world)
+
+
+func is_terrain_collision_body(body: Node) -> bool:
+	if body == null:
+		return false
+	var current: Node = body
+	while current != null:
+		if current == floor_tilemap or current == walls_tilemap:
+			return true
+		current = current.get_parent()
+	return false
 
 
 func _foliage_jitter(pos: Vector2i) -> Vector2:

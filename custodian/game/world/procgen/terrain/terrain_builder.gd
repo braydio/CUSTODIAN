@@ -5,6 +5,7 @@ const TerrainRegionScript := preload("res://game/world/procgen/terrain/terrain_r
 const TerrainTileIdsScript := preload("res://game/world/procgen/terrain/terrain_tile_ids.gd")
 const WorldProgressProfileScript := preload("res://game/world/procgen/progression/world_progress_profile.gd")
 const AscentRoutePlannerScript := preload("res://game/world/procgen/progression/ascent_route_planner.gd")
+const TerrainBallisticsScript := preload("res://game/world/procgen/terrain/terrain_ballistics.gd")
 
 enum TerrainType {
 	GROUND,
@@ -221,6 +222,7 @@ func build_terrain(map_rect: Rect2i, rng: RandomNumberGenerator, context: Dictio
 	result["missing_required_count"] = (connectivity.get("missing_required", []) as Array).size()
 	result["rescue_carved_cells"] = rescue_carved_cells
 	result["baseline_rescue_carved_cells"] = baseline_rescue_carved_cells
+	result["edge_profile_by_cell"] = _build_edge_profiles(result)
 	result["debug_summary"] = _build_debug_summary(result)
 	_last_result = result.duplicate(true)
 	
@@ -263,6 +265,7 @@ func _build_baseline(map_rect: Rect2i, context: Dictionary) -> Dictionary:
 	var tile_by_cell := {}
 	var ramp_dir_by_cell := {}
 	var blocked_cells := {}
+	var edge_profile_by_cell := {}
 
 	var floor_lookup := _cell_lookup(_normalize_cell_array(context.get("floor_cells", [])))
 	var blocked_lookup := _cell_lookup(_normalize_cell_array(context.get("blocked_cells", [])))
@@ -311,6 +314,7 @@ func _build_baseline(map_rect: Rect2i, context: Dictionary) -> Dictionary:
 		"tile_by_cell": tile_by_cell,
 		"ramp_dir_by_cell": ramp_dir_by_cell,
 		"blocked_cells": blocked_cells,
+		"edge_profile_by_cell": edge_profile_by_cell,
 	}
 
 
@@ -592,6 +596,21 @@ func _build_debug_summary(result: Dictionary) -> Dictionary:
 	var elevated_count := 0
 	var ramp_count := 0
 	var max_height := 0
+	var edge_counts := {
+		TerrainBallisticsScript.EDGE_LEDGE_FIRE_OVER: 0,
+		TerrainBallisticsScript.EDGE_WALL_HIGH: 0,
+		TerrainBallisticsScript.EDGE_DROP: 0,
+	}
+	var ballistic_edge_count := 0
+	for profile_variant in (result.get("edge_profile_by_cell", {}) as Dictionary).values():
+		if not (profile_variant is Dictionary):
+			continue
+		for edge_variant in (profile_variant as Dictionary).values():
+			var edge := String(edge_variant)
+			if edge != TerrainBallisticsScript.EDGE_NONE:
+				ballistic_edge_count += 1
+			if edge_counts.has(edge):
+				edge_counts[edge] = int(edge_counts[edge]) + 1
 	for cell in traversal_by_cell.keys():
 		var traversal := String(traversal_by_cell[cell])
 		if _is_blocked_traversal(traversal):
@@ -616,7 +635,46 @@ func _build_debug_summary(result: Dictionary) -> Dictionary:
 		"rescue_carved_cells": int(result.get("rescue_carved_cells", 0)),
 		"baseline_rescue_carved_cells": int(result.get("baseline_rescue_carved_cells", 0)),
 		"generation_mode": String(result.get("generation_mode", "FINAL_VISUAL")),
+		"ballistic_edge_count": ballistic_edge_count,
+		"ledge_fire_over_edge_count": int(edge_counts[TerrainBallisticsScript.EDGE_LEDGE_FIRE_OVER]),
+		"wall_high_edge_count": int(edge_counts[TerrainBallisticsScript.EDGE_WALL_HIGH]),
+		"drop_edge_count": int(edge_counts[TerrainBallisticsScript.EDGE_DROP]),
 	}
+
+
+func _build_edge_profiles(result: Dictionary) -> Dictionary:
+	var profiles := {}
+	var traversal_by_cell: Dictionary = result.get("traversal_by_cell", {})
+	var context := {
+		"height_by_cell": result.get("height_by_cell", {}),
+		"traversal_by_cell": traversal_by_cell,
+		"terrain_type_by_cell": result.get("terrain_type_by_cell", {}),
+		"tile_by_cell": result.get("tile_by_cell", {}),
+	}
+	var directions := {
+		"north": Vector2i.UP,
+		"south": Vector2i.DOWN,
+		"east": Vector2i.RIGHT,
+		"west": Vector2i.LEFT,
+	}
+	for cell_variant in traversal_by_cell.keys():
+		if not (cell_variant is Vector2i):
+			continue
+		var cell := cell_variant as Vector2i
+		var cell_profiles := {}
+		for direction_name in directions:
+			var neighbor: Vector2i = cell + directions[direction_name]
+			var profile: String
+			if not traversal_by_cell.has(neighbor):
+				var traversal := String(traversal_by_cell.get(cell, TRAVERSAL_WALKABLE))
+				profile = TerrainBallisticsScript.EDGE_DROP \
+						if traversal == TRAVERSAL_DROP \
+						else TerrainBallisticsScript.EDGE_WALL_HIGH
+			else:
+				profile = TerrainBallisticsScript.classify_boundary(context, cell, neighbor)
+			cell_profiles[direction_name] = profile
+		profiles[cell] = cell_profiles
+	return profiles
 
 
 func _rescue_connectivity(result: Dictionary, start_cell: Vector2i, missing_required: Array) -> int:

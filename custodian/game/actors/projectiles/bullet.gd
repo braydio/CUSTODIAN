@@ -13,13 +13,22 @@ extends Area2D
 @export var falloff_start_px: float = 180.0
 @export var falloff_end_px: float = 320.0
 @export var min_damage_multiplier: float = 0.45
+@export var terrain_ballistics_enabled: bool = true
+@export var terrain_ballistics_debug: bool = false
 
 const BLOCK_SPARK_SCENE := preload("res://game/actors/effects/block_spark.tscn")
+const TerrainBallistics := preload("res://game/world/procgen/terrain/terrain_ballistics.gd")
 
 var direction := Vector2.RIGHT
 var shooter: Node = null
+var terrain_ballistics_provider: Node = null
 var age := 0.0
 var _distance_traveled := 0.0
+var _terrain_query_fail_open := true
+var _terrain_query_warning_printed := false
+var _last_step_from := Vector2.ZERO
+var _last_step_to := Vector2.ZERO
+var _last_step_terrain_allowed := true
 
 @onready var visual = get_node_or_null("Visual")
 @onready var collision_shape = get_node_or_null("CollisionShape2D")
@@ -41,14 +50,29 @@ func _physics_process(delta):
 	var from: Vector2 = global_position
 	var to: Vector2 = global_position + direction * speed * delta
 	var traveled_this_step := from.distance_to(to)
+	_last_step_from = from
+	_last_step_to = to
+	var terrain_result := _query_terrain_ballistics(from, to)
+	_last_step_terrain_allowed = bool(terrain_result.get("allowed", _terrain_query_fail_open))
+	if not _last_step_terrain_allowed:
+		var blocked_position: Vector2 = terrain_result.get("blocked_at_world", to)
+		traveled_this_step = from.distance_to(blocked_position)
+		global_position = blocked_position
+		_distance_traveled += traveled_this_step
+		_spawn_impact_at(blocked_position)
+		queue_free()
+		return
 	var hit: Dictionary = _sweep_projectile(from, to)
 	if not hit.is_empty():
 		var hit_position: Vector2 = hit.get("position", to)
 		traveled_this_step = from.distance_to(hit_position)
 		global_position = hit_position
 		var collider: Object = hit.get("collider", null)
-		if collider is Node and _handle_body_hit(collider as Node, global_position):
-			return
+		if collider is Node:
+			var collider_node := collider as Node
+			if not (_last_step_terrain_allowed and _is_generated_terrain_collision(collider_node)):
+				if _handle_body_hit(collider_node, global_position):
+					return
 		traveled_this_step += hit_position.distance_to(to)
 	global_position = to
 	_distance_traveled += traveled_this_step
@@ -58,7 +82,51 @@ func _physics_process(delta):
 
 
 func _on_body_entered(body: Node):
+	if _last_step_terrain_allowed and _is_generated_terrain_collision(body):
+		return
 	_handle_body_hit(body, _resolve_impact_position(body))
+
+
+func set_terrain_ballistics_provider(provider: Node) -> void:
+	terrain_ballistics_provider = provider
+
+
+func _resolve_terrain_ballistics_provider() -> Node:
+	if terrain_ballistics_provider != null and is_instance_valid(terrain_ballistics_provider):
+		return terrain_ballistics_provider
+	if shooter != null and is_instance_valid(shooter) and shooter.has_method("get_terrain_ballistics_provider"):
+		var shooter_provider: Variant = shooter.call("get_terrain_ballistics_provider")
+		if shooter_provider is Node and is_instance_valid(shooter_provider):
+			terrain_ballistics_provider = shooter_provider
+			return terrain_ballistics_provider
+	if get_tree() == null:
+		return null
+	var providers := get_tree().get_nodes_in_group("terrain_ballistics_provider")
+	if not providers.is_empty():
+		terrain_ballistics_provider = providers[0]
+	return terrain_ballistics_provider
+
+
+func _query_terrain_ballistics(from: Vector2, to: Vector2) -> Dictionary:
+	if not terrain_ballistics_enabled:
+		return {"allowed": true, "blocked_by": "disabled"}
+	var provider := _resolve_terrain_ballistics_provider()
+	if provider == null or not provider.has_method("can_trace_projectile"):
+		return {"allowed": true, "blocked_by": "no_terrain_provider"}
+	var result_variant: Variant = provider.call("can_trace_projectile", from, to)
+	if result_variant is Dictionary and (result_variant as Dictionary).has("allowed"):
+		return result_variant as Dictionary
+	if terrain_ballistics_debug and not _terrain_query_warning_printed:
+		_terrain_query_warning_printed = true
+		push_warning("[TerrainBallistics] Provider returned no allowed field; projectile query failed open.")
+	return {"allowed": _terrain_query_fail_open, "blocked_by": "invalid_terrain_result"}
+
+
+func _is_generated_terrain_collision(body: Node) -> bool:
+	var provider := _resolve_terrain_ballistics_provider()
+	return provider != null \
+			and provider.has_method("is_terrain_collision_body") \
+			and bool(provider.call("is_terrain_collision_body", body))
 
 
 func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:

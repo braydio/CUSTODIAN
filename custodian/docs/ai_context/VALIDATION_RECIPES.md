@@ -165,11 +165,14 @@ For TerrainBuilder/procgen connectivity changes:
 ```bash
 cd custodian
 godot --headless --script res://tools/validation/terrain_builder_smoke.gd
+godot --headless --script res://tools/validation/terrain_ballistics_smoke.gd
 godot --headless --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 ```
 
-The first command validates TerrainBuilder determinism and metadata behavior. The second generates representative
-candidate-mode maps and verifies required-cell counts stay bounded while terrain connectivity remains enforced.
+The first command validates TerrainBuilder determinism and metadata behavior. The second validates deterministic projectile
+tile tracing, directional ledge fire, hard wall/drop blocking, ramp/stair exceptions, generated edge profiles, and preserved
+movement blocking. The third generates representative candidate-mode maps and verifies required-cell counts stay bounded
+while terrain connectivity remains enforced. `terrain_ballistics_smoke` is part of the default procgen suite.
 For production-sized contract rescue diagnostics, use the slow suite mode from the repository root:
 
 ```bash

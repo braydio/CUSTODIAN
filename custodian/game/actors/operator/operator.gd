@@ -2074,6 +2074,14 @@ func _get_muzzle_obstruction(direction: Vector2, muzzle_position: Vector2) -> Di
 	if hit.is_empty():
 		return {}
 	var collider: Object = hit.get("collider", null)
+	var terrain_provider := _find_terrain_ballistics_provider()
+	if collider is Node and terrain_provider != null \
+			and terrain_provider.has_method("is_terrain_collision_body") \
+			and bool(terrain_provider.call("is_terrain_collision_body", collider as Node)) \
+			and terrain_provider.has_method("can_trace_projectile"):
+		var terrain_result: Variant = terrain_provider.call("can_trace_projectile", from, to)
+		if terrain_result is Dictionary and bool((terrain_result as Dictionary).get("allowed", false)):
+			return {}
 	if _is_ranged_fire_blocker(collider):
 		return hit
 	return {}
@@ -2201,6 +2209,7 @@ func _emit_pending_ranged_shot() -> void:
 	bullet.bullet_color = profile.get("color", Color(1.0, 0.9, 0.35, 1.0))
 	bullet.impact_scene = impact_scene
 	bullet.shooter = self
+	bullet.terrain_ballistics_provider = _find_terrain_ballistics_provider()
 	# Apply cognitive crit bonus (bearing increases crit chance)
 	if cognitive != null and cognitive.has_method("get_player_crit_bonus"):
 		bullet.crit_chance = float(cognitive.call("get_player_crit_bonus"))
@@ -2218,6 +2227,15 @@ func _emit_pending_ranged_shot() -> void:
 	_emit_weapon_noise(spawn_position)
 	_spawn_muzzle_flash(direction)
 	_apply_body_recoil_impulse(direction)
+
+
+func get_terrain_ballistics_provider() -> Node:
+	return _find_terrain_ballistics_provider()
+
+
+func _find_terrain_ballistics_provider() -> Node:
+	var providers := get_tree().get_nodes_in_group("terrain_ballistics_provider")
+	return providers[0] if not providers.is_empty() else null
 
 
 func _handle_attack_input() -> void:

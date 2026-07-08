@@ -8,7 +8,7 @@ enum TurretType {
 	SNIPER,
 }
 
-const BULLET_SCENE := preload("res://game/actors/defense/bullet.tscn")
+const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
 
 @export var turret_name: String = "Turret"
 @export var turret_type: TurretType = TurretType.GUNNER
@@ -25,6 +25,7 @@ var target: Node2D = null
 var fire_timer: float = 0.0
 var sector_reference: Sector = null
 var enemies_in_range: Array[Node2D] = []
+var _terrain_ballistics_provider: Node = null
 
 const INTEGRITY_MODIFIER_BY_STATE := {
 	"operational": 1.0,
@@ -114,7 +115,8 @@ func _physics_process(delta: float) -> void:
 	_prune_enemies_in_range()
 	if target == null or not is_instance_valid(target):
 		target = acquire_target()
-	elif target.global_position.distance_to(global_position) > range:
+	elif target.global_position.distance_to(global_position) > range \
+			or not _has_terrain_line_of_fire(target.global_position):
 		target = acquire_target()
 
 	fire_timer -= delta
@@ -176,7 +178,7 @@ func acquire_target() -> Node2D:
 		if enemy.has_method("is_passive_enemy") and bool(enemy.call("is_passive_enemy")):
 			continue
 		var dist = global_position.distance_to(enemy.global_position)
-		if dist < closest_dist:
+		if dist < closest_dist and _has_terrain_line_of_fire(enemy.global_position):
 			closest_dist = dist
 			closest = enemy
 
@@ -194,6 +196,9 @@ func rotate_barrel() -> void:
 
 func shoot(effective_output: float) -> void:
 	if target == null or not is_instance_valid(target):
+		return
+	if not _has_terrain_line_of_fire(target.global_position):
+		target = null
 		return
 	var bullet = BULLET_SCENE.instantiate()
 	if bullet == null:
@@ -213,6 +218,10 @@ func shoot(effective_output: float) -> void:
 	bullet.set("damage", damage * effective_output)
 	bullet.set("team", "defense")
 	bullet.set("shooter", self)
+	bullet.set("max_range_px", range)
+	bullet.set("falloff_start_px", range)
+	bullet.set("falloff_end_px", range)
+	bullet.set("terrain_ballistics_provider", _find_terrain_ballistics_provider())
 
 	var container = get_node_or_null("/root/GameRoot/World/Projectiles")
 	if container:
@@ -227,6 +236,27 @@ func shoot(effective_output: float) -> void:
 		if is_instance_valid(barrel):
 			barrel.scale = Vector2.ONE
 	)
+
+
+func get_terrain_ballistics_provider() -> Node:
+	return _find_terrain_ballistics_provider()
+
+
+func _find_terrain_ballistics_provider() -> Node:
+	if _terrain_ballistics_provider != null and is_instance_valid(_terrain_ballistics_provider):
+		return _terrain_ballistics_provider
+	var providers := get_tree().get_nodes_in_group("terrain_ballistics_provider")
+	_terrain_ballistics_provider = providers[0] if not providers.is_empty() else null
+	return _terrain_ballistics_provider
+
+
+func _has_terrain_line_of_fire(target_position: Vector2) -> bool:
+	var provider := _find_terrain_ballistics_provider()
+	if provider == null or not provider.has_method("can_trace_projectile"):
+		return true
+	var origin := muzzle.global_position if muzzle != null else global_position
+	var result: Variant = provider.call("can_trace_projectile", origin, target_position)
+	return not (result is Dictionary) or bool((result as Dictionary).get("allowed", true))
 
 
 func has_power() -> bool:

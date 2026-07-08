@@ -36,6 +36,7 @@ run_step architecture_ownership_smoke python custodian/tools/validation/architec
 
 cd "$ROOT_DIR/custodian" || exit 1
 run_step terrain_builder_smoke godot --headless --path . --script res://tools/validation/terrain_builder_smoke.gd
+run_step terrain_ballistics_smoke godot --headless --path . --script res://tools/validation/terrain_ballistics_smoke.gd
 run_step procgen_terrain_required_cells_smoke godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 run_step procgen_foliage_spawner_smoke godot --headless --path . --script res://tools/validation/procgen_foliage_spawner_smoke.gd
 run_step terrain_gameplay_packs_smoke godot --headless --path . --script res://tools/validation/terrain_gameplay_packs_smoke.gd

@@ -32,6 +32,7 @@ var fire_timer := 0.0
 var target: Node2D = null
 var barrel_angle := 0.0
 var turret_state: TurretState = TurretState.IDLE
+var _terrain_ballistics_provider: Node = null
 
 @onready var barrel = get_node_or_null("Barrel")
 @onready var barrel_sprite = get_node_or_null("Barrel/Sprite")
@@ -95,7 +96,7 @@ func _find_target() -> Node2D:
 		if enemy.has_method("is_dead") and enemy.is_dead():
 			continue
 		var dist = global_position.distance_to(enemy.global_position)
-		if dist < nearest_dist:
+		if dist < nearest_dist and _has_terrain_line_of_fire(enemy.global_position):
 			nearest_dist = dist
 			nearest = enemy
 
@@ -130,6 +131,7 @@ func _fire():
 	bullet.set("damage", damage)
 	bullet.set("team", "defense")
 	bullet.set("shooter", self)
+	bullet.set("terrain_ballistics_provider", _find_terrain_ballistics_provider())
 
 	var container = get_node_or_null("/root/GameRoot/World/Projectiles")
 	if container:
@@ -137,6 +139,26 @@ func _fire():
 	else:
 		get_tree().current_scene.add_child(bullet)
 	bullet.global_position = spawn_position
+
+
+func get_terrain_ballistics_provider() -> Node:
+	return _find_terrain_ballistics_provider()
+
+
+func _find_terrain_ballistics_provider() -> Node:
+	if _terrain_ballistics_provider != null and is_instance_valid(_terrain_ballistics_provider):
+		return _terrain_ballistics_provider
+	var providers := get_tree().get_nodes_in_group("terrain_ballistics_provider")
+	_terrain_ballistics_provider = providers[0] if not providers.is_empty() else null
+	return _terrain_ballistics_provider
+
+
+func _has_terrain_line_of_fire(target_position: Vector2) -> bool:
+	var provider := _find_terrain_ballistics_provider()
+	if provider == null or not provider.has_method("can_trace_projectile"):
+		return true
+	var result: Variant = provider.call("can_trace_projectile", global_position, target_position)
+	return not (result is Dictionary) or bool((result as Dictionary).get("allowed", true))
 
 
 func _has_power() -> bool:
