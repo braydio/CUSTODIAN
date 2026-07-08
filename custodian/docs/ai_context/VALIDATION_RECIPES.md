@@ -344,7 +344,7 @@ python custodian/tools/tiles/ingest_generated_terrain_packs.py
 # Register runtime PNGs into procgen_world_tileset.tres
 python custodian/tools/tiles/register_terrain_gameplay_packs.py --dry-run
 
-# Validate packs (manifests, PNG dimensions/alpha, symbolic IDs, non-walkable resolution)
+# Validate packs, registration report, and active TileSet atlas-source resolution
 cd custodian
 godot --headless --script res://tools/validation/terrain_gameplay_packs_smoke.gd
 ```
@@ -355,14 +355,32 @@ Validates:
 - Manifests reference every runtime file
 - Symbolic IDs in `terrain_tile_ids.gd` match runtime filenames
 - Non-walkable tiles (chasm void/edge/corner, broken gap) resolve correctly
+- `procgen_world_tileset.tres` loads and resolves every registered connector/ascent/chasm_bridge runtime PNG as a TileSetAtlasSource
+- Expected atlas source ID ranges exist: connector `60..77`, ascent `80..99`, chasm_bridge `100..123`
+- Each registered source uses `32x32` texture regions and contains atlas coord `(0, 0)`
+- `reports/terrain_pack_ingest/terrain_gameplay_tileset_sources.json` has expected counts and no duplicate source IDs
 - No checkerboard artifacts in runtime images
 
 Ingest reports are written to `reports/terrain_pack_ingest/terrain_pack_ingest_report.md`.
 TileSet source maps are written to `reports/terrain_pack_ingest/terrain_gameplay_tileset_sources.json`.
+Direction/corner review notes belong in `reports/terrain_pack_ingest/terrain_direction_review.md`.
 
-The smoke test runs in the procgen validation suite:
+Current terrain gameplay pack status:
+
+- Connector, Ascent, and Chasm+Bridge are registered as TileSet atlas sources, not as Godot TileSet terrain/autotile terrain sets.
+- Runtime TerrainBuilder/ProcGenTilemap placement for connector visuals, ascent replacement tiles, chasm generation, and bridge placement is deferred to a separate runtime integration pass.
+- Connector currently visualizes future authority-repair/connectors; Ascent expands ramp/stair/landing vocabulary while TerrainBuilder keeps its stable mapping; Chasm+Bridge adds negative-space/crossing vocabulary while placement remains inactive.
+
+The smoke test runs in the default procgen validation suite:
 ```bash
 custodian/tools/validation/run_procgen_validation_suite.sh
+```
+
+The slow production rescue diagnostic remains opt-in:
+
+```bash
+RUN_SLOW_PROCGEN=1 custodian/tools/validation/run_procgen_validation_suite.sh
+custodian/tools/validation/run_procgen_validation_suite.sh --full
 ```
 
 ## Fabrication Balance Pipeline Validation

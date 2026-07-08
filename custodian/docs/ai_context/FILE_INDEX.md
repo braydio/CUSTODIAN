@@ -84,7 +84,7 @@ Last updated: 2026-07-08
 - `custodian/game/world/procgen/foliage/procgen_foliage_spawner.gd` — foliage generation policy service for deterministic spawn/clear/remove logic, fruit/trunk collision helpers, and deferred queue draining used by `ProcGenTilemap`
 - `custodian/game/world/procgen/foliage/README.md` — foliage ownership and migration note; facade/service split plus authority boundaries
 - `custodian/game/world/procgen/terrain/terrain_builder.gd` — deterministic terrain-construction pass that emits baseline metadata, guarded worldgen reserved-region elevation metadata, mountain blockers, industrial elevation platform metadata, symbolic tile IDs for explicit features only, flood-fill connectivity validation, candidate-aware warning/result summaries, baseline/final required-cell corridor rescue counts before fallback, and spawn-valid traversal helpers
-- `custodian/game/world/procgen/terrain/terrain_tile_ids.gd` — centralized symbolic terrain tile IDs for industrial elevation and mountain/cliff art plus placeholder constants; baseline visual no-op is owned by TerrainBuilder, not this file
+- `custodian/game/world/procgen/terrain/terrain_tile_ids.gd` — centralized symbolic terrain tile IDs for industrial elevation, mountain/cliff art, connector/ascent/chasm/bridge gameplay pack atlas IDs, and placeholder constants; baseline visual no-op is owned by TerrainBuilder, not this file
 - `custodian/game/world/procgen/terrain/terrain_region.gd` — terrain region descriptor for baseline, mountain wall, chasm, and industrial platform debug/validation output
 - `custodian/game/world/procgen/terrain/terrain_debug_overlay.gd` — optional debug draw helper that visualizes terrain height/traversal metadata from a TerrainBuilder result
 - `custodian/game/world/lighting/lighting_profile.gd` — `Resource` data object for ambient color, directional light color/energy/rotation, cosmic-underlay alpha, fog alpha, and transition timing
@@ -125,7 +125,9 @@ Last updated: 2026-07-08
 - `custodian/tools/tiles/normalize_connector_pack_tiles.py` — per-pack normalize script for connector tiles (connected-component detection, 32×32 crop/pad, runtime/manifest/preview exports)
 - `custodian/tools/tiles/normalize_ascent_pack_sheet.py` — per-pack normalize script for ascent tiles
 - `custodian/tools/tiles/normalize_chasm_bridge_pack_sheet.py` — per-pack normalize script for chasm+bridge tiles
-- `custodian/tools/validation/terrain_gameplay_packs_smoke.gd` — validates terrain pack manifests, runtime PNG dimensions/alpha/checkerboard, symbolic ID existence, and non-walkable tile resolution
+- `custodian/tools/validation/terrain_gameplay_packs_smoke.gd` — validates terrain pack manifests, runtime PNG dimensions/alpha/checkerboard, symbolic ID agreement, chasm non-walkable resolution, committed registration-report counts/ranges/collisions, and direct `procgen_world_tileset.tres` TileSetAtlasSource registration for connector/ascent/chasm_bridge runtime PNGs
+- `reports/terrain_pack_ingest/terrain_gameplay_tileset_sources.json` — committed registration report mapping connector/ascent/chasm_bridge runtime tile IDs to TileSet atlas source IDs 60–123
+- `reports/terrain_pack_ingest/terrain_direction_review.md` — manual visual review queue for connector inner/outer corners, ascent ramp/stair directions, chasm edge/corner directions, and bridge starts before runtime gameplay placement
 - `custodian/tools/validation/procgen_intent_graph_smoke.gd` — deterministic intent graph and reservation validation
 - `custodian/tools/validation/procgen_worldgen_shape_smoke.gd` — integrated procgen shape validation for intent graph export and reserved-region generation
 - `custodian/tools/validation/procgen_ascent_style_smoke.gd` — smoke validation for world profile loading and uphill ascent metadata
@@ -368,7 +370,7 @@ Last updated: 2026-07-08
 - `custodian/content/tiles/walls/source/procgen_wall_modules_source.png` — canonical reviewed source sheet for generated procgen wall modules
 - `custodian/content/tiles/walls/source/wall_passages/` — optional `32px`-tall wall passage strips sliced directly into procgen passage/hole buckets
 - `custodian/content/tiles/walls/Wall_Tops.png` — wall-top source sheet that is alpha-split by the atlas builder with `--top-source`
-- `custodian/content/tiles/tilesets/procgen_world_tileset.tres` — canonical active world/procgen TileSet used by procgen and test-map TileMapLayer scenes; source IDs `32..59` register the industrial elevation and mountain-cliff runtime PNGs
+- `custodian/content/tiles/tilesets/procgen_world_tileset.tres` — canonical active world/procgen TileSet used by procgen and test-map TileMapLayer scenes; source IDs `32..59` register industrial elevation and mountain-cliff runtime PNGs, while terrain gameplay packs are currently registered as atlas sources `60..77` connector, `80..99` ascent, and `100..123` chasm_bridge. These are not yet Godot TileSet terrain/autotile terrain sets.
 - `custodian/content/tiles/roads_paths/README.md` — local road/path asset layout, regeneration commands, and runtime/source split
 - `custodian/content/tiles/roads_paths/source/Pathways.json` — road/path role metadata used by the game32 normalizer and procgen surface mapping
 - `custodian/content/tiles/roads_paths/source/road_piece_exports/road_piece_manifest.json` — raw procgen road-piece metadata; maps variable-size stamp PNGs by connection bitmask before game-grid normalization
