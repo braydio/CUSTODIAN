@@ -133,11 +133,16 @@ func die_violently() -> void:
 
 func _choose_attack(distance: float) -> void:
 	_attack_timer = attack_cooldown
+	# Keep the close-range attack on pin strike; reserve thread pull for spacing control.
+	if distance <= attack_range:
+		_pin_strike()
+		return
+
 	if site != null and site.event_state.thread_tension >= 60:
 		_thread_pull()
 		return
-	if distance <= attack_range:
-		_pin_strike()
+
+	_pin_strike()
 
 
 func _pin_strike() -> void:

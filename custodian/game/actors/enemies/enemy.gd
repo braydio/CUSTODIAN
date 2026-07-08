@@ -29,6 +29,7 @@ const GRUNT_STAGGER_ANIMATION := &"stagger_s"
 const GRUNT_CRIT_ANIMATION := &"crit_s"
 const GRUNT_CRIT_RECOVERY_ANIMATION := &"crit_recovery_s"
 const GRUNT_CRIT_FX_ANIMATION := &"crit_fx_s"
+const GRUNT_FLINCH_FX_ANIMATION := &"flinch_fx_s"
 const GRUNT_DEATH_ANIMATION := &"death_s"
 const GRUNT_FLINCH_ANIMATION := &"flinch_s"
 const CUSTOM_AMBIENT_EAST_ANIMATION := &"ambient_slink_east"
@@ -2122,6 +2123,7 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 		if _has_animation(String(GRUNT_FLINCH_ANIMATION)):
 			animated_sprite.flip_h = false
 			_play_animation(String(GRUNT_FLINCH_ANIMATION), false)
+			_play_grunt_flinch_fx()
 			return
 	if _stagger_timer > 0.0:
 		if _has_animation(String(GRUNT_STAGGER_ANIMATION)):
@@ -2216,6 +2218,17 @@ func _play_custom_enemy_crit_fx() -> void:
 	custom_enemy_fx_sprite.scale = custom_enemy_fx_scale
 	custom_enemy_fx_sprite.flip_h = false
 	custom_enemy_fx_sprite.play(String(GRUNT_CRIT_FX_ANIMATION))
+
+
+func _play_grunt_flinch_fx() -> void:
+	if custom_enemy_fx_sprite == null or custom_enemy_fx_sprite.sprite_frames == null:
+		return
+	if not custom_enemy_fx_sprite.sprite_frames.has_animation(String(GRUNT_FLINCH_FX_ANIMATION)):
+		return
+	custom_enemy_fx_sprite.visible = true
+	custom_enemy_fx_sprite.scale = custom_enemy_fx_scale
+	custom_enemy_fx_sprite.flip_h = false
+	custom_enemy_fx_sprite.play(String(GRUNT_FLINCH_FX_ANIMATION))
 
 
 func _on_custom_enemy_fx_finished() -> void:

@@ -20,7 +20,7 @@ The operator has dedicated lower-body and upper-body `AnimatedSprite2D` layers w
 
 - Root routing: `/home/braydenchaffee/Projects/CUSTODIAN/AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active design/spec docs: `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md`, `design/features/implementation/UNARMED_TOGGLE.md`
+- Active design/spec docs: `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md`, `design/02_features/operator/UNARMED_TOGGLE.md`
 - Active runtime/docs files: `custodian/game/actors/operator/operator.gd`, `custodian/game/actors/operator/operator.tscn`, `custodian/tools/pipelines/build_operator_modular_runtime.py`, `custodian/tools/pipelines/update_operator_curated_resources.gd`
 - Historical reference only: `python-sim/`
 

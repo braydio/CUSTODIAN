@@ -21,7 +21,7 @@
     {
       "item_id": "ancient_bearing",
       "display_name": "Ancient Bearing",
-      "description": "A remnant of the elder days, the last reminder of its ancient station among the ordered things. This aspect shapes the way the Shrumb orients toward the world. On rare occasions its essence sublimates upon the Shrumb's death, where it will continue to seek the alignment of a station that no longer receives it.",
+      "description": "A remnant of the elder days. This aspect shapes the way the Shrumb orients toward the world. On rare occasions its essence sublimates upon the Shrumb's death, where it will continue to seek the alignment of a station that no longer receives it.",
       "stack_size": 999,
       "rarity": "rare",
       "cognitive_axis": "bearing",

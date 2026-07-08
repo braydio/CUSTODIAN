@@ -122,7 +122,7 @@ custodian/game/world/procgen/gothic_compound/
 Also create the design note first:
 
 ```text
-design/features/implementation/GOTHIC_COMPOUND_PROCGEN.md
+design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md
 ```
 
 If your current procgen folder uses a different convention, Codex can adapt the paths, but it should keep the split between **asset registry**, **config**, **generator**, and **validator**.
@@ -134,7 +134,7 @@ If your current procgen folder uses a different convention, Codex can adapt the 
 Create:
 
 ```text
-design/features/implementation/GOTHIC_COMPOUND_PROCGEN.md
+design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md
 ```
 
 Content:
@@ -1522,7 +1522,7 @@ Paste this to Codex:
 Implement the gothic compound procgen fix.
 
 Read AGENTS.md first. This is a Godot runtime change under `custodian/`, so create/update a design note first:
-`design/features/implementation/GOTHIC_COMPOUND_PROCGEN.md`
+`design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md`
 
 Current bug:
 The screenshot shows asset-stamping, not compound generation. Terrain patches are placed as isolated repeated squares, roads are decorative, walls do not form a perimeter, and large props overlap layout. Fix by making the generator constraint-first.

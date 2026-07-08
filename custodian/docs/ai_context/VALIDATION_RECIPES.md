@@ -181,7 +181,8 @@ at `176x176`, `208x224`, and `224x224`, prints required-cell source/reason class
 TerrainBuilder baseline floor/wall walkability, and semantic required walkability, reports component/bridge diagnostics,
 and fails if baseline rescue, pre-terrain required connectivity, candidate acceptance, or forced failure-safe emission
 regresses. The expected production rescue baseline is no TerrainBuilder baseline rescue for the selected seeds; authority
-repair should happen in procgen before TerrainBuilder receives the floor/wall graph.
+repair should happen through `game/world/procgen/diagnostics/` before TerrainBuilder receives the floor/wall graph, with
+`ProcGenTilemap` acting as the context/state façade.
 
 For a batch run that captures per-step exit codes while teeing a timestamped log, use:
 
@@ -331,6 +332,38 @@ python3 -m py_compile tools/tiles/extract_wall_parts.py tools/tiles/compose_wall
 ```
 
 Then run the specific generator command documented in the relevant design or README file.
+
+## Terrain Gameplay Pack Pipeline Validation
+
+Use for terrain gameplay pack ingest, TileSet registration, and pack integrity checks.
+
+```bash
+# Ingest all three packs (connector, ascent, chasm+bridge) from source sheets
+python custodian/tools/tiles/ingest_generated_terrain_packs.py
+
+# Register runtime PNGs into procgen_world_tileset.tres
+python custodian/tools/tiles/register_terrain_gameplay_packs.py --dry-run
+
+# Validate packs (manifests, PNG dimensions/alpha, symbolic IDs, non-walkable resolution)
+cd custodian
+godot --headless --script res://tools/validation/terrain_gameplay_packs_smoke.gd
+```
+
+Validates:
+- All runtime PNGs exist in `runtime/{connector,ascent,chasm_bridge}/`
+- All PNGs are 32×32 RGBA with valid alpha
+- Manifests reference every runtime file
+- Symbolic IDs in `terrain_tile_ids.gd` match runtime filenames
+- Non-walkable tiles (chasm void/edge/corner, broken gap) resolve correctly
+- No checkerboard artifacts in runtime images
+
+Ingest reports are written to `reports/terrain_pack_ingest/terrain_pack_ingest_report.md`.
+TileSet source maps are written to `reports/terrain_pack_ingest/terrain_gameplay_tileset_sources.json`.
+
+The smoke test runs in the procgen validation suite:
+```bash
+custodian/tools/validation/run_procgen_validation_suite.sh
+```
 
 ## Fabrication Balance Pipeline Validation
 

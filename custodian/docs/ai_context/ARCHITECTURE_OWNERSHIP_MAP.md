@@ -7,7 +7,7 @@ Compact agent-facing map for current and target ownership. Use this with `custod
 - Persistent state: currently `GameState`, `InventoryManager`, `CognitiveState`; target is `game/state/persistent/*` behind compatibility facades.
 - Transient campaign/run state: currently `GameState`, `GameStats`, and contract generation records; target is `game/state/run/campaign_session.gd`, `campaign_outcome.gd`, and `run_phase.gd`.
 - Active world binding: currently `contract_world_loader.gd`, scene-local transition code, camera/navigation rebinding; target is `game/world/lifecycle/*`.
-- Procgen construction: currently `proc_gen_tilemap.gd` plus terrain/intent helpers; target keeps `ProcGenTilemap` as facade and moves generation services under `game/world/procgen/{generation,foliage,roads,authored_claims}`.
+- Procgen construction: `proc_gen_tilemap.gd` is the façade/state host; terrain, intent, foliage, and pre-terrain required-cell/diagnostic/repair algorithms already live in focused helpers. Further generation services should continue moving under `game/world/procgen/{generation,diagnostics,foliage,roads,authored_claims}`.
 - Authored maps: currently `game/world/sundered_keep/`, `game/world/home/`, and gothic compound runtime files; target is `game/world/authored/<map>/` after explicit path migration.
 - Combat simulation: currently `game/systems/combat/*`, operator combat profiles, enemy combat hooks, `NoiseEventBus`; target remains domain-owned under `game/systems/combat/` plus actor-local ability modules.
 - Actor-local behavior: currently `operator.gd`, `enemy.gd`, allied/vehicle actors; target extracts enemy abilities/archetypes while preserving actor-owned movement and health contracts.

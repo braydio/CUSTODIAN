@@ -1,0 +1,83 @@
+{
+  "report_time": "2026-07-08T18:17:44.742588+00:00",
+  "tileset_path": "res://content/tiles/tilesets/procgen_world_tileset.tres",
+  "packs": {
+    "connector": {
+      "source_id_start": 60,
+      "tiles": {
+        "terrain_connector_broken_patch_32": 60,
+        "terrain_connector_centerline_32": 61,
+        "terrain_connector_cracked_32": 62,
+        "terrain_connector_dust_32": 63,
+        "terrain_connector_edge_e_32": 64,
+        "terrain_connector_edge_n_32": 65,
+        "terrain_connector_edge_s_32": 66,
+        "terrain_connector_edge_w_32": 67,
+        "terrain_connector_gravel_32": 68,
+        "terrain_connector_ground_32": 69,
+        "terrain_connector_inner_corner_ne_32": 70,
+        "terrain_connector_inner_corner_nw_32": 71,
+        "terrain_connector_inner_corner_se_32": 72,
+        "terrain_connector_inner_corner_sw_32": 73,
+        "terrain_connector_outer_corner_ne_32": 74,
+        "terrain_connector_outer_corner_nw_32": 75,
+        "terrain_connector_outer_corner_se_32": 76,
+        "terrain_connector_outer_corner_sw_32": 77
+      }
+    },
+    "ascent": {
+      "source_id_start": 80,
+      "tiles": {
+        "ascent_lip_connector_32": 80,
+        "ascent_threshold_32": 81,
+        "ramp_east_broken_32": 82,
+        "ramp_east_wide_32": 83,
+        "ramp_north_broken_32": 84,
+        "ramp_north_wide_32": 85,
+        "ramp_south_broken_32": 86,
+        "ramp_south_wide_32": 87,
+        "ramp_west_broken_32": 88,
+        "ramp_west_wide_32": 89,
+        "stair_east_metal_32": 90,
+        "stair_east_stone_32": 91,
+        "stair_north_metal_32": 92,
+        "stair_north_stone_32": 93,
+        "stair_south_metal_32": 94,
+        "stair_south_stone_32": 95,
+        "stair_west_metal_32": 96,
+        "stair_west_stone_32": 97,
+        "terrain_landing_industrial_32": 98,
+        "terrain_landing_stone_32": 99
+      }
+    },
+    "chasm_bridge": {
+      "source_id_start": 100,
+      "tiles": {
+        "bridge_broken_segment_32": 100,
+        "bridge_metal_mid_horizontal_32": 101,
+        "bridge_metal_mid_vertical_32": 102,
+        "bridge_stone_mid_horizontal_32": 103,
+        "bridge_stone_mid_vertical_32": 104,
+        "bridge_stone_start_e_32": 105,
+        "bridge_stone_start_n_32": 106,
+        "bridge_stone_start_s_32": 107,
+        "bridge_stone_start_w_32": 108,
+        "broken_gap_edge_32": 109,
+        "chasm_edge_e_32": 110,
+        "chasm_edge_n_32": 111,
+        "chasm_edge_s_32": 112,
+        "chasm_edge_w_32": 113,
+        "chasm_inner_corner_ne_32": 114,
+        "chasm_inner_corner_nw_32": 115,
+        "chasm_inner_corner_se_32": 116,
+        "chasm_inner_corner_sw_32": 117,
+        "chasm_outer_corner_ne_32": 118,
+        "chasm_outer_corner_nw_32": 119,
+        "chasm_outer_corner_se_32": 120,
+        "chasm_outer_corner_sw_32": 121,
+        "chasm_void_32": 122,
+        "collapsed_gap_32": 123
+      }
+    }
+  }
+}

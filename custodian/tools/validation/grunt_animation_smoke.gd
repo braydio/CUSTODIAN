@@ -23,6 +23,7 @@ const REQUIRED_FX_ANIMATIONS := {
 	"melee_fx_sw": 10,
 	"melee_fx_w": 10,
 	"crit_fx_s": 8,
+	"flinch_fx_s": 5,
 }
 
 

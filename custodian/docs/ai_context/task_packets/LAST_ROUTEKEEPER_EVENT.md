@@ -15,23 +15,23 @@ Design and implement The Last Routekeeper — a rare, one-time authored random e
 
 ## Outcome
 
-- Design doc (`design/02_features/LAST_ROUTEKEEPER_EVENT.md`) complete and reviewed.
-- Code roadmap (`design/02_features/LAST_ROUTEKEEPER_EVENT_CODE.md`) complete with drop-in GDScript, Map patches, autoload config, and REQUIRED_ASSETS.md entries.
+- Design doc (`design/02_features/events/LAST_ROUTEKEEPER_EVENT.md`) complete and reviewed.
+- Code roadmap (`design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md`) complete with drop-in GDScript, Map patches, autoload config, and REQUIRED_ASSETS.md entries.
 - Task packet created.
 
 ## Authority
 
 - Root routing: `../design/`
 - Local routing: `custodian/docs/ai_context/task_packets/`
-- Active design/spec docs: `design/02_features/LAST_ROUTEKEEPER_EVENT.md`, `design/02_features/LAST_ROUTEKEEPER_EVENT_CODE.md`
+- Active design/spec docs: `design/02_features/events/LAST_ROUTEKEEPER_EVENT.md`, `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md`
 - Active runtime/docs files: `game/world/sundered_keep/sundered_keep_map.gd`, `game/world/events/ash_bell/` (precedent), `REQUIRED_ASSETS.md`
-- Historical reference only: `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` (for event pattern precedent, not content)
+- Historical reference only: `design/02_features/enemy_objective/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` (for event pattern precedent, not content)
 
 ## Work Surface
 
 - Files or folders expected to change:
-  - `design/02_features/LAST_ROUTEKEEPER_EVENT.md` — design spec (created)
-  - `design/02_features/LAST_ROUTEKEEPER_EVENT_CODE.md` — code roadmap (created)
+  - `design/02_features/events/LAST_ROUTEKEEPER_EVENT.md` — design spec (created)
+  - `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md` — code roadmap (created)
   - `custodian/docs/ai_context/task_packets/LAST_ROUTEKEEPER_EVENT.md` — this packet
   - `custodian/docs/ai_context/CURRENT_STATE.md` — update to mention new design docs
   - `custodian/docs/ai_context/FILE_INDEX.md` — update references
@@ -58,8 +58,8 @@ Design and implement The Last Routekeeper — a rare, one-time authored random e
 
 ### Phase A — Design (complete)
 
-1. Write `design/02_features/LAST_ROUTEKEEPER_EVENT.md` with event summary, design goals, runtime anchors, trigger conditions, event sequence, player-facing text, runtime architecture, production assets, and validation checklist.
-2. Write `design/02_features/LAST_ROUTEKEEPER_EVENT_CODE.md` with drop-in GDScript files, map patches, autoload config, bridge methods, and REQUIRED_ASSETS.md entries.
+1. Write `design/02_features/events/LAST_ROUTEKEEPER_EVENT.md` with event summary, design goals, runtime anchors, trigger conditions, event sequence, player-facing text, runtime architecture, production assets, and validation checklist.
+2. Write `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md` with drop-in GDScript files, map patches, autoload config, bridge methods, and REQUIRED_ASSETS.md entries.
 3. Create this task packet.
 
 ### Phase B — Context Pack Update (current)
@@ -86,7 +86,7 @@ Design and implement The Last Routekeeper — a rare, one-time authored random e
 
 ## Drift Review
 
-- Does `custodian/docs/ai_context/CURRENT_STATE.md` need an update? Yes — add reference to design/02_features/LAST_ROUTEKEEPER_EVENT.md
+- Does `custodian/docs/ai_context/CURRENT_STATE.md` need an update? Yes — add reference to design/02_features/events/LAST_ROUTEKEEPER_EVENT.md
 - Does `custodian/docs/ai_context/CONTEXT.md` need an update? No — the event fits existing lore/runtime patterns
 - Does `custodian/docs/ai_context/FILE_INDEX.md` need an update? Yes — add index entry for the two new design docs
 - Does `custodian/AGENTS.md` need an update? No
@@ -102,6 +102,6 @@ Design and implement The Last Routekeeper — a rare, one-time authored random e
 
 - Next action: Implement Phase C — create the autoload, event scripts, map patches, and REQUIRED_ASSETS.md updates.
 - Best starting files: `game/systems/core/state/world_event_memory.gd`, then `game/world/events/last_routekeeper/last_routekeeper_event_state.gd`, then `game/world/events/last_routekeeper/last_routekeeper_event.gd`, then `sundered_keep_map.gd`, then `project.godot`, then `REQUIRED_ASSETS.md`.
-- Required context: `design/02_features/LAST_ROUTEKEEPER_EVENT.md`, `design/02_features/LAST_ROUTEKEEPER_EVENT_CODE.md`, `game/world/events/ash_bell/` for pattern reference, `game/world/sundered_keep/sundered_keep_map.gd` to understand existing map interaction flow.
+- Required context: `design/02_features/events/LAST_ROUTEKEEPER_EVENT.md`, `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md`, `game/world/events/ash_bell/` for pattern reference, `game/world/sundered_keep/sundered_keep_map.gd` to understand existing map interaction flow.
 - Validation to run: `godot --headless --check-only --quit` after each implementation step.
 - Blockers or open questions: None for design phase.

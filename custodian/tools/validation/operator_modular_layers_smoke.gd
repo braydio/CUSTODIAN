@@ -62,6 +62,7 @@ func _init() -> void:
 	operator.set("fire_cooldown_remaining", 0.0)
 	operator.set("_pending_ranged_shot", {})
 	operator.call("_enter_ranged_ready")
+	operator.call("_tick_primary_ranged_action_presentation", 10.0)
 	operator.call("_update_animation")
 
 	_check_layer(lower, "ranged-ready idle lower", &"unarmed_idle_right", failures)

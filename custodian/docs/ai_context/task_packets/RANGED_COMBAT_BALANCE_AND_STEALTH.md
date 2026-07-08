@@ -1,7 +1,7 @@
 # RANGED COMBAT BALANCE AND STEALTH
 
 - Status: `complete`
-- Authority: `design/COMBAT_BALANCE.md`; normalized implementation spec at `design/02_features/combat_feel/RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md`
+- Authority: `design/02_features/balance/COMBAT_BALANCE.md`; normalized implementation spec at `design/02_features/combat_feel/RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md`
 - Goal: Make ranged combat burst-limited and positionally consequential through capped ammo, heat, range falloff, noise-driven perception, search/leash behavior, and ambient hostile camps.
 - Files: weapon data/schema/factory, Operator, bullet, ammo cache/supply drops, stealth noise bus, enemy perception/blackboard/state machine, ambient camp/spawner, game scene, active docs, focused validation.
 - Constraints: Preserve fixed-step gameplay authority; keep runtime state out of shared weapon resources; retain legacy ammo/status keys; extend the existing enemy behavior stack; do not implement vehicle weapons.
@@ -31,7 +31,7 @@
 
 ## Drift Review
 
-- Primary authority: `design/COMBAT_BALANCE.md` references stale `custodian/assets/weapons/`; live data is under `custodian/content/weapons/`. The normalized spec records the live paths.
+- Primary authority: `design/02_features/balance/COMBAT_BALANCE.md` references stale `custodian/assets/weapons/`; live data is under `custodian/content/weapons/`. The normalized spec records the live paths.
 - `CURRENT_STATE.md`: update after runtime validation.
 - `CONTEXT.md`: update because NoiseEventBus becomes shared system authority.
 - `FILE_INDEX.md`: append new ownership entries without disturbing unrelated in-progress edits.

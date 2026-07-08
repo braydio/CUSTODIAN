@@ -96,6 +96,11 @@ const FX_ANIMATION_SPECS := {
 		"fps": 12.0,
 		"loop": false,
 	},
+	"flinch_fx_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/fx/enemy_grunt__fx__melee__flinch_01__s__5f__96.png",
+		"fps": 12.0,
+		"loop": false,
+	},
 }
 
 static var _cached_frames: SpriteFrames = null

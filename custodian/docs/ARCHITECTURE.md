@@ -264,7 +264,7 @@ The following files own too many concerns and are the first extraction targets:
 
 | File | Line Count (approx) | Concerns | Extraction Target |
 |------|---------------------|----------|-------------------|
-| `game/world/procgen/proc_gen_tilemap.gd` | ~5000+ | Path generation, terrain, elevation, foliage, roads, portals, authored claims, level data export, candidate metrics, intent graph, reservations | `game/world/procgen/{generation,terrain,foliage,roads,authored_claims}/` |
+| `game/world/procgen/proc_gen_tilemap.gd` | ~6000+ | Procgen façade/state host for path generation, terrain, elevation, foliage, roads, portals, authored claims, level data export, intent graph, and reservations; pre-terrain diagnostics/repair are extracted | `game/world/procgen/{generation,terrain,diagnostics,foliage,roads,authored_claims}/` |
 | `game/world/procgen/custodian_contract_map.gd` | ~800+ | Seed derivation, candidate loop, terrain acceptance, scoring, final visual regeneration | Keep selection; move construction internals to world construction layer |
 | `game/systems/core/systems/contract_world_loader.gd` | ~600+ | World handoff, anchor placement, vehicle placement, ARRN relay placement, resource placement, connected-map instancing | `game/world/lifecycle/` + `game/world/placement/` |
 | `game/actors/enemies/enemy.gd` | ~2000+ | Base enemy + procedural variants, grunt/marine animation, marine dash, parry handshake, loot awards, behavior hooks, stat recording | `game/actors/enemies/{core,archetypes,abilities,behavior}/` |

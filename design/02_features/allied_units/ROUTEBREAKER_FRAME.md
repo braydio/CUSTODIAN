@@ -202,6 +202,6 @@ The mech is tightly coupled to the Sundered Keep approach sequence:
 ## Related Files
 
 - `design/05_levels/SUNDERED_KEEP_PHASE_1.md` — Sundered Keep level context
-- `design/features/implementation/SUNDERED_KEEP_VISTA_APPROACH.md` — approach sequence where mech first appears
+- `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md` — approach sequence where mech first appears
 - `custodian/game/actors/allies/combat_drone.gd` — existing allied-unit template for reference
 - `custodian/game/systems/drone/drone_manager.gd` — existing DroneManager (mech is not a drone but shares some ally patterns)

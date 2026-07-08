@@ -38,6 +38,7 @@ cd "$ROOT_DIR/custodian" || exit 1
 run_step terrain_builder_smoke godot --headless --path . --script res://tools/validation/terrain_builder_smoke.gd
 run_step procgen_terrain_required_cells_smoke godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 run_step procgen_foliage_spawner_smoke godot --headless --path . --script res://tools/validation/procgen_foliage_spawner_smoke.gd
+run_step terrain_gameplay_packs_smoke godot --headless --path . --script res://tools/validation/terrain_gameplay_packs_smoke.gd
 if [[ "$run_slow" == "1" ]]; then
 	run_step procgen_contract_rescue_diagnostic_smoke godot --headless --path . --script res://tools/validation/procgen_contract_rescue_diagnostic_smoke.gd
 else

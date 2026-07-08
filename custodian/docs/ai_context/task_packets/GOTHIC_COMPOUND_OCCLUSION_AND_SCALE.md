@@ -23,7 +23,7 @@ Fix gothic compound draw ordering so the player renders above floor/road/decal t
 
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active design/spec docs: `design/features/implementation/GOTHIC_COMPOUND_PROCGEN.md`
+- Active design/spec docs: `design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md`
 - Active runtime/docs files: `custodian/game/world/procgen/gothic_compound/`, `custodian/game/world/gothic_compound/gothic_compound_map.gd`
 - Historical reference only: archived gothic compound packets
 
@@ -34,7 +34,7 @@ Fix gothic compound draw ordering so the player renders above floor/road/decal t
   - `custodian/game/world/gothic_compound/gothic_compound_map.gd`
   - `custodian/docs/ai_context/CURRENT_STATE.md`
   - `custodian/docs/ai_context/FILE_INDEX.md`
-  - `design/features/implementation/GOTHIC_COMPOUND_PROCGEN.md`
+  - `design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md`
 - Files or folders expected to be read but not changed:
   - `custodian/game/actors/operator/`
   - `custodian/content/procgen/special_rooms/gothic_compound/`

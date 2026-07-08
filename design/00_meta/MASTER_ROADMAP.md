@@ -364,21 +364,23 @@ Milestones are major release checkpoints. Each has:
 Every feature in the roadmap must have:
 
 1. **Design doc** in `design/` folder
-2. **Implementation code** in `design/features/implementation/` (as proposal)
+2. **Implementation doc** in the appropriate numbered subdirectory
 3. **Status field** matching roadmap status
 
 ### Doc Path Convention
 
 ```
 design/
-├── 00_meta/
-│   └── MASTER_ROADMAP.md          ← THIS FILE
+├── 00_meta/                       ← Meta/tracking (THIS FILE)
 ├── 01_systems/                    ← Core systems
-├── 02_features/                    ← Feature specs
+├── 02_features/                   ← Feature specs
 │   └── [feature]/
+│       ├── spec.md
 │       └── implementation.md
-├── 03_architecture/               ← High-level design
-└── 04_research/                   → Spike/research
+├── 03_world/                      ← World lore & content
+├── 04_architecture/               ← High-level architecture
+├── 05_levels/                     ← Level designs
+└── 06_reference/                  ← Research & reference
 ```
 
 ### Linking Format
@@ -411,7 +413,8 @@ Every design doc must include:
 ### Finding Design Docs
 
 - Search `design/02_features/[feature_name]/`
-- Check `design/features/implementation/` for code
+- Search `design/05_levels/` for level designs
+- Search `design/04_architecture/` for architecture docs
 
 ---
 

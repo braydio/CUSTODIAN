@@ -74,4 +74,4 @@ After the tool runs successfully, confirm:
 1. Output file exists and is non-empty.
 2. Output dimensions match input dimensions.
 3. The flip direction reported by the tool matches the intent (`hflip=True` for east→west, etc.).
-4. If this completes a missing asset group, update the relevant tracking doc (e.g., `design/OperatorAnimatorTracker.md`) and the asset manifest.
+4. If this completes a missing asset group, update the relevant tracking doc (e.g., `design/02_features/animation/OperatorAnimatorTracker.md`) and the asset manifest.

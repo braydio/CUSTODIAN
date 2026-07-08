@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-07-06
+Last updated: 2026-07-08
 
 ## Local Entry And Workflow
 
@@ -76,7 +76,11 @@ Last updated: 2026-07-06
 ## Active Runtime Systems
 
 - `custodian/game/world/procgen/custodian_contract_map.gd` — contract generation and planet-linked world profile creation, including deterministic map size/room bands, ambient Shrumb trait profile fields, contract-owned candidate generation, layout plus terrain fallback/connectivity acceptance logging, terrain-fallback candidate rejection/preference rules, and final selected-map visual regeneration
-- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen world generation, planet world profile application, route-first worldgen intent graph construction/reservation carving, constructed interior region carving, semantic intent-zone metadata, connected main-map road/parking-zone surface generation using explicit `roads_paths/runtime/placeholders/{roads,paths}/PLACEHOLDER_*` manifests for temporary road/path decal stamps, 32x32 road lane-role overlay selection from centerline offsets, road-component repair/pruning, wall/collision clearing and speed multiplier queries, long walled main-map connector road carving from compound ingress with deterministic elevation/ramp metadata, dedicated terrain-builder integration, semantic-anchor terrain required-cell collection with sampled road/parking/compound-connector/ascent/intent anchors, pre-TerrainBuilder layout/baseline/semantic walkability diagnostics, missing-required source/reason classification, required-component/bridge diagnostics, deterministic pre-TerrainBuilder authority repair for semantic required cells and component bridges, terrain-builder tile visual mapping and level-data fallback/connectivity export, elevation metadata ownership/query helpers, candidate/evaluation generation mode, intensity queries, optional final-visual foliage placement with deferred/batched spawning, decorative ruin prop placement, paired portal-ring teleport endpoint wiring, and the centralized `claim_procgen_floor_rect_for_authored_scene_*` API that transfers a footprint from procgen wall/road/elevation authority to authored-scene floor authority; foliage policy itself lives in `custodian/game/world/procgen/foliage/procgen_foliage_spawner.gd`
+- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen façade and state host: world generation, planet profile application, intent/reservation carving, interiors, semantic zones, roads/parking/connectors, wall/collision authority, TerrainBuilder orchestration, terrain visual/result export, elevation queries, candidate/evaluation mode, foliage/prop orchestration, portals, and authored-scene floor claims. It assembles contexts for the focused pre-terrain diagnostic services instead of owning their algorithms.
+- `custodian/game/world/procgen/diagnostics/procgen_required_cell_classifier.gd` — deterministic semantic required-cell collection, source classification, sampling, deduplication, and entry-to-cell conversion.
+- `custodian/game/world/procgen/diagnostics/procgen_preterrain_diagnostics.gd` — three-graph pre-TerrainBuilder connectivity comparison, missing-required aggregation/sample export, graph disagreement reporting, and compatible diagnostic result assembly.
+- `custodian/game/world/procgen/diagnostics/procgen_component_analyzer.gd` — baseline floor component analysis and deterministic capped bridge-candidate selection for disconnected required components.
+- `custodian/game/world/procgen/diagnostics/procgen_preturn_authority_repair.gd` — bounded pre-TerrainBuilder authority repair loop that promotes missing required cells and applies deterministic component bridges through host callbacks.
 - `custodian/game/world/procgen/foliage/procgen_foliage_spawner.gd` — foliage generation policy service for deterministic spawn/clear/remove logic, fruit/trunk collision helpers, and deferred queue draining used by `ProcGenTilemap`
 - `custodian/game/world/procgen/foliage/README.md` — foliage ownership and migration note; facade/service split plus authority boundaries
 - `custodian/game/world/procgen/terrain/terrain_builder.gd` — deterministic terrain-construction pass that emits baseline metadata, guarded worldgen reserved-region elevation metadata, mountain blockers, industrial elevation platform metadata, symbolic tile IDs for explicit features only, flood-fill connectivity validation, candidate-aware warning/result summaries, baseline/final required-cell corridor rescue counts before fallback, and spawn-valid traversal helpers
@@ -116,6 +120,12 @@ Last updated: 2026-07-06
 - `custodian/game/world/procgen/story/story_room_placer.gd` — deterministic environmental story-room candidate placer
 - `custodian/game/world/procgen/story/story_room_geometry_stamper.gd` — V1 story-room geometry reservation stamper using the shared procgen authored-scene claim API
 - `custodian/game/actors/enemies/ambient/ambient_activity_anchor.gd` — claimable non-combat activity anchor used by behavior-driven enemies
+- `custodian/tools/tiles/ingest_generated_terrain_packs.py` — unified wrapper that runs per-pack normalize scripts for connector, ascent, and chasm+bridge terrain gameplay packs; writes combined ingest report to `reports/terrain_pack_ingest/`
+- `custodian/tools/tiles/register_terrain_gameplay_packs.py` — registers runtime terrain gameplay pack PNGs as TileSetAtlasSource entries in `procgen_world_tileset.tres`; writes source-ID mapping report to `reports/terrain_pack_ingest/terrain_gameplay_tileset_sources.json`
+- `custodian/tools/tiles/normalize_connector_pack_tiles.py` — per-pack normalize script for connector tiles (connected-component detection, 32×32 crop/pad, runtime/manifest/preview exports)
+- `custodian/tools/tiles/normalize_ascent_pack_sheet.py` — per-pack normalize script for ascent tiles
+- `custodian/tools/tiles/normalize_chasm_bridge_pack_sheet.py` — per-pack normalize script for chasm+bridge tiles
+- `custodian/tools/validation/terrain_gameplay_packs_smoke.gd` — validates terrain pack manifests, runtime PNG dimensions/alpha/checkerboard, symbolic ID existence, and non-walkable tile resolution
 - `custodian/tools/validation/procgen_intent_graph_smoke.gd` — deterministic intent graph and reservation validation
 - `custodian/tools/validation/procgen_worldgen_shape_smoke.gd` — integrated procgen shape validation for intent graph export and reserved-region generation
 - `custodian/tools/validation/procgen_ascent_style_smoke.gd` — smoke validation for world profile loading and uphill ascent metadata
@@ -170,8 +180,8 @@ Last updated: 2026-07-06
 - `custodian/scenes/environment/forlorn_ritualant_shader_fx.tscn` and `custodian/scripts/environment/forlorn_ritualant_shader_fx.gd` — Forlorn-Ritualant visual-only FX layer combining the cosmic underlay, room-edge shadow/rim mask sprites, and temporal haze with exported `ShaderMaterial` intensity controls
 - `custodian/game/world/events/ash_bell/shaders/` and `custodian/game/world/events/ash_bell/materials/` — encounter-local CanvasItem shaders/materials for void-ocean drift, room-edge haze, and temporal overlap haze
 - `custodian/content/masks/forlorn_ritualant/room_silhouette_mask.png` — presentation-only alpha mask derived from current room art for edge shadow/rim rendering; not collision or gameplay authority
-- `design/02_features/FORLORN_RITUALANT_COSMIC_UNDERLAY.md` — scene-layering note for the Forlorn-Ritualant underlay, transparent-edge room-art requirement, and reuse contract
-- `design/02_features/FORLORN_RITUALANT_SHADER_FX.md` — shader FX design note for the Forlorn-Ritualant void-ocean, edge shadow/rim, temporal haze, and mask contracts
+- `design/02_features/enemy_objective/FORLORN_RITUALANT_COSMIC_UNDERLAY.md` — scene-layering note for the Forlorn-Ritualant underlay, transparent-edge room-art requirement, and reuse contract
+- `design/02_features/enemy_objective/FORLORN_RITUALANT_SHADER_FX.md` — shader FX design note for the Forlorn-Ritualant void-ocean, edge shadow/rim, temporal haze, and mask contracts
 - `custodian/tools/validation/procgen_authored_scene_authority_smoke.gd` — focused generated-map smoke proving authored footprint claims remove wall visuals, generated/runtime wall authority, blocked elevation, and stale road authority while forcing floor metadata
 - `custodian/game/systems/core/systems/ambient_critter_manager.gd` — ambient critter spawning, tint, pacing, scale, speed, naming, and trait metadata linked to world profile
 - `custodian/game/systems/core/systems/inventory_manager.gd` — minimal stack-count ledger autoload for cognitive drops and future stackable resources
@@ -304,13 +314,11 @@ Last updated: 2026-07-06
 - `custodian/tools/validation/operator_modular_layers_smoke.gd` — focused modular operator presentation smoke covering unarmed locomotion, ranged-ready lower/upper ownership split, and clean legacy fallback when the modular ranged upper stack is unavailable
 - `custodian/tools/validation/operator_primary_ranged_modular_fire_smoke.gd` — focused headless smoke for presentation-only primary/two-handed ranged modular fire helper playback, modular primary/sidearm muzzle alignment, legacy visual hiding, and timer cleanup
 - `custodian/tools/validation/wave_manager_debug_grunt_spawn_gate_smoke.gd` — focused WaveManager smoke proving the startup debug grunt stays despawned inside the Operator spawn threshold and appears once after the Operator crosses it
-- `design/features/implementation/UNARMED_TOGGLE.md` — unarmed/Fists selection behavior, state rules, and acceptance tests
-- `design/features/implementation/UNARMED_TOGGLE_CODE.md` — implementation notes for the unarmed/Fists profile selection system
-- `design/features/implementation/MINIMAP_SYSTEM.md` — custom data-driven tactical minimap implementation spec
-- `design/features/implementation/MINIMAP_SYSTEM_CODE.md` — minimap runtime code plan and integration notes
-- `design/features/implementation/GOTHIC_COMPOUND_PROCGEN.md` — active implementation note and migrated review for constraint-first gothic compound blueprint generation
-- `design/THE_TRAGEDY_OF_THE_FOREST_SHRUMB_GAMEPLAY_CORE.md` — active Forest Shrumb cognitive drop runtime implementation notes
-- `design/THE_TRAGEDY_OF_THE_FOREST_SHRUMB-IMPLEMENTATION_DELTA.md` — duplicate/current Forest Shrumb implementation delta reference used for v1 foundation
+- `design/02_features/operator/UNARMED_TOGGLE.md` — unarmed/Fists selection behavior, state rules, and acceptance tests
+- `design/02_features/operator/UNARMED_TOGGLE_CODE.md` — implementation notes for the unarmed/Fists profile selection system
+- `design/02_features/minimap/MINIMAP_SYSTEM.md` — custom data-driven tactical minimap implementation spec
+- `design/02_features/minimap/MINIMAP_SYSTEM_CODE.md` — minimap runtime code plan and integration notes
+- `design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md` — active implementation note and migrated review for constraint-first gothic compound blueprint generation
 
 ## Active Interaction/UI Files
 
@@ -418,8 +426,8 @@ Last updated: 2026-07-06
 - `custodian/content/tiles/walls/generated/procgen_wall_tiles_32.png` — generated fixed-grid wall atlas used by procgen TileSet source ID `12`
 - `custodian/content/tiles/walls/generated/procgen_wall_tiles_32.mapping.json` — generated semantic bucket mapping used to populate procgen wall coordinate arrays
 - `custodian/assets/tiles/walls/generated/README.md` — regeneration and Godot import notes for generated wall tile assets
-- `design/features/implementation/WALL_TILE_PIPELINE.md` — implementation spec for the offline wall tile extraction and composition pipeline
-- `design/features/implementation/PROCGEN_WALL_TILE_BRIDGE.md` — implementation spec for integrating generated wall tiles into the procgen TileMap runtime
+- `design/02_features/procgen/WALL_TILE_PIPELINE.md` — implementation spec for the offline wall tile extraction and composition pipeline
+- `design/02_features/procgen/PROCGEN_WALL_TILE_BRIDGE.md` — implementation spec for integrating generated wall tiles into the procgen TileMap runtime
 - `design/02_features/procgen/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — first runtime slice for single-map indoor/outdoor region-aware procgen
 - `custodian/content/sprites/_pipeline/README.md` — intake contract, canonical sprite naming, and manifest examples
 - `custodian/docs/SPRITE_PIPELINE_CHEATSHEET.md` — short operator-facing pipeline guide for checking needed assets, validating drops, ingesting/building into runtime, and proving outputs
@@ -469,11 +477,6 @@ Last updated: 2026-07-06
 - `design/02_features/props/PROCEDURAL_PROP_VARIANT_SYSTEM.md` — active implementation spec and runtime ownership note for the ruin prop variant system
 - `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md` — merged system design for resource collection, ledger, and fabrication pipeline; Stage 1 ready for implementation
 - `design/02_features/arrn/implementation.md` — ARRN implementation roadmap; runtime V1 is implemented with primitive relay visuals and deferred production polish
-- `design/RESOURCE_FAB_PIPELINE_ADD.md` — build-token-first fabrication pipeline addendum used to scope the first runtime implementation
-- `design/features/implementation/FAB_PIPELINE_SYSTEM.md` — implementation note for the first resource ledger, build inventory, and queued fab pipeline slice
-- `design/04_research/resource_fabrication/RESOURCE_FABRICATION_PIPELINE.md` — source brainstorm: implementation-level pseudocode and script contracts
-- `design/04_research/resource_fabrication/RESOURCE_COLLECTION_PLAN.md` — source brainstorm: strategic staging and spatial design for resource zones
-- `design/04_research/resource_fabrication/RESOURCE_STARTER_TIER.md` — source brainstorm: resource identity, lore, and CUSTODIAN flavor framing
 
 ## Active Documentation
 
@@ -502,7 +505,7 @@ Last updated: 2026-07-06
 - `custodian/tools/validation/lighting_playground.tscn` and `.gd` — standalone native 2D lighting playground with CanvasModulate, DirectionalLight2D, three light rigs, a lighting zone, an occluder wall, a placeholder player, and debug profile/flash controls
 - `custodian/tools/validation/lighting_system_smoke.gd` — headless smoke for the CUSTODIAN Lighting System V1 playground, director/profile switching, light rigs, occluder presence, and transient flash pool
 - `design/02_features/lighting/CUSTODIAN_LIGHTING_SYSTEM.md` — active implementation note for native Godot 2D lighting direction, authored rigs, zones, and transient flashes
-- `design/features/implementation/TERRAIN_BUILDER_ELEVATION_INTEGRATION.md` — implementation spec and completion notes for dedicated terrain builder elevation/cliff integration
+- `design/02_features/procgen/TERRAIN_BUILDER_ELEVATION_INTEGRATION.md` — implementation spec and completion notes for dedicated terrain builder elevation/cliff integration
 - `custodian/AGENTS.md` — first-stop local operating guide for all work under `custodian/`
 - `custodian/docs/ARCHITECTURE.md` — comprehensive runtime architecture reference: 9-layer model, layer boundaries, overburdened coordinator file list, determinism rules, current and target boot flow, migration status per layer
 - `custodian/docs/SCENE_HIERARCHY.md` — scene organization reference
@@ -520,10 +523,10 @@ Last updated: 2026-07-06
 - `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md` — canonical lore, faction, and game-protocol authority
 - `design/03_world/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target
 - `design/03_world/THE_DISPERSED_FLEETS.md` — historical lore reference: the first post-Severance military expeditions that vanished without trace; design-shaping material, not an implementation target
-- `design/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` — canonical Ash-Bell / Forlorn-Ritualant implementation spec (includes merged Toll Count appendix from deleted companion doc)
+- `design/02_features/enemy_objective/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` — canonical Ash-Bell / Forlorn-Ritualant implementation spec (includes merged Toll Count appendix from deleted companion doc)
 - `design/02_features/procgen/SPECIAL_ROOM_INSERTION.md` — live V1 design note for generated-map special-room definitions, deterministic placement, authored-footprint claiming, and validation
-- `design/02_features/LAST_ROUTEKEEPER_EVENT.md` — design spec for The Last Routekeeper: rare, one-time residual-system event inside Sundered Keep
-- `design/02_features/LAST_ROUTEKEEPER_EVENT_CODE.md` — drop-in GDScript, map patches, autoload config, and REQUIRED_ASSETS.md entries for The Last Routekeeper
+- `design/02_features/events/LAST_ROUTEKEEPER_EVENT.md` — design spec for The Last Routekeeper: rare, one-time residual-system event inside Sundered Keep
+- `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md` — drop-in GDScript, map patches, autoload config, and REQUIRED_ASSETS.md entries for The Last Routekeeper
 
 ## Legacy Reference Only
 

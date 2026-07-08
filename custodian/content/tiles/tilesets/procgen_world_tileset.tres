@@ -57,6 +57,69 @@
 [ext_resource type="Texture2D" uid="uid://cliwxmu2nu8u1" path="res://content/tiles/mountain_cliffs/cliff_chasm_drop_32.png" id="58_terrain_cliff_chasm_drop"]
 [ext_resource type="Texture2D" uid="uid://dp628vtsbmwso" path="res://content/tiles/mountain_cliffs/mountain_wall_impassable_32.png" id="59_terrain_mountain_wall_impassable"]
 
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_broken_patch_32.png" id="60_connector_terrain_connector_broken_patch_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_centerline_32.png" id="61_connector_terrain_connector_centerline_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_cracked_32.png" id="62_connector_terrain_connector_cracked_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_dust_32.png" id="63_connector_terrain_connector_dust_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_edge_e_32.png" id="64_connector_terrain_connector_edge_e_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_edge_n_32.png" id="65_connector_terrain_connector_edge_n_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_edge_s_32.png" id="66_connector_terrain_connector_edge_s_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_edge_w_32.png" id="67_connector_terrain_connector_edge_w_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_gravel_32.png" id="68_connector_terrain_connector_gravel_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_ground_32.png" id="69_connector_terrain_connector_ground_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_inner_corner_ne_32.png" id="70_connector_terrain_connector_inner_corner_ne_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_inner_corner_nw_32.png" id="71_connector_terrain_connector_inner_corner_nw_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_inner_corner_se_32.png" id="72_connector_terrain_connector_inner_corner_se_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_inner_corner_sw_32.png" id="73_connector_terrain_connector_inner_corner_sw_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_outer_corner_ne_32.png" id="74_connector_terrain_connector_outer_corner_ne_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_outer_corner_nw_32.png" id="75_connector_terrain_connector_outer_corner_nw_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_outer_corner_se_32.png" id="76_connector_terrain_connector_outer_corner_se_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/connector/terrain_connector_outer_corner_sw_32.png" id="77_connector_terrain_connector_outer_corner_sw_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/ascent_lip_connector_32.png" id="80_ascent_ascent_lip_connector_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/ascent_threshold_32.png" id="81_ascent_ascent_threshold_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/ramp_east_broken_32.png" id="82_ascent_ramp_east_broken_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/ramp_east_wide_32.png" id="83_ascent_ramp_east_wide_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/ramp_north_broken_32.png" id="84_ascent_ramp_north_broken_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/ramp_north_wide_32.png" id="85_ascent_ramp_north_wide_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/ramp_south_broken_32.png" id="86_ascent_ramp_south_broken_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/ramp_south_wide_32.png" id="87_ascent_ramp_south_wide_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/ramp_west_broken_32.png" id="88_ascent_ramp_west_broken_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/ramp_west_wide_32.png" id="89_ascent_ramp_west_wide_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/stair_east_metal_32.png" id="90_ascent_stair_east_metal_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/stair_east_stone_32.png" id="91_ascent_stair_east_stone_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/stair_north_metal_32.png" id="92_ascent_stair_north_metal_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/stair_north_stone_32.png" id="93_ascent_stair_north_stone_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/stair_south_metal_32.png" id="94_ascent_stair_south_metal_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/stair_south_stone_32.png" id="95_ascent_stair_south_stone_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/stair_west_metal_32.png" id="96_ascent_stair_west_metal_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/stair_west_stone_32.png" id="97_ascent_stair_west_stone_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/terrain_landing_industrial_32.png" id="98_ascent_terrain_landing_industrial_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/ascent/terrain_landing_stone_32.png" id="99_ascent_terrain_landing_stone_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_broken_segment_32.png" id="100_chasm_bridge_bridge_broken_segment_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_metal_mid_horizontal_32.png" id="101_chasm_bridge_bridge_metal_mid_horizontal_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_metal_mid_vertical_32.png" id="102_chasm_bridge_bridge_metal_mid_vertical_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_stone_mid_horizontal_32.png" id="103_chasm_bridge_bridge_stone_mid_horizontal_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_stone_mid_vertical_32.png" id="104_chasm_bridge_bridge_stone_mid_vertical_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_stone_start_e_32.png" id="105_chasm_bridge_bridge_stone_start_e_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_stone_start_n_32.png" id="106_chasm_bridge_bridge_stone_start_n_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_stone_start_s_32.png" id="107_chasm_bridge_bridge_stone_start_s_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/bridge_stone_start_w_32.png" id="108_chasm_bridge_bridge_stone_start_w_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/broken_gap_edge_32.png" id="109_chasm_bridge_broken_gap_edge_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_edge_e_32.png" id="110_chasm_bridge_chasm_edge_e_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_edge_n_32.png" id="111_chasm_bridge_chasm_edge_n_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_edge_s_32.png" id="112_chasm_bridge_chasm_edge_s_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_edge_w_32.png" id="113_chasm_bridge_chasm_edge_w_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_inner_corner_ne_32.png" id="114_chasm_bridge_chasm_inner_corner_ne_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_inner_corner_nw_32.png" id="115_chasm_bridge_chasm_inner_corner_nw_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_inner_corner_se_32.png" id="116_chasm_bridge_chasm_inner_corner_se_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_inner_corner_sw_32.png" id="117_chasm_bridge_chasm_inner_corner_sw_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_outer_corner_ne_32.png" id="118_chasm_bridge_chasm_outer_corner_ne_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_outer_corner_nw_32.png" id="119_chasm_bridge_chasm_outer_corner_nw_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_outer_corner_se_32.png" id="120_chasm_bridge_chasm_outer_corner_se_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_outer_corner_sw_32.png" id="121_chasm_bridge_chasm_outer_corner_sw_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/chasm_void_32.png" id="122_chasm_bridge_chasm_void_32"]
+[ext_resource type="Texture2D" path="res://content/tiles/terrain/runtime/chasm_bridge/collapsed_gap_32.png" id="123_chasm_bridge_collapsed_gap_32"]
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_floor"]
 texture = ExtResource("1_floor")
 0:0/0 = 0
@@ -819,6 +882,316 @@ texture_region_size = Vector2i(32, 32)
 7:6/0 = 0
 7:7/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_broken_patch_32"]
+texture = ExtResource("60_connector_terrain_connector_broken_patch_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_centerline_32"]
+texture = ExtResource("61_connector_terrain_connector_centerline_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_cracked_32"]
+texture = ExtResource("62_connector_terrain_connector_cracked_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_dust_32"]
+texture = ExtResource("63_connector_terrain_connector_dust_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_edge_e_32"]
+texture = ExtResource("64_connector_terrain_connector_edge_e_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_edge_n_32"]
+texture = ExtResource("65_connector_terrain_connector_edge_n_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_edge_s_32"]
+texture = ExtResource("66_connector_terrain_connector_edge_s_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_edge_w_32"]
+texture = ExtResource("67_connector_terrain_connector_edge_w_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_gravel_32"]
+texture = ExtResource("68_connector_terrain_connector_gravel_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_ground_32"]
+texture = ExtResource("69_connector_terrain_connector_ground_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_inner_corner_ne_32"]
+texture = ExtResource("70_connector_terrain_connector_inner_corner_ne_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_inner_corner_nw_32"]
+texture = ExtResource("71_connector_terrain_connector_inner_corner_nw_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_inner_corner_se_32"]
+texture = ExtResource("72_connector_terrain_connector_inner_corner_se_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_inner_corner_sw_32"]
+texture = ExtResource("73_connector_terrain_connector_inner_corner_sw_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_outer_corner_ne_32"]
+texture = ExtResource("74_connector_terrain_connector_outer_corner_ne_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_outer_corner_nw_32"]
+texture = ExtResource("75_connector_terrain_connector_outer_corner_nw_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_outer_corner_se_32"]
+texture = ExtResource("76_connector_terrain_connector_outer_corner_se_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_connector_terrain_connector_outer_corner_sw_32"]
+texture = ExtResource("77_connector_terrain_connector_outer_corner_sw_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ascent_lip_connector_32"]
+texture = ExtResource("80_ascent_ascent_lip_connector_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ascent_threshold_32"]
+texture = ExtResource("81_ascent_ascent_threshold_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ramp_east_broken_32"]
+texture = ExtResource("82_ascent_ramp_east_broken_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ramp_east_wide_32"]
+texture = ExtResource("83_ascent_ramp_east_wide_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ramp_north_broken_32"]
+texture = ExtResource("84_ascent_ramp_north_broken_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ramp_north_wide_32"]
+texture = ExtResource("85_ascent_ramp_north_wide_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ramp_south_broken_32"]
+texture = ExtResource("86_ascent_ramp_south_broken_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ramp_south_wide_32"]
+texture = ExtResource("87_ascent_ramp_south_wide_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ramp_west_broken_32"]
+texture = ExtResource("88_ascent_ramp_west_broken_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ramp_west_wide_32"]
+texture = ExtResource("89_ascent_ramp_west_wide_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_stair_east_metal_32"]
+texture = ExtResource("90_ascent_stair_east_metal_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_stair_east_stone_32"]
+texture = ExtResource("91_ascent_stair_east_stone_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_stair_north_metal_32"]
+texture = ExtResource("92_ascent_stair_north_metal_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_stair_north_stone_32"]
+texture = ExtResource("93_ascent_stair_north_stone_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_stair_south_metal_32"]
+texture = ExtResource("94_ascent_stair_south_metal_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_stair_south_stone_32"]
+texture = ExtResource("95_ascent_stair_south_stone_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_stair_west_metal_32"]
+texture = ExtResource("96_ascent_stair_west_metal_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_stair_west_stone_32"]
+texture = ExtResource("97_ascent_stair_west_stone_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_terrain_landing_industrial_32"]
+texture = ExtResource("98_ascent_terrain_landing_industrial_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_terrain_landing_stone_32"]
+texture = ExtResource("99_ascent_terrain_landing_stone_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_broken_segment_32"]
+texture = ExtResource("100_chasm_bridge_bridge_broken_segment_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_metal_mid_horizontal_32"]
+texture = ExtResource("101_chasm_bridge_bridge_metal_mid_horizontal_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_metal_mid_vertical_32"]
+texture = ExtResource("102_chasm_bridge_bridge_metal_mid_vertical_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_mid_horizontal_32"]
+texture = ExtResource("103_chasm_bridge_bridge_stone_mid_horizontal_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_mid_vertical_32"]
+texture = ExtResource("104_chasm_bridge_bridge_stone_mid_vertical_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_e_32"]
+texture = ExtResource("105_chasm_bridge_bridge_stone_start_e_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_n_32"]
+texture = ExtResource("106_chasm_bridge_bridge_stone_start_n_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_s_32"]
+texture = ExtResource("107_chasm_bridge_bridge_stone_start_s_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_bridge_stone_start_w_32"]
+texture = ExtResource("108_chasm_bridge_bridge_stone_start_w_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_broken_gap_edge_32"]
+texture = ExtResource("109_chasm_bridge_broken_gap_edge_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_e_32"]
+texture = ExtResource("110_chasm_bridge_chasm_edge_e_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_n_32"]
+texture = ExtResource("111_chasm_bridge_chasm_edge_n_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_s_32"]
+texture = ExtResource("112_chasm_bridge_chasm_edge_s_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_edge_w_32"]
+texture = ExtResource("113_chasm_bridge_chasm_edge_w_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_inner_corner_ne_32"]
+texture = ExtResource("114_chasm_bridge_chasm_inner_corner_ne_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_inner_corner_nw_32"]
+texture = ExtResource("115_chasm_bridge_chasm_inner_corner_nw_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_inner_corner_se_32"]
+texture = ExtResource("116_chasm_bridge_chasm_inner_corner_se_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_inner_corner_sw_32"]
+texture = ExtResource("117_chasm_bridge_chasm_inner_corner_sw_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_ne_32"]
+texture = ExtResource("118_chasm_bridge_chasm_outer_corner_ne_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_nw_32"]
+texture = ExtResource("119_chasm_bridge_chasm_outer_corner_nw_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_se_32"]
+texture = ExtResource("120_chasm_bridge_chasm_outer_corner_se_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_outer_corner_sw_32"]
+texture = ExtResource("121_chasm_bridge_chasm_outer_corner_sw_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_chasm_void_32"]
+texture = ExtResource("122_chasm_bridge_chasm_void_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_chasm_bridge_collapsed_gap_32"]
+texture = ExtResource("123_chasm_bridge_collapsed_gap_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
 [resource]
 sources/0 = SubResource("TileSetAtlasSource_floor")
 sources/1 = SubResource("TileSetAtlasSource_walls_low")
@@ -876,3 +1249,65 @@ sources/56 = SubResource("TileSetAtlasSource_terrain_cliff_inner_sw")
 sources/57 = SubResource("TileSetAtlasSource_terrain_cliff_inner_se")
 sources/58 = SubResource("TileSetAtlasSource_terrain_cliff_chasm_drop")
 sources/59 = SubResource("TileSetAtlasSource_terrain_mountain_wall_impassable")
+sources/60 = SubResource("TileSetAtlasSource_connector_terrain_connector_broken_patch_32")
+sources/61 = SubResource("TileSetAtlasSource_connector_terrain_connector_centerline_32")
+sources/62 = SubResource("TileSetAtlasSource_connector_terrain_connector_cracked_32")
+sources/63 = SubResource("TileSetAtlasSource_connector_terrain_connector_dust_32")
+sources/64 = SubResource("TileSetAtlasSource_connector_terrain_connector_edge_e_32")
+sources/65 = SubResource("TileSetAtlasSource_connector_terrain_connector_edge_n_32")
+sources/66 = SubResource("TileSetAtlasSource_connector_terrain_connector_edge_s_32")
+sources/67 = SubResource("TileSetAtlasSource_connector_terrain_connector_edge_w_32")
+sources/68 = SubResource("TileSetAtlasSource_connector_terrain_connector_gravel_32")
+sources/69 = SubResource("TileSetAtlasSource_connector_terrain_connector_ground_32")
+sources/70 = SubResource("TileSetAtlasSource_connector_terrain_connector_inner_corner_ne_32")
+sources/71 = SubResource("TileSetAtlasSource_connector_terrain_connector_inner_corner_nw_32")
+sources/72 = SubResource("TileSetAtlasSource_connector_terrain_connector_inner_corner_se_32")
+sources/73 = SubResource("TileSetAtlasSource_connector_terrain_connector_inner_corner_sw_32")
+sources/74 = SubResource("TileSetAtlasSource_connector_terrain_connector_outer_corner_ne_32")
+sources/75 = SubResource("TileSetAtlasSource_connector_terrain_connector_outer_corner_nw_32")
+sources/76 = SubResource("TileSetAtlasSource_connector_terrain_connector_outer_corner_se_32")
+sources/77 = SubResource("TileSetAtlasSource_connector_terrain_connector_outer_corner_sw_32")
+sources/80 = SubResource("TileSetAtlasSource_ascent_ascent_lip_connector_32")
+sources/81 = SubResource("TileSetAtlasSource_ascent_ascent_threshold_32")
+sources/82 = SubResource("TileSetAtlasSource_ascent_ramp_east_broken_32")
+sources/83 = SubResource("TileSetAtlasSource_ascent_ramp_east_wide_32")
+sources/84 = SubResource("TileSetAtlasSource_ascent_ramp_north_broken_32")
+sources/85 = SubResource("TileSetAtlasSource_ascent_ramp_north_wide_32")
+sources/86 = SubResource("TileSetAtlasSource_ascent_ramp_south_broken_32")
+sources/87 = SubResource("TileSetAtlasSource_ascent_ramp_south_wide_32")
+sources/88 = SubResource("TileSetAtlasSource_ascent_ramp_west_broken_32")
+sources/89 = SubResource("TileSetAtlasSource_ascent_ramp_west_wide_32")
+sources/90 = SubResource("TileSetAtlasSource_ascent_stair_east_metal_32")
+sources/91 = SubResource("TileSetAtlasSource_ascent_stair_east_stone_32")
+sources/92 = SubResource("TileSetAtlasSource_ascent_stair_north_metal_32")
+sources/93 = SubResource("TileSetAtlasSource_ascent_stair_north_stone_32")
+sources/94 = SubResource("TileSetAtlasSource_ascent_stair_south_metal_32")
+sources/95 = SubResource("TileSetAtlasSource_ascent_stair_south_stone_32")
+sources/96 = SubResource("TileSetAtlasSource_ascent_stair_west_metal_32")
+sources/97 = SubResource("TileSetAtlasSource_ascent_stair_west_stone_32")
+sources/98 = SubResource("TileSetAtlasSource_ascent_terrain_landing_industrial_32")
+sources/99 = SubResource("TileSetAtlasSource_ascent_terrain_landing_stone_32")
+sources/100 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_broken_segment_32")
+sources/101 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_metal_mid_horizontal_32")
+sources/102 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_metal_mid_vertical_32")
+sources/103 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_mid_horizontal_32")
+sources/104 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_mid_vertical_32")
+sources/105 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_e_32")
+sources/106 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_n_32")
+sources/107 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_s_32")
+sources/108 = SubResource("TileSetAtlasSource_chasm_bridge_bridge_stone_start_w_32")
+sources/109 = SubResource("TileSetAtlasSource_chasm_bridge_broken_gap_edge_32")
+sources/110 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_e_32")
+sources/111 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_n_32")
+sources/112 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_s_32")
+sources/113 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_edge_w_32")
+sources/114 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_ne_32")
+sources/115 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_nw_32")
+sources/116 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_se_32")
+sources/117 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_inner_corner_sw_32")
+sources/118 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_ne_32")
+sources/119 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_nw_32")
+sources/120 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_se_32")
+sources/121 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_outer_corner_sw_32")
+sources/122 = SubResource("TileSetAtlasSource_chasm_bridge_chasm_void_32")
+sources/123 = SubResource("TileSetAtlasSource_chasm_bridge_collapsed_gap_32")

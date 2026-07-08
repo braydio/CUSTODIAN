@@ -937,7 +937,7 @@ func _update_animation():
 	if animated_sprite.sprite_frames == null:
 		_hide_modular_locomotion_layers()
 		return
-	if _is_primary_ranged_aim_presentation_active() or _is_primary_ranged_fire_presentation_active():
+	if _is_primary_ranged_transition_presentation_active() or _is_primary_ranged_fire_presentation_active():
 		if _is_primary_ranged_fire_presentation_active():
 			var lower_base := _get_modular_lower_body_motion_base()
 			if _can_reuse_modular_lower_body_for_current_loadout():
@@ -1098,6 +1098,9 @@ func _update_animation():
 		if _sync_modular_ranged_2h_stance_presentation(animation_dir):
 			_update_idle_loop_tracking(true, "ranged_2h_stance_modular")
 			return
+		if _is_using_ranged_2h_primary() and _sync_modular_ranged_relaxed_presentation(animation_dir):
+			_update_idle_loop_tracking(true, "ranged_2h_relaxed_modular")
+			return
 		if _is_current_profile_unarmed() and _sync_modular_locomotion_layers("unarmed_idle", visual_idle_direction, _get_modular_upper_locomotion_direction(animation_dir)):
 			_update_idle_loop_tracking(true, "unarmed_idle")
 			return
@@ -1154,8 +1157,16 @@ func _sync_modular_locomotion_layers(base_animation: String, lower_direction: Ve
 		if not _sync_modular_unarmed_upper_body_locomotion(base_animation, resolved_upper_direction, speed_scale):
 			_hide_modular_locomotion_layers()
 			return false
+		if base_animation == "unarmed_run":
+			_play_optional_modular_cape_animation("unarmed_run_cape", resolved_upper_direction, 12.0)
+		else:
+			_hide_modular_cape_layer()
 	elif _is_ranged_ready_active() and _is_using_ranged_2h_primary():
 		if not _sync_modular_ranged_ready_upper_layers(resolved_upper_direction):
+			_hide_modular_locomotion_layers()
+			return false
+	elif _is_using_ranged_2h_primary():
+		if not _sync_modular_ranged_relaxed_upper_layers(resolved_upper_direction):
 			_hide_modular_locomotion_layers()
 			return false
 	else:
@@ -1314,7 +1325,27 @@ func _sync_modular_ranged_ready_upper_layers(direction: Vector2) -> bool:
 		resolved_direction = Vector2.RIGHT
 	if not _sync_modular_upper_body_layer("ranged_2h_stance_modular", resolved_direction, 1.0, false):
 		return false
-	if not _sync_modular_ranged_weapon_layer(resolved_direction):
+	if not _sync_modular_ranged_weapon_layer(resolved_direction, "ranged_2h_stance_modular"):
+		return false
+	if primary_weapon_sprite != null:
+		primary_weapon_sprite.visible = false
+	if ranged_fx_overlay_sprite != null:
+		ranged_fx_overlay_sprite.visible = false
+	_hide_modular_cape_layer()
+	return true
+
+
+func _sync_modular_ranged_relaxed_upper_layers(direction: Vector2) -> bool:
+	if not modular_locomotion_layers_enabled or not _is_using_ranged_2h_primary():
+		return false
+	if modular_upper_body_sprite == null or modular_upper_body_sprite.sprite_frames == null:
+		return false
+	var resolved_direction := direction
+	if resolved_direction.length_squared() <= 0.0001:
+		resolved_direction = visual_idle_direction if visual_idle_direction.length_squared() > 0.0001 else Vector2.RIGHT
+	if not _sync_modular_upper_body_layer("ranged_2h_relaxed_modular", resolved_direction, 1.0, false):
+		return false
+	if not _sync_modular_ranged_weapon_layer(resolved_direction, "ranged_2h_relaxed_modular"):
 		return false
 	if primary_weapon_sprite != null:
 		primary_weapon_sprite.visible = false
@@ -1333,6 +1364,8 @@ func _can_reuse_modular_lower_body_for_current_loadout() -> bool:
 		return modular_upper_body_sprite != null and modular_upper_body_sprite.sprite_frames != null
 	if _is_ranged_ready_active() and _is_using_ranged_2h_primary():
 		return _has_modular_ranged_ready_upper_stack()
+	if _is_using_ranged_2h_primary():
+		return _has_modular_ranged_relaxed_upper_stack()
 	return false
 
 
@@ -1348,6 +1381,19 @@ func _has_modular_ranged_ready_upper_stack() -> bool:
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
 		return false
 	var weapon_animation := AnimationResolver.resolve("ranged_2h_stance_modular", direction, modular_sidearm_sprite)
+	return _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, weapon_animation)
+
+
+func _has_modular_ranged_relaxed_upper_stack() -> bool:
+	if modular_upper_body_sprite == null or modular_upper_body_sprite.sprite_frames == null:
+		return false
+	if modular_sidearm_sprite == null or modular_sidearm_sprite.sprite_frames == null:
+		return false
+	var direction := visual_idle_direction if visual_idle_direction.length_squared() > 0.0001 else Vector2.RIGHT
+	var upper_animation := AnimationResolver.resolve("ranged_2h_relaxed_modular", direction, modular_upper_body_sprite)
+	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_animation):
+		return false
+	var weapon_animation := AnimationResolver.resolve("ranged_2h_relaxed_modular", direction, modular_sidearm_sprite)
 	return _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, weapon_animation)
 
 
@@ -1380,6 +1426,20 @@ func _sync_modular_sidearm_presentation(_is_firing: bool) -> bool:
 
 func _sync_modular_ranged_2h_stance_presentation(direction: Vector2) -> bool:
 	if not modular_locomotion_layers_enabled or not _is_ranged_ready_active() or not _is_using_ranged_2h_primary():
+		return false
+	if _reload_active or _is_ranged_fire_animation_active():
+		return false
+	if not _sync_modular_locomotion_layers(_get_modular_lower_body_motion_base(), movement_direction if velocity.length() > 0.01 else visual_idle_direction, direction, 1.0):
+		return false
+	if primary_weapon_sprite:
+		primary_weapon_sprite.visible = false
+	if ranged_fx_overlay_sprite:
+		ranged_fx_overlay_sprite.visible = false
+	return true
+
+
+func _sync_modular_ranged_relaxed_presentation(direction: Vector2) -> bool:
+	if not modular_locomotion_layers_enabled or not _is_using_ranged_2h_primary():
 		return false
 	if _reload_active or _is_ranged_fire_animation_active():
 		return false
@@ -1425,7 +1485,7 @@ func _sync_modular_ranged_ready_movement_presentation(
 	if not _sync_modular_upper_body_layer("ranged_2h_stance_modular", resolved_upper_direction, 1.0, false):
 		_hide_modular_locomotion_layers()
 		return false
-	if not _sync_modular_ranged_weapon_layer(resolved_upper_direction):
+	if not _sync_modular_ranged_weapon_layer(resolved_upper_direction, "ranged_2h_stance_modular"):
 		_hide_modular_locomotion_layers()
 		return false
 
@@ -1440,10 +1500,10 @@ func _sync_modular_ranged_ready_movement_presentation(
 	return true
 
 
-func _sync_modular_ranged_weapon_layer(direction: Vector2) -> bool:
+func _sync_modular_ranged_weapon_layer(direction: Vector2, base_animation: String) -> bool:
 	if modular_sidearm_sprite == null or modular_sidearm_sprite.sprite_frames == null:
 		return false
-	var animation := AnimationResolver.resolve("ranged_2h_stance_modular", direction, modular_sidearm_sprite)
+	var animation := AnimationResolver.resolve(base_animation, direction, modular_sidearm_sprite)
 	if not _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, animation):
 		return false
 	modular_sidearm_sprite.visible = true
@@ -1462,8 +1522,16 @@ func _is_primary_ranged_aim_presentation_active() -> bool:
 	return _primary_ranged_action_phase == &"aiming"
 
 
+func _is_primary_ranged_lower_presentation_active() -> bool:
+	return _primary_ranged_action_phase == &"lowering"
+
+
+func _is_primary_ranged_transition_presentation_active() -> bool:
+	return _is_primary_ranged_aim_presentation_active() or _is_primary_ranged_lower_presentation_active()
+
+
 func _tick_primary_ranged_action_presentation(delta: float) -> void:
-	if not (_is_primary_ranged_aim_presentation_active() or _is_primary_ranged_fire_presentation_active()):
+	if not (_is_primary_ranged_transition_presentation_active() or _is_primary_ranged_fire_presentation_active()):
 		return
 
 	_primary_ranged_action_timer -= delta
@@ -1598,6 +1666,46 @@ func _begin_modular_primary_ranged_aim_presentation() -> bool:
 	return true
 
 
+func _begin_modular_primary_ranged_lower_presentation() -> bool:
+	if not modular_primary_ranged_fire_enabled or not modular_locomotion_layers_enabled:
+		return false
+	if _is_using_sidearm_ranged() or not _is_using_ranged_2h_primary():
+		return false
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null or modular_sidearm_sprite == null:
+		return false
+
+	var action_direction := aim_direction
+	if action_direction.length_squared() <= 0.0001:
+		action_direction = visual_idle_direction
+	if action_direction.length_squared() <= 0.0001:
+		action_direction = Vector2.RIGHT
+
+	var longest_duration := 0.0
+	for sprite in [modular_lower_body_sprite, modular_upper_body_sprite, modular_sidearm_sprite]:
+		var result := _play_modular_action_animation_backwards(
+			sprite,
+			"ranged_2h_aim_modular",
+			action_direction,
+			modular_primary_ranged_aim_fps
+		)
+		if not bool(result.get("played", false)):
+			return false
+		longest_duration = max(longest_duration, float(result.get("duration", 0.0)))
+
+	var cape_result := _play_optional_modular_cape_animation_backwards(
+		"ranged_2h_aim_cape",
+		action_direction,
+		modular_primary_ranged_aim_fps
+	)
+	longest_duration = max(longest_duration, float(cape_result.get("duration", 0.0)))
+	_primary_ranged_action_phase = &"lowering"
+	_primary_ranged_action_timer = max(0.04, longest_duration)
+	_hide_legacy_primary_ranged_presentation_for_modular_fire()
+	if modular_upper_fx_sprite:
+		modular_upper_fx_sprite.visible = false
+	return true
+
+
 func _end_modular_primary_ranged_fire_presentation() -> void:
 	_primary_ranged_action_phase = &""
 	_primary_ranged_action_timer = 0.0
@@ -1696,11 +1804,35 @@ func _play_modular_action_animation(
 	return {"played": true, "duration": duration, "animation": animation_name}
 
 
+func _play_modular_action_animation_backwards(
+	sprite: AnimatedSprite2D,
+	base_animation: String,
+	direction: Vector2,
+	target_fps: float
+) -> Dictionary:
+	var result := _play_modular_action_animation(sprite, base_animation, direction, target_fps)
+	if not bool(result.get("played", false)):
+		return result
+	var animation_name: StringName = result.get("animation", &"")
+	sprite.play_backwards(animation_name)
+	return result
+
+
 func _play_optional_modular_cape_animation(base_animation: String, direction: Vector2, target_fps: float) -> Dictionary:
 	if not modular_primary_ranged_aim_cape_enabled:
 		_hide_modular_cape_layer()
 		return {"played": false, "duration": 0.0}
 	var result := _play_modular_action_animation(modular_cape_sprite, base_animation, direction, target_fps)
+	if not bool(result.get("played", false)):
+		_hide_modular_cape_layer()
+	return result
+
+
+func _play_optional_modular_cape_animation_backwards(base_animation: String, direction: Vector2, target_fps: float) -> Dictionary:
+	if not modular_primary_ranged_aim_cape_enabled:
+		_hide_modular_cape_layer()
+		return {"played": false, "duration": 0.0}
+	var result := _play_modular_action_animation_backwards(modular_cape_sprite, base_animation, direction, target_fps)
 	if not bool(result.get("played", false)):
 		_hide_modular_cape_layer()
 	return result
@@ -2093,6 +2225,8 @@ func _handle_attack_input() -> void:
 		_try_queue_parry_counter_from_block()
 		return
 	if _is_ranged_ready_active():
+		if _is_primary_ranged_aim_presentation_active():
+			return
 		if _is_attack_primary_just_pressed() and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
 			_request_ranged_shot()
 		elif _is_attack_primary_pressed() and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
@@ -2102,22 +2236,10 @@ func _handle_attack_input() -> void:
 		_request_current_profile_intent(false)
 		return
 	if _is_ranged_loadout_active():
-		if _is_attack_primary_just_pressed() and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
-			_request_panic_ranged_shot()
 		return
 	if _is_attack_primary_just_pressed():
 		_request_current_profile_intent(true)
 		return
-
-
-func _request_panic_ranged_shot() -> void:
-	var fallback_direction := visual_idle_direction
-	if movement_direction.length_squared() > 0.0001:
-		fallback_direction = movement_direction
-	if fallback_direction.length_squared() <= 0.0001:
-		fallback_direction = Vector2.RIGHT
-	aim_direction = fallback_direction.normalized()
-	_request_ranged_shot()
 
 
 func _request_current_profile_intent(primary: bool) -> void:
@@ -2409,7 +2531,9 @@ func _enter_ranged_ready() -> void:
 	var ranged_weapon := _get_ranged_ready_candidate_weapon_definition()
 	if ranged_weapon == null:
 		return
-	var entering_sidearm := not _ranged_ready_active and ranged_weapon == _get_sidearm_weapon_definition()
+	var already_ready_for_weapon := _ranged_ready_active and _ranged_ready_weapon_definition == ranged_weapon
+	var entering_sidearm := not already_ready_for_weapon and ranged_weapon == _get_sidearm_weapon_definition()
+	var entering_primary := not already_ready_for_weapon and ranged_weapon != _get_sidearm_weapon_definition()
 	_ranged_ready_active = true
 	_ranged_ready_weapon_definition = ranged_weapon
 	if entering_sidearm:
@@ -2425,26 +2549,32 @@ func _enter_ranged_ready() -> void:
 	_apply_active_weapon_frames()
 	_apply_dynamic_weapon_socket_layout(ranged_weapon)
 	_update_primary_weapon_visual(false)
-	if not entering_sidearm:
+	if entering_primary:
 		_begin_modular_primary_ranged_aim_presentation()
 
 
 func _exit_ranged_ready() -> void:
 	if not _ranged_ready_active:
 		return
-	_end_modular_primary_ranged_fire_presentation()
+	var should_lower_primary := not _is_using_sidearm_ranged() and _is_using_ranged_2h_primary()
+	var lowered_primary := false
+	if should_lower_primary:
+		lowered_primary = _begin_modular_primary_ranged_lower_presentation()
+	if not lowered_primary:
+		_end_modular_primary_ranged_fire_presentation()
 	_ranged_ready_active = false
 	_ranged_ready_weapon_definition = null
 	_sidearm_draw_active = false
 	_sidearm_action_phase = &"holstered"
 	_sidearm_action_phase_started = false
-	if modular_sidearm_sprite:
+	if modular_sidearm_sprite and not lowered_primary:
 		modular_sidearm_sprite.visible = false
 		modular_sidearm_sprite.stop()
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
 		modular_upper_fx_sprite.stop()
-	_hide_modular_cape_layer()
+	if not lowered_primary:
+		_hide_modular_cape_layer()
 	_apply_active_weapon_frames()
 	_apply_dynamic_weapon_socket_layout()
 	_update_primary_weapon_visual(false)

@@ -242,6 +242,9 @@ func _init() -> void:
 	_replace_animation_entries(modular_sidearm_frames, _build_modular_ranged_stance_entries("ranged_weapon"))
 	_replace_animation_entries(modular_sidearm_frames, _build_modular_ranged_aim_entries("ranged_weapon"))
 	_replace_animation_entries(modular_sidearm_frames, _build_modular_ranged_fire_entries("ranged_weapon"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_relaxed_entries("lower_body"))
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_ranged_relaxed_entries("upper_body"))
+	_replace_animation_entries(modular_sidearm_frames, _build_modular_ranged_relaxed_entries("ranged_weapon"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_fire_fx", "fx_01"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_ranged_fire_entries("upper_fx"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_draw_fx", "draw_sidearm_01"))
@@ -614,6 +617,12 @@ func _build_modular_ranged_aim_entries(part: String) -> Array:
 func _build_modular_ranged_fire_entries(part: String) -> Array:
 	return _build_modular_ranged_action_entries(part, {
 		"source": "fire_01", "base_anim": "ranged_2h_fire_modular", "fps": 10.0, "loop": false,
+	})
+
+
+func _build_modular_ranged_relaxed_entries(part: String) -> Array:
+	return _build_modular_ranged_action_entries(part, {
+		"source": "relaxed_01", "base_anim": "ranged_2h_relaxed_modular", "fps": 8.0, "loop": true,
 	})
 
 

@@ -20,7 +20,7 @@ The generated gothic compound should read as a fortified yard with a clear perim
 
 - Root routing: `AGENTS.md`
 - Local routing: `custodian/AGENTS.md`
-- Active design/spec docs: `design/features/implementation/GOTHIC_COMPOUND_PROCGEN.md`
+- Active design/spec docs: `design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md`
 - Active runtime/docs files: `custodian/game/world/procgen/gothic_compound/*`, `custodian/game/world/gothic_compound/gothic_compound_map.gd`, `custodian/docs/ai_context/CURRENT_STATE.md`
 - Historical reference only: `python-sim/`
 
@@ -60,7 +60,7 @@ The generated gothic compound should read as a fortified yard with a clear perim
 - Does `custodian/docs/ai_context/CONTEXT.md` need an update? No.
 - Does `custodian/docs/ai_context/FILE_INDEX.md` need an update? Yes, for the new asset defs file.
 - Does `custodian/AGENTS.md` need an update? No.
-- Do any design docs need an update? Yes, `design/features/implementation/GOTHIC_COMPOUND_PROCGEN.md`.
+- Do any design docs need an update? Yes, `design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md`.
 
 ## Completion Notes
 

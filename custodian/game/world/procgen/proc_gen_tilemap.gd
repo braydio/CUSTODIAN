@@ -13,6 +13,9 @@ extends Node
 const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_wall_segment.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
+const REQUIRED_CELL_CLASSIFIER_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_required_cell_classifier.gd")
+const PRETERRAIN_DIAGNOSTICS_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_preterrain_diagnostics.gd")
+const PRETERRAIN_AUTHORITY_REPAIR_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_preturn_authority_repair.gd")
 const WORLD_PROGRESS_PROFILE_SCRIPT := preload("res://game/world/procgen/progression/world_progress_profile.gd")
 const FACTION_SITE_PLACER_SCRIPT := preload("res://game/world/procgen/factions/faction_site_placer.gd")
 const STORY_ROOM_PLACER_SCRIPT := preload("res://game/world/procgen/story/story_room_placer.gd")
@@ -3536,10 +3539,10 @@ func _apply_terrain_builder(map_size: Vector2i) -> void:
 	var required_cell_entries := _collect_terrain_required_cell_entries(map_size)
 	var required_cells := _terrain_required_entries_to_cells(required_cell_entries)
 	var pre_repair_connectivity := _compute_pre_terrain_connectivity(map_size, required_cell_entries)
-	var pre_terrain_repair_carved := _repair_pre_terrain_required_connectivity(map_size, required_cell_entries)
+	var pre_terrain_repair := _repair_pre_terrain_required_connectivity(map_size, required_cell_entries)
 	_last_pre_terrain_connectivity = _compute_pre_terrain_connectivity(map_size, required_cell_entries)
 	_last_pre_terrain_connectivity["pre_terrain_before_repair"] = pre_repair_connectivity
-	_last_pre_terrain_connectivity["pre_terrain_authority_repair_carved_cells"] = pre_terrain_repair_carved
+	_last_pre_terrain_connectivity["pre_terrain_authority_repair_carved_cells"] = int(pre_terrain_repair.get("carved_cells", 0))
 	var context := {
 		"seed": terrain_seed,
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
@@ -3564,49 +3567,15 @@ func _apply_terrain_builder(map_size: Vector2i) -> void:
 	_log_terrain_builder_summary(_last_terrain_result)
 
 
-func _repair_pre_terrain_required_connectivity(map_size: Vector2i, required_cell_entries: Array[Dictionary]) -> int:
-	var total_carved := 0
-	var seen_bridges := {}
-	for _iteration in range(8):
-		var diagnostics := _compute_pre_terrain_connectivity(map_size, required_cell_entries)
-		if int(diagnostics.get("pre_terrain_missing_required_count", 0)) <= 0:
-			break
-		var promoted_required := _promote_missing_required_samples_to_floor(diagnostics, map_size)
-		var bridge_candidates: Array = diagnostics.get("pre_terrain_bridge_candidates", [])
-		if bridge_candidates.is_empty() and promoted_required <= 0:
-			break
-		var carved_this_iteration := 0
-		for candidate in bridge_candidates:
-			if not (candidate is Dictionary):
-				continue
-			var from_tile_variant: Variant = (candidate as Dictionary).get("from_tile", Vector2i.ZERO)
-			var to_tile_variant: Variant = (candidate as Dictionary).get("to_tile", Vector2i.ZERO)
-			if not (from_tile_variant is Vector2i and to_tile_variant is Vector2i):
-				continue
-			var from_tile := from_tile_variant as Vector2i
-			var to_tile := to_tile_variant as Vector2i
-			var bridge_key := "%s>%s" % [str(from_tile), str(to_tile)]
-			if seen_bridges.has(bridge_key):
-				continue
-			seen_bridges[bridge_key] = true
-			carved_this_iteration += _carve_pre_terrain_authority_bridge(from_tile, to_tile, map_size)
-		total_carved += promoted_required + carved_this_iteration
-		if promoted_required + carved_this_iteration <= 0:
-			break
-	return total_carved
-
-
-func _promote_missing_required_samples_to_floor(diagnostics: Dictionary, map_size: Vector2i) -> int:
-	var promoted := 0
-	var samples: Array = diagnostics.get("pre_terrain_missing_required_samples", [])
-	for sample in samples:
-		if not (sample is Dictionary):
-			continue
-		var tile_variant: Variant = (sample as Dictionary).get("tile", Vector2i.ZERO)
-		if not (tile_variant is Vector2i):
-			continue
-		promoted += _set_pre_terrain_bridge_floor(tile_variant as Vector2i, map_size)
-	return promoted
+func _repair_pre_terrain_required_connectivity(map_size: Vector2i, required_cell_entries: Array[Dictionary]) -> Dictionary:
+	return PRETERRAIN_AUTHORITY_REPAIR_SCRIPT.repair({
+		"compute_diagnostics": func() -> Dictionary:
+			return _compute_pre_terrain_connectivity(map_size, required_cell_entries),
+		"set_bridge_floor": func(tile: Vector2i) -> int:
+			return _set_pre_terrain_bridge_floor(tile, map_size),
+		"carve_bridge": func(from_tile: Vector2i, to_tile: Vector2i) -> int:
+			return _carve_pre_terrain_authority_bridge(from_tile, to_tile, map_size),
+	})
 
 
 func _carve_pre_terrain_authority_bridge(from_tile: Vector2i, to_tile: Vector2i, map_size: Vector2i) -> int:
@@ -3637,71 +3606,28 @@ func _collect_terrain_required_cells(map_size: Vector2i) -> Array[Vector2i]:
 
 
 func _collect_terrain_required_cell_entries(map_size: Vector2i) -> Array[Dictionary]:
-	var entries: Array[Dictionary] = []
-	var spawn := get_player_spawn()
-	if _is_tile_inside_map(spawn, map_size):
-		entries.append({"tile": spawn, "source": "spawn"})
-	if world_shape_mode == WorldShapeMode.ASCENT_FIELD:
-		entries.append_array(_collect_ascent_required_cell_entries(map_size))
-	else:
-		for center in get_rooms_by_distance_from_spawn().slice(0, 4):
-			if _is_tile_inside_map(center, map_size):
-				entries.append({"tile": center, "source": "room_center"})
-	for threshold in _last_interior_thresholds:
-		if _is_tile_inside_map(threshold, map_size):
-			entries.append({"tile": threshold, "source": "interior_threshold"})
-	for ingress in _last_compound_ingress:
-		if _is_tile_inside_map(ingress, map_size):
-			entries.append({"tile": ingress, "source": "compound_ingress"})
-	entries.append_array(_sample_required_anchor_entries_from_dict(_get_connected_road_required_tiles(), map_size, 16, "road_sample"))
-	entries.append_array(_sample_required_anchor_entries_from_dict(_get_connected_parking_required_tiles(), map_size, 8, "parking_sample"))
-	for connector_cell in _sample_vector2i_array(_compound_connector_centerline_tiles, map_size, 8):
-		if _is_tile_inside_map(connector_cell, map_size):
-			entries.append({"tile": connector_cell, "source": "compound_connector_road"})
+	var intent_required_cells: Array = []
 	if _worldgen_intent_graph != null:
-		for cell in _worldgen_intent_graph.get_required_cells():
-			if _is_tile_inside_map(cell, map_size):
-				entries.append({"tile": cell, "source": "intent_graph_required"})
-	return _dedupe_terrain_required_entries(entries)
-
-
-func _collect_ascent_required_cell_entries(map_size: Vector2i) -> Array[Dictionary]:
-	var entries: Array[Dictionary] = []
-	for cell in _sample_vector2i_array(_ascent_field_main_route_cells, map_size, 8):
-		entries.append({"tile": cell, "source": "ascent_anchor"})
-	for cell in _sample_vector2i_array(_ascent_field_vista_cells, map_size, 4):
-		entries.append({"tile": cell, "source": "ascent_vista"})
-	for cell in get_rooms_by_distance_from_spawn().slice(0, 4):
-		if _is_tile_inside_map(cell, map_size):
-			entries.append({"tile": cell, "source": "ascent_objective"})
-	return entries
+		intent_required_cells = _worldgen_intent_graph.get_required_cells()
+	return REQUIRED_CELL_CLASSIFIER_SCRIPT.collect_required_cell_entries({
+		"map_size": map_size,
+		"spawn": get_player_spawn(),
+		"is_ascent_field": world_shape_mode == WorldShapeMode.ASCENT_FIELD,
+		"rooms_by_distance": get_rooms_by_distance_from_spawn(),
+		"last_interior_thresholds": _last_interior_thresholds,
+		"last_compound_ingress": _last_compound_ingress,
+		"connected_road_required_tiles": _get_connected_road_required_tiles(),
+		"connected_parking_required_tiles": _get_connected_parking_required_tiles(),
+		"compound_connector_centerline_tiles": _compound_connector_centerline_tiles,
+		"ascent_field_main_route_cells": _ascent_field_main_route_cells,
+		"ascent_field_vista_cells": _ascent_field_vista_cells,
+		"intent_graph_required_cells": intent_required_cells,
+		"is_tile_inside_map": Callable(self, "_is_tile_inside_map"),
+	})
 
 
 func _terrain_required_entries_to_cells(entries: Array[Dictionary]) -> Array[Vector2i]:
-	var required: Array[Vector2i] = []
-	for entry in entries:
-		var tile_variant: Variant = entry.get("tile", Vector2i.ZERO)
-		if tile_variant is Vector2i:
-			required.append(tile_variant as Vector2i)
-	return _dedupe_vector2i_array(required)
-
-
-func _dedupe_terrain_required_entries(entries: Array[Dictionary]) -> Array[Dictionary]:
-	var seen := {}
-	var result: Array[Dictionary] = []
-	for entry in entries:
-		var tile_variant: Variant = entry.get("tile", Vector2i.ZERO)
-		if not (tile_variant is Vector2i):
-			continue
-		var tile := tile_variant as Vector2i
-		if seen.has(tile):
-			continue
-		seen[tile] = true
-		result.append({
-			"tile": tile,
-			"source": String(entry.get("source", "unknown")),
-			})
-	return result
+	return REQUIRED_CELL_CLASSIFIER_SCRIPT.entries_to_cells(entries)
 
 
 func _get_connected_road_required_tiles() -> Dictionary:
@@ -3741,100 +3667,22 @@ func _get_connected_road_tiles_from_spawn() -> Dictionary:
 	return _collect_connected_road_tiles(best_root)
 
 
-func _sample_required_anchor_entries_from_dict(source: Dictionary, map_size: Vector2i, max_count: int, source_label: String) -> Array[Dictionary]:
-	var entries: Array[Dictionary] = []
-	for cell in _sample_required_anchor_cells_from_dict(source, map_size, max_count):
-		entries.append({"tile": cell, "source": source_label})
-	return entries
-
-
 func _compute_pre_terrain_connectivity(map_size: Vector2i, required_cell_entries: Array[Dictionary]) -> Dictionary:
-	var spawn := get_player_spawn()
-	var required_cells := _terrain_required_entries_to_cells(required_cell_entries)
-	var layout_reachable := _flood_fill_pre_terrain_graph(map_size, spawn, Callable(self, "_is_layout_pre_terrain_walkable_cell"))
-	var reachable := _flood_fill_pre_terrain_graph(map_size, spawn, Callable(self, "_is_pre_terrain_walkable_cell"))
-	var semantic_reachable := _flood_fill_pre_terrain_graph(map_size, spawn, Callable(self, "_is_semantic_required_walkable_cell"))
-	var missing_samples: Array[Dictionary] = []
-	var missing_count := 0
-	var connected_count := 0
-	var layout_connected_count := 0
-	var semantic_connected_count := 0
-	var missing_by_source := {}
-	var missing_by_reason := {}
-	var entry_by_tile := {}
-	for entry in required_cell_entries:
-		var tile_variant: Variant = entry.get("tile", Vector2i.ZERO)
-		if tile_variant is Vector2i and not entry_by_tile.has(tile_variant):
-			entry_by_tile[tile_variant] = entry
-	for cell in required_cells:
-		if layout_reachable.has(cell):
-			layout_connected_count += 1
-		if semantic_reachable.has(cell):
-			semantic_connected_count += 1
-		if reachable.has(cell):
-			connected_count += 1
-			continue
-		missing_count += 1
-		var entry: Dictionary = entry_by_tile.get(cell, {"tile": cell, "source": "unknown"})
-		var reason := _classify_pre_terrain_missing_reason(cell, map_size)
-		var source := String(entry.get("source", "unknown"))
-		missing_by_source[source] = int(missing_by_source.get(source, 0)) + 1
-		missing_by_reason[reason] = int(missing_by_reason.get(reason, 0)) + 1
-		if missing_samples.size() < 20:
-			missing_samples.append(_build_pre_terrain_missing_sample(cell, source, reason, reachable))
-	var ratio := 1.0
-	var layout_ratio := 1.0
-	var semantic_ratio := 1.0
-	if required_cells.size() > 0:
-		ratio = float(connected_count) / float(required_cells.size())
-		layout_ratio = float(layout_connected_count) / float(required_cells.size())
-		semantic_ratio = float(semantic_connected_count) / float(required_cells.size())
-	var graph_disagreement := _compute_pre_terrain_graph_disagreements(map_size, required_cell_entries)
-	var components := _compute_pre_terrain_component_diagnostics(map_size, required_cell_entries)
-	return {
-		"pre_terrain_spawn_tile": spawn,
-		"pre_terrain_required_cell_count": required_cells.size(),
-		"pre_terrain_missing_required_count": missing_count,
-		"pre_terrain_reachable_floor_count": reachable.size(),
-		"pre_terrain_connected_required_ratio": ratio,
-		"pre_terrain_layout_connected_required_ratio": layout_ratio,
-		"pre_terrain_baseline_connected_required_ratio": ratio,
-		"pre_terrain_semantic_connected_required_ratio": semantic_ratio,
-		"pre_terrain_missing_required_samples": missing_samples,
-		"pre_terrain_missing_required_by_source": missing_by_source,
-		"pre_terrain_missing_required_by_reason": missing_by_reason,
-		"pre_terrain_graph_disagreement_count": int(graph_disagreement.get("count", 0)),
-		"pre_terrain_graph_disagreement_samples": graph_disagreement.get("samples", []),
-		"pre_terrain_component_count": int(components.get("pre_terrain_component_count", 0)),
-		"pre_terrain_spawn_component_size": int(components.get("pre_terrain_spawn_component_size", 0)),
-		"pre_terrain_required_components": components.get("pre_terrain_required_components", {}),
-		"pre_terrain_largest_missing_component_size": int(components.get("pre_terrain_largest_missing_component_size", 0)),
-		"pre_terrain_bridge_candidates": components.get("pre_terrain_bridge_candidates", []),
-		"pre_terrain_total_floor_cells": _generated_floor_cells.size(),
-		"pre_terrain_total_wall_cells": _generated_wall_cells.size(),
-	}
-
-
-func _flood_fill_pre_terrain_floor(map_size: Vector2i, start_cell: Vector2i) -> Dictionary:
-	return _flood_fill_pre_terrain_graph(map_size, start_cell, Callable(self, "_is_pre_terrain_walkable_cell"))
-
-
-func _flood_fill_pre_terrain_graph(map_size: Vector2i, start_cell: Vector2i, walkable_callable: Callable) -> Dictionary:
-	var reachable := {}
-	if not bool(walkable_callable.call(start_cell, map_size)):
-		return reachable
-	var open: Array[Vector2i] = [start_cell]
-	reachable[start_cell] = true
-	var directions: Array[Vector2i] = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
-	while not open.is_empty():
-		var current: Vector2i = open.pop_back()
-		for direction in directions:
-			var next := current + direction
-			if reachable.has(next) or not bool(walkable_callable.call(next, map_size)):
-				continue
-			reachable[next] = true
-			open.append(next)
-	return reachable
+	return PRETERRAIN_DIAGNOSTICS_SCRIPT.compute({
+		"map_size": map_size,
+		"spawn": get_player_spawn(),
+		"required_cell_entries": required_cell_entries,
+		"floor_cells": _generated_floor_cells,
+		"wall_cells": _generated_wall_cells,
+		"road_cells": _main_road_tiles,
+		"parking_cells": _parking_zone_tiles,
+		"is_layout_walkable": Callable(self, "_is_layout_pre_terrain_walkable_cell"),
+		"is_baseline_walkable": Callable(self, "_is_pre_terrain_walkable_cell"),
+		"is_semantic_walkable": Callable(self, "_is_semantic_required_walkable_cell"),
+		"classify_missing_reason": Callable(self, "_classify_pre_terrain_missing_reason"),
+		"build_missing_sample": Callable(self, "_build_pre_terrain_missing_sample"),
+		"get_region_data_at_tile": Callable(self, "get_region_data_at_tile"),
+	})
 
 
 func _is_pre_terrain_walkable_cell(cell: Vector2i, map_size: Vector2i) -> bool:
@@ -3912,175 +3760,6 @@ func _nearest_reachable_manhattan_distance(cell: Vector2i, reachable: Dictionary
 		if distance < best:
 			best = distance
 	return best if best != 2147483647 else -1
-
-
-func _compute_pre_terrain_graph_disagreements(map_size: Vector2i, required_cell_entries: Array[Dictionary]) -> Dictionary:
-	var samples: Array[Dictionary] = []
-	var count := 0
-	for entry in required_cell_entries:
-		var tile_variant: Variant = entry.get("tile", Vector2i.ZERO)
-		if not (tile_variant is Vector2i):
-			continue
-		var tile := tile_variant as Vector2i
-		var layout_walkable := _is_layout_pre_terrain_walkable_cell(tile, map_size)
-		var baseline_walkable := _is_pre_terrain_walkable_cell(tile, map_size)
-		var semantic_walkable := _is_semantic_required_walkable_cell(tile, map_size)
-		if layout_walkable == baseline_walkable and baseline_walkable == semantic_walkable:
-			continue
-		count += 1
-		if samples.size() < 20:
-			var region := get_region_data_at_tile(tile)
-			samples.append({
-				"tile": tile,
-				"source": String(entry.get("source", "unknown")),
-				"layout_walkable": layout_walkable,
-				"terrain_baseline_walkable": baseline_walkable,
-				"semantic_walkable": semantic_walkable,
-				"floor_authority": _generated_floor_cells.has(tile),
-				"wall_authority": _generated_wall_cells.has(tile),
-				"road_authority": _main_road_tiles.has(tile),
-				"parking_authority": _parking_zone_tiles.has(tile),
-				"region_type": String(region.get("region_type", "exterior")),
-				"zone": String(region.get("zone", "natural")),
-			})
-	return {"count": count, "samples": samples}
-
-
-func _compute_pre_terrain_component_diagnostics(map_size: Vector2i, required_cell_entries: Array[Dictionary]) -> Dictionary:
-	var components: Array[Array] = []
-	var component_by_tile := {}
-	var remaining := {}
-	for tile_variant in _generated_floor_cells.keys():
-		if tile_variant is Vector2i and _is_pre_terrain_walkable_cell(tile_variant as Vector2i, map_size):
-			remaining[tile_variant] = true
-	var directions: Array[Vector2i] = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
-	while not remaining.is_empty():
-		var start := remaining.keys()[0] as Vector2i
-		var component: Array[Vector2i] = []
-		var open: Array[Vector2i] = [start]
-		remaining.erase(start)
-		while not open.is_empty():
-			var current: Vector2i = open.pop_back()
-			component.append(current)
-			for direction in directions:
-				var next := current + direction
-				if not remaining.has(next):
-					continue
-				remaining.erase(next)
-				open.append(next)
-		var component_id := components.size()
-		for tile in component:
-			component_by_tile[tile] = component_id
-		components.append(component)
-
-	var spawn := get_player_spawn()
-	var spawn_component := int(component_by_tile.get(spawn, -1))
-	var required_components := {}
-	var required_entries_by_component := {}
-	for entry in required_cell_entries:
-		var tile_variant: Variant = entry.get("tile", Vector2i.ZERO)
-		if not (tile_variant is Vector2i):
-			continue
-		var tile := tile_variant as Vector2i
-		var component_id := int(component_by_tile.get(tile, -1))
-		var key := str(component_id)
-		required_components[key] = int(required_components.get(key, 0)) + 1
-		if not required_entries_by_component.has(component_id):
-			required_entries_by_component[component_id] = []
-		(required_entries_by_component[component_id] as Array).append(entry)
-
-	var largest_missing_size := 0
-	for component_id_variant in required_entries_by_component.keys():
-		var component_id := int(component_id_variant)
-		if component_id == spawn_component or component_id < 0 or component_id >= components.size():
-			continue
-		largest_missing_size = maxi(largest_missing_size, (components[component_id] as Array).size())
-
-	return {
-		"pre_terrain_component_count": components.size(),
-		"pre_terrain_spawn_component_size": (components[spawn_component] as Array).size() if spawn_component >= 0 and spawn_component < components.size() else 0,
-		"pre_terrain_required_components": required_components,
-		"pre_terrain_largest_missing_component_size": largest_missing_size,
-		"pre_terrain_bridge_candidates": _find_pre_terrain_bridge_candidates(components, spawn_component, required_entries_by_component),
-	}
-
-
-func _find_pre_terrain_bridge_candidates(components: Array[Array], spawn_component: int, required_entries_by_component: Dictionary) -> Array[Dictionary]:
-	var candidates: Array[Dictionary] = []
-	if spawn_component < 0 or spawn_component >= components.size():
-		return candidates
-	var spawn_tiles := components[spawn_component] as Array[Vector2i]
-	for component_id_variant in required_entries_by_component.keys():
-		var component_id := int(component_id_variant)
-		if component_id == spawn_component or component_id < 0 or component_id >= components.size():
-			continue
-		var entries := required_entries_by_component[component_id] as Array
-		if entries.is_empty():
-			continue
-		var other_tiles := components[component_id] as Array[Vector2i]
-		var best_from := Vector2i.ZERO
-		var best_to := Vector2i.ZERO
-		var best_distance := 2147483647
-		for from_tile in spawn_tiles:
-			for to_tile in other_tiles:
-				var distance := absi(from_tile.x - to_tile.x) + absi(from_tile.y - to_tile.y)
-				if distance < best_distance:
-					best_distance = distance
-					best_from = from_tile
-					best_to = to_tile
-		var to_entry := entries[0] as Dictionary
-		candidates.append({
-			"from_tile": best_from,
-			"to_tile": best_to,
-			"distance_manhattan": best_distance,
-			"from_source": "spawn_component",
-			"to_source": String(to_entry.get("source", "unknown")),
-		})
-	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		var distance_a := int(a.get("distance_manhattan", 0))
-		var distance_b := int(b.get("distance_manhattan", 0))
-		if distance_a != distance_b:
-			return distance_a < distance_b
-		var a_to: Vector2i = a.get("to_tile", Vector2i.ZERO)
-		var b_to: Vector2i = b.get("to_tile", Vector2i.ZERO)
-		if a_to.x != b_to.x:
-			return a_to.x < b_to.x
-		return a_to.y < b_to.y
-	)
-	if candidates.size() > 12:
-		candidates = candidates.slice(0, 12)
-	return candidates
-
-
-func _sample_required_anchor_cells_from_dict(source: Dictionary, map_size: Vector2i, max_count: int) -> Array[Vector2i]:
-	var cells: Array[Vector2i] = []
-	if max_count <= 0 or source.is_empty():
-		return cells
-
-	for key in source.keys():
-		if key is Vector2i:
-			var cell := key as Vector2i
-			if _is_tile_inside_map(cell, map_size):
-				cells.append(cell)
-
-	if cells.is_empty():
-		return cells
-
-	cells.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
-		if a.x != b.x:
-			return a.x < b.x
-		return a.y < b.y
-	)
-
-	if cells.size() <= max_count:
-		return cells
-
-	var sampled: Array[Vector2i] = []
-	for index in range(max_count):
-		var t := 0.0 if max_count == 1 else float(index) / float(max_count - 1)
-		var source_index := clampi(int(round(t * float(cells.size() - 1))), 0, cells.size() - 1)
-		sampled.append(cells[source_index])
-	return _dedupe_vector2i_array(sampled)
 
 
 func _dedupe_vector2i_array(cells: Array[Vector2i]) -> Array[Vector2i]:

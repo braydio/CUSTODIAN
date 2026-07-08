@@ -30,7 +30,7 @@ Optional implementation proposal file, to satisfy the older implementation-doc c
 design/features/implementation/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM_CODE.md
 ```
 
-Documentation drift note: `AGENTS.md` currently says new Godot implementation specs live under `design/20_features/in_progress/`, but later says required feature implementation docs should live under `design/features/implementation/`. To avoid conflict, create the main design spec in `design/20_features/in_progress/` and put exact copy-paste implementation notes in `design/features/implementation/`. Later, update `AGENTS.md` to clarify whether `design/features/implementation/` is still required for Codex or only for non-Codex agents.
+Documentation note: The old `design/features/implementation/` convention has been consolidated. All implementation specs now live in the appropriate numbered directory under `design/` (e.g., `02_features/vehicles/` for vehicle features).
 
 ---
 

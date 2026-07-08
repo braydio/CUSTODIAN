@@ -1,0 +1,22 @@
+{
+  "source": "operator__modular_upper_body__unarmed__success_01__w__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/new_operator/modular/success_01/operator__modular_upper_body__unarmed__success_01__w__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "post_process": [
+    "operator_modular_runtime"
+  ]
+}

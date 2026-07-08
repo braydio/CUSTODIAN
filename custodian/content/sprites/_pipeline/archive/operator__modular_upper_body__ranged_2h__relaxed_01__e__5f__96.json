@@ -1,0 +1,22 @@
+{
+  "source": "operator__modular_upper_body__ranged_2h__relaxed_01__e__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/new_operator/modular/ranged/operator__modular_upper_body__ranged_2h__relaxed_01__e__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "post_process": [
+    "operator_modular_runtime"
+  ]
+}

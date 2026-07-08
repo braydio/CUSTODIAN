@@ -78,6 +78,7 @@ shadow_color = Color(0, 0, 0, 0.5)
 
 [node name="ForlornRitualantSite" type="Node2D" unique_id=1649470245]
 script = ExtResource("1_site")
+z_index = 40
 forlorn_ritualant_path = NodePath("NPCs/ForlornRitualant")
 dry_fountain_ghost_path = NodePath("Props/DryFountainGhost")
 dry_fountain_black_water_path = NodePath("Props/DryFountainBlackWater")

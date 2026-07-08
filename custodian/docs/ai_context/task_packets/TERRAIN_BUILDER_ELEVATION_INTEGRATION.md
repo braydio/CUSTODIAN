@@ -8,7 +8,7 @@ Implement a dedicated deterministic terrain builder pass for elevation, mountain
 
 ## Authority
 
-- `design/features/implementation/TERRAIN_BUILDER_ELEVATION_INTEGRATION.md`
+- `design/02_features/procgen/TERRAIN_BUILDER_ELEVATION_INTEGRATION.md`
 - `custodian/AGENTS.md`
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md`
 

@@ -28,8 +28,8 @@ Active runtime is Godot under `custodian/`, and Godot implementation specs shoul
 Create:
 
 ```text
-design/features/implementation/MINIMAP_SYSTEM.md
-design/features/implementation/MINIMAP_SYSTEM_CODE.md
+design/02_features/minimap/MINIMAP_SYSTEM.md
+design/02_features/minimap/MINIMAP_SYSTEM_CODE.md
 ```
 
 After implementation, update:

@@ -26,7 +26,6 @@ func _init() -> void:
 	operator.set("aim_direction", Vector2.RIGHT)
 	operator.set("visual_idle_direction", Vector2.RIGHT)
 	operator.set("modular_locomotion_layers_enabled", true)
-	operator.call("_enter_ranged_ready")
 
 	var lower := operator.get_node_or_null("ModularLowerBodySprite") as AnimatedSprite2D
 	var upper := operator.get_node_or_null("ModularUpperBodySprite") as AnimatedSprite2D
@@ -37,9 +36,12 @@ func _init() -> void:
 
 	_install_test_frames(lower, [
 		&"unarmed_idle_right",
+		&"ranged_2h_aim_modular_right",
 		&"ranged_2h_fire_lower_right",
 	])
 	_install_test_frames(upper, [
+		&"ranged_2h_relaxed_modular_right",
+		&"ranged_2h_aim_modular_right",
 		&"ranged_2h_stance_modular_right",
 		&"ranged_2h_stance_modular_up",
 		&"ranged_2h_stance_modular_left",
@@ -47,6 +49,8 @@ func _init() -> void:
 		&"ranged_2h_fire_upper_right",
 	])
 	_install_test_frames(weapon, [
+		&"ranged_2h_relaxed_modular_right",
+		&"ranged_2h_aim_modular_right",
 		&"ranged_2h_stance_modular_right",
 		&"ranged_2h_stance_modular_up",
 		&"ranged_2h_stance_modular_left",
@@ -56,6 +60,28 @@ func _init() -> void:
 	_install_test_frames(fx, [
 		&"ranged_2h_fire_fx_right",
 	])
+
+	if not bool(operator.call("_sync_modular_ranged_relaxed_presentation", Vector2.RIGHT)):
+		failures.append("equipped ranged relaxed presentation did not start")
+	_check_layer(upper, &"ranged_2h_relaxed_modular_right", "relaxed upper", failures)
+	_check_layer(weapon, &"ranged_2h_relaxed_modular_right", "relaxed weapon", failures)
+
+	operator.call("_enter_ranged_ready")
+	if not bool(operator.call("_is_primary_ranged_aim_presentation_active")):
+		failures.append("RMB ranged-ready entry did not start aim raise")
+	var initial_aim_timer := float(operator.get("_primary_ranged_action_timer"))
+	operator.call("_enter_ranged_ready")
+	if not is_equal_approx(float(operator.get("_primary_ranged_action_timer")), initial_aim_timer):
+		failures.append("held RMB restarted the aim raise instead of preserving progress")
+	_check_layer(upper, &"ranged_2h_aim_modular_right", "aim upper", failures)
+	_check_layer(weapon, &"ranged_2h_aim_modular_right", "aim weapon", failures)
+	operator.call("_tick_primary_ranged_action_presentation", 10.0)
+	if bool(operator.call("_is_primary_ranged_aim_presentation_active")):
+		failures.append("aim raise did not finish into stance")
+	if not bool(operator.call("_sync_modular_ranged_2h_stance_presentation", Vector2.RIGHT)):
+		failures.append("held RMB ranged stance did not start")
+	_check_layer(upper, &"ranged_2h_stance_modular_right", "stance upper", failures)
+	_check_layer(weapon, &"ranged_2h_stance_modular_right", "stance weapon", failures)
 
 	if not bool(operator.call("_begin_modular_primary_ranged_fire_presentation")):
 		failures.append("primary ranged modular fire presentation did not start")
@@ -82,11 +108,19 @@ func _init() -> void:
 	if primary_weapon != null and primary_weapon.visible:
 		failures.append("legacy primary weapon sprite should be hidden during modular primary ranged fire")
 
-	operator.call("_tick_primary_ranged_fire_presentation", 10.0)
+	operator.call("_tick_primary_ranged_action_presentation", 10.0)
 	if bool(operator.call("_is_primary_ranged_fire_presentation_active")):
 		failures.append("primary ranged modular fire presentation did not end after timer tick")
 
-	operator.call("_end_modular_primary_ranged_fire_presentation")
+	operator.call("_exit_ranged_ready")
+	if not bool(operator.call("_is_primary_ranged_lower_presentation_active")):
+		failures.append("RMB release did not start reverse aim lower")
+	_check_layer(upper, &"ranged_2h_aim_modular_right", "lower upper", failures)
+	_check_layer(weapon, &"ranged_2h_aim_modular_right", "lower weapon", failures)
+	operator.call("_tick_primary_ranged_action_presentation", 10.0)
+	if bool(operator.call("_is_primary_ranged_lower_presentation_active")):
+		failures.append("reverse aim lower did not finish into relaxed")
+
 	operator.set("sidearm_slot_equipped", true)
 	operator.set("_ranged_ready_active", true)
 	operator.set("_ranged_ready_weapon_definition", operator.get("sidearm_weapon_definition"))

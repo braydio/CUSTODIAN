@@ -1,23 +1,36 @@
-[gd_resource type="SpriteFrames" load_steps=5 format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://cdjiq4bvbxkfc"]
 
-[ext_resource type="Texture2D" path="res://content/sprites/operator/new_operator/modular/fast_attack/operator__modular_wardrobe_cape__unarmed__fast_recovery_01__n__3f__96.png" id="1_cape"]
+[ext_resource type="Texture2D" uid="uid://bly2nv0iu2yhq" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/fast_recovery_01/operator__modular_wardrobe_cape__unarmed__fast_recovery_01__n__3f__96.png" id="1_cape_fastrecovery"]
+[ext_resource type="Texture2D" uid="uid://dhymj6l4wk1r5" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__n__3f__96.png" id="2_cape_run"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cape_0"]
-atlas = ExtResource("1_cape")
+atlas = ExtResource("1_cape_fastrecovery")
 region = Rect2(0, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cape_1"]
-atlas = ExtResource("1_cape")
+atlas = ExtResource("1_cape_fastrecovery")
 region = Rect2(96, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cape_2"]
-atlas = ExtResource("1_cape")
+atlas = ExtResource("1_cape_fastrecovery")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cape_run_0"]
+atlas = ExtResource("2_cape_run")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cape_run_1"]
+atlas = ExtResource("2_cape_run")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cape_run_2"]
+atlas = ExtResource("2_cape_run")
 region = Rect2(192, 0, 96, 96)
 
 [resource]
 animations = [{
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }, {
@@ -31,7 +44,21 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_cape_2")
 }],
-"loop": false,
+"loop": 0,
 "name": &"ranged_2h_aim_cape",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cape_run_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cape_run_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cape_run_2")
+}],
+"loop": 1,
+"name": &"unarmed_run_cape",
+"speed": 12.0
 }]

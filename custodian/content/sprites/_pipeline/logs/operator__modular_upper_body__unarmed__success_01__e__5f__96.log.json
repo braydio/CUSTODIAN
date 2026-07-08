@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__unarmed__success_01__e__5f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/success_01/operator__modular_upper_body__unarmed__success_01__e__5f__96.png"
+	],
+	"post_process": [
+		"operator_modular_runtime"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_upper_body__unarmed__success_01__e__5f__96.png",
+	"timestamp_utc": "2026-07-07 21:14:26"
+}

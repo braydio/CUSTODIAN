@@ -2059,32 +2059,7 @@ This follows your Ash-Bell source recommendation that Ash-Bell appearances shoul
 
 # 18. Suggested implementation proposal files
 
-Because AGENTS has both `design/20_features/in_progress` and `design/features/implementation` conventions, I would create the implementation proposal here:
-
-```text
-design/features/implementation/ASH_BELL_FORLORN_RITUALANT.md
-design/features/implementation/ASH_BELL_FORLORN_RITUALANT_CODE.md
-```
-
-Then add a lightweight index/link file here if your current workflow expects active features under `20_features/in_progress`:
-
-```text
-design/20_features/in_progress/ASH_BELL_FORLORN_RITUALANT.md
-```
-
-## Documentation drift check
-
-There is a small repo-governance drift in `AGENTS.md`: it first says Godot implementation specs live in `./design/20_features/in_progress`, but the required process later says new feature proposals should use `design/features/implementation/FEATURE_NAME.md` and `FEATURE_NAME_CODE.md`.
-
-Recommended action:
-
-```text
-Make design/features/implementation the canonical proposal location.
-Use design/20_features/in_progress only for active implementation tracking / index files.
-Update AGENTS.md to say this explicitly.
-```
-
-This avoids agents creating duplicate specs in two incompatible places.
+The old `design/features/implementation` and `design/20_features/in_progress` conventions have been consolidated. All implementation specs now live in the appropriate numbered subdirectory under `design/` (e.g., `02_features/enemy_objective/` for the Forlorn-Ritualant encounter, `02_features/procgen/` for procgen features, etc.). This document itself lives at `design/02_features/enemy_objective/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` as the canonical home.
 
 ---
 
