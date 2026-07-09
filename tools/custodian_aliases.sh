@@ -41,7 +41,13 @@ runjson() {
 # -- Run sprite ingest pipeline
 runsprite() {
   _update_usage "runsprite"
-  python "${CUSTODIAN_GODOT}/tools/pipelines/ingest.py"
+  python3 "${CUSTODIAN_GODOT}/tools/pipelines/ingest.py" "$@"
+}
+
+# -- Run focused Operator ingest (dry run by default; pass --apply to write)
+opingest() {
+  _update_usage "opingest"
+  "${CUSTODIAN_REPO}/tools/operator_ingest.sh" "$@"
 }
 
 # -- List current assets in sprite pipeline inbox
@@ -63,7 +69,7 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite listbox opcolor promptmenu; do
+  for cmd in dryjson runjson runsprite opingest listbox opcolor promptmenu; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
     printf "  %-12s %d\n" "${cmd}:" "${count}"
@@ -72,5 +78,5 @@ alias_usage() {
   echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, listbox, promptmenu"
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, listbox, promptmenu"
 echo "  Type 'alias_usage' for usage counts."

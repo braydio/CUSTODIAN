@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__body__melee_1h__e__8f__156x96.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/body/melee_1h/operator__body__melee_1h__e__8f__156x96.png"
+	],
+	"post_process": [
+		"operator_curated_resources"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__body__melee_1h__e__8f__156x96.png",
+	"timestamp_utc": "2026-07-09 07:35:41"
+}

@@ -31,6 +31,7 @@ const MANIFESTS := {
 }
 
 const TERRAIN_TILE_IDS := preload("res://game/world/procgen/terrain/terrain_tile_ids.gd")
+const PROCGEN_TILEMAP := preload("res://game/world/procgen/proc_gen_tilemap.gd")
 const TILESET_PATH := "res://content/tiles/tilesets/procgen_world_tileset.tres"
 const REGISTRATION_REPORT_PATH := "res://../reports/terrain_pack_ingest/terrain_gameplay_tileset_sources.json"
 var tile_id_helper := TERRAIN_TILE_IDS.new()
@@ -95,6 +96,9 @@ func _run() -> void:
 		failed = true
 
 	if not _validate_tileset_registration(manifests):
+		failed = true
+
+	if not _validate_runtime_visual_map(manifests):
 		failed = true
 
 	if not _validate_registration_report(manifests):
@@ -387,6 +391,37 @@ func _validate_tileset_registration(manifests: Dictionary) -> bool:
 		return false
 
 	print("  PASS TileSet atlas source registration")
+	return true
+
+
+func _validate_runtime_visual_map(manifests: Dictionary) -> bool:
+	var ok := true
+	var runtime_sources: Dictionary = PROCGEN_TILEMAP.TERRAIN_TILESET_SOURCES
+	for pack_key in MANIFESTS:
+		var info := MANIFESTS[pack_key] as Dictionary
+		var manifest := manifests.get(pack_key, {}) as Dictionary
+		var tiles: Array = manifest.get("tiles", [])
+		var source_start := int(info["source_id_start"])
+		for index in range(tiles.size()):
+			var tile: Dictionary = tiles[index]
+			var tile_id := String(tile.get("id", ""))
+			var expected_source_id := source_start + index
+			if not runtime_sources.has(tile_id):
+				push_error("%s: '%s' is registered in TileSet but missing from ProcGenTilemap.TERRAIN_TILESET_SOURCES." % [info["label"], tile_id])
+				ok = false
+				continue
+			var source_def: Dictionary = runtime_sources[tile_id]
+			if int(source_def.get("source_id", -1)) != expected_source_id:
+				push_error("%s: '%s' runtime source_id=%s, expected %d." % [info["label"], tile_id, str(source_def.get("source_id")), expected_source_id])
+				ok = false
+			var expected_layer := "wall" if pack_key == "chasm_bridge" and expected_source_id <= 114 else "floor"
+			if String(source_def.get("layer", "")) != expected_layer:
+				push_error("%s: '%s' runtime layer='%s', expected '%s'." % [info["label"], tile_id, String(source_def.get("layer", "")), expected_layer])
+				ok = false
+	if not ok:
+		print("  FAIL ProcGenTilemap runtime visual source map")
+		return false
+	print("  PASS ProcGenTilemap runtime visual source map: all 62 gameplay art IDs")
 	return true
 
 

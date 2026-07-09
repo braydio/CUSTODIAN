@@ -922,13 +922,13 @@ func _direction_to_delta(direction: String) -> Vector2i:
 func _industrial_ramp_tile(ramp_side: int) -> String:
 	match ramp_side:
 		0:
-			return TerrainTileIdsScript.industrial("ramp_north")
+			return TerrainTileIdsScript.ascent("ramp_north")
 		1:
-			return TerrainTileIdsScript.industrial("ramp_east")
+			return TerrainTileIdsScript.ascent("ramp_east")
 		2:
-			return TerrainTileIdsScript.industrial("ramp_south")
+			return TerrainTileIdsScript.ascent("ramp_south")
 		_:
-			return TerrainTileIdsScript.industrial("ramp_west")
+			return TerrainTileIdsScript.ascent("ramp_west")
 
 
 func _industrial_edge_tile(rect: Rect2i, cell: Vector2i) -> String:

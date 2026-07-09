@@ -1315,6 +1315,19 @@ func _update_crosshair() -> void:
 	if _main_hud_hidden or _terminal_open or _placement_mode_active:
 		crosshair_label.visible = false
 		return
+	var drone_manager = get_node_or_null("/root/GameRoot/World/DroneManager")
+	if drone_manager != null and drone_manager.has_method("get_command_reticle_state"):
+		var command_state: Dictionary = drone_manager.call("get_command_reticle_state")
+		if bool(command_state.get("active", false)):
+			var command_world_position: Vector2 = command_state.get("world_position", Vector2.ZERO)
+			var command_screen_position := get_viewport().get_canvas_transform() * command_world_position
+			var command_size := Vector2.ZERO
+			if crosshair_label.texture:
+				command_size = crosshair_label.texture.get_size()
+			crosshair_label.position = command_screen_position - command_size * 0.5
+			crosshair_label.visible = true
+			crosshair_label.modulate = Color(1.0, 0.18, 0.14, 1.0) if bool(command_state.get("has_hostile", false)) else Color(0.9, 0.9, 0.9, 1.0)
+			return
 	var operator_ref = get_node_or_null("/root/GameRoot/World/Operator")
 	if operator_ref == null or not operator_ref.has_method("get_weapon_status"):
 		crosshair_label.visible = false

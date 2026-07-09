@@ -1,6 +1,6 @@
-[gd_resource type="SpriteFrames" load_steps=10 format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://bcsdpi7sk0y36"]
 
-[ext_resource type="Texture2D" path="res://content/sprites/effects/combat/critical/combat_fx__breach_alert__8f__96-48.png" id="1_texture"]
+[ext_resource type="Texture2D" uid="uid://bu2uhv8x240re" path="res://content/sprites/effects/combat/critical/combat_fx__breach_alert__8f__96-48.png" id="1_texture"]
 
 [sub_resource type="AtlasTexture" id="Atlas_0"]
 atlas = ExtResource("1_texture")
@@ -61,7 +61,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("Atlas_7")
 }],
-"loop": false,
+"loop": 0,
 "name": &"breach",
 "speed": 18.0
 }]

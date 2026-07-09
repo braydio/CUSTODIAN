@@ -5,7 +5,7 @@
 **Status:** active  
 **Last Updated:** 2026-05-21  
 **Authority:** Supersedes previous Custodian-purpose framing in `GAME_PROTOCOLS_AND_WORLD_LORE.md` (see § Conflicts & Supersessions)  
-**Related Docs:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`, `design/03_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/03_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`  
+**Related Docs:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`  
 **Source:** `design/LORE_GAMEPLAY_DUMP.md` (archived after migration)
 
 ---

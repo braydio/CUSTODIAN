@@ -1,5 +1,7 @@
 # CUSTODIAN Documentation Drift Report
 
+> **SUPERSEDED:** This report was generated 2026-04-21 and has not been refreshed. The findings below may be stale. Re-audit before relying on any specific system's status. The superseding live authority for current state is `custodian/docs/ai_context/CURRENT_STATE.md`.
+
 **Generated:** 2026-04-21
 **Purpose:** Track discrepancies between design documents and actual implementations
 **Canonical source:** This is the single authoritative drift report. The superseded `DOCUMENTATION_DRIFT_REPORT.md` has been merged into this document and removed.
@@ -58,7 +60,7 @@
 
 ### 3. PROCGen — Phased Implementation
 
-**Location:** `design/03_architecture/REGION_GENERATION_SYSTEM.md` vs `custodian/game/world/procgen/`
+**Location:** `design/04_architecture/REGION_GENERATION_SYSTEM.md` vs `custodian/game/world/procgen/`
 
 **STATUS: This is the correctly tracked system.**
 
@@ -88,7 +90,7 @@
 
 ### 4. COMPOUND TILE SYSTEM — NOT IMPLEMENTED
 
-**Location:** `design/03_architecture/COMPOUND_TILE_SYSTEM.md`
+**Location:** `design/04_architecture/COMPOUND_TILE_SYSTEM.md`
 
 | Document Claims | Reality |
 |---------------|---------|

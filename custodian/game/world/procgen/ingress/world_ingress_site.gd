@@ -2,6 +2,7 @@ extends Area2D
 class_name WorldIngressSite
 
 @export var ingress_id: StringName
+@export var level_id: StringName = &""
 @export var approach_scene: PackedScene
 @export var target_scene_path: String = ""
 @export var target_spawn_id: StringName = &""
@@ -11,6 +12,7 @@ class_name WorldIngressSite
 var _triggered := false
 var _approach_enter_deferred := false
 var _sprite: Sprite2D = null
+var _main_map: Node = null
 
 
 func _ready() -> void:
@@ -30,6 +32,20 @@ func configure(
 	approach_scene = p_approach_scene
 	target_scene_path = p_target_scene_path
 	target_spawn_id = p_target_spawn_id
+
+
+func configure_level(p_level_id: StringName, p_main_map: Node = null) -> void:
+	level_id = p_level_id
+	_main_map = p_main_map
+
+
+func apply_ingress_definition(definition: RefCounted) -> void:
+	if definition == null:
+		return
+	ingress_id = definition.ingress_id
+	prompt_text = definition.prompt_text
+	target_spawn_id = definition.target_spawn_id
+	interaction_distance = definition.interaction_distance
 
 
 func get_interaction_prompt() -> String:
@@ -70,16 +86,30 @@ func _enter_approach_deferred(body: Node) -> void:
 
 
 func _enter_approach(actor: Node) -> void:
-	if approach_scene == null:
-		push_error("[WorldIngressSite] Missing approach_scene for %s" % ingress_id)
-		return
-
 	var world := get_node_or_null("/root/GameRoot/World") as Node2D
 	if world == null:
 		var candidate := get_tree().current_scene
 		world = candidate as Node2D
 	if world == null:
 		push_error("[WorldIngressSite] Missing world root for %s" % ingress_id)
+		return
+
+	if not level_id.is_empty():
+		var level_loader := _find_level_loader()
+		if level_loader != null:
+			var instance: Node = level_loader.call("enter_level", level_id, actor, {
+				"parent": world,
+				"main_map": _main_map,
+				"return_world_position": global_position,
+				"target_spawn_id": target_spawn_id,
+			}) as Node
+			if instance != null:
+				_set_procgen_world_visible(false)
+				return
+		push_warning("[WorldIngressSite] LevelLoader could not enter %s; using legacy approach fallback" % level_id)
+
+	if approach_scene == null:
+		push_error("[WorldIngressSite] Missing approach_scene for %s" % ingress_id)
 		return
 
 	var existing := world.get_node_or_null("%s_Approach" % String(ingress_id))
@@ -103,6 +133,13 @@ func _enter_approach(actor: Node) -> void:
 
 	if actor is Node2D and approach.has_method("get_entry_position"):
 		(actor as Node2D).global_position = approach.call("get_entry_position")
+
+
+func _find_level_loader() -> Node:
+	var candidates := get_tree().get_nodes_in_group("level_loader")
+	if not candidates.is_empty():
+		return candidates[0] as Node
+	return null
 
 
 func _is_player_body(body: Node) -> bool:

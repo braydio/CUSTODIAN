@@ -317,8 +317,12 @@ func _canonical_output_identity(filename: String) -> String:
 	var size_token := parts[parts.size() - 1]
 	if not frames_token.ends_with("f") or not frames_token.trim_suffix("f").is_valid_int():
 		return ""
-	if not size_token.is_valid_int():
+	var size_parts := size_token.to_lower().split("x")
+	if size_parts.size() < 1 or size_parts.size() > 2:
 		return ""
+	for size_part in size_parts:
+		if not size_part.is_valid_int() or int(size_part) <= 0:
+			return ""
 	return "__".join(parts.slice(0, parts.size() - 2))
 
 

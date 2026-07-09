@@ -68,6 +68,7 @@ func _init() -> void:
 	_require(int(summary.get("missing_required_count", -1)) == 0, "No required cells should be missing in the primary terrain result.")
 	_require(String(summary.get("generation_mode", "")) == "FINAL_VISUAL", "TerrainBuilder smoke should run final visual mode.")
 	_require(_has_accessible_platform(first), "Elevated terrain should remain accessible when generated.")
+	_require(_ramps_use_ascent_pack_visuals(first), "Generated industrial ramps should use Ascent Pack wide-ramp visuals.")
 	_require(_no_invalid_spawn_cells(first), "Blocked/drop/ledge terrain cells should not be valid spawn cells.")
 	_assert_baseline_visual_noop()
 	_assert_disconnected_baseline_is_rescued_before_features()
@@ -223,6 +224,23 @@ func _has_accessible_platform(result: Dictionary) -> bool:
 		if traversal == TerrainBuilderScript.TRAVERSAL_RAMP or traversal == TerrainBuilderScript.TRAVERSAL_STAIR:
 			ramp_count += 1
 	return elevated_count == 0 or ramp_count > 0
+
+
+func _ramps_use_ascent_pack_visuals(result: Dictionary) -> bool:
+	var traversal_by_cell: Dictionary = result.get("traversal_by_cell", {})
+	var tile_by_cell: Dictionary = result.get("tile_by_cell", {})
+	var ascent_ramp_ids: Array[String] = [
+		"ramp_north_wide_32",
+		"ramp_south_wide_32",
+		"ramp_east_wide_32",
+		"ramp_west_wide_32",
+	]
+	for cell in traversal_by_cell:
+		if String(traversal_by_cell[cell]) != TerrainBuilderScript.TRAVERSAL_RAMP:
+			continue
+		if not ascent_ramp_ids.has(String(tile_by_cell.get(cell, ""))):
+			return false
+	return true
 
 
 func _no_invalid_spawn_cells(result: Dictionary) -> bool:

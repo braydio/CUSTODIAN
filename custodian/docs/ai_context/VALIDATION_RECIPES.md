@@ -133,6 +133,14 @@ Missing optional posture-break and critical-expiry assets should warn without fa
 
 For Sundered Keep asset wiring specifically:
 
+For the registered Sundered Keep ingress and existing route wrapper:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_approach_route_smoke.gd
+```
+
 ```bash
 cd custodian
 godot --headless --script tools/validation/sundered_keep_asset_smoke.gd
@@ -194,12 +202,17 @@ cd custodian
 godot --headless --script res://tools/validation/terrain_builder_smoke.gd
 godot --headless --script res://tools/validation/terrain_ballistics_smoke.gd
 godot --headless --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
+godot --headless --path . --script res://tools/validation/terrain_gameplay_art_usage_smoke.gd
+godot --headless --path . --script res://tools/validation/floor_value_clusters_smoke.gd
 ```
 
 The first command validates TerrainBuilder determinism and metadata behavior. The second validates deterministic projectile
 tile tracing, directional ledge fire, hard wall/drop blocking, ramp/stair exceptions, generated edge profiles, and preserved
 movement blocking. The third generates representative candidate-mode maps and verifies required-cell counts stay bounded
-while terrain connectivity remains enforced. `terrain_ballistics_smoke` is part of the default procgen suite.
+while terrain connectivity remains enforced. The fourth validates all gameplay-pack runtime source mappings, representative
+TileMap paint paths, stable legacy mappings, and source-usage diagnostics. The fifth proves tile-value cluster determinism,
+different-seed variation, semantic skips, metadata preservation, and safe missing-variant behavior. These smokes are part of
+the default procgen suite.
 For production-sized contract rescue diagnostics, use the slow suite mode from the repository root:
 
 ```bash
@@ -313,6 +326,16 @@ tools/operator_ingest.sh --dry-run
 tools/operator_ingest.sh --apply
 ```
 
+After sourcing `tools/custodian_aliases.sh`, the same focused wrapper is available as
+`opingest --dry-run` or `opingest --apply`. For a generic inbox ingest that must also rebuild already-authored
+Operator modular source, use:
+
+```bash
+python custodian/tools/pipelines/ingest.py --build-operator-runtime --remove-superseded
+```
+
+`--build-operator-runtime` runs only after successful ingest and also respects `--dry-run`.
+
 For modular Operator action QA previews:
 
 ```bash
@@ -377,6 +400,7 @@ python custodian/tools/tiles/register_terrain_gameplay_packs.py --dry-run
 # Validate packs, registration report, and active TileSet atlas-source resolution
 cd custodian
 godot --headless --script res://tools/validation/terrain_gameplay_packs_smoke.gd
+godot --headless --path . --script res://tools/validation/terrain_gameplay_art_usage_smoke.gd
 ```
 
 Validates:
@@ -386,6 +410,7 @@ Validates:
 - Symbolic IDs in `terrain_tile_ids.gd` match runtime filenames
 - Non-walkable tiles (chasm void/edge/corner, broken gap) resolve correctly
 - `procgen_world_tileset.tres` loads and resolves every registered connector/ascent/chasm_bridge runtime PNG as a TileSetAtlasSource
+- `ProcGenTilemap.TERRAIN_TILESET_SOURCES` resolves all 62 gameplay-pack IDs and representative tiles paint the expected floor/wall source
 - Expected atlas source ID ranges exist: connector `60..77`, ascent `80..99`, chasm_bridge `100..123`
 - Each registered source uses `32x32` texture regions and contains atlas coord `(0, 0)`
 - `reports/terrain_pack_ingest/terrain_gameplay_tileset_sources.json` has expected counts and no duplicate source IDs
@@ -398,8 +423,8 @@ Direction/corner review notes belong in `reports/terrain_pack_ingest/terrain_dir
 Current terrain gameplay pack status:
 
 - Connector, Ascent, and Chasm+Bridge are registered as TileSet atlas sources, not as Godot TileSet terrain/autotile terrain sets.
-- Runtime TerrainBuilder/ProcGenTilemap placement for connector visuals, ascent replacement tiles, chasm generation, and bridge placement is deferred to a separate runtime integration pass.
-- Connector currently visualizes future authority-repair/connectors; Ascent expands ramp/stair/landing vocabulary while TerrainBuilder keeps its stable mapping; Chasm+Bridge adds negative-space/crossing vocabulary while placement remains inactive.
+- Connector centerlines and authority-repair/rescue floors use deterministic Connector visuals; existing industrial/compound ramps use directional Ascent wide-ramp visuals.
+- Existing chasm/drop visuals may resolve to Chasm Pack void/gap art without changing drop semantics. New chasm topology, directional stair selection without direction metadata, and bridge placement remain deferred.
 
 The smoke test runs in the default procgen validation suite:
 ```bash

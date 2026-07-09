@@ -37,6 +37,7 @@ class SheetInfo:
     variant: str
     direction: str
     frame_count: int
+    frame_width: int
     frame_size: int
     source_kind: str
 
@@ -131,7 +132,7 @@ def _build_manifest(png_path: Path, *, remove_superseded: bool = False) -> dict:
         "outputs": _build_outputs(info),
     }
     if info.source_kind != "copy":
-        manifest["frame_size"] = [info.frame_size, info.frame_size]
+        manifest["frame_size"] = [info.frame_width, info.frame_size]
     if remove_superseded:
         manifest["remove_superseded"] = True
     post_process = _build_post_process(info)
@@ -170,7 +171,7 @@ def _inspect_sheet(png_path: Path) -> SheetInfo:
     variant = "__".join(parts[3:-3])
 
     frame_count = _parse_token_count(frames_token, "f", basename)
-    frame_size = _parse_token_count(size_token, "", basename)
+    frame_width, frame_size = _parse_frame_dimensions(size_token, basename)
     source_kind = "copy" if "4dir" in direction or frame_count == 1 else "strip"
 
     with Image.open(png_path) as image:
@@ -179,12 +180,15 @@ def _inspect_sheet(png_path: Path) -> SheetInfo:
         raise RuntimeError(
             f"{basename}: strip height {height} does not match declared frame size {frame_size}"
         )
-    if source_kind == "strip" and width % frame_size != 0:
+    if source_kind == "strip" and width % frame_width != 0:
         raise RuntimeError(
-            f"{basename}: strip width {width} is not divisible by frame size {frame_size}"
+            f"{basename}: strip width {width} is not divisible by declared frame width {frame_width}"
         )
-    if source_kind == "strip" and width // frame_size != frame_count:
-        frame_count = width // frame_size
+    if source_kind == "strip" and width // frame_width != frame_count:
+        raise RuntimeError(
+            f"{basename}: declared {frame_count} frames at {frame_width}px wide expects "
+            f"a {frame_count * frame_width}px strip, got {width}px"
+        )
 
     return SheetInfo(
         basename=basename,
@@ -194,6 +198,7 @@ def _inspect_sheet(png_path: Path) -> SheetInfo:
         variant=variant,
         direction=direction,
         frame_count=frame_count,
+        frame_width=frame_width,
         frame_size=frame_size,
         source_kind=source_kind,
     )
@@ -229,6 +234,7 @@ def _inspect_item_sheet(png_path: Path, parts: list[str]) -> SheetInfo:
         variant=item_name,
         direction="omni",
         frame_count=frame_count,
+        frame_width=frame_size,
         frame_size=frame_size,
         source_kind="strip",
     )
@@ -282,6 +288,7 @@ def _inspect_simple_actor_sheet(png_path: Path, parts: list[str]) -> SheetInfo:
         variant=variant,
         direction=direction,
         frame_count=frame_count,
+        frame_width=frame_size,
         frame_size=frame_size,
         source_kind=source_kind,
     )
@@ -335,6 +342,7 @@ def _inspect_harvesting_node_sheet(png_path: Path, parts: list[str]) -> SheetInf
         variant=state,
         direction="omni",
         frame_count=frame_count,
+        frame_width=frame_size,
         frame_size=frame_size,
         source_kind="strip",
     )
@@ -351,6 +359,22 @@ def _parse_token_count(token: str, suffix: str, basename: str) -> int:
     if not raw.isdigit():
         raise RuntimeError(f"{basename}: expected numeric token, got {token!r}")
     return int(raw)
+
+
+def _parse_frame_dimensions(token: str, basename: str) -> tuple[int, int]:
+    if "x" not in token.lower():
+        size = _parse_token_count(token, "", basename)
+        return size, size
+
+    parts = token.lower().split("x")
+    if len(parts) != 2 or not all(part.isdigit() for part in parts):
+        raise RuntimeError(
+            f"{basename}: expected frame size token <size> or <width>x<height>, got {token!r}"
+        )
+    width, height = (int(part) for part in parts)
+    if width <= 0 or height <= 0:
+        raise RuntimeError(f"{basename}: frame dimensions must be positive")
+    return width, height
 
 
 def _build_outputs(info: SheetInfo) -> list[dict]:
@@ -518,7 +542,8 @@ def _canonical_output_identity(filename: str) -> tuple[str, ...] | None:
         return None
     if not parts[-2].endswith("f") or not parts[-2].removesuffix("f").isdigit():
         return None
-    if not parts[-1].isdigit():
+    size_parts = parts[-1].lower().split("x")
+    if len(size_parts) not in {1, 2} or not all(part.isdigit() and int(part) > 0 for part in size_parts):
         return None
     return tuple(parts[:-2])
 

@@ -18,6 +18,7 @@ var max_health: float = 45.0
 var health: float = 45.0
 var destroyed: bool = false
 var target: Node2D = null
+var command_target: Node2D = null
 
 # When false, _update_weapon skips firing. Owned by DroneManager squad commands.
 var fire_at_will: bool = true
@@ -96,6 +97,16 @@ func clear_order_anchor() -> void:
 	_roam_repath_timer = 0.0
 
 
+func set_command_target(hostile: Node2D) -> void:
+	command_target = hostile
+	target = hostile
+
+
+func clear_command_target() -> void:
+	command_target = null
+	target = null
+
+
 func _get_anchor_position() -> Vector2:
 	if order_anchor_active:
 		return order_anchor_position
@@ -141,6 +152,11 @@ func _refresh_target() -> void:
 		return
 	var anchor_position := _get_anchor_position()
 	var engage_range := _get_engage_range()
+	if command_target != null and is_instance_valid(command_target) and not _targeting.is_invalid_enemy(command_target):
+		if command_target.global_position.distance_to(anchor_position) <= engage_range:
+			target = command_target
+			return
+	command_target = null
 	if target != null and is_instance_valid(target) and not _targeting.is_invalid_enemy(target):
 		if target.global_position.distance_to(anchor_position) <= engage_range:
 			return

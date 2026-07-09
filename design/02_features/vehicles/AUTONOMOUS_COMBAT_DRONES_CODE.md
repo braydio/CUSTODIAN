@@ -31,6 +31,8 @@ Status: implemented-v3
 - Guard targeting uses `guard_order_engage_range`; exceeding `guard_order_return_range` clears targets and forces formation return, bounded by `guard_order_leash_range`.
 - `AlliedInfantryDroid` status text reports `FOLLOW CLOSE/FAR/ROAM` or `GUARD CLOSE/FAR/ROAM`, followed by fire discipline.
 - Operator primary fire is suppressed while the guard-order chord is held so a command click does not consume ammunition.
+- During the guard-order chord, `DroneManager` resolves the nearest valid hostile under the pointer. The HUD reads this presentation state to place the command reticle over that hostile and tint it red. Clicking propagates the hostile as an explicit command target and anchors the squad at its position; an empty-ground click preserves ordinary guard placement.
+- `CombatDrone` prioritizes the explicit command target without bypassing guard engage/return/leash constraints. Ground orders and recall clear it.
 
 ## Integration
 

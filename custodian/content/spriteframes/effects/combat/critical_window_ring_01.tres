@@ -1,6 +1,6 @@
-[gd_resource type="SpriteFrames" load_steps=14 format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://b7v5wajpavnra"]
 
-[ext_resource type="Texture2D" path="res://content/sprites/effects/combat/critical/combat_fx__breach_timer_reticle__12f__128.png" id="1_texture"]
+[ext_resource type="Texture2D" uid="uid://bm7s1upsg4njd" path="res://content/sprites/effects/combat/critical/combat_fx__breach_timer_reticle__12f__128.png" id="1_texture"]
 
 [sub_resource type="AtlasTexture" id="Atlas_0"]
 atlas = ExtResource("1_texture")
@@ -89,7 +89,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("Atlas_11")
 }],
-"loop": false,
+"loop": 0,
 "name": &"countdown",
 "speed": 12.0
 }]

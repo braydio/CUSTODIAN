@@ -43,8 +43,10 @@ const GOTHIC_COMPOUND_MAP_SCRIPT := preload("res://game/world/gothic_compound/go
 const GOTHIC_COMPOUND_TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_travel_gate.gd")
 const SUNDERED_KEEP_MAP_SCRIPT := preload("res://game/world/sundered_keep/sundered_keep_map.gd")
 const WORLD_INGRESS_SITE_SCRIPT := preload("res://game/world/procgen/ingress/world_ingress_site.gd")
+const LEVEL_LOADER_SCRIPT := preload("res://game/world/levels/level_loader.gd")
 const SUNDERED_KEEP_APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
 const SUNDERED_KEEP_TARGET_SCENE_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
+const SUNDERED_KEEP_LEVEL_ID := &"sundered_keep_front_gate"
 const SECTOR_TILE_PX := 24.0
 const PROCGEN_SECTOR_LAYOUT := {
 	"ARCHIVE": 0,
@@ -1034,7 +1036,16 @@ func _place_sundered_keep_connection(level_data: Dictionary, map_instance: Node)
 	ingress.name = "SunderedKeepIngressSite"
 	ingress.add_to_group("generated_sundered_keep_connection")
 	ingress.call("configure", &"sundered_keep", SUNDERED_KEEP_APPROACH_SCENE, SUNDERED_KEEP_TARGET_SCENE_PATH, &"")
-	ingress.set("prompt_text", "APPROACH SUNDERED KEEP")
+	var level_loader := _ensure_level_loader(world)
+	if level_loader != null:
+		ingress.call("configure_level", SUNDERED_KEEP_LEVEL_ID, map_instance)
+		var definition: RefCounted = level_loader.call("get_definition", SUNDERED_KEEP_LEVEL_ID) as RefCounted
+		if definition != null:
+			ingress.call("apply_ingress_definition", definition.ingress)
+		else:
+			ingress.set("prompt_text", "APPROACH SUNDERED KEEP")
+	else:
+		ingress.set("prompt_text", "APPROACH SUNDERED KEEP")
 	ingress.global_position = ingress_position
 	world.add_child(ingress)
 
@@ -1047,6 +1058,16 @@ func _place_sundered_keep_connection(level_data: Dictionary, map_instance: Node)
 		var operator := get_node_or_null(operator_path) as Node2D
 		if operator != null:
 			operator.global_position = ingress.global_position + debug_sundered_keep_start_offset
+
+
+func _ensure_level_loader(world: Node) -> Node:
+	var existing := world.get_node_or_null("LevelLoader")
+	if existing != null:
+		return existing
+	var loader := LEVEL_LOADER_SCRIPT.new()
+	loader.name = "LevelLoader"
+	world.add_child(loader)
+	return loader
 
 
 func _create_debug_sundered_keep_map(

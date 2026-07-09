@@ -1,0 +1,20 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "sundered_keep_front_gate",
+  "display_name": "Sundered Keep — Front Gate",
+  "route_scene_path": "res://game/world/routes/sundered_keep/sundered_keep_approach_route.tscn",
+  "target_scene_path": "res://game/world/sundered_keep/sundered_keep_map.tscn",
+  "authored_data_path": "res://content/levels/sundered_keep/sundered_keep_front_gate_large.json",
+  "world_context": "campaign_region",
+  "tags": [
+    "authored",
+    "route",
+    "sundered_keep"
+  ],
+  "ingress": {
+    "ingress_id": "sundered_keep",
+    "prompt_text": "APPROACH SUNDERED KEEP",
+    "target_spawn_id": "",
+    "interaction_distance": 92.0
+  }
+}

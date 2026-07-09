@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://dqma145fdalvd"]
 
 [ext_resource type="Script" uid="uid://uqqs4sw5j2ag" path="res://game/world/procgen/proc_gen_tilemap.gd" id="1"]
-[ext_resource type="TileSet" path="res://content/tiles/tilesets/procgen_world_tileset.tres" id="2"]
+[ext_resource type="TileSet" uid="uid://dmi7ehjmoiqcf" path="res://content/tiles/tilesets/procgen_world_tileset.tres" id="2"]
 [ext_resource type="Script" uid="uid://dhph4w3w8vsll" path="res://game/world/procgen/procgen.gd" id="3_7iafn"]
-[ext_resource type="Script" path="res://game/systems/core/systems/shadow_system.gd" id="4_shadow_system"]
+[ext_resource type="Script" uid="uid://gy2k3e1i24lq" path="res://game/systems/core/systems/shadow_system.gd" id="4_shadow_system"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
@@ -14,13 +14,11 @@ procgen_node = NodePath("ProcGen2")
 floor_tilemap = NodePath("NavigationRegion2D/Floor")
 walls_tilemap = NodePath("NavigationRegion2D/Walls")
 nav_region = NodePath("NavigationRegion2D")
-world_shape_mode = 1
 floor_source_id = 10
+walls_source_id = 12
 alternate_floor_source_ids = Array[int]([9])
 full_grid_floor_source_ids = Array[int]([9, 10])
 full_grid_floor_dimensions = Vector2i(8, 8)
-walls_source_id = 12
-use_reference_wall_connectors = true
 reference_vertical_wall_coords = Array[Vector2i]([Vector2i(15, 0)])
 reference_vertical_hole_right_coords = Array[Vector2i]([Vector2i(15, 0)])
 reference_vertical_hole_left_coords = Array[Vector2i]([Vector2i(15, 0)])
@@ -41,9 +39,6 @@ reference_north_west_corner_coords = Array[Vector2i]([Vector2i(0, 1), Vector2i(1
 reference_north_east_corner_coords = Array[Vector2i]([Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)])
 reference_left_terminal_coords = Array[Vector2i]([Vector2i(0, 0), Vector2i(7, 0), Vector2i(9, 0), Vector2i(11, 0), Vector2i(13, 0), Vector2i(10, 1), Vector2i(12, 1), Vector2i(1, 2), Vector2i(15, 2), Vector2i(6, 3), Vector2i(11, 3), Vector2i(5, 4), Vector2i(7, 4), Vector2i(9, 4), Vector2i(11, 4), Vector2i(13, 4), Vector2i(15, 4), Vector2i(3, 5), Vector2i(7, 5), Vector2i(10, 5)])
 reference_right_terminal_coords = Array[Vector2i]([Vector2i(6, 0), Vector2i(8, 0), Vector2i(10, 0), Vector2i(12, 0), Vector2i(14, 0), Vector2i(11, 1), Vector2i(13, 1), Vector2i(3, 2), Vector2i(3, 3), Vector2i(10, 3), Vector2i(14, 3), Vector2i(6, 4), Vector2i(8, 4), Vector2i(10, 4), Vector2i(12, 4), Vector2i(14, 4), Vector2i(2, 5), Vector2i(6, 5), Vector2i(9, 5), Vector2i(13, 5)])
-show_base_wall_tiles = true
-collision_only_on_new_ruined_wall_tiles = false
-show_runtime_wall_collision_debug = false
 interior_floor_source_ids = Array[int]([18, 19, 20, 21, 22, 23, 25])
 interior_threshold_source_ids = Array[int]([26, 27])
 interior_doorway_source_ids = Array[int]([28, 29])
@@ -57,13 +52,12 @@ procgen_node = NodePath("../ProcGen2")
 floor_tilemap = NodePath("../NavigationRegion2D/Floor")
 walls_tilemap = NodePath("../NavigationRegion2D/Walls")
 nav_region = NodePath("../NavigationRegion2D")
-world_shape_mode = 1
+generation_output_enabled = false
 floor_source_id = 10
+walls_source_id = 12
 alternate_floor_source_ids = Array[int]([9])
 full_grid_floor_source_ids = Array[int]([9, 10])
 full_grid_floor_dimensions = Vector2i(8, 8)
-walls_source_id = 12
-use_reference_wall_connectors = true
 reference_vertical_wall_coords = Array[Vector2i]([Vector2i(15, 0)])
 reference_vertical_hole_right_coords = Array[Vector2i]([Vector2i(15, 0)])
 reference_vertical_hole_left_coords = Array[Vector2i]([Vector2i(15, 0)])
@@ -84,42 +78,36 @@ reference_north_west_corner_coords = Array[Vector2i]([Vector2i(0, 1), Vector2i(1
 reference_north_east_corner_coords = Array[Vector2i]([Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)])
 reference_left_terminal_coords = Array[Vector2i]([Vector2i(0, 0), Vector2i(7, 0), Vector2i(9, 0), Vector2i(11, 0), Vector2i(13, 0), Vector2i(10, 1), Vector2i(12, 1), Vector2i(1, 2), Vector2i(15, 2), Vector2i(6, 3), Vector2i(11, 3), Vector2i(5, 4), Vector2i(7, 4), Vector2i(9, 4), Vector2i(11, 4), Vector2i(13, 4), Vector2i(15, 4), Vector2i(3, 5), Vector2i(7, 5), Vector2i(10, 5)])
 reference_right_terminal_coords = Array[Vector2i]([Vector2i(6, 0), Vector2i(8, 0), Vector2i(10, 0), Vector2i(12, 0), Vector2i(14, 0), Vector2i(11, 1), Vector2i(13, 1), Vector2i(3, 2), Vector2i(3, 3), Vector2i(10, 3), Vector2i(14, 3), Vector2i(6, 4), Vector2i(8, 4), Vector2i(10, 4), Vector2i(12, 4), Vector2i(14, 4), Vector2i(2, 5), Vector2i(6, 5), Vector2i(9, 5), Vector2i(13, 5)])
-show_base_wall_tiles = true
-collision_only_on_new_ruined_wall_tiles = false
-show_runtime_wall_collision_debug = false
 interior_floor_source_ids = Array[int]([18, 19, 20, 21, 22, 23, 25])
 interior_threshold_source_ids = Array[int]([26, 27])
 interior_doorway_source_ids = Array[int]([28, 29])
 interior_wall_source_ids = Array[int]([16, 30, 31])
 interior_wall_source_id = 16
 interior_wall_corner_source_id = 17
-generation_output_enabled = false
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=2086078231]
-visible = true
 navigation_polygon = SubResource("NavigationPolygon_1")
 
 [node name="Floor" type="TileMapLayer" parent="NavigationRegion2D" unique_id=1495522250]
 tile_set = ExtResource("2")
-z_index = 0
 
-[node name="FoliageLayer" type="Node2D" parent="NavigationRegion2D"]
+[node name="FoliageLayer" type="Node2D" parent="NavigationRegion2D" unique_id=42841710]
 z_index = 1
 
-[node name="PropLayer" type="Node2D" parent="NavigationRegion2D"]
+[node name="PropLayer" type="Node2D" parent="NavigationRegion2D" unique_id=1615428475]
 z_index = 2
 
-[node name="ShadowOverlay" type="Node2D" parent="NavigationRegion2D"]
+[node name="ShadowOverlay" type="Node2D" parent="NavigationRegion2D" unique_id=1262911834]
 script = ExtResource("4_shadow_system")
 
 [node name="Walls" type="TileMapLayer" parent="NavigationRegion2D" unique_id=495031987]
-tile_set = ExtResource("2")
 z_index = 2
+tile_set = ExtResource("2")
 
 [node name="ProcGen2" type="Node" parent="." unique_id=1827944280]
 script = ExtResource("3_7iafn")
-auto_generate_on_ready = false
 automaton_iterations = 4
 automaton_noise_rate = 0.56
 automaton_smoothing_step_cell_min_neighbors = 3
+auto_generate_on_ready = false
 metadata/_custom_type_script = "uid://dhph4w3w8vsll"

@@ -109,6 +109,10 @@ Fields:
 - `frames`: authored frame count, such as `6f` or `8f`
 - `frame_size`: square frame size in pixels, such as `96`, `128`, or `64`
 
+Rectangular source frames use `<width>x<height>` in the final token, for example
+`operator__body__melee_1h__e__8f__156x96.png`. Manifest generation validates that the source strip is
+`frames * width` by `height` and writes the inferred `[width, height]` frame size automatically.
+
 Examples:
 
 ```text
@@ -251,6 +255,11 @@ That conflicted with the live repo in four ways:
 4. Inspect outputs in the live runtime domain
 5. If the manifest requested a post-process hook, let it run the matching resource/import refresh
 6. Validate in Godot or with the narrow Python smoke/report tool for the changed surface
+
+When Operator modular source already exists outside the inbox, pass
+`--build-operator-runtime` to `ingest.py` to rebuild the stable Operator runtime after a successful ingest.
+The flag respects `--dry-run` and `--remove-superseded`. Modular Operator manifests continue to request the
+same build automatically through their `operator_modular_runtime` post-process hook.
 
 For already-authored Operator modular source sheets in `content/sprites/operator/new_operator/modular/`:
 

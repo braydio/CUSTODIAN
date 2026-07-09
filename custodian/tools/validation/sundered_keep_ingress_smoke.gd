@@ -52,6 +52,8 @@ func _init() -> void:
 			errors.append("SunderedKeepIngressSite missing world_ingress_site group")
 		if ingress.get("approach_scene") == null:
 			errors.append("SunderedKeepIngressSite has no approach_scene")
+		if String(ingress.get("level_id")) != "sundered_keep_front_gate":
+			errors.append("SunderedKeepIngressSite is not configured with the registered level ID")
 		if String(ingress.get("target_scene_path")) != "res://game/world/sundered_keep/sundered_keep_map.gd":
 			errors.append("SunderedKeepIngressSite target_scene_path wrong: %s" % String(ingress.get("target_scene_path")))
 		if String(ingress.get("prompt_text")) == "ENTER SUNDERED KEEP":
@@ -62,11 +64,14 @@ func _init() -> void:
 		world.add_child(actor)
 		ingress.call("_enter_approach", actor)
 		await process_frame
-		var approach := world.get_node_or_null("sundered_keep_Approach") as Node2D
+		var level_loader := world.get_node_or_null("LevelLoader")
+		var approach: Node = null
+		if level_loader != null:
+			approach = level_loader.call("get_active_level_instance") as Node
 		if approach == null:
-			errors.append("WorldIngressSite did not instantiate authored approach")
-		elif actor.global_position.distance_to(ingress.global_position) > 0.01:
-			errors.append("WorldIngressSite did not align approach entry to ingress; actor=%s ingress=%s" % [actor.global_position, ingress.global_position])
+			errors.append("WorldIngressSite did not enter the registered authored route")
+		elif String(level_loader.call("get_active_level_id")) != "sundered_keep_front_gate":
+			errors.append("LevelLoader active level ID is wrong")
 		if map_instance.visible:
 			errors.append("WorldIngressSite did not hide ProcGenRuntime while approach is active")
 		if map_instance.process_mode != Node.PROCESS_MODE_DISABLED:

@@ -24,7 +24,7 @@ fi
 design/00_meta/
 design/01_systems/
 design/02_features/
-design/03_architecture/
+design/04_architecture/
 </code></pre><p>Do not spend more than a few minutes polishing this. Make the packet accurate enough and move on.</p><h2>1.3 Ensure packet README lists this work</h2><p>Update:</p><pre><code class="language-text">custodian/docs/ai_context/task_packets/README.md
 </code></pre><p>Add under Active Packets / In Progress if missing:</p><pre><code class="language-markdown">- `PLAYABLE_SIEGE_LOOP_GATEHOUSE_SLICE.md` — Implements the Sundered Keep gatehouse siege loop: gate-open-triggered wave pressure, defendable objective integrity, repair interaction, defensive helper behavior, debug state, validation, and docs updates.
 </code></pre><hr><h1>2. Runtime Discovery</h1><p>Run broad searches, but do not get trapped in analysis. The Sundered Keep files are the primary work surface.</p><pre><code class="language-bash">find design -maxdepth 4 -type f | sort

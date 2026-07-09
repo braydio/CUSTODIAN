@@ -47,6 +47,8 @@ def main() -> int:
         for path in (canonical, legacy, cape, ranged):
             _write_strip(path)
         _write_strip(legacy_collision, frames=4)
+        rectangular = root / "operator__body__melee_1h__e__8f__156x96.png"
+        Image.new("RGBA", (8 * 156, 96), (255, 255, 255, 255)).save(rectangular)
 
         canonical_info = manifests._inspect_sheet(canonical)
         legacy_info = manifests._inspect_sheet(legacy)
@@ -61,6 +63,9 @@ def main() -> int:
             "operator/new_operator/modular/block/"
         )
         assert manifests._build_post_process(cape_info) == ["operator_modular_runtime"]
+        rectangular_manifest = manifests._build_manifest(rectangular)
+        assert rectangular_manifest["frame_size"] == [156, 96]
+        assert rectangular_manifest["outputs"][0]["select"]["count"] == 8
 
         module_root = root / "runtime"
         generated = builder._build_generic_action_modules(root, module_root, dry_run=True)

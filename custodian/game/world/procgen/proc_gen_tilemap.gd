@@ -60,6 +60,68 @@ const TERRAIN_TILESET_SOURCES := {
 	"cliff_inner_se_32": {"source_id": 57, "layer": "wall"},
 	"cliff_chasm_drop_32": {"source_id": 58, "layer": "wall"},
 	"mountain_wall_impassable_32": {"source_id": 59, "layer": "wall"},
+	"terrain_connector_ground_32": {"source_id": 60, "layer": "floor"},
+	"terrain_connector_cracked_32": {"source_id": 61, "layer": "floor"},
+	"terrain_connector_gravel_32": {"source_id": 62, "layer": "floor"},
+	"terrain_connector_dust_32": {"source_id": 63, "layer": "floor"},
+	"terrain_connector_edge_n_32": {"source_id": 64, "layer": "floor"},
+	"terrain_connector_edge_s_32": {"source_id": 65, "layer": "floor"},
+	"terrain_connector_edge_e_32": {"source_id": 66, "layer": "floor"},
+	"terrain_connector_edge_w_32": {"source_id": 67, "layer": "floor"},
+	"terrain_connector_outer_corner_ne_32": {"source_id": 68, "layer": "floor"},
+	"terrain_connector_outer_corner_nw_32": {"source_id": 69, "layer": "floor"},
+	"terrain_connector_outer_corner_se_32": {"source_id": 70, "layer": "floor"},
+	"terrain_connector_outer_corner_sw_32": {"source_id": 71, "layer": "floor"},
+	"terrain_connector_inner_corner_ne_32": {"source_id": 72, "layer": "floor"},
+	"terrain_connector_inner_corner_nw_32": {"source_id": 73, "layer": "floor"},
+	"terrain_connector_inner_corner_se_32": {"source_id": 74, "layer": "floor"},
+	"terrain_connector_inner_corner_sw_32": {"source_id": 75, "layer": "floor"},
+	"terrain_connector_centerline_32": {"source_id": 76, "layer": "floor"},
+	"terrain_connector_broken_patch_32": {"source_id": 77, "layer": "floor"},
+	"terrain_landing_industrial_32": {"source_id": 80, "layer": "floor"},
+	"terrain_landing_stone_32": {"source_id": 81, "layer": "floor"},
+	"ramp_north_wide_32": {"source_id": 82, "layer": "floor"},
+	"ramp_south_wide_32": {"source_id": 83, "layer": "floor"},
+	"ramp_east_wide_32": {"source_id": 84, "layer": "floor"},
+	"ramp_west_wide_32": {"source_id": 85, "layer": "floor"},
+	"ramp_north_broken_32": {"source_id": 86, "layer": "floor"},
+	"ramp_south_broken_32": {"source_id": 87, "layer": "floor"},
+	"ramp_east_broken_32": {"source_id": 88, "layer": "floor"},
+	"ramp_west_broken_32": {"source_id": 89, "layer": "floor"},
+	"stair_north_stone_32": {"source_id": 90, "layer": "floor"},
+	"stair_south_stone_32": {"source_id": 91, "layer": "floor"},
+	"stair_east_stone_32": {"source_id": 92, "layer": "floor"},
+	"stair_west_stone_32": {"source_id": 93, "layer": "floor"},
+	"stair_north_metal_32": {"source_id": 94, "layer": "floor"},
+	"stair_south_metal_32": {"source_id": 95, "layer": "floor"},
+	"stair_east_metal_32": {"source_id": 96, "layer": "floor"},
+	"stair_west_metal_32": {"source_id": 97, "layer": "floor"},
+	"ascent_threshold_32": {"source_id": 98, "layer": "floor"},
+	"ascent_lip_connector_32": {"source_id": 99, "layer": "floor"},
+	"chasm_void_32": {"source_id": 100, "layer": "wall"},
+	"chasm_edge_n_32": {"source_id": 101, "layer": "wall"},
+	"chasm_edge_s_32": {"source_id": 102, "layer": "wall"},
+	"chasm_edge_e_32": {"source_id": 103, "layer": "wall"},
+	"chasm_edge_w_32": {"source_id": 104, "layer": "wall"},
+	"chasm_outer_corner_ne_32": {"source_id": 105, "layer": "wall"},
+	"chasm_outer_corner_nw_32": {"source_id": 106, "layer": "wall"},
+	"chasm_outer_corner_se_32": {"source_id": 107, "layer": "wall"},
+	"chasm_outer_corner_sw_32": {"source_id": 108, "layer": "wall"},
+	"chasm_inner_corner_ne_32": {"source_id": 109, "layer": "wall"},
+	"chasm_inner_corner_nw_32": {"source_id": 110, "layer": "wall"},
+	"chasm_inner_corner_se_32": {"source_id": 111, "layer": "wall"},
+	"chasm_inner_corner_sw_32": {"source_id": 112, "layer": "wall"},
+	"collapsed_gap_32": {"source_id": 113, "layer": "wall"},
+	"broken_gap_edge_32": {"source_id": 114, "layer": "wall"},
+	"bridge_stone_mid_horizontal_32": {"source_id": 115, "layer": "floor"},
+	"bridge_stone_mid_vertical_32": {"source_id": 116, "layer": "floor"},
+	"bridge_stone_start_n_32": {"source_id": 117, "layer": "floor"},
+	"bridge_stone_start_s_32": {"source_id": 118, "layer": "floor"},
+	"bridge_stone_start_e_32": {"source_id": 119, "layer": "floor"},
+	"bridge_stone_start_w_32": {"source_id": 120, "layer": "floor"},
+	"bridge_metal_mid_horizontal_32": {"source_id": 121, "layer": "floor"},
+	"bridge_metal_mid_vertical_32": {"source_id": 122, "layer": "floor"},
+	"bridge_broken_segment_32": {"source_id": 123, "layer": "floor"},
 }
 
 enum WorldShapeMode {
@@ -74,6 +136,7 @@ enum WorldShapeMode {
 @export var world_shape_mode: WorldShapeMode = WorldShapeMode.ASCENT_FIELD
 @export var generation_evaluation_mode: bool = false
 @export var generation_output_enabled: bool = true
+@export var debug_log_terrain_source_usage: bool = false
 @export var enable_final_foliage: bool = true
 @export var foliage_deferred_spawn_enabled: bool = true
 @export_range(64, 4096, 64) var foliage_spawn_batch_size: int = 512
@@ -85,6 +148,10 @@ enum WorldShapeMode {
 @export var alternate_floor_source_ids: Array[int] = []
 @export var full_grid_floor_source_ids: Array[int] = []
 @export var full_grid_floor_dimensions: Vector2i = Vector2i(16, 16)
+@export var floor_value_clusters_enabled: bool = true
+@export var floor_value_cluster_debug: bool = false
+@export_range(0.0, 2.0, 0.05) var floor_value_cluster_strength: float = 1.0
+@export var floor_value_cluster_variant_source_ids: Array[int] = []
 
 ## Atlas coordinates for tiles (set in inspector)
 @export var floor_atlas_coord: Vector2i = Vector2i(0, 0)
@@ -281,6 +348,7 @@ var _path_centerline_tiles: Dictionary = {}
 var _road_visual_tiles: Dictionary = {}
 var _path_visual_tiles: Dictionary = {}
 var _compound_connector_centerline_tiles: Array[Vector2i] = []
+var _compound_connector_visual_candidates: Dictionary = {}
 var _parking_zone_tiles: Dictionary = {}
 var _region_tiles: Dictionary = {}
 var _wall_health: Dictionary = {}
@@ -457,6 +525,7 @@ var elevation_map: Node = null
 var _terrain_builder: RefCounted = null
 var _last_terrain_result: Dictionary = {}
 var _last_pre_terrain_connectivity: Dictionary = {}
+var _last_floor_value_cluster_summary: Dictionary = {}
 var _interior_prop_nodes: Array[Node2D] = []
 var _portal_teleporters: Array[Area2D] = []
 var _foliage_nodes: Dictionary = {}
@@ -748,8 +817,19 @@ func _fill_tilemaps() -> void:
 		_enforce_road_walkability(map_size)
 		_prune_small_edge_road_components(map_size)
 		_refresh_road_path_visuals()
+		_refresh_compound_connector_pack_visuals(map_size)
 		_capture_generated_tile_state(map_size)
 	_marks["roads_pass2"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
+
+	if not generation_evaluation_mode:
+		_apply_floor_value_clusters(
+			_last_terrain_result,
+			int(procgen_node.seed) if procgen_node != null else 0
+		)
+		_marks["floor_value_clusters"] = Time.get_ticks_msec() - _last
+	else:
+		_marks["floor_value_clusters"] = 0
 	_last = Time.get_ticks_msec()
 
 	if enable_streaming_reveal:
@@ -784,6 +864,11 @@ func _fill_tilemaps() -> void:
 	if not generation_evaluation_mode and not enable_streaming_reveal:
 		_rebuild_horizontal_wall_overlays()
 	_marks["horiz_wall_overlays"] = Time.get_ticks_msec() - _last
+	if debug_log_terrain_source_usage:
+		var usage := debug_dump_runtime_tileset_source_usage()
+		print("[TerrainRuntimeTiles] floor_source_counts=%s" % str(usage["floor_source_counts"]))
+		print("[TerrainRuntimeTiles] wall_source_counts=%s" % str(usage["wall_source_counts"]))
+		print("[TerrainRuntimeTiles] gameplay_pack_counts=%s" % str(usage["gameplay_pack_counts"]))
 
 	# Print timing summary
 	var _total := Time.get_ticks_msec() - _t_start
@@ -835,6 +920,248 @@ func _tile_noise_hash(pos: Vector2i) -> int:
 	hashed ^= int(pos.y) * 19349663
 	hashed ^= seed_value * 83492791
 	return abs(hashed)
+
+
+func _apply_floor_value_clusters(result: Dictionary, seed: int) -> void:
+	_last_floor_value_cluster_summary = {
+		"clusters": 0,
+		"cells_changed": 0,
+		"skipped": 0,
+		"changed_cells": [],
+	}
+	if not floor_value_clusters_enabled or floor_value_cluster_strength <= 0.0:
+		return
+	if floor_tilemap == null or walls_tilemap == null:
+		return
+
+	var variant_sources := _get_floor_value_cluster_variant_sources()
+	if variant_sources.size() < 2:
+		print("[ProcGen] floor_value_clusters SKIP no registered floor value variants")
+		return
+
+	var map_size := procgen_node.map_size if procgen_node != null else _used_floor_bounds_size()
+	var required_lookup := {}
+	if procgen_node != null:
+		for required_cell in _collect_terrain_required_cells(map_size):
+			required_lookup[required_cell] = true
+
+	var eligible_cells: Array[Vector2i] = []
+	var skipped := 0
+	for cell_variant in _generated_floor_cells.keys():
+		if not (cell_variant is Vector2i):
+			continue
+		var cell := cell_variant as Vector2i
+		if _is_floor_value_cluster_cell_safe(cell, variant_sources, required_lookup, result):
+			eligible_cells.append(cell)
+		else:
+			skipped += 1
+	eligible_cells.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		if a.y == b.y:
+			return a.x < b.x
+		return a.y < b.y
+	)
+	if eligible_cells.is_empty():
+		_last_floor_value_cluster_summary["skipped"] = skipped
+		if floor_value_cluster_debug:
+			print("[ProcGen] floor_value_clusters: clusters=0 cells_changed=0 skipped=%d" % skipped)
+		return
+
+	var map_area := maxi(1, map_size.x * map_size.y)
+	var cluster_count := clampi(int(round(float(map_area) / 1400.0)), 12, 35)
+	cluster_count = mini(cluster_count, eligible_cells.size())
+	var clusters: Array[Dictionary] = []
+	for cluster_index in range(cluster_count):
+		var center_hash := _floor_value_cluster_hash(Vector2i(cluster_index, cluster_index * 17), seed, 101)
+		var radius_hash := _floor_value_cluster_hash(Vector2i(cluster_index, 0), seed, 211)
+		var strength_hash := _floor_value_cluster_hash(Vector2i(0, cluster_index), seed, 307)
+		var family_hash := _floor_value_cluster_hash(Vector2i(cluster_index, cluster_index), seed, 401)
+		clusters.append({
+			"center": eligible_cells[center_hash % eligible_cells.size()],
+			"radius": 3.0 + float(radius_hash % 7),
+			"strength": (0.15 + float(strength_hash % 301) / 1000.0) * floor_value_cluster_strength,
+			"source_id": variant_sources[family_hash % variant_sources.size()],
+			"salt": cluster_index,
+		})
+
+	var changed_cells: Array[Vector2i] = []
+	for cell in eligible_cells:
+		var total_score := 0.0
+		var dominant_score := 0.0
+		var dominant_cluster: Dictionary = {}
+		for cluster in clusters:
+			var center: Vector2i = cluster["center"]
+			var radius := float(cluster["radius"])
+			var distance := cell.distance_to(center)
+			if distance >= radius:
+				continue
+			var contribution := float(cluster["strength"]) * (1.0 - distance / radius)
+			total_score += contribution
+			if contribution > dominant_score:
+				dominant_score = contribution
+				dominant_cluster = cluster
+		if dominant_cluster.is_empty():
+			continue
+		var fleck_noise := _floor_value_cluster_noise(cell, seed, 503)
+		var island_noise := _floor_value_cluster_noise(cell / 2, seed, 607)
+		var threshold := 0.27 + (island_noise - 0.5) * 0.10
+		if total_score + fleck_noise * 0.12 <= threshold:
+			continue
+		# Sparse deterministic holes/flecks break up circular falloff boundaries.
+		if fleck_noise < 0.14 and dominant_score < 0.30:
+			continue
+		var source_id := int(dominant_cluster["source_id"])
+		var existing_source := floor_tilemap.get_cell_source_id(cell)
+		if source_id == existing_source:
+			var current_index := variant_sources.find(source_id)
+			source_id = variant_sources[(current_index + 1) % variant_sources.size()]
+		var atlas := _floor_value_cluster_atlas_coord(cell, source_id, int(dominant_cluster["salt"]))
+		floor_tilemap.set_cell(cell, source_id, atlas, 0)
+		_generated_floor_cells[cell] = {
+			"source_id": source_id,
+			"atlas": atlas,
+			"alternative": 0,
+		}
+		changed_cells.append(cell)
+
+	_last_floor_value_cluster_summary = {
+		"clusters": clusters.size(),
+		"cells_changed": changed_cells.size(),
+		"skipped": skipped,
+		"changed_cells": changed_cells,
+	}
+	if floor_value_cluster_debug:
+		print("[ProcGen] floor_value_clusters: clusters=%d cells_changed=%d skipped=%d" % [
+			clusters.size(),
+			changed_cells.size(),
+			skipped,
+		])
+
+
+func get_last_floor_value_cluster_summary() -> Dictionary:
+	return _last_floor_value_cluster_summary.duplicate(true)
+
+
+func _get_floor_value_cluster_variant_sources() -> Array[int]:
+	var requested := floor_value_cluster_variant_source_ids.duplicate()
+	if requested.is_empty():
+		requested.append(floor_source_id)
+		requested.append_array(alternate_floor_source_ids)
+	var valid: Array[int] = []
+	if floor_tilemap == null or floor_tilemap.tile_set == null:
+		return valid
+	for source_id in requested:
+		if valid.has(source_id) or not floor_tilemap.tile_set.has_source(source_id):
+			continue
+		var source := floor_tilemap.tile_set.get_source(source_id) as TileSetAtlasSource
+		if source != null and source.has_tile(Vector2i.ZERO):
+			valid.append(source_id)
+	return valid
+
+
+func _is_floor_value_cluster_cell_safe(
+	cell: Vector2i,
+	variant_sources: Array[int],
+	required_lookup: Dictionary,
+	result: Dictionary
+) -> bool:
+	if not _generated_floor_cells.has(cell) or _generated_wall_cells.has(cell):
+		return false
+	if walls_tilemap.get_cell_source_id(cell) >= 0:
+		return false
+	if required_lookup.has(cell) \
+			or _last_interior_thresholds.has(cell) \
+			or _last_compound_ingress.has(cell) \
+			or _road_centerline_tiles.has(cell) \
+			or _path_centerline_tiles.has(cell):
+		return false
+	var source_id := floor_tilemap.get_cell_source_id(cell)
+	if not variant_sources.has(source_id):
+		return false
+	var elevation_data := get_elevation_data_at_tile(cell)
+	if int(elevation_data.get("height", 0)) != 0 \
+			or String(elevation_data.get("traversal_type", ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE)) != ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE:
+		return false
+	var tile_by_cell: Dictionary = result.get("tile_by_cell", {})
+	if not String(tile_by_cell.get(cell, "")).is_empty():
+		return false
+	var region_type := get_region_type_at_tile(cell).to_lower()
+	for blocked_token in [
+		"road", "path", "parking", "connector", "rescue", "spawn", "portal",
+		"interior", "threshold", "door", "gate", "objective", "authored",
+		"reserved", "compound", "elevation", "mountain", "drop", "ledge",
+	]:
+		if region_type.contains(blocked_token):
+			return false
+	return true
+
+
+func _floor_value_cluster_atlas_coord(cell: Vector2i, source_id: int, salt: int) -> Vector2i:
+	if full_grid_floor_source_ids.has(source_id):
+		var width := maxi(1, full_grid_floor_dimensions.x)
+		var height := maxi(1, full_grid_floor_dimensions.y)
+		var hashed := _floor_value_cluster_hash(cell, source_id, 701 + salt)
+		return Vector2i(hashed % width, int(hashed / width) % height)
+	return floor_atlas_coord
+
+
+func _floor_value_cluster_hash(cell: Vector2i, seed: int, salt: int) -> int:
+	var hashed := int(cell.x) * 73856093
+	hashed ^= int(cell.y) * 19349663
+	hashed ^= seed * 83492791
+	hashed ^= salt * 2654435761
+	return absi(hashed)
+
+
+func _floor_value_cluster_noise(cell: Vector2i, seed: int, salt: int) -> float:
+	return float(_floor_value_cluster_hash(cell, seed, salt) % 10000) / 9999.0
+
+
+func _used_floor_bounds_size() -> Vector2i:
+	if floor_tilemap == null:
+		return Vector2i.ONE
+	var used_rect := floor_tilemap.get_used_rect()
+	return Vector2i(maxi(1, used_rect.size.x), maxi(1, used_rect.size.y))
+
+
+func _is_gameplay_pack_source_id(source_id: int) -> bool:
+	return (source_id >= 60 and source_id <= 77) \
+			or (source_id >= 80 and source_id <= 99) \
+			or (source_id >= 100 and source_id <= 123)
+
+
+func debug_dump_runtime_tileset_source_usage() -> Dictionary:
+	var floor_source_counts := {}
+	var wall_source_counts := {}
+	var gameplay_pack_counts := {
+		"connector": 0,
+		"ascent": 0,
+		"chasm_bridge": 0,
+	}
+	if floor_tilemap != null:
+		_count_tilemap_source_usage(floor_tilemap, floor_source_counts, gameplay_pack_counts)
+	if walls_tilemap != null:
+		_count_tilemap_source_usage(walls_tilemap, wall_source_counts, gameplay_pack_counts)
+	return {
+		"floor_source_counts": floor_source_counts,
+		"wall_source_counts": wall_source_counts,
+		"gameplay_pack_counts": gameplay_pack_counts,
+	}
+
+
+func _count_tilemap_source_usage(tilemap: TileMapLayer, source_counts: Dictionary, gameplay_pack_counts: Dictionary) -> void:
+	for cell in tilemap.get_used_cells():
+		var source_id := tilemap.get_cell_source_id(cell)
+		if source_id < 0:
+			continue
+		source_counts[source_id] = int(source_counts.get(source_id, 0)) + 1
+		if not _is_gameplay_pack_source_id(source_id):
+			continue
+		if source_id <= 77:
+			gameplay_pack_counts["connector"] = int(gameplay_pack_counts["connector"]) + 1
+		elif source_id <= 99:
+			gameplay_pack_counts["ascent"] = int(gameplay_pack_counts["ascent"]) + 1
+		else:
+			gameplay_pack_counts["chasm_bridge"] = int(gameplay_pack_counts["chasm_bridge"]) + 1
 
 
 func _is_open_layout_active() -> bool:
@@ -1351,6 +1678,7 @@ func _carve_main_roads(map_size: Vector2i) -> void:
 	_road_centerline_tiles.clear()
 	_road_visual_tiles.clear()
 	_compound_connector_centerline_tiles.clear()
+	_compound_connector_visual_candidates.clear()
 	_parking_zone_tiles.clear()
 	if procgen_node == null:
 		return
@@ -1633,6 +1961,7 @@ func _carve_compound_connector_corridor(spawn: Vector2i, primary_anchor: Vector2
 	var width: int = maxi(1, intent_compound_connector_half_width)
 	var wall_offset: int = width + maxi(1, intent_compound_connector_wall_gap_tiles)
 	_compound_connector_centerline_tiles.clear()
+	_compound_connector_visual_candidates.clear()
 
 	var last_center := ingress
 	for step in range(1, length + 1):
@@ -1645,6 +1974,8 @@ func _carve_compound_connector_corridor(spawn: Vector2i, primary_anchor: Vector2
 		if step == 1 or step == length or step % maxi(1, road_piece_straight_stride_tiles) == 0:
 			_road_visual_tiles[center] = true
 		_carve_road_brush(center, width, map_size)
+		for lateral in range(-width, width + 1):
+			_compound_connector_visual_candidates[center + side_axis * lateral] = lateral == 0
 		_set_region_tile(center, "compound_connector_road", "compound_ingress")
 		for side in [-1, 1]:
 			_stamp_compound_connector_wall(center + side_axis * int(side) * wall_offset, side_axis * int(side), map_size)
@@ -1653,6 +1984,14 @@ func _carve_compound_connector_corridor(spawn: Vector2i, primary_anchor: Vector2
 		_carve_main_road_path(spawn, last_center, maxi(1, width - 1), map_size)
 		if primary_anchor != Vector2i.ZERO and primary_anchor != ingress:
 			_carve_main_road_path(last_center, primary_anchor, maxi(1, width - 1), map_size)
+		# Joining the corridor to the broader road graph repaints region metadata as
+		# main_road. Restore the connector footprint label so the final visual pass
+		# can select Connector Pack art without changing floor authority.
+		for centerline_tile in _compound_connector_centerline_tiles:
+			for lateral in range(-width, width + 1):
+				var connector_tile := centerline_tile + side_axis * lateral
+				if _main_road_tiles.has(connector_tile):
+					_set_region_tile(connector_tile, "compound_connector_road", "compound_ingress")
 
 
 func _stamp_compound_connector_wall(center: Vector2i, outward_axis: Vector2i, map_size: Vector2i) -> void:
@@ -1838,6 +2177,7 @@ func _refresh_road_path_visuals() -> void:
 				continue
 			if not _should_preserve_road_floor_visual(road_tile):
 				_set_road_path_tile(road_tile, "road")
+				_apply_connector_region_visual(road_tile)
 	for tile_variant in _region_tiles.keys():
 		if not (tile_variant is Vector2i):
 			continue
@@ -1872,6 +2212,27 @@ func _is_road_blocked_by_impassable_authority(tile: Vector2i) -> bool:
 func _should_preserve_road_floor_visual(tile: Vector2i) -> bool:
 	var region_type := get_region_type_at_tile(tile)
 	return region_type == "compound_connector_elevated_road" or region_type == "compound_connector_ramp"
+
+
+func _apply_connector_region_visual(tile: Vector2i) -> void:
+	var region_type := get_region_type_at_tile(tile)
+	if _compound_connector_centerline_tiles.has(tile) or region_type == "compound_connector_road":
+		_apply_terrain_tile_visual(tile, "terrain_connector_centerline_32")
+	elif region_type == "terrain_rescue_floor" \
+			or region_type == "pre_terrain_required_connector" \
+			or region_type == "authority_repair":
+		_apply_terrain_tile_visual(tile, _deterministic_connector_repair_tile_id(tile))
+
+
+func _deterministic_connector_repair_tile_id(tile: Vector2i) -> String:
+	const REPAIR_TILES: Array[String] = [
+		"terrain_connector_ground_32",
+		"terrain_connector_cracked_32",
+		"terrain_connector_gravel_32",
+		"terrain_connector_dust_32",
+		"terrain_connector_broken_patch_32",
+	]
+	return REPAIR_TILES[_tile_noise_hash(tile) % REPAIR_TILES.size()]
 
 
 func _find_or_create_road_piece_parent() -> Node2D:
@@ -2734,6 +3095,7 @@ func _clear_region_metadata() -> void:
 	_road_visual_tiles.clear()
 	_path_visual_tiles.clear()
 	_compound_connector_centerline_tiles.clear()
+	_compound_connector_visual_candidates.clear()
 	_parking_zone_tiles.clear()
 	_region_tiles.clear()
 
@@ -3600,6 +3962,7 @@ func _set_pre_terrain_bridge_floor(tile: Vector2i, map_size: Vector2i) -> int:
 		return 0
 	var was_walkable := _is_pre_terrain_walkable_cell(tile, map_size)
 	_set_floor_tile_and_generated_state(tile, "pre_terrain_required_connector", "authority_repair")
+	_apply_terrain_tile_visual(tile, _deterministic_connector_repair_tile_id(tile))
 	return 0 if was_walkable else 1
 
 
@@ -3784,7 +4147,8 @@ func _apply_terrain_visuals(terrain_result: Dictionary) -> void:
 		var cell := cell_variant as Vector2i
 		var traversal := String(traversal_by_cell.get(cell, ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE))
 		var tile_id := String(tile_by_cell.get(cell, ""))
-		var rendered_tile := _apply_terrain_tile_visual(cell, tile_id)
+		var visual_tile_id := _resolve_live_terrain_visual_tile_id(cell, tile_id)
+		var rendered_tile := _apply_terrain_tile_visual(cell, visual_tile_id)
 		if traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_BLOCKED:
 			if tile_id.is_empty():
 				continue
@@ -3814,8 +4178,15 @@ func _apply_terrain_visuals(terrain_result: Dictionary) -> void:
 			_set_region_tile(cell, "terrain_elevated_floor", "elevated")
 		elif traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE and tile_id == "rescue_walkable_ground":
 			_ensure_walkable_terrain_floor_authority(cell, rendered_tile, "terrain_rescue_floor", "walkable")
+			_apply_terrain_tile_visual(cell, _deterministic_connector_repair_tile_id(cell))
 		elif _is_walkable_terrain_traversal(traversal):
 			_ensure_walkable_terrain_floor_authority(cell, rendered_tile, "terrain_walkable_floor", "walkable")
+
+
+func _resolve_live_terrain_visual_tile_id(cell: Vector2i, tile_id: String) -> String:
+	if tile_id == "cliff_chasm_drop_32":
+		return "chasm_void_32" if _tile_noise_hash(cell) % 2 == 0 else "collapsed_gap_32"
+	return tile_id
 
 
 func _is_walkable_terrain_traversal(traversal: String) -> bool:
@@ -3851,13 +4222,30 @@ func _apply_compound_connector_elevation(map_size: Vector2i) -> void:
 				continue
 			if index < ramp_index:
 				elevation_map.set_cell(tile, 1, ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE, ELEVATION_MAP_SCRIPT.DIRECTION_NONE)
-				_apply_terrain_tile_visual(tile, "elevated_floor_32")
+				_apply_terrain_tile_visual(tile, "terrain_landing_industrial_32")
 				_set_region_tile(tile, "compound_connector_elevated_road", "compound_ingress")
 			elif index == ramp_index:
 				elevation_map.set_cell(tile, 1, ELEVATION_MAP_SCRIPT.TRAVERSAL_RAMP, ramp_direction)
 				_apply_terrain_tile_visual(tile, ramp_tile_id)
 				_set_region_tile(tile, "compound_connector_ramp", "compound_ingress")
 			_clear_road_blocking_wall(tile)
+
+
+func _refresh_compound_connector_pack_visuals(map_size: Vector2i) -> void:
+	if _compound_connector_visual_candidates.is_empty():
+		return
+	for tile_variant in _compound_connector_visual_candidates:
+		if not (tile_variant is Vector2i):
+			continue
+		var tile := tile_variant as Vector2i
+		if not _is_tile_inside_map(tile, map_size, 1) \
+				or not _main_road_tiles.has(tile) \
+				or _is_road_blocked_by_impassable_authority(tile) \
+				or _should_preserve_road_floor_visual(tile):
+			continue
+		var is_centerline := bool(_compound_connector_visual_candidates[tile])
+		var tile_id := "terrain_connector_centerline_32" if is_centerline else _deterministic_connector_repair_tile_id(tile)
+		_apply_terrain_tile_visual(tile, tile_id)
 
 
 func _get_compound_connector_outward_direction() -> Vector2i:
@@ -3883,15 +4271,15 @@ func _direction_name_from_delta(delta: Vector2i) -> String:
 func _ramp_tile_id_from_delta(delta: Vector2i) -> String:
 	match delta:
 		Vector2i.UP:
-			return "ramp_north_32"
+			return "ramp_north_wide_32"
 		Vector2i.DOWN:
-			return "ramp_south_32"
+			return "ramp_south_wide_32"
 		Vector2i.LEFT:
-			return "ramp_west_32"
+			return "ramp_west_wide_32"
 		Vector2i.RIGHT:
-			return "ramp_east_32"
+			return "ramp_east_wide_32"
 		_:
-			return "ramp_south_32"
+			return "ramp_south_wide_32"
 
 
 func _apply_terrain_tile_visual(cell: Vector2i, tile_id: String) -> bool:

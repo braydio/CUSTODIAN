@@ -535,6 +535,6 @@ tree -L 6 \
   > .tree-map.txt
 
 grep -R \
-  "proc_gen_tilemap.gd\|proc_gen_map.tscn\|dungeon_tileset.tres\|game/world/procgen" \
+  "proc_gen_tilemap.gd\|proc_gen_map.tscn\|procgen_world_tileset.tres\|game/world/procgen" \
   .tree-map.txt custodian/docs/ai_context/FILE_INDEX.md custodian/docs/ai_context/CURRENT_STATE.md
 ```

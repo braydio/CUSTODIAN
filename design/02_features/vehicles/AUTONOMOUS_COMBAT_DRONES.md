@@ -64,6 +64,8 @@ Anchor and formation are separate command axes:
 Controls:
 
 - Hold `drone_issue_guard_order` (`J`) and press primary/mouse-left to place or move the guard anchor.
+- While `J` is held, hovering a valid hostile changes the command reticle to red; clicking that hostile places the guard anchor at its position and assigns it as the squad's explicit target.
+- Clicking empty ground while `J` is held remains a normal guard-anchor order.
 - Press `drone_recall_order` (`K`) to clear the guard anchor.
 - `G` continues to cycle close/far/free-roam around the active anchor.
 - The Operator suppresses primary weapon fire while the guard-order chord is held.
@@ -77,6 +79,7 @@ Guard interpretation:
 - Enemies outside the guard engage range are ignored.
 - Drones outside the guard return range clear targets and return to formation.
 - Guard patrol is local defense, not independent room clearing or scouting.
+- An explicit command target takes acquisition priority while it remains valid and inside the guard engagement contract; it does not remove leash/return rules.
 - A small world-space ring/cross marker identifies the active guard point.
 
 ## V1 Tuning
