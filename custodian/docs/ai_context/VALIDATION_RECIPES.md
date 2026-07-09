@@ -117,6 +117,20 @@ These checks cover Operator/order-point anchor state, close/far/roam goals aroun
 marker and replacement-drone inheritance, recall, manager-owned InputMap actions, hold-fire cancellation, and suppression
 of accidental Operator primary fire while issuing an order.
 
+For parry critical-open indicators and exclusive grunt critical presentation:
+
+```bash
+cd custodian
+godot --headless --path . --import --quit
+godot --headless --path . --script res://tools/validation/grunt_parry_crit_reaction_smoke.gd
+godot --headless --path . --script res://tools/validation/grunt_animation_smoke.gd
+godot --headless --path . --script res://tools/validation/operator_modular_defense_ranged_smoke.gd
+```
+
+The focused reaction smoke validates the required 6/8/12-frame assets, contact auto-free, enemy-attached BREACH/ring
+lifecycle, duration-driven expiry, critical consumption, and suppression of standard grunt flinch/white-flash presentation.
+Missing optional posture-break and critical-expiry assets should warn without failing.
+
 For Sundered Keep asset wiring specifically:
 
 ```bash

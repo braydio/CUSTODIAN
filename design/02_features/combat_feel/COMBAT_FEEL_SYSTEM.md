@@ -179,6 +179,7 @@ Parry / guard:
 - Releasing offhand secondary exits guard. If parry recovery finishes while secondary is still held, the operator returns to guard; if secondary was released, the operator returns to normal stance.
 - A front-facing perfect parry cancels the incoming enemy hit, calls `apply_parry_stagger(...)` on the attacker when available, refunds stamina, and opens a short counter window that boosts the next fast melee/unarmed hit.
 - For `enemy_grunt`, parry critical-open and critical-hit presentation is exclusive: opening the window cancels any queued standard `flinch_fx_s`, and consuming the window plays `crit_s` plus `crit_fx_s` without the normal white body hit flash. Standard flinch/body-flash presentation remains available for non-critical damage.
+- Successful parry now adds a world-space contact spark at the captured impact point and attaches a floating BREACH marker plus duration-driven countdown reticle to a critical-open grunt. Gameplay timing remains `_parry_critical_window_timer` in `enemy.gd`; VFX only visualize it and are removed on consumption or expiry. Required runtime strips are `content/sprites/effects/combat/critical/combat_fx__parry_success_hit_spark_01__6f__128.png`, `combat_fx__breach_alert__8f__96-48.png`, and `combat_fx__breach_timer_reticle__12f__128.png`. Optional posture-break/expiry strips remain non-blocking and warn once when absent.
 - Guard uses the existing block state presentation, drains stamina per hit, and reduces incoming damage to chip damage instead of fully negating it.
 - Enemy damage application must check parry first, guard second, then damage. Presentation fallbacks are allowed when parry animations are missing, but simulation authority stays in `operator.gd` and `enemy.gd`.
 
@@ -480,6 +481,8 @@ Files:
 - `custodian/tools/validation/operator_ranged_ready_input_smoke.gd`
 - `custodian/tools/validation/operator_modular_layers_smoke.gd`
 - `custodian/tools/validation/grunt_parry_crit_reaction_smoke.gd`
+- `custodian/game/vfx/combat/`
+- `custodian/content/spriteframes/effects/combat/`
 - `REQUIRED_ASSETS.md`
 - `custodian/content/sprites/operator/new_operator/modular/`
 

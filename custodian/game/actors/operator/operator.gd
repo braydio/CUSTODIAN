@@ -19,6 +19,7 @@ const MUZZLE_FLASH_SCENE := preload("res://game/actors/effects/muzzle_flash.tscn
 const MELEE_SWING_SCENE := preload("res://game/actors/effects/melee_swing.tscn")
 const TARGET_RING_SCENE := preload("res://game/actors/effects/target_ring.tscn")
 const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
+const PARRY_CONTACT_SPARK_VFX_SCENE := preload("res://game/vfx/combat/parry_contact_spark_vfx.tscn")
 
 enum AttackPhase {
 	NONE,
@@ -3122,6 +3123,16 @@ func try_guard_incoming_attack(damage: float, hit_direction: Vector2) -> Diction
 
 
 func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dictionary) -> void:
+	var contact_position := global_position
+	if hit_data.get("impact_position") is Vector2:
+		contact_position = hit_data["impact_position"]
+	elif attacker != null and is_instance_valid(attacker):
+		contact_position = _resolve_melee_impact_position(attacker)
+	else:
+		var contact_direction := -hit_direction.normalized()
+		if contact_direction.length_squared() <= 0.001:
+			contact_direction = _get_attack_aim_direction()
+		contact_position += contact_direction.normalized() * 22.0
 	_parry_active = false
 	_parry_phase = &"success"
 	var success_recovery := maxf(0.0, parry_success_recovery_sec)
@@ -3142,8 +3153,21 @@ func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dicti
 			attacker.call("apply_melee_impact", "parry", away_from_operator, parry_enemy_knockback)
 
 	_play_parry_animation(&"unarmed_parry_success")
+	_spawn_parry_contact_spark(contact_position)
 	_spawn_parry_success_fx()
 	_notify_camera_attack_impact(hit_direction, false)
+
+
+func _spawn_parry_contact_spark(contact_position: Vector2) -> void:
+	var spark := PARRY_CONTACT_SPARK_VFX_SCENE.instantiate() as Node2D
+	if spark == null:
+		push_error("[CombatVfx] Required parry contact spark scene could not instantiate.")
+		return
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	parent.add_child(spark)
+	spark.global_position = contact_position
 
 
 func _play_parry_animation(base_animation: StringName) -> void:

@@ -11,6 +11,13 @@ const ENEMY_PERCEPTION_SCRIPT := preload("res://game/actors/enemies/components/e
 const ENEMY_OBJECTIVE_SENSOR_SCRIPT := preload("res://game/actors/enemies/components/enemy_objective_sensor.gd")
 const ENEMY_LOOT_CARRIER_SCRIPT := preload("res://game/actors/enemies/components/enemy_loot_carrier.gd")
 const ENEMY_BEHAVIOR_STATE_MACHINE_SCRIPT := preload("res://game/actors/enemies/enemy_behavior_state_machine.gd")
+const CRITICAL_BREACH_MARKER_VFX_SCENE := preload("res://game/vfx/combat/critical_breach_marker_vfx.tscn")
+const CRITICAL_WINDOW_RING_VFX_SCENE := preload("res://game/vfx/combat/critical_window_ring_vfx.tscn")
+const OPTIONAL_POSTURE_BREAK_FLASH_PATH := "res://content/sprites/effects/combat/critical/posture_break_flash_01.png"
+const OPTIONAL_CRITICAL_WINDOW_EXPIRE_PATH := "res://content/sprites/effects/combat/critical/critical_window_expire_01.png"
+
+static var _optional_posture_break_warning_emitted := false
+static var _optional_expire_warning_emitted := false
 const AXUL_DIRECTIONAL_SHEET_PATH := "res://content/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt.png"
 const DIRECTIONAL_SUFFIXES := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
 const DIRECTIONAL_ANIMATION_PREFIX := "red_walk"
@@ -105,6 +112,9 @@ enum AssaultState {
 @export var custom_enemy_animation_scale: Vector2 = Vector2.ONE
 @export var custom_enemy_fx_scale: Vector2 = Vector2.ONE
 @export var grunt_parry_critical_window_min_sec: float = 0.8
+@export var grunt_critical_breach_marker_offset: Vector2 = Vector2(0.0, -62.0)
+@export var grunt_critical_window_ring_offset: Vector2 = Vector2(0.0, -24.0)
+@export var grunt_optional_critical_vfx_enabled: bool = true
 var simulation_tier: String = "active"
 @export var marine_dash_enabled: bool = false
 @export var marine_dash_windup_time: float = 0.32
@@ -167,6 +177,8 @@ var _recoil_timer: float = 0.0
 var _crit_timer: float = 0.0
 var _crit_recovery_timer: float = 0.0
 var _parry_critical_window_timer: float = 0.0
+var _critical_breach_marker_vfx: Node2D = null
+var _critical_window_ring_vfx: Node2D = null
 var _parry_stagger_placeholder_logged: bool = false
 var _windup_attack_is_strong: bool = false
 var _pending_attack_forward: Vector2 = Vector2.DOWN
@@ -1553,8 +1565,10 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 	_crit_timer = 0.0
 	_crit_recovery_timer = 0.0
 	if _uses_grunt_critical_window():
-		_parry_critical_window_timer = maxf(_parry_critical_window_timer, _get_grunt_parry_critical_window_duration(duration))
+		var critical_window_duration := _get_grunt_parry_critical_window_duration(duration)
+		_parry_critical_window_timer = maxf(_parry_critical_window_timer, critical_window_duration)
 		_clear_grunt_standard_hit_fx()
+		_spawn_grunt_critical_open_vfx(_parry_critical_window_timer)
 		_log_grunt_stagger_placeholder()
 	var resolved_direction := knockback_direction.normalized() if knockback_direction.length_squared() > 0.0001 else -_last_move_direction.normalized()
 	if resolved_direction.length_squared() <= 0.0001:
@@ -1610,6 +1624,7 @@ func _start_crit_reaction() -> void:
 	_crit_timer = max(_crit_timer, crit_hit_duration)
 	_crit_recovery_timer = 0.0
 	_parry_critical_window_timer = 0.0
+	_clear_grunt_critical_open_vfx(false)
 	_recoil_timer = 0.0
 	_stagger_timer = 0.0
 	_attack_windup_timer = 0.0
@@ -1645,6 +1660,8 @@ func _update_reaction_timers(delta: float) -> bool:
 		return true
 	if _parry_critical_window_timer > 0.0:
 		_parry_critical_window_timer = max(0.0, _parry_critical_window_timer - delta)
+		if _parry_critical_window_timer <= 0.0:
+			_clear_grunt_critical_open_vfx(true)
 		_stagger_timer = max(0.0, _stagger_timer - delta)
 		velocity = Vector2.ZERO
 		if _uses_directional_animation_set():
@@ -2238,6 +2255,51 @@ func _clear_grunt_standard_hit_fx() -> void:
 		return
 	custom_enemy_fx_sprite.stop()
 	custom_enemy_fx_sprite.visible = false
+
+
+func _spawn_grunt_critical_open_vfx(duration: float) -> void:
+	_clear_grunt_critical_open_vfx(false)
+	_warn_for_missing_optional_critical_vfx()
+
+	_critical_breach_marker_vfx = CRITICAL_BREACH_MARKER_VFX_SCENE.instantiate() as Node2D
+	if _critical_breach_marker_vfx == null:
+		push_error("[CombatVfx] Required BREACH marker scene could not instantiate.")
+	else:
+		_critical_breach_marker_vfx.position = grunt_critical_breach_marker_offset
+		add_child(_critical_breach_marker_vfx)
+		if _critical_breach_marker_vfx.has_method("configure_duration"):
+			_critical_breach_marker_vfx.call("configure_duration", duration)
+
+	_critical_window_ring_vfx = CRITICAL_WINDOW_RING_VFX_SCENE.instantiate() as Node2D
+	if _critical_window_ring_vfx == null:
+		push_error("[CombatVfx] Required critical-window ring scene could not instantiate.")
+	else:
+		_critical_window_ring_vfx.position = grunt_critical_window_ring_offset
+		add_child(_critical_window_ring_vfx)
+		if _critical_window_ring_vfx.has_method("configure_duration"):
+			_critical_window_ring_vfx.call("configure_duration", duration)
+
+
+func _clear_grunt_critical_open_vfx(expired: bool) -> void:
+	if _critical_breach_marker_vfx != null and is_instance_valid(_critical_breach_marker_vfx):
+		_critical_breach_marker_vfx.queue_free()
+	_critical_breach_marker_vfx = null
+	if _critical_window_ring_vfx != null and is_instance_valid(_critical_window_ring_vfx):
+		_critical_window_ring_vfx.queue_free()
+	_critical_window_ring_vfx = null
+	if expired and grunt_optional_critical_vfx_enabled and ResourceLoader.exists(OPTIONAL_CRITICAL_WINDOW_EXPIRE_PATH):
+		push_warning("[CombatVfx] Optional critical-window expiry asset exists but has no runtime strip contract yet: %s" % OPTIONAL_CRITICAL_WINDOW_EXPIRE_PATH)
+
+
+func _warn_for_missing_optional_critical_vfx() -> void:
+	if not grunt_optional_critical_vfx_enabled:
+		return
+	if not ResourceLoader.exists(OPTIONAL_POSTURE_BREAK_FLASH_PATH) and not _optional_posture_break_warning_emitted:
+		_optional_posture_break_warning_emitted = true
+		push_warning("[CombatVfx] Optional asset missing: %s - posture-break flash disabled, continuing." % OPTIONAL_POSTURE_BREAK_FLASH_PATH)
+	if not ResourceLoader.exists(OPTIONAL_CRITICAL_WINDOW_EXPIRE_PATH) and not _optional_expire_warning_emitted:
+		_optional_expire_warning_emitted = true
+		push_warning("[CombatVfx] Optional asset missing: %s - critical-window expiry VFX disabled, continuing." % OPTIONAL_CRITICAL_WINDOW_EXPIRE_PATH)
 
 
 func _on_custom_enemy_fx_finished() -> void:
