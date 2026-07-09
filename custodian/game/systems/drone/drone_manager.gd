@@ -4,6 +4,7 @@ class_name DroneManager
 const DEFAULT_DRONE_SCENE := preload("res://game/actors/allies/allied_infantry_droid.tscn")
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 const DroneSquadStateScript := preload("res://game/systems/drone/drone_squad_state.gd")
+const GUARD_ORDER_MARKER_SCENE := preload("res://game/actors/effects/drone_guard_order_marker.tscn")
 
 @export var operator_path: NodePath = NodePath("../Operator")
 @export var spawn_on_ready: bool = true
@@ -13,11 +14,14 @@ const DroneSquadStateScript := preload("res://game/systems/drone/drone_squad_sta
 @export var squad_state: Resource
 @export var toggle_fire_action: StringName = &"drone_toggle_fire"
 @export var cycle_follow_distance_action: StringName = &"drone_cycle_follow_distance"
+@export var issue_guard_order_action: StringName = &"drone_issue_guard_order"
+@export var recall_guard_order_action: StringName = &"drone_recall_order"
 @export var announce_commands: bool = true
 
 var _operator: Node2D = null
 var _drone_parent: Node = null
 var _drones: Array[Node2D] = []
+var _guard_order_marker: Node2D = null
 
 
 func _ready() -> void:
@@ -80,6 +84,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed(cycle_follow_distance_action):
 		cycle_follow_distance()
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(recall_guard_order_action):
+		recall_guard_order()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(&"attack_primary") and Input.is_action_pressed(issue_guard_order_action):
+		issue_guard_order(_get_pointer_world_position())
+		get_viewport().set_input_as_handled()
 
 
 func set_squad_mode(mode: int) -> void:
@@ -116,6 +126,24 @@ func set_follow_distance(mode: int) -> void:
 	_propagate_follow_distance(mode)
 
 
+func issue_guard_order(position: Vector2) -> void:
+	squad_state.set_order_anchor(position)
+	_propagate_order_anchor(position)
+	_update_guard_order_marker()
+	_announce_squad_state("Guard")
+
+
+func recall_guard_order() -> void:
+	squad_state.clear_order_anchor()
+	_propagate_order_anchor_clear()
+	_update_guard_order_marker()
+	_announce_squad_state("Recall")
+
+
+func has_guard_order() -> bool:
+	return squad_state != null and squad_state.has_order_anchor()
+
+
 func notify_drone_destroyed(drone: Node) -> void:
 	if drone == null:
 		return
@@ -141,6 +169,10 @@ func _apply_squad_state_to_drone(drone: Node) -> void:
 		drone.call("set_fire_at_will", squad_state.fire_at_will)
 	if drone.has_method("set_follow_distance_mode"):
 		drone.call("set_follow_distance_mode", squad_state.current_follow_distance)
+	if squad_state.has_order_anchor() and drone.has_method("set_order_anchor"):
+		drone.call("set_order_anchor", squad_state.order_anchor_position)
+	elif drone.has_method("clear_order_anchor"):
+		drone.call("clear_order_anchor")
 
 
 func _propagate_fire_at_will(enabled: bool) -> void:
@@ -154,6 +186,20 @@ func _propagate_follow_distance(mode: int) -> void:
 	_for_each_live_drone(func(drone: Node) -> void:
 		if drone.has_method("set_follow_distance_mode"):
 			drone.call("set_follow_distance_mode", mode)
+	)
+
+
+func _propagate_order_anchor(position: Vector2) -> void:
+	_for_each_live_drone(func(drone: Node) -> void:
+		if drone.has_method("set_order_anchor"):
+			drone.call("set_order_anchor", position)
+	)
+
+
+func _propagate_order_anchor_clear() -> void:
+	_for_each_live_drone(func(drone: Node) -> void:
+		if drone.has_method("clear_order_anchor"):
+			drone.call("clear_order_anchor")
 	)
 
 
@@ -171,10 +217,13 @@ func _announce_squad_state(reason: String) -> void:
 	var fire_text := "FIRE AT WILL" if bool(summary.get("fire_at_will", true)) else "HOLD FIRE"
 	var follow_text := String(summary.get("follow_distance", "UNKNOWN")).replace("_", " ")
 	var tactical_text := String(summary.get("mode", "UNKNOWN"))
+	var anchor_text := String(summary.get("anchor_kind", "FOLLOW"))
 	if reason == "Fire":
 		print("[Drones] Fire: %s | live=%d | follow=%s | mode=%s" % [fire_text, int(summary.get("live_count", 0)), follow_text, tactical_text])
 	elif reason == "Follow":
-		print("[Drones] Follow: %s | live=%d | fire=%s | mode=%s" % [follow_text, int(summary.get("live_count", 0)), fire_text, tactical_text])
+		print("[Drones] %s: %s | live=%d | fire=%s | mode=%s" % [anchor_text, follow_text, int(summary.get("live_count", 0)), fire_text, tactical_text])
+	elif reason == "Guard" or reason == "Recall":
+		print("[Drones] %s %s | live=%d | fire=%s | mode=%s" % [anchor_text, follow_text, int(summary.get("live_count", 0)), fire_text, tactical_text])
 	else:
 		print("[Drones] %s | live=%d | fire=%s | follow=%s | mode=%s" % [reason, int(summary.get("live_count", 0)), fire_text, follow_text, tactical_text])
 
@@ -188,3 +237,25 @@ func _prune_drones() -> void:
 			continue
 		live_drones.append(drone)
 	_drones = live_drones
+
+
+func _get_pointer_world_position() -> Vector2:
+	var camera := get_viewport().get_camera_2d()
+	if camera != null:
+		return camera.get_global_mouse_position()
+	if _operator != null and is_instance_valid(_operator):
+		return _operator.get_global_mouse_position()
+	return Vector2.ZERO
+
+
+func _update_guard_order_marker() -> void:
+	if not squad_state.has_order_anchor():
+		if _guard_order_marker != null and is_instance_valid(_guard_order_marker):
+			_guard_order_marker.queue_free()
+		_guard_order_marker = null
+		return
+	if _guard_order_marker == null or not is_instance_valid(_guard_order_marker):
+		_guard_order_marker = GUARD_ORDER_MARKER_SCENE.instantiate() as Node2D
+		var marker_parent := _drone_parent if _drone_parent != null else get_parent()
+		marker_parent.add_child(_guard_order_marker)
+	_guard_order_marker.global_position = squad_state.order_anchor_position

@@ -2239,6 +2239,8 @@ func _find_terrain_ballistics_provider() -> Node:
 
 
 func _handle_attack_input() -> void:
+	if InputMap.has_action(&"drone_issue_guard_order") and Input.is_action_pressed(&"drone_issue_guard_order"):
+		return
 	if _is_block_state_active():
 		_try_queue_parry_counter_from_block()
 		return

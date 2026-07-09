@@ -1,15 +1,15 @@
 # Autonomous Combat Drones Implementation Notes
 
-Status: implemented-v2
+Status: implemented-v3
 
 ## Runtime Additions
 
 - `CombatDrone` is a `CharacterBody2D` allied actor with movement, targeting, firing, health, collision, and muzzle logic.
 - `AlliedInfantryDroid` subclasses `CombatDrone`, replaces the placeholder `ColorRect` with `AnimatedSprite2D` playback, and displays a small fire/follow status label. It no longer owns raw input.
 - `DroneManager` is scene-mounted under `GameRoot/World`, spawns two drones into `GameRoot/World/Allies`, and owns squad command input.
-- `DroneCommandProfile` centralizes V1 tuning, tactical mode constants, V2 follow-distance band tuning, separation, and free-roam patrol timing.
-- `DroneTargeting` performs deterministic nearest-target selection against non-passive enemies with an optional range override for free roam.
-- `DroneSquadState` tracks active/destroyed drone IDs, current tactical mode, squad fire discipline, and current follow distance.
+- `DroneCommandProfile` centralizes tactical mode constants, follow-distance bands, separation, free-roam patrol timing, and guard engage/return/leash ranges.
+- `DroneTargeting` performs deterministic nearest-target selection against non-passive enemies around either a node anchor or explicit world position.
+- `DroneSquadState` tracks active/destroyed drone IDs, current tactical mode, squad fire discipline, current follow distance, and Operator/order-point anchor state.
 
 ## V2 Runtime Additions
 
@@ -21,9 +21,20 @@ Status: implemented-v2
 - `CombatDrone` resolves `CLOSE` and `FAR` as soft follow bands with Operator/drone separation instead of exact orbit offsets.
 - `FREE_ROAM` periodically chooses deterministic local patrol goals around the Operator, pressures enemies inside `free_roam_engage_range`, and remains leashed by `free_roam_leash_range`.
 
+## V3 Runtime Additions
+
+- `drone_issue_guard_order` defaults to `J`; holding it while pressing primary/mouse-left stores the pointer world position as the squad order anchor.
+- `drone_recall_order` defaults to `K` and restores the Operator anchor.
+- `DroneManager` propagates guard placement/recall to live drones, applies active guard state to replacement drones, and owns the world-space guard marker.
+- `CombatDrone._get_anchor_position()` is the single formation/retreat/intercept/patrol anchor resolver.
+- `CLOSE`, `FAR`, and `FREE_ROAM` use the same movement contracts around either the Operator or guard point.
+- Guard targeting uses `guard_order_engage_range`; exceeding `guard_order_return_range` clears targets and forces formation return, bounded by `guard_order_leash_range`.
+- `AlliedInfantryDroid` status text reports `FOLLOW CLOSE/FAR/ROAM` or `GUARD CLOSE/FAR/ROAM`, followed by fire discipline.
+- Operator primary fire is suppressed while the guard-order chord is held so a command click does not consume ammunition.
+
 ## Integration
 
-`custodian/scenes/game.tscn` references the animated allied infantry droid scene and manager script. The manager uses `../Operator` as its anchor, defaults to two active droids, and owns the squad-wide follower command actions.
+`custodian/scenes/game.tscn` references the animated allied infantry droid scene and manager script. The manager uses `../Operator` as its default anchor, defaults to two active droids, and owns the squad-wide fire, formation, guard-order, and recall actions.
 
 ## Validation
 

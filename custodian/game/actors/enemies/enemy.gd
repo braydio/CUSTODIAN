@@ -1015,20 +1015,21 @@ func apply_difficulty_modifiers(hp_scale: float, damage_scale: float):
 func take_damage(amount: float):
 	if dead:
 		return
-		
+
+	var consumed_parry_critical_window := _is_grunt_parry_critical_window_active()
 	health -= amount
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call("on_damaged", self, amount)
 	_on_assault_damage_taken(amount)
-	if _is_grunt_parry_critical_window_active():
+	if consumed_parry_critical_window:
 		_start_crit_reaction()
 	else:
 		_apply_reaction(amount)
 	update_visuals()
 	_spawn_damage_popup(amount)
 	
-	# Flash effect
-	if visual:
+	# Critical hits own their presentation through crit_s + crit_fx_s.
+	if visual and not consumed_parry_critical_window:
 		visual.modulate = Color(1, 1, 1)  # Flash white
 		await get_tree().create_timer(0.1).timeout
 		update_visuals()
@@ -1553,6 +1554,7 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 	_crit_recovery_timer = 0.0
 	if _uses_grunt_critical_window():
 		_parry_critical_window_timer = maxf(_parry_critical_window_timer, _get_grunt_parry_critical_window_duration(duration))
+		_clear_grunt_standard_hit_fx()
 		_log_grunt_stagger_placeholder()
 	var resolved_direction := knockback_direction.normalized() if knockback_direction.length_squared() > 0.0001 else -_last_move_direction.normalized()
 	if resolved_direction.length_squared() <= 0.0001:
@@ -2229,6 +2231,13 @@ func _play_grunt_flinch_fx() -> void:
 	custom_enemy_fx_sprite.scale = custom_enemy_fx_scale
 	custom_enemy_fx_sprite.flip_h = false
 	custom_enemy_fx_sprite.play(String(GRUNT_FLINCH_FX_ANIMATION))
+
+
+func _clear_grunt_standard_hit_fx() -> void:
+	if custom_enemy_fx_sprite == null:
+		return
+	custom_enemy_fx_sprite.stop()
+	custom_enemy_fx_sprite.visible = false
 
 
 func _on_custom_enemy_fx_finished() -> void:

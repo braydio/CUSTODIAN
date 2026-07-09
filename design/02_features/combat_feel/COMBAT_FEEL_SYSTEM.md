@@ -178,6 +178,7 @@ Parry / guard:
 - Pressing primary while offhand secondary is held starts parry windup, then opens a short active parry window.
 - Releasing offhand secondary exits guard. If parry recovery finishes while secondary is still held, the operator returns to guard; if secondary was released, the operator returns to normal stance.
 - A front-facing perfect parry cancels the incoming enemy hit, calls `apply_parry_stagger(...)` on the attacker when available, refunds stamina, and opens a short counter window that boosts the next fast melee/unarmed hit.
+- For `enemy_grunt`, parry critical-open and critical-hit presentation is exclusive: opening the window cancels any queued standard `flinch_fx_s`, and consuming the window plays `crit_s` plus `crit_fx_s` without the normal white body hit flash. Standard flinch/body-flash presentation remains available for non-critical damage.
 - Guard uses the existing block state presentation, drains stamina per hit, and reduces incoming damage to chip damage instead of fully negating it.
 - Enemy damage application must check parry first, guard second, then damage. Presentation fallbacks are allowed when parry animations are missing, but simulation authority stays in `operator.gd` and `enemy.gd`.
 
@@ -470,7 +471,7 @@ Approximate total: ~60 frames.
 
 ## Next Agent Slice
 
-Goal: broaden authored parry directional coverage and tune the feel in live combat now that baseline modular parry playback is wired.
+Goal: broaden authored parry directional coverage and tune the feel in live combat while preserving exclusive grunt critical presentation.
 
 Files:
 
@@ -478,6 +479,7 @@ Files:
 - `custodian/game/actors/enemies/enemy.gd`
 - `custodian/tools/validation/operator_ranged_ready_input_smoke.gd`
 - `custodian/tools/validation/operator_modular_layers_smoke.gd`
+- `custodian/tools/validation/grunt_parry_crit_reaction_smoke.gd`
 - `REQUIRED_ASSETS.md`
 - `custodian/content/sprites/operator/new_operator/modular/`
 
@@ -485,11 +487,13 @@ Constraints:
 
 - Keep offhand secondary unambiguous: ranged primary, P-9 sidearm, or parry/guard by slot context.
 - Keep parry/guard simulation in operator/enemy gameplay code; animation and FX remain presentation only.
+- Do not layer normal grunt flinch FX or white body hit flash over `crit_s` / `crit_fx_s`.
 - Do not put parry on the P-9 sidearm branch until sidearm/defense tradeoffs are deliberately redesigned.
 
 Acceptance checks:
 
 - `cd custodian && godot --headless --script tools/validation/operator_ranged_ready_input_smoke.gd`
 - `cd custodian && godot --headless --script tools/validation/operator_modular_layers_smoke.gd`
+- `cd custodian && godot --headless --script tools/validation/grunt_parry_crit_reaction_smoke.gd`
 - `cd custodian && godot --headless --quit`
 - In play, empty offhand hold guards, empty offhand hold plus primary parries, P-9 equipped hold readies sidearm, P-9 held plus primary fires sidearm, and selected ranged primary hold readies the primary ranged weapon.

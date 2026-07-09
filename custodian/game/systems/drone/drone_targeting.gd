@@ -6,6 +6,12 @@ const DroneCommandProfileScript := preload("res://game/systems/drone/drone_comma
 func acquire_target(drone: Node2D, anchor: Node2D, mode: int, profile: Resource, max_range_override: float = -1.0) -> Node2D:
 	if drone == null or anchor == null or profile == null:
 		return null
+	return acquire_target_at_position(drone, anchor.global_position, mode, profile, max_range_override)
+
+
+func acquire_target_at_position(drone: Node2D, anchor_position: Vector2, mode: int, profile: Resource, max_range_override: float = -1.0) -> Node2D:
+	if drone == null or profile == null:
+		return null
 	var max_range: float = max_range_override if max_range_override > 0.0 else profile.drone_engage_range
 	var best: Node2D = null
 	var best_score := INF
@@ -15,7 +21,7 @@ func acquire_target(drone: Node2D, anchor: Node2D, mode: int, profile: Resource,
 		var enemy := candidate as Node2D
 		if is_invalid_enemy(enemy):
 			continue
-		var anchor_distance := enemy.global_position.distance_to(anchor.global_position)
+		var anchor_distance := enemy.global_position.distance_to(anchor_position)
 		var drone_distance := enemy.global_position.distance_to(drone.global_position)
 		if mode != DroneCommandProfileScript.Mode.HOLD and anchor_distance > max_range:
 			continue

@@ -104,6 +104,19 @@ godot --headless --quit
 
 Known caveat: current headless validation may exit with existing object/resource leak warnings. Treat new parse errors, missing resources, broken script loads, or changed fatal errors as blockers.
 
+For allied drone fire/formation/guard-anchor commands:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/drone_follower_commands_smoke.gd
+godot --headless --path . --script res://tools/validation/main_scene_allied_droid_smoke.gd
+godot --headless --path . --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd
+```
+
+These checks cover Operator/order-point anchor state, close/far/roam goals around guard points, guard return limits,
+marker and replacement-drone inheritance, recall, manager-owned InputMap actions, hold-fire cancellation, and suppression
+of accidental Operator primary fire while issuing an order.
+
 For Sundered Keep asset wiring specifically:
 
 ```bash

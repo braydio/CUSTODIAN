@@ -49,6 +49,9 @@ enum FollowDistance {
 @export var hold_leash_range: float = 360.0
 @export var intercept_standoff: float = 72.0
 @export var recall_distance: float = 30.0
+@export var guard_order_leash_range: float = 520.0
+@export var guard_order_engage_range: float = 420.0
+@export var guard_order_return_range: float = 460.0
 
 
 static func mode_name(mode: int) -> String:

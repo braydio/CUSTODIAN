@@ -118,7 +118,7 @@ func _update_status_label() -> void:
 		return
 	var fire_text := "FIRE" if fire_at_will else "HOLD"
 	var follow_text := get_follow_distance_name().replace("FREE_ROAM", "ROAM")
-	status_label.text = "%s / %s" % [fire_text, follow_text]
+	status_label.text = "%s %s / %s" % [get_anchor_mode_name(), follow_text, fire_text]
 
 
 func _get_health_ratio() -> float:

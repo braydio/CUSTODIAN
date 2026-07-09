@@ -3,11 +3,19 @@ class_name DroneSquadState
 
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 
+enum AnchorKind {
+	OPERATOR,
+	ORDER_POINT,
+}
+
 @export var max_active_drones: int = 2
 @export var max_reserve_drones: int = 0
 @export var current_mode: int = DroneCommandProfileScript.Mode.FOLLOW
 @export var fire_at_will: bool = true
 @export var current_follow_distance: int = DroneCommandProfileScript.FollowDistance.CLOSE
+@export var anchor_kind: AnchorKind = AnchorKind.OPERATOR
+@export var order_anchor_position: Vector2 = Vector2.ZERO
+@export var order_anchor_active: bool = false
 
 var active_drone_ids: Array[String] = []
 var destroyed_drone_ids: Array[String] = []
@@ -56,6 +64,25 @@ func cycle_follow_distance() -> int:
 	return current_follow_distance
 
 
+func set_order_anchor(position: Vector2) -> void:
+	order_anchor_position = position
+	order_anchor_active = true
+	anchor_kind = AnchorKind.ORDER_POINT
+
+
+func clear_order_anchor() -> void:
+	order_anchor_active = false
+	anchor_kind = AnchorKind.OPERATOR
+
+
+func has_order_anchor() -> bool:
+	return order_anchor_active and anchor_kind == AnchorKind.ORDER_POINT
+
+
+func get_anchor_label() -> String:
+	return "GUARD" if has_order_anchor() else "FOLLOW"
+
+
 func get_summary() -> Dictionary:
 	return {
 		"mode": DroneCommandProfileScript.mode_name(current_mode),
@@ -65,4 +92,7 @@ func get_summary() -> Dictionary:
 		"destroyed": destroyed_drone_ids.duplicate(),
 		"reserve": max_reserve_drones,
 		"max_active": max_active_drones,
+		"anchor_kind": get_anchor_label(),
+		"order_anchor_active": has_order_anchor(),
+		"order_anchor_position": order_anchor_position,
 	}

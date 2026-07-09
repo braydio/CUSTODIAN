@@ -20,6 +20,10 @@ func _run() -> void:
 	assert(drone_scene.resource_path == EXPECTED_DROID_SCENE, "Expected main DroneManager to spawn %s, got %s." % [EXPECTED_DROID_SCENE, drone_scene.resource_path])
 	assert(drone_manager.get("toggle_fire_action") == &"drone_toggle_fire", "Expected DroneManager to own fire command input.")
 	assert(drone_manager.get("cycle_follow_distance_action") == &"drone_cycle_follow_distance", "Expected DroneManager to own follow-distance input.")
+	assert(drone_manager.get("issue_guard_order_action") == &"drone_issue_guard_order", "Expected DroneManager to own guard-order input.")
+	assert(drone_manager.get("recall_guard_order_action") == &"drone_recall_order", "Expected DroneManager to own guard recall input.")
+	assert(InputMap.has_action(&"drone_issue_guard_order"), "Expected drone_issue_guard_order InputMap action.")
+	assert(InputMap.has_action(&"drone_recall_order"), "Expected drone_recall_order InputMap action.")
 
 	var droid := drone_scene.instantiate()
 	assert(droid != null, "Expected allied droid scene to instantiate.")
@@ -30,5 +34,5 @@ func _run() -> void:
 
 	droid.free()
 	scene.free()
-	print("[MainSceneAlliedDroidSmoke] ok scene=%s manager_commands=T/G" % EXPECTED_DROID_SCENE)
+	print("[MainSceneAlliedDroidSmoke] ok scene=%s manager_commands=T/G/J+click/K" % EXPECTED_DROID_SCENE)
 	quit(0)

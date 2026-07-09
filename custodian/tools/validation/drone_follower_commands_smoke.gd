@@ -29,6 +29,15 @@ func _verify_squad_state() -> void:
 	assert(state.cycle_follow_distance() == DroneCommandProfileScript.FollowDistance.FAR, "CLOSE should cycle to FAR.")
 	assert(state.cycle_follow_distance() == DroneCommandProfileScript.FollowDistance.FREE_ROAM, "FAR should cycle to FREE_ROAM.")
 	assert(state.cycle_follow_distance() == DroneCommandProfileScript.FollowDistance.CLOSE, "FREE_ROAM should cycle to CLOSE.")
+	var guard_position := Vector2(640.0, 384.0)
+	state.set_order_anchor(guard_position)
+	assert(state.has_order_anchor(), "set_order_anchor should activate guard anchoring.")
+	assert(state.anchor_kind == DroneSquadStateScript.AnchorKind.ORDER_POINT, "Guard order should use ORDER_POINT anchor kind.")
+	assert(state.order_anchor_position == guard_position, "Guard order should retain world position.")
+	assert(state.get_anchor_label() == "GUARD", "Active order anchor should report GUARD.")
+	state.clear_order_anchor()
+	assert(not state.has_order_anchor(), "clear_order_anchor should restore Operator anchoring.")
+	assert(state.get_anchor_label() == "FOLLOW", "Cleared order anchor should report FOLLOW.")
 	var summary := state.get_summary()
 	assert(summary.get("fire_at_will") == true, "Summary should include fire_at_will.")
 	assert(summary.get("follow_distance") == "CLOSE", "Summary should include follow_distance.")
@@ -44,6 +53,8 @@ func _verify_follow_profile_contract() -> void:
 	assert(profile.free_roam_min_radius < profile.free_roam_max_radius, "FREE_ROAM patrol band should have min < max.")
 	assert(profile.free_roam_leash_range >= profile.free_roam_max_radius, "FREE_ROAM leash should contain patrol band.")
 	assert(profile.free_roam_repath_min > 0.0 and profile.free_roam_repath_max >= profile.free_roam_repath_min, "FREE_ROAM repath timing should be positive and ordered.")
+	assert(profile.guard_order_engage_range <= profile.guard_order_leash_range, "Guard engage range should fit inside guard leash.")
+	assert(profile.guard_order_return_range <= profile.guard_order_leash_range, "Guard return range should fit inside guard leash.")
 
 
 func _verify_combat_drone_fire_cancel() -> void:
@@ -98,6 +109,54 @@ func _verify_follow_bands_and_free_roam_goals() -> void:
 	assert(roam_goal_b.distance_to(roam_goal_a) > 8.0, "FREE_ROAM should periodically choose a new patrol goal without enemies.")
 	assert(roam_goal_b.distance_to(operator.global_position) <= droid.profile.free_roam_leash_range + 0.1, "New FREE_ROAM goal should also stay leashed.")
 
+	var guard_position := Vector2(1500.0, 1100.0)
+	droid.call("set_order_anchor", guard_position)
+	assert(droid.get("order_anchor_active") == true, "Droid should activate order anchor.")
+	assert(droid.call("_get_anchor_position") == guard_position, "Droid should resolve guard point as active anchor.")
+	droid.global_position = guard_position + Vector2(8.0, 0.0)
+	var operator_enemy := Node2D.new()
+	operator_enemy.name = "OperatorEnemy"
+	operator_enemy.add_to_group("enemy")
+	scene_root.add_child(operator_enemy)
+	operator_enemy.global_position = operator.global_position + Vector2(40.0, 0.0)
+	var guard_enemy := Node2D.new()
+	guard_enemy.name = "GuardEnemy"
+	guard_enemy.add_to_group("enemy")
+	scene_root.add_child(guard_enemy)
+	guard_enemy.global_position = guard_position + Vector2(80.0, 0.0)
+	droid.call("_refresh_target")
+	assert(droid.target == guard_enemy, "Guard targeting should prefer enemies inside the guard zone instead of near the Operator.")
+	guard_enemy.global_position = guard_position + Vector2(droid.profile.guard_order_engage_range + 20.0, 0.0)
+	droid.call("_refresh_target")
+	assert(droid.target == null, "Guard target should clear after leaving guard engage range.")
+
+	droid.call("set_follow_distance_mode", DroneCommandProfileScript.FollowDistance.CLOSE)
+	var guard_close_goal: Vector2 = droid.call("_get_desired_position")
+	assert(guard_close_goal.distance_to(guard_position) >= droid.profile.follow_player_separation_radius - 0.1, "GUARD CLOSE should use close formation around guard point.")
+	droid.call("_update_visuals")
+	var status_label := droid.get_node_or_null("StatusLabel") as Label
+	assert(status_label != null and status_label.text.begins_with("GUARD CLOSE"), "Droid status should expose GUARD CLOSE.")
+
+	droid.call("set_follow_distance_mode", DroneCommandProfileScript.FollowDistance.FAR)
+	var guard_far_goal: Vector2 = droid.call("_get_desired_position")
+	assert(guard_far_goal.distance_to(guard_position) >= droid.profile.follow_far_min_radius - 0.1, "GUARD FAR should hold a perimeter around guard point.")
+
+	droid.call("set_follow_distance_mode", DroneCommandProfileScript.FollowDistance.FREE_ROAM)
+	droid.set("_roam_repath_timer", 0.0)
+	var guard_roam_goal: Vector2 = droid.call("_get_desired_position")
+	assert(guard_roam_goal.distance_to(guard_position) <= droid.profile.guard_order_leash_range + 0.1, "GUARD ROAM should stay inside guard leash.")
+
+	droid.global_position = guard_position + Vector2(droid.profile.guard_order_return_range + 40.0, 0.0)
+	droid.target = Node2D.new()
+	var return_goal: Vector2 = droid.call("_get_desired_position")
+	assert(droid.call("_must_return_to_order_anchor"), "Droid outside guard return range should force return.")
+	assert(return_goal.distance_to(guard_position) < droid.global_position.distance_to(guard_position), "Forced return goal should move toward guard anchor.")
+	droid.target.free()
+	droid.target = null
+
+	droid.call("clear_order_anchor")
+	assert(droid.call("_get_anchor_position") == operator.global_position, "Recall should restore Operator anchor position.")
+
 	scene_root.queue_free()
 	await process_frame
 
@@ -135,6 +194,12 @@ func _verify_manager_propagation_and_spawn_inheritance() -> void:
 	assert(first.get("fire_at_will") == false and second.get("fire_at_will") == false, "Manager should propagate HOLD FIRE to all live droids.")
 	assert(first.get("follow_distance_mode") == DroneCommandProfileScript.FollowDistance.FAR, "Manager should propagate FAR follow to first droid.")
 	assert(second.get("follow_distance_mode") == DroneCommandProfileScript.FollowDistance.FAR, "Manager should propagate FAR follow to second droid.")
+	var guard_position := Vector2(920.0, 760.0)
+	manager.issue_guard_order(guard_position)
+	assert(manager.has_guard_order(), "Manager should activate guard order.")
+	assert(first.get("order_anchor_active") == true and first.get("order_anchor_position") == guard_position, "Manager should propagate guard anchor to first droid.")
+	assert(second.get("order_anchor_active") == true and second.get("order_anchor_position") == guard_position, "Manager should propagate guard anchor to second droid.")
+	assert(manager.get("_guard_order_marker") != null, "Guard order should create a world marker.")
 
 	second.call("take_damage", 999.0)
 	manager.set_fire_at_will(true)
@@ -148,6 +213,13 @@ func _verify_manager_propagation_and_spawn_inheritance() -> void:
 	assert(replacement != null, "DroneManager should spawn a replacement after pruning freed droids.")
 	assert(replacement.get("fire_at_will") == true, "Newly spawned droid should inherit current fire discipline.")
 	assert(replacement.get("follow_distance_mode") == DroneCommandProfileScript.FollowDistance.FAR, "Newly spawned droid should inherit current follow distance.")
+	assert(replacement.get("order_anchor_active") == true, "Newly spawned droid should inherit active guard order.")
+	assert(replacement.get("order_anchor_position") == guard_position, "Replacement should inherit guard anchor position.")
+
+	manager.recall_guard_order()
+	assert(not manager.has_guard_order(), "Recall should clear manager guard state.")
+	assert(replacement.get("order_anchor_active") == false, "Recall should restore replacement to Operator anchor.")
+	assert(manager.get("_guard_order_marker") == null, "Recall should clear the guard-order marker reference.")
 
 	game_root.queue_free()
 	await process_frame
