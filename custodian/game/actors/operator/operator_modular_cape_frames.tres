@@ -1,8 +1,8 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://cvtirf2pohxjb"]
 
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__nw__6f__96.png" id="2_7an8j"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__n__3f__96.png" id="2_cape_run"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__ne__6f__96.png" id="3_cqmhe"]
+[ext_resource type="Texture2D" uid="uid://j40s5wk0kwn1" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__nw__6f__96.png" id="2_7an8j"]
+[ext_resource type="Texture2D" uid="uid://dhymj6l4wk1r5" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__n__3f__96.png" id="2_cape_run"]
+[ext_resource type="Texture2D" uid="uid://b4wa8f8yk06bu" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__ne__6f__96.png" id="3_cqmhe"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cape_run_0"]
 atlas = ExtResource("2_cape_run")

@@ -32,7 +32,9 @@ func _run() -> void:
 
 func _validate_input_binding() -> void:
 	_assert_true(InputMap.has_action("use_field_patch"), "use_field_patch input action should exist")
-	_assert_true(_action_has_key("use_field_patch", KEY_B), "use_field_patch should include B")
+	_assert_true(_action_has_key("use_field_patch", KEY_P), "use_field_patch should include P")
+	_assert_true(not _action_has_key("use_field_patch", KEY_B), "use_field_patch should not share B with build")
+	_assert_true(_action_has_key("build", KEY_B), "build should keep B")
 
 
 func _validate_commit(root: Node) -> void:

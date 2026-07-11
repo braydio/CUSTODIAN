@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://qse5vf2ywrq3"
-path="res://.godot/imported/operator__modular_upper_body__unarmed__parry_01__e__5f__96.png-5571f2dc13e1459f4e4ff2596257b8fe.ctex"
+uid="uid://co5mditq22mgh"
+path="res://.godot/imported/enemy_grunt__body__melee__stagger_01__w__8f__96.png-de29cac8d245678d84a6f0dd166ae3bc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/modules/new_operator/upper_body/actions/unarmed/parry_01/operator__modular_upper_body__unarmed__parry_01__e__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__parry_01__e__5f__96.png-5571f2dc13e1459f4e4ff2596257b8fe.ctex"]
+source_file="res://content/sprites/enemies/enemy_grunt/enemy_grunt__body__melee__stagger_01__w__8f__96.png"
+dest_files=["res://.godot/imported/enemy_grunt__body__melee__stagger_01__w__8f__96.png-de29cac8d245678d84a6f0dd166ae3bc.ctex"]
 
 [params]
 
