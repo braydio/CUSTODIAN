@@ -1,10 +1,10 @@
 # Vehicle Registry + Pilotable Vehicle System — Persistent Design Doc
 
 **Status:** persistent / canonical design document  
-**Implementation tracked in:** `design/20_features/in_progress/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md`  
+**Implementation tracked in:** `design/02_features/vehicles/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md`  
 **Last Updated:** 2026-05-27
 
-This is the authoritative, persistent design specification for the Vehicle Registry and Pilotable Vehicle system. Implementation progress, code references, and runtime tracking live in the `20_features/in_progress/` companion document.
+This is the authoritative, persistent design specification for the Vehicle Registry and Pilotable Vehicle system. Implementation progress, code references, and runtime tracking live under `design/02_features/vehicles/`.
 
 ---
 
@@ -21,7 +21,7 @@ Below is a Codex-ready implementation design.
 Create:
 
 ```text
-design/20_features/in_progress/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md
+design/02_features/vehicles/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md
 ```
 
 Optional implementation proposal file, to satisfy the older implementation-doc convention:
@@ -881,7 +881,7 @@ Use this with Codex:
 ```text
 Implement the CUSTODIAN Vehicle Registry + Pilotable Vehicle system from:
 
-design/20_features/in_progress/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md
+design/02_features/vehicles/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md
 
 Requirements:
 - Preserve the scalable classification taxonomy: faction, domain, chassis, role, tier, variant, loadout, mobility, tags.

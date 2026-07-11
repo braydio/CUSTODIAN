@@ -2,7 +2,7 @@
 
 ## Scope
 
-Audit target: `design/20_features/in_progress/SECTOR_DAMAGE_SYSTEM.md`
+Audit target: `design/02_features/sector_damage/SECTOR_DAMAGE_SYSTEM.md`
 
 Runtime compared:
 

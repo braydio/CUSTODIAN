@@ -176,12 +176,17 @@ Parry / guard:
 - Empty offhand and `offhand_guard_item_equipped` both route offhand secondary to the defense path.
 - Holding offhand secondary starts guard immediately; the guard becomes fully active after a short guard-ready delay.
 - Pressing primary while offhand secondary is held starts parry windup, then opens a short active parry window.
-- Releasing offhand secondary exits guard. If parry recovery finishes while secondary is still held, the operator returns to guard; if secondary was released, the operator returns to normal stance.
-- A front-facing perfect parry cancels the incoming enemy hit, calls `apply_parry_stagger(...)` on the attacker when available, refunds stamina, and opens a short counter window that boosts the next fast melee/unarmed hit.
+- Releasing offhand secondary exits guard. If failed-parry recovery finishes while secondary is still held, the operator re-enters guard through `block_enter`; if secondary was released, the operator returns to normal stance. No parry path may snap directly into `block_hold`.
+- Failed parry is not a separate miss animation or VFX branch. When the active parry window expires without success, the Operator lets the original `parry_01` attempt finish, then returns to neutral or re-enters guard through `block_enter` if offhand secondary is still held.
+- A front-facing perfect parry cancels the incoming enemy hit, calls `apply_parry_stagger(...)` on the attacker when available, refunds stamina, opens the enemy-owned vulnerable/critical-open window where supported, and requires block release/repress before guard can be raised again.
+- Attack input after a successful parry resolves contextually: the Operator first looks for an enemy that validates `can_receive_parry_critical_from(self)`. Only then may it start the explicit critical branch; otherwise it falls back to the normal melee/unarmed attack path.
+- The previously misnamed 8-frame `operator__body__unarmed__parry_miss_01__{e,w}__8f__96.png` sheets are currently runtime-mapped as `operator_critical_1h_right/left` for the fast parry-critical attack. They are not parry miss assets.
+- Enemies own critical validation and consumption through `receive_parry_critical(...)`. Arbitrary `take_damage()` is normal damage and must not be the only critical-consumption path.
 - For `enemy_grunt`, parry critical-open and critical-hit presentation is exclusive: opening the window cancels any queued standard `flinch_fx_s`, and consuming the window plays `crit_s` plus `crit_fx_s` without the normal white body hit flash. Standard flinch/body-flash presentation remains available for non-critical damage.
-- Successful parry now adds a world-space contact spark at the captured impact point and attaches a floating BREACH marker plus duration-driven countdown reticle to a critical-open grunt. Gameplay timing remains `_parry_critical_window_timer` in `enemy.gd`; VFX only visualize it and are removed on consumption or expiry. Required runtime strips are `content/sprites/effects/combat/critical/combat_fx__parry_success_hit_spark_01__6f__128.png`, `combat_fx__breach_alert__8f__96-48.png`, and `combat_fx__breach_timer_reticle__12f__128.png`. Optional posture-break/expiry strips remain non-blocking and warn once when absent.
+- Successful parry now adds a world-space contact spark plus an independently owned one-shot success burst at the captured impact point and attaches a floating BREACH marker plus duration-driven countdown reticle to a critical-open grunt. Gameplay timing remains `_parry_critical_window_timer` in `enemy.gd`; VFX only visualize it and are removed on consumption or expiry. Required runtime strips are `content/sprites/effects/combat/critical/combat_fx__parry_success_hit_spark_01__6f__128.png`, `combat_fx__breach_alert__8f__96-48.png`, and `combat_fx__breach_timer_reticle__12f__128.png`. Optional posture-break/expiry strips remain non-blocking and warn once when absent.
 - Guard uses the existing block state presentation, drains stamina per hit, and reduces incoming damage to chip damage instead of fully negating it.
 - Enemy damage application must check parry first, guard second, then damage. Presentation fallbacks are allowed when parry animations are missing, but simulation authority stays in `operator.gd` and `enemy.gd`.
+- Detailed parry/critical branching authority lives in `design/02_features/combat_feel/PARRY_CRITICAL_BRANCHING_AND_VFX.md`.
 
 ### Runtime control contract
 
@@ -227,9 +232,10 @@ Unarmed block presentation uses the modular lower/upper body stack: authored ent
 reaction clips play through the existing block state path, and exit reuses entry in reverse. Parry gameplay now uses
 the same state path for timing, plays the generated modular `parry_01` lower/upper/FX stack when available, and falls
 back to block animations when `unarmed_parry*` clips are missing. The curated `parry_01` playback is intentionally
-registered at 12 FPS for a slightly heavier read. Successful parries route their burst through
-`PLACEHOLDER_unarmed_parry_success_fx*`, currently sourced from the normal parry FX strip and clearly named for
-replacement when the dedicated success FX is supplied.
+registered at 12 FPS for a slightly heavier read. Successful parries spawn an independent world-space success burst
+at the captured contact point. It currently reuses the validated six-frame contact strip through a dedicated one-shot
+scene, so post-parry body/neutral transitions cannot hide it. `PLACEHOLDER_unarmed_parry_success_fx*` remains an
+optional modular motion overlay; missing directional coverage warns and falls back without owning success readability.
 
 Asset rule: unarmed body motion and unarmed FX should be separate runtime layers. If an existing clean body strip
 matches the needed motion, reuse it for body frames and put fist impact/trail pixels in an unarmed FX overlay.

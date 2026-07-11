@@ -1,9 +1,15 @@
 # CURRENT STATE — CUSTODIAN
 
-Last updated: 2026-07-08
+Last updated: 2026-07-09
 
 ## Runtime Status
 
+- Parry/critical branching is explicitly documented in `design/02_features/combat_feel/PARRY_CRITICAL_BRANCHING_AND_VFX.md` with a packet at `custodian/docs/ai_context/task_packets/PARRY_CRITICAL_BRANCHING_AND_VFX.md`. Failed parries no longer have a `parry_miss` animation or VFX branch: active-window expiry lets the original `parry_01` read finish, then returns neutral or re-enters held guard only through `block_enter`. Successful parries keep the release/repress guard rule, open enemy-owned critical vulnerability where supported, and attack input only starts the critical branch after finding an enemy that validates `can_receive_parry_critical_from(...)`. `enemy.gd` owns explicit `receive_parry_critical(...)` consumption instead of relying on arbitrary `take_damage()` to consume BREACH/ring state. The previously misnamed 8-frame `operator__body__unarmed__parry_miss_01__{e,w}__8f__96.png` sheets are currently mapped in code as `operator_critical_1h_right/left` for the fast critical attack.
+- If an enemy hit lands during a committed parry attempt that does not validate as a successful parry, the Operator now cancels the failed attempt, plays the existing blocking hit-react animation, and still takes the incoming damage. Marine dash respects this result flag so dash impact recoil does not overwrite the block-hit presentation.
+- Removed `ranged_2h_aim_cape` animation block from `operator_modular_cape_frames.tres` — no production `operator__modular_wardrobe_cape__ranged_2h__*` source sheets exist, so the entry was wired to a wrong unarmed fast-recovery cape. The operator now gracefully hides the cape layer during ranged aim instead of playing mismatched art.
+- Fixed `operator.tscn` default `ModularCapeSprite` animation from the removed `ranged_2h_aim_cape` to `unarmed_run_cape`, and updated `operator_modular_defense_ranged_smoke.gd` to expect the cape to stay hidden during ranged aim.
+- Doc-drift remediation: swept all `design/20_features/` references across design docs under `02_features/` and change-control docs, updating 8 files to point to the active `02_features/` paths. Archived/historical references left in place. Only intentional historical/retired references remain.
+- Operator parry-success readability no longer depends on `ModularUpperFxSprite` surviving the 0.03-second success-to-neutral transition. Successful parries now spawn a dedicated world-space one-shot burst at the captured contact point; modular `PLACEHOLDER_unarmed_parry_success_fx*` remains optional motion dressing with missing-direction warnings. Enemy grunt BREACH/ring timing and all parry simulation timings are unchanged.
 - Allied combat-drone guard commands now support hostile designation. While `J` is held, a valid hostile under the pointer receives a red command reticle; clicking assigns it as the explicit squad target and anchors the order at its position. Empty-ground clicks retain ordinary guard placement, and targets remain constrained by guard engagement/return/leash rules.
 - Sundered Keep is the first destination wrapped by the shared `LevelDefinition` / `LevelRegistry` / `LevelLoader` contract. `WorldIngressSite` resolves `sundered_keep_front_gate` from `res://content/levels/levels.json` and enters the existing four-stage route. The direct approach remains a failure fallback; Gothic Compound, Home, Ash-Bell, and Return Causeway are not migrated yet.
 - Active runtime: Godot 4.x project in `custodian/`.
@@ -27,23 +33,19 @@ Last updated: 2026-07-08
   collision, navigation, interactables, or TileMap authority and is covered by `return_causeway_parallax_smoke.gd`.
 - Sundered Keep Approach production runtime now lives at
   `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` as a full script-built vista/traversal
-  scene. It fits ocean/cliff/fog underlay, horizon sky, far sea, distant keep, vista fog, Return Causeway path art,
-  fortress mass, occluders, and a second-beat `GrandVistaRoot` hero overlook panorama to explicit world `Rect2`s; the
-  distant keep uses its intended hero silhouette rect instead of the old stretched proxy. The approach now has two vista
-  beats separated by a real playable traversal section: the initial approach reveal/traversal vista, then a later
-  grand hero overlook where the generated grand-vista panorama/fog/spray/parapet presentation layer fades in at
-  `SecondVistaStart`/`SecondVistaFull` and fades back out by `SecondVistaEnd`. `GrandVistaRoot` remains hidden during
-  the first reveal and middle traversal gap, and `sundered_keep_approach_smoke.gd` validates marker ordering plus the
-  hidden/reveal/hidden grand-vista window. The approach now applies
-  a local soft-rectangle feather shader to the fitted matte plates, adds visual-only grounding shadows under the path
-  chunks, and wires the saved grand-vista glue overlays under `GrandVistaGlueRoot` for horizon seam fog, path contact
-  shadow, foreground edge masking, and edge spray wrap. The production underlay correction patch candidates are
-  intentionally not required because the current production underlay remains acceptable; they are optional future polish
-  only. Collision is a single `PathBoundaryCollision` `StaticBody2D` made from `SegmentShape2D` perimeter rails, not
-  filled walkable polygons, and `GrandVistaRoot` is visual-only with no collision, navigation, or deterministic simulation
-  authority. Procgen ingress now defers the approach transition out of `Area2D.body_entered`, and the approach defers
-  dynamic boundary/exit-trigger physics setup by one frame to avoid Godot physics-query flush errors while keeping the
-  perimeter rails active.
+  scene. It now uses one authored `ApproachRouteMaster` sprite from
+  `res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png` as the only active
+  `PlayableRoot` ground render; the older five path chunks remain only behind the disabled legacy branch. New approach
+  support layers live under `res://content/backgrounds/sundered_keep/approach/`, with fog strips in `approach/fog/`:
+  ocean void, cliff spires, route contact shadow, first-vista horizon/fog veil, edge mist, final gate shadow veil, and
+  three optional fog strips. The first vista fades `VistaRoot` from `RevealStart` to `RevealFull`; `GrandVistaRoot`
+  remains hidden through the first reveal and middle traversal gap, then uses the existing grand-vista assets during the
+  later `SecondVistaStart`/`SecondVistaFull`/`SecondVistaEnd` window. `ApproachFinalGateShadowVeil` starts hidden and
+  fades in from `SecondVistaEnd` toward `ReturnTopdown`. Collision is a single `PathBoundaryCollision` `StaticBody2D`
+  made from 28 `SegmentShape2D` rails, not image alpha or filled walkable polygons, and `GrandVistaRoot` remains
+  visual-only with no collision, navigation, or deterministic simulation authority. Procgen ingress still defers the
+  approach transition out of `Area2D.body_entered`, and the approach defers dynamic boundary/exit-trigger physics setup
+  by one frame to avoid Godot physics-query flush errors while keeping the perimeter rails active.
 - Sundered Keep access now follows the explicit ingress chain:
   procgen world placement -> `WorldIngressSite` -> authored Sundered Keep approach/vista -> final fade ->
   `SunderedKeepMap`. Procgen owns where the ingress appears, the approach owns the reveal/vista/fade presentation,

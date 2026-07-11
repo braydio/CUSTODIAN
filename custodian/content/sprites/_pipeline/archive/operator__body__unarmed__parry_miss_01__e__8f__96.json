@@ -1,0 +1,23 @@
+{
+  "source": "operator__body__unarmed__parry_miss_01__e__8f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/runtime/body/unarmed/operator__body__unarmed__parry_miss_01__e__8f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "operator_curated_resources"
+  ]
+}

@@ -3,12 +3,22 @@ class_name SunderedKeepApproach
 
 const SOFT_RECT_FEATHER_SHADER := preload("res://game/world/approaches/sundered_keep/soft_rect_feather.gdshader")
 
-const OCEAN_UNDERLAY_PATH := "res://content/backgrounds/sundered_keep/ocean_underlay.png"
-const CLIFF_DEPTH_UNDERLAY_PATH := "res://content/backgrounds/sundered_keep/cliff_depth_underlay.png"
-const HORIZON_SKY_PATH := "res://content/backgrounds/sundered_keep/horizon_sky.png"
-const FAR_SEA_PATH := "res://content/backgrounds/sundered_keep/far_sea.png"
-const DISTANT_KEEP_PATH := "res://content/backgrounds/sundered_keep/distant_sundered_keep.png"
-const VISTA_FOG_BAND_PATH := "res://content/backgrounds/sundered_keep/vista_fog_band.png"
+const USE_ROUTE_MASTER := true
+
+const APPROACH_ROUTE_MASTER := "res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png"
+
+const APPROACH_OCEAN_VOID_UNDERLAY := "res://content/backgrounds/sundered_keep/approach/approach_ocean_void_underlay.png"
+const APPROACH_CLIFF_SPIRES_UNDERLAY := "res://content/backgrounds/sundered_keep/approach/approach_cliff_spires_underlay.png"
+const APPROACH_ROUTE_CONTACT_SHADOW := "res://content/backgrounds/sundered_keep/approach/approach_route_contact_shadow.png"
+const APPROACH_EDGE_MIST_WRAP := "res://content/backgrounds/sundered_keep/approach/approach_edge_mist_wrap.png"
+const APPROACH_FIRST_VISTA_HORIZON := "res://content/backgrounds/sundered_keep/approach/approach_first_vista_horizon.png"
+const APPROACH_FIRST_VISTA_FOG_VEIL := "res://content/backgrounds/sundered_keep/approach/approach_first_vista_fog_veil.png"
+const APPROACH_FINAL_GATE_SHADOW_VEIL := "res://content/backgrounds/sundered_keep/approach/approach_final_gate_shadow_veil.png"
+
+const APPROACH_FOG_STRIP_01 := "res://content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_01.png"
+const APPROACH_FOG_STRIP_02 := "res://content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_02.png"
+const APPROACH_FOG_STRIP_03 := "res://content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_03.png"
+
 const GRAND_VISTA_PANORAMA := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_panorama.png"
 const GRAND_VISTA_FOG := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_fog_overlay.png"
 const GRAND_VISTA_PARAPET := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png"
@@ -25,19 +35,16 @@ const OVERLOOK_LEDGE_PATH := "res://content/sprites/world/return_causeway/path/o
 const LATERAL_TRAVERSE_PATH := "res://content/sprites/world/return_causeway/path/lateral_traverse_path.png"
 const FORTRESS_WALL_MASS_PATH := "res://content/sprites/world/return_causeway/path/fortress_wall_mass.png"
 
-const CLIFF_OCCLUDER_PATH := "res://content/sprites/world/return_causeway/occlusion/cliff_occluder.png"
-const WALL_SHADOW_OCCLUDER_PATH := "res://content/sprites/world/return_causeway/occlusion/wall_shadow_occluder.png"
-const UNDERLAY_FOG_BAND_PATH := "res://content/sprites/world/return_causeway/underlay/underlay_fog_band.png"
-
 const TARGET_SCENE_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
 
-const RECT_OCEAN_UNDERLAY := Rect2(Vector2(-900.0, -700.0), Vector2(2100.0, 1400.0))
-const RECT_CLIFF_DEPTH_UNDERLAY := Rect2(Vector2(-500.0, -440.0), Vector2(520.0, 540.0))
-const RECT_FOG_UNDERLAY := Rect2(Vector2(-900.0, -620.0), Vector2(2100.0, 360.0))
-const RECT_HORIZON_SKY := Rect2(Vector2(-900.0, -700.0), Vector2(2100.0, 380.0))
-const RECT_FAR_SEA := Rect2(Vector2(-900.0, -520.0), Vector2(2100.0, 260.0))
-const RECT_DISTANT_KEEP := Rect2(Vector2(-260.0, -670.0), Vector2(540.0, 250.0))
-const RECT_VISTA_FOG_BAND := Rect2(Vector2(-900.0, -380.0), Vector2(2100.0, 160.0))
+const RECT_ROUTE_MASTER := Rect2(Vector2(-620.0, -660.0), Vector2(2048.0, 1706.0))
+const RECT_APPROACH_UNDERLAY := Rect2(Vector2(-1000.0, -900.0), Vector2(2600.0, 1800.0))
+const RECT_FIRST_VISTA_HORIZON := Rect2(Vector2(-1000.0, -980.0), Vector2(2600.0, 1460.0))
+const RECT_FIRST_VISTA_FOG_VEIL := Rect2(Vector2(-1000.0, -360.0), Vector2(2600.0, 720.0))
+const RECT_FINAL_GATE_SHADOW_VEIL := Rect2(Vector2(-1000.0, -520.0), Vector2(2600.0, 900.0))
+const RECT_FOG_STRIP_01 := Rect2(Vector2(-880.0, -430.0), Vector2(1500.0, 520.0))
+const RECT_FOG_STRIP_02 := Rect2(Vector2(-260.0, -420.0), Vector2(1500.0, 520.0))
+const RECT_FOG_STRIP_03 := Rect2(Vector2(320.0, -410.0), Vector2(1500.0, 520.0))
 const RECT_GRAND_VISTA_PANORAMA := Rect2(Vector2(-1280.0, -920.0), Vector2(2560.0, 1440.0))
 const RECT_GRAND_VISTA_SPRAY := Rect2(Vector2(-1280.0, -160.0), Vector2(2560.0, 720.0))
 const RECT_GRAND_VISTA_FOG := Rect2(Vector2(-1280.0, -520.0), Vector2(2560.0, 480.0))
@@ -53,33 +60,46 @@ const RECT_HILL_CLIMB := Rect2(Vector2(-190.0, -120.0), Vector2(400.0, 240.0))
 const RECT_OVERLOOK_LEDGE := Rect2(Vector2(-320.0, -320.0), Vector2(640.0, 200.0))
 const RECT_LATERAL_TRAVERSE := Rect2(Vector2(260.0, -260.0), Vector2(520.0, 180.0))
 const RECT_FORTRESS_WALL_MASS := Rect2(Vector2(650.0, -420.0), Vector2(350.0, 380.0))
-const RECT_CLIFF_OCCLUDER := Rect2(Vector2(520.0, -420.0), Vector2(520.0, 540.0))
-const RECT_WALL_SHADOW_OCCLUDER := Rect2(Vector2(-900.0, -360.0), Vector2(2100.0, 130.0))
 
-const ENTRY_SPAWN_POS := Vector2(-80.0, 430.0)
-const REVEAL_START_POS := Vector2(-40.0, 80.0)
-const REVEAL_FULL_POS := Vector2(0.0, -250.0)
-const TRAVERSE_START_POS := Vector2(260.0, -180.0)
-const TRAVERSE_END_POS := Vector2(760.0, -170.0)
-const RETURN_TOPDOWN_POS := Vector2(720.0, -80.0)
-const SECOND_VISTA_START_POS := Vector2(420.0, -180.0)
-const SECOND_VISTA_FULL_POS := Vector2(560.0, -185.0)
-const SECOND_VISTA_END_POS := Vector2(700.0, -175.0)
+const ENTRY_SPAWN_POS := Vector2(45.0, 430.0)
+const REVEAL_START_POS := Vector2(-40.0, 120.0)
+const REVEAL_FULL_POS := Vector2(-150.0, -175.0)
+const MID_GAMEPLAY_START_POS := Vector2(50.0, -235.0)
+const SECOND_VISTA_START_POS := Vector2(300.0, -305.0)
+const SECOND_VISTA_FULL_POS := Vector2(590.0, -305.0)
+const SECOND_VISTA_END_POS := Vector2(830.0, -305.0)
+const TRAVERSE_END_POS := Vector2(915.0, -305.0)
+const RETURN_TOPDOWN_POS := Vector2(980.0, -305.0)
 
 const BOUNDARY_SEGMENTS := [
-	[Vector2(-280.0, 520.0), Vector2(80.0, 520.0)],
-	[Vector2(80.0, 520.0), Vector2(170.0, 280.0)],
-	[Vector2(170.0, 280.0), Vector2(80.0, 120.0)],
-	[Vector2(-140.0, 120.0), Vector2(-300.0, 300.0)],
-	[Vector2(-300.0, 300.0), Vector2(-280.0, 520.0)],
-	[Vector2(-140.0, 120.0), Vector2(-190.0, -120.0)],
-	[Vector2(130.0, 120.0), Vector2(210.0, -120.0)],
-	[Vector2(-260.0, -120.0), Vector2(-320.0, -320.0)],
-	[Vector2(-320.0, -320.0), Vector2(320.0, -320.0)],
-	[Vector2(320.0, -320.0), Vector2(300.0, -260.0)],
-	[Vector2(260.0, -260.0), Vector2(780.0, -260.0)],
-	[Vector2(780.0, -260.0), Vector2(780.0, -80.0)],
-	[Vector2(780.0, -80.0), Vector2(300.0, -80.0)],
+	[Vector2(-125.0, 505.0), Vector2(120.0, 505.0)],
+	[Vector2(-125.0, 505.0), Vector2(-205.0, 392.0)],
+	[Vector2(120.0, 505.0), Vector2(188.0, 388.0)],
+	[Vector2(-205.0, 392.0), Vector2(-190.0, 246.0)],
+	[Vector2(188.0, 388.0), Vector2(150.0, 242.0)],
+	[Vector2(-190.0, 246.0), Vector2(-125.0, 118.0)],
+	[Vector2(150.0, 242.0), Vector2(62.0, 108.0)],
+	[Vector2(-125.0, 118.0), Vector2(-238.0, -56.0)],
+	[Vector2(62.0, 108.0), Vector2(-30.0, -74.0)],
+	[Vector2(-238.0, -56.0), Vector2(-320.0, -202.0)],
+	[Vector2(-30.0, -74.0), Vector2(-130.0, -218.0)],
+	[Vector2(-320.0, -202.0), Vector2(-305.0, -344.0)],
+	[Vector2(-130.0, -218.0), Vector2(58.0, -320.0)],
+	[Vector2(-305.0, -344.0), Vector2(-70.0, -420.0)],
+	[Vector2(58.0, -320.0), Vector2(240.0, -402.0)],
+	[Vector2(-70.0, -420.0), Vector2(242.0, -444.0)],
+	[Vector2(240.0, -402.0), Vector2(448.0, -408.0)],
+	[Vector2(242.0, -444.0), Vector2(470.0, -460.0)],
+	[Vector2(448.0, -408.0), Vector2(666.0, -410.0)],
+	[Vector2(470.0, -460.0), Vector2(690.0, -466.0)],
+	[Vector2(666.0, -410.0), Vector2(885.0, -392.0)],
+	[Vector2(690.0, -466.0), Vector2(935.0, -456.0)],
+	[Vector2(885.0, -392.0), Vector2(1055.0, -362.0)],
+	[Vector2(935.0, -456.0), Vector2(1115.0, -430.0)],
+	[Vector2(1055.0, -362.0), Vector2(1160.0, -268.0)],
+	[Vector2(1115.0, -430.0), Vector2(1245.0, -320.0)],
+	[Vector2(1160.0, -268.0), Vector2(1035.0, -215.0)],
+	[Vector2(1245.0, -320.0), Vector2(1110.0, -235.0)],
 ]
 
 var _ingress_config: Dictionary = {}
@@ -95,7 +115,7 @@ var markers_root: Node2D = null
 var entry_spawn: Marker2D = null
 var reveal_start: Marker2D = null
 var reveal_full: Marker2D = null
-var traverse_start: Marker2D = null
+var mid_gameplay_start: Marker2D = null
 var traverse_end: Marker2D = null
 var return_topdown: Marker2D = null
 var second_vista_start: Marker2D = null
@@ -154,12 +174,12 @@ func _ensure_roots() -> void:
 	entry_spawn = _ensure_marker("EntrySpawn", ENTRY_SPAWN_POS)
 	reveal_start = _ensure_marker("RevealStart", REVEAL_START_POS)
 	reveal_full = _ensure_marker("RevealFull", REVEAL_FULL_POS)
-	traverse_start = _ensure_marker("TraverseStart", TRAVERSE_START_POS)
-	traverse_end = _ensure_marker("TraverseEnd", TRAVERSE_END_POS)
-	return_topdown = _ensure_marker("ReturnTopdown", RETURN_TOPDOWN_POS)
+	mid_gameplay_start = _ensure_marker("MidGameplayStart", MID_GAMEPLAY_START_POS)
 	second_vista_start = _ensure_marker("SecondVistaStart", SECOND_VISTA_START_POS)
 	second_vista_full = _ensure_marker("SecondVistaFull", SECOND_VISTA_FULL_POS)
 	second_vista_end = _ensure_marker("SecondVistaEnd", SECOND_VISTA_END_POS)
+	traverse_end = _ensure_marker("TraverseEnd", TRAVERSE_END_POS)
+	return_topdown = _ensure_marker("ReturnTopdown", RETURN_TOPDOWN_POS)
 
 
 func _ensure_node2d_root(node_name: String, z: int) -> Node2D:
@@ -211,33 +231,22 @@ func _build_visuals() -> void:
 	_clear_children(occlusion_root)
 	vista_root.modulate.a = 0.0
 	_grand_vista_root.modulate.a = 0.0
-	occlusion_root.modulate.a = 0.0
+	occlusion_root.modulate.a = 1.0
 
-	_add_fitted_sprite(underlay_root, "OceanUnderlay", OCEAN_UNDERLAY_PATH, RECT_OCEAN_UNDERLAY, 0, Color.WHITE)
+	_add_fitted_sprite(underlay_root, "ApproachOceanVoidUnderlay", APPROACH_OCEAN_VOID_UNDERLAY, RECT_APPROACH_UNDERLAY, -30, Color.WHITE)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(underlay_root, "CliffDepthUnderlay", CLIFF_DEPTH_UNDERLAY_PATH, RECT_CLIFF_DEPTH_UNDERLAY, 1, Color(0.82, 0.86, 0.92, 0.82)),
-		Vector4(0.16, 0.30, 0.20, 0.28)
+		_add_fitted_sprite(underlay_root, "ApproachCliffSpiresUnderlay", APPROACH_CLIFF_SPIRES_UNDERLAY, RECT_APPROACH_UNDERLAY, -20, Color(1.0, 1.0, 1.0, 0.75)),
+		Vector4(0.12, 0.12, 0.14, 0.22)
 	)
-	_apply_soft_rect_feather(
-		_add_fitted_sprite(underlay_root, "FogUnderlay", UNDERLAY_FOG_BAND_PATH, RECT_FOG_UNDERLAY, 2, Color(1.0, 1.0, 1.0, 0.22)),
-		Vector4(0.18, 0.18, 0.36, 0.34)
-	)
+	_add_fitted_sprite(underlay_root, "ApproachRouteContactShadow", APPROACH_ROUTE_CONTACT_SHADOW, RECT_ROUTE_MASTER, -5, Color(1.0, 1.0, 1.0, 0.85))
 
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(vista_root, "HorizonSky", HORIZON_SKY_PATH, RECT_HORIZON_SKY, 0, Color(0.86, 0.90, 1.0, 0.92)),
-		Vector4(0.06, 0.06, 0.08, 0.24)
+		_add_fitted_sprite(vista_root, "ApproachFirstVistaHorizon", APPROACH_FIRST_VISTA_HORIZON, RECT_FIRST_VISTA_HORIZON, 0, Color.WHITE),
+		Vector4(0.06, 0.06, 0.08, 0.18)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(vista_root, "FarSea", FAR_SEA_PATH, RECT_FAR_SEA, 1, Color(0.86, 0.90, 1.0, 0.86)),
-		Vector4(0.08, 0.08, 0.28, 0.30)
-	)
-	_apply_soft_rect_feather(
-		_add_fitted_sprite(vista_root, "DistantSunderedKeep", DISTANT_KEEP_PATH, RECT_DISTANT_KEEP, 2, Color(0.90, 0.94, 1.0, 0.84)),
-		Vector4(0.18, 0.18, 0.16, 0.34)
-	)
-	_apply_soft_rect_feather(
-		_add_fitted_sprite(vista_root, "VistaFogBand", VISTA_FOG_BAND_PATH, RECT_VISTA_FOG_BAND, 3, Color(1.0, 1.0, 1.0, 0.72)),
-		Vector4(0.14, 0.14, 0.36, 0.36)
+		_add_fitted_sprite(vista_root, "ApproachFirstVistaFogVeil", APPROACH_FIRST_VISTA_FOG_VEIL, RECT_FIRST_VISTA_FOG_VEIL, 10, Color(1.0, 1.0, 1.0, 0.65)),
+		Vector4(0.08, 0.08, 0.18, 0.24)
 	)
 
 	_apply_soft_rect_feather(
@@ -278,6 +287,19 @@ func _build_visuals() -> void:
 		Vector4(0.08, 0.08, 0.18, 0.08)
 	)
 
+	if USE_ROUTE_MASTER:
+		_add_fitted_sprite(playable_root, "ApproachRouteMaster", APPROACH_ROUTE_MASTER, RECT_ROUTE_MASTER, 0, Color.WHITE)
+	else:
+		_build_legacy_path_chunks()
+
+	_add_fitted_sprite(occlusion_root, "ApproachEdgeMistWrap", APPROACH_EDGE_MIST_WRAP, RECT_ROUTE_MASTER, 5, Color(1.0, 1.0, 1.0, 0.55))
+	_add_fitted_sprite(occlusion_root, "ApproachFogStrip01", APPROACH_FOG_STRIP_01, RECT_FOG_STRIP_01, 8, Color(1.0, 1.0, 1.0, 0.28))
+	_add_fitted_sprite(occlusion_root, "ApproachFogStrip02", APPROACH_FOG_STRIP_02, RECT_FOG_STRIP_02, 9, Color(1.0, 1.0, 1.0, 0.22))
+	_add_fitted_sprite(occlusion_root, "ApproachFogStrip03", APPROACH_FOG_STRIP_03, RECT_FOG_STRIP_03, 10, Color(1.0, 1.0, 1.0, 0.18))
+	_add_fitted_sprite(occlusion_root, "ApproachFinalGateShadowVeil", APPROACH_FINAL_GATE_SHADOW_VEIL, RECT_FINAL_GATE_SHADOW_VEIL, 20, Color(1.0, 1.0, 1.0, 0.0))
+
+
+func _build_legacy_path_chunks() -> void:
 	_add_grounding_shadow("MainlandApproachShadow", PackedVector2Array([
 		Vector2(-315.0, 145.0), Vector2(190.0, 250.0), Vector2(120.0, 535.0), Vector2(-330.0, 535.0)
 	]), -32, Color(0.02, 0.025, 0.035, 0.30))
@@ -293,9 +315,6 @@ func _build_visuals() -> void:
 	_add_fitted_sprite(playable_root, "OverlookLedge", OVERLOOK_LEDGE_PATH, RECT_OVERLOOK_LEDGE, -22, Color.WHITE)
 	_add_fitted_sprite(playable_root, "LateralTraversePath", LATERAL_TRAVERSE_PATH, RECT_LATERAL_TRAVERSE, -21, Color.WHITE)
 	_add_fitted_sprite(playable_root, "FortressWallMass", FORTRESS_WALL_MASS_PATH, RECT_FORTRESS_WALL_MASS, 30, Color.WHITE)
-
-	_add_fitted_sprite(occlusion_root, "CliffOccluder", CLIFF_OCCLUDER_PATH, RECT_CLIFF_OCCLUDER, 120, Color(1.0, 1.0, 1.0, 0.0))
-	_add_fitted_sprite(occlusion_root, "WallShadowOccluder", WALL_SHADOW_OCCLUDER_PATH, RECT_WALL_SHADOW_OCCLUDER, 130, Color(1.0, 1.0, 1.0, 0.0))
 
 
 func _add_fitted_sprite(
@@ -405,12 +424,13 @@ func _ensure_vista_controller() -> void:
 	vista_controller.end_marker_path = NodePath("../Markers/ReturnTopdown")
 	vista_controller.vista_root_path = NodePath("../VistaRoot")
 	vista_controller.grand_vista_root_path = NodePath("../GrandVistaRoot")
-	vista_controller.vista_fog_band_path = NodePath("../VistaRoot/VistaFogBand")
-	vista_controller.fog_underlay_path = NodePath("../UnderlayRoot/FogUnderlay")
+	vista_controller.vista_fog_band_path = NodePath("../VistaRoot/ApproachFirstVistaFogVeil")
+	vista_controller.fog_underlay_path = NodePath("")
 	vista_controller.occlusion_root_path = NodePath("../OcclusionRoot")
-	vista_controller.cliff_occluder_path = NodePath("../OcclusionRoot/CliffOccluder")
-	vista_controller.wall_shadow_occluder_path = NodePath("../OcclusionRoot/WallShadowOccluder")
-	vista_controller.distant_keep_path = NodePath("../VistaRoot/DistantSunderedKeep")
+	vista_controller.cliff_occluder_path = NodePath("../OcclusionRoot/ApproachEdgeMistWrap")
+	vista_controller.wall_shadow_occluder_path = NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil")
+	vista_controller.final_gate_shadow_veil_path = NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil")
+	vista_controller.distant_keep_path = NodePath("../VistaRoot/ApproachFirstVistaHorizon")
 	vista_controller.second_vista_start_marker_path = NodePath("../Markers/SecondVistaStart")
 	vista_controller.second_vista_full_marker_path = NodePath("../Markers/SecondVistaFull")
 	vista_controller.second_vista_end_marker_path = NodePath("../Markers/SecondVistaEnd")
@@ -425,7 +445,7 @@ func _ensure_exit_transition_trigger() -> void:
 		exit_transition_trigger.name = "ExitTransitionTrigger"
 		add_child(exit_transition_trigger)
 
-	exit_transition_trigger.position = TRAVERSE_END_POS
+	exit_transition_trigger.position = RETURN_TOPDOWN_POS
 	exit_transition_trigger.target_scene_path = TARGET_SCENE_PATH
 	exit_transition_trigger.vista_controller_path = NodePath("../VistaController")
 	exit_transition_trigger.set_deferred("monitoring", true)

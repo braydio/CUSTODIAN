@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit Sundered Keep Approach source PNG export contracts."""
+"""Audit Sundered Keep Approach route-master PNG contracts."""
 
 from __future__ import annotations
 
@@ -19,13 +19,17 @@ except ImportError:
 ROOT = Path(__file__).resolve().parents[2]
 
 EXPECTED_SIZES = {
-    "content/backgrounds/sundered_keep/ocean_underlay.png": (2100, 1400),
-    "content/backgrounds/sundered_keep/cliff_depth_underlay.png": (520, 540),
-    "content/sprites/world/return_causeway/underlay/underlay_fog_band.png": (2172, 724),
-    "content/backgrounds/sundered_keep/horizon_sky.png": (2100, 380),
-    "content/backgrounds/sundered_keep/far_sea.png": (2100, 260),
-    "content/backgrounds/sundered_keep/distant_sundered_keep.png": (540, 250),
-    "content/backgrounds/sundered_keep/vista_fog_band.png": (2100, 160),
+    "content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png": (4813, 3066),
+    "content/backgrounds/sundered_keep/approach/approach_ocean_void_underlay.png": (1586, 992),
+    "content/backgrounds/sundered_keep/approach/approach_cliff_spires_underlay.png": (2560, 1600),
+    "content/backgrounds/sundered_keep/approach/approach_route_contact_shadow.png": (1536, 1024),
+    "content/backgrounds/sundered_keep/approach/approach_edge_mist_wrap.png": (1536, 1024),
+    "content/backgrounds/sundered_keep/approach/approach_first_vista_horizon.png": (2560, 1440),
+    "content/backgrounds/sundered_keep/approach/approach_first_vista_fog_veil.png": (2560, 1440),
+    "content/backgrounds/sundered_keep/approach/approach_final_gate_shadow_veil.png": (2560, 900),
+    "content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_01.png": (1024, 512),
+    "content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_02.png": (1024, 512),
+    "content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_03.png": (1024, 512),
     "content/backgrounds/sundered_keep/grand_vista/grand_vista_panorama.png": (1672, 941),
     "content/backgrounds/sundered_keep/grand_vista/grand_vista_fog_overlay.png": (1672, 941),
     "content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png": (1672, 941),
@@ -35,24 +39,18 @@ EXPECTED_SIZES = {
     "content/backgrounds/sundered_keep/grand_vista/grand_vista_path_contact_shadow.png": (3546, 443),
     "content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_edge_mask.png": (1672, 941),
     "content/backgrounds/sundered_keep/grand_vista/grand_vista_edge_spray_wrap.png": (1656, 925),
-    "content/sprites/world/return_causeway/path/mainland_approach_path.png": (470, 400),
-    "content/sprites/world/return_causeway/path/hill_climb_path.png": (400, 240),
-    "content/sprites/world/return_causeway/path/overlook_ledge.png": (640, 240),
-    "content/sprites/world/return_causeway/path/lateral_traverse_path.png": (520, 180),
-    "content/sprites/world/return_causeway/path/fortress_wall_mass.png": (360, 380),
-    "content/sprites/world/return_causeway/occlusion/cliff_occluder.png": (520, 540),
-    "content/sprites/world/return_causeway/occlusion/wall_shadow_occluder.png": (2100, 130),
 }
 
-PLAYABLE_ALPHA_REQUIRED = {
-    "content/sprites/world/return_causeway/path/mainland_approach_path.png",
-    "content/sprites/world/return_causeway/path/hill_climb_path.png",
-    "content/sprites/world/return_causeway/path/overlook_ledge.png",
-    "content/sprites/world/return_causeway/path/lateral_traverse_path.png",
-    "content/sprites/world/return_causeway/path/fortress_wall_mass.png",
-}
-
-GRAND_VISTA_ALPHA_REQUIRED = {
+ALPHA_REQUIRED = {
+    "content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png",
+    "content/backgrounds/sundered_keep/approach/approach_route_contact_shadow.png",
+    "content/backgrounds/sundered_keep/approach/approach_edge_mist_wrap.png",
+    "content/backgrounds/sundered_keep/approach/approach_first_vista_horizon.png",
+    "content/backgrounds/sundered_keep/approach/approach_first_vista_fog_veil.png",
+    "content/backgrounds/sundered_keep/approach/approach_final_gate_shadow_veil.png",
+    "content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_01.png",
+    "content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_02.png",
+    "content/backgrounds/sundered_keep/approach/fog/approach_fog_strip_03.png",
     "content/backgrounds/sundered_keep/grand_vista/grand_vista_foreground_parapet.png",
     "content/backgrounds/sundered_keep/grand_vista/grand_vista_ocean_spray_overlay.png",
     "content/backgrounds/sundered_keep/grand_vista/grand_vista_horizon_seam_fog.png",
@@ -84,21 +82,18 @@ def main() -> int:
             if actual_size != expected_size:
                 errors.append(f"{rel_path} expected {expected_size[0]}x{expected_size[1]}, got {actual_size[0]}x{actual_size[1]}")
 
-            if rel_path in PLAYABLE_ALPHA_REQUIRED:
+            if rel_path in ALPHA_REQUIRED:
                 extrema = _alpha_extrema(image)
                 if extrema is None:
-                    errors.append(f"{rel_path} has no alpha channel; re-export playable terrain with transparency outside the terrain shape")
-                elif extrema[0] >= 255:
-                    errors.append(f"{rel_path} is fully opaque; re-export playable terrain with transparent non-terrain pixels")
-
-            if rel_path in GRAND_VISTA_ALPHA_REQUIRED:
-                extrema = _alpha_extrema(image)
-                if extrema is None:
-                    errors.append(f"{rel_path} has no alpha channel; re-export grand-vista overlay with real transparency")
+                    errors.append(f"{rel_path} has no alpha channel; export with real transparency")
                 elif extrema[0] >= 255:
                     errors.append(f"{rel_path} is fully opaque; remove baked checkerboard/matte and preserve real alpha")
                 elif extrema[1] <= 0:
                     errors.append(f"{rel_path} is fully transparent; overlay needs visible nontransparent pixels")
+
+    legacy_fog_paths = sorted((ROOT / "content/backgrounds/sundered_keep/approach").glob("approach_fog_strip_*.png"))
+    for path in legacy_fog_paths:
+        errors.append(f"fog strip should live under approach/fog/: {path.relative_to(ROOT)}")
 
     if errors:
         for error in errors:

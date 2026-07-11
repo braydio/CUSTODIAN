@@ -31,7 +31,7 @@ The shrumb's drops affect the player's cognitive state along three axes:
 |---------|--------------|--------|----------------|-------------|
 | `faint_recollection` | Faint Recollection | Common | recollection | A faint recollection shed by forest shrumbs. It stirs toward something once known, but does not gather enough to become it. |
 | `residual_instinct` | Residual Instinct | Uncommon | instinct | A dull instinct held among forest shrumbs. It compels movement without aim, settling where decision never took hold. |
-| `ancient_bearing` | Ancient Bearing | Rare | bearing | A fragment of orientation from the elder days, carried by the shrumb. It suggests a place once held among the ordered things, though no memory of it remains. |
+| `ancient_bearing` | Ancient Bearing | Rare | bearing | The Shrumb was not born lost.\n\nIn the elder days, this aspect gave it bearing, turning it toward a station that answered from beyond the forest.\n\nThe station is silent now. Rarely, upon death, the essence sublimates, and goes on seeking the signal that taught it where to face. |
 
 ---
 

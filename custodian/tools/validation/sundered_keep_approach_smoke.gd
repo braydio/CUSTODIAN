@@ -2,7 +2,7 @@ extends SceneTree
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
 const KEEP_SCENE := preload("res://game/world/sundered_keep/sundered_keep_map.tscn")
-const EXPECTED_BOUNDARY_SEGMENTS := 13
+const EXPECTED_BOUNDARY_SEGMENTS := 28
 
 const EXPECTED_ROOTS := {
 	"UnderlayRoot": -300,
@@ -13,13 +13,11 @@ const EXPECTED_ROOTS := {
 }
 
 const EXPECTED_SPRITE_RECTS := {
-	"UnderlayRoot/OceanUnderlay": Rect2(Vector2(-900, -700), Vector2(2100, 1400)),
-	"UnderlayRoot/CliffDepthUnderlay": Rect2(Vector2(-500, -440), Vector2(520, 540)),
-	"UnderlayRoot/FogUnderlay": Rect2(Vector2(-900, -620), Vector2(2100, 360)),
-	"VistaRoot/HorizonSky": Rect2(Vector2(-900, -700), Vector2(2100, 380)),
-	"VistaRoot/FarSea": Rect2(Vector2(-900, -520), Vector2(2100, 260)),
-	"VistaRoot/DistantSunderedKeep": Rect2(Vector2(-260, -670), Vector2(540, 250)),
-	"VistaRoot/VistaFogBand": Rect2(Vector2(-900, -380), Vector2(2100, 160)),
+	"UnderlayRoot/ApproachOceanVoidUnderlay": Rect2(Vector2(-1000, -900), Vector2(2600, 1800)),
+	"UnderlayRoot/ApproachCliffSpiresUnderlay": Rect2(Vector2(-1000, -900), Vector2(2600, 1800)),
+	"UnderlayRoot/ApproachRouteContactShadow": Rect2(Vector2(-620, -660), Vector2(2048, 1706)),
+	"VistaRoot/ApproachFirstVistaHorizon": Rect2(Vector2(-1000, -980), Vector2(2600, 1460)),
+	"VistaRoot/ApproachFirstVistaFogVeil": Rect2(Vector2(-1000, -360), Vector2(2600, 720)),
 	"GrandVistaRoot/GrandVistaPanorama": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
 	"GrandVistaRoot/GrandVistaOceanSprayOverlay": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
 	"GrandVistaRoot/GrandVistaFogOverlay": Rect2(Vector2(-1280, -520), Vector2(2560, 480)),
@@ -29,35 +27,41 @@ const EXPECTED_SPRITE_RECTS := {
 	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaPathContactShadow": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
 	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaEdgeSprayWrap": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
 	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaForegroundEdgeMask": Rect2(Vector2(-1280, 220), Vector2(2560, 420)),
-	"PlayableRoot/MainlandApproachPath": Rect2(Vector2(-300, 120), Vector2(470, 400)),
-	"PlayableRoot/HillClimbPath": Rect2(Vector2(-190, -120), Vector2(400, 240)),
-	"PlayableRoot/OverlookLedge": Rect2(Vector2(-320, -320), Vector2(640, 200)),
-	"PlayableRoot/LateralTraversePath": Rect2(Vector2(260, -260), Vector2(520, 180)),
-	"PlayableRoot/FortressWallMass": Rect2(Vector2(650, -420), Vector2(350, 380)),
-	"OcclusionRoot/CliffOccluder": Rect2(Vector2(520, -420), Vector2(520, 540)),
-	"OcclusionRoot/WallShadowOccluder": Rect2(Vector2(-900, -360), Vector2(2100, 130)),
+	"PlayableRoot/ApproachRouteMaster": Rect2(Vector2(-620, -660), Vector2(2048, 1706)),
+	"OcclusionRoot/ApproachEdgeMistWrap": Rect2(Vector2(-620, -660), Vector2(2048, 1706)),
+	"OcclusionRoot/ApproachFogStrip01": Rect2(Vector2(-880, -430), Vector2(1500, 520)),
+	"OcclusionRoot/ApproachFogStrip02": Rect2(Vector2(-260, -420), Vector2(1500, 520)),
+	"OcclusionRoot/ApproachFogStrip03": Rect2(Vector2(320, -410), Vector2(1500, 520)),
+	"OcclusionRoot/ApproachFinalGateShadowVeil": Rect2(Vector2(-1000, -520), Vector2(2600, 900)),
 }
 
 const EXPECTED_SPRITE_Z := {
-	"PlayableRoot/MainlandApproachPath": -24,
-	"PlayableRoot/HillClimbPath": -23,
-	"PlayableRoot/OverlookLedge": -22,
-	"PlayableRoot/LateralTraversePath": -21,
-	"PlayableRoot/FortressWallMass": 30,
-	"OcclusionRoot/CliffOccluder": 120,
-	"OcclusionRoot/WallShadowOccluder": 130,
+	"PlayableRoot/ApproachRouteMaster": 0,
+	"OcclusionRoot/ApproachEdgeMistWrap": 5,
+	"OcclusionRoot/ApproachFinalGateShadowVeil": 20,
 }
 
+const FORBIDDEN_LEGACY_PLAYABLE := [
+	"MainlandApproachShadow",
+	"OverlookLedgeShadow",
+	"LateralTraverseShadow",
+	"MainlandApproachPath",
+	"HillClimbPath",
+	"OverlookLedge",
+	"LateralTraversePath",
+	"FortressWallMass",
+]
+
 const EXPECTED_MARKERS := {
-	"EntrySpawn": Vector2(-80, 430),
-	"RevealStart": Vector2(-40, 80),
-	"RevealFull": Vector2(0, -250),
-	"TraverseStart": Vector2(260, -180),
-	"TraverseEnd": Vector2(760, -170),
-	"ReturnTopdown": Vector2(720, -80),
-	"SecondVistaStart": Vector2(420, -180),
-	"SecondVistaFull": Vector2(560, -185),
-	"SecondVistaEnd": Vector2(700, -175),
+	"EntrySpawn": Vector2(45, 430),
+	"RevealStart": Vector2(-40, 120),
+	"RevealFull": Vector2(-150, -175),
+	"MidGameplayStart": Vector2(50, -235),
+	"SecondVistaStart": Vector2(300, -305),
+	"SecondVistaFull": Vector2(590, -305),
+	"SecondVistaEnd": Vector2(830, -305),
+	"TraverseEnd": Vector2(915, -305),
+	"ReturnTopdown": Vector2(980, -305),
 }
 
 
@@ -89,6 +93,12 @@ func _init() -> void:
 	if scene.get_node_or_null("Gameplay/WalkableAreas") != null:
 		errors.append("Metadata-only Gameplay/WalkableAreas proxy must not remain in the production runtime scene")
 
+	var playable_root := scene.get_node_or_null("PlayableRoot")
+	if playable_root != null:
+		for node_name: String in FORBIDDEN_LEGACY_PLAYABLE:
+			if playable_root.get_node_or_null(node_name) != null:
+				errors.append("PlayableRoot/%s should not render while USE_ROUTE_MASTER is true" % node_name)
+
 	for node_path: String in EXPECTED_SPRITE_RECTS:
 		var sprite := scene.get_node_or_null(node_path) as Sprite2D
 		if sprite == null:
@@ -97,13 +107,13 @@ func _init() -> void:
 		if sprite.texture == null:
 			errors.append("%s has null texture" % node_path)
 			continue
-			if sprite.centered:
-				errors.append("%s should use centered=false" % node_path)
-			if sprite.z_as_relative:
-				errors.append("%s should use z_as_relative=false" % node_path)
-			if EXPECTED_SPRITE_Z.has(node_path) and sprite.z_index != int(EXPECTED_SPRITE_Z[node_path]):
-				errors.append("%s z_index expected %d, got %d" % [node_path, int(EXPECTED_SPRITE_Z[node_path]), sprite.z_index])
-			_check_sprite_rect(node_path, sprite, EXPECTED_SPRITE_RECTS[node_path] as Rect2, errors)
+		if sprite.centered:
+			errors.append("%s should use centered=false" % node_path)
+		if sprite.z_as_relative:
+			errors.append("%s should use z_as_relative=false" % node_path)
+		if EXPECTED_SPRITE_Z.has(node_path) and sprite.z_index != int(EXPECTED_SPRITE_Z[node_path]):
+			errors.append("%s z_index expected %d, got %d" % [node_path, int(EXPECTED_SPRITE_Z[node_path]), sprite.z_index])
+		_check_sprite_rect(node_path, sprite, EXPECTED_SPRITE_RECTS[node_path] as Rect2, errors)
 
 	var vista_root := scene.get_node_or_null("VistaRoot") as CanvasItem
 	if vista_root == null or vista_root.modulate.a > 0.01:
@@ -114,11 +124,11 @@ func _init() -> void:
 	if grand_vista_root != null:
 		_collect_collision_nodes(grand_vista_root, "GrandVistaRoot must be visual-only", errors)
 	var occlusion_root := scene.get_node_or_null("OcclusionRoot") as CanvasItem
-	if occlusion_root == null or occlusion_root.modulate.a > 0.01:
-		errors.append("OcclusionRoot should start hidden; alpha=%s" % (occlusion_root.modulate.a if occlusion_root else "missing"))
-	var fog_underlay := scene.get_node_or_null("UnderlayRoot/FogUnderlay") as CanvasItem
-	if fog_underlay == null or fog_underlay.modulate.a < 0.24 or fog_underlay.modulate.a > 0.36:
-		errors.append("FogUnderlay should start subtle; alpha=%s" % (fog_underlay.modulate.a if fog_underlay else "missing"))
+	if occlusion_root == null or occlusion_root.modulate.a < 0.99:
+		errors.append("OcclusionRoot should stay visible for edge mist/fog; alpha=%s" % (occlusion_root.modulate.a if occlusion_root else "missing"))
+	var final_gate_veil := scene.get_node_or_null("OcclusionRoot/ApproachFinalGateShadowVeil") as CanvasItem
+	if final_gate_veil == null or final_gate_veil.modulate.a > 0.01:
+		errors.append("ApproachFinalGateShadowVeil should start hidden; alpha=%s" % (final_gate_veil.modulate.a if final_gate_veil else "missing"))
 
 	var markers := scene.get_node_or_null("Markers")
 	if markers == null:
@@ -148,8 +158,8 @@ func _init() -> void:
 				errors.append("%s should use SegmentShape2D, got %s" % [shape.get_path(), shape.shape])
 			else:
 				segment_count += 1
-		if segment_count < EXPECTED_BOUNDARY_SEGMENTS:
-			errors.append("PathBoundaryCollision expected at least %d SegmentShape2D rails, got %d" % [EXPECTED_BOUNDARY_SEGMENTS, segment_count])
+		if segment_count != EXPECTED_BOUNDARY_SEGMENTS:
+			errors.append("PathBoundaryCollision expected %d SegmentShape2D rails, got %d" % [EXPECTED_BOUNDARY_SEGMENTS, segment_count])
 
 	_collect_filled_collision_polygons(scene, errors)
 
@@ -159,48 +169,47 @@ func _init() -> void:
 	else:
 		_check_controller_path(controller, "vista_root_path", NodePath("../VistaRoot"), errors)
 		_check_controller_path(controller, "grand_vista_root_path", NodePath("../GrandVistaRoot"), errors)
-		_check_controller_path(controller, "vista_fog_band_path", NodePath("../VistaRoot/VistaFogBand"), errors)
-		_check_controller_path(controller, "fog_underlay_path", NodePath("../UnderlayRoot/FogUnderlay"), errors)
+		_check_controller_path(controller, "vista_fog_band_path", NodePath("../VistaRoot/ApproachFirstVistaFogVeil"), errors)
 		_check_controller_path(controller, "occlusion_root_path", NodePath("../OcclusionRoot"), errors)
-		_check_controller_path(controller, "cliff_occluder_path", NodePath("../OcclusionRoot/CliffOccluder"), errors)
-		_check_controller_path(controller, "wall_shadow_occluder_path", NodePath("../OcclusionRoot/WallShadowOccluder"), errors)
-		_check_controller_path(controller, "distant_keep_path", NodePath("../VistaRoot/DistantSunderedKeep"), errors)
+		_check_controller_path(controller, "cliff_occluder_path", NodePath("../OcclusionRoot/ApproachEdgeMistWrap"), errors)
+		_check_controller_path(controller, "wall_shadow_occluder_path", NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil"), errors)
+		_check_controller_path(controller, "final_gate_shadow_veil_path", NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil"), errors)
+		_check_controller_path(controller, "distant_keep_path", NodePath("../VistaRoot/ApproachFirstVistaHorizon"), errors)
 		_check_controller_path(controller, "second_vista_start_marker_path", NodePath("../Markers/SecondVistaStart"), errors)
 		_check_controller_path(controller, "second_vista_full_marker_path", NodePath("../Markers/SecondVistaFull"), errors)
 		_check_controller_path(controller, "second_vista_end_marker_path", NodePath("../Markers/SecondVistaEnd"), errors)
+
 		var reveal_start_progress := _marker_progress(scene, "RevealStart", errors)
 		var reveal_full_progress := _marker_progress(scene, "RevealFull", errors)
-		var traverse_start_progress := _marker_progress(scene, "TraverseStart", errors)
-		var traverse_end_progress := _marker_progress(scene, "TraverseEnd", errors)
+		var mid_progress := _marker_progress(scene, "MidGameplayStart", errors)
 		var second_start_progress := _marker_progress(scene, "SecondVistaStart", errors)
 		var second_full_progress := _marker_progress(scene, "SecondVistaFull", errors)
 		var second_end_progress := _marker_progress(scene, "SecondVistaEnd", errors)
+		var traverse_end_progress := _marker_progress(scene, "TraverseEnd", errors)
 		_check_marker_order(
 			reveal_start_progress,
 			reveal_full_progress,
-			traverse_start_progress,
-			traverse_end_progress,
+			mid_progress,
 			second_start_progress,
 			second_full_progress,
 			second_end_progress,
+			traverse_end_progress,
 			errors
 		)
+
 		controller.apply_progress(0.0)
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController should keep GrandVistaRoot hidden before second vista")
+		if final_gate_veil == null or final_gate_veil.modulate.a > 0.01:
+			errors.append("VistaController should keep final gate veil hidden at start")
 		controller.apply_progress(0.15)
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController should not reveal GrandVistaRoot during first approach reveal")
-		if vista_root == null or vista_root.modulate.a < 0.25:
-			errors.append("VistaController should be revealing VistaRoot during first approach reveal")
-		controller.apply_progress(0.45)
 		if vista_root == null or vista_root.modulate.a < 0.9:
-			errors.append("VistaController did not reveal VistaRoot at overlook progress")
-		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
-			errors.append("VistaController should keep GrandVistaRoot hidden through gameplay traversal progress")
+			errors.append("VistaController should reveal VistaRoot by early overlook progress")
 		controller.apply_progress(maxf(reveal_full_progress, second_start_progress - 0.05))
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
-			errors.append("VistaController should keep GrandVistaRoot hidden before second vista marker window")
+			errors.append("VistaController should keep GrandVistaRoot hidden through the gameplay traversal gap")
 		controller.apply_progress(second_full_progress)
 		if grand_vista_root == null or grand_vista_root.modulate.a < 0.85:
 			errors.append("VistaController did not reveal GrandVistaRoot at second vista full marker")
@@ -208,8 +217,8 @@ func _init() -> void:
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController did not hide GrandVistaRoot after second vista marker window")
 		controller.apply_progress(1.0)
-		if occlusion_root == null or occlusion_root.modulate.a < 0.9:
-			errors.append("VistaController did not raise OcclusionRoot alpha at traversal progress")
+		if final_gate_veil == null or final_gate_veil.modulate.a < 0.8:
+			errors.append("VistaController did not raise final gate veil near exit")
 
 	var trigger := scene.get_node_or_null("ExitTransitionTrigger") as SunderedKeepTransitionTrigger
 	if trigger == null:
@@ -217,6 +226,8 @@ func _init() -> void:
 	else:
 		if String(trigger.target_scene_path) != "res://game/world/sundered_keep/sundered_keep_map.gd":
 			errors.append("ExitTransitionTrigger target path is wrong: %s" % trigger.target_scene_path)
+		if not _vec2_nearly_equal(trigger.position, EXPECTED_MARKERS["ReturnTopdown"] as Vector2):
+			errors.append("ExitTransitionTrigger should sit near ReturnTopdown; got %s" % trigger.position)
 		if trigger.get_node_or_null("CollisionShape2D") == null:
 			errors.append("ExitTransitionTrigger missing CollisionShape2D")
 		if trigger.vista_controller_path != NodePath("../VistaController"):
@@ -281,25 +292,25 @@ func _marker_progress(scene: Node2D, marker_name: String, errors: Array[String])
 func _check_marker_order(
 	reveal_start_progress: float,
 	reveal_full_progress: float,
-	traverse_start_progress: float,
-	traverse_end_progress: float,
+	mid_progress: float,
 	second_start_progress: float,
 	second_full_progress: float,
 	second_end_progress: float,
+	traverse_end_progress: float,
 	errors: Array[String]
 ) -> void:
 	if not (reveal_start_progress < reveal_full_progress):
 		errors.append("RevealStart progress must be before RevealFull progress")
-	if not (reveal_full_progress < traverse_start_progress):
-		errors.append("RevealFull progress must be before playable traversal start")
-	if not (traverse_start_progress < second_start_progress):
+	if not (reveal_full_progress < mid_progress):
+		errors.append("RevealFull progress must be before MidGameplayStart progress")
+	if not (mid_progress < second_start_progress):
 		errors.append("SecondVistaStart must come after playable traversal has begun")
 	if second_start_progress - reveal_full_progress < 0.25:
 		errors.append("SecondVistaStart must leave a real gameplay traversal gap after RevealFull")
 	if not (second_start_progress < second_full_progress and second_full_progress < second_end_progress):
 		errors.append("Second vista markers must progress Start < Full < End")
-	if second_end_progress > traverse_end_progress + 0.02:
-		errors.append("SecondVistaEnd should finish before or near TraverseEnd/ReturnTopdown progress")
+	if second_end_progress > traverse_end_progress:
+		errors.append("SecondVistaEnd should finish before TraverseEnd progress")
 
 
 func _collect_filled_collision_polygons(node: Node, errors: Array[String]) -> void:

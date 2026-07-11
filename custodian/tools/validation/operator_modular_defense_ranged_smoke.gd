@@ -21,8 +21,14 @@ func _run() -> void:
 	root.add_child(operator)
 	await process_frame
 
-	_validate_parry_recovery_uses_modular_layers(operator)
+	_validate_parry_attempt_uses_modular_layers(operator)
 	_validate_ranged_2h_stance_uses_modular_layers(operator)
+
+	var heavy_operator := OPERATOR_SCENE.instantiate()
+	root.add_child(heavy_operator)
+	await process_frame
+	_validate_unarmed_heavy_fx_survives_visual_update(heavy_operator)
+	heavy_operator.queue_free()
 
 	operator.queue_free()
 	if _failed:
@@ -33,7 +39,7 @@ func _run() -> void:
 	quit()
 
 
-func _validate_parry_recovery_uses_modular_layers(operator: Node) -> void:
+func _validate_parry_attempt_uses_modular_layers(operator: Node) -> void:
 	operator.set("combat_loadout_mode", "melee")
 	operator.set("primary_weapon_equipped", false)
 	operator.set("using_unarmed", true)
@@ -49,12 +55,40 @@ func _validate_parry_recovery_uses_modular_layers(operator: Node) -> void:
 	var lower_sprite := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
 	var upper_sprite := operator.get("modular_upper_body_sprite") as AnimatedSprite2D
 	var fx_sprite := operator.get("modular_upper_fx_sprite") as AnimatedSprite2D
-	_assert_true(lower_sprite != null and lower_sprite.visible, "parry recovery should show modular lower body")
-	_assert_true(upper_sprite != null and upper_sprite.visible, "parry recovery should show modular upper body")
-	_assert_true(fx_sprite != null and fx_sprite.visible, "parry recovery should show modular upper FX")
+	_assert_true(lower_sprite != null and lower_sprite.visible, "parry success should show modular lower body")
+	_assert_true(upper_sprite != null and upper_sprite.visible, "parry success should show modular upper body")
+	_assert_true(fx_sprite != null and fx_sprite.visible, "parry success should show modular upper FX")
 	_assert_true(lower_sprite != null and lower_sprite.animation == &"unarmed_parry_success_01_right", "parry success recovery should play lower right success_01")
 	_assert_true(upper_sprite != null and upper_sprite.animation == &"unarmed_parry_success_01_right", "parry success recovery should play upper right success_01")
 	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed_parry_success_01_fx_right", "parry success recovery should play right success_01 FX")
+
+	_assert_animation_exists(operator, "modular_lower_body_sprite", &"unarmed_parry_right")
+	_assert_animation_exists(operator, "modular_upper_body_sprite", &"unarmed_parry_right")
+	operator.call("_play_parry_animation", &"unarmed_parry")
+	_assert_true(lower_sprite != null and lower_sprite.animation == &"unarmed_parry_right", "failed parry should keep the parry_01 lower-body attempt animation")
+	_assert_true(upper_sprite != null and upper_sprite.animation == &"unarmed_parry_right", "failed parry should keep the parry_01 upper-body attempt animation")
+
+
+func _validate_unarmed_heavy_fx_survives_visual_update(operator: Node) -> void:
+	operator.call("_exit_ranged_ready")
+	operator.set("combat_loadout_mode", "melee")
+	operator.set("primary_weapon_equipped", false)
+	operator.set("using_unarmed", true)
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+
+	_assert_animation_exists(operator, "melee_fx_overlay_sprite", &"unarmed_attack_heavy_fx_right")
+	operator.call("start_attack", "unarmed_heavy")
+	var fx_sprite := operator.get("melee_fx_overlay_sprite") as AnimatedSprite2D
+	_assert_true(fx_sprite != null and fx_sprite.visible, "unarmed heavy should show its melee FX overlay when the attack starts")
+	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed_attack_heavy_fx_right", "unarmed heavy should play right heavy FX")
+	operator.call("_update_primary_weapon_visual", false)
+	_assert_true(fx_sprite != null and fx_sprite.visible, "unarmed heavy FX should survive the normal weapon visual update")
+	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed_attack_heavy_fx_right", "weapon visual update should not replace unarmed heavy FX")
+	operator.call("_reset_melee_overlay_visuals")
+	operator.set("_melee_active", false)
+	operator.set("_melee_attack_kind", "")
+	operator.set("_melee_attack_key", "")
 
 
 func _validate_ranged_2h_stance_uses_modular_layers(operator: Node) -> void:
@@ -72,7 +106,6 @@ func _validate_ranged_2h_stance_uses_modular_layers(operator: Node) -> void:
 	_assert_animation_exists(operator, "modular_lower_body_sprite", &"ranged_2h_aim_modular_right")
 	_assert_animation_exists(operator, "modular_upper_body_sprite", &"ranged_2h_aim_modular_right")
 	_assert_animation_exists(operator, "modular_sidearm_sprite", &"ranged_2h_aim_modular_right")
-	_assert_animation_exists(operator, "modular_cape_sprite", &"ranged_2h_aim_cape")
 	operator.call("_enter_ranged_ready")
 	_assert_true(bool(operator.call("_is_ranged_ready_active")), "carbine should enter ranged-ready")
 	_assert_true(bool(operator.call("_has_modular_ranged_ready_upper_stack")), "east ranged-ready stack should be accepted")
@@ -85,14 +118,13 @@ func _validate_ranged_2h_stance_uses_modular_layers(operator: Node) -> void:
 	_assert_true(lower_sprite != null and lower_sprite.animation == &"ranged_2h_aim_modular_right", "ranged-ready should play lower east aim raise")
 	_assert_true(upper_sprite != null and upper_sprite.animation == &"ranged_2h_aim_modular_right", "ranged-ready should play upper east aim raise")
 	_assert_true(weapon_sprite != null and weapon_sprite.animation == &"ranged_2h_aim_modular_right", "ranged-ready should play weapon east aim raise")
-	_assert_true(cape_sprite != null and cape_sprite.visible and cape_sprite.animation == &"ranged_2h_aim_cape", "ranged-ready should play optional cape aim layer")
+	_assert_true(cape_sprite == null or not cape_sprite.visible, "ranged-ready should hide cape (no ranged-aim cape animation available)")
 	operator.call("_tick_primary_ranged_action_presentation", 1.0)
 	_assert_true(not bool(operator.call("_is_primary_ranged_aim_presentation_active")), "modular aim raise should finish before stance")
 	_assert_true(bool(operator.call("_sync_modular_ranged_2h_stance_presentation", Vector2.RIGHT)), "east ranged-ready should sync modular stance")
 
 	_assert_true(upper_sprite != null and upper_sprite.animation == &"ranged_2h_stance_modular_right", "ranged-ready should play upper east stance")
 	_assert_true(weapon_sprite != null and weapon_sprite.animation == &"ranged_2h_stance_modular_right", "ranged-ready should play weapon east stance")
-	_assert_true(cape_sprite != null and not cape_sprite.visible, "cape aim layer should hide after stance resumes")
 
 
 func _assert_animation_exists(operator: Node, sprite_property: String, animation_name: StringName) -> void:

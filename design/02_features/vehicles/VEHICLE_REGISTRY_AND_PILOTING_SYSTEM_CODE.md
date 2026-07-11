@@ -1,6 +1,6 @@
 # Vehicle Registry + Pilotable Vehicle — Implementation Notes
 
-**Source spec:** `design/20_features/in_progress/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md`
+**Source spec:** `design/02_features/vehicles/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md`
 **Status:** review → complete (update after validation)
 
 ---

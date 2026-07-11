@@ -638,7 +638,7 @@ Each state file needs to read from the input state to determine transitions.
 | `custodian/entities/operator/animations/animation_state_machine.gd` | State machine backbone |
 | `custodian/entities/operator/animations/states/animation_state.gd` | Base state class |
 | `custodian/entities/operator/animations/states/idle_state.gd` | Example state implementation |
-| `design/20_features/in_progress/8BIT_SPRITE_INTEGRATION.md` | Sprite system documentation |
+| `design/02_features/animation/8BIT_SPRITE_INTEGRATION.md` | Sprite system documentation |
 
 ---
 

@@ -89,7 +89,7 @@ Related docs:
 
 - `design/OPERATOR_ANIMATION_STATE_MACHINE.md`
 - `design/ANIMATION_SYSTEM_MIGRATION.md`
-- `design/20_features/in_progress/COMBAT_FEEL_SYSTEM.md`
+- `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md`
 
 ## Current Problem Points In Code
 

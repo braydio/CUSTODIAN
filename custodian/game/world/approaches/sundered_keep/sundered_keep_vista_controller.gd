@@ -12,6 +12,7 @@ class_name SunderedKeepVistaController
 @export var occlusion_root_path: NodePath
 @export var cliff_occluder_path: NodePath
 @export var wall_shadow_occluder_path: NodePath
+@export var final_gate_shadow_veil_path: NodePath
 @export var distant_keep_path: NodePath
 @export var second_vista_start_marker_path: NodePath
 @export var second_vista_full_marker_path: NodePath
@@ -28,6 +29,7 @@ class_name SunderedKeepVistaController
 
 var _player: Node2D
 var _start: Node2D
+var _reveal_full: Node2D
 var _end: Node2D
 var _vista_root: CanvasItem
 var _grand_vista_root: CanvasItem
@@ -36,6 +38,7 @@ var _fog_underlay: CanvasItem
 var _occlusion_root: CanvasItem
 var _cliff: CanvasItem
 var _shadow: CanvasItem
+var _final_gate_shadow_veil: CanvasItem
 var _keep: CanvasItem
 var _second_vista_start: Marker2D
 var _second_vista_full: Marker2D
@@ -95,10 +98,14 @@ func _resolve_nodes() -> void:
 	_vista_root = get_node_or_null(vista_root_path) as CanvasItem
 	_grand_vista_root = get_node_or_null(grand_vista_root_path) as CanvasItem
 	_vista_fog = get_node_or_null(vista_fog_band_path) as CanvasItem
-	_fog_underlay = get_node_or_null(fog_underlay_path) as CanvasItem
+	if String(fog_underlay_path).is_empty():
+		_fog_underlay = null
+	else:
+		_fog_underlay = get_node_or_null(fog_underlay_path) as CanvasItem
 	_occlusion_root = get_node_or_null(occlusion_root_path) as CanvasItem
 	_cliff = get_node_or_null(cliff_occluder_path) as CanvasItem
 	_shadow = get_node_or_null(wall_shadow_occluder_path) as CanvasItem
+	_final_gate_shadow_veil = get_node_or_null(final_gate_shadow_veil_path) as CanvasItem
 	_keep = get_node_or_null(distant_keep_path) as CanvasItem
 	_second_vista_start = get_node_or_null(second_vista_start_marker_path) as Marker2D
 	_second_vista_full = get_node_or_null(second_vista_full_marker_path) as Marker2D
@@ -109,6 +116,7 @@ func _resolve_nodes() -> void:
 		return
 	if _start == null:
 		_start = approach_root.get_node_or_null("Markers/RevealStart") as Node2D
+	_reveal_full = approach_root.get_node_or_null("Markers/RevealFull") as Node2D
 	if _end == null:
 		_end = approach_root.get_node_or_null("Markers/ReturnTopdown") as Node2D
 	if _vista_root == null:
@@ -116,17 +124,17 @@ func _resolve_nodes() -> void:
 	if _grand_vista_root == null:
 		_grand_vista_root = approach_root.get_node_or_null("GrandVistaRoot") as CanvasItem
 	if _vista_fog == null:
-		_vista_fog = approach_root.get_node_or_null("VistaRoot/VistaFogBand") as CanvasItem
-	if _fog_underlay == null:
-		_fog_underlay = approach_root.get_node_or_null("UnderlayRoot/FogUnderlay") as CanvasItem
+		_vista_fog = approach_root.get_node_or_null("VistaRoot/ApproachFirstVistaFogVeil") as CanvasItem
 	if _occlusion_root == null:
 		_occlusion_root = approach_root.get_node_or_null("OcclusionRoot") as CanvasItem
 	if _cliff == null:
-		_cliff = approach_root.get_node_or_null("OcclusionRoot/CliffOccluder") as CanvasItem
+		_cliff = approach_root.get_node_or_null("OcclusionRoot/ApproachEdgeMistWrap") as CanvasItem
 	if _shadow == null:
-		_shadow = approach_root.get_node_or_null("OcclusionRoot/WallShadowOccluder") as CanvasItem
+		_shadow = approach_root.get_node_or_null("OcclusionRoot/ApproachFinalGateShadowVeil") as CanvasItem
+	if _final_gate_shadow_veil == null:
+		_final_gate_shadow_veil = approach_root.get_node_or_null("OcclusionRoot/ApproachFinalGateShadowVeil") as CanvasItem
 	if _keep == null:
-		_keep = approach_root.get_node_or_null("VistaRoot/DistantSunderedKeep") as CanvasItem
+		_keep = approach_root.get_node_or_null("VistaRoot/ApproachFirstVistaHorizon") as CanvasItem
 	if _second_vista_start == null:
 		_second_vista_start = approach_root.get_node_or_null("Markers/SecondVistaStart") as Marker2D
 	if _second_vista_full == null:
@@ -136,28 +144,30 @@ func _resolve_nodes() -> void:
 
 
 func _apply_progress(t: float) -> void:
-	var reveal := smoothstep(0.0, 0.38, t)
-	var lateral := smoothstep(0.58, 0.92, t)
-	var occlusion := smoothstep(0.58, 0.95, t)
-	var vista_alpha := lerpf(0.0, vista_max_alpha, reveal)
-	vista_alpha = lerpf(vista_alpha, vista_min_lateral_alpha, lateral)
+	var reveal_start_progress := _marker_progress(_start) if _start != null else 0.0
+	var reveal_full_progress := _marker_progress(_reveal_full) if _reveal_full != null else 0.38
+	var first_vista_alpha := smoothstep(reveal_start_progress, reveal_full_progress, t)
+	var second_vista_alpha := _get_second_vista_alpha(t)
+	var exit_shadow_alpha := _get_exit_shadow_alpha(t)
 
 	if _vista_root != null:
-		_vista_root.modulate.a = vista_alpha
+		_vista_root.modulate.a = first_vista_alpha * vista_max_alpha
 	if _grand_vista_root != null:
-		_grand_vista_root.modulate.a = _get_second_vista_alpha(t)
+		_grand_vista_root.modulate.a = second_vista_alpha
 	if _vista_fog != null:
-		_vista_fog.modulate.a = lerpf(0.0, vista_fog_max_alpha, reveal)
+		_vista_fog.modulate.a = lerpf(0.0, vista_fog_max_alpha, first_vista_alpha)
 	if _fog_underlay != null:
 		_fog_underlay.modulate.a = lerpf(fog_underlay_min_alpha, fog_underlay_max_alpha, smoothstep(0.0, 1.0, t))
 	if _occlusion_root != null:
-		_occlusion_root.modulate.a = occlusion
+		_occlusion_root.modulate.a = 1.0
 	if _cliff != null:
-		_cliff.modulate.a = occlusion * cliff_max_alpha
+		_cliff.modulate.a = minf(_cliff.modulate.a, cliff_max_alpha)
 	if _shadow != null:
-		_shadow.modulate.a = smoothstep(0.48, 0.96, t) * shadow_max_alpha
+		_shadow.modulate.a = exit_shadow_alpha * shadow_max_alpha
+	if _final_gate_shadow_veil != null:
+		_final_gate_shadow_veil.modulate.a = exit_shadow_alpha * shadow_max_alpha
 	if _keep != null:
-		_keep.modulate.a = lerpf(1.0, keep_min_alpha, lateral)
+		_keep.modulate.a = lerpf(keep_min_alpha, 1.0, first_vista_alpha)
 
 
 func _get_second_vista_alpha(t: float) -> float:
@@ -188,3 +198,9 @@ func _marker_progress(marker: Node2D) -> float:
 		return 0.0
 	var along := (marker.global_position - _start.global_position).dot(progress_axis.normalized())
 	return clampf(along / total, 0.0, 1.0)
+
+
+func _get_exit_shadow_alpha(t: float) -> float:
+	if _second_vista_end == null or _end == null:
+		return smoothstep(0.82, 1.0, t)
+	return smoothstep(_marker_progress(_second_vista_end), _marker_progress(_end), t)

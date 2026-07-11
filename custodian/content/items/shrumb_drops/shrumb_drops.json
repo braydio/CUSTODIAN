@@ -21,7 +21,7 @@
     {
       "item_id": "ancient_bearing",
       "display_name": "Ancient Bearing",
-      "description": "A remnant of the elder days. This aspect shapes the way the Shrumb orients toward the world. On rare occasions its essence sublimates upon the Shrumb's death, where it will continue to seek the alignment of a station that no longer receives it.",
+      "description": "The Shrumb was not born lost.\n\nIn the elder days, this aspect gave it bearing, turning it toward a station that answered from beyond the forest.\n\nThe station is silent now. Rarely, upon death, the essence sublimates, and goes on seeking the signal that taught it where to face.",
       "stack_size": 999,
       "rarity": "rare",
       "cognitive_axis": "bearing",

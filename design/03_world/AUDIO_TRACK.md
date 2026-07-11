@@ -1,8 +1,8 @@
 ```text
-design/20_features/in_progress/SOUNDTRACK_APPROACH_TRACK.md
+design/02_features/audio/SOUNDTRACK_APPROACH_TRACK.md
 ```
 
-That location matches the active design-doc convention from the project guidance, where Godot-native implementation specs live under `design/20_features/in_progress/`, while active runtime code lives under `custodian/`.
+This document should live under `design/02_features/audio/` to match the current active design-doc convention where Godot-native implementation specs live under `design/02_features/<area>/`, while active runtime code lives under `custodian/`.
 
 # CUSTODIAN Soundtrack — Approach Track
 

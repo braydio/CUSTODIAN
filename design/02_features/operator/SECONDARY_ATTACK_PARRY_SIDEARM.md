@@ -384,7 +384,7 @@ Add/extend:
   8. Attack spam cannot freely cancel into parry unless explicitly allowed by combat state rules.
 
 Update docs:
-- design/20_features/in_progress/PARRY_AND_GUARD_SYSTEM.md
+- design/02_features/combat_feel/PARRY_AND_GUARD_SYSTEM.md
 - Create or update a secondary-slot/loadout section in the combat/equipment docs.
 - Update custodian/docs/ai_context/CURRENT_STATE.md.
 - Call out any documentation drift between existing sidearm fallback behavior and the new loadout-driven secondary action resolver.

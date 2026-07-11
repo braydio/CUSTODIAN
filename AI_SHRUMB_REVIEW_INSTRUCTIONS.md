@@ -51,7 +51,7 @@ For each item, please provide:
 {
 "item_id": "ancient_bearing",
 "display_name": "Ancient Bearing",
-"description": "A fragment of orientation from the elder days, carried by the shrumb.\nIt suggests a place once held among the ordered things, though no memory of it remains.",
+"description": "The Shrumb was not born lost.\n\nIn the elder days, this aspect gave it bearing, turning it toward a station that answered from beyond the forest.\n\nThe station is silent now. Rarely, upon death, the essence sublimates, and goes on seeking the signal that taught it where to face.",
 "stack_size": 999,
 "rarity": "rare",
 "cognitive_axis": "bearing",

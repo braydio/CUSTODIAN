@@ -118,9 +118,9 @@ Use slash commands to run the implementation workflows from design docs:
 
 | Command | Example |
 |--------|---------|
-| `/implement` | `/implement design/20_features/in_progress/TURRET_SYSTEM.md` |
-| `/build-plan` | `/build-plan design/20_features/in_progress/REPAIR_GAMEPLAY_SYSTEM.md` |
-| `/designaudit` | `/designaudit design/20_features/in_progress` |
+| `/implement` | `/implement design/02_features/enemy_director/implementation.md` |
+| `/build-plan` | `/build-plan design/02_features/vehicles/VEHICLES.md` |
+| `/designaudit` | `/designaudit design/02_features/` |
 
 These commands map to scripts under `~/.codex/scripts/`.
 
@@ -24890,9 +24890,9 @@ Use slash commands to run the implementation workflows from design docs:
 
 | Command | Example |
 |--------|---------|
-| `/implement` | `/implement design/20_features/in_progress/TURRET_SYSTEM.md` |
-| `/build-plan` | `/build-plan design/20_features/in_progress/REPAIR_GAMEPLAY_SYSTEM.md` |
-| `/designaudit` | `/designaudit design/20_features/in_progress` |
+| `/implement` | `/implement design/02_features/enemy_director/implementation.md` |
+| `/build-plan` | `/build-plan design/02_features/vehicles/VEHICLES.md` |
+| `/designaudit` | `/designaudit design/02_features/` |
 
 These commands map to scripts under `~/.codex/scripts/`.
 

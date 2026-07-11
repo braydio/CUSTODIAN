@@ -113,7 +113,7 @@ enum AssaultState {
 @export var custom_enemy_fx_scale: Vector2 = Vector2.ONE
 @export var grunt_parry_critical_window_min_sec: float = 0.8
 @export var grunt_critical_breach_marker_offset: Vector2 = Vector2(0.0, -62.0)
-@export var grunt_critical_window_ring_offset: Vector2 = Vector2(0.0, -24.0)
+@export var grunt_critical_window_ring_offset: Vector2 = Vector2.ZERO
 @export var grunt_optional_critical_vfx_enabled: bool = true
 var simulation_tier: String = "active"
 @export var marine_dash_enabled: bool = false
@@ -599,7 +599,7 @@ func _is_marine_dash_hit_window_active() -> bool:
 func _apply_marine_dash_hit(hit_node: Node2D) -> void:
 	var hit_result := _apply_enemy_hit_to_target(hit_node, _marine_dash_current_damage, &"dash")
 
-	if bool(hit_result.get("dodged", false)) or bool(hit_result.get("parried", false)):
+	if bool(hit_result.get("dodged", false)) or bool(hit_result.get("parried", false)) or bool(hit_result.get("block_hitreact", false)):
 		_marine_dash_last_attack_hit = false
 		return
 
@@ -1028,20 +1028,15 @@ func take_damage(amount: float):
 	if dead:
 		return
 
-	var consumed_parry_critical_window := _is_grunt_parry_critical_window_active()
 	health -= amount
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call("on_damaged", self, amount)
 	_on_assault_damage_taken(amount)
-	if consumed_parry_critical_window:
-		_start_crit_reaction()
-	else:
-		_apply_reaction(amount)
+	_apply_reaction(amount)
 	update_visuals()
 	_spawn_damage_popup(amount)
 	
-	# Critical hits own their presentation through crit_s + crit_fx_s.
-	if visual and not consumed_parry_critical_window:
+	if visual:
 		visual.modulate = Color(1, 1, 1)  # Flash white
 		await get_tree().create_timer(0.1).timeout
 		update_visuals()
@@ -1590,6 +1585,42 @@ func _uses_grunt_critical_window() -> bool:
 
 func _is_grunt_parry_critical_window_active() -> bool:
 	return _uses_grunt_critical_window() and _parry_critical_window_timer > 0.0
+
+
+func can_receive_parry_critical_from(attacker: Node2D) -> bool:
+	if attacker == null or not is_instance_valid(attacker):
+		return false
+	return _is_grunt_parry_critical_window_active()
+
+
+func receive_parry_critical(attacker: Node2D, damage_amount: float, hit_data: Dictionary = {}) -> Dictionary:
+	if not can_receive_parry_critical_from(attacker):
+		return {
+			"critical": false,
+			"consumed": false,
+			"damage_applied": 0.0,
+		}
+
+	health -= damage_amount
+	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
+		behavior_state_machine.call("on_damaged", self, damage_amount)
+	_on_assault_damage_taken(damage_amount)
+	_spawn_damage_popup(damage_amount)
+	_start_crit_reaction()
+	update_visuals()
+	if health <= 0:
+		die()
+	return {
+		"critical": true,
+		"consumed": true,
+		"damage_applied": damage_amount,
+	}
+
+
+func has_active_critical_target_reticle() -> bool:
+	return _is_grunt_parry_critical_window_active() \
+		and _critical_window_ring_vfx != null \
+		and is_instance_valid(_critical_window_ring_vfx)
 
 
 func _get_grunt_parry_critical_window_duration(duration: float) -> float:

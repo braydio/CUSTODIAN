@@ -20,6 +20,12 @@ const MELEE_SWING_SCENE := preload("res://game/actors/effects/melee_swing.tscn")
 const TARGET_RING_SCENE := preload("res://game/actors/effects/target_ring.tscn")
 const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
 const PARRY_CONTACT_SPARK_VFX_SCENE := preload("res://game/vfx/combat/parry_contact_spark_vfx.tscn")
+const PARRY_SUCCESS_BURST_VFX_SCENE := preload("res://game/vfx/combat/parry_success_burst_vfx.tscn")
+const CRITICAL_ATTACK_RIGHT_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__parry_miss_01__e__8f__96.png"
+const CRITICAL_ATTACK_LEFT_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__parry_miss_01__w__8f__96.png"
+const CRITICAL_ATTACK_FRAME_COUNT := 8
+const CRITICAL_ATTACK_FRAME_SIZE := Vector2i(96, 96)
+const CRITICAL_ATTACK_FPS := 15.0
 
 enum AttackPhase {
 	NONE,
@@ -261,6 +267,8 @@ var _melee_range_current: float = 0.0
 var _melee_arc_current: float = 0.0
 var _melee_hitbox_active: bool = false
 var _melee_hit_targets: Dictionary = {}
+var _critical_attack_target: Node2D = null
+var _critical_attack_damage: float = 0.0
 var _block_phase: StringName = &""
 var _block_active: bool = false
 var _parry_phase: StringName = &""
@@ -2259,7 +2267,7 @@ func _handle_attack_input() -> void:
 	if _is_ranged_loadout_active():
 		return
 	if _is_attack_primary_just_pressed():
-		_request_current_profile_intent(true)
+		_try_start_contextual_attack()
 		return
 
 
@@ -2293,6 +2301,14 @@ func _try_melee_attack(intent: String = ""):
 		_request_attack_state(requested_kind)
 		return
 	_buffer_attack(requested_kind)
+
+
+func _try_start_contextual_attack() -> void:
+	var critical_target := _find_valid_parry_critical_target()
+	if critical_target != null:
+		_start_critical_attack(critical_target)
+		return
+	_request_current_profile_intent(true)
 
 
 func _try_queue_parry_counter_from_block() -> void:
@@ -2507,10 +2523,9 @@ func _update_parry_guard_timers(delta: float) -> void:
 			if _parry_timer <= 0.0:
 				_parry_active = false
 				_parry_phase = &"recovery"
-				_parry_timer = maxf(0.0, parry_recovery_sec)
+				_parry_timer = maxf(maxf(0.0, parry_recovery_sec), _get_parry_attempt_remaining_duration())
 				_block_phase = &"recovery"
 				_block_active = false
-				_play_parry_animation(&"unarmed_block_exit")
 		&"success", &"recovery":
 			if _parry_timer <= 0.0:
 				var completed_phase := _parry_phase
@@ -2533,11 +2548,42 @@ func _update_parry_guard_timers(delta: float) -> void:
 					_block_active = false
 		&"expired":
 			_parry_phase = &"recovery"
-			_parry_timer = maxf(0.0, parry_recovery_sec)
+			_parry_timer = maxf(maxf(0.0, parry_recovery_sec), _get_parry_attempt_remaining_duration())
 			_guard_requested_from_secondary = false
 			_block_phase = &"recovery"
 			_block_active = false
-			_play_parry_animation(&"unarmed_block_exit")
+
+
+func _get_parry_attempt_remaining_duration() -> float:
+	var direction := _get_attack_aim_direction()
+	if direction.length_squared() <= 0.001:
+		direction = visual_idle_direction
+	if direction.length_squared() <= 0.001:
+		direction = Vector2.DOWN
+
+	var duration := 0.0
+	if _is_current_profile_unarmed() and modular_locomotion_layers_enabled:
+		if modular_lower_body_sprite != null and modular_lower_body_sprite.sprite_frames != null:
+			var lower_anim := AnimationResolver.resolve("unarmed_parry", direction, modular_lower_body_sprite)
+			duration = maxf(duration, _get_sprite_frames_animation_duration(modular_lower_body_sprite.sprite_frames, lower_anim))
+		if modular_upper_body_sprite != null and modular_upper_body_sprite.sprite_frames != null:
+			var upper_anim := AnimationResolver.resolve("unarmed_parry", direction, modular_upper_body_sprite)
+			duration = maxf(duration, _get_sprite_frames_animation_duration(modular_upper_body_sprite.sprite_frames, upper_anim))
+	if animated_sprite != null and animated_sprite.sprite_frames != null:
+		var body_anim := AnimationResolver.resolve("unarmed_parry", direction, animated_sprite)
+		duration = maxf(duration, _get_sprite_frames_animation_duration(animated_sprite.sprite_frames, body_anim))
+	if duration <= 0.0:
+		return 0.0
+	return maxf(0.0, duration - maxf(0.0, parry_windup_sec) - maxf(0.0, parry_active_sec))
+
+
+func _get_sprite_frames_animation_duration(sprite_frames: SpriteFrames, animation_name: StringName) -> float:
+	if not _has_playable_sprite_animation(sprite_frames, animation_name):
+		return 0.0
+	var speed := sprite_frames.get_animation_speed(animation_name)
+	if speed <= 0.001:
+		return 0.0
+	return float(sprite_frames.get_frame_count(animation_name)) / speed
 
 
 func _enter_post_parry_neutral_lock() -> void:
@@ -2641,7 +2687,9 @@ func _can_start_attack_now() -> bool:
 
 
 func _start_attack_by_kind(kind: String) -> void:
-	if kind == "heavy":
+	if kind == "critical":
+		_start_critical_attack(_critical_attack_target)
+	elif kind == "heavy":
 		_start_heavy_attack()
 	elif kind == "fast":
 		_start_fast_attack()
@@ -2690,6 +2738,9 @@ func _get_active_melee_hit_window() -> Dictionary:
 
 
 func _request_attack_state(kind: String) -> void:
+	if kind == "critical":
+		_start_attack_by_kind(kind)
+		return
 	var state_name := "attack_fast"
 	if kind == "heavy":
 		state_name = "attack_heavy"
@@ -2728,6 +2779,8 @@ func _clear_attack_buffer() -> void:
 
 
 func _start_fast_attack() -> void:
+	_critical_attack_target = null
+	_critical_attack_damage = 0.0
 	_active_attack_profile = get_current_combat_profile()
 	_melee_active = true
 	_modular_lower_action_animation = &""
@@ -2818,6 +2871,8 @@ func _begin_fast_attack_strike_phase() -> void:
 
 
 func _start_heavy_attack() -> void:
+	_critical_attack_target = null
+	_critical_attack_damage = 0.0
 	_active_attack_profile = get_current_combat_profile()
 	_modular_upper_action_animation = &""
 	_melee_heavy_anticipating = false
@@ -2907,6 +2962,8 @@ func _update_melee_attack(delta: float) -> void:
 	_melee_duration = 0.0
 	_melee_heavy_anticipating = false
 	_melee_fast_windup = false
+	_critical_attack_target = null
+	_critical_attack_damage = 0.0
 	disable_hitbox()
 	_melee_hit_targets.clear()
 	if not _melee_recovery_active:
@@ -2949,7 +3006,16 @@ func _apply_melee_hitbox_tick() -> void:
 		if angle > (_melee_arc_current * 0.5):
 			continue
 		var impact_position := _resolve_melee_impact_position(enemy)
-		enemy.take_damage(_melee_damage_current)
+		var critical_consumed := false
+		if _melee_attack_kind == "critical" and enemy == _critical_attack_target and enemy.has_method("receive_parry_critical"):
+			var result: Variant = enemy.call("receive_parry_critical", self, _critical_attack_damage, {
+				"impact_position": impact_position,
+				"attack_key": _melee_attack_key,
+			})
+			if result is Dictionary:
+				critical_consumed = bool((result as Dictionary).get("critical", false))
+		if not critical_consumed:
+			enemy.take_damage(_melee_damage_current)
 		_melee_hit_targets[enemy_id] = true
 		var knockback_dir := global_position.direction_to(enemy.global_position)
 		var knockback_force: float = _active_melee_attack_profile.knockback_force if _active_melee_attack_profile != null else (melee_fast_knockback_force if _melee_attack_kind == "fast" else melee_heavy_knockback_force)
@@ -3122,6 +3188,20 @@ func try_guard_incoming_attack(damage: float, hit_direction: Vector2) -> Diction
 	}
 
 
+func _is_failed_parry_hitreact_context() -> bool:
+	return not _parry_phase.is_empty() and _parry_phase != &"success"
+
+
+func _play_failed_parry_block_hitreact() -> void:
+	_parry_active = false
+	_parry_phase = &""
+	_parry_timer = 0.0
+	_block_phase = &"hitreact"
+	_block_active = false
+	_guard_requested_from_secondary = false
+	_play_block_animation(&"melee_2h_block_hitreact")
+
+
 func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dictionary) -> void:
 	var contact_position := global_position
 	if hit_data.get("impact_position") is Vector2:
@@ -3154,7 +3234,7 @@ func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dicti
 
 	_play_parry_animation(&"unarmed_parry_success")
 	_spawn_parry_contact_spark(contact_position)
-	_spawn_parry_success_fx()
+	_spawn_parry_success_fx(contact_position)
 	_notify_camera_attack_impact(hit_direction, false)
 
 
@@ -3178,7 +3258,9 @@ func _play_parry_animation(base_animation: StringName) -> void:
 		direction = Vector2.DOWN
 
 	var fallback := &"unarmed_block_enter"
-	if base_animation == &"unarmed_parry_success":
+	if base_animation == &"unarmed_parry_recovery":
+		fallback = &"unarmed_block_exit"
+	elif base_animation == &"unarmed_parry_success":
 		fallback = &"unarmed_block_hitreact"
 	elif base_animation == &"unarmed_parry_success_01":
 		fallback = &"unarmed_block_exit"
@@ -3231,7 +3313,11 @@ func _play_modular_unarmed_parry(base_animation: String, direction: Vector2) -> 
 	animated_sprite.visible = false
 
 	if modular_upper_fx_sprite != null and modular_upper_fx_sprite.sprite_frames != null:
-		var fx_base := "unarmed_parry_success_01_fx" if base_animation == "unarmed_parry_success_01" else "unarmed_parry_fx"
+		var fx_base := "unarmed_parry_fx"
+		if base_animation == "unarmed_parry_success_01":
+			fx_base = "unarmed_parry_success_01_fx"
+		elif base_animation == "unarmed_parry_recovery":
+			fx_base = "unarmed_parry_recovery_fx"
 		var fx_anim := AnimationResolver.resolve(fx_base, direction, modular_upper_fx_sprite)
 		if _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_anim):
 			modular_upper_fx_sprite.visible = true
@@ -3241,20 +3327,138 @@ func _play_modular_unarmed_parry(base_animation: String, direction: Vector2) -> 
 	return true
 
 
-func _spawn_parry_success_fx() -> void:
+func _spawn_parry_success_fx(contact_position: Vector2) -> Node2D:
+	var burst := PARRY_SUCCESS_BURST_VFX_SCENE.instantiate() as Node2D
+	if burst == null:
+		push_error("[CombatVfx] Required parry success burst scene could not instantiate.")
+		return null
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	parent.add_child(burst)
+	burst.global_position = contact_position
+
 	var direction := _get_attack_aim_direction()
 	if direction.length_squared() <= 0.001:
 		direction = visual_idle_direction
 	if direction.length_squared() <= 0.001:
 		direction = Vector2.DOWN
 	if _play_modular_parry_fx(direction, "PLACEHOLDER_unarmed_parry_success_fx"):
+		return burst
+	var placeholder_animation := AnimationResolver.resolve(
+		"PLACEHOLDER_unarmed_parry_success_fx",
+		direction,
+		modular_upper_fx_sprite
+	)
+	_warn_missing_animation_once(String(placeholder_animation), "independent world-space parry success burst")
+	_play_modular_parry_fx(direction, "unarmed_parry_fx")
+	return burst
+
+
+func _find_valid_parry_critical_target() -> Node2D:
+	var best_target: Node2D = null
+	var best_distance := INF
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if not (enemy is Node2D):
+			continue
+		var enemy_node := enemy as Node2D
+		if enemy_node == null or not is_instance_valid(enemy_node):
+			continue
+		if enemy_node.has_method("is_dead") and bool(enemy_node.call("is_dead")):
+			continue
+		if not enemy_node.has_method("can_receive_parry_critical_from"):
+			continue
+		if not bool(enemy_node.call("can_receive_parry_critical_from", self)):
+			continue
+		if not _is_enemy_in_preview_strike_zone(enemy_node):
+			continue
+		var distance := global_position.distance_to(enemy_node.global_position)
+		if distance < best_distance:
+			best_distance = distance
+			best_target = enemy_node
+	return best_target
+
+
+func _start_critical_attack(target: Node2D) -> void:
+	if target == null or not is_instance_valid(target):
+		_try_melee_attack()
 		return
-	if _play_modular_parry_fx(direction, "unarmed_parry_fx"):
+	if _melee_active or melee_cooldown_remaining > 0.0:
+		_critical_attack_target = target
+		_buffer_attack("critical")
 		return
-	var fx_animation := AnimationResolver.resolve("unarmed_parry_fx", direction, melee_fx_overlay_sprite)
-	if not _play_named_melee_fx_overlay(fx_animation):
-		_warn_missing_animation_once(String(fx_animation), "melee impact spark fallback")
-		_spawn_melee_impact(global_position + direction.normalized() * 22.0)
+
+	_active_attack_profile = get_current_combat_profile()
+	_active_melee_attack_profile = _get_current_melee_attack_profile("fast")
+	_modular_lower_action_animation = &""
+	_modular_upper_action_animation = &""
+	_modular_upper_fx_action_animation = &""
+	_melee_heavy_anticipating = false
+	_melee_fast_windup = false
+	_melee_fast_combo_step = 0
+	_melee_attack_kind = "critical"
+	_melee_attack_key = "critical_attack_01"
+	_critical_attack_target = target
+	_notify_camera_attack_windup(true)
+
+	_melee_forward = global_position.direction_to(target.global_position)
+	if _melee_forward.length_squared() <= 0.001:
+		_melee_forward = _get_melee_forward_direction()
+	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
+
+	var damage := melee_fast_hit_damage * parry_counter_damage_multiplier
+	var attack_range := melee_range
+	var attack_arc := melee_arc_degrees
+	if _active_melee_attack_profile != null:
+		damage = _active_melee_attack_profile.damage * parry_counter_damage_multiplier
+		attack_range = _active_melee_attack_profile.range_px
+		attack_arc = _active_melee_attack_profile.arc_degrees
+	_critical_attack_damage = damage
+	_melee_active = true
+	_melee_elapsed = 0.0
+	_configure_melee_hitbox(damage, attack_range, attack_arc)
+	_counter_window_timer = 0.0
+	_play_critical_attack_animation()
+	_melee_duration = _get_current_melee_animation_duration(0.42, 0.24, 0.56)
+	_lock_melee_cooldown(_melee_duration + 0.08)
+
+
+func _play_critical_attack_animation() -> void:
+	var animation_name := _ensure_operator_critical_attack_animation(_melee_forward)
+	if not animation_name.is_empty():
+		animated_sprite.visible = true
+		animated_sprite.flip_h = false
+		animated_sprite.speed_scale = 1.0
+		animated_sprite.play(animation_name)
+		_clear_modular_fast_attack_layers()
+		_reset_melee_overlay_visuals()
+		return
+	_warn_missing_animation_once("operator_critical_1h", "unarmed_attack_fast")
+	_play_melee_anim_from_key("unarmed_fast_1", &"unarmed_attack_fast")
+
+
+func _ensure_operator_critical_attack_animation(direction: Vector2) -> StringName:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return &""
+	var facing_left := _is_facing_left(direction)
+	var animation_name := &"operator_critical_1h_left" if facing_left else &"operator_critical_1h_right"
+	if _has_playable_sprite_animation(animated_sprite.sprite_frames, animation_name):
+		return animation_name
+	var sheet_path := CRITICAL_ATTACK_LEFT_SHEET if facing_left else CRITICAL_ATTACK_RIGHT_SHEET
+	if not ResourceLoader.exists(sheet_path):
+		return &""
+	var texture := load(sheet_path) as Texture2D
+	if texture == null:
+		return &""
+	animated_sprite.sprite_frames.add_animation(animation_name)
+	animated_sprite.sprite_frames.set_animation_loop(animation_name, false)
+	animated_sprite.sprite_frames.set_animation_speed(animation_name, CRITICAL_ATTACK_FPS)
+	for frame_index in range(CRITICAL_ATTACK_FRAME_COUNT):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(frame_index * CRITICAL_ATTACK_FRAME_SIZE.x, 0, CRITICAL_ATTACK_FRAME_SIZE.x, CRITICAL_ATTACK_FRAME_SIZE.y)
+		animated_sprite.sprite_frames.add_frame(animation_name, atlas)
+	return animation_name
 
 
 func _play_modular_parry_fx(direction: Vector2, base_animation: String = "unarmed_parry_fx") -> bool:
@@ -4435,6 +4639,9 @@ func _update_target_ring() -> void:
 	if _combat_target == null or not is_instance_valid(_combat_target):
 		_target_ring.visible = false
 		return
+	if _combat_target.has_method("has_active_critical_target_reticle") and bool(_combat_target.call("has_active_critical_target_reticle")):
+		_target_ring.visible = false
+		return
 	_target_ring.visible = true
 	_target_ring.global_position = _combat_target.global_position
 	if _target_ring.has_method("set_in_strike_zone"):
@@ -5228,7 +5435,7 @@ func _update_primary_weapon_visual(is_firing: bool) -> void:
 			melee_weapon_overlay_sprite.stop()
 			melee_weapon_overlay_sprite.frame = 0
 	if melee_fx_overlay_sprite:
-		melee_fx_overlay_sprite.visible = (_melee_active and _melee_attack_kind == "fast") or _melee_recovery_active
+		melee_fx_overlay_sprite.visible = (_melee_active and not _melee_attack_kind.is_empty()) or _melee_recovery_active
 		if not melee_fx_overlay_sprite.visible:
 			melee_fx_overlay_sprite.stop()
 			melee_fx_overlay_sprite.frame = 0
@@ -6044,7 +6251,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 	if bool(guard_result.get("blocked", false)):
 		var final_damage := float(guard_result.get("damage", amount))
 		if final_damage > 0.0:
-			take_damage(final_damage)
+			take_damage(final_damage, false)
 		return {
 			"result": &"blocked",
 			"hit_kind": hit_kind,
@@ -6052,6 +6259,19 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 			"parried": false,
 			"blocked": true,
 			"applied_damage": max(0.0, final_damage),
+		}
+
+	if _is_failed_parry_hitreact_context():
+		_play_failed_parry_block_hitreact()
+		take_damage(amount, false)
+		return {
+			"result": &"damaged",
+			"hit_kind": hit_kind,
+			"dodged": false,
+			"parried": false,
+			"blocked": false,
+			"block_hitreact": true,
+			"applied_damage": max(0.0, amount),
 		}
 
 	if _is_block_state_active():
@@ -6073,7 +6293,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 func receive_projectile_hit(amount: float, _attacker_team: String = "neutral") -> Dictionary:
 	return receive_enemy_hit(amount, &"projectile", _attacker_team)
 
-func take_damage(amount: float):
+func take_damage(amount: float, trigger_reaction: bool = true):
 	if _is_dead:
 		return
 
@@ -6114,7 +6334,8 @@ func take_damage(amount: float):
 		_handle_death()
 		return
 
-	_request_damage_reaction(amount)
+	if trigger_reaction:
+		_request_damage_reaction(amount)
 
 	if visual:
 		visual.modulate = Color(1, 1, 1)

@@ -27,6 +27,9 @@ OPERATOR_MODULAR_LAYERS = {
     "modular_wardrobe_cape",
 }
 
+SUPPORTED_OPERATOR_MODULAR_LOADOUTS = {"unarmed", "sidearm", "ranged_2h"}
+FUTURE_OPERATOR_MODULAR_LOADOUTS = {"melee", "melee_1h", "melee_2h"}
+
 
 @dataclass(frozen=True)
 class SheetInfo:
@@ -468,7 +471,20 @@ def _operator_modular_source_bucket(info: SheetInfo) -> str:
 
 
 def _operator_modular_loadout_action(info: SheetInfo) -> tuple[str, str]:
-    known_loadouts = {"unarmed", "sidearm", "ranged_2h"}
+    known_loadouts = SUPPORTED_OPERATOR_MODULAR_LOADOUTS
+    if info.owner == "operator" and info.layer in OPERATOR_MODULAR_LAYERS:
+        detected_loadout = ""
+        if info.action_group in FUTURE_OPERATOR_MODULAR_LOADOUTS:
+            detected_loadout = info.action_group
+        elif info.variant in FUTURE_OPERATOR_MODULAR_LOADOUTS:
+            detected_loadout = info.variant
+        if detected_loadout:
+            print(
+                "[WARN] Operator modular loadout '%s' seen in %s. "
+                "Update pipeline supported loadouts before ingesting weapon-specific block/hitreact assets."
+                % (detected_loadout, info.basename),
+                file=sys.stderr,
+            )
     if info.action_group in known_loadouts and info.variant:
         return info.action_group, info.variant
     if info.variant in known_loadouts:

@@ -3,7 +3,7 @@
 **File target**
 
 ```
-design/20_features/in_progress/BALANCE_TARGETS_V1.md
+design/02_features/balance/BALANCE_TARGETS_V1.md
 ```
 
 ---

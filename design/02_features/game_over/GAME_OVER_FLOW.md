@@ -3,7 +3,7 @@
 **File target**
 
 ```
-design/20_features/in_progress/GAME_OVER_FLOW.md
+design/02_features/game_over/GAME_OVER_FLOW.md
 ```
 
 ---
