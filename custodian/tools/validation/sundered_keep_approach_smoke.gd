@@ -2,7 +2,7 @@ extends SceneTree
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
 const KEEP_SCENE := preload("res://game/world/sundered_keep/sundered_keep_map.tscn")
-const EXPECTED_BOUNDARY_SEGMENTS := 28
+const EXPECTED_BOUNDARY_SEGMENTS := 90
 
 const EXPECTED_ROOTS := {
 	"UnderlayRoot": -300,
@@ -15,7 +15,7 @@ const EXPECTED_ROOTS := {
 const EXPECTED_SPRITE_RECTS := {
 	"UnderlayRoot/ApproachOceanVoidUnderlay": Rect2(Vector2(-1000, -900), Vector2(2600, 1800)),
 	"UnderlayRoot/ApproachCliffSpiresUnderlay": Rect2(Vector2(-1000, -900), Vector2(2600, 1800)),
-	"UnderlayRoot/ApproachRouteContactShadow": Rect2(Vector2(-620, -660), Vector2(2048, 1706)),
+	"UnderlayRoot/ApproachRouteContactShadow": Rect2(Vector2(-620, -480), Vector2(2048, 1706)),
 	"VistaRoot/ApproachFirstVistaHorizon": Rect2(Vector2(-1000, -980), Vector2(2600, 1460)),
 	"VistaRoot/ApproachFirstVistaFogVeil": Rect2(Vector2(-1000, -360), Vector2(2600, 720)),
 	"GrandVistaRoot/GrandVistaPanorama": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
@@ -27,12 +27,12 @@ const EXPECTED_SPRITE_RECTS := {
 	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaPathContactShadow": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
 	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaEdgeSprayWrap": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
 	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaForegroundEdgeMask": Rect2(Vector2(-1280, 220), Vector2(2560, 420)),
-	"PlayableRoot/ApproachRouteMaster": Rect2(Vector2(-620, -660), Vector2(2048, 1706)),
-	"OcclusionRoot/ApproachEdgeMistWrap": Rect2(Vector2(-620, -660), Vector2(2048, 1706)),
-	"OcclusionRoot/ApproachFogStrip01": Rect2(Vector2(-880, -430), Vector2(1500, 520)),
-	"OcclusionRoot/ApproachFogStrip02": Rect2(Vector2(-260, -420), Vector2(1500, 520)),
-	"OcclusionRoot/ApproachFogStrip03": Rect2(Vector2(320, -410), Vector2(1500, 520)),
-	"OcclusionRoot/ApproachFinalGateShadowVeil": Rect2(Vector2(-1000, -520), Vector2(2600, 900)),
+	"PlayableRoot/ApproachRouteMaster": Rect2(Vector2(-620, -480), Vector2(2048, 1706)),
+	"OcclusionRoot/ApproachEdgeMistWrap": Rect2(Vector2(-620, -480), Vector2(2048, 1706)),
+	"OcclusionRoot/ApproachFogStrip01": Rect2(Vector2(-880, -250), Vector2(1500, 520)),
+	"OcclusionRoot/ApproachFogStrip02": Rect2(Vector2(-260, -240), Vector2(1500, 520)),
+	"OcclusionRoot/ApproachFogStrip03": Rect2(Vector2(320, -230), Vector2(1500, 520)),
+	"OcclusionRoot/ApproachFinalGateShadowVeil": Rect2(Vector2(-1000, -340), Vector2(2600, 900)),
 }
 
 const EXPECTED_SPRITE_Z := {
@@ -53,15 +53,15 @@ const FORBIDDEN_LEGACY_PLAYABLE := [
 ]
 
 const EXPECTED_MARKERS := {
-	"EntrySpawn": Vector2(45, 430),
-	"RevealStart": Vector2(-40, 120),
-	"RevealFull": Vector2(-150, -175),
-	"MidGameplayStart": Vector2(50, -235),
-	"SecondVistaStart": Vector2(300, -305),
-	"SecondVistaFull": Vector2(590, -305),
-	"SecondVistaEnd": Vector2(830, -305),
-	"TraverseEnd": Vector2(915, -305),
-	"ReturnTopdown": Vector2(980, -305),
+	"EntrySpawn": Vector2(45, 610),
+	"RevealStart": Vector2(-40, 300),
+	"RevealFull": Vector2(-150, 5),
+	"MidGameplayStart": Vector2(50, -55),
+	"SecondVistaStart": Vector2(300, -125),
+	"SecondVistaFull": Vector2(590, -125),
+	"SecondVistaEnd": Vector2(830, -125),
+	"TraverseEnd": Vector2(915, -125),
+	"ReturnTopdown": Vector2(980, -125),
 }
 
 
@@ -109,8 +109,8 @@ func _init() -> void:
 			continue
 		if sprite.centered:
 			errors.append("%s should use centered=false" % node_path)
-		if sprite.z_as_relative:
-			errors.append("%s should use z_as_relative=false" % node_path)
+		if not sprite.z_as_relative:
+			errors.append("%s should inherit root z ordering with z_as_relative=true" % node_path)
 		if EXPECTED_SPRITE_Z.has(node_path) and sprite.z_index != int(EXPECTED_SPRITE_Z[node_path]):
 			errors.append("%s z_index expected %d, got %d" % [node_path, int(EXPECTED_SPRITE_Z[node_path]), sprite.z_index])
 		_check_sprite_rect(node_path, sprite, EXPECTED_SPRITE_RECTS[node_path] as Rect2, errors)
@@ -122,6 +122,11 @@ func _init() -> void:
 	if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 		errors.append("GrandVistaRoot should start hidden; alpha=%s" % (grand_vista_root.modulate.a if grand_vista_root else "missing"))
 	if grand_vista_root != null:
+		var glue_root := scene.get_node_or_null("GrandVistaRoot/GrandVistaGlueRoot") as Node2D
+		if glue_root == null:
+			errors.append("GrandVistaRoot/GrandVistaGlueRoot missing")
+		elif not glue_root.z_as_relative:
+			errors.append("GrandVistaRoot/GrandVistaGlueRoot should inherit GrandVistaRoot z ordering")
 		_collect_collision_nodes(grand_vista_root, "GrandVistaRoot must be visual-only", errors)
 	var occlusion_root := scene.get_node_or_null("OcclusionRoot") as CanvasItem
 	if occlusion_root == null or occlusion_root.modulate.a < 0.99:
@@ -160,8 +165,11 @@ func _init() -> void:
 				segment_count += 1
 		if segment_count != EXPECTED_BOUNDARY_SEGMENTS:
 			errors.append("PathBoundaryCollision expected %d SegmentShape2D rails, got %d" % [EXPECTED_BOUNDARY_SEGMENTS, segment_count])
+		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-86.9, 686.4), Vector2(-86.5, 607.2), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_090", Vector2(-76.7, 772.7), Vector2(-86.7, 686.7), errors)
 
 	_collect_filled_collision_polygons(scene, errors)
+	_check_camera_bounds(scene, errors)
 
 	var controller := scene.get_node_or_null("VistaController") as SunderedKeepVistaController
 	if controller == null:
@@ -232,6 +240,8 @@ func _init() -> void:
 			errors.append("ExitTransitionTrigger missing CollisionShape2D")
 		if trigger.vista_controller_path != NodePath("../VistaController"):
 			errors.append("ExitTransitionTrigger vista_controller_path is not wired")
+		elif not trigger.has_method("_retire_approach_scene"):
+			errors.append("ExitTransitionTrigger should retire the approach scene after target handoff")
 
 	var keep_scene := KEEP_SCENE.instantiate() as Node2D
 	if keep_scene == null:
@@ -265,6 +275,26 @@ func _check_sprite_rect(node_path: String, sprite: Sprite2D, expected: Rect2, er
 	)
 	if not _vec2_nearly_equal(rendered_size, expected.size):
 		errors.append("%s rendered size expected %s, got %s" % [node_path, expected.size, rendered_size])
+
+
+func _check_boundary_segment(boundary: StaticBody2D, segment_name: String, expected_a: Vector2, expected_b: Vector2, errors: Array[String]) -> void:
+	var segment_node := boundary.get_node_or_null(segment_name) as CollisionShape2D
+	var segment := segment_node.shape as SegmentShape2D if segment_node != null else null
+	if segment == null:
+		errors.append("PathBoundaryCollision missing %s" % segment_name)
+		return
+	if not _vec2_nearly_equal(segment.a, expected_a) or not _vec2_nearly_equal(segment.b, expected_b):
+		errors.append("%s expected %s -> %s, got %s -> %s" % [segment_name, expected_a, expected_b, segment.a, segment.b])
+
+
+func _check_camera_bounds(scene: Node, errors: Array[String]) -> void:
+	if not scene.has_method("get_camera_bounds"):
+		errors.append("SunderedKeepApproach should expose get_camera_bounds()")
+		return
+	var bounds := scene.call("get_camera_bounds") as Rect2
+	var expected := Rect2(Vector2(-1280, -980), Vector2(2880, 2206))
+	if not _vec2_nearly_equal(bounds.position, expected.position) or not _vec2_nearly_equal(bounds.size, expected.size):
+		errors.append("SunderedKeepApproach camera bounds expected %s, got %s" % [expected, bounds])
 
 
 func _check_controller_path(controller: SunderedKeepVistaController, property_name: String, expected: NodePath, errors: Array[String]) -> void:

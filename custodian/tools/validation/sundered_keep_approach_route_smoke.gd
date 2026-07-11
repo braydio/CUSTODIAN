@@ -171,8 +171,8 @@ func _check_causeway_approach(errors: Array[String]) -> Node:
 		if sprite == null:
 			errors.append("Causeway %s missing or not Sprite2D" % sprite_path)
 			continue
-		if sprite.z_as_relative:
-			errors.append("Causeway %s should use z_as_relative=false" % sprite_path)
+		if not sprite.z_as_relative:
+			errors.append("Causeway %s should inherit root z ordering with z_as_relative=true" % sprite_path)
 		if sprite.z_index != int(CAUSEWAY_EXPECTED_SPRITE_Z[sprite_path]):
 			errors.append("Causeway %s z_index expected %d, got %d" % [sprite_path, int(CAUSEWAY_EXPECTED_SPRITE_Z[sprite_path]), sprite.z_index])
 

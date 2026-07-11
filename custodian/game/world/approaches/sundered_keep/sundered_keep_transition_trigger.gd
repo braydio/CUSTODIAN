@@ -57,6 +57,7 @@ func _load_target_scene(actor: Node) -> void:
 
 	if actor is Node2D:
 		_move_actor_to_target(actor as Node2D, target)
+	_retire_approach_scene()
 
 
 func _instantiate_target() -> Node:
@@ -98,3 +99,14 @@ func _set_world_branch_visible(branch: Node, value: bool) -> void:
 	if branch is CanvasItem:
 		(branch as CanvasItem).visible = value
 	branch.process_mode = Node.PROCESS_MODE_INHERIT if value else Node.PROCESS_MODE_DISABLED
+
+
+func _retire_approach_scene() -> void:
+	var approach := get_parent()
+	if approach == null:
+		return
+	if approach is CanvasItem:
+		(approach as CanvasItem).visible = false
+	approach.process_mode = Node.PROCESS_MODE_DISABLED
+	if approach.is_in_group("world_ingress_approach"):
+		approach.queue_free()

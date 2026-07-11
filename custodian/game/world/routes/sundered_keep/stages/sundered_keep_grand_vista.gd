@@ -71,7 +71,7 @@ func _add_fitted_sprite(
 	sprite.texture = texture
 	sprite.centered = false
 	sprite.position = rect.position
-	sprite.z_as_relative = false
+	sprite.z_as_relative = true
 	sprite.z_index = z
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	sprite.modulate = tint
@@ -94,7 +94,7 @@ func _add_backdrop_fill(parent: Node, rect: Rect2) -> Polygon2D:
 		rect.position + Vector2(0.0, rect.size.y),
 	])
 	fill.color = BACKDROP_VOID_COLOR
-	fill.z_as_relative = false
+	fill.z_as_relative = true
 	fill.z_index = -1000
 	parent.add_child(fill)
 	return fill

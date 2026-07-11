@@ -133,11 +133,19 @@ Missing optional posture-break and critical-expiry assets should warn without fa
 
 For Sundered Keep asset wiring specifically:
 
-For the registered Sundered Keep ingress and existing route wrapper:
+For the registered Sundered Keep ingress and active continuous approach:
 
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_approach_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_mapper_smoke.gd
+```
+
+For the experimental route/stage wrapper:
+
+```bash
+cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_route_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_route_visual_smoke.gd
 ```

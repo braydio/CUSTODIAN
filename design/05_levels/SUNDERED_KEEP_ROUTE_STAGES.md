@@ -1,19 +1,19 @@
 # Sundered Keep Route / Stage System
 
-- **Status:** connected through the level registry and smoke-validated — all 4 stages register and instantiate, causeway approach carries forward collision/VistaController/exit-trigger logic from the old approach, and the current hotfix keeps base underlay/backdrop/camera framing stable while a future pass collapses the route into one continuous traversal scene
+- **Status:** experimental and smoke-validated, but not the configured production ingress — all 4 stages register and instantiate, causeway approach carries forward collision/VistaController/exit-trigger logic from the old approach, and the current hotfix keeps base underlay/backdrop/camera framing stable while production uses the continuous one-scene approach
 - **Owner:** world / connected maps
 - **Runtime:** `custodian/` Godot 4.x
 - **Route controller:** `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.gd`
 - **Stage scenes:** `custodian/game/world/routes/sundered_keep/stages/*.tscn`
 - **Base classes:** `custodian/game/world/routes/level_stage.gd`, `custodian/game/world/routes/level_route.gd`
 - **Validation:** `custodian/tools/validation/sundered_keep_approach_route_smoke.gd`, `custodian/tools/validation/sundered_keep_approach_route_visual_smoke.gd`
-- **Active configured ingress:** `custodian/content/levels/sundered_keep/front_gate.json` points `sundered_keep_front_gate` at `res://game/world/routes/sundered_keep/sundered_keep_approach_route.tscn`
+- **Active configured ingress:** `custodian/content/levels/sundered_keep/front_gate.json` points `sundered_keep_front_gate` at `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn`
 
 ## Summary
 
 A lightweight Route/Stage level-organization layer that wraps a linear sequence of authored scenes (stages) behind a single route controller. The world map and level registry know the route controller, not the substages. Each stage is a standalone scene under `routes/<route_name>/stages/`.
 
-This route is currently connected through the `LevelDefinition` / `LevelLoader` path for `sundered_keep_front_gate`. The implementation is still **stage-cut based**: `LevelRoute` queue-frees one stage and instantiates the next. The intended production direction is one continuous authored approach scene with route beats, keeping only the final Sundered Keep map load as a true scene handoff.
+This route is not the configured production ingress. It remains a smoke-covered prototype of the Route/Stage organization layer. The implementation is still **stage-cut based**: `LevelRoute` queue-frees one stage and instantiates the next. Production uses the continuous authored approach scene, keeping only the final Sundered Keep map load as a true scene handoff.
 
 ## Architecture
 
@@ -113,7 +113,7 @@ front_gate (sundered_keep_map.tscn)
 
 ## Implementation Notes
 
-- The route is connected through the level registry wrapper. Legacy direct approach-scene fields remain as fallback/migration compatibility in the ingress path.
+- The route is not connected through the level registry wrapper. `front_gate.json` points at the continuous approach scene because this route hard-swaps presentation stages.
 - `SunderedKeepMap` is script-only (`.gd`). The route's `final_target_scene` expects a `PackedScene`, so `sundered_keep_map.tscn` wrapper was created.
 - Stage scenes should remain thin — all substantive logic lives in the `.gd` script, the `.tscn` is a minimal stub (script + EntrySpawn + CameraBounds).
 - The current route-stage flow remains visually discontinuous by design because substages are separate scenes. Do not add more hard-swapped vista stages for the production entrance; prefer merging vista_one/pre_level/grand_vista/causeway_approach into one continuous approach scene.
@@ -121,7 +121,7 @@ front_gate (sundered_keep_map.tscn)
 ## Next Agent Slice
 
 ### Goal
-Convert the connected Sundered Keep route from stage-cut presentation to one continuous authored approach scene with route beats.
+Either retire this stage-cut route or convert it into a continuous authored approach scene with route beats before reconnecting it to production ingress.
 
 ### Files
 - `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.gd`

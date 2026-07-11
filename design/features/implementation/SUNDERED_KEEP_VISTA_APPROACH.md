@@ -28,7 +28,7 @@ res://content/backgrounds/sundered_keep/approach/fog/
 
 `VistaRoot` fades from `RevealStart` to `RevealFull`. `GrandVistaRoot` stays hidden during the first reveal and traversal gap, then uses the later `SecondVistaStart` / `SecondVistaFull` / `SecondVistaEnd` window. `ApproachFinalGateShadowVeil` starts hidden and fades in from `SecondVistaEnd` toward `ReturnTopdown`.
 
-Collision remains separate from art: `Collision/PathBoundaryCollision` is a `StaticBody2D` made from 28 `SegmentShape2D` rails. Image alpha is not collision authority.
+Collision remains separate from art: `Collision/PathBoundaryCollision` is a `StaticBody2D` made from mapper-authored `SegmentShape2D` rails. Image alpha is not collision authority.
 
 ## Validation
 
@@ -38,4 +38,3 @@ godot --headless --path . --import
 python3 tools/validation/sundered_keep_approach_asset_audit.py
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_smoke.gd
 ```
-
