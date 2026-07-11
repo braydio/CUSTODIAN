@@ -902,7 +902,7 @@ func _physics_process(delta):
 	if _sprint_exhausted and stamina >= stamina_max:
 		_sprint_exhausted = false
 	var can_start_sprint := stamina > stamina_sprint_gate
-	is_sprinting = moving and wants_sprint and not _has_attack_movement_modifier() and not _sprint_exhausted and (was_sprinting or can_start_sprint)
+	is_sprinting = moving and wants_sprint and not _is_block_state_active() and not _has_attack_movement_modifier() and not _sprint_exhausted and (was_sprinting or can_start_sprint)
 	is_sneaking = moving and InputMap.has_action("sneak") and Input.is_action_pressed("sneak") and not is_sprinting and not _has_attack_movement_modifier()
 	var movement_profile := get_current_combat_profile()
 	var active_move_speed := SPEED * sprint_multiplier if is_sprinting else SPEED
@@ -917,6 +917,7 @@ func _physics_process(delta):
 		active_move_speed *= ranged_ready_move_multiplier
 	active_move_speed *= _get_attack_move_multiplier()
 	if _is_block_state_active():
+		is_sprinting = false
 		active_move_speed *= block_move_multiplier
 	if _field_patch_active:
 		active_move_speed *= field_patch_move_multiplier
@@ -1040,6 +1041,8 @@ func _update_animation():
 		var active_animation_name := String(animated_sprite.animation)
 		animated_sprite.flip_h = facing_left and not active_animation_name.ends_with("_left")
 		if is_attacking and _sync_modular_action_domains():
+			return
+		if is_block_anim and _sync_modular_block_hold_movement_presentation():
 			return
 		if is_block_anim and _is_modular_block_active():
 			return
@@ -3614,6 +3617,9 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 		animated_sprite.visible = false
 		return true
 
+	if base_animation == "unarmed_block_hold" and velocity.length() > 0.01:
+		return _sync_modular_block_hold_movement_presentation()
+
 	# Enter / hold / hitreact: both layers play the same animation
 	var lower_anim := AnimationResolver.resolve(resolved_base, direction, modular_lower_body_sprite)
 	var upper_anim := AnimationResolver.resolve(resolved_base, direction, modular_upper_body_sprite)
@@ -3629,6 +3635,51 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 	modular_upper_body_sprite.speed_scale = 1.0
 	modular_lower_body_sprite.play(lower_anim)
 	modular_upper_body_sprite.play(upper_anim)
+	return true
+
+
+func _sync_modular_block_hold_movement_presentation() -> bool:
+	if _block_phase != &"hold":
+		return false
+	if not _is_current_profile_unarmed() or not modular_locomotion_layers_enabled:
+		return false
+	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
+		return false
+	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
+		return false
+
+	var upper_direction := aim_direction if aim_direction.length_squared() > 0.001 else visual_idle_direction
+	if upper_direction.length_squared() <= 0.001:
+		upper_direction = Vector2.DOWN
+	var upper_anim := AnimationResolver.resolve("unarmed_block_hold", upper_direction, modular_upper_body_sprite)
+	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
+		return false
+
+	var lower_synced := false
+	if velocity.length() > 0.01:
+		var lower_direction := movement_direction if movement_direction.length_squared() > 0.001 else visual_idle_direction
+		if lower_direction.length_squared() <= 0.001:
+			lower_direction = upper_direction
+		lower_synced = _sync_modular_lower_body_layer("unarmed_walk", lower_direction, clampf(block_move_multiplier, 0.2, 1.0))
+	if not lower_synced:
+		var lower_anim := AnimationResolver.resolve("unarmed_block_hold", upper_direction, modular_lower_body_sprite)
+		if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
+			return false
+		modular_lower_body_sprite.visible = true
+		modular_lower_body_sprite.flip_h = false
+		modular_lower_body_sprite.speed_scale = 1.0
+		if modular_lower_body_sprite.animation != lower_anim or not modular_lower_body_sprite.is_playing():
+			modular_lower_body_sprite.play(lower_anim)
+
+	modular_upper_body_sprite.visible = true
+	modular_upper_body_sprite.flip_h = false
+	modular_upper_body_sprite.speed_scale = 1.0
+	if modular_upper_body_sprite.animation != upper_anim or not modular_upper_body_sprite.is_playing():
+		modular_upper_body_sprite.play(upper_anim)
+	if modular_upper_fx_sprite != null:
+		modular_upper_fx_sprite.visible = false
+	_hide_modular_cape_layer()
+	animated_sprite.visible = false
 	return true
 
 
@@ -5042,7 +5093,7 @@ func _is_block_state_active() -> bool:
 
 
 func _is_movement_locked() -> bool:
-	return _reload_active or _is_block_state_active() or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked
+	return _reload_active or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked
 
 
 func _has_attack_movement_modifier() -> bool:

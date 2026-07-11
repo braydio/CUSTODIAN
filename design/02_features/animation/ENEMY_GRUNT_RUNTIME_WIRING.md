@@ -1,7 +1,7 @@
 # Enemy Grunt Runtime Wiring
 
 Status: complete
-Last updated: 2026-05-17
+Last updated: 2026-07-11
 
 ## Summary
 
@@ -25,6 +25,7 @@ The current art set is partial but expanded:
 - idle: south only
 - run: east and west
 - melee: east, southeast, and west
+- stagger: east, south, and west, selected from the grunt's tracked knockback/facing direction
 - melee FX: east and west overlay strips, played through `CustomEnemyFxSprite` during grunt attack windup
 
 Until directional coverage is complete, runtime reuses available body strips instead of blocking the enemy from spawning.
@@ -37,4 +38,5 @@ Until directional coverage is complete, runtime reuses available body strips ins
 - `spawn_grunt` can spawn a grunt near the operator for immediate review.
 - Grunt melee windup plays the body melee strip plus the matching FX overlay strip.
 - Grunt melee windup duration lands in the middle of the authored clip before damage resolves.
+- Grunt stagger and parry critical-open hold use the authored directional `stagger_01` strips when available.
 - Headless Godot validation loads the new scene and scripts without missing resource errors.

@@ -9,6 +9,8 @@ const GRAND_VISTA_SHADOW_VIGNETTE_PATH := "res://content/backgrounds/sundered_ke
 const GRAND_VISTA_OCEAN_SPRAY_PATH := "res://content/backgrounds/sundered_keep/grand_vista/grand_vista_ocean_spray_overlay.png"
 
 const RECT_FULL_VISTA := Rect2(Vector2(-900.0, -700.0), Vector2(2100.0, 1400.0))
+const RECT_CAMERA_BOUNDS := Rect2(Vector2(-1050.0, -760.0), Vector2(2450.0, 1650.0))
+const BACKDROP_VOID_COLOR := Color(0.015, 0.018, 0.022, 1.0)
 
 @export var duration_seconds := 5.0
 @export var allow_skip := true
@@ -32,6 +34,10 @@ func _process(delta: float) -> void:
 		complete_stage()
 
 
+func get_camera_bounds() -> Rect2:
+	return RECT_CAMERA_BOUNDS
+
+
 func _build_grand_vista() -> void:
 	var root := Node2D.new()
 	root.name = "GrandVistaRoot"
@@ -39,6 +45,7 @@ func _build_grand_vista() -> void:
 	root.z_index = -200
 	add_child(root)
 
+	_add_backdrop_fill(root, RECT_CAMERA_BOUNDS)
 	_add_fitted_sprite(root, "GrandVistaPanorama", GRAND_VISTA_PANORAMA_PATH, RECT_FULL_VISTA, 0, Color.WHITE)
 	_add_fitted_sprite(root, "GrandVistaFogOverlay", GRAND_VISTA_FOG_OVERLAY_PATH, RECT_FULL_VISTA, 1, Color.WHITE)
 	_add_fitted_sprite(root, "GrandVistaForegroundParapet", GRAND_VISTA_FOREGROUND_PARAPET_PATH, RECT_FULL_VISTA, 2, Color.WHITE)
@@ -75,3 +82,19 @@ func _add_fitted_sprite(
 
 	parent.add_child(sprite)
 	return sprite
+
+
+func _add_backdrop_fill(parent: Node, rect: Rect2) -> Polygon2D:
+	var fill := Polygon2D.new()
+	fill.name = "BackdropVoidFill"
+	fill.polygon = PackedVector2Array([
+		rect.position,
+		rect.position + Vector2(rect.size.x, 0.0),
+		rect.position + rect.size,
+		rect.position + Vector2(0.0, rect.size.y),
+	])
+	fill.color = BACKDROP_VOID_COLOR
+	fill.z_as_relative = false
+	fill.z_index = -1000
+	parent.add_child(fill)
+	return fill

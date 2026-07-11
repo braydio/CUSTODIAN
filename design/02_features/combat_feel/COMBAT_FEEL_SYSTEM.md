@@ -229,9 +229,10 @@ the sidearm slot is empty or defensive, and primary pressed while guard-ready tr
 defensive skill expression without overloading the held sidearm-ready state.
 
 Unarmed block presentation uses the modular lower/upper body stack: authored entry, looping hold, and blocked-hit
-reaction clips play through the existing block state path, and exit reuses entry in reverse. Parry gameplay now uses
-the same state path for timing, plays the generated modular `parry_01` lower/upper/FX stack when available, and falls
-back to block animations when `unarmed_parry*` clips are missing. The curated `parry_01` playback is intentionally
+reaction clips play through the existing block state path, and exit reuses entry in reverse. While held guard is moving,
+movement remains slowed by `block_move_multiplier`; the lower layer reuses modular `unarmed_walk` locomotion while the
+upper layer holds the authored block loop. Parry gameplay now uses the same state path for timing, plays the generated
+modular `parry_01` lower/upper/FX stack when available, and falls back to block animations when `unarmed_parry*` clips are missing. The curated `parry_01` playback is intentionally
 registered at 12 FPS for a slightly heavier read. Successful parries spawn an independent world-space success burst
 at the captured contact point. It currently reuses the validated six-frame contact strip through a dedicated one-shot
 scene, so post-parry body/neutral transitions cannot hide it. `PLACEHOLDER_unarmed_parry_success_fx*` remains an

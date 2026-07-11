@@ -199,13 +199,25 @@ func _check_causeway_approach(errors: Array[String]) -> Node:
 	if controller == null:
 		errors.append("Causeway VistaController missing")
 	else:
-		_check_controller_path(controller, "vista_root_path", NodePath("../UnderlayRoot"), errors)
+		_check_controller_path(controller, "vista_root_path", NodePath(""), errors)
 		_check_controller_path(controller, "fog_underlay_path", NodePath("../UnderlayRoot/FogUnderlay"), errors)
 		_check_controller_path(controller, "occlusion_root_path", NodePath("../OcclusionRoot"), errors)
 		_check_controller_path(controller, "cliff_occluder_path", NodePath("../OcclusionRoot/CliffOccluder"), errors)
 		_check_controller_path(controller, "wall_shadow_occluder_path", NodePath("../OcclusionRoot/WallShadowOccluder"), errors)
+		var underlay := scene.get_node_or_null("UnderlayRoot") as Node2D
+		if underlay == null:
+			errors.append("Causeway UnderlayRoot missing for alpha check")
+		elif not is_equal_approx(underlay.modulate.a, 1.0):
+			errors.append("Causeway UnderlayRoot alpha should start at 1.0, got %.3f" % underlay.modulate.a)
 		controller.apply_progress(0.45)
 		controller.apply_progress(1.0)
+		if underlay != null and not is_equal_approx(underlay.modulate.a, 1.0):
+			errors.append("Causeway UnderlayRoot alpha should remain 1.0 after vista progress, got %.3f" % underlay.modulate.a)
+
+	if scene.get_node_or_null("UnderlayRoot/BackdropVoidFill") == null:
+		errors.append("Causeway missing UnderlayRoot/BackdropVoidFill")
+
+	_check_stage_camera_bounds(stage, Vector2(2300.0, 1500.0), "Causeway", errors)
 
 	var exit_area := scene.get_node_or_null("ExitToFrontGate") as Area2D
 	if exit_area == null:
@@ -236,6 +248,10 @@ func _check_vista_one(errors: Array[String]) -> void:
 	if spawn == null:
 		errors.append("VistaOne EntrySpawn missing")
 
+	if scene.get_node_or_null("BackdropVoidFill") == null:
+		errors.append("VistaOne missing BackdropVoidFill")
+	_check_stage_camera_bounds(scene, Vector2(2450.0, 1650.0), "VistaOne", errors)
+
 	scene.queue_free()
 
 
@@ -260,6 +276,10 @@ func _check_pre_level(errors: Array[String]) -> void:
 	if exit_trigger == null:
 		errors.append("PreLevel ExitToGrandVistaTrigger missing")
 
+	if scene.get_node_or_null("UnderlayBackdrop/BackdropVoidFill") == null:
+		errors.append("PreLevel missing UnderlayBackdrop/BackdropVoidFill")
+	_check_stage_camera_bounds(scene, Vector2(2450.0, 1650.0), "PreLevel", errors)
+
 	scene.queue_free()
 
 
@@ -279,6 +299,10 @@ func _check_grand_vista(errors: Array[String]) -> void:
 	var spawn := scene.get_node_or_null("EntrySpawn") as Marker2D
 	if spawn == null:
 		errors.append("GrandVista EntrySpawn missing")
+
+	if scene.get_node_or_null("GrandVistaRoot/BackdropVoidFill") == null:
+		errors.append("GrandVista missing GrandVistaRoot/BackdropVoidFill")
+	_check_stage_camera_bounds(scene, Vector2(2450.0, 1650.0), "GrandVista", errors)
 
 	scene.queue_free()
 
@@ -303,6 +327,17 @@ func _check_controller_path(controller: SunderedKeepVistaController, property_na
 	var actual := controller.get(property_name) as NodePath
 	if actual != expected:
 		errors.append("Causeway VistaController.%s expected %s, got %s" % [property_name, expected, actual])
+
+
+func _check_stage_camera_bounds(stage: Node, expected_size: Vector2, label: String, errors: Array[String]) -> void:
+	if not stage.has_method("get_camera_bounds"):
+		errors.append("%s does not expose get_camera_bounds()" % label)
+		return
+	var bounds := stage.call("get_camera_bounds") as Rect2
+	if not _vec2_nearly_equal(bounds.size, expected_size):
+		errors.append("%s camera bounds expected size %s, got %s" % [label, expected_size, bounds.size])
+	if _vec2_nearly_equal(bounds.size, Vector2(2400.0, 1600.0)):
+		errors.append("%s camera bounds still match LevelStage fallback size" % label)
 
 
 func _vec2_nearly_equal(a: Vector2, b: Vector2, epsilon := 0.01) -> bool:

@@ -25,6 +25,8 @@ const RECT_LATERAL_TRAVERSE := Rect2(Vector2(260.0, -260.0), Vector2(520.0, 180.
 const RECT_FORTRESS_WALL_MASS := Rect2(Vector2(650.0, -420.0), Vector2(350.0, 380.0))
 const RECT_CLIFF_OCCLUDER := Rect2(Vector2(520.0, -420.0), Vector2(520.0, 540.0))
 const RECT_WALL_SHADOW_OCCLUDER := Rect2(Vector2(-900.0, -360.0), Vector2(2100.0, 130.0))
+const RECT_CAMERA_BOUNDS := Rect2(Vector2(-1000.0, -760.0), Vector2(2300.0, 1500.0))
+const BACKDROP_VOID_COLOR := Color(0.015, 0.018, 0.022, 1.0)
 
 const ENTRY_SPAWN_POS := Vector2(-80.0, 430.0)
 const REVEAL_START_POS := Vector2(-40.0, 80.0)
@@ -89,6 +91,10 @@ func get_entry_position() -> Vector2:
 	return global_position + ENTRY_SPAWN_POS
 
 
+func get_camera_bounds() -> Rect2:
+	return RECT_CAMERA_BOUNDS
+
+
 func _remove_stale_proxy_nodes() -> void:
 	for node_name in ["VistaUnderlay", "PathSprites", "Occlusion", "Gameplay", "ApproachVoidBackdrop"]:
 		var stale := get_node_or_null(node_name)
@@ -145,8 +151,10 @@ func _build_visuals() -> void:
 	_clear_children(underlay_root)
 	_clear_children(playable_root)
 	_clear_children(occlusion_root)
+	underlay_root.modulate.a = 1.0
 	occlusion_root.modulate.a = 0.0
 
+	_add_backdrop_fill(underlay_root, RECT_CAMERA_BOUNDS)
 	_add_fitted_sprite(underlay_root, "OceanUnderlay", OCEAN_UNDERLAY_PATH, RECT_OCEAN_UNDERLAY, 0, Color.WHITE)
 	_add_fitted_sprite(underlay_root, "CliffDepthUnderlay", CLIFF_DEPTH_UNDERLAY_PATH, RECT_CLIFF_DEPTH_UNDERLAY, 1, Color.WHITE)
 	_add_fitted_sprite(underlay_root, "FogUnderlay", UNDERLAY_FOG_BAND_PATH, RECT_FOG_UNDERLAY, 2, Color(1.0, 1.0, 1.0, 0.28))
@@ -198,6 +206,22 @@ func _add_fitted_sprite(
 	return sprite
 
 
+func _add_backdrop_fill(parent: Node, rect: Rect2) -> Polygon2D:
+	var fill := Polygon2D.new()
+	fill.name = "BackdropVoidFill"
+	fill.polygon = PackedVector2Array([
+		rect.position,
+		rect.position + Vector2(rect.size.x, 0.0),
+		rect.position + rect.size,
+		rect.position + Vector2(0.0, rect.size.y),
+	])
+	fill.color = BACKDROP_VOID_COLOR
+	fill.z_as_relative = false
+	fill.z_index = -1000
+	parent.add_child(fill)
+	return fill
+
+
 func _build_collision() -> void:
 	_clear_children(collision_root)
 
@@ -240,7 +264,7 @@ func _ensure_vista_controller() -> void:
 
 	vista_controller.start_marker_path = NodePath("../Markers/RevealStart")
 	vista_controller.end_marker_path = NodePath("../Markers/ReturnTopdown")
-	vista_controller.vista_root_path = NodePath("../UnderlayRoot")
+	vista_controller.vista_root_path = NodePath("")
 	vista_controller.vista_fog_band_path = NodePath("../UnderlayRoot/FogUnderlay")
 	vista_controller.fog_underlay_path = NodePath("../UnderlayRoot/FogUnderlay")
 	vista_controller.occlusion_root_path = NodePath("../OcclusionRoot")
@@ -248,6 +272,7 @@ func _ensure_vista_controller() -> void:
 	vista_controller.wall_shadow_occluder_path = NodePath("../OcclusionRoot/WallShadowOccluder")
 	vista_controller.refresh_bindings()
 	vista_controller.apply_progress(0.0)
+	underlay_root.modulate.a = 1.0
 
 
 func _ensure_exit_trigger() -> void:

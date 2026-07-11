@@ -1,19 +1,19 @@
 # Sundered Keep Route / Stage System
 
-- **Status:** base infrastructure implemented and smoke-validated — all 4 stages register and instantiate, causeway approach carries forward full collision/VistaController/exit-trigger logic from the old approach, grand vista handles missing textures gracefully
+- **Status:** connected through the level registry and smoke-validated — all 4 stages register and instantiate, causeway approach carries forward collision/VistaController/exit-trigger logic from the old approach, and the current hotfix keeps base underlay/backdrop/camera framing stable while a future pass collapses the route into one continuous traversal scene
 - **Owner:** world / connected maps
 - **Runtime:** `custodian/` Godot 4.x
 - **Route controller:** `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.gd`
 - **Stage scenes:** `custodian/game/world/routes/sundered_keep/stages/*.tscn`
 - **Base classes:** `custodian/game/world/routes/level_stage.gd`, `custodian/game/world/routes/level_route.gd`
-- **Validation:** `custodian/tools/validation/sundered_keep_approach_route_smoke.gd`
-- **Not yet connected:** the old `sundered_keep_approach.tscn` remains the active `WorldIngressSite` target; the new route system is not yet wired into `ContractWorldLoader` or `WorldIngressSite`
+- **Validation:** `custodian/tools/validation/sundered_keep_approach_route_smoke.gd`, `custodian/tools/validation/sundered_keep_approach_route_visual_smoke.gd`
+- **Active configured ingress:** `custodian/content/levels/sundered_keep/front_gate.json` points `sundered_keep_front_gate` at `res://game/world/routes/sundered_keep/sundered_keep_approach_route.tscn`
 
 ## Summary
 
-A lightweight Route/Stage level-organization layer that wraps a linear sequence of authored scenes (stages) behind a single route controller. The world map only knows the route controller, never the substages. Each stage is a standalone scene under `routes/<route_name>/stages/`.
+A lightweight Route/Stage level-organization layer that wraps a linear sequence of authored scenes (stages) behind a single route controller. The world map and level registry know the route controller, not the substages. Each stage is a standalone scene under `routes/<route_name>/stages/`.
 
-This is **not connected** to the live ingress chain yet — it is purely an organizational layer that can be integrated later.
+This route is currently connected through the `LevelDefinition` / `LevelLoader` path for `sundered_keep_front_gate`. The implementation is still **stage-cut based**: `LevelRoute` queue-frees one stage and instantiates the next. The intended production direction is one continuous authored approach scene with route beats, keeping only the final Sundered Keep map load as a true scene handoff.
 
 ## Architecture
 
@@ -106,34 +106,39 @@ front_gate (sundered_keep_map.tscn)
 - Retains all 13 `SegmentShape2D` boundary rails on layer/mask 1
 - Retains 6 markers: EntrySpawn, RevealStart, RevealFull, TraverseStart, TraverseEnd, ReturnTopdown
 - Distant vista sprites (HorizonSky, FarSea, DistantSunderedKeep, VistaFogBand) removed — those live in `vista_one` stage
-- `VistaController.vista_root_path` redirected to `../UnderlayRoot` since the dedicated VistaRoot no longer exists
+- `VistaController.vista_root_path` is intentionally empty so it cannot fade `UnderlayRoot`; fog/occlusion nodes remain individually bound
+- `UnderlayRoot.modulate.a` stays `1.0`; only fog/occlusion/veil layers should fade
+- Stage scripts override `get_camera_bounds()` with explicit `Rect2` values because the legacy `.tscn` `CameraBounds` nodes are `Node2D`, not `ReferenceRect`
+- All route stages create a bottommost `BackdropVoidFill` so missing transparent coverage renders as dark void instead of gray background
 
 ## Implementation Notes
 
-- The route system is not yet connected to the live procgen ingress chain (`WorldIngressSite` / `ContractWorldLoader`). Integration should replace direct approach-scene loading with route-scene loading in `WorldIngressSite._enter_approach()`.
+- The route is connected through the level registry wrapper. Legacy direct approach-scene fields remain as fallback/migration compatibility in the ingress path.
 - `SunderedKeepMap` is script-only (`.gd`). The route's `final_target_scene` expects a `PackedScene`, so `sundered_keep_map.tscn` wrapper was created.
 - Stage scenes should remain thin — all substantive logic lives in the `.gd` script, the `.tscn` is a minimal stub (script + EntrySpawn + CameraBounds).
-- `VistaController` reference paths now point to `../UnderlayRoot` instead of `../VistaRoot` since the distant vista sprites moved out of the causeway approach.
+- The current route-stage flow remains visually discontinuous by design because substages are separate scenes. Do not add more hard-swapped vista stages for the production entrance; prefer merging vista_one/pre_level/grand_vista/causeway_approach into one continuous approach scene.
 
 ## Next Agent Slice
 
 ### Goal
-Connect the route system to the live procgen ingress chain, replacing the direct approach-scene load in `WorldIngressSite` with route-scene load.
+Convert the connected Sundered Keep route from stage-cut presentation to one continuous authored approach scene with route beats.
 
 ### Files
-- `custodian/game/world/procgen/ingress/world_ingress_site.gd` — replace `approach_scene.instantiate()` with the route scene
-- `custodian/game/systems/core/systems/contract_world_loader.gd` — replace `SUNDERED_KEEP_APPROACH_SCENE` with `SUNDERED_KEEP_ROUTE_SCENE`, pass route controller the `main_map` and `return_position` directly
-- `custodian/game/world/routes/level_route.gd` — ensure `configure_connection()` is called before `enter_from_main()` in the ingress flow
-- `custodian/tools/validation/sundered_keep_approach_route_smoke.gd` — extend to validate the full route→final_scene handoff
+- `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.gd`
+- `custodian/game/world/routes/sundered_keep/stages/*.gd`
+- `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.gd` — reference model for one-scene layered traversal
+- `custodian/tools/validation/sundered_keep_approach_route_smoke.gd`
+- `custodian/tools/validation/sundered_keep_approach_route_visual_smoke.gd`
 
 ### Constraints
-- Existing `WorldIngressSite.configure(ingress_id, approach_scene, target_scene_path, target_spawn_id)` API must remain backward-compatible for any other map routes.
-- The route controller replaces both `approach_scene` and `target_scene_path` — either the route must accept them dynamically, or `WorldIngressSite` must be updated to pass the route scene and skip the target path.
-- `SunderedKeepTransitionTrigger` in the old approach directly loads `SunderedKeepMap`. The route controller must handle the same fade and map instantiation.
+- Preserve `LevelDefinition` / `LevelLoader` entry and final `SunderedKeepMap` handoff.
+- Keep base underlay/backdrop always visible; never bind `VistaController.vista_root_path` to `UnderlayRoot`.
+- Keep collision rails and exit trigger deterministic and separate from presentation layers.
 - Deterministic fixed-step simulation is a hard constraint — route advancement must not introduce frame-dependent behavior.
 
 ### Acceptance
 - Route smoke test passes.
-- `WorldIngressSite` can be configured with a route scene instead of an approach scene.
-- Route controller receives `main_map` and `return_position` from the ingress flow.
-- Final target map (`SunderedKeepMap`) receives working `configure_connection()` and `enter_from_main()` calls with correct return position.
+- Route visual smoke test passes.
+- The player experiences one continuous walk/vista/traverse before the final front-gate map transition.
+- No route beat queue-frees and replaces the visible approach during ordinary traversal.
+- Final target map (`SunderedKeepMap`) still receives working `configure_connection()` and `enter_from_main()` calls with correct return position.

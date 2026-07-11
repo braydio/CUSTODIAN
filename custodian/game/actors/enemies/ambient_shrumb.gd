@@ -3,6 +3,11 @@ extends Enemy
 @onready var shrumb_dropper: Node = get_node_or_null("ShrumbDropper")
 
 
+func _ready() -> void:
+	super._ready()
+	add_to_group("drone_command_target")
+
+
 func die() -> void:
 	if dead:
 		return

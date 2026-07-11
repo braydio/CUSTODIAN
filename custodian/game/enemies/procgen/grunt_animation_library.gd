@@ -44,7 +44,17 @@ const ANIMATION_SPECS := {
 		"loop": false,
 	},
 	"stagger_s": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__s__8__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__s__8f__96.png",
+		"fps": 10.0,
+		"loop": false,
+	},
+	"stagger_e": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__e__8f__96.png",
+		"fps": 10.0,
+		"loop": false,
+	},
+	"stagger_w": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__w__8f__96.png",
 		"fps": 10.0,
 		"loop": false,
 	},
@@ -190,6 +200,14 @@ static func get_attack_animation(direction: Vector2) -> StringName:
 	if direction.y > 0.35 and direction.x >= 0.0:
 		return &"melee_se"
 	return &"melee_e"
+
+
+static func get_stagger_animation(direction: Vector2) -> StringName:
+	if direction.x < -0.2:
+		return &"stagger_w"
+	if direction.x > 0.2:
+		return &"stagger_e"
+	return &"stagger_s"
 
 
 static func get_attack_fx_animation(direction: Vector2) -> StringName:

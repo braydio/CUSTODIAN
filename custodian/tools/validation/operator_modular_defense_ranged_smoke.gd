@@ -22,6 +22,7 @@ func _run() -> void:
 	await process_frame
 
 	_validate_parry_attempt_uses_modular_layers(operator)
+	_validate_guard_hold_walk_uses_modular_lower(operator)
 	_validate_ranged_2h_stance_uses_modular_layers(operator)
 
 	var heavy_operator := OPERATOR_SCENE.instantiate()
@@ -67,6 +68,39 @@ func _validate_parry_attempt_uses_modular_layers(operator: Node) -> void:
 	operator.call("_play_parry_animation", &"unarmed_parry")
 	_assert_true(lower_sprite != null and lower_sprite.animation == &"unarmed_parry_right", "failed parry should keep the parry_01 lower-body attempt animation")
 	_assert_true(upper_sprite != null and upper_sprite.animation == &"unarmed_parry_right", "failed parry should keep the parry_01 upper-body attempt animation")
+
+
+func _validate_guard_hold_walk_uses_modular_lower(operator: Node) -> void:
+	operator.set("combat_loadout_mode", "melee")
+	operator.set("primary_weapon_equipped", false)
+	operator.set("using_unarmed", true)
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+	operator.set("movement_direction", Vector2.RIGHT)
+	operator.set("velocity", Vector2.RIGHT * 32.0)
+	operator.set("_block_phase", &"hold")
+	operator.set("_block_active", true)
+	operator.set("is_sprinting", false)
+	operator.call("_exit_ranged_ready")
+
+	_assert_true(not bool(operator.call("_is_movement_locked")), "held guard should not hard-lock movement")
+	_assert_animation_exists(operator, "modular_lower_body_sprite", &"unarmed_walk_right")
+	_assert_animation_exists(operator, "modular_upper_body_sprite", &"unarmed_block_hold_right")
+	_assert_true(bool(operator.call("_sync_modular_block_hold_movement_presentation")), "moving guard hold should sync modular lower walk plus upper block hold")
+
+	var lower_sprite := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
+	var upper_sprite := operator.get("modular_upper_body_sprite") as AnimatedSprite2D
+	var legacy_sprite := operator.get("animated_sprite") as AnimatedSprite2D
+	_assert_true(lower_sprite != null and lower_sprite.visible, "moving guard hold should show modular lower body")
+	_assert_true(upper_sprite != null and upper_sprite.visible, "moving guard hold should show modular upper body")
+	_assert_true(lower_sprite != null and lower_sprite.animation == &"unarmed_walk_right", "moving guard hold should use lower-body walk")
+	_assert_true(lower_sprite != null and is_equal_approx(lower_sprite.speed_scale, float(operator.get("block_move_multiplier"))), "moving guard lower walk should use block movement speed scale")
+	_assert_true(upper_sprite != null and upper_sprite.animation == &"unarmed_block_hold_right", "moving guard hold should keep upper-body block hold")
+	_assert_true(legacy_sprite == null or not legacy_sprite.visible, "moving guard hold should hide legacy full body")
+
+	operator.set("velocity", Vector2.ZERO)
+	operator.set("_block_phase", &"")
+	operator.set("_block_active", false)
 
 
 func _validate_unarmed_heavy_fx_survives_visual_update(operator: Node) -> void:

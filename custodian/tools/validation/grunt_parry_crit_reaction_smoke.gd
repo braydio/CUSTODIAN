@@ -55,7 +55,7 @@ func _run() -> void:
 	_assert_true(float(grunt.get("_stagger_timer")) > 0.0, "parried grunt should enter stagger timer first")
 	_assert_true(float(grunt.get("_parry_critical_window_timer")) > 0.0, "parried grunt should open a critical-hit window")
 	_assert_true(is_equal_approx(float(grunt.get("_crit_timer")), 0.0), "parry alone should not start crit_01")
-	_assert_true(body_sprite != null and String(body_sprite.animation) == "stagger_s", "parried grunt should play stagger_s before critical hit")
+	_assert_true(body_sprite != null and String(body_sprite.animation) == "stagger_e", "right-parried grunt should play stagger_e before critical hit")
 	_assert_true(fx_sprite == null or not fx_sprite.visible, "parry stagger should clear standard flinch FX and wait for the special critical FX")
 	var breach_marker := grunt.get("_critical_breach_marker_vfx") as Node2D
 	var countdown_ring := grunt.get("_critical_window_ring_vfx") as Node2D
@@ -73,10 +73,10 @@ func _run() -> void:
 
 	grunt.call("_update_reaction_timers", 0.56)
 	var stagger_frames := body_sprite.sprite_frames if body_sprite != null else null
-	var last_stagger_frame := stagger_frames.get_frame_count("stagger_s") - 1 if stagger_frames != null and stagger_frames.has_animation("stagger_s") else -1
+	var last_stagger_frame := stagger_frames.get_frame_count("stagger_e") - 1 if stagger_frames != null and stagger_frames.has_animation("stagger_e") else -1
 	_assert_true(is_equal_approx(float(grunt.get("_stagger_timer")), 0.0), "stagger timer should clear before the critical window ends")
 	_assert_true(float(grunt.get("_parry_critical_window_timer")) > 0.0, "critical window should remain briefly after stagger animation time")
-	_assert_true(body_sprite != null and String(body_sprite.animation) == "stagger_s" and body_sprite.frame == last_stagger_frame, "critical window placeholder should freeze the last stagger frame")
+	_assert_true(body_sprite != null and String(body_sprite.animation) == "stagger_e" and body_sprite.frame == last_stagger_frame, "critical window placeholder should freeze the last directional stagger frame")
 	_assert_true(bool(grunt.call("can_receive_parry_critical_from", operator)), "enemy should validate parry criticals while the critical-open window is active")
 	operator.call("_start_critical_attack", grunt)
 	var operator_sprite := operator.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D

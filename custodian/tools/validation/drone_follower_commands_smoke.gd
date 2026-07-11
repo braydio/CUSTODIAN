@@ -6,6 +6,18 @@ const DroneCommandProfileScript := preload("res://game/systems/drone/drone_comma
 const ALLIED_DROID_SCENE := preload("res://game/actors/allies/allied_infantry_droid.tscn")
 
 
+class PassiveCommandTarget:
+	extends Node2D
+
+	var dead := false
+
+	func is_passive_enemy() -> bool:
+		return true
+
+	func is_dead() -> bool:
+		return dead
+
+
 func _init() -> void:
 	call_deferred("_run")
 
@@ -218,6 +230,25 @@ func _verify_manager_propagation_and_spawn_inheritance() -> void:
 	assert(first.get("target") == commanded_enemy, "Explicit command target should become the active droid target.")
 	assert(manager.squad_state.order_anchor_position == commanded_enemy.global_position, "Target click should place the guard anchor at the hostile position.")
 
+	var commanded_shrumb := PassiveCommandTarget.new()
+	commanded_shrumb.name = "CommandedShrumb"
+	commanded_shrumb.add_to_group("enemy")
+	commanded_shrumb.add_to_group("drone_command_target")
+	world.add_child(commanded_shrumb)
+	commanded_shrumb.global_position = guard_position + Vector2(30.0, 0.0)
+	manager.issue_guard_order(guard_position)
+	first.call("clear_command_target")
+	first.target = null
+	first.call("_refresh_target")
+	assert(first.get("target") != commanded_shrumb, "Passive Shrumb should not be acquired automatically by fire-at-will targeting.")
+	assert(manager.call("_resolve_hostile_at_position", commanded_shrumb.global_position) == commanded_shrumb, "Command hover should resolve a selectable Shrumb under the pointer.")
+	manager.issue_target_order(commanded_shrumb)
+	first.global_position = commanded_shrumb.global_position + Vector2(8.0, 0.0)
+	first.call("_refresh_target")
+	assert(first.get("command_target") == commanded_shrumb and second.get("command_target") == commanded_shrumb, "Target click should propagate an explicit Shrumb target to every live droid.")
+	assert(first.get("target") == commanded_shrumb, "Explicit Shrumb command target should become the active droid target.")
+	assert(manager.squad_state.order_anchor_position == commanded_shrumb.global_position, "Shrumb target click should place the guard anchor at the Shrumb position.")
+
 	second.call("take_damage", 999.0)
 	manager.set_fire_at_will(true)
 	var summary: Dictionary = manager.get_squad_summary()
@@ -231,8 +262,8 @@ func _verify_manager_propagation_and_spawn_inheritance() -> void:
 	assert(replacement.get("fire_at_will") == true, "Newly spawned droid should inherit current fire discipline.")
 	assert(replacement.get("follow_distance_mode") == DroneCommandProfileScript.FollowDistance.FAR, "Newly spawned droid should inherit current follow distance.")
 	assert(replacement.get("order_anchor_active") == true, "Newly spawned droid should inherit active guard order.")
-	assert(replacement.get("order_anchor_position") == commanded_enemy.global_position, "Replacement should inherit the target-order anchor position.")
-	assert(replacement.get("command_target") == commanded_enemy, "Replacement should inherit a still-valid explicit command target.")
+	assert(replacement.get("order_anchor_position") == commanded_shrumb.global_position, "Replacement should inherit the current target-order anchor position.")
+	assert(replacement.get("command_target") == commanded_shrumb, "Replacement should inherit a still-valid explicit Shrumb command target.")
 
 	manager.recall_guard_order()
 	assert(not manager.has_guard_order(), "Recall should clear manager guard state.")

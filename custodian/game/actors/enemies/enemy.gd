@@ -1579,7 +1579,7 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 
 func _uses_grunt_critical_window() -> bool:
 	return custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT) \
-		and _has_animation(String(GRUNT_STAGGER_ANIMATION)) \
+		and _has_animation(String(_get_grunt_stagger_animation())) \
 		and _has_animation(String(GRUNT_CRIT_ANIMATION))
 
 
@@ -1624,7 +1624,7 @@ func has_active_critical_target_reticle() -> bool:
 
 
 func _get_grunt_parry_critical_window_duration(duration: float) -> float:
-	return maxf(maxf(duration, grunt_parry_critical_window_min_sec), _get_animation_duration(String(GRUNT_STAGGER_ANIMATION)))
+	return maxf(maxf(duration, grunt_parry_critical_window_min_sec), _get_animation_duration(String(_get_grunt_stagger_animation())))
 
 
 func _log_grunt_stagger_placeholder() -> void:
@@ -2176,9 +2176,10 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 			_play_grunt_flinch_fx()
 			return
 	if _stagger_timer > 0.0:
-		if _has_animation(String(GRUNT_STAGGER_ANIMATION)):
+		var stagger_animation := _get_grunt_stagger_animation()
+		if _has_animation(String(stagger_animation)):
 			animated_sprite.flip_h = false
-			_play_animation(String(GRUNT_STAGGER_ANIMATION), false)
+			_play_animation(String(stagger_animation), false)
 			return
 	if force_attack:
 		var attack_animation := GRUNT_ANIMATION_LIBRARY.get_attack_animation(facing)
@@ -2206,18 +2207,27 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 	animated_sprite.set_frame_and_progress(0, 0.0)
 
 
+func _get_grunt_stagger_animation() -> StringName:
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+		var stagger_animation := GRUNT_ANIMATION_LIBRARY.get_stagger_animation(_last_move_direction)
+		if _has_animation(String(stagger_animation)):
+			return stagger_animation
+	return GRUNT_STAGGER_ANIMATION
+
+
 func _play_grunt_parry_stagger_placeholder() -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
-	if not _has_animation(String(GRUNT_STAGGER_ANIMATION)):
+	var stagger_animation := _get_grunt_stagger_animation()
+	if not _has_animation(String(stagger_animation)):
 		return
 	animated_sprite.flip_h = false
-	if _stagger_timer > 0.0 and (animated_sprite.animation != String(GRUNT_STAGGER_ANIMATION) or animated_sprite.is_playing()):
-		_play_animation(String(GRUNT_STAGGER_ANIMATION), false)
+	if _stagger_timer > 0.0 and (animated_sprite.animation != String(stagger_animation) or animated_sprite.is_playing()):
+		_play_animation(String(stagger_animation), false)
 		return
-	if animated_sprite.animation != String(GRUNT_STAGGER_ANIMATION):
-		animated_sprite.play(String(GRUNT_STAGGER_ANIMATION))
-	var last_frame: int = max(0, animated_sprite.sprite_frames.get_frame_count(String(GRUNT_STAGGER_ANIMATION)) - 1)
+	if animated_sprite.animation != String(stagger_animation):
+		animated_sprite.play(String(stagger_animation))
+	var last_frame: int = max(0, animated_sprite.sprite_frames.get_frame_count(String(stagger_animation)) - 1)
 	animated_sprite.stop()
 	animated_sprite.set_frame_and_progress(last_frame, 0.0)
 

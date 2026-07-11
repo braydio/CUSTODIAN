@@ -139,6 +139,7 @@ For the registered Sundered Keep ingress and existing route wrapper:
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_route_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_approach_route_visual_smoke.gd
 ```
 
 ```bash

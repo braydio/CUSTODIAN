@@ -11,6 +11,8 @@ const REQUIRED_BODY_ANIMATIONS := {
 	"melee_sw": 10,
 	"melee_w": 11,
 	"stagger_s": 8,
+	"stagger_e": 8,
+	"stagger_w": 8,
 	"crit_s": 8,
 	"crit_recovery_s": 5,
 	"death_s": 12,
@@ -56,6 +58,18 @@ func _run() -> void:
 		return
 	if GRUNT_ANIMATION_LIBRARY.get_attack_animation(Vector2(1.0, 1.0)) != &"melee_se":
 		push_error("Grunt southeast attack did not resolve to melee_se.")
+		quit(1)
+		return
+	if GRUNT_ANIMATION_LIBRARY.get_stagger_animation(Vector2.RIGHT) != &"stagger_e":
+		push_error("Grunt right stagger did not resolve to stagger_e.")
+		quit(1)
+		return
+	if GRUNT_ANIMATION_LIBRARY.get_stagger_animation(Vector2.LEFT) != &"stagger_w":
+		push_error("Grunt left stagger did not resolve to stagger_w.")
+		quit(1)
+		return
+	if GRUNT_ANIMATION_LIBRARY.get_stagger_animation(Vector2.DOWN) != &"stagger_s":
+		push_error("Grunt vertical stagger did not resolve to stagger_s.")
 		quit(1)
 		return
 	if GRUNT_ANIMATION_LIBRARY.get_attack_fx_animation(Vector2.LEFT) != &"melee_fx_w":

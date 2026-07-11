@@ -36,6 +36,16 @@ func acquire_target_at_position(drone: Node2D, anchor_position: Vector2, mode: i
 	return best
 
 
+func is_valid_command_target(target: Node) -> bool:
+	if target == null or not is_instance_valid(target):
+		return false
+	if target.has_method("is_dead") and bool(target.call("is_dead")):
+		return false
+	if target.is_in_group("drone_command_target"):
+		return true
+	return not is_invalid_enemy(target)
+
+
 func is_invalid_enemy(enemy: Node) -> bool:
 	if enemy == null or not is_instance_valid(enemy):
 		return true

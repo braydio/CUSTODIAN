@@ -150,7 +150,7 @@ func issue_guard_order(position: Vector2) -> void:
 
 
 func issue_target_order(hostile: Node2D) -> void:
-	if not _is_valid_command_hostile(hostile):
+	if not _is_valid_command_target(hostile):
 		return
 	squad_state.set_order_anchor(hostile.global_position)
 	_propagate_order_anchor(hostile.global_position)
@@ -176,7 +176,7 @@ func is_target_command_active() -> bool:
 
 
 func get_command_hover_target() -> Node2D:
-	if _is_valid_command_hostile(_command_hover_target):
+	if _is_valid_command_target(_command_hover_target):
 		return _command_hover_target
 	return null
 
@@ -219,7 +219,7 @@ func _apply_squad_state_to_drone(drone: Node) -> void:
 		drone.call("set_order_anchor", squad_state.order_anchor_position)
 	elif drone.has_method("clear_order_anchor"):
 		drone.call("clear_order_anchor")
-	if _is_valid_command_hostile(_command_target) and drone.has_method("set_command_target"):
+	if _is_valid_command_target(_command_target) and drone.has_method("set_command_target"):
 		drone.call("set_command_target", _command_target)
 
 
@@ -315,8 +315,8 @@ func _get_pointer_world_position() -> Vector2:
 func _resolve_hostile_at_position(world_position: Vector2) -> Node2D:
 	var nearest: Node2D = null
 	var nearest_distance := command_target_hover_radius
-	for candidate: Node in get_tree().get_nodes_in_group("enemy"):
-		if not candidate is Node2D or not _is_valid_command_hostile(candidate):
+	for candidate: Node in _get_command_target_candidates():
+		if not candidate is Node2D or not _is_valid_command_target(candidate):
 			continue
 		var hostile := candidate as Node2D
 		var distance := hostile.global_position.distance_to(world_position)
@@ -324,6 +324,29 @@ func _resolve_hostile_at_position(world_position: Vector2) -> Node2D:
 			nearest_distance = distance
 			nearest = hostile
 	return nearest
+
+
+func _get_command_target_candidates() -> Array[Node]:
+	var candidates: Array[Node] = []
+	var seen: Dictionary = {}
+	for group_name in [&"enemy", &"drone_command_target"]:
+		for candidate: Node in get_tree().get_nodes_in_group(group_name):
+			var instance_id := candidate.get_instance_id()
+			if seen.has(instance_id):
+				continue
+			seen[instance_id] = true
+			candidates.append(candidate)
+	return candidates
+
+
+func _is_valid_command_target(candidate: Node) -> bool:
+	if candidate == null or not is_instance_valid(candidate):
+		return false
+	if candidate.has_method("is_dead") and bool(candidate.call("is_dead")):
+		return false
+	if candidate.is_in_group("drone_command_target"):
+		return true
+	return _is_valid_command_hostile(candidate)
 
 
 func _is_valid_command_hostile(candidate: Node) -> bool:
