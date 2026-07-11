@@ -28,7 +28,7 @@ below; this document does not duplicate their runtime ownership.
 | Global attention/escalation | pending | No shared attention meter, alarm network, reinforcement pressure, or ritual acceleration from noise | This document |
 | Sidearm loadout tradeoff | complete-v1 | Recovered P-9 must occupy the Equipment-page sidearm slot; equipped P-9 replaces guard/parry with sidearm-ready | `COMBAT_FEEL_SYSTEM.md`, `SIDEARM_UNLOCK.md` |
 | Health | complete-v1 | Operator health, damage, death, hit recoil, and HUD/status display are live | `COMBAT_FEEL_SYSTEM.md` |
-| Field Patch healing | pending | No limited healing item, timed commit, interruption, or crafting/restock loop | This document |
+| Field Patch healing | complete-v1 | Operator carries limited Field Patches, uses a timed commit heal, slows during use, restores 35% max health at commit, and interrupts before commit on damage or conflicting actions. Pickup/crafting restock remains pending. | This document |
 | Stamina, dodge, guard, parry | complete-v1 | Dodge/heavy/parry costs, guard chip and stamina damage, timed parry, enemy stagger, and counter window are live | `COMBAT_FEEL_SYSTEM.md` |
 | Dedicated riposte/opened state | partial | Parry grants a counter damage window, but there is no unique riposte action or persistent enemy-opened state | This document |
 | Hit readability | partial | Operator hit recoil and enemy recoil/stagger thresholds are live; strength taxonomy, armor deflect, guard-break presentation, and complete animation coverage are not | This document |
@@ -89,16 +89,17 @@ guard + primary -> parry
 
 ### Healing
 
-The first healing slice should use a limited physical Field Patch:
+The first healing slice uses a limited physical Field Patch:
 
 - maximum carried baseline: 2
-- tunable use time target: 1.1–1.4 seconds
+- starting count baseline: 1
+- tunable use time target: 1.25 seconds
 - tunable restore target: 35% maximum health
 - apply healing only at a timed commit point
-- heavy hit/stagger interrupts before commit
+- damage, dodge, reload, attack, death, terminal/runtime locks, and field-work input interrupt before commit
 - no free combat regeneration
-- restock/craft consumes existing flavored resources through established
-  inventory/fabrication authority
+- restock/craft should consume existing flavored resources through established
+  inventory/fabrication authority in a later slice
 
 ### Hit readability and riposte
 
@@ -144,13 +145,14 @@ the rifle indefinitely; current ranged-balance smoke remains green.
 
 ### Milestone B — Field Patch survival pressure
 
-- Add carried Field Patch count and quick-item action.
-- Add timed, interruptible heal commit and partial restore.
+- Carried Field Patch count and quick-use action are complete-v1.
+- Timed, interruptible heal commit and partial restore are complete-v1.
 - Add cache/fabrication restock using existing resource IDs.
-- Add start/apply/recovery presentation fallbacks and required-asset entries.
+- Add production start/apply/recovery presentation assets beyond the current placeholder warning.
 
 Acceptance: healing is finite, cannot be animation-cancelled for free, and does
-not regenerate health passively.
+not regenerate health passively. Runtime v1 acceptance is covered by
+`custodian/tools/validation/field_patch_smoke.gd`.
 
 ### Milestone C — Hit taxonomy and full riposte
 
@@ -185,6 +187,7 @@ remain local tactical aids.
 ```bash
 cd custodian
 godot --headless --script tools/validation/ranged_combat_balance_smoke.gd
+godot --headless --script tools/validation/field_patch_smoke.gd
 godot --headless --script tools/validation/enemy_behavior_vault_smoke.gd
 godot --headless --script tools/validation/debug_collector_combat_drone_smoke.gd
 ```
@@ -204,5 +207,5 @@ Constraints: UI is read-only; retain typed ammo adapters; use `NoiseEventBus`;
 preserve the equipment-gated sidearm and guard/parry control contract.
 
 Acceptance: heat, overheat, reload, dry-fire, and recovery are readable in normal
-play; focused ranged validation passes; deferred Field Patch work remains
-explicit.
+play; focused ranged validation passes; Field Patch restock/crafting and
+production presentation remain explicit deferred work.

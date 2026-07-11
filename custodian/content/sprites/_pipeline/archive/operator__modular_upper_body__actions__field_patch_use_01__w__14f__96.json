@@ -1,0 +1,23 @@
+{
+  "source": "operator__modular_upper_body__actions__field_patch_use_01__w__14f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/new_operator/modular/field_patch_use_01/operator__modular_upper_body__actions__field_patch_use_01__w__14f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 14
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "operator_modular_runtime"
+  ]
+}

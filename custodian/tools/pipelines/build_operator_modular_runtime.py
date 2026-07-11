@@ -473,7 +473,7 @@ def _parse_generic_modular_source(source: Path) -> tuple[str, str, str, SheetSpe
     try:
         direction = parts[-3]
         frames = int(parts[-2].removesuffix("f"))
-        declared_size = int(parts[-1])
+        declared_size = int(re.sub(r"\D.*$", "", parts[-1]))
     except ValueError:
         return None
     if direction not in DIRECTIONS or frames <= 0 or declared_size <= 0:
@@ -570,7 +570,7 @@ def _find_part(root: Path, part: str, action: str, direction: str) -> Path | Non
 
 
 def _sheet_spec_from_path(path: Path, direction: str) -> SheetSpec:
-    match = re.search(r"__(\d+)f__(\d+)\.png$", path.name)
+    match = re.search(r"__(\d+)f__(\d+)(?:\D.*)?\.png$", path.name)
     if match is None:
         raise ValueError(f"cannot parse frame count from {path}")
     frames = int(match.group(1))

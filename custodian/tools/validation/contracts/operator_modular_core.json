@@ -75,6 +75,16 @@
       ]
     },
     {
+      "id": "field_patch",
+      "label": "Field Patch use action modules",
+      "required": false,
+      "entries": [
+        {"layer": "lower_body", "loadout": "unarmed", "action": "field_patch_use_01", "directions": ["e", "w"], "frames": 14},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "field_patch_use_01", "directions": ["e", "w"], "frames": 14},
+        {"layer": "upper_fx", "loadout": "unarmed", "action": "field_patch_use_01", "directions": ["e", "w"], "frames": 14}
+      ]
+    },
+    {
       "id": "sidearm_actions",
       "label": "Sidearm draw/fire action modules",
       "required": false,

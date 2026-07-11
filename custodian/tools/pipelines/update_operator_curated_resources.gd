@@ -5,6 +5,7 @@ const MODULAR_LOWER_BODY_FRAMES_PATH := "res://game/actors/operator/operator_mod
 const MODULAR_UPPER_BODY_FRAMES_PATH := "res://game/actors/operator/operator_modular_upper_body_frames.tres"
 const MODULAR_SIDEARM_FRAMES_PATH := "res://game/actors/operator/operator_modular_sidearm_frames.tres"
 const MODULAR_UPPER_FX_FRAMES_PATH := "res://game/actors/operator/operator_modular_upper_fx_frames.tres"
+const MODULAR_CAPE_FRAMES_PATH := "res://game/actors/operator/operator_modular_cape_frames.tres"
 const WEAPON_FRAMES_PATH := "res://game/actors/operator/operator_weapon_frames.tres"
 const MELEE_OVERLAY_FRAMES_PATH := "res://game/actors/operator/operator_melee_overlay_frames.tres"
 const RANGED_FX_FRAMES_PATH := "res://game/actors/operator/operator_ranged_fx_frames.tres"
@@ -163,11 +164,12 @@ func _init() -> void:
 	var modular_upper_body_frames := _load_or_create_sprite_frames(MODULAR_UPPER_BODY_FRAMES_PATH)
 	var modular_sidearm_frames := _load_or_create_sprite_frames(MODULAR_SIDEARM_FRAMES_PATH)
 	var modular_upper_fx_frames := _load_or_create_sprite_frames(MODULAR_UPPER_FX_FRAMES_PATH)
+	var modular_cape_frames := _load_or_create_sprite_frames(MODULAR_CAPE_FRAMES_PATH)
 	var weapon_frames := load(WEAPON_FRAMES_PATH) as SpriteFrames
 	var melee_overlay_frames := load(MELEE_OVERLAY_FRAMES_PATH) as SpriteFrames
 	var ranged_fx_frames := load(RANGED_FX_FRAMES_PATH) as SpriteFrames
 
-	if body_frames == null or modular_lower_body_frames == null or modular_upper_body_frames == null or modular_sidearm_frames == null or modular_upper_fx_frames == null or weapon_frames == null or melee_overlay_frames == null or ranged_fx_frames == null:
+	if body_frames == null or modular_lower_body_frames == null or modular_upper_body_frames == null or modular_sidearm_frames == null or modular_upper_fx_frames == null or modular_cape_frames == null or weapon_frames == null or melee_overlay_frames == null or ranged_fx_frames == null:
 		push_error("Failed to load one or more operator SpriteFrames resources.")
 		quit(1)
 		return
@@ -225,12 +227,14 @@ func _init() -> void:
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_fast_attack_entries("lower_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_unarmed_block_entries("lower_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_unarmed_parry_entries("lower_body"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_field_patch_entries("lower_body", "field_patch_use_lower"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_locomotion_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_fast_attack_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_draw_upper", "draw_sidearm_01"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_fire_upper", "fire_sidearm_01"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_unarmed_block_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_unarmed_parry_entries("upper_body"))
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_field_patch_entries("upper_body", "field_patch_use_upper"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_stance_entries("lower_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_ranged_stance_entries("upper_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_aim_entries("lower_body"))
@@ -251,6 +255,8 @@ func _init() -> void:
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_sidearm_entries("upper_fx", "sidearm_fire_fx", "fire_sidearm_01"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_fast_attack_entries("upper_fx"))
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_unarmed_parry_fx_entries())
+	_replace_animation_entries(modular_upper_fx_frames, _build_modular_field_patch_entries("upper_fx", "field_patch_use_fx"))
+	_replace_animation_entries(modular_cape_frames, _build_modular_cape_run_entries())
 	_replace_animation_if_exists(body_frames, "unarmed_death", UNARMED_DEATH_BODY_SHEET, 6, 0, 96, 96, 7.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival_down", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
@@ -308,6 +314,7 @@ func _init() -> void:
 	ResourceSaver.save(modular_upper_body_frames, MODULAR_UPPER_BODY_FRAMES_PATH)
 	ResourceSaver.save(modular_sidearm_frames, MODULAR_SIDEARM_FRAMES_PATH)
 	ResourceSaver.save(modular_upper_fx_frames, MODULAR_UPPER_FX_FRAMES_PATH)
+	ResourceSaver.save(modular_cape_frames, MODULAR_CAPE_FRAMES_PATH)
 	ResourceSaver.save(weapon_frames, WEAPON_FRAMES_PATH)
 	ResourceSaver.save(melee_overlay_frames, MELEE_OVERLAY_FRAMES_PATH)
 	ResourceSaver.save(ranged_fx_frames, RANGED_FX_FRAMES_PATH)
@@ -757,6 +764,69 @@ func _find_modular_action_sheet(root: String, part: String, loadout: String, act
 				"frames": int(matched.get_string(1)),
 			}
 	return {}
+
+
+func _build_modular_field_patch_entries(part: String, base: String) -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/unarmed" % part
+	var entries: Array = []
+	for direction_spec in [
+		{"dir": "e", "suffix": "right", "alias_base": true},
+		{"dir": "w", "suffix": "left"},
+	]:
+		var sheet := _find_modular_action_sheet(root, part, "unarmed", "field_patch_use_01", str(direction_spec["dir"]))
+		if sheet.is_empty():
+			continue
+		var entry := {
+			"path": str(sheet["path"]),
+			"frames": int(sheet["frames"]),
+			"frame_width": 96,
+			"frame_height": 96,
+			"fps": 11.2,
+			"loop": false,
+		}
+		if bool(direction_spec.get("alias_base", false)):
+			var base_entry := entry.duplicate()
+			base_entry["animation"] = base
+			entries.append(base_entry)
+		var directional_entry := entry.duplicate()
+		directional_entry["animation"] = "%s_%s" % [base, str(direction_spec["suffix"])]
+		entries.append(directional_entry)
+	return entries
+
+
+func _build_modular_cape_run_entries() -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed"
+	var entries: Array = []
+	var direction_specs := [
+		{"dir": "s", "suffix": "down", "alias_base": true},
+		{"dir": "se", "suffix": "down_right"},
+		{"dir": "e", "suffix": "right"},
+		{"dir": "ne", "suffix": "up_right"},
+		{"dir": "n", "suffix": "up"},
+		{"dir": "nw", "suffix": "up_left"},
+		{"dir": "w", "suffix": "left"},
+		{"dir": "sw", "suffix": "down_left"},
+	]
+	for direction_spec in direction_specs:
+		var sheet := _find_modular_action_sheet(root, "wardrobe_cape", "unarmed", "run_01", str(direction_spec["dir"]))
+		if sheet.is_empty():
+			continue
+		var entry := {
+			"path": str(sheet["path"]),
+			"frames": int(sheet["frames"]),
+			"frame_width": 96,
+			"frame_height": 96,
+			"fps": 12.0,
+			"loop": true,
+		}
+		if bool(direction_spec.get("alias_base", false)):
+			var base_entry := entry.duplicate()
+			base_entry["animation"] = "unarmed_run_cape"
+			entries.append(base_entry)
+		var directional_entry := entry.duplicate()
+		directional_entry["animation"] = "unarmed_run_cape_%s" % str(direction_spec["suffix"])
+		entries.append(directional_entry)
+	return entries
 
 
 func _build_modular_unarmed_parry_fx_entries() -> Array:

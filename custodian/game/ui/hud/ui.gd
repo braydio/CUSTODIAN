@@ -955,10 +955,18 @@ func _build_debug_player_snapshot(operator: Node) -> Dictionary:
 	var sprint := {}
 	if operator.has_method("get_sprint_status"):
 		sprint = operator.call("get_sprint_status")
+	var field_patch := {}
+	if operator.has_method("get_field_patch_status"):
+		field_patch = operator.call("get_field_patch_status")
 	return {
 		"name": operator.name,
 		"position": (operator as Node2D).global_position if operator is Node2D else Vector2.ZERO,
 		"health": "%d/%d" % [int(round(health_value)), int(round(max_health_value))],
+		"field_patch": "%d/%d%s" % [
+			int(field_patch.get("count", 0)),
+			int(field_patch.get("max", 0)),
+			" active" if bool(field_patch.get("active", false)) else "",
+		],
 		"stamina": "%.0f/%.0f" % [float(sprint.get("stamina", 0.0)), float(sprint.get("stamina_max", 0.0))],
 		"sprinting": bool(sprint.get("is_sprinting", false)),
 		"exhausted": bool(sprint.get("sprint_exhausted", false)),
@@ -1109,6 +1117,14 @@ func _process(delta):
 			elif "max_health" in operator_for_health:
 				max_health_value = max(1.0, float(operator_for_health.get("max_health")))
 		var health_text := "HEALTH: %d/%d" % [int(round(health_value)), int(round(max_health_value))]
+		if operator_for_health != null and operator_for_health.has_method("get_field_patch_status"):
+			var patch_status: Dictionary = operator_for_health.get_field_patch_status()
+			var patch_count := int(patch_status.get("count", 0))
+			var patch_max := int(patch_status.get("max", 0))
+			if bool(patch_status.get("active", false)):
+				health_text += "  PATCHING %.1fs" % maxf(0.0, float(patch_status.get("time_remaining", 0.0)))
+			else:
+				health_text += "  PATCH %d/%d" % [patch_count, patch_max]
 		if health_text != _last_health_text:
 			lives_label.text = health_text
 			_last_health_text = health_text

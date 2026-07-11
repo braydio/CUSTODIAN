@@ -1,5 +1,9 @@
 extends ControllableActor
 
+signal health_changed(current: float, maximum: float)
+signal field_patch_changed(count: int, maximum: int)
+signal field_patch_state_changed(active: bool, committed: bool)
+
 const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
 const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
 const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
@@ -170,6 +174,14 @@ var last_fire_cooldown := 0.0
 @export var guard_break_stamina_threshold: float = 6.0
 @export var guard_exit_speed_scale: float = 1.6
 @export_group("", "")
+@export_group("Field Patch")
+@export var field_patch_max_count: int = 2
+@export var field_patch_count: int = 1
+@export var field_patch_use_duration: float = 1.25
+@export var field_patch_restore_fraction: float = 0.35
+@export var field_patch_recovery_duration: float = 0.20
+@export var field_patch_move_multiplier: float = 0.35
+@export_group("", "")
 @export var combat_target_range: float = 360.0
 @export var use_tiny_rpg_placeholder_soldier: bool = true
 @export var modular_locomotion_layers_enabled: bool = true
@@ -304,6 +316,11 @@ var _dodge_recovery_timer: float = 0.0
 var _dodge_cooldown_remaining: float = 0.0
 var _dodge_direction: Vector2 = Vector2.DOWN
 var _dodge_backstep_active: bool = false
+var _field_patch_active: bool = false
+var _field_patch_timer: float = 0.0
+var _field_patch_committed: bool = false
+var _field_patch_recovery_timer: float = 0.0
+var _field_patch_missing_presentation_warning_emitted: bool = false
 var _combat_target: Node2D = null
 var _target_ring: Node2D = null
 var _target_ring_pending: bool = false
@@ -759,26 +776,38 @@ func _process(delta):
 	_update_melee_attack(delta)
 	_update_melee_recovery(delta)
 	_update_reload(delta)
+	_update_field_patch(delta)
 	_tick_primary_ranged_action_presentation(delta)
 	_update_animation_state_machine(delta)
 	_update_combat_target()
 	_update_target_ring()
 	_update_interaction_target()
 	if _is_dead:
+		cancel_field_patch(&"dead")
 		_cancel_dodge()
 		_exit_ranged_ready()
 		return
 	if _enemy_impact_lock_timer > 0.0:
+		cancel_field_patch(&"impact")
 		_cancel_dodge()
 		_exit_ranged_ready()
 		_update_aim()
 		_update_animation()
 		return
 	_handle_interact_input()
-	if _is_terminal_open():
+	if _is_terminal_open() or _is_non_terminal_ui_open():
+		cancel_field_patch(&"ui")
 		_exit_ranged_ready()
 		return
 	if _portal_transition_locked or _portal_arrival_animation_active:
+		cancel_field_patch(&"portal")
+		_exit_ranged_ready()
+		_update_aim()
+		_update_animation()
+		return
+	_handle_field_patch_input()
+	_handle_field_patch_interrupt_input()
+	if _field_patch_active:
 		_exit_ranged_ready()
 		_update_aim()
 		_update_animation()
@@ -831,7 +860,8 @@ func _physics_process(delta):
 		_update_stealth_noise_snapshot(false)
 		move_and_slide()
 		return
-	if _is_terminal_open() or _is_ui_text_input_focused():
+	if _is_terminal_open() or _is_non_terminal_ui_open() or _is_ui_text_input_focused():
+		cancel_field_patch(&"ui")
 		velocity = Vector2.ZERO
 		is_sprinting = false
 		is_sneaking = false
@@ -876,6 +906,9 @@ func _physics_process(delta):
 	is_sneaking = moving and InputMap.has_action("sneak") and Input.is_action_pressed("sneak") and not is_sprinting and not _has_attack_movement_modifier()
 	var movement_profile := get_current_combat_profile()
 	var active_move_speed := SPEED * sprint_multiplier if is_sprinting else SPEED
+	if _field_patch_active:
+		is_sprinting = false
+		active_move_speed = SPEED
 	if is_sneaking:
 		active_move_speed *= 0.55
 	if movement_profile != null:
@@ -885,6 +918,8 @@ func _physics_process(delta):
 	active_move_speed *= _get_attack_move_multiplier()
 	if _is_block_state_active():
 		active_move_speed *= block_move_multiplier
+	if _field_patch_active:
+		active_move_speed *= field_patch_move_multiplier
 		
 	# Apply cognitive state move speed modifier
 	var cognitive := get_node_or_null("/root/CognitiveState")
@@ -964,6 +999,9 @@ func _update_animation():
 		return
 	if _dodge_recovery_active:
 		_play_dodge_recovery_animation()
+		return
+	if _field_patch_active:
+		_play_field_patch_use_presentation()
 		return
 
 	# Check if currently firing or attacking (lock to cursor)
@@ -1847,6 +1885,47 @@ func _play_optional_modular_cape_animation_backwards(base_animation: String, dir
 	return result
 
 
+func _play_field_patch_use_presentation() -> bool:
+	var direction := aim_direction if aim_direction.length_squared() > 0.0001 else visual_idle_direction
+	if direction.length_squared() <= 0.0001:
+		direction = Vector2.RIGHT
+
+	var lower_played := _sync_field_patch_action_layer(modular_lower_body_sprite, "field_patch_use_lower", direction, 11.2)
+	var upper_played := _sync_field_patch_action_layer(modular_upper_body_sprite, "field_patch_use_upper", direction, 11.2)
+	_sync_field_patch_action_layer(modular_upper_fx_sprite, "field_patch_use_fx", direction, 11.2)
+	if lower_played and upper_played:
+		animated_sprite.visible = false
+		if modular_sidearm_sprite:
+			modular_sidearm_sprite.visible = false
+		_hide_modular_cape_layer()
+		return true
+
+	_hide_modular_locomotion_layers()
+	if not _field_patch_missing_presentation_warning_emitted:
+		_field_patch_missing_presentation_warning_emitted = true
+		push_warning("[FieldPatch] Production use animation missing; using fallback locomotion presentation.")
+	return false
+
+
+func _sync_field_patch_action_layer(sprite: AnimatedSprite2D, base_animation: String, direction: Vector2, target_fps: float) -> bool:
+	if sprite == null or sprite.sprite_frames == null:
+		return false
+	var animation_name := AnimationResolver.resolve(base_animation, direction, sprite)
+	if not _has_playable_sprite_animation(sprite.sprite_frames, animation_name):
+		sprite.visible = false
+		return false
+
+	sprite.visible = true
+	sprite.flip_h = false
+	var source_speed := sprite.sprite_frames.get_animation_speed(animation_name)
+	if source_speed <= 0.0:
+		source_speed = target_fps
+	sprite.speed_scale = target_fps / max(0.01, source_speed)
+	if sprite.animation != animation_name or not sprite.is_playing():
+		sprite.play(animation_name)
+	return true
+
+
 func _hide_modular_cape_layer() -> void:
 	if modular_cape_sprite:
 		modular_cape_sprite.visible = false
@@ -2248,6 +2327,8 @@ func _find_terrain_ballistics_provider() -> Node:
 
 
 func _handle_attack_input() -> void:
+	if _field_patch_active:
+		return
 	if InputMap.has_action(&"drone_issue_guard_order") and Input.is_action_pressed(&"drone_issue_guard_order"):
 		return
 	if _is_block_state_active():
@@ -2282,6 +2363,9 @@ func _request_current_profile_intent(primary: bool) -> void:
 
 
 func _request_attack_intent(intent: String) -> void:
+	if _field_patch_active:
+		cancel_field_patch(&"attack")
+		return
 	match intent:
 		"ranged_ready", "ranged_stance", "ranged_aim":
 			_enter_ranged_ready()
@@ -2294,6 +2378,9 @@ func _request_attack_intent(intent: String) -> void:
 
 
 func _try_melee_attack(intent: String = ""):
+	if _field_patch_active:
+		cancel_field_patch(&"attack")
+		return
 	if not _is_melee_loadout_active():
 		return
 	var requested_kind := _get_requested_attack_kind(intent)
@@ -2444,6 +2531,8 @@ func _can_start_guard_from_secondary() -> bool:
 		return false
 	if _is_terminal_open() or _is_ui_text_input_focused() or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
 		return false
+	if _field_patch_active:
+		return false
 	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active:
 		return false
 	if _dodge_active or _dodge_recovery_active:
@@ -2500,6 +2589,8 @@ func _can_start_parry() -> bool:
 	if _is_dead or _enemy_impact_lock_timer > 0.0:
 		return false
 	if _is_terminal_open() or _is_ui_text_input_focused() or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
+		return false
+	if _field_patch_active:
 		return false
 	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active:
 		return false
@@ -2681,6 +2772,8 @@ func _attack_kind_from_intent(intent: String) -> String:
 
 
 func _can_start_attack_now() -> bool:
+	if _field_patch_active:
+		return false
 	if _melee_active:
 		return false
 	return melee_cooldown_remaining <= 0.0
@@ -4021,6 +4114,152 @@ func _handle_aim_input_toggle() -> void:
 		arrow_aim_enabled = not arrow_aim_enabled
 
 
+func _handle_field_patch_input() -> void:
+	if _is_action_just_pressed_any(["use_field_patch"]):
+		start_field_patch()
+
+
+func _handle_field_patch_interrupt_input() -> void:
+	if not _field_patch_active:
+		return
+	if _is_action_just_pressed_any(["dodge"]):
+		cancel_field_patch(&"dodge")
+		return
+	if _is_action_just_pressed_any(["reload_weapon", "reload"]):
+		cancel_field_patch(&"reload")
+		return
+	if _is_attack_primary_just_pressed() or _is_attack_secondary_chord_just_pressed():
+		cancel_field_patch(&"attack")
+		return
+	if Input.is_action_just_pressed("build") or Input.is_action_just_pressed("repair"):
+		cancel_field_patch(&"field_work")
+
+
+func can_use_field_patch() -> bool:
+	if _is_dead:
+		return false
+	if _field_patch_active:
+		return false
+	if _field_patch_recovery_timer > 0.0:
+		return false
+	if field_patch_count <= 0:
+		return false
+	if current_health >= max_health:
+		return false
+	if _is_terminal_open() or _is_non_terminal_ui_open() or _is_ui_text_input_focused():
+		return false
+	if _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
+		return false
+	if _reload_active:
+		return false
+	if _dodge_active or _dodge_recovery_active:
+		return false
+	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active:
+		return false
+	if attack_phase != AttackPhase.NONE:
+		return false
+	return true
+
+
+func start_field_patch() -> void:
+	if not can_use_field_patch():
+		return
+
+	_field_patch_active = true
+	_field_patch_timer = maxf(0.05, field_patch_use_duration)
+	_field_patch_committed = false
+	is_sprinting = false
+	is_sneaking = false
+	_exit_ranged_ready()
+	_cancel_reload()
+	field_patch_state_changed.emit(true, false)
+
+
+func cancel_field_patch(reason: StringName = &"unknown") -> void:
+	if not _field_patch_active:
+		return
+	if _field_patch_committed:
+		return
+
+	_field_patch_active = false
+	_field_patch_timer = 0.0
+	_field_patch_committed = false
+	field_patch_state_changed.emit(false, false)
+	print("[FieldPatch] interrupted: ", reason)
+
+
+func _update_field_patch(delta: float) -> void:
+	_field_patch_recovery_timer = maxf(0.0, _field_patch_recovery_timer - delta)
+
+	if not _field_patch_active:
+		return
+
+	if _is_dead:
+		cancel_field_patch(&"dead")
+		return
+	if _is_terminal_open() or _is_non_terminal_ui_open() or _is_ui_text_input_focused():
+		cancel_field_patch(&"ui")
+		return
+	if _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
+		cancel_field_patch(&"runtime_lock")
+		return
+
+	_field_patch_timer -= delta
+	if _field_patch_timer <= 0.0:
+		_commit_field_patch()
+
+
+func _commit_field_patch() -> void:
+	if not _field_patch_active or _field_patch_committed:
+		return
+
+	_field_patch_committed = true
+	_field_patch_active = false
+	_field_patch_timer = 0.0
+	_field_patch_recovery_timer = maxf(0.0, field_patch_recovery_duration)
+
+	field_patch_count = max(0, field_patch_count - 1)
+	var restore_amount := max_health * field_patch_restore_fraction
+	restore_health(restore_amount)
+
+	field_patch_changed.emit(field_patch_count, field_patch_max_count)
+	field_patch_state_changed.emit(false, true)
+	print("[FieldPatch] restored ", restore_amount, " hp")
+
+
+func restore_health(amount: float) -> void:
+	if _is_dead:
+		return
+
+	var applied := maxf(0.0, amount)
+	if applied <= 0.0:
+		return
+
+	current_health = minf(max_health, current_health + applied)
+	health = current_health
+	health_changed.emit(current_health, max_health)
+	update_visuals()
+
+
+func add_field_patches(amount: int) -> int:
+	var before := field_patch_count
+	field_patch_count = clampi(field_patch_count + maxi(0, amount), 0, field_patch_max_count)
+	if field_patch_count != before:
+		field_patch_changed.emit(field_patch_count, field_patch_max_count)
+	return field_patch_count - before
+
+
+func get_field_patch_status() -> Dictionary:
+	return {
+		"count": field_patch_count,
+		"max": field_patch_max_count,
+		"active": _field_patch_active,
+		"time_remaining": _field_patch_timer,
+		"use_duration": field_patch_use_duration,
+		"recovery_remaining": _field_patch_recovery_timer,
+	}
+
+
 func _handle_reload_input() -> void:
 	if _is_action_just_pressed_any(["reload_weapon", "reload"]):
 		_try_start_reload()
@@ -4077,6 +4316,8 @@ func _can_start_dodge() -> bool:
 	if _is_dead or _enemy_impact_lock_timer > 0.0 or _is_terminal_open() or _is_ui_text_input_focused():
 		return false
 	if _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
+		return false
+	if _field_patch_active:
 		return false
 	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active or _is_block_state_active():
 		return false
@@ -5827,6 +6068,8 @@ func _get_current_reload_duration() -> float:
 func _can_reload() -> bool:
 	if not _is_ranged_context_active() or _reload_active:
 		return false
+	if _field_patch_active:
+		return false
 	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active or _is_block_state_active():
 		return false
 	return _get_current_loaded_ammo() < _get_current_magazine_size() and _get_current_reserve_ammo() > 0
@@ -6300,8 +6543,12 @@ func take_damage(amount: float, trigger_reaction: bool = true):
 	if _should_ignore_incoming_damage_for_dodge("take_damage"):
 		return
 
+	if amount > 0.0 and _field_patch_active and not _field_patch_committed:
+		cancel_field_patch(&"damage")
+
 	health = max(0.0, health - amount)
 	current_health = health
+	health_changed.emit(current_health, max_health)
 
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null:
@@ -6350,6 +6597,9 @@ func apply_enemy_dash_impact(direction: Vector2, knockback_px: float, victim_hit
 
 	if _should_ignore_incoming_damage_for_dodge("apply_enemy_dash_impact"):
 		return
+
+	if _field_patch_active and not _field_patch_committed:
+		cancel_field_patch(&"dash_impact")
 
 	var impact_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector2.DOWN
 	_enemy_impact_lock_timer = maxf(_enemy_impact_lock_timer, maxf(0.16, victim_hitstop_sec + 0.13))
@@ -6428,6 +6678,7 @@ func _handle_death() -> void:
 	if _is_dead:
 		return
 	_is_dead = true
+	cancel_field_patch(&"dead")
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null:
 		observatory.call("increment", "player_deaths", 1)
@@ -6441,6 +6692,7 @@ func _handle_death() -> void:
 	if world_history != null:
 		world_history.call("record", "", "player_death", global_position, {})
 	current_health = 0.0  # Sync with ControllableActor
+	health_changed.emit(current_health, max_health)
 	_buffered_attack_kind = ""
 	_melee_active = false
 	_melee_attack_kind = ""
@@ -6472,6 +6724,7 @@ func _finish_death() -> void:
 	if gs and gs.game_over:
 		return
 	health = max_health
+	current_health = health
 	stamina = stamina_max
 	_sprint_exhausted = false
 	_buffered_attack_kind = ""
@@ -6491,6 +6744,10 @@ func _finish_death() -> void:
 	_block_active = false
 	_reload_active = false
 	_reload_timer = 0.0
+	_field_patch_active = false
+	_field_patch_timer = 0.0
+	_field_patch_committed = false
+	_field_patch_recovery_timer = 0.0
 	_pending_ranged_shot.clear()
 	_portal_transition_locked = false
 	_portal_arrival_animation_active = false
@@ -6503,6 +6760,7 @@ func _finish_death() -> void:
 	_melee_hit_targets.clear()
 	_reset_melee_overlay_visuals()
 	update_visuals()
+	health_changed.emit(current_health, max_health)
 	_is_dead = false
 	if _animation_state_machine != null:
 		# DeathState is terminal and non-interruptible; respawn must force the
@@ -6715,6 +6973,13 @@ func _is_terminal_open() -> bool:
 	var ui = get_node_or_null("/root/GameRoot/UI")
 	if ui and ui.has_method("is_terminal_open"):
 		return bool(ui.is_terminal_open())
+	return false
+
+
+func _is_non_terminal_ui_open() -> bool:
+	for node in get_tree().get_nodes_in_group("inventory_ui"):
+		if node is CanvasItem and (node as CanvasItem).visible:
+			return true
 	return false
 
 

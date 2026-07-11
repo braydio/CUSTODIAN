@@ -1,0 +1,23 @@
+{
+  "source": "operator__modular_upper_body__idle__w__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/new_operator/modular/idle/operator__modular_upper_body__idle__w__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "operator_modular_runtime"
+  ]
+}
