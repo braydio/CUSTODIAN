@@ -65,6 +65,8 @@ func can_start_recipe(recipe_id: String) -> bool:
 	var recipe: Dictionary = _recipes[recipe_id]
 	if _is_recipe_locked(recipe):
 		return false
+	if not _can_accept_recipe_output(recipe):
+		return false
 	var ledger := _get_resource_ledger()
 	if ledger == null:
 		return false
@@ -85,6 +87,9 @@ func try_start_recipe(recipe_id: String) -> bool:
 	var recipe: Dictionary = (_recipes[recipe_id] as Dictionary).duplicate(true)
 	if _is_recipe_locked(recipe):
 		job_failed.emit(recipe_id, "ARRN blueprint locked")
+		return false
+	if not _can_accept_recipe_output(recipe):
+		job_failed.emit(recipe_id, "Output carry cap reached")
 		return false
 	var cost: Dictionary = recipe.get("cost", {})
 	if not bool(ledger.call("can_pay", cost)):
@@ -158,6 +163,14 @@ func _complete_job(job) -> void:
 				ledger.call("add", output_id, output_amount)
 			else:
 				push_warning("[FabPipeline] ResourceLedger unavailable for output: %s" % output_id)
+		"operator_field_patch":
+			var operator := _get_operator()
+			if operator != null and operator.has_method("add_field_patches"):
+				var gained := int(operator.call("add_field_patches", output_amount))
+				if gained <= 0:
+					push_warning("[FabPipeline] Operator could not accept Field Patch output: %s" % output_id)
+			else:
+				push_warning("[FabPipeline] Operator unavailable for Field Patch output: %s" % output_id)
 		_:
 			push_warning("[FabPipeline] Unknown fab output type: %s" % output_type)
 
@@ -172,6 +185,18 @@ func _get_build_inventory() -> Node:
 	return get_node_or_null("/root/BuildInventory")
 
 
+func _get_operator() -> Node:
+	var tree := get_tree()
+	if tree != null:
+		var player := tree.get_first_node_in_group("player")
+		if player != null:
+			return player
+	var game_root_operator := get_node_or_null("/root/GameRoot/World/Operator")
+	if game_root_operator != null:
+		return game_root_operator
+	return get_node_or_null("/root/GameRoot/Operator")
+
+
 func _is_recipe_locked(recipe: Dictionary) -> bool:
 	var benefit_id := str(recipe.get("requires_arrn_benefit", "")).strip_edges().to_lower()
 	if benefit_id.is_empty():
@@ -180,6 +205,19 @@ func _is_recipe_locked(recipe: Dictionary) -> bool:
 	if arrn_manager == null or not arrn_manager.has_method("has_benefit"):
 		return true
 	return not bool(arrn_manager.call("has_benefit", benefit_id))
+
+
+func _can_accept_recipe_output(recipe: Dictionary) -> bool:
+	var output_type := str(recipe.get("output_type", "build_token"))
+	if output_type != "operator_field_patch":
+		return true
+	var operator := _get_operator()
+	if operator == null:
+		return false
+	if not operator.has_method("get_field_patch_status"):
+		return false
+	var status: Dictionary = operator.call("get_field_patch_status")
+	return int(status.get("count", 0)) < int(status.get("max", 0))
 
 
 func _load_json_dictionary(path: String) -> Dictionary:

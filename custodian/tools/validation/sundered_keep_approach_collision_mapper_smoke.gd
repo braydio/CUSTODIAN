@@ -29,6 +29,8 @@ func _run() -> void:
 	var help := scene.get_node_or_null("CanvasLayer/Help") as Label
 	if help == null:
 		errors.append("Help label missing")
+	elif not help.text.contains("connected polyline"):
+		errors.append("Help label should describe connected polyline segment export")
 
 	if not scene.has_method("get_collision_mapper_state"):
 		errors.append("Mapper script does not expose get_collision_mapper_state()")

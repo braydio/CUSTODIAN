@@ -139,6 +139,7 @@ For the registered Sundered Keep ingress and active continuous approach:
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_runtime_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_mapper_smoke.gd
 ```
 
@@ -181,9 +182,19 @@ For fabrication terminal readability / work-order translation changes:
 ```bash
 cd custodian
 godot --headless --script tools/validation/fabrication_terminal_readability_smoke.gd
+godot --headless --script tools/validation/fabrication_terminal_command_smoke.gd
 ```
 
 This validates the live FABRICATION terminal translation layer, the readable next-action text, and the `BUILD PLACE <ready_build_id>` placement alias against the runtime autoloads.
+
+For Field Patch healing or restock changes:
+
+```bash
+cd custodian
+godot --headless --script tools/validation/field_patch_smoke.gd
+```
+
+This validates input binding, timed commit healing, interruption semantics, capped restock helpers, terminal fabrication restock, cap-blocked no-spend behavior, and emergency-cache fallback materials.
 
 For the native Godot lighting layer:
 
@@ -213,6 +224,7 @@ godot --headless --script res://tools/validation/terrain_ballistics_smoke.gd
 godot --headless --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 godot --headless --path . --script res://tools/validation/terrain_gameplay_art_usage_smoke.gd
 godot --headless --path . --script res://tools/validation/floor_value_clusters_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_combat_readability_smoke.gd
 ```
 
 The first command validates TerrainBuilder determinism and metadata behavior. The second validates deterministic projectile
@@ -220,7 +232,8 @@ tile tracing, directional ledge fire, hard wall/drop blocking, ramp/stair except
 movement blocking. The third generates representative candidate-mode maps and verifies required-cell counts stay bounded
 while terrain connectivity remains enforced. The fourth validates all gameplay-pack runtime source mappings, representative
 TileMap paint paths, stable legacy mappings, and source-usage diagnostics. The fifth proves tile-value cluster determinism,
-different-seed variation, semantic skips, metadata preservation, and safe missing-variant behavior. These smokes are part of
+different-seed variation, semantic skips, metadata preservation, and safe missing-variant behavior. The sixth validates
+combat/readability floor reporting, floor-cluster skips, and the combat foliage occlusion profile. These smokes are part of
 the default procgen suite.
 For production-sized contract rescue diagnostics, use the slow suite mode from the repository root:
 
@@ -252,10 +265,12 @@ For foliage extraction / deferred spawn changes:
 cd custodian
 godot --headless --script res://tools/validation/procgen_foliage_spawner_smoke.gd
 godot --headless --script res://tools/validation/procgen_deferred_foliage_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_combat_readability_smoke.gd
 ```
 
 The first command validates the extracted foliage service's deterministic generate/remove/clear lifecycle. The second
-checks that final-visual foliage queues batch into placed nodes over subsequent frames.
+checks that final-visual foliage queues batch into placed nodes over subsequent frames. The third validates combat-aware
+canopy occlusion profile switching and readability clearance hooks.
 
 ## Manual Godot Validation
 

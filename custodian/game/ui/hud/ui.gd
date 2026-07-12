@@ -4254,7 +4254,7 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 						_append_terminal_line("UNKNOWN RECIPE %s" % recipe_id.to_upper(), "warning")
 						return true
 					if not bool(start_pipeline.call("can_start_recipe", recipe_id)):
-						_append_terminal_line("CANNOT START %s // INSUFFICIENT RESOURCES" % recipe_id.to_upper(), "warning")
+						_append_terminal_line("CANNOT START %s // CHECK MATERIALS OR CARRY CAP" % recipe_id.to_upper(), "warning")
 						return true
 					if bool(start_pipeline.call("try_start_recipe", recipe_id)):
 						_terminal_fabrication_selected_work_order_id = recipe_id

@@ -289,6 +289,7 @@ var _parry_active: bool = false
 var _parry_success_lockout: float = 0.0
 var _guard_requested_from_secondary: bool = false
 var _guard_repress_required_after_parry_success: bool = false
+var _parry_neutral_lock_active: bool = false
 var _guard_held_timer: float = 0.0
 var _offhand_secondary_was_pressed: bool = false
 var _counter_window_timer: float = 0.0
@@ -767,7 +768,10 @@ func _process(delta):
 	_dodge_cooldown_remaining = max(0.0, _dodge_cooldown_remaining - delta)
 	_dodge_iframe_timer = maxf(0.0, _dodge_iframe_timer - delta)
 	_parry_success_lockout = maxf(0.0, _parry_success_lockout - delta)
+	var prev_counter_window := _counter_window_timer
 	_counter_window_timer = maxf(0.0, _counter_window_timer - delta)
+	if prev_counter_window > 0.0 and _counter_window_timer <= 0.0:
+		_parry_neutral_lock_active = false
 	current_recoil = max(0.0, current_recoil - recoil_decay * delta)
 	_update_weapon_heat(delta)
 	_update_pending_ranged_shot(delta)
@@ -783,11 +787,13 @@ func _process(delta):
 	_update_target_ring()
 	_update_interaction_target()
 	if _is_dead:
+		_parry_neutral_lock_active = false
 		cancel_field_patch(&"dead")
 		_cancel_dodge()
 		_exit_ranged_ready()
 		return
 	if _enemy_impact_lock_timer > 0.0:
+		_parry_neutral_lock_active = false
 		cancel_field_patch(&"impact")
 		_cancel_dodge()
 		_exit_ranged_ready()
@@ -1003,6 +1009,8 @@ func _update_animation():
 		return
 	if _field_patch_active:
 		_play_field_patch_use_presentation()
+		return
+	if _parry_neutral_lock_active:
 		return
 
 	# Check if currently firing or attacking (lock to cursor)
@@ -2574,6 +2582,7 @@ func _try_start_parry() -> bool:
 	disable_hitbox()
 	_melee_hit_targets.clear()
 	_reset_melee_overlay_visuals()
+	_parry_neutral_lock_active = false
 
 	_parry_phase = &"windup"
 	_parry_timer = maxf(0.0, parry_windup_sec)
@@ -2685,6 +2694,7 @@ func _enter_post_parry_neutral_lock() -> void:
 	_guard_repress_required_after_parry_success = _is_attack_secondary_pressed()
 	_block_phase = &""
 	_block_active = false
+	_parry_neutral_lock_active = true
 	_play_parry_animation(&"unarmed_parry_success_01")
 
 
@@ -2879,6 +2889,7 @@ func _start_fast_attack() -> void:
 	_critical_attack_damage = 0.0
 	_active_attack_profile = get_current_combat_profile()
 	_melee_active = true
+	_parry_neutral_lock_active = false
 	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
 	_modular_upper_fx_action_animation = &""
@@ -2970,6 +2981,7 @@ func _start_heavy_attack() -> void:
 	_critical_attack_target = null
 	_critical_attack_damage = 0.0
 	_active_attack_profile = get_current_combat_profile()
+	_parry_neutral_lock_active = false
 	_modular_upper_action_animation = &""
 	_melee_heavy_anticipating = false
 	_melee_fast_combo_step = 0
@@ -3167,6 +3179,7 @@ func start_block() -> void:
 	disable_hitbox()
 	_melee_hit_targets.clear()
 	_reset_melee_overlay_visuals()
+	_parry_neutral_lock_active = false
 	_block_phase = &"enter"
 	_block_active = false
 	_play_block_animation(&"melee_2h_block_enter")
@@ -3486,6 +3499,7 @@ func _start_critical_attack(target: Node2D) -> void:
 
 	_active_attack_profile = get_current_combat_profile()
 	_active_melee_attack_profile = _get_current_melee_attack_profile("fast")
+	_parry_neutral_lock_active = false
 	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
 	_modular_upper_fx_action_animation = &""
@@ -4341,6 +4355,7 @@ func _handle_dodge_input() -> void:
 func _try_start_dodge() -> bool:
 	if not _can_start_dodge():
 		return false
+	_parry_neutral_lock_active = false
 	_dodge_direction = _resolve_dodge_direction()
 	_dodge_backstep_active = _is_dodge_backstep_request(_dodge_direction)
 	_dodge_active = true

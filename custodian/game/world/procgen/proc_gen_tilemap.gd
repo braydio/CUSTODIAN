@@ -152,6 +152,7 @@ enum WorldShapeMode {
 @export var floor_value_cluster_debug: bool = false
 @export_range(0.0, 2.0, 0.05) var floor_value_cluster_strength: float = 1.0
 @export var floor_value_cluster_variant_source_ids: Array[int] = []
+@export var debug_log_floor_source_under_player: bool = false
 
 ## Atlas coordinates for tiles (set in inspector)
 @export var floor_atlas_coord: Vector2i = Vector2i(0, 0)
@@ -441,6 +442,18 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export var foliage_mob_feet_offset: Vector2 = Vector2(0, 6)
 @export var foliage_mob_upper_body_offset: Vector2 = Vector2(0, -18)
 @export var foliage_mob_occlusion_x_padding: float = 8.0
+@export_group("Combat Readability")
+@export var combat_readability_enabled: bool = true
+@export var combat_readability_enemy_range: float = 260.0
+@export var combat_foliage_occlusion_radius: float = 128.0
+@export var combat_foliage_occlusion_softness: float = 28.0
+@export_range(0.1, 1.0, 0.05) var combat_foliage_occlusion_alpha: float = 0.35
+@export var combat_foliage_mob_x_padding: float = 22.0
+@export var combat_foliage_hold_seconds: float = 1.25
+@export_range(0, 12, 1) var combat_readability_foliage_clearance_tiles: int = 4
+@export_range(0, 12, 1) var combat_readability_prop_clearance_tiles: int = 4
+@export var debug_log_foliage_occlusion_bubbles: bool = false
+@export_group("")
 @export var foliage_tree_trunk_collision_size: Vector2 = Vector2(18, 12)
 @export var foliage_tree_trunk_collision_offset: Vector2 = Vector2(0, -6)
 @export var foliage_probabilistic_tree_collision: bool = true
@@ -526,6 +539,7 @@ var _terrain_builder: RefCounted = null
 var _last_terrain_result: Dictionary = {}
 var _last_pre_terrain_connectivity: Dictionary = {}
 var _last_floor_value_cluster_summary: Dictionary = {}
+var _combat_readability_timer: float = 0.0
 var _interior_prop_nodes: Array[Node2D] = []
 var _portal_teleporters: Array[Area2D] = []
 var _foliage_nodes: Dictionary = {}
@@ -590,7 +604,7 @@ func _ready() -> void:
 		procgen_node.finished.connect(_on_procgen_finished)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if _generated_floor_cells.is_empty() and _generated_wall_cells.is_empty():
 		return
 	if enable_final_foliage and not _pending_foliage_tiles.is_empty():
@@ -602,6 +616,9 @@ func _process(_delta: float) -> void:
 		_streaming_player = get_tree().get_first_node_in_group("player") as Node2D
 
 	if _streaming_player != null:
+		_update_combat_readability_state(delta)
+		if debug_log_floor_source_under_player:
+			debug_print_floor_tile_at_global(_streaming_player.global_position)
 		if enable_streaming_reveal:
 			var player_tile := _global_to_tile(_streaming_player.global_position)
 			var player_chunk := _tile_to_chunk(player_tile)
@@ -610,6 +627,8 @@ func _process(_delta: float) -> void:
 				_update_streaming_chunks(player_chunk, player_tile)
 			_update_foliage_occlusion(_streaming_player)
 		_update_ruin_prop_occlusion(_streaming_player)
+	else:
+		_combat_readability_timer = maxf(0.0, _combat_readability_timer - delta)
 
 	if enable_streaming_reveal:
 		_process_streaming_reveal_queue()
@@ -1074,6 +1093,8 @@ func _is_floor_value_cluster_cell_safe(
 			or _road_centerline_tiles.has(cell) \
 			or _path_centerline_tiles.has(cell):
 		return false
+	if _is_combat_readability_floor_tile(cell):
+		return false
 	var source_id := floor_tilemap.get_cell_source_id(cell)
 	if not variant_sources.has(source_id):
 		return false
@@ -1093,6 +1114,27 @@ func _is_floor_value_cluster_cell_safe(
 		if region_type.contains(blocked_token):
 			return false
 	return true
+
+
+func _is_combat_readability_floor_tile(tile: Vector2i) -> bool:
+	var region := get_region_type_at_tile(tile).to_lower()
+	match region:
+		"spawn_clearing", \
+		"soft_path", \
+		"main_road", \
+		"parking_zone", \
+		"portal_plaza", \
+		"compound_approach", \
+		"compound_ingress", \
+		"compound_connector_road", \
+		"compound_connector_ramp", \
+		"compound_connector_elevated_road", \
+		"terrain_elevation_access", \
+		"terrain_rescue_floor":
+			return true
+	if region.begins_with("faction_") or region.begins_with("story_room_"):
+		return true
+	return false
 
 
 func _floor_value_cluster_atlas_coord(cell: Vector2i, source_id: int, salt: int) -> Vector2i:
@@ -3470,6 +3512,41 @@ func debug_get_generated_wall_cells() -> Dictionary:
 	return _generated_wall_cells.duplicate(true)
 
 
+func debug_print_floor_tile_at_global(world_pos: Vector2) -> void:
+	var tile := _global_to_tile(world_pos)
+	var report := debug_get_floor_tile_report(tile)
+	print("[FloorDebug] tile=%s source=%s atlas=%s alt=%s region=%s generated=%s wall=%s spawn_valid=%s" % [
+		report.get("tile", tile),
+		report.get("source_id", -1),
+		report.get("atlas", Vector2i(-1, -1)),
+		report.get("alternative", -1),
+		report.get("region_type", "unknown"),
+		report.get("generated_floor", false),
+		report.get("generated_wall", false),
+		report.get("valid_spawn_cell", false),
+	])
+
+
+func debug_get_floor_tile_report(tile: Vector2i) -> Dictionary:
+	var source_id := -1
+	var atlas := Vector2i(-1, -1)
+	var alternative := -1
+	if floor_tilemap != null:
+		source_id = floor_tilemap.get_cell_source_id(tile)
+		atlas = floor_tilemap.get_cell_atlas_coords(tile)
+		alternative = floor_tilemap.get_cell_alternative_tile(tile)
+	return {
+		"tile": tile,
+		"source_id": source_id,
+		"atlas": atlas,
+		"alternative": alternative,
+		"region_type": get_region_type_at_tile(tile),
+		"generated_floor": _generated_floor_cells.has(tile),
+		"generated_wall": _generated_wall_cells.has(tile),
+		"valid_spawn_cell": is_valid_spawn_cell(tile),
+	}
+
+
 func debug_get_compound_ingress_footprints() -> Array[Vector2i]:
 	var footprints: Array[Vector2i] = []
 	for ingress in _last_compound_ingress:
@@ -4429,6 +4506,7 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 		"is_road_surface_tile": Callable(self, "is_road_surface_tile"),
 		"is_parking_zone_tile": Callable(self, "is_parking_zone_tile"),
 		"is_indoor_tile": Callable(self, "is_indoor_tile"),
+		"is_inside_combat_readability_clearance": Callable(self, "_is_inside_combat_readability_spawn_clearance"),
 		"get_region_type_at_tile": Callable(self, "get_region_type_at_tile"),
 		"get_region_data_at_tile": Callable(self, "get_region_data_at_tile"),
 		"set_region_tile": Callable(self, "_set_region_tile"),
@@ -4515,6 +4593,8 @@ func _should_place_ruin_prop(pos: Vector2i, map_size: Vector2i) -> bool:
 		return false
 	if _is_inside_ruin_prop_clearance(pos):
 		return false
+	if _is_inside_combat_readability_spawn_clearance(pos, combat_readability_prop_clearance_tiles):
+		return false
 	if _foliage_nodes.has(pos):
 		return false
 	return true
@@ -4538,6 +4618,35 @@ func _is_inside_ruin_prop_clearance(pos: Vector2i) -> bool:
 	for building in _last_compound_buildings:
 		var expanded := building.grow(ruin_prop_compound_building_clearance)
 		if expanded.has_point(pos):
+			return true
+	return false
+
+
+func _is_inside_combat_readability_spawn_clearance(pos: Vector2i, radius: int = -1) -> bool:
+	var clearance_radius := radius
+	if clearance_radius < 0:
+		clearance_radius = combat_readability_foliage_clearance_tiles
+	if clearance_radius <= 0:
+		return false
+	if _is_combat_readability_floor_tile(pos):
+		return true
+	var anchors: Array[Vector2i] = [get_player_spawn()]
+	for ingress in _last_compound_ingress:
+		if ingress is Vector2i:
+			anchors.append(ingress)
+	for site in _faction_activity_sites:
+		var cell: Variant = site.get("cell", Vector2i.ZERO)
+		if cell is Vector2i:
+			anchors.append(cell)
+	for site in _story_room_sites:
+		var cell: Variant = site.get("cell", Vector2i.ZERO)
+		if cell is Vector2i:
+			anchors.append(cell)
+	for portal in _portal_teleporters:
+		if portal is Node2D and is_instance_valid(portal):
+			anchors.append(_global_to_tile((portal as Node2D).global_position))
+	for anchor in anchors:
+		if pos.distance_to(anchor) <= float(clearance_radius):
 			return true
 	return false
 
@@ -5522,6 +5631,7 @@ func _collect_foliage_occluders(player: Node2D) -> Array[Dictionary]:
 	var occluders: Array[Dictionary] = []
 	var player_id := player.get_instance_id()
 	var seen_ids := {player_id: true}
+	var combat_active := _is_combat_readability_active()
 	occluders.append({
 		"node": player,
 		"feet": player.global_position + foliage_player_feet_offset,
@@ -5558,7 +5668,7 @@ func _collect_foliage_occluders(player: Node2D) -> Array[Dictionary]:
 				"node": actor,
 				"feet": actor.global_position + foliage_mob_feet_offset,
 				"upper": actor.global_position + foliage_mob_upper_body_offset,
-				"x_padding": foliage_mob_occlusion_x_padding,
+				"x_padding": combat_foliage_mob_x_padding if combat_active else foliage_mob_occlusion_x_padding,
 				"is_player": false,
 				"dist_squared": dist_squared,
 			})
@@ -5586,13 +5696,75 @@ func _get_foliage_occlusion_bubble_limit() -> int:
 	return clampi(foliage_occlusion_max_bubbles, 1, FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES)
 
 
+func _update_combat_readability_state(delta: float) -> void:
+	if not combat_readability_enabled:
+		_combat_readability_timer = 0.0
+		return
+	var player := _streaming_player
+	if player == null or not is_instance_valid(player):
+		var tree := get_tree()
+		if tree != null:
+			player = tree.get_first_node_in_group("player") as Node2D
+	if player == null:
+		_combat_readability_timer = maxf(0.0, _combat_readability_timer - delta)
+		return
+
+	var active := false
+	var range_squared := combat_readability_enemy_range * combat_readability_enemy_range
+	var tree := get_tree()
+	if tree != null:
+		for group_name in foliage_mob_occlusion_groups:
+			var group := String(group_name)
+			if group.is_empty():
+				continue
+			for node in tree.get_nodes_in_group(group):
+				if not (node is Node2D):
+					continue
+				var actor := node as Node2D
+				if actor == player or _is_foliage_occluder_inactive(actor):
+					continue
+				if actor.global_position.distance_squared_to(player.global_position) <= range_squared:
+					active = true
+					break
+			if active:
+				break
+	if active:
+		_combat_readability_timer = combat_foliage_hold_seconds
+	else:
+		_combat_readability_timer = maxf(0.0, _combat_readability_timer - delta)
+
+
+func _is_combat_readability_active() -> bool:
+	return _combat_readability_timer > 0.0
+
+
+func debug_get_combat_readability_state() -> Dictionary:
+	return {
+		"enabled": combat_readability_enabled,
+		"active": _is_combat_readability_active(),
+		"timer": _combat_readability_timer,
+		"enemy_range": combat_readability_enemy_range,
+		"foliage_radius": combat_foliage_occlusion_radius if _is_combat_readability_active() else foliage_player_occlusion_radius,
+		"foliage_softness": combat_foliage_occlusion_softness if _is_combat_readability_active() else foliage_player_occlusion_softness,
+		"foliage_alpha": combat_foliage_occlusion_alpha if _is_combat_readability_active() else foliage_player_occlusion_alpha,
+	}
+
+
 func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers: Array[Vector2]) -> void:
 	var bubble_count := mini(active_centers.size(), _get_foliage_occlusion_bubble_limit())
-	material.set_shader_parameter("bubble_radius", foliage_player_occlusion_radius)
-	material.set_shader_parameter("bubble_softness", foliage_player_occlusion_softness)
-	material.set_shader_parameter("bubble_alpha", foliage_player_occlusion_alpha)
+	var combat_active := _is_combat_readability_active()
+	material.set_shader_parameter("bubble_radius", combat_foliage_occlusion_radius if combat_active else foliage_player_occlusion_radius)
+	material.set_shader_parameter("bubble_softness", combat_foliage_occlusion_softness if combat_active else foliage_player_occlusion_softness)
+	material.set_shader_parameter("bubble_alpha", combat_foliage_occlusion_alpha if combat_active else foliage_player_occlusion_alpha)
 	material.set_shader_parameter("bubble_enabled", bubble_count > 0)
 	material.set_shader_parameter("bubble_count", bubble_count)
+	if debug_log_foliage_occlusion_bubbles and bubble_count > 0:
+		print("[FoliageOcclusion] combat=%s bubbles=%d radius=%.1f alpha=%.2f" % [
+			combat_active,
+			bubble_count,
+			combat_foliage_occlusion_radius if combat_active else foliage_player_occlusion_radius,
+			combat_foliage_occlusion_alpha if combat_active else foliage_player_occlusion_alpha,
+		])
 	for bubble_index in range(FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES):
 		var center := Vector2.ZERO
 		if bubble_index < bubble_count:

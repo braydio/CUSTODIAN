@@ -58,6 +58,8 @@ This preserves:
 - Building pads and the immediate player spawn zone should maintain foliage clearance rather than filling with trees and shrubs.
 - Foliage in front of the operator should render above the operator body while still remaining below wall layers.
 - Foliage behind the operator should remain behind, but a small local occlusion bubble around the operator may soften the covered region to preserve readability.
+- Combat-active foliage readability uses the same local occlusion model with a stronger temporary profile: when a live enemy/mob is near the player, nearby canopies use a wider, softer, lower-alpha bubble for a short hold window. This remains presentation-only and must not become movement, target, or combat authority.
+- Core combat/readability pockets such as spawn clearings, faction sites, story rooms, portal plazas, compound ingress, and connector lanes should maintain large-foliage and bulky-prop clearance while allowing perimeter cover.
 - The translucency rule is a local readability zone, not a whole-sprite fade; distant foliage should remain fully opaque.
 - Tree foliage may carry a small trunk-only collision shape at the ground contact point so the canopy remains visual while the base behaves like a readable world obstacle.
 - Tree trunk collision must be attached to the spawned foliage node itself so streamed reveal/unload and foliage cleanup do not leave orphan collision bodies behind.

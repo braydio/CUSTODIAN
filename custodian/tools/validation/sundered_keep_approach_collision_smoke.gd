@@ -31,8 +31,8 @@ func _init() -> void:
 			if shape == null:
 				bad.append("PathBoundaryCollision child is not CollisionShape2D: %s" % child.get_path())
 				continue
-			if not (shape.shape is SegmentShape2D):
-				bad.append("PathBoundaryCollision child must use SegmentShape2D: %s" % shape.get_path())
+			if not (shape.shape is CapsuleShape2D):
+				bad.append("PathBoundaryCollision child must use CapsuleShape2D thick rail: %s" % shape.get_path())
 				continue
 			segment_count += 1
 		if segment_count < 13:

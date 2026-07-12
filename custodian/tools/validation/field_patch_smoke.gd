@@ -1,6 +1,8 @@
 extends SceneTree
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
+const PATCH_PICKUP_SCENE := preload("res://game/actors/items/consumables/lattice_field_patch_pickup.tscn")
+const FabricationTerminalViewModelScript := preload("res://game/ui/terminal/fabrication_terminal_view_model.gd")
 
 var _failed := false
 
@@ -21,6 +23,8 @@ func _run() -> void:
 	await _validate_interrupt(root)
 	await _validate_input_interrupt(root)
 	await _validate_add_field_patches(root)
+	await _validate_terminal_fabrication_restock(root)
+	await _validate_emergency_cache_pickup(root)
 
 	if _failed:
 		push_error("field_patch_smoke failed")
@@ -118,6 +122,94 @@ func _validate_add_field_patches(root: Node) -> void:
 	var gained := int(operator.call("add_field_patches", 5))
 	_assert_true(gained == 1, "add_field_patches should report only the capped gain")
 	_assert_true(int(operator.get("field_patch_count")) == 2, "add_field_patches should clamp at max count")
+	operator.queue_free()
+
+
+func _validate_terminal_fabrication_restock(root: Node) -> void:
+	var ledger := get_root().get_node_or_null("/root/ResourceLedger")
+	var fab_pipeline := get_root().get_node_or_null("/root/FabPipeline")
+	_assert_true(ledger != null, "ResourceLedger should be available for Field Patch fabrication")
+	_assert_true(fab_pipeline != null, "FabPipeline should be available for Field Patch fabrication")
+	if ledger == null or fab_pipeline == null:
+		return
+
+	ledger.call("clear")
+	fab_pipeline.call("clear_jobs")
+
+	var operator := OPERATOR_SCENE.instantiate()
+	root.add_child(operator)
+	await process_frame
+	operator.set("field_patch_max_count", 2)
+	operator.set("field_patch_count", 1)
+
+	ledger.call("add", "resin_clot", 2)
+	ledger.call("add", "signal_filament", 1)
+	ledger.call("add", "capacitor_dust", 1)
+
+	_assert_true(bool(fab_pipeline.call("has_recipe", "lattice_field_patch")), "lattice_field_patch fabrication recipe should exist")
+	_assert_true(bool(fab_pipeline.call("can_start_recipe", "lattice_field_patch")), "lattice_field_patch should be craftable below carry cap with materials")
+	var view_model := FabricationTerminalViewModelScript.new() as FabricationTerminalViewModel
+	var below_cap_view := view_model.build(root, "lattice_field_patch")
+	var below_cap_row := _find_work_order(below_cap_view.get("work_orders", []), "lattice_field_patch")
+	_assert_true(str(below_cap_row.get("state", "")) == "READY", "lattice_field_patch terminal row should be READY below carry cap")
+	var started := bool(fab_pipeline.call("try_start_recipe", "lattice_field_patch"))
+	_assert_true(started, "lattice_field_patch fabrication should start")
+	_assert_true(int(operator.get("field_patch_count")) == 2, "lattice_field_patch fabrication should add one carried patch")
+	_assert_true(int(ledger.call("get_amount", "resin_clot")) == 0, "lattice_field_patch should spend resin_clot")
+	_assert_true(int(ledger.call("get_amount", "signal_filament")) == 0, "lattice_field_patch should spend signal_filament")
+	_assert_true(int(ledger.call("get_amount", "capacitor_dust")) == 0, "lattice_field_patch should spend capacitor_dust")
+
+	ledger.call("add", "resin_clot", 2)
+	ledger.call("add", "signal_filament", 1)
+	ledger.call("add", "capacitor_dust", 1)
+	_assert_true(not bool(fab_pipeline.call("can_start_recipe", "lattice_field_patch")), "lattice_field_patch should be disabled at carry cap")
+	var at_cap_view := view_model.build(root, "lattice_field_patch")
+	var at_cap_row := _find_work_order(at_cap_view.get("work_orders", []), "lattice_field_patch")
+	_assert_true(str(at_cap_row.get("state", "")) == "CARRIED MAX", "lattice_field_patch terminal row should show CARRIED MAX at cap")
+	_assert_true(str(at_cap_row.get("action_text", "")) == "CARRY CAP REACHED", "lattice_field_patch terminal action should be disabled at cap")
+	var blocked := bool(fab_pipeline.call("try_start_recipe", "lattice_field_patch"))
+	_assert_true(not blocked, "lattice_field_patch fabrication should not start at carry cap")
+	_assert_true(int(ledger.call("get_amount", "resin_clot")) == 2, "carry-cap blocked fabrication should not spend resources")
+	operator.queue_free()
+
+
+func _find_work_order(rows: Array, row_id: String) -> Dictionary:
+	for row_variant in rows:
+		if not (row_variant is Dictionary):
+			continue
+		var row := row_variant as Dictionary
+		if str(row.get("id", "")) == row_id:
+			return row
+	return {}
+
+
+func _validate_emergency_cache_pickup(root: Node) -> void:
+	var ledger := get_root().get_node_or_null("/root/ResourceLedger")
+	_assert_true(ledger != null, "ResourceLedger should be available for emergency cache fallback")
+	if ledger == null:
+		return
+
+	ledger.call("clear")
+
+	var operator := OPERATOR_SCENE.instantiate()
+	root.add_child(operator)
+	await process_frame
+	operator.set("field_patch_max_count", 2)
+	operator.set("field_patch_count", 1)
+
+	var pickup := PATCH_PICKUP_SCENE.instantiate()
+	root.add_child(pickup)
+	await process_frame
+	pickup.call("_on_body_entered", operator)
+	_assert_true(int(operator.get("field_patch_count")) == 2, "emergency cache should grant a patch below cap")
+
+	var full_pickup := PATCH_PICKUP_SCENE.instantiate()
+	root.add_child(full_pickup)
+	await process_frame
+	full_pickup.call("_on_body_entered", operator)
+	_assert_true(int(operator.get("field_patch_count")) == 2, "emergency cache should not exceed patch cap")
+	_assert_true(int(ledger.call("get_amount", "resin_clot")) == 1, "full emergency cache should grant fallback resin_clot")
+	_assert_true(int(ledger.call("get_amount", "capacitor_dust")) == 1, "full emergency cache should grant fallback capacitor_dust")
 	operator.queue_free()
 
 

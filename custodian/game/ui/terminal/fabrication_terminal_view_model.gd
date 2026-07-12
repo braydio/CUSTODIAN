@@ -5,16 +5,18 @@ const CATEGORY_PRIORITY := {
 	"defense": 0,
 	"structure": 1,
 	"support": 2,
-	"power": 3,
-	"sensor": 4,
-	"archive": 5,
-	"utility": 6,
+	"consumable": 3,
+	"power": 4,
+	"sensor": 5,
+	"archive": 6,
+	"utility": 7,
 }
 
 const CATEGORY_PURPOSE := {
 	"defense": "Automated perimeter defense.",
 	"structure": "Field fortification and chokepoint control.",
 	"support": "Field repair, sealing, and sustainment.",
+	"consumable": "Carried emergency consumables.",
 	"power": "Power routing, stability, and backup systems.",
 	"sensor": "Detection, relay, and situational awareness.",
 	"archive": "Blueprint decoding and archive support.",
@@ -28,6 +30,7 @@ const RECIPE_PURPOSE := {
 	"sensor_pylon_basic": "Basic detection and relay coverage.",
 	"archive_sensor_pylon": "Archive-grade relay for recovered blueprint context.",
 	"field_sealant_patch": "Seals breaches and stabilizes damaged structures.",
+	"lattice_field_patch": "Fabricates one carried emergency repair patch for Operator survival.",
 }
 
 const READY_BUILD_ACTIONABLE := {
@@ -286,6 +289,8 @@ func _build_next_action(selected_work_order: Dictionary, ready_builds: Array[Dic
 			return "Wait for %s to complete or open FAB QUEUE." % display_name
 		"MISSING MATERIALS":
 			return "Gather missing materials for %s." % display_name
+		"CARRIED MAX":
+			return "%s carry cap reached. Use a patch before fabricating another." % display_name
 		"LOCKED":
 			return "Unlock %s before starting it." % display_name
 		_:
@@ -359,6 +364,8 @@ func _resolve_work_order_state(ui: Node, recipe: Dictionary, resources: Dictiona
 		return "IN PROGRESS"
 	if _is_recipe_locked(ui, recipe):
 		return "LOCKED"
+	if _is_operator_field_patch_recipe(recipe) and _is_operator_field_patch_full(ui):
+		return "CARRIED MAX"
 	if _can_pay_recipe(recipe, resources):
 		return "READY"
 	return "MISSING MATERIALS"
@@ -376,10 +383,12 @@ func _work_order_sort_rank(state: String, ready_build_count: int, deployable: bo
 			return 3
 		"MISSING MATERIALS":
 			return 4
-		"LOCKED":
+		"CARRIED MAX":
 			return 5
-		_:
+		"LOCKED":
 			return 6
+		_:
+			return 7
 
 
 func _format_build_text(_recipe_id: String, recipe: Dictionary, display_name: String, ready_build_count: int, _deployable: bool) -> String:
@@ -390,6 +399,8 @@ func _format_build_text(_recipe_id: String, recipe: Dictionary, display_name: St
 		return "Creates Ready Build: %s" % display_name
 	if output_type == "unlock":
 		return "Unlocks: %s" % display_name
+	if output_type == "operator_field_patch":
+		return "Adds carried consumable: %s" % display_name
 	return "Produces: %s" % display_name
 
 
@@ -402,6 +413,8 @@ func _format_result_text(_recipe_id: String, recipe: Dictionary, display_name: S
 		return "Ready Build: %s" % display_name
 	if output_type == "unlock":
 		return "Unlocks: %s" % display_name
+	if output_type == "operator_field_patch":
+		return "Consumable restock: %s" % display_name
 	if not output_id.is_empty():
 		return "Produces: %s" % output_id
 	return "Produces: %s" % display_name
@@ -410,6 +423,8 @@ func _format_result_text(_recipe_id: String, recipe: Dictionary, display_name: S
 func _format_action_text(recipe_id: String, recipe: Dictionary, state: String, ready_build_count: int, deployable: bool) -> String:
 	if state == "LOCKED":
 		return "Unlock required"
+	if state == "CARRIED MAX":
+		return "CARRY CAP REACHED"
 	var output_type := str(recipe.get("output_type", "build_token"))
 	if output_type == "build_token" and ready_build_count > 0 and deployable:
 		return "BUILD PLACE %s" % str(recipe.get("output_id", recipe_id))
@@ -513,6 +528,32 @@ func _can_pay_recipe(recipe: Dictionary, resources: Dictionary) -> bool:
 		if int(resources.get(resource_id, 0)) < required:
 			return false
 	return true
+
+
+func _is_operator_field_patch_recipe(recipe: Dictionary) -> bool:
+	return str(recipe.get("output_type", "")) == "operator_field_patch"
+
+
+func _is_operator_field_patch_full(ui: Node) -> bool:
+	var operator := _get_operator(ui)
+	if operator == null or not operator.has_method("get_field_patch_status"):
+		return true
+	var status: Dictionary = operator.call("get_field_patch_status")
+	return int(status.get("count", 0)) >= int(status.get("max", 0))
+
+
+func _get_operator(ui: Node) -> Node:
+	if ui != null:
+		var tree := ui.get_tree()
+		if tree != null:
+			var player := tree.get_first_node_in_group("player")
+			if player != null:
+				return player
+		var game_root_operator := ui.get_node_or_null("/root/GameRoot/World/Operator")
+		if game_root_operator != null:
+			return game_root_operator
+		return ui.get_node_or_null("/root/GameRoot/Operator")
+	return null
 
 
 func _resolve_label(resource_id: String, resource_defs: Dictionary) -> String:

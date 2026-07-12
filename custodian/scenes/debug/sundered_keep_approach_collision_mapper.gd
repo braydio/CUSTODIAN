@@ -109,7 +109,7 @@ func _handle_key(event: InputEventKey) -> void:
 func _add_point(point: Vector2) -> void:
 	_draft_points.append(point)
 	_print_point(point)
-	if _draft_points.size() % 2 == 0:
+	if _draft_points.size() >= 2:
 		var a := _draft_points[_draft_points.size() - 2]
 		var b := _draft_points[_draft_points.size() - 1]
 		print(_format_segment(a, b))
@@ -142,10 +142,10 @@ func _focus_late_traverse() -> void:
 
 func _copy_segments_to_clipboard() -> void:
 	var lines: Array[String] = []
-	var index := 0
-	while index + 1 < _draft_points.size():
-		lines.append(_format_segment(_draft_points[index], _draft_points[index + 1]))
-		index += 2
+	var index := 1
+	while index < _draft_points.size():
+		lines.append(_format_segment(_draft_points[index - 1], _draft_points[index]))
+		index += 1
 	var text := "\n".join(lines)
 	DisplayServer.clipboard_set(text)
 	print("[SunderedKeepApproachCollisionMapper] Copied %d segment(s) to clipboard" % lines.size())
@@ -174,10 +174,10 @@ func _update_help() -> void:
 	if _hud == null:
 		return
 	var source := _to_source_point(_mouse_world)
-	var complete_segments := int(floor(float(_draft_points.size()) / 2.0))
+	var complete_segments := maxi(0, _draft_points.size() - 1)
 	_hud.text = "\n".join([
 		"Sundered Keep Approach Collision Mapper",
-		"Left click: add point   Right click: undo   C: copy segment pairs",
+		"Left click: add point   Right click: undo   C: copy connected polyline segments",
 		"WASD/arrows: pan   Wheel/+/-: zoom   L: final traverse   E: existing rails   V: draft   R: reset   H: help",
 		"Mouse runtime: %s   BOUNDARY_SEGMENTS source: %s" % [_fmt_vec(_mouse_world), _fmt_vec(source)],
 		"Draft points: %d   Complete segments: %d" % [_draft_points.size(), complete_segments],

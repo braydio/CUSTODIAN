@@ -79,6 +79,20 @@
 		"output_id": "fabricator_pattern_decode_01",
 		"output_amount": 1
 	},
+	"lattice_field_patch": {
+		"label": "Lattice Field Patch",
+		"category": "consumable",
+		"cost": {
+			"resin_clot": 2,
+			"signal_filament": 1,
+			"capacitor_dust": 1
+		},
+		"build_seconds": 0.0,
+		"output_type": "operator_field_patch",
+		"output_id": "lattice_field_patch",
+		"output_amount": 1,
+		"max_carried": 2
+	},
 	"field_sealant_patch": {
 		"label": "Field Sealant Patch",
 		"category": "support",

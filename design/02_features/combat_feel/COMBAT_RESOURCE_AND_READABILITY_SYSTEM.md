@@ -28,7 +28,7 @@ below; this document does not duplicate their runtime ownership.
 | Global attention/escalation | pending | No shared attention meter, alarm network, reinforcement pressure, or ritual acceleration from noise | This document |
 | Sidearm loadout tradeoff | complete-v1 | Recovered P-9 must occupy the Equipment-page sidearm slot; equipped P-9 replaces guard/parry with sidearm-ready | `COMBAT_FEEL_SYSTEM.md`, `SIDEARM_UNLOCK.md` |
 | Health | complete-v1 | Operator health, damage, death, hit recoil, and HUD/status display are live | `COMBAT_FEEL_SYSTEM.md` |
-| Field Patch healing | complete-v1 | Operator carries limited Field Patches, uses a timed commit heal, slows during use, restores 35% max health at commit, and interrupts before commit on damage or conflicting actions. Pickup/crafting restock remains pending. | This document |
+| Field Patch healing/restock | complete-v1 | Operator carries limited Field Patches, uses a timed commit heal, slows during use, restores 35% max health at commit, and interrupts before commit on damage or conflicting actions. Restock v1 is terminal/crafting based through `lattice_field_patch`, with emergency cache pickup fallback materials when full. | This document |
 | Stamina, dodge, guard, parry | complete-v1 | Dodge/heavy/parry costs, guard chip and stamina damage, timed parry, enemy stagger, and counter window are live | `COMBAT_FEEL_SYSTEM.md` |
 | Dedicated riposte/opened state | partial | Parry grants a counter damage window, but there is no unique riposte action or persistent enemy-opened state | This document |
 | Hit readability | partial | Operator hit recoil and enemy recoil/stagger thresholds are live; strength taxonomy, armor deflect, guard-break presentation, and complete animation coverage are not | This document |
@@ -98,8 +98,13 @@ The first healing slice uses a limited physical Field Patch:
 - apply healing only at a timed commit point
 - damage, dodge, reload, attack, death, terminal/runtime locks, and field-work input interrupt before commit
 - no free combat regeneration
-- restock/craft should consume existing flavored resources through established
-  inventory/fabrication authority in a later slice
+- primary restock is fabrication at the Custodian Field Terminal under
+  Fabrication / Consumables: `lattice_field_patch` costs `resin_clot` x2,
+  `signal_filament` x1, and `capacitor_dust` x1, consumes resources only when
+  the Operator can accept the patch, and cannot exceed the carry cap
+- secondary restock is rare sealed emergency caches: below cap they grant +1
+  Field Patch; at cap they grant fallback materials instead
+- no enemy health-potion drops, passive wave refill, or free combat regeneration
 
 ### Hit readability and riposte
 
@@ -147,7 +152,7 @@ the rifle indefinitely; current ranged-balance smoke remains green.
 
 - Carried Field Patch count and quick-use action are complete-v1.
 - Timed, interruptible heal commit and partial restore are complete-v1.
-- Add cache/fabrication restock using existing resource IDs.
+- Cache/fabrication restock using existing resource IDs is complete-v1.
 - Add production start/apply/recovery presentation assets beyond the current placeholder warning.
 
 Acceptance: healing is finite, cannot be animation-cancelled for free, and does
@@ -207,5 +212,5 @@ Constraints: UI is read-only; retain typed ammo adapters; use `NoiseEventBus`;
 preserve the equipment-gated sidearm and guard/parry control contract.
 
 Acceptance: heat, overheat, reload, dry-fire, and recovery are readable in normal
-play; focused ranged validation passes; Field Patch restock/crafting and
-production presentation remain explicit deferred work.
+play; focused ranged validation passes; Field Patch production presentation remains
+explicit deferred work.

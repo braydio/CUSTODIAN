@@ -2,7 +2,7 @@ extends SceneTree
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
 const KEEP_SCENE := preload("res://game/world/sundered_keep/sundered_keep_map.tscn")
-const EXPECTED_BOUNDARY_SEGMENTS := 90
+const EXPECTED_BOUNDARY_SEGMENTS := 181
 
 const EXPECTED_ROOTS := {
 	"UnderlayRoot": -300,
@@ -159,14 +159,15 @@ func _init() -> void:
 			if shape == null:
 				errors.append("PathBoundaryCollision child %s is not CollisionShape2D" % child.name)
 				continue
-			if not (shape.shape is SegmentShape2D):
-				errors.append("%s should use SegmentShape2D, got %s" % [shape.get_path(), shape.shape])
+			if not (shape.shape is CapsuleShape2D):
+				errors.append("%s should use CapsuleShape2D thick rail, got %s" % [shape.get_path(), shape.shape])
 			else:
 				segment_count += 1
 		if segment_count != EXPECTED_BOUNDARY_SEGMENTS:
-			errors.append("PathBoundaryCollision expected %d SegmentShape2D rails, got %d" % [EXPECTED_BOUNDARY_SEGMENTS, segment_count])
-		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-86.9, 686.4), Vector2(-86.5, 607.2), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_090", Vector2(-76.7, 772.7), Vector2(-86.7, 686.7), errors)
+			errors.append("PathBoundaryCollision expected %d thick capsule rails, got %d" % [EXPECTED_BOUNDARY_SEGMENTS, segment_count])
+		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-45.8, 950.6), Vector2(-77.9, 814.4), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(-77.9, 814.4), Vector2(-89.1, 796.8), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_181", Vector2(-58.1, 979.9), Vector2(-44.9, 949.5), errors)
 
 	_collect_filled_collision_polygons(scene, errors)
 	_check_camera_bounds(scene, errors)
@@ -279,12 +280,19 @@ func _check_sprite_rect(node_path: String, sprite: Sprite2D, expected: Rect2, er
 
 func _check_boundary_segment(boundary: StaticBody2D, segment_name: String, expected_a: Vector2, expected_b: Vector2, errors: Array[String]) -> void:
 	var segment_node := boundary.get_node_or_null(segment_name) as CollisionShape2D
-	var segment := segment_node.shape as SegmentShape2D if segment_node != null else null
-	if segment == null:
+	if segment_node == null or not (segment_node.shape is CapsuleShape2D):
 		errors.append("PathBoundaryCollision missing %s" % segment_name)
 		return
-	if not _vec2_nearly_equal(segment.a, expected_a) or not _vec2_nearly_equal(segment.b, expected_b):
-		errors.append("%s expected %s -> %s, got %s -> %s" % [segment_name, expected_a, expected_b, segment.a, segment.b])
+	if not segment_node.has_meta("boundary_a") or not segment_node.has_meta("boundary_b"):
+		errors.append("%s missing boundary endpoint metadata" % segment_name)
+		return
+	var actual_a := segment_node.get_meta("boundary_a") as Vector2
+	var actual_b := segment_node.get_meta("boundary_b") as Vector2
+	if not _vec2_nearly_equal(actual_a, expected_a) or not _vec2_nearly_equal(actual_b, expected_b):
+		errors.append("%s expected %s -> %s, got %s -> %s" % [segment_name, expected_a, expected_b, actual_a, actual_b])
+	var rail := segment_node.shape as CapsuleShape2D
+	if rail.radius < 9.5:
+		errors.append("%s rail radius %.2f is too thin for playable boundary blocking" % [segment_name, rail.radius])
 
 
 func _check_camera_bounds(scene: Node, errors: Array[String]) -> void:

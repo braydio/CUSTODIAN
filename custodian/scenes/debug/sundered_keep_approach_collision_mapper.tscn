@@ -1,23 +1,23 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://jgb2kmv7huvq"]
 
-[ext_resource type="Script" path="res://scenes/debug/sundered_keep_approach_collision_mapper.gd" id="1_script"]
-[ext_resource type="Script" path="res://scenes/debug/sundered_keep_approach_collision_mapper_overlay.gd" id="2_overlay"]
+[ext_resource type="Script" uid="uid://0c72fm3pv8n1" path="res://scenes/debug/sundered_keep_approach_collision_mapper.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cjs6agajlpwmo" path="res://scenes/debug/sundered_keep_approach_collision_mapper_overlay.gd" id="2_overlay"]
 
-[node name="GameRoot" type="Node2D"]
+[node name="GameRoot" type="Node2D" unique_id=1753549684]
 script = ExtResource("1_script")
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=106802340]
 
-[node name="Camera2D" type="Camera2D" parent="World"]
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=1164863998]
 position = Vector2(520, -20)
 zoom = Vector2(0.42, 0.42)
 
-[node name="CollisionOverlay" type="Node2D" parent="World"]
+[node name="CollisionOverlay" type="Node2D" parent="World" unique_id=1133420701]
 script = ExtResource("2_overlay")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1607626437]
 
-[node name="Help" type="Label" parent="CanvasLayer"]
+[node name="Help" type="Label" parent="CanvasLayer" unique_id=1816405640]
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 980.0

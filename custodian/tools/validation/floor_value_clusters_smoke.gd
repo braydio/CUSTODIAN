@@ -51,6 +51,8 @@ func _init() -> void:
 	_require(gameplay_result == gameplay_before, "Gameplay terrain metadata changed.")
 	_require(floor.get_cell_source_id(Vector2i(2, 2)) == BASE_SOURCE, "Road/readability cell should be skipped.")
 	_require(floor.get_cell_source_id(Vector2i(3, 2)) == BASE_SOURCE, "Objective cell should be skipped.")
+	for tile in _readability_region_tiles().keys():
+		_require(floor.get_cell_source_id(tile) == BASE_SOURCE, "Readability region %s should be skipped." % str(tilemap.get_region_type_at_tile(tile)))
 
 	_reset_floor(tilemap, floor, walls)
 	tilemap._apply_floor_value_clusters(gameplay_result, 424242)
@@ -95,6 +97,26 @@ func _reset_floor(tilemap: ProcGenTilemap, floor: TileMapLayer, walls: TileMapLa
 			}
 	tilemap._set_region_tile(Vector2i(2, 2), "main_road", "travel")
 	tilemap._set_region_tile(Vector2i(3, 2), "ascent_objective", "objective")
+	for tile in _readability_region_tiles().keys():
+		tilemap._set_region_tile(tile, String(_readability_region_tiles()[tile]), "readability")
+
+
+func _readability_region_tiles() -> Dictionary:
+	return {
+		Vector2i(4, 2): "spawn_clearing",
+		Vector2i(5, 2): "soft_path",
+		Vector2i(6, 2): "parking_zone",
+		Vector2i(7, 2): "portal_plaza",
+		Vector2i(8, 2): "compound_approach",
+		Vector2i(9, 2): "compound_ingress",
+		Vector2i(10, 2): "compound_connector_road",
+		Vector2i(11, 2): "compound_connector_ramp",
+		Vector2i(12, 2): "compound_connector_elevated_road",
+		Vector2i(13, 2): "terrain_elevation_access",
+		Vector2i(14, 2): "terrain_rescue_floor",
+		Vector2i(15, 2): "faction_camp",
+		Vector2i(16, 2): "story_room_floor",
+	}
 
 
 func _floor_signature(floor: TileMapLayer) -> String:

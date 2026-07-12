@@ -125,6 +125,8 @@ func _should_place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 		return false
 	if _is_inside_foliage_clearance(context, pos):
 		return false
+	if _call_bool(context, "is_inside_combat_readability_clearance", pos):
+		return false
 	return _would_place_foliage_at(context, pos)
 
 
@@ -295,7 +297,9 @@ func _estimate_local_tree_density(context: Dictionary, center: Vector2i) -> floa
 				continue
 			if _is_no_random_foliage_region_tile(context, pos):
 				continue
-			if _is_near_wall(context, pos) or _is_inside_foliage_clearance(context, pos):
+			if _is_near_wall(context, pos) \
+					or _is_inside_foliage_clearance(context, pos) \
+					or _call_bool(context, "is_inside_combat_readability_clearance", pos):
 				continue
 			possible += 1
 			if not _would_place_foliage_at(context, pos):
