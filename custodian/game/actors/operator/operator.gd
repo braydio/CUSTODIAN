@@ -1880,6 +1880,13 @@ func _play_optional_modular_cape_animation(base_animation: String, direction: Ve
 	if not modular_primary_ranged_aim_cape_enabled:
 		_hide_modular_cape_layer()
 		return {"played": false, "duration": 0.0}
+	# Cape art only exists for upward-facing directions (up, up_left, up_right).
+	# Hide the cape when running in directions without authored art to avoid
+	# showing the wrong directional sprite from the fallback animation.
+	var dir_suffix := AnimationResolver._get_direction_suffix(direction)
+	if dir_suffix != "up" and dir_suffix != "up_left" and dir_suffix != "up_right":
+		_hide_modular_cape_layer()
+		return {"played": false, "duration": 0.0}
 	var result := _play_modular_action_animation(modular_cape_sprite, base_animation, direction, target_fps)
 	if not bool(result.get("played", false)):
 		_hide_modular_cape_layer()
