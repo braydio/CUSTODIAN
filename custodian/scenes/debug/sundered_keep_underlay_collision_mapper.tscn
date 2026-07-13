@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://vqq4da6n23i7"]
+
+[ext_resource type="Script" uid="uid://bg0wvgyg5m6am" path="res://scenes/debug/sundered_keep_underlay_collision_mapper.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://ccqgrjohv1s3c" path="res://scenes/debug/sundered_keep_underlay_collision_mapper_overlay.gd" id="2_overlay"]
+
+[node name="GameRoot" type="Node2D" unique_id=1106407091]
+script = ExtResource("1_script")
+
+[node name="World" type="Node2D" parent="." unique_id=1320982587]
+
+[node name="Camera2D" type="Camera2D" parent="World" unique_id=1645183767]
+position = Vector2(1792, 1843)
+zoom = Vector2(0.32, 0.32)
+
+[node name="CollisionOverlay" type="Node2D" parent="World" unique_id=1447392302]
+script = ExtResource("2_overlay")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=891976633]
+
+[node name="Help" type="Label" parent="CanvasLayer" unique_id=1351284980]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 1040.0
+offset_bottom = 150.0
+theme_override_colors/font_color = Color(0.92, 0.96, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+text = "Sundered Keep Main Underlay Collision Mapper"
+autowrap_mode = 2

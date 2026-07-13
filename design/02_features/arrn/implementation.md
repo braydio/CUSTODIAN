@@ -222,10 +222,10 @@ ui/arrn/
 - [ ] Add relay visibility states (hidden until scanned)
 
 **Files to Create:**
-- `res://core/systems/arrn/arrn_manager.gd`
-- `res://core/systems/arrn/relay_data.gd` (data definitions)
-- `res://entities/relay/relay.tscn`
-- `res://entities/relay/relay.gd`
+- `res://game/systems/arrn/arrn_manager.gd`
+- `res://game/systems/arrn/relay_data.gd` (data definitions)
+- `res://game/systems/arrn/relay.tscn`
+- `res://game/systems/arrn/relay.gd`
 
 **Dependencies:**
 - GameState autoload (for time ticks)
@@ -258,8 +258,8 @@ DORMANCY PRESSURE: 0
 ```
 
 **Files to Modify:**
-- `res://entities/terminal/terminal.gd` - Add SCAN RELAYS handler
-- `res://core/systems/arrn/arrn_manager.gd` - Add scan logic
+- `res://game/ui/terminal.gd` - Add SCAN RELAYS handler
+- `res://game/systems/arrn/arrn_manager.gd` - Add scan logic
 
 ---
 
@@ -285,12 +285,12 @@ DORMANCY PRESSURE: 0
 6. Player must return to COMMAND for sync
 
 **Files to Create:**
-- `res://entities/relay/relay_interaction.gd`
-- `res://core/systems/arrn/stabilization_task.gd`
+- `res://game/systems/arrn/relay_interaction.gd`
+- `res://game/systems/arrn/stabilization_task.gd`
 
 **Files to Modify:**
-- `res://entities/operator/operator.gd` - Add task state
-- `res://core/systems/arrn/arrn_manager.gd` - Task management
+- `res://game/actors/operator/operator.gd` - Add task state
+- `res://game/systems/arrn/arrn_manager.gd` - Task management
 
 ---
 
@@ -328,8 +328,8 @@ BENEFIT ACTIVE: REMOTE REPAIR COST -1.
 ```
 
 **Files to Modify:**
-- `res://entities/terminal/terminal.gd` - Add SYNC handler
-- `res://core/systems/arrn/arrn_manager.gd` - Add sync logic
+- `res://game/ui/terminal.gd` - Add SYNC handler
+- `res://game/systems/arrn/arrn_manager.gd` - Add sync logic
 
 ---
 
@@ -355,8 +355,8 @@ status = STABLE if stability >= 70
 ```
 
 **Files to Modify:**
-- `res://core/systems/arrn/arrn_manager.gd` - Add tick logic
-- `res://core/game.gd` or `res://core/wave_manager.gd` - Hook into tick
+- `res://game/systems/arrn/arrn_manager.gd` - Add tick logic
+- `res://game/game.gd` or `res://game/systems/spawning/wave_manager.gd` - Hook into tick
 
 ---
 

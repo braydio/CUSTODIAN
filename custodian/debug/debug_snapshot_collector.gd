@@ -26,7 +26,7 @@ func _collect(bus: Node) -> void:
 
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null and observatory.has_method("get_recent_events"):
-		var recent = observatory.call("get_recent_events", "", 25)
+		var recent = observatory.call("get_recent_events", 25)
 		if recent is Array:
 			bus.call("import_observatory_events", recent)
 

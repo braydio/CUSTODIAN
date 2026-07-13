@@ -25,7 +25,7 @@ The player can repair damaged structures. This creates the core gameplay tension
 
 Add repair functionality to existing interaction system.
 
-**Modify:** `res://entities/operator/operator.gd`
+**Modify:** `res://game/actors/operator/operator.gd`
 
 ```gdscript
 # Add to operator.gd
@@ -70,7 +70,7 @@ func _repair_structure(structure: Damageable, delta: float):
 
 Switch between weapons and repair tool.
 
-**Modify:** `res://entities/operator/operator.gd`
+**Modify:** `res://game/actors/operator/operator.gd`
 
 ```gdscript
 # Add weapon profile for repair
@@ -135,7 +135,7 @@ func _update_repair_prompt():
 
 Add ammo-like system for repairs.
 
-**File:** `res://entities/items/repair_kit.tscn`
+**File:** `res://game/repair_kit.tscn`
 
 ```gdscript
 extends Area2D

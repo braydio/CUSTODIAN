@@ -4,7 +4,7 @@
 
 ### Shared damage state
 
-- Added `res://core/systems/damageable.gd`
+- Added `res://game/systems/damageable.gd`
 - Canonical states: `operational`, `damaged`, `critical`, `destroyed`
 - Canonical APIs/signals: `take_damage`, `repair`, `heal` alias, `get_efficiency`, `is_dead`
 
@@ -25,14 +25,14 @@
 
 ### Command post fail state
 
-- Added `res://entities/sector/command_post.gd`
+- Added `res://game/actors/sector/command_post.gd`
 - Command post destruction emits `game_over` and triggers `GameState.trigger_game_over(...)`
 - Runtime tree is paused on game over
 - UI surfaces game-over reason in interaction label
 
 ### Power-node coupling
 
-- Added `res://entities/sector/power_node.gd`
+- Added `res://game/actors/sector/power_node.gd`
 - Power node output scales by state:
   - operational `1.0`
   - damaged `0.6`

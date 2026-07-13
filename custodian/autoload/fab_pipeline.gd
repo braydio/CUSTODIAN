@@ -163,14 +163,14 @@ func _complete_job(job) -> void:
 				ledger.call("add", output_id, output_amount)
 			else:
 				push_warning("[FabPipeline] ResourceLedger unavailable for output: %s" % output_id)
-		"operator_field_patch":
+		"operator_consumable", "operator_field_patch":
 			var operator := _get_operator()
-			if operator != null and operator.has_method("add_field_patches"):
+			if output_id == "lattice_field_patch" and operator != null and operator.has_method("add_field_patches"):
 				var gained := int(operator.call("add_field_patches", output_amount))
 				if gained <= 0:
-					push_warning("[FabPipeline] Operator could not accept Field Patch output: %s" % output_id)
+					push_warning("[FabPipeline] Operator could not accept consumable output: %s" % output_id)
 			else:
-				push_warning("[FabPipeline] Operator unavailable for Field Patch output: %s" % output_id)
+				push_warning("[FabPipeline] Operator unavailable for consumable output: %s" % output_id)
 		_:
 			push_warning("[FabPipeline] Unknown fab output type: %s" % output_type)
 
@@ -209,7 +209,9 @@ func _is_recipe_locked(recipe: Dictionary) -> bool:
 
 func _can_accept_recipe_output(recipe: Dictionary) -> bool:
 	var output_type := str(recipe.get("output_type", "build_token"))
-	if output_type != "operator_field_patch":
+	if output_type != "operator_consumable" and output_type != "operator_field_patch":
+		return true
+	if str(recipe.get("output_id", "")) != "lattice_field_patch":
 		return true
 	var operator := _get_operator()
 	if operator == null:

@@ -35,17 +35,22 @@ const TERMINAL_ICON_TURRET := preload("res://content/ui/terminal/icons/icon_turr
 const TERMINAL_ICON_WARNING := preload("res://content/ui/terminal/icons/icon_warning.png")
 const TERMINAL_ICON_CRITICAL := preload("res://content/ui/terminal/icons/icon_critical.png")
 
-const TERMINAL_PANEL_SLICE := 10.0
-const TERMINAL_MAP_SLICE := 12.0
-const TERMINAL_NAV_SLICE := 10.0
-const TERMINAL_BUTTON_SLICE := 10.0
-const TERMINAL_COMMAND_LINE_SLICE := 8.0
+const TERMINAL_STYLE_STRETCH := StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
+const TERMINAL_STYLE_TILE := StyleBoxTexture.AXIS_STRETCH_MODE_TILE
+const TERMINAL_STYLE_TILE_FIT := StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
+const TERMINAL_PANEL_SLICE := 2.0
+const TERMINAL_MAP_SLICE := 2.0
+const TERMINAL_NAV_SLICE := 2.0
+const TERMINAL_BUTTON_SLICE := 2.0
+const TERMINAL_COMMAND_LINE_SLICE := 2.0
+const TERMINAL_HEADER_SLICE := 2.0
 const TERMINAL_SCANLINE_ALPHA := 0.05
 const TERMINAL_NOISE_ALPHA := 0.025
 const TERMINAL_DECOR_OVERLAY_Z := 5
 const TERMINAL_COMMAND_ENTRY_Z := 10
 const TERMINAL_BACKDROP_COLOR := Color(0.015, 0.025, 0.03, 0.78)
 const TERMINAL_DENSE_PANEL_MODULATE := Color(1.0, 1.0, 1.0, 0.82)
+const DEBUG_TERMINAL_STYLEBOXES := false
 
 const DEFAULT_TERMINAL_SERVICE_URL := "http://127.0.0.1:7331"
 const TERMINAL_LOCAL_LINK := "LOCAL://GAME_STATE"
@@ -851,8 +856,13 @@ func _setup_terminal_main_scroll() -> void:
 			content_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			content_column.add_theme_constant_override("separation", 8)
 			_terminal_main_scroll.add_child(content_column)
+	_terminal_main_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_terminal_main_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	if content_column == null:
 		return
+	content_column.custom_minimum_size.x = 0.0
+	content_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_configure_terminal_scroll_policy()
 	for node in content_nodes:
 		if node == null:
 			continue
@@ -1798,7 +1808,14 @@ func _apply_terminal_planet_rotation() -> void:
 func _apply_terminal_planet_zoom() -> void:
 	_terminal_planet_preview_renderer.apply_zoom()
 
-func _make_terminal_texture_style(texture: Texture2D, margin: float, content_margin: float = 8.0) -> StyleBoxTexture:
+func _make_terminal_texture_style(
+	texture: Texture2D,
+	margin: float,
+	content_margin: float = 8.0,
+	h_axis_mode: int = TERMINAL_STYLE_TILE,
+	v_axis_mode: int = TERMINAL_STYLE_TILE,
+	draw_center: bool = true
+) -> StyleBoxTexture:
 	var style := StyleBoxTexture.new()
 	style.texture = texture
 	style.texture_margin_left = margin
@@ -1809,14 +1826,241 @@ func _make_terminal_texture_style(texture: Texture2D, margin: float, content_mar
 	style.content_margin_top = content_margin
 	style.content_margin_right = content_margin
 	style.content_margin_bottom = content_margin
+	style.axis_stretch_horizontal = h_axis_mode
+	style.axis_stretch_vertical = v_axis_mode
+	style.draw_center = draw_center
 	return style
+
+
+func _make_terminal_panel_style(content_margin: float = 8.0) -> StyleBoxTexture:
+	return _make_terminal_texture_style(
+		TERMINAL_PANEL_FRAME_TEXTURE,
+		TERMINAL_PANEL_SLICE,
+		content_margin,
+		TERMINAL_STYLE_TILE_FIT,
+		TERMINAL_STYLE_TILE_FIT,
+		false
+	)
+
+
+func _make_terminal_header_style(texture: Texture2D, content_margin: float = 6.0) -> StyleBoxTexture:
+	return _make_terminal_texture_style(
+		texture,
+		TERMINAL_HEADER_SLICE,
+		content_margin,
+		TERMINAL_STYLE_STRETCH,
+		TERMINAL_STYLE_STRETCH,
+		true
+	)
+
+
+func _make_terminal_map_style(content_margin: float = 10.0) -> StyleBoxTexture:
+	return _make_terminal_texture_style(
+		TERMINAL_MAP_FRAME_TEXTURE,
+		TERMINAL_MAP_SLICE,
+		content_margin,
+		TERMINAL_STYLE_TILE_FIT,
+		TERMINAL_STYLE_TILE_FIT,
+		false
+	)
+
+
+func _make_terminal_nav_style(texture: Texture2D, content_margin: float = 6.0) -> StyleBoxTexture:
+	return _make_terminal_texture_style(
+		texture,
+		TERMINAL_NAV_SLICE,
+		content_margin,
+		TERMINAL_STYLE_STRETCH,
+		TERMINAL_STYLE_STRETCH,
+		true
+	)
+
+
+func _make_terminal_button_style(texture: Texture2D, content_margin: float = 6.0) -> StyleBoxTexture:
+	return _make_terminal_texture_style(
+		texture,
+		TERMINAL_BUTTON_SLICE,
+		content_margin,
+		TERMINAL_STYLE_STRETCH,
+		TERMINAL_STYLE_STRETCH,
+		true
+	)
 
 
 func _make_terminal_input_style() -> StyleBoxTexture:
-	var style := _make_terminal_texture_style(TERMINAL_COMMAND_LINE_TEXTURE, TERMINAL_COMMAND_LINE_SLICE, 8.0)
+	var style := _make_terminal_texture_style(
+		TERMINAL_COMMAND_LINE_TEXTURE,
+		TERMINAL_COMMAND_LINE_SLICE,
+		8.0,
+		TERMINAL_STYLE_STRETCH,
+		TERMINAL_STYLE_STRETCH,
+		true
+	)
 	style.content_margin_top = 4.0
 	style.content_margin_bottom = 4.0
 	return style
+
+
+func _debug_terminal_stylebox(label: String, style: StyleBoxTexture) -> void:
+	if not DEBUG_TERMINAL_STYLEBOXES:
+		return
+	print("[TerminalStyle] %s margin=(%s,%s,%s,%s) axis=(%s,%s)" % [
+		label,
+		style.texture_margin_left,
+		style.texture_margin_top,
+		style.texture_margin_right,
+		style.texture_margin_bottom,
+		style.axis_stretch_horizontal,
+		style.axis_stretch_vertical,
+	])
+
+
+func _apply_terminal_widget_button_styles(normal: StyleBoxTexture, hover: StyleBoxTexture, pressed: StyleBoxTexture, disabled: StyleBoxTexture) -> void:
+	if terminal_widget_stack == null:
+		return
+	for button in terminal_widget_stack.find_children("*", "Button", true, false):
+		if not (button is BaseButton):
+			continue
+		_apply_terminal_button_assets(button as BaseButton, normal, hover, pressed, disabled, pressed)
+
+
+func _set_control_property_if_available(control: Object, property_name: StringName, value: Variant) -> void:
+	if control == null:
+		return
+	for property in control.get_property_list():
+		if StringName(str(property.get("name", ""))) == property_name:
+			control.set(property_name, value)
+			return
+
+
+func _configure_terminal_scroll_policy() -> void:
+	if _terminal_main_scroll != null:
+		_terminal_main_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		_terminal_main_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	if terminal_activity_scroll is ScrollContainer:
+		var activity_scroll := terminal_activity_scroll as ScrollContainer
+		activity_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		activity_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	if terminal_widget_stack == null:
+		return
+	for scroll in terminal_widget_stack.find_children("*", "ScrollContainer", true, false):
+		if not (scroll is ScrollContainer):
+			continue
+		var scroll_container := scroll as ScrollContainer
+		scroll_container.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		scroll_container.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+
+
+func _configure_fabrication_dashboard_layout() -> void:
+	if terminal_widget_stack == null:
+		return
+	var fabrication_widgets := terminal_widget_stack.get_node_or_null("FabricationWidgets") as VBoxContainer
+	if fabrication_widgets == null:
+		return
+	fabrication_widgets.custom_minimum_size.x = 0.0
+	fabrication_widgets.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fabrication_widgets.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	fabrication_widgets.add_theme_constant_override("separation", 6)
+
+	var top_row := fabrication_widgets.get_node_or_null("TopRow") as BoxContainer
+	var main_row := fabrication_widgets.get_node_or_null("MainRow") as HBoxContainer
+	var bottom_row := fabrication_widgets.get_node_or_null("BottomRow") as HBoxContainer
+	var action_row := fabrication_widgets.get_node_or_null("ActionRow") as HBoxContainer
+	var status_panel := fabrication_widgets.find_child("FabStatusPanel", true, false) as Control
+	var selected_panel := fabrication_widgets.find_child("FabSelectedRecipePanel", true, false) as Control
+	var filter_panel := fabrication_widgets.find_child("FabCategoryPanel", true, false) as Control
+	var recipe_panel := fabrication_widgets.find_child("FabRecipeListPanel", true, false) as Control
+	var cost_panel := fabrication_widgets.find_child("FabCostPanel", true, false) as Control
+
+	if top_row != null:
+		top_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		top_row.add_theme_constant_override("separation", 0)
+		if status_panel != null:
+			_ensure_child_parent(status_panel, top_row)
+	if main_row != null:
+		main_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		main_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		main_row.add_theme_constant_override("separation", 6)
+		if filter_panel != null:
+			_ensure_child_parent(filter_panel, main_row)
+		if recipe_panel != null:
+			_ensure_child_parent(recipe_panel, main_row)
+	if selected_panel != null:
+		_ensure_child_parent(selected_panel, fabrication_widgets)
+	if cost_panel != null:
+		_ensure_child_parent(cost_panel, fabrication_widgets)
+	if bottom_row != null:
+		_ensure_child_parent(bottom_row, fabrication_widgets)
+	if action_row != null:
+		_ensure_child_parent(action_row, fabrication_widgets)
+
+	_order_fabrication_children(fabrication_widgets, [top_row, main_row, selected_panel, cost_panel, bottom_row, action_row])
+	for panel in [status_panel, selected_panel, recipe_panel, cost_panel]:
+		if panel == null:
+			continue
+		panel.custom_minimum_size.x = 0.0
+		panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if filter_panel != null:
+		filter_panel.custom_minimum_size = Vector2(124.0, 0.0)
+		filter_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		filter_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	if recipe_panel != null:
+		recipe_panel.custom_minimum_size.x = 0.0
+		recipe_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		recipe_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	if selected_panel != null:
+		selected_panel.custom_minimum_size = Vector2(0.0, 112.0)
+	if cost_panel != null:
+		cost_panel.custom_minimum_size = Vector2(0.0, 94.0)
+	if bottom_row != null:
+		bottom_row.custom_minimum_size = Vector2(0.0, 70.0)
+		bottom_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if action_row != null:
+		action_row.custom_minimum_size = Vector2(0.0, 48.0)
+		action_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		action_row.add_theme_constant_override("separation", 6)
+		for child in action_row.get_children():
+			if child is Button:
+				var button := child as Button
+				button.custom_minimum_size = Vector2(0.0, 42.0)
+				button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+				button.clip_text = true
+				button.add_theme_font_size_override("font_size", 11)
+				_set_control_property_if_available(button, &"text_overrun_behavior", TextServer.OVERRUN_TRIM_ELLIPSIS)
+	for scroll in fabrication_widgets.find_children("*", "ScrollContainer", true, false):
+		if scroll is ScrollContainer:
+			var scroll_container := scroll as ScrollContainer
+			scroll_container.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+			scroll_container.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+			scroll_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			scroll_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	for body in fabrication_widgets.find_children("Body", "RichTextLabel", true, false):
+		var rich_text := body as RichTextLabel
+		rich_text.custom_minimum_size.x = 0.0
+		rich_text.fit_content = false
+		rich_text.scroll_active = false
+		rich_text.add_theme_font_size_override("font_size", 12)
+
+
+func _ensure_child_parent(child: Node, parent: Node) -> void:
+	if child == null or parent == null or child.get_parent() == parent:
+		return
+	var old_parent := child.get_parent()
+	if old_parent != null:
+		old_parent.remove_child(child)
+	parent.add_child(child)
+
+
+func _order_fabrication_children(parent: Node, ordered_children: Array) -> void:
+	var target_index := 0
+	for child_variant in ordered_children:
+		if not (child_variant is Node):
+			continue
+		var child := child_variant as Node
+		if child.get_parent() != parent:
+			continue
+		parent.move_child(child, target_index)
+		target_index += 1
 
 
 func _apply_terminal_button_assets(button: BaseButton, normal: StyleBoxTexture, hover: StyleBoxTexture, pressed: StyleBoxTexture, disabled: StyleBoxTexture, focus: StyleBoxTexture, icon: Texture2D = null) -> void:
@@ -1933,19 +2177,28 @@ func _raise_terminal_command_entry_layer() -> void:
 func _apply_terminal_theme():
 	_ensure_terminal_texture_overlays()
 	_raise_terminal_command_entry_layer()
-	var panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 10.0)
-	var header_style := _make_terminal_texture_style(TERMINAL_HEADER_ACTIVE_TEXTURE, 4.0, 6.0)
-	var output_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 8.0)
-	var map_style := _make_terminal_texture_style(TERMINAL_MAP_FRAME_TEXTURE, TERMINAL_MAP_SLICE, 10.0)
+	_configure_terminal_scroll_policy()
+	_configure_fabrication_dashboard_layout()
+	var panel_style := _make_terminal_panel_style(10.0)
+	var header_style := _make_terminal_header_style(TERMINAL_HEADER_ACTIVE_TEXTURE, 6.0)
+	var output_style := _make_terminal_panel_style(8.0)
+	var map_style := _make_terminal_map_style(10.0)
 	var input_style := _make_terminal_input_style()
-	var nav_button_style := _make_terminal_texture_style(TERMINAL_NAV_IDLE_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
-	var nav_button_hover_style := _make_terminal_texture_style(TERMINAL_NAV_HOVER_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
-	var nav_button_active_style := _make_terminal_texture_style(TERMINAL_NAV_ACTIVE_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
-	var nav_button_focus_style := _make_terminal_texture_style(TERMINAL_NAV_ACTIVE_TEXTURE, TERMINAL_NAV_SLICE, 6.0)
-	var action_button_style := _make_terminal_texture_style(TERMINAL_BUTTON_IDLE_TEXTURE, TERMINAL_BUTTON_SLICE, 6.0)
-	var action_button_hover_style := _make_terminal_texture_style(TERMINAL_BUTTON_HOVER_TEXTURE, TERMINAL_BUTTON_SLICE, 6.0)
-	var action_button_pressed_style := _make_terminal_texture_style(TERMINAL_BUTTON_PRESSED_TEXTURE, TERMINAL_BUTTON_SLICE, 6.0)
-	var action_button_disabled_style := _make_terminal_texture_style(TERMINAL_BUTTON_DISABLED_TEXTURE, TERMINAL_BUTTON_SLICE, 6.0)
+	var nav_button_style := _make_terminal_nav_style(TERMINAL_NAV_IDLE_TEXTURE, 6.0)
+	var nav_button_hover_style := _make_terminal_nav_style(TERMINAL_NAV_HOVER_TEXTURE, 6.0)
+	var nav_button_active_style := _make_terminal_nav_style(TERMINAL_NAV_ACTIVE_TEXTURE, 6.0)
+	var nav_button_focus_style := _make_terminal_nav_style(TERMINAL_NAV_ACTIVE_TEXTURE, 6.0)
+	var action_button_style := _make_terminal_button_style(TERMINAL_BUTTON_IDLE_TEXTURE, 6.0)
+	var action_button_hover_style := _make_terminal_button_style(TERMINAL_BUTTON_HOVER_TEXTURE, 6.0)
+	var action_button_pressed_style := _make_terminal_button_style(TERMINAL_BUTTON_PRESSED_TEXTURE, 6.0)
+	var action_button_disabled_style := _make_terminal_button_style(TERMINAL_BUTTON_DISABLED_TEXTURE, 6.0)
+	_debug_terminal_stylebox("panel", panel_style)
+	_debug_terminal_stylebox("header", header_style)
+	_debug_terminal_stylebox("output", output_style)
+	_debug_terminal_stylebox("map", map_style)
+	_debug_terminal_stylebox("input", input_style)
+	_debug_terminal_stylebox("nav", nav_button_style)
+	_debug_terminal_stylebox("button", action_button_style)
 	if terminal_panel:
 		terminal_panel.add_theme_stylebox_override("panel", panel_style)
 		terminal_panel.modulate = Color(1, 1, 1, 1)
@@ -1986,7 +2239,7 @@ func _apply_terminal_theme():
 			output.scroll_active = true
 			output.bbcode_enabled = true
 	if terminal_widget_stack:
-		var widget_panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 8.0)
+		var widget_panel_style := _make_terminal_panel_style(8.0)
 		for panel in terminal_widget_stack.find_children("*", "PanelContainer", true, false):
 			panel.add_theme_stylebox_override("panel", widget_panel_style)
 			panel.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
@@ -2002,6 +2255,7 @@ func _apply_terminal_theme():
 		for label in terminal_widget_stack.find_children("*", "Label", true, false):
 			label.add_theme_color_override("font_color", Color(0.63, 0.83, 0.74, 0.92))
 			label.add_theme_font_size_override("font_size", 11)
+		_apply_terminal_widget_button_styles(action_button_style, action_button_hover_style, action_button_pressed_style, action_button_disabled_style)
 	if terminal_output:
 		terminal_output.scroll_following = true
 	if terminal_activity_scroll:
@@ -2598,11 +2852,11 @@ func _set_terminal_page(page_name: String) -> void:
 func _apply_terminal_page_theme() -> void:
 	var fabrication_mode := _terminal_current_page == "FABRICATION"
 	if terminal_panel:
-		terminal_panel.add_theme_stylebox_override("panel", _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 10.0))
+		terminal_panel.add_theme_stylebox_override("panel", _make_terminal_panel_style(10.0))
 		terminal_panel.self_modulate = Color(1.0, 0.92, 0.72, 1.0) if fabrication_mode else Color(1, 1, 1, 1)
 	if terminal_header_panel:
 		var header_texture: Texture2D = TERMINAL_HEADER_WARNING_TEXTURE if fabrication_mode else TERMINAL_HEADER_ACTIVE_TEXTURE
-		terminal_header_panel.add_theme_stylebox_override("panel", _make_terminal_texture_style(header_texture, 4.0, 6.0))
+		terminal_header_panel.add_theme_stylebox_override("panel", _make_terminal_header_style(header_texture, 6.0))
 	if terminal_title_label:
 		terminal_title_label.add_theme_color_override("font_color", Color(0.98, 0.90, 0.72, 1.0) if fabrication_mode else Color(0.93, 0.98, 0.95, 1.0))
 	if terminal_header_eyebrow:
@@ -2615,6 +2869,7 @@ func _apply_terminal_page_theme() -> void:
 		terminal_status_label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.48, 0.96) if fabrication_mode else Color(0.64, 0.88, 0.78, 0.96))
 	if terminal_hint_label:
 		terminal_hint_label.add_theme_color_override("font_color", Color(0.96, 0.79, 0.54, 0.88) if fabrication_mode else Color(0.54, 0.72, 0.68, 0.88))
+		terminal_hint_label.text = "Click a work order. Esc closes." if fabrication_mode else "Type directly into the command line. Drag globe to inspect. Left click in the world to place while building. Esc closes."
 	if terminal_input:
 		var input_style := _make_terminal_input_style()
 		terminal_input.custom_minimum_size.y = max(terminal_input.custom_minimum_size.y, 48.0)
@@ -2640,7 +2895,11 @@ func _apply_terminal_page_theme() -> void:
 	elif terminal_background:
 		terminal_background.modulate = Color(1, 1, 1, 1)
 	if terminal_widget_stack:
-		var widget_panel_style := _make_terminal_texture_style(TERMINAL_PANEL_FRAME_TEXTURE, TERMINAL_PANEL_SLICE, 8.0)
+		var widget_panel_style := _make_terminal_panel_style(8.0)
+		var action_button_style := _make_terminal_button_style(TERMINAL_BUTTON_IDLE_TEXTURE, 6.0)
+		var action_button_hover_style := _make_terminal_button_style(TERMINAL_BUTTON_HOVER_TEXTURE, 6.0)
+		var action_button_pressed_style := _make_terminal_button_style(TERMINAL_BUTTON_PRESSED_TEXTURE, 6.0)
+		var action_button_disabled_style := _make_terminal_button_style(TERMINAL_BUTTON_DISABLED_TEXTURE, 6.0)
 		for panel in terminal_widget_stack.find_children("*", "PanelContainer", true, false):
 			panel.add_theme_stylebox_override("panel", widget_panel_style)
 			panel.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
@@ -2654,6 +2913,7 @@ func _apply_terminal_page_theme() -> void:
 		for label in terminal_widget_stack.find_children("*", "Label", true, false):
 			label.add_theme_color_override("font_color", Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
 			label.add_theme_font_size_override("font_size", 11)
+		_apply_terminal_widget_button_styles(action_button_style, action_button_hover_style, action_button_pressed_style, action_button_disabled_style)
 	if terminal_output is RichTextLabel:
 		terminal_output.scroll_following = true
 
@@ -2928,7 +3188,11 @@ func _set_terminal_widget_mode(page_name: String) -> void:
 	if terminal_status_widgets:
 		terminal_status_widgets.visible = show_status
 	if terminal_settings_widgets:
-		terminal_settings_widgets.visible = show_settings or show_fabrication
+		terminal_settings_widgets.visible = show_settings
+	if terminal_widget_stack:
+		var fabrication_widgets := terminal_widget_stack.get_node_or_null("FabricationWidgets")
+		if fabrication_widgets:
+			fabrication_widgets.visible = show_fabrication
 	if terminal_map_label:
 		terminal_map_label.visible = not using_widgets
 
@@ -3361,6 +3625,9 @@ func _render_terminal_fabrication_widgets() -> void:
 	var selected_work_order: Dictionary = view.get("selected_work_order", {})
 	if _terminal_fabrication_selected_work_order_id.is_empty() and not selected_work_order.is_empty():
 		_terminal_fabrication_selected_work_order_id = str(selected_work_order.get("id", ""))
+	if terminal_widget_stack != null and terminal_widget_stack.get_node_or_null("FabricationWidgets") != null:
+		_render_terminal_fabrication_clickable_widgets(view)
+		return
 
 	var display_lines: Array[String] = [
 		"FABRICATION // WORK ORDERS",
@@ -3463,6 +3730,319 @@ func _render_terminal_fabrication_widgets() -> void:
 		for command_variant in command_help:
 			map_lines.append(str(command_variant))
 	_set_terminal_rich_text(terminal_settings_map_body, "\n".join(map_lines))
+
+
+func _render_terminal_fabrication_clickable_widgets(view: Dictionary) -> void:
+	var status: Dictionary = view.get("status", {})
+	var work_orders: Array = view.get("work_orders", [])
+	var selected: Dictionary = view.get("selected_work_order", {})
+	var in_progress: Array = view.get("in_progress", [])
+	var ready_builds: Array = view.get("ready_builds", [])
+
+	_set_terminal_rich_text(_get_fabrication_panel_body("FabStatusPanel"), "FAB STATUS: %s | QUEUE %d | READY %d | %s" % [
+		str(status.get("fabricator_state", "UNKNOWN")).to_upper(),
+		in_progress.size(),
+		ready_builds.size(),
+		_get_operator_patch_carry_summary(),
+	])
+
+	var selected_lines: Array[String] = ["NO WORK ORDER SELECTED"]
+	var cost_lines: Array[String] = ["Select a work order."]
+	if not selected.is_empty():
+		selected_lines = [
+			str(selected.get("display_name", "UNKNOWN")).to_upper(),
+			"%s / %s" % [str(selected.get("state", "UNKNOWN")).to_upper(), str(selected.get("category", "utility")).to_upper()],
+			str(selected.get("purpose", "Fabrication support output.")),
+			"Result: %s" % str(selected.get("result_text", "Produces a build output.")),
+		]
+		cost_lines = [
+			"Cost: %s" % str(selected.get("cost_text", "FREE")),
+			"Have: %s" % str(selected.get("have_text", "none")),
+			str(selected.get("missing_text", "Missing Materials: none")),
+			_get_operator_patch_carry_summary() if _is_selected_lattice_field_patch(selected) else "Action: %s" % str(selected.get("action_text", "FAB START <work_order_id>")),
+		]
+	_set_terminal_rich_text(_get_fabrication_panel_body("FabSelectedRecipePanel"), "\n".join(selected_lines))
+	_set_terminal_rich_text(_get_fabrication_panel_body("FabCostPanel"), "\n".join(cost_lines))
+
+	var categories: Dictionary = {}
+	for row_variant in work_orders:
+		if row_variant is Dictionary:
+			var category := str((row_variant as Dictionary).get("category", "utility")).to_upper()
+			categories[category] = int(categories.get(category, 0)) + 1
+	var category_lines: Array[String] = []
+	for category in categories.keys():
+		category_lines.append("%s %d" % [_short_fabrication_category(str(category)), int(categories[category])])
+	category_lines.sort()
+	_set_terminal_rich_text(_get_fabrication_panel_body("FabCategoryPanel"), "\n".join(category_lines) if not category_lines.is_empty() else "NO WORK ORDERS")
+
+	_populate_fabrication_work_order_rows(work_orders)
+
+	var progress_lines: Array[String] = []
+	if in_progress.is_empty():
+		progress_lines.append("NO ACTIVE JOBS")
+	else:
+		for job_variant in in_progress:
+			if not (job_variant is Dictionary):
+				continue
+			var job := job_variant as Dictionary
+			progress_lines.append("#%d %s %s" % [
+				int(job.get("job_id", 0)),
+				str(job.get("display_name", "UNKNOWN")),
+				str(job.get("progress_text", "0%")),
+			])
+	_set_terminal_rich_text(_get_fabrication_panel_body("FabProgressPanel"), "\n".join(progress_lines))
+
+	var ready_lines: Array[String] = []
+	if ready_builds.is_empty():
+		ready_lines.append("NO READY BUILDS")
+	else:
+		for ready_variant in ready_builds:
+			if not (ready_variant is Dictionary):
+				continue
+			var ready := ready_variant as Dictionary
+			ready_lines.append("%s x%d // %s" % [
+				str(ready.get("display_name", "READY BUILD")),
+				int(ready.get("count", 1)),
+				str(ready.get("deployment_state", "STORED")),
+			])
+	_set_terminal_rich_text(_get_fabrication_panel_body("FabReadyBuildPanel"), "\n".join(ready_lines))
+
+	_update_fabrication_action_buttons(selected, in_progress, ready_builds)
+
+
+func _get_fabrication_panel_body(panel_name: String) -> RichTextLabel:
+	if terminal_widget_stack == null:
+		return null
+	var panel := terminal_widget_stack.find_child(panel_name, true, false)
+	if panel == null:
+		return null
+	return panel.find_child("Body", true, false) as RichTextLabel
+
+
+func _get_operator_patch_carry_summary() -> String:
+	var operator := get_tree().get_first_node_in_group("player")
+	if operator == null or not operator.has_method("get_field_patch_status"):
+		return "PATCH --/--"
+	var status: Dictionary = operator.call("get_field_patch_status")
+	return "PATCH %d/%d" % [int(status.get("count", 0)), int(status.get("max", 0))]
+
+
+func _is_selected_lattice_field_patch(selected: Dictionary) -> bool:
+	return str(selected.get("id", "")) == "lattice_field_patch" or str(selected.get("output_id", "")) == "lattice_field_patch"
+
+
+func _short_fabrication_category(category: String) -> String:
+	match category.to_upper():
+		"CONSUMABLE":
+			return "CONSUM."
+		"STRUCTURE":
+			return "STRUCT."
+		_:
+			return category.to_upper()
+
+
+func _short_fabrication_state(state: String) -> String:
+	match state.to_upper():
+		"READY":
+			return "READY"
+		"IN PROGRESS":
+			return "BUILD"
+		"MISSING MATERIALS":
+			return "MISS"
+		"LOCKED":
+			return "LOCK"
+		_:
+			return state.to_upper()
+
+
+func _short_fabrication_cost(cost_text: String) -> String:
+	var shortened := cost_text
+	var replacements := {
+		"Ruin Scrap": "SCRAP",
+		"Structural Alloy": "ALLOY",
+		"Power Components": "POWER",
+		"Resin Clot": "RESIN",
+		"Signal Filament": "SIGNAL",
+		"Capacitor Dust": "DUST",
+		"Memory Glass Fragment": "GLASS",
+		"Fiber Moss": "FIBER",
+		"Blackwood": "BLACKWOOD",
+	}
+	for key in replacements.keys():
+		shortened = shortened.replace(str(key), str(replacements[key]))
+	shortened = shortened.replace(" x", " ")
+	var parts := shortened.split(" / ", false)
+	if parts.size() > 3:
+		var limited_parts: Array[String] = []
+		for index in range(3):
+			limited_parts.append(str(parts[index]))
+		return " / ".join(limited_parts) + " / ..."
+	return shortened
+
+
+func _format_fabrication_work_order_row(row: Dictionary) -> String:
+	return "[%s] %s | %s | %s" % [
+		_short_fabrication_state(str(row.get("state", "UNKNOWN"))),
+		str(row.get("display_name", "UNKNOWN")).to_upper(),
+		_short_fabrication_category(str(row.get("category", "utility"))),
+		_short_fabrication_cost(str(row.get("cost_text", "FREE"))),
+	]
+
+
+func _populate_fabrication_work_order_rows(work_orders: Array) -> void:
+	var rows: Node = null
+	if terminal_widget_stack != null:
+		rows = terminal_widget_stack.find_child("Rows", true, false)
+	if rows == null:
+		return
+	for child in rows.get_children():
+		rows.remove_child(child)
+		child.queue_free()
+	for row_variant in work_orders:
+		if not (row_variant is Dictionary):
+			continue
+		var row := row_variant as Dictionary
+		var recipe_id := str(row.get("id", ""))
+		var button := Button.new()
+		button.text = _format_fabrication_work_order_row(row)
+		button.tooltip_text = str(row.get("purpose", "Fabrication support output."))
+		button.toggle_mode = true
+		button.button_pressed = bool(row.get("is_selected", false))
+		button.custom_minimum_size = Vector2(0.0, 34.0)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.focus_mode = Control.FOCUS_ALL
+		button.clip_text = true
+		button.add_theme_font_size_override("font_size", 11)
+		_set_control_property_if_available(button, &"text_overrun_behavior", TextServer.OVERRUN_TRIM_ELLIPSIS)
+		button.pressed.connect(_on_fabrication_work_order_button_pressed.bind(recipe_id))
+		rows.add_child(button)
+	var idle := _make_terminal_button_style(TERMINAL_BUTTON_IDLE_TEXTURE, 6.0)
+	var hover := _make_terminal_button_style(TERMINAL_BUTTON_HOVER_TEXTURE, 6.0)
+	var pressed := _make_terminal_button_style(TERMINAL_BUTTON_PRESSED_TEXTURE, 6.0)
+	var disabled := _make_terminal_button_style(TERMINAL_BUTTON_DISABLED_TEXTURE, 6.0)
+	_apply_terminal_widget_button_styles(idle, hover, pressed, disabled)
+
+
+func _update_fabrication_action_buttons(selected: Dictionary, in_progress: Array, ready_builds: Array) -> void:
+	var craft_one: Button = null
+	var craft_to_max: Button = null
+	var place_ready: Button = null
+	var cancel_queue: Button = null
+	if terminal_widget_stack != null:
+		craft_one = terminal_widget_stack.find_child("CraftOneButton", true, false) as Button
+		craft_to_max = terminal_widget_stack.find_child("CraftToMaxButton", true, false) as Button
+		place_ready = terminal_widget_stack.find_child("PlaceReadyBuildButton", true, false) as Button
+		cancel_queue = terminal_widget_stack.find_child("CancelQueueButton", true, false) as Button
+	var ready_to_start := not selected.is_empty() and str(selected.get("state", "")) == "READY"
+	if craft_one:
+		craft_one.text = "CRAFT 1"
+		craft_one.disabled = not ready_to_start
+		_connect_fabrication_action_button(craft_one, "_on_fabrication_craft_one_pressed")
+	if craft_to_max:
+		craft_to_max.text = "TO MAX"
+		craft_to_max.disabled = not ready_to_start
+		_connect_fabrication_action_button(craft_to_max, "_on_fabrication_craft_to_max_pressed")
+	if place_ready:
+		place_ready.text = "PLACE"
+		var has_deployable := not _first_deployable_ready_build_id(ready_builds).is_empty()
+		place_ready.visible = has_deployable
+		place_ready.disabled = not has_deployable
+		_connect_fabrication_action_button(place_ready, "_on_fabrication_place_ready_pressed")
+	if cancel_queue:
+		cancel_queue.text = "CANCEL"
+		cancel_queue.disabled = in_progress.is_empty()
+		_connect_fabrication_action_button(cancel_queue, "_on_fabrication_cancel_queue_pressed")
+
+
+func _connect_fabrication_action_button(button: Button, method_name: String) -> void:
+	var callback := Callable(self, method_name)
+	if not button.pressed.is_connected(callback):
+		button.pressed.connect(callback)
+
+
+func _on_fabrication_work_order_button_pressed(recipe_id: String) -> void:
+	_terminal_fabrication_selected_work_order_id = _normalize_terminal_fab_identifier(recipe_id)
+	_render_terminal_fabrication_widgets()
+	_append_terminal_line("FAB SELECTED -> %s" % _terminal_fabrication_selected_work_order_id.to_upper(), "info")
+
+
+func _on_fabrication_craft_one_pressed() -> void:
+	_start_selected_fabrication_recipe(1)
+
+
+func _on_fabrication_craft_to_max_pressed() -> void:
+	_start_selected_fabrication_recipe(20)
+
+
+func _on_fabrication_place_ready_pressed() -> void:
+	var view: Dictionary = _terminal_fabrication_view_model.build(self, _terminal_fabrication_selected_work_order_id)
+	var ready_id := _first_deployable_ready_build_id(view.get("ready_builds", []))
+	if ready_id.is_empty():
+		_append_terminal_line("NO DEPLOYABLE READY BUILD", "warning")
+		return
+	_start_ready_build_placement(ready_id)
+
+
+func _on_fabrication_cancel_queue_pressed() -> void:
+	var fab_pipeline := get_node_or_null("/root/FabPipeline")
+	if fab_pipeline == null:
+		_append_terminal_line("FAB PIPELINE UNAVAILABLE", "warning")
+		return
+	fab_pipeline.call("clear_jobs")
+	_append_terminal_line("FAB JOBS CLEARED", "success")
+	_refresh_snapshot()
+
+
+func _start_selected_fabrication_recipe(max_count: int) -> void:
+	var recipe_id := _normalize_terminal_fab_identifier(_terminal_fabrication_selected_work_order_id)
+	if recipe_id.is_empty():
+		_append_terminal_line("NO FAB WORK ORDER SELECTED", "warning")
+		return
+	var fab_pipeline := get_node_or_null("/root/FabPipeline")
+	if fab_pipeline == null:
+		_append_terminal_line("FAB PIPELINE UNAVAILABLE", "warning")
+		return
+	var started := 0
+	for _i in range(maxi(1, max_count)):
+		if not bool(fab_pipeline.call("can_start_recipe", recipe_id)):
+			break
+		if not bool(fab_pipeline.call("try_start_recipe", recipe_id)):
+			break
+		started += 1
+	if started <= 0:
+		_append_terminal_line("CANNOT START %s" % recipe_id.to_upper(), "warning")
+	else:
+		_append_terminal_line("FAB JOB STARTED -> %s x%d" % [recipe_id.to_upper(), started], "success")
+	_refresh_snapshot()
+
+
+func _first_deployable_ready_build_id(ready_builds: Array) -> String:
+	for ready_variant in ready_builds:
+		if not (ready_variant is Dictionary):
+			continue
+		var ready := ready_variant as Dictionary
+		if bool(ready.get("deployable", false)) and int(ready.get("count", 0)) > 0:
+			return str(ready.get("id", ""))
+	return ""
+
+
+func _start_ready_build_placement(ready_build_id: String) -> void:
+	var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
+	if turret_placement == null:
+		_append_terminal_line("TURRET PLACEMENT UNAVAILABLE", "warning")
+		return
+	if not turret_placement.has_method("get_turret_type_for_build_token"):
+		_append_terminal_line("READY BUILD MAPPING UNAVAILABLE", "warning")
+		return
+	var turret_type := str(turret_placement.call("get_turret_type_for_build_token", ready_build_id))
+	if turret_type.is_empty():
+		_append_terminal_line("UNKNOWN READY BUILD %s" % ready_build_id.to_upper(), "warning")
+		return
+	if bool(turret_placement.call("enter_placement_mode", turret_type)):
+		_terminal_fabrication_selected_work_order_id = ready_build_id
+		_append_terminal_line("BUILD PLACEMENT ACTIVE // %s -> %s" % [ready_build_id.to_upper(), turret_type.to_upper()], "success")
+	else:
+		_append_terminal_line("BUILD PLACE FAILED // CHECK MATERIALS OR CAP", "warning")
 
 
 func _render_terminal_main_content(snapshot: Dictionary) -> void:
@@ -4254,7 +4834,7 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 						_append_terminal_line("UNKNOWN RECIPE %s" % recipe_id.to_upper(), "warning")
 						return true
 					if not bool(start_pipeline.call("can_start_recipe", recipe_id)):
-						_append_terminal_line("CANNOT START %s // CHECK MATERIALS OR CARRY CAP" % recipe_id.to_upper(), "warning")
+						_append_terminal_line("CANNOT START %s // INSUFFICIENT RESOURCES" % recipe_id.to_upper(), "warning")
 						return true
 					if bool(start_pipeline.call("try_start_recipe", recipe_id)):
 						_terminal_fabrication_selected_work_order_id = recipe_id

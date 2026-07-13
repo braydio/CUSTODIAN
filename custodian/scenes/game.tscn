@@ -48,7 +48,7 @@
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
 [ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
 [ext_resource type="Script" uid="uid://brgprv506ntpi" path="res://game/systems/spawning/ambient_enemy_camp.gd" id="207_ambient_camp"]
-[ext_resource type="PackedScene" path="res://game/ui/debug/dev_observatory_overlay.tscn" id="208_observatory_overlay"]
+[ext_resource type="PackedScene" path="res://scenes/debug/dev_observatory_overlay.tscn" id="208_observatory_overlay"]
 [ext_resource type="PackedScene" path="res://game/actors/allies/allied_infantry_droid.tscn" id="209_allied_droid"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
@@ -1536,6 +1536,243 @@ layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
+
+[node name="FabricationWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="TopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="FabStatusPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel/Margin/Content"]
+layout_mode = 2
+text = "FAB STATUS"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 82)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="FabSelectedRecipePanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel/Margin/Content"]
+layout_mode = 2
+text = "SELECTED WORK ORDER"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 82)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="MainRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="FabCategoryPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow"]
+custom_minimum_size = Vector2(132, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel/Margin/Content"]
+layout_mode = 2
+text = "FILTER"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="FabRecipeListPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin/Content"]
+layout_mode = 2
+text = "WORK ORDERS"
+
+[node name="RecipeScroll" type="ScrollContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Rows" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin/Content/RecipeScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="FabCostPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel/Margin/Content"]
+layout_mode = 2
+text = "COST / OUTPUT"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = true
+scroll_active = true
+
+[node name="BottomRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="FabProgressPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel/Margin/Content"]
+layout_mode = 2
+text = "IN PROGRESS"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="FabReadyBuildPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel/Margin/Content"]
+layout_mode = 2
+text = "READY BUILDS"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ActionRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="CraftOneButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CRAFT 1"
+
+[node name="CraftToMaxButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CRAFT TO MAX"
+
+[node name="PlaceReadyBuildButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PLACE READY BUILD"
+
+[node name="CancelQueueButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CANCEL QUEUE"
 
 [node name="SettingsWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802894]
 visible = false

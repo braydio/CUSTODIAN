@@ -34,6 +34,10 @@ func _run() -> void:
 
 	if not scene.has_method("get_collision_mapper_state"):
 		errors.append("Mapper script does not expose get_collision_mapper_state()")
+	if not scene.has_method("_apply_draft_segments_to_runtime_collision_map"):
+		errors.append("Mapper script does not expose runtime collision-map apply helper")
+	if not scene.has_method("_replace_boundary_segments_block") or not scene.has_method("_format_boundary_segments_const"):
+		errors.append("Mapper script does not expose non-mutating replacement helpers")
 	else:
 		var state := scene.call("get_collision_mapper_state") as Dictionary
 		var approach := state.get("approach") as Node
@@ -45,6 +49,13 @@ func _run() -> void:
 			errors.append("Existing collision overlay should start visible")
 		if not bool(state.get("show_draft", false)):
 			errors.append("Draft overlay should start visible")
+		var replacement_lines: Array[String] = ["[Vector2(1.0, 2.0), Vector2(3.0, 4.0)],"]
+		var replacement := str(scene.call("_format_boundary_segments_const", replacement_lines))
+		var replaced := str(scene.call("_replace_boundary_segments_block", "before\nconst BOUNDARY_SEGMENTS := [\n\t[Vector2.ZERO, Vector2.ONE],\n]\nafter", replacement))
+		if not replaced.contains("[Vector2(1.0, 2.0), Vector2(3.0, 4.0)],"):
+			errors.append("Mapper replacement helper did not insert new segment text")
+		if replaced.contains("Vector2.ZERO"):
+			errors.append("Mapper replacement helper left stale segment text behind")
 
 	if errors.is_empty():
 		print("[SunderedKeepApproachCollisionMapperSmoke] PASS")

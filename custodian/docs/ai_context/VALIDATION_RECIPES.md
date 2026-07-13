@@ -163,9 +163,10 @@ For the walkable Sundered Keep underlay-only gameplay debug scene:
 ```bash
 cd custodian
 godot --headless --script tools/validation/sundered_keep_underlay_gameplay_debug_smoke.gd
+godot --headless --script tools/validation/sundered_keep_underlay_collision_mapper_smoke.gd
 ```
 
-This loads `res://scenes/debug/sundered_keep_production_underlay_debug.tscn`, verifies the scene uses only the active main underlay texture without instantiating `SunderedKeepMap` or authored tile sprites, confirms the real Operator/controller/projectile/camera runtime shell, and checks gameplay camera zoom/bounds rather than authoring-review zoom.
+This loads `res://scenes/debug/sundered_keep_production_underlay_debug.tscn`, verifies the scene uses only the active main underlay texture without instantiating `SunderedKeepMap` or authored tile sprites, confirms the real Operator/controller/projectile/camera runtime shell, checks gameplay camera zoom/bounds rather than authoring-review zoom, and validates the companion collision mapper that applies world-space `UNDERLAY_BOUNDARY_SEGMENTS`.
 
 For the Sundered Keep overlay-authoring guide pipeline:
 
@@ -181,11 +182,14 @@ For fabrication terminal readability / work-order translation changes:
 
 ```bash
 cd custodian
+godot --headless --path . --script res://tools/validation/terminal_stylebox_rendering_smoke.gd
+godot --headless --path . --script res://tools/validation/fabrication_terminal_layout_smoke.gd
 godot --headless --script tools/validation/fabrication_terminal_readability_smoke.gd
 godot --headless --script tools/validation/fabrication_terminal_command_smoke.gd
+godot --headless --path . --script res://tools/validation/fabrication_terminal_clickable_smoke.gd
 ```
 
-This validates the live FABRICATION terminal translation layer, the readable next-action text, and the `BUILD PLACE <ready_build_id>` placement alias against the runtime autoloads.
+This validates crisp terminal `StyleBoxTexture` rendering with border-only tile-fit frames and stretched single-center controls, fixed-width/no-horizontal-scroll FABRICATION layout, the live FABRICATION terminal translation layer, the readable next-action text, the `BUILD PLACE <ready_build_id>` placement alias against the runtime autoloads, and the dedicated clickable FabricationWidgets page in the main scene.
 
 For Field Patch healing or restock changes:
 

@@ -83,7 +83,7 @@ The Collection Plan adds the spatial staging the Pipeline doc assumes, and the P
 
 ### Resource-Node Harvesting, Not Survival Crafting
 
-Resources are **world objects** that the player walks up to and interacts with. There is no inventory UI, no crafting menu, no tool belt. The loop is:
+Resources are **world objects** that the player walks up to and interacts with. There is no freeform survival-crafting grid, loose item-combining menu, or tool belt. Fabrication happens only through bounded authored work orders in the Custodian terminal. The loop is:
 
 ```
 See node → Walk to it → Press interact → Node depletes → Resources added to ledger → Fabricator can use them
@@ -672,11 +672,11 @@ godot --headless --quit
 
 ## Future Considerations
 
-### V1.1 — HUD Integration
-- Add resource counts to HUD (small panel showing blackwood/structural_alloy/ruin_scrap/power_components)
-- Terminal FABRICATION page showing available work orders, current resources, queue status, ready builds, and the next recommended action
-- Fabrication queue status in terminal
-- Player-facing terminology should prefer "Work Order", "Ready Build", "In Progress", and "Missing Materials" even when the backend keeps recipe IDs and token IDs unchanged
+### V1.1 — Terminal Work-Order UI
+- Complete-v1: the terminal FABRICATION page has dedicated `FabricationWidgets`, clickable work-order rows, selected recipe details, cost/have/missing material text, queue and ready-build summaries, and action buttons for CRAFT 1, CRAFT TO MAX, PLACE READY BUILD, and CANCEL QUEUE.
+- Typed fallback remains supported through `FAB START <work_order_id>`, `FAB QUEUE`, `FAB CANCEL`, and `BUILD PLACE <ready_build_id>`.
+- Player-facing terminology should prefer "Work Order", "Ready Build", "In Progress", and "Missing Materials" even when the backend keeps recipe IDs and token IDs unchanged.
+- Deferred: small always-on HUD resource counts and broader non-turret deployment bridges.
 
 ### V1.2 — Power-Aware Fabrication
 - Fabricator speed/cost scaling based on `power.gd._get_fabrication_effectiveness()`
@@ -704,13 +704,13 @@ Current runtime step: before a separate destination/travel UI exists, `ContractW
 
 ## Next Agent Slice
 
-**Goal:** Polish the live FABRICATION work-order screen without changing the fabrication backend.
+**Goal:** Extend the live FABRICATION work-order screen beyond the first clickable pass without changing fabrication authority.
 
-**Files:** `custodian/game/ui/hud/ui.gd`, `custodian/game/ui/terminal/fabrication_terminal_view_model.gd`, `custodian/game/ui/terminal/terminal_command_router.gd`, `custodian/game/systems/core/systems/turret_placement.gd`
+**Files:** `custodian/game/ui/hud/ui.gd`, `custodian/game/ui/terminal/fabrication_terminal_view_model.gd`, `custodian/game/ui/terminal/terminal_command_router.gd`, `custodian/game/systems/core/systems/turret_placement.gd`, `custodian/autoload/fab_pipeline.gd`
 
 **Constraints:** Keep simulation authority in `FabPipeline`, `ResourceLedger`, and `BuildInventory`; preserve the readable command aliases; do not expose raw recipe dictionaries as the primary player surface.
 
-**Acceptance:** The terminal keeps the work-order layout, sorts useful outputs first, distinguishes deployable ready builds from stored outputs, teaches the fabricate-then-place bridge, and remains compatible with existing `FAB START` and `BUILD PLACE` commands.
+**Acceptance:** The terminal keeps the clickable work-order layout, supports richer filtering/sorting and broader deployable ready-build bridges, preserves Field Patch carry-cap validation, and remains compatible with existing `FAB START` and `BUILD PLACE` commands.
 
 ---
 

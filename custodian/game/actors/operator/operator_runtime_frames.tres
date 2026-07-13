@@ -84,7 +84,7 @@
 [ext_resource type="Texture2D" uid="uid://ck6w8c775he8i" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__nw__5f__96.png" id="68_bsdqu"]
 [ext_resource type="Texture2D" uid="uid://6iaj4qrlq4cc" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__ne__5f__96.png" id="69_0ja7k"]
 [ext_resource type="Texture2D" uid="uid://bepg2xxnj2bpc" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__s__6f__96.png" id="76_mbo84"]
-[ext_resource type="Texture2D" uid="uid://c8bu4k76d2he4" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__n__6f__96.png" id="81_2216u"]
+[ext_resource type="Texture2D" uid="uid://cxd4c70ke5gxu" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__n__5f__96.png" id="81_2216u"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t43yl"]
 atlas = ExtResource("7_2pr6a")
@@ -2653,10 +2653,6 @@ region = Rect2(288, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_4ga6o"]
 atlas = ExtResource("81_2216u")
 region = Rect2(384, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ju4jc"]
-atlas = ExtResource("81_2216u")
-region = Rect2(480, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yqywf"]
 atlas = ExtResource("68_bsdqu")
@@ -5450,9 +5446,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4ga6o")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ju4jc")
 }],
 "loop": 1,
 "name": &"unarmed_walk_up",

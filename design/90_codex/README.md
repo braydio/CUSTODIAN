@@ -46,7 +46,7 @@ It is not active runtime truth, not a design-spec replacement, and not implement
 
 ## Graduation Rules
 
-To graduate, create or update an active implementation spec outside `90_codex/`. Use the current design structure, not this folder, as the implementation home. If a future `design/20_features/in_progress/` lane is created, graduated feature specs may target it; in the current tree, use the closest existing active folder such as `design/02_features/`, `design/01_systems/`, or `design/04_architecture/`.
+To graduate, create or update an active implementation spec outside `90_codex/`. Use the current design structure, not this folder, as the implementation home. Use the closest existing active folder such as `design/02_features/`, `design/01_systems/`, or `design/04_architecture/`. (Note: `design/20_features/` was consolidated into `design/02_features/`.)
 
 Graduation should include:
 

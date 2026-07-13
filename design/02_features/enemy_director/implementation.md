@@ -21,13 +21,13 @@ This file is the runtime behavior authority for assault orchestration. For facti
 
 ### Runtime Slice Delivered (2026-03-08 to 2026-03-10)
 
-- Added `res://core/systems/enemy_director.gd` and attached it in `res://scenes/game.tscn` as `EnemyDirector`.
-- Added `res://core/systems/threat_model.gd`.
-- Added `res://core/systems/assault_lane.gd`.
-- Added `res://core/systems/enemy_factory.gd`.
-- Extended `res://core/systems/wave_manager.gd` with `set_external_wave_plan(composition, lane, objective)`.
+- Added `res://game/systems/enemy_director.gd` and attached it in `res://scenes/game.tscn` as `EnemyDirector`.
+- Added `res://game/systems/threat_model.gd`.
+- Added `res://game/systems/assault_lane.gd`.
+- Added `res://game/systems/enemy_factory.gd`.
+- Extended `res://game/systems/spawning/wave_manager.gd` with `set_external_wave_plan(composition, lane, objective)`.
 - WaveManager now accepts director-forced lane and objective per wave while retaining existing spawn execution.
-- Enemy objective string is now respected by `res://entities/enemies/enemy.gd` target-priority ordering.
+- Enemy objective string is now respected by `res://game/actors/enemies/enemy.gd` target-priority ordering.
 - Added `EnemyDirector.get_director_status()` runtime telemetry.
 - Added lane outcome metrics (`total_attacks`, `successful_attacks`, `success_ratio`) in `AssaultLane`.
 - Added HUD line + terminal fallback telemetry rendering in `res://scenes/ui.gd` (`DIRECTOR`, `THREAT`, `ASSAULT`, `WAVE/BUDGET`).

@@ -154,6 +154,7 @@ func _validate_terminal_fabrication_restock(root: Node) -> void:
 	_assert_true(str(below_cap_row.get("state", "")) == "READY", "lattice_field_patch terminal row should be READY below carry cap")
 	var started := bool(fab_pipeline.call("try_start_recipe", "lattice_field_patch"))
 	_assert_true(started, "lattice_field_patch fabrication should start")
+	await _wait_for_fab_jobs(fab_pipeline, 3.0)
 	_assert_true(int(operator.get("field_patch_count")) == 2, "lattice_field_patch fabrication should add one carried patch")
 	_assert_true(int(ledger.call("get_amount", "resin_clot")) == 0, "lattice_field_patch should spend resin_clot")
 	_assert_true(int(ledger.call("get_amount", "signal_filament")) == 0, "lattice_field_patch should spend signal_filament")
@@ -171,6 +172,15 @@ func _validate_terminal_fabrication_restock(root: Node) -> void:
 	_assert_true(not blocked, "lattice_field_patch fabrication should not start at carry cap")
 	_assert_true(int(ledger.call("get_amount", "resin_clot")) == 2, "carry-cap blocked fabrication should not spend resources")
 	operator.queue_free()
+
+
+func _wait_for_fab_jobs(fab_pipeline: Node, max_seconds: float) -> void:
+	var deadline := Time.get_ticks_msec() + int(max_seconds * 1000.0)
+	while Time.get_ticks_msec() < deadline:
+		var jobs: Array = fab_pipeline.call("get_jobs_snapshot")
+		if jobs.is_empty():
+			return
+		await process_frame
 
 
 func _find_work_order(rows: Array, row_id: String) -> Dictionary:

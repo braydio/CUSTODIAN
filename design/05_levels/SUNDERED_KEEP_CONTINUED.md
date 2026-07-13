@@ -19,7 +19,7 @@ git mv custodian/docs/ai_context/task_packets/playable_siege_loop_gatehouse_slic
  custodian/docs/ai_context/task_packets/PLAYABLE_SIEGE_LOOP_GATEHOUSE_SLICE.md
 PACKET=custodian/docs/ai_context/task_packets/PLAYABLE_SIEGE_LOOP_GATEHOUSE_SLICE.md
 fi
-</code></pre><h2>1.2 Fix stale design path references</h2><p>In the packet, replace stale references to:</p><pre><code class="language-text">design/20_features/in_progress/
+</code></pre><h2>1.2 Fix stale design path references</h2><p>In the packet, replace stale references to:</p><pre><code class="language-text">design/20_features/in_progress/ (now consolidated into design/02_features/)
 </code></pre><p>with the current structure:</p><pre><code class="language-text">design/
 design/00_meta/
 design/01_systems/

@@ -1,4 +1,4 @@
-I checked the live GitHub repo rather than relying only on the older Drive context, because your project note says GitHub may be fresher. The repo is available as braydio/CUSTODIAN on main . I also found a documentation drift issue: AGENTS.md says active Godot specs live under design/20_features/in_progress, but the current combat/weapon docs I found are under design/02_features/...; Codex should either normalize that or explicitly update AGENTS.md so future agents stop guessing paths . Current weapon runtime state is already partly data-driven: OperatorWeaponDefinition has stats, ammo, magazine, reload, range, recoil, etc. , WeaponDefinitionFactory loads those from JSON , and operator.gd already has stealth snapshot fields plus primitive firing noise values .
+I checked the live GitHub repo rather than relying only on the older Drive context, because your project note says GitHub may be fresher. The repo is available as braydio/CUSTODIAN on main . I also found a documentation drift issue: AGENTS.md previously referenced design/20_features/in_progress (now consolidated into design/02_features/), and the current combat/weapon docs live under design/02_features/...; Codex should either normalize that or explicitly update AGENTS.md so future agents stop guessing paths . Current weapon runtime state is already partly data-driven: OperatorWeaponDefinition has stats, ammo, magazine, reload, range, recoil, etc. , WeaponDefinitionFactory loads those from JSON , and operator.gd already has stealth snapshot fields plus primitive firing noise values .
 
 Here’s the Codex-ready implementation brief. Copy/paste this as the task.
 
@@ -69,8 +69,7 @@ Work
 1. Inspect AGENTS.md.
 2. Inspect current design docs under design/.
 3. Confirm whether active feature docs live under:
-   - design/20_features/in_progress/
-   - design/02_features/
+   - design/02_features/ (formerly design/20_features/in_progress/, now consolidated)
    - both
 4. Update docs so future agents know the real current layout.
 

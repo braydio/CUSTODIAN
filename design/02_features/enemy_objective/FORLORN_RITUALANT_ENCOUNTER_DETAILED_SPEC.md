@@ -2059,7 +2059,7 @@ This follows your Ash-Bell source recommendation that Ash-Bell appearances shoul
 
 # 18. Suggested implementation proposal files
 
-The old `design/features/implementation` and `design/20_features/in_progress` conventions have been consolidated. All implementation specs now live in the appropriate numbered subdirectory under `design/` (e.g., `02_features/enemy_objective/` for the Forlorn-Ritualant encounter, `02_features/procgen/` for procgen features, etc.). This document itself lives at `design/02_features/enemy_objective/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` as the canonical home.
+The old `design/features/implementation` and `design/20_features/in_progress` conventions have been consolidated into the current numbered subdirectories (e.g., `design/02_features/`). All implementation specs now live in the appropriate numbered subdirectory under `design/` (e.g., `02_features/enemy_objective/` for the Forlorn-Ritualant encounter, `02_features/procgen/` for procgen features, etc.). This document itself lives at `design/02_features/enemy_objective/FORLORN_RITUALANT_ENCOUNTER_DETAILED_SPEC.md` as the canonical home.
 
 ---
 

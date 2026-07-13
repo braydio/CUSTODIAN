@@ -87,8 +87,8 @@
 			"signal_filament": 1,
 			"capacitor_dust": 1
 		},
-		"build_seconds": 0.0,
-		"output_type": "operator_field_patch",
+		"build_seconds": 2.0,
+		"output_type": "operator_consumable",
 		"output_id": "lattice_field_patch",
 		"output_amount": 1,
 		"max_carried": 2

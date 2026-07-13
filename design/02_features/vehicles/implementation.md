@@ -179,7 +179,7 @@ func exit_vehicle() -> void:
 
 # Vehicle registry for spawn management
 var vehicle_registry = {
-    "light_buggy": preload("res://entities/vehicles/light_buggy.tscn")
+    "light_buggy": preload("res://game/vehicles/light_buggy.tscn")
 }
 ```
 

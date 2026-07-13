@@ -307,7 +307,7 @@ var reward_profile: RewardProfile
 ### Phase 1: Core Data Structures
 
 ```gdscript
-# res://core/systems/hub/hub_data.gd
+# res://game/systems/hub_data.gd
 class_name HubData
 extends Resource
 
@@ -338,7 +338,7 @@ class VictoryCondition extends Resource:
 ### Phase 2: Scenario Generation
 
 ```gdscript
-# res://core/systems/hub/scenario_generator.gd
+# res://game/systems/scenario_generator.gd
 class_name ScenarioGenerator
 extends Node
 
@@ -363,7 +363,7 @@ func generate_offers(hub: HubState, count: int = 3) -> Array[CampaignScenario]:
 ### Phase 3: Knowledge & Progression
 
 ```gdscript
-# res://core/systems/hub/knowledge_system.gd
+# res://game/systems/knowledge_system.gd
 class_name KnowledgeSystem
 extends Node
 
@@ -423,7 +423,7 @@ SELECT MISSION [1-3] OR [R]EFRESH: _
 Each campaign mission generates a unique region:
 
 ```gdscript
-# res://core/systems/hub/region_generator.gd
+# res://game/systems/region_generator.gd
 class_name RegionGenerator
 extends Node
 

@@ -100,6 +100,7 @@ Rules:
 - No icons required for MVP
 - Colors: green/amber/red only as emphasis, never as sole information carrier
 - This bar never scrolls
+- Pixel-art terminal frames should be rendered as Godot `StyleBoxTexture` resources with margins that match the actual frame linework and per-family stretch policy. Large panel/map frames may tile-fit borders with `draw_center=false`; header bars, nav tabs, action buttons, and command inputs should stretch a single center rather than tiling interior motifs. Do not compensate for smeared or over-tiled terminal borders by redrawing assets until runtime stylebox margins, axis modes, and `draw_center` have been verified.
 
 ### Zone B — Left Navigation Rail
 
@@ -120,8 +121,9 @@ Primary menu buttons, in this exact order:
 8. ARCHIVE
 9. RECON
 10. CONTRACTS
-11. HISTORY
-12. SETTINGS
+11. FABRICATION
+12. HISTORY
+13. SETTINGS
 
 Contextual button cluster below:
 
@@ -410,7 +412,30 @@ Hub-side scenario proposal browser.
 
 - ACCEPT, RECON FIRST, DEFER, ARCHIVE NOTE
 
-### 11. HISTORY Page
+### 11. FABRICATION Page
+
+Bounded terminal work-order surface for authored recipes. This is not a freeform survival-crafting menu.
+
+The FABRICATION page must fit inside the existing center content pane. It should use a compact dashboard layout with a status strip, compact filters, vertically scrolling work-order list, stacked selected-detail/cost panels, and a fixed action row. Do not use horizontal scrolling or spreadsheet-style side-by-side columns for fabrication; long recipe purpose/cost/result text belongs in the selected-detail area, not inline rows.
+
+**Layout:**
+
+- Top: fabricator state and selected work-order detail
+- Left: category/filter summary
+- Center: clickable work-order rows
+- Right: selected recipe cost, owned materials, missing materials, and output
+- Bottom: in-progress queue, ready builds, and action row
+
+**Actions:**
+
+- CRAFT 1
+- CRAFT TO MAX
+- PLACE READY BUILD
+- CANCEL QUEUE
+
+Typed fallback commands remain valid: `FAB START <work_order_id>`, `FAB QUEUE`, `FAB CANCEL`, and `BUILD PLACE <ready_build_id>`.
+
+### 12. HISTORY Page
 
 Operational history and campaign log.
 
@@ -418,7 +443,7 @@ Operational history and campaign log.
 
 - COMMAND LOG, ASSAULTS, CAMPAIGNS, LOSSES, DISCOVERIES
 
-### 12. SETTINGS Page
+### 13. SETTINGS Page
 
 Minimal.
 

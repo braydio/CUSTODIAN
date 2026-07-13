@@ -81,9 +81,9 @@
 [ext_resource type="Texture2D" uid="uid://bfjcemg75j66l" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/run_01/operator__modular_upper_body__unarmed__run_01__n__6f__96.png" id="56_qclgr"]
 [ext_resource type="Texture2D" uid="uid://c2p7mrb54pd7n" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/run_01/operator__modular_upper_body__unarmed__run_01__nw__6f__96.png" id="57_6oc7d"]
 [ext_resource type="Texture2D" uid="uid://ducpk1tvkuewj" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/walk_01/operator__modular_upper_body__unarmed__walk_01__se__6f__96.png" id="57_wr7g6"]
-[ext_resource type="Texture2D" uid="uid://boseibgh2s7ff" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/walk_01/operator__modular_upper_body__unarmed__walk_01__n__6f__96.png" id="60_2ca4m"]
-[ext_resource type="Texture2D" uid="uid://cm8jybrjl6s7u" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/walk_01/operator__modular_upper_body__unarmed__walk_01__nw__6f__96.png" id="61_mvt1s"]
-[ext_resource type="Texture2D" uid="uid://fd28xhhamtui" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/walk_01/operator__modular_upper_body__unarmed__walk_01__ne__6f__96.png" id="62_8cdyq"]
+[ext_resource type="Texture2D" uid="uid://d3anh0nthws6b" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/walk_01/operator__modular_upper_body__unarmed__walk_01__n__5f__96.png" id="60_2ca4m"]
+[ext_resource type="Texture2D" uid="uid://dql3liqh66hj1" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/walk_01/operator__modular_upper_body__unarmed__walk_01__nw__5f__96.png" id="61_mvt1s"]
+[ext_resource type="Texture2D" uid="uid://bwxsmm2qxs1gq" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/walk_01/operator__modular_upper_body__unarmed__walk_01__ne__5f__96.png" id="62_8cdyq"]
 [ext_resource type="Texture2D" uid="uid://cwnt8er5ynjlt" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/actions/unarmed/parry_01/operator__modular_upper_body__unarmed__parry_01__w__6f__96.png" id="65_m86ce"]
 [ext_resource type="Texture2D" uid="uid://da61enncvvyyq" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/locomotion/run_01/operator__modular_upper_body__unarmed__run_01__ne__6f__96.png" id="78_0ffs6"]
 
@@ -2107,10 +2107,6 @@ region = Rect2(288, 0, 96, 96)
 atlas = ExtResource("60_2ca4m")
 region = Rect2(384, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ofkly"]
-atlas = ExtResource("60_2ca4m")
-region = Rect2(480, 0, 96, 96)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_x4st2"]
 atlas = ExtResource("61_mvt1s")
 region = Rect2(0, 0, 96, 96)
@@ -2131,10 +2127,6 @@ region = Rect2(288, 0, 96, 96)
 atlas = ExtResource("61_mvt1s")
 region = Rect2(384, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_81osu"]
-atlas = ExtResource("61_mvt1s")
-region = Rect2(480, 0, 96, 96)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_50oel"]
 atlas = ExtResource("62_8cdyq")
 region = Rect2(0, 0, 96, 96)
@@ -2154,10 +2146,6 @@ region = Rect2(288, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_pnb7k"]
 atlas = ExtResource("62_8cdyq")
 region = Rect2(384, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_uf360"]
-atlas = ExtResource("62_8cdyq")
-region = Rect2(480, 0, 96, 96)
 
 [resource]
 animations = [{
@@ -4196,9 +4184,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_06707")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ofkly")
 }],
 "loop": 1,
 "name": &"unarmed_walk_up",
@@ -4219,9 +4204,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ulrh4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_81osu")
 }],
 "loop": 1,
 "name": &"unarmed_walk_up_left",
@@ -4242,9 +4224,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pnb7k")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_uf360")
 }],
 "loop": 1,
 "name": &"unarmed_walk_up_right",

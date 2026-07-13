@@ -23,6 +23,8 @@ Assets must support:
 
 **Rule:** Do **not** paint text into assets unless decorative. Let Godot render labels, values, warnings, and dynamic text.
 
+Runtime integration note: before redrawing frame art, verify `StyleBoxTexture` setup in `custodian/game/ui/hud/ui.gd`. Thin pixel frames should use slice margins that match the drawn linework and per-family axis modes. Large frame-only panels should tile-fit borders without drawing a repeated center; nav tabs, action buttons, header bars, and command inputs should stretch one clean center. Oversized margins smear borders, while tiling every center creates repeated panel wallpaper.
+
 ---
 
 ## Folder Layout

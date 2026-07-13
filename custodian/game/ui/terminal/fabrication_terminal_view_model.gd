@@ -126,7 +126,8 @@ func _build_work_orders(ui: Node, recipes: Dictionary, resources: Dictionary, re
 	var rows: Array[Dictionary] = []
 	for recipe_id_variant in recipes.keys():
 		var recipe_id := str(recipe_id_variant)
-		var recipe := recipes[recipe_id_variant] as Dictionary
+		var recipe := (recipes[recipe_id_variant] as Dictionary).duplicate(true)
+		recipe["id"] = recipe_id
 		var output_type := str(recipe.get("output_type", "build_token"))
 		var output_id := str(recipe.get("output_id", recipe_id))
 		var category := str(recipe.get("category", "")).to_lower()
@@ -399,7 +400,7 @@ func _format_build_text(_recipe_id: String, recipe: Dictionary, display_name: St
 		return "Creates Ready Build: %s" % display_name
 	if output_type == "unlock":
 		return "Unlocks: %s" % display_name
-	if output_type == "operator_field_patch":
+	if output_type == "operator_consumable" or output_type == "operator_field_patch":
 		return "Adds carried consumable: %s" % display_name
 	return "Produces: %s" % display_name
 
@@ -413,7 +414,7 @@ func _format_result_text(_recipe_id: String, recipe: Dictionary, display_name: S
 		return "Ready Build: %s" % display_name
 	if output_type == "unlock":
 		return "Unlocks: %s" % display_name
-	if output_type == "operator_field_patch":
+	if output_type == "operator_consumable" or output_type == "operator_field_patch":
 		return "Consumable restock: %s" % display_name
 	if not output_id.is_empty():
 		return "Produces: %s" % output_id
@@ -531,7 +532,9 @@ func _can_pay_recipe(recipe: Dictionary, resources: Dictionary) -> bool:
 
 
 func _is_operator_field_patch_recipe(recipe: Dictionary) -> bool:
-	return str(recipe.get("output_type", "")) == "operator_field_patch"
+	var output_type := str(recipe.get("output_type", ""))
+	return (output_type == "operator_consumable" or output_type == "operator_field_patch") \
+			and str(recipe.get("output_id", "")) == "lattice_field_patch"
 
 
 func _is_operator_field_patch_full(ui: Node) -> bool:

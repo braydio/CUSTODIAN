@@ -232,7 +232,7 @@ func _try_place_turret():
         _spawn_turret(pos, "gunner")
 
 func _spawn_turret(position: Vector2, turret_type: String):
-    var turret_scene = preload("res://entities/sector/turret.tscn")
+    var turret_scene = preload("res://game/actors/sector/turret.tscn")
     var turret = turret_scene.instantiate()
     turret.turret_type = turret_type
     turret.global_position = position

@@ -40,7 +40,7 @@ Structures (Command Post, Power Nodes, Turrets) take persistent damage that affe
 
 Create a reusable damageable component:
 
-**File:** `res://core/systems/damageable.gd`
+**File:** `res://game/systems/damageable.gd`
 
 ```gdscript
 extends Node2D
@@ -111,7 +111,7 @@ func _on_destroyed():
 
 ## 3. Power Node Implementation
 
-**File:** `res://entities/sector/power_node.gd`
+**File:** `res://game/actors/sector/power_node.gd`
 
 ```gdscript
 extends Damageable
@@ -159,7 +159,7 @@ func _on_destroyed():
 
 ## 4. Turret Implementation
 
-**File:** `res://entities/sector/turret.gd`
+**File:** `res://game/actors/sector/turret.gd`
 
 ```gdscript
 extends Damageable
@@ -238,7 +238,7 @@ func _on_state_changed(new_state: String):
 
 ## 5. Command Post Implementation
 
-**File:** `res://entities/sector/command_post.gd`
+**File:** `res://game/actors/sector/command_post.gd`
 
 ```gdscript
 extends Damageable
@@ -277,7 +277,7 @@ func _on_state_changed(new_state: String):
 
 The Power system needs to query all Power Nodes:
 
-**File:** `res://core/systems/power.gd` (modify existing)
+**File:** `res://game/systems/power.gd` (modify existing)
 
 ```gdscript
 # Add these functions

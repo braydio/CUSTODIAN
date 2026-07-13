@@ -36,7 +36,7 @@ Designated positions on the map where enemies spawn. Placed on map edges to crea
 
 ### Implementation: `spawn_node.gd`
 
-**File:** `res://core/systems/spawn_node.gd`
+**File:** `res://game/systems/spawning/spawn_node.gd`
 
 ```gdscript
 extends Node2D
@@ -54,7 +54,7 @@ func _ready():
 ### Scene Setup
 
 Create spawn node scenes:
-- `res://core/systems/spawn_node.tscn` (instantiate for each spawn point)
+- `res://game/systems/spawning/spawn_node.tscn` (instantiate for each spawn point)
 
 ### Lane Groups
 
@@ -79,7 +79,7 @@ Controls assault timing, composition, and pacing.
 
 ### Implementation: `wave_manager.gd`
 
-**File:** `res://core/systems/wave_manager.gd`
+**File:** `res://game/systems/spawning/wave_manager.gd`
 
 ```gdscript
 extends Node
@@ -276,7 +276,7 @@ func reset():
 
 ### Add to Existing Enemy Script
 
-Modify `res://entities/enemies/enemy.gd` to support difficulty scaling:
+Modify `res://game/actors/enemies/enemy.gd` to support difficulty scaling:
 
 ```gdscript
 # Add these functions to enemy.gd
@@ -296,12 +296,12 @@ func apply_difficulty_modifiers(hp_mult: float, damage_mult: float):
 
 1. Open `test_map.tscn`
 2. Add new Node → name it `WaveManager`
-3. Attach script: `res://core/systems/wave_manager.gd`
+3. Attach script: `res://game/systems/spawning/wave_manager.gd`
 
 ### Step 2: Assign Enemy Scenes
 
 In Inspector for WaveManager:
-- `Drone Scene`: assign `res://entities/enemies/enemy.tscn`
+- `Drone Scene`: assign `res://game/actors/enemies/enemy.tscn`
 - `Fast Drone Scene`: (create new scene or duplicate)
 - `Heavy Drone Scene`: (create new scene or duplicate)
 

@@ -4,7 +4,7 @@
 
 ### Operator repair loop
 
-- Added hold-to-repair behavior in `res://entities/operator/operator.gd`
+- Added hold-to-repair behavior in `res://game/actors/operator/operator.gd`
 - Input: hold `R`
 - Repair amount: `repair_rate * delta` (default `15 HP/sec`)
 - Repair targets: nearest `Damageable` in `structure` group within interaction range

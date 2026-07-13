@@ -2,7 +2,7 @@ extends SceneTree
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
 const KEEP_SCENE := preload("res://game/world/sundered_keep/sundered_keep_map.tscn")
-const EXPECTED_BOUNDARY_SEGMENTS := 181
+const EXPECTED_BOUNDARY_SEGMENTS := 170
 
 const EXPECTED_ROOTS := {
 	"UnderlayRoot": -300,
@@ -165,9 +165,9 @@ func _init() -> void:
 				segment_count += 1
 		if segment_count != EXPECTED_BOUNDARY_SEGMENTS:
 			errors.append("PathBoundaryCollision expected %d thick capsule rails, got %d" % [EXPECTED_BOUNDARY_SEGMENTS, segment_count])
-		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-45.8, 950.6), Vector2(-77.9, 814.4), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(-77.9, 814.4), Vector2(-89.1, 796.8), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_181", Vector2(-58.1, 979.9), Vector2(-44.9, 949.5), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-79.9, 574.1), Vector2(-78.5, 488.9), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(-78.5, 488.9), Vector2(-143.7, 422.2), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_170", Vector2(-58.9, 605.2), Vector2(-78.3, 573.2), errors)
 
 	_collect_filled_collision_polygons(scene, errors)
 	_check_camera_bounds(scene, errors)

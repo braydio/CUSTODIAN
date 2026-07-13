@@ -133,7 +133,7 @@ This ensures stable planet+map pairing per contract seed.
 
 ## Active World Wiring
 
-- `res://core/systems/contract_world_loader.gd` now listens to `contract_generated`.
+- `res://game/systems/contract_world_loader.gd` now listens to `contract_generated`.
 - On generation, it re-parents the contract `ProcGenMap` instance into active world runtime container:
   - `World/ProcGenRuntime`
 - Static sector visuals are hidden (systems remain available), and runtime entities are aligned to contract map data:

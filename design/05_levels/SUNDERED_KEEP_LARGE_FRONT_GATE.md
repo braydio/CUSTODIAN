@@ -48,6 +48,14 @@ The active front-gate JSON may declare:
 
 This is presentation-only. It gives the level a silhouette plate and shape anchor beneath the authored tile/prop layers, but it does not own collision, traversal, blockers, interactables, or elevation authority.
 
+The playable underlay debug scene now supports explicit mapped boundary rails for manual review:
+
+- scene: `custodian/scenes/debug/sundered_keep_production_underlay_debug.tscn`
+- mapper: `custodian/scenes/debug/sundered_keep_underlay_collision_mapper.tscn`
+- runtime data home: `UNDERLAY_BOUNDARY_SEGMENTS` in `sundered_keep_production_underlay_debug.gd`
+
+These rails are authored line segments over the underlay in world space. They are not generated from alpha and should remain review/debug collision until promoted deliberately into the final `SunderedKeepMap` layout data.
+
 ## Overlay Authoring Pipeline
 
 The master overlay now also has a deterministic authoring-guide pipeline:
@@ -103,6 +111,7 @@ cd custodian
 godot --headless --script res://tools/validation/sundered_keep_asset_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_layout_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_large_layout_smoke.gd
+godot --headless --script res://tools/validation/sundered_keep_underlay_collision_mapper_smoke.gd
 ```
 
 Also useful after manifest changes:

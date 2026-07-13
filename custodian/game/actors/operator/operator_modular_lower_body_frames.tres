@@ -80,7 +80,7 @@
 [ext_resource type="Texture2D" uid="uid://b0w4vxns2t1ks" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/actions/unarmed/fast_attack/fast_windup_01/operator__modular_lower_body__unarmed__fast_windup_01__w__3f__96.png" id="47_nnmlu"]
 [ext_resource type="Texture2D" uid="uid://xl83vj7qkeqc" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/actions/unarmed/fast_attack/fast_windup_01/operator__modular_lower_body__unarmed__fast_windup_01__e__3f__96.png" id="48_4dn6i"]
 [ext_resource type="Texture2D" uid="uid://cnsk7m3ru0u8c" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/actions/unarmed/fast_attack/fast_windup_01/operator__modular_lower_body__unarmed__fast_windup_01__n__3f__96.png" id="49_pdrxk"]
-[ext_resource type="Texture2D" uid="uid://c8bu4k76d2he4" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__n__6f__96.png" id="50_8oeh4"]
+[ext_resource type="Texture2D" uid="uid://cxd4c70ke5gxu" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__n__5f__96.png" id="50_8oeh4"]
 [ext_resource type="Texture2D" uid="uid://cydxf4sgw6myu" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/actions/unarmed/fast_attack/fast_windup_01/operator__modular_lower_body__unarmed__fast_windup_01__nw__3f__96.png" id="50_arc78"]
 [ext_resource type="Texture2D" uid="uid://dkiqb6j85h6h4" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/actions/unarmed/fast_attack/fast_windup_01/operator__modular_lower_body__unarmed__fast_windup_01__ne__3f__96.png" id="51_1muxx"]
 [ext_resource type="Texture2D" uid="uid://dfbdcxpeceu73" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/actions/unarmed/parry_01/operator__modular_lower_body__unarmed__parry_01__w__6f__96.png" id="63_2vse1"]
@@ -2032,10 +2032,6 @@ region = Rect2(288, 0, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_rr13d"]
 atlas = ExtResource("50_8oeh4")
 region = Rect2(384, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4ikyi"]
-atlas = ExtResource("50_8oeh4")
-region = Rect2(480, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_x6fmv"]
 atlas = ExtResource("23_3qcr5")
@@ -4050,9 +4046,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rr13d")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4ikyi")
 }],
 "loop": 1,
 "name": &"unarmed_walk_up",

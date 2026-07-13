@@ -10,10 +10,10 @@ These notes are runtime-slice implementation notes. For future faction ideology,
 
 ### New systems
 
-- Added `res://core/systems/enemy_director.gd`.
-- Added `res://core/systems/threat_model.gd`.
-- Added `res://core/systems/assault_lane.gd`.
-- Added `res://core/systems/enemy_factory.gd`.
+- Added `res://game/systems/enemy_director.gd`.
+- Added `res://game/systems/threat_model.gd`.
+- Added `res://game/systems/assault_lane.gd`.
+- Added `res://game/systems/enemy_factory.gd`.
 
 ### Scene integration
 

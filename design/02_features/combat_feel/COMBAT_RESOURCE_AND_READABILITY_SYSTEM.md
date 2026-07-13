@@ -101,7 +101,8 @@ The first healing slice uses a limited physical Field Patch:
 - primary restock is fabrication at the Custodian Field Terminal under
   Fabrication / Consumables: `lattice_field_patch` costs `resin_clot` x2,
   `signal_filament` x1, and `capacitor_dust` x1, consumes resources only when
-  the Operator can accept the patch, and cannot exceed the carry cap
+  the Operator can accept the patch, completes as an `operator_consumable`
+  output through `Operator.add_field_patches(...)`, and cannot exceed the carry cap
 - secondary restock is rare sealed emergency caches: below cap they grant +1
   Field Patch; at cap they grant fallback materials instead
 - no enemy health-potion drops, passive wave refill, or free combat regeneration

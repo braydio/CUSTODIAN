@@ -39,8 +39,8 @@ func _run() -> void:
 	await physics_frame
 
 	# Cross the first mapped rail after ROUTE_VERTICAL_OFFSET has been applied.
-	probe.global_position = Vector2(-28.0, 882.0)
-	var collision := probe.move_and_collide(Vector2(-80.0, 0.0), true)
+	probe.global_position = Vector2(-20.0, 530.0)
+	var collision := probe.move_and_collide(Vector2(-100.0, 0.0), true)
 	if collision == null:
 		errors.append("Collision probe did not hit the mapped approach rail")
 	else:

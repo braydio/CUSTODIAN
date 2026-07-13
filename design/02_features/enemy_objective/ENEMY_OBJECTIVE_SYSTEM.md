@@ -116,7 +116,7 @@ Modify your existing structure scenes to add them to groups:
 
 ### Step 2: Modify Enemy Script
 
-**File:** `res://entities/enemies/enemy.gd`
+**File:** `res://game/actors/enemies/enemy.gd`
 
 Add target priority logic:
 

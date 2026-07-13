@@ -273,8 +273,8 @@ Runtime behavior implemented:
   - camera shake impulse via `Camera2D.shake(power)`
   - melee impact spark spawn at hit position
 - runtime spark scenes:
-  - `res://entities/effects/impact_spark.tscn` uses `hit_spark_4f_64.png` (4/4 frames)
-  - `res://entities/effects/block_spark.tscn` uses `block_spark_4f_128.png` (2/4 frames)
+- `res://game/vfx/impact_spark.tscn` uses `hit_spark_4f_64.png` (4/4 frames)
+- `res://game/vfx/block_spark.tscn` uses `block_spark_4f_128.png` (2/4 frames)
 - blocked projectile outcomes:
   - `bullet.gd` first checks `receive_projectile_hit(amount, team)` when available
   - if the result dictionary has `blocked = true`, spawn `block_spark`

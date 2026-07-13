@@ -3,7 +3,7 @@
 > ⚠️ **IMPORTANT:** These notes have been incorporated into the design docs. See links in each entry.
 > 
 > **Master Roadmap:** [`00_meta/MASTER_ROADMAP.md`](00_meta/MASTER_ROADMAP.md)
-> **Tracking:** [`00_meta/TRACKING.md`](00_meta/TRACKING.md)
+> **Tracking:** Archived to `00_meta/archived/TRACKING.md` — superseded by MASTER_ROADMAP.md
 
 ---
 

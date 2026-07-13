@@ -1,6 +1,7 @@
 extends Node2D
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
+const APPROACH_SCRIPT_PATH := "res://game/world/approaches/sundered_keep/sundered_keep_approach.gd"
 const ROUTE_VERTICAL_OFFSET := 180.0
 
 @export var zoom_step := 1.15
@@ -85,6 +86,8 @@ func _handle_key(event: InputEventKey) -> void:
 	match event.keycode:
 		KEY_C:
 			_copy_segments_to_clipboard()
+		KEY_ENTER, KEY_KP_ENTER, KEY_U:
+			_apply_draft_segments_to_runtime_collision_map()
 		KEY_E:
 			_show_existing = not _show_existing
 			_overlay.queue_redraw()
@@ -141,17 +144,87 @@ func _focus_late_traverse() -> void:
 
 
 func _copy_segments_to_clipboard() -> void:
-	var lines: Array[String] = []
-	var index := 1
-	while index < _draft_points.size():
-		lines.append(_format_segment(_draft_points[index - 1], _draft_points[index]))
-		index += 1
+	var lines := _format_draft_segment_lines()
 	var text := "\n".join(lines)
 	DisplayServer.clipboard_set(text)
 	print("[SunderedKeepApproachCollisionMapper] Copied %d segment(s) to clipboard" % lines.size())
 	if text.is_empty():
 		return
 	print(text)
+
+
+func _apply_draft_segments_to_runtime_collision_map() -> bool:
+	var lines := _format_draft_segment_lines()
+	if lines.is_empty():
+		push_warning("[SunderedKeepApproachCollisionMapper] No complete draft segments to apply")
+		return false
+
+	var script_path := ProjectSettings.globalize_path(APPROACH_SCRIPT_PATH)
+	if script_path.is_empty():
+		push_warning("[SunderedKeepApproachCollisionMapper] Could not resolve %s" % APPROACH_SCRIPT_PATH)
+		return false
+	if not FileAccess.file_exists(script_path):
+		push_warning("[SunderedKeepApproachCollisionMapper] Missing approach script: %s" % script_path)
+		return false
+
+	var file := FileAccess.open(script_path, FileAccess.READ)
+	if file == null:
+		push_warning("[SunderedKeepApproachCollisionMapper] Could not read approach script: %s" % script_path)
+		return false
+	var text := file.get_as_text()
+	file.close()
+
+	var replaced := _replace_boundary_segments_block(text, _format_boundary_segments_const(lines))
+	if replaced == text:
+		push_warning("[SunderedKeepApproachCollisionMapper] BOUNDARY_SEGMENTS block was not replaced")
+		return false
+
+	file = FileAccess.open(script_path, FileAccess.WRITE)
+	if file == null:
+		push_warning("[SunderedKeepApproachCollisionMapper] Could not write approach script: %s" % script_path)
+		return false
+	file.store_string(replaced)
+	file.close()
+
+	print("[SunderedKeepApproachCollisionMapper] Applied %d segment(s) to %s" % [lines.size(), APPROACH_SCRIPT_PATH])
+	_copy_segments_to_clipboard()
+	return true
+
+
+func _format_draft_segment_lines() -> Array[String]:
+	var lines: Array[String] = []
+	var index := 1
+	while index < _draft_points.size():
+		lines.append(_format_segment(_draft_points[index - 1], _draft_points[index]))
+		index += 1
+	return lines
+
+
+func _format_boundary_segments_const(lines: Array[String]) -> String:
+	return "const BOUNDARY_SEGMENTS := [\n\t%s\n]" % "\n\t".join(lines)
+
+
+func _replace_boundary_segments_block(text: String, replacement: String) -> String:
+	const MARKER := "const BOUNDARY_SEGMENTS := ["
+	var marker_start := text.find(MARKER)
+	if marker_start < 0:
+		return text
+	var bracket_start := text.find("[", marker_start)
+	if bracket_start < 0:
+		return text
+
+	var depth := 0
+	var index := bracket_start
+	while index < text.length():
+		var character := text[index]
+		if character == "[":
+			depth += 1
+		elif character == "]":
+			depth -= 1
+			if depth == 0:
+				return text.substr(0, marker_start) + replacement + text.substr(index + 1)
+		index += 1
+	return text
 
 
 func _print_point(point: Vector2) -> void:
@@ -177,7 +250,7 @@ func _update_help() -> void:
 	var complete_segments := maxi(0, _draft_points.size() - 1)
 	_hud.text = "\n".join([
 		"Sundered Keep Approach Collision Mapper",
-		"Left click: add point   Right click: undo   C: copy connected polyline segments",
+		"Left click: add point   Right click: undo   C: copy connected polyline segments   Enter/U: apply to runtime collision map",
 		"WASD/arrows: pan   Wheel/+/-: zoom   L: final traverse   E: existing rails   V: draft   R: reset   H: help",
 		"Mouse runtime: %s   BOUNDARY_SEGMENTS source: %s" % [_fmt_vec(_mouse_world), _fmt_vec(source)],
 		"Draft points: %d   Complete segments: %d" % [_draft_points.size(), complete_segments],
