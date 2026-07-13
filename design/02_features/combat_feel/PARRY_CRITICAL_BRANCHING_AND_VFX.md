@@ -169,11 +169,20 @@ operator_critical_1h_right
 operator_critical_1h_left
 ```
 
+Critical attack visual overlay:
+
+```text
+operator_critical_hitspark_right
+operator_critical_hitspark_left
+```
+
 Current runtime maps the previously misnamed 8-frame 96px `parry_miss` body sheets as the fast critical attack body animation:
 
 ```text
 custodian/content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__parry_miss_01__e__8f__96.png -> operator_critical_1h_right
 custodian/content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__parry_miss_01__w__8f__96.png -> operator_critical_1h_left
+custodian/content/sprites/operator/new_operator/modular/critical/operator__fx__critical_hitspark_01__e__8f__156x96.png -> operator_critical_hitspark_right
+custodian/content/sprites/operator/new_operator/modular/critical/operator__fx__critical_hitspark_01__w__8f__156x96.png -> operator_critical_hitspark_left
 ```
 
 These files should be renamed in a future asset cleanup, but runtime code must present them as `operator_critical_1h_*`, not as parry miss.

@@ -407,12 +407,12 @@ UI/VFX targets:
 
 - target ring
 - threat highlight
-- projectile tracer
+- projectile tracer — Carbine MK1 baseline now routes through `design/20_features/in_progress/PROJECTILE_VFX_SYSTEM.md`
 
 Animation requirements:
 
 - `target_highlight` (3-frame loop)
-- `projectile_impact` (3 frames)
+- `projectile_impact` — Carbine MK1 hard-surface impact baseline is live; flesh/shield/material routing remains future work
 
 ## 7. Encounter Pacing
 

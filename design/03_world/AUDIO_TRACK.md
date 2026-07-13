@@ -1,5 +1,5 @@
 ```text
-design/02_features/audio/SOUNDTRACK_APPROACH_TRACK.md
+design/03_world/AUDIO_TRACK.md
 ```
 
 This document should live under `design/02_features/audio/` to match the current active design-doc convention where Godot-native implementation specs live under `design/02_features/<area>/`, while active runtime code lives under `custodian/`.

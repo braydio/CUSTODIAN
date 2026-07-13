@@ -1,7 +1,7 @@
 # Sundered Keep Vista Approach
 
-- **Status:** route-master runtime production approach implemented, grand-vista presentation beat wired, and smoke/audit validated
-- **Owner:** rendering / camera
+- **Status:** route-master playable Sundered Keep slice implemented, grand-vista presentation beat wired, mapper-authored collision promoted, and event marker authoring added
+- **Owner:** authored level / rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Production runtime scene:** `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn`
 - **Reference generator:** `custodian/tools/build_sundered_keep_approach_blockout.gd`
@@ -10,19 +10,19 @@
 
 ## Summary
 
-A visual-only camera/composition sequence for the Sundered Keep approach. The player enters from mainland top-down on one authored route-master terrain sprite, climbs as the first vista reveals behind the route, moves through a playable traversal section with `GrandVistaRoot` still hidden, reaches a later hero-overlook beat where `GrandVistaRoot` fades in with the generated panorama/fog/spray/parapet layer, then the second vista fades out and the final gate shadow veil fades in before the handoff to normal top-down Sundered Keep play.
+A playable first Sundered Keep slice built from the former approach scene. The player enters from mainland top-down on one authored route-master terrain sprite, climbs as the first vista reveals behind the route, moves through a playable traversal section with `GrandVistaRoot` still hidden, reaches a later hero-overlook beat where `GrandVistaRoot` fades in with the generated panorama/fog/spray/parapet layer, then continues into the mapper-authored gatehouse/exit area.
 
-**Hard constraint:** Rendering/camera/traversal only. No navigation, combat, enemy AI, or deterministic simulation state. The production runtime scene uses fitted `Sprite2D` matte/terrain assets and a single perimeter-rail `StaticBody2D` made from mapper-authored thick `CapsuleShape2D` rails. `GrandVistaRoot` is presentation-only and must not become collision, navigation, or sim authority. Filled path-shaped `CollisionPolygon2D` solids are not valid walkable-boundary collision because they block the path itself. Sprite2D assets are fit to their target `Rect2`; the rect is runtime layout authority. Playable terrain art must keep transparent pixels outside the authored terrain shape unless the full rectangle is intentionally terrain.
+**Hard constraint:** Art alpha still does not own collision. The production runtime scene uses fitted `Sprite2D` matte/terrain assets, a single perimeter-rail `StaticBody2D` made from mapper-authored thick `CapsuleShape2D` rails, and explicit `AUTHORING_MARKERS` for gameplay/event semantics. `GrandVistaRoot` is presentation-only and must not become collision, navigation, enemy AI, or sim authority. Filled path-shaped `CollisionPolygon2D` solids are not valid walkable-boundary collision because they block the path itself. Sprite2D assets are fit to their target `Rect2`; the rect is runtime layout authority. Playable terrain art must keep transparent pixels outside the authored terrain shape unless the full rectangle is intentionally terrain.
 
 ## Runtime Ingress Chain
 
 Normal contract-world access now routes through:
 
 ```
-Procgen world placement -> WorldIngressSite -> authored Sundered Keep approach/vista -> final fade -> SunderedKeepMap
+Procgen world placement -> WorldIngressSite -> authored Sundered Keep approach/vista playable map
 ```
 
-`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` is now the full production runtime approach and the configured `sundered_keep_front_gate` registry entry. It uses a single route-master terrain sprite, ocean/cliff/contact-shadow underlay support, first-vista horizon/fog veil, edge mist/fog strips/final gate veil, the second-beat `GrandVistaRoot`, 170 mapper-authored thick capsule perimeter collision rails, progress markers, `SunderedKeepVistaController`, `SunderedKeepTransitionTrigger`, and the level-loader entry hooks (`configure_connection`, `enter_from_main`, `get_camera_bounds`). The runtime approach isolates presentation from the generated world: `WorldIngressSite` hides and disables `ProcGenRuntime` and `ConnectedMaps` while the approach is active, and the approach scene fits all sprites to explicit design `Rect2`s instead of using raw PNG dimensions. The authored route path, route-following fog/veil, markers, exit trigger, and collision rails are lowered together by `ROUTE_VERTICAL_OFFSET` so camera follow leaves more than half the top of the viewport for vista space on the final horizontal traverse. Generated visual children must use root-relative z ordering so underlay/path/vista art stays beneath the Operator unless it belongs under the intentional `OcclusionRoot`. `res://game/world/sundered_keep/sundered_keep_map.gd` remains the real gameplay destination after the fade; after that target handoff, `SunderedKeepTransitionTrigger` retires the approach scene so approach occlusion art cannot draw over the Operator after landing. The old direct `SunderedKeepTravelGate` path is retained only behind `place_debug_sundered_keep_gateway` for review.
+`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` is now the full production runtime entry and playable `sundered_keep_front_gate` registry target. It uses a single route-master terrain sprite, ocean/cliff/contact-shadow underlay support, first-vista horizon/fog veil, edge mist/fog strips/final gate veil, the second-beat `GrandVistaRoot`, mapper-authored thick capsule perimeter collision rails, progress markers, `AUTHORING_MARKERS`, and the level-loader entry hooks (`configure_connection`, `enter_from_main`, `get_camera_bounds`). `WorldIngressSite` hides and disables `ProcGenRuntime` while the approach/map scene is active, and the scene fits all sprites to explicit design `Rect2`s instead of using raw PNG dimensions. The authored route path, route-following fog/veil, event markers, and collision rails are lowered together by `ROUTE_VERTICAL_OFFSET` so camera follow leaves more than half the top of the viewport for vista space on the final horizontal traverse. Generated visual children must use root-relative z ordering so underlay/path/vista art stays beneath the Operator unless it belongs under the intentional `OcclusionRoot`. `res://game/world/sundered_keep/sundered_keep_map.gd` is retained as a reference/fallback/debug map, but the normal registered Sundered Keep flow no longer auto-hands off to it.
 
 Ingress transitions must be deferred out of `Area2D.body_entered` physics callbacks before instancing this scene. The approach also defers its dynamic `StaticBody2D` boundary rails and final exit `Area2D` setup by one frame so Godot does not register or toggle physics shapes while flushing queries.
 
@@ -44,6 +44,17 @@ Controls:
 
 The mapper prints both runtime coordinates and source coordinates. Paste the source coordinates into `BOUNDARY_SEGMENTS`; runtime lowering from `ROUTE_VERTICAL_OFFSET` is applied by the approach script. The runtime also preserves the current captured point stream by flattening the pasted entries and building rails between every consecutive point.
 
+The same mapper now has marker mode for event authoring:
+
+- `M`: toggle collision/marker mode.
+- `1`-`7`: select `spawn`, `return_causeway`, `gatehouse_key`, `main_gate`, `level_exit`, `enemy_spawn_west`, or `enemy_spawn_gate`.
+- Left click in marker mode: place the selected marker.
+- Right click in marker mode: clear the selected marker.
+- `C`: copy the full `AUTHORING_MARKERS` block.
+- `Enter` / `U`: apply marker positions back to `sundered_keep_approach.gd`.
+
+`AUTHORING_MARKERS` is the stable authoring contract for significant events on the map. Current required marker roles are spawn, Return Causeway, gatehouse key, raisable main gate, level exit, and enemy spawnpoints. Enemy markers create `SpawnNode` instances in the `enemy_spawn` group so later encounter systems can consume the same authored positions.
+
 ## Scene Architecture
 
 ```
@@ -55,8 +66,9 @@ SunderedKeepApproach
 ├── OcclusionRoot         z=100   — edge mist, fog strips, final gate shadow veil
 ├── Collision             — PathBoundaryCollision thick CapsuleShape2D rails
 ├── Markers               — EntrySpawn, RevealStart, RevealFull, MidGameplayStart, SecondVistaStart, SecondVistaFull, SecondVistaEnd, TraverseEnd, ReturnTopdown
+├── EventMarkers          — AUTHORING_MARKERS positions for spawn, Return Causeway, key, gate, exit, and enemy spawns
+├── EventRuntime          — lightweight interactables, gate blocker, level-exit trigger, and SpawnNode instances derived from EventMarkers
 ├── VistaController       — drives vista, grand vista, fog, occlusion, and distant keep alpha
-└── ExitTransitionTrigger — final handoff to SunderedKeepMap
 ```
 
 ### Z-order
@@ -68,7 +80,7 @@ SunderedKeepApproach
 | VistaRoot | -200 | First vista horizon/fog veil |
 | PlayableRoot | 0 | Route-master walkable terrain art |
 | OcclusionRoot | 100 | Edge mist, fog strips, and final gate veil |
-| Collision/VistaController/ExitTransitionTrigger | — | No visual concern |
+| Collision/VistaController/EventMarkers/EventRuntime | — | Collision/event authority, no visual root concern |
 
 The production runtime script self-heals these visual roots with `z_as_relative=false` so draw order does not depend on scene-tree insertion or inherited z values. The blockout scene remains reference/dev-only.
 
@@ -136,7 +148,7 @@ The approach also applies `res://game/world/approaches/sundered_keep/soft_rect_f
 
 ### Grand Vista Glue Overlays
 
-The saved grand-vista glue overlays are wired under `GrandVistaRoot/GrandVistaGlueRoot`, so they inherit the same second-vista fade and disappear before the top-down `SunderedKeepMap` is shown. They are low-alpha blend layers, not new scenery or collision authority.
+The saved grand-vista glue overlays are wired under `GrandVistaRoot/GrandVistaGlueRoot`, so they inherit the same second-vista fade and stay presentation-owned while the approach scene remains the playable map. They are low-alpha blend layers, not new scenery or collision authority.
 
 | Sprite name | Asset path | Rect | z_index | Tint |
 |---|---|---|---|---|
@@ -178,7 +190,7 @@ The audit checks all full-composition PNGs and fails if any PlayableRoot terrain
 
 The live ingress approach has a runtime fitting table in `res://game/world/approaches/sundered_keep/sundered_keep_approach.gd`. It intentionally scales `res://content/sprites/world/return_causeway/` path/underlay/occlusion PNGs and `res://content/backgrounds/sundered_keep/` vista mattes into target world rectangles, including a thin `2100x130` `WallShadowOccluder`, so oversized generated overlay exports cannot appear as raw black curtains over the scene.
 
-The actual `SunderedKeepMap` remains the top-down gameplay destination. It must not instantiate `GrandVistaRoot`, grand-vista sprites, or grand-vista textures; `sundered_keep_approach_smoke.gd` instantiates the map and fails if those presentation assets appear in the gameplay scene.
+The old `SunderedKeepMap` remains available as reference/debug fallback, but the normal registered Sundered Keep flow now stays in `sundered_keep_approach.tscn`. `sundered_keep_approach_smoke.gd` validates that the approach scene owns the event markers, key/gate/exit runtime nodes, enemy spawnpoints, and mapper-authored collision rails.
 
 ## Reference Blockout Implementation
 
@@ -342,7 +354,8 @@ Verify at each state:
 - **Future opportunities:**
   - Re-export `underlay_fog_band.png`, `distant_sundered_keep.png`, `overlook_ledge.png`, and `fortress_wall_mass.png` to match the documented production rect/source contract if desired
   - In-editor visual review of the approach blockout scene (open `sundered_keep_approach_blockout.tscn` and walk the operator)
-  - In-editor visual review of the procgen ingress -> `sundered_keep_approach.tscn` -> `SunderedKeepMap` flow
+  - In-editor visual review of the procgen ingress -> `sundered_keep_approach.tscn` playable-map flow
   - Replace the current ingress tile fallback with a specific coast/keep ingress reservation in the procgen intent graph
-  - Ensure the approach transitions smoothly back to the main game scene after completion
-- **Constraint:** Rendering/camera/traversal only. No combat/nav/AI.
+  - Expand `AUTHORING_MARKERS` into richer encounter scripting once enemy compositions are selected
+  - Ensure the level-exit trigger returns cleanly to the procgen world after completion
+- **Constraint:** Art alpha remains non-authoritative; use mapper rails for collision and `AUTHORING_MARKERS` for semantic gameplay points.

@@ -2,7 +2,7 @@
 
 Status: v1 foundation initialized 2026-04-30
 Purpose: compact Codex/agent-facing runtime implementation instructions
-Depends on: `design/features/implementation/FOREST_SHRUMB_COGNITIVE_DROPS.md` or equivalent Forest Shrumb lore/gameplay design document
+Depends on: Forest Shrumb lore/gameplay design document (no dedicated cognitive drops doc exists yet)
 Runtime target: Godot 4.x under `custodian/`
 
 Implementation note, 2026-04-30: v1 added the minimal inventory ledger, cognitive state autoload, item data, cognitive pickup, shrumb dropper, placeholder item sprites, and the live `ambient_shrumb.tscn` actor. Ambient spawning now uses `ambient_shrumb.tscn`; the former scav droid scene path has been removed.

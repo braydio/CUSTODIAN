@@ -1,4 +1,4 @@
-Found the elevation authority: design/ELEVATION.md. It says elevation must be metadata-first: visual tile, height data, and traversal rule stay separate, with ElevationMap as the gameplay authority.   The current state also says Sundered Keep already has authored elevation regions, bridge elevation, fake-elevation visuals, and validation smokes.  
+Found the elevation authority: design/02_features/procgen/ELEVATION.md. It says elevation must be metadata-first: visual tile, height data, and traversal rule stay separate, with ElevationMap as the gameplay authority.   The current state also says Sundered Keep already has authored elevation regions, bridge elevation, fake-elevation visuals, and validation smokes.  
 
 Send Codex this:
 
@@ -8,7 +8,7 @@ Read first:
 
 1. AGENTS.md
 2. custodian/AGENTS.md
-3. design/ELEVATION.md
+3. design/02_features/procgen/ELEVATION.md
 4. custodian/docs/ai_context/CURRENT_STATE.md
 5. custodian/docs/ai_context/FILE_INDEX.md
 6. custodian/docs/ai_context/VALIDATION_RECIPES.md

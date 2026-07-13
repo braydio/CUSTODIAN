@@ -1,4 +1,4 @@
-> This design document has a supporting reference at design/reference/STARTER_MAP_PROCGEN_REFERENCE.png
+> This design document has a supporting reference at design/02_features/procgen/STARTER_MAP_PROCGEN_REFERENCE.png
 >
 To procgen levels like that image, do **not** try to generate the whole illustrated blueprint. Generate a **semantic tile grid** from a **room-flow graph**, then render it through your Godot TileMap + props + encounter scenes. The image is basically a “starter maintenance complex profile”: entry → terminal → repair workshop → powered door/security corridor → exit.
 
