@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dru85vkkm4r0n"
-path="res://.godot/imported/operator__modular_upper_body__walk_01__n__8f__96.png-a73a05e87869b4e95398c59695fe29c4.ctex"
+uid="uid://bygg5evsc3edq"
+path="res://.godot/imported/operator__modular_wardrobe_cape__unarmed__run_01__n__5f__96.png-43da9b64ccb5d98557898d8c2ee19024.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__modular_upper_body__walk_01__n__8f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__walk_01__n__8f__96.png-a73a05e87869b4e95398c59695fe29c4.ctex"]
+source_file="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__n__5f__96.png"
+dest_files=["res://.godot/imported/operator__modular_wardrobe_cape__unarmed__run_01__n__5f__96.png-43da9b64ccb5d98557898d8c2ee19024.ctex"]
 
 [params]
 

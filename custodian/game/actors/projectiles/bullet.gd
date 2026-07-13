@@ -15,9 +15,16 @@ extends Area2D
 @export var min_damage_multiplier: float = 0.45
 @export var terrain_ballistics_enabled: bool = true
 @export var terrain_ballistics_debug: bool = false
+@export var visual_sprite_frames: SpriteFrames
+@export var visual_animation: StringName = &"travel"
+@export var rotate_visual_to_direction: bool = true
+@export var impact_rotation_enabled: bool = true
+@export var hide_visual_before_impact: bool = true
 
 const BLOCK_SPARK_SCENE := preload("res://game/actors/effects/block_spark.tscn")
 const TerrainBallistics := preload("res://game/world/procgen/terrain/terrain_ballistics.gd")
+
+static var _warning_once := {}
 
 var direction := Vector2.RIGHT
 var shooter: Node = null
@@ -29,6 +36,7 @@ var _terrain_query_warning_printed := false
 var _last_step_from := Vector2.ZERO
 var _last_step_to := Vector2.ZERO
 var _last_step_terrain_allowed := true
+var _impact_committed := false
 
 @onready var visual = get_node_or_null("Visual")
 @onready var collision_shape = get_node_or_null("CollisionShape2D")
@@ -43,7 +51,17 @@ func set_direction(dir: Vector2):
 	if dir.length_squared() <= 0.0001:
 		return
 	direction = dir.normalized()
-	rotation = direction.angle()
+	if rotate_visual_to_direction:
+		rotation = direction.angle()
+
+
+func configure_visual(frames: SpriteFrames, animation_name: StringName = &"travel", scale_value: Vector2 = Vector2.ONE) -> void:
+	visual_sprite_frames = frames
+	visual_animation = animation_name
+	if visual is AnimatedSprite2D:
+		var sprite := visual as AnimatedSprite2D
+		sprite.scale = scale_value
+		_apply_visual_style()
 
 
 func _physics_process(delta):
@@ -56,10 +74,11 @@ func _physics_process(delta):
 	_last_step_terrain_allowed = bool(terrain_result.get("allowed", _terrain_query_fail_open))
 	if not _last_step_terrain_allowed:
 		var blocked_position: Vector2 = terrain_result.get("blocked_at_world", to)
+		var terrain_normal: Vector2 = terrain_result.get("normal", terrain_result.get("surface_normal", -direction))
 		traveled_this_step = from.distance_to(blocked_position)
 		global_position = blocked_position
 		_distance_traveled += traveled_this_step
-		_spawn_impact_at(blocked_position)
+		_spawn_impact_at(blocked_position, terrain_normal)
 		queue_free()
 		return
 	var hit: Dictionary = _sweep_projectile(from, to)
@@ -71,7 +90,7 @@ func _physics_process(delta):
 		if collider is Node:
 			var collider_node := collider as Node
 			if not (_last_step_terrain_allowed and _is_generated_terrain_collision(collider_node)):
-				if _handle_body_hit(collider_node, global_position):
+				if _handle_body_hit(collider_node, global_position, hit.get("normal", Vector2.ZERO)):
 					return
 		traveled_this_step += hit_position.distance_to(to)
 	global_position = to
@@ -84,7 +103,7 @@ func _physics_process(delta):
 func _on_body_entered(body: Node):
 	if _last_step_terrain_allowed and _is_generated_terrain_collision(body):
 		return
-	_handle_body_hit(body, _resolve_impact_position(body))
+	_handle_body_hit(body, _resolve_impact_position(body), Vector2.ZERO)
 
 
 func set_terrain_ballistics_provider(provider: Node) -> void:
@@ -129,7 +148,9 @@ func _is_generated_terrain_collision(body: Node) -> bool:
 			and bool(provider.call("is_terrain_collision_body", body))
 
 
-func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
+func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vector2 = Vector2.ZERO) -> bool:
+	if _impact_committed:
+		return true
 	if body == shooter:
 		return false
 	if body.has_method("receive_projectile_hit") and (_is_world_blocker(body) or _can_hit(body)):
@@ -139,11 +160,11 @@ func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
 		if was_blocked:
 			_spawn_block_impact_at(impact_position)
 		else:
-			_spawn_impact_at(impact_position)
+			_spawn_impact_at(impact_position, surface_normal)
 		queue_free()
 		return true
 	if _is_world_blocker(body):
-		_spawn_impact_at(impact_position)
+		_spawn_impact_at(impact_position, surface_normal)
 		queue_free()
 		return true
 	if not _can_hit(body):
@@ -155,12 +176,12 @@ func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
 			final_damage *= crit_multiplier
 		body.take_damage(final_damage)
 		_apply_game_feel(body, 60.0)
-		_spawn_impact_at(impact_position)
+		_spawn_impact_at(impact_position, surface_normal)
 		queue_free()
 		return true
 
 	if body is StaticBody2D or body is CharacterBody2D:
-		_spawn_impact_at(impact_position)
+		_spawn_impact_at(impact_position, surface_normal)
 		queue_free()
 		return true
 	return false
@@ -232,11 +253,16 @@ func _is_world_blocker(body: Node) -> bool:
 
 
 func _spawn_impact(body: Node = null):
-	_spawn_impact_at(_resolve_impact_position(body))
+	_spawn_impact_at(_resolve_impact_position(body), Vector2.ZERO)
 
 
-func _spawn_impact_at(impact_position: Vector2) -> void:
+func _spawn_impact_at(impact_position: Vector2, surface_normal: Vector2 = Vector2.ZERO) -> void:
+	if _impact_committed:
+		return
+	_impact_committed = true
+	_hide_or_stop_visual_before_impact()
 	if impact_scene == null:
+		_warn_once(&"missing_impact_scene", "[Bullet] Missing impact_scene; projectile will free without impact VFX.")
 		return
 	var fx = impact_scene.instantiate()
 	if fx == null:
@@ -247,6 +273,12 @@ func _spawn_impact_at(impact_position: Vector2) -> void:
 	else:
 		get_tree().current_scene.add_child(fx)
 	fx.global_position = impact_position
+	if fx.has_method("configure_impact"):
+		fx.call("configure_impact", direction, surface_normal)
+	elif impact_rotation_enabled:
+		var orient := surface_normal if surface_normal.length_squared() > 0.0001 else -direction
+		if orient.length_squared() > 0.0001:
+			fx.rotation = orient.angle()
 
 
 func _spawn_block_impact(body: Node = null) -> void:
@@ -254,6 +286,10 @@ func _spawn_block_impact(body: Node = null) -> void:
 
 
 func _spawn_block_impact_at(impact_position: Vector2) -> void:
+	if _impact_committed:
+		return
+	_impact_committed = true
+	_hide_or_stop_visual_before_impact()
 	if BLOCK_SPARK_SCENE == null:
 		_spawn_impact_at(impact_position)
 		return
@@ -317,13 +353,43 @@ func _estimate_body_contact_radius(body: Node, fallback_radius: float) -> float:
 
 
 func _apply_visual_style():
-	if visual:
-		visual.color = bullet_color
-		visual.offset_left = -bullet_radius
-		visual.offset_top = -bullet_radius * 0.5
-		visual.offset_right = bullet_radius * 2.2
-		visual.offset_bottom = bullet_radius * 0.5
+	if visual is AnimatedSprite2D:
+		var sprite := visual as AnimatedSprite2D
+		if visual_sprite_frames != null:
+			sprite.sprite_frames = visual_sprite_frames
+		if sprite.sprite_frames != null and sprite.sprite_frames.has_animation(visual_animation):
+			sprite.animation = visual_animation
+			sprite.play(visual_animation)
+		elif sprite.sprite_frames == null:
+			_warn_once(&"missing_projectile_sprite_frames", "[Bullet] Missing projectile SpriteFrames; animated tracer unavailable.")
+		else:
+			_warn_once(&"missing_projectile_animation", "[Bullet] Projectile SpriteFrames missing animation '%s'." % String(visual_animation))
+		sprite.centered = true
+		sprite.visible = sprite.sprite_frames != null and sprite.sprite_frames.has_animation(sprite.animation)
+	elif visual is ColorRect:
+		var fallback := visual as ColorRect
+		fallback.color = bullet_color
+		fallback.offset_left = -bullet_radius
+		fallback.offset_top = -bullet_radius * 0.5
+		fallback.offset_right = bullet_radius * 2.2
+		fallback.offset_bottom = bullet_radius * 0.5
 	if collision_shape:
 		var shape = CircleShape2D.new()
 		shape.radius = bullet_radius
 		collision_shape.shape = shape
+
+
+func _hide_or_stop_visual_before_impact() -> void:
+	if not hide_visual_before_impact or visual == null:
+		return
+	if visual is AnimatedSprite2D:
+		(visual as AnimatedSprite2D).stop()
+	if visual is CanvasItem:
+		(visual as CanvasItem).visible = false
+
+
+func _warn_once(key: StringName, message: String) -> void:
+	if _warning_once.has(key):
+		return
+	_warning_once[key] = true
+	push_warning(message)

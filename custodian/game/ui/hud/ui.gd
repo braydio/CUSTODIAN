@@ -2079,6 +2079,8 @@ func _configure_fabrication_dashboard_layout() -> void:
 			continue
 		panel.custom_minimum_size.x = 0.0
 		panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if status_panel != null:
+		status_panel.custom_minimum_size = Vector2(0.0, 42.0)
 	if filter_panel != null:
 		filter_panel.custom_minimum_size = Vector2(124.0, 0.0)
 		filter_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -2088,9 +2090,10 @@ func _configure_fabrication_dashboard_layout() -> void:
 		recipe_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		recipe_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	if selected_panel != null:
-		selected_panel.custom_minimum_size = Vector2(0.0, 112.0)
+		selected_panel.custom_minimum_size = Vector2(0.0, 150.0)
 	if cost_panel != null:
-		cost_panel.custom_minimum_size = Vector2(0.0, 94.0)
+		cost_panel.visible = false
+		cost_panel.custom_minimum_size = Vector2(0.0, 0.0)
 	if bottom_row != null:
 		bottom_row.custom_minimum_size = Vector2(0.0, 70.0)
 		bottom_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -2119,6 +2122,17 @@ func _configure_fabrication_dashboard_layout() -> void:
 		rich_text.fit_content = false
 		rich_text.scroll_active = false
 		rich_text.add_theme_font_size_override("font_size", 12)
+	var status_body := _get_fabrication_panel_body("FabStatusPanel")
+	if status_body != null:
+		status_body.custom_minimum_size = Vector2(0.0, 22.0)
+		status_body.add_theme_font_size_override("font_size", 11)
+	var selected_body := _get_fabrication_panel_body("FabSelectedRecipePanel")
+	if selected_body != null:
+		selected_body.custom_minimum_size = Vector2(0.0, 120.0)
+		selected_body.add_theme_font_size_override("font_size", 11)
+	var filter_body := _get_fabrication_panel_body("FabCategoryPanel")
+	if filter_body != null:
+		filter_body.add_theme_font_size_override("font_size", 11)
 
 
 func _ensure_child_parent(child: Node, parent: Node) -> void:
@@ -3850,6 +3864,7 @@ func _render_terminal_fabrication_clickable_widgets(view: Dictionary) -> void:
 	var in_progress: Array = view.get("in_progress", [])
 	var ready_builds: Array = view.get("ready_builds", [])
 
+	_configure_fabrication_dashboard_layout()
 	_set_terminal_rich_text(_get_fabrication_panel_body("FabStatusPanel"), "FAB STATUS: %s | QUEUE %d | READY %d | %s" % [
 		str(status.get("fabricator_state", "UNKNOWN")).to_upper(),
 		in_progress.size(),
@@ -3863,15 +3878,16 @@ func _render_terminal_fabrication_clickable_widgets(view: Dictionary) -> void:
 		selected_lines = [
 			str(selected.get("display_name", "UNKNOWN")).to_upper(),
 			"%s / %s" % [str(selected.get("state", "UNKNOWN")).to_upper(), str(selected.get("category", "utility")).to_upper()],
-			str(selected.get("purpose", "Fabrication support output.")),
-			"Result: %s" % str(selected.get("result_text", "Produces a build output.")),
-		]
-		cost_lines = [
 			"Cost: %s" % str(selected.get("cost_text", "FREE")),
 			"Have: %s" % str(selected.get("have_text", "none")),
 			str(selected.get("missing_text", "Missing Materials: none")),
-			_get_operator_patch_carry_summary() if _is_selected_lattice_field_patch(selected) else "Action: %s" % str(selected.get("action_text", "FAB START <work_order_id>")),
+			"Result: %s" % str(selected.get("result_text", "Produces a build output.")),
 		]
+		if _is_selected_lattice_field_patch(selected):
+			selected_lines.append(_get_operator_patch_carry_summary())
+		selected_lines.append(str(selected.get("purpose", "Fabrication support output.")))
+		selected_lines.append("Action: %s" % str(selected.get("action_text", "FAB START <work_order_id>")))
+		cost_lines = []
 	_set_terminal_rich_text(_get_fabrication_panel_body("FabSelectedRecipePanel"), "\n".join(selected_lines))
 	_set_terminal_rich_text(_get_fabrication_panel_body("FabCostPanel"), "\n".join(cost_lines))
 
@@ -3919,6 +3935,7 @@ func _render_terminal_fabrication_clickable_widgets(view: Dictionary) -> void:
 	_set_terminal_rich_text(_get_fabrication_panel_body("FabReadyBuildPanel"), "\n".join(ready_lines))
 
 	_update_fabrication_action_buttons(selected, in_progress, ready_builds)
+	call_deferred("_debug_check_fabrication_widget_overflow")
 
 
 func _get_fabrication_panel_body(panel_name: String) -> RichTextLabel:
@@ -4032,6 +4049,26 @@ func _populate_fabrication_work_order_rows(work_orders: Array) -> void:
 	var pressed := _make_terminal_button_style(TERMINAL_BUTTON_PRESSED_TEXTURE, 6.0)
 	var disabled := _make_terminal_button_style(TERMINAL_BUTTON_DISABLED_TEXTURE, 6.0)
 	_apply_terminal_widget_button_styles(idle, hover, pressed, disabled)
+
+
+func _debug_check_fabrication_widget_overflow() -> void:
+	if terminal_widget_stack == null:
+		return
+	var fabrication_widgets := terminal_widget_stack.find_child("FabricationWidgets", true, false) as Control
+	if fabrication_widgets == null or not fabrication_widgets.is_visible_in_tree():
+		return
+	var root_rect := fabrication_widgets.get_global_rect()
+	var right_edge := root_rect.position.x + root_rect.size.x + 2.0
+	for child in fabrication_widgets.find_children("*", "Control", true, false):
+		if not (child is Control):
+			continue
+		var control := child as Control
+		if not control.is_visible_in_tree():
+			continue
+		var rect := control.get_global_rect()
+		var child_right := rect.position.x + rect.size.x
+		if child_right > right_edge:
+			push_warning("[FabricationLayout] %s exceeds FabricationWidgets width by %.1f px." % [control.name, child_right - right_edge])
 
 
 func _update_fabrication_action_buttons(selected: Dictionary, in_progress: Array, ready_builds: Array) -> void:

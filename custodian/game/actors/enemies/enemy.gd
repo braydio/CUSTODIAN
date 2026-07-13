@@ -115,6 +115,22 @@ enum AssaultState {
 @export var grunt_critical_breach_marker_offset: Vector2 = Vector2(0.0, -62.0)
 @export var grunt_critical_window_ring_offset: Vector2 = Vector2.ZERO
 @export var grunt_optional_critical_vfx_enabled: bool = true
+@export var grunt_falcon_punch_enabled: bool = false
+@export var grunt_falcon_punch_windup_time: float = 0.34
+@export var grunt_falcon_punch_leap_time: float = 0.24
+@export var grunt_falcon_punch_impact_lock_time: float = 0.06
+@export var grunt_falcon_punch_recovery_time: float = 0.50
+@export var grunt_falcon_punch_distance_px: float = 112.0
+@export var grunt_falcon_punch_damage_multiplier: float = 1.45
+@export var grunt_falcon_punch_cooldown: float = 1.35
+@export var grunt_falcon_punch_launch_band_min: float = 58.0
+@export var grunt_falcon_punch_launch_band_max: float = 172.0
+@export var grunt_falcon_punch_hit_active_start_ratio: float = 0.24
+@export var grunt_falcon_punch_hit_active_end_ratio: float = 0.82
+@export var grunt_falcon_punch_hit_forward_reach_px: float = 32.0
+@export var grunt_falcon_punch_hit_lateral_reach_px: float = 22.0
+@export var grunt_falcon_punch_windup_speed_multiplier: float = 0.82
+@export var grunt_falcon_punch_recovery_speed: float = 74.0
 var simulation_tier: String = "active"
 @export var marine_dash_enabled: bool = false
 @export var marine_dash_windup_time: float = 0.32
@@ -222,6 +238,11 @@ var _marine_dash_last_attack_hit: bool = false
 var _marine_dash_reset_timer: float = 0.0
 var _marine_dash_reset_direction: Vector2 = Vector2.UP
 var _marine_dash_reset_side: float = 1.0
+var _grunt_falcon_punch_phase: StringName = &""
+var _grunt_falcon_punch_timer: float = 0.0
+var _grunt_falcon_punch_direction: Vector2 = Vector2.RIGHT
+var _grunt_falcon_punch_start_position: Vector2 = Vector2.ZERO
+var _grunt_falcon_punch_hit_targets: Array[int] = []
 
 # Pathfinding
 var navigation_system: Node = null
@@ -343,6 +364,8 @@ func _physics_process(delta):
 	if dead:
 		return
 	_update_threat_highlight_visual(delta)
+	if _update_grunt_falcon_punch_attack(delta):
+		return
 	if _update_marine_dash_attack(delta):
 		return
 	if _update_reaction_timers(delta):
@@ -394,6 +417,9 @@ func _physics_process(delta):
 			_attack_target(delta)
 		
 func _attack_target(delta: float):
+	if _should_use_grunt_falcon_punch_attack():
+		if _attack_grunt_falcon_punch_target(delta):
+			return
 	if _should_use_marine_dash_attack():
 		_attack_marine_dash_target(delta)
 		return
@@ -414,6 +440,181 @@ func _attack_target(delta: float):
 
 func _should_use_marine_dash_attack() -> bool:
 	return marine_dash_enabled and custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE)
+
+
+func _should_use_grunt_falcon_punch_attack() -> bool:
+	return grunt_falcon_punch_enabled and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT)
+
+
+func _attack_grunt_falcon_punch_target(delta: float) -> bool:
+	if not _grunt_falcon_punch_phase.is_empty():
+		return true
+	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
+		return false
+	var target_node := target as Node2D
+	if target_node == null:
+		return false
+	var distance := global_position.distance_to(target_node.global_position)
+	if distance < grunt_falcon_punch_launch_band_min or distance > grunt_falcon_punch_launch_band_max:
+		return false
+	damage_timer += delta
+	if damage_timer < grunt_falcon_punch_cooldown:
+		return true
+	damage_timer = 0.0
+	var direction := (target_node.global_position - global_position).normalized()
+	_start_grunt_falcon_punch_windup(direction)
+	return true
+
+
+func _start_grunt_falcon_punch_windup(direction: Vector2) -> void:
+	_grunt_falcon_punch_phase = &"windup"
+	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_windup_time)
+	_grunt_falcon_punch_direction = direction.normalized() if direction.length_squared() > 0.0001 else _last_move_direction.normalized()
+	if _grunt_falcon_punch_direction.length_squared() <= 0.0001:
+		_grunt_falcon_punch_direction = Vector2.RIGHT
+	_grunt_falcon_punch_start_position = global_position
+	_grunt_falcon_punch_hit_targets.clear()
+	_last_move_direction = _grunt_falcon_punch_direction
+	clear_path()
+	if _uses_custom_enemy_animation_set():
+		_update_custom_enemy_animation(_grunt_falcon_punch_direction, true, false)
+	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_windup")
+
+
+func _update_grunt_falcon_punch_attack(delta: float) -> bool:
+	if _grunt_falcon_punch_phase.is_empty():
+		return false
+	_grunt_falcon_punch_timer = maxf(0.0, _grunt_falcon_punch_timer - delta)
+	match _grunt_falcon_punch_phase:
+		&"windup":
+			velocity = _grunt_falcon_punch_direction * speed * grunt_falcon_punch_windup_speed_multiplier
+			move_and_slide()
+			_last_move_direction = _grunt_falcon_punch_direction
+			if _uses_custom_enemy_animation_set():
+				_update_custom_enemy_animation(_grunt_falcon_punch_direction, true, false)
+			if _grunt_falcon_punch_timer <= 0.0:
+				_start_grunt_falcon_punch_leap()
+		&"leap":
+			_update_grunt_falcon_punch_leap(delta)
+		&"impact_lock":
+			velocity = Vector2.ZERO
+			if _grunt_falcon_punch_timer <= 0.0:
+				_start_grunt_falcon_punch_recovery()
+		&"recovery":
+			var recovery_progress := clampf(_grunt_falcon_punch_timer / maxf(0.01, grunt_falcon_punch_recovery_time), 0.0, 1.0)
+			velocity = _grunt_falcon_punch_direction * grunt_falcon_punch_recovery_speed * recovery_progress
+			move_and_slide()
+			if _uses_custom_enemy_animation_set():
+				_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, false)
+			if _grunt_falcon_punch_timer <= 0.0:
+				_finish_grunt_falcon_punch_attack()
+		_:
+			_finish_grunt_falcon_punch_attack()
+	return true
+
+
+func _start_grunt_falcon_punch_leap() -> void:
+	_grunt_falcon_punch_phase = &"leap"
+	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_leap_time)
+	_grunt_falcon_punch_start_position = global_position
+	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_leap")
+	if _uses_custom_enemy_animation_set():
+		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, true)
+
+
+func _update_grunt_falcon_punch_leap(delta: float) -> void:
+	var leap_speed := grunt_falcon_punch_distance_px / maxf(0.01, grunt_falcon_punch_leap_time)
+	velocity = _grunt_falcon_punch_direction * leap_speed
+	move_and_slide()
+	_try_apply_grunt_falcon_punch_hit()
+	var traveled := global_position.distance_to(_grunt_falcon_punch_start_position)
+	if get_slide_collision_count() > 0 or traveled >= grunt_falcon_punch_distance_px or _grunt_falcon_punch_timer <= 0.0:
+		_start_grunt_falcon_punch_impact_lock()
+
+
+func _start_grunt_falcon_punch_impact_lock() -> void:
+	_grunt_falcon_punch_phase = &"impact_lock"
+	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_impact_lock_time)
+	velocity = Vector2.ZERO
+	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_impact_lock")
+	if _uses_custom_enemy_animation_set():
+		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, true)
+
+
+func _start_grunt_falcon_punch_recovery() -> void:
+	_grunt_falcon_punch_phase = &"recovery"
+	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_recovery_time)
+	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_recovery")
+	if _uses_custom_enemy_animation_set():
+		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, false)
+
+
+func _finish_grunt_falcon_punch_attack() -> void:
+	if _grunt_falcon_punch_phase.is_empty():
+		return
+	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_finished")
+	_grunt_falcon_punch_phase = &""
+	_grunt_falcon_punch_timer = 0.0
+	_grunt_falcon_punch_hit_targets.clear()
+	velocity = Vector2.ZERO
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
+
+
+func _try_apply_grunt_falcon_punch_hit() -> void:
+	if not _is_grunt_falcon_punch_hit_window_active():
+		return
+	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
+		return
+	var target_node := target as Node2D
+	if target_node == null:
+		return
+	var target_id := int(target_node.get_instance_id())
+	if _grunt_falcon_punch_hit_targets.has(target_id):
+		return
+	var to_target := target_node.global_position - global_position
+	var forward_distance := to_target.dot(_grunt_falcon_punch_direction)
+	if forward_distance < -6.0 or forward_distance > grunt_falcon_punch_hit_forward_reach_px:
+		return
+	var lateral_distance := absf(to_target.cross(_grunt_falcon_punch_direction))
+	if lateral_distance > grunt_falcon_punch_hit_lateral_reach_px:
+		return
+	_grunt_falcon_punch_hit_targets.append(target_id)
+	var hit_result := _apply_enemy_hit_to_target(target_node, damage * grunt_falcon_punch_damage_multiplier, &"falcon_punch")
+	_obs_increment(&"grunt_falcon_punch_hits_resolved", 1)
+	_obs_log(&"grunt_falcon_punch_hit_resolved", {
+		"enemy": enemy_name,
+		"position": global_position,
+		"target": target_node.name,
+		"target_position": target_node.global_position,
+		"result": String(hit_result.get("result", "")),
+		"applied_damage": float(hit_result.get("applied_damage", 0.0)),
+		"dodged": bool(hit_result.get("dodged", false)),
+		"blocked": bool(hit_result.get("blocked", false)),
+		"parried": bool(hit_result.get("parried", false)),
+	})
+	_start_grunt_falcon_punch_impact_lock()
+
+
+func _is_grunt_falcon_punch_hit_window_active() -> bool:
+	if _grunt_falcon_punch_phase != &"leap":
+		return false
+	var leap_time := maxf(0.01, grunt_falcon_punch_leap_time)
+	var progress := clampf(1.0 - (_grunt_falcon_punch_timer / leap_time), 0.0, 1.0)
+	var active_start := clampf(grunt_falcon_punch_hit_active_start_ratio, 0.0, 1.0)
+	var active_end := clampf(grunt_falcon_punch_hit_active_end_ratio, active_start, 1.0)
+	return progress >= active_start and progress <= active_end
+
+
+func _log_grunt_falcon_punch_event(event_name: StringName) -> void:
+	_obs_log(event_name, {
+		"enemy": enemy_name,
+		"phase": String(_grunt_falcon_punch_phase),
+		"position": global_position,
+		"direction": _grunt_falcon_punch_direction,
+		"target": target.name if target != null and is_instance_valid(target) else "",
+		"damage": damage * grunt_falcon_punch_damage_multiplier,
+	})
 
 
 func _attack_marine_dash_target(delta: float) -> void:
@@ -439,6 +640,7 @@ func _attack_marine_dash_target(delta: float) -> void:
 func _start_marine_dash_windup(direction: Vector2, target_distance: float = -1.0) -> void:
 	_configure_marine_dash_charge(target_distance)
 	_marine_dash_phase = &"windup"
+	_log_marine_dash_event(&"marine_dash_windup")
 	_marine_dash_timer = maxf(0.01, marine_dash_windup_time + marine_dash_charge_extra_windup * _marine_dash_charge_ratio)
 	_marine_dash_direction = direction.normalized() if direction.length_squared() > 0.0001 else _last_move_direction.normalized()
 	if _marine_dash_direction.length_squared() <= 0.0001:
@@ -516,6 +718,7 @@ func _update_marine_dash_attack(delta: float) -> bool:
 
 func _start_marine_dash_travel() -> void:
 	_marine_dash_phase = &"dash"
+	_log_marine_dash_event(&"marine_dash_travel")
 	_marine_dash_timer = maxf(0.01, marine_dash_time)
 	_marine_dash_start_position = global_position
 	_show_marine_dash_telegraph(false)
@@ -536,17 +739,20 @@ func _update_marine_dash_travel(delta: float) -> void:
 
 func _start_marine_dash_impact_lock() -> void:
 	_marine_dash_phase = &"impact_lock"
+	_log_marine_dash_event(&"marine_dash_impact_lock")
 	_marine_dash_timer = maxf(0.01, marine_dash_impact_lock_time)
 	velocity = Vector2.ZERO
 
 
 func _start_marine_dash_recovery() -> void:
 	_marine_dash_phase = &"recovery"
+	_log_marine_dash_event(&"marine_dash_recovery")
 	_marine_dash_timer = maxf(0.01, marine_dash_recovery_time)
 	velocity = Vector2.ZERO
 
 
 func _finish_marine_dash_attack() -> void:
+	_log_marine_dash_event(&"marine_dash_finished")
 	_marine_dash_phase = &""
 	_marine_dash_timer = 0.0
 	_marine_dash_attacker_hitstop_timer = 0.0
@@ -734,6 +940,16 @@ func get_marine_dash_debug_state() -> Dictionary:
 		"reset_timer": _marine_dash_reset_timer,
 	}
 
+
+func _log_marine_dash_event(event_name: StringName) -> void:
+	var data := get_marine_dash_debug_state()
+	data["enemy"] = enemy_name
+	data["position"] = global_position
+	data["target"] = target.name if target != null and is_instance_valid(target) else ""
+	if target is Node2D:
+		data["target_position"] = (target as Node2D).global_position
+	_obs_log(event_name, data)
+
 func _refresh_target():
 	if passive:
 		target = null
@@ -795,6 +1011,8 @@ func _is_target_destroyed(node: Node) -> bool:
 func _get_attack_range(node: Node2D) -> float:
 	if _variant_profile != null:
 		return float(_variant_profile.get("attack_range"))
+	if _should_use_grunt_falcon_punch_attack() and node.is_in_group("player"):
+		return grunt_falcon_punch_launch_band_max
 	if _should_use_marine_dash_attack() and node.is_in_group("player"):
 		return marine_dash_launch_band_max
 	if node.is_in_group("player"):
@@ -803,6 +1021,8 @@ func _get_attack_range(node: Node2D) -> float:
 
 
 func get_behavior_attack_range() -> float:
+	if _should_use_grunt_falcon_punch_attack():
+		return grunt_falcon_punch_launch_band_max
 	if _should_use_marine_dash_attack():
 		return marine_dash_launch_band_max
 	return 40.0
@@ -1070,6 +1290,7 @@ func update_visuals():
 func die():
 	dead = true
 	velocity = Vector2.ZERO
+	_finish_grunt_falcon_punch_attack()
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_enemy_died"):
 		behavior_state_machine.call("on_enemy_died", self)
 	set_threat_highlight(false)
@@ -1086,8 +1307,8 @@ func die():
 		_spawn_material_pickup()
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null:
-		observatory.call("increment", "enemies_destroyed", 1)
-		observatory.call("log_event", "enemy_killed", {
+		_obs_increment(&"enemies_destroyed", 1)
+		_obs_log(&"enemy_killed", {
 			"enemy": enemy_name,
 			"position": global_position,
 		})
@@ -1113,10 +1334,48 @@ func is_passive_enemy() -> bool:
 	return passive
 
 
+func _get_dev_observatory() -> Node:
+	return get_node_or_null("/root/DevObservatory")
+
+
+func _obs_log(kind: StringName, data: Dictionary = {}) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", String(kind), data)
+
+
+func _obs_increment(counter_name: StringName, amount: int = 1) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("increment"):
+		observatory.call("increment", String(counter_name), amount)
+
+
+func _assault_state_name(state: int) -> String:
+	match state:
+		AssaultState.STAGING:
+			return "staging"
+		AssaultState.PROBING:
+			return "probing"
+		AssaultState.COMMIT:
+			return "commit"
+		AssaultState.REGROUP:
+			return "regroup"
+		_:
+			return "unknown"
+
+
 func set_simulation_tier(tier: String) -> void:
 	if simulation_tier == tier:
 		return
 	simulation_tier = tier
+	_obs_log(&"enemy_simulation_tier_changed", {
+		"enemy": enemy_name,
+		"position": global_position,
+		"tier": simulation_tier,
+		"behavior_profile": String(behavior_profile_id),
+		"passive": passive,
+	})
+	_obs_increment(StringName("enemy_sim_tier_%s" % simulation_tier), 1)
 
 
 func counts_for_wave_cap() -> bool:
@@ -1130,6 +1389,11 @@ func set_behavior_profile(profile_id: Variant) -> void:
 	_ensure_behavior_components()
 	if behavior_state_machine != null and behavior_state_machine.has_method("setup_profile"):
 		behavior_state_machine.call("setup_profile", behavior_profile_id)
+	_obs_log(&"enemy_behavior_profile_set", {
+		"enemy": enemy_name,
+		"profile_id": String(behavior_profile_id),
+		"position": global_position,
+	})
 
 
 func get_behavior_snapshot() -> Dictionary:
@@ -1152,12 +1416,22 @@ func force_behavior_notice() -> void:
 	_ensure_behavior_components()
 	if behavior_state_machine != null and behavior_state_machine.has_method("force_notice"):
 		behavior_state_machine.call("force_notice", get_tree().get_first_node_in_group("player"))
+	_obs_log(&"enemy_behavior_force_notice", {
+		"enemy": enemy_name,
+		"profile_id": String(behavior_profile_id),
+		"position": global_position,
+	})
 
 
 func force_behavior_steal() -> void:
 	_ensure_behavior_components()
 	if behavior_state_machine != null and behavior_state_machine.has_method("force_steal"):
 		behavior_state_machine.call("force_steal")
+	_obs_log(&"enemy_behavior_force_steal", {
+		"enemy": enemy_name,
+		"profile_id": String(behavior_profile_id),
+		"position": global_position,
+	})
 
 
 func get_last_move_direction() -> Vector2:
@@ -1370,6 +1644,17 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 	_attack_windup_timer = max(0.01, attack_windup_duration)
 	_windup_attack_is_strong = is_strong
 	_capture_pending_attack_context()
+	_obs_increment(&"enemy_attack_windups", 1)
+	_obs_log(&"enemy_attack_windup", {
+		"enemy": enemy_name,
+		"position": global_position,
+		"damage": queued_damage,
+		"is_strong": is_strong,
+		"attack_objective": attack_objective,
+		"target": target.name if target != null and is_instance_valid(target) else "",
+		"range_px": _pending_attack_range_px,
+		"arc_degrees": _pending_attack_arc_degrees,
+	})
 	velocity = Vector2.ZERO
 	if _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_last_move_direction, false, true)
@@ -1414,19 +1699,56 @@ func _execute_queued_attack() -> void:
 		_clear_pending_attack_context()
 		return
 	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
+		_obs_increment(&"enemy_attack_cancelled_no_target", 1)
+		_obs_log(&"enemy_attack_cancelled", {
+			"enemy": enemy_name,
+			"reason": "no_target",
+			"position": global_position,
+		})
 		_clear_pending_attack_context()
 		return
 
 	var target_node := target as Node2D if target is Node2D else null
 	if target_node == null:
+		_obs_increment(&"enemy_attack_cancelled_no_target", 1)
+		_obs_log(&"enemy_attack_cancelled", {
+			"enemy": enemy_name,
+			"reason": "target_not_node2d",
+			"position": global_position,
+		})
 		_clear_pending_attack_context()
 		return
 
 	if not _can_pending_attack_connect(target_node):
+		_obs_increment(&"enemy_attack_whiffs", 1)
+		_obs_log(&"enemy_attack_whiff", {
+			"enemy": enemy_name,
+			"position": global_position,
+			"target": target_node.name,
+			"target_position": target_node.global_position,
+			"queued_damage": _pending_attack_damage,
+			"range_px": _pending_attack_range_px,
+			"arc_degrees": _pending_attack_arc_degrees,
+		})
 		_clear_pending_attack_context()
 		return
 
 	var hit_result := _apply_enemy_hit_to_target(target_node, _pending_attack_damage, &"melee")
+	_obs_increment(&"enemy_attacks_resolved", 1)
+	_obs_log(&"enemy_attack_resolved", {
+		"enemy": enemy_name,
+		"position": global_position,
+		"target": target_node.name,
+		"target_position": target_node.global_position,
+		"result": String(hit_result.get("result", "")),
+		"hit_kind": String(hit_result.get("hit_kind", "")),
+		"applied_damage": float(hit_result.get("applied_damage", 0.0)),
+		"dodged": bool(hit_result.get("dodged", false)),
+		"blocked": bool(hit_result.get("blocked", false)),
+		"parried": bool(hit_result.get("parried", false)),
+	})
+	var result_name := String(hit_result.get("result", "unknown"))
+	_obs_increment(StringName("enemy_attack_result_%s" % result_name), 1)
 	if bool(hit_result.get("dodged", false)) or bool(hit_result.get("parried", false)):
 		pass  # clean whiff
 	elif bool(hit_result.get("blocked", false)):
@@ -1554,6 +1876,7 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 	if dead:
 		return
 	_pending_attack_damage = 0.0
+	_finish_grunt_falcon_punch_attack()
 	_finish_marine_dash_attack()
 	_stagger_timer = max(_stagger_timer, duration)
 	_recoil_timer = 0.0
@@ -1645,6 +1968,7 @@ func _start_stagger_reaction() -> void:
 	_recoil_timer = 0.0
 	_attack_windup_timer = 0.0
 	_pending_attack_damage = 0.0
+	_finish_grunt_falcon_punch_attack()
 	_finish_marine_dash_attack()
 	velocity = Vector2.ZERO
 	if _uses_directional_animation_set():
@@ -1660,6 +1984,7 @@ func _start_crit_reaction() -> void:
 	_stagger_timer = 0.0
 	_attack_windup_timer = 0.0
 	_pending_attack_damage = 0.0
+	_finish_grunt_falcon_punch_attack()
 	_finish_marine_dash_attack()
 	velocity = Vector2.ZERO
 	if _uses_directional_animation_set():
@@ -1775,7 +2100,20 @@ func _update_regroup_state() -> bool:
 
 
 func _enter_assault_state(next_state: int) -> void:
+	var previous_state := _assault_state
 	_assault_state = next_state
+	if previous_state != next_state:
+		_obs_log(&"enemy_assault_state_changed", {
+			"enemy": enemy_name,
+			"position": global_position,
+			"from": _assault_state_name(previous_state),
+			"to": _assault_state_name(next_state),
+			"health": health,
+			"max_health": max_health,
+			"target": target.name if target != null and is_instance_valid(target) else "",
+			"attack_objective": attack_objective,
+		})
+		_obs_increment(StringName("enemy_assault_state_%s" % _assault_state_name(next_state)), 1)
 	match _assault_state:
 		AssaultState.STAGING:
 			target = null
@@ -2156,6 +2494,12 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 		facing = _last_move_direction
 	animated_sprite.scale = custom_enemy_animation_scale
 	_base_sprite_scale = animated_sprite.scale
+	if not _grunt_falcon_punch_phase.is_empty():
+		var special_animation := GRUNT_ANIMATION_LIBRARY.get_grunt_falcon_punch_phase_animation(_grunt_falcon_punch_phase, _grunt_falcon_punch_direction)
+		if _has_animation(String(special_animation)):
+			animated_sprite.flip_h = false
+			_play_animation(String(special_animation), false)
+		return
 	if _crit_timer > 0.0:
 		if _has_animation(String(GRUNT_CRIT_ANIMATION)):
 			animated_sprite.flip_h = false

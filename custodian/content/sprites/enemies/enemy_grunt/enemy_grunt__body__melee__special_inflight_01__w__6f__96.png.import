@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dhymj6l4wk1r5"
-path="res://.godot/imported/operator__modular_wardrobe_cape__unarmed__run_01__n__3f__96.png-94c1fef0d1e764104329c32351a33cbf.ctex"
+uid="uid://b0tgqmhisbf2m"
+path="res://.godot/imported/enemy_grunt__body__melee__special_inflight_01__w__6f__96.png-c2378193bcad9d269da07772cfa776c6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__n__3f__96.png"
-dest_files=["res://.godot/imported/operator__modular_wardrobe_cape__unarmed__run_01__n__3f__96.png-94c1fef0d1e764104329c32351a33cbf.ctex"]
+source_file="res://content/sprites/enemies/enemy_grunt/enemy_grunt__body__melee__special_inflight_01__w__6f__96.png"
+dest_files=["res://.godot/imported/enemy_grunt__body__melee__special_inflight_01__w__6f__96.png-c2378193bcad9d269da07772cfa776c6.ctex"]
 
 [params]
 

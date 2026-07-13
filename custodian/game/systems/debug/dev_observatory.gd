@@ -178,18 +178,97 @@ func _sample_runtime_gauges() -> void:
 
 	set_gauge(&"node_count", _count_nodes(tree.root))
 
-	var enemies := tree.get_nodes_in_group("enemies")
-	if enemies.size() > 0:
-		set_gauge(&"active_enemies", enemies.size())
+	var enemies := _get_unique_group_nodes(["enemy", "enemies"])
+	set_gauge(&"active_enemies", enemies.size())
+	set_gauge(&"behavior_agents", tree.get_nodes_in_group("enemy_behavior_agent").size())
+	set_gauge(&"ambient_critters", tree.get_nodes_in_group("ambient_critter").size())
+	set_gauge(&"active_projectiles", _count_active_projectiles(tree))
+	_sample_player_gauges(tree)
+	_sample_enemy_gauges(enemies)
 
-	var projectiles := tree.get_nodes_in_group("projectiles")
-	if projectiles.size() > 0:
-		set_gauge(&"active_projectiles", projectiles.size())
 
+func _sample_player_gauges(tree: SceneTree) -> void:
 	var player := tree.get_first_node_in_group("player")
-	if player != null and player is Node2D:
+	if player == null:
+		return
+
+	if player is Node2D:
 		var p := player as Node2D
 		set_gauge(&"player_position", Vector2i(roundi(p.global_position.x), roundi(p.global_position.y)))
+
+	if player.has_method("get_health"):
+		set_gauge(&"player_health", float(player.call("get_health")))
+	elif "current_health" in player:
+		set_gauge(&"player_health", float(player.get("current_health")))
+
+	if player.has_method("get_max_health"):
+		set_gauge(&"player_max_health", float(player.call("get_max_health")))
+	elif "max_health" in player:
+		set_gauge(&"player_max_health", float(player.get("max_health")))
+
+	if player.has_method("get_sprint_status"):
+		var sprint_status: Variant = player.call("get_sprint_status")
+		if sprint_status is Dictionary:
+			var status := sprint_status as Dictionary
+			set_gauge(&"player_stamina", float(status.get("stamina", 0.0)))
+			set_gauge(&"player_stamina_max", float(status.get("stamina_max", 0.0)))
+			set_gauge(&"player_sprinting", bool(status.get("is_sprinting", false)))
+
+	if player.has_method("get_field_patch_status"):
+		var patch_status: Variant = player.call("get_field_patch_status")
+		if patch_status is Dictionary:
+			var status := patch_status as Dictionary
+			set_gauge(&"field_patches_remaining", int(status.get("count", 0)))
+			set_gauge(&"field_patches_max", int(status.get("max", 0)))
+			set_gauge(&"field_patch_active", bool(status.get("active", false)))
+
+	if player.has_method("get_weapon_status"):
+		var weapon_status: Variant = player.call("get_weapon_status")
+		if weapon_status is Dictionary:
+			var status := weapon_status as Dictionary
+			set_gauge(&"player_loaded_ammo", int(status.get("loaded_ammo", 0)))
+			set_gauge(&"player_reserve_ammo", int(status.get("reserve_ammo", 0)))
+			set_gauge(&"player_weapon_heat", float(status.get("heat", 0.0)))
+			set_gauge(&"player_weapon_overheated", bool(status.get("overheated", false)))
+
+
+func _sample_enemy_gauges(enemies: Array) -> void:
+	for enemy in enemies:
+		if enemy == null or not is_instance_valid(enemy):
+			continue
+		if enemy.has_method("get_behavior_snapshot"):
+			var snapshot: Variant = enemy.call("get_behavior_snapshot")
+			if snapshot is Dictionary:
+				set_gauge(&"enemy_behavior_sample", snapshot)
+				return
+
+
+func _get_unique_group_nodes(group_names: Array) -> Array:
+	var tree := get_tree()
+	if tree == null:
+		return []
+	var seen := {}
+	var out: Array = []
+	for group_name in group_names:
+		for node in tree.get_nodes_in_group(StringName(str(group_name))):
+			if node == null or not is_instance_valid(node):
+				continue
+			var id := node.get_instance_id()
+			if seen.has(id):
+				continue
+			seen[id] = true
+			out.append(node)
+	return out
+
+
+func _count_active_projectiles(tree: SceneTree) -> int:
+	var projectiles := tree.get_nodes_in_group("projectiles")
+	if projectiles.size() > 0:
+		return projectiles.size()
+	var projectile_root := get_node_or_null("/root/GameRoot/World/Projectiles")
+	if projectile_root == null:
+		return 0
+	return projectile_root.get_child_count()
 
 
 func _count_nodes(root_node: Node) -> int:

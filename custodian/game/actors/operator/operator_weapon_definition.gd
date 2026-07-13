@@ -192,3 +192,24 @@ func get_animation_string(stat_name: String, fallback: String = "") -> String:
 	if animation is Dictionary and animation.has(stat_name):
 		return String(animation[stat_name])
 	return fallback
+
+
+func get_projectile_value(stat_name: String, fallback: Variant = null) -> Variant:
+	var projectile: Variant = get_weapon_data().get("projectile", {})
+	if projectile is Dictionary and projectile.has(stat_name):
+		return projectile[stat_name]
+	return fallback
+
+
+func get_visual_effect_value(stat_name: String, fallback: Variant = null) -> Variant:
+	var visual_effects: Variant = get_weapon_data().get("visual_effects", {})
+	if visual_effects is Dictionary and visual_effects.has(stat_name):
+		return visual_effects[stat_name]
+	return fallback
+
+
+func get_sprite_value(stat_name: String, fallback: Variant = null) -> Variant:
+	var sprite: Variant = get_weapon_data().get("sprite", {})
+	if sprite is Dictionary and sprite.has(stat_name):
+		return sprite[stat_name]
+	return fallback

@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__fx__critical_hitspark_01__e__8f__156x96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/critical/operator__fx__critical_hitspark_01__e__8f__156x96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/operator__fx__critical_hitspark_01__e__8f__156x96.png",
+	"timestamp_utc": "2026-07-13 12:52:49"
+}

@@ -1,0 +1,53 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://content/sprites/effects/weapons/carbine_mk1/carbine_mk1_projectile_impact_hard_01.png" id="1_impact"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impact_0"]
+atlas = ExtResource("1_impact")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impact_1"]
+atlas = ExtResource("1_impact")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impact_2"]
+atlas = ExtResource("1_impact")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impact_3"]
+atlas = ExtResource("1_impact")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impact_4"]
+atlas = ExtResource("1_impact")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impact_5"]
+atlas = ExtResource("1_impact")
+region = Rect2(320, 0, 64, 64)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_impact_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_impact_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_impact_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_impact_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_impact_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_impact_5")
+}],
+"loop": false,
+"name": &"impact",
+"speed": 24.0
+}]

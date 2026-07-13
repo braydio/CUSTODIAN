@@ -10,6 +10,7 @@ func _ready() -> void:
 func create_weapon_definition(weapon_id: String) -> OperatorWeaponDefinition:
 	var def = OperatorWeaponDefinition.new()
 	var data = weapon_data_loader.get_weapon_data(weapon_id)
+	def.weapon_data_path = WeaponDataLoader.WEAPON_DATA_PATH + weapon_id + ".json"
 	
 	if data.is_empty():
 		push_warning("[WeaponDefinitionFactory] No data for weapon: " + weapon_id)

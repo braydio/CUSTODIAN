@@ -1,8 +1,7 @@
 extends SceneTree
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
-const KEEP_SCENE := preload("res://game/world/sundered_keep/sundered_keep_map.tscn")
-const EXPECTED_BOUNDARY_SEGMENTS := 170
+const EXPECTED_BOUNDARY_SEGMENTS := 100
 
 const EXPECTED_ROOTS := {
 	"UnderlayRoot": -300,
@@ -165,9 +164,9 @@ func _init() -> void:
 				segment_count += 1
 		if segment_count != EXPECTED_BOUNDARY_SEGMENTS:
 			errors.append("PathBoundaryCollision expected %d thick capsule rails, got %d" % [EXPECTED_BOUNDARY_SEGMENTS, segment_count])
-		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-79.9, 574.1), Vector2(-78.5, 488.9), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(-78.5, 488.9), Vector2(-143.7, 422.2), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_170", Vector2(-58.9, 605.2), Vector2(-78.3, 573.2), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-121.6, 1013.9), Vector2(20.4, 1028.3), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(20.4, 1028.3), Vector2(232.0, 991.1), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_100", Vector2(-179.4, 944.0), Vector2(-124.9, 1014.4), errors)
 
 	_collect_filled_collision_polygons(scene, errors)
 	_check_camera_bounds(scene, errors)
@@ -229,29 +228,9 @@ func _init() -> void:
 		if final_gate_veil == null or final_gate_veil.modulate.a < 0.8:
 			errors.append("VistaController did not raise final gate veil near exit")
 
-	var trigger := scene.get_node_or_null("ExitTransitionTrigger") as SunderedKeepTransitionTrigger
-	if trigger == null:
-		errors.append("ExitTransitionTrigger missing")
-	else:
-		if String(trigger.target_scene_path) != "res://game/world/sundered_keep/sundered_keep_map.gd":
-			errors.append("ExitTransitionTrigger target path is wrong: %s" % trigger.target_scene_path)
-		if not _vec2_nearly_equal(trigger.position, EXPECTED_MARKERS["ReturnTopdown"] as Vector2):
-			errors.append("ExitTransitionTrigger should sit near ReturnTopdown; got %s" % trigger.position)
-		if trigger.get_node_or_null("CollisionShape2D") == null:
-			errors.append("ExitTransitionTrigger missing CollisionShape2D")
-		if trigger.vista_controller_path != NodePath("../VistaController"):
-			errors.append("ExitTransitionTrigger vista_controller_path is not wired")
-		elif not trigger.has_method("_retire_approach_scene"):
-			errors.append("ExitTransitionTrigger should retire the approach scene after target handoff")
-
-	var keep_scene := KEEP_SCENE.instantiate() as Node2D
-	if keep_scene == null:
-		errors.append("Could not instantiate SunderedKeepMap")
-	else:
-		root.add_child(keep_scene)
-		await process_frame
-		_collect_forbidden_grand_vista_nodes(keep_scene, errors)
-		keep_scene.queue_free()
+	if scene.get_node_or_null("ExitTransitionTrigger") != null:
+		errors.append("ExitTransitionTrigger should not auto-handoff to the old SunderedKeepMap")
+	_check_event_markers(scene, errors)
 
 	if errors.is_empty():
 		print("[SunderedKeepApproachSmoke] PASS")
@@ -367,16 +346,38 @@ func _collect_collision_nodes(node: Node, context: String, errors: Array[String]
 		_collect_collision_nodes(child, context, errors)
 
 
-func _collect_forbidden_grand_vista_nodes(node: Node, errors: Array[String]) -> void:
-	var node_name := String(node.name)
-	if node_name.begins_with("GrandVista") or node_name == "GrandVistaRoot":
-		errors.append("SunderedKeepMap must not contain grand-vista presentation node: %s" % node.get_path())
-	if node is Sprite2D:
-		var sprite := node as Sprite2D
-		if sprite.texture != null and sprite.texture.resource_path.find("/grand_vista/") >= 0:
-			errors.append("SunderedKeepMap must not use grand-vista texture: %s -> %s" % [node.get_path(), sprite.texture.resource_path])
-	for child in node.get_children():
-		_collect_forbidden_grand_vista_nodes(child, errors)
+func _check_event_markers(scene: Node, errors: Array[String]) -> void:
+	var markers := scene.get_node_or_null("EventMarkers")
+	if markers == null:
+		errors.append("EventMarkers root missing")
+	var runtime := scene.get_node_or_null("EventRuntime")
+	if runtime == null:
+		errors.append("EventRuntime root missing")
+	if not scene.has_method("get_authoring_marker_state"):
+		errors.append("Approach does not expose get_authoring_marker_state")
+		return
+	var marker_state := scene.call("get_authoring_marker_state") as Dictionary
+	for marker_id in ["spawn", "return_causeway", "gatehouse_key", "main_gate", "level_exit", "enemy_spawn_west", "enemy_spawn_gate"]:
+		if not marker_state.has(marker_id):
+			errors.append("AUTHORING_MARKERS missing %s" % marker_id)
+	if markers != null:
+		for marker_id in marker_state.keys():
+			var marker_name := String(marker_id).to_pascal_case()
+			if markers.get_node_or_null(marker_name) == null:
+				errors.append("EventMarkers/%s missing" % marker_name)
+	if runtime != null:
+		if runtime.get_node_or_null("GatehouseKeyInteraction") == null:
+			errors.append("EventRuntime/GatehouseKeyInteraction missing")
+		if runtime.get_node_or_null("MainGateInteraction") == null:
+			errors.append("EventRuntime/MainGateInteraction missing")
+		if runtime.get_node_or_null("MainGateBlocker") == null:
+			errors.append("EventRuntime/MainGateBlocker missing")
+		if runtime.get_node_or_null("LevelExitTrigger") == null:
+			errors.append("EventRuntime/LevelExitTrigger missing")
+		if runtime.get_node_or_null("EnemySpawnWestSpawnNode") == null:
+			errors.append("EventRuntime/EnemySpawnWestSpawnNode missing")
+		if runtime.get_node_or_null("EnemySpawnGateSpawnNode") == null:
+			errors.append("EventRuntime/EnemySpawnGateSpawnNode missing")
 
 
 func _vec2_nearly_equal(a: Vector2, b: Vector2, epsilon := 0.01) -> bool:

@@ -3,11 +3,12 @@
   "level_id": "sundered_keep_front_gate",
   "display_name": "Sundered Keep — Front Gate",
   "route_scene_path": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn",
-  "target_scene_path": "res://game/world/sundered_keep/sundered_keep_map.tscn",
+  "target_scene_path": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn",
   "authored_data_path": "res://content/levels/sundered_keep/sundered_keep_front_gate_large.json",
   "world_context": "campaign_region",
   "tags": [
     "authored",
+    "playable_map",
     "approach",
     "sundered_keep"
   ],

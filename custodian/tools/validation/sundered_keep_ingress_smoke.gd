@@ -54,7 +54,7 @@ func _init() -> void:
 			errors.append("SunderedKeepIngressSite has no approach_scene")
 		if String(ingress.get("level_id")) != "sundered_keep_front_gate":
 			errors.append("SunderedKeepIngressSite is not configured with the registered level ID")
-		if String(ingress.get("target_scene_path")) != "res://game/world/sundered_keep/sundered_keep_map.gd":
+		if String(ingress.get("target_scene_path")) != "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn":
 			errors.append("SunderedKeepIngressSite target_scene_path wrong: %s" % String(ingress.get("target_scene_path")))
 		if String(ingress.get("prompt_text")) == "ENTER SUNDERED KEEP":
 			errors.append("SunderedKeepIngressSite still uses generic direct gate prompt")

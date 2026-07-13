@@ -160,6 +160,10 @@
       "required": ["scene", "speed_px"],
       "properties": {
         "scene": {"type": "string", "description": "Path to projectile scene"},
+        "visual_sprite_frames": {"type": ["string", "null"], "description": "Optional SpriteFrames resource for visible projectile travel animation"},
+        "visual_animation": {"type": "string", "description": "Animation name to play on projectile SpriteFrames"},
+        "visual_scale": {"$ref": "#/definitions/vector2"},
+        "impact_scene": {"type": ["string", "null"], "description": "Optional one-shot impact scene assigned to the projectile"},
         "speed_px": {"type": "number", "minimum": 0},
         "lifetime_sec": {"type": "number", "minimum": 0},
         "gravity": {"type": "number", "description": "Gravity applied to projectile"},

@@ -38,6 +38,11 @@ func _validate_underlay_debug_collision_layer() -> void:
 	if scene.has_method("get_underlay_debug_state"):
 		var state := scene.call("get_underlay_debug_state") as Dictionary
 		_assert(state.has("underlay_boundary_segments"), "underlay debug state missing underlay boundary segment count")
+		_assert(state.has("authoring_markers"), "underlay debug state missing authoring markers")
+	if scene.has_method("get_underlay_authoring_marker_state"):
+		var marker_state := scene.call("get_underlay_authoring_marker_state") as Dictionary
+		_assert(marker_state.has("spawn"), "underlay authoring markers missing spawn")
+		_assert(marker_state.has("main_gate"), "underlay authoring markers missing main_gate")
 
 	root.remove_child(scene)
 	scene.queue_free()
@@ -61,8 +66,13 @@ func _validate_mapper_scene() -> void:
 	_assert(scene.get_node_or_null("World/Camera2D") is Camera2D, "underlay collision mapper missing camera")
 	_assert(scene.get_node_or_null("World/CollisionOverlay") != null, "underlay collision mapper missing overlay")
 	_assert(scene.get_node_or_null("CanvasLayer/Help") is Label, "underlay collision mapper missing help label")
+	var help := scene.get_node_or_null("CanvasLayer/Help") as Label
+	if help != null:
+		_assert(help.text.contains("Mode: COLLISION"), "underlay collision mapper help missing mode line")
+		_assert(help.text.contains("Marker mode"), "underlay collision mapper help missing marker mode instructions")
 	_assert(scene.has_method("get_collision_mapper_state"), "underlay collision mapper missing state method")
 	_assert(scene.has_method("_replace_underlay_boundary_segments_block"), "underlay collision mapper missing replacement helper")
+	_assert(scene.has_method("_replace_underlay_authoring_markers_block"), "underlay collision mapper missing marker replacement helper")
 
 	if scene.has_method("get_collision_mapper_state"):
 		var state := scene.call("get_collision_mapper_state") as Dictionary
@@ -71,6 +81,9 @@ func _validate_mapper_scene() -> void:
 		if underlay_scene != null:
 			_assert(underlay_scene.get_node_or_null("World/SunderedKeepMainUnderlay") is Sprite2D, "mapper underlay review missing main underlay sprite")
 			_assert(underlay_scene.get_node_or_null("World/MappedUnderlayBounds/UnderlayBoundaryCollision") is StaticBody2D, "mapper underlay review missing mapped collision body")
+			_assert(underlay_scene.get_node_or_null("World/UnderlayAuthoringMarkers") is Node2D, "mapper underlay review missing authoring marker root")
+		_assert(state.has("draft_markers"), "underlay collision mapper state missing draft_markers")
+		_assert(state.has("selected_marker"), "underlay collision mapper state missing selected_marker")
 
 	if scene.has_method("_replace_underlay_boundary_segments_block"):
 		var source := "const UNDERLAY_BOUNDARY_SEGMENTS := [\n]\nconst NEXT := 1\n"
@@ -83,6 +96,14 @@ func _validate_mapper_scene() -> void:
 		if scene.has_method("_extract_underlay_boundary_segments_block"):
 			var extracted := scene.call("_extract_underlay_boundary_segments_block", result) as String
 			_assert(extracted == replacement, "mapper extraction helper did not isolate the current segment block")
+
+	if scene.has_method("_replace_underlay_authoring_markers_block") and scene.has_method("_format_underlay_authoring_markers_const"):
+		var marker_replacement := scene.call("_format_underlay_authoring_markers_const") as String
+		var marker_source := "const UNDERLAY_AUTHORING_MARKERS := {\n\t\"old\": {}\n}\nvar NEXT := 1\n"
+		var marker_result := scene.call("_replace_underlay_authoring_markers_block", marker_source, marker_replacement) as String
+		_assert(marker_result.contains("\"spawn\""), "mapper marker replacement helper did not insert marker data")
+		_assert(not marker_result.contains("\"old\""), "mapper marker replacement helper left stale marker data")
+		_assert(marker_result.contains("var NEXT := 1"), "mapper marker replacement helper did not preserve following source")
 
 	root.remove_child(scene)
 	scene.queue_free()

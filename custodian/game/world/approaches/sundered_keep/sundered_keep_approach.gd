@@ -2,6 +2,8 @@ extends Node2D
 class_name SunderedKeepApproach
 
 const SOFT_RECT_FEATHER_SHADER := preload("res://game/world/approaches/sundered_keep/soft_rect_feather.gdshader")
+const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
+const SPAWN_NODE_SCRIPT := preload("res://game/systems/core/systems/spawn_node.gd")
 
 const USE_ROUTE_MASTER := true
 
@@ -38,6 +40,7 @@ const FORTRESS_WALL_MASS_PATH := "res://content/sprites/world/return_causeway/pa
 const TARGET_SCENE_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
 const ROUTE_VERTICAL_OFFSET := 180.0
 const BOUNDARY_RAIL_RADIUS := 10.0
+const SUNDERED_GATE_KEY_ID := &"sundered_gate_key"
 
 const RECT_ROUTE_MASTER := Rect2(Vector2(-620.0, -660.0), Vector2(2048.0, 1706.0))
 const RECT_APPROACH_UNDERLAY := Rect2(Vector2(-1000.0, -900.0), Vector2(2600.0, 1800.0))
@@ -177,6 +180,46 @@ const BOUNDARY_SEGMENTS := [
 	[Vector2(-179.4, 764.0), Vector2(-124.9, 834.4)],
 ]
 
+const AUTHORING_MARKERS := {
+	"spawn": {
+		"label": "SPAWN",
+		"kind": "spawn",
+		"position": Vector2(45.0, 430.0),
+	},
+	"return_causeway": {
+		"label": "RETURN CAUSEWAY",
+		"kind": "return_causeway",
+		"position": Vector2(-32.0, 470.0),
+	},
+	"gatehouse_key": {
+		"label": "GATEHOUSE KEY",
+		"kind": "key",
+		"position": Vector2(1078.0, -285.0),
+	},
+	"main_gate": {
+		"label": "RAISING GATE",
+		"kind": "gate",
+		"position": Vector2(973.0, -305.0),
+	},
+	"level_exit": {
+		"label": "LEVEL EXIT",
+		"kind": "level_exit",
+		"position": Vector2(1240.0, -218.0),
+	},
+	"enemy_spawn_west": {
+		"label": "ENEMY SPAWN W",
+		"kind": "enemy_spawn",
+		"position": Vector2(690.0, -336.0),
+		"lane": "sundered_keep_west",
+	},
+	"enemy_spawn_gate": {
+		"label": "ENEMY SPAWN GATE",
+		"kind": "enemy_spawn",
+		"position": Vector2(1160.0, -230.0),
+		"lane": "sundered_keep_gate",
+	},
+}
+
 var _ingress_config: Dictionary = {}
 
 var underlay_root: Node2D = null
@@ -186,6 +229,8 @@ var playable_root: Node2D = null
 var occlusion_root: Node2D = null
 var collision_root: Node2D = null
 var markers_root: Node2D = null
+var event_markers_root: Node2D = null
+var event_runtime_root: Node2D = null
 
 var entry_spawn: Marker2D = null
 var reveal_start: Marker2D = null
@@ -200,6 +245,11 @@ var vista_controller: SunderedKeepVistaController = null
 var exit_transition_trigger: SunderedKeepTransitionTrigger = null
 var main_map: Node = null
 var main_return_position := Vector2.ZERO
+var _has_sundered_gate_key := false
+var _main_gate_open := false
+var _main_gate_blocker: StaticBody2D = null
+var _main_gate_marker_visual: CanvasItem = null
+var _level_exit_trigger: Area2D = null
 
 
 func _ready() -> void:
@@ -231,9 +281,8 @@ func enter_from_main(p_actor: Node) -> void:
 
 
 func get_entry_position() -> Vector2:
-	if entry_spawn != null:
-		return entry_spawn.global_position
-	return global_position + ENTRY_SPAWN_POS
+	var marker_position := _get_authoring_marker_position("spawn", ENTRY_SPAWN_POS)
+	return global_position + _route_point(marker_position)
 
 
 func get_camera_bounds() -> Rect2:
@@ -244,7 +293,7 @@ func _finish_physics_setup() -> void:
 	if not is_inside_tree():
 		return
 	_build_collision()
-	_ensure_exit_transition_trigger()
+	_build_event_markers()
 	_apply_ingress_config_to_trigger()
 
 
@@ -264,6 +313,8 @@ func _ensure_roots() -> void:
 	occlusion_root = _ensure_node2d_root("OcclusionRoot", 100)
 	collision_root = _ensure_plain_node2d("Collision")
 	markers_root = _ensure_plain_node2d("Markers")
+	event_markers_root = _ensure_plain_node2d("EventMarkers")
+	event_runtime_root = _ensure_plain_node2d("EventRuntime")
 
 	entry_spawn = _ensure_marker("EntrySpawn", _route_point(ENTRY_SPAWN_POS))
 	reveal_start = _ensure_marker("RevealStart", _route_point(REVEAL_START_POS))
@@ -503,6 +554,141 @@ func _build_collision() -> void:
 		index += 1
 
 
+func _build_event_markers() -> void:
+	if event_markers_root == null or event_runtime_root == null:
+		return
+	_clear_children(event_markers_root)
+	_clear_children(event_runtime_root)
+	_main_gate_blocker = null
+	_main_gate_marker_visual = null
+	_level_exit_trigger = null
+	for marker_id: String in AUTHORING_MARKERS.keys():
+		var marker_data := AUTHORING_MARKERS[marker_id] as Dictionary
+		_add_event_marker(marker_id, marker_data)
+	_build_main_gate_runtime()
+	_build_level_exit_trigger()
+
+
+func _add_event_marker(marker_id: String, marker_data: Dictionary) -> Marker2D:
+	var position := _route_point(marker_data.get("position", Vector2.ZERO) as Vector2)
+	var kind := str(marker_data.get("kind", marker_id))
+	var label := str(marker_data.get("label", marker_id.to_upper()))
+	var marker := Marker2D.new()
+	marker.name = marker_id.to_pascal_case()
+	marker.position = position
+	marker.set_meta("marker_id", marker_id)
+	marker.set_meta("marker_kind", kind)
+	marker.set_meta("label", label)
+	event_markers_root.add_child(marker)
+	_add_event_marker_visual(marker, label, _event_marker_color(kind))
+	match kind:
+		"key":
+			_add_key_interactable(marker, marker_id, label)
+		"gate":
+			_main_gate_marker_visual = marker.get_child(0) as CanvasItem if marker.get_child_count() > 0 else null
+			_add_gate_interactable(marker, marker_id, label)
+		"enemy_spawn":
+			_add_enemy_spawn_marker(marker, marker_data, marker_id)
+	return marker
+
+
+func _add_event_marker_visual(parent: Node2D, label: String, color: Color) -> void:
+	var ring := Polygon2D.new()
+	ring.name = "MarkerSwatch"
+	ring.polygon = PackedVector2Array([
+		Vector2(0.0, -14.0),
+		Vector2(14.0, 0.0),
+		Vector2(0.0, 14.0),
+		Vector2(-14.0, 0.0),
+	])
+	ring.color = color
+	ring.z_as_relative = true
+	ring.z_index = 180
+	parent.add_child(ring)
+	var text := Label.new()
+	text.name = "MarkerLabel"
+	text.text = label
+	text.position = Vector2(18.0, -18.0)
+	text.z_as_relative = true
+	text.z_index = 181
+	text.add_theme_font_size_override("font_size", 12)
+	text.add_theme_color_override("font_color", Color(1.0, 0.96, 0.78, 0.94))
+	parent.add_child(text)
+
+
+func _event_marker_color(kind: String) -> Color:
+	match kind:
+		"spawn":
+			return Color(0.42, 0.85, 1.0, 0.85)
+		"return_causeway":
+			return Color(0.56, 0.72, 1.0, 0.85)
+		"key":
+			return Color(1.0, 0.82, 0.30, 0.90)
+		"gate":
+			return Color(1.0, 0.42, 0.24, 0.90)
+		"level_exit":
+			return Color(0.46, 1.0, 0.58, 0.90)
+		"enemy_spawn":
+			return Color(1.0, 0.20, 0.24, 0.90)
+		_:
+			return Color(0.92, 0.92, 0.92, 0.85)
+
+
+func _add_key_interactable(marker: Node2D, marker_id: String, label: String) -> void:
+	var interaction := SUNDERED_KEEP_INTERACTABLE.new() as Node2D
+	interaction.name = "%sInteraction" % marker_id.to_pascal_case()
+	interaction.position = marker.position
+	interaction.call("configure", self, SUNDERED_GATE_KEY_ID, "TAKE %s" % label, 84.0)
+	event_runtime_root.add_child(interaction)
+
+
+func _add_gate_interactable(marker: Node2D, marker_id: String, label: String) -> void:
+	var interaction := SUNDERED_KEEP_INTERACTABLE.new() as Node2D
+	interaction.name = "%sInteraction" % marker_id.to_pascal_case()
+	interaction.position = marker.position
+	interaction.call("configure", self, &"main_gate", "RAISE %s" % label, 104.0)
+	event_runtime_root.add_child(interaction)
+
+
+func _add_enemy_spawn_marker(marker: Node2D, marker_data: Dictionary, marker_id: String) -> void:
+	var spawn := SPAWN_NODE_SCRIPT.new() as Node2D
+	spawn.name = "%sSpawnNode" % marker_id.to_pascal_case()
+	spawn.set("lane", str(marker_data.get("lane", marker_id)))
+	spawn.position = marker.position
+	event_runtime_root.add_child(spawn)
+
+
+func _build_main_gate_runtime() -> void:
+	var marker_position := _get_authoring_marker_position("main_gate", RETURN_TOPDOWN_POS)
+	var gate_position := _route_point(marker_position)
+	_main_gate_blocker = StaticBody2D.new()
+	_main_gate_blocker.name = "MainGateBlocker"
+	_main_gate_blocker.collision_layer = 1
+	_main_gate_blocker.collision_mask = 1
+	event_runtime_root.add_child(_main_gate_blocker)
+	_add_boundary_segment(
+		_main_gate_blocker,
+		"MainGateRail",
+		gate_position + Vector2(-70.0, 0.0),
+		gate_position + Vector2(70.0, 0.0)
+	)
+
+
+func _build_level_exit_trigger() -> void:
+	var marker_position := _get_authoring_marker_position("level_exit", RETURN_TOPDOWN_POS)
+	_level_exit_trigger = Area2D.new()
+	_level_exit_trigger.name = "LevelExitTrigger"
+	_level_exit_trigger.position = _route_point(marker_position)
+	_level_exit_trigger.body_entered.connect(_on_level_exit_body_entered)
+	event_runtime_root.add_child(_level_exit_trigger)
+	var shape := CollisionShape2D.new()
+	shape.name = "CollisionShape2D"
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = Vector2(160.0, 150.0)
+	shape.shape = rectangle
+	_level_exit_trigger.add_child(shape)
+
+
 func _add_boundary_segment(parent: StaticBody2D, node_name: String, a: Vector2, b: Vector2) -> CollisionShape2D:
 	var direction := b - a
 	var length := direction.length()
@@ -583,6 +769,100 @@ func _apply_ingress_config_to_trigger() -> void:
 		exit_transition_trigger.target_spawn_id = _ingress_config["target_spawn_id"]
 	if _ingress_config.has("return_world_position"):
 		exit_transition_trigger.return_world_position = _ingress_config["return_world_position"]
+
+
+func _handle_sundered_interaction(kind: StringName, actor: Node) -> void:
+	match kind:
+		SUNDERED_GATE_KEY_ID:
+			_has_sundered_gate_key = true
+			_hide_key_interactions()
+			print("[SunderedKeepApproach] Gatehouse key acquired.")
+		&"main_gate", &"sundered_main_gate":
+			_try_open_main_gate(actor)
+		_:
+			print("[SunderedKeepApproach] Unhandled interaction: %s" % String(kind))
+
+
+func _try_open_main_gate(_actor: Node = null) -> bool:
+	if _main_gate_open:
+		return true
+	if not _has_sundered_gate_key:
+		print("[SunderedKeepApproach] Main gate requires the gatehouse key.")
+		return false
+	_main_gate_open = true
+	if _main_gate_blocker != null and is_instance_valid(_main_gate_blocker):
+		_main_gate_blocker.queue_free()
+		_main_gate_blocker = null
+	if _main_gate_marker_visual != null and is_instance_valid(_main_gate_marker_visual):
+		_main_gate_marker_visual.modulate = Color(0.48, 1.0, 0.58, 0.72)
+	print("[SunderedKeepApproach] Main gate raised.")
+	return true
+
+
+func _hide_key_interactions() -> void:
+	if event_runtime_root == null:
+		return
+	for child in event_runtime_root.get_children():
+		if child is SunderedKeepInteractable and StringName(child.get("interaction_kind")) == SUNDERED_GATE_KEY_ID:
+			child.remove_from_group("interactable")
+			if child is CanvasItem:
+				(child as CanvasItem).visible = false
+
+
+func _on_level_exit_body_entered(body: Node) -> void:
+	if not _is_player_body(body):
+		return
+	if not _main_gate_open:
+		_try_open_main_gate(body)
+		if not _main_gate_open:
+			return
+	_return_actor_to_main(body)
+
+
+func _return_actor_to_main(actor: Node) -> void:
+	if actor is Node2D and main_return_position != Vector2.ZERO:
+		(actor as Node2D).global_position = main_return_position
+	var world := get_node_or_null("/root/GameRoot/World") as Node2D
+	if world != null:
+		_set_world_branch_visible(world.get_node_or_null("ProcGenRuntime"), true)
+		_set_world_branch_visible(world.get_node_or_null("ConnectedMaps"), true)
+	queue_free()
+
+
+func _is_player_body(body: Node) -> bool:
+	return body.is_in_group("player") or body.is_in_group("operator") or String(body.name) == "Operator"
+
+
+func _set_world_branch_visible(branch: Node, value: bool) -> void:
+	if branch == null:
+		return
+	if branch is CanvasItem:
+		(branch as CanvasItem).visible = value
+	branch.process_mode = Node.PROCESS_MODE_INHERIT if value else Node.PROCESS_MODE_DISABLED
+
+
+func _get_authoring_marker_position(marker_id: String, fallback: Vector2) -> Vector2:
+	var marker_data: Variant = AUTHORING_MARKERS.get(marker_id, {})
+	if marker_data is Dictionary:
+		var position: Variant = (marker_data as Dictionary).get("position", fallback)
+		if position is Vector2:
+			return position
+	return fallback
+
+
+func get_authoring_marker_state() -> Dictionary:
+	var result := {}
+	for marker_id: String in AUTHORING_MARKERS.keys():
+		var marker_data := AUTHORING_MARKERS[marker_id] as Dictionary
+		var source_position := marker_data.get("position", Vector2.ZERO) as Vector2
+		var runtime_position := _route_point(source_position)
+		result[marker_id] = {
+			"kind": str(marker_data.get("kind", marker_id)),
+			"label": str(marker_data.get("label", marker_id)),
+			"source_position": source_position,
+			"runtime_position": runtime_position,
+		}
+	return result
 
 
 func _clear_children(parent: Node) -> void:

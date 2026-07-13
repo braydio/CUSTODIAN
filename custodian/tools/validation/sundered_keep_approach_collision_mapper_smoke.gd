@@ -29,13 +29,15 @@ func _run() -> void:
 	var help := scene.get_node_or_null("CanvasLayer/Help") as Label
 	if help == null:
 		errors.append("Help label missing")
-	elif not help.text.contains("connected polyline"):
-		errors.append("Help label should describe connected polyline segment export")
+	elif not help.text.contains("Collision mode") or not help.text.contains("Marker mode"):
+		errors.append("Help label should describe both collision and marker authoring modes")
 
 	if not scene.has_method("get_collision_mapper_state"):
 		errors.append("Mapper script does not expose get_collision_mapper_state()")
 	if not scene.has_method("_apply_draft_segments_to_runtime_collision_map"):
 		errors.append("Mapper script does not expose runtime collision-map apply helper")
+	if not scene.has_method("_apply_draft_markers_to_runtime_marker_map"):
+		errors.append("Mapper script does not expose runtime marker-map apply helper")
 	if not scene.has_method("_replace_boundary_segments_block") or not scene.has_method("_format_boundary_segments_const"):
 		errors.append("Mapper script does not expose non-mutating replacement helpers")
 	else:
@@ -56,6 +58,17 @@ func _run() -> void:
 			errors.append("Mapper replacement helper did not insert new segment text")
 		if replaced.contains("Vector2.ZERO"):
 			errors.append("Mapper replacement helper left stale segment text behind")
+		if not state.has("draft_markers") or not state.has("selected_marker"):
+			errors.append("Mapper state does not expose marker authoring state")
+		if not scene.has_method("_replace_authoring_markers_block") or not scene.has_method("_format_authoring_markers_const"):
+			errors.append("Mapper script does not expose marker replacement helpers")
+		else:
+			var marker_replacement := str(scene.call("_format_authoring_markers_const"))
+			var marker_replaced := str(scene.call("_replace_authoring_markers_block", "before\nconst AUTHORING_MARKERS := {\n\t\"old\": {}\n}\nafter", marker_replacement))
+			if not marker_replaced.contains("\"spawn\""):
+				errors.append("Mapper marker replacement helper did not insert marker text")
+			if marker_replaced.contains("\"old\""):
+				errors.append("Mapper marker replacement helper left stale marker text behind")
 
 	if errors.is_empty():
 		print("[SunderedKeepApproachCollisionMapperSmoke] PASS")

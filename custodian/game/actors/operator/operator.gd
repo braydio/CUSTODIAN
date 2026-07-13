@@ -30,6 +30,11 @@ const CRITICAL_ATTACK_LEFT_SHEET := "res://content/sprites/operator/runtime/body
 const CRITICAL_ATTACK_FRAME_COUNT := 8
 const CRITICAL_ATTACK_FRAME_SIZE := Vector2i(96, 96)
 const CRITICAL_ATTACK_FPS := 15.0
+const CRITICAL_HITSPARK_RIGHT_SHEET := "res://content/sprites/operator/new_operator/modular/critical/operator__fx__critical_hitspark_01__e__8f__156x96.png"
+const CRITICAL_HITSPARK_LEFT_SHEET := "res://content/sprites/operator/new_operator/modular/critical/operator__fx__critical_hitspark_01__w__8f__156x96.png"
+const CRITICAL_HITSPARK_FRAME_COUNT := 8
+const CRITICAL_HITSPARK_FRAME_SIZE := Vector2i(156, 96)
+const CRITICAL_HITSPARK_FPS := 15.0
 
 enum AttackPhase {
 	NONE,
@@ -268,6 +273,7 @@ var pending_weapon_selection: Dictionary = {}
 var _active_attack_profile: OperatorWeaponDefinition = null
 var _active_melee_attack_profile: MeleeAttackProfile = null
 var _missing_animation_warnings: Dictionary = {}
+var _ranged_config_warning_once: Dictionary = {}
 var _melee_heavy_anticipating: bool = false
 var _melee_fast_windup: bool = false
 var _melee_fast_combo_step: int = 0
@@ -414,6 +420,11 @@ func _get_current_ranged_profile() -> Dictionary:
 	resolved_profile["falloff_start_px"] = weapon_definition.get_stat_float("damage_falloff_start_px", float(resolved_profile["effective_range_px"]))
 	resolved_profile["falloff_end_px"] = weapon_definition.get_stat_float("damage_falloff_end_px", float(resolved_profile["max_range_px"]))
 	resolved_profile["min_damage_multiplier"] = weapon_definition.get_stat_float("min_falloff_damage_mult", 0.5)
+	resolved_profile["projectile_scene"] = weapon_definition.get_projectile_value("scene", "res://game/actors/projectiles/bullet.tscn")
+	resolved_profile["impact_scene"] = weapon_definition.get_projectile_value("impact_scene", "")
+	resolved_profile["visual_sprite_frames"] = weapon_definition.get_projectile_value("visual_sprite_frames", "")
+	resolved_profile["visual_animation"] = weapon_definition.get_projectile_value("visual_animation", "travel")
+	resolved_profile["visual_scale"] = _dictionary_to_vector2(weapon_definition.get_projectile_value("visual_scale", {}), Vector2.ONE)
 	return resolved_profile
 
 const PRIMARY_WEAPON_NONE := ""
@@ -2226,21 +2237,117 @@ func _spawn_ranged_impact_at(impact_position: Vector2) -> void:
 	spark.global_position = impact_position
 
 
+func _get_dev_observatory() -> Node:
+	return get_node_or_null("/root/DevObservatory")
+
+
+func _obs_log(kind: StringName, data: Dictionary = {}) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", String(kind), data)
+
+
+func _obs_increment(counter_name: StringName, amount: int = 1) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("increment"):
+		observatory.call("increment", String(counter_name), amount)
+
+
+func _obs_gauge(gauge_name: StringName, value: Variant) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("set_gauge"):
+		observatory.call("set_gauge", String(gauge_name), value)
+
+
+func _log_ranged_fire_failure(reason: StringName) -> void:
+	_obs_increment(&"player_ranged_fire_failures", 1)
+	_obs_log(&"player_ranged_fire_failed", {
+		"reason": String(reason),
+		"weapon": _get_active_weapon_state_key(),
+		"position": global_position,
+		"loaded_ammo": _get_current_loaded_ammo(),
+		"reserve_ammo": _get_current_reserve_ammo(),
+		"heat": weapon_heat_by_id.get(_get_active_weapon_state_key(), 0.0),
+	})
+
+
+func _instantiate_ranged_projectile(profile: Dictionary) -> Node:
+	var scene_path := str(profile.get("projectile_scene", "res://game/actors/projectiles/bullet.tscn"))
+	var scene := _load_packed_scene_from_path(scene_path, &"projectile_scene")
+	if scene == null:
+		scene = BULLET_SCENE
+	return scene.instantiate()
+
+
+func _load_projectile_impact_scene(scene_path: String, fallback: PackedScene) -> PackedScene:
+	var scene := _load_packed_scene_from_path(scene_path, &"impact_scene")
+	return scene if scene != null else fallback
+
+
+func _load_projectile_sprite_frames(frames_path: String) -> SpriteFrames:
+	var trimmed_path := frames_path.strip_edges()
+	if trimmed_path.is_empty():
+		return null
+	if not ResourceLoader.exists(trimmed_path):
+		_warn_ranged_config_once(StringName("missing_projectile_sprite_frames_%s" % trimmed_path), "[Operator] Missing projectile SpriteFrames: %s" % trimmed_path)
+		return null
+	var resource := load(trimmed_path)
+	if resource is SpriteFrames:
+		return resource as SpriteFrames
+	_warn_ranged_config_once(StringName("invalid_projectile_sprite_frames_%s" % trimmed_path), "[Operator] Projectile visual path is not SpriteFrames: %s" % trimmed_path)
+	return null
+
+
+func _load_packed_scene_from_path(scene_path: String, warning_kind: StringName) -> PackedScene:
+	var trimmed_path := scene_path.strip_edges()
+	if trimmed_path.is_empty():
+		return null
+	if not ResourceLoader.exists(trimmed_path):
+		_warn_ranged_config_once(StringName("%s_missing_%s" % [String(warning_kind), trimmed_path]), "[Operator] Configured %s cannot be loaded: %s" % [String(warning_kind), trimmed_path])
+		return null
+	var resource := load(trimmed_path)
+	if resource is PackedScene:
+		return resource as PackedScene
+	_warn_ranged_config_once(StringName("%s_invalid_%s" % [String(warning_kind), trimmed_path]), "[Operator] Configured %s is not a PackedScene: %s" % [String(warning_kind), trimmed_path])
+	return null
+
+
+func _warn_ranged_config_once(key: StringName, message: String) -> void:
+	if _ranged_config_warning_once.has(key):
+		return
+	_ranged_config_warning_once[key] = true
+	push_warning(message)
+
+
+func _dictionary_to_vector2(value: Variant, fallback: Vector2) -> Vector2:
+	if value is Vector2:
+		return value as Vector2
+	if value is Dictionary:
+		var dict := value as Dictionary
+		return Vector2(float(dict.get("x", fallback.x)), float(dict.get("y", fallback.y)))
+	return fallback
+
+
 func _request_ranged_shot() -> void:
 	if not _is_ranged_context_active():
 		return
 	if _reload_active:
 		last_ranged_fire_failure = &"reloading"
+		_log_ranged_fire_failure(last_ranged_fire_failure)
 		return
 	if _is_active_weapon_overheated():
 		last_ranged_fire_failure = &"overheated"
+		_log_ranged_fire_failure(last_ranged_fire_failure)
 		return
 	if not _has_loaded_ammo():
 		last_ranged_fire_failure = &"reload_started" if _get_current_reserve_ammo() > 0 else &"no_ammo"
+		_log_ranged_fire_failure(last_ranged_fire_failure)
 		_try_start_reload()
 		return
 	if _is_using_sidearm_ranged():
 		if _sidearm_action_phase != &"held":
+			last_ranged_fire_failure = &"sidearm_not_held"
+			_log_ranged_fire_failure(last_ranged_fire_failure)
 			return
 		_sidearm_action_phase = &"firing"
 		_sidearm_action_phase_started = false
@@ -2288,7 +2395,7 @@ func _emit_pending_ranged_shot() -> void:
 	var spread_rad := deg_to_rad(randf_range(-spread, spread))
 	direction = direction.rotated(spread_rad)
 
-	var bullet = BULLET_SCENE.instantiate()
+	var bullet = _instantiate_ranged_projectile(profile)
 	if bullet == null:
 		return
 
@@ -2302,6 +2409,19 @@ func _emit_pending_ranged_shot() -> void:
 		_emit_weapon_noise(spawn_position)
 		_spawn_muzzle_flash(direction)
 		_apply_body_recoil_impulse(direction)
+		_obs_increment(&"player_ranged_shots_blocked", 1)
+		_obs_log(&"player_ranged_shot_blocked", {
+			"weapon": _get_active_weapon_state_key(),
+			"position": global_position,
+			"muzzle": spawn_position,
+			"impact": muzzle_check.get("position", spawn_position),
+			"direction": direction,
+			"spread_deg": spread,
+			"loaded_ammo": _get_current_loaded_ammo(),
+			"reserve_ammo": _get_current_reserve_ammo(),
+		})
+		_obs_gauge(&"player_loaded_ammo", _get_current_loaded_ammo())
+		_obs_gauge(&"player_reserve_ammo", _get_current_reserve_ammo())
 		return
 	if bullet.has_method("set_direction"):
 		bullet.set_direction(direction)
@@ -2313,9 +2433,13 @@ func _emit_pending_ranged_shot() -> void:
 	bullet.min_damage_multiplier = float(profile.get("min_damage_multiplier", 0.5))
 	bullet.bullet_radius = float(profile.get("radius", 3.0))
 	bullet.bullet_color = profile.get("color", Color(1.0, 0.9, 0.35, 1.0))
-	bullet.impact_scene = impact_scene
+	bullet.impact_scene = _load_projectile_impact_scene(str(profile.get("impact_scene", "")), impact_scene)
 	bullet.shooter = self
 	bullet.terrain_ballistics_provider = _find_terrain_ballistics_provider()
+	if bullet.has_method("configure_visual"):
+		var frames := _load_projectile_sprite_frames(str(profile.get("visual_sprite_frames", "")))
+		if frames != null:
+			bullet.call("configure_visual", frames, StringName(str(profile.get("visual_animation", "travel"))), profile.get("visual_scale", Vector2.ONE))
 	# Apply cognitive crit bonus (bearing increases crit chance)
 	if cognitive != null and cognitive.has_method("get_player_crit_bonus"):
 		bullet.crit_chance = float(cognitive.call("get_player_crit_bonus"))
@@ -2333,6 +2457,22 @@ func _emit_pending_ranged_shot() -> void:
 	_emit_weapon_noise(spawn_position)
 	_spawn_muzzle_flash(direction)
 	_apply_body_recoil_impulse(direction)
+	_obs_increment(&"player_ranged_shots_fired", 1)
+	_obs_log(&"player_ranged_shot", {
+		"weapon": _get_active_weapon_state_key(),
+		"position": global_position,
+		"muzzle": spawn_position,
+		"direction": direction,
+		"damage": bullet.damage,
+		"speed": bullet.speed,
+		"radius": bullet.bullet_radius,
+		"spread_deg": spread,
+		"loaded_ammo": _get_current_loaded_ammo(),
+		"reserve_ammo": _get_current_reserve_ammo(),
+	})
+	_obs_gauge(&"player_loaded_ammo", _get_current_loaded_ammo())
+	_obs_gauge(&"player_reserve_ammo", _get_current_reserve_ammo())
+	_obs_gauge(&"player_recoil", current_recoil)
 
 
 func get_terrain_ballistics_provider() -> Node:
@@ -3549,6 +3689,7 @@ func _play_critical_attack_animation() -> void:
 		animated_sprite.play(animation_name)
 		_clear_modular_fast_attack_layers()
 		_reset_melee_overlay_visuals()
+		_play_operator_critical_hitspark(_melee_forward)
 		return
 	_warn_missing_animation_once("operator_critical_1h", "unarmed_attack_fast")
 	_play_melee_anim_from_key("unarmed_fast_1", &"unarmed_attack_fast")
@@ -3575,6 +3716,45 @@ func _ensure_operator_critical_attack_animation(direction: Vector2) -> StringNam
 		atlas.atlas = texture
 		atlas.region = Rect2(frame_index * CRITICAL_ATTACK_FRAME_SIZE.x, 0, CRITICAL_ATTACK_FRAME_SIZE.x, CRITICAL_ATTACK_FRAME_SIZE.y)
 		animated_sprite.sprite_frames.add_frame(animation_name, atlas)
+	return animation_name
+
+
+func _play_operator_critical_hitspark(direction: Vector2) -> bool:
+	if modular_upper_fx_sprite == null or modular_upper_fx_sprite.sprite_frames == null:
+		return false
+	var fx_animation := _ensure_operator_critical_hitspark_animation(direction)
+	if fx_animation.is_empty():
+		_warn_missing_animation_once("operator_critical_hitspark", "critical attack visual-only FX")
+		return false
+	modular_upper_fx_sprite.visible = true
+	modular_upper_fx_sprite.flip_h = false
+	modular_upper_fx_sprite.speed_scale = 1.0
+	modular_upper_fx_sprite.play(fx_animation)
+	_modular_upper_fx_action_animation = fx_animation
+	return true
+
+
+func _ensure_operator_critical_hitspark_animation(direction: Vector2) -> StringName:
+	if modular_upper_fx_sprite == null or modular_upper_fx_sprite.sprite_frames == null:
+		return &""
+	var facing_left := _is_facing_left(direction)
+	var animation_name := &"operator_critical_hitspark_left" if facing_left else &"operator_critical_hitspark_right"
+	if _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, animation_name):
+		return animation_name
+	var sheet_path := CRITICAL_HITSPARK_LEFT_SHEET if facing_left else CRITICAL_HITSPARK_RIGHT_SHEET
+	if not ResourceLoader.exists(sheet_path):
+		return &""
+	var texture := load(sheet_path) as Texture2D
+	if texture == null:
+		return &""
+	modular_upper_fx_sprite.sprite_frames.add_animation(animation_name)
+	modular_upper_fx_sprite.sprite_frames.set_animation_loop(animation_name, false)
+	modular_upper_fx_sprite.sprite_frames.set_animation_speed(animation_name, CRITICAL_HITSPARK_FPS)
+	for frame_index in range(CRITICAL_HITSPARK_FRAME_COUNT):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(frame_index * CRITICAL_HITSPARK_FRAME_SIZE.x, 0, CRITICAL_HITSPARK_FRAME_SIZE.x, CRITICAL_HITSPARK_FRAME_SIZE.y)
+		modular_upper_fx_sprite.sprite_frames.add_frame(animation_name, atlas)
 	return animation_name
 
 
@@ -4245,6 +4425,14 @@ func start_field_patch() -> void:
 	_exit_ranged_ready()
 	_cancel_reload()
 	field_patch_state_changed.emit(true, false)
+	_obs_increment(&"field_patch_started", 1)
+	_obs_log(&"field_patch_started", {
+		"position": global_position,
+		"health": current_health,
+		"max_health": max_health,
+		"patches_remaining": field_patch_count,
+		"use_duration": field_patch_use_duration,
+	})
 
 
 func cancel_field_patch(reason: StringName = &"unknown") -> void:
@@ -4258,6 +4446,13 @@ func cancel_field_patch(reason: StringName = &"unknown") -> void:
 	_field_patch_committed = false
 	field_patch_state_changed.emit(false, false)
 	print("[FieldPatch] interrupted: ", reason)
+	_obs_increment(&"field_patch_cancelled", 1)
+	_obs_log(&"field_patch_cancelled", {
+		"reason": String(reason),
+		"position": global_position,
+		"health": current_health,
+		"patches_remaining": field_patch_count,
+	})
 
 
 func _update_field_patch(delta: float) -> void:
@@ -4297,6 +4492,16 @@ func _commit_field_patch() -> void:
 	field_patch_changed.emit(field_patch_count, field_patch_max_count)
 	field_patch_state_changed.emit(false, true)
 	print("[FieldPatch] restored ", restore_amount, " hp")
+	_obs_increment(&"field_patch_committed", 1)
+	_obs_log(&"field_patch_committed", {
+		"position": global_position,
+		"restore_amount": restore_amount,
+		"health": current_health,
+		"max_health": max_health,
+		"patches_remaining": field_patch_count,
+	})
+	_obs_gauge(&"player_health", current_health)
+	_obs_gauge(&"field_patches_remaining", field_patch_count)
 
 
 func restore_health(amount: float) -> void:
@@ -4380,6 +4585,17 @@ func _try_start_dodge() -> bool:
 	movement_direction = _dodge_direction
 	visual_idle_direction = aim_direction.normalized() if _is_aiming_for_facing() and aim_direction.length_squared() > 0.0001 else _dodge_direction
 	_play_dodge_animation(true)
+	_obs_increment(&"player_dodges_started", 1)
+	_obs_log(&"player_dodge_started", {
+		"position": global_position,
+		"direction": _dodge_direction,
+		"backstep": _dodge_backstep_active,
+		"duration": dodge_duration,
+		"iframe_duration": dodge_iframe_duration,
+		"cooldown": _dodge_cooldown_remaining,
+		"stamina": stamina,
+	})
+	_obs_gauge(&"player_stamina", stamina)
 	return true
 
 
@@ -4469,6 +4685,14 @@ func _should_ignore_incoming_damage_for_dodge(source: String = "") -> bool:
 		return false
 	if dodge_iframe_debug_enabled:
 		print("[Operator] Dodge i-frame avoided incoming damage: ", source)
+	_obs_increment(&"player_iframe_avoids", 1)
+	_obs_log(&"player_damage_avoided_by_iframe", {
+		"source": source,
+		"position": global_position,
+		"dodge_timer": _dodge_timer,
+		"iframe_timer": _dodge_iframe_timer,
+		"direction": _dodge_direction,
+	})
 	return true
 
 
@@ -6497,6 +6721,34 @@ func _get_attack_aim_direction() -> Vector2:
 	return Vector2.RIGHT
 
 
+func _log_incoming_hit_result(
+	result: StringName,
+	hit_kind: StringName,
+	amount: float,
+	applied_damage: float,
+	attacker: Node2D = null,
+	extra: Dictionary = {}
+) -> void:
+	var data := {
+		"result": String(result),
+		"hit_kind": String(hit_kind),
+		"amount": amount,
+		"applied_damage": applied_damage,
+		"position": global_position,
+		"health": current_health,
+		"stamina": stamina,
+	}
+	if attacker != null and is_instance_valid(attacker):
+		data["attacker"] = attacker.name
+		data["attacker_position"] = attacker.global_position
+	for key in extra.keys():
+		data[key] = extra[key]
+
+	_obs_increment(&"incoming_hits_total", 1)
+	_obs_increment(StringName("incoming_hit_%s" % String(result)), 1)
+	_obs_log(&"incoming_hit_result", data)
+
+
 func _get_world_mouse_position() -> Vector2:
 	var camera := _get_world_camera()
 	if camera != null and camera.has_method("get_global_mouse_position"):
@@ -6544,6 +6796,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		resolved_hit_direction = -visual_idle_direction.normalized() if visual_idle_direction.length_squared() > 0.001 else Vector2.DOWN
 
 	if try_parry_incoming_attack(attacker, resolved_hit_direction, {"damage": amount, "hit_kind": hit_kind}):
+		_log_incoming_hit_result(&"parried", hit_kind, amount, 0.0, attacker)
 		return {
 			"result": &"parried",
 			"hit_kind": hit_kind,
@@ -6554,6 +6807,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		}
 
 	if _should_ignore_incoming_damage_for_dodge(String(hit_kind)):
+		_log_incoming_hit_result(&"dodged", hit_kind, amount, 0.0, attacker)
 		return {
 			"result": &"dodged",
 			"hit_kind": hit_kind,
@@ -6568,6 +6822,9 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		var final_damage := float(guard_result.get("damage", amount))
 		if final_damage > 0.0:
 			take_damage(final_damage, false)
+		_log_incoming_hit_result(&"blocked", hit_kind, amount, final_damage, attacker, {
+			"guard_damage": final_damage,
+		})
 		return {
 			"result": &"blocked",
 			"hit_kind": hit_kind,
@@ -6580,6 +6837,9 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 	if _is_failed_parry_hitreact_context():
 		_play_failed_parry_block_hitreact()
 		take_damage(amount, false)
+		_log_incoming_hit_result(&"damaged", hit_kind, amount, amount, attacker, {
+			"block_hitreact": true,
+		})
 		return {
 			"result": &"damaged",
 			"hit_kind": hit_kind,
@@ -6596,6 +6856,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		_play_block_animation(&"melee_2h_block_exit")
 
 	take_damage(amount)
+	_log_incoming_hit_result(&"damaged", hit_kind, amount, amount, attacker)
 	return {
 		"result": &"damaged",
 		"hit_kind": hit_kind,
@@ -6623,14 +6884,14 @@ func take_damage(amount: float, trigger_reaction: bool = true):
 	current_health = health
 	health_changed.emit(current_health, max_health)
 
-	var observatory := get_node_or_null("/root/DevObservatory")
-	if observatory != null:
-		observatory.call("increment", "player_hits_taken", 1)
-		observatory.call("log_event", "player_damage", {
-			"amount": amount,
-			"position": global_position,
-			"health": health,
-		})
+	_obs_increment(&"player_hits_taken", 1)
+	_obs_log(&"player_damage", {
+		"amount": amount,
+		"position": global_position,
+		"health": health,
+		"max_health": max_health,
+	})
+	_obs_gauge(&"player_health", health)
 
 	var heatmap := get_node_or_null("/root/SectorHeatmap")
 	if heatmap != null:
@@ -6752,12 +7013,11 @@ func _handle_death() -> void:
 		return
 	_is_dead = true
 	cancel_field_patch(&"dead")
-	var observatory := get_node_or_null("/root/DevObservatory")
-	if observatory != null:
-		observatory.call("increment", "player_deaths", 1)
-		observatory.call("log_event", "player_death", {
-			"position": global_position,
-		})
+	_obs_increment(&"player_deaths", 1)
+	_obs_log(&"player_death", {
+		"position": global_position,
+	})
+	_obs_gauge(&"player_health", 0.0)
 	var heatmap := get_node_or_null("/root/SectorHeatmap")
 	if heatmap != null:
 		heatmap.call("add", global_position, "player_death", 1.0)

@@ -12,7 +12,7 @@
 
   "sprite": {
     "body": "res://content/sprites/operator/guns/runtime/carbine_2h_stance.png",
-    "muzzle_flash": null,
+    "muzzle_flash": "res://game/actors/effects/muzzle_flash.tscn",
     "icon": null,
     "frame_size": {"x": 32, "y": 64}
   },
@@ -96,6 +96,10 @@
 
   "projectile": {
     "scene": "res://game/actors/projectiles/bullet.tscn",
+    "visual_sprite_frames": "res://assets/resources/vfx/weapons/carbine_mk1/carbine_mk1_projectile_travel_loop_01_frames.tres",
+    "visual_animation": "travel",
+    "visual_scale": {"x": 1.0, "y": 1.0},
+    "impact_scene": "res://game/vfx/weapons/carbine_mk1/carbine_mk1_impact_hard_vfx.tscn",
     "speed_px": 950,
     "lifetime_sec": 1.2,
     "gravity": 0.0,
@@ -116,7 +120,7 @@
     "muzzle_flash": "standard",
     "shell_eject": true,
     "shell_eject_offset_px": {"x": -8, "y": 2},
-    "tracer": false,
+    "tracer": true,
     "impact_spark": true
   },
 

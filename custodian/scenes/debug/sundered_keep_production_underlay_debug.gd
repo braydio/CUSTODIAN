@@ -135,6 +135,46 @@ const UNDERLAY_BOUNDARY_SEGMENTS := [
 	[Vector2(1920.1, 2990.8), Vector2(1868.8, 2938.1)],
 ]
 
+const UNDERLAY_AUTHORING_MARKERS := {
+	"spawn": {
+		"label": "SPAWN",
+		"kind": "spawn",
+		"position": Vector2(1808.0, 2448.0),
+	},
+	"return_causeway": {
+		"label": "RETURN CAUSEWAY",
+		"kind": "return_causeway",
+		"position": Vector2(1792.0, 2320.0),
+	},
+	"gatehouse_key": {
+		"label": "GATEHOUSE KEY",
+		"kind": "key",
+		"position": Vector2(2336.0, 1792.0),
+	},
+	"main_gate": {
+		"label": "RAISING GATE",
+		"kind": "gate",
+		"position": Vector2(1792.0, 1600.0),
+	},
+	"level_exit": {
+		"label": "LEVEL EXIT",
+		"kind": "level_exit",
+		"position": Vector2(1792.0, 928.0),
+	},
+	"enemy_spawn_west": {
+		"label": "ENEMY SPAWN W",
+		"kind": "enemy_spawn",
+		"position": Vector2(1440.0, 1696.0),
+		"lane": "sundered_keep_west",
+	},
+	"enemy_spawn_gate": {
+		"label": "ENEMY SPAWN GATE",
+		"kind": "enemy_spawn",
+		"position": Vector2(2176.0, 1696.0),
+		"lane": "sundered_keep_gate",
+	},
+}
+
 var _camera_bounds := Rect2(Vector2.ZERO, Vector2(MAP_SIZE_TILES) * TILE_SIZE)
 
 @onready var _operator: Node2D = $World/Operator
@@ -143,6 +183,7 @@ var _camera_bounds := Rect2(Vector2.ZERO, Vector2(MAP_SIZE_TILES) * TILE_SIZE)
 
 func _ready() -> void:
 	_build_underlay_boundary_collision()
+	_build_underlay_authoring_markers()
 
 	if _operator != null:
 		_operator.global_position = minimap_tile_to_global(SPAWN_TILE)
@@ -192,7 +233,22 @@ func get_underlay_debug_state() -> Dictionary:
 		"operator_position": _operator.global_position if _operator != null else Vector2.ZERO,
 		"tiles_enabled": false,
 		"underlay_boundary_segments": UNDERLAY_BOUNDARY_SEGMENTS.size(),
+		"authoring_markers": get_underlay_authoring_marker_state(),
 	}
+
+
+func get_underlay_authoring_marker_state() -> Dictionary:
+	var result := {}
+	for marker_id: String in UNDERLAY_AUTHORING_MARKERS.keys():
+		var marker_data := UNDERLAY_AUTHORING_MARKERS[marker_id] as Dictionary
+		var position := marker_data.get("position", Vector2.ZERO) as Vector2
+		result[marker_id] = {
+			"kind": str(marker_data.get("kind", marker_id)),
+			"label": str(marker_data.get("label", marker_id)),
+			"position": position,
+			"tile": global_to_minimap_tile(position),
+		}
+	return result
 
 
 func _build_underlay_boundary_collision() -> void:
@@ -225,6 +281,67 @@ func _build_underlay_boundary_collision() -> void:
 			segment[1] as Vector2
 		)
 		index += 1
+
+
+func _build_underlay_authoring_markers() -> void:
+	var world := get_node_or_null("World") as Node2D
+	if world == null:
+		return
+	var root := world.get_node_or_null("UnderlayAuthoringMarkers") as Node2D
+	if root == null:
+		root = Node2D.new()
+		root.name = "UnderlayAuthoringMarkers"
+		world.add_child(root)
+	_clear_children(root)
+	root.z_as_relative = false
+	root.z_index = 200
+	for marker_id: String in UNDERLAY_AUTHORING_MARKERS.keys():
+		var marker_data := UNDERLAY_AUTHORING_MARKERS[marker_id] as Dictionary
+		var marker := Marker2D.new()
+		marker.name = marker_id.to_pascal_case()
+		marker.position = marker_data.get("position", Vector2.ZERO) as Vector2
+		marker.set_meta("marker_id", marker_id)
+		marker.set_meta("marker_kind", str(marker_data.get("kind", marker_id)))
+		root.add_child(marker)
+		_add_underlay_marker_visual(marker, str(marker_data.get("label", marker_id.to_upper())), _underlay_marker_color(str(marker_data.get("kind", marker_id))))
+
+
+func _add_underlay_marker_visual(parent: Node2D, label: String, color: Color) -> void:
+	var swatch := Polygon2D.new()
+	swatch.name = "MarkerSwatch"
+	swatch.polygon = PackedVector2Array([
+		Vector2(0.0, -14.0),
+		Vector2(14.0, 0.0),
+		Vector2(0.0, 14.0),
+		Vector2(-14.0, 0.0),
+	])
+	swatch.color = color
+	parent.add_child(swatch)
+	var text := Label.new()
+	text.name = "MarkerLabel"
+	text.text = label
+	text.position = Vector2(18.0, -18.0)
+	text.add_theme_font_size_override("font_size", 12)
+	text.add_theme_color_override("font_color", Color(1.0, 0.96, 0.78, 0.96))
+	parent.add_child(text)
+
+
+func _underlay_marker_color(kind: String) -> Color:
+	match kind:
+		"spawn":
+			return Color(0.42, 0.85, 1.0, 0.85)
+		"return_causeway":
+			return Color(0.56, 0.72, 1.0, 0.85)
+		"key":
+			return Color(1.0, 0.82, 0.30, 0.90)
+		"gate":
+			return Color(1.0, 0.42, 0.24, 0.90)
+		"level_exit":
+			return Color(0.46, 1.0, 0.58, 0.90)
+		"enemy_spawn":
+			return Color(1.0, 0.20, 0.24, 0.90)
+		_:
+			return Color(0.92, 0.92, 0.92, 0.85)
 
 
 func _add_underlay_boundary_segment(parent: StaticBody2D, node_name: String, a: Vector2, b: Vector2) -> CollisionShape2D:

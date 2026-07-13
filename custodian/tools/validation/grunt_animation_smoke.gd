@@ -13,6 +13,10 @@ const REQUIRED_BODY_ANIMATIONS := {
 	"stagger_s": 8,
 	"stagger_e": 8,
 	"stagger_w": 8,
+	"special_inflight_e": 6,
+	"special_inflight_w": 6,
+	"special_recovery_e": 11,
+	"special_recovery_w": 11,
 	"crit_s": 8,
 	"crit_recovery_s": 5,
 	"death_s": 12,
@@ -70,6 +74,14 @@ func _run() -> void:
 		return
 	if GRUNT_ANIMATION_LIBRARY.get_stagger_animation(Vector2.DOWN) != &"stagger_s":
 		push_error("Grunt vertical stagger did not resolve to stagger_s.")
+		quit(1)
+		return
+	if GRUNT_ANIMATION_LIBRARY.get_grunt_falcon_punch_phase_animation(&"leap", Vector2.RIGHT) != &"special_inflight_e":
+		push_error("Grunt right falcon-punch leap did not resolve to special_inflight_e.")
+		quit(1)
+		return
+	if GRUNT_ANIMATION_LIBRARY.get_grunt_falcon_punch_phase_animation(&"recovery", Vector2.LEFT) != &"special_recovery_w":
+		push_error("Grunt left falcon-punch recovery did not resolve to special_recovery_w.")
 		quit(1)
 		return
 	if GRUNT_ANIMATION_LIBRARY.get_attack_fx_animation(Vector2.LEFT) != &"melee_fx_w":

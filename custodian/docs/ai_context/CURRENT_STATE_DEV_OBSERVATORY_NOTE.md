@@ -6,7 +6,7 @@ Add this note into `custodian/docs/ai_context/CURRENT_STATE.md` when the feature
 
 A developer-only Observatory autoload now exists at:
 
-- `res://scripts/debug/dev_observatory.gd`
+- `res://game/systems/debug/dev_observatory.gd`
 
 It creates a lightweight F9 overlay from:
 

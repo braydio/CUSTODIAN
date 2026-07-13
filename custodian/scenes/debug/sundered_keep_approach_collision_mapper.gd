@@ -3,6 +3,33 @@ extends Node2D
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
 const APPROACH_SCRIPT_PATH := "res://game/world/approaches/sundered_keep/sundered_keep_approach.gd"
 const ROUTE_VERTICAL_OFFSET := 180.0
+const MARKER_KINDS := [
+	"spawn",
+	"return_causeway",
+	"gatehouse_key",
+	"main_gate",
+	"level_exit",
+	"enemy_spawn_west",
+	"enemy_spawn_gate",
+]
+const MARKER_KIND_LABELS := {
+	"spawn": "SPAWN",
+	"return_causeway": "RETURN CAUSEWAY",
+	"gatehouse_key": "GATEHOUSE KEY",
+	"main_gate": "RAISING GATE",
+	"level_exit": "LEVEL EXIT",
+	"enemy_spawn_west": "ENEMY SPAWN W",
+	"enemy_spawn_gate": "ENEMY SPAWN GATE",
+}
+const MARKER_KIND_TYPES := {
+	"spawn": "spawn",
+	"return_causeway": "return_causeway",
+	"gatehouse_key": "key",
+	"main_gate": "gate",
+	"level_exit": "level_exit",
+	"enemy_spawn_west": "enemy_spawn",
+	"enemy_spawn_gate": "enemy_spawn",
+}
 
 @export var zoom_step := 1.15
 @export var pan_step := 96.0
@@ -18,6 +45,9 @@ var _mouse_world := Vector2.ZERO
 var _show_existing := true
 var _show_draft := true
 var _show_help := true
+var _marker_mode := false
+var _selected_marker_index := 0
+var _draft_markers: Dictionary = {}
 
 
 func _ready() -> void:
@@ -43,9 +73,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		var mouse := event as InputEventMouseButton
 		if mouse.pressed:
 			if mouse.button_index == MOUSE_BUTTON_LEFT:
-				_add_point(_camera.get_global_mouse_position())
+				if _marker_mode:
+					_set_marker_point(_camera.get_global_mouse_position())
+				else:
+					_add_point(_camera.get_global_mouse_position())
 			elif mouse.button_index == MOUSE_BUTTON_RIGHT:
-				_remove_last_point()
+				if _marker_mode:
+					_remove_selected_marker_point()
+				else:
+					_remove_last_point()
 			elif mouse.button_index == MOUSE_BUTTON_WHEEL_UP:
 				_zoom(zoom_step)
 			elif mouse.button_index == MOUSE_BUTTON_WHEEL_DOWN:
@@ -85,9 +121,15 @@ func _handle_keyboard_pan() -> void:
 func _handle_key(event: InputEventKey) -> void:
 	match event.keycode:
 		KEY_C:
-			_copy_segments_to_clipboard()
+			if _marker_mode:
+				_copy_markers_to_clipboard()
+			else:
+				_copy_segments_to_clipboard()
 		KEY_ENTER, KEY_KP_ENTER, KEY_U:
-			_apply_draft_segments_to_runtime_collision_map()
+			if _marker_mode:
+				_apply_draft_markers_to_runtime_marker_map()
+			else:
+				_apply_draft_segments_to_runtime_collision_map()
 		KEY_E:
 			_show_existing = not _show_existing
 			_overlay.queue_redraw()
@@ -97,7 +139,19 @@ func _handle_key(event: InputEventKey) -> void:
 		KEY_L:
 			_focus_late_traverse()
 		KEY_R:
-			_draft_points.clear()
+			if _marker_mode:
+				_draft_markers.clear()
+			else:
+				_draft_points.clear()
+			_overlay.queue_redraw()
+			_update_help()
+		KEY_M:
+			_marker_mode = not _marker_mode
+			_overlay.queue_redraw()
+			_update_help()
+		KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7:
+			_selected_marker_index = clampi(event.keycode - KEY_1, 0, MARKER_KINDS.size() - 1)
+			_marker_mode = true
 			_overlay.queue_redraw()
 			_update_help()
 		KEY_V:
@@ -128,6 +182,23 @@ func _remove_last_point() -> void:
 	_update_help()
 
 
+func _set_marker_point(point: Vector2) -> void:
+	var marker_id := _selected_marker_id()
+	_draft_markers[marker_id] = point
+	print("[SunderedKeepApproachCollisionMapper] marker %s runtime=%s source=%s" % [marker_id, _fmt_vec(point), _fmt_vec(_to_source_point(point))])
+	_overlay.queue_redraw()
+	_update_help()
+
+
+func _remove_selected_marker_point() -> void:
+	var marker_id := _selected_marker_id()
+	if not _draft_markers.has(marker_id):
+		return
+	_draft_markers.erase(marker_id)
+	_overlay.queue_redraw()
+	_update_help()
+
+
 func _zoom(factor: float) -> void:
 	var before := _camera.get_global_mouse_position()
 	_camera.zoom = (_camera.zoom * factor).clamp(Vector2(0.12, 0.12), Vector2(2.5, 2.5))
@@ -151,6 +222,14 @@ func _copy_segments_to_clipboard() -> void:
 	if text.is_empty():
 		return
 	print(text)
+
+
+func _copy_markers_to_clipboard() -> void:
+	var text := _format_authoring_markers_const()
+	DisplayServer.clipboard_set(text)
+	print("[SunderedKeepApproachCollisionMapper] Copied %d marker override(s) to clipboard" % _draft_markers.size())
+	if not text.is_empty():
+		print(text)
 
 
 func _apply_draft_segments_to_runtime_collision_map() -> bool:
@@ -191,6 +270,43 @@ func _apply_draft_segments_to_runtime_collision_map() -> bool:
 	return true
 
 
+func _apply_draft_markers_to_runtime_marker_map() -> bool:
+	if _draft_markers.is_empty():
+		push_warning("[SunderedKeepApproachCollisionMapper] No draft markers to apply")
+		return false
+
+	var script_path := ProjectSettings.globalize_path(APPROACH_SCRIPT_PATH)
+	if script_path.is_empty():
+		push_warning("[SunderedKeepApproachCollisionMapper] Could not resolve %s" % APPROACH_SCRIPT_PATH)
+		return false
+	if not FileAccess.file_exists(script_path):
+		push_warning("[SunderedKeepApproachCollisionMapper] Missing approach script: %s" % script_path)
+		return false
+
+	var file := FileAccess.open(script_path, FileAccess.READ)
+	if file == null:
+		push_warning("[SunderedKeepApproachCollisionMapper] Could not read approach script: %s" % script_path)
+		return false
+	var text := file.get_as_text()
+	file.close()
+
+	var replaced := _replace_authoring_markers_block(text, _format_authoring_markers_const())
+	if replaced == text:
+		push_warning("[SunderedKeepApproachCollisionMapper] AUTHORING_MARKERS block was not replaced")
+		return false
+
+	file = FileAccess.open(script_path, FileAccess.WRITE)
+	if file == null:
+		push_warning("[SunderedKeepApproachCollisionMapper] Could not write approach script: %s" % script_path)
+		return false
+	file.store_string(replaced)
+	file.close()
+
+	print("[SunderedKeepApproachCollisionMapper] Applied %d marker override(s) to %s" % [_draft_markers.size(), APPROACH_SCRIPT_PATH])
+	_copy_markers_to_clipboard()
+	return true
+
+
 func _format_draft_segment_lines() -> Array[String]:
 	var lines: Array[String] = []
 	var index := 1
@@ -227,6 +343,45 @@ func _replace_boundary_segments_block(text: String, replacement: String) -> Stri
 	return text
 
 
+func _format_authoring_markers_const() -> String:
+	var lines: Array[String] = ["const AUTHORING_MARKERS := {"]
+	for marker_id: String in MARKER_KINDS:
+		var point := _marker_runtime_point(marker_id)
+		var source_point := _to_source_point(point)
+		lines.append("\t\"%s\": {" % marker_id)
+		lines.append("\t\t\"label\": \"%s\"," % str(MARKER_KIND_LABELS.get(marker_id, marker_id.to_upper())))
+		lines.append("\t\t\"kind\": \"%s\"," % str(MARKER_KIND_TYPES.get(marker_id, marker_id)))
+		lines.append("\t\t\"position\": %s," % _fmt_vec(source_point))
+		if marker_id.begins_with("enemy_spawn"):
+			lines.append("\t\t\"lane\": \"sundered_keep_%s\"," % marker_id.trim_prefix("enemy_spawn_"))
+		lines.append("\t},")
+	lines.append("}")
+	return "\n".join(lines)
+
+
+func _replace_authoring_markers_block(text: String, replacement: String) -> String:
+	const MARKER := "const AUTHORING_MARKERS := {"
+	var marker_start := text.find(MARKER)
+	if marker_start < 0:
+		return text
+	var brace_start := text.find("{", marker_start)
+	if brace_start < 0:
+		return text
+
+	var depth := 0
+	var index := brace_start
+	while index < text.length():
+		var character := text[index]
+		if character == "{":
+			depth += 1
+		elif character == "}":
+			depth -= 1
+			if depth == 0:
+				return text.substr(0, marker_start) + replacement + text.substr(index + 1)
+		index += 1
+	return text
+
+
 func _print_point(point: Vector2) -> void:
 	print("[SunderedKeepApproachCollisionMapper] runtime=%s unshifted=%s" % [_fmt_vec(point), _fmt_vec(_to_source_point(point))])
 
@@ -243,17 +398,37 @@ func _to_source_point(runtime_point: Vector2) -> Vector2:
 	return runtime_point - Vector2(0.0, ROUTE_VERTICAL_OFFSET)
 
 
+func _selected_marker_id() -> String:
+	return MARKER_KINDS[clampi(_selected_marker_index, 0, MARKER_KINDS.size() - 1)]
+
+
+func _marker_runtime_point(marker_id: String) -> Vector2:
+	if _draft_markers.has(marker_id):
+		return _draft_markers[marker_id] as Vector2
+	if _approach != null and _approach.has_method("get_authoring_marker_state"):
+		var state := _approach.call("get_authoring_marker_state") as Dictionary
+		var marker_state: Variant = state.get(marker_id, {})
+		if marker_state is Dictionary:
+			var runtime_position: Variant = (marker_state as Dictionary).get("runtime_position", Vector2.ZERO)
+			if runtime_position is Vector2:
+				return runtime_position
+	return Vector2.ZERO
+
+
 func _update_help() -> void:
 	if _hud == null:
 		return
 	var source := _to_source_point(_mouse_world)
 	var complete_segments := maxi(0, _draft_points.size() - 1)
+	var selected_marker := _selected_marker_id()
 	_hud.text = "\n".join([
 		"Sundered Keep Approach Collision Mapper",
-		"Left click: add point   Right click: undo   C: copy connected polyline segments   Enter/U: apply to runtime collision map",
-		"WASD/arrows: pan   Wheel/+/-: zoom   L: final traverse   E: existing rails   V: draft   R: reset   H: help",
+		"Mode: %s   M: toggle collision/marker   1-7: marker type   Selected marker: %s" % ["MARKER" if _marker_mode else "COLLISION", selected_marker],
+		"Collision mode: Left click add rail point   Right click undo   C copy rails   Enter/U apply rails",
+		"Marker mode: Left click place selected marker   Right click clear selected marker   C copy markers   Enter/U apply markers",
+		"WASD/arrows: pan   Wheel/+/-: zoom   L: final traverse   E: existing rails   V: draft   R: reset current mode   H: help",
 		"Mouse runtime: %s   BOUNDARY_SEGMENTS source: %s" % [_fmt_vec(_mouse_world), _fmt_vec(source)],
-		"Draft points: %d   Complete segments: %d" % [_draft_points.size(), complete_segments],
+		"Draft points: %d   Complete segments: %d   Draft markers: %d" % [_draft_points.size(), complete_segments, _draft_markers.size()],
 	])
 
 
@@ -261,6 +436,10 @@ func get_collision_mapper_state() -> Dictionary:
 	return {
 		"approach": _approach,
 		"draft_points": _draft_points,
+		"draft_markers": _draft_markers,
+		"marker_kinds": MARKER_KINDS,
+		"marker_mode": _marker_mode,
+		"selected_marker": _selected_marker_id(),
 		"mouse_world": _mouse_world,
 		"show_existing": _show_existing,
 		"show_draft": _show_draft,

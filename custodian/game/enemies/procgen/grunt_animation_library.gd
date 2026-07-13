@@ -58,6 +58,26 @@ const ANIMATION_SPECS := {
 		"fps": 10.0,
 		"loop": false,
 	},
+	"special_inflight_e": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_inflight_01__e__6f__96.png",
+		"fps": 18.0,
+		"loop": false,
+	},
+	"special_inflight_w": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_inflight_01__w__6f__96.png",
+		"fps": 18.0,
+		"loop": false,
+	},
+	"special_recovery_e": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__e__11f__96.png",
+		"fps": 18.0,
+		"loop": false,
+	},
+	"special_recovery_w": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__w__11f__96.png",
+		"fps": 18.0,
+		"loop": false,
+	},
 	"crit_s": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__crit_01__s__8f__96.png",
 		"fps": 10.0,
@@ -239,6 +259,17 @@ static func get_marine_dash_phase_animation(phase: StringName, _direction: Vecto
 		&"recovery":
 			return &"marine_dash_recovery_e"
 	return &"marine_dash_inflight_e"
+
+
+static func get_grunt_falcon_punch_phase_animation(phase: StringName, direction: Vector2 = Vector2.RIGHT) -> StringName:
+	match phase:
+		&"windup":
+			return get_move_animation(direction)
+		&"leap", &"impact_lock":
+			return &"special_inflight_w" if direction.x < -0.05 else &"special_inflight_e"
+		&"recovery":
+			return &"special_recovery_w" if direction.x < -0.05 else &"special_recovery_e"
+	return &"special_inflight_w" if direction.x < -0.05 else &"special_inflight_e"
 
 
 static func get_marine_dash_attack_fx_animation(_direction: Vector2) -> StringName:

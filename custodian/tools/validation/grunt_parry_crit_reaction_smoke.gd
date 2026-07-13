@@ -80,8 +80,11 @@ func _run() -> void:
 	_assert_true(bool(grunt.call("can_receive_parry_critical_from", operator)), "enemy should validate parry criticals while the critical-open window is active")
 	operator.call("_start_critical_attack", grunt)
 	var operator_sprite := operator.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	var operator_critical_fx_sprite := operator.get_node_or_null("ModularUpperFxSprite") as AnimatedSprite2D
 	_assert_true(operator_sprite != null and String(operator_sprite.animation) == "operator_critical_1h_right", "critical branch should play the repurposed 8-frame fast critical body animation")
 	_assert_true(operator_sprite != null and operator_sprite.sprite_frames.get_frame_count("operator_critical_1h_right") == 8, "critical body animation should expose 8 frames")
+	_assert_true(operator_critical_fx_sprite != null and operator_critical_fx_sprite.visible and String(operator_critical_fx_sprite.animation) == "operator_critical_hitspark_right", "critical branch should play the authored operator hitspark FX")
+	_assert_true(operator_critical_fx_sprite != null and operator_critical_fx_sprite.sprite_frames.get_frame_count("operator_critical_hitspark_right") == 8, "critical hitspark FX should expose 8 frames")
 
 	var critical_result: Dictionary = grunt.call("receive_parry_critical", operator, 12.0, {})
 	await process_frame
