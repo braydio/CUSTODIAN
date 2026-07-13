@@ -51,6 +51,7 @@ const TERMINAL_COMMAND_ENTRY_Z := 10
 const TERMINAL_BACKDROP_COLOR := Color(0.015, 0.025, 0.03, 0.78)
 const TERMINAL_DENSE_PANEL_MODULATE := Color(1.0, 1.0, 1.0, 0.82)
 const DEBUG_TERMINAL_STYLEBOXES := false
+const DEBUG_TERMINAL_INPUT_LAYOUT := true
 
 const DEFAULT_TERMINAL_SERVICE_URL := "http://127.0.0.1:7331"
 const TERMINAL_LOCAL_LINK := "LOCAL://GAME_STATE"
@@ -1559,6 +1560,8 @@ func open_command_terminal(service_url: String = ""):
 		_append_terminal_line("LOCAL SNAPSHOT MODE ACTIVE", "info")
 	_set_terminal_input_enabled(true)
 	_update_terminal_hint_visibility()
+	call_deferred("_ensure_terminal_input_visible_and_focused")
+	_debug_terminal_input_layout("open_command_terminal")
 	_refresh_snapshot()
 	if terminal_poll_timer:
 		terminal_poll_timer.start()
@@ -1713,11 +1716,54 @@ func _set_terminal_input_enabled(enabled: bool):
 		return
 	terminal_input.editable = enabled
 	terminal_input.placeholder_text = "ENTER COMMAND" if enabled else "TERMINAL INPUT LOCKED"
+	terminal_input.visible = true
+	terminal_input.focus_mode = Control.FOCUS_ALL
 	_update_terminal_hint_visibility()
 	if enabled and _terminal_open:
 		if terminal_input:
 			terminal_input.grab_focus()
 			_update_terminal_hint_visibility()
+
+
+func _ensure_terminal_input_visible_and_focused() -> void:
+	var input_row := get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow")
+	if input_row is Control:
+		var row_control := input_row as Control
+		row_control.visible = true
+		row_control.custom_minimum_size.y = max(row_control.custom_minimum_size.y, 48.0)
+		row_control.size_flags_vertical = Control.SIZE_SHRINK_END
+	var prompt_label := get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow/Prompt")
+	if prompt_label is Control:
+		var prompt_control := prompt_label as Control
+		prompt_control.custom_minimum_size.y = max(prompt_control.custom_minimum_size.y, 42.0)
+		prompt_control.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if terminal_activity_scroll is ScrollContainer:
+		var activity_scroll := terminal_activity_scroll as ScrollContainer
+		activity_scroll.custom_minimum_size.y = 0.0
+		activity_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	if terminal_output is RichTextLabel:
+		var output := terminal_output as RichTextLabel
+		output.custom_minimum_size = Vector2(0.0, 0.0)
+		output.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		output.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		output.fit_content = false
+		output.scroll_active = false
+	if terminal_input == null:
+		push_warning("[TerminalInput] Missing TerminalInput node.")
+		_debug_terminal_input_layout("ensure_missing_input")
+		return
+	terminal_input.visible = true
+	terminal_input.custom_minimum_size.x = max(terminal_input.custom_minimum_size.x, 220.0)
+	terminal_input.custom_minimum_size.y = max(terminal_input.custom_minimum_size.y, 44.0)
+	terminal_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	terminal_input.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	terminal_input.editable = _terminal_open and _terminal_ready
+	terminal_input.focus_mode = Control.FOCUS_ALL
+	if _terminal_open and _terminal_ready:
+		terminal_input.grab_focus()
+		if terminal_status_label:
+			terminal_status_label.text = "COMMAND INPUT FOCUSED"
+	_debug_terminal_input_layout("ensure_terminal_input_visible_and_focused")
 
 
 func _ensure_terminal_input_focus():
@@ -1738,12 +1784,36 @@ func _ensure_terminal_input_focus():
 		_update_terminal_hint_visibility()
 
 func _on_terminal_input_focus_changed() -> void:
+	if terminal_input != null and terminal_input.has_focus() and terminal_status_label != null:
+		terminal_status_label.text = "COMMAND INPUT FOCUSED"
 	_update_terminal_hint_visibility()
+	_debug_terminal_input_layout("terminal_input_focus_changed")
 
 func _update_terminal_hint_visibility() -> void:
 	if terminal_hint_label == null:
 		return
+	if _terminal_current_page == "FABRICATION":
+		terminal_hint_label.visible = false
+		_debug_terminal_input_layout("update_terminal_hint_visibility")
+		return
 	terminal_hint_label.visible = _terminal_open and terminal_input != null and terminal_input.has_focus()
+	_debug_terminal_input_layout("update_terminal_hint_visibility")
+
+
+func _debug_terminal_input_layout(reason: String) -> void:
+	if not DEBUG_TERMINAL_INPUT_LAYOUT:
+		return
+	var viewport := get_viewport()
+	var focus_owner := viewport.gui_get_focus_owner() if viewport != null else null
+	var input_row := get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow")
+	print("[TerminalInputDebug] ", reason)
+	print("  terminal_open=", _terminal_open, " ready=", _terminal_ready, " page=", _terminal_current_page)
+	print("  focus_owner=", focus_owner.name if focus_owner != null else "none")
+	if input_row is Control:
+		var row_control := input_row as Control
+		print("  InputRow rect=", row_control.get_global_rect(), " visible=", row_control.visible, " min=", row_control.custom_minimum_size)
+	if terminal_input is Control:
+		print("  TerminalInput rect=", terminal_input.get_global_rect(), " visible=", terminal_input.visible, " editable=", terminal_input.editable, " min=", terminal_input.custom_minimum_size, " text='", terminal_input.text, "'")
 
 func _focus_terminal_button_group(buttons: Array, forward: bool) -> void:
 	var indexes: Array[int] = []
@@ -1939,8 +2009,17 @@ func _configure_terminal_scroll_policy() -> void:
 		_terminal_main_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	if terminal_activity_scroll is ScrollContainer:
 		var activity_scroll := terminal_activity_scroll as ScrollContainer
+		activity_scroll.custom_minimum_size.y = 0.0
+		activity_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		activity_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 		activity_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	if terminal_output is RichTextLabel:
+		var output := terminal_output as RichTextLabel
+		output.custom_minimum_size = Vector2(0.0, 0.0)
+		output.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		output.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		output.fit_content = false
+		output.scroll_active = false
 	if terminal_widget_stack == null:
 		return
 	for scroll in terminal_widget_stack.find_children("*", "ScrollContainer", true, false):
@@ -2236,7 +2315,7 @@ func _apply_terminal_theme():
 		output.add_theme_font_size_override("font_size", 13 if output == terminal_map_label else 11)
 		if output is RichTextLabel:
 			output.fit_content = false
-			output.scroll_active = true
+			output.scroll_active = output != terminal_output
 			output.bbcode_enabled = true
 	if terminal_widget_stack:
 		var widget_panel_style := _make_terminal_panel_style(8.0)
@@ -2258,12 +2337,24 @@ func _apply_terminal_theme():
 		_apply_terminal_widget_button_styles(action_button_style, action_button_hover_style, action_button_pressed_style, action_button_disabled_style)
 	if terminal_output:
 		terminal_output.scroll_following = true
+		terminal_output.custom_minimum_size = Vector2(0.0, 0.0)
+		terminal_output.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		terminal_output.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		terminal_output.fit_content = false
+		terminal_output.scroll_active = false
 	if terminal_activity_scroll:
+		terminal_activity_scroll.custom_minimum_size.y = 0.0
+		terminal_activity_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		terminal_activity_scroll.add_theme_stylebox_override("panel", output_style)
 		terminal_activity_scroll.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
 
 	if terminal_input:
-		terminal_input.custom_minimum_size.y = max(terminal_input.custom_minimum_size.y, 48.0)
+		terminal_input.visible = true
+		terminal_input.focus_mode = Control.FOCUS_ALL
+		terminal_input.custom_minimum_size.x = max(terminal_input.custom_minimum_size.x, 220.0)
+		terminal_input.custom_minimum_size.y = max(terminal_input.custom_minimum_size.y, 44.0)
+		terminal_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		terminal_input.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		terminal_input.add_theme_stylebox_override("normal", input_style)
 		terminal_input.add_theme_stylebox_override("focus", input_style)
 		terminal_input.add_theme_color_override("font_color", Color(0.96, 1.0, 0.98, 1.0))
@@ -2274,8 +2365,18 @@ func _apply_terminal_theme():
 		terminal_input.add_theme_constant_override("minimum_character_width", 1)
 		terminal_input.add_theme_font_size_override("font_size", 18)
 		terminal_input.self_modulate = Color(1, 1, 1, 1)
+	var input_row = get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow")
+	if input_row is Control:
+		var input_row_control := input_row as Control
+		input_row_control.visible = true
+		input_row_control.custom_minimum_size.y = max(input_row_control.custom_minimum_size.y, 48.0)
+		input_row_control.size_flags_vertical = Control.SIZE_SHRINK_END
 	var prompt_label = get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow/Prompt")
 	if prompt_label:
+		if prompt_label is Control:
+			var prompt_control := prompt_label as Control
+			prompt_control.custom_minimum_size.y = max(prompt_control.custom_minimum_size.y, 42.0)
+			prompt_control.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		prompt_label.add_theme_color_override("font_color", Color(0.78, 0.96, 0.86, 1.0))
 		prompt_label.add_theme_font_size_override("font_size", 18)
 	if terminal_status_label:
@@ -2847,6 +2948,9 @@ func _set_terminal_page(page_name: String) -> void:
 	_apply_terminal_page_theme()
 	if _terminal_open:
 		_refresh_snapshot()
+	if _terminal_open or terminal_input != null:
+		call_deferred("_ensure_terminal_input_visible_and_focused")
+	_debug_terminal_input_layout("_set_terminal_page")
 
 
 func _apply_terminal_page_theme() -> void:
@@ -2872,7 +2976,12 @@ func _apply_terminal_page_theme() -> void:
 		terminal_hint_label.text = "Click a work order. Esc closes." if fabrication_mode else "Type directly into the command line. Drag globe to inspect. Left click in the world to place while building. Esc closes."
 	if terminal_input:
 		var input_style := _make_terminal_input_style()
-		terminal_input.custom_minimum_size.y = max(terminal_input.custom_minimum_size.y, 48.0)
+		terminal_input.visible = true
+		terminal_input.focus_mode = Control.FOCUS_ALL
+		terminal_input.custom_minimum_size.x = max(terminal_input.custom_minimum_size.x, 220.0)
+		terminal_input.custom_minimum_size.y = max(terminal_input.custom_minimum_size.y, 44.0)
+		terminal_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		terminal_input.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		terminal_input.add_theme_stylebox_override("normal", input_style)
 		terminal_input.add_theme_stylebox_override("focus", input_style)
 		terminal_input.add_theme_color_override("font_color", Color(1.0, 0.96, 0.88, 1.0) if fabrication_mode else Color(0.96, 1.0, 0.98, 1.0))
@@ -2883,6 +2992,8 @@ func _apply_terminal_page_theme() -> void:
 		terminal_input.add_theme_constant_override("minimum_character_width", 1)
 		terminal_input.add_theme_font_size_override("font_size", 18)
 		terminal_input.self_modulate = Color(1, 1, 1, 1)
+	_update_terminal_hint_visibility()
+	_debug_terminal_input_layout("_apply_terminal_page_theme")
 	for output in [terminal_output, terminal_map_label]:
 		if output == null:
 			continue

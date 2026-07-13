@@ -1875,7 +1875,7 @@ text = "NO DATA"
 fit_content = true
 
 [node name="CommandColumn" type="VBoxContainer" parent="UI/TerminalPanel/Body" unique_id=1757164212]
-custom_minimum_size = Vector2(270, 0)
+custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -1884,33 +1884,44 @@ layout_mode = 2
 text = "TRANSCRIPT"
 
 [node name="ActivityScroll" type="ScrollContainer" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1905084263]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
 
 [node name="TerminalOutput" type="RichTextLabel" parent="UI/TerminalPanel/Body/CommandColumn/ActivityScroll" unique_id=668276365]
-custom_minimum_size = Vector2(280, 456)
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 focus_mode = 2
 bbcode_enabled = true
-fit_content = true
+fit_content = false
 scroll_active = false
 selection_enabled = true
 
 [node name="InputRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1322626681]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 8
 theme_override_constants/separation = 6
 
 [node name="Prompt" type="Label" parent="UI/TerminalPanel/Body/CommandColumn/InputRow" unique_id=86849026]
+custom_minimum_size = Vector2(18, 42)
 layout_mode = 2
+size_flags_vertical = 4
 text = ">"
 
 [node name="TerminalInput" type="LineEdit" parent="UI/TerminalPanel/Body/CommandColumn/InputRow" unique_id=140366070]
-custom_minimum_size = Vector2(0, 42)
+visible = true
+custom_minimum_size = Vector2(220, 44)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
+focus_mode = 2
 placeholder_text = "ENTER COMMAND"
 
 [node name="Status" type="Label" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1839776512]

@@ -1,8 +1,8 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://cvtirf2pohxjb"]
+[gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" uid="uid://j40s5wk0kwn1" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__nw__6f__96.png" id="2_7an8j"]
-[ext_resource type="Texture2D" uid="uid://dhymj6l4wk1r5" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__n__3f__96.png" id="2_cape_run"]
-[ext_resource type="Texture2D" uid="uid://b4wa8f8yk06bu" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__ne__6f__96.png" id="3_cqmhe"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__nw__6f__96.png" id="2_7an8j"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__n__3f__96.png" id="2_cape_run"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__ne__6f__96.png" id="3_cqmhe"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cape_run_0"]
 atlas = ExtResource("2_cape_run")
@@ -16,63 +16,63 @@ region = Rect2(96, 0, 96, 96)
 atlas = ExtResource("2_cape_run")
 region = Rect2(192, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_m0vpe"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_7an8j"]
 atlas = ExtResource("2_cape_run")
 region = Rect2(0, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ba8i6"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_cqmhe"]
 atlas = ExtResource("2_cape_run")
 region = Rect2(96, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_dt820"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_m0vpe"]
 atlas = ExtResource("2_cape_run")
 region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ba8i6"]
+atlas = ExtResource("2_7an8j")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dt820"]
+atlas = ExtResource("2_7an8j")
+region = Rect2(96, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kwah2"]
 atlas = ExtResource("2_7an8j")
-region = Rect2(0, 0, 96, 96)
+region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6tkih"]
 atlas = ExtResource("2_7an8j")
-region = Rect2(96, 0, 96, 96)
+region = Rect2(288, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xqhed"]
 atlas = ExtResource("2_7an8j")
-region = Rect2(192, 0, 96, 96)
+region = Rect2(384, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jx8ro"]
 atlas = ExtResource("2_7an8j")
-region = Rect2(288, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nc3xr"]
-atlas = ExtResource("2_7an8j")
-region = Rect2(384, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ej83w"]
-atlas = ExtResource("2_7an8j")
 region = Rect2(480, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_aprhm"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_nc3xr"]
 atlas = ExtResource("3_cqmhe")
 region = Rect2(0, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ryjjw"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ej83w"]
 atlas = ExtResource("3_cqmhe")
 region = Rect2(96, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_drnu8"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_aprhm"]
 atlas = ExtResource("3_cqmhe")
 region = Rect2(192, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_vcs61"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ryjjw"]
 atlas = ExtResource("3_cqmhe")
 region = Rect2(288, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6hgh0"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_drnu8"]
 atlas = ExtResource("3_cqmhe")
 region = Rect2(384, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_qmo0y"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_vcs61"]
 atlas = ExtResource("3_cqmhe")
 region = Rect2(480, 0, 96, 96)
 
@@ -99,19 +99,25 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_7an8j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cqmhe")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_m0vpe")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ba8i6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_dt820")
 }],
 "loop": 1,
 "name": &"unarmed_run_cape_up",
 "speed": 12.0
 }, {
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ba8i6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dt820")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_kwah2")
 }, {
@@ -123,18 +129,18 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_jx8ro")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_nc3xr")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ej83w")
 }],
 "loop": 1,
 "name": &"unarmed_run_cape_up_left",
 "speed": 12.0
 }, {
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nc3xr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ej83w")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_aprhm")
 }, {
@@ -146,12 +152,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vcs61")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6hgh0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qmo0y")
 }],
 "loop": 1,
 "name": &"unarmed_run_cape_up_right",
