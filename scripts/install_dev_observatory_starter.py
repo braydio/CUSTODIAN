@@ -6,7 +6,7 @@ import sys
 
 REPO = Path.cwd()
 PROJECT = REPO / "custodian" / "project.godot"
-AUTOLOAD_LINE = 'DevObservatory="*res://scripts/debug/dev_observatory.gd"'
+AUTOLOAD_LINE = 'DevObservatory="*res://game/systems/debug/dev_observatory.gd"'
 
 def fail(msg: str) -> None:
     print(f"ERROR: {msg}", file=sys.stderr)
@@ -17,6 +17,9 @@ def inject_autoload() -> None:
         fail(f"Missing {PROJECT}")
 
     text = PROJECT.read_text(encoding="utf-8")
+
+    if 'DevObservatory="' in text and AUTOLOAD_LINE not in text:
+        fail("DevObservatory autoload already exists at a different path. Inspect custodian/project.godot before changing it.")
 
     if AUTOLOAD_LINE in text:
         print("DevObservatory autoload already present.")

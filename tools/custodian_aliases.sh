@@ -50,6 +50,22 @@ opingest() {
   "${CUSTODIAN_REPO}/tools/operator_ingest.sh" "$@"
 }
 
+# -- Match one sprite sheet's palette to a reference (CIE LAB nearest-color)
+#    Usage: matchpal <reference.png> <target.png> <output.png> [strength] [max_colors]
+matchpal() {
+  _update_usage "matchpal"
+  local ref="$1" target="$2" out="$3" strength="${4:-0.65}" max_colors="${5:-64}"
+  python3 "${CUSTODIAN_GODOT}/tools/pipelines/match_sprite_palette.py" \
+    --reference "$ref" --target "$target" --output "$out" \
+    --strength "$strength" --max-colors "$max_colors"
+}
+
+# -- Batch-match all fast_strike_01 palettes to their fast_windup_01 counterparts
+batchstrike() {
+  _update_usage "batchstrike"
+  python3 "${CUSTODIAN_GODOT}/tools/pipelines/batch_match_fast_strike_palette.py"
+}
+
 # -- List current assets in sprite pipeline inbox
 listbox() {
   _update_usage "listbox"
@@ -69,7 +85,7 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite opingest listbox opcolor promptmenu; do
+  for cmd in dryjson runjson runsprite opingest listbox matchpal batchstrike opcolor promptmenu; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
     printf "  %-12s %d\n" "${cmd}:" "${count}"
@@ -78,5 +94,5 @@ alias_usage() {
   echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, listbox, promptmenu"
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, listbox, matchpal, batchstrike, promptmenu"
 echo "  Type 'alias_usage' for usage counts."
