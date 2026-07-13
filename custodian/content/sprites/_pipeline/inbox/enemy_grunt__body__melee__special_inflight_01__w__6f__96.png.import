@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://uvabwn82f7uo"
-path="res://.godot/imported/enemy_grunt__body__melee__stagger_01__w__8f__96.png-9b8f6b7943a16959bfb3be54d0eb6c17.ctex"
+uid="uid://dndyi3gqxwd31"
+path="res://.godot/imported/enemy_grunt__body__melee__special_inflight_01__w__6f__96.png-1842ebe5b39a98d0917717e1c8a7b8ff.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/enemy_grunt__body__melee__stagger_01__w__8f__96.png"
-dest_files=["res://.godot/imported/enemy_grunt__body__melee__stagger_01__w__8f__96.png-9b8f6b7943a16959bfb3be54d0eb6c17.ctex"]
+source_file="res://content/sprites/_pipeline/inbox/enemy_grunt__body__melee__special_inflight_01__w__6f__96.png"
+dest_files=["res://.godot/imported/enemy_grunt__body__melee__special_inflight_01__w__6f__96.png-1842ebe5b39a98d0917717e1c8a7b8ff.ctex"]
 
 [params]
 
