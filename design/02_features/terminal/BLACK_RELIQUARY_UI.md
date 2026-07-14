@@ -1,7 +1,7 @@
 # Black Reliquary UI
 
 Status: complete  
-Last updated: 2026-06-21
+Last updated: 2026-07-13
 
 ## Summary
 
@@ -26,6 +26,7 @@ Black Reliquary is the current CUSTODIAN gothic/brass runtime UI style. It repla
 - Normal gameplay should not show giant world-space debug labels. Debug text may exist behind `set_debug_overlay_visible(...)` only for local authored HUDs or inside the dedicated debug screen.
 - Legacy command-terminal HUD diagnostics should live in the dedicated `res://game/ui/hud/debug_screen.tscn` surface opened by F12 or `debug_hud`; normal play should show only essentials such as health, stamina, prompts, status plaques, and tactical minimap.
 - Command-terminal typography uses the vendored IBM Plex two-font stack under `content/ui/fonts/`: condensed display text for titles/sections/navigation and mono text for logs, status, values, Fabrication rows, and input. Runtime loading must fall back safely if an asset is missing; bounded rows ellipsize and never introduce horizontal scrolling.
+- Fabrication uses flat, left-aligned work-order rows with distinct state/name/category/cost fields, a highlighted selection synchronized with selected detail, and an aligned cost/have/missing grid. Empty progress and ready-build regions collapse into one status strip; the page rail and work-order list own the only vertical scrolling, while page-level and horizontal scrolling remain disabled.
 - The minimap frame should embed the live shared minimap renderer with simplified tactical pips. Do not use raw level screenshots or static marker mockups for normal play.
 - Authored-map-specific quest, status, prompt, and minimap HUDs must be hidden outside their owning map. External suppression such as the terminal interface must preserve that map-context visibility instead of blindly restoring every gameplay overlay.
 

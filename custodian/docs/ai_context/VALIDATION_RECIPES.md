@@ -127,6 +127,18 @@ godot --headless --path . --script res://tools/validation/dev_observatory_smoke.
 This proves bounded telemetry storage, F9/F10 action registration, stable and timestamped JSON output, JSON-safe Variant
 conversion, event-buffer retention, success-event logging, failure-warning routing, and basic heatmap accumulation.
 
+For the local exported-session report tool, run from the repository root:
+
+```bash
+python3 -m py_compile tools/analyze_dev_observatory_session.py
+python3 tools/analyze_dev_observatory_session.py /path/to/latest_session.json
+```
+
+After sourcing the repo aliases, `obsreport` runs the same analyzer and discovers
+the stable latest-session export when no path is supplied.
+
+Omit the path to analyze the stable export in the standard Godot user-data location when it exists.
+
 For parry critical-open indicators and exclusive grunt critical presentation:
 
 ```bash
@@ -202,7 +214,7 @@ godot --headless --script tools/validation/fabrication_terminal_command_smoke.gd
 godot --headless --path . --script res://tools/validation/fabrication_terminal_clickable_smoke.gd
 ```
 
-This validates crisp terminal `StyleBoxTexture` rendering with border-only tile-fit frames and stretched single-center controls, the shipped display/mono font hierarchy and disciplined sizes, fixed-width/no-horizontal-scroll FABRICATION layout, the live FABRICATION terminal translation layer, the readable next-action text, the `BUILD PLACE <ready_build_id>` placement alias against the runtime autoloads, and the dedicated clickable FabricationWidgets page in the main scene.
+This validates crisp terminal `StyleBoxTexture` rendering with border-only tile-fit frames and stretched single-center controls, the shipped display/mono font hierarchy and disciplined sizes, flat Fabrication row labels, selected-row/detail synchronization, structured resource rows, collapsed empty build status, fixed-width/no-page-scroll FABRICATION layout, the scrollable page rail, the live terminal translation layer, readable next-action text, the `BUILD PLACE <ready_build_id>` placement alias against runtime autoloads, and the dedicated clickable `FabricationWidgets` page in the main scene.
 
 For Field Patch healing or restock changes:
 

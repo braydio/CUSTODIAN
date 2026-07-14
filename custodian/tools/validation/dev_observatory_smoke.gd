@@ -68,6 +68,8 @@ func _run() -> void:
 	var exported_path: String = observatory.export_session_json(SMOKE_EXPORT_PATH)
 	if exported_path != SMOKE_EXPORT_PATH or not FileAccess.file_exists(SMOKE_EXPORT_PATH):
 		failures.append("observatory stable export was not written")
+	if observatory.last_export_path != SMOKE_EXPORT_PATH or observatory.last_export_absolute_path.is_empty():
+		failures.append("observatory did not expose the last export path for runtime confirmation")
 	if observatory.events.size() != event_count_before_export + 1:
 		failures.append("export must retain the event buffer and append one success event")
 	elif StringName(observatory.events[-1].get("kind", &"")) != &"observatory_session_exported":
@@ -94,6 +96,8 @@ func _run() -> void:
 	var timestamp_regex := RegEx.create_from_string("^session_[0-9]{8}_[0-9]{6}\\.json$")
 	if timestamped_path.is_empty() or timestamp_regex.search(timestamped_name) == null or not FileAccess.file_exists(timestamped_path):
 		failures.append("timestamped observatory export path is invalid")
+	if observatory.last_export_path != timestamped_path:
+		failures.append("timestamped export should remain the visible last-export path")
 	if not FileAccess.file_exists(LATEST_EXPORT_PATH):
 		failures.append("timestamped export must refresh latest_session.json")
 

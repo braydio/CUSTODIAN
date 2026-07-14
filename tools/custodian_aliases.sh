@@ -50,6 +50,12 @@ opingest() {
   "${CUSTODIAN_REPO}/tools/operator_ingest.sh" "$@"
 }
 
+# -- Analyze the latest or an explicitly provided Developer Observatory session
+obsreport() {
+  _update_usage "obsreport"
+  python3 "${CUSTODIAN_REPO}/tools/analyze_dev_observatory_session.py" "$@"
+}
+
 # -- Match one sprite sheet's palette to a reference (CIE LAB nearest-color)
 #    Usage: matchpal <reference.png> <target.png> <output.png> [strength] [max_colors]
 matchpal() {
@@ -85,7 +91,7 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite opingest listbox matchpal batchstrike opcolor promptmenu; do
+  for cmd in dryjson runjson runsprite opingest obsreport listbox matchpal batchstrike opcolor promptmenu; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
     printf "  %-12s %d\n" "${cmd}:" "${count}"
@@ -94,5 +100,5 @@ alias_usage() {
   echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, listbox, matchpal, batchstrike, promptmenu"
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, obsreport, listbox, matchpal, batchstrike, promptmenu"
 echo "  Type 'alias_usage' for usage counts."

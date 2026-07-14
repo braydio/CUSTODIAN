@@ -33,6 +33,10 @@ func _refresh() -> void:
 	var lines: PackedStringArray = []
 	lines.append("[b]CUSTODIAN // DEVELOPER OBSERVATORY[/b]")
 	lines.append("[color=gray]F9 toggles this overlay // F10 exports JSON session[/color]")
+	if not observatory.last_export_error.is_empty():
+		lines.append("[color=red]export failed: %s[/color]" % observatory.last_export_error)
+	elif not observatory.last_export_absolute_path.is_empty():
+		lines.append("[color=green]last export: %s[/color]" % observatory.last_export_absolute_path)
 	lines.append("")
 
 	lines.append("[b]Runtime[/b]")

@@ -65,17 +65,32 @@ Input:
 The payload includes its schema and export timestamp, project and engine metadata, current scene, uptime/session counts,
 events, counters, gauges, and warnings. Runtime Variants are converted into JSON-safe values without clearing or
 mutating the bounded observatory buffers. Successful exports append `observatory_session_exported`; directory, open,
-or write failures append a warning through `mark_warning(...)`.
+or write failures append a warning through `mark_warning(...)`. Successful writes print their absolute filesystem path,
+and the F9 overlay retains the latest timestamped export path for immediate discovery.
 
 This produces a playtest artifact that can be handed to Codex or other tools for post-run analysis. It remains
 observability-only and has no combat, player, enemy, heatmap, world-history, or simulation authority.
+
+Analyze an exported session from the repository root with:
+
+```bash
+python3 tools/analyze_dev_observatory_session.py /path/to/session.json
+```
+
+After sourcing `tools/custodian_aliases.sh`, run `obsreport` to analyze the
+latest discoverable export or pass an explicit session path and analyzer flags.
+
+When the path is omitted, the script looks for `latest_session.json` in the standard Godot user-data locations. The
+standard-library-only report summarizes session and scene metadata, top event kinds, recent warnings, nonzero counters,
+gauges, player damage/deaths, ranged fire, dodges/iframes, Field Patch outcomes, and enemy attack outcomes. It does not
+write to the export or change runtime state.
 
 ## Follow-up Slices
 
 - Heatmap visualization bands and mode cycling.
 - Sector/world-state summaries in the overlay.
 - AI/stealth/noise overlays using existing debug draw surfaces.
-- A small `tools/analyze_dev_observatory_session.py` report tool for exported playtest sessions.
+- Optional machine-readable report output if automated playtest aggregation needs it later.
 
 ## Acceptance
 
@@ -86,5 +101,5 @@ observability-only and has no combat, player, enemy, heatmap, world-history, or 
 
 ## Next Agent Slice
 
-- Add `tools/analyze_dev_observatory_session.py` to summarize high-signal playtest outcomes from `latest_session.json`.
-- Keep heatmap rendering and `WorldStateGraph` / `WorldHistory` overlay summaries as separate presentation slices.
+- Add heatmap rendering or `WorldStateGraph` / `WorldHistory` overlay summaries as separate presentation slices.
+- Keep report automation separate from runtime telemetry and add machine-readable output only when a consumer exists.

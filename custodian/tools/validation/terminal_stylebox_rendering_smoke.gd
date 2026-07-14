@@ -35,7 +35,8 @@ func _run() -> void:
 	await process_frame
 	_check_border_frame_style(ui.get_node_or_null("TerminalPanel"), "panel", "fabrication terminal panel")
 	_check_stretched_center_style(ui.get_node_or_null("TerminalPanel/Header"), "panel", "fabrication terminal header")
-	_check_border_frame_style(ui.find_child("FabStatusPanel", true, false), "panel", "fabrication widget panel")
+	_check_flat_style(ui.find_child("FabStatusPanel", true, false), "panel", "fabrication compact status panel")
+	_check_border_frame_style(ui.find_child("FabRecipeListPanel", true, false), "panel", "fabrication work-order panel")
 	_check_stretched_center_style(ui.find_child("CraftOneButton", true, false), "normal", "fabrication action button")
 
 	game.queue_free()
@@ -79,6 +80,12 @@ func _check_stretched_center_style(control: Node, style_name: String, label: Str
 		_max_margin(style) <= 4.0,
 		"%s should use small frame margins, got %s." % [label, _max_margin(style)]
 	)
+
+
+func _check_flat_style(control: Node, style_name: String, label: String) -> void:
+	_require(control is Control, "%s should be a Control." % label)
+	if control is Control:
+		_require((control as Control).get_theme_stylebox(style_name) is StyleBoxFlat, "%s should use a compact StyleBoxFlat." % label)
 
 
 func _get_style(control: Node, style_name: String, label: String) -> StyleBoxTexture:

@@ -19,6 +19,10 @@ var events: Array[Dictionary] = []
 var counters: Dictionary = {}
 var gauges: Dictionary = {}
 var warnings: Array[Dictionary] = []
+var last_export_path := ""
+var last_export_absolute_path := ""
+var last_export_time := ""
+var last_export_error := ""
 
 var _sample_accum := 0.0
 var _overlay: CanvasLayer = null
@@ -183,6 +187,7 @@ func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
 		resolved_path = DEFAULT_EXPORT_PATH
 
 	if not _ensure_parent_dir(resolved_path):
+		last_export_error = "Could not create parent directory for %s" % resolved_path
 		mark_warning("Developer Observatory export failed: could not create parent directory.", {
 			"path": resolved_path,
 		})
@@ -192,6 +197,7 @@ func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
 	var file := FileAccess.open(resolved_path, FileAccess.WRITE)
 	if file == null:
 		var error_code := FileAccess.get_open_error()
+		last_export_error = "Could not open %s (error %s)" % [resolved_path, error_code]
 		mark_warning("Developer Observatory export failed: could not open file.", {
 			"path": resolved_path,
 			"error": error_code,
@@ -202,19 +208,26 @@ func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
 	var write_error := file.get_error()
 	file.close()
 	if write_error != OK:
+		last_export_error = "Could not write %s (error %s)" % [resolved_path, write_error]
 		mark_warning("Developer Observatory export failed: could not write file.", {
 			"path": resolved_path,
 			"error": write_error,
 		})
 		return ""
 
+	last_export_path = resolved_path
+	last_export_absolute_path = ProjectSettings.globalize_path(resolved_path)
+	last_export_time = Time.get_datetime_string_from_system(false, true)
+	last_export_error = ""
 	log_event(&"observatory_session_exported", {
 		"path": resolved_path,
+		"absolute_path": last_export_absolute_path,
 		"event_count": events.size(),
 		"warning_count": warnings.size(),
 		"counter_count": counters.size(),
 		"gauge_count": gauges.size(),
 	})
+	print("[DevObservatory] Session exported: %s" % last_export_absolute_path)
 
 	return resolved_path
 
@@ -232,6 +245,8 @@ func export_timestamped_session_json() -> String:
 	if not exported_path.is_empty():
 		# Keep one stable path available for tools without directory discovery.
 		export_session_json(DEFAULT_EXPORT_PATH)
+		last_export_path = exported_path
+		last_export_absolute_path = ProjectSettings.globalize_path(exported_path)
 
 	return exported_path
 

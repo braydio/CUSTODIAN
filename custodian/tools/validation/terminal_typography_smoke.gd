@@ -52,6 +52,11 @@ func _run() -> void:
 		_check_button(row_button, MONO_BOLD_PATH, 12, "work-order row")
 		_require(row_button is Button and (row_button as Button).clip_text, "work-order row should clip overflow")
 		_require(int(row_button.get("text_overrun_behavior")) == TextServer.OVERRUN_TRIM_ELLIPSIS, "work-order row should use ellipsis")
+		_require(row_button.get_theme_stylebox("normal") is StyleBoxFlat, "work-order row should use a flat style")
+		_check_label(row_button.find_child("StateLabel", true, false), MONO_BOLD_PATH, 12, "work-order state")
+		_check_label(row_button.find_child("NameLabel", true, false), MONO_BOLD_PATH, 12, "work-order name")
+		_check_label(row_button.find_child("CategoryLabel", true, false), MONO_PATH, 12, "work-order category")
+		_check_label(row_button.find_child("CostLabel", true, false), MONO_PATH, 12, "work-order cost")
 	else:
 		_require(false, "Fabrication should render at least one work-order row")
 	for scroll in ui.find_children("*", "ScrollContainer", true, false):

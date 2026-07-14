@@ -144,6 +144,7 @@ func _build_work_orders(ui: Node, recipes: Dictionary, resources: Dictionary, re
 			"cost_text": _format_cost_text(recipe.get("cost", {}), resource_defs),
 			"have_text": _format_have_text(recipe.get("cost", {}), resources, resource_defs),
 			"missing_text": _format_missing_text(recipe.get("cost", {}), resources, resource_defs),
+			"cost_rows": _build_cost_rows(recipe.get("cost", {}), resources, resource_defs),
 			"build_text": _format_build_text(recipe_id, recipe, display_name, ready_build_count, deployable),
 			"result_text": _format_result_text(recipe_id, recipe, display_name, ready_build_count, deployable),
 			"action_text": _format_action_text(recipe_id, recipe, state, ready_build_count, deployable),
@@ -168,6 +169,27 @@ func _build_work_orders(ui: Node, recipes: Dictionary, resources: Dictionary, re
 		if bool(a.get("is_selected", false)) != bool(b.get("is_selected", false)):
 			return bool(a.get("is_selected", false))
 		return str(a.get("display_name", "")) < str(b.get("display_name", ""))
+	)
+	return rows
+
+
+func _build_cost_rows(cost: Variant, resources: Dictionary, resource_defs: Dictionary) -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	if not (cost is Dictionary):
+		return rows
+	for resource_id_variant in (cost as Dictionary).keys():
+		var resource_id := str(resource_id_variant)
+		var need := int((cost as Dictionary)[resource_id_variant])
+		var have := int(resources.get(resource_id, 0))
+		rows.append({
+			"id": resource_id,
+			"label": _resolve_label(resource_id, resource_defs),
+			"need": need,
+			"have": have,
+			"missing": maxi(need - have, 0),
+		})
+	rows.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return str(a.get("label", "")) < str(b.get("label", ""))
 	)
 	return rows
 

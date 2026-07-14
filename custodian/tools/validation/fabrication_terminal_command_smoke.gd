@@ -52,6 +52,19 @@ func _run() -> void:
 		if String(first_job.get("recipe_id", "")) != "turret_basic":
 			failures.append("started recipe id was %s instead of turret_basic" % String(first_job.get("recipe_id", "")))
 
+	var terminal_lines: Array = ui.get("_terminal_lines")
+	terminal_lines.clear()
+	var reboot_parsed := router.parse("REBOOT")
+	if not bool(ui.call("_execute_local_terminal_command_legacy", reboot_parsed)):
+		failures.append("REBOOT command was not handled")
+	var reboot_lines: Array = ui.get("_terminal_lines")
+	if reboot_lines.size() <= 1:
+		failures.append("REBOOT did not restore the terminal boot transcript")
+	for line in reboot_lines:
+		if not (line is String):
+			failures.append("REBOOT restored a non-String terminal line")
+			break
+
 	if not failures.is_empty():
 		for failure in failures:
 			push_error("[FabricationTerminalCommandSmoke] %s" % failure)

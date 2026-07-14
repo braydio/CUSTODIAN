@@ -56,6 +56,18 @@ func _run() -> void:
 	var archive_row := _find_row(work_orders, "archive_sensor_pylon")
 	assert(not archive_row.is_empty())
 	assert(str(archive_row.get("purpose", "")).contains("Archive-grade"))
+	var archive_cost_rows: Array = archive_row.get("cost_rows", [])
+	assert(not archive_cost_rows.is_empty())
+	for cost_variant in archive_cost_rows:
+		assert(cost_variant is Dictionary)
+		var cost := cost_variant as Dictionary
+		assert(cost.has("label"))
+		assert(cost.has("need"))
+		assert(cost.has("have"))
+		assert(cost.has("missing"))
+	var lattice_row := _find_row(work_orders, "lattice_field_patch")
+	assert(not lattice_row.is_empty())
+	assert(str(lattice_row.get("category", "")) == "consumable")
 
 	build_inventory.call("clear")
 	fab_pipeline.call("clear_jobs")

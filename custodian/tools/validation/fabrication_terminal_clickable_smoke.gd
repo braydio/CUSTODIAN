@@ -55,7 +55,32 @@ func _run() -> void:
 	_require(not bool(settings_widgets.visible), "SettingsWidgets should not be visible in FABRICATION mode.")
 	_require(recipe_rows.get_child_count() > 0, "Fabrication work orders should render as button rows.")
 	_require(recipe_rows.get_child(0) is Button, "First work-order row should be a Button.")
+	var first_row := recipe_rows.get_child(0) as Button
+	_require(first_row.has_meta("fabrication_flat_row"), "Work-order rows should use the flat-row contract.")
+	_require(first_row.get_theme_stylebox("normal") is StyleBoxFlat, "Work-order rows should use StyleBoxFlat instead of button art.")
+	for label_name in ["StateLabel", "NameLabel", "CategoryLabel", "CostLabel"]:
+		_require(first_row.find_child(label_name, true, false) is Label, "Work-order row should expose %s." % label_name)
+	var selected_body := ui.find_child("FabSelectedRecipePanel", true, false).find_child("Body", true, false) as RichTextLabel
+	_require(selected_body.get_parsed_text().contains("NEED"), "Selected detail should render a NEED/HAVE/MISSING resource grid.")
+	_require(selected_body.get_parsed_text().contains("MISSING"), "Selected detail should render missing-resource values.")
+	var ready_panel := ui.find_child("FabReadyBuildPanel", true, false) as Control
+	var progress_body := ui.find_child("FabProgressPanel", true, false).find_child("Body", true, false) as RichTextLabel
+	_require(ready_panel != null and not ready_panel.visible, "Empty ready-build panel should collapse into the shared status strip.")
+	_require(progress_body.get_parsed_text().contains("IN PROGRESS: NONE"), "Compact bottom strip should report no active jobs.")
+	_require(progress_body.get_parsed_text().contains("READY BUILDS: NONE"), "Compact bottom strip should report no ready builds.")
 	_require(not bool((craft_one as Button).disabled), "CraftOneButton should be enabled for affordable selected recipe.")
+
+	ui.set("_terminal_fabrication_selected_work_order_id", "archive_sensor_pylon")
+	ui.call("_render_terminal_fabrication_widgets")
+	await process_frame
+	var archive_button := _find_recipe_button(recipe_rows, "archive_sensor_pylon")
+	_require(archive_button != null and archive_button.button_pressed, "Selected detail should correspond to a highlighted work-order row.")
+	_require(str(ui.get("_terminal_fabrication_selected_work_order_id")) == "archive_sensor_pylon", "Resolved selected work order should remain synchronized with the highlighted row.")
+
+	ui.set("_terminal_fabrication_selected_work_order_id", "turret_basic")
+	ui.call("_render_terminal_fabrication_widgets")
+	await process_frame
+	craft_one = ui.find_child("CraftOneButton", true, false)
 
 	(craft_one as Button).pressed.emit()
 	await process_frame
@@ -63,10 +88,24 @@ func _run() -> void:
 	_require(not jobs.is_empty(), "CraftOneButton should start a fabrication job.")
 	if not jobs.is_empty():
 		_require(str((jobs[0] as Dictionary).get("recipe_id", "")) == "turret_basic", "CraftOneButton should start selected recipe.")
+	ui.call("_render_terminal_fabrication_widgets")
+	await process_frame
+	var terminal_body := ui.get_node_or_null("TerminalPanel/Body") as Control
+	var action_row := ui.find_child("ActionRow", true, false) as Control
+	_require(ready_panel.visible, "Active fabrication should expand the progress/ready list region.")
+	if terminal_body != null and action_row != null:
+		_require(action_row.get_global_rect().end.y <= terminal_body.get_global_rect().end.y + 1.0, "Expanded fabrication status should keep the action row inside the terminal body.")
 
 	game.queue_free()
 	await process_frame
 	_finish()
+
+
+func _find_recipe_button(rows: Node, recipe_id: String) -> Button:
+	for child in rows.get_children():
+		if child is Button and str(child.get_meta("recipe_id", "")) == recipe_id:
+			return child as Button
+	return null
 
 
 func _finish() -> void:

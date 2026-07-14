@@ -51,11 +51,27 @@ func _run() -> void:
 	_require(recipe_scroll != null, "RecipeScroll should exist.")
 	if recipe_scroll != null:
 		_require(recipe_scroll.vertical_scroll_mode == ScrollContainer.SCROLL_MODE_AUTO, "RecipeScroll should allow vertical scrolling.")
+	var main_scroll := ui.find_child("MainContentScroll", true, false) as ScrollContainer
+	_require(main_scroll != null, "MainContentScroll should exist.")
+	if main_scroll != null:
+		_require(main_scroll.vertical_scroll_mode == ScrollContainer.SCROLL_MODE_DISABLED, "Fabrication page should not use page-level vertical scrolling.")
+	var page_scroll := ui.find_child("PageButtonsScroll", true, false) as ScrollContainer
+	_require(page_scroll != null, "Navigation pages should be wrapped in a vertical scroll container.")
+	if page_scroll != null:
+		_require(page_scroll.horizontal_scroll_mode == ScrollContainer.SCROLL_MODE_DISABLED, "Navigation page rail should not scroll horizontally.")
+		_require(page_scroll.vertical_scroll_mode == ScrollContainer.SCROLL_MODE_AUTO, "Navigation page rail should allow vertical scrolling.")
 
 	var action_row := ui.find_child("ActionRow", true, false) as Control
 	_require(action_row != null, "ActionRow should exist.")
 	if action_row != null:
-		_require(action_row.size.y >= 40.0, "ActionRow should remain tall enough for buttons.")
+		_require(action_row.size.y >= 32.0, "ActionRow should remain tall enough for compact buttons.")
+	var terminal_body := ui.get_node_or_null("TerminalPanel/Body") as Control
+	if terminal_body != null and action_row != null:
+		_require(action_row.get_global_rect().end.y <= terminal_body.get_global_rect().end.y + 1.0, "Fabrication action row should remain inside the terminal body.")
+	var fabrication_button := ui.find_child("FabricationButton", true, false) as Control
+	var nav_rail := ui.get_node_or_null("TerminalPanel/Body/NavRail") as Control
+	if fabrication_button != null and nav_rail != null:
+		_require(fabrication_button.get_global_rect().end.y <= nav_rail.get_global_rect().end.y + 1.0, "Fabrication navigation button should not clip below the nav rail.")
 
 	game.queue_free()
 	await process_frame
