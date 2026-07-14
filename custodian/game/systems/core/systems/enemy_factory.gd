@@ -6,6 +6,7 @@ class_name EnemyFactory
 @export var heavy_drone_scene: PackedScene
 @export var grunt_scene: PackedScene
 @export var marine_scene: PackedScene
+@export var savage_scene: PackedScene
 @export var siege_drone_scene: PackedScene
 @export_range(0.0, 1.0, 0.05) var wolf_composition_weight: float = 0.35
 
@@ -13,6 +14,7 @@ const ENEMY_COST := {
 	"drone": 1,
 	"grunt": 2,
 	"marine": 3,
+	"savage": 3,
 	"fast": 2,
 	"heavy": 4,
 	"siege": 6,
@@ -23,6 +25,7 @@ const UNLOCK_WAVE := {
 	"drone": 0,
 	"grunt": 2,
 	"marine": 5,
+	"savage": 4,
 	"fast": 3,
 	"heavy": 6,
 	"siege": 10,
@@ -47,7 +50,7 @@ func generate_composition(budget: int, wave_number: int) -> Array[String]:
 func _choose_enemy(budget: int, wave: int, rng: RandomNumberGenerator) -> String:
 	var options: Array[Dictionary] = []
 
-	for enemy_type in ["drone", "wolf", "grunt", "marine", "fast", "heavy", "siege"]:
+	for enemy_type in ["drone", "wolf", "grunt", "savage", "marine", "fast", "heavy", "siege"]:
 		if budget < int(ENEMY_COST[enemy_type]):
 			continue
 		if wave < int(UNLOCK_WAVE[enemy_type]):
@@ -93,6 +96,8 @@ func get_scene_for_type(enemy_type: String) -> PackedScene:
 			return grunt_scene
 		"marine":
 			return marine_scene
+		"savage":
+			return savage_scene
 		"heavy":
 			return heavy_drone_scene
 		"siege":

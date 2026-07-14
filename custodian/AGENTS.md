@@ -36,7 +36,7 @@ If a conflict appears, prefer this authority order:
 ## Current Design And Development State
 
 - Active runtime authority is the Godot 4.x project in `custodian/`
-- Active implementation specs live in `../design/`
+- Active implementation specs live in `../design/`, with feature work normalized under `../design/02_features/`; do not add new specs under the retired `../design/20_features/` tree
 - Active AI-facing context pack lives in `docs/ai_context/`
 - Legacy Python runtime and Python AI context are historical reference only
 - Deterministic fixed-step simulation remains a hard constraint

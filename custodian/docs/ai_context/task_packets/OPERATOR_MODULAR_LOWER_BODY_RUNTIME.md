@@ -34,7 +34,6 @@ The modular operator source suite can be rebuilt into stable runtime module fold
   - `custodian/game/actors/operator/operator_runtime_frames.tres`
   - `custodian/game/actors/operator/operator_melee_overlay_frames.tres`
   - `REQUIRED_ASSETS.md`
-  - `design/00_meta/REQUIRED_ASSETS.md`
   - `custodian/docs/ai_context/CURRENT_STATE.md`
   - `custodian/docs/ai_context/FILE_INDEX.md`
   - `custodian/docs/ai_context/task_packets/README.md`

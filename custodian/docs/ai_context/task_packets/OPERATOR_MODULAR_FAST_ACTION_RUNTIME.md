@@ -34,7 +34,6 @@ The Operator keeps shared movement/action state ownership but can play modular-d
   - `custodian/game/actors/operator/operator_runtime_frames.tres`
   - `custodian/game/actors/operator/operator_melee_overlay_frames.tres`
   - `REQUIRED_ASSETS.md`
-  - `design/00_meta/REQUIRED_ASSETS.md`
   - `custodian/docs/ai_context/CURRENT_STATE.md`
   - `custodian/docs/ai_context/FILE_INDEX.md`
   - `custodian/docs/ai_context/task_packets/README.md`
@@ -51,7 +50,7 @@ The Operator keeps shared movement/action state ownership but can play modular-d
 
 - Determinism concerns: gameplay timing and hit resolution remain simulation-owned by attack profiles and the shared attack states.
 - Simulation/UI boundary concerns: rendering assets and SpriteFrames change, but attack state ownership remains unchanged.
-- Asset requirements: missing production art must be tracked in both `REQUIRED_ASSETS.md` copies.
+- Asset requirements: missing production art must be tracked in root `REQUIRED_ASSETS.md`.
 - Compatibility or migration concerns: existing unarmed fast sheets remain available as fallback/legacy runtime assets.
 - Clarifying questions or assumptions: derive missing north/south lower-body strike frames from available windup lower-body frames for this pass; skip windup FX at runtime until authored.
 

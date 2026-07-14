@@ -19,15 +19,18 @@ The `enemy_grunt` sprite intake is a new active-enemy art set, not a replacement
 - Debug spawn: DevConsole command `spawn_grunt [x_offset y_offset]` spawns one near the operator through `EnemyDirector` / `WaveManager`.
 - Startup test: `WaveManager.debug_spawn_grunt_on_start` can place one grunt near the initial operator spawn for live visual review, but it waits until the operator crosses `debug_start_grunt_trigger_distance` away from that spawn zone so AFK scene loads are safe.
 - Attack timing: `EnemyGrunt.attack_windup_duration` is `0.42s`, so damage lands around the middle of the common 10-frame/12 FPS melee body and FX strips instead of waiting for the end of the clip. The west melee body source is currently 11 frames and may need a separate follow-up if west-facing attacks feel slightly early or late.
-- Special attack: `EnemyGrunt.grunt_falcon_punch_enabled` is enabled on `enemy_grunt.tscn`. When a player target is inside the launch band, the grunt can enter a running windup, then a leaping punch, then momentum-carrying roll recovery. The hit still resolves through `_apply_enemy_hit_to_target(...)`, so dodge, parry, guard, and damage analytics remain centralized.
+- Special attack: `EnemyGrunt.grunt_falcon_punch_enabled` is enabled on `enemy_grunt.tscn`. Falcon Punch is a deliberate commitment after normal melee pressure, not a range-only trigger: a deterministic cadence gate, independent cooldown, recent-parry lockout, and clear ally lane are required before launch. The `0.46s` windup has minimal drift, the leap stops `30px` short of the target center, and the `0.70s` recovery has no forward velocity. Contact enforces `28px` body separation. The hit still resolves through `_apply_enemy_hit_to_target(...)`, so dodge, parry, guard, and damage analytics remain centralized; a parry hard-cancels every Falcon phase and opens the existing grunt critical window.
+- Falcon impact: a damaging, unblocked hit invokes the Operator's dedicated Falcon impact hook for hit recoil, `58px` knockback intent, brief hitstop, and smaller camera feedback than Marine dash. Block, parry, contact, and recovery all preserve body separation.
 
 The current art set is partial but expanded:
 
 - idle: south only
 - run: east and west
 - melee: east, southeast, and west
-- stagger: east, south, and west, selected from the grunt's tracked knockback/facing direction
-- special punch: east/west `special_inflight_01` strips, plus east/west 11-frame roll-recovery strips currently authored as `stagger_01`
+- stagger: improved 11-frame east/west strips plus the existing south strip, selected from tracked knockback/facing direction
+- flinch: east/west 5-frame strips plus the existing south fallback
+- special punch: dedicated east/west 6-frame `special_windup_01`, `special_inflight_01`, and `special_recovery_01` strips
+- death: the newer east-facing 8-frame fall is the active death clip and mirrors for west-facing deaths
 - melee FX: east and west overlay strips, played through `CustomEnemyFxSprite` during grunt attack windup
 
 Until directional coverage is complete, runtime reuses available body strips instead of blocking the enemy from spawning.
@@ -41,6 +44,6 @@ Until directional coverage is complete, runtime reuses available body strips ins
 - Grunt melee windup plays the body melee strip plus the matching FX overlay strip.
 - Grunt melee windup duration lands in the middle of the authored clip before damage resolves.
 - Grunt stagger and parry critical-open hold use the authored directional `stagger_01` strips when available.
-- Grunt falcon punch uses running windup, directional `special_inflight_e/w`, hit-kind `falcon_punch`, and directional `special_recovery_e/w`.
+- Grunt falcon punch uses directional `special_windup_e/w`, `special_inflight_e/w`, hit-kind `falcon_punch`, and `special_recovery_e/w`.
 - Headless Godot validation loads the new scene and scripts without missing resource errors.
-- `grunt_falcon_punch_smoke.gd` proves windup, leap-hit, and recovery phase routing.
+- `grunt_falcon_punch_smoke.gd` proves windup/leap/recovery routing, stop-short travel, post-contact separation, zero recovery drift, dedicated victim impact, hard parry cancellation and lockout, enemy movement spacing, and ally-lane rejection.

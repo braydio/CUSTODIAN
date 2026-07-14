@@ -6,6 +6,9 @@ signal warning_logged(message: String, data: Dictionary)
 
 const OVERLAY_SCENE_PATH := "res://scenes/debug/dev_observatory_overlay.tscn"
 const INPUT_ACTION := "debug_observatory"
+const EXPORT_INPUT_ACTION := "debug_observatory_export"
+const DEFAULT_EXPORT_DIR := "user://dev_observatory"
+const DEFAULT_EXPORT_PATH := "user://dev_observatory/latest_session.json"
 
 @export var max_events := 300
 @export var sample_interval := 0.25
@@ -25,7 +28,7 @@ var _boot_time_msec := 0
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_boot_time_msec = Time.get_ticks_msec()
-	_ensure_input_action()
+	_ensure_input_actions()
 
 	if auto_create_overlay:
 		_create_overlay()
@@ -40,6 +43,12 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(INPUT_ACTION):
 		toggle()
 		get_viewport().set_input_as_handled()
+		return
+
+	if event.is_action_pressed(EXPORT_INPUT_ACTION):
+		export_timestamped_session_json()
+		get_viewport().set_input_as_handled()
+		return
 
 
 func _process(delta: float) -> void:
@@ -168,6 +177,185 @@ func get_summary() -> Dictionary:
 	}
 
 
+func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
+	var resolved_path := path.strip_edges()
+	if resolved_path.is_empty():
+		resolved_path = DEFAULT_EXPORT_PATH
+
+	if not _ensure_parent_dir(resolved_path):
+		mark_warning("Developer Observatory export failed: could not create parent directory.", {
+			"path": resolved_path,
+		})
+		return ""
+
+	var payload := _build_export_payload(resolved_path)
+	var file := FileAccess.open(resolved_path, FileAccess.WRITE)
+	if file == null:
+		var error_code := FileAccess.get_open_error()
+		mark_warning("Developer Observatory export failed: could not open file.", {
+			"path": resolved_path,
+			"error": error_code,
+		})
+		return ""
+
+	file.store_string(JSON.stringify(payload, "\t"))
+	var write_error := file.get_error()
+	file.close()
+	if write_error != OK:
+		mark_warning("Developer Observatory export failed: could not write file.", {
+			"path": resolved_path,
+			"error": write_error,
+		})
+		return ""
+
+	log_event(&"observatory_session_exported", {
+		"path": resolved_path,
+		"event_count": events.size(),
+		"warning_count": warnings.size(),
+		"counter_count": counters.size(),
+		"gauge_count": gauges.size(),
+	})
+
+	return resolved_path
+
+
+func export_timestamped_session_json() -> String:
+	var stamp := Time.get_datetime_string_from_system(false, true)
+	stamp = stamp.replace("-", "")
+	stamp = stamp.replace(":", "")
+	stamp = stamp.replace("T", "_")
+	stamp = stamp.replace(" ", "_")
+
+	var timestamped_path := "%s/session_%s.json" % [DEFAULT_EXPORT_DIR, stamp]
+	var exported_path := export_session_json(timestamped_path)
+
+	if not exported_path.is_empty():
+		# Keep one stable path available for tools without directory discovery.
+		export_session_json(DEFAULT_EXPORT_PATH)
+
+	return exported_path
+
+
+func _build_export_payload(path: String) -> Dictionary:
+	var scene_name := ""
+	var scene_path := ""
+
+	var tree := get_tree()
+	if tree != null and tree.current_scene != null:
+		scene_name = tree.current_scene.name
+		scene_path = tree.current_scene.scene_file_path
+
+	return {
+		"schema": "custodian.dev_observatory.session.v1",
+		"exported_at": Time.get_datetime_string_from_system(false, true),
+		"export_path": path,
+		"metadata": {
+			"project_name": ProjectSettings.get_setting("application/config/name", "CUSTODIAN"),
+			"project_version": ProjectSettings.get_setting("application/config/version", ""),
+		},
+		"engine": {
+			"version": _json_safe(Engine.get_version_info()),
+			"frames_per_second": Engine.get_frames_per_second(),
+			"time_scale": Engine.time_scale,
+		},
+		"session": {
+			"uptime_sec": get_uptime_sec(),
+			"boot_time_msec": _boot_time_msec,
+			"event_count": events.size(),
+			"counter_count": counters.size(),
+			"gauge_count": gauges.size(),
+			"warning_count": warnings.size(),
+			"observatory_enabled": enabled,
+		},
+		"scene": {
+			"name": scene_name,
+			"path": scene_path,
+		},
+		"counters": _json_safe(counters),
+		"gauges": _json_safe(gauges),
+		"warnings": _json_safe(warnings),
+		"events": _json_safe(events),
+	}
+
+
+func _json_safe(value: Variant) -> Variant:
+	match typeof(value):
+		TYPE_NIL:
+			return null
+		TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING:
+			return value
+		TYPE_STRING_NAME, TYPE_NODE_PATH:
+			return String(value)
+		TYPE_VECTOR2:
+			var v := value as Vector2
+			return {"x": v.x, "y": v.y}
+		TYPE_VECTOR2I:
+			var v := value as Vector2i
+			return {"x": v.x, "y": v.y}
+		TYPE_VECTOR3:
+			var v := value as Vector3
+			return {"x": v.x, "y": v.y, "z": v.z}
+		TYPE_VECTOR3I:
+			var v := value as Vector3i
+			return {"x": v.x, "y": v.y, "z": v.z}
+		TYPE_RECT2:
+			var r := value as Rect2
+			return {
+				"position": _json_safe(r.position),
+				"size": _json_safe(r.size),
+			}
+		TYPE_RECT2I:
+			var r := value as Rect2i
+			return {
+				"position": _json_safe(r.position),
+				"size": _json_safe(r.size),
+			}
+		TYPE_COLOR:
+			var c := value as Color
+			return {
+				"r": c.r,
+				"g": c.g,
+				"b": c.b,
+				"a": c.a,
+				"html": c.to_html(true),
+			}
+		TYPE_ARRAY:
+			var out: Array = []
+			for item in value:
+				out.append(_json_safe(item))
+			return out
+		TYPE_DICTIONARY:
+			var out := {}
+			var dict := value as Dictionary
+			for key in dict.keys():
+				out[str(key)] = _json_safe(dict[key])
+			return out
+		TYPE_OBJECT:
+			var object := value as Object
+			if object == null:
+				return null
+			if object is Node:
+				var node := object as Node
+				return {
+					"node_name": node.name,
+					"node_path": str(node.get_path()) if node.is_inside_tree() else "",
+					"class": node.get_class(),
+				}
+			return str(value)
+		_:
+			return str(value)
+
+
+func _ensure_parent_dir(path: String) -> bool:
+	var base_dir := path.get_base_dir()
+	if base_dir.is_empty():
+		return true
+
+	var absolute_dir := ProjectSettings.globalize_path(base_dir)
+	var result := DirAccess.make_dir_recursive_absolute(absolute_dir)
+	return result == OK or DirAccess.dir_exists_absolute(absolute_dir)
+
+
 func _sample_runtime_gauges() -> void:
 	set_gauge(&"fps", Engine.get_frames_per_second())
 	set_gauge(&"uptime_sec", snappedf(get_uptime_sec(), 0.01))
@@ -278,16 +466,22 @@ func _count_nodes(root_node: Node) -> int:
 	return count
 
 
-func _ensure_input_action() -> void:
-	if not InputMap.has_action(INPUT_ACTION):
-		InputMap.add_action(INPUT_ACTION)
-	if _action_has_key(INPUT_ACTION, KEY_F9):
+func _ensure_input_actions() -> void:
+	_ensure_action_key(INPUT_ACTION, KEY_F9)
+	_ensure_action_key(EXPORT_INPUT_ACTION, KEY_F10)
+
+
+func _ensure_action_key(action: StringName, keycode: Key) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action)
+
+	if _action_has_key(action, keycode):
 		return
 
 	var key := InputEventKey.new()
-	key.keycode = KEY_F9
-	key.key_label = KEY_F9
-	InputMap.action_add_event(INPUT_ACTION, key)
+	key.keycode = keycode
+	key.key_label = keycode
+	InputMap.action_add_event(action, key)
 
 
 func _action_has_key(action: StringName, keycode: Key) -> bool:

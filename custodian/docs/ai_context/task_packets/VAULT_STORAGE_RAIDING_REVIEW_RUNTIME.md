@@ -14,7 +14,7 @@ Review the active vault, resource storage, enemy stealing, and enemy behavior sp
 
 ## Outcome
 
-Vault storage has a stable runtime asset domain, visible storage state art, damage/vandalism support, and enemy behavior can choose between stealing and sabotaging storage according to profile weights. Missing production assets are tracked in both `REQUIRED_ASSETS.md` copies.
+Vault storage has a stable runtime asset domain, visible storage state art, damage/vandalism support, and enemy behavior can choose between stealing and sabotaging storage according to profile weights. Missing production assets are tracked in root `REQUIRED_ASSETS.md`.
 
 ## Authority
 
@@ -35,7 +35,6 @@ Vault storage has a stable runtime asset domain, visible storage state art, dama
   - `custodian/game/actors/enemies/components/enemy_objective_sensor.gd`
   - `custodian/content/sprites/environment/props/vault_storage/runtime/`
   - `REQUIRED_ASSETS.md`
-  - `design/00_meta/REQUIRED_ASSETS.md`
   - `custodian/docs/ai_context/CURRENT_STATE.md`
   - `custodian/docs/ai_context/FILE_INDEX.md`
 - Files or folders expected to be read but not changed:

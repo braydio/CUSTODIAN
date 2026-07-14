@@ -117,17 +117,29 @@ These checks cover Operator/order-point anchor state, close/far/roam goals aroun
 marker and replacement-drone inheritance, recall, manager-owned InputMap actions, hold-fire cancellation, and suppression
 of accidental Operator primary fire while issuing an order.
 
+For Developer Observatory telemetry and JSON session export:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/dev_observatory_smoke.gd
+```
+
+This proves bounded telemetry storage, F9/F10 action registration, stable and timestamped JSON output, JSON-safe Variant
+conversion, event-buffer retention, success-event logging, failure-warning routing, and basic heatmap accumulation.
+
 For parry critical-open indicators and exclusive grunt critical presentation:
 
 ```bash
 cd custodian
 godot --headless --path . --import --quit
+godot --headless --path . --script res://tools/validation/grunt_falcon_punch_smoke.gd
 godot --headless --path . --script res://tools/validation/grunt_parry_crit_reaction_smoke.gd
 godot --headless --path . --script res://tools/validation/grunt_animation_smoke.gd
 godot --headless --path . --script res://tools/validation/operator_modular_defense_ranged_smoke.gd
 ```
 
-The focused reaction smoke validates the required 6/8/12-frame assets, contact auto-free, enemy-attached BREACH/ring
+The Falcon smoke validates stop-short travel, body/enemy separation, dedicated Operator impact, zero-drift recovery,
+hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection. The focused reaction smoke validates the required 6/8/12-frame assets, contact auto-free, enemy-attached BREACH/ring
 lifecycle, duration-driven expiry, critical consumption, and suppression of standard grunt flinch/white-flash presentation.
 Missing optional posture-break and critical-expiry assets should warn without failing.
 
@@ -183,13 +195,14 @@ For fabrication terminal readability / work-order translation changes:
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/terminal_stylebox_rendering_smoke.gd
+godot --headless --path . --script res://tools/validation/terminal_typography_smoke.gd
 godot --headless --path . --script res://tools/validation/fabrication_terminal_layout_smoke.gd
 godot --headless --script tools/validation/fabrication_terminal_readability_smoke.gd
 godot --headless --script tools/validation/fabrication_terminal_command_smoke.gd
 godot --headless --path . --script res://tools/validation/fabrication_terminal_clickable_smoke.gd
 ```
 
-This validates crisp terminal `StyleBoxTexture` rendering with border-only tile-fit frames and stretched single-center controls, fixed-width/no-horizontal-scroll FABRICATION layout, the live FABRICATION terminal translation layer, the readable next-action text, the `BUILD PLACE <ready_build_id>` placement alias against the runtime autoloads, and the dedicated clickable FabricationWidgets page in the main scene.
+This validates crisp terminal `StyleBoxTexture` rendering with border-only tile-fit frames and stretched single-center controls, the shipped display/mono font hierarchy and disciplined sizes, fixed-width/no-horizontal-scroll FABRICATION layout, the live FABRICATION terminal translation layer, the readable next-action text, the `BUILD PLACE <ready_build_id>` placement alias against the runtime autoloads, and the dedicated clickable FabricationWidgets page in the main scene.
 
 For Field Patch healing or restock changes:
 
@@ -304,7 +317,7 @@ cd custodian
 python tools/pipelines/ingest.py --dry-run <manifest_or_source>
 ```
 
-Only run non-dry-run ingest when generated files are intended. Successful non-dry-run ingests may stage generated files by default; use `--no-git-add` when inspecting outputs without staging.
+Only run non-dry-run ingest when generated files are intended. Ingest writes and archives files but does not stage or commit them; inspect `git status --short` afterward.
 
 For modular Operator naming/routing and generic action module generation:
 
@@ -344,6 +357,25 @@ godot --headless --script res://tools/validation/operator_modular_fast_attack_sm
 This checks existing fast-attack source/runtime PNG coverage against the lower-body, upper-body, and upper-FX
 `SpriteFrames` resources, then instantiates the Operator and verifies windup, strike, and recovery helpers play the
 modular layers for every direction where body coverage exists while preserving legacy fallback/timing ownership.
+
+For the active Savage first runtime slice:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/savage_runtime_smoke.gd
+```
+
+This validates mixed frame-size idle strips, direction fallbacks, scene activation, and factory/wave/main-scene wiring.
+
+For the Savage rushdown gameplay contract:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/enemy_savage_smoke.gd
+```
+
+This validates the approved stats and `raider_savage` profile, no-theft behavior, chain/pounce activation, both chain
+hits, the stronger second-hit guard cost, and the pounce hit contract.
 
 For the focused modular Operator ingest loop, use the thin repo-root wrapper. It defaults to dry-run; `--apply` runs
 shared-inbox manifest generation, rebuilds modular Operator runtime sheets, runs Godot import, refreshes curated

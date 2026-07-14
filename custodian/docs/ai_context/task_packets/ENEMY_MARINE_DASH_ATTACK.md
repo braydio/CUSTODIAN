@@ -28,7 +28,7 @@ The marine dash now has exported runtime tuning for windup, dash, impact lock, r
 
 - Changed runtime files: `custodian/game/actors/enemies/enemy.gd`, `custodian/game/actors/enemies/enemy_marine.tscn`, `custodian/game/actors/enemies/enemy_behavior_state_machine.gd`, `custodian/game/actors/operator/operator.gd`, `custodian/game/world/sundered_keep/sundered_keep_marine_ambush.gd`
 - Changed validation: `custodian/tools/validation/authored_vault_grunt_loot_marine_smoke.gd`
-- Changed docs/assets: design doc, AI context pack, and both `REQUIRED_ASSETS.md` copies
+- Changed docs/assets: design doc, AI context pack, and root `REQUIRED_ASSETS.md`
 - Out-of-scope areas: generating new production sprite/audio assets, full directional movement/death suite, final in-editor feel tuning
 
 ## Constraints

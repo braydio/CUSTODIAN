@@ -25,6 +25,22 @@ Assets must support:
 
 Runtime integration note: before redrawing frame art, verify `StyleBoxTexture` setup in `custodian/game/ui/hud/ui.gd`. Thin pixel frames should use slice margins that match the drawn linework and per-family axis modes. Large frame-only panels should tile-fit borders without drawing a repeated center; nav tabs, action buttons, header bars, and command inputs should stretch one clean center. Oversized margins smear borders, while tiling every center creates repeated panel wallpaper.
 
+## Typography System
+
+The shipped terminal uses a two-font IBM Plex stack from `custodian/content/ui/fonts/`:
+
+- IBM Plex Sans Condensed Regular: terminal title, section headers, navigation, and action labels
+- IBM Plex Mono Regular: command output, status, values, timestamps, details, filters, and command input
+- IBM Plex Mono Bold: work-order rows and compact command controls
+
+Runtime sizes are centralized in `custodian/game/ui/hud/ui.gd`: title 22px, header/section 11px, navigation and
+buttons 12px, body 13px, Fabrication rows/details 12px, command log 12px, input 16px, and hints 10px. Both terminal
+theme passes must use the semantic typography helpers rather than reapplying raw default font sizes.
+
+Labels/buttons use clipping and ellipsis for bounded rows. Full work-order detail belongs in the selected-detail
+panel; horizontal scrolling is not an accepted text-overflow strategy. Font provenance and the SIL OFL 1.1 license
+are documented beside the runtime TTF files.
+
 ---
 
 ## Folder Layout

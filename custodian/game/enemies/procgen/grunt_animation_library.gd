@@ -49,13 +49,23 @@ const ANIMATION_SPECS := {
 		"loop": false,
 	},
 	"stagger_e": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__e__8f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__e__11f__96.png",
 		"fps": 10.0,
 		"loop": false,
 	},
 	"stagger_w": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__w__8f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__w__11f__96.png",
 		"fps": 10.0,
+		"loop": false,
+	},
+	"special_windup_e": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_windup_01__e__6f__96.png",
+		"fps": 18.0,
+		"loop": false,
+	},
+	"special_windup_w": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_windup_01__w__6f__96.png",
+		"fps": 18.0,
 		"loop": false,
 	},
 	"special_inflight_e": {
@@ -69,12 +79,12 @@ const ANIMATION_SPECS := {
 		"loop": false,
 	},
 	"special_recovery_e": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__e__11f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_recovery_01__e__6f__96.png",
 		"fps": 18.0,
 		"loop": false,
 	},
 	"special_recovery_w": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__stagger_01__w__11f__96.png",
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_recovery_01__w__6f__96.png",
 		"fps": 18.0,
 		"loop": false,
 	},
@@ -88,13 +98,23 @@ const ANIMATION_SPECS := {
 		"fps": 8.0,
 		"loop": false,
 	},
-	"death_s": {
-		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__death_01__s__5__96.png",
+	"death_e": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__death_01__e__8f__96.png",
 		"fps": 10.0,
 		"loop": false,
 	},
 	"flinch_s": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__flinch_01__s__6__96.png",
+		"fps": 12.0,
+		"loop": false,
+	},
+	"flinch_e": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__flinch_01__e__5f__96.png",
+		"fps": 12.0,
+		"loop": false,
+	},
+	"flinch_w": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__flinch_01__w__5f__96.png",
 		"fps": 12.0,
 		"loop": false,
 	},
@@ -264,12 +284,20 @@ static func get_marine_dash_phase_animation(phase: StringName, _direction: Vecto
 static func get_grunt_falcon_punch_phase_animation(phase: StringName, direction: Vector2 = Vector2.RIGHT) -> StringName:
 	match phase:
 		&"windup":
-			return get_move_animation(direction)
+			return &"special_windup_w" if direction.x < -0.05 else &"special_windup_e"
 		&"leap", &"impact_lock":
 			return &"special_inflight_w" if direction.x < -0.05 else &"special_inflight_e"
 		&"recovery":
 			return &"special_recovery_w" if direction.x < -0.05 else &"special_recovery_e"
 	return &"special_inflight_w" if direction.x < -0.05 else &"special_inflight_e"
+
+
+static func get_flinch_animation(direction: Vector2) -> StringName:
+	if direction.x < -0.2:
+		return &"flinch_w"
+	if direction.x > 0.2:
+		return &"flinch_e"
+	return &"flinch_s"
 
 
 static func get_marine_dash_attack_fx_animation(_direction: Vector2) -> StringName:

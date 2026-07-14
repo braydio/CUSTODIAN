@@ -3401,7 +3401,7 @@ func try_parry_incoming_attack(attacker: Node2D, hit_direction: Vector2, hit_dat
 	return true
 
 
-func try_guard_incoming_attack(damage: float, hit_direction: Vector2) -> Dictionary:
+func try_guard_incoming_attack(damage: float, hit_direction: Vector2, stamina_cost_override: float = -1.0) -> Dictionary:
 	if not _is_blocking():
 		return {"blocked": false, "damage": damage}
 
@@ -3418,7 +3418,7 @@ func try_guard_incoming_attack(damage: float, hit_direction: Vector2) -> Diction
 	if facing_dot < 0.15:
 		return {"blocked": false, "damage": damage}
 
-	var stamina_cost := guard_stamina_cost_per_hit
+	var stamina_cost := stamina_cost_override if stamina_cost_override >= 0.0 else guard_stamina_cost_per_hit
 	if offhand_guard_item_equipped:
 		stamina_cost *= 0.75
 	stamina = maxf(0.0, stamina - stamina_cost)
@@ -6788,7 +6788,7 @@ func toggle_primary_carbine() -> void:
 	equip_primary_carbine()
 
 
-func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker_team: String = "enemy", attacker: Node2D = null, hit_direction: Vector2 = Vector2.ZERO) -> Dictionary:
+func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker_team: String = "enemy", attacker: Node2D = null, hit_direction: Vector2 = Vector2.ZERO, guard_stamina_cost_override: float = -1.0) -> Dictionary:
 	var resolved_hit_direction := hit_direction
 	if resolved_hit_direction.length_squared() <= 0.001 and attacker != null and is_instance_valid(attacker):
 		resolved_hit_direction = attacker.global_position.direction_to(global_position)
@@ -6817,7 +6817,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 			"applied_damage": 0.0,
 		}
 
-	var guard_result := try_guard_incoming_attack(amount, resolved_hit_direction)
+	var guard_result := try_guard_incoming_attack(amount, resolved_hit_direction, guard_stamina_cost_override)
 	if bool(guard_result.get("blocked", false)):
 		var final_damage := float(guard_result.get("damage", amount))
 		if final_damage > 0.0:
@@ -6940,6 +6940,25 @@ func apply_enemy_dash_impact(direction: Vector2, knockback_px: float, victim_hit
 	_last_damage_reaction_direction = impact_direction
 	_interrupt_active_combat_for_damage_reaction()
 	velocity = impact_direction * (knockback_px / maxf(0.16, _enemy_impact_lock_timer))
+	if _animation_state_machine != null:
+		_animation_state_machine.request("hit_recoil", 24)
+	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera != null and camera.has_method("on_damage_taken"):
+		camera.call("on_damage_taken", impact_direction)
+
+
+func apply_enemy_falcon_punch_impact(direction: Vector2, knockback_px: float, victim_hitstop_sec: float) -> void:
+	if _is_dead:
+		return
+	if _should_ignore_incoming_damage_for_dodge("apply_enemy_falcon_punch_impact"):
+		return
+	if _field_patch_active and not _field_patch_committed:
+		cancel_field_patch(&"falcon_punch_impact")
+	var impact_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector2.DOWN
+	_enemy_impact_lock_timer = maxf(_enemy_impact_lock_timer, maxf(0.13, victim_hitstop_sec + 0.10))
+	_last_damage_reaction_direction = impact_direction
+	_interrupt_active_combat_for_damage_reaction()
+	velocity = impact_direction * (knockback_px / maxf(0.13, _enemy_impact_lock_timer))
 	if _animation_state_machine != null:
 		_animation_state_machine.request("hit_recoil", 24)
 	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")

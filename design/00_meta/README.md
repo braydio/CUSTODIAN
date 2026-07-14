@@ -30,7 +30,7 @@ design/
 │   ├── GAMEPLAY_NOTES.md          # Incorporated into feature docs
 │   ├── PROCGEN_PIPELINE_CORRECTION.md
 │   ├── PROCGEN_WALL_COLLISION_FIX.md
-│   ├── REQUIRED_ASSETS.md
+│   ├── REQUIRED_ASSETS.md         # Deprecated pointer to root canonical tracker
 │   ├── SPRITE_PIPELINE_INSTRUCT.md
 │   └── UID_DUPLICATE_FIX.md
 │

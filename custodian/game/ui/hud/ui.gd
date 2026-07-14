@@ -35,6 +35,20 @@ const TERMINAL_ICON_TURRET := preload("res://content/ui/terminal/icons/icon_turr
 const TERMINAL_ICON_WARNING := preload("res://content/ui/terminal/icons/icon_warning.png")
 const TERMINAL_ICON_CRITICAL := preload("res://content/ui/terminal/icons/icon_critical.png")
 
+const TERMINAL_FONT_MONO_PATH := "res://content/ui/fonts/terminal_mono_regular.ttf"
+const TERMINAL_FONT_MONO_BOLD_PATH := "res://content/ui/fonts/terminal_mono_bold.ttf"
+const TERMINAL_FONT_DISPLAY_PATH := "res://content/ui/fonts/terminal_display_regular.ttf"
+const TERMINAL_FONT_SIZE_TITLE := 22
+const TERMINAL_FONT_SIZE_HEADER := 11
+const TERMINAL_FONT_SIZE_NAV := 12
+const TERMINAL_FONT_SIZE_SECTION := 11
+const TERMINAL_FONT_SIZE_BODY := 13
+const TERMINAL_FONT_SIZE_ROW := 12
+const TERMINAL_FONT_SIZE_LOG := 12
+const TERMINAL_FONT_SIZE_INPUT := 16
+const TERMINAL_FONT_SIZE_HINT := 10
+const TERMINAL_FONT_SIZE_BUTTON := 12
+
 const TERMINAL_STYLE_STRETCH := StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
 const TERMINAL_STYLE_TILE := StyleBoxTexture.AXIS_STRETCH_MODE_TILE
 const TERMINAL_STYLE_TILE_FIT := StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
@@ -307,6 +321,9 @@ var _terminal_page_buttons: Dictionary = {}
 var _terminal_nav_buttons: Array = []
 var _terminal_action_buttons: Array = []
 var _terminal_main_scroll: ScrollContainer = null
+var _terminal_font_mono: Font = null
+var _terminal_font_mono_bold: Font = null
+var _terminal_font_display: Font = null
 var _terminal_fabrication_queue: Array[String] = []
 var _terminal_fabrication_selected_work_order_id := ""
 var _terminal_policy_preset := "BALANCED"
@@ -425,6 +442,7 @@ func _ready():
 	if terminal_help_button and not terminal_help_button.pressed.is_connected(_on_terminal_action_button_pressed.bind("HELP")):
 		terminal_help_button.pressed.connect(_on_terminal_action_button_pressed.bind("HELP"))
 	_setup_terminal_main_scroll()
+	_load_terminal_typography_fonts()
 	_apply_terminal_theme()
 	_init_terminal_previews()
 	_ensure_terminal_contract_binding()
@@ -475,6 +493,7 @@ func _register_devconsole_commands() -> void:
 		_register_devconsole_command(console, "show_cognitive", _devconsole_show_cognitive)
 		_register_devconsole_command(console, "test_spawn", _devconsole_test_spawn)
 		_register_devconsole_command(console, "spawn_grunt", _devconsole_spawn_grunt)
+		_register_devconsole_command(console, "spawn_savage", _devconsole_spawn_savage)
 		_register_devconsole_command(console, "knight_skin", _devconsole_knight_skin)
 		_register_devconsole_command(console, "ui_status", _devconsole_ui_status)
 		_register_devconsole_command(console, "fab_status", _devconsole_fab_status)
@@ -541,6 +560,21 @@ func _devconsole_spawn_grunt(args: Array) -> String:
 		var pos = operator.global_position + offset
 		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "grunt", pos))
 		return "Spawned grunt at %s" % str(pos) if spawned else "Failed to spawn grunt"
+	return "EnemyDirector not found or spawn_debug_enemy_type not available"
+
+
+func _devconsole_spawn_savage(args: Array) -> String:
+	var operator = _get_operator_node()
+	if operator == null:
+		return "Operator not found"
+	var enemy_mgr = get_node_or_null("/root/GameRoot/EnemyDirector")
+	if enemy_mgr != null and enemy_mgr.has_method("spawn_debug_enemy_type"):
+		var offset := Vector2(128.0, 0.0)
+		if args.size() >= 2:
+			offset = Vector2(float(args[0]), float(args[1]))
+		var pos = operator.global_position + offset
+		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "savage", pos))
+		return "Spawned savage at %s" % str(pos) if spawned else "Failed to spawn savage"
 	return "EnemyDirector not found or spawn_debug_enemy_type not available"
 
 
@@ -1988,10 +2022,76 @@ func _debug_terminal_stylebox(label: String, style: StyleBoxTexture) -> void:
 func _apply_terminal_widget_button_styles(normal: StyleBoxTexture, hover: StyleBoxTexture, pressed: StyleBoxTexture, disabled: StyleBoxTexture) -> void:
 	if terminal_widget_stack == null:
 		return
+	var button_color := Color(1.0, 0.90, 0.76, 1.0) if _terminal_current_page == "FABRICATION" else Color(0.82, 0.92, 0.88, 1.0)
 	for button in terminal_widget_stack.find_children("*", "Button", true, false):
 		if not (button is BaseButton):
 			continue
-		_apply_terminal_button_assets(button as BaseButton, normal, hover, pressed, disabled, pressed)
+		var terminal_button := button as BaseButton
+		_apply_terminal_button_assets(terminal_button, normal, hover, pressed, disabled, pressed)
+		_apply_button_type(terminal_button, _terminal_font_mono_bold, TERMINAL_FONT_SIZE_BUTTON, button_color)
+
+
+func _load_terminal_typography_fonts() -> void:
+	_terminal_font_mono = _load_terminal_font(TERMINAL_FONT_MONO_PATH)
+	_terminal_font_mono_bold = _load_terminal_font(TERMINAL_FONT_MONO_BOLD_PATH)
+	_terminal_font_display = _load_terminal_font(TERMINAL_FONT_DISPLAY_PATH)
+	var missing: Array[String] = []
+	if _terminal_font_mono == null:
+		missing.append(TERMINAL_FONT_MONO_PATH)
+	if _terminal_font_mono_bold == null:
+		missing.append(TERMINAL_FONT_MONO_BOLD_PATH)
+	if _terminal_font_display == null:
+		missing.append(TERMINAL_FONT_DISPLAY_PATH)
+	if not missing.is_empty():
+		push_warning("[TerminalTypography] Font asset missing; falling back to default Godot font. Missing: %s" % ", ".join(missing))
+
+
+func _load_terminal_font(path: String) -> Font:
+	if not ResourceLoader.exists(path, "Font"):
+		return null
+	var resource := load(path)
+	return resource as Font if resource is Font else null
+
+
+func _apply_label_type(label: Label, font: Font, size: int, color: Color) -> void:
+	if label == null:
+		return
+	if font != null:
+		label.add_theme_font_override("font", font)
+	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_color_override("font_color", color)
+	label.clip_text = true
+	_set_control_property_if_available(label, &"text_overrun_behavior", TextServer.OVERRUN_TRIM_ELLIPSIS)
+
+
+func _apply_button_type(button: BaseButton, font: Font, size: int, color: Color) -> void:
+	if button == null:
+		return
+	if font != null:
+		button.add_theme_font_override("font", font)
+	button.add_theme_font_size_override("font_size", size)
+	button.add_theme_color_override("font_color", color)
+	if button is Button:
+		(button as Button).clip_text = true
+	_set_control_property_if_available(button, &"text_overrun_behavior", TextServer.OVERRUN_TRIM_ELLIPSIS)
+
+
+func _apply_rich_text_type(rich_text: RichTextLabel, font: Font, mono_font: Font, size: int, color: Color) -> void:
+	if rich_text == null:
+		return
+	if font != null:
+		rich_text.add_theme_font_override("normal_font", font)
+	if mono_font != null:
+		rich_text.add_theme_font_override("mono_font", mono_font)
+	if _terminal_font_mono_bold != null:
+		rich_text.add_theme_font_override("bold_font", _terminal_font_mono_bold)
+	rich_text.add_theme_font_size_override("normal_font_size", size)
+	rich_text.add_theme_font_size_override("mono_font_size", size)
+	rich_text.add_theme_font_size_override("bold_font_size", size)
+	rich_text.add_theme_color_override("default_color", color)
+	rich_text.bbcode_enabled = true
+	rich_text.fit_content = false
+	rich_text.scroll_active = true
 
 
 func _set_control_property_if_available(control: Object, property_name: StringName, value: Variant) -> void:
@@ -2107,7 +2207,7 @@ func _configure_fabrication_dashboard_layout() -> void:
 				button.custom_minimum_size = Vector2(0.0, 42.0)
 				button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 				button.clip_text = true
-				button.add_theme_font_size_override("font_size", 11)
+				_apply_button_type(button, _terminal_font_mono_bold, TERMINAL_FONT_SIZE_BUTTON, Color(0.82, 0.92, 0.88, 1.0))
 				_set_control_property_if_available(button, &"text_overrun_behavior", TextServer.OVERRUN_TRIM_ELLIPSIS)
 	for scroll in fabrication_widgets.find_children("*", "ScrollContainer", true, false):
 		if scroll is ScrollContainer:
@@ -2121,18 +2221,20 @@ func _configure_fabrication_dashboard_layout() -> void:
 		rich_text.custom_minimum_size.x = 0.0
 		rich_text.fit_content = false
 		rich_text.scroll_active = false
-		rich_text.add_theme_font_size_override("font_size", 12)
+		_apply_rich_text_type(rich_text, _terminal_font_mono, _terminal_font_mono, TERMINAL_FONT_SIZE_ROW, Color(0.82, 0.92, 0.88, 1.0))
+	var fabrication_text_color := Color(1.0, 0.90, 0.76, 1.0) if _terminal_current_page == "FABRICATION" else Color(0.82, 0.92, 0.88, 1.0)
 	var status_body := _get_fabrication_panel_body("FabStatusPanel")
 	if status_body != null:
 		status_body.custom_minimum_size = Vector2(0.0, 22.0)
-		status_body.add_theme_font_size_override("font_size", 11)
+		_apply_rich_text_type(status_body, _terminal_font_mono, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, fabrication_text_color)
 	var selected_body := _get_fabrication_panel_body("FabSelectedRecipePanel")
 	if selected_body != null:
 		selected_body.custom_minimum_size = Vector2(0.0, 120.0)
-		selected_body.add_theme_font_size_override("font_size", 11)
+		_apply_rich_text_type(selected_body, _terminal_font_mono, _terminal_font_mono, TERMINAL_FONT_SIZE_ROW, fabrication_text_color)
 	var filter_body := _get_fabrication_panel_body("FabCategoryPanel")
 	if filter_body != null:
-		filter_body.add_theme_font_size_override("font_size", 11)
+		_apply_rich_text_type(filter_body, _terminal_font_mono, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, fabrication_text_color)
+		filter_body.autowrap_mode = TextServer.AUTOWRAP_OFF
 
 
 func _ensure_child_parent(child: Node, parent: Node) -> void:
@@ -2299,55 +2401,45 @@ func _apply_terminal_theme():
 	if terminal_header_panel:
 		terminal_header_panel.add_theme_stylebox_override("panel", header_style)
 
-	for label in [terminal_header_eyebrow, terminal_nav_title, terminal_action_title, terminal_command_title, terminal_map_title_label, terminal_planet_title_label, terminal_map_preview_title_label]:
-		if label == null:
+	for label in [terminal_nav_title, terminal_action_title, terminal_command_title, terminal_map_title_label, terminal_planet_title_label, terminal_map_preview_title_label]:
+		if not (label is Label):
 			continue
-		label.add_theme_color_override("font_color", Color(0.63, 0.83, 0.74, 0.92))
-		label.add_theme_font_size_override("font_size", 11)
+		_apply_label_type(label as Label, _terminal_font_display, TERMINAL_FONT_SIZE_SECTION, Color(0.63, 0.83, 0.74, 0.92))
 	if _terminal_main_scroll:
 		var main_scroll_style := StyleBoxFlat.new()
 		main_scroll_style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
 		main_scroll_style.set_border_width_all(0)
 		_terminal_main_scroll.add_theme_stylebox_override("panel", main_scroll_style)
 
-	if terminal_title_label:
-		terminal_title_label.add_theme_color_override("font_color", Color(0.93, 0.98, 0.95, 1.0))
-		terminal_title_label.add_theme_font_size_override("font_size", 18)
+	if terminal_title_label is Label:
+		_apply_label_type(terminal_title_label as Label, _terminal_font_display, TERMINAL_FONT_SIZE_TITLE, Color(0.93, 0.98, 0.95, 1.0))
+	if terminal_header_eyebrow is Label:
+		_apply_label_type(terminal_header_eyebrow as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(0.63, 0.83, 0.74, 0.92))
 
-	if terminal_target_label:
-		terminal_target_label.add_theme_color_override("font_color", Color(0.76, 0.92, 0.86, 0.95))
-		terminal_target_label.add_theme_font_size_override("font_size", 10)
-	if terminal_page_summary_label:
-		terminal_page_summary_label.add_theme_color_override("font_color", Color(0.62, 0.78, 0.72, 0.92))
-		terminal_page_summary_label.add_theme_font_size_override("font_size", 11)
+	if terminal_target_label is Label:
+		_apply_label_type(terminal_target_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(0.76, 0.92, 0.86, 0.95))
+	if terminal_page_summary_label is Label:
+		_apply_label_type(terminal_page_summary_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(0.62, 0.78, 0.72, 0.92))
 
 	for output in [terminal_output, terminal_map_label]:
 		if output == null:
 			continue
 		output.add_theme_stylebox_override("normal", map_style if output == terminal_map_label else output_style)
-		output.add_theme_color_override("font_color", Color(0.82, 0.92, 0.88, 1.0))
-		output.add_theme_font_size_override("font_size", 13 if output == terminal_map_label else 11)
 		if output is RichTextLabel:
-			output.fit_content = false
-			output.scroll_active = output != terminal_output
-			output.bbcode_enabled = true
+			_apply_rich_text_type(output as RichTextLabel, _terminal_font_mono, _terminal_font_mono, TERMINAL_FONT_SIZE_BODY if output == terminal_map_label else TERMINAL_FONT_SIZE_LOG, Color(0.82, 0.92, 0.88, 1.0))
+			(output as RichTextLabel).scroll_active = output != terminal_output
 	if terminal_widget_stack:
 		var widget_panel_style := _make_terminal_panel_style(8.0)
 		for panel in terminal_widget_stack.find_children("*", "PanelContainer", true, false):
 			panel.add_theme_stylebox_override("panel", widget_panel_style)
 			panel.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
 		for rich_text in terminal_widget_stack.find_children("*", "RichTextLabel", true, false):
-			rich_text.add_theme_color_override("font_color", Color(0.82, 0.92, 0.88, 1.0))
-			rich_text.add_theme_font_size_override("font_size", 13)
+			_apply_rich_text_type(rich_text as RichTextLabel, _terminal_font_mono, _terminal_font_mono, TERMINAL_FONT_SIZE_BODY, Color(0.82, 0.92, 0.88, 1.0))
 			if rich_text.custom_minimum_size.y > 0.0 and rich_text.custom_minimum_size.y < 130.0:
 				rich_text.custom_minimum_size.y = min(rich_text.custom_minimum_size.y, 86.0)
-			rich_text.fit_content = false
-			rich_text.scroll_active = true
 			rich_text.scroll_following = false
-			rich_text.bbcode_enabled = true
 		for label in terminal_widget_stack.find_children("*", "Label", true, false):
-			label.add_theme_color_override("font_color", Color(0.63, 0.83, 0.74, 0.92))
-			label.add_theme_font_size_override("font_size", 11)
+			_apply_label_type(label as Label, _terminal_font_display, TERMINAL_FONT_SIZE_SECTION, Color(0.63, 0.83, 0.74, 0.92))
 		_apply_terminal_widget_button_styles(action_button_style, action_button_hover_style, action_button_pressed_style, action_button_disabled_style)
 	if terminal_output:
 		terminal_output.scroll_following = true
@@ -2377,7 +2469,9 @@ func _apply_terminal_theme():
 		terminal_input.add_theme_color_override("selection_color", Color(0.68, 0.92, 0.80, 0.92))
 		terminal_input.add_theme_color_override("caret_color", Color(0.96, 1.0, 0.98, 1.0))
 		terminal_input.add_theme_constant_override("minimum_character_width", 1)
-		terminal_input.add_theme_font_size_override("font_size", 18)
+		if _terminal_font_mono != null:
+			terminal_input.add_theme_font_override("font", _terminal_font_mono)
+		terminal_input.add_theme_font_size_override("font_size", TERMINAL_FONT_SIZE_INPUT)
 		terminal_input.self_modulate = Color(1, 1, 1, 1)
 	var input_row = get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow")
 	if input_row is Control:
@@ -2391,14 +2485,12 @@ func _apply_terminal_theme():
 			var prompt_control := prompt_label as Control
 			prompt_control.custom_minimum_size.y = max(prompt_control.custom_minimum_size.y, 42.0)
 			prompt_control.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		prompt_label.add_theme_color_override("font_color", Color(0.78, 0.96, 0.86, 1.0))
-		prompt_label.add_theme_font_size_override("font_size", 18)
-	if terminal_status_label:
-		terminal_status_label.add_theme_color_override("font_color", Color(0.64, 0.88, 0.78, 0.96))
-		terminal_status_label.add_theme_font_size_override("font_size", 13)
-	if terminal_hint_label:
-		terminal_hint_label.add_theme_color_override("font_color", Color(0.54, 0.72, 0.68, 0.88))
-		terminal_hint_label.add_theme_font_size_override("font_size", 12)
+		if prompt_label is Label:
+			_apply_label_type(prompt_label as Label, _terminal_font_mono_bold, TERMINAL_FONT_SIZE_INPUT, Color(0.78, 0.96, 0.86, 1.0))
+	if terminal_status_label is Label:
+		_apply_label_type(terminal_status_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(0.64, 0.88, 0.78, 0.96))
+	if terminal_hint_label is Label:
+		_apply_label_type(terminal_hint_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HINT, Color(0.54, 0.72, 0.68, 0.88))
 		_update_terminal_hint_visibility()
 	for page_name in _terminal_page_buttons.keys():
 		var button: BaseButton = _terminal_page_buttons[page_name]
@@ -2409,15 +2501,13 @@ func _apply_terminal_theme():
 		button.add_theme_color_override("icon_hover_color", Color(1.0, 1.0, 1.0, 0.82))
 		button.add_theme_color_override("icon_pressed_color", Color(1.0, 1.0, 1.0, 1.0))
 		button.add_theme_color_override("icon_disabled_color", Color(1.0, 1.0, 1.0, 1.0))
-		button.add_theme_color_override("font_color", Color(0.80, 0.92, 0.88, 1.0))
+		_apply_button_type(button, _terminal_font_display, TERMINAL_FONT_SIZE_NAV, Color(0.80, 0.92, 0.88, 1.0))
 		button.add_theme_color_override("font_disabled_color", Color(0.95, 1.0, 0.97, 1.0))
-		button.add_theme_font_size_override("font_size", 13)
 	for button in [terminal_wait_button, terminal_wait_10x_button, terminal_focus_button, terminal_harden_button, terminal_reset_button, terminal_reboot_button, terminal_help_button]:
 		if button == null:
 			continue
 		_apply_terminal_button_assets(button, action_button_style, action_button_hover_style, action_button_pressed_style, action_button_disabled_style, action_button_pressed_style, _terminal_action_icon(button))
-		button.add_theme_color_override("font_color", Color(0.74, 0.88, 0.82, 1.0))
-		button.add_theme_font_size_override("font_size", 12)
+		_apply_button_type(button, _terminal_font_display, TERMINAL_FONT_SIZE_BUTTON, Color(0.74, 0.88, 0.82, 1.0))
 	if primary_weapon_button:
 		primary_weapon_button.add_theme_stylebox_override("normal", action_button_style)
 		primary_weapon_button.add_theme_stylebox_override("hover", action_button_hover_style)
@@ -2975,18 +3065,18 @@ func _apply_terminal_page_theme() -> void:
 	if terminal_header_panel:
 		var header_texture: Texture2D = TERMINAL_HEADER_WARNING_TEXTURE if fabrication_mode else TERMINAL_HEADER_ACTIVE_TEXTURE
 		terminal_header_panel.add_theme_stylebox_override("panel", _make_terminal_header_style(header_texture, 6.0))
-	if terminal_title_label:
-		terminal_title_label.add_theme_color_override("font_color", Color(0.98, 0.90, 0.72, 1.0) if fabrication_mode else Color(0.93, 0.98, 0.95, 1.0))
-	if terminal_header_eyebrow:
-		terminal_header_eyebrow.add_theme_color_override("font_color", Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
-	if terminal_nav_title:
-		terminal_nav_title.add_theme_color_override("font_color", Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
-	if terminal_action_title:
-		terminal_action_title.add_theme_color_override("font_color", Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
-	if terminal_status_label:
-		terminal_status_label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.48, 0.96) if fabrication_mode else Color(0.64, 0.88, 0.78, 0.96))
-	if terminal_hint_label:
-		terminal_hint_label.add_theme_color_override("font_color", Color(0.96, 0.79, 0.54, 0.88) if fabrication_mode else Color(0.54, 0.72, 0.68, 0.88))
+	if terminal_title_label is Label:
+		_apply_label_type(terminal_title_label as Label, _terminal_font_display, TERMINAL_FONT_SIZE_TITLE, Color(0.98, 0.90, 0.72, 1.0) if fabrication_mode else Color(0.93, 0.98, 0.95, 1.0))
+	if terminal_header_eyebrow is Label:
+		_apply_label_type(terminal_header_eyebrow as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
+	if terminal_nav_title is Label:
+		_apply_label_type(terminal_nav_title as Label, _terminal_font_display, TERMINAL_FONT_SIZE_SECTION, Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
+	if terminal_action_title is Label:
+		_apply_label_type(terminal_action_title as Label, _terminal_font_display, TERMINAL_FONT_SIZE_SECTION, Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
+	if terminal_status_label is Label:
+		_apply_label_type(terminal_status_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(1.0, 0.78, 0.48, 0.96) if fabrication_mode else Color(0.64, 0.88, 0.78, 0.96))
+	if terminal_hint_label is Label:
+		_apply_label_type(terminal_hint_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HINT, Color(0.96, 0.79, 0.54, 0.88) if fabrication_mode else Color(0.54, 0.72, 0.68, 0.88))
 		terminal_hint_label.text = "Click a work order. Esc closes." if fabrication_mode else "Type directly into the command line. Drag globe to inspect. Left click in the world to place while building. Esc closes."
 	if terminal_input:
 		var input_style := _make_terminal_input_style()
@@ -3004,17 +3094,19 @@ func _apply_terminal_page_theme() -> void:
 		terminal_input.add_theme_color_override("selection_color", Color(0.96, 0.72, 0.28, 0.92) if fabrication_mode else Color(0.68, 0.92, 0.80, 0.92))
 		terminal_input.add_theme_color_override("caret_color", Color(1.0, 0.96, 0.88, 1.0) if fabrication_mode else Color(0.96, 1.0, 0.98, 1.0))
 		terminal_input.add_theme_constant_override("minimum_character_width", 1)
-		terminal_input.add_theme_font_size_override("font_size", 18)
+		if _terminal_font_mono != null:
+			terminal_input.add_theme_font_override("font", _terminal_font_mono)
+		terminal_input.add_theme_font_size_override("font_size", TERMINAL_FONT_SIZE_INPUT)
 		terminal_input.self_modulate = Color(1, 1, 1, 1)
 	_update_terminal_hint_visibility()
 	_debug_terminal_input_layout("_apply_terminal_page_theme")
 	for output in [terminal_output, terminal_map_label]:
 		if output == null:
 			continue
-		output.add_theme_color_override("font_color", Color(1.0, 0.90, 0.76, 1.0) if fabrication_mode else Color(0.82, 0.92, 0.88, 1.0))
 		if output is RichTextLabel:
-			output.add_theme_color_override("selection_color", Color(0.98, 0.72, 0.28, 0.92) if fabrication_mode else Color(0.68, 0.92, 0.80, 0.92))
-			output.add_theme_font_size_override("font_size", 12 if output == terminal_output else 13)
+			var rich_output := output as RichTextLabel
+			_apply_rich_text_type(rich_output, _terminal_font_mono, _terminal_font_mono, TERMINAL_FONT_SIZE_LOG if output == terminal_output else TERMINAL_FONT_SIZE_BODY, Color(1.0, 0.90, 0.76, 1.0) if fabrication_mode else Color(0.82, 0.92, 0.88, 1.0))
+			rich_output.add_theme_color_override("selection_color", Color(0.98, 0.72, 0.28, 0.92) if fabrication_mode else Color(0.68, 0.92, 0.80, 0.92))
 	if terminal_background and fabrication_mode:
 		terminal_background.modulate = Color(1.0, 0.92, 0.72, 1.0)
 	elif terminal_background:
@@ -3029,16 +3121,12 @@ func _apply_terminal_page_theme() -> void:
 			panel.add_theme_stylebox_override("panel", widget_panel_style)
 			panel.self_modulate = TERMINAL_DENSE_PANEL_MODULATE
 		for rich_text in terminal_widget_stack.find_children("*", "RichTextLabel", true, false):
-			rich_text.add_theme_color_override("font_color", Color(1.0, 0.90, 0.76, 1.0) if fabrication_mode else Color(0.82, 0.92, 0.88, 1.0))
-			rich_text.add_theme_font_size_override("font_size", 13)
-			rich_text.fit_content = false
-			rich_text.scroll_active = true
+			_apply_rich_text_type(rich_text as RichTextLabel, _terminal_font_mono, _terminal_font_mono, TERMINAL_FONT_SIZE_BODY, Color(1.0, 0.90, 0.76, 1.0) if fabrication_mode else Color(0.82, 0.92, 0.88, 1.0))
 			rich_text.scroll_following = false
-			rich_text.bbcode_enabled = true
 		for label in terminal_widget_stack.find_children("*", "Label", true, false):
-			label.add_theme_color_override("font_color", Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
-			label.add_theme_font_size_override("font_size", 11)
+			_apply_label_type(label as Label, _terminal_font_display, TERMINAL_FONT_SIZE_SECTION, Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
 		_apply_terminal_widget_button_styles(action_button_style, action_button_hover_style, action_button_pressed_style, action_button_disabled_style)
+		_configure_fabrication_dashboard_layout()
 	if terminal_output is RichTextLabel:
 		terminal_output.scroll_following = true
 
@@ -4040,7 +4128,7 @@ func _populate_fabrication_work_order_rows(work_orders: Array) -> void:
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.focus_mode = Control.FOCUS_ALL
 		button.clip_text = true
-		button.add_theme_font_size_override("font_size", 11)
+		_apply_button_type(button, _terminal_font_mono_bold, TERMINAL_FONT_SIZE_ROW, Color(0.82, 0.92, 0.88, 1.0))
 		_set_control_property_if_available(button, &"text_overrun_behavior", TextServer.OVERRUN_TRIM_ELLIPSIS)
 		button.pressed.connect(_on_fabrication_work_order_button_pressed.bind(recipe_id))
 		rows.add_child(button)

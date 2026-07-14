@@ -375,6 +375,30 @@ Implemented behavior:
   - idle/firing clips are replaced at runtime so new strips are guaranteed to be used over legacy `enemy.tres` entries
   - firing animation restart is forced on repeat shots for snappier transitions
 
+### Savage Rushdown Contract
+
+`enemy_savage` creates tempo rather than absorbing more damage than a grunt. It has 64 HP, 104 engage speed, low
+stagger/critical thresholds, and an aggressive no-theft behavior profile. Its normal commitment is a two-hit chain:
+the first hit teaches restraint, the second applies higher guard-stamina pressure, and the final recovery is the
+player's punish window. Its pounce is a short, highlighted, direction-locked gap closer with a long miss/hit recovery,
+not a reuse of the grunt Falcon Punch.
+
+Savage attacks remain interruptible by recoil, stagger, or critical reactions. Encounter composition should preserve
+lateral dodge/parry space and normally stay at one Savage with supporting grunts or two Savages as a focused panic
+test; four-plus Savage pockets and one-tile corridors undermine the intended counterplay.
+
+### Grunt Falcon Punch Commitment Contract
+
+Falcon Punch is a readable grunt special, not the grunt's default range state. A grunt must apply normal melee pressure
+before its deterministic special cadence becomes eligible, and launch still requires an independent cooldown, no recent
+Falcon parry, the configured `88-184px` range band, and a clear ally lane. The tell is `0.46s` with only 15% movement;
+the `0.28s` leap targets a point `30px` in front of the Operator rather than the Operator center; recovery lasts `0.70s`
+with zero forward drift. Contact enforces at least `28px` separation.
+
+A Falcon parry cancels windup, leap, impact lock, or recovery and opens the normal grunt critical window. A damaging
+hit uses a dedicated Operator recoil/knockback/hitstop presentation. The contextual Operator counter-kick remains
+deferred; spacing, timing, and interrupt clarity are the current counterplay contract.
+
 ## 5. Combat Movement Feel
 
 No new logic animation dependency except sprint readability.
@@ -407,7 +431,7 @@ UI/VFX targets:
 
 - target ring
 - threat highlight
-- projectile tracer — Carbine MK1 baseline now routes through `design/20_features/in_progress/PROJECTILE_VFX_SYSTEM.md`
+- projectile tracer — Carbine MK1 baseline now routes through `design/02_features/combat_feel/PROJECTILE_VFX_SYSTEM.md`
 
 Animation requirements:
 

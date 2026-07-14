@@ -15,13 +15,10 @@ Canonical tracker for production art, audio, animation, and content assets that 
 >
 > **When you change an asset's status** (e.g., `needed` → `partial` or `done`), update the entry accordingly.
 >
-> ### Dual Copy Sync
+> ### Canonical Location
 >
-> This file exists in **two locations that must be kept identical**:
-> 1. `REQUIRED_ASSETS.md` — project root (user visibility)
-> 2. `design/00_meta/REQUIRED_ASSETS.md` — design directory (agent reference)
->
-> **Any update to one copy must be mirrored to the other immediately.** Do not let them drift.
+> This root file is the sole canonical required-assets tracker. `design/00_meta/REQUIRED_ASSETS.md` is a deprecated
+> forwarding notice only; never copy tracker entries there.
 
 ## Practice
 
@@ -115,6 +112,12 @@ Canonical tracker for production art, audio, animation, and content assets that 
 | needed | Enemy marine heavy dash directional body suite | `custodian/content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__dash_attack_01__{n,ne,e,se,s,sw,w,nw}__8f__156.png` | Replace the current east-only dash fallback with readable directional heavy-charge body animation. | Design target is slow compressed windup, violent launch smear, impact frame, and skid/recovery. Minimum useful coverage is E/W/NE/NW/SE/SW; E exists and W may flip temporarily. |
 | needed | Enemy marine heavy dash FX overlay suite | `custodian/content/sprites/enemies/enemy_marine/runtime/fx/enemy_marine__fx__unarmed__dash_attack_01__{n,ne,e,se,s,sw,w,nw}__8f__156.png` | Add separate telegraph, launch, travel, impact, skid, and settling dust/spark overlays for the heavy dash. | Keep FX dirty/metallic: shoulder glow, boot scrape, floor chips, orange sparks, short shock crescent, skid dust. E exists but should be revised to the hardened design if needed. |
 | needed | Enemy marine heavy dash audio stack | `custodian/content/audio/sfx/enemies/enemy_marine/dash_{windup,launch,travel,impact,recover}_*.wav` | Sell mass and impact with servo whine, armor creak, boot slam, dirty whoosh, metal body hit, bass thud, stone scrape, and recovery grind. | Do not use sword-swish audio; this should sound like armored mass crossing space violently. |
+
+## Enemy Savage
+
+| Status | Asset | Target Path | Purpose | Notes |
+|---|---|---|---|---|
+| needed | Enemy Savage rushdown animation suite | `custodian/content/sprites/enemies/enemy_savage/runtime/body/enemy_savage__body__{run,melee_chain_01,pounce,flinch,stagger,death}__{n,ne,e,se,s,sw,w,nw}__?f__96.png`, optional FX under `runtime/fx/` | Replace idle substitution with readable movement, two-hit pressure, pounce commitment, reactions, and death. | Gameplay is live with E/N/S/SE/SW/W idle strips, NE/NW falling back to N. Minimum broad wiring target is S/E/W/N; each sheet needs explicit frame metadata if its canvas is not 96px. |
 
 ## Portal / Ruin Props
 

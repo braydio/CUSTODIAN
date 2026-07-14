@@ -11,16 +11,20 @@ const REQUIRED_BODY_ANIMATIONS := {
 	"melee_sw": 10,
 	"melee_w": 11,
 	"stagger_s": 8,
-	"stagger_e": 8,
-	"stagger_w": 8,
+	"stagger_e": 11,
+	"stagger_w": 11,
+	"special_windup_e": 6,
+	"special_windup_w": 6,
 	"special_inflight_e": 6,
 	"special_inflight_w": 6,
-	"special_recovery_e": 11,
-	"special_recovery_w": 11,
+	"special_recovery_e": 6,
+	"special_recovery_w": 6,
 	"crit_s": 8,
 	"crit_recovery_s": 5,
-	"death_s": 12,
+	"death_e": 8,
 	"flinch_s": 6,
+	"flinch_e": 5,
+	"flinch_w": 5,
 }
 
 const REQUIRED_FX_ANIMATIONS := {
@@ -80,12 +84,20 @@ func _run() -> void:
 		push_error("Grunt right falcon-punch leap did not resolve to special_inflight_e.")
 		quit(1)
 		return
+	if GRUNT_ANIMATION_LIBRARY.get_grunt_falcon_punch_phase_animation(&"windup", Vector2.LEFT) != &"special_windup_w":
+		push_error("Grunt left falcon-punch windup did not resolve to special_windup_w.")
+		quit(1)
+		return
 	if GRUNT_ANIMATION_LIBRARY.get_grunt_falcon_punch_phase_animation(&"recovery", Vector2.LEFT) != &"special_recovery_w":
 		push_error("Grunt left falcon-punch recovery did not resolve to special_recovery_w.")
 		quit(1)
 		return
 	if GRUNT_ANIMATION_LIBRARY.get_attack_fx_animation(Vector2.LEFT) != &"melee_fx_w":
 		push_error("Grunt left attack FX did not resolve to melee_fx_w.")
+		quit(1)
+		return
+	if GRUNT_ANIMATION_LIBRARY.get_flinch_animation(Vector2.RIGHT) != &"flinch_e":
+		push_error("Grunt right flinch did not resolve to flinch_e.")
 		quit(1)
 		return
 

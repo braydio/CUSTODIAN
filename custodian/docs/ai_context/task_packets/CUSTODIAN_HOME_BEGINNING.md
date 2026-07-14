@@ -26,7 +26,7 @@ The Home beginning has an active design home, a Godot scene/runtime script, Blac
 
 ## Work Surface
 
-- Files or folders expected to change: `design/03_architecture/`, `custodian/game/world/home/`, `custodian/scenes/`, `custodian/tools/validation/`, `custodian/docs/ai_context/`, `REQUIRED_ASSETS.md`, `design/00_meta/REQUIRED_ASSETS.md`
+- Files or folders expected to change: `design/03_architecture/`, `custodian/game/world/home/`, `custodian/scenes/`, `custodian/tools/validation/`, `custodian/docs/ai_context/`, `REQUIRED_ASSETS.md`
 - Files or folders expected to be read but not changed: existing hub prototype, command terminal, operator, camera, and HUD components
 - Out-of-scope areas: legacy Python runtime, contract/procgen scene ownership, final production art/audio generation
 

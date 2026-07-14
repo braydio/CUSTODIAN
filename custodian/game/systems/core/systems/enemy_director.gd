@@ -59,6 +59,7 @@ func _resolve_dependencies() -> void:
 		enemy_factory.set("heavy_drone_scene", wave_manager.get("heavy_drone_scene"))
 		enemy_factory.set("grunt_scene", wave_manager.get("grunt_scene"))
 		enemy_factory.set("marine_scene", wave_manager.get("marine_scene"))
+		enemy_factory.set("savage_scene", wave_manager.get("savage_scene"))
 
 func _connect_wave_events() -> void:
 	if wave_manager == null:

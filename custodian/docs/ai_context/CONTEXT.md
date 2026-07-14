@@ -1,6 +1,6 @@
 # PROJECT CONTEXT PRIMER — CUSTODIAN
 
-Last updated: 2026-07-03
+Last updated: 2026-07-13
 
 ## Purpose
 
@@ -24,6 +24,7 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 - Runtime authority: Godot only
 - Active command shell: HUD terminal in `custodian/game/ui/hud/ui.gd`, with terminal helper modules under `custodian/game/ui/terminal/`
 - Current gameplay HUD style: compact Black Reliquary gothic/brass UI. Assets live in `custodian/content/ui/black_reliquary/`; reusable theme/components/HUD scenes live under `custodian/game/ui/`. Prompt text must be real Godot labels, not baked into images, the minimap frame should embed the shared live tactical minimap renderer rather than static marker art, authored-map-specific HUD content must only show inside its owning map, debug diagnostics should live in the dedicated F12/`debug_hud` debug screen instead of normal HUD labels, and terminal focus must mask gameplay overlays without re-showing inactive map-local HUDs.
+- Command-terminal typography is a shipped two-font system: IBM Plex Sans Condensed owns display hierarchy, IBM Plex Mono owns data/input hierarchy, and the vendored TTF/OFL files live under `content/ui/fonts/`. Theme/page switches must preserve semantic fonts and sizes; bounded text ellipsizes instead of enabling horizontal scroll.
 - Contract/runtime coupling: contract planet generation feeds procgen world generation through a shared world profile. `CustodianContractMap` owns candidate map generation: it disables child `ProcGen` ready-time auto-generation before tree entry, evaluates candidates without cosmetic prop/nav passes, then regenerates the selected map once in full visual mode.
 - Input prompts: interaction UI should derive from `InputMap`, not hardcoded keys
 - Operator combat selection: Fists/unarmed is a first-class `OperatorWeaponDefinition` profile selected with `toggle_unarmed`; normal weapon cycling excludes Fists and only cycles armed profiles. Melee attack physics resolve through `MeleeAttackProfile` resources referenced by each weapon definition, with legacy operator melee exports kept only as fallbacks. The offhand secondary button (`aim_hold` / `attack_secondary`, right mouse or LT) is context-sensitive: selected ranged primary holds primary ranged-ready, melee/unarmed plus equipped P-9 holds sidearm-ready, and melee/unarmed with empty or guard-focused offhand starts tap parry / held guard. Primary fires the active ranged weapon only while ranged-ready or sidearm-ready is active; two-handed ranged fire waits for its authored aim raise to complete. `Shift+primary` remains the melee/unarmed heavy chord. Operator movement now supports WASD/left stick movement, mouse/right-stick aim, and movement-first dodge with idle aiming backstep.
@@ -35,6 +36,7 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 - Procgen world progression now has a route-first Intent Graph / Ascent V1 layer. `ProcGenTilemap.world_shape_mode` defaults to `ASCENT_FIELD`, which does not use the old BSP/corridor/cellular cave mask as the base world substrate. It builds a deterministic ascent spine, broad exterior route, terraces, branch pockets, sparse cliff/ruin blockers, and story/faction reservations from the world profile, then exports the graph/summary/reserved regions in level data. `LEGACY_CAVE` keeps the old generator path available. TerrainBuilder consumes intent required cells and reserved regions for guarded height/traversal metadata. Elevation traversal query API is live; actor/enemy pathfinding enforcement is deferred.
 - Sundered Keep is a live authored connected-map destination under `game/world/sundered_keep/`. Its active front-gate level is now built from `content/levels/sundered_keep/sundered_keep_front_gate_large.json` through `sundered_keep_tilemap_loader.gd`, giving the map `112x80` tile bounds, a southern broken-causeway spawn, outer landing, pre-gate Return Mooring/key alcoves, gatehouse, locked portcullis, vestibule, courtyard, rampart/service branches, and Great Hall front. Interaction state remains in `sundered_keep_map.gd`: real game32 Return Mooring assets provide diegetic return travel, the Main Gate starts closed with a four-tile/two-row collision blocker and requires local/inventory item `sundered_gate_key`, the Great Hall entry has its own openable double-door blocker, and the map exports live minimap floor/wall data plus tile/world conversion methods for the compact HUD minimap. Normal contract startup now leaves the Operator at the generated-map spawn; `ContractWorldLoader` debug Sundered Keep gateway/start options are opt-in review tools.
 - Enemy marine dash is now a documented heavy commitment attack, not just forced sprite playback: windup/telegraph locks direction, dash travel owns the only active hit window, impact/recovery enforce a punish window, and feel comes from hitstop, knockback, camera shake, and Operator impact-lock feedback. Current runtime uses the east body/FX strip as fallback while directional dash body/FX sheets and the dash audio stack are tracked in `REQUIRED_ASSETS.md`.
+- Enemy Savage is a low-discipline rushdown role, not a stronger grunt. `enemy_savage.tscn` uses the no-theft `raider_savage` profile, low durability/poise thresholds, a two-hit guard-pressure chain, and a distinct interruptible pounce with locked travel and punishable recovery. `enemy.gd` owns its fixed-step combat timing; current directional idle art remains presentation fallback until dedicated action sheets arrive.
 
 ## Active Architecture Snapshot
 
@@ -65,6 +67,8 @@ An explicit architecture organization pass is now documented and tracked.
 ## Working Rules
 
 - Treat `custodian/` and `design/` as the active implementation surface.
+- Put active feature specs under `design/02_features/`; `design/20_features/` is retired and must not receive new work.
+- Treat root `REQUIRED_ASSETS.md` as the sole asset-tracker authority; the design-tree file is a deprecated pointer, not a synchronized copy.
 - Start all local work by reading `custodian/AGENTS.md`, then this context pack.
 - Use task packets as optional risk-control and handoff records: skip narrow low-risk work, use the compact template when durable scope or acceptance helps, and expand it only for high-risk or multi-session work.
 - When a task packet exists, keep it current as scope, blockers, acceptance, or deferred work materially changes.

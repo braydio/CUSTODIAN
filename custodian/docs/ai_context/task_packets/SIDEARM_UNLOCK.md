@@ -34,7 +34,7 @@ The Operator starts with an empty sidearm slot, recovers the P-9 as carried equi
 
 - Determinism concerns: unlock state should be local runtime state and interaction-driven, with no random grant behavior.
 - Simulation/UI boundary concerns: Operator owns weapon readiness; Sundered Keep owns map-local interactable and pickup messaging.
-- Asset requirements: use existing sidearm resources and keep missing production sidearm animation assets tracked in both `REQUIRED_ASSETS.md` copies.
+- Asset requirements: use existing sidearm resources and keep missing production sidearm animation assets tracked in root `REQUIRED_ASSETS.md`.
 - Compatibility or migration concerns: active ranged primary must keep priority over sidearm fallback.
 - Clarifying questions or assumptions: persist opened/acquired for the run using Sundered Keep local state unless a verified existing autoload inventory pattern is appropriate.
 
@@ -66,7 +66,7 @@ The Operator starts with an empty sidearm slot, recovers the P-9 as carried equi
 
 - Implemented: the Operator starts with the sidearm inactive. Sundered Keep's one-time field-retention locker at `[73, 27]` adds `p9_sidearm` to carried inventory. The inventory Equipment page fills/clears the sidearm slot and calls `grant_sidearm(...)` / `remove_sidearm()` at equip boundaries, so recovery alone never overrides parry/guard.
 - Validated: Operator ranged-ready smoke covers locked/granted behavior, pistol profile values, non-`ranged_2h` classification, and selected-primary priority. The focused Sundered Keep unlock smoke covers locker availability, successful one-time grant, melee selection preservation, fallback activation, and opened/non-interactable state. Sundered Keep asset, layout, and large-layout smokes pass.
-- Deferred: manual editor playtest and production art. The locker currently uses a wet-crate stand-in, and the modular sidearm ready/fire/recover/reload directional suite remains incomplete; both needs are tracked identically in the two `REQUIRED_ASSETS.md` copies.
+- Deferred: manual editor playtest and production art. The locker currently uses a wet-crate stand-in, and the modular sidearm ready/fire/recover/reload directional suite remains incomplete; both needs are tracked in root `REQUIRED_ASSETS.md`.
 
 ## Next Steps
 

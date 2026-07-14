@@ -31,7 +31,7 @@ Update the sprite pipeline for: {{target_actor_or_system}}
 
 ## Implementation Notes
 - Check `custodian/content/sprites/` for existing pipeline patterns
-- Use `custodian/tools/pipelines/ingest.py` for batch processing; pass `--no-git-add` when inspecting without staging
+- Use `custodian/tools/pipelines/ingest.py` for batch processing; it writes outputs and archives intake without staging Git changes
 - Update `custodian/content/sprites/[actor]/runtime/` with new animations
 - Preserve `.aseprite` source files for iterative editing
 - Test animations in Godot scene: `custodian/scenes/game.tscn`

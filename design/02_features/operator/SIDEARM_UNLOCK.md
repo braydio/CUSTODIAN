@@ -110,4 +110,4 @@ Last updated: 2026-06-21
   - `custodian/tools/validation/operator_ranged_ready_input_smoke.gd`
   - `custodian/tools/validation/sundered_keep_sidearm_unlock_smoke.gd`
 
-Remaining production assets are tracked in both copies of `REQUIRED_ASSETS.md`: the final Sundered Keep sidearm locker art and the complete modular sidearm ready/fire/recover/reload suite.
+Remaining production assets are tracked in root `REQUIRED_ASSETS.md`: the final Sundered Keep sidearm locker art and the complete modular sidearm ready/fire/recover/reload suite.

@@ -40,7 +40,6 @@ Begin implementation of the contained elevation suite from `design/ELEVATION.md`
   - `custodian/content/tiles/tilesets/procgen_world_tileset.tres`
   - `custodian/tools/validation/terrain_builder_smoke.gd`
   - `REQUIRED_ASSETS.md`
-  - `design/00_meta/REQUIRED_ASSETS.md`
   - `custodian/docs/ai_context/CURRENT_STATE.md`
   - `custodian/docs/ai_context/FILE_INDEX.md`
 - Files or folders expected to be read but not changed:

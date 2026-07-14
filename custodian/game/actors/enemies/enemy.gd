@@ -5,6 +5,7 @@ const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
 const SCRAP_PICKUP_SCENE := preload("res://game/actors/items/scrap_pickup.tscn")
 const WOLF_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/wolf_animation_library.gd")
 const GRUNT_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/grunt_animation_library.gd")
+const SAVAGE_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/savage_animation_library.gd")
 const ENEMY_PALETTE_SHADER := preload("res://game/enemies/procgen/enemy_palette_tint.gdshader")
 const ENEMY_BLACKBOARD_SCRIPT := preload("res://game/actors/enemies/components/enemy_blackboard.gd")
 const ENEMY_PERCEPTION_SCRIPT := preload("res://game/actors/enemies/components/enemy_perception_component.gd")
@@ -28,6 +29,7 @@ const WOLF_DEATH_ANIMATION := &"death_east"
 const WOLF_SPECIAL_ANIMATION := &"howl_east"
 const CUSTOM_ENEMY_GRUNT := &"enemy_grunt"
 const CUSTOM_ENEMY_MARINE := &"enemy_marine"
+const CUSTOM_ENEMY_SAVAGE := &"enemy_savage"
 const GRUNT_IDLE_ANIMATION := &"idle_s"
 const GRUNT_MOVE_ANIMATION := &"run_w"
 const GRUNT_ATTACK_ANIMATION := &"melee_e"
@@ -37,7 +39,7 @@ const GRUNT_CRIT_ANIMATION := &"crit_s"
 const GRUNT_CRIT_RECOVERY_ANIMATION := &"crit_recovery_s"
 const GRUNT_CRIT_FX_ANIMATION := &"crit_fx_s"
 const GRUNT_FLINCH_FX_ANIMATION := &"flinch_fx_s"
-const GRUNT_DEATH_ANIMATION := &"death_s"
+const GRUNT_DEATH_ANIMATION := &"death_e"
 const GRUNT_FLINCH_ANIMATION := &"flinch_s"
 const CUSTOM_AMBIENT_EAST_ANIMATION := &"ambient_slink_east"
 const CUSTOM_AMBIENT_NORTH_ANIMATION := &"ambient_slink_north"
@@ -111,26 +113,62 @@ enum AssaultState {
 @export var custom_enemy_animation_set: String = ""
 @export var custom_enemy_animation_scale: Vector2 = Vector2.ONE
 @export var custom_enemy_fx_scale: Vector2 = Vector2.ONE
+@export var health_bar_vertical_offset: float = -28.0
 @export var grunt_parry_critical_window_min_sec: float = 0.8
 @export var grunt_critical_breach_marker_offset: Vector2 = Vector2(0.0, -62.0)
 @export var grunt_critical_window_ring_offset: Vector2 = Vector2.ZERO
 @export var grunt_optional_critical_vfx_enabled: bool = true
 @export var grunt_falcon_punch_enabled: bool = false
-@export var grunt_falcon_punch_windup_time: float = 0.34
-@export var grunt_falcon_punch_leap_time: float = 0.24
-@export var grunt_falcon_punch_impact_lock_time: float = 0.06
-@export var grunt_falcon_punch_recovery_time: float = 0.50
-@export var grunt_falcon_punch_distance_px: float = 112.0
-@export var grunt_falcon_punch_damage_multiplier: float = 1.45
-@export var grunt_falcon_punch_cooldown: float = 1.35
-@export var grunt_falcon_punch_launch_band_min: float = 58.0
-@export var grunt_falcon_punch_launch_band_max: float = 172.0
-@export var grunt_falcon_punch_hit_active_start_ratio: float = 0.24
-@export var grunt_falcon_punch_hit_active_end_ratio: float = 0.82
-@export var grunt_falcon_punch_hit_forward_reach_px: float = 32.0
-@export var grunt_falcon_punch_hit_lateral_reach_px: float = 22.0
-@export var grunt_falcon_punch_windup_speed_multiplier: float = 0.82
-@export var grunt_falcon_punch_recovery_speed: float = 74.0
+@export var grunt_falcon_punch_windup_time: float = 0.46
+@export var grunt_falcon_punch_leap_time: float = 0.28
+@export var grunt_falcon_punch_impact_lock_time: float = 0.08
+@export var grunt_falcon_punch_recovery_time: float = 0.70
+@export var grunt_falcon_punch_distance_px: float = 96.0
+@export var grunt_falcon_punch_damage_multiplier: float = 1.35
+@export var grunt_falcon_punch_cooldown: float = 2.1
+@export var grunt_falcon_punch_launch_band_min: float = 88.0
+@export var grunt_falcon_punch_launch_band_max: float = 184.0
+@export var grunt_falcon_punch_hit_active_start_ratio: float = 0.38
+@export var grunt_falcon_punch_hit_active_end_ratio: float = 0.76
+@export var grunt_falcon_punch_hit_forward_reach_px: float = 34.0
+@export var grunt_falcon_punch_hit_lateral_reach_px: float = 24.0
+@export var grunt_falcon_punch_windup_speed_multiplier: float = 0.15
+@export var grunt_falcon_punch_recovery_speed: float = 0.0
+@export var grunt_falcon_punch_stop_short_px: float = 30.0
+@export var grunt_falcon_punch_knockback_px: float = 58.0
+@export var grunt_falcon_punch_victim_hitstop: float = 0.06
+@export var grunt_falcon_punch_attacker_hitstop: float = 0.035
+@export var grunt_falcon_punch_camera_shake_strength: float = 0.22
+@export var grunt_falcon_punch_camera_shake_duration: float = 0.10
+@export_range(0.0, 1.0, 0.01) var grunt_falcon_punch_chance: float = 0.35
+@export var grunt_falcon_punch_recent_parry_lockout_sec: float = 3.0
+@export var grunt_falcon_punch_requires_clear_lane: bool = true
+@export var grunt_falcon_punch_ally_lane_radius_px: float = 34.0
+@export var grunt_falcon_punch_after_normal_attacks_min: int = 1
+@export var enemy_body_separation_px: float = 28.0
+@export var enemy_spacing_radius_px: float = 34.0
+@export var enemy_spacing_strength: float = 0.65
+@export var savage_chain_enabled: bool = false
+@export var savage_chain_gap_time: float = 0.10
+@export var savage_chain_second_windup_time: float = 0.16
+@export var savage_chain_second_damage: float = 12.0
+@export var savage_chain_recovery_time: float = 0.55
+@export var savage_chain_first_guard_stamina_damage: float = 10.0
+@export var savage_chain_second_guard_stamina_damage: float = 22.0
+@export var savage_pounce_enabled: bool = false
+@export var savage_pounce_windup_time: float = 0.28
+@export var savage_pounce_leap_time: float = 0.18
+@export var savage_pounce_recovery_time: float = 0.55
+@export var savage_pounce_distance_px: float = 64.0
+@export var savage_pounce_damage: float = 18.0
+@export var savage_pounce_knockback_px: float = 52.0
+@export var savage_pounce_cooldown: float = 1.8
+@export var savage_pounce_launch_band_min: float = 44.0
+@export var savage_pounce_launch_band_max: float = 132.0
+@export var savage_pounce_hit_active_start_ratio: float = 0.20
+@export var savage_pounce_hit_active_end_ratio: float = 0.86
+@export var savage_pounce_hit_forward_reach_px: float = 30.0
+@export var savage_pounce_hit_lateral_reach_px: float = 22.0
 var simulation_tier: String = "active"
 @export var marine_dash_enabled: bool = false
 @export var marine_dash_windup_time: float = 0.32
@@ -243,6 +281,21 @@ var _grunt_falcon_punch_timer: float = 0.0
 var _grunt_falcon_punch_direction: Vector2 = Vector2.RIGHT
 var _grunt_falcon_punch_start_position: Vector2 = Vector2.ZERO
 var _grunt_falcon_punch_hit_targets: Array[int] = []
+var _grunt_falcon_punch_current_distance: float = 0.0
+var _grunt_falcon_punch_cooldown_timer: float = 0.0
+var _grunt_falcon_punch_recent_parry_timer: float = 0.0
+var _grunt_falcon_punch_attacker_hitstop_timer: float = 0.0
+var _grunt_falcon_punch_normal_attacks_since_special: int = 0
+var _grunt_falcon_punch_decision_credit: float = 0.0
+var _savage_chain_phase: StringName = &""
+var _savage_chain_timer: float = 0.0
+var _savage_chain_direction: Vector2 = Vector2.RIGHT
+var _savage_pounce_phase: StringName = &""
+var _savage_pounce_timer: float = 0.0
+var _savage_pounce_cooldown_timer: float = 0.0
+var _savage_pounce_direction: Vector2 = Vector2.RIGHT
+var _savage_pounce_start_position: Vector2 = Vector2.ZERO
+var _savage_pounce_hit_targets: Array[int] = []
 
 # Pathfinding
 var navigation_system: Node = null
@@ -307,6 +360,8 @@ func _ready():
 	_schedule_next_passive_wander()
 	_enter_assault_state(AssaultState.STAGING)
 	damage_timer = damage_interval
+	_grunt_falcon_punch_current_distance = grunt_falcon_punch_distance_px
+	_grunt_falcon_punch_decision_credit = maxf(0.0, 1.0 - clampf(grunt_falcon_punch_chance, 0.0, 1.0))
 	_refresh_target()
 	_initialize_navigation()
 	if behavior_state_machine_enabled and behavior_state_machine != null and behavior_state_machine.has_method("setup_profile"):
@@ -321,9 +376,9 @@ func _setup_health_bar_style() -> void:
 	
 	health_bar.custom_minimum_size = Vector2(48, 8)
 	health_bar.offset_left = -24.0
-	health_bar.offset_top = -28.0
+	health_bar.offset_top = health_bar_vertical_offset
 	health_bar.offset_right = 24.0
-	health_bar.offset_bottom = -20.0
+	health_bar.offset_bottom = health_bar_vertical_offset + 8.0
 	
 	var bg_style = StyleBoxFlat.new()
 	bg_style.bg_color = Color(0.1, 0.1, 0.1, 0.8)
@@ -364,6 +419,11 @@ func _physics_process(delta):
 	if dead:
 		return
 	_update_threat_highlight_visual(delta)
+	_savage_pounce_cooldown_timer = maxf(0.0, _savage_pounce_cooldown_timer - delta)
+	_grunt_falcon_punch_cooldown_timer = maxf(0.0, _grunt_falcon_punch_cooldown_timer - delta)
+	_grunt_falcon_punch_recent_parry_timer = maxf(0.0, _grunt_falcon_punch_recent_parry_timer - delta)
+	if _update_savage_attack(delta):
+		return
 	if _update_grunt_falcon_punch_attack(delta):
 		return
 	if _update_marine_dash_attack(delta):
@@ -401,6 +461,7 @@ func _physics_process(delta):
 				# Direct movement (fallback)
 				direction = (target_pos - global_position).normalized()
 			
+			direction = _apply_enemy_spacing_to_direction(direction)
 			velocity = direction * speed
 			move_and_slide()
 			_update_stuck_reroute(target_pos, delta)
@@ -417,6 +478,15 @@ func _physics_process(delta):
 			_attack_target(delta)
 		
 func _attack_target(delta: float):
+	if _should_use_savage_attacks():
+		if _attack_savage_pounce_target():
+			return
+		if _savage_chain_phase.is_empty():
+			damage_timer += delta
+			if damage_timer >= damage_interval:
+				damage_timer = 0.0
+				_start_savage_chain()
+		return
 	if _should_use_grunt_falcon_punch_attack():
 		if _attack_grunt_falcon_punch_target(delta):
 			return
@@ -446,29 +516,272 @@ func _should_use_grunt_falcon_punch_attack() -> bool:
 	return grunt_falcon_punch_enabled and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT)
 
 
-func _attack_grunt_falcon_punch_target(delta: float) -> bool:
-	if not _grunt_falcon_punch_phase.is_empty():
-		return true
-	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
+func _should_use_savage_attacks() -> bool:
+	return custom_enemy_animation_set == String(CUSTOM_ENEMY_SAVAGE) and (savage_chain_enabled or savage_pounce_enabled)
+
+
+func _attack_savage_pounce_target() -> bool:
+	if not savage_pounce_enabled or _savage_pounce_cooldown_timer > 0.0:
+		return false
+	if target == null or not is_instance_valid(target) or _is_target_destroyed(target) or not target.is_in_group("player"):
 		return false
 	var target_node := target as Node2D
 	if target_node == null:
 		return false
 	var distance := global_position.distance_to(target_node.global_position)
-	if distance < grunt_falcon_punch_launch_band_min or distance > grunt_falcon_punch_launch_band_max:
+	if distance < savage_pounce_launch_band_min or distance > savage_pounce_launch_band_max:
 		return false
-	damage_timer += delta
-	if damage_timer < grunt_falcon_punch_cooldown:
+	var direction := global_position.direction_to(target_node.global_position)
+	_start_savage_pounce(direction)
+	return true
+
+
+func _start_savage_pounce(direction: Vector2) -> void:
+	_savage_pounce_phase = &"windup"
+	_savage_pounce_timer = maxf(0.01, savage_pounce_windup_time)
+	_savage_pounce_cooldown_timer = maxf(0.0, savage_pounce_cooldown)
+	_savage_pounce_direction = direction.normalized() if direction.length_squared() > 0.0001 else _last_move_direction.normalized()
+	if _savage_pounce_direction.length_squared() <= 0.0001:
+		_savage_pounce_direction = Vector2.RIGHT
+	_savage_pounce_start_position = global_position
+	_savage_pounce_hit_targets.clear()
+	_last_move_direction = _savage_pounce_direction
+	velocity = Vector2.ZERO
+	clear_path()
+	set_threat_highlight(true)
+	if _uses_custom_enemy_animation_set():
+		_update_custom_enemy_animation(_savage_pounce_direction, false, true)
+	_log_savage_event(&"savage_pounce_windup")
+
+
+func _update_savage_attack(delta: float) -> bool:
+	if not _savage_pounce_phase.is_empty():
+		_update_savage_pounce(delta)
 		return true
-	damage_timer = 0.0
+	if not _savage_chain_phase.is_empty():
+		_update_savage_chain(delta)
+		return true
+	return false
+
+
+func _update_savage_pounce(delta: float) -> void:
+	_savage_pounce_timer = maxf(0.0, _savage_pounce_timer - delta)
+	match _savage_pounce_phase:
+		&"windup":
+			velocity = Vector2.ZERO
+			if _savage_pounce_timer <= 0.0:
+				_savage_pounce_phase = &"leap"
+				_savage_pounce_timer = maxf(0.01, savage_pounce_leap_time)
+				_savage_pounce_start_position = global_position
+				set_threat_highlight(false)
+				_log_savage_event(&"savage_pounce_leap")
+		&"leap":
+			var leap_speed := savage_pounce_distance_px / maxf(0.01, savage_pounce_leap_time)
+			velocity = _savage_pounce_direction * leap_speed
+			move_and_slide()
+			_try_apply_savage_pounce_hit()
+			var traveled := global_position.distance_to(_savage_pounce_start_position)
+			if get_slide_collision_count() > 0 or traveled >= savage_pounce_distance_px or _savage_pounce_timer <= 0.0:
+				_start_savage_pounce_recovery()
+		&"recovery":
+			velocity = Vector2.ZERO
+			if _savage_pounce_timer <= 0.0:
+				_finish_savage_pounce()
+		_:
+			_finish_savage_pounce()
+
+
+func _try_apply_savage_pounce_hit() -> void:
+	if _savage_pounce_phase != &"leap" or target == null or not is_instance_valid(target) or _is_target_destroyed(target):
+		return
+	var leap_progress := clampf(1.0 - (_savage_pounce_timer / maxf(0.01, savage_pounce_leap_time)), 0.0, 1.0)
+	if leap_progress < savage_pounce_hit_active_start_ratio or leap_progress > savage_pounce_hit_active_end_ratio:
+		return
+	var target_node := target as Node2D
+	if target_node == null:
+		return
+	var target_id := int(target_node.get_instance_id())
+	if _savage_pounce_hit_targets.has(target_id):
+		return
+	var to_target := target_node.global_position - global_position
+	var forward_distance := to_target.dot(_savage_pounce_direction)
+	var lateral_distance := absf(to_target.cross(_savage_pounce_direction))
+	if forward_distance < -5.0 or forward_distance > savage_pounce_hit_forward_reach_px or lateral_distance > savage_pounce_hit_lateral_reach_px:
+		return
+	_savage_pounce_hit_targets.append(target_id)
+	var hit_result := _apply_enemy_hit_to_target(target_node, savage_pounce_damage, &"savage_pounce")
+	if bool(hit_result.get("parried", false)):
+		return
+	if float(hit_result.get("applied_damage", 0.0)) > 0.0 and not bool(hit_result.get("blocked", false)):
+		if target_node.has_method("apply_enemy_dash_impact"):
+			target_node.call("apply_enemy_dash_impact", _savage_pounce_direction, savage_pounce_knockback_px, 0.04)
+	_log_savage_event(&"savage_pounce_hit", hit_result)
+	_start_savage_pounce_recovery()
+
+
+func _start_savage_pounce_recovery() -> void:
+	_savage_pounce_phase = &"recovery"
+	_savage_pounce_timer = maxf(0.01, savage_pounce_recovery_time)
+	velocity = Vector2.ZERO
+	_log_savage_event(&"savage_pounce_recovery")
+
+
+func _finish_savage_pounce() -> void:
+	_savage_pounce_phase = &""
+	_savage_pounce_timer = 0.0
+	_savage_pounce_hit_targets.clear()
+	velocity = Vector2.ZERO
+	set_threat_highlight(false)
+
+
+func _start_savage_chain() -> void:
+	if not savage_chain_enabled:
+		return
+	_savage_chain_phase = &"windup_1"
+	_savage_chain_timer = maxf(0.01, attack_windup_duration)
+	_savage_chain_direction = global_position.direction_to((target as Node2D).global_position) if target is Node2D else _last_move_direction
+	if _savage_chain_direction.length_squared() <= 0.0001:
+		_savage_chain_direction = Vector2.RIGHT
+	_savage_chain_direction = _savage_chain_direction.normalized()
+	_last_move_direction = _savage_chain_direction
+	velocity = Vector2.ZERO
+	clear_path()
+	if _uses_custom_enemy_animation_set():
+		_update_custom_enemy_animation(_savage_chain_direction, false, true)
+	_log_savage_event(&"savage_chain_windup_1")
+
+
+func _update_savage_chain(delta: float) -> void:
+	_savage_chain_timer = maxf(0.0, _savage_chain_timer - delta)
+	velocity = Vector2.ZERO
+	if _savage_chain_timer > 0.0:
+		return
+	match _savage_chain_phase:
+		&"windup_1":
+			_resolve_savage_chain_hit(damage, &"savage_chain_1", savage_chain_first_guard_stamina_damage)
+			if _savage_chain_phase != &"windup_1":
+				return
+			_savage_chain_phase = &"gap"
+			_savage_chain_timer = maxf(0.01, savage_chain_gap_time)
+		&"gap":
+			_savage_chain_phase = &"windup_2"
+			_savage_chain_timer = maxf(0.01, savage_chain_second_windup_time)
+			_log_savage_event(&"savage_chain_windup_2")
+		&"windup_2":
+			_resolve_savage_chain_hit(savage_chain_second_damage, &"savage_chain_2", savage_chain_second_guard_stamina_damage)
+			if _savage_chain_phase != &"windup_2":
+				return
+			_savage_chain_phase = &"recovery"
+			_savage_chain_timer = maxf(0.01, savage_chain_recovery_time)
+			_log_savage_event(&"savage_chain_recovery")
+		&"recovery":
+			_finish_savage_chain()
+		_:
+			_finish_savage_chain()
+
+
+func _resolve_savage_chain_hit(hit_damage: float, hit_kind: StringName, guard_stamina_damage: float) -> void:
+	if target == null or not is_instance_valid(target) or _is_target_destroyed(target) or not (target is Node2D):
+		_log_savage_event(&"savage_chain_whiff")
+		return
+	var target_node := target as Node2D
+	var grace_range := 40.0 * melee_hit_range_grace_multiplier + melee_hit_range_grace_px
+	var to_target := target_node.global_position - global_position
+	if to_target.length() > grace_range or _savage_chain_direction.dot(to_target.normalized()) < cos(deg_to_rad(melee_hit_arc_degrees * 0.5)):
+		_log_savage_event(&"savage_chain_whiff")
+		return
+	var hit_result := _apply_enemy_hit_to_target(target_node, hit_damage, hit_kind, guard_stamina_damage)
+	_log_savage_event(&"savage_chain_hit", hit_result)
+
+
+func _finish_savage_chain() -> void:
+	_savage_chain_phase = &""
+	_savage_chain_timer = 0.0
+	velocity = Vector2.ZERO
+
+
+func _cancel_savage_attack() -> void:
+	if _savage_chain_phase.is_empty() and _savage_pounce_phase.is_empty():
+		return
+	_savage_chain_phase = &""
+	_savage_chain_timer = 0.0
+	_savage_pounce_phase = &""
+	_savage_pounce_timer = 0.0
+	_savage_pounce_hit_targets.clear()
+	velocity = Vector2.ZERO
+	set_threat_highlight(false)
+	_log_savage_event(&"savage_attack_interrupted")
+
+
+func _log_savage_event(event_name: StringName, result: Dictionary = {}) -> void:
+	_obs_log(event_name, {
+		"enemy": enemy_name,
+		"chain_phase": String(_savage_chain_phase),
+		"pounce_phase": String(_savage_pounce_phase),
+		"position": global_position,
+		"target": target.name if target != null and is_instance_valid(target) else "",
+		"result": String(result.get("result", "")),
+	})
+
+
+func _attack_grunt_falcon_punch_target(_delta: float) -> bool:
+	if not _grunt_falcon_punch_phase.is_empty():
+		return true
+	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
+		return false
+	var target_node := target as Node2D
+	if target_node == null or not _should_start_grunt_falcon_punch_now(target_node):
+		return false
 	var direction := (target_node.global_position - global_position).normalized()
 	_start_grunt_falcon_punch_windup(direction)
+	return true
+
+
+func _should_start_grunt_falcon_punch_now(target_node: Node2D) -> bool:
+	if not _should_use_grunt_falcon_punch_attack() or target_node == null or not target_node.is_in_group("player"):
+		return false
+	var distance := global_position.distance_to(target_node.global_position)
+	if distance < grunt_falcon_punch_launch_band_min or distance > grunt_falcon_punch_launch_band_max:
+		return false
+	if _grunt_falcon_punch_cooldown_timer > 0.0 or _grunt_falcon_punch_recent_parry_timer > 0.0:
+		return false
+	if _grunt_falcon_punch_normal_attacks_since_special < max(0, grunt_falcon_punch_after_normal_attacks_min):
+		return false
+	var chance := clampf(grunt_falcon_punch_chance, 0.0, 1.0)
+	if chance <= 0.0 or _grunt_falcon_punch_decision_credit < 1.0:
+		return false
+	if grunt_falcon_punch_requires_clear_lane and not _is_grunt_falcon_punch_lane_clear(target_node):
+		return false
+	return true
+
+
+func _is_grunt_falcon_punch_lane_clear(target_node: Node2D) -> bool:
+	var to_target := target_node.global_position - global_position
+	var lane_length := maxf(0.0, to_target.length() - grunt_falcon_punch_stop_short_px)
+	if lane_length <= 0.0:
+		return false
+	var lane_direction := to_target.normalized()
+	for candidate in get_tree().get_nodes_in_group("enemy"):
+		if candidate == self or not (candidate is Node2D):
+			continue
+		var other := candidate as Node2D
+		if _is_target_destroyed(other):
+			continue
+		var offset := other.global_position - global_position
+		var forward := offset.dot(lane_direction)
+		if forward <= 0.0 or forward >= lane_length:
+			continue
+		if absf(offset.cross(lane_direction)) < grunt_falcon_punch_ally_lane_radius_px:
+			return false
 	return true
 
 
 func _start_grunt_falcon_punch_windup(direction: Vector2) -> void:
 	_grunt_falcon_punch_phase = &"windup"
 	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_windup_time)
+	_grunt_falcon_punch_cooldown_timer = maxf(0.0, grunt_falcon_punch_cooldown)
+	_grunt_falcon_punch_normal_attacks_since_special = 0
+	_grunt_falcon_punch_decision_credit = 0.0
 	_grunt_falcon_punch_direction = direction.normalized() if direction.length_squared() > 0.0001 else _last_move_direction.normalized()
 	if _grunt_falcon_punch_direction.length_squared() <= 0.0001:
 		_grunt_falcon_punch_direction = Vector2.RIGHT
@@ -484,6 +797,10 @@ func _start_grunt_falcon_punch_windup(direction: Vector2) -> void:
 func _update_grunt_falcon_punch_attack(delta: float) -> bool:
 	if _grunt_falcon_punch_phase.is_empty():
 		return false
+	if _grunt_falcon_punch_attacker_hitstop_timer > 0.0:
+		_grunt_falcon_punch_attacker_hitstop_timer = maxf(0.0, _grunt_falcon_punch_attacker_hitstop_timer - delta)
+		velocity = Vector2.ZERO
+		return true
 	_grunt_falcon_punch_timer = maxf(0.0, _grunt_falcon_punch_timer - delta)
 	match _grunt_falcon_punch_phase:
 		&"windup":
@@ -501,9 +818,7 @@ func _update_grunt_falcon_punch_attack(delta: float) -> bool:
 			if _grunt_falcon_punch_timer <= 0.0:
 				_start_grunt_falcon_punch_recovery()
 		&"recovery":
-			var recovery_progress := clampf(_grunt_falcon_punch_timer / maxf(0.01, grunt_falcon_punch_recovery_time), 0.0, 1.0)
-			velocity = _grunt_falcon_punch_direction * grunt_falcon_punch_recovery_speed * recovery_progress
-			move_and_slide()
+			velocity = Vector2.ZERO
 			if _uses_custom_enemy_animation_set():
 				_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, false)
 			if _grunt_falcon_punch_timer <= 0.0:
@@ -517,18 +832,28 @@ func _start_grunt_falcon_punch_leap() -> void:
 	_grunt_falcon_punch_phase = &"leap"
 	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_leap_time)
 	_grunt_falcon_punch_start_position = global_position
+	_grunt_falcon_punch_current_distance = grunt_falcon_punch_distance_px
+	if target is Node2D and is_instance_valid(target):
+		var desired_contact_point := (target as Node2D).global_position - _grunt_falcon_punch_direction * grunt_falcon_punch_stop_short_px
+		var projected_distance := maxf(0.0, (desired_contact_point - global_position).dot(_grunt_falcon_punch_direction))
+		_grunt_falcon_punch_current_distance = minf(grunt_falcon_punch_distance_px, projected_distance)
 	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_leap")
 	if _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, true)
 
 
 func _update_grunt_falcon_punch_leap(delta: float) -> void:
-	var leap_speed := grunt_falcon_punch_distance_px / maxf(0.01, grunt_falcon_punch_leap_time)
+	var active_end := clampf(grunt_falcon_punch_hit_active_end_ratio, 0.01, 1.0)
+	var travel_time := maxf(0.01, grunt_falcon_punch_leap_time * active_end)
+	var leap_speed := _grunt_falcon_punch_current_distance / travel_time
 	velocity = _grunt_falcon_punch_direction * leap_speed
 	move_and_slide()
-	_try_apply_grunt_falcon_punch_hit()
 	var traveled := global_position.distance_to(_grunt_falcon_punch_start_position)
-	if get_slide_collision_count() > 0 or traveled >= grunt_falcon_punch_distance_px or _grunt_falcon_punch_timer <= 0.0:
+	var reached_contact := traveled >= _grunt_falcon_punch_current_distance or get_slide_collision_count() > 0
+	_try_apply_grunt_falcon_punch_hit(reached_contact)
+	if _grunt_falcon_punch_phase != &"leap":
+		return
+	if get_slide_collision_count() > 0 or traveled >= _grunt_falcon_punch_current_distance or _grunt_falcon_punch_timer <= 0.0:
 		_start_grunt_falcon_punch_impact_lock()
 
 
@@ -544,6 +869,8 @@ func _start_grunt_falcon_punch_impact_lock() -> void:
 func _start_grunt_falcon_punch_recovery() -> void:
 	_grunt_falcon_punch_phase = &"recovery"
 	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_recovery_time)
+	velocity = Vector2.ZERO
+	_separate_from_target_after_contact(target as Node2D if target is Node2D else null)
 	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_recovery")
 	if _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, false)
@@ -555,14 +882,16 @@ func _finish_grunt_falcon_punch_attack() -> void:
 	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_finished")
 	_grunt_falcon_punch_phase = &""
 	_grunt_falcon_punch_timer = 0.0
+	_grunt_falcon_punch_attacker_hitstop_timer = 0.0
 	_grunt_falcon_punch_hit_targets.clear()
+	_grunt_falcon_punch_current_distance = grunt_falcon_punch_distance_px
 	velocity = Vector2.ZERO
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
 
 
-func _try_apply_grunt_falcon_punch_hit() -> void:
-	if not _is_grunt_falcon_punch_hit_window_active():
+func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> void:
+	if not force_contact_check and not _is_grunt_falcon_punch_hit_window_active():
 		return
 	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
 		return
@@ -593,7 +922,55 @@ func _try_apply_grunt_falcon_punch_hit() -> void:
 		"blocked": bool(hit_result.get("blocked", false)),
 		"parried": bool(hit_result.get("parried", false)),
 	})
+	if bool(hit_result.get("parried", false)):
+		_separate_from_target_after_contact(target_node)
+		if _grunt_falcon_punch_recent_parry_timer <= 0.0:
+			apply_parry_stagger(-_grunt_falcon_punch_direction, stagger_duration, 70.0)
+		return
+	if not bool(hit_result.get("dodged", false)) and not bool(hit_result.get("blocked", false)) and float(hit_result.get("applied_damage", 0.0)) > 0.0:
+		if target_node.has_method("apply_enemy_falcon_punch_impact"):
+			target_node.call("apply_enemy_falcon_punch_impact", _grunt_falcon_punch_direction, grunt_falcon_punch_knockback_px, grunt_falcon_punch_victim_hitstop)
+		_trigger_grunt_falcon_punch_camera_feedback()
+		_apply_grunt_falcon_punch_hitstop(maxf(grunt_falcon_punch_victim_hitstop, grunt_falcon_punch_attacker_hitstop))
+		_grunt_falcon_punch_attacker_hitstop_timer = maxf(_grunt_falcon_punch_attacker_hitstop_timer, grunt_falcon_punch_attacker_hitstop)
+	_separate_from_target_after_contact(target_node)
 	_start_grunt_falcon_punch_impact_lock()
+
+
+func _separate_from_target_after_contact(target_node: Node2D) -> void:
+	if target_node == null or not is_instance_valid(target_node):
+		return
+	var separation := maxf(0.0, enemy_body_separation_px)
+	var away := global_position - target_node.global_position
+	if away.length_squared() <= 0.001:
+		away = -_grunt_falcon_punch_direction
+	if away.length_squared() <= 0.001:
+		away = Vector2.LEFT
+	if global_position.distance_to(target_node.global_position) < separation:
+		global_position = target_node.global_position + away.normalized() * separation
+
+
+func _trigger_grunt_falcon_punch_camera_feedback() -> void:
+	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera == null:
+		return
+	if camera.has_method("on_attack_impact"):
+		camera.call("on_attack_impact", _grunt_falcon_punch_direction, true)
+	if camera.has_method("shake"):
+		camera.call("shake", grunt_falcon_punch_camera_shake_strength * 10.0, grunt_falcon_punch_camera_shake_duration)
+
+
+func _apply_grunt_falcon_punch_hitstop(duration: float) -> void:
+	if duration <= 0.0 or Engine.time_scale < 1.0:
+		return
+	Engine.time_scale = 0.1
+	var tree := get_tree()
+	if tree == null:
+		Engine.time_scale = 1.0
+		return
+	await tree.create_timer(duration, true, false, true).timeout
+	if Engine.time_scale < 1.0:
+		Engine.time_scale = 1.0
 
 
 func _is_grunt_falcon_punch_hit_window_active() -> bool:
@@ -1011,7 +1388,7 @@ func _is_target_destroyed(node: Node) -> bool:
 func _get_attack_range(node: Node2D) -> float:
 	if _variant_profile != null:
 		return float(_variant_profile.get("attack_range"))
-	if _should_use_grunt_falcon_punch_attack() and node.is_in_group("player"):
+	if _should_use_grunt_falcon_punch_attack() and _should_start_grunt_falcon_punch_now(node):
 		return grunt_falcon_punch_launch_band_max
 	if _should_use_marine_dash_attack() and node.is_in_group("player"):
 		return marine_dash_launch_band_max
@@ -1021,7 +1398,9 @@ func _get_attack_range(node: Node2D) -> float:
 
 
 func get_behavior_attack_range() -> float:
-	if _should_use_grunt_falcon_punch_attack():
+	if _should_use_savage_attacks():
+		return savage_pounce_launch_band_max if savage_pounce_enabled and _savage_pounce_cooldown_timer <= 0.0 else 40.0
+	if _should_use_grunt_falcon_punch_attack() and target is Node2D and _should_start_grunt_falcon_punch_now(target as Node2D):
 		return grunt_falcon_punch_launch_band_max
 	if _should_use_marine_dash_attack():
 		return marine_dash_launch_band_max
@@ -1249,6 +1628,7 @@ func take_damage(amount: float):
 		return
 
 	health -= amount
+	_cancel_savage_attack()
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call("on_damaged", self, amount)
 	_on_assault_damage_taken(amount)
@@ -1324,7 +1704,7 @@ func die():
 	if _uses_custom_ambient_animation_set() and _has_animation(String(CUSTOM_AMBIENT_KO_ANIMATION)):
 		call_deferred("_play_custom_ambient_knockout")
 		return
-	if _uses_custom_enemy_animation_set() and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT) and _has_animation(String(GRUNT_DEATH_ANIMATION)):
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT) and _has_animation(String(GRUNT_DEATH_ANIMATION)):
 		call_deferred("_play_grunt_death")
 		return
 	queue_free()
@@ -1453,12 +1833,44 @@ func behavior_move_toward(target_position: Vector2, desired_speed: float) -> voi
 	if direction.length_squared() <= 0.0001:
 		behavior_stop()
 		return
+	direction = _apply_enemy_spacing_to_direction(direction)
 	velocity = direction * desired_speed
 	move_and_slide()
 	_update_stuck_reroute(target_position, get_physics_process_delta_time())
 	_last_move_direction = direction
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, true)
+
+
+func _apply_enemy_spacing_to_direction(direction: Vector2) -> Vector2:
+	if direction.length_squared() <= 0.0001 or enemy_spacing_radius_px <= 0.0 or enemy_spacing_strength <= 0.0:
+		return direction
+	var separation := _get_enemy_separation_vector(enemy_spacing_radius_px)
+	if separation.length_squared() <= 0.0001:
+		return direction
+	return (direction.normalized() + separation * enemy_spacing_strength).normalized()
+
+
+func _get_enemy_separation_vector(radius_px: float = 34.0) -> Vector2:
+	var push := Vector2.ZERO
+	var radius := maxf(0.01, radius_px)
+	for candidate in get_tree().get_nodes_in_group("enemy"):
+		if candidate == self or not (candidate is Node2D):
+			continue
+		var other := candidate as Node2D
+		if _is_target_destroyed(other):
+			continue
+		var delta := global_position - other.global_position
+		var distance := delta.length()
+		if distance > radius:
+			continue
+		if distance <= 0.001:
+			var self_path := String(get_path())
+			var other_path := String(other.get_path())
+			delta = Vector2.LEFT if self_path < other_path else Vector2.RIGHT
+			distance = 0.0
+		push += delta.normalized() * ((radius - distance) / radius)
+	return push
 
 
 func behavior_attack_target() -> void:
@@ -1640,6 +2052,9 @@ func _award_loot_table() -> bool:
 
 
 func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
+	if _should_use_grunt_falcon_punch_attack() and target is Node2D and target.is_in_group("player"):
+		_grunt_falcon_punch_normal_attacks_since_special += 1
+		_grunt_falcon_punch_decision_credit = minf(2.0, _grunt_falcon_punch_decision_credit + clampf(grunt_falcon_punch_chance, 0.0, 1.0))
 	_pending_attack_damage = queued_damage
 	_attack_windup_timer = max(0.01, attack_windup_duration)
 	_windup_attack_is_strong = is_strong
@@ -1784,7 +2199,7 @@ func _can_pending_attack_connect(target_node: Node2D) -> bool:
 	return true
 
 
-func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringName = &"melee") -> Dictionary:
+func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringName = &"melee", guard_stamina_cost_override: float = -1.0) -> Dictionary:
 	if hit_node == null or not is_instance_valid(hit_node):
 		return {
 			"result": &"no_target",
@@ -1812,7 +2227,11 @@ func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringN
 			}
 
 	if hit_node.has_method("receive_enemy_hit"):
-		var result: Variant = hit_node.call("receive_enemy_hit", amount, hit_kind, team, self, hit_direction)
+		var result: Variant
+		if guard_stamina_cost_override >= 0.0:
+			result = hit_node.call("receive_enemy_hit", amount, hit_kind, team, self, hit_direction, guard_stamina_cost_override)
+		else:
+			result = hit_node.call("receive_enemy_hit", amount, hit_kind, team, self, hit_direction)
 		if result is Dictionary:
 			return result as Dictionary
 
@@ -1875,8 +2294,12 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockback_force: float) -> void:
 	if dead:
 		return
+	var interrupted_falcon_punch := not _grunt_falcon_punch_phase.is_empty()
 	_pending_attack_damage = 0.0
+	_cancel_savage_attack()
 	_finish_grunt_falcon_punch_attack()
+	if interrupted_falcon_punch:
+		_grunt_falcon_punch_recent_parry_timer = maxf(_grunt_falcon_punch_recent_parry_timer, grunt_falcon_punch_recent_parry_lockout_sec)
 	_finish_marine_dash_attack()
 	_stagger_timer = max(_stagger_timer, duration)
 	_recoil_timer = 0.0
@@ -2192,7 +2615,7 @@ func _uses_procedural_variant_animation_set() -> bool:
 
 
 func _uses_custom_enemy_animation_set() -> bool:
-	return [String(CUSTOM_ENEMY_GRUNT), String(CUSTOM_ENEMY_MARINE)].has(custom_enemy_animation_set) and animated_sprite != null
+	return [String(CUSTOM_ENEMY_GRUNT), String(CUSTOM_ENEMY_MARINE), String(CUSTOM_ENEMY_SAVAGE)].has(custom_enemy_animation_set) and animated_sprite != null
 
 
 func _uses_custom_ambient_animation_set() -> bool:
@@ -2334,6 +2757,8 @@ func _ensure_custom_enemy_animations() -> void:
 		animated_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_grunt_sprite_frames()
 	elif custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
 		animated_sprite.sprite_frames = GRUNT_ANIMATION_LIBRARY.get_marine_sprite_frames()
+	elif custom_enemy_animation_set == String(CUSTOM_ENEMY_SAVAGE):
+		animated_sprite.sprite_frames = SAVAGE_ANIMATION_LIBRARY.get_savage_sprite_frames()
 
 
 func _ensure_custom_enemy_fx_animations() -> void:
@@ -2486,6 +2911,9 @@ func _update_custom_ambient_animation(direction: Vector2, is_moving: bool) -> vo
 func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_attack: bool = false) -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_SAVAGE):
+		_update_savage_enemy_animation(direction)
+		return
 	if custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
 		_update_marine_enemy_animation(direction, force_attack)
 		return
@@ -2514,9 +2942,12 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 		_play_grunt_parry_stagger_placeholder()
 		return
 	if _recoil_timer > 0.0:
-		if _has_animation(String(GRUNT_FLINCH_ANIMATION)):
+		var flinch_animation := GRUNT_ANIMATION_LIBRARY.get_flinch_animation(facing)
+		if not _has_animation(String(flinch_animation)):
+			flinch_animation = GRUNT_FLINCH_ANIMATION
+		if _has_animation(String(flinch_animation)):
 			animated_sprite.flip_h = false
-			_play_animation(String(GRUNT_FLINCH_ANIMATION), false)
+			_play_animation(String(flinch_animation), false)
 			_play_grunt_flinch_fx()
 			return
 	if _stagger_timer > 0.0:
@@ -2549,6 +2980,19 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 		animated_sprite.play(String(GRUNT_IDLE_ANIMATION))
 	animated_sprite.stop()
 	animated_sprite.set_frame_and_progress(0, 0.0)
+
+
+func _update_savage_enemy_animation(direction: Vector2) -> void:
+	var facing := direction if direction.length_squared() > 0.0001 else _last_move_direction
+	var animation_name := SAVAGE_ANIMATION_LIBRARY.get_idle_animation(facing)
+	if not _has_animation(String(animation_name)):
+		animation_name = &"idle_s"
+	if not _has_animation(String(animation_name)):
+		return
+	animated_sprite.scale = custom_enemy_animation_scale
+	_base_sprite_scale = animated_sprite.scale
+	animated_sprite.flip_h = false
+	_play_animation(String(animation_name), false)
 
 
 func _get_grunt_stagger_animation() -> StringName:
@@ -2740,7 +3184,7 @@ func _play_grunt_death() -> void:
 		queue_free()
 		return
 	animated_sprite.stop()
-	animated_sprite.flip_h = false
+	animated_sprite.flip_h = _last_move_direction.x < -0.05
 	animated_sprite.play(String(GRUNT_DEATH_ANIMATION))
 	await animated_sprite.animation_finished
 	queue_free()

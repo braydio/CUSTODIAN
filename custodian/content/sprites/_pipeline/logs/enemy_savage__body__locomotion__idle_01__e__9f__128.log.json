@@ -1,0 +1,12 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/enemy_savage__body__locomotion__idle_01__e__9f__128.json",
+	"outputs": [
+		"res://content/sprites/enemies/enemy_savage/runtime/body/enemy_savage__body__locomotion__idle_01__e__9f__128.png",
+		"res://content/sprites/enemies/enemy_savage/enemy_savage__body__locomotion__idle_01__e__9f__128.png"
+	],
+	"post_process": [
+		"enemy_runtime_import"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/enemy_savage__body__locomotion__idle_01__e__9f__128.png",
+	"timestamp_utc": "2026-07-13 21:57:28"
+}

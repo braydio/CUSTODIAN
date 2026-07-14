@@ -24,6 +24,7 @@ signal all_waves_completed()
 @export var heavy_drone_scene: PackedScene
 @export var grunt_scene: PackedScene
 @export var marine_scene: PackedScene
+@export var savage_scene: PackedScene
 @export var procedural_enemy_variants_enabled: bool = true
 @export var debug_spawn_grunt_on_start: bool = false
 @export var debug_start_grunt_offset: Vector2 = Vector2(96.0, 0.0)
@@ -55,6 +56,7 @@ const ENEMY_COST := {
 	"drone": 1,
 	"grunt": 2,
 	"marine": 3,
+	"savage": 3,
 	"fast": 2,
 	"heavy": 4,
 	"wolf": 2,
@@ -224,6 +226,8 @@ func _choose_enemy_type(available_points: int) -> String:
 		options.append("grunt")
 	if available_points >= ENEMY_COST["marine"] and wave_number >= 5 and marine_scene != null:
 		options.append("marine")
+	if available_points >= ENEMY_COST["savage"] and wave_number >= 4 and savage_scene != null:
+		options.append("savage")
 	if available_points >= ENEMY_COST["fast"] and wave_number >= 3 and fast_drone_scene != null:
 		options.append("fast")
 	if available_points >= ENEMY_COST["heavy"] and wave_number >= 6 and heavy_drone_scene != null:
@@ -374,6 +378,8 @@ func _scene_for_enemy_type(enemy_type: String) -> PackedScene:
 			if marine_scene != null:
 				return marine_scene
 			return grunt_scene if grunt_scene != null else drone_scene
+		"savage":
+			return savage_scene if savage_scene != null else grunt_scene
 		"heavy":
 			return heavy_drone_scene if heavy_drone_scene != null else drone_scene
 		"wolf":
@@ -384,7 +390,9 @@ func _scene_for_enemy_type(enemy_type: String) -> PackedScene:
 
 func _apply_behavior_profile(enemy: Node, enemy_type: String, profile_id: StringName = &"") -> void:
 	var chosen_profile := profile_id
-	if chosen_profile == &"" and (enemy_type == "grunt" or enemy_type == "marine"):
+	if chosen_profile == &"" and enemy_type == "savage":
+		chosen_profile = &"raider_savage"
+	elif chosen_profile == &"" and enemy_type in ["grunt", "marine"]:
 		chosen_profile = &"raider_grunt"
 	if chosen_profile == &"":
 		return

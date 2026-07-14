@@ -25,6 +25,7 @@
     96,
     96
   ],
+  "remove_superseded": true,
   "post_process": [
     "enemy_runtime_import"
   ]

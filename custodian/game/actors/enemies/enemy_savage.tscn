@@ -1,0 +1,75 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_perception_component.gd" id="3_perception"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_objective_sensor.gd" id="4_sensor"]
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_loot_carrier.gd" id="5_carrier"]
+[ext_resource type="Script" path="res://game/actors/enemies/enemy_behavior_state_machine.gd" id="6_behavior"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_savage"]
+size = Vector2(34, 38)
+
+[node name="EnemySavage" type="CharacterBody2D"]
+z_index = 2
+script = ExtResource("1_enemy")
+enemy_name = "SAVAGE"
+speed = 104.0
+health = 64.0
+max_health = 64.0
+damage = 10.0
+base_tint = Color(0.48, 0.22, 0.16, 1)
+attack_windup_duration = 0.26
+melee_hit_arc_degrees = 115.0
+stagger_duration = 0.45
+stagger_damage_threshold = 16.0
+crit_damage_threshold = 38.0
+material_drop_min = 0
+material_drop_max = 2
+custom_enemy_animation_set = "enemy_savage"
+custom_enemy_animation_scale = Vector2(1, 1)
+health_bar_vertical_offset = -88.0
+behavior_state_machine_enabled = true
+behavior_profile_id = &"raider_savage"
+savage_chain_enabled = true
+savage_pounce_enabled = true
+
+[node name="Visual" type="ColorRect" parent="."]
+offset_left = -17.0
+offset_top = -19.0
+offset_right = 17.0
+offset_bottom = 19.0
+color = Color(0.48, 0.22, 0.16, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_savage")
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -20.0
+offset_top = -46.0
+offset_right = 20.0
+offset_bottom = -40.0
+value = 100.0
+show_percentage = false
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -25)
+
+[node name="CustomEnemyFxSprite" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(0, -25)
+
+[node name="EnemyBlackboard" type="Node" parent="."]
+script = ExtResource("2_blackboard")
+
+[node name="EnemyPerceptionComponent" type="Node" parent="."]
+script = ExtResource("3_perception")
+
+[node name="EnemyObjectiveSensor" type="Node" parent="."]
+script = ExtResource("4_sensor")
+
+[node name="EnemyLootCarrier" type="Node" parent="."]
+script = ExtResource("5_carrier")
+
+[node name="EnemyBehaviorStateMachine" type="Node" parent="."]
+script = ExtResource("6_behavior")

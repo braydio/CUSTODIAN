@@ -35,7 +35,6 @@ The operator has dedicated lower-body and upper-body `AnimatedSprite2D` layers w
   - `custodian/tools/pipelines/update_operator_curated_resources.gd`
   - `custodian/content/sprites/operator/runtime/modules/new_operator/`
   - `REQUIRED_ASSETS.md`
-  - `design/00_meta/REQUIRED_ASSETS.md`
   - `custodian/docs/ai_context/CURRENT_STATE.md`
   - `custodian/docs/ai_context/FILE_INDEX.md`
 - Files or folders expected to be read but not changed:

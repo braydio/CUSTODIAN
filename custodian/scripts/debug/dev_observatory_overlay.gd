@@ -32,7 +32,7 @@ func _refresh() -> void:
 
 	var lines: PackedStringArray = []
 	lines.append("[b]CUSTODIAN // DEVELOPER OBSERVATORY[/b]")
-	lines.append("[color=gray]F9 toggles this overlay[/color]")
+	lines.append("[color=gray]F9 toggles this overlay // F10 exports JSON session[/color]")
 	lines.append("")
 
 	lines.append("[b]Runtime[/b]")
