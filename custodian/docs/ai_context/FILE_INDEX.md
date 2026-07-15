@@ -112,7 +112,7 @@ Last updated: 2026-07-08
 - `custodian/game/systems/world/world_history.gd` — in-memory sector-scoped world-event journal for player, sector, and enemy telemetry events.
 - `custodian/game/systems/world/sector_heatmap.gd` — tile-space heat accumulator and player-presence sampler for diagnostic route/combat analysis.
 - `custodian/game/systems/simulation/simulation_interest_manager.gd` — distance-tier classifier for `interest_managed` nodes; first slice reports tiers conservatively without heavy behavior throttling.
-- `custodian/game/actors/projectiles/bullet.gd` and `.tscn` — generic physical projectile with swept collision, terrain-ballistics checks, range/falloff authority, configurable animated travel presentation, and data-driven one-shot impact scene assignment.
+- `custodian/game/actors/projectiles/bullet.gd` and `.tscn` — generic physical projectile with swept collision, terrain-ballistics checks, range/falloff authority, configurable animated travel presentation, a generic impact-spark default for shared drone/turret callers, and data-driven one-shot impact scene overrides.
 - `custodian/game/vfx/one_shot_animated_vfx.gd` — reusable one-shot `AnimatedSprite2D` VFX script that plays an animation on ready, optionally orients to impact direction/normal, and frees on `animation_finished`.
 - `custodian/game/vfx/weapons/carbine_mk1/carbine_mk1_impact_hard_vfx.tscn` — Carbine MK1 hard-surface impact VFX scene using the shared one-shot script.
 - `custodian/assets/resources/vfx/weapons/carbine_mk1/carbine_mk1_projectile_travel_loop_01_frames.tres` and `carbine_mk1_impact_hard_01_frames.tres` — Carbine MK1 projectile travel and hard-impact `SpriteFrames` resources; current PNGs are dimension-drift placeholders under `content/sprites/effects/weapons/carbine_mk1/`.
@@ -236,7 +236,7 @@ Last updated: 2026-07-08
 - `custodian/game/actors/relay/signal_indicator.gd` — primitive signal-strength visual for relay placeholder scenes
 - `custodian/game/actors/relay/relay_interaction.gd` — relay interaction area bridge for future scene-level interaction expansion
 - `custodian/game/actors/allies/combat_drone.tscn` — base allied combat drone scene with health bar, collision, muzzle marker, and fallback ColorRect visual
-- `custodian/game/actors/allies/combat_drone.gd` — fragile allied combat drone actor with Operator/order-point anchor resolution, close/far formation bands, deterministic local patrol, guard-centered targeting/return limits, FOLLOW/HOLD/INTERCEPT/RECALL modes, shared terrain-aware projectile fire, independent HP, and manager-controlled command state
+- `custodian/game/actors/allies/combat_drone.gd` — fragile allied combat drone actor with Operator/order-point anchor resolution, close/far formation bands, deterministic local patrol, guard-centered targeting/return limits, freed-target pruning plus Observatory telemetry, FOLLOW/HOLD/INTERCEPT/RECALL modes, shared terrain-aware projectile fire, independent HP, and manager-controlled command state
 - `custodian/game/actors/effects/drone_guard_order_marker.tscn` — lightweight pulsing world-space ring/cross marker for the active ordered guard point
 - `custodian/game/vfx/combat/parry_contact_spark_vfx.tscn` — non-looping world-space six-frame parry contact spark that auto-frees at animation completion
 - `custodian/game/vfx/combat/critical_breach_marker_vfx.tscn` — enemy-attached floating BREACH marker held visibly for the gameplay-owned critical window

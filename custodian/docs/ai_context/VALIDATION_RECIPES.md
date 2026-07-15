@@ -127,7 +127,8 @@ godot --headless --path . --script res://tools/validation/operator_primary_range
 
 These checks cover Operator/order-point anchor state, close/far/roam goals around guard points, guard return limits,
 marker and replacement-drone inheritance, recall, manager-owned InputMap actions, hold-fire cancellation, and suppression
-of accidental Operator primary fire while issuing an order.
+of accidental Operator primary fire while issuing an order. The follower smoke also frees a live explicit command target
+and verifies the drone clears that stale reference before entering typed targeting code.
 
 For Developer Observatory telemetry and JSON session export:
 

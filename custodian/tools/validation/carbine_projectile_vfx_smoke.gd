@@ -77,6 +77,7 @@ func _validate_scene() -> void:
 		root.add_child(bullet)
 		var visual := bullet.get_node_or_null("Visual")
 		_require(visual is AnimatedSprite2D, "Bullet Visual should be AnimatedSprite2D.")
+		_require(bullet.get("impact_scene") is PackedScene, "Generic bullet should provide a non-blocking default impact scene for drone/turret callers.")
 		if visual is AnimatedSprite2D:
 			var sprite := visual as AnimatedSprite2D
 			_require(sprite.sprite_frames != null, "Bullet Visual should have SpriteFrames.")

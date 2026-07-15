@@ -1,0 +1,76 @@
+CUSTODIAN DEV OBSERVATORY PLAYTEST REPORT
+============================================
+Source:   /home/braydenchaffee/.local/share/godot/app_userdata/CUSTODIAN/dev_observatory/latest_session.json
+Schema:   custodian.dev_observatory.session.v1
+Exported: 2026-07-14 19:38:13
+Scene:    GameRoot (res://scenes/game.tscn)
+Uptime:   3m 36s
+Captured: 300 events | 8 warnings | 25 counters | 30 gauges
+
+PLAYTEST SIGNALS
+  player deaths                0
+  damage events                3
+  damage observed              56.55
+  ranged shots fired           71
+  blocked muzzle shots         0
+  ranged fire failures         35
+  dodges started               2
+  iframe avoids                0
+  field patches committed      0
+  field patches cancelled      0
+  enemy attacks resolved       6
+  enemy attack whiffs          0
+  enemy attack results         blocked=1, damaged=2, parried=3
+  incoming hit results         blocked=1, damaged=2
+  enemies destroyed            4
+
+TOP EVENT TYPES (12)
+  player_weapon_feedback               76
+  player_ranged_shot                   71
+  player_ranged_fire_failed            35
+  enemy_simulation_tier_changed        24
+  procgen_stuck_pocket_validation      13
+  observatory_toggled                  13
+  world_state_changed                  10
+  warning                              8
+  world_history_recorded               7
+  enemy_attack_windup                  6
+  enemy_attack_resolved                6
+  marine_dash_finished                 6
+
+WARNINGS (8)
+  [8.067s] Procgen stuck pocket collision remediated.
+  [208.955s] Operator blocked-pocket detector triggered.
+  [208.955s] Operator rescued from blocked procgen pocket.
+  [213.442s] Operator blocked-pocket detector triggered.
+  [213.442s] Operator rescued from blocked procgen pocket.
+
+NONZERO COUNTERS
+  enemies_destroyed                    4
+  enemy_assault_state_commit           1
+  enemy_assault_state_regroup          1
+  enemy_attack_result_blocked          1
+  enemy_attack_result_damaged          2
+  enemy_attack_result_parried          3
+  enemy_attack_windups                 6
+  enemy_attacks_resolved               6
+  enemy_sim_tier_background            10
+  enemy_sim_tier_dormant               10
+  enemy_sim_tier_nearby                4
+  incoming_hit_blocked                 1
+  ... 13 more
+
+GAUGES
+  active_enemies                       7
+  active_projectiles                   1
+  ambient_critters                     7
+  behavior_agents                      0
+  enemy_behavior_sample                {"carrying_loot":false,"enabled":false,"profile_id":"raider_grunt","state":"legacy"}
+  field_patch_active                   False
+  field_patches_max                    2
+  field_patches_remaining              1
+  fps                                  59
+  heat_player_presence_cells           179
+  interest_active                      0
+  interest_background                  3
+  ... 18 more

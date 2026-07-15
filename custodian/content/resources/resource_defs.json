@@ -17,7 +17,7 @@
 	},
 	"frayed_signal_filament": {
 		"label": "Frayed Signal Filament",
-		"description": "A severed signal thread used in old witness relays. Even broken, it bends toward anything still broadcasting."
+		"description": "A frayed filament from an old signal assembly. Its casing is gone and its channel is broken, but faint pulses still move through the strand."
 	},
 	"cracked_field_tag": {
 		"label": "Cracked Field Tag",

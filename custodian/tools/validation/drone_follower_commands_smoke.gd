@@ -141,6 +141,18 @@ func _verify_follow_bands_and_free_roam_goals() -> void:
 	guard_enemy.global_position = guard_position + Vector2(droid.profile.guard_order_engage_range + 20.0, 0.0)
 	droid.call("_refresh_target")
 	assert(droid.target == null, "Guard target should clear after leaving guard engage range.")
+	var freed_command_target := Node2D.new()
+	freed_command_target.name = "FreedCommandTarget"
+	freed_command_target.add_to_group("enemy")
+	scene_root.add_child(freed_command_target)
+	droid.call("set_command_target", freed_command_target)
+	freed_command_target.free()
+	droid.call("_refresh_target")
+	assert(droid.get("command_target") == null, "Freed explicit command targets should be pruned before typed targeting checks.")
+	var observatory: Node = root.get_node_or_null("/root/DevObservatory")
+	if observatory != null:
+		var counters: Dictionary = observatory.get("counters")
+		assert(int(counters.get("drone_stale_targets_cleared", 0)) > 0, "Stale target cleanup should reach Developer Observatory.")
 
 	droid.call("set_follow_distance_mode", DroneCommandProfileScript.FollowDistance.CLOSE)
 	var guard_close_goal: Vector2 = droid.call("_get_desired_position")

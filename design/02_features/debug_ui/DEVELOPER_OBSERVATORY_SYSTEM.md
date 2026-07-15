@@ -106,6 +106,7 @@ These are good candidates for observatory telemetry when they appear in gameplay
 - Foliage occlusion bubbles (canopy fade active count)
 - Falcon punch overlap / collision hits
 - Enemy spacing / pathfinding failures
+- Allied-drone stale target cleanup after enemy destruction
 - Floor source under player (terrain source ID)
 - Combat readability zones (active/inactive)
 

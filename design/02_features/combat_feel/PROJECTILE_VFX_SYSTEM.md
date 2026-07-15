@@ -16,6 +16,8 @@ Travel art points east/right in source art. The projectile node rotates to `dire
 
 Impact effects are separately spawned one-shot scenes at the collision point. They are not children of the projectile, do not apply damage, and free themselves when their animation finishes.
 
+The generic bullet provides `res://game/actors/effects/impact_spark.tscn` as its safe default impact presentation. Weapon data may replace it with a weapon/material-specific scene. This keeps shared drone and turret callers readable without requiring each firing actor to duplicate presentation configuration; a caller that explicitly clears the scene still produces one loud warning and frees the projectile safely.
+
 ## Carbine MK1 Slice
 
 The Carbine MK1 uses the existing generic bullet scene with weapon-data presentation assignment:

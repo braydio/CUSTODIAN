@@ -67,7 +67,7 @@ Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE
 - Sprite and asset pipeline: start with `custodian/tools/pipelines/ingest.py`, `generate_inbox_manifests.py`, and the relevant validation recipe. For modular Operator work, `tools/operator_ingest.sh` is the thin repo-root wrapper; default is dry-run, `--apply` runs rebuild/import/resource update/smoke/report.
 - Operator animation reports: use `custodian/tools/validation/operator_animation_contract_report.py` for required/optional/missing/suspicious asset coverage. Reports belong under `reports/`, not active runtime folders.
 - Preview/review helpers: use `custodian/tools/pipelines/operator_action_preview.py` and the review tools listed in `docs/ai_context/AGENT_TOOLING_BY_ASK.md`; generated preview output is review-only.
-- Agent memory: start the worker service before `agentmemory demo`; the demo uses `http://localhost:3111` and prints its own cleanup path.
+- Agent memory: check `agentmemory status`, start the worker with `agentmemory` when needed, and use it selectively for durable cross-session decisions or handoffs while keeping repository docs authoritative.
 
 ## Reusable Context Fetch Pipeline
 
@@ -215,6 +215,8 @@ If the task is “where do I start?” or “what do I read first?”, the answe
 
 ## Agentmemory Note
 
-- Start the worker service with `agentmemory` before running `agentmemory demo`.
+- Check worker health with `agentmemory status`; if it is not running, start it with `agentmemory` and verify status again.
+- Use agentmemory when durable cross-session context, recurring decisions, or handoff continuity would be helpful. It supplements rather than replaces `design/`, `docs/ai_context/`, task packets, and live runtime inspection.
+- Start the worker service before running `agentmemory demo`.
 - `agentmemory demo` is a smoke test for a live worker on `http://localhost:3111`.
 - The demo prints a cleanup command for `/tmp/agentmemory-demo` sessions when it finishes.

@@ -36,21 +36,23 @@ func acquire_target_at_position(drone: Node2D, anchor_position: Vector2, mode: i
 	return best
 
 
-func is_valid_command_target(target: Node) -> bool:
-	if target == null or not is_instance_valid(target):
+func is_valid_command_target(target: Variant) -> bool:
+	if target == null or not is_instance_valid(target) or not (target is Node):
 		return false
-	if target.has_method("is_dead") and bool(target.call("is_dead")):
+	var target_node := target as Node
+	if target_node.has_method("is_dead") and bool(target_node.call("is_dead")):
 		return false
-	if target.is_in_group("drone_command_target"):
+	if target_node.is_in_group("drone_command_target"):
 		return true
-	return not is_invalid_enemy(target)
+	return not is_invalid_enemy(target_node)
 
 
-func is_invalid_enemy(enemy: Node) -> bool:
-	if enemy == null or not is_instance_valid(enemy):
+func is_invalid_enemy(enemy: Variant) -> bool:
+	if enemy == null or not is_instance_valid(enemy) or not (enemy is Node):
 		return true
-	if enemy.has_method("is_dead") and bool(enemy.call("is_dead")):
+	var enemy_node := enemy as Node
+	if enemy_node.has_method("is_dead") and bool(enemy_node.call("is_dead")):
 		return true
-	if enemy.has_method("is_passive_enemy") and bool(enemy.call("is_passive_enemy")):
+	if enemy_node.has_method("is_passive_enemy") and bool(enemy_node.call("is_passive_enemy")):
 		return true
 	return false

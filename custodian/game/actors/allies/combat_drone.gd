@@ -35,6 +35,7 @@ var _targeting: RefCounted = DroneTargetingScript.new()
 var _roam_goal: Vector2 = Vector2.ZERO
 var _roam_repath_timer: float = 0.0
 var _roam_sequence: int = 0
+var _command_target_instance_id: int = 0
 
 @onready var visual: ColorRect = get_node_or_null("Visual")
 @onready var health_bar: ProgressBar = get_node_or_null("HealthBar")
@@ -100,11 +101,13 @@ func clear_order_anchor() -> void:
 func set_command_target(hostile: Node2D) -> void:
 	command_target = hostile
 	target = hostile
+	_command_target_instance_id = hostile.get_instance_id() if hostile != null and is_instance_valid(hostile) else 0
 
 
 func clear_command_target() -> void:
 	command_target = null
 	target = null
+	_command_target_instance_id = 0
 
 
 func _get_anchor_position() -> Vector2:
@@ -144,6 +147,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _refresh_target() -> void:
+	_prune_freed_target_references()
 	if squad_mode == DroneCommandProfileScript.Mode.RECALL:
 		target = null
 		return
@@ -157,10 +161,40 @@ func _refresh_target() -> void:
 			target = command_target
 			return
 	command_target = null
+	_command_target_instance_id = 0
 	if target != null and is_instance_valid(target) and not _targeting.is_invalid_enemy(target):
 		if target.global_position.distance_to(anchor_position) <= engage_range:
 			return
 	target = _targeting.acquire_target_at_position(self, anchor_position, squad_mode, profile, engage_range)
+
+
+func _prune_freed_target_references() -> void:
+	var cleared_slots: Array[String] = []
+	if _command_target_instance_id != 0 and not is_instance_id_valid(_command_target_instance_id):
+		command_target = null
+		_command_target_instance_id = 0
+		cleared_slots.append("command_target")
+		if not is_instance_valid(target):
+			target = null
+			cleared_slots.append("target")
+	elif command_target != null and not is_instance_valid(command_target):
+		command_target = null
+		_command_target_instance_id = 0
+		cleared_slots.append("command_target")
+	if target != null and not is_instance_valid(target):
+		target = null
+		cleared_slots.append("target")
+	if cleared_slots.is_empty():
+		return
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null:
+		if observatory.has_method("increment"):
+			observatory.call("increment", &"drone_stale_targets_cleared", cleared_slots.size())
+		if observatory.has_method("log_event"):
+			observatory.call("log_event", &"drone_stale_target_cleared", {
+				"drone_id": drone_id,
+				"slots": cleared_slots,
+			})
 
 
 func _update_movement(delta: float) -> void:

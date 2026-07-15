@@ -3,7 +3,7 @@ extends Area2D
 @export var speed: float = 760.0
 @export var damage: float = 18.0
 @export var max_lifetime: float = 1.6
-@export var impact_scene: PackedScene
+@export var impact_scene: PackedScene = preload("res://game/actors/effects/impact_spark.tscn")
 @export var bullet_color: Color = Color(1.0, 0.85, 0.25, 1.0)
 @export var bullet_radius: float = 4.0
 @export var team: String = "player"  # player, defense, enemy, or neutral

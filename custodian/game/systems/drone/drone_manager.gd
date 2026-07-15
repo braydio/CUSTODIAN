@@ -339,22 +339,26 @@ func _get_command_target_candidates() -> Array[Node]:
 	return candidates
 
 
-func _is_valid_command_target(candidate: Node) -> bool:
-	if candidate == null or not is_instance_valid(candidate):
+func _is_valid_command_target(candidate: Variant) -> bool:
+	if candidate == null or not is_instance_valid(candidate) or not (candidate is Node):
 		return false
-	if candidate.has_method("is_dead") and bool(candidate.call("is_dead")):
+	var candidate_node := candidate as Node
+	if candidate_node.has_method("is_dead") and bool(candidate_node.call("is_dead")):
 		return false
-	if candidate.is_in_group("drone_command_target"):
+	if candidate_node.is_in_group("drone_command_target"):
 		return true
-	return _is_valid_command_hostile(candidate)
+	return _is_valid_command_hostile(candidate_node)
 
 
-func _is_valid_command_hostile(candidate: Node) -> bool:
-	if candidate == null or not is_instance_valid(candidate) or not candidate.is_in_group("enemy"):
+func _is_valid_command_hostile(candidate: Variant) -> bool:
+	if candidate == null or not is_instance_valid(candidate) or not (candidate is Node):
 		return false
-	if candidate.has_method("is_dead") and bool(candidate.call("is_dead")):
+	var candidate_node := candidate as Node
+	if not candidate_node.is_in_group("enemy"):
 		return false
-	if candidate.has_method("is_passive_enemy") and bool(candidate.call("is_passive_enemy")):
+	if candidate_node.has_method("is_dead") and bool(candidate_node.call("is_dead")):
+		return false
+	if candidate_node.has_method("is_passive_enemy") and bool(candidate_node.call("is_passive_enemy")):
 		return false
 	return true
 

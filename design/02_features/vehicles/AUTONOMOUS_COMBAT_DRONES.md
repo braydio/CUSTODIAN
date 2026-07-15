@@ -80,6 +80,7 @@ Guard interpretation:
 - Drones outside the guard return range clear targets and return to formation.
 - Guard patrol is local defense, not independent room clearing or scouting.
 - An explicit command target takes acquisition priority while it remains valid and inside the guard engagement contract; it does not remove leash/return rules. Passive Shrumbs are not acquired automatically by fire-at-will targeting, but Shrumb actors opt into explicit squad targeting through the `drone_command_target` group.
+- Target references are weak runtime observations rather than ownership. Enemy destruction must be pruned before typed targeting checks; freed command/active targets clear without an error, and the cleanup is recorded in Developer Observatory.
 - A small world-space ring/cross marker identifies the active guard point.
 
 ## V1 Tuning
