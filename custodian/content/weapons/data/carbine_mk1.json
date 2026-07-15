@@ -108,7 +108,7 @@
   },
 
   "sounds": {
-    "fire": null,
+    "fire": "res://content/audio/sfx/weapons/carbine_mk1/carbine_mk1_shot_01.wav",
     "fire_last": null,
     "reload_start": "res://content/audio/sfx/weapons/carbine_mk1/carbine_mk1_reload_start_01.wav",
     "reload_insert": null,

@@ -2588,6 +2588,7 @@ func _request_ranged_shot() -> void:
 	_play_ranged_fire_animation(fire_animation)
 	if not _is_using_sidearm_ranged():
 		_begin_modular_primary_ranged_fire_presentation()
+	_emit_weapon_feedback(&"fire")
 	if delay <= 0.0:
 		_emit_pending_ranged_shot()
 
@@ -6908,7 +6909,7 @@ func _get_weapon_feedback_snapshot(weapon_definition: OperatorWeaponDefinition =
 	if weapon_definition != null:
 		snapshot["weapon_id"] = String(_get_weapon_state_key(weapon_definition))
 		snapshot["active_weapon"] = weapon_definition == active_definition
-		for sound_id in [&"empty", &"reload_start", &"reload_complete", &"heat_warning", &"overheat_start", &"overheat_loop", &"overheat_recovered"]:
+		for sound_id in [&"empty", &"reload_start", &"reload_complete", &"heat_warning", &"overheat_start", &"overheat_loop", &"overheat_recovered", &"fire"]:
 			snapshot["sound_%s" % String(sound_id)] = str(weapon_definition.get_sound_value(String(sound_id), ""))
 	return snapshot
 

@@ -6,6 +6,7 @@ const VENT_VFX_SCENE := preload("res://game/vfx/weapons/weapon_overheat_vent_vfx
 @onready var dry_fire_player: AudioStreamPlayer2D = $DryFirePlayer
 @onready var reload_player: AudioStreamPlayer2D = $ReloadPlayer
 @onready var heat_player: AudioStreamPlayer2D = $HeatPlayer
+@onready var shot_player: AudioStreamPlayer2D = $ShotPlayer
 
 var _operator: Node = null
 var _sprite_tween: Tween = null
@@ -24,6 +25,8 @@ func _on_weapon_feedback_event(event_id: StringName, snapshot: Dictionary) -> vo
 	if not bool(snapshot.get("active_weapon", true)):
 		return
 	match event_id:
+		&"fire":
+			_play_snapshot_sound(shot_player, snapshot, &"fire", event_id)
 		&"dry_fire":
 			_play_snapshot_sound(dry_fire_player, snapshot, &"empty", event_id)
 		&"reload_started":
