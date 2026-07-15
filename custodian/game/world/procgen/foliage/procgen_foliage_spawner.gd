@@ -53,6 +53,8 @@ func clear(context: Dictionary) -> void:
 			node = entry.get("node", null) as Node
 		elif entry is Node:
 			node = entry as Node
+		if entry is Dictionary and bool(entry.get("has_collision", false)):
+			_call_void(context, "unregister_runtime_prop_blocker", node)
 		if is_instance_valid(node):
 			node.queue_free()
 	foliage_nodes.clear()
@@ -76,6 +78,8 @@ func remove_at(context: Dictionary, pos: Vector2i) -> void:
 	elif entry is Node2D:
 		node = entry as Node2D
 	if node != null and is_instance_valid(node):
+		if entry is Dictionary and bool(entry.get("has_collision", false)):
+			_call_void(context, "unregister_runtime_prop_blocker", node)
 		node.queue_free()
 	foliage_nodes.erase(pos)
 	var get_region_type: Callable = context.get("get_region_type_at_tile", Callable())
@@ -268,6 +272,8 @@ func _classify_foliage(foliage_size: Vector2) -> String:
 
 
 func _should_add_tree_trunk_collision(context: Dictionary, pos: Vector2i) -> bool:
+	if _call_bool(context, "is_inside_tree_trunk_clearance", pos):
+		return false
 	if not bool(context.get("foliage_probabilistic_tree_collision", true)):
 		return true
 	var local_tree_density := _estimate_local_tree_density(context, pos)
@@ -359,6 +365,7 @@ func _add_tree_trunk_collision(context: Dictionary, foliage_sprite: Sprite2D, fo
 	body.position = Vector2(0, foliage_size.y * 0.5) + Vector2(context.get("foliage_tree_trunk_collision_offset", Vector2(0, -6)))
 	body.add_child(shape)
 	foliage_sprite.add_child(body)
+	_call_void(context, "register_runtime_prop_blocker", foliage_sprite)
 
 
 func _should_place_fruit(context: Dictionary, pos: Vector2i, foliage_kind: String) -> bool:
@@ -431,6 +438,12 @@ func _tile_noise_hash(context: Dictionary, pos: Vector2i) -> int:
 func _call_bool(context: Dictionary, key: String, pos: Vector2i) -> bool:
 	var callable: Callable = context.get(key, Callable())
 	return bool(callable.call(pos)) if callable.is_valid() else false
+
+
+func _call_void(context: Dictionary, key: String, value: Variant) -> void:
+	var callable: Callable = context.get(key, Callable())
+	if callable.is_valid():
+		callable.call(value)
 
 
 func _call_vector2(context: Dictionary, key: String, pos: Vector2i) -> Vector2:

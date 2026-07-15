@@ -507,6 +507,7 @@ func _register_devconsole_commands() -> void:
 		_register_devconsole_command(console, "enemy_debug", _devconsole_enemy_debug)
 		_register_devconsole_command(console, "force_enemy_notice", _devconsole_force_enemy_notice)
 		_register_devconsole_command(console, "force_enemy_steal", _devconsole_force_enemy_steal)
+		_register_devconsole_command(console, "stuck_report", _devconsole_stuck_report)
 		if ENABLE_MINIMAP:
 			_register_devconsole_command(console, "toggle_minimap", _devconsole_toggle_minimap)
 			_register_devconsole_command(console, "minimap_status", _devconsole_minimap_status)
@@ -535,6 +536,22 @@ func _devconsole_show_cognitive(args: Array) -> String:
 		return "CognitiveState autoload not found"
 	var dominant = cs.get_dominant_state() if cs.has_method("get_dominant_state") else "UNKNOWN"
 	return "Cognitive: Dominant=%s" % str(dominant)
+
+
+func _devconsole_stuck_report(_args: Array) -> String:
+	var operator := _get_operator_node()
+	if operator == null:
+		return "Operator not found"
+	if not operator.has_method("debug_print_stuck_report"):
+		return "Operator does not expose stuck diagnostics"
+	var report: Dictionary = operator.call("debug_print_stuck_report")
+	if report.is_empty():
+		return "No active procgen walkability provider"
+	return "Stuck report: tile=%s floor=%s wall=%s region=%s prop_blocked=%s escape_neighbors=%s nearby=%s" % [
+		report.get("tile"), report.get("floor_source_id"), report.get("wall_source_id"),
+		report.get("region_type"), report.get("runtime_prop_blocked"),
+		report.get("escape_neighbor_count"), report.get("nearby_collision_bodies"),
+	]
 
 func _devconsole_test_spawn(args: Array) -> String:
 	# Spawn a test enemy at operator position
@@ -6126,6 +6143,7 @@ func _reset_terminal_local_state(include_boot_lines: bool) -> void:
 	_terminal_completion_index = -1
 	_terminal_completion_seed = ""
 	if include_boot_lines:
+
 		_terminal_lines.clear()
 		_terminal_lines.append_array(TERMINAL_BOOT_LINES)
 		_terminal_log_entries.clear()

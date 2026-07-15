@@ -24,6 +24,8 @@ Keep ranged weapons strong in deliberate bursts without allowing unlimited scree
 - Existing enemy behavior now tracks last seen/heard positions, pursuit memory, deterministic search offsets, home position, camp ID, and a leash. Hard leash applies after LOS is broken.
 - `AmbientEnemyCamp` supports authored activation-limited camps; `AmbientEnemySpawner` supports procgen/authored marker groups. The main test scene contains two hostile grunt camps outside wave spawning.
 - `get_weapon_status()` exposes canonical ammo, heat, overheat, noise, suppression, range values, and whether a ranged magazine is currently active while retaining legacy keys.
+- `get_weapon_status()` also exposes reload/overheat progress, warning and overheat thresholds, decay delay, effective heat-per-shot, shots-to-overheat, and weapon-independent heat bands. Discrete `weapon_feedback_event` transitions drive presentation without polling sticky failure state.
+- The compact HUD preserves magazine/reserve counts and adds one priority-driven pressure row for heat, hot/critical, reload, dry, and vent recovery. A child `WeaponFeedbackPresenter` owns local-only dry/reload/heat audio, critical tint, and procedural barrel vent VFX; none of these cues emit `NoiseEventBus` events.
 - Primary/two-handed ranged-ready now uses a composition split instead of baked ranged locomotion requirements. Lower body stays movement-owned on the reusable `unarmed_{idle,walk,run}` modular locomotion clips, upper body plus temporary ranged-weapon layers stay aim/loadout-owned, FX stays action-owned, and the legacy full-body ranged sprite only appears when that modular ranged upper/weapon stack is unavailable. Accepted primary ranged shots can still play modular upper/weapon/FX fire layers when matching clips exist, with projectile emission, ammo, heat, range/falloff, and noise authority unchanged.
 
 ## Phase Mapping
@@ -37,7 +39,7 @@ Keep ranged weapons strong in deliberate bursts without allowing unlimited scree
 7. Ambient placement: authored camps and marker-driven spawner bridge.
 8. Noise integration: distance/threat response without global aggro.
 9. Pursuit: last-known search, LOS loss, and return-home leash.
-10. Status/debug: canonical status dictionary; production heat UI deferred.
+10. Status/feedback: canonical progress snapshot, debounced transition events, production compact pressure HUD, local audio, and procedural vent VFX.
 11. Vehicle hook: contract documented below; runtime deferred.
 12. Tuning: initial carbine, pistol, shotgun, sniper, and minigun data applied.
 13. Validation: focused smoke plus headless parse/runtime checks.
@@ -48,6 +50,9 @@ Keep ranged weapons strong in deliberate bursts without allowing unlimited scree
 - `custodian/game/actors/operator/operator.gd`
 - `custodian/tools/validation/operator_primary_ranged_modular_fire_smoke.gd`
 - `custodian/game/actors/operator/operator_weapon_definition.gd`
+- `custodian/game/actors/operator/components/weapon_feedback_presenter.gd`
+- `custodian/game/ui/hud/custodian_hud.gd`
+- `custodian/game/vfx/weapons/weapon_overheat_vent_vfx.tscn`
 - `custodian/game/actors/projectiles/bullet.gd`
 - `custodian/content/weapons/weapon_schema.json`
 - `custodian/content/weapons/data/*.json`
@@ -60,6 +65,7 @@ Keep ranged weapons strong in deliberate bursts without allowing unlimited scree
 - `custodian/game/systems/spawning/ambient_enemy_spawner.gd`
 - `custodian/game/actors/items/ammo_cache.gd`
 - `custodian/scenes/game.tscn`
+- `custodian/tools/validation/combat_resource_feedback_smoke.gd`
 
 The original brief's `custodian/assets/weapons/` path is stale. Live weapon data is under `custodian/content/weapons/`.
 
@@ -76,6 +82,7 @@ The original brief's `custodian/assets/weapons/` path is stale. Live weapon data
 ## Validation
 
 - `env HOME=/tmp/custodian-godot-home godot --headless --script tools/validation/ranged_combat_balance_smoke.gd`
+- `env HOME=/tmp/custodian-godot-home godot --headless --script tools/validation/combat_resource_feedback_smoke.gd`
 - `env HOME=/tmp/custodian-godot-home godot --headless --path . --editor --quit`
 - Main-scene boot: no new script parse/load errors. A pre-existing missing Forlorn Ritualant rubble resource still prevents a clean full boot and is outside this change.
 - Manual acceptance still required for feel: burst-to-overheat cadence, visible spread/recoil, camp investigation, corner LOS break/search/return, reload and sidearm switching, and melee/parry/dodge regression.
@@ -86,7 +93,7 @@ A future `VehicleWeaponDefinition` should own `weapon_id`, weapon data path, mou
 
 ## Deferred
 
-- Production heat bar, dry-fire/overheat audio, and final player feedback beyond the first normal-play magazine/reserve HUD readout
+- Manual cue-mix/cadence review, bespoke P-9 reload/heat replacements, optional authored vent sprite strip, and optional pressure-state HUD icons
 - Suppressor item/mod inventory
 - Cover and lighting visibility modifiers
 - Large-scale procedural enemy bases and streaming/pooling
@@ -95,7 +102,7 @@ A future `VehicleWeaponDefinition` should own `weapon_id`, weapon data path, mou
 
 ## Next Agent Slice
 
-Goal: tune and expose the new constraints through final gameplay feedback.  
-Files: Operator HUD/debug screen, weapon JSON, noise/camp tuning, audio/FX assets when available.  
-Constraints: do not move simulation authority into UI; retain deterministic search/spawn decisions; preserve canonical ammo adapters until all HUD consumers migrate.  
-Acceptance: manual scenario from `design/COMBAT_BALANCE.md` passes, heat/dry-fire causes are readable to the player, and no pre-existing combat controls regress.
+Goal: tune the completed feedback slice in play and replace shared V1 cues without changing its event/status contract.
+Files: weapon feedback presenter, compact HUD, weapon JSON/audio, and optional vent/icon assets.
+Constraints: do not move simulation authority into UI; retain deterministic search/spawn decisions; preserve canonical ammo adapters until all HUD consumers migrate.
+Acceptance: manual scenario from `design/COMBAT_BALANCE.md` passes, feedback remains readable without held-input chatter, and no pre-existing combat controls or AI hearing behavior regress.

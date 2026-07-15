@@ -70,6 +70,7 @@
     "decay_delay_sec": 0.2,
     "overheat_threshold": 100,
     "overheat_lockout_sec": 0.85,
+    "ui_warn_threshold": 70,
     "spread_mult_at_max": 1.45,
     "recoil_mult_at_max": 1.25
   },
@@ -104,9 +105,13 @@
 
   "sounds": {
     "fire": null,
-    "reload_start": null,
-    "reload_complete": null,
-    "empty": null
+    "reload_start": "res://content/audio/sfx/weapons/carbine_mk1/carbine_mk1_reload_start_01.wav",
+    "reload_complete": "res://content/audio/sfx/weapons/carbine_mk1/carbine_mk1_reload_complete_01.wav",
+    "empty": "res://content/audio/sfx/weapons/common/weapon_dry_fire_01.wav",
+    "heat_warning": "res://content/audio/sfx/weapons/carbine_mk1/carbine_mk1_heat_warning_01.wav",
+    "overheat_start": "res://content/audio/sfx/weapons/carbine_mk1/carbine_mk1_overheat_vent_01.wav",
+    "overheat_loop": null,
+    "overheat_recovered": "res://content/audio/sfx/weapons/carbine_mk1/carbine_mk1_reload_complete_01.wav"
   },
 
   "visual_effects": {

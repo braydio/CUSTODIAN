@@ -44,6 +44,8 @@ Completed packets are moved to `archived/`. They are preserved for historical re
 
 ### Recently Complete (awaiting archive)
 
+- `PROCGEN_STUCK_POCKET_AUTHORITY.md` — Added collision-owner runtime blocker authority, protected route/structure clearances, two-exit pocket remediation, navigation consumption, loud stuck diagnostics, debug-only Operator rescue, Observatory telemetry, and focused smoke coverage.
+- `COMBAT_RESOURCE_FEEDBACK.md` — Added authoritative reload/heat/overheat progress snapshots, debounced feedback events, compact pressure HUD, weapon-local audio/procedural vent presentation, schema wiring, and focused smoke coverage.
 - `ASH_BELL_FORLORN_RITUALANT.md` — Added the centralized authored-scene procgen authority reservation API and wired Ash-Bell dev placement to claim its canonical room footprint before instantiation.
 - `PROCGEN_ASCENT_STYLE_FACTION_STORY_V1.md` — Added distance-band world progression, connectivity-safe gradual ascent metadata, deterministic faction activity anchors, environmental story-room candidates, placeholder markers, and enemy ambient routines.
 - `OPERATOR_MODULAR_SIDEARM_PLAYBACK.md` — Corrected facing ownership and wired four-diagonal synchronized sidearm draw/fire lower, upper, pistol, and FX layers with draw-complete gating, held final draw pose, fire-to-held return, and Operator-local alignment.

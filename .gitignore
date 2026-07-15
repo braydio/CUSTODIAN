@@ -112,6 +112,8 @@ package-lock.json
 # =======================
 # CUSTODIAN SPECIFIC
 # =======================
+# Audio library source packs (large, not imported by Godot)
+custodian/audio_library/
 # Local environment overrides (create personal .env files but don't track them)
 .env
 .env.local

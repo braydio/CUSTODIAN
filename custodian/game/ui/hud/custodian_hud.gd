@@ -13,6 +13,8 @@ const InventoryAssets := preload("res://game/ui/inventory/inventory_asset_catalo
 @onready var weapon_icon: TextureRect = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponIconFrame/WeaponIcon")
 @onready var weapon_name_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponText/WeaponNameLabel")
 @onready var weapon_ammo_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponStatusRow/WeaponText/WeaponAmmoLabel")
+@onready var weapon_pressure_bar: ProgressBar = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponPressureRow/WeaponPressureBar")
+@onready var weapon_pressure_state_label: Label = get_node_or_null("Root/TopLeftVitals/Margin/Content/WeaponPressureRow/WeaponPressureStateLabel")
 @onready var loadout_primary_icon: TextureRect = get_node_or_null("Root/TopLeftLoadout/Margin/Content/PrimaryRow/IconFrame/Icon")
 @onready var loadout_primary_name: Label = get_node_or_null("Root/TopLeftLoadout/Margin/Content/PrimaryRow/Text/Name")
 @onready var loadout_primary_status: Label = get_node_or_null("Root/TopLeftLoadout/Margin/Content/PrimaryRow/Text/Status")
@@ -28,6 +30,11 @@ var _health_current := 100
 var _health_max := 100
 var _last_weapon_status_text := ""
 var _last_weapon_icon: Texture2D = null
+var _weapon_pressure_state: StringName = &"normal"
+var _weapon_icon_tween: Tween = null
+var _weapon_flash_tween: Tween = null
+var _critical_pulse_timer := 0.0
+var _feedback_operator: Node = null
 var _last_primary_loadout_text := ""
 var _last_secondary_loadout_text := ""
 var _last_prompt_frame := -1
@@ -54,8 +61,13 @@ func _ready() -> void:
 	hide_interaction()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_refresh_operator_status()
+	if _weapon_pressure_state == &"critical":
+		_critical_pulse_timer -= delta
+		if _critical_pulse_timer <= 0.0:
+			_critical_pulse_timer = 0.55
+			_pulse_weapon_icon(0.18, Palette.DANGER)
 	if prompt != null and visible and _last_prompt_frame >= 0 and Engine.get_process_frames() - _last_prompt_frame > 2:
 		hide_interaction()
 
@@ -111,19 +123,13 @@ func set_weapon_status(
 	var ammo_text := "MELEE READY"
 	if magazine_size > 0:
 		ammo_text = "MAG %d/%d  RES %d" % [maxi(0, loaded), maxi(1, magazine_size), maxi(0, reserve)]
-		if reloading:
-			ammo_text = "RELOADING  %d/%d" % [maxi(0, loaded), maxi(1, magazine_size)]
-		elif overheated:
-			ammo_text = "OVERHEATED  %d/%d" % [maxi(0, loaded), maxi(1, magazine_size)]
 	var combined := "%s|%s" % [display_name, ammo_text]
 	if combined != _last_weapon_status_text:
 		if weapon_name_label != null:
 			weapon_name_label.text = display_name
 		if weapon_ammo_label != null:
 			weapon_ammo_label.text = ammo_text
-			if overheated:
-				weapon_ammo_label.add_theme_color_override("font_color", Palette.DANGER)
-			elif reloading or loaded <= 0 and magazine_size > 0:
+			if loaded <= 0 and magazine_size > 0:
 				weapon_ammo_label.add_theme_color_override("font_color", Palette.GOLD_TEXT)
 			else:
 				weapon_ammo_label.add_theme_color_override("font_color", Palette.BODY_TEXT)
@@ -132,6 +138,132 @@ func set_weapon_status(
 		weapon_icon.texture = icon_texture
 		weapon_icon.visible = icon_texture != null
 		_last_weapon_icon = icon_texture
+
+
+func consume_weapon_status(snapshot: Dictionary, icon_texture: Texture2D = null) -> void:
+	set_weapon_status(
+		str(snapshot.get("weapon_name", "UNARMED")),
+		int(snapshot.get("loaded_ammo", 0)),
+		int(snapshot.get("magazine_size", 0)),
+		int(snapshot.get("reserve_ammo", 0)),
+		icon_texture,
+		bool(snapshot.get("reloading", false)),
+		bool(snapshot.get("overheated", false))
+	)
+	_set_weapon_pressure(snapshot)
+
+
+func _set_weapon_pressure(snapshot: Dictionary) -> void:
+	var state: StringName = &"normal"
+	var ratio := clampf(float(snapshot.get("overheat_ratio", 0.0)), 0.0, 1.0)
+	var label := "HEAT"
+	var color := Palette.BODY_TEXT
+	if bool(snapshot.get("overheated", false)):
+		state = &"overheated"
+		ratio = clampf(float(snapshot.get("overheat_recovery_ratio", 0.0)), 0.0, 1.0)
+		label = "VENT"
+		color = Palette.DANGER
+	elif bool(snapshot.get("reloading", false)):
+		state = &"reloading"
+		ratio = clampf(float(snapshot.get("reload_ratio", 0.0)), 0.0, 1.0)
+		label = "LOAD"
+		color = Palette.GOLD_TEXT
+	elif int(snapshot.get("magazine_size", 0)) > 0 and int(snapshot.get("loaded_ammo", 0)) <= 0 and int(snapshot.get("reserve_ammo", 0)) <= 0:
+		state = &"dry"
+		ratio = 0.0
+		label = "DRY"
+		color = Palette.MUTED_TEXT
+	elif str(snapshot.get("heat_band", "normal")) == "critical" or int(snapshot.get("shots_to_overheat", 99)) in [1, 2]:
+		state = &"critical"
+		label = "CRIT"
+		color = Palette.DANGER
+	elif str(snapshot.get("heat_band", "normal")) == "hot" or float(snapshot.get("heat", 0.0)) >= float(snapshot.get("heat_warn_threshold", INF)):
+		state = &"hot"
+		label = "HOT"
+		color = Palette.GOLD_TEXT
+	if weapon_pressure_bar != null:
+		weapon_pressure_bar.max_value = 100.0
+		weapon_pressure_bar.value = ratio * 100.0
+		weapon_pressure_bar.show_percentage = false
+		weapon_pressure_bar.add_theme_stylebox_override("background", Styles.bar_background_style())
+		weapon_pressure_bar.add_theme_stylebox_override("fill", Styles.bar_fill_style(color))
+	if weapon_pressure_state_label != null:
+		weapon_pressure_state_label.text = label
+		weapon_pressure_state_label.add_theme_color_override("font_color", color)
+	if state != _weapon_pressure_state:
+		var previous := _weapon_pressure_state
+		_weapon_pressure_state = state
+		_on_weapon_pressure_transition(previous, state)
+
+
+func _on_weapon_pressure_transition(_previous: StringName, current: StringName) -> void:
+	if current == &"hot":
+		_pulse_weapon_icon(0.28, Palette.GOLD_TEXT)
+	elif current == &"critical":
+		_critical_pulse_timer = 0.0
+
+
+func _ensure_weapon_feedback_connection(operator_ref: Node) -> void:
+	if operator_ref == _feedback_operator:
+		return
+	if _feedback_operator != null and is_instance_valid(_feedback_operator) and _feedback_operator.has_signal("weapon_feedback_event"):
+		var old_callable := Callable(self, "_on_weapon_feedback_event")
+		if _feedback_operator.is_connected("weapon_feedback_event", old_callable):
+			_feedback_operator.disconnect("weapon_feedback_event", old_callable)
+	_feedback_operator = operator_ref
+	if _feedback_operator != null and _feedback_operator.has_signal("weapon_feedback_event"):
+		_feedback_operator.connect("weapon_feedback_event", Callable(self, "_on_weapon_feedback_event"))
+
+
+func _on_weapon_feedback_event(event_id: StringName, snapshot: Dictionary) -> void:
+	if not bool(snapshot.get("active_weapon", true)):
+		return
+	match event_id:
+		&"dry_fire":
+			_kick_weapon_icon()
+		&"reload_completed":
+			_flash_weapon_row(Palette.GOLD_TEXT, 0.20)
+		&"overheated":
+			_flash_weapon_row(Palette.DANGER, 0.12)
+		&"overheat_recovered":
+			_flash_weapon_row(Palette.EVRFOREST_PALE_GREEN, 0.25)
+
+
+func _pulse_weapon_icon(duration: float, color: Color) -> void:
+	if weapon_icon == null:
+		return
+	if _weapon_icon_tween != null and _weapon_icon_tween.is_valid():
+		_weapon_icon_tween.kill()
+	weapon_icon.pivot_offset = weapon_icon.size * 0.5
+	weapon_icon.scale = Vector2.ONE
+	weapon_icon.modulate = Color.WHITE
+	_weapon_icon_tween = create_tween()
+	_weapon_icon_tween.tween_property(weapon_icon, "scale", Vector2(1.08, 1.08), duration * 0.5)
+	_weapon_icon_tween.parallel().tween_property(weapon_icon, "modulate", color, duration * 0.5)
+	_weapon_icon_tween.tween_property(weapon_icon, "scale", Vector2.ONE, duration * 0.5)
+	_weapon_icon_tween.parallel().tween_property(weapon_icon, "modulate", Color.WHITE, duration * 0.5)
+
+
+func _kick_weapon_icon() -> void:
+	if weapon_icon == null:
+		return
+	if _weapon_icon_tween != null and _weapon_icon_tween.is_valid():
+		_weapon_icon_tween.kill()
+	var origin := weapon_icon.position
+	_weapon_icon_tween = create_tween()
+	_weapon_icon_tween.tween_property(weapon_icon, "position", origin + Vector2(2.0, 0.0), 0.04)
+	_weapon_icon_tween.tween_property(weapon_icon, "position", origin + Vector2(-2.0, 0.0), 0.04)
+	_weapon_icon_tween.tween_property(weapon_icon, "position", origin, 0.04)
+
+
+func _flash_weapon_row(color: Color, duration: float) -> void:
+	if weapon_icon_frame == null:
+		return
+	if _weapon_flash_tween != null and _weapon_flash_tween.is_valid():
+		_weapon_flash_tween.kill()
+	weapon_icon_frame.modulate = color
+	_weapon_flash_tween = create_tween()
+	_weapon_flash_tween.tween_property(weapon_icon_frame, "modulate", Color.WHITE, duration)
 
 
 func set_location(text: String) -> void:
@@ -233,6 +365,7 @@ func _refresh_operator_status() -> void:
 	var operator_ref := get_node_or_null("/root/GameRoot/World/Operator")
 	if operator_ref == null:
 		return
+	_ensure_weapon_feedback_connection(operator_ref)
 	var current := _health_current
 	var max_value := _health_max
 	if operator_ref.has_method("get_health"):
@@ -260,15 +393,7 @@ func _refresh_operator_status() -> void:
 			var icon_variant: Variant = operator_ref.call("get_active_weapon_icon_texture")
 			if icon_variant is Texture2D:
 				icon_texture = icon_variant as Texture2D
-		set_weapon_status(
-			str(weapon_status.get("weapon_name", "UNARMED")),
-			int(weapon_status.get("loaded_ammo", 0)),
-			int(weapon_status.get("magazine_size", 0)),
-			int(weapon_status.get("reserve_ammo", 0)),
-			icon_texture,
-			bool(weapon_status.get("reloading", false)),
-			bool(weapon_status.get("overheated", false))
-		)
+		consume_weapon_status(weapon_status, icon_texture)
 
 
 func _refresh_loadout_section(operator_ref: Node = null) -> void:

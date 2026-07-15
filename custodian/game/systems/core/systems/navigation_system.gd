@@ -14,6 +14,7 @@ signal navigation_dirty()
 var astar: AStar2D
 var floor_tilemap: TileMapLayer
 var walls_tilemap: TileMapLayer
+var runtime_blocker_provider: Node
 var _walkable_tiles: Dictionary = {}  # Vector2i -> bool
 var _initialized: bool = false
 
@@ -29,6 +30,7 @@ func _exit_tree() -> void:
 	astar = null
 	floor_tilemap = null
 	walls_tilemap = null
+	runtime_blocker_provider = null
 	_walkable_tiles.clear()
 	_initialized = false
 	_init_deferred = false
@@ -66,6 +68,11 @@ func _initialize_navigation() -> void:
 	if floor_tilemap == null:
 		push_warning("[NavigationSystem] No floor tilemap found")
 		return
+	if runtime_blocker_provider == null:
+		for provider in get_tree().get_nodes_in_group("procgen_walkability_provider"):
+			if provider != null and provider.get("floor_tilemap") == floor_tilemap:
+				runtime_blocker_provider = provider
+				break
 	
 	astar = AStar2D.new()
 	_walkable_tiles.clear()
@@ -75,9 +82,10 @@ func _initialize_navigation() -> void:
 	print("[NavigationSystem] Initialized with ", _walkable_tiles.size(), " walkable tiles")
 
 
-func set_runtime_tilemaps(p_floor_tilemap: TileMapLayer, p_walls_tilemap: TileMapLayer) -> void:
+func set_runtime_tilemaps(p_floor_tilemap: TileMapLayer, p_walls_tilemap: TileMapLayer, p_runtime_blocker_provider: Node = null) -> void:
 	floor_tilemap = p_floor_tilemap
 	walls_tilemap = p_walls_tilemap
+	runtime_blocker_provider = p_runtime_blocker_provider
 
 
 func _find_floor_tilemap() -> TileMapLayer:
@@ -157,6 +165,12 @@ func _is_walkable(cell: Vector2i) -> bool:
 		var wall_source = walls_tilemap.get_cell_source_id(cell)
 		if wall_source >= 0:
 			return false
+
+	if runtime_blocker_provider != null \
+			and is_instance_valid(runtime_blocker_provider) \
+			and runtime_blocker_provider.has_method("is_runtime_walkable_after_props") \
+			and not bool(runtime_blocker_provider.call("is_runtime_walkable_after_props", cell)):
+		return false
 	
 	return true
 

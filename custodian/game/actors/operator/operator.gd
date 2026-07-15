@@ -3,6 +3,7 @@ extends ControllableActor
 signal health_changed(current: float, maximum: float)
 signal field_patch_changed(count: int, maximum: int)
 signal field_patch_state_changed(active: bool, committed: bool)
+signal weapon_feedback_event(event_id: StringName, snapshot: Dictionary)
 
 const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
 const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
@@ -144,6 +145,14 @@ var last_fire_cooldown := 0.0
 @export var move_acceleration: float = 1200.0
 @export var move_deceleration: float = 1500.0
 @export var movement_turn_response: float = 14.0
+@export_group("Debug Unstuck", "unstuck")
+@export var unstuck_enabled: bool = true
+@export var unstuck_rescue_enabled: bool = true
+@export_range(0.1, 2.0, 0.05) var unstuck_hold_seconds: float = 0.35
+@export_range(1, 12, 1) var unstuck_search_radius_tiles: int = 4
+@export_range(0.5, 12.0, 0.5) var unstuck_max_displacement: float = 3.0
+@export_range(1.0, 40.0, 1.0) var unstuck_max_velocity: float = 8.0
+@export_group("", "")
 @export var unarmed_move_multiplier: float = 1.12
 @export var ranged_firing_move_multiplier: float = 0.72
 @export var ranged_ready_move_multiplier: float = 0.88
@@ -303,6 +312,7 @@ var _melee_recovery_active: bool = false
 var _melee_recovery_timer: float = 0.0
 var _reload_active: bool = false
 var _reload_timer: float = 0.0
+var _reload_total: float = 0.0
 var _ammo_standard_loaded: int = 0
 var _ammo_heavy_loaded: int = 0
 var ammo_reserve_by_type: Dictionary = {}
@@ -312,6 +322,8 @@ var weapon_heat_by_id: Dictionary = {}
 var weapon_heat_delay_by_id: Dictionary = {}
 var weapon_overheat_by_id: Dictionary = {}
 var last_ranged_fire_failure: StringName = &""
+var _weapon_failure_feedback_cooldown: float = 0.0
+var _last_weapon_failure_feedback: StringName = &""
 var _pending_ranged_shot: Dictionary = {}
 var _ranged_ready_active: bool = false
 var _ranged_ready_weapon_definition: OperatorWeaponDefinition = null
@@ -340,6 +352,10 @@ var _portal_arrival_animation_active := false
 var _arrn_stabilization_locked := false
 var _enemy_impact_lock_timer: float = 0.0
 var _is_dead := false
+var _unstuck_timer := 0.0
+var _unstuck_anchor_position := Vector2.ZERO
+var _unstuck_anchor_valid := false
+var _unstuck_report_cooldown := 0.0
 var _body_recoil_offset := Vector2.ZERO
 var _animated_sprite_base_position := Vector2.ZERO
 var _dodge_fx_back_base_position := Vector2.ZERO
@@ -775,6 +791,7 @@ func _draw_socket_marker(pos: Vector2, color: Color, label: String) -> void:
 
 func _process(delta):
 	fire_cooldown_remaining = max(0.0, fire_cooldown_remaining - delta)
+	_weapon_failure_feedback_cooldown = maxf(0.0, _weapon_failure_feedback_cooldown - delta)
 	melee_cooldown_remaining = max(0.0, melee_cooldown_remaining - delta)
 	_dodge_cooldown_remaining = max(0.0, _dodge_cooldown_remaining - delta)
 	_dodge_iframe_timer = maxf(0.0, _dodge_iframe_timer - delta)
@@ -798,12 +815,14 @@ func _process(delta):
 	_update_target_ring()
 	_update_interaction_target()
 	if _is_dead:
+		_reset_unstuck_detector()
 		_parry_neutral_lock_active = false
 		cancel_field_patch(&"dead")
 		_cancel_dodge()
 		_exit_ranged_ready()
 		return
 	if _enemy_impact_lock_timer > 0.0:
+		_reset_unstuck_detector()
 		_parry_neutral_lock_active = false
 		cancel_field_patch(&"impact")
 		_cancel_dodge()
@@ -878,6 +897,7 @@ func _physics_process(delta):
 		move_and_slide()
 		return
 	if _is_terminal_open() or _is_non_terminal_ui_open() or _is_ui_text_input_focused():
+		_reset_unstuck_detector()
 		cancel_field_patch(&"ui")
 		velocity = Vector2.ZERO
 		is_sprinting = false
@@ -887,16 +907,19 @@ func _physics_process(delta):
 		move_and_slide()
 		return
 	if _dodge_active:
+		_reset_unstuck_detector()
 		_update_dodge(delta)
 		_update_stealth_noise_snapshot(true)
 		move_and_slide()
 		return
 	if _dodge_recovery_active:
+		_reset_unstuck_detector()
 		_update_dodge_recovery(delta)
 		_update_stealth_noise_snapshot(false)
 		move_and_slide()
 		return
 	if _is_movement_locked():
+		_reset_unstuck_detector()
 		velocity = Vector2.ZERO
 		is_sprinting = false
 		is_sneaking = false
@@ -951,6 +974,7 @@ func _physics_process(delta):
 		accel_rate *= movement_profile.acceleration_multiplier
 	velocity = velocity.move_toward(target_velocity, accel_rate * delta)
 	move_and_slide()
+	_update_unstuck_detector(delta, input_direction)
 	_update_stealth_noise_snapshot(moving)
 
 	if is_sprinting:
@@ -965,6 +989,82 @@ func _physics_process(delta):
 	# DEBUG: Press J to damage nearest sector
 	if Input.is_key_pressed(KEY_J):
 		_damage_nearest_sector(10.0)
+
+
+func _update_unstuck_detector(delta: float, input_direction: Vector2) -> void:
+	_unstuck_report_cooldown = maxf(0.0, _unstuck_report_cooldown - delta)
+	if not unstuck_enabled or input_direction.length_squared() <= 0.01:
+		_reset_unstuck_detector()
+		return
+	if not _unstuck_anchor_valid:
+		_unstuck_anchor_position = global_position
+		_unstuck_anchor_valid = true
+		return
+	var moved := global_position.distance_to(_unstuck_anchor_position)
+	if moved >= unstuck_max_displacement:
+		_unstuck_timer = 0.0
+		_unstuck_anchor_position = global_position
+		return
+	if velocity.length() < unstuck_max_velocity:
+		_unstuck_timer += delta
+	else:
+		_unstuck_timer = 0.0
+	if _unstuck_timer < unstuck_hold_seconds or _unstuck_report_cooldown > 0.0:
+		return
+	var provider := _get_procgen_walkability_provider()
+	var report: Dictionary = {}
+	if provider != null and provider.has_method("debug_get_stuck_report_at_global"):
+		report = provider.call("debug_get_stuck_report_at_global", global_position)
+	var nearby_bodies: Array = report.get("nearby_collision_bodies", [])
+	var confirmed_pocket := not report.is_empty() \
+		and int(report.get("escape_neighbor_count", 4)) < 2 \
+		and (bool(report.get("runtime_prop_blocked", false)) or not nearby_bodies.is_empty())
+	if not confirmed_pocket:
+		_unstuck_report_cooldown = 0.5
+		_unstuck_timer = 0.0
+		_unstuck_anchor_position = global_position
+		return
+	if provider.has_method("debug_print_stuck_report"):
+		provider.call("debug_print_stuck_report", global_position)
+	_obs_increment(&"operator_stuck_detections")
+	_obs_log(&"operator_stuck_detected", report)
+	_obs_warning("Operator blocked-pocket detector triggered.", report)
+	if OS.is_debug_build() and unstuck_rescue_enabled and provider != null \
+			and provider.has_method("find_nearest_runtime_walkable_global"):
+		var rescue_position: Vector2 = provider.call(
+			"find_nearest_runtime_walkable_global", global_position, unstuck_search_radius_tiles
+		)
+		if rescue_position != Vector2.INF:
+			var from_tile: Vector2i = report.get("tile", Vector2i.ZERO)
+			global_position = rescue_position
+			velocity = Vector2.ZERO
+			var destination_report: Dictionary = provider.call("debug_get_stuck_report_at_global", rescue_position)
+			var to_tile: Vector2i = destination_report.get("tile", Vector2i.ZERO)
+			print("[OperatorUnstuck] rescued from tile=%s to tile=%s reason=blocked_pocket" % [from_tile, to_tile])
+			_obs_increment(&"operator_unstuck_rescues")
+			_obs_log(&"operator_unstuck_rescued", {"from_tile": from_tile, "to_tile": to_tile, "reason": "blocked_pocket"})
+			_obs_warning("Operator rescued from blocked procgen pocket.", {"from_tile": from_tile, "to_tile": to_tile})
+	_unstuck_report_cooldown = 1.0
+	_unstuck_timer = 0.0
+	_unstuck_anchor_position = global_position
+
+
+func _reset_unstuck_detector() -> void:
+	_unstuck_timer = 0.0
+	_unstuck_anchor_position = global_position
+	_unstuck_anchor_valid = false
+
+
+func _get_procgen_walkability_provider() -> Node:
+	return get_tree().get_first_node_in_group("procgen_walkability_provider")
+
+
+func debug_print_stuck_report() -> Dictionary:
+	var provider := _get_procgen_walkability_provider()
+	if provider == null or not provider.has_method("debug_print_stuck_report"):
+		push_warning("[StuckDebug] No procgen walkability provider is active")
+		return {}
+	return provider.call("debug_print_stuck_report", global_position)
 
 
 func _update_aim():
@@ -2259,6 +2359,12 @@ func _obs_gauge(gauge_name: StringName, value: Variant) -> void:
 		observatory.call("set_gauge", String(gauge_name), value)
 
 
+func _obs_warning(message: String, data: Dictionary = {}) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("mark_warning"):
+		observatory.call("mark_warning", message, data)
+
+
 func _log_ranged_fire_failure(reason: StringName) -> void:
 	_obs_increment(&"player_ranged_fire_failures", 1)
 	_obs_log(&"player_ranged_fire_failed", {
@@ -2269,6 +2375,24 @@ func _log_ranged_fire_failure(reason: StringName) -> void:
 		"reserve_ammo": _get_current_reserve_ammo(),
 		"heat": weapon_heat_by_id.get(_get_active_weapon_state_key(), 0.0),
 	})
+
+
+func _emit_weapon_feedback(event_id: StringName, weapon_definition: OperatorWeaponDefinition = null) -> void:
+	var snapshot := _get_weapon_feedback_snapshot(weapon_definition)
+	weapon_feedback_event.emit(event_id, snapshot)
+	_obs_log(&"player_weapon_feedback", {
+		"event_id": String(event_id),
+		"weapon": String(snapshot.get("weapon_id", "")),
+	})
+
+
+func _emit_weapon_failure_feedback(reason: StringName, event_id: StringName) -> void:
+	if reason == _last_weapon_failure_feedback and _weapon_failure_feedback_cooldown > 0.0:
+		return
+	_last_weapon_failure_feedback = reason
+	_weapon_failure_feedback_cooldown = 0.15
+	_log_ranged_fire_failure(reason)
+	_emit_weapon_feedback(event_id)
 
 
 func _instantiate_ranged_projectile(profile: Dictionary) -> Node:
@@ -2333,15 +2457,16 @@ func _request_ranged_shot() -> void:
 		return
 	if _reload_active:
 		last_ranged_fire_failure = &"reloading"
-		_log_ranged_fire_failure(last_ranged_fire_failure)
+		_emit_weapon_failure_feedback(last_ranged_fire_failure, &"fire_blocked_reloading")
 		return
 	if _is_active_weapon_overheated():
 		last_ranged_fire_failure = &"overheated"
-		_log_ranged_fire_failure(last_ranged_fire_failure)
+		_emit_weapon_failure_feedback(last_ranged_fire_failure, &"fire_blocked_overheated")
 		return
 	if not _has_loaded_ammo():
 		last_ranged_fire_failure = &"reload_started" if _get_current_reserve_ammo() > 0 else &"no_ammo"
-		_log_ranged_fire_failure(last_ranged_fire_failure)
+		if last_ranged_fire_failure == &"no_ammo":
+			_emit_weapon_failure_feedback(last_ranged_fire_failure, &"dry_fire")
 		_try_start_reload()
 		return
 	if _is_using_sidearm_ranged():
@@ -2354,6 +2479,8 @@ func _request_ranged_shot() -> void:
 		_sidearm_action_direction = _get_attack_aim_direction()
 	var profile := _get_current_ranged_profile()
 	last_ranged_fire_failure = &""
+	_last_weapon_failure_feedback = &""
+	_weapon_failure_feedback_cooldown = 0.0
 	last_fire_cooldown = float(profile["cooldown"])
 	fire_cooldown_remaining = last_fire_cooldown
 	# Apply cognitive attack recovery modifier (instinct reduces cooldown)
@@ -6376,10 +6503,12 @@ func _try_start_reload() -> void:
 	if not _can_reload():
 		return
 	_reload_active = true
-	_reload_timer = _get_current_reload_duration()
+	_reload_total = _get_current_reload_duration()
+	_reload_timer = _reload_total
 	last_fire_cooldown = max(last_fire_cooldown, _reload_timer)
 	fire_cooldown_remaining = max(fire_cooldown_remaining, _reload_timer)
 	_update_primary_weapon_visual(false)
+	_emit_weapon_feedback(&"reload_started")
 
 
 func _update_reload(delta: float) -> void:
@@ -6405,6 +6534,7 @@ func _finish_reload() -> void:
 	ammo_reserve_by_type[ammo_type] = reserve - transfer
 	_sync_legacy_ammo_fields()
 	_cancel_reload()
+	_emit_weapon_feedback(&"reload_completed", weapon_definition)
 
 
 func _cancel_reload() -> void:
@@ -6460,12 +6590,20 @@ func _apply_heat_for_shot() -> void:
 	var key := _get_weapon_state_key(weapon_definition)
 	var heat_max := maxf(1.0, weapon_definition.get_heat_float("max", weapon_definition.heat_max))
 	var heat_per_shot := weapon_definition.get_heat_float("per_shot", weapon_definition.heat_per_shot) * weapon_definition.heat_per_shot_mult
-	var new_heat := minf(heat_max, float(weapon_heat_by_id.get(key, 0.0)) + heat_per_shot)
+	var previous_heat := float(weapon_heat_by_id.get(key, 0.0))
+	var previous_band := _get_weapon_heat_band(weapon_definition, previous_heat)
+	var new_heat := minf(heat_max, previous_heat + heat_per_shot)
 	weapon_heat_by_id[key] = new_heat
 	weapon_heat_delay_by_id[key] = weapon_definition.get_heat_float("decay_delay_sec", weapon_definition.heat_decay_delay_sec)
 	var threshold := weapon_definition.get_heat_float("overheat_threshold", weapon_definition.overheat_threshold)
+	var new_band := _get_weapon_heat_band(weapon_definition, new_heat)
+	if new_band == &"critical" and previous_band != &"critical":
+		_emit_weapon_feedback(&"heat_critical", weapon_definition)
+	elif new_band == &"hot" and previous_band == &"normal":
+		_emit_weapon_feedback(&"heat_hot", weapon_definition)
 	if new_heat >= threshold and float(weapon_overheat_by_id.get(key, 0.0)) <= 0.0:
 		weapon_overheat_by_id[key] = weapon_definition.get_heat_float("overheat_lockout_sec", weapon_definition.overheat_lockout_sec) * weapon_definition.overheat_lockout_mult
+		_emit_weapon_feedback(&"overheated", weapon_definition)
 
 
 func _update_weapon_heat(delta: float) -> void:
@@ -6490,6 +6628,23 @@ func _update_weapon_heat(delta: float) -> void:
 		if previous_lockout > 0.0 and lockout <= 0.0:
 			var heat_max := maxf(1.0, weapon_definition.get_heat_float("max", weapon_definition.heat_max))
 			weapon_heat_by_id[key] = minf(float(weapon_heat_by_id[key]), heat_max * 0.7)
+			_emit_weapon_feedback(&"overheat_recovered", weapon_definition)
+
+
+func _get_weapon_heat_band(weapon_definition: OperatorWeaponDefinition, current_heat: float) -> StringName:
+	if weapon_definition == null:
+		return &"normal"
+	var threshold := maxf(0.001, weapon_definition.get_heat_float("overheat_threshold", weapon_definition.overheat_threshold))
+	if current_heat >= threshold:
+		return &"overheated"
+	var per_shot := maxf(0.001, weapon_definition.get_heat_float("per_shot", weapon_definition.heat_per_shot) * weapon_definition.heat_per_shot_mult)
+	var shots_to_overheat := ceili(maxf(0.0, threshold - current_heat) / per_shot)
+	if shots_to_overheat <= 2:
+		return &"critical"
+	var warn_threshold := weapon_definition.get_heat_float("ui_warn_threshold", weapon_definition.heat_ui_warn_threshold)
+	if current_heat >= warn_threshold:
+		return &"hot"
+	return &"normal"
 
 
 func _get_heat_ratio() -> float:
@@ -6547,6 +6702,12 @@ func get_weapon_status() -> Dictionary:
 	var ammo_type := _get_weapon_ammo_type(ranged_weapon_definition) if ranged_weapon_definition != null else ""
 	var heat_max := maxf(1.0, ranged_weapon_definition.get_heat_float("max", ranged_weapon_definition.heat_max)) if ranged_weapon_definition != null else 100.0
 	var heat := _get_active_weapon_heat() if ranged_weapon_definition != null else 0.0
+	var heat_per_shot := ranged_weapon_definition.get_heat_float("per_shot", ranged_weapon_definition.heat_per_shot) * ranged_weapon_definition.heat_per_shot_mult if ranged_weapon_definition != null else 0.0
+	var overheat_threshold := maxf(0.001, ranged_weapon_definition.get_heat_float("overheat_threshold", ranged_weapon_definition.overheat_threshold)) if ranged_weapon_definition != null else 100.0
+	var heat_warn_threshold := ranged_weapon_definition.get_heat_float("ui_warn_threshold", ranged_weapon_definition.heat_ui_warn_threshold) if ranged_weapon_definition != null else 70.0
+	var overheat_total := ranged_weapon_definition.get_heat_float("overheat_lockout_sec", ranged_weapon_definition.overheat_lockout_sec) * ranged_weapon_definition.overheat_lockout_mult if ranged_weapon_definition != null else 0.0
+	var overheat_remaining := float(weapon_overheat_by_id.get(_get_active_heat_key(), 0.0)) if ranged_weapon_definition != null else 0.0
+	var reload_ratio := clampf(1.0 - _reload_timer / maxf(0.001, _reload_total), 0.0, 1.0) if _reload_active else 0.0
 	var noise_radius := ranged_weapon_definition.get_noise_float("shot_radius_px", ranged_weapon_definition.shot_noise_radius_px) if ranged_weapon_definition != null else 0.0
 	var is_suppressed := ranged_weapon_definition.get_noise_bool("suppressed", ranged_weapon_definition.suppressed) if ranged_weapon_definition != null else false
 	if is_suppressed and ranged_weapon_definition != null:
@@ -6576,6 +6737,9 @@ func get_weapon_status() -> Dictionary:
 		"cooldown_remaining": fire_cooldown_remaining,
 		"cooldown_total": cooldown_total,
 		"reloading": _reload_active,
+		"reload_remaining": _reload_timer,
+		"reload_total": _reload_total,
+		"reload_ratio": reload_ratio,
 		"last_fire_failure": String(last_ranged_fire_failure),
 		"ammo_type": ammo_type,
 		"loaded_ammo": _get_current_loaded_ammo() if ranged_weapon_definition != null else 0,
@@ -6585,8 +6749,17 @@ func get_weapon_status() -> Dictionary:
 		"heat": heat,
 		"heat_max": heat_max,
 		"heat_ratio": heat / heat_max,
+		"heat_warn_threshold": heat_warn_threshold,
+		"overheat_threshold": overheat_threshold,
+		"overheat_ratio": clampf(heat / overheat_threshold, 0.0, 1.0),
+		"heat_decay_delay_remaining": float(weapon_heat_delay_by_id.get(_get_active_heat_key(), 0.0)) if ranged_weapon_definition != null else 0.0,
+		"heat_per_shot": heat_per_shot,
+		"shots_to_overheat": ceili(maxf(0.0, overheat_threshold - heat) / maxf(0.001, heat_per_shot)) if heat_per_shot > 0.0 else 0,
 		"overheated": _is_active_weapon_overheated(),
-		"overheat_remaining": float(weapon_overheat_by_id.get(_get_active_heat_key(), 0.0)),
+		"overheat_remaining": overheat_remaining,
+		"overheat_total": overheat_total,
+		"overheat_recovery_ratio": clampf(1.0 - overheat_remaining / maxf(0.001, overheat_total), 0.0, 1.0) if overheat_remaining > 0.0 else 0.0,
+		"heat_band": String(_get_weapon_heat_band(ranged_weapon_definition, heat)),
 		"noise_radius_px": noise_radius,
 		"suppressed": is_suppressed,
 		"effective_range_px": float(profile.get("effective_range_px", 0.0)),
@@ -6598,6 +6771,19 @@ func get_weapon_status() -> Dictionary:
 		"ammo_standard_magazine_size": _get_standard_magazine_size(),
 		"ammo_heavy_magazine_size": _get_heavy_magazine_size(),
 	}
+
+
+func _get_weapon_feedback_snapshot(weapon_definition: OperatorWeaponDefinition = null) -> Dictionary:
+	var snapshot := get_weapon_status()
+	var active_definition := _get_active_ranged_weapon_definition()
+	if weapon_definition == null:
+		weapon_definition = active_definition
+	if weapon_definition != null:
+		snapshot["weapon_id"] = String(_get_weapon_state_key(weapon_definition))
+		snapshot["active_weapon"] = weapon_definition == active_definition
+		for sound_id in [&"empty", &"reload_start", &"reload_complete", &"heat_warning", &"overheat_start", &"overheat_loop", &"overheat_recovered"]:
+			snapshot["sound_%s" % String(sound_id)] = str(weapon_definition.get_sound_value(String(sound_id), ""))
+	return snapshot
 
 
 func get_active_weapon_icon_texture() -> Texture2D:

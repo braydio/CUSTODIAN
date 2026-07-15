@@ -177,7 +177,11 @@ def _append_key_values(
 
 
 def build_report(
-    payload: Mapping[str, Any], source: Path, top: int, warning_limit: int
+    payload: Mapping[str, Any],
+    source: Path,
+    top: int,
+    warning_limit: int,
+    show_all: bool = False,
 ) -> str:
     session = _mapping(payload.get("session"))
     scene = _mapping(payload.get("scene"))
@@ -187,6 +191,8 @@ def build_report(
     events = _records(payload.get("events"))
     warnings = _records(payload.get("warnings"))
     kinds = _event_kinds(events)
+    if show_all:
+        top = max(top, len(kinds), len(counters), len(gauges), len(events))
 
     event_count = int(_number(session.get("event_count"), len(events)))
     warning_count = int(_number(session.get("warning_count"), len(warnings)))
@@ -291,10 +297,21 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help=f"maximum event, counter, and gauge rows (default: {DEFAULT_TOP})",
     )
     parser.add_argument(
+        "--all",
+        action="store_true",
+        help="show all events, counters, and gauges without truncation",
+    )
+    parser.add_argument(
         "--warnings",
         type=int,
         default=DEFAULT_WARNING_LIMIT,
         help=f"maximum recent warnings (default: {DEFAULT_WARNING_LIMIT})",
+    )
+    parser.add_argument(
+        "-o", "--output",
+        type=str,
+        default=None,
+        help="save report to this file instead of printing to stdout",
     )
     args = parser.parse_args(argv)
     if args.top < 1:
@@ -313,7 +330,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
 
-    print(build_report(payload, path, args.top, args.warnings))
+    report = build_report(payload, path, args.top, args.warnings, show_all=args.all)
+
+    if args.output:
+        out = Path(args.output)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(report + "\n", encoding="utf-8")
+        print(f"report saved to {out}")
+    else:
+        print(report)
+
     return 0
 
 

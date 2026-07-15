@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/vfx/weapons/weapon_overheat_vent_vfx.gd" id="1_vent"]
+
+[node name="WeaponOverheatVentVfx" type="Node2D"]
+script = ExtResource("1_vent")

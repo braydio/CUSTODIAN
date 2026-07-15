@@ -355,6 +355,8 @@ var _region_tiles: Dictionary = {}
 var _wall_health: Dictionary = {}
 var _generated_floor_cells: Dictionary = {}
 var _generated_wall_cells: Dictionary = {}
+var _runtime_prop_blocker_cells: Dictionary = {}
+var _runtime_prop_blocker_sources: Dictionary = {}
 var _revealed_chunks: Dictionary = {}
 var _queued_chunks: Dictionary = {}
 var _streaming_reveal_queue: Array[Vector2i] = []
@@ -398,7 +400,7 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export var foliage_jitter_amplitude: Vector2 = Vector2(4, 2)
 @export var foliage_debug_logging: bool = false
 @export_range(0.0, 1.0, 0.01) var foliage_compound_density_multiplier: float = 0.28
-@export_range(0, 8, 1) var foliage_compound_building_clearance: int = 2
+@export_range(0, 8, 1) var foliage_compound_building_clearance: int = 3
 @export_range(0, 12, 1) var foliage_spawn_clearance_radius: int = 4
 @export var extra_foliage_textures: Array[Texture2D] = []
 @export var enable_fruit_spawning: bool = true
@@ -454,8 +456,8 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export_range(0, 12, 1) var combat_readability_prop_clearance_tiles: int = 4
 @export var debug_log_foliage_occlusion_bubbles: bool = false
 @export_group("")
-@export var foliage_tree_trunk_collision_size: Vector2 = Vector2(18, 12)
-@export var foliage_tree_trunk_collision_offset: Vector2 = Vector2(0, -6)
+@export var foliage_tree_trunk_collision_size: Vector2 = Vector2(14, 8)
+@export var foliage_tree_trunk_collision_offset: Vector2 = Vector2(0, 2)
 @export var foliage_probabilistic_tree_collision: bool = true
 @export_range(1, 8, 1) var foliage_tree_collision_density_radius: int = 4
 @export_range(0.0, 1.0, 0.01) var foliage_sparse_tree_collision_threshold: float = 0.08
@@ -474,6 +476,12 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export var ruin_prop_jitter_amplitude: Vector2 = Vector2(5, 3)
 @export var ruin_prop_variant_intensity: ProceduralProp.VariantIntensity = ProceduralProp.VariantIntensity.SUBTLE
 @export var ruin_prop_debug_logging: bool = false
+@export_group("Runtime Prop Walkability", "runtime_blocker")
+@export_range(0, 8, 1) var runtime_blocker_route_clearance_tiles: int = 3
+@export_range(1, 4, 1) var runtime_blocker_min_escape_neighbors: int = 2
+@export var runtime_blocker_validate_stuck_pockets: bool = true
+@export var runtime_blocker_remediate_stuck_pockets: bool = true
+@export_group("", "")
 @export var enable_portal_pair_teleport: bool = true
 @export_range(1, 12, 1) var portal_pair_min_distance_tiles: int = 8
 @export_range(0, 96, 1) var portal_teleport_cooldown_frames: int = 60
@@ -574,6 +582,7 @@ func _ready() -> void:
 	if not generation_output_enabled:
 		return
 	add_to_group("procgen_tilemap")
+	add_to_group("procgen_walkability_provider")
 	add_to_group("terrain_ballistics_provider")
 	# Auto-find ProcGen if not assigned
 	if not procgen_node:
@@ -645,6 +654,7 @@ func _process_foliage_spawn_queue() -> void:
 		if foliage_debug_logging:
 			print("[ProcGenTilemap] foliage_deferred_spawn_complete elapsed=%dms" % (Time.get_ticks_msec() - _foliage_deferred_start_msec))
 		_foliage_deferred_start_msec = 0
+		validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
 
 
 func _is_attached_to_runtime_world() -> bool:
@@ -3512,6 +3522,229 @@ func debug_get_generated_wall_cells() -> Dictionary:
 	return _generated_wall_cells.duplicate(true)
 
 
+func register_runtime_prop_blocker(
+	center_tile: Vector2i,
+	radius_tiles: int = 1,
+	owner: Node = null,
+	kind: StringName = &"runtime_prop"
+) -> String:
+	var owner_id := str(owner.get_instance_id()) if is_instance_valid(owner) else "%s:%s" % [String(kind), center_tile]
+	_unregister_runtime_prop_blocker_id(owner_id)
+	var cells: Array[Vector2i] = []
+	var radius := maxi(0, radius_tiles)
+	for y in range(-radius, radius + 1):
+		for x in range(-radius, radius + 1):
+			cells.append(center_tile + Vector2i(x, y))
+	_register_runtime_prop_blocker_cells(owner_id, cells, owner, kind, center_tile)
+	return owner_id
+
+
+func unregister_runtime_prop_blocker(owner_or_id: Variant) -> void:
+	var owner_id := ""
+	if owner_or_id is Node and is_instance_valid(owner_or_id):
+		owner_id = str((owner_or_id as Node).get_instance_id())
+	else:
+		owner_id = str(owner_or_id)
+	_unregister_runtime_prop_blocker_id(owner_id)
+
+
+func has_runtime_prop_blocker_at_tile(tile: Vector2i) -> bool:
+	return _runtime_prop_blocker_cells.has(tile) and not (_runtime_prop_blocker_cells[tile] as Dictionary).is_empty()
+
+
+func is_runtime_walkable_after_props(tile: Vector2i) -> bool:
+	return _generated_floor_cells.has(tile) \
+		and not _generated_wall_cells.has(tile) \
+		and not has_runtime_prop_blocker_at_tile(tile)
+
+
+func _is_runtime_walkable_after_props(tile: Vector2i) -> bool:
+	return is_runtime_walkable_after_props(tile)
+
+
+func get_runtime_escape_neighbor_count(tile: Vector2i) -> int:
+	var open_count := 0
+	for direction in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+		if is_runtime_walkable_after_props(tile + direction):
+			open_count += 1
+	return open_count
+
+
+func debug_get_runtime_prop_blocker_cells() -> Dictionary:
+	return _runtime_prop_blocker_cells.duplicate(true)
+
+
+func _register_foliage_runtime_blocker(foliage_node: Node) -> void:
+	_register_runtime_prop_node(foliage_node, &"tree_trunk")
+
+
+func _register_runtime_prop_node(owner: Node, kind: StringName) -> void:
+	if owner == null or not is_instance_valid(owner):
+		return
+	var cells := _collision_cells_for_node(owner)
+	if cells.is_empty():
+		return
+	var source_tile := _global_to_tile((owner as Node2D).global_position) if owner is Node2D else cells[0]
+	_register_runtime_prop_blocker_cells(str(owner.get_instance_id()), cells, owner, kind, source_tile)
+
+
+func _register_runtime_prop_blocker_cells(
+	owner_id: String,
+	cells: Array[Vector2i],
+	owner: Node,
+	kind: StringName,
+	source_tile: Vector2i
+) -> void:
+	if owner_id.is_empty() or cells.is_empty():
+		return
+	_runtime_prop_blocker_sources[owner_id] = {
+		"owner": owner,
+		"kind": kind,
+		"source_tile": source_tile,
+		"cells": cells.duplicate(),
+	}
+	for cell in cells:
+		var owners: Dictionary = _runtime_prop_blocker_cells.get(cell, {})
+		owners[owner_id] = true
+		_runtime_prop_blocker_cells[cell] = owners
+	_obs_increment(&"procgen_runtime_blockers_registered")
+	_obs_gauge(&"procgen_runtime_blocker_sources", _runtime_prop_blocker_sources.size())
+	_obs_gauge(&"procgen_runtime_prop_blocker_cells", _runtime_prop_blocker_cells.size())
+
+
+func _unregister_runtime_prop_blocker_id(owner_id: String) -> void:
+	if owner_id.is_empty() or not _runtime_prop_blocker_sources.has(owner_id):
+		return
+	var source: Dictionary = _runtime_prop_blocker_sources[owner_id]
+	for cell_variant in source.get("cells", []):
+		if not cell_variant is Vector2i or not _runtime_prop_blocker_cells.has(cell_variant):
+			continue
+		var owners: Dictionary = _runtime_prop_blocker_cells[cell_variant]
+		owners.erase(owner_id)
+		if owners.is_empty():
+			_runtime_prop_blocker_cells.erase(cell_variant)
+		else:
+			_runtime_prop_blocker_cells[cell_variant] = owners
+	_runtime_prop_blocker_sources.erase(owner_id)
+	_obs_increment(&"procgen_runtime_blockers_unregistered")
+	_obs_gauge(&"procgen_runtime_blocker_sources", _runtime_prop_blocker_sources.size())
+	_obs_gauge(&"procgen_runtime_prop_blocker_cells", _runtime_prop_blocker_cells.size())
+
+
+func _collision_cells_for_node(owner: Node) -> Array[Vector2i]:
+	var lookup: Dictionary = {}
+	var stack: Array[Node] = [owner]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		if node is CollisionShape2D:
+			var collision := node as CollisionShape2D
+			if collision.disabled or collision.shape == null:
+				continue
+			var half_extents := Vector2(8.0, 8.0)
+			if collision.shape is RectangleShape2D:
+				half_extents = (collision.shape as RectangleShape2D).size * 0.5
+			elif collision.shape is CircleShape2D:
+				var radius := (collision.shape as CircleShape2D).radius
+				half_extents = Vector2(radius, radius)
+			elif collision.shape is CapsuleShape2D:
+				var capsule := collision.shape as CapsuleShape2D
+				half_extents = Vector2(capsule.radius, capsule.height * 0.5)
+			var corner_tiles: Array[Vector2i] = []
+			for corner in [Vector2(-half_extents.x, -half_extents.y), Vector2(half_extents.x, -half_extents.y), Vector2(-half_extents.x, half_extents.y), Vector2(half_extents.x, half_extents.y)]:
+				corner_tiles.append(_global_to_tile(collision.to_global(corner)))
+			var min_tile: Vector2i = corner_tiles[0]
+			var max_tile: Vector2i = corner_tiles[0]
+			for corner_tile in corner_tiles:
+				min_tile = Vector2i(mini(min_tile.x, corner_tile.x), mini(min_tile.y, corner_tile.y))
+				max_tile = Vector2i(maxi(max_tile.x, corner_tile.x), maxi(max_tile.y, corner_tile.y))
+			for y in range(min_tile.y, max_tile.y + 1):
+				for x in range(min_tile.x, max_tile.x + 1):
+					lookup[Vector2i(x, y)] = true
+		for child in node.get_children():
+			if child is Node:
+				stack.append(child)
+	var cells: Array[Vector2i] = []
+	for cell_variant in lookup.keys():
+		cells.append(cell_variant as Vector2i)
+	_sort_tiles(cells)
+	return cells
+
+
+func validate_no_stuck_pockets(remediate: bool = true) -> Dictionary:
+	if not runtime_blocker_validate_stuck_pockets:
+		return {"flagged": [], "remediated": 0}
+	var candidate_lookup: Dictionary = {}
+	for blocker_variant in _runtime_prop_blocker_cells.keys():
+		var blocker := blocker_variant as Vector2i
+		for y in range(-1, 2):
+			for x in range(-1, 2):
+				candidate_lookup[blocker + Vector2i(x, y)] = true
+	var candidates: Array[Vector2i] = []
+	for candidate_variant in candidate_lookup.keys():
+		candidates.append(candidate_variant as Vector2i)
+	_sort_tiles(candidates)
+	var flagged: Array[Vector2i] = []
+	var remediated := 0
+	for tile in candidates:
+		if not is_runtime_walkable_after_props(tile):
+			continue
+		if get_runtime_escape_neighbor_count(tile) >= runtime_blocker_min_escape_neighbors:
+			continue
+		flagged.append(tile)
+		if remediate:
+			var cleared_for_tile := 0
+			while get_runtime_escape_neighbor_count(tile) < runtime_blocker_min_escape_neighbors \
+					and _clear_one_blocker_near_tile(tile):
+				cleared_for_tile += 1
+			if cleared_for_tile > 0:
+				remediated += 1
+				push_warning("[ProcGenStuckPocket] cleared %d runtime collision owner(s) near tile=%s" % [cleared_for_tile, tile])
+				_obs_warning("Procgen stuck pocket collision remediated.", {"tile": tile, "cleared_sources": cleared_for_tile})
+	if remediated > 0:
+		_queue_navigation_rebuild()
+	_obs_increment(&"procgen_stuck_pockets_detected", flagged.size())
+	_obs_increment(&"procgen_stuck_pockets_remediated", remediated)
+	_obs_gauge(&"procgen_stuck_pockets_last_scan", flagged.size())
+	_obs_log(&"procgen_stuck_pocket_validation", {"flagged": flagged.size(), "remediated": remediated})
+	return {"flagged": flagged, "remediated": remediated}
+
+
+func _clear_one_blocker_near_tile(tile: Vector2i) -> bool:
+	var ids: Array[String] = []
+	for direction in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+		var owners: Dictionary = _runtime_prop_blocker_cells.get(tile + direction, {})
+		for owner_id_variant in owners.keys():
+			var owner_id := str(owner_id_variant)
+			if not ids.has(owner_id):
+				ids.append(owner_id)
+	ids.sort()
+	if ids.is_empty():
+		return false
+	var source: Dictionary = _runtime_prop_blocker_sources.get(ids[0], {})
+	_disable_collision_shapes(source.get("owner", null) as Node)
+	_unregister_runtime_prop_blocker_id(ids[0])
+	return true
+
+
+func _disable_collision_shapes(owner: Node) -> void:
+	if owner == null or not is_instance_valid(owner):
+		return
+	var stack: Array[Node] = [owner]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		if node is CollisionShape2D:
+			(node as CollisionShape2D).set_deferred("disabled", true)
+		for child in node.get_children():
+			if child is Node:
+				stack.append(child)
+
+
+func _sort_tiles(tiles: Array[Vector2i]) -> void:
+	tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return a.x < b.x if a.y == b.y else a.y < b.y
+	)
+
+
 func debug_print_floor_tile_at_global(world_pos: Vector2) -> void:
 	var tile := _global_to_tile(world_pos)
 	var report := debug_get_floor_tile_report(tile)
@@ -3545,6 +3778,74 @@ func debug_get_floor_tile_report(tile: Vector2i) -> Dictionary:
 		"generated_wall": _generated_wall_cells.has(tile),
 		"valid_spawn_cell": is_valid_spawn_cell(tile),
 	}
+
+
+func debug_get_stuck_report_at_global(world_pos: Vector2) -> Dictionary:
+	var tile := _global_to_tile(world_pos)
+	var floor_source := floor_tilemap.get_cell_source_id(tile) if floor_tilemap != null else -1
+	var wall_source := walls_tilemap.get_cell_source_id(tile) if walls_tilemap != null else -1
+	if floor_source < 0 and _generated_floor_cells.has(tile):
+		floor_source = int((_generated_floor_cells[tile] as Dictionary).get("source_id", -1))
+	if wall_source < 0 and _generated_wall_cells.has(tile):
+		wall_source = int((_generated_wall_cells[tile] as Dictionary).get("source_id", -1))
+	var nearby_names: Array[String] = []
+	var nearby_sources: Dictionary = {}
+	for y in range(-1, 2):
+		for x in range(-1, 2):
+			var owners: Dictionary = _runtime_prop_blocker_cells.get(tile + Vector2i(x, y), {})
+			for owner_id_variant in owners.keys():
+				nearby_sources[str(owner_id_variant)] = true
+	for owner_id_variant in nearby_sources.keys():
+		var source: Dictionary = _runtime_prop_blocker_sources.get(owner_id_variant, {})
+		var owner := source.get("owner", null) as Node
+		var label := String(source.get("kind", &"runtime_prop"))
+		if owner != null and is_instance_valid(owner):
+			label = "%s:%s" % [label, owner.name]
+		nearby_names.append(label)
+	nearby_names.sort()
+	return {
+		"tile": tile,
+		"floor_source_id": floor_source,
+		"wall_source_id": wall_source,
+		"region_type": get_region_type_at_tile(tile),
+		"region_data": get_region_data_at_tile(tile),
+		"runtime_prop_blocked": has_runtime_prop_blocker_at_tile(tile),
+		"nearby_collision_bodies": nearby_names,
+		"escape_neighbor_count": get_runtime_escape_neighbor_count(tile),
+		"runtime_walkable": is_runtime_walkable_after_props(tile),
+	}
+
+
+func debug_print_stuck_report(world_pos: Vector2) -> Dictionary:
+	var report := debug_get_stuck_report_at_global(world_pos)
+	print("[StuckDebug] tile=%s floor_source=%s wall_source=%s region=%s runtime_prop_blocked=%s nearby_bodies=%s escape_neighbors=%s runtime_walkable=%s" % [
+		report.get("tile"), report.get("floor_source_id"), report.get("wall_source_id"),
+		report.get("region_data"), report.get("runtime_prop_blocked"),
+		report.get("nearby_collision_bodies"), report.get("escape_neighbor_count"),
+		report.get("runtime_walkable"),
+	])
+	_obs_log(&"procgen_stuck_debug_report", report)
+	return report
+
+
+func find_nearest_runtime_walkable_global(world_pos: Vector2, radius_tiles: int = 4) -> Vector2:
+	var origin := _global_to_tile(world_pos)
+	var candidates: Array[Vector2i] = []
+	var radius := maxi(0, radius_tiles)
+	for y in range(-radius, radius + 1):
+		for x in range(-radius, radius + 1):
+			var tile := origin + Vector2i(x, y)
+			if is_runtime_walkable_after_props(tile) \
+					and get_runtime_escape_neighbor_count(tile) >= runtime_blocker_min_escape_neighbors:
+				candidates.append(tile)
+	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var da := a.distance_squared_to(origin)
+		var db := b.distance_squared_to(origin)
+		if da == db:
+			return a.x < b.x if a.y == b.y else a.y < b.y
+		return da < db
+	)
+	return tile_to_global_position(candidates[0]) if not candidates.is_empty() else Vector2.INF
 
 
 func debug_get_compound_ingress_footprints() -> Array[Vector2i]:
@@ -3913,7 +4214,7 @@ func _flush_navigation_rebuild() -> void:
 	for navigation_node in get_tree().get_nodes_in_group("navigation"):
 		if navigation_node != null and navigation_node.has_method("rebuild"):
 			if navigation_node.has_method("set_runtime_tilemaps"):
-				navigation_node.call("set_runtime_tilemaps", floor_tilemap, walls_tilemap)
+				navigation_node.call("set_runtime_tilemaps", floor_tilemap, walls_tilemap, self)
 			navigation_node.call("rebuild")
 			rebuilt = true
 	if not rebuilt and nav_region != null:
@@ -4510,6 +4811,9 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 		"get_region_type_at_tile": Callable(self, "get_region_type_at_tile"),
 		"get_region_data_at_tile": Callable(self, "get_region_data_at_tile"),
 		"set_region_tile": Callable(self, "_set_region_tile"),
+		"is_inside_tree_trunk_clearance": Callable(self, "_is_inside_tree_trunk_clearance"),
+		"register_runtime_prop_blocker": Callable(self, "_register_foliage_runtime_blocker"),
+		"unregister_runtime_prop_blocker": Callable(self, "unregister_runtime_prop_blocker"),
 	}
 
 
@@ -4565,12 +4869,23 @@ func _generate_ruin_props(map_size: Vector2i) -> void:
 
 	var spawned := _ruin_prop_scatterer.scatter_on_tiles(candidate_tiles, Callable(self, "_ruin_prop_tile_to_world"))
 	_configure_portal_pair(candidate_tiles, spawned, map_size)
+	for prop in spawned:
+		if prop != null and is_instance_valid(prop) and not prop.is_queued_for_deletion():
+			_register_runtime_prop_node(prop, &"ruin_prop")
+	validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
 	if ruin_prop_debug_logging:
 		print("[RuinProps] Placed %d props under %s" % [spawned.size(), _ruin_prop_parent.get_path()])
 
 
 func _clear_ruin_props() -> void:
 	_portal_teleporters.clear()
+	var ruin_source_ids: Array[String] = []
+	for owner_id_variant in _runtime_prop_blocker_sources.keys():
+		var source: Dictionary = _runtime_prop_blocker_sources[owner_id_variant]
+		if source.get("kind", &"") == &"ruin_prop":
+			ruin_source_ids.append(str(owner_id_variant))
+	for owner_id in ruin_source_ids:
+		_unregister_runtime_prop_blocker_id(owner_id)
 	if _ruin_prop_scatterer != null and is_instance_valid(_ruin_prop_scatterer):
 		_ruin_prop_scatterer.queue_free()
 	_ruin_prop_scatterer = null
@@ -4594,6 +4909,8 @@ func _should_place_ruin_prop(pos: Vector2i, map_size: Vector2i) -> bool:
 	if _is_inside_ruin_prop_clearance(pos):
 		return false
 	if _is_inside_combat_readability_spawn_clearance(pos, combat_readability_prop_clearance_tiles):
+		return false
+	if _is_inside_required_route_clearance(pos, runtime_blocker_route_clearance_tiles):
 		return false
 	if _foliage_nodes.has(pos):
 		return false
@@ -4619,6 +4936,33 @@ func _is_inside_ruin_prop_clearance(pos: Vector2i) -> bool:
 		var expanded := building.grow(ruin_prop_compound_building_clearance)
 		if expanded.has_point(pos):
 			return true
+	return false
+
+
+func _is_inside_tree_trunk_clearance(pos: Vector2i) -> bool:
+	if _is_inside_required_route_clearance(pos, runtime_blocker_route_clearance_tiles):
+		return true
+	for building in _last_compound_buildings:
+		if building.grow(3).has_point(pos):
+			return true
+	for y in range(-3, 4):
+		for x in range(-3, 4):
+			if _generated_wall_cells.has(pos + Vector2i(x, y)):
+				return true
+	return _is_inside_combat_readability_spawn_clearance(pos, 4)
+
+
+func _is_inside_required_route_clearance(pos: Vector2i, radius: int = 3) -> bool:
+	var clearance := maxi(0, radius)
+	for y in range(-clearance, clearance + 1):
+		for x in range(-clearance, clearance + 1):
+			var tile := pos + Vector2i(x, y)
+			if _main_road_tiles.has(tile) \
+					or _road_centerline_tiles.has(tile) \
+					or _path_centerline_tiles.has(tile) \
+					or _ascent_field_main_route_cells.has(tile) \
+					or _compound_connector_centerline_tiles.has(tile):
+				return true
 	return false
 
 
@@ -5842,6 +6186,8 @@ func _process_streaming_reveal_queue() -> void:
 		_rebuild_horizontal_wall_overlays()
 		_refresh_shadows()
 		if _streaming_reveal_queue.is_empty() or _navigation_rebuild_pending:
+			if _streaming_reveal_queue.is_empty():
+				validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
 			_refresh_navigation_after_wall_change()
 
 
@@ -6700,6 +7046,8 @@ func get_level_data() -> Dictionary:
 		"terrain_builder": _get_terrain_builder_level_data(),
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
+		"runtime_prop_blocker_cells": _dict_keys_as_vector2i_array(_runtime_prop_blocker_cells),
+		"runtime_prop_blocker_source_count": _runtime_prop_blocker_sources.size(),
 		"world_profile": get_planet_world_profile(),
 		"world_shape_mode": _world_shape_mode_name(),
 		"world_progression_enabled": world_progression_enabled,
@@ -6716,6 +7064,34 @@ func get_level_data() -> Dictionary:
 		"special_room_sites": _special_room_sites.duplicate(true),
 		"intent_zones_enabled": true,
 	}
+
+
+func _get_dev_observatory() -> Node:
+	return get_node_or_null("/root/DevObservatory")
+
+
+func _obs_log(kind: StringName, data: Dictionary = {}) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", kind, data)
+
+
+func _obs_increment(counter_name: StringName, amount: int = 1) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("increment"):
+		observatory.call("increment", counter_name, amount)
+
+
+func _obs_gauge(gauge_name: StringName, value: Variant) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("set_gauge"):
+		observatory.call("set_gauge", gauge_name, value)
+
+
+func _obs_warning(message: String, data: Dictionary = {}) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("mark_warning"):
+		observatory.call("mark_warning", message, data)
 
 
 func _get_terrain_builder_level_data() -> Dictionary:

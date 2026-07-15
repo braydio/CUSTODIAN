@@ -125,6 +125,7 @@
         "decay_delay_sec": {"type": "number", "minimum": 0},
         "overheat_threshold": {"type": "number", "minimum": 0},
         "overheat_lockout_sec": {"type": "number", "minimum": 0},
+        "ui_warn_threshold": {"type": "number", "minimum": 0},
         "spread_mult_at_max": {"type": "number", "minimum": 1},
         "recoil_mult_at_max": {"type": "number", "minimum": 1}
       }
@@ -184,6 +185,10 @@
         "reload_insert": {"type": ["string", "null"]},
         "reload_complete": {"type": ["string", "null"]},
         "empty": {"type": ["string", "null"]},
+        "heat_warning": {"type": ["string", "null"]},
+        "overheat_start": {"type": ["string", "null"]},
+        "overheat_loop": {"type": ["string", "null"]},
+        "overheat_recovered": {"type": ["string", "null"]},
         "equip": {"type": ["string", "null"]}
       }
     },

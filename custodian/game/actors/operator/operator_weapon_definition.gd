@@ -201,6 +201,13 @@ func get_projectile_value(stat_name: String, fallback: Variant = null) -> Varian
 	return fallback
 
 
+func get_sound_value(stat_name: String, fallback: Variant = null) -> Variant:
+	var sounds: Variant = get_weapon_data().get("sounds", {})
+	if sounds is Dictionary and sounds.has(stat_name):
+		return sounds[stat_name]
+	return fallback
+
+
 func get_visual_effect_value(stat_name: String, fallback: Variant = null) -> Variant:
 	var visual_effects: Variant = get_weapon_data().get("visual_effects", {})
 	if visual_effects is Dictionary and visual_effects.has(stat_name):

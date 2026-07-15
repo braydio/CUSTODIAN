@@ -46,6 +46,78 @@ Provide a developer-only observability surface that makes live simulation state,
 - Avoid unbounded allocations; event history is capped.
 - Do not replace the existing F12 debug screen. The observatory is a fast live telemetry view, not a full inspector replacement.
 
+## Debug Instrumentation Pattern
+
+When adding debug instrumentation, route persistent telemetry through `DevObservatory` instead of relying only on `print()` statements. The autoload exposes exactly these primitives at `/root/DevObservatory`:
+
+- `log_event(kind: StringName, data: Dictionary)` — structured moments (state transitions, one-shot detections).
+- `increment(name: StringName, amount: int)` — bump a counter.
+- `set_counter(name: StringName, value: int)` — set an absolute count.
+- `set_gauge(name: StringName, value: Variant)` — current live values (read every frame, updated continuously).
+- `mark_warning(message: String, data: Dictionary)` — actionable anomalies.
+
+### Event examples
+
+Use events for **state transitions**, not per-frame spam:
+
+```gdscript
+var obs := get_node_or_null("/root/DevObservatory")
+if obs != null:
+	obs.log_event(&"procgen_stuck_pocket_detected", {
+		"tile": tile,
+		"world_position": global_position,
+		"region": region_type,
+		"floor_source": floor_source_id,
+		"wall_source": wall_source_id,
+		"runtime_prop_blocked": runtime_prop_blocked,
+		"escape_neighbors": escape_neighbors,
+	})
+	obs.increment(&"procgen_stuck_pockets_detected")
+```
+
+### Gauge examples
+
+Use gauges for **continuous state** that changes every frame or tick:
+
+```gdscript
+obs.set_gauge(&"procgen_runtime_prop_blocker_cells", _runtime_prop_blocker_cells.size())
+obs.set_gauge(&"foliage_occlusion_active_bubbles", active_bubble_count)
+obs.set_gauge(&"combat_readability_active", _is_combat_readability_active())
+```
+
+### Warning examples
+
+Use warnings for **problems** that should appear in the F9 overlay and F10 export:
+
+```gdscript
+obs.mark_warning("Procgen stuck pocket detected", {
+	"tile": tile,
+	"nearby_bodies": nearby_body_names,
+	"escape_neighbors": escape_neighbors,
+})
+```
+
+### Typical debug surfaces to instrument
+
+These are good candidates for observatory telemetry when they appear in gameplay or procgen:
+
+- Stuck pockets (procgen connectivity rescue)
+- Runtime prop blockers (foliage/prop collision overlap)
+- Foliage occlusion bubbles (canopy fade active count)
+- Falcon punch overlap / collision hits
+- Enemy spacing / pathfinding failures
+- Floor source under player (terrain source ID)
+- Combat readability zones (active/inactive)
+
+### Rate guidance
+
+- **Do not** put high-frequency per-frame spam into `log_event`. Use gauges for continuous state and only log events on transitions: "stuck started," "stuck resolved," "stuck rescue fired," "falcon overlap detected."
+- Temporary `print()` / `debug_draw()` is allowed for local visual debugging, but any useful playtest artifact should also appear in `DevObservatory` so F10 session exports capture it for post-run analysis.
+
+### Live procgen stuck-pocket telemetry
+
+`ProcGenTilemap` publishes blocker registration/unregistration counters, current blocker source/cell gauges, one validation event per scan, and warnings for every remediated pocket. Operator blocked-motion detection publishes `operator_stuck_detected`; a successful debug rescue additionally publishes `operator_unstuck_rescued` and increments the matching counters. The `stuck_report` console command also records its structured tile/source/region/blocker/neighbor snapshot as `procgen_stuck_debug_report`. None of these signals feeds back into generation or movement authority.
+
 ## Session Export
 
 Developer Observatory supports JSON session export through the existing autoload at:

@@ -149,6 +149,20 @@ Canonical tracker for production art, audio, animation, and content assets that 
 | needed | Operator non-unarmed hit reactions | `custodian/content/sprites/operator/runtime/body/{melee_2h,ranged_2h}/operator__body__*__light_hitreact_01__*__?f__96.png` | Avoid using unarmed hitreact fallback for armed profiles. | Runtime currently falls back to unarmed hitreact. |
 | needed | Remaining directional ranged run sheets | `custodian/content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged_2h__run_01__{n,s,w}__?f__96.png` and matching weapon overlays | Dedicated ranged sprint/run in all directions. | East is wired and mirrored for horizontal left. |
 
+## Combat Resource Feedback (Milestone A)
+
+The V1 common dry-fire and carbine reload/heat/vent WAVs are supplied, format-verified, and wired. The P-9 reuses those cues until bespoke replacements arrive.
+
+| Status | Asset | Target Path | Purpose | Notes |
+|---|---|---|---|---|
+| needed | Overheat vent FX strip | `custodian/content/sprites/effects/runtime/weapon_pressure/weapon_pressure__fx__ranged__overheat_vent_01__omni__6f__32.png` | Compact white-grey pressure discharge with faint amber first frame, spawned at weapon barrel during overheat. | 32×32 per frame, 6 frames, 12 fps, non-looping. Optional for V1 — a procedural particle scene (`weapon_overheat_vent_vfx.tscn`) can stand in. |
+| needed | Source Aseprite for vent FX | `custodian/content/_aseprite/sprites/effects/source/weapon_pressure/weapon_pressure__fx__ranged__overheat_vent_01__omni__6f__32.aseprite` | Editable source for the overheat vent strip. | Required by the Aseprite source file convention. |
+| needed | HUD icon: heat hot | `custodian/content/ui/black_reliquary/icons/weapon_pressure/heat_hot.png` | Optional state icon for the pressure row when heat is above warning threshold. | 16×16, transparent background. Optional — initial implementation uses the text label and Black Reliquary palette. |
+| needed | HUD icon: heat critical | `custodian/content/ui/black_reliquary/icons/weapon_pressure/heat_critical.png` | Optional state icon for the pressure row when 1–2 shots remain before overheat. | 16×16, transparent background. Optional. |
+| needed | HUD icon: overheated | `custodian/content/ui/black_reliquary/icons/weapon_pressure/overheated.png` | Optional state icon for the pressure row during overheat lockout. | 16×16, transparent background. Optional. |
+| needed | HUD icon: reloading | `custodian/content/ui/black_reliquary/icons/weapon_pressure/reloading.png` | Optional state icon for the pressure row during magazine reload. | 16×16, transparent background. Optional. |
+| needed | HUD icon: dry | `custodian/content/ui/black_reliquary/icons/weapon_pressure/dry.png` | Optional state icon for the pressure row when magazine and reserve are empty. | 16×16, transparent background. Optional. |
+
 ## Vehicles
 
 | Status | Asset | Target Path | Purpose | Notes |

@@ -32,8 +32,12 @@ Last updated: 2026-07-13
   `loop` metadata, current resource UIDs, and canonical/noncanonical import regeneration guidance documented in
   `design/00_meta/UID_DUPLICATE_FIX.md`.
 - Procgen-triggered navigation rebuilds now explicitly bind the active `ProcGenTilemap` floor/wall `TileMapLayer`
-  references before rebuilding, so streamed/generated wall updates do not rely on stale auto-discovery and no longer
-  emit `[NavigationSystem] No floor tilemap found` when the terrain builder itself succeeds.
+  references plus its runtime prop-blocker overlay before rebuilding. Floor/wall TileMaps remain base structural authority;
+  collision-bearing tree trunks and ruin props register only their physical footprints, participate in walkability and
+  deterministic two-exit pocket validation, and unregister with streaming/cleanup. Required routes and structure mouths
+  keep three-tile blocker clearance, combat/readability zones keep four, and tree canopies may remain visual when trunk
+  collision is suppressed. Remediation, `stuck_report`, and debug-only Operator rescue are loud and mirrored into Developer
+  Observatory; they do not move generation authority into navigation, UI, or telemetry.
 - Return Causeway now has a visual-only distant Sundered Keep parallax landmark using
   `res://content/backgrounds/sundered_keep/distant_sundered_keep.png`, plus a simple far-mist band. The layer has no
   collision, navigation, interactables, or TileMap authority and is covered by `return_causeway_parallax_smoke.gd`.
@@ -239,7 +243,8 @@ Last updated: 2026-07-13
 - Modular Operator facing is state-owned: ordinary locomotion keeps upper/lower facing together, while ranged-ready, sidearm-ready, parry/guard, or a directional action grants aim/action direction to the action stack. For primary two-handed ranged-ready, lower-body locomotion now stays movement-owned on the reusable `unarmed_{idle,walk,run}` modular clips while upper-body and weapon layers follow aim direction independently; the modular ranged-ready gate validates the requested aim/facing stack instead of requiring unrelated missing directions, so available east/west/north/diagonal stance modules are used before legacy full-body fallback. Modular sidearm draw/fire lower, upper, pistol, and FX layers are live for NE/NW/SE/SW at the Operator-local visual origin. Sidearm-ready hides the separate primary-ranged/carbine weapon and FX overlays because the pistol is baked into the modular sidearm stack. Each draw/fire phase starts once, completed layers wait for the remaining modular layers instead of restarting, draw completes before fire is accepted, the complete draw pose holds on its final frame while ready, and fire returns to that held pose.
 - Godot-native contract loop, procgen runtime world, and command terminal are active implementation areas.
 - Forest Shrumb v1 is now wired into ambient spawning through `AmbientCritterManager`; next work is deciding whether cognitive values should surface in HUD beyond pickup popups/logs.
-- Immediate task focus: validate profile-backed Fists/melee fast/heavy combat in play after removing the deprecated light attack path.
+- Combat Resource Feedback Milestone A is complete-v1: `Operator.get_weapon_status()` exposes reload/heat/overheat progress and weapon-independent warning fields; debounced `weapon_feedback_event` transitions drive local presentation and observability; `WeaponFeedbackPresenter` owns weapon-local WAV playback, tint, and procedural barrel vent VFX without emitting gameplay noise; and the compact Black Reliquary HUD keeps ammo counts persistent beside a priority-driven pressure row. The weapon schema/data now include `ui_warn_threshold` and heat/overheat sound slots. Optional authored vent/HUD art and bespoke P-9 replacement cues remain tracked in `REQUIRED_ASSETS.md`.
+- Previous immediate task: validate profile-backed Fists/melee fast/heavy combat in play after removing the deprecated light attack path.
 - Terminal page coverage is largely complete; remaining work is richer live data, tighter layout polish, and code modularization.
 - HUD/minimap stability pass: terminal input connection paths are null-guarded, the dedicated debug screen now toggles from `debug_toggle` or raw F12, and the custom minimap no longer redraws every frame or rebuilds its map texture on every individual tile change.
 - Planet/runtime coupling is active and should be preserved when adjusting procgen or contract generation.

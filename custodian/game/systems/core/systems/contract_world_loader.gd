@@ -480,7 +480,7 @@ func _rebuild_navigation(map_instance: Node) -> void:
 	if map_instance is ProcGenTilemap:
 		var pg := map_instance as ProcGenTilemap
 		if nav.has_method("set_runtime_tilemaps"):
-			nav.call("set_runtime_tilemaps", pg.floor_tilemap, pg.walls_tilemap)
+			nav.call("set_runtime_tilemaps", pg.floor_tilemap, pg.walls_tilemap, pg)
 		else:
 			if pg.floor_tilemap:
 				nav.floor_tilemap = pg.floor_tilemap

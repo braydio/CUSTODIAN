@@ -104,6 +104,18 @@ godot --headless --quit
 
 Known caveat: current headless validation may exit with existing object/resource leak warnings. Treat new parse errors, missing resources, broken script loads, or changed fatal errors as blockers.
 
+For Operator combat-resource feedback, compact HUD pressure state, and weapon-local presentation isolation:
+
+```bash
+cd custodian
+env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/ranged_combat_balance_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/combat_resource_feedback_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd
+```
+
+The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
+
 For allied drone fire/formation/guard-anchor commands:
 
 ```bash
@@ -295,11 +307,13 @@ cd custodian
 godot --headless --script res://tools/validation/procgen_foliage_spawner_smoke.gd
 godot --headless --script res://tools/validation/procgen_deferred_foliage_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_combat_readability_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_stuck_pocket_smoke.gd
 ```
 
 The first command validates the extracted foliage service's deterministic generate/remove/clear lifecycle. The second
 checks that final-visual foliage queues batch into placed nodes over subsequent frames. The third validates combat-aware
-canopy occlusion profile switching and readability clearance hooks.
+canopy occlusion profile switching and readability clearance hooks. The fourth proves collision-owner blocker lifecycle,
+local escape detection/remediation, and required-route clearance without relying on a full contract generation.
 
 ## Manual Godot Validation
 

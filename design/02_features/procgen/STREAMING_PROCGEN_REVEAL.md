@@ -63,6 +63,10 @@ This preserves:
 - The translucency rule is a local readability zone, not a whole-sprite fade; distant foliage should remain fully opaque.
 - Tree foliage may carry a small trunk-only collision shape at the ground contact point so the canopy remains visual while the base behaves like a readable world obstacle.
 - Tree trunk collision must be attached to the spawned foliage node itself so streamed reveal/unload and foliage cleanup do not leave orphan collision bodies behind.
+- Floor and wall TileMaps remain base structural authority, but every spawned tree trunk or ruin prop with collision must register its occupied cells in the `ProcGenTilemap` runtime blocker overlay. Navigation and local escape validation consume that overlay; visual-only canopy cells never register.
+- Blocking foliage and ruin props must remain at least three tiles from required routes and structure thresholds, with four-tile combat/readability clearance. Canopies may overlap those lanes visually when their trunk collision is suppressed.
+- After prop placement and completed reveal batches, deterministic local escape validation checks cardinal exits around blocker-adjacent floor cells. Collision-created pockets with fewer than two exits are remediated by disabling the implicated decorative collision and rebuilding navigation; remediation is logged loudly and mirrored to Developer Observatory.
+- Debug builds may rescue an Operator who holds movement for `0.35` seconds with less than `3 px` displacement and near-zero velocity. Rescue searches four tiles for runtime-walkable floor with at least two exits and always prints the source/destination tiles; this is a playtest failsafe, not generation authority.
 
 ## Scope
 

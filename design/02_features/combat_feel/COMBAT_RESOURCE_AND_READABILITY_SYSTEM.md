@@ -4,7 +4,7 @@
 **Status:** in_progress
 **Owner:** gameplay/combat + logistics + enemy behavior
 **Runtime target:** Godot 4.x (`custodian/`)
-**Last updated:** 2026-06-21
+**Last updated:** 2026-07-14
 
 ## Purpose
 
@@ -22,8 +22,8 @@ below; this document does not duplicate their runtime ownership.
 
 | System | State | Runtime result | Durable authority |
 |---|---|---|---|
-| Typed ammunition, magazines, reload, range/falloff | complete-v1 | Capped typed reserves and persistent per-weapon magazines; projectile range and falloff are live; normal-play HUD now exposes active weapon icon plus magazine/reserve count | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
-| Weapon heat and overheat | complete-v1 | Per-weapon heat, delayed decay, spread/recoil scaling, overheat lockout, and status hooks are live | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
+| Typed ammunition, magazines, reload, range/falloff | complete-v1 | Capped typed reserves and persistent per-weapon magazines; projectile range and falloff are live; normal-play HUD keeps magazine/reserve counts visible while a separate pressure row shows reload progress | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
+| Weapon heat and overheat | complete-v1 | Per-weapon heat, delayed decay, spread/recoil scaling, overheat lockout, threshold-aware status, discrete feedback events, compact HUD pressure state, weapon-local audio, and procedural barrel vent VFX are live | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
 | Positional gunshot noise | complete-v1 | `NoiseEventBus` drives local enemy investigation, LOS-loss search, and leash return | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
 | Global attention/escalation | pending | No shared attention meter, alarm network, reinforcement pressure, or ritual acceleration from noise | This document |
 | Sidearm loadout tradeoff | complete-v1 | Recovered P-9 must occupy the Equipment-page sidearm slot; equipped P-9 replaces guard/parry with sidearm-ready | `COMBAT_FEEL_SYSTEM.md`, `SIDEARM_UNLOCK.md` |
@@ -137,12 +137,15 @@ Runtime durability belongs to item/deployable state, never shared resource data.
 
 ### Milestone A — Production combat-pressure feedback
 
-- Add normal-play heat/overheat/reload/dry-fire feedback without moving weapon
-  state into UI.
-- Keep active weapon magazine/reserve count visible in the compact HUD as a
-  read-only consumer of `Operator.get_weapon_status()`.
-- Tune rifle burst cadence, cache supply, sidearm distinction, and movement
-  handling in play.
+- Complete-v1: normal-play heat/overheat/reload/dry-fire feedback consumes
+  authoritative Operator snapshots and discrete transition events without moving
+  weapon state into UI.
+- Complete-v1: active weapon magazine/reserve count remains continuously visible;
+  a polymorphic pressure row displays heat, critical, reload, dry, and vent state.
+- Complete-v1: held-fire failure feedback and observability are debounced while
+  the underlying request remains live, so firing resumes automatically after reload/cooling.
+- Remaining tuning: review rifle burst cadence, cache supply, sidearm distinction,
+  movement handling, and cue mix in play.
 - Decide whether explicit vent input adds value beyond current lockout cooling.
 - Extend noise sources only through `NoiseEventBus`.
 
@@ -193,6 +196,7 @@ remain local tactical aids.
 ```bash
 cd custodian
 godot --headless --script tools/validation/ranged_combat_balance_smoke.gd
+godot --headless --script tools/validation/combat_resource_feedback_smoke.gd
 godot --headless --script tools/validation/field_patch_smoke.gd
 godot --headless --script tools/validation/enemy_behavior_vault_smoke.gd
 godot --headless --script tools/validation/debug_collector_combat_drone_smoke.gd
@@ -203,15 +207,15 @@ for cadence, readability, animation interruption, and control regressions.
 
 ## Next Agent Slice
 
-Goal: complete Milestone A production feedback before adding another simulation
-resource.
+Goal: perform the manual feel/mix review for completed Milestone A, replace shared
+P-9 cues when weapon-specific audio arrives, then begin Milestone C hit taxonomy.
 
-Files: Operator weapon status, compact HUD/status consumers, weapon JSON,
-overheat/dry-fire/reload audio and VFX assets when available.
+Files: combat resource feedback presenter/HUD, ranged weapon JSON/audio, and the
+combat hit/reaction boundaries named by Milestone C.
 
 Constraints: UI is read-only; retain typed ammo adapters; use `NoiseEventBus`;
 preserve the equipment-gated sidearm and guard/parry control contract.
 
-Acceptance: heat, overheat, reload, dry-fire, and recovery are readable in normal
-play; focused ranged validation passes; Field Patch production presentation remains
-explicit deferred work.
+Acceptance: cue cadence and mix remain readable without chatter; weapon-specific
+replacement assets preserve the existing event contract; the next hit-readability
+slice keeps presentation out of damage/stagger authority.

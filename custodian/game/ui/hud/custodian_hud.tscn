@@ -19,13 +19,13 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="TopLeftVitals" parent="Root" instance=ExtResource("2_panel")]
-custom_minimum_size = Vector2(224, 154)
+custom_minimum_size = Vector2(224, 170)
 layout_mode = 1
 anchors_preset = 0
 offset_left = 14.0
 offset_top = 12.0
 offset_right = 238.0
-offset_bottom = 166.0
+offset_bottom = 182.0
 
 [node name="Margin" type="MarginContainer" parent="Root/TopLeftVitals"]
 layout_mode = 2
@@ -88,14 +88,31 @@ layout_mode = 2
 text = "MAG 24/24  RES 48"
 text_overrun_behavior = 3
 
+[node name="WeaponPressureRow" type="HBoxContainer" parent="Root/TopLeftVitals/Margin/Content"]
+custom_minimum_size = Vector2(180, 10)
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="WeaponPressureBar" type="ProgressBar" parent="Root/TopLeftVitals/Margin/Content/WeaponPressureRow"]
+custom_minimum_size = Vector2(132, 6)
+layout_mode = 2
+size_flags_vertical = 4
+show_percentage = false
+
+[node name="WeaponPressureStateLabel" type="Label" parent="Root/TopLeftVitals/Margin/Content/WeaponPressureRow"]
+custom_minimum_size = Vector2(42, 10)
+layout_mode = 2
+text = "HEAT"
+horizontal_alignment = 2
+
 [node name="TopLeftLoadout" parent="Root" instance=ExtResource("2_panel")]
 custom_minimum_size = Vector2(224, 128)
 layout_mode = 1
 anchors_preset = 0
 offset_left = 14.0
-offset_top = 176.0
+offset_top = 192.0
 offset_right = 238.0
-offset_bottom = 304.0
+offset_bottom = 320.0
 
 [node name="Margin" type="MarginContainer" parent="Root/TopLeftLoadout"]
 layout_mode = 2
