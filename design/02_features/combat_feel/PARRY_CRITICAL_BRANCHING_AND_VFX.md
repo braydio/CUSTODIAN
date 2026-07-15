@@ -47,7 +47,7 @@ Ordinary hit reactions must not overwrite enter, hold, recover, or executing. Re
 
 `can_receive_parry_critical_from(attacker)` is true only for a live enemy in enter or hold with an active opportunity, a valid attacker, and no execution owner.
 
-`reserve_parry_critical(attacker)` performs validation and consumption atomically. It switches to executing, stores the attacker, increments and returns an execution token, freezes the opportunity clock, clears BREACH/countdown, and returns anchor/facing/operator-offset data. It never applies damage.
+`reserve_parry_critical(attacker)` performs validation and consumption atomically. It switches to executing, stores the attacker, increments and returns an execution token, freezes the opportunity clock, clears BREACH/countdown, and returns anchor/facing/shared-root data. It never applies damage.
 
 The paired lifecycle is:
 
@@ -63,7 +63,9 @@ The token and attacker must match at begin, damage, finish, and cancellation. Da
 
 ## Alignment Contract
 
-`enemy_grunt.tscn` owns `CriticalExecutionAnchor`. The enemy exposes its global anchor, the authored Operator offset, and fixed south-facing presentation. The current authored offset is `Vector2(-24, 0)` from the enemy anchor. The Operator aligns directly to that pair root on reservation and both CharacterBody roots remain fixed until cleanup; no post-reservation range check may cancel due to animation displacement. South execution assets are not mirrored.
+`enemy_grunt.tscn` owns `CriticalExecutionAnchor` at local `Vector2.ZERO`. The Operator body, enemy victim body, and execution FX were exported as full uncropped 96×96 cells from one authored canvas, so their transparent placement already contains character separation. They share one exact world root: the enemy execution anchor. `grunt_parry_critical_operator_offset` is `Vector2.ZERO`; a non-zero offset is invalid for this execution and must fail loudly in debug builds. Both CharacterBody roots are reassigned to the shared root on start and every execution physics tick, with no post-reservation range cancellation. The paired sprite layers retain the same local presentation transform so the FX cannot drift independently. South execution assets are not mirrored.
+
+Independent cropping or recentering of the Operator, victim, or FX exports is forbidden. If contact is wrong, correct the exported canvas placement for all layers rather than adding runtime per-layer offsets.
 
 ## Shared Timeline And Damage Frame
 
@@ -114,10 +116,11 @@ Enemy grunt art uses the repository's actual `melee__` naming (not `unarmed__`):
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/grunt_parry_crit_reaction_smoke.gd
+godot --headless --path . --script res://tools/validation/debug_grunt_spawn_modes_smoke.gd
 godot --headless --path . --script res://tools/validation/operator_modular_defense_ranged_smoke.gd
 ```
 
-The focused smoke proves enter → hold → recover, indicator lifetime/cleanup, atomic reservation, same-tick semantic paired playback, 8-frame/12-FPS contracts, zero damage before frame 3, one damage event across frame 3, nonlethal recovery, lethal death routing, duplicate rejection, and cleanup restoration.
+The focused reaction smoke proves enter → hold → recover, indicator lifetime/cleanup, atomic reservation, zero-offset shared CharacterBody roots, zero-local paired layers, transform restoration, same-tick semantic paired playback, 8-frame/12-FPS contracts, zero damage before frame 3, one damage event across frame 3, nonlethal recovery, lethal death routing, duplicate rejection, and cleanup restoration. The debug-spawn smoke drives every preset through `WaveManager`, verifies its phase/animation/reticle contract, and rejects unsupported modes without leaving an enemy behind.
 
 ## Debug Spawn Modes
 
@@ -141,5 +144,5 @@ Goal: visually tune the authored south-facing pair in live play without changing
 
 Files: the six runtime strips above, `enemy_grunt.tscn`, and focused validation.
 
-Constraints: preserve `Vector2(-24, 0)` as the documented baseline unless both roots are retuned together; do not mirror the pair or move damage off frame 3.
+Constraints: preserve the shared zero-offset root and full-cell exports; do not independently offset layers, mirror the pair, or move damage off frame 3.
 Acceptance: no root sliding, frame-perfect body/FX/victim synchronization, readable contact, clean lethal and nonlethal exits.

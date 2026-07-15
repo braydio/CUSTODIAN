@@ -895,6 +895,7 @@ func _process(delta):
 	_update_ranged_ready_state()
 	_handle_dodge_input()
 	_update_animation()
+	_sync_primary_ranged_weapon_frame_to_upper()
 	if Input.is_action_just_pressed("build"):
 		if _try_terminal_deploy_or_pickup():
 			return
@@ -3966,6 +3967,13 @@ func _start_critical_attack(target: Node2D) -> void:
 	if execution_data.is_empty():
 		_try_melee_attack()
 		return
+	var authored_operator_offset: Vector2 = execution_data.get("operator_offset", Vector2.ZERO)
+	if not authored_operator_offset.is_zero_approx():
+		push_error("[PairedExecution] Shared-root execution received non-zero Operator offset: %s" % authored_operator_offset)
+		if OS.is_debug_build():
+			assert(false, "Shared-root paired execution received a non-zero operator offset.")
+		target.call("cancel_parry_critical_execution", self, &"non_zero_shared_root_offset")
+		return
 	if not _ensure_paired_execution_animation(animated_sprite, PAIRED_EXECUTION_BODY_ANIMATION, PAIRED_EXECUTION_BODY_SHEET):
 		target.call("cancel_parry_critical_execution", self, &"operator_body_asset_missing")
 		return
@@ -4009,7 +4017,7 @@ func _start_critical_attack(target: Node2D) -> void:
 	_paired_execution_target = target
 	_paired_execution_token = int(execution_data.get("token", -1))
 	_paired_execution_anchor = execution_data.get("anchor", target.global_position)
-	_paired_execution_operator_root = _paired_execution_anchor + execution_data.get("operator_offset", Vector2.ZERO)
+	_paired_execution_operator_root = _paired_execution_anchor
 	_paired_execution_original_collision_mask = collision_mask
 	_paired_execution_original_collision_layer = collision_layer
 	_paired_execution_elapsed = 0.0
@@ -4021,6 +4029,7 @@ func _start_critical_attack(target: Node2D) -> void:
 	visual_idle_direction = Vector2.DOWN
 	_melee_forward = Vector2.DOWN
 	animated_sprite.visible = true
+	animated_sprite.position = Vector2.ZERO
 	animated_sprite.flip_h = false
 	animated_sprite.speed_scale = 1.0
 	animated_sprite.play(PAIRED_EXECUTION_BODY_ANIMATION)
@@ -4028,6 +4037,7 @@ func _start_critical_attack(target: Node2D) -> void:
 	animated_sprite.set_frame_and_progress(0, 0.0)
 	_hide_modular_locomotion_layers()
 	modular_upper_fx_sprite.visible = true
+	modular_upper_fx_sprite.position = Vector2.ZERO
 	modular_upper_fx_sprite.flip_h = false
 	modular_upper_fx_sprite.speed_scale = 1.0
 	modular_upper_fx_sprite.play(PAIRED_EXECUTION_FX_ANIMATION)
@@ -4037,6 +4047,8 @@ func _start_critical_attack(target: Node2D) -> void:
 	if not bool(target.call("begin_parry_critical_execution", self, execution_data)):
 		_cleanup_paired_execution(false, &"enemy_begin_rejected")
 		return
+	if OS.is_debug_build():
+		assert(global_position.is_equal_approx(target.global_position), "Paired execution roots diverged on start.")
 	_notify_camera_attack_windup(true)
 	_lock_melee_cooldown(PAIRED_EXECUTION_DURATION + 0.08)
 
@@ -4078,14 +4090,18 @@ func _update_paired_execution(delta: float) -> void:
 	var frame_index := mini(PAIRED_EXECUTION_FRAME_COUNT - 1, int(floor(_paired_execution_elapsed * PAIRED_EXECUTION_FPS)))
 	global_position = _paired_execution_operator_root
 	velocity = Vector2.ZERO
+	animated_sprite.position = Vector2.ZERO
 	animated_sprite.stop()
 	animated_sprite.set_frame_and_progress(frame_index, 0.0)
 	modular_upper_fx_sprite.visible = true
+	modular_upper_fx_sprite.position = Vector2.ZERO
 	modular_upper_fx_sprite.stop()
 	modular_upper_fx_sprite.set_frame_and_progress(frame_index, 0.0)
 	var target_dead := _paired_execution_target.has_method("is_dead") and bool(_paired_execution_target.call("is_dead"))
 	if not target_dead:
 		_paired_execution_target.call("set_parry_critical_execution_frame", self, _paired_execution_token, frame_index)
+		if OS.is_debug_build():
+			assert(global_position.is_equal_approx(_paired_execution_target.global_position), "Paired execution roots diverged during playback.")
 	var damage_time := float(PAIRED_EXECUTION_DAMAGE_FRAME) / PAIRED_EXECUTION_FPS
 	if not _paired_execution_damage_applied and previous_elapsed < damage_time and _paired_execution_elapsed >= damage_time:
 		_paired_execution_damage_applied = true
@@ -4133,9 +4149,12 @@ func _cleanup_paired_execution(completed: bool, reason: StringName) -> void:
 	collision_mask = _paired_execution_original_collision_mask
 	collision_layer = _paired_execution_original_collision_layer
 	velocity = Vector2.ZERO
+	if animated_sprite != null:
+		animated_sprite.position = _animated_sprite_base_position
 	if modular_upper_fx_sprite != null:
 		modular_upper_fx_sprite.stop()
 		modular_upper_fx_sprite.visible = false
+		modular_upper_fx_sprite.position = _modular_upper_fx_base_position
 	_modular_upper_fx_action_animation = &""
 	_critical_attack_target = null
 	_critical_attack_damage = 0.0

@@ -128,7 +128,7 @@ enum ParryCriticalPhase {
 @export var health_bar_vertical_offset: float = -28.0
 @export var grunt_parry_critical_window_min_sec: float = 0.8
 @export var grunt_parry_critical_capture_range_px: float = 72.0
-@export var grunt_parry_critical_operator_offset: Vector2 = Vector2(-24.0, 0.0)
+@export var grunt_parry_critical_operator_offset: Vector2 = Vector2.ZERO
 @export var grunt_critical_breach_marker_offset: Vector2 = Vector2(0.0, -62.0)
 @export var grunt_critical_window_ring_offset: Vector2 = Vector2.ZERO
 @export var grunt_optional_critical_vfx_enabled: bool = true
@@ -251,6 +251,8 @@ var _parry_critical_phase_timer: float = 0.0
 var _parry_critical_execution_token: int = 0
 var _parry_critical_execution_damage_applied: bool = false
 var _parry_critical_execution_root: Vector2 = Vector2.ZERO
+var _parry_critical_execution_body_original_position: Vector2 = Vector2.ZERO
+var _parry_critical_execution_body_position_captured: bool = false
 var _critical_breach_marker_vfx: Node2D = null
 var _critical_window_ring_vfx: Node2D = null
 var _windup_attack_is_strong: bool = false
@@ -1739,6 +1741,8 @@ func is_passive_enemy() -> bool:
 
 
 func _get_dev_observatory() -> Node:
+	if not is_inside_tree():
+		return null
 	return get_node_or_null("/root/DevObservatory")
 
 
@@ -2415,7 +2419,8 @@ func reserve_parry_critical(attacker: Node2D) -> Dictionary:
 	_parry_critical_window_timer = 0.0
 	_parry_critical_phase = ParryCriticalPhase.EXECUTING
 	_parry_critical_phase_timer = 0.0
-	_parry_critical_execution_root = global_position
+	_parry_critical_execution_root = get_parry_critical_execution_anchor()
+	global_position = _parry_critical_execution_root
 	_clear_grunt_critical_open_vfx(false)
 	velocity = Vector2.ZERO
 	return {
@@ -2433,6 +2438,9 @@ func begin_parry_critical_execution(attacker: Node2D, execution_data: Dictionary
 	global_position = _parry_critical_execution_root
 	_play_animation(String(GRUNT_CRITICAL_EXECUTION_VICTIM_ANIMATION), false)
 	if animated_sprite != null:
+		_parry_critical_execution_body_original_position = animated_sprite.position
+		_parry_critical_execution_body_position_captured = true
+		animated_sprite.position = Vector2.ZERO
 		animated_sprite.stop()
 		animated_sprite.set_frame_and_progress(0, 0.0)
 	return true
@@ -2494,6 +2502,9 @@ func cancel_parry_critical_execution(attacker: Node2D, _reason: StringName) -> v
 
 
 func _release_parry_critical_execution_owner() -> void:
+	if animated_sprite != null and _parry_critical_execution_body_position_captured:
+		animated_sprite.position = _parry_critical_execution_body_original_position
+	_parry_critical_execution_body_position_captured = false
 	_parry_critical_target = null
 	_parry_critical_phase_timer = 0.0
 	_parry_critical_window_timer = 0.0

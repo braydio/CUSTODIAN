@@ -167,7 +167,7 @@ godot --headless --path . --script res://tools/validation/operator_modular_defen
 ```
 
 The Falcon smoke validates stop-short travel, body/enemy separation, dedicated Operator impact, zero-drift recovery,
-hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection. The focused reaction smoke validates required asset dimensions, enter/hold/recover, BREACH/ring lifetime, atomic reservation, same-tick 8-frame/12-FPS semantic playback, frame-3 exactly-once damage, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Required paired/open assets fail loudly; only optional posture-break and expiry presentation may warn without failing.
+hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection. The focused reaction smoke validates required asset dimensions, enter/hold/recover, BREACH/ring lifetime, atomic reservation, zero-offset shared CharacterBody roots, zero-local paired layers plus transform restoration, same-tick 8-frame/12-FPS semantic playback, frame-3 exactly-once damage, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Required paired/open assets fail loudly; only optional posture-break and expiry presentation may warn without failing.
 
 For Sundered Keep asset wiring specifically:
 

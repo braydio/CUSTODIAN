@@ -75,9 +75,16 @@ func _run() -> void:
 	_assert_true(is_instance_valid(marker) and is_instance_valid(ring), "indicators should persist through hold")
 	_assert_true(bool(grunt.call("can_receive_parry_critical_from", operator)), "enter/hold opportunity should validate its nearby attacker")
 
-	operator.call("_start_critical_attack", grunt)
+	var execution_anchor := grunt.get_node("CriticalExecutionAnchor") as Marker2D
 	var operator_body := operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
 	var operator_fx := operator.get_node("ModularUpperFxSprite") as AnimatedSprite2D
+	var operator_body_original_position := operator_body.position
+	var operator_fx_original_position := operator_fx.position
+	var grunt_body_original_position := body_sprite.position
+	var shared_root_offset: Vector2 = grunt.call("get_parry_critical_operator_offset")
+	_assert_true(execution_anchor.position.is_zero_approx(), "CriticalExecutionAnchor should be local zero")
+	_assert_true(shared_root_offset.is_zero_approx(), "shared-root execution offset should be zero")
+	operator.call("_start_critical_attack", grunt)
 	_assert_true(bool(operator.get("_paired_execution_active")), "valid input should start paired execution")
 	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_EXECUTING, "reservation should atomically enter executing")
 	_assert_true(String(operator_body.animation) == "operator_critical_execution_s", "Operator should use semantic execution body")
@@ -86,6 +93,9 @@ func _run() -> void:
 	_assert_animation(operator_body.sprite_frames, "operator_critical_execution_s", 8, 12.0, false)
 	_assert_animation(operator_fx.sprite_frames, "operator_critical_execution_fx_s", 8, 12.0, false)
 	_assert_animation(body_sprite.sprite_frames, "critical_execution_victim_s", 8, 12.0, false)
+	_assert_true(operator.global_position.is_equal_approx(grunt.global_position), "Operator and victim should start on one shared world root")
+	_assert_true(operator.global_position.is_equal_approx(execution_anchor.global_position), "shared world root should equal execution anchor")
+	_assert_true(operator_body.position.is_zero_approx() and body_sprite.position.is_zero_approx() and operator_fx.position.is_zero_approx(), "paired body/victim/FX layers should use local zero during execution")
 	_assert_true(grunt.get("_critical_breach_marker_vfx") == null and grunt.get("_critical_window_ring_vfx") == null, "reservation should clear both indicators")
 	_assert_true((grunt.call("reserve_parry_critical", operator) as Dictionary).is_empty(), "a second reservation should be rejected")
 
@@ -94,6 +104,7 @@ func _run() -> void:
 	var health_before := float(grunt.health)
 	operator.call("_update_paired_execution", DAMAGE_TIME - 0.01)
 	_assert_true(is_equal_approx(float(grunt.health), health_before), "damage must remain zero before frame 3")
+	_assert_true(operator.global_position.is_equal_approx(grunt.global_position), "shared execution roots should remain equal during playback")
 	_assert_true(operator_body.frame == operator_fx.frame and operator_body.frame == body_sprite.frame, "body, FX, and victim should share one frame index")
 	operator.call("_update_paired_execution", 0.02)
 	var health_after_impact := float(grunt.health)
@@ -107,6 +118,9 @@ func _run() -> void:
 	_assert_true(float(grunt.get("_crit_recovery_timer")) > 0.0, "nonlethal completion should enter crit recovery")
 	_assert_true(String(body_sprite.animation) == "crit_recovery_s", "nonlethal completion should play crit_recovery_s")
 	_assert_true(not operator_fx.visible, "cleanup should hide execution FX")
+	_assert_true(operator_body.position.is_equal_approx(operator_body_original_position), "cleanup should restore Operator body local position")
+	_assert_true(operator_fx.position.is_equal_approx(operator_fx_original_position), "cleanup should restore execution FX local position")
+	_assert_true(body_sprite.position.is_equal_approx(grunt_body_original_position), "cleanup should restore victim body local position")
 
 	var expiry_grunt := GRUNT_SCENE.instantiate()
 	expiry_grunt.global_position = Vector2(120.0, 0.0)

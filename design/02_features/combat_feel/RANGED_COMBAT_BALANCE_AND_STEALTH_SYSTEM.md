@@ -92,8 +92,10 @@ The original brief's `custodian/assets/weapons/` path is stale. Live weapon data
 
 - `env HOME=/tmp/custodian-godot-home godot --headless --script tools/validation/ranged_combat_balance_smoke.gd`
 - `env HOME=/tmp/custodian-godot-home godot --headless --script tools/validation/combat_resource_feedback_smoke.gd`
+- `env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd`
 - `env HOME=/tmp/custodian-godot-home godot --headless --path . --editor --quit`
-- Main-scene boot: no new script parse/load errors. A pre-existing missing Forlorn Ritualant rubble resource still prevents a clean full boot and is outside this change.
+- The modular-primary smoke covers the south-move/east-aim stop regression and asserts upper/weapon normalized-frame agreement across 120 presentation ticks.
+- Main-scene headless boot reaches generated-world initialization without new script parse/load or missing-animation errors; existing shutdown leak diagnostics remain non-fatal test-harness noise.
 - Manual acceptance still required for feel: burst-to-overheat cadence, visible spread/recoil, camp investigation, corner LOS break/search/return, reload and sidearm switching, and melee/parry/dodge regression.
 
 ## Future: Vehicle-Mounted Weapon Firing
