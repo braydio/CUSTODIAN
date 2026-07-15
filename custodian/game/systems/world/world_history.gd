@@ -25,9 +25,14 @@ func record(sector_id: String, kind: String, position: Vector2, data := {}) -> v
 
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null:
+		observatory.call("increment", StringName("world_history_%s" % kind), 1)
 		observatory.call("log_event", "world_history_recorded", {
 			"sector_id": resolved_sector_id,
 			"kind": kind,
+			"position": position,
+			"data_keys": (data as Dictionary).keys() if data is Dictionary else [],
+			"persistence": "bounded_history",
+			"source": "world_history",
 		})
 
 

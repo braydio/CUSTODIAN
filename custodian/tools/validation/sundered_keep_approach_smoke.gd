@@ -357,27 +357,18 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 		errors.append("Approach does not expose get_authoring_marker_state")
 		return
 	var marker_state := scene.call("get_authoring_marker_state") as Dictionary
-	for marker_id in ["spawn", "return_causeway", "gatehouse_key", "main_gate", "level_exit", "enemy_spawn_west", "enemy_spawn_gate"]:
+	for marker_id in ["spawn", "return_causeway"]:
 		if not marker_state.has(marker_id):
 			errors.append("AUTHORING_MARKERS missing %s" % marker_id)
 	if markers != null:
-		for marker_id in marker_state.keys():
-			var marker_name := String(marker_id).to_pascal_case()
-			if markers.get_node_or_null(marker_name) == null:
-				errors.append("EventMarkers/%s missing" % marker_name)
+		if markers.get_child_count() != 0:
+			errors.append("Vista Approach must not render authoring markers at runtime")
 	if runtime != null:
-		if runtime.get_node_or_null("GatehouseKeyInteraction") == null:
-			errors.append("EventRuntime/GatehouseKeyInteraction missing")
-		if runtime.get_node_or_null("MainGateInteraction") == null:
-			errors.append("EventRuntime/MainGateInteraction missing")
-		if runtime.get_node_or_null("MainGateBlocker") == null:
-			errors.append("EventRuntime/MainGateBlocker missing")
 		if runtime.get_node_or_null("LevelExitTrigger") == null:
 			errors.append("EventRuntime/LevelExitTrigger missing")
-		if runtime.get_node_or_null("EnemySpawnWestSpawnNode") == null:
-			errors.append("EventRuntime/EnemySpawnWestSpawnNode missing")
-		if runtime.get_node_or_null("EnemySpawnGateSpawnNode") == null:
-			errors.append("EventRuntime/EnemySpawnGateSpawnNode missing")
+		for forbidden_name in ["GatehouseKeyInteraction", "MainGateInteraction", "MainGateBlocker", "EnemySpawnWestSpawnNode", "EnemySpawnGateSpawnNode"]:
+			if runtime.get_node_or_null(forbidden_name) != null:
+				errors.append("EventRuntime/%s belongs in the Keep entrance, not Vista Approach" % forbidden_name)
 
 
 func _vec2_nearly_equal(a: Vector2, b: Vector2, epsilon := 0.01) -> bool:

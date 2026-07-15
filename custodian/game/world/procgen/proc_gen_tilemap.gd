@@ -3704,6 +3704,8 @@ func validate_no_stuck_pockets(remediate: bool = true) -> Dictionary:
 		_queue_navigation_rebuild()
 	_obs_increment(&"procgen_stuck_pockets_detected", flagged.size())
 	_obs_increment(&"procgen_stuck_pockets_remediated", remediated)
+	_obs_increment(&"procgen_validation_pockets_detected", flagged.size())
+	_obs_increment(&"procgen_validation_pockets_repaired", remediated)
 	_obs_gauge(&"procgen_stuck_pockets_last_scan", flagged.size())
 	_obs_log(&"procgen_stuck_pocket_validation", {"flagged": flagged.size(), "remediated": remediated})
 	return {"flagged": flagged, "remediated": remediated}
@@ -3803,7 +3805,17 @@ func debug_get_stuck_report_at_global(world_pos: Vector2) -> Dictionary:
 			label = "%s:%s" % [label, owner.name]
 		nearby_names.append(label)
 	nearby_names.sort()
+	var blocker_details: Array[Dictionary] = []
+	for owner_id_variant in nearby_sources.keys():
+		var source: Dictionary = _runtime_prop_blocker_sources.get(owner_id_variant, {})
+		blocker_details.append({
+			"owner_id": str(owner_id_variant),
+			"kind": String(source.get("kind", &"runtime_prop")),
+			"source_tile": source.get("source_tile", Vector2i.ZERO),
+			"cells": source.get("cells", []),
+		})
 	return {
+		"seed": int(procgen_node.seed) if procgen_node != null and "seed" in procgen_node else 0,
 		"tile": tile,
 		"floor_source_id": floor_source,
 		"wall_source_id": wall_source,
@@ -3813,6 +3825,9 @@ func debug_get_stuck_report_at_global(world_pos: Vector2) -> Dictionary:
 		"nearby_collision_bodies": nearby_names,
 		"escape_neighbor_count": get_runtime_escape_neighbor_count(tile),
 		"runtime_walkable": is_runtime_walkable_after_props(tile),
+		"reachable_area_tiles": _count_local_runtime_reachable_tiles(tile, 4),
+		"blocker_sources": blocker_details,
+		"local_collision_mask": _get_local_runtime_collision_mask(tile, 2),
 	}
 
 
@@ -3835,8 +3850,12 @@ func find_nearest_runtime_walkable_global(world_pos: Vector2, radius_tiles: int 
 	for y in range(-radius, radius + 1):
 		for x in range(-radius, radius + 1):
 			var tile := origin + Vector2i(x, y)
-			if is_runtime_walkable_after_props(tile) \
-					and get_runtime_escape_neighbor_count(tile) >= runtime_blocker_min_escape_neighbors:
+			if tile.distance_squared_to(origin) <= 2 \
+					or not is_runtime_walkable_after_props(tile) \
+					or get_runtime_escape_neighbor_count(tile) < maxi(2, runtime_blocker_min_escape_neighbors) \
+					or _count_local_runtime_reachable_tiles(tile, 3) < 8 \
+					or _has_runtime_blocker_within(tile, 1):
+				continue
 				candidates.append(tile)
 	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		var da := a.distance_squared_to(origin)
@@ -3846,6 +3865,51 @@ func find_nearest_runtime_walkable_global(world_pos: Vector2, radius_tiles: int 
 		return da < db
 	)
 	return tile_to_global_position(candidates[0]) if not candidates.is_empty() else Vector2.INF
+
+
+func _has_runtime_blocker_within(center: Vector2i, radius: int) -> bool:
+	for y in range(-radius, radius + 1):
+		for x in range(-radius, radius + 1):
+			if has_runtime_prop_blocker_at_tile(center + Vector2i(x, y)):
+				return true
+	return false
+
+
+func _count_local_runtime_reachable_tiles(origin: Vector2i, radius: int) -> int:
+	if not is_runtime_walkable_after_props(origin):
+		return 0
+	var visited: Dictionary = {origin: true}
+	var queue: Array[Vector2i] = [origin]
+	var directions: Array[Vector2i] = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
+	while not queue.is_empty():
+		var current: Vector2i = queue.pop_front()
+		for direction: Vector2i in directions:
+			var neighbor: Vector2i = current + direction
+			if visited.has(neighbor) or abs(neighbor.x - origin.x) > radius or abs(neighbor.y - origin.y) > radius:
+				continue
+			if not is_runtime_walkable_after_props(neighbor):
+				continue
+			visited[neighbor] = true
+			queue.append(neighbor)
+	return visited.size()
+
+
+func _get_local_runtime_collision_mask(center: Vector2i, radius: int) -> Array[String]:
+	var rows: Array[String] = []
+	for y in range(-radius, radius + 1):
+		var row := ""
+		for x in range(-radius, radius + 1):
+			var tile := center + Vector2i(x, y)
+			if _generated_wall_cells.has(tile):
+				row += "W"
+			elif has_runtime_prop_blocker_at_tile(tile):
+				row += "P"
+			elif is_runtime_walkable_after_props(tile):
+				row += "."
+			else:
+				row += "#"
+		rows.append(row)
+	return rows
 
 
 func debug_get_compound_ingress_footprints() -> Array[Vector2i]:

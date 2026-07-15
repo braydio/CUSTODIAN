@@ -165,6 +165,16 @@ write to the export or change runtime state.
 - AI/stealth/noise overlays using existing debug draw surfaces.
 - Optional machine-readable report output if automated playtest aggregation needs it later.
 
+## Audit Remediation Contract (2026-07-14)
+
+- Ranged telemetry separates trigger samples, authoritative fire requests, shots, and debounced failures. Failures expose stable reason and `empty` / `state_locked` / `internal` category counters.
+- Enemy melee windup, resolution, Operator incoming-hit resolution, and player damage share `attack_id`, attacker/target IDs, attempted/applied damage, and health-before/after fields where the receiver supports the extended contract.
+- Dodge, Field Patch, and stamina telemetry records timing phases, attempts/rejection reasons, availability below half health, death with a patch available, spend/regeneration causes, and exhaustion transitions without changing their gameplay tuning.
+- `director_behavior_agents` and `legacy_combat_agents` are separate gauges. `enemy_behavior_sample` is reserved for director/profile agents; non-agent enemies use `legacy_enemy_sample`.
+- Node ownership/performance gauges distinguish world, procgen, props, collision, VFX, UI, physics bodies/shapes, and processing nodes.
+- Procgen validation-pocket counters describe generation-time repair; Operator trap/rescue counters describe runtime failures. Stuck reports include seed, tile/region, blocker sources, a local collision mask, and reachable area. Debug rescue candidates require distance from the source, two exits, an eight-tile local reachable area, no nearby runtime blocker, and a post-move report.
+- The text analyzer labels warning totals separately from the displayed tail; omitted earlier warnings are disclosed.
+
 ## Acceptance
 
 - `F9` toggles the observatory overlay in `res://scenes/game.tscn`.

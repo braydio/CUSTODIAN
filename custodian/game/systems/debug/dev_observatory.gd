@@ -99,6 +99,10 @@ func increment(name: StringName, amount: int = 1) -> void:
 	counters[name] = int(counters.get(name, 0)) + amount
 
 
+func accumulate(name: StringName, amount: float) -> void:
+	counters[name] = float(counters.get(name, 0.0)) + amount
+
+
 func set_counter(name: StringName, value: int) -> void:
 	counters[name] = value
 
@@ -379,11 +383,15 @@ func _sample_runtime_gauges() -> void:
 	if tree == null:
 		return
 
-	set_gauge(&"node_count", _count_nodes(tree.root))
+	var node_stats := _collect_node_stats(tree.root)
+	for stat_name in node_stats.keys():
+		set_gauge(StringName(str(stat_name)), node_stats[stat_name])
 
 	var enemies := _get_unique_group_nodes(["enemy", "enemies"])
 	set_gauge(&"active_enemies", enemies.size())
-	set_gauge(&"behavior_agents", tree.get_nodes_in_group("enemy_behavior_agent").size())
+	var director_agents := tree.get_nodes_in_group("enemy_behavior_agent").size()
+	set_gauge(&"director_behavior_agents", director_agents)
+	set_gauge(&"legacy_combat_agents", maxi(0, enemies.size() - director_agents))
 	set_gauge(&"ambient_critters", tree.get_nodes_in_group("ambient_critter").size())
 	set_gauge(&"active_projectiles", _count_active_projectiles(tree))
 	_sample_player_gauges(tree)
@@ -436,14 +444,21 @@ func _sample_player_gauges(tree: SceneTree) -> void:
 
 
 func _sample_enemy_gauges(enemies: Array) -> void:
+	var legacy_sample: Dictionary = {}
 	for enemy in enemies:
 		if enemy == null or not is_instance_valid(enemy):
 			continue
-		if enemy.has_method("get_behavior_snapshot"):
+		if enemy.is_in_group("enemy_behavior_agent") and enemy.has_method("get_behavior_snapshot"):
 			var snapshot: Variant = enemy.call("get_behavior_snapshot")
 			if snapshot is Dictionary:
 				set_gauge(&"enemy_behavior_sample", snapshot)
 				return
+		elif legacy_sample.is_empty() and enemy.has_method("get_behavior_snapshot"):
+			var snapshot: Variant = enemy.call("get_behavior_snapshot")
+			if snapshot is Dictionary:
+				legacy_sample = snapshot
+	if not legacy_sample.is_empty():
+		set_gauge(&"legacy_enemy_sample", legacy_sample)
 
 
 func _get_unique_group_nodes(group_names: Array) -> Array:
@@ -479,6 +494,51 @@ func _count_nodes(root_node: Node) -> int:
 	for child in root_node.get_children():
 		count += _count_nodes(child)
 	return count
+
+
+func _collect_node_stats(root_node: Node) -> Dictionary:
+	var stats := {
+		"node_count": 0,
+		"node_count_world": 0,
+		"node_count_procgen": 0,
+		"node_count_props": 0,
+		"node_count_collision": 0,
+		"node_count_vfx": 0,
+		"node_count_ui": 0,
+		"physics_body_count": 0,
+		"collision_shape_count": 0,
+		"process_enabled_node_count": 0,
+		"physics_process_enabled_node_count": 0,
+	}
+	var stack: Array[Node] = [root_node]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		stats["node_count"] += 1
+		var path := str(node.get_path()).to_lower()
+		if path.begins_with("/root/gameroot/world"):
+			stats["node_count_world"] += 1
+		if "procgen" in path or node.is_in_group("procgen_walkability_provider"):
+			stats["node_count_procgen"] += 1
+		if "prop" in path or node.is_in_group("runtime_prop"):
+			stats["node_count_props"] += 1
+		if node is CollisionObject2D or node is CollisionShape2D or node is CollisionPolygon2D:
+			stats["node_count_collision"] += 1
+		if node is CollisionShape2D or node is CollisionPolygon2D:
+			stats["collision_shape_count"] += 1
+		if node is PhysicsBody2D:
+			stats["physics_body_count"] += 1
+		if node is Control or node is CanvasLayer:
+			stats["node_count_ui"] += 1
+		if "vfx" in path or "effect" in path or node.is_in_group("vfx"):
+			stats["node_count_vfx"] += 1
+		if node.is_processing():
+			stats["process_enabled_node_count"] += 1
+		if node.is_physics_processing():
+			stats["physics_process_enabled_node_count"] += 1
+		for child in node.get_children():
+			if child is Node:
+				stack.append(child)
+	return stats
 
 
 func _ensure_input_actions() -> void:

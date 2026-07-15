@@ -2,8 +2,6 @@ extends Node2D
 class_name SunderedKeepApproach
 
 const SOFT_RECT_FEATHER_SHADER := preload("res://game/world/approaches/sundered_keep/soft_rect_feather.gdshader")
-const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
-const SPAWN_NODE_SCRIPT := preload("res://game/systems/core/systems/spawn_node.gd")
 
 const USE_ROUTE_MASTER := true
 
@@ -40,7 +38,6 @@ const FORTRESS_WALL_MASS_PATH := "res://content/sprites/world/return_causeway/pa
 const TARGET_SCENE_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
 const ROUTE_VERTICAL_OFFSET := 180.0
 const BOUNDARY_RAIL_RADIUS := 10.0
-const SUNDERED_GATE_KEY_ID := &"sundered_gate_key"
 
 const RECT_ROUTE_MASTER := Rect2(Vector2(-620.0, -660.0), Vector2(2048.0, 1706.0))
 const RECT_APPROACH_UNDERLAY := Rect2(Vector2(-1000.0, -900.0), Vector2(2600.0, 1800.0))
@@ -76,6 +73,7 @@ const SECOND_VISTA_FULL_POS := Vector2(590.0, -305.0)
 const SECOND_VISTA_END_POS := Vector2(830.0, -305.0)
 const TRAVERSE_END_POS := Vector2(915.0, -305.0)
 const RETURN_TOPDOWN_POS := Vector2(980.0, -305.0)
+const LEVEL_EXIT_POS := Vector2(1240.0, -218.0)
 
 const BOUNDARY_SEGMENTS := [
 	[Vector2(-121.6, 833.9), Vector2(20.4, 848.3)],
@@ -191,33 +189,6 @@ const AUTHORING_MARKERS := {
 		"kind": "return_causeway",
 		"position": Vector2(-32.0, 470.0),
 	},
-	"gatehouse_key": {
-		"label": "GATEHOUSE KEY",
-		"kind": "key",
-		"position": Vector2(1078.0, -285.0),
-	},
-	"main_gate": {
-		"label": "RAISING GATE",
-		"kind": "gate",
-		"position": Vector2(973.0, -305.0),
-	},
-	"level_exit": {
-		"label": "LEVEL EXIT",
-		"kind": "level_exit",
-		"position": Vector2(1240.0, -218.0),
-	},
-	"enemy_spawn_west": {
-		"label": "ENEMY SPAWN W",
-		"kind": "enemy_spawn",
-		"position": Vector2(690.0, -336.0),
-		"lane": "sundered_keep_west",
-	},
-	"enemy_spawn_gate": {
-		"label": "ENEMY SPAWN GATE",
-		"kind": "enemy_spawn",
-		"position": Vector2(1160.0, -230.0),
-		"lane": "sundered_keep_gate",
-	},
 }
 
 var _ingress_config: Dictionary = {}
@@ -245,10 +216,6 @@ var vista_controller: SunderedKeepVistaController = null
 var exit_transition_trigger: SunderedKeepTransitionTrigger = null
 var main_map: Node = null
 var main_return_position := Vector2.ZERO
-var _has_sundered_gate_key := false
-var _main_gate_open := false
-var _main_gate_blocker: StaticBody2D = null
-var _main_gate_marker_visual: CanvasItem = null
 var _level_exit_trigger: Area2D = null
 
 
@@ -559,13 +526,10 @@ func _build_event_markers() -> void:
 		return
 	_clear_children(event_markers_root)
 	_clear_children(event_runtime_root)
-	_main_gate_blocker = null
-	_main_gate_marker_visual = null
 	_level_exit_trigger = null
-	for marker_id: String in AUTHORING_MARKERS.keys():
-		var marker_data := AUTHORING_MARKERS[marker_id] as Dictionary
-		_add_event_marker(marker_id, marker_data)
-	_build_main_gate_runtime()
+	# This is the visual Vista Approach, not the Keep gatehouse/causeway level.
+	# Keep-specific key, gate, enemy-spawn, and authoring-marker runtime was
+	# previously placed here by mistake and made the vista route impassable.
 	_build_level_exit_trigger()
 
 
@@ -581,14 +545,6 @@ func _add_event_marker(marker_id: String, marker_data: Dictionary) -> Marker2D:
 	marker.set_meta("label", label)
 	event_markers_root.add_child(marker)
 	_add_event_marker_visual(marker, label, _event_marker_color(kind))
-	match kind:
-		"key":
-			_add_key_interactable(marker, marker_id, label)
-		"gate":
-			_main_gate_marker_visual = marker.get_child(0) as CanvasItem if marker.get_child_count() > 0 else null
-			_add_gate_interactable(marker, marker_id, label)
-		"enemy_spawn":
-			_add_enemy_spawn_marker(marker, marker_data, marker_id)
 	return marker
 
 
@@ -634,51 +590,10 @@ func _event_marker_color(kind: String) -> Color:
 			return Color(0.92, 0.92, 0.92, 0.85)
 
 
-func _add_key_interactable(marker: Node2D, marker_id: String, label: String) -> void:
-	var interaction := SUNDERED_KEEP_INTERACTABLE.new() as Node2D
-	interaction.name = "%sInteraction" % marker_id.to_pascal_case()
-	interaction.position = marker.position
-	interaction.call("configure", self, SUNDERED_GATE_KEY_ID, "TAKE %s" % label, 84.0)
-	event_runtime_root.add_child(interaction)
-
-
-func _add_gate_interactable(marker: Node2D, marker_id: String, label: String) -> void:
-	var interaction := SUNDERED_KEEP_INTERACTABLE.new() as Node2D
-	interaction.name = "%sInteraction" % marker_id.to_pascal_case()
-	interaction.position = marker.position
-	interaction.call("configure", self, &"main_gate", "RAISE %s" % label, 104.0)
-	event_runtime_root.add_child(interaction)
-
-
-func _add_enemy_spawn_marker(marker: Node2D, marker_data: Dictionary, marker_id: String) -> void:
-	var spawn := SPAWN_NODE_SCRIPT.new() as Node2D
-	spawn.name = "%sSpawnNode" % marker_id.to_pascal_case()
-	spawn.set("lane", str(marker_data.get("lane", marker_id)))
-	spawn.position = marker.position
-	event_runtime_root.add_child(spawn)
-
-
-func _build_main_gate_runtime() -> void:
-	var marker_position := _get_authoring_marker_position("main_gate", RETURN_TOPDOWN_POS)
-	var gate_position := _route_point(marker_position)
-	_main_gate_blocker = StaticBody2D.new()
-	_main_gate_blocker.name = "MainGateBlocker"
-	_main_gate_blocker.collision_layer = 1
-	_main_gate_blocker.collision_mask = 1
-	event_runtime_root.add_child(_main_gate_blocker)
-	_add_boundary_segment(
-		_main_gate_blocker,
-		"MainGateRail",
-		gate_position + Vector2(-70.0, 0.0),
-		gate_position + Vector2(70.0, 0.0)
-	)
-
-
 func _build_level_exit_trigger() -> void:
-	var marker_position := _get_authoring_marker_position("level_exit", RETURN_TOPDOWN_POS)
 	_level_exit_trigger = Area2D.new()
 	_level_exit_trigger.name = "LevelExitTrigger"
-	_level_exit_trigger.position = _route_point(marker_position)
+	_level_exit_trigger.position = _route_point(LEVEL_EXIT_POS)
 	_level_exit_trigger.body_entered.connect(_on_level_exit_body_entered)
 	event_runtime_root.add_child(_level_exit_trigger)
 	var shape := CollisionShape2D.new()
@@ -771,51 +686,9 @@ func _apply_ingress_config_to_trigger() -> void:
 		exit_transition_trigger.return_world_position = _ingress_config["return_world_position"]
 
 
-func _handle_sundered_interaction(kind: StringName, actor: Node) -> void:
-	match kind:
-		SUNDERED_GATE_KEY_ID:
-			_has_sundered_gate_key = true
-			_hide_key_interactions()
-			print("[SunderedKeepApproach] Gatehouse key acquired.")
-		&"main_gate", &"sundered_main_gate":
-			_try_open_main_gate(actor)
-		_:
-			print("[SunderedKeepApproach] Unhandled interaction: %s" % String(kind))
-
-
-func _try_open_main_gate(_actor: Node = null) -> bool:
-	if _main_gate_open:
-		return true
-	if not _has_sundered_gate_key:
-		print("[SunderedKeepApproach] Main gate requires the gatehouse key.")
-		return false
-	_main_gate_open = true
-	if _main_gate_blocker != null and is_instance_valid(_main_gate_blocker):
-		_main_gate_blocker.queue_free()
-		_main_gate_blocker = null
-	if _main_gate_marker_visual != null and is_instance_valid(_main_gate_marker_visual):
-		_main_gate_marker_visual.modulate = Color(0.48, 1.0, 0.58, 0.72)
-	print("[SunderedKeepApproach] Main gate raised.")
-	return true
-
-
-func _hide_key_interactions() -> void:
-	if event_runtime_root == null:
-		return
-	for child in event_runtime_root.get_children():
-		if child is SunderedKeepInteractable and StringName(child.get("interaction_kind")) == SUNDERED_GATE_KEY_ID:
-			child.remove_from_group("interactable")
-			if child is CanvasItem:
-				(child as CanvasItem).visible = false
-
-
 func _on_level_exit_body_entered(body: Node) -> void:
 	if not _is_player_body(body):
 		return
-	if not _main_gate_open:
-		_try_open_main_gate(body)
-		if not _main_gate_open:
-			return
 	_return_actor_to_main(body)
 
 

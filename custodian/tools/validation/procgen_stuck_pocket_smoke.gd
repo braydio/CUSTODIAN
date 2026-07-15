@@ -41,6 +41,9 @@ func _run() -> void:
 	var remediated := tilemap.validate_no_stuck_pockets(true)
 	assert(int(remediated.get("remediated", 0)) > 0)
 	assert(tilemap.get_runtime_escape_neighbor_count(target) >= 2)
+	var report := tilemap.debug_get_stuck_report_at_global(tilemap.tile_to_global_position(target))
+	assert(report.has("seed") and report.has("blocker_sources") and report.has("local_collision_mask"))
+	assert(int(report.get("reachable_area_tiles", 0)) >= 8)
 
 	var route_cells := {Vector2i(10, 10): true}
 	tilemap.set("_main_road_tiles", route_cells)

@@ -62,6 +62,8 @@ enemy.set_behavior_profile("zealot_wanderer")
 
 If no explicit profile is supplied, enemies default to `raider_grunt`. V1 keeps this local to the enemy actor rather than moving behavior execution into the director. The director and wave manager decide composition and broad objective pressure; the enemy-local state machine decides moment-to-moment theft, investigation, engagement, and escape.
 
+Developer Observatory treats these as distinct populations: enemies in `enemy_behavior_agent` publish `director_behavior_agents` and `enemy_behavior_sample`; enemies still executing the direct legacy combat path publish `legacy_combat_agents` and `legacy_enemy_sample`. A nonzero legacy count is therefore explicit runtime ownership, not evidence that the strategic `EnemyDirector` node failed to run.
+
 ### V1 Non-Goals
 
 - No full GOAP planner.

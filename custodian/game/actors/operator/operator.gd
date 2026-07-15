@@ -44,6 +44,17 @@ enum AttackPhase {
 	RECOVERY,
 }
 
+enum RangedFireFailureReason {
+	NONE,
+	EMPTY_MAGAZINE,
+	NO_RESERVE_AMMO,
+	RELOADING,
+	OVERHEATED,
+	ACTION_LOCKED,
+	INVALID_PROFILE,
+	PROJECTILE_SPAWN_FAILED,
+}
+
 const ATTACK_MOVE_PROFILES := {
 	"unarmed_fast": {
 		"startup_time": 0.06,
@@ -356,6 +367,7 @@ var _unstuck_timer := 0.0
 var _unstuck_anchor_position := Vector2.ZERO
 var _unstuck_anchor_valid := false
 var _unstuck_report_cooldown := 0.0
+var _field_patch_seconds_available_below_half_health := 0.0
 var _body_recoil_offset := Vector2.ZERO
 var _animated_sprite_base_position := Vector2.ZERO
 var _dodge_fx_back_base_position := Vector2.ZERO
@@ -809,6 +821,7 @@ func _process(delta):
 	_update_melee_recovery(delta)
 	_update_reload(delta)
 	_update_field_patch(delta)
+	_update_field_patch_observability(delta)
 	_tick_primary_ranged_action_presentation(delta)
 	_update_animation_state_machine(delta)
 	_update_combat_target()
@@ -903,7 +916,7 @@ func _physics_process(delta):
 		is_sprinting = false
 		is_sneaking = false
 		_update_stealth_noise_snapshot(false)
-		stamina = min(stamina_max, stamina + stamina_regen_per_second * delta)
+		_regenerate_stamina(stamina_regen_per_second * delta)
 		move_and_slide()
 		return
 	if _dodge_active:
@@ -978,13 +991,13 @@ func _physics_process(delta):
 	_update_stealth_noise_snapshot(moving)
 
 	if is_sprinting:
-		stamina = max(0.0, stamina - stamina_drain_per_second * delta)
+		_spend_stamina(stamina_drain_per_second * delta, &"sprint")
 		if stamina <= 0.0:
 			is_sprinting = false
 			if stamina_sprint_exhaustion_requires_full_recovery:
 				_sprint_exhausted = true
 	else:
-		stamina = min(stamina_max, stamina + stamina_regen_per_second * delta)
+		_regenerate_stamina(stamina_regen_per_second * delta)
 
 	# DEBUG: Press J to damage nearest sector
 	if Input.is_key_pressed(KEY_J):
@@ -1027,6 +1040,7 @@ func _update_unstuck_detector(delta: float, input_direction: Vector2) -> void:
 	if provider.has_method("debug_print_stuck_report"):
 		provider.call("debug_print_stuck_report", global_position)
 	_obs_increment(&"operator_stuck_detections")
+	_obs_increment(&"runtime_operator_traps_detected")
 	_obs_log(&"operator_stuck_detected", report)
 	_obs_warning("Operator blocked-pocket detector triggered.", report)
 	if OS.is_debug_build() and unstuck_rescue_enabled and provider != null \
@@ -1036,14 +1050,28 @@ func _update_unstuck_detector(delta: float, input_direction: Vector2) -> void:
 		)
 		if rescue_position != Vector2.INF:
 			var from_tile: Vector2i = report.get("tile", Vector2i.ZERO)
+			var destination_report: Dictionary = provider.call("debug_get_stuck_report_at_global", rescue_position)
+			var destination_safe := bool(destination_report.get("runtime_walkable", false)) \
+					and int(destination_report.get("escape_neighbor_count", 0)) >= 2 \
+					and int(destination_report.get("reachable_area_tiles", 0)) >= 8 \
+					and not bool(destination_report.get("runtime_prop_blocked", true)) \
+					and (destination_report.get("nearby_collision_bodies", []) as Array).is_empty()
+			if not destination_safe:
+				_obs_increment(&"operator_unstuck_destinations_rejected")
+				_obs_warning("Operator unstuck destination failed safety validation.", {"source": report, "destination": destination_report})
+				_unstuck_report_cooldown = 1.0
+				_unstuck_timer = 0.0
+				_unstuck_anchor_position = global_position
+				return
 			global_position = rescue_position
 			velocity = Vector2.ZERO
-			var destination_report: Dictionary = provider.call("debug_get_stuck_report_at_global", rescue_position)
 			var to_tile: Vector2i = destination_report.get("tile", Vector2i.ZERO)
+			var post_move_report: Dictionary = provider.call("debug_get_stuck_report_at_global", global_position)
 			print("[OperatorUnstuck] rescued from tile=%s to tile=%s reason=blocked_pocket" % [from_tile, to_tile])
 			_obs_increment(&"operator_unstuck_rescues")
-			_obs_log(&"operator_unstuck_rescued", {"from_tile": from_tile, "to_tile": to_tile, "reason": "blocked_pocket"})
-			_obs_warning("Operator rescued from blocked procgen pocket.", {"from_tile": from_tile, "to_tile": to_tile})
+			_obs_increment(&"runtime_operator_traps_rescued")
+			_obs_log(&"operator_unstuck_rescued", {"source": report, "destination": destination_report, "post_move": post_move_report, "reason": "blocked_pocket"})
+			_obs_warning("Operator rescued from blocked procgen pocket.", {"source": report, "destination": destination_report, "post_move": post_move_report})
 	_unstuck_report_cooldown = 1.0
 	_unstuck_timer = 0.0
 	_unstuck_anchor_position = global_position
@@ -2353,6 +2381,12 @@ func _obs_increment(counter_name: StringName, amount: int = 1) -> void:
 		observatory.call("increment", String(counter_name), amount)
 
 
+func _obs_accumulate(counter_name: StringName, amount: float) -> void:
+	var observatory := _get_dev_observatory()
+	if observatory != null and observatory.has_method("accumulate"):
+		observatory.call("accumulate", String(counter_name), amount)
+
+
 func _obs_gauge(gauge_name: StringName, value: Variant) -> void:
 	var observatory := _get_dev_observatory()
 	if observatory != null and observatory.has_method("set_gauge"):
@@ -2365,16 +2399,67 @@ func _obs_warning(message: String, data: Dictionary = {}) -> void:
 		observatory.call("mark_warning", message, data)
 
 
+func _spend_stamina(amount: float, cause: StringName) -> float:
+	var before := stamina
+	stamina = maxf(0.0, stamina - maxf(0.0, amount))
+	var spent := before - stamina
+	if spent > 0.0:
+		_obs_accumulate(StringName("stamina_spent_%s" % String(cause)), spent)
+		_obs_accumulate(&"stamina_spent_total", spent)
+	if before > 0.0 and stamina <= 0.0:
+		_obs_increment(&"stamina_exhaustions")
+		_obs_increment(StringName("stamina_exhaustion_%s" % String(cause)))
+		_obs_log(&"stamina_exhausted", {"cause": String(cause), "position": global_position})
+	return spent
+
+
+func _regenerate_stamina(amount: float, cause: StringName = &"passive") -> float:
+	var before := stamina
+	stamina = minf(stamina_max, stamina + maxf(0.0, amount))
+	var restored := stamina - before
+	if restored > 0.0:
+		_obs_accumulate(StringName("stamina_regenerated_%s" % String(cause)), restored)
+		_obs_accumulate(&"stamina_regenerated_total", restored)
+	return restored
+
+
 func _log_ranged_fire_failure(reason: StringName) -> void:
+	var category := _get_ranged_fire_failure_category(reason)
 	_obs_increment(&"player_ranged_fire_failures", 1)
+	_obs_increment(StringName("player_ranged_fire_failure_%s" % String(reason)), 1)
+	_obs_increment(StringName("player_ranged_fire_failure_%s" % String(category)), 1)
 	_obs_log(&"player_ranged_fire_failed", {
 		"reason": String(reason),
+		"reason_code": _get_ranged_fire_failure_reason_code(reason),
+		"category": String(category),
 		"weapon": _get_active_weapon_state_key(),
 		"position": global_position,
 		"loaded_ammo": _get_current_loaded_ammo(),
 		"reserve_ammo": _get_current_reserve_ammo(),
 		"heat": weapon_heat_by_id.get(_get_active_weapon_state_key(), 0.0),
+		"reload_active": _reload_active,
+		"cooldown_remaining": fire_cooldown_remaining,
+		"weapon_equipped": _is_ranged_loadout_active(),
 	})
+
+
+func _get_ranged_fire_failure_category(reason: StringName) -> StringName:
+	if reason in [&"empty_magazine", &"no_reserve_ammo", &"no_ammo"]:
+		return &"empty"
+	if reason in [&"invalid_profile", &"projectile_spawn_failed"]:
+		return &"internal"
+	return &"state_locked"
+
+
+func _get_ranged_fire_failure_reason_code(reason: StringName) -> int:
+	match reason:
+		&"empty_magazine": return RangedFireFailureReason.EMPTY_MAGAZINE
+		&"no_reserve_ammo", &"no_ammo": return RangedFireFailureReason.NO_RESERVE_AMMO
+		&"reloading": return RangedFireFailureReason.RELOADING
+		&"overheated": return RangedFireFailureReason.OVERHEATED
+		&"invalid_profile": return RangedFireFailureReason.INVALID_PROFILE
+		&"projectile_spawn_failed": return RangedFireFailureReason.PROJECTILE_SPAWN_FAILED
+		_: return RangedFireFailureReason.ACTION_LOCKED
 
 
 func _emit_weapon_feedback(event_id: StringName, weapon_definition: OperatorWeaponDefinition = null) -> void:
@@ -2453,7 +2538,9 @@ func _dictionary_to_vector2(value: Variant, fallback: Vector2) -> Vector2:
 
 
 func _request_ranged_shot() -> void:
+	_obs_increment(&"player_ranged_fire_requests")
 	if not _is_ranged_context_active():
+		_log_ranged_fire_failure(&"action_locked")
 		return
 	if _reload_active:
 		last_ranged_fire_failure = &"reloading"
@@ -2464,9 +2551,11 @@ func _request_ranged_shot() -> void:
 		_emit_weapon_failure_feedback(last_ranged_fire_failure, &"fire_blocked_overheated")
 		return
 	if not _has_loaded_ammo():
-		last_ranged_fire_failure = &"reload_started" if _get_current_reserve_ammo() > 0 else &"no_ammo"
-		if last_ranged_fire_failure == &"no_ammo":
+		last_ranged_fire_failure = &"empty_magazine" if _get_current_reserve_ammo() > 0 else &"no_reserve_ammo"
+		if last_ranged_fire_failure == &"no_reserve_ammo":
 			_emit_weapon_failure_feedback(last_ranged_fire_failure, &"dry_fire")
+		else:
+			_log_ranged_fire_failure(last_ranged_fire_failure)
 		_try_start_reload()
 		return
 	if _is_using_sidearm_ranged():
@@ -2620,6 +2709,8 @@ func _handle_attack_input() -> void:
 		_try_queue_parry_counter_from_block()
 		return
 	if _is_ranged_ready_active():
+		if _is_attack_primary_just_pressed():
+			_obs_increment(&"player_ranged_trigger_samples")
 		if _is_primary_ranged_aim_presentation_active():
 			return
 		if _is_attack_primary_just_pressed() and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
@@ -2839,7 +2930,7 @@ func _try_start_parry() -> bool:
 	if not _can_start_parry():
 		return false
 
-	stamina = maxf(0.0, stamina - parry_stamina_cost)
+	_spend_stamina(parry_stamina_cost, &"parry")
 	_exit_ranged_ready()
 	_cancel_reload()
 	_clear_attack_buffer()
@@ -3264,7 +3355,7 @@ func _start_heavy_attack() -> void:
 	_melee_attack_key = "unarmed_heavy" if is_unarmed_attack else "melee_heavy"
 	_begin_melee_attack_profile("heavy")
 	_notify_camera_attack_windup(true)
-	stamina = max(0.0, stamina - heavy_attack_stamina_cost)
+	_spend_stamina(heavy_attack_stamina_cost, &"heavy_attack")
 	_melee_forward = _get_melee_forward_direction()
 	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
 	if not is_unarmed_attack and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("melee_2h_heavy_anticipation"):
@@ -3548,7 +3639,7 @@ func try_guard_incoming_attack(damage: float, hit_direction: Vector2, stamina_co
 	var stamina_cost := stamina_cost_override if stamina_cost_override >= 0.0 else guard_stamina_cost_per_hit
 	if offhand_guard_item_equipped:
 		stamina_cost *= 0.75
-	stamina = maxf(0.0, stamina - stamina_cost)
+	_spend_stamina(stamina_cost, &"guard")
 
 	var reduction := guard_damage_reduction
 	if offhand_guard_item_equipped:
@@ -3606,7 +3697,7 @@ func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dicti
 	_block_active = false
 	_guard_repress_required_after_parry_success = _is_attack_secondary_pressed()
 
-	stamina = min(stamina_max, stamina + parry_success_stamina_refund)
+	_regenerate_stamina(parry_success_stamina_refund, &"parry_refund")
 
 	if attacker != null and is_instance_valid(attacker):
 		var away_from_operator := global_position.direction_to(attacker.global_position)
@@ -4540,8 +4631,37 @@ func can_use_field_patch() -> bool:
 	return true
 
 
+func _get_field_patch_rejection_reason() -> StringName:
+	if _is_dead:
+		return &"dead"
+	if _field_patch_active:
+		return &"already_active"
+	if _field_patch_recovery_timer > 0.0:
+		return &"recovery"
+	if field_patch_count <= 0:
+		return &"no_patches"
+	if current_health >= max_health:
+		return &"full_health"
+	if _is_terminal_open() or _is_non_terminal_ui_open() or _is_ui_text_input_focused():
+		return &"ui"
+	if _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked:
+		return &"runtime_lock"
+	if _reload_active:
+		return &"reloading"
+	if _dodge_active or _dodge_recovery_active:
+		return &"dodging"
+	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active or attack_phase != AttackPhase.NONE:
+		return &"attack_locked"
+	return &"unknown"
+
+
 func start_field_patch() -> void:
+	_obs_increment(&"field_patch_attempted", 1)
 	if not can_use_field_patch():
+		var reason := _get_field_patch_rejection_reason()
+		_obs_increment(&"field_patch_rejected", 1)
+		_obs_increment(StringName("field_patch_rejected_%s" % String(reason)), 1)
+		_obs_log(&"field_patch_rejected", {"reason": String(reason), "health": current_health, "patches_remaining": field_patch_count})
 		return
 
 	_field_patch_active = true
@@ -4601,6 +4721,12 @@ func _update_field_patch(delta: float) -> void:
 	_field_patch_timer -= delta
 	if _field_patch_timer <= 0.0:
 		_commit_field_patch()
+
+
+func _update_field_patch_observability(delta: float) -> void:
+	if not _is_dead and max_health > 0.0 and current_health < max_health * 0.5 and field_patch_count > 0:
+		_field_patch_seconds_available_below_half_health += delta
+		_obs_gauge(&"field_patch_seconds_available_below_half_health", snappedf(_field_patch_seconds_available_below_half_health, 0.01))
 
 
 func _commit_field_patch() -> void:
@@ -4703,7 +4829,7 @@ func _try_start_dodge() -> bool:
 	_dodge_iframe_timer = minf(maxf(0.0, dodge_iframe_duration), _dodge_timer)
 	_dodge_recovery_timer = 0.0
 	_dodge_cooldown_remaining = maxf(dodge_cooldown, _dodge_timer + maxf(0.0, dodge_recovery_duration))
-	stamina = maxf(0.0, stamina - dodge_stamina_cost)
+	_spend_stamina(dodge_stamina_cost, &"dodge")
 	is_sprinting = false
 	is_sneaking = false
 	_exit_ranged_ready()
@@ -4813,6 +4939,7 @@ func _should_ignore_incoming_damage_for_dodge(source: String = "") -> bool:
 	if dodge_iframe_debug_enabled:
 		print("[Operator] Dodge i-frame avoided incoming damage: ", source)
 	_obs_increment(&"player_iframe_avoids", 1)
+	_obs_increment(&"dodge_iframe_avoid", 1)
 	_obs_log(&"player_damage_avoided_by_iframe", {
 		"source": source,
 		"position": global_position,
@@ -6923,6 +7050,7 @@ func _log_incoming_hit_result(
 		"position": global_position,
 		"health": current_health,
 		"stamina": stamina,
+		"target_health_after": current_health,
 	}
 	if attacker != null and is_instance_valid(attacker):
 		data["attacker"] = attacker.name
@@ -6974,7 +7102,20 @@ func toggle_primary_carbine() -> void:
 	equip_primary_carbine()
 
 
-func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker_team: String = "enemy", attacker: Node2D = null, hit_direction: Vector2 = Vector2.ZERO, guard_stamina_cost_override: float = -1.0) -> Dictionary:
+func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker_team: String = "enemy", attacker: Node2D = null, hit_direction: Vector2 = Vector2.ZERO, guard_stamina_cost_override: float = -1.0, attack_context: Dictionary = {}) -> Dictionary:
+	var health_before := current_health
+	var hit_context := attack_context.duplicate(true)
+	hit_context["damage_attempted"] = amount
+	hit_context["target_health_before"] = health_before
+	if _dodge_active:
+		_obs_increment(&"incoming_hit_during_dodge")
+		if _dodge_iframe_timer > 0.0:
+			_obs_increment(&"incoming_hit_during_iframe")
+		else:
+			_obs_increment(&"dodge_timing_miss_late")
+	elif _dodge_recovery_active:
+		_obs_increment(&"incoming_hit_during_dodge_recovery")
+		_obs_increment(&"dodge_timing_miss_late")
 	var resolved_hit_direction := hit_direction
 	if resolved_hit_direction.length_squared() <= 0.001 and attacker != null and is_instance_valid(attacker):
 		resolved_hit_direction = attacker.global_position.direction_to(global_position)
@@ -6982,7 +7123,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		resolved_hit_direction = -visual_idle_direction.normalized() if visual_idle_direction.length_squared() > 0.001 else Vector2.DOWN
 
 	if try_parry_incoming_attack(attacker, resolved_hit_direction, {"damage": amount, "hit_kind": hit_kind}):
-		_log_incoming_hit_result(&"parried", hit_kind, amount, 0.0, attacker)
+		_log_incoming_hit_result(&"parried", hit_kind, amount, 0.0, attacker, hit_context)
 		return {
 			"result": &"parried",
 			"hit_kind": hit_kind,
@@ -6990,10 +7131,12 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 			"blocked": false,
 			"parried": true,
 			"applied_damage": 0.0,
+			"target_health_before": health_before,
+			"target_health_after": current_health,
 		}
 
 	if _should_ignore_incoming_damage_for_dodge(String(hit_kind)):
-		_log_incoming_hit_result(&"dodged", hit_kind, amount, 0.0, attacker)
+		_log_incoming_hit_result(&"dodged", hit_kind, amount, 0.0, attacker, hit_context)
 		return {
 			"result": &"dodged",
 			"hit_kind": hit_kind,
@@ -7001,15 +7144,21 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 			"blocked": false,
 			"parried": false,
 			"applied_damage": 0.0,
+			"target_health_before": health_before,
+			"target_health_after": current_health,
 		}
 
 	var guard_result := try_guard_incoming_attack(amount, resolved_hit_direction, guard_stamina_cost_override)
 	if bool(guard_result.get("blocked", false)):
 		var final_damage := float(guard_result.get("damage", amount))
 		if final_damage > 0.0:
-			take_damage(final_damage, false)
+			take_damage(final_damage, false, hit_context)
 		_log_incoming_hit_result(&"blocked", hit_kind, amount, final_damage, attacker, {
 			"guard_damage": final_damage,
+			"attack_id": hit_context.get("attack_id", ""),
+			"attacker_id": hit_context.get("attacker_id", 0),
+			"target_id": hit_context.get("target_id", get_instance_id()),
+			"target_health_before": health_before,
 		})
 		return {
 			"result": &"blocked",
@@ -7018,11 +7167,13 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 			"parried": false,
 			"blocked": true,
 			"applied_damage": max(0.0, final_damage),
+			"target_health_before": health_before,
+			"target_health_after": current_health,
 		}
 
 	if _is_failed_parry_hitreact_context():
 		_play_failed_parry_block_hitreact()
-		take_damage(amount, false)
+		take_damage(amount, false, hit_context)
 		_log_incoming_hit_result(&"damaged", hit_kind, amount, amount, attacker, {
 			"block_hitreact": true,
 		})
@@ -7034,6 +7185,8 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 			"blocked": false,
 			"block_hitreact": true,
 			"applied_damage": max(0.0, amount),
+			"target_health_before": health_before,
+			"target_health_after": current_health,
 		}
 
 	if _is_block_state_active():
@@ -7041,8 +7194,8 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		_block_active = false
 		_play_block_animation(&"melee_2h_block_exit")
 
-	take_damage(amount)
-	_log_incoming_hit_result(&"damaged", hit_kind, amount, amount, attacker)
+	take_damage(amount, true, hit_context)
+	_log_incoming_hit_result(&"damaged", hit_kind, amount, health_before - current_health, attacker, hit_context)
 	return {
 		"result": &"damaged",
 		"hit_kind": hit_kind,
@@ -7050,13 +7203,15 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		"parried": false,
 		"blocked": false,
 		"applied_damage": max(0.0, amount),
+		"target_health_before": health_before,
+		"target_health_after": current_health,
 	}
 
 
 func receive_projectile_hit(amount: float, _attacker_team: String = "neutral") -> Dictionary:
 	return receive_enemy_hit(amount, &"projectile", _attacker_team)
 
-func take_damage(amount: float, trigger_reaction: bool = true):
+func take_damage(amount: float, trigger_reaction: bool = true, damage_context: Dictionary = {}):
 	if _is_dead:
 		return
 
@@ -7066,17 +7221,24 @@ func take_damage(amount: float, trigger_reaction: bool = true):
 	if amount > 0.0 and _field_patch_active and not _field_patch_committed:
 		cancel_field_patch(&"damage")
 
+	var health_before := health
 	health = max(0.0, health - amount)
 	current_health = health
 	health_changed.emit(current_health, max_health)
 
 	_obs_increment(&"player_hits_taken", 1)
-	_obs_log(&"player_damage", {
+	var damage_event := {
 		"amount": amount,
+		"damage_applied": health_before - health,
 		"position": global_position,
+		"target_health_before": health_before,
+		"target_health_after": health,
 		"health": health,
 		"max_health": max_health,
-	})
+	}
+	for key in damage_context.keys():
+		damage_event[key] = damage_context[key]
+	_obs_log(&"player_damage", damage_event)
 	_obs_gauge(&"player_health", health)
 
 	var heatmap := get_node_or_null("/root/SectorHeatmap")
@@ -7221,7 +7383,10 @@ func _handle_death() -> void:
 	_obs_increment(&"player_deaths", 1)
 	_obs_log(&"player_death", {
 		"position": global_position,
+		"patches_remaining": field_patch_count,
 	})
+	if field_patch_count > 0:
+		_obs_increment(&"player_died_with_field_patch_available")
 	_obs_gauge(&"player_health", 0.0)
 	var heatmap := get_node_or_null("/root/SectorHeatmap")
 	if heatmap != null:

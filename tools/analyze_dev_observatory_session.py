@@ -218,6 +218,9 @@ def build_report(
         ("ranged shots fired", _count(counters, "player_ranged_shots_fired", kinds["player_ranged_shot"])),
         ("blocked muzzle shots", _count(counters, "player_ranged_shots_blocked", kinds["player_ranged_shot_blocked"])),
         ("ranged fire failures", _count(counters, "player_ranged_fire_failures", kinds["player_ranged_fire_failed"])),
+        ("ranged empty failures", _prefixed_counts(counters, "player_ranged_fire_failure_empty")),
+        ("ranged state failures", _prefixed_counts(counters, "player_ranged_fire_failure_state_locked")),
+        ("ranged internal failures", _prefixed_counts(counters, "player_ranged_fire_failure_internal")),
         ("dodges started", _count(counters, "player_dodges_started", kinds["player_dodge_started"])),
         ("iframe avoids", _count(counters, "player_iframe_avoids", kinds["player_damage_avoided_by_iframe"])),
         ("field patches committed", _count(counters, "field_patch_committed", kinds["field_patch_committed"])),
@@ -257,12 +260,19 @@ def build_report(
     else:
         lines.append("  none")
 
-    lines.extend(["", f"WARNINGS ({warning_count})"])
+    displayed_warning_count = min(len(warnings), warning_limit)
+    lines.extend(["", f"WARNINGS ({warning_count} total, {displayed_warning_count} displayed)"])
     if warnings:
         for warning in warnings[-warning_limit:]:
             uptime_text = _format_value(warning.get("uptime_sec", "?"))
             message = _format_value(warning.get("message", "warning"), 110)
             lines.append(f"  [{uptime_text}s] {message}")
+        hidden_warning_count = max(0, len(warnings) - displayed_warning_count)
+        if hidden_warning_count:
+            lines.append(f"  ... {hidden_warning_count} earlier warning(s) omitted; use --warnings to show more")
+        unavailable_warning_count = max(0, warning_count - len(warnings))
+        if unavailable_warning_count:
+            lines.append(f"  ... {unavailable_warning_count} warning(s) counted by the session but absent from the export list")
     else:
         lines.append("  none")
 

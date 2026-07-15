@@ -238,6 +238,8 @@ var _windup_attack_is_strong: bool = false
 var _pending_attack_forward: Vector2 = Vector2.DOWN
 var _pending_attack_range_px: float = 0.0
 var _pending_attack_arc_degrees: float = 95.0
+var _attack_sequence: int = 0
+var _pending_attack_id: String = ""
 var _threat_highlight_enabled: bool = false
 var _threat_highlight_time: float = 0.0
 var _base_sprite_scale: Vector2 = Vector2.ONE
@@ -2056,6 +2058,8 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 		_grunt_falcon_punch_normal_attacks_since_special += 1
 		_grunt_falcon_punch_decision_credit = minf(2.0, _grunt_falcon_punch_decision_credit + clampf(grunt_falcon_punch_chance, 0.0, 1.0))
 	_pending_attack_damage = queued_damage
+	_attack_sequence += 1
+	_pending_attack_id = "%s:%s" % [get_instance_id(), _attack_sequence]
 	_attack_windup_timer = max(0.01, attack_windup_duration)
 	_windup_attack_is_strong = is_strong
 	_capture_pending_attack_context()
@@ -2064,6 +2068,9 @@ func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
 		"enemy": enemy_name,
 		"position": global_position,
 		"damage": queued_damage,
+		"attack_id": _pending_attack_id,
+		"attacker_id": get_instance_id(),
+		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
 		"is_strong": is_strong,
 		"attack_objective": attack_objective,
 		"target": target.name if target != null and is_instance_valid(target) else "",
@@ -2137,6 +2144,9 @@ func _execute_queued_attack() -> void:
 	if not _can_pending_attack_connect(target_node):
 		_obs_increment(&"enemy_attack_whiffs", 1)
 		_obs_log(&"enemy_attack_whiff", {
+			"attack_id": _pending_attack_id,
+			"attacker_id": get_instance_id(),
+			"target_id": target_node.get_instance_id(),
 			"enemy": enemy_name,
 			"position": global_position,
 			"target": target_node.name,
@@ -2151,6 +2161,9 @@ func _execute_queued_attack() -> void:
 	var hit_result := _apply_enemy_hit_to_target(target_node, _pending_attack_damage, &"melee")
 	_obs_increment(&"enemy_attacks_resolved", 1)
 	_obs_log(&"enemy_attack_resolved", {
+		"attack_id": _pending_attack_id,
+		"attacker_id": get_instance_id(),
+		"target_id": target_node.get_instance_id(),
 		"enemy": enemy_name,
 		"position": global_position,
 		"target": target_node.name,
@@ -2158,6 +2171,9 @@ func _execute_queued_attack() -> void:
 		"result": String(hit_result.get("result", "")),
 		"hit_kind": String(hit_result.get("hit_kind", "")),
 		"applied_damage": float(hit_result.get("applied_damage", 0.0)),
+		"damage_attempted": _pending_attack_damage,
+		"target_health_before": hit_result.get("target_health_before", null),
+		"target_health_after": hit_result.get("target_health_after", null),
 		"dodged": bool(hit_result.get("dodged", false)),
 		"blocked": bool(hit_result.get("blocked", false)),
 		"parried": bool(hit_result.get("parried", false)),
@@ -2179,6 +2195,7 @@ func _clear_pending_attack_context() -> void:
 	_pending_attack_forward = Vector2.DOWN
 	_pending_attack_range_px = 0.0
 	_pending_attack_arc_degrees = melee_hit_arc_degrees
+	_pending_attack_id = ""
 
 
 func _can_pending_attack_connect(target_node: Node2D) -> bool:
@@ -2214,7 +2231,14 @@ func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringN
 	if hit_node is Node2D:
 		hit_direction = global_position.direction_to((hit_node as Node2D).global_position)
 
-	if hit_node.has_method("try_parry_incoming_attack"):
+	var attack_context := {
+		"attack_id": _pending_attack_id,
+		"attacker_id": get_instance_id(),
+		"target_id": hit_node.get_instance_id(),
+		"damage_attempted": amount,
+	}
+
+	if not hit_node.has_method("receive_enemy_hit") and hit_node.has_method("try_parry_incoming_attack"):
 		var parry_result: Variant = hit_node.call("try_parry_incoming_attack", self, hit_direction, {"damage": amount, "hit_kind": hit_kind})
 		if bool(parry_result):
 			return {
@@ -2228,7 +2252,12 @@ func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringN
 
 	if hit_node.has_method("receive_enemy_hit"):
 		var result: Variant
-		if guard_stamina_cost_override >= 0.0:
+		var supports_attack_context := _method_argument_count(hit_node, &"receive_enemy_hit") >= 7
+		if supports_attack_context and guard_stamina_cost_override >= 0.0:
+			result = hit_node.call("receive_enemy_hit", amount, hit_kind, team, self, hit_direction, guard_stamina_cost_override, attack_context)
+		elif supports_attack_context:
+			result = hit_node.call("receive_enemy_hit", amount, hit_kind, team, self, hit_direction, -1.0, attack_context)
+		elif guard_stamina_cost_override >= 0.0:
 			result = hit_node.call("receive_enemy_hit", amount, hit_kind, team, self, hit_direction, guard_stamina_cost_override)
 		else:
 			result = hit_node.call("receive_enemy_hit", amount, hit_kind, team, self, hit_direction)
@@ -2264,6 +2293,14 @@ func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringN
 		"parried": false,
 		"applied_damage": 0.0,
 	}
+
+
+func _method_argument_count(object: Object, method_name: StringName) -> int:
+	for method_variant in object.get_method_list():
+		var method := method_variant as Dictionary
+		if StringName(str(method.get("name", ""))) == method_name:
+			return (method.get("args", []) as Array).size()
+	return 0
 
 
 func _apply_reaction(amount: float) -> void:

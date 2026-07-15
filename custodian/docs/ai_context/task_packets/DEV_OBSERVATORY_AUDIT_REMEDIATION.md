@@ -1,13 +1,13 @@
 # DEV OBSERVATORY AUDIT REMEDIATION
 
-- Status: `in_progress`
+- Status: `complete`
 - Authority: `DEV_OBSERVATORY_AUDITS.md`; `design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md`
 - Goal: Implement the audit's observability contract fixes and harden the debug-only procgen unstuck rescue without changing combat balance or simulation authority.
 - Files: Observatory runtime/analyzer, Operator/enemy combat telemetry, procgen walkability diagnostics, world-state/history telemetry, focused validation, and active AI-context docs.
 - Constraints: Observatory remains presentation/diagnostics-only; stable reason identifiers; no combat balance changes; no generated-world authority moves into debug code.
 - Acceptance: Ranged attempts reconcile; enemy hits share attack IDs; dodge/Field Patch/stamina outcomes are observable; warnings report truncation honestly; legacy/director AI gauges are distinct; rescue destinations pass stronger safety checks and export forensic context; focused smokes pass.
-- Completed: Audit mapped to current runtime ownership.
-- Deferred: None yet.
+- Completed: Stable ranged taxonomy/request metrics; shared attack-chain IDs; dodge/Field Patch/stamina telemetry; director/legacy and node ownership gauges; structured world-state/history metadata; stronger rescue selection and forensic reports; honest warning truncation; focused smokes/docs; Vista Approach gate/key/enemy-marker and blocker removal with unconditional end traversal.
+- Deferred: Production combat-balance tuning remains intentionally out of scope. Existing missing `unarmed_run_cape` animation and headless ObjectDB/resource-leak diagnostics remain loud, pre-existing validation noise.
 
 ## Ownership And Timing
 
@@ -40,7 +40,7 @@
 
 ## Handoff
 
-- Next action: Implement stable telemetry helpers and rescue safety predicates.
+- Next action: Run a targeted live playtest and inspect the next F10 export for zero internal ranged failures, zero runtime traps/rescues, and attack-chain reconciliation.
 - Best starting files: `operator.gd`, `enemy.gd`, `proc_gen_tilemap.gd`, `dev_observatory.gd`, analyzer.
 - Validation to run: Dev Observatory, procgen stuck-pocket, ranged/combat, dodge/Field Patch focused smokes plus headless parse.
-- Blockers or open questions: None.
+- Blockers or open questions: None. All selected focused smokes pass.

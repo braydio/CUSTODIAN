@@ -11,6 +11,7 @@ func set_state(key: String, value: Variant) -> void:
 	if state.get(key) == value:
 		return
 
+	var previous_value: Variant = state.get(key, null)
 	state[key] = value
 	state_changed.emit(key, value)
 
@@ -19,6 +20,10 @@ func set_state(key: String, value: Variant) -> void:
 		observatory.call("log_event", "world_state_changed", {
 			"key": key,
 			"value": value,
+			"previous_value": previous_value,
+			"derived": false,
+			"persistence": "persistent",
+			"source": "world_state_graph",
 		})
 
 	_evaluate_dependencies()
@@ -57,6 +62,7 @@ func _evaluate_dependencies() -> void:
 			var output_value: Variant = dependency.get("value", true)
 			if state.get(output_key) == output_value:
 				continue
+			var previous_value: Variant = state.get(output_key, null)
 			state[output_key] = output_value
 			state_changed.emit(output_key, output_value)
 			var observatory := get_node_or_null("/root/DevObservatory")
@@ -64,7 +70,10 @@ func _evaluate_dependencies() -> void:
 				observatory.call("log_event", "world_state_changed", {
 					"key": output_key,
 					"value": output_value,
+					"previous_value": previous_value,
 					"derived": true,
+					"persistence": "persistent",
+					"source": "world_state_dependency",
 				})
 			changed = true
 	_is_evaluating_dependencies = false

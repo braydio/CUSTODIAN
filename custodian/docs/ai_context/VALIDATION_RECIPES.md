@@ -135,10 +135,12 @@ For Developer Observatory telemetry and JSON session export:
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/dev_observatory_smoke.gd
+godot --headless --path . --script res://tools/validation/dev_observatory_audit_smoke.gd
 ```
 
 This proves bounded telemetry storage, F9/F10 action registration, stable and timestamped JSON output, JSON-safe Variant
-conversion, event-buffer retention, success-event logging, failure-warning routing, and basic heatmap accumulation.
+conversion, event-buffer retention, success-event logging, failure-warning routing, numeric accumulation, and basic heatmap accumulation.
+The audit smoke additionally reconciles a shared enemy attack ID through incoming-hit/player-damage events and checks ranged failure categories plus Field Patch rejection reasons.
 
 For the local exported-session report tool, run from the repository root:
 
@@ -179,6 +181,8 @@ godot --headless --path . --script res://tools/validation/sundered_keep_approach
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_runtime_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_mapper_smoke.gd
 ```
+
+The active approach smoke also proves the Vista Approach contains no Keep-specific key/gate/enemy markers or gate blocker and retains an unconditional level-end trigger.
 
 For the experimental route/stage wrapper:
 

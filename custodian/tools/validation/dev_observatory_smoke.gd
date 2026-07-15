@@ -24,6 +24,8 @@ func _run() -> void:
 
 	observatory.log_event("smoke", {"ok": true})
 	observatory.increment("shots_fired", 2)
+	observatory.accumulate("stamina_spent_test", 1.25)
+	observatory.accumulate("stamina_spent_test", 0.75)
 	observatory.set_gauge("active_enemies", 4)
 	observatory.set_gauge("json_safe_types", {
 		"vector2": Vector2(12.5, -3.0),
@@ -42,6 +44,8 @@ func _run() -> void:
 		failures.append("observatory did not retain recent event")
 	if int(observatory.counters.get("shots_fired", 0)) != 2:
 		failures.append("observatory counter incorrect")
+	if not is_equal_approx(float(observatory.counters.get("stamina_spent_test", 0.0)), 2.0):
+		failures.append("observatory numeric accumulation incorrect")
 	if int(observatory.gauges.get("active_enemies", 0)) != 4:
 		failures.append("observatory gauge incorrect")
 	if heatmap.get_value(Vector2(64, 64), "player_presence") < 1.49:
