@@ -29,6 +29,8 @@ content/props/ruins/
 
 `PropDefinition.collision_scene` is optional. For simple blockers, `PropDefinition` can also describe an authored collision footprint directly. Tall props can opt into player-relative depth sorting so they render behind the player when the player is in front of them.
 
+The prop root is the floor/contact anchor. `BaseSprite` is centered at `-anchor_offset`, and `collision_shape_offset` is the blocker center in that same root-local space. A bottom-anchored floor prop should normally keep its collision bottom at local `y=0` (within a small tolerance); set `collision_allows_below_anchor` only for an intentional, documented exception. Use `ProceduralProp.get_collision_alignment_report()` or the procgen `ruin_prop_force_collision_debug` override to inspect an instance without changing its shared definition.
+
 ## Procgen Placement
 
 `ProcGenTilemap` can spawn decorative ruin props from `data/ruin_prop_spawn_set.tres` into `NavigationRegion2D/PropLayer`.
@@ -42,6 +44,8 @@ Current placement rules:
 - uses deterministic tile-based seeds
 - keeps collision authored on the `PropDefinition`, not generated from visual variants
 - can opt into simple inline collision footprints for runtime physics without a bespoke collision scene
+- registers an inline blocker's generated global collision rectangle—not merely the spawn tile—in the runtime prop-blocker overlay; authored multi-shape scenes retain shape-by-shape footprints so intentional lanes stay open
+- disables/unregisters collision when that complete footprint crosses a protected route, spawn, structure, story, or combat clear zone while allowing the visual prop to remain
 - can opt into player-relative depth sorting for tall props
 
 ## Pixel Padding

@@ -93,6 +93,30 @@ const ANIMATION_SPECS := {
 		"fps": 10.0,
 		"loop": false,
 	},
+	"critical_open_enter_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_open_enter_01__s__5f__96.png",
+		"fps": 12.0,
+		"loop": false,
+		"required": true,
+	},
+	"critical_open_hold_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_open_hold_01__s__4f__96.png",
+		"fps": 6.0,
+		"loop": true,
+		"required": true,
+	},
+	"critical_open_recover_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_recover_01__s__5f__96.png",
+		"fps": 10.0,
+		"loop": false,
+		"required": true,
+	},
+	"critical_execution_victim_s": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__s__8f__96.png",
+		"fps": 12.0,
+		"loop": false,
+		"required": true,
+	},
 	"crit_recovery_s": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__crit_recovery_01__s__5f__96.png",
 		"fps": 8.0,
@@ -250,6 +274,23 @@ static func get_stagger_animation(direction: Vector2) -> StringName:
 	return &"stagger_s"
 
 
+static func get_parry_critical_open_animation(phase: StringName) -> StringName:
+	match phase:
+		&"enter":
+			return &"critical_open_enter_s"
+		&"hold":
+			return &"critical_open_hold_s"
+		&"recover":
+			return &"critical_open_recover_s"
+		&"executing":
+			return &"critical_execution_victim_s"
+	return &""
+
+
+static func get_parry_critical_execution_victim_animation() -> StringName:
+	return &"critical_execution_victim_s"
+
+
 static func get_attack_fx_animation(direction: Vector2) -> StringName:
 	if direction.x < -0.2:
 		if direction.y > 0.35:
@@ -307,7 +348,10 @@ static func get_marine_dash_attack_fx_animation(_direction: Vector2) -> StringNa
 static func _add_strip_animation(frames: SpriteFrames, animation_name: String, spec: Dictionary) -> void:
 	var path := String(spec["path"])
 	if not ResourceLoader.exists(path):
-		push_warning("[GruntAnimationLibrary] Missing grunt sheet: %s" % path)
+		if bool(spec.get("required", false)):
+			push_error("[GruntAnimationLibrary] Required grunt sheet missing: %s" % path)
+		else:
+			push_warning("[GruntAnimationLibrary] Missing grunt sheet: %s" % path)
 		return
 	var texture := load(path)
 	if not (texture is Texture2D):

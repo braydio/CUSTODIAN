@@ -39,6 +39,8 @@ run_step terrain_builder_smoke godot --headless --path . --script res://tools/va
 run_step terrain_ballistics_smoke godot --headless --path . --script res://tools/validation/terrain_ballistics_smoke.gd
 run_step procgen_terrain_required_cells_smoke godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
 run_step procgen_foliage_spawner_smoke godot --headless --path . --script res://tools/validation/procgen_foliage_spawner_smoke.gd
+run_step prop_collision_alignment_smoke godot --headless --path . --script res://tools/validation/prop_collision_alignment_smoke.gd
+run_step procgen_stuck_pocket_smoke godot --headless --path . --script res://tools/validation/procgen_stuck_pocket_smoke.gd
 run_step terrain_gameplay_packs_smoke godot --headless --path . --script res://tools/validation/terrain_gameplay_packs_smoke.gd
 run_step terrain_gameplay_art_usage_smoke godot --headless --path . --script res://tools/validation/terrain_gameplay_art_usage_smoke.gd
 run_step floor_value_clusters_smoke godot --headless --path . --script res://tools/validation/floor_value_clusters_smoke.gd

@@ -74,6 +74,9 @@ visible = false
 position = Vector2(0, -18)
 scale = Vector2(1, 1)
 
+[node name="CriticalExecutionAnchor" type="Marker2D" parent="."]
+position = Vector2(0, 0)
+
 [node name="EnemyBlackboard" type="Node" parent="."]
 script = ExtResource("2_blackboard")
 

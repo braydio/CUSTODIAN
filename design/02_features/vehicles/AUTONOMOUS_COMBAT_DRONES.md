@@ -59,14 +59,14 @@ Anchor and formation are separate command axes:
 - `FOLLOW`: the active anchor is the Operator.
 - `GUARD`: the active anchor is a clicked world position.
 - `CLOSE`, `FAR`, and `FREE_ROAM` remain the formation behavior around whichever anchor is active.
-- Recall clears the ordered point and restores the Operator anchor without replacing fire discipline or follow-distance state.
+- Return-to-follow clears the ordered point and explicit target, restores the Operator anchor and tactical `FOLLOW` mode, and preserves fire discipline plus follow-distance state.
 
 Controls:
 
 - Hold `drone_issue_guard_order` (`J`) and press primary/mouse-left to place or move the guard anchor.
 - While `J` is held, hovering a valid hostile or a command-targetable Shrumb changes the command reticle to red; clicking that target places the guard anchor at its position and assigns it as the squad's explicit target.
 - Clicking empty ground while `J` is held remains a normal guard-anchor order.
-- Press `drone_recall_order` (`K`) to clear the guard anchor.
+- Press `drone_recall_order` (`K`) to return the squad to Operator-follow, including mechanoids left in `HOLD` or another tactical mode.
 - `G` continues to cycle close/far/free-roam around the active anchor.
 - The Operator suppresses primary weapon fire while the guard-order chord is held.
 

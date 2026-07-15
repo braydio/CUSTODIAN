@@ -287,7 +287,7 @@ func _spawn_enemy(enemy_type: String, difficulty: float) -> bool:
 		enemy.apply_difficulty_modifiers(difficulty, difficulty)
 	return true
 
-func debug_spawn_enemy_type(enemy_type: String = "drone", spawn_position: Vector2 = Vector2.ZERO, difficulty: float = 1.0, behavior_profile: StringName = &"") -> bool:
+func debug_spawn_enemy_type(enemy_type: String = "drone", spawn_position: Vector2 = Vector2.ZERO, difficulty: float = 1.0, behavior_profile: StringName = &"", debug_mode: StringName = &"normal") -> bool:
 	var parent = get_node_or_null(enemy_container_path)
 	if parent == null:
 		push_warning("[WaveManager] Enemy container missing at %s" % String(enemy_container_path))
@@ -315,7 +315,24 @@ func debug_spawn_enemy_type(enemy_type: String = "drone", spawn_position: Vector
 			enemy.call("apply_variant", variant_profile)
 	elif enemy.has_method("apply_difficulty_modifiers"):
 		enemy.apply_difficulty_modifiers(difficulty, difficulty)
-	print("[WaveManager] Debug spawned %s at %s" % [normalized_type, spawn_position])
+	var normalized_mode := StringName(String(debug_mode).strip_edges().to_lower())
+	if normalized_mode.is_empty():
+		normalized_mode = &"normal"
+	if normalized_mode != &"normal":
+		if not enemy.has_method("debug_apply_spawn_mode"):
+			parent.remove_child(enemy)
+			enemy.free()
+			push_warning("[WaveManager] Debug mode %s is unsupported by enemy type %s" % [String(normalized_mode), normalized_type])
+			return false
+		var attacker := get_node_or_null(operator_path) as Node2D
+		if attacker == null:
+			attacker = get_tree().get_first_node_in_group("player") as Node2D
+		if not bool(enemy.call("debug_apply_spawn_mode", normalized_mode, attacker)):
+			parent.remove_child(enemy)
+			enemy.free()
+			push_warning("[WaveManager] Failed to apply debug mode %s to %s" % [String(normalized_mode), normalized_type])
+			return false
+	print("[WaveManager] Debug spawned %s mode=%s at %s" % [normalized_type, String(normalized_mode), spawn_position])
 	return true
 
 func set_external_wave_plan(composition: Array[String], lane: String = "", objective: String = "", behavior_profile: StringName = &"") -> void:

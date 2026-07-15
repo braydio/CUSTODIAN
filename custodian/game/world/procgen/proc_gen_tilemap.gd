@@ -476,6 +476,7 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export var ruin_prop_jitter_amplitude: Vector2 = Vector2(5, 3)
 @export var ruin_prop_variant_intensity: ProceduralProp.VariantIntensity = ProceduralProp.VariantIntensity.SUBTLE
 @export var ruin_prop_debug_logging: bool = false
+@export var ruin_prop_force_collision_debug: bool = false
 @export_group("Runtime Prop Walkability", "runtime_blocker")
 @export_range(0, 8, 1) var runtime_blocker_route_clearance_tiles: int = 3
 @export_range(1, 4, 1) var runtime_blocker_min_escape_neighbors: int = 2
@@ -3581,11 +3582,40 @@ func _register_foliage_runtime_blocker(foliage_node: Node) -> void:
 func _register_runtime_prop_node(owner: Node, kind: StringName) -> void:
 	if owner == null or not is_instance_valid(owner):
 		return
-	var cells := _collision_cells_for_node(owner)
+	var cells: Array[Vector2i] = []
+	if owner is ProceduralProp and (owner as ProceduralProp).definition != null \
+			and (owner as ProceduralProp).definition.collision_scene == null:
+		var collision_rect := (owner as ProceduralProp).get_collision_rect_global()
+		if collision_rect.size.x > 0.0 and collision_rect.size.y > 0.0:
+			cells = _collision_cells_for_global_rect(collision_rect)
+	if cells.is_empty():
+		cells = _collision_cells_for_node(owner)
 	if cells.is_empty():
 		return
 	var source_tile := _global_to_tile((owner as Node2D).global_position) if owner is Node2D else cells[0]
 	_register_runtime_prop_blocker_cells(str(owner.get_instance_id()), cells, owner, kind, source_tile)
+
+
+func _collision_cells_for_global_rect(collision_rect: Rect2) -> Array[Vector2i]:
+	if collision_rect.size.x <= 0.0 or collision_rect.size.y <= 0.0:
+		return []
+	var corner_tiles: Array[Vector2i] = [
+		_global_to_tile(collision_rect.position),
+		_global_to_tile(Vector2(collision_rect.end.x, collision_rect.position.y)),
+		_global_to_tile(collision_rect.end),
+		_global_to_tile(Vector2(collision_rect.position.x, collision_rect.end.y)),
+	]
+	var min_tile := corner_tiles[0]
+	var max_tile := corner_tiles[0]
+	for corner_tile in corner_tiles:
+		min_tile = Vector2i(mini(min_tile.x, corner_tile.x), mini(min_tile.y, corner_tile.y))
+		max_tile = Vector2i(maxi(max_tile.x, corner_tile.x), maxi(max_tile.y, corner_tile.y))
+	var cells: Array[Vector2i] = []
+	for y in range(min_tile.y, max_tile.y + 1):
+		for x in range(min_tile.x, max_tile.x + 1):
+			cells.append(Vector2i(x, y))
+	_sort_tiles(cells)
+	return cells
 
 
 func _register_runtime_prop_blocker_cells(
@@ -4929,16 +4959,99 @@ func _generate_ruin_props(map_size: Vector2i) -> void:
 	_ruin_prop_scatterer.min_distance_tiles = ruin_prop_min_distance_tiles
 	_ruin_prop_scatterer.seed = _tile_noise_hash(Vector2i(97, 211))
 	_ruin_prop_scatterer.variant_intensity = ruin_prop_variant_intensity
+	_ruin_prop_scatterer.force_collision_debug = ruin_prop_force_collision_debug
 	_ruin_prop_parent.add_child(_ruin_prop_scatterer)
 
 	var spawned := _ruin_prop_scatterer.scatter_on_tiles(candidate_tiles, Callable(self, "_ruin_prop_tile_to_world"))
 	_configure_portal_pair(candidate_tiles, spawned, map_size)
+	_obs_gauge(&"procgen_scattered_prop_count", spawned.size())
 	for prop in spawned:
 		if prop != null and is_instance_valid(prop) and not prop.is_queued_for_deletion():
 			_register_runtime_prop_node(prop, &"ruin_prop")
+			_enforce_ruin_prop_blocker_clearance(prop)
+			_observe_ruin_prop_collision(prop)
 	validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
 	if ruin_prop_debug_logging:
 		print("[RuinProps] Placed %d props under %s" % [spawned.size(), _ruin_prop_parent.get_path()])
+
+
+func _observe_ruin_prop_collision(prop: ProceduralProp) -> void:
+	var report := prop.get_collision_alignment_report()
+	if not bool(report.get("has_collision", false)):
+		return
+	report["source_tile"] = _get_prop_source_tile(prop)
+	var alignment_anomaly := bool(report.get("likely_below_anchor", false)) \
+		or bool(report.get("collision_outside_visual_bounds", false)) \
+		or bool(report.get("suspicious_positive_y", false)) \
+		or bool(report.get("missing_base_texture", false))
+	if ruin_prop_force_collision_debug or alignment_anomaly:
+		_obs_log(&"prop_collision_alignment_warning", report)
+	if alignment_anomaly:
+		var message := "[PropCollisionAlignment] definition=%s bottom_y=%.2f outside_visual=%s" % [
+			report.get("definition_id", "unknown"),
+			float(report.get("collision_bottom_y", 0.0)),
+			str(report.get("collision_outside_visual_bounds", false)),
+		]
+		push_warning(message)
+		_obs_increment(&"prop_collision_alignment_warnings")
+		_obs_warning(message, report)
+
+
+
+func _enforce_ruin_prop_blocker_clearance(prop: ProceduralProp) -> bool:
+	# Portal side blockers are deliberately authored around the portal's own
+	# approach lane, whose connector terminates at the portal footprint.
+	if _is_portal_prop(prop):
+		return false
+	var owner_id := str(prop.get_instance_id())
+	var source: Dictionary = _runtime_prop_blocker_sources.get(owner_id, {})
+	var protected_cell: Variant = null
+	for cell_variant in source.get("cells", []):
+		var cell := cell_variant as Vector2i
+		if _is_protected_ruin_prop_blocker_cell(cell):
+			protected_cell = cell
+			break
+	if protected_cell == null:
+		return false
+
+	var report := prop.get_collision_alignment_report()
+	report["source_tile"] = _get_prop_source_tile(prop)
+	report["blocker_cell"] = protected_cell
+	report["anomaly"] = "protected_clear_zone_overlap"
+	report["collision_disabled"] = true
+	var message := "[PropCollisionAlignment] disabled runtime footprint overlapping protected clear zone definition=%s cell=%s" % [
+		report.get("definition_id", "unknown"),
+		protected_cell,
+	]
+	push_warning(message)
+	_disable_collision_shapes(prop)
+	_unregister_runtime_prop_blocker_id(owner_id)
+	_obs_log(&"prop_collision_alignment_warning", report)
+	_obs_increment(&"prop_collision_alignment_warnings")
+	_obs_increment(&"procgen_runtime_blockers_cleared_for_protected_zones")
+	_obs_warning(message, report)
+	return true
+
+
+func _is_protected_ruin_prop_blocker_cell(cell: Vector2i) -> bool:
+	if _is_inside_required_route_clearance(cell, 0) or _is_inside_ruin_prop_clearance(cell):
+		return true
+	var protected_anchors: Array[Vector2i] = []
+	for ingress in _last_compound_ingress:
+		if ingress is Vector2i:
+			protected_anchors.append(ingress)
+	for site in _faction_activity_sites:
+		var faction_cell: Variant = site.get("cell", Vector2i.ZERO)
+		if faction_cell is Vector2i:
+			protected_anchors.append(faction_cell)
+	for site in _story_room_sites:
+		var story_cell: Variant = site.get("cell", Vector2i.ZERO)
+		if story_cell is Vector2i:
+			protected_anchors.append(story_cell)
+	for anchor in protected_anchors:
+		if cell.distance_to(anchor) <= float(combat_readability_prop_clearance_tiles):
+			return true
+	return false
 
 
 func _clear_ruin_props() -> void:
@@ -5558,6 +5671,7 @@ func _spawn_guaranteed_ruin_prop(definition: PropDefinition, tile: Vector2i) -> 
 	prop.variant_intensity = ruin_prop_variant_intensity
 	prop.variant_seed = PropVariantGenerator.seed_from_world_cell(definition.id, tile, _ruin_prop_scatterer.seed)
 	prop.generate_on_ready = false
+	prop.force_collision_debug = ruin_prop_force_collision_debug
 	_ruin_prop_scatterer.add_child(prop)
 	prop.global_position = _portal_tile_to_world(tile)
 	prop.set_meta("source_tile", tile)

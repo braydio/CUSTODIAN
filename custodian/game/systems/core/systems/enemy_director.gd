@@ -165,9 +165,9 @@ func spawn_test_enemy(spawn_position: Vector2) -> bool:
 	return spawn_debug_enemy_type("drone", spawn_position)
 
 
-func spawn_debug_enemy_type(enemy_type: String, spawn_position: Vector2, behavior_profile: StringName = &"") -> bool:
+func spawn_debug_enemy_type(enemy_type: String, spawn_position: Vector2, behavior_profile: StringName = &"", debug_mode: StringName = &"normal") -> bool:
 	if wave_manager != null and wave_manager.has_method("debug_spawn_enemy_type"):
-		return bool(wave_manager.call("debug_spawn_enemy_type", enemy_type, spawn_position, 1.0, behavior_profile))
+		return bool(wave_manager.call("debug_spawn_enemy_type", enemy_type, spawn_position, 1.0, behavior_profile, debug_mode))
 	if enemy_factory != null and enemy_factory.has_method("get_scene_for_type"):
 		var scene_variant: Variant = enemy_factory.call("get_scene_for_type", enemy_type)
 		if scene_variant is PackedScene:
@@ -180,6 +180,12 @@ func spawn_debug_enemy_type(enemy_type: String, spawn_position: Vector2, behavio
 			if behavior_profile != &"" and enemy.has_method("set_behavior_profile"):
 				enemy.call("set_behavior_profile", behavior_profile)
 			parent.add_child(enemy)
+			if debug_mode != &"normal":
+				var attacker := get_tree().get_first_node_in_group("player") as Node2D
+				if not enemy.has_method("debug_apply_spawn_mode") or not bool(enemy.call("debug_apply_spawn_mode", debug_mode, attacker)):
+					parent.remove_child(enemy)
+					enemy.free()
+					return false
 			return true
 	return false
 

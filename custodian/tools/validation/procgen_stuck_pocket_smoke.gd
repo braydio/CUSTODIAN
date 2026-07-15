@@ -1,6 +1,9 @@
 extends SceneTree
 
 const FOLIAGE_SPAWNER_SCRIPT := preload("res://game/world/procgen/foliage/procgen_foliage_spawner.gd")
+const PROP_SCENE := preload("res://content/props/ruins/scenes/ProceduralProp.tscn")
+const SLAB_DEFINITION := preload("res://content/props/ruins/data/prop_definitions/slab_01.tres")
+const PORTAL_DEFINITION := preload("res://content/props/ruins/data/prop_definitions/portal_ring_01.tres")
 
 
 func _init() -> void:
@@ -8,12 +11,20 @@ func _init() -> void:
 
 
 func _run() -> void:
+	var observatory := root.get_node_or_null("DevObservatory")
+	if observatory != null and observatory.has_method("clear"):
+		observatory.call("clear")
 	var tilemap := ProcGenTilemap.new()
 	tilemap.generation_output_enabled = false
 	var procgen := ProcGen.new()
 	procgen.map_size = Vector2i(64, 64)
 	tilemap.procgen_node = procgen
 	tilemap.add_child(procgen)
+	var floor_layer := TileMapLayer.new()
+	floor_layer.tile_set = TileSet.new()
+	floor_layer.tile_set.tile_size = Vector2i(16, 16)
+	tilemap.floor_tilemap = floor_layer
+	tilemap.add_child(floor_layer)
 	root.add_child(tilemap)
 
 	var floors: Dictionary = {}
@@ -64,6 +75,61 @@ func _run() -> void:
 	assert(tilemap.has_runtime_prop_blocker_at_tile(Vector2i(4, 4)))
 	tilemap.unregister_runtime_prop_blocker(unregister_owner)
 	assert(not tilemap.has_runtime_prop_blocker_at_tile(Vector2i(4, 4)))
+
+	var slab := PROP_SCENE.instantiate() as ProceduralProp
+	slab.definition = SLAB_DEFINITION
+	slab.generate_on_ready = false
+	tilemap.add_child(slab)
+	slab.global_position = floor_layer.to_global(floor_layer.map_to_local(Vector2i(20, 20)))
+	slab.generate_variant()
+	tilemap.call("_register_runtime_prop_node", slab, &"ruin_prop")
+	var slab_rect := slab.get_collision_rect_global()
+	var expected_cells: Array = tilemap.call("_collision_cells_for_global_rect", slab_rect)
+	var blocker_sources: Dictionary = tilemap.get("_runtime_prop_blocker_sources")
+	var slab_source: Dictionary = blocker_sources.get(str(slab.get_instance_id()), {})
+	assert(not expected_cells.is_empty(), "Corrected slab collision must occupy runtime blocker cells")
+	assert(slab_source.get("cells", []) == expected_cells, "Runtime blocker authority must use corrected global collision rect")
+	assert(is_equal_approx(slab.get_collision_rect_root_local().end.y, 0.0), "Slab collision must end at its contact anchor")
+	tilemap.ruin_prop_force_collision_debug = true
+	tilemap.call("_observe_ruin_prop_collision", slab)
+	if observatory != null:
+		assert(not observatory.call("get_recent_events", 10, &"prop_collision_alignment_warning").is_empty())
+		assert(int(observatory.get("gauges").get("procgen_runtime_prop_blocker_cells", 0)) > 0)
+
+		var bad_definition := SLAB_DEFINITION.duplicate(true) as PropDefinition
+		bad_definition.id = &"smoke_misaligned_slab"
+		bad_definition.collision_shape_offset = Vector2(0, 8)
+		var bad_prop := PROP_SCENE.instantiate() as ProceduralProp
+		bad_prop.definition = bad_definition
+		bad_prop.generate_on_ready = false
+		tilemap.add_child(bad_prop)
+		bad_prop.global_position = floor_layer.to_global(floor_layer.map_to_local(Vector2i(30, 30)))
+		bad_prop.generate_variant()
+		tilemap.call("_register_runtime_prop_node", bad_prop, &"ruin_prop")
+		tilemap.call("_observe_ruin_prop_collision", bad_prop)
+		assert(int(observatory.get("counters").get("prop_collision_alignment_warnings", 0)) >= 1)
+
+		var protected_routes: Dictionary = tilemap.get("_main_road_tiles")
+		protected_routes[expected_cells[0]] = true
+		tilemap.set("_main_road_tiles", protected_routes)
+		assert(bool(tilemap.call("_enforce_ruin_prop_blocker_clearance", slab)))
+		assert(not tilemap.has_runtime_prop_blocker_at_tile(expected_cells[0]), "Protected route cell retained ruin prop collision")
+		assert(int(observatory.get("counters").get("procgen_runtime_blockers_cleared_for_protected_zones", 0)) == 1)
+
+	var portal := PROP_SCENE.instantiate() as ProceduralProp
+	portal.definition = PORTAL_DEFINITION
+	portal.generate_on_ready = false
+	tilemap.add_child(portal)
+	portal.global_position = floor_layer.to_global(floor_layer.map_to_local(Vector2i(50, 50)))
+	portal.generate_variant()
+	tilemap.call("_register_runtime_prop_node", portal, &"ruin_prop")
+	var portal_lane_tile := floor_layer.local_to_map(floor_layer.to_local(portal.global_position + Vector2(0, -47)))
+	var portal_left_tile := floor_layer.local_to_map(floor_layer.to_local(portal.global_position + Vector2(-53.5, -47)))
+	var portal_right_tile := floor_layer.local_to_map(floor_layer.to_local(portal.global_position + Vector2(49.5, -47)))
+	assert(not tilemap.has_runtime_prop_blocker_at_tile(portal_lane_tile), "Portal multi-shape blocker union filled its center lane")
+	assert(tilemap.has_runtime_prop_blocker_at_tile(portal_left_tile))
+	assert(tilemap.has_runtime_prop_blocker_at_tile(portal_right_tile))
+	assert(not bool(tilemap.call("_enforce_ruin_prop_blocker_clearance", portal)), "Portal authored side blockers must be clearance-exempt")
 
 	print("[ProcgenStuckPocketSmoke] ok detected=%d remediated=%d escape_neighbors=%d" % [
 		(detected.get("flagged", []) as Array).size(),

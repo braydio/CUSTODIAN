@@ -9,6 +9,7 @@ const PROCEDURAL_PROP_SCENE := preload("res://content/props/ruins/scenes/Procedu
 @export var min_distance_tiles: int = 4
 @export var seed: int = 12345
 @export var variant_intensity: ProceduralProp.VariantIntensity = ProceduralProp.VariantIntensity.SUBTLE
+@export var force_collision_debug: bool = false
 
 var _rng := RandomNumberGenerator.new()
 
@@ -48,8 +49,10 @@ func scatter_on_tiles(tiles: Array[Vector2i], tile_to_position: Callable, blocke
 		prop.variant_intensity = variant_intensity
 		prop.variant_seed = PropVariantGenerator.seed_from_world_cell(definition.id, tile, seed)
 		prop.generate_on_ready = false
+		prop.force_collision_debug = force_collision_debug
 		add_child(prop)
 		prop.global_position = tile_to_position.call(tile)
+		prop.set_meta("source_tile", tile)
 		prop.generate_variant()
 
 		placed_tiles.append(tile)

@@ -2,18 +2,18 @@
 
 - Status: `complete`
 - Authority: `design/02_features/combat_feel/PARRY_CRITICAL_BRANCHING_AND_VFX.md`; supporting umbrella `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md`
-- Goal: Harden failed/successful parry branching, explicit enemy-owned critical validation/consumption, independent success VFX, and the fast parry-critical attack animation.
+- Goal: Replace frozen-stagger critical-open presentation with explicit enter/hold/recover phases and migrate the follow-up into a reserved, synchronized paired execution.
 - Files: `custodian/game/actors/operator/operator.gd`; `custodian/game/actors/enemies/enemy.gd`; focused validation under `custodian/tools/validation/`; AI/design docs.
-- Constraints: Every guard entry goes through `block_enter`; successful parry requires block release/repress; enemy owns the critical-open timer; `critical_attack_01` only starts after a valid vulnerable target is found.
-- Acceptance: Failed parry finishes the original `parry_01` read with no miss VFX; held-block failure re-enters `block_enter`; released-block failure returns neutral; enemy validates and consumes parry critical through explicit methods; BREACH/ring cleanup is preserved; critical branch plays the repurposed 8-frame fast critical body sheet; focused Godot smokes pass.
-- Completed: Added design authority doc; removed the parry-miss VFX branch; added enemy `can_receive_parry_critical_from()` / `receive_parry_critical()`; added Operator contextual critical target search and explicit critical branch; mapped the previously misnamed 8-frame `parry_miss` body sheets as `operator_critical_1h_right/left`; refreshed focused smokes.
-- Deferred: Rename the misnamed `operator__body__unarmed__parry_miss_01__{e,w}__8f__96.png` files through the asset pipeline when it is safe to update import metadata and references.
+- Constraints: Every guard entry goes through `block_enter`; enemy owns opportunity/reservation/damage authority; Operator owns the shared eight-frame timeline; damage occurs once at frame 3; the authored south pair is not mirrored; grunt asset filenames use `melee__`.
+- Acceptance: Enter advances to looping hold; expiry advances through recover; reservation is atomic; semantic Operator body/FX and enemy victim clips share an 8-frame 12-FPS clock; frame-3 damage is exactly once; lethal/nonlethal/cancel cleanup is safe; focused Godot smokes pass.
+- Completed: Added authored grunt enter/hold/recover registrations and phases; tokenized reservation plus begin/damage/finish/cancel callbacks; scene-owned execution anchor; fixed south alignment; semantic Operator body/FX and enemy victim playback; shared fixed-step frame clock with frame-3 one-shot damage; lethal, nonlethal, and interruption cleanup; required-asset failures; focused smoke coverage; root-spec redirect and context drift cleanup.
+- Deferred: Directional paired executions remain unauthored. The requested combined 128px Aseprite master is not present at its canonical source-only path and is not used by runtime playback.
 
 ## Drift Review
 
 - Primary authority: Added `design/02_features/combat_feel/PARRY_CRITICAL_BRANCHING_AND_VFX.md`.
-- `CURRENT_STATE.md`: Must mention the explicit parry branching and enemy-owned critical consumption.
-- `FILE_INDEX.md`: Must index this packet and the new design doc.
+- `CURRENT_STATE.md`: Updated for explicit open phases and paired ownership.
+- `FILE_INDEX.md`: Updated for the active runtime/API/test contract.
 - Local routing/readmes: No routing change required.
 
 ## Validation

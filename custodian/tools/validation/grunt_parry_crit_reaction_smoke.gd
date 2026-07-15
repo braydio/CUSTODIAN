@@ -3,11 +3,24 @@ extends SceneTree
 const GRUNT_SCENE := preload("res://game/actors/enemies/enemy_grunt.tscn")
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const PARRY_CONTACT_SPARK_SCENE := preload("res://game/vfx/combat/parry_contact_spark_vfx.tscn")
-const REQUIRED_VFX_ASSETS := [
+const REQUIRED_ASSETS := [
 	"res://content/sprites/effects/combat/critical/combat_fx__parry_success_hit_spark_01__6f__128.png",
 	"res://content/sprites/effects/combat/critical/combat_fx__breach_alert__8f__96-48.png",
 	"res://content/sprites/effects/combat/critical/combat_fx__breach_timer_reticle__12f__128.png",
+	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_open_enter_01__s__5f__96.png",
+	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_open_hold_01__s__4f__96.png",
+	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_recover_01__s__5f__96.png",
+	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__s__8f__96.png",
+	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png",
+	"res://content/sprites/operator/runtime/fx/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
 ]
+
+const PHASE_NONE := 0
+const PHASE_ENTER := 1
+const PHASE_HOLD := 2
+const PHASE_RECOVER := 3
+const PHASE_EXECUTING := 4
+const DAMAGE_TIME := 3.0 / 12.0
 
 var _failed := false
 
@@ -17,116 +30,150 @@ func _init() -> void:
 
 
 func _run() -> void:
-	for asset_path in REQUIRED_VFX_ASSETS:
-		_assert_true(ResourceLoader.exists(asset_path), "[CombatVfx] Required asset missing: %s" % asset_path)
+	for asset_path in REQUIRED_ASSETS:
+		_assert_true(ResourceLoader.exists(asset_path), "Required asset missing: %s" % asset_path)
+
 	var root := Node2D.new()
 	root.name = "GruntParryCritReactionSmokeRoot"
 	get_root().add_child(root)
 	current_scene = root
 
-	var grunt := GRUNT_SCENE.instantiate()
-	root.add_child(grunt)
-	await process_frame
-
-	var body_sprite := grunt.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
-	var fx_sprite := grunt.get_node_or_null("CustomEnemyFxSprite") as AnimatedSprite2D
 	var contact_spark := PARRY_CONTACT_SPARK_SCENE.instantiate()
 	root.add_child(contact_spark)
 	var contact_sprite := contact_spark.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
-	_assert_true(contact_sprite != null and contact_sprite.sprite_frames.get_frame_count("contact") == 6, "parry contact spark should use the required 6-frame strip")
+	_assert_true(contact_sprite != null and contact_sprite.sprite_frames.get_frame_count("contact") == 6, "parry contact spark should use six frames")
 	await create_timer(0.35).timeout
-	_assert_true(not is_instance_valid(contact_spark), "parry contact spark should auto-free after its non-looping animation")
+	_assert_true(not is_instance_valid(contact_spark), "parry contact spark should auto-free")
 
 	var operator := OPERATOR_SCENE.instantiate()
 	root.add_child(operator)
+	var grunt := GRUNT_SCENE.instantiate()
+	grunt.global_position = Vector2(40.0, 0.0)
+	root.add_child(grunt)
 	await process_frame
-	var success_burst: Node2D = operator.call("_spawn_parry_success_fx", Vector2(64.0, 48.0)) as Node2D
-	_assert_true(success_burst != null and success_burst.is_in_group("parry_success_world_vfx"), "parry success should spawn an independently owned world-space burst")
-	var success_sprite := success_burst.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
-	_assert_true(success_sprite != null and success_sprite.sprite_frames.get_frame_count("contact") == 6, "parry success burst should reuse the validated 6-frame strip")
-	operator.call("_enter_post_parry_neutral_lock")
-	await process_frame
-	_assert_true(is_instance_valid(success_burst) and success_burst.is_inside_tree(), "parry success burst should survive the post-parry neutral-lock transition")
 
+	var body_sprite := grunt.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	var fx_sprite := grunt.get_node("CustomEnemyFxSprite") as AnimatedSprite2D
 	fx_sprite.visible = true
 	fx_sprite.play("flinch_fx_s")
-	grunt.call("apply_parry_stagger", Vector2.RIGHT, 0.55, 44.0)
-	await process_frame
-	_assert_true(float(grunt.get("_stagger_timer")) > 0.0, "parried grunt should enter stagger timer first")
-	_assert_true(float(grunt.get("_parry_critical_window_timer")) > 0.0, "parried grunt should open a critical-hit window")
-	_assert_true(is_equal_approx(float(grunt.get("_crit_timer")), 0.0), "parry alone should not start crit_01")
-	_assert_true(body_sprite != null and String(body_sprite.animation) == "stagger_e", "right-parried grunt should play stagger_e before critical hit")
-	_assert_true(fx_sprite == null or not fx_sprite.visible, "parry stagger should clear standard flinch FX and wait for the special critical FX")
-	var breach_marker := grunt.get("_critical_breach_marker_vfx") as Node2D
-	var countdown_ring := grunt.get("_critical_window_ring_vfx") as Node2D
-	_assert_true(breach_marker != null and is_instance_valid(breach_marker), "critical-open should attach the BREACH marker")
-	_assert_true(countdown_ring != null and is_instance_valid(countdown_ring), "critical-open should attach the countdown ring")
-	_assert_true(countdown_ring.position == Vector2.ZERO, "countdown ring should encircle the grunt at the feet")
-	var breach_sprite := breach_marker.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
-	var ring_sprite := countdown_ring.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
-	var near_ring_sprite := countdown_ring.get_node_or_null("NearAnimatedSprite2D") as AnimatedSprite2D
-	_assert_true(breach_sprite != null and breach_sprite.sprite_frames.get_frame_count("breach") == 8, "BREACH marker should use the required 8-frame strip")
-	_assert_true(ring_sprite != null and ring_sprite.sprite_frames.get_frame_count("countdown") == 12, "countdown ring should use the required 12-frame strip")
-	_assert_true(near_ring_sprite != null and near_ring_sprite.sprite_frames == ring_sprite.sprite_frames, "countdown ring should split the same frames into near/far depth layers")
-	_assert_true(ring_sprite.z_index < body_sprite.z_index, "countdown ring far side should render behind the grunt body")
-	_assert_true(near_ring_sprite.z_index > body_sprite.z_index, "countdown ring near side should render in front of the grunt body")
+	grunt.call("apply_parry_stagger", Vector2.RIGHT, 0.55, 0.0)
+	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_ENTER, "parry should enter critical-open enter")
+	_assert_true(String(body_sprite.animation) == "critical_open_enter_s", "enter should play critical_open_enter_s")
+	_assert_animation(body_sprite.sprite_frames, "critical_open_enter_s", 5, 12.0, false)
+	_assert_true(float(grunt.get("_parry_critical_window_timer")) > 0.0, "parry should open enemy-owned opportunity time")
+	_assert_true(not fx_sprite.visible, "opening should clear ordinary flinch FX")
+	var marker := grunt.get("_critical_breach_marker_vfx") as Node2D
+	var ring := grunt.get("_critical_window_ring_vfx") as Node2D
+	_assert_true(marker != null and is_instance_valid(marker), "BREACH marker should persist during enter")
+	_assert_true(ring != null and is_instance_valid(ring), "countdown ring should persist during enter")
 
-	grunt.call("_update_reaction_timers", 0.56)
-	var stagger_frames := body_sprite.sprite_frames if body_sprite != null else null
-	var last_stagger_frame := stagger_frames.get_frame_count("stagger_e") - 1 if stagger_frames != null and stagger_frames.has_animation("stagger_e") else -1
-	_assert_true(is_equal_approx(float(grunt.get("_stagger_timer")), 0.0), "stagger timer should clear before the critical window ends")
-	_assert_true(float(grunt.get("_parry_critical_window_timer")) > 0.0, "critical window should remain briefly after stagger animation time")
-	_assert_true(body_sprite != null and String(body_sprite.animation) == "stagger_e" and body_sprite.frame == last_stagger_frame, "critical window placeholder should freeze the last directional stagger frame")
-	_assert_true(bool(grunt.call("can_receive_parry_critical_from", operator)), "enemy should validate parry criticals while the critical-open window is active")
+	var enter_duration := body_sprite.sprite_frames.get_frame_count("critical_open_enter_s") / body_sprite.sprite_frames.get_animation_speed("critical_open_enter_s")
+	grunt.call("_update_reaction_timers", enter_duration + 0.001)
+	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_HOLD, "enter completion should transition to hold")
+	_assert_true(String(body_sprite.animation) == "critical_open_hold_s", "hold should play critical_open_hold_s")
+	_assert_animation(body_sprite.sprite_frames, "critical_open_hold_s", 4, 6.0, true)
+	_assert_true(is_instance_valid(marker) and is_instance_valid(ring), "indicators should persist through hold")
+	_assert_true(bool(grunt.call("can_receive_parry_critical_from", operator)), "enter/hold opportunity should validate its nearby attacker")
+
 	operator.call("_start_critical_attack", grunt)
-	var operator_sprite := operator.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
-	var operator_critical_fx_sprite := operator.get_node_or_null("ModularUpperFxSprite") as AnimatedSprite2D
-	_assert_true(operator_sprite != null and String(operator_sprite.animation) == "operator_critical_1h_right", "critical branch should play the repurposed 8-frame fast critical body animation")
-	_assert_true(operator_sprite != null and operator_sprite.sprite_frames.get_frame_count("operator_critical_1h_right") == 8, "critical body animation should expose 8 frames")
-	_assert_true(operator_critical_fx_sprite != null and operator_critical_fx_sprite.visible and String(operator_critical_fx_sprite.animation) == "operator_critical_hitspark_right", "critical branch should play the authored operator hitspark FX")
-	_assert_true(operator_critical_fx_sprite != null and operator_critical_fx_sprite.sprite_frames.get_frame_count("operator_critical_hitspark_right") == 8, "critical hitspark FX should expose 8 frames")
+	var operator_body := operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	var operator_fx := operator.get_node("ModularUpperFxSprite") as AnimatedSprite2D
+	_assert_true(bool(operator.get("_paired_execution_active")), "valid input should start paired execution")
+	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_EXECUTING, "reservation should atomically enter executing")
+	_assert_true(String(operator_body.animation) == "operator_critical_execution_s", "Operator should use semantic execution body")
+	_assert_true(String(operator_fx.animation) == "operator_critical_execution_fx_s", "Operator should use semantic execution FX")
+	_assert_true(String(body_sprite.animation) == "critical_execution_victim_s", "enemy victim should start on the reservation tick")
+	_assert_animation(operator_body.sprite_frames, "operator_critical_execution_s", 8, 12.0, false)
+	_assert_animation(operator_fx.sprite_frames, "operator_critical_execution_fx_s", 8, 12.0, false)
+	_assert_animation(body_sprite.sprite_frames, "critical_execution_victim_s", 8, 12.0, false)
+	_assert_true(grunt.get("_critical_breach_marker_vfx") == null and grunt.get("_critical_window_ring_vfx") == null, "reservation should clear both indicators")
+	_assert_true((grunt.call("reserve_parry_critical", operator) as Dictionary).is_empty(), "a second reservation should be rejected")
 
-	var critical_result: Dictionary = grunt.call("receive_parry_critical", operator, 12.0, {})
-	await process_frame
-	_assert_true(bool(critical_result.get("critical", false)), "explicit parry critical should report critical=true")
-	_assert_true(bool(critical_result.get("consumed", false)), "explicit parry critical should consume the window")
-	_assert_true(is_equal_approx(float(grunt.get("_parry_critical_window_timer")), 0.0), "follow-up hit should consume the critical window")
-	_assert_true(float(grunt.get("_crit_timer")) > 0.0, "follow-up hit during stagger should start crit_01")
-	_assert_true(body_sprite != null and String(body_sprite.animation) == "crit_s", "follow-up hit should play crit_s body animation")
-	_assert_true(fx_sprite != null and fx_sprite.visible and String(fx_sprite.animation) == "crit_fx_s", "follow-up hit should play crit_fx_s overlay")
-	_assert_true(grunt.get("_critical_breach_marker_vfx") == null, "critical hit should clear BREACH marker ownership")
-	_assert_true(grunt.get("_critical_window_ring_vfx") == null, "critical hit should clear countdown ring ownership")
-	_assert_true(not is_instance_valid(breach_marker), "consumed BREACH marker should be freed")
-	_assert_true(not is_instance_valid(countdown_ring), "consumed countdown ring should be freed")
-	var visual := grunt.get_node_or_null("Visual") as ColorRect
-	_assert_true(visual == null or visual.modulate != Color.WHITE, "critical follow-up should not apply the standard white body hit flash")
-
-	grunt.call("_update_reaction_timers", float(grunt.get("crit_hit_duration")) + 0.01)
-	_assert_true(is_equal_approx(float(grunt.get("_crit_timer")), 0.0), "crit timer should clear after crit hit duration")
-	_assert_true(float(grunt.get("_crit_recovery_timer")) > 0.0, "crit_01 should enter crit recovery")
-	_assert_true(body_sprite != null and String(body_sprite.animation) == "crit_recovery_s", "crit recovery should play crit_recovery_s")
+	grunt.health = 999.0
+	grunt.max_health = 999.0
+	var health_before := float(grunt.health)
+	operator.call("_update_paired_execution", DAMAGE_TIME - 0.01)
+	_assert_true(is_equal_approx(float(grunt.health), health_before), "damage must remain zero before frame 3")
+	_assert_true(operator_body.frame == operator_fx.frame and operator_body.frame == body_sprite.frame, "body, FX, and victim should share one frame index")
+	operator.call("_update_paired_execution", 0.02)
+	var health_after_impact := float(grunt.health)
+	_assert_true(health_after_impact < health_before, "crossing frame 3 should apply damage")
+	operator.call("_update_paired_execution", 0.02)
+	_assert_true(is_equal_approx(float(grunt.health), health_after_impact), "damage should apply exactly once")
+	_assert_true(operator_body.frame == operator_fx.frame and operator_body.frame == body_sprite.frame, "all paired sprites should remain synchronized after impact")
+	operator.call("_update_paired_execution", 1.0)
+	_assert_true(not bool(operator.get("_paired_execution_active")), "normal completion should unlock Operator")
+	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_NONE, "normal completion should release enemy execution ownership")
+	_assert_true(float(grunt.get("_crit_recovery_timer")) > 0.0, "nonlethal completion should enter crit recovery")
+	_assert_true(String(body_sprite.animation) == "crit_recovery_s", "nonlethal completion should play crit_recovery_s")
+	_assert_true(not operator_fx.visible, "cleanup should hide execution FX")
 
 	var expiry_grunt := GRUNT_SCENE.instantiate()
+	expiry_grunt.global_position = Vector2(120.0, 0.0)
 	root.add_child(expiry_grunt)
 	await process_frame
+	var expiry_body := expiry_grunt.get_node("AnimatedSprite2D") as AnimatedSprite2D
 	expiry_grunt.call("apply_parry_stagger", Vector2.LEFT, 0.55, 0.0)
 	var expiry_marker := expiry_grunt.get("_critical_breach_marker_vfx") as Node2D
 	var expiry_ring := expiry_grunt.get("_critical_window_ring_vfx") as Node2D
 	var expiry_duration := float(expiry_grunt.get("_parry_critical_window_timer"))
 	expiry_grunt.call("_update_reaction_timers", expiry_duration + 0.01)
 	await process_frame
-	_assert_true(is_equal_approx(float(expiry_grunt.get("_parry_critical_window_timer")), 0.0), "unconsumed critical window should expire")
-	_assert_true(expiry_grunt.get("_critical_breach_marker_vfx") == null, "expired critical window should clear BREACH marker ownership")
-	_assert_true(expiry_grunt.get("_critical_window_ring_vfx") == null, "expired critical window should clear countdown ring ownership")
-	_assert_true(not is_instance_valid(expiry_marker), "expired BREACH marker should be freed")
-	_assert_true(not is_instance_valid(expiry_ring), "expired countdown ring should be freed")
+	_assert_true(int(expiry_grunt.get("_parry_critical_phase")) == PHASE_RECOVER, "unused expiry should enter recover")
+	_assert_true(String(expiry_body.animation) == "critical_open_recover_s", "expiry should play critical_open_recover_s")
+	_assert_animation(expiry_body.sprite_frames, "critical_open_recover_s", 5, 10.0, false)
+	_assert_true(not is_instance_valid(expiry_marker) and not is_instance_valid(expiry_ring), "expiry should free both indicators")
+	var recover_duration := expiry_body.sprite_frames.get_frame_count("critical_open_recover_s") / expiry_body.sprite_frames.get_animation_speed("critical_open_recover_s")
+	expiry_grunt.call("_update_reaction_timers", recover_duration + 0.01)
+	_assert_true(int(expiry_grunt.get("_parry_critical_phase")) == PHASE_NONE, "recover completion should return to normal behavior")
+
+	var cancel_operator := OPERATOR_SCENE.instantiate()
+	cancel_operator.global_position = Vector2(220.0, 0.0)
+	root.add_child(cancel_operator)
+	var cancel_grunt := GRUNT_SCENE.instantiate()
+	cancel_grunt.global_position = Vector2(250.0, 0.0)
+	root.add_child(cancel_grunt)
+	await process_frame
+	cancel_grunt.call("apply_parry_stagger", Vector2.LEFT, 0.55, 0.0)
+	var original_layer: int = int(cancel_operator.collision_layer)
+	var original_mask: int = int(cancel_operator.collision_mask)
+	cancel_operator.call("_start_critical_attack", cancel_grunt)
+	cancel_operator.call("_cleanup_paired_execution", false, &"smoke_interrupt")
+	_assert_true(not bool(cancel_operator.get("_paired_execution_active")), "interruption should clear Operator execution state")
+	_assert_true(cancel_operator.collision_layer == original_layer and cancel_operator.collision_mask == original_mask, "cleanup should restore exact collision values")
+	_assert_true(int(cancel_grunt.get("_parry_critical_phase")) == PHASE_NONE and float(cancel_grunt.get("_crit_recovery_timer")) > 0.0, "interruption should release a live enemy into recovery")
+
+	var lethal_operator := OPERATOR_SCENE.instantiate()
+	lethal_operator.global_position = Vector2(340.0, 0.0)
+	root.add_child(lethal_operator)
+	var lethal_grunt := GRUNT_SCENE.instantiate()
+	lethal_grunt.global_position = Vector2(370.0, 0.0)
+	lethal_grunt.health = 1.0
+	lethal_grunt.max_health = 1.0
+	root.add_child(lethal_grunt)
+	await process_frame
+	lethal_grunt.call("apply_parry_stagger", Vector2.LEFT, 0.55, 0.0)
+	lethal_operator.call("_start_critical_attack", lethal_grunt)
+	lethal_operator.call("_update_paired_execution", DAMAGE_TIME + 0.01)
+	_assert_true(bool(lethal_grunt.dead), "lethal frame-3 damage should route to death")
+	lethal_operator.call("_update_paired_execution", 1.0)
+	_assert_true(not bool(lethal_operator.get("_paired_execution_active")), "lethal completion should still clean Operator state")
 
 	if _failed:
 		push_error("grunt_parry_crit_reaction_smoke failed")
 		quit(1)
 		return
-	print("[GruntParryCritReactionSmoke] parry stagger opens a critical window, then hit routes to crit/recovery.")
+	print("[GruntParryCritReactionSmoke] authored open phases and frame-3 paired execution passed.")
 	quit(0)
+
+
+func _assert_animation(frames: SpriteFrames, animation_name: StringName, frame_count: int, fps: float, loop: bool) -> void:
+	_assert_true(frames != null and frames.has_animation(animation_name), "%s should be registered" % animation_name)
+	if frames == null or not frames.has_animation(animation_name):
+		return
+	_assert_true(frames.get_frame_count(animation_name) == frame_count, "%s should expose %d frames" % [animation_name, frame_count])
+	_assert_true(is_equal_approx(frames.get_animation_speed(animation_name), fps), "%s should run at %.1f FPS" % [animation_name, fps])
+	_assert_true(frames.get_animation_loop(animation_name) == loop, "%s loop contract should match" % animation_name)
 
 
 func _assert_true(value: bool, message: String) -> void:

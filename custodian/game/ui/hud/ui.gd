@@ -66,6 +66,14 @@ const TERMINAL_BACKDROP_COLOR := Color(0.015, 0.025, 0.03, 0.78)
 const TERMINAL_DENSE_PANEL_MODULATE := Color(1.0, 1.0, 1.0, 0.82)
 const DEBUG_TERMINAL_STYLEBOXES := false
 const DEBUG_TERMINAL_INPUT_LAYOUT := true
+const DEBUG_GRUNT_SPAWN_MODES := [
+	&"normal",
+	&"critical_enter",
+	&"critical_hold",
+	&"critical_recover",
+	&"execution_ready",
+	&"execution_lethal",
+]
 
 const DEFAULT_TERMINAL_SERVICE_URL := "http://127.0.0.1:7331"
 const TERMINAL_LOCAL_LINK := "LOCAL://GAME_STATE"
@@ -569,15 +577,43 @@ func _devconsole_spawn_grunt(args: Array) -> String:
 	var operator = _get_operator_node()
 	if operator == null:
 		return "Operator not found"
+	var mode := &"normal"
+	var offset_arg_index := 0
+	if not args.is_empty():
+		var first_arg := str(args[0]).strip_edges().to_lower()
+		if first_arg == "modes":
+			return "Grunt modes: %s" % ", ".join(DEBUG_GRUNT_SPAWN_MODES.map(func(value): return String(value)))
+		if not first_arg.is_valid_float():
+			mode = _normalize_debug_grunt_spawn_mode(first_arg)
+			if mode.is_empty():
+				return "Unknown grunt mode '%s'. Use: spawn_grunt modes" % first_arg
+			offset_arg_index = 1
 	var enemy_mgr = get_node_or_null("/root/GameRoot/EnemyDirector")
 	if enemy_mgr != null and enemy_mgr.has_method("spawn_debug_enemy_type"):
-		var offset := Vector2(96.0, 0.0)
-		if args.size() >= 2:
-			offset = Vector2(float(args[0]), float(args[1]))
+		var offset := Vector2(96.0, 0.0) if mode == &"normal" else Vector2(48.0, 0.0)
+		if args.size() >= offset_arg_index + 2:
+			offset = Vector2(float(args[offset_arg_index]), float(args[offset_arg_index + 1]))
 		var pos = operator.global_position + offset
-		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "grunt", pos))
-		return "Spawned grunt at %s" % str(pos) if spawned else "Failed to spawn grunt"
+		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "grunt", pos, &"", mode))
+		return "Spawned grunt mode=%s at %s" % [String(mode), str(pos)] if spawned else "Failed to spawn grunt mode=%s" % String(mode)
 	return "EnemyDirector not found or spawn_debug_enemy_type not available"
+
+
+func _normalize_debug_grunt_spawn_mode(value: String) -> StringName:
+	match value:
+		"normal":
+			return &"normal"
+		"enter", "critical_enter":
+			return &"critical_enter"
+		"hold", "critical_hold":
+			return &"critical_hold"
+		"recover", "critical_recover":
+			return &"critical_recover"
+		"ready", "open", "execution_ready":
+			return &"execution_ready"
+		"lethal", "execution_lethal":
+			return &"execution_lethal"
+	return &""
 
 
 func _devconsole_spawn_savage(args: Array) -> String:

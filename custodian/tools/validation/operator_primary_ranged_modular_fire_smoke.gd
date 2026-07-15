@@ -83,6 +83,40 @@ func _init() -> void:
 	_check_layer(upper, &"ranged_2h_stance_modular_right", "stance upper", failures)
 	_check_layer(weapon, &"ranged_2h_stance_modular_right", "stance weapon", failures)
 
+	operator.set("movement_direction", Vector2.DOWN)
+	operator.set("velocity", Vector2.DOWN * 100.0)
+	var moving_lower_direction: Vector2 = operator.call(
+		"_get_ranged_lower_visual_direction",
+		Vector2.DOWN,
+		Vector2.RIGHT
+	)
+	if not moving_lower_direction.is_equal_approx(Vector2.DOWN):
+		failures.append("moving ranged lower body did not preserve readable strafe direction")
+	operator.set("velocity", Vector2.ZERO)
+	var stationary_lower_direction: Vector2 = operator.call(
+		"_get_ranged_lower_visual_direction",
+		Vector2.DOWN,
+		Vector2.RIGHT
+	)
+	if not stationary_lower_direction.is_equal_approx(Vector2.RIGHT):
+		failures.append("stationary ranged lower body retained stale movement direction")
+
+	if upper != null and weapon != null:
+		upper.play(&"ranged_2h_stance_modular_right")
+		weapon.play(&"ranged_2h_stance_modular_right")
+		for tick in range(120):
+			var upper_position: float = fmod(float(tick) * 0.37, 3.0)
+			var upper_frame: int = int(floor(upper_position))
+			var upper_progress: float = upper_position - floor(upper_position)
+			upper.set_frame_and_progress(upper_frame, upper_progress)
+			weapon.set_frame_and_progress((upper_frame + 1) % 3, 0.0)
+			operator.call("_sync_primary_ranged_weapon_frame_to_upper")
+			var upper_normalized: float = (float(upper.frame) + upper.frame_progress) / 3.0
+			var weapon_normalized: float = (float(weapon.frame) + weapon.frame_progress) / 3.0
+			if absf(upper_normalized - weapon_normalized) >= 0.02:
+				failures.append("primary ranged weapon animation drifted from upper body at tick %d" % tick)
+				break
+
 	if not bool(operator.call("_begin_modular_primary_ranged_fire_presentation")):
 		failures.append("primary ranged modular fire presentation did not start")
 

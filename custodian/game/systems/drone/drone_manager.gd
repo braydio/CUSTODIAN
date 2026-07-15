@@ -95,7 +95,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		cycle_follow_distance()
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed(recall_guard_order_action):
-		recall_guard_order()
+		return_to_operator_follow()
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed(&"attack_primary") and Input.is_action_pressed(issue_guard_order_action):
 		var pointer_position := _get_pointer_world_position()
@@ -159,12 +159,21 @@ func issue_target_order(hostile: Node2D) -> void:
 	_announce_squad_state("Target")
 
 
-func recall_guard_order() -> void:
+func return_to_operator_follow() -> void:
+	var previous_mode: int = squad_state.current_mode
+	var had_guard_order: bool = squad_state.has_order_anchor()
+	set_squad_mode(DroneCommandProfileScript.Mode.FOLLOW)
 	squad_state.clear_order_anchor()
 	_propagate_command_target_clear()
 	_propagate_order_anchor_clear()
 	_update_guard_order_marker()
-	_announce_squad_state("Recall")
+	_announce_squad_state("Return")
+	_record_operator_follow_return(previous_mode, had_guard_order)
+
+
+func recall_guard_order() -> void:
+	# Compatibility entrypoint for existing scripts and console calls.
+	return_to_operator_follow()
 
 
 func has_guard_order() -> bool:
@@ -286,10 +295,25 @@ func _announce_squad_state(reason: String) -> void:
 		print("[Drones] Fire: %s | live=%d | follow=%s | mode=%s" % [fire_text, int(summary.get("live_count", 0)), follow_text, tactical_text])
 	elif reason == "Follow":
 		print("[Drones] %s: %s | live=%d | fire=%s | mode=%s" % [anchor_text, follow_text, int(summary.get("live_count", 0)), fire_text, tactical_text])
-	elif reason == "Guard" or reason == "Recall":
+	elif reason == "Guard" or reason == "Return":
 		print("[Drones] %s %s | live=%d | fire=%s | mode=%s" % [anchor_text, follow_text, int(summary.get("live_count", 0)), fire_text, tactical_text])
 	else:
 		print("[Drones] %s | live=%d | fire=%s | follow=%s | mode=%s" % [reason, int(summary.get("live_count", 0)), fire_text, follow_text, tactical_text])
+
+
+func _record_operator_follow_return(previous_mode: int, had_guard_order: bool) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory == null:
+		return
+	if observatory.has_method("increment"):
+		observatory.call("increment", &"drone_operator_follow_returns", 1)
+	if observatory.has_method("log_event"):
+		observatory.call("log_event", &"drone_operator_follow_returned", {
+			"previous_mode": DroneCommandProfileScript.mode_name(previous_mode),
+			"had_guard_order": had_guard_order,
+			"follow_distance": DroneCommandProfileScript.follow_distance_name(squad_state.current_follow_distance),
+			"live_count": _drones.size(),
+		})
 
 
 func _prune_drones() -> void:

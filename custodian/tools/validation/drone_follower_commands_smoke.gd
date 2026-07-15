@@ -277,11 +277,23 @@ func _verify_manager_propagation_and_spawn_inheritance() -> void:
 	assert(replacement.get("order_anchor_position") == commanded_shrumb.global_position, "Replacement should inherit the current target-order anchor position.")
 	assert(replacement.get("command_target") == commanded_shrumb, "Replacement should inherit a still-valid explicit Shrumb command target.")
 
-	manager.recall_guard_order()
+	manager.set_squad_mode(DroneCommandProfileScript.Mode.HOLD)
+	assert(replacement.get("squad_mode") == DroneCommandProfileScript.Mode.HOLD, "Fixture should put replacement into HOLD before return-to-follow.")
+	manager.return_to_operator_follow()
 	assert(not manager.has_guard_order(), "Recall should clear manager guard state.")
 	assert(replacement.get("order_anchor_active") == false, "Recall should restore replacement to Operator anchor.")
+	assert(manager.squad_state.current_mode == DroneCommandProfileScript.Mode.FOLLOW, "Return command should restore manager tactical mode to FOLLOW.")
+	assert(replacement.get("squad_mode") == DroneCommandProfileScript.Mode.FOLLOW, "Return command should restore live mechanoids to FOLLOW.")
+	assert(replacement.call("_get_anchor_position") == operator.global_position, "Returned mechanoid should resolve the Operator as its anchor.")
 	assert(manager.get("_guard_order_marker") == null, "Recall should clear the guard-order marker reference.")
 	assert(replacement.get("command_target") == null, "Recall should clear the explicit command target.")
+	var observatory := root.get_node_or_null("/root/DevObservatory")
+	if observatory != null:
+		var counters: Dictionary = observatory.get("counters")
+		assert(int(counters.get("drone_operator_follow_returns", 0)) > 0, "Return-to-follow should reach Developer Observatory.")
+	manager.issue_guard_order(guard_position)
+	manager.recall_guard_order()
+	assert(not manager.has_guard_order() and replacement.get("squad_mode") == DroneCommandProfileScript.Mode.FOLLOW, "Legacy recall entrypoint should delegate to return-to-follow.")
 
 	game_root.queue_free()
 	await process_frame

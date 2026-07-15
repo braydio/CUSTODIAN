@@ -36,6 +36,16 @@ const CRITICAL_HITSPARK_LEFT_SHEET := "res://content/sprites/operator/new_operat
 const CRITICAL_HITSPARK_FRAME_COUNT := 8
 const CRITICAL_HITSPARK_FRAME_SIZE := Vector2i(156, 96)
 const CRITICAL_HITSPARK_FPS := 15.0
+const PAIRED_EXECUTION_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png"
+const PAIRED_EXECUTION_FX_SHEET := "res://content/sprites/operator/runtime/fx/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png"
+const PAIRED_EXECUTION_BODY_ANIMATION := &"operator_critical_execution_s"
+const PAIRED_EXECUTION_FX_ANIMATION := &"operator_critical_execution_fx_s"
+const PAIRED_EXECUTION_FRAME_SIZE := Vector2i(96, 96)
+const PAIRED_EXECUTION_FRAME_COUNT := 8
+const PAIRED_EXECUTION_FPS := 12.0
+const PAIRED_EXECUTION_DAMAGE_FRAME := 3
+const PAIRED_EXECUTION_DURATION := float(PAIRED_EXECUTION_FRAME_COUNT) / PAIRED_EXECUTION_FPS
+const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav")
 
 enum AttackPhase {
 	NONE,
@@ -307,6 +317,15 @@ var _melee_hitbox_active: bool = false
 var _melee_hit_targets: Dictionary = {}
 var _critical_attack_target: Node2D = null
 var _critical_attack_damage: float = 0.0
+var _paired_execution_active: bool = false
+var _paired_execution_target: Node2D = null
+var _paired_execution_elapsed: float = 0.0
+var _paired_execution_damage_applied: bool = false
+var _paired_execution_token: int = -1
+var _paired_execution_anchor: Vector2 = Vector2.ZERO
+var _paired_execution_operator_root: Vector2 = Vector2.ZERO
+var _paired_execution_original_collision_mask: int = 0
+var _paired_execution_original_collision_layer: int = 0
 var _block_phase: StringName = &""
 var _block_active: bool = false
 var _parry_phase: StringName = &""
@@ -464,6 +483,8 @@ const LOADOUT_RANGED := &"ranged"
 const RANGED_FIRE_WALK_ANIMATION := &"ranged_2h_fire_walk"
 const RANGED_FIRE_WALK_FRAME_WIDTH := 96
 const RANGED_FIRE_WALK_BASE_FPS := 10.0
+const RANGED_VISUAL_STATIONARY_SPEED_SQ := 16.0
+const RANGED_VISUAL_MAX_TWIST_DEGREES := 100.0
 const DODGE_STEP_ANIMATION := &"operator_dodge_step"
 const DODGE_RECOVERY_ANIMATION := &"operator_dodge_recovery"
 const DODGE_BACKSTEP_ANIMATION := &"operator_dodge_backstep"
@@ -555,6 +576,7 @@ const KNIGHT_TEST_ANIMATION_SPECS := {
 @onready var weapon_factory: Node = get_node_or_null("/root/GameRoot/World/WeaponDefinitionFactory")
 
 func _exit_tree() -> void:
+	_cleanup_paired_execution(false, &"operator_exit_tree")
 	_animation_state_machine = null
 
 
@@ -802,6 +824,8 @@ func _draw_socket_marker(pos: Vector2, color: Color, label: String) -> void:
 		draw_string(font, pos + Vector2(10.0, -8.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, color)
 
 func _process(delta):
+	if _paired_execution_active:
+		return
 	fire_cooldown_remaining = max(0.0, fire_cooldown_remaining - delta)
 	_weapon_failure_feedback_cooldown = maxf(0.0, _weapon_failure_feedback_cooldown - delta)
 	melee_cooldown_remaining = max(0.0, melee_cooldown_remaining - delta)
@@ -823,6 +847,7 @@ func _process(delta):
 	_update_field_patch(delta)
 	_update_field_patch_observability(delta)
 	_tick_primary_ranged_action_presentation(delta)
+	_sync_primary_ranged_weapon_frame_to_upper()
 	_update_animation_state_machine(delta)
 	_update_combat_target()
 	_update_target_ring()
@@ -895,6 +920,12 @@ func _input(event: InputEvent) -> void:
 
 
 func _physics_process(delta):
+	if _paired_execution_active:
+		if _is_dead:
+			_cleanup_paired_execution(false, &"operator_dead")
+		else:
+			_update_paired_execution(delta)
+		return
 	if _is_dead:
 		velocity = Vector2.ZERO
 		is_sneaking = false
@@ -1225,10 +1256,15 @@ func _update_animation():
 	if is_moving:
 		if _is_ranged_ready_active() and _is_using_ranged_2h_primary():
 			var ranged_ready_lower_base := "unarmed_run" if is_sprinting else "unarmed_walk"
+			var ranged_ready_upper_direction := _get_modular_upper_locomotion_direction(animation_dir)
+			var ranged_ready_lower_direction := _get_ranged_lower_visual_direction(
+				movement_direction,
+				ranged_ready_upper_direction
+			)
 			if _sync_modular_ranged_ready_movement_presentation(
 				ranged_ready_lower_base,
-				movement_direction,
-				_get_modular_upper_locomotion_direction(animation_dir),
+				ranged_ready_lower_direction,
+				ranged_ready_upper_direction,
 				1.0
 			):
 				_update_idle_loop_tracking(false, "ranged_2h_move_modular")
@@ -1292,7 +1328,8 @@ func _update_animation():
 				animated_sprite.play("walk_right")
 			_update_idle_loop_tracking(false, "")
 	else:
-		if _sync_modular_ranged_2h_stance_presentation(animation_dir):
+		var ranged_stance_direction := _get_modular_upper_locomotion_direction(animation_dir)
+		if _sync_modular_ranged_2h_stance_presentation(ranged_stance_direction):
 			_update_idle_loop_tracking(true, "ranged_2h_stance_modular")
 			return
 		if _is_using_ranged_2h_primary() and _sync_modular_ranged_relaxed_presentation(animation_dir):
@@ -1498,6 +1535,28 @@ func _get_modular_upper_locomotion_direction(fallback_direction: Vector2) -> Vec
 	return Vector2.DOWN
 
 
+func _get_ranged_lower_visual_direction(
+	move_direction: Vector2,
+	upper_direction: Vector2
+) -> Vector2:
+	var safe_upper := upper_direction.normalized()
+	if safe_upper.length_squared() <= 0.0001:
+		safe_upper = Vector2.DOWN
+
+	if velocity.length_squared() <= RANGED_VISUAL_STATIONARY_SPEED_SQ:
+		return safe_upper
+
+	var safe_move := move_direction.normalized()
+	if safe_move.length_squared() <= 0.0001:
+		return safe_upper
+
+	var difference := absf(rad_to_deg(safe_move.angle_to(safe_upper)))
+	if difference > RANGED_VISUAL_MAX_TWIST_DEGREES:
+		return safe_upper
+
+	return safe_move
+
+
 func _sync_modular_lower_body_locomotion(action_name: String, direction: Vector2, speed_scale: float = 1.0) -> bool:
 	if not _can_reuse_modular_lower_body_for_current_loadout():
 		return false
@@ -1626,7 +1685,8 @@ func _sync_modular_ranged_2h_stance_presentation(direction: Vector2) -> bool:
 		return false
 	if _reload_active or _is_ranged_fire_animation_active():
 		return false
-	if not _sync_modular_locomotion_layers(_get_modular_lower_body_motion_base(), movement_direction if velocity.length() > 0.01 else visual_idle_direction, direction, 1.0):
+	var lower_direction := _get_ranged_lower_visual_direction(movement_direction, direction)
+	if not _sync_modular_locomotion_layers(_get_modular_lower_body_motion_base(), lower_direction, direction, 1.0):
 		return false
 	if primary_weapon_sprite:
 		primary_weapon_sprite.visible = false
@@ -1711,6 +1771,48 @@ func _sync_modular_ranged_weapon_layer(direction: Vector2, base_animation: Strin
 	return true
 
 
+func _sync_primary_ranged_weapon_frame_to_upper() -> void:
+	if not (_is_ranged_ready_active() or _is_primary_ranged_transition_presentation_active() or _is_primary_ranged_fire_presentation_active()):
+		return
+	if not _is_using_ranged_2h_primary():
+		return
+	if modular_upper_body_sprite == null or modular_sidearm_sprite == null:
+		return
+	if not modular_upper_body_sprite.visible or not modular_sidearm_sprite.visible:
+		return
+	_sync_ranged_slave_frame_to_upper(modular_sidearm_sprite)
+	if modular_upper_fx_sprite != null and modular_upper_fx_sprite.visible:
+		_sync_ranged_slave_frame_to_upper(modular_upper_fx_sprite)
+
+
+func _sync_ranged_slave_frame_to_upper(slave_sprite: AnimatedSprite2D) -> void:
+	if slave_sprite == null:
+		return
+	if modular_upper_body_sprite.sprite_frames == null or slave_sprite.sprite_frames == null:
+		return
+	var upper_animation: StringName = modular_upper_body_sprite.animation
+	var slave_animation: StringName = slave_sprite.animation
+	if not modular_upper_body_sprite.sprite_frames.has_animation(upper_animation):
+		return
+	if not slave_sprite.sprite_frames.has_animation(slave_animation):
+		return
+
+	var upper_count: int = modular_upper_body_sprite.sprite_frames.get_frame_count(upper_animation)
+	var slave_count: int = slave_sprite.sprite_frames.get_frame_count(slave_animation)
+	if upper_count <= 0 or slave_count <= 0:
+		return
+
+	var normalized_frame: float = (
+		float(modular_upper_body_sprite.frame)
+		+ modular_upper_body_sprite.frame_progress
+	) / float(upper_count)
+	var slave_position: float = normalized_frame * float(slave_count)
+	var slave_frame := clampi(int(floor(slave_position)), 0, slave_count - 1)
+	var slave_progress := clampf(slave_position - floor(slave_position), 0.0, 1.0)
+	slave_sprite.pause()
+	slave_sprite.set_frame_and_progress(slave_frame, slave_progress)
+
+
 func _is_primary_ranged_fire_presentation_active() -> bool:
 	return _primary_ranged_action_phase == &"firing"
 
@@ -1771,9 +1873,7 @@ func _begin_modular_primary_ranged_fire_presentation() -> bool:
 	var any_layer_played := false
 
 	var lower_base := _get_modular_lower_body_motion_base()
-	var lower_direction := movement_direction if velocity.length() > 0.01 else visual_idle_direction
-	if lower_direction.length_squared() <= 0.0001:
-		lower_direction = fire_dir
+	var lower_direction := _get_ranged_lower_visual_direction(movement_direction, fire_dir)
 	if not _sync_modular_lower_body_locomotion(lower_base, lower_direction):
 		return false
 
@@ -3112,6 +3212,7 @@ func _exit_ranged_ready() -> void:
 		modular_upper_fx_sprite.stop()
 	if not lowered_primary:
 		_hide_modular_cape_layer()
+	_reset_primary_ranged_visual_transform()
 	_apply_active_weapon_frames()
 	_apply_dynamic_weapon_socket_layout()
 	_update_primary_weapon_visual(false)
@@ -3447,6 +3548,9 @@ func _update_melee_attack(delta: float) -> void:
 
 
 func _apply_melee_hitbox_tick() -> void:
+	# Paired executions use their fixed-step frame-3 event, never overlap polling.
+	if _melee_attack_kind == "critical":
+		return
 	if weapon_hitbox == null:
 		return
 	var weapon_definition = _active_attack_profile if _active_attack_profile != null else _get_equipped_primary_weapon_definition()
@@ -3480,16 +3584,7 @@ func _apply_melee_hitbox_tick() -> void:
 		if angle > (_melee_arc_current * 0.5):
 			continue
 		var impact_position := _resolve_melee_impact_position(enemy)
-		var critical_consumed := false
-		if _melee_attack_kind == "critical" and enemy == _critical_attack_target and enemy.has_method("receive_parry_critical"):
-			var result: Variant = enemy.call("receive_parry_critical", self, _critical_attack_damage, {
-				"impact_position": impact_position,
-				"attack_key": _melee_attack_key,
-			})
-			if result is Dictionary:
-				critical_consumed = bool((result as Dictionary).get("critical", false))
-		if not critical_consumed:
-			enemy.take_damage(_melee_damage_current)
+		enemy.take_damage(_melee_damage_current)
 		_melee_hit_targets[enemy_id] = true
 		var knockback_dir := global_position.direction_to(enemy.global_position)
 		var knockback_force: float = _active_melee_attack_profile.knockback_force if _active_melee_attack_profile != null else (melee_fast_knockback_force if _melee_attack_kind == "fast" else melee_heavy_knockback_force)
@@ -3858,14 +3953,35 @@ func _start_critical_attack(target: Node2D) -> void:
 	if target == null or not is_instance_valid(target):
 		_try_melee_attack()
 		return
+	if _paired_execution_active:
+		return
 	if _melee_active or melee_cooldown_remaining > 0.0:
 		_critical_attack_target = target
 		_buffer_attack("critical")
 		return
-
+	if not target.has_method("reserve_parry_critical"):
+		_try_melee_attack()
+		return
+	var execution_data: Dictionary = target.call("reserve_parry_critical", self)
+	if execution_data.is_empty():
+		_try_melee_attack()
+		return
+	if not _ensure_paired_execution_animation(animated_sprite, PAIRED_EXECUTION_BODY_ANIMATION, PAIRED_EXECUTION_BODY_SHEET):
+		target.call("cancel_parry_critical_execution", self, &"operator_body_asset_missing")
+		return
+	if not _ensure_paired_execution_animation(modular_upper_fx_sprite, PAIRED_EXECUTION_FX_ANIMATION, PAIRED_EXECUTION_FX_SHEET):
+		target.call("cancel_parry_critical_execution", self, &"operator_fx_asset_missing")
+		return
 	_active_attack_profile = get_current_combat_profile()
 	_active_melee_attack_profile = _get_current_melee_attack_profile("fast")
 	_parry_neutral_lock_active = false
+	_block_phase = &""
+	_block_active = false
+	_parry_phase = &""
+	_parry_active = false
+	_parry_timer = 0.0
+	if _animation_state_machine != null:
+		_animation_state_machine.request("idle", 100)
 	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
 	_modular_upper_fx_action_animation = &""
@@ -3875,28 +3991,170 @@ func _start_critical_attack(target: Node2D) -> void:
 	_melee_attack_kind = "critical"
 	_melee_attack_key = "critical_attack_01"
 	_critical_attack_target = target
-	_notify_camera_attack_windup(true)
-
-	_melee_forward = global_position.direction_to(target.global_position)
-	if _melee_forward.length_squared() <= 0.001:
-		_melee_forward = _get_melee_forward_direction()
-	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
-
 	var damage := melee_fast_hit_damage * parry_counter_damage_multiplier
-	var attack_range := melee_range
-	var attack_arc := melee_arc_degrees
 	if _active_melee_attack_profile != null:
 		damage = _active_melee_attack_profile.damage * parry_counter_damage_multiplier
-		attack_range = _active_melee_attack_profile.range_px
-		attack_arc = _active_melee_attack_profile.arc_degrees
 	_critical_attack_damage = damage
-	_melee_active = true
+	_melee_active = false
 	_melee_elapsed = 0.0
-	_configure_melee_hitbox(damage, attack_range, attack_arc)
+	_melee_duration = 0.0
+	disable_hitbox()
+	_melee_hit_targets.clear()
+	_clear_attack_buffer()
 	_counter_window_timer = 0.0
-	_play_critical_attack_animation()
-	_melee_duration = _get_current_melee_animation_duration(0.42, 0.24, 0.56)
-	_lock_melee_cooldown(_melee_duration + 0.08)
+	_exit_ranged_ready()
+	_cancel_dodge()
+	_reload_active = false
+	_reload_timer = 0.0
+	_paired_execution_target = target
+	_paired_execution_token = int(execution_data.get("token", -1))
+	_paired_execution_anchor = execution_data.get("anchor", target.global_position)
+	_paired_execution_operator_root = _paired_execution_anchor + execution_data.get("operator_offset", Vector2.ZERO)
+	_paired_execution_original_collision_mask = collision_mask
+	_paired_execution_original_collision_layer = collision_layer
+	_paired_execution_elapsed = 0.0
+	_paired_execution_damage_applied = false
+	_paired_execution_active = true
+	global_position = _paired_execution_operator_root
+	velocity = Vector2.ZERO
+	movement_direction = Vector2.DOWN
+	visual_idle_direction = Vector2.DOWN
+	_melee_forward = Vector2.DOWN
+	animated_sprite.visible = true
+	animated_sprite.flip_h = false
+	animated_sprite.speed_scale = 1.0
+	animated_sprite.play(PAIRED_EXECUTION_BODY_ANIMATION)
+	animated_sprite.stop()
+	animated_sprite.set_frame_and_progress(0, 0.0)
+	_hide_modular_locomotion_layers()
+	modular_upper_fx_sprite.visible = true
+	modular_upper_fx_sprite.flip_h = false
+	modular_upper_fx_sprite.speed_scale = 1.0
+	modular_upper_fx_sprite.play(PAIRED_EXECUTION_FX_ANIMATION)
+	modular_upper_fx_sprite.stop()
+	modular_upper_fx_sprite.set_frame_and_progress(0, 0.0)
+	_modular_upper_fx_action_animation = PAIRED_EXECUTION_FX_ANIMATION
+	if not bool(target.call("begin_parry_critical_execution", self, execution_data)):
+		_cleanup_paired_execution(false, &"enemy_begin_rejected")
+		return
+	_notify_camera_attack_windup(true)
+	_lock_melee_cooldown(PAIRED_EXECUTION_DURATION + 0.08)
+
+
+func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name: StringName, sheet_path: String) -> bool:
+	if sprite == null or sprite.sprite_frames == null:
+		push_error("[PairedExecution] Required animation owner missing for %s" % sheet_path)
+		return false
+	if sprite.sprite_frames.has_animation(animation_name) and sprite.sprite_frames.get_frame_count(animation_name) == PAIRED_EXECUTION_FRAME_COUNT:
+		return true
+	if not ResourceLoader.exists(sheet_path):
+		push_error("[PairedExecution] Required asset missing: %s" % sheet_path)
+		return false
+	var texture := load(sheet_path) as Texture2D
+	if texture == null or texture.get_width() != PAIRED_EXECUTION_FRAME_COUNT * PAIRED_EXECUTION_FRAME_SIZE.x or texture.get_height() != PAIRED_EXECUTION_FRAME_SIZE.y:
+		push_error("[PairedExecution] Required asset has invalid dimensions: %s" % sheet_path)
+		return false
+	if sprite.sprite_frames.has_animation(animation_name):
+		sprite.sprite_frames.remove_animation(animation_name)
+	sprite.sprite_frames.add_animation(animation_name)
+	sprite.sprite_frames.set_animation_loop(animation_name, false)
+	sprite.sprite_frames.set_animation_speed(animation_name, PAIRED_EXECUTION_FPS)
+	for frame_index in range(PAIRED_EXECUTION_FRAME_COUNT):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(frame_index * PAIRED_EXECUTION_FRAME_SIZE.x, 0, PAIRED_EXECUTION_FRAME_SIZE.x, PAIRED_EXECUTION_FRAME_SIZE.y)
+		sprite.sprite_frames.add_frame(animation_name, atlas)
+	return true
+
+
+func _update_paired_execution(delta: float) -> void:
+	if not _paired_execution_active:
+		return
+	if _paired_execution_target == null or not is_instance_valid(_paired_execution_target):
+		_cleanup_paired_execution(false, &"enemy_invalid")
+		return
+	var previous_elapsed := _paired_execution_elapsed
+	_paired_execution_elapsed = minf(PAIRED_EXECUTION_DURATION, _paired_execution_elapsed + delta)
+	var frame_index := mini(PAIRED_EXECUTION_FRAME_COUNT - 1, int(floor(_paired_execution_elapsed * PAIRED_EXECUTION_FPS)))
+	global_position = _paired_execution_operator_root
+	velocity = Vector2.ZERO
+	animated_sprite.stop()
+	animated_sprite.set_frame_and_progress(frame_index, 0.0)
+	modular_upper_fx_sprite.visible = true
+	modular_upper_fx_sprite.stop()
+	modular_upper_fx_sprite.set_frame_and_progress(frame_index, 0.0)
+	var target_dead := _paired_execution_target.has_method("is_dead") and bool(_paired_execution_target.call("is_dead"))
+	if not target_dead:
+		_paired_execution_target.call("set_parry_critical_execution_frame", self, _paired_execution_token, frame_index)
+	var damage_time := float(PAIRED_EXECUTION_DAMAGE_FRAME) / PAIRED_EXECUTION_FPS
+	if not _paired_execution_damage_applied and previous_elapsed < damage_time and _paired_execution_elapsed >= damage_time:
+		_paired_execution_damage_applied = true
+		var damage_result: Dictionary = _paired_execution_target.call("apply_parry_critical_execution_damage", self, _critical_attack_damage, {
+			"execution_token": _paired_execution_token,
+			"impact_position": _paired_execution_anchor,
+			"frame": PAIRED_EXECUTION_DAMAGE_FRAME,
+		})
+		if not bool(damage_result.get("critical", false)):
+			_cleanup_paired_execution(false, &"damage_rejected")
+			return
+		_notify_camera_attack_impact(Vector2.DOWN, true)
+		_apply_hit_stop()
+		_play_paired_execution_impact_sound()
+	if _paired_execution_elapsed >= PAIRED_EXECUTION_DURATION:
+		_cleanup_paired_execution(true, &"complete")
+
+
+func _play_paired_execution_impact_sound() -> void:
+	var player := AudioStreamPlayer2D.new()
+	player.stream = PAIRED_EXECUTION_IMPACT_SOUND
+	player.volume_db = -2.0
+	player.max_distance = 620.0
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	if parent == null:
+		return
+	parent.add_child(player)
+	player.global_position = _paired_execution_anchor
+	player.finished.connect(player.queue_free)
+	player.play()
+
+
+func _cleanup_paired_execution(completed: bool, reason: StringName) -> void:
+	if not _paired_execution_active:
+		return
+	var target := _paired_execution_target
+	var token := _paired_execution_token
+	_paired_execution_active = false
+	_paired_execution_target = null
+	_paired_execution_elapsed = 0.0
+	_paired_execution_damage_applied = false
+	_paired_execution_token = -1
+	collision_mask = _paired_execution_original_collision_mask
+	collision_layer = _paired_execution_original_collision_layer
+	velocity = Vector2.ZERO
+	if modular_upper_fx_sprite != null:
+		modular_upper_fx_sprite.stop()
+		modular_upper_fx_sprite.visible = false
+	_modular_upper_fx_action_animation = &""
+	_critical_attack_target = null
+	_critical_attack_damage = 0.0
+	_melee_attack_kind = ""
+	_melee_attack_key = ""
+	_melee_active = false
+	_melee_elapsed = 0.0
+	_melee_duration = 0.0
+	disable_hitbox()
+	_melee_hit_targets.clear()
+	_active_attack_profile = null
+	_active_melee_attack_profile = null
+	if target != null and is_instance_valid(target):
+		if completed:
+			target.call("finish_parry_critical_execution", self, {"execution_token": token})
+		else:
+			target.call("cancel_parry_critical_execution", self, reason)
+	if is_inside_tree() and not _is_dead:
+		_update_animation()
 
 
 func _play_critical_attack_animation() -> void:
@@ -5594,7 +5852,7 @@ func _is_block_state_active() -> bool:
 
 
 func _is_movement_locked() -> bool:
-	return _reload_active or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked
+	return _paired_execution_active or _reload_active or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked
 
 
 func _has_attack_movement_modifier() -> bool:
@@ -6138,6 +6396,17 @@ func _apply_dynamic_weapon_socket_layout(weapon_definition = null) -> void:
 	debug_weapon_socket_pos = primary_weapon_socket.position if primary_weapon_socket else primary_weapon_socket_position
 	debug_muzzle_pos = muzzle_pos
 	queue_redraw()
+
+
+func _reset_primary_ranged_visual_transform() -> void:
+	if primary_weapon_socket != null:
+		primary_weapon_socket.rotation = 0.0
+		primary_weapon_socket.scale = Vector2.ONE
+	if primary_weapon_sprite != null:
+		primary_weapon_sprite.rotation = 0.0
+		var weapon_definition: OperatorWeaponDefinition = _get_equipped_primary_weapon_definition()
+		primary_weapon_sprite.scale = weapon_definition.weapon_sprite_scale if weapon_definition != null else primary_weapon_sprite_scale
+		primary_weapon_sprite.modulate = Color.WHITE
 
 
 func _mirror_socket_vector_if_needed(value: Vector2, mirror_x: bool) -> Vector2:

@@ -23,5 +23,5 @@ max_rubble_count = 2
 rubble_spawn_rect = Rect2(-28, -2, 56, 12)
 overlay_spawn_rect = Rect2(-24, -42, 48, 36)
 collision_shape_size = Vector2(56, 16)
-collision_shape_offset = Vector2(0, 8)
+collision_shape_offset = Vector2(0, -8)
 depth_sort_enabled = true

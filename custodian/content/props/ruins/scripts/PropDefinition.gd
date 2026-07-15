@@ -5,6 +5,8 @@ class_name PropDefinition
 @export var base_texture: Texture2D
 
 # Pixel-space anchor. Use bottom-center for most floor props after adding transparent padding.
+# ProceduralProp places its root at this floor/contact anchor and shifts the
+# centered base sprite by -anchor_offset.
 @export var anchor_offset: Vector2 = Vector2.ZERO
 @export var allow_flip_h: bool = true
 
@@ -32,10 +34,14 @@ class_name PropDefinition
 @export var allow_overlay_flip_h: bool = true
 
 # Collision is authored per prop type and remains stable across visual variants.
+# collision_shape_offset is the collision center in prop-root local space. For
+# bottom-anchored floor props, the footprint should normally end near local y=0
+# instead of extending into empty floor below the contact anchor.
 @export var collision_scene: PackedScene
 @export var collision_shape_size: Vector2 = Vector2.ZERO
 @export var collision_shape_offset: Vector2 = Vector2.ZERO
 @export var collision_shape_rotation_degrees: float = 0.0
+@export var collision_allows_below_anchor: bool = false
 @export var show_collision_debug: bool = false
 @export var collision_debug_color: Color = Color(1.0, 0.25, 0.1, 0.34)
 @export var collision_debug_outline_color: Color = Color(1.0, 0.85, 0.2, 0.9)

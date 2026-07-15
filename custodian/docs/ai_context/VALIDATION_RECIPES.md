@@ -126,7 +126,7 @@ godot --headless --path . --script res://tools/validation/operator_primary_range
 ```
 
 These checks cover Operator/order-point anchor state, close/far/roam goals around guard points, guard return limits,
-marker and replacement-drone inheritance, recall, manager-owned InputMap actions, hold-fire cancellation, and suppression
+marker and replacement-drone inheritance, `K` restoring both Operator anchor and tactical FOLLOW, manager-owned InputMap actions, hold-fire cancellation, and suppression
 of accidental Operator primary fire while issuing an order. The follower smoke also frees a live explicit command target
 and verifies the drone clears that stale reference before entering typed targeting code.
 
@@ -154,21 +154,20 @@ the stable latest-session export when no path is supplied.
 
 Omit the path to analyze the stable export in the standard Godot user-data location when it exists.
 
-For parry critical-open indicators and exclusive grunt critical presentation:
+For authored parry critical-open phases and paired execution:
 
 ```bash
 cd custodian
 godot --headless --path . --import --quit
 godot --headless --path . --script res://tools/validation/grunt_falcon_punch_smoke.gd
 godot --headless --path . --script res://tools/validation/grunt_parry_crit_reaction_smoke.gd
+godot --headless --path . --script res://tools/validation/debug_grunt_spawn_modes_smoke.gd
 godot --headless --path . --script res://tools/validation/grunt_animation_smoke.gd
 godot --headless --path . --script res://tools/validation/operator_modular_defense_ranged_smoke.gd
 ```
 
 The Falcon smoke validates stop-short travel, body/enemy separation, dedicated Operator impact, zero-drift recovery,
-hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection. The focused reaction smoke validates the required 6/8/12-frame assets, contact auto-free, enemy-attached BREACH/ring
-lifecycle, duration-driven expiry, critical consumption, and suppression of standard grunt flinch/white-flash presentation.
-Missing optional posture-break and critical-expiry assets should warn without failing.
+hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection. The focused reaction smoke validates required asset dimensions, enter/hold/recover, BREACH/ring lifetime, atomic reservation, same-tick 8-frame/12-FPS semantic playback, frame-3 exactly-once damage, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Required paired/open assets fail loudly; only optional posture-break and expiry presentation may warn without failing.
 
 For Sundered Keep asset wiring specifically:
 
@@ -312,13 +311,16 @@ cd custodian
 godot --headless --script res://tools/validation/procgen_foliage_spawner_smoke.gd
 godot --headless --script res://tools/validation/procgen_deferred_foliage_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_combat_readability_smoke.gd
+godot --headless --path . --script res://tools/validation/prop_collision_alignment_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_stuck_pocket_smoke.gd
 ```
 
 The first command validates the extracted foliage service's deterministic generate/remove/clear lifecycle. The second
 checks that final-visual foliage queues batch into placed nodes over subsequent frames. The third validates combat-aware
-canopy occlusion profile switching and readability clearance hooks. The fourth proves collision-owner blocker lifecycle,
-local escape detection/remediation, and required-route clearance without relying on a full contract generation.
+canopy occlusion profile switching and readability clearance hooks. The fourth audits every ruin prop definition against
+the bottom-contact collision contract and verifies per-instance collision debug. The fifth proves collision-owner blocker
+lifecycle, corrected global prop-footprint registration, local escape detection/remediation, and required-route clearance
+without relying on a full contract generation.
 
 ## Manual Godot Validation
 

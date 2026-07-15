@@ -26,7 +26,16 @@ Keep ranged weapons strong in deliberate bursts without allowing unlimited scree
 - `get_weapon_status()` exposes canonical ammo, heat, overheat, noise, suppression, range values, and whether a ranged magazine is currently active while retaining legacy keys.
 - `get_weapon_status()` also exposes reload/overheat progress, warning and overheat thresholds, decay delay, effective heat-per-shot, shots-to-overheat, and weapon-independent heat bands. Discrete `weapon_feedback_event` transitions drive presentation without polling sticky failure state.
 - The compact HUD preserves magazine/reserve counts and adds one priority-driven pressure row for heat, hot/critical, reload, dry, and vent recovery. A child `WeaponFeedbackPresenter` owns local-only dry/reload/heat audio, critical tint, and procedural barrel vent VFX; none of these cues emit `NoiseEventBus` events.
-- Primary/two-handed ranged-ready now uses a composition split instead of baked ranged locomotion requirements. Lower body stays movement-owned on the reusable `unarmed_{idle,walk,run}` modular locomotion clips, upper body plus temporary ranged-weapon layers stay aim/loadout-owned, FX stays action-owned, and the legacy full-body ranged sprite only appears when that modular ranged upper/weapon stack is unavailable. Accepted primary ranged shots can still play modular upper/weapon/FX fire layers when matching clips exist, with projectile emission, ammo, heat, range/falloff, and noise authority unchanged.
+- Primary/two-handed ranged-ready uses a composition split instead of baked ranged locomotion requirements. While moving, the lower body may remain movement-owned on reusable `unarmed_{idle,walk,run}` clips only when its direction stays within 100 degrees of the aim-owned upper body. At stationary speed (`velocity.length_squared() <= 16.0`) or beyond that twist limit, the lower body resolves from the upper-body aim direction so a stopped Operator cannot retain a stale locomotion facing. The upper body owns the modular ranged animation clock; the weapon layer is normalized-frame-slaved to it, and muzzle FX is action/frame-owned. The legacy full-body ranged sprite only appears when the modular ranged upper/weapon stack is unavailable. Accepted primary ranged shots can still play modular upper/weapon/FX fire layers when matching clips exist, with projectile emission, ammo, heat, range/falloff, and noise authority unchanged.
+
+### Modular ranged pose and clock contract
+
+- `upper body`: authoritative aim direction and animation clock.
+- `weapon`: uses the upper body's normalized frame position every presentation tick; it must not advance on an independent clock.
+- `muzzle FX`: starts from the accepted fire event and follows the authored fire frame contract.
+- `lower body`: independently follows movement only while actually moving and within the allowed torso/leg twist; otherwise it follows the upper body.
+- Directional socket layout is absolute. Runtime layout must assign from authored base/socket data and may not accumulate offsets with `+=`.
+- Leaving ranged-ready resets retained rotation, scale, and modulation, then recomputes the absolute socket layout.
 
 ## Phase Mapping
 

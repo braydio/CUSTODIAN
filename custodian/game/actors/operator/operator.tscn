@@ -109,7 +109,7 @@ offset = Vector2(0, 114)
 visible = false
 position = Vector2(0, -18)
 sprite_frames = ExtResource("34_modular_cape_frames")
-animation = &"unarmed_run_cape"
+animation = &"unarmed_run_cape_up"
 
 [node name="ModularLowerBodySprite" type="AnimatedSprite2D" parent="."]
 visible = false

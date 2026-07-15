@@ -15,6 +15,7 @@ const PALETTE_SHADER := preload("res://content/props/ruins/shaders/prop_palette_
 @export var variant_seed: int = 0
 @export var variant_intensity: VariantIntensity = VariantIntensity.SUBTLE
 @export var generate_on_ready: bool = true
+@export var force_collision_debug: bool = false
 @export var regenerate_in_editor: bool = false:
 	set(value):
 		if not value:
@@ -245,7 +246,7 @@ func _spawn_collision() -> void:
 
 func _rebuild_collision_debug() -> void:
 	_clear_children(collision_debug_root)
-	collision_debug_root.visible = definition != null and definition.show_collision_debug
+	collision_debug_root.visible = definition != null and (definition.show_collision_debug or force_collision_debug)
 
 	if not collision_debug_root.visible:
 		return
@@ -255,6 +256,112 @@ func _rebuild_collision_debug() -> void:
 
 	for child in collision_root.get_children():
 		_add_collision_debug_for_node(child, Transform2D.IDENTITY)
+
+
+func get_visual_rect_root_local() -> Rect2:
+	if definition == null or definition.base_texture == null:
+		return Rect2()
+	var texture_size := Vector2(definition.base_texture.get_size())
+	return Rect2(-definition.anchor_offset - texture_size * 0.5, texture_size)
+
+
+func get_collision_rect_root_local() -> Rect2:
+	var points := PackedVector2Array()
+	if collision_root != null:
+		for child in collision_root.get_children():
+			_append_collision_points(child, collision_root.transform, points)
+	elif definition != null and definition.collision_scene == null \
+			and definition.collision_shape_size.x > 0.0 and definition.collision_shape_size.y > 0.0:
+		var shape_transform := Transform2D(
+			deg_to_rad(definition.collision_shape_rotation_degrees),
+			definition.collision_shape_offset
+		)
+		_append_rectangle_points(definition.collision_shape_size, shape_transform, points)
+	return _rect_from_points(points)
+
+
+func get_collision_rect_global() -> Rect2:
+	var local_rect := get_collision_rect_root_local()
+	if local_rect.size == Vector2.ZERO:
+		return Rect2()
+	var points := PackedVector2Array()
+	for corner in _rect_corners(local_rect):
+		points.append(global_transform * corner)
+	return _rect_from_points(points)
+
+
+func get_collision_alignment_report() -> Dictionary:
+	var visual_rect := get_visual_rect_root_local()
+	var collision_rect := get_collision_rect_root_local()
+	var texture_size := Vector2.ZERO
+	if definition != null and definition.base_texture != null:
+		texture_size = Vector2(definition.base_texture.get_size())
+	var has_collision := collision_rect.size.x > 0.0 and collision_rect.size.y > 0.0
+	var collision_bottom_y := collision_rect.end.y if has_collision else 0.0
+	var outside_visual := has_collision and visual_rect.size != Vector2.ZERO \
+		and not visual_rect.grow(4.0).encloses(collision_rect)
+	var allows_below_anchor := definition != null and definition.collision_allows_below_anchor
+	var likely_below_anchor := has_collision and collision_bottom_y > 4.0 and not allows_below_anchor
+	var suspicious_positive_y := definition != null and definition.collision_shape_size != Vector2.ZERO \
+		and definition.collision_shape_offset.y > 4.0
+	return {
+		"definition_id": str(definition.id) if definition != null else "",
+		"texture_size": texture_size,
+		"anchor_offset": definition.anchor_offset if definition != null else Vector2.ZERO,
+		"visual_rect_root_local": visual_rect,
+		"collision_size": definition.collision_shape_size if definition != null else Vector2.ZERO,
+		"collision_offset": definition.collision_shape_offset if definition != null else Vector2.ZERO,
+		"collision_rect_root_local": collision_rect,
+		"collision_rect_global": get_collision_rect_global(),
+		"collision_bottom_y": collision_bottom_y,
+		"collision_outside_visual_bounds": outside_visual,
+		"likely_below_anchor": likely_below_anchor,
+		"suspicious_positive_y": suspicious_positive_y,
+		"collision_allows_below_anchor": allows_below_anchor,
+		"missing_base_texture": definition == null or definition.base_texture == null,
+		"has_collision": has_collision,
+	}
+
+
+func _append_collision_points(node: Node, parent_transform: Transform2D, points: PackedVector2Array) -> void:
+	var local_transform := parent_transform
+	if node is Node2D:
+		local_transform = parent_transform * (node as Node2D).transform
+	if node is CollisionShape2D:
+		var collision_shape := node as CollisionShape2D
+		if not collision_shape.disabled and collision_shape.shape is RectangleShape2D:
+			_append_rectangle_points((collision_shape.shape as RectangleShape2D).size, local_transform, points)
+	for child in node.get_children():
+		_append_collision_points(child, local_transform, points)
+
+
+func _append_rectangle_points(size: Vector2, shape_transform: Transform2D, points: PackedVector2Array) -> void:
+	var half_size := size * 0.5
+	for corner in [
+		Vector2(-half_size.x, -half_size.y),
+		Vector2(half_size.x, -half_size.y),
+		Vector2(half_size.x, half_size.y),
+		Vector2(-half_size.x, half_size.y),
+	]:
+		points.append(shape_transform * corner)
+
+
+func _rect_corners(rect: Rect2) -> PackedVector2Array:
+	return PackedVector2Array([
+		rect.position,
+		Vector2(rect.end.x, rect.position.y),
+		rect.end,
+		Vector2(rect.position.x, rect.end.y),
+	])
+
+
+func _rect_from_points(points: PackedVector2Array) -> Rect2:
+	if points.is_empty():
+		return Rect2()
+	var result := Rect2(points[0], Vector2.ZERO)
+	for point in points:
+		result = result.expand(point)
+	return result
 
 
 func _add_collision_debug_for_node(node: Node, parent_transform: Transform2D) -> void:
