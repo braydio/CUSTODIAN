@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-07-08
+Last updated: 2026-07-15
 
 ## Local Entry And Workflow
 
@@ -273,7 +273,7 @@ Last updated: 2026-07-08
 - `custodian/game/actors/storage/vault_storage.tscn` — vault storage scene used by debug fallback vault placement, now rendering stable runtime storage sprites instead of a ColorRect placeholder
 - `custodian/game/actors/items/stolen_resource_pickup.gd` — recoverable stolen-resource bundle that returns payloads to `VaultManager` when picked up by the player
 - `custodian/game/actors/items/stolen_resource_pickup.tscn` — placeholder pickup scene for dropped stolen vault resources
-- `custodian/game/actors/enemies/enemy.gd` — shared active enemy actor, including custom enemy animation sets, phased special attacks, typed loot, behavior hooks, and the grunt-owned parry-critical enter/hold/recover/executing phases, atomic reservation, zero-offset shared-root execution anchor contract, exactly-once paired damage, and lethal/nonlethal cleanup
+- `custodian/game/actors/enemies/enemy.gd` — shared active enemy actor, including grunt parry-critical phases with independent-root open/recover locking, normal-target suppression, atomic reservation, zero-offset shared-root execution, exactly-once paired damage, and lethal/nonlethal cleanup
 - `custodian/game/actors/enemies/enemy_grunt.tscn` — live grunt scene using canonical runtime body/FX strips, a `CriticalExecutionAnchor`, opt-in behavior/vault-theft components, and the lore-specced typed loot table
 - `custodian/game/actors/enemies/enemy_marine.tscn` — first live marine enemy scene using the `enemy_marine` custom animation set, 8-direction idle runtime strips, the east dash attack body/FX strips, and exported heavy dash tuning enabled by default, with full movement/combat/death directional coverage plus directional dash body/FX/audio still tracked as missing production assets
 - `custodian/game/actors/enemies/components/enemy_behavior_profile.gd` — inspectable profile resource factory for raider, iconoclast looter, and zealot behavior variables, including theft and storage-sabotage weights/timing
@@ -356,13 +356,15 @@ Last updated: 2026-07-08
 - `custodian/tools/validation/world_telemetry_foundation_smoke.gd` — focused headless smoke check for derived world-state evaluation, sector-history recording, and interest-tier classification.
 - `custodian/tools/validation/operator_ranged_ready_input_smoke.gd` — focused headless smoke check for ranged-ready/twin-stick input bindings, offhand secondary mode resolution, parry/guard handshake, successful-parry counter queue/release timing, held-block release/repress guard gating after parry success, carbine secondary intent, operator ranged-ready helper state, and dodge/backstep direction rules
 - `custodian/tools/validation/field_patch_smoke.gd` — focused headless smoke for Field Patch input binding, no pre-commit heal, commit restore/count consumption, damage/input interruption before commit, count preservation on interrupt, capped restock helper behavior, terminal fabrication restock, cap-blocked no-spend behavior, and emergency-cache fallback materials
-- `custodian/tools/validation/grunt_parry_crit_reaction_smoke.gd` — focused headless smoke proving enter/hold/recover, indicator ownership, atomic reservation, zero-offset shared CharacterBody roots and zero-local execution layers, synchronized semantic clips, frame-3 exactly-once damage, lethal/nonlethal resolution, and transform/state cleanup restoration
+- `custodian/tools/validation/grunt_parry_crit_reaction_smoke.gd` — focused headless smoke proving independent-root enter/hold/recover, normal-target suppression, indicator ownership, atomic reservation, zero-offset shared execution roots, synchronized semantic clips, frame-3 exactly-once damage, and cleanup
 - `custodian/tools/validation/grunt_falcon_punch_smoke.gd` — focused headless smoke proving Falcon Punch stop-short travel, body/enemy separation, dedicated victim impact, zero-drift recovery, hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection
 - `custodian/tools/validation/operator_modular_layers_smoke.gd` — focused modular operator presentation smoke covering unarmed locomotion, ranged-ready lower/upper ownership split, and clean legacy fallback when the modular ranged upper stack is unavailable
-- `custodian/tools/validation/operator_primary_ranged_modular_fire_smoke.gd` — focused headless smoke for presentation-only primary/two-handed ranged modular fire helper playback, modular primary/sidearm muzzle alignment, legacy visual hiding, and timer cleanup
+- `custodian/tools/validation/operator_primary_ranged_modular_fire_smoke.gd` — focused headless smoke for raise/lower direction retargeting with preserved progress, committed fire direction, recovery resolution, posture sequence, upper/weapon direction and frame synchronization, muzzle alignment, and cleanup
+- `custodian/game/ui/hud/components/ranged_reticle.gd` / `.tscn` — procedural read-only ranged posture reticle driven by canonical `get_weapon_status()` values
 - `custodian/tools/validation/wave_manager_debug_grunt_spawn_gate_smoke.gd` — focused WaveManager smoke proving the startup debug grunt stays despawned inside the Operator spawn threshold and appears once after the Operator crosses it
 - `design/02_features/operator/UNARMED_TOGGLE.md` — unarmed/Fists selection behavior, state rules, and acceptance tests
 - `design/02_features/operator/UNARMED_TOGGLE_CODE.md` — implementation notes for the unarmed/Fists profile selection system
+- `design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md` — hybrid authored-body + socketed-weapon design: static directional weapon sprites positioned at per-frame sockets with procedural rotation, replacing baked weapon animation strips; includes deprecation path for legacy weapon SpriteFrames and phased implementation plan
 - `design/02_features/minimap/MINIMAP_SYSTEM.md` — custom data-driven tactical minimap implementation spec
 - `design/02_features/minimap/MINIMAP_SYSTEM_CODE.md` — minimap runtime code plan and integration notes
 - `design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md` — active implementation note and migrated review for constraint-first gothic compound blueprint generation
