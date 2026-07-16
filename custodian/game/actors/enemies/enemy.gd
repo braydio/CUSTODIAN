@@ -251,6 +251,8 @@ var _parry_critical_phase_timer: float = 0.0
 var _parry_critical_execution_token: int = 0
 var _parry_critical_execution_damage_applied: bool = false
 var _parry_critical_execution_root: Vector2 = Vector2.ZERO
+var _parry_critical_standalone_root: Vector2 = Vector2.ZERO
+var _parry_critical_standalone_root_valid: bool = false
 var _parry_critical_execution_body_original_position: Vector2 = Vector2.ZERO
 var _parry_critical_execution_body_position_captured: bool = false
 var _critical_breach_marker_vfx: Node2D = null
@@ -310,6 +312,9 @@ var _grunt_falcon_punch_recent_parry_timer: float = 0.0
 var _grunt_falcon_punch_attacker_hitstop_timer: float = 0.0
 var _grunt_falcon_punch_normal_attacks_since_special: int = 0
 var _grunt_falcon_punch_decision_credit: float = 0.0
+var _grunt_falcon_punch_attack_id: String = ""
+var _grunt_falcon_punch_result: StringName = &""
+var _grunt_falcon_punch_impact_confirmed: bool = false
 var _savage_chain_phase: StringName = &""
 var _savage_chain_timer: float = 0.0
 var _savage_chain_direction: Vector2 = Vector2.RIGHT
@@ -800,6 +805,10 @@ func _is_grunt_falcon_punch_lane_clear(target_node: Node2D) -> bool:
 
 
 func _start_grunt_falcon_punch_windup(direction: Vector2) -> void:
+	_attack_sequence += 1
+	_grunt_falcon_punch_attack_id = "%s:falcon:%s" % [get_instance_id(), _attack_sequence]
+	_grunt_falcon_punch_result = &"pending"
+	_grunt_falcon_punch_impact_confirmed = false
 	_grunt_falcon_punch_phase = &"windup"
 	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_windup_time)
 	_grunt_falcon_punch_cooldown_timer = maxf(0.0, grunt_falcon_punch_cooldown)
@@ -814,6 +823,7 @@ func _start_grunt_falcon_punch_windup(direction: Vector2) -> void:
 	clear_path()
 	if _uses_custom_enemy_animation_set():
 		_update_custom_enemy_animation(_grunt_falcon_punch_direction, true, false)
+	_obs_increment(&"falcon_punch_attempts")
 	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_windup")
 
 
@@ -877,10 +887,13 @@ func _update_grunt_falcon_punch_leap(delta: float) -> void:
 	if _grunt_falcon_punch_phase != &"leap":
 		return
 	if get_slide_collision_count() > 0 or traveled >= _grunt_falcon_punch_current_distance or _grunt_falcon_punch_timer <= 0.0:
-		_start_grunt_falcon_punch_impact_lock()
+		var miss_reason := &"blocked_by_collision" if get_slide_collision_count() > 0 else _get_grunt_falcon_punch_miss_reason()
+		_resolve_grunt_falcon_punch_whiff(miss_reason)
 
 
 func _start_grunt_falcon_punch_impact_lock() -> void:
+	if not _grunt_falcon_punch_impact_confirmed:
+		return
 	_grunt_falcon_punch_phase = &"impact_lock"
 	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_impact_lock_time)
 	velocity = Vector2.ZERO
@@ -899,15 +912,22 @@ func _start_grunt_falcon_punch_recovery() -> void:
 		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, false)
 
 
-func _finish_grunt_falcon_punch_attack() -> void:
+func _finish_grunt_falcon_punch_attack(result_override: StringName = &"") -> void:
 	if _grunt_falcon_punch_phase.is_empty():
 		return
+	if not result_override.is_empty():
+		_grunt_falcon_punch_result = result_override
+	if _grunt_falcon_punch_result == &"pending":
+		_grunt_falcon_punch_result = &"interrupted"
+		_obs_increment(&"falcon_punch_cancelled")
 	_log_grunt_falcon_punch_event(&"grunt_falcon_punch_finished")
 	_grunt_falcon_punch_phase = &""
 	_grunt_falcon_punch_timer = 0.0
 	_grunt_falcon_punch_attacker_hitstop_timer = 0.0
 	_grunt_falcon_punch_hit_targets.clear()
 	_grunt_falcon_punch_current_distance = grunt_falcon_punch_distance_px
+	_grunt_falcon_punch_attack_id = ""
+	_grunt_falcon_punch_impact_confirmed = false
 	velocity = Vector2.ZERO
 	if _uses_directional_animation_set():
 		_update_directional_animation(_last_move_direction, false)
@@ -932,10 +952,24 @@ func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> voi
 	if lateral_distance > grunt_falcon_punch_hit_lateral_reach_px:
 		return
 	_grunt_falcon_punch_hit_targets.append(target_id)
-	var hit_result := _apply_enemy_hit_to_target(target_node, damage * grunt_falcon_punch_damage_multiplier, &"falcon_punch")
+	var hit_result := _apply_enemy_hit_to_target(
+		target_node,
+		damage * grunt_falcon_punch_damage_multiplier,
+		&"falcon_punch",
+		-1.0,
+		_grunt_falcon_punch_attack_id
+	)
+	var result_name := StringName(str(hit_result.get("result", &"unknown")))
+	_grunt_falcon_punch_result = result_name
 	_obs_increment(&"grunt_falcon_punch_hits_resolved", 1)
+	_obs_increment(StringName("enemy_attack_result_%s" % String(result_name)), 1)
 	_obs_log(&"grunt_falcon_punch_hit_resolved", {
 		"enemy": enemy_name,
+		"attack_id": _grunt_falcon_punch_attack_id,
+		"attacker_id": get_instance_id(),
+		"target_id": target_node.get_instance_id(),
+		"attack_type": "falcon_punch",
+		"phase": String(_grunt_falcon_punch_phase),
 		"position": global_position,
 		"target": target_node.name,
 		"target_position": target_node.global_position,
@@ -946,18 +980,62 @@ func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> voi
 		"parried": bool(hit_result.get("parried", false)),
 	})
 	if bool(hit_result.get("parried", false)):
+		_obs_increment(&"falcon_punch_parried")
+		_obs_increment(&"enemy_attack_interrupted_by_parry")
 		_separate_from_target_after_contact(target_node)
 		if _grunt_falcon_punch_recent_parry_timer <= 0.0:
 			apply_parry_stagger(-_grunt_falcon_punch_direction, stagger_duration, 70.0)
 		return
 	if not bool(hit_result.get("dodged", false)) and not bool(hit_result.get("blocked", false)) and float(hit_result.get("applied_damage", 0.0)) > 0.0:
+		_grunt_falcon_punch_impact_confirmed = true
+		_grunt_falcon_punch_result = &"damaged"
+		_obs_increment(&"falcon_punch_hits")
 		if target_node.has_method("apply_enemy_falcon_punch_impact"):
 			target_node.call("apply_enemy_falcon_punch_impact", _grunt_falcon_punch_direction, grunt_falcon_punch_knockback_px, grunt_falcon_punch_victim_hitstop)
 		_trigger_grunt_falcon_punch_camera_feedback()
 		_apply_grunt_falcon_punch_hitstop(maxf(grunt_falcon_punch_victim_hitstop, grunt_falcon_punch_attacker_hitstop))
 		_grunt_falcon_punch_attacker_hitstop_timer = maxf(_grunt_falcon_punch_attacker_hitstop_timer, grunt_falcon_punch_attacker_hitstop)
+		_separate_from_target_after_contact(target_node)
+		_start_grunt_falcon_punch_impact_lock()
+		return
 	_separate_from_target_after_contact(target_node)
-	_start_grunt_falcon_punch_impact_lock()
+	_start_grunt_falcon_punch_recovery()
+
+
+func _resolve_grunt_falcon_punch_whiff(reason: StringName) -> void:
+	if _grunt_falcon_punch_phase != &"leap":
+		return
+	_grunt_falcon_punch_result = reason
+	_obs_increment(&"falcon_punch_whiffed")
+	_obs_increment(&"enemy_attack_whiffs")
+	_obs_increment(&"enemy_attack_result_whiffed")
+	if reason == &"blocked_by_collision":
+		_obs_increment(&"enemy_attack_blocked_by_collision")
+	elif reason == &"target_out_of_arc":
+		_obs_increment(&"enemy_attack_whiffed_out_of_arc")
+	else:
+		_obs_increment(&"enemy_attack_whiffed_out_of_range")
+	_obs_log(&"grunt_falcon_punch_hit_resolved", {
+		"attack_id": _grunt_falcon_punch_attack_id,
+		"attacker_id": get_instance_id(),
+		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
+		"attack_type": "falcon_punch",
+		"phase": "leap",
+		"result": "whiffed",
+		"reason": String(reason),
+		"position": global_position,
+	})
+	_start_grunt_falcon_punch_recovery()
+
+
+func _get_grunt_falcon_punch_miss_reason() -> StringName:
+	if not target is Node2D or not is_instance_valid(target) or _is_target_destroyed(target):
+		return &"target_out_of_range"
+	var to_target := (target as Node2D).global_position - global_position
+	var lateral_distance := absf(to_target.cross(_grunt_falcon_punch_direction))
+	if lateral_distance > grunt_falcon_punch_hit_lateral_reach_px:
+		return &"target_out_of_arc"
+	return &"target_out_of_range"
 
 
 func _separate_from_target_after_contact(target_node: Node2D) -> void:
@@ -1008,8 +1086,13 @@ func _is_grunt_falcon_punch_hit_window_active() -> bool:
 
 func _log_grunt_falcon_punch_event(event_name: StringName) -> void:
 	_obs_log(event_name, {
+		"attack_id": _grunt_falcon_punch_attack_id,
+		"attacker_id": get_instance_id(),
+		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
+		"attack_type": "falcon_punch",
 		"enemy": enemy_name,
 		"phase": String(_grunt_falcon_punch_phase),
+		"result": String(_grunt_falcon_punch_result),
 		"position": global_position,
 		"direction": _grunt_falcon_punch_direction,
 		"target": target.name if target != null and is_instance_valid(target) else "",
@@ -1693,10 +1776,15 @@ func update_visuals():
 func die():
 	dead = true
 	velocity = Vector2.ZERO
+	_cancel_pending_attack_with_result(&"cancelled_by_death", &"death")
 	_clear_grunt_critical_open_vfx(false)
 	_release_parry_critical_execution_owner()
 	_parry_critical_phase = ParryCriticalPhase.NONE
-	_finish_grunt_falcon_punch_attack()
+	_parry_critical_standalone_root_valid = false
+	if not _grunt_falcon_punch_phase.is_empty():
+		_obs_increment(&"enemy_attack_interrupted_by_death")
+		_obs_increment(&"falcon_punch_cancelled")
+	_finish_grunt_falcon_punch_attack(&"cancelled_by_death")
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_enemy_died"):
 		behavior_state_machine.call("on_enemy_died", self)
 	set_threat_highlight(false)
@@ -2144,11 +2232,25 @@ func _update_attack_windup(delta: float) -> bool:
 
 func _execute_queued_attack() -> void:
 	if dead:
-		_clear_pending_attack_context()
+		_cancel_pending_attack_with_result(&"cancelled_by_death", &"death")
 		return
+	_obs_log(&"enemy_attack_active", {
+		"attack_id": _pending_attack_id,
+		"attacker_id": get_instance_id(),
+		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
+		"attack_type": "melee",
+		"phase": "active",
+		"enemy": enemy_name,
+	})
 	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
 		_obs_increment(&"enemy_attack_cancelled_no_target", 1)
 		_obs_log(&"enemy_attack_cancelled", {
+			"attack_id": _pending_attack_id,
+			"attacker_id": get_instance_id(),
+			"target_id": 0,
+			"attack_type": "melee",
+			"phase": "active",
+			"result": "interrupted",
 			"enemy": enemy_name,
 			"reason": "no_target",
 			"position": global_position,
@@ -2160,6 +2262,12 @@ func _execute_queued_attack() -> void:
 	if target_node == null:
 		_obs_increment(&"enemy_attack_cancelled_no_target", 1)
 		_obs_log(&"enemy_attack_cancelled", {
+			"attack_id": _pending_attack_id,
+			"attacker_id": get_instance_id(),
+			"target_id": 0,
+			"attack_type": "melee",
+			"phase": "active",
+			"result": "interrupted",
 			"enemy": enemy_name,
 			"reason": "target_not_node2d",
 			"position": global_position,
@@ -2167,13 +2275,21 @@ func _execute_queued_attack() -> void:
 		_clear_pending_attack_context()
 		return
 
-	if not _can_pending_attack_connect(target_node):
+	var miss_reason := _get_pending_attack_miss_reason(target_node)
+	if not miss_reason.is_empty():
 		_obs_increment(&"enemy_attack_whiffs", 1)
+		_obs_increment(&"enemy_attack_result_whiffed", 1)
+		var whiff_counter_suffix := "out_of_range" if miss_reason == &"target_out_of_range" else "out_of_arc"
+		_obs_increment(StringName("enemy_attack_whiffed_%s" % whiff_counter_suffix), 1)
 		_obs_log(&"enemy_attack_whiff", {
 			"attack_id": _pending_attack_id,
 			"attacker_id": get_instance_id(),
 			"target_id": target_node.get_instance_id(),
 			"enemy": enemy_name,
+			"attack_type": "melee",
+			"phase": "active",
+			"result": "whiffed",
+			"reason": String(miss_reason),
 			"position": global_position,
 			"target": target_node.name,
 			"target_position": target_node.global_position,
@@ -2191,6 +2307,8 @@ func _execute_queued_attack() -> void:
 		"attacker_id": get_instance_id(),
 		"target_id": target_node.get_instance_id(),
 		"enemy": enemy_name,
+		"attack_type": "melee",
+		"phase": "resolved",
 		"position": global_position,
 		"target": target_node.name,
 		"target_position": target_node.global_position,
@@ -2224,25 +2342,58 @@ func _clear_pending_attack_context() -> void:
 	_pending_attack_id = ""
 
 
+func _cancel_pending_attack_with_result(result: StringName, reason: StringName) -> void:
+	if _pending_attack_id.is_empty():
+		_clear_pending_attack_context()
+		return
+	_obs_log(&"enemy_attack_resolved", {
+		"attack_id": _pending_attack_id,
+		"attacker_id": get_instance_id(),
+		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
+		"attack_type": "melee",
+		"phase": "cancelled",
+		"result": String(result),
+		"reason": String(reason),
+		"enemy": enemy_name,
+		"position": global_position,
+	})
+	_obs_increment(StringName("enemy_attack_result_%s" % String(result)), 1)
+	if result == &"cancelled_by_death":
+		_obs_increment(&"enemy_attack_interrupted_by_death")
+	elif reason == &"parry":
+		_obs_increment(&"enemy_attack_interrupted_by_parry")
+	_clear_pending_attack_context()
+
+
 func _can_pending_attack_connect(target_node: Node2D) -> bool:
+	return _get_pending_attack_miss_reason(target_node).is_empty()
+
+
+func _get_pending_attack_miss_reason(target_node: Node2D) -> StringName:
 	if _pending_attack_range_px <= 0.0:
 		_pending_attack_range_px = _get_attack_range(target_node)
 
 	var grace_range := _pending_attack_range_px * melee_hit_range_grace_multiplier + melee_hit_range_grace_px
 	var distance := global_position.distance_to(target_node.global_position)
 	if distance > grace_range:
-		return false
+		return &"target_out_of_range"
 
 	var to_target := (target_node.global_position - global_position).normalized()
 	var dot := _pending_attack_forward.dot(to_target)
 	var angle_rad := deg_to_rad(_pending_attack_arc_degrees * 0.5)
 	if dot < cos(angle_rad):
-		return false
+		return &"target_out_of_arc"
 
-	return true
+	return &""
 
 
-func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringName = &"melee", guard_stamina_cost_override: float = -1.0) -> Dictionary:
+func _apply_enemy_hit_to_target(
+	hit_node: Node,
+	amount: float,
+	hit_kind: StringName = &"melee",
+	guard_stamina_cost_override: float = -1.0,
+	attack_id_override: String = ""
+) -> Dictionary:
 	if hit_node == null or not is_instance_valid(hit_node):
 		return {
 			"result": &"no_target",
@@ -2258,7 +2409,7 @@ func _apply_enemy_hit_to_target(hit_node: Node, amount: float, hit_kind: StringN
 		hit_direction = global_position.direction_to((hit_node as Node2D).global_position)
 
 	var attack_context := {
-		"attack_id": _pending_attack_id,
+		"attack_id": attack_id_override if not attack_id_override.is_empty() else _pending_attack_id,
 		"attacker_id": get_instance_id(),
 		"target_id": hit_node.get_instance_id(),
 		"damage_attempted": amount,
@@ -2360,7 +2511,7 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 	if dead:
 		return
 	var interrupted_falcon_punch := not _grunt_falcon_punch_phase.is_empty()
-	_pending_attack_damage = 0.0
+	_cancel_pending_attack_with_result(&"interrupted", &"parry")
 	_cancel_savage_attack()
 	_finish_grunt_falcon_punch_attack()
 	if interrupted_falcon_punch:
@@ -2382,6 +2533,11 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 	_last_move_direction = resolved_direction
 	velocity = resolved_direction * knockback_force
 	move_and_slide()
+	if _parry_critical_phase == ParryCriticalPhase.ENTER:
+		# The requested parry impulse is the only root displacement allowed before
+		# reservation. Standalone open/recover clips keep this independent root.
+		_parry_critical_standalone_root = global_position
+		_parry_critical_standalone_root_valid = true
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call("on_damaged", self, 0.0)
 	if _uses_directional_animation_set():
@@ -2419,6 +2575,7 @@ func reserve_parry_critical(attacker: Node2D) -> Dictionary:
 	_parry_critical_window_timer = 0.0
 	_parry_critical_phase = ParryCriticalPhase.EXECUTING
 	_parry_critical_phase_timer = 0.0
+	_parry_critical_standalone_root_valid = false
 	_parry_critical_execution_root = get_parry_critical_execution_anchor()
 	global_position = _parry_critical_execution_root
 	_clear_grunt_critical_open_vfx(false)
@@ -2587,6 +2744,28 @@ func has_active_critical_target_reticle() -> bool:
 		and is_instance_valid(_critical_window_ring_vfx)
 
 
+func suppresses_normal_targeting_presentation() -> bool:
+	return _parry_critical_phase in [
+		ParryCriticalPhase.ENTER,
+		ParryCriticalPhase.HOLD,
+		ParryCriticalPhase.RECOVER,
+		ParryCriticalPhase.EXECUTING,
+	]
+
+
+func _preserve_parry_critical_standalone_root() -> void:
+	if not _parry_critical_standalone_root_valid:
+		_parry_critical_standalone_root = global_position
+		_parry_critical_standalone_root_valid = true
+	if OS.is_debug_build():
+		assert(
+			global_position.is_equal_approx(_parry_critical_standalone_root),
+			"Critical-open standalone state changed the enemy world root."
+		)
+	global_position = _parry_critical_standalone_root
+	velocity = Vector2.ZERO
+
+
 func _get_grunt_parry_critical_window_duration(duration: float) -> float:
 	return maxf(maxf(duration, grunt_parry_critical_window_min_sec), _get_animation_duration(String(GRUNT_CRITICAL_OPEN_ENTER_ANIMATION)))
 
@@ -2619,7 +2798,7 @@ func _start_stagger_reaction() -> void:
 	_stagger_timer = max(_stagger_timer, stagger_duration)
 	_recoil_timer = 0.0
 	_attack_windup_timer = 0.0
-	_pending_attack_damage = 0.0
+	_cancel_pending_attack_with_result(&"interrupted", &"stagger")
 	_finish_grunt_falcon_punch_attack()
 	_finish_marine_dash_attack()
 	velocity = Vector2.ZERO
@@ -2635,7 +2814,7 @@ func _start_crit_reaction() -> void:
 	_recoil_timer = 0.0
 	_stagger_timer = 0.0
 	_attack_windup_timer = 0.0
-	_pending_attack_damage = 0.0
+	_cancel_pending_attack_with_result(&"interrupted", &"critical_hit")
 	_finish_grunt_falcon_punch_attack()
 	_finish_marine_dash_attack()
 	velocity = Vector2.ZERO
@@ -2659,6 +2838,7 @@ func _update_reaction_timers(delta: float) -> bool:
 			cancel_parry_critical_execution(null, &"owner_invalid")
 		return true
 	if _parry_critical_phase in [ParryCriticalPhase.ENTER, ParryCriticalPhase.HOLD]:
+		_preserve_parry_critical_standalone_root()
 		_parry_critical_window_timer = maxf(0.0, _parry_critical_window_timer - delta)
 		_parry_critical_phase_timer = maxf(0.0, _parry_critical_phase_timer - delta)
 		velocity = Vector2.ZERO
@@ -2670,10 +2850,12 @@ func _update_reaction_timers(delta: float) -> bool:
 		_update_custom_enemy_animation(_last_move_direction, false)
 		return true
 	if _parry_critical_phase == ParryCriticalPhase.RECOVER:
+		_preserve_parry_critical_standalone_root()
 		_parry_critical_phase_timer = maxf(0.0, _parry_critical_phase_timer - delta)
 		velocity = Vector2.ZERO
 		if _parry_critical_phase_timer <= 0.0:
 			_parry_critical_phase = ParryCriticalPhase.NONE
+			_parry_critical_standalone_root_valid = false
 			_update_custom_enemy_animation(_last_move_direction, false)
 		else:
 			_update_custom_enemy_animation(_last_move_direction, false)

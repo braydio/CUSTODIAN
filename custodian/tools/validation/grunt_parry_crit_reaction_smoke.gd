@@ -32,6 +32,12 @@ func _init() -> void:
 func _run() -> void:
 	for asset_path in REQUIRED_ASSETS:
 		_assert_true(ResourceLoader.exists(asset_path), "Required asset missing: %s" % asset_path)
+	var enter_final_bounds := _frame_alpha_bounds(REQUIRED_ASSETS[3], 4)
+	var hold_final_bounds := _frame_alpha_bounds(REQUIRED_ASSETS[4], 3)
+	var recover_first_bounds := _frame_alpha_bounds(REQUIRED_ASSETS[5], 0)
+	_assert_true(abs(enter_final_bounds.position.x - hold_final_bounds.position.x) <= 2, "enter-final and hold-final artwork should share the standalone enemy root")
+	_assert_true(abs(hold_final_bounds.position.x - recover_first_bounds.position.x) <= 2, "hold-final and recover-first artwork should not pop laterally")
+	_assert_true(abs(hold_final_bounds.end.y - recover_first_bounds.end.y) <= 2, "hold-final and recover-first planted-foot height should remain continuous")
 
 	var root := Node2D.new()
 	root.name = "GruntParryCritReactionSmokeRoot"
@@ -57,6 +63,8 @@ func _run() -> void:
 	fx_sprite.visible = true
 	fx_sprite.play("flinch_fx_s")
 	grunt.call("apply_parry_stagger", Vector2.RIGHT, 0.55, 0.0)
+	var standalone_grunt_root: Vector2 = grunt.global_position
+	var independent_operator_root: Vector2 = operator.global_position
 	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_ENTER, "parry should enter critical-open enter")
 	_assert_true(String(body_sprite.animation) == "critical_open_enter_s", "enter should play critical_open_enter_s")
 	_assert_animation(body_sprite.sprite_frames, "critical_open_enter_s", 5, 12.0, false)
@@ -66,9 +74,12 @@ func _run() -> void:
 	var ring := grunt.get("_critical_window_ring_vfx") as Node2D
 	_assert_true(marker != null and is_instance_valid(marker), "BREACH marker should persist during enter")
 	_assert_true(ring != null and is_instance_valid(ring), "countdown ring should persist during enter")
+	_assert_true(bool(grunt.call("suppresses_normal_targeting_presentation")), "enter should suppress the normal target ring")
 
 	var enter_duration := body_sprite.sprite_frames.get_frame_count("critical_open_enter_s") / body_sprite.sprite_frames.get_animation_speed("critical_open_enter_s")
 	grunt.call("_update_reaction_timers", enter_duration + 0.001)
+	_assert_true(grunt.global_position.is_equal_approx(standalone_grunt_root), "enter-to-hold should preserve the enemy standalone root")
+	_assert_true(operator.global_position.is_equal_approx(independent_operator_root), "critical-open phases must not snap the Operator to the enemy")
 	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_HOLD, "enter completion should transition to hold")
 	_assert_true(String(body_sprite.animation) == "critical_open_hold_s", "hold should play critical_open_hold_s")
 	_assert_animation(body_sprite.sprite_frames, "critical_open_hold_s", 4, 6.0, true)
@@ -127,7 +138,8 @@ func _run() -> void:
 	root.add_child(expiry_grunt)
 	await process_frame
 	var expiry_body := expiry_grunt.get_node("AnimatedSprite2D") as AnimatedSprite2D
-	expiry_grunt.call("apply_parry_stagger", Vector2.LEFT, 0.55, 0.0)
+	expiry_grunt.call("apply_parry_stagger", Vector2.LEFT, 0.55, 8.0)
+	var expiry_standalone_root: Vector2 = expiry_grunt.global_position
 	var expiry_marker := expiry_grunt.get("_critical_breach_marker_vfx") as Node2D
 	var expiry_ring := expiry_grunt.get("_critical_window_ring_vfx") as Node2D
 	var expiry_duration := float(expiry_grunt.get("_parry_critical_window_timer"))
@@ -137,9 +149,17 @@ func _run() -> void:
 	_assert_true(String(expiry_body.animation) == "critical_open_recover_s", "expiry should play critical_open_recover_s")
 	_assert_animation(expiry_body.sprite_frames, "critical_open_recover_s", 5, 10.0, false)
 	_assert_true(not is_instance_valid(expiry_marker) and not is_instance_valid(expiry_ring), "expiry should free both indicators")
+	_assert_true(expiry_grunt.global_position.is_equal_approx(expiry_standalone_root), "expiry should not move the standalone enemy root")
+	_assert_true(bool(expiry_grunt.call("suppresses_normal_targeting_presentation")), "recover should keep the normal target ring suppressed")
+	operator.set("_combat_target", expiry_grunt)
+	operator.call("_update_target_ring")
+	var normal_target_ring := operator.get("_target_ring") as Node2D
+	_assert_true(normal_target_ring == null or not normal_target_ring.visible, "Operator target ring should remain hidden during critical-open recover")
 	var recover_duration := expiry_body.sprite_frames.get_frame_count("critical_open_recover_s") / expiry_body.sprite_frames.get_animation_speed("critical_open_recover_s")
 	expiry_grunt.call("_update_reaction_timers", recover_duration + 0.01)
 	_assert_true(int(expiry_grunt.get("_parry_critical_phase")) == PHASE_NONE, "recover completion should return to normal behavior")
+	_assert_true(expiry_grunt.global_position.is_equal_approx(expiry_standalone_root), "recover completion should not introduce a lateral root snap")
+	_assert_true(not bool(expiry_grunt.call("suppresses_normal_targeting_presentation")), "normal targeting should resume after recover completes")
 
 	var cancel_operator := OPERATOR_SCENE.instantiate()
 	cancel_operator.global_position = Vector2(220.0, 0.0)
@@ -188,6 +208,26 @@ func _assert_animation(frames: SpriteFrames, animation_name: StringName, frame_c
 	_assert_true(frames.get_frame_count(animation_name) == frame_count, "%s should expose %d frames" % [animation_name, frame_count])
 	_assert_true(is_equal_approx(frames.get_animation_speed(animation_name), fps), "%s should run at %.1f FPS" % [animation_name, fps])
 	_assert_true(frames.get_animation_loop(animation_name) == loop, "%s loop contract should match" % animation_name)
+
+
+func _frame_alpha_bounds(resource_path: String, frame_index: int) -> Rect2i:
+	var image := Image.load_from_file(ProjectSettings.globalize_path(resource_path))
+	if image == null or image.is_empty():
+		return Rect2i()
+	var minimum := Vector2i(96, 96)
+	var maximum := Vector2i(-1, -1)
+	var frame_x := frame_index * 96
+	for y in range(96):
+		for x in range(96):
+			if image.get_pixel(frame_x + x, y).a <= 0.0:
+				continue
+			minimum.x = mini(minimum.x, x)
+			minimum.y = mini(minimum.y, y)
+			maximum.x = maxi(maximum.x, x)
+			maximum.y = maxi(maximum.y, y)
+	if maximum.x < minimum.x or maximum.y < minimum.y:
+		return Rect2i()
+	return Rect2i(minimum, maximum - minimum + Vector2i.ONE)
 
 
 func _assert_true(value: bool, message: String) -> void:

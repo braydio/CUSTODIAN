@@ -37,6 +37,18 @@ Keep ranged weapons strong in deliberate bursts without allowing unlimited scree
 - Directional socket layout is absolute. Runtime layout must assign from authored base/socket data and may not accumulate offsets with `+=`.
 - Leaving ranged-ready resets retained rotation, scale, and modulation, then recomputes the absolute socket layout.
 
+### Primary ranged direction and posture contract
+
+The authored primary sequence is `relaxed -> raising -> ready -> firing -> recovering -> ready -> lowering -> relaxed`.
+
+- Relaxed and ready continuously resolve the current cursor/aim direction.
+- Raising and lowering may retarget to another directional `ranged_2h_aim_modular` clip without restarting normalized progress.
+- Firing commits `_primary_ranged_action_direction` when the shot is accepted. Lower, upper, weapon, and fire FX remain coherent with that direction until the fire clip ends; a cursor reversal cannot twist the lower body 180 degrees during the shot.
+- Recovering releases the committed direction and immediately resolves current aim into ready stance.
+- Upper body remains the clock authority. Weapon frame sync also verifies the phase-appropriate directional animation name before copying normalized frame position.
+- `get_weapon_status()` exposes `ranged_posture`, transition ratio, readiness, fire eligibility, and committed direction as read-only presentation/debug values.
+- Normal-play readiness is conveyed by the procedural ranged reticle, not permanent HUD text. The HUD consumes the status snapshot and never owns readiness or firing rules.
+
 ## Phase Mapping
 
 1. Ammo economy: typed reserve caps, persistent magazines, smaller pickups and drops.
@@ -99,6 +111,32 @@ The original brief's `custodian/assets/weapons/` path is stale. Live weapon data
 - Manual acceptance still required for feel: burst-to-overheat cadence, visible spread/recoil, camp investigation, corner LOS break/search/return, reload and sidearm switching, and melee/parry/dodge regression.
 
 ## Future: Vehicle-Mounted Weapon Firing
+
+## Frame-aware Carbine socket contract
+
+The live modular ranged presentation follows
+`design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md`.
+For the Carbine phase-1 sectors (`e`, `w`, `se`, `sw`), upper-body animation
+name and frame select one grip/muzzle/ejection/draw-order record. Projectile
+origin and muzzle presentation consume that record rather than the generic
+forward-distance muzzle. The upper body is the master clock; weapon and fire FX
+are slaves. Missing production metadata is an error, not a silent fallback.
+
+## Ranged aim transition and camera contract
+
+Primary two-handed ranged aim uses distinct timing: raise targets `0.22 s`,
+lower targets `0.12 s`, and the aim-ready threshold is `0.70`. Movement remains
+available under the existing ranged-ready multiplier. Fire held or pressed
+during raise is accepted once the threshold is crossed; lowering is not played
+at the raise speed.
+
+The Operator exposes intent only. `custodian/game/world/camera.gd` owns
+interpolation and composes ranged aim with contextual zoom, movement/threat
+offsets, shake, push, map bounds, and follow smoothing. Initial targets are a
+`1.07` zoom multiplier, `32 px` directional lead, `0.22 s` entry response, and
+`0.13 s` exit response. Cancellation clears the camera target; camera runtime
+state returns to `1.0` multiplier and zero lead. The reticle consumes the
+read-only aim accuracy ratio and becomes tight at the ready threshold.
 
 A future `VehicleWeaponDefinition` should own `weapon_id`, weapon data path, mount socket, fire arc, heat state, ammo source, noise radius, recoil/knockback, and occupant requirement. When an occupied vehicle owns an active weapon, primary fire routes to the vehicle before personal weapon logic. Vehicle ammo, heat, and noise belong to the mount; personal firing is disabled unless the vehicle explicitly supports firing ports. Vehicle weapons reuse `NoiseEventBus` and the heat schema, with a starting noise target of 700 px for light guns and 1000 px for heavy guns. No partial vehicle-fire hook is implemented in V1 because current occupant/input ownership does not expose a complete mount contract.
 

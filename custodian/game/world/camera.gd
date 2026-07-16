@@ -41,6 +41,15 @@ class_name CameraController
 @export var lookahead_strength: float = 40.0  # pixels
 @export var lookahead_damping: float = 0.15
 
+@export_group("Ranged Aim Camera")
+@export var ranged_aim_camera_enabled: bool = true
+@export var ranged_aim_zoom_multiplier: float = 1.07
+@export var ranged_aim_camera_lead_px: float = 32.0
+@export var ranged_aim_camera_enter_sec: float = 0.22
+@export var ranged_aim_camera_exit_sec: float = 0.13
+@export var ranged_aim_camera_lead_smoothing: float = 12.0
+@export var ranged_aim_reticle_emphasis: float = 1.15
+
 # Micro Bob
 @export_group("Micro Bob")
 @export var bob_enabled: bool = true
@@ -119,6 +128,10 @@ var _last_position: Vector2 = Vector2.ZERO
 
 # Lookahead
 var _lookahead: Vector2 = Vector2.ZERO
+var _ranged_aim_camera_active: bool = false
+var _ranged_aim_camera_direction: Vector2 = Vector2.RIGHT
+var _current_aim_zoom_multiplier: float = 1.0
+var _current_aim_camera_lead: Vector2 = Vector2.ZERO
 
 # Micro Bob
 var _current_bob: float = 0.0
@@ -177,6 +190,8 @@ func _process(delta):
 	_update_movement(delta)
 	_update_state_machine(delta)
 	_refresh_contextual_zoom()
+	_update_ranged_aim_camera(delta)
+	target_zoom = (target_zoom * _current_aim_zoom_multiplier).clamp(min_zoom, max_zoom)
 	_update_lookahead(delta)
 	_update_threat_offset(delta)
 	_update_bob(delta)
@@ -333,6 +348,22 @@ func _update_lookahead(delta: float):
 	_lookahead = _lookahead.lerp(target_lookahead, lookahead_damping)
 
 
+func set_ranged_aim_camera_active(active: bool, direction: Vector2) -> void:
+	_ranged_aim_camera_active = active and ranged_aim_camera_enabled
+	if direction.length_squared() > 0.0001:
+		_ranged_aim_camera_direction = direction.normalized()
+
+
+func _update_ranged_aim_camera(delta: float) -> void:
+	var target_multiplier := ranged_aim_zoom_multiplier if _ranged_aim_camera_active else 1.0
+	var response := ranged_aim_camera_enter_sec if _ranged_aim_camera_active else ranged_aim_camera_exit_sec
+	var zoom_weight := 1.0 - exp(-delta / maxf(response, 0.001))
+	_current_aim_zoom_multiplier = lerpf(_current_aim_zoom_multiplier, target_multiplier, zoom_weight)
+	var target_lead := _ranged_aim_camera_direction * ranged_aim_camera_lead_px if _ranged_aim_camera_active else Vector2.ZERO
+	var lead_weight := 1.0 - exp(-ranged_aim_camera_lead_smoothing * delta)
+	_current_aim_camera_lead = _current_aim_camera_lead.lerp(target_lead, lead_weight)
+
+
 func _update_bob(delta: float):
 	if not bob_enabled or _get_follow_target() == null:
 		_current_bob = 0.0
@@ -424,6 +455,9 @@ func _apply_camera_position(delta: float):
 	
 	# Add lookahead
 	target_pos += _lookahead
+
+	# Aim lead composes with movement, threat framing, push, and shake.
+	target_pos += _current_aim_camera_lead
 
 	# Bias framing slightly toward nearby threats during combat.
 	target_pos += _threat_offset
@@ -620,6 +654,18 @@ func snap_to_player_spawn(spawn_position: Vector2) -> void:
 	_threat_offset = Vector2.ZERO
 	_push_offset = Vector2.ZERO
 	_shake_offset = Vector2.ZERO
+	_ranged_aim_camera_active = false
+	_current_aim_zoom_multiplier = 1.0
+	_current_aim_camera_lead = Vector2.ZERO
+
+
+func get_ranged_aim_camera_snapshot() -> Dictionary:
+	return {
+		"active": _ranged_aim_camera_active,
+		"direction": _ranged_aim_camera_direction,
+		"zoom_multiplier": _current_aim_zoom_multiplier,
+		"lead": _current_aim_camera_lead,
+	}
 
 
 func _rebuild_bounds():

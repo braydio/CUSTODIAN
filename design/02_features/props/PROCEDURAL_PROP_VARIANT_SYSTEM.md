@@ -1,7 +1,7 @@
 # Procedural Prop Variant System
 
 Status: in progress
-Last updated: 2026-07-15
+Last updated: 2026-07-16
 
 ## Goal
 
@@ -54,6 +54,10 @@ For portal-ring props, prefer a dedicated authored collision scene when the side
 
 `ProcGenTilemap` can now place decorative ruin prop variants after floor/wall generation captures the stable generated cell state. Placement uses a `PropSpawnSet` resource with weighted entries, spacing checks, player/compound clearance, wall clearance, and deterministic seeds derived from tile cells.
 
+Collision-bearing candidates are validated before their scene is instantiated. The placement authority projects the selected `PropDefinition.collision_shape_size` and `collision_shape_offset` from the candidate's jittered world root, converts the resulting global rectangle into its complete tile footprint, and rejects the candidate when any occupied tile overlaps a required route, player spawn clearance, portal/story/structure threshold clearance, protected combat/readability zone, or an already registered runtime blocker. The definition is selected before validation so a large obelisk cannot be accepted merely because its anchor tile is clear. Portal props with bespoke multi-shape collision retain their dedicated portal placement contract.
+
+Spawn-time rejection is the normal safety contract. Post-spawn protected-clearance enforcement and stuck-pocket remediation remain mandatory defense-in-depth for bespoke collision scenes, future definitions, and validation failures; they must report a warning rather than silently normalizing invalid generation.
+
 The current slice keeps visual variation presentation-only while registering authored physical footprints:
 
 - props spawn under `NavigationRegion2D/PropLayer`
@@ -66,7 +70,15 @@ The current slice keeps visual variation presentation-only while registering aut
 - dedicated portal side blockers are exempt from that generic clearance cleanup because the portal connector intentionally terminates inside their authored approach footprint; their center lane remains the walkable authority
 - placement avoids the player spawn, compound buildings, and near-wall cells
 
-Collision alignment anomalies and protected-clear-zone footprint overlaps log loudly and mirror structured events, counters, gauges, and warnings into `DevObservatory`. Observatory data is diagnostic only and never decides placement, collision, navigation, or remediation.
+Collision alignment anomalies and protected-clear-zone footprint overlaps log loudly and mirror structured events, counters, gauges, and warnings into `DevObservatory`. Rejection and remediation payloads include the generation seed, definition ID, source tile, candidate world root, collision rectangle, occupied tile footprint, protected-zone type, and remediation action. Per-generation gauges distinguish protected-zone, stuck-risk, and existing-blocker rejections and publish last-generation stuck-pocket and alignment-warning totals. Observatory data is diagnostic only and never decides placement, collision, navigation, or remediation.
+
+## Acceptance
+
+- Ordinary seeds should normally report zero protected-zone collision warnings and zero stuck-pocket remediation.
+- A collision-bearing candidate whose projected footprint crosses a protected cell is rejected before instantiation even when its source tile is otherwise valid.
+- A candidate footprint that overlaps an already registered runtime blocker is rejected before instantiation.
+- Backup remediation remains active and emits enough definition/tile/zone/seed data to reproduce every nonzero result.
+- Candidate selection and rejection remain deterministic for a fixed seed.
 
 The initial spawn set lives at `custodian/content/props/ruins/data/ruin_prop_spawn_set.tres`.
 

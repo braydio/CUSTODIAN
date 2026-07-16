@@ -1,10 +1,31 @@
-[gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3]
+[gd_resource type="Resource" script_class="OperatorWeaponDefinition" format=3 uid="uid://buv7t506pckky"]
 
-[ext_resource type="Script" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
-[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_weapon_frames.tres" id="2_weapon_frames"]
+[ext_resource type="Script" uid="uid://dr83ct4e8mal7" path="res://game/actors/operator/operator_weapon_definition.gd" id="1_weapon_definition"]
+[ext_resource type="SpriteFrames" uid="uid://c4ftqt42qddru" path="res://game/actors/operator/operator_weapon_frames.tres" id="2_weapon_frames"]
+[ext_resource type="Texture2D" uid="uid://dknfyelkqrale" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__e__5f__96.png" id="3_e"]
+[ext_resource type="Texture2D" uid="uid://d20vsfn7gq4fc" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__w__5f__96.png" id="4_w"]
+[ext_resource type="Texture2D" uid="uid://dsoae55nqk42g" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__se__5f__96.png" id="5_se"]
+[ext_resource type="Texture2D" uid="uid://c7nohsoo4i627" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__sw__5f__96.png" id="6_sw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e"]
+atlas = ExtResource("3_e")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_se"]
+atlas = ExtResource("5_se")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sw"]
+atlas = ExtResource("6_sw")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w"]
+atlas = ExtResource("4_w")
+region = Rect2(0, 0, 96, 96)
 
 [resource]
 script = ExtResource("1_weapon_definition")
+weapon_id = &"carbine_mk1"
 display_name = "Carbine Rifle"
 weapon_kind = "ranged"
 primary_intent = "ranged_unfocused_fire"
@@ -23,3 +44,17 @@ right_hand_socket_position_down = Vector2(10, -6)
 left_hand_socket_position_down = Vector2(4, -2)
 weapon_socket_position_down = Vector2(12, -6)
 muzzle_socket_position_down = Vector2(24, 2)
+socket_data_path = "res://content/data/operator/generated/operator_weapon_sockets.generated.json"
+production_socket_data_required = true
+directional_weapon_textures = {
+"e": SubResource("AtlasTexture_e"),
+"se": SubResource("AtlasTexture_se"),
+"sw": SubResource("AtlasTexture_sw"),
+"w": SubResource("AtlasTexture_w")
+}
+grip_pivot_by_direction = {
+"e": Vector2(0, 0),
+"se": Vector2(0, 0),
+"sw": Vector2(0, 0),
+"w": Vector2(0, 0)
+}

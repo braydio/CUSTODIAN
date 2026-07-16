@@ -1,5 +1,12 @@
 # WEAPON_OWNED_ANIMATION_SYSTEM
 
+> Frame-aware ranged placement is authoritative in
+> `design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md`.
+> The live Operator path is `custodian/game/actors/operator/`, not the retired
+> `custodian/entities/operator/` path. The upper body owns ranged direction and
+> animation time; the weapon consumes the same sector, frame, and generated
+> socket snapshot.
+
 Status: in progress
 Owner: gameplay/animation
 Runtime target: Godot 4 (`custodian/`)
@@ -47,7 +54,7 @@ The current runtime is functional, but animation ownership is still inverted.
 - melee and ranged combat both function
 - melee hitbox windows already sync from animation frames
 - `OperatorWeaponDefinition` already exists
-- state machine scaffold exists under `custodian/entities/operator/animations/states/`
+- state machine scaffold exists under `custodian/game/actors/operator/animations/states/`
 - separated fast melee body + weapon + FX overlays already exist
 
 ### Current architectural gaps
@@ -67,23 +74,25 @@ The current runtime is functional, but animation ownership is still inverted.
   and legacy full-body ranged sprites are fallback only. Do not show modular lower-body legs while a legacy full-body
   ranged sprite is visible; if the modular ranged upper/weapon stack is missing, hide modular lower-body layers and use
   the full-body fallback instead.
+- primary ranged directional transitions are retargetable: aim raise/lower may change directional clips while preserving
+  normalized progress; fire commits one shot direction across every visible layer; recovery returns to current aim.
 
 ## Files In Scope
 
 Primary runtime files:
 
-- `custodian/entities/operator/operator.gd`
-- `custodian/entities/operator/operator_weapon_definition.gd`
-- `custodian/entities/operator/operator_runtime_frames.tres`
-- `custodian/entities/operator/operator_melee_overlay_frames.tres`
-- `custodian/entities/operator/carbine_rifle_mk1_definition.tres`
-- `custodian/entities/operator/fallen_star_katana_definition.tres`
+- `custodian/game/actors/operator/operator.gd`
+- `custodian/game/actors/operator/operator_weapon_definition.gd`
+- `custodian/game/actors/operator/operator_runtime_frames.tres`
+- `custodian/game/actors/operator/operator_melee_overlay_frames.tres`
+- `custodian/game/actors/operator/carbine_rifle_mk1_definition.tres`
+- `custodian/game/actors/operator/fallen_star_katana_definition.tres`
 
 State machine files:
 
-- `custodian/entities/operator/animations/animation_state_machine.gd`
-- `custodian/entities/operator/animations/states/attack_fast_state.gd`
-- `custodian/entities/operator/animations/states/attack_heavy_state.gd`
+- `custodian/game/actors/operator/animations/animation_state_machine.gd`
+- `custodian/game/actors/operator/animations/states/attack_fast_state.gd`
+- `custodian/game/actors/operator/animations/states/attack_heavy_state.gd`
 
 Related docs:
 
@@ -162,7 +171,7 @@ Stop using raw animation strings in gameplay logic.
 Create:
 
 ```
-custodian/entities/operator/animations/animation_resolver.gd
+custodian/game/actors/operator/animations/animation_resolver.gd
 ```
 
 Responsibilities:
@@ -212,7 +221,7 @@ Move animation decisions into weapon data.
 
 ### File to update
 
-`custodian/entities/operator/operator_weapon_definition.gd`
+`custodian/game/actors/operator/operator_weapon_definition.gd`
 
 ### New exported fields
 

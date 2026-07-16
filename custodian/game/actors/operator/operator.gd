@@ -6,6 +6,7 @@ signal field_patch_state_changed(active: bool, committed: bool)
 signal weapon_feedback_event(event_id: StringName, snapshot: Dictionary)
 
 const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
+const WeaponSocketLibrary = preload("res://game/actors/operator/animations/operator_weapon_socket_library.gd")
 const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
 const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
 const AttackHeavyState = preload("res://game/actors/operator/animations/states/attack_heavy_state.gd")
@@ -226,6 +227,9 @@ var last_fire_cooldown := 0.0
 @export var modular_primary_ranged_fire_recover_hold_sec: float = 0.04
 @export var modular_primary_ranged_aim_fps: float = 8.0
 @export var modular_primary_ranged_aim_cape_enabled: bool = true
+@export var ranged_raise_duration: float = 0.22
+@export var ranged_lower_duration: float = 0.12
+@export_range(0.0, 1.0) var ranged_aim_ready_ratio: float = 0.70
 @export_group("", "")
 @export_file("*.png") var idle_main_sheet_path := "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
 @export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged__stance_01__e__12f__96.png"
@@ -413,7 +417,12 @@ var _sidearm_action_phase_started: bool = false
 var _sidearm_action_direction: Vector2 = Vector2.DOWN
 var _primary_ranged_action_phase: StringName = &""
 var _primary_ranged_action_timer: float = 0.0
+var _primary_ranged_action_total: float = 0.0
+var _primary_ranged_action_direction: Vector2 = Vector2.RIGHT
 var _primary_ranged_action_suffix: StringName = &"right"
+var _weapon_socket_library := WeaponSocketLibrary.new()
+var _active_weapon_socket: Dictionary = {}
+var _weapon_socket_error_key: String = ""
 var fake_elevation: float = 0.0
 var movement_surface_multiplier: float = 1.0
 var _base_world_z_index: int = 2
@@ -421,10 +430,14 @@ var _fake_elevation_visual_offset: Vector2 = Vector2.ZERO
 
 # Debug socket visualization
 var debug_draw_sockets: bool = false
+@export var operator_weapon_socket_debug_enabled: bool = false
 var debug_right_hand_pos: Vector2 = Vector2.ZERO
 var debug_left_hand_pos: Vector2 = Vector2.ZERO
 var debug_weapon_socket_pos: Vector2 = Vector2.ZERO
 var debug_muzzle_pos: Vector2 = Vector2.ZERO
+var debug_support_grip_pos: Vector2 = Vector2.ZERO
+var debug_ejection_pos: Vector2 = Vector2.ZERO
+var debug_projectile_direction: Vector2 = Vector2.RIGHT
 
 const WEAPON_PROFILES = [
 	{
@@ -568,6 +581,8 @@ const KNIGHT_TEST_ANIMATION_SPECS := {
 @onready var melee_weapon_overlay_sprite = $MeleeWeaponOverlaySprite if has_node("MeleeWeaponOverlaySprite") else null
 @onready var melee_fx_overlay_sprite = $MeleeFxOverlaySprite if has_node("MeleeFxOverlaySprite") else null
 @onready var barrel = $PrimaryWeaponSocket/Barrel if has_node("PrimaryWeaponSocket/Barrel") else null
+@onready var ejection_socket: Marker2D = $PrimaryWeaponSocket/EjectionSocket if has_node("PrimaryWeaponSocket/EjectionSocket") else null
+@onready var support_grip_debug: Marker2D = $PrimaryWeaponSocket/SupportGripDebug if has_node("PrimaryWeaponSocket/SupportGripDebug") else null
 @onready var body_collision = $CollisionShape2D if has_node("CollisionShape2D") else null
 @onready var blob_shadow = $BlobShadow if has_node("BlobShadow") else null
 @onready var hitbox_root: Node2D = $HitboxRoot if has_node("HitboxRoot") else null
@@ -576,6 +591,7 @@ const KNIGHT_TEST_ANIMATION_SPECS := {
 @onready var weapon_factory: Node = get_node_or_null("/root/GameRoot/World/WeaponDefinitionFactory")
 
 func _exit_tree() -> void:
+	_set_ranged_aim_camera_active(false)
 	_cleanup_paired_execution(false, &"operator_exit_tree")
 	_animation_state_machine = null
 
@@ -626,6 +642,7 @@ func _ready():
 		_capture_runtime_visual_base_positions()
 	_reset_melee_overlay_visuals()
 	_update_primary_weapon_visual(false)
+	_load_primary_weapon_socket_data()
 	stamina = stamina_max
 	_ensure_target_ring()
 	weapon_profile = 0
@@ -803,15 +820,18 @@ func _add_knight_sheet_animation(
 		frames.add_frame(animation_name, atlas)
 
 func _draw():
-	if not debug_draw_sockets:
+	if not debug_draw_sockets and not operator_weapon_socket_debug_enabled:
 		return
 	draw_line(debug_right_hand_pos, debug_weapon_socket_pos, Color(1.0, 0.35, 0.35, 0.9), 2.0)
 	draw_line(debug_left_hand_pos, debug_weapon_socket_pos, Color(0.35, 0.8, 1.0, 0.9), 2.0)
 	draw_line(debug_weapon_socket_pos, debug_muzzle_pos, Color(1.0, 0.85, 0.25, 0.9), 2.0)
+	draw_line(debug_muzzle_pos, debug_muzzle_pos + debug_projectile_direction.normalized() * 48.0, Color(1.0, 0.95, 0.35, 0.75), 1.0)
 	_draw_socket_marker(debug_right_hand_pos, Color.RED, "RH")
 	_draw_socket_marker(debug_left_hand_pos, Color.BLUE, "LH")
 	_draw_socket_marker(debug_weapon_socket_pos, Color(0.6, 1.0, 0.6, 1.0), "W")
 	_draw_socket_marker(debug_muzzle_pos, Color.YELLOW, "M")
+	_draw_socket_marker(debug_support_grip_pos, Color.CYAN, "SG")
+	_draw_socket_marker(debug_ejection_pos, Color.ORANGE, "EJ")
 
 
 func _draw_socket_marker(pos: Vector2, color: Color, label: String) -> void:
@@ -847,6 +867,7 @@ func _process(delta):
 	_update_field_patch(delta)
 	_update_field_patch_observability(delta)
 	_tick_primary_ranged_action_presentation(delta)
+	_sync_ranged_aim_camera_state()
 	_sync_primary_ranged_weapon_frame_to_upper()
 	_update_animation_state_machine(delta)
 	_update_combat_target()
@@ -891,6 +912,8 @@ func _process(delta):
 	_handle_aim_input_toggle()
 	_handle_reload_input()
 	_update_aim()
+	if _is_primary_ranged_transition_presentation_active():
+		_retarget_primary_ranged_transition(aim_direction)
 	_handle_offhand_secondary_input(delta)
 	_update_ranged_ready_state()
 	_handle_dodge_input()
@@ -1162,8 +1185,13 @@ func _update_animation():
 	if _is_primary_ranged_transition_presentation_active() or _is_primary_ranged_fire_presentation_active():
 		if _is_primary_ranged_fire_presentation_active():
 			var lower_base := _get_modular_lower_body_motion_base()
+			var committed_direction := _primary_ranged_action_direction
+			var lower_direction := _get_ranged_lower_visual_direction(
+				movement_direction,
+				committed_direction
+			)
 			if _can_reuse_modular_lower_body_for_current_loadout():
-				_sync_modular_lower_body_locomotion(lower_base, movement_direction if velocity.length() > 0.01 else visual_idle_direction)
+				_sync_modular_lower_body_locomotion(lower_base, lower_direction)
 			else:
 				_hide_modular_locomotion_layers()
 		return
@@ -1781,9 +1809,114 @@ func _sync_primary_ranged_weapon_frame_to_upper() -> void:
 		return
 	if not modular_upper_body_sprite.visible or not modular_sidearm_sprite.visible:
 		return
+	_ensure_primary_ranged_weapon_direction_matches_upper()
 	_sync_ranged_slave_frame_to_upper(modular_sidearm_sprite)
 	if modular_upper_fx_sprite != null and modular_upper_fx_sprite.visible:
 		_sync_ranged_slave_frame_to_upper(modular_upper_fx_sprite)
+	_apply_frame_aware_primary_weapon_socket()
+
+
+func resolve_aim_sector(direction: Vector2) -> StringName:
+	return WeaponSocketLibrary.resolve_aim_sector(direction)
+
+
+func _load_primary_weapon_socket_data() -> bool:
+	var weapon_definition := _get_primary_ranged_weapon_definition()
+	if weapon_definition == null:
+		return false
+	if weapon_definition.production_socket_data_required:
+		for sector in WeaponSocketLibrary.REQUIRED_SECTORS:
+			if not (weapon_definition.directional_weapon_textures.get(String(sector)) is Texture2D):
+				push_error("Missing production directional weapon texture for %s sector %s" % [weapon_definition.weapon_id, sector])
+				return false
+			if not weapon_definition.grip_pivot_by_direction.has(String(sector)):
+				push_error("Missing production weapon grip pivot for %s sector %s" % [weapon_definition.weapon_id, sector])
+				return false
+	var path: String = weapon_definition.socket_data_path
+	if path.is_empty():
+		if weapon_definition.production_socket_data_required:
+			push_error("Production weapon has no socket_data_path: %s" % weapon_definition.weapon_id)
+		return false
+	return _weapon_socket_library.load_generated(path)
+
+
+func _get_frame_aware_weapon_direction() -> Vector2:
+	if _is_primary_ranged_transition_presentation_active() or _is_primary_ranged_fire_presentation_active():
+		return _primary_ranged_action_direction
+	if aim_direction.length_squared() > 0.0001:
+		return aim_direction
+	return visual_idle_direction
+
+
+func _apply_frame_aware_primary_weapon_socket() -> bool:
+	_active_weapon_socket.clear()
+	if not _is_using_ranged_2h_primary() or modular_upper_body_sprite == null or not modular_upper_body_sprite.visible:
+		return false
+	var sector := resolve_aim_sector(_get_frame_aware_weapon_direction())
+	if not sector in WeaponSocketLibrary.REQUIRED_SECTORS:
+		return false
+	if not _weapon_socket_library.is_loaded() and not _load_primary_weapon_socket_data():
+		return false
+	var animation: StringName = modular_upper_body_sprite.animation
+	var frame: int = modular_upper_body_sprite.frame
+	if not _weapon_socket_library.has_socket(animation, frame):
+		var suffix := String(_get_direction_suffix(_get_frame_aware_weapon_direction()))
+		var phase := "stance"
+		if _is_primary_ranged_fire_presentation_active() or _is_primary_ranged_fire_recover_presentation_active():
+			phase = "fire"
+		elif _is_primary_ranged_transition_presentation_active():
+			phase = "aim"
+		animation = StringName("ranged_2h_%s_modular_%s" % [phase, suffix])
+	var socket := _weapon_socket_library.get_socket(animation, frame, true)
+	if socket.is_empty():
+		_weapon_socket_error_key = "%s:%d" % [animation, frame]
+		return false
+	_weapon_socket_error_key = ""
+	_active_weapon_socket = socket
+
+	var weapon_definition := _get_primary_ranged_weapon_definition()
+	var frame_direction := _get_frame_aware_weapon_direction().normalized()
+	var recoil_ratio := clampf(current_recoil, 0.0, 1.0)
+	var procedural_recoil := Vector2.ZERO
+	if weapon_definition != null and frame_direction.length_squared() > 0.0001:
+		procedural_recoil = -frame_direction * weapon_definition.recoil_translation_px * recoil_ratio
+	var visual_offset := _body_recoil_offset + _fake_elevation_visual_offset + procedural_recoil
+	var grip: Vector2 = socket.grip + visual_offset
+	var muzzle: Vector2 = socket.muzzle + visual_offset
+	var support: Vector2 = socket.support_grip + visual_offset
+	var ejection: Vector2 = socket.ejection + visual_offset
+	var correction := 0.0
+	if weapon_definition != null and weapon_definition.fine_aim_limit_degrees > 0.0:
+		var sector_direction: Vector2 = WeaponSocketLibrary.sector_direction(sector)
+		var error := sector_direction.angle_to(_get_frame_aware_weapon_direction().normalized())
+		correction = clampf(error, deg_to_rad(-weapon_definition.fine_aim_limit_degrees), deg_to_rad(weapon_definition.fine_aim_limit_degrees))
+	var recoil_rotation := 0.0
+	if weapon_definition != null:
+		var recoil_sign := -1.0 if frame_direction.x < 0.0 else 1.0
+		recoil_rotation = deg_to_rad(weapon_definition.recoil_rotation_degrees * recoil_ratio * recoil_sign)
+	var authored_rotation := deg_to_rad(float(socket.weapon_angle_deg))
+
+	if modular_sidearm_sprite != null:
+		modular_sidearm_sprite.position = grip
+		modular_sidearm_sprite.rotation = authored_rotation + correction + recoil_rotation
+		modular_sidearm_sprite.z_index = int(socket.weapon_z)
+	if primary_weapon_socket != null:
+		primary_weapon_socket.position = grip
+		primary_weapon_socket.rotation = authored_rotation + correction + recoil_rotation
+	if barrel != null:
+		barrel.position = muzzle - grip
+	if ejection_socket != null:
+		ejection_socket.position = ejection - grip
+	if support_grip_debug != null:
+		support_grip_debug.position = support - grip
+
+	debug_weapon_socket_pos = grip
+	debug_support_grip_pos = support
+	debug_muzzle_pos = muzzle
+	debug_ejection_pos = ejection
+	debug_projectile_direction = _get_frame_aware_weapon_direction().normalized()
+	queue_redraw()
+	return true
 
 
 func _sync_ranged_slave_frame_to_upper(slave_sprite: AnimatedSprite2D) -> void:
@@ -1814,6 +1947,69 @@ func _sync_ranged_slave_frame_to_upper(slave_sprite: AnimatedSprite2D) -> void:
 	slave_sprite.set_frame_and_progress(slave_frame, slave_progress)
 
 
+func _ensure_primary_ranged_weapon_direction_matches_upper() -> void:
+	var base: String = "ranged_2h_stance_modular"
+	var direction: Vector2 = aim_direction
+	if _is_primary_ranged_transition_presentation_active():
+		base = "ranged_2h_aim_modular"
+		direction = _primary_ranged_action_direction
+	elif _is_primary_ranged_fire_presentation_active():
+		return
+	_retarget_ranged_sprite_preserving_progress(modular_sidearm_sprite, base, direction)
+
+
+func _retarget_primary_ranged_transition(direction: Vector2) -> void:
+	if not _is_primary_ranged_transition_presentation_active():
+		return
+	var resolved: Vector2 = direction.normalized()
+	if resolved.length_squared() <= 0.0001:
+		return
+	var previous_suffix: String = _get_direction_suffix(_primary_ranged_action_direction)
+	var next_suffix: String = _get_direction_suffix(resolved)
+	if previous_suffix == next_suffix:
+		return
+	_primary_ranged_action_direction = resolved
+	for sprite in [modular_lower_body_sprite, modular_upper_body_sprite, modular_sidearm_sprite]:
+		_retarget_ranged_sprite_preserving_progress(sprite, "ranged_2h_aim_modular", resolved)
+
+
+func _retarget_ranged_sprite_preserving_progress(
+	sprite: AnimatedSprite2D,
+	base_animation: String,
+	direction: Vector2
+) -> void:
+	if sprite == null or sprite.sprite_frames == null:
+		return
+	var expected: StringName = AnimationResolver.resolve(base_animation, direction, sprite)
+	if not _has_playable_sprite_animation(sprite.sprite_frames, expected):
+		return
+	if sprite.animation == expected:
+		return
+	var old_count: int = sprite.sprite_frames.get_frame_count(sprite.animation)
+	var normalized: float = 0.0
+	if old_count > 0:
+		normalized = clampf(
+			(float(sprite.frame) + sprite.frame_progress) / float(old_count),
+			0.0,
+			0.9999
+		)
+	var was_playing: bool = sprite.is_playing()
+	var old_speed_scale: float = sprite.speed_scale
+	var new_count: int = sprite.sprite_frames.get_frame_count(expected)
+	var new_position: float = normalized * float(new_count)
+	var new_frame: int = clampi(int(floor(new_position)), 0, new_count - 1)
+	var new_progress: float = new_position - floor(new_position)
+	sprite.animation = expected
+	sprite.speed_scale = old_speed_scale
+	sprite.set_frame_and_progress(new_frame, new_progress)
+	if was_playing:
+		if _is_primary_ranged_lower_presentation_active():
+			sprite.play_backwards(expected)
+		else:
+			sprite.play(expected)
+		sprite.set_frame_and_progress(new_frame, new_progress)
+
+
 func _is_primary_ranged_fire_presentation_active() -> bool:
 	return _primary_ranged_action_phase == &"firing"
 
@@ -1831,20 +2027,36 @@ func _is_primary_ranged_transition_presentation_active() -> bool:
 
 
 func _tick_primary_ranged_action_presentation(delta: float) -> void:
-	if not (_is_primary_ranged_transition_presentation_active() or _is_primary_ranged_fire_presentation_active()):
+	if not (_is_primary_ranged_transition_presentation_active() or _is_primary_ranged_fire_presentation_active() or _is_primary_ranged_fire_recover_presentation_active()):
 		return
 
 	_primary_ranged_action_timer -= delta
 	if _primary_ranged_action_timer > 0.0:
 		return
 
-	_primary_ranged_action_phase = &"recover" if _is_primary_ranged_fire_presentation_active() else &""
-	_primary_ranged_action_timer = 0.0
+	if _is_primary_ranged_fire_presentation_active():
+		_primary_ranged_action_phase = &"recover"
+		_primary_ranged_action_direction = _get_current_primary_ranged_visual_direction()
+		_primary_ranged_action_timer = maxf(0.04, modular_primary_ranged_fire_recover_hold_sec)
+		_primary_ranged_action_total = _primary_ranged_action_timer
+	else:
+		_primary_ranged_action_phase = &""
+		_primary_ranged_action_timer = 0.0
+		_primary_ranged_action_total = 0.0
 	_update_animation()
 
 
 func _is_primary_ranged_fire_recover_presentation_active() -> bool:
 	return _primary_ranged_action_phase == &"recover"
+
+
+func _get_current_primary_ranged_visual_direction() -> Vector2:
+	var direction := aim_direction
+	if direction.length_squared() <= 0.0001:
+		direction = visual_idle_direction
+	if direction.length_squared() <= 0.0001:
+		direction = Vector2.RIGHT
+	return direction.normalized()
 
 
 func _begin_modular_primary_ranged_fire_presentation() -> bool:
@@ -1864,6 +2076,7 @@ func _begin_modular_primary_ranged_fire_presentation() -> bool:
 		fire_dir = visual_idle_direction
 	if fire_dir.length_squared() <= 0.0001:
 		fire_dir = Vector2.RIGHT
+	_primary_ranged_action_direction = fire_dir.normalized()
 
 	var suffix := _primary_ranged_fire_suffix_for_direction(fire_dir)
 	_primary_ranged_action_suffix = suffix
@@ -1906,7 +2119,8 @@ func _begin_modular_primary_ranged_fire_presentation() -> bool:
 		return false
 
 	_primary_ranged_action_phase = &"firing"
-	_primary_ranged_action_timer = max(0.04, longest_duration + modular_primary_ranged_fire_recover_hold_sec)
+	_primary_ranged_action_timer = max(0.04, longest_duration)
+	_primary_ranged_action_total = _primary_ranged_action_timer
 	_hide_legacy_primary_ranged_presentation_for_modular_fire()
 	_hide_modular_cape_layer()
 	return true
@@ -1933,6 +2147,7 @@ func _begin_modular_primary_ranged_aim_presentation() -> bool:
 		action_direction = visual_idle_direction
 	if action_direction.length_squared() <= 0.0001:
 		action_direction = Vector2.RIGHT
+	_primary_ranged_action_direction = action_direction.normalized()
 
 	var lower_animation := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_lower_body_sprite)
 	var upper_animation := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_upper_body_sprite)
@@ -1945,19 +2160,21 @@ func _begin_modular_primary_ranged_aim_presentation() -> bool:
 		return false
 
 	var longest_duration := 0.0
-	var lower_result := _play_modular_action_animation(modular_lower_body_sprite, "ranged_2h_aim_modular", action_direction, modular_primary_ranged_aim_fps)
+	var raise_fps := float(modular_upper_body_sprite.sprite_frames.get_frame_count(upper_animation)) / maxf(0.04, ranged_raise_duration)
+	var lower_result := _play_modular_action_animation(modular_lower_body_sprite, "ranged_2h_aim_modular", action_direction, raise_fps)
 	longest_duration = max(longest_duration, float(lower_result.get("duration", 0.0)))
 
-	var upper_result := _play_modular_action_animation(modular_upper_body_sprite, "ranged_2h_aim_modular", action_direction, modular_primary_ranged_aim_fps)
+	var upper_result := _play_modular_action_animation(modular_upper_body_sprite, "ranged_2h_aim_modular", action_direction, raise_fps)
 	longest_duration = max(longest_duration, float(upper_result.get("duration", 0.0)))
 
-	var weapon_result := _play_modular_action_animation(modular_sidearm_sprite, "ranged_2h_aim_modular", action_direction, modular_primary_ranged_aim_fps)
+	var weapon_result := _play_modular_action_animation(modular_sidearm_sprite, "ranged_2h_aim_modular", action_direction, raise_fps)
 	longest_duration = max(longest_duration, float(weapon_result.get("duration", 0.0)))
-	var cape_result := _play_optional_modular_cape_animation("ranged_2h_aim_cape", action_direction, modular_primary_ranged_aim_fps)
+	var cape_result := _play_optional_modular_cape_animation("ranged_2h_aim_cape", action_direction, raise_fps)
 	longest_duration = max(longest_duration, float(cape_result.get("duration", 0.0)))
 
 	_primary_ranged_action_phase = &"aiming"
 	_primary_ranged_action_timer = max(0.04, longest_duration)
+	_primary_ranged_action_total = _primary_ranged_action_timer
 	_hide_legacy_primary_ranged_presentation_for_modular_fire()
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
@@ -1977,27 +2194,45 @@ func _begin_modular_primary_ranged_lower_presentation() -> bool:
 		action_direction = visual_idle_direction
 	if action_direction.length_squared() <= 0.0001:
 		action_direction = Vector2.RIGHT
+	_primary_ranged_action_direction = action_direction.normalized()
 
+	var lowering_from_partial_raise := _is_primary_ranged_aim_presentation_active()
 	var longest_duration := 0.0
+	var resolved_upper := AnimationResolver.resolve("ranged_2h_aim_modular", action_direction, modular_upper_body_sprite)
+	var lower_fps := modular_primary_ranged_aim_fps
+	if _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, resolved_upper):
+		lower_fps = float(modular_upper_body_sprite.sprite_frames.get_frame_count(resolved_upper)) / maxf(0.04, ranged_lower_duration)
 	for sprite in [modular_lower_body_sprite, modular_upper_body_sprite, modular_sidearm_sprite]:
+		var prior_ratio := 1.0
+		if lowering_from_partial_raise and sprite.sprite_frames != null:
+			var prior_count: int = sprite.sprite_frames.get_frame_count(sprite.animation)
+			if prior_count > 0:
+				prior_ratio = clampf((float(sprite.frame) + sprite.frame_progress) / float(prior_count), 0.0, 1.0)
 		var result := _play_modular_action_animation_backwards(
 			sprite,
 			"ranged_2h_aim_modular",
 			action_direction,
-			modular_primary_ranged_aim_fps
+			lower_fps
 		)
 		if not bool(result.get("played", false)):
 			return false
-		longest_duration = max(longest_duration, float(result.get("duration", 0.0)))
+		var result_duration := float(result.get("duration", 0.0))
+		if lowering_from_partial_raise:
+			var new_count: int = sprite.sprite_frames.get_frame_count(sprite.animation)
+			var new_position := clampf(prior_ratio, 0.0, 0.9999) * float(new_count)
+			sprite.set_frame_and_progress(clampi(int(floor(new_position)), 0, new_count - 1), new_position - floor(new_position))
+			result_duration *= prior_ratio
+		longest_duration = max(longest_duration, result_duration)
 
 	var cape_result := _play_optional_modular_cape_animation_backwards(
 		"ranged_2h_aim_cape",
 		action_direction,
-		modular_primary_ranged_aim_fps
+		lower_fps
 	)
 	longest_duration = max(longest_duration, float(cape_result.get("duration", 0.0)))
 	_primary_ranged_action_phase = &"lowering"
 	_primary_ranged_action_timer = max(0.04, longest_duration)
+	_primary_ranged_action_total = _primary_ranged_action_timer
 	_hide_legacy_primary_ranged_presentation_for_modular_fire()
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
@@ -2007,6 +2242,7 @@ func _begin_modular_primary_ranged_lower_presentation() -> bool:
 func _end_modular_primary_ranged_fire_presentation() -> void:
 	_primary_ranged_action_phase = &""
 	_primary_ranged_action_timer = 0.0
+	_primary_ranged_action_total = 0.0
 
 
 func _primary_ranged_fire_candidates(layer_key: StringName, suffix: StringName) -> Array[StringName]:
@@ -2340,29 +2576,7 @@ func _clear_modular_fast_attack_layers() -> void:
 
 
 func _get_direction_suffix(dir: Vector2) -> String:
-	# Determine direction based on angle (8 directions)
-	var angle = dir.angle()  # -PI to PI
-	
-	# Convert to 8 directions
-	# Right: 0, Down: PI/2, Left: PI, Up: -PI/2
-	if angle >= -PI/8 and angle < PI/8:
-		return "right"
-	elif angle >= PI/8 and angle < 3*PI/8:
-		return "down_right"
-	elif angle >= 3*PI/8 and angle < 5*PI/8:
-		return "down"
-	elif angle >= 5*PI/8 and angle < 7*PI/8:
-		return "down_left"
-	elif angle >= -3*PI/8 and angle < -PI/8:
-		return "up_right"
-	elif angle >= -5*PI/8 and angle < -3*PI/8:
-		return "up"
-	elif angle >= -7*PI/8 and angle < -5*PI/8:
-		return "up_left"
-	elif angle >= 5*PI/8 or angle < -5*PI/8:
-		return "left"
-	# Default
-	return "down"
+	return WeaponSocketLibrary.resolve_animation_suffix(dir)
 
 
 func _is_facing_left(dir: Vector2) -> bool:
@@ -2813,7 +3027,7 @@ func _handle_attack_input() -> void:
 	if _is_ranged_ready_active():
 		if _is_attack_primary_just_pressed():
 			_obs_increment(&"player_ranged_trigger_samples")
-		if _is_primary_ranged_aim_presentation_active():
+		if _is_primary_ranged_aim_presentation_active() and not _is_ranged_aim_ready():
 			return
 		if _is_attack_primary_just_pressed() and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
 			_request_ranged_shot()
@@ -3202,6 +3416,7 @@ func _exit_ranged_ready() -> void:
 		_end_modular_primary_ranged_fire_presentation()
 	_ranged_ready_active = false
 	_ranged_ready_weapon_definition = null
+	_set_ranged_aim_camera_active(false)
 	_sidearm_draw_active = false
 	_sidearm_action_phase = &"holstered"
 	_sidearm_action_phase_started = false
@@ -5111,6 +5326,9 @@ func _try_start_dodge() -> bool:
 	is_sprinting = false
 	is_sneaking = false
 	_exit_ranged_ready()
+	if _is_primary_ranged_transition_presentation_active():
+		_end_modular_primary_ranged_fire_presentation()
+		_set_ranged_aim_camera_active(false)
 	_cancel_reload()
 	velocity = _dodge_direction * dodge_speed
 	movement_direction = _dodge_direction
@@ -5709,6 +5927,10 @@ func _update_target_ring() -> void:
 	if _combat_target == null or not is_instance_valid(_combat_target):
 		_target_ring.visible = false
 		return
+	if _combat_target.has_method("suppresses_normal_targeting_presentation") \
+		and bool(_combat_target.call("suppresses_normal_targeting_presentation")):
+		_target_ring.visible = false
+		return
 	if _combat_target.has_method("has_active_critical_target_reticle") and bool(_combat_target.call("has_active_critical_target_reticle")):
 		_target_ring.visible = false
 		return
@@ -5795,12 +6017,38 @@ func _spawn_muzzle_flash(direction: Vector2):
 
 
 func _get_ranged_muzzle_position(direction: Vector2) -> Vector2:
+	if _is_using_ranged_2h_primary() and modular_upper_body_sprite != null and modular_upper_body_sprite.visible:
+		_apply_frame_aware_primary_weapon_socket()
+	if not _active_weapon_socket.is_empty() and barrel != null:
+		return barrel.global_position
+	var weapon_definition := _get_primary_ranged_weapon_definition()
+	if _is_using_ranged_2h_primary() and weapon_definition != null and weapon_definition.production_socket_data_required:
+		var sector := resolve_aim_sector(direction)
+		if sector in WeaponSocketLibrary.REQUIRED_SECTORS:
+			push_error("Production Carbine muzzle requested without a resolved frame socket (%s)" % _weapon_socket_error_key)
+			return global_position
 	var modular_position := _get_modular_ranged_muzzle_position(direction)
 	if modular_position != Vector2.INF:
 		return modular_position
 	if barrel:
 		return barrel.global_position
 	return global_position + direction.normalized() * muzzle_offset
+
+
+func get_ranged_ejection_position() -> Vector2:
+	if _is_using_ranged_2h_primary() and modular_upper_body_sprite != null and modular_upper_body_sprite.visible:
+		_apply_frame_aware_primary_weapon_socket()
+	if not _active_weapon_socket.is_empty() and ejection_socket != null:
+		return ejection_socket.global_position
+	return Vector2.INF
+
+
+func get_ranged_support_grip_position() -> Vector2:
+	if _is_using_ranged_2h_primary() and modular_upper_body_sprite != null and modular_upper_body_sprite.visible:
+		_apply_frame_aware_primary_weapon_socket()
+	if not _active_weapon_socket.is_empty() and support_grip_debug != null:
+		return support_grip_debug.global_position
+	return Vector2.INF
 
 
 func _get_modular_ranged_muzzle_position(direction: Vector2) -> Vector2:
@@ -6418,6 +6666,7 @@ func _apply_dynamic_weapon_socket_layout(weapon_definition = null) -> void:
 
 
 func _reset_primary_ranged_visual_transform() -> void:
+	_active_weapon_socket.clear()
 	if primary_weapon_socket != null:
 		primary_weapon_socket.rotation = 0.0
 		primary_weapon_socket.scale = Vector2.ONE
@@ -6426,6 +6675,9 @@ func _reset_primary_ranged_visual_transform() -> void:
 		var weapon_definition: OperatorWeaponDefinition = _get_equipped_primary_weapon_definition()
 		primary_weapon_sprite.scale = weapon_definition.weapon_sprite_scale if weapon_definition != null else primary_weapon_sprite_scale
 		primary_weapon_sprite.modulate = Color.WHITE
+	if modular_sidearm_sprite != null:
+		modular_sidearm_sprite.rotation = 0.0
+		modular_sidearm_sprite.z_index = 0
 
 
 func _mirror_socket_vector_if_needed(value: Vector2, mirror_x: bool) -> Vector2:
@@ -7111,6 +7363,61 @@ func _emit_weapon_noise(position: Vector2) -> void:
 	bus.call("emit_at", self, position, radius, &"gunshot", weapon_definition.get_noise_float("alert_threat_value", weapon_definition.alert_threat_value), weapon_definition.get_noise_float("shot_loudness", weapon_definition.shot_loudness), suppressed, &"player")
 
 
+func get_ranged_posture() -> StringName:
+	if not _is_using_ranged_2h_primary():
+		return &"none"
+	if _reload_active:
+		return &"reloading"
+	if _is_active_weapon_overheated():
+		return &"overheated"
+	match _primary_ranged_action_phase:
+		&"aiming":
+			return &"raising"
+		&"firing":
+			return &"firing"
+		&"recover":
+			return &"recovering"
+		&"lowering":
+			return &"lowering"
+	if _is_ranged_ready_active():
+		return &"ready"
+	return &"relaxed"
+
+
+func get_ranged_transition_ratio() -> float:
+	if _primary_ranged_action_total <= 0.001:
+		return 0.0
+	return clampf(
+		1.0 - _primary_ranged_action_timer / _primary_ranged_action_total,
+		0.0,
+		1.0
+	)
+
+
+func _is_ranged_aim_ready() -> bool:
+	return not _is_primary_ranged_aim_presentation_active() or get_ranged_transition_ratio() >= ranged_aim_ready_ratio
+
+
+func _set_ranged_aim_camera_active(active: bool) -> void:
+	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera != null and camera.has_method("set_ranged_aim_camera_active"):
+		camera.call("set_ranged_aim_camera_active", active, aim_direction)
+
+
+func _sync_ranged_aim_camera_state() -> void:
+	_set_ranged_aim_camera_active(_is_ranged_ready_active())
+
+
+func can_fire_ranged_now() -> bool:
+	return _is_ranged_ready_active() \
+		and _is_ranged_aim_ready() \
+		and not _reload_active \
+		and not _is_active_weapon_overheated() \
+		and _get_current_loaded_ammo() > 0 \
+		and fire_cooldown_remaining <= 0.0 \
+		and _pending_ranged_shot.is_empty()
+
+
 func get_weapon_status() -> Dictionary:
 	var profile := _get_current_ranged_profile()
 	var ranged_context_active := _is_ranged_context_active()
@@ -7136,6 +7443,7 @@ func get_weapon_status() -> Dictionary:
 	elif display_profile != null:
 		var weapon_data: Dictionary = display_profile.get_weapon_data()
 		weapon_name = str(weapon_data.get("name", weapon_name)).to_upper()
+	var ranged_posture := get_ranged_posture()
 	return {
 		"equipped": primary_weapon_equipped,
 		"primary_weapon_id": equipped_primary_weapon_id,
@@ -7146,12 +7454,20 @@ func get_weapon_status() -> Dictionary:
 		"last_armed_weapon_index": last_armed_weapon_index,
 		"aim_mode": "arrows" if arrow_aim_enabled else "mouse",
 		"aim_direction": aim_direction,
+		"committed_aim_direction": _primary_ranged_action_direction,
 		"player_position": global_position,
 		"loadout_mode": String(combat_loadout_mode),
 		"blocking": _is_blocking(),
 		"profile": String(profile["name"]),
 		"cooldown_remaining": fire_cooldown_remaining,
 		"cooldown_total": cooldown_total,
+		"ranged_posture": String(ranged_posture),
+		"ranged_transition_ratio": get_ranged_transition_ratio(),
+		"ranged_aim_ready_ratio": ranged_aim_ready_ratio,
+		"ranged_aim_accuracy_ratio": clampf(get_ranged_transition_ratio() / maxf(0.001, ranged_aim_ready_ratio), 0.0, 1.0) if _is_primary_ranged_aim_presentation_active() else (1.0 if _is_ranged_ready_active() else 0.0),
+		"ranged_ready": ranged_posture == &"ready",
+		"can_fire_now": can_fire_ranged_now(),
+		"recoil": current_recoil,
 		"reloading": _reload_active,
 		"reload_remaining": _reload_timer,
 		"reload_total": _reload_total,

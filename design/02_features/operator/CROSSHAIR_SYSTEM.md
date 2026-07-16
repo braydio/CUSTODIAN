@@ -1,102 +1,50 @@
-# Crosshair System Design
+# RANGED RETICLE SYSTEM
 
-## Overview
+Status: active Godot implementation authority
+Owner: gameplay presentation / HUD
+Runtime: `custodian/game/ui/hud/components/ranged_reticle.gd`, `custodian/game/ui/hud/ui.gd`
 
-Implement a visual crosshair that follows the player's aim direction when using arrow key (joystick) aiming. Shows where the player will fire.
+## Purpose
 
----
+Communicate the Operator's primary-ranged posture and fire readiness without a permanent READY label. Gameplay authority remains in `operator.gd`; the HUD reads `get_weapon_status()` and renders a procedural reticle.
 
-## Current State
+## Ownership
 
-- Arrow key aiming exists (`arrow_aim_enabled` toggle)
-- Basic crosshair Label exists in UI (but hidden)
-- Aim direction calculated in operator via `_get_keyboard_aim_direction()`
-- UI shows crosshair as hidden always
+- Operator owns ranged posture, transition progress, committed shot direction, ammunition, heat, cooldown, and `can_fire_now`.
+- HUD owns screen positioning and feeds an immutable status snapshot to the reticle.
+- `RangedReticle` owns only interpolation and `_draw()` presentation. It cannot change gameplay state.
+- The existing `Crosshair` TextureRect remains available for drone command targeting and legacy arrow-aim fallback; it is not ranged-readiness authority.
 
----
+## Posture Presentation
 
-## Implementation Plan
-
-### 1. Create Crosshair Scene
-
-**File:** `custodian/scenes/crosshair.tscn`
-
-Create a proper crosshair sprite/control:
-- Center dot
-- Directional indicator showing aim direction
-- Optional: range indicators
-
-### 2. Update UI to Position Crosshair
-
-**File:** `custodian/scenes/ui.gd`
-
-```gdscript
-func _update_crosshair():
-    if not crosshair_label:
-        return
-    
-    var ws = _get_world_state()
-    if not ws:
-        crosshair_label.visible = false
-        return
-    
-    var arrow_enabled = ws.get("arrow_aim_enabled", false)
-    var aim_direction = ws.get("aim_direction", Vector2.RIGHT)
-    var player_pos = ws.get("player_position", Vector2.ZERO)
-    
-    if not arrow_enabled:
-        # Use mouse position when in mouse aim mode
-        crosshair_label.visible = false
-        return
-    
-    # Calculate crosshair position based on aim direction
-    var aim_distance = 150.0  # Pixels from player
-    var crosshair_pos = player_pos + aim_direction * aim_distance
-    
-    # Convert to screen position
-    var camera = get_node_or_null("/root/GameRoot/World/Camera2D")
-    if camera:
-        var screen_pos = camera.unproject_position(crosshair_pos)
-        crosshair_label.position = screen_pos
-        crosshair_label.visible = true
+```text
+relaxed     hidden
+raising     fade in; brackets contract 18px -> 8px; center dot appears
+ready       compact bright brackets and dot; one confirmation pulse on entry
+firing      brackets kick outward using recoil/spread; center flashes
+recovering  brackets settle toward ready
+lowering    brackets expand and fade
+reloading   open and dim
+overheated  broken/open warning presentation
 ```
 
-### 3. Add Aim Direction to World State
+The reticle is procedural and requires no texture asset. Mouse aim places it at the current cursor. Controller/arrow aim places it at a clamped world-space aim point in front of the Operator. It hides with the main HUD, terminal, placement mode, non-primary ranged contexts, and relaxed/none posture.
 
-**File:** `custodian/entities/operator/operator.gd`
+## Status Contract
 
-In `_get_world_state()` add:
-```gdscript
-"aim_direction": aim_direction,
-"arrow_aim_enabled": arrow_aim_enabled,
-```
+`get_weapon_status()` provides:
 
-### 4. Make Crosshair Visible
+- `ranged_posture`
+- `ranged_transition_ratio`
+- `ranged_ready`
+- `can_fire_now`
+- `committed_aim_direction`
+- existing heat, recoil/cooldown, ammo, aim mode, aim direction, and player position values
 
-**File:** `custodian/scenes/ui.gd`
+A future authored ready sound may play once on `raising -> ready`; direction retargets must not retrigger it. No sound asset is required for the procedural V1.
 
-Update the crosshair section to show when arrow aiming is enabled.
+## Validation
 
----
-
-## File Changes
-
-| File | Action |
-|------|--------|
-| `custodian/scenes/crosshair.tscn` | CREATE - Crosshair scene |
-| `custodian/scenes/ui.gd` | MODIFY - Show/position crosshair |
-| `custodian/entities/operator/operator.gd` | MODIFY - Export aim_direction |
-
----
-
-## Testing
-
-- [ ] Press key to toggle arrow aim mode
-- [ ] Crosshair appears when using arrow keys
-- [ ] Crosshair moves in aim direction
-- [ ] Crosshair disappears when using mouse aim
-- [ ] Crosshair follows player as they move
-
----
-
-*Document created: 2026-03-29*
+- `operator_primary_ranged_modular_fire_smoke.gd` validates transition retargeting, committed fire direction, recovery direction, posture sequence, and upper/weapon direction plus frame agreement.
+- `operator_ranged_ready_input_smoke.gd` validates readiness gating and exposed status.
+- Main-scene parse/boot validates reticle scene wiring.

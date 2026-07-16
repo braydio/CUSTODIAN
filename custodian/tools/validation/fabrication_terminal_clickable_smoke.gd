@@ -49,20 +49,28 @@ func _run() -> void:
 	_require(craft_one is Button, "CraftOneButton should be a Button.")
 
 	ui.set("_terminal_fabrication_selected_work_order_id", "turret_basic")
+	ui.call("_set_terminal_page", "FABRICATION")
 	ui.call("_set_terminal_widget_mode", "FABRICATION")
 	ui.call("_render_terminal_fabrication_widgets")
 	_require(bool(fabrication_widgets.visible), "FabricationWidgets should be visible in FABRICATION mode.")
 	_require(not bool(settings_widgets.visible), "SettingsWidgets should not be visible in FABRICATION mode.")
 	_require(recipe_rows.get_child_count() > 0, "Fabrication work orders should render as button rows.")
 	_require(recipe_rows.get_child(0) is Button, "First work-order row should be a Button.")
+	var action_title := ui.get_node_or_null("TerminalPanel/Body/NavRail/ActionTitle") as Label
+	_require(action_title != null and action_title.text == "TERMINAL ACTIONS", "Fabrication action rail should not be labeled READY BUILDS.")
 	var first_row := recipe_rows.get_child(0) as Button
 	_require(first_row.has_meta("fabrication_flat_row"), "Work-order rows should use the flat-row contract.")
 	_require(first_row.get_theme_stylebox("normal") is StyleBoxFlat, "Work-order rows should use StyleBoxFlat instead of button art.")
 	for label_name in ["StateLabel", "NameLabel", "CategoryLabel", "CostLabel"]:
 		_require(first_row.find_child(label_name, true, false) is Label, "Work-order row should expose %s." % label_name)
 	var selected_body := ui.find_child("FabSelectedRecipePanel", true, false).find_child("Body", true, false) as RichTextLabel
+	_require(selected_body.get_parsed_text().strip_edges().begins_with("BASIC TURRET"), "Selected detail should begin with the selected work-order name.")
+	_require(selected_body.get_parsed_text().contains("STATE") and selected_body.get_parsed_text().contains("CATEGORY") and selected_body.get_parsed_text().contains("RESULT"), "Selected detail should expose state, category, and result before cost.")
 	_require(selected_body.get_parsed_text().contains("NEED"), "Selected detail should render a NEED/HAVE/MISSING resource grid.")
 	_require(selected_body.get_parsed_text().contains("MISSING"), "Selected detail should render missing-resource values.")
+	var terminal_output := ui.get_node_or_null("TerminalPanel/Body/CommandColumn/ActivityScroll/TerminalOutput") as RichTextLabel
+	_require(terminal_output != null and terminal_output.get_parsed_text().contains("SELECT WORK ORDER"), "Fabrication Control should show idle work-order guidance.")
+	_require(terminal_output != null and terminal_output.get_parsed_text().contains("TO MAX crafts until capped or resources fail"), "Fabrication Control should explain TO MAX while idle.")
 	var ready_panel := ui.find_child("FabReadyBuildPanel", true, false) as Control
 	var progress_body := ui.find_child("FabProgressPanel", true, false).find_child("Body", true, false) as RichTextLabel
 	_require(ready_panel != null and not ready_panel.visible, "Empty ready-build panel should collapse into the shared status strip.")
@@ -77,10 +85,26 @@ func _run() -> void:
 	_require(archive_button != null and archive_button.button_pressed, "Selected detail should correspond to a highlighted work-order row.")
 	_require(str(ui.get("_terminal_fabrication_selected_work_order_id")) == "archive_sensor_pylon", "Resolved selected work order should remain synchronized with the highlighted row.")
 
+	ui.set("_terminal_fabrication_selected_work_order_id", "lattice_field_patch")
+	ui.call("_render_terminal_fabrication_widgets")
+	await process_frame
+	selected_body = ui.find_child("FabSelectedRecipePanel", true, false).find_child("Body", true, false) as RichTextLabel
+	_require(selected_body.get_parsed_text().strip_edges().begins_with("LATTICE FIELD PATCH"), "Field Patch detail should begin with its selected work-order name.")
+	_require(selected_body.get_parsed_text().contains("CARRY") and selected_body.get_parsed_text().contains("PATCH 1/2"), "Field Patch detail should expose PATCH current/max carry state.")
+
 	ui.set("_terminal_fabrication_selected_work_order_id", "turret_basic")
+	ledger.call("clear")
 	ui.call("_render_terminal_fabrication_widgets")
 	await process_frame
 	craft_one = ui.find_child("CraftOneButton", true, false)
+	_require(bool((craft_one as Button).disabled), "CraftOneButton should remain visibly disabled when materials are missing.")
+	ledger.call("add", "ruin_scrap", 25)
+	ledger.call("add", "structural_alloy", 8)
+	ledger.call("add", "power_components", 1)
+	ui.call("_render_terminal_fabrication_widgets")
+	await process_frame
+	craft_one = ui.find_child("CraftOneButton", true, false)
+	_require(not bool((craft_one as Button).disabled), "CraftOneButton should re-enable after required materials are restored.")
 
 	(craft_one as Button).pressed.emit()
 	await process_frame

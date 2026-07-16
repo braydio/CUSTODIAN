@@ -60,6 +60,19 @@ func _run() -> void:
 	tilemap.set("_main_road_tiles", route_cells)
 	assert(bool(tilemap.call("_is_inside_required_route_clearance", Vector2i(13, 10), 3)))
 	assert(not bool(tilemap.call("_is_inside_required_route_clearance", Vector2i(14, 10), 3)))
+	var projected_source := Vector2i(12, 10)
+	assert(not bool(tilemap.call("_is_inside_required_route_clearance", projected_source, 0)), "Projected-footprint smoke requires a clear anchor tile")
+	var projected_world := floor_layer.to_global(floor_layer.map_to_local(projected_source))
+	var protected_verdict: Dictionary = tilemap.call(
+		"_validate_ruin_prop_candidate",
+		SLAB_DEFINITION,
+		projected_source,
+		projected_world
+	)
+	assert(not bool(protected_verdict.get("allowed", true)), "Collision footprint crossing route must be rejected before spawn")
+	assert(String(protected_verdict.get("protected_zone_type", "")) == "required_route")
+	assert(not (protected_verdict.get("collision_rect_tile_footprint", []) as Array).is_empty())
+	assert(protected_verdict.has("seed") and protected_verdict.has("collision_rect_global"))
 	assert(bool(tilemap.call("_is_inside_tree_trunk_clearance", Vector2i(12, 10))))
 	var foliage_spawner := FOLIAGE_SPAWNER_SCRIPT.new()
 	var foliage_context := {
@@ -75,6 +88,24 @@ func _run() -> void:
 	assert(tilemap.has_runtime_prop_blocker_at_tile(Vector2i(4, 4)))
 	tilemap.unregister_runtime_prop_blocker(unregister_owner)
 	assert(not tilemap.has_runtime_prop_blocker_at_tile(Vector2i(4, 4)))
+
+	var existing_blocker_owner := Node2D.new()
+	tilemap.add_child(existing_blocker_owner)
+	var existing_source := Vector2i(20, 20)
+	var existing_world := floor_layer.to_global(floor_layer.map_to_local(existing_source))
+	var existing_rect: Rect2 = tilemap.call("_get_definition_collision_rect_global", SLAB_DEFINITION, existing_world)
+	var existing_cells: Array = tilemap.call("_collision_cells_for_global_rect", existing_rect)
+	assert(not existing_cells.is_empty())
+	tilemap.register_runtime_prop_blocker(existing_cells[0], 0, existing_blocker_owner, &"smoke_existing_prop")
+	var existing_verdict: Dictionary = tilemap.call(
+		"_validate_ruin_prop_candidate",
+		SLAB_DEFINITION,
+		existing_source,
+		existing_world
+	)
+	assert(not bool(existing_verdict.get("allowed", true)), "Candidate footprint overlapping runtime blocker must be rejected")
+	assert(String(existing_verdict.get("protected_zone_type", "")) == "existing_runtime_blocker")
+	tilemap.unregister_runtime_prop_blocker(existing_blocker_owner)
 
 	var slab := PROP_SCENE.instantiate() as ProceduralProp
 	slab.definition = SLAB_DEFINITION
@@ -115,6 +146,9 @@ func _run() -> void:
 		assert(bool(tilemap.call("_enforce_ruin_prop_blocker_clearance", slab)))
 		assert(not tilemap.has_runtime_prop_blocker_at_tile(expected_cells[0]), "Protected route cell retained ruin prop collision")
 		assert(int(observatory.get("counters").get("procgen_runtime_blockers_cleared_for_protected_zones", 0)) == 1)
+		assert(int(observatory.get("counters").get("procgen_prop_candidates_rejected_protected_zone", 0)) >= 1)
+		assert(int(observatory.get("counters").get("procgen_prop_candidates_rejected_existing_blocker", 0)) >= 1)
+		assert(int(observatory.get("gauges").get("procgen_stuck_pockets_detected_last_generation", -1)) >= 0)
 
 	var portal := PROP_SCENE.instantiate() as ProceduralProp
 	portal.definition = PORTAL_DEFINITION

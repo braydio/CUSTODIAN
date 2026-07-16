@@ -102,6 +102,12 @@ clock is slaved to the upper body, while placement, muzzle/ejection locations,
 and draw order come from socket metadata. Static per-sector texture export is an
 art follow-up that does not change the socket contract.
 
+Aim transition timing is asymmetric: `ranged_raise_duration = 0.22`,
+`ranged_lower_duration = 0.12`, and `ranged_aim_ready_ratio = 0.70`. Fine-angle
+correction stays disabled for the phase-1 Carbine art until socket/contact review
+passes. Camera aim feedback is owned by `custodian/game/world/camera.gd`; the
+Operator only publishes active state and current aim direction.
+
 ### Scene node hierarchy (target)
 
 ```text
@@ -466,53 +472,37 @@ heavy_weapon_special: fully authored if body interaction is unusual
 
 ## Implementation Phases
 
-### Phase 1 — Static directional weapon sprites
+### Phase 1 — Carbine frame-socket vertical slice (implemented)
 
-**Goal:** Replace animated weapon strips with static directional weapon sprites.
+The `e/w/se/sw` stance, aim, and fire frames have generated grip,
+support-grip, muzzle, ejection, rotation, and draw-order records. A canonical
+eight-way resolver drives both animation suffix and socket sector. Required
+sector art is exposed as first-frame `AtlasTexture` views in the Carbine
+definition. Projectile and muzzle flash share the resolved frame muzzle;
+ejection is exposed for casing presentation. Missing required metadata, texture,
+or grip pivot logs an error and does not use the generic forward muzzle.
 
-1. Author or export8 static weapon sprites (one per direction) from the
-   existing weapon art. Each shows the weapon at its default hold angle.
-2. Replace `ModularSidearmSprite` (`AnimatedSprite2D`) with a `Sprite2D`
-   or single-frame `AnimatedSprite2D` in `operator.tscn`.
-3. On direction change, select the matching directional sprite and position
-   it at the grip socket.
-4. Apply small procedural rotation (±12°) based on cursor angle error.
-5. Remove `_sync_ranged_slave_frame_to_upper()` calls.
-6. Remove `_sync_modular_ranged_weapon_layer()` calls.
+The current modular weapon strips remain visible compatibility art, with the
+upper body as their clock. This avoids a broad scene/resource migration before
+the extracted static art is reviewed.
 
-**Acceptance:** Weapon sprite changes direction with the cursor; body
-animation plays independently; no frame-slave sync artifacts.
+### Phase 2 — Static runtime weapon node and full directions
 
-### Phase 2 — Frame-aware socket metadata
+1. Export reviewed one-frame weapon textures for all eight sectors without
+   action-strip padding ambiguity.
+2. Replace primary-ranged use of `ModularSidearmSprite` with a dedicated
+   `Sprite2D` under `WeaponRoot`; retain the modular node only for sidearm and
+   migration compatibility.
+3. Extend socket metadata to `n/ne/s/nw` and enable reviewed fine-angle limits.
+4. Remove primary weapon frame-slaving after the static node passes visual QA.
 
-**Goal:** Position the weapon correctly per animation frame, not just per state.
+### Phase 3 — Reload props and casing presentation
 
-1. Define a `WeaponSocketTable` resource that maps
-   `{animation_name, frame_index} → {position, rotation, z_index}`.
-2. Populate for the8-direction stance, aim, fire, and relaxed upper body
-   animations.
-3. Update `WeaponRoot` positioning to read from the socket table each frame
-   based on the current upper body animation + frame.
-4. If no socket data exists for a frame, fall back to the state-level offset
-   (current behavior).
-
-**Acceptance:** Weapon grip stays aligned with the operator's hand across
-all frames of a stance/aim/fire animation.
-
-### Phase 3 — Muzzle/eject socket wiring
-
-**Goal:** Move projectile origin and shell ejection to authored sockets.
-
-1. Wire `MuzzleSocket` position from the weapon root's local muzzle offset
-   (per weapon definition).
-2. Wire projectile spawn to `MuzzleSocket.global_position` instead of the
-   current `primary_weapon_muzzle_socket_position` calculation.
-3. Add `EjectSocket` for future shell casing effects.
-4. Remove the hardcoded `MODULAR_PRIMARY_RANGED_MUZZLE_OFFSETS` dictionary
-   from `operator.gd` in favor of per-weapon definition muzzle offsets.
-
-**Acceptance:** Muzzle flash and projectile originate from the correct
-position for all 8 directions.
+1. Assign casing scene/art and spawn it from `EjectionSocket`.
+2. Author `MagazineSocket` and `OffhandPropSprite` tracks.
+3. Export `mag_out`, `mag_in`, and `reload_commit` events and retain the
+   existing exactly-once ammo-transfer guard.
+4. Replace bootstrap coordinates with a fresh Aseprite marker export.
 
 ### Phase 4 — Legacy cleanup
 
@@ -555,8 +545,9 @@ When implementing the socket system:
    the ingest pipeline or Godot editor.
 2. The `_apply_dynamic_weapon_socket_layout()` function already handles
    per-aim-state socket positions — extend it to per-frame.
-3. The `OperatorWeaponDefinition` already has per-aim-state socket exports —
-   these become the fallback when no per-frame data exists.
+3. The `OperatorWeaponDefinition` per-aim-state socket exports remain legacy or
+   non-production compatibility only. A production-required sector may not fall
+   back when its per-frame record is missing.
 4. Keep the `weapon_feedback_event` signal contract unchanged — the
    `WeaponFeedbackPresenter` is presentation-only and does not care about
    sprite architecture.
@@ -571,16 +562,16 @@ godot --headless --script tools/validation/combat_resource_feedback_smoke.gd
 
 ## Next Agent Slice
 
-Goal: Implement Phase 1 — static directional weapon sprites replacing baked
-animation strips.
+Goal: Implement Phase 2 — reviewed static runtime weapon node plus full
+directional socket coverage.
 
 Files: `operator.tscn`, `operator.gd` (weapon display functions), weapon
 definition resources, modular sidearm sprite frames.
 
 Constraints: Do not break the `weapon_feedback_event` contract; keep the
-frame-slave sync functional until Phase 1 is validated; preserve paired
-execution presentation.
+compatibility frame-slave path until static art is visually approved; preserve
+paired execution presentation and required metadata failure policy.
 
-Acceptance: Weapon sprite changes direction with cursor; body animation
-plays independently; muzzle flash originates from correct position; no
-visual regressions in ranged combat.
+Acceptance: All eight static textures and frame tracks validate; primary ranged
+no longer needs animated weapon strips; muzzle/ejection/contact remain aligned;
+no visual regressions in ranged combat.

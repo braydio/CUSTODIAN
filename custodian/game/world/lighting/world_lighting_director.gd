@@ -55,6 +55,24 @@ func apply_profile(profile: LightingProfile, immediate: bool = false) -> void:
 	lighting_profile_changed.emit(profile)
 
 
+func apply_world_profile_overrides(world_profile: Dictionary, immediate: bool = false) -> void:
+	var source_profile := active_profile if active_profile != null else default_profile
+	if source_profile == null or world_profile.is_empty():
+		return
+	var resolved := source_profile.duplicate(true) as LightingProfile
+	resolved.fog_alpha = clampf(
+		float(world_profile.get("fog_alpha", resolved.fog_alpha)),
+		0.0,
+		0.5
+	)
+	resolved.cosmic_underlay_alpha = clampf(
+		float(world_profile.get("cosmic_underlay_alpha", resolved.cosmic_underlay_alpha)),
+		0.0,
+		0.5
+	)
+	apply_profile(resolved, immediate)
+
+
 func push_temporary_flash(color: Color, energy: float, duration: float) -> void:
 	if duration <= 0.0 or energy <= 0.0:
 		return

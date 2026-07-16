@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="LightingProfile" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/world/lighting/lighting_profile.gd" id="1_profile"]
+
+[resource]
+script = ExtResource("1_profile")
+ambient_color = Color(0.23, 0.25, 0.29, 1)
+directional_color = Color(0.78, 0.84, 0.96, 1)
+directional_energy = 0.55
+directional_rotation_degrees = -32.0
+cosmic_underlay_alpha = 0.02
+fog_alpha = 0.10
+transition_seconds = 0.65

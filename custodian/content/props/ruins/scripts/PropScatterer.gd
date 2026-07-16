@@ -14,7 +14,12 @@ const PROCEDURAL_PROP_SCENE := preload("res://content/props/ruins/scenes/Procedu
 var _rng := RandomNumberGenerator.new()
 
 
-func scatter_on_tiles(tiles: Array[Vector2i], tile_to_position: Callable, blocked_tiles: Dictionary = {}) -> Array[ProceduralProp]:
+func scatter_on_tiles(
+	tiles: Array[Vector2i],
+	tile_to_position: Callable,
+	blocked_tiles: Dictionary = {},
+	candidate_validator: Callable = Callable()
+) -> Array[ProceduralProp]:
 	clear_spawned()
 
 	var spawned: Array[ProceduralProp] = []
@@ -23,7 +28,7 @@ func scatter_on_tiles(tiles: Array[Vector2i], tile_to_position: Callable, blocke
 
 	_rng.seed = seed
 	var candidates := tiles.duplicate()
-	candidates.shuffle()
+	_shuffle_candidates(candidates)
 
 	var placed_tiles: Array[Vector2i] = []
 	var spawn_counts: Dictionary = {}
@@ -40,6 +45,11 @@ func scatter_on_tiles(tiles: Array[Vector2i], tile_to_position: Callable, blocke
 		var definition := _pick_definition_with_counts(spawn_counts)
 		if definition == null:
 			continue
+		var world_position: Vector2 = tile_to_position.call(tile)
+		if candidate_validator.is_valid():
+			var verdict_variant: Variant = candidate_validator.call(definition, tile, world_position)
+			if verdict_variant is Dictionary and not bool((verdict_variant as Dictionary).get("allowed", true)):
+				continue
 
 		var prop := prop_scene.instantiate() as ProceduralProp
 		if prop == null:
@@ -51,7 +61,7 @@ func scatter_on_tiles(tiles: Array[Vector2i], tile_to_position: Callable, blocke
 		prop.generate_on_ready = false
 		prop.force_collision_debug = force_collision_debug
 		add_child(prop)
-		prop.global_position = tile_to_position.call(tile)
+		prop.global_position = world_position
 		prop.set_meta("source_tile", tile)
 		prop.generate_variant()
 
@@ -61,6 +71,16 @@ func scatter_on_tiles(tiles: Array[Vector2i], tile_to_position: Callable, blocke
 		spawned.append(prop)
 
 	return spawned
+
+
+func _shuffle_candidates(candidates: Array[Vector2i]) -> void:
+	# Array.shuffle() uses the global RNG. Keep placement order tied to this
+	# scatterer's explicit seed so rejection paths reproduce exactly.
+	for index in range(candidates.size() - 1, 0, -1):
+		var swap_index := _rng.randi_range(0, index)
+		var value := candidates[index]
+		candidates[index] = candidates[swap_index]
+		candidates[swap_index] = value
 
 
 func clear_spawned() -> void:

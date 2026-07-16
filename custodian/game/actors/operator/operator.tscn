@@ -168,6 +168,18 @@ animation = &"hidden"
 [node name="Barrel" type="Node2D" parent="PrimaryWeaponSocket" unique_id=594123787]
 position = Vector2(20, 2)
 
+[node name="EjectionSocket" type="Marker2D" parent="PrimaryWeaponSocket"]
+position = Vector2(10, -1)
+
+[node name="SupportGripDebug" type="Marker2D" parent="PrimaryWeaponSocket"]
+position = Vector2(10, 0)
+
+[node name="MagazineSocket" type="Marker2D" parent="PrimaryWeaponSocket"]
+position = Vector2(4, 4)
+
+[node name="OffhandPropSprite" type="Sprite2D" parent="PrimaryWeaponSocket"]
+visible = false
+
 [node name="WeaponFeedbackPresenter" type="Node2D" parent="."]
 script = ExtResource("35_weapon_feedback")
 

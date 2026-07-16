@@ -674,6 +674,9 @@ godot --headless --quit
 
 ### V1.1 — Terminal Work-Order UI
 - Complete-v1: the terminal FABRICATION page has dedicated `FabricationWidgets`, clickable work-order rows, selected recipe details, cost/have/missing material text, queue and ready-build summaries, and action buttons for CRAFT 1, CRAFT TO MAX, PLACE READY BUILD, and CANCEL QUEUE.
+- The lower navigation rail is labeled `TERMINAL ACTIONS`; it owns general terminal actions and must not be labeled `READY BUILDS` unless its controls actually consume ready builds.
+- Selected detail begins with the work-order display name, then aligned state/category/result fields and the complete cost grid. The Lattice Field Patch includes its live `CARRY PATCH current/max` value in that header block.
+- While no terminal command is queued, the Fabrication command column may show non-persistent page guidance for selection, CRAFT 1, TO MAX, and closing the terminal. Guidance is presentation-only and must not be appended to command history.
 - Typed fallback remains supported through `FAB START <work_order_id>`, `FAB QUEUE`, `FAB CANCEL`, and `BUILD PLACE <ready_build_id>`.
 - Player-facing terminology should prefer "Work Order", "Ready Build", "In Progress", and "Missing Materials" even when the backend keeps recipe IDs and token IDs unchanged.
 - Deferred: small always-on HUD resource counts and broader non-turret deployment bridges.

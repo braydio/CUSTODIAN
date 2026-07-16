@@ -1,6 +1,7 @@
 extends SceneTree
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
+const GRUNT_SCENE := preload("res://game/actors/enemies/enemy_grunt.tscn")
 
 
 func _init() -> void:
@@ -49,6 +50,36 @@ func _run() -> void:
 	operator.start_field_patch()
 	if int(observatory.counters.get("field_patch_rejected_full_health", 0)) != 1:
 		failures.append("Field Patch rejection reason counter missing")
+
+	var grunt := GRUNT_SCENE.instantiate()
+	grunt.name = "AuditGrunt"
+	entities.add_child(grunt)
+	await process_frame
+	grunt.set_physics_process(false)
+	grunt.target = operator
+	grunt.global_position = Vector2.ZERO
+	operator.global_position = Vector2(500.0, 0.0)
+	grunt.call("_start_attack_windup", 5.0, false)
+	grunt.call("_execute_queued_attack")
+	if int(observatory.counters.get("enemy_attack_whiffed_out_of_range", 0)) != 1:
+		failures.append("enemy range-whiff reason counter missing")
+	var whiffs: Array = observatory.get_recent_events(10, &"enemy_attack_whiff")
+	if whiffs.is_empty() or str((whiffs[0] as Dictionary).get("data", {}).get("reason", "")) != "target_out_of_range":
+		failures.append("enemy whiff event did not retain terminal range reason")
+
+	var node_stats: Dictionary = observatory.call("_collect_node_stats", game_root)
+	for gauge_name in [
+		"collision_shape_count_runtime_walls",
+		"collision_shape_count_foliage",
+		"collision_shape_count_ruin_props",
+		"collision_shape_count_enemies",
+		"collision_shape_count_projectiles",
+		"physics_body_count_runtime_walls",
+		"physics_body_count_foliage",
+		"physics_body_count_ruin_props",
+	]:
+		if not node_stats.has(gauge_name):
+			failures.append("split collision gauge missing: %s" % gauge_name)
 
 	if failures.is_empty():
 		print("DEV_OBSERVATORY_AUDIT_SMOKE: PASS")

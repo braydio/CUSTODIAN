@@ -126,6 +126,8 @@ func _on_contract_generated(contract: Dictionary) -> void:
 	_contract_generation_failed = false
 	_last_failure_result = {}
 	var map_block: Dictionary = contract.get("map", {}) as Dictionary
+	var world_profile: Dictionary = contract.get("world_profile", {}) as Dictionary
+	_apply_contract_lighting_profile(world_profile)
 	var level_data: Dictionary = map_block.get("level_data", {}) as Dictionary
 	if bool(level_data.get("generation_failed", false)):
 		_on_contract_generation_failed(level_data)
@@ -167,6 +169,14 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_refresh_camera(map_instance)
 	_rebuild_navigation(map_instance)
 	_mark_contract_ready()
+
+
+func _apply_contract_lighting_profile(world_profile: Dictionary) -> void:
+	if world_profile.is_empty():
+		return
+	var director := get_tree().get_first_node_in_group("world_lighting_director")
+	if director != null and director.has_method("apply_world_profile_overrides"):
+		director.call("apply_world_profile_overrides", world_profile, false)
 
 
 func _on_contract_generation_failed(result: Dictionary) -> void:

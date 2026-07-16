@@ -2,9 +2,15 @@ extends Area2D
 class_name SunderedKeepTransitionTrigger
 
 @export_file("*.gd", "*.tscn") var target_scene_path: String = "res://game/world/sundered_keep/sundered_keep_map.gd"
+@export var target_node_name: StringName = &"SunderedKeepMap"
+@export var target_level_id: StringName = &"sundered_keep_front_gate"
 @export var target_spawn_id: StringName = &""
 @export var vista_controller_path: NodePath
+@export var connection_owner_path: NodePath
+@export var source_scene_path: NodePath = NodePath("..")
 @export var return_world_position := Vector2.ZERO
+@export var deactivate_source_on_transition := true
+@export var free_source_on_transition := true
 
 var _triggered := false
 
@@ -19,13 +25,27 @@ func _on_body_entered(body: Node) -> void:
 	if not _is_player_body(body):
 		return
 
-	_triggered = true
+	transition_actor(body)
 
+
+func enter_from_main(actor: Node) -> void:
+	transition_actor(actor)
+
+
+func reset_transition() -> void:
+	_triggered = false
+
+
+func transition_actor(actor: Node) -> void:
+	if _triggered or actor == null or not is_instance_valid(actor):
+		return
+	if not _is_player_body(actor):
+		return
+	_triggered = true
 	var controller := get_node_or_null(vista_controller_path)
 	if controller != null and controller.has_method("play_final_fade"):
 		await controller.call("play_final_fade")
-
-	_load_target_scene(body)
+	_load_target_scene(actor)
 
 
 func _load_target_scene(actor: Node) -> void:
@@ -44,20 +64,26 @@ func _load_target_scene(actor: Node) -> void:
 		world.add_child(connected_root)
 	_set_world_branch_visible(connected_root, true)
 
-	var target := connected_root.get_node_or_null("SunderedKeepMap")
+	var resolved_target_name := String(target_node_name)
+	if resolved_target_name.is_empty():
+		resolved_target_name = "SunderedKeepMap"
+	var target := connected_root.get_node_or_null(resolved_target_name)
 	if target == null:
 		target = _instantiate_target()
 		if target == null:
 			push_error("[SunderedKeepTransitionTrigger] Could not instantiate target: %s" % target_scene_path)
 			return
-		target.name = "SunderedKeepMap"
+		target.name = resolved_target_name
 		target.add_to_group("generated_sundered_keep_connection")
 		connected_root.add_child(target)
-		_configure_target_connection(target, world)
+	else:
+		_set_world_branch_visible(target, true)
+	_configure_target_connection(target, world)
 
 	if actor is Node2D:
 		_move_actor_to_target(actor as Node2D, target)
-	_retire_approach_scene()
+	_adopt_level_loader_target(target)
+	_deactivate_source_scene()
 
 
 func _instantiate_target() -> Node:
@@ -83,10 +109,25 @@ func _move_actor_to_target(actor: Node2D, target: Node) -> void:
 func _configure_target_connection(target: Node, world: Node2D) -> void:
 	if not target.has_method("configure_connection"):
 		return
-	var main_map := world.get_node_or_null("ProcGenRuntime")
+	var main_map: Node = null
+	if not connection_owner_path.is_empty():
+		main_map = get_node_or_null(connection_owner_path)
+	if main_map == null:
+		main_map = world.get_node_or_null("ProcGenRuntime")
 	if main_map == null:
 		main_map = world.get_node_or_null("ContractMap")
 	target.call("configure_connection", main_map, return_world_position)
+
+
+func _adopt_level_loader_target(target: Node) -> void:
+	if get_tree() == null:
+		return
+	var loaders := get_tree().get_nodes_in_group("level_loader")
+	if loaders.is_empty():
+		return
+	var loader := loaders[0] as Node
+	if loader != null and loader.has_method("adopt_active_level"):
+		loader.call("adopt_active_level", target_level_id, target)
 
 
 func _is_player_body(body: Node) -> bool:
@@ -101,12 +142,16 @@ func _set_world_branch_visible(branch: Node, value: bool) -> void:
 	branch.process_mode = Node.PROCESS_MODE_INHERIT if value else Node.PROCESS_MODE_DISABLED
 
 
-func _retire_approach_scene() -> void:
-	var approach := get_parent()
-	if approach == null:
+func _deactivate_source_scene() -> void:
+	if not deactivate_source_on_transition:
 		return
-	if approach is CanvasItem:
-		(approach as CanvasItem).visible = false
-	approach.process_mode = Node.PROCESS_MODE_DISABLED
-	if approach.is_in_group("world_ingress_approach"):
-		approach.queue_free()
+	var source := get_node_or_null(source_scene_path)
+	if source == null:
+		source = get_parent()
+	if source == null:
+		return
+	if source is CanvasItem:
+		(source as CanvasItem).visible = false
+	source.process_mode = Node.PROCESS_MODE_DISABLED
+	if free_source_on_transition:
+		source.queue_free()

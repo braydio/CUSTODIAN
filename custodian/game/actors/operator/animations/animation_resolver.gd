@@ -1,6 +1,8 @@
 extends RefCounted
 class_name AnimationResolver
 
+const WeaponSocketLibrary = preload("res://game/actors/operator/animations/operator_weapon_socket_library.gd")
+
 
 static func resolve(base: String, direction: Vector2, sprite: AnimatedSprite2D) -> StringName:
 	if sprite == null or sprite.sprite_frames == null:
@@ -29,19 +31,4 @@ static func _has_playable_animation(sprite_frames: SpriteFrames, animation_name:
 
 
 static func _get_direction_suffix(direction: Vector2) -> String:
-	var angle := direction.angle()
-	if angle >= -PI / 8.0 and angle < PI / 8.0:
-		return "right"
-	if angle >= PI / 8.0 and angle < 3.0 * PI / 8.0:
-		return "down_right"
-	if angle >= 3.0 * PI / 8.0 and angle < 5.0 * PI / 8.0:
-		return "down"
-	if angle >= 5.0 * PI / 8.0 and angle < 7.0 * PI / 8.0:
-		return "down_left"
-	if angle >= -3.0 * PI / 8.0 and angle < -PI / 8.0:
-		return "up_right"
-	if angle >= -5.0 * PI / 8.0 and angle < -3.0 * PI / 8.0:
-		return "up"
-	if angle >= -7.0 * PI / 8.0 and angle < -5.0 * PI / 8.0:
-		return "up_left"
-	return "left"
+	return WeaponSocketLibrary.resolve_animation_suffix(direction)

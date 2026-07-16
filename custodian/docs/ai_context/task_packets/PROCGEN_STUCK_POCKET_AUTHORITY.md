@@ -14,7 +14,7 @@
 - Owner: ProcGenTilemap runtime blocker overlay; NavigationSystem consumes it; Operator only diagnoses/rescues in debug builds.
 - Agent/session: Codex `/root`
 - Created: 2026-07-14
-- Last updated: 2026-07-14
+- Last updated: 2026-07-16
 
 ## Work Surface
 
@@ -40,6 +40,7 @@
 
 ## Handoff
 
+- 2026-07-16 follow-up: ruin props now reject complete inline collision footprints before instantiation, revalidate actual generated footprints after late portal-route reservation but before blocker registration, and keep deterministic candidate ordering. Observatory payloads/gauges distinguish rejection from backup remediation, and focused plus full-seed smokes cover the contract.
 - Next action: reproduce the original stuck location in a debug build, run `stuck_report`, and export the F10 Observatory session if any blocker mismatch remains.
 - Best starting files: `game/world/procgen/proc_gen_tilemap.gd`, `game/world/procgen/foliage/procgen_foliage_spawner.gd`.
 - Validation to run: `procgen_stuck_pocket_smoke.gd` plus existing focused procgen smoke(s) selected by the validation recipe.

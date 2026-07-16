@@ -35,7 +35,7 @@ const OVERLOOK_LEDGE_PATH := "res://content/sprites/world/return_causeway/path/o
 const LATERAL_TRAVERSE_PATH := "res://content/sprites/world/return_causeway/path/lateral_traverse_path.png"
 const FORTRESS_WALL_MASS_PATH := "res://content/sprites/world/return_causeway/path/fortress_wall_mass.png"
 
-const TARGET_SCENE_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
+const RETURN_CAUSEWAY_SCENE_PATH := "res://game/world/sundered_keep/return_causeway/ReturnCausewayApproach.tscn"
 const ROUTE_VERTICAL_OFFSET := 180.0
 const BOUNDARY_RAIL_RADIUS := 10.0
 
@@ -76,118 +76,132 @@ const RETURN_TOPDOWN_POS := Vector2(980.0, -305.0)
 const LEVEL_EXIT_POS := Vector2(1240.0, -218.0)
 
 const BOUNDARY_SEGMENTS := [
-	[Vector2(-121.6, 833.9), Vector2(20.4, 848.3)],
-	[Vector2(20.4, 848.3), Vector2(232.0, 811.1)],
-	[Vector2(232.0, 811.1), Vector2(220.0, 776.9)],
-	[Vector2(220.0, 776.9), Vector2(276.8, 762.9)],
-	[Vector2(276.8, 762.9), Vector2(367.6, 720.5)],
-	[Vector2(367.6, 720.5), Vector2(324.8, 662.9)],
-	[Vector2(324.8, 662.9), Vector2(230.9, 584.2)],
-	[Vector2(230.9, 584.2), Vector2(129.7, 555.7)],
-	[Vector2(129.7, 555.7), Vector2(85.3, 483.8)],
-	[Vector2(85.3, 483.8), Vector2(66.5, 403.4)],
-	[Vector2(66.5, 403.4), Vector2(77.7, 368.8)],
-	[Vector2(77.7, 368.8), Vector2(54.9, 338.4)],
-	[Vector2(54.9, 338.4), Vector2(91.7, 248.2)],
-	[Vector2(91.7, 248.2), Vector2(39.4, 212.3)],
-	[Vector2(39.4, 212.3), Vector2(89.2, 147.7)],
-	[Vector2(89.2, 147.7), Vector2(29.2, 103.7)],
-	[Vector2(29.2, 103.7), Vector2(28.0, 73.3)],
-	[Vector2(28.0, 73.3), Vector2(35.6, 47.4)],
-	[Vector2(35.6, 47.4), Vector2(-17.0, 13.9)],
-	[Vector2(-17.0, 13.9), Vector2(15.8, -33.7)],
-	[Vector2(15.8, -33.7), Vector2(-57.4, -107.7)],
-	[Vector2(-57.4, -107.7), Vector2(-159.0, -144.5)],
-	[Vector2(-159.0, -144.5), Vector2(-202.9, -210.4)],
-	[Vector2(-202.9, -210.4), Vector2(-172.6, -225.2)],
-	[Vector2(-172.6, -225.2), Vector2(-146.6, -211.6)],
-	[Vector2(-146.6, -211.6), Vector2(-80.6, -237.2)],
-	[Vector2(-80.6, -237.2), Vector2(-111.4, -273.2)],
-	[Vector2(-111.4, -273.2), Vector2(-44.6, -341.6)],
-	[Vector2(-44.6, -341.6), Vector2(72.1, -353.2)],
-	[Vector2(72.1, -353.2), Vector2(159.3, -346.4)],
-	[Vector2(159.3, -346.4), Vector2(213.6, -338.4)],
-	[Vector2(213.6, -338.4), Vector2(284.4, -340.8)],
-	[Vector2(284.4, -340.8), Vector2(285.2, -321.6)],
-	[Vector2(285.2, -321.6), Vector2(328.8, -322.4)],
-	[Vector2(328.8, -322.4), Vector2(377.2, -326.4)],
-	[Vector2(377.2, -326.4), Vector2(422.8, -328.0)],
-	[Vector2(422.8, -328.0), Vector2(480.0, -319.2)],
-	[Vector2(480.0, -319.2), Vector2(584.4, -309.6)],
-	[Vector2(584.4, -309.6), Vector2(653.1, -311.2)],
-	[Vector2(653.1, -311.2), Vector2(694.7, -314.0)],
-	[Vector2(694.7, -314.0), Vector2(696.3, -281.6)],
-	[Vector2(696.3, -281.6), Vector2(713.3, -249.6)],
-	[Vector2(713.3, -249.6), Vector2(770.5, -252.4)],
-	[Vector2(770.5, -252.4), Vector2(834.9, -236.8)],
-	[Vector2(834.9, -236.8), Vector2(919.5, -235.6)],
-	[Vector2(919.5, -235.6), Vector2(986.8, -265.2)],
-	[Vector2(986.8, -265.2), Vector2(1025.8, -258.0)],
-	[Vector2(1025.8, -258.0), Vector2(1058.6, -262.0)],
-	[Vector2(1058.6, -262.0), Vector2(1090.8, -237.2)],
-	[Vector2(1090.8, -237.2), Vector2(1121.9, -210.4)],
-	[Vector2(1121.9, -210.4), Vector2(1161.1, -215.2)],
-	[Vector2(1161.1, -215.2), Vector2(1225.9, -194.8)],
-	[Vector2(1225.9, -194.8), Vector2(1268.3, -198.0)],
-	[Vector2(1268.3, -198.0), Vector2(1276.7, -234.0)],
-	[Vector2(1276.7, -234.0), Vector2(1243.5, -241.6)],
-	[Vector2(1243.5, -241.6), Vector2(1201.9, -247.2)],
-	[Vector2(1201.9, -247.2), Vector2(1135.1, -241.2)],
-	[Vector2(1135.1, -241.2), Vector2(1091.5, -273.6)],
-	[Vector2(1091.5, -273.6), Vector2(1085.9, -309.6)],
-	[Vector2(1085.9, -309.6), Vector2(1069.3, -346.8)],
-	[Vector2(1069.3, -346.8), Vector2(874.6, -348.4)],
-	[Vector2(874.6, -348.4), Vector2(702.3, -360.4)],
-	[Vector2(702.3, -360.4), Vector2(494.7, -387.2)],
-	[Vector2(494.7, -387.2), Vector2(442.8, -390.8)],
-	[Vector2(442.8, -390.8), Vector2(349.2, -390.4)],
-	[Vector2(349.2, -390.4), Vector2(261.6, -399.2)],
-	[Vector2(261.6, -399.2), Vector2(177.4, -398.8)],
-	[Vector2(177.4, -398.8), Vector2(110.9, -393.6)],
-	[Vector2(110.9, -393.6), Vector2(30.5, -408.4)],
-	[Vector2(30.5, -408.4), Vector2(-32.3, -406.8)],
-	[Vector2(-32.3, -406.8), Vector2(-92.0, -371.2)],
-	[Vector2(-92.0, -371.2), Vector2(-158.5, -299.2)],
-	[Vector2(-158.5, -299.2), Vector2(-206.0, -326.8)],
-	[Vector2(-206.0, -326.8), Vector2(-385.5, -305.1)],
-	[Vector2(-385.5, -305.1), Vector2(-518.3, -280.3)],
-	[Vector2(-518.3, -280.3), Vector2(-511.5, -245.5)],
-	[Vector2(-511.5, -245.5), Vector2(-354.7, -166.3)],
-	[Vector2(-354.7, -166.3), Vector2(-316.7, -197.9)],
-	[Vector2(-316.7, -197.9), Vector2(-282.7, -184.3)],
-	[Vector2(-282.7, -184.3), Vector2(-268.3, -165.1)],
-	[Vector2(-268.3, -165.1), Vector2(-228.7, -118.7)],
-	[Vector2(-228.7, -118.7), Vector2(-132.3, -29.5)],
-	[Vector2(-132.3, -29.5), Vector2(-79.1, 0.9)],
-	[Vector2(-79.1, 0.9), Vector2(-65.5, 58.5)],
-	[Vector2(-65.5, 58.5), Vector2(-80.7, 92.2)],
-	[Vector2(-80.7, 92.2), Vector2(-47.1, 135.3)],
-	[Vector2(-47.1, 135.3), Vector2(-45.1, 165.3)],
-	[Vector2(-45.1, 165.3), Vector2(-73.5, 192.9)],
-	[Vector2(-73.5, 192.9), Vector2(-147.7, 243.3)],
-	[Vector2(-147.7, 243.3), Vector2(-80.9, 303.3)],
-	[Vector2(-80.9, 303.3), Vector2(-68.9, 409.7)],
-	[Vector2(-68.9, 409.7), Vector2(-48.1, 494.5)],
-	[Vector2(-48.1, 494.5), Vector2(-51.3, 516.3)],
-	[Vector2(-51.3, 516.3), Vector2(-160.5, 574.7)],
-	[Vector2(-160.5, 574.7), Vector2(-261.8, 635.8)],
-	[Vector2(-261.8, 635.8), Vector2(-282.2, 681.0)],
-	[Vector2(-282.2, 681.0), Vector2(-257.0, 723.4)],
-	[Vector2(-257.0, 723.4), Vector2(-225.4, 734.2)],
-	[Vector2(-225.4, 734.2), Vector2(-179.4, 764.0)],
-	[Vector2(-179.4, 764.0), Vector2(-124.9, 834.4)],
+	[Vector2(-44.7, 509.4), Vector2(-71.3, 400.2)],
+	[Vector2(-71.3, 400.2), Vector2(-82.4, 308.4)],
+	[Vector2(-82.4, 308.4), Vector2(-136.6, 243.4)],
+	[Vector2(-136.6, 243.4), Vector2(-40.4, 154.5)],
+	[Vector2(-40.4, 154.5), Vector2(-47.6, 125.5)],
+	[Vector2(-47.6, 125.5), Vector2(-87.4, 92.3)],
+	[Vector2(-87.4, 92.3), Vector2(-61.0, 48.2)],
+	[Vector2(-61.0, 48.2), Vector2(-85.0, -0.8)],
+	[Vector2(-85.0, -0.8), Vector2(-139.0, -28.2)],
+	[Vector2(-139.0, -28.2), Vector2(-184.3, -85.8)],
+	[Vector2(-184.3, -85.8), Vector2(-240.9, -128.8)],
+	[Vector2(-240.9, -128.8), Vector2(-306.2, -198.8)],
+	[Vector2(-306.2, -198.8), Vector2(-371.4, -156.8)],
+	[Vector2(-371.4, -156.8), Vector2(-410.7, -204.8)],
+	[Vector2(-410.7, -204.8), Vector2(-549.7, -254.0)],
+	[Vector2(-549.7, -254.0), Vector2(-506.5, -284.2)],
+	[Vector2(-506.5, -284.2), Vector2(-284.5, -322.6)],
+	[Vector2(-284.5, -322.6), Vector2(-172.3, -323.5)],
+	[Vector2(-172.3, -323.5), Vector2(-167.7, -294.1)],
+	[Vector2(-167.7, -294.1), Vector2(-38.4, -400.4)],
+	[Vector2(-38.4, -400.4), Vector2(27.9, -405.4)],
+	[Vector2(27.9, -405.4), Vector2(98.0, -398.7)],
+	[Vector2(98.0, -398.7), Vector2(281.6, -397.5)],
+	[Vector2(281.6, -397.5), Vector2(422.8, -387.9)],
+	[Vector2(422.8, -387.9), Vector2(660.5, -366.5)],
+	[Vector2(660.5, -366.5), Vector2(711.1, -367.7)],
+	[Vector2(711.1, -367.7), Vector2(787.8, -361.6)],
+	[Vector2(787.8, -361.6), Vector2(973.0, -360.4)],
+	[Vector2(973.0, -360.4), Vector2(1102.8, -356.2)],
+	[Vector2(1102.8, -356.2), Vector2(1086.2, -323.7)],
+	[Vector2(1086.2, -323.7), Vector2(1088.6, -273.9)],
+	[Vector2(1088.6, -273.9), Vector2(1136.2, -245.1)],
+	[Vector2(1136.2, -245.1), Vector2(1202.0, -243.9)],
+	[Vector2(1202.0, -243.9), Vector2(1266.8, -241.9)],
+	[Vector2(1266.8, -241.9), Vector2(1294.6, -224.7)],
+	[Vector2(1294.6, -224.7), Vector2(1270.4, -198.9)],
+	[Vector2(1270.4, -198.9), Vector2(1244.2, -190.8)],
+	[Vector2(1244.2, -190.8), Vector2(1170.4, -198.0)],
+	[Vector2(1170.4, -198.0), Vector2(1095.0, -231.6)],
+	[Vector2(1095.0, -231.6), Vector2(1050.2, -258.8)],
+	[Vector2(1050.2, -258.8), Vector2(1017.0, -264.8)],
+	[Vector2(1017.0, -264.8), Vector2(916.2, -249.6)],
+	[Vector2(916.2, -249.6), Vector2(805.2, -248.0)],
+	[Vector2(805.2, -248.0), Vector2(706.4, -283.4)],
+	[Vector2(706.4, -283.4), Vector2(683.4, -287.8)],
+	[Vector2(683.4, -287.8), Vector2(681.4, -314.0)],
+	[Vector2(681.4, -314.0), Vector2(529.0, -318.2)],
+	[Vector2(529.0, -318.2), Vector2(414.4, -324.0)],
+	[Vector2(414.4, -324.0), Vector2(332.2, -330.2)],
+	[Vector2(332.2, -330.2), Vector2(246.8, -342.4)],
+	[Vector2(246.8, -342.4), Vector2(78.7, -350.0)],
+	[Vector2(78.7, -350.0), Vector2(34.5, -341.0)],
+	[Vector2(34.5, -341.0), Vector2(-14.1, -337.2)],
+	[Vector2(-14.1, -337.2), Vector2(-45.5, -317.4)],
+	[Vector2(-45.5, -317.4), Vector2(-91.0, -270.8)],
+	[Vector2(-91.0, -270.8), Vector2(-77.7, -243.1)],
+	[Vector2(-77.7, -243.1), Vector2(-103.3, -223.5)],
+	[Vector2(-103.3, -223.5), Vector2(-145.7, -208.9)],
+	[Vector2(-145.7, -208.9), Vector2(-167.1, -219.7)],
+	[Vector2(-167.1, -219.7), Vector2(-193.5, -207.3)],
+	[Vector2(-193.5, -207.3), Vector2(-185.7, -178.3)],
+	[Vector2(-185.7, -178.3), Vector2(-156.7, -151.5)],
+	[Vector2(-156.7, -151.5), Vector2(-52.3, -97.4)],
+	[Vector2(-52.3, -97.4), Vector2(40.9, -31.6)],
+	[Vector2(40.9, -31.6), Vector2(-4.3, 10.3)],
+	[Vector2(-4.3, 10.3), Vector2(35.5, 54.7)],
+	[Vector2(35.5, 54.7), Vector2(38.5, 135.7)],
+	[Vector2(38.5, 135.7), Vector2(73.7, 159.0)],
+	[Vector2(73.7, 159.0), Vector2(42.1, 211.2)],
+	[Vector2(42.1, 211.2), Vector2(99.1, 240.5)],
+	[Vector2(99.1, 240.5), Vector2(79.9, 309.9)],
+	[Vector2(79.9, 309.9), Vector2(70.1, 352.9)],
+	[Vector2(70.1, 352.9), Vector2(83.7, 386.3)],
+	[Vector2(83.7, 386.3), Vector2(86.3, 415.7)],
+	[Vector2(86.3, 415.7), Vector2(79.7, 444.5)],
+	[Vector2(79.7, 444.5), Vector2(136.5, 535.8)],
+	[Vector2(136.5, 535.8), Vector2(281.9, 610.0)],
+	[Vector2(281.9, 610.0), Vector2(390.5, 711.8)],
+	[Vector2(390.5, 711.8), Vector2(344.5, 745.4)],
+	[Vector2(344.5, 745.4), Vector2(258.2, 783.3)],
+	[Vector2(258.2, 783.3), Vector2(159.4, 830.4)],
+	[Vector2(159.4, 830.4), Vector2(3.6, 849.8)],
+	[Vector2(3.6, 849.8), Vector2(-193.4, 801.2)],
+	[Vector2(-193.4, 801.2), Vector2(-306.6, 703.7)],
+	[Vector2(-306.6, 703.7), Vector2(-274.2, 646.9)],
+	[Vector2(-274.2, 646.9), Vector2(-214.4, 596.7)],
+	[Vector2(-214.4, 596.7), Vector2(-45.0, 509.7)],
 ]
 
 const AUTHORING_MARKERS := {
 	"spawn": {
 		"label": "SPAWN",
 		"kind": "spawn",
-		"position": Vector2(45.0, 430.0),
+		"position": Vector2(32.1, 662.2),
 	},
 	"return_causeway": {
 		"label": "RETURN CAUSEWAY",
 		"kind": "return_causeway",
-		"position": Vector2(-32.0, 470.0),
+		"position": Vector2(1226.7, -236.9),
+	},
+	"gatehouse_key": {
+		"label": "GATEHOUSE KEY",
+		"kind": "key",
+		"position": Vector2(0.0, -180.0),
+	},
+	"main_gate": {
+		"label": "RAISING GATE",
+		"kind": "gate",
+		"position": Vector2(0.0, -180.0),
+	},
+	"level_exit": {
+		"label": "LEVEL EXIT",
+		"kind": "level_exit",
+		"position": Vector2(1226.2, -237.1),
+	},
+	"enemy_spawn_west": {
+		"label": "ENEMY SPAWN W",
+		"kind": "enemy_spawn",
+		"position": Vector2(0.0, -180.0),
+		"lane": "sundered_keep_west",
+	},
+	"enemy_spawn_gate": {
+		"label": "ENEMY SPAWN GATE",
+		"kind": "enemy_spawn",
+		"position": Vector2(0.0, -180.0),
+		"lane": "sundered_keep_gate",
 	},
 }
 
@@ -591,10 +605,19 @@ func _event_marker_color(kind: String) -> Color:
 
 
 func _build_level_exit_trigger() -> void:
-	_level_exit_trigger = Area2D.new()
+	var trigger := SunderedKeepTransitionTrigger.new()
+	trigger.target_scene_path = RETURN_CAUSEWAY_SCENE_PATH
+	trigger.target_node_name = &"ReturnCausewayApproach"
+	trigger.target_level_id = &"return_causeway"
+	trigger.vista_controller_path = NodePath("../../VistaController")
+	trigger.source_scene_path = NodePath("../..")
+	trigger.return_world_position = main_return_position
+	trigger.deactivate_source_on_transition = true
+	trigger.free_source_on_transition = true
+	_level_exit_trigger = trigger
+	exit_transition_trigger = trigger
 	_level_exit_trigger.name = "LevelExitTrigger"
 	_level_exit_trigger.position = _route_point(LEVEL_EXIT_POS)
-	_level_exit_trigger.body_entered.connect(_on_level_exit_body_entered)
 	event_runtime_root.add_child(_level_exit_trigger)
 	var shape := CollisionShape2D.new()
 	shape.name = "CollisionShape2D"
@@ -648,58 +671,11 @@ func _ensure_vista_controller() -> void:
 	vista_controller.apply_progress(0.0)
 
 
-func _ensure_exit_transition_trigger() -> void:
-	exit_transition_trigger = get_node_or_null("ExitTransitionTrigger") as SunderedKeepTransitionTrigger
-	if exit_transition_trigger == null:
-		exit_transition_trigger = SunderedKeepTransitionTrigger.new()
-		exit_transition_trigger.name = "ExitTransitionTrigger"
-		add_child(exit_transition_trigger)
-
-	exit_transition_trigger.position = _route_point(RETURN_TOPDOWN_POS)
-	exit_transition_trigger.target_scene_path = TARGET_SCENE_PATH
-	exit_transition_trigger.vista_controller_path = NodePath("../VistaController")
-	exit_transition_trigger.set_deferred("monitoring", true)
-	exit_transition_trigger.set_deferred("monitorable", true)
-
-	var shape := exit_transition_trigger.get_node_or_null("CollisionShape2D") as CollisionShape2D
-	if shape == null:
-		shape = CollisionShape2D.new()
-		shape.name = "CollisionShape2D"
-		exit_transition_trigger.add_child(shape)
-	var rectangle := shape.shape as RectangleShape2D
-	if rectangle == null:
-		rectangle = RectangleShape2D.new()
-		shape.shape = rectangle
-	rectangle.size = Vector2(144.0, 190.0)
-	shape.position = Vector2.ZERO
-	shape.set_deferred("disabled", false)
-
-
 func _apply_ingress_config_to_trigger() -> void:
 	if exit_transition_trigger == null:
 		return
-	if _ingress_config.has("target_scene_path"):
-		exit_transition_trigger.target_scene_path = String(_ingress_config["target_scene_path"])
-	if _ingress_config.has("target_spawn_id"):
-		exit_transition_trigger.target_spawn_id = _ingress_config["target_spawn_id"]
 	if _ingress_config.has("return_world_position"):
 		exit_transition_trigger.return_world_position = _ingress_config["return_world_position"]
-
-
-func _on_level_exit_body_entered(body: Node) -> void:
-	if not _is_player_body(body):
-		return
-	_return_actor_to_main(body)
-
-
-func _return_actor_to_main(actor: Node) -> void:
-	if actor is Node2D and main_return_position != Vector2.ZERO:
-		(actor as Node2D).global_position = main_return_position
-	var world := get_node_or_null("/root/GameRoot/World") as Node2D
-	if world != null:
-		_set_world_branch_visible(world.get_node_or_null("ProcGenRuntime"), true)
-		_set_world_branch_visible(world.get_node_or_null("ConnectedMaps"), true)
-	queue_free()
 
 
 func _is_player_body(body: Node) -> bool:

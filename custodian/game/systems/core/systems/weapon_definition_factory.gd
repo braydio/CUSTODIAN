@@ -71,6 +71,13 @@ func create_weapon_definition(weapon_id: String) -> OperatorWeaponDefinition:
 	var animation = data.get("animation", {})
 	def.animation_fire_frame = int(animation.get("fire_frame", 0))
 	def.recoil_animation = StringName(String(animation.get("recoil_animation", "recoil_standard")))
+
+	var presentation = data.get("presentation", {})
+	def.socket_data_path = String(presentation.get("socket_data_path", ""))
+	def.production_socket_data_required = bool(presentation.get("production_socket_data_required", false))
+	def.fine_aim_limit_degrees = float(presentation.get("fine_aim_limit_degrees", 0.0))
+	def.recoil_translation_px = float(presentation.get("recoil_translation_px", 3.0))
+	def.recoil_rotation_degrees = float(presentation.get("recoil_rotation_degrees", 2.0))
 	
 	def.current_magazine = def.magazine_size
 	

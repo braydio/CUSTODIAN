@@ -112,9 +112,11 @@ env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/ranged_combat_balance_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/combat_resource_feedback_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_weapon_socket_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ready_input_smoke.gd
 ```
 
-The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
+The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. The modular fire and ready-input smokes additionally validate raise/lower direction retargeting without progress reset, committed shot direction, recovery-to-current-aim, posture/readiness status, and upper/weapon direction plus frame-clock synchronization. The socket smoke validates generated Carbine phase-1 metadata, socket-derived muzzle/draw order, transition timing, and camera-owned zoom/lead cancellation. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
 
 For allied drone fire/formation/guard-anchor commands:
 
@@ -167,7 +169,7 @@ godot --headless --path . --script res://tools/validation/operator_modular_defen
 ```
 
 The Falcon smoke validates stop-short travel, body/enemy separation, dedicated Operator impact, zero-drift recovery,
-hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection. The focused reaction smoke validates required asset dimensions, enter/hold/recover, BREACH/ring lifetime, atomic reservation, zero-offset shared CharacterBody roots, zero-local paired layers plus transform restoration, same-tick 8-frame/12-FPS semantic playback, frame-3 exactly-once damage, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Required paired/open assets fail loudly; only optional posture-break and expiry presentation may warn without failing.
+hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection. The focused reaction smoke validates required asset dimensions, independent post-knockback roots through enter/hold/recover, normal target-ring suppression through recovery, BREACH/ring lifetime, atomic reservation, zero-offset shared execution roots, zero-local paired layers plus transform restoration, same-tick 8-frame/12-FPS semantic playback, frame-3 exactly-once damage, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Required paired/open assets fail loudly; only optional posture-break and expiry presentation may warn without failing.
 
 For Sundered Keep asset wiring specifically:
 
@@ -177,11 +179,12 @@ For the registered Sundered Keep ingress and active continuous approach:
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_level_chain_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_runtime_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_mapper_smoke.gd
 ```
 
-The active approach smoke also proves the Vista Approach contains no Keep-specific key/gate/enemy markers or gate blocker and retains an unconditional level-end trigger.
+The active approach smoke proves the Vista scene contains no misplaced Keep-specific markers/blocker and that its unconditional endpoint targets Return Causeway. The chain smoke proves Vista → Causeway → Keep actor placement, LevelLoader adoption, source branch deactivation, and Keep → Causeway return anchoring.
 
 For the experimental route/stage wrapper:
 
@@ -245,8 +248,19 @@ For the native Godot lighting layer:
 
 ```bash
 cd custodian
-godot --headless --script res://tools/validation/lighting_system_smoke.gd
+env HOME=/tmp/custodian-godot-home \
+  godot --headless --path . \
+  --script res://tools/validation/lighting_system_smoke.gd
+
+env HOME=/tmp/custodian-godot-home \
+  godot --headless --path . \
+  --script res://tools/validation/world_atmosphere_smoke.gd
 ```
+
+The first command instantiates the standalone lighting playground and checks the `WorldLightingDirector`,
+`CanvasModulate`, `DirectionalLight2D`, reusable light rigs, `LightingZone2D`, `LightOccluder2D`, and transient additive
+flash pool. The second command checks live `game.tscn` lighting/profile/atmosphere wiring, UI layer separation, runtime
+fog/cosmic propagation, the combined foliage wind/occlusion shader contract, and representative persistent light rigs.
 
 For the Dear ImGui Director Console dev-tooling layer:
 
@@ -256,9 +270,6 @@ godot --headless --script res://tools/validation/director_console_imgui_smoke.gd
 ```
 
 This validates the `/root/ImGui` plugin autoload, the F3 debug bus autoload, the read-only snapshot collector autoload, and the Director Console front-end wiring without requiring a rendered editor window.
-
-This instantiates the standalone lighting playground and checks the `WorldLightingDirector`, `CanvasModulate`,
-`DirectionalLight2D`, reusable light rigs, `LightingZone2D`, `LightOccluder2D`, and transient additive flash pool.
 
 For TerrainBuilder/procgen connectivity changes:
 
@@ -319,8 +330,10 @@ The first command validates the extracted foliage service's deterministic genera
 checks that final-visual foliage queues batch into placed nodes over subsequent frames. The third validates combat-aware
 canopy occlusion profile switching and readability clearance hooks. The fourth audits every ruin prop definition against
 the bottom-contact collision contract and verifies per-instance collision debug. The fifth proves collision-owner blocker
-lifecycle, corrected global prop-footprint registration, local escape detection/remediation, and required-route clearance
-without relying on a full contract generation.
+lifecycle, definition-footprint rejection before instantiation, existing-blocker rejection, corrected global
+prop-footprint registration, local escape detection/remediation, and required-route clearance without relying on a full
+contract generation. Run `procgen_authored_scene_authority_smoke.gd` after placement-policy changes to confirm a full
+seed produces no protected-zone backup warnings after portal routes are finalized.
 
 ## Manual Godot Validation
 

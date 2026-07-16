@@ -159,6 +159,7 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var director_label = get_node_or_null("DirectorLabel")
 @onready var supply_drop_label = get_node_or_null("SupplyDropLabel")
 @onready var crosshair_label = get_node_or_null("Crosshair")
+@onready var ranged_reticle = get_node_or_null("RangedReticle")
 @onready var interaction_label = get_node_or_null("InteractionLabel")
 @onready var minimap = get_node_or_null("Minimap")
 
@@ -1424,15 +1425,17 @@ func _process(delta):
 
 
 func _update_crosshair() -> void:
-	if not crosshair_label:
+	if crosshair_label == null and ranged_reticle == null:
 		return
 	if _main_hud_hidden or _terminal_open or _placement_mode_active:
-		crosshair_label.visible = false
+		_hide_aim_reticles()
 		return
 	var drone_manager = get_node_or_null("/root/GameRoot/World/DroneManager")
 	if drone_manager != null and drone_manager.has_method("get_command_reticle_state"):
 		var command_state: Dictionary = drone_manager.call("get_command_reticle_state")
-		if bool(command_state.get("active", false)):
+		if bool(command_state.get("active", false)) and crosshair_label != null:
+			if ranged_reticle != null:
+				ranged_reticle.visible = false
 			var command_world_position: Vector2 = command_state.get("world_position", Vector2.ZERO)
 			var command_screen_position := get_viewport().get_canvas_transform() * command_world_position
 			var command_size := Vector2.ZERO
@@ -1444,12 +1447,24 @@ func _update_crosshair() -> void:
 			return
 	var operator_ref = get_node_or_null("/root/GameRoot/World/Operator")
 	if operator_ref == null or not operator_ref.has_method("get_weapon_status"):
-		crosshair_label.visible = false
+		_hide_aim_reticles()
 		return
-	var weapon_status = operator_ref.get_weapon_status()
+	var weapon_status: Dictionary = operator_ref.get_weapon_status()
+	if ranged_reticle != null and ranged_reticle.has_method("set_weapon_status"):
+		ranged_reticle.call("set_weapon_status", weapon_status)
+		if ranged_reticle.visible:
+			if crosshair_label != null:
+				crosshair_label.visible = false
+			var ranged_screen_position := _get_ranged_reticle_screen_position(weapon_status, operator_ref)
+			if ranged_screen_position != Vector2.INF:
+				ranged_reticle.position = ranged_screen_position - ranged_reticle.size * 0.5
+			return
 	var aim_mode = str(weapon_status.get("aim_mode", "mouse"))
 	if aim_mode != "arrows":
-		crosshair_label.visible = false
+		if crosshair_label != null:
+			crosshair_label.visible = false
+		return
+	if crosshair_label == null:
 		return
 	var aim_dir = Vector2(weapon_status.get("aim_direction", Vector2.RIGHT))
 	var normalized_aim = Vector2.RIGHT
@@ -1486,6 +1501,35 @@ func _update_crosshair() -> void:
 	crosshair_label.visible = true
 	crosshair_label.modulate = operator_ref.aim_crosshair_color
 	_last_crosshair_aim_dir = normalized_aim
+
+
+func _get_ranged_reticle_screen_position(weapon_status: Dictionary, operator_ref: Node2D) -> Vector2:
+	var viewport_rect := get_viewport().get_visible_rect()
+	var margin := CROSSHAIR_SCREEN_MARGIN
+	if str(weapon_status.get("aim_mode", "mouse")) == "mouse":
+		var mouse_position := get_viewport().get_mouse_position()
+		mouse_position.x = clampf(mouse_position.x, margin, maxf(margin, viewport_rect.size.x - margin))
+		mouse_position.y = clampf(mouse_position.y, margin, maxf(margin, viewport_rect.size.y - margin))
+		return mouse_position
+	var camera := get_node_or_null("/root/GameRoot/World/Camera2D") as Camera2D
+	if camera == null:
+		return Vector2.INF
+	var aim_direction: Vector2 = weapon_status.get("aim_direction", Vector2.RIGHT)
+	if aim_direction.length_squared() <= 0.0001:
+		aim_direction = Vector2.RIGHT
+	var player_position: Vector2 = weapon_status.get("player_position", operator_ref.global_position)
+	var world_position := player_position + aim_direction.normalized() * CROSSHAIR_WORLD_DISTANCE
+	var screen_position := get_viewport().get_canvas_transform() * world_position
+	screen_position.x = clampf(screen_position.x, margin, maxf(margin, viewport_rect.size.x - margin))
+	screen_position.y = clampf(screen_position.y, margin, maxf(margin, viewport_rect.size.y - margin))
+	return screen_position
+
+
+func _hide_aim_reticles() -> void:
+	if crosshair_label != null:
+		crosshair_label.visible = false
+	if ranged_reticle != null:
+		ranged_reticle.visible = false
 
 
 func _get_essential_hud_nodes() -> Array:
@@ -1538,6 +1582,8 @@ func _set_main_hud_hidden(hidden: bool) -> void:
 			node.visible = false
 	if crosshair_label:
 		crosshair_label.visible = false
+	if ranged_reticle:
+		ranged_reticle.visible = false
 	_set_external_gameplay_overlays_hidden(effective_hidden)
 
 
@@ -2721,6 +2767,11 @@ func _render_terminal_output():
 			var sector_label := _display_sector_name(sector).to_upper()
 			rendered_line += " [url=sector:%s][color=#8AD0FF]%s[/color][/url]" % [sector, _escape_bbcode(sector_label)]
 		chunks.append("[color=#6FAE9C][%s][/color] [color=%s]%s[/color]" % [timestamp, level_color, rendered_line])
+	if _terminal_current_page == "FABRICATION" and _terminal_command_queue.is_empty():
+		chunks.append("\n[color=#e3b763][b]SELECT WORK ORDER[/b][/color]")
+		chunks.append("[color=#d9c7a2]CRAFT 1[/color] starts selected recipe")
+		chunks.append("[color=#d9c7a2]TO MAX[/color] crafts until capped or resources fail")
+		chunks.append("[color=#9eb9ae]Esc closes terminal[/color]")
 	if terminal_output is RichTextLabel:
 		terminal_output.clear()
 		terminal_output.append_text("\n".join(chunks))
@@ -3186,6 +3237,7 @@ func _set_terminal_page(page_name: String) -> void:
 	_terminal_current_page = normalized
 	_refresh_terminal_page_buttons()
 	_apply_terminal_page_theme()
+	_render_terminal_output()
 	if _terminal_open:
 		_refresh_snapshot()
 	if _terminal_open or terminal_input != null:
@@ -3211,6 +3263,7 @@ func _apply_terminal_page_theme() -> void:
 		_apply_label_type(terminal_nav_title as Label, _terminal_font_display, TERMINAL_FONT_SIZE_SECTION, Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
 	if terminal_action_title is Label:
 		_apply_label_type(terminal_action_title as Label, _terminal_font_display, TERMINAL_FONT_SIZE_SECTION, Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
+		terminal_action_title.text = "TERMINAL ACTIONS" if fabrication_mode else "ACTIONS"
 	if terminal_status_label is Label:
 		_apply_label_type(terminal_status_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(1.0, 0.78, 0.48, 0.96) if fabrication_mode else Color(0.64, 0.88, 0.78, 0.96))
 	if terminal_hint_label is Label:
@@ -4157,15 +4210,19 @@ func _render_terminal_fabrication_clickable_widgets(view: Dictionary) -> void:
 
 func _build_fabrication_selected_detail(selected: Dictionary) -> String:
 	var lines: Array[String] = [
+		"[color=#e3b763][b]%s[/b][/color]" % str(selected.get("display_name", "UNKNOWN")).to_upper(),
 		"[table=2]",
-		"[cell][color=#9eb9ae]NAME[/color][/cell][cell][b]%s[/b][/cell]" % str(selected.get("display_name", "UNKNOWN")).to_upper(),
 		"[cell][color=#9eb9ae]STATE[/color][/cell][cell]%s[/cell]" % str(selected.get("state", "UNKNOWN")).to_upper(),
 		"[cell][color=#9eb9ae]CATEGORY[/color][/cell][cell]%s[/cell]" % _short_fabrication_category(str(selected.get("category", "utility"))),
 		"[cell][color=#9eb9ae]RESULT[/color][/cell][cell]%s[/cell]" % str(selected.get("result_text", "Produces a build output.")),
+	]
+	if _is_selected_lattice_field_patch(selected):
+		lines.append("[cell][color=#9eb9ae]CARRY[/color][/cell][cell]%s[/cell]" % _get_operator_patch_carry_summary())
+	lines.append_array([
 		"[/table]",
 		"[color=#e3b763][b]COST[/b][/color]",
 		"[table=4][cell][color=#9eb9ae]RESOURCE[/color][/cell][cell][color=#9eb9ae]NEED[/color][/cell][cell][color=#9eb9ae]HAVE[/color][/cell][cell][color=#9eb9ae]MISSING[/color][/cell]",
-	]
+	])
 	var cost_rows: Array = selected.get("cost_rows", [])
 	if cost_rows.is_empty():
 		lines.append("[cell]FREE[/cell][cell]--[/cell][cell]--[/cell][cell]--[/cell]")
@@ -4183,8 +4240,6 @@ func _build_fabrication_selected_detail(selected: Dictionary) -> String:
 				missing_text,
 			])
 	lines.append("[/table]")
-	if _is_selected_lattice_field_patch(selected):
-		lines.append("[color=#9eb9ae]%s[/color]" % _get_operator_patch_carry_summary())
 	return "\n".join(lines)
 
 
@@ -4599,7 +4654,7 @@ func _render_terminal_main_content(snapshot: Dictionary) -> void:
 	if terminal_nav_title:
 		terminal_nav_title.text = "WORK ORDERS" if _terminal_current_page == "FABRICATION" else "NAVIGATION"
 	if terminal_action_title:
-		terminal_action_title.text = "READY BUILDS" if _terminal_current_page == "FABRICATION" else "ACTIONS"
+		terminal_action_title.text = "TERMINAL ACTIONS" if _terminal_current_page == "FABRICATION" else "ACTIONS"
 	if terminal_header_eyebrow:
 		terminal_header_eyebrow.text = "FABRICATION TERMINAL" if _terminal_current_page == "FABRICATION" else "CUSTODIAN NODE"
 	if terminal_title_label:

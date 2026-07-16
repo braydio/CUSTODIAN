@@ -4,6 +4,8 @@
 
 Implemented as a Godot-native presentation layer under `res://game/world/lighting/`.
 
+The live-game atmosphere and foliage-motion consumer is specified by `design/02_features/visuals/WORLD_ATMOSPHERE_SHADER_SYSTEM.md`. The director is no longer playground-only: `res://scenes/game.tscn` instantiates its default exterior profile, native lighting nodes, and the fullscreen world-atmosphere pass below UI.
+
 ## Direction
 
 CUSTODIAN does not use a third-party lighting plugin or custom renderer for V1. The runtime uses Godot native 2D
@@ -25,6 +27,10 @@ The project-specific layer is a lighting direction system, not a replacement lig
 - `custodian/game/world/lighting/light_rig_2d.gd`
 - `custodian/game/world/lighting/light_rig_2d.tscn`
 - `custodian/game/world/lighting/transient_light_pool.gd`
+- `custodian/game/world/lighting/world_atmosphere_2d.gd`
+- `custodian/game/world/lighting/world_atmosphere_2d.tscn`
+- `custodian/game/world/lighting/shaders/world_atmosphere.gdshader`
+- `custodian/content/lighting/profiles/sundered_keep_exterior.tres`
 
 ## Usage
 
@@ -48,16 +54,18 @@ pulses, and small explosions. It intentionally avoids spawning `PointLight2D` fo
 ```bash
 cd custodian
 godot --headless --script res://tools/validation/lighting_system_smoke.gd
+godot --headless --path . --script res://tools/validation/world_atmosphere_smoke.gd
 ```
 
 The playground scene is `res://tools/validation/lighting_playground.tscn`. It includes a `CanvasModulate`,
 `DirectionalLight2D`, three `LightRig2D` examples, a `LightingZone2D`, a simple `LightOccluder2D` wall, and debug
-profile/flash controls.
+profile/flash controls. The world-atmosphere smoke separately validates the live `game.tscn` director/profile/pass,
+UI layering, runtime profile propagation, combined foliage wind/occlusion material, and representative persistent
+terminal and power-node lights.
 
 ## Deferred
 
-- Wiring the director into `scenes/game.tscn`.
-- Level-authored profiles for Return Causeway, Sundered Keep, Ash-Bell, Forlorn-Ritualant, shoreline storms, and
+- Additional level-authored profiles for Return Causeway interiors, Ash-Bell, Forlorn-Ritualant, shoreline storms, and
   constructed interiors.
 - Selective normal/specular map production for hero assets and major machinery.
 - Custom shaders for cosmic underlay refraction, temporal distortion, fog bands, and fake height-map shadows.

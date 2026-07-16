@@ -1,7 +1,7 @@
 extends RefCounted
 class_name ProcgenFoliageSpawner
 
-const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occlusion_bubble.gdshader")
+const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_life.gdshader")
 const FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES := 8
 
 
@@ -211,6 +211,8 @@ func _place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 
 	var sprite := Sprite2D.new()
 	sprite.texture = texture
+	var texture_size := texture.get_size()
+	var foliage_kind := _classify_foliage(texture_size)
 	sprite.modulate = _call_color(context, "get_planet_profile_color", "foliage_tint", Color.WHITE)
 	var world_pos := _call_vector2(context, "tile_to_world_position", pos) + _foliage_jitter(context, pos)
 	sprite.position = foliage_parent.to_local(world_pos)
@@ -223,13 +225,20 @@ func _place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 	material.set_shader_parameter("bubble_alpha", float(context.get("foliage_player_occlusion_alpha", 0.55)))
 	material.set_shader_parameter("bubble_enabled", false)
 	material.set_shader_parameter("bubble_count", 0)
+	var phase_hash := _tile_noise_hash(context, pos + Vector2i(431, 977))
+	material.set_shader_parameter("wind_enabled", bool(context.get("foliage_wind_enabled", true)))
+	material.set_shader_parameter("wind_speed", float(context.get("foliage_wind_speed", 0.9)))
+	material.set_shader_parameter("gust_amount", float(context.get("foliage_wind_gust_amount", 0.35)))
+	material.set_shader_parameter("wind_phase", float(phase_hash % 6283) / 1000.0)
+	var wind_strength := float(context.get("foliage_shrub_wind_strength_px", 0.45))
+	if foliage_kind == "tree":
+		wind_strength = float(context.get("foliage_tree_wind_strength_px", 0.9))
+	material.set_shader_parameter("wind_strength_px", wind_strength)
 	for bubble_index in range(FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES):
 		material.set_shader_parameter("bubble_center_%d" % bubble_index, Vector2.ZERO)
 	sprite.material = material
 	foliage_parent.add_child(sprite)
 
-	var texture_size := texture.get_size()
-	var foliage_kind := _classify_foliage(texture_size)
 	var has_trunk_collision := foliage_kind == "tree" and _should_add_tree_trunk_collision(context, pos)
 	if has_trunk_collision:
 		_add_tree_trunk_collision(context, sprite, texture_size)

@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://dqle6bbgblr2o"]
+[gd_scene load_steps=4 format=3 uid="uid://dqle6bbgblr2o"]
 
 [ext_resource type="Script" uid="uid://dj1viok18xp87" path="res://game/actors/terminal/command_terminal.gd" id="1_terminal"]
+[ext_resource type="PackedScene" path="res://game/world/lighting/light_rig_2d.tscn" id="2_light_rig"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(34, 24)
@@ -21,6 +22,15 @@ polygon = PackedVector2Array(-18, 18, 18, 18, 14, -2, -14, -2)
 [node name="Screen" type="Polygon2D" parent="." unique_id=1088133084]
 color = Color(0.1, 0.7, 0.65, 1)
 polygon = PackedVector2Array(-12, -4, 12, -4, 10, -18, -10, -18)
+
+[node name="TerminalLightRig" parent="." instance=ExtResource("2_light_rig")]
+position = Vector2(0, -10)
+light_color = Color(0.35, 0.9, 0.78, 1)
+energy = 0.85
+pulse_enabled = true
+pulse_speed = 0.9
+pulse_amount = 0.06
+glow_scale = 1.3
 
 [node name="StatusStrip" type="Polygon2D" parent="." unique_id=1421444196]
 color = Color(0.82, 0.88, 0.95, 1)

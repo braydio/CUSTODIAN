@@ -95,6 +95,15 @@
     "frame_size_px": {"x": 32, "y": 64}
   },
 
+  "presentation": {
+    "socket_data_path": "res://content/data/operator/generated/operator_weapon_sockets.generated.json",
+    "production_socket_data_required": true,
+    "phase_1_sectors": ["e", "w", "se", "sw"],
+    "fine_aim_limit_degrees": 0.0,
+    "recoil_translation_px": 3.0,
+    "recoil_rotation_degrees": 2.0
+  },
+
   "projectile": {
     "scene": "res://game/actors/projectiles/bullet.tscn",
     "visual_sprite_frames": "res://assets/resources/vfx/weapons/carbine_mk1/carbine_mk1_projectile_travel_loop_01_frames.tres",

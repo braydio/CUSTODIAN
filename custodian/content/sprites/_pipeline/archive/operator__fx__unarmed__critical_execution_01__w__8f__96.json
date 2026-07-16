@@ -1,0 +1,20 @@
+{
+  "source": "operator__fx__unarmed__critical_execution_01__w__8f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__8f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true
+}

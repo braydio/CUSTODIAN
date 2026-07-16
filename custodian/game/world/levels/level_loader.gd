@@ -78,6 +78,14 @@ func get_active_level_instance() -> Node:
 	return null
 
 
+func adopt_active_level(level_id: StringName, instance: Node) -> void:
+	if instance == null or not is_instance_valid(instance):
+		return
+	_active_level_id = level_id
+	_active_level_instance = instance
+	level_entered.emit(level_id, instance)
+
+
 func _fail(level_id: StringName, reason: String) -> Node:
 	push_error("[LevelLoader] unable to enter %s: %s" % [level_id, reason])
 	level_entry_failed.emit(level_id, reason)

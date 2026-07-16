@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__fx__unarmed__critical_execution_01__e__8f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__8f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/operator__fx__unarmed__critical_execution_01__e__8f__96.png",
+	"timestamp_utc": "2026-07-16 07:48:39"
+}

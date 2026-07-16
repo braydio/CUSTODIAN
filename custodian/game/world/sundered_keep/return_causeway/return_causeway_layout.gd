@@ -31,6 +31,8 @@ const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sunde
 const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_travel_gate.gd")
+const KEEP_TRANSITION_SCRIPT := preload("res://game/world/approaches/sundered_keep/sundered_keep_transition_trigger.gd")
+const SUNDERED_KEEP_SCENE_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
 
 # Music.
 const MUSIC_PATH := "res://content/audio/music/return_causeway/return_causeway_01.ogg"
@@ -75,6 +77,9 @@ var _travel_gate: Node2D = null
 var _return_mooring_active_overlay: Sprite2D = null
 var _buried_terminal_overlay: Sprite2D = null
 var _music_player: AudioStreamPlayer2D = null
+var _upstream_map: Node = null
+var _upstream_return_position := Vector2.ZERO
+var _keep_transition_controller: SunderedKeepTransitionTrigger = null
 
 
 # -- Lifecycle ----------------------------------------------------------------
@@ -93,8 +98,8 @@ func _process(_delta: float) -> void:
 # -- Public API (Travel Gate Interface) ---------------------------------------
 
 func configure_connection(p_main_map: Node, p_main_return_position: Vector2) -> void:
-	# Not used directly — prologue starts in this scene.
-	pass
+	_upstream_map = p_main_map
+	_upstream_return_position = p_main_return_position
 
 
 func get_entry_position() -> Vector2:
@@ -131,6 +136,21 @@ func enter_from_main(actor: Node) -> void:
 func return_to_main(_actor: Node) -> void:
 	# Prologue return — not a sub-map, so this is a no-op.
 	pass
+
+
+func resume_from_child(actor: Node, child_level: Node = null) -> void:
+	visible = true
+	process_mode = Node.PROCESS_MODE_INHERIT
+	if _keep_transition_controller != null:
+		_keep_transition_controller.reset_transition()
+	if child_level is CanvasItem:
+		(child_level as CanvasItem).visible = false
+	if child_level != null:
+		child_level.process_mode = Node.PROCESS_MODE_DISABLED
+	if actor is Node2D:
+		(actor as Node2D).global_position = _get_keep_return_position()
+	_refresh_camera(self, actor)
+	_adopt_as_active_level()
 
 
 # -- Build Orchestrator -------------------------------------------------------
@@ -620,20 +640,45 @@ func _build_gatehouse_gate() -> void:
 func _add_travel_gate() -> void:
 	# Travel gate at the north end of Outer Keep Yard.
 	# Transitions to Sundered Keep main map.
+	_keep_transition_controller = KEEP_TRANSITION_SCRIPT.new() as SunderedKeepTransitionTrigger
+	if _keep_transition_controller == null:
+		return
+	_keep_transition_controller.name = "KeepTransitionController"
+	_keep_transition_controller.target_scene_path = SUNDERED_KEEP_SCENE_PATH
+	_keep_transition_controller.target_node_name = &"SunderedKeepMap"
+	_keep_transition_controller.target_level_id = &"sundered_keep_front_gate"
+	_keep_transition_controller.connection_owner_path = NodePath("..")
+	_keep_transition_controller.source_scene_path = NodePath("..")
+	_keep_transition_controller.return_world_position = _get_keep_return_position()
+	_keep_transition_controller.deactivate_source_on_transition = true
+	_keep_transition_controller.free_source_on_transition = false
+	_keep_transition_controller.monitoring = false
+	_keep_transition_controller.monitorable = false
+	add_child(_keep_transition_controller)
+
 	_travel_gate = TRAVEL_GATE_SCRIPT.new() as Node2D
 	if _travel_gate == null:
 		return
 	_travel_gate.name = "TravelToSunderedKeepGate"
-	_travel_gate.call("configure", self, 0, "ENTER SUNDERED KEEP")
-
-	# Try to find Sundered Keep map for direct transition.
-	var keep_map := get_node_or_null("/root/GameRoot/World/SunderedKeepMap")
-	if keep_map != null:
-		_travel_gate.set("connected_map", keep_map)
-		_travel_gate.set("connected_map_path", NodePath("/root/GameRoot/World/SunderedKeepMap"))
+	_travel_gate.call("configure", _keep_transition_controller, 0, "ENTER SUNDERED KEEP")
 
 	_travel_gate.position = _tile_center(TRANSITION_TILE)
 	add_child(_travel_gate)
+
+
+func _get_keep_return_position() -> Vector2:
+	return to_global(_tile_center(TRANSITION_TILE + Vector2i(0, 2)))
+
+
+func _adopt_as_active_level() -> void:
+	if get_tree() == null:
+		return
+	var loaders := get_tree().get_nodes_in_group("level_loader")
+	if loaders.is_empty():
+		return
+	var loader := loaders[0] as Node
+	if loader != null and loader.has_method("adopt_active_level"):
+		loader.call("adopt_active_level", &"return_causeway", self)
 
 
 # -- Music --------------------------------------------------------------------

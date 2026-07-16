@@ -364,8 +364,14 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 		if markers.get_child_count() != 0:
 			errors.append("Vista Approach must not render authoring markers at runtime")
 	if runtime != null:
-		if runtime.get_node_or_null("LevelExitTrigger") == null:
+		var level_exit := runtime.get_node_or_null("LevelExitTrigger") as SunderedKeepTransitionTrigger
+		if level_exit == null:
 			errors.append("EventRuntime/LevelExitTrigger missing")
+		else:
+			if not level_exit.target_scene_path.ends_with("ReturnCausewayApproach.tscn"):
+				errors.append("Vista endpoint must target Return Causeway")
+			if level_exit.target_node_name != &"ReturnCausewayApproach":
+				errors.append("Vista endpoint must use the stable ReturnCausewayApproach node name")
 		for forbidden_name in ["GatehouseKeyInteraction", "MainGateInteraction", "MainGateBlocker", "EnemySpawnWestSpawnNode", "EnemySpawnGateSpawnNode"]:
 			if runtime.get_node_or_null(forbidden_name) != null:
 				errors.append("EventRuntime/%s belongs in the Keep entrance, not Vista Approach" % forbidden_name)

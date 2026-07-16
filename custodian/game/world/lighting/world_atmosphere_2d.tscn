@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/world/lighting/world_atmosphere_2d.gd" id="1_script"]
+[ext_resource type="Shader" path="res://game/world/lighting/shaders/world_atmosphere.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_atmosphere"]
+resource_local_to_scene = true
+shader = ExtResource("2_shader")
+
+[node name="WorldAtmosphere2D" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_script")
+
+[node name="PostProcess" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_atmosphere")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

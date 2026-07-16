@@ -184,12 +184,31 @@ func _validate_selected_primary_priority(operator: Node) -> void:
 	operator.set("equipped_primary_weapon_id", "carbine_rifle")
 	operator.set("using_unarmed", false)
 	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("fire_cooldown_remaining", 0.0)
+	operator.set("_pending_ranged_shot", {})
+	operator.set("_reload_active", false)
+	for sprite_name in ["modular_lower_body_sprite", "modular_upper_body_sprite", "modular_sidearm_sprite"]:
+		var sprite := operator.get(sprite_name) as AnimatedSprite2D
+		if sprite != null:
+			_add_placeholder_animation(sprite.sprite_frames, &"ranged_2h_aim_modular_right")
 	_assert_true(operator.call("_get_offhand_secondary_mode") == &"primary_ranged_ready", "selected ranged primary should route secondary to primary ranged-ready")
 	_assert_true(operator.call("_get_ranged_ready_candidate_weapon_definition") == CARBINE_DEFINITION, "actively selected ranged primary should take priority over sidearm")
 	operator.call("_enter_ranged_ready")
 	_assert_true(operator.call("_get_active_ranged_weapon_definition") == CARBINE_DEFINITION, "active ranged weapon should remain the selected primary")
 	_assert_true(bool(operator.call("_is_using_ranged_2h_primary")), "selected carbine should still report as ranged_2h primary")
+	var raising_status: Dictionary = operator.call("get_weapon_status")
+	_assert_true(raising_status.get("ranged_posture") == "raising", "carbine aim entry should expose raising posture")
+	_assert_true(not bool(raising_status.get("ranged_ready", true)), "raising should not expose ranged_ready")
+	_assert_true(not bool(raising_status.get("can_fire_now", true)), "aim raise should expose fire gating")
+	_assert_true(raising_status.has("committed_aim_direction"), "weapon status should expose committed aim direction")
+	operator.call("_tick_primary_ranged_action_presentation", 10.0)
+	var ready_status: Dictionary = operator.call("get_weapon_status")
+	_assert_true(ready_status.get("ranged_posture") == "ready", "completed aim entry should expose ready posture")
+	_assert_true(bool(ready_status.get("ranged_ready", false)), "ready posture should expose ranged_ready")
+	_assert_true(float(ready_status.get("ranged_transition_ratio", -1.0)) == 0.0, "settled ready posture should clear transition ratio")
 	operator.call("_exit_ranged_ready")
+	var lowering_status: Dictionary = operator.call("get_weapon_status")
+	_assert_true(lowering_status.get("ranged_posture") == "lowering", "carbine release should expose lowering posture")
 
 
 func _validate_offhand_input_actions_trigger_parry(root: Node) -> void:

@@ -33,18 +33,21 @@ func _init() -> void:
 
 
 func _run() -> void:
-	var root := Node2D.new()
-	root.name = "GruntFalconPunchSmokeRoot"
-	get_root().add_child(root)
-	current_scene = root
+	var observatory := root.get_node_or_null("DevObservatory")
+	if observatory != null and observatory.has_method("clear"):
+		observatory.call("clear")
+	var scene_root := Node2D.new()
+	scene_root.name = "GruntFalconPunchSmokeRoot"
+	get_root().add_child(scene_root)
+	current_scene = scene_root
 
 	var grunt := GRUNT_SCENE.instantiate()
-	root.add_child(grunt)
+	scene_root.add_child(grunt)
 	var target := DummyTarget.new()
 	target.name = "DummyPlayer"
 	target.add_to_group("player")
 	target.global_position = Vector2(112.0, 0.0)
-	root.add_child(target)
+	scene_root.add_child(target)
 	await process_frame
 	grunt.set_physics_process(false)
 	_assert_near(float(grunt.get("grunt_falcon_punch_windup_time")), 0.46, 0.001, "live grunt should use the longer Falcon tell")
@@ -98,6 +101,9 @@ func _run() -> void:
 	_assert_true(String(grunt.get("_grunt_falcon_punch_phase")).is_empty(), "recovery should finish the special attack")
 
 	# A parried result must cancel the entire attack even when the target stub does not call back into Enemy.
+	var impact_events_before_parry := 0
+	if observatory != null:
+		impact_events_before_parry = (observatory.call("get_recent_events", 100, &"grunt_falcon_punch_impact_lock") as Array).size()
 	target.result_mode = &"parried"
 	target.global_position = Vector2(100.0, 0.0)
 	grunt.global_position = Vector2.ZERO
@@ -109,6 +115,10 @@ func _run() -> void:
 	grunt.call("_try_apply_grunt_falcon_punch_hit")
 	_assert_true(String(grunt.get("_grunt_falcon_punch_phase")).is_empty(), "parry should hard-cancel falcon punch")
 	_assert_true(float(grunt.get("_grunt_falcon_punch_recent_parry_timer")) > 0.0, "parry should start the special lockout")
+	if observatory != null:
+		var impact_events_after_parry := (observatory.call("get_recent_events", 100, &"grunt_falcon_punch_impact_lock") as Array).size()
+		_assert_true(impact_events_after_parry == impact_events_before_parry, "parried Falcon Punch must not emit normal impact lock")
+		_assert_true(int(observatory.get("counters").get("falcon_punch_parried", 0)) == 1, "Falcon parry counter should increment once")
 	grunt.set("_grunt_falcon_punch_decision_credit", 1.0)
 	target.global_position = grunt.global_position + Vector2(100.0, 0.0)
 	_assert_true(not bool(grunt.call("_should_start_grunt_falcon_punch_now", target)), "recent parry should block immediate re-falcon")
@@ -125,7 +135,7 @@ func _run() -> void:
 	ally_blocker.name = "AllyLaneBlocker"
 	ally_blocker.add_to_group("enemy")
 	ally_blocker.global_position = Vector2(55.0, 8.0)
-	root.add_child(ally_blocker)
+	scene_root.add_child(ally_blocker)
 	_assert_true(not bool(grunt.call("_is_grunt_falcon_punch_lane_clear", target)), "ally in launch lane should block falcon punch")
 	ally_blocker.global_position = Vector2(18.0, 8.0)
 	_assert_true((grunt.call("_get_enemy_separation_vector", 34.0) as Vector2).length_squared() > 0.0, "nearby enemy should contribute movement separation")
@@ -138,6 +148,17 @@ func _run() -> void:
 	_assert_true(not bool(grunt.call("_should_start_grunt_falcon_punch_now", target)), "falcon punch should require normal melee pressure first")
 	grunt.call("_start_attack_windup", 13.0, false)
 	_assert_true(bool(grunt.call("_should_start_grunt_falcon_punch_now", target)), "normal melee pressure should advance deterministic Falcon eligibility")
+
+	# A terminal leap without a hit goes directly to recovery and records why.
+	grunt.call("_clear_pending_attack_context")
+	grunt.set("_grunt_falcon_punch_recent_parry_timer", 0.0)
+	grunt.call("_start_grunt_falcon_punch_windup", Vector2.RIGHT)
+	grunt.call("_start_grunt_falcon_punch_leap")
+	grunt.call("_resolve_grunt_falcon_punch_whiff", &"target_out_of_range")
+	_assert_true(String(grunt.get("_grunt_falcon_punch_phase")) == "recovery", "Falcon whiff should skip successful impact lock")
+	if observatory != null:
+		_assert_true(int(observatory.get("counters").get("falcon_punch_whiffed", 0)) == 1, "Falcon whiff counter should identify terminal miss")
+		_assert_true(int(observatory.get("counters").get("enemy_attack_whiffed_out_of_range", 0)) == 1, "Falcon range whiff should expose reason counter")
 
 	if _failed:
 		push_error("grunt_falcon_punch_smoke failed")

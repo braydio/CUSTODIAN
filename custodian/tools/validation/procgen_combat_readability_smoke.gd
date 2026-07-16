@@ -1,7 +1,7 @@
 extends SceneTree
 
 const PROCGEN_TILEMAP := preload("res://game/world/procgen/proc_gen_tilemap.gd")
-const FOLIAGE_SHADER := preload("res://game/world/procgen/foliage_occlusion_bubble.gdshader")
+const FOLIAGE_SHADER := preload("res://game/world/procgen/foliage_life.gdshader")
 const TILESET_PATH := "res://content/tiles/tilesets/procgen_world_tileset.tres"
 
 var _failed := false

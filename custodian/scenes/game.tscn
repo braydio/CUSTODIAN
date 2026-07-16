@@ -45,12 +45,17 @@
 [ext_resource type="Script" uid="uid://bxpa63ls5ihkq" path="res://game/systems/core/systems/turret_placement.gd" id="100_turret_placement"]
 [ext_resource type="Texture2D" uid="uid://6y4pj114mk8m" path="res://content/sprites/misc/crosshair_64x64.png" id="101_crosshair"]
 [ext_resource type="Script" uid="uid://brs7i5frcn2w5" path="res://game/systems/core/systems/terminal_deployment.gd" id="101_terminal_deployment"]
+[ext_resource type="PackedScene" path="res://game/ui/hud/components/ranged_reticle.tscn" id="102_ranged_reticle"]
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
 [ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
 [ext_resource type="Script" uid="uid://brgprv506ntpi" path="res://game/systems/spawning/ambient_enemy_camp.gd" id="207_ambient_camp"]
 [ext_resource type="PackedScene" path="res://scenes/debug/dev_observatory_overlay.tscn" id="208_observatory_overlay"]
 [ext_resource type="PackedScene" path="res://game/actors/allies/allied_infantry_droid.tscn" id="209_allied_droid"]
+[ext_resource type="Script" path="res://game/world/lighting/world_lighting_director.gd" id="210_lighting_director"]
+[ext_resource type="Resource" path="res://content/lighting/profiles/sundered_keep_exterior.tres" id="211_lighting_profile"]
+[ext_resource type="PackedScene" path="res://game/world/lighting/world_atmosphere_2d.tscn" id="212_world_atmosphere"]
+[ext_resource type="PackedScene" path="res://game/world/lighting/light_rig_2d.tscn" id="213_light_rig"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
@@ -66,6 +71,20 @@ script = ExtResource("33_debug_collector")
 [node name="DevObservatoryOverlay" parent="." unique_id=1030058335 instance=ExtResource("208_observatory_overlay")]
 
 [node name="World" type="Node2D" parent="." unique_id=932635855]
+
+[node name="CanvasModulate" type="CanvasModulate" parent="World"]
+color = Color(0.23, 0.25, 0.29, 1)
+
+[node name="DirectionalLight2D" type="DirectionalLight2D" parent="World"]
+rotation_degrees = -32.0
+color = Color(0.78, 0.84, 0.96, 1)
+energy = 0.55
+
+[node name="WorldLightingDirector" type="Node2D" parent="World"]
+script = ExtResource("210_lighting_director")
+canvas_modulate_path = NodePath("../CanvasModulate")
+directional_light_path = NodePath("../DirectionalLight2D")
+default_profile = ExtResource("211_lighting_profile")
 
 [node name="DebugDraw" type="Node2D" parent="World" unique_id=1320630577]
 script = ExtResource("31_debug_draw")
@@ -94,6 +113,15 @@ sector_name = "POWER"
 sector_type = "POWER"
 size_tiles = Vector2i(28, 26)
 door_sides = PackedStringArray("W", "S")
+
+[node name="PowerNodeLightRig" parent="World/Sectors/POWER" instance=ExtResource("213_light_rig")]
+position = Vector2(0, -18)
+light_color = Color(0.96, 0.7, 0.3, 1)
+energy = 1.15
+pulse_enabled = true
+pulse_speed = 2.1
+pulse_amount = 0.12
+glow_scale = 1.55
 
 [node name="DEFENSE" parent="World/Sectors" unique_id=1371060751 instance=ExtResource("4_sector")]
 position = Vector2(1800, 312)
@@ -273,6 +301,8 @@ position = Vector2(804, -492)
 position = Vector2(720, -480)
 script = ExtResource("3_camera")
 
+[node name="WorldAtmosphere2D" parent="." instance=ExtResource("212_world_atmosphere")]
+
 [node name="Simulation" type="Node" parent="." unique_id=262550242]
 script = ExtResource("1_simulation")
 
@@ -317,6 +347,7 @@ critter_scene = ExtResource("35_ambient_shrumb")
 min_distance_from_spawn_tiles = 10
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=2053415447]
+layer = 20
 script = ExtResource("8_ui")
 terminal_contract_node_path = NodePath("../World/ContractMap")
 
@@ -457,6 +488,8 @@ offset_top = 360.0
 offset_right = 704.0
 offset_bottom = 424.0
 texture = ExtResource("101_crosshair")
+
+[node name="RangedReticle" parent="UI" instance=ExtResource("102_ranged_reticle")]
 
 [node name="InteractionLabel" type="Label" parent="UI" unique_id=466777138]
 modulate = Color(0.86, 0.93, 0.9, 0.82)

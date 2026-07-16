@@ -35,6 +35,17 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 @export var weapon_socket_position_down: Vector2 = Vector2(12, -14)
 @export var muzzle_socket_position_down: Vector2 = Vector2(20, 4)
 
+@export_group("Frame-aware Weapon Presentation")
+@export_file("*.json") var socket_data_path: String = ""
+@export var production_socket_data_required: bool = false
+@export var directional_weapon_textures: Dictionary = {}
+@export var grip_pivot_by_direction: Dictionary = {}
+@export var fine_aim_limit_degrees: float = 0.0
+@export var recoil_translation_px: float = 3.0
+@export var recoil_rotation_degrees: float = 2.0
+@export var muzzle_flash_scene: PackedScene
+@export var casing_scene: PackedScene
+
 # === WEAPON STATS (from JSON) ===
 @export_group("Combat Stats")
 @export var damage: float = 12.0

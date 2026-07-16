@@ -175,6 +175,20 @@ write to the export or change runtime state.
 - Procgen validation-pocket counters describe generation-time repair; Operator trap/rescue counters describe runtime failures. Stuck reports include seed, tile/region, blocker sources, a local collision mask, and reachable area. Debug rescue candidates require distance from the source, two exits, an eight-tile local reachable area, no nearby runtime blocker, and a post-move report.
 - The text analyzer labels warning totals separately from the displayed tail; omitted earlier warnings are disclosed.
 
+## Procgen Placement Prevention Contract (2026-07-16)
+
+- Ruin-prop placement reports pre-spawn rejection separately from post-spawn remediation. The Observatory records outcomes but never participates in the placement decision.
+- Rejection counters are `procgen_prop_candidates_rejected_protected_zone`, `procgen_prop_candidates_rejected_stuck_risk`, and `procgen_prop_candidates_rejected_existing_blocker`.
+- Last-generation gauges are `procgen_stuck_pockets_detected_last_generation`, `procgen_stuck_pockets_remediated_last_generation`, and `procgen_prop_collision_alignment_warning_count_last_generation`; they are reset for each generation rather than accumulated across a play session.
+- Prop collision warning/rejection payloads include definition ID, source tile, prop global position, global collision rectangle, collision tile footprint, protected-zone type, remediation action, and seed when available.
+- Performance gauges split collision shapes and physics bodies for runtime walls, foliage, and ruin props. Classification is diagnostic and based on runtime ownership/groups; it does not alter collision behavior.
+
+## Enemy Attack Outcome Contract (2026-07-16)
+
+- Enemy attack lifecycle events share a stable `attack_id`, enemy/target IDs, attack type, phase, result, and reason where applicable.
+- Terminal result values distinguish `damaged`, `parried`, `whiffed`, `interrupted`, `cancelled_by_death`, `target_out_of_range`, `target_out_of_arc`, and `blocked_by_collision`.
+- Falcon Punch tracks attempts, hits, parries, whiffs, and cancellations separately. Its ordinary `impact_lock` is hit-confirmed; a parry hard-cancels into the parry-critical branch and must not emit a successful-impact lock.
+
 ## Acceptance
 
 - `F9` toggles the observatory overlay in `res://scenes/game.tscn`.

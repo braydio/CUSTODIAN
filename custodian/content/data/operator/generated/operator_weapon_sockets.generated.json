@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "owner": "operator",
+  "weapon_id": "carbine_mk1",
+  "cell_size": [96, 96],
+  "required_sectors": ["e", "w", "se", "sw"],
+  "coordinate_space": "operator_local",
+  "tracks": {
+    "ranged_2h_stance_modular_right": [
+      {"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3}
+    ],
+    "ranged_2h_stance_modular_left": [
+      {"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3},
+      {"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3}
+    ],
+    "ranged_2h_stance_modular_down_right": [
+      {"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4},
+      {"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4},
+      {"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4},
+      {"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4},
+      {"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4}
+    ],
+    "ranged_2h_stance_modular_down_left": [
+      {"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4},
+      {"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4},
+      {"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4},
+      {"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4},
+      {"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4}
+    ],
+    "ranged_2h_aim_modular_right": [
+      {"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3}
+    ],
+    "ranged_2h_aim_modular_left": [
+      {"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3}
+    ],
+    "ranged_2h_aim_modular_down_right": [
+      {"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4}
+    ],
+    "ranged_2h_aim_modular_down_left": [
+      {"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4}
+    ],
+    "ranged_2h_fire_modular_right": [
+      {"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[-1,-18],"support_grip":[9,-20],"muzzle":[31,-28],"ejection":[11,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[-3,-18],"support_grip":[7,-20],"muzzle":[29,-28],"ejection":[9,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[-2,-18],"support_grip":[8,-20],"muzzle":[30,-28],"ejection":[10,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[-1,-18],"support_grip":[9,-20],"muzzle":[31,-28],"ejection":[11,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[0,-18],"support_grip":[10,-20],"muzzle":[32,-28],"ejection":[12,-29],"weapon_angle_deg":0,"weapon_z":3}
+    ],
+    "ranged_2h_fire_modular_left": [
+      {"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[1,-18],"support_grip":[-9,-20],"muzzle":[-31,-28],"ejection":[-11,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[3,-18],"support_grip":[-7,-20],"muzzle":[-29,-28],"ejection":[-9,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[2,-18],"support_grip":[-8,-20],"muzzle":[-30,-28],"ejection":[-10,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[1,-18],"support_grip":[-9,-20],"muzzle":[-31,-28],"ejection":[-11,-29],"weapon_angle_deg":0,"weapon_z":3},{"grip":[0,-18],"support_grip":[-10,-20],"muzzle":[-32,-28],"ejection":[-12,-29],"weapon_angle_deg":0,"weapon_z":3}
+    ],
+    "ranged_2h_fire_modular_down_right": [
+      {"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[-1,-19],"support_grip":[9,-12],"muzzle":[30,-18],"ejection":[11,-21],"weapon_angle_deg":0,"weapon_z":4},{"grip":[-2,-20],"support_grip":[8,-13],"muzzle":[29,-19],"ejection":[10,-22],"weapon_angle_deg":0,"weapon_z":4},{"grip":[-1,-19],"support_grip":[9,-12],"muzzle":[30,-18],"ejection":[11,-21],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[10,-11],"muzzle":[31,-17],"ejection":[12,-20],"weapon_angle_deg":0,"weapon_z":4}
+    ],
+    "ranged_2h_fire_modular_down_left": [
+      {"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4},{"grip":[1,-19],"support_grip":[-9,-12],"muzzle":[-30,-18],"ejection":[-11,-21],"weapon_angle_deg":0,"weapon_z":4},{"grip":[2,-20],"support_grip":[-8,-13],"muzzle":[-29,-19],"ejection":[-10,-22],"weapon_angle_deg":0,"weapon_z":4},{"grip":[1,-19],"support_grip":[-9,-12],"muzzle":[-30,-18],"ejection":[-11,-21],"weapon_angle_deg":0,"weapon_z":4},{"grip":[0,-18],"support_grip":[-10,-11],"muzzle":[-31,-17],"ejection":[-12,-20],"weapon_angle_deg":0,"weapon_z":4}
+    ]
+  }
+}

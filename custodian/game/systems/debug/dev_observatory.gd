@@ -507,6 +507,14 @@ func _collect_node_stats(root_node: Node) -> Dictionary:
 		"node_count_ui": 0,
 		"physics_body_count": 0,
 		"collision_shape_count": 0,
+		"collision_shape_count_runtime_walls": 0,
+		"collision_shape_count_foliage": 0,
+		"collision_shape_count_ruin_props": 0,
+		"collision_shape_count_enemies": 0,
+		"collision_shape_count_projectiles": 0,
+		"physics_body_count_runtime_walls": 0,
+		"physics_body_count_foliage": 0,
+		"physics_body_count_ruin_props": 0,
 		"process_enabled_node_count": 0,
 		"physics_process_enabled_node_count": 0,
 	}
@@ -525,8 +533,26 @@ func _collect_node_stats(root_node: Node) -> Dictionary:
 			stats["node_count_collision"] += 1
 		if node is CollisionShape2D or node is CollisionPolygon2D:
 			stats["collision_shape_count"] += 1
+			var shape_category := _get_collision_owner_category(node)
+			if shape_category == &"runtime_walls":
+				stats["collision_shape_count_runtime_walls"] += 1
+			elif shape_category == &"foliage":
+				stats["collision_shape_count_foliage"] += 1
+			elif shape_category == &"ruin_props":
+				stats["collision_shape_count_ruin_props"] += 1
+			elif shape_category == &"enemies":
+				stats["collision_shape_count_enemies"] += 1
+			elif shape_category == &"projectiles":
+				stats["collision_shape_count_projectiles"] += 1
 		if node is PhysicsBody2D:
 			stats["physics_body_count"] += 1
+			var body_category := _get_collision_owner_category(node)
+			if body_category == &"runtime_walls":
+				stats["physics_body_count_runtime_walls"] += 1
+			elif body_category == &"foliage":
+				stats["physics_body_count_foliage"] += 1
+			elif body_category == &"ruin_props":
+				stats["physics_body_count_ruin_props"] += 1
 		if node is Control or node is CanvasLayer:
 			stats["node_count_ui"] += 1
 		if "vfx" in path or "effect" in path or node.is_in_group("vfx"):
@@ -539,6 +565,24 @@ func _collect_node_stats(root_node: Node) -> Dictionary:
 			if child is Node:
 				stack.append(child)
 	return stats
+
+
+func _get_collision_owner_category(node: Node) -> StringName:
+	var cursor := node
+	while cursor != null:
+		if cursor.is_in_group("enemies") or cursor.is_in_group("enemy"):
+			return &"enemies"
+		if cursor.is_in_group("projectiles"):
+			return &"projectiles"
+		if cursor.is_in_group("runtime_prop") or cursor is ProceduralProp:
+			return &"ruin_props"
+		var name_lower := String(cursor.name).to_lower()
+		if "foliage" in name_lower or "tree" in name_lower or "shrub" in name_lower:
+			return &"foliage"
+		if name_lower == "walls" or "runtimewall" in name_lower or "runtime_wall" in name_lower:
+			return &"runtime_walls"
+		cursor = cursor.get_parent()
+	return &""
 
 
 func _ensure_input_actions() -> void:

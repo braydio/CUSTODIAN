@@ -41,6 +41,10 @@ The runtime phase enum is `NONE`, `ENTER`, `HOLD`, `RECOVER`, and `EXECUTING`. `
 
 On `apply_parry_stagger()`, active attacks are cancelled, only the short requested physical knockback is applied, BREACH/countdown are spawned, and `critical_open_enter_s` starts. Enter advances to looping `critical_open_hold_s`. Expiry from enter or hold clears both indicators and starts non-looping `critical_open_recover_s`; normal AI, navigation, attacks, reactions, and direction selection remain suppressed until recover completes.
 
+Enter, hold, and recover are standalone enemy states, not paired compositions. After the one requested parry knockback step resolves, the enemy records its own world root and preserves that root through all three phases; the Operator keeps its independent root. Normal target-ring presentation stays suppressed through recover and returns only after the recover clip completes. The paired shared-root contract begins only when reservation succeeds.
+
+All standalone critical-open strips retain the same uncropped 96×96 enemy root convention as `idle_s`. The final hold frame and first recover frame must use nearly identical planted-foot placement and silhouette. Runtime root locking cannot repair artwork that was independently cropped or recentered, so visible hold-to-recover popping is an export defect and must be corrected in the authored sheets.
+
 Ordinary hit reactions must not overwrite enter, hold, recover, or executing. Required asset failure emits `push_error` with the exact path and prevents the production branch from silently returning to the frozen stagger placeholder.
 
 ## Reservation And Execution API

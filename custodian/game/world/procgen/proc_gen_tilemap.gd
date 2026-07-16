@@ -380,13 +380,14 @@ const FOLIAGE_ASSET_PATHS := [
 ]
 
 const FRUIT_TEXTURE_PATH := "res://content/sprites/environment/foliage/fruit_sheet.png"
-const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_occlusion_bubble.gdshader")
+const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_life.gdshader")
 const PROCGEN_FOLIAGE_SPAWNER_SCRIPT := preload("res://game/world/procgen/foliage/procgen_foliage_spawner.gd")
 const FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES := 8
 const DEFAULT_RUIN_PROP_SCENE := preload("res://content/props/ruins/scenes/ProceduralProp.tscn")
 const DEFAULT_RUIN_PROP_SPAWN_SET := preload("res://content/props/ruins/data/ruin_prop_spawn_set.tres")
 const PROP_SCATTERER_SCRIPT := preload("res://content/props/ruins/scripts/PropScatterer.gd")
 const PORTAL_TELEPORTER_SCRIPT := preload("res://game/world/procgen/portal_teleporter.gd")
+const LIGHT_RIG_SCENE := preload("res://game/world/lighting/light_rig_2d.tscn")
 const PORTAL_DEFINITION_ID := &"portal_ring_01"
 const INTERIOR_RUNTIME_DIR := "res://content/tiles/interiors/runtime"
 const ROAD_PIECE_MANIFEST_PATH := "res://content/tiles/roads_paths/runtime/roads/lane/road_lane_piece_manifest.game32.json"
@@ -444,6 +445,12 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export var foliage_mob_feet_offset: Vector2 = Vector2(0, 6)
 @export var foliage_mob_upper_body_offset: Vector2 = Vector2(0, -18)
 @export var foliage_mob_occlusion_x_padding: float = 8.0
+@export_group("Foliage Motion")
+@export var foliage_wind_enabled: bool = true
+@export_range(0.0, 4.0, 0.05) var foliage_wind_speed: float = 0.9
+@export_range(0.0, 2.0, 0.05) var foliage_shrub_wind_strength_px: float = 0.45
+@export_range(0.0, 3.0, 0.05) var foliage_tree_wind_strength_px: float = 0.9
+@export_range(0.0, 1.0, 0.01) var foliage_wind_gust_amount: float = 0.35
 @export_group("Combat Readability")
 @export var combat_readability_enabled: bool = true
 @export var combat_readability_enemy_range: float = 260.0
@@ -578,6 +585,10 @@ var _ascent_field_main_route_cells: Array[Vector2i] = []
 var _ascent_field_vista_cells: Array[Vector2i] = []
 var _world_progress_marker_parent: Node2D = null
 var _debug_generation_id: int = 0
+var _generation_prop_rejections_protected_zone: int = 0
+var _generation_prop_rejections_stuck_risk: int = 0
+var _generation_prop_rejections_existing_blocker: int = 0
+var _generation_prop_collision_alignment_warnings: int = 0
 
 func _ready() -> void:
 	if not generation_output_enabled:
@@ -695,6 +706,10 @@ func apply_planet_world_profile(profile: Dictionary) -> void:
 	foliage_compound_density_multiplier = clamp(float(_planet_world_profile.get("foliage_compound_density_multiplier", foliage_compound_density_multiplier)), 0.0, 1.0)
 	fruit_spawn_chance_shrub = clamp(float(_planet_world_profile.get("fruit_spawn_chance_shrub", fruit_spawn_chance_shrub)), 0.0, 1.0)
 	fruit_spawn_chance_tree = clamp(float(_planet_world_profile.get("fruit_spawn_chance_tree", fruit_spawn_chance_tree)), 0.0, 1.0)
+	foliage_wind_speed = clampf(float(_planet_world_profile.get("foliage_wind_speed", foliage_wind_speed)), 0.0, 4.0)
+	foliage_shrub_wind_strength_px = clampf(float(_planet_world_profile.get("foliage_shrub_wind_strength_px", foliage_shrub_wind_strength_px)), 0.0, 2.0)
+	foliage_tree_wind_strength_px = clampf(float(_planet_world_profile.get("foliage_tree_wind_strength_px", foliage_tree_wind_strength_px)), 0.0, 3.0)
+	foliage_wind_gust_amount = clampf(float(_planet_world_profile.get("foliage_wind_gust_amount", foliage_wind_gust_amount)), 0.0, 1.0)
 	_apply_planet_visual_profile()
 
 
@@ -709,6 +724,7 @@ signal minimap_tile_changed(tile: Vector2i, terrain_kind: String)
 
 func _on_procgen_finished() -> void:
 	_debug_generation_id += 1
+	_reset_generation_prop_observability()
 	var mode := "EVAL_CANDIDATE" if generation_evaluation_mode else "FINAL_VISUAL"
 	var seed_text := "unknown"
 	if procgen_node != null:
@@ -3723,13 +3739,20 @@ func validate_no_stuck_pockets(remediate: bool = true) -> Dictionary:
 		flagged.append(tile)
 		if remediate:
 			var cleared_for_tile := 0
+			var cleared_source_ids: Array[String] = []
 			while get_runtime_escape_neighbor_count(tile) < runtime_blocker_min_escape_neighbors \
-					and _clear_one_blocker_near_tile(tile):
+					and _clear_one_blocker_near_tile(tile, cleared_source_ids):
 				cleared_for_tile += 1
 			if cleared_for_tile > 0:
 				remediated += 1
 				push_warning("[ProcGenStuckPocket] cleared %d runtime collision owner(s) near tile=%s" % [cleared_for_tile, tile])
-				_obs_warning("Procgen stuck pocket collision remediated.", {"tile": tile, "cleared_sources": cleared_for_tile})
+				_obs_warning("Procgen stuck pocket collision remediated.", {
+					"tile": tile,
+					"cleared_sources": cleared_for_tile,
+					"cleared_source_ids": cleared_source_ids,
+					"remediation_action": "disabled_collision/unregistered_blocker",
+					"seed": _get_generation_seed(),
+				})
 	if remediated > 0:
 		_queue_navigation_rebuild()
 	_obs_increment(&"procgen_stuck_pockets_detected", flagged.size())
@@ -3737,11 +3760,17 @@ func validate_no_stuck_pockets(remediate: bool = true) -> Dictionary:
 	_obs_increment(&"procgen_validation_pockets_detected", flagged.size())
 	_obs_increment(&"procgen_validation_pockets_repaired", remediated)
 	_obs_gauge(&"procgen_stuck_pockets_last_scan", flagged.size())
-	_obs_log(&"procgen_stuck_pocket_validation", {"flagged": flagged.size(), "remediated": remediated})
+	_obs_gauge(&"procgen_stuck_pockets_detected_last_generation", flagged.size())
+	_obs_gauge(&"procgen_stuck_pockets_remediated_last_generation", remediated)
+	_obs_log(&"procgen_stuck_pocket_validation", {
+		"flagged": flagged.size(),
+		"remediated": remediated,
+		"seed": _get_generation_seed(),
+	})
 	return {"flagged": flagged, "remediated": remediated}
 
 
-func _clear_one_blocker_near_tile(tile: Vector2i) -> bool:
+func _clear_one_blocker_near_tile(tile: Vector2i, cleared_source_ids: Array[String] = []) -> bool:
 	var ids: Array[String] = []
 	for direction in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
 		var owners: Dictionary = _runtime_prop_blocker_cells.get(tile + direction, {})
@@ -3755,6 +3784,7 @@ func _clear_one_blocker_near_tile(tile: Vector2i) -> bool:
 	var source: Dictionary = _runtime_prop_blocker_sources.get(ids[0], {})
 	_disable_collision_shapes(source.get("owner", null) as Node)
 	_unregister_runtime_prop_blocker_id(ids[0])
+	cleared_source_ids.append(ids[0])
 	return true
 
 
@@ -4879,6 +4909,11 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 		"foliage_player_occlusion_radius": foliage_player_occlusion_radius,
 		"foliage_player_occlusion_softness": foliage_player_occlusion_softness,
 		"foliage_player_occlusion_alpha": foliage_player_occlusion_alpha,
+		"foliage_wind_enabled": foliage_wind_enabled,
+		"foliage_wind_speed": foliage_wind_speed,
+		"foliage_shrub_wind_strength_px": foliage_shrub_wind_strength_px,
+		"foliage_tree_wind_strength_px": foliage_tree_wind_strength_px,
+		"foliage_wind_gust_amount": foliage_wind_gust_amount,
 		"foliage_occlusion_shader": FOLIAGE_OCCLUSION_SHADER,
 		"foliage_occlusion_max_shader_bubbles": FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES,
 		"foliage_tree_trunk_collision_size": foliage_tree_trunk_collision_size,
@@ -4962,17 +4997,197 @@ func _generate_ruin_props(map_size: Vector2i) -> void:
 	_ruin_prop_scatterer.force_collision_debug = ruin_prop_force_collision_debug
 	_ruin_prop_parent.add_child(_ruin_prop_scatterer)
 
-	var spawned := _ruin_prop_scatterer.scatter_on_tiles(candidate_tiles, Callable(self, "_ruin_prop_tile_to_world"))
+	var spawned := _ruin_prop_scatterer.scatter_on_tiles(
+		candidate_tiles,
+		Callable(self, "_ruin_prop_tile_to_world"),
+		{},
+		Callable(self, "_validate_ruin_prop_candidate")
+	)
 	_configure_portal_pair(candidate_tiles, spawned, map_size)
+	_reject_ruin_props_after_route_finalization(spawned)
 	_obs_gauge(&"procgen_scattered_prop_count", spawned.size())
 	for prop in spawned:
-		if prop != null and is_instance_valid(prop) and not prop.is_queued_for_deletion():
+		if prop != null and is_instance_valid(prop) and not prop.is_queued_for_deletion() \
+				and not bool(prop.get_meta("procgen_candidate_rejected", false)):
 			_register_runtime_prop_node(prop, &"ruin_prop")
 			_enforce_ruin_prop_blocker_clearance(prop)
 			_observe_ruin_prop_collision(prop)
 	validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
 	if ruin_prop_debug_logging:
 		print("[RuinProps] Placed %d props under %s" % [spawned.size(), _ruin_prop_parent.get_path()])
+
+
+func _reject_ruin_props_after_route_finalization(spawned: Array[ProceduralProp]) -> void:
+	# Portal pairing reserves/carves connector paths after the initial scatter.
+	# Revalidate before any blocker is registered so those late route cells cannot
+	# turn a decorative candidate into a live collision-remediation warning.
+	for prop in spawned:
+		if prop == null or not is_instance_valid(prop) or prop.is_queued_for_deletion() or _is_portal_prop(prop):
+			continue
+		var verdict := _validate_spawned_ruin_prop_candidate(prop)
+		if bool(verdict.get("allowed", true)):
+			continue
+		verdict["remediation_action"] = "removed_prop_before_blocker_registration"
+		_obs_log(&"procgen_prop_candidate_removed_after_route_reservation", verdict)
+		prop.set_meta("procgen_candidate_rejected", true)
+		prop.queue_free()
+
+
+func _validate_spawned_ruin_prop_candidate(prop: ProceduralProp) -> Dictionary:
+	var collision_rect := prop.get_collision_rect_global()
+	var footprint := _collision_cells_for_global_rect(collision_rect)
+	var verdict := {
+		"allowed": true,
+		"definition_id": str(prop.definition.id) if prop.definition != null else "unknown",
+		"spawn_tile": _get_prop_source_tile(prop),
+		"prop_global_position": prop.global_position,
+		"collision_rect_global": collision_rect,
+		"collision_rect_tile_footprint": footprint,
+		"seed": _get_generation_seed(),
+	}
+	for cell in footprint:
+		var protected_zone := _get_ruin_prop_protected_zone_type(cell)
+		if not protected_zone.is_empty():
+			verdict["allowed"] = false
+			verdict["protected_zone_type"] = String(protected_zone)
+			_record_ruin_prop_candidate_rejection(&"protected_zone", verdict)
+			return verdict
+		if _runtime_prop_blocker_cells.has(cell):
+			verdict["allowed"] = false
+			verdict["protected_zone_type"] = "existing_runtime_blocker"
+			_record_ruin_prop_candidate_rejection(&"existing_blocker", verdict)
+			return verdict
+	if _would_ruin_prop_footprint_create_stuck_risk(footprint):
+		verdict["allowed"] = false
+		verdict["protected_zone_type"] = "local_escape"
+		_record_ruin_prop_candidate_rejection(&"stuck_risk", verdict)
+	return verdict
+
+
+func _reset_generation_prop_observability() -> void:
+	_generation_prop_rejections_protected_zone = 0
+	_generation_prop_rejections_stuck_risk = 0
+	_generation_prop_rejections_existing_blocker = 0
+	_generation_prop_collision_alignment_warnings = 0
+	_obs_gauge(&"procgen_prop_candidates_rejected_protected_zone", 0)
+	_obs_gauge(&"procgen_prop_candidates_rejected_stuck_risk", 0)
+	_obs_gauge(&"procgen_prop_candidates_rejected_existing_blocker", 0)
+	_obs_gauge(&"procgen_stuck_pockets_detected_last_generation", 0)
+	_obs_gauge(&"procgen_stuck_pockets_remediated_last_generation", 0)
+	_obs_gauge(&"procgen_prop_collision_alignment_warning_count_last_generation", 0)
+
+
+func _validate_ruin_prop_candidate(
+	definition: PropDefinition,
+	source_tile: Vector2i,
+	world_position: Vector2
+) -> Dictionary:
+	var verdict := {
+		"allowed": true,
+		"definition_id": str(definition.id) if definition != null else "unknown",
+		"spawn_tile": source_tile,
+		"prop_global_position": world_position,
+		"seed": _get_generation_seed(),
+	}
+	if definition == null:
+		return verdict
+	# Bespoke collision scenes (currently the paired portal endpoints) keep their
+	# dedicated placement validator because a union rectangle would fill authored gaps.
+	if definition.collision_scene != null:
+		return verdict
+	if definition.collision_shape_size.x <= 0.0 or definition.collision_shape_size.y <= 0.0:
+		return verdict
+
+	var collision_rect := _get_definition_collision_rect_global(definition, world_position)
+	var footprint := _collision_cells_for_global_rect(collision_rect)
+	verdict["collision_rect_global"] = collision_rect
+	verdict["collision_rect_tile_footprint"] = footprint
+	for cell in footprint:
+		var protected_zone := _get_ruin_prop_protected_zone_type(cell)
+		if not protected_zone.is_empty():
+			verdict["allowed"] = false
+			verdict["protected_zone_type"] = String(protected_zone)
+			verdict["remediation_action"] = "rejected_before_spawn"
+			_record_ruin_prop_candidate_rejection(&"protected_zone", verdict)
+			return verdict
+		if _runtime_prop_blocker_cells.has(cell):
+			verdict["allowed"] = false
+			verdict["protected_zone_type"] = "existing_runtime_blocker"
+			verdict["remediation_action"] = "rejected_before_spawn"
+			_record_ruin_prop_candidate_rejection(&"existing_blocker", verdict)
+			return verdict
+
+	if _would_ruin_prop_footprint_create_stuck_risk(footprint):
+		verdict["allowed"] = false
+		verdict["protected_zone_type"] = "local_escape"
+		verdict["remediation_action"] = "rejected_before_spawn"
+		_record_ruin_prop_candidate_rejection(&"stuck_risk", verdict)
+	return verdict
+
+
+func _get_definition_collision_rect_global(definition: PropDefinition, world_position: Vector2) -> Rect2:
+	var half_size := definition.collision_shape_size * 0.5
+	var rotation := deg_to_rad(definition.collision_shape_rotation_degrees)
+	var transform := Transform2D(rotation, world_position + definition.collision_shape_offset)
+	var corners: Array[Vector2] = [
+		transform * Vector2(-half_size.x, -half_size.y),
+		transform * Vector2(half_size.x, -half_size.y),
+		transform * Vector2(half_size.x, half_size.y),
+		transform * Vector2(-half_size.x, half_size.y),
+	]
+	var min_point := corners[0]
+	var max_point := corners[0]
+	for corner in corners:
+		min_point = Vector2(minf(min_point.x, corner.x), minf(min_point.y, corner.y))
+		max_point = Vector2(maxf(max_point.x, corner.x), maxf(max_point.y, corner.y))
+	return Rect2(min_point, max_point - min_point)
+
+
+func _would_ruin_prop_footprint_create_stuck_risk(footprint: Array[Vector2i]) -> bool:
+	if footprint.is_empty():
+		return false
+	var footprint_lookup: Dictionary = {}
+	var neighbor_lookup: Dictionary = {}
+	for cell in footprint:
+		footprint_lookup[cell] = true
+		for direction in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+			neighbor_lookup[cell + direction] = true
+	for neighbor_variant in neighbor_lookup.keys():
+		var neighbor := neighbor_variant as Vector2i
+		if footprint_lookup.has(neighbor) or not is_runtime_walkable_after_props(neighbor):
+			continue
+		var current_exits := get_runtime_escape_neighbor_count(neighbor)
+		if current_exits < runtime_blocker_min_escape_neighbors:
+			continue
+		var projected_exits := 0
+		for direction in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
+			var adjacent: Vector2i = neighbor + (direction as Vector2i)
+			if not footprint_lookup.has(adjacent) and is_runtime_walkable_after_props(adjacent):
+				projected_exits += 1
+		if projected_exits < runtime_blocker_min_escape_neighbors:
+			return true
+	return false
+
+
+func _record_ruin_prop_candidate_rejection(reason: StringName, payload: Dictionary) -> void:
+	match reason:
+		&"protected_zone":
+			_generation_prop_rejections_protected_zone += 1
+			_obs_increment(&"procgen_prop_candidates_rejected_protected_zone")
+			_obs_gauge(&"procgen_prop_candidates_rejected_protected_zone", _generation_prop_rejections_protected_zone)
+		&"stuck_risk":
+			_generation_prop_rejections_stuck_risk += 1
+			_obs_increment(&"procgen_prop_candidates_rejected_stuck_risk")
+			_obs_gauge(&"procgen_prop_candidates_rejected_stuck_risk", _generation_prop_rejections_stuck_risk)
+		&"existing_blocker":
+			_generation_prop_rejections_existing_blocker += 1
+			_obs_increment(&"procgen_prop_candidates_rejected_existing_blocker")
+			_obs_gauge(&"procgen_prop_candidates_rejected_existing_blocker", _generation_prop_rejections_existing_blocker)
+	_obs_log(&"procgen_prop_candidate_rejected", payload)
+
+
+func _get_generation_seed() -> int:
+	return int(procgen_node.seed) if procgen_node != null and "seed" in procgen_node else 0
 
 
 func _observe_ruin_prop_collision(prop: ProceduralProp) -> void:
@@ -4994,6 +5209,8 @@ func _observe_ruin_prop_collision(prop: ProceduralProp) -> void:
 		]
 		push_warning(message)
 		_obs_increment(&"prop_collision_alignment_warnings")
+		_generation_prop_collision_alignment_warnings += 1
+		_obs_gauge(&"procgen_prop_collision_alignment_warning_count_last_generation", _generation_prop_collision_alignment_warnings)
 		_obs_warning(message, report)
 
 
@@ -5017,41 +5234,67 @@ func _enforce_ruin_prop_blocker_clearance(prop: ProceduralProp) -> bool:
 	var report := prop.get_collision_alignment_report()
 	report["source_tile"] = _get_prop_source_tile(prop)
 	report["blocker_cell"] = protected_cell
+	report["prop_global_position"] = prop.global_position
+	report["collision_rect_global"] = prop.get_collision_rect_global()
+	report["collision_rect_tile_footprint"] = source.get("cells", []).duplicate()
+	report["protected_zone_type"] = String(_get_ruin_prop_protected_zone_type(protected_cell as Vector2i))
+	report["remediation_action"] = "disabled_collision/unregistered_blocker"
+	report["seed"] = _get_generation_seed()
 	report["anomaly"] = "protected_clear_zone_overlap"
 	report["collision_disabled"] = true
-	var message := "[PropCollisionAlignment] disabled runtime footprint overlapping protected clear zone definition=%s cell=%s" % [
+	var message := "[PropCollisionAlignment] disabled runtime footprint overlapping protected clear zone definition=%s cell=%s zone=%s" % [
 		report.get("definition_id", "unknown"),
 		protected_cell,
+		report.get("protected_zone_type", "unknown"),
 	]
 	push_warning(message)
 	_disable_collision_shapes(prop)
 	_unregister_runtime_prop_blocker_id(owner_id)
 	_obs_log(&"prop_collision_alignment_warning", report)
 	_obs_increment(&"prop_collision_alignment_warnings")
+	_generation_prop_collision_alignment_warnings += 1
+	_obs_gauge(&"procgen_prop_collision_alignment_warning_count_last_generation", _generation_prop_collision_alignment_warnings)
 	_obs_increment(&"procgen_runtime_blockers_cleared_for_protected_zones")
 	_obs_warning(message, report)
 	return true
 
 
 func _is_protected_ruin_prop_blocker_cell(cell: Vector2i) -> bool:
-	if _is_inside_required_route_clearance(cell, 0) or _is_inside_ruin_prop_clearance(cell):
-		return true
-	var protected_anchors: Array[Vector2i] = []
+	return not _get_ruin_prop_protected_zone_type(cell).is_empty()
+
+
+func _get_ruin_prop_protected_zone_type(cell: Vector2i) -> StringName:
+	if _is_inside_required_route_clearance(cell, 0):
+		return &"required_route"
+	var spawn_tile := get_player_spawn()
+	if abs(cell.x - spawn_tile.x) <= ruin_prop_spawn_clearance_radius \
+			and abs(cell.y - spawn_tile.y) <= ruin_prop_spawn_clearance_radius:
+		return &"player_spawn"
+	for building in _last_compound_buildings:
+		if building.grow(ruin_prop_compound_building_clearance).has_point(cell):
+			return &"compound_structure"
+	for threshold in _last_interior_thresholds:
+		if threshold is Vector2i and cell.distance_to(threshold) <= float(combat_readability_prop_clearance_tiles):
+			return &"story_room_threshold"
 	for ingress in _last_compound_ingress:
 		if ingress is Vector2i:
-			protected_anchors.append(ingress)
+			if cell.distance_to(ingress) <= float(combat_readability_prop_clearance_tiles):
+				return &"compound_threshold"
 	for site in _faction_activity_sites:
 		var faction_cell: Variant = site.get("cell", Vector2i.ZERO)
-		if faction_cell is Vector2i:
-			protected_anchors.append(faction_cell)
+		if faction_cell is Vector2i and cell.distance_to(faction_cell) <= float(combat_readability_prop_clearance_tiles):
+			return &"faction_activity"
 	for site in _story_room_sites:
 		var story_cell: Variant = site.get("cell", Vector2i.ZERO)
-		if story_cell is Vector2i:
-			protected_anchors.append(story_cell)
-	for anchor in protected_anchors:
-		if cell.distance_to(anchor) <= float(combat_readability_prop_clearance_tiles):
-			return true
-	return false
+		if story_cell is Vector2i and cell.distance_to(story_cell) <= float(combat_readability_prop_clearance_tiles):
+			return &"story_room"
+	for portal in _portal_teleporters:
+		if portal is Node2D and is_instance_valid(portal) \
+				and cell.distance_to(_global_to_tile((portal as Node2D).global_position)) <= float(combat_readability_prop_clearance_tiles):
+			return &"portal"
+	if _is_inside_combat_readability_spawn_clearance(cell, combat_readability_prop_clearance_tiles):
+		return &"combat_readability"
+	return &""
 
 
 func _clear_ruin_props() -> void:
@@ -5691,6 +5934,7 @@ func _attach_portal_teleporter(prop: ProceduralProp) -> Area2D:
 		return null
 	teleporter.name = "PortalTeleporter"
 	var portal_definition := prop.definition
+	_attach_portal_light_rig(prop, portal_definition)
 	if portal_definition != null and portal_definition.portal_platform_enabled:
 		var ramp_bottom_offset := portal_definition.portal_platform_bottom_offset - portal_definition.portal_platform_trigger_offset
 		teleporter.position = portal_definition.portal_platform_trigger_offset
@@ -5726,6 +5970,23 @@ func _attach_portal_teleporter(prop: ProceduralProp) -> Area2D:
 	teleporter.set("cooldown_frames", portal_teleport_cooldown_frames)
 	prop.add_child(teleporter)
 	return teleporter
+
+
+func _attach_portal_light_rig(prop: ProceduralProp, portal_definition: PropDefinition) -> void:
+	if prop.get_node_or_null("PortalLightRig") != null:
+		return
+	var light_rig := LIGHT_RIG_SCENE.instantiate() as LightRig2D
+	if light_rig == null:
+		return
+	light_rig.name = "PortalLightRig"
+	light_rig.position = portal_definition.portal_platform_trigger_offset if portal_definition != null else Vector2(0, -56)
+	light_rig.light_color = Color(0.25, 0.62, 1.0, 1.0)
+	light_rig.energy = 1.0
+	light_rig.pulse_enabled = true
+	light_rig.pulse_speed = 0.55
+	light_rig.pulse_amount = 0.14
+	light_rig.glow_scale = 1.7
+	prop.add_child(light_rig)
 
 
 func _generate_interior_props(map_size: Vector2i) -> void:
