@@ -81,16 +81,37 @@ An explicit architecture organization pass is now documented and tracked.
 
 ## Immediate Priorities
 
-1. Create or ingest the enemy marine heavy dash directional body sheets, FX overlay sheets, and five-part audio stack now tracked in `REQUIRED_ASSETS.md`.
-2. Validate profile-backed Fists/melee combat in play and keep queued selection deterministic.
-3. Clean remaining animation-state documentation/assets around deprecated `attack_light` compatibility.
-4. Deepen terminal pages with richer live runtime data and interactions.
-5. Preserve and extend planet-to-runtime world coupling as procgen evolves.
-6. Continue Sundered Keep follow-up with encounter composition, save/load persistence for gate/key state, and eventual TileSet/TileMapLayer authoring if the JSON-driven Sprite2D authored map becomes hard to maintain.
-7. Keep Sundered Keep/Home prompts and normal-play status surfaces on the compact Black Reliquary HUD API; route diagnostics to the dedicated debug screen instead of reintroducing giant panels or debug labels during normal gameplay.
-8. Decide when the Home beginning scene should become the boot/default entry, then wire it into the world-transition/campaign-flow spine without regressing the current contract/procgen sandbox.
-9. Wire true Forest Shrumbs into the intended spawning/procgen path and decide which cognitive readout belongs in HUD/debug.
-10. Author ruin prop slices, overlay/rubble assets, and `PropDefinition` resources for the procedural prop system.
+### Tier 1 — High-impact gameplay gaps
+
+1. **Hit taxonomy and riposte (Milestone C).** Normalize hit-strength metadata at the damage boundary, add differentiated enemy/Operator reactions with heavy-enemy resistance, add explicit guard-break presentation, and implement the enemy-opened state plus unique riposte action after successful parry. Players currently cannot distinguish hurt/deflect/stagger/parry-opened/guard-impact/guard-break; this is the most impactful remaining combat readability gap. See `design/02_features/combat_feel/COMBAT_RESOURCE_AND_READABILITY_SYSTEM.md` Milestone C and `PARRY_CRITICAL_BRANCHING_AND_VFX.md` for execution ownership.
+
+2. **Enemy marine heavy dash art and audio.** Ingest or create the directional body sheets (minimum E/W/NE/NW/SE/SW), matching FX overlays, and five-part audio stack (windup, travel, impact, armor, recovery) tracked in `REQUIRED_ASSETS.md`. V1 gameplay is live with east-only fallback; production coverage is the single largest art gap blocking enemy combat readability.
+
+3. **Melee profile consolidation.** Finish centralizing light/fast/heavy timing, active frames, recovery, range, arc, damage, knockback, hit-stop, camera impulse, and movement profile values into `MeleeAttackProfile` resources. The old operator melee exports remain deprecated fallbacks; completing this removes hidden per-weapon magic numbers and makes new enemy melee types cheaper to author.
+
+### Tier 2 — World and systems depth
+
+4. **Sundered Keep follow-up.** Encounter composition tuning, save/load persistence for gate/key state, and production labyrinth wall/void-edge/dressing art (currently `PLACEHOLDER_sundered_keep_labyrinth_*`). If the JSON-driven Sprite2D authored map becomes hard to maintain, begin the TileSet/TileMapLayer authoring migration documented in the level design spec.
+
+5. **Home beginning scene transition decision.** Decide when `home_custodian_begin.tscn` becomes the boot/default entry, then wire it into the world-transition/campaign-flow spine without regressing the current contract/procgen sandbox. This is a content-flow milestone, not just an asset milestone — it requires the transition chain to handle first-run versus return.
+
+6. **Terminal page extraction and richness.** Follow up on the decursification pass: extract remaining page renderers from `ui.gd` into dedicated scripts under `game/ui/terminal/`, deepen pages with richer live runtime data, and tighten layout polish. Terminal is the primary non-combat interaction surface and still has placeholder content on several pages.
+
+7. **Elevation and terrain pathing enforcement.** The metadata-first TerrainBuilder and ElevationMap have traversal query APIs but do not yet enforce Operator, vehicle, or enemy path traversal. Wire enforcement for at least one enemy type and Operator movement so elevation has gameplay meaning beyond visuals and contract scoring.
+
+### Tier 3 — Integration and polish
+
+8. **Forest Shrumb cognitive surface.** Wire true Forest Shrumbs into the intended spawning/procgen path and decide which cognitive readout belongs in HUD versus debug. The v1 runtime foundation (InventoryManager, CognitiveState, cognitive_pickup, shrumb_dropper) is live but the player-facing feedback loop is still open.
+
+9. **Ruin prop production assets.** Author additional `PropDefinition` resources, overlay/rubble artwork, and chip/dirt/vine/highlight overlays under `custodian/content/props/ruins/`. The procedural prop variant foundation and procgen placement are live; what's missing is enough authored art variety to make the system feel intentional rather than sparse.
+
+10. **Architecture organization pass execution.** The 9-layer ownership model and extraction candidates are documented but no runtime code has been moved yet. Prioritize the largest coordinator/facade files (`proc_gen_tilemap.gd`, `custodian_contract_map.gd`, `contract_world_loader.gd`, `enemy.gd`, `game_state.gd`) when a natural feature boundary creates a safe extraction window — do not move code for its own sake.
+
+### Cross-cutting
+
+- **Keep Sundered Keep/Home prompts and normal-play status surfaces on the compact Black Reliquary HUD API.** Route diagnostics to the dedicated debug screen; do not reintroduce giant panels or debug labels during normal gameplay.
+- **Preserve and extend planet-to-runtime world coupling** as procgen evolves. Contract planet data must keep driving world profile variation without silent coupling breaks.
+- **Clean deprecated `attack_light` compatibility** remnants from animation-state documentation and any surviving asset references.
 
 ## Update Expectation
 
