@@ -10,6 +10,7 @@ const VALID_VERBS := {
 	"REPAIR": true, "MOVE": true, "RETURN": true, "SYNC": true, "LOCKDOWN": true,
 	"FORTIFY": true, "BOOST": true, "SCAN": true, "STABILIZE": true, "PRIORITIZE": true,
 	"DRONE": true, "POLICY": true, "CONFIG": true, "SET": true, "FAB": true, "BUILD": true, "SCAVENGE": true,
+	"RESET": true, "REBOOT": true,
 }
 
 const SNAPSHOT_REFRESH_VERBS := [

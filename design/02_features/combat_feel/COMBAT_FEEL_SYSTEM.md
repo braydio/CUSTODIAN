@@ -220,6 +220,13 @@ south, with horizontal mirroring for left. Runtime V1 retains split `operator_do
 `operator_dodge_recovery` and optional aim-backstep tracks as compatibility fallbacks until the full directional suite
 is supplied.
 
+A primary fast input during active dodge/roll movement is buffered until the explicit recovery boundary; it never
+cancels active movement or iframes. A primary fast attack during recovery cancels that recovery and skips the normal
+unarmed windup. When the authored east/west `dodge_fast_attack_01` body/FX strips are available, they own the combined
+roll-exit presentation at 20 FPS and use source frame 4 as the hit frame; west may add its synchronized cape layer.
+The transition does not reset or shorten dodge cooldown and does not bypass ordinary attack eligibility, stamina,
+cooldown, or attack-recovery rules. Heavy attacks retain their normal timing.
+
 Unarmed/Fists is a selectable weapon profile. It must not create separate unarmed combat states; `unarmed_fast`
 and `unarmed_heavy` reuse the shared `attack_fast` and `attack_heavy` states while resolving profile-specific
 animations, hit windows, FX, and stat multipliers through `unarmed_definition.tres`.
@@ -391,9 +398,11 @@ test; four-plus Savage pockets and one-tile corridors undermine the intended cou
 
 Falcon Punch is a readable grunt special, not the grunt's default range state. A grunt must apply normal melee pressure
 before its deterministic special cadence becomes eligible, and launch still requires an independent cooldown, no recent
-Falcon parry, the configured `88-184px` range band, and a clear ally lane. The tell is `0.46s` with only 15% movement;
-the `0.28s` leap targets a point `30px` in front of the Operator rather than the Operator center; recovery lasts `0.70s`
-with zero forward drift. Contact enforces at least `28px` separation.
+Falcon parry, the configured `88-184px` range band, and a clear ally lane. The tell is `0.75s`, tracks the
+Operator until leap commitment, and has only 15% movement. The `0.28s` leap is then direction-locked, targets a
+point `28px` in front of the last tracked Operator position, and uses a `42px` forward by `30px` lateral contact
+envelope so visually credible contact resolves reliably. Recovery lasts `0.70s` with zero forward drift. Contact
+enforces at least `28px` separation. `spawn_grunt falcon` bypasses ordinary eligibility only for deterministic debug review.
 
 A Falcon parry cancels windup, leap, impact lock, or recovery and opens the normal grunt critical window. A damaging
 hit uses a dedicated Operator recoil/knockback/hitstop presentation. The contextual Operator counter-kick remains

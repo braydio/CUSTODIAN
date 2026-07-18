@@ -17,10 +17,12 @@ INBOX_DIR = PIPELINE_DIR / "inbox"
 INGEST_SCRIPT = Path(__file__).resolve().parent / "ingest.py"
 
 OPERATOR_MODULAR_LAYERS = {
+    "cape",
     "modular_body_lower",
     "modular_body_upper",
     "modular_combined_body",
     "modular_lower_body",
+    "modular_ranged_weapon",
     "modular_sidearm",
     "modular_upper_body",
     "modular_upper_fx",

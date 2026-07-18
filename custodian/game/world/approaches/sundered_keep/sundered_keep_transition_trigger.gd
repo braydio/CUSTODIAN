@@ -81,7 +81,12 @@ func _load_target_scene(actor: Node) -> void:
 	_configure_target_connection(target, world)
 
 	if actor is Node2D:
-		_move_actor_to_target(actor as Node2D, target)
+		# Let connected maps perform their own entry setup (camera limits, HUD,
+		# and authored spawn) unless the trigger explicitly names a spawn node.
+		if target_spawn_id == &"" and target.has_method("enter_from_main"):
+			target.call("enter_from_main", actor)
+		else:
+			_move_actor_to_target(actor as Node2D, target)
 	_adopt_level_loader_target(target)
 	_deactivate_source_scene()
 

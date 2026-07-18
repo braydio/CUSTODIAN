@@ -57,6 +57,13 @@ func _run() -> void:
 	var reboot_parsed := router.parse("REBOOT")
 	if not bool(ui.call("_execute_local_terminal_command_legacy", reboot_parsed)):
 		failures.append("REBOOT command was not handled")
+	if not terminal_lines.any(func(line): return str(line).contains("REBOOT PROTECTED")):
+		failures.append("REBOOT without confirmation did not preserve the protected-command contract")
+	if not router.is_known_verb("RESET") or not router.is_known_verb("REBOOT"):
+		failures.append("RESET/REBOOT should be known protected system verbs")
+	var reboot_confirmed := router.parse("REBOOT CONFIRM")
+	if not bool(ui.call("_execute_local_terminal_command_legacy", reboot_confirmed)):
+		failures.append("REBOOT CONFIRM command was not handled")
 	var reboot_lines: Array = ui.get("_terminal_lines")
 	if reboot_lines.size() <= 1:
 		failures.append("REBOOT did not restore the terminal boot transcript")

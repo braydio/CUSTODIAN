@@ -97,9 +97,19 @@ func _validate_marine_idle(root: Node) -> void:
 	_assert_true(absf(float(marine.get("marine_dash_hit_lateral_reach_px")) - 22.0) < 0.001, "marine dash lateral contact should be tuned for reliability")
 	_assert_true(marine.has_method("get_behavior_attack_range"), "marine should expose behavior attack range")
 	_assert_true(float(marine.call("get_behavior_attack_range")) >= 240.0, "marine behavior attack range should allow readable dash windup")
+	_validate_pursuit_stop_boundary(marine)
 	_validate_marine_tactical_dash(root, marine)
 	_validate_marine_dash_hit_gate(root, marine)
 	marine.queue_free()
+
+
+func _validate_pursuit_stop_boundary(marine: Node) -> void:
+	marine.global_position = Vector2.ZERO
+	marine.set("velocity", Vector2(100.0, 0.0))
+	marine.call("_limit_pursuit_inward_velocity", Vector2(40.25, 0.0), 40.0, 1.0 / 60.0)
+	var limited_velocity: Vector2 = marine.get("velocity")
+	_assert_true(limited_velocity.x <= 15.01, "pursuit velocity should not cross the melee stop boundary in one physics step")
+	_assert_true(absf(limited_velocity.y) < 0.001, "pursuit stop limiting should not introduce lateral movement")
 
 
 func _validate_marine_tactical_dash(root: Node, marine: Node) -> void:
@@ -159,8 +169,10 @@ func _validate_marine_dash_hit_gate(root: Node, marine: Node) -> void:
 	marine.call("_try_apply_marine_dash_hit")
 	_assert_true((marine.get("_marine_dash_hit_targets") as Array).is_empty(), "marine dash should not hit outside lateral contact")
 	target.global_position = Vector2(12.0, 0.0)
+	var position_before_hit := target.global_position
 	marine.call("_try_apply_marine_dash_hit")
 	_assert_true(not (marine.get("_marine_dash_hit_targets") as Array).is_empty(), "marine dash should hit during active close contact")
+	_assert_true(target.global_position.is_equal_approx(position_before_hit), "marine impact must not call move_and_slide on its target")
 	target.queue_free()
 
 

@@ -52,6 +52,15 @@ func _run() -> void:
 	var remediated := tilemap.validate_no_stuck_pockets(true)
 	assert(int(remediated.get("remediated", 0)) > 0)
 	assert(tilemap.get_runtime_escape_neighbor_count(target) >= 2)
+	if observatory != null:
+		var remediation_warnings: Array = observatory.call("get_recent_warnings", 10)
+		var remediation_data: Dictionary = {}
+		for warning in remediation_warnings:
+			if String((warning as Dictionary).get("message", "")) == "Procgen stuck pocket collision remediated.":
+				remediation_data = (warning as Dictionary).get("data", {}) as Dictionary
+				break
+		for field in ["pocket_id", "center_cell", "cell_count", "blocker_source", "remediation_action"]:
+			assert(remediation_data.has(field), "Remediation warning missing %s" % field)
 	var report := tilemap.debug_get_stuck_report_at_global(tilemap.tile_to_global_position(target))
 	assert(report.has("seed") and report.has("blocker_sources") and report.has("local_collision_mask"))
 	assert(int(report.get("reachable_area_tiles", 0)) >= 8)

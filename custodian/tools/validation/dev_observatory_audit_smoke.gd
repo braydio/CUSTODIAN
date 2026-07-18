@@ -2,6 +2,7 @@ extends SceneTree
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const GRUNT_SCENE := preload("res://game/actors/enemies/enemy_grunt.tscn")
+const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
 
 
 func _init() -> void:
@@ -26,6 +27,9 @@ func _run() -> void:
 	var entities := Node2D.new()
 	entities.name = "Entities"
 	world.add_child(entities)
+	var projectiles := Node2D.new()
+	projectiles.name = "Projectiles"
+	world.add_child(projectiles)
 	var operator := OPERATOR_SCENE.instantiate()
 	operator.name = "AuditOperator"
 	entities.add_child(operator)
@@ -50,6 +54,19 @@ func _run() -> void:
 	operator.start_field_patch()
 	if int(observatory.counters.get("field_patch_rejected_full_health", 0)) != 1:
 		failures.append("Field Patch rejection reason counter missing")
+	operator.current_health = operator.max_health * 0.4
+	operator.health = operator.current_health
+	operator.field_patch_count = 2
+	operator.call("_update_field_patch_observability", 0.25)
+	var patch_status: Dictionary = operator.call("get_field_patch_status")
+	if not bool(patch_status.get("prompt_visible", false)) or int(observatory.counters.get("field_patch_prompt_shown", 0)) != 1:
+		failures.append("Field Patch warning prompt telemetry missing")
+	operator.current_health = operator.max_health * 0.2
+	operator.health = operator.current_health
+	operator.call("_update_field_patch_observability", 0.25)
+	patch_status = operator.call("get_field_patch_status")
+	if not bool(patch_status.get("prompt_critical", false)) or int(observatory.counters.get("field_patch_prompt_shown", 0)) != 2:
+		failures.append("Field Patch critical prompt transition missing")
 
 	var grunt := GRUNT_SCENE.instantiate()
 	grunt.name = "AuditGrunt"
@@ -68,6 +85,14 @@ func _run() -> void:
 		failures.append("enemy whiff event did not retain terminal range reason")
 
 	var node_stats: Dictionary = observatory.call("_collect_node_stats", game_root)
+	var bullet := BULLET_SCENE.instantiate()
+	projectiles.add_child(bullet)
+	await process_frame
+	node_stats = observatory.call("_collect_node_stats", game_root)
+	if not bullet.is_in_group("projectiles"):
+		failures.append("active bullet root must belong to projectiles group")
+	if int(node_stats.get("collision_shape_count_projectiles", 0)) < 1:
+		failures.append("an active bullet must own at least one classified projectile collision shape")
 	for gauge_name in [
 		"collision_shape_count_runtime_walls",
 		"collision_shape_count_foliage",
@@ -80,6 +105,21 @@ func _run() -> void:
 	]:
 		if not node_stats.has(gauge_name):
 			failures.append("split collision gauge missing: %s" % gauge_name)
+
+	operator.stamina = 33.0
+	operator.set("_last_damage_kind", &"physical")
+	operator.set("_last_enemy_attack_kind", &"melee")
+	operator.call("_handle_death")
+	var death_events: Array = observatory.get_recent_events(2, &"player_death")
+	if death_events.is_empty():
+		failures.append("player death snapshot event missing")
+	else:
+		var death_data: Dictionary = (death_events[0] as Dictionary).get("data", {})
+		for field in ["health", "stamina", "field_patches_remaining", "seconds_below_half_health_with_patch_available", "last_damage_kind", "last_enemy_attack_kind", "nearest_enemy_count", "active_enemy_count"]:
+			if not death_data.has(field):
+				failures.append("player death snapshot missing %s" % field)
+	if int(observatory.counters.get("field_patch_prompt_ignored_on_death", 0)) != 1:
+		failures.append("ignored Field Patch prompt death counter missing")
 
 	if failures.is_empty():
 		print("DEV_OBSERVATORY_AUDIT_SMOKE: PASS")

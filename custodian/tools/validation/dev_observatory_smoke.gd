@@ -65,16 +65,26 @@ func _run() -> void:
 	if not ResourceLoader.exists(OVERLAY_SCENE_PATH):
 		failures.append("canonical observatory overlay scene missing")
 
+	observatory.max_events = 3
+	for event_index in range(5):
+		observatory.log_event("buffer_test", {"index": event_index})
+	if observatory.events.size() != 3 or observatory.dropped_event_count <= 0:
+		failures.append("observatory event buffer accounting did not disclose retained and dropped events")
+	if observatory.total_events_logged != observatory.events.size() + observatory.dropped_event_count:
+		failures.append("observatory event buffer accounting did not disclose retained and dropped events")
+
 	_remove_file_if_present(SMOKE_EXPORT_PATH)
 	var had_latest_export := FileAccess.file_exists(LATEST_EXPORT_PATH)
 	var previous_latest_export := _read_text(LATEST_EXPORT_PATH) if had_latest_export else ""
 	var event_count_before_export := observatory.events.size()
+	var total_events_before_export := observatory.total_events_logged
+	var dropped_events_before_export := observatory.dropped_event_count
 	var exported_path: String = observatory.export_session_json(SMOKE_EXPORT_PATH)
 	if exported_path != SMOKE_EXPORT_PATH or not FileAccess.file_exists(SMOKE_EXPORT_PATH):
 		failures.append("observatory stable export was not written")
 	if observatory.last_export_path != SMOKE_EXPORT_PATH or observatory.last_export_absolute_path.is_empty():
 		failures.append("observatory did not expose the last export path for runtime confirmation")
-	if observatory.events.size() != event_count_before_export + 1:
+	if observatory.events.size() != mini(event_count_before_export + 1, observatory.max_events):
 		failures.append("export must retain the event buffer and append one success event")
 	elif StringName(observatory.events[-1].get("kind", &"")) != &"observatory_session_exported":
 		failures.append("export must emit observatory_session_exported")
@@ -85,6 +95,13 @@ func _run() -> void:
 			failures.append("export payload missing %s" % required_key)
 	if String(payload.get("schema", "")) != "custodian.dev_observatory.session.v1":
 		failures.append("export schema mismatch")
+	var exported_session := payload.get("session", {}) as Dictionary
+	if int(exported_session.get("event_capacity", 0)) != 3:
+		failures.append("export did not include event capacity")
+	if int(exported_session.get("total_events_logged", 0)) != total_events_before_export or int(exported_session.get("dropped_event_count", 0)) != dropped_events_before_export:
+		failures.append("export did not include cumulative and dropped event counts")
+	if not bool(exported_session.get("event_buffer_saturated", false)):
+		failures.append("export did not disclose saturated event buffer")
 	var safe_values: Dictionary = (payload.get("gauges", {}) as Dictionary).get("json_safe_types", {})
 	if not safe_values.get("vector2", {}) is Dictionary or float(safe_values.get("vector2", {}).get("x", 0.0)) != 12.5:
 		failures.append("Vector2 was not converted safely")

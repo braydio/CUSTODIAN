@@ -141,6 +141,11 @@ mutating the bounded observatory buffers. Successful exports append `observatory
 or write failures append a warning through `mark_warning(...)`. Successful writes print their absolute filesystem path,
 and the F9 overlay retains the latest timestamped export path for immediate discovery.
 
+Session metadata distinguishes retained tail size from cumulative activity with `event_capacity`,
+`total_events_logged`, `dropped_event_count`, and `event_buffer_saturated`. Counters remain cumulative when the event
+ring wraps. The analyzer discloses this tail-window boundary; for legacy exports that lack these fields, a full
+300-event array is reported as possibly saturated rather than presented as a whole-session event total.
+
 This produces a playtest artifact that can be handed to Codex or other tools for post-run analysis. It remains
 observability-only and has no combat, player, enemy, heatmap, world-history, or simulation authority.
 
@@ -174,6 +179,11 @@ write to the export or change runtime state.
 - Node ownership/performance gauges distinguish world, procgen, props, collision, VFX, UI, physics bodies/shapes, and processing nodes.
 - Procgen validation-pocket counters describe generation-time repair; Operator trap/rescue counters describe runtime failures. Stuck reports include seed, tile/region, blocker sources, a local collision mask, and reachable area. Debug rescue candidates require distance from the source, two exits, an eight-tile local reachable area, no nearby runtime blocker, and a post-move report.
 - The text analyzer labels warning totals separately from the displayed tail; omitted earlier warnings are disclosed.
+- Projectile collision ownership requires projectile roots to use the `projectiles` group. Active weapon gauges include
+  the ranged weapon ID/state key, magazine capacity, and ammo-per-shot so zero ammo values are not interpreted without
+  loadout context.
+- Deliberate dodge overlaps emit one `incoming_dodge_timing_classified` event per incoming attack ID with canonical
+  `iframe_avoid`, `miss_late`, or `recovery_hit` classification while retaining the older phase counters.
 
 ## Procgen Placement Prevention Contract (2026-07-16)
 
@@ -186,8 +196,23 @@ write to the export or change runtime state.
 ## Enemy Attack Outcome Contract (2026-07-16)
 
 - Enemy attack lifecycle events share a stable `attack_id`, enemy/target IDs, attack type, phase, result, and reason where applicable.
-- Terminal result values distinguish `damaged`, `parried`, `whiffed`, `interrupted`, `cancelled_by_death`, `target_out_of_range`, `target_out_of_arc`, and `blocked_by_collision`.
+- Terminal outcomes are reported once per unique `attack_id` as `damaged`, `blocked`, `parried`, `whiffed`, or
+  `cancelled_by_death`. Interruption causes such as parry, hit, and target loss are a separate dimension; range, arc, and
+  collision details remain reasons rather than additional terminal-outcome buckets.
 - Falcon Punch tracks attempts, hits, parries, whiffs, and cancellations separately. Its ordinary `impact_lock` is hit-confirmed; a parry hard-cancels into the parry-critical branch and must not emit a successful-impact lock.
+- Falcon Punch terminal telemetry includes launch distance, target distance at active-frame start, closest approach,
+  lateral error, player dodge phase, collision obstruction, and configured stop-short distance.
+- Falcon Punch also publishes mutually exclusive detail counters for damaged, iframe-dodged, blocked, parried, and whiffed terminals.
+- Parry telemetry covers started, active, expired, success, miss-feedback spawn, and failed-parry hit-react transitions. Grunt opportunity telemetry covers vulnerable-window opened, consumed, and expired; paired execution separately counts player critical starts and confirmed hits.
+- Player death snapshots include health, pre-death-reset stamina, carried Field Patches, accumulated low-health patch availability, last damage/attack kinds, nearby enemy count, and active enemy count.
+- The report labels retained terminal-event totals, retained unique terminal IDs, cumulative incoming-hit results, and cumulative whiff terminals separately. Incoming-hit results exclude whiffs.
+- Stuck-pocket remediation warnings include pocket ID, center cell, cell count, blocker source, and remediation action.
+
+## Field Patch Affordance Contract (2026-07-18)
+
+- Below 50% health with at least one carried patch, the gameplay HUD shows and pulses `FIELD PATCH READY [P]`.
+- Below 25% health, the prompt changes to the stronger critical treatment. It remains advisory and never auto-consumes a patch.
+- Prompt entry/severity transitions emit `field_patch_prompt_shown`; death while the prompt remains actionable emits `field_patch_prompt_ignored_on_death`.
 
 ## Acceptance
 

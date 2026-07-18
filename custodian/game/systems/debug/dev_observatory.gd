@@ -16,6 +16,8 @@ const DEFAULT_EXPORT_PATH := "user://dev_observatory/latest_session.json"
 
 var enabled := false
 var events: Array[Dictionary] = []
+var total_events_logged := 0
+var dropped_event_count := 0
 var counters: Dictionary = {}
 var gauges: Dictionary = {}
 var warnings: Array[Dictionary] = []
@@ -80,6 +82,7 @@ func set_enabled(value: bool) -> void:
 
 
 func log_event(kind: StringName, data: Dictionary = {}) -> void:
+	total_events_logged += 1
 	var entry := {
 		"time_msec": Time.get_ticks_msec(),
 		"uptime_sec": get_uptime_sec(),
@@ -91,6 +94,7 @@ func log_event(kind: StringName, data: Dictionary = {}) -> void:
 
 	while events.size() > max_events:
 		events.pop_front()
+		dropped_event_count += 1
 
 	event_logged.emit(kind, data)
 
@@ -135,6 +139,8 @@ func mark_warning(message: String, data: Dictionary = {}) -> void:
 
 func clear() -> void:
 	events.clear()
+	total_events_logged = 0
+	dropped_event_count = 0
 	counters.clear()
 	gauges.clear()
 	warnings.clear()
@@ -175,6 +181,10 @@ func get_summary() -> Dictionary:
 		"enabled": enabled,
 		"uptime_sec": get_uptime_sec(),
 		"event_count": events.size(),
+		"event_capacity": max_events,
+		"total_events_logged": total_events_logged,
+		"dropped_event_count": dropped_event_count,
+		"event_buffer_saturated": dropped_event_count > 0,
 		"counter_count": counters.size(),
 		"gauge_count": gauges.size(),
 		"warning_count": warnings.size(),
@@ -281,6 +291,10 @@ func _build_export_payload(path: String) -> Dictionary:
 			"uptime_sec": get_uptime_sec(),
 			"boot_time_msec": _boot_time_msec,
 			"event_count": events.size(),
+			"event_capacity": max_events,
+			"total_events_logged": total_events_logged,
+			"dropped_event_count": dropped_event_count,
+			"event_buffer_saturated": dropped_event_count > 0,
 			"counter_count": counters.size(),
 			"gauge_count": gauges.size(),
 			"warning_count": warnings.size(),
@@ -439,6 +453,10 @@ func _sample_player_gauges(tree: SceneTree) -> void:
 			var status := weapon_status as Dictionary
 			set_gauge(&"player_loaded_ammo", int(status.get("loaded_ammo", 0)))
 			set_gauge(&"player_reserve_ammo", int(status.get("reserve_ammo", 0)))
+			set_gauge(&"player_active_weapon_id", String(status.get("active_weapon_id", "")))
+			set_gauge(&"player_active_weapon_state_key", String(status.get("active_weapon_state_key", "")))
+			set_gauge(&"player_magazine_capacity", int(status.get("magazine_size", 0)))
+			set_gauge(&"player_ammo_per_shot", int(status.get("ammo_per_shot", 0)))
 			set_gauge(&"player_weapon_heat", float(status.get("heat", 0.0)))
 			set_gauge(&"player_weapon_overheated", bool(status.get("overheated", false)))
 

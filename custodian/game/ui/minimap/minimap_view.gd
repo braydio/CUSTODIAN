@@ -27,6 +27,8 @@ extends Control
 @export var room_marker_radius_px: float = 1.6
 @export var draw_grid: bool = true
 @export var dynamic_redraw_interval: float = 0.08
+@export var overview_map_padding_px: float = 4.0
+@export_range(0.55, 0.95, 0.01) var overview_target_fill_ratio: float = 0.72
 
 var map_size: Vector2i = Vector2i.ZERO
 var tile_size: Vector2 = Vector2(32, 32)
@@ -53,6 +55,7 @@ var _redraw_queued := false
 var _dynamic_redraw_accum := 0.0
 var _last_dynamic_signature := ""
 var _world_bounds := Rect2()
+var _overview_mode := false
 
 
 func _ready() -> void:
@@ -98,6 +101,17 @@ func set_world_bounds(bounds: Rect2) -> void:
 	compound_buildings.clear()
 	region_tiles.clear()
 	_mark_map_texture_dirty()
+
+
+func set_overview_mode(enabled: bool) -> void:
+	if _overview_mode == enabled:
+		return
+	_overview_mode = enabled
+	_request_redraw()
+
+
+func get_map_draw_rect() -> Rect2:
+	return _get_map_rect()
 
 
 func set_player(node: Node2D) -> void:
@@ -269,7 +283,10 @@ func _rebuild_map_texture() -> void:
 
 
 func _get_map_rect() -> Rect2:
-	var available := size - Vector2(map_padding_px * 2.0, map_padding_px * 2.0)
+	var active_padding := overview_map_padding_px if _overview_mode else map_padding_px
+	var available := size - Vector2(active_padding * 2.0, active_padding * 2.0)
+	if _overview_mode:
+		available = available * clampf(overview_target_fill_ratio, 0.55, 0.95)
 	var scale := minf(available.x / float(maxi(1, map_size.x)), available.y / float(maxi(1, map_size.y)))
 	var draw_size := Vector2(float(map_size.x), float(map_size.y)) * scale
 	var origin := (size - draw_size) * 0.5

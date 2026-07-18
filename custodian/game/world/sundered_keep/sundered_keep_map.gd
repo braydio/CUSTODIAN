@@ -241,6 +241,14 @@ func return_to_main(actor: Node) -> void:
 	if main_map != null and main_map.has_method("resume_from_child"):
 		main_map.call("resume_from_child", actor, self)
 		return
+	# Direct Vista -> Keep testing returns to the procgen/contract branch, which
+	# does not implement the connected-map resume hook used by Return Causeway.
+	if main_map is CanvasItem:
+		(main_map as CanvasItem).visible = true
+	if main_map != null:
+		main_map.process_mode = Node.PROCESS_MODE_INHERIT
+	visible = false
+	process_mode = Node.PROCESS_MODE_DISABLED
 	if actor is Node2D:
 		(actor as Node2D).global_position = main_return_position
 	_refresh_camera(main_map, actor)

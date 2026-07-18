@@ -3746,10 +3746,15 @@ func validate_no_stuck_pockets(remediate: bool = true) -> Dictionary:
 			if cleared_for_tile > 0:
 				remediated += 1
 				push_warning("[ProcGenStuckPocket] cleared %d runtime collision owner(s) near tile=%s" % [cleared_for_tile, tile])
+				var pocket_id := "%s:%d:%d" % [_get_generation_seed(), tile.x, tile.y]
 				_obs_warning("Procgen stuck pocket collision remediated.", {
+					"pocket_id": pocket_id,
 					"tile": tile,
+					"center_cell": tile,
+					"cell_count": 1,
 					"cleared_sources": cleared_for_tile,
 					"cleared_source_ids": cleared_source_ids,
+					"blocker_source": ",".join(cleared_source_ids),
 					"remediation_action": "disabled_collision/unregistered_blocker",
 					"seed": _get_generation_seed(),
 				})

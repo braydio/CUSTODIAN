@@ -43,9 +43,12 @@ def main() -> int:
         legacy_collision = root / "operator__modular_lower_body__block_loop_01__e__4f__96.png"
         legacy = root / "operator__modular_lower_body__blocking_hitreact_01__e__5f__96.png"
         cape = root / "operator__modular_wardrobe_cape__unarmed__block_loop_01__e__5f__96.png"
+        cape_alias = root / "operator__cape__unarmed__dodge_fast_attack_01__w__11f__96.png"
         ranged = root / "operator__modular_upper_body__stance__ranged_2h__e__5f__96.png"
-        for path in (canonical, legacy, cape, ranged):
+        ranged_weapon = root / "operator__modular_ranged_weapon__ranged_2h__relaxed_carbine_mk1_01__e__5f__96.png"
+        for path in (canonical, legacy, cape, ranged, ranged_weapon):
             _write_strip(path)
+        _write_strip(cape_alias, frames=11)
         _write_strip(legacy_collision, frames=4)
         rectangular = root / "operator__body__melee_1h__e__8f__156x96.png"
         Image.new("RGBA", (8 * 156, 96), (255, 255, 255, 255)).save(rectangular)
@@ -53,6 +56,8 @@ def main() -> int:
         canonical_info = manifests._inspect_sheet(canonical)
         legacy_info = manifests._inspect_sheet(legacy)
         cape_info = manifests._inspect_sheet(cape)
+        cape_alias_info = manifests._inspect_sheet(cape_alias)
+        ranged_weapon_info = manifests._inspect_sheet(ranged_weapon)
         assert manifests._canonical_runtime_path(canonical_info).startswith(
             "operator/new_operator/modular/block/"
         )
@@ -63,6 +68,18 @@ def main() -> int:
             "operator/new_operator/modular/block/"
         )
         assert manifests._build_post_process(cape_info) == ["operator_modular_runtime"]
+        assert manifests._canonical_runtime_path(cape_alias_info).startswith(
+            "operator/new_operator/modular/dodge/"
+        )
+        assert manifests._build_post_process(cape_alias_info) == ["operator_modular_runtime"]
+        assert manifests._canonical_runtime_path(ranged_weapon_info).startswith(
+            "operator/new_operator/modular/ranged/"
+        )
+        assert manifests._build_post_process(ranged_weapon_info) == ["operator_modular_runtime"]
+        parsed_ranged_weapon = builder._parse_generic_modular_source(ranged_weapon)
+        assert parsed_ranged_weapon is not None
+        assert parsed_ranged_weapon[1:3] == ("ranged_2h", "relaxed_01")
+        assert parsed_ranged_weapon[4] == 3
         rectangular_manifest = manifests._build_manifest(rectangular)
         assert rectangular_manifest["frame_size"] == [156, 96]
         assert rectangular_manifest["outputs"][0]["select"]["count"] == 8
@@ -82,6 +99,14 @@ def main() -> int:
         assert (
             "wardrobe_cape/actions/unarmed/block_loop_01/"
             "operator__modular_wardrobe_cape__unarmed__block_loop_01__e__5f__96.png"
+        ) in relative
+        assert (
+            "wardrobe_cape/actions/unarmed/dodge_fast_attack_01/"
+            "operator__modular_wardrobe_cape__unarmed__dodge_fast_attack_01__w__11f__96.png"
+        ) in relative
+        assert (
+            "ranged_weapon/actions/ranged_2h/relaxed_01/"
+            "operator__modular_ranged_weapon__ranged_2h__relaxed_01__e__5f__96.png"
         ) in relative
         assert not any("ranged_2h/stance_01" in path for path in relative)
 

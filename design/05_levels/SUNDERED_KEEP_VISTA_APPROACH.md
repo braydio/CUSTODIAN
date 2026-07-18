@@ -1,6 +1,6 @@
 # Sundered Keep Vista Approach
 
-- **Status:** route-master playable Sundered Keep slice implemented, grand-vista presentation beat wired, mapper-authored collision promoted, and event marker authoring added
+- **Status:** route-master playable Sundered Keep slice implemented; direct-to-Keep sanity ingress is the default and the longer Return Causeway branch remains available behind an exported test switch
 - **Owner:** authored level / rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Production runtime scene:** `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn`
@@ -16,19 +16,18 @@ A playable first Sundered Keep slice built from the former approach scene. The p
 
 ## Runtime Ingress Chain
 
-Normal contract-world access now routes through the complete authored level chain:
+Normal contract-world access currently uses the shorter sanity route:
 
 ```
 Procgen world placement
   -> WorldIngressSite
   -> Vista Approach
-  -> Return Causeway
   -> Sundered Keep front-gate map
 ```
 
-`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` remains the production entry scene. Its unconditional endpoint must instantiate/activate `ReturnCausewayApproach.tscn`, place the Operator at that scene's authored entry, and retire the Vista scene; it must not return the Operator to procgen. The Return Causeway north travel gate then activates `sundered_keep_map.gd`, places the Operator at the front-gate entry, and preserves the Causeway as the Keep's return destination. Only one authored branch is visible and processing at a time.
+`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` remains the production entry scene. `BYPASS_RETURN_CAUSEWAY_FOR_KEEP_TESTING` defaults to `true`, so its endpoint instantiates `sundered_keep_map.gd` directly, retains `target_level_id = sundered_keep_front_gate`, places the Operator through `SunderedKeepMap.enter_from_main()` / `get_entry_position()`, and retires the Vista scene. Returning from this direct Keep branch reactivates the upstream procgen/contract map and restores the configured world return position.
 
-`LevelLoader` tracks each handoff so its active-instance reference does not remain pointed at a freed Vista scene. `SunderedKeepTransitionTrigger` owns the shared handoff mechanics; source levels own endpoint placement and target configuration. Returning from the Keep reactivates Return Causeway at its north return anchor rather than jumping directly to procgen.
+The exported instance switch `bypass_return_causeway_for_keep_testing` may be set to `false` to test the longer Vista Approach -> Return Causeway -> Keep route. On that branch the Causeway displays a named entry affordance, its north gate enters the Keep, and Keep return reactivates the Causeway at its north anchor. `LevelLoader` tracks either handoff and `SunderedKeepTransitionTrigger` owns shared target instancing, entry setup, active-level adoption, and source retirement.
 
 Ingress transitions must be deferred out of `Area2D.body_entered` physics callbacks before instancing this scene. The approach also defers its dynamic `StaticBody2D` boundary rails and final exit `Area2D` setup by one frame so Godot does not register or toggle physics shapes while flushing queries.
 
@@ -59,7 +58,7 @@ The same mapper now has marker mode for event authoring:
 - `C`: copy the full `AUTHORING_MARKERS` block.
 - `Enter` / `U`: apply marker positions back to `sundered_keep_approach.gd`.
 
-`AUTHORING_MARKERS` is the stable authoring contract for Vista reference points. Keep key, gate, encounter, and siege markers belong to Return Causeway or the Sundered Keep map, not this presentation route. The runtime endpoint is positioned by `LEVEL_EXIT_POS` and owns only the handoff to Return Causeway.
+`AUTHORING_MARKERS` is the stable authoring contract for Vista reference points. Keep key, gate, encounter, and siege markers belong to Return Causeway or the Sundered Keep map, not this presentation route. The runtime endpoint is positioned by `LEVEL_EXIT_POS` and selects either the direct Keep target or the optional Return Causeway target from the exported bypass switch.
 
 ## Scene Architecture
 
@@ -73,7 +72,7 @@ SunderedKeepApproach
 ├── Collision             — PathBoundaryCollision thick CapsuleShape2D rails
 ├── Markers               — EntrySpawn, RevealStart, RevealFull, MidGameplayStart, SecondVistaStart, SecondVistaFull, SecondVistaEnd, TraverseEnd, ReturnTopdown
 ├── EventMarkers          — retained Vista reference markers for spawn and Return Causeway
-├── EventRuntime          — unconditional Vista-to-Return-Causeway transition trigger
+├── EventRuntime          — switchable direct-Keep / Return-Causeway transition trigger
 ├── VistaController       — drives vista, grand vista, fog, occlusion, and distant keep alpha
 ```
 
@@ -196,7 +195,7 @@ The audit checks all full-composition PNGs and fails if any PlayableRoot terrain
 
 The live ingress approach has a runtime fitting table in `res://game/world/approaches/sundered_keep/sundered_keep_approach.gd`. It intentionally scales `res://content/sprites/world/return_causeway/` path/underlay/occlusion PNGs and `res://content/backgrounds/sundered_keep/` vista mattes into target world rectangles, including a thin `2100x130` `WallShadowOccluder`, so oversized generated overlay exports cannot appear as raw black curtains over the scene.
 
-The Sundered Keep front-gate map remains the gameplay destination after Return Causeway. `sundered_keep_approach_smoke.gd` validates the Vista endpoint target and mapper-authored collision; the transition-chain smoke validates Vista → Causeway → Keep placement, active-level adoption, source visibility, and the Keep return anchor.
+The Sundered Keep front-gate map is the default Vista endpoint. `sundered_keep_approach_smoke.gd` validates that default plus mapper-authored collision; the transition-chain smoke validates both direct Vista -> Keep placement and the optional Vista -> Causeway -> Keep branch, including active-level adoption, source visibility, and the Keep-to-Causeway return anchor.
 
 ## Reference Blockout Implementation
 
@@ -363,5 +362,5 @@ Verify at each state:
   - In-editor visual review of the procgen ingress -> `sundered_keep_approach.tscn` playable-map flow
   - Replace the current ingress tile fallback with a specific coast/keep ingress reservation in the procgen intent graph
   - Expand `AUTHORING_MARKERS` into richer encounter scripting once enemy compositions are selected
-  - Ensure the level-exit trigger enters Return Causeway, whose north gate enters Sundered Keep
+  - Rebuild/polish Return Causeway before changing the exported bypass default back to the longer route
 - **Constraint:** Art alpha remains non-authoritative; use mapper rails for collision and `AUTHORING_MARKERS` for semantic gameplay points.

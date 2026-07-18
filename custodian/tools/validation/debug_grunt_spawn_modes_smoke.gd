@@ -41,6 +41,14 @@ func _run() -> void:
 	await _assert_mode(wave_manager, enemies, operator, &"critical_recover", PHASE_RECOVER, &"critical_open_recover_s")
 	await _assert_mode(wave_manager, enemies, operator, &"execution_ready", PHASE_HOLD, &"critical_open_hold_s")
 
+	var falcon_grunt: Node2D = await _spawn_mode(wave_manager, enemies, operator, &"falcon", Vector2(128.0, 0.0))
+	_assert_true(falcon_grunt != null, "falcon debug mode should be accepted")
+	if falcon_grunt != null:
+		_assert_true(StringName(falcon_grunt.get("_grunt_falcon_punch_phase")) == &"windup", "falcon debug mode should immediately enter windup")
+		_assert_true(falcon_grunt.get("target") == operator, "falcon debug mode should explicitly target the Operator")
+		falcon_grunt.queue_free()
+		await process_frame
+
 	var lethal_grunt: Node2D = await _spawn_mode(wave_manager, enemies, operator, &"execution_lethal")
 	_assert_true(lethal_grunt != null, "execution_lethal should be accepted")
 	if lethal_grunt != null:
@@ -84,12 +92,12 @@ func _assert_mode(
 		_assert_true(bool(grunt.call("can_receive_parry_critical_from", operator)), "%s should be reservable" % String(mode))
 
 
-func _spawn_mode(wave_manager: Node, enemies: Node2D, operator: Node2D, mode: StringName) -> Node2D:
+func _spawn_mode(wave_manager: Node, enemies: Node2D, operator: Node2D, mode: StringName, offset: Vector2 = Vector2(48.0, 0.0)) -> Node2D:
 	var child_count_before := enemies.get_child_count()
 	var spawned := bool(wave_manager.call(
 		"debug_spawn_enemy_type",
 		"grunt",
-		operator.global_position + Vector2(48.0, 0.0),
+		operator.global_position + offset,
 		1.0,
 		&"",
 		mode

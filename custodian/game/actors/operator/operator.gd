@@ -40,13 +40,13 @@ const CRITICAL_HITSPARK_FRAME_SIZE := Vector2i(156, 96)
 const CRITICAL_HITSPARK_FPS := 15.0
 const PAIRED_EXECUTION_BODY_SHEETS := {
 	&"s": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png",
-	&"e": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__8f__96.png",
-	&"w": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__8f__96.png",
+	&"e": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__12f__96.png",
+	&"w": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__12f__96.png",
 }
 const PAIRED_EXECUTION_FX_SHEETS := {
 	&"s": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
-	&"e": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__8f__96.png",
-	&"w": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__8f__96.png",
+	&"e": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__12f__96.png",
+	&"w": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__12f__96.png",
 }
 const PAIRED_EXECUTION_BODY_ANIMATIONS := {
 	&"s": &"operator_critical_execution_s",
@@ -59,13 +59,19 @@ const PAIRED_EXECUTION_FX_ANIMATIONS := {
 	&"w": &"operator_critical_execution_fx_w",
 }
 const PAIRED_EXECUTION_FRAME_SIZE := Vector2i(96, 96)
-const PAIRED_EXECUTION_FRAME_COUNT := 8
 const PAIRED_EXECUTION_SOURCE_FPS := 12.0
-const PAIRED_EXECUTION_FRAME_DURATIONS := [0.09, 0.13, 0.16, 0.22, 0.05, 0.15, 0.15, 0.25]
-const PAIRED_EXECUTION_DAMAGE_FRAME := 4
+const PAIRED_EXECUTION_FRAME_COUNTS := {&"s": 8, &"e": 12, &"w": 12}
+const PAIRED_EXECUTION_FRAME_DURATIONS := {
+	&"s": [0.09, 0.13, 0.16, 0.22, 0.05, 0.15, 0.15, 0.25],
+	&"e": [0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333],
+	&"w": [0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333, 0.083333],
+}
+const PAIRED_EXECUTION_DAMAGE_FRAMES := {&"s": 4, &"e": 4, &"w": 4}
 const PAIRED_EXECUTION_HIT_STOP_DURATION := 0.11
-const PAIRED_EXECUTION_DURATION := 1.20
 const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav")
+const DODGE_FAST_ATTACK_FRAME_COUNT := 11
+const DODGE_FAST_ATTACK_FPS := 20.0
+const DODGE_FAST_ATTACK_HIT_FRAME := 4
 
 enum AttackPhase {
 	NONE,
@@ -331,6 +337,9 @@ var _ranged_config_warning_once: Dictionary = {}
 var _melee_heavy_anticipating: bool = false
 var _melee_fast_windup: bool = false
 var _melee_fast_combo_step: int = 0
+var _skip_next_fast_attack_windup: bool = false
+var _dodge_fast_attack_buffered: bool = false
+var _dodge_fast_attack_presentation_active: bool = false
 var _buffered_attack_kind: String = ""
 var _buffered_attack_timer: float = 0.0
 var _hit_stop_active: bool = false
@@ -346,6 +355,9 @@ var _paired_execution_target: Node2D = null
 var _paired_execution_elapsed: float = 0.0
 var _paired_execution_frame_index: int = 0
 var _paired_execution_frame_elapsed: float = 0.0
+var _paired_execution_frame_count: int = 8
+var _paired_execution_frame_durations: Array = []
+var _paired_execution_damage_frame: int = 4
 var _paired_execution_hit_stop_remaining: float = 0.0
 var _paired_execution_damage_applied: bool = false
 var _paired_execution_token: int = -1
@@ -416,6 +428,10 @@ var _unstuck_anchor_position := Vector2.ZERO
 var _unstuck_anchor_valid := false
 var _unstuck_report_cooldown := 0.0
 var _field_patch_seconds_available_below_half_health := 0.0
+var _field_patch_prompt_active := false
+var _field_patch_prompt_critical := false
+var _last_damage_kind: StringName = &""
+var _last_enemy_attack_kind: StringName = &""
 var _body_recoil_offset := Vector2.ZERO
 var _animated_sprite_base_position := Vector2.ZERO
 var _dodge_fx_back_base_position := Vector2.ZERO
@@ -1475,6 +1491,10 @@ func _sync_modular_action_domains() -> bool:
 		return false
 	if not _melee_active or _melee_attack_kind != "fast":
 		return false
+	if _dodge_fast_attack_presentation_active:
+		# The authored roll-exit strip is already a complete body composition.
+		# Keep modular locomotion/action layers from replacing it mid-playback.
+		return animated_sprite != null and animated_sprite.visible
 	if not _is_attack_profile_unarmed(_active_attack_profile):
 		return false
 	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
@@ -3106,6 +3126,19 @@ func _try_melee_attack(intent: String = ""):
 	if not _is_melee_loadout_active():
 		return
 	var requested_kind := _get_requested_attack_kind(intent)
+	if requested_kind == "fast" and _dodge_active:
+		if _can_start_attack_now():
+			_dodge_fast_attack_buffered = true
+			_obs_log(&"player_fast_attack_dodge_buffered", {
+				"dodge_time_remaining": _dodge_timer,
+				"dodge_cooldown_remaining": _dodge_cooldown_remaining,
+			})
+		else:
+			_buffer_attack(requested_kind)
+		return
+	if requested_kind == "fast" and _dodge_recovery_active and _can_start_attack_now():
+		_cancel_dodge_recovery_for_fast_attack()
+		_skip_next_fast_attack_windup = true
 	if _can_start_attack_now():
 		_request_attack_state(requested_kind)
 		return
@@ -3303,6 +3336,12 @@ func _try_start_parry() -> bool:
 	_block_active = false
 	_play_parry_animation(&"unarmed_parry")
 	_request_block_state()
+	_obs_increment(&"player_parry_started")
+	_obs_log(&"player_parry_started", {
+		"position": global_position,
+		"stamina": stamina,
+		"active_window_sec": parry_active_sec,
+	})
 	return true
 
 
@@ -3333,9 +3372,14 @@ func _update_parry_guard_timers(delta: float) -> void:
 				_parry_phase = &"active"
 				_parry_timer = maxf(0.0, parry_active_sec)
 				_parry_active = true
+				_obs_increment(&"player_parry_active")
+				_obs_log(&"player_parry_active", {"position": global_position, "window_sec": parry_active_sec})
 		&"active":
 			if _parry_timer <= 0.0:
 				_parry_active = false
+				_obs_increment(&"player_parry_expired")
+				_obs_log(&"player_parry_expired", {"position": global_position})
+				_spawn_parry_miss_fx()
 				_parry_phase = &"recovery"
 				_parry_timer = maxf(maxf(0.0, parry_recovery_sec), _get_parry_attempt_remaining_duration())
 				_block_phase = &"recovery"
@@ -3598,6 +3642,8 @@ func _clear_attack_buffer() -> void:
 
 
 func _start_fast_attack() -> void:
+	var skip_windup_from_dodge := _skip_next_fast_attack_windup
+	_skip_next_fast_attack_windup = false
 	_critical_attack_target = null
 	_critical_attack_damage = 0.0
 	_active_attack_profile = get_current_combat_profile()
@@ -3608,6 +3654,7 @@ func _start_fast_attack() -> void:
 	_modular_upper_fx_action_animation = &""
 	_melee_heavy_anticipating = false
 	_melee_fast_windup = false
+	_dodge_fast_attack_presentation_active = false
 	_melee_attack_kind = "fast"
 	var attack_profile: MeleeAttackProfile = _begin_melee_attack_profile("fast")
 	_notify_camera_attack_windup(false)
@@ -3638,13 +3685,58 @@ func _start_fast_attack() -> void:
 		_configure_melee_hitbox(melee_fast_hit_damage, melee_range, melee_arc_degrees)
 
 	# Try windup phase for unarmed fast attacks (skip for melee weapons)
-	if is_unarmed_attack and _try_start_fast_attack_windup():
+	if is_unarmed_attack and not skip_windup_from_dodge and _try_start_fast_attack_windup():
 		return
+	if is_unarmed_attack and skip_windup_from_dodge:
+		_obs_increment(&"player_fast_attacks_from_dodge_recovery")
+		_obs_log(&"player_fast_attack_dodge_cancel", {
+			"attack_key": _melee_attack_key,
+			"direction": _melee_forward,
+			"skipped_phase": "windup",
+			"dodge_cooldown_remaining": _dodge_cooldown_remaining,
+		})
 
-	# Legacy path: play strike directly (melee weapons or no windup available)
-	_play_melee_anim_from_key(_melee_attack_key, fallback_animation)
-	_melee_duration = _get_current_melee_animation_duration(next_duration, 0.24, next_duration)
+	# A roll-exit fast attack owns a dedicated full-body presentation when the
+	# ingested strip is available. Gameplay remains on the ordinary fast-attack
+	# profile; only its authored hit frame and visual duration differ.
+	if is_unarmed_attack and skip_windup_from_dodge:
+		_dodge_fast_attack_presentation_active = _play_dodge_fast_attack_presentation()
+	if not _dodge_fast_attack_presentation_active:
+		_play_melee_anim_from_key(_melee_attack_key, fallback_animation)
+	_melee_duration = (
+		float(DODGE_FAST_ATTACK_FRAME_COUNT) / DODGE_FAST_ATTACK_FPS
+		if _dodge_fast_attack_presentation_active
+		else _get_current_melee_animation_duration(next_duration, 0.24, next_duration)
+	)
 	_lock_melee_cooldown(_melee_duration + 0.04)
+
+
+func _play_dodge_fast_attack_presentation() -> bool:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return false
+	var suffix := "left" if _melee_forward.x < -0.05 else "right"
+	var body_animation := StringName("unarmed_dodge_fast_attack_%s" % suffix)
+	if not _has_playable_sprite_animation(animated_sprite.sprite_frames, body_animation):
+		return false
+	_hide_modular_locomotion_layers()
+	animated_sprite.visible = true
+	animated_sprite.flip_h = false
+	animated_sprite.speed_scale = 1.0
+	animated_sprite.play(body_animation)
+	var fx_animation := StringName("unarmed_dodge_fast_attack_fx_%s" % suffix)
+	if not _play_named_melee_fx_overlay(fx_animation) and melee_fx_overlay_sprite != null:
+		melee_fx_overlay_sprite.visible = false
+	var cape_animation := StringName("unarmed_dodge_fast_attack_cape_%s" % suffix)
+	if modular_cape_sprite != null \
+		and modular_cape_sprite.sprite_frames != null \
+		and _has_playable_sprite_animation(modular_cape_sprite.sprite_frames, cape_animation):
+		modular_cape_sprite.visible = true
+		modular_cape_sprite.flip_h = false
+		modular_cape_sprite.speed_scale = 1.0
+		modular_cape_sprite.play(cape_animation)
+	else:
+		_hide_modular_cape_layer()
+	return true
 
 
 func _try_start_fast_attack_windup() -> bool:
@@ -4021,6 +4113,8 @@ func _play_failed_parry_block_hitreact() -> void:
 	_block_active = false
 	_guard_requested_from_secondary = false
 	_play_block_animation(&"melee_2h_block_hitreact")
+	_obs_increment(&"player_failed_parry_hitreact")
+	_obs_log(&"player_failed_parry_hitreact", {"position": global_position, "health": current_health})
 
 
 func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dictionary) -> void:
@@ -4057,6 +4151,32 @@ func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dicti
 	_spawn_parry_contact_spark(contact_position)
 	_spawn_parry_success_fx(contact_position)
 	_notify_camera_attack_impact(hit_direction, false)
+	_obs_increment(&"player_parry_success")
+	_obs_log(&"player_parry_success", {
+		"position": global_position,
+		"contact_position": contact_position,
+		"attacker_id": attacker.get_instance_id() if attacker != null and is_instance_valid(attacker) else 0,
+	})
+
+
+func _spawn_parry_miss_fx() -> void:
+	var miss_fx := PARRY_CONTACT_SPARK_VFX_SCENE.instantiate() as Node2D
+	if miss_fx == null:
+		return
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	parent.add_child(miss_fx)
+	var direction := _get_attack_aim_direction()
+	if direction.length_squared() <= 0.001:
+		direction = visual_idle_direction
+	if direction.length_squared() <= 0.001:
+		direction = Vector2.DOWN
+	miss_fx.global_position = global_position + direction.normalized() * 20.0
+	miss_fx.modulate = Color(1.0, 0.34, 0.24, 0.72)
+	miss_fx.add_to_group("parry_miss_world_vfx")
+	_obs_increment(&"player_parry_miss_vfx_spawned")
+	_obs_log(&"player_parry_miss_vfx_spawned", {"position": miss_fx.global_position})
 
 
 func _spawn_parry_contact_spark(contact_position: Vector2) -> void:
@@ -4231,10 +4351,13 @@ func _start_critical_attack(target: Node2D) -> void:
 	var body_sheet: String = PAIRED_EXECUTION_BODY_SHEETS[execution_direction]
 	var fx_animation: StringName = PAIRED_EXECUTION_FX_ANIMATIONS[execution_direction]
 	var fx_sheet: String = PAIRED_EXECUTION_FX_SHEETS[execution_direction]
-	if not _ensure_paired_execution_animation(animated_sprite, body_animation, body_sheet):
+	_paired_execution_frame_count = int(PAIRED_EXECUTION_FRAME_COUNTS.get(execution_direction, 8))
+	_paired_execution_frame_durations = Array(PAIRED_EXECUTION_FRAME_DURATIONS.get(execution_direction, PAIRED_EXECUTION_FRAME_DURATIONS[&"s"])).duplicate()
+	_paired_execution_damage_frame = int(PAIRED_EXECUTION_DAMAGE_FRAMES.get(execution_direction, 4))
+	if not _ensure_paired_execution_animation(animated_sprite, body_animation, body_sheet, _paired_execution_frame_count):
 		target.call("cancel_parry_critical_execution", self, &"operator_body_asset_missing")
 		return
-	if not _ensure_paired_execution_animation(modular_upper_fx_sprite, fx_animation, fx_sheet):
+	if not _ensure_paired_execution_animation(modular_upper_fx_sprite, fx_animation, fx_sheet, _paired_execution_frame_count):
 		target.call("cancel_parry_critical_execution", self, &"operator_fx_asset_missing")
 		return
 	_active_attack_profile = get_current_combat_profile()
@@ -4309,23 +4432,29 @@ func _start_critical_attack(target: Node2D) -> void:
 	if not bool(target.call("begin_parry_critical_execution", self, execution_data)):
 		_cleanup_paired_execution(false, &"enemy_begin_rejected")
 		return
+	_obs_increment(&"player_critical_attack_started")
+	_obs_log(&"player_critical_attack_started", {
+		"target_id": target.get_instance_id(),
+		"execution_token": _paired_execution_token,
+		"direction": String(_paired_execution_direction),
+	})
 	if OS.is_debug_build():
 		assert(global_position.is_equal_approx(target.global_position), "Paired execution roots diverged on start.")
 	_notify_camera_attack_windup(true)
-	_lock_melee_cooldown(PAIRED_EXECUTION_DURATION + PAIRED_EXECUTION_HIT_STOP_DURATION + 0.08)
+	_lock_melee_cooldown(_get_paired_execution_duration() + PAIRED_EXECUTION_HIT_STOP_DURATION + 0.08)
 
 
-func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name: StringName, sheet_path: String) -> bool:
+func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name: StringName, sheet_path: String, frame_count: int) -> bool:
 	if sprite == null or sprite.sprite_frames == null:
 		push_error("[PairedExecution] Required animation owner missing for %s" % sheet_path)
 		return false
-	if sprite.sprite_frames.has_animation(animation_name) and sprite.sprite_frames.get_frame_count(animation_name) == PAIRED_EXECUTION_FRAME_COUNT:
+	if sprite.sprite_frames.has_animation(animation_name) and sprite.sprite_frames.get_frame_count(animation_name) == frame_count:
 		return true
 	if not ResourceLoader.exists(sheet_path):
 		push_error("[PairedExecution] Required asset missing: %s" % sheet_path)
 		return false
 	var texture := load(sheet_path) as Texture2D
-	if texture == null or texture.get_width() != PAIRED_EXECUTION_FRAME_COUNT * PAIRED_EXECUTION_FRAME_SIZE.x or texture.get_height() != PAIRED_EXECUTION_FRAME_SIZE.y:
+	if texture == null or texture.get_width() != frame_count * PAIRED_EXECUTION_FRAME_SIZE.x or texture.get_height() != PAIRED_EXECUTION_FRAME_SIZE.y:
 		push_error("[PairedExecution] Required asset has invalid dimensions: %s" % sheet_path)
 		return false
 	if sprite.sprite_frames.has_animation(animation_name):
@@ -4335,12 +4464,19 @@ func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name
 	# This speed is source-preview metadata only. Runtime playback is driven by the
 	# authored duration table in _update_paired_execution().
 	sprite.sprite_frames.set_animation_speed(animation_name, PAIRED_EXECUTION_SOURCE_FPS)
-	for frame_index in range(PAIRED_EXECUTION_FRAME_COUNT):
+	for frame_index in range(frame_count):
 		var atlas := AtlasTexture.new()
 		atlas.atlas = texture
 		atlas.region = Rect2(frame_index * PAIRED_EXECUTION_FRAME_SIZE.x, 0, PAIRED_EXECUTION_FRAME_SIZE.x, PAIRED_EXECUTION_FRAME_SIZE.y)
 		sprite.sprite_frames.add_frame(animation_name, atlas)
 	return true
+
+
+func _get_paired_execution_duration() -> float:
+	var duration := 0.0
+	for frame_duration in _paired_execution_frame_durations:
+		duration += float(frame_duration)
+	return duration
 
 
 func _update_paired_execution(delta: float) -> void:
@@ -4357,7 +4493,7 @@ func _update_paired_execution(delta: float) -> void:
 			remaining_delta -= hit_stop_step
 			if remaining_delta <= 0.0:
 				break
-		var frame_duration: float = PAIRED_EXECUTION_FRAME_DURATIONS[_paired_execution_frame_index]
+		var frame_duration: float = float(_paired_execution_frame_durations[_paired_execution_frame_index])
 		var frame_step := minf(remaining_delta, frame_duration - _paired_execution_frame_elapsed)
 		_paired_execution_frame_elapsed += frame_step
 		_paired_execution_elapsed += frame_step
@@ -4365,12 +4501,12 @@ func _update_paired_execution(delta: float) -> void:
 		if _paired_execution_frame_elapsed + 0.000001 < frame_duration:
 			break
 		_paired_execution_frame_elapsed = 0.0
-		if _paired_execution_frame_index >= PAIRED_EXECUTION_FRAME_COUNT - 1:
+		if _paired_execution_frame_index >= _paired_execution_frame_count - 1:
 			_cleanup_paired_execution(true, &"complete")
 			return
 		_paired_execution_frame_index += 1
 		_apply_paired_execution_frame(_paired_execution_frame_index)
-		if _paired_execution_frame_index == PAIRED_EXECUTION_DAMAGE_FRAME:
+		if _paired_execution_frame_index == _paired_execution_damage_frame:
 			_apply_paired_execution_impact()
 			if _paired_execution_active:
 				_paired_execution_hit_stop_remaining = PAIRED_EXECUTION_HIT_STOP_DURATION
@@ -4402,11 +4538,18 @@ func _apply_paired_execution_impact() -> void:
 	var damage_result: Dictionary = _paired_execution_target.call("apply_parry_critical_execution_damage", self, _critical_attack_damage, {
 		"execution_token": _paired_execution_token,
 		"impact_position": _paired_execution_anchor,
-		"frame": PAIRED_EXECUTION_DAMAGE_FRAME,
+		"frame": _paired_execution_damage_frame,
 	})
 	if not bool(damage_result.get("critical", false)):
 		_cleanup_paired_execution(false, &"damage_rejected")
 		return
+	_obs_increment(&"player_critical_attack_hit")
+	_obs_log(&"player_critical_attack_hit", {
+		"target_id": _paired_execution_target.get_instance_id(),
+		"execution_token": _paired_execution_token,
+		"damage_applied": float(damage_result.get("damage_applied", 0.0)),
+		"lethal": bool(damage_result.get("lethal", false)),
+	})
 	var camera = _get_world_camera()
 	if camera and camera.has_method("on_execution_impact"):
 		camera.call("on_execution_impact", _paired_execution_direction_vector(_paired_execution_direction))
@@ -4831,6 +4974,8 @@ func _sync_melee_hitbox_window_from_animation() -> void:
 	var frame: int = animated_sprite.frame
 	var weapon_definition = _get_equipped_primary_weapon_definition()
 	var window: Dictionary = _get_active_melee_hit_window()
+	if _dodge_fast_attack_presentation_active:
+		window = {"frames": [DODGE_FAST_ATTACK_HIT_FRAME]}
 	if weapon_definition != null and weapon_definition.hit_windows is Dictionary:
 		var weapon_window: Dictionary = weapon_definition.hit_windows.get(_melee_attack_key, {})
 		if not weapon_window.is_empty():
@@ -5033,6 +5178,7 @@ func _play_fast_attack_recovery() -> void:
 
 
 func _start_fast_attack_recovery() -> void:
+	_dodge_fast_attack_presentation_active = false
 	_melee_recovery_active = true
 	_melee_recovery_timer = melee_fast_recovery_duration
 	# Apply cognitive attack recovery modifier (instinct reduces recovery time)
@@ -5311,9 +5457,22 @@ func _update_field_patch(delta: float) -> void:
 
 
 func _update_field_patch_observability(delta: float) -> void:
-	if not _is_dead and max_health > 0.0 and current_health < max_health * 0.5 and field_patch_count > 0:
+	var health_ratio := current_health / max_health if max_health > 0.0 else 1.0
+	var should_prompt := not _is_dead and health_ratio < 0.5 and field_patch_count > 0 and not _field_patch_active
+	var critical_prompt := should_prompt and health_ratio < 0.25
+	if should_prompt:
 		_field_patch_seconds_available_below_half_health += delta
 		_obs_gauge(&"field_patch_seconds_available_below_half_health", snappedf(_field_patch_seconds_available_below_half_health, 0.01))
+	if should_prompt and (not _field_patch_prompt_active or critical_prompt != _field_patch_prompt_critical):
+		_obs_increment(&"field_patch_prompt_shown")
+		_obs_log(&"field_patch_prompt_shown", {
+			"health": current_health,
+			"max_health": max_health,
+			"patches_remaining": field_patch_count,
+			"severity": "critical" if critical_prompt else "warning",
+		})
+	_field_patch_prompt_active = should_prompt
+	_field_patch_prompt_critical = critical_prompt
 
 
 func _commit_field_patch() -> void:
@@ -5374,6 +5533,8 @@ func get_field_patch_status() -> Dictionary:
 		"time_remaining": _field_patch_timer,
 		"use_duration": field_patch_use_duration,
 		"recovery_remaining": _field_patch_recovery_timer,
+		"prompt_visible": _field_patch_prompt_active,
+		"prompt_critical": _field_patch_prompt_critical,
 	}
 
 
@@ -5408,6 +5569,7 @@ func _try_start_dodge() -> bool:
 	if not _can_start_dodge():
 		return false
 	_parry_neutral_lock_active = false
+	_dodge_fast_attack_buffered = false
 	_dodge_direction = _resolve_dodge_direction()
 	_dodge_backstep_active = _is_dodge_backstep_request(_dodge_direction)
 	_dodge_active = true
@@ -5488,12 +5650,32 @@ func _update_dodge(delta: float) -> void:
 func _start_dodge_recovery() -> void:
 	_dodge_iframe_timer = 0.0
 	_dodge_recovery_timer = maxf(0.0, dodge_recovery_duration)
+	if _dodge_fast_attack_buffered:
+		_dodge_fast_attack_buffered = false
+		_dodge_recovery_active = true
+		_cancel_dodge_recovery_for_fast_attack()
+		_skip_next_fast_attack_windup = true
+		_request_attack_state("fast")
+		return
 	if _dodge_recovery_timer <= 0.0 or not _has_dodge_recovery_animation():
 		_dodge_recovery_active = false
 		velocity = velocity.move_toward(Vector2.ZERO, move_deceleration * get_physics_process_delta_time())
 		return
 	_dodge_recovery_active = true
 	_play_dodge_recovery_animation(true)
+
+
+func _cancel_dodge_recovery_for_fast_attack() -> void:
+	_dodge_active = false
+	_dodge_recovery_active = false
+	_dodge_timer = 0.0
+	_dodge_iframe_timer = 0.0
+	_dodge_recovery_timer = 0.0
+	_dodge_backstep_active = false
+	_hide_dodge_fx()
+	# Preserve the ordinary dodge cooldown; this is an attack cancel, not a free
+	# second dodge. Attack movement takes ownership of velocity immediately.
+	velocity = Vector2.ZERO
 
 
 func _update_dodge_recovery(delta: float) -> void:
@@ -5512,6 +5694,7 @@ func _cancel_dodge() -> void:
 	_dodge_iframe_timer = 0.0
 	_dodge_recovery_timer = 0.0
 	_dodge_backstep_active = false
+	_dodge_fast_attack_buffered = false
 	_hide_dodge_fx()
 
 
@@ -5521,6 +5704,16 @@ func _is_dodge_invulnerable() -> bool:
 
 func is_dodge_invulnerable() -> bool:
 	return _is_dodge_invulnerable()
+
+
+func get_dodge_telemetry_phase() -> StringName:
+	if _dodge_active and _dodge_iframe_timer > 0.0:
+		return &"iframe"
+	if _dodge_active:
+		return &"late_active"
+	if _dodge_recovery_active:
+		return &"recovery"
+	return &"none"
 
 
 func _should_ignore_incoming_damage_for_dodge(source: String = "") -> bool:
@@ -7542,6 +7735,8 @@ func get_weapon_status() -> Dictionary:
 	return {
 		"equipped": primary_weapon_equipped,
 		"primary_weapon_id": equipped_primary_weapon_id,
+		"active_weapon_id": String(ranged_weapon_definition.weapon_id) if ranged_weapon_definition != null else "",
+		"active_weapon_state_key": String(_get_weapon_state_key(ranged_weapon_definition)) if ranged_weapon_definition != null else "",
 		"weapon_name": weapon_name,
 		"ranged_context_active": ranged_context_active,
 		"using_unarmed": using_unarmed,
@@ -7573,6 +7768,7 @@ func get_weapon_status() -> Dictionary:
 		"reserve_ammo": _get_current_reserve_ammo() if ranged_weapon_definition != null else 0,
 		"max_reserve_ammo": int(ammo_capacity_by_type.get(ammo_type, 0)),
 		"magazine_size": _get_current_magazine_size() if ranged_weapon_definition != null else 0,
+		"ammo_per_shot": _get_current_ammo_per_shot() if ranged_weapon_definition != null else 0,
 		"heat": heat,
 		"heat_max": heat_max,
 		"heat_ratio": heat / heat_max,
@@ -7811,11 +8007,17 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		_obs_increment(&"incoming_hit_during_dodge")
 		if _dodge_iframe_timer > 0.0:
 			_obs_increment(&"incoming_hit_during_iframe")
+			_obs_increment(&"incoming_dodge_classification_iframe_avoid")
+			_obs_log(&"incoming_dodge_timing_classified", hit_context.merged({"classification": "iframe_avoid"}, true))
 		else:
 			_obs_increment(&"dodge_timing_miss_late")
+			_obs_increment(&"incoming_dodge_classification_miss_late")
+			_obs_log(&"incoming_dodge_timing_classified", hit_context.merged({"classification": "miss_late"}, true))
 	elif _dodge_recovery_active:
 		_obs_increment(&"incoming_hit_during_dodge_recovery")
 		_obs_increment(&"dodge_timing_miss_late")
+		_obs_increment(&"incoming_dodge_classification_recovery_hit")
+		_obs_log(&"incoming_dodge_timing_classified", hit_context.merged({"classification": "recovery_hit"}, true))
 	var resolved_hit_direction := hit_direction
 	if resolved_hit_direction.length_squared() <= 0.001 and attacker != null and is_instance_valid(attacker):
 		resolved_hit_direction = attacker.global_position.direction_to(global_position)
@@ -7949,6 +8151,8 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 		"health": health,
 		"max_health": max_health,
 	}
+	_last_enemy_attack_kind = StringName(str(damage_context.get("hit_kind", damage_context.get("attack_type", "unknown"))))
+	_last_damage_kind = StringName(str(damage_context.get("damage_kind", _last_enemy_attack_kind)))
 	for key in damage_context.keys():
 		damage_event[key] = damage_context[key]
 	_obs_log(&"player_damage", damage_event)
@@ -8132,13 +8336,28 @@ func _handle_death() -> void:
 		return
 	_is_dead = true
 	cancel_field_patch(&"dead")
+	var enemy_snapshot := _get_enemy_death_snapshot()
 	_obs_increment(&"player_deaths", 1)
 	_obs_log(&"player_death", {
 		"position": global_position,
+		"health": current_health,
+		"stamina": stamina,
 		"patches_remaining": field_patch_count,
+		"field_patches_remaining": field_patch_count,
+		"seconds_below_half_health_with_patch_available": snappedf(_field_patch_seconds_available_below_half_health, 0.01),
+		"last_damage_kind": String(_last_damage_kind),
+		"last_enemy_attack_kind": String(_last_enemy_attack_kind),
+		"nearest_enemy_count": int(enemy_snapshot.get("nearest_enemy_count", 0)),
+		"active_enemy_count": int(enemy_snapshot.get("active_enemy_count", 0)),
 	})
 	if field_patch_count > 0:
 		_obs_increment(&"player_died_with_field_patch_available")
+	if _field_patch_prompt_active and field_patch_count > 0:
+		_obs_increment(&"field_patch_prompt_ignored_on_death")
+		_obs_log(&"field_patch_prompt_ignored_on_death", {
+			"patches_remaining": field_patch_count,
+			"seconds_visible": snappedf(_field_patch_seconds_available_below_half_health, 0.01),
+		})
 	_obs_gauge(&"player_health", 0.0)
 	var heatmap := get_node_or_null("/root/SectorHeatmap")
 	if heatmap != null:
@@ -8173,6 +8392,23 @@ func _handle_death() -> void:
 		gs.lose_life("Custodian eliminated after a fatal strike")
 	await get_tree().create_timer(1.6).timeout
 	_finish_death()
+
+
+func _get_enemy_death_snapshot(nearby_radius: float = 192.0) -> Dictionary:
+	var active_enemy_count := 0
+	var nearest_enemy_count := 0
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if not (enemy is Node2D) or not is_instance_valid(enemy):
+			continue
+		if enemy.has_method("is_dead") and bool(enemy.call("is_dead")):
+			continue
+		active_enemy_count += 1
+		if global_position.distance_to((enemy as Node2D).global_position) <= nearby_radius:
+			nearest_enemy_count += 1
+	return {
+		"nearest_enemy_count": nearest_enemy_count,
+		"active_enemy_count": active_enemy_count,
+	}
 
 func _finish_death() -> void:
 	var gs = get_node_or_null("/root/GameState")

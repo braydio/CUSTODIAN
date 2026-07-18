@@ -86,7 +86,7 @@ This file is the implementation authority for terminal structure. For player-fac
 11. HISTORY
 12. SETTINGS
 
-The default rail keeps the operational pages visible without scrolling: OVERVIEW, SECTORS, POWER, DEFENSE, FABRICATION, SENSORS, ARCHIVE, and RECON. STATUS, INCIDENTS, CONTRACTS, HISTORY, and SETTINGS live behind `MORE / SYSTEMS`; opening a secondary page keeps that group expanded.
+At the `1366x768` safe-layout target, the default rail presents OVERVIEW, SECTORS, POWER, DEFENSE, FABRICATION, SENSORS, ARCHIVE, and RECON as the primary subset. STATUS, INCIDENTS, CONTRACTS, HISTORY, and SETTINGS live behind `MORE / SYSTEMS`; opening a secondary page keeps that group expanded. The page list is an explicit vertical `ScrollContainer`, while `MORE / SYSTEMS` and WAIT/FOCUS/HARDEN/HELP remain pinned outside it. Mouse-wheel input over the rail or any page button scrolls the page list, and keyboard focus skips hidden pages while keeping the newly focused page visible.
 
 **Default contextual actions:**
 - WAIT
@@ -94,7 +94,7 @@ The default rail keeps the operational pages visible without scrolling: OVERVIEW
 - HARDEN
 - HELP
 
-`WAIT 10X`, `RESET`, and danger-class `REBOOT` remain command-line/secondary actions instead of consuming permanent rail height.
+`WAIT 10X`, `RESET`, and danger-class `REBOOT` remain command-line/secondary actions instead of consuming permanent rail height. `REBOOT` requires the explicit protected form `REBOOT CONFIRM`.
 
 **Rules:**
 - Keyboard-first: Up/down selects, Enter opens
@@ -137,7 +137,7 @@ The default rail keeps the operational pages visible without scrolling: OVERVIEW
 - Timestamps on every entry
 - Clicking opens linked page/sector
 - World interaction prompts should resolve the live `interact` binding at runtime rather than hardcoding a specific key label
-- On OVERVIEW, the first entries are a synthesized attention feed: current system/link state, grid change, sensor/contact state, and recommended next page/command. The bounded recent transcript follows beneath it.
+- On OVERVIEW, the first entries are a synthesized attention feed: current system/link state, grid change, sensor/contact state, and recommended next page/command. After boot completes, boot/procedure chatter collapses into one `BOOT LOG // N PRIOR MESSAGES` entry before the bounded actionable transcript.
 
 ---
 
@@ -151,6 +151,7 @@ The default rail keeps the operational pages visible without scrolling: OVERVIEW
 - Top row: Operational Summary, Power Summary, Assault Summary cards
 - Middle row: Sector Tactical Map (largest panel)
 - Bottom row: Priority Sectors, Active Incidents, Recommended Attention lists
+- Bottom-row entries are direct `terminal_action:` links for sector focus and opening the relevant Power, Sectors, Incidents, or Defense page; routine Overview use does not require command-line entry.
 
 **Operational Summary card:**
 - Mode, fidelity, current phase
@@ -176,6 +177,7 @@ The default rail keeps the operational pages visible without scrolling: OVERVIEW
 
 **Sector Tactical Map:**
 - Live tactical minimap using the shared Godot `MinimapPanel` / `MinimapView` path; do not use the old placeholder contract-preview texture.
+- In Overview mode, the live map draw rect targets 72% of the smaller preview dimension (acceptable range 65-80%); local-to-world conversion must consume that same rect.
 - Display per sector: state color, power state, defense readiness, hostile count, objective badge, operator marker
 - Click to open SECTORS page focused on sector
 
@@ -186,6 +188,7 @@ The default rail keeps the operational pages visible without scrolling: OVERVIEW
 **Overview fit contract:**
 - At a 1366×768 window using the project 1280×720 canvas-safe viewport, top summaries, the live map, all three diagnosis cards, transcript, and command input remain visible without page-level or horizontal scrolling.
 - The terminal is modal: gameplay overlays are suppressed, a full-viewport dark scrim intercepts pointer input, and the terminal panel remains above it.
+- Opening the terminal makes the system pointer visible and closing it restores the prior mouse mode. GUI input order keeps the scrim before the terminal panel so it blocks gameplay clicks outside the panel without intercepting terminal buttons, links, map interaction, or command input.
 - `DEBUG_TERMINAL_LAYOUT_BOUNDS` may outline the safe rect, nav, tactical map, transcript, and command input. Opening the terminal emits their rects, visible nav count, and header-truncation state to `DevObservatory`.
 
 ---
@@ -524,7 +527,7 @@ The current HUD-hosted implementation is being decursified without replacing the
 - `res://game/ui/hud/ui.gd` owns HUD integration, page switching, node binding, and rendering orchestration.
 - `res://game/ui/terminal/terminal_command_router.gd` owns command parsing, validation, refresh policy, and the command dispatch boundary.
 - `res://game/ui/terminal/terminal_snapshot.gd` owns read-only game-state snapshot aggregation for terminal rendering.
-- `res://game/ui/terminal/terminal_map_preview.gd` owns minimap preview state and click-to-world conversion.
+- The live terminal map uses `res://game/ui/minimap/minimap_controller.gd` and `minimap_view.gd` for rendering and click-to-world conversion. `res://game/ui/terminal/terminal_map_preview.gd` remains the compatibility texture boundary and uses a 448px Overview fallback instead of the ordinary 256px fallback.
 - `res://game/ui/terminal/terminal_planet_preview.gd` owns globe preview viewport state, rotation, zoom, and preview input behavior.
 
 PNG assets belong under `res://content/ui/terminal/` and should be consumed as `TextureRect`, `NinePatchRect`, `TextureButton`, or `StyleBoxTexture` skins/overlays. PNGs must not replace the Control-node layout or absorb command/simulation logic.

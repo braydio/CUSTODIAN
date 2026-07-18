@@ -29,6 +29,7 @@ DIRECTION_TO_SUFFIX = {
     "sw": "down_left",
 }
 MODULAR_LAYER_OUTPUTS = {
+    "cape": "wardrobe_cape",
     "modular_body_lower": "lower_body",
     "modular_body_upper": "upper_body",
     "modular_combined_body": "combined_body",
@@ -491,7 +492,9 @@ def _parse_generic_modular_source(source: Path) -> tuple[str, str, str, SheetSpe
     if action_group in KNOWN_LOADOUTS and variant:
         loadout = action_group
         action = _canonical_action_name(variant)
-        priority = 2
+        # Weapon-specific art should supersede a generic loadout pose when both
+        # normalize to the same live action (for example carbine_mk1 relaxed).
+        priority = 3 if variant == "relaxed_carbine_mk1_01" else 2
     elif variant in KNOWN_LOADOUTS:
         loadout = variant
         action = _canonical_action_name(action_group)
@@ -506,11 +509,12 @@ def _parse_generic_modular_source(source: Path) -> tuple[str, str, str, SheetSpe
 
 
 def _canonical_action_name(action: str) -> str:
-    return {
+	return {
         "aim": "aim_01",
         "fire": "fire_01",
         "idle": "idle_01",
-        "run": "run_01",
+		"run": "run_01",
+        "relaxed_carbine_mk1_01": "relaxed_01",
         "stance": "stance_01",
         "walk": "walk_01",
     }.get(action, action)

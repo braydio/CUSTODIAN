@@ -11,14 +11,14 @@ const REQUIRED_ASSETS := [
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_open_hold_01__s__4f__96.png",
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_recover_01__s__5f__96.png",
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__s__8f__96.png",
-	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__e__8f__96.png",
-	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__w__8f__96.png",
+	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__e__12f__96.png",
+	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__w__12f__96.png",
 	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png",
-	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__8f__96.png",
-	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__8f__96.png",
+	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__12f__96.png",
+	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__12f__96.png",
 	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
-	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__8f__96.png",
-	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__8f__96.png",
+	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__12f__96.png",
+	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__12f__96.png",
 ]
 
 const PHASE_NONE := 0
@@ -37,6 +37,9 @@ func _init() -> void:
 
 
 func _run() -> void:
+	var observatory := get_root().get_node_or_null("DevObservatory")
+	if observatory != null and observatory.has_method("clear"):
+		observatory.call("clear")
 	for asset_path in REQUIRED_ASSETS:
 		_assert_true(ResourceLoader.exists(asset_path), "Required asset missing: %s" % asset_path)
 	var enter_final_bounds := _frame_alpha_bounds(REQUIRED_ASSETS[3], 4)
@@ -167,9 +170,9 @@ func _run() -> void:
 		_assert_true(String(directional_operator_body.animation) == "operator_critical_execution_%s" % direction, "Operator should play the %s execution body" % direction)
 		_assert_true(String(directional_operator_fx.animation) == "operator_critical_execution_fx_%s" % direction, "Operator should play the %s execution FX" % direction)
 		_assert_true(String(directional_grunt_body.animation) == "critical_execution_victim_%s" % direction, "grunt should play the %s victim strip" % direction)
-		_assert_animation(directional_operator_body.sprite_frames, StringName("operator_critical_execution_%s" % direction), 8, 12.0, false)
-		_assert_animation(directional_operator_fx.sprite_frames, StringName("operator_critical_execution_fx_%s" % direction), 8, 12.0, false)
-		_assert_animation(directional_grunt_body.sprite_frames, StringName("critical_execution_victim_%s" % direction), 8, 12.0, false)
+		_assert_animation(directional_operator_body.sprite_frames, StringName("operator_critical_execution_%s" % direction), 12, 12.0, false)
+		_assert_animation(directional_operator_fx.sprite_frames, StringName("operator_critical_execution_fx_%s" % direction), 12, 12.0, false)
+		_assert_animation(directional_grunt_body.sprite_frames, StringName("critical_execution_victim_%s" % direction), 12, 12.0, false)
 		directional_operator.call("_cleanup_paired_execution", false, &"directional_smoke")
 
 	var expiry_grunt := GRUNT_SCENE.instantiate()
@@ -231,6 +234,13 @@ func _run() -> void:
 	_assert_true(bool(lethal_grunt.dead), "lethal contact-frame damage should route to death")
 	lethal_operator.call("_update_paired_execution", 1.0)
 	_assert_true(not bool(lethal_operator.get("_paired_execution_active")), "lethal completion should still clean Operator state")
+	if observatory != null:
+		var counters: Dictionary = observatory.get("counters")
+		_assert_true(int(counters.get("enemy_parry_vulnerable_opened", 0)) >= 1, "parry should count vulnerable windows opened")
+		_assert_true(int(counters.get("enemy_parry_vulnerable_consumed", 0)) >= 1, "execution reservation should count a consumed vulnerable window")
+		_assert_true(int(counters.get("enemy_parry_vulnerable_expired", 0)) >= 1, "unused vulnerable window should count expiry")
+		_assert_true(int(counters.get("player_critical_attack_started", 0)) >= 1, "paired execution should count critical starts")
+		_assert_true(int(counters.get("player_critical_attack_hit", 0)) >= 1, "paired execution should count critical hits")
 
 	if _failed:
 		push_error("grunt_parry_crit_reaction_smoke failed")

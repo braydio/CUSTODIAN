@@ -47,6 +47,7 @@ func _run() -> void:
 	await process_frame
 
 	_validate_spriteframes_match_existing_runtime_pngs()
+	_validate_roll_exit_ingest_registration()
 	_validate_runtime_phase_playback(operator)
 	_validate_fast_attack_entry_points(operator)
 
@@ -106,6 +107,23 @@ func _validate_runtime_phase_playback(operator: Node) -> void:
 		operator.call("_clear_modular_fast_attack_layers")
 
 
+func _validate_roll_exit_ingest_registration() -> void:
+	var body_frames := load("res://game/actors/operator/operator_runtime_frames.tres") as SpriteFrames
+	var fx_frames := load("res://game/actors/operator/operator_melee_overlay_frames.tres") as SpriteFrames
+	var cape_frames := load("res://game/actors/operator/operator_modular_cape_frames.tres") as SpriteFrames
+	for direction in ["e", "w"]:
+		var suffix := "right" if direction == "e" else "left"
+		var body_path := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__dodge_fast_attack_01__%s__11f__96.png" % direction
+		var fx_path := "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__dodge_fast_attack_01__%s__11f__96.png" % direction
+		if FileAccess.file_exists(body_path):
+			_assert_playable(body_frames, StringName("unarmed_dodge_fast_attack_%s" % suffix), "roll-exit body should be registered")
+		if FileAccess.file_exists(fx_path):
+			_assert_playable(fx_frames, StringName("unarmed_dodge_fast_attack_fx_%s" % suffix), "roll-exit FX should be registered")
+	var cape_path := "res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/dodge_fast_attack_01/operator__modular_wardrobe_cape__unarmed__dodge_fast_attack_01__w__11f__96.png"
+	if FileAccess.file_exists(cape_path):
+		_assert_playable(cape_frames, &"unarmed_dodge_fast_attack_cape_left", "west roll-exit cape should be registered")
+
+
 func _validate_fast_attack_entry_points(operator: Node) -> void:
 	operator.set("using_unarmed", true)
 	operator.set("combat_loadout_mode", "melee")
@@ -136,6 +154,40 @@ func _validate_fast_attack_entry_points(operator: Node) -> void:
 	operator.set("_melee_recovery_active", false)
 	operator.call("_reset_melee_overlay_visuals")
 
+	operator.set("_melee_active", false)
+	operator.set("_melee_fast_windup", false)
+	operator.set("_melee_recovery_active", false)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("_dodge_recovery_active", true)
+	operator.set("_dodge_recovery_timer", 0.12)
+	operator.set("_dodge_cooldown_remaining", 0.9)
+	operator.call("_try_melee_attack", "unarmed_fast")
+	_assert_true(not bool(operator.get("_dodge_recovery_active")), "fast attack during dodge recovery should cancel the recovery phase")
+	_assert_true(not bool(operator.get("_melee_fast_windup")), "fast attack from dodge recovery should skip unarmed windup")
+	_assert_true(bool(operator.get("_melee_active")), "fast attack from dodge recovery should enter the strike immediately")
+	_assert_true(float(operator.get("_dodge_cooldown_remaining")) > 0.0, "roll-exit attack cancel must preserve dodge cooldown")
+	_assert_true(bool(operator.call("_sync_modular_action_domains")), "roll-exit strike should claim the modular action presentation on the next visual sync")
+	if bool(operator.get("_dodge_fast_attack_presentation_active")):
+		_assert_true(legacy_sprite.visible and String(legacy_sprite.animation).begins_with("unarmed_dodge_fast_attack_"), "ingested roll-exit body should own the full-body presentation")
+	else:
+		var roll_exit_suffix := str(operator.call("_get_direction_suffix", operator.get("_melee_forward")))
+		_assert_layer_animation_suffix(operator, "modular_lower_body_sprite", "unarmed_fast_strike_lower", roll_exit_suffix)
+		_assert_layer_animation_suffix(operator, "modular_upper_body_sprite", "unarmed_fast_strike_upper", roll_exit_suffix)
+
+	operator.set("_melee_active", false)
+	operator.set("_melee_recovery_active", false)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("_dodge_active", true)
+	operator.set("_dodge_timer", 0.08)
+	operator.set("_dodge_cooldown_remaining", 0.9)
+	operator.call("_try_melee_attack", "unarmed_fast")
+	_assert_true(bool(operator.get("_dodge_fast_attack_buffered")), "fast attack pressed during active roll should buffer until roll exit")
+	_assert_true(not bool(operator.get("_melee_active")), "buffered roll-exit attack should not begin during active dodge/iframes")
+	operator.set("_dodge_active", false)
+	operator.call("_start_dodge_recovery")
+	_assert_true(not bool(operator.get("_dodge_fast_attack_buffered")), "roll recovery entry should consume the buffered fast attack")
+	_assert_true(bool(operator.get("_melee_active")), "buffered fast attack should begin as the roll exits")
+
 
 func _source_png_path(layer: String, action: String, dir: String) -> String:
 	return "res://content/sprites/operator/new_operator/modular/fast_attack/operator__modular_%s__unarmed__%s__%s__3f__96.png" % [layer, action, dir]
@@ -152,6 +204,16 @@ func _assert_layer_animation(operator: Node, sprite_property: String, base: Stri
 		return
 	var expected := StringName("%s_%s" % [base, str(_directions[dir]["suffix"])])
 	_assert_true(sprite.visible, "%s should be visible for %s" % [sprite_property, dir])
+	_assert_true(sprite.animation == expected, "%s expected %s got %s" % [sprite_property, String(expected), String(sprite.animation)])
+
+
+func _assert_layer_animation_suffix(operator: Node, sprite_property: String, base: String, suffix: String) -> void:
+	var sprite := operator.get(sprite_property) as AnimatedSprite2D
+	_assert_true(sprite != null, "%s should exist" % sprite_property)
+	if sprite == null:
+		return
+	var expected := StringName("%s_%s" % [base, suffix])
+	_assert_true(sprite.visible, "%s should be visible for %s" % [sprite_property, suffix])
 	_assert_true(sprite.animation == expected, "%s expected %s got %s" % [sprite_property, String(expected), String(sprite.animation)])
 
 

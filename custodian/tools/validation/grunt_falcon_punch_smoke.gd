@@ -13,10 +13,10 @@ class DummyTarget:
 		var result := {
 			"result": result_mode,
 			"hit_kind": hit_kind,
-			"dodged": false,
-			"blocked": false,
+			"dodged": result_mode == &"dodged",
+			"blocked": result_mode == &"blocked",
 			"parried": result_mode == &"parried",
-			"applied_damage": 0.0 if result_mode == &"parried" else amount,
+			"applied_damage": amount if result_mode == &"damaged" else 0.0,
 		}
 		hits.append(result)
 		return result
@@ -50,10 +50,12 @@ func _run() -> void:
 	scene_root.add_child(target)
 	await process_frame
 	grunt.set_physics_process(false)
-	_assert_near(float(grunt.get("grunt_falcon_punch_windup_time")), 0.46, 0.001, "live grunt should use the longer Falcon tell")
+	_assert_near(float(grunt.get("grunt_falcon_punch_windup_time")), 0.75, 0.001, "live grunt should use the longer Falcon tell")
 	_assert_near(float(grunt.get("grunt_falcon_punch_recovery_time")), 0.70, 0.001, "live grunt should use the longer punish recovery")
 	_assert_near(float(grunt.get("grunt_falcon_punch_recovery_speed")), 0.0, 0.001, "live grunt recovery should have zero forward drift")
-	_assert_near(float(grunt.get("grunt_falcon_punch_stop_short_px")), 30.0, 0.001, "live grunt should target a stop-short contact point")
+	_assert_near(float(grunt.get("grunt_falcon_punch_stop_short_px")), 28.0, 0.001, "live grunt should target a stop-short contact point")
+	_assert_near(float(grunt.get("grunt_falcon_punch_hit_forward_reach_px")), 42.0, 0.001, "live grunt should have practical forward contact grace")
+	_assert_near(float(grunt.get("grunt_falcon_punch_hit_lateral_reach_px")), 30.0, 0.001, "live grunt should have practical lateral contact grace")
 
 	grunt.global_position = Vector2.ZERO
 	grunt.set("target", target)
@@ -74,6 +76,11 @@ func _run() -> void:
 	var body_sprite := grunt.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	_assert_true(String(grunt.get("_grunt_falcon_punch_phase")) == "windup", "falcon punch should start in windup")
 	_assert_true(body_sprite != null and String(body_sprite.animation) == "special_windup_e", "windup should use special_windup_e")
+	target.global_position = Vector2(80.0, 80.0)
+	grunt.call("_update_grunt_falcon_punch_attack", 0.005)
+	var tracked_direction := grunt.get("_grunt_falcon_punch_direction") as Vector2
+	_assert_true(tracked_direction.y > 0.5, "windup should visibly track target movement before leap commitment")
+	target.global_position = Vector2(112.0, 0.0)
 
 	grunt.call("_update_grunt_falcon_punch_attack", 0.03)
 	await process_frame
@@ -100,6 +107,57 @@ func _run() -> void:
 	await process_frame
 	_assert_true(String(grunt.get("_grunt_falcon_punch_phase")).is_empty(), "recovery should finish the special attack")
 
+	# A stationary target in the normal launch band should be contacted without test-side repositioning.
+	target.hits.clear()
+	target.falcon_impacts = 0
+	target.result_mode = &"damaged"
+	grunt.global_position = Vector2.ZERO
+	target.global_position = Vector2(112.0, 0.0)
+	grunt.call("_start_grunt_falcon_punch_windup", Vector2.RIGHT)
+	grunt.call("_start_grunt_falcon_punch_leap")
+	for _step in range(24):
+		if StringName(grunt.get("_grunt_falcon_punch_phase")) != &"leap":
+			break
+		await physics_frame
+		grunt.call("_update_grunt_falcon_punch_attack", 1.0 / 60.0)
+	_assert_true(target.hits.size() == 1, "stationary target in the natural launch band should be hit")
+	_assert_true(StringName(grunt.get("_grunt_falcon_punch_phase")) == &"impact_lock", "natural contact should enter impact lock")
+	grunt.call("_finish_grunt_falcon_punch_attack", &"debug_test_complete")
+
+	# Collect a stable connection sample across the close, middle, and long launch bands.
+	grunt.set("grunt_falcon_punch_distance_px", 220.0)
+	var band_hits := {96: 0, 136: 0, 176: 0}
+	for launch_distance in [96, 136, 176]:
+		for _attempt in range(7):
+			target.hits.clear()
+			target.result_mode = &"damaged"
+			grunt.global_position = Vector2.ZERO
+			target.global_position = Vector2(float(launch_distance), 0.0)
+			grunt.call("_start_grunt_falcon_punch_windup", Vector2.RIGHT)
+			var attack_id := String(grunt.get("_grunt_falcon_punch_attack_id"))
+			grunt.call("_start_grunt_falcon_punch_leap")
+			for _step in range(30):
+				if StringName(grunt.get("_grunt_falcon_punch_phase")) != &"leap":
+					break
+				grunt.call("_update_grunt_falcon_punch_attack", 1.0 / 60.0)
+			if target.hits.size() == 1:
+				band_hits[launch_distance] = int(band_hits[launch_distance]) + 1
+			_assert_true(target.hits.size() == 1, "Falcon sample at %d px should resolve exactly one hit" % launch_distance)
+			if observatory != null:
+				var resolved_events := observatory.call("get_recent_events", 100, &"grunt_falcon_punch_hit_resolved") as Array
+				var matching: Dictionary = {}
+				for event in resolved_events:
+					var data := (event as Dictionary).get("data", {}) as Dictionary
+					if String(data.get("attack_id", "")) == attack_id:
+						matching = data
+						break
+				_assert_true(not matching.is_empty(), "Falcon sample should emit a terminal event with its attack_id")
+				for field in ["launch_distance", "target_distance_at_active_start", "closest_approach", "lateral_error", "player_dodge_phase", "collision_obstructed", "stop_short_distance"]:
+					_assert_true(matching.has(field), "Falcon terminal telemetry missing %s" % field)
+			grunt.call("_finish_grunt_falcon_punch_attack", &"debug_sample_complete")
+	for launch_distance in band_hits:
+		_assert_true(int(band_hits[launch_distance]) == 7, "Falcon %d px band did not connect on all seven stationary samples" % launch_distance)
+
 	# A parried result must cancel the entire attack even when the target stub does not call back into Enemy.
 	var impact_events_before_parry := 0
 	if observatory != null:
@@ -122,6 +180,17 @@ func _run() -> void:
 	grunt.set("_grunt_falcon_punch_decision_credit", 1.0)
 	target.global_position = grunt.global_position + Vector2(100.0, 0.0)
 	_assert_true(not bool(grunt.call("_should_start_grunt_falcon_punch_now", target)), "recent parry should block immediate re-falcon")
+
+	for terminal_result in [&"blocked", &"dodged"]:
+		target.result_mode = terminal_result
+		grunt.global_position = Vector2.ZERO
+		target.global_position = Vector2(100.0, 0.0)
+		grunt.call("_start_grunt_falcon_punch_windup", Vector2.RIGHT)
+		grunt.call("_start_grunt_falcon_punch_leap")
+		target.global_position = grunt.global_position + Vector2(20.0, 0.0)
+		grunt.call("_try_apply_grunt_falcon_punch_hit", true)
+		_assert_true(StringName(grunt.get("_grunt_falcon_punch_phase")) == &"recovery", "Falcon %s result should enter recovery" % terminal_result)
+		grunt.call("_finish_grunt_falcon_punch_attack", &"debug_terminal_detail")
 
 	# An ally occupying the forward corridor blocks the special, without blocking ordinary pathing.
 	grunt.set("_grunt_falcon_punch_recent_parry_timer", 0.0)
@@ -159,12 +228,18 @@ func _run() -> void:
 	if observatory != null:
 		_assert_true(int(observatory.get("counters").get("falcon_punch_whiffed", 0)) == 1, "Falcon whiff counter should identify terminal miss")
 		_assert_true(int(observatory.get("counters").get("enemy_attack_whiffed_out_of_range", 0)) == 1, "Falcon range whiff should expose reason counter")
+		var falcon_counters: Dictionary = observatory.get("counters")
+		_assert_true(int(falcon_counters.get("falcon_punch_result_damaged", 0)) >= 1, "Falcon damaged terminal detail should be counted")
+		_assert_true(int(falcon_counters.get("falcon_punch_result_parried", 0)) == 1, "Falcon parried terminal detail should be counted")
+		_assert_true(int(falcon_counters.get("falcon_punch_result_blocked", 0)) == 1, "Falcon blocked terminal detail should be counted")
+		_assert_true(int(falcon_counters.get("falcon_punch_result_iframe_dodged", 0)) == 1, "Falcon iframe-dodged terminal detail should be counted")
+		_assert_true(int(falcon_counters.get("falcon_punch_result_whiffed", 0)) == 1, "Falcon whiff terminal detail should be counted")
 
 	if _failed:
 		push_error("grunt_falcon_punch_smoke failed")
 		quit(1)
 		return
-	print("[GruntFalconPunchSmoke] stop-short, separation, impact, parry lockout, lane gate, and zero-drift recovery resolved.")
+	print("[GruntFalconPunchSmoke] tracking tell, natural contact, stop-short, separation, impact, parry lockout, lane gate, and zero-drift recovery resolved.")
 	quit(0)
 
 

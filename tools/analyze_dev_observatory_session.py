@@ -113,6 +113,68 @@ def _event_data(event: Mapping[str, Any]) -> Mapping[str, Any]:
     return _mapping(event.get("data"))
 
 
+def _attack_id(event: Mapping[str, Any]) -> str:
+    return str(_event_data(event).get("attack_id", "")).strip()
+
+
+def _enemy_attack_summary(events: Sequence[Mapping[str, Any]]) -> tuple[Counter[str], Counter[str], Counter[str]]:
+    """Derive mutually exclusive terminal outcomes and lifecycle counts by attack_id."""
+    started_ids: set[str] = set()
+    active_ids: set[str] = set()
+    terminal_by_id: dict[str, str] = {}
+    interruption_by_id: dict[str, str] = {}
+    for event in events:
+        kind = str(event.get("kind", ""))
+        data = _event_data(event)
+        attack_id = _attack_id(event)
+        if not attack_id:
+            continue
+        if kind in {"enemy_attack_windup", "grunt_falcon_punch_windup"}:
+            started_ids.add(attack_id)
+        if kind in {"enemy_attack_active", "grunt_falcon_punch_active", "grunt_falcon_punch_leap"}:
+            active_ids.add(attack_id)
+        if kind not in {
+            "enemy_attack_resolved",
+            "enemy_attack_whiff",
+            "enemy_attack_cancelled",
+            "grunt_falcon_punch_hit_resolved",
+        }:
+            continue
+        result = str(data.get("result", "")).strip().lower()
+        reason = str(data.get("reason", "")).strip().lower()
+        if kind == "enemy_attack_whiff" or result in {
+            "target_out_of_range", "target_out_of_arc", "blocked_by_collision"
+        }:
+            result = "whiffed"
+        elif result == "interrupted":
+            if reason == "death":
+                result = "cancelled_by_death"
+            elif reason == "parry":
+                result = "parried"
+        if result:
+            terminal_by_id[attack_id] = result
+        if reason == "parry" or result == "parried":
+            interruption_by_id[attack_id] = "interrupted_by_parry"
+        elif reason in {"hit", "damaged", "staggered_by_hit"}:
+            interruption_by_id[attack_id] = "interrupted_by_hit"
+        elif reason in {"no_target", "target_not_node2d", "target_loss"}:
+            interruption_by_id[attack_id] = "interrupted_by_target_loss"
+
+    outcomes = Counter(terminal_by_id.values())
+    interruptions = Counter(interruption_by_id.values())
+    lifecycle = Counter(
+        started=len(started_ids), active=len(active_ids), terminal=len(terminal_by_id)
+    )
+    return outcomes, interruptions, lifecycle
+
+
+def _ordered_counts(values: Mapping[str, int], names: Sequence[str]) -> str:
+    parts = [f"{name}={int(values.get(name, 0))}" for name in names]
+    extras = sorted(name for name in values if name not in names and values[name])
+    parts.extend(f"{name}={int(values[name])}" for name in extras)
+    return ", ".join(parts)
+
+
 def _damage_before_deaths(events: Sequence[Mapping[str, Any]]) -> list[float]:
     damage_this_life = 0.0
     totals: list[float] = []
@@ -191,10 +253,19 @@ def build_report(
     events = _records(payload.get("events"))
     warnings = _records(payload.get("warnings"))
     kinds = _event_kinds(events)
+    attack_outcomes, attack_interruptions, attack_lifecycle = _enemy_attack_summary(events)
     if show_all:
         top = max(top, len(kinds), len(counters), len(gauges), len(events))
 
     event_count = int(_number(session.get("event_count"), len(events)))
+    has_buffer_accounting = "event_capacity" in session or "dropped_event_count" in session
+    event_capacity = int(_number(session.get("event_capacity"), 300))
+    total_events_logged = int(_number(session.get("total_events_logged"), event_count))
+    dropped_event_count = int(_number(session.get("dropped_event_count"), 0))
+    event_buffer_saturated = bool(session.get("event_buffer_saturated", dropped_event_count > 0))
+    legacy_buffer_may_be_saturated = (
+        not has_buffer_accounting and event_capacity > 0 and event_count >= event_capacity
+    )
     warning_count = int(_number(session.get("warning_count"), len(warnings)))
     uptime = _number(session.get("uptime_sec"))
     schema = str(payload.get("schema", "missing"))
@@ -211,6 +282,27 @@ def build_report(
     )
     damage_before_deaths = _damage_before_deaths(events)
 
+    terminal_event_kinds = {
+        "enemy_attack_resolved",
+        "enemy_attack_whiff",
+        "enemy_attack_cancelled",
+        "grunt_falcon_punch_hit_resolved",
+    }
+    terminal_events_total = sum(
+        1 for event in events if str(event.get("kind", "")) in terminal_event_kinds
+    )
+    terminal_unique_ids = int(attack_lifecycle.get("terminal", 0))
+    incoming_result_counts = {
+        name: _count(counters, f"incoming_hit_{name}")
+        for name in ["damaged", "blocked", "parried", "dodged"]
+    }
+    incoming_results_total = _count(
+        counters, "incoming_hits_total", sum(incoming_result_counts.values())
+    )
+    whiff_terminal_total = _count(
+        counters, "enemy_attack_result_whiffed", int(attack_outcomes.get("whiffed", 0))
+    )
+
     signals = [
         ("player deaths", deaths),
         ("damage events", damage_events),
@@ -226,14 +318,18 @@ def build_report(
         ("field patches committed", _count(counters, "field_patch_committed", kinds["field_patch_committed"])),
         ("field patches cancelled", _count(counters, "field_patch_cancelled", kinds["field_patch_cancelled"])),
         ("enemy attacks resolved", _count(counters, "enemy_attacks_resolved", kinds["enemy_attack_resolved"])),
+        ("terminal events retained", terminal_events_total),
+        ("terminal unique IDs retained", terminal_unique_ids),
+        ("incoming hit results total", incoming_results_total),
+        ("whiff terminals total", whiff_terminal_total),
         ("enemy attack whiffs", _count(counters, "enemy_attack_whiffs", kinds["enemy_attack_whiff"])),
-        ("enemy attack results", _prefixed_counts(counters, "enemy_attack_result_")),
-        ("incoming hit results", _prefixed_counts(counters, "incoming_hit_")),
+        ("incoming hit results", _ordered_counts(incoming_result_counts, ["damaged", "blocked", "parried", "dodged"])),
         ("falcon punch attempts", _count(counters, "falcon_punch_attempts", kinds["grunt_falcon_punch_windup"])),
         ("falcon punch hits", _count(counters, "falcon_punch_hits")),
         ("falcon punch parried", _count(counters, "falcon_punch_parried")),
         ("falcon punch whiffed", _count(counters, "falcon_punch_whiffed")),
         ("falcon punch cancelled", _count(counters, "falcon_punch_cancelled")),
+        ("falcon punch results", _prefixed_counts(counters, "falcon_punch_result_")),
         ("enemies destroyed", _count(counters, "enemies_destroyed", kinds["enemy_killed"])),
     ]
 
@@ -248,6 +344,16 @@ def build_report(
         f"Captured: {event_count} events | {warning_count} warnings | "
         f"{len(counters)} counters | {len(gauges)} gauges",
     ]
+    if event_buffer_saturated:
+        lines.append(
+            f"NOTE: event buffer wrapped; showing the final {event_count}/{event_capacity} events "
+            f"({total_events_logged} logged, {dropped_event_count} dropped). Counters remain cumulative."
+        )
+    elif legacy_buffer_may_be_saturated:
+        lines.append(
+            f"NOTE: legacy export filled the {event_capacity}-event buffer; this is only the final "
+            "retained window if wrapping occurred. Total/dropped counts are unavailable; counters remain cumulative."
+        )
     if schema != EXPECTED_SCHEMA:
         lines.append(f"NOTE: expected schema {EXPECTED_SCHEMA}; reporting known fields only.")
 
@@ -257,6 +363,26 @@ def build_report(
     if damage_before_deaths:
         formatted = ", ".join(_format_value(value) for value in damage_before_deaths)
         lines.append(f"  {'damage observed before deaths':<28} {formatted}")
+    lines.append("  NOTE: incoming hit results exclude whiffs; terminal outcomes include them.")
+    lines.append("  NOTE: retained event/unique-ID totals are tail-window values; cumulative counters may be larger.")
+
+    lines.extend([
+        "",
+        "ENEMY ATTACK TERMINAL OUTCOMES (UNIQUE ATTACK IDs IN RETAINED EVENTS)",
+        "  " + _ordered_counts(
+            attack_outcomes,
+            ["damaged", "blocked", "parried", "whiffed", "cancelled_by_death"],
+        ),
+        "",
+        "ENEMY ATTACK INTERRUPTION CAUSES (UNIQUE ATTACK IDs IN RETAINED EVENTS)",
+        "  " + _ordered_counts(
+            attack_interruptions,
+            ["interrupted_by_parry", "interrupted_by_hit", "interrupted_by_target_loss"],
+        ),
+        "",
+        "ENEMY ATTACK LIFECYCLE (UNIQUE ATTACK IDs IN RETAINED EVENTS)",
+        "  " + _ordered_counts(attack_lifecycle, ["started", "active", "terminal"]),
+    ])
 
     lines.extend(["", f"TOP EVENT TYPES ({min(top, len(kinds))})"])
     if kinds:

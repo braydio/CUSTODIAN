@@ -152,11 +152,21 @@ For Developer Observatory telemetry and JSON session export:
 cd custodian
 godot --headless --path . --script res://tools/validation/dev_observatory_smoke.gd
 godot --headless --path . --script res://tools/validation/dev_observatory_audit_smoke.gd
+godot --headless --path . --script res://tools/validation/dev_observatory_director_population_smoke.gd
+godot --headless --path . --script res://tools/validation/operator_ammo_reconciliation_smoke.gd
+godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
 ```
 
 This proves bounded telemetry storage, F9/F10 action registration, stable and timestamped JSON output, JSON-safe Variant
 conversion, event-buffer retention, success-event logging, failure-warning routing, numeric accumulation, and basic heatmap accumulation.
-The audit smoke additionally reconciles a shared enemy attack ID through incoming-hit/player-damage events and checks ranged failure categories plus Field Patch rejection reasons.
+The audit smoke additionally reconciles a shared enemy attack ID through incoming-hit/player-damage events, proves a
+live bullet owns a projectile-classified collision shape, and checks ranged failure categories, Field Patch prompt
+severity/ignored-on-death accounting, and the structured player-death snapshot. The Falcon and paired-critical smokes
+cover detailed special terminals plus vulnerable-window open/consume/expire and critical start/hit telemetry. The
+procgen stuck-pocket smoke checks structured remediation warning context. The ammo smoke emits 18 real projectiles and reconciles a fresh carbine from 24/48 to 6/48 without a weapon
+swap. The dodge smoke classifies 20 deliberate overlaps one-for-one across iframe, late-active, and recovery phases.
+The director-population smoke deliberately enables two profile-managed enemies beside one legacy enemy and reconciles
+the split population gauges plus the director behavior-sample surface.
 
 For the local exported-session report tool, run from the repository root:
 
@@ -184,7 +194,8 @@ godot --headless --path . --script res://tools/validation/operator_knockdown_ani
 ```
 
 The Falcon smoke validates stop-short travel, body/enemy separation, dedicated Operator impact, zero-drift recovery,
-hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection. The focused reaction smoke validates required S/E/W asset dimensions, independent post-knockback roots through enter/hold/recover, normal target-ring suppression through recovery, BREACH/ring lifetime, atomic reservation, approach-owned directional selection with vertical-to-south fallback, zero-offset shared execution roots, zero-local paired layers plus transform restoration, same-tick semantic playback through the nonuniform eight-frame duration table, source-frame-5 exactly-once damage, the 110ms paired contact freeze, final-settle ownership, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Required paired/open assets fail loudly; only optional posture-break and expiry presentation may warn without failing.
+hard parry cancel/lockout, deterministic eligibility, ally-lane rejection, terminal diagnostic fields, and seven stationary
+connection samples at each of 96, 136, and 176 pixels. The focused reaction smoke validates required S/E/W asset dimensions, independent post-knockback roots through enter/hold/recover, normal target-ring suppression through recovery, BREACH/ring lifetime, atomic reservation, approach-owned directional selection with vertical-to-south fallback, zero-offset shared execution roots, zero-local paired layers plus transform restoration, same-tick semantic playback through the nonuniform eight-frame duration table, source-frame-5 exactly-once damage, the 110ms paired contact freeze, final-settle ownership, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Required paired/open assets fail loudly; only optional posture-break and expiry presentation may warn without failing.
 
 For Sundered Keep asset wiring specifically:
 
@@ -199,7 +210,7 @@ godot --headless --path . --script res://tools/validation/sundered_keep_approach
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_mapper_smoke.gd
 ```
 
-The active approach smoke proves the Vista scene contains no misplaced Keep-specific markers/blocker and that its unconditional endpoint targets Return Causeway. The chain smoke proves Vista → Causeway → Keep actor placement, LevelLoader adoption, source branch deactivation, and Keep → Causeway return anchoring.
+The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker and that its default endpoint targets Sundered Keep directly. The chain smoke proves both default Vista → Keep actor placement and the optional Vista → Causeway → Keep branch, including LevelLoader adoption, source branch deactivation, entry affordance, and Keep → Causeway return anchoring.
 
 For the experimental route/stage wrapper:
 
@@ -261,7 +272,7 @@ godot --headless --path . --script res://tools/validation/terminal_stylebox_rend
 godot --headless --path . --script res://tools/validation/fabrication_terminal_layout_smoke.gd
 ```
 
-This validates the 1366×768 safe Overview composition, container-based status chips, collapsed secondary nav and reduced default actions, dominant shared tactical map, all diagnosis cards, actionable attention feed, command/transcript containment, full-viewport input-blocking scrim, gameplay-overlay suppression/restoration, typography, terminal skin rendering, and Fabrication layout compatibility.
+This validates the 1366×768 safe Overview composition, container-based status chips, collapsed secondary nav and reduced default actions, dominant shared tactical map, all diagnosis cards, actionable attention feed, command/transcript containment, visible-pointer modal behavior, a real GUI-routed page-button click through the full-viewport input-blocking scrim, gameplay-overlay suppression/restoration, typography, terminal skin rendering, and Fabrication layout compatibility.
 
 For Field Patch healing or restock changes:
 
@@ -394,6 +405,15 @@ python tools/pipelines/ingest.py --dry-run <manifest_or_source>
 
 Only run non-dry-run ingest when generated files are intended. Ingest writes and archives files but does not stage or commit them; inspect `git status --short` afterward.
 
+For a mixed canonical inbox batch (including enemy, curated Operator, cape, and ranged-weapon modular sheets), generate manifests and ingest through the combined entrypoint so every declared post-process runs:
+
+```bash
+python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run --remove-superseded
+python custodian/tools/pipelines/generate_inbox_manifests.py --remove-superseded
+```
+
+For the current roll-exit/parry/execution/relaxed-carbine batch, follow the applied ingest with `operator_modular_fast_attack_smoke.gd`, `operator_modular_defense_ranged_smoke.gd`, `operator_primary_ranged_modular_fire_smoke.gd`, and `grunt_parry_crit_reaction_smoke.gd`.
+
 For modular Operator naming/routing and generic action module generation:
 
 ```bash
@@ -431,7 +451,10 @@ godot --headless --script res://tools/validation/operator_modular_fast_attack_sm
 
 This checks existing fast-attack source/runtime PNG coverage against the lower-body, upper-body, and upper-FX
 `SpriteFrames` resources, then instantiates the Operator and verifies windup, strike, and recovery helpers play the
-modular layers for every direction where body coverage exists while preserving legacy fallback/timing ownership.
+modular layers for every direction where body coverage exists while preserving legacy fallback/timing ownership. It
+also proves that fast primary can buffer during active dodge without cancelling iframes, consumes at roll exit,
+preserves dodge cooldown, skips the ordinary unarmed windup, and selects the ingested combined body/FX/cape
+presentation when those runtime sheets are present.
 
 For the active Savage first runtime slice:
 

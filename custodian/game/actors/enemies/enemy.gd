@@ -139,7 +139,7 @@ enum ParryCriticalPhase {
 @export var grunt_critical_window_ring_offset: Vector2 = Vector2.ZERO
 @export var grunt_optional_critical_vfx_enabled: bool = true
 @export var grunt_falcon_punch_enabled: bool = false
-@export var grunt_falcon_punch_windup_time: float = 0.46
+@export var grunt_falcon_punch_windup_time: float = 0.75
 @export var grunt_falcon_punch_leap_time: float = 0.28
 @export var grunt_falcon_punch_impact_lock_time: float = 0.08
 @export var grunt_falcon_punch_recovery_time: float = 0.70
@@ -150,11 +150,11 @@ enum ParryCriticalPhase {
 @export var grunt_falcon_punch_launch_band_max: float = 184.0
 @export var grunt_falcon_punch_hit_active_start_ratio: float = 0.38
 @export var grunt_falcon_punch_hit_active_end_ratio: float = 0.76
-@export var grunt_falcon_punch_hit_forward_reach_px: float = 34.0
-@export var grunt_falcon_punch_hit_lateral_reach_px: float = 24.0
+@export var grunt_falcon_punch_hit_forward_reach_px: float = 42.0
+@export var grunt_falcon_punch_hit_lateral_reach_px: float = 30.0
 @export var grunt_falcon_punch_windup_speed_multiplier: float = 0.15
 @export var grunt_falcon_punch_recovery_speed: float = 0.0
-@export var grunt_falcon_punch_stop_short_px: float = 30.0
+@export var grunt_falcon_punch_stop_short_px: float = 28.0
 @export var grunt_falcon_punch_knockback_px: float = 58.0
 @export var grunt_falcon_punch_victim_hitstop: float = 0.06
 @export var grunt_falcon_punch_attacker_hitstop: float = 0.035
@@ -322,6 +322,11 @@ var _grunt_falcon_punch_decision_credit: float = 0.0
 var _grunt_falcon_punch_attack_id: String = ""
 var _grunt_falcon_punch_result: StringName = &""
 var _grunt_falcon_punch_impact_confirmed: bool = false
+var _grunt_falcon_punch_launch_distance: float = -1.0
+var _grunt_falcon_punch_active_start_target_distance: float = -1.0
+var _grunt_falcon_punch_closest_approach: float = INF
+var _grunt_falcon_punch_lateral_error: float = 0.0
+var _grunt_falcon_punch_collision_obstructed: bool = false
 var _savage_chain_phase: StringName = &""
 var _savage_chain_timer: float = 0.0
 var _savage_chain_direction: Vector2 = Vector2.RIGHT
@@ -498,6 +503,7 @@ func _physics_process(delta):
 			
 			direction = _apply_enemy_spacing_to_direction(direction)
 			velocity = direction * speed
+			_limit_pursuit_inward_velocity(target_pos, attack_range, delta)
 			move_and_slide()
 			_update_stuck_reroute(target_pos, delta)
 			_last_move_direction = direction if direction.length_squared() > 0.0001 else _last_move_direction
@@ -816,6 +822,11 @@ func _start_grunt_falcon_punch_windup(direction: Vector2) -> void:
 	_grunt_falcon_punch_attack_id = "%s:falcon:%s" % [get_instance_id(), _attack_sequence]
 	_grunt_falcon_punch_result = &"pending"
 	_grunt_falcon_punch_impact_confirmed = false
+	_grunt_falcon_punch_launch_distance = global_position.distance_to((target as Node2D).global_position) if target is Node2D and is_instance_valid(target) else -1.0
+	_grunt_falcon_punch_active_start_target_distance = -1.0
+	_grunt_falcon_punch_closest_approach = _grunt_falcon_punch_launch_distance if _grunt_falcon_punch_launch_distance >= 0.0 else INF
+	_grunt_falcon_punch_lateral_error = 0.0
+	_grunt_falcon_punch_collision_obstructed = false
 	_grunt_falcon_punch_phase = &"windup"
 	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_windup_time)
 	_grunt_falcon_punch_cooldown_timer = maxf(0.0, grunt_falcon_punch_cooldown)
@@ -844,6 +855,7 @@ func _update_grunt_falcon_punch_attack(delta: float) -> bool:
 	_grunt_falcon_punch_timer = maxf(0.0, _grunt_falcon_punch_timer - delta)
 	match _grunt_falcon_punch_phase:
 		&"windup":
+			_retarget_grunt_falcon_punch_windup()
 			velocity = _grunt_falcon_punch_direction * speed * grunt_falcon_punch_windup_speed_multiplier
 			move_and_slide()
 			_last_move_direction = _grunt_falcon_punch_direction
@@ -869,6 +881,7 @@ func _update_grunt_falcon_punch_attack(delta: float) -> bool:
 
 
 func _start_grunt_falcon_punch_leap() -> void:
+	_retarget_grunt_falcon_punch_windup()
 	_grunt_falcon_punch_phase = &"leap"
 	_grunt_falcon_punch_timer = maxf(0.01, grunt_falcon_punch_leap_time)
 	_grunt_falcon_punch_start_position = global_position
@@ -882,14 +895,33 @@ func _start_grunt_falcon_punch_leap() -> void:
 		_update_custom_enemy_animation(_grunt_falcon_punch_direction, false, true)
 
 
+func _retarget_grunt_falcon_punch_windup() -> void:
+	# Track only during the readable tell. Once leap begins, direction remains
+	# committed so a deliberate lateral dodge still defeats the attack.
+	if target == null or not is_instance_valid(target) or _is_target_destroyed(target) or not (target is Node2D):
+		return
+	var to_target := (target as Node2D).global_position - global_position
+	if to_target.length_squared() <= 0.0001:
+		return
+	_grunt_falcon_punch_direction = to_target.normalized()
+	_last_move_direction = _grunt_falcon_punch_direction
+
+
 func _update_grunt_falcon_punch_leap(delta: float) -> void:
 	var active_end := clampf(grunt_falcon_punch_hit_active_end_ratio, 0.01, 1.0)
 	var travel_time := maxf(0.01, grunt_falcon_punch_leap_time * active_end)
 	var leap_speed := _grunt_falcon_punch_current_distance / travel_time
 	velocity = _grunt_falcon_punch_direction * leap_speed
 	move_and_slide()
+	if target is Node2D and is_instance_valid(target):
+		var to_target := (target as Node2D).global_position - global_position
+		_grunt_falcon_punch_closest_approach = minf(_grunt_falcon_punch_closest_approach, to_target.length())
+		_grunt_falcon_punch_lateral_error = absf(to_target.cross(_grunt_falcon_punch_direction))
+		if _grunt_falcon_punch_active_start_target_distance < 0.0 and _is_grunt_falcon_punch_hit_window_active():
+			_grunt_falcon_punch_active_start_target_distance = to_target.length()
 	var traveled := global_position.distance_to(_grunt_falcon_punch_start_position)
 	var reached_contact := traveled >= _grunt_falcon_punch_current_distance or get_slide_collision_count() > 0
+	_grunt_falcon_punch_collision_obstructed = _grunt_falcon_punch_collision_obstructed or get_slide_collision_count() > 0
 	_try_apply_grunt_falcon_punch_hit(reached_contact)
 	if _grunt_falcon_punch_phase != &"leap":
 		return
@@ -970,7 +1002,17 @@ func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> voi
 	_grunt_falcon_punch_result = result_name
 	_obs_increment(&"grunt_falcon_punch_hits_resolved", 1)
 	_obs_increment(StringName("enemy_attack_result_%s" % String(result_name)), 1)
-	_obs_log(&"grunt_falcon_punch_hit_resolved", {
+	match result_name:
+		&"damaged":
+			_obs_increment(&"falcon_punch_result_damaged")
+		&"dodged":
+			_obs_increment(&"falcon_punch_result_iframe_dodged")
+		&"blocked":
+			_obs_increment(&"falcon_punch_result_blocked")
+		&"parried":
+			_obs_increment(&"falcon_punch_result_parried")
+	var resolved_event := _get_grunt_falcon_punch_telemetry()
+	resolved_event.merge({
 		"enemy": enemy_name,
 		"attack_id": _grunt_falcon_punch_attack_id,
 		"attacker_id": get_instance_id(),
@@ -985,7 +1027,8 @@ func _try_apply_grunt_falcon_punch_hit(force_contact_check: bool = false) -> voi
 		"dodged": bool(hit_result.get("dodged", false)),
 		"blocked": bool(hit_result.get("blocked", false)),
 		"parried": bool(hit_result.get("parried", false)),
-	})
+	}, true)
+	_obs_log(&"grunt_falcon_punch_hit_resolved", resolved_event)
 	if bool(hit_result.get("parried", false)):
 		_obs_increment(&"falcon_punch_parried")
 		_obs_increment(&"enemy_attack_interrupted_by_parry")
@@ -1014,6 +1057,7 @@ func _resolve_grunt_falcon_punch_whiff(reason: StringName) -> void:
 		return
 	_grunt_falcon_punch_result = reason
 	_obs_increment(&"falcon_punch_whiffed")
+	_obs_increment(&"falcon_punch_result_whiffed")
 	_obs_increment(&"enemy_attack_whiffs")
 	_obs_increment(&"enemy_attack_result_whiffed")
 	if reason == &"blocked_by_collision":
@@ -1022,7 +1066,8 @@ func _resolve_grunt_falcon_punch_whiff(reason: StringName) -> void:
 		_obs_increment(&"enemy_attack_whiffed_out_of_arc")
 	else:
 		_obs_increment(&"enemy_attack_whiffed_out_of_range")
-	_obs_log(&"grunt_falcon_punch_hit_resolved", {
+	var whiff_event := _get_grunt_falcon_punch_telemetry()
+	whiff_event.merge({
 		"attack_id": _grunt_falcon_punch_attack_id,
 		"attacker_id": get_instance_id(),
 		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
@@ -1031,7 +1076,8 @@ func _resolve_grunt_falcon_punch_whiff(reason: StringName) -> void:
 		"result": "whiffed",
 		"reason": String(reason),
 		"position": global_position,
-	})
+	}, true)
+	_obs_log(&"grunt_falcon_punch_hit_resolved", whiff_event)
 	_start_grunt_falcon_punch_recovery()
 
 
@@ -1092,7 +1138,14 @@ func _is_grunt_falcon_punch_hit_window_active() -> bool:
 
 
 func _log_grunt_falcon_punch_event(event_name: StringName) -> void:
-	_obs_log(event_name, {
+	_obs_log(event_name, _get_grunt_falcon_punch_telemetry())
+
+
+func _get_grunt_falcon_punch_telemetry() -> Dictionary:
+	var dodge_phase := "unknown"
+	if target != null and is_instance_valid(target) and target.has_method("get_dodge_telemetry_phase"):
+		dodge_phase = String(target.call("get_dodge_telemetry_phase"))
+	return {
 		"attack_id": _grunt_falcon_punch_attack_id,
 		"attacker_id": get_instance_id(),
 		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
@@ -1104,7 +1157,14 @@ func _log_grunt_falcon_punch_event(event_name: StringName) -> void:
 		"direction": _grunt_falcon_punch_direction,
 		"target": target.name if target != null and is_instance_valid(target) else "",
 		"damage": damage * grunt_falcon_punch_damage_multiplier,
-	})
+		"launch_distance": _grunt_falcon_punch_launch_distance,
+		"target_distance_at_active_start": _grunt_falcon_punch_active_start_target_distance,
+		"closest_approach": _grunt_falcon_punch_closest_approach if is_finite(_grunt_falcon_punch_closest_approach) else -1.0,
+		"lateral_error": _grunt_falcon_punch_lateral_error,
+		"player_dodge_phase": dodge_phase,
+		"collision_obstructed": _grunt_falcon_punch_collision_obstructed,
+		"stop_short_distance": grunt_falcon_punch_stop_short_px,
+	}
 
 
 func _attack_marine_dash_target(delta: float) -> void:
@@ -1302,10 +1362,6 @@ func _apply_marine_dash_hit(hit_node: Node2D) -> void:
 	_marine_dash_last_attack_hit = true
 
 	var knockback_direction := _marine_dash_direction.normalized()
-	if hit_node is CharacterBody2D:
-		var body := hit_node as CharacterBody2D
-		body.velocity = knockback_direction * (marine_dash_knockback_px / maxf(0.12, marine_dash_recovery_time))
-		body.move_and_slide()
 	if hit_node.has_method("apply_enemy_dash_impact"):
 		hit_node.call("apply_enemy_dash_impact", knockback_direction, marine_dash_knockback_px, marine_dash_victim_hitstop)
 	_trigger_marine_dash_camera_feedback()
@@ -1508,6 +1564,23 @@ func _get_attack_range(node: Node2D) -> float:
 	if node.is_in_group("player"):
 		return 40.0
 	return structure_attack_range
+
+
+func _limit_pursuit_inward_velocity(target_position: Vector2, stop_distance: float, delta: float) -> void:
+	# Character bodies own their movement. Cap only the inward component so a
+	# pursuit step cannot cross the attack boundary and press into a locked target.
+	var to_target := target_position - global_position
+	var distance := to_target.length()
+	if distance <= 0.0001 or delta <= 0.0:
+		velocity = Vector2.ZERO
+		return
+	var toward_target := to_target / distance
+	var inward_speed := velocity.dot(toward_target)
+	if inward_speed <= 0.0:
+		return
+	var max_inward_speed := maxf(0.0, (distance - maxf(0.0, stop_distance)) / delta)
+	if inward_speed > max_inward_speed:
+		velocity -= toward_target * (inward_speed - max_inward_speed)
 
 
 func get_behavior_attack_range() -> float:
@@ -2586,6 +2659,12 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 		_clear_grunt_standard_hit_fx()
 		_spawn_grunt_critical_open_vfx(_parry_critical_window_timer)
 		_enter_parry_critical_phase(ParryCriticalPhase.ENTER)
+		_obs_increment(&"enemy_parry_vulnerable_opened")
+		_obs_log(&"enemy_parry_vulnerable_opened", {
+			"enemy_id": get_instance_id(),
+			"position": global_position,
+			"window_sec": critical_window_duration,
+		})
 	var resolved_direction := knockback_direction.normalized() if knockback_direction.length_squared() > 0.0001 else -_last_move_direction.normalized()
 	if resolved_direction.length_squared() <= 0.0001:
 		resolved_direction = Vector2.RIGHT
@@ -2640,6 +2719,12 @@ func reserve_parry_critical(attacker: Node2D) -> Dictionary:
 	global_position = _parry_critical_execution_root
 	_clear_grunt_critical_open_vfx(false)
 	velocity = Vector2.ZERO
+	_obs_increment(&"enemy_parry_vulnerable_consumed")
+	_obs_log(&"enemy_parry_vulnerable_consumed", {
+		"enemy_id": get_instance_id(),
+		"attacker_id": attacker.get_instance_id(),
+		"execution_token": _parry_critical_execution_token,
+	})
 	return {
 		"token": _parry_critical_execution_token,
 		"anchor": get_parry_critical_execution_anchor(),
@@ -2794,6 +2879,18 @@ func debug_apply_spawn_mode(mode: StringName, attacker: Node2D = null) -> bool:
 	if normalized_mode == &"normal":
 		_obs_log(&"debug_enemy_spawn_mode_applied", {"enemy": enemy_name, "mode": String(normalized_mode)})
 		return true
+	if normalized_mode == &"falcon":
+		if attacker == null or not is_instance_valid(attacker):
+			return false
+		target = attacker
+		var direction := global_position.direction_to(attacker.global_position)
+		_start_grunt_falcon_punch_windup(direction)
+		_obs_log(&"debug_enemy_spawn_mode_applied", {
+			"enemy": enemy_name,
+			"mode": String(normalized_mode),
+			"position": global_position,
+		})
+		return true
 	if normalized_mode not in [&"critical_enter", &"critical_hold", &"critical_recover", &"execution_ready", &"execution_lethal"]:
 		return false
 	var knockback_direction := Vector2.LEFT
@@ -2937,6 +3034,11 @@ func _update_reaction_timers(delta: float) -> bool:
 		_parry_critical_phase_timer = maxf(0.0, _parry_critical_phase_timer - delta)
 		velocity = Vector2.ZERO
 		if _parry_critical_window_timer <= 0.0:
+			_obs_increment(&"enemy_parry_vulnerable_expired")
+			_obs_log(&"enemy_parry_vulnerable_expired", {
+				"enemy_id": get_instance_id(),
+				"position": global_position,
+			})
 			_clear_grunt_critical_open_vfx(true)
 			_enter_parry_critical_phase(ParryCriticalPhase.RECOVER)
 		elif _parry_critical_phase == ParryCriticalPhase.ENTER and _parry_critical_phase_timer <= 0.0:

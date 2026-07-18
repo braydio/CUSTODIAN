@@ -1,0 +1,23 @@
+{
+  "source": "operator__modular_ranged_weapon__ranged_2h__relaxed_carbine_mk1_01__w__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/new_operator/modular/ranged/operator__modular_ranged_weapon__ranged_2h__relaxed_carbine_mk1_01__w__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "operator_modular_runtime"
+  ]
+}

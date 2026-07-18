@@ -36,8 +36,14 @@ const LATERAL_TRAVERSE_PATH := "res://content/sprites/world/return_causeway/path
 const FORTRESS_WALL_MASS_PATH := "res://content/sprites/world/return_causeway/path/fortress_wall_mass.png"
 
 const RETURN_CAUSEWAY_SCENE_PATH := "res://game/world/sundered_keep/return_causeway/ReturnCausewayApproach.tscn"
+const SUNDERED_KEEP_MAP_SCRIPT_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
+# Temporary production sanity switch. Keep the authored Return Causeway branch
+# available for focused testing while the default ingress goes straight to the Keep.
+const BYPASS_RETURN_CAUSEWAY_FOR_KEEP_TESTING := true
 const ROUTE_VERTICAL_OFFSET := 180.0
 const BOUNDARY_RAIL_RADIUS := 10.0
+
+@export var bypass_return_causeway_for_keep_testing := BYPASS_RETURN_CAUSEWAY_FOR_KEEP_TESTING
 
 const RECT_ROUTE_MASTER := Rect2(Vector2(-620.0, -660.0), Vector2(2048.0, 1706.0))
 const RECT_APPROACH_UNDERLAY := Rect2(Vector2(-1000.0, -900.0), Vector2(2600.0, 1800.0))
@@ -593,9 +599,14 @@ func _event_marker_color(kind: String) -> Color:
 
 func _build_level_exit_trigger() -> void:
 	var trigger := SunderedKeepTransitionTrigger.new()
-	trigger.target_scene_path = RETURN_CAUSEWAY_SCENE_PATH
-	trigger.target_node_name = &"ReturnCausewayApproach"
-	trigger.target_level_id = &"return_causeway"
+	if bypass_return_causeway_for_keep_testing:
+		trigger.target_scene_path = SUNDERED_KEEP_MAP_SCRIPT_PATH
+		trigger.target_node_name = &"SunderedKeepMap"
+		trigger.target_level_id = &"sundered_keep_front_gate"
+	else:
+		trigger.target_scene_path = RETURN_CAUSEWAY_SCENE_PATH
+		trigger.target_node_name = &"ReturnCausewayApproach"
+		trigger.target_level_id = &"return_causeway"
 	trigger.vista_controller_path = NodePath("../../VistaController")
 	trigger.source_scene_path = NodePath("../..")
 	trigger.return_world_position = main_return_position

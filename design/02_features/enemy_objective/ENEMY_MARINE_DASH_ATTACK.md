@@ -185,6 +185,12 @@ The sound stack should be:
 
 Do not use sword-swish audio. This is armored mass, not a blade swing.
 
+## Impact Movement Ownership
+
+- The marine resolves damage and calls the target's `apply_enemy_dash_impact(...)` API.
+- It must not assign the target's velocity or call `move_and_slide()` on the target. The operator consumes the impact velocity during its own physics process.
+- Ordinary pursuit caps its inward velocity at the attack boundary so one physics step cannot overshoot into continuous body pressure.
+
 ## Validation
 
 Use:

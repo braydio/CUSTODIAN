@@ -69,6 +69,7 @@ const DEBUG_TERMINAL_INPUT_LAYOUT := false
 const DEBUG_TERMINAL_LAYOUT_BOUNDS := false
 const DEBUG_GRUNT_SPAWN_MODES := [
 	&"normal",
+	&"falcon",
 	&"critical_enter",
 	&"critical_hold",
 	&"critical_recover",
@@ -107,6 +108,7 @@ const TERMINAL_COMPLETION_TOKENS := [
 	"CONTRACT", "PLANET", "MAP",
 	"START ASSAULT",
 	"WAIT", "WAIT UNTIL", "DEPLOY", "MOVE", "RETURN", "FOCUS", "HARDEN",
+	"RESET", "REBOOT CONFIRM",
 	"REPAIR", "SCAVENGE", "SET", "SET FAB", "POLICY SHOW", "POLICY PRESET",
 	"FABRICATION",
 	"FAB STATUS", "FAB RECIPES", "FAB GRANT", "FAB START", "FAB QUEUE", "FAB CANCEL",
@@ -146,6 +148,7 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var power_display = get_node_or_null("PowerDisplay")
 @onready var contract_phase_label = get_node_or_null("ContractPhaseLabel")
 @onready var lives_label = get_node_or_null("LivesLabel")
+@onready var field_patch_prompt = get_node_or_null("FieldPatchPrompt")
 @onready var camera_follow_label = get_node_or_null("CameraFollowLabel")
 @onready var camera_zoom_label = get_node_or_null("CameraZoomLabel")
 @onready var time_scale_label = get_node_or_null("TimeScaleLabel")
@@ -236,20 +239,21 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var terminal_settings_display_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow/SettingsDisplayPanel/Margin/Content/Body")
 @onready var terminal_settings_input_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsTopRow/SettingsInputPanel/Margin/Content/Body")
 @onready var terminal_settings_map_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/SettingsWidgets/SettingsMapPanel/Margin/Content/Body")
-@onready var terminal_overview_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/OverviewButton")
-@onready var terminal_status_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/StatusButton")
-@onready var terminal_sectors_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/SectorsButton")
-@onready var terminal_power_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/PowerButton")
-@onready var terminal_defense_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/DefenseButton")
-@onready var terminal_sensors_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/SensorsButton")
-@onready var terminal_incidents_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/IncidentsButton")
-@onready var terminal_archive_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/ArchiveButton")
-@onready var terminal_recon_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/ReconButton")
-@onready var terminal_contracts_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/ContractsButton")
-@onready var terminal_history_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/HistoryButton")
-@onready var terminal_settings_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/SettingsButton")
+@onready var _terminal_page_buttons_scroll = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll") as ScrollContainer
+@onready var terminal_overview_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/OverviewButton")
+@onready var terminal_status_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/StatusButton")
+@onready var terminal_sectors_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/SectorsButton")
+@onready var terminal_power_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/PowerButton")
+@onready var terminal_defense_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/DefenseButton")
+@onready var terminal_sensors_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/SensorsButton")
+@onready var terminal_incidents_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/IncidentsButton")
+@onready var terminal_archive_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/ArchiveButton")
+@onready var terminal_recon_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/ReconButton")
+@onready var terminal_contracts_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/ContractsButton")
+@onready var terminal_history_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/HistoryButton")
+@onready var terminal_settings_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons/SettingsButton")
 var terminal_fabrication_button: BaseButton = null
-var _terminal_more_button: BaseButton = null
+@onready var _terminal_more_button = get_node_or_null("TerminalPanel/Body/NavRail/MoreButton") as BaseButton
 @onready var terminal_wait_button = get_node_or_null("TerminalPanel/Body/NavRail/ActionButtons/WaitButton")
 @onready var terminal_wait_10x_button = get_node_or_null("TerminalPanel/Body/NavRail/ActionButtons/Wait10xButton")
 @onready var terminal_focus_button = get_node_or_null("TerminalPanel/Body/NavRail/ActionButtons/FocusButton")
@@ -282,6 +286,8 @@ var _last_director_text := ""
 var _terminal_open := false
 var _terminal_ready := false
 var _terminal_boot_started := false
+var _terminal_boot_complete := false
+var _terminal_previous_mouse_mode := Input.MOUSE_MODE_VISIBLE
 var _terminal_service_url := DEFAULT_TERMINAL_SERVICE_URL
 var _terminal_lines: Array[String] = []
 var _terminal_log_entries: Array[Dictionary] = []
@@ -363,6 +369,7 @@ const TERMINAL_ACTIVITY_SCROLL_FOLLOW_MARGIN := 24.0
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_ensure_terminal_modal_input_order()
 	if minimap:
 		_minimap_visible = minimap.visible
 	_set_main_hud_hidden(false)
@@ -447,6 +454,8 @@ func _ready():
 		_terminal_nav_buttons.append(terminal_fabrication_button)
 	if _terminal_more_button != null and not _terminal_nav_buttons.has(_terminal_more_button):
 		_terminal_nav_buttons.append(_terminal_more_button)
+	_bind_terminal_nav_wheel()
+	_connect_terminal_meta_links(terminal_widget_stack)
 	if terminal_wait_button and not terminal_wait_button.pressed.is_connected(_on_terminal_action_button_pressed.bind("WAIT")):
 		terminal_wait_button.pressed.connect(_on_terminal_action_button_pressed.bind("WAIT"))
 	if terminal_wait_10x_button and not terminal_wait_10x_button.pressed.is_connected(_on_terminal_action_button_pressed.bind("WAIT 10X")):
@@ -602,7 +611,7 @@ func _devconsole_spawn_grunt(args: Array) -> String:
 			offset_arg_index = 1
 	var enemy_mgr = get_node_or_null("/root/GameRoot/EnemyDirector")
 	if enemy_mgr != null and enemy_mgr.has_method("spawn_debug_enemy_type"):
-		var offset := Vector2(96.0, 0.0) if mode == &"normal" else Vector2(48.0, 0.0)
+		var offset := Vector2(128.0, 0.0) if mode == &"falcon" else (Vector2(96.0, 0.0) if mode == &"normal" else Vector2(48.0, 0.0))
 		if args.size() >= offset_arg_index + 2:
 			offset = Vector2(float(args[offset_arg_index]), float(args[offset_arg_index + 1]))
 		var pos = operator.global_position + offset
@@ -615,6 +624,8 @@ func _normalize_debug_grunt_spawn_mode(value: String) -> StringName:
 	match value:
 		"normal":
 			return &"normal"
+		"falcon", "falcon_punch":
+			return &"falcon"
 		"enter", "critical_enter":
 			return &"critical_enter"
 		"hold", "critical_hold":
@@ -983,6 +994,8 @@ func _apply_terminal_page_layout() -> void:
 	if content_column == null:
 		return
 	var is_overview := _terminal_current_page == "OVERVIEW"
+	if terminal_map_preview.has_method("set_overview_mode"):
+		terminal_map_preview.call("set_overview_mode", is_overview)
 	if is_overview and terminal_overview_map_slot != null:
 		if terminal_map_preview_title_label.get_parent() != terminal_overview_map_slot:
 			terminal_map_preview_title_label.reparent(terminal_overview_map_slot)
@@ -990,7 +1003,7 @@ func _apply_terminal_page_layout() -> void:
 			terminal_map_preview.reparent(terminal_overview_map_slot)
 		terminal_map_preview_title_label.visible = true
 		terminal_map_preview.visible = true
-		terminal_map_preview.custom_minimum_size.y = 210.0
+		terminal_map_preview.custom_minimum_size.y = 236.0
 	else:
 		if terminal_map_preview_title_label.get_parent() != content_column:
 			terminal_map_preview_title_label.reparent(content_column)
@@ -1258,6 +1271,8 @@ func _process(delta):
 			elif "max_health" in operator_for_health:
 				max_health_value = max(1.0, float(operator_for_health.get("max_health")))
 		var health_text := "HEALTH: %d/%d" % [int(round(health_value)), int(round(max_health_value))]
+		var patch_prompt_visible := false
+		var patch_prompt_critical := false
 		if operator_for_health != null and operator_for_health.has_method("get_field_patch_status"):
 			var patch_status: Dictionary = operator_for_health.get_field_patch_status()
 			var patch_count := int(patch_status.get("count", 0))
@@ -1266,6 +1281,8 @@ func _process(delta):
 				health_text += "  PATCHING %.1fs" % maxf(0.0, float(patch_status.get("time_remaining", 0.0)))
 			else:
 				health_text += "  PATCH %d/%d" % [patch_count, patch_max]
+			patch_prompt_visible = bool(patch_status.get("prompt_visible", false))
+			patch_prompt_critical = bool(patch_status.get("prompt_critical", false))
 		if health_text != _last_health_text:
 			lives_label.text = health_text
 			_last_health_text = health_text
@@ -1276,6 +1293,13 @@ func _process(delta):
 			lives_label.modulate = Color(0.95, 0.8, 0.35, 1.0)
 		else:
 			lives_label.modulate = Color(0.55, 0.95, 0.65, 1.0)
+		if field_patch_prompt is Label:
+			var prompt := field_patch_prompt as Label
+			prompt.visible = patch_prompt_visible and not _terminal_open
+			if prompt.visible:
+				prompt.text = "!! FIELD PATCH [P] — CRITICAL !!" if patch_prompt_critical else "+ FIELD PATCH READY [P]"
+				var pulse := 0.72 + 0.28 * sin(float(Time.get_ticks_msec()) * (0.012 if patch_prompt_critical else 0.006))
+				prompt.modulate = Color(1.0, 0.22, 0.18, pulse) if patch_prompt_critical else Color(0.42, 1.0, 0.58, pulse)
 
 	var cam = get_node_or_null("/root/GameRoot/World/Camera2D")
 	if show_debug_hud and cam and camera_follow_label and camera_zoom_label and "auto_zoom_enabled" in cam and "follow_enabled" in cam:
@@ -1577,6 +1601,7 @@ func _hide_aim_reticles() -> void:
 func _get_essential_hud_nodes() -> Array:
 	return [
 		lives_label,
+		field_patch_prompt,
 		stamina_bar,
 		stamina_label,
 		ammo_label,
@@ -1707,6 +1732,10 @@ func exit_placement_mode_ui() -> void:
 	print("[UI] Exited placement mode UI")
 
 func open_command_terminal(service_url: String = ""):
+	if not _terminal_open:
+		_terminal_previous_mouse_mode = Input.mouse_mode
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_ensure_terminal_modal_input_order()
 	if not service_url.strip_edges().is_empty():
 		_terminal_service_url = service_url.strip_edges()
 	_terminal_open = true
@@ -1738,6 +1767,7 @@ func open_command_terminal(service_url: String = ""):
 		_run_terminal_boot_sequence()
 	else:
 		_terminal_ready = true
+		_terminal_boot_complete = true
 		_append_terminal_line("LOCAL SNAPSHOT MODE ACTIVE", "info")
 	_set_terminal_input_enabled(true)
 	_update_terminal_hint_visibility()
@@ -1767,6 +1797,7 @@ func close_command_terminal():
 			exit_placement_mode_ui()
 		return
 	_terminal_open = false
+	Input.mouse_mode = _terminal_previous_mouse_mode
 	_set_main_hud_hidden(_main_hud_hidden)
 	_apply_debug_screen_visibility()
 	_terminal_command_queue.clear()
@@ -1782,6 +1813,19 @@ func close_command_terminal():
 	var world_terminal := get_node_or_null("/root/GameRoot/World/CommandTerminal")
 	if world_terminal != null and world_terminal.has_method("deactivate_visual_after_ui_close"):
 		world_terminal.call("deactivate_visual_after_ui_close")
+
+
+func _ensure_terminal_modal_input_order() -> void:
+	if terminal_panel == null or terminal_background == null:
+		return
+	var shared_parent := terminal_panel.get_parent()
+	if shared_parent == null or terminal_background.get_parent() != shared_parent:
+		return
+	# Godot GUI picking follows sibling order independently of visual z ordering.
+	# Keep the full-screen click blocker before the panel so it catches gameplay
+	# clicks outside the modal without intercepting controls inside the terminal.
+	if terminal_background.get_index() > terminal_panel.get_index():
+		shared_parent.move_child(terminal_background, terminal_panel.get_index())
 
 func is_terminal_open() -> bool:
 	return _terminal_open
@@ -2070,10 +2114,11 @@ func _focus_terminal_button_group(buttons: Array, forward: bool) -> void:
 		var button = buttons[idx]
 		if button == null or not is_instance_valid(button) or not (button is BaseButton):
 			continue
-		if button.disabled:
+		if button.disabled or not (button as Control).is_visible_in_tree():
 			continue
 
 		(button as BaseButton).grab_focus()
+		_ensure_terminal_nav_button_visible.call_deferred(button as Control)
 		return
 
 	if terminal_input and terminal_input.editable:
@@ -2106,10 +2151,11 @@ func _move_terminal_button_focus(step: int) -> void:
 		var next_button = ordered_buttons[next_index]
 		if next_button == null or not is_instance_valid(next_button) or not (next_button is BaseButton):
 			continue
-		if next_button.disabled:
+		if next_button.disabled or not (next_button as Control).is_visible_in_tree():
 			continue
 
 		(next_button as BaseButton).grab_focus()
+		_ensure_terminal_nav_button_visible.call_deferred(next_button)
 		return
 
 func _update_terminal_planet_spin(delta: float) -> void:
@@ -2364,25 +2410,16 @@ func _configure_terminal_nav_fit() -> void:
 		nav_rail.add_theme_constant_override("separation", 3)
 	if page_buttons != null:
 		page_buttons.add_theme_constant_override("separation", 1)
-		var page_scroll := nav_rail.get_node_or_null("PageButtonsScroll") as ScrollContainer if nav_rail != null else null
-		if page_scroll == null and nav_rail != null:
-			page_scroll = ScrollContainer.new()
-			page_scroll.name = "PageButtonsScroll"
-			page_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-			page_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-			page_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			page_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-			var page_index := page_buttons.get_index()
-			page_buttons.reparent(page_scroll)
-			nav_rail.add_child(page_scroll)
-			nav_rail.move_child(page_scroll, page_index)
-		if page_scroll != null:
-			page_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-			page_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+		if _terminal_page_buttons_scroll != null:
+			_terminal_page_buttons_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+			_terminal_page_buttons_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+			_terminal_page_buttons_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			_terminal_page_buttons_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			_terminal_page_buttons_scroll.mouse_filter = Control.MOUSE_FILTER_STOP
 		page_buttons.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		for child in page_buttons.get_children():
 			if child is BaseButton:
-				(child as BaseButton).custom_minimum_size.y = 22.0
+				(child as BaseButton).custom_minimum_size.y = 30.0
 	if action_buttons != null:
 		action_buttons.add_theme_constant_override("separation", 1)
 		for child in action_buttons.get_children():
@@ -2391,6 +2428,55 @@ func _configure_terminal_nav_fit() -> void:
 	if context_spacer != null:
 		context_spacer.custom_minimum_size.y = 2.0
 	_configure_terminal_nav_groups()
+
+
+func _bind_terminal_nav_wheel() -> void:
+	var nav_rail := get_node_or_null("TerminalPanel/Body/NavRail") as Control
+	var page_buttons := get_node_or_null("TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons") as Control
+	for target in [nav_rail, _terminal_page_buttons_scroll, page_buttons]:
+		if target is Control and not (target as Control).gui_input.is_connected(_on_terminal_nav_gui_input):
+			(target as Control).gui_input.connect(_on_terminal_nav_gui_input)
+	for button in _terminal_nav_buttons:
+		if button is Control and not (button as Control).gui_input.is_connected(_on_terminal_nav_gui_input):
+			(button as Control).gui_input.connect(_on_terminal_nav_gui_input)
+
+
+func _on_terminal_nav_gui_input(event: InputEvent) -> void:
+	if not _terminal_open or _terminal_page_buttons_scroll == null:
+		return
+	if not (event is InputEventMouseButton):
+		return
+	var mouse_event := event as InputEventMouseButton
+	if not mouse_event.pressed or mouse_event.button_index not in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+		return
+	var delta := -52 if mouse_event.button_index == MOUSE_BUTTON_WHEEL_UP else 52
+	var scroll_bar := _terminal_page_buttons_scroll.get_v_scroll_bar()
+	var max_scroll := maxi(0, int(ceil(scroll_bar.max_value - scroll_bar.page))) if scroll_bar != null else 0
+	_terminal_page_buttons_scroll.scroll_vertical = clampi(_terminal_page_buttons_scroll.scroll_vertical + delta, 0, max_scroll)
+	get_viewport().set_input_as_handled()
+
+
+func _ensure_terminal_nav_button_visible(button: Control) -> void:
+	if _terminal_page_buttons_scroll == null or button == null or not button.is_visible_in_tree():
+		return
+	if _terminal_page_buttons_scroll.is_ancestor_of(button):
+		_terminal_page_buttons_scroll.ensure_control_visible(button)
+
+
+func _refresh_terminal_nav_scroll() -> void:
+	if _terminal_page_buttons_scroll == null:
+		return
+	var scroll_bar := _terminal_page_buttons_scroll.get_v_scroll_bar()
+	if scroll_bar != null:
+		var max_scroll := maxi(0, int(ceil(scroll_bar.max_value - scroll_bar.page)))
+		_terminal_page_buttons_scroll.scroll_vertical = clampi(_terminal_page_buttons_scroll.scroll_vertical, 0, max_scroll)
+	var focus_owner := get_viewport().gui_get_focus_owner()
+	if focus_owner is Control:
+		if not (focus_owner as Control).is_visible_in_tree():
+			if _terminal_more_button != null:
+				_terminal_more_button.grab_focus()
+		else:
+			_ensure_terminal_nav_button_visible(focus_owner as Control)
 
 
 func _make_fabrication_compact_panel_style() -> StyleBoxFlat:
@@ -2842,12 +2928,13 @@ func _ensure_fabrication_terminal_button() -> void:
 
 func _ensure_terminal_more_button() -> void:
 	if _terminal_more_button != null and is_instance_valid(_terminal_more_button):
+		if not _terminal_more_button.pressed.is_connected(_toggle_terminal_secondary_nav):
+			_terminal_more_button.pressed.connect(_toggle_terminal_secondary_nav)
 		return
 	var nav_rail := get_node_or_null("TerminalPanel/Body/NavRail")
-	var page_buttons_container := nav_rail.find_child("PageButtons", true, false) if nav_rail != null else null
-	if page_buttons_container == null:
+	if nav_rail == null:
 		return
-	var existing := page_buttons_container.get_node_or_null("MoreButton")
+	var existing := nav_rail.get_node_or_null("MoreButton")
 	if existing is BaseButton:
 		_terminal_more_button = existing as BaseButton
 	else:
@@ -2856,7 +2943,10 @@ func _ensure_terminal_more_button() -> void:
 		_terminal_more_button.text = "MORE / SYSTEMS"
 		_terminal_more_button.focus_mode = Control.FOCUS_ALL
 		_terminal_more_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		page_buttons_container.add_child(_terminal_more_button)
+		nav_rail.add_child(_terminal_more_button)
+		var context_spacer := nav_rail.get_node_or_null("ContextSpacer")
+		if context_spacer != null:
+			nav_rail.move_child(_terminal_more_button, context_spacer.get_index())
 	if not _terminal_more_button.pressed.is_connected(_toggle_terminal_secondary_nav):
 		_terminal_more_button.pressed.connect(_toggle_terminal_secondary_nav)
 	_configure_terminal_nav_groups()
@@ -2865,6 +2955,7 @@ func _ensure_terminal_more_button() -> void:
 func _toggle_terminal_secondary_nav() -> void:
 	_terminal_secondary_nav_expanded = not _terminal_secondary_nav_expanded
 	_configure_terminal_nav_groups()
+	_refresh_terminal_nav_scroll.call_deferred()
 
 
 func _configure_terminal_nav_groups() -> void:
@@ -2884,8 +2975,6 @@ func _configure_terminal_nav_groups() -> void:
 	for button in primary_order:
 		if button != null and button.get_parent() == page_buttons_container:
 			page_buttons_container.move_child(button, page_buttons_container.get_child_count() - 1)
-	if _terminal_more_button != null and _terminal_more_button.get_parent() == page_buttons_container:
-		page_buttons_container.move_child(_terminal_more_button, page_buttons_container.get_child_count() - 1)
 	var secondary_buttons: Array[BaseButton] = [
 		terminal_status_button,
 		terminal_incidents_button,
@@ -2904,15 +2993,16 @@ func _configure_terminal_nav_groups() -> void:
 	for button in secondary_buttons:
 		if button != null:
 			button.visible = show_secondary
+			button.focus_mode = Control.FOCUS_ALL if show_secondary else Control.FOCUS_NONE
 			if show_secondary and button.get_parent() == page_buttons_container:
 				page_buttons_container.move_child(button, page_buttons_container.get_child_count() - 1)
 	if _terminal_more_button != null:
 		_terminal_more_button.text = "LESS / PRIMARY" if show_secondary else "MORE / SYSTEMS"
-		if _terminal_more_button.get_parent() == page_buttons_container:
-			page_buttons_container.move_child(_terminal_more_button, page_buttons_container.get_child_count() - 1)
+		_terminal_more_button.focus_mode = Control.FOCUS_ALL
 	for secondary_action in [terminal_wait_10x_button, terminal_reset_button, terminal_reboot_button]:
 		if secondary_action != null:
 			secondary_action.visible = false
+	_refresh_terminal_nav_scroll.call_deferred()
 
 
 func _append_terminal_line(line: String, level: String = "info", sector: String = ""):
@@ -2958,6 +3048,17 @@ func _render_terminal_output():
 	var entries_to_render: Array = _terminal_log_entries
 	if _terminal_current_page == "OVERVIEW" and entries_to_render.size() > 12:
 		entries_to_render = entries_to_render.slice(entries_to_render.size() - 12, entries_to_render.size())
+	if _terminal_current_page == "OVERVIEW" and _terminal_boot_complete:
+		var non_boot_entries: Array = []
+		var collapsed_boot_count := 0
+		for entry in entries_to_render:
+			if _is_terminal_boot_log_line(str(entry.get("line", ""))):
+				collapsed_boot_count += 1
+			else:
+				non_boot_entries.append(entry)
+		entries_to_render = non_boot_entries
+		if collapsed_boot_count > 0:
+			chunks.append("[color=#6FAE9C][BOOT][/color] [color=#8CA49D]BOOT LOG // %d PRIOR MESSAGES[/color]" % collapsed_boot_count)
 	for entry in entries_to_render:
 		var timestamp := str(entry.get("time", "--:--:--"))
 		var line := str(entry.get("line", ""))
@@ -2981,6 +3082,14 @@ func _render_terminal_output():
 		terminal_output.text = "\n".join(chunks)
 	if _terminal_activity_autofollow:
 		call_deferred("_scroll_terminal_output_to_bottom")
+
+
+func _is_terminal_boot_log_line(line: String) -> bool:
+	return line in TERMINAL_BOOT_LINES or line in [
+		"--- COMMAND INTERFACE ACTIVE ---",
+		"Awaiting directives.",
+		"Type HELP for available commands.",
+	]
 
 
 func _build_terminal_attention_feed_chunks() -> PackedStringArray:
@@ -3046,6 +3155,16 @@ func _on_terminal_activity_meta_clicked(meta: Variant) -> void:
 		return
 	select_sector(meta_text.trim_prefix("sector:"))
 
+
+func _connect_terminal_meta_links(root_node: Node) -> void:
+	if root_node == null:
+		return
+	for rich_text in root_node.find_children("*", "RichTextLabel", true, false):
+		var label := rich_text as RichTextLabel
+		label.meta_underlined = true
+		if not label.meta_clicked.is_connected(_on_terminal_activity_meta_clicked):
+			label.meta_clicked.connect(_on_terminal_activity_meta_clicked)
+
 func _render_terminal_status(text: String):
 	if terminal_status_label:
 		terminal_status_label.text = text
@@ -3061,6 +3180,7 @@ func _format_terminal_input_echo(raw_text: String) -> String:
 
 
 func _run_terminal_boot_sequence() -> void:
+	_terminal_boot_complete = false
 	_set_terminal_input_enabled(false)
 	for idx in range(TERMINAL_BOOT_LINES.size()):
 		if not _terminal_open:
@@ -3080,6 +3200,8 @@ func _run_terminal_boot_sequence() -> void:
 	_append_terminal_line("--- COMMAND INTERFACE ACTIVE ---")
 	_append_terminal_line("Awaiting directives.")
 	_append_terminal_line("Type HELP for available commands.")
+	_terminal_boot_complete = true
+	_render_terminal_output()
 	_render_terminal_status("LINK ESTABLISHED")
 	_set_terminal_input_enabled(true)
 	_refresh_snapshot()
@@ -3280,9 +3402,9 @@ func _render_terminal_header(snapshot: Dictionary) -> void:
 	var power_status := _get_power_status_snapshot()
 	var reserve_rate := float(power_status.get("net", 0.0)) * 60.0
 	var phase_short := _terminal_truncate(phase_text, 14)
-	var grid_text := "GRID:%+0.0f" % reserve_rate
+	var grid_text := "GRID:STABLE"
 	if reserve_rate < 0.0:
-		grid_text = "GRID:DEFICIT %0.0f" % abs(reserve_rate)
+		grid_text = "GRID:%s" % _format_terminal_grid_rate(reserve_rate)
 	if terminal_header_eyebrow:
 		terminal_header_eyebrow.text = "CUSTODIAN NODE"
 	if terminal_title_label:
@@ -3446,6 +3568,12 @@ func _format_terminal_rate(rate: float) -> String:
 	if is_equal_approx(rate, round(rate)):
 		return "%dX" % int(round(rate))
 	return "%.1fX" % rate
+
+
+func _format_terminal_grid_rate(value: float) -> String:
+	if absf(value) >= 1000.0:
+		return "%+.1fK/s" % (value / 1000.0)
+	return "%+.0f/s" % value
 
 
 func _set_terminal_page(page_name: String) -> void:
@@ -3858,7 +3986,8 @@ func _render_terminal_overview_widgets(phase_text: String, hostile_text: String,
 		var raw_name := str(sector.get("name", sector.get("id", "SECTOR")))
 		var display := _terminal_truncate(_display_sector_name(raw_name).to_upper(), 8)
 		var status := str(sector.get("status", "UNKNOWN")).to_upper()
-		priority_lines.append("%-8s %3s%% %s" % [display, str(sector.get("hp_pct", "?")), _terminal_truncate(status, 6)])
+		var priority_line := "%-8s %3s%% %s" % [display, str(sector.get("hp_pct", "?")), _terminal_truncate(status, 6)]
+		priority_lines.append("[url=terminal_action:focus_sector:%s][color=#9EDBFF]%s[/color][/url]" % [_escape_bbcode(raw_name), priority_line])
 	if priority_lines.is_empty():
 		priority_lines.append("NO PRIORITY SECTORS AVAILABLE")
 	_set_terminal_rich_text(terminal_overview_priority_body, "\n".join(priority_lines))
@@ -3872,15 +4001,19 @@ func _render_terminal_overview_widgets(phase_text: String, hostile_text: String,
 			break
 	if incident_lines.is_empty():
 		incident_lines.append("NO ACTIVE CRITICAL INCIDENTS")
+	incident_lines.append("[url=terminal_action:open_incidents][color=#7DDE9B]> OPEN INCIDENTS[/color][/url]")
 	_set_terminal_rich_text(terminal_overview_incident_body, "\n".join(incident_lines))
-	var recommendation := "OPEN SECTORS\nVERIFY PRIORITY"
+	var recommendation_action := "open_sectors"
+	var recommendation := "OPEN SECTORS // VERIFY PRIORITY"
 	if float(power_status.get("net", 0.0)) < 0.0:
-		recommendation = "OPEN POWER\nCORRECT DEFICIT"
+		recommendation_action = "open_power"
+		recommendation = "OPEN POWER // CORRECT DEFICIT"
 	elif compromised_count > 0 or offline_count > 0:
-		recommendation = "OPEN SECTORS\nRESTORE SYSTEMS"
+		recommendation = "OPEN SECTORS // RESTORE SYSTEMS"
 	elif str(threat_text).to_upper() in ["ELEVATED", "CRITICAL"]:
-		recommendation = "OPEN DEFENSE\nREVIEW COVERAGE"
-	_set_terminal_rich_text(terminal_overview_contract_body, recommendation)
+		recommendation_action = "open_defense"
+		recommendation = "OPEN DEFENSE // REVIEW COVERAGE"
+	_set_terminal_rich_text(terminal_overview_contract_body, "[url=terminal_action:%s][color=#7DDE9B]> %s[/color][/url]" % [recommendation_action, recommendation])
 
 
 func _render_terminal_sector_widgets(sector_array: Array, selected_sector: Dictionary) -> void:
@@ -5109,6 +5242,7 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 		"HELP":
 			_append_terminal_line("LOCAL COMMANDS: HELP STATUS PREP ARRN ENEMIES WAVE SECTORS CONTRACT PLANET MAP START ASSAULT WALL TURRET REROUTE CLEAR OVERLAY RESET REBOOT FABRICATION", "info")
 			_append_terminal_line("ACTIONS: WAIT | WAIT 10X | GOTO <PAGE> | HARDEN <SECTOR> | FOCUS <TARGET>", "info")
+			_append_terminal_line("PROTECTED: REBOOT CONFIRM // RESET clears local terminal view state", "warning")
 			_append_terminal_line("LIVE CONTROL: SCAN RELAYS | STABILIZE RELAY <ID> | SYNC | REPAIR COMMAND", "info")
 			return true
 		"STATUS":
@@ -5187,7 +5321,11 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 			_refresh_snapshot()
 			return true
 		"REBOOT":
+			if args.is_empty() or str(args[0]).to_upper() != "CONFIRM":
+				_append_terminal_line("REBOOT PROTECTED // USE: REBOOT CONFIRM", "warning")
+				return true
 			_reset_terminal_local_state(true)
+			_terminal_boot_complete = true
 			_append_terminal_line("COMMAND LINK REBOOT COMPLETE // LOCAL CONTROL RESTORED", "success")
 			_refresh_snapshot()
 			return true
@@ -6452,6 +6590,9 @@ func _handle_terminal_action_link(action_payload: String) -> void:
 	var sector_name := str(parts[1]).strip_edges() if parts.size() > 1 else _terminal_highlight_sector
 	var resolved_name := _resolve_terminal_sector_name(sector_name)
 	match action:
+		"open_sectors":
+			_set_terminal_page("SECTORS")
+			_append_terminal_line("SECTOR PRIORITY VIEW OPENED", "command")
 		"open_power":
 			if not resolved_name.is_empty():
 				_terminal_highlight_sector = resolved_name
@@ -6472,11 +6613,16 @@ func _handle_terminal_action_link(action_payload: String) -> void:
 				terminal_input.text = "REROUTE POWER sector=%s priority=HIGH" % _display_sector_name(resolved_name).to_upper()
 				terminal_input.caret_column = terminal_input.text.length()
 				terminal_input.grab_focus()
-		"track_incidents":
+		"open_incidents", "track_incidents":
 			if not resolved_name.is_empty():
 				_terminal_highlight_sector = resolved_name
 			_set_terminal_page("INCIDENTS")
 			_append_terminal_line("INCIDENT TRACKING FOCUSED%s" % (" // %s" % _display_sector_name(resolved_name).to_upper() if not resolved_name.is_empty() else ""), "command", resolved_name)
+		"open_defense":
+			_set_terminal_page("DEFENSE")
+			_append_terminal_line("DEFENSE COVERAGE VIEW OPENED", "command")
+		"focus_sector":
+			select_sector(sector_name)
 		_:
 			_append_terminal_line("UNKNOWN TERMINAL ACTION %s" % action_payload.to_upper(), "warning", resolved_name)
 

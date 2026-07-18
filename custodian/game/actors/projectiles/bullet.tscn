@@ -6,7 +6,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_bullet"]
 radius = 4.0
 
-[node name="Bullet" type="Area2D"]
+[node name="Bullet" type="Area2D" groups=["projectiles"]]
 script = ExtResource("1_bullet")
 monitoring = true
 monitorable = true

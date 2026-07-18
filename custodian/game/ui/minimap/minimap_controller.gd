@@ -24,6 +24,7 @@ var _refresh_accum := 0.0
 var _retry_accum := 0.0
 var _connected_procgen_id := 0
 var _expanded := false
+var _overview_mode := false
 
 
 func _ready() -> void:
@@ -79,6 +80,14 @@ func set_expanded(expanded: bool) -> void:
 func refresh_now() -> void:
 	_resolve_procgen()
 	_refresh_dynamic_nodes()
+
+
+func set_overview_mode(enabled: bool) -> void:
+	_overview_mode = enabled
+	minimap_view = get_node_or_null(minimap_view_path)
+	if minimap_view != null and minimap_view.has_method("set_overview_mode"):
+		minimap_view.call("set_overview_mode", enabled)
+	queue_redraw()
 
 
 func local_to_world(local_pos: Vector2) -> Vector2:

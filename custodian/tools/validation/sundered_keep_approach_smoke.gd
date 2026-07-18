@@ -1,7 +1,7 @@
 extends SceneTree
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
-const EXPECTED_BOUNDARY_SEGMENTS := 100
+const EXPECTED_BOUNDARY_SEGMENTS := 74
 
 const EXPECTED_ROOTS := {
 	"UnderlayRoot": -300,
@@ -164,9 +164,9 @@ func _init() -> void:
 				segment_count += 1
 		if segment_count != EXPECTED_BOUNDARY_SEGMENTS:
 			errors.append("PathBoundaryCollision expected %d thick capsule rails, got %d" % [EXPECTED_BOUNDARY_SEGMENTS, segment_count])
-		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-121.6, 1013.9), Vector2(20.4, 1028.3), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(20.4, 1028.3), Vector2(232.0, 991.1), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_100", Vector2(-179.4, 944.0), Vector2(-124.9, 1014.4), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-167.2, 1024.8), Vector2(-306.4, 969.5), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(-306.4, 969.5), Vector2(-371.1, 885.2), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_074", Vector2(-25.6, 990.7), Vector2(-166.4, 1023.7), errors)
 
 	_collect_filled_collision_polygons(scene, errors)
 	_check_camera_bounds(scene, errors)
@@ -229,7 +229,7 @@ func _init() -> void:
 			errors.append("VistaController did not raise final gate veil near exit")
 
 	if scene.get_node_or_null("ExitTransitionTrigger") != null:
-		errors.append("ExitTransitionTrigger should not auto-handoff to the old SunderedKeepMap")
+		errors.append("Legacy duplicate ExitTransitionTrigger must not coexist with EventRuntime/LevelExitTrigger")
 	_check_event_markers(scene, errors)
 
 	if errors.is_empty():
@@ -368,10 +368,14 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 		if level_exit == null:
 			errors.append("EventRuntime/LevelExitTrigger missing")
 		else:
-			if not level_exit.target_scene_path.ends_with("ReturnCausewayApproach.tscn"):
-				errors.append("Vista endpoint must target Return Causeway")
-			if level_exit.target_node_name != &"ReturnCausewayApproach":
-				errors.append("Vista endpoint must use the stable ReturnCausewayApproach node name")
+			if not bool(scene.get("bypass_return_causeway_for_keep_testing")):
+				errors.append("Vista Approach should bypass Return Causeway by default during Keep testing")
+			if not level_exit.target_scene_path.ends_with("sundered_keep_map.gd"):
+				errors.append("Default Vista endpoint must target SunderedKeepMap directly")
+			if level_exit.target_node_name != &"SunderedKeepMap":
+				errors.append("Default Vista endpoint must use the stable SunderedKeepMap node name")
+			if level_exit.target_level_id != &"sundered_keep_front_gate":
+				errors.append("Direct Vista endpoint must retain the sundered_keep_front_gate level id")
 		for forbidden_name in ["GatehouseKeyInteraction", "MainGateInteraction", "MainGateBlocker", "EnemySpawnWestSpawnNode", "EnemySpawnGateSpawnNode"]:
 			if runtime.get_node_or_null(forbidden_name) != null:
 				errors.append("EventRuntime/%s belongs in the Keep entrance, not Vista Approach" % forbidden_name)

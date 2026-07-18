@@ -31,6 +31,10 @@ const DODGE_FULL_NORTH_BODY_SHEET := "res://content/sprites/operator/runtime/act
 const DODGE_FULL_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/actions/dodge/body/operator__body__full__dodge_01__s__9f__96.png"
 const DODGE_FULL_NORTH_FX_SHEET := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__n__9f__96.png"
 const DODGE_FULL_SOUTH_FX_SHEET := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__s__9f__96.png"
+const DODGE_FAST_ATTACK_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__dodge_fast_attack_01__e__11f__96.png"
+const DODGE_FAST_ATTACK_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__dodge_fast_attack_01__w__11f__96.png"
+const DODGE_FAST_ATTACK_EAST_FX_SHEET := "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__dodge_fast_attack_01__e__11f__96.png"
+const DODGE_FAST_ATTACK_WEST_FX_SHEET := "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__dodge_fast_attack_01__w__11f__96.png"
 const HEAVY_ANTICIPATION_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_anticipation_body.png"
 const HEAVY_ATTACK_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/heavy_attack_right_3layer_7f.png"
 const BLOCK_ENTER_BODY_SHEET := "res://content/sprites/operator/runtime/curated/body/melee_2h/block_enter_body_4f.png"
@@ -263,6 +267,7 @@ func _init() -> void:
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_unarmed_parry_fx_entries())
 	_replace_animation_entries(modular_upper_fx_frames, _build_modular_field_patch_entries("upper_fx", "field_patch_use_fx"))
 	_replace_animation_entries(modular_cape_frames, _build_modular_cape_run_entries())
+	_replace_animation_entries(modular_cape_frames, _build_modular_cape_dodge_fast_attack_entries())
 	_replace_animation_if_exists(body_frames, "unarmed_death", UNARMED_DEATH_BODY_SHEET, 6, 0, 96, 96, 7.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival_down", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
@@ -276,6 +281,8 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "operator_dodge_backstep_recovery", DODGE_BACKSTEP_RECOVERY_BODY_SHEET, 4, 0, 96, 96, 18.0, false)
 	_replace_animation_if_exists(body_frames, "operator_dodge_full_north", DODGE_FULL_NORTH_BODY_SHEET, 9, 0, 96, 96, 25.0, false)
 	_replace_animation_if_exists(body_frames, "operator_dodge_full_south", DODGE_FULL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 25.0, false)
+	_replace_animation_if_exists(body_frames, "unarmed_dodge_fast_attack_right", DODGE_FAST_ATTACK_EAST_BODY_SHEET, 11, 0, 96, 96, 20.0, false)
+	_replace_animation_if_exists(body_frames, "unarmed_dodge_fast_attack_left", DODGE_FAST_ATTACK_WEST_BODY_SHEET, 11, 0, 96, 96, 20.0, false)
 	_replace_animation_if_exists(body_frames, "ranged_2h_reload", RELOAD_BODY_SHEET, 4, 0, 96, 96, 10.0, false)
 	_replace_animation(body_frames, "melee_2h_block_enter", BLOCK_ENTER_BODY_SHEET, 4, 0, 96, 96, 10.0, false)
 	_replace_animation(body_frames, "melee_2h_block_hold", BLOCK_HOLD_BODY_SHEET, 1, 0, 96, 96, 1.0, true)
@@ -300,6 +307,8 @@ func _init() -> void:
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_attack_fast_fx_right", UNARMED_FAST_FX_EAST_SHEET, 3, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_attack_fast_fx_up", UNARMED_FAST_FX_NORTH_SHEET, 6, 0, 96, 96, 12.0, false)
 	_replace_animation_entries(melee_overlay_frames, UNARMED_FAST_STRIKE_FX_SLICES)
+	_replace_animation_if_exists(melee_overlay_frames, "unarmed_dodge_fast_attack_fx_right", DODGE_FAST_ATTACK_EAST_FX_SHEET, 11, 0, 96, 96, 20.0, false)
+	_replace_animation_if_exists(melee_overlay_frames, "unarmed_dodge_fast_attack_fx_left", DODGE_FAST_ATTACK_WEST_FX_SHEET, 11, 0, 96, 96, 20.0, false)
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_attack_heavy_fx_right", UNARMED_HEAVY_FX_EAST_SHEET, 7, 0, 96, 96, 10.0, false)
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_attack_heavy_fx_left", UNARMED_HEAVY_FX_WEST_SHEET, 7, 0, 96, 96, 10.0, false)
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_attack_heavy_fx_down", UNARMED_HEAVY_FX_SOUTH_SHEET, 7, 0, 96, 96, 10.0, false)
@@ -834,6 +843,28 @@ func _build_modular_cape_run_entries() -> Array:
 		var directional_entry := entry.duplicate()
 		directional_entry["animation"] = "unarmed_run_cape_%s" % str(direction_spec["suffix"])
 		entries.append(directional_entry)
+	return entries
+
+
+func _build_modular_cape_dodge_fast_attack_entries() -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed"
+	var entries: Array = []
+	for direction_spec in [
+		{"dir": "e", "suffix": "right"},
+		{"dir": "w", "suffix": "left"},
+	]:
+		var sheet := _find_modular_action_sheet(root, "wardrobe_cape", "unarmed", "dodge_fast_attack_01", str(direction_spec["dir"]))
+		if sheet.is_empty():
+			continue
+		entries.append({
+			"animation": "unarmed_dodge_fast_attack_cape_%s" % str(direction_spec["suffix"]),
+			"path": str(sheet["path"]),
+			"frames": int(sheet["frames"]),
+			"frame_width": 96,
+			"frame_height": 96,
+			"fps": 20.0,
+			"loop": false,
+		})
 	return entries
 
 

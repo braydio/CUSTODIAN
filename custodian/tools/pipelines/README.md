@@ -29,6 +29,9 @@ compatibility outputs, or runtime resource rebuilds.
 - Modular Operator sheets use
   `operator__<modular_layer>__<loadout>__<action>__<direction>__<frames>f__<frame_size>.png`;
   generic modular actions become stable runtime modules, while live playback wiring remains deliberate.
+- The intake aliases `operator__cape__...` to the stable `wardrobe_cape` module layer and accepts
+  `operator__modular_ranged_weapon__...`; `relaxed_carbine_mk1_01` normalizes to the live ranged `relaxed_01`
+  action and outranks generic relaxed weapon art.
 - Operator modular source sheets live under `content/sprites/operator/new_operator/modular/`; generated stable
   modules live under `content/sprites/operator/runtime/modules/new_operator/`. Runtime scenes should not read
   directly from `_pipeline/` or from QA preview output.

@@ -390,6 +390,14 @@ offset_right = 260.0
 offset_bottom = 68.0
 text = "HEALTH: 100/100"
 
+[node name="FieldPatchPrompt" type="Label" parent="UI"]
+visible = false
+offset_left = 20.0
+offset_top = 68.0
+offset_right = 300.0
+offset_bottom = 92.0
+text = "+ FIELD PATCH READY [P]"
+
 [node name="CameraFollowLabel" type="Label" parent="UI" unique_id=170044321]
 offset_left = 20.0
 offset_top = 96.0
@@ -574,7 +582,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="GridChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips"]
-custom_minimum_size = Vector2(112, 0)
+custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 text = "GRID:STABLE"
 horizontal_alignment = 1
@@ -597,57 +605,72 @@ theme_override_constants/separation = 8
 layout_mode = 2
 text = "PAGES"
 
-[node name="PageButtons" type="VBoxContainer" parent="UI/TerminalPanel/Body/NavRail" unique_id=-2137803082]
+[node name="PageButtonsScroll" type="ScrollContainer" parent="UI/TerminalPanel/Body/NavRail"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="PageButtons" type="VBoxContainer" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll" unique_id=-2137803082]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="OverviewButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803081]
+[node name="OverviewButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803081]
 layout_mode = 2
 text = "OVERVIEW"
 
-[node name="StatusButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803080]
+[node name="StatusButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803080]
 layout_mode = 2
 text = "STATUS"
 
-[node name="SectorsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803079]
+[node name="SectorsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803079]
 layout_mode = 2
 text = "SECTORS"
 
-[node name="PowerButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803078]
+[node name="PowerButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803078]
 layout_mode = 2
 text = "POWER"
 
-[node name="DefenseButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803077]
+[node name="DefenseButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803077]
 layout_mode = 2
 text = "DEFENSE"
 
-[node name="SensorsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803076]
+[node name="SensorsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803076]
 layout_mode = 2
 text = "SENSORS"
 
-[node name="IncidentsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803075]
+[node name="IncidentsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803075]
 layout_mode = 2
 text = "INCIDENTS"
 
-[node name="ArchiveButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803074]
+[node name="ArchiveButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803074]
 layout_mode = 2
 text = "ARCHIVE"
 
-[node name="ReconButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803073]
+[node name="ReconButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803073]
 layout_mode = 2
 text = "RECON"
 
-[node name="ContractsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803072]
+[node name="ContractsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803072]
 layout_mode = 2
 text = "CONTRACTS"
 
-[node name="HistoryButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803071]
+[node name="HistoryButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803071]
 layout_mode = 2
 text = "HISTORY"
 
-[node name="SettingsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtons" unique_id=-2137803070]
+[node name="SettingsButton" type="Button" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll/PageButtons" unique_id=-2137803070]
 layout_mode = 2
 text = "SETTINGS"
+
+[node name="MoreButton" type="Button" parent="UI/TerminalPanel/Body/NavRail"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+focus_mode = 2
+text = "MORE / SYSTEMS"
 
 [node name="ContextSpacer" type="Control" parent="UI/TerminalPanel/Body/NavRail" unique_id=-2137803069]
 custom_minimum_size = Vector2(0, 12)

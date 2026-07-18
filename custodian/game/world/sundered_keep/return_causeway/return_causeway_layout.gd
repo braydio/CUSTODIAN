@@ -4,16 +4,17 @@ class_name ReturnCausewayLayout
 
 
 # ------------------------------------------------------------------------------
-# Return Causeway legacy standalone/reference approach — Procedural Tilemap Builder
+# Return Causeway optional production approach — Procedural Tilemap Builder
 #
-# Builds the player's arrival approach to Sundered Keep as an authored
+# Builds the longer bridge route from the Vista Approach to Sundered Keep as an
+# authored
 # vertical slice: Arrival Beach → Return Mooring → Broken Causeway →
 # Shore Path / Buried Terminal → Intact Causeway → Gatehouse Threshold →
 # Outer Keep Yard → Transition to Sundered Keep Main Map.
 #
-# Architecture follows the same patterns as SunderedKeepMap but remains a
-# self-contained fallback/reference. The active procgen ingress bridge uses
-# game/world/approaches/sundered_keep/ for the reveal/fade approach.
+# The Vista Approach currently bypasses this branch by default for Keep testing.
+# Disable its exported bypass switch to exercise this complete production-capable
+# route; this scene must not be treated as an unexplained legacy handoff.
 # ------------------------------------------------------------------------------
 
 # -- Constants ---------------------------------------------------------------
@@ -88,6 +89,11 @@ func _ready() -> void:
 	add_to_group("connected_map")
 	add_to_group("return_causeway")
 	_build_once()
+	_obs_log(&"sundered_keep_flow_entered_return_causeway", {
+		"entry_position": get_entry_position(),
+		"camera_bounds": get_camera_bounds(),
+		"flow_branch": "return_causeway",
+	})
 	set_process(true)
 
 
@@ -166,6 +172,7 @@ func _build_once() -> void:
 	)
 
 	_create_layers()
+	_build_entry_affordance()
 	_ensure_elevation_map()
 	_build_parallax_backdrop()
 	_build_ocean_backdrop()
@@ -210,6 +217,34 @@ func _create_layers() -> void:
 		layer.z_index = z_by_name[name]
 		add_child(layer)
 		_layers[name] = layer
+
+
+func _build_entry_affordance() -> void:
+	var world_ui := _layers.get("WorldUI") as Node2D
+	if world_ui == null:
+		return
+	var title := Label.new()
+	title.name = "ReturnCausewayEntryAffordance"
+	title.text = "RETURN CAUSEWAY\nRE-ESTABLISHING KEEP APPROACH"
+	title.position = _tile_center(ENTRANCE_TILE) + Vector2(-240.0, -122.0)
+	title.size = Vector2(480.0, 72.0)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title.add_theme_font_size_override("font_size", 18)
+	title.add_theme_color_override("font_color", Color(0.84, 0.92, 0.96, 0.96))
+	title.add_theme_color_override("font_shadow_color", Color(0.02, 0.03, 0.04, 0.92))
+	title.add_theme_constant_override("shadow_offset_x", 2)
+	title.add_theme_constant_override("shadow_offset_y", 2)
+	world_ui.add_child(title)
+
+
+func _obs_log(kind: StringName, data: Dictionary = {}) -> void:
+	if Engine.is_editor_hint() or get_tree() == null:
+		return
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", kind, data)
 
 
 # -- Sector Builders -----------------------------------------------------------
