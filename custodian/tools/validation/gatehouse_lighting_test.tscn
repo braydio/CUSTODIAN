@@ -1,0 +1,185 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://tools/validation/gatehouse_lighting_test.gd" id="1_test"]
+[ext_resource type="Script" path="res://game/world/lighting/world_lighting_director.gd" id="2_director"]
+[ext_resource type="Resource" path="res://content/lighting/profiles/sundered_keep_gatehouse_interior.tres" id="3_profile"]
+[ext_resource type="PackedScene" path="res://game/world/lighting/light_rig_2d.tscn" id="4_rig"]
+[ext_resource type="Script" path="res://game/world/lighting/lighting_zone_2d.gd" id="5_zone"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/lighting/light_cookie_window_slash_192x128.png" id="6_window"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/lighting/light_cookie_radial_broken_128.png" id="7_broken"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/lighting/light_cookie_radial_soft_128.png" id="8_soft"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/shadows/contact_shadow_prop_large_96x48.png" id="9_shadow_large"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/shadows/contact_shadow_prop_small_64x32.png" id="10_shadow_small"]
+
+[sub_resource type="RectangleShape2D" id="ZoneShape"]
+size = Vector2(720, 420)
+
+[sub_resource type="OccluderPolygon2D" id="PillarOccluder"]
+polygon = PackedVector2Array(-18, -32, 18, -32, 18, 32, -18, 32)
+
+[sub_resource type="OccluderPolygon2D" id="GateOccluder"]
+polygon = PackedVector2Array(-180, -22, 180, -22, 180, 22, -180, 22)
+
+[sub_resource type="CanvasItemMaterial" id="DustMaterial"]
+blend_mode = 1
+
+[sub_resource type="CanvasItemMaterial" id="ShadowMaterial"]
+blend_mode = 3
+
+[node name="GatehouseLightingTest" type="Node2D"]
+script = ExtResource("1_test")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.055, 0.06, 0.075, 1)
+
+[node name="DirectionalLight2D" type="DirectionalLight2D" parent="."]
+rotation = -1.0821
+color = Color(0.38, 0.45, 0.58, 1)
+energy = 0.14
+
+[node name="WorldLightingDirector" type="Node2D" parent="."]
+script = ExtResource("2_director")
+canvas_modulate_path = NodePath("../CanvasModulate")
+directional_light_path = NodePath("../DirectionalLight2D")
+default_profile = ExtResource("3_profile")
+
+[node name="Floor" type="Polygon2D" parent="."]
+color = Color(0.12, 0.125, 0.14, 1)
+polygon = PackedVector2Array(-360, -210, 360, -210, 360, 210, -360, 210)
+
+[node name="WindowLight" parent="." instance=ExtResource("4_rig")]
+position = Vector2(-110, -92)
+rotation = 0.42
+light_color = Color(0.56, 0.72, 1, 1)
+energy = 1.25
+light_texture = ExtResource("6_window")
+glow_texture = ExtResource("6_window")
+light_texture_scale = Vector2(1.7, 1.1)
+glow_texture_scale = Vector2(1.7, 1.1)
+glow_scale = 0.9
+light_height = 76.0
+
+[node name="WestBrazier" parent="." instance=ExtResource("4_rig")]
+position = Vector2(-210, 78)
+light_color = Color(1, 0.53, 0.2, 1)
+energy = 1.45
+light_texture = ExtResource("7_broken")
+glow_texture = ExtResource("7_broken")
+pulse_enabled = true
+pulse_speed = 1.7
+pulse_amount = 0.08
+light_height = 34.0
+
+[node name="EastBrazier" parent="." instance=ExtResource("4_rig")]
+position = Vector2(205, 64)
+light_color = Color(1, 0.47, 0.17, 1)
+energy = 1.35
+light_texture = ExtResource("7_broken")
+glow_texture = ExtResource("7_broken")
+pulse_enabled = true
+pulse_speed = 1.35
+pulse_amount = 0.07
+light_height = 34.0
+
+[node name="ObjectiveLight" parent="." instance=ExtResource("4_rig")]
+position = Vector2(0, -174)
+light_color = Color(0.68, 0.82, 1, 1)
+energy = 1.6
+light_texture = ExtResource("8_soft")
+glow_texture = ExtResource("8_soft")
+light_texture_scale = Vector2(0.85, 1.25)
+glow_texture_scale = Vector2(0.85, 1.25)
+shadows_enabled = false
+
+[node name="LightingZone2D" type="Area2D" parent="."]
+script = ExtResource("5_zone")
+profile = ExtResource("3_profile")
+profile_priority = 20
+director_path = NodePath("../WorldLightingDirector")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LightingZone2D"]
+shape = SubResource("ZoneShape")
+
+[node name="WindowDust" type="AnimatedSprite2D" parent="."]
+position = Vector2(-110, -88)
+rotation = 0.42
+modulate = Color(0.64, 0.78, 1, 0.42)
+material = SubResource("DustMaterial")
+
+[node name="WestBrazierShadow" type="Sprite2D" parent="."]
+position = Vector2(-210, 91)
+texture = ExtResource("10_shadow_small")
+modulate = Color(0.15, 0.19, 0.26, 0.34)
+material = SubResource("ShadowMaterial")
+
+[node name="EastBrazierShadow" type="Sprite2D" parent="."]
+position = Vector2(205, 77)
+texture = ExtResource("10_shadow_small")
+modulate = Color(0.15, 0.19, 0.26, 0.34)
+material = SubResource("ShadowMaterial")
+
+[node name="PillarWest" type="Node2D" parent="."]
+position = Vector2(-125, 20)
+
+[node name="ContactShadow" type="Sprite2D" parent="PillarWest"]
+position = Vector2(0, 26)
+texture = ExtResource("9_shadow_large")
+modulate = Color(0.14, 0.18, 0.25, 0.36)
+material = SubResource("ShadowMaterial")
+
+[node name="Visual" type="Polygon2D" parent="PillarWest"]
+color = Color(0.23, 0.22, 0.25, 1)
+polygon = PackedVector2Array(-18, -46, 18, -46, 22, 34, -22, 34)
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="PillarWest"]
+occluder = SubResource("PillarOccluder")
+
+[node name="PillarCenter" type="Node2D" parent="."]
+position = Vector2(8, -18)
+
+[node name="ContactShadow" type="Sprite2D" parent="PillarCenter"]
+position = Vector2(0, 26)
+texture = ExtResource("9_shadow_large")
+modulate = Color(0.14, 0.18, 0.25, 0.36)
+material = SubResource("ShadowMaterial")
+
+[node name="Visual" type="Polygon2D" parent="PillarCenter"]
+color = Color(0.2, 0.2, 0.23, 1)
+polygon = PackedVector2Array(-18, -46, 18, -46, 22, 34, -22, 34)
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="PillarCenter"]
+occluder = SubResource("PillarOccluder")
+
+[node name="PillarEast" type="Node2D" parent="."]
+position = Vector2(138, 34)
+
+[node name="ContactShadow" type="Sprite2D" parent="PillarEast"]
+position = Vector2(0, 26)
+texture = ExtResource("9_shadow_large")
+modulate = Color(0.14, 0.18, 0.25, 0.36)
+material = SubResource("ShadowMaterial")
+
+[node name="Visual" type="Polygon2D" parent="PillarEast"]
+color = Color(0.22, 0.21, 0.24, 1)
+polygon = PackedVector2Array(-18, -46, 18, -46, 22, 34, -22, 34)
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="PillarEast"]
+occluder = SubResource("PillarOccluder")
+
+[node name="GateWall" type="Node2D" parent="."]
+position = Vector2(0, -184)
+
+[node name="Visual" type="Polygon2D" parent="GateWall"]
+color = Color(0.17, 0.17, 0.2, 1)
+polygon = PackedVector2Array(-180, -22, -46, -22, -46, 22, 46, 22, 46, -22, 180, -22, 180, 22, -180, 22)
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="GateWall"]
+occluder = SubResource("GateOccluder")
+
+[node name="ObjectiveDoor" type="Polygon2D" parent="."]
+position = Vector2(0, -180)
+color = Color(0.42, 0.56, 0.72, 1)
+polygon = PackedVector2Array(-34, -18, 34, -18, 34, 18, -34, 18)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(1.25, 1.25)

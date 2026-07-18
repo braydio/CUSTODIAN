@@ -7,6 +7,8 @@ signal placement_mode_changed(is_placing: bool)
 signal turret_placed(turret: Node2D)
 signal turret_dismantled(turret: Node2D, refund: int)
 signal turret_picked_up(turret_type: String)
+signal build_token_placed(instance: Node2D, build_token_id: String)
+signal build_placement_failed(build_token_id: String, reason: String)
 
 const TURRET_COSTS := {
 	"gunner": 10,
@@ -26,6 +28,18 @@ const TURRET_BUILD_TOKENS := {
 	"gunner": "turret_basic",
 }
 
+const BUILD_TOKEN_TO_PLACEABLE := {
+	"turret_basic": {
+		"placeable_type": "gunner",
+		"kind": "turret",
+	},
+	"barricade_light": {
+		"placeable_type": "light_barricade",
+		"kind": "structure",
+		"scene": preload("res://game/actors/structures/light_barricade.tscn"),
+	},
+}
+
 const MAX_DEFAULT_TURRETS := 10
 const TURRET_BUILD_ORDER := ["gunner", "blaster", "repeater", "sniper"]
 
@@ -41,10 +55,13 @@ var _selected_turret_type: String = ""
 var _ghost_preview: Node2D = null
 var _placement_valid: bool = false
 var _placed_turrets: Array[Node2D] = []
+var _placed_structures: Array[Node2D] = []
 var _carried_turret_data: Dictionary = {}
 var _preview_override_active: bool = false
 var _preview_override_world_pos: Vector2 = Vector2.ZERO
 var _build_cycle_index: int = -1
+var _selected_build_token: String = ""
+var _selected_placeable_type: String = ""
 
 var _game_state: Node = null
 var _operator: Node2D = null
@@ -76,6 +93,17 @@ func _create_ghost_preview() -> void:
 	sprite.name = "Sprite"
 	_ghost_preview.add_child(sprite)
 
+	var footprint := Polygon2D.new()
+	footprint.name = "Footprint"
+	footprint.polygon = PackedVector2Array([
+		Vector2(-30.0, -14.0),
+		Vector2(30.0, -14.0),
+		Vector2(30.0, 14.0),
+		Vector2(-30.0, 14.0),
+	])
+	footprint.color = Color(0.55, 0.72, 0.38, 0.55)
+	_ghost_preview.add_child(footprint)
+
 
 func _input(event: InputEvent) -> void:
 	# B key - cycle placement mode or dismantle nearby turret
@@ -93,12 +121,12 @@ func _input(event: InputEvent) -> void:
 		return
 	
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		_attempt_place_turret(_get_world_mouse_position())
+		_attempt_place_selected(_get_world_mouse_position())
 
 
 func _handle_build_input() -> void:
 	if _is_placing:
-		if bool(_carried_turret_data.get("active", false)):
+		if bool(_carried_turret_data.get("active", false)) or _selected_turret_type.is_empty():
 			exit_placement_mode()
 		else:
 			_cycle_to_next_turret_type()
@@ -109,31 +137,13 @@ func _handle_build_input() -> void:
 		_attempt_dismantle(turret_under_cursor)
 		return
 	
-	if not _cycle_to_next_turret_type(true):
-		push_warning("[TurretPlacement] No turret type available")
+	_cycle_to_next_turret_type(true)
 
 
 func _attempt_dismantle(turret: Node2D) -> void:
-	if not _placed_turrets.has(turret):
-		return
-	
-	var refund := 5 # Default fallback
-	# Try to determine refund based on turret type
-	for type in TURRET_COSTS.keys():
-		if turret_scenes.has(type):
-			var scene = turret_scenes[type]
-			if turret.scene_file_path == scene.resource_path:
-				refund = TURRET_REFUNDS.get(type, 5)
-				break
-	
-	_placed_turrets.erase(turret)
-	
-	if _game_state != null and _game_state.has("materials"):
-		_game_state.materials += refund
-	
-	turret.queue_free()
-	turret_dismantled.emit(turret, refund)
-	print("[TurretPlacement] Dismantled turret, refunded ", refund, " materials")
+	var refund := attempt_dismantle(turret)
+	if refund > 0:
+		print("[TurretPlacement] Dismantled turret, refunded ", refund, " materials")
 
 
 func _cycle_to_next_turret_type(include_current_index: bool = false) -> bool:
@@ -196,6 +206,7 @@ func enter_placement_mode(turret_type: String) -> bool:
 		return false
 	
 	_selected_turret_type = turret_type
+	_selected_placeable_type = turret_type
 	_build_cycle_index = TURRET_BUILD_ORDER.find(turret_type)
 	_is_placing = true
 	_ghost_preview.visible = true
@@ -211,6 +222,8 @@ func enter_placement_mode(turret_type: String) -> bool:
 func exit_placement_mode() -> void:
 	_is_placing = false
 	_selected_turret_type = ""
+	_selected_build_token = ""
+	_selected_placeable_type = ""
 	_ghost_preview.visible = false
 	_preview_override_active = false
 	placement_mode_changed.emit(false)
@@ -224,7 +237,7 @@ func is_placing() -> bool:
 
 
 func get_selected_type() -> String:
-	return _selected_turret_type
+	return _selected_turret_type if not _selected_turret_type.is_empty() else _selected_placeable_type
 
 
 func get_turret_count() -> int:
@@ -244,10 +257,7 @@ func _update_ghost_preview(mouse_pos: Vector2) -> void:
 	
 	_placement_valid = _can_place_at(mouse_pos)
 	
-	if _placement_valid:
-		sprite.modulate = Color(1, 1, 1, 0.5)
-	else:
-		sprite.modulate = Color(1, 0, 0, 0.5)
+	_ghost_preview.modulate = Color(0.75, 1.0, 0.65, 0.7) if _placement_valid else Color(1.0, 0.35, 0.35, 0.7)
 	
 	_ghost_preview.global_position = mouse_pos
 
@@ -274,48 +284,57 @@ func _is_walkable_floor(position: Vector2) -> bool:
 
 
 func _is_occupied(position: Vector2) -> bool:
-	var check_radius := 20.0
-	for turret in _placed_turrets:
-		if turret.global_position.distance_to(position) < check_radius:
-			return true
-	
-	var enemies := get_tree().get_nodes_in_group("enemy")
-	for enemy in enemies:
-		if enemy.global_position.distance_to(position) < check_radius:
+	var check_radius := 40.0
+	var occupied_nodes: Array[Node] = []
+	for group_name in ["player", "enemy", "enemies", "turret", "structure"]:
+		for node in get_tree().get_nodes_in_group(group_name):
+			if not occupied_nodes.has(node):
+				occupied_nodes.append(node)
+	for node in occupied_nodes:
+		if node is Node2D and is_instance_valid(node) and (node as Node2D).global_position.distance_to(position) < check_radius:
 			return true
 	
 	return false
 
 
-func _attempt_place_turret(position: Vector2) -> void:
+func _attempt_place_selected(position: Vector2) -> bool:
+	if not _selected_turret_type.is_empty():
+		return _attempt_place_turret(position)
+	return _attempt_place_build_token(position)
+
+
+func _attempt_place_turret(position: Vector2) -> bool:
 	if not _can_place_at(position):
-		push_warning("[TurretPlacement] Cannot place here")
-		return
+		_emit_build_placement_failed("invalid_site")
+		return false
 	
 	var cost: int = int(TURRET_COSTS.get(_selected_turret_type, 0))
 	var is_redeploy := bool(_carried_turret_data.get("active", false)) and String(_carried_turret_data.get("type", "")) == _selected_turret_type
 	var used_build_token := false
 	if not is_redeploy:
 		used_build_token = _consume_build_token_for_turret(_selected_turret_type)
-	if not is_redeploy and not used_build_token:
+	if not is_redeploy and not _selected_build_token.is_empty() and not used_build_token:
+		_emit_build_placement_failed("token_unavailable")
+		return false
+	if not is_redeploy and _selected_build_token.is_empty() and not used_build_token:
 		if _game_state and _game_state.has_method("add_materials"):
 			_game_state.add_materials(-cost)
-		elif _game_state and _game_state.has("materials"):
-			_game_state.materials -= cost
 	
 	var scene: PackedScene = turret_scenes.get(_selected_turret_type, null)
 	if scene == null:
 		if used_build_token:
 			_refund_build_token_for_turret(_selected_turret_type)
 		push_error("[TurretPlacement] Missing scene for: " + _selected_turret_type)
-		return
+		_emit_build_placement_failed("scene_unavailable")
+		return false
 	
 	var turret: Node2D = scene.instantiate() as Node2D
 	if turret == null:
 		if used_build_token:
 			_refund_build_token_for_turret(_selected_turret_type)
 		push_error("[TurretPlacement] Failed to instantiate turret")
-		return
+		_emit_build_placement_failed("scene_instantiate_failed")
+		return false
 	
 	get_parent().add_child(turret)
 	turret.global_position = position
@@ -330,8 +349,41 @@ func _attempt_place_turret(position: Vector2) -> void:
 	
 	_placed_turrets.append(turret)
 	turret_placed.emit(turret)
+	var placed_token_id := _selected_build_token
+	if not placed_token_id.is_empty():
+		build_token_placed.emit(turret, placed_token_id)
 	
 	exit_placement_mode()
+	return true
+
+
+func _attempt_place_build_token(position: Vector2) -> bool:
+	var build_token_id := _selected_build_token
+	if build_token_id.is_empty() or not BUILD_TOKEN_TO_PLACEABLE.has(build_token_id):
+		_emit_build_placement_failed("unknown_build_token")
+		return false
+	if not _can_place_at(position):
+		_emit_build_placement_failed("invalid_site")
+		return false
+	var definition: Dictionary = BUILD_TOKEN_TO_PLACEABLE[build_token_id]
+	var scene: PackedScene = definition.get("scene", null)
+	if scene == null:
+		_emit_build_placement_failed("scene_unavailable")
+		return false
+	var instance := scene.instantiate() as Node2D
+	if instance == null:
+		_emit_build_placement_failed("scene_instantiate_failed")
+		return false
+	if not _consume_build_token(build_token_id):
+		instance.free()
+		_emit_build_placement_failed("token_unavailable")
+		return false
+	get_parent().add_child(instance)
+	instance.global_position = position
+	_placed_structures.append(instance)
+	build_token_placed.emit(instance, build_token_id)
+	exit_placement_mode()
+	return true
 
 
 func set_preview_world_position(position: Vector2) -> bool:
@@ -348,12 +400,15 @@ func clear_preview_world_override() -> void:
 
 
 func attempt_place_turret_at(position: Vector2) -> bool:
+	if not _is_placing or _selected_turret_type.is_empty():
+		return false
+	return _attempt_place_turret(position)
+
+
+func attempt_place_build_at(position: Vector2) -> bool:
 	if not _is_placing:
 		return false
-	if not _can_place_at(position):
-		return false
-	_attempt_place_turret(position)
-	return true
+	return _attempt_place_selected(position)
 
 
 func get_preview_world_position() -> Vector2:
@@ -368,6 +423,11 @@ func get_placement_valid() -> bool:
 
 func get_placed_turrets() -> Array[Node2D]:
 	return _placed_turrets
+
+
+func get_placed_structures() -> Array[Node2D]:
+	_prune_placed_structures()
+	return _placed_structures
 
 
 func pick_up_turret(turret: Node2D) -> bool:
@@ -440,8 +500,55 @@ func get_build_token_for_turret_type(turret_type: String) -> String:
 	return _get_build_token_for_turret(turret_type)
 
 
+func get_placeable_type_for_build_token(build_token_id: String) -> String:
+	var definition: Dictionary = BUILD_TOKEN_TO_PLACEABLE.get(build_token_id, {})
+	return String(definition.get("placeable_type", ""))
+
+
+func enter_build_token_placement(build_token_id: String) -> bool:
+	var definition: Dictionary = BUILD_TOKEN_TO_PLACEABLE.get(build_token_id, {})
+	if definition.is_empty() or not _has_build_token(build_token_id):
+		return false
+	var placeable_type := String(definition.get("placeable_type", ""))
+	var kind := String(definition.get("kind", ""))
+	_selected_build_token = build_token_id
+	_selected_placeable_type = placeable_type
+	if kind == "turret":
+		if enter_placement_mode(placeable_type):
+			return true
+		_selected_build_token = ""
+		_selected_placeable_type = ""
+		return false
+	if kind != "structure" or definition.get("scene", null) == null:
+		_selected_build_token = ""
+		_selected_placeable_type = ""
+		return false
+	_selected_turret_type = ""
+	_is_placing = true
+	_ghost_preview.visible = true
+	placement_mode_changed.emit(true)
+	if _ui != null and _ui.has_method("enter_placement_mode_ui"):
+		_ui.enter_placement_mode_ui()
+	return true
+
+
 func _get_build_inventory() -> Node:
 	return get_node_or_null("/root/BuildInventory")
+
+
+func _has_build_token(build_token_id: String) -> bool:
+	var build_inventory := _get_build_inventory()
+	return build_inventory != null and int(build_inventory.call("get_amount", build_token_id)) > 0
+
+
+func _consume_build_token(build_token_id: String) -> bool:
+	var build_inventory := _get_build_inventory()
+	return build_inventory != null and bool(build_inventory.call("remove", build_token_id, 1))
+
+
+func _emit_build_placement_failed(reason: String) -> void:
+	if not _selected_build_token.is_empty():
+		build_placement_failed.emit(_selected_build_token, reason)
 
 
 func _infer_turret_type(turret: Node2D) -> String:
@@ -474,17 +581,18 @@ func _prune_placed_turrets() -> void:
 	)
 
 
+func _prune_placed_structures() -> void:
+	_placed_structures = _placed_structures.filter(func(structure: Node2D) -> bool:
+		return structure != null and is_instance_valid(structure)
+	)
+
+
 func get_tilemap_layer(layer_name: String) -> TileMapLayer:
-	var root := get_tree().root
-	var world := root.get_node_or_null("GameRoot/World")
-	if world == null:
+	if layer_name != "Floor":
 		return null
-	
-	var procgen_map := world.get_node_or_null("ProcGenMap")
-	if procgen_map and procgen_map.has("procgen_node"):
-		var tilemap: TileMapLayer = procgen_map.floor_tilemap
-		return tilemap
-	
+	var procgen_map := get_tree().get_first_node_in_group("procgen_tilemap")
+	if procgen_map != null and procgen_map.has_method("get_floor_tilemap"):
+		return procgen_map.call("get_floor_tilemap") as TileMapLayer
 	return null
 
 
@@ -496,15 +604,17 @@ func _get_world_mouse_position() -> Vector2:
 
 
 func attempt_dismantle(turret: Node2D) -> int:
+	_prune_placed_turrets()
 	if not _placed_turrets.has(turret):
 		return 0
 	
-	var refund: int = int(TURRET_REFUNDS.get(_selected_turret_type, 0))
+	var turret_type := _infer_turret_type(turret)
+	var refund: int = int(TURRET_REFUNDS.get(turret_type, 5))
 	
 	_placed_turrets.erase(turret)
 	
-	if _game_state and _game_state.has("materials"):
-		_game_state.materials += refund
+	if _game_state and _game_state.has_method("add_materials"):
+		_game_state.add_materials(refund)
 	
 	turret.queue_free()
 	turret_dismantled.emit(turret, refund)

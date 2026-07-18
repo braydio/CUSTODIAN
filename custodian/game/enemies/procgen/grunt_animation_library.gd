@@ -117,6 +117,18 @@ const ANIMATION_SPECS := {
 		"loop": false,
 		"required": true,
 	},
+	"critical_execution_victim_e": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__e__8f__96.png",
+		"fps": 12.0,
+		"loop": false,
+		"required": true,
+	},
+	"critical_execution_victim_w": {
+		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__w__8f__96.png",
+		"fps": 12.0,
+		"loop": false,
+		"required": true,
+	},
 	"crit_recovery_s": {
 		"path": "res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__crit_recovery_01__s__5f__96.png",
 		"fps": 8.0,

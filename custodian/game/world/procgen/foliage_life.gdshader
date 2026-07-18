@@ -6,11 +6,11 @@ shader_type canvas_item;
 */
 
 uniform bool wind_enabled = true;
-uniform float wind_strength_px : hint_range(0.0, 4.0, 0.05) = 0.8;
+uniform float wind_strength_px : hint_range(0.0, 4.0, 0.05) = 1.2;
 uniform float wind_speed : hint_range(0.0, 4.0, 0.05) = 0.9;
 uniform float wind_spatial_frequency : hint_range(0.001, 0.2, 0.001) = 0.025;
 uniform float wind_phase = 0.0;
-uniform float gust_amount : hint_range(0.0, 1.0, 0.01) = 0.35;
+uniform float gust_amount : hint_range(0.0, 1.0, 0.01) = 0.42;
 uniform float top_flex_power : hint_range(0.5, 4.0, 0.1) = 1.7;
 
 uniform bool bubble_enabled = false;

@@ -13,6 +13,34 @@ class_name LightRig2D
 @export_range(0.0, 20.0, 0.01) var pulse_speed: float = 2.0
 @export_range(0.0, 1.0, 0.01) var pulse_amount: float = 0.12
 @export_range(0.1, 8.0, 0.01) var glow_scale: float = 1.0
+@export var light_texture: Texture2D:
+	set(value):
+		light_texture = value
+		if is_node_ready():
+			_ensure_glow_texture()
+			_apply_light_settings()
+@export var glow_texture: Texture2D:
+	set(value):
+		glow_texture = value
+		if is_node_ready():
+			_ensure_glow_texture()
+			_apply_light_settings()
+@export var shadows_enabled: bool = true:
+	set(value):
+		shadows_enabled = value
+		_apply_light_settings()
+@export_range(0.0, 256.0, 1.0) var light_height: float = 32.0:
+	set(value):
+		light_height = value
+		_apply_light_settings()
+@export var light_texture_scale: Vector2 = Vector2.ONE:
+	set(value):
+		light_texture_scale = value
+		_apply_light_settings()
+@export var glow_texture_scale: Vector2 = Vector2.ONE:
+	set(value):
+		glow_texture_scale = value
+		_apply_light_settings()
 
 @onready var point_light: PointLight2D = get_node_or_null("PointLight2D") as PointLight2D
 @onready var glow_sprite: Sprite2D = get_node_or_null("GlowSprite") as Sprite2D
@@ -38,17 +66,24 @@ func _apply_light_settings(pulse_multiplier: float = 1.0) -> void:
 	if point_light != null:
 		point_light.color = light_color
 		point_light.energy = energy * pulse_multiplier
+		point_light.shadow_enabled = shadows_enabled
+		point_light.height = light_height
+		point_light.scale = light_texture_scale
+		if light_texture != null:
+			point_light.texture = light_texture
 	if glow_sprite != null:
 		glow_sprite.modulate = Color(light_color.r, light_color.g, light_color.b, clampf(0.2 + energy * 0.22, 0.0, 1.0))
-		glow_sprite.scale = Vector2.ONE * glow_scale * pulse_multiplier
+		glow_sprite.scale = glow_texture_scale * glow_scale * pulse_multiplier
+		if glow_texture != null:
+			glow_sprite.texture = glow_texture
 
 
 func _ensure_glow_texture() -> void:
-	var texture := _get_or_create_glow_texture()
-	if point_light != null and point_light.texture == null:
-		point_light.texture = texture
-	if glow_sprite != null and glow_sprite.texture == null:
-		glow_sprite.texture = texture
+	var fallback_texture := _get_or_create_glow_texture()
+	if point_light != null:
+		point_light.texture = light_texture if light_texture != null else fallback_texture
+	if glow_sprite != null:
+		glow_sprite.texture = glow_texture if glow_texture != null else fallback_texture
 		var material := CanvasItemMaterial.new()
 		material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 		glow_sprite.material = material

@@ -506,10 +506,11 @@ horizontal_alignment = 1
 
 [node name="TerminalPanel" type="Panel" parent="UI" unique_id=760134112]
 visible = false
-offset_left = 72.0
-offset_top = 40.0
-offset_right = 1294.0
-offset_bottom = 704.0
+z_index = 10
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 1248.0
+offset_bottom = 688.0
 
 [node name="Header" type="Panel" parent="UI/TerminalPanel" unique_id=1714410557]
 layout_mode = 0
@@ -518,31 +519,66 @@ offset_top = 8.0
 offset_right = 1214.0
 offset_bottom = 56.0
 
-[node name="Eyebrow" type="Label" parent="UI/TerminalPanel/Header" unique_id=1814410557]
-layout_mode = 0
-offset_left = 12.0
-offset_top = 6.0
-offset_right = 360.0
-offset_bottom = 22.0
-text = "CUSTODIAN NODE // LINKING"
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Header"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = -10.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Title" type="Label" parent="UI/TerminalPanel/Header" unique_id=103289056]
-layout_mode = 0
-offset_left = 302.0
-offset_top = 14.0
-offset_right = 820.0
-offset_bottom = 48.0
-text = "NO CONTRACT LOCK"
+[node name="HeaderRow" type="HBoxContainer" parent="UI/TerminalPanel/Header/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Eyebrow" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow" unique_id=1814410557]
+custom_minimum_size = Vector2(172, 0)
+layout_mode = 2
+text = "CUSTODIAN NODE"
+vertical_alignment = 1
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow" unique_id=103289056]
+custom_minimum_size = Vector2(148, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "OVERVIEW"
+vertical_alignment = 1
+
+[node name="StatusChips" type="HBoxContainer" parent="UI/TerminalPanel/Header/Margin/HeaderRow"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="TimeChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips"]
+custom_minimum_size = Vector2(82, 0)
+layout_mode = 2
+text = "T:--:--"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Target" type="Label" parent="UI/TerminalPanel/Header" unique_id=292939273]
-layout_mode = 0
-offset_left = 824.0
-offset_top = 12.0
-offset_right = 1198.0
-offset_bottom = 44.0
-text = "SIM: 60 TPS | THREAT: LOW | POWER: --"
-horizontal_alignment = 2
+[node name="ThreatChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips"]
+custom_minimum_size = Vector2(112, 0)
+layout_mode = 2
+text = "THREAT:STABLE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PhaseChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips"]
+custom_minimum_size = Vector2(154, 0)
+layout_mode = 2
+text = "PHASE:FREE ROAM"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GridChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips"]
+custom_minimum_size = Vector2(112, 0)
+layout_mode = 2
+text = "GRID:STABLE"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Body" type="HBoxContainer" parent="UI/TerminalPanel" unique_id=1510856963]
 layout_mode = 0
@@ -672,7 +708,7 @@ layout_mode = 2
 text = "CONTRACTED GLOBE"
 
 [node name="PlanetPreview" type="TextureRect" parent="UI/TerminalPanel/Body/MapColumn" unique_id=111001529]
-custom_minimum_size = Vector2(0, 188)
+custom_minimum_size = Vector2(0, 144)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
@@ -682,7 +718,7 @@ layout_mode = 2
 text = "TACTICAL MINIMAP"
 
 [node name="MapPreview" parent="UI/TerminalPanel/Body/MapColumn" unique_id=1591864208 instance=ExtResource("200_minimap")]
-custom_minimum_size = Vector2(0, 250)
+custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 mouse_filter = 0
 enable_expand_toggle = false
@@ -724,7 +760,7 @@ layout_mode = 2
 text = "OPERATIONAL SUMMARY"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewOperationalPanel/Margin/Content" unique_id=-2137803052]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -750,7 +786,7 @@ layout_mode = 2
 text = "POWER SUMMARY"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewPowerPanel/Margin/Content" unique_id=-2137803047]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -776,11 +812,16 @@ layout_mode = 2
 text = "ASSAULT SUMMARY"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewAssaultPanel/Margin/Content" unique_id=-2137803042]
-custom_minimum_size = Vector2(0, 118)
+custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
+
+[node name="OverviewMapSlot" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
 
 [node name="OverviewBottomRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets" unique_id=-2137803041]
 layout_mode = 2
@@ -807,7 +848,33 @@ layout_mode = 2
 text = "PRIORITY SECTORS"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewPriorityPanel/Margin/Content" unique_id=-2137803036]
-custom_minimum_size = Vector2(0, 138)
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="OverviewIncidentPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel/Margin/Content"]
+layout_mode = 2
+text = "ACTIVE INCIDENTS"
+
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -830,10 +897,10 @@ theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewContractPanel/Margin/Content" unique_id=-2137803032]
 layout_mode = 2
-text = "CONTRACT LINK"
+text = "RECOMMENDED ATTENTION"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewContractPanel/Margin/Content" unique_id=-2137803031]
-custom_minimum_size = Vector2(0, 138)
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
@@ -1974,12 +2041,14 @@ text = "Command line accepts typed orders. SECTORS: click sector links or minima
 
 [node name="TerminalBackground" type="TextureRect" parent="UI" unique_id=999999999]
 visible = false
-z_index = -10
-offset_left = 100.0
-offset_top = 72.0
-offset_right = 1266.0
-offset_bottom = 686.0
-mouse_filter = 2
+z_index = 5
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
 stretch_mode = 1
 script = ExtResource("36_terminal_background")
 

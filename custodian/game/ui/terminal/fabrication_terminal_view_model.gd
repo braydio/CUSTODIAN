@@ -34,6 +34,7 @@ const RECIPE_PURPOSE := {
 }
 
 const READY_BUILD_ACTIONABLE := {
+	"barricade_light": true,
 	"turret_basic": true,
 }
 

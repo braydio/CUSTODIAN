@@ -11,8 +11,14 @@ const REQUIRED_ASSETS := [
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_open_hold_01__s__4f__96.png",
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_recover_01__s__5f__96.png",
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__s__8f__96.png",
+	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__e__8f__96.png",
+	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__w__8f__96.png",
 	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png",
-	"res://content/sprites/operator/runtime/fx/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
+	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__8f__96.png",
+	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__8f__96.png",
+	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
+	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__8f__96.png",
+	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__8f__96.png",
 ]
 
 const PHASE_NONE := 0
@@ -20,7 +26,8 @@ const PHASE_ENTER := 1
 const PHASE_HOLD := 2
 const PHASE_RECOVER := 3
 const PHASE_EXECUTING := 4
-const DAMAGE_TIME := 3.0 / 12.0
+const DAMAGE_TIME := 0.09 + 0.13 + 0.16 + 0.22
+const EXECUTION_HIT_STOP := 0.11
 
 var _failed := false
 
@@ -54,7 +61,7 @@ func _run() -> void:
 	var operator := OPERATOR_SCENE.instantiate()
 	root.add_child(operator)
 	var grunt := GRUNT_SCENE.instantiate()
-	grunt.global_position = Vector2(40.0, 0.0)
+	grunt.global_position = Vector2(0.0, 40.0)
 	root.add_child(grunt)
 	await process_frame
 
@@ -114,15 +121,21 @@ func _run() -> void:
 	grunt.max_health = 999.0
 	var health_before := float(grunt.health)
 	operator.call("_update_paired_execution", DAMAGE_TIME - 0.01)
-	_assert_true(is_equal_approx(float(grunt.health), health_before), "damage must remain zero before frame 3")
+	_assert_true(is_equal_approx(float(grunt.health), health_before), "damage must remain zero before contact frame 5")
 	_assert_true(operator.global_position.is_equal_approx(grunt.global_position), "shared execution roots should remain equal during playback")
 	_assert_true(operator_body.frame == operator_fx.frame and operator_body.frame == body_sprite.frame, "body, FX, and victim should share one frame index")
 	operator.call("_update_paired_execution", 0.02)
 	var health_after_impact := float(grunt.health)
-	_assert_true(health_after_impact < health_before, "crossing frame 3 should apply damage")
-	operator.call("_update_paired_execution", 0.02)
+	_assert_true(health_after_impact < health_before, "entering contact frame 5 should apply damage")
+	_assert_true(operator_body.frame == 4, "contact should display zero-based frame 4")
+	_assert_true(float(operator.get("_paired_execution_hit_stop_remaining")) > 0.0, "contact should begin execution hit-stop")
+	operator.call("_update_paired_execution", EXECUTION_HIT_STOP - 0.02)
 	_assert_true(is_equal_approx(float(grunt.health), health_after_impact), "damage should apply exactly once")
-	_assert_true(operator_body.frame == operator_fx.frame and operator_body.frame == body_sprite.frame, "all paired sprites should remain synchronized after impact")
+	_assert_true(operator_body.frame == 4, "both actors should remain frozen on contact during hit-stop")
+	_assert_true(operator_body.frame == operator_fx.frame and operator_body.frame == body_sprite.frame, "all paired sprites should remain synchronized during hit-stop")
+	operator.call("_update_paired_execution", 0.52)
+	_assert_true(bool(operator.get("_paired_execution_active")), "final settle should retain execution ownership")
+	_assert_true(operator_body.frame == 7, "final separation frame should hold before control restoration")
 	operator.call("_update_paired_execution", 1.0)
 	_assert_true(not bool(operator.get("_paired_execution_active")), "normal completion should unlock Operator")
 	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_NONE, "normal completion should release enemy execution ownership")
@@ -132,6 +145,32 @@ func _run() -> void:
 	_assert_true(operator_body.position.is_equal_approx(operator_body_original_position), "cleanup should restore Operator body local position")
 	_assert_true(operator_fx.position.is_equal_approx(operator_fx_original_position), "cleanup should restore execution FX local position")
 	_assert_true(body_sprite.position.is_equal_approx(grunt_body_original_position), "cleanup should restore victim body local position")
+
+	for direction_case in [
+		{"direction": "e", "operator_position": Vector2(200.0, -200.0), "grunt_position": Vector2(240.0, -200.0)},
+		{"direction": "w", "operator_position": Vector2(360.0, -200.0), "grunt_position": Vector2(320.0, -200.0)},
+	]:
+		var directional_operator := OPERATOR_SCENE.instantiate()
+		directional_operator.global_position = direction_case["operator_position"]
+		root.add_child(directional_operator)
+		var directional_grunt := GRUNT_SCENE.instantiate()
+		directional_grunt.global_position = direction_case["grunt_position"]
+		root.add_child(directional_grunt)
+		await process_frame
+		directional_grunt.call("apply_parry_stagger", Vector2.DOWN, 0.55, 0.0)
+		directional_operator.call("_start_critical_attack", directional_grunt)
+		var direction: String = direction_case["direction"]
+		var directional_operator_body := directional_operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
+		var directional_operator_fx := directional_operator.get_node("ModularUpperFxSprite") as AnimatedSprite2D
+		var directional_grunt_body := directional_grunt.get_node("AnimatedSprite2D") as AnimatedSprite2D
+		_assert_true(String(directional_operator.get("_paired_execution_direction")) == direction, "%s approach should select %s execution" % [direction, direction])
+		_assert_true(String(directional_operator_body.animation) == "operator_critical_execution_%s" % direction, "Operator should play the %s execution body" % direction)
+		_assert_true(String(directional_operator_fx.animation) == "operator_critical_execution_fx_%s" % direction, "Operator should play the %s execution FX" % direction)
+		_assert_true(String(directional_grunt_body.animation) == "critical_execution_victim_%s" % direction, "grunt should play the %s victim strip" % direction)
+		_assert_animation(directional_operator_body.sprite_frames, StringName("operator_critical_execution_%s" % direction), 8, 12.0, false)
+		_assert_animation(directional_operator_fx.sprite_frames, StringName("operator_critical_execution_fx_%s" % direction), 8, 12.0, false)
+		_assert_animation(directional_grunt_body.sprite_frames, StringName("critical_execution_victim_%s" % direction), 8, 12.0, false)
+		directional_operator.call("_cleanup_paired_execution", false, &"directional_smoke")
 
 	var expiry_grunt := GRUNT_SCENE.instantiate()
 	expiry_grunt.global_position = Vector2(120.0, 0.0)
@@ -189,7 +228,7 @@ func _run() -> void:
 	lethal_grunt.call("apply_parry_stagger", Vector2.LEFT, 0.55, 0.0)
 	lethal_operator.call("_start_critical_attack", lethal_grunt)
 	lethal_operator.call("_update_paired_execution", DAMAGE_TIME + 0.01)
-	_assert_true(bool(lethal_grunt.dead), "lethal frame-3 damage should route to death")
+	_assert_true(bool(lethal_grunt.dead), "lethal contact-frame damage should route to death")
 	lethal_operator.call("_update_paired_execution", 1.0)
 	_assert_true(not bool(lethal_operator.get("_paired_execution_active")), "lethal completion should still clean Operator state")
 
@@ -197,7 +236,7 @@ func _run() -> void:
 		push_error("grunt_parry_crit_reaction_smoke failed")
 		quit(1)
 		return
-	print("[GruntParryCritReactionSmoke] authored open phases and frame-3 paired execution passed.")
+	print("[GruntParryCritReactionSmoke] authored open phases and retimed contact-frame paired execution passed.")
 	quit(0)
 
 

@@ -554,6 +554,12 @@ func on_attack_impact(direction: Vector2, is_heavy: bool = false):
 	_hold_state(CameraState.HEAVY_ATTACK if is_heavy else CameraState.COMBAT, 0.12 if is_heavy else 0.08)
 
 
+func on_execution_impact(direction: Vector2):
+	# Executions use one authored directional kick instead of prolonged random shake.
+	_push_offset += direction.normalized() * 3.0
+	_hold_state(CameraState.HEAVY_ATTACK, 0.14)
+
+
 func on_damage_taken(hit_direction: Vector2):
 	_hold_state(CameraState.HITSTUN, hitstun_state_hold_time)
 	apply_shake(5.0, 0.18)

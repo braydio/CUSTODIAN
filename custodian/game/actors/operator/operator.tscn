@@ -8,6 +8,7 @@
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_melee_overlay_frames.tres" id="27_melee_overlay_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_ranged_fx_frames.tres" id="28_ranged_fx_frames"]
 [ext_resource type="Script" path="res://game/actors/effects/blob_shadow.gd" id="29_blob_shadow"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/shadows/contact_shadow_character_64x32.png" id="29_contact_shadow"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_lower_body_frames.tres" id="30_modular_lower_body_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_upper_body_frames.tres" id="31_modular_upper_body_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_sidearm_frames.tres" id="32_modular_sidearm_frames"]
@@ -92,6 +93,7 @@ show_percentage = false
 [node name="BlobShadow" type="Node2D" parent="."]
 position = Vector2(0, 13)
 script = ExtResource("29_blob_shadow")
+shadow_texture = ExtResource("29_contact_shadow")
 
 [node name="DodgeFXBackSprite" type="AnimatedSprite2D" parent="."]
 visible = false

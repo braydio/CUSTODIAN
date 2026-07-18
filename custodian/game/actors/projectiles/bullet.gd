@@ -1,5 +1,7 @@
 extends Area2D
 
+const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
+
 @export var speed: float = 760.0
 @export var damage: float = 18.0
 @export var max_lifetime: float = 1.6
@@ -174,7 +176,8 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 		var final_damage: float = get_scaled_damage()
 		if crit_chance > 0.0 and randf() < crit_chance:
 			final_damage *= crit_multiplier
-		body.take_damage(final_damage)
+		var bullet_hit_strength := CombatConstants.HitStrength.HEAVY if final_damage >= damage * 1.5 else CombatConstants.HitStrength.LIGHT
+		body.take_damage(final_damage, bullet_hit_strength)
 		_apply_game_feel(body, 60.0)
 		_spawn_impact_at(impact_position, surface_normal)
 		queue_free()

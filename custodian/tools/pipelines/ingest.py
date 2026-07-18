@@ -47,6 +47,8 @@ def main() -> int:
         "--headless",
         "--path",
         str(PROJECT_DIR),
+        "--log-file",
+        str(PROJECT_DIR / ".godot" / "sprite_pipeline_ingest.log"),
         "--script",
         "res://tools/pipelines/ingest_runtime.gd",
         "--",

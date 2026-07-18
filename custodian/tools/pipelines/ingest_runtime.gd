@@ -444,6 +444,8 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 					"--headless",
 					"--path",
 					_project_root,
+					"--log-file",
+					_project_root.path_join(".godot/sprite_pipeline_post_process.log"),
 					"--script",
 					"res://tools/pipelines/update_operator_curated_resources.gd"
 				],
@@ -478,6 +480,8 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 					"--headless",
 					"--path",
 					_project_root,
+					"--log-file",
+					_project_root.path_join(".godot/sprite_pipeline_post_process.log"),
 					"--script",
 					"res://tools/pipelines/update_operator_curated_resources.gd"
 				],
@@ -498,6 +502,8 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 					"--headless",
 					"--path",
 					_project_root,
+					"--log-file",
+					_project_root.path_join(".godot/sprite_pipeline_post_process.log"),
 					"--import"
 				],
 				output,
@@ -517,6 +523,8 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 					"--headless",
 					"--path",
 					_project_root,
+					"--log-file",
+					_project_root.path_join(".godot/sprite_pipeline_post_process.log"),
 					"--script",
 					"res://tools/pipelines/update_vehicle_runtime_resources.gd"
 				],

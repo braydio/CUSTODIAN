@@ -1,5 +1,7 @@
 extends Node
 
+const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
+
 var weapon_ready := true
 var fire_rate := 0.3
 
@@ -30,7 +32,7 @@ func try_fire() -> void:
 
 func fire_at(target: Node2D) -> void:
 	if target.has_method("take_damage"):
-		target.take_damage(15.0)
+		target.take_damage(15.0, CombatConstants.HitStrength.LIGHT)
 		var target_name := target.name
 		var enemy_name_variant = target.get("enemy_name")
 		if enemy_name_variant != null:

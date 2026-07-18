@@ -65,7 +65,8 @@ const TERMINAL_COMMAND_ENTRY_Z := 10
 const TERMINAL_BACKDROP_COLOR := Color(0.015, 0.025, 0.03, 0.78)
 const TERMINAL_DENSE_PANEL_MODULATE := Color(1.0, 1.0, 1.0, 0.82)
 const DEBUG_TERMINAL_STYLEBOXES := false
-const DEBUG_TERMINAL_INPUT_LAYOUT := true
+const DEBUG_TERMINAL_INPUT_LAYOUT := false
+const DEBUG_TERMINAL_LAYOUT_BOUNDS := false
 const DEBUG_GRUNT_SPAWN_MODES := [
 	&"normal",
 	&"critical_enter",
@@ -164,8 +165,8 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var minimap = get_node_or_null("Minimap")
 
 @onready var terminal_panel = get_node_or_null("TerminalPanel")
-@onready var terminal_header_eyebrow = get_node_or_null("TerminalPanel/Header/Eyebrow")
-@onready var terminal_title_label = get_node_or_null("TerminalPanel/Header/Title")
+@onready var terminal_header_eyebrow = get_node_or_null("TerminalPanel/Header/Margin/HeaderRow/Eyebrow")
+@onready var terminal_title_label = get_node_or_null("TerminalPanel/Header/Margin/HeaderRow/Title")
 @onready var terminal_nav_title = get_node_or_null("TerminalPanel/Body/NavRail/NavTitle")
 @onready var terminal_action_title = get_node_or_null("TerminalPanel/Body/NavRail/ActionTitle")
 @onready var terminal_activity_scroll = get_node_or_null("TerminalPanel/Body/CommandColumn/ActivityScroll")
@@ -173,7 +174,10 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var terminal_command_title = get_node_or_null("TerminalPanel/Body/CommandColumn/CommandTitle")
 @onready var terminal_input = get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow/TerminalInput")
 @onready var terminal_status_label = get_node_or_null("TerminalPanel/Body/CommandColumn/Status")
-@onready var terminal_target_label = get_node_or_null("TerminalPanel/Header/Target")
+@onready var terminal_time_chip = get_node_or_null("TerminalPanel/Header/Margin/HeaderRow/StatusChips/TimeChip")
+@onready var terminal_threat_chip = get_node_or_null("TerminalPanel/Header/Margin/HeaderRow/StatusChips/ThreatChip")
+@onready var terminal_phase_chip = get_node_or_null("TerminalPanel/Header/Margin/HeaderRow/StatusChips/PhaseChip")
+@onready var terminal_grid_chip = get_node_or_null("TerminalPanel/Header/Margin/HeaderRow/StatusChips/GridChip")
 @onready var terminal_hint_label = get_node_or_null("TerminalPanel/Hint")
 @onready var terminal_map_column = get_node_or_null("TerminalPanel/Body/MapColumn")
 @onready var terminal_map_title_label = get_node_or_null("TerminalPanel/Body/MapColumn/MapTitle")
@@ -201,7 +205,9 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var terminal_overview_operational_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewOperationalPanel/Margin/Content/Body")
 @onready var terminal_overview_power_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewPowerPanel/Margin/Content/Body")
 @onready var terminal_overview_assault_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewAssaultPanel/Margin/Content/Body")
+@onready var terminal_overview_map_slot = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewMapSlot")
 @onready var terminal_overview_priority_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewPriorityPanel/Margin/Content/Body")
+@onready var terminal_overview_incident_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel/Margin/Content/Body")
 @onready var terminal_overview_contract_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewContractPanel/Margin/Content/Body")
 @onready var terminal_sector_list_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorListPanel/Margin/Content/Body")
 @onready var terminal_sector_detail_body = get_node_or_null("TerminalPanel/Body/MapColumn/WidgetStack/SectorsWidgets/SectorDetailPanel/Margin/Content/Body")
@@ -243,6 +249,7 @@ const SECTOR_DISPLAY_NAMES := {
 @onready var terminal_history_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/HistoryButton")
 @onready var terminal_settings_button = get_node_or_null("TerminalPanel/Body/NavRail/PageButtons/SettingsButton")
 var terminal_fabrication_button: BaseButton = null
+var _terminal_more_button: BaseButton = null
 @onready var terminal_wait_button = get_node_or_null("TerminalPanel/Body/NavRail/ActionButtons/WaitButton")
 @onready var terminal_wait_10x_button = get_node_or_null("TerminalPanel/Body/NavRail/ActionButtons/Wait10xButton")
 @onready var terminal_focus_button = get_node_or_null("TerminalPanel/Body/NavRail/ActionButtons/FocusButton")
@@ -326,6 +333,7 @@ var _terminal_known_sector_states: Dictionary = {}
 var _terminal_map_render_bounds := {}
 var _terminal_map_hover_world_pos := Vector2.ZERO
 var _terminal_current_page := "OVERVIEW"
+var _terminal_secondary_nav_expanded := false
 var _terminal_page_buttons: Dictionary = {}
 var _terminal_nav_buttons: Array = []
 var _terminal_action_buttons: Array = []
@@ -431,11 +439,14 @@ func _ready():
 		if button != null and not button.pressed.is_connected(_on_terminal_page_button_pressed.bind(page_name)):
 			button.pressed.connect(_on_terminal_page_button_pressed.bind(page_name))
 	_ensure_fabrication_terminal_button()
+	_ensure_terminal_more_button()
 	_terminal_page_buttons["FABRICATION"] = terminal_fabrication_button
 	if terminal_fabrication_button != null and not terminal_fabrication_button.pressed.is_connected(_on_terminal_page_button_pressed.bind("FABRICATION")):
 		terminal_fabrication_button.pressed.connect(_on_terminal_page_button_pressed.bind("FABRICATION"))
 	if terminal_fabrication_button != null and not _terminal_nav_buttons.has(terminal_fabrication_button):
 		_terminal_nav_buttons.append(terminal_fabrication_button)
+	if _terminal_more_button != null and not _terminal_nav_buttons.has(_terminal_more_button):
+		_terminal_nav_buttons.append(_terminal_more_button)
 	if terminal_wait_button and not terminal_wait_button.pressed.is_connected(_on_terminal_action_button_pressed.bind("WAIT")):
 		terminal_wait_button.pressed.connect(_on_terminal_action_button_pressed.bind("WAIT"))
 	if terminal_wait_10x_button and not terminal_wait_10x_button.pressed.is_connected(_on_terminal_action_button_pressed.bind("WAIT 10X")):
@@ -962,6 +973,37 @@ func _setup_terminal_main_scroll() -> void:
 			if previous_parent != null:
 				previous_parent.remove_child(node)
 			content_column.add_child(node)
+	_apply_terminal_page_layout()
+
+
+func _apply_terminal_page_layout() -> void:
+	if _terminal_main_scroll == null or terminal_map_preview == null or terminal_map_preview_title_label == null:
+		return
+	var content_column := _terminal_main_scroll.get_node_or_null("Content") as VBoxContainer
+	if content_column == null:
+		return
+	var is_overview := _terminal_current_page == "OVERVIEW"
+	if is_overview and terminal_overview_map_slot != null:
+		if terminal_map_preview_title_label.get_parent() != terminal_overview_map_slot:
+			terminal_map_preview_title_label.reparent(terminal_overview_map_slot)
+		if terminal_map_preview.get_parent() != terminal_overview_map_slot:
+			terminal_map_preview.reparent(terminal_overview_map_slot)
+		terminal_map_preview_title_label.visible = true
+		terminal_map_preview.visible = true
+		terminal_map_preview.custom_minimum_size.y = 210.0
+	else:
+		if terminal_map_preview_title_label.get_parent() != content_column:
+			terminal_map_preview_title_label.reparent(content_column)
+		if terminal_map_preview.get_parent() != content_column:
+			terminal_map_preview.reparent(content_column)
+		var widget_index := terminal_widget_stack.get_index() if terminal_widget_stack != null and terminal_widget_stack.get_parent() == content_column else content_column.get_child_count()
+		content_column.move_child(terminal_map_preview_title_label, widget_index)
+		content_column.move_child(terminal_map_preview, mini(widget_index + 1, content_column.get_child_count() - 1))
+		terminal_map_preview.custom_minimum_size.y = 250.0
+	if terminal_planet_preview != null:
+		terminal_planet_preview.custom_minimum_size.y = 144.0
+	if _terminal_main_scroll != null:
+		_terminal_main_scroll.scroll_vertical = 0
 
 
 func _update_debug_panel() -> void:
@@ -1678,8 +1720,14 @@ func open_command_terminal(service_url: String = ""):
 		terminal_background.visible = true
 		terminal_background.initialize()
 		terminal_background.generate_new()
-	if terminal_target_label:
-		terminal_target_label.text = "SIM: %d TPS | THREAT: STABLE | POWER: -- | LINKING" % Engine.physics_ticks_per_second
+	if terminal_time_chip:
+		terminal_time_chip.text = "T:--:--"
+	if terminal_threat_chip:
+		terminal_threat_chip.text = "THREAT:STABLE"
+	if terminal_phase_chip:
+		terminal_phase_chip.text = "PHASE:LINKING"
+	if terminal_grid_chip:
+		terminal_grid_chip.text = "GRID:--"
 	if not _terminal_boot_started:
 		_terminal_ready = false
 		_terminal_boot_started = true
@@ -1696,6 +1744,8 @@ func open_command_terminal(service_url: String = ""):
 	call_deferred("_ensure_terminal_input_visible_and_focused")
 	_debug_terminal_input_layout("open_command_terminal")
 	_refresh_snapshot()
+	call_deferred("_report_terminal_layout_open")
+	call_deferred("_set_terminal_layout_debug_bounds_visible", DEBUG_TERMINAL_LAYOUT_BOUNDS)
 	if terminal_poll_timer:
 		terminal_poll_timer.start()
 
@@ -1735,6 +1785,66 @@ func close_command_terminal():
 
 func is_terminal_open() -> bool:
 	return _terminal_open
+
+
+func _report_terminal_layout_open() -> void:
+	if not _terminal_open or terminal_panel == null:
+		return
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory == null or not observatory.has_method("log_event"):
+		return
+	var nav_rail := get_node_or_null("TerminalPanel/Body/NavRail") as Control
+	var command_column := get_node_or_null("TerminalPanel/Body/CommandColumn") as Control
+	var input_row := get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow") as Control
+	var visible_nav_buttons := 0
+	for button in _terminal_page_buttons.values():
+		if button is Control and (button as Control).is_visible_in_tree():
+			visible_nav_buttons += 1
+	if _terminal_more_button != null and _terminal_more_button.is_visible_in_tree():
+		visible_nav_buttons += 1
+	var header_truncated := false
+	for label in [terminal_header_eyebrow, terminal_title_label, terminal_time_chip, terminal_threat_chip, terminal_phase_chip, terminal_grid_chip]:
+		if label is Label and (label as Label).get_minimum_size().x > (label as Label).size.x + 1.0:
+			header_truncated = true
+	observatory.call("log_event", "terminal_layout_open", {
+		"terminal_viewport_size": get_viewport().get_visible_rect().size,
+		"terminal_panel_rect": terminal_panel.get_global_rect(),
+		"terminal_overview_map_rect": terminal_map_preview.get_global_rect() if terminal_map_preview != null else Rect2(),
+		"terminal_nav_rect": nav_rail.get_global_rect() if nav_rail != null else Rect2(),
+		"terminal_transcript_rect": command_column.get_global_rect() if command_column != null else Rect2(),
+		"terminal_command_input_rect": input_row.get_global_rect() if input_row != null else Rect2(),
+		"terminal_nav_visible_buttons": visible_nav_buttons,
+		"terminal_header_truncated": header_truncated,
+		"page": _terminal_current_page,
+	})
+
+
+func _set_terminal_layout_debug_bounds_visible(enabled: bool) -> void:
+	var targets := {
+		"TerminalSafeRect": terminal_panel,
+		"NavRailRect": get_node_or_null("TerminalPanel/Body/NavRail"),
+		"OverviewMapRect": terminal_map_preview,
+		"TranscriptRect": get_node_or_null("TerminalPanel/Body/CommandColumn"),
+		"CommandInputRect": get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow"),
+	}
+	var colors := [Color.CYAN, Color(0.95, 0.72, 0.25), Color(0.35, 0.95, 0.62), Color(0.8, 0.45, 0.95), Color(0.95, 0.45, 0.42)]
+	var color_index := 0
+	for overlay_name in targets.keys():
+		var target := targets[overlay_name] as Control
+		if target == null:
+			continue
+		var overlay := target.get_node_or_null(String(overlay_name)) as ReferenceRect
+		if overlay == null:
+			overlay = ReferenceRect.new()
+			overlay.name = String(overlay_name)
+			overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			overlay.editor_only = false
+			overlay.border_width = 2.0
+			target.add_child(overlay)
+		overlay.border_color = colors[color_index % colors.size()]
+		overlay.visible = enabled
+		color_index += 1
 
 func _handle_terminal_shortcuts():
 	if not _terminal_open:
@@ -2219,8 +2329,8 @@ func _set_control_property_if_available(control: Object, property_name: StringNa
 func _configure_terminal_scroll_policy() -> void:
 	if _terminal_main_scroll != null:
 		_terminal_main_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		_terminal_main_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED if _terminal_current_page == "FABRICATION" else ScrollContainer.SCROLL_MODE_AUTO
-		if _terminal_current_page == "FABRICATION":
+		_terminal_main_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED if _terminal_current_page in ["OVERVIEW", "FABRICATION"] else ScrollContainer.SCROLL_MODE_AUTO
+		if _terminal_current_page in ["OVERVIEW", "FABRICATION"]:
 			_terminal_main_scroll.scroll_vertical = 0
 	if terminal_activity_scroll is ScrollContainer:
 		var activity_scroll := terminal_activity_scroll as ScrollContainer
@@ -2280,6 +2390,7 @@ func _configure_terminal_nav_fit() -> void:
 				(child as BaseButton).custom_minimum_size.y = 20.0
 	if context_spacer != null:
 		context_spacer.custom_minimum_size.y = 2.0
+	_configure_terminal_nav_groups()
 
 
 func _make_fabrication_compact_panel_style() -> StyleBoxFlat:
@@ -2597,8 +2708,16 @@ func _apply_terminal_theme():
 	if terminal_header_eyebrow is Label:
 		_apply_label_type(terminal_header_eyebrow as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(0.63, 0.83, 0.74, 0.92))
 
-	if terminal_target_label is Label:
-		_apply_label_type(terminal_target_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(0.76, 0.92, 0.86, 0.95))
+	for chip in [terminal_time_chip, terminal_threat_chip, terminal_phase_chip, terminal_grid_chip]:
+		if not (chip is Label):
+			continue
+		_apply_label_type(chip as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(0.76, 0.92, 0.86, 0.95))
+		var chip_style := StyleBoxFlat.new()
+		chip_style.bg_color = Color(0.025, 0.08, 0.085, 0.88)
+		chip_style.border_color = Color(0.22, 0.48, 0.44, 0.78)
+		chip_style.set_border_width_all(1)
+		chip_style.set_content_margin_all(5.0)
+		(chip as Label).add_theme_stylebox_override("normal", chip_style)
 	if terminal_page_summary_label is Label:
 		_apply_label_type(terminal_page_summary_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(0.62, 0.78, 0.72, 0.92))
 
@@ -2684,6 +2803,9 @@ func _apply_terminal_theme():
 		button.add_theme_color_override("icon_disabled_color", Color(1.0, 1.0, 1.0, 1.0))
 		_apply_button_type(button, _terminal_font_display, TERMINAL_FONT_SIZE_NAV, Color(0.80, 0.92, 0.88, 1.0))
 		button.add_theme_color_override("font_disabled_color", Color(0.95, 1.0, 0.97, 1.0))
+	if _terminal_more_button != null:
+		_apply_terminal_button_assets(_terminal_more_button, nav_button_style, nav_button_hover_style, nav_button_active_style, nav_button_active_style, nav_button_focus_style, TERMINAL_ICON_RESTART)
+		_apply_button_type(_terminal_more_button, _terminal_font_display, TERMINAL_FONT_SIZE_NAV, Color(0.72, 0.88, 0.83, 1.0))
 	for button in [terminal_wait_button, terminal_wait_10x_button, terminal_focus_button, terminal_harden_button, terminal_reset_button, terminal_reboot_button, terminal_help_button]:
 		if button == null:
 			continue
@@ -2716,6 +2838,81 @@ func _ensure_fabrication_terminal_button() -> void:
 	page_buttons_container.add_child(button)
 	page_buttons_container.move_child(button, page_buttons_container.get_child_count() - 1)
 	terminal_fabrication_button = button
+
+
+func _ensure_terminal_more_button() -> void:
+	if _terminal_more_button != null and is_instance_valid(_terminal_more_button):
+		return
+	var nav_rail := get_node_or_null("TerminalPanel/Body/NavRail")
+	var page_buttons_container := nav_rail.find_child("PageButtons", true, false) if nav_rail != null else null
+	if page_buttons_container == null:
+		return
+	var existing := page_buttons_container.get_node_or_null("MoreButton")
+	if existing is BaseButton:
+		_terminal_more_button = existing as BaseButton
+	else:
+		_terminal_more_button = Button.new()
+		_terminal_more_button.name = "MoreButton"
+		_terminal_more_button.text = "MORE / SYSTEMS"
+		_terminal_more_button.focus_mode = Control.FOCUS_ALL
+		_terminal_more_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		page_buttons_container.add_child(_terminal_more_button)
+	if not _terminal_more_button.pressed.is_connected(_toggle_terminal_secondary_nav):
+		_terminal_more_button.pressed.connect(_toggle_terminal_secondary_nav)
+	_configure_terminal_nav_groups()
+
+
+func _toggle_terminal_secondary_nav() -> void:
+	_terminal_secondary_nav_expanded = not _terminal_secondary_nav_expanded
+	_configure_terminal_nav_groups()
+
+
+func _configure_terminal_nav_groups() -> void:
+	var page_buttons_container := terminal_overview_button.get_parent() if terminal_overview_button != null else null
+	if page_buttons_container == null:
+		return
+	var primary_order: Array[BaseButton] = [
+		terminal_overview_button,
+		terminal_sectors_button,
+		terminal_power_button,
+		terminal_defense_button,
+		terminal_fabrication_button,
+		terminal_sensors_button,
+		terminal_archive_button,
+		terminal_recon_button,
+	]
+	for button in primary_order:
+		if button != null and button.get_parent() == page_buttons_container:
+			page_buttons_container.move_child(button, page_buttons_container.get_child_count() - 1)
+	if _terminal_more_button != null and _terminal_more_button.get_parent() == page_buttons_container:
+		page_buttons_container.move_child(_terminal_more_button, page_buttons_container.get_child_count() - 1)
+	var secondary_buttons: Array[BaseButton] = [
+		terminal_status_button,
+		terminal_incidents_button,
+		terminal_contracts_button,
+		terminal_history_button,
+		terminal_settings_button,
+	]
+	var current_is_secondary := false
+	for button in secondary_buttons:
+		if button == null:
+			continue
+		var page_name := String(button.name).trim_suffix("Button").to_upper()
+		if page_name == _terminal_current_page:
+			current_is_secondary = true
+	var show_secondary := _terminal_secondary_nav_expanded or current_is_secondary
+	for button in secondary_buttons:
+		if button != null:
+			button.visible = show_secondary
+			if show_secondary and button.get_parent() == page_buttons_container:
+				page_buttons_container.move_child(button, page_buttons_container.get_child_count() - 1)
+	if _terminal_more_button != null:
+		_terminal_more_button.text = "LESS / PRIMARY" if show_secondary else "MORE / SYSTEMS"
+		if _terminal_more_button.get_parent() == page_buttons_container:
+			page_buttons_container.move_child(_terminal_more_button, page_buttons_container.get_child_count() - 1)
+	for secondary_action in [terminal_wait_10x_button, terminal_reset_button, terminal_reboot_button]:
+		if secondary_action != null:
+			secondary_action.visible = false
 
 
 func _append_terminal_line(line: String, level: String = "info", sector: String = ""):
@@ -2756,7 +2953,12 @@ func _render_terminal_output():
 	if terminal_output == null:
 		return
 	var chunks: PackedStringArray = []
-	for entry in _terminal_log_entries:
+	if _terminal_current_page == "OVERVIEW":
+		chunks.append_array(_build_terminal_attention_feed_chunks())
+	var entries_to_render: Array = _terminal_log_entries
+	if _terminal_current_page == "OVERVIEW" and entries_to_render.size() > 12:
+		entries_to_render = entries_to_render.slice(entries_to_render.size() - 12, entries_to_render.size())
+	for entry in entries_to_render:
 		var timestamp := str(entry.get("time", "--:--:--"))
 		var line := str(entry.get("line", ""))
 		var level := str(entry.get("level", "info"))
@@ -2779,6 +2981,26 @@ func _render_terminal_output():
 		terminal_output.text = "\n".join(chunks)
 	if _terminal_activity_autofollow:
 		call_deferred("_scroll_terminal_output_to_bottom")
+
+
+func _build_terminal_attention_feed_chunks() -> PackedStringArray:
+	var chunks := PackedStringArray()
+	var timestamp := str(_terminal_snapshot.get("time", Time.get_time_string_from_system()))
+	var power_status := _get_power_status_snapshot()
+	var reserve_rate := float(power_status.get("net", 0.0)) * 60.0
+	var enemy_snapshot: Dictionary = _terminal_snapshot.get("enemies", {})
+	var contacts := int(enemy_snapshot.get("total", 0))
+	var threat_band := _get_threat_band(float(_terminal_snapshot.get("threat_raw", 0.0)))
+	var recommended := "OPEN SECTORS"
+	if reserve_rate < 0.0:
+		recommended = "OPEN POWER"
+	elif threat_band in ["ELEVATED", "CRITICAL"]:
+		recommended = "OPEN DEFENSE"
+	chunks.append("[color=#6FAE9C][%s][/color] [color=#9EDBFF]SYSTEM[/color]  [color=#D7E8E1]LOCAL SNAPSHOT MODE ACTIVE[/color]" % timestamp)
+	chunks.append("[color=#6FAE9C][%s][/color] [color=#E8C86D]POWER[/color]   [color=#D7E8E1]GRID RESERVE %+0.0f // %s[/color]" % [timestamp, reserve_rate, "DEFICIT" if reserve_rate < 0.0 else "STABLE"])
+	chunks.append("[color=#6FAE9C][%s][/color] [color=%s]SENSOR[/color]  [color=#D7E8E1]%d CONTACTS // %s CONFIDENCE[/color]" % [timestamp, "#F07A7A" if contacts > 0 else "#9EDBFF", contacts, "HIGH" if contacts > 0 else "LOW"])
+	chunks.append("[color=#6FAE9C][%s][/color] [color=#7DDE9B]ACTION[/color]  [color=#D7E8E1]RECOMMENDED: %s[/color]\n" % [timestamp, recommended])
+	return chunks
 
 func _scroll_terminal_output_to_bottom():
 	if terminal_output == null or terminal_activity_scroll == null:
@@ -3052,33 +3274,29 @@ func _refresh_snapshot() -> void:
 	_render_terminal_status("LOCAL SNAPSHOT LIVE")
 
 func _render_terminal_header(snapshot: Dictionary) -> void:
-	var contract: Dictionary = snapshot.get("contract", {})
-	var contract_seed := int(contract.get("contract_seed", -1)) if contract is Dictionary else -1
-	var planet_key := str(contract.get("planet_key", "NO CONTRACT")).to_upper() if contract is Dictionary else "NO CONTRACT"
 	var phase_text := str(snapshot.get("contract_phase", "UNKNOWN")).replace("_", " ").to_upper()
 	var threat_value := float(snapshot.get("threat_raw", 0.0))
 	var threat_label := _get_threat_band(threat_value)
 	var power_status := _get_power_status_snapshot()
 	var reserve_rate := float(power_status.get("net", 0.0)) * 60.0
-	var rate_text := _format_terminal_rate(Engine.time_scale)
-	var phase_short := _terminal_truncate(phase_text, 12)
-	var grid_text := "GRID:%+0.0f NET" % reserve_rate
+	var phase_short := _terminal_truncate(phase_text, 14)
+	var grid_text := "GRID:%+0.0f" % reserve_rate
 	if reserve_rate < 0.0:
-		grid_text = "GRID DEFICIT:%0.0f" % abs(reserve_rate)
+		grid_text = "GRID:DEFICIT %0.0f" % abs(reserve_rate)
 	if terminal_header_eyebrow:
-		terminal_header_eyebrow.text = "CUSTODIAN // COMMAND LINK | MODE: COMMAND | FIDELITY: FULL | PAGE: %s" % _terminal_current_page
+		terminal_header_eyebrow.text = "CUSTODIAN NODE"
 	if terminal_title_label:
-		terminal_title_label.text = "%s // %s" % [planet_key, "CONTRACT-%04d" % contract_seed if contract_seed >= 0 else "NO CONTRACT LOCK"]
-	if terminal_target_label:
-		var threat_color := _get_threat_color(threat_label)
-		terminal_target_label.text = "T:%s  THREAT:%s  PHASE:%s  %s  RATE:%s" % [
-			str(snapshot.get("time", "--:--:--")),
-			threat_label,
-			phase_short,
-			grid_text,
-			rate_text,
-		]
-		terminal_target_label.add_theme_color_override("font_color", Color(threat_color))
+		terminal_title_label.text = _terminal_current_page
+	if terminal_time_chip:
+		terminal_time_chip.text = "T:%s" % str(snapshot.get("time", "--:--" )).substr(0, 5)
+	if terminal_threat_chip:
+		terminal_threat_chip.text = "THREAT:%s" % threat_label
+		terminal_threat_chip.add_theme_color_override("font_color", Color(_get_threat_color(threat_label)))
+	if terminal_phase_chip:
+		terminal_phase_chip.text = "PHASE:%s" % phase_short
+	if terminal_grid_chip:
+		terminal_grid_chip.text = grid_text
+		terminal_grid_chip.add_theme_color_override("font_color", Color("#F07A7A" if reserve_rate < 0.0 else "#7DDE9B"))
 
 func _record_terminal_snapshot_events(snapshot: Dictionary) -> void:
 	var phase_text := str(snapshot.get("contract_phase", "UNKNOWN"))
@@ -3247,6 +3465,7 @@ func _set_terminal_page(page_name: String) -> void:
 
 func _apply_terminal_page_theme() -> void:
 	var fabrication_mode := _terminal_current_page == "FABRICATION"
+	_apply_terminal_page_layout()
 	_configure_terminal_scroll_policy()
 	_configure_terminal_nav_fit()
 	if terminal_panel:
@@ -3268,7 +3487,7 @@ func _apply_terminal_page_theme() -> void:
 		_apply_label_type(terminal_status_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(1.0, 0.78, 0.48, 0.96) if fabrication_mode else Color(0.64, 0.88, 0.78, 0.96))
 	if terminal_hint_label is Label:
 		_apply_label_type(terminal_hint_label as Label, _terminal_font_mono, TERMINAL_FONT_SIZE_HINT, Color(0.96, 0.79, 0.54, 0.88) if fabrication_mode else Color(0.54, 0.72, 0.68, 0.88))
-		terminal_hint_label.text = "Click a work order. Esc closes." if fabrication_mode else "Type directly into the command line. Drag globe to inspect. Left click in the world to place while building. Esc closes."
+		terminal_hint_label.text = "Click a work order. Esc closes." if fabrication_mode else ("Type commands or inspect the live tactical map. Esc closes." if _terminal_current_page == "OVERVIEW" else "Type directly into the command line. Drag globe where available. Esc closes.")
 	if terminal_input:
 		var input_style := _make_terminal_input_style()
 		terminal_input.visible = true
@@ -3316,6 +3535,10 @@ func _apply_terminal_page_theme() -> void:
 			rich_text.scroll_following = false
 		for label in terminal_widget_stack.find_children("*", "Label", true, false):
 			_apply_label_type(label as Label, _terminal_font_display, TERMINAL_FONT_SIZE_SECTION, Color(0.98, 0.74, 0.42, 0.92) if fabrication_mode else Color(0.63, 0.83, 0.74, 0.92))
+		if terminal_overview_widgets != null:
+			for overview_body in terminal_overview_widgets.find_children("*", "RichTextLabel", true, false):
+				_apply_rich_text_type(overview_body as RichTextLabel, _terminal_font_mono, _terminal_font_mono, TERMINAL_FONT_SIZE_HEADER, Color(0.82, 0.92, 0.88, 1.0))
+				(overview_body as RichTextLabel).scroll_active = false
 		_apply_terminal_widget_button_styles(action_button_style, action_button_hover_style, action_button_pressed_style, action_button_disabled_style)
 		_configure_fabrication_dashboard_layout()
 	if terminal_output is RichTextLabel:
@@ -3330,6 +3553,7 @@ func _refresh_terminal_page_buttons() -> void:
 		var active: bool = String(page_name) == _terminal_current_page
 		button.disabled = active
 		button.text = ("> %s" % String(page_name)) if active else String(page_name)
+	_configure_terminal_nav_groups()
 
 func _on_primary_weapon_button_pressed() -> void:
 	var operator = get_node_or_null("/root/GameRoot/World/Operator")
@@ -3606,18 +3830,19 @@ func _set_terminal_widget_mode(page_name: String) -> void:
 
 
 func _render_terminal_overview_widgets(phase_text: String, hostile_text: String, compromised_count: int, offline_count: int, power_status: Dictionary, power_summary: String, critical_count: int, threat_text: Variant, assault_value: Variant, wave_text: String, defense_rating: Variant, sector_array: Array, contract_lines: Array[String], vault: Dictionary = {}) -> void:
+	var contract_identity := "NO CONTRACT LOCK"
+	if not contract_lines.is_empty():
+		var contract_tokens := contract_lines[0].split(" ", false)
+		contract_identity = _terminal_truncate(str(contract_tokens[-1]) if not contract_tokens.is_empty() else "UNKNOWN", 12)
 	_set_terminal_rich_text(terminal_overview_operational_body, "\n".join([
-		_terminal_kv("MODE", "COMMAND"),
-		_terminal_kv("PHASE", phase_text),
-		_terminal_kv("HOSTILES", hostile_text),
-		_terminal_kv("COMPROMISED", compromised_count),
-		_terminal_kv("SYSTEMS OFF", offline_count),
+		"PHASE    %s" % _terminal_truncate(phase_text, 14),
+		"OPERATOR FIELD LINK",
+		"BODY %s // HOSTILES %s" % [contract_identity, hostile_text],
 	]))
 	_set_terminal_rich_text(terminal_overview_power_body, "\n".join([
-		_terminal_kv("BUDGET", power_summary),
-		_terminal_kv("GEN", "%.1f/s" % (float(power_status.get("generated", 0.0)) * 60.0)),
-		_terminal_kv("DRAW", "%.1f/s" % (float(power_status.get("consumed", 0.0)) * 60.0)),
-		_terminal_kv("ROUTING", "%d PRIORITY SECTORS" % critical_count),
+		"NET      %+0.1f/s" % (float(power_status.get("net", 0.0)) * 60.0),
+		"GEN %.1f // DRAW %.1f" % [float(power_status.get("generated", 0.0)) * 60.0, float(power_status.get("consumed", 0.0)) * 60.0],
+		"ROUTING  %d PRIORITY" % critical_count,
 	]))
 	_set_terminal_rich_text(terminal_overview_assault_body, "\n".join([
 		_terminal_kv("THREAT", threat_text),
@@ -3626,25 +3851,36 @@ func _render_terminal_overview_widgets(phase_text: String, hostile_text: String,
 		_terminal_kv("DEFENSE", defense_rating),
 	]))
 	var priority_lines: Array[String] = []
-	for sector_variant in sector_array.slice(0, min(4, sector_array.size())):
+	for sector_variant in sector_array.slice(0, min(2, sector_array.size())):
 		if not (sector_variant is Dictionary):
 			continue
 		var sector: Dictionary = sector_variant
 		var raw_name := str(sector.get("name", sector.get("id", "SECTOR")))
-		var display := _display_sector_name(raw_name).to_upper()
+		var display := _terminal_truncate(_display_sector_name(raw_name).to_upper(), 8)
 		var status := str(sector.get("status", "UNKNOWN")).to_upper()
-		priority_lines.append("%-18s HP %3s%% | %s" % [display, str(sector.get("hp_pct", "?")), status])
+		priority_lines.append("%-8s %3s%% %s" % [display, str(sector.get("hp_pct", "?")), _terminal_truncate(status, 6)])
 	if priority_lines.is_empty():
 		priority_lines.append("NO PRIORITY SECTORS AVAILABLE")
 	_set_terminal_rich_text(terminal_overview_priority_body, "\n".join(priority_lines))
-	_set_terminal_rich_text(terminal_overview_contract_body, "\n".join(contract_lines))
-	if not vault.is_empty():
-		var vault_total: Dictionary = vault.get("total", {})
-		var vault_events: Array = vault.get("recent_events", [])
-		var vault_line := "VAULT " + _format_debug_dictionary(vault_total)
-		if not vault_events.is_empty():
-			vault_line += "\nLAST " + str(vault_events[0])
-		_set_terminal_rich_text(terminal_overview_contract_body, "\n".join(contract_lines + [vault_line]))
+	var incident_lines: Array[String] = []
+	for entry_index in range(_terminal_log_entries.size() - 1, -1, -1):
+		var entry: Dictionary = _terminal_log_entries[entry_index]
+		if str(entry.get("level", "info")) not in ["critical", "threat", "assault", "warning", "power"]:
+			continue
+		incident_lines.push_front(_terminal_truncate(str(entry.get("line", "INCIDENT")), 24))
+		if incident_lines.size() >= 2:
+			break
+	if incident_lines.is_empty():
+		incident_lines.append("NO ACTIVE CRITICAL INCIDENTS")
+	_set_terminal_rich_text(terminal_overview_incident_body, "\n".join(incident_lines))
+	var recommendation := "OPEN SECTORS\nVERIFY PRIORITY"
+	if float(power_status.get("net", 0.0)) < 0.0:
+		recommendation = "OPEN POWER\nCORRECT DEFICIT"
+	elif compromised_count > 0 or offline_count > 0:
+		recommendation = "OPEN SECTORS\nRESTORE SYSTEMS"
+	elif str(threat_text).to_upper() in ["ELEVATED", "CRITICAL"]:
+		recommendation = "OPEN DEFENSE\nREVIEW COVERAGE"
+	_set_terminal_rich_text(terminal_overview_contract_body, recommendation)
 
 
 func _render_terminal_sector_widgets(sector_array: Array, selected_sector: Dictionary) -> void:
@@ -4557,7 +4793,10 @@ func _on_fabrication_craft_to_max_pressed() -> void:
 
 func _on_fabrication_place_ready_pressed() -> void:
 	var view: Dictionary = _terminal_fabrication_view_model.build(self, _terminal_fabrication_selected_work_order_id)
-	var ready_id := _first_deployable_ready_build_id(view.get("ready_builds", []))
+	var ready_builds: Array = view.get("ready_builds", [])
+	var ready_id := _selected_deployable_ready_build_id(ready_builds, view.get("selected_work_order", {}))
+	if ready_id.is_empty():
+		ready_id = _first_deployable_ready_build_id(ready_builds)
 	if ready_id.is_empty():
 		_append_terminal_line("NO DEPLOYABLE READY BUILD", "warning")
 		return
@@ -4607,23 +4846,67 @@ func _first_deployable_ready_build_id(ready_builds: Array) -> String:
 	return ""
 
 
-func _start_ready_build_placement(ready_build_id: String) -> void:
+func _selected_deployable_ready_build_id(ready_builds: Array, selected_work_order: Dictionary) -> String:
+	var selected_output_id := str(selected_work_order.get("output_id", ""))
+	if selected_output_id.is_empty():
+		return ""
+	for ready_variant in ready_builds:
+		if not (ready_variant is Dictionary):
+			continue
+		var ready := ready_variant as Dictionary
+		if str(ready.get("id", "")) == selected_output_id \
+				and bool(ready.get("deployable", false)) \
+				and int(ready.get("count", 0)) > 0:
+			return selected_output_id
+	return ""
+
+
+func _start_ready_build_placement(ready_build_id: String) -> bool:
 	var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
 	if turret_placement == null:
-		_append_terminal_line("TURRET PLACEMENT UNAVAILABLE", "warning")
-		return
-	if not turret_placement.has_method("get_turret_type_for_build_token"):
+		_append_terminal_line("BUILD PLACEMENT UNAVAILABLE", "warning")
+		return false
+	if not turret_placement.has_method("get_placeable_type_for_build_token") \
+			or not turret_placement.has_method("enter_build_token_placement"):
 		_append_terminal_line("READY BUILD MAPPING UNAVAILABLE", "warning")
-		return
-	var turret_type := str(turret_placement.call("get_turret_type_for_build_token", ready_build_id))
-	if turret_type.is_empty():
+		return false
+	var placeable_type := str(turret_placement.call("get_placeable_type_for_build_token", ready_build_id))
+	if placeable_type.is_empty():
 		_append_terminal_line("UNKNOWN READY BUILD %s" % ready_build_id.to_upper(), "warning")
-		return
-	if bool(turret_placement.call("enter_placement_mode", turret_type)):
+		return false
+	_bind_build_placement_feedback(turret_placement)
+	if bool(turret_placement.call("enter_build_token_placement", ready_build_id)):
 		_terminal_fabrication_selected_work_order_id = ready_build_id
-		_append_terminal_line("BUILD PLACEMENT ACTIVE // %s -> %s" % [ready_build_id.to_upper(), turret_type.to_upper()], "success")
+		_append_terminal_line("BUILD PLACEMENT ACTIVE // %s" % ready_build_id.to_upper(), "success")
+		return true
+	_append_terminal_line("BUILD PLACE FAILED // READY BUILD UNAVAILABLE", "warning")
+	return false
+
+
+func _bind_build_placement_feedback(build_placement: Node) -> void:
+	var placed_callback := Callable(self, "_on_build_token_placed")
+	if build_placement.has_signal("build_token_placed") \
+			and not build_placement.is_connected("build_token_placed", placed_callback):
+		build_placement.connect("build_token_placed", placed_callback)
+	var failed_callback := Callable(self, "_on_build_placement_failed")
+	if build_placement.has_signal("build_placement_failed") \
+			and not build_placement.is_connected("build_placement_failed", failed_callback):
+		build_placement.connect("build_placement_failed", failed_callback)
+
+
+func _on_build_token_placed(_instance: Node2D, build_token_id: String) -> void:
+	if build_token_id == "barricade_light":
+		_append_terminal_line("BARRICADE PLACED", "success")
 	else:
-		_append_terminal_line("BUILD PLACE FAILED // CHECK MATERIALS OR CAP", "warning")
+		_append_terminal_line("READY BUILD PLACED // %s" % build_token_id.to_upper(), "success")
+	_refresh_snapshot()
+
+
+func _on_build_placement_failed(build_token_id: String, reason: String) -> void:
+	if reason == "invalid_site":
+		_append_terminal_line("INVALID BUILD SITE", "warning")
+		return
+	_append_terminal_line("BUILD PLACE FAILED // %s // %s" % [build_token_id.to_upper(), reason.to_upper()], "warning")
 
 
 func _render_terminal_main_content(snapshot: Dictionary) -> void:
@@ -4650,7 +4933,7 @@ func _render_terminal_main_content(snapshot: Dictionary) -> void:
 		else:
 			terminal_page_summary_label.text = "TACTICAL PAGE // LIVE CONTRACT"
 	if terminal_command_title:
-		terminal_command_title.text = "FABRICATION CONTROL" if _terminal_current_page == "FABRICATION" else ("EVENT LOG" if _terminal_current_page == "SECTORS" else "TRANSCRIPT")
+		terminal_command_title.text = "FABRICATION CONTROL" if _terminal_current_page == "FABRICATION" else ("EVENT LOG" if _terminal_current_page == "SECTORS" else ("ATTENTION FEED" if _terminal_current_page == "OVERVIEW" else "TRANSCRIPT"))
 	if terminal_nav_title:
 		terminal_nav_title.text = "WORK ORDERS" if _terminal_current_page == "FABRICATION" else "NAVIGATION"
 	if terminal_action_title:
@@ -4660,13 +4943,14 @@ func _render_terminal_main_content(snapshot: Dictionary) -> void:
 	if terminal_title_label:
 		terminal_title_label.text = "FABRICATION" if _terminal_current_page == "FABRICATION" else "CUSTODIAN INTERFACE"
 	if terminal_planet_preview:
-		terminal_planet_preview.visible = _terminal_current_page in ["OVERVIEW", "STATUS", "CONTRACTS", "ARCHIVE"]
+		terminal_planet_preview.visible = _terminal_current_page in ["STATUS", "CONTRACTS", "ARCHIVE"]
 	if terminal_planet_title_label:
 		terminal_planet_title_label.visible = terminal_planet_preview != null and terminal_planet_preview.visible
 	if terminal_map_preview:
 		terminal_map_preview.visible = _terminal_current_page in ["OVERVIEW", "SECTORS", "POWER", "DEFENSE", "SENSORS", "INCIDENTS"]
 	if terminal_map_preview_title_label:
 		terminal_map_preview_title_label.visible = terminal_map_preview != null and terminal_map_preview.visible
+	_apply_terminal_page_layout()
 
 	var lines: Array[String] = []
 	var summary := "TACTICAL SUMMARY // LIVE CONTRACT SNAPSHOT"
@@ -5025,24 +5309,10 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 					if ready_build_id.is_empty():
 						_append_terminal_line("USE: BUILD PLACE <READY_BUILD_ID>", "warning")
 						return true
-					var turret_placement = get_node_or_null("/root/GameRoot/World/TurretPlacement")
-					if turret_placement == null:
-						_append_terminal_line("TURRET PLACEMENT UNAVAILABLE", "warning")
-						return true
-					if not turret_placement.has_method("get_turret_type_for_build_token"):
-						_append_terminal_line("READY BUILD MAPPING UNAVAILABLE", "warning")
-						return true
-					var turret_type := str(turret_placement.call("get_turret_type_for_build_token", ready_build_id))
-					if turret_type.is_empty():
-						_append_terminal_line("UNKNOWN READY BUILD %s" % ready_build_id.to_upper(), "warning")
-						return true
-					if turret_placement.call("enter_placement_mode", turret_type):
-						_terminal_fabrication_selected_work_order_id = ready_build_id
+					if _start_ready_build_placement(ready_build_id):
 						_set_terminal_page("FABRICATION")
-						_append_terminal_line("BUILD PLACEMENT ACTIVE // %s -> %s" % [ready_build_id.to_upper(), turret_type.to_upper()], "success")
-						_append_terminal_line("LEFT CLICK IN WORLD TO PLACE // B CYCLES TYPES // Q OR ESC TO EXIT", "info")
+						_append_terminal_line("LEFT CLICK IN WORLD TO PLACE // Q OR ESC TO EXIT", "info")
 						return true
-					_append_terminal_line("BUILD PLACE FAILED // CHECK MATERIALS OR CAP", "warning")
 					return true
 				_:
 					_append_terminal_line("USE: BUILD PLACE <READY_BUILD_ID>", "warning")

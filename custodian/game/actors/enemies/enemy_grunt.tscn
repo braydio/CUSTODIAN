@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://enemy_grunt_001"]
+[gd_scene load_steps=9 format=3 uid="uid://enemy_grunt_001"]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_objective_sensor.gd" id="4_sensor"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_loot_carrier.gd" id="5_carrier"]
 [ext_resource type="Script" path="res://game/actors/enemies/enemy_behavior_state_machine.gd" id="6_behavior"]
+[ext_resource type="Script" path="res://game/actors/effects/blob_shadow.gd" id="7_blob_shadow"]
+[ext_resource type="Texture2D" path="res://content/sprites/world/shadows/contact_shadow_character_64x32.png" id="8_contact_shadow"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_grunt"]
 size = Vector2(26, 26)
@@ -65,6 +67,13 @@ offset_right = 16.0
 offset_bottom = -26.0
 value = 100.0
 show_percentage = false
+
+[node name="BlobShadow" type="Node2D" parent="."]
+position = Vector2(0, 12)
+script = ExtResource("7_blob_shadow")
+shadow_texture = ExtResource("8_contact_shadow")
+base_radius = Vector2(13, 6.5)
+shadow_alpha = 0.28
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -18)

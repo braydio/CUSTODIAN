@@ -14,6 +14,8 @@ func _init(state_name: String = "hit_recoil"):
 func enter() -> void:
 	elapsed = 0.0
 	_played_animation = &""
+	if state_machine and state_machine.actor and state_machine.actor.has_method("get_damage_reaction_duration"):
+		recoil_duration = maxf(0.01, float(state_machine.actor.call("get_damage_reaction_duration", name)))
 	if state_machine == null or state_machine.sprite == null:
 		return
 	var animation_name := &""
@@ -29,6 +31,11 @@ func enter() -> void:
 	state_machine.sprite.play(animation_name)
 	if state_machine.actor and state_machine.actor.has_method("play_damage_reaction_fx"):
 		state_machine.actor.call("play_damage_reaction_fx", animation_name)
+
+
+func exit() -> void:
+	if state_machine and state_machine.actor and state_machine.actor.has_method("finish_damage_reaction_presentation"):
+		state_machine.actor.call("finish_damage_reaction_presentation")
 
 
 func update(_delta: float) -> String:

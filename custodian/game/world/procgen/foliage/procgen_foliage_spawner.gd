@@ -228,11 +228,11 @@ func _place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 	var phase_hash := _tile_noise_hash(context, pos + Vector2i(431, 977))
 	material.set_shader_parameter("wind_enabled", bool(context.get("foliage_wind_enabled", true)))
 	material.set_shader_parameter("wind_speed", float(context.get("foliage_wind_speed", 0.9)))
-	material.set_shader_parameter("gust_amount", float(context.get("foliage_wind_gust_amount", 0.35)))
+	material.set_shader_parameter("gust_amount", float(context.get("foliage_wind_gust_amount", 0.42)))
 	material.set_shader_parameter("wind_phase", float(phase_hash % 6283) / 1000.0)
-	var wind_strength := float(context.get("foliage_shrub_wind_strength_px", 0.45))
+	var wind_strength := float(context.get("foliage_shrub_wind_strength_px", 0.7))
 	if foliage_kind == "tree":
-		wind_strength = float(context.get("foliage_tree_wind_strength_px", 0.9))
+		wind_strength = float(context.get("foliage_tree_wind_strength_px", 1.35))
 	material.set_shader_parameter("wind_strength_px", wind_strength)
 	for bubble_index in range(FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES):
 		material.set_shader_parameter("bubble_center_%d" % bubble_index, Vector2.ZERO)

@@ -401,6 +401,13 @@ def _build_outputs(info: SheetInfo) -> list[dict]:
 
 def _canonical_runtime_path(info: SheetInfo) -> str:
     if info.owner == "operator":
+        # Full-body combat reactions are authored as a composited body plus a
+        # synchronized combat-FX strip.  They still belong to the runtime body
+        # and overlay domains consumed by the Operator scene.
+        if info.layer == "full_body_combat":
+            return f"operator/runtime/body/{info.action_group}/{info.basename}"
+        if info.layer == "combat_fx":
+            return f"operator/runtime/overlays/{info.action_group}/{info.basename}"
         if _is_operator_modular_sidearm_weapon(info):
             return f"operator/new_operator/modular/sidearm/{info.basename}"
         if _is_operator_modular_sheet(info):
@@ -510,7 +517,7 @@ def _is_operator_modular_sheet(info: SheetInfo) -> bool:
 
 def _build_post_process(info: SheetInfo) -> list[str]:
     post_process: list[str] = []
-    if info.owner == "operator" and info.layer == "body":
+    if info.owner == "operator" and info.layer in {"body", "full_body_combat", "combat_fx"}:
         post_process.append("operator_curated_resources")
     if _is_operator_modular_sheet(info) or _is_operator_modular_sidearm_weapon(info):
         post_process.append("operator_modular_runtime")

@@ -2,8 +2,8 @@
 
 **Project:** CUSTODIAN
 **Created:** 2026-05-08
-**Status:** design
-**Last Updated:** 2026-05-08
+**Status:** implemented-v1
+**Last Updated:** 2026-07-16
 **Roadmap:** v0.5.0 Free-Roam Pre-Assault — Resource Collection & Fabrication
 **Depends on:** Free-roam traversal (v0.5.0), Existing operator interaction system, Existing InventoryManager autoload
 
@@ -65,6 +65,7 @@ The Collection Plan adds the spatial staging the Pipeline doc assumes, and the P
 - The blackwood inventory icon uses a reusable alpha-bounded CanvasItem ember/spark shader material. It derives a warm-pixel and nearby-dark-crack mask when no emission mask exists, keeps procedural glow/sparks inside the icon silhouette, and is assigned only at the inventory item-icon rendering boundary.
 - Interaction prompts via existing InteractionLabel HUD element
 - Resource deficit validation on fabricator recipes
+- One bounded deployable-structure bridge: completed `barricade_light` build tokens enter placement mode and create a damageable Light Barricade on a valid floor site
 
 ### Out of Scope (V1)
 - ❌ Survival-crafting system
@@ -523,6 +524,16 @@ This file is for metadata/documentation. Runtime resource counts live in `Resour
 | `custodian/assets/sprites/resources/wreckage_salvage_01.png` | Wreckage node standing |
 | `custodian/assets/sprites/resources/wreckage_depleted_01.png` | Wreckage node depleted |
 
+Light Barricade V1 uses scene-native placeholder polygons so the deployment loop does not wait on production art. Production replacement assets are reserved at:
+
+| Path | Size | Purpose |
+|------|------|---------|
+| `custodian/assets/sprites/structures/barricades/light_barricade/light_barricade_01.png` | `64x64` | Intact runtime sprite |
+| `custodian/assets/sprites/structures/barricades/light_barricade/light_barricade_damaged_01.png` | `64x64` | Below-50% damage state |
+| `custodian/assets/sprites/structures/barricades/light_barricade/light_barricade_destroyed_01.png` | `64x64` | Optional destroyed debris |
+| `custodian/assets/sprites/structures/barricades/light_barricade/light_barricade_ghost_01.png` | `64x64` | Optional placement preview replacement |
+| `custodian/assets/sprites/structures/barricades/light_barricade/source/light_barricade_01_source.aseprite` | `64x64`, 1–3 frames | Editing source only |
+
 ### V2 Polish (Priority Optional)
 
 | Path | Purpose |
@@ -678,8 +689,10 @@ godot --headless --quit
 - Selected detail begins with the work-order display name, then aligned state/category/result fields and the complete cost grid. The Lattice Field Patch includes its live `CARRY PATCH current/max` value in that header block.
 - While no terminal command is queued, the Fabrication command column may show non-persistent page guidance for selection, CRAFT 1, TO MAX, and closing the terminal. Guidance is presentation-only and must not be appended to command history.
 - Typed fallback remains supported through `FAB START <work_order_id>`, `FAB QUEUE`, `FAB CANCEL`, and `BUILD PLACE <ready_build_id>`.
+- Complete-v1: `turret_basic` and `barricade_light` are deployable Ready Builds. The selected work order is preferred by the PLACE action when its output token is ready.
+- Complete-v1: Light Barricade placement reuses the scene-wired `TurretPlacement` compatibility surface, consumes exactly one token only after a valid site is confirmed, and creates an 80-HP collision obstacle in the `structure`, `buildable_structure`, and `enemy_obstacle` groups.
 - Player-facing terminology should prefer "Work Order", "Ready Build", "In Progress", and "Missing Materials" even when the backend keeps recipe IDs and token IDs unchanged.
-- Deferred: small always-on HUD resource counts and broader non-turret deployment bridges.
+- Deferred: small always-on HUD resource counts and deployment bridges beyond Light Barricade.
 
 ### V1.2 — Power-Aware Fabrication
 - Fabricator speed/cost scaling based on `power.gd._get_fabrication_effectiveness()`
@@ -707,13 +720,13 @@ Current runtime step: before a separate destination/travel UI exists, `ContractW
 
 ## Next Agent Slice
 
-**Goal:** Extend the live FABRICATION work-order screen beyond the first clickable pass without changing fabrication authority.
+**Goal:** Extend deployable Ready Builds beyond the validated Basic Turret and Light Barricade without creating freeform base building.
 
-**Files:** `custodian/game/ui/hud/ui.gd`, `custodian/game/ui/terminal/fabrication_terminal_view_model.gd`, `custodian/game/ui/terminal/terminal_command_router.gd`, `custodian/game/systems/core/systems/turret_placement.gd`, `custodian/autoload/fab_pipeline.gd`
+**Files:** `custodian/game/ui/hud/ui.gd`, `custodian/game/ui/terminal/fabrication_terminal_view_model.gd`, `custodian/game/systems/core/systems/turret_placement.gd`, `custodian/autoload/fab_pipeline.gd`, and the next bounded placeable scene.
 
-**Constraints:** Keep simulation authority in `FabPipeline`, `ResourceLedger`, and `BuildInventory`; preserve the readable command aliases; do not expose raw recipe dictionaries as the primary player surface.
+**Constraints:** Keep simulation authority in `FabPipeline`, `ResourceLedger`, and `BuildInventory`; preserve the readable command aliases; keep placement token-gated; do not add walls, floors, gates, power grids, or freeform base editing in this slice.
 
-**Acceptance:** The terminal keeps the clickable work-order layout, supports richer filtering/sorting and broader deployable ready-build bridges, preserves Field Patch carry-cap validation, and remains compatible with existing `FAB START` and `BUILD PLACE` commands.
+**Acceptance:** The next placeable consumes one ready token only on valid placement, leaves invalid sites non-destructive, preserves Basic Turret and Light Barricade deployment, and remains compatible with existing `FAB START` and `BUILD PLACE` commands.
 
 ---
 

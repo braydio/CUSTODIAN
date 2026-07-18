@@ -94,6 +94,20 @@ cd custodian
 godot --headless --quit
 ```
 
+For turret placement resource and dismantle behavior:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/turret_placement_smoke.gd
+```
+
+For token-driven Light Barricade fabrication and placement, including Basic Turret regression:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/build_structure_placement_smoke.gd
+```
+
 Use import first when scenes/assets/resources changed:
 
 ```bash
@@ -166,10 +180,11 @@ godot --headless --path . --script res://tools/validation/grunt_parry_crit_react
 godot --headless --path . --script res://tools/validation/debug_grunt_spawn_modes_smoke.gd
 godot --headless --path . --script res://tools/validation/grunt_animation_smoke.gd
 godot --headless --path . --script res://tools/validation/operator_modular_defense_ranged_smoke.gd
+godot --headless --path . --script res://tools/validation/operator_knockdown_animation_smoke.gd
 ```
 
 The Falcon smoke validates stop-short travel, body/enemy separation, dedicated Operator impact, zero-drift recovery,
-hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection. The focused reaction smoke validates required asset dimensions, independent post-knockback roots through enter/hold/recover, normal target-ring suppression through recovery, BREACH/ring lifetime, atomic reservation, zero-offset shared execution roots, zero-local paired layers plus transform restoration, same-tick 8-frame/12-FPS semantic playback, frame-3 exactly-once damage, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Required paired/open assets fail loudly; only optional posture-break and expiry presentation may warn without failing.
+hard parry cancel/lockout, deterministic eligibility, and ally-lane rejection. The focused reaction smoke validates required S/E/W asset dimensions, independent post-knockback roots through enter/hold/recover, normal target-ring suppression through recovery, BREACH/ring lifetime, atomic reservation, approach-owned directional selection with vertical-to-south fallback, zero-offset shared execution roots, zero-local paired layers plus transform restoration, same-tick semantic playback through the nonuniform eight-frame duration table, source-frame-5 exactly-once damage, the 110ms paired contact freeze, final-settle ownership, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Required paired/open assets fail loudly; only optional posture-break and expiry presentation may warn without failing.
 
 For Sundered Keep asset wiring specifically:
 
@@ -235,6 +250,19 @@ godot --headless --path . --script res://tools/validation/fabrication_terminal_c
 
 This validates crisp terminal `StyleBoxTexture` rendering with border-only tile-fit frames and stretched single-center controls, the shipped display/mono font hierarchy and disciplined sizes, flat Fabrication row labels, selected-row/detail synchronization, structured resource rows, collapsed empty build status, fixed-width/no-page-scroll FABRICATION layout, the scrollable page rail, the live terminal translation layer, readable next-action text, the `BUILD PLACE <ready_build_id>` placement alias against runtime autoloads, and the dedicated clickable `FabricationWidgets` page in the main scene.
 
+For command-terminal Overview hierarchy, header/nav fit, or modal containment changes:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/terminal_overview_layout_smoke.gd
+godot --headless --path . --script res://tools/validation/terminal_overlay_visibility_smoke.gd
+godot --headless --path . --script res://tools/validation/terminal_typography_smoke.gd
+godot --headless --path . --script res://tools/validation/terminal_stylebox_rendering_smoke.gd
+godot --headless --path . --script res://tools/validation/fabrication_terminal_layout_smoke.gd
+```
+
+This validates the 1366×768 safe Overview composition, container-based status chips, collapsed secondary nav and reduced default actions, dominant shared tactical map, all diagnosis cards, actionable attention feed, command/transcript containment, full-viewport input-blocking scrim, gameplay-overlay suppression/restoration, typography, terminal skin rendering, and Fabrication layout compatibility.
+
 For Field Patch healing or restock changes:
 
 ```bash
@@ -257,8 +285,9 @@ env HOME=/tmp/custodian-godot-home \
   --script res://tools/validation/world_atmosphere_smoke.gd
 ```
 
-The first command instantiates the standalone lighting playground and checks the `WorldLightingDirector`,
-`CanvasModulate`, `DirectionalLight2D`, reusable light rigs, `LightingZone2D`, `LightOccluder2D`, and transient additive
+The first command instantiates the standalone lighting playground plus the shadowed gatehouse reference room and checks
+the `WorldLightingDirector`, `CanvasModulate`, `DirectionalLight2D`, authored light cookies, shadow/height/asymmetric
+rig settings, darker `LightingZone2D`, major-geometry `LightOccluder2D` polygons, animated dust, and transient additive
 flash pool. The second command checks live `game.tscn` lighting/profile/atmosphere wiring, UI layer separation, runtime
 fog/cosmic propagation, the combined foliage wind/occlusion shader contract, and representative persistent light rigs.
 

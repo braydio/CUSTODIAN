@@ -69,8 +69,9 @@ cosmic alpha:    0.02
 grade mix:       0.055
 vignette:        0.10
 grain:           0.008
-tree wind:       0.90 local px
-shrub wind:      0.45 local px
+tree wind:       1.35 local px
+shrub wind:      0.70 local px
+gust amount:     0.42
 ```
 
 ## Local Light Contract

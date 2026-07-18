@@ -138,6 +138,8 @@ their existing builders; other modular actions are normalized into stable runtim
 `operator/runtime/modules/new_operator/<layer>/actions/<loadout>/<action>/`. This does not automatically add
 new Operator gameplay states or playback mappings.
 
+Composited Operator reaction pairs are a supported authored alias: `full_body_combat` routes to the live body domain and `combat_fx` routes to the synchronized overlay domain. Runtime playback remains an explicit gameplay/presentation wiring step.
+
 Compatibility rule:
 
 - Legacy runtime paths may remain while current scenes and rebuild scripts still consume them.

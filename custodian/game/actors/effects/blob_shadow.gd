@@ -6,6 +6,8 @@ extends Node2D
 @export var max_stretch: float = 0.22
 @export var squash_per_speed: float = 0.00045
 @export_range(8, 48, 1) var point_count: int = 20
+@export var shadow_texture: Texture2D
+@export var shadow_tint: Color = Color(0.15, 0.19, 0.26, 1.0)
 
 var _current_velocity: Vector2 = Vector2.ZERO
 
@@ -13,6 +15,9 @@ var _current_velocity: Vector2 = Vector2.ZERO
 func _ready() -> void:
 	show_behind_parent = true
 	z_index = -1
+	var material := CanvasItemMaterial.new()
+	material.blend_mode = CanvasItemMaterial.BLEND_MODE_MUL
+	self.material = material
 	queue_redraw()
 
 
@@ -40,7 +45,15 @@ func _draw() -> void:
 		base_radius.x * (1.0 + stretch),
 		base_radius.y * max(0.7, 1.0 - squash)
 	)
-	draw_colored_polygon(_build_ellipse_points(radii), Color(0.0, 0.0, 0.0, shadow_alpha))
+	if shadow_texture != null:
+		draw_texture_rect(
+			shadow_texture,
+			Rect2(-radii, radii * 2.0),
+			false,
+			Color(shadow_tint.r, shadow_tint.g, shadow_tint.b, shadow_alpha)
+		)
+		return
+	draw_colored_polygon(_build_ellipse_points(radii), Color(shadow_tint.r, shadow_tint.g, shadow_tint.b, shadow_alpha))
 
 
 func _build_ellipse_points(radii: Vector2) -> PackedVector2Array:

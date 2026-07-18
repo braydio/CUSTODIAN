@@ -54,6 +54,7 @@ marine_dash_reset_time = 0.48
 marine_dash_reset_speed = 100.0
 behavior_state_machine_enabled = true
 behavior_profile_id = &"raider_grunt"
+resists_light_flinch = true
 
 [node name="Visual" type="ColorRect" parent="."]
 offset_left = -14.0

@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://dee2udakjfhvd"]
 
-[ext_resource type="Script" path="res://game/vfx/weapons/weapon_overheat_vent_vfx.gd" id="1_vent"]
+[ext_resource type="Script" uid="uid://x8gmau776lr3" path="res://game/vfx/weapons/weapon_overheat_vent_vfx.gd" id="1_vent"]
 
-[node name="WeaponOverheatVentVfx" type="Node2D"]
+[node name="WeaponOverheatVentVfx" type="Node2D" unique_id=49338123]
 script = ExtResource("1_vent")

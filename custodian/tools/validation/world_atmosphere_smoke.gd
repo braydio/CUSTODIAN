@@ -90,9 +90,9 @@ func _run() -> void:
 		"foliage_probabilistic_tree_collision": false,
 		"foliage_wind_enabled": true,
 		"foliage_wind_speed": 1.1,
-		"foliage_shrub_wind_strength_px": 0.45,
-		"foliage_tree_wind_strength_px": 0.9,
-		"foliage_wind_gust_amount": 0.35,
+		"foliage_shrub_wind_strength_px": 0.70,
+		"foliage_tree_wind_strength_px": 1.35,
+		"foliage_wind_gust_amount": 0.42,
 	}, Vector2i(4, 7))
 	assert(placed and foliage_nodes.has(Vector2i(4, 7)), "Foliage spawner did not create smoke foliage.")
 	var foliage_sprite := foliage_nodes[Vector2i(4, 7)].get("node") as Sprite2D
@@ -107,6 +107,10 @@ func _run() -> void:
 	]:
 		assert(foliage_uniforms.has(uniform_name), "Foliage-life shader missing uniform: %s" % uniform_name)
 	assert(is_equal_approx(float(foliage_material.get_shader_parameter("wind_speed")), 1.1))
+	var foliage_kind := str((foliage_nodes[Vector2i(4, 7)] as Dictionary).get("kind", "shrub"))
+	var expected_wind_strength := 1.35 if foliage_kind == "tree" else 0.70
+	assert(is_equal_approx(float(foliage_material.get_shader_parameter("wind_strength_px")), expected_wind_strength))
+	assert(is_equal_approx(float(foliage_material.get_shader_parameter("gust_amount")), 0.42))
 
 	var live_game := GAME_SCENE.instantiate()
 	var live_atmosphere := live_game.get_node_or_null("WorldAtmosphere2D") as CanvasLayer

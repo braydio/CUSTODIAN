@@ -81,6 +81,10 @@ const UNARMED_DEATH_BODY_SHEET := "res://content/sprites/operator/runtime/body/u
 const UNARMED_ARRIVAL_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__arrival_01__s__9f__96.png"
 const UNARMED_LIGHT_HITREACT_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__light_hitreact_01__s__3f__96.png"
 const UNARMED_LIGHT_HITREACT_FX_SOUTH_SHEET := "res://content/sprites/operator/runtime/overlay/unarmed/operator__fx__unarmed__light_hitreact_01__s__3f__96.png"
+const UNARMED_BODYSLAM_KNOCKDOWN_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__full_body_combat__unarmed__bodyslam_knockdown_01__e__12f__96.png"
+const UNARMED_BODYSLAM_KNOCKDOWN_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__full_body_combat__unarmed__bodyslam_knockdown_01__w__12f__96.png"
+const UNARMED_BODYSLAM_KNOCKDOWN_EAST_FX_SHEET := "res://content/sprites/operator/runtime/overlays/unarmed/operator__combat_fx__unarmed__bodyslam_knockdown_01__e__12f__96.png"
+const UNARMED_BODYSLAM_KNOCKDOWN_WEST_FX_SHEET := "res://content/sprites/operator/runtime/overlays/unarmed/operator__combat_fx__unarmed__bodyslam_knockdown_01__w__12f__96.png"
 var _had_rebuild_error := false
 
 const WALK_BASE_SLICES := [
@@ -215,6 +219,8 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "unarmed_stance_left", UNARMED_STANCE_WEST_BODY_SHEET, 6, 0, 96, 96, 8.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_light_hitreact", UNARMED_LIGHT_HITREACT_SOUTH_BODY_SHEET, 3, 0, 96, 96, 10.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_light_hitreact_down", UNARMED_LIGHT_HITREACT_SOUTH_BODY_SHEET, 3, 0, 96, 96, 10.0, false)
+	_replace_animation(body_frames, "unarmed_bodyslam_knockdown_right", UNARMED_BODYSLAM_KNOCKDOWN_EAST_BODY_SHEET, 12, 0, 96, 96, 12.0, false)
+	_replace_animation(body_frames, "unarmed_bodyslam_knockdown_left", UNARMED_BODYSLAM_KNOCKDOWN_WEST_BODY_SHEET, 12, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_walk", UNARMED_WALK_SOUTH_SHEET, 6, 0, 96, 96, 10.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_walk_down", UNARMED_WALK_SOUTH_SHEET, 6, 0, 96, 96, 10.0, true)
 	_replace_animation_if_exists(body_frames, "unarmed_walk_right", UNARMED_WALK_EAST_SHEET, 5, 0, 96, 96, 10.0, true)
@@ -299,6 +305,8 @@ func _init() -> void:
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_attack_heavy_fx_down", UNARMED_HEAVY_FX_SOUTH_SHEET, 7, 0, 96, 96, 10.0, false)
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_attack_heavy_fx_up", UNARMED_HEAVY_FX_NORTH_SHEET, 8, 0, 96, 96, 11.5, false)
 	_replace_animation_if_exists(melee_overlay_frames, "unarmed_light_hitreact_fx_down", UNARMED_LIGHT_HITREACT_FX_SOUTH_SHEET, 3, 0, 96, 96, 10.0, false)
+	_replace_animation(melee_overlay_frames, "unarmed_bodyslam_knockdown_fx_right", UNARMED_BODYSLAM_KNOCKDOWN_EAST_FX_SHEET, 12, 0, 96, 96, 12.0, false)
+	_replace_animation(melee_overlay_frames, "unarmed_bodyslam_knockdown_fx_left", UNARMED_BODYSLAM_KNOCKDOWN_WEST_FX_SHEET, 12, 0, 96, 96, 12.0, false)
 	_replace_animation(melee_overlay_frames, "melee_2h_block_enter_weapon", BLOCK_ENTER_WEAPON_SHEET, 4, 0, 96, 96, 10.0, false)
 	_replace_animation(melee_overlay_frames, "melee_2h_block_hold_weapon", BLOCK_HOLD_WEAPON_SHEET, 1, 0, 96, 96, 1.0, true)
 	_replace_animation(melee_overlay_frames, "melee_2h_block_exit_weapon", BLOCK_EXIT_WEAPON_SHEET, 2, 0, 96, 96, 10.0, false)

@@ -36,6 +36,8 @@ content/sprites/_pipeline/
 Direction codes are fixed: `n`, `ne`, `e`, `se`, `s`, `sw`, `w`, `nw`, and `omni` for non-directional effects.
 Compatibility copies to older runtime paths are allowed, but the source/intake asset should keep the canonical name.
 
+Operator composited combat reactions may use the authored `full_body_combat` and `combat_fx` layer names. The manifest generator routes those sheets into `operator/runtime/body/<loadout>/` and `operator/runtime/overlays/<loadout>/`, then rebuilds the curated Operator `SpriteFrames` resources.
+
 ## Example Manifest
 
 ```json

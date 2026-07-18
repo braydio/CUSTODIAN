@@ -1,5 +1,7 @@
 extends Area2D
 
+const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
+
 @export var speed: float = 2000.0
 @export var damage: float = 22.0
 @export var max_lifetime: float = 0.8
@@ -66,7 +68,7 @@ func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
 		return false
 
 	if body.has_method("take_damage"):
-		body.take_damage(damage)
+		body.take_damage(damage, CombatConstants.HitStrength.LIGHT)
 		_apply_game_feel(body, 40.0)
 		_spawn_impact_at(impact_position)
 		queue_free()

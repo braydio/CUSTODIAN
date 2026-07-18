@@ -28,9 +28,10 @@ func _run() -> void:
 		_finish()
 		return
 
-	_check_label(ui.get_node_or_null("TerminalPanel/Header/Title"), DISPLAY_PATH, 22, "terminal title")
-	_check_label(ui.get_node_or_null("TerminalPanel/Header/Eyebrow"), MONO_PATH, 11, "header eyebrow")
-	_check_label(ui.get_node_or_null("TerminalPanel/Header/Target"), MONO_PATH, 11, "header target")
+	_check_label(ui.get_node_or_null("TerminalPanel/Header/Margin/HeaderRow/Title"), DISPLAY_PATH, 22, "terminal title")
+	_check_label(ui.get_node_or_null("TerminalPanel/Header/Margin/HeaderRow/Eyebrow"), MONO_PATH, 11, "header eyebrow")
+	for chip_name in ["TimeChip", "ThreatChip", "PhaseChip", "GridChip"]:
+		_check_label(ui.get_node_or_null("TerminalPanel/Header/Margin/HeaderRow/StatusChips/" + chip_name), MONO_PATH, 11, "header %s" % chip_name)
 	_check_button(ui.find_child("OverviewButton", true, false), DISPLAY_PATH, 12, "navigation button")
 	_check_line_edit(ui.get_node_or_null("TerminalPanel/Body/CommandColumn/InputRow/TerminalInput"), MONO_PATH, 16, "command input")
 	_check_rich_text(ui.find_child("TerminalOutput", true, false), MONO_PATH, 12, "command log")

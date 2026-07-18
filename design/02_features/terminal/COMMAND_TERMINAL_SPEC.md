@@ -4,7 +4,7 @@
 **Status:** design
 **Created:** 2026-04-06
 **Author:** PAI-OpenCode
-**Last Updated:** 2026-05-10
+**Last Updated:** 2026-07-17
 **Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
@@ -55,9 +55,10 @@ This file is the implementation authority for terminal structure. For player-fac
 - Archive state
 - Pause/compression state
 
-**Example:**
-```
-CUSTODIAN // COMMAND LINK | MODE: COMMAND | FIDELITY: FULL | T: 18 | THREAT: HIGH | ASSAULT: PENDING | POWER: +2 RESERVE | ARCHIVE: 1/3 LOST | RATE: 1X
+**Runtime composition:** container-based left identity, center page title, and compact right status chips. The default chip set is simulation time, threat, phase, and grid state; deeper fidelity/archive/rate detail belongs in page content rather than one concatenated header string.
+
+```text
+[ CUSTODIAN NODE ] [ OVERVIEW ] [ T:19:14 ] [ THREAT:STABLE ] [ PHASE:FREE ROAM ] [ GRID:STABLE ]
 ```
 
 **Rules:**
@@ -71,7 +72,7 @@ CUSTODIAN // COMMAND LINK | MODE: COMMAND | FIDELITY: FULL | T: 18 | THREAT: HIG
 
 **Width:** 220–260px
 
-**Top section — Major pages (in order):**
+**Major pages (all reachable):**
 1. OVERVIEW
 2. STATUS
 3. SECTORS
@@ -85,18 +86,19 @@ CUSTODIAN // COMMAND LINK | MODE: COMMAND | FIDELITY: FULL | T: 18 | THREAT: HIG
 11. HISTORY
 12. SETTINGS
 
-**Bottom section — Contextual actions:**
+The default rail keeps the operational pages visible without scrolling: OVERVIEW, SECTORS, POWER, DEFENSE, FABRICATION, SENSORS, ARCHIVE, and RECON. STATUS, INCIDENTS, CONTRACTS, HISTORY, and SETTINGS live behind `MORE / SYSTEMS`; opening a secondary page keeps that group expanded.
+
+**Default contextual actions:**
 - WAIT
-- WAIT 10X
 - FOCUS
 - HARDEN
-- RESET
-- REBOOT
 - HELP
+
+`WAIT 10X`, `RESET`, and danger-class `REBOOT` remain command-line/secondary actions instead of consuming permanent rail height.
 
 **Rules:**
 - Keyboard-first: Up/down selects, Enter opens
-- Disabled buttons remain visible (don't disappear)
+- Disabled buttons remain visible inside their active primary/secondary group
 - FOCUS and HARDEN open modal submenus
 
 ---
@@ -135,6 +137,7 @@ CUSTODIAN // COMMAND LINK | MODE: COMMAND | FIDELITY: FULL | T: 18 | THREAT: HIG
 - Timestamps on every entry
 - Clicking opens linked page/sector
 - World interaction prompts should resolve the live `interact` binding at runtime rather than hardcoding a specific key label
+- On OVERVIEW, the first entries are a synthesized attention feed: current system/link state, grid change, sensor/contact state, and recommended next page/command. The bounded recent transcript follows beneath it.
 
 ---
 
@@ -175,6 +178,15 @@ CUSTODIAN // COMMAND LINK | MODE: COMMAND | FIDELITY: FULL | T: 18 | THREAT: HIG
 - Live tactical minimap using the shared Godot `MinimapPanel` / `MinimapView` path; do not use the old placeholder contract-preview texture.
 - Display per sector: state color, power state, defense readiness, hostile count, objective badge, operator marker
 - Click to open SECTORS page focused on sector
+
+**Planet preview:**
+- The globe is contextual rather than dominant. It is hidden on OVERVIEW and remains available on STATUS, CONTRACTS, and ARCHIVE.
+- Contract body/planet identity is summarized compactly inside Overview operational data.
+
+**Overview fit contract:**
+- At a 1366×768 window using the project 1280×720 canvas-safe viewport, top summaries, the live map, all three diagnosis cards, transcript, and command input remain visible without page-level or horizontal scrolling.
+- The terminal is modal: gameplay overlays are suppressed, a full-viewport dark scrim intercepts pointer input, and the terminal panel remains above it.
+- `DEBUG_TERMINAL_LAYOUT_BOUNDS` may outline the safe rect, nav, tactical map, transcript, and command input. Opening the terminal emits their rects, visible nav count, and header-truncation state to `DevObservatory`.
 
 ---
 
@@ -632,6 +644,16 @@ Implementation notes:
 - `01_systems/COMMAND_TERMINAL_UI.md` — Superseded by this spec
 - `01_systems/ROADMAP_COMMAND_TERMINAL.md` — Superseded by this spec
 - `02_features/terminal/TERMINAL_PLANET_GLOBE_PREVIEW.md` — Planet view implementation
+
+## Next Agent Slice
+
+Goal: deepen Overview data quality without changing its hierarchy or promoting presentation code into simulation authority.
+
+Files: `custodian/game/ui/terminal/terminal_snapshot.gd`, `custodian/game/ui/hud/ui.gd`, and focused terminal validation.
+
+Constraints: preserve the 1366×768 containment contract, shared live minimap renderer, collapsed secondary navigation, modal scrim, and read-only snapshot boundary. Replace fallback Operator location, incident, and recommendation strings only with authoritative snapshot fields.
+
+Acceptance: Overview reports authoritative Operator location and ranked incident/recommendation data while `terminal_overview_layout_smoke.gd` and the existing terminal regression suite continue to pass.
 
 ---
 

@@ -1,0 +1,58 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/actors/structures/light_barricade.gd" id="1_script"]
+[ext_resource type="Script" path="res://game/actors/structures/light_barricade_collision.gd" id="2_collision_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_barricade"]
+size = Vector2(56, 24)
+
+[node name="LightBarricade" type="Node2D"]
+script = ExtResource("1_script")
+max_health = 80.0
+current_health = 80.0
+projectile_armor = 2.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+script = ExtResource("2_collision_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_barricade")
+
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="Intact" type="Node2D" parent="Visuals"]
+
+[node name="BackBoard" type="Polygon2D" parent="Visuals/Intact"]
+polygon = PackedVector2Array(-30, -11, 30, -11, 30, -2, -30, -2)
+color = Color(0.18, 0.12, 0.08, 1)
+
+[node name="FrontBoard" type="Polygon2D" parent="Visuals/Intact"]
+polygon = PackedVector2Array(-30, 1, 30, 1, 30, 11, -30, 11)
+color = Color(0.34, 0.21, 0.11, 1)
+
+[node name="LeftBrace" type="Polygon2D" parent="Visuals/Intact"]
+polygon = PackedVector2Array(-25, -15, -18, -15, -14, 15, -21, 15)
+color = Color(0.55, 0.42, 0.22, 1)
+
+[node name="RightBrace" type="Polygon2D" parent="Visuals/Intact"]
+polygon = PackedVector2Array(18, -15, 25, -15, 21, 15, 14, 15)
+color = Color(0.55, 0.42, 0.22, 1)
+
+[node name="Damaged" type="Node2D" parent="Visuals"]
+visible = false
+
+[node name="BackBoard" type="Polygon2D" parent="Visuals/Damaged"]
+polygon = PackedVector2Array(-30, -11, 5, -11, 10, -4, 30, -2, 30, 4, -30, -2)
+color = Color(0.14, 0.09, 0.06, 1)
+
+[node name="FrontBoard" type="Polygon2D" parent="Visuals/Damaged"]
+polygon = PackedVector2Array(-30, 1, -6, 2, 0, 8, 30, 5, 30, 11, -30, 11)
+color = Color(0.27, 0.15, 0.08, 1)
+
+[node name="LeftBrace" type="Polygon2D" parent="Visuals/Damaged"]
+polygon = PackedVector2Array(-25, -15, -18, -15, -14, 15, -21, 15)
+color = Color(0.43, 0.31, 0.17, 1)
+
+[node name="RightBrace" type="Polygon2D" parent="Visuals/Damaged"]
+polygon = PackedVector2Array(18, -10, 25, -7, 21, 15, 14, 15)
+color = Color(0.43, 0.31, 0.17, 1)

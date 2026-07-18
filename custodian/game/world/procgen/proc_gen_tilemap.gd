@@ -448,9 +448,9 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export_group("Foliage Motion")
 @export var foliage_wind_enabled: bool = true
 @export_range(0.0, 4.0, 0.05) var foliage_wind_speed: float = 0.9
-@export_range(0.0, 2.0, 0.05) var foliage_shrub_wind_strength_px: float = 0.45
-@export_range(0.0, 3.0, 0.05) var foliage_tree_wind_strength_px: float = 0.9
-@export_range(0.0, 1.0, 0.01) var foliage_wind_gust_amount: float = 0.35
+@export_range(0.0, 2.0, 0.05) var foliage_shrub_wind_strength_px: float = 0.7
+@export_range(0.0, 3.0, 0.05) var foliage_tree_wind_strength_px: float = 1.35
+@export_range(0.0, 1.0, 0.01) var foliage_wind_gust_amount: float = 0.42
 @export_group("Combat Readability")
 @export var combat_readability_enabled: bool = true
 @export var combat_readability_enemy_range: float = 260.0

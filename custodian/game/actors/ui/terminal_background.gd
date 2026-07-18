@@ -5,7 +5,8 @@ var _viewport: SubViewport = null
 var _initialized := false
 
 func _ready() -> void:
-	z_index = -10  # Behind terminal panel
+	z_index = 5  # Above gameplay UI, below the terminal panel.
+	mouse_filter = Control.MOUSE_FILTER_STOP
 
 func initialize() -> void:
 	if _initialized:
@@ -21,7 +22,7 @@ func _setup_background_generator() -> void:
 
 func _create_fallback_background() -> void:
 	var gradient = Gradient.new()
-	gradient.colors = [Color(0.05, 0.05, 0.15), Color(0.02, 0.02, 0.08)]
+	gradient.colors = [Color(0.03, 0.055, 0.07, 0.94), Color(0.008, 0.014, 0.02, 0.96)]
 	
 	var gradient_tex = GradientTexture2D.new()
 	gradient_tex.gradient = gradient

@@ -18,6 +18,7 @@ const WalkState = preload("res://game/actors/operator/animations/states/walk_sta
 const SprintState = preload("res://game/actors/operator/animations/states/sprint_state.gd")
 const DeathState = preload("res://game/actors/operator/animations/states/death_state.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
+const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
 const SPEED := 150.0
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
 const MUZZLE_FLASH_SCENE := preload("res://game/actors/effects/muzzle_flash.tscn")
@@ -37,15 +38,33 @@ const CRITICAL_HITSPARK_LEFT_SHEET := "res://content/sprites/operator/new_operat
 const CRITICAL_HITSPARK_FRAME_COUNT := 8
 const CRITICAL_HITSPARK_FRAME_SIZE := Vector2i(156, 96)
 const CRITICAL_HITSPARK_FPS := 15.0
-const PAIRED_EXECUTION_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png"
-const PAIRED_EXECUTION_FX_SHEET := "res://content/sprites/operator/runtime/fx/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png"
-const PAIRED_EXECUTION_BODY_ANIMATION := &"operator_critical_execution_s"
-const PAIRED_EXECUTION_FX_ANIMATION := &"operator_critical_execution_fx_s"
+const PAIRED_EXECUTION_BODY_SHEETS := {
+	&"s": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png",
+	&"e": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__8f__96.png",
+	&"w": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__8f__96.png",
+}
+const PAIRED_EXECUTION_FX_SHEETS := {
+	&"s": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
+	&"e": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__8f__96.png",
+	&"w": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__8f__96.png",
+}
+const PAIRED_EXECUTION_BODY_ANIMATIONS := {
+	&"s": &"operator_critical_execution_s",
+	&"e": &"operator_critical_execution_e",
+	&"w": &"operator_critical_execution_w",
+}
+const PAIRED_EXECUTION_FX_ANIMATIONS := {
+	&"s": &"operator_critical_execution_fx_s",
+	&"e": &"operator_critical_execution_fx_e",
+	&"w": &"operator_critical_execution_fx_w",
+}
 const PAIRED_EXECUTION_FRAME_SIZE := Vector2i(96, 96)
 const PAIRED_EXECUTION_FRAME_COUNT := 8
-const PAIRED_EXECUTION_FPS := 12.0
-const PAIRED_EXECUTION_DAMAGE_FRAME := 3
-const PAIRED_EXECUTION_DURATION := float(PAIRED_EXECUTION_FRAME_COUNT) / PAIRED_EXECUTION_FPS
+const PAIRED_EXECUTION_SOURCE_FPS := 12.0
+const PAIRED_EXECUTION_FRAME_DURATIONS := [0.09, 0.13, 0.16, 0.22, 0.05, 0.15, 0.15, 0.25]
+const PAIRED_EXECUTION_DAMAGE_FRAME := 4
+const PAIRED_EXECUTION_HIT_STOP_DURATION := 0.11
+const PAIRED_EXECUTION_DURATION := 1.20
 const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav")
 
 enum AttackPhase {
@@ -149,6 +168,7 @@ var last_fire_cooldown := 0.0
 @export var melee_fast_hit_stop_duration: float = 0.028
 @export var melee_fast_camera_shake_power: float = 1.4
 @export var operator_light_reaction_stun_duration: float = 0.22
+@export var operator_knockdown_reaction_duration: float = 1.0
 @export var melee_fast_knockback_force: float = 56.0
 @export var melee_fast_recovery_duration: float = 0.10
 @export var melee_fast_animation_speed_scale: float = 1.35
@@ -324,10 +344,14 @@ var _critical_attack_damage: float = 0.0
 var _paired_execution_active: bool = false
 var _paired_execution_target: Node2D = null
 var _paired_execution_elapsed: float = 0.0
+var _paired_execution_frame_index: int = 0
+var _paired_execution_frame_elapsed: float = 0.0
+var _paired_execution_hit_stop_remaining: float = 0.0
 var _paired_execution_damage_applied: bool = false
 var _paired_execution_token: int = -1
 var _paired_execution_anchor: Vector2 = Vector2.ZERO
 var _paired_execution_operator_root: Vector2 = Vector2.ZERO
+var _paired_execution_direction: StringName = &"s"
 var _paired_execution_original_collision_mask: int = 0
 var _paired_execution_original_collision_layer: int = 0
 var _block_phase: StringName = &""
@@ -385,6 +409,7 @@ var _portal_transition_locked := false
 var _portal_arrival_animation_active := false
 var _arrn_stabilization_locked := false
 var _enemy_impact_lock_timer: float = 0.0
+var _damage_reaction_strength: int = CombatConstants.HitStrength.LIGHT
 var _is_dead := false
 var _unstuck_timer := 0.0
 var _unstuck_anchor_position := Vector2.ZERO
@@ -1210,6 +1235,11 @@ func _update_animation():
 		_play_field_patch_use_presentation()
 		return
 	if _parry_neutral_lock_active:
+		return
+	if _animation_state_machine != null and _animation_state_machine.current_state == "hit_recoil":
+		# Damage reaction playback owns the full body until its state duration
+		# completes; ordinary locomotion must not replace a knockdown mid-strip.
+		_hide_modular_locomotion_layers()
 		return
 
 	# Check if currently firing or attacking (lock to cursor)
@@ -3764,7 +3794,7 @@ func _update_melee_attack(delta: float) -> void:
 
 
 func _apply_melee_hitbox_tick() -> void:
-	# Paired executions use their fixed-step frame-3 event, never overlap polling.
+	# Paired executions use their duration-table contact event, never overlap polling.
 	if _melee_attack_kind == "critical":
 		return
 	if weapon_hitbox == null:
@@ -3800,7 +3830,12 @@ func _apply_melee_hitbox_tick() -> void:
 		if angle > (_melee_arc_current * 0.5):
 			continue
 		var impact_position := _resolve_melee_impact_position(enemy)
-		enemy.take_damage(_melee_damage_current)
+		var melee_hit_strength = CombatConstants.HitStrength.LIGHT
+		if _melee_attack_kind == "heavy":
+			melee_hit_strength = CombatConstants.HitStrength.HEAVY
+		elif _active_melee_attack_profile != null and _active_melee_attack_profile.attack_kind == "heavy":
+			melee_hit_strength = CombatConstants.HitStrength.HEAVY
+		enemy.take_damage(_melee_damage_current, melee_hit_strength)
 		_melee_hit_targets[enemy_id] = true
 		var knockback_dir := global_position.direction_to(enemy.global_position)
 		var knockback_force: float = _active_melee_attack_profile.knockback_force if _active_melee_attack_profile != null else (melee_fast_knockback_force if _melee_attack_kind == "fast" else melee_heavy_knockback_force)
@@ -4189,10 +4224,17 @@ func _start_critical_attack(target: Node2D) -> void:
 			assert(false, "Shared-root paired execution received a non-zero operator offset.")
 		target.call("cancel_parry_critical_execution", self, &"non_zero_shared_root_offset")
 		return
-	if not _ensure_paired_execution_animation(animated_sprite, PAIRED_EXECUTION_BODY_ANIMATION, PAIRED_EXECUTION_BODY_SHEET):
+	var execution_direction := StringName(execution_data.get("direction", &"s"))
+	if not PAIRED_EXECUTION_BODY_SHEETS.has(execution_direction):
+		execution_direction = &"s"
+	var body_animation: StringName = PAIRED_EXECUTION_BODY_ANIMATIONS[execution_direction]
+	var body_sheet: String = PAIRED_EXECUTION_BODY_SHEETS[execution_direction]
+	var fx_animation: StringName = PAIRED_EXECUTION_FX_ANIMATIONS[execution_direction]
+	var fx_sheet: String = PAIRED_EXECUTION_FX_SHEETS[execution_direction]
+	if not _ensure_paired_execution_animation(animated_sprite, body_animation, body_sheet):
 		target.call("cancel_parry_critical_execution", self, &"operator_body_asset_missing")
 		return
-	if not _ensure_paired_execution_animation(modular_upper_fx_sprite, PAIRED_EXECUTION_FX_ANIMATION, PAIRED_EXECUTION_FX_SHEET):
+	if not _ensure_paired_execution_animation(modular_upper_fx_sprite, fx_animation, fx_sheet):
 		target.call("cancel_parry_critical_execution", self, &"operator_fx_asset_missing")
 		return
 	_active_attack_profile = get_current_combat_profile()
@@ -4233,21 +4275,26 @@ func _start_critical_attack(target: Node2D) -> void:
 	_paired_execution_token = int(execution_data.get("token", -1))
 	_paired_execution_anchor = execution_data.get("anchor", target.global_position)
 	_paired_execution_operator_root = _paired_execution_anchor
+	_paired_execution_direction = execution_direction
 	_paired_execution_original_collision_mask = collision_mask
 	_paired_execution_original_collision_layer = collision_layer
 	_paired_execution_elapsed = 0.0
+	_paired_execution_frame_index = 0
+	_paired_execution_frame_elapsed = 0.0
+	_paired_execution_hit_stop_remaining = 0.0
 	_paired_execution_damage_applied = false
 	_paired_execution_active = true
 	global_position = _paired_execution_operator_root
 	velocity = Vector2.ZERO
-	movement_direction = Vector2.DOWN
-	visual_idle_direction = Vector2.DOWN
-	_melee_forward = Vector2.DOWN
+	var execution_facing := _paired_execution_direction_vector(_paired_execution_direction)
+	movement_direction = execution_facing
+	visual_idle_direction = execution_facing
+	_melee_forward = execution_facing
 	animated_sprite.visible = true
 	animated_sprite.position = Vector2.ZERO
 	animated_sprite.flip_h = false
 	animated_sprite.speed_scale = 1.0
-	animated_sprite.play(PAIRED_EXECUTION_BODY_ANIMATION)
+	animated_sprite.play(body_animation)
 	animated_sprite.stop()
 	animated_sprite.set_frame_and_progress(0, 0.0)
 	_hide_modular_locomotion_layers()
@@ -4255,17 +4302,17 @@ func _start_critical_attack(target: Node2D) -> void:
 	modular_upper_fx_sprite.position = Vector2.ZERO
 	modular_upper_fx_sprite.flip_h = false
 	modular_upper_fx_sprite.speed_scale = 1.0
-	modular_upper_fx_sprite.play(PAIRED_EXECUTION_FX_ANIMATION)
+	modular_upper_fx_sprite.play(fx_animation)
 	modular_upper_fx_sprite.stop()
 	modular_upper_fx_sprite.set_frame_and_progress(0, 0.0)
-	_modular_upper_fx_action_animation = PAIRED_EXECUTION_FX_ANIMATION
+	_modular_upper_fx_action_animation = fx_animation
 	if not bool(target.call("begin_parry_critical_execution", self, execution_data)):
 		_cleanup_paired_execution(false, &"enemy_begin_rejected")
 		return
 	if OS.is_debug_build():
 		assert(global_position.is_equal_approx(target.global_position), "Paired execution roots diverged on start.")
 	_notify_camera_attack_windup(true)
-	_lock_melee_cooldown(PAIRED_EXECUTION_DURATION + 0.08)
+	_lock_melee_cooldown(PAIRED_EXECUTION_DURATION + PAIRED_EXECUTION_HIT_STOP_DURATION + 0.08)
 
 
 func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name: StringName, sheet_path: String) -> bool:
@@ -4285,7 +4332,9 @@ func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name
 		sprite.sprite_frames.remove_animation(animation_name)
 	sprite.sprite_frames.add_animation(animation_name)
 	sprite.sprite_frames.set_animation_loop(animation_name, false)
-	sprite.sprite_frames.set_animation_speed(animation_name, PAIRED_EXECUTION_FPS)
+	# This speed is source-preview metadata only. Runtime playback is driven by the
+	# authored duration table in _update_paired_execution().
+	sprite.sprite_frames.set_animation_speed(animation_name, PAIRED_EXECUTION_SOURCE_FPS)
 	for frame_index in range(PAIRED_EXECUTION_FRAME_COUNT):
 		var atlas := AtlasTexture.new()
 		atlas.atlas = texture
@@ -4300,9 +4349,36 @@ func _update_paired_execution(delta: float) -> void:
 	if _paired_execution_target == null or not is_instance_valid(_paired_execution_target):
 		_cleanup_paired_execution(false, &"enemy_invalid")
 		return
-	var previous_elapsed := _paired_execution_elapsed
-	_paired_execution_elapsed = minf(PAIRED_EXECUTION_DURATION, _paired_execution_elapsed + delta)
-	var frame_index := mini(PAIRED_EXECUTION_FRAME_COUNT - 1, int(floor(_paired_execution_elapsed * PAIRED_EXECUTION_FPS)))
+	var remaining_delta := maxf(0.0, delta)
+	while remaining_delta > 0.0 and _paired_execution_active:
+		if _paired_execution_hit_stop_remaining > 0.0:
+			var hit_stop_step := minf(remaining_delta, _paired_execution_hit_stop_remaining)
+			_paired_execution_hit_stop_remaining -= hit_stop_step
+			remaining_delta -= hit_stop_step
+			if remaining_delta <= 0.0:
+				break
+		var frame_duration: float = PAIRED_EXECUTION_FRAME_DURATIONS[_paired_execution_frame_index]
+		var frame_step := minf(remaining_delta, frame_duration - _paired_execution_frame_elapsed)
+		_paired_execution_frame_elapsed += frame_step
+		_paired_execution_elapsed += frame_step
+		remaining_delta -= frame_step
+		if _paired_execution_frame_elapsed + 0.000001 < frame_duration:
+			break
+		_paired_execution_frame_elapsed = 0.0
+		if _paired_execution_frame_index >= PAIRED_EXECUTION_FRAME_COUNT - 1:
+			_cleanup_paired_execution(true, &"complete")
+			return
+		_paired_execution_frame_index += 1
+		_apply_paired_execution_frame(_paired_execution_frame_index)
+		if _paired_execution_frame_index == PAIRED_EXECUTION_DAMAGE_FRAME:
+			_apply_paired_execution_impact()
+			if _paired_execution_active:
+				_paired_execution_hit_stop_remaining = PAIRED_EXECUTION_HIT_STOP_DURATION
+	if _paired_execution_active:
+		_apply_paired_execution_frame(_paired_execution_frame_index)
+
+
+func _apply_paired_execution_frame(frame_index: int) -> void:
 	global_position = _paired_execution_operator_root
 	velocity = Vector2.ZERO
 	animated_sprite.position = Vector2.ZERO
@@ -4317,22 +4393,26 @@ func _update_paired_execution(delta: float) -> void:
 		_paired_execution_target.call("set_parry_critical_execution_frame", self, _paired_execution_token, frame_index)
 		if OS.is_debug_build():
 			assert(global_position.is_equal_approx(_paired_execution_target.global_position), "Paired execution roots diverged during playback.")
-	var damage_time := float(PAIRED_EXECUTION_DAMAGE_FRAME) / PAIRED_EXECUTION_FPS
-	if not _paired_execution_damage_applied and previous_elapsed < damage_time and _paired_execution_elapsed >= damage_time:
-		_paired_execution_damage_applied = true
-		var damage_result: Dictionary = _paired_execution_target.call("apply_parry_critical_execution_damage", self, _critical_attack_damage, {
-			"execution_token": _paired_execution_token,
-			"impact_position": _paired_execution_anchor,
-			"frame": PAIRED_EXECUTION_DAMAGE_FRAME,
-		})
-		if not bool(damage_result.get("critical", false)):
-			_cleanup_paired_execution(false, &"damage_rejected")
-			return
-		_notify_camera_attack_impact(Vector2.DOWN, true)
-		_apply_hit_stop()
-		_play_paired_execution_impact_sound()
-	if _paired_execution_elapsed >= PAIRED_EXECUTION_DURATION:
-		_cleanup_paired_execution(true, &"complete")
+
+
+func _apply_paired_execution_impact() -> void:
+	if _paired_execution_damage_applied:
+		return
+	_paired_execution_damage_applied = true
+	var damage_result: Dictionary = _paired_execution_target.call("apply_parry_critical_execution_damage", self, _critical_attack_damage, {
+		"execution_token": _paired_execution_token,
+		"impact_position": _paired_execution_anchor,
+		"frame": PAIRED_EXECUTION_DAMAGE_FRAME,
+	})
+	if not bool(damage_result.get("critical", false)):
+		_cleanup_paired_execution(false, &"damage_rejected")
+		return
+	var camera = _get_world_camera()
+	if camera and camera.has_method("on_execution_impact"):
+		camera.call("on_execution_impact", _paired_execution_direction_vector(_paired_execution_direction))
+	else:
+		_notify_camera_attack_impact(_paired_execution_direction_vector(_paired_execution_direction), true)
+	_play_paired_execution_impact_sound()
 
 
 func _play_paired_execution_impact_sound() -> void:
@@ -4359,8 +4439,12 @@ func _cleanup_paired_execution(completed: bool, reason: StringName) -> void:
 	_paired_execution_active = false
 	_paired_execution_target = null
 	_paired_execution_elapsed = 0.0
+	_paired_execution_frame_index = 0
+	_paired_execution_frame_elapsed = 0.0
+	_paired_execution_hit_stop_remaining = 0.0
 	_paired_execution_damage_applied = false
 	_paired_execution_token = -1
+	_paired_execution_direction = &"s"
 	collision_mask = _paired_execution_original_collision_mask
 	collision_layer = _paired_execution_original_collision_layer
 	velocity = Vector2.ZERO
@@ -4389,6 +4473,16 @@ func _cleanup_paired_execution(completed: bool, reason: StringName) -> void:
 			target.call("cancel_parry_critical_execution", self, reason)
 	if is_inside_tree() and not _is_dead:
 		_update_animation()
+
+
+func _paired_execution_direction_vector(direction: StringName) -> Vector2:
+	match direction:
+		&"e":
+			return Vector2.RIGHT
+		&"w":
+			return Vector2.LEFT
+		_:
+			return Vector2.DOWN
 
 
 func _play_critical_attack_animation() -> void:
@@ -6119,7 +6213,8 @@ func _is_block_state_active() -> bool:
 
 
 func _is_movement_locked() -> bool:
-	return _paired_execution_active or _reload_active or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked
+	var damage_reaction_locked: bool = _animation_state_machine != null and _animation_state_machine.current_state == "hit_recoil"
+	return damage_reaction_locked or _paired_execution_active or _reload_active or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked
 
 
 func _has_attack_movement_modifier() -> bool:
@@ -7726,6 +7821,8 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 		resolved_hit_direction = attacker.global_position.direction_to(global_position)
 	if resolved_hit_direction.length_squared() <= 0.001:
 		resolved_hit_direction = -visual_idle_direction.normalized() if visual_idle_direction.length_squared() > 0.001 else Vector2.DOWN
+	hit_context["hit_direction"] = resolved_hit_direction
+	hit_context["hit_kind"] = hit_kind
 
 	if try_parry_incoming_attack(attacker, resolved_hit_direction, {"damage": amount, "hit_kind": hit_kind}):
 		_log_incoming_hit_result(&"parried", hit_kind, amount, 0.0, attacker, hit_context)
@@ -7814,7 +7911,10 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 
 
 func receive_projectile_hit(amount: float, _attacker_team: String = "neutral") -> Dictionary:
-	return receive_enemy_hit(amount, &"projectile", _attacker_team)
+	return receive_enemy_hit(amount, &"projectile", _attacker_team, null, Vector2.ZERO, -1.0, {
+		"hit_strength": CombatConstants.HitStrength.LIGHT,
+		"damage_type": CombatConstants.DamageType.PHYSICAL,
+	})
 
 func take_damage(amount: float, trigger_reaction: bool = true, damage_context: Dictionary = {}):
 	if _is_dead:
@@ -7832,6 +7932,14 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 	health_changed.emit(current_health, max_health)
 
 	_obs_increment(&"player_hits_taken", 1)
+	var hit_str = damage_context.get("hit_strength", CombatConstants.HitStrength.LIGHT)
+	match hit_str:
+		CombatConstants.HitStrength.HEAVY:
+			_obs_increment(&"player_hits_taken_heavy", 1)
+		CombatConstants.HitStrength.INTERRUPT:
+			_obs_increment(&"player_hits_taken_interrupt", 1)
+		_:
+			_obs_increment(&"player_hits_taken_light", 1)
 	var damage_event := {
 		"amount": amount,
 		"damage_applied": health_before - health,
@@ -7857,7 +7965,10 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 			"health": health,
 		})
 
-	var hit_direction := -aim_direction.normalized() if aim_direction.length_squared() > 0.001 else Vector2.DOWN
+	var hit_direction_variant: Variant = damage_context.get("hit_direction", Vector2.ZERO)
+	var hit_direction := hit_direction_variant as Vector2 if hit_direction_variant is Vector2 else Vector2.ZERO
+	if hit_direction.length_squared() <= 0.001:
+		hit_direction = -aim_direction.normalized() if aim_direction.length_squared() > 0.001 else Vector2.DOWN
 	_last_damage_reaction_direction = hit_direction
 	_notify_camera_damage_taken(hit_direction)
 	update_visuals()
@@ -7869,7 +7980,7 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 		return
 
 	if trigger_reaction:
-		_request_damage_reaction(amount)
+		_request_damage_reaction(amount, int(hit_str))
 
 	if visual:
 		visual.modulate = Color(1, 1, 1)
@@ -7894,6 +8005,7 @@ func apply_enemy_dash_impact(direction: Vector2, knockback_px: float, victim_hit
 	_interrupt_active_combat_for_damage_reaction()
 	velocity = impact_direction * (knockback_px / maxf(0.16, _enemy_impact_lock_timer))
 	if _animation_state_machine != null:
+		_damage_reaction_strength = CombatConstants.HitStrength.HEAVY
 		_animation_state_machine.request("hit_recoil", 24)
 	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
 	if camera != null and camera.has_method("on_damage_taken"):
@@ -7913,14 +8025,16 @@ func apply_enemy_falcon_punch_impact(direction: Vector2, knockback_px: float, vi
 	_interrupt_active_combat_for_damage_reaction()
 	velocity = impact_direction * (knockback_px / maxf(0.13, _enemy_impact_lock_timer))
 	if _animation_state_machine != null:
+		_damage_reaction_strength = CombatConstants.HitStrength.HEAVY
 		_animation_state_machine.request("hit_recoil", 24)
 	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
 	if camera != null and camera.has_method("on_damage_taken"):
 		camera.call("on_damage_taken", impact_direction)
 
-func _request_damage_reaction(_amount: float) -> void:
+func _request_damage_reaction(_amount: float, hit_strength: int = CombatConstants.HitStrength.LIGHT) -> void:
 	if _animation_state_machine == null:
 		return
+	_damage_reaction_strength = hit_strength
 	_interrupt_active_combat_for_damage_reaction()
 	_animation_state_machine.request("hit_recoil", 20)
 
@@ -7928,6 +8042,10 @@ func _request_damage_reaction(_amount: float) -> void:
 func get_damage_reaction_animation(_reaction_name: String) -> StringName:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return &""
+	if _damage_reaction_strength == CombatConstants.HitStrength.HEAVY:
+		var knockdown_animation := &"unarmed_bodyslam_knockdown_left" if _last_damage_reaction_direction.x < 0.0 else &"unarmed_bodyslam_knockdown_right"
+		if _has_playable_sprite_animation(animated_sprite.sprite_frames, knockdown_animation):
+			return knockdown_animation
 	var profile := get_current_combat_profile()
 	var mapped := _get_weapon_animation_name(profile, "unarmed_light_hitreact", &"") if profile != null else &""
 	if mapped == StringName() and unarmed_definition != null:
@@ -7944,13 +8062,32 @@ func get_damage_reaction_animation(_reaction_name: String) -> StringName:
 	return &""
 
 
+func get_damage_reaction_duration(_reaction_name: String) -> float:
+	if _damage_reaction_strength == CombatConstants.HitStrength.HEAVY:
+		return operator_knockdown_reaction_duration
+	return operator_light_reaction_stun_duration
+
+
 func play_damage_reaction_fx(_animation_name: StringName) -> void:
+	_hide_modular_locomotion_layers()
+	if _damage_reaction_strength == CombatConstants.HitStrength.HEAVY and animated_sprite:
+		# E/W are separately authored full-body sheets; do not inherit a stale
+		# locomotion mirror from the frame before impact.
+		animated_sprite.flip_h = false
 	if melee_weapon_overlay_sprite:
 		melee_weapon_overlay_sprite.visible = false
 		melee_weapon_overlay_sprite.stop()
+	if primary_weapon_sprite:
+		primary_weapon_sprite.visible = false
+		primary_weapon_sprite.stop()
+	if ranged_fx_overlay_sprite:
+		ranged_fx_overlay_sprite.visible = false
+		ranged_fx_overlay_sprite.stop()
 	if melee_fx_overlay_sprite == null or melee_fx_overlay_sprite.sprite_frames == null:
 		return
 	var fx_animation := &"unarmed_light_hitreact_fx_down"
+	if _damage_reaction_strength == CombatConstants.HitStrength.HEAVY:
+		fx_animation = &"unarmed_bodyslam_knockdown_fx_left" if _last_damage_reaction_direction.x < 0.0 else &"unarmed_bodyslam_knockdown_fx_right"
 	if not melee_fx_overlay_sprite.sprite_frames.has_animation(fx_animation):
 		return
 	melee_fx_overlay_sprite.visible = true
@@ -7958,6 +8095,16 @@ func play_damage_reaction_fx(_animation_name: StringName) -> void:
 	melee_fx_overlay_sprite.speed_scale = 1.0
 	melee_fx_overlay_sprite.set_frame_and_progress(0, 0.0)
 	melee_fx_overlay_sprite.play(fx_animation)
+
+
+func finish_damage_reaction_presentation() -> void:
+	if melee_fx_overlay_sprite == null:
+		return
+	var animation_name := String(melee_fx_overlay_sprite.animation)
+	if animation_name.begins_with("unarmed_light_hitreact") or animation_name.begins_with("unarmed_bodyslam_knockdown"):
+		melee_fx_overlay_sprite.visible = false
+		melee_fx_overlay_sprite.stop()
+		melee_fx_overlay_sprite.frame = 0
 
 
 func _interrupt_active_combat_for_damage_reaction() -> void:

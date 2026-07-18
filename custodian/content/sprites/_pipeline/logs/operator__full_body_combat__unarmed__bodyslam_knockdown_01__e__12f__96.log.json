@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__full_body_combat__unarmed__bodyslam_knockdown_01__e__12f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/body/unarmed/operator__full_body_combat__unarmed__bodyslam_knockdown_01__e__12f__96.png"
+	],
+	"post_process": [
+		"operator_curated_resources"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__full_body_combat__unarmed__bodyslam_knockdown_01__e__12f__96.png",
+	"timestamp_utc": "2026-07-18 00:34:25"
+}
