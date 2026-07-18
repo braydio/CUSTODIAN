@@ -2,7 +2,11 @@ extends Node
 class_name SunderedKeepVistaController
 
 @export var player_path: NodePath = NodePath("/root/GameRoot/World/Operator")
+@export var camera_path: NodePath = NodePath("/root/GameRoot/World/Camera2D")
+@export var entry_marker_path: NodePath
 @export var start_marker_path: NodePath
+@export var reveal_full_marker_path: NodePath
+@export var mid_gameplay_marker_path: NodePath
 @export var end_marker_path: NodePath
 
 @export var vista_root_path: NodePath
@@ -27,9 +31,23 @@ class_name SunderedKeepVistaController
 @export_range(0.0, 1.0, 0.01) var shadow_max_alpha := 0.85
 @export_range(0.0, 1.0, 0.01) var keep_min_alpha := 0.40
 
+const CAMERA_ENTRY_OFFSET := Vector2(0.0, 0.0)
+const CAMERA_ENTRY_ZOOM := Vector2(1.0, 1.0)
+const CAMERA_FIRST_REVEAL_OFFSET := Vector2(0.0, -140.0)
+const CAMERA_FIRST_REVEAL_ZOOM := Vector2(0.86, 0.86)
+const CAMERA_TRAVERSE_OFFSET := Vector2(0.0, -48.0)
+const CAMERA_TRAVERSE_ZOOM := Vector2(0.96, 0.96)
+const CAMERA_GRAND_VISTA_OFFSET := Vector2(0.0, -48.0)
+const CAMERA_GRAND_VISTA_ZOOM := Vector2(0.96, 0.96)
+const CAMERA_FINAL_GATE_OFFSET := Vector2(0.0, 0.0)
+const CAMERA_FINAL_GATE_ZOOM := Vector2(1.0, 1.0)
+
 var _player: Node2D
+var _camera: Camera2D
+var _entry: Marker2D
 var _start: Node2D
 var _reveal_full: Node2D
+var _mid_gameplay: Marker2D
 var _end: Node2D
 var _vista_root: CanvasItem
 var _grand_vista_root: CanvasItem
@@ -43,6 +61,8 @@ var _keep: CanvasItem
 var _second_vista_start: Marker2D
 var _second_vista_full: Marker2D
 var _second_vista_end: Marker2D
+var _camera_target_offset := CAMERA_ENTRY_OFFSET
+var _camera_target_zoom := CAMERA_ENTRY_ZOOM
 
 
 func _ready() -> void:
@@ -91,9 +111,25 @@ func apply_progress(t: float) -> void:
 	_apply_progress(t)
 
 
+func has_camera_target() -> bool:
+	return _camera != null and is_instance_valid(_camera)
+
+
+func get_camera_target_state() -> Dictionary:
+	return {
+		"offset": _camera_target_offset,
+		"zoom": _camera_target_zoom,
+		"camera_bound": has_camera_target(),
+	}
+
+
 func _resolve_nodes() -> void:
 	_player = get_node_or_null(player_path) as Node2D
+	_camera = get_node_or_null(camera_path) as Camera2D
+	_entry = get_node_or_null(entry_marker_path) as Marker2D
 	_start = get_node_or_null(start_marker_path) as Node2D
+	_reveal_full = get_node_or_null(reveal_full_marker_path) as Node2D
+	_mid_gameplay = get_node_or_null(mid_gameplay_marker_path) as Marker2D
 	_end = get_node_or_null(end_marker_path) as Node2D
 	_vista_root = get_node_or_null(vista_root_path) as CanvasItem
 	_grand_vista_root = get_node_or_null(grand_vista_root_path) as CanvasItem
@@ -116,7 +152,12 @@ func _resolve_nodes() -> void:
 		return
 	if _start == null:
 		_start = approach_root.get_node_or_null("Markers/RevealStart") as Node2D
-	_reveal_full = approach_root.get_node_or_null("Markers/RevealFull") as Node2D
+	if _entry == null:
+		_entry = approach_root.get_node_or_null("Markers/EntrySpawn") as Marker2D
+	if _reveal_full == null:
+		_reveal_full = approach_root.get_node_or_null("Markers/RevealFull") as Node2D
+	if _mid_gameplay == null:
+		_mid_gameplay = approach_root.get_node_or_null("Markers/MidGameplayStart") as Marker2D
 	if _end == null:
 		_end = approach_root.get_node_or_null("Markers/ReturnTopdown") as Node2D
 	if _vista_root == null:
@@ -149,6 +190,7 @@ func _apply_progress(t: float) -> void:
 	var first_vista_alpha := smoothstep(reveal_start_progress, reveal_full_progress, t)
 	var second_vista_alpha := _get_second_vista_alpha(t)
 	var exit_shadow_alpha := _get_exit_shadow_alpha(t)
+	_apply_camera_progress(t)
 
 	if _vista_root != null:
 		_vista_root.modulate.a = first_vista_alpha * vista_max_alpha
@@ -168,6 +210,46 @@ func _apply_progress(t: float) -> void:
 		_final_gate_shadow_veil.modulate.a = exit_shadow_alpha * shadow_max_alpha
 	if _keep != null:
 		_keep.modulate.a = lerpf(keep_min_alpha, 1.0, first_vista_alpha)
+
+
+func _apply_camera_progress(t: float) -> void:
+	var reveal_full_progress := _marker_progress(_reveal_full) if _reveal_full != null else 0.25
+	var mid_progress := _marker_progress(_mid_gameplay) if _mid_gameplay != null else 0.45
+	var second_start_progress := _marker_progress(_second_vista_start) if _second_vista_start != null else 0.60
+	var second_end_progress := _marker_progress(_second_vista_end) if _second_vista_end != null else 0.86
+	var end_progress := _marker_progress(_end) if _end != null else 1.0
+
+	if t <= reveal_full_progress:
+		var weight := smoothstep(0.0, maxf(reveal_full_progress, 0.001), t)
+		_set_camera_target(
+			CAMERA_ENTRY_OFFSET.lerp(CAMERA_FIRST_REVEAL_OFFSET, weight),
+			CAMERA_ENTRY_ZOOM.lerp(CAMERA_FIRST_REVEAL_ZOOM, weight)
+		)
+	elif t <= mid_progress:
+		var weight := smoothstep(reveal_full_progress, maxf(mid_progress, reveal_full_progress + 0.001), t)
+		_set_camera_target(
+			CAMERA_FIRST_REVEAL_OFFSET.lerp(CAMERA_TRAVERSE_OFFSET, weight),
+			CAMERA_FIRST_REVEAL_ZOOM.lerp(CAMERA_TRAVERSE_ZOOM, weight)
+		)
+	elif t <= second_start_progress:
+		_set_camera_target(CAMERA_TRAVERSE_OFFSET, CAMERA_TRAVERSE_ZOOM)
+	elif t <= second_end_progress:
+		_set_camera_target(CAMERA_GRAND_VISTA_OFFSET, CAMERA_GRAND_VISTA_ZOOM)
+	else:
+		var weight := smoothstep(second_end_progress, maxf(end_progress, second_end_progress + 0.001), t)
+		_set_camera_target(
+			CAMERA_GRAND_VISTA_OFFSET.lerp(CAMERA_FINAL_GATE_OFFSET, weight),
+			CAMERA_GRAND_VISTA_ZOOM.lerp(CAMERA_FINAL_GATE_ZOOM, weight)
+		)
+
+
+func _set_camera_target(target_offset: Vector2, target_zoom: Vector2) -> void:
+	_camera_target_offset = target_offset
+	_camera_target_zoom = target_zoom
+	if _camera == null or not is_instance_valid(_camera):
+		_camera = get_node_or_null(camera_path) as Camera2D
+	if _camera != null and _camera.has_method("set_presentation_framing"):
+		_camera.call("set_presentation_framing", true, target_offset, target_zoom)
 
 
 func _get_second_vista_alpha(t: float) -> float:

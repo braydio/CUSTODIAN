@@ -29,6 +29,8 @@ Procgen world placement
 
 The exported instance switch `bypass_return_causeway_for_keep_testing` may be set to `false` to test the longer Vista Approach -> Return Causeway -> Keep route. On that branch the Causeway displays a named entry affordance, its north gate enters the Keep, and Keep return reactivates the Causeway at its north anchor. `LevelLoader` tracks either handoff and `SunderedKeepTransitionTrigger` owns shared target instancing, entry setup, active-level adoption, and source retirement.
 
+`WorldIngressSite` establishes the Vista presentation contract before it calls `LevelLoader.enter_level(...)`: `ProcGenRuntime` and `ConnectedMaps` are hidden and processing-disabled, the procgen HUD/minimap enters `vista_approach` mode, and Operator world-space health/target presentation is suppressed. A failed entry restores those branches and presentation state. The production approach reasserts the same contract when it becomes active, so procgen actors, resource/aspect markers, health bars, target rings, and minimap pips cannot bleed into the authored route.
+
 Ingress transitions must be deferred out of `Area2D.body_entered` physics callbacks before instancing this scene. The approach also defers its dynamic `StaticBody2D` boundary rails and final exit `Area2D` setup by one frame so Godot does not register or toggle physics shapes while flushing queries.
 
 ## Collision Mapping Debug Scene
@@ -89,6 +91,8 @@ SunderedKeepApproach
 
 The production runtime script self-heals these visual roots with `z_as_relative=false` so draw order does not depend on scene-tree insertion or inherited z values. The blockout scene remains reference/dev-only.
 
+`UnderlayRoot/BackdropVoidFill` is the bottom safety plate. Its coverage is `RECT_CAMERA_BOUNDS.grow(768)` and its z-index is below every fitted underlay sprite. `RECT_APPROACH_UNDERLAY` also includes camera-framing slack. The safety plate owns no collision or simulation semantics; it exists solely to ensure camera zoom/framing can never expose the engine clear color.
+
 ### Camera states & markers
 
 State transitions are driven by player position against Marker2D waypoints. Approach flows **north (decreasing Y)** then **east (increasing X)**.
@@ -100,6 +104,10 @@ State transitions are driven by player position against Marker2D waypoints. Appr
 | 3 — Playable Traverse | traverse_offset (0,-48), traverse_zoom (0.96) | 1.0 | Edge mist/fog strips visible, final veil hidden | Player passes MidGameplayStart; `GrandVistaRoot` remains hidden |
 | 4 — Grand Hero Vista | traverse_offset, traverse_zoom | 1.0 | Edge mist/fog strips visible | Player reaches SecondVistaStart/SecondVistaFull; `GrandVistaRoot` fades in, then fades out by SecondVistaEnd |
 | 5 — Final Gate Veil | normal_offset, normal_zoom | 1.0 | Final gate shadow veil fades in | Player passes SecondVistaEnd toward ReturnTopdown |
+
+These values are live camera targets. `SunderedKeepVistaController` interpolates them and sends a reversible presentation-framing override to the shared `CameraController`; ordinary auto-zoom, lookahead, threat bias, and bob resume after the level handoff.
+
+The endpoint remains an `Area2D`, but it is a narrow walkable threshold under `EventRuntime/LevelExitAffordance`, displays `ENTER SUNDERED KEEP`, accepts automatic crossing only from the authored approach side, raises the final veil, and then performs the existing fade/handoff.
 
 **Marker positions** (from builder):
 
@@ -352,10 +360,14 @@ Verify at each state:
 - [x] Smoke test passes: all Sprite2D nodes exist with non-null textures, root/Operator z-order is absolute, playable collision polygons exist, director exports are wired, and Sprite2D render rects match their intended world rectangles
 - [x] Scene regenerates cleanly from builder
 - [x] Scene loads via F6 in-game (debug shortcut)
+- [x] Procgen simulation and procgen-specific HUD/marker presentation are isolated before Vista instancing
+- [x] BackdropVoidFill covers camera bounds plus 768 px of framing slack
+- [x] Production VistaController drives the shared runtime camera through authored offset/zoom targets
+- [x] Exit uses a visible, directionally staged destination threshold before fade/handoff
 
 ## Next Agent Slice
 
-- **Goal:** Production runtime full-composition approach is implemented. Remaining work is asset export cleanup and manual play review.
+- **Goal:** Production runtime full-composition and presentation-isolation pass is implemented. Remaining work is asset export cleanup and manual play review.
 - **Future opportunities:**
   - Re-export `underlay_fog_band.png`, `distant_sundered_keep.png`, `overlook_ledge.png`, and `fortress_wall_mass.png` to match the documented production rect/source contract if desired
   - In-editor visual review of the approach blockout scene (open `sundered_keep_approach_blockout.tscn` and walk the operator)

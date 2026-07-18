@@ -210,7 +210,7 @@ godot --headless --path . --script res://tools/validation/sundered_keep_approach
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_mapper_smoke.gd
 ```
 
-The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker and that its default endpoint targets Sundered Keep directly. The chain smoke proves both default Vista → Keep actor placement and the optional Vista → Causeway → Keep branch, including LevelLoader adoption, source branch deactivation, entry affordance, and Keep → Causeway return anchoring.
+The ingress smoke proves registered entry and procgen/connected branch isolation. The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker, its backdrop covers camera bounds plus framing slack, camera targets are wired, its endpoint has a visible directional affordance, and the default target is Sundered Keep directly. The chain smoke proves representative harvest/aspect marker suppression plus both default Vista → Keep actor placement and the optional Vista → Causeway → Keep branch, including LevelLoader adoption, source branch deactivation, entry affordance, and Keep → Causeway return anchoring.
 
 For the experimental route/stage wrapper:
 

@@ -413,6 +413,7 @@ var _field_patch_missing_presentation_warning_emitted: bool = false
 var _combat_target: Node2D = null
 var _target_ring: Node2D = null
 var _target_ring_pending: bool = false
+var _vista_presentation_mode := false
 var _idle_loop_counter := 0
 var _last_idle_frame := -1
 var _last_idle_animation := ""
@@ -6211,6 +6212,9 @@ func _update_combat_target() -> void:
 func _update_target_ring() -> void:
 	if _target_ring == null:
 		return
+	if _vista_presentation_mode:
+		_target_ring.visible = false
+		return
 	if _combat_target == null or not is_instance_valid(_combat_target):
 		_target_ring.visible = false
 		return
@@ -6225,6 +6229,16 @@ func _update_target_ring() -> void:
 	_target_ring.global_position = _combat_target.global_position
 	if _target_ring.has_method("set_in_strike_zone"):
 		_target_ring.call("set_in_strike_zone", _is_enemy_in_preview_strike_zone(_combat_target))
+
+
+func set_vista_presentation_mode(enabled: bool) -> void:
+	_vista_presentation_mode = enabled
+	if health_bar != null:
+		health_bar.visible = not enabled
+	if enabled:
+		_combat_target = null
+		if _target_ring != null and is_instance_valid(_target_ring):
+			_target_ring.visible = false
 
 
 func _find_nearest_enemy_target(max_distance: float) -> Node2D:

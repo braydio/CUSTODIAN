@@ -319,6 +319,7 @@ var _debug_hud_visible := false
 var _debug_toggle_key_was_pressed := false
 var _debug_screen: Control = null
 var _minimap_visible := true
+var _world_presentation_mode: StringName = &"gameplay"
 var _placement_mode_active := false
 var _last_crosshair_aim_dir := Vector2.ZERO
 var _last_crosshair_screen_pos := Vector2.ZERO
@@ -1670,6 +1671,17 @@ func _set_minimap_visible(visible: bool) -> void:
 	_minimap_visible = visible
 	if minimap:
 		minimap.visible = visible and not _main_hud_hidden and not _terminal_open
+
+
+func set_world_presentation_mode(mode: StringName) -> void:
+	_world_presentation_mode = mode
+	# The legacy contract HUD is procgen-specific. Vista traversal deliberately
+	# uses a clean screen; authored destination prompts are world-owned.
+	_set_main_hud_hidden(mode == &"vista_approach")
+
+
+func get_world_presentation_mode() -> StringName:
+	return _world_presentation_mode
 
 
 func _set_external_gameplay_overlays_hidden(hidden: bool) -> void:

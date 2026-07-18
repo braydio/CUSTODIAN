@@ -94,6 +94,11 @@ func _enter_approach(actor: Node) -> void:
 		push_error("[WorldIngressSite] Missing world root for %s" % ingress_id)
 		return
 
+	# Presentation levels must never be born for one frame inside the active
+	# procgen simulation. Isolate first, then restore atomically on failure.
+	_set_procgen_world_visible(false)
+	_set_vista_presentation_mode(actor, true)
+
 	if not level_id.is_empty():
 		var level_loader := _find_level_loader()
 		if level_loader != null:
@@ -104,12 +109,12 @@ func _enter_approach(actor: Node) -> void:
 				"target_spawn_id": target_spawn_id,
 			}) as Node
 			if instance != null:
-				_set_procgen_world_visible(false)
 				return
 		push_warning("[WorldIngressSite] LevelLoader could not enter %s; using legacy approach fallback" % level_id)
 
 	if approach_scene == null:
 		push_error("[WorldIngressSite] Missing approach_scene for %s" % ingress_id)
+		_restore_failed_approach_entry(actor)
 		return
 
 	var existing := world.get_node_or_null("%s_Approach" % String(ingress_id))
@@ -118,12 +123,11 @@ func _enter_approach(actor: Node) -> void:
 		approach = approach_scene.instantiate()
 		if approach == null:
 			push_error("[WorldIngressSite] Could not instantiate approach scene for %s" % ingress_id)
+			_restore_failed_approach_entry(actor)
 			return
 		approach.name = "%s_Approach" % String(ingress_id)
 		world.add_child(approach)
 		_align_approach_entry_to_ingress(approach)
-	_set_procgen_world_visible(false)
-
 	if approach.has_method("configure_ingress"):
 		approach.call("configure_ingress", {
 			"target_scene_path": target_scene_path,
@@ -157,6 +161,20 @@ func _align_approach_entry_to_ingress(approach: Node) -> void:
 func _set_procgen_world_visible(value: bool) -> void:
 	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ProcGenRuntime"), value)
 	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ConnectedMaps"), value)
+
+
+func _restore_failed_approach_entry(actor: Node) -> void:
+	_set_procgen_world_visible(true)
+	_set_vista_presentation_mode(actor, false)
+	_triggered = false
+
+
+func _set_vista_presentation_mode(actor: Node, enabled: bool) -> void:
+	var ui := get_node_or_null("/root/GameRoot/UI")
+	if ui != null and ui.has_method("set_world_presentation_mode"):
+		ui.call("set_world_presentation_mode", &"vista_approach" if enabled else &"gameplay")
+	if actor != null and actor.has_method("set_vista_presentation_mode"):
+		actor.call("set_vista_presentation_mode", enabled)
 
 
 func _set_world_branch_visible(branch: Node, value: bool) -> void:

@@ -32,6 +32,12 @@ func _check_direct_keep_branch() -> void:
 	actor.global_position = approach.call("get_entry_position")
 	await process_frame
 	await process_frame
+	_expect(not procgen.visible and procgen.process_mode == Node.PROCESS_MODE_DISABLED, "Vista entry did not isolate ProcGenRuntime before presentation")
+	_expect(not connected_maps.visible and connected_maps.process_mode == Node.PROCESS_MODE_DISABLED, "Vista entry did not isolate ConnectedMaps")
+	var harvest_marker := fixture["harvest_marker"] as CanvasItem
+	var aspect_marker := fixture["aspect_marker"] as CanvasItem
+	_expect(not harvest_marker.is_visible_in_tree(), "Harvest marker remained visible during Vista Approach")
+	_expect(not aspect_marker.is_visible_in_tree(), "Aspect marker remained visible during Vista Approach")
 
 	var vista_exit := approach.get_node_or_null("EventRuntime/LevelExitTrigger") as SunderedKeepTransitionTrigger
 	_expect(vista_exit != null, "Direct branch Vista endpoint transition trigger is missing")
@@ -156,6 +162,14 @@ func _create_fixture() -> Dictionary:
 	var procgen := Node2D.new()
 	procgen.name = "ProcGenRuntime"
 	world.add_child(procgen)
+	var harvest_marker := Polygon2D.new()
+	harvest_marker.name = "HarvestMarkerFixture"
+	harvest_marker.add_to_group("resource_nodes")
+	procgen.add_child(harvest_marker)
+	var aspect_marker := Polygon2D.new()
+	aspect_marker.name = "AspectMarkerFixture"
+	aspect_marker.add_to_group("aspect_markers")
+	procgen.add_child(aspect_marker)
 	var connected_maps := Node2D.new()
 	connected_maps.name = "ConnectedMaps"
 	world.add_child(connected_maps)
@@ -173,6 +187,8 @@ func _create_fixture() -> Dictionary:
 		"connected_maps": connected_maps,
 		"loader": loader,
 		"actor": actor,
+		"harvest_marker": harvest_marker,
+		"aspect_marker": aspect_marker,
 	}
 
 

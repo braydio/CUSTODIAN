@@ -46,7 +46,7 @@ const BOUNDARY_RAIL_RADIUS := 10.0
 @export var bypass_return_causeway_for_keep_testing := BYPASS_RETURN_CAUSEWAY_FOR_KEEP_TESTING
 
 const RECT_ROUTE_MASTER := Rect2(Vector2(-620.0, -660.0), Vector2(2048.0, 1706.0))
-const RECT_APPROACH_UNDERLAY := Rect2(Vector2(-1000.0, -900.0), Vector2(2600.0, 1800.0))
+const RECT_APPROACH_UNDERLAY := Rect2(Vector2(-1536.0, -1236.0), Vector2(3392.0, 2718.0))
 const RECT_FIRST_VISTA_HORIZON := Rect2(Vector2(-1000.0, -980.0), Vector2(2600.0, 1460.0))
 const RECT_FIRST_VISTA_FOG_VEIL := Rect2(Vector2(-1000.0, -360.0), Vector2(2600.0, 720.0))
 const RECT_FINAL_GATE_SHADOW_VEIL := Rect2(Vector2(-1000.0, -520.0), Vector2(2600.0, 900.0))
@@ -54,6 +54,8 @@ const RECT_FOG_STRIP_01 := Rect2(Vector2(-880.0, -430.0), Vector2(1500.0, 520.0)
 const RECT_FOG_STRIP_02 := Rect2(Vector2(-260.0, -420.0), Vector2(1500.0, 520.0))
 const RECT_FOG_STRIP_03 := Rect2(Vector2(320.0, -410.0), Vector2(1500.0, 520.0))
 const RECT_CAMERA_BOUNDS := Rect2(Vector2(-1280.0, -980.0), Vector2(2880.0, 2206.0))
+const RECT_BACKDROP_VOID_FILL := Rect2(Vector2(-2048.0, -1748.0), Vector2(4416.0, 3742.0))
+const BACKDROP_VOID_COLOR := Color(0.018, 0.043, 0.057, 1.0)
 const RECT_GRAND_VISTA_PANORAMA := Rect2(Vector2(-1280.0, -920.0), Vector2(2560.0, 1440.0))
 const RECT_GRAND_VISTA_SPRAY := Rect2(Vector2(-1280.0, -160.0), Vector2(2560.0, 720.0))
 const RECT_GRAND_VISTA_FOG := Rect2(Vector2(-1280.0, -520.0), Vector2(2560.0, 480.0))
@@ -233,6 +235,7 @@ func _ready() -> void:
 	_ensure_roots()
 	_build_visuals()
 	_ensure_vista_controller()
+	_enforce_presentation_isolation()
 	call_deferred("_finish_physics_setup")
 
 
@@ -252,6 +255,7 @@ func enter_from_main(p_actor: Node) -> void:
 	if p_actor is Node2D:
 		(p_actor as Node2D).global_position = get_entry_position()
 	_refresh_camera()
+	_enforce_presentation_isolation()
 
 
 func get_entry_position() -> Vector2:
@@ -352,6 +356,7 @@ func _build_visuals() -> void:
 	_grand_vista_root.modulate.a = 0.0
 	occlusion_root.modulate.a = 1.0
 
+	_add_backdrop_void_fill()
 	_add_fitted_sprite(underlay_root, "ApproachOceanVoidUnderlay", APPROACH_OCEAN_VOID_UNDERLAY, RECT_APPROACH_UNDERLAY, -30, Color.WHITE)
 	_apply_soft_rect_feather(
 		_add_fitted_sprite(underlay_root, "ApproachCliffSpiresUnderlay", APPROACH_CLIFF_SPIRES_UNDERLAY, RECT_APPROACH_UNDERLAY, -20, Color(1.0, 1.0, 1.0, 0.75)),
@@ -498,10 +503,38 @@ func _add_grounding_shadow(node_name: String, points: PackedVector2Array, z: int
 	return shadow
 
 
+func _add_backdrop_void_fill() -> Polygon2D:
+	var fill := Polygon2D.new()
+	fill.name = "BackdropVoidFill"
+	fill.polygon = PackedVector2Array([
+		RECT_BACKDROP_VOID_FILL.position,
+		Vector2(RECT_BACKDROP_VOID_FILL.end.x, RECT_BACKDROP_VOID_FILL.position.y),
+		RECT_BACKDROP_VOID_FILL.end,
+		Vector2(RECT_BACKDROP_VOID_FILL.position.x, RECT_BACKDROP_VOID_FILL.end.y),
+	])
+	fill.color = BACKDROP_VOID_COLOR
+	fill.z_as_relative = true
+	fill.z_index = -100
+	fill.set_meta("coverage_rect", RECT_BACKDROP_VOID_FILL)
+	underlay_root.add_child(fill)
+	return fill
+
+
 func _refresh_camera() -> void:
 	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
 	if camera != null and camera.has_method("set_runtime_map"):
 		camera.call("set_runtime_map", self)
+
+
+func _enforce_presentation_isolation() -> void:
+	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ProcGenRuntime"), false)
+	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ConnectedMaps"), false)
+	var ui := get_node_or_null("/root/GameRoot/UI")
+	if ui != null and ui.has_method("set_world_presentation_mode"):
+		ui.call("set_world_presentation_mode", &"vista_approach")
+	var actor := get_node_or_null("/root/GameRoot/World/Operator")
+	if actor != null and actor.has_method("set_vista_presentation_mode"):
+		actor.call("set_vista_presentation_mode", true)
 
 
 func _build_collision() -> void:
@@ -615,14 +648,52 @@ func _build_level_exit_trigger() -> void:
 	_level_exit_trigger = trigger
 	exit_transition_trigger = trigger
 	_level_exit_trigger.name = "LevelExitTrigger"
-	_level_exit_trigger.position = _route_point(LEVEL_EXIT_POS)
+	_level_exit_trigger.position = _route_point(_get_authoring_marker_position("level_exit", LEVEL_EXIT_POS))
+	_level_exit_trigger.required_entry_direction = Vector2.RIGHT
 	event_runtime_root.add_child(_level_exit_trigger)
 	var shape := CollisionShape2D.new()
 	shape.name = "CollisionShape2D"
 	var rectangle := RectangleShape2D.new()
-	rectangle.size = Vector2(160.0, 150.0)
+	rectangle.size = Vector2(72.0, 104.0)
 	shape.shape = rectangle
 	_level_exit_trigger.add_child(shape)
+	_build_level_exit_affordance(_level_exit_trigger.position)
+
+
+func _build_level_exit_affordance(exit_position: Vector2) -> void:
+	var affordance := Node2D.new()
+	affordance.name = "LevelExitAffordance"
+	affordance.position = exit_position
+	affordance.z_index = 130
+	event_runtime_root.add_child(affordance)
+
+	var threshold := Polygon2D.new()
+	threshold.name = "WalkableThreshold"
+	threshold.polygon = PackedVector2Array([
+		Vector2(-38.0, -54.0), Vector2(38.0, -54.0),
+		Vector2(38.0, 54.0), Vector2(-38.0, 54.0),
+	])
+	threshold.color = Color(0.20, 0.42, 0.46, 0.38)
+	affordance.add_child(threshold)
+
+	var prompt_back := Polygon2D.new()
+	prompt_back.name = "PromptBackdrop"
+	prompt_back.polygon = PackedVector2Array([
+		Vector2(-92.0, -92.0), Vector2(92.0, -92.0),
+		Vector2(92.0, -62.0), Vector2(-92.0, -62.0),
+	])
+	prompt_back.color = Color(0.01, 0.025, 0.035, 0.88)
+	affordance.add_child(prompt_back)
+
+	var prompt := Label.new()
+	prompt.name = "DestinationPrompt"
+	prompt.text = "ENTER SUNDERED KEEP  >"
+	prompt.position = Vector2(-82.0, -88.0)
+	prompt.size = Vector2(164.0, 24.0)
+	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	prompt.add_theme_font_size_override("font_size", 12)
+	prompt.add_theme_color_override("font_color", Color(0.78, 0.91, 0.90, 1.0))
+	affordance.add_child(prompt)
 
 
 func _add_boundary_segment(parent: StaticBody2D, node_name: String, a: Vector2, b: Vector2) -> CollisionShape2D:
@@ -653,6 +724,10 @@ func _ensure_vista_controller() -> void:
 
 	vista_controller.start_marker_path = NodePath("../Markers/RevealStart")
 	vista_controller.end_marker_path = NodePath("../Markers/ReturnTopdown")
+	vista_controller.camera_path = NodePath("/root/GameRoot/World/Camera2D")
+	vista_controller.entry_marker_path = NodePath("../Markers/EntrySpawn")
+	vista_controller.reveal_full_marker_path = NodePath("../Markers/RevealFull")
+	vista_controller.mid_gameplay_marker_path = NodePath("../Markers/MidGameplayStart")
 	vista_controller.vista_root_path = NodePath("../VistaRoot")
 	vista_controller.grand_vista_root_path = NodePath("../GrandVistaRoot")
 	vista_controller.vista_fog_band_path = NodePath("../VistaRoot/ApproachFirstVistaFogVeil")

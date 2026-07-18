@@ -156,6 +156,9 @@ var _held_state: CameraState = CameraState.EXPLORE
 # Zoom Tween
 var _zoom_tween: Tween = null
 var _locked_zoom: Vector2 = base_zoom
+var _presentation_framing_active := false
+var _presentation_offset := Vector2.ZERO
+var _presentation_zoom := Vector2.ONE
 
 # Input
 var dragging := false
@@ -186,6 +189,10 @@ func _ready():
 
 
 func _process(delta):
+	if _presentation_framing_active:
+		_update_presentation_framing(delta)
+		_clamp_to_bounds()
+		return
 	_restore_follow_on_player_movement()
 	_update_movement(delta)
 	_update_state_machine(delta)
@@ -200,6 +207,35 @@ func _process(delta):
 	_update_zoom(delta)
 	_apply_camera_position(delta)
 	_clamp_to_bounds()
+
+
+func set_presentation_framing(active: bool, framing_offset := Vector2.ZERO, framing_zoom := Vector2.ONE) -> void:
+	_presentation_framing_active = active
+	_presentation_offset = framing_offset
+	_presentation_zoom = framing_zoom.clamp(min_zoom, max_zoom)
+	if active:
+		target_zoom = _presentation_zoom
+		_lookahead = Vector2.ZERO
+		_threat_offset = Vector2.ZERO
+		_current_bob = 0.0
+		_target_bob = 0.0
+		_push_offset = Vector2.ZERO
+		_current_aim_camera_lead = Vector2.ZERO
+
+
+func has_presentation_framing() -> bool:
+	return _presentation_framing_active
+
+
+func _update_presentation_framing(delta: float) -> void:
+	target_zoom = _presentation_zoom
+	_update_zoom(delta)
+	var target := _get_follow_target()
+	if target == null:
+		return
+	var target_position := target.global_position + _presentation_offset
+	var weight := clampf(follow_lerp_speed * delta, 0.0, 1.0)
+	global_position = global_position.lerp(target_position, weight)
 
 
 func _unhandled_input(event):

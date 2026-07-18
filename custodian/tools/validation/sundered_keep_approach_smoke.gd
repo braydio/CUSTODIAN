@@ -12,8 +12,8 @@ const EXPECTED_ROOTS := {
 }
 
 const EXPECTED_SPRITE_RECTS := {
-	"UnderlayRoot/ApproachOceanVoidUnderlay": Rect2(Vector2(-1000, -900), Vector2(2600, 1800)),
-	"UnderlayRoot/ApproachCliffSpiresUnderlay": Rect2(Vector2(-1000, -900), Vector2(2600, 1800)),
+	"UnderlayRoot/ApproachOceanVoidUnderlay": Rect2(Vector2(-1536, -1236), Vector2(3392, 2718)),
+	"UnderlayRoot/ApproachCliffSpiresUnderlay": Rect2(Vector2(-1536, -1236), Vector2(3392, 2718)),
 	"UnderlayRoot/ApproachRouteContactShadow": Rect2(Vector2(-620, -480), Vector2(2048, 1706)),
 	"VistaRoot/ApproachFirstVistaHorizon": Rect2(Vector2(-1000, -980), Vector2(2600, 1460)),
 	"VistaRoot/ApproachFirstVistaFogVeil": Rect2(Vector2(-1000, -360), Vector2(2600, 720)),
@@ -65,6 +65,16 @@ const EXPECTED_MARKERS := {
 
 
 func _init() -> void:
+	var game_root := Node2D.new()
+	game_root.name = "GameRoot"
+	root.add_child(game_root)
+	var world := Node2D.new()
+	world.name = "World"
+	game_root.add_child(world)
+	var camera := Camera2D.new()
+	camera.name = "Camera2D"
+	world.add_child(camera)
+
 	var scene := APPROACH_SCENE.instantiate() as Node2D
 	if scene == null:
 		_fail("Could not instantiate SunderedKeepApproach")
@@ -97,6 +107,8 @@ func _init() -> void:
 		for node_name: String in FORBIDDEN_LEGACY_PLAYABLE:
 			if playable_root.get_node_or_null(node_name) != null:
 				errors.append("PlayableRoot/%s should not render while USE_ROUTE_MASTER is true" % node_name)
+
+	_check_backdrop_coverage(scene, errors)
 
 	for node_path: String in EXPECTED_SPRITE_RECTS:
 		var sprite := scene.get_node_or_null(node_path) as Sprite2D
@@ -175,7 +187,13 @@ func _init() -> void:
 	if controller == null:
 		errors.append("VistaController missing")
 	else:
+		if not controller.has_camera_target():
+			errors.append("VistaController camera target is not bound")
 		_check_controller_path(controller, "vista_root_path", NodePath("../VistaRoot"), errors)
+		_check_controller_path(controller, "camera_path", NodePath("/root/GameRoot/World/Camera2D"), errors)
+		_check_controller_path(controller, "entry_marker_path", NodePath("../Markers/EntrySpawn"), errors)
+		_check_controller_path(controller, "reveal_full_marker_path", NodePath("../Markers/RevealFull"), errors)
+		_check_controller_path(controller, "mid_gameplay_marker_path", NodePath("../Markers/MidGameplayStart"), errors)
 		_check_controller_path(controller, "grand_vista_root_path", NodePath("../GrandVistaRoot"), errors)
 		_check_controller_path(controller, "vista_fog_band_path", NodePath("../VistaRoot/ApproachFirstVistaFogVeil"), errors)
 		_check_controller_path(controller, "occlusion_root_path", NodePath("../OcclusionRoot"), errors)
@@ -206,6 +224,7 @@ func _init() -> void:
 		)
 
 		controller.apply_progress(0.0)
+		_check_camera_target(controller, Vector2.ZERO, Vector2.ONE, "entry", errors)
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController should keep GrandVistaRoot hidden before second vista")
 		if final_gate_veil == null or final_gate_veil.modulate.a > 0.01:
@@ -219,12 +238,14 @@ func _init() -> void:
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController should keep GrandVistaRoot hidden through the gameplay traversal gap")
 		controller.apply_progress(second_full_progress)
+		_check_camera_target(controller, Vector2(0.0, -48.0), Vector2(0.96, 0.96), "grand vista", errors)
 		if grand_vista_root == null or grand_vista_root.modulate.a < 0.85:
 			errors.append("VistaController did not reveal GrandVistaRoot at second vista full marker")
 		controller.apply_progress(minf(1.0, second_end_progress + 0.05))
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController did not hide GrandVistaRoot after second vista marker window")
 		controller.apply_progress(1.0)
+		_check_camera_target(controller, Vector2.ZERO, Vector2.ONE, "final gate", errors)
 		if final_gate_veil == null or final_gate_veil.modulate.a < 0.8:
 			errors.append("VistaController did not raise final gate veil near exit")
 
@@ -284,10 +305,43 @@ func _check_camera_bounds(scene: Node, errors: Array[String]) -> void:
 		errors.append("SunderedKeepApproach camera bounds expected %s, got %s" % [expected, bounds])
 
 
+func _check_backdrop_coverage(scene: Node, errors: Array[String]) -> void:
+	var fill := scene.get_node_or_null("UnderlayRoot/BackdropVoidFill") as Polygon2D
+	if fill == null:
+		errors.append("UnderlayRoot/BackdropVoidFill missing or not Polygon2D")
+		return
+	if fill.z_index >= -30:
+		errors.append("BackdropVoidFill must render below all fitted underlay art")
+	if not fill.has_meta("coverage_rect"):
+		errors.append("BackdropVoidFill missing coverage_rect metadata")
+		return
+	var coverage := fill.get_meta("coverage_rect") as Rect2
+	var bounds := scene.call("get_camera_bounds") as Rect2
+	# Standalone smoke keeps the approach at the origin, matching local coverage.
+	if not coverage.encloses(bounds):
+		errors.append("BackdropVoidFill %s does not cover camera bounds %s" % [coverage, bounds])
+	var required := bounds.grow(768.0)
+	if not coverage.encloses(required):
+		errors.append("BackdropVoidFill %s lacks the required camera framing slack %s" % [coverage, required])
+
+
 func _check_controller_path(controller: SunderedKeepVistaController, property_name: String, expected: NodePath, errors: Array[String]) -> void:
 	var actual := controller.get(property_name) as NodePath
 	if actual != expected:
 		errors.append("VistaController.%s expected %s, got %s" % [property_name, expected, actual])
+
+
+func _check_camera_target(controller: SunderedKeepVistaController, expected_offset: Vector2, expected_zoom: Vector2, label: String, errors: Array[String]) -> void:
+	if not controller.has_method("get_camera_target_state"):
+		errors.append("VistaController must expose an authored camera target state")
+		return
+	var state := controller.get_camera_target_state()
+	var actual_offset: Vector2 = state.get("offset", Vector2(INF, INF))
+	var actual_zoom: Vector2 = state.get("zoom", Vector2.ZERO)
+	if not _vec2_nearly_equal(actual_offset, expected_offset):
+		errors.append("VistaController %s offset expected %s, got %s" % [label, expected_offset, actual_offset])
+	if not _vec2_nearly_equal(actual_zoom, expected_zoom):
+		errors.append("VistaController %s zoom expected %s, got %s" % [label, expected_zoom, actual_zoom])
 
 
 func _marker_progress(scene: Node2D, marker_name: String, errors: Array[String]) -> float:
@@ -376,6 +430,17 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 				errors.append("Default Vista endpoint must use the stable SunderedKeepMap node name")
 			if level_exit.target_level_id != &"sundered_keep_front_gate":
 				errors.append("Direct Vista endpoint must retain the sundered_keep_front_gate level id")
+			if level_exit.required_entry_direction != Vector2.RIGHT:
+				errors.append("LevelExitTrigger must reject entry from the unauthored side")
+		var affordance := runtime.get_node_or_null("LevelExitAffordance")
+		if affordance == null:
+			errors.append("EventRuntime/LevelExitAffordance missing")
+		else:
+			if affordance.get_node_or_null("WalkableThreshold") == null:
+				errors.append("LevelExitAffordance missing WalkableThreshold")
+			var prompt := affordance.get_node_or_null("DestinationPrompt") as Label
+			if prompt == null or not prompt.text.contains("ENTER SUNDERED KEEP"):
+				errors.append("LevelExitAffordance destination prompt is missing or unclear")
 		for forbidden_name in ["GatehouseKeyInteraction", "MainGateInteraction", "MainGateBlocker", "EnemySpawnWestSpawnNode", "EnemySpawnGateSpawnNode"]:
 			if runtime.get_node_or_null(forbidden_name) != null:
 				errors.append("EventRuntime/%s belongs in the Keep entrance, not Vista Approach" % forbidden_name)

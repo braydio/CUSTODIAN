@@ -11,6 +11,7 @@ class_name SunderedKeepTransitionTrigger
 @export var return_world_position := Vector2.ZERO
 @export var deactivate_source_on_transition := true
 @export var free_source_on_transition := true
+@export var required_entry_direction := Vector2.ZERO
 
 var _triggered := false
 
@@ -23,6 +24,8 @@ func _on_body_entered(body: Node) -> void:
 	if _triggered:
 		return
 	if not _is_player_body(body):
+		return
+	if not _entered_from_authored_side(body):
 		return
 
 	transition_actor(body)
@@ -55,6 +58,7 @@ func _load_target_scene(actor: Node) -> void:
 	if world == null:
 		push_error("[SunderedKeepTransitionTrigger] Missing world root")
 		return
+	_restore_gameplay_presentation(actor)
 
 	_set_world_branch_visible(world.get_node_or_null("ProcGenRuntime"), false)
 	var connected_root := world.get_node_or_null("ConnectedMaps") as Node2D
@@ -137,6 +141,24 @@ func _adopt_level_loader_target(target: Node) -> void:
 
 func _is_player_body(body: Node) -> bool:
 	return body.is_in_group("player") or body.is_in_group("operator") or String(body.name) == "Operator"
+
+
+func _entered_from_authored_side(body: Node) -> bool:
+	if required_entry_direction.length_squared() <= 0.001 or not (body is Node2D):
+		return true
+	var local_actor_position := to_local((body as Node2D).global_position)
+	return local_actor_position.dot(required_entry_direction.normalized()) <= 0.0
+
+
+func _restore_gameplay_presentation(actor: Node) -> void:
+	var ui := get_node_or_null("/root/GameRoot/UI")
+	if ui != null and ui.has_method("set_world_presentation_mode"):
+		ui.call("set_world_presentation_mode", &"gameplay")
+	if actor != null and actor.has_method("set_vista_presentation_mode"):
+		actor.call("set_vista_presentation_mode", false)
+	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera != null and camera.has_method("set_presentation_framing"):
+		camera.call("set_presentation_framing", false)
 
 
 func _set_world_branch_visible(branch: Node, value: bool) -> void:
