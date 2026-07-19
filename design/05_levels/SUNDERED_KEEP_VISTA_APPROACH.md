@@ -76,6 +76,7 @@ SunderedKeepApproach
 ├── EventMarkers          — retained Vista reference markers for spawn and Return Causeway
 ├── EventRuntime          — switchable direct-Keep / Return-Causeway transition trigger
 ├── VistaController       — drives vista, grand vista, fog, occlusion, and distant keep alpha
+├── RevealDirector        — one-shot threshold choreography for camera, fog peel, moonlight cue, and delayed prompt
 ```
 
 ### Z-order
@@ -106,6 +107,10 @@ State transitions are driven by player position against Marker2D waypoints. Appr
 | 5 — Final Gate Veil | normal_offset, normal_zoom | 1.0 | Final gate shadow veil fades in | Player passes SecondVistaEnd toward ReturnTopdown |
 
 These values are live camera targets. `SunderedKeepVistaController` interpolates them and sends a reversible presentation-framing override to the shared `CameraController`; ordinary auto-zoom, lookahead, threat bias, and bob resume after the level handoff.
+
+Crossing `Markers/RevealStart` now starts a discrete 0.81-second reveal event instead of relying on positional interpolation alone. `SunderedKeepRevealDirector` owns the presentation-only sequence: 0.08 seconds of fog anticipation, a 0.28-second cubic camera lift/fog peel, and a 0.45-second moonlight settle. Near and mid fog move away from the route on different vectors, the far strip remains as distance haze, and a soft radial `RevealMoonlightCue` briefly lifts the keep silhouette without flashing the whole viewport. The controller retains a reveal-progress floor after completion so ordinary player sampling cannot pull the camera or vista alpha backward after the snap.
+
+`VistaRoot/FarKeepSilhouetteLayerA` and `LayerB` reuse the current horizon matte at darker, softer, offset scales behind the primary plate. These are runtime distance-separation scaffolds; the bespoke far-silhouette asset tracked in `REQUIRED_ASSETS.md` should replace them once authored.
 
 The endpoint remains an `Area2D`, but it is a narrow walkable threshold under `EventRuntime/LevelExitAffordance`, displays `ENTER SUNDERED KEEP`, accepts automatic crossing only from the authored approach side, raises the final veil, and then performs the existing fade/handoff.
 
@@ -364,12 +369,16 @@ Verify at each state:
 - [x] BackdropVoidFill covers camera bounds plus 768 px of framing slack
 - [x] Production VistaController drives the shared runtime camera through authored offset/zoom targets
 - [x] Exit uses a visible, directionally staged destination threshold before fade/handoff
+- [x] RevealStart fires one one-shot camera/fog/light choreography and cannot replay
+- [x] Near/mid fog peel independently while far haze remains after the reveal
+- [x] Destination prompt remains hidden until the reveal settle completes
 
 ## Next Agent Slice
 
-- **Goal:** Production runtime full-composition and presentation-isolation pass is implemented. Remaining work is asset export cleanup and manual play review.
+- **Goal:** Production runtime reveal choreography and presentation isolation are implemented. Remaining work is bespoke reveal-asset export and manual play review.
 - **Future opportunities:**
   - Re-export `underlay_fog_band.png`, `distant_sundered_keep.png`, `overlook_ledge.png`, and `fortress_wall_mass.png` to match the documented production rect/source contract if desired
+  - Replace the procedural/reused reveal scaffolds with the tracked fog-veil, fog-ribbon, moonlight-sweep, and far-silhouette production assets
   - In-editor visual review of the approach blockout scene (open `sundered_keep_approach_blockout.tscn` and walk the operator)
   - In-editor visual review of the procgen ingress -> `sundered_keep_approach.tscn` playable-map flow
   - Replace the current ingress tile fallback with a specific coast/keep ingress reservation in the procgen intent graph

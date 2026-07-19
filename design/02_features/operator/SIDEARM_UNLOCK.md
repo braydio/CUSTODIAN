@@ -111,3 +111,5 @@ Last updated: 2026-06-21
   - `custodian/tools/validation/sundered_keep_sidearm_unlock_smoke.gd`
 
 Remaining production assets are tracked in root `REQUIRED_ASSETS.md`: the final Sundered Keep sidearm locker art and the complete modular sidearm ready/fire/recover/reload suite.
+
+Sidearm fire readiness now uses a one-slot input buffer: a primary press during draw or fire recovery is deferred once, duplicate held sampling is ignored, and the buffered shot is requested only after the sidearm returns to `held` and its cooldown permits firing. Readiness deferral is observability-only until consumption and no longer creates repeated `sidearm_not_held` failures.

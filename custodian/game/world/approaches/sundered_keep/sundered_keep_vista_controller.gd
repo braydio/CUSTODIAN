@@ -63,6 +63,10 @@ var _second_vista_full: Marker2D
 var _second_vista_end: Marker2D
 var _camera_target_offset := CAMERA_ENTRY_OFFSET
 var _camera_target_zoom := CAMERA_ENTRY_ZOOM
+var _last_progress := 0.0
+var _reveal_choreography_active := false
+var _reveal_choreography_weight := 0.0
+var _reveal_progress_floor := 0.0
 
 
 func _ready() -> void:
@@ -120,6 +124,31 @@ func get_camera_target_state() -> Dictionary:
 		"offset": _camera_target_offset,
 		"zoom": _camera_target_zoom,
 		"camera_bound": has_camera_target(),
+	}
+
+
+func begin_reveal_choreography() -> void:
+	_reveal_choreography_active = true
+	_reveal_choreography_weight = 0.0
+
+
+func set_reveal_choreography_weight(weight: float) -> void:
+	_reveal_choreography_weight = clampf(weight, 0.0, 1.0)
+	_apply_progress(_last_progress)
+
+
+func complete_reveal_choreography() -> void:
+	_reveal_choreography_weight = 1.0
+	_reveal_progress_floor = maxf(_reveal_progress_floor, _marker_progress(_reveal_full)) if _reveal_full != null else 0.25
+	_reveal_choreography_active = false
+	_apply_progress(_last_progress)
+
+
+func get_reveal_choreography_state() -> Dictionary:
+	return {
+		"active": _reveal_choreography_active,
+		"weight": _reveal_choreography_weight,
+		"progress_floor": _reveal_progress_floor,
 	}
 
 
@@ -185,12 +214,17 @@ func _resolve_nodes() -> void:
 
 
 func _apply_progress(t: float) -> void:
+	_last_progress = clampf(t, 0.0, 1.0)
 	var reveal_start_progress := _marker_progress(_start) if _start != null else 0.0
 	var reveal_full_progress := _marker_progress(_reveal_full) if _reveal_full != null else 0.38
-	var first_vista_alpha := smoothstep(reveal_start_progress, reveal_full_progress, t)
+	var authored_reveal_progress := lerpf(reveal_start_progress, reveal_full_progress, _reveal_choreography_weight)
+	var reveal_t := maxf(t, _reveal_progress_floor)
+	if _reveal_choreography_active:
+		reveal_t = maxf(reveal_t, authored_reveal_progress)
+	var first_vista_alpha := smoothstep(reveal_start_progress, reveal_full_progress, reveal_t)
 	var second_vista_alpha := _get_second_vista_alpha(t)
 	var exit_shadow_alpha := _get_exit_shadow_alpha(t)
-	_apply_camera_progress(t)
+	_apply_camera_progress(reveal_t)
 
 	if _vista_root != null:
 		_vista_root.modulate.a = first_vista_alpha * vista_max_alpha

@@ -2,6 +2,7 @@ extends Node2D
 class_name SunderedKeepApproach
 
 const SOFT_RECT_FEATHER_SHADER := preload("res://game/world/approaches/sundered_keep/soft_rect_feather.gdshader")
+const REVEAL_DIRECTOR_SCRIPT := preload("res://game/world/approaches/sundered_keep/sundered_keep_reveal_director.gd")
 
 const USE_ROUTE_MASTER := true
 
@@ -222,6 +223,7 @@ var second_vista_start: Marker2D = null
 var second_vista_full: Marker2D = null
 var second_vista_end: Marker2D = null
 var vista_controller: SunderedKeepVistaController = null
+var reveal_director: Node = null
 var exit_transition_trigger: SunderedKeepTransitionTrigger = null
 var main_map: Node = null
 var main_return_position := Vector2.ZERO
@@ -235,6 +237,7 @@ func _ready() -> void:
 	_ensure_roots()
 	_build_visuals()
 	_ensure_vista_controller()
+	_ensure_reveal_director()
 	_enforce_presentation_isolation()
 	call_deferred("_finish_physics_setup")
 
@@ -273,6 +276,8 @@ func _finish_physics_setup() -> void:
 	_build_collision()
 	_build_event_markers()
 	_apply_ingress_config_to_trigger()
+	if reveal_director != null:
+		reveal_director.refresh_bindings()
 
 
 func _remove_stale_proxy_nodes() -> void:
@@ -365,6 +370,14 @@ func _build_visuals() -> void:
 	_add_fitted_sprite(underlay_root, "ApproachRouteContactShadow", APPROACH_ROUTE_CONTACT_SHADOW, _route_rect(RECT_ROUTE_MASTER), -5, Color(1.0, 1.0, 1.0, 0.85))
 
 	_apply_soft_rect_feather(
+		_add_fitted_sprite(vista_root, "FarKeepSilhouetteLayerA", APPROACH_FIRST_VISTA_HORIZON, Rect2(-1120.0, -1040.0, 2840.0, 1540.0), -20, Color(0.30, 0.42, 0.52, 0.24)),
+		Vector4(0.10, 0.10, 0.12, 0.22)
+	)
+	_apply_soft_rect_feather(
+		_add_fitted_sprite(vista_root, "FarKeepSilhouetteLayerB", APPROACH_FIRST_VISTA_HORIZON, Rect2(-1060.0, -1008.0, 2720.0, 1500.0), -10, Color(0.42, 0.53, 0.62, 0.32)),
+		Vector4(0.08, 0.08, 0.10, 0.20)
+	)
+	_apply_soft_rect_feather(
 		_add_fitted_sprite(vista_root, "ApproachFirstVistaHorizon", APPROACH_FIRST_VISTA_HORIZON, RECT_FIRST_VISTA_HORIZON, 0, Color.WHITE),
 		Vector4(0.06, 0.06, 0.08, 0.18)
 	)
@@ -420,7 +433,30 @@ func _build_visuals() -> void:
 	_add_fitted_sprite(occlusion_root, "ApproachFogStrip01", APPROACH_FOG_STRIP_01, _route_rect(RECT_FOG_STRIP_01), 8, Color(1.0, 1.0, 1.0, 0.28))
 	_add_fitted_sprite(occlusion_root, "ApproachFogStrip02", APPROACH_FOG_STRIP_02, _route_rect(RECT_FOG_STRIP_02), 9, Color(1.0, 1.0, 1.0, 0.22))
 	_add_fitted_sprite(occlusion_root, "ApproachFogStrip03", APPROACH_FOG_STRIP_03, _route_rect(RECT_FOG_STRIP_03), 10, Color(1.0, 1.0, 1.0, 0.18))
+	_add_reveal_moonlight_cue()
 	_add_fitted_sprite(occlusion_root, "ApproachFinalGateShadowVeil", APPROACH_FINAL_GATE_SHADOW_VEIL, _route_rect(RECT_FINAL_GATE_SHADOW_VEIL), 20, Color(1.0, 1.0, 1.0, 0.0))
+
+
+func _add_reveal_moonlight_cue() -> PointLight2D:
+	var light := PointLight2D.new()
+	light.name = "RevealMoonlightCue"
+	light.position = Vector2(250.0, -310.0)
+	light.color = Color(0.56, 0.78, 1.0, 1.0)
+	light.energy = 0.0
+	light.texture_scale = 3.2
+	var gradient := Gradient.new()
+	gradient.colors = PackedColorArray([Color(1.0, 1.0, 1.0, 0.72), Color(1.0, 1.0, 1.0, 0.0)])
+	gradient.offsets = PackedFloat32Array([0.0, 1.0])
+	var texture := GradientTexture2D.new()
+	texture.width = 512
+	texture.height = 512
+	texture.fill = GradientTexture2D.FILL_RADIAL
+	texture.fill_from = Vector2(0.5, 0.5)
+	texture.fill_to = Vector2(1.0, 0.5)
+	texture.gradient = gradient
+	light.texture = texture
+	occlusion_root.add_child(light)
+	return light
 
 
 func _build_legacy_path_chunks() -> void:
@@ -742,6 +778,25 @@ func _ensure_vista_controller() -> void:
 	vista_controller.second_vista_end_marker_path = NodePath("../Markers/SecondVistaEnd")
 	vista_controller.refresh_bindings()
 	vista_controller.apply_progress(0.0)
+
+
+func _ensure_reveal_director() -> void:
+	reveal_director = get_node_or_null("RevealDirector")
+	if reveal_director == null:
+		reveal_director = REVEAL_DIRECTOR_SCRIPT.new()
+		reveal_director.name = "RevealDirector"
+		add_child(reveal_director)
+	reveal_director.player_path = NodePath("/root/GameRoot/World/Operator")
+	reveal_director.entry_marker_path = NodePath("../Markers/EntrySpawn")
+	reveal_director.threshold_marker_path = NodePath("../Markers/RevealStart")
+	reveal_director.vista_controller_path = NodePath("../VistaController")
+	reveal_director.near_fog_path = NodePath("../OcclusionRoot/ApproachFogStrip01")
+	reveal_director.mid_fog_path = NodePath("../OcclusionRoot/ApproachFogStrip02")
+	reveal_director.far_fog_path = NodePath("../OcclusionRoot/ApproachFogStrip03")
+	reveal_director.edge_mist_path = NodePath("../OcclusionRoot/ApproachEdgeMistWrap")
+	reveal_director.reveal_light_path = NodePath("../OcclusionRoot/RevealMoonlightCue")
+	reveal_director.destination_prompt_path = NodePath("../EventRuntime/LevelExitAffordance")
+	reveal_director.refresh_bindings()
 
 
 func _apply_ingress_config_to_trigger() -> void:

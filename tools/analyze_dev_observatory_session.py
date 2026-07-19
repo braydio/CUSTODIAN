@@ -181,7 +181,8 @@ def _damage_before_deaths(events: Sequence[Mapping[str, Any]]) -> list[float]:
     for event in events:
         kind = str(event.get("kind", ""))
         if kind == "player_damage":
-            damage_this_life += _number(_event_data(event).get("amount"))
+            data = _event_data(event)
+            damage_this_life += _number(data.get("damage_applied", data.get("amount")))
         elif kind == "player_death":
             totals.append(damage_this_life)
             damage_this_life = 0.0
@@ -198,6 +199,18 @@ def _prefixed_counts(counters: Mapping[str, Any], prefix: str) -> str:
         if count:
             values.append(f"{name.removeprefix(prefix)}={count}")
     return ", ".join(values) if values else "none"
+
+
+def _ranged_failure_category(
+    counters: Mapping[str, Any], category: str, reasons: Sequence[str]
+) -> str:
+    total = _count(counters, f"player_ranged_fire_failure_{category}")
+    parts = [f"total={total}"]
+    for reason in reasons:
+        count = _count(counters, f"player_ranged_fire_failure_{reason}")
+        if count:
+            parts.append(f"{reason}={count}")
+    return ", ".join(parts)
 
 
 def _format_duration(seconds: float) -> str:
@@ -276,7 +289,7 @@ def build_report(
     deaths = _count(counters, "player_deaths", kinds["player_death"])
     damage_events = kinds["player_damage"]
     total_damage = sum(
-        _number(_event_data(event).get("amount"))
+        _number(_event_data(event).get("damage_applied", _event_data(event).get("amount")))
         for event in events
         if str(event.get("kind", "")) == "player_damage"
     )
@@ -306,13 +319,17 @@ def build_report(
     signals = [
         ("player deaths", deaths),
         ("damage events", damage_events),
-        ("damage observed", _format_value(total_damage)),
+        ("cumulative damage amount", _format_value(_number(counters.get("player_damage_amount_total")))),
+        ("retained-event damage", _format_value(total_damage)),
+        ("cumulative chip damage", _format_value(_number(counters.get("player_chip_damage_amount_total")))),
+        ("cumulative healing amount", _format_value(_number(counters.get("player_healing_amount_total")))),
         ("ranged shots fired", _count(counters, "player_ranged_shots_fired", kinds["player_ranged_shot"])),
         ("blocked muzzle shots", _count(counters, "player_ranged_shots_blocked", kinds["player_ranged_shot_blocked"])),
         ("ranged fire failures", _count(counters, "player_ranged_fire_failures", kinds["player_ranged_fire_failed"])),
-        ("ranged empty failures", _prefixed_counts(counters, "player_ranged_fire_failure_empty_")),
-        ("ranged state failures", _prefixed_counts(counters, "player_ranged_fire_failure_state_locked_")),
-        ("ranged internal failures", _prefixed_counts(counters, "player_ranged_fire_failure_internal_")),
+        ("ranged empty failures", _ranged_failure_category(counters, "empty", ["empty_magazine", "no_reserve_ammo", "no_ammo"])),
+        ("ranged state failures", _ranged_failure_category(counters, "state_locked", ["reloading", "overheated", "action_locked", "sidearm_not_held"])),
+        ("ranged internal failures", _ranged_failure_category(counters, "internal", ["invalid_profile", "projectile_spawn_failed"])),
+        ("ranged cancellations", _prefixed_counts(counters, "player_ranged_request_cancelled_")),
         ("dodges started", _count(counters, "player_dodges_started", kinds["player_dodge_started"])),
         ("iframe avoids", _count(counters, "player_iframe_avoids", kinds["player_damage_avoided_by_iframe"])),
         ("field patches committed", _count(counters, "field_patch_committed", kinds["field_patch_committed"])),
@@ -362,9 +379,43 @@ def build_report(
         lines.append(f"  {label:<28} {value}")
     if damage_before_deaths:
         formatted = ", ".join(_format_value(value) for value in damage_before_deaths)
-        lines.append(f"  {'damage observed before deaths':<28} {formatted}")
+        lines.append(f"  {'retained damage before deaths':<28} {formatted}")
+        if event_buffer_saturated or legacy_buffer_may_be_saturated:
+            lines.append("  NOTE: retained damage-before-death values exclude damage dropped from the event ring.")
     lines.append("  NOTE: incoming hit results exclude whiffs; terminal outcomes include them.")
     lines.append("  NOTE: retained event/unique-ID totals are tail-window values; cumulative counters may be larger.")
+
+    ranged_requests = _count(counters, "player_ranged_fire_requests")
+    ranged_fired = _count(counters, "player_ranged_request_fired", _count(counters, "player_ranged_shots_fired"))
+    ranged_blocked = _count(counters, "player_ranged_request_muzzle_blocked", _count(counters, "player_ranged_shots_blocked"))
+    ranged_failed = _count(counters, "player_ranged_request_failed", _count(counters, "player_ranged_fire_failures"))
+    ranged_cancelled = _count(counters, "player_ranged_request_cancelled")
+    ranged_pending = int(_number(gauges.get("player_ranged_requests_pending")))
+    ranged_terminal = ranged_fired + ranged_blocked + ranged_failed + ranged_cancelled
+    ranged_unaccounted = ranged_requests - ranged_terminal - ranged_pending
+    lines.extend([
+        "",
+        "RANGED REQUEST RECONCILIATION",
+        f"  {'requests':<28} {ranged_requests}",
+        f"  {'fired':<28} {ranged_fired}",
+        f"  {'muzzle blocked':<28} {ranged_blocked}",
+        f"  {'failed':<28} {ranged_failed}",
+        f"  {'cancelled':<28} {ranged_cancelled}",
+        f"  {'pending':<28} {ranged_pending}",
+        f"  {'unaccounted':<28} {ranged_unaccounted}{'  <-- defect' if ranged_unaccounted else ''}",
+    ])
+    if bool(gauges.get("player_dead", False)):
+        lines.append("")
+        lines.append("NOTE: player was dead at export; current resource gauges reflect post-death state.")
+        lines.append(
+            "  last live resources: weapon=%s, loaded=%s, reserve=%s, stamina=%s"
+            % (
+                _format_value(gauges.get("player_last_live_weapon_id", "")),
+                _format_value(gauges.get("player_last_live_loaded_ammo", 0)),
+                _format_value(gauges.get("player_last_live_reserve_ammo", 0)),
+                _format_value(gauges.get("player_last_live_stamina", 0)),
+            )
+        )
 
     lines.extend([
         "",

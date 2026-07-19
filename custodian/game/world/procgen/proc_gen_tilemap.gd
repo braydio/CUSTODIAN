@@ -585,6 +585,7 @@ var _ascent_field_main_route_cells: Array[Vector2i] = []
 var _ascent_field_vista_cells: Array[Vector2i] = []
 var _world_progress_marker_parent: Node2D = null
 var _debug_generation_id: int = 0
+var _runtime_wall_body_peak: int = 0
 var _generation_prop_rejections_protected_zone: int = 0
 var _generation_prop_rejections_stuck_risk: int = 0
 var _generation_prop_rejections_existing_blocker: int = 0
@@ -750,6 +751,7 @@ func _on_procgen_finished() -> void:
 	# Emit level data for game systems to use
 	var data = get_level_data()
 	level_data_ready.emit(data)
+	_publish_generation_complexity_gauges()
 
 	print("[ProcGenTilemap] GEN_END id=%d mode=%s seed=%s total=%dms" % [
 		_debug_generation_id,
@@ -6762,6 +6764,7 @@ func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true) -> voi
 	shape.shape = rect
 	body.add_child(shape)
 	collision_root.add_child(body)
+	_publish_runtime_wall_body_gauges(collision_root)
 	if refresh_debug:
 		_rebuild_runtime_wall_collision_debug()
 
@@ -6774,12 +6777,38 @@ func _remove_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true) -> vo
 	if body != null:
 		collision_root.remove_child(body)
 		body.queue_free()
+		_publish_runtime_wall_body_gauges(collision_root)
 	if refresh_debug:
 		_rebuild_runtime_wall_collision_debug()
 
 
 func _runtime_wall_body_name(tile: Vector2i) -> String:
 	return "Wall_%d_%d" % [tile.x, tile.y]
+
+
+func _publish_generation_complexity_gauges() -> void:
+	var map_size := procgen_node.map_size if procgen_node != null else Vector2i.ZERO
+	var runtime_wall_count := 0
+	if walls_tilemap != null:
+		var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision")
+		if collision_root != null:
+			runtime_wall_count = collision_root.get_child_count()
+	_runtime_wall_body_peak = maxi(_runtime_wall_body_peak, runtime_wall_count)
+	_obs_gauge(&"procgen_generation_id", _debug_generation_id)
+	_obs_gauge(&"procgen_generation_count", _debug_generation_id)
+	_obs_gauge(&"procgen_map_width", map_size.x)
+	_obs_gauge(&"procgen_map_height", map_size.y)
+	_obs_gauge(&"procgen_generated_wall_cells", _generated_wall_cells.size())
+	_obs_gauge(&"procgen_runtime_wall_body_count", runtime_wall_count)
+	_obs_gauge(&"procgen_runtime_wall_body_peak", _runtime_wall_body_peak)
+
+
+func _publish_runtime_wall_body_gauges(collision_root: Node) -> void:
+	var runtime_wall_count := collision_root.get_child_count() if collision_root != null else 0
+	_runtime_wall_body_peak = maxi(_runtime_wall_body_peak, runtime_wall_count)
+	_obs_gauge(&"procgen_generated_wall_cells", _generated_wall_cells.size())
+	_obs_gauge(&"procgen_runtime_wall_body_count", runtime_wall_count)
+	_obs_gauge(&"procgen_runtime_wall_body_peak", _runtime_wall_body_peak)
 
 
 func _clear_runtime_wall_collision() -> void:
@@ -6789,6 +6818,7 @@ func _clear_runtime_wall_collision() -> void:
 	for child in collision_root.get_children():
 		collision_root.remove_child(child)
 		child.queue_free()
+	_publish_runtime_wall_body_gauges(collision_root)
 
 
 func _sync_runtime_wall_collision_with_visible_walls() -> void:

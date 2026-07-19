@@ -214,6 +214,15 @@ write to the export or change runtime state.
 - Below 25% health, the prompt changes to the stronger critical treatment. It remains advisory and never auto-consumes a patch.
 - Prompt entry/severity transitions emit `field_patch_prompt_shown`; death while the prompt remains actionable emits `field_patch_prompt_ignored_on_death`.
 
+## Ranged Reconciliation And Cumulative Resource Contract (2026-07-18)
+
+- Sidearm primary input during draw/fire recovery is buffered once and becomes one authoritative request after the held pose and cooldown are ready. Repeated sampling while buffered is ignored and does not emit `sidearm_not_held` failures.
+- Every authoritative ranged request terminates as fired, muzzle-blocked, failed, cancelled, or currently pending. Failure feedback may remain audiovisually debounced, but telemetry is never debounced.
+- Zero-direction, projectile-creation, and death cancellations expose reason counters. The analyzer prints a reconciliation block and flags any nonzero remainder.
+- Player damage, guarded chip damage, and healing amounts use cumulative counters so event-ring wrapping cannot understate session totals. Retained-event damage remains explicitly labeled as a tail-window value.
+- `player_alive` / `player_dead` and last-live weapon, ammunition, and stamina gauges prevent post-death snapshots from being interpreted as balance evidence.
+- Procgen generation/map/wall-body gauges, global node/physics/collision peaks, and loaded world/procgen root counts distinguish proportional collision cost from cleanup or handoff leakage.
+
 ## Acceptance
 
 - `F9` toggles the observatory overlay in `res://scenes/game.tscn`.

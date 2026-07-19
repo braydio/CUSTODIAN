@@ -1,6 +1,7 @@
 extends SceneTree
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
+const REVEAL_DIRECTOR_SCRIPT := preload("res://game/world/approaches/sundered_keep/sundered_keep_reveal_director.gd")
 const EXPECTED_BOUNDARY_SEGMENTS := 74
 
 const EXPECTED_ROOTS := {
@@ -16,6 +17,8 @@ const EXPECTED_SPRITE_RECTS := {
 	"UnderlayRoot/ApproachCliffSpiresUnderlay": Rect2(Vector2(-1536, -1236), Vector2(3392, 2718)),
 	"UnderlayRoot/ApproachRouteContactShadow": Rect2(Vector2(-620, -480), Vector2(2048, 1706)),
 	"VistaRoot/ApproachFirstVistaHorizon": Rect2(Vector2(-1000, -980), Vector2(2600, 1460)),
+	"VistaRoot/FarKeepSilhouetteLayerA": Rect2(Vector2(-1120, -1040), Vector2(2840, 1540)),
+	"VistaRoot/FarKeepSilhouetteLayerB": Rect2(Vector2(-1060, -1008), Vector2(2720, 1500)),
 	"VistaRoot/ApproachFirstVistaFogVeil": Rect2(Vector2(-1000, -360), Vector2(2600, 720)),
 	"GrandVistaRoot/GrandVistaPanorama": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
 	"GrandVistaRoot/GrandVistaOceanSprayOverlay": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
@@ -252,6 +255,7 @@ func _init() -> void:
 	if scene.get_node_or_null("ExitTransitionTrigger") != null:
 		errors.append("Legacy duplicate ExitTransitionTrigger must not coexist with EventRuntime/LevelExitTrigger")
 	_check_event_markers(scene, errors)
+	await _check_reveal_director(scene, errors)
 
 	if errors.is_empty():
 		print("[SunderedKeepApproachSmoke] PASS")
@@ -444,6 +448,77 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 		for forbidden_name in ["GatehouseKeyInteraction", "MainGateInteraction", "MainGateBlocker", "EnemySpawnWestSpawnNode", "EnemySpawnGateSpawnNode"]:
 			if runtime.get_node_or_null(forbidden_name) != null:
 				errors.append("EventRuntime/%s belongs in the Keep entrance, not Vista Approach" % forbidden_name)
+
+
+func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
+	var director := scene.get_node_or_null("RevealDirector")
+	if director == null:
+		errors.append("RevealDirector missing")
+		return
+	if director.get_script() != REVEAL_DIRECTOR_SCRIPT:
+		errors.append("RevealDirector uses the wrong script")
+	if director.threshold_marker_path != NodePath("../Markers/RevealStart"):
+		errors.append("RevealDirector must use Markers/RevealStart as its threshold")
+	if director.vista_controller_path != NodePath("../VistaController"):
+		errors.append("RevealDirector camera choreography is not bound to VistaController")
+	if scene.get_node_or_null("OcclusionRoot/RevealMoonlightCue") as PointLight2D == null:
+		errors.append("RevealMoonlightCue missing")
+	var near_fog := scene.get_node_or_null("OcclusionRoot/ApproachFogStrip01") as Node2D
+	var mid_fog := scene.get_node_or_null("OcclusionRoot/ApproachFogStrip02") as Node2D
+	var far_fog := scene.get_node_or_null("OcclusionRoot/ApproachFogStrip03") as CanvasItem
+	var near_fog_origin := near_fog.position if near_fog != null else Vector2.ZERO
+	var mid_fog_origin := mid_fog.position if mid_fog != null else Vector2.ZERO
+	var prompt := scene.get_node_or_null("EventRuntime/LevelExitAffordance") as CanvasItem
+	if prompt == null:
+		errors.append("RevealDirector cannot validate delayed prompt without LevelExitAffordance")
+	elif prompt.modulate.a > 0.01:
+		errors.append("LevelExitAffordance must stay hidden until the reveal settles")
+
+	director.anticipation_duration = 0.001
+	director.peel_duration = 0.001
+	director.settle_duration = 0.001
+	var controller := scene.get_node_or_null("VistaController") as SunderedKeepVistaController
+	if controller != null:
+		controller.apply_progress(0.0)
+	var completion_count := [0]
+	director.reveal_completed.connect(func() -> void: completion_count[0] += 1)
+	var operator := Node2D.new()
+	operator.name = "Operator"
+	operator.add_to_group("operator")
+	var world := root.get_node_or_null("GameRoot/World")
+	world.add_child(operator)
+	var entry := scene.get_node_or_null("Markers/EntrySpawn") as Node2D
+	var threshold := scene.get_node_or_null("Markers/RevealStart") as Node2D
+	var threshold_axis := (threshold.global_position - entry.global_position).normalized()
+	operator.global_position = threshold.global_position + threshold_axis
+	director.refresh_bindings()
+	await process_frame
+	if not director.has_played():
+		errors.append("RevealDirector did not fire when the Operator crossed RevealStart")
+		director.play_reveal()
+	await director.reveal_completed
+	var state: Dictionary = director.get_reveal_state()
+	if not bool(state.get("played", false)) or not bool(state.get("complete", false)):
+		errors.append("RevealDirector did not complete its one-shot reveal")
+	if not bool(state.get("camera_bound", false)) or not bool(state.get("threshold_bound", false)):
+		errors.append("RevealDirector is missing its camera or threshold binding")
+	if not bool(state.get("prompt_visible", false)):
+		errors.append("LevelExitAffordance did not appear after reveal completion")
+	if near_fog == null or near_fog.position.x >= near_fog_origin.x or near_fog.position.y <= near_fog_origin.y:
+		errors.append("Near fog did not peel left/down from the reveal centerline")
+	if mid_fog == null or mid_fog.position.x <= mid_fog_origin.x or mid_fog.position.y <= mid_fog_origin.y:
+		errors.append("Mid fog did not trail right/down behind the near peel")
+	if far_fog == null or far_fog.modulate.a < 0.15:
+		errors.append("Far haze did not remain after the reveal")
+	var reveal_light := scene.get_node_or_null("OcclusionRoot/RevealMoonlightCue") as PointLight2D
+	if reveal_light != null and reveal_light.energy > 0.01:
+		errors.append("RevealMoonlightCue did not settle back to zero energy")
+	if controller != null:
+		_check_camera_target(controller, Vector2(0.0, -140.0), Vector2(0.86, 0.86), "reveal event", errors)
+	director.play_reveal()
+	await process_frame
+	if int(completion_count[0]) != 1:
+		errors.append("RevealDirector replayed after its one-shot completion")
 
 
 func _vec2_nearly_equal(a: Vector2, b: Vector2, epsilon := 0.01) -> bool:

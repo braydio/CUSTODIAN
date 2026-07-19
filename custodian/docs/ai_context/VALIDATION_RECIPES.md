@@ -160,7 +160,8 @@ godot --headless --path . --script res://tools/validation/operator_dodge_overlap
 This proves bounded telemetry storage, F9/F10 action registration, stable and timestamped JSON output, JSON-safe Variant
 conversion, event-buffer retention, success-event logging, failure-warning routing, numeric accumulation, and basic heatmap accumulation.
 The audit smoke additionally reconciles a shared enemy attack ID through incoming-hit/player-damage events, proves a
-live bullet owns a projectile-classified collision shape, and checks ranged failure categories, Field Patch prompt
+live bullet owns a projectile-classified collision shape, and checks cumulative damage/healing/chip amounts, ranged
+failure/cancellation categories, performance/leak peaks, last-live post-death context, Field Patch prompt
 severity/ignored-on-death accounting, and the structured player-death snapshot. The Falcon and paired-critical smokes
 cover detailed special terminals plus vulnerable-window open/consume/expire and critical start/hit telemetry. The
 procgen stuck-pocket smoke checks structured remediation warning context. The ammo smoke emits 18 real projectiles and reconciles a fresh carbine from 24/48 to 6/48 without a weapon
@@ -210,7 +211,7 @@ godot --headless --path . --script res://tools/validation/sundered_keep_approach
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_mapper_smoke.gd
 ```
 
-The ingress smoke proves registered entry and procgen/connected branch isolation. The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker, its backdrop covers camera bounds plus framing slack, camera targets are wired, its endpoint has a visible directional affordance, and the default target is Sundered Keep directly. The chain smoke proves representative harvest/aspect marker suppression plus both default Vista → Keep actor placement and the optional Vista → Causeway → Keep branch, including LevelLoader adoption, source branch deactivation, entry affordance, and Keep → Causeway return anchoring.
+The ingress smoke proves registered entry and procgen/connected branch isolation. The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker, its backdrop covers camera bounds plus framing slack, camera targets are wired, its endpoint has a visible directional affordance, and the default target is Sundered Keep directly. It also runs the first reveal at accelerated timings and asserts its threshold/controller bindings, one-shot completion, reveal camera target, lighting cue, and post-settle prompt release. The chain smoke proves representative harvest/aspect marker suppression plus both default Vista → Keep actor placement and the optional Vista → Causeway → Keep branch, including LevelLoader adoption, source branch deactivation, entry affordance, and Keep → Causeway return anchoring.
 
 For the experimental route/stage wrapper:
 

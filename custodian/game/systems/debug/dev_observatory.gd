@@ -400,6 +400,11 @@ func _sample_runtime_gauges() -> void:
 	var node_stats := _collect_node_stats(tree.root)
 	for stat_name in node_stats.keys():
 		set_gauge(StringName(str(stat_name)), node_stats[stat_name])
+	for peak_name in ["node_count", "physics_body_count", "collision_shape_count"]:
+		var gauge_name := StringName("%s_peak" % peak_name)
+		set_gauge(gauge_name, maxi(int(gauges.get(gauge_name, 0)), int(node_stats.get(peak_name, 0))))
+	set_gauge(&"loaded_world_branch_count", _count_named_nodes(tree.root, [&"ProcGenRuntime", &"ConnectedMaps"]))
+	set_gauge(&"loaded_procgen_root_count", _count_named_nodes(tree.root, [&"ProcGenRuntime"]))
 
 	var enemies := _get_unique_group_nodes(["enemy", "enemies"])
 	set_gauge(&"active_enemies", enemies.size())
@@ -416,6 +421,13 @@ func _sample_player_gauges(tree: SceneTree) -> void:
 	var player := tree.get_first_node_in_group("player")
 	if player == null:
 		return
+	var player_alive := true
+	if player.has_method("is_alive"):
+		player_alive = bool(player.call("is_alive"))
+	elif "_is_dead" in player:
+		player_alive = not bool(player.get("_is_dead"))
+	set_gauge(&"player_alive", player_alive)
+	set_gauge(&"player_dead", not player_alive)
 
 	if player is Node2D:
 		var p := player as Node2D
@@ -438,6 +450,8 @@ func _sample_player_gauges(tree: SceneTree) -> void:
 			set_gauge(&"player_stamina", float(status.get("stamina", 0.0)))
 			set_gauge(&"player_stamina_max", float(status.get("stamina_max", 0.0)))
 			set_gauge(&"player_sprinting", bool(status.get("is_sprinting", false)))
+			if player_alive:
+				set_gauge(&"player_last_live_stamina", float(status.get("stamina", 0.0)))
 
 	if player.has_method("get_field_patch_status"):
 		var patch_status: Variant = player.call("get_field_patch_status")
@@ -459,6 +473,23 @@ func _sample_player_gauges(tree: SceneTree) -> void:
 			set_gauge(&"player_ammo_per_shot", int(status.get("ammo_per_shot", 0)))
 			set_gauge(&"player_weapon_heat", float(status.get("heat", 0.0)))
 			set_gauge(&"player_weapon_overheated", bool(status.get("overheated", false)))
+			if player_alive:
+				set_gauge(&"player_last_live_weapon_id", String(status.get("active_weapon_id", "")))
+				set_gauge(&"player_last_live_loaded_ammo", int(status.get("loaded_ammo", 0)))
+				set_gauge(&"player_last_live_reserve_ammo", int(status.get("reserve_ammo", 0)))
+
+
+func _count_named_nodes(root_node: Node, names: Array[StringName]) -> int:
+	var count := 0
+	var stack: Array[Node] = [root_node]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		if StringName(node.name) in names:
+			count += 1
+		for child in node.get_children():
+			if child is Node:
+				stack.append(child)
+	return count
 
 
 func _sample_enemy_gauges(enemies: Array) -> void:

@@ -39,11 +39,18 @@ func _run() -> void:
 	var result: Dictionary = operator.receive_enemy_hit(7.0, &"melee", "enemy", null, Vector2.DOWN, -1.0, attack_context)
 	if String(result.get("result", "")) != "damaged":
 		failures.append("enemy-to-Operator audit hit did not resolve")
+	if not is_equal_approx(float(observatory.counters.get("player_damage_amount_total", 0.0)), 7.0):
+		failures.append("cumulative player damage amount did not record applied damage")
 	for event_kind in [&"incoming_hit_result", &"player_damage"]:
 		var matching: Array = observatory.get_recent_events(20, event_kind)
 		if matching.is_empty() or str((matching[0] as Dictionary).get("data", {}).get("attack_id", "")) != "audit:1":
 			failures.append("%s did not retain shared attack_id" % event_kind)
-
+	operator.restore_health(3.0)
+	if not is_equal_approx(float(observatory.counters.get("player_healing_amount_total", 0.0)), 3.0):
+		failures.append("cumulative player healing amount did not record applied healing")
+	operator.take_damage(2.0, false, {"guard_blocked": true})
+	if not is_equal_approx(float(observatory.counters.get("player_chip_damage_amount_total", 0.0)), 2.0):
+		failures.append("cumulative chip damage amount did not record guarded damage")
 	operator.call("_log_ranged_fire_failure", &"no_reserve_ammo")
 	if int(observatory.counters.get("player_ranged_fire_failure_no_reserve_ammo", 0)) != 1:
 		failures.append("ranged reason-specific counter missing")
@@ -105,8 +112,14 @@ func _run() -> void:
 	]:
 		if not node_stats.has(gauge_name):
 			failures.append("split collision gauge missing: %s" % gauge_name)
+	observatory.call("_sample_runtime_gauges")
+	for peak_gauge in ["node_count_peak", "physics_body_count_peak", "collision_shape_count_peak", "loaded_world_branch_count", "loaded_procgen_root_count"]:
+		if not observatory.gauges.has(peak_gauge):
+			failures.append("performance/leak gauge missing: %s" % peak_gauge)
 
 	operator.stamina = 33.0
+	operator.set("_pending_ranged_shot", {"timer": 1.0, "profile": {}, "aim_direction": Vector2.RIGHT})
+	observatory.increment(&"player_ranged_fire_requests")
 	operator.set("_last_damage_kind", &"physical")
 	operator.set("_last_enemy_attack_kind", &"melee")
 	operator.call("_handle_death")
@@ -120,6 +133,11 @@ func _run() -> void:
 				failures.append("player death snapshot missing %s" % field)
 	if int(observatory.counters.get("field_patch_prompt_ignored_on_death", 0)) != 1:
 		failures.append("ignored Field Patch prompt death counter missing")
+	if int(observatory.counters.get("player_ranged_request_cancelled_death", 0)) != 1:
+		failures.append("pending ranged request was not terminally cancelled on death")
+	for gauge_name in ["player_alive", "player_dead", "player_last_live_weapon_id", "player_last_live_loaded_ammo", "player_last_live_reserve_ammo", "player_last_live_stamina"]:
+		if not observatory.gauges.has(gauge_name):
+			failures.append("post-death resource context gauge missing: %s" % gauge_name)
 
 	if failures.is_empty():
 		print("DEV_OBSERVATORY_AUDIT_SMOKE: PASS")

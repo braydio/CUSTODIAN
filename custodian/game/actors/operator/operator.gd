@@ -456,6 +456,7 @@ var _warned_missing_modular_fast_attack_fx: bool = false
 var _sidearm_draw_active: bool = false
 var _sidearm_action_phase: StringName = &"holstered"
 var _sidearm_action_phase_started: bool = false
+var _sidearm_fire_buffered := false
 var _sidearm_action_direction: Vector2 = Vector2.DOWN
 var _primary_ranged_action_phase: StringName = &""
 var _primary_ranged_action_timer: float = 0.0
@@ -901,6 +902,7 @@ func _process(delta):
 	current_recoil = max(0.0, current_recoil - recoil_decay * delta)
 	_update_weapon_heat(delta)
 	_update_pending_ranged_shot(delta)
+	_try_consume_sidearm_fire_buffer()
 	_update_body_recoil(delta)
 	_update_attack_buffer(delta)
 	_update_melee_attack(delta)
@@ -2791,6 +2793,7 @@ func _regenerate_stamina(amount: float, cause: StringName = &"passive") -> float
 
 func _log_ranged_fire_failure(reason: StringName) -> void:
 	var category := _get_ranged_fire_failure_category(reason)
+	_obs_increment(&"player_ranged_request_failed", 1)
 	_obs_increment(&"player_ranged_fire_failures", 1)
 	_obs_increment(StringName("player_ranged_fire_failure_%s" % String(reason)), 1)
 	_obs_increment(StringName("player_ranged_fire_failure_%s" % String(category)), 1)
@@ -2838,12 +2841,25 @@ func _emit_weapon_feedback(event_id: StringName, weapon_definition: OperatorWeap
 
 
 func _emit_weapon_failure_feedback(reason: StringName, event_id: StringName) -> void:
+	# Feedback is debounced, but every authoritative request still needs one
+	# terminal telemetry outcome for reconciliation.
+	_log_ranged_fire_failure(reason)
 	if reason == _last_weapon_failure_feedback and _weapon_failure_feedback_cooldown > 0.0:
 		return
 	_last_weapon_failure_feedback = reason
 	_weapon_failure_feedback_cooldown = 0.15
-	_log_ranged_fire_failure(reason)
 	_emit_weapon_feedback(event_id)
+
+
+func _log_ranged_request_cancelled(reason: StringName) -> void:
+	_obs_increment(&"player_ranged_request_cancelled")
+	_obs_increment(StringName("player_ranged_request_cancelled_%s" % String(reason)))
+	_obs_log(&"player_ranged_request_cancelled", {
+		"reason": String(reason),
+		"weapon": _get_active_weapon_state_key(),
+		"position": global_position,
+	})
+	_obs_gauge(&"player_ranged_requests_pending", 0)
 
 
 func _instantiate_ranged_projectile(profile: Dictionary) -> Node:
@@ -2951,6 +2967,7 @@ func _request_ranged_shot() -> void:
 		"profile": profile.duplicate(true),
 		"aim_direction": _get_attack_aim_direction(),
 	}
+	_obs_gauge(&"player_ranged_requests_pending", 1)
 	_play_ranged_fire_animation(fire_animation)
 	if not _is_using_sidearm_ranged():
 		_begin_modular_primary_ranged_fire_presentation()
@@ -2965,7 +2982,9 @@ func _emit_pending_ranged_shot() -> void:
 	var profile: Dictionary = _pending_ranged_shot.get("profile", {})
 	var direction: Vector2 = _pending_ranged_shot.get("aim_direction", Vector2.RIGHT)
 	_pending_ranged_shot.clear()
+	_obs_gauge(&"player_ranged_requests_pending", 0)
 	if direction.length_squared() <= 0.0001:
+		_log_ranged_request_cancelled(&"zero_direction")
 		return
 	var spread := float(profile.get("spread", 0.0)) + (current_recoil * 0.2)
 	spread *= _get_movement_spread_multiplier()
@@ -2980,6 +2999,7 @@ func _emit_pending_ranged_shot() -> void:
 
 	var bullet = _instantiate_ranged_projectile(profile)
 	if bullet == null:
+		_log_ranged_request_cancelled(&"projectile_creation")
 		return
 
 	var spawn_position: Vector2 = _get_ranged_muzzle_position(direction)
@@ -2993,6 +3013,7 @@ func _emit_pending_ranged_shot() -> void:
 		_spawn_muzzle_flash(direction)
 		_apply_body_recoil_impulse(direction)
 		_obs_increment(&"player_ranged_shots_blocked", 1)
+		_obs_increment(&"player_ranged_request_muzzle_blocked", 1)
 		_obs_log(&"player_ranged_shot_blocked", {
 			"weapon": _get_active_weapon_state_key(),
 			"position": global_position,
@@ -3041,6 +3062,7 @@ func _emit_pending_ranged_shot() -> void:
 	_spawn_muzzle_flash(direction)
 	_apply_body_recoil_impulse(direction)
 	_obs_increment(&"player_ranged_shots_fired", 1)
+	_obs_increment(&"player_ranged_request_fired", 1)
 	_obs_log(&"player_ranged_shot", {
 		"weapon": _get_active_weapon_state_key(),
 		"position": global_position,
@@ -3078,6 +3100,9 @@ func _handle_attack_input() -> void:
 	if _is_ranged_ready_active():
 		if _is_attack_primary_just_pressed():
 			_obs_increment(&"player_ranged_trigger_samples")
+		if _is_using_sidearm_ranged():
+			_handle_sidearm_fire_input()
+			return
 		if _is_primary_ranged_aim_presentation_active() and not _is_ranged_aim_ready():
 			return
 		if _is_attack_primary_just_pressed() and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
@@ -3093,6 +3118,35 @@ func _handle_attack_input() -> void:
 	if _is_attack_primary_just_pressed():
 		_try_start_contextual_attack()
 		return
+
+
+func _handle_sidearm_fire_input() -> void:
+	if not _is_attack_primary_just_pressed():
+		return
+	if _sidearm_action_phase == &"held" and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
+		_request_ranged_shot()
+		return
+	if _sidearm_action_phase in [&"drawing", &"firing"] and not _sidearm_fire_buffered:
+		_sidearm_fire_buffered = true
+		_obs_increment(&"player_ranged_fire_deferred_sidearm_not_ready")
+		_obs_log(&"player_ranged_fire_deferred", {
+			"reason": "sidearm_not_ready",
+			"phase": String(_sidearm_action_phase),
+		})
+
+
+func _try_consume_sidearm_fire_buffer() -> void:
+	if not _sidearm_fire_buffered:
+		return
+	if not _is_using_sidearm_ranged() or not _is_ranged_ready_active():
+		_sidearm_fire_buffered = false
+		_obs_increment(&"player_ranged_fire_deferred_cancelled_weapon_switch")
+		return
+	if _sidearm_action_phase != &"held" or fire_cooldown_remaining > 0.0 or not _pending_ranged_shot.is_empty():
+		return
+	_sidearm_fire_buffered = false
+	_obs_increment(&"player_ranged_fire_deferred_consumed")
+	_request_ranged_shot()
 
 
 func _request_current_profile_intent(primary: bool) -> void:
@@ -3495,6 +3549,9 @@ func _exit_ranged_ready() -> void:
 	_sidearm_draw_active = false
 	_sidearm_action_phase = &"holstered"
 	_sidearm_action_phase_started = false
+	if _sidearm_fire_buffered:
+		_sidearm_fire_buffered = false
+		_obs_increment(&"player_ranged_fire_deferred_cancelled_weapon_switch")
 	if modular_sidearm_sprite and not lowered_primary:
 		modular_sidearm_sprite.visible = false
 		modular_sidearm_sprite.stop()
@@ -5512,8 +5569,10 @@ func restore_health(amount: float) -> void:
 	if applied <= 0.0:
 		return
 
+	var health_before := current_health
 	current_health = minf(max_health, current_health + applied)
 	health = current_health
+	_obs_accumulate(&"player_healing_amount_total", maxf(0.0, current_health - health_before))
 	health_changed.emit(current_health, max_health)
 	update_visuals()
 
@@ -8070,6 +8129,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _attacker
 	if bool(guard_result.get("blocked", false)):
 		var final_damage := float(guard_result.get("damage", amount))
 		if final_damage > 0.0:
+			hit_context["guard_blocked"] = true
 			take_damage(final_damage, false, hit_context)
 		_log_incoming_hit_result(&"blocked", hit_kind, amount, final_damage, attacker, {
 			"guard_damage": final_damage,
@@ -8146,6 +8206,10 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 	health = max(0.0, health - amount)
 	current_health = health
 	health_changed.emit(current_health, max_health)
+	var applied_damage := maxf(0.0, health_before - health)
+	_obs_accumulate(&"player_damage_amount_total", applied_damage)
+	if bool(damage_context.get("guard_blocked", false)):
+		_obs_accumulate(&"player_chip_damage_amount_total", applied_damage)
 
 	_obs_increment(&"player_hits_taken", 1)
 	var hit_str = damage_context.get("hit_strength", CombatConstants.HitStrength.LIGHT)
@@ -8348,7 +8412,12 @@ func _interrupt_active_combat_for_damage_reaction() -> void:
 func _handle_death() -> void:
 	if _is_dead:
 		return
+	var last_live_weapon_status := get_weapon_status()
 	_is_dead = true
+	if not _pending_ranged_shot.is_empty():
+		_pending_ranged_shot.clear()
+		_log_ranged_request_cancelled(&"death")
+	_sidearm_fire_buffered = false
 	cancel_field_patch(&"dead")
 	var enemy_snapshot := _get_enemy_death_snapshot()
 	_obs_increment(&"player_deaths", 1)
@@ -8373,6 +8442,12 @@ func _handle_death() -> void:
 			"seconds_visible": snappedf(_field_patch_seconds_available_below_half_health, 0.01),
 		})
 	_obs_gauge(&"player_health", 0.0)
+	_obs_gauge(&"player_alive", false)
+	_obs_gauge(&"player_dead", true)
+	_obs_gauge(&"player_last_live_weapon_id", String(last_live_weapon_status.get("active_weapon_id", "")))
+	_obs_gauge(&"player_last_live_loaded_ammo", int(last_live_weapon_status.get("loaded_ammo", 0)))
+	_obs_gauge(&"player_last_live_reserve_ammo", int(last_live_weapon_status.get("reserve_ammo", 0)))
+	_obs_gauge(&"player_last_live_stamina", stamina)
 	var heatmap := get_node_or_null("/root/SectorHeatmap")
 	if heatmap != null:
 		heatmap.call("add", global_position, "player_death", 1.0)
@@ -8467,6 +8542,8 @@ func _finish_death() -> void:
 	update_visuals()
 	health_changed.emit(current_health, max_health)
 	_is_dead = false
+	_obs_gauge(&"player_alive", true)
+	_obs_gauge(&"player_dead", false)
 	if _animation_state_machine != null:
 		# DeathState is terminal and non-interruptible; respawn must force the
 		# state machine back to an input-eligible state before queued weapon

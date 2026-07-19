@@ -141,6 +141,7 @@ func _validate_operator_ranged_ready(root: Node) -> void:
 	_assert_true(not bool(operator.call("_is_using_ranged_2h_primary")), "sidearm-ready should not report the carried 2h primary")
 	_assert_true(bool(operator.call("_is_using_ranged_weapon_visual")), "ranged-ready should show a ranged visual layer")
 	_assert_true((operator.call("_resolve_dodge_direction") as Vector2).is_equal_approx(Vector2.LEFT), "idle aiming dodge should hop back away from aim")
+	_validate_sidearm_fire_buffer(operator)
 
 	operator.call("_exit_ranged_ready")
 	_assert_true(not bool(operator.call("_is_ranged_ready_active")), "exiting ranged-ready should clear the ready state")
@@ -150,6 +151,32 @@ func _validate_operator_ranged_ready(root: Node) -> void:
 	_validate_sidearm_ranged_ready(operator)
 	_validate_selected_primary_priority(operator)
 	operator.queue_free()
+
+
+func _validate_sidearm_fire_buffer(operator: Node) -> void:
+	var observatory := root.get_node_or_null("DevObservatory")
+	var requests_before := int(observatory.counters.get("player_ranged_fire_requests", 0)) if observatory != null else 0
+	var deferred_before := int(observatory.counters.get("player_ranged_fire_deferred_sidearm_not_ready", 0)) if observatory != null else 0
+	var readiness_failures_before := int(observatory.counters.get("player_ranged_fire_failure_sidearm_not_held", 0)) if observatory != null else 0
+	operator.set("_sidearm_action_phase", &"drawing")
+	operator.set("_sidearm_fire_buffered", false)
+	operator.set("fire_cooldown_remaining", 0.0)
+	operator.set("_pending_ranged_shot", {})
+	Input.action_release("attack_primary")
+	Input.action_press("attack_primary")
+	operator.call("_handle_sidearm_fire_input")
+	operator.call("_handle_sidearm_fire_input")
+	_assert_true(bool(operator.get("_sidearm_fire_buffered")), "one early sidearm press should be buffered during draw")
+	if observatory != null:
+		_assert_true(int(observatory.counters.get("player_ranged_fire_requests", 0)) == requests_before, "buffered sidearm input must not become an early fire request")
+		_assert_true(int(observatory.counters.get("player_ranged_fire_deferred_sidearm_not_ready", 0)) == deferred_before + 1, "repeated sampling of one early sidearm press should defer exactly once")
+	operator.set("_sidearm_action_phase", &"held")
+	operator.call("_try_consume_sidearm_fire_buffer")
+	_assert_true(not bool(operator.get("_sidearm_fire_buffered")), "held sidearm should consume the buffered press")
+	if observatory != null:
+		_assert_true(int(observatory.counters.get("player_ranged_fire_requests", 0)) == requests_before + 1, "one deferred sidearm press should become exactly one request")
+		_assert_true(int(observatory.counters.get("player_ranged_fire_failure_sidearm_not_held", 0)) == readiness_failures_before, "buffered sidearm input must not emit sidearm_not_held failures")
+	Input.action_release("attack_primary")
 
 
 func _validate_sidearm_ranged_ready(operator: Node) -> void:
