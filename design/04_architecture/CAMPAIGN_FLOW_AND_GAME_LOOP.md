@@ -1301,7 +1301,7 @@ Likely integration touch points:
 ```plaintext id="xe2qtw"
 custodian/core/systems/hub/hub_manager.gd
 custodian/core/systems/hub/knowledge_system.gd
-custodian/core/systems/world/world_transition_manager.gd
+custodian/game/systems/world/world_transition_manager.gd
 custodian/core/systems/region/region_generator.gd
 custodian/scenes/ui.gd
 custodian/scenes/game.tscn

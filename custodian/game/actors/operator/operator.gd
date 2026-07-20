@@ -28,6 +28,7 @@ const TARGET_RING_SCENE := preload("res://game/actors/effects/target_ring.tscn")
 const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
 const PARRY_CONTACT_SPARK_VFX_SCENE := preload("res://game/vfx/combat/parry_contact_spark_vfx.tscn")
 const PARRY_SUCCESS_BURST_VFX_SCENE := preload("res://game/vfx/combat/parry_success_burst_vfx.tscn")
+const PARRY_SUCCESS_SOUND: AudioStream = preload("res://content/audio/sfx/combat/parry_success_01.wav")
 const CRITICAL_ATTACK_RIGHT_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__parry_miss_01__e__8f__96.png"
 const CRITICAL_ATTACK_LEFT_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__parry_miss_01__w__8f__96.png"
 const CRITICAL_ATTACK_FRAME_COUNT := 8
@@ -4208,6 +4209,7 @@ func _on_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dicti
 	_play_parry_animation(&"unarmed_parry_success")
 	_spawn_parry_contact_spark(contact_position)
 	_spawn_parry_success_fx(contact_position)
+	_play_parry_success_sound(contact_position)
 	_notify_camera_attack_impact(hit_direction, false)
 	_obs_increment(&"player_parry_success")
 	_obs_log(&"player_parry_success", {
@@ -4352,6 +4354,31 @@ func _spawn_parry_success_fx(contact_position: Vector2) -> Node2D:
 	_warn_missing_animation_once(String(placeholder_animation), "independent world-space parry success burst")
 	_play_modular_parry_fx(direction, "unarmed_parry_fx")
 	return burst
+
+
+func _play_parry_success_sound(contact_position: Vector2) -> AudioStreamPlayer2D:
+	var player := AudioStreamPlayer2D.new()
+	player.name = "ParrySuccessAudio"
+	player.stream = PARRY_SUCCESS_SOUND
+	player.volume_db = -1.0
+	player.max_distance = 560.0
+	player.add_to_group("parry_success_audio")
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	if parent == null:
+		player.free()
+		return null
+	parent.add_child(player)
+	player.global_position = contact_position
+	player.finished.connect(player.queue_free)
+	player.play()
+	_obs_increment(&"player_parry_success_sfx_played")
+	_obs_log(&"player_parry_success_sfx_played", {
+		"position": contact_position,
+		"stream": PARRY_SUCCESS_SOUND.resource_path,
+	})
+	return player
 
 
 func _find_valid_parry_critical_target() -> Node2D:

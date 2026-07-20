@@ -338,6 +338,7 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	_assert_true(not bool(operator.get("_parry_active")), "missed active parry should clear active parry flag")
 	_assert_true(operator.get("_block_phase") == &"recovery", "missed active parry should keep block recovery presentation")
 	_assert_true(operator.get_tree().get_nodes_in_group("parry_success_world_vfx").is_empty(), "missed active parry should not spawn success burst")
+	_assert_true(operator.get_tree().get_nodes_in_group("parry_success_audio").is_empty(), "missed active parry should not play the success sound")
 	_assert_true(not operator.get_tree().get_nodes_in_group("parry_miss_world_vfx").is_empty(), "missed active parry should spawn miss feedback")
 	if observatory != null:
 		var miss_counters: Dictionary = observatory.get("counters")
@@ -361,8 +362,20 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	_assert_true(is_equal_approx(attacker.parry_duration, float(operator.get("parry_enemy_stagger_sec"))), "parry should use exported stagger duration")
 	_assert_true(is_equal_approx(attacker.parry_knockback, float(operator.get("parry_enemy_knockback"))), "parry should use exported knockback")
 	_assert_true(operator.get("_parry_phase") == &"success", "successful parry should enter success recovery")
+	var parry_success_audio := operator.get_tree().get_nodes_in_group("parry_success_audio")
+	_assert_true(parry_success_audio.size() == 1, "successful parry should create exactly one positional success sound")
+	if parry_success_audio.size() == 1:
+		var parry_success_player := parry_success_audio[0] as AudioStreamPlayer2D
+		_assert_true(parry_success_player != null and parry_success_player.playing, "successful parry sound should begin playback immediately")
+		_assert_true(
+			parry_success_player != null \
+			and parry_success_player.stream != null \
+			and parry_success_player.stream.resource_path == "res://content/audio/sfx/combat/parry_success_01.wav",
+			"successful parry should use parry_success_01.wav",
+		)
 	if observatory != null:
 		_assert_true(int(observatory.get("counters").get("player_parry_success", 0)) == 1, "successful parry telemetry should count once")
+		_assert_true(int(observatory.get("counters").get("player_parry_success_sfx_played", 0)) == 1, "successful parry sound telemetry should count once")
 	_assert_true(float(operator.get("_counter_window_timer")) > 0.0, "successful parry should open a counter window")
 	_assert_true(float(operator.get("parry_success_recovery_sec")) <= 0.035, "successful parry should put guard down quickly enough to counter during enemy stagger")
 	Input.action_press("fire_primary")

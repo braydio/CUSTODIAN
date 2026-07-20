@@ -125,6 +125,8 @@ Enemy grunt art uses the repository's actual `melee__` naming (not `unarmed__`):
 
 Optional posture-break flash spawns at the enemy breach-marker offset when critical-open begins. Optional critical-window expiry spawns at the countdown-ring offset when the opportunity expires unconsumed. Both are one-shot `queue_free`-on-finish scenes gated by `grunt_optional_critical_vfx_enabled`.
 
+Successful parry audio is a separate Operator-owned presentation cue. `_on_parry_success()` spawns one positional `AudioStreamPlayer2D` at the already resolved contact point using `custodian/content/audio/sfx/combat/parry_success_01.wav`; the player auto-frees when the 0.61-second stream finishes. Misses, expired windows, guard chip damage, and parry input do not play this cue.
+
 ## Validation
 
 ```bash

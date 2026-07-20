@@ -1,6 +1,6 @@
 # FILE INDEX — CUSTODIAN
 
-Last updated: 2026-07-17
+Last updated: 2026-07-20
 
 ## Local Entry And Workflow
 
@@ -168,7 +168,7 @@ Last updated: 2026-07-17
 - `custodian/game/world/procgen/gothic_compound/` — deterministic gothic compound blueprint generator modules: metadata asset definitions, legacy path registry, config, result, validator, generator, and Sprite2D adapter used by the connected-map prototype; current generation uses logical asset definitions, flat-layer top-left anchoring for terrain/roads/decals, base-rooted dynamic wall/prop/gatehouse occluders under `DepthSortLayer`, footprint-aware placement/collision, render/depth metadata, operator-relative prop depth sorting, wall/post/gatehouse perimeter grammar, keep-plaza exclusion, service paths, zone-specific decals/grates, clustered exterior scatter, and perimeter topology validation
 - `custodian/game/world/gothic_compound/gothic_compound_map.gd` — authored connected gothic compound destination map that runs the larger gothic blueprint generator, exposes camera bounds, updates player-relative depth sorting, places the return gate, and now adds an `AuthoredVaultRoom` with three `VaultStorage` caches plus `VaultEnemyExit`
 - `custodian/game/world/gothic_compound/gothic_compound_travel_gate.gd` — interactable gate used to enter the gothic compound from the main map and return from the compound to the main map; Sundered Keep normal access now uses `WorldIngressSite` instead, with this gate retained for the optional debug direct gateway
-- `custodian/game/world/procgen/ingress/world_ingress_site.gd` — generic procgen-to-authored Area2D boundary; registered entry is authoritative, restores procgen/UI state on failure, and requires an explicit compatibility flag before using a legacy scene fallback
+- `custodian/game/world/procgen/ingress/world_ingress_site.gd` — generic procgen-to-authored Area2D boundary; resolves presentation from registry data, snapshots both world branches plus actor/camera/UI state, restores atomically on failure/return, and resets for re-entry
 - `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn` and `.gd` — active isolated visual Vista Approach with route-master art, guaranteed backdrop coverage, mapper-authored perimeter rails, authored shared-camera framing, a staged direct-to-Keep endpoint plus exported Return Causeway test switch, `VistaController`, and level-loader hooks
 - `custodian/game/world/approaches/sundered_keep/soft_rect_feather.gdshader` — local CanvasItem shader used by the Sundered Keep approach to soften fitted matte sprite edges so panorama/fog/sea/keep plates do not read as raw rectangles
 - `custodian/game/world/approaches/sundered_keep/sundered_keep_vista_controller.gd` — progress-based visual controller for the Sundered Keep approach; fades VistaRoot, GrandVistaRoot, fog underlay, vista fog, occlusion root, cliff occlusion, wall shadow, and distant keep without owning gameplay simulation
@@ -182,8 +182,9 @@ Last updated: 2026-07-17
 - `custodian/game/world/routes/level_route.gd` — base `LevelRoute` controller with `register_stage()`, `_load_stage()`, `_on_stage_complete()` stage advancement, and `final_target_scene` instantiation via `_enter_front_gate()`
 - `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.gd` — route controller registering vista_one, pre_level, grand_vista, and causeway_approach stages with `sundered_keep_map.tscn` as final target
 - `custodian/game/world/routes/sundered_keep/sundered_keep_approach_route.tscn` — thin route scene wrapper (script only)
-- `custodian/game/world/levels/level_definition.gd`, `level_registry.gd`, `level_loader.gd`, and `world_ingress_definition.gd` — shared authored-level data contract, duplicate-safe registry, named-spawn entry resolver, companion-scene metadata, placement policy, and active-instance adoption boundary
-- `custodian/game/world/levels/authored_level_2d.gd` and `level_playtest_bootstrap.gd` — production level base contract plus standalone-wrapper activation helper; production levels own content/markers/collision/camera bounds but never a persistent Operator
+- `custodian/game/world/levels/level_definition.gd`, `level_registry.gd`, `level_loader.gd`, and `world_ingress_definition.gd` — shared authored-level data contract, explicit presentation/lifecycle policy, duplicate-safe registry, named-spawn entry resolver, companion-scene metadata, placement policy, active-instance authority, and world-return release boundary
+- `custodian/game/world/levels/authored_level_2d.gd` and `level_playtest_bootstrap.gd` — production level base contract plus standalone-wrapper activation helper; production levels own content/markers/collision/camera bounds and loader-mediated return but never a persistent Operator
+- `custodian/tools/validation/{authored_level_ingress_return_smoke,authored_level_reentry_smoke,level_presentation_profile_smoke,level_entry_rollback_smoke}.gd` — focused authored lifecycle coverage for exact branch restoration, loader/ingress cleanup, repeat entry, registry-selected presentation, and atomic failed-spawn rollback
 - `custodian/game/world/levels/world_ingress_spawner.gd` and `world_ingress_placement_resolver.gd` — deterministic registry-driven procgen ingress creation and spatial policy; production `ContractWorldLoader` delegates authored destination placement here
 - `custodian/tools/level_authoring/` — CLI scaffold request/generator/entry script and templates for managed production, playtest, authoring, definition, design, and validation artifacts
 - `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md` and `design/02_features/level_authoring/AUTHORED_LEVEL_AUTHORING_PIPELINE_CODE.md` — active ownership and implementation contracts for authored-level creation
@@ -260,6 +261,7 @@ Last updated: 2026-07-17
 - `custodian/game/vfx/combat/critical_breach_marker_vfx.tscn` — enemy-attached floating BREACH marker held visibly for the gameplay-owned critical window
 - `custodian/game/vfx/combat/critical_window_ring_vfx.tscn` — enemy-attached twelve-frame countdown reticle scaled to the supplied critical-window duration
 - `custodian/game/vfx/combat/parry_success_burst_vfx.gd` / `.tscn` — independently owned world-space parry-success one-shot that reuses the validated six-frame contact strip and survives Operator modular-layer transitions
+- `custodian/content/audio/sfx/combat/parry_success_01.wav` — 0.61-second positional confirmation cue spawned exactly once at the resolved contact point by Operator parry-success authority
 - `custodian/content/spriteframes/effects/combat/` — compact SpriteFrames resources slicing the required contact, BREACH, and countdown runtime strips
 - `custodian/game/actors/allies/allied_infantry_droid.tscn` — active main-scene allied droid presentation with animated SpriteFrames, muzzle marker, health bar, status label, and inherited combat behavior
 - `custodian/game/actors/allies/allied_infantry_droid.gd` — animated `CombatDrone` subclass with facing-aware idle/run/destroyed playback, hold-fire dimming, and fire/follow status label; no raw squad command input
@@ -402,7 +404,8 @@ Last updated: 2026-07-17
 - `design/02_features/minimap/MINIMAP_SYSTEM.md` — custom data-driven tactical minimap implementation spec
 - `design/02_features/minimap/MINIMAP_SYSTEM_CODE.md` — minimap runtime code plan and integration notes
 - `design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md` — active implementation note and migrated review for constraint-first gothic compound blueprint generation
-- `design/02_features/terminal/TERMINAL_DESIGN_AUDIT.md` — full source/design audit of the command terminal against commit ed65c73; page maturity matrix, P0-P2 implementation sequence, documentation drift fixes, and validation gap analysis
+- `design/02_features/terminal/TERMINAL_DESIGN_AUDIT.md` — source/design audit of the command terminal (has factual errors — verify against runtime before implementing)
+- `design/02_features/terminal/TERMINAL_AUDIT_VERIFICATION.md` — runtime verification correcting the audit: fidelity policy, status formatter, overview view model, and validation smokes already exist; corrected page maturity matrix and implementation sequence
 - `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md` — canonical thirteen-page terminal implementation authority (supersedes `design/01_systems/TERMINAL_COMMAND_INTERFACE.md` and `design/01_systems/ROADMAP_COMMAND_TERMINAL.md`)
 
 ## Active Interaction/UI Files

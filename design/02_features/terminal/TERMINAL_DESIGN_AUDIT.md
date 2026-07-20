@@ -5,8 +5,11 @@
 **Source of Truth:** GitHub `braydio/CUSTODIAN` (freshest repository state)
 **Terminal Authority:** `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`
 **Runtime Authority:** Godot files under `custodian/`
+**Verification:** `design/02_features/terminal/TERMINAL_AUDIT_VERIFICATION.md`
 
 This was a source/design audit, not a rendered playtest.
+
+> **⚠ Corrections:** A runtime verification pass found significant factual errors in this audit. Several files recommended for creation already exist and are functional (fidelity policy, status formatter, overview view model, validation smokes). The snapshot does not hardcode fidelity or use the OS clock. Overview ranking is score-based, not alphabetical. See `TERMINAL_AUDIT_VERIFICATION.md` for the corrected page maturity matrix and implementation sequence.
 
 ---
 
@@ -20,17 +23,19 @@ The terminal has a strong shell. Modal full-screen presentation, navigation rail
 
 ## Page Maturity Matrix
 
+> **Corrected version:** `TERMINAL_AUDIT_VERIFICATION.md` — several pages are more mature than listed here.
+
 ```
 SHELL            complete-v1
-OVERVIEW         functional-partial
-STATUS           readout-placeholder
+OVERVIEW         functional-partial  ← actually functional-v1 (scored ranking, real location)
+STATUS           readout-placeholder ← actually functional-v1 (fidelity-aware formatter)
 SECTORS          functional-v1
 POWER            readout-partial
 DEFENSE          readout-scaffold
 FABRICATION      functional-v1
 SENSORS          readout-scaffold
 INCIDENTS        transcript-scaffold
-ARCHIVE          placeholder
+ARCHIVE          placeholder         ← actually functional-partial (real ARRN/contract data)
 RECON            placeholder
 CONTRACTS        active-contract-only
 HISTORY          transcript-mirror

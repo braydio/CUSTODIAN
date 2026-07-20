@@ -130,7 +130,7 @@ env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tool
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ready_input_smoke.gd
 ```
 
-The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. The modular fire and ready-input smokes additionally validate raise/lower direction retargeting without progress reset, committed shot direction, recovery-to-current-aim, posture/readiness status, and upper/weapon direction plus frame-clock synchronization. The socket smoke validates generated Carbine phase-1 metadata, socket-derived muzzle/draw order, transition timing, and camera-owned zoom/lead cancellation. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
+The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. The modular fire and ready-input smokes additionally validate raise/lower direction retargeting without progress reset, committed shot direction, recovery-to-current-aim, posture/readiness status, upper/weapon direction plus frame-clock synchronization, missed-parry silence, and exactly one positional `parry_success_01.wav` cue on confirmed parry success. The socket smoke validates generated Carbine phase-1 metadata, socket-derived muzzle/draw order, transition timing, and camera-owned zoom/lead cancellation. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
 
 For allied drone fire/formation/guard-anchor commands:
 
@@ -238,9 +238,13 @@ godot --headless --path . --script res://tools/validation/level_registry_contrac
 godot --headless --path . --script res://tools/validation/level_collision_poi_mapper_smoke.gd
 godot --headless --path . --script res://tools/validation/world_ingress_spawner_smoke.gd
 godot --headless --path . --script res://tools/validation/level_scaffold_generator_smoke.gd
+godot --headless --path . --script res://tools/validation/authored_level_ingress_return_smoke.gd
+godot --headless --path . --script res://tools/validation/authored_level_reentry_smoke.gd
+godot --headless --path . --script res://tools/validation/level_presentation_profile_smoke.gd
+godot --headless --path . --script res://tools/validation/level_entry_rollback_smoke.gd
 ```
 
-These checks prove named-spawn success/failure without actor mutation, every registered entry scene's spawn and mapper boundary contract, generic mapper dynamic schema and Sundered compatibility, deterministic multi-ingress spacing/identity, and alternate-root scaffold dry-run/creation/duplicate rejection/managed regeneration/unmanaged rejection/registry sorting. The existing `sundered_keep_ingress_smoke.gd` now exercises `ContractWorldLoader`'s registry-driven placement path rather than the deprecated Sundered-specific helper.
+These checks prove named-spawn success/failure without actor mutation, every registered entry scene's spawn/presentation/lifecycle and mapper boundary contract, generic mapper dynamic schema and Sundered compatibility, deterministic multi-ingress spacing/identity, alternate-root scaffold dry-run/creation/duplicate rejection/managed regeneration/unmanaged rejection/registry sorting, exact procgen/connected branch restoration, loader/ingress cleanup, repeat entry, profile selection, and atomic actor/camera/UI rollback. The existing `sundered_keep_ingress_smoke.gd` exercises `ContractWorldLoader`'s registry-driven placement path rather than the deprecated Sundered-specific helper.
 
 For the experimental route/stage wrapper:
 

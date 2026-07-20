@@ -8,7 +8,7 @@
 **Depends On:** Runtime World & Camera Stabilization, Hub System (Meta Progression)
 **Blocks:** Campaign Flow & Game Loop, Integration Contract, Region Deployment
 **Runtime Target:** Godot 4.x (`custodian/`)
-**Last Updated:** 2026-03-27
+**Last Updated:** 2026-07-20
 
 ## Current Runtime Bridge
 
@@ -19,6 +19,21 @@ The authoritative transition manager described below remains future architecture
 - `custodian/game/systems/core/systems/contract_world_loader.gd`
 
 Registered authored destinations and named-spawn activation are governed by `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`. That bridge must preserve one active gameplay world and the persistent main-world Operator until the full transition manager replaces it.
+
+### Transition layers
+
+The future `WorldTransitionManager` changes major authoritative runtime contexts, such as Compound to Campaign or Campaign to Compound. It must not own ordinary traversal between authored scenes that remain inside one campaign world.
+
+Intra-campaign scene boundaries belong to a separate, planned `RouteTraversalManager`. Route traversal will resolve directed route edges, named spawns, caching, backtracking, and world-origin exfil while preserving the campaign-world context and the Operator owned above every route node. Movement inside one loaded level remains local level gameplay and requires neither manager.
+
+```text
+WorldTransitionManager  major context changes
+RouteTraversalManager  route-node changes inside a campaign
+LevelInstanceLoader    instantiate/validate one route-node scene
+Level scene            local content and exit requests
+```
+
+The current `LevelLoader` is the live bridge for the third responsibility. Phase-1 authored-level lifecycle hardening may add transactional entry/return cleanup to that bridge, but route graphs, branch selection, and route history must not be placed in it.
 
 ---
 
@@ -251,7 +266,7 @@ This system needs one owner.
 ### 9.1 Required Owner
 
 ```plaintext
-custodian/core/systems/world/world_transition_manager.gd
+custodian/game/systems/world/world_transition_manager.gd
 ```
 
 This manager is the authoritative owner of:
@@ -1136,10 +1151,10 @@ This prevents procedural world generation logic from becoming the de facto world
 Recommended implementation targets:
 
 ```plaintext id="w4h7s7"
-custodian/core/systems/world/world_transition_manager.gd
-custodian/core/systems/world/world_spec.gd
-custodian/core/systems/world/world_transition_request.gd
-custodian/core/systems/world/world_transition_result.gd
+custodian/game/systems/world/world_transition_manager.gd
+custodian/game/systems/world/world_spec.gd
+custodian/game/systems/world/world_transition_request.gd
+custodian/game/systems/world/world_transition_result.gd
 ```
 
 Likely integration touch points:

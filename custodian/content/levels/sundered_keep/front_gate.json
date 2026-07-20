@@ -6,6 +6,11 @@
   "target_scene_path": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn",
   "authored_data_path": "res://content/levels/sundered_keep/sundered_keep_front_gate_large.json",
   "world_context": "campaign_region",
+  "presentation_profile": "vista_approach",
+  "lifecycle": {
+    "cache_policy": "destroy_on_forward_exit",
+    "state_policy": "session"
+  },
   "tags": [
     "authored",
     "playable_map",

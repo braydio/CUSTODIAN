@@ -2,7 +2,7 @@
 
 **Project:** CUSTODIAN  
 **Status:** active  
-**Last Updated:** 2026-07-19
+**Last Updated:** 2026-07-20
 
 ## Runtime Rules
 
@@ -14,6 +14,24 @@
 - A registered `WorldIngressSite` never uses its legacy scene fallback unless `allow_legacy_registered_fallback` is explicitly enabled.
 - `WorldIngressSpawner` places only definitions tagged `world_ingress`.
 - Placement uses registry order by level ID and squared-distance spacing checks.
+- Definitions must declare `presentation_profile` and a `lifecycle` block.
+- Registered ingress snapshots source branches, actor, camera, and UI before isolation.
+- `LevelLoader` owns the active-instance record and clears it synchronously on world return.
+- `AuthoredLevel2D.return_to_main()` completes return through the loader when runtime context is bound.
+- World return restores `ProcGenRuntime` and `ConnectedMaps`, resets the originating ingress, and releases the outgoing level.
+
+Allowed presentation profiles are `gameplay`, `vista_approach`, and `cinematic`. Generated levels default to `gameplay`; special presentation must be selected in registry data.
+
+Initial lifecycle policy is:
+
+```json
+{
+  "cache_policy": "keep_during_route",
+  "state_policy": "session"
+}
+```
+
+The current bridge has no route cache authority. Therefore `keep_during_route` still releases an instance when returning to world origin; it only prevents future route traversal from being forced into destroy-on-every-edge behavior.
 
 ## Generated Layout
 
@@ -62,4 +80,3 @@ Safety: `--dry-run`, `--no-register`, `--force-generated`, `--adopt-existing`, `
 6. Existing unmanaged files are never overwritten.
 7. Generated manifest lists every managed path.
 8. Generic and Sundered compatibility smokes pass.
-

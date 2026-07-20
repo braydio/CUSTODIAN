@@ -700,6 +700,10 @@ func set_runtime_map(map_instance: Node) -> void:
 		snap_to_player_spawn(operator_ref.global_position)
 
 
+func get_runtime_map() -> Node:
+	return _runtime_map if is_instance_valid(_runtime_map) else null
+
+
 func snap_to_player_spawn(spawn_position: Vector2) -> void:
 	global_position = spawn_position + player_offset
 	_last_position = spawn_position

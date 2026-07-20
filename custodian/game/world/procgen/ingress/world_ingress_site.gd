@@ -14,6 +14,7 @@ var _triggered := false
 var _approach_enter_deferred := false
 var _sprite: Sprite2D = null
 var _main_map: Node = null
+var _entry_snapshot: Dictionary = {}
 
 
 func _ready() -> void:
@@ -93,21 +94,32 @@ func _enter_approach(actor: Node) -> void:
 		world = candidate as Node2D
 	if world == null:
 		push_error("[WorldIngressSite] Missing world root for %s" % ingress_id)
+		reset_after_level_return()
 		return
-
-	# Presentation levels must never be born for one frame inside the active
-	# procgen simulation. Isolate first, then restore atomically on failure.
-	_set_procgen_world_visible(false)
-	_set_vista_presentation_mode(actor, true)
 
 	if not level_id.is_empty():
 		var level_loader := _find_level_loader()
+		if level_loader == null:
+			push_error("[WorldIngressSite] Missing LevelLoader for registered destination %s" % level_id)
+			if not allow_legacy_registered_fallback:
+				reset_after_level_return()
+				return
+		else:
+			var definition: RefCounted = level_loader.call("get_definition", level_id) as RefCounted
+			var presentation_profile := &"gameplay"
+			if definition != null and definition.has_method("get_presentation_profile"):
+				presentation_profile = definition.call("get_presentation_profile") as StringName
+			_entry_snapshot = _capture_origin_state(actor)
+			_set_procgen_world_visible(false)
+			_set_world_presentation_profile(actor, presentation_profile)
 		if level_loader != null:
 			var instance: Node = level_loader.call("enter_level", level_id, actor, {
 				"parent": world,
 				"main_map": _main_map,
 				"return_world_position": global_position,
 				"target_spawn_id": target_spawn_id,
+				"origin_ingress": self,
+				"source_state": _entry_snapshot,
 			}) as Node
 			if instance != null:
 				_observe(&"level_ingress_entered", {"level_id": String(level_id), "ingress_id": String(ingress_id)})
@@ -118,6 +130,11 @@ func _enter_approach(actor: Node) -> void:
 			_restore_failed_approach_entry(actor)
 			return
 		push_warning("[WorldIngressSite] LevelLoader could not enter %s; explicit legacy fallback enabled" % level_id)
+
+	if _entry_snapshot.is_empty():
+		_entry_snapshot = _capture_origin_state(actor)
+		_set_procgen_world_visible(false)
+		_set_world_presentation_profile(actor, &"vista_approach")
 
 	if approach_scene == null:
 		push_error("[WorldIngressSite] Missing approach_scene for %s" % ingress_id)
@@ -171,17 +188,113 @@ func _set_procgen_world_visible(value: bool) -> void:
 
 
 func _restore_failed_approach_entry(actor: Node) -> void:
-	_set_procgen_world_visible(true)
-	_set_vista_presentation_mode(actor, false)
-	_triggered = false
+	restore_world_origin(actor, _entry_snapshot)
+	reset_after_level_return()
 
 
-func _set_vista_presentation_mode(actor: Node, enabled: bool) -> void:
+func _set_world_presentation_profile(actor: Node, profile: StringName) -> void:
 	var ui := get_node_or_null("/root/GameRoot/UI")
 	if ui != null and ui.has_method("set_world_presentation_mode"):
-		ui.call("set_world_presentation_mode", &"vista_approach" if enabled else &"gameplay")
+		ui.call("set_world_presentation_mode", profile)
 	if actor != null and actor.has_method("set_vista_presentation_mode"):
-		actor.call("set_vista_presentation_mode", enabled)
+		actor.call("set_vista_presentation_mode", profile != &"gameplay")
+
+
+func restore_world_origin(actor: Node, source_state: Dictionary = {}) -> void:
+	var snapshot := source_state if not source_state.is_empty() else _entry_snapshot
+	for branch_state: Variant in snapshot.get("branches", []):
+		if not (branch_state is Dictionary):
+			continue
+		_restore_branch_state(branch_state as Dictionary)
+	if snapshot.is_empty():
+		_set_procgen_world_visible(true)
+	var ui_mode := StringName(str(snapshot.get("ui_mode", "gameplay")))
+	_set_world_presentation_profile(actor, ui_mode)
+	if actor is Node2D and snapshot.has("actor_position"):
+		(actor as Node2D).global_position = snapshot.get("actor_position") as Vector2
+	var camera: Node = snapshot.get("camera") as Node
+	if camera == null or not is_instance_valid(camera):
+		camera = get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera != null and camera.has_method("set_presentation_framing"):
+		camera.call(
+			"set_presentation_framing",
+			bool(snapshot.get("camera_presentation_framing", false)),
+			snapshot.get("camera_presentation_offset", Vector2.ZERO),
+			snapshot.get("camera_presentation_zoom", Vector2.ONE)
+		)
+	if camera != null and camera.has_method("set_runtime_map"):
+		camera.call("set_runtime_map", snapshot.get("camera_runtime_map", snapshot.get("main_map", _main_map)) as Node)
+	if camera is Node2D and snapshot.has("camera_position"):
+		(camera as Node2D).global_position = snapshot.get("camera_position") as Vector2
+	if camera is Camera2D and snapshot.has("camera_zoom"):
+		(camera as Camera2D).zoom = snapshot.get("camera_zoom") as Vector2
+	if camera != null and snapshot.has("camera_target_zoom") and "target_zoom" in camera:
+		camera.set("target_zoom", snapshot.get("camera_target_zoom"))
+
+
+func reset_after_level_return() -> void:
+	_triggered = false
+	_approach_enter_deferred = false
+	_entry_snapshot.clear()
+	monitoring = true
+	monitorable = true
+
+
+func is_triggered() -> bool:
+	return _triggered
+
+
+func _capture_origin_state(actor: Node) -> Dictionary:
+	var branches: Array[Dictionary] = []
+	for branch_path in [
+		"/root/GameRoot/World/ProcGenRuntime",
+		"/root/GameRoot/World/ConnectedMaps",
+	]:
+		var branch := get_node_or_null(branch_path)
+		if branch == null:
+			continue
+		branches.append({
+			"node": branch,
+			"visible": (branch as CanvasItem).visible if branch is CanvasItem else true,
+			"process_mode": branch.process_mode,
+		})
+	var ui := get_node_or_null("/root/GameRoot/UI")
+	var ui_mode: StringName = &"gameplay"
+	if ui != null and ui.has_method("get_world_presentation_mode"):
+		ui_mode = ui.call("get_world_presentation_mode") as StringName
+	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	var snapshot := {
+		"branches": branches,
+		"ui_mode": ui_mode,
+		"main_map": _main_map,
+		"camera": camera,
+	}
+	if actor is Node2D:
+		snapshot["actor_position"] = (actor as Node2D).global_position
+	if camera is Node2D:
+		snapshot["camera_position"] = (camera as Node2D).global_position
+	if camera is Camera2D:
+		snapshot["camera_zoom"] = (camera as Camera2D).zoom
+	if camera != null and camera.has_method("has_presentation_framing"):
+		snapshot["camera_presentation_framing"] = bool(camera.call("has_presentation_framing"))
+	if camera != null and "_presentation_offset" in camera:
+		snapshot["camera_presentation_offset"] = camera.get("_presentation_offset")
+	if camera != null and "_presentation_zoom" in camera:
+		snapshot["camera_presentation_zoom"] = camera.get("_presentation_zoom")
+	if camera != null and camera.has_method("get_runtime_map"):
+		snapshot["camera_runtime_map"] = camera.call("get_runtime_map")
+	if camera != null and "target_zoom" in camera:
+		snapshot["camera_target_zoom"] = camera.get("target_zoom")
+	return snapshot
+
+
+func _restore_branch_state(branch_state: Dictionary) -> void:
+	var branch: Node = branch_state.get("node") as Node
+	if branch == null or not is_instance_valid(branch):
+		return
+	if branch is CanvasItem:
+		(branch as CanvasItem).visible = bool(branch_state.get("visible", true))
+	branch.process_mode = int(branch_state.get("process_mode", Node.PROCESS_MODE_INHERIT))
 
 
 func _set_world_branch_visible(branch: Node, value: bool) -> void:

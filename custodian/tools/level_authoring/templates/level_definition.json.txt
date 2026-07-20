@@ -9,6 +9,11 @@
   "authoring_scene_path": "{{AUTHORING_SCENE_PATH}}",
   "design_doc_path": "{{DESIGN_DOC_PATH}}",
   "world_context": "{{WORLD_CONTEXT}}",
+  "presentation_profile": "gameplay",
+  "lifecycle": {
+    "cache_policy": "keep_during_route",
+    "state_policy": "session"
+  },
   "tags": ["authored", "playable_map", "world_ingress", "{{REGION}}"],
   "ingress": {
     "ingress_id": "{{LEVEL_ID}}",

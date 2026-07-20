@@ -9,6 +9,14 @@ extends Node2D
 
 var main_map: Node
 var main_return_position := Vector2.ZERO
+var presentation_profile: StringName = &"gameplay"
+var lifecycle: Dictionary = {
+	"cache_policy": "keep_during_route",
+	"state_policy": "session",
+}
+var _level_loader: Node
+var _origin_ingress: Node
+var _source_state: Dictionary = {}
 
 
 func _ready() -> void:
@@ -21,6 +29,16 @@ func _ready() -> void:
 func configure_connection(p_main_map: Node, p_return_world_position: Vector2) -> void:
 	main_map = p_main_map
 	main_return_position = p_return_world_position
+
+
+func configure_level_runtime(context: Dictionary) -> void:
+	_level_loader = context.get("level_loader") as Node
+	_origin_ingress = context.get("origin_ingress") as Node
+	presentation_profile = StringName(str(context.get("presentation_profile", "gameplay")))
+	var lifecycle_value: Variant = context.get("lifecycle", {})
+	lifecycle = (lifecycle_value as Dictionary).duplicate(true) if lifecycle_value is Dictionary else {}
+	var source_value: Variant = context.get("source_state", {})
+	_source_state = (source_value as Dictionary).duplicate(false) if source_value is Dictionary else {}
 
 
 func get_entry_position() -> Vector2:
@@ -57,12 +75,24 @@ func enter_from_main_at_spawn(actor: Node, spawn_id: StringName) -> bool:
 
 
 func return_to_main(actor: Node) -> void:
+	if _level_loader != null and is_instance_valid(_level_loader) \
+	and _level_loader.has_method("complete_return_to_world"):
+		if bool(_level_loader.call("complete_return_to_world", self, actor)):
+			return
 	_set_branch_active(main_map, true)
 	visible = false
 	process_mode = Node.PROCESS_MODE_DISABLED
 	if actor is Node2D:
 		(actor as Node2D).global_position = main_return_position
 	_refresh_camera(main_map, actor)
+	var ui := get_node_or_null("/root/GameRoot/UI")
+	if ui != null and ui.has_method("set_world_presentation_mode"):
+		ui.call("set_world_presentation_mode", &"gameplay")
+	if actor != null and actor.has_method("set_vista_presentation_mode"):
+		actor.call("set_vista_presentation_mode", false)
+	if _origin_ingress != null and is_instance_valid(_origin_ingress) \
+	and _origin_ingress.has_method("reset_after_level_return"):
+		_origin_ingress.call("reset_after_level_return")
 
 
 func get_camera_bounds() -> Rect2:

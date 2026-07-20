@@ -16,6 +16,11 @@ func _run() -> void:
 		return
 	for level_id: StringName in registry.call("get_level_ids"):
 		var definition: RefCounted = registry.call("get_level", level_id)
+		if definition.call("get_presentation_profile") not in [&"gameplay", &"vista_approach", &"cinematic"]:
+			errors.append("%s has an invalid presentation profile" % level_id)
+		var lifecycle: Dictionary = definition.call("get_lifecycle")
+		if str(lifecycle.get("cache_policy", "")).is_empty() or str(lifecycle.get("state_policy", "")).is_empty():
+			errors.append("%s has an incomplete lifecycle policy" % level_id)
 		if definition.ingress == null or definition.ingress.target_spawn_id.is_empty():
 			errors.append("%s has no named ingress spawn" % level_id)
 			continue

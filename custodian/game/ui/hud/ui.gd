@@ -1679,9 +1679,9 @@ func _set_minimap_visible(visible: bool) -> void:
 
 func set_world_presentation_mode(mode: StringName) -> void:
 	_world_presentation_mode = mode
-	# The legacy contract HUD is procgen-specific. Vista traversal deliberately
-	# uses a clean screen; authored destination prompts are world-owned.
-	_set_main_hud_hidden(mode == &"vista_approach")
+	# Gameplay is the only profile that owns the ordinary HUD. Vista and
+	# cinematic profiles use level-owned presentation and prompts.
+	_set_main_hud_hidden(mode != &"gameplay")
 
 
 func get_world_presentation_mode() -> StringName:

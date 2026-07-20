@@ -5,12 +5,14 @@ const LEVEL_REGISTRY_SCRIPT := preload("res://game/world/levels/level_registry.g
 
 signal level_entered(level_id: StringName, instance: Node)
 signal level_entry_failed(level_id: StringName, reason: String)
+signal level_returned(level_id: StringName)
 
 @export_file("*.json") var registry_index_path: String = LEVEL_REGISTRY_SCRIPT.DEFAULT_INDEX_PATH
 
 var _registry: RefCounted
 var _active_level_id: StringName = &""
 var _active_level_instance: Node
+var _active_level_context: Dictionary = {}
 
 
 func _ready() -> void:
@@ -36,6 +38,8 @@ func get_definition(level_id: StringName) -> RefCounted:
 
 
 func enter_level(level_id: StringName, actor: Node, context: Dictionary = {}) -> Node:
+	if get_active_level_instance() != null:
+		return _fail(level_id, "another level is already active: %s" % _active_level_id)
 	var definition := get_definition(level_id)
 	if definition == null:
 		return _fail(level_id, "level is not registered")
@@ -60,8 +64,21 @@ func enter_level(level_id: StringName, actor: Node, context: Dictionary = {}) ->
 	var return_position: Vector2 = context.get("return_world_position", Vector2.ZERO)
 	if instance.has_method("configure_connection"):
 		instance.call("configure_connection", main_map, return_position)
+	var runtime_context := context.duplicate(false)
+	runtime_context["level_id"] = level_id
+	runtime_context["level_loader"] = self
+	runtime_context["presentation_profile"] = definition.call("get_presentation_profile")
+	runtime_context["lifecycle"] = definition.call("get_lifecycle")
+	if instance.has_method("configure_level_runtime"):
+		instance.call("configure_level_runtime", runtime_context)
 	var target_spawn_id := _resolve_target_spawn_id(definition, context)
+	var actor_position := Vector2.ZERO
+	var actor_had_position := actor is Node2D
+	if actor_had_position:
+		actor_position = (actor as Node2D).global_position
 	if not _enter_actor_at_spawn(instance, actor, target_spawn_id):
+		if actor_had_position and is_instance_valid(actor):
+			(actor as Node2D).global_position = actor_position
 		instance.queue_free()
 		return _fail(
 			level_id,
@@ -69,17 +86,21 @@ func enter_level(level_id: StringName, actor: Node, context: Dictionary = {}) ->
 		)
 	_active_level_id = level_id
 	_active_level_instance = instance
+	_active_level_context = runtime_context
 	level_entered.emit(level_id, instance)
 	return instance
 
 
 func get_active_level_id() -> StringName:
+	get_active_level_instance()
 	return _active_level_id
 
 
 func get_active_level_instance() -> Node:
 	if is_instance_valid(_active_level_instance):
 		return _active_level_instance
+	if _active_level_instance != null or not _active_level_id.is_empty():
+		clear_active_level()
 	return null
 
 
@@ -88,7 +109,87 @@ func adopt_active_level(level_id: StringName, instance: Node) -> void:
 		return
 	_active_level_id = level_id
 	_active_level_instance = instance
+	_active_level_context = {}
 	level_entered.emit(level_id, instance)
+
+
+func get_active_level_context() -> Dictionary:
+	return _active_level_context.duplicate(false)
+
+
+func complete_return_to_world(instance: Node, actor: Node) -> bool:
+	if instance == null or instance != get_active_level_instance():
+		push_error("[LevelLoader] return rejected for a non-active level instance")
+		return false
+	var completed_level_id := _active_level_id
+	var context := _active_level_context.duplicate(false)
+	var origin_ingress: Node = context.get("origin_ingress") as Node
+	var source_state: Dictionary = context.get("source_state", {}) as Dictionary
+	if origin_ingress != null and is_instance_valid(origin_ingress) \
+	and origin_ingress.has_method("restore_world_origin"):
+		origin_ingress.call("restore_world_origin", actor, source_state)
+		if origin_ingress.has_method("reset_after_level_return"):
+			origin_ingress.call("reset_after_level_return")
+	else:
+		_restore_origin_without_ingress(actor, context, source_state)
+	clear_active_level(instance)
+	_release_level_instance(instance, context.get("lifecycle", {}) as Dictionary, true)
+	level_returned.emit(completed_level_id)
+	return true
+
+
+func clear_active_level(expected_instance: Node = null) -> bool:
+	if expected_instance != null and expected_instance != _active_level_instance:
+		return false
+	_active_level_id = &""
+	_active_level_instance = null
+	_active_level_context.clear()
+	return true
+
+
+func release_level_instance(instance: Node, lifecycle: Dictionary, route_ending := false) -> void:
+	_release_level_instance(instance, lifecycle, route_ending)
+
+
+func _release_level_instance(instance: Node, lifecycle: Dictionary, route_ending: bool) -> void:
+	if instance == null or not is_instance_valid(instance):
+		return
+	var cache_policy := StringName(str(lifecycle.get("cache_policy", "destroy_on_exit")))
+	if cache_policy == &"keep_during_route" and not route_ending:
+		if instance is CanvasItem:
+			(instance as CanvasItem).visible = false
+		instance.process_mode = Node.PROCESS_MODE_DISABLED
+		return
+	instance.queue_free()
+
+
+func _restore_origin_without_ingress(actor: Node, context: Dictionary, source_state: Dictionary) -> void:
+	for branch_state: Variant in source_state.get("branches", []):
+		if not (branch_state is Dictionary):
+			continue
+		var branch: Node = (branch_state as Dictionary).get("node") as Node
+		if branch == null or not is_instance_valid(branch):
+			continue
+		if branch is CanvasItem:
+			(branch as CanvasItem).visible = bool((branch_state as Dictionary).get("visible", true))
+		branch.process_mode = int((branch_state as Dictionary).get("process_mode", Node.PROCESS_MODE_INHERIT))
+	var main_map: Node = context.get("main_map") as Node
+	if source_state.is_empty() and main_map != null:
+		if main_map is CanvasItem:
+			(main_map as CanvasItem).visible = true
+		main_map.process_mode = Node.PROCESS_MODE_INHERIT
+	if actor is Node2D:
+		(actor as Node2D).global_position = context.get("return_world_position", Vector2.ZERO)
+	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera != null and camera.has_method("set_presentation_framing"):
+		camera.call("set_presentation_framing", false)
+	if camera != null and camera.has_method("set_runtime_map"):
+		camera.call("set_runtime_map", main_map)
+	var ui := get_node_or_null("/root/GameRoot/UI")
+	if ui != null and ui.has_method("set_world_presentation_mode"):
+		ui.call("set_world_presentation_mode", source_state.get("ui_mode", &"gameplay"))
+	if actor != null and actor.has_method("set_vista_presentation_mode"):
+		actor.call("set_vista_presentation_mode", source_state.get("ui_mode", &"gameplay") != &"gameplay")
 
 
 func _resolve_target_spawn_id(definition: RefCounted, context: Dictionary) -> StringName:
