@@ -56,6 +56,7 @@
 [ext_resource type="Resource" path="res://content/lighting/profiles/sundered_keep_exterior.tres" id="211_lighting_profile"]
 [ext_resource type="PackedScene" path="res://game/world/lighting/world_atmosphere_2d.tscn" id="212_world_atmosphere"]
 [ext_resource type="PackedScene" path="res://game/world/lighting/light_rig_2d.tscn" id="213_light_rig"]
+[ext_resource type="PackedScene" path="res://game/infrastructure/structures/field_fabricator_mk1.tscn" id="214_field_fabricator"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
@@ -296,6 +297,9 @@ drone_scene = ExtResource("209_allied_droid")
 
 [node name="CommandTerminal" parent="World" unique_id=2021499921 instance=ExtResource("27_command_terminal")]
 position = Vector2(804, -492)
+
+[node name="FieldFabricatorMk1" parent="World" instance=ExtResource("214_field_fabricator")]
+position = Vector2(1120, -480)
 
 [node name="Camera2D" type="Camera2D" parent="World" unique_id=1332183342]
 position = Vector2(720, -480)
@@ -766,6 +770,7 @@ theme_override_constants/separation = 8
 [node name="OverviewOperationalPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow" unique_id=-2137803056]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
 
 [node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewTopRow/OverviewOperationalPanel" unique_id=-2137803055]
 layout_mode = 2
@@ -871,7 +876,7 @@ layout_mode = 2
 text = "PRIORITY SECTORS"
 
 [node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewPriorityPanel/Margin/Content" unique_id=-2137803036]
-custom_minimum_size = Vector2(0, 58)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true

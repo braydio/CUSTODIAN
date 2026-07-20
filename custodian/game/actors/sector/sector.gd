@@ -39,6 +39,7 @@ const INTEGRITY_MODIFIER_BY_STATE := {
 
 
 func _ready() -> void:
+	add_to_group("sector")
 	add_to_group("structure")
 	projectile_armor = structure_projectile_armor
 	match sector_type:

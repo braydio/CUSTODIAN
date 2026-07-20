@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://game/infrastructure/infrastructure_structure.gd" id="1_structure"]
+[ext_resource type="Resource" path="res://content/infrastructure/definitions/fabrication/field_fabricator_mk1.tres" id="2_definition"]
+[ext_resource type="Script" path="res://game/infrastructure/components/power_consumer_component.gd" id="3_consumer"]
+[ext_resource type="Script" path="res://game/infrastructure/components/infrastructure_service_component.gd" id="4_service"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fabricator"]
+size = Vector2(92, 64)
+
+[node name="FieldFabricatorMk1" type="StaticBody2D"]
+script = ExtResource("1_structure")
+definition = ExtResource("2_definition")
+infrastructure_instance_id = &"field_fabricator_primary"
+prebuilt_operational = true
+
+[node name="Body" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-46, -32, 46, -32, 46, 32, -46, 32)
+color = Color(0.16, 0.28, 0.29, 1)
+
+[node name="Core" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-24, -18, 24, -18, 30, 0, 24, 18, -24, 18, -30, 0)
+color = Color(0.32, 0.78, 0.7, 0.9)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_fabricator")
+
+[node name="PowerConsumer" type="Node" parent="."]
+script = ExtResource("3_consumer")
+consumer_id = &"field_fabricator_primary"
+minimum_power = 10.0
+standard_power = 25.0
+overdrive_power = 40.0
+overdrive_efficiency = 1.35
+priority = 30
+
+[node name="FabricationService" type="Node" parent="."]
+script = ExtResource("4_service")
+service_id = &"FABRICATION"
+base_output = 1.0
+requires_power = true

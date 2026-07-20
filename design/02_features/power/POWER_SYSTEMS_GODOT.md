@@ -1,8 +1,9 @@
 # Power Systems Design
 
-**Status:** In Progress  
+**Status:** implemented-v1 / V2 design pending
 **Source:** Legacy Python `python-sim/design/10_systems/infrastructure/POWER_SYSTEMS.md`  
-**Last Updated:** 2026-03-10
+**Last Updated:** 2026-07-20
+**V2 Authority:** `design/02_features/infrastructure/COMPOUND_INFRASTRUCTURE_SYSTEM.md`
 
 ---
 
@@ -11,6 +12,8 @@
 ```
 effective_output = power_efficiency * integrity_modifier
 ```
+
+This file records the current sector-oriented power slice. It is not authority for persistent free-standing construction. The Compound Infrastructure design adds explicit generator/consumer/storage components, rate-versus-reserve terminology, and a compatibility migration that does not require new buildings to inherit from `Sector`.
 
 This single formula applies to all powered structures.
 

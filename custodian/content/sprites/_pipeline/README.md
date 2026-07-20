@@ -20,7 +20,7 @@ content/sprites/_pipeline/
 - Every ingest job is a `PNG` plus a sidecar `JSON` manifest with the same basename.
 - Output paths are always relative to `res://content/sprites/`.
 - New sprite sheets should use `<owner>__<layer>__<action_group>__<variant>__<direction>__<frames>f__<frame_size>.png`.
-- The pipeline writes into the **live** runtime domains already used by the project:
+- The pipeline writes into the **live** runtime domains already used by the project. Animated actors use the owner-first canonical shape `<actor>/runtime/<layer>/<action_group>/`; domain-prefixed enemy/allied paths are emitted only for compatibility:
   - `operator/...`
   - `weapons/...`
   - `enemies/...`
@@ -46,6 +46,11 @@ Operator composited combat reactions may use the authored `full_body_combat` and
   "mode": "strip",
   "frame_size": [96, 96],
   "outputs": [
+    {
+      "path": "drone/runtime/body/locomotion/drone__body__locomotion__idle__s__4f__96.png",
+      "layout": "horizontal_strip",
+      "select": { "type": "range", "start": 0, "count": 4 }
+    },
     {
       "path": "enemies/drone/runtime/body/drone__body__locomotion__idle__s__4f__96.png",
       "layout": "horizontal_strip",
@@ -318,9 +323,9 @@ Saved file examples by domain:
 ```text
 content/sprites/weapons/fallen_star_katana/animations/fallen_star_katana__melee_1h__fast_weapon__n__6f__96.png
 content/sprites/weapons/carbine_rifle/animations/carbine_rifle__ranged__stance__e__6f__96.png
-content/sprites/enemies/drone/runtime/idle/drone__body__locomotion__idle__s__4f__96.png
-content/sprites/allies/allied_infantry_droid/runtime/body/allied_infantry_droid__body__locomotion__idle__e__5f__96.png
-content/sprites/allies/allied_infantry_droid/runtime/fx/allied_infantry_droid__fx__ranged__muzzle_flash__e__5f__96.png
+content/sprites/drone/runtime/body/locomotion/drone__body__locomotion__idle__s__4f__96.png
+content/sprites/allied_infantry_droid/runtime/body/locomotion/allied_infantry_droid__body__locomotion__idle__e__5f__96.png
+content/sprites/allied_infantry_droid/runtime/fx/ranged/allied_infantry_droid__fx__ranged__muzzle_flash__e__5f__96.png
 content/sprites/effects/runtime/hit_spark/hit_spark__fx__impact__default__omni__4f__64.png
 content/sprites/vehicles/hover_buggy/runtime/hover_buggy__body__move__e__6f__256.png
 content/sprites/turrets/gunner/turret-gunner-firing.png
@@ -361,12 +366,14 @@ allied_infantry_droid__fx_muzzle_flash__e__5f__96.png
 
 The canonical form is preferred for production batches because it keeps layer and action-group intent explicit.
 
-Successful ingest routes these to:
+Successful ingest routes these canonically to:
 
 ```text
-res://content/sprites/allies/allied_infantry_droid/runtime/body/
-res://content/sprites/allies/allied_infantry_droid/runtime/fx/
+res://content/sprites/allied_infantry_droid/runtime/body/<action_group>/
+res://content/sprites/allied_infantry_droid/runtime/fx/<action_group>/
 ```
+
+Until existing consumers migrate, the same ingest also writes compatibility copies to `res://content/sprites/allies/allied_infantry_droid/runtime/body|fx/`. Enemy and drone sheets likewise write compatibility copies under `res://content/sprites/enemies/<actor>/`.
 
 Then it rebuilds:
 

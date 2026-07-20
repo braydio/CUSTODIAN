@@ -4,7 +4,7 @@
 **Status:** design
 **Created:** 2026-04-06
 **Author:** PAI-OpenCode
-**Last Updated:** 2026-07-17
+**Last Updated:** 2026-07-20
 **Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ---
@@ -28,6 +28,13 @@ This file is the implementation authority for terminal structure. For player-fac
 | Sectorized defense | Every page preserves sector awareness |
 | Deterministic language | STATUS output follows canonical format |
 | Loss of clarity | Comms degradation shown as omission, not weakness |
+
+### Runtime identity and unit contracts
+
+- Terminal sector authority is the dedicated `sector` group, filtered to live `Sector` instances. The broader `structure` group includes turrets and other damageable structures and must never determine sector counts, Operator location, system health totals, or priority-sector candidates.
+- Power telemetry is expressed in per-second rates: `generated_per_second`, `consumed_per_second`, and `net_per_second`. Terminal renderers consume those values directly and must not multiply them by an assumed frame rate.
+- A zero-integrity defense sector is `DESTROYED` regardless of its textual status. Health is a hard lower bound for readiness classification.
+- Unimplemented engagement-policy controls must render as unavailable/disabled rather than as apparently selectable mode lists.
 
 ### Lore / Language Rules
 
@@ -58,7 +65,7 @@ This file is the implementation authority for terminal structure. For player-fac
 **Runtime composition:** container-based left identity, center page title, and compact right status chips. The default chip set is simulation time, threat, phase, and grid state; deeper fidelity/archive/rate detail belongs in page content rather than one concatenated header string.
 
 ```text
-[ CUSTODIAN NODE ] [ OVERVIEW ] [ T:19:14 ] [ THREAT:STABLE ] [ PHASE:FREE ROAM ] [ GRID:STABLE ]
+[ CUSTODIAN NODE ] [ OVERVIEW ] [ T+19:14 ] [ THREAT:STABLE ] [ PHASE:FREE ROAM ] [ GRID:STABLE ]
 ```
 
 **Rules:**

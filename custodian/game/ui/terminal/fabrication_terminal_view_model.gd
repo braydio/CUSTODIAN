@@ -27,6 +27,7 @@ const RECIPE_PURPOSE := {
 	"barricade_light": "Quick field barricade for lane denial and choke control.",
 	"turret_basic": "Automated perimeter defense.",
 	"power_bank_patch": "Stabilizes power routing and backup systems.",
+	"capacitor_bank_mk1": "Expands compound reserve capacity and shortage bridging.",
 	"sensor_pylon_basic": "Basic detection and relay coverage.",
 	"archive_sensor_pylon": "Archive-grade relay for recovered blueprint context.",
 	"field_sealant_patch": "Seals breaches and stabilizes damaged structures.",
@@ -36,6 +37,7 @@ const RECIPE_PURPOSE := {
 const READY_BUILD_ACTIONABLE := {
 	"barricade_light": true,
 	"turret_basic": true,
+	"capacitor_bank_mk1": true,
 }
 
 
@@ -374,6 +376,8 @@ func _get_recipe_category_key_for_ready_build(token_id: String) -> String:
 		"field_sealant_patch":
 			return "support"
 		"power_bank_patch":
+			return "power"
+		"capacitor_bank_mk1":
 			return "power"
 		"sensor_pylon_basic":
 			return "sensor"

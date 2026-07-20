@@ -56,6 +56,8 @@ func _init() -> void:
 	_require(not snapshot_source.contains("get_time_string_from_system"), "Terminal snapshot must not use the operating-system clock.")
 	var terminal_ui_source := FileAccess.get_file_as_string("res://game/ui/hud/ui.gd")
 	_require(not terminal_ui_source.contains("get_time_string_from_system"), "Terminal transcript and attention feed must use simulation time rather than a second clock domain.")
+	_require(terminal_ui_source.contains("T+%02d:%02d"), "The terminal header should format sub-hour elapsed time as T+MM:SS.")
+	_require(terminal_ui_source.contains("T+%d:%02d:%02d"), "The terminal header should retain hours once elapsed time reaches one hour.")
 
 	if _failed:
 		push_error("terminal_status_fidelity_smoke failed")

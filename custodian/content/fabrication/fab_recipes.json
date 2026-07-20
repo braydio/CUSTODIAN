@@ -38,6 +38,21 @@
 		"output_id": "power_bank_patch",
 		"output_amount": 1
 	},
+	"capacitor_bank_mk1": {
+		"label": "Capacitor Bank Mk I",
+		"category": "power",
+		"cost": {
+			"structural_alloy": 8,
+			"ruin_scrap": 14,
+			"power_components": 2,
+			"capacitor_dust": 8,
+			"resin_clot": 1
+		},
+		"build_seconds": 6.0,
+		"output_type": "build_token",
+		"output_id": "capacitor_bank_mk1",
+		"output_amount": 1
+	},
 	"sensor_pylon_basic": {
 		"label": "Basic Sensor Pylon",
 		"category": "sensor",

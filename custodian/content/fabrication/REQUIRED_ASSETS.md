@@ -7,6 +7,7 @@
 | `barricade_light` | Light Barricade | structure | blackwood:10, ruin_scrap:4 | 4s | build_token -> `barricade_light` |
 | `turret_basic` | Basic Turret | defense | ruin_scrap:25, structural_alloy:8, power_components:1 | 7.5s | build_token -> `turret_basic` |
 | `power_bank_patch` | Power Bank Patch | power | structural_alloy:6, ruin_scrap:12, power_components:2, capacitor_dust:2 | 6s | build_token -> `power_bank_patch` |
+| `capacitor_bank_mk1` | Capacitor Bank Mk I | power | structural_alloy:8, ruin_scrap:14, power_components:2, capacitor_dust:8, resin_clot:1 | 6s | build_token -> `capacitor_bank_mk1` |
 | `sensor_pylon_basic` | Basic Sensor Pylon | sensor | ruin_scrap:12, capacitor_dust:4, signal_filament:1 | 8s | build_token -> `sensor_pylon_basic` |
 | `archive_sensor_pylon` | Archive Sensor Pylon | archive | structural_alloy:10, ruin_scrap:18, power_components:3, signal_filament:2, memory_glass_fragment:1 | 9s | build_token -> `archive_sensor_pylon` |
 | `fabricator_pattern_decode_01` | Fabricator Pattern Decode I | archive | memory_glass_fragment:2, signal_filament:1 | 5s | unlock -> `fabricator_pattern_decode_01` |
@@ -18,7 +19,11 @@
 
 | Build Token | Scene File | Notes |
 |-------------|------------|-------|
-| `turret_basic` | `turret_gunner.tscn` | Only token currently wired. Others use direct material cost. |
+| `turret_basic` | `res://game/actors/structures/turrets/turret_gunner.tscn` | Existing tactical defense placement. |
+| `barricade_light` | `res://game/actors/structures/barricade_light.tscn` | Existing tactical obstacle placement. |
+| `capacitor_bank_mk1` | `res://game/infrastructure/structures/capacitor_bank_mk1.tscn` | Creates a timed foundation; storage registers only after commissioning. |
+
+`power_bank_patch` remains a separate, currently non-placeable migration input. It is not an alias for the permanent Capacitor Bank.
 
 **Turret types (from `turret_placement.gd`):**
 | Type | Scene | Material Cost | Refund | Token |

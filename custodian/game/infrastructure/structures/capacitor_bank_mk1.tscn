@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://game/infrastructure/infrastructure_structure.gd" id="1_structure"]
+[ext_resource type="Resource" path="res://content/infrastructure/definitions/power/capacitor_bank_mk1.tres" id="2_definition"]
+[ext_resource type="Script" path="res://game/infrastructure/components/power_storage_component.gd" id="3_storage"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bank"]
+size = Vector2(68, 46)
+
+[node name="CapacitorBankMk1" type="StaticBody2D"]
+script = ExtResource("1_structure")
+definition = ExtResource("2_definition")
+
+[node name="Body" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-34, -23, 34, -23, 34, 23, -34, 23)
+color = Color(0.15, 0.22, 0.28, 1)
+
+[node name="CellLeft" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-26, -15, -4, -15, -4, 15, -26, 15)
+color = Color(0.28, 0.7, 0.86, 1)
+
+[node name="CellRight" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(4, -15, 26, -15, 26, 15, 4, 15)
+color = Color(0.28, 0.7, 0.86, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_bank")
+
+[node name="PowerStorage" type="Node" parent="."]
+script = ExtResource("3_storage")
+storage_id = &"capacitor_bank_mk1"
+storage_capacity = 250.0
+charge_rate = 50.0
+discharge_rate = 75.0
+

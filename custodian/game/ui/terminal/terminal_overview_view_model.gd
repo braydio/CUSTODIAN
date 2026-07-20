@@ -68,7 +68,7 @@ func _score_sector(sector: Dictionary) -> Dictionary:
 func _build_recommendations(ranked: Array[Dictionary], snapshot: Dictionary) -> Array[Dictionary]:
 	var recommendations: Array[Dictionary] = []
 	var power_status: Dictionary = snapshot.get("power_status", {}) if snapshot.get("power_status", {}) is Dictionary else {}
-	if float(power_status.get("net", 0.0)) < 0.0:
+	if float(power_status.get("net_per_second", 0.0)) < 0.0:
 		recommendations.append({
 			"id": &"correct_power_deficit",
 			"action": &"open_power",

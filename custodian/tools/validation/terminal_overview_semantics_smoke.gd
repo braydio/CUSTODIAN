@@ -10,7 +10,7 @@ func _init() -> void:
 	var snapshot := {
 		"operator_location": "ZETA KEEP",
 		"threat_raw": 5.0,
-		"power_status": {"net": 2.0},
+		"power_status": {"net_per_second": 2.0},
 		"sectors": [
 			{
 				"name": "ALPHA ARCHIVE",

@@ -77,16 +77,22 @@ def main() -> int:
     args = parser.parse_args()
 
     layers = tuple(args.layer) if args.layer else DEFAULT_LAYERS
-    actor_runtime_dir = CONTENT_SPRITES_DIR / args.domain / args.owner / "runtime"
+    actor_runtime_dirs = [
+        CONTENT_SPRITES_DIR / args.owner / "runtime",
+        CONTENT_SPRITES_DIR / args.domain / args.owner / "runtime",
+    ]
     actor_resource_dir = ACTORS_DIR / args.domain / args.owner
 
-    if not actor_runtime_dir.exists():
-        print(f"missing actor runtime directory: {actor_runtime_dir.relative_to(PROJECT_DIR)}", file=sys.stderr)
+    if not any(path.exists() for path in actor_runtime_dirs):
+        searched = ", ".join(
+            str(path.relative_to(PROJECT_DIR)) for path in actor_runtime_dirs
+        )
+        print(f"missing actor runtime directory; searched: {searched}", file=sys.stderr)
         return 1
 
     wrote_any = False
     for layer in layers:
-        sheets = _collect_sheets(actor_runtime_dir, args.owner, layer, args.frame_size)
+        sheets = _collect_sheets(actor_runtime_dirs, args.owner, layer, args.frame_size)
         if not sheets:
             print(f"[SKIP] {args.owner} {layer}: no runtime strips")
             continue
@@ -114,20 +120,20 @@ def main() -> int:
     return 0 if wrote_any else 1
 
 
-def _collect_sheets(runtime_dir: Path, owner: str, layer: str, fallback_frame_size: int) -> list[Sheet]:
-    layer_dir = runtime_dir / layer
-    search_dirs = [layer_dir] if layer_dir.exists() else []
-    if not search_dirs and runtime_dir.exists():
-        search_dirs.append(runtime_dir)
-
-    sheets: list[Sheet] = []
-    for search_dir in search_dirs:
-        for path in sorted(search_dir.glob("*.png")):
+def _collect_sheets(runtime_dirs: list[Path], owner: str, layer: str, fallback_frame_size: int) -> list[Sheet]:
+    sheets_by_animation: dict[str, Sheet] = {}
+    for runtime_dir in runtime_dirs:
+        layer_dir = runtime_dir / layer
+        search_root = layer_dir if layer_dir.exists() else runtime_dir
+        if not search_root.exists():
+            continue
+        for path in sorted(search_root.rglob("*.png")):
             sheet = _parse_sheet(path, owner, layer, fallback_frame_size)
-            if sheet is not None:
-                sheets.append(sheet)
-    sheets.sort(key=lambda item: item.animation_name)
-    return sheets
+            if sheet is not None and sheet.animation_name not in sheets_by_animation:
+                # Canonical <actor>/runtime paths are searched first and win
+                # over domain-prefixed compatibility copies.
+                sheets_by_animation[sheet.animation_name] = sheet
+    return sorted(sheets_by_animation.values(), key=lambda item: item.animation_name)
 
 
 def _parse_sheet(path: Path, owner: str, expected_layer: str, fallback_frame_size: int) -> Sheet | None:

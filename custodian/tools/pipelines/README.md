@@ -37,8 +37,10 @@ compatibility outputs, or runtime resource rebuilds.
   directly from `_pipeline/` or from QA preview output.
 - Hover buggy vehicle sheets can trigger the live vehicle `SpriteFrames` rebuild through
   `custodian/tools/pipelines/update_vehicle_runtime_resources.gd`.
-- Enemy, weapon, effects, vehicle, and turret outputs are written directly into the
-  runtime-owned sprite domains already used by the game.
+- Enemy, drone, and allied actor outputs use the canonical owner-first tree
+  `content/sprites/<actor>/runtime/<layer>/<action_group>/`. Domain-prefixed enemy/allied
+  copies are retained for current consumers during migration. Weapon, effects, vehicle,
+  and turret outputs retain their specialized runtime domains.
 
 ## Why This Exists
 
@@ -47,7 +49,7 @@ The project already has multiple live sprite consumers:
 - operator body and overlay strips feeding `operator_runtime_frames.tres`,
   `operator_weapon_frames.tres`, and `operator_melee_overlay_frames.tres`
 - weapon-owned animation strips in `content/sprites/weapons/`
-- enemy runtime strips in `content/sprites/enemies/`
+- non-Operator actor runtime strips in `content/sprites/<actor>/runtime/`, with temporary domain-prefixed compatibility copies
 - direct effect strips in `content/sprites/effects/runtime/`
 
 The pipeline should feed those consumers directly instead of creating a second asset tree.

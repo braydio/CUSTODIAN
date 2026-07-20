@@ -1184,10 +1184,10 @@ func _build_debug_systems_snapshot(power_system: Node, director_status: Dictiona
 	}
 	if power_system != null and power_system.has_method("get_power_status"):
 		var status: Dictionary = power_system.call("get_power_status")
-		result["power"] = "%d/%d | net %.1f/tick" % [
+		result["power"] = "%d/%d | net %.1f/s" % [
 			int(round(float(status.get("total", 0.0)))),
 			int(round(float(status.get("max", 0.0)))),
-			float(status.get("net", 0.0)),
+			float(status.get("net_per_second", 0.0)),
 		]
 	var supply_manager := get_node_or_null("/root/GameRoot/SupplyDropManager")
 	if supply_manager != null and supply_manager.has_method("get_status"):
@@ -1232,9 +1232,9 @@ func _process(delta):
 		var status: Dictionary = power_system.get_power_status()
 		var total_power: float = float(status.get("total", 0.0))
 		var max_power_value: float = float(status.get("max", 0.0))
-		var generated_per_second: float = float(status.get("generated", 0.0)) * 60.0
-		var consumed_per_second: float = float(status.get("consumed", 0.0)) * 60.0
-		var net_per_second: float = float(status.get("net", 0.0)) * 60.0
+		var generated_per_second: float = float(status.get("generated_per_second", 0.0))
+		var consumed_per_second: float = float(status.get("consumed_per_second", 0.0))
+		var net_per_second: float = float(status.get("net_per_second", 0.0))
 		power_label.text = "POWER: %d/%d | GEN %.0f/s | DRAW %.0f/s | NET %+0.0f/s" % [int(round(total_power)), int(round(max_power_value)), generated_per_second, consumed_per_second, net_per_second]
 		if max_power_value > 0.0:
 			power_bar.value = (total_power / max_power_value) * 100.0
@@ -3112,7 +3112,7 @@ func _build_terminal_attention_feed_chunks() -> PackedStringArray:
 	var chunks := PackedStringArray()
 	var timestamp := _get_terminal_sim_timestamp()
 	var power_status := _get_power_status_snapshot()
-	var reserve_rate := float(power_status.get("net", 0.0)) * 60.0
+	var reserve_rate := float(power_status.get("net_per_second", 0.0))
 	var enemy_snapshot: Dictionary = _terminal_snapshot.get("enemies", {})
 	var contacts := int(enemy_snapshot.get("total", 0))
 	var threat_band := _get_threat_band(float(_terminal_snapshot.get("threat_raw", 0.0)))
@@ -3425,7 +3425,7 @@ func _render_terminal_header(snapshot: Dictionary) -> void:
 	var threat_value := float(snapshot.get("threat_raw", 0.0))
 	var threat_label := _get_threat_band(threat_value)
 	var power_status := _get_power_status_snapshot()
-	var reserve_rate := float(power_status.get("net", 0.0)) * 60.0
+	var reserve_rate := float(power_status.get("net_per_second", 0.0))
 	var phase_short := _terminal_truncate(phase_text, 14)
 	var grid_text := "GRID:STABLE"
 	if reserve_rate < 0.0:
@@ -3435,7 +3435,7 @@ func _render_terminal_header(snapshot: Dictionary) -> void:
 	if terminal_title_label:
 		terminal_title_label.text = _terminal_current_page
 	if terminal_time_chip:
-		terminal_time_chip.text = "T:%s" % str(snapshot.get("time", "--:--" )).substr(0, 5)
+		terminal_time_chip.text = _format_terminal_elapsed_chip(snapshot)
 	if terminal_threat_chip:
 		terminal_threat_chip.text = "THREAT:%s" % threat_label
 		terminal_threat_chip.add_theme_color_override("font_color", Color(_get_threat_color(threat_label)))
@@ -3593,6 +3593,16 @@ func _format_terminal_rate(rate: float) -> String:
 	if is_equal_approx(rate, round(rate)):
 		return "%dX" % int(round(rate))
 	return "%.1fX" % rate
+
+
+func _format_terminal_elapsed_chip(snapshot: Dictionary) -> String:
+	var total_seconds := maxi(0, int(floor(float(snapshot.get("simulation_seconds", 0.0)))))
+	var hours := total_seconds / 3600
+	var minutes := (total_seconds % 3600) / 60
+	var seconds := total_seconds % 60
+	if hours > 0:
+		return "T+%d:%02d:%02d" % [hours, minutes, seconds]
+	return "T+%02d:%02d" % [minutes, seconds]
 
 
 func _format_terminal_grid_rate(value: float) -> String:
@@ -3838,7 +3848,7 @@ func _build_terminal_render_context(snapshot: Dictionary) -> Dictionary:
 	var power_summary := "%d/%d | %+0.1f/s" % [
 		int(round(float(power_status.get("total", 0.0)))),
 		int(round(float(power_status.get("max", 0.0)))),
-		float(power_status.get("net", 0.0)) * 60.0,
+		float(power_status.get("net_per_second", 0.0)),
 	]
 	return {
 		"snapshot": snapshot,
@@ -3991,13 +4001,15 @@ func _render_terminal_overview_widgets(snapshot: Dictionary, context: Dictionary
 	var assault_value: Variant = context.get("assault_value", "?")
 	var wave_text := String(context.get("wave_text", "--"))
 	_set_terminal_rich_text(terminal_overview_operational_body, "\n".join([
-		"%s/%s | %s" % [_terminal_truncate(String(snapshot.get("terminal_mode", &"field")).to_upper(), 3), _terminal_truncate(String(snapshot.get("fidelity", &"lost")).to_upper(), 4), _terminal_truncate(phase_text, 8)],
-		"OP %s | POST %s" % [_terminal_truncate(String(view_model.get("operator_location", "UNKNOWN")).to_upper(), 8), "YES" if bool(snapshot.get("command_center_occupied", false)) else "NO"],
-		"HOST %d | CMP %d | OFF %d" % [int(enemy_snapshot.get("total", 0)), int(snapshot.get("systems_compromised_count", 0)), int(view_model.get("systems_offline_count", 0))],
+		"MODE %s // FIDELITY %s" % [String(snapshot.get("terminal_mode", &"field")).to_upper(), String(snapshot.get("fidelity", &"lost")).to_upper()],
+		"PHASE %s" % phase_text,
+		"OPERATOR %s // POST %s" % [String(view_model.get("operator_location", "UNKNOWN")).to_upper(), "LINKED" if bool(snapshot.get("command_center_occupied", false)) else "REMOTE"],
+		"HOSTILES %d // COMPROMISED %d" % [int(enemy_snapshot.get("total", 0)), int(snapshot.get("systems_compromised_count", 0))],
+		"OFFLINE %d" % int(view_model.get("systems_offline_count", 0)),
 	]))
 	_set_terminal_rich_text(terminal_overview_power_body, "\n".join([
-		"NET      %+0.1f/s" % (float(power_status.get("net", 0.0)) * 60.0),
-		"GEN %.1f // DRAW %.1f" % [float(power_status.get("generated", 0.0)) * 60.0, float(power_status.get("consumed", 0.0)) * 60.0],
+		"NET      %+0.1f/s" % float(power_status.get("net_per_second", 0.0)),
+		"GEN %.1f/s // DRAW %.1f/s" % [float(power_status.get("generated_per_second", 0.0)), float(power_status.get("consumed_per_second", 0.0))],
 		"COLD START %d // OFFLINE %d" % [int(view_model.get("cold_start_systems_count", 0)), int(view_model.get("systems_offline_count", 0))],
 	]))
 	_set_terminal_rich_text(terminal_overview_assault_body, "\n".join([
@@ -4013,10 +4025,10 @@ func _render_terminal_overview_widgets(snapshot: Dictionary, context: Dictionary
 			continue
 		var sector: Dictionary = sector_variant
 		var raw_name := str(sector.get("name", sector.get("id", "SECTOR")))
-		var display := _terminal_truncate(_display_sector_name(raw_name).to_upper(), 8)
+		var display := _terminal_truncate(_display_sector_name(raw_name).to_upper(), 14)
 		var status := str(sector.get("status", "UNKNOWN")).to_upper()
-		var priority_line := "%-8s %3s%% %s" % [display, str(sector.get("hp_pct", "?")), _terminal_truncate(status, 6)]
-		priority_lines.append("[url=terminal_action:focus_sector:%s][color=#9EDBFF]%s[/color][/url]" % [_escape_bbcode(raw_name), priority_line])
+		var priority_line := "%-14s %3s%% %s" % [display, str(sector.get("hp_pct", "?")), _terminal_truncate(status, 10)]
+		priority_lines.append("[color=#DCEBE5]%s[/color] [url=terminal_action:focus_sector:%s][color=#7DDE9B]> OPEN[/color][/url]" % [priority_line, _escape_bbcode(raw_name)])
 	if priority_lines.is_empty():
 		priority_lines.append("NO PRIORITY SECTORS AVAILABLE")
 	_set_terminal_rich_text(terminal_overview_priority_body, "\n".join(priority_lines))
@@ -4166,9 +4178,10 @@ func _sector_incident_summary(sector: Dictionary) -> String:
 func _render_terminal_power_widgets(power_status: Dictionary, sector_array: Array) -> void:
 	_set_terminal_rich_text(terminal_power_global_body, "\n".join([
 		_terminal_kv("TOTAL", "%d/%d" % [int(round(float(power_status.get("total", 0.0)))), int(round(float(power_status.get("max", 0.0))))]),
-		_terminal_kv("GEN", "%.1f/s" % (float(power_status.get("generated", 0.0)) * 60.0)),
-		_terminal_kv("DRAW", "%.1f/s" % (float(power_status.get("consumed", 0.0)) * 60.0)),
-		_terminal_kv("RESERVE", "%+0.1f/s" % (float(power_status.get("net", 0.0)) * 60.0)),
+		_terminal_kv("GEN", "%.1f/s" % float(power_status.get("generated_per_second", 0.0))),
+		_terminal_kv("DEMAND", "%.1f/s" % float(power_status.get("requested_per_second", 0.0))),
+		_terminal_kv("ALLOCATED", "%.1f/s" % float(power_status.get("allocated_per_second", 0.0))),
+		_terminal_kv("NET", "%+0.1f/s" % float(power_status.get("net_per_second", 0.0))),
 	]))
 	_set_terminal_rich_text(terminal_power_preset_body, "\n".join([
 		"BALANCED",
@@ -4191,6 +4204,18 @@ func _render_terminal_power_widgets(power_status: Dictionary, sector_array: Arra
 			str(sector.get("power_tier", "UNKNOWN")).to_upper(),
 			str(sector.get("power_priority", "?")),
 		])
+	var infrastructure_consumers: Array = power_status.get("infrastructure_consumers", []) if power_status.get("infrastructure_consumers", []) is Array else []
+	for consumer_variant in infrastructure_consumers:
+		if not (consumer_variant is Dictionary):
+			continue
+		var consumer: Dictionary = consumer_variant
+		allocation_lines.append("%-16s %5.1f / %5.1f   %-8s  %3d" % [
+			_terminal_truncate(str(consumer.get("id", "STRUCTURE")).to_upper(), 16),
+			float(consumer.get("allocated", 0.0)),
+			float(consumer.get("standard", 0.0)),
+			str(consumer.get("tier", "UNKNOWN")).to_upper(),
+			int(consumer.get("priority", 0)),
+		])
 	_set_terminal_rich_text(terminal_power_allocation_body, "\n".join(allocation_lines))
 
 
@@ -4204,14 +4229,14 @@ func _build_terminal_defense_coverage_lines(sector_array: Array) -> Array[String
 		var status_text := str(sector.get("status", "UNKNOWN")).to_upper()
 		var hp_pct := int(sector.get("hp_pct", 0))
 		var readiness := "HOLDING"
-		if status_text.find("BREACH") >= 0 or status_text.find("CRITICAL") >= 0:
-			readiness = "BREACHED"
-		elif status_text.find("DAMAGED") >= 0:
-			readiness = "STRAINED"
+		if hp_pct <= 0:
+			readiness = "DESTROYED"
 		elif status_text.find("OFFLINE") >= 0:
 			readiness = "OFFLINE"
-		elif hp_pct < 70:
-			readiness = "WATCHED"
+		elif hp_pct <= 30 or status_text.find("CRITICAL") >= 0 or status_text.find("BREACH") >= 0:
+			readiness = "CRITICAL"
+		elif hp_pct < 70 or status_text.find("DAMAGED") >= 0:
+			readiness = "STRAINED"
 		coverage_lines.append("%-16s %s | HP %3d%%" % [display_name, readiness, hp_pct])
 		if coverage_lines.size() >= 6:
 			break
@@ -4228,10 +4253,9 @@ func _render_terminal_defense_widgets(snapshot: Dictionary, assault_value: Varia
 		_terminal_kv("TURRETS", get_tree().get_nodes_in_group("turret").size()),
 	]))
 	_set_terminal_rich_text(terminal_defense_modes_body, "\n".join([
-		"FIRST CONTACT",
-		"CLOSEST",
-		"HEAVIEST",
-		"OBJECTIVE THREATS",
+		"ENGAGEMENT POLICY",
+		"CURRENT: FIRST CONTACT",
+		"CONTROL: NOT EXPOSED",
 	]))
 	_set_terminal_rich_text(terminal_defense_coverage_body, "\n".join(_build_terminal_defense_coverage_lines(snapshot.get("sectors", []))))
 

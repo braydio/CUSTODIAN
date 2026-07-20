@@ -1,13 +1,16 @@
 # SIMPLIFIED POWER IN ROOMS — Implementation Spec
 
-**Status:** draft
+**Status:** superseded-reference
 **Replaces:** Full Compound Tile System (for power delivery only — Phase 1)
 **See also:** `COMPOUND_TILE_SYSTEM.md` — Full Phase 2+ target architecture
-**Last Updated:** 2026-04-21
+**Last Updated:** 2026-07-20
+**Superseded By:** `design/02_features/infrastructure/COMPOUND_INFRASTRUCTURE_SYSTEM.md`
 
 ---
 
 ## Overview
+
+> This proposal is retained as historical room-marker research. Do not implement its `power_conduit → PowerNode generator` mapping. A conduit, relay, consumer socket, and generator socket are distinct semantics; the active Compound Infrastructure design uses explicit component registration and reserves authored room markers for typed connection/placement authority.
 
 This spec describes a bounded implementation to add power delivery to procedurally-generated rooms without the overhead of a full compound tile system.
 

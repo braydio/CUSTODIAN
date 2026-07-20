@@ -17,25 +17,23 @@ This was a source/design audit, not a rendered playtest.
 
 The terminal has a strong shell. Modal full-screen presentation, navigation rail, status chips, transcript, command input, tactical minimap, Overview hierarchy, Sectors page, and Fabrication page are substantially implemented. Layout and input containment at 1366x768 have focused automated coverage. Fabrication is the most complete page. Sectors is the most complete tactical page.
 
-**The main problem is functional honesty.** The terminal visually presents itself as a mature thirteen-page command system, but several pages are currently static summaries, inferred data, hardcoded placeholders, or alternate views of the transcript. It looks more operational than it actually is.
+**The main problem is functional honesty.** The terminal visually presents itself as a mature thirteen-page command system, but several pages are currently static summaries, inferred data, hardcoded placeholders, or alternate views of the transcript. Overview and STATUS have complete-v1 semantic models; their remaining defects are live integration and layout issues rather than missing architecture.
 
 ---
 
 ## Page Maturity Matrix
 
-> **Corrected version:** `TERMINAL_AUDIT_VERIFICATION.md` — several pages are more mature than listed here.
-
 ```
 SHELL            complete-v1
-OVERVIEW         functional-partial  ← actually functional-v1 (scored ranking, real location)
-STATUS           readout-placeholder ← actually functional-v1 (fidelity-aware formatter)
+OVERVIEW         functional-v1 — live integration defects under correction
+STATUS           functional-v1 — layout refinement required
 SECTORS          functional-v1
-POWER            readout-partial
+POWER            readout-partial — rate-unit defect
 DEFENSE          readout-scaffold
 FABRICATION      functional-v1
 SENSORS          readout-scaffold
 INCIDENTS        transcript-scaffold
-ARCHIVE          placeholder         ← actually functional-partial (real ARRN/contract data)
+ARCHIVE          functional-partial
 RECON            placeholder
 CONTRACTS        active-contract-only
 HISTORY          transcript-mirror
@@ -362,23 +360,19 @@ custodian/game/ui/terminal/
 
 ---
 
-## Validation Gap
+## Validation Coverage and Remaining Gaps
 
 The existing Overview smoke is strong for containment, navigation, scrolling, pointer behavior, map size, card visibility, and action-link routing. The documented validation set is primarily layout, typography, stylebox, modal, and Fabrication-focused.
 
-It does not prove:
-- Correct priority ranking
-- Real Operator location
-- Fidelity degradation
-- Command Center authority
+Focused semantic smokes now prove ranked Overview diagnosis, fidelity degradation, canonical STATUS formatting, simulation-clock ownership, and physical Command Center authority. The current integrity pass adds live sector-identity, power-unit, Overview-shell, and Defense-readiness coverage.
+
+It still does not prove:
 - Power route preview/commit
 - Incident lifecycle
 - Immutable history
 - Archive uncertainty
 - Sensor field omission
 - Command registry/help/completion consistency
-
-This explains how visually complete but semantically shallow pages pass the current suite.
 
 ---
 

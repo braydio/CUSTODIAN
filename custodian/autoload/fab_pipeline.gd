@@ -124,12 +124,15 @@ func debug_start_recipe_with_grant(recipe_id: String) -> bool:
 func _tick_jobs(delta: float) -> void:
 	if _jobs.is_empty():
 		return
+	var fabrication_rate := _get_fabrication_rate_multiplier()
+	if fabrication_rate <= 0.0:
+		return
 
 	var completed_jobs: Array = []
 	for job in _jobs:
 		if job == null:
 			continue
-		var is_complete: bool = bool(job.call("tick", delta))
+		var is_complete: bool = bool(job.call("tick", delta * fabrication_rate))
 		job_progressed.emit(job.job_id, job.recipe_id, job.call("progress"))
 		if is_complete:
 			completed_jobs.append(job)
@@ -195,6 +198,19 @@ func _get_operator() -> Node:
 	if game_root_operator != null:
 		return game_root_operator
 	return get_node_or_null("/root/GameRoot/Operator")
+
+
+func get_fabrication_rate_multiplier() -> float:
+	return _get_fabrication_rate_multiplier()
+
+
+func _get_fabrication_rate_multiplier() -> float:
+	var registry := get_node_or_null("/root/InfrastructureRegistry")
+	if registry == null or not registry.has_method("has_service"):
+		return 1.0
+	if not bool(registry.call("has_service", &"FABRICATION")):
+		return 1.0
+	return maxf(0.0, float(registry.call("get_service_output", &"FABRICATION")))
 
 
 func _is_recipe_locked(recipe: Dictionary) -> bool:

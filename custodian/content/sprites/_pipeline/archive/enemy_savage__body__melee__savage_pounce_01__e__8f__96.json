@@ -1,0 +1,40 @@
+{
+  "source": "enemy_savage__body__melee__savage_pounce_01__e__8f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "enemy_savage/runtime/body/melee/enemy_savage__body__melee__savage_pounce_01__e__8f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    },
+    {
+      "path": "enemies/enemy_savage/runtime/body/enemy_savage__body__melee__savage_pounce_01__e__8f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    },
+    {
+      "path": "enemies/enemy_savage/enemy_savage__body__melee__savage_pounce_01__e__8f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 8
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "post_process": [
+    "enemy_runtime_import"
+  ]
+}

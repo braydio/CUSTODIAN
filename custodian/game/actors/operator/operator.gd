@@ -70,6 +70,13 @@ const PAIRED_EXECUTION_FRAME_DURATIONS := {
 const PAIRED_EXECUTION_DAMAGE_FRAMES := {&"s": 4, &"e": 4, &"w": 4}
 const PAIRED_EXECUTION_HIT_STOP_DURATION := 0.11
 const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav")
+const MELEE_CONTACT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_contact_01.wav")
+const MELEE_HEAVY_HIT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_heavy_hit_01.wav")
+const CRITICAL_IMPACT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_impact_01.wav")
+const MELEE_MISS_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_miss_01.wav")
+const MELEE_GRAZE_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_graze_01.wav")
+const DODGE_ROLL_SOUND: AudioStream = preload("res://content/audio/sfx/combat/dodge_roll_01.wav")
+const CRITICAL_WINDUP_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_windup_01.wav")
 const DODGE_FAST_ATTACK_FRAME_COUNT := 11
 const DODGE_FAST_ATTACK_FPS := 20.0
 const DODGE_FAST_ATTACK_HIT_FRAME := 4
@@ -349,6 +356,7 @@ var _melee_range_current: float = 0.0
 var _melee_arc_current: float = 0.0
 var _melee_hitbox_active: bool = false
 var _melee_hit_targets: Dictionary = {}
+var _melee_miss_sfx_played: bool = false
 var _critical_attack_target: Node2D = null
 var _critical_attack_damage: float = 0.0
 var _paired_execution_active: bool = false
@@ -3381,6 +3389,7 @@ func _try_start_parry() -> bool:
 	_active_melee_attack_profile = null
 	disable_hitbox()
 	_melee_hit_targets.clear()
+	_melee_miss_sfx_played = false
 	_reset_melee_overlay_visuals()
 	_parry_neutral_lock_active = false
 
@@ -3812,6 +3821,7 @@ func _try_start_fast_attack_windup() -> bool:
 	_melee_duration = 0.0
 	disable_hitbox()
 	_melee_hit_targets.clear()
+	_melee_miss_sfx_played = false
 	animated_sprite.flip_h = _is_facing_left(_melee_forward)
 	animated_sprite.speed_scale = _get_melee_animation_speed_scale(_melee_attack_key)
 	animated_sprite.play(windup_anim)
@@ -3854,6 +3864,7 @@ func _start_heavy_attack() -> void:
 	_melee_attack_key = "unarmed_heavy" if is_unarmed_attack else "melee_heavy"
 	_begin_melee_attack_profile("heavy")
 	_notify_camera_attack_windup(true)
+	_play_combat_sfx(CRITICAL_WINDUP_SOUND, global_position, -4.0)
 	_spend_stamina(heavy_attack_stamina_cost, &"heavy_attack")
 	_melee_forward = _get_melee_forward_direction()
 	_begin_attack_movement_profile(_resolve_current_attack_id(), _melee_forward)
@@ -3864,6 +3875,7 @@ func _start_heavy_attack() -> void:
 		_melee_duration = 0.0
 		disable_hitbox()
 		_melee_hit_targets.clear()
+		_melee_miss_sfx_played = false
 		animated_sprite.flip_h = _is_facing_left(_melee_forward)
 		animated_sprite.play("melee_2h_heavy_anticipation")
 		_play_named_melee_weapon_overlay(&"melee_2h_heavy_anticipation_weapon")
@@ -3938,6 +3950,7 @@ func _update_melee_attack(delta: float) -> void:
 	_critical_attack_damage = 0.0
 	disable_hitbox()
 	_melee_hit_targets.clear()
+	_melee_miss_sfx_played = false
 	if not _melee_recovery_active:
 		_active_attack_profile = null
 		_active_melee_attack_profile = null
@@ -4000,6 +4013,9 @@ func _apply_melee_hitbox_tick() -> void:
 	if hit_count > 0:
 		_on_melee_hit_confirmed()
 		print("MELEE HIT: ", hit_count, " target(s), damage=", _melee_damage_current)
+	elif not _melee_miss_sfx_played:
+		_melee_miss_sfx_played = true
+		_play_combat_sfx(MELEE_MISS_SOUND, global_position, -4.0)
 
 
 func _get_melee_forward_direction() -> Vector2:
@@ -4041,6 +4057,7 @@ func start_block() -> void:
 	_active_melee_attack_profile = null
 	disable_hitbox()
 	_melee_hit_targets.clear()
+	_melee_miss_sfx_played = false
 	_reset_melee_overlay_visuals()
 	_parry_neutral_lock_active = false
 	_block_phase = &"enter"
@@ -4111,6 +4128,7 @@ func try_parry_incoming_attack(attacker: Node2D, hit_direction: Vector2, hit_dat
 		incoming_from = global_position.direction_to(attacker.global_position) if attacker != null and is_instance_valid(attacker) else -guard_dir
 	var facing_dot := guard_dir.normalized().dot(incoming_from.normalized())
 	if facing_dot < 0.35:
+		_play_combat_sfx(MELEE_GRAZE_SOUND, global_position, -3.0)
 		return false
 
 	_on_parry_success(attacker, hit_direction, hit_data)
@@ -4356,6 +4374,24 @@ func _spawn_parry_success_fx(contact_position: Vector2) -> Node2D:
 	return burst
 
 
+func _play_combat_sfx(stream: AudioStream, position: Vector2, volume_db: float = -2.0, max_dist: float = 560.0) -> AudioStreamPlayer2D:
+	var player := AudioStreamPlayer2D.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	player.max_distance = max_dist
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	if parent == null:
+		player.free()
+		return null
+	parent.add_child(player)
+	player.global_position = position
+	player.finished.connect(player.queue_free)
+	player.play()
+	return player
+
+
 func _play_parry_success_sound(contact_position: Vector2) -> AudioStreamPlayer2D:
 	var player := AudioStreamPlayer2D.new()
 	player.name = "ParrySuccessAudio"
@@ -4473,6 +4509,7 @@ func _start_critical_attack(target: Node2D) -> void:
 	_melee_duration = 0.0
 	disable_hitbox()
 	_melee_hit_targets.clear()
+	_melee_miss_sfx_played = false
 	_clear_attack_buffer()
 	_counter_window_timer = 0.0
 	_exit_ranged_ready()
@@ -4641,6 +4678,7 @@ func _apply_paired_execution_impact() -> void:
 	else:
 		_notify_camera_attack_impact(_paired_execution_direction_vector(_paired_execution_direction), true)
 	_play_paired_execution_impact_sound()
+	_play_combat_sfx(CRITICAL_IMPACT_SOUND, _paired_execution_anchor, -1.0)
 
 
 func _play_paired_execution_impact_sound() -> void:
@@ -4692,6 +4730,7 @@ func _cleanup_paired_execution(completed: bool, reason: StringName) -> void:
 	_melee_duration = 0.0
 	disable_hitbox()
 	_melee_hit_targets.clear()
+	_melee_miss_sfx_played = false
 	_active_attack_profile = null
 	_active_melee_attack_profile = null
 	if target != null and is_instance_valid(target):
@@ -5038,6 +5077,7 @@ func _configure_melee_hitbox(damage: float, attack_range: float, attack_arc_degr
 	_melee_range_current = attack_range * range_multiplier
 	_melee_arc_current = attack_arc_degrees
 	_melee_hit_targets.clear()
+	_melee_miss_sfx_played = false
 	_update_melee_hitbox_transform()
 	disable_hitbox()
 
@@ -5332,6 +5372,10 @@ func _estimate_node_contact_radius(target: Node, fallback_radius: float = 12.0) 
 func _on_melee_hit_confirmed() -> void:
 	_notify_camera_attack_impact(_melee_forward, _melee_attack_kind == "heavy")
 	_apply_hit_stop()
+	if _melee_attack_kind == "heavy":
+		_play_combat_sfx(MELEE_HEAVY_HIT_SOUND, global_position, -2.0)
+	else:
+		_play_combat_sfx(MELEE_CONTACT_SOUND, global_position, -2.0)
 
 
 func _trigger_camera_shake() -> void:
@@ -5677,6 +5721,7 @@ func _try_start_dodge() -> bool:
 	movement_direction = _dodge_direction
 	visual_idle_direction = aim_direction.normalized() if _is_aiming_for_facing() and aim_direction.length_squared() > 0.0001 else _dodge_direction
 	_play_dodge_animation(true)
+	_play_combat_sfx(DODGE_ROLL_SOUND, global_position, -3.0)
 	_obs_increment(&"player_dodges_started", 1)
 	_obs_log(&"player_dodge_started", {
 		"position": global_position,
@@ -8434,6 +8479,7 @@ func _interrupt_active_combat_for_damage_reaction() -> void:
 	_block_active = false
 	disable_hitbox()
 	_melee_hit_targets.clear()
+	_melee_miss_sfx_played = false
 	_reset_melee_overlay_visuals()
 
 func _handle_death() -> void:
@@ -8565,6 +8611,7 @@ func _finish_death() -> void:
 	velocity = Vector2.ZERO
 	disable_hitbox()
 	_melee_hit_targets.clear()
+	_melee_miss_sfx_played = false
 	_reset_melee_overlay_visuals()
 	update_visuals()
 	health_changed.emit(current_health, max_health)

@@ -5,7 +5,7 @@
 - **Type**: Infrastructure Architecture
 - **Location**: `custodian/tools/pipelines/`
 - **Status**: Active, repo-native intake pipeline
-- **Last Updated**: 2026-06-19
+- **Last Updated**: 2026-07-20
 
 ## Purpose
 
@@ -22,7 +22,7 @@ The pipeline must target the live consumers that already exist:
    - `res://game/actors/operator/operator_weapon_frames.tres`
    - `res://game/actors/operator/operator_melee_overlay_frames.tres`
 2. Weapon-owned animation strips in `res://content/sprites/weapons/`
-3. Enemy runtime strips in `res://content/sprites/enemies/`
+3. Non-Operator actor runtime strips in `res://content/sprites/<actor>/runtime/<layer>/<action_group>/`; domain-prefixed enemy/allied paths remain compatibility outputs while live consumers migrate
 4. Effects runtime strips in `res://content/sprites/effects/runtime/`
 5. Vehicle and turret runtime strips in their current sprite domains
 
@@ -146,6 +146,12 @@ Compatibility rule:
 - New source and pipeline intake work should use the canonical name.
 - A manifest may write a canonical output and a compatibility copy in the same run.
 - Do not create new naming families such as `fast_attack_north_base_*` unless they are temporary compatibility outputs for existing code.
+
+Non-Operator actor rule:
+
+- Enemy, drone, and allied actor sheets use the same owner-first canonical shape as the Operator: `content/sprites/<actor>/runtime/<layer>/<action_group>/<canonical_filename>.png`.
+- `enemies/<actor>/runtime/<layer>/` and `allies/<actor>/runtime/<layer>/` are compatibility surfaces, not the canonical destination for newly ingested art.
+- The generic actor `SpriteFrames` builder reads the owner-first tree recursively and merges legacy domain-prefixed strips when an actor has not yet been fully migrated; owner-first duplicates win.
 
 Replacement rule:
 

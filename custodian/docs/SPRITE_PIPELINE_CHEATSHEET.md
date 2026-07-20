@@ -9,7 +9,7 @@ Use this when you need to answer:
 
 The existing sprite pipeline is the authority. Do not create a second asset tree. `_pipeline/` is intake,
 debug, archive, and request planning only; runtime scenes should consume files under the normal
-`content/sprites/<domain>/...` runtime paths.
+`content/sprites/<owner>/runtime/...` paths for animated actors and the documented specialized runtime domains for other sprite classes.
 
 ## 1. Check What Assets Are Needed
 
@@ -222,9 +222,11 @@ python custodian/tools/pipelines/generate_inbox_manifests.py
 The ingest routes sheets into:
 
 ```text
-custodian/content/sprites/allies/<actor_slug>/runtime/body/
-custodian/content/sprites/allies/<actor_slug>/runtime/fx/
+custodian/content/sprites/<actor_slug>/runtime/body/<action_group>/
+custodian/content/sprites/<actor_slug>/runtime/fx/<action_group>/
 ```
+
+It also writes temporary compatibility copies under `content/sprites/allies/<actor_slug>/runtime/body|fx/` while existing consumers migrate.
 
 and rebuilds:
 

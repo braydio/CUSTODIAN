@@ -38,6 +38,11 @@ const BUILD_TOKEN_TO_PLACEABLE := {
 		"kind": "structure",
 		"scene": preload("res://game/actors/structures/light_barricade.tscn"),
 	},
+	"capacitor_bank_mk1": {
+		"placeable_type": "capacitor_bank_mk1",
+		"kind": "structure",
+		"scene": preload("res://game/infrastructure/structures/capacitor_bank_mk1.tscn"),
+	},
 }
 
 const MAX_DEFAULT_TURRETS := 10
@@ -380,8 +385,14 @@ func _attempt_place_build_token(position: Vector2) -> bool:
 		return false
 	get_parent().add_child(instance)
 	instance.global_position = position
+	if instance.has_method("begin_construction"):
+		instance.call("begin_construction")
 	_placed_structures.append(instance)
 	build_token_placed.emit(instance, build_token_id)
+	_observe_infrastructure_event(&"infrastructure_foundation_committed", {
+		"build_token_id": build_token_id,
+		"position": position,
+	})
 	exit_placement_mode()
 	return true
 
@@ -549,6 +560,16 @@ func _consume_build_token(build_token_id: String) -> bool:
 func _emit_build_placement_failed(reason: String) -> void:
 	if not _selected_build_token.is_empty():
 		build_placement_failed.emit(_selected_build_token, reason)
+		_observe_infrastructure_event(&"infrastructure_package_placement_rejected", {
+			"build_token_id": _selected_build_token,
+			"reason": reason,
+		})
+
+
+func _observe_infrastructure_event(event_name: StringName, payload: Dictionary) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", event_name, payload)
 
 
 func _infer_turret_type(turret: Node2D) -> String:

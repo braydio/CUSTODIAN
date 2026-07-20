@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StructureDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/infrastructure/definitions/structure_definition.gd" id="1_definition"]
+
+[resource]
+script = ExtResource("1_definition")
+structure_id = &"capacitor_bank_mk1"
+display_name = "Capacitor Bank"
+description = "Compound reserve bank that absorbs surplus generation and bridges grid shortages."
+category = &"power"
+placement_mode = &"designated_zone"
+footprint_tiles = Vector2i(3, 2)
+recipe_id = &"capacitor_bank_mk1"
+construction_time = 4.0
+minimum_power = 0.0
+standard_power = 0.0
+default_priority = 50
+storage_capacity = 250.0
+charge_rate = 50.0
+discharge_rate = 75.0
+max_integrity = 240.0
+

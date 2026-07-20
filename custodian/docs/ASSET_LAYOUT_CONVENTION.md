@@ -19,10 +19,8 @@ content/
   sprites/
     <entity>/
       runtime/            # files directly loaded by scenes/resources
-        attack/
-        idle/
-        move/
-        fx/
+        <layer>/
+          <action_group>/
       source/             # non-aseprite editable source files (.xcf, .psd, .gif)
       archive/            # deprecated but retained files not used by runtime
     environment/
@@ -124,6 +122,7 @@ are not moved — they belong to their respective packages.
 ## Naming Rules
 
 - New sprite sheets use `<owner>__<layer>__<action_group>__<variant>__<direction>__<frames>f__<frame_size>.png`.
+- Animated non-Operator actors use `sprites/<owner>/runtime/<layer>/<action_group>/<canonical_filename>.png`, matching the Operator's owner-first runtime layout. Older `sprites/enemies/<owner>/...` and `sprites/allies/<owner>/...` paths are compatibility surfaces during migration.
 - Use owner names such as `operator`, `enemy_grunt`, `drone`, `fallen_star_katana`, or `hit_spark`.
 - Use layer names such as `body`, `weapon`, `fx`, `shadow`, or `mask`.
 - Use action groups such as `locomotion`, `melee`, `defense`, `ranged`, `reaction`, `death`, `impact`, or `interaction`.

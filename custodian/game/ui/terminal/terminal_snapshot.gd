@@ -52,16 +52,30 @@ func build(ui: Node) -> Dictionary:
 		"contract": contract,
 		"power_pct": power_pct,
 		"power_status": power_status,
+		"infrastructure": collect_infrastructure(ui),
 		"arrn": arrn,
 		"tactical_entities": collect_tactical_entities(ui),
 		"vault": collect_vault(ui),
 	}
 
 
+func collect_infrastructure(ui: Node) -> Array[Dictionary]:
+	var registry := ui.get_node_or_null("/root/InfrastructureRegistry")
+	if registry != null and registry.has_method("get_structure_snapshot"):
+		var snapshot = registry.call("get_structure_snapshot")
+		if snapshot is Array:
+			var result: Array[Dictionary] = []
+			for entry in snapshot:
+				if entry is Dictionary:
+					result.append((entry as Dictionary).duplicate(true))
+			return result
+	return []
+
+
 func collect_sectors(ui: Node) -> Array[Dictionary]:
 	var sectors: Array[Dictionary] = []
-	for node in ui.get_tree().get_nodes_in_group("structure"):
-		if not (node is Node2D):
+	for node in ui.get_tree().get_nodes_in_group("sector"):
+		if not (node is Sector):
 			continue
 		var entry: Dictionary = {}
 		entry["name"] = str(node.get("sector_name") if "sector_name" in node else node.name)

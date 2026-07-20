@@ -2,6 +2,7 @@ extends CharacterBody2D
 class_name CombatDrone
 
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
+const MECH_GUNSHOT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/mech_gun_shot_01.wav")
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 const DroneTargetingScript := preload("res://game/systems/drone/drone_targeting.gd")
 
@@ -487,6 +488,24 @@ func _fire_once() -> void:
 	else:
 		get_tree().current_scene.add_child(bullet)
 	bullet.global_position = spawn_position
+	_play_mech_gunshot(spawn_position)
+
+
+func _play_mech_gunshot(pos: Vector2) -> void:
+	var player := AudioStreamPlayer2D.new()
+	player.stream = MECH_GUNSHOT_SOUND
+	player.volume_db = -4.0
+	player.max_distance = 640.0
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	if parent == null:
+		player.free()
+		return
+	parent.add_child(player)
+	player.global_position = pos
+	player.finished.connect(player.queue_free)
+	player.play()
 
 
 func get_terrain_ballistics_provider() -> Node:

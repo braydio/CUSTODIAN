@@ -9,6 +9,7 @@ enum TurretType {
 }
 
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
+const MECH_GUNSHOT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/mech_gun_shot_01.wav")
 
 @export var turret_name: String = "Turret"
 @export var turret_type: TurretType = TurretType.GUNNER
@@ -229,6 +230,7 @@ func shoot(effective_output: float) -> void:
 	else:
 		get_tree().current_scene.add_child(bullet)
 	bullet.global_position = spawn_position
+	_play_mech_gunshot(spawn_position)
 
 	# Lightweight visual kickback.
 	barrel.scale = Vector2(1.08, 1.08)
@@ -236,6 +238,23 @@ func shoot(effective_output: float) -> void:
 		if is_instance_valid(barrel):
 			barrel.scale = Vector2.ONE
 	)
+
+
+func _play_mech_gunshot(pos: Vector2) -> void:
+	var player := AudioStreamPlayer2D.new()
+	player.stream = MECH_GUNSHOT_SOUND
+	player.volume_db = -4.0
+	player.max_distance = 640.0
+	var parent := get_tree().current_scene
+	if parent == null:
+		parent = get_parent()
+	if parent == null:
+		player.free()
+		return
+	parent.add_child(player)
+	player.global_position = pos
+	player.finished.connect(player.queue_free)
+	player.play()
 
 
 func get_terrain_ballistics_provider() -> Node:

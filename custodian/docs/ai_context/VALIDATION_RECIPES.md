@@ -300,15 +300,19 @@ For command-terminal Overview hierarchy, header/nav fit, or modal containment ch
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/terminal_status_fidelity_smoke.gd
+godot --headless --path . --script res://tools/validation/terminal_snapshot_sector_identity_smoke.gd
+godot --headless --path . --script res://tools/validation/power_rate_units_smoke.gd
 godot --headless --path . --script res://tools/validation/terminal_overview_semantics_smoke.gd
+godot --headless --path . --script res://tools/validation/terminal_overview_live_snapshot_smoke.gd
 godot --headless --path . --script res://tools/validation/terminal_overview_layout_smoke.gd
+godot --headless --path . --script res://tools/validation/terminal_defense_semantics_smoke.gd
 godot --headless --path . --script res://tools/validation/terminal_overlay_visibility_smoke.gd
 godot --headless --path . --script res://tools/validation/terminal_typography_smoke.gd
 godot --headless --path . --script res://tools/validation/terminal_stylebox_rendering_smoke.gd
 godot --headless --path . --script res://tools/validation/fabrication_terminal_layout_smoke.gd
 ```
 
-This validates deterministic simulation-clock STATUS output, all four fidelity omission levels, command/field asymmetry, weighted and stable Overview diagnosis, the 1366×768 safe Overview composition, container-based status chips, collapsed secondary nav and reduced default actions, dominant shared tactical map, all diagnosis cards, actionable attention feed, command/transcript containment, visible-pointer modal behavior, a real GUI-routed page-button click through the full-viewport input-blocking scrim, gameplay-overlay suppression/restoration, typography, terminal skin rendering, and Fabrication layout compatibility.
+This validates deterministic simulation-clock STATUS output and elapsed header formatting, all four fidelity omission levels, command/field asymmetry, sector-only identity despite broader turret/structure membership, delta-independent per-second power rates, weighted and stable Overview diagnosis, live deficit recommendation routing, health-first Defense readiness, honest unavailable engagement controls, the 1366×768 safe Overview composition, container-based status chips, collapsed secondary nav and reduced default actions, dominant shared tactical map, all diagnosis cards, actionable attention feed, command/transcript containment, visible-pointer modal behavior, a real GUI-routed page-button click through the full-viewport input-blocking scrim, gameplay-overlay suppression/restoration, typography, terminal skin rendering, and Fabrication layout compatibility.
 
 For Field Patch healing or restock changes:
 
@@ -466,6 +470,8 @@ For the current roll-exit/parry/execution/relaxed-carbine batch, follow the appl
 For modular Operator naming/routing and generic action module generation:
 
 ```bash
+python -m py_compile custodian/tools/pipelines/generate_inbox_manifests.py custodian/tools/pipelines/build_actor_spriteframes.py
+python custodian/tools/validation/non_operator_actor_pipeline_smoke.py
 python custodian/tools/validation/operator_modular_pipeline_smoke.py
 ```
 
@@ -659,6 +665,22 @@ Check:
 - `reports/fabrication_balance/fabrication_balance_report.md` exists and lists affordability, optimality, bottlenecks, and lore-drop review.
 - `reports/fabrication_balance/proposed_changes.json` is proposal-only JSON and does not imply runtime data was applied.
 - Lore violations are understood before using `--strict-lore` in automated checks.
+
+## Compound Infrastructure Powered Fabricator Validation
+
+Use after changes to infrastructure definitions/components, power registration, fabrication service scaling, construction placement, or registry persistence.
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/power_grid_component_registration_smoke.gd
+godot --headless --path . --script res://tools/validation/construction_placement_contract_smoke.gd
+godot --headless --path . --script res://tools/validation/powered_fabricator_slice_smoke.gd
+godot --headless --path . --script res://tools/validation/infrastructure_save_restore_smoke.gd
+godot --headless --path . --script res://tools/validation/power_rate_units_smoke.gd
+godot --headless --path . --script res://tools/validation/turret_placement_smoke.gd
+```
+
+The save/restore smoke proves the versioned `InfrastructureRegistry` boundary. It does not imply project-wide save-manager integration.
 
 ## Review Validation
 

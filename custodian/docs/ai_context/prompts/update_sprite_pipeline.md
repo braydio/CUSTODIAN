@@ -20,7 +20,7 @@ Update the sprite pipeline for: {{target_actor_or_system}}
 - `custodian/docs/ai_context/FILE_INDEX.md` — File ownership map
 - `custodian/docs/ai_context/CONTEXT.md` — Full context overview
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` — Validation command guide
-- Pipeline docs: `custodian/content/sprites/_pipeline/README.md`, `custodian/docs/ASSET_LAYOUT_CONVENTION.md`, and `design/03_architecture/SPRITE_PIPELINE_SYSTEM.md`
+- Pipeline docs: `custodian/content/sprites/_pipeline/README.md`, `custodian/docs/ASSET_LAYOUT_CONVENTION.md`, and `design/04_architecture/SPRITE_PIPELINE_SYSTEM.md`
 
 ## Sprite Pipeline Structure
 - **Source assets**: `custodian/content/sprites/[actor]/source/`

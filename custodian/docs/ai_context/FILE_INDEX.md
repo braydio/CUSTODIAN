@@ -349,11 +349,15 @@ Last updated: 2026-07-20
 - `custodian/docs/ai_context/task_packets/archived/CUSTODIAN_INVENTORY_UI.md` — completed packet for the live professional inventory overlay and production-asset drop-in contract
 - `custodian/docs/ai_context/task_packets/FAB_TERMINAL_READABILITY_PASS.md` — completed packet for the FABRICATION work-order readability pass, including the terminal translation layer and build-placement alias
 - `custodian/game/ui/terminal/terminal_command_router.gd` — command parsing, validation, refresh policy, and dispatch boundary for the HUD terminal
-- `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems, including deterministic physics-frame time, physical-terminal command authority, Operator sector location, system counts, vault totals, and enemy diagnostic signals
+- `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems, including deterministic physics-frame time, physical-terminal command authority, sector-only Operator location and system counts, vault totals, and enemy diagnostic signals; broad `structure` membership is never used as sector authority
 - `custodian/game/ui/terminal/terminal_fidelity_policy.gd` — pure command/field plus communications-state policy for FULL, DEGRADED, FRAGMENTED, and LOST information quality
 - `custodian/game/ui/terminal/terminal_status_formatter.gd` — sole deterministic canonical STATUS formatter shared by page rendering and typed STATUS commands
 - `custodian/game/ui/terminal/terminal_overview_view_model.gd` — pure weighted sector diagnosis, stable incident/recommendation IDs, and offline/cold-start summary model
-- `custodian/tools/validation/terminal_status_fidelity_smoke.gd` and `terminal_overview_semantics_smoke.gd` — focused semantic validation for fidelity omissions, simulation-clock ownership, and ranked Overview diagnosis
+- `custodian/tools/validation/terminal_status_fidelity_smoke.gd` and `terminal_overview_semantics_smoke.gd` — focused semantic validation for fidelity omissions, simulation-clock/header ownership, and ranked Overview diagnosis
+- `custodian/tools/validation/terminal_snapshot_sector_identity_smoke.gd` — proves six sectors remain six terminal sector records even when five turrets also belong to the broader `structure` group
+- `custodian/tools/validation/power_rate_units_smoke.gd` — proves generation, consumption, net rate, and one-second energy integration remain delta-independent at 30/60/120 Hz
+- `custodian/tools/validation/terminal_overview_live_snapshot_smoke.gd` — full-game integration check for sector-only snapshots, authoritative negative net rate, deficit recommendation copy, and `open_power` routing
+- `custodian/tools/validation/terminal_defense_semantics_smoke.gd` — full-game semantic check for health-first Defense readiness and honest unavailable engagement controls
 - `custodian/game/ui/terminal/terminal_map_preview.gd` — compatibility texture-preview boundary with 256px ordinary and 448px Overview fallback sizing; the live terminal map renders and converts coordinates through the shared minimap controller/view
 - `custodian/game/ui/terminal/terminal_planet_preview.gd` — terminal globe viewport, rotation, zoom, and preview input handling
 - `custodian/game/actors/operator/operator.gd` — Operator simulation authority including persistent per-weapon ammo/heat, reload/overheat progress snapshots, debounced discrete weapon-feedback transitions, movement/input/combat, roll-exit fast-input buffering and authored body/FX/cape playback, direction-specific paired-execution clocks, Field Patch healing, modular action presentation hooks, and read-only stealth/noise state
@@ -422,12 +426,12 @@ Last updated: 2026-07-20
 ## Active Asset Pipeline
 
 - `custodian/tools/pipelines/ingest.py` — manifest-driven sprite ingest that writes into live runtime sprite domains, runs post-process rebuilds including modular Operator runtime refreshes, archives processed intake, and cleans source PNG `.import` sidecars without staging Git changes
-- `custodian/tools/pipelines/generate_inbox_manifests.py` — deterministic inbox manifest generator that infers JSON sidecars from canonical filenames, image dimensions, flat item filenames, harvesting-node filenames, modular Operator layer filenames including `cape` and `modular_ranged_weapon`, allied actor body/FX filenames, and hover buggy vehicle filenames, then runs the ingest pipeline
+- `custodian/tools/pipelines/generate_inbox_manifests.py` — deterministic inbox manifest generator that infers JSON sidecars from canonical filenames and image dimensions, routes enemy/drone/allied sheets to owner-first `<actor>/runtime/<layer>/<action_group>/` paths plus legacy compatibility outputs, supports flat items, harvesting nodes, modular Operator layers including `cape` and `modular_ranged_weapon`, and hover buggy vehicle filenames, then runs the ingest pipeline
 - `custodian/tools/pipelines/aseprite_inbox.py` — staging helper that moves aseprite PNG exports into the sprite inbox, prompts for incomplete canonical filename blocks, and can chain manifest generation / ingest
 - `custodian/tools/pipelines/reload_assets.py` — direct operator curated-resource rebuild entrypoint
 - `custodian/tools/pipelines/update_operator_curated_resources.gd` — rebuilds operator runtime `SpriteFrames` from curated/source sheets, including modular unarmed fast windup/strike/recovery lower/upper/FX registrations and separate modular lower/upper body locomotion frame resources
 - `custodian/tools/pipelines/build_operator_modular_runtime.py` — builds stable runtime sheets from `content/sprites/operator/new_operator/modular/`, including lower/upper locomotion, generic cape actions, weapon-specific relaxed-carbine normalization, legacy source compatibility, modular unarmed fast-attack phases, and baked body/FX strips with fallback/canvas normalization
-- `custodian/tools/pipelines/build_actor_spriteframes.py` — generic non-Operator actor `SpriteFrames` builder that scans `content/sprites/<domain>/<owner>/runtime/body` and `runtime/fx` PNG strips and writes `<owner>_body_frames.tres` / `<owner>_fx_frames.tres` under `game/actors/<domain>/<owner>/`
+- `custodian/tools/pipelines/build_actor_spriteframes.py` — generic non-Operator actor `SpriteFrames` builder that recursively scans canonical `content/sprites/<owner>/runtime/<layer>/<action_group>/` strips, merges missing legacy `content/sprites/<domain>/<owner>/runtime/` strips with canonical precedence, and writes `<owner>_body_frames.tres` / `<owner>_fx_frames.tres` under `game/actors/<domain>/<owner>/`
 - `custodian/tools/pipelines/ingest.py` — Python launcher for the Godot sprite ingest runtime; `--build-operator-runtime` explicitly rebuilds already-authored Operator modular source after successful ingest and respects dry-run/superseded-cleanup flags
 - `custodian/tools/operator/operator_ingest.sh` — thin Operator modular ingest wrapper, also exposed as `opingest` by `tools/custodian_aliases.sh`; dry-run by default, `--apply` runs inbox manifest generation, modular runtime build, Godot import, curated SpriteFrames update, modular layer smoke, and contract-report output
 - `custodian/tools/validation/contracts/operator_modular_core.json` — editable Operator modular animation coverage contract for required/optional locomotion, combat, defense, dodge, sidearm, ranged, and optional layer coverage
@@ -532,6 +536,7 @@ Last updated: 2026-07-20
 - `custodian/content/sprites/_pipeline/README.md` — intake contract, canonical sprite naming, and manifest examples
 - `custodian/docs/SPRITE_PIPELINE_CHEATSHEET.md` — short operator-facing pipeline guide for checking needed assets, validating drops, ingesting/building into runtime, and proving outputs
 - `custodian/tools/validation/operator_modular_pipeline_smoke.py` — focused Python smoke for modular Operator inbox routing, compatibility naming, post-process selection, and stable generic action module outputs
+- `custodian/tools/validation/non_operator_actor_pipeline_smoke.py` — focused Python smoke proving owner-first enemy/allied routing, legacy compatibility outputs, recursive action-group discovery, and canonical precedence during SpriteFrames rebuilds
 - `custodian/tools/validation/operator_animation_contract_report_smoke.py` — pure-Python smoke for the Operator animation contract report and strict-mode success on synthetic strips
 - `custodian/tools/validation/operator_action_preview_smoke.py` — pure-Python smoke for generalized Operator action preview compositing on synthetic lower/upper/FX strips
 - `custodian/tools/validation/scaffold_character_contract_smoke.py` — pure-Python smoke for new-character scaffold output creation and expected filename content
@@ -576,7 +581,15 @@ Last updated: 2026-07-20
 - `custodian/content/props/ruins/data/prop_definitions/slab_01.tres` — starter test definition using available moss/crack overlays and rubble
 - `custodian/content/props/ruins/README.md` — ruin prop folder layout, padding commands for cropped PNGs, import settings, and pixel-art transform constraints
 - `design/02_features/props/PROCEDURAL_PROP_VARIANT_SYSTEM.md` — active implementation spec and runtime ownership note for the ruin prop variant system
-- `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md` — merged system design for resource collection, ledger, and fabrication pipeline; Stage 1 ready for implementation
+- `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md` — implemented-v1 authority for harvesting, resource ledger, fabrication work orders, Ready Builds, and the current token-gated Basic Turret/Light Barricade placement bridge
+- `design/02_features/infrastructure/COMPOUND_INFRASTRUCTURE_SYSTEM.md` — active authority for the bounded construction economy; Powered Fabricator Milestone 1 is live with component grid registration, hybrid Capacitor Bank construction, typed fabrication service output, and a versioned persistence boundary
+- `design/02_features/infrastructure/INFRASTRUCTURE_IMPLEMENTATION_PLAN.md` — implemented Milestone 1 compatibility decisions, transaction order, runtime file list, and validation record
+- `custodian/autoload/infrastructure_registry.gd` — structure/service registry, terminal snapshot authority, and versioned capture/restore boundary
+- `custodian/game/infrastructure/` — reusable structure definition/base, power and service components, and Field Fabricator/Capacitor Bank scenes
+- `custodian/content/infrastructure/definitions/` — definition resources for the first Field Fabricator and Capacitor Bank structures
+- `custodian/tools/validation/{power_grid_component_registration,construction_placement_contract,powered_fabricator_slice,infrastructure_save_restore}_smoke.gd` — focused Milestone 1 registration, transaction, full-loop, and persistence validation
+- `design/02_features/power/POWER_SYSTEMS_GODOT.md` — current sector-oriented power implementation summary and compatibility boundary for future infrastructure-grid work
+- `design/04_architecture/SIMPLIFIED_POWER_IN_ROOMS.md` — superseded room-marker proposal retained as historical reference; its conduit-to-generator mapping must not be implemented
 - `design/02_features/arrn/implementation.md` — ARRN implementation roadmap; runtime V1 is implemented with primitive relay visuals and deferred production polish
 
 ## Active Documentation

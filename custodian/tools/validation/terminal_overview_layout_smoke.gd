@@ -81,7 +81,15 @@ func _run() -> void:
 		_require(overview_panel != null and overview_panel.is_visible_in_tree(), "%s should be visible on Overview." % panel_name)
 		_require(body == null or overview_panel == null or overview_panel.get_global_rect().end.y <= body.get_global_rect().end.y + 1.0, "%s should fit above the terminal body edge." % panel_name)
 		var card_body := overview_panel.find_child("Body", true, false) as RichTextLabel if overview_panel != null else null
-		_require(card_body != null and card_body.get_content_height() <= card_body.size.y + 1.0, "%s content should fit without an internal scrollbar." % panel_name)
+		_require(
+			card_body != null and card_body.get_content_height() <= card_body.size.y + 1.0,
+			"%s content should fit without an internal scrollbar (content=%.1f, body=%.1f, width=%.1f)." % [
+				panel_name,
+				card_body.get_content_height() if card_body != null else -1.0,
+				card_body.size.y if card_body != null else -1.0,
+				card_body.size.x if card_body != null else -1.0,
+			]
+		)
 	_require(main_scroll != null and main_scroll.horizontal_scroll_mode == ScrollContainer.SCROLL_MODE_DISABLED, "Overview should not allow horizontal scrolling.")
 	_require(main_scroll != null and main_scroll.vertical_scroll_mode == ScrollContainer.SCROLL_MODE_DISABLED, "Overview should fit without page-level scrolling.")
 
@@ -141,6 +149,8 @@ func _run() -> void:
 	_require(body == null or input_row == null or _inside(input_row.get_global_rect(), body.get_global_rect()), "Command input should remain fully visible.")
 	_require(header == null or _header_fits(header), "Header chips should fit without overlap or truncation.")
 	_require(str(ui.call("_format_terminal_grid_rate", -3538.0)) == "-3.5K/s", "Grid deficit formatter should use compact signed K/s text.")
+	_require(str(ui.call("_format_terminal_elapsed_chip", {"simulation_seconds": 186.0})) == "T+03:06", "Sub-hour header time should use T+MM:SS.")
+	_require(str(ui.call("_format_terminal_elapsed_chip", {"simulation_seconds": 3786.0})) == "T+1:03:06", "Long-running header time should retain elapsed hours.")
 	var output := ui.find_child("TerminalOutput", true, false) as RichTextLabel
 	var output_text := output.get_parsed_text() if output != null else ""
 	_require(output_text.contains("SYSTEM") and output_text.contains("POWER") and output_text.contains("ACTION"), "Overview transcript should begin with an actionable attention feed.")

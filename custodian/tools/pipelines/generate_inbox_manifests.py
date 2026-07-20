@@ -420,10 +420,11 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
             return f"operator/runtime/weapon/{info.action_group}/{info.basename}"
         if info.layer == "fx":
             return f"operator/runtime/overlays/{info.action_group}/{info.basename}"
-    if info.owner == "enemy" or info.owner.startswith("enemy_") or info.owner == "drone":
-        return f"enemies/{info.owner}/runtime/{info.layer}/{info.basename}"
-    if _is_allied_actor_owner(info.owner):
-        return f"allies/{info.owner}/runtime/{info.layer}/{info.basename}"
+    if _is_non_operator_actor_owner(info.owner):
+        return (
+            f"{info.owner}/runtime/{info.layer}/{info.action_group}/"
+            f"{info.basename}"
+        )
     if info.owner in {"fallen_star_katana", "carbine_rifle", "carbine_rifle_mk1"}:
         return f"weapons/{info.owner}/animations/{info.basename}"
     if info.owner in {"command_terminal", "fabricator_terminal", "computer_terminal", "builder_terminal"}:
@@ -444,16 +445,33 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
 
 
 def _compatibility_outputs(info: SheetInfo) -> list[dict]:
-	outputs: list[dict] = []
-	if info.owner.startswith("enemy_") or info.owner == "drone":
-		output: dict = {
-			"path": f"enemies/{info.owner}/{info.basename}",
-			"layout": "copy" if info.source_kind == "copy" else "horizontal_strip",
-		}
-		if info.source_kind != "copy":
-			output["select"] = {"type": "range", "start": 0, "count": info.frame_count}
-		outputs.append(output)
-	return outputs
+    outputs: list[dict] = []
+    domain = _legacy_actor_domain(info.owner)
+    if domain:
+        outputs.append(_output_spec(
+            info,
+            f"{domain}/{info.owner}/runtime/{info.layer}/{info.basename}",
+        ))
+    if info.owner.startswith("enemy_") or info.owner == "drone":
+        outputs.append(_output_spec(
+            info,
+            f"enemies/{info.owner}/{info.basename}",
+        ))
+    return outputs
+
+
+def _output_spec(info: SheetInfo, path: str) -> dict:
+    output: dict = {
+        "path": path,
+        "layout": "copy" if info.source_kind == "copy" else "horizontal_strip",
+    }
+    if info.source_kind != "copy":
+        output["select"] = {
+            "type": "range",
+            "start": 0,
+            "count": info.frame_count,
+        }
+    return output
 
 
 def _operator_modular_source_bucket(info: SheetInfo) -> str:
@@ -523,7 +541,7 @@ def _build_post_process(info: SheetInfo) -> list[str]:
         post_process.append("operator_curated_resources")
     if _is_operator_modular_sheet(info) or _is_operator_modular_sidearm_weapon(info):
         post_process.append("operator_modular_runtime")
-    if info.owner.startswith("enemy_") or info.owner == "drone":
+    if info.owner == "enemy" or info.owner.startswith("enemy_") or info.owner == "drone":
         post_process.append("enemy_runtime_import")
     if _is_allied_actor_owner(info.owner):
         post_process.append(f"actor_spriteframes:allies:{info.owner}")
@@ -543,6 +561,23 @@ def _is_allied_actor_owner(owner: str) -> bool:
             "repair_drone",
         }
     )
+
+
+def _is_non_operator_actor_owner(owner: str) -> bool:
+    return (
+        owner == "enemy"
+        or owner == "drone"
+        or owner.startswith("enemy_")
+        or _is_allied_actor_owner(owner)
+    )
+
+
+def _legacy_actor_domain(owner: str) -> str:
+    if owner == "enemy" or owner == "drone" or owner.startswith("enemy_"):
+        return "enemies"
+    if _is_allied_actor_owner(owner):
+        return "allies"
+    return ""
 
 
 def _find_superseded_outputs(manifest: dict) -> list[Path]:

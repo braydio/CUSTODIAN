@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN
 **Created:** 2026-05-08
 **Status:** implemented-v1
-**Last Updated:** 2026-07-16
+**Last Updated:** 2026-07-20
 **Roadmap:** v0.5.0 Free-Roam Pre-Assault — Resource Collection & Fabrication
 **Depends on:** Free-roam traversal (v0.5.0), Existing operator interaction system, Existing InventoryManager autoload
 
@@ -497,10 +497,10 @@ This file is for metadata/documentation. Runtime resource counts live in `Resour
 | **PlayerController** (`player_controller.gd`) | Independent; shares `interact` input but targets different node groups | Separate responsibility; route interact to vehicle OR resource, not both |
 | **InteractionLabel** (`UI` node in game.tscn) | `PlayerResourceHarvester` updates its `.text` property | No changes needed; already exists at `UI/InteractionLabel` path |
 | **InventoryManager** (autoload) | Parallel system; separate ledger for cognitive drops vs. fabrication materials | May merge in future economy pass |
-| **Power system** (`power.gd`) | Has `_get_fabrication_effectiveness()` — fabrication bridge should read this for scaling in V2 | V1 ignores power scaling |
-| **WaveManager** | Fabricated defenses feed into sector/turret placement for wave defense | V1 bridge only adds recipes; no runtime placement |
+| **Power system** (`power.gd`) | Existing sector-power compatibility boundary | Persistent powered fabrication belongs to `COMPOUND_INFRASTRUCTURE_SYSTEM.md`; callers must migrate away from private `_get_fabrication_effectiveness()` access |
+| **WaveManager** | Fabricated defenses feed into sector/turret placement for wave defense | `turret_basic` and `barricade_light` Ready Builds have live token-gated placement |
 | **Terminal HUD** (`ui.gd`) | Terminal has `_terminal_fabrication_queue` — V1 bridge can enqueue builds | Existing terminal fabrication commands should route through bridge |
-| **Wall build system** (`wall_build_system.gd`) | Barricade_light recipe should eventually produce placable walls | V1: bridge only; no wall spawning yet |
+| **Placement system** (`turret_placement.gd`) | Compatibility placement surface for current Ready Builds | Valid Turret/Light Barricade placement consumes one token and spawns the damageable scene; invalid placement preserves the token |
 
 ### Project Settings
 
@@ -695,9 +695,9 @@ godot --headless --quit
 - Deferred: small always-on HUD resource counts and deployment bridges beyond Light Barricade.
 
 ### V1.2 — Power-Aware Fabrication
-- Fabricator speed/cost scaling based on `power.gd._get_fabrication_effectiveness()`
-- Fabricator requires power to operate
-- Blackout stops fabrication
+- Superseded as an isolated follow-up by `design/02_features/infrastructure/COMPOUND_INFRASTRUCTURE_SYSTEM.md`.
+- Persistent Field Fabricator operation must use typed infrastructure service output rather than direct access to `power.gd._get_fabrication_effectiveness()`.
+- The first infrastructure milestone proves generation, Fabricator consumption/effective output, Capacitor Bank construction, reserve changes, destruction, terminal reconciliation, and persistence.
 
 ### V2 — Expedition Maps
 - Procedural resource node placement in procgen world generation
@@ -720,13 +720,13 @@ Current runtime step: before a separate destination/travel UI exists, `ContractW
 
 ## Next Agent Slice
 
-**Goal:** Extend deployable Ready Builds beyond the validated Basic Turret and Light Barricade without creating freeform base building.
+**Goal:** Prepare the bounded Powered Fabricator implementation plan defined by `COMPOUND_INFRASTRUCTURE_SYSTEM.md` without creating freeform base building.
 
-**Files:** `custodian/game/ui/hud/ui.gd`, `custodian/game/ui/terminal/fabrication_terminal_view_model.gd`, `custodian/game/systems/core/systems/turret_placement.gd`, `custodian/autoload/fab_pipeline.gd`, and the next bounded placeable scene.
+**Files:** `design/02_features/infrastructure/INFRASTRUCTURE_IMPLEMENTATION_PLAN.md`, `design/02_features/power/POWER_GRID_V2.md`, `custodian/autoload/fab_pipeline.gd`, `custodian/autoload/build_inventory.gd`, `custodian/game/systems/core/systems/power.gd`, and `custodian/game/systems/core/systems/turret_placement.gd`.
 
-**Constraints:** Keep simulation authority in `FabPipeline`, `ResourceLedger`, and `BuildInventory`; preserve the readable command aliases; keep placement token-gated; do not add walls, floors, gates, power grids, or freeform base editing in this slice.
+**Constraints:** Keep simulation authority in `FabPipeline`, `ResourceLedger`, and `BuildInventory`; preserve the readable command aliases and existing Turret/Light Barricade placement; keep placement token-gated; add component-based grid interfaces rather than making every structure a `Sector`; do not add walls, floors, cables, or unrestricted base editing.
 
-**Acceptance:** The next placeable consumes one ready token only on valid placement, leaves invalid sites non-destructive, preserves Basic Turret and Light Barricade deployment, and remains compatible with existing `FAB START` and `BUILD PLACE` commands.
+**Acceptance:** The proposal maps the Powered Fabricator milestone to deterministic registration, atomic placement/construction, persistence, terminal snapshots, and focused validation while preserving current `FAB START` and `BUILD PLACE` behavior.
 
 ---
 

@@ -1,0 +1,11 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__modular_lower_body__idle__sw__5f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/new_operator/modular/idle/operator__modular_lower_body__idle__sw__5f__96.png"
+	],
+	"post_process": [
+		"operator_modular_runtime"
+	],
+	"source": "res://content/sprites/_pipeline/inbox/operator__modular_lower_body__idle__sw__5f__96.png",
+	"timestamp_utc": "2026-07-20 14:04:44"
+}
