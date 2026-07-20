@@ -64,7 +64,7 @@ Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE
 
 - Search/read: prefer `rg`, `rg --files`, and targeted `sed`/`nl` reads. Use RTK wrappers only where the validation recipe recommends them or compact command output matters.
 - Godot validation: use focused `custodian/tools/validation/*_smoke.gd` scripts for behavior checks; do not treat `godot --headless --quit` or import alone as sufficient for gameplay/presentation changes.
-- Sprite and asset pipeline: start with `custodian/tools/pipelines/ingest.py`, `generate_inbox_manifests.py`, and the relevant validation recipe. For modular Operator work, `tools/operator_ingest.sh` is the thin repo-root wrapper; default is dry-run, `--apply` runs rebuild/import/resource update/smoke/report.
+- Sprite and asset pipeline: start with `custodian/tools/pipelines/ingest.py`, `generate_inbox_manifests.py`, and the relevant validation recipe. For modular Operator work, `custodian/tools/operator/operator_ingest.sh` is the thin wrapper; default is dry-run, `--apply` runs rebuild/import/resource update/smoke/report.
 - Operator animation reports: use `custodian/tools/validation/operator_animation_contract_report.py` for required/optional/missing/suspicious asset coverage. Reports belong under `reports/`, not active runtime folders.
 - Preview/review helpers: use `custodian/tools/pipelines/operator_action_preview.py` and the review tools listed in `docs/ai_context/AGENT_TOOLING_BY_ASK.md`; generated preview output is review-only.
 - Agent memory: check `agentmemory status`, start the worker with `agentmemory` when needed, and use it selectively for durable cross-session decisions or handoffs while keeping repository docs authoritative.

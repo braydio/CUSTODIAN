@@ -22,8 +22,13 @@ func load_index(index_path: String = DEFAULT_INDEX_PATH) -> bool:
 	if not paths is Array:
 		_errors.append("definitions must be an array in %s" % index_path)
 		return false
+	var seen_paths: Dictionary = {}
 	for path_value: Variant in paths:
 		var definition_path := str(path_value)
+		if seen_paths.has(definition_path):
+			_errors.append("duplicate definition path: %s" % definition_path)
+			continue
+		seen_paths[definition_path] = true
 		var definition_data := _read_json_dictionary(definition_path)
 		if definition_data.is_empty():
 			continue
@@ -58,6 +63,15 @@ func get_level_ids() -> Array[StringName]:
 		ids.append(level_id as StringName)
 	ids.sort()
 	return ids
+
+
+func get_levels_with_tag(tag: StringName) -> Array[RefCounted]:
+	var result: Array[RefCounted] = []
+	for level_id in get_level_ids():
+		var definition := get_level(level_id)
+		if definition != null and definition.has_method("has_tag") and bool(definition.call("has_tag", tag)):
+			result.append(definition)
+	return result
 
 
 func get_errors() -> PackedStringArray:

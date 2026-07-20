@@ -70,7 +70,7 @@ What it does:
 Use:
 
 ```bash
-python3 tools/check_operator_modular_assets.py --json-out operator_asset_audit.json
+python3 custodian/tools/operator/check_operator_modular_assets.py --json-out operator_asset_audit.json
 ```
 
 What it does:
@@ -101,15 +101,15 @@ How to interpret it:
 Use:
 
 ```bash
-bash tools/refresh_combo_check_src.sh
-python3 tools/modular_combo_check.py --src /tmp/custodian_combo_check_src --check-dir .ai/operator_modular_combo_check --clean --fit-debug
+bash custodian/tools/operator/refresh_combo_check_src.sh
+python3 custodian/tools/operator/modular_combo_check.py --src /tmp/custodian_combo_check_src --check-dir .ai/operator_modular_combo_check --clean --fit-debug
 ```
 
 For a ranked “what should I fix next?” report joined to the production contract:
 
 ```bash
-bash tools/refresh_combo_check_src.sh
-python3 tools/modular_combo_check.py \
+bash custodian/tools/operator/refresh_combo_check_src.sh
+python3 custodian/tools/operator/modular_combo_check.py \
   --src /tmp/custodian_combo_check_src \
   --check-dir .ai/operator_modular_combo_check \
   --clean \
@@ -124,7 +124,7 @@ python3 tools/modular_combo_check.py \
 To refresh fit evidence and recommendations without regenerating preview PNGs/GIFs:
 
 ```bash
-python3 tools/modular_combo_check.py \
+python3 custodian/tools/operator/modular_combo_check.py \
   --src /tmp/custodian_combo_check_src \
   --check-dir .ai/operator_modular_combo_check \
   --fit-report-only \
@@ -138,7 +138,7 @@ What it does:
 - `modular_combo_check.py` combines upper and lower modular sheets for visual review.
 - Locomotion upper sheets pair with matching lower locomotion; action upper sheets fan out across lower locomotion domains.
 - With `--fit-debug`, it reports alpha bounding-box edge gaps and horizontal center deltas.
-- With `--next-actions`, it invokes `tools/operator_next_actions_report.py`, joins fit evidence to `operator_modular_core.json` plus the production coverage reporter, and writes `reports/next_actions.json` and `reports/NEXT_ACTIONS.md` before embedding the top recommendations in `index.html`.
+- With `--next-actions`, it invokes `custodian/tools/operator/operator_next_actions_report.py`, joins fit evidence to `operator_modular_core.json` plus the production coverage reporter, and writes `reports/next_actions.json` and `reports/NEXT_ACTIONS.md` before embedding the top recommendations in `index.html`.
 - Pair and chain records retain resolved canonical source paths rather than temporary symlink/workspace paths.
 
 Historical sample from 2026-06-18 (not current repository state; rerun the command for live counts):
@@ -160,7 +160,7 @@ How to interpret it:
 Use:
 
 ```bash
-python3 tools/review_modular_body_pairs.py \
+python3 custodian/tools/operator/review_modular_body_pairs.py \
   --root custodian/content/sprites/operator/new_operator/modular/fast_attack \
   --out .ai/modular_body_pair_review_fast_attack \
   --fit-debug
@@ -190,7 +190,7 @@ How to interpret it:
 Use only for legacy flat sheet exports shaped like `*upper*__sheet.png` and `*lower*__sheet.png` in the same root:
 
 ```bash
-python3 tools/review_modular_flat_png_pairs.py --root <flat-sheet-root> --out .ai/modular_flat_png_pair_review
+python3 custodian/tools/operator/review_modular_flat_png_pairs.py --root <flat-sheet-root> --out .ai/modular_flat_png_pair_review
 ```
 
 Historical sample from 2026-06-18 (not current repository state; rerun for live counts):

@@ -1,0 +1,21 @@
+# {{DISPLAY_NAME}}
+
+**Level ID:** `{{LEVEL_ID}}`  
+**Region:** `{{REGION}}`  
+**Status:** scaffold
+
+## Intent
+
+Define the authored route, encounters, POIs, and destination handoff before production dressing.
+
+## Entry And Return
+
+- Main entry: `{{SPAWN_ID}}`
+- Return anchor: `{{RETURN_SPAWN_ID}}`
+- Ingress prompt: `{{INGRESS_PROMPT}}`
+
+## Authoring
+
+- Production scene: `{{PRODUCTION_SCENE_PATH}}`
+- Playtest scene: `{{PLAYTEST_SCENE_PATH}}`
+- Collision/POI mapper: `{{AUTHORING_SCENE_PATH}}`

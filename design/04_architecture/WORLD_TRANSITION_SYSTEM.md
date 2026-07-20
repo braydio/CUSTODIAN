@@ -10,6 +10,16 @@
 **Runtime Target:** Godot 4.x (`custodian/`)
 **Last Updated:** 2026-03-27
 
+## Current Runtime Bridge
+
+The authoritative transition manager described below remains future architecture. The live Godot bridge currently distributes level handoff across:
+
+- `custodian/game/world/levels/level_loader.gd`
+- `custodian/game/world/procgen/ingress/world_ingress_site.gd`
+- `custodian/game/systems/core/systems/contract_world_loader.gd`
+
+Registered authored destinations and named-spawn activation are governed by `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`. That bridge must preserve one active gameplay world and the persistent main-world Operator until the full transition manager replaces it.
+
 ---
 
 ## 1. Purpose
@@ -1287,4 +1297,3 @@ That is the minimum viable World Transition System.
 * [5] Compound Tile System
 * [6] Campaign Flow & Game Loop
 * [7] Integration Contract (Glue Layer)
-

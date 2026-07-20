@@ -40,7 +40,7 @@ func _init() -> void:
 	}
 
 	await process_frame
-	loader.call("_place_sundered_keep_connection", level_data, map_instance)
+	loader.call("_place_registered_world_ingresses", level_data, map_instance)
 	await process_frame
 
 	var errors: Array[String] = []

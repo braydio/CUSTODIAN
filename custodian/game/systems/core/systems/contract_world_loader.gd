@@ -23,6 +23,7 @@ class_name ContractWorldLoader
 @export var place_tutorial_resource_nodes_from_contract: bool = true
 @export var place_expedition_resource_nodes_from_contract: bool = true
 @export var place_gothic_compound_connection: bool = true
+@export var place_registered_level_connections: bool = true
 @export var place_sundered_keep_connection: bool = true
 @export var place_debug_sundered_keep_gateway: bool = false
 @export var debug_start_near_sundered_keep_entrance: bool = false
@@ -44,6 +45,7 @@ const GOTHIC_COMPOUND_TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_com
 const SUNDERED_KEEP_MAP_SCRIPT := preload("res://game/world/sundered_keep/sundered_keep_map.gd")
 const WORLD_INGRESS_SITE_SCRIPT := preload("res://game/world/procgen/ingress/world_ingress_site.gd")
 const LEVEL_LOADER_SCRIPT := preload("res://game/world/levels/level_loader.gd")
+const WORLD_INGRESS_SPAWNER_SCRIPT := preload("res://game/world/levels/world_ingress_spawner.gd")
 const SUNDERED_KEEP_APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
 const SUNDERED_KEEP_TARGET_SCENE_PATH := "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn"
 const SUNDERED_KEEP_LEVEL_ID := &"sundered_keep_front_gate"
@@ -163,7 +165,9 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_position_arrn_relays(level_data, map_instance)
 	if place_gothic_compound_connection:
 		_place_gothic_compound_connection(level_data, map_instance)
-	if place_sundered_keep_connection:
+	if place_registered_level_connections:
+		_place_registered_world_ingresses(level_data, map_instance)
+	elif place_sundered_keep_connection:
 		_place_sundered_keep_connection(level_data, map_instance)
 	if reposition_camera_from_contract:
 		_refresh_camera(map_instance)
@@ -1068,6 +1072,20 @@ func _place_sundered_keep_connection(level_data: Dictionary, map_instance: Node)
 		var operator := get_node_or_null(operator_path) as Node2D
 		if operator != null:
 			operator.global_position = ingress.global_position + debug_sundered_keep_start_offset
+
+
+func _place_registered_world_ingresses(level_data: Dictionary, map_instance: Node) -> void:
+	var world := get_node_or_null(world_path) as Node2D
+	if world == null:
+		return
+	var spawner := world.get_node_or_null("WorldIngressSpawner")
+	if spawner == null:
+		spawner = WORLD_INGRESS_SPAWNER_SCRIPT.new()
+		spawner.name = "WorldIngressSpawner"
+		spawner.set("fallback_tile_size", fallback_tile_size)
+		world.add_child(spawner)
+	var loader := _ensure_level_loader(world)
+	spawner.call("place_all", level_data, map_instance, world, loader)
 
 
 func _ensure_level_loader(world: Node) -> Node:

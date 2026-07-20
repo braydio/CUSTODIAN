@@ -8,6 +8,7 @@ class_name WorldIngressSite
 @export var target_spawn_id: StringName = &""
 @export var prompt_text: String = "APPROACH"
 @export_range(32.0, 192.0, 1.0) var interaction_distance: float = 92.0
+@export var allow_legacy_registered_fallback := false
 
 var _triggered := false
 var _approach_enter_deferred := false
@@ -109,8 +110,14 @@ func _enter_approach(actor: Node) -> void:
 				"target_spawn_id": target_spawn_id,
 			}) as Node
 			if instance != null:
+				_observe(&"level_ingress_entered", {"level_id": String(level_id), "ingress_id": String(ingress_id)})
 				return
-		push_warning("[WorldIngressSite] LevelLoader could not enter %s; using legacy approach fallback" % level_id)
+		_observe(&"level_ingress_spawn_resolution_failed", {"level_id": String(level_id), "ingress_id": String(ingress_id)})
+		if not allow_legacy_registered_fallback:
+			push_error("[WorldIngressSite] Registered level entry failed authoritatively: %s" % level_id)
+			_restore_failed_approach_entry(actor)
+			return
+		push_warning("[WorldIngressSite] LevelLoader could not enter %s; explicit legacy fallback enabled" % level_id)
 
 	if approach_scene == null:
 		push_error("[WorldIngressSite] Missing approach_scene for %s" % ingress_id)
@@ -215,3 +222,9 @@ func _ensure_visual() -> void:
 		Vector2(0, 16),
 	])
 	add_child(marker)
+
+
+func _observe(event_name: StringName, payload: Dictionary) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("log_event"):
+		observatory.call("log_event", event_name, payload)

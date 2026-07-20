@@ -47,13 +47,13 @@ runsprite() {
 # -- Run focused Operator ingest (dry run by default; pass --apply to write)
 opingest() {
   _update_usage "opingest"
-  "${CUSTODIAN_REPO}/tools/operator_ingest.sh" "$@"
+  "${CUSTODIAN_GODOT}/tools/operator/operator_ingest.sh" "$@"
 }
 
 # -- Analyze the latest or an explicitly provided Developer Observatory session
 obsreport() {
   _update_usage "obsreport"
-  python3 "${CUSTODIAN_REPO}/tools/analyze_dev_observatory_session.py" "$@"
+  python3 "${CUSTODIAN_GODOT}/tools/analysis/analyze_dev_observatory_session.py" "$@"
 }
 
 # -- Match one sprite sheet's palette to a reference (CIE LAB nearest-color)
@@ -83,6 +83,64 @@ promptmenu() {
   bash "${CUSTODIAN_REPO}/scripts/prompt-menu.sh"
 }
 
+# -- Check modular upper/lower combo fit (bounding box, alignment, overlap)
+opcombo() {
+  _update_usage "opcombo"
+  python3 "${CUSTODIAN_GODOT}/tools/operator/modular_combo_check.py" "$@"
+}
+
+# -- Run operator animation contract report (completeness vs production contract)
+opcontract() {
+  _update_usage "opcontract"
+  python3 "${CUSTODIAN_GODOT}/tools/validation/operator_animation_contract_report.py" "$@"
+}
+
+# -- Audit modular sprite sources for missing/extra/malformed assets
+opaudit() {
+  _update_usage "opaudit"
+  python3 "${CUSTODIAN_GODOT}/tools/operator/check_operator_modular_assets.py" "$@"
+}
+
+# -- Generate prioritized next-actions report (fit + contract joined)
+opnext() {
+  _update_usage "opnext"
+  python3 "${CUSTODIAN_GODOT}/tools/operator/operator_next_actions_report.py" "$@"
+}
+
+# List all commands ───────────────────────────────────────────────────────
+clisting() {
+  echo "Custodian commands:"
+  echo ""
+  echo "  Navigation"
+  echo "    croot          cd to repo root"
+  echo "    cgodot         cd to custodian/ (Godot project)"
+  echo "    cpack          run context pack script"
+  echo ""
+  echo "  Sprites & Pipelines"
+  echo "    dryjson        generate JSON sidecar manifests (dry run)"
+  echo "    runjson        generate JSON sidecar manifests (live)"
+  echo "    runsprite      run sprite ingest pipeline"
+  echo "    opingest       focused operator ingest (dry run; --apply to write)"
+  echo "    matchpal       match sprite palette to a reference (CIE LAB)"
+  echo "    batchstrike    batch-match fast_strike palettes to fast_windup"
+  echo "    listbox        list current assets in pipeline inbox"
+  echo ""
+  echo "  Operator Animation"
+  echo "    opcombo        check upper/lower modular combo fit & alignment"
+  echo "    opcontract     report animation completeness vs production contract"
+  echo "    opaudit        audit modular sprite sources for missing/extra assets"
+  echo "    opnext         prioritized next-actions report (fit + contract)"
+  echo "    opcolor        show operator color guide"
+  echo ""
+  echo "  Debug & Reporting"
+  echo "    obsreport      analyze a Developer Observatory session"
+  echo ""
+  echo "  Misc"
+  echo "    promptmenu     run the prompt menu interactively"
+  echo "    alias_usage    show usage counts per command"
+  echo "    clisting       this list"
+}
+
 # Usage tally ─────────────────────────────────────────────────────────────
 alias_usage() {
   local usage_file="${HOME}/.custodian_alias_usage.log"
@@ -91,7 +149,7 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite opingest obsreport listbox matchpal batchstrike opcolor promptmenu; do
+  for cmd in dryjson runjson runsprite opingest obsreport listbox matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext clisting; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
     printf "  %-12s %d\n" "${cmd}:" "${count}"
@@ -100,5 +158,5 @@ alias_usage() {
   echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, obsreport, listbox, matchpal, batchstrike, promptmenu"
-echo "  Type 'alias_usage' for usage counts."
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, opingest, obsreport, listbox, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, clisting"
+echo "  Type 'clisting' for all commands with descriptions, 'alias_usage' for usage counts."

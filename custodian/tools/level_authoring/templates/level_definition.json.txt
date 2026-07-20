@@ -1,0 +1,26 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "{{LEVEL_ID}}",
+  "display_name": "{{DISPLAY_NAME}}",
+  "route_scene_path": "",
+  "target_scene_path": "{{PRODUCTION_SCENE_PATH}}",
+  "authored_data_path": "",
+  "playtest_scene_path": "{{PLAYTEST_SCENE_PATH}}",
+  "authoring_scene_path": "{{AUTHORING_SCENE_PATH}}",
+  "design_doc_path": "{{DESIGN_DOC_PATH}}",
+  "world_context": "{{WORLD_CONTEXT}}",
+  "tags": ["authored", "playable_map", "world_ingress", "{{REGION}}"],
+  "ingress": {
+    "ingress_id": "{{LEVEL_ID}}",
+    "prompt_text": "{{INGRESS_PROMPT}}",
+    "target_spawn_id": "{{SPAWN_ID}}",
+    "interaction_distance": {{INTERACTION_DISTANCE}},
+    "placement": {
+      "strategy": "{{PLACEMENT_STRATEGY}}",
+      "priority": 100,
+      "minimum_spacing_tiles": 10,
+      "search_radius_tiles": 14,
+      "offset_candidates_tiles": {{PLACEMENT_OFFSETS_JSON}}
+    }
+  }
+}

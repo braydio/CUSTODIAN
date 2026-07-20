@@ -157,7 +157,7 @@ observability-only and has no combat, player, enemy, heatmap, world-history, or 
 Analyze an exported session from the repository root with:
 
 ```bash
-python3 tools/analyze_dev_observatory_session.py /path/to/session.json
+python3 custodian/tools/analysis/analyze_dev_observatory_session.py /path/to/session.json
 ```
 
 After sourcing `tools/custodian_aliases.sh`, run `obsreport` to analyze the

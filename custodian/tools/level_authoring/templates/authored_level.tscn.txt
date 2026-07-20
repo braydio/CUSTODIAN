@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="{{PRODUCTION_SCRIPT_PATH}}" id="1_level"]
+
+[node name="{{CLASS_NAME}}" type="Node2D"]
+script = ExtResource("1_level")
+placeholder_canvas_size = Vector2({{CANVAS_WIDTH}}, {{CANVAS_HEIGHT}})
+camera_bounds = Rect2(-{{CANVAS_HALF_WIDTH}}, -{{CANVAS_HALF_HEIGHT}}, {{CANVAS_WIDTH}}, {{CANVAS_HEIGHT}})
+
+[node name="UnderlayRoot" type="Node2D" parent="."]
+[node name="BackgroundRoot" type="Node2D" parent="."]
+[node name="PlayableRoot" type="Node2D" parent="."]
+[node name="PropsRoot" type="Node2D" parent="."]
+[node name="OcclusionRoot" type="Node2D" parent="."]
+[node name="Collision" type="Node2D" parent="."]
+[node name="PathBoundaryCollision" type="StaticBody2D" parent="Collision"]
+collision_layer = 1
+collision_mask = 1
+[node name="Markers" type="Node2D" parent="."]
+[node name="{{SPAWN_ID}}" type="Marker2D" parent="Markers"]
+[node name="{{RETURN_SPAWN_ID}}" type="Marker2D" parent="Markers"]
+position = Vector2(96, 0)
+[node name="POIRoot" type="Node2D" parent="."]
+[node name="EventMarkers" type="Node2D" parent="."]
+[node name="EventRuntime" type="Node2D" parent="."]
+[node name="NavigationRoot" type="Node2D" parent="."]

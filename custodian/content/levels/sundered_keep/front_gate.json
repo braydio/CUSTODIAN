@@ -10,12 +10,20 @@
     "authored",
     "playable_map",
     "approach",
+    "world_ingress",
     "sundered_keep"
   ],
   "ingress": {
     "ingress_id": "sundered_keep",
     "prompt_text": "APPROACH SUNDERED KEEP",
-    "target_spawn_id": "",
-    "interaction_distance": 92.0
+    "target_spawn_id": "EntrySpawn",
+    "interaction_distance": 92.0,
+    "placement": {
+      "strategy": "near_compound_ingress",
+      "priority": 200,
+      "minimum_spacing_tiles": 10,
+      "search_radius_tiles": 14,
+      "offset_candidates_tiles": [[4, 0], [-4, 0], [0, 4], [0, -4], [6, 2], [-6, 2]]
+    }
   }
 }

@@ -60,8 +60,13 @@ func enter_level(level_id: StringName, actor: Node, context: Dictionary = {}) ->
 	var return_position: Vector2 = context.get("return_world_position", Vector2.ZERO)
 	if instance.has_method("configure_connection"):
 		instance.call("configure_connection", main_map, return_position)
-	if instance.has_method("enter_from_main"):
-		instance.call("enter_from_main", actor)
+	var target_spawn_id := _resolve_target_spawn_id(definition, context)
+	if not _enter_actor_at_spawn(instance, actor, target_spawn_id):
+		instance.queue_free()
+		return _fail(
+			level_id,
+			"target spawn could not be resolved: %s" % String(target_spawn_id)
+		)
 	_active_level_id = level_id
 	_active_level_instance = instance
 	level_entered.emit(level_id, instance)
@@ -84,6 +89,35 @@ func adopt_active_level(level_id: StringName, instance: Node) -> void:
 	_active_level_id = level_id
 	_active_level_instance = instance
 	level_entered.emit(level_id, instance)
+
+
+func _resolve_target_spawn_id(definition: RefCounted, context: Dictionary) -> StringName:
+	var requested := StringName(str(context.get("target_spawn_id", "")))
+	if not requested.is_empty():
+		return requested
+	var ingress: Variant = definition.get("ingress")
+	if ingress != null:
+		return ingress.target_spawn_id
+	return &""
+
+
+func _enter_actor_at_spawn(instance: Node, actor: Node, spawn_id: StringName) -> bool:
+	if actor == null:
+		return true
+	if not spawn_id.is_empty() and instance.has_method("enter_from_main_at_spawn"):
+		return bool(instance.call("enter_from_main_at_spawn", actor, spawn_id))
+	var spawn: Node2D = null
+	if not spawn_id.is_empty():
+		if instance.has_method("has_spawn") and not bool(instance.call("has_spawn", spawn_id)):
+			return false
+		spawn = instance.find_child(String(spawn_id), true, false) as Node2D
+		if spawn == null or not (actor is Node2D):
+			return false
+	if instance.has_method("enter_from_main"):
+		instance.call("enter_from_main", actor)
+	if spawn != null:
+		(actor as Node2D).global_position = spawn.global_position
+	return spawn_id.is_empty() or spawn != null
 
 
 func _fail(level_id: StringName, reason: String) -> Node:

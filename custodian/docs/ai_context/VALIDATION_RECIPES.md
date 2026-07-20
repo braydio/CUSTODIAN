@@ -174,10 +174,10 @@ The DevMode smoke proves release-default-off, debug/feature/project/command-line
 For modular visual-fit next-action reporting:
 
 ```bash
-python3 -m py_compile tools/modular_combo_check.py tools/operator_next_actions_report.py
+python3 -m py_compile custodian/tools/operator/modular_combo_check.py custodian/tools/operator/operator_next_actions_report.py
 python3 custodian/tools/validation/operator_next_actions_report_smoke.py
-bash tools/refresh_combo_check_src.sh
-python3 tools/modular_combo_check.py \
+bash custodian/tools/operator/refresh_combo_check_src.sh
+python3 custodian/tools/operator/modular_combo_check.py \
   --src /tmp/custodian_combo_check_src \
   --check-dir .ai/operator_modular_combo_check \
   --fit-report-only --fit-debug --next-actions
@@ -188,8 +188,8 @@ The smoke validates the versioned generated-artifact schema, contract-group join
 For the local exported-session report tool, run from the repository root:
 
 ```bash
-python3 -m py_compile tools/analyze_dev_observatory_session.py
-python3 tools/analyze_dev_observatory_session.py /path/to/latest_session.json
+python3 -m py_compile custodian/tools/analysis/analyze_dev_observatory_session.py
+python3 custodian/tools/analysis/analyze_dev_observatory_session.py /path/to/latest_session.json
 ```
 
 After sourcing the repo aliases, `obsreport` runs the same analyzer and discovers
@@ -228,6 +228,19 @@ godot --headless --path . --script res://tools/validation/sundered_keep_approach
 ```
 
 The ingress smoke proves registered entry and procgen/connected branch isolation. The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker, its backdrop covers camera bounds plus framing slack, camera targets are wired, its endpoint has a visible directional affordance, and the default target is Sundered Keep directly. It also runs the first reveal at accelerated timings and asserts its threshold/controller bindings, one-shot completion, reveal camera target, lighting cue, and post-settle prompt release. The chain smoke proves representative harvest/aspect marker suppression plus both default Vista → Keep actor placement and the optional Vista → Causeway → Keep branch, including LevelLoader adoption, source branch deactivation, entry affordance, and Keep → Causeway return anchoring.
+
+For the reusable authored-level scaffold and registry ingress pipeline:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/level_named_spawn_smoke.gd
+godot --headless --path . --script res://tools/validation/level_registry_contract_smoke.gd
+godot --headless --path . --script res://tools/validation/level_collision_poi_mapper_smoke.gd
+godot --headless --path . --script res://tools/validation/world_ingress_spawner_smoke.gd
+godot --headless --path . --script res://tools/validation/level_scaffold_generator_smoke.gd
+```
+
+These checks prove named-spawn success/failure without actor mutation, every registered entry scene's spawn and mapper boundary contract, generic mapper dynamic schema and Sundered compatibility, deterministic multi-ingress spacing/identity, and alternate-root scaffold dry-run/creation/duplicate rejection/managed regeneration/unmanaged rejection/registry sorting. The existing `sundered_keep_ingress_smoke.gd` now exercises `ContractWorldLoader`'s registry-driven placement path rather than the deprecated Sundered-specific helper.
 
 For the experimental route/stage wrapper:
 
@@ -510,8 +523,8 @@ shared-inbox manifest generation, rebuilds modular Operator runtime sheets, runs
 SpriteFrames, runs the modular layer smoke, and writes an animation contract JSON report.
 
 ```bash
-tools/operator_ingest.sh --dry-run
-tools/operator_ingest.sh --apply
+custodian/tools/operator/operator_ingest.sh --dry-run
+custodian/tools/operator/operator_ingest.sh --apply
 ```
 
 After sourcing `tools/custodian_aliases.sh`, the same focused wrapper is available as

@@ -6,7 +6,7 @@ Prioritized automation candidates for CUSTODIAN agent workflow. These are intent
 
 ## Priority 1 — AI Context Validator
 
-Suggested path: `tools/agent/check_ai_context.py`
+Suggested path: `custodian/tools/agent/check_ai_context.py`
 
 Purpose:
 
@@ -32,7 +32,7 @@ Why first:
 
 ## Priority 2 — Task Packet Linter
 
-Suggested path: `tools/agent/check_task_packets.py`
+Suggested path: `custodian/tools/agent/check_task_packets.py`
 
 Purpose:
 
@@ -55,7 +55,7 @@ Why second:
 
 ## Priority 3 — Prompt Template Validator
 
-Suggested path: `tools/agent/check_prompts.py`
+Suggested path: `custodian/tools/agent/check_prompts.py`
 
 Purpose:
 
@@ -77,7 +77,7 @@ Why third:
 
 ## Priority 4 — Validation Recipe Runner
 
-Suggested path: `tools/agent/validate_docs.py`
+Suggested path: `custodian/tools/agent/validate_docs.py`
 
 Purpose:
 
@@ -98,7 +98,7 @@ Why fourth:
 
 ## Priority 5 — Git Safety Scanner
 
-Suggested path: `tools/agent/check_git_safety.py`
+Suggested path: `custodian/tools/agent/check_git_safety.py`
 
 Purpose:
 
@@ -130,11 +130,11 @@ Why fifth:
 Prefer simple repository-root commands:
 
 ```bash
-python3 tools/agent/check_ai_context.py
-python3 tools/agent/check_task_packets.py
-python3 tools/agent/check_prompts.py
-python3 tools/agent/validate_docs.py
-python3 tools/agent/check_git_safety.py
+python3 custodian/tools/agent/check_ai_context.py
+python3 custodian/tools/agent/check_task_packets.py
+python3 custodian/tools/agent/check_prompts.py
+python3 custodian/tools/agent/validate_docs.py
+python3 custodian/tools/agent/check_git_safety.py
 ```
 
 Once stable, add these commands to `custodian/docs/ai_context/VALIDATION_RECIPES.md`.

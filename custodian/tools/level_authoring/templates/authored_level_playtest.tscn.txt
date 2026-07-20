@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="{{PRODUCTION_SCENE_PATH}}" id="1_level"]
+[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="2_operator"]
+[ext_resource type="Script" path="res://game/systems/core/player_controller.gd" id="3_controller"]
+[ext_resource type="Script" path="res://game/world/camera.gd" id="4_camera"]
+[ext_resource type="Script" path="res://game/world/levels/level_playtest_bootstrap.gd" id="5_bootstrap"]
+{{PLAYTEST_EXTRA_RESOURCES}}
+
+[node name="GameRoot" type="Node2D"]
+{{PLAYTEST_EXTRA_NODES}}
+[node name="World" type="Node2D" parent="."]
+[node name="Level" parent="World" instance=ExtResource("1_level")]
+[node name="Projectiles" type="Node2D" parent="World"]
+[node name="Enemies" type="Node2D" parent="World"]
+[node name="Allies" type="Node2D" parent="World"]
+[node name="Items" type="Node2D" parent="World"]
+[node name="ConnectedMaps" type="Node2D" parent="World"]
+[node name="Operator" parent="World" instance=ExtResource("2_operator")]
+[node name="PlayerController" type="Node" parent="World"]
+script = ExtResource("3_controller")
+operator_path = NodePath("../Operator")
+[node name="Camera2D" type="Camera2D" parent="World"]
+script = ExtResource("4_camera")
+[node name="LevelPlaytestBootstrap" type="Node" parent="World"]
+script = ExtResource("5_bootstrap")
+profile = "{{PLAYTEST_PROFILE}}"
+spawn_id = &"{{SPAWN_ID}}"

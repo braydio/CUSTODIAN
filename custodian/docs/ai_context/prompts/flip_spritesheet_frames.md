@@ -66,7 +66,7 @@ When generating a mirrored counterpart, preserve all fields except the direction
 - `custodian/docs/ASSET_LAYOUT_CONVENTION.md` — Asset layout conventions
 - `custodian/tools/art/png_flip_frames.py` — The tool itself
 - `custodian/content/sprites/operator/source/` — Example source sprite directory
-- `custodian/tools/check_operator_modular_assets.py` — Post-flip validation reference
+- `custodian/tools/operator/check_operator_modular_assets.py` — Post-flip validation reference
 
 ## Verification
 

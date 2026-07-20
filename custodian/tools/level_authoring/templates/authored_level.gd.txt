@@ -1,0 +1,28 @@
+extends AuthoredLevel2D
+class_name {{CLASS_NAME}}
+
+const BOUNDARY_SEGMENTS := [
+]
+
+const AUTHORING_MARKERS := {
+	"spawn": {
+		"node_name": "{{SPAWN_ID}}",
+		"label": "MAIN ENTRY",
+		"kind": "spawn",
+		"position": Vector2.ZERO,
+	},
+	"return_main": {
+		"node_name": "{{RETURN_SPAWN_ID}}",
+		"label": "RETURN TO MAIN WORLD",
+		"kind": "level_exit",
+		"position": Vector2(96.0, 0.0),
+	},
+}
+
+
+func get_boundary_segments() -> Array:
+	return BOUNDARY_SEGMENTS
+
+
+func get_authoring_markers() -> Dictionary:
+	return AUTHORING_MARKERS

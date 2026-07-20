@@ -163,41 +163,22 @@ const BOUNDARY_SEGMENTS := [
 
 const AUTHORING_MARKERS := {
 	"spawn": {
+		"node_name": "EntrySpawn",
 		"label": "SPAWN",
 		"kind": "spawn",
 		"position": Vector2(-145.1, 686.5),
 	},
 	"return_causeway": {
+		"node_name": "ReturnTopdown",
 		"label": "RETURN CAUSEWAY",
 		"kind": "return_causeway",
 		"position": Vector2(1132.7, -285.5),
 	},
-	"gatehouse_key": {
-		"label": "GATEHOUSE KEY",
-		"kind": "key",
-		"position": Vector2(0.0, -180.0),
-	},
-	"main_gate": {
-		"label": "RAISING GATE",
-		"kind": "gate",
-		"position": Vector2(0.0, -180.0),
-	},
 	"level_exit": {
+		"node_name": "LevelExit",
 		"label": "LEVEL EXIT",
 		"kind": "level_exit",
 		"position": Vector2(1131.7, -287.6),
-	},
-	"enemy_spawn_west": {
-		"label": "ENEMY SPAWN W",
-		"kind": "enemy_spawn",
-		"position": Vector2(0.0, -180.0),
-		"lane": "sundered_keep_west",
-	},
-	"enemy_spawn_gate": {
-		"label": "ENEMY SPAWN GATE",
-		"kind": "enemy_spawn",
-		"position": Vector2(0.0, -180.0),
-		"lane": "sundered_keep_gate",
 	},
 }
 
@@ -840,6 +821,31 @@ func get_authoring_marker_state() -> Dictionary:
 			"runtime_position": runtime_position,
 		}
 	return result
+
+
+func get_boundary_segments() -> Array:
+	return BOUNDARY_SEGMENTS
+
+
+func get_authoring_markers() -> Dictionary:
+	return AUTHORING_MARKERS
+
+
+func get_authoring_marker_schema() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for marker_id: String in AUTHORING_MARKERS.keys():
+		var data := (AUTHORING_MARKERS[marker_id] as Dictionary).duplicate(true)
+		data["id"] = marker_id
+		result.append(data)
+	return result
+
+
+func authoring_to_runtime_point(point: Vector2) -> Vector2:
+	return _route_point(point)
+
+
+func runtime_to_authoring_point(point: Vector2) -> Vector2:
+	return point - Vector2(0.0, ROUTE_VERTICAL_OFFSET)
 
 
 func _clear_children(parent: Node) -> void:
