@@ -156,7 +156,11 @@ func _handle_body_hit(body: Node, impact_position: Vector2, surface_normal: Vect
 	if body == shooter:
 		return false
 	if body.has_method("receive_projectile_hit") and (_is_world_blocker(body) or _can_hit(body)):
-		var result_variant: Variant = body.call("receive_projectile_hit", get_scaled_damage(), team)
+		var result_variant: Variant
+		if body.is_in_group("runtime_wall_chunk"):
+			result_variant = body.call("receive_projectile_hit", get_scaled_damage(), team, impact_position)
+		else:
+			result_variant = body.call("receive_projectile_hit", get_scaled_damage(), team)
 		var was_blocked: bool = _extract_blocked_result(result_variant)
 		_apply_game_feel(body, 0.0)
 		if was_blocked:

@@ -37,10 +37,22 @@ float value_noise(vec2 p) {
 }
 
 
-float fbm(vec2 p) {
+float fbm3(vec2 p) {
 	float value = 0.0;
 	float amplitude = 0.5;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 3; i++) {
+		value += value_noise(p) * amplitude;
+		p = p * 2.03 + vec2(17.1, 9.2);
+		amplitude *= 0.5;
+	}
+	return value;
+}
+
+
+float fbm2(vec2 p) {
+	float value = 0.0;
+	float amplitude = 0.5;
+	for (int i = 0; i < 2; i++) {
 		value += value_noise(p) * amplitude;
 		p = p * 2.03 + vec2(17.1, 9.2);
 		amplitude *= 0.5;
@@ -55,7 +67,7 @@ void fragment() {
 	vec2 world_position = camera_world_position
 		+ (SCREEN_UV - vec2(0.5)) * viewport_size / safe_zoom;
 	vec2 fog_coordinate = (world_position + fog_velocity_world * TIME) / fog_scale_px;
-	float fog_noise = fbm(fog_coordinate);
+	float fog_noise = fbm3(fog_coordinate);
 	float fog_shape = smoothstep(0.46, 0.79, fog_noise);
 	float vertical_weight = mix(0.72, 1.0, smoothstep(0.0, 1.0, SCREEN_UV.y));
 	float resolved_fog = fog_alpha * fog_shape * vertical_weight;
@@ -64,12 +76,15 @@ void fragment() {
 	output_color = mix(output_color, output_color * grade_tint.rgb, grade_mix);
 	output_color = mix(output_color, fog_color.rgb, resolved_fog);
 
-	float cosmic_noise = fbm(
-		world_position / max(64.0, fog_scale_px * 0.48)
-		+ vec2(TIME * 0.011, -TIME * 0.006)
-	);
-	float cosmic_energy = pow(max(0.0, cosmic_noise - 0.73), 3.0)
-		* cosmic_alpha * 4.0;
+	float cosmic_energy = 0.0;
+	if (cosmic_alpha > 0.0001) {
+		float cosmic_noise = fbm2(
+			world_position / max(64.0, fog_scale_px * 0.48)
+			+ vec2(TIME * 0.011, -TIME * 0.006)
+		);
+		cosmic_energy = pow(max(0.0, cosmic_noise - 0.73), 3.0)
+			* cosmic_alpha * 4.0;
+	}
 	output_color += cosmic_tint.rgb * cosmic_energy;
 
 	vec2 centered_uv = SCREEN_UV * 2.0 - 1.0;

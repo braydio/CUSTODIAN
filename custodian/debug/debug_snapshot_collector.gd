@@ -6,6 +6,10 @@ extends Node
 var _elapsed := 0.0
 
 
+func _ready() -> void:
+	set_process(_dev_allows(&"debug_ui"))
+
+
 func _process(delta: float) -> void:
 	var bus := _debug_bus()
 	if bus == null or not bool(bus.get("enabled")):
@@ -165,6 +169,11 @@ func _actor_snapshot(actor: Node2D, group_name: String) -> Dictionary:
 
 func _debug_bus() -> Node:
 	return get_node_or_null("/root/DebugBus")
+
+
+func _dev_allows(capability: StringName) -> bool:
+	var dev_mode := get_node_or_null("/root/DevMode")
+	return dev_mode == null or (dev_mode.has_method("allows") and bool(dev_mode.call("allows", capability)))
 
 
 func _object_has_property(object: Object, property_name: StringName) -> bool:

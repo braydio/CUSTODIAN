@@ -3,10 +3,14 @@ extends SceneTree
 const GRUNT_SCENE := preload("res://game/actors/enemies/enemy_grunt.tscn")
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const PARRY_CONTACT_SPARK_SCENE := preload("res://game/vfx/combat/parry_contact_spark_vfx.tscn")
+const POSTURE_BREAK_FLASH_SCENE := preload("res://game/vfx/combat/posture_break_flash_vfx.tscn")
+const CRITICAL_WINDOW_EXPIRE_SCENE := preload("res://game/vfx/combat/critical_window_expire_vfx.tscn")
 const REQUIRED_ASSETS := [
 	"res://content/sprites/effects/combat/critical/combat_fx__parry_success_hit_spark_01__6f__128.png",
 	"res://content/sprites/effects/combat/critical/combat_fx__breach_alert__8f__96-48.png",
 	"res://content/sprites/effects/combat/critical/combat_fx__breach_timer_reticle__12f__128.png",
+	"res://content/sprites/effects/combat/critical/posture_break_flash_01.png",
+	"res://content/sprites/effects/combat/critical/critical_window_expire_01.png",
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_open_enter_01__s__5f__96.png",
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_open_hold_01__s__4f__96.png",
 	"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__parry_critical_recover_01__s__5f__96.png",
@@ -42,9 +46,9 @@ func _run() -> void:
 		observatory.call("clear")
 	for asset_path in REQUIRED_ASSETS:
 		_assert_true(ResourceLoader.exists(asset_path), "Required asset missing: %s" % asset_path)
-	var enter_final_bounds := _frame_alpha_bounds(REQUIRED_ASSETS[3], 4)
-	var hold_final_bounds := _frame_alpha_bounds(REQUIRED_ASSETS[4], 3)
-	var recover_first_bounds := _frame_alpha_bounds(REQUIRED_ASSETS[5], 0)
+	var enter_final_bounds := _frame_alpha_bounds(REQUIRED_ASSETS[5], 4)
+	var hold_final_bounds := _frame_alpha_bounds(REQUIRED_ASSETS[6], 3)
+	var recover_first_bounds := _frame_alpha_bounds(REQUIRED_ASSETS[7], 0)
 	_assert_true(abs(enter_final_bounds.position.x - hold_final_bounds.position.x) <= 2, "enter-final and hold-final artwork should share the standalone enemy root")
 	_assert_true(abs(hold_final_bounds.position.x - recover_first_bounds.position.x) <= 2, "hold-final and recover-first artwork should not pop laterally")
 	_assert_true(abs(hold_final_bounds.end.y - recover_first_bounds.end.y) <= 2, "hold-final and recover-first planted-foot height should remain continuous")
@@ -60,6 +64,18 @@ func _run() -> void:
 	_assert_true(contact_sprite != null and contact_sprite.sprite_frames.get_frame_count("contact") == 6, "parry contact spark should use six frames")
 	await create_timer(0.35).timeout
 	_assert_true(not is_instance_valid(contact_spark), "parry contact spark should auto-free")
+	var posture_scene_instance := POSTURE_BREAK_FLASH_SCENE.instantiate()
+	root.add_child(posture_scene_instance)
+	var posture_scene_sprite := posture_scene_instance.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	_assert_animation(posture_scene_sprite.sprite_frames, &"flash", 7, 24.0, false)
+	await create_timer(0.35).timeout
+	_assert_true(not is_instance_valid(posture_scene_instance), "posture-break flash should auto-free")
+	var expire_scene_instance := CRITICAL_WINDOW_EXPIRE_SCENE.instantiate()
+	root.add_child(expire_scene_instance)
+	var expire_scene_sprite := expire_scene_instance.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	_assert_animation(expire_scene_sprite.sprite_frames, &"expire", 8, 20.0, false)
+	await create_timer(0.45).timeout
+	_assert_true(not is_instance_valid(expire_scene_instance), "critical-window expiry should auto-free")
 
 	var operator := OPERATOR_SCENE.instantiate()
 	root.add_child(operator)
@@ -82,8 +98,10 @@ func _run() -> void:
 	_assert_true(not fx_sprite.visible, "opening should clear ordinary flinch FX")
 	var marker := grunt.get("_critical_breach_marker_vfx") as Node2D
 	var ring := grunt.get("_critical_window_ring_vfx") as Node2D
+	var posture_flash := grunt.get_node_or_null("PostureBreakFlashVfx") as Node2D
 	_assert_true(marker != null and is_instance_valid(marker), "BREACH marker should persist during enter")
 	_assert_true(ring != null and is_instance_valid(ring), "countdown ring should persist during enter")
+	_assert_true(posture_flash != null and posture_flash.position.is_equal_approx(grunt.grunt_critical_breach_marker_offset), "posture-break flash should spawn at breach-marker offset")
 	_assert_true(bool(grunt.call("suppresses_normal_targeting_presentation")), "enter should suppress the normal target ring")
 
 	var enter_duration := body_sprite.sprite_frames.get_frame_count("critical_open_enter_s") / body_sprite.sprite_frames.get_animation_speed("critical_open_enter_s")
@@ -187,10 +205,12 @@ func _run() -> void:
 	var expiry_duration := float(expiry_grunt.get("_parry_critical_window_timer"))
 	expiry_grunt.call("_update_reaction_timers", expiry_duration + 0.01)
 	await process_frame
+	var expire_effect := expiry_grunt.get_node_or_null("CriticalWindowExpireVfx") as Node2D
 	_assert_true(int(expiry_grunt.get("_parry_critical_phase")) == PHASE_RECOVER, "unused expiry should enter recover")
 	_assert_true(String(expiry_body.animation) == "critical_open_recover_s", "expiry should play critical_open_recover_s")
 	_assert_animation(expiry_body.sprite_frames, "critical_open_recover_s", 5, 10.0, false)
 	_assert_true(not is_instance_valid(expiry_marker) and not is_instance_valid(expiry_ring), "expiry should free both indicators")
+	_assert_true(expire_effect != null and expire_effect.position.is_equal_approx(expiry_grunt.grunt_critical_window_ring_offset), "expiry effect should spawn at countdown-ring offset")
 	_assert_true(expiry_grunt.global_position.is_equal_approx(expiry_standalone_root), "expiry should not move the standalone enemy root")
 	_assert_true(bool(expiry_grunt.call("suppresses_normal_targeting_presentation")), "recover should keep the normal target ring suppressed")
 	operator.set("_combat_target", expiry_grunt)
@@ -202,6 +222,15 @@ func _run() -> void:
 	_assert_true(int(expiry_grunt.get("_parry_critical_phase")) == PHASE_NONE, "recover completion should return to normal behavior")
 	_assert_true(expiry_grunt.global_position.is_equal_approx(expiry_standalone_root), "recover completion should not introduce a lateral root snap")
 	_assert_true(not bool(expiry_grunt.call("suppresses_normal_targeting_presentation")), "normal targeting should resume after recover completes")
+
+	var no_optional_vfx_grunt := GRUNT_SCENE.instantiate()
+	no_optional_vfx_grunt.grunt_optional_critical_vfx_enabled = false
+	root.add_child(no_optional_vfx_grunt)
+	await process_frame
+	no_optional_vfx_grunt.call("_spawn_grunt_critical_open_vfx", 0.5)
+	_assert_true(no_optional_vfx_grunt.get_node_or_null("PostureBreakFlashVfx") == null, "optional VFX toggle should suppress posture-break flash")
+	no_optional_vfx_grunt.call("_clear_grunt_critical_open_vfx", true)
+	_assert_true(no_optional_vfx_grunt.get_node_or_null("CriticalWindowExpireVfx") == null, "optional VFX toggle should suppress expiry effect")
 
 	var cancel_operator := OPERATOR_SCENE.instantiate()
 	cancel_operator.global_position = Vector2(220.0, 0.0)

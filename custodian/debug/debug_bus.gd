@@ -27,10 +27,12 @@ var command_version := 0
 
 
 func _ready() -> void:
-	set_process_input(true)
+	set_process_input(_dev_allows(&"debug_ui"))
 
 
 func _input(event: InputEvent) -> void:
+	if not _dev_allows(&"debug_ui"):
+		return
 	if event is InputEventKey:
 		var key_event := event as InputEventKey
 		if not key_event.pressed or key_event.echo:
@@ -49,6 +51,11 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif key_event.keycode == KEY_F6 or key_event.physical_keycode == KEY_F6:
 			_load_approach_blockout()
+
+
+func _dev_allows(capability: StringName) -> bool:
+	var dev_mode := get_node_or_null("/root/DevMode")
+	return dev_mode == null or (dev_mode.has_method("allows") and bool(dev_mode.call("allows", capability)))
 
 
 func set_stat(category: String, key: String, value: Variant) -> void:

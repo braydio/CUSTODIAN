@@ -15,11 +15,8 @@ const ENEMY_LOOT_CARRIER_SCRIPT := preload("res://game/actors/enemies/components
 const ENEMY_BEHAVIOR_STATE_MACHINE_SCRIPT := preload("res://game/actors/enemies/enemy_behavior_state_machine.gd")
 const CRITICAL_BREACH_MARKER_VFX_SCENE := preload("res://game/vfx/combat/critical_breach_marker_vfx.tscn")
 const CRITICAL_WINDOW_RING_VFX_SCENE := preload("res://game/vfx/combat/critical_window_ring_vfx.tscn")
-const OPTIONAL_POSTURE_BREAK_FLASH_PATH := "res://content/sprites/effects/combat/critical/posture_break_flash_01.png"
-const OPTIONAL_CRITICAL_WINDOW_EXPIRE_PATH := "res://content/sprites/effects/combat/critical/critical_window_expire_01.png"
-
-static var _optional_posture_break_warning_emitted := false
-static var _optional_expire_warning_emitted := false
+const POSTURE_BREAK_FLASH_VFX_SCENE := preload("res://game/vfx/combat/posture_break_flash_vfx.tscn")
+const CRITICAL_WINDOW_EXPIRE_VFX_SCENE := preload("res://game/vfx/combat/critical_window_expire_vfx.tscn")
 const AXUL_DIRECTIONAL_SHEET_PATH := "res://content/sprites/additional-charsets/Small-8-Direction-Characters_by_AxulArt/Small-8-Direction-Characters_by_AxulArt.png"
 const DIRECTIONAL_SUFFIXES := [&"n", &"ne", &"e", &"se", &"s", &"sw", &"w", &"nw"]
 const DIRECTIONAL_ANIMATION_PREFIX := "red_walk"
@@ -1944,6 +1941,11 @@ func set_simulation_tier(tier: String) -> void:
 	if simulation_tier == tier:
 		return
 	simulation_tier = tier
+	if simulation_tier == "dormant":
+		velocity = Vector2.ZERO
+		set_physics_process(false)
+	else:
+		set_physics_process(true)
 	_obs_log(&"enemy_simulation_tier_changed", {
 		"enemy": enemy_name,
 		"position": global_position,
@@ -3707,7 +3709,6 @@ func _clear_grunt_standard_hit_fx() -> void:
 
 func _spawn_grunt_critical_open_vfx(duration: float) -> void:
 	_clear_grunt_critical_open_vfx(false)
-	_warn_for_missing_optional_critical_vfx()
 
 	_critical_breach_marker_vfx = CRITICAL_BREACH_MARKER_VFX_SCENE.instantiate() as Node2D
 	if _critical_breach_marker_vfx == null:
@@ -3727,6 +3728,12 @@ func _spawn_grunt_critical_open_vfx(duration: float) -> void:
 		if _critical_window_ring_vfx.has_method("configure_duration"):
 			_critical_window_ring_vfx.call("configure_duration", duration)
 
+	if grunt_optional_critical_vfx_enabled:
+		var posture_flash := POSTURE_BREAK_FLASH_VFX_SCENE.instantiate() as Node2D
+		if posture_flash != null:
+			posture_flash.position = grunt_critical_breach_marker_offset
+			add_child(posture_flash)
+
 
 func _clear_grunt_critical_open_vfx(expired: bool) -> void:
 	if _critical_breach_marker_vfx != null and is_instance_valid(_critical_breach_marker_vfx):
@@ -3735,19 +3742,11 @@ func _clear_grunt_critical_open_vfx(expired: bool) -> void:
 	if _critical_window_ring_vfx != null and is_instance_valid(_critical_window_ring_vfx):
 		_critical_window_ring_vfx.queue_free()
 	_critical_window_ring_vfx = null
-	if expired and grunt_optional_critical_vfx_enabled and ResourceLoader.exists(OPTIONAL_CRITICAL_WINDOW_EXPIRE_PATH):
-		push_warning("[CombatVfx] Optional critical-window expiry asset exists but has no runtime strip contract yet: %s" % OPTIONAL_CRITICAL_WINDOW_EXPIRE_PATH)
-
-
-func _warn_for_missing_optional_critical_vfx() -> void:
-	if not grunt_optional_critical_vfx_enabled:
-		return
-	if not ResourceLoader.exists(OPTIONAL_POSTURE_BREAK_FLASH_PATH) and not _optional_posture_break_warning_emitted:
-		_optional_posture_break_warning_emitted = true
-		push_warning("[CombatVfx] Optional asset missing: %s - posture-break flash disabled, continuing." % OPTIONAL_POSTURE_BREAK_FLASH_PATH)
-	if not ResourceLoader.exists(OPTIONAL_CRITICAL_WINDOW_EXPIRE_PATH) and not _optional_expire_warning_emitted:
-		_optional_expire_warning_emitted = true
-		push_warning("[CombatVfx] Optional asset missing: %s - critical-window expiry VFX disabled, continuing." % OPTIONAL_CRITICAL_WINDOW_EXPIRE_PATH)
+	if expired and grunt_optional_critical_vfx_enabled:
+		var expire_effect := CRITICAL_WINDOW_EXPIRE_VFX_SCENE.instantiate() as Node2D
+		if expire_effect != null:
+			expire_effect.position = grunt_critical_window_ring_offset
+			add_child(expire_effect)
 
 
 func _on_custom_enemy_fx_finished() -> void:

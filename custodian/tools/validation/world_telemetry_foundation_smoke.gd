@@ -58,6 +58,13 @@ func _init() -> void:
 		failures.append("world history did not record sector entry")
 	if managed.simulation_tier != "active":
 		failures.append("interest manager did not classify nearby node as active")
+	managed.position = Vector2(manager.background_radius + 100.0, 0.0)
+	manager._process(manager.update_interval_sec * 0.5)
+	if managed.simulation_tier != "active":
+		failures.append("interest manager ignored its 5 Hz classification budget")
+	manager._process(manager.update_interval_sec * 0.5)
+	if managed.simulation_tier != "dormant":
+		failures.append("interest manager did not classify after the interval elapsed")
 
 	if not failures.is_empty():
 		for failure in failures:
@@ -67,4 +74,3 @@ func _init() -> void:
 
 	print("world_telemetry_foundation_smoke ok")
 	quit(0)
-

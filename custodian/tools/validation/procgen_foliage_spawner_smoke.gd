@@ -129,6 +129,10 @@ func _run() -> void:
 	_assert_true(int(result.get("placed", 0)) == generated_floor_cells.size(), "generate should place one foliage sprite per valid floor tile")
 	_assert_true(foliage_nodes.size() == generated_floor_cells.size(), "foliage_nodes should track placed sprites")
 	_assert_true(fruit_sprites.size() == generated_floor_cells.size(), "fruit_sprites should track placed fruit")
+	var first_material: Material = ((foliage_nodes[Vector2i(10, 10)] as Dictionary).get("node") as Sprite2D).material
+	var second_material: Material = ((foliage_nodes[Vector2i(11, 10)] as Dictionary).get("node") as Sprite2D).material
+	_assert_true(first_material == second_material, "same-kind foliage should share one ShaderMaterial")
+	_assert_true(spawner.get_shared_materials().size() == 1, "shrub-only smoke should allocate exactly one shared foliage material")
 
 	spawner.remove_at(context, Vector2i(10, 10))
 	_assert_true(not foliage_nodes.has(Vector2i(10, 10)), "remove_at should erase the tile")

@@ -45,13 +45,15 @@ for anim in idle_01 run_01 walk_01; do
     done
 done
 
-# ── Upper body fast_strike_01 from runtime actions ──
-for f in "$RUNTIME_MOD/upper_body/actions/unarmed/fast_attack/fast_strike_01"/*.png; do
-    [ -f "$f" ] || continue
-    link_upper "$f" "$(basename "$f")"
+# ── Upper body fast-attack phases from generated runtime actions ──
+for anim in fast_windup_01 fast_strike_01 fast_recovery_01; do
+    for f in "$RUNTIME_MOD/upper_body/actions/unarmed/fast_attack/$anim"/*.png; do
+        [ -f "$f" ] || continue
+        link_upper "$f" "$(basename "$f")"
+    done
 done
 
-# ── Upper body from source modular (fast_recovery, fast_windup not in runtime yet) ──
+# ── Source fallback for any fast-attack phase missing from generated runtime ──
 for f in "$NEW_OP/modular/fast_attack"/*modular_upper_body*.png; do
     [ -f "$f" ] || continue
     base=$(basename "$f")

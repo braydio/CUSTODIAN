@@ -1,40 +1,35 @@
 # Procgen Runtime Wall Collision Compaction
 
-**Status:** collision authority is live; measurement pass implemented, compaction deferred
+**Status:** chunk-body compaction implemented; rectangle-shape merging deferred
 
 ## Current Runtime
 
-`ProcGenTilemap` currently creates one `StaticBody2D` plus one `CollisionShape2D` for each visible runtime wall tile under `Walls/RuntimeWallCollision`. When `destructible_runtime_walls` is enabled, each body is a `ProcGenRuntimeWallSegment` and retains its exact source tile so projectile damage can call `damage_wall_tile(...)`.
+`ProcGenTilemap` groups visible runtime wall tiles into deterministic streaming-sized chunks. Each chunk owns one `StaticBody2D` (`RuntimeWallChunk`) with per-tile `CollisionShape2D` children and exact tile metadata. The compatibility export `compact_runtime_wall_bodies` can restore legacy one-body-per-tile construction, but compact mode is the default.
 
-The old diagnosis that procgen had no wall collision is retired. Runtime walls are blocking correctly, but dense maps can create hundreds of bodies and shapes.
+Destructible projectile paths pass the impact position to a chunk body. `RuntimeWallChunk` resolves the nearest owned shape, verifies the source tile, and calls `damage_wall_tile(...)` for that tile only. A missing impact position fails closed instead of damaging an arbitrary neighbor.
+
+Streaming reveal creates wall shapes incrementally, suppresses per-tile debug reconstruction, and coalesces overlay, shadow, collision-safety synchronization, and navigation refresh to a bounded interval or queue completion.
 
 ## Measurement Contract
 
-Developer Observatory publishes:
+Developer Observatory publishes generated wall cells, runtime wall bodies, runtime wall shapes, body peaks, map/generation identity, global node/physics/collision peaks, and loaded world/procgen roots. Body count should track occupied chunks, while shape count tracks visible collidable wall cells.
 
-- `procgen_generation_id` / `procgen_generation_count`
-- `procgen_map_width` / `procgen_map_height`
-- `procgen_generated_wall_cells`
-- `procgen_runtime_wall_body_count` / `procgen_runtime_wall_body_peak`
-- `node_count_peak`, `physics_body_count_peak`, and `collision_shape_count_peak`
-- `loaded_world_branch_count` and `loaded_procgen_root_count`
+A representative `96x80` smoke fixture currently produces `585` wall shapes in `28` bodies. This is body compaction, not yet shape compaction.
 
-Compare wall-body count with generated wall cells across regeneration and level handoffs. Proportional stable counts indicate architecture cost; increasing body counts with stable wall cells or multiple loaded procgen roots indicate cleanup/ownership leakage.
+## Authority Constraints
 
-## Compaction Constraint
+- Destroying one tile removes only that tile's visual, generated-wall, collision-shape, and navigation authority.
+- Projectiles must provide exact contact position when hitting a compact destructible wall body.
+- Regeneration and unload must remove empty chunk bodies and must not accumulate stale shapes or roots.
+- Camera/screen visibility is not wall collision authority.
 
-Do not merge wall bodies without preserving per-tile destruction authority. A merged rectangle hit must still resolve the struck tile before applying damage. Acceptable implementations include:
+## Acceptance
 
-1. Horizontal run bodies with one shape per tile and shape-owner-to-tile metadata.
-2. Merged rectangles plus contact-point-to-tile resolution validated against `_generated_wall_cells`.
-3. Non-destructible merged runs only, retaining per-tile segments for destructible walls.
+- `compound_wall_smoke.gd` and `procgen_authored_scene_authority_smoke.gd` pass.
+- `runtime_wall_collision_compaction_smoke.gd` proves bodies are materially fewer than shapes.
+- The compaction smoke destroys the contacted tile and proves a neighboring tile remains a wall with collision.
+- Runtime debug reconstruction occurs only when debug drawing is enabled and never once per reveal tile.
 
-The first optimization target is horizontal run merging, followed by optional vertical merging of identical runs. Rebuild or split only the affected run when wall authority changes.
+## Next Slice
 
-## Acceptance Before Enabling Compaction
-
-- Existing compound wall and authored-scene authority smokes still pass.
-- Projectiles damage the contacted wall tile, not an adjacent tile in the same run.
-- Destroyed walls remove only their intended collision authority.
-- Runtime wall bodies fall materially below generated wall-cell count on representative maps.
-- Regeneration does not increase bodies, shapes, or loaded procgen roots for equivalent map data.
+Merge static contiguous tiles into horizontal/rectangular shapes, retaining individual shapes for destructible cells where exact split/rebuild cost would otherwise be unsafe.

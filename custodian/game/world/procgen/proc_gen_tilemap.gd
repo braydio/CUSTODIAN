@@ -11,6 +11,7 @@ extends Node
 ## Set tile coordinates in inspector, then call generate()
 
 const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_wall_segment.gd")
+const RUNTIME_WALL_CHUNK_SCRIPT := preload("res://game/world/procgen/runtime_wall_chunk.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const TERRAIN_BALLISTICS_SCRIPT := preload("res://game/world/procgen/terrain/terrain_ballistics.gd")
@@ -328,12 +329,14 @@ enum WorldShapeMode {
 @export_group("", "")
 @export var build_runtime_wall_collision: bool = true
 @export var destructible_runtime_walls: bool = true
+@export var compact_runtime_wall_bodies: bool = true
 @export var wall_tile_max_health: float = 42.0
 @export var enable_streaming_reveal: bool = true
 @export_range(4, 32, 1) var streaming_chunk_size_tiles: int = 16
 @export_range(0, 3, 1) var streaming_immediate_chunk_radius: int = 1
 @export_range(1, 4, 1) var streaming_active_chunk_radius: int = 2
 @export_range(1, 256, 1) var streaming_reveal_tiles_per_frame: int = 96
+@export_range(0.05, 0.5, 0.01) var streaming_visual_rebuild_interval_sec: float = 0.15
 @export var streaming_unload_distant_chunks: bool = false
 @export_range(2, 8, 1) var streaming_unload_chunk_distance: int = 4
 
@@ -364,6 +367,8 @@ var _streaming_player: Node2D = null
 var _streaming_current_chunk: Vector2i = Vector2i(999999, 999999)
 var _navigation_rebuild_pending: bool = false
 var _navigation_rebuild_deferred: bool = false
+var _streaming_visual_rebuild_pending: bool = false
+var _streaming_visual_rebuild_accum: float = 0.0
 var shadow_system: Node = null
 
 
@@ -438,6 +443,7 @@ const PATH_PIECE_EXPORT_ROOT := "res://content/tiles/roads_paths/runtime/placeho
 @export var foliage_player_occlusion_radius: float = 80.0
 @export var foliage_player_occlusion_softness: float = 12.0
 @export_range(0.1, 1.0, 0.05) var foliage_player_occlusion_alpha: float = 0.55
+@export_range(4, 24, 1) var foliage_local_z_inspection_radius_tiles: int = 12
 @export_range(1, 8, 1) var foliage_occlusion_max_bubbles: int = 8
 @export var foliage_mob_occlusion_enabled: bool = true
 @export var foliage_mob_occlusion_groups: PackedStringArray = PackedStringArray(["enemy", "ambient_critter", "mob"])
@@ -559,6 +565,7 @@ var _combat_readability_timer: float = 0.0
 var _interior_prop_nodes: Array[Node2D] = []
 var _portal_teleporters: Array[Area2D] = []
 var _foliage_nodes: Dictionary = {}
+var _foliage_locally_inspected_tiles: Dictionary = {}
 var _foliage_textures: Array[Texture2D] = []
 var _pending_foliage_tiles: Array[Vector2i] = []
 var _foliage_spawn_generation: int = 0
@@ -586,6 +593,7 @@ var _ascent_field_vista_cells: Array[Vector2i] = []
 var _world_progress_marker_parent: Node2D = null
 var _debug_generation_id: int = 0
 var _runtime_wall_body_peak: int = 0
+var _runtime_wall_shape_count: int = 0
 var _generation_prop_rejections_protected_zone: int = 0
 var _generation_prop_rejections_stuck_risk: int = 0
 var _generation_prop_rejections_existing_blocker: int = 0
@@ -653,7 +661,7 @@ func _process(delta: float) -> void:
 		_combat_readability_timer = maxf(0.0, _combat_readability_timer - delta)
 
 	if enable_streaming_reveal:
-		_process_streaming_reveal_queue()
+		_process_streaming_reveal_queue(delta)
 
 
 func _process_foliage_spawn_queue() -> void:
@@ -4049,7 +4057,12 @@ func debug_runtime_wall_body_exists(tile: Vector2i) -> bool:
 	if walls_tilemap == null:
 		return false
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
-	return collision_root != null and collision_root.has_node(NodePath(_runtime_wall_body_name(tile)))
+	if collision_root == null:
+		return false
+	if compact_runtime_wall_bodies:
+		var chunk := collision_root.get_node_or_null(NodePath(_runtime_wall_chunk_name(tile)))
+		return chunk != null and chunk.has_method("has_wall_tile") and bool(chunk.call("has_wall_tile", tile))
+	return collision_root.has_node(NodePath(_runtime_wall_body_name(tile)))
 
 
 func debug_get_road_piece_decal_count() -> int:
@@ -4225,8 +4238,10 @@ func _rebuild_runtime_wall_collision(map_size: Vector2i) -> void:
 			var src := walls_tilemap.get_cell_source_id(pos)
 			if src < 0:
 				continue
-			_spawn_runtime_wall_body(pos, false)
-	_rebuild_runtime_wall_collision_debug()
+			_spawn_runtime_wall_body(pos, false, false)
+	_publish_runtime_wall_body_gauges(collision_root)
+	if show_runtime_wall_collision_debug:
+		_rebuild_runtime_wall_collision_debug()
 
 
 func _is_floor_like_tile(pos: Vector2i) -> bool:
@@ -4965,6 +4980,7 @@ func _generate_foliage(map_size: Vector2i) -> void:
 func _clear_foliage() -> void:
 	_ensure_foliage_spawner()
 	_foliage_spawner.clear(_build_foliage_spawner_context())
+	_foliage_locally_inspected_tiles.clear()
 	_foliage_deferred_start_msec = 0
 
 
@@ -6161,6 +6177,7 @@ func _interior_prop_jitter(pos: Vector2i) -> Vector2:
 func _remove_foliage(pos: Vector2i) -> void:
 	_ensure_foliage_spawner()
 	_foliage_spawner.remove_at(_build_foliage_spawner_context(), pos)
+	_foliage_locally_inspected_tiles.erase(pos)
 
 
 func _should_place_foliage(pos: Vector2i) -> bool:
@@ -6381,40 +6398,53 @@ func _update_foliage_occlusion(player: Node2D) -> void:
 	if player == null:
 		return
 	var occluders := _collect_foliage_occluders(player)
-	for pos in _foliage_nodes.keys():
-		var entry = _foliage_nodes.get(pos, null)
-		if not (entry is Dictionary):
-			continue
-		var sprite := entry.get("node", null) as Sprite2D
-		if sprite == null or not is_instance_valid(sprite):
-			continue
-		var base_y := float(entry.get("base_y", sprite.global_position.y))
-		var size := entry.get("size", Vector2.ZERO) as Vector2
-		var top_y := base_y - size.y
-		var player_in_front := false
-		var active_centers: Array[Vector2] = []
-		for occluder in occluders:
-			var upper := occluder.get("upper", Vector2.ZERO) as Vector2
-			var feet := occluder.get("feet", Vector2.ZERO) as Vector2
-			var x_padding := float(occluder.get("x_padding", foliage_player_occlusion_x_padding))
-			var half_width := size.x * 0.5 + x_padding
-			var canopy_contains_upper := (
-				upper.x >= sprite.global_position.x - half_width
-				and upper.x <= sprite.global_position.x + half_width
-				and upper.y >= top_y
-				and upper.y <= base_y
-			)
-			var actor_in_front := feet.y > base_y
-			if bool(occluder.get("is_player", false)):
-				player_in_front = actor_in_front
-			if not actor_in_front and canopy_contains_upper:
-				active_centers.append(upper)
-				if active_centers.size() >= _get_foliage_occlusion_bubble_limit():
-					break
-		sprite.z_index = foliage_behind_z_index if player_in_front else foliage_front_z_index
-		var material := sprite.material as ShaderMaterial
-		if material != null:
+	var active_centers: Array[Vector2] = []
+	for occluder in occluders:
+		active_centers.append(occluder.get("upper", Vector2.ZERO) as Vector2)
+	var updated_materials := 0
+	if _foliage_spawner != null:
+		var shared_materials: Dictionary = _foliage_spawner.get_shared_materials()
+		for material_variant in shared_materials.values():
+			var material := material_variant as ShaderMaterial
+			if material == null:
+				continue
 			_apply_foliage_occlusion_material(material, active_centers)
+			updated_materials += 1
+
+	var player_tile := _global_to_tile(player.global_position)
+	var current_local_tiles: Dictionary = {}
+	var radius := foliage_local_z_inspection_radius_tiles
+	for x in range(player_tile.x - radius, player_tile.x + radius + 1):
+		for y in range(player_tile.y - radius, player_tile.y + radius + 1):
+			var pos := Vector2i(x, y)
+			if not _foliage_nodes.has(pos):
+				continue
+			current_local_tiles[pos] = true
+			_update_local_foliage_z(pos, player)
+	for old_pos in _foliage_locally_inspected_tiles.keys():
+		if current_local_tiles.has(old_pos):
+			continue
+		var old_entry: Variant = _foliage_nodes.get(old_pos, null)
+		if old_entry is Dictionary:
+			var old_sprite := (old_entry as Dictionary).get("node", null) as Sprite2D
+			if old_sprite != null and is_instance_valid(old_sprite):
+				old_sprite.z_index = foliage_behind_z_index
+	_foliage_locally_inspected_tiles = current_local_tiles
+	_obs_gauge(&"foliage_shared_material_count", updated_materials)
+	_obs_gauge(&"foliage_z_order_inspections", current_local_tiles.size())
+
+
+func _update_local_foliage_z(pos: Vector2i, player: Node2D) -> void:
+	var entry = _foliage_nodes.get(pos, null)
+	if not (entry is Dictionary):
+		return
+	var sprite := entry.get("node", null) as Sprite2D
+	if sprite == null or not is_instance_valid(sprite):
+		return
+	var base_y := float(entry.get("base_y", sprite.global_position.y))
+	var player_feet_y := player.global_position.y + foliage_player_feet_offset.y
+	var player_in_front := player_feet_y > base_y
+	sprite.z_index = foliage_behind_z_index if player_in_front else foliage_front_z_index
 
 
 func _collect_foliage_occluders(player: Node2D) -> Array[Dictionary]:
@@ -6570,6 +6600,8 @@ func _prepare_streaming_reveal() -> void:
 	_streaming_current_chunk = Vector2i(999999, 999999)
 	_navigation_rebuild_pending = false
 	_navigation_rebuild_deferred = false
+	_streaming_visual_rebuild_pending = false
+	_streaming_visual_rebuild_accum = 0.0
 	_clear_foliage()
 	_clear_ruin_props()
 	_clear_horizontal_wall_overlays()
@@ -6598,6 +6630,8 @@ func _prime_streaming_chunks(center_tile: Vector2i) -> void:
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
 	_refresh_navigation_after_wall_change()
+	_streaming_visual_rebuild_pending = false
+	_streaming_visual_rebuild_accum = 0.0
 
 
 func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> void:
@@ -6614,11 +6648,11 @@ func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> 
 					_unload_chunk(chunk_pos)
 					unloaded_any = true
 	if unloaded_any:
-		_refresh_navigation_after_wall_change()
+		_flush_streaming_visual_rebuilds()
 
 
-func _process_streaming_reveal_queue() -> void:
-	if _streaming_reveal_queue.is_empty():
+func _process_streaming_reveal_queue(delta: float = 0.0) -> void:
+	if _streaming_reveal_queue.is_empty() and not _streaming_visual_rebuild_pending:
 		return
 	var remaining := streaming_reveal_tiles_per_frame
 	var revealed_any := false
@@ -6628,13 +6662,24 @@ func _process_streaming_reveal_queue() -> void:
 		revealed_any = true
 		remaining -= 1
 	if revealed_any:
-		_sync_runtime_wall_collision_with_visible_walls()
-		_rebuild_horizontal_wall_overlays()
-		_refresh_shadows()
-		if _streaming_reveal_queue.is_empty() or _navigation_rebuild_pending:
-			if _streaming_reveal_queue.is_empty():
-				validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
-			_refresh_navigation_after_wall_change()
+		_streaming_visual_rebuild_pending = true
+		_streaming_visual_rebuild_accum += maxf(0.0, delta)
+	if _streaming_reveal_queue.is_empty():
+		validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
+		_flush_streaming_visual_rebuilds()
+	elif _streaming_visual_rebuild_accum >= streaming_visual_rebuild_interval_sec:
+		_flush_streaming_visual_rebuilds()
+
+
+func _flush_streaming_visual_rebuilds() -> void:
+	if not _streaming_visual_rebuild_pending:
+		return
+	_streaming_visual_rebuild_pending = false
+	_streaming_visual_rebuild_accum = 0.0
+	_sync_runtime_wall_collision_with_visible_walls()
+	_rebuild_horizontal_wall_overlays()
+	_refresh_shadows()
+	_refresh_navigation_after_wall_change()
 
 
 func _queue_chunk_for_reveal(chunk_pos: Vector2i, center_tile: Vector2i) -> void:
@@ -6710,11 +6755,9 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 			walls_tilemap.erase_cell(tile)
 			_remove_foliage(tile)
 			_remove_road_piece_decal(tile)
-			_remove_runtime_wall_body(tile)
+			_remove_runtime_wall_body(tile, false, false)
 	_revealed_chunks.erase(chunk_pos)
-	_sync_runtime_wall_collision_with_visible_walls()
-	_rebuild_horizontal_wall_overlays()
-	_refresh_shadows()
+	_streaming_visual_rebuild_pending = true
 
 
 func _reveal_tile(tile: Vector2i) -> void:
@@ -6729,10 +6772,10 @@ func _reveal_tile(tile: Vector2i) -> void:
 		walls_tilemap.set_cell(tile, int(wall_data.get("source_id", walls_source_id)), wall_data.get("atlas", wall_atlas_coord), int(wall_data.get("alternative", 0)))
 		_remove_foliage(tile)
 		if build_runtime_wall_collision:
-			_spawn_runtime_wall_body(tile)
+			_spawn_runtime_wall_body(tile, false, false)
 
 
-func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true) -> void:
+func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true, publish_gauges: bool = true) -> void:
 	if collision_only_on_new_ruined_wall_tiles and not _tile_uses_new_ruined_wall_treatment(tile):
 		return
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
@@ -6740,12 +6783,32 @@ func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true) -> voi
 		collision_root = Node2D.new()
 		collision_root.name = "RuntimeWallCollision"
 		walls_tilemap.add_child(collision_root)
-	var node_name := _runtime_wall_body_name(tile)
-	if collision_root.has_node(NodePath(node_name)):
-		return
 	var tile_size: Vector2 = Vector2(16, 16)
 	if walls_tilemap.tile_set != null:
 		tile_size = Vector2(walls_tilemap.tile_set.tile_size)
+	var collision_profile := _get_runtime_wall_collision_profile(tile, tile_size)
+	var collision_size: Vector2 = collision_profile.get("size", Vector2(tile_size.x, tile_size.y))
+	var collision_offset: Vector2 = collision_profile.get("offset", Vector2.ZERO)
+	if compact_runtime_wall_bodies:
+		var chunk_name := _runtime_wall_chunk_name(tile)
+		var chunk := collision_root.get_node_or_null(NodePath(chunk_name))
+		if chunk == null:
+			chunk = RUNTIME_WALL_CHUNK_SCRIPT.new()
+			chunk.name = chunk_name
+			chunk.call("setup", self, _runtime_wall_chunk_position(tile), destructible_runtime_walls)
+			collision_root.add_child(chunk)
+		if bool(chunk.call("has_wall_tile", tile)):
+			return
+		chunk.call("add_wall_tile", tile, walls_tilemap.map_to_local(tile) + collision_offset, collision_size)
+		_runtime_wall_shape_count += 1
+		if publish_gauges:
+			_publish_runtime_wall_body_gauges(collision_root)
+		if refresh_debug and show_runtime_wall_collision_debug:
+			_rebuild_runtime_wall_collision_debug()
+		return
+	var node_name := _runtime_wall_body_name(tile)
+	if collision_root.has_node(NodePath(node_name)):
+		return
 	var body: StaticBody2D
 	if destructible_runtime_walls:
 		var segment := RUNTIME_WALL_SEGMENT_SCRIPT.new()
@@ -6757,33 +6820,61 @@ func _spawn_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true) -> voi
 	body.position = walls_tilemap.map_to_local(tile)
 	var shape := CollisionShape2D.new()
 	var rect := RectangleShape2D.new()
-	var collision_profile := _get_runtime_wall_collision_profile(tile, tile_size)
-	var collision_size: Vector2 = collision_profile.get("size", Vector2(tile_size.x, tile_size.y))
-	shape.position = collision_profile.get("offset", Vector2.ZERO)
+	shape.position = collision_offset
 	rect.size = collision_size
 	shape.shape = rect
 	body.add_child(shape)
 	collision_root.add_child(body)
-	_publish_runtime_wall_body_gauges(collision_root)
-	if refresh_debug:
+	_runtime_wall_shape_count += 1
+	if publish_gauges:
+		_publish_runtime_wall_body_gauges(collision_root)
+	if refresh_debug and show_runtime_wall_collision_debug:
 		_rebuild_runtime_wall_collision_debug()
 
 
-func _remove_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true) -> void:
+func _remove_runtime_wall_body(tile: Vector2i, refresh_debug: bool = true, publish_gauges: bool = true) -> void:
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
 	if collision_root == null:
+		return
+	if compact_runtime_wall_bodies:
+		var chunk := collision_root.get_node_or_null(NodePath(_runtime_wall_chunk_name(tile)))
+		if chunk != null and chunk.has_method("remove_wall_tile") and bool(chunk.call("has_wall_tile", tile)):
+			chunk.call("remove_wall_tile", tile)
+			_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
+			if bool(chunk.call("is_empty")):
+				collision_root.remove_child(chunk)
+				chunk.queue_free()
+			if publish_gauges:
+				_publish_runtime_wall_body_gauges(collision_root)
+		if refresh_debug and show_runtime_wall_collision_debug:
+			_rebuild_runtime_wall_collision_debug()
 		return
 	var body := collision_root.get_node_or_null(NodePath(_runtime_wall_body_name(tile)))
 	if body != null:
 		collision_root.remove_child(body)
 		body.queue_free()
-		_publish_runtime_wall_body_gauges(collision_root)
-	if refresh_debug:
+		_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
+		if publish_gauges:
+			_publish_runtime_wall_body_gauges(collision_root)
+	if refresh_debug and show_runtime_wall_collision_debug:
 		_rebuild_runtime_wall_collision_debug()
 
 
 func _runtime_wall_body_name(tile: Vector2i) -> String:
 	return "Wall_%d_%d" % [tile.x, tile.y]
+
+
+func _runtime_wall_chunk_position(tile: Vector2i) -> Vector2i:
+	var chunk_size := maxi(1, streaming_chunk_size_tiles)
+	return Vector2i(
+		floori(float(tile.x) / float(chunk_size)),
+		floori(float(tile.y) / float(chunk_size))
+	)
+
+
+func _runtime_wall_chunk_name(tile: Vector2i) -> String:
+	var chunk := _runtime_wall_chunk_position(tile)
+	return "Chunk_%d_%d" % [chunk.x, chunk.y]
 
 
 func _publish_generation_complexity_gauges() -> void:
@@ -6808,10 +6899,12 @@ func _publish_runtime_wall_body_gauges(collision_root: Node) -> void:
 	_runtime_wall_body_peak = maxi(_runtime_wall_body_peak, runtime_wall_count)
 	_obs_gauge(&"procgen_generated_wall_cells", _generated_wall_cells.size())
 	_obs_gauge(&"procgen_runtime_wall_body_count", runtime_wall_count)
+	_obs_gauge(&"procgen_runtime_wall_shape_count", _runtime_wall_shape_count)
 	_obs_gauge(&"procgen_runtime_wall_body_peak", _runtime_wall_body_peak)
 
 
 func _clear_runtime_wall_collision() -> void:
+	_runtime_wall_shape_count = 0
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
 	if collision_root == null:
 		return
@@ -6834,14 +6927,26 @@ func _sync_runtime_wall_collision_with_visible_walls() -> void:
 	for tile in walls_tilemap.get_used_cells():
 		if walls_tilemap.get_cell_source_id(tile) >= 0:
 			visible_wall_tiles[tile] = true
-			_spawn_runtime_wall_body(tile, false)
+			_spawn_runtime_wall_body(tile, false, false)
 
 	for child in collision_root.get_children():
+		if compact_runtime_wall_bodies and child.has_method("get_wall_tiles"):
+			for tile in child.call("get_wall_tiles"):
+				if not visible_wall_tiles.has(tile):
+					child.call("remove_wall_tile", tile)
+					_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
+			if bool(child.call("is_empty")):
+				collision_root.remove_child(child)
+				child.queue_free()
+			continue
 		var tile := _wall_tile_from_runtime_body_name(String(child.name))
 		if tile == Vector2i(999999, 999999) or not visible_wall_tiles.has(tile):
 			collision_root.remove_child(child)
 			child.queue_free()
-	_rebuild_runtime_wall_collision_debug()
+			_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
+	_publish_runtime_wall_body_gauges(collision_root)
+	if show_runtime_wall_collision_debug:
+		_rebuild_runtime_wall_collision_debug()
 
 
 func _wall_tile_from_runtime_body_name(body_name: String) -> Vector2i:
@@ -6884,27 +6989,23 @@ func _rebuild_runtime_wall_collision_debug() -> void:
 		var body := child as StaticBody2D
 		if body == null:
 			continue
-		var shape := body.get_node_or_null("CollisionShape2D") as CollisionShape2D
-		if shape == null:
-			for grandchild in body.get_children():
-				if grandchild is CollisionShape2D:
-					shape = grandchild as CollisionShape2D
-					break
-		if shape == null:
-			continue
-		var rectangle := shape.shape as RectangleShape2D
-		if rectangle == null:
-			continue
-		var poly := Polygon2D.new()
-		poly.color = Color(1.0, 0.1, 0.1, 0.24)
-		poly.position = body.position + shape.position
-		poly.polygon = PackedVector2Array([
-			Vector2(-rectangle.size.x * 0.5, -rectangle.size.y * 0.5),
-			Vector2(rectangle.size.x * 0.5, -rectangle.size.y * 0.5),
-			Vector2(rectangle.size.x * 0.5, rectangle.size.y * 0.5),
-			Vector2(-rectangle.size.x * 0.5, rectangle.size.y * 0.5),
-		])
-		debug_root.add_child(poly)
+		for shape_variant in body.get_children():
+			var shape := shape_variant as CollisionShape2D
+			if shape == null:
+				continue
+			var rectangle := shape.shape as RectangleShape2D
+			if rectangle == null:
+				continue
+			var poly := Polygon2D.new()
+			poly.color = Color(1.0, 0.1, 0.1, 0.24)
+			poly.position = body.position + shape.position
+			poly.polygon = PackedVector2Array([
+				Vector2(-rectangle.size.x * 0.5, -rectangle.size.y * 0.5),
+				Vector2(rectangle.size.x * 0.5, -rectangle.size.y * 0.5),
+				Vector2(rectangle.size.x * 0.5, rectangle.size.y * 0.5),
+				Vector2(-rectangle.size.x * 0.5, rectangle.size.y * 0.5),
+			])
+			debug_root.add_child(poly)
 
 
 func _should_use_horizontal_wall_overlay_collision(tile: Vector2i) -> bool:

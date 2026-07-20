@@ -155,11 +155,12 @@ godot --headless --path . --script res://tools/validation/dev_observatory_audit_
 godot --headless --path . --script res://tools/validation/dev_observatory_director_population_smoke.gd
 godot --headless --path . --script res://tools/validation/operator_ammo_reconciliation_smoke.gd
 godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
+godot --headless --path . --script res://tools/validation/dev_mode_smoke.gd
 ```
 
 This proves bounded telemetry storage, F9/F10 action registration, stable and timestamped JSON output, JSON-safe Variant
 conversion, event-buffer retention, success-event logging, failure-warning routing, numeric accumulation, and basic heatmap accumulation.
-The audit smoke additionally reconciles a shared enemy attack ID through incoming-hit/player-damage events, proves a
+The audit smoke additionally proves hidden Observatory processing performs no recursive runtime scans, visible sampling performs one consolidated scan, export forces a current snapshot, reconciles a shared enemy attack ID through incoming-hit/player-damage events, proves a
 live bullet owns a projectile-classified collision shape, and checks cumulative damage/healing/chip amounts, ranged
 failure/cancellation categories, performance/leak peaks, last-live post-death context, Field Patch prompt
 severity/ignored-on-death accounting, and the structured player-death snapshot. The Falcon and paired-critical smokes
@@ -168,6 +169,21 @@ procgen stuck-pocket smoke checks structured remediation warning context. The am
 swap. The dodge smoke classifies 20 deliberate overlaps one-for-one across iframe, late-active, and recovery phases.
 The director-population smoke deliberately enables two profile-managed enemies beside one legacy enemy and reconciles
 the split population gauges plus the director behavior-sample surface.
+The DevMode smoke proves release-default-off, debug/feature/project/command-line resolution, explicit-only heavy diagnostics, negative overrides, and load order before debug consumers.
+
+For modular visual-fit next-action reporting:
+
+```bash
+python3 -m py_compile tools/modular_combo_check.py tools/operator_next_actions_report.py
+python3 custodian/tools/validation/operator_next_actions_report_smoke.py
+bash tools/refresh_combo_check_src.sh
+python3 tools/modular_combo_check.py \
+  --src /tmp/custodian_combo_check_src \
+  --check-dir .ai/operator_modular_combo_check \
+  --fit-report-only --fit-debug --next-actions
+```
+
+The smoke validates the versioned generated-artifact schema, contract-group join, fast-attack phase grouping, canonical/actionable source and runtime paths, commands, acceptance criteria, Markdown, and HTML loader. The report-only command proves existing previews can gain refreshed fit evidence and recommendations without rebuilding PNG/GIF outputs.
 
 For the local exported-session report tool, run from the repository root:
 
@@ -196,7 +212,7 @@ godot --headless --path . --script res://tools/validation/operator_knockdown_ani
 
 The Falcon smoke validates stop-short travel, body/enemy separation, dedicated Operator impact, zero-drift recovery,
 hard parry cancel/lockout, deterministic eligibility, ally-lane rejection, terminal diagnostic fields, and seven stationary
-connection samples at each of 96, 136, and 176 pixels. The focused reaction smoke validates required S/E/W asset dimensions, independent post-knockback roots through enter/hold/recover, normal target-ring suppression through recovery, BREACH/ring lifetime, atomic reservation, approach-owned directional selection with vertical-to-south fallback, zero-offset shared execution roots, zero-local paired layers plus transform restoration, same-tick semantic playback through the nonuniform eight-frame duration table, source-frame-5 exactly-once damage, the 110ms paired contact freeze, final-settle ownership, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Required paired/open assets fail loudly; only optional posture-break and expiry presentation may warn without failing.
+connection samples at each of 96, 136, and 176 pixels. The focused reaction smoke validates required S/E/W asset dimensions, independent post-knockback roots through enter/hold/recover, normal target-ring suppression through recovery, BREACH/ring lifetime, posture-break/expiry frame timing, offsets, auto-free, and toggle suppression, atomic reservation, approach-owned directional selection with vertical-to-south fallback, zero-offset shared execution roots, zero-local paired layers plus transform restoration, same-tick semantic playback through the nonuniform eight-frame duration table, source-frame-5 exactly-once damage, the 110ms paired contact freeze, final-settle ownership, lethal/nonlethal resolution, and cancellation cleanup. The debug-spawn smoke validates each critical-open/execution-ready preset, opportunity presentation, one-health lethal setup, and unknown-mode rejection. Paired/open and optional-bookend runtime scenes are preloaded and fail loudly if their scene or strip contract is missing; the optional toggle controls playback rather than resource availability.
 
 For Sundered Keep asset wiring specifically:
 
@@ -367,7 +383,7 @@ godot --headless --path . --script res://tools/validation/prop_collision_alignme
 godot --headless --path . --script res://tools/validation/procgen_stuck_pocket_smoke.gd
 ```
 
-The first command validates the extracted foliage service's deterministic generate/remove/clear lifecycle. The second
+The first command validates the extracted foliage service's deterministic generate/remove/clear lifecycle and shared same-kind material ownership. The second
 checks that final-visual foliage queues batch into placed nodes over subsequent frames. The third validates combat-aware
 canopy occlusion profile switching and readability clearance hooks. The fourth audits every ruin prop definition against
 the bottom-contact collision contract and verifies per-instance collision debug. The fifth proves collision-owner blocker
@@ -375,6 +391,19 @@ lifecycle, definition-footprint rejection before instantiation, existing-blocker
 prop-footprint registration, local escape detection/remediation, and required-route clearance without relying on a full
 contract generation. Run `procgen_authored_scene_authority_smoke.gd` after placement-policy changes to confirm a full
 seed produces no protected-zone backup warnings after portal routes are finalized.
+
+For compact runtime-wall collision ownership:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/runtime_wall_collision_compaction_smoke.gd
+godot --headless --path . --script res://tools/validation/compound_wall_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_authored_scene_authority_smoke.gd
+```
+
+The compaction smoke proves a representative generated map owns materially fewer chunk bodies than per-tile shapes,
+then destroys one wall through impact-position resolution and verifies an adjacent wall retains visual and collision
+authority. The existing smokes guard tile-scoped destruction and authored footprint clearing.
 
 ## Manual Godot Validation
 

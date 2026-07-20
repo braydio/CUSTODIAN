@@ -8,6 +8,9 @@ var _active_tab := "World"
 
 
 func _ready() -> void:
+	if not _dev_allows(&"debug_ui"):
+		set_process(false)
+		return
 	_try_connect_imgui()
 
 
@@ -26,6 +29,11 @@ func _try_connect_imgui() -> void:
 		imgui.imgui_layout.connect(_on_imgui_layout)
 	_layout_connected = true
 	_imgui_available = true
+
+
+func _dev_allows(capability: StringName) -> bool:
+	var dev_mode := get_node_or_null("/root/DevMode")
+	return dev_mode == null or (dev_mode.has_method("allows") and bool(dev_mode.call("allows", capability)))
 
 
 func _on_imgui_layout() -> void:

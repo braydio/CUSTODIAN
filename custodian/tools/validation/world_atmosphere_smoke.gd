@@ -48,6 +48,10 @@ func _run() -> void:
 	var atmosphere_material := atmosphere.get_atmosphere_material()
 	assert(atmosphere_material != null, "PostProcess did not retain a ShaderMaterial.")
 	var atmosphere_uniforms := _uniform_names(atmosphere_material.shader)
+	var atmosphere_shader_code := atmosphere_material.shader.code
+	assert(atmosphere_shader_code.contains("float fbm3"), "Atmosphere fog should use the reduced three-octave FBM path.")
+	assert(atmosphere_shader_code.contains("float fbm2"), "Atmosphere cosmic variation should use the reduced two-octave FBM path.")
+	assert(atmosphere_shader_code.contains("if (cosmic_alpha > 0.0001)"), "Disabled cosmic atmosphere must skip its FBM path.")
 	for uniform_name in [
 		"viewport_size",
 		"camera_world_position",
@@ -111,6 +115,7 @@ func _run() -> void:
 	var expected_wind_strength := 1.35 if foliage_kind == "tree" else 0.70
 	assert(is_equal_approx(float(foliage_material.get_shader_parameter("wind_strength_px")), expected_wind_strength))
 	assert(is_equal_approx(float(foliage_material.get_shader_parameter("gust_amount")), 0.42))
+	assert(is_zero_approx(float(foliage_material.get_shader_parameter("wind_phase"))), "Shared foliage material should rely on shader world-space phase.")
 
 	var live_game := GAME_SCENE.instantiate()
 	var live_atmosphere := live_game.get_node_or_null("WorldAtmosphere2D") as CanvasLayer

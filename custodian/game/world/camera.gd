@@ -83,6 +83,7 @@ class_name CameraController
 @export var threat_scan_radius: float = 560.0
 @export var threat_offset_strength: float = 26.0
 @export var threat_offset_damping: float = 0.10
+@export_range(0.05, 0.5, 0.01) var threat_scan_interval_sec: float = 0.10
 
 # Map Bounds
 @export_group("Map")
@@ -148,6 +149,8 @@ var _push_decay: float = 10.0
 
 # Threat Framing
 var _threat_offset: Vector2 = Vector2.ZERO
+var _threat_target_offset: Vector2 = Vector2.ZERO
+var _threat_scan_accum: float = 0.0
 
 # Transient State Lock
 var _state_hold_remaining: float = 0.0
@@ -424,11 +427,22 @@ func _update_bob(delta: float):
 func _update_threat_offset(delta: float):
 	var target := _get_follow_target()
 	if not threat_framing_enabled or target == null or current_state == CameraState.IDLE:
+		_threat_target_offset = Vector2.ZERO
+		_threat_scan_accum = 0.0
 		_threat_offset = _threat_offset.lerp(Vector2.ZERO, threat_offset_damping)
 		return
+	_threat_scan_accum += maxf(0.0, delta)
+	if _threat_scan_accum >= threat_scan_interval_sec:
+		_threat_scan_accum = 0.0
+		_threat_target_offset = _calculate_threat_target_offset(target)
+	_threat_offset = _threat_offset.lerp(_threat_target_offset, threat_offset_damping)
+
+
+func _calculate_threat_target_offset(target: Node2D) -> Vector2:
 
 	var threat_center := Vector2.ZERO
 	var threat_count := 0
+	var radius_squared := threat_scan_radius * threat_scan_radius
 	for enemy in get_tree().get_nodes_in_group("enemy"):
 		if not (enemy is Node2D):
 			continue
@@ -438,7 +452,7 @@ func _update_threat_offset(delta: float):
 			continue
 		var enemy_node := enemy as Node2D
 		var to_enemy := enemy_node.global_position - target.global_position
-		if to_enemy.length() > threat_scan_radius:
+		if to_enemy.length_squared() > radius_squared:
 			continue
 		threat_center += enemy_node.global_position
 		threat_count += 1
@@ -450,7 +464,7 @@ func _update_threat_offset(delta: float):
 		if bias.length_squared() > 0.001:
 			target_offset = bias.normalized() * min(threat_offset_strength, bias.length() * 0.20)
 
-	_threat_offset = _threat_offset.lerp(target_offset, threat_offset_damping)
+	return target_offset
 
 
 func _update_shake(delta: float):
@@ -694,6 +708,8 @@ func snap_to_player_spawn(spawn_position: Vector2) -> void:
 	_current_bob = 0.0
 	_target_bob = 0.0
 	_threat_offset = Vector2.ZERO
+	_threat_target_offset = Vector2.ZERO
+	_threat_scan_accum = 0.0
 	_push_offset = Vector2.ZERO
 	_shake_offset = Vector2.ZERO
 	_ranged_aim_camera_active = false
@@ -843,6 +859,8 @@ func set_follow_target(target: Node2D) -> void:
 	_velocity = Vector2.ZERO
 	_lookahead = Vector2.ZERO
 	_threat_offset = Vector2.ZERO
+	_threat_target_offset = Vector2.ZERO
+	_threat_scan_accum = 0.0
 
 
 func _get_follow_target() -> Node2D:

@@ -80,7 +80,7 @@ What it does:
 - Reports missing expected files, wrong-folder matches, malformed names, unexpected Operator PNGs, and dimension mismatches.
 - Can write JSON with `--json-out` and Markdown with `--md-out`.
 
-Current audit result from 2026-06-18:
+Historical sample from 2026-06-18 (not current repository state; rerun the command for live counts):
 
 - `expected_files`: 104
 - `found_operator_pngs`: 180
@@ -105,14 +105,43 @@ bash tools/refresh_combo_check_src.sh
 python3 tools/modular_combo_check.py --src /tmp/custodian_combo_check_src --check-dir .ai/operator_modular_combo_check --clean --fit-debug
 ```
 
+For a ranked “what should I fix next?” report joined to the production contract:
+
+```bash
+bash tools/refresh_combo_check_src.sh
+python3 tools/modular_combo_check.py \
+  --src /tmp/custodian_combo_check_src \
+  --check-dir .ai/operator_modular_combo_check \
+  --clean \
+  --fit-debug \
+  --fit-gap-threshold 3 \
+  --fit-center-threshold 5 \
+  --chain fast_windup_01,fast_strike_01,fast_recovery_01 \
+  --next-actions \
+  --next-actions-max 20
+```
+
+To refresh fit evidence and recommendations without regenerating preview PNGs/GIFs:
+
+```bash
+python3 tools/modular_combo_check.py \
+  --src /tmp/custodian_combo_check_src \
+  --check-dir .ai/operator_modular_combo_check \
+  --fit-report-only \
+  --fit-debug \
+  --next-actions
+```
+
 What it does:
 
 - `refresh_combo_check_src.sh` rebuilds `/tmp/custodian_combo_check_src` as a symlink workspace with `lower/` and `upper/` folders.
 - `modular_combo_check.py` combines upper and lower modular sheets for visual review.
 - Locomotion upper sheets pair with matching lower locomotion; action upper sheets fan out across lower locomotion domains.
 - With `--fit-debug`, it reports alpha bounding-box edge gaps and horizontal center deltas.
+- With `--next-actions`, it invokes `tools/operator_next_actions_report.py`, joins fit evidence to `operator_modular_core.json` plus the production coverage reporter, and writes `reports/next_actions.json` and `reports/NEXT_ACTIONS.md` before embedding the top recommendations in `index.html`.
+- Pair and chain records retain resolved canonical source paths rather than temporary symlink/workspace paths.
 
-Current audit result from 2026-06-18:
+Historical sample from 2026-06-18 (not current repository state; rerun the command for live counts):
 
 - Refresh source produced `48 lower + 48 upper = 96 total`.
 - Combo check produced `96` reviews at `.ai/operator_modular_combo_check/index.html`.
@@ -124,6 +153,7 @@ How to interpret it:
 - Use this when the ask is "show me upper/lower combinations," "does this modular action fit on locomotion?", or "generate review GIFs for art fit."
 - The script expects a source directory with literal `lower/` and `upper/` children. Do not point it directly at the canonical modular root unless you first build that shape with `refresh_combo_check_src.sh`.
 - Fit-debug is a visual triage signal, not gameplay authority. Confirm important results by opening the generated review page.
+- The next-actions report is generated evidence, not project authority. Contract group membership/required status comes from `operator_modular_core.json`; change that contract rather than hard-coding new priorities into the preview script.
 
 ### Body And FX Pair Review
 
@@ -143,7 +173,7 @@ What it does:
 - Supports offset controls and `--strict` if missing pairs should fail the run.
 - Supports `--fit-debug`, `--fit-verbose`, and `--fit-gap-threshold`, matching the alpha-bounding-box gap/center analysis from `modular_combo_check.py`.
 
-Current audit result from 2026-06-18 after adding fit-debug:
+Historical sample from 2026-06-18 after adding fit-debug (not current repository state; rerun for live counts):
 
 - Produced `39` pair reviews at `.ai/modular_body_pair_review_fast_attack/index.html`.
 - Reported incomplete pairs for the malformed `operator__PART__unarmed__fast_windup_01__w__3f__9\t.png` key and several upper-only `run_01` files.
@@ -163,7 +193,7 @@ Use only for legacy flat sheet exports shaped like `*upper*__sheet.png` and `*lo
 python3 tools/review_modular_flat_png_pairs.py --root <flat-sheet-root> --out .ai/modular_flat_png_pair_review
 ```
 
-Current audit result from 2026-06-18:
+Historical sample from 2026-06-18 (not current repository state; rerun for live counts):
 
 - Running against `assets_review` produced `0` pair reviews.
 - Repo-wide scan found no obvious current modular Operator inputs ending in the script's expected `__sheet.png` pattern.

@@ -118,8 +118,12 @@ Enemy grunt art uses the repository's actual `melee__` naming (not `unarmed__`):
 | `operator_critical_execution_fx_s` | `custodian/content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png` | 8 × 96×96 / 768×96 | 12 | no |
 | `operator_critical_execution_fx_e` | `custodian/content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__12f__96.png` | 12 × 96×96 / 1152×96 | 12 | no |
 | `operator_critical_execution_fx_w` | `custodian/content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__12f__96.png` | 12 × 96×96 / 1152×96 | 12 | no |
+| `posture_break_flash` | `custodian/content/sprites/effects/combat/critical/posture_break_flash_01.png` | 7 × 128×128 / 896×128 | 24 | no |
+| `critical_window_expire` | `custodian/content/sprites/effects/combat/critical/critical_window_expire_01.png` | 8 × 128×128 / 1024×128 | 20 | no |
 
 `crit_s`, `operator_critical_1h_right/left`, and `operator_critical_hitspark_right/left` remain compatibility aliases for unrelated callers; paired execution uses semantic names. The combined source-only master belongs at `custodian/content/sprites/operator/new_operator/source/critical/operator_enemy_grunt__paired__critical_execution_01__s__8f__128.aseprite` and is never bound to runtime `SpriteFrames`.
+
+Optional posture-break flash spawns at the enemy breach-marker offset when critical-open begins. Optional critical-window expiry spawns at the countdown-ring offset when the opportunity expires unconsumed. Both are one-shot `queue_free`-on-finish scenes gated by `grunt_optional_critical_vfx_enabled`.
 
 ## Validation
 

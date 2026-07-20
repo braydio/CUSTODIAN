@@ -4,6 +4,8 @@ class_name ProcgenFoliageSpawner
 const FOLIAGE_OCCLUSION_SHADER := preload("res://game/world/procgen/foliage_life.gdshader")
 const FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES := 8
 
+var _shared_materials: Dictionary = {}
+
 
 func generate(context: Dictionary) -> Dictionary:
 	var started := Time.get_ticks_msec()
@@ -67,6 +69,11 @@ func clear(context: Dictionary) -> void:
 
 	var pending_foliage_tiles: Array = context.get("pending_foliage_tiles", [])
 	pending_foliage_tiles.clear()
+	_shared_materials.clear()
+
+
+func get_shared_materials() -> Dictionary:
+	return _shared_materials
 
 
 func remove_at(context: Dictionary, pos: Vector2i) -> void:
@@ -218,25 +225,7 @@ func _place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 	sprite.position = foliage_parent.to_local(world_pos)
 	sprite.z_index = int(context.get("foliage_behind_z_index", 1))
 	sprite.z_as_relative = false
-	var material := ShaderMaterial.new()
-	material.shader = FOLIAGE_OCCLUSION_SHADER
-	material.set_shader_parameter("bubble_radius", float(context.get("foliage_player_occlusion_radius", 80.0)))
-	material.set_shader_parameter("bubble_softness", float(context.get("foliage_player_occlusion_softness", 12.0)))
-	material.set_shader_parameter("bubble_alpha", float(context.get("foliage_player_occlusion_alpha", 0.55)))
-	material.set_shader_parameter("bubble_enabled", false)
-	material.set_shader_parameter("bubble_count", 0)
-	var phase_hash := _tile_noise_hash(context, pos + Vector2i(431, 977))
-	material.set_shader_parameter("wind_enabled", bool(context.get("foliage_wind_enabled", true)))
-	material.set_shader_parameter("wind_speed", float(context.get("foliage_wind_speed", 0.9)))
-	material.set_shader_parameter("gust_amount", float(context.get("foliage_wind_gust_amount", 0.42)))
-	material.set_shader_parameter("wind_phase", float(phase_hash % 6283) / 1000.0)
-	var wind_strength := float(context.get("foliage_shrub_wind_strength_px", 0.7))
-	if foliage_kind == "tree":
-		wind_strength = float(context.get("foliage_tree_wind_strength_px", 1.35))
-	material.set_shader_parameter("wind_strength_px", wind_strength)
-	for bubble_index in range(FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES):
-		material.set_shader_parameter("bubble_center_%d" % bubble_index, Vector2.ZERO)
-	sprite.material = material
+	sprite.material = _get_shared_material(context, foliage_kind)
 	foliage_parent.add_child(sprite)
 
 	var has_trunk_collision := foliage_kind == "tree" and _should_add_tree_trunk_collision(context, pos)
@@ -264,6 +253,32 @@ func _place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 			and _should_place_fruit(context, pos, foliage_kind):
 		_place_fruit(context, sprite, pos, texture_size, foliage_kind)
 	return true
+
+
+func _get_shared_material(context: Dictionary, foliage_kind: String) -> ShaderMaterial:
+	if _shared_materials.has(foliage_kind):
+		return _shared_materials[foliage_kind] as ShaderMaterial
+	var material := ShaderMaterial.new()
+	material.shader = FOLIAGE_OCCLUSION_SHADER
+	material.set_shader_parameter("bubble_radius", float(context.get("foliage_player_occlusion_radius", 80.0)))
+	material.set_shader_parameter("bubble_softness", float(context.get("foliage_player_occlusion_softness", 12.0)))
+	material.set_shader_parameter("bubble_alpha", float(context.get("foliage_player_occlusion_alpha", 0.55)))
+	material.set_shader_parameter("bubble_enabled", false)
+	material.set_shader_parameter("bubble_count", 0)
+	material.set_shader_parameter("wind_enabled", bool(context.get("foliage_wind_enabled", true)))
+	material.set_shader_parameter("wind_speed", float(context.get("foliage_wind_speed", 0.9)))
+	material.set_shader_parameter("gust_amount", float(context.get("foliage_wind_gust_amount", 0.42)))
+	# World-space phase in foliage_life.gdshader already gives each sprite
+	# spatial variation, so per-sprite material phase is unnecessary.
+	material.set_shader_parameter("wind_phase", 0.0)
+	var wind_strength := float(context.get("foliage_shrub_wind_strength_px", 0.7))
+	if foliage_kind == "tree":
+		wind_strength = float(context.get("foliage_tree_wind_strength_px", 1.35))
+	material.set_shader_parameter("wind_strength_px", wind_strength)
+	for bubble_index in range(FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES):
+		material.set_shader_parameter("bubble_center_%d" % bubble_index, Vector2.ZERO)
+	_shared_materials[foliage_kind] = material
+	return material
 
 
 func _pick_foliage_texture(context: Dictionary, pos: Vector2i) -> Texture2D:

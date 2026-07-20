@@ -17,6 +17,16 @@ func _run() -> void:
 		quit(1)
 		return
 	observatory.clear()
+	observatory.set_enabled(false)
+	var hidden_scan_count := int(observatory.get("_runtime_tree_scan_count"))
+	observatory.call("_process", float(observatory.sample_interval) * 2.0)
+	if int(observatory.get("_runtime_tree_scan_count")) != hidden_scan_count:
+		failures.append("hidden Observatory performed a periodic full-tree scan")
+	observatory.set_enabled(true)
+	observatory.call("_process", float(observatory.sample_interval))
+	if int(observatory.get("_runtime_tree_scan_count")) != hidden_scan_count + 1:
+		failures.append("visible Observatory did not perform exactly one scan for one sample")
+	observatory.set_enabled(false)
 	var game_root := Node2D.new()
 	game_root.name = "GameRoot"
 	root.add_child(game_root)
@@ -79,6 +89,13 @@ func _run() -> void:
 	grunt.name = "AuditGrunt"
 	entities.add_child(grunt)
 	await process_frame
+	grunt.set_physics_process(false)
+	grunt.set_simulation_tier("dormant")
+	if grunt.is_physics_processing():
+		failures.append("dormant enemy tier did not suppress physics work")
+	grunt.set_simulation_tier("active")
+	if not grunt.is_physics_processing():
+		failures.append("active enemy tier did not restore physics work")
 	grunt.set_physics_process(false)
 	grunt.target = operator
 	grunt.global_position = Vector2.ZERO

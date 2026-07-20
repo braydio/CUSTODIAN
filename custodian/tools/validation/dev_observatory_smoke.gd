@@ -4,6 +4,7 @@ const DevObservatoryScript := preload("res://game/systems/debug/dev_observatory.
 const SectorHeatmapScript := preload("res://game/systems/world/sector_heatmap.gd")
 const OVERLAY_SCENE_PATH := "res://scenes/debug/dev_observatory_overlay.tscn"
 const SMOKE_EXPORT_PATH := "user://dev_observatory/smoke_session.json"
+const DISABLED_EXPORT_PATH := "user://dev_observatory/disabled_sampling_session.json"
 const LATEST_EXPORT_PATH := "user://dev_observatory/latest_session.json"
 const BLOCKER_PATH := "user://dev_observatory_export_blocker"
 
@@ -79,7 +80,10 @@ func _run() -> void:
 	var event_count_before_export := observatory.events.size()
 	var total_events_before_export := observatory.total_events_logged
 	var dropped_events_before_export := observatory.dropped_event_count
+	var runtime_scans_before_export := int(observatory.get("_runtime_tree_scan_count"))
 	var exported_path: String = observatory.export_session_json(SMOKE_EXPORT_PATH)
+	if int(observatory.get("_runtime_tree_scan_count")) != runtime_scans_before_export + 1:
+		failures.append("export must force exactly one current runtime snapshot")
 	if exported_path != SMOKE_EXPORT_PATH or not FileAccess.file_exists(SMOKE_EXPORT_PATH):
 		failures.append("observatory stable export was not written")
 	if observatory.last_export_path != SMOKE_EXPORT_PATH or observatory.last_export_absolute_path.is_empty():
@@ -134,8 +138,19 @@ func _run() -> void:
 		if not failed_path.is_empty() or observatory.warnings.size() != warnings_before_failure + 1:
 			failures.append("export failure must return empty and emit an observatory warning")
 
+	observatory.set("_telemetry_allowed", false)
+	observatory.gauges.erase(&"node_count")
+	var disabled_scan_count := int(observatory.get("_runtime_tree_scan_count"))
+	var disabled_export := observatory.export_session_json(DISABLED_EXPORT_PATH)
+	if disabled_export != DISABLED_EXPORT_PATH or not FileAccess.file_exists(DISABLED_EXPORT_PATH):
+		failures.append("explicit export must remain available when continuous telemetry is disabled")
+	if int(observatory.get("_runtime_tree_scan_count")) != disabled_scan_count + 1 or not observatory.gauges.has(&"node_count"):
+		failures.append("disabled continuous telemetry export did not force a current snapshot")
+	observatory.set("_telemetry_allowed", true)
+
 	_remove_file_if_present(SMOKE_EXPORT_PATH)
 	_remove_file_if_present(timestamped_path)
+	_remove_file_if_present(DISABLED_EXPORT_PATH)
 	if had_latest_export:
 		_write_text(LATEST_EXPORT_PATH, previous_latest_export)
 	else:

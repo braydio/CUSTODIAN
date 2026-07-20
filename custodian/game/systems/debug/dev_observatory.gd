@@ -29,14 +29,20 @@ var last_export_error := ""
 var _sample_accum := 0.0
 var _overlay: CanvasLayer = null
 var _boot_time_msec := 0
+var _runtime_tree_scan_count := 0
+var _telemetry_allowed := true
+var _force_snapshot_write := false
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_boot_time_msec = Time.get_ticks_msec()
+	_telemetry_allowed = _dev_allows(&"dev")
+	set_process_input(_dev_allows(&"debug_ui"))
+	set_process(_dev_allows(&"observatory_sampling"))
 	_ensure_input_actions()
 
-	if auto_create_overlay:
+	if auto_create_overlay and _dev_allows(&"debug_ui"):
 		_create_overlay()
 
 	log_event(&"observatory_ready", {
@@ -46,6 +52,8 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if not _dev_allows(&"debug_ui"):
+		return
 	if event.is_action_pressed(INPUT_ACTION):
 		toggle()
 		get_viewport().set_input_as_handled()
@@ -58,6 +66,8 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	if not enabled or not _dev_allows(&"observatory_sampling"):
+		return
 	_sample_accum += delta
 	if _sample_accum >= sample_interval:
 		_sample_accum = 0.0
@@ -69,10 +79,13 @@ func toggle() -> void:
 
 
 func set_enabled(value: bool) -> void:
+	if value and not _dev_allows(&"debug_ui"):
+		return
 	if enabled == value:
 		return
 
 	enabled = value
+	_sample_accum = 0.0
 
 	if _overlay != null:
 		_overlay.visible = enabled
@@ -82,6 +95,8 @@ func set_enabled(value: bool) -> void:
 
 
 func log_event(kind: StringName, data: Dictionary = {}) -> void:
+	if not _telemetry_allowed:
+		return
 	total_events_logged += 1
 	var entry := {
 		"time_msec": Time.get_ticks_msec(),
@@ -100,22 +115,32 @@ func log_event(kind: StringName, data: Dictionary = {}) -> void:
 
 
 func increment(name: StringName, amount: int = 1) -> void:
+	if not _telemetry_allowed:
+		return
 	counters[name] = int(counters.get(name, 0)) + amount
 
 
 func accumulate(name: StringName, amount: float) -> void:
+	if not _telemetry_allowed:
+		return
 	counters[name] = float(counters.get(name, 0.0)) + amount
 
 
 func set_counter(name: StringName, value: int) -> void:
+	if not _telemetry_allowed:
+		return
 	counters[name] = value
 
 
 func set_gauge(name: StringName, value: Variant) -> void:
+	if not _telemetry_allowed and not _force_snapshot_write:
+		return
 	gauges[name] = value
 
 
 func mark_warning(message: String, data: Dictionary = {}) -> void:
+	if not _telemetry_allowed:
+		return
 	var entry := {
 		"time_msec": Time.get_ticks_msec(),
 		"uptime_sec": get_uptime_sec(),
@@ -135,6 +160,11 @@ func mark_warning(message: String, data: Dictionary = {}) -> void:
 	})
 
 	warning_logged.emit(message, data)
+
+
+func _dev_allows(capability: StringName) -> bool:
+	var dev_mode := get_node_or_null("/root/DevMode")
+	return dev_mode == null or (dev_mode.has_method("allows") and bool(dev_mode.call("allows", capability)))
 
 
 func clear() -> void:
@@ -196,6 +226,11 @@ func get_summary() -> Dictionary:
 
 
 func export_session_json(path: String = DEFAULT_EXPORT_PATH) -> String:
+	# F10/export must retain a current final snapshot even though hidden
+	# Observatory presentation performs no periodic scene-tree sampling.
+	_force_snapshot_write = true
+	_sample_runtime_gauges()
+	_force_snapshot_write = false
 	var resolved_path := path.strip_edges()
 	if resolved_path.is_empty():
 		resolved_path = DEFAULT_EXPORT_PATH
@@ -398,13 +433,15 @@ func _sample_runtime_gauges() -> void:
 		return
 
 	var node_stats := _collect_node_stats(tree.root)
+	_runtime_tree_scan_count += 1
+	set_gauge(&"observatory_full_tree_scan_count", _runtime_tree_scan_count)
 	for stat_name in node_stats.keys():
 		set_gauge(StringName(str(stat_name)), node_stats[stat_name])
 	for peak_name in ["node_count", "physics_body_count", "collision_shape_count"]:
 		var gauge_name := StringName("%s_peak" % peak_name)
 		set_gauge(gauge_name, maxi(int(gauges.get(gauge_name, 0)), int(node_stats.get(peak_name, 0))))
-	set_gauge(&"loaded_world_branch_count", _count_named_nodes(tree.root, [&"ProcGenRuntime", &"ConnectedMaps"]))
-	set_gauge(&"loaded_procgen_root_count", _count_named_nodes(tree.root, [&"ProcGenRuntime"]))
+	set_gauge(&"loaded_world_branch_count", int(node_stats.get("loaded_world_branch_count", 0)))
+	set_gauge(&"loaded_procgen_root_count", int(node_stats.get("loaded_procgen_root_count", 0)))
 
 	var enemies := _get_unique_group_nodes(["enemy", "enemies"])
 	set_gauge(&"active_enemies", enemies.size())
@@ -477,19 +514,6 @@ func _sample_player_gauges(tree: SceneTree) -> void:
 				set_gauge(&"player_last_live_weapon_id", String(status.get("active_weapon_id", "")))
 				set_gauge(&"player_last_live_loaded_ammo", int(status.get("loaded_ammo", 0)))
 				set_gauge(&"player_last_live_reserve_ammo", int(status.get("reserve_ammo", 0)))
-
-
-func _count_named_nodes(root_node: Node, names: Array[StringName]) -> int:
-	var count := 0
-	var stack: Array[Node] = [root_node]
-	while not stack.is_empty():
-		var node: Node = stack.pop_back()
-		if StringName(node.name) in names:
-			count += 1
-		for child in node.get_children():
-			if child is Node:
-				stack.append(child)
-	return count
 
 
 func _sample_enemy_gauges(enemies: Array) -> void:
@@ -566,11 +590,18 @@ func _collect_node_stats(root_node: Node) -> Dictionary:
 		"physics_body_count_ruin_props": 0,
 		"process_enabled_node_count": 0,
 		"physics_process_enabled_node_count": 0,
+		"loaded_world_branch_count": 0,
+		"loaded_procgen_root_count": 0,
 	}
 	var stack: Array[Node] = [root_node]
 	while not stack.is_empty():
 		var node: Node = stack.pop_back()
 		stats["node_count"] += 1
+		var node_name := StringName(node.name)
+		if node_name == &"ProcGenRuntime" or node_name == &"ConnectedMaps":
+			stats["loaded_world_branch_count"] += 1
+		if node_name == &"ProcGenRuntime":
+			stats["loaded_procgen_root_count"] += 1
 		var path := str(node.get_path()).to_lower()
 		if path.begins_with("/root/gameroot/world"):
 			stats["node_count_world"] += 1

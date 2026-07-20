@@ -50,7 +50,9 @@ import json
 import re
 import shutil
 import subprocess
+import sys
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -284,6 +286,31 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Only run fit-debug on existing pairings in check-dir (no regeneration).",
     )
+    parser.add_argument(
+        "--fit-center-threshold",
+        type=int,
+        default=5,
+        help="Flag horizontal center deltas at or above this magnitude (default: 5).",
+    )
+
+    # ── Prioritized next-actions report ────────────────────────────────
+    parser.add_argument(
+        "--next-actions",
+        action="store_true",
+        help="Generate prioritized animation implementation recommendations.",
+    )
+    parser.add_argument(
+        "--next-actions-max",
+        type=int,
+        default=20,
+        help="Maximum number of ranked recommendations.",
+    )
+    parser.add_argument(
+        "--repo-root",
+        type=Path,
+        default=Path(__file__).resolve().parents[1],
+        help="CUSTODIAN repository root used for canonical paths and contract tooling.",
+    )
 
     # ── Chain flags ──────────────────────────────────────────────────────
     parser.add_argument(
@@ -341,6 +368,17 @@ def sanitize_id(value: str) -> str:
     value = re.sub(r"[^a-z0-9_.]+", "_", value)
     value = re.sub(r"_{3,}", "__", value)
     return value.strip("_")
+
+
+def _git_commit(repo_root: Path) -> str:
+    completed = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return completed.stdout.strip() if completed.returncode == 0 else "unknown"
 
 
 def animation_domain(anim_id: str) -> str:
@@ -853,6 +891,8 @@ def composite_chain(
         "pair_mode": "chain",
         "lower": chain.lower.workspace_path.name,
         "upper": " + ".join(j.upper.workspace_path.name for j in chain.phases),
+        "lower_source_path": str(chain.lower.source_path.resolve()),
+        "upper_source_paths": [str(job.upper.source_path.resolve()) for job in chain.phases],
         "lower_anim": chain.lower.anim_id,
         "upper_anim": " → ".join(phase_labels),
         "direction": chain.direction,
@@ -931,6 +971,8 @@ def composite_pair(
         "pair_mode": job.pair_mode,
         "lower": job.lower.workspace_path.name,
         "upper": job.upper.workspace_path.name,
+        "lower_source_path": str(job.lower.source_path.resolve()),
+        "upper_source_path": str(job.upper.source_path.resolve()),
         "lower_anim": job.lower.anim_id,
         "upper_anim": job.upper.anim_id,
         "direction": job.upper.direction,
@@ -1118,6 +1160,91 @@ def make_gif(frames: List[Image.Image], path: Path, args: argparse.Namespace) ->
     )
 
 
+def run_next_actions_report(args: argparse.Namespace, manifest_path: Path) -> None:
+    if not args.next_actions:
+        return
+    helper = args.repo_root.expanduser().resolve() / "tools/operator_next_actions_report.py"
+    if not helper.exists():
+        raise RuntimeError(f"Next-actions helper is missing: {helper}")
+    command = [
+        sys.executable,
+        str(helper),
+        "--combo-manifest",
+        str(manifest_path),
+        "--repo-root",
+        str(args.repo_root.expanduser().resolve()),
+        "--fit-gap-threshold",
+        str(args.fit_gap_threshold),
+        "--fit-center-threshold",
+        str(args.fit_center_threshold),
+        "--max-actions",
+        str(args.next_actions_max),
+    ]
+    completed = subprocess.run(command, check=False)
+    if completed.returncode != 0:
+        raise RuntimeError(f"Next-actions report failed with status {completed.returncode}")
+
+
+def next_actions_html(check_dir: Path) -> str:
+    path = check_dir / "reports" / "next_actions.json"
+    if not path.exists():
+        return ""
+    report = json.loads(path.read_text(encoding="utf-8"))
+    actions = report.get("actions", [])
+    if not actions:
+        return """
+<section class="card next-actions">
+  <h2>Recommended Next Actions</h2>
+  <p>No recommendations generated.</p>
+</section>
+"""
+    rows = []
+    for action in actions[:12]:
+        sources = action.get("source_files", [])
+        source_path = sources[0].get("repo_path", "") if sources else ""
+        rows.append(
+            "<li>"
+            f"<b>{html.escape(str(action.get('priority', 'P3')))}</b> "
+            f"{html.escape(str(action.get('title', 'Untitled recommendation')))}"
+            f"<br><code>{html.escape(source_path)}</code>"
+            "</li>"
+        )
+    return f"""
+<section class="card next-actions">
+  <h2>Recommended Next Actions</h2>
+  <p>
+    <a href="reports/NEXT_ACTIONS.md">Full implementation report</a>
+    |
+    <a href="reports/next_actions.json">JSON</a>
+  </p>
+  <ol>{''.join(rows)}</ol>
+</section>
+"""
+
+
+def canonical_part_path(
+    candidates: List[Path],
+    workspace_candidate: Path,
+    workspace_name: str,
+    part: str,
+    anim_id: str,
+    direction: str,
+) -> Optional[Path]:
+    if workspace_candidate.exists():
+        return workspace_candidate.resolve()
+    exact = [path for path in candidates if path.name == workspace_name]
+    if exact:
+        return exact[0].resolve()
+    part_token = "lower_body" if part == "lower" else "upper_body"
+    semantic = [
+        path for path in candidates
+        if part_token in path.name
+        and f"__{anim_id}__" in path.name
+        and f"__{direction}__" in path.name
+    ]
+    return semantic[0].resolve() if semantic else None
+
+
 def write_html(
     check_dir: Path,
     records: List[Dict],
@@ -1125,6 +1252,7 @@ def write_html(
     missing: List[Dict],
     args: argparse.Namespace,
 ) -> None:
+    recommendations_html = next_actions_html(check_dir)
     warning_items = warnings[:]
     warning_items.extend(json.dumps(item, ensure_ascii=False) for item in missing)
 
@@ -1147,20 +1275,29 @@ def write_html(
         fit_html = ""
         if record.get("fit_debug"):
             gap_threshold = args.fit_gap_threshold
-            flagged = [d for d in record["fit_debug"] if d.get("vertical_gap_px") is not None and abs(d["vertical_gap_px"]) >= gap_threshold]
+            center_threshold = args.fit_center_threshold
+            flagged = [
+                d for d in record["fit_debug"]
+                if (d.get("vertical_gap_px") is not None and abs(d["vertical_gap_px"]) >= gap_threshold)
+                or (d.get("horizontal_center_delta_px") is not None and abs(d["horizontal_center_delta_px"]) >= center_threshold)
+            ]
             fit_summary_lines = []
             for d in record["fit_debug"]:
                 gap = d.get("vertical_gap_px")
                 hdelta = d.get("horizontal_center_delta_px")
-                flag = "⚠️" if gap is not None and abs(gap) >= gap_threshold else ""
+                flag = "⚠️" if (
+                    (gap is not None and abs(gap) >= gap_threshold)
+                    or (hdelta is not None and abs(hdelta) >= center_threshold)
+                ) else ""
+                hdelta_text = "n/a" if hdelta is None else f"{hdelta:+.0f}"
                 fit_summary_lines.append(
-                    f"frame {d['frame']}: gap={gap}px h-center={hdelta:+.0f}px "
+                    f"frame {d['frame']}: gap={gap}px h-center={hdelta_text}px "
                     f"upper={d['upper_bbox']['nontransparent_height']}px×{d['upper_bbox']['nontransparent_width']}px "
                     f"lower={d['lower_bbox']['nontransparent_height']}px×{d['lower_bbox']['nontransparent_width']}px {flag}"
                 )
             fit_html = '<div class="fit-debug"><h4>Fit Analysis</h4>'
             if flagged:
-                fit_html += f'<p style="color:#ff6b6b">{len(flagged)}/{len(record["fit_debug"])} frames exceed gap threshold (±{gap_threshold}px)</p>'
+                fit_html += f'<p style="color:#ff6b6b">{len(flagged)}/{len(record["fit_debug"])} frames exceed gap/center thresholds (±{gap_threshold}px / ±{center_threshold}px)</p>'
             fit_html += "<pre>" + "\n".join(html.escape(l) for l in fit_summary_lines) + "</pre></div>"
 
         cards.append(f"""
@@ -1250,6 +1387,7 @@ code {{
   Source layout: <code>source_dir/lower</code> + <code>source_dir/upper</code>.
   Action uppers fan out across matching-direction lower idle/run/walk sheets.
 </p>
+{recommendations_html}
 {warning_html}
 {''.join(cards)}
 </body>
@@ -1267,6 +1405,17 @@ def run_fit_debug_on_existing(args: argparse.Namespace) -> int:
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     updated = []
+    repo_root = args.repo_root.expanduser().resolve()
+    operator_roots = [
+        repo_root / "custodian/content/sprites/operator/new_operator/modular",
+        repo_root / "custodian/content/sprites/operator/runtime/modules/new_operator",
+    ]
+    canonical_candidates = [
+        path
+        for root in operator_roots
+        if root.exists()
+        for path in root.rglob("*.png")
+    ]
 
     for record in manifest.get("records", []):
         combined_rel = record.get("combined")
@@ -1308,35 +1457,63 @@ def run_fit_debug_on_existing(args: argparse.Namespace) -> int:
             })
 
         record["fit_debug"] = fit_debug_frames
+        source_lower = canonical_part_path(
+            canonical_candidates,
+            args.src.expanduser().resolve() / "lower" / lower_name,
+            lower_name,
+            "lower",
+            str(record.get("lower_anim", "")),
+            str(record.get("direction", "")),
+        )
+        source_upper = canonical_part_path(
+            canonical_candidates,
+            args.src.expanduser().resolve() / "upper" / upper_name,
+            upper_name,
+            "upper",
+            str(record.get("upper_anim", "")),
+            str(record.get("direction", "")),
+        )
+        if source_lower is not None:
+            record["lower_source_path"] = str(source_lower)
+        if source_upper is not None:
+            record["upper_source_path"] = str(source_upper)
         updated.append(record)
 
         if args.fit_verbose:
             print_fit_debug(record["id"], fit_debug_frames)
 
     manifest["records"] = updated
+    manifest["fit_gap_threshold"] = args.fit_gap_threshold
+    manifest["fit_center_threshold"] = args.fit_center_threshold
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
-    # Re-generate HTML with fit data
+    run_next_actions_report(args, manifest_path)
+    # Re-generate HTML with fit data and recommendations.
     write_html(check_dir, updated, manifest.get("warnings", []), manifest.get("missing_or_unpaired", []), args)
 
     # Summary
     threshold = args.fit_gap_threshold
+    center_threshold = args.fit_center_threshold
     bad_pairs = []
     for r in updated:
         fd = r.get("fit_debug", [])
-        flagged = [d for d in fd if d.get("vertical_gap_px") is not None and abs(d["vertical_gap_px"]) >= threshold]
+        flagged = [
+            d for d in fd
+            if (d.get("vertical_gap_px") is not None and abs(d["vertical_gap_px"]) >= threshold)
+            or (d.get("horizontal_center_delta_px") is not None and abs(d["horizontal_center_delta_px"]) >= center_threshold)
+        ]
         if flagged:
             bad_pairs.append((r["id"], len(flagged), len(fd), flagged))
 
     print(f"\nFit-debug complete: {len(updated)} pairings analyzed")
     if bad_pairs:
-        print(f"\n⚠️  {len(bad_pairs)} pairings exceed gap threshold (±{threshold}px):")
+        print(f"\n⚠️  {len(bad_pairs)} pairings exceed gap/center thresholds (±{threshold}px / ±{center_threshold}px):")
         for pid, n_flagged, n_total, frames in sorted(bad_pairs):
             gaps = ", ".join(f"f{d['frame']}={d['vertical_gap_px']}px" for d in frames)
             print(f"  {pid}")
             print(f"    {n_flagged}/{n_total} frames flagged: {gaps}")
     else:
-        print(f"✅ All pairings within gap threshold (±{threshold}px)")
+        print(f"✅ All pairings within gap/center thresholds (±{threshold}px / ±{center_threshold}px)")
 
     return 0
 
@@ -1467,7 +1644,11 @@ def main() -> int:
         records.append(record)
 
     manifest = {
-        "schema": "custodian.operator_modular_combo_check.lower_upper_dirs.v4_action_fanout",
+        "schema": "custodian.operator_modular_combo_check.lower_upper_dirs.v5_actionable_paths",
+        "notice": "Generated artifact—not project authority.",
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "commit_sha": _git_commit(args.repo_root.expanduser().resolve()),
+        "repo_root": str(args.repo_root.expanduser().resolve()),
         "src": str(src),
         "lower_dir": str(lower_dir),
         "upper_dir": str(upper_dir),
@@ -1478,6 +1659,7 @@ def main() -> int:
         "lower_frame_repeat": args.lower_frame_repeat,
         "fit_debug": args.fit_debug,
         "fit_gap_threshold": args.fit_gap_threshold,
+        "fit_center_threshold": args.fit_center_threshold,
         "lower_count": len(lower_sheets),
         "upper_count": len(upper_sheets),
         "job_count": len(jobs),
@@ -1490,6 +1672,7 @@ def main() -> int:
     manifest_path = dirs["reports"] / "manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
+    run_next_actions_report(args, manifest_path)
     write_html(check_dir, records, warnings, missing, args)
 
     print(f"lower sheets: {len(lower_sheets)}")
@@ -1514,20 +1697,25 @@ def main() -> int:
     # Fit summary
     if args.fit_debug:
         threshold = args.fit_gap_threshold
+        center_threshold = args.fit_center_threshold
         bad_pairs = []
         for r in records:
             fd = r.get("fit_debug", [])
-            flagged = [d for d in fd if d.get("vertical_gap_px") is not None and abs(d["vertical_gap_px"]) >= threshold]
+            flagged = [
+                d for d in fd
+                if (d.get("vertical_gap_px") is not None and abs(d["vertical_gap_px"]) >= threshold)
+                or (d.get("horizontal_center_delta_px") is not None and abs(d["horizontal_center_delta_px"]) >= center_threshold)
+            ]
             if flagged:
                 bad_pairs.append((r["id"], len(flagged), len(fd)))
         if bad_pairs:
-            print(f"\n⚠️  Fit-debug: {len(bad_pairs)}/{len(records)} pairings exceed gap threshold (±{threshold}px):")
+            print(f"\n⚠️  Fit-debug: {len(bad_pairs)}/{len(records)} pairings exceed gap/center thresholds (±{threshold}px / ±{center_threshold}px):")
             for pid, n, total in sorted(bad_pairs)[:20]:
                 print(f"  {pid}: {n}/{total} frames flagged")
             if len(bad_pairs) > 20:
                 print(f"  ... and {len(bad_pairs) - 20} more")
         else:
-            print(f"\n✅ Fit-debug: all {len(records)} pairings within gap threshold (±{threshold}px)")
+            print(f"\n✅ Fit-debug: all {len(records)} pairings within gap/center thresholds (±{threshold}px / ±{center_threshold}px)")
 
     if args.open:
         subprocess.run(["xdg-open", str(check_dir / "index.html")], check=False)

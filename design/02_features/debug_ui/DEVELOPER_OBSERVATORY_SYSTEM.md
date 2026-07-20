@@ -11,10 +11,14 @@ Provide a developer-only observability surface that makes live simulation state,
 ## Runtime Contract
 
 - `DevObservatory` is an opt-in autoload telemetry sink.
+- `DevMode` owns runtime eligibility. Outside development eligibility, Observatory input, overlay creation, continuous sampling, and telemetry accumulation are disabled.
 - `F9` toggles a lightweight observatory overlay.
 - `F10` exports the current bounded telemetry session as JSON.
 - The overlay is presentation-only. It reads counters, gauges, and recent events; it does not mutate gameplay state.
 - Systems may report events, counters, and gauges, but gameplay authority remains in the existing runtime owners.
+- Bounded event/counter ingestion remains available while the overlay is hidden, but recursive runtime sampling does not run.
+- Enabling the overlay samples at the configured interval with one consolidated scene-tree traversal per sample. F10 export forces exactly one current snapshot before serialization.
+- Explicit export remains callable even when continuous sampling is unavailable and still forces its final snapshot.
 
 ## Initial Slice
 
@@ -114,6 +118,7 @@ These are good candidates for observatory telemetry when they appear in gameplay
 
 - **Do not** put high-frequency per-frame spam into `log_event`. Use gauges for continuous state and only log events on transitions: "stuck started," "stuck resolved," "stuck rescue fired," "falcon overlap detected."
 - Temporary `print()` / `debug_draw()` is allowed for local visual debugging, but any useful playtest artifact should also appear in `DevObservatory` so F10 session exports capture it for post-run analysis.
+- Recursive runtime ownership statistics are an overlay/export diagnostic, not a background service. Hidden sampling must perform zero full-tree scans; enabled sampling must not separately traverse for loaded world/procgen counts.
 
 ### Live procgen stuck-pocket telemetry
 
@@ -229,6 +234,9 @@ write to the export or change runtime state.
 - Player damage/death and presence events appear without breaking normal gameplay.
 - No new simulation authority is introduced into the overlay.
 - `F10` writes timestamped and stable session JSON without clearing the event buffer.
+- With F9 hidden, periodic processing performs zero full scene-tree scans.
+- With F9 visible, one sampling interval performs one consolidated scene-tree scan.
+- Export forces one current runtime snapshot even when the overlay is hidden.
 
 ## Next Agent Slice
 

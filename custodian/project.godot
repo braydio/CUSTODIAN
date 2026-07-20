@@ -24,6 +24,7 @@ driver/buffer_size=512
 GameState="*res://game/systems/core/state/game_state.gd"
 GameStats="*res://game/systems/core/state/game_stats.gd"
 ARRNManager="*res://game/systems/core/systems/arrn/arrn_manager.gd"
+DevMode="*res://game/systems/debug/dev_mode.gd"
 DevConsole="*uid://ccoijpiv8l45j"
 DebugBus="*res://debug/debug_bus.gd"
 DebugSnapshotCollector="*res://debug/debug_snapshot_collector.gd"
@@ -48,6 +49,11 @@ WorldHistory="*res://game/systems/world/world_history.gd"
 SimulationInterestManager="*res://game/systems/simulation/simulation_interest_manager.gd"
 SectorHeatmap="*res://game/systems/world/sector_heatmap.gd"
 ImGui="*uid://csvdmevoaejje"
+
+[custodian]
+
+dev/enabled=false
+dev/heavy_diagnostics=false
 
 [dev_console]
 

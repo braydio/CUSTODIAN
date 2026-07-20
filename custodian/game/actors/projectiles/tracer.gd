@@ -55,7 +55,10 @@ func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
 	if body == shooter:
 		return false
 	if body.has_method("receive_projectile_hit") and (_is_world_blocker(body) or _can_hit(body)):
-		body.call("receive_projectile_hit", damage, team)
+		if body.is_in_group("runtime_wall_chunk"):
+			body.call("receive_projectile_hit", damage, team, impact_position)
+		else:
+			body.call("receive_projectile_hit", damage, team)
 		_apply_game_feel(body, 30.0 if not _is_world_blocker(body) else 0.0)
 		_spawn_impact_at(impact_position)
 		queue_free()

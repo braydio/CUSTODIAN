@@ -9,6 +9,7 @@ const DroneTargetingScript := preload("res://game/systems/drone/drone_targeting.
 @export var base_tint: Color = Color(0.35, 0.82, 0.95, 1.0)
 @export var damaged_tint: Color = Color(1.0, 0.65, 0.24, 1.0)
 @export var critical_tint: Color = Color(1.0, 0.22, 0.18, 1.0)
+@export_range(0.05, 0.5, 0.01) var target_scan_interval_sec: float = 0.18
 
 var profile: Resource = DroneCommandProfileScript.new()
 var squad_mode: int = DroneCommandProfileScript.Mode.FOLLOW
@@ -36,6 +37,7 @@ var _roam_goal: Vector2 = Vector2.ZERO
 var _roam_repath_timer: float = 0.0
 var _roam_sequence: int = 0
 var _command_target_instance_id: int = 0
+var _target_scan_timer: float = 0.0
 
 @onready var visual: ColorRect = get_node_or_null("Visual")
 @onready var health_bar: ProgressBar = get_node_or_null("HealthBar")
@@ -65,6 +67,7 @@ func configure(index: int, anchor_node: Node2D, manager_node: Node, command_prof
 
 func set_mode(mode: int) -> void:
 	squad_mode = mode
+	_target_scan_timer = 0.0
 	if mode == DroneCommandProfileScript.Mode.HOLD:
 		_hold_position = global_position
 
@@ -89,6 +92,7 @@ func set_order_anchor(position: Vector2) -> void:
 	target = null
 	_roam_goal = Vector2.ZERO
 	_roam_repath_timer = 0.0
+	_target_scan_timer = 0.0
 
 
 func clear_order_anchor() -> void:
@@ -96,18 +100,21 @@ func clear_order_anchor() -> void:
 	target = null
 	_roam_goal = Vector2.ZERO
 	_roam_repath_timer = 0.0
+	_target_scan_timer = 0.0
 
 
 func set_command_target(hostile: Node2D) -> void:
 	command_target = hostile
 	target = hostile
 	_command_target_instance_id = hostile.get_instance_id() if hostile != null and is_instance_valid(hostile) else 0
+	_target_scan_timer = target_scan_interval_sec
 
 
 func clear_command_target() -> void:
 	command_target = null
 	target = null
 	_command_target_instance_id = 0
+	_target_scan_timer = 0.0
 
 
 func _get_anchor_position() -> Vector2:
@@ -140,7 +147,10 @@ func _physics_process(delta: float) -> void:
 	_fire_cooldown_timer = maxf(0.0, _fire_cooldown_timer - delta)
 	_burst_gap_timer = maxf(0.0, _burst_gap_timer - delta)
 	_roam_repath_timer = maxf(0.0, _roam_repath_timer - delta)
-	_refresh_target()
+	_target_scan_timer = maxf(0.0, _target_scan_timer - delta)
+	if _target_scan_timer <= 0.0:
+		_target_scan_timer = target_scan_interval_sec
+		_refresh_target()
 	_update_movement(delta)
 	_update_weapon()
 	_update_visuals()

@@ -3,15 +3,23 @@ extends Node
 @export var active_radius: float = 900.0
 @export var nearby_radius: float = 1600.0
 @export var background_radius: float = 3000.0
+@export_range(0.05, 1.0, 0.05) var update_interval_sec: float = 0.20
 
 var player: Node2D = null
+var _update_accum := 0.0
+var _has_classified := false
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if player == null or not is_instance_valid(player):
 		player = get_tree().get_first_node_in_group("player") as Node2D
 		if player == null:
 			return
+	_update_accum += maxf(0.0, delta)
+	if _has_classified and _update_accum < update_interval_sec:
+		return
+	_update_accum = 0.0
+	_has_classified = true
 
 	var counts := {
 		"active": 0,
@@ -20,17 +28,20 @@ func _process(_delta: float) -> void:
 		"dormant": 0,
 	}
 
+	var active_sq := active_radius * active_radius
+	var nearby_sq := nearby_radius * nearby_radius
+	var background_sq := background_radius * background_radius
 	for node in get_tree().get_nodes_in_group("interest_managed"):
 		if not (node is Node2D):
 			continue
 
-		var distance := player.global_position.distance_to((node as Node2D).global_position)
+		var distance_sq := player.global_position.distance_squared_to((node as Node2D).global_position)
 		var tier := "dormant"
-		if distance <= active_radius:
+		if distance_sq <= active_sq:
 			tier = "active"
-		elif distance <= nearby_radius:
+		elif distance_sq <= nearby_sq:
 			tier = "nearby"
-		elif distance <= background_radius:
+		elif distance_sq <= background_sq:
 			tier = "background"
 
 		counts[tier] = int(counts.get(tier, 0)) + 1

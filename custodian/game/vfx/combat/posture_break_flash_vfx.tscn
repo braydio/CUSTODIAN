@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/vfx/combat/posture_break_flash_vfx.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://content/spriteframes/effects/combat/posture_break_flash_01.tres" id="2_frames"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_add"]
+blend_mode = 1
+
+[node name="PostureBreakFlashVfx" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("CanvasItemMaterial_add")
+sprite_frames = ExtResource("2_frames")
+animation = &"flash"
+modulate = Color(1, 0.85, 0.55, 0.95)

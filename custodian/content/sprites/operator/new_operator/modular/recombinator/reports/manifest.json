@@ -1,9 +1,13 @@
 {
-  "schema": "custodian.operator_modular_combo_check.lower_upper_dirs.v4_action_fanout",
-  "src": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular",
-  "lower_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/lower",
-  "upper_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/fast_attack",
-  "check_dir": "/home/braydenchaffee/Projects/CUSTODIAN/custodian/content/sprites/operator/new_operator/modular/recombinator",
+  "schema": "custodian.operator_modular_combo_check.legacy_snapshot.v1",
+  "notice": "Generated artifact—not project authority. Regenerate current evidence under .ai/operator_modular_combo_check.",
+  "generated_at_utc": "2026-07-19T22:09:28Z",
+  "commit_sha": "ed65c73e3215b816facd432b04cc44877fae639e",
+  "repo_root": ".",
+  "src": "custodian/content/sprites/operator/new_operator/modular",
+  "lower_dir": "custodian/content/sprites/operator/new_operator/modular/lower",
+  "upper_dir": "custodian/content/sprites/operator/new_operator/modular/fast_attack",
+  "check_dir": "custodian/content/sprites/operator/new_operator/modular/recombinator",
   "lower_domains": [
     "idle",
     "run",

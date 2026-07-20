@@ -9,9 +9,9 @@ Last updated: 2026-07-16
 
 Connect the existing native 2D lighting framework to the live game and add restrained environmental motion without weakening pixel-art or combat readability.
 
-The V1 stack is:
+The live stack is:
 
-1. one combined foliage-life material per generated foliage sprite;
+1. one shared combined foliage-life material per generated foliage kind (shrub/tree);
 2. one fullscreen, screen-reading world-atmosphere pass below player UI;
 3. existing authored `LightRig2D` instances for selected local emitters.
 
@@ -22,7 +22,8 @@ Ground TileMaps remain visually stable. V1 does not add blur, chromatic aberrati
 - `WorldLightingDirector` owns the active `LightingProfile`, profile blending, `CanvasModulate`, `DirectionalLight2D`, `fog_alpha`, and `cosmic_underlay_alpha`.
 - `WorldAtmosphere2D` is a read-only presentation consumer. It samples the active camera and lighting director and writes their current values to its private `ShaderMaterial`.
 - `ProcGenTilemap` owns foliage tuning exports and resolves planet-profile overrides before passing values into `ProcgenFoliageSpawner`.
-- `ProcgenFoliageSpawner` creates the existing unique foliage material and assigns deterministic per-tile wind phase plus tree/shrub strength.
+- `ProcgenFoliageSpawner` owns shared shrub/tree materials. Spatial wind phase comes from shader world position, while tree/shrub strength remains a material variant.
+- `ProcGenTilemap` updates bubble uniforms once per shared material and inspects z-order only in a bounded tile window around the player.
 - Foliage collision, navigation blockers, and gameplay visibility remain unchanged. Wind is vertex-only presentation.
 - Planet world-profile dictionaries may provide fog, cosmic, and foliage-motion values; they do not directly mutate shaders or lighting nodes.
 
@@ -47,7 +48,7 @@ The atmosphere grades the world but never the HUD. Debug overlays may use their 
 
 `res://game/world/procgen/foliage_life.gdshader` replaces the occlusion-only shader as the live material contract. It retains `bubble_enabled`, `bubble_count`, `bubble_center`, all eight indexed bubble centers, radius, softness, and alpha.
 
-Wind bends from the top using `pow(1.0 - UV.y, top_flex_power)`, leaving the sprite bottom at zero displacement. Each tile receives a deterministic phase derived from the procgen tile hash. Trees and shrubs use separate conservative displacement strengths. The existing per-sprite material count and draw-layer count do not increase.
+Wind bends from the top using `pow(1.0 - UV.y, top_flex_power)`, leaving the sprite bottom at zero displacement. World-space vertex position supplies deterministic spatial variation, so a unique per-sprite phase/material is unnecessary. Trees and shrubs use separate conservative displacement strengths. A normal generated map should own no more than the shared shrub/tree variants, and bubble centers are written to those materials once per update rather than once per sprite.
 
 ## Atmosphere Contract
 
@@ -60,6 +61,8 @@ Wind bends from the top using `pow(1.0 - UV.y, top_flex_power)`, leaving the spr
 - screen-pixel-quantized light grain.
 
 The controller continuously updates viewport size, camera screen center/zoom, and the director's blended fog/cosmic values. Camera movement changes world-space sampling rather than dragging fog in screen space.
+
+Normal fog uses three procedural FBM octaves. Optional cosmic variation uses two and is not evaluated at all when `cosmic_alpha <= 0.0001`. A scrolling noise texture remains the preferred later replacement if the fullscreen procedural pass still dominates GPU time.
 
 Default exterior tuning:
 
@@ -91,8 +94,8 @@ Automated:
 
 ```bash
 cd custodian
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/world_atmosphere_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --editor --quit
+godot --headless --path . --script res://tools/validation/world_atmosphere_smoke.gd
+godot --headless --path . --editor --quit
 ```
 
 Manual acceptance:
@@ -104,6 +107,8 @@ Manual acceptance:
 - UI is not graded;
 - no floor seams or vertex motion appear;
 - dense-foliage frame time remains stable.
+- foliage material variants remain bounded to shrub/tree rather than foliage instance count;
+- disabled cosmic atmosphere performs no cosmic FBM evaluation.
 
 ## Next Agent Slice
 
