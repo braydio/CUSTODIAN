@@ -1,6 +1,6 @@
 # PROJECT CONTEXT PRIMER — CUSTODIAN
 
-Last updated: 2026-07-15
+Last updated: 2026-07-20
 
 ## Purpose
 
@@ -45,7 +45,7 @@ The Great Severance is no longer framed as a collapse caused by lost shared cont
 - World layer: procgen tilemap/runtime world systems
 - Simulation layer: deterministic Godot runtime systems
 - Cognitive layer: autoloaded inventory ledger and cognitive state values expose drop/combat modifier getters, with only pickup/drop feedback wired in v1
-- UI layer: HUD + command terminal pages/widgets; terminal command, snapshot, map preview, and planet preview helpers live under `game/ui/terminal/`
+- UI layer: HUD + command terminal pages/widgets; terminal command parsing, authoritative snapshot projection, fidelity policy, canonical STATUS formatting, ranked Overview diagnosis, map preview, and planet preview helpers live under `game/ui/terminal/`. Physics-frame time and simulation state remain upstream truth; terminal modules only project read-only information.
 - Black Reliquary UI layer: `game/ui/theme/` centralizes palette/styles/assets, `game/ui/components/` owns reusable compact panels/prompts/minimap/icon labels, and `game/ui/hud/custodian_hud.tscn` is the first local gameplay HUD shell used by Sundered Keep and Home. The Black Reliquary minimap component wraps `game/ui/minimap/minimap_panel.tscn` so it stays live while using gothic/brass chrome.
 - Debug UI layer: `game/ui/hud/debug_screen.tscn` owns F12/`debug_hud` diagnostics as a read-only tabbed overlay fed by `game/ui/hud/ui.gd`. Dear ImGui is approved only for developer tooling through the F3 CUSTODIAN Director Console (`debug/debug_bus.gd`, `debug/debug_snapshot_collector.gd`, `debug/debug_imgui_console.gd`); player HUD, terminal, inventory, dialogue, and pause surfaces stay Godot `Control` UI.
 - Debug data flow: gameplay systems expose read-only snapshots or group membership, `DebugSnapshotCollector` copies them after normal runtime updates, `DebugBus` stores bounded stats/events/overrides/commands, and ImGui reads the bus. Dev mutations must use `DebugBus.queue_command(...)` or debug overrides and be applied by runtime owners at safe boundaries.

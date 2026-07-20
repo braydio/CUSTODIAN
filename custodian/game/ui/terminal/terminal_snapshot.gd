@@ -1,17 +1,41 @@
 extends RefCounted
 class_name TerminalSnapshot
 
+const TerminalFidelityPolicyScript := preload("res://game/ui/terminal/terminal_fidelity_policy.gd")
+
+var _fidelity_policy: TerminalFidelityPolicy = TerminalFidelityPolicyScript.new()
+
 
 func build(ui: Node) -> Dictionary:
 	var sectors := collect_sectors(ui)
+	var operator_context := collect_operator_context(ui, sectors)
+	_enrich_sector_diagnostics(ui, sectors, operator_context)
 	var enemies := collect_enemies(ui)
 	var wave := collect_wave(ui)
 	var director := get_local_director_status(ui)
 	var contract := collect_contract(ui)
 	var game_state := get_game_state(ui)
 	var power_pct := get_power_utilization_pct(ui)
+	var power_status := get_power_status(ui)
+	var terminal_mode: StringName = &"command" if bool(operator_context.get("command_center_occupied", false)) else &"field"
+	var base_fidelity := _fidelity_policy.resolve(terminal_mode, sectors)
+	var arrn := collect_arrn(ui, String(base_fidelity).to_upper())
+	var fidelity := _fidelity_policy.resolve(terminal_mode, sectors, arrn)
+	var simulation_tick := int(game_state.get("tick")) if game_state != null and "tick" in game_state else Engine.get_physics_frames()
+	var simulation_ticks_per_second := 60
+	var system_counts := _collect_system_counts(sectors)
 	return {
-		"time": str(Time.get_time_string_from_system()),
+		"simulation_tick": simulation_tick,
+		"simulation_seconds": float(simulation_tick) / float(simulation_ticks_per_second),
+		"simulation_rate": Engine.time_scale,
+		"time": _format_simulation_time(float(simulation_tick) / float(simulation_ticks_per_second)),
+		"terminal_mode": terminal_mode,
+		"fidelity": fidelity,
+		"archive_state": resolve_archive_state(ui),
+		"operator_location": StringName(String(operator_context.get("operator_location", "FIELD"))),
+		"command_center_occupied": bool(operator_context.get("command_center_occupied", false)),
+		"systems_compromised_count": int(system_counts.get("compromised", 0)),
+		"systems_offline_count": int(system_counts.get("offline", 0)),
 		"threat": "%.1f" % float(director.get("threat", 0.0)) if not director.is_empty() else "?",
 		"threat_raw": float(director.get("threat", 0.0)) if not director.is_empty() else 0.0,
 		"assault": "%s/%s" % [
@@ -27,7 +51,8 @@ func build(ui: Node) -> Dictionary:
 		"wave": wave,
 		"contract": contract,
 		"power_pct": power_pct,
-		"arrn": collect_arrn(ui),
+		"power_status": power_status,
+		"arrn": arrn,
 		"tactical_entities": collect_tactical_entities(ui),
 		"vault": collect_vault(ui),
 	}
@@ -48,6 +73,8 @@ func collect_sectors(ui: Node) -> Array[Dictionary]:
 			entry["hp_pct"] = int(round((hp / hp_max) * 100.0))
 		if "power_tier" in node:
 			entry["power_tier"] = str(node.get("power_tier"))
+		if "sector_type" in node:
+			entry["sector_type"] = str(node.get("sector_type"))
 		if "effective_output" in node:
 			entry["effective_output"] = snapped(float(node.get("effective_output")) * 100.0, 0.1)
 		if "power_priority" in node:
@@ -55,6 +82,8 @@ func collect_sectors(ui: Node) -> Array[Dictionary]:
 		if "power" in node and "standard_power_required" in node:
 			entry["power_allocated"] = snapped(float(node.get("power")), 0.1)
 			entry["power_standard"] = snapped(float(node.get("standard_power_required")), 0.1)
+			entry["power_margin"] = snapped(float(node.get("power")) - float(node.get("standard_power_required")), 0.1)
+		entry["strategic_priority"] = int(entry.get("power_priority", 0)) >= 85
 		sectors.append(entry)
 	sectors.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return str(a.get("name", "")) < str(b.get("name", ""))
@@ -176,9 +205,119 @@ func collect_contract(ui: Node) -> Dictionary:
 	return {}
 
 
-func collect_arrn(ui: Node) -> Dictionary:
+func collect_arrn(ui: Node, requested_fidelity: String = "FULL") -> Dictionary:
 	var arrn_manager := ui.get_node_or_null("/root/ARRNManager")
 	if arrn_manager == null or not arrn_manager.has_method("get_snapshot"):
 		return {}
-	var snapshot = arrn_manager.call("get_snapshot", "FULL")
+	var snapshot = arrn_manager.call("get_snapshot", requested_fidelity)
 	return snapshot if snapshot is Dictionary else {}
+
+
+func collect_operator_context(ui: Node, sectors: Array[Dictionary]) -> Dictionary:
+	var operator := ui.get_node_or_null("/root/GameRoot/World/Operator") as Node2D
+	if operator == null:
+		return {
+			"operator_location": "UNAVAILABLE",
+			"command_center_occupied": false,
+		}
+	var location := _nearest_sector_name(operator.global_position, sectors)
+	var command_center_occupied := false
+	for terminal in ui.get_tree().get_nodes_in_group("command_terminal"):
+		if not (terminal is Node2D):
+			continue
+		if terminal.has_method("grants_command_mode") and not bool(terminal.call("grants_command_mode")):
+			continue
+		var interaction_distance := 88.0
+		if terminal.has_method("get_interaction_distance"):
+			interaction_distance = float(terminal.call("get_interaction_distance"))
+		if operator.global_position.distance_to((terminal as Node2D).global_position) <= interaction_distance + 12.0:
+			command_center_occupied = true
+			break
+	return {
+		"operator_location": location,
+		"command_center_occupied": command_center_occupied,
+		"operator_position": operator.global_position,
+	}
+
+
+func resolve_archive_state(ui: Node) -> StringName:
+	var archive := ui.get_node_or_null("/root/ArchiveManager")
+	if archive == null:
+		return &"unavailable"
+	for method_name in [&"get_terminal_state", &"get_archive_state", &"get_status"]:
+		if not archive.has_method(method_name):
+			continue
+		var state: Variant = archive.call(method_name)
+		if state is Dictionary:
+			state = (state as Dictionary).get("state", "unavailable")
+		var normalized := String(state).strip_edges().to_lower()
+		if not normalized.is_empty():
+			return StringName(normalized)
+	return &"unavailable"
+
+
+func _enrich_sector_diagnostics(ui: Node, sectors: Array[Dictionary], operator_context: Dictionary) -> void:
+	var operator_location := String(operator_context.get("operator_location", ""))
+	for sector in sectors:
+		sector["operator_present"] = String(sector.get("name", "")) == operator_location
+		sector["hostile_count"] = 0
+		sector["hostile_objective_active"] = false
+		var state := String(sector.get("status", "")).to_upper()
+		sector["unresolved_critical_incident"] = state.contains("CRITICAL") or state.contains("BREACH") or state.contains("OFFLINE")
+	for enemy in ui.get_tree().get_nodes_in_group("enemy"):
+		if not (enemy is Node2D) or not is_instance_valid(enemy):
+			continue
+		var sector_index := _nearest_sector_index((enemy as Node2D).global_position, sectors)
+		if sector_index < 0:
+			continue
+		var sector: Dictionary = sectors[sector_index]
+		sector["hostile_count"] = int(sector.get("hostile_count", 0)) + 1
+		var objective := ""
+		var alerted := false
+		if enemy.has_method("get_behavior_snapshot"):
+			var behavior: Variant = enemy.call("get_behavior_snapshot")
+			if behavior is Dictionary:
+				var blackboard: Dictionary = (behavior as Dictionary).get("blackboard", {})
+				objective = String(blackboard.get("objective_type", "")).to_lower()
+				alerted = bool(blackboard.get("alerted", false))
+		sector["hostile_objective_active"] = bool(sector.get("hostile_objective_active", false)) or alerted or objective not in ["", "none", "idle"]
+		sectors[sector_index] = sector
+
+
+func _collect_system_counts(sectors: Array[Dictionary]) -> Dictionary:
+	var compromised := 0
+	var offline := 0
+	for sector in sectors:
+		var state := "%s %s" % [String(sector.get("status", "")), String(sector.get("power_tier", ""))]
+		state = state.to_upper()
+		if state.contains("OFFLINE") or state.contains("DESTROYED"):
+			offline += 1
+		if state.contains("BREACH") or state.contains("DAMAGED") or state.contains("CRITICAL"):
+			compromised += 1
+	return {"compromised": compromised, "offline": offline}
+
+
+func _nearest_sector_name(position: Vector2, sectors: Array[Dictionary]) -> String:
+	var index := _nearest_sector_index(position, sectors)
+	if index < 0:
+		return "FIELD"
+	return String(sectors[index].get("name", "FIELD"))
+
+
+func _nearest_sector_index(position: Vector2, sectors: Array[Dictionary]) -> int:
+	var nearest_index := -1
+	var nearest_distance := INF
+	for index in range(sectors.size()):
+		var sector: Dictionary = sectors[index]
+		if not sector.get("world_pos", null) is Vector2:
+			continue
+		var distance := position.distance_squared_to(sector["world_pos"])
+		if distance < nearest_distance:
+			nearest_distance = distance
+			nearest_index = index
+	return nearest_index
+
+
+func _format_simulation_time(seconds: float) -> String:
+	var whole_seconds := maxi(0, int(floor(seconds)))
+	return "%02d:%02d:%02d" % [whole_seconds / 3600, (whole_seconds % 3600) / 60, whole_seconds % 60]

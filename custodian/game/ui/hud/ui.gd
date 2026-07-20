@@ -2,6 +2,8 @@ extends CanvasLayer
 
 const TerminalCommandRouterScript := preload("res://game/ui/terminal/terminal_command_router.gd")
 const TerminalSnapshotScript := preload("res://game/ui/terminal/terminal_snapshot.gd")
+const TerminalStatusFormatterScript := preload("res://game/ui/terminal/terminal_status_formatter.gd")
+const TerminalOverviewViewModelScript := preload("res://game/ui/terminal/terminal_overview_view_model.gd")
 const TerminalFabricationViewModelScript := preload("res://game/ui/terminal/fabrication_terminal_view_model.gd")
 const TerminalMapPreviewScript := preload("res://game/ui/terminal/terminal_map_preview.gd")
 const TerminalPlanetPreviewScript := preload("res://game/ui/terminal/terminal_planet_preview.gd")
@@ -354,6 +356,8 @@ var _terminal_policy_preset := "BALANCED"
 var _terminal_activity_autofollow := true
 var _terminal_command_router: TerminalCommandRouter = TerminalCommandRouterScript.new()
 var _terminal_snapshot_builder: TerminalSnapshot = TerminalSnapshotScript.new()
+var _terminal_status_formatter: TerminalStatusFormatter = TerminalStatusFormatterScript.new()
+var _terminal_overview_view_model: TerminalOverviewViewModel = TerminalOverviewViewModelScript.new()
 var _terminal_fabrication_view_model: FabricationTerminalViewModel = TerminalFabricationViewModelScript.new()
 var _terminal_map_preview_renderer: TerminalMapPreview = TerminalMapPreviewScript.new()
 var _terminal_planet_preview_renderer: TerminalPlanetPreview = TerminalPlanetPreviewScript.new()
@@ -3021,7 +3025,7 @@ func _append_terminal_line(line: String, level: String = "info", sector: String 
 	_terminal_activity_autofollow = _is_terminal_activity_near_bottom()
 	_terminal_lines.append(line)
 	var entry := {
-		"time": Time.get_time_string_from_system(),
+		"time": _get_terminal_sim_timestamp(),
 		"line": line,
 		"level": level,
 		"sector": sector,
@@ -3106,7 +3110,7 @@ func _is_terminal_boot_log_line(line: String) -> bool:
 
 func _build_terminal_attention_feed_chunks() -> PackedStringArray:
 	var chunks := PackedStringArray()
-	var timestamp := str(_terminal_snapshot.get("time", Time.get_time_string_from_system()))
+	var timestamp := _get_terminal_sim_timestamp()
 	var power_status := _get_power_status_snapshot()
 	var reserve_rate := float(power_status.get("net", 0.0)) * 60.0
 	var enemy_snapshot: Dictionary = _terminal_snapshot.get("enemies", {})
@@ -3122,6 +3126,15 @@ func _build_terminal_attention_feed_chunks() -> PackedStringArray:
 	chunks.append("[color=#6FAE9C][%s][/color] [color=%s]SENSOR[/color]  [color=#D7E8E1]%d CONTACTS // %s CONFIDENCE[/color]" % [timestamp, "#F07A7A" if contacts > 0 else "#9EDBFF", contacts, "HIGH" if contacts > 0 else "LOW"])
 	chunks.append("[color=#6FAE9C][%s][/color] [color=#7DDE9B]ACTION[/color]  [color=#D7E8E1]RECOMMENDED: %s[/color]\n" % [timestamp, recommended])
 	return chunks
+
+
+func _get_terminal_sim_timestamp() -> String:
+	var snapshot_time := String(_terminal_snapshot.get("time", "")).strip_edges()
+	if not snapshot_time.is_empty():
+		return snapshot_time
+	var game_state := _get_game_state()
+	var tick := int(game_state.get("tick")) if game_state != null and "tick" in game_state else Engine.get_physics_frames()
+	return _terminal_status_formatter.format_duration(float(tick) / 60.0)
 
 func _scroll_terminal_output_to_bottom():
 	if terminal_output == null or terminal_activity_scroll == null:
@@ -3874,10 +3887,10 @@ func _render_terminal_page(context: Dictionary) -> String:
 	var contract_lines: Array[String] = context.get("contract_lines", [])
 	match _terminal_current_page:
 		"OVERVIEW":
-			_render_terminal_overview_widgets(phase_text, hostile_text, int(context.get("compromised_count", 0)), int(context.get("offline_count", 0)), power_status, str(context.get("power_summary", "")), int(context.get("critical_count", 0)), threat_text, assault_value, wave_text, snapshot.get("defense_rating", 0.0), sector_array, contract_lines, context.get("vault", {}))
+			_render_terminal_overview_widgets(snapshot, context)
 			return "DEFAULT COMMAND SURFACE // SUMMARY, POWER, ASSAULT, PRIORITIES"
 		"STATUS":
-			_render_terminal_status_widgets(snapshot, phase_text, threat_text, str(context.get("power_summary", "")), assault_value, wave_text, hostile_text)
+			_render_terminal_status_widgets(snapshot)
 			return "CANONICAL SNAPSHOT // RAW OPERATIONAL STATUS MIRROR"
 		"SECTORS":
 			_render_terminal_sector_widgets(sector_array, selected_sector)
@@ -3969,29 +3982,33 @@ func _set_terminal_widget_mode(page_name: String) -> void:
 				(control as CanvasItem).visible = false
 
 
-func _render_terminal_overview_widgets(phase_text: String, hostile_text: String, compromised_count: int, offline_count: int, power_status: Dictionary, power_summary: String, critical_count: int, threat_text: Variant, assault_value: Variant, wave_text: String, defense_rating: Variant, sector_array: Array, contract_lines: Array[String], vault: Dictionary = {}) -> void:
-	var contract_identity := "NO CONTRACT LOCK"
-	if not contract_lines.is_empty():
-		var contract_tokens := contract_lines[0].split(" ", false)
-		contract_identity = _terminal_truncate(str(contract_tokens[-1]) if not contract_tokens.is_empty() else "UNKNOWN", 12)
+func _render_terminal_overview_widgets(snapshot: Dictionary, context: Dictionary) -> void:
+	var view_model := _terminal_overview_view_model.build(snapshot)
+	var phase_text := String(context.get("phase_text", "UNKNOWN"))
+	var enemy_snapshot: Dictionary = snapshot.get("enemies", {}) if snapshot.get("enemies", {}) is Dictionary else {}
+	var power_status: Dictionary = context.get("power_status", {})
+	var threat_text: Variant = context.get("threat_text", "?")
+	var assault_value: Variant = context.get("assault_value", "?")
+	var wave_text := String(context.get("wave_text", "--"))
 	_set_terminal_rich_text(terminal_overview_operational_body, "\n".join([
-		"PHASE    %s" % _terminal_truncate(phase_text, 14),
-		"OPERATOR FIELD LINK",
-		"BODY %s // HOSTILES %s" % [contract_identity, hostile_text],
+		"%s/%s | %s" % [_terminal_truncate(String(snapshot.get("terminal_mode", &"field")).to_upper(), 3), _terminal_truncate(String(snapshot.get("fidelity", &"lost")).to_upper(), 4), _terminal_truncate(phase_text, 8)],
+		"OP %s | POST %s" % [_terminal_truncate(String(view_model.get("operator_location", "UNKNOWN")).to_upper(), 8), "YES" if bool(snapshot.get("command_center_occupied", false)) else "NO"],
+		"HOST %d | CMP %d | OFF %d" % [int(enemy_snapshot.get("total", 0)), int(snapshot.get("systems_compromised_count", 0)), int(view_model.get("systems_offline_count", 0))],
 	]))
 	_set_terminal_rich_text(terminal_overview_power_body, "\n".join([
 		"NET      %+0.1f/s" % (float(power_status.get("net", 0.0)) * 60.0),
 		"GEN %.1f // DRAW %.1f" % [float(power_status.get("generated", 0.0)) * 60.0, float(power_status.get("consumed", 0.0)) * 60.0],
-		"ROUTING  %d PRIORITY" % critical_count,
+		"COLD START %d // OFFLINE %d" % [int(view_model.get("cold_start_systems_count", 0)), int(view_model.get("systems_offline_count", 0))],
 	]))
 	_set_terminal_rich_text(terminal_overview_assault_body, "\n".join([
 		_terminal_kv("THREAT", threat_text),
 		_terminal_kv("ASSAULT", assault_value),
 		_terminal_kv("WAVE", wave_text),
-		_terminal_kv("DEFENSE", defense_rating),
+		_terminal_kv("DEFENSE", snapshot.get("defense_rating", 0.0)),
 	]))
 	var priority_lines: Array[String] = []
-	for sector_variant in sector_array.slice(0, min(2, sector_array.size())):
+	var priority_sectors: Array = view_model.get("priority_sectors", [])
+	for sector_variant in priority_sectors.slice(0, min(2, priority_sectors.size())):
 		if not (sector_variant is Dictionary):
 			continue
 		var sector: Dictionary = sector_variant
@@ -4004,27 +4021,18 @@ func _render_terminal_overview_widgets(phase_text: String, hostile_text: String,
 		priority_lines.append("NO PRIORITY SECTORS AVAILABLE")
 	_set_terminal_rich_text(terminal_overview_priority_body, "\n".join(priority_lines))
 	var incident_lines: Array[String] = []
-	for entry_index in range(_terminal_log_entries.size() - 1, -1, -1):
-		var entry: Dictionary = _terminal_log_entries[entry_index]
-		if str(entry.get("level", "info")) not in ["critical", "threat", "assault", "warning", "power"]:
-			continue
-		incident_lines.push_front(_terminal_truncate(str(entry.get("line", "INCIDENT")), 24))
-		if incident_lines.size() >= 2:
-			break
+	var active_incidents: Array = view_model.get("active_incidents", [])
+	for incident_variant in active_incidents.slice(0, min(2, active_incidents.size())):
+		if incident_variant is Dictionary:
+			incident_lines.append(_terminal_truncate(String((incident_variant as Dictionary).get("label", "INCIDENT")), 24))
 	if incident_lines.is_empty():
 		incident_lines.append("NO ACTIVE CRITICAL INCIDENTS")
 	incident_lines.append("[url=terminal_action:open_incidents][color=#7DDE9B]> OPEN INCIDENTS[/color][/url]")
 	_set_terminal_rich_text(terminal_overview_incident_body, "\n".join(incident_lines))
-	var recommendation_action := "open_sectors"
-	var recommendation := "OPEN SECTORS // VERIFY PRIORITY"
-	if float(power_status.get("net", 0.0)) < 0.0:
-		recommendation_action = "open_power"
-		recommendation = "OPEN POWER // CORRECT DEFICIT"
-	elif compromised_count > 0 or offline_count > 0:
-		recommendation = "OPEN SECTORS // RESTORE SYSTEMS"
-	elif str(threat_text).to_upper() in ["ELEVATED", "CRITICAL"]:
-		recommendation_action = "open_defense"
-		recommendation = "OPEN DEFENSE // REVIEW COVERAGE"
+	var recommendations: Array = view_model.get("recommendations", [])
+	var primary_recommendation: Dictionary = recommendations[0] if not recommendations.is_empty() and recommendations[0] is Dictionary else {}
+	var recommendation_action := String(primary_recommendation.get("action", "open_sectors"))
+	var recommendation := String(primary_recommendation.get("label", "OPEN SECTORS // VERIFY PRIORITY"))
 	_set_terminal_rich_text(terminal_overview_contract_body, "[url=terminal_action:%s][color=#7DDE9B]> %s[/color][/url]" % [recommendation_action, recommendation])
 
 
@@ -4359,20 +4367,13 @@ func _render_terminal_history_widgets() -> void:
 	_set_terminal_rich_text(terminal_history_log_body, "\n".join(lines))
 
 
-func _render_terminal_status_widgets(snapshot: Dictionary, phase_text: String, threat_text: Variant, power_summary: String, assault_value: Variant, wave_text: String, hostile_text: String) -> void:
-	_set_terminal_rich_text(terminal_status_raw_body, "\n".join([
-		"MODE=COMMAND | FIDELITY=FULL | RATE=1X",
-		"PHASE=%s | THREAT=%s | POWER=%s" % [phase_text, str(threat_text), power_summary],
-		"ARCHIVE=NOMINAL | ASSAULT=%s | MATERIAL=%s" % [str(assault_value), str(snapshot.get("materials", 0))],
-		"DEFENSE=%.1f | WAVE=%s | HOSTILES=%s" % [float(snapshot.get("defense_rating", 0.0)), wave_text, hostile_text],
-	]))
-	_set_terminal_rich_text(terminal_status_parsed_body, "\n".join([
-		_terminal_kv("TIME", str(snapshot.get("time", "--:--:--"))),
-		_terminal_kv("THREAT", _get_threat_band(float(snapshot.get("threat_raw", 0.0)))),
-		_terminal_kv("ASSAULT", str(assault_value)),
-		_terminal_kv("MATERIAL", int(snapshot.get("materials", 0))),
-		_terminal_kv("FIDELITY", "FULL"),
-	]))
+func _render_terminal_status_widgets(snapshot: Dictionary) -> void:
+	_set_terminal_rich_text(terminal_status_raw_body, _terminal_status_formatter.format(snapshot))
+	var parsed_lines: Array[String] = []
+	for field_variant in _terminal_status_formatter.structured_fields(snapshot):
+		var field: Dictionary = field_variant
+		parsed_lines.append(_terminal_kv(String(field.get("label", "STATE")), field.get("value", "UNKNOWN")))
+	_set_terminal_rich_text(terminal_status_parsed_body, "\n".join(parsed_lines))
 	_set_terminal_rich_text(terminal_status_fidelity_body, "\n".join([
 		"FULL        exact tactical truth",
 		"DEGRADED    generalized counts, posture targets hidden",
@@ -5174,46 +5175,9 @@ func _execute_local_terminal_command_legacy(parsed: Dictionary) -> bool:
 
 	if cmd_upper == "STATUS FULL" or cmd_upper == "STATUS":
 		_refresh_snapshot()
-		var wave = _collect_wave_snapshot()
-		var enemies = _collect_enemy_snapshot()
-		var contract = _collect_contract_snapshot()
-		var game_state = _get_game_state()
-		var power_status = _get_power_status_snapshot()
 		_append_terminal_line("SNAPSHOT REFRESHED", "success")
-		if game_state != null:
-			_append_terminal_line("CONTRACT PHASE=%s | MATERIALS=%d | DEFENSE=%.1f" % [
-				game_state.get_phase_name(),
-				int(game_state.materials),
-				float(game_state.defense_rating),
-			], "info")
-		_append_terminal_line("WAVE %d/%d | IN_PROGRESS=%s | PENDING=%d" % [
-			int(wave.get("wave_number", 0)),
-			int(wave.get("max_wave", 0)),
-			"YES" if bool(wave.get("in_progress", false)) else "NO",
-			int(wave.get("pending_spawns", 0)),
-		], "info")
-		_append_terminal_line("ENEMIES TOTAL=%d DRONE=%d FAST=%d HEAVY=%d" % [
-			int(enemies.get("total", 0)),
-			int(enemies.get("drone", 0)),
-			int(enemies.get("fast", 0)),
-			int(enemies.get("heavy", 0)),
-		], "info")
-		if not power_status.is_empty():
-			_append_terminal_line("POWER %d/%d | GEN %.1f/s | DRAW %.1f/s | NET %+0.1f/s" % [
-				int(round(float(power_status.get("total", 0.0)))),
-				int(round(float(power_status.get("max", 0.0)))),
-				float(power_status.get("generated", 0.0)) * 60.0,
-				float(power_status.get("consumed", 0.0)) * 60.0,
-				float(power_status.get("net", 0.0)) * 60.0,
-			], "info")
-		if not contract.is_empty():
-			_append_terminal_line("CONTRACT #%d | PLANET=%s | MAP=%s" % [
-				int(contract.get("contract_seed", -1)),
-				str(contract.get("planet_key", "UNKNOWN")).to_upper(),
-				str(contract.get("map_seed", "?")),
-			], "info")
-		else:
-			_append_terminal_line("CONTRACT NONE", "warning")
+		for status_line in _terminal_status_formatter.format_lines(_terminal_snapshot):
+			_append_terminal_line(status_line, "info")
 		return true
 	if cmd_upper == "START ASSAULT":
 		var assault_game_state := _get_game_state()

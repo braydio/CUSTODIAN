@@ -347,7 +347,11 @@ Last updated: 2026-07-17
 - `custodian/docs/ai_context/task_packets/archived/CUSTODIAN_INVENTORY_UI.md` — completed packet for the live professional inventory overlay and production-asset drop-in contract
 - `custodian/docs/ai_context/task_packets/FAB_TERMINAL_READABILITY_PASS.md` — completed packet for the FABRICATION work-order readability pass, including the terminal translation layer and build-placement alias
 - `custodian/game/ui/terminal/terminal_command_router.gd` — command parsing, validation, refresh policy, and dispatch boundary for the HUD terminal
-- `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems, including vault totals and enemy storage-search/loot-carrying counts
+- `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems, including deterministic physics-frame time, physical-terminal command authority, Operator sector location, system counts, vault totals, and enemy diagnostic signals
+- `custodian/game/ui/terminal/terminal_fidelity_policy.gd` — pure command/field plus communications-state policy for FULL, DEGRADED, FRAGMENTED, and LOST information quality
+- `custodian/game/ui/terminal/terminal_status_formatter.gd` — sole deterministic canonical STATUS formatter shared by page rendering and typed STATUS commands
+- `custodian/game/ui/terminal/terminal_overview_view_model.gd` — pure weighted sector diagnosis, stable incident/recommendation IDs, and offline/cold-start summary model
+- `custodian/tools/validation/terminal_status_fidelity_smoke.gd` and `terminal_overview_semantics_smoke.gd` — focused semantic validation for fidelity omissions, simulation-clock ownership, and ranked Overview diagnosis
 - `custodian/game/ui/terminal/terminal_map_preview.gd` — compatibility texture-preview boundary with 256px ordinary and 448px Overview fallback sizing; the live terminal map renders and converts coordinates through the shared minimap controller/view
 - `custodian/game/ui/terminal/terminal_planet_preview.gd` — terminal globe viewport, rotation, zoom, and preview input handling
 - `custodian/game/actors/operator/operator.gd` — Operator simulation authority including persistent per-weapon ammo/heat, reload/overheat progress snapshots, debounced discrete weapon-feedback transitions, movement/input/combat, roll-exit fast-input buffering and authored body/FX/cape playback, direction-specific paired-execution clocks, Field Patch healing, modular action presentation hooks, and read-only stealth/noise state
@@ -398,6 +402,8 @@ Last updated: 2026-07-17
 - `design/02_features/minimap/MINIMAP_SYSTEM.md` — custom data-driven tactical minimap implementation spec
 - `design/02_features/minimap/MINIMAP_SYSTEM_CODE.md` — minimap runtime code plan and integration notes
 - `design/02_features/procgen/GOTHIC_COMPOUND_PROCGEN.md` — active implementation note and migrated review for constraint-first gothic compound blueprint generation
+- `design/02_features/terminal/TERMINAL_DESIGN_AUDIT.md` — full source/design audit of the command terminal against commit ed65c73; page maturity matrix, P0-P2 implementation sequence, documentation drift fixes, and validation gap analysis
+- `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md` — canonical thirteen-page terminal implementation authority (supersedes `design/01_systems/TERMINAL_COMMAND_INTERFACE.md` and `design/01_systems/ROADMAP_COMMAND_TERMINAL.md`)
 
 ## Active Interaction/UI Files
 

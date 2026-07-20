@@ -1,9 +1,11 @@
 # CUSTODIAN Command Terminal — Full Implementation Spec
 
-**Status:** implementation-ready
-**Source:** Godot runtime authority
+**Status:** superseded-reference
+**Authority:** `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`
 **Last Updated:** 2026-04-08
 **Content Canon Authority:** `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+
+> **Note:** This document is retained as reference material only. The canonical implementation authority is `design/02_features/terminal/COMMAND_TERMINAL_SPEC.md`. Do not use this file for implementation decisions.
 
 ---
 

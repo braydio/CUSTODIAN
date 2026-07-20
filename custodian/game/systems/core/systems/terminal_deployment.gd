@@ -75,6 +75,7 @@ func _deploy_carried_terminal() -> bool:
 	if not _is_carrying or _terminal == null or not is_instance_valid(_terminal):
 		return false
 	_terminal.global_position = _get_deploy_position()
+	_terminal.revoke_command_authority()
 	_terminal.set_carried_state(false, false)
 	_terminal.play_pickup_transition(true)
 	_is_carrying = false

@@ -295,6 +295,8 @@ For command-terminal Overview hierarchy, header/nav fit, or modal containment ch
 
 ```bash
 cd custodian
+godot --headless --path . --script res://tools/validation/terminal_status_fidelity_smoke.gd
+godot --headless --path . --script res://tools/validation/terminal_overview_semantics_smoke.gd
 godot --headless --path . --script res://tools/validation/terminal_overview_layout_smoke.gd
 godot --headless --path . --script res://tools/validation/terminal_overlay_visibility_smoke.gd
 godot --headless --path . --script res://tools/validation/terminal_typography_smoke.gd
@@ -302,7 +304,7 @@ godot --headless --path . --script res://tools/validation/terminal_stylebox_rend
 godot --headless --path . --script res://tools/validation/fabrication_terminal_layout_smoke.gd
 ```
 
-This validates the 1366×768 safe Overview composition, container-based status chips, collapsed secondary nav and reduced default actions, dominant shared tactical map, all diagnosis cards, actionable attention feed, command/transcript containment, visible-pointer modal behavior, a real GUI-routed page-button click through the full-viewport input-blocking scrim, gameplay-overlay suppression/restoration, typography, terminal skin rendering, and Fabrication layout compatibility.
+This validates deterministic simulation-clock STATUS output, all four fidelity omission levels, command/field asymmetry, weighted and stable Overview diagnosis, the 1366×768 safe Overview composition, container-based status chips, collapsed secondary nav and reduced default actions, dominant shared tactical map, all diagnosis cards, actionable attention feed, command/transcript containment, visible-pointer modal behavior, a real GUI-routed page-button click through the full-viewport input-blocking scrim, gameplay-overlay suppression/restoration, typography, terminal skin rendering, and Fabrication layout compatibility.
 
 For Field Patch healing or restock changes:
 

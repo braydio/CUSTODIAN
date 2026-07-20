@@ -21,6 +21,7 @@ const COMPAT_COMMAND_TERMINAL_PICKUP_ALT_TEXTURE_PATH := "res://content/sprites/
 @export_range(1.0, 24.0, 0.5) var activation_fps: float = 10.0
 @export_range(0.0, 3.0, 0.05) var deactivate_delay_multiplier: float = 1.15
 @export var pickup_modulate_alpha: float = 0.55
+@export var grants_command_authority: bool = true
 
 var _terminal_sprite: AnimatedSprite2D = null
 var _terminal_body_collision: CollisionShape2D = null
@@ -59,6 +60,14 @@ func get_interaction_position() -> Vector2:
 
 func get_interaction_distance() -> float:
 	return interact_distance
+
+
+func grants_command_mode() -> bool:
+	return grants_command_authority and not _is_carried
+
+
+func revoke_command_authority() -> void:
+	grants_command_authority = false
 
 
 func interact(_actor: Node) -> void:

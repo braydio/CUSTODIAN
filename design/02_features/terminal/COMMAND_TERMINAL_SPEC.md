@@ -13,7 +13,7 @@
 
 The Command Terminal is the player's primary interface for strategic decision-making, power routing, defense management, and campaign oversight. It embodies the core game doctrine: information asymmetry between Command Center and field play, power as a routing constraint, and knowledge preservation over raw combat spectacle.
 
-This specification supersedes the earlier `COMMAND_TERMINAL_UI.md` concept and `ROADMAP_COMMAND_TERMINAL.md` roadmap, incorporating the full four-zone layout, twelve-page structure, and mode-dependent behavior.
+This specification supersedes the earlier `COMMAND_TERMINAL_UI.md` concept and `ROADMAP_COMMAND_TERMINAL.md` roadmap, incorporating the full four-zone layout, thirteen-page structure, and mode-dependent behavior.
 
 This file is the implementation authority for terminal structure. For player-facing lore tone, confidence language, archive semantics, and the rule that systems should speak in procedure rather than exposition, defer to `design/03_content/GAME_PROTOCOLS_AND_WORLD_LORE.md`.
 
@@ -78,13 +78,14 @@ This file is the implementation authority for terminal structure. For player-fac
 3. SECTORS
 4. POWER
 5. DEFENSE
-6. SENSORS
-7. INCIDENTS
-8. ARCHIVE
-9. RECON
-10. CONTRACTS
-11. HISTORY
-12. SETTINGS
+6. FABRICATION
+7. SENSORS
+8. INCIDENTS
+9. ARCHIVE
+10. RECON
+11. CONTRACTS
+12. HISTORY
+13. SETTINGS
 
 At the `1366x768` safe-layout target, the default rail presents OVERVIEW, SECTORS, POWER, DEFENSE, FABRICATION, SENSORS, ARCHIVE, and RECON as the primary subset. STATUS, INCIDENTS, CONTRACTS, HISTORY, and SETTINGS live behind `MORE / SYSTEMS`; opening a secondary page keeps that group expanded. The page list is an explicit vertical `ScrollContainer`, while `MORE / SYSTEMS` and WAIT/FOCUS/HARDEN/HELP remain pinned outside it. Mouse-wheel input over the rail or any page button scrolls the page list, and keyboard focus skips hidden pages while keeping the newly focused page visible.
 
@@ -526,7 +527,10 @@ The current HUD-hosted implementation is being decursified without replacing the
 - `res://scenes/game.tscn` owns the current terminal Control-node structure.
 - `res://game/ui/hud/ui.gd` owns HUD integration, page switching, node binding, and rendering orchestration.
 - `res://game/ui/terminal/terminal_command_router.gd` owns command parsing, validation, refresh policy, and the command dispatch boundary.
-- `res://game/ui/terminal/terminal_snapshot.gd` owns read-only game-state snapshot aggregation for terminal rendering.
+- `res://game/ui/terminal/terminal_snapshot.gd` owns read-only game-state snapshot aggregation, deterministic `GameState.tick` clock projection (with physics-frame fallback before GameState exists), physical-terminal command authority, Operator location, and sector diagnostic signals.
+- `res://game/ui/terminal/terminal_fidelity_policy.gd` derives FULL/DEGRADED/FRAGMENTED/LOST information quality from command-versus-field authority and communications condition.
+- `res://game/ui/terminal/terminal_status_formatter.gd` is the sole canonical STATUS text owner used by the STATUS page and typed `STATUS`/`STATUS FULL` commands.
+- `res://game/ui/terminal/terminal_overview_view_model.gd` owns deterministic sector ranking, derived active incidents, stable recommendation IDs, offline/cold-start counts, and Overview diagnosis ordering.
 - The live terminal map uses `res://game/ui/minimap/minimap_controller.gd` and `minimap_view.gd` for rendering and click-to-world conversion. `res://game/ui/terminal/terminal_map_preview.gd` remains the compatibility texture boundary and uses a 448px Overview fallback instead of the ordinary 256px fallback.
 - `res://game/ui/terminal/terminal_planet_preview.gd` owns globe preview viewport state, rotation, zoom, and preview input behavior.
 
@@ -546,6 +550,7 @@ PNG assets belong under `res://content/ui/terminal/` and should be consumed as `
 - `ReconPageViewModel`
 - `ContractsPageViewModel`
 - `HistoryPageViewModel`
+- `FabricationPageViewModel`
 
 ---
 
@@ -571,6 +576,7 @@ CustodianTerminal (Control)
 │   │   │   ├── SectorsButton
 │   │   │   ├── PowerButton
 │   │   │   ├── DefenseButton
+│   │   │   ├── FabricationButton
 │   │   │   ├── SensorsButton
 │   │   │   ├── IncidentsButton
 │   │   │   ├── ArchiveButton
@@ -593,6 +599,7 @@ CustodianTerminal (Control)
 │   │       ├── SectorsPage
 │   │       ├── PowerPage
 │   │       ├── DefensePage
+│   │       ├── FabricationPage
 │   │       ├── SensorsPage
 │   │       ├── IncidentsPage
 │   │       ├── ArchivePage
@@ -639,6 +646,7 @@ Implementation notes:
 - The prop can be picked up and redeployed in world space through the runtime placement flow.
 - While carried, the terminal should not remain in the interactable or terminal-marker groups.
 - Build/placement input should prefer terminal pickup or redeploy before falling back to wall/turret placement behavior.
+- The original authority-granting terminal provides command mode only while the Operator is within interaction range. Picking up and redeploying that terminal permanently revokes command authority for that instance, so the same shell truthfully enters field mode instead of using screen visibility as authority.
 
 ---
 
@@ -650,13 +658,13 @@ Implementation notes:
 
 ## Next Agent Slice
 
-Goal: deepen Overview data quality without changing its hierarchy or promoting presentation code into simulation authority.
+Goal: extract command definitions and execution from the HUD compatibility bridge into one registry-driven command architecture.
 
-Files: `custodian/game/ui/terminal/terminal_snapshot.gd`, `custodian/game/ui/hud/ui.gd`, and focused terminal validation.
+Files: `custodian/game/ui/terminal/terminal_command_registry.gd`, `terminal_command_context.gd`, `terminal_command_router.gd`, command-family scripts, `custodian/game/ui/hud/ui.gd`, and focused terminal validation.
 
-Constraints: preserve the 1366×768 containment contract, shared live minimap renderer, collapsed secondary navigation, modal scrim, and read-only snapshot boundary. Replace fallback Operator location, incident, and recommendation strings only with authoritative snapshot fields.
+Constraints: preserve buffered command execution, existing command spellings as aliases, the read-only snapshot boundary, and the current HUD shell while making registry definitions authoritative for help, completion, validation, dispatch, confirmation, authority, and refresh policy.
 
-Acceptance: Overview reports authoritative Operator location and ranked incident/recommendation data while `terminal_overview_layout_smoke.gd` and the existing terminal regression suite continue to pass.
+Acceptance: no command executes through `_execute_local_terminal_command_legacy()`, duplicate completion entries are eliminated, help/completion/execution agree, and `terminal_command_registry_smoke.gd` plus the existing terminal regression suite pass.
 
 ---
 
