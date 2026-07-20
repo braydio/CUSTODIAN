@@ -188,7 +188,10 @@ func _set_procgen_world_visible(value: bool) -> void:
 
 
 func _restore_failed_approach_entry(actor: Node) -> void:
-	restore_world_origin(actor, _entry_snapshot)
+	var result := restore_world_origin(actor, _entry_snapshot)
+	if not bool(result.get("succeeded", false)):
+		push_error("[WorldIngressSite] Failed to restore world origin after entry failure: %s" % result.get("reason", "unknown failure"))
+		return
 	reset_after_level_return()
 
 
@@ -200,21 +203,41 @@ func _set_world_presentation_profile(actor: Node, profile: StringName) -> void:
 		actor.call("set_vista_presentation_mode", profile != &"gameplay")
 
 
-func restore_world_origin(actor: Node, source_state: Dictionary = {}) -> void:
+func restore_world_origin(actor: Node, source_state: Dictionary = {}) -> Dictionary:
 	var snapshot := source_state if not source_state.is_empty() else _entry_snapshot
+	if snapshot.is_empty():
+		return _restore_failure("origin snapshot is empty")
+	var missing_branches: Array[String] = []
+	for branch_state: Variant in snapshot.get("branches", []):
+		if not (branch_state is Dictionary):
+			continue
+		var branch_value: Variant = (branch_state as Dictionary).get("node")
+		if branch_value == null or not is_instance_valid(branch_value):
+			missing_branches.append(str((branch_state as Dictionary).get("path", "unknown_branch")))
+	if not missing_branches.is_empty():
+		return _restore_failure("one or more origin branches are unavailable", missing_branches)
+	if not (actor is Node2D) or not snapshot.has("actor_position"):
+		return _restore_failure("actor return position is unavailable")
+	var camera_value: Variant = snapshot.get("camera")
+	var camera: Node = camera_value as Node if camera_value != null and is_instance_valid(camera_value) else null
+	if camera == null:
+		camera = get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera == null or not is_instance_valid(camera) or not camera.has_method("set_runtime_map"):
+		return _restore_failure("camera runtime-map binding is unavailable")
+	var runtime_map_value: Variant = snapshot.get("camera_runtime_map")
+	var runtime_map: Node = runtime_map_value as Node if runtime_map_value != null and is_instance_valid(runtime_map_value) else null
+	if runtime_map == null:
+		var main_map_value: Variant = snapshot.get("main_map", _main_map)
+		runtime_map = main_map_value as Node if main_map_value != null and is_instance_valid(main_map_value) else null
+	if runtime_map == null or not is_instance_valid(runtime_map):
+		return _restore_failure("camera origin map is unavailable")
 	for branch_state: Variant in snapshot.get("branches", []):
 		if not (branch_state is Dictionary):
 			continue
 		_restore_branch_state(branch_state as Dictionary)
-	if snapshot.is_empty():
-		_set_procgen_world_visible(true)
 	var ui_mode := StringName(str(snapshot.get("ui_mode", "gameplay")))
 	_set_world_presentation_profile(actor, ui_mode)
-	if actor is Node2D and snapshot.has("actor_position"):
-		(actor as Node2D).global_position = snapshot.get("actor_position") as Vector2
-	var camera: Node = snapshot.get("camera") as Node
-	if camera == null or not is_instance_valid(camera):
-		camera = get_node_or_null("/root/GameRoot/World/Camera2D")
+	(actor as Node2D).global_position = snapshot.get("actor_position") as Vector2
 	if camera != null and camera.has_method("set_presentation_framing"):
 		camera.call(
 			"set_presentation_framing",
@@ -222,14 +245,21 @@ func restore_world_origin(actor: Node, source_state: Dictionary = {}) -> void:
 			snapshot.get("camera_presentation_offset", Vector2.ZERO),
 			snapshot.get("camera_presentation_zoom", Vector2.ONE)
 		)
-	if camera != null and camera.has_method("set_runtime_map"):
-		camera.call("set_runtime_map", snapshot.get("camera_runtime_map", snapshot.get("main_map", _main_map)) as Node)
+	camera.call("set_runtime_map", runtime_map)
 	if camera is Node2D and snapshot.has("camera_position"):
 		(camera as Node2D).global_position = snapshot.get("camera_position") as Vector2
 	if camera is Camera2D and snapshot.has("camera_zoom"):
 		(camera as Camera2D).zoom = snapshot.get("camera_zoom") as Vector2
 	if camera != null and snapshot.has("camera_target_zoom") and "target_zoom" in camera:
 		camera.set("target_zoom", snapshot.get("camera_target_zoom"))
+	return {
+		"succeeded": true,
+		"reason": "",
+		"restored_branches": (snapshot.get("branches", []) as Array).size(),
+		"missing_branches": [],
+		"camera_bound": true,
+		"actor_placed": true,
+	}
 
 
 func reset_after_level_return() -> void:
@@ -255,6 +285,7 @@ func _capture_origin_state(actor: Node) -> Dictionary:
 			continue
 		branches.append({
 			"node": branch,
+			"path": branch_path,
 			"visible": (branch as CanvasItem).visible if branch is CanvasItem else true,
 			"process_mode": branch.process_mode,
 		})
@@ -295,6 +326,17 @@ func _restore_branch_state(branch_state: Dictionary) -> void:
 	if branch is CanvasItem:
 		(branch as CanvasItem).visible = bool(branch_state.get("visible", true))
 	branch.process_mode = int(branch_state.get("process_mode", Node.PROCESS_MODE_INHERIT))
+
+
+func _restore_failure(reason: String, missing_branches: Array[String] = []) -> Dictionary:
+	return {
+		"succeeded": false,
+		"reason": reason,
+		"restored_branches": 0,
+		"missing_branches": missing_branches,
+		"camera_bound": false,
+		"actor_placed": false,
+	}
 
 
 func _set_world_branch_visible(branch: Node, value: bool) -> void:

@@ -6,7 +6,8 @@ Priority: P1
 Maturity: system
 Cost: medium
 Owner: Brayden
-Last reviewed: 2026-07-08
+Last reviewed: 2026-07-20
+Runtime: live — `custodian/game/systems/world/sector_heatmap.gd`
 
 ## One-line pitch
 

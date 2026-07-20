@@ -69,6 +69,20 @@ This validates:
 - no stale `design/03_architecture` references remain inside `design/04_architecture/`
 - reports line counts for overburdened coordinator files (warning only)
 
+## Idea Codex Index Validation
+
+Use after adding, removing, or graduating cards from `design/90_codex/`.
+
+```bash
+python tools/validate_design_codex.py
+```
+
+This validates:
+
+- every `.md` card file under `design/90_codex/` has a matching row in `00_index.md`
+- every index row has a corresponding card file on disk
+- the `Runtime` column in the index matches the `Runtime:` field in card files
+
 ## Doc-Only Validation
 
 Use for markdown, routing, task packet, and context-pack edits.
@@ -242,9 +256,14 @@ godot --headless --path . --script res://tools/validation/authored_level_ingress
 godot --headless --path . --script res://tools/validation/authored_level_reentry_smoke.gd
 godot --headless --path . --script res://tools/validation/level_presentation_profile_smoke.gd
 godot --headless --path . --script res://tools/validation/level_entry_rollback_smoke.gd
+godot --headless --path . --script res://tools/validation/world_ingress_physics_reentry_smoke.gd
+godot --headless --path . --script res://tools/validation/level_return_single_authority_smoke.gd
+godot --headless --path . --script res://tools/validation/level_return_rejected_smoke.gd
+godot --headless --path . --script res://tools/validation/level_origin_destroyed_smoke.gd
+godot --headless --path . --script res://tools/validation/level_camera_rebind_smoke.gd
 ```
 
-These checks prove named-spawn success/failure without actor mutation, every registered entry scene's spawn/presentation/lifecycle and mapper boundary contract, generic mapper dynamic schema and Sundered compatibility, deterministic multi-ingress spacing/identity, alternate-root scaffold dry-run/creation/duplicate rejection/managed regeneration/unmanaged rejection/registry sorting, exact procgen/connected branch restoration, loader/ingress cleanup, repeat entry, profile selection, and atomic actor/camera/UI rollback. The existing `sundered_keep_ingress_smoke.gd` exercises `ContractWorldLoader`'s registry-driven placement path rather than the deprecated Sundered-specific helper.
+These checks prove named-spawn success/failure without actor mutation, every registered entry scene's spawn/presentation/lifecycle and mapper boundary contract, generic mapper dynamic schema and Sundered compatibility, deterministic multi-ingress spacing/identity, alternate-root scaffold dry-run/creation/duplicate rejection/managed regeneration/unmanaged rejection/registry sorting, exact procgen/connected branch and camera restoration, loader/ingress cleanup, real physics-driven repeat entry, profile selection, atomic actor/camera/UI rollback, immediate outgoing-level deactivation, fail-closed rejected returns, and non-committing destroyed-origin failure. The existing `sundered_keep_ingress_smoke.gd` exercises `ContractWorldLoader`'s registry-driven placement path rather than the deprecated Sundered-specific helper.
 
 For the experimental route/stage wrapper:
 

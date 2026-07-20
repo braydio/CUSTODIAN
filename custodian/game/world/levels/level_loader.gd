@@ -6,6 +6,7 @@ const LEVEL_REGISTRY_SCRIPT := preload("res://game/world/levels/level_registry.g
 signal level_entered(level_id: StringName, instance: Node)
 signal level_entry_failed(level_id: StringName, reason: String)
 signal level_returned(level_id: StringName)
+signal level_return_failed(level_id: StringName, reason: String, details: Dictionary)
 
 @export_file("*.json") var registry_index_path: String = LEVEL_REGISTRY_SCRIPT.DEFAULT_INDEX_PATH
 
@@ -77,6 +78,7 @@ func enter_level(level_id: StringName, actor: Node, context: Dictionary = {}) ->
 	if actor_had_position:
 		actor_position = (actor as Node2D).global_position
 	if not _enter_actor_at_spawn(instance, actor, target_spawn_id):
+		_deactivate_instance_immediately(instance)
 		if actor_had_position and is_instance_valid(actor):
 			(actor as Node2D).global_position = actor_position
 		instance.queue_free()
@@ -123,15 +125,29 @@ func complete_return_to_world(instance: Node, actor: Node) -> bool:
 		return false
 	var completed_level_id := _active_level_id
 	var context := _active_level_context.duplicate(false)
+	var activation_state := _capture_instance_activation_state(instance)
+	_deactivate_instance_immediately(instance)
 	var origin_ingress: Node = context.get("origin_ingress") as Node
 	var source_state: Dictionary = context.get("source_state", {}) as Dictionary
+	var restore_result: Dictionary
 	if origin_ingress != null and is_instance_valid(origin_ingress) \
 	and origin_ingress.has_method("restore_world_origin"):
-		origin_ingress.call("restore_world_origin", actor, source_state)
-		if origin_ingress.has_method("reset_after_level_return"):
-			origin_ingress.call("reset_after_level_return")
+		var result_variant: Variant = origin_ingress.call("restore_world_origin", actor, source_state)
+		if result_variant is Dictionary:
+			restore_result = result_variant as Dictionary
+		else:
+			restore_result = _restore_failure("origin ingress returned no restoration result")
 	else:
-		_restore_origin_without_ingress(actor, context, source_state)
+		restore_result = _restore_origin_without_ingress(actor, context, source_state)
+	if not bool(restore_result.get("succeeded", false)):
+		_reactivate_instance(instance, activation_state)
+		var reason := str(restore_result.get("reason", "world origin restoration failed"))
+		push_error("[LevelLoader] return failed for %s: %s" % [completed_level_id, reason])
+		level_return_failed.emit(completed_level_id, reason, restore_result.duplicate(true))
+		return false
+	if origin_ingress != null and is_instance_valid(origin_ingress) \
+	and origin_ingress.has_method("reset_after_level_return"):
+		origin_ingress.call("reset_after_level_return")
 	clear_active_level(instance)
 	_release_level_instance(instance, context.get("lifecycle", {}) as Dictionary, true)
 	level_returned.emit(completed_level_id)
@@ -163,7 +179,57 @@ func _release_level_instance(instance: Node, lifecycle: Dictionary, route_ending
 	instance.queue_free()
 
 
-func _restore_origin_without_ingress(actor: Node, context: Dictionary, source_state: Dictionary) -> void:
+func _capture_instance_activation_state(instance: Node) -> Dictionary:
+	return {
+		"visible": (instance as CanvasItem).visible if instance is CanvasItem else true,
+		"process_mode": instance.process_mode,
+	}
+
+
+func _deactivate_instance_immediately(instance: Node) -> void:
+	if instance == null or not is_instance_valid(instance):
+		return
+	if instance is CanvasItem:
+		(instance as CanvasItem).visible = false
+	instance.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+func _reactivate_instance(instance: Node, activation_state: Dictionary) -> void:
+	if instance == null or not is_instance_valid(instance):
+		return
+	if instance is CanvasItem:
+		(instance as CanvasItem).visible = bool(activation_state.get("visible", true))
+	instance.process_mode = int(activation_state.get("process_mode", Node.PROCESS_MODE_INHERIT))
+
+
+func _restore_origin_without_ingress(actor: Node, context: Dictionary, source_state: Dictionary) -> Dictionary:
+	var missing_branches: Array[String] = []
+	for branch_state: Variant in source_state.get("branches", []):
+		if not (branch_state is Dictionary):
+			continue
+		var branch_value: Variant = (branch_state as Dictionary).get("node")
+		if branch_value == null or not is_instance_valid(branch_value):
+			missing_branches.append(str((branch_state as Dictionary).get("path", "unknown_branch")))
+	var main_map_value: Variant = context.get("main_map")
+	var main_map: Node = main_map_value as Node if main_map_value != null and is_instance_valid(main_map_value) else null
+	if main_map == null:
+		return _restore_failure("main map is unavailable", missing_branches)
+	if not missing_branches.is_empty():
+		return _restore_failure("one or more origin branches are unavailable", missing_branches)
+	if not (actor is Node2D) or not source_state.has("actor_position"):
+		return _restore_failure("actor return position is unavailable")
+	var camera_value: Variant = source_state.get("camera")
+	var camera: Node = camera_value as Node if camera_value != null and is_instance_valid(camera_value) else null
+	if camera == null:
+		camera = get_node_or_null("/root/GameRoot/World/Camera2D")
+	if camera == null or not is_instance_valid(camera) or not camera.has_method("set_runtime_map"):
+		return _restore_failure("camera runtime-map binding is unavailable")
+	var runtime_map_value: Variant = source_state.get("camera_runtime_map")
+	var runtime_map: Node = runtime_map_value as Node if runtime_map_value != null and is_instance_valid(runtime_map_value) else null
+	if runtime_map == null:
+		runtime_map = main_map
+	if runtime_map == null or not is_instance_valid(runtime_map):
+		return _restore_failure("camera origin map is unavailable")
 	for branch_state: Variant in source_state.get("branches", []):
 		if not (branch_state is Dictionary):
 			continue
@@ -173,23 +239,47 @@ func _restore_origin_without_ingress(actor: Node, context: Dictionary, source_st
 		if branch is CanvasItem:
 			(branch as CanvasItem).visible = bool((branch_state as Dictionary).get("visible", true))
 		branch.process_mode = int((branch_state as Dictionary).get("process_mode", Node.PROCESS_MODE_INHERIT))
-	var main_map: Node = context.get("main_map") as Node
 	if source_state.is_empty() and main_map != null:
 		if main_map is CanvasItem:
 			(main_map as CanvasItem).visible = true
 		main_map.process_mode = Node.PROCESS_MODE_INHERIT
-	if actor is Node2D:
-		(actor as Node2D).global_position = context.get("return_world_position", Vector2.ZERO)
-	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	(actor as Node2D).global_position = source_state.get(
+		"actor_position",
+		context.get("return_world_position", Vector2.ZERO)
+	) as Vector2
 	if camera != null and camera.has_method("set_presentation_framing"):
 		camera.call("set_presentation_framing", false)
-	if camera != null and camera.has_method("set_runtime_map"):
-		camera.call("set_runtime_map", main_map)
+	camera.call("set_runtime_map", runtime_map)
+	if camera is Node2D and source_state.has("camera_position"):
+		(camera as Node2D).global_position = source_state.get("camera_position") as Vector2
+	if camera is Camera2D and source_state.has("camera_zoom"):
+		(camera as Camera2D).zoom = source_state.get("camera_zoom") as Vector2
+	if source_state.has("camera_target_zoom") and "target_zoom" in camera:
+		camera.set("target_zoom", source_state.get("camera_target_zoom"))
 	var ui := get_node_or_null("/root/GameRoot/UI")
 	if ui != null and ui.has_method("set_world_presentation_mode"):
 		ui.call("set_world_presentation_mode", source_state.get("ui_mode", &"gameplay"))
 	if actor != null and actor.has_method("set_vista_presentation_mode"):
 		actor.call("set_vista_presentation_mode", source_state.get("ui_mode", &"gameplay") != &"gameplay")
+	return {
+		"succeeded": true,
+		"reason": "",
+		"restored_branches": (source_state.get("branches", []) as Array).size(),
+		"missing_branches": [],
+		"camera_bound": true,
+		"actor_placed": true,
+	}
+
+
+func _restore_failure(reason: String, missing_branches: Array[String] = []) -> Dictionary:
+	return {
+		"succeeded": false,
+		"reason": reason,
+		"restored_branches": 0,
+		"missing_branches": missing_branches,
+		"camera_bound": false,
+		"actor_placed": false,
+	}
 
 
 func _resolve_target_spawn_id(definition: RefCounted, context: Dictionary) -> StringName:

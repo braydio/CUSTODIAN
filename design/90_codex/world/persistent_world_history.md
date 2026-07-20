@@ -6,7 +6,8 @@ Priority: P0
 Maturity: system
 Cost: high
 Owner: Brayden
-Last reviewed: 2026-07-08
+Last reviewed: 2026-07-20
+Runtime: live — `custodian/game/systems/world/world_history.gd`
 
 ## One-line pitch
 

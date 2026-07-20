@@ -40,7 +40,7 @@ const RETURN_CAUSEWAY_SCENE_PATH := "res://game/world/sundered_keep/return_cause
 const SUNDERED_KEEP_MAP_SCRIPT_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
 # Temporary production sanity switch. Keep the authored Return Causeway branch
 # available for focused testing while the default ingress goes straight to the Keep.
-const BYPASS_RETURN_CAUSEWAY_FOR_KEEP_TESTING := true
+const BYPASS_RETURN_CAUSEWAY_FOR_KEEP_TESTING := false
 const ROUTE_VERTICAL_OFFSET := 180.0
 const BOUNDARY_RAIL_RADIUS := 10.0
 

@@ -2,7 +2,7 @@
 
 **Project:** CUSTODIAN  
 **Created:** 2026-07-19  
-**Status:** complete-v1; lifecycle hardening active
+**Status:** complete-v1; lifecycle hardening implemented; route migration pending
 **Last Updated:** 2026-07-20
 
 ## Purpose
@@ -125,6 +125,10 @@ Every definition explicitly declares one presentation profile:
 
 Ingress resolves the registered definition before changing presentation. It snapshots both source world branches, the actor transform, camera state, and prior UI presentation, then isolates the source and activates the requested profile. Any activation failure restores that snapshot atomically.
 
+World return is transactional at the active-node boundary. `LevelLoader` immediately hides and disables the outgoing level before restoring the origin, so the authored level and procgen world cannot both process during the deferred-free frame. Origin restoration preflights required branch, actor, camera, and runtime-map references and returns a structured result. The loader releases the outgoing node and clears active ownership only after a successful restore; otherwise it restores the outgoing node's prior presentation/process state and keeps the route bridge active.
+
+When a valid loader is bound, `AuthoredLevel2D.return_to_main()` fails closed if the loader rejects the request. Its legacy local restoration path is available only when no loader owns the level.
+
 Every definition also declares lifecycle data:
 
 ```json
@@ -199,6 +203,10 @@ This pipeline improves that bridge without claiming the future manager exists.
 - Mapper smoke proves generic configuration, dynamic markers, compatibility aliases, and non-mutating replacement helpers.
 - Generator smoke proves dry-run, creation, duplicates, managed overwrite, unmanaged rejection, sorting, and rollback.
 - Spawner smoke proves deterministic spacing and correct level identity.
+- Physics re-entry smoke proves real `Area2D.body_entered` activation can leave and re-enter the same ingress.
+- Single-authority return smoke proves the outgoing authored level is hidden and disabled before origin processing resumes.
+- Rejected-return and destroyed-origin smokes prove loader ownership cannot be bypassed and partial restoration does not commit.
+- Camera-rebind smoke proves runtime-map binding, transform, zoom, target zoom, and presentation framing restore exactly.
 - Existing Sundered ingress, mapper, approach, and chain smokes remain required regressions.
 
 ## Deferred Work

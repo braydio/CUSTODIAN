@@ -29,6 +29,10 @@ It is not active runtime truth, not a design-spec replacement, and not implement
 - `deferred` - good idea, wrong time
 - `cut` - intentionally rejected
 
+## Runtime Field
+
+Cards may include a `Runtime:` line indicating whether live runtime code exists. This is informational only — it does not grant the card implementation authority. Use active design specs and `custodian/docs/ai_context/CURRENT_STATE.md` for build truth.
+
 ## Priority Values
 
 - `P0` - identity-defining

@@ -426,14 +426,14 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 		if level_exit == null:
 			errors.append("EventRuntime/LevelExitTrigger missing")
 		else:
-			if not bool(scene.get("bypass_return_causeway_for_keep_testing")):
-				errors.append("Vista Approach should bypass Return Causeway by default during Keep testing")
-			if not level_exit.target_scene_path.ends_with("sundered_keep_map.gd"):
-				errors.append("Default Vista endpoint must target SunderedKeepMap directly")
-			if level_exit.target_node_name != &"SunderedKeepMap":
-				errors.append("Default Vista endpoint must use the stable SunderedKeepMap node name")
-			if level_exit.target_level_id != &"sundered_keep_front_gate":
-				errors.append("Direct Vista endpoint must retain the sundered_keep_front_gate level id")
+			if bool(scene.get("bypass_return_causeway_for_keep_testing")):
+				errors.append("Vista Approach should not bypass Return Causeway by default")
+			if not level_exit.target_scene_path.ends_with("ReturnCausewayApproach.tscn"):
+				errors.append("Default Vista endpoint must target Return Causeway")
+			if level_exit.target_node_name != &"ReturnCausewayApproach":
+				errors.append("Default Vista endpoint must use the stable ReturnCausewayApproach node name")
+			if level_exit.target_level_id != &"return_causeway":
+				errors.append("Default Vista endpoint must use the return_causeway level id")
 			if level_exit.required_entry_direction != Vector2.RIGHT:
 				errors.append("LevelExitTrigger must reject entry from the unauthored side")
 		var affordance := runtime.get_node_or_null("LevelExitAffordance")

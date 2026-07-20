@@ -1,7 +1,7 @@
 # Authored Level Authoring Pipeline — Implementation Contract
 
 **Project:** CUSTODIAN  
-**Status:** active  
+**Status:** complete-v1; lifecycle hardening implemented; route migration pending
 **Last Updated:** 2026-07-20
 
 ## Runtime Rules
@@ -19,6 +19,10 @@
 - `LevelLoader` owns the active-instance record and clears it synchronously on world return.
 - `AuthoredLevel2D.return_to_main()` completes return through the loader when runtime context is bound.
 - World return restores `ProcGenRuntime` and `ConnectedMaps`, resets the originating ingress, and releases the outgoing level.
+- The outgoing level is hidden and set to `PROCESS_MODE_DISABLED` before origin restoration begins; deferred freeing must never create a same-frame dual-authority window.
+- Origin restoration preflights required branches, actor placement, camera binding, and runtime-map references, and returns a structured success/failure result.
+- Failed restoration reactivates the outgoing level with its exact prior visibility/process state and leaves loader/ingress ownership intact.
+- A loader-bound `AuthoredLevel2D` never falls through to local legacy restoration after a rejected return.
 
 Allowed presentation profiles are `gameplay`, `vista_approach`, and `cinematic`. Generated levels default to `gameplay`; special presentation must be selected in registry data.
 
@@ -80,3 +84,7 @@ Safety: `--dry-run`, `--no-register`, `--force-generated`, `--adopt-existing`, `
 6. Existing unmanaged files are never overwritten.
 7. Generated manifest lists every managed path.
 8. Generic and Sundered compatibility smokes pass.
+9. Physics-driven ingress re-entry succeeds without private-method activation.
+10. Return has exactly one active gameplay authority before the next process frame.
+11. Rejected or impossible origin restoration does not partially restore the world or clear loader ownership.
+12. Camera/runtime-map state restores exactly after a successful return.

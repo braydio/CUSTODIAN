@@ -1,11 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://bcmu4svuf8du"]
 
-[ext_resource type="Script" path="res://game/world/routes/sundered_keep/stages/sundered_keep_vista_one.gd" id="1_vista"]
+[ext_resource type="Script" uid="uid://mquoixl3i4jj" path="res://game/world/routes/sundered_keep/stages/sundered_keep_vista_one.gd" id="1_vista"]
 
-[node name="SunderedKeepVistaOne" type="Node2D"]
+[node name="SunderedKeepVistaOne" type="Node2D" unique_id=1609789888]
 script = ExtResource("1_vista")
 
-[node name="EntrySpawn" type="Marker2D" parent="."]
+[node name="EntrySpawn" type="Marker2D" parent="." unique_id=675426750]
 position = Vector2(-240, 420)
 
-[node name="CameraBounds" type="Node2D" parent="."]
+[node name="CameraBounds" type="Node2D" parent="." unique_id=1472710854]

@@ -1,0 +1,71 @@
+name: Godot Level Pipeline
+
+on:
+  pull_request:
+    paths:
+      - "custodian/game/world/levels/**"
+      - "custodian/game/world/procgen/ingress/**"
+      - "custodian/game/world/approaches/sundered_keep/**"
+      - "custodian/content/levels/**"
+      - "custodian/tools/validation/**level*.gd"
+      - "custodian/tools/validation/**ingress*.gd"
+      - ".github/workflows/godot-level-pipeline.yml"
+  push:
+    branches: [main]
+    paths:
+      - "custodian/game/world/levels/**"
+      - "custodian/game/world/procgen/ingress/**"
+      - "custodian/game/world/approaches/sundered_keep/**"
+      - "custodian/content/levels/**"
+      - "custodian/tools/validation/**level*.gd"
+      - "custodian/tools/validation/**ingress*.gd"
+      - ".github/workflows/godot-level-pipeline.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  authored-level-lifecycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+
+      - name: Import project
+        working-directory: custodian
+        run: godot --headless --path . --import --quit
+
+      - name: Run authored-level lifecycle suite
+        working-directory: custodian
+        shell: bash
+        run: |
+          set -euo pipefail
+          tests=(
+            authored_level_ingress_return_smoke.gd
+            authored_level_reentry_smoke.gd
+            level_presentation_profile_smoke.gd
+            level_entry_rollback_smoke.gd
+            world_ingress_physics_reentry_smoke.gd
+            level_return_single_authority_smoke.gd
+            level_return_rejected_smoke.gd
+            level_origin_destroyed_smoke.gd
+            level_camera_rebind_smoke.gd
+            level_named_spawn_smoke.gd
+            level_registry_contract_smoke.gd
+            sundered_keep_ingress_smoke.gd
+            sundered_keep_level_chain_smoke.gd
+          )
+
+          for test in "${tests[@]}"; do
+            godot --headless --path . \
+              --script "res://tools/validation/${test}"
+          done

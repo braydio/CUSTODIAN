@@ -75,10 +75,17 @@ func enter_from_main_at_spawn(actor: Node, spawn_id: StringName) -> bool:
 
 
 func return_to_main(actor: Node) -> void:
-	if _level_loader != null and is_instance_valid(_level_loader) \
-	and _level_loader.has_method("complete_return_to_world"):
-		if bool(_level_loader.call("complete_return_to_world", self, actor)):
+	if _level_loader != null and is_instance_valid(_level_loader):
+		if not _level_loader.has_method("complete_return_to_world"):
+			push_error("[AuthoredLevel2D] Loader lacks return contract")
 			return
+		if not bool(_level_loader.call("complete_return_to_world", self, actor)):
+			push_error("[AuthoredLevel2D] Loader rejected level return")
+		return
+	_legacy_return_without_loader(actor)
+
+
+func _legacy_return_without_loader(actor: Node) -> void:
 	_set_branch_active(main_map, true)
 	visible = false
 	process_mode = Node.PROCESS_MODE_DISABLED

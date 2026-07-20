@@ -73,6 +73,7 @@ const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pa
 const MELEE_CONTACT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_contact_01.wav")
 const MELEE_HEAVY_HIT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_heavy_hit_01.wav")
 const CRITICAL_IMPACT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_impact_01.wav")
+const KNOCKDOWN_SOUND: AudioStream = preload("res://content/audio/sfx/combat/operator_heavy_knockdown_01.wav")
 const MELEE_MISS_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_miss_01.wav")
 const MELEE_GRAZE_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_graze_01.wav")
 const DODGE_ROLL_SOUND: AudioStream = preload("res://content/audio/sfx/combat/dodge_roll_01.wav")
@@ -8428,6 +8429,7 @@ func play_damage_reaction_fx(_animation_name: StringName) -> void:
 		# E/W are separately authored full-body sheets; do not inherit a stale
 		# locomotion mirror from the frame before impact.
 		animated_sprite.flip_h = false
+		_play_combat_sfx(KNOCKDOWN_SOUND, global_position, -1.0)
 	if melee_weapon_overlay_sprite:
 		melee_weapon_overlay_sprite.visible = false
 		melee_weapon_overlay_sprite.stop()
