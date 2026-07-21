@@ -220,9 +220,15 @@ south, with horizontal mirroring for left. Runtime V1 retains split `operator_do
 `operator_dodge_recovery` and optional aim-backstep tracks as compatibility fallbacks until the full directional suite
 is supplied.
 
-A primary fast input during active dodge/roll movement is buffered until the explicit recovery boundary; it never
-cancels active movement or iframes. A primary fast attack during recovery cancels that recovery and skips the normal
-unarmed windup. When the authored east/west `dodge_fast_attack_01` body/FX strips are available, they own the combined
+Input release now selects a bounded dodge profile: a short tap preserves the standard fixed dodge, while a hold of at
+least `0.12s` selects a long roll and `0.30s` selects a committed roll. Charged profiles scale displacement through
+speed, cost more stamina, and extend vulnerable recovery without extending the standard iframe window. Charge itself
+has no invulnerability and becomes movement-committed after the short detection window. Detailed authority lives in
+`design/02_features/operator/DODGE_CHARGED_LONG_ROLL.md`.
+
+A primary fast input during active tap-dodge movement is buffered until the explicit recovery boundary; it never
+cancels active movement or iframes. A primary fast attack during tap recovery cancels that recovery and skips the normal
+unarmed windup. Charged profiles preserve their longer commitment: attack input waits until recovery completes. When the authored east/west `dodge_fast_attack_01` body/FX strips are available, they own the combined
 roll-exit presentation at 20 FPS and use source frame 4 as the hit frame; west may add its synchronized cape layer.
 The transition does not reset or shorten dodge cooldown and does not bypass ordinary attack eligibility, stamina,
 cooldown, or attack-recovery rules. Heavy attacks retain their normal timing.

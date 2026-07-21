@@ -15,6 +15,7 @@
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_upper_fx_frames.tres" id="33_modular_upper_fx_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_cape_frames.tres" id="34_modular_cape_frames"]
 [ext_resource type="Script" path="res://game/actors/operator/components/weapon_feedback_presenter.gd" id="35_weapon_feedback"]
+[ext_resource type="PackedScene" path="res://game/vfx/combat/dodge_charge_feedback.tscn" id="36_dodge_charge_feedback"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ytitt"]
 radius = 11.0
@@ -184,6 +185,8 @@ visible = false
 
 [node name="WeaponFeedbackPresenter" type="Node2D" parent="."]
 script = ExtResource("35_weapon_feedback")
+
+[node name="DodgeChargeFeedback" parent="." instance=ExtResource("36_dodge_charge_feedback")]
 
 [node name="DryFirePlayer" type="AudioStreamPlayer2D" parent="WeaponFeedbackPresenter"]
 max_distance = 420.0

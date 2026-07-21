@@ -34,6 +34,7 @@ var _weapon_pressure_state: StringName = &"normal"
 var _weapon_icon_tween: Tween = null
 var _weapon_flash_tween: Tween = null
 var _critical_pulse_timer := 0.0
+var _stamina_reject_timer := 0.0
 var _feedback_operator: Node = null
 var _last_primary_loadout_text := ""
 var _last_secondary_loadout_text := ""
@@ -63,6 +64,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_refresh_operator_status()
+	_stamina_reject_timer = maxf(0.0, _stamina_reject_timer - delta)
 	if _weapon_pressure_state == &"critical":
 		_critical_pulse_timer -= delta
 		if _critical_pulse_timer <= 0.0:
@@ -93,17 +95,20 @@ func set_health(current: int, max_value: int) -> void:
 	_forward_inventory_status("set_health", [current, max_value])
 
 
-func set_stamina_status(text: String, percent: float) -> void:
+func set_stamina_status(text: String, percent: float, show_percent: bool = true) -> void:
 	var safe_percent := clampf(percent, 0.0, 100.0)
+	var stamina_color := Palette.DANGER if _stamina_reject_timer > 0.0 else Palette.EVRFOREST_PALE_GREEN
 	if stamina_label != null:
-		stamina_label.text = "STAMINA %s %d%%" % [text, int(round(safe_percent))]
-		stamina_label.add_theme_color_override("font_color", Palette.EVRFOREST_PALE_GREEN)
+		stamina_label.text = "STAMINA %s" % text
+		if show_percent:
+			stamina_label.text += " %d%%" % int(round(safe_percent))
+		stamina_label.add_theme_color_override("font_color", stamina_color)
 	if stamina_bar != null:
 		stamina_bar.max_value = 100.0
 		stamina_bar.value = safe_percent
 		stamina_bar.show_percentage = false
 		stamina_bar.add_theme_stylebox_override("background", Styles.bar_background_style())
-		stamina_bar.add_theme_stylebox_override("fill", Styles.bar_fill_style(Palette.EVRFOREST_PALE_GREEN))
+		stamina_bar.add_theme_stylebox_override("fill", Styles.bar_fill_style(stamina_color))
 	_forward_inventory_status("set_stamina_status", [text, safe_percent])
 
 
@@ -210,9 +215,25 @@ func _ensure_weapon_feedback_connection(operator_ref: Node) -> void:
 		var old_callable := Callable(self, "_on_weapon_feedback_event")
 		if _feedback_operator.is_connected("weapon_feedback_event", old_callable):
 			_feedback_operator.disconnect("weapon_feedback_event", old_callable)
+	if _feedback_operator != null and is_instance_valid(_feedback_operator) and _feedback_operator.has_signal("dodge_charge_cancelled"):
+		var old_dodge_callable := Callable(self, "_on_dodge_charge_cancelled")
+		if _feedback_operator.is_connected("dodge_charge_cancelled", old_dodge_callable):
+			_feedback_operator.disconnect("dodge_charge_cancelled", old_dodge_callable)
 	_feedback_operator = operator_ref
 	if _feedback_operator != null and _feedback_operator.has_signal("weapon_feedback_event"):
 		_feedback_operator.connect("weapon_feedback_event", Callable(self, "_on_weapon_feedback_event"))
+	if _feedback_operator != null and _feedback_operator.has_signal("dodge_charge_cancelled"):
+		_feedback_operator.connect("dodge_charge_cancelled", Callable(self, "_on_dodge_charge_cancelled"))
+
+
+func _on_dodge_charge_cancelled(reason: StringName) -> void:
+	if reason != &"insufficient_stamina":
+		return
+	_stamina_reject_timer = 0.18
+	if stamina_label != null:
+		var tween := create_tween()
+		tween.tween_property(stamina_label, "scale", Vector2(1.03, 1.03), 0.06)
+		tween.tween_property(stamina_label, "scale", Vector2.ONE, 0.10)
 
 
 func _on_weapon_feedback_event(event_id: StringName, snapshot: Dictionary) -> void:
@@ -383,9 +404,18 @@ func _refresh_operator_status() -> void:
 		var stamina_max: float = max(1.0, float(sprint_status.get("stamina_max", 1.0)))
 		var stamina_pct: float = clampf(float(sprint_status.get("stamina", 0.0)) / stamina_max * 100.0, 0.0, 100.0)
 		var mode: String = "SPRINT" if bool(sprint_status.get("is_sprinting", false)) else "READY"
+		var show_stamina_percent := true
 		if bool(sprint_status.get("sprint_exhausted", false)):
 			mode = "RECOVER"
-		set_stamina_status(mode, stamina_pct)
+		if operator_ref.has_method("get_dodge_charge_status"):
+			var dodge_charge_status: Dictionary = operator_ref.call("get_dodge_charge_status")
+			if bool(dodge_charge_status.get("active", false)):
+				if bool(dodge_charge_status.get("ready", false)):
+					mode = "DODGE READY"
+					show_stamina_percent = false
+				else:
+					mode = "DODGE"
+		set_stamina_status(mode, stamina_pct, show_stamina_percent)
 	if operator_ref.has_method("get_weapon_status"):
 		var weapon_status: Dictionary = operator_ref.call("get_weapon_status")
 		var icon_texture: Texture2D = null

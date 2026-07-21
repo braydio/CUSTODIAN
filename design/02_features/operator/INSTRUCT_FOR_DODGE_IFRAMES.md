@@ -1,5 +1,7 @@
 You are working in `~/Projects/CUSTODIAN`.
 
+> Historical surgical instruction: this document remains authoritative for the iframe damage gate only. The later, approved tap/hold movement extension is owned by `design/02_features/operator/DODGE_CHARGED_LONG_ROLL.md`; it preserves this document's active-only iframe ceiling and vulnerable recovery rule.
+
 Operate in **low-code-ability mode**:
 
 - Make the smallest possible surgical edits.

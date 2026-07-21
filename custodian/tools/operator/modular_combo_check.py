@@ -2,7 +2,14 @@
 """
 CUSTODIAN modular upper/lower combination checker.
 
-Expected source layout:
+Automatic runtime mode:
+
+  python modular_combo_check.py idle --fit-debug --open
+  python modular_combo_check.py run --fit-debug --open
+
+The positional domain resolves matching lower_body/ and upper_body/ runtime
+children and stages them automatically. Existing manual --src mode remains
+available with this expected layout:
 
   source_dir/
   ├── lower/
@@ -213,26 +220,63 @@ class ChainJob:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Combine modular lower/upper sprite sheets from source_dir/lower and source_dir/upper."
+        description=(
+            "Combine modular lower/upper sprite sheets. Pass a runtime domain/action "
+            "such as 'idle' or 'run' to stage matching runtime assets automatically, "
+            "or use --src with an existing lower/ + upper/ source workspace."
+        ),
+        epilog=(
+            "Examples:\n"
+            "  python modular_combo_check.py idle --fit-debug --open\n"
+            "  python modular_combo_check.py run --fit-debug --open\n"
+            "  python modular_combo_check.py actions/unarmed/fast_attack/fast_strike_01 --fit-debug --open\n"
+            "  python modular_combo_check.py --src .ai/custom_combo_source --lower-domains idle,run,walk"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
     parser.add_argument(
+        "domain",
+        nargs="?",
+        help=(
+            "Runtime child/domain to stage automatically. Simple locomotion names "
+            "such as idle, walk, and run resolve to locomotion/<name>_01. Relative "
+            "runtime paths and uniquely named action directories are also accepted."
+        ),
+    )
+    parser.add_argument(
         "--src",
         type=Path,
-        required=True,
-        help="Source directory containing lower/ and upper/ subdirectories.",
+        default=None,
+        help="Existing source directory containing lower/ and upper/ subdirectories.",
     )
     parser.add_argument(
         "--check-dir",
         type=Path,
-        default=Path(".ai/operator_modular_combo_check"),
-        help="Output review workspace.",
+        default=None,
+        help=(
+            "Output review workspace. Auto-domain mode defaults to "
+            ".ai/operator_modular_combo_check/<domain>."
+        ),
+    )
+    parser.add_argument(
+        "--runtime-root",
+        type=Path,
+        default=None,
+        help=(
+            "Runtime module root containing lower_body/ and upper_body/. Default: "
+            "<repo>/custodian/content/sprites/operator/runtime/modules/new_operator"
+        ),
     )
 
     parser.add_argument(
         "--lower-domains",
-        default="idle,run,walk",
-        help="Comma-separated lower locomotion domains used for action fanout. Default: idle,run,walk",
+        default=None,
+        help=(
+            "Comma-separated lower domains used for pairing. In auto-domain mode this "
+            "is inferred from the staged lower-body filenames. Existing --src mode "
+            "defaults to idle,run,walk."
+        ),
     )
 
     parser.add_argument(
@@ -308,8 +352,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--repo-root",
         type=Path,
-        default=Path(__file__).resolve().parents[1],
-        help="CUSTODIAN repository root used for canonical paths and contract tooling.",
+        default=Path(__file__).resolve().parents[3],
+        help="CUSTODIAN repository root used for runtime discovery, outputs, and contract tooling.",
     )
 
     # ── Chain flags ──────────────────────────────────────────────────────
@@ -327,6 +371,128 @@ def parse_args() -> argparse.Namespace:
 
 def parse_lower_domains(value: str) -> List[str]:
     return [x.strip().lower() for x in value.split(",") if x.strip()]
+
+
+def domain_slug(value: str) -> str:
+    slug = sanitize_id(value.strip().lower())
+    return slug or "runtime_domain"
+
+
+def runtime_directory_candidates(layer_root: Path, requested: str) -> List[Path]:
+    """Return matching runtime child directories for one body layer.
+
+    Resolution order:
+      1. Exact relative path below the layer root.
+      2. Locomotion shorthand: idle -> locomotion/idle_01.
+      3. Recursive directory-name match, allowing action names such as
+         fast_strike_01 or parent groups such as fast_attack.
+    """
+    raw = requested.strip().strip("/")
+    if not raw:
+        return []
+
+    exact = layer_root / raw
+    if exact.is_dir():
+        return [exact.resolve()]
+
+    simple = raw.lower()
+    locomotion_name = simple if simple.endswith("_01") else f"{simple}_01"
+    locomotion = layer_root / "locomotion" / locomotion_name
+    if locomotion.is_dir():
+        return [locomotion.resolve()]
+
+    names = {Path(raw).name.lower()}
+    if not Path(raw).name.lower().endswith("_01"):
+        names.add(f"{Path(raw).name.lower()}_01")
+
+    matches = [
+        path.resolve()
+        for path in layer_root.rglob("*")
+        if path.is_dir() and path.name.lower() in names
+    ]
+    return sorted(set(matches))
+
+
+def resolve_runtime_directory(layer_root: Path, requested: str, layer_label: str) -> Path:
+    candidates = runtime_directory_candidates(layer_root, requested)
+    if not candidates:
+        raise RuntimeError(
+            f"No {layer_label} runtime directory matched '{requested}' below {layer_root}."
+        )
+    if len(candidates) > 1:
+        choices = "\n".join(f"  - {path}" for path in candidates)
+        raise RuntimeError(
+            f"Runtime domain '{requested}' is ambiguous for {layer_label}:\n{choices}\n"
+            "Pass a relative path such as actions/ranged_2h/aim_01."
+        )
+    return candidates[0]
+
+
+def copy_runtime_domain(source: Path, destination: Path) -> None:
+    destination.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(
+        source,
+        destination,
+        dirs_exist_ok=True,
+        ignore=shutil.ignore_patterns("*.import"),
+    )
+
+
+def inferred_domains_from_pngs(root: Path) -> List[str]:
+    domains = set()
+    failures = []
+    for path in sorted(root.rglob("*.png")):
+        try:
+            meta = parse_modular_png_name(path)
+        except ValueError as exc:
+            failures.append(str(exc))
+            continue
+        domains.add(animation_domain(str(meta["anim_id"])))
+
+    if not domains:
+        detail = "" if not failures else "\n" + "\n".join(failures[:8])
+        raise RuntimeError(
+            f"Could not infer any animation domains from staged lower-body PNGs in {root}.{detail}"
+        )
+    return sorted(domains)
+
+
+def stage_runtime_domain(args: argparse.Namespace) -> Tuple[Path, List[str]]:
+    repo_root = args.repo_root.expanduser().resolve()
+    runtime_root = (
+        args.runtime_root.expanduser().resolve()
+        if args.runtime_root is not None
+        else repo_root
+        / "custodian/content/sprites/operator/runtime/modules/new_operator"
+    )
+
+    lower_root = runtime_root / "lower_body"
+    upper_root = runtime_root / "upper_body"
+    if not lower_root.is_dir() or not upper_root.is_dir():
+        raise RuntimeError(
+            "Runtime module root must contain lower_body/ and upper_body/: "
+            f"{runtime_root}"
+        )
+
+    lower_source = resolve_runtime_directory(lower_root, args.domain, "lower-body")
+    upper_source = resolve_runtime_directory(upper_root, args.domain, "upper-body")
+
+    slug = domain_slug(args.domain)
+    stage_root = repo_root / ".ai/operator_modular_combo_sources" / slug
+    if stage_root.exists():
+        shutil.rmtree(stage_root)
+
+    copy_runtime_domain(lower_source, stage_root / "lower")
+    copy_runtime_domain(upper_source, stage_root / "upper")
+    inferred = inferred_domains_from_pngs(stage_root / "lower")
+
+    print(f"runtime domain: {args.domain}")
+    print(f"lower source:  {lower_source}")
+    print(f"upper source:  {upper_source}")
+    print(f"staged source: {stage_root}")
+    print(f"lower domains: {','.join(inferred)}")
+
+    return stage_root, inferred
 
 
 def ensure_dirs(check_dir: Path, clean: bool) -> Dict[str, Path]:
@@ -395,7 +561,7 @@ def animation_domain(anim_id: str) -> str:
 
 def split_middle_for_upper_variant(part: str, middle: str) -> Tuple[Optional[str], str]:
     """
-    Upper body names may include a loadout/variant before the animation id.
+    Modular lower and upper body names may include a loadout/variant before the animation id.
 
     Examples:
       operator__modular_upper_body__unarmed__run_01__ne__5f__96
@@ -412,7 +578,7 @@ def split_middle_for_upper_variant(part: str, middle: str) -> Tuple[Optional[str
     """
     chunks = middle.split("__")
 
-    if part == "upper" and len(chunks) >= 2:
+    if part in {"lower", "upper"} and len(chunks) >= 2:
         variant = chunks[0]
         anim_id = "__".join(chunks[1:])
         return variant, anim_id
@@ -1520,14 +1686,50 @@ def run_fit_debug_on_existing(args: argparse.Namespace) -> int:
 
 def main() -> int:
     args = parse_args()
+    repo_root = args.repo_root.expanduser().resolve()
 
-    # Fit-report-only mode: don't regenerate, just analyze existing
+    if args.domain and args.src is not None:
+        print("ERROR: pass either a runtime domain argument or --src, not both.")
+        return 2
+
+    slug = domain_slug(args.domain) if args.domain else None
+    if args.check_dir is None:
+        check_dir = repo_root / ".ai/operator_modular_combo_check"
+        if slug:
+            check_dir = check_dir / slug
+    else:
+        check_dir = args.check_dir.expanduser().resolve()
+    args.check_dir = check_dir
+
+    # Fit-report-only mode: don't regenerate, just analyze existing. The generated
+    # parts workspace is sufficient when no explicit source directory is supplied.
     if args.fit_report_only:
+        if args.src is None:
+            args.src = check_dir / "parts"
         return run_fit_debug_on_existing(args)
 
-    src = args.src.expanduser().resolve()
-    check_dir = args.check_dir.expanduser().resolve()
-    lower_domains = parse_lower_domains(args.lower_domains)
+    try:
+        if args.domain:
+            src, inferred_domains = stage_runtime_domain(args)
+            lower_domains = (
+                parse_lower_domains(args.lower_domains)
+                if args.lower_domains
+                else inferred_domains
+            )
+            # Auto-domain mode is intended to be one-command/reproducible; stale
+            # parts and collision copies would invalidate its output.
+            args.clean = True
+        elif args.src is not None:
+            src = args.src.expanduser().resolve()
+            lower_domains = parse_lower_domains(args.lower_domains or "idle,run,walk")
+        else:
+            print("ERROR: pass a runtime domain such as 'idle' or 'run', or provide --src.")
+            return 2
+    except RuntimeError as exc:
+        print(f"ERROR: {exc}")
+        return 2
+
+    args.src = src
 
     if not src.exists():
         print(f"ERROR: source directory does not exist: {src}")

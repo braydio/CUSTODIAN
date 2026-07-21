@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://game/vfx/combat/dodge_charge_feedback.gd" id="1_feedback"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/dodge_charge/fx/operator__fx__locomotion__dodge_charge_meter_01__omni__8f__96.png" id="2_meter"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/dodge_charge/fx/operator__fx__locomotion__dodge_charge_ready_01__omni__5f__96.png" id="3_ready"]
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/actions/dodge_charge/fx/operator__fx__locomotion__dodge_charge_release_01__omni__6f__96.png" id="4_release"]
+[ext_resource type="Texture2D" path="res://content/sprites/effects/runtime/motion/dodge_charge_trail_core_01.png" id="5_trail"]
+
+[node name="DodgeChargeFeedback" type="Node2D"]
+z_index = -1
+script = ExtResource("1_feedback")
+
+[node name="MeterSprite" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, 22)
+texture_filter = 1
+texture = ExtResource("2_meter")
+hframes = 8
+
+[node name="ReadySprite" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, 22)
+texture_filter = 1
+texture = ExtResource("3_ready")
+hframes = 5
+
+[node name="ReleaseSprite" type="Sprite2D" parent="."]
+visible = false
+top_level = true
+texture_filter = 1
+texture = ExtResource("4_release")
+hframes = 6
+
+[node name="TrailSprite" type="Sprite2D" parent="."]
+visible = false
+top_level = true
+texture_filter = 1
+texture = ExtResource("5_trail")
