@@ -20,6 +20,17 @@ var register_level := true
 var force_generated := false
 var adopt_existing := false
 var json_report_path := ""
+var route_id := ""
+var route_node_id := ""
+var entry_spawn_id := ""
+var exits: Array[Dictionary] = []
+var edges: Array[Dictionary] = []
+var cache_policy := "keep_during_route"
+var state_policy := "session"
+var presentation_profile := "gameplay"
+var create_route := false
+var append_to_route := false
+var route_data: Dictionary = {}
 
 
 func configure(data: Dictionary) -> void:
@@ -45,6 +56,18 @@ func configure(data: Dictionary) -> void:
 	force_generated = bool(data.get("force_generated", force_generated))
 	adopt_existing = bool(data.get("adopt_existing", adopt_existing))
 	json_report_path = str(data.get("json_report_path", json_report_path)).strip_edges()
+	route_id = str(data.get("route_id", route_id)).strip_edges().to_snake_case()
+	route_node_id = str(data.get("route_node_id", route_node_id)).strip_edges().to_snake_case()
+	entry_spawn_id = str(data.get("entry_spawn_id", spawn_id)).strip_edges()
+	cache_policy = str(data.get("cache_policy", cache_policy)).strip_edges()
+	state_policy = str(data.get("state_policy", state_policy)).strip_edges()
+	presentation_profile = str(data.get("presentation_profile", presentation_profile)).strip_edges()
+	create_route = bool(data.get("create_route", create_route))
+	append_to_route = bool(data.get("append_to_route", append_to_route))
+	exits.assign(data.get("exits", []))
+	edges.assign(data.get("edges", []))
+	if exits.is_empty():
+		exits.append({"exit_id": "return_world", "node_name": "Exit_Main"})
 	var offsets: Variant = data.get("placement_offsets", [])
 	if offsets is Array and not offsets.is_empty():
 		placement_offsets.clear()
@@ -64,6 +87,30 @@ func validate() -> PackedStringArray:
 	if playtest_profile not in ["movement", "combat", "full"]: errors.append("playtest_profile must be movement, combat, or full")
 	if canvas_size.x <= 0 or canvas_size.y <= 0: errors.append("canvas_size must be positive")
 	if interaction_distance <= 0.0: errors.append("interaction_distance must be positive")
+	if cache_policy not in ["destroy_on_exit", "destroy_on_forward_exit", "keep_during_route", "snapshot_and_unload"]: errors.append("invalid cache_policy")
+	if state_policy not in ["reset_on_entry", "session", "persistent"]: errors.append("invalid state_policy")
+	if create_route and append_to_route: errors.append("create_route and append_to_route are mutually exclusive")
+	if (create_route or append_to_route) and route_id.is_empty(): errors.append("route_id is required for route mutation")
+	if not route_id.is_empty() and route_node_id.is_empty(): errors.append("route_node_id is required with route_id")
+	if not route_id.is_empty(): _validate_identifier(route_id, "route_id", errors)
+	if not route_node_id.is_empty(): _validate_identifier(route_node_id, "route_node_id", errors)
+	_validate_node_name(entry_spawn_id, "entry_spawn_id", errors)
+	var exit_ids := {}
+	for exit_data in exits:
+		var exit_id := str(exit_data.get("exit_id", ""))
+		var node_name := str(exit_data.get("node_name", ""))
+		_validate_identifier(exit_id, "exit_id", errors)
+		_validate_node_name(node_name, "exit node_name", errors)
+		if exit_ids.has(exit_id): errors.append("duplicate exit_id: %s" % exit_id)
+		exit_ids[exit_id] = true
+	var edge_ids := {}
+	for edge in edges:
+		for field in ["edge_id", "from_node_id", "exit_id", "to_node_id", "direction"]:
+			if str(edge.get(field, "")).is_empty(): errors.append("edge %s is required" % field)
+		if str(edge.get("direction", "")) not in ["forward", "back", "lateral", "exfil"]: errors.append("edge has invalid direction")
+		var edge_id := str(edge.get("edge_id", ""))
+		if edge_ids.has(edge_id): errors.append("duplicate edge_id: %s" % edge_id)
+		edge_ids[edge_id] = true
 	return errors
 
 

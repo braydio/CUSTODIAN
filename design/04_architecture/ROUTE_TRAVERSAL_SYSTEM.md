@@ -1,8 +1,8 @@
 # Route Traversal System
 
-**Project:** CUSTODIAN  
-**Status:** complete-v1  
-**Runtime target:** Godot 4.x (`custodian/`)  
+**Project:** CUSTODIAN
+**Status:** complete-v1
+**Runtime target:** Godot 4.x (`custodian/`)
 **Last updated:** 2026-07-21
 
 ## Purpose

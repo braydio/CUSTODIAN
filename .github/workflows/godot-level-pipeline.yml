@@ -6,9 +6,14 @@ on:
       - "custodian/game/world/levels/**"
       - "custodian/game/world/procgen/ingress/**"
       - "custodian/game/world/approaches/sundered_keep/**"
+      - "custodian/game/world/routes/**"
       - "custodian/content/levels/**"
+      - "custodian/content/routes/**"
+      - "design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md"
       - "custodian/tools/validation/**level*.gd"
       - "custodian/tools/validation/**ingress*.gd"
+      - "custodian/tools/validation/**route*.gd"
+      - "custodian/tools/validation/run_route_pipeline_suite.sh"
       - ".github/workflows/godot-level-pipeline.yml"
   push:
     branches: [main]
@@ -16,9 +21,14 @@ on:
       - "custodian/game/world/levels/**"
       - "custodian/game/world/procgen/ingress/**"
       - "custodian/game/world/approaches/sundered_keep/**"
+      - "custodian/game/world/routes/**"
       - "custodian/content/levels/**"
+      - "custodian/content/routes/**"
+      - "design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md"
       - "custodian/tools/validation/**level*.gd"
       - "custodian/tools/validation/**ingress*.gd"
+      - "custodian/tools/validation/**route*.gd"
+      - "custodian/tools/validation/run_route_pipeline_suite.sh"
       - ".github/workflows/godot-level-pipeline.yml"
   workflow_dispatch:
 
@@ -69,3 +79,8 @@ jobs:
             godot --headless --path . \
               --script "res://tools/validation/${test}"
           done
+
+      - name: Run route traversal suite
+        working-directory: custodian
+        shell: bash
+        run: bash tools/validation/run_route_pipeline_suite.sh

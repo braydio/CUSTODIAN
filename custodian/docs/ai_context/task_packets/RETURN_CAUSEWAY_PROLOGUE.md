@@ -8,7 +8,7 @@
 
 ## Runtime Handoff Status
 
-The authored progression chain is now live: Vista Approach activates `ReturnCausewayApproach.tscn` at its authored beach entry; the north travel gate activates `SunderedKeepMap`; returning from the Keep reactivates Return Causeway at its north anchor. `SunderedKeepTransitionTrigger` owns the shared scene handoff and `LevelLoader` adopts each active instance. Remaining unchecked criteria below concern level content/polish rather than connectivity.
+The authored progression chain is now live under `RouteTraversalManager`: Vista `continue` activates `ReturnCausewayApproach.tscn` at `OperatorSpawn`, Causeway `continue` activates the real Front Gate scene, and explicit `backtrack` edges return through `KeepReturnSpawn` and `ReturnTopdown`. Scenes expose generic exits only; `LevelLoader` stages/activates instances without owning topology. Remaining unchecked criteria below concern level content/polish rather than connectivity.
 
 ## Task
 Implement the Return Causeway prologue level — the player's arrival approach to Sundered Keep — as an authored Godot 4 vertical slice. This level replaces the old "drop into the keep" start with a controlled, cinematic arrival sequence that establishes tone, introduces the Custodian identity, and ends at the existing Sundered Keep front gate entrance.

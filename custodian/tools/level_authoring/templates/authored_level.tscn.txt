@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps={{LOAD_STEPS}} format=3]
 
 [ext_resource type="Script" path="{{PRODUCTION_SCRIPT_PATH}}" id="1_level"]
+[ext_resource type="Script" path="res://game/world/levels/level_exit_2d.gd" id="2_exit"]
+{{EXIT_SUBRESOURCES}}
 
 [node name="{{CLASS_NAME}}" type="Node2D"]
 script = ExtResource("1_level")
@@ -23,4 +25,6 @@ position = Vector2(96, 0)
 [node name="POIRoot" type="Node2D" parent="."]
 [node name="EventMarkers" type="Node2D" parent="."]
 [node name="EventRuntime" type="Node2D" parent="."]
+[node name="Exits" type="Node2D" parent="."]
+{{EXIT_NODES}}
 [node name="NavigationRoot" type="Node2D" parent="."]

@@ -14,6 +14,9 @@ func generate(data: Dictionary) -> Dictionary:
 		return _failure(errors)
 	var output_root := _resolve_output_root(request.output_root)
 	var paths := _build_paths(request, output_root)
+	var route_preflight := _prepare_route_mutation(request, paths)
+	if not bool(route_preflight.get("ok", false)):
+		return route_preflight
 	var rendered := _render_files(request, paths)
 	var preflight := _preflight(request, paths, rendered)
 	if not bool(preflight.get("ok", false)):
@@ -58,6 +61,8 @@ func _build_paths(request: RefCounted, output_root: String) -> Dictionary:
 		"smoke": validation_dir.path_join("%s_smoke.gd" % request.level_id),
 		"design": design_dir.path_join("%s.md" % request.level_id.to_upper()),
 		"registry": project_root.path_join("content/levels/levels.json"),
+		"route_definition": project_root.path_join("content/routes/%s/%s_route.json" % [request.route_id, request.route_id]),
+		"route_registry": project_root.path_join("content/routes/routes.json"),
 	}
 
 
@@ -68,7 +73,8 @@ func _render_files(request: RefCounted, paths: Dictionary) -> Dictionary:
 		"{{DISPLAY_NAME}}": request.display_name,
 		"{{REGION}}": request.region,
 		"{{CLASS_NAME}}": request.class_name_value,
-		"{{SPAWN_ID}}": request.spawn_id,
+		"{{SPAWN_ID}}": request.entry_spawn_id,
+		"{{ENTRY_SPAWN_ID}}": request.entry_spawn_id,
 		"{{RETURN_SPAWN_ID}}": request.return_spawn_id,
 		"{{INGRESS_PROMPT}}": request.ingress_prompt,
 		"{{WORLD_CONTEXT}}": request.world_context,
@@ -86,9 +92,18 @@ func _render_files(request: RefCounted, paths: Dictionary) -> Dictionary:
 		"{{PLAYTEST_SCENE_PATH}}": _resource_path(paths.playtest_scene),
 		"{{AUTHORING_SCENE_PATH}}": _resource_path(paths.authoring_scene),
 		"{{DEFINITION_PATH}}": _resource_path(paths.definition),
-		"{{DESIGN_DOC_PATH}}": "../design/05_levels/%s.md" % request.level_id.to_upper(),
+		"{{DESIGN_DOC_PATH}}": _resource_path(paths.design),
 		"{{PLACEMENT_OFFSETS_JSON}}": JSON.stringify(request.placement_offsets.map(func(value: Vector2i) -> Array: return [value.x, value.y])),
+		"{{CACHE_POLICY}}": request.cache_policy,
+		"{{STATE_POLICY}}": request.state_policy,
+		"{{PRESENTATION_PROFILE}}": request.presentation_profile,
+		"{{TAGS_JSON}}": JSON.stringify(["authored", "playable_map", "route_node", request.region] if not request.route_id.is_empty() else ["authored", "playable_map", "world_ingress", request.region]),
+		"{{INGRESS_BLOCK}}": "" if not request.route_id.is_empty() else _ingress_block(request),
 	}
+	var exit_fragments := _exit_fragments(request.exits)
+	replacements["{{LOAD_STEPS}}"] = str(3 + request.exits.size())
+	replacements["{{EXIT_SUBRESOURCES}}"] = exit_fragments.subresources
+	replacements["{{EXIT_NODES}}"] = exit_fragments.nodes
 	var files := {
 		paths.production_script: _render_template("authored_level.gd.txt", replacements),
 		paths.production_scene: _render_template("authored_level.tscn.txt", replacements),
@@ -103,6 +118,8 @@ func _render_files(request: RefCounted, paths: Dictionary) -> Dictionary:
 	for path: String in files.keys():
 		managed_files.append(path.trim_prefix(paths.output_root + "/"))
 	managed_files.append(paths.manifest.trim_prefix(paths.output_root + "/"))
+	if request.create_route or request.append_to_route:
+		managed_files.append(paths.route_definition.trim_prefix(paths.output_root + "/"))
 	managed_files.sort()
 	files[paths.manifest] = JSON.stringify({
 		"schema": "custodian.level_scaffold_manifest.v1",
@@ -113,6 +130,34 @@ func _render_files(request: RefCounted, paths: Dictionary) -> Dictionary:
 		"last_generated_utc": Time.get_datetime_string_from_system(true),
 	}, "  ") + "\n"
 	return files
+
+
+func _ingress_block(request: RefCounted) -> String:
+	return ",\n  \"ingress\": " + JSON.stringify({
+		"ingress_id": request.level_id,
+		"prompt_text": request.ingress_prompt,
+		"target_spawn_id": request.entry_spawn_id,
+		"interaction_distance": request.interaction_distance,
+		"placement": {"strategy": request.placement_strategy, "priority": 100, "minimum_spacing_tiles": 10, "search_radius_tiles": 14, "offset_candidates_tiles": request.placement_offsets.map(func(value: Vector2i) -> Array: return [value.x, value.y])},
+	}, "  ")
+
+
+func _exit_fragments(exits: Array[Dictionary]) -> Dictionary:
+	var subresources: Array[String] = []
+	var nodes: Array[String] = []
+	for index in exits.size():
+		var exit_data := exits[index]
+		var shape_id := "RectangleShape2D_exit_%d" % index
+		subresources.append("[sub_resource type=\"RectangleShape2D\" id=\"%s\"]\nsize = Vector2(72, 72)" % shape_id)
+		nodes.append("\n".join([
+			"[node name=\"%s\" type=\"Area2D\" parent=\"Exits\"]" % str(exit_data.node_name),
+			"position = Vector2(%d, 96)" % (96 + index * 96),
+			"script = ExtResource(\"2_exit\")",
+			"exit_id = &\"%s\"" % str(exit_data.exit_id),
+			"[node name=\"CollisionShape2D\" type=\"CollisionShape2D\" parent=\"Exits/%s\"]" % str(exit_data.node_name),
+			"shape = SubResource(\"%s\")" % shape_id,
+		]))
+	return {"subresources": "\n\n".join(subresources), "nodes": "\n\n".join(nodes)}
 
 
 func _playtest_profile_fragments(profile: String) -> Dictionary:
@@ -184,10 +229,96 @@ func _preflight(request: RefCounted, paths: Dictionary, rendered: Dictionary) ->
 	return {"ok": true}
 
 
+func _prepare_route_mutation(request: RefCounted, paths: Dictionary) -> Dictionary:
+	request.route_data.clear()
+	if not request.create_route and not request.append_to_route:
+		return {"ok": true}
+	var route: Dictionary
+	if request.create_route:
+		if FileAccess.file_exists(paths.route_definition):
+			return _failure(["route definition already exists: %s" % paths.route_definition])
+		route = {
+			"schema": "custodian.route_definition.v1",
+			"managed_by": "custodian.level_scaffold_generator.v1",
+			"route_id": request.route_id,
+			"display_name": request.route_id.replace("_", " ").capitalize(),
+			"world_context": request.world_context,
+			"default_profile": "production",
+			"tags": ["authored"], "nodes": [], "edges": [], "profiles": [],
+		}
+	else:
+		if not FileAccess.file_exists(paths.route_definition):
+			return _failure(["route definition does not exist: %s" % paths.route_definition])
+		route = _read_json(paths.route_definition)
+		if str(route.get("managed_by", "")) != "custodian.level_scaffold_generator.v1":
+			return _failure(["refusing to overwrite unmanaged route file: %s" % paths.route_definition])
+	if str(route.get("route_id", "")) != request.route_id:
+		return _failure(["route_id mismatch in route definition"])
+	var nodes: Array = route.get("nodes", [])
+	for node: Dictionary in nodes:
+		if str(node.get("node_id", "")) == request.route_node_id:
+			return _failure(["duplicate route node_id: %s" % request.route_node_id])
+	nodes.append({"node_id": request.route_node_id, "level_id": request.level_id})
+	route.nodes = nodes
+	var edges: Array = route.get("edges", [])
+	var edge_ids := {}; var profile_exit_keys := {}
+	for existing: Dictionary in edges:
+		edge_ids[str(existing.get("edge_id", ""))] = true
+	for edge: Dictionary in request.edges:
+		var edge_id := str(edge.get("edge_id", ""))
+		if edge_ids.has(edge_id): return _failure(["duplicate route edge_id: %s" % edge_id])
+		edge_ids[edge_id] = true
+		edges.append(edge.duplicate(true))
+	route.edges = edges
+	var profiles: Array = route.get("profiles", [])
+	var profiles_by_id := {}
+	for profile: Dictionary in profiles:
+		var existing_profile_id := str(profile.get("profile_id", ""))
+		profiles_by_id[existing_profile_id] = profile
+		for enabled_edge_id: Variant in profile.get("enabled_edge_ids", []):
+			for existing_edge: Dictionary in edges:
+				if str(existing_edge.get("edge_id", "")) == str(enabled_edge_id):
+					profile_exit_keys["%s::%s::%s" % [existing_profile_id, existing_edge.from_node_id, existing_edge.exit_id]] = true
+	for edge: Dictionary in request.edges:
+		for profile_id: Variant in edge.get("profiles", ["production"]):
+			var id := str(profile_id)
+			if not profiles_by_id.has(id):
+				var profile := {"profile_id": id, "entry_edge_id": "", "enabled_edge_ids": []}
+				profiles.append(profile); profiles_by_id[id] = profile
+			var target_profile: Dictionary = profiles_by_id[id]
+			var key := "%s::%s::%s" % [id, edge.from_node_id, edge.exit_id]
+			if profile_exit_keys.has(key): return _failure(["ambiguous profile exit mapping: %s" % key])
+			profile_exit_keys[key] = true
+			(target_profile.enabled_edge_ids as Array).append(edge.edge_id)
+			if str(edge.from_node_id) == "@world_origin":
+				if not str(target_profile.entry_edge_id).is_empty(): return _failure(["profile %s already has an entry edge" % id])
+				target_profile.entry_edge_id = edge.edge_id
+	if profiles.is_empty():
+		return _failure(["route mutation requires at least one --edge with a profile"])
+	for profile: Dictionary in profiles:
+		if str(profile.get("entry_edge_id", "")).is_empty(): return _failure(["profile %s has no world-origin entry edge" % profile.get("profile_id", "")])
+	route.profiles = profiles
+	request.route_data = route
+	return {"ok": true}
+
+
 func _commit(request: RefCounted, paths: Dictionary, rendered: Dictionary) -> Dictionary:
 	var stage_root: String = str(paths.output_root).path_join(".levelgen-stage-%s-%d" % [request.level_id, Time.get_ticks_msec()])
 	var backups: Dictionary = {}
 	var created: Array[String] = []
+	var mutation_paths: Array[String] = []
+	if request.register_level:
+		mutation_paths.append(str(paths.registry))
+	if request.create_route or request.append_to_route:
+		mutation_paths.append(paths.route_definition)
+		mutation_paths.append(paths.route_registry)
+	for mutation_path in mutation_paths:
+		if FileAccess.file_exists(mutation_path):
+			var mutation_file := FileAccess.open(mutation_path, FileAccess.READ)
+			backups[mutation_path] = mutation_file.get_buffer(mutation_file.get_length())
+			mutation_file.close()
+		else:
+			created.append(mutation_path)
 	for final_path: String in rendered.keys():
 		var stage_path: String = stage_root.path_join(final_path.trim_prefix(str(paths.output_root) + "/"))
 		if not _write_text(stage_path, rendered[final_path]):
@@ -215,6 +346,10 @@ func _commit(request: RefCounted, paths: Dictionary, rendered: Dictionary) -> Di
 		_rollback(created, backups)
 		_remove_tree(stage_root)
 		return _failure(["registry update failed; generated files rolled back"])
+	if (request.create_route or request.append_to_route) and not _commit_route_mutation(request, paths):
+		_rollback(created, backups)
+		_remove_tree(stage_root)
+		return _failure(["route update failed; generated files rolled back"])
 	_remove_tree(stage_root)
 	return {
 		"ok": true,
@@ -224,6 +359,21 @@ func _commit(request: RefCounted, paths: Dictionary, rendered: Dictionary) -> Di
 		"definition_path": _resource_path(paths.definition),
 		"registry_path": paths.registry,
 	}
+
+
+func _commit_route_mutation(request: RefCounted, paths: Dictionary) -> bool:
+	if not _atomic_write_text(paths.route_definition, JSON.stringify(request.route_data, "  ") + "\n"):
+		return false
+	var registry := {"schema": "custodian.route_registry.v1", "definitions": []}
+	if FileAccess.file_exists(paths.route_registry):
+		registry = _read_json(paths.route_registry)
+	if str(registry.get("schema", "")) != "custodian.route_registry.v1":
+		return false
+	var definitions: Array = registry.get("definitions", [])
+	var route_path := _resource_path(paths.route_definition)
+	if not definitions.has(route_path): definitions.append(route_path)
+	definitions.sort(); registry.definitions = definitions
+	return _atomic_write_text(paths.route_registry, JSON.stringify(registry, "  ") + "\n")
 
 
 func _validate_committed_resources(paths: Dictionary) -> bool:

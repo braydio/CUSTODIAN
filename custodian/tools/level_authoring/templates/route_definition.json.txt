@@ -1,0 +1,12 @@
+{
+  "schema": "custodian.route_definition.v1",
+  "managed_by": "custodian.level_scaffold_generator.v1",
+  "route_id": "{{ROUTE_ID}}",
+  "display_name": "{{ROUTE_DISPLAY_NAME}}",
+  "world_context": "{{WORLD_CONTEXT}}",
+  "default_profile": "production",
+  "tags": ["authored"],
+  "nodes": {{ROUTE_NODES_JSON}},
+  "edges": {{ROUTE_EDGES_JSON}},
+  "profiles": {{ROUTE_PROFILES_JSON}}
+}

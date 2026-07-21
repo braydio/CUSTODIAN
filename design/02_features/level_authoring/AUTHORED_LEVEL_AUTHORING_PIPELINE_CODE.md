@@ -1,8 +1,8 @@
 # Authored Level Authoring Pipeline — Implementation Contract
 
 **Project:** CUSTODIAN  
-**Status:** complete-v1; lifecycle hardening implemented; route migration pending
-**Last Updated:** 2026-07-20
+**Status:** complete-v1; lifecycle hardening complete; route traversal v1 complete
+**Last Updated:** 2026-07-21
 
 ## Runtime Rules
 
@@ -12,11 +12,11 @@
 - `LevelLoader.enter_level()` succeeds only after actor placement succeeds.
 - A nonempty requested spawn is mandatory and unresolved IDs abort entry.
 - A registered `WorldIngressSite` never uses its legacy scene fallback unless `allow_legacy_registered_fallback` is explicitly enabled.
-- `WorldIngressSpawner` places only definitions tagged `world_ingress`.
+- `WorldIngressSpawner` combines level and route definitions tagged `world_ingress` and rejects duplicate ingress IDs.
 - Placement uses registry order by level ID and squared-distance spacing checks.
 - Definitions must declare `presentation_profile` and a `lifecycle` block.
 - Registered ingress snapshots source branches, actor, camera, and UI before isolation.
-- `LevelLoader` owns the active-instance record and clears it synchronously on world return.
+- `LevelLoader` owns only staged/active instance identity; `RouteTraversalManager` owns route topology, profiles, history, state/cache policy, rollback, and production exfil.
 - `AuthoredLevel2D.return_to_main()` completes return through the loader when runtime context is bound.
 - World return restores `ProcGenRuntime` and `ConnectedMaps`, resets the originating ingress, and releases the outgoing level.
 - The outgoing level is hidden and set to `PROCESS_MODE_DISABLED` before origin restoration begins; deferred freeing must never create a same-frame dual-authority window.
@@ -35,7 +35,7 @@ Initial lifecycle policy is:
 }
 ```
 
-The current bridge has no route cache authority. Therefore `keep_during_route` still releases an instance when returning to world origin; it only prevents future route traversal from being forced into destroy-on-every-edge behavior.
+All four cache policies and all three state policies are live. Retained instances are hidden and processing-disabled, session state clears at route end, and `persistent` state survives later route sessions only in the current runtime. Disk persistence is not implemented.
 
 ## Generated Layout
 
@@ -73,6 +73,8 @@ godot --headless --path . \
 Required: `--level-id`, `--display-name`, `--region`.
 
 Safety: `--dry-run`, `--no-register`, `--force-generated`, `--adopt-existing`, `--output-root`, `--json-report`.
+
+Route authoring adds `--route-id`, `--route-node-id`, `--entry-spawn-id`, repeatable `--exit exit_id:NodeName`, policy/profile flags, `--create-route` or `--append-to-route`, and repeatable edges in `edge_id|from_node_id|exit_id|to_node_id|target_spawn_id|direction|profile,profile` format. Route and level mutations preflight before writes; the route registry is committed last.
 
 ## Acceptance
 

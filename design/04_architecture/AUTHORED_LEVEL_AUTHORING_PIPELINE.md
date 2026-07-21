@@ -2,8 +2,8 @@
 
 **Project:** CUSTODIAN  
 **Created:** 2026-07-19  
-**Status:** complete-v1; lifecycle hardening implemented; route migration pending
-**Last Updated:** 2026-07-20
+**Status:** complete-v1; lifecycle hardening complete; route traversal v1 complete
+**Last Updated:** 2026-07-21
 
 ## Purpose
 
@@ -29,8 +29,8 @@ Define one deterministic path from a level-scaffold request to a registered, pla
 - Campaign save serialization.
 - A full world-transition-manager migration.
 - Editor-dock UI for the scaffold generator.
-- Replacing the routed Sundered Keep Vista/Return Causeway chain.
-- Directed route graphs, branch selection, and route-session persistence.
+- Major-context Compound/Campaign transitions.
+- Disk/save-file persistence for route sessions.
 
 ## Core Ownership Contract
 
@@ -146,7 +146,9 @@ Every definition also declares lifecycle data:
 
 Definitions tagged `world_ingress` are eligible for procgen placement. Registry paths are sorted and duplicate paths/IDs are rejected.
 
-Sundered Keep remains a temporary special routed chain: its registry entry points at the Vista Approach, and its later Keep transition remains approach-owned. `target_scene_path` is therefore the registered entry target, not the terminal Keep map. Its definition explicitly selects `vista_approach`; generated definitions default to `gameplay`.
+Sundered Keep is a registered route with distinct Vista Approach, Return Causeway, and Front Gate levels. Its route definition owns world ingress and production/debug profiles; each scene exposes only generic exits. The Front Gate definition points to the real Keep scene. Generated definitions default to `gameplay`, while the Vista node explicitly selects `vista_approach`.
+
+`WorldIngressSpawner` combines level-owned and route-owned ingress definitions deterministically and rejects duplicate ingress IDs. Production level-only ingress starts an internal one-node route. `LevelLoader` is the low-level staged-instance service and never owns graph/profile/history logic.
 
 ## Ingress Placement
 
@@ -213,6 +215,6 @@ This pipeline improves that bridge without claiming the future manager exists.
 
 - A `DevBootstrap`-style editor dock for level creation.
 - Full transition-manager ownership.
-- Directed `RouteTraversalManager` ownership and Sundered route-graph migration.
+- Disk/save-file route serialization and editor graph authoring.
 - Abstract placement strategies beyond compound-relative candidates.
 - Production art promotion and TileMap authoring workflows.

@@ -12,9 +12,10 @@
 
 ## Current Runtime Bridge
 
-The authoritative transition manager described below remains future architecture. The live Godot bridge currently distributes level handoff across:
+The authoritative major-context manager described below remains future architecture. Intra-campaign handoff is now live through:
 
 - `custodian/game/world/levels/level_loader.gd`
+- `custodian/game/world/routes/route_traversal_manager.gd`
 - `custodian/game/world/procgen/ingress/world_ingress_site.gd`
 - `custodian/game/systems/core/systems/contract_world_loader.gd`
 
@@ -24,12 +25,12 @@ Registered authored destinations and named-spawn activation are governed by `des
 
 The future `WorldTransitionManager` changes major authoritative runtime contexts, such as Compound to Campaign or Campaign to Compound. It must not own ordinary traversal between authored scenes that remain inside one campaign world.
 
-Intra-campaign scene boundaries belong to a separate, planned `RouteTraversalManager`. Route traversal will resolve directed route edges, named spawns, caching, backtracking, and world-origin exfil while preserving the campaign-world context and the Operator owned above every route node. Movement inside one loaded level remains local level gameplay and requires neither manager.
+Intra-campaign scene boundaries belong to the live `RouteTraversalManager` defined by `ROUTE_TRAVERSAL_SYSTEM.md`. It resolves directed route edges, named spawns, profiles, caching, backtracking, rollback, and world-origin exfil while preserving the campaign-world context and the Operator owned above every route node. Production registry ingress starts route sessions, including an internal one-node route for ordinary level destinations. Movement inside one loaded level remains local level gameplay and requires neither manager.
 
 ```text
 WorldTransitionManager  major context changes
-RouteTraversalManager  route-node changes inside a campaign
-LevelInstanceLoader    instantiate/validate one route-node scene
+RouteTraversalManager  live route-node changes inside a campaign
+LevelLoader            stage/activate/release one route-node scene
 Level scene            local content and exit requests
 ```
 

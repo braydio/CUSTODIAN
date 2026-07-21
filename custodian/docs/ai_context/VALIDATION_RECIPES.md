@@ -4,6 +4,17 @@ Canonical validation guide for CUSTODIAN agent work.
 
 Use the narrowest recipe that proves the change, then broaden only when the change affects shared runtime behavior, scenes, imports, or workflow routing.
 
+## Route Traversal V1
+
+From `custodian/`, run the complete directed-route suite:
+
+```bash
+env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
+bash tools/validation/run_route_pipeline_suite.sh
+```
+
+The runner covers registry failures/connectivity, forward/back authority, profile resolution, rollback, world exfil, the single-level wrapper, all cache/state policies, physics-driven exit binding, the real Sundered graph/state/no-direct-authority contracts, and route-aware scaffold create/append. For lifecycle changes also run the authored ingress/re-entry/rollback/single-authority smokes and `sundered_keep_ingress_smoke.gd`. Runtime `persistent` route state is process-local; save serialization is not claimed.
+
 Prefer RTK subcommands for compact output when they support the command shape. RTK is not a blind prefix: use `rtk git status`, `rtk grep ...`, `rtk find ...`, etc. For unsupported commands where token tracking still helps, use `rtk proxy <command> ...`. Use the raw command when RTK changes argument ordering or hides information needed for debugging.
 
 ## Selection Rules

@@ -26,12 +26,14 @@ func _parse_args(args: PackedStringArray) -> Dictionary:
 	var index := 0
 	while index < args.size():
 		var flag := args[index]
-		if flag in ["--dry-run", "--no-register", "--force-generated", "--adopt-existing"]:
+		if flag in ["--dry-run", "--no-register", "--force-generated", "--adopt-existing", "--create-route", "--append-to-route"]:
 			match flag:
 				"--dry-run": request.dry_run = true
 				"--no-register": request.register_level = false
 				"--force-generated": request.force_generated = true
 				"--adopt-existing": request.adopt_existing = true
+				"--create-route": request.create_route = true
+				"--append-to-route": request.append_to_route = true
 			index += 1
 			continue
 		if index + 1 >= args.size():
@@ -53,6 +55,14 @@ func _parse_args(args: PackedStringArray) -> Dictionary:
 			"--canvas-size": request.canvas_size = _parse_size(value)
 			"--output-root": request.output_root = value
 			"--json-report": request.json_report_path = value
+			"--route-id": request.route_id = value
+			"--route-node-id": request.route_node_id = value
+			"--entry-spawn-id": request.entry_spawn_id = value
+			"--exit": request.get_or_add("exits", []).append(_parse_exit(value))
+			"--edge": request.get_or_add("edges", []).append(_parse_edge(value))
+			"--cache-policy": request.cache_policy = value
+			"--state-policy": request.state_policy = value
+			"--presentation-profile": request.presentation_profile = value
 			_: return {"ok": false, "errors": PackedStringArray(["unknown option: %s" % flag])}
 		index += 2
 	return {"ok": true, "request": request}
@@ -69,6 +79,19 @@ func _parse_offsets(value: String) -> Array[Vector2i]:
 func _parse_size(value: String) -> Vector2i:
 	var parts := value.to_lower().split("x")
 	return Vector2i(parts[0].to_int(), parts[1].to_int()) if parts.size() == 2 else Vector2i.ZERO
+
+
+func _parse_exit(value: String) -> Dictionary:
+	var parts := value.split(":", false, 1)
+	return {"exit_id": parts[0], "node_name": parts[1] if parts.size() == 2 else ""}
+
+
+# edge_id|from_node_id|exit_id|to_node_id|target_spawn_id|direction|profile,profile
+func _parse_edge(value: String) -> Dictionary:
+	var parts := value.split("|", true)
+	if parts.size() != 7:
+		return {}
+	return {"edge_id": parts[0], "from_node_id": parts[1], "exit_id": parts[2], "to_node_id": parts[3], "target_spawn_id": parts[4], "direction": parts[5], "transition_style": "fade", "profiles": Array(parts[6].split(",", false))}
 
 
 func _finish(result: Dictionary, code: int) -> void:
