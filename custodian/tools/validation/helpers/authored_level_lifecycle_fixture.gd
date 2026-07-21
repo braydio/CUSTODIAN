@@ -3,6 +3,8 @@ extends RefCounted
 
 const AUTHORED_LEVEL_SCRIPT := preload("res://game/world/levels/authored_level_2d.gd")
 const LEVEL_LOADER_SCRIPT := preload("res://game/world/levels/level_loader.gd")
+const ROUTE_MANAGER_SCRIPT := preload("res://game/world/routes/route_traversal_manager.gd")
+const LEVEL_EXIT_SCRIPT := preload("res://game/world/levels/level_exit_2d.gd")
 const INGRESS_SCRIPT := preload("res://game/world/procgen/ingress/world_ingress_site.gd")
 const TEST_UI_SCRIPT := preload("res://tools/validation/fixtures/level_lifecycle_test_ui.gd")
 const TEST_ACTOR_SCRIPT := preload("res://tools/validation/fixtures/level_lifecycle_test_actor.gd")
@@ -42,6 +44,9 @@ func create(tree: SceneTree, suffix: String, profile: StringName, target_spawn_i
 	loader.name = "LevelLoader"
 	loader.registry_index_path = paths.index
 	world.add_child(loader)
+	var route_manager := ROUTE_MANAGER_SCRIPT.new()
+	route_manager.name = "RouteTraversalManager"
+	world.add_child(route_manager)
 	var ingress := INGRESS_SCRIPT.new()
 	ingress.name = "FixtureIngress"
 	world.add_child(ingress)
@@ -57,6 +62,7 @@ func create(tree: SceneTree, suffix: String, profile: StringName, target_spawn_i
 		"camera": camera,
 		"actor": actor,
 		"loader": loader,
+		"route_manager": route_manager,
 		"ingress": ingress,
 		"level_id": StringName(paths.level_id),
 	}
@@ -88,6 +94,21 @@ func _write_resources(suffix: String, profile: StringName, target_spawn_id: Stri
 	spawn.position = Vector2(240.0, 80.0)
 	markers.add_child(spawn)
 	spawn.owner = level
+	var exits := Node2D.new()
+	exits.name = "Exits"
+	level.add_child(exits)
+	exits.owner = level
+	var exit := LEVEL_EXIT_SCRIPT.new()
+	exit.name = "Exit_Main"
+	exit.exit_id = &"return_world"
+	exit.trigger_on_body_entered = false
+	var exit_shape := CollisionShape2D.new()
+	exit_shape.name = "CollisionShape2D"
+	exit_shape.shape = RectangleShape2D.new()
+	exit.add_child(exit_shape)
+	exits.add_child(exit)
+	exit.owner = level
+	exit_shape.owner = level
 	var packed := PackedScene.new()
 	assert(packed.pack(level) == OK)
 	assert(ResourceSaver.save(packed, scene_path) == OK)
@@ -99,6 +120,7 @@ func _write_resources(suffix: String, profile: StringName, target_spawn_id: Stri
 		"target_scene_path": scene_path,
 		"world_context": "campaign_region",
 		"presentation_profile": String(profile),
+		"spawns": [String(target_spawn_id)],
 		"lifecycle": {
 			"cache_policy": "keep_during_route",
 			"state_policy": "session",

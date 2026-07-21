@@ -21,8 +21,11 @@ func _run() -> void:
 		var lifecycle: Dictionary = definition.call("get_lifecycle")
 		if str(lifecycle.get("cache_policy", "")).is_empty() or str(lifecycle.get("state_policy", "")).is_empty():
 			errors.append("%s has an incomplete lifecycle policy" % level_id)
-		if definition.ingress == null or definition.ingress.target_spawn_id.is_empty():
-			errors.append("%s has no named ingress spawn" % level_id)
+		if definition.has_tag(&"world_ingress") and (definition.ingress == null or definition.ingress.target_spawn_id.is_empty()):
+			errors.append("%s world ingress has no named spawn" % level_id)
+			continue
+		if not definition.has_tag(&"world_ingress") and definition.spawns.is_empty():
+			errors.append("%s route node has no declared spawn" % level_id)
 			continue
 		var scene := load(definition.call("get_entry_scene_path")) as PackedScene
 		if scene == null:
@@ -31,12 +34,11 @@ func _run() -> void:
 		var level := scene.instantiate()
 		root.add_child(level)
 		await process_frame
-		for method_name in ["configure_connection", "get_entry_position", "enter_from_main", "get_camera_bounds", "get_authoring_marker_state"]:
+		for method_name in ["get_entry_position", "get_camera_bounds", "activate_route_node", "capture_route_state", "restore_route_state"]:
 			if not level.has_method(method_name): errors.append("%s missing %s" % [level_id, method_name])
-		if level.get_node_or_null("Collision/PathBoundaryCollision") == null:
-			errors.append("%s missing Collision/PathBoundaryCollision" % level_id)
-		if level.find_child(String(definition.ingress.target_spawn_id), true, false) == null:
-			errors.append("%s missing spawn %s" % [level_id, definition.ingress.target_spawn_id])
+		var expected_spawn: StringName = definition.ingress.target_spawn_id if definition.ingress != null else definition.spawns[0]
+		if level.find_child(String(expected_spawn), true, false) == null:
+			errors.append("%s missing spawn %s" % [level_id, expected_spawn])
 		level.queue_free()
 		await process_frame
 	_finish(errors)

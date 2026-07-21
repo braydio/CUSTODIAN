@@ -16,6 +16,7 @@ var authoring_scene_path: String = ""
 var design_doc_path: String = ""
 var world_context: StringName = &""
 var tags: Array[StringName] = []
+var spawns: Array[StringName] = []
 var ingress: RefCounted
 var presentation_profile: StringName = &"gameplay"
 var lifecycle: Dictionary = {
@@ -44,6 +45,9 @@ func configure_from_dictionary(data: Dictionary) -> void:
 	tags.clear()
 	for tag: Variant in data.get("tags", []):
 		tags.append(StringName(str(tag)))
+	spawns.clear()
+	for spawn_id: Variant in data.get("spawns", []):
+		spawns.append(StringName(str(spawn_id)))
 	var ingress_data: Variant = data.get("ingress", {})
 	ingress = null
 	if ingress_data is Dictionary and not ingress_data.is_empty():
@@ -83,11 +87,18 @@ func validate() -> PackedStringArray:
 	var state_policy := StringName(str(lifecycle.get("state_policy", "")))
 	if not STATE_POLICIES.has(state_policy):
 		errors.append("lifecycle.state_policy is invalid: %s" % state_policy)
-	if ingress == null:
-		errors.append("ingress definition is required")
-	else:
-		for ingress_error: String in ingress.validate():
+	if has_tag(&"world_ingress") and ingress == null:
+		errors.append("ingress definition is required for world_ingress levels")
+	elif ingress != null:
+		for ingress_error: String in ingress.validate(has_tag(&"world_ingress")):
 			errors.append("ingress.%s" % ingress_error)
+	var seen_spawns: Dictionary = {}
+	for spawn_id in spawns:
+		if spawn_id.is_empty():
+			errors.append("spawns cannot contain an empty ID")
+		elif seen_spawns.has(spawn_id):
+			errors.append("duplicate spawn ID: %s" % spawn_id)
+		seen_spawns[spawn_id] = true
 	return errors
 
 
@@ -101,6 +112,10 @@ func get_presentation_profile() -> StringName:
 
 func get_lifecycle() -> Dictionary:
 	return lifecycle.duplicate(true)
+
+
+func has_declared_spawn(spawn_id: StringName) -> bool:
+	return spawns.has(spawn_id)
 
 
 func _validate_optional_scene(path: String, label: String, errors: PackedStringArray) -> void:

@@ -78,6 +78,13 @@ func get_errors() -> PackedStringArray:
 	return _errors.duplicate()
 
 
+func level_has_spawn(level_id: StringName, spawn_id: StringName) -> bool:
+	var definition := get_level(level_id)
+	if definition == null or spawn_id.is_empty():
+		return false
+	return bool(definition.call("has_declared_spawn", spawn_id))
+
+
 func _read_json_dictionary(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
 		_errors.append("JSON file does not exist: %s" % path)

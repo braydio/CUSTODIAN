@@ -3,6 +3,8 @@ class_name WorldIngressSite
 
 @export var ingress_id: StringName
 @export var level_id: StringName = &""
+@export var route_id: StringName = &""
+@export var route_profile: StringName = &""
 @export var approach_scene: PackedScene
 @export var target_scene_path: String = ""
 @export var target_spawn_id: StringName = &""
@@ -15,11 +17,13 @@ var _approach_enter_deferred := false
 var _sprite: Sprite2D = null
 var _main_map: Node = null
 var _entry_snapshot: Dictionary = {}
+var _awaiting_body_exit_after_return := false
 
 
 func _ready() -> void:
 	add_to_group("world_ingress_site")
 	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
 	_ensure_collision()
 	_ensure_visual()
 
@@ -38,6 +42,15 @@ func configure(
 
 func configure_level(p_level_id: StringName, p_main_map: Node = null) -> void:
 	level_id = p_level_id
+	route_id = &""
+	route_profile = &""
+	_main_map = p_main_map
+
+
+func configure_route(p_route_id: StringName, p_route_profile: StringName, p_main_map: Node = null) -> void:
+	route_id = p_route_id
+	route_profile = p_route_profile
+	level_id = &""
 	_main_map = p_main_map
 
 
@@ -63,6 +76,8 @@ func get_interaction_distance() -> float:
 
 
 func _on_body_entered(body: Node) -> void:
+	if _awaiting_body_exit_after_return:
+		return
 	if _triggered:
 		return
 	if _approach_enter_deferred:
@@ -73,6 +88,11 @@ func _on_body_entered(body: Node) -> void:
 		return
 	_approach_enter_deferred = true
 	call_deferred("_enter_approach_deferred", body)
+
+
+func _on_body_exited(body: Node) -> void:
+	if _awaiting_body_exit_after_return and _is_player_body(body):
+		_awaiting_body_exit_after_return = false
 
 
 func _enter_approach_deferred(body: Node) -> void:
@@ -97,70 +117,43 @@ func _enter_approach(actor: Node) -> void:
 		reset_after_level_return()
 		return
 
-	if not level_id.is_empty():
-		var level_loader := _find_level_loader()
-		if level_loader == null:
-			push_error("[WorldIngressSite] Missing LevelLoader for registered destination %s" % level_id)
-			if not allow_legacy_registered_fallback:
-				reset_after_level_return()
-				return
-		else:
-			var definition: RefCounted = level_loader.call("get_definition", level_id) as RefCounted
-			var presentation_profile := &"gameplay"
-			if definition != null and definition.has_method("get_presentation_profile"):
-				presentation_profile = definition.call("get_presentation_profile") as StringName
-			_entry_snapshot = _capture_origin_state(actor)
-			_set_procgen_world_visible(false)
-			_set_world_presentation_profile(actor, presentation_profile)
-		if level_loader != null:
-			var instance: Node = level_loader.call("enter_level", level_id, actor, {
-				"parent": world,
-				"main_map": _main_map,
-				"return_world_position": global_position,
-				"target_spawn_id": target_spawn_id,
-				"origin_ingress": self,
-				"source_state": _entry_snapshot,
-			}) as Node
-			if instance != null:
-				_observe(&"level_ingress_entered", {"level_id": String(level_id), "ingress_id": String(ingress_id)})
-				return
-		_observe(&"level_ingress_spawn_resolution_failed", {"level_id": String(level_id), "ingress_id": String(ingress_id)})
-		if not allow_legacy_registered_fallback:
-			push_error("[WorldIngressSite] Registered level entry failed authoritatively: %s" % level_id)
-			_restore_failed_approach_entry(actor)
-			return
-		push_warning("[WorldIngressSite] LevelLoader could not enter %s; explicit legacy fallback enabled" % level_id)
-
-	if _entry_snapshot.is_empty():
-		_entry_snapshot = _capture_origin_state(actor)
-		_set_procgen_world_visible(false)
-		_set_world_presentation_profile(actor, &"vista_approach")
-
-	if approach_scene == null:
-		push_error("[WorldIngressSite] Missing approach_scene for %s" % ingress_id)
-		_restore_failed_approach_entry(actor)
+	var has_level := not level_id.is_empty()
+	var has_route := not route_id.is_empty()
+	if has_level == has_route:
+		push_error("[WorldIngressSite] Exactly one destination mode is required for %s" % ingress_id)
+		reset_after_level_return()
 		return
-
-	var existing := world.get_node_or_null("%s_Approach" % String(ingress_id))
-	var approach := existing
-	if approach == null:
-		approach = approach_scene.instantiate()
-		if approach == null:
-			push_error("[WorldIngressSite] Could not instantiate approach scene for %s" % ingress_id)
-			_restore_failed_approach_entry(actor)
-			return
-		approach.name = "%s_Approach" % String(ingress_id)
-		world.add_child(approach)
-		_align_approach_entry_to_ingress(approach)
-	if approach.has_method("configure_ingress"):
-		approach.call("configure_ingress", {
-			"target_scene_path": target_scene_path,
-			"target_spawn_id": target_spawn_id,
-			"return_world_position": global_position,
-		})
-
-	if actor is Node2D and approach.has_method("get_entry_position"):
-		(actor as Node2D).global_position = approach.call("get_entry_position")
+	var route_manager := _find_route_traversal_manager()
+	if route_manager == null:
+		push_error("[WorldIngressSite] Missing RouteTraversalManager for %s" % ingress_id)
+		reset_after_level_return()
+		return
+	var presentation_profile := &"gameplay"
+	if has_route:
+		presentation_profile = route_manager.call("get_route_entry_presentation_profile", route_id, route_profile) as StringName
+	else:
+		var level_loader := _find_level_loader()
+		var definition: RefCounted = level_loader.call("get_definition", level_id) as RefCounted if level_loader != null else null
+		if definition != null:
+			presentation_profile = definition.call("get_presentation_profile") as StringName
+	_entry_snapshot = capture_world_origin(actor)
+	isolate_world_origin(actor, presentation_profile)
+	var context := {
+		"parent": world,
+		"main_map": _main_map,
+		"return_world_position": global_position,
+		"origin_ingress": self,
+		"origin_snapshot": _entry_snapshot,
+		"source_state": _entry_snapshot,
+		"route_profile": route_profile,
+	}
+	var started := bool(route_manager.call("start_route", route_id, actor, context)) if has_route \
+		else bool(route_manager.call("start_single_level_route", level_id, actor, context))
+	if started:
+		_observe(&"route_ingress_entered", {"route_id": String(route_id), "level_id": String(level_id), "ingress_id": String(ingress_id)})
+		return
+	_observe(&"route_ingress_entry_failed", {"route_id": String(route_id), "level_id": String(level_id), "ingress_id": String(ingress_id)})
+	_restore_failed_approach_entry(actor)
 
 
 func _find_level_loader() -> Node:
@@ -168,6 +161,11 @@ func _find_level_loader() -> Node:
 	if not candidates.is_empty():
 		return candidates[0] as Node
 	return null
+
+
+func _find_route_traversal_manager() -> Node:
+	var candidates := get_tree().get_nodes_in_group("route_traversal_manager")
+	return candidates[0] as Node if not candidates.is_empty() else null
 
 
 func _is_player_body(body: Node) -> bool:
@@ -185,6 +183,15 @@ func _align_approach_entry_to_ingress(approach: Node) -> void:
 func _set_procgen_world_visible(value: bool) -> void:
 	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ProcGenRuntime"), value)
 	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ConnectedMaps"), value)
+
+
+func capture_world_origin(actor: Node) -> Dictionary:
+	return _capture_origin_state(actor)
+
+
+func isolate_world_origin(actor: Node, presentation_profile: StringName) -> void:
+	_set_procgen_world_visible(false)
+	_set_world_presentation_profile(actor, presentation_profile)
 
 
 func _restore_failed_approach_entry(actor: Node) -> void:
@@ -266,6 +273,7 @@ func reset_after_level_return() -> void:
 	_triggered = false
 	_approach_enter_deferred = false
 	_entry_snapshot.clear()
+	_awaiting_body_exit_after_return = true
 	monitoring = true
 	monitorable = true
 

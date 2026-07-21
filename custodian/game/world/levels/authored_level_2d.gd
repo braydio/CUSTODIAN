@@ -74,7 +74,45 @@ func enter_from_main_at_spawn(actor: Node, spawn_id: StringName) -> bool:
 	return true
 
 
+func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
+	if not (actor is Node2D):
+		return false
+	if not has_spawn(spawn_id):
+		return false
+	(actor as Node2D).global_position = get_spawn_position(spawn_id)
+	_refresh_camera(self, actor)
+	return true
+
+
+func capture_route_state() -> Dictionary:
+	return {}
+
+
+func restore_route_state(_state: Dictionary) -> void:
+	pass
+
+
+func prepare_route_deactivation(_context: Dictionary) -> void:
+	pass
+
+
+func complete_route_activation(_context: Dictionary) -> void:
+	pass
+
+
+func refresh_route_camera(actor: Node) -> bool:
+	_refresh_camera(self, actor)
+	return true
+
+
 func return_to_main(actor: Node) -> void:
+	var route_manager := _find_route_traversal_manager()
+	if route_manager != null and route_manager.has_method("get_active_session"):
+		var session := route_manager.call("get_active_session") as RefCounted
+		if session != null and session.current_instance == self:
+			if not bool(route_manager.call("request_exit", &"return_world", actor)):
+				push_error("[AuthoredLevel2D] Route manager rejected world return")
+			return
 	if _level_loader != null and is_instance_valid(_level_loader):
 		if not _level_loader.has_method("complete_return_to_world"):
 			push_error("[AuthoredLevel2D] Loader lacks return contract")
@@ -83,6 +121,14 @@ func return_to_main(actor: Node) -> void:
 			push_error("[AuthoredLevel2D] Loader rejected level return")
 		return
 	_legacy_return_without_loader(actor)
+
+
+func _find_route_traversal_manager() -> Node:
+	var manager := get_tree().get_first_node_in_group("route_traversal_manager")
+	if manager != null:
+		return manager
+	var world := get_node_or_null("/root/GameRoot/World")
+	return world.get_node_or_null("RouteTraversalManager") if world != null else null
 
 
 func _legacy_return_without_loader(actor: Node) -> void:

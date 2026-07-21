@@ -19,9 +19,12 @@ func _run() -> void:
 	if not registry.call("load_index"):
 		errors.append("production level registry did not load")
 	else:
-		var sundered: RefCounted = registry.call("get_level", &"sundered_keep_front_gate")
-		if sundered == null or sundered.call("get_presentation_profile") != &"vista_approach":
-			errors.append("Sundered Keep does not explicitly own vista_approach presentation")
+		var vista: RefCounted = registry.call("get_level", &"sundered_keep_vista_approach")
+		var keep: RefCounted = registry.call("get_level", &"sundered_keep_front_gate")
+		if vista == null or vista.call("get_presentation_profile") != &"vista_approach":
+			errors.append("Sundered Vista node does not own vista_approach presentation")
+		if keep == null or keep.call("get_presentation_profile") != &"gameplay":
+			errors.append("Sundered Front Gate should own gameplay presentation")
 	var fixture: Dictionary = FIXTURE_SCRIPT.new().create(self, "cinematic_profile", &"cinematic", &"Spawn_Main")
 	fixture.ingress.set("_triggered", true)
 	fixture.ingress.call("_enter_approach", fixture.actor)

@@ -13,12 +13,17 @@ func _run() -> void:
 	var actor: Node2D = fixture.actor
 	var loader: Node = fixture.loader
 	var origin_position := actor.global_position
+	if loader.call("get_definition", fixture.level_id) == null:
+		push_error("[AuthoredLevelIngressReturnSmoke] fixture level definition is unavailable before entry")
+	if get_nodes_in_group("route_traversal_manager").is_empty():
+		push_error("[AuthoredLevelIngressReturnSmoke] fixture route manager is not registered before entry")
 	ingress.set("_triggered", true)
 	ingress.call("_enter_approach", actor)
 	var errors: Array[String] = []
 	var level: Node = loader.call("get_active_level_instance") as Node
 	if level == null:
-		errors.append("registered authored level did not activate")
+		var manager: Node = fixture.route_manager
+		errors.append("registered authored level did not activate (route=%s node=%s phase=%s)" % [manager.call("get_current_route_id"), manager.call("get_current_node_id"), manager.call("get_phase")])
 	else:
 		level.call("return_to_main", actor)
 		await process_frame

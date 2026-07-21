@@ -57,6 +57,8 @@
 [ext_resource type="PackedScene" path="res://game/world/lighting/world_atmosphere_2d.tscn" id="212_world_atmosphere"]
 [ext_resource type="PackedScene" path="res://game/world/lighting/light_rig_2d.tscn" id="213_light_rig"]
 [ext_resource type="PackedScene" path="res://game/infrastructure/structures/field_fabricator_mk1.tscn" id="214_field_fabricator"]
+[ext_resource type="Script" path="res://game/world/levels/level_loader.gd" id="215_level_loader"]
+[ext_resource type="Script" path="res://game/world/routes/route_traversal_manager.gd" id="216_route_manager"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
@@ -72,6 +74,12 @@ script = ExtResource("33_debug_collector")
 [node name="DevObservatoryOverlay" parent="." unique_id=1030058335 instance=ExtResource("208_observatory_overlay")]
 
 [node name="World" type="Node2D" parent="." unique_id=932635855]
+
+[node name="LevelLoader" type="Node" parent="World"]
+script = ExtResource("215_level_loader")
+
+[node name="RouteTraversalManager" type="Node" parent="World"]
+script = ExtResource("216_route_manager")
 
 [node name="CanvasModulate" type="CanvasModulate" parent="World"]
 color = Color(0.23, 0.25, 0.29, 1)

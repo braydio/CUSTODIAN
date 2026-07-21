@@ -38,32 +38,45 @@ func get_definition(level_id: StringName) -> RefCounted:
 	return _registry.get_level(level_id)
 
 
+func get_registry() -> RefCounted:
+	return _registry if ensure_registry() else null
+
+
 func enter_level(level_id: StringName, actor: Node, context: Dictionary = {}) -> Node:
 	if get_active_level_instance() != null:
 		return _fail(level_id, "another level is already active: %s" % _active_level_id)
-	var definition := get_definition(level_id)
-	if definition == null:
-		return _fail(level_id, "level is not registered")
-	var entry_path: String = definition.call("get_entry_scene_path")
-	var entry_scene := load(entry_path) as PackedScene
-	if entry_scene == null:
-		return _fail(level_id, "entry scene could not be loaded: %s" % entry_path)
-	var instance := entry_scene.instantiate()
-	if instance == null:
-		return _fail(level_id, "entry scene could not be instantiated: %s" % entry_path)
 	var parent: Node = context.get("parent") as Node
 	if parent == null:
 		parent = get_parent()
+	var stage := stage_level(level_id, parent, context)
+	if not bool(stage.get("succeeded", false)):
+		return null
+	var definition: RefCounted = stage.get("definition") as RefCounted
+	var target_spawn_id := _resolve_target_spawn_id(definition, context)
+	var result := commit_staged_level(stage, actor, target_spawn_id, null)
+	return result.get("instance") as Node if bool(result.get("succeeded", false)) else null
+
+
+func stage_level(level_id: StringName, parent: Node, context: Dictionary = {}) -> Dictionary:
+	var definition := get_definition(level_id)
+	if definition == null:
+		return _stage_failure(level_id, "level is not registered")
 	if parent == null:
-		instance.queue_free()
-		return _fail(level_id, "no parent is available for the level entry scene")
+		return _stage_failure(level_id, "no parent is available for the level entry scene")
+	var entry_path: String = definition.call("get_entry_scene_path")
+	var entry_scene := load(entry_path) as PackedScene
+	if entry_scene == null:
+		return _stage_failure(level_id, "entry scene could not be loaded: %s" % entry_path)
+	var instance := entry_scene.instantiate()
+	if instance == null:
+		return _stage_failure(level_id, "entry scene could not be instantiated: %s" % entry_path)
 	parent.add_child(instance)
 	var entry_position: Variant = context.get("entry_world_position", context.get("return_world_position"))
 	if instance is Node2D and entry_position is Vector2:
 		(instance as Node2D).global_position = entry_position
 	var main_map: Node = context.get("main_map") as Node
 	var return_position: Vector2 = context.get("return_world_position", Vector2.ZERO)
-	if instance.has_method("configure_connection"):
+	if instance.has_method("configure_connection") and bool(context.get("compatibility_connection", true)):
 		instance.call("configure_connection", main_map, return_position)
 	var runtime_context := context.duplicate(false)
 	runtime_context["level_id"] = level_id
@@ -72,25 +85,87 @@ func enter_level(level_id: StringName, actor: Node, context: Dictionary = {}) ->
 	runtime_context["lifecycle"] = definition.call("get_lifecycle")
 	if instance.has_method("configure_level_runtime"):
 		instance.call("configure_level_runtime", runtime_context)
-	var target_spawn_id := _resolve_target_spawn_id(definition, context)
-	var actor_position := Vector2.ZERO
-	var actor_had_position := actor is Node2D
-	if actor_had_position:
-		actor_position = (actor as Node2D).global_position
-	if not _enter_actor_at_spawn(instance, actor, target_spawn_id):
-		_deactivate_instance_immediately(instance)
-		if actor_had_position and is_instance_valid(actor):
-			(actor as Node2D).global_position = actor_position
+	deactivate_instance_immediately(instance)
+	var requested_spawn := StringName(str(context.get("target_spawn_id", "")))
+	if not requested_spawn.is_empty() and not _instance_has_spawn(instance, requested_spawn):
 		instance.queue_free()
-		return _fail(
-			level_id,
-			"target spawn could not be resolved: %s" % String(target_spawn_id)
-		)
-	_active_level_id = level_id
-	_active_level_instance = instance
-	_active_level_context = runtime_context
-	level_entered.emit(level_id, instance)
-	return instance
+		return _stage_failure(level_id, "target spawn could not be resolved: %s" % requested_spawn)
+	return {
+		"succeeded": true,
+		"reason": "",
+		"level_id": level_id,
+		"definition": definition,
+		"instance": instance,
+		"context": runtime_context,
+	}
+
+
+func commit_staged_level(
+	stage: Dictionary,
+	actor: Node,
+	target_spawn_id: StringName,
+	expected_active_instance: Node = null
+) -> Dictionary:
+	if not bool(stage.get("succeeded", false)):
+		return _commit_failure("stage is not successful")
+	var target: Node = stage.get("instance") as Node
+	if target == null or not is_instance_valid(target):
+		return _commit_failure("staged instance is unavailable")
+	if get_active_level_instance() != expected_active_instance:
+		return _commit_failure("active instance changed before commit")
+	if not _instance_has_spawn(target, target_spawn_id):
+		return _commit_failure("target spawn could not be resolved: %s" % target_spawn_id)
+	var source := expected_active_instance
+	var source_activation := capture_instance_activation_state(source)
+	var actor_position := (actor as Node2D).global_position if actor is Node2D else Vector2.ZERO
+	if source != null:
+		deactivate_instance_immediately(source)
+	if target is CanvasItem:
+		(target as CanvasItem).visible = true
+	target.process_mode = Node.PROCESS_MODE_INHERIT
+	if not _activate_actor_at_spawn(target, actor, target_spawn_id):
+		deactivate_instance_immediately(target)
+		if source != null:
+			reactivate_instance(source, source_activation)
+		if actor is Node2D:
+			(actor as Node2D).global_position = actor_position
+		return _commit_failure("target activation failed: %s" % target_spawn_id)
+	_active_level_id = stage.get("level_id") as StringName
+	_active_level_instance = target
+	_active_level_context = (stage.get("context", {}) as Dictionary).duplicate(false)
+	level_entered.emit(_active_level_id, target)
+	return {"succeeded": true, "reason": "", "instance": target, "source_activation_state": source_activation}
+
+
+func activate_existing_level(
+	level_id: StringName,
+	instance: Node,
+	actor: Node,
+	target_spawn_id: StringName,
+	context: Dictionary,
+	expected_active_instance: Node
+) -> Dictionary:
+	return commit_staged_level({
+		"succeeded": true,
+		"level_id": level_id,
+		"definition": get_definition(level_id),
+		"instance": instance,
+		"context": context,
+	}, actor, target_spawn_id, expected_active_instance)
+
+
+func deactivate_instance_immediately(instance: Node) -> Dictionary:
+	var state := capture_instance_activation_state(instance)
+	_deactivate_instance_immediately(instance)
+	return state
+
+
+func reactivate_instance(instance: Node, activation_state: Dictionary) -> void:
+	_reactivate_instance(instance, activation_state)
+
+
+func capture_instance_activation_state(instance: Node) -> Dictionary:
+	return _capture_instance_activation_state(instance)
 
 
 func get_active_level_id() -> StringName:
@@ -113,6 +188,12 @@ func adopt_active_level(level_id: StringName, instance: Node) -> void:
 	_active_level_instance = instance
 	_active_level_context = {}
 	level_entered.emit(level_id, instance)
+
+
+func restore_active_level_identity(level_id: StringName, instance: Node, context: Dictionary) -> void:
+	_active_level_id = level_id
+	_active_level_instance = instance
+	_active_level_context = context.duplicate(false)
 
 
 func get_active_level_context() -> Dictionary:
@@ -180,6 +261,8 @@ func _release_level_instance(instance: Node, lifecycle: Dictionary, route_ending
 
 
 func _capture_instance_activation_state(instance: Node) -> Dictionary:
+	if instance == null or not is_instance_valid(instance):
+		return {}
 	return {
 		"visible": (instance as CanvasItem).visible if instance is CanvasItem else true,
 		"process_mode": instance.process_mode,
@@ -290,6 +373,29 @@ func _resolve_target_spawn_id(definition: RefCounted, context: Dictionary) -> St
 	if ingress != null:
 		return ingress.target_spawn_id
 	return &""
+
+
+func _instance_has_spawn(instance: Node, spawn_id: StringName) -> bool:
+	if instance == null or spawn_id.is_empty():
+		return false
+	if instance.has_method("has_spawn"):
+		return bool(instance.call("has_spawn", spawn_id))
+	return instance.find_child(String(spawn_id), true, false) is Node2D
+
+
+func _activate_actor_at_spawn(instance: Node, actor: Node, spawn_id: StringName) -> bool:
+	if instance.has_method("activate_route_node"):
+		return bool(instance.call("activate_route_node", actor, spawn_id))
+	return _enter_actor_at_spawn(instance, actor, spawn_id)
+
+
+func _stage_failure(level_id: StringName, reason: String) -> Dictionary:
+	_fail(level_id, reason)
+	return {"succeeded": false, "reason": reason, "level_id": level_id}
+
+
+func _commit_failure(reason: String) -> Dictionary:
+	return {"succeeded": false, "reason": reason}
 
 
 func _enter_actor_at_spawn(instance: Node, actor: Node, spawn_id: StringName) -> bool:
