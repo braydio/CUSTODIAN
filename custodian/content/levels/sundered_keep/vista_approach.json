@@ -1,0 +1,15 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "sundered_keep_vista_approach",
+  "display_name": "Sundered Keep — Vista Approach",
+  "route_scene_path": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn",
+  "target_scene_path": "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn",
+  "world_context": "campaign_region",
+  "presentation_profile": "vista_approach",
+  "spawns": ["EntrySpawn", "ReturnTopdown"],
+  "lifecycle": {
+    "cache_policy": "destroy_on_forward_exit",
+    "state_policy": "reset_on_entry"
+  },
+  "tags": ["authored", "approach", "route_node", "sundered_keep"]
+}

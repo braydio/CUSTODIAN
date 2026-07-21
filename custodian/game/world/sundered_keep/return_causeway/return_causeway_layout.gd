@@ -4,7 +4,7 @@ class_name ReturnCausewayLayout
 
 
 # ------------------------------------------------------------------------------
-# Return Causeway optional production approach — Procedural Tilemap Builder
+# Return Causeway production route node — Procedural Tilemap Builder
 #
 # Builds the longer bridge route from the Vista Approach to Sundered Keep as an
 # authored
@@ -12,9 +12,8 @@ class_name ReturnCausewayLayout
 # Shore Path / Buried Terminal → Intact Causeway → Gatehouse Threshold →
 # Outer Keep Yard → Transition to Sundered Keep Main Map.
 #
-# The Vista Approach currently bypasses this branch by default for Keep testing.
-# Disable its exported bypass switch to exercise this complete production-capable
-# route; this scene must not be treated as an unexplained legacy handoff.
+# Route topology is owned by RouteTraversalManager; this scene owns only local
+# traversal geometry, presentation, encounters, state hooks, spawns, and exits.
 # ------------------------------------------------------------------------------
 
 # -- Constants ---------------------------------------------------------------
@@ -31,9 +30,7 @@ const DISTANT_KEEP_TINT := Color(0.78, 0.82, 0.88, 0.76)
 const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
 const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
-const TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_travel_gate.gd")
-const KEEP_TRANSITION_SCRIPT := preload("res://game/world/approaches/sundered_keep/sundered_keep_transition_trigger.gd")
-const SUNDERED_KEEP_SCENE_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
+const LEVEL_EXIT_SCRIPT := preload("res://game/world/levels/level_exit_2d.gd")
 
 # Music.
 const MUSIC_PATH := "res://content/audio/music/return_causeway/return_causeway_01.ogg"
@@ -74,13 +71,11 @@ var _buried_terminal_interaction: Node2D = null
 var _gatehouse_interaction: Node2D = null
 var _gatehouse_closed_sprite: Sprite2D = null
 var _gatehouse_blockers: Array[Node] = []
-var _travel_gate: Node2D = null
+var _continue_exit: LevelExit2D = null
+var _backtrack_exit: LevelExit2D = null
 var _return_mooring_active_overlay: Sprite2D = null
 var _buried_terminal_overlay: Sprite2D = null
 var _music_player: AudioStreamPlayer2D = null
-var _upstream_map: Node = null
-var _upstream_return_position := Vector2.ZERO
-var _keep_transition_controller: SunderedKeepTransitionTrigger = null
 
 
 # -- Lifecycle ----------------------------------------------------------------
@@ -99,13 +94,6 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_update_actor_elevation()
-
-
-# -- Public API (Travel Gate Interface) ---------------------------------------
-
-func configure_connection(p_main_map: Node, p_main_return_position: Vector2) -> void:
-	_upstream_map = p_main_map
-	_upstream_return_position = p_main_return_position
 
 
 func get_entry_position() -> Vector2:
@@ -132,31 +120,50 @@ func can_traverse_elevation(from_tile: Vector2i, to_tile: Vector2i) -> bool:
 	return bool(_elevation_map.call("can_traverse", from_tile, to_tile))
 
 
-func enter_from_main(actor: Node) -> void:
-	# Called when returning from Sundered Keep main map (e.g., via travel gate back).
-	if actor is Node2D:
-		(actor as Node2D).global_position = get_entry_position()
+func has_spawn(spawn_id: StringName) -> bool:
+	return find_child(String(spawn_id), true, false) is Node2D
+
+
+func get_spawn_position(spawn_id: StringName) -> Vector2:
+	var marker := find_child(String(spawn_id), true, false) as Node2D
+	return marker.global_position if marker != null else global_position
+
+
+func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
+	if not (actor is Node2D) or not has_spawn(spawn_id):
+		return false
+	(actor as Node2D).global_position = get_spawn_position(spawn_id)
 	_refresh_camera(self, actor)
+	return true
 
 
-func return_to_main(_actor: Node) -> void:
-	# Prologue return — not a sub-map, so this is a no-op.
+func capture_route_state() -> Dictionary:
+	return {
+		"buried_terminal_activated": _buried_terminal_activated,
+		"gatehouse_unlocked": _gatehouse_unlocked,
+		"gatehouse_opened": _gatehouse_opened,
+	}
+
+
+func restore_route_state(state: Dictionary) -> void:
+	_buried_terminal_activated = bool(state.get("buried_terminal_activated", false))
+	_gatehouse_unlocked = bool(state.get("gatehouse_unlocked", _buried_terminal_activated))
+	_set_gatehouse_gate_open(bool(state.get("gatehouse_opened", false)))
+	if _buried_terminal_overlay != null:
+		_buried_terminal_overlay.visible = _buried_terminal_activated
+
+
+func prepare_route_deactivation(_context: Dictionary) -> void:
 	pass
 
 
-func resume_from_child(actor: Node, child_level: Node = null) -> void:
-	visible = true
-	process_mode = Node.PROCESS_MODE_INHERIT
-	if _keep_transition_controller != null:
-		_keep_transition_controller.reset_transition()
-	if child_level is CanvasItem:
-		(child_level as CanvasItem).visible = false
-	if child_level != null:
-		child_level.process_mode = Node.PROCESS_MODE_DISABLED
-	if actor is Node2D:
-		(actor as Node2D).global_position = _get_keep_return_position()
+func complete_route_activation(_context: Dictionary) -> void:
+	pass
+
+
+func refresh_route_camera(actor: Node) -> bool:
 	_refresh_camera(self, actor)
-	_adopt_as_active_level()
+	return true
 
 
 # -- Build Orchestrator -------------------------------------------------------
@@ -673,47 +680,34 @@ func _build_gatehouse_gate() -> void:
 # -- Travel Gate ---------------------------------------------------------------
 
 func _add_travel_gate() -> void:
-	# Travel gate at the north end of Outer Keep Yard.
-	# Transitions to Sundered Keep main map.
-	_keep_transition_controller = KEEP_TRANSITION_SCRIPT.new() as SunderedKeepTransitionTrigger
-	if _keep_transition_controller == null:
-		return
-	_keep_transition_controller.name = "KeepTransitionController"
-	_keep_transition_controller.target_scene_path = SUNDERED_KEEP_SCENE_PATH
-	_keep_transition_controller.target_node_name = &"SunderedKeepMap"
-	_keep_transition_controller.target_level_id = &"sundered_keep_front_gate"
-	_keep_transition_controller.connection_owner_path = NodePath("..")
-	_keep_transition_controller.source_scene_path = NodePath("..")
-	_keep_transition_controller.return_world_position = _get_keep_return_position()
-	_keep_transition_controller.deactivate_source_on_transition = true
-	_keep_transition_controller.free_source_on_transition = false
-	_keep_transition_controller.monitoring = false
-	_keep_transition_controller.monitorable = false
-	add_child(_keep_transition_controller)
-
-	_travel_gate = TRAVEL_GATE_SCRIPT.new() as Node2D
-	if _travel_gate == null:
-		return
-	_travel_gate.name = "TravelToSunderedKeepGate"
-	_travel_gate.call("configure", _keep_transition_controller, 0, "ENTER SUNDERED KEEP")
-
-	_travel_gate.position = _tile_center(TRANSITION_TILE)
-	add_child(_travel_gate)
+	var exits := get_node_or_null("Exits") as Node2D
+	if exits == null:
+		exits = Node2D.new()
+		exits.name = "Exits"
+		add_child(exits)
+	var keep_return_spawn := find_child("KeepReturnSpawn", true, false) as Marker2D
+	if keep_return_spawn == null:
+		keep_return_spawn = Marker2D.new()
+		keep_return_spawn.name = "KeepReturnSpawn"
+		keep_return_spawn.position = _tile_center(TRANSITION_TILE + Vector2i(0, 2))
+		add_child(keep_return_spawn)
+	_continue_exit = _create_route_exit(exits, "Exit_Continue", &"continue", _tile_center(TRANSITION_TILE))
+	_backtrack_exit = _create_route_exit(exits, "Exit_Backtrack", &"backtrack", _tile_center(ENTRANCE_TILE + Vector2i(0, 2)))
 
 
-func _get_keep_return_position() -> Vector2:
-	return to_global(_tile_center(TRANSITION_TILE + Vector2i(0, 2)))
-
-
-func _adopt_as_active_level() -> void:
-	if get_tree() == null:
-		return
-	var loaders := get_tree().get_nodes_in_group("level_loader")
-	if loaders.is_empty():
-		return
-	var loader := loaders[0] as Node
-	if loader != null and loader.has_method("adopt_active_level"):
-		loader.call("adopt_active_level", &"return_causeway", self)
+func _create_route_exit(parent: Node2D, node_name: String, exit_id: StringName, exit_position: Vector2) -> LevelExit2D:
+	var route_exit := LEVEL_EXIT_SCRIPT.new() as LevelExit2D
+	route_exit.name = node_name
+	route_exit.exit_id = exit_id
+	route_exit.position = exit_position
+	var collision := CollisionShape2D.new()
+	collision.name = "CollisionShape2D"
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = Vector2(88.0, 88.0)
+	collision.shape = rectangle
+	route_exit.add_child(collision)
+	parent.add_child(route_exit)
+	return route_exit
 
 
 # -- Music --------------------------------------------------------------------

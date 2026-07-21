@@ -1,6 +1,8 @@
 {
   "schema": "custodian.level_registry.v1",
   "definitions": [
-    "res://content/levels/sundered_keep/front_gate.json"
+    "res://content/levels/sundered_keep/front_gate.json",
+    "res://content/levels/sundered_keep/return_causeway.json",
+    "res://content/levels/sundered_keep/vista_approach.json"
   ]
 }

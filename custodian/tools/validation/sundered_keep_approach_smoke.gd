@@ -2,7 +2,7 @@ extends SceneTree
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
 const REVEAL_DIRECTOR_SCRIPT := preload("res://game/world/approaches/sundered_keep/sundered_keep_reveal_director.gd")
-const EXPECTED_BOUNDARY_SEGMENTS := 74
+const EXPECTED_BOUNDARY_SEGMENTS := 57
 
 const EXPECTED_ROOTS := {
 	"UnderlayRoot": -300,
@@ -55,7 +55,7 @@ const FORBIDDEN_LEGACY_PLAYABLE := [
 ]
 
 const EXPECTED_MARKERS := {
-	"EntrySpawn": Vector2(45, 610),
+	"EntrySpawn": Vector2(-163, 610),
 	"RevealStart": Vector2(-40, 300),
 	"RevealFull": Vector2(-150, 5),
 	"MidGameplayStart": Vector2(50, -55),
@@ -179,9 +179,9 @@ func _init() -> void:
 				segment_count += 1
 		if segment_count != EXPECTED_BOUNDARY_SEGMENTS:
 			errors.append("PathBoundaryCollision expected %d thick capsule rails, got %d" % [EXPECTED_BOUNDARY_SEGMENTS, segment_count])
-		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-167.2, 1024.8), Vector2(-306.4, 969.5), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(-306.4, 969.5), Vector2(-371.1, 885.2), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_074", Vector2(-25.6, 990.7), Vector2(-166.4, 1023.7), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-214.3, 695.0), Vector2(-240.7, 600.5), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(-240.7, 600.5), Vector2(-245.7, 484.7), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_057", Vector2(-342.6, 794.2), Vector2(-214.6, 696.6), errors)
 
 	_collect_filled_collision_polygons(scene, errors)
 	_check_camera_bounds(scene, errors)
@@ -422,20 +422,12 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 		if markers.get_child_count() != 0:
 			errors.append("Vista Approach must not render authoring markers at runtime")
 	if runtime != null:
-		var level_exit := runtime.get_node_or_null("LevelExitTrigger") as SunderedKeepTransitionTrigger
-		if level_exit == null:
-			errors.append("EventRuntime/LevelExitTrigger missing")
-		else:
-			if bool(scene.get("bypass_return_causeway_for_keep_testing")):
-				errors.append("Vista Approach should not bypass Return Causeway by default")
-			if not level_exit.target_scene_path.ends_with("ReturnCausewayApproach.tscn"):
-				errors.append("Default Vista endpoint must target Return Causeway")
-			if level_exit.target_node_name != &"ReturnCausewayApproach":
-				errors.append("Default Vista endpoint must use the stable ReturnCausewayApproach node name")
-			if level_exit.target_level_id != &"return_causeway":
-				errors.append("Default Vista endpoint must use the return_causeway level id")
-			if level_exit.required_entry_direction != Vector2.RIGHT:
-				errors.append("LevelExitTrigger must reject entry from the unauthored side")
+		var level_exit := runtime.get_node_or_null("Exit_Continue") as LevelExit2D
+		var world_exit := runtime.get_node_or_null("Exit_ReturnWorld") as LevelExit2D
+		if level_exit == null or level_exit.exit_id != &"continue":
+			errors.append("EventRuntime/Exit_Continue generic exit missing")
+		if world_exit == null or world_exit.exit_id != &"return_world":
+			errors.append("EventRuntime/Exit_ReturnWorld generic exit missing")
 		var affordance := runtime.get_node_or_null("LevelExitAffordance")
 		if affordance == null:
 			errors.append("EventRuntime/LevelExitAffordance missing")

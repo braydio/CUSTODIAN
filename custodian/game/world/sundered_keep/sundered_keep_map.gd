@@ -4,7 +4,6 @@ class_name SunderedKeepMap
 const TILE_SIZE := 32.0
 const DEFAULT_LEVEL_DATA_PATH := "res://content/levels/sundered_keep/sundered_keep_front_gate_large.json"
 const DEFAULT_SIEGE_CONFIG_PATH := "res://content/levels/sundered_keep/gatehouse_siege_config.json"
-const TRAVEL_GATE_SCRIPT := preload("res://game/world/gothic_compound/gothic_compound_travel_gate.gd")
 const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
 const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
 const SUNDERED_KEEP_TILEMAP_LOADER := preload("res://game/world/sundered_keep/sundered_keep_tilemap_loader.gd")
@@ -51,6 +50,7 @@ const SUNDERED_GATE_KEY_FLAVOR := "A corroded winch key stamped with the keep's 
 const SIDEARM_LOCKER_ITEM_NAME := "P-9 Field Sidearm"
 const SIDEARM_LOCKER_PICKUP_MESSAGE := "P-9 FIELD SIDEARM ACQUIRED"
 const SIDEARM_LOCKER_ITEM_ID := &"p9_sidearm"
+const LEVEL_EXIT_SCRIPT := preload("res://game/world/levels/level_exit_2d.gd")
 
 const WALL_ASSET_DIRS := [
 	"res://content/tiles/sundered_keep/entrance/causeway_walls",
@@ -80,8 +80,6 @@ const WALL_ASSET_DIRS := [
 @export_range(0, 100, 1) var routekeeper_post_gate_spawn_chance_percent := 12
 @export var force_routekeeper_event := false
 
-var main_map: Node = null
-var main_return_position: Vector2 = Vector2.ZERO
 var map_size_tiles := Vector2i(112, 80)
 
 var _built := false
@@ -99,6 +97,8 @@ var _active_interior_region_ids: Array[String] = []
 var _brazier_flicker_frames: SpriteFrames = null
 var _hanging_brazier_frames: Dictionary = {}
 var _return_gate: Node2D = null
+var _route_backtrack_exit: LevelExit2D = null
+var _route_exfil_exit: LevelExit2D = null
 var _return_mooring_interaction: Node2D = null
 var _return_mooring_active_overlay: Sprite2D = null
 var _main_gate_interaction: Node2D = null
@@ -170,11 +170,6 @@ func _process(_delta: float) -> void:
 	_update_actor_elevation()
 
 
-func configure_connection(p_main_map: Node, p_main_return_position: Vector2) -> void:
-	main_map = p_main_map
-	main_return_position = p_main_return_position
-
-
 func get_entry_position() -> Vector2:
 	return to_global(_tile_center(entrance_tile))
 
@@ -229,29 +224,99 @@ func get_active_interior_region_id() -> String:
 	return _active_interior_region_id
 
 
-func enter_from_main(actor: Node) -> void:
-	_set_hud_active(true)
-	if actor is Node2D:
-		(actor as Node2D).global_position = get_entry_position()
-	_refresh_camera(self, actor)
-
-
 func return_to_main(actor: Node) -> void:
-	_set_hud_active(false)
-	if main_map != null and main_map.has_method("resume_from_child"):
-		main_map.call("resume_from_child", actor, self)
+	if _route_exfil_exit == null or not is_instance_valid(_route_exfil_exit):
+		push_error("[SunderedKeep] Route exfil exit is unavailable")
 		return
-	# Direct Vista -> Keep testing returns to the procgen/contract branch, which
-	# does not implement the connected-map resume hook used by Return Causeway.
-	if main_map is CanvasItem:
-		(main_map as CanvasItem).visible = true
-	if main_map != null:
-		main_map.process_mode = Node.PROCESS_MODE_INHERIT
-	visible = false
-	process_mode = Node.PROCESS_MODE_DISABLED
-	if actor is Node2D:
-		(actor as Node2D).global_position = main_return_position
-	_refresh_camera(main_map, actor)
+	_route_exfil_exit.request_transition(actor)
+
+
+func has_spawn(spawn_id: StringName) -> bool:
+	return find_child(String(spawn_id), true, false) is Node2D
+
+
+func get_spawn_position(spawn_id: StringName) -> Vector2:
+	var marker := find_child(String(spawn_id), true, false) as Node2D
+	return marker.global_position if marker != null else global_position
+
+
+func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
+	if not (actor is Node2D) or not has_spawn(spawn_id):
+		return false
+	_set_hud_active(true)
+	(actor as Node2D).global_position = get_spawn_position(spawn_id)
+	_refresh_camera(self, actor)
+	return true
+
+
+func capture_route_state() -> Dictionary:
+	return {
+		"has_sundered_gate_key": _has_sundered_gate_key,
+		"main_gate_open": _main_gate_open,
+		"return_mooring_created": _return_mooring_created,
+		"great_hall_door_open": _great_hall_door_open,
+		"sidearm_locker_opened": _sidearm_locker_opened,
+		"routekeeper_trace_recovered": _last_routekeeper_trace_recovered,
+		"siege_started": _siege_started,
+		"siege_wave_index": _siege_wave_index,
+		"siege_pressure_tick": _siege_pressure_tick,
+		"siege_state": _siege_state,
+		"siege_game_over_triggered": _siege_game_over_triggered,
+		"siege_objectives": _get_siege_objective_states(),
+		"great_hall_ambush": _get_great_hall_marine_ambush_state(),
+	}
+
+
+func restore_route_state(state: Dictionary) -> void:
+	_has_sundered_gate_key = bool(state.get("has_sundered_gate_key", false))
+	_restore_main_gate_open_without_events(bool(state.get("main_gate_open", false)))
+	_return_mooring_created = bool(state.get("return_mooring_created", _return_mooring_created))
+	_set_return_mooring_active(_return_mooring_created)
+	_set_great_hall_door_open(bool(state.get("great_hall_door_open", false)))
+	_sidearm_locker_opened = bool(state.get("sidearm_locker_opened", false))
+	_last_routekeeper_trace_recovered = bool(state.get("routekeeper_trace_recovered", false))
+	_siege_started = bool(state.get("siege_started", false))
+	_siege_wave_index = int(state.get("siege_wave_index", 0))
+	_siege_pressure_tick = int(state.get("siege_pressure_tick", 0))
+	_siege_state = str(state.get("siege_state", "dormant"))
+	_siege_game_over_triggered = bool(state.get("siege_game_over_triggered", false))
+	if _has_sundered_gate_key and _key_pickup_interaction != null and is_instance_valid(_key_pickup_interaction):
+		_key_pickup_interaction.remove_from_group("interactable")
+		_key_pickup_interaction.visible = false
+	if _sidearm_locker_opened and _sidearm_locker_interaction != null and is_instance_valid(_sidearm_locker_interaction):
+		_sidearm_locker_interaction.remove_from_group("interactable")
+		_sidearm_locker_interaction.visible = false
+
+
+func _restore_main_gate_open_without_events(open: bool) -> void:
+	_main_gate_open = open
+	if _main_gate_closed_sprite != null:
+		_main_gate_closed_sprite.visible = not open
+	if _main_gate_open_sprite != null:
+		_main_gate_open_sprite.visible = open
+		_main_gate_open_sprite.stop()
+		_main_gate_open_sprite.frame = 0
+	if open:
+		_clear_main_gate_blockers()
+		if _main_gate_interaction != null:
+			_main_gate_interaction.remove_from_group("interactable")
+			_main_gate_interaction.visible = false
+	elif is_inside_tree():
+		_add_main_gate_blockers()
+	_refresh_hud_state()
+
+
+func prepare_route_deactivation(_context: Dictionary) -> void:
+	_set_hud_active(false)
+
+
+func complete_route_activation(_context: Dictionary) -> void:
+	_set_hud_active(true)
+
+
+func refresh_route_camera(actor: Node) -> bool:
+	_refresh_camera(self, actor)
+	return true
 
 
 func get_sundered_keep_debug_state() -> Dictionary:
@@ -1329,14 +1394,50 @@ func _build_great_hall_door(tile: Vector2i) -> void:
 
 
 func _add_return_gate() -> void:
-	_return_gate = TRAVEL_GATE_SCRIPT.new() as Node2D
-	if _return_gate == null:
-		return
-	_return_gate.name = "ReturnToMainMapGate"
-	_return_gate.call("configure", self, 1, "RETURN TO MAIN MAP")
-	_return_gate.visible = false
-	_return_gate.position = _tile_center(return_gate_tile)
-	add_child(_return_gate)
+	var entry_spawn := find_child("EntrySpawn", true, false) as Marker2D
+	if entry_spawn == null:
+		entry_spawn = Marker2D.new()
+		entry_spawn.name = "EntrySpawn"
+		entry_spawn.position = _tile_center(entrance_tile)
+		add_child(entry_spawn)
+	var exits := get_node_or_null("Exits") as Node2D
+	if exits == null:
+		exits = Node2D.new()
+		exits.name = "Exits"
+		add_child(exits)
+	for child in exits.get_children():
+		child.free()
+	_route_backtrack_exit = _create_route_exit(exits, "Exit_Backtrack", &"backtrack", _tile_center(return_gate_tile))
+	_route_exfil_exit = _create_route_exit(
+		exits,
+		"Exit_Exfil",
+		&"exfil",
+		_tile_center(return_mooring_origin_tile + Vector2i(2, 2)),
+		false
+	)
+	_return_gate = _route_backtrack_exit
+
+
+func _create_route_exit(
+	parent: Node2D,
+	node_name: String,
+	exit_id: StringName,
+	exit_position: Vector2,
+	trigger_on_enter := true
+) -> LevelExit2D:
+	var route_exit := LEVEL_EXIT_SCRIPT.new() as LevelExit2D
+	route_exit.name = node_name
+	route_exit.exit_id = exit_id
+	route_exit.trigger_on_body_entered = trigger_on_enter
+	route_exit.position = exit_position
+	var collision := CollisionShape2D.new()
+	collision.name = "CollisionShape2D"
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = Vector2(88.0, 88.0)
+	collision.shape = rectangle
+	route_exit.add_child(collision)
+	parent.add_child(route_exit)
+	return route_exit
 
 
 func _add_cliff_edges() -> void:

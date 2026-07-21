@@ -3,6 +3,7 @@ class_name SunderedKeepApproach
 
 const SOFT_RECT_FEATHER_SHADER := preload("res://game/world/approaches/sundered_keep/soft_rect_feather.gdshader")
 const REVEAL_DIRECTOR_SCRIPT := preload("res://game/world/approaches/sundered_keep/sundered_keep_reveal_director.gd")
+const LEVEL_EXIT_SCRIPT := preload("res://game/world/levels/level_exit_2d.gd")
 
 const USE_ROUTE_MASTER := true
 
@@ -36,15 +37,8 @@ const OVERLOOK_LEDGE_PATH := "res://content/sprites/world/return_causeway/path/o
 const LATERAL_TRAVERSE_PATH := "res://content/sprites/world/return_causeway/path/lateral_traverse_path.png"
 const FORTRESS_WALL_MASS_PATH := "res://content/sprites/world/return_causeway/path/fortress_wall_mass.png"
 
-const RETURN_CAUSEWAY_SCENE_PATH := "res://game/world/sundered_keep/return_causeway/ReturnCausewayApproach.tscn"
-const SUNDERED_KEEP_MAP_SCRIPT_PATH := "res://game/world/sundered_keep/sundered_keep_map.gd"
-# Temporary production sanity switch. Keep the authored Return Causeway branch
-# available for focused testing while the default ingress goes straight to the Keep.
-const BYPASS_RETURN_CAUSEWAY_FOR_KEEP_TESTING := false
 const ROUTE_VERTICAL_OFFSET := 180.0
 const BOUNDARY_RAIL_RADIUS := 10.0
-
-@export var bypass_return_causeway_for_keep_testing := BYPASS_RETURN_CAUSEWAY_FOR_KEEP_TESTING
 
 const RECT_ROUTE_MASTER := Rect2(Vector2(-620.0, -660.0), Vector2(2048.0, 1706.0))
 const RECT_APPROACH_UNDERLAY := Rect2(Vector2(-1536.0, -1236.0), Vector2(3392.0, 2718.0))
@@ -165,8 +159,6 @@ const AUTHORING_MARKERS := {
 	},
 }
 
-var _ingress_config: Dictionary = {}
-
 var underlay_root: Node2D = null
 var vista_root: Node2D = null
 var _grand_vista_root: Node2D = null
@@ -188,10 +180,8 @@ var second_vista_full: Marker2D = null
 var second_vista_end: Marker2D = null
 var vista_controller: SunderedKeepVistaController = null
 var reveal_director: Node = null
-var exit_transition_trigger: SunderedKeepTransitionTrigger = null
-var main_map: Node = null
-var main_return_position := Vector2.ZERO
-var _level_exit_trigger: Area2D = null
+var _continue_exit: LevelExit2D = null
+var _return_world_exit: LevelExit2D = null
 
 
 func _ready() -> void:
@@ -204,18 +194,6 @@ func _ready() -> void:
 	_ensure_reveal_director()
 	_enforce_presentation_isolation()
 	call_deferred("_finish_physics_setup")
-
-
-func configure_ingress(config: Dictionary) -> void:
-	_ingress_config = config.duplicate(true)
-	_apply_ingress_config_to_trigger()
-
-
-func configure_connection(p_main_map: Node, p_main_return_position: Vector2) -> void:
-	main_map = p_main_map
-	main_return_position = p_main_return_position
-	_ingress_config["return_world_position"] = p_main_return_position
-	_apply_ingress_config_to_trigger()
 
 
 func enter_from_main(p_actor: Node) -> void:
@@ -239,7 +217,6 @@ func _finish_physics_setup() -> void:
 		return
 	_build_collision()
 	_build_event_markers()
-	_apply_ingress_config_to_trigger()
 	if reveal_director != null:
 		reveal_director.refresh_bindings()
 
@@ -566,11 +543,12 @@ func _build_event_markers() -> void:
 		return
 	_clear_children(event_markers_root)
 	_clear_children(event_runtime_root)
-	_level_exit_trigger = null
+	_continue_exit = null
+	_return_world_exit = null
 	# This is the visual Vista Approach, not the Keep gatehouse/causeway level.
 	# Keep-specific key, gate, enemy-spawn, and authoring-marker runtime was
 	# previously placed here by mistake and made the vista route impassable.
-	_build_level_exit_trigger()
+	_build_route_exits()
 
 
 func _add_event_marker(marker_id: String, marker_data: Dictionary) -> Marker2D:
@@ -630,34 +608,40 @@ func _event_marker_color(kind: String) -> Color:
 			return Color(0.92, 0.92, 0.92, 0.85)
 
 
-func _build_level_exit_trigger() -> void:
-	var trigger := SunderedKeepTransitionTrigger.new()
-	if bypass_return_causeway_for_keep_testing:
-		trigger.target_scene_path = SUNDERED_KEEP_MAP_SCRIPT_PATH
-		trigger.target_node_name = &"SunderedKeepMap"
-		trigger.target_level_id = &"sundered_keep_front_gate"
-	else:
-		trigger.target_scene_path = RETURN_CAUSEWAY_SCENE_PATH
-		trigger.target_node_name = &"ReturnCausewayApproach"
-		trigger.target_level_id = &"return_causeway"
-	trigger.vista_controller_path = NodePath("../../VistaController")
-	trigger.source_scene_path = NodePath("../..")
-	trigger.return_world_position = main_return_position
-	trigger.deactivate_source_on_transition = true
-	trigger.free_source_on_transition = true
-	_level_exit_trigger = trigger
-	exit_transition_trigger = trigger
-	_level_exit_trigger.name = "LevelExitTrigger"
-	_level_exit_trigger.position = _route_point(_get_authoring_marker_position("level_exit", LEVEL_EXIT_POS))
-	_level_exit_trigger.required_entry_direction = Vector2.RIGHT
-	event_runtime_root.add_child(_level_exit_trigger)
-	var shape := CollisionShape2D.new()
-	shape.name = "CollisionShape2D"
+func _build_route_exits() -> void:
+	_continue_exit = _create_route_exit(
+		"Exit_Continue", &"continue", "CONTINUE TO RETURN CAUSEWAY",
+		_route_point(_get_authoring_marker_position("level_exit", LEVEL_EXIT_POS)),
+		Vector2(72.0, 104.0)
+	)
+	_return_world_exit = _create_route_exit(
+		"Exit_ReturnWorld", &"return_world", "RETURN TO CAMPAIGN",
+		entry_spawn.position + Vector2(-48.0, 32.0),
+		Vector2(72.0, 88.0)
+	)
+	_build_level_exit_affordance(_continue_exit.position)
+
+
+func _create_route_exit(
+	node_name: String,
+	exit_id: StringName,
+	prompt: String,
+	exit_position: Vector2,
+	shape_size: Vector2
+) -> LevelExit2D:
+	var route_exit := LEVEL_EXIT_SCRIPT.new() as LevelExit2D
+	route_exit.name = node_name
+	route_exit.exit_id = exit_id
+	route_exit.prompt_text = prompt
+	route_exit.position = exit_position
+	var collision := CollisionShape2D.new()
+	collision.name = "CollisionShape2D"
 	var rectangle := RectangleShape2D.new()
-	rectangle.size = Vector2(72.0, 104.0)
-	shape.shape = rectangle
-	_level_exit_trigger.add_child(shape)
-	_build_level_exit_affordance(_level_exit_trigger.position)
+	rectangle.size = shape_size
+	collision.shape = rectangle
+	route_exit.add_child(collision)
+	event_runtime_root.add_child(route_exit)
+	return route_exit
 
 
 func _build_level_exit_affordance(exit_position: Vector2) -> void:
@@ -763,13 +747,6 @@ func _ensure_reveal_director() -> void:
 	reveal_director.refresh_bindings()
 
 
-func _apply_ingress_config_to_trigger() -> void:
-	if exit_transition_trigger == null:
-		return
-	if _ingress_config.has("return_world_position"):
-		exit_transition_trigger.return_world_position = _ingress_config["return_world_position"]
-
-
 func _is_player_body(body: Node) -> bool:
 	return body.is_in_group("player") or body.is_in_group("operator") or String(body.name) == "Operator"
 
@@ -789,6 +766,45 @@ func _get_authoring_marker_position(marker_id: String, fallback: Vector2) -> Vec
 		if position is Vector2:
 			return position
 	return fallback
+
+
+func has_spawn(spawn_id: StringName) -> bool:
+	return markers_root != null and markers_root.get_node_or_null(String(spawn_id)) is Node2D
+
+
+func get_spawn_position(spawn_id: StringName) -> Vector2:
+	var marker := markers_root.get_node_or_null(String(spawn_id)) as Node2D if markers_root != null else null
+	return marker.global_position if marker != null else global_position
+
+
+func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
+	if not (actor is Node2D) or not has_spawn(spawn_id):
+		return false
+	(actor as Node2D).global_position = get_spawn_position(spawn_id)
+	_refresh_camera()
+	_enforce_presentation_isolation()
+	return true
+
+
+func capture_route_state() -> Dictionary:
+	return {}
+
+
+func restore_route_state(_state: Dictionary) -> void:
+	pass
+
+
+func prepare_route_deactivation(_context: Dictionary) -> void:
+	pass
+
+
+func complete_route_activation(_context: Dictionary) -> void:
+	_enforce_presentation_isolation()
+
+
+func refresh_route_camera(_actor: Node) -> bool:
+	_refresh_camera()
+	return true
 
 
 func get_authoring_marker_state() -> Dictionary:

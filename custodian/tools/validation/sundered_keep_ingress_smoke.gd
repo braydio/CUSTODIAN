@@ -50,12 +50,10 @@ func _init() -> void:
 	else:
 		if not ingress.is_in_group("world_ingress_site"):
 			errors.append("SunderedKeepIngressSite missing world_ingress_site group")
-		if ingress.get("approach_scene") == null:
-			errors.append("SunderedKeepIngressSite has no approach_scene")
-		if String(ingress.get("level_id")) != "sundered_keep_front_gate":
-			errors.append("SunderedKeepIngressSite is not configured with the registered level ID")
-		if String(ingress.get("target_scene_path")) != "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn":
-			errors.append("SunderedKeepIngressSite target_scene_path wrong: %s" % String(ingress.get("target_scene_path")))
+		if String(ingress.get("route_id")) != "sundered_keep" or not String(ingress.get("level_id")).is_empty():
+			errors.append("SunderedKeepIngressSite is not configured exclusively for the route")
+		if String(ingress.get("route_profile")) != "production":
+			errors.append("SunderedKeepIngressSite route profile is not production")
 		if String(ingress.get("prompt_text")) == "ENTER SUNDERED KEEP":
 			errors.append("SunderedKeepIngressSite still uses generic direct gate prompt")
 		var actor := Node2D.new()
@@ -70,8 +68,11 @@ func _init() -> void:
 			approach = level_loader.call("get_active_level_instance") as Node
 		if approach == null:
 			errors.append("WorldIngressSite did not enter the registered authored route")
-		elif String(level_loader.call("get_active_level_id")) != "sundered_keep_front_gate":
+		elif String(level_loader.call("get_active_level_id")) != "sundered_keep_vista_approach":
 			errors.append("LevelLoader active level ID is wrong")
+		var route_manager := world.get_node_or_null("RouteTraversalManager")
+		if route_manager == null or String(route_manager.call("get_current_node_id")) != "vista_approach":
+			errors.append("production ingress did not start the Vista route node")
 		if map_instance.visible:
 			errors.append("WorldIngressSite did not hide ProcGenRuntime while approach is active")
 		if map_instance.process_mode != Node.PROCESS_MODE_DISABLED:

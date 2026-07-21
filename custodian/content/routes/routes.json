@@ -1,0 +1,6 @@
+{
+  "schema": "custodian.route_registry.v1",
+  "definitions": [
+    "res://content/routes/sundered_keep/sundered_keep_route.json"
+  ]
+}

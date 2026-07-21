@@ -1,0 +1,55 @@
+{
+  "schema": "custodian.route_definition.v1",
+  "route_id": "sundered_keep",
+  "display_name": "Sundered Keep",
+  "world_context": "campaign_region",
+  "default_profile": "production",
+  "tags": ["authored", "world_ingress", "sundered_keep"],
+  "ingress": {
+    "ingress_id": "sundered_keep",
+    "prompt_text": "APPROACH SUNDERED KEEP",
+    "interaction_distance": 92.0,
+    "route_profile": "production",
+    "placement": {
+      "strategy": "near_compound_ingress",
+      "priority": 200,
+      "minimum_spacing_tiles": 10,
+      "search_radius_tiles": 14,
+      "offset_candidates_tiles": [[4, 0], [-4, 0], [0, 4], [0, -4], [6, 2], [-6, 2]]
+    }
+  },
+  "nodes": [
+    {"node_id": "vista_approach", "level_id": "sundered_keep_vista_approach"},
+    {"node_id": "return_causeway", "level_id": "sundered_keep_return_causeway"},
+    {"node_id": "front_gate", "level_id": "sundered_keep_front_gate"}
+  ],
+  "edges": [
+    {"edge_id": "enter_vista", "from_node_id": "@world_origin", "exit_id": "enter", "to_node_id": "vista_approach", "target_spawn_id": "EntrySpawn", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "enter_causeway_debug", "from_node_id": "@world_origin", "exit_id": "enter", "to_node_id": "return_causeway", "target_spawn_id": "OperatorSpawn", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "vista_to_causeway", "from_node_id": "vista_approach", "exit_id": "continue", "to_node_id": "return_causeway", "target_spawn_id": "OperatorSpawn", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "vista_to_keep_direct", "from_node_id": "vista_approach", "exit_id": "continue", "to_node_id": "front_gate", "target_spawn_id": "EntrySpawn", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "vista_exfil", "from_node_id": "vista_approach", "exit_id": "return_world", "to_node_id": "@world_origin", "target_spawn_id": "", "direction": "exfil", "transition_style": "fade"},
+    {"edge_id": "causeway_to_keep", "from_node_id": "return_causeway", "exit_id": "continue", "to_node_id": "front_gate", "target_spawn_id": "EntrySpawn", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "causeway_to_vista", "from_node_id": "return_causeway", "exit_id": "backtrack", "to_node_id": "vista_approach", "target_spawn_id": "ReturnTopdown", "direction": "back", "transition_style": "fade"},
+    {"edge_id": "causeway_exfil_debug", "from_node_id": "return_causeway", "exit_id": "backtrack", "to_node_id": "@world_origin", "target_spawn_id": "", "direction": "exfil", "transition_style": "fade"},
+    {"edge_id": "keep_to_causeway", "from_node_id": "front_gate", "exit_id": "backtrack", "to_node_id": "return_causeway", "target_spawn_id": "KeepReturnSpawn", "direction": "back", "transition_style": "fade"},
+    {"edge_id": "keep_exfil", "from_node_id": "front_gate", "exit_id": "exfil", "to_node_id": "@world_origin", "target_spawn_id": "", "direction": "exfil", "transition_style": "fade"}
+  ],
+  "profiles": [
+    {
+      "profile_id": "production",
+      "entry_edge_id": "enter_vista",
+      "enabled_edge_ids": ["enter_vista", "vista_to_causeway", "vista_exfil", "causeway_to_keep", "causeway_to_vista", "keep_to_causeway", "keep_exfil"]
+    },
+    {
+      "profile_id": "debug_direct_keep",
+      "entry_edge_id": "enter_vista",
+      "enabled_edge_ids": ["enter_vista", "vista_to_keep_direct", "vista_exfil", "keep_to_causeway", "causeway_to_vista", "keep_exfil"]
+    },
+    {
+      "profile_id": "causeway_only",
+      "entry_edge_id": "enter_causeway_debug",
+      "enabled_edge_ids": ["enter_causeway_debug", "causeway_exfil_debug"]
+    }
+  ]
+}
