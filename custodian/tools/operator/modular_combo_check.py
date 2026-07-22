@@ -6,10 +6,12 @@ Automatic runtime mode:
 
   python modular_combo_check.py idle --fit-debug --open
   python modular_combo_check.py run --fit-debug --open
+  python modular_combo_check.py ne --fit-debug --open
 
-The positional domain resolves matching lower_body/ and upper_body/ runtime
-children and stages them automatically. Existing manual --src mode remains
-available with this expected layout:
+The positional selector resolves either matching lower_body/ and upper_body/
+runtime children, or every exact lower/upper runtime pair for a direction. It
+stages those sheets automatically. Existing manual --src mode remains available
+with this expected layout:
 
   source_dir/
   ├── lower/
@@ -82,6 +84,29 @@ FRAME_META_RE = re.compile(
     r"__(?P<frames>\d+)f__(?P<frame_w>\d+)$",
     re.IGNORECASE,
 )
+
+DIRECTION_ALIASES = {
+    "n": "n",
+    "north": "n",
+    "ne": "ne",
+    "northeast": "ne",
+    "north_east": "ne",
+    "e": "e",
+    "east": "e",
+    "se": "se",
+    "southeast": "se",
+    "south_east": "se",
+    "s": "s",
+    "south": "s",
+    "sw": "sw",
+    "southwest": "sw",
+    "south_west": "sw",
+    "w": "w",
+    "west": "w",
+    "nw": "nw",
+    "northwest": "nw",
+    "north_west": "nw",
+}
 
 
 # ── Bounding-box / fit-debug helpers ─────────────────────────────────────────
@@ -222,13 +247,15 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Combine modular lower/upper sprite sheets. Pass a runtime domain/action "
-            "such as 'idle' or 'run' to stage matching runtime assets automatically, "
-            "or use --src with an existing lower/ + upper/ source workspace."
+            "such as 'idle' or 'run', or a direction such as 'ne' or 'south', to "
+            "stage matching runtime assets automatically. Use --src for an existing "
+            "lower/ + upper/ source workspace."
         ),
         epilog=(
             "Examples:\n"
             "  python modular_combo_check.py idle --fit-debug --open\n"
             "  python modular_combo_check.py run --fit-debug --open\n"
+            "  python modular_combo_check.py ne --fit-debug --open\n"
             "  python modular_combo_check.py actions/unarmed/fast_attack/fast_strike_01 --fit-debug --open\n"
             "  python modular_combo_check.py --src .ai/custom_combo_source --lower-domains idle,run,walk"
         ),
@@ -239,7 +266,9 @@ def parse_args() -> argparse.Namespace:
         "domain",
         nargs="?",
         help=(
-            "Runtime child/domain to stage automatically. Simple locomotion names "
+            "Runtime selector to stage automatically. Direction names/abbreviations "
+            "such as ne, south, and w collect every exact lower/upper runtime pair "
+            "for that direction. Simple locomotion names "
             "such as idle, walk, and run resolve to locomotion/<name>_01. Relative "
             "runtime paths and uniquely named action directories are also accepted."
         ),
@@ -378,6 +407,11 @@ def domain_slug(value: str) -> str:
     return slug or "runtime_domain"
 
 
+def runtime_direction(value: str) -> Optional[str]:
+    normalized = value.strip().lower().replace("-", "_").replace(" ", "_")
+    return DIRECTION_ALIASES.get(normalized)
+
+
 def runtime_directory_candidates(layer_root: Path, requested: str) -> List[Path]:
     """Return matching runtime child directories for one body layer.
 
@@ -438,6 +472,27 @@ def copy_runtime_domain(source: Path, destination: Path) -> None:
     )
 
 
+def copy_runtime_direction(source: Path, destination: Path, direction: str) -> int:
+    """Copy canonical PNG/JSON pairs for one direction, preserving runtime paths."""
+    copied = 0
+    for source_png in sorted(source.rglob("*.png")):
+        try:
+            meta = parse_modular_png_name(source_png)
+        except ValueError:
+            continue
+        if meta["direction"] != direction:
+            continue
+
+        destination_png = destination / source_png.relative_to(source)
+        destination_png.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source_png, destination_png)
+        source_json = raw_json_for_png(source_png)
+        if source_json is not None:
+            shutil.copy2(source_json, destination_png.with_suffix(".json"))
+        copied += 1
+    return copied
+
+
 def inferred_domains_from_pngs(root: Path) -> List[str]:
     domains = set()
     failures = []
@@ -491,6 +546,47 @@ def stage_runtime_domain(args: argparse.Namespace) -> Tuple[Path, List[str]]:
     print(f"upper source:  {upper_source}")
     print(f"staged source: {stage_root}")
     print(f"lower domains: {','.join(inferred)}")
+
+    return stage_root, inferred
+
+
+def stage_runtime_direction(
+    args: argparse.Namespace,
+    direction: str,
+) -> Tuple[Path, List[str]]:
+    repo_root = args.repo_root.expanduser().resolve()
+    runtime_root = (
+        args.runtime_root.expanduser().resolve()
+        if args.runtime_root is not None
+        else repo_root
+        / "custodian/content/sprites/operator/runtime/modules/new_operator"
+    )
+
+    lower_root = runtime_root / "lower_body"
+    upper_root = runtime_root / "upper_body"
+    if not lower_root.is_dir() or not upper_root.is_dir():
+        raise RuntimeError(
+            "Runtime module root must contain lower_body/ and upper_body/: "
+            f"{runtime_root}"
+        )
+
+    stage_root = repo_root / ".ai/operator_modular_combo_sources" / direction
+    if stage_root.exists():
+        shutil.rmtree(stage_root)
+
+    lower_count = copy_runtime_direction(lower_root, stage_root / "lower", direction)
+    upper_count = copy_runtime_direction(upper_root, stage_root / "upper", direction)
+    if lower_count == 0 or upper_count == 0:
+        raise RuntimeError(
+            f"Direction '{direction}' needs runtime PNGs in both body layers; "
+            f"found lower={lower_count}, upper={upper_count} below {runtime_root}."
+        )
+
+    inferred = inferred_domains_from_pngs(stage_root / "lower")
+    print(f"runtime direction: {direction}")
+    print(f"lower source:      {lower_root} ({lower_count} sheets)")
+    print(f"upper source:      {upper_root} ({upper_count} sheets)")
+    print(f"staged source:     {stage_root}")
 
     return stage_root, inferred
 
@@ -827,7 +923,7 @@ def build_output_id(job: PairJob, output_frame_count: int, frame_w: int) -> str:
 
     variant_piece = f"__{upper.variant}" if upper.variant else ""
 
-    if job.pair_mode == "locomotion_exact":
+    if job.pair_mode in {"locomotion_exact", "runtime_direction_exact"}:
         return (
             f"{lower.actor}__modular_combined_body"
             f"{variant_piece}"
@@ -927,6 +1023,51 @@ def find_pair_jobs(
                     f"No lower base sheets for action fanout. "
                     f"Need lower domains {lower_domains} for direction '{upper.direction}' and frame width {upper.frame_w}."
                 ),
+            })
+
+    return jobs, missing
+
+
+def find_direction_pair_jobs(
+    lower_sheets: List[Sheet],
+    upper_sheets: List[Sheet],
+) -> Tuple[List[PairJob], List[Dict]]:
+    """Pair all runtime sheets for one direction without action fan-out."""
+    jobs: List[PairJob] = []
+    missing: List[Dict] = []
+    matched_lower_ids = set()
+
+    for upper in upper_sheets:
+        exact = [
+            lower for lower in lower_sheets
+            if lower.actor == upper.actor
+            and lower.variant == upper.variant
+            and lower.anim_id == upper.anim_id
+            and lower.direction == upper.direction
+            and lower.frame_w == upper.frame_w
+        ]
+        if not exact:
+            missing.append({
+                "upper": upper.workspace_path.name,
+                "reason": "No exact lower-body runtime counterpart for direction review.",
+            })
+            continue
+        for lower in exact:
+            matched_lower_ids.add(id(lower))
+            jobs.append(
+                PairJob(
+                    lower=lower,
+                    upper=upper,
+                    output_id="",
+                    pair_mode="runtime_direction_exact",
+                )
+            )
+
+    for lower in lower_sheets:
+        if id(lower) not in matched_lower_ids:
+            missing.append({
+                "lower": lower.workspace_path.name,
+                "reason": "No exact upper-body runtime counterpart for direction review.",
             })
 
     return jobs, missing
@@ -1329,7 +1470,10 @@ def make_gif(frames: List[Image.Image], path: Path, args: argparse.Namespace) ->
 def run_next_actions_report(args: argparse.Namespace, manifest_path: Path) -> None:
     if not args.next_actions:
         return
-    helper = args.repo_root.expanduser().resolve() / "tools/operator_next_actions_report.py"
+    helper = (
+        args.repo_root.expanduser().resolve()
+        / "custodian/tools/operator/operator_next_actions_report.py"
+    )
     if not helper.exists():
         raise RuntimeError(f"Next-actions helper is missing: {helper}")
     command = [
@@ -1687,12 +1831,13 @@ def run_fit_debug_on_existing(args: argparse.Namespace) -> int:
 def main() -> int:
     args = parse_args()
     repo_root = args.repo_root.expanduser().resolve()
+    selected_direction = runtime_direction(args.domain) if args.domain else None
 
     if args.domain and args.src is not None:
         print("ERROR: pass either a runtime domain argument or --src, not both.")
         return 2
 
-    slug = domain_slug(args.domain) if args.domain else None
+    slug = domain_slug(selected_direction or args.domain) if args.domain else None
     if args.check_dir is None:
         check_dir = repo_root / ".ai/operator_modular_combo_check"
         if slug:
@@ -1710,7 +1855,10 @@ def main() -> int:
 
     try:
         if args.domain:
-            src, inferred_domains = stage_runtime_domain(args)
+            if selected_direction:
+                src, inferred_domains = stage_runtime_direction(args, selected_direction)
+            else:
+                src, inferred_domains = stage_runtime_domain(args)
             lower_domains = (
                 parse_lower_domains(args.lower_domains)
                 if args.lower_domains
@@ -1751,11 +1899,14 @@ def main() -> int:
 
     warnings = lower_warnings + upper_warnings
 
-    jobs, missing = find_pair_jobs(
-        lower_sheets=lower_sheets,
-        upper_sheets=upper_sheets,
-        lower_domains=lower_domains,
-    )
+    if selected_direction:
+        jobs, missing = find_direction_pair_jobs(lower_sheets, upper_sheets)
+    else:
+        jobs, missing = find_pair_jobs(
+            lower_sheets=lower_sheets,
+            upper_sheets=upper_sheets,
+            lower_domains=lower_domains,
+        )
 
     # ── Chain grouping ───────────────────────────────────────────────────
     chain_phases: List[str] = []
@@ -1855,6 +2006,8 @@ def main() -> int:
         "lower_dir": str(lower_dir),
         "upper_dir": str(upper_dir),
         "check_dir": str(check_dir),
+        "runtime_selection_kind": "direction" if selected_direction else ("domain" if args.domain else "manual"),
+        "runtime_selection": selected_direction or args.domain,
         "lower_domains": lower_domains,
         "output_frame_policy": args.output_frame_policy,
         "upper_frame_repeat": args.upper_frame_repeat,

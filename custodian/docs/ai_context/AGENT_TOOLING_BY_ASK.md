@@ -105,6 +105,15 @@ bash custodian/tools/operator/refresh_combo_check_src.sh
 python3 custodian/tools/operator/modular_combo_check.py --src /tmp/custodian_combo_check_src --check-dir .ai/operator_modular_combo_check --clean --fit-debug
 ```
 
+For automatic runtime selection, pass an animation domain or a direction. A
+direction review collects every exact lower/upper runtime pair in that direction:
+
+```bash
+python3 custodian/tools/operator/modular_combo_check.py idle --fit-debug --open
+python3 custodian/tools/operator/modular_combo_check.py ne --fit-debug --open
+python3 custodian/tools/operator/modular_combo_check.py south --fit-debug --open
+```
+
 For a ranked “what should I fix next?” report joined to the production contract:
 
 ```bash
@@ -136,6 +145,7 @@ What it does:
 
 - `refresh_combo_check_src.sh` rebuilds `/tmp/custodian_combo_check_src` as a symlink workspace with `lower/` and `upper/` folders.
 - `modular_combo_check.py` combines upper and lower modular sheets for visual review.
+- A positional direction (`n`, `ne`, `e`, `se`, `s`, `sw`, `w`, `nw`, or its full name) stages all runtime sheets for that direction and pairs exact action/loadout counterparts without locomotion fan-out.
 - Locomotion upper sheets pair with matching lower locomotion; action upper sheets fan out across lower locomotion domains.
 - With `--fit-debug`, it reports alpha bounding-box edge gaps and horizontal center deltas.
 - With `--next-actions`, it invokes `custodian/tools/operator/operator_next_actions_report.py`, joins fit evidence to `operator_modular_core.json` plus the production coverage reporter, and writes `reports/next_actions.json` and `reports/NEXT_ACTIONS.md` before embedding the top recommendations in `index.html`.

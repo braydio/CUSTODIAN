@@ -72,7 +72,7 @@ def parse_args() -> argparse.Namespace:
         description="Generate prioritized Operator animation implementation recommendations."
     )
     parser.add_argument("--combo-manifest", type=Path, required=True)
-    parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[3])
     parser.add_argument("--contract", type=Path, default=None)
     parser.add_argument("--fit-gap-threshold", type=int, default=3)
     parser.add_argument("--fit-center-threshold", type=int, default=5)

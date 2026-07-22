@@ -10,8 +10,8 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-HELPER = REPO_ROOT / "tools/operator_next_actions_report.py"
-COMBO_CHECKER = REPO_ROOT / "tools/modular_combo_check.py"
+HELPER = REPO_ROOT / "custodian/tools/operator/operator_next_actions_report.py"
+COMBO_CHECKER = REPO_ROOT / "custodian/tools/operator/modular_combo_check.py"
 
 
 def main() -> int:
@@ -75,6 +75,27 @@ def main() -> int:
         html = module.next_actions_html(Path(temp))
         assert "Recommended Next Actions" in html
         assert "reports/NEXT_ACTIONS.md" in html
+
+        assert module.runtime_direction("NE") == "ne"
+        assert module.runtime_direction("south-west") == "sw"
+        lower = module.Sheet(
+            Path("lower.png"), Path("lower.png"), "operator", "lower",
+            "unarmed", "idle_01", "ne", 5, 96, "lower",
+        )
+        exact_upper = module.Sheet(
+            Path("upper.png"), Path("upper.png"), "operator", "upper",
+            "unarmed", "idle_01", "ne", 5, 96, "upper",
+        )
+        wrong_variant = module.Sheet(
+            Path("ranged.png"), Path("ranged.png"), "operator", "upper",
+            "ranged_2h", "idle_01", "ne", 5, 96, "ranged",
+        )
+        jobs, missing = module.find_direction_pair_jobs(
+            [lower], [exact_upper, wrong_variant]
+        )
+        assert len(jobs) == 1
+        assert jobs[0].pair_mode == "runtime_direction_exact"
+        assert len(missing) == 1 and missing[0]["upper"] == "ranged.png"
 
     print("operator_next_actions_report_smoke ok")
     return 0

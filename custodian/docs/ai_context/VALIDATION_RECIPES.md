@@ -209,6 +209,7 @@ For modular visual-fit next-action reporting:
 ```bash
 python3 -m py_compile custodian/tools/operator/modular_combo_check.py custodian/tools/operator/operator_next_actions_report.py
 python3 custodian/tools/validation/operator_next_actions_report_smoke.py
+python3 custodian/tools/operator/modular_combo_check.py ne --check-dir /tmp/custodian_combo_check_ne --clean
 bash custodian/tools/operator/refresh_combo_check_src.sh
 python3 custodian/tools/operator/modular_combo_check.py \
   --src /tmp/custodian_combo_check_src \
@@ -216,7 +217,7 @@ python3 custodian/tools/operator/modular_combo_check.py \
   --fit-report-only --fit-debug --next-actions
 ```
 
-The smoke validates the versioned generated-artifact schema, contract-group join, fast-attack phase grouping, canonical/actionable source and runtime paths, commands, acceptance criteria, Markdown, and HTML loader. The report-only command proves existing previews can gain refreshed fit evidence and recommendations without rebuilding PNG/GIF outputs.
+The smoke validates the versioned generated-artifact schema, contract-group join, fast-attack phase grouping, canonical/actionable source and runtime paths, commands, acceptance criteria, Markdown, and HTML loader. The `ne` command proves positional direction selection stages all matching runtime sheets, combines exact lower/upper action and loadout counterparts, and reports one-sided coverage without unrelated action fan-out. The report-only command proves existing previews can gain refreshed fit evidence and recommendations without rebuilding PNG/GIF outputs.
 
 For the local exported-session report tool, run from the repository root:
 
