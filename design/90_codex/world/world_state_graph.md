@@ -1,13 +1,15 @@
 # World State Graph
 
-Status: candidate
+Status: graduated
 Category: world
 Priority: P0
 Maturity: system
 Cost: high
 Owner: Brayden
-Last reviewed: 2026-07-20
-Runtime: live — `custodian/game/systems/world/world_state_graph.gd`
+Last reviewed: 2026-07-21
+Runtime status: live
+Runtime path: `custodian/game/systems/world/world_state_graph.gd`
+Graduated to: `design/01_systems/WORLD_STATE_GRAPH_SYSTEM.md`
 
 ## One-line pitch
 
@@ -54,4 +56,3 @@ Graduate when repair gameplay needs to affect more than one object or sector.
 Related: Repair Gameplay System, Terminal System, Persistent World History, Developer Observatory.
 
 Active implementation authority: `design/01_systems/WORLD_STATE_GRAPH_SYSTEM.md` and `custodian/docs/ai_context/CURRENT_STATE.md`.
-

@@ -29,9 +29,15 @@ It is not active runtime truth, not a design-spec replacement, and not implement
 - `deferred` - good idea, wrong time
 - `cut` - intentionally rejected
 
-## Runtime Field
+## Runtime Fields
 
-Cards may include a `Runtime:` line indicating whether live runtime code exists. This is informational only — it does not grant the card implementation authority. Use active design specs and `custodian/docs/ai_context/CURRENT_STATE.md` for build truth.
+Cards with live support use these informational fields:
+
+- `Runtime status:` — whether a runtime slice is live
+- `Runtime path:` — the live implementation entrypoint
+- `Graduated to:` — the active implementation spec that owns build truth
+
+These fields do not grant the card implementation authority. A graduated card remains an idea-history record and pointer; use its active design spec and `custodian/docs/ai_context/CURRENT_STATE.md` for build truth.
 
 ## Priority Values
 
@@ -57,5 +63,5 @@ Graduation should include:
 - a clear implementation owner and runtime surface
 - dependencies and deterministic simulation constraints
 - acceptance checks and validation recipe
+- `Status: graduated`, `Graduated to:`, and any live `Runtime status:` / `Runtime path:` metadata on the original card
 - updates to `custodian/docs/ai_context/CURRENT_STATE.md` only when implementation changes live runtime state
-

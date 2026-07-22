@@ -21,6 +21,7 @@ OPERATOR_MODULAR_LAYERS = {
     "modular_body_lower",
     "modular_body_upper",
     "modular_combined_body",
+    "modular_head",
     "modular_lower_body",
     "modular_ranged_weapon",
     "modular_sidearm",

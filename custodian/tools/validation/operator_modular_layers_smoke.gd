@@ -21,6 +21,7 @@ func _init() -> void:
 
 	var lower := operator.get_node_or_null("ModularLowerBodySprite") as AnimatedSprite2D
 	var upper := operator.get_node_or_null("ModularUpperBodySprite") as AnimatedSprite2D
+	var head := operator.get_node_or_null("ModularHeadSprite") as AnimatedSprite2D
 	var weapon := operator.get_node_or_null("ModularSidearmSprite") as AnimatedSprite2D
 	var body := operator.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	var primary_weapon := operator.get_node_or_null("PrimaryWeaponSocket/PrimaryWeaponSprite") as AnimatedSprite2D
@@ -37,6 +38,9 @@ func _init() -> void:
 
 	_check_layer(lower, "unarmed idle lower", &"unarmed_idle_down", failures)
 	_check_layer(upper, "unarmed idle upper", &"unarmed_idle_down", failures)
+	_check_layer(head, "hooded idle head", &"hooded_idle_down", failures)
+	if head != null and upper != null and head.frame != upper.frame:
+		failures.append("hooded idle head frame should synchronize to modular upper body")
 	_check_hidden(body, "legacy body should be hidden during modular unarmed idle", failures)
 
 	operator.set("velocity", Vector2.RIGHT * 32.0)
@@ -47,6 +51,7 @@ func _init() -> void:
 
 	_check_layer(lower, "unarmed move lower", &"unarmed_walk_right", failures)
 	_check_layer(upper, "unarmed move upper", &"unarmed_walk_right", failures)
+	_check_hidden(head, "modular head should hide when the selected profile lacks walk-right art", failures)
 	_check_hidden(body, "legacy body should be hidden during modular unarmed locomotion", failures)
 
 	operator.call("_exit_ranged_ready")
@@ -68,6 +73,7 @@ func _init() -> void:
 	_check_layer(lower, "ranged-ready idle lower", &"unarmed_idle_right", failures)
 	_check_layer(upper, "ranged-ready idle upper", &"ranged_2h_stance_modular_right", failures)
 	_check_layer(weapon, "ranged-ready idle weapon", &"ranged_2h_stance_modular_right", failures)
+	_check_hidden(head, "south-idle head should not remain frozen over ranged-ready stance", failures)
 	_check_hidden(body, "legacy body should be hidden during modular ranged-ready idle", failures)
 	_check_hidden(primary_weapon, "legacy primary weapon should hide during modular ranged-ready idle", failures)
 	_check_hidden(ranged_fx, "legacy ranged fx should hide during modular ranged-ready idle", failures)

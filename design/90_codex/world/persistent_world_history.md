@@ -1,13 +1,15 @@
 # Persistent World History
 
-Status: candidate
+Status: graduated
 Category: world
 Priority: P0
 Maturity: system
 Cost: high
 Owner: Brayden
-Last reviewed: 2026-07-20
-Runtime: live — `custodian/game/systems/world/world_history.gd`
+Last reviewed: 2026-07-21
+Runtime status: live
+Runtime path: `custodian/game/systems/world/world_history.gd`
+Graduated to: `design/01_systems/WORLD_HISTORY_SYSTEM.md`
 
 ## One-line pitch
 
@@ -54,4 +56,3 @@ Graduate when revisiting locations should visibly reflect previous player action
 Related: World Autopsy, World State Graph, Sector Heatmap, Developer Observatory.
 
 Active implementation authority: `design/01_systems/WORLD_HISTORY_SYSTEM.md` and `custodian/docs/ai_context/CURRENT_STATE.md`.
-

@@ -14,6 +14,7 @@
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_sidearm_frames.tres" id="32_modular_sidearm_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_upper_fx_frames.tres" id="33_modular_upper_fx_frames"]
 [ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_cape_frames.tres" id="34_modular_cape_frames"]
+[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_head_frames.tres" id="37_modular_head_frames"]
 [ext_resource type="Script" path="res://game/actors/operator/components/weapon_feedback_presenter.gd" id="35_weapon_feedback"]
 [ext_resource type="PackedScene" path="res://game/vfx/combat/dodge_charge_feedback.tscn" id="36_dodge_charge_feedback"]
 
@@ -125,6 +126,12 @@ visible = false
 position = Vector2(0, -18)
 sprite_frames = ExtResource("31_modular_upper_body_frames")
 animation = &"unarmed_idle_down"
+
+[node name="ModularHeadSprite" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(0, -18)
+sprite_frames = ExtResource("37_modular_head_frames")
+animation = &"hooded_idle_down"
 
 [node name="ModularSidearmSprite" type="AnimatedSprite2D" parent="."]
 visible = false

@@ -7,6 +7,9 @@ signal weapon_feedback_event(event_id: StringName, snapshot: Dictionary)
 signal dodge_charge_changed(active: bool, ratio: float, ready: bool)
 signal dodge_charge_released(ratio: float, direction: Vector2)
 signal dodge_charge_cancelled(reason: StringName)
+signal dodge_chain_started(index: int, flow: float, direction: Vector2)
+signal dodge_chain_ended(count: int, flow: float, reason: StringName)
+signal dodge_flow_changed(value: float, direction: Vector2)
 
 const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
 const WeaponSocketLibrary = preload("res://game/actors/operator/animations/operator_weapon_socket_library.gd")
@@ -236,6 +239,17 @@ var last_fire_cooldown := 0.0
 @export var dodge_long_stamina_cost: float = 20.0
 @export var dodge_committed_stamina_cost: float = 26.0
 @export_group("", "")
+@export_group("Dodge Flow")
+@export var dodge_chain_enabled: bool = true
+@export var dodge_chain_buffer_start: float = 0.10
+@export var dodge_chain_late_grace: float = 0.06
+@export var dodge_flow_decay_delay: float = 0.22
+@export var dodge_flow_decay_per_second: float = 1.8
+@export var dodge_flow_speed_bonus: float = 0.12
+@export var dodge_flow_distance_bonus: float = 0.18
+@export var dodge_flow_recovery_reduction: float = 0.35
+@export var dodge_exit_carry_duration: float = 0.18
+@export_group("", "")
 @export var heavy_attack_stamina_cost: float = 14.0
 @export var heavy_attack_blocked_while_sprinting: bool = true
 @export var block_move_multiplier: float = 0.6
@@ -272,6 +286,7 @@ var last_fire_cooldown := 0.0
 @export var combat_target_range: float = 360.0
 @export var use_tiny_rpg_placeholder_soldier: bool = true
 @export var modular_locomotion_layers_enabled: bool = true
+@export var modular_head_profile: StringName = &"hooded"
 @export_group("Modular Primary Ranged Fire")
 @export var modular_primary_ranged_fire_enabled: bool = true
 @export var modular_primary_ranged_fire_fps: float = 14.0
@@ -439,6 +454,18 @@ var _active_dodge_profile: StringName = &"tap"
 var _active_dodge_speed: float = 0.0
 var _active_dodge_duration: float = 0.0
 var _active_dodge_recovery_duration: float = 0.0
+var _dodge_chain_buffered: bool = false
+var _dodge_chain_direction: Vector2 = Vector2.ZERO
+var _dodge_chain_index: int = 0
+var _dodge_chain_last_turn_angle: float = 0.0
+var _dodge_chain_last_retention: float = 1.0
+var _dodge_chain_end_reason: StringName = &"opener_complete"
+var _dodge_recovery_elapsed: float = 0.0
+var _dodge_flow: float = 0.0
+var _dodge_flow_direction: Vector2 = Vector2.ZERO
+var _dodge_flow_decay_timer: float = 0.0
+var _dodge_exit_velocity: Vector2 = Vector2.ZERO
+var _dodge_exit_timer: float = 0.0
 var _field_patch_active: bool = false
 var _field_patch_timer: float = 0.0
 var _field_patch_committed: bool = false
@@ -473,6 +500,7 @@ var _dodge_fx_back_base_position := Vector2.ZERO
 var _modular_cape_base_position := Vector2.ZERO
 var _modular_lower_body_base_position := Vector2.ZERO
 var _modular_upper_body_base_position := Vector2.ZERO
+var _modular_head_base_position := Vector2.ZERO
 var _modular_sidearm_base_position := Vector2.ZERO
 var _modular_upper_fx_base_position := Vector2.ZERO
 var _melee_weapon_overlay_base_position := Vector2.ZERO
@@ -648,6 +676,7 @@ const KNIGHT_TEST_ANIMATION_SPECS := {
 @onready var modular_cape_sprite: AnimatedSprite2D = $ModularCapeSprite if has_node("ModularCapeSprite") else null
 @onready var modular_lower_body_sprite = $ModularLowerBodySprite if has_node("ModularLowerBodySprite") else null
 @onready var modular_upper_body_sprite = $ModularUpperBodySprite if has_node("ModularUpperBodySprite") else null
+@onready var modular_head_sprite: AnimatedSprite2D = $ModularHeadSprite if has_node("ModularHeadSprite") else null
 @onready var modular_sidearm_sprite = $ModularSidearmSprite if has_node("ModularSidearmSprite") else null
 @onready var modular_upper_fx_sprite = $ModularUpperFxSprite if has_node("ModularUpperFxSprite") else null
 @onready var right_hand_socket = $RightHandSocket if has_node("RightHandSocket") else null
@@ -707,6 +736,9 @@ func _ready():
 	if modular_upper_body_sprite:
 		modular_upper_body_sprite.visible = false
 		modular_upper_body_sprite.modulate = Color(1.3, 1.3, 1.3, 1)
+	if modular_head_sprite:
+		modular_head_sprite.visible = false
+		modular_head_sprite.modulate = Color(1.3, 1.3, 1.3, 1)
 	_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_unfocused_fire", "ranged_ready")
 	_configure_weapon_definition_defaults(melee_weapon_definition, "Fallen Star Katana", "melee", "melee_fast", "melee_heavy")
 	_rebuild_armed_weapon_list()
@@ -955,14 +987,14 @@ func _process(delta):
 		_reset_unstuck_detector()
 		_parry_neutral_lock_active = false
 		cancel_field_patch(&"dead")
-		_cancel_dodge()
+		_cancel_dodge(&"dead")
 		_exit_ranged_ready()
 		return
 	if _enemy_impact_lock_timer > 0.0:
 		_reset_unstuck_detector()
 		_parry_neutral_lock_active = false
 		cancel_field_patch(&"impact")
-		_cancel_dodge()
+		_cancel_dodge(&"impact")
 		_exit_ranged_ready()
 		_update_aim()
 		_update_animation()
@@ -1032,6 +1064,7 @@ func _physics_process(delta):
 		else:
 			_update_paired_execution(delta)
 		return
+	_update_dodge_flow_decay(delta)
 	if _is_dead:
 		velocity = Vector2.ZERO
 		is_sneaking = false
@@ -1127,6 +1160,16 @@ func _physics_process(delta):
 	set_movement_surface_multiplier(_query_movement_surface_multiplier("operator"))
 	active_move_speed *= max(0.0, movement_surface_multiplier)
 	var target_velocity: Vector2 = input_direction * active_move_speed
+	if _dodge_exit_timer > 0.0:
+		var carry_ratio := clampf(_dodge_exit_timer / maxf(0.001, dodge_exit_carry_duration), 0.0, 1.0)
+		var carry_target := _dodge_exit_velocity * carry_ratio
+		if moving:
+			target_velocity = carry_target.lerp(target_velocity, 1.0 - carry_ratio)
+		else:
+			target_velocity = carry_target
+		_dodge_exit_timer = maxf(0.0, _dodge_exit_timer - delta)
+		if _dodge_exit_timer <= 0.0:
+			_dodge_exit_velocity = Vector2.ZERO
 	var accel_rate: float = move_acceleration if moving else move_deceleration
 	if movement_profile != null:
 		accel_rate *= movement_profile.acceleration_multiplier
@@ -1515,19 +1558,23 @@ func _sync_modular_locomotion_layers(base_animation: String, lower_direction: Ve
 		if not _sync_modular_unarmed_upper_body_locomotion(base_animation, resolved_upper_direction, speed_scale):
 			_hide_modular_locomotion_layers()
 			return false
+		_sync_modular_head_locomotion(base_animation, resolved_upper_direction, speed_scale)
 		if base_animation == "unarmed_run":
 			_play_optional_modular_cape_animation("unarmed_run_cape", resolved_upper_direction, 12.0)
 		else:
 			_hide_modular_cape_layer()
 	elif _is_ranged_ready_active() and _is_using_ranged_2h_primary():
+		_hide_modular_head_layer()
 		if not _sync_modular_ranged_ready_upper_layers(resolved_upper_direction):
 			_hide_modular_locomotion_layers()
 			return false
 	elif _is_using_ranged_2h_primary():
+		_hide_modular_head_layer()
 		if not _sync_modular_ranged_relaxed_upper_layers(resolved_upper_direction):
 			_hide_modular_locomotion_layers()
 			return false
 	else:
+		_hide_modular_head_layer()
 		_hide_modular_locomotion_layers()
 		return false
 
@@ -1546,6 +1593,7 @@ func _sync_modular_action_domains() -> bool:
 		return animated_sprite != null and animated_sprite.visible
 	if not _is_attack_profile_unarmed(_active_attack_profile):
 		return false
+	_hide_modular_head_layer()
 	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
@@ -2633,6 +2681,39 @@ func _sync_modular_upper_body_layer(base_animation: String, direction: Vector2, 
 	return true
 
 
+func _sync_modular_head_locomotion(base_animation: String, direction: Vector2, speed_scale: float) -> bool:
+	if modular_head_sprite == null or modular_head_sprite.sprite_frames == null or modular_head_profile.is_empty():
+		_hide_modular_head_layer()
+		return false
+	var action := base_animation.trim_prefix("unarmed_")
+	var head_base := "%s_%s" % [String(modular_head_profile), action]
+	var head_animation := AnimationResolver.resolve(head_base, direction, modular_head_sprite)
+	if not _has_playable_sprite_animation(modular_head_sprite.sprite_frames, head_animation):
+		_hide_modular_head_layer()
+		return false
+	modular_head_sprite.visible = true
+	modular_head_sprite.flip_h = false
+	modular_head_sprite.speed_scale = speed_scale
+	if modular_head_sprite.animation != head_animation or not modular_head_sprite.is_playing():
+		modular_head_sprite.play(head_animation)
+	if modular_upper_body_sprite != null \
+		and modular_upper_body_sprite.visible \
+		and modular_upper_body_sprite.sprite_frames != null:
+		var head_frame_count := modular_head_sprite.sprite_frames.get_frame_count(head_animation)
+		if head_frame_count > 0:
+			modular_head_sprite.set_frame_and_progress(
+				mini(modular_upper_body_sprite.frame, head_frame_count - 1),
+				modular_upper_body_sprite.frame_progress
+			)
+	return true
+
+
+func _hide_modular_head_layer() -> void:
+	if modular_head_sprite:
+		modular_head_sprite.visible = false
+		modular_head_sprite.stop()
+
+
 func _hide_modular_locomotion_layers() -> void:
 	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
@@ -2649,6 +2730,7 @@ func _hide_modular_locomotion_layers() -> void:
 		modular_sidearm_sprite.visible = false
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
+	_hide_modular_head_layer()
 	_hide_modular_cape_layer()
 
 
@@ -4560,7 +4642,7 @@ func _start_critical_attack(target: Node2D) -> void:
 	_clear_attack_buffer()
 	_counter_window_timer = 0.0
 	_exit_ranged_ready()
-	_cancel_dodge()
+	_cancel_dodge(&"paired_execution")
 	_reload_active = false
 	_reload_timer = 0.0
 	_paired_execution_target = target
@@ -5746,6 +5828,17 @@ func _is_action_just_released_any(action_names: Array) -> bool:
 
 
 func _handle_dodge_input(delta: float = 0.0) -> void:
+	if dodge_chain_enabled and _is_action_just_pressed_any(["dodge"]):
+		if _dodge_active:
+			var active_elapsed := maxf(0.0, _active_dodge_duration - _dodge_timer)
+			if active_elapsed >= maxf(0.0, dodge_chain_buffer_start):
+				_buffer_dodge_chain(_resolve_dodge_direction(), &"active_window")
+			return
+		if _dodge_recovery_active:
+			if _dodge_recovery_elapsed <= maxf(0.0, dodge_chain_late_grace):
+				_buffer_dodge_chain(_resolve_dodge_direction(), &"late_grace")
+				_launch_buffered_dodge_chain()
+			return
 	if not dodge_charge_enabled:
 		if _is_action_just_pressed_any(["dodge"]):
 			_try_start_dodge()
@@ -5766,6 +5859,26 @@ func _handle_dodge_input(delta: float = 0.0) -> void:
 		return
 	if _is_action_just_pressed_any(["dodge"]):
 		_begin_dodge_charge()
+
+
+func _buffer_dodge_chain(direction: Vector2, source: StringName) -> bool:
+	if not dodge_chain_enabled or (not _dodge_active and not _dodge_recovery_active):
+		return false
+	var resolved_direction := direction.normalized()
+	if resolved_direction == Vector2.ZERO:
+		resolved_direction = _dodge_direction
+	_dodge_chain_buffered = true
+	_dodge_chain_direction = resolved_direction
+	_obs_increment(&"player_dodge_chain_inputs_buffered")
+	_obs_log(&"player_dodge_chain_buffered", {
+		"source": String(source),
+		"next_index": _dodge_chain_index + 1,
+		"flow": _dodge_flow,
+		"direction": resolved_direction,
+		"active_remaining": _dodge_timer,
+		"recovery_elapsed": _dodge_recovery_elapsed,
+	})
+	return true
 
 
 func _begin_dodge_charge() -> bool:
@@ -5801,7 +5914,7 @@ func _release_dodge_charge() -> bool:
 	_dodge_charge_timer = 0.0
 	_pending_dodge_direction = Vector2.ZERO
 	dodge_charge_changed.emit(false, charge_ratio, charge_ratio >= 1.0)
-	var started := _try_start_dodge_with_profile(direction, profile)
+	var started := _try_start_dodge_with_profile(direction, profile, charge_ratio)
 	if started:
 		dodge_charge_released.emit(charge_ratio, direction)
 	else:
@@ -5865,13 +5978,22 @@ func _try_start_dodge() -> bool:
 	return _try_start_dodge_with_profile(_resolve_dodge_direction(), &"tap")
 
 
-func _try_start_dodge_with_profile(direction: Vector2, profile: StringName) -> bool:
+func _try_start_dodge_with_profile(direction: Vector2, profile: StringName, charge_ratio: float = -1.0) -> bool:
 	var config := _get_dodge_profile_config(profile)
 	var stamina_cost := float(config.get("stamina_cost", dodge_stamina_cost))
 	if not _can_start_dodge(stamina_cost):
 		return false
 	_parry_neutral_lock_active = false
 	_dodge_fast_attack_buffered = false
+	_dodge_chain_buffered = false
+	_dodge_chain_direction = Vector2.ZERO
+	_dodge_chain_index = 0
+	_dodge_chain_last_turn_angle = 0.0
+	_dodge_chain_last_retention = 1.0
+	_dodge_chain_end_reason = &"opener_complete"
+	_dodge_recovery_elapsed = 0.0
+	_dodge_exit_timer = 0.0
+	_dodge_exit_velocity = Vector2.ZERO
 	_active_dodge_profile = StringName(config.get("profile", &"tap"))
 	_active_dodge_speed = dodge_speed * float(config.get("speed_multiplier", 1.0))
 	_active_dodge_duration = maxf(0.05, dodge_duration)
@@ -5886,7 +6008,8 @@ func _try_start_dodge_with_profile(direction: Vector2, profile: StringName) -> b
 	_dodge_timer = _active_dodge_duration
 	_dodge_iframe_timer = minf(maxf(0.0, dodge_iframe_duration), _dodge_timer)
 	_dodge_recovery_timer = 0.0
-	_dodge_cooldown_remaining = maxf(dodge_cooldown, _dodge_timer + _active_dodge_recovery_duration)
+	_dodge_cooldown_remaining = 0.0
+	_establish_dodge_flow(_active_dodge_profile, charge_ratio, _dodge_direction)
 	_spend_stamina(stamina_cost, &"dodge")
 	is_sprinting = false
 	is_sneaking = false
@@ -5915,6 +6038,7 @@ func _try_start_dodge_with_profile(direction: Vector2, profile: StringName) -> b
 		"recovery_duration": _active_dodge_recovery_duration,
 		"stamina_cost": stamina_cost,
 		"cooldown": _dodge_cooldown_remaining,
+		"flow": _dodge_flow,
 		"stamina": stamina,
 	})
 	_obs_increment(StringName("player_dodges_started_%s" % String(_active_dodge_profile)))
@@ -5945,6 +6069,208 @@ func _get_dodge_profile_config(profile: StringName) -> Dictionary:
 				"recovery_multiplier": 1.0,
 				"stamina_cost": dodge_stamina_cost,
 			}
+
+
+func _establish_dodge_flow(profile: StringName, charge_ratio: float, direction: Vector2) -> void:
+	var initial_flow := 0.35
+	if charge_ratio >= 0.0:
+		initial_flow = lerpf(0.35, 1.0, clampf(charge_ratio, 0.0, 1.0))
+	else:
+		match profile:
+			&"long":
+				initial_flow = 0.65
+			&"committed":
+				initial_flow = 1.0
+	_set_dodge_flow(initial_flow, direction)
+	_dodge_flow_decay_timer = maxf(0.0, dodge_flow_decay_delay)
+
+
+func _flow_retention_for_turn(old_direction: Vector2, new_direction: Vector2) -> float:
+	if old_direction.length_squared() <= 0.0001 or new_direction.length_squared() <= 0.0001:
+		return 0.0
+	var angle := absf(rad_to_deg(old_direction.normalized().angle_to(new_direction.normalized())))
+	if angle <= 45.001:
+		return 1.0
+	if angle <= 90.001:
+		return 0.75
+	if angle <= 135.001:
+		return 0.40
+	return 0.0
+
+
+func _dodge_chain_animation_start_frame(turn_angle: float) -> int:
+	if turn_angle <= 45.001:
+		return 2
+	if turn_angle <= 90.001:
+		return 1
+	return 0
+
+
+func _get_dodge_flow_end_speed_factor(flow: float) -> float:
+	var safe_flow := clampf(flow, 0.0, 1.0)
+	var base_end_speed_factor := 0.45
+	var peak_multiplier := lerpf(1.0, 1.0 + maxf(0.0, dodge_flow_speed_bonus), safe_flow)
+	var distance_multiplier := lerpf(1.0, 1.0 + maxf(0.0, dodge_flow_distance_bonus), safe_flow)
+	var base_average_factor := (1.0 + base_end_speed_factor) * 0.5
+	var desired_average_factor := base_average_factor * distance_multiplier / maxf(0.001, peak_multiplier)
+	return clampf(desired_average_factor * 2.0 - 1.0, base_end_speed_factor, 1.0)
+
+
+func _launch_buffered_dodge_chain() -> bool:
+	if not _dodge_chain_buffered:
+		return false
+	var next_direction := _dodge_chain_direction.normalized()
+	_dodge_chain_buffered = false
+	_dodge_chain_direction = Vector2.ZERO
+	if next_direction == Vector2.ZERO:
+		next_direction = _dodge_direction
+	if _is_dead or _enemy_impact_lock_timer > 0.0 or _portal_transition_locked or _portal_arrival_animation_active:
+		_dodge_chain_end_reason = &"runtime_lock"
+		return false
+	if stamina < maxf(0.0, dodge_stamina_cost):
+		_dodge_chain_end_reason = &"insufficient_stamina"
+		dodge_charge_cancelled.emit(&"insufficient_stamina")
+		_obs_increment(&"player_dodge_chain_rejected_stamina")
+		return false
+
+	var previous_direction := _dodge_flow_direction if _dodge_flow_direction.length_squared() > 0.0001 else _dodge_direction
+	var turn_angle := absf(rad_to_deg(previous_direction.normalized().angle_to(next_direction)))
+	var retention := _flow_retention_for_turn(previous_direction, next_direction)
+	var retained_flow := clampf(_dodge_flow * retention, 0.0, 1.0)
+	_dodge_chain_last_turn_angle = turn_angle
+	_dodge_chain_last_retention = retention
+	_set_dodge_flow(retained_flow, next_direction)
+
+	_dodge_chain_index += 1
+	_dodge_chain_end_reason = &"input_released"
+	_active_dodge_profile = &"chain"
+	_active_dodge_speed = dodge_speed * lerpf(1.0, 1.0 + maxf(0.0, dodge_flow_speed_bonus), _dodge_flow)
+	_active_dodge_duration = maxf(0.05, dodge_duration)
+	_active_dodge_recovery_duration = maxf(
+		0.0,
+		dodge_recovery_duration * lerpf(1.0, maxf(0.0, 1.0 - dodge_flow_recovery_reduction), _dodge_flow)
+	)
+	_dodge_direction = next_direction
+	_dodge_backstep_active = _is_dodge_backstep_request(_dodge_direction)
+	_dodge_active = true
+	_dodge_recovery_active = false
+	_dodge_timer = _active_dodge_duration
+	_dodge_iframe_timer = minf(maxf(0.0, dodge_iframe_duration), _dodge_timer)
+	_dodge_recovery_timer = 0.0
+	_dodge_recovery_elapsed = 0.0
+	_dodge_cooldown_remaining = 0.0
+	_dodge_fast_attack_buffered = false
+	_spend_stamina(dodge_stamina_cost, &"dodge_chain")
+	is_sprinting = false
+	is_sneaking = false
+	velocity = _dodge_direction * _active_dodge_speed
+	movement_direction = _dodge_direction
+	visual_idle_direction = _dodge_direction
+	var start_frame := _dodge_chain_animation_start_frame(turn_angle)
+	_play_dodge_animation(true, start_frame)
+	var chain_audio := _play_combat_sfx(DODGE_ROLL_SOUND, global_position, -2.5)
+	if chain_audio != null:
+		chain_audio.pitch_scale = minf(1.08, 1.0 + float(_dodge_chain_index) * 0.025)
+	dodge_chain_started.emit(_dodge_chain_index, _dodge_flow, _dodge_direction)
+	_obs_increment(&"player_dodge_chain_links_started")
+	_obs_gauge(&"player_dodge_chain_index", _dodge_chain_index)
+	_obs_gauge(&"player_dodge_flow", _dodge_flow)
+	_obs_log(&"player_dodge_chain_started", {
+		"index": _dodge_chain_index,
+		"flow": _dodge_flow,
+		"direction": _dodge_direction,
+		"turn_angle": turn_angle,
+		"retention": retention,
+		"speed": _active_dodge_speed,
+		"recovery_duration": _active_dodge_recovery_duration,
+		"animation_start_frame": start_frame,
+		"iframe_duration": _dodge_iframe_timer,
+		"stamina": stamina,
+	})
+	return true
+
+
+func _set_dodge_flow(value: float, direction: Vector2) -> void:
+	var clamped_value := clampf(value, 0.0, 1.0)
+	var normalized_direction := direction.normalized()
+	var changed := not is_equal_approx(clamped_value, _dodge_flow) \
+		or (normalized_direction != Vector2.ZERO and not normalized_direction.is_equal_approx(_dodge_flow_direction))
+	_dodge_flow = clamped_value
+	if normalized_direction != Vector2.ZERO:
+		_dodge_flow_direction = normalized_direction
+	if _dodge_flow <= 0.0 and normalized_direction == Vector2.ZERO:
+		_dodge_flow_direction = Vector2.ZERO
+	if changed:
+		dodge_flow_changed.emit(_dodge_flow, _dodge_flow_direction)
+		_obs_gauge(&"player_dodge_flow", _dodge_flow)
+
+
+func _update_dodge_flow_decay(delta: float) -> void:
+	if _dodge_flow <= 0.0:
+		return
+	if _dodge_charge_active or _dodge_active or _dodge_recovery_active or _dodge_exit_timer > 0.0:
+		_dodge_flow_decay_timer = maxf(0.0, dodge_flow_decay_delay)
+		return
+	if _dodge_flow_decay_timer > 0.0:
+		_dodge_flow_decay_timer = maxf(0.0, _dodge_flow_decay_timer - delta)
+		return
+	var decay_rate := maxf(0.0, dodge_flow_decay_per_second)
+	var move_direction := _get_move_input_vector()
+	if is_sprinting and move_direction.length_squared() > 0.01 \
+	and move_direction.normalized().dot(_dodge_flow_direction) >= 0.70:
+		decay_rate *= 0.45
+	var next_flow := maxf(0.0, _dodge_flow - decay_rate * delta)
+	_set_dodge_flow(next_flow, _dodge_flow_direction if next_flow > 0.0 else Vector2.ZERO)
+
+
+func _begin_dodge_exit_carry() -> void:
+	if _dodge_flow <= 0.0 or _dodge_flow_direction.length_squared() <= 0.0001:
+		_dodge_exit_velocity = Vector2.ZERO
+		_dodge_exit_timer = 0.0
+		return
+	var exit_speed := SPEED * lerpf(1.0, 1.45, _dodge_flow)
+	_dodge_exit_velocity = _dodge_flow_direction * exit_speed
+	_dodge_exit_timer = maxf(0.0, dodge_exit_carry_duration)
+	velocity = _dodge_exit_velocity
+
+
+func _finish_dodge_flow_sequence(reason: StringName, allow_exit_carry: bool = true) -> void:
+	var final_flow := _dodge_flow
+	var chain_count := _dodge_chain_index
+	if allow_exit_carry:
+		_begin_dodge_exit_carry()
+	else:
+		_dodge_exit_velocity = Vector2.ZERO
+		_dodge_exit_timer = 0.0
+	if chain_count > 0:
+		dodge_chain_ended.emit(chain_count, final_flow, reason)
+	_obs_log(&"player_dodge_chain_ended", {
+		"count": chain_count,
+		"flow": final_flow,
+		"direction": _dodge_flow_direction,
+		"reason": String(reason),
+		"exit_velocity": _dodge_exit_velocity,
+		"exit_duration": _dodge_exit_timer,
+	})
+	_obs_gauge(&"player_dodge_chain_index", 0)
+	_dodge_chain_buffered = false
+	_dodge_chain_direction = Vector2.ZERO
+	_dodge_chain_index = 0
+	_dodge_flow_decay_timer = maxf(0.0, dodge_flow_decay_delay)
+
+
+func get_dodge_flow_status() -> Dictionary:
+	return {
+		"flow": _dodge_flow,
+		"direction": _dodge_flow_direction,
+		"chain_index": _dodge_chain_index,
+		"chain_buffered": _dodge_chain_buffered,
+		"chain_direction": _dodge_chain_direction,
+		"turn_angle": _dodge_chain_last_turn_angle,
+		"retention": _dodge_chain_last_retention,
+		"exit_velocity": _dodge_exit_velocity,
+		"exit_time_remaining": _dodge_exit_timer,
+	}
 
 
 func _can_start_dodge(required_stamina: float = -1.0) -> bool:
@@ -5992,7 +6318,10 @@ func _update_dodge(delta: float) -> void:
 	var active_duration := _active_dodge_duration if _active_dodge_duration > 0.0 else maxf(0.05, dodge_duration)
 	var active_speed := _active_dodge_speed if _active_dodge_speed > 0.0 else dodge_speed
 	var remaining_ratio := _dodge_timer / active_duration
-	var eased_speed := active_speed * lerpf(0.45, 1.0, remaining_ratio)
+	var end_speed_factor := 0.45
+	if _active_dodge_profile == &"chain":
+		end_speed_factor = _get_dodge_flow_end_speed_factor(_dodge_flow)
+	var eased_speed := active_speed * lerpf(end_speed_factor, 1.0, remaining_ratio)
 	velocity = _dodge_direction * eased_speed
 	if _dodge_timer <= 0.0:
 		_dodge_active = false
@@ -6001,9 +6330,13 @@ func _update_dodge(delta: float) -> void:
 
 func _start_dodge_recovery() -> void:
 	_dodge_iframe_timer = 0.0
+	if _dodge_chain_buffered and _launch_buffered_dodge_chain():
+		return
 	var recovery_duration := _active_dodge_recovery_duration \
 		if _active_dodge_duration > 0.0 else dodge_recovery_duration
 	_dodge_recovery_timer = maxf(0.0, recovery_duration)
+	_dodge_recovery_elapsed = 0.0
+	_dodge_cooldown_remaining = maxf(dodge_cooldown, _dodge_recovery_timer)
 	if _dodge_fast_attack_buffered and _active_dodge_profile == &"tap":
 		_dodge_fast_attack_buffered = false
 		_dodge_recovery_active = true
@@ -6013,10 +6346,13 @@ func _start_dodge_recovery() -> void:
 		return
 	if _dodge_recovery_timer <= 0.0 or not _has_dodge_recovery_animation():
 		var completed_profile := _active_dodge_profile
+		var will_consume_attack := completed_profile != &"tap" and not _buffered_attack_kind.is_empty()
 		_dodge_recovery_active = false
 		velocity = velocity.move_toward(Vector2.ZERO, move_deceleration * get_physics_process_delta_time())
 		_active_dodge_profile = &"tap"
-		if completed_profile != &"tap" and not _buffered_attack_kind.is_empty():
+		_finish_dodge_flow_sequence(_dodge_chain_end_reason, not will_consume_attack)
+		if will_consume_attack:
+			_set_dodge_flow(0.0, Vector2.ZERO)
 			_request_attack_state(_consume_buffered_attack())
 		return
 	_dodge_recovery_active = true
@@ -6032,26 +6368,33 @@ func _cancel_dodge_recovery_for_fast_attack() -> void:
 	_dodge_backstep_active = false
 	_active_dodge_profile = &"tap"
 	_hide_dodge_fx()
+	_finish_dodge_flow_sequence(&"attack_cancel", false)
+	_set_dodge_flow(0.0, Vector2.ZERO)
 	# Preserve the ordinary dodge cooldown; this is an attack cancel, not a free
 	# second dodge. Attack movement takes ownership of velocity immediately.
 	velocity = Vector2.ZERO
 
 
 func _update_dodge_recovery(delta: float) -> void:
+	_dodge_recovery_elapsed += delta
 	_dodge_recovery_timer = maxf(0.0, _dodge_recovery_timer - delta)
 	velocity = velocity.move_toward(Vector2.ZERO, move_deceleration * delta)
 	if _dodge_recovery_timer <= 0.0:
 		var completed_profile := _active_dodge_profile
+		var will_consume_attack := completed_profile != &"tap" and not _buffered_attack_kind.is_empty()
 		_dodge_recovery_active = false
 		_dodge_backstep_active = false
 		_active_dodge_profile = &"tap"
 		_hide_dodge_fx()
-		if completed_profile != &"tap" and not _buffered_attack_kind.is_empty():
+		_finish_dodge_flow_sequence(_dodge_chain_end_reason, not will_consume_attack)
+		if will_consume_attack:
+			_set_dodge_flow(0.0, Vector2.ZERO)
 			_request_attack_state(_consume_buffered_attack())
 
 
-func _cancel_dodge() -> void:
-	_cancel_dodge_charge(&"dodge_cancelled")
+func _cancel_dodge(reason: StringName = &"cancelled") -> void:
+	var had_flow_sequence := _dodge_flow > 0.0 or _dodge_chain_index > 0
+	_cancel_dodge_charge(reason)
 	_dodge_active = false
 	_dodge_recovery_active = false
 	_dodge_timer = 0.0
@@ -6064,6 +6407,9 @@ func _cancel_dodge() -> void:
 	_active_dodge_duration = 0.0
 	_active_dodge_recovery_duration = 0.0
 	_hide_dodge_fx()
+	if had_flow_sequence:
+		_finish_dodge_flow_sequence(reason, false)
+	_set_dodge_flow(0.0, Vector2.ZERO)
 
 
 func _is_dodge_invulnerable() -> bool:
@@ -6103,7 +6449,7 @@ func _should_ignore_incoming_damage_for_dodge(source: String = "") -> bool:
 	return true
 
 
-func _play_dodge_animation(force_restart: bool = false) -> void:
+func _play_dodge_animation(force_restart: bool = false, start_frame: int = 0) -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
 	_hide_modular_locomotion_layers()
@@ -6113,10 +6459,10 @@ func _play_dodge_animation(force_restart: bool = false) -> void:
 	var animation_name := _get_dodge_step_animation()
 	if animated_sprite.sprite_frames.has_animation(animation_name):
 		if force_restart or animated_sprite.animation != animation_name or not animated_sprite.is_playing():
-			if force_restart:
-				animated_sprite.set_frame_and_progress(0, 0.0)
 			animated_sprite.play(animation_name)
-	_play_dodge_fx(force_restart)
+			if force_restart:
+				animated_sprite.set_frame_and_progress(clampi(start_frame, 0, 8), 0.0)
+	_play_dodge_fx(force_restart, start_frame)
 
 
 func _play_dodge_recovery_animation(force_restart: bool = false) -> void:
@@ -6173,7 +6519,7 @@ func _has_dodge_recovery_animation() -> bool:
 		)
 
 
-func _play_dodge_fx(force_restart: bool = false) -> void:
+func _play_dodge_fx(force_restart: bool = false, start_frame: int = 0) -> void:
 	if dodge_fx_back_sprite == null or dodge_fx_back_sprite.sprite_frames == null:
 		return
 	var animation_name := _get_full_dodge_fx_animation()
@@ -6188,9 +6534,9 @@ func _play_dodge_fx(force_restart: bool = false) -> void:
 	dodge_fx_back_sprite.flip_h = _is_facing_left(_dodge_direction)
 	dodge_fx_back_sprite.speed_scale = 1.0
 	if force_restart or dodge_fx_back_sprite.animation != animation_name or not dodge_fx_back_sprite.is_playing():
-		if force_restart:
-			dodge_fx_back_sprite.set_frame_and_progress(0, 0.0)
 		dodge_fx_back_sprite.play(animation_name)
+		if force_restart:
+			dodge_fx_back_sprite.set_frame_and_progress(clampi(start_frame, 0, 8), 0.0)
 
 
 func _hide_dodge_fx() -> void:
@@ -7090,6 +7436,8 @@ func _apply_body_recoil_offset() -> void:
 		modular_lower_body_sprite.position = _modular_lower_body_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 	if modular_upper_body_sprite:
 		modular_upper_body_sprite.position = _modular_upper_body_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
+	if modular_head_sprite:
+		modular_head_sprite.position = _modular_head_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 	if modular_sidearm_sprite:
 		modular_sidearm_sprite.position = _modular_sidearm_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 	if modular_upper_fx_sprite:
@@ -7240,6 +7588,9 @@ func _apply_placeholder_runtime_layout() -> void:
 	if modular_upper_body_sprite:
 		modular_upper_body_sprite.position = placeholder_sprite_position
 		modular_upper_body_sprite.offset = placeholder_sprite_offset
+	if modular_head_sprite:
+		modular_head_sprite.position = placeholder_sprite_position
+		modular_head_sprite.offset = placeholder_sprite_offset
 	if modular_sidearm_sprite:
 		modular_sidearm_sprite.position = placeholder_sprite_position
 		modular_sidearm_sprite.offset = placeholder_sprite_offset
@@ -7285,6 +7636,8 @@ func _capture_runtime_visual_base_positions() -> void:
 		_modular_lower_body_base_position = modular_lower_body_sprite.position
 	if modular_upper_body_sprite:
 		_modular_upper_body_base_position = modular_upper_body_sprite.position
+	if modular_head_sprite:
+		_modular_head_base_position = modular_head_sprite.position
 	if modular_sidearm_sprite:
 		_modular_sidearm_base_position = modular_sidearm_sprite.position
 	if modular_upper_fx_sprite:

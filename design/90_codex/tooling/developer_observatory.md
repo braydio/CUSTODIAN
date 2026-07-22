@@ -1,13 +1,15 @@
 # Developer Observatory
 
-Status: candidate
+Status: graduated
 Category: tooling
 Priority: P0
 Maturity: system
 Cost: medium
 Owner: Brayden
-Last reviewed: 2026-07-20
-Runtime: live — `custodian/game/systems/debug/dev_observatory.gd`
+Last reviewed: 2026-07-21
+Runtime status: live
+Runtime path: `custodian/game/systems/debug/dev_observatory.gd`
+Graduated to: `design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md`
 
 ## One-line pitch
 
@@ -54,4 +56,3 @@ Graduate when at least two runtime systems need shared debug visibility.
 Related: Sector Heatmap, Persistent World History, World State Graph, Interest Management.
 
 Active implementation authority: `design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md` and `custodian/docs/ai_context/CURRENT_STATE.md`.
-

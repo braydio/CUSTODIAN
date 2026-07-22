@@ -92,7 +92,10 @@ This validates:
 
 - every `.md` card file under `design/90_codex/` has a matching row in `00_index.md`
 - every index row has a corresponding card file on disk
-- the `Runtime` column in the index matches the `Runtime:` field in card files
+- every card declares non-empty `Status`, `Category`, `Priority`, `Maturity`, and `Cost` metadata
+- index status, priority, maturity, and runtime status match their card fields
+- graduated cards point to an existing active spec with `Graduated to:` or an existing implementation with `Runtime path:`
+- live runtime paths exist and no packaging directory such as `Cards-Wave-3/` remains under the Codex
 
 ## Doc-Only Validation
 
@@ -155,11 +158,12 @@ env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tool
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ready_input_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_charged_long_roll_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_charge_feedback_smoke.gd
+env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_flow_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
 env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_modular_fast_attack_smoke.gd
 ```
 
-The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. The modular fire and ready-input smokes additionally validate raise/lower direction retargeting without progress reset, committed shot direction, recovery-to-current-aim, posture/readiness status, upper/weapon direction plus frame-clock synchronization, missed-parry silence, and exactly one positional `parry_success_01.wav` cue on confirmed parry success. The charged-roll smoke validates tier selection, proportional speed, longer vulnerable recovery, stamina, invariant iframes, vulnerable charge, and hold/release input; the dodge-charge-feedback smoke validates asset/frame contracts, delayed ratio-driven presentation, compression/latch/release/rejection behavior, and temporary stamina-label copy. The overlap and modular-fast smokes preserve iframe/recovery classification and tap roll-exit compatibility. The socket smoke validates generated Carbine phase-1 metadata, socket-derived muzzle/draw order, transition timing, and camera-owned zoom/lead cancellation. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
+The focused feedback smoke validates progress fields, dry/reload priority, held-input debounce, hot/critical/overheat/recovery transitions, monotonic reload transfer, per-weapon persistence, zero presentation `NoiseEventBus` emissions, and read-only HUD consumption. The modular fire and ready-input smokes additionally validate raise/lower direction retargeting without progress reset, committed shot direction, recovery-to-current-aim, posture/readiness status, upper/weapon direction plus frame-clock synchronization, missed-parry silence, and exactly one positional `parry_success_01.wav` cue on confirmed parry success. The charged-roll smoke validates tier selection, proportional speed, longer vulnerable recovery, stamina, invariant iframes, vulnerable charge, and hold/release input; the dodge-charge-feedback smoke validates asset/frame contracts, delayed ratio-driven presentation, compression/latch/release/rejection behavior, and temporary stamina-label copy. The Dodge Flow smoke validates active/late input windows, charge-derived Flow, directional retention, uncapped links, fixed iframe clocks, speed/travel/recovery modifiers, atlas entry frames, final cooldown, exit carry/decay, stamina constraints, signals, and telemetry. The overlap and modular-fast smokes preserve iframe/recovery classification and tap roll-exit compatibility. The socket smoke validates generated Carbine phase-1 metadata, socket-derived muzzle/draw order, transition timing, and camera-owned zoom/lead cancellation. Missing optional authored vent/HUD art warns without failing because the V1 presenter supplies a procedural vent and label fallback.
 
 For allied drone fire/formation/guard-anchor commands:
 
@@ -508,6 +512,11 @@ python -m py_compile custodian/tools/pipelines/generate_inbox_manifests.py custo
 python custodian/tools/validation/non_operator_actor_pipeline_smoke.py
 python custodian/tools/validation/operator_modular_pipeline_smoke.py
 ```
+
+This smoke also covers modular-head inbox routing and the `head/actions/<profile>/<action>/` runtime module contract.
+After rebuilding curated resources, `operator_modular_layers_smoke.gd` verifies the hooded south-idle animation is
+registered, visible with modular unarmed idle, frame-synchronized to the upper body, and hidden when directional
+head coverage is unavailable.
 
 For modular Operator contract coverage, suspicious filename/frame metadata, and next-batch reporting:
 

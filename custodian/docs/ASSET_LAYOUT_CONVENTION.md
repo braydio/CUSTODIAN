@@ -156,10 +156,13 @@ operator__<modular_layer>__<loadout>__<action>__<direction>__<frames>f__<frame_s
 ```
 
 Prefer `modular_lower_body`, `modular_upper_body`, `modular_upper_fx`, `modular_wardrobe_cape`,
-`modular_combined_body`, or `modular_sidearm` for the layer. Use an explicit loadout such as `unarmed`,
+`modular_combined_body`, `modular_sidearm`, or `modular_head` for the layer. Use an explicit loadout such as `unarmed`,
 `sidearm`, or `ranged_2h`, followed by the action such as `block_loop_01`, `enter_block_01`, or `stance_01`.
 Legacy short names and the earlier ranged token ordering remain accepted as compatibility input, but new art
 should use the explicit loadout/action order.
+
+`modular_head` specializes the loadout token as a cosmetic head profile, for example
+`operator__modular_head__hooded__idle_01__s__5f__96.png`. Head profiles remain independent of combat loadout.
 
 ## Runtime Replacement Rule
 

@@ -1,0 +1,91 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/head/actions/hooded/idle_01/operator__modular_head__hooded__idle_01__s__5f__96.png" id="1_axuc6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_axuc6"]
+atlas = ExtResource("1_axuc6")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kkbwf"]
+atlas = ExtResource("1_axuc6")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r53xn"]
+atlas = ExtResource("1_axuc6")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_48obw"]
+atlas = ExtResource("1_axuc6")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6u27p"]
+atlas = ExtResource("1_axuc6")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hxrud"]
+atlas = ExtResource("1_axuc6")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ltkb"]
+atlas = ExtResource("1_axuc6")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_80d18"]
+atlas = ExtResource("1_axuc6")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nocdj"]
+atlas = ExtResource("1_axuc6")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vwulq"]
+atlas = ExtResource("1_axuc6")
+region = Rect2(384, 0, 96, 96)
+
+[resource]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_axuc6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kkbwf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r53xn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_48obw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6u27p")
+}],
+"loop": 1,
+"name": &"hooded_idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hxrud")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ltkb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_80d18")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nocdj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vwulq")
+}],
+"loop": 1,
+"name": &"hooded_idle_down",
+"speed": 8.0
+}]

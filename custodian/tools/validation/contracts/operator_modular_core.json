@@ -10,9 +10,10 @@
     "wardrobe_cape",
     "sidearm",
     "ranged_weapon",
-    "combined_body"
+    "combined_body",
+    "head"
   ],
-  "loadouts": ["unarmed", "sidearm", "ranged_2h", "full"],
+  "loadouts": ["unarmed", "sidearm", "ranged_2h", "full", "hooded"],
   "notes": [
     "This is a production coverage/reporting contract, not a hard runtime gate.",
     "Runtime playback still requires deliberate Operator state-machine and SpriteFrames registration.",
@@ -118,7 +119,8 @@
       "label": "Optional modular overlays",
       "required": false,
       "entries": [
-        {"layer": "wardrobe_cape", "loadout": "unarmed", "action": "fast_strike_01", "directions": ["n"], "frames": 3}
+        {"layer": "wardrobe_cape", "loadout": "unarmed", "action": "fast_strike_01", "directions": ["n"], "frames": 3},
+        {"layer": "head", "loadout": "hooded", "action": "idle_01", "directions": ["s"], "frames": 5}
       ]
     },
     {

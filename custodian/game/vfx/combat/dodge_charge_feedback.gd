@@ -37,6 +37,7 @@ func _ready() -> void:
 	_connect_operator_signal(&"dodge_charge_changed", Callable(self, "_on_dodge_charge_changed"))
 	_connect_operator_signal(&"dodge_charge_released", Callable(self, "_on_dodge_charge_released"))
 	_connect_operator_signal(&"dodge_charge_cancelled", Callable(self, "_on_dodge_charge_cancelled"))
+	_connect_operator_signal(&"dodge_chain_started", Callable(self, "_on_dodge_chain_started"))
 	_reset_visuals()
 
 
@@ -99,6 +100,13 @@ func _on_dodge_charge_cancelled(reason: StringName) -> void:
 		_play_stamina_rejection()
 		return
 	_contract_meter()
+
+
+func _on_dodge_chain_started(_index: int, flow: float, direction: Vector2) -> void:
+	var chain_ratio := lerpf(0.25, 0.80, clampf(flow, 0.0, 1.0))
+	_play_trail(chain_ratio, direction.normalized())
+	trail_sprite.scale.y *= 0.60
+	trail_sprite.modulate.a *= 0.78
 
 
 func _reset_meter_appearance() -> void:

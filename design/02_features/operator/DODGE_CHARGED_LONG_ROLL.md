@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN
 **Status:** implemented-v1
 **Created:** 2026-07-20
-**Last Updated:** 2026-07-20
+**Last Updated:** 2026-07-21
 
 ## Purpose
 
@@ -34,6 +34,10 @@ The compatibility method `_try_start_dodge()` remains an immediate standard dodg
 ## Attack Interaction
 
 Tap dodge preserves the existing explicit roll-exit fast-attack cancel. Long and committed rolls cannot cancel their increased recovery. Attack input during those profiles may be buffered and begins only after recovery completes.
+
+## Dodge Flow Integration
+
+`DODGE_FLOW.md` extends a released opener into an explicit movement sequence. Charge ratio establishes initial Flow; only subsequent chain links consume Flow for speed/travel/recovery modifiers. Holding dodge during a live chain is treated as a buffered tap, and no link increases iframe duration or multiplies the charged opener's profile bonus.
 
 ## Presentation
 

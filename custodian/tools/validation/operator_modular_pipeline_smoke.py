@@ -44,9 +44,10 @@ def main() -> int:
         legacy = root / "operator__modular_lower_body__blocking_hitreact_01__e__5f__96.png"
         cape = root / "operator__modular_wardrobe_cape__unarmed__block_loop_01__e__5f__96.png"
         cape_alias = root / "operator__cape__unarmed__dodge_fast_attack_01__w__11f__96.png"
+        head = root / "operator__modular_head__hooded__idle_01__s__5f__96.png"
         ranged = root / "operator__modular_upper_body__stance__ranged_2h__e__5f__96.png"
         ranged_weapon = root / "operator__modular_ranged_weapon__ranged_2h__relaxed_carbine_mk1_01__e__5f__96.png"
-        for path in (canonical, legacy, cape, ranged, ranged_weapon):
+        for path in (canonical, legacy, cape, head, ranged, ranged_weapon):
             _write_strip(path)
         _write_strip(cape_alias, frames=11)
         _write_strip(legacy_collision, frames=4)
@@ -57,6 +58,7 @@ def main() -> int:
         legacy_info = manifests._inspect_sheet(legacy)
         cape_info = manifests._inspect_sheet(cape)
         cape_alias_info = manifests._inspect_sheet(cape_alias)
+        head_info = manifests._inspect_sheet(head)
         ranged_weapon_info = manifests._inspect_sheet(ranged_weapon)
         assert manifests._canonical_runtime_path(canonical_info).startswith(
             "operator/new_operator/modular/block/"
@@ -72,6 +74,13 @@ def main() -> int:
             "operator/new_operator/modular/dodge/"
         )
         assert manifests._build_post_process(cape_alias_info) == ["operator_modular_runtime"]
+        assert manifests._canonical_runtime_path(head_info).startswith(
+            "operator/new_operator/modular/idle/"
+        )
+        assert manifests._build_post_process(head_info) == ["operator_modular_runtime"]
+        parsed_head = builder._parse_generic_modular_source(head)
+        assert parsed_head is not None
+        assert parsed_head[0:3] == ("head", "hooded", "idle_01")
         assert manifests._canonical_runtime_path(ranged_weapon_info).startswith(
             "operator/new_operator/modular/ranged/"
         )
@@ -107,6 +116,10 @@ def main() -> int:
         assert (
             "ranged_weapon/actions/ranged_2h/relaxed_01/"
             "operator__modular_ranged_weapon__ranged_2h__relaxed_01__e__5f__96.png"
+        ) in relative
+        assert (
+            "head/actions/hooded/idle_01/"
+            "operator__modular_head__hooded__idle_01__s__5f__96.png"
         ) in relative
         assert not any("ranged_2h/stance_01" in path for path in relative)
 

@@ -1,6 +1,6 @@
 # Idea Codex Index
 
-This index tracks non-runtime ideas only. It does not replace active implementation specs. Cards with `Runtime: live` have corresponding runtime code but remain non-authoritative — use the active design specs and `custodian/docs/ai_context/CURRENT_STATE.md` for build truth.
+This index tracks idea cards, including graduated cards retained as audit records. It does not replace active implementation specs. Cards with `Runtime status: live` have corresponding runtime code but remain non-authoritative — use their `Graduated to:` specs and `custodian/docs/ai_context/CURRENT_STATE.md` for build truth.
 
 ## Core Files
 
@@ -25,31 +25,31 @@ This index tracks non-runtime ideas only. It does not replace active implementat
 
 ## Cards
 
-| Card | Status | Priority | Maturity | Runtime |
+| Card | Status | Priority | Maturity | Runtime status |
 |---|---|---|---|---|
-| `tooling/developer_observatory.md` | candidate | P0 | system | live |
+| `tooling/developer_observatory.md` | graduated | P0 | system | live |
 | `ai/director_memory.md` | candidate | P1 | system | |
-| `world/world_state_graph.md` | candidate | P0 | system | live |
-| `world/persistent_world_history.md` | candidate | P0 | system | live |
+| `world/world_state_graph.md` | graduated | P0 | system | live |
+| `world/persistent_world_history.md` | graduated | P0 | system | live |
 | `world/world_autopsy.md` | candidate | P0 | system | |
 | `world/encounter_language.md` | candidate | P0 | system | |
 | `world/mystery_budget.md` | candidate | P0 | vibe | |
 | `world/ambient_scheduler.md` | candidate | P2 | system | |
 | `world/landmark_hierarchy.md` | candidate | P1 | system | |
 | `world/spatial_compression.md` | candidate | P1 | mechanic | |
-| `simulation/interest_management.md` | triaged | P1 | system | live |
-| `simulation/navigation_combat_heatmaps.md` | candidate | P1 | system | live |
+| `simulation/interest_management.md` | graduated | P1 | system | live |
+| `simulation/navigation_combat_heatmaps.md` | graduated | P1 | system | live |
 | `simulation/simulation_camera.md` | candidate | P2 | system | |
-| `ai/ai_morale_cohesion_system.md` | candidate | | card | |
-| `ai/faction_knowledge_system.md` | candidate | | card | |
-| `simulation/sector_activity_simulator.md` | candidate | | card | |
-| `tooling/developer_replay_system.md` | candidate | | card | |
-| `tooling/performance_budget_manager.md` | candidate | | card | |
-| `world/line_of_communication_graph.md` | candidate | | card | |
-| `world/material_intelligence_system.md` | candidate | | card | |
-| `world/procedural_ruin_generator.md` | candidate | | card | |
-| `world/resource_economy_graph.md` | candidate | | card | |
-| `world/world_event_timeline.md` | candidate | | card | |
+| `ai/ai_morale_cohesion_system.md` | candidate | P2 | system | |
+| `ai/faction_knowledge_system.md` | candidate | P1 | system | |
+| `simulation/sector_activity_simulator.md` | candidate | P1 | system | |
+| `tooling/developer_replay_system.md` | candidate | P1 | system | |
+| `tooling/performance_budget_manager.md` | candidate | P1 | system | |
+| `world/line_of_communication_graph.md` | candidate | P1 | system | |
+| `world/material_intelligence_system.md` | candidate | P0 | system | |
+| `world/procedural_ruin_generator.md` | candidate | P2 | system | |
+| `world/resource_economy_graph.md` | candidate | P1 | system | |
+| `world/world_event_timeline.md` | candidate | P1 | system | |
 
 ## Active-Spec Cross-Check
 

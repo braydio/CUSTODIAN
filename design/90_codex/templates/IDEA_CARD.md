@@ -7,7 +7,9 @@ Maturity:
 Cost:
 Owner:
 Last reviewed:
-Runtime:
+Runtime status:
+Runtime path:
+Graduated to:
 
 ## One-line pitch
 
@@ -30,4 +32,3 @@ Runtime:
 ## Graduation criteria
 
 ## Notes / references
-

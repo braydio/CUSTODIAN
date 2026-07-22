@@ -22,6 +22,7 @@ LAYER_ALIASES = {
     "modular_body_lower": "lower_body",
     "modular_body_upper": "upper_body",
     "modular_combined_body": "combined_body",
+    "modular_head": "head",
     "modular_lower_body": "lower_body",
     "modular_ranged_weapon": "ranged_weapon",
     "modular_sidearm": "sidearm",
@@ -40,8 +41,9 @@ VALID_LAYERS = {
     "sidearm",
     "ranged_weapon",
     "combined_body",
+    "head",
 }
-VALID_LOADOUTS = {"unarmed", "sidearm", "ranged_2h", "full"}
+VALID_LOADOUTS = {"unarmed", "sidearm", "ranged_2h", "full", "hooded"}
 KNOWN_ACTION_ALIASES = {
     "idle": "idle_01",
     "walk": "walk_01",

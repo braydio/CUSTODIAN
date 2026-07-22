@@ -1,13 +1,15 @@
 # Navigation and Combat Heatmaps
 
-Status: candidate
+Status: graduated
 Category: simulation
 Priority: P1
 Maturity: system
 Cost: medium
 Owner: Brayden
-Last reviewed: 2026-07-20
-Runtime: live — `custodian/game/systems/world/sector_heatmap.gd`
+Last reviewed: 2026-07-21
+Runtime status: live
+Runtime path: `custodian/game/systems/world/sector_heatmap.gd`
+Graduated to: `design/01_systems/SECTOR_HEATMAP_SYSTEM.md`
 
 ## One-line pitch
 
@@ -54,4 +56,3 @@ Graduate when playtesting starts or when level layouts need evidence-based tunin
 Related: Developer Observatory, Director Memory, Encounter Language, Interest Management.
 
 Active implementation authority: `design/01_systems/SECTOR_HEATMAP_SYSTEM.md` and `custodian/docs/ai_context/CURRENT_STATE.md`.
-

@@ -1,13 +1,15 @@
 # Interest Management
 
-Status: triaged
+Status: graduated
 Category: simulation
 Priority: P1
 Maturity: system
 Cost: medium
 Owner: Brayden
-Last reviewed: 2026-07-20
-Runtime: live — `custodian/game/systems/simulation/simulation_interest_manager.gd`
+Last reviewed: 2026-07-21
+Runtime status: live
+Runtime path: `custodian/game/systems/simulation/simulation_interest_manager.gd`
+Graduated to: `design/01_systems/INTEREST_MANAGEMENT_SYSTEM.md`
 
 ## One-line pitch
 
@@ -54,4 +56,3 @@ Graduate when enemy count, ally behavior, or sector size begins causing performa
 Related: Developer Observatory, Enemy Behavior Director, Ambient Scheduler, Persistent World History.
 
 Active implementation authority: `design/01_systems/INTEREST_MANAGEMENT_SYSTEM.md` and `custodian/docs/ai_context/CURRENT_STATE.md`.
-

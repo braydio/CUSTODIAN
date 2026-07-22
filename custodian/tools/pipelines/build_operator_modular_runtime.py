@@ -33,6 +33,7 @@ MODULAR_LAYER_OUTPUTS = {
     "modular_body_lower": "lower_body",
     "modular_body_upper": "upper_body",
     "modular_combined_body": "combined_body",
+    "modular_head": "head",
     "modular_lower_body": "lower_body",
     "modular_ranged_weapon": "ranged_weapon",
     "modular_sidearm": "sidearm",
@@ -482,6 +483,14 @@ def _parse_generic_modular_source(source: Path) -> tuple[str, str, str, SheetSpe
 
     action_group = parts[2]
     variant = "__".join(parts[3:-3])
+    if output_layer == "head" and variant:
+        # Modular heads use the third filename token as a cosmetic profile
+        # (for example `hooded`) rather than a combat loadout.
+        loadout = action_group
+        action = _canonical_action_name(variant)
+        priority = 2
+        spec = _sheet_spec_from_path(source, direction)
+        return output_layer, loadout, action, spec, priority
     if output_layer == "upper_body" and action_group == "weapon" and variant == "ranged_2h":
         output_layer = "ranged_weapon"
         loadout = "ranged_2h"

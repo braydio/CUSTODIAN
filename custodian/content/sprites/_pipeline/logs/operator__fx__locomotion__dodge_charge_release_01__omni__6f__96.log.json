@@ -1,0 +1,9 @@
+{
+	"manifest": "res://content/sprites/_pipeline/inbox/operator__fx__locomotion__dodge_charge_release_01__omni__6f__96.json",
+	"outputs": [
+		"res://content/sprites/operator/runtime/overlays/locomotion/operator__fx__locomotion__dodge_charge_release_01__omni__6f__96.png"
+	],
+	"post_process": [],
+	"source": "res://content/sprites/_pipeline/inbox/operator__fx__locomotion__dodge_charge_release_01__omni__6f__96.png",
+	"timestamp_utc": "2026-07-22 00:34:07"
+}
