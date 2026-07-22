@@ -1,7 +1,7 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://cmhhcm4gnd8mb"]
 
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/head/actions/hooded/idle_01/operator__modular_head__hooded__idle_01__s__5f__96.png" id="1_axuc6"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/modules/new_operator/head/actions/hooded/walk_01/operator__modular_head__hooded__walk_01__s__5f__96.png" id="2_kkbwf"]
+[ext_resource type="Texture2D" uid="uid://d27wom52sybub" path="res://content/sprites/operator/runtime/modules/new_operator/head/actions/hooded/idle_01/operator__modular_head__hooded__idle_01__s__5f__96.png" id="1_axuc6"]
+[ext_resource type="Texture2D" uid="uid://bkgwd4qb475hu" path="res://content/sprites/operator/runtime/modules/new_operator/head/actions/hooded/walk_01/operator__modular_head__hooded__walk_01__s__5f__96.png" id="2_kkbwf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kkbwf"]
 atlas = ExtResource("1_axuc6")
