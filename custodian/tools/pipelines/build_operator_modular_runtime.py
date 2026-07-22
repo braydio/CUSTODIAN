@@ -541,7 +541,11 @@ def _has_specialized_builder(output_layer: str, loadout: str, action: str) -> bo
     return action in {"idle_01", "run_01", "walk_01"} or action.startswith(("dodge", "fast_"))
 
 
-def _remove_superseded_generated(generated: list[Path], dry_run: bool) -> None:
+def _remove_superseded_generated(
+    generated: list[Path],
+    dry_run: bool,
+    reference_root: Path = PROJECT_ROOT,
+) -> None:
     generated_set = set(generated)
     identities = {
         (output.parent, identity)
@@ -558,10 +562,30 @@ def _remove_superseded_generated(generated: list[Path], dry_run: bool) -> None:
                 display_path = candidate.relative_to(PROJECT_ROOT)
             except ValueError:
                 display_path = candidate
+            if _generated_asset_is_referenced(candidate, reference_root):
+                print(f"preserved superseded generated {display_path} (still referenced)")
+                continue
             print(f"{'[dry-run] would remove' if dry_run else 'removed'} superseded generated {display_path}")
             if not dry_run:
                 candidate.unlink()
                 candidate.with_suffix(candidate.suffix + ".import").unlink(missing_ok=True)
+
+
+def _generated_asset_is_referenced(candidate: Path, reference_root: Path) -> bool:
+    try:
+        relative = candidate.resolve().relative_to(reference_root.resolve())
+    except ValueError:
+        return False
+
+    resource_path = "res://" + relative.as_posix()
+    for extension in ("*.tres", "*.tscn"):
+        for consumer in reference_root.rglob(extension):
+            try:
+                if resource_path in consumer.read_text(encoding="utf-8", errors="ignore"):
+                    return True
+            except OSError:
+                continue
+    return False
 
 
 def _canonical_output_identity(filename: str) -> tuple[str, ...] | None:

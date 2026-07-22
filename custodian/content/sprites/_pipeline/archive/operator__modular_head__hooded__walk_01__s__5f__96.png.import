@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bx60k00qo8k42"
-path="res://.godot/imported/operator__modular_upper_body__unarmed__walk_01__s__5f__96.png-1af09b09137b7a81d39bfd32b78dd9ed.ctex"
+uid="uid://ikhuudvd4gxd"
+path="res://.godot/imported/operator__modular_head__hooded__walk_01__s__5f__96.png-86da9883e8ba50c4d4e33179d319178e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__modular_upper_body__unarmed__walk_01__s__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__walk_01__s__5f__96.png-1af09b09137b7a81d39bfd32b78dd9ed.ctex"]
+source_file="res://content/sprites/_pipeline/archive/operator__modular_head__hooded__walk_01__s__5f__96.png"
+dest_files=["res://.godot/imported/operator__modular_head__hooded__walk_01__s__5f__96.png-86da9883e8ba50c4d4e33179d319178e.ctex"]
 
 [params]
 

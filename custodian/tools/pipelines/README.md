@@ -243,7 +243,9 @@ python custodian/tools/pipelines/generate_inbox_manifests.py --remove-superseded
 
 `--remove-superseded` matches only canonical siblings in the exact output directory whose filename is identical
 through direction and differs only by `__<frames>f__<frame_size>.png`. Their `.import` sidecars are removed too.
-Modular Operator cleanup propagates into stable generated runtime modules.
+Modular Operator cleanup propagates into stable generated runtime modules after curated `SpriteFrames` resources
+have been rebuilt. A generated sheet that is still referenced by a `.tres` or `.tscn` is retained, preventing a
+frame-count replacement such as `6f` to `5f` from making the consumer unloadable between build phases.
 
 Skip post-process hooks:
 

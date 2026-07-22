@@ -2687,7 +2687,10 @@ func _sync_modular_head_locomotion(base_animation: String, direction: Vector2, s
 		return false
 	var action := base_animation.trim_prefix("unarmed_")
 	var head_base := "%s_%s" % [String(modular_head_profile), action]
-	var head_animation := AnimationResolver.resolve(head_base, direction, modular_head_sprite)
+	# Head coverage is cosmetic and sparse. Require the exact authored direction
+	# instead of allowing AnimationResolver to reuse the south/base alias for a
+	# missing direction, which would leave a south-facing head on an east walk.
+	var head_animation := StringName("%s_%s" % [head_base, _get_direction_suffix(direction)])
 	if not _has_playable_sprite_animation(modular_head_sprite.sprite_frames, head_animation):
 		_hide_modular_head_layer()
 		return false

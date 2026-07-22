@@ -20,6 +20,9 @@ var _skip_post := false
 var _remove_superseded := false
 var _manifest_paths: Array[String] = []
 var _had_error := false
+var _pending_post_process_steps: Array[String] = []
+var _pending_finalizations: Array[Dictionary] = []
+var _pending_cleanup_superseded := false
 
 
 func _init() -> void:
@@ -44,6 +47,17 @@ func _init() -> void:
 		var result := _process_manifest(manifest_path)
 		if not result:
 			_had_error = true
+
+	if not _had_error and not _skip_post:
+		for step in _pending_post_process_steps:
+			var post_result := _run_post_process(step, _pending_cleanup_superseded)
+			if not post_result.get("ok", false):
+				push_error("batched post-process %s: %s" % [step, post_result.get("error", "post-process failed")])
+				_had_error = true
+				break
+
+	if not _had_error:
+		_finalize_pending_manifests()
 
 	quit(1 if _had_error else 0)
 
@@ -147,17 +161,32 @@ func _process_manifest(manifest_path: String) -> bool:
 	var post_process_steps: Array = manifest.get("post_process", [])
 	if not _skip_post:
 		for step_variant in post_process_steps:
-			var post_result := _run_post_process(str(step_variant), cleanup_superseded)
-			if not post_result.get("ok", false):
-				push_error("%s: %s" % [manifest_path.get_file(), post_result.get("error", "post-process failed")])
-				return false
-
-	_write_log(manifest_path, source_path, output_paths, post_process_steps)
-	_archive_file(manifest_path)
-	_archive_file(source_path)
-	_remove_source_import_sidecar(source_path)
-	print("[DONE] %s" % manifest_path.get_file())
+			var step := str(step_variant)
+			if not _pending_post_process_steps.has(step):
+				_pending_post_process_steps.append(step)
+	_pending_cleanup_superseded = _pending_cleanup_superseded or cleanup_superseded
+	_pending_finalizations.append({
+		"manifest_path": manifest_path,
+		"source_path": source_path,
+		"output_paths": output_paths,
+		"post_process_steps": post_process_steps,
+	})
 	return true
+
+
+func _finalize_pending_manifests() -> void:
+	for record in _pending_finalizations:
+		var manifest_path := str(record.get("manifest_path", ""))
+		var source_path := str(record.get("source_path", ""))
+		var output_paths: Array[String] = []
+		for output_path in record.get("output_paths", []):
+			output_paths.append(str(output_path))
+		var post_process_steps: Array = record.get("post_process_steps", [])
+		_write_log(manifest_path, source_path, output_paths, post_process_steps)
+		_archive_file(manifest_path)
+		_archive_file(source_path)
+		_remove_source_import_sidecar(source_path)
+		print("[DONE] %s" % manifest_path.get_file())
 
 
 func _load_manifest(path: String) -> Dictionary:
@@ -463,8 +492,6 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 			var build_args := [
 				ProjectSettings.globalize_path("res://tools/pipelines/build_operator_modular_runtime.py")
 			]
-			if cleanup_superseded:
-				build_args.append("--remove-superseded")
 			var build_exit_code := OS.execute(
 				"python3",
 				build_args,
@@ -490,6 +517,19 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 			)
 			if curated_exit_code != 0:
 				return {"ok": false, "error": "operator modular SpriteFrames rebuild failed:\n%s" % "\n".join(curated_output)}
+			if cleanup_superseded:
+				var cleanup_output: Array = []
+				var cleanup_exit_code := OS.execute(
+					"python3",
+					[
+						ProjectSettings.globalize_path("res://tools/pipelines/build_operator_modular_runtime.py"),
+						"--remove-superseded"
+					],
+					cleanup_output,
+					true
+				)
+				if cleanup_exit_code != 0:
+					return {"ok": false, "error": "operator modular cleanup failed:\n%s" % "\n".join(cleanup_output)}
 			return {"ok": true}
 		POST_PROCESS_ENEMY_RUNTIME_IMPORT:
 			if _dry_run:

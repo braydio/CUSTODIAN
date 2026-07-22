@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cceja43i5nlqn"
-path="res://.godot/imported/operator__modular_head__hooded__idle_hitreact_01__n__5f__96.png-57f39b7655e1f34f925406fecefa09e3.ctex"
+uid="uid://cqjgchq45g4k4"
+path="res://.godot/imported/operator__modular_upper_body__unarmed__walk_01__s__5f__96.png-18110fafa5a48420a9dfdfcd2b31850c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/inbox/operator__modular_head__hooded__idle_hitreact_01__n__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_head__hooded__idle_hitreact_01__n__5f__96.png-57f39b7655e1f34f925406fecefa09e3.ctex"]
+source_file="res://content/sprites/_pipeline/archive/operator__modular_upper_body__unarmed__walk_01__s__5f__96.png"
+dest_files=["res://.godot/imported/operator__modular_upper_body__unarmed__walk_01__s__5f__96.png-18110fafa5a48420a9dfdfcd2b31850c.ctex"]
 
 [params]
 

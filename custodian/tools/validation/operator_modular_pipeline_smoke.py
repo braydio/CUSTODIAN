@@ -45,9 +45,10 @@ def main() -> int:
         cape = root / "operator__modular_wardrobe_cape__unarmed__block_loop_01__e__5f__96.png"
         cape_alias = root / "operator__cape__unarmed__dodge_fast_attack_01__w__11f__96.png"
         head = root / "operator__modular_head__hooded__idle_01__s__5f__96.png"
+        walk = root / "operator__modular_lower_body__unarmed__walk_01__s__5f__96.png"
         ranged = root / "operator__modular_upper_body__stance__ranged_2h__e__5f__96.png"
         ranged_weapon = root / "operator__modular_ranged_weapon__ranged_2h__relaxed_carbine_mk1_01__e__5f__96.png"
-        for path in (canonical, legacy, cape, head, ranged, ranged_weapon):
+        for path in (canonical, legacy, cape, head, walk, ranged, ranged_weapon):
             _write_strip(path)
         _write_strip(cape_alias, frames=11)
         _write_strip(legacy_collision, frames=4)
@@ -81,6 +82,14 @@ def main() -> int:
         parsed_head = builder._parse_generic_modular_source(head)
         assert parsed_head is not None
         assert parsed_head[0:3] == ("head", "hooded", "idle_01")
+        walk_info = manifests._inspect_sheet(walk)
+        assert manifests._operator_modular_loadout_action(walk_info) == ("unarmed", "walk_01")
+        assert manifests._canonical_runtime_path(walk_info).startswith(
+            "operator/new_operator/modular/walk/"
+        )
+        parsed_walk = builder._parse_generic_modular_source(walk)
+        assert parsed_walk is not None
+        assert parsed_walk[0:3] == ("lower_body", "unarmed", "walk_01")
         assert manifests._canonical_runtime_path(ranged_weapon_info).startswith(
             "operator/new_operator/modular/ranged/"
         )
@@ -138,6 +147,39 @@ def main() -> int:
         builder._remove_superseded_generated([generated_new], dry_run=False)
         assert not generated_old.exists()
         assert not generated_old.with_suffix(".png.import").exists()
+
+        referenced_root = root / "referenced-project"
+        referenced_runtime = referenced_root / "content/runtime"
+        referenced_new = referenced_runtime / (
+            "operator__modular_lower_body__unarmed__walk_01__s__5f__96.png"
+        )
+        referenced_old = referenced_runtime / (
+            "operator__modular_lower_body__unarmed__walk_01__s__6f__96.png"
+        )
+        _write_strip(referenced_new, frames=5)
+        _write_strip(referenced_old, frames=6)
+        referenced_old.with_suffix(".png.import").write_text("smoke\n", encoding="utf-8")
+        consumer = referenced_root / "game/operator_walk_frames.tres"
+        consumer.parent.mkdir(parents=True, exist_ok=True)
+        old_resource_path = "res://content/runtime/" + referenced_old.name
+        new_resource_path = "res://content/runtime/" + referenced_new.name
+        consumer.write_text(old_resource_path + "\n", encoding="utf-8")
+
+        builder._remove_superseded_generated(
+            [referenced_new],
+            dry_run=False,
+            reference_root=referenced_root,
+        )
+        assert referenced_old.exists(), "referenced generated sheets must survive pre-update cleanup"
+
+        consumer.write_text(new_resource_path + "\n", encoding="utf-8")
+        builder._remove_superseded_generated(
+            [referenced_new],
+            dry_run=False,
+            reference_root=referenced_root,
+        )
+        assert not referenced_old.exists(), "superseded sheets should be removed after consumers update"
+        assert not referenced_old.with_suffix(".png.import").exists()
 
     print("operator modular pipeline smoke passed")
     return 0
