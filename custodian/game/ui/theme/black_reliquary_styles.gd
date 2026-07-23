@@ -38,6 +38,28 @@ static func panel_style(deep := false) -> StyleBoxFlat:
 	return style
 
 
+static func inventory_register_style() -> StyleBoxFlat:
+	var style := panel_style(true)
+	style.bg_color = Color(0.018, 0.024, 0.023, 0.91)
+	style.border_color = Color(Palette.BORDER_DIM, 0.38)
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 1
+	style.shadow_size = 0
+	return style
+
+
+static func inventory_footer_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.012, 0.017, 0.017, 0.96)
+	style.border_color = Color(Palette.BORDER_DIM, 0.5)
+	style.border_width_top = 1
+	style.content_margin_left = 12
+	style.content_margin_right = 12
+	return style
+
+
 static func bar_background_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = Palette.PANEL_DEEP

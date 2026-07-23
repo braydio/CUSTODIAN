@@ -40,15 +40,16 @@ resource and build-token simulation remain owned by their separate ledgers.
 Required presentation:
 
 - full-screen darkened backdrop with a centered wide reliquary frame
-- shortened single-line header and compact page tabs
-- slim category rail plus a truthful filter/sort/view status row
+- `FIELD LEDGER` single-line header and compact Status/Equipment/Ledger/History tabs
+- counted category rail plus truthful focusable filter and sort controls
 - deterministic class/name ordering and category-specific empty-state copy
-- fixed 136x154 item cards with dedicated icon, two-line name, quantity, and
-  type-stamp regions so text never overlaps art
+- responsive two-to-four-column `180x190` item cards with a `112x112` icon
+  viewport, two-line name, upper-right quantity badge, and meaningful markers
 - class-specific framing, distinct selected/hovered/disabled states, and no
   stack count on key-object cards
 - readable item name, classification, count, use, description, and provenance
 - keyboard/mouse and controller focus support
+- persistent gold selection distinct from technical-cyan navigation focus
 - empty-state copy that still reads as an intentional CUSTODIAN interface
 - production assets resolved through a centralized inventory asset catalog
 - canonical production assets may replace fallbacks by landing at the documented
@@ -60,6 +61,12 @@ Required presentation:
 - an Equipment page whose sidearm slot moves a carried P-9 into/out of
   `InventoryManager` equipment and calls the Operator equip-time hooks; recovery
   alone must never activate the sidearm combat action
+
+The Ledger uses a `170px` category rail and `380px` inspection panel. Only the
+description/provenance region scrolls; its action stays pinned to the bottom.
+Reopening preserves the last page for the current session. See
+`design/02_features/ui/INVENTORY_PAUSE_MENU_REFINEMENT.md` for the completed
+responsive-layout, prompt, and icon-normalization contract.
 
 The overlay must connect to `/root/InventoryManager` and update when its
 `inventory_changed` signal fires. The older local `Inventory` resource remains a

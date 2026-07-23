@@ -498,7 +498,14 @@ func _build_modular_locomotion_entries(part: String) -> Array:
 		var base := str(action_spec["base"])
 		for direction_spec in direction_specs:
 			var dir := str(direction_spec["dir"])
-			var sheet := _find_modular_action_sheet(root, part, "unarmed", action, dir)
+			var sheet := _find_modular_action_sheet(
+				root,
+				part,
+				"unarmed",
+				action,
+				dir,
+				true
+			)
 			if sheet.is_empty():
 				continue
 			var path := str(sheet.get("path", ""))
@@ -825,7 +832,14 @@ func _build_modular_unarmed_parry_entries(part: String) -> Array:
 	return entries
 
 
-func _find_modular_action_sheet(root: String, part: String, loadout: String, action: String, direction: String) -> Dictionary:
+func _find_modular_action_sheet(
+	root: String,
+	part: String,
+	loadout: String,
+	action: String,
+	direction: String,
+	prefer_largest_frame_count := false
+) -> Dictionary:
 	var action_root := "%s/%s" % [root, action]
 	var directory := DirAccess.open(action_root)
 	if directory == null:
@@ -836,14 +850,29 @@ func _find_modular_action_sheet(root: String, part: String, loadout: String, act
 	)
 	if compile_error != OK:
 		return {}
+	var best_path := ""
+	var best_frames := 0
 	for filename in directory.get_files():
 		var matched := pattern.search(filename)
 		if matched != null:
-			return {
-				"path": "%s/%s" % [action_root, filename],
-				"frames": int(matched.get_string(1)),
-			}
-	return {}
+			var frame_count := int(matched.get_string(1))
+			if best_path.is_empty() \
+			or (
+				prefer_largest_frame_count
+				and frame_count > best_frames
+			) \
+			or (
+				frame_count == best_frames
+				and (best_path.is_empty() or filename < best_path)
+			):
+				best_path = filename
+				best_frames = frame_count
+	if best_path.is_empty():
+		return {}
+	return {
+		"path": "%s/%s" % [action_root, best_path],
+		"frames": best_frames,
+	}
 
 
 func _build_modular_field_patch_entries(part: String, base: String) -> Array:

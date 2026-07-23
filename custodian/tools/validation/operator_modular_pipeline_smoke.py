@@ -59,6 +59,25 @@ def main() -> int:
         _write_strip(dodge_charge, frames=5)
         _write_strip(dodge_chain, frames=4)
 
+        generic_run_nw = (
+            root / "run/operator__modular_lower_body__run_01__nw__5f__96.png"
+        )
+        explicit_run_nw = (
+            root
+            / "run/operator__modular_lower_body__unarmed__run_01__nw__6f__96.png"
+        )
+        _write_strip(generic_run_nw, frames=5)
+        _write_strip(explicit_run_nw, frames=6)
+        resolved_run_nw = builder._resolve_lower_source(
+            root,
+            "run_01",
+            "nw",
+            ("action_01",),
+        )
+        assert resolved_run_nw is not None
+        assert resolved_run_nw.path == explicit_run_nw
+        assert resolved_run_nw.frames == 6
+
         canonical_info = manifests._inspect_sheet(canonical)
         legacy_info = manifests._inspect_sheet(legacy)
         cape_info = manifests._inspect_sheet(cape)

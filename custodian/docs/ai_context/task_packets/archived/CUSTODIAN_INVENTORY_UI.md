@@ -64,6 +64,7 @@ uses canonical production assets when they appear at documented runtime paths.
 ## Completion Notes
 
 - Implemented: live InventoryManager-backed Black Reliquary field ledger, compact hierarchy/readability pass, deterministic class/name sorting, category-specific empty states and card frames, non-overlapping stamped cards, structured detail inspector, functional P-9 Equipment-page equip/unequip actions, placeholder sidearm icon, input/focus handling, canonical production asset resolver, fallbacks, docs, and production asset requests
+- Refinement amendment (2026-07-23): the runtime surface has four pages—Status, Equipment, Ledger, and History. `design/02_features/ui/INVENTORY_PAUSE_MENU_REFINEMENT.md` records the completed hierarchy reduction, responsive cards/columns, counted categories, real filter/sort controls, pinned inspection action, device-aware prompts, page persistence, and normalized canonical icons.
 - Validated: inventory script/catalog check-only, dedicated inventory UI smoke, Black Reliquary UI smoke, manifest JSON parse, required asset tracker parity, full game headless boot, and scoped diff check
 - Deferred: production inventory art, in-editor visual review, equipment/drag-drop/use/drop actions, and any deliberate resource/build-token ledger views
 

@@ -10,6 +10,12 @@ const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 const Styles := preload("res://game/ui/theme/black_reliquary_styles.gd")
 const MinimapFrameScene := preload("res://game/ui/components/black_reliquary_minimap_frame.tscn")
 const IconLabelScene := preload("res://game/ui/components/black_reliquary_icon_label.tscn")
+const RELIQUARY_BACKDROP_SHADER := preload(
+	"res://game/ui/inventory/shaders/reliquary_inventory_backdrop.gdshader"
+)
+const RELIQUARY_BACKDROP_MATERIAL := preload(
+	"res://game/ui/inventory/materials/reliquary_inventory_backdrop_material.tres"
+)
 const SYSTEM_TECH := Color("#5a9ea0")
 
 const PAGE_STATUS := "status"
@@ -91,7 +97,6 @@ var _page_buttons: Dictionary = {}
 var _frame: PanelContainer
 var _header_status: Label
 var _count_label: Label
-var _page_hint: Label
 var _footer_hint: Label
 var _close_button: Button
 var _pages_root: Control
@@ -112,6 +117,8 @@ var _status_gate_row: HBoxContainer
 var _status_return_row: HBoxContainer
 var _status_summary: Label
 var _status_minimap_frame: Control
+var _status_left_panel: PanelContainer
+var _status_left_stack: VBoxContainer
 var _history_log: RichTextLabel
 var _history_empty: Label
 
@@ -130,12 +137,17 @@ var _ledger_detail_description: Label
 var _ledger_detail_use: Label
 var _ledger_detail_provenance: Label
 var _ledger_detail_equip_button: Button
+var _ledger_category_panel: PanelContainer
+var _ledger_records_panel: PanelContainer
+var _ledger_detail_panel: PanelContainer
 
 var _equipment_slot_container: VBoxContainer
 var _equipment_slot_icon: TextureRect
 var _equipment_slot_name: Label
 var _equipment_slot_status: Label
 var _equipment_action_button: Button
+var _equipment_available_list: VBoxContainer
+var _equipment_available_empty: Label
 
 
 func _ready() -> void:
@@ -149,16 +161,20 @@ func _ready() -> void:
 	_refresh_entries()
 	_select_page(PAGE_STATUS, false)
 	_update_input_prompts()
+	call_deferred("_update_ledger_grid_columns")
+	call_deferred("_update_responsive_layout")
 	visible = false
 
 
 func open(inv: Inventory = null) -> void:
 	if inv != null:
 		inventory = inv
-	_refresh_entries()
-	_select_page(_current_page, false)
 	visible = true
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	_refresh_entries()
+	_select_page(_current_page, false)
+	call_deferred("_update_ledger_grid_columns")
+	call_deferred("_update_responsive_layout")
 	_focus_current_page()
 
 
@@ -214,17 +230,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif joy_event.button_index == JOY_BUTTON_RIGHT_SHOULDER:
 			_cycle_page(1)
 			get_viewport().set_input_as_handled()
-		elif _current_page == PAGE_LEDGER and joy_event.button_index == JOY_BUTTON_Y:
+		elif _current_page == PAGE_LEDGER and joy_event.button_index == JOY_BUTTON_X:
 			_cycle_ledger_filter()
 			get_viewport().set_input_as_handled()
-		elif _current_page == PAGE_LEDGER and joy_event.button_index == JOY_BUTTON_X:
+		elif _current_page == PAGE_LEDGER and joy_event.button_index == JOY_BUTTON_RIGHT_STICK:
 			_toggle_ledger_sort()
 			get_viewport().set_input_as_handled()
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
-		_update_ledger_grid_columns()
+		call_deferred("_update_ledger_grid_columns")
+		call_deferred("_update_responsive_layout")
 
 
 func set_location(text: String) -> void:
@@ -333,8 +350,11 @@ func _build_interface() -> void:
 	var backdrop := ColorRect.new()
 	backdrop.name = "Backdrop"
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	backdrop.color = Color(0.008, 0.012, 0.015, 0.95)
+	backdrop.color = Color.WHITE
 	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	var backdrop_material := RELIQUARY_BACKDROP_MATERIAL.duplicate() as ShaderMaterial
+	backdrop_material.shader = RELIQUARY_BACKDROP_SHADER
+	backdrop.material = backdrop_material
 	add_child(backdrop)
 
 	_frame = PanelContainer.new()
@@ -429,18 +449,15 @@ func _build_page_rail() -> Control:
 		_apply_button_style(button)
 		_page_buttons[page] = button
 		rail.add_child(button)
-	_page_hint = _label("", Palette.MUTED_TEXT, 12)
-	_page_hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_page_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	rail.add_child(_page_hint)
 	return rail
 
 
 func _build_footer() -> Control:
-	var footer := HBoxContainer.new()
+	var footer := PanelContainer.new()
 	footer.name = "InputFooter"
-	footer.custom_minimum_size.y = 34
+	footer.custom_minimum_size.y = 38
 	footer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	footer.add_theme_stylebox_override("panel", Styles.inventory_footer_style())
 	_footer_hint = _label("", Palette.MUTED_TEXT, 12)
 	_footer_hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_footer_hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -455,37 +472,37 @@ func _build_status_page() -> Control:
 	page.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	page.add_theme_constant_override("separation", 14)
 
-	var left_panel := _panel(true, Vector2(340, 0))
-	left_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	_status_left_panel = _panel(true, Vector2(340, 0))
+	_status_left_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_status_left_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	var left_margin := MarginContainer.new()
 	left_margin.add_theme_constant_override("margin_left", 18)
 	left_margin.add_theme_constant_override("margin_top", 18)
 	left_margin.add_theme_constant_override("margin_right", 18)
 	left_margin.add_theme_constant_override("margin_bottom", 18)
-	left_panel.add_child(left_margin)
-	var left_stack := VBoxContainer.new()
-	left_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left_stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left_stack.add_theme_constant_override("separation", 10)
-	left_margin.add_child(left_stack)
+	_status_left_panel.add_child(left_margin)
+	_status_left_stack = VBoxContainer.new()
+	_status_left_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_status_left_stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_status_left_stack.add_theme_constant_override("separation", 10)
+	left_margin.add_child(_status_left_stack)
 
-	left_stack.add_child(_label("FIELD POSTURE", Palette.GOLD_TEXT, 12))
+	_status_left_stack.add_child(_label("FIELD POSTURE", Palette.GOLD_TEXT, 12))
 	_status_health_label = _label("HEALTH 100/100", Palette.BODY_TEXT, 18)
-	left_stack.add_child(_status_health_label)
+	_status_left_stack.add_child(_status_health_label)
 	_status_health_bar = _progress_bar(Palette.DANGER)
-	left_stack.add_child(_status_health_bar)
+	_status_left_stack.add_child(_status_health_bar)
 	_status_stamina_label = _label("STAMINA READY", Palette.EVRFOREST_PALE_GREEN, 14)
-	left_stack.add_child(_status_stamina_label)
+	_status_left_stack.add_child(_status_stamina_label)
 	_status_stamina_bar = _progress_bar(Palette.EVRFOREST_PALE_GREEN)
-	left_stack.add_child(_status_stamina_bar)
+	_status_left_stack.add_child(_status_stamina_bar)
 
-	left_stack.add_child(_build_divider())
+	_status_left_stack.add_child(_build_divider())
 	_status_summary = _label("BLACK RELIQUARY / FIELD STATUS", Palette.MUTED_TEXT, 12)
 	_status_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	left_stack.add_child(_status_summary)
+	_status_left_stack.add_child(_status_summary)
 
-	left_stack.add_child(_build_divider())
+	_status_left_stack.add_child(_build_divider())
 	_status_location_row = _create_status_row(Catalog.COMPASS_ROSE_SMALL, "LOCATION: --")
 	_status_phase_row = _create_status_row(Catalog.ICON_OBJECTIVE, "PHASE: --")
 	_status_objective_row = _create_status_row(Catalog.ICON_OBJECTIVE, "OBJECTIVE: --")
@@ -493,7 +510,7 @@ func _build_status_page() -> Control:
 	_status_gate_row = _create_status_row(Catalog.ICON_GATE_LOCKED, "MAIN GATE: LOCKED")
 	_status_return_row = _create_status_row(Catalog.ICON_RETURN_MOORING, "RETURN MOORING: DORMANT")
 	for row in [_status_location_row, _status_phase_row, _status_objective_row, _status_key_row, _status_gate_row, _status_return_row]:
-		left_stack.add_child(row)
+		_status_left_stack.add_child(row)
 
 	var minimap_panel := _panel(true, Vector2(0, 0))
 	minimap_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -516,10 +533,10 @@ func _build_status_page() -> Control:
 			_status_minimap_frame.call("set_title", "TACTICAL STATUS MAP")
 		_status_minimap_frame.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		_status_minimap_frame.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		_status_minimap_frame.custom_minimum_size = Vector2(720, 540)
+		_status_minimap_frame.custom_minimum_size = Vector2(480, 300)
 		minimap_stack.add_child(_status_minimap_frame)
 
-	page.add_child(left_panel)
+	page.add_child(_status_left_panel)
 	page.add_child(minimap_panel)
 	return page
 
@@ -600,9 +617,9 @@ func _build_ledger_body() -> Control:
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_theme_constant_override("separation", 16)
 
-	var categories := _section_panel(Vector2(184, 0))
-	categories.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	categories.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_ledger_category_panel = _section_panel(Vector2(170, 0))
+	_ledger_category_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	_ledger_category_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var category_margin := MarginContainer.new()
 	category_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	category_margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -610,7 +627,7 @@ func _build_ledger_body() -> Control:
 	category_margin.add_theme_constant_override("margin_top", 12)
 	category_margin.add_theme_constant_override("margin_right", 12)
 	category_margin.add_theme_constant_override("margin_bottom", 12)
-	categories.add_child(category_margin)
+	_ledger_category_panel.add_child(category_margin)
 	_ledger_category_list = VBoxContainer.new()
 	_ledger_category_list.add_theme_constant_override("separation", 7)
 	category_margin.add_child(_ledger_category_list)
@@ -625,7 +642,7 @@ func _build_ledger_body() -> Control:
 		_apply_button_style(button)
 		_category_buttons[category] = button
 		_ledger_category_list.add_child(button)
-	body.add_child(categories)
+	body.add_child(_ledger_category_panel)
 
 	var records := VBoxContainer.new()
 	records.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -671,16 +688,31 @@ func _build_ledger_body() -> Control:
 	_ledger_empty_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_ledger_empty_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	records.add_child(_ledger_empty_label)
-	body.add_child(records)
+	_ledger_records_panel = PanelContainer.new()
+	_ledger_records_panel.name = "LedgerRecordsPanel"
+	_ledger_records_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_ledger_records_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_ledger_records_panel.add_theme_stylebox_override(
+		"panel",
+		Styles.inventory_register_style()
+	)
+	var records_margin := MarginContainer.new()
+	records_margin.add_theme_constant_override("margin_left", 14)
+	records_margin.add_theme_constant_override("margin_top", 12)
+	records_margin.add_theme_constant_override("margin_right", 14)
+	records_margin.add_theme_constant_override("margin_bottom", 12)
+	_ledger_records_panel.add_child(records_margin)
+	records_margin.add_child(records)
+	body.add_child(_ledger_records_panel)
 
 	body.add_child(_build_ledger_detail_panel())
 	return body
 
 
 func _build_ledger_detail_panel() -> Control:
-	var detail := _section_panel(Vector2(400, 0))
-	detail.size_flags_horizontal = Control.SIZE_SHRINK_END
-	detail.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_ledger_detail_panel = _section_panel(Vector2(380, 0))
+	_ledger_detail_panel.size_flags_horizontal = Control.SIZE_SHRINK_END
+	_ledger_detail_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -689,7 +721,7 @@ func _build_ledger_detail_panel() -> Control:
 	margin.add_theme_constant_override("margin_top", 14)
 	margin.add_theme_constant_override("margin_right", 16)
 	margin.add_theme_constant_override("margin_bottom", 14)
-	detail.add_child(margin)
+	_ledger_detail_panel.add_child(margin)
 
 	var stack := VBoxContainer.new()
 	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -756,7 +788,7 @@ func _build_ledger_detail_panel() -> Control:
 	_apply_button_style(_ledger_detail_equip_button)
 	_ledger_detail_equip_button.pressed.connect(_on_equip_button_pressed)
 	stack.add_child(_ledger_detail_equip_button)
-	return detail
+	return _ledger_detail_panel
 
 
 func _build_equipment_page() -> Control:
@@ -772,14 +804,32 @@ func _build_equipment_page() -> Control:
 	margin.add_theme_constant_override("margin_right", 18)
 	margin.add_theme_constant_override("margin_bottom", 18)
 	page.add_child(margin)
-	var stack := VBoxContainer.new()
-	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	stack.add_theme_constant_override("separation", 14)
-	margin.add_child(stack)
-	
-	stack.add_child(_label("EQUIPMENT SLOTS", Palette.GOLD_TEXT, 14))
-	stack.add_child(_label("Slot equipment from the Ledger page into active slots to enable their use in the field.", Palette.MUTED_TEXT, 12))
+	var body := HBoxContainer.new()
+	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.add_theme_constant_override("separation", 16)
+	margin.add_child(body)
+
+	var active_panel := _section_panel(Vector2(520, 0))
+	active_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	active_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var active_margin := MarginContainer.new()
+	active_margin.add_theme_constant_override("margin_left", 16)
+	active_margin.add_theme_constant_override("margin_top", 16)
+	active_margin.add_theme_constant_override("margin_right", 16)
+	active_margin.add_theme_constant_override("margin_bottom", 16)
+	active_panel.add_child(active_margin)
+	var active_stack := VBoxContainer.new()
+	active_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	active_stack.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	active_stack.add_theme_constant_override("separation", 14)
+	active_margin.add_child(active_stack)
+	active_stack.add_child(_label("ACTIVE SLOTS", Palette.GOLD_TEXT, 14))
+	active_stack.add_child(_label(
+		"Equipped records claim their field action. Empty slots retain the Operator's default behavior.",
+		Palette.MUTED_TEXT,
+		12
+	))
 	
 	# Sidearm slot card
 	var slot_card := _panel(true, Vector2(0, 0))
@@ -834,16 +884,37 @@ func _build_equipment_page() -> Control:
 	button_container.add_child(_equipment_action_button)
 	info_stack.add_child(button_container)
 	
-	stack.add_child(slot_card)
-	
-	# Future equipment slots will be added here
-	
-	stack.add_child(_build_divider())
-	stack.add_child(_label("INVENTORY EQUIPMENT", Palette.GOLD_TEXT, 12))
-	var inv_note := _label("Unequipped equipment appears in the Ledger under Equipment. Select an item and choose Equip.", Palette.MUTED_TEXT, 12)
-	inv_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	stack.add_child(inv_note)
-	
+	active_stack.add_child(slot_card)
+	body.add_child(active_panel)
+
+	var available_panel := _section_panel(Vector2(420, 0))
+	available_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	available_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var available_margin := MarginContainer.new()
+	available_margin.add_theme_constant_override("margin_left", 16)
+	available_margin.add_theme_constant_override("margin_top", 16)
+	available_margin.add_theme_constant_override("margin_right", 16)
+	available_margin.add_theme_constant_override("margin_bottom", 16)
+	available_panel.add_child(available_margin)
+	_equipment_available_list = VBoxContainer.new()
+	_equipment_available_list.name = "AvailableEquipmentList"
+	_equipment_available_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_equipment_available_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_equipment_available_list.add_theme_constant_override("separation", 10)
+	available_margin.add_child(_equipment_available_list)
+	_equipment_available_list.add_child(_label("AVAILABLE EQUIPMENT", Palette.GOLD_TEXT, 14))
+	_equipment_available_empty = _label(
+		"NO UNEQUIPPED EQUIPMENT",
+		Palette.MUTED_TEXT,
+		14
+	)
+	_equipment_available_empty.name = "AvailableEquipmentEmpty"
+	_equipment_available_empty.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_equipment_available_empty.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_equipment_available_empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_equipment_available_empty.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_equipment_available_list.add_child(_equipment_available_empty)
+	body.add_child(available_panel)
 	return page
 
 
@@ -879,6 +950,8 @@ func _on_equipment_changed(_slot_name: StringName, _item_id: StringName) -> void
 func _refresh_equipment_page() -> void:
 	if _equipment_slot_name == null or _equipment_slot_status == null or _equipment_slot_icon == null or _equipment_action_button == null:
 		return
+
+	_rebuild_available_equipment()
 	
 	if _inventory_manager == null or not _inventory_manager.has_method("get_equipped"):
 		_equipment_slot_name.text = "OFFLINE"
@@ -912,6 +985,100 @@ func _refresh_equipment_page() -> void:
 		_equipment_action_button.text = "UNEQUIP"
 		_equipment_action_button.disabled = false
 		_equipment_action_button.visible = true
+
+
+func _rebuild_available_equipment() -> void:
+	if _equipment_available_list == null or _equipment_available_empty == null:
+		return
+	for child in _equipment_available_list.get_children():
+		if child == _equipment_available_empty or child is Label:
+			continue
+		_equipment_available_list.remove_child(child)
+		child.queue_free()
+
+	var equipped_id := ""
+	if _inventory_manager != null and _inventory_manager.has_method("get_equipped"):
+		equipped_id = str(_inventory_manager.call("get_equipped", &"sidearm"))
+
+	var available: Array[Dictionary] = []
+	for entry in _entries:
+		var definition: Dictionary = entry.get("definition", {})
+		if str(definition.get("category", "carried")) != "equipment":
+			continue
+		if str(entry.get("item_id", "")) == equipped_id:
+			continue
+		available.append(entry)
+
+	_equipment_available_empty.visible = available.is_empty()
+	for entry in available:
+		_equipment_available_list.add_child(_create_available_equipment_card(entry))
+
+
+func _create_available_equipment_card(entry: Dictionary) -> Button:
+	var definition: Dictionary = entry.get("definition", {})
+	var item_id := str(entry.get("item_id", ""))
+	var card := Button.new()
+	card.name = "AvailableEquipment_%s" % item_id
+	card.custom_minimum_size = Vector2(0, 104)
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.text = ""
+	card.set_meta("item_id", item_id)
+	_apply_button_style(card)
+
+	var margin := MarginContainer.new()
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_bottom", 10)
+	card.add_child(margin)
+	var row := HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", 12)
+	margin.add_child(row)
+	var icon := TextureRect.new()
+	icon.custom_minimum_size = Vector2(80, 80)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	icon.texture = Assets.item_portrait(item_id)
+	icon.material = _item_icon_material(item_id)
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(icon)
+	var labels := VBoxContainer.new()
+	labels.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	labels.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	labels.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	labels.add_theme_constant_override("separation", 4)
+	row.add_child(labels)
+	labels.add_child(_label(
+		str(definition.get("display_name", item_id)).to_upper(),
+		Palette.BODY_TEXT,
+		16
+	))
+	labels.add_child(_label(
+		"AVAILABLE · ×%d" % int(entry.get("quantity", 0)),
+		SYSTEM_TECH,
+		12
+	))
+	var description := _label(
+		str(definition.get("description", "Recovered field equipment.")),
+		Palette.MUTED_TEXT,
+		12
+	)
+	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	labels.add_child(description)
+	card.pressed.connect(_on_available_equipment_pressed.bind(entry))
+	return card
+
+
+func _on_available_equipment_pressed(entry: Dictionary) -> void:
+	var item_id := StringName(str(entry.get("item_id", "")))
+	var slot_name := _get_equipment_slot_for_item(item_id)
+	if slot_name == &"":
+		return
+	_equip_item_to_slot(item_id, slot_name)
 
 
 func _on_equipment_action_pressed() -> void:
@@ -1130,6 +1297,28 @@ func _update_ledger_grid_columns() -> void:
 	_ledger_item_grid.columns = clampi(columns, 1, responsive_cap)
 
 
+func _update_responsive_layout() -> void:
+	var viewport_width := get_viewport_rect().size.x
+	if _status_left_panel != null:
+		_status_left_panel.custom_minimum_size.x = 280.0 if viewport_width <= 1280.0 else 340.0
+	if _status_left_stack != null:
+		_status_left_stack.add_theme_constant_override(
+			"separation",
+			7 if viewport_width <= 1280.0 else 10
+		)
+	if _status_minimap_frame != null:
+		_status_minimap_frame.custom_minimum_size = (
+			Vector2(400, 250)
+			if viewport_width <= 1280.0
+			else Vector2(480, 300)
+		)
+	if _ledger_category_panel != null:
+		_ledger_category_panel.custom_minimum_size.x = 150.0 if viewport_width <= 1280.0 else 170.0
+	if _ledger_detail_panel != null:
+		_ledger_detail_panel.custom_minimum_size.x = 340.0 if viewport_width <= 1280.0 else 380.0
+	call_deferred("_update_ledger_grid_columns")
+
+
 func _create_item_button(entry: Dictionary) -> Button:
 	var definition: Dictionary = entry["definition"]
 	var item_id := str(entry["item_id"])
@@ -1139,18 +1328,41 @@ func _create_item_button(entry: Dictionary) -> Button:
 	button.tooltip_text = str(definition.get("description", ""))
 	button.text = ""
 	button.set_meta("inventory_category", str(definition.get("category", "carried")))
+	button.set_meta("inventory_item_id", item_id)
+
+	var content_margin := MarginContainer.new()
+	content_margin.name = "ContentMargin"
+	content_margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	content_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	content_margin.add_theme_constant_override("margin_left", 14)
+	content_margin.add_theme_constant_override("margin_top", 22)
+	content_margin.add_theme_constant_override("margin_right", 14)
+	content_margin.add_theme_constant_override("margin_bottom", 10)
+	button.add_child(content_margin)
+	var content := VBoxContainer.new()
+	content.name = "Content"
+	content.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	content.add_theme_constant_override("separation", 4)
+	content_margin.add_child(content)
+	var icon_center := CenterContainer.new()
+	icon_center.name = "IconViewport"
+	icon_center.custom_minimum_size = Vector2(118, 118)
+	icon_center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	icon_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	content.add_child(icon_center)
 	var icon := TextureRect.new()
 	icon.name = "ItemIcon"
-	icon.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	icon.position = Vector2(-56.0, 16.0)
-	icon.size = Vector2(112.0, 112.0)
+	icon.custom_minimum_size = Vector2(118, 118)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	icon.texture = Assets.item_portrait(item_id)
 	icon.material = _item_icon_material(item_id)
-	button.add_child(icon)
+	icon.resized.connect(_update_item_icon_pivot.bind(icon))
+	icon_center.add_child(icon)
 	var category := str(definition.get("category", "carried"))
 	var stamp := _label(_category_stamp(category), Palette.MUTED_TEXT, 11)
 	stamp.name = "ItemStamp"
@@ -1160,13 +1372,13 @@ func _create_item_button(entry: Dictionary) -> Button:
 	button.add_child(stamp)
 	var name_label := _label(str(definition.get("display_name", entry["item_id"])).to_upper(), Palette.BODY_TEXT, 14)
 	name_label.name = "ItemName"
-	name_label.position = Vector2(10, 132)
-	name_label.size = Vector2(160, 46)
+	name_label.custom_minimum_size = Vector2(0, 42)
+	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	button.add_child(name_label)
+	content.add_child(name_label)
 	var quantity := _label("×%d" % int(entry["quantity"]), Palette.GOLD_TEXT, 13)
 	quantity.name = "ItemQuantity"
 	quantity.position = Vector2(130, 8)
@@ -1183,10 +1395,59 @@ func _create_item_button(entry: Dictionary) -> Button:
 	selection_mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	selection_mark.visible = item_id == _selected_item_id
 	button.add_child(selection_mark)
+	button.add_child(_create_focus_corner_marks())
 	button.pressed.connect(_select_entry.bind(entry))
-	button.focus_entered.connect(_select_entry.bind(entry))
+	button.focus_entered.connect(_refresh_item_focus.bind(button))
+	button.focus_exited.connect(_refresh_item_focus.bind(button))
 	_apply_item_button_style(button, category, item_id == _selected_item_id)
 	return button
+
+
+func _update_item_icon_pivot(icon: TextureRect) -> void:
+	if icon == null:
+		return
+	icon.pivot_offset = icon.size * 0.5
+
+
+func _create_focus_corner_marks() -> Control:
+	var marks := Control.new()
+	marks.name = "FocusCorners"
+	marks.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	marks.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	marks.visible = false
+	var corners := [
+		[Vector2(0.0, 0.0), Vector4(5, 5, 15, 8)],
+		[Vector2(1.0, 0.0), Vector4(-15, 5, -5, 8)],
+		[Vector2(0.0, 1.0), Vector4(5, -8, 15, -5)],
+		[Vector2(1.0, 1.0), Vector4(-15, -8, -5, -5)],
+	]
+	for index in corners.size():
+		var mark := ColorRect.new()
+		mark.name = "FocusCorner%d" % index
+		mark.color = SYSTEM_TECH
+		mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var corner: Array = corners[index]
+		mark.anchor_left = (corner[0] as Vector2).x
+		mark.anchor_top = (corner[0] as Vector2).y
+		mark.anchor_right = (corner[0] as Vector2).x
+		mark.anchor_bottom = (corner[0] as Vector2).y
+		mark.offset_left = (corner[1] as Vector4).x
+		mark.offset_top = (corner[1] as Vector4).y
+		mark.offset_right = (corner[1] as Vector4).z
+		mark.offset_bottom = (corner[1] as Vector4).w
+		marks.add_child(mark)
+	return marks
+
+
+func _refresh_item_focus(button: Button) -> void:
+	if button == null:
+		return
+	var selected := str(button.get_meta("inventory_item_id", "")) == _selected_item_id
+	_apply_item_button_style(
+		button,
+		str(button.get_meta("inventory_category", "carried")),
+		selected
+	)
 
 
 func _select_category(category: String) -> void:
@@ -1221,7 +1482,7 @@ func _select_entry(entry: Dictionary) -> void:
 		_apply_item_button_style(
 			button,
 			str(button.get_meta("inventory_category", "carried")),
-			button.name == "Item_%s" % _selected_item_id
+			str(button.get_meta("inventory_item_id", "")) == _selected_item_id
 		)
 
 
@@ -1343,13 +1604,6 @@ func _select_page(page_name: String, focus := true) -> void:
 			if _equipment_page != null:
 				_equipment_page.visible = true
 			_refresh_equipment_page()
-	if _page_hint != null:
-		_page_hint.text = {
-			PAGE_STATUS: "FIELD POSTURE",
-			PAGE_EQUIPMENT: "ACTIVE LOADOUT",
-			PAGE_LEDGER: "RECOVERED OBJECTS",
-			PAGE_HISTORY: "FIELD HISTORY",
-		}.get(_current_page, "")
 	for page in _page_buttons:
 		_apply_button_style(_page_buttons[page] as Button, page == _current_page)
 	_update_input_prompts()
@@ -1403,6 +1657,9 @@ func _rebuild_history_log() -> void:
 func _update_status_row(row: HBoxContainer, icon_path: String, text: String, color: Color) -> void:
 	if row == null:
 		return
+	if row.has_method("configure"):
+		row.call("configure", icon_path, text, Vector2(32, 32), color)
+		return
 	var icon_rect := row.get_node_or_null("Icon") as TextureRect
 	var label := row.get_node_or_null("Label") as Label
 	if icon_rect != null:
@@ -1417,6 +1674,8 @@ func _create_status_row(icon_path: String, text: String, color: Color = Palette.
 	var row := IconLabelScene.instantiate() as HBoxContainer
 	if row == null:
 		row = HBoxContainer.new()
+	row.custom_minimum_size.y = maxf(row.custom_minimum_size.y, 32.0)
+	row.visible = true
 	_update_status_row(row, icon_path, text, color)
 	return row
 
@@ -1443,7 +1702,7 @@ func _update_input_prompts() -> void:
 	if _footer_hint != null:
 		if _controller_prompts_active:
 			_footer_hint.text = "LB  PREVIOUS PAGE     RB  NEXT PAGE%s     B  CLOSE" % (
-				"     A  SELECT" if _current_page == PAGE_LEDGER else ""
+				"     X  FILTER     R3  SORT     A  SELECT" if _current_page == PAGE_LEDGER else ""
 			)
 		else:
 			_footer_hint.text = "Q  PREVIOUS PAGE     E  NEXT PAGE%s     ESC  CLOSE" % (
@@ -1451,12 +1710,12 @@ func _update_input_prompts() -> void:
 			)
 	if _ledger_filter_button != null:
 		_ledger_filter_button.text = "%s  FILTER · %s" % [
-			"Y" if _controller_prompts_active else "F",
+			"X" if _controller_prompts_active else "F",
 			str(CATEGORY_LABELS.get(_selected_category, _selected_category.to_upper())),
 		]
 	if _ledger_sort_button != null:
 		_ledger_sort_button.text = "%s  SORT · %s" % [
-			"X" if _controller_prompts_active else "R",
+			"R3" if _controller_prompts_active else "R",
 			"NAME / CLASS" if _sort_name_first else "CLASS / NAME",
 		]
 	if _ledger_filter_label != null:
@@ -1523,14 +1782,9 @@ func _apply_item_button_style(button: Button, category: String, selected := fals
 	normal.border_width_right = border_width
 	normal.border_width_bottom = border_width
 	var hover := normal.duplicate()
-	hover.border_color = Palette.GOLD_TEXT.lightened(0.12)
+	hover.border_color = Palette.GOLD_TEXT if selected else Palette.GOLD_TEXT.lightened(0.12)
 	hover.bg_color = Color(0.12, 0.13, 0.11, 0.98)
-	var focus := normal.duplicate()
-	focus.border_color = SYSTEM_TECH
-	focus.border_width_left = 2
-	focus.border_width_top = 2
-	focus.border_width_right = 2
-	focus.border_width_bottom = 2
+	var focus := StyleBoxEmpty.new()
 	var disabled := normal.duplicate()
 	disabled.border_color = Color(category_color, 0.3)
 	disabled.bg_color = Color(0.025, 0.03, 0.03, 0.88)
@@ -1544,7 +1798,7 @@ func _apply_item_button_style(button: Button, category: String, selected := fals
 	button.add_theme_color_override("font_focus_color", Palette.GOLD_TEXT)
 	button.add_theme_color_override("font_disabled_color", Palette.MUTED_TEXT)
 	button.add_theme_font_size_override("font_size", 11)
-	var name_label := button.get_node_or_null("ItemName") as Label
+	var name_label := button.find_child("ItemName", true, false) as Label
 	if name_label != null:
 		name_label.add_theme_color_override(
 			"font_color",
@@ -1553,10 +1807,13 @@ func _apply_item_button_style(button: Button, category: String, selected := fals
 	var selection_mark := button.get_node_or_null("SelectionMark") as ColorRect
 	if selection_mark != null:
 		selection_mark.visible = selected
-	var icon := button.get_node_or_null("ItemIcon") as TextureRect
+	var focus_corners := button.get_node_or_null("FocusCorners") as Control
+	if focus_corners != null:
+		focus_corners.visible = button.has_focus()
+	var icon := button.find_child("ItemIcon", true, false) as TextureRect
 	if icon != null:
-		icon.size = Vector2(118, 118) if selected else Vector2(112, 112)
-		icon.position = Vector2(-59, 13) if selected else Vector2(-56, 16)
+		icon.pivot_offset = icon.size * 0.5
+		icon.scale = Vector2.ONE * (1.04 if selected else 1.0)
 
 
 func _panel(deep: bool, minimum_size: Vector2) -> PanelContainer:
@@ -1611,6 +1868,10 @@ func _add_frame_texture(parent: Control) -> void:
 	frame_texture.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	if Styles.configure_nine_patch(frame_texture, path):
 		frame_texture.draw_center = false
+		# The production frame source is a compact HUD ornament. Stretching its
+		# border across the full Ledger creates a second, overbright arch behind
+		# the page hierarchy; the styled ReliquaryFrame owns this outline.
+		frame_texture.visible = false
 	parent.add_child(frame_texture)
 	parent.move_child(frame_texture, 0)
 

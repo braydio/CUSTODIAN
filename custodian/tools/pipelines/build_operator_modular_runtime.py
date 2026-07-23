@@ -335,10 +335,20 @@ def _resolve_lower_source(
     )
     for search_action in search_actions:
         for directory in search_dirs:
-            pattern = f"operator__modular_lower_body*__{search_action}__{direction}__*f__96.png"
-            matches = sorted(directory.glob(pattern)) if directory.exists() else []
-            if matches:
-                return _sheet_spec_from_path(matches[0], direction)
+            if not directory.exists():
+                continue
+            # Loadout-qualified sheets are the canonical source. The previous
+            # wildcard mixed them with legacy generic sheets and selected the
+            # first lexical filename, allowing an old generic run strip to
+            # shadow a newly ingested `__unarmed__` replacement.
+            preferred_patterns = (
+                f"operator__modular_lower_body__unarmed__{search_action}__{direction}__*f__96.png",
+                f"operator__modular_lower_body__{search_action}__{direction}__*f__96.png",
+            )
+            for pattern in preferred_patterns:
+                matches = sorted(directory.glob(pattern))
+                if matches:
+                    return _sheet_spec_from_path(matches[0], direction)
     return None
 
 

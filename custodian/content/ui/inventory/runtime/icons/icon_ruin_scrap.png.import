@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ck6w8c775he8i"
-path="res://.godot/imported/operator__modular_lower_body__unarmed__walk_01__nw__5f__96.png-5bcc6a0f952011a094025a53b1e1638e.ctex"
+uid="uid://bql75xqbyr6an"
+path="res://.godot/imported/icon_ruin_scrap.png-b35d912e07146ca4d89b6c7d87326f40.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/walk_01/operator__modular_lower_body__unarmed__walk_01__nw__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__unarmed__walk_01__nw__5f__96.png-5bcc6a0f952011a094025a53b1e1638e.ctex"]
+source_file="res://content/ui/inventory/runtime/icons/icon_ruin_scrap.png"
+dest_files=["res://.godot/imported/icon_ruin_scrap.png-b35d912e07146ca4d89b6c7d87326f40.ctex"]
 
 [params]
 

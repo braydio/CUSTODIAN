@@ -208,7 +208,16 @@ The audit checks all full-composition PNGs and fails if any PlayableRoot terrain
 
 The live ingress approach has a runtime fitting table in `res://game/world/approaches/sundered_keep/sundered_keep_approach.gd`. It intentionally scales `res://content/sprites/world/return_causeway/` path/underlay/occlusion PNGs and `res://content/backgrounds/sundered_keep/` vista mattes into target world rectangles, including a thin `2100x130` `WallShadowOccluder`, so oversized generated overlay exports cannot appear as raw black curtains over the scene.
 
-The Sundered Keep front-gate map is the default Vista endpoint. `sundered_keep_approach_smoke.gd` validates that default plus mapper-authored collision; the transition-chain smoke validates both direct Vista -> Keep placement and the optional Vista -> Causeway -> Keep branch, including active-level adoption, source visibility, and the Keep-to-Causeway return anchor.
+The production route always continues from Vista to Return Causeway before Front Gate:
+
+```text
+@world_origin
+  -> vista_approach
+  -> return_causeway
+  -> front_gate
+```
+
+`sundered_keep_approach_smoke.gd` validates the Vista scene and mapper-authored collision. The production graph smoke validates forward and reverse traversal, active-level adoption, source cache behavior, and exact world-origin restoration only after route exfil. Direct Vista-to-Front-Gate traversal exists only in the explicit `debug_direct_keep` profile.
 
 ## Reference Blockout Implementation
 

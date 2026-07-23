@@ -28,6 +28,35 @@ func _init() -> void:
 	var ranged_fx := operator.get_node_or_null("PrimaryWeaponSocket/RangedFxOverlaySprite") as AnimatedSprite2D
 	var failures: Array[String] = []
 
+	_check_frame_count(
+		lower,
+		&"unarmed_run_up_right",
+		6,
+		"new NE lower-body run",
+		failures
+	)
+	_check_frame_count(
+		lower,
+		&"unarmed_run_up_left",
+		6,
+		"new NW lower-body run",
+		failures
+	)
+	_check_frame_count(
+		lower,
+		&"unarmed_walk_up_right",
+		6,
+		"new NE lower-body walk",
+		failures
+	)
+	_check_frame_count(
+		lower,
+		&"unarmed_walk_up_left",
+		6,
+		"new NW lower-body walk",
+		failures
+	)
+
 	operator.set("using_unarmed", true)
 	operator.set("combat_loadout_mode", &"melee")
 	operator.set("velocity", Vector2.ZERO)
@@ -134,3 +163,24 @@ func _check_layer(sprite: AnimatedSprite2D, label: String, expected_animation: S
 func _check_hidden(sprite: AnimatedSprite2D, message: String, failures: Array[String]) -> void:
 	if sprite != null and sprite.visible:
 		failures.append(message)
+
+
+func _check_frame_count(
+	sprite: AnimatedSprite2D,
+	animation: StringName,
+	expected_count: int,
+	label: String,
+	failures: Array[String]
+) -> void:
+	if sprite == null or sprite.sprite_frames == null:
+		failures.append("%s has no SpriteFrames" % label)
+		return
+	if not sprite.sprite_frames.has_animation(animation):
+		failures.append("%s is missing %s" % [label, String(animation)])
+		return
+	var actual_count := sprite.sprite_frames.get_frame_count(animation)
+	if actual_count != expected_count:
+		failures.append(
+			"%s has %d frames, expected %d"
+			% [label, actual_count, expected_count]
+		)

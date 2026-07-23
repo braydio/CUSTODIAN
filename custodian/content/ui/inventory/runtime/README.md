@@ -23,5 +23,14 @@ runtime/
     └── inventory_ornament_se.png
 ```
 
-Use 64x64 or larger square item icons. Text remains live Godot `Label` text; do
-not bake item names, counts, descriptions, or prompts into images.
+Canonical item icons use a transparent `128x128px` canvas with centered visible
+art approximately `88-104px` across its longest edge and nearest-neighbor
+filtering. Existing legacy art can be normalized without redrawing it:
+
+```bash
+python custodian/tools/ui/normalize_inventory_icons.py --apply
+python custodian/tools/ui/normalize_inventory_icons.py --check
+```
+
+Text remains live Godot `Label` text; do not bake item names, counts,
+descriptions, or prompts into images.

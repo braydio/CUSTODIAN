@@ -2,6 +2,7 @@ extends SceneTree
 
 const INVENTORY_SCENE := "res://game/ui/inventory/inventory_ui.tscn"
 const ASSET_MANIFEST := "res://content/ui/inventory/runtime/inventory_ui_asset_manifest.json"
+const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 
 class MockOperator:
 	extends Node
@@ -48,7 +49,35 @@ func _initialize() -> void:
 	var page_root := _find_node_named(inventory_ui, "PageRoot") as Control
 	var production_frame := _find_node_named(inventory_ui, "ProductionFrame") as NinePatchRect
 	_assert(page_root != null and page_root.clip_contents, "PageRoot should clip overflowing page content")
-	_assert(production_frame != null and not production_frame.draw_center, "production frame should not draw a center mural behind panels")
+	_assert(
+		production_frame != null
+		and not production_frame.draw_center
+		and not production_frame.visible,
+		"overscaled production frame should not compete with Ledger content"
+	)
+	var backdrop := _find_node_named(inventory_ui, "Backdrop") as ColorRect
+	var backdrop_material := backdrop.material as ShaderMaterial if backdrop != null else null
+	_assert(
+		backdrop_material != null
+		and backdrop_material.shader != null
+		and backdrop_material.shader.resource_path.ends_with("reliquary_inventory_backdrop.gdshader"),
+		"inventory backdrop should use Black Reliquary Archive Glass"
+	)
+	_assert(
+		backdrop_material != null
+		and backdrop_material.get_shader_parameter("exposure") <= 0.5
+		and backdrop_material.get_shader_parameter("highlight_compression") >= 0.9,
+		"archive glass should suppress and compress world highlights"
+	)
+	_assert_archive_glass_highlight_contract(backdrop_material)
+	var footer := _find_node_named(inventory_ui, "InputFooter") as PanelContainer
+	var footer_style := footer.get_theme_stylebox("panel") as StyleBoxFlat if footer != null else null
+	_assert(
+		footer != null and footer.custom_minimum_size.y >= 36.0
+		and footer_style != null and footer_style.bg_color.a >= 0.95,
+		"input prompts should sit on a dedicated near-opaque footer strip"
+	)
+	_assert(_find_node_named(inventory_ui, "PageHint") == null, "detached page hint should not remain")
 	_assert(status_page != null, "status page root missing")
 	_assert(_find_node_named(inventory_ui, "StatusButton") != null, "status tab button missing")
 	_assert(_find_node_named(inventory_ui, "HistoryButton") != null, "history tab button missing")
@@ -75,6 +104,14 @@ func _initialize() -> void:
 	inventory_ui.call("_select_page", "ledger")
 	await process_frame
 	_assert(ledger_page != null and ledger_page.visible, "ledger page did not become visible")
+	var records_panel := _find_node_named(inventory_ui, "LedgerRecordsPanel") as PanelContainer
+	var records_style := records_panel.get_theme_stylebox("panel") as StyleBoxFlat if records_panel != null else null
+	_assert(
+		records_panel != null and records_style != null
+		and records_style.bg_color.a >= 0.9
+		and records_style.border_color.a >= 0.37,
+		"center Ledger register should have its own opaque bordered backing"
+	)
 	_assert(_find_node_named(inventory_ui, "Item_faint_recollection") != null, "live inventory item was not rendered")
 	_assert(_find_node_named(inventory_ui, "Item_sundered_gate_key") != null, "Sundered Gate Key was not rendered")
 	_assert(_find_node_named(inventory_ui, "Item_p9_sidearm") != null, "P-9 equipment item was not rendered")
@@ -82,6 +119,8 @@ func _initialize() -> void:
 	_assert(item_grid != null and not item_grid.get_children().is_empty(), "ledger item grid missing")
 	_assert(item_grid is GridContainer and (item_grid as GridContainer).columns >= 1 and (item_grid as GridContainer).columns <= 4, "ledger item grid columns should be responsive and clamped")
 	_assert(item_grid != null and item_grid.get_child(0).name == "Item_sundered_gate_key", "ledger should sort by class and display name")
+	var selected_mark := (item_grid.get_child(0) as Button).get_node_or_null("SelectionMark") as ColorRect
+	_assert(selected_mark != null and selected_mark.visible, "selected card should expose its persistent gold registration mark")
 	var filter_button := _find_node_named(inventory_ui, "FilterButton") as Button
 	var sort_button := _find_node_named(inventory_ui, "SortButton") as Button
 	_assert(filter_button != null and filter_button.text.contains("FILTER · ALL"), "filter should be a truthful focusable control")
@@ -90,6 +129,18 @@ func _initialize() -> void:
 	var cognitive_category := _find_node_named(inventory_ui, "CategoryCognitiveButton") as Button
 	_assert(all_category != null and all_category.text.contains("4"), "All category should expose its current unit count")
 	_assert(cognitive_category != null and cognitive_category.text.contains("2"), "Cognitive category should expose its current unit count")
+	sort_button.emit_signal("pressed")
+	await process_frame
+	_assert(item_grid.get_child(0).name == "Item_faint_recollection", "name-first sort control did not reorder the register")
+	sort_button.emit_signal("pressed")
+	await process_frame
+	_assert(item_grid.get_child(0).name == "Item_sundered_gate_key", "class-first sort control did not restore deterministic order")
+	filter_button.emit_signal("pressed")
+	await process_frame
+	_assert(filter_button.text.contains("FILTER · KEY OBJECTS"), "filter control did not advance to Key Objects")
+	_assert(item_grid.get_child_count() == 1 and item_grid.get_child(0).name == "Item_sundered_gate_key", "filter control did not constrain the register")
+	inventory_ui.call("_select_category", "all")
+	await process_frame
 	var detail_equip_button := _find_node_named(inventory_ui, "EquipButton")
 	var description_scroll := _find_node_named(inventory_ui, "DescriptionScroll") as ScrollContainer
 	_assert(detail_equip_button != null and not _has_scroll_ancestor(detail_equip_button), "inspection action should be pinned outside scrolling content")
@@ -97,14 +148,39 @@ func _initialize() -> void:
 	var key_quantity := (_find_node_named(inventory_ui, "Item_sundered_gate_key") as Button).get_node_or_null("ItemQuantity") as Label
 	_assert(key_quantity != null and not key_quantity.visible, "key-object cards should not display stack quantity")
 	var p9_card := _find_node_named(inventory_ui, "Item_p9_sidearm") as Button
-	var p9_name := p9_card.get_node_or_null("ItemName") as Label
+	var p9_name := _find_node_named(p9_card, "ItemName") as Label
 	_assert(p9_name != null and p9_name.text == "P-9 FIELD SIDEARM", "item card should keep its name in a dedicated text region")
 	_assert(p9_card.custom_minimum_size == Vector2(180, 190), "item cards should use the 180x190 reference footprint")
-	var p9_icon := p9_card.get_node_or_null("ItemIcon") as TextureRect
-	_assert(p9_icon != null and p9_icon.size.x >= 112.0, "item cards should use the normalized 112px icon viewport")
+	var p9_icon := _find_node_named(p9_card, "ItemIcon") as TextureRect
+	var p9_icon_viewport := _find_node_named(p9_card, "IconViewport") as CenterContainer
+	_assert(
+		p9_icon != null and p9_icon.custom_minimum_size == Vector2(118, 118)
+		and p9_icon_viewport != null and p9_icon_viewport.custom_minimum_size == Vector2(118, 118),
+		"item cards should keep a fixed 118px icon viewport"
+	)
+	_assert(
+		p9_icon != null and _rect_contains(p9_card.get_global_rect(), p9_icon.get_global_rect()),
+		"item icon intersects its card boundary"
+	)
 	_assert(
 		p9_icon != null and p9_icon.texture != null and p9_icon.texture.resource_path.ends_with("p9_custodian_sidearm__portrait__inventory__default__omni__1f__512.png"),
 		"P-9 should resolve its production inventory portrait"
+	)
+	var first_card := item_grid.get_child(0) as Button
+	var second_card := item_grid.get_child(1) as Button
+	var first_mark := first_card.get_node_or_null("SelectionMark") as ColorRect
+	second_card.grab_focus()
+	await process_frame
+	var second_focus_corners := second_card.get_node_or_null("FocusCorners") as Control
+	var first_style := first_card.get_theme_stylebox("normal") as StyleBoxFlat
+	_assert(
+		first_mark != null and first_mark.visible and first_style != null
+		and first_style.border_color.is_equal_approx(first_mark.color),
+		"moving focus should not erase the persistent selected-item state"
+	)
+	_assert(
+		second_focus_corners != null and second_focus_corners.visible,
+		"focused item should use cyan corner marks"
 	)
 	inventory_ui.call("_select_category", "relic")
 	await process_frame
@@ -115,12 +191,19 @@ func _initialize() -> void:
 	await process_frame
 	_assert(equipment_page != null and equipment_page.visible, "equipment page did not become visible")
 	var equipment_action := _find_node_named(inventory_ui, "EquipmentActionButton") as Button
+	var available_p9 := _find_node_named(inventory_ui, "AvailableEquipment_p9_sidearm") as Button
+	_assert(available_p9 != null, "available Equipment column should list the carried P-9")
 	_assert(equipment_action != null and equipment_action.text == "EQUIP SIDEARM" and not equipment_action.disabled, "equipment page should offer the carried P-9")
 	equipment_action.emit_signal("pressed")
 	await process_frame
 	_assert(str(inventory_manager.call("get_equipped", &"sidearm")) == "p9_sidearm", "equipment page should fill the sidearm slot")
 	_assert(mock_operator.sidearm_equipped, "equipment page should activate the Operator sidearm gate")
 	_assert(equipment_action.text == "UNEQUIP", "filled equipment slot should offer unequip")
+	_assert(
+		_find_node_named(inventory_ui, "AvailableEquipment_p9_sidearm") == null
+		and (_find_node_named(inventory_ui, "AvailableEquipmentEmpty") as Label).visible,
+		"equipped gear should leave the Available Equipment column"
+	)
 	equipment_action.emit_signal("pressed")
 	await process_frame
 	_assert(str(inventory_manager.call("get_equipped", &"sidearm")).is_empty(), "equipment page should clear the sidearm slot")
@@ -132,7 +215,7 @@ func _initialize() -> void:
 		await process_frame
 	var blackwood_button := _find_node_named(inventory_ui, "Item_blackwood")
 	_assert(blackwood_button != null, "blackwood resource item was not rendered")
-	var blackwood_icon := blackwood_button.get_node_or_null("ItemIcon") as TextureRect if blackwood_button != null else null
+	var blackwood_icon := _find_node_named(blackwood_button, "ItemIcon") as TextureRect if blackwood_button != null else null
 	_assert(blackwood_icon != null, "blackwood item icon control missing")
 	_assert(blackwood_icon != null and blackwood_icon.material is ShaderMaterial, "blackwood item icon ember material missing")
 	var blackwood_material := blackwood_icon.material as ShaderMaterial if blackwood_icon != null else null
@@ -140,11 +223,11 @@ func _initialize() -> void:
 	_assert(blackwood_material != null and is_equal_approx(float(blackwood_material.get_shader_parameter("ember_intensity")), 0.25), "blackwood ember material intensity changed unexpectedly")
 	_assert(
 		blackwood_icon != null and blackwood_icon.texture != null
-		and blackwood_icon.texture.resource_path == "res://content/ui/inventory/icons/resources/icon_blackwood.png",
-		"blackwood item did not resolve its dedicated resource icon"
+		and blackwood_icon.texture.resource_path == "res://content/ui/inventory/runtime/icons/icon_blackwood.png",
+		"blackwood item did not resolve its normalized canonical runtime icon"
 	)
 	var recollection_button := _find_node_named(inventory_ui, "Item_faint_recollection")
-	var recollection_icon := recollection_button.get_node_or_null("ItemIcon") as TextureRect if recollection_button != null else null
+	var recollection_icon := _find_node_named(recollection_button, "ItemIcon") as TextureRect if recollection_button != null else null
 	var recollection_material := recollection_icon.material as ShaderMaterial if recollection_icon != null else null
 	_assert(
 		recollection_icon != null
@@ -186,6 +269,38 @@ func _validate_asset_manifest() -> void:
 		_assert(ResourceLoader.exists(fallback_path), "inventory fallback asset does not resolve: %s" % fallback_path)
 
 
+func _assert_archive_glass_highlight_contract(material: ShaderMaterial) -> void:
+	if material == null:
+		return
+	var source := Vector3.ONE
+	var luminance := _luminance(source)
+	var saturation: float = material.get_shader_parameter("saturation")
+	var compression: float = material.get_shader_parameter("highlight_compression")
+	var exposure: float = material.get_shader_parameter("exposure")
+	var tint_strength: float = material.get_shader_parameter("tint_strength")
+	var tint: Color = material.get_shader_parameter("reliquary_tint")
+	var graded := Vector3(luminance, luminance, luminance).lerp(
+		source,
+		saturation
+	)
+	graded /= Vector3.ONE + graded * compression
+	graded *= exposure
+	graded = graded.lerp(Vector3(tint.r, tint.g, tint.b), tint_strength)
+	var active_text := Vector3(
+		Palette.GOLD_TEXT.r,
+		Palette.GOLD_TEXT.g,
+		Palette.GOLD_TEXT.b
+	)
+	_assert(
+		_luminance(graded) < _luminance(active_text),
+		"archive-glass white highlight would render brighter than active UI text"
+	)
+
+
+func _luminance(value: Vector3) -> float:
+	return value.dot(Vector3(0.2126, 0.7152, 0.0722))
+
+
 func _assert(condition: bool, message: String) -> void:
 	if condition:
 		return
@@ -220,3 +335,12 @@ func _has_scroll_ancestor(node: Node) -> bool:
 			return true
 		current = current.get_parent()
 	return false
+
+
+func _rect_contains(outer: Rect2, inner: Rect2) -> bool:
+	return (
+		inner.position.x >= outer.position.x - 0.5
+		and inner.position.y >= outer.position.y - 0.5
+		and inner.end.x <= outer.end.x + 0.5
+		and inner.end.y <= outer.end.y + 0.5
+	)

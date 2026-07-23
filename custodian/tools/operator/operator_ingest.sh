@@ -108,7 +108,9 @@ if [[ "$NO_VALIDATE" -eq 0 ]]; then
   godot --headless --path custodian --script res://tools/validation/operator_modular_fast_attack_smoke.gd
   godot --headless --path custodian --script res://tools/validation/operator_modular_defense_ranged_smoke.gd
   godot --headless --path custodian --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd
-  if [[ -f custodian/content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__e__12f__96.png ]]; then
+  if [[ -f custodian/content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__critical_execution_victim_01__e__12f__96.png \
+    && -f custodian/content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__12f__96.png \
+    && -f custodian/content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__12f__96.png ]]; then
     godot --headless --path custodian --script res://tools/validation/grunt_parry_crit_reaction_smoke.gd
   fi
   echo ""

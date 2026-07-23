@@ -49,6 +49,8 @@
   "item_icon_contract": {
     "canonical_pattern": "res://content/ui/inventory/runtime/icons/icon_{item_id}.png",
     "legacy_pattern": "res://content/ui/inventory/icons/icon_{item_id}.png",
-    "recommended_size_px": [64, 64]
+    "recommended_size_px": [128, 128],
+    "visible_art_long_edge_px": {"min": 88, "max": 104},
+    "filter": "nearest"
   }
 }
