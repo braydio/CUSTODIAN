@@ -13,7 +13,7 @@ signal reveal_completed
 @export var far_fog_path := NodePath("../OcclusionRoot/ApproachFogStrip03")
 @export var edge_mist_path := NodePath("../OcclusionRoot/ApproachEdgeMistWrap")
 @export var reveal_light_path := NodePath("../OcclusionRoot/RevealMoonlightCue")
-@export var destination_prompt_path := NodePath("../EventRuntime/LevelExitAffordance")
+@export var destination_prompt_path := NodePath("../EventRuntimeRoot/LevelExitAffordance")
 
 @export_range(0.0, 0.25, 0.01) var anticipation_duration := 0.08
 @export_range(0.1, 0.6, 0.01) var peel_duration := 0.28

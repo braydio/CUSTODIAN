@@ -413,18 +413,31 @@ func _rollback(
 	reason: String
 ) -> bool:
 	_set_phase(TransitionPhase.ROLLING_BACK)
+	var source: Node = _active_session.current_instance
+	var target_owns_loader_authority: bool = (
+		target != null
+		and is_instance_valid(target)
+		and _level_loader.call("get_active_level_instance") == target
+	)
 	if target != null and is_instance_valid(target):
 		_disconnect_exits(target)
 		_level_loader.call("deactivate_instance_immediately", target)
-		if target_is_new:
-			target.queue_free()
-	var source: Node = _active_session.current_instance
+	if target_owns_loader_authority:
+		if not bool(_level_loader.call("clear_active_level", target)):
+			push_error("[RouteTraversalManager] rollback could not clear target loader authority")
+	if target != null and is_instance_valid(target) and target_is_new:
+		target.queue_free()
 	if source != null and is_instance_valid(source):
 		_level_loader.call("reactivate_instance", source, context.source_activation_state)
 		_level_loader.call("restore_active_level_identity", source_level_id, source, source_loader_context)
 		if source.has_method("refresh_route_camera"):
 			source.call("refresh_route_camera", _active_session.actor)
-		_bind_exits(source, _active_session.current_node_id)
+		var bind_result := _bind_exits(source, _active_session.current_node_id)
+		if not bool(bind_result.get("succeeded", false)):
+			push_error(
+				"[RouteTraversalManager] rollback source exit rebind failed: %s"
+				% bind_result.get("reason", "unknown failure")
+			)
 	if _active_session.actor is Node2D:
 		(_active_session.actor as Node2D).global_position = context.actor_position
 	_unlock_actor(_active_session.actor, context.actor_process_mode)

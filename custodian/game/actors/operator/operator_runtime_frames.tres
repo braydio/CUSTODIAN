@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://dfmpefen0ns4o"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://dxw57ilbpenif"]
 
 [ext_resource type="Texture2D" uid="uid://bmmw1ly83vttt" path="res://content/sprites/operator/runtime/animation_base/body/core_locomotion/death_disintigrate_base.png" id="2_aq5vh"]
 [ext_resource type="Texture2D" uid="uid://cosb1mp0q0pe2" path="res://content/sprites/operator/runtime/curated/body/melee_2h/block_enter_body_4f.png" id="4_gt11m"]

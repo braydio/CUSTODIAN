@@ -3,6 +3,15 @@
   "mode": "strip",
   "outputs": [
     {
+      "path": "enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__special_inflight_01__e__6f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 6
+      }
+    },
+    {
       "path": "enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_inflight_01__e__6f__96.png",
       "layout": "horizontal_strip",
       "select": {

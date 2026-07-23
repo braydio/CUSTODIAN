@@ -69,6 +69,7 @@ func _write_resources(suffix: String, options: Dictionary) -> Dictionary:
 	var safe := suffix.validate_filename().to_snake_case()
 	var root := "user://route_fixture_%s" % safe
 	var level_a_scene := "%s_a.tscn" % root
+	var level_a_retry_scene := "%s_a_retry.tscn" % root
 	var level_b_scene := "%s_b.tscn" % root
 	var level_a_definition := "%s_a.json" % root
 	var level_b_definition := "%s_b.json" % root
@@ -79,7 +80,13 @@ func _write_resources(suffix: String, options: Dictionary) -> Dictionary:
 	var b_flags: Dictionary = (options.get("b_flags", {}) as Dictionary).duplicate()
 	a_flags["trigger_exits"] = bool(options.get("trigger_exits", false))
 	b_flags["trigger_exits"] = bool(options.get("trigger_exits", false))
-	_write_level_scene(level_a_scene, ["continue", "return_world"], Vector2(100.0, 10.0), a_flags)
+	var a_exit_ids: Array[String] = ["continue", "return_world"]
+	if bool(a_flags.get("duplicate_exit_id", false)):
+		a_exit_ids.append("continue")
+	if bool(a_flags.get("empty_exit_id", false)):
+		a_exit_ids.append("")
+	_write_level_scene(level_a_scene, a_exit_ids, Vector2(100.0, 10.0), a_flags)
+	_write_level_scene(level_a_retry_scene, ["continue", "return_world"], Vector2(100.0, 10.0), {})
 	_write_level_scene(level_b_scene, ["backtrack", "return_world"], Vector2(300.0, 20.0), b_flags, "OtherSpawn" if bool(options.get("b_missing_actual_spawn", false)) else "EntrySpawn")
 	_write_json(level_a_definition, _level_definition("fixture_a", level_a_scene, str(options.get("a_cache", "keep_during_route")), str(options.get("a_state", "session"))))
 	_write_json(level_b_definition, _level_definition("fixture_b", level_b_scene, str(options.get("b_cache", "keep_during_route")), str(options.get("b_state", "session"))))
@@ -94,7 +101,14 @@ func _write_resources(suffix: String, options: Dictionary) -> Dictionary:
 			if edge.edge_id == "a_to_b": edge.target_spawn_id = "MissingSpawn"
 	_write_json(route_definition, route)
 	_write_json(route_index, {"schema": "custodian.route_registry.v1", "definitions": [route_definition]})
-	return {"level_index": level_index, "route_index": route_index, "route_definition": route_definition}
+	return {
+		"level_index": level_index,
+		"route_index": route_index,
+		"route_definition": route_definition,
+		"level_a_scene": level_a_scene,
+		"level_a_retry_scene": level_a_retry_scene,
+		"level_b_scene": level_b_scene,
+	}
 
 
 func _write_level_scene(path: String, exit_ids: Array[String], spawn_position: Vector2, flags: Dictionary, marker_name := "EntrySpawn") -> void:
@@ -104,6 +118,7 @@ func _write_level_scene(path: String, exit_ids: Array[String], spawn_position: V
 	level.fail_activation = bool(flags.get("fail_activation", false))
 	level.fail_camera = bool(flags.get("fail_camera", false))
 	level.fail_state_restore = bool(flags.get("fail_state_restore", false))
+	level.fail_completion = bool(flags.get("fail_completion", false))
 	var collision_root := Node2D.new()
 	collision_root.name = "Collision"
 	level.add_child(collision_root)
@@ -131,7 +146,7 @@ func _write_level_scene(path: String, exit_ids: Array[String], spawn_position: V
 		shape.name = "CollisionShape2D"
 		shape.shape = RectangleShape2D.new()
 		exit.add_child(shape)
-		exits.add_child(exit)
+		exits.add_child(exit, true)
 		exit.owner = level
 		shape.owner = level
 	var packed := PackedScene.new()

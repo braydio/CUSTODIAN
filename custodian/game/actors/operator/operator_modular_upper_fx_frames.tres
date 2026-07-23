@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://c6pma6n8i5x5o"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://chnh2p5uony1w"]
 
 [ext_resource type="Texture2D" uid="uid://b7eol5to6x1io" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/draw_sidearm_01/operator__modular_upper_fx__sidearm__draw_sidearm_01__se__5f__96.png" id="1_odlm6"]
 [ext_resource type="Texture2D" uid="uid://bw1s3cplqtd2n" path="res://content/sprites/operator/runtime/modules/new_operator/upper_fx/actions/sidearm/draw_sidearm_01/operator__modular_upper_fx__sidearm__draw_sidearm_01__sw__5f__96.png" id="2_3ewpm"]

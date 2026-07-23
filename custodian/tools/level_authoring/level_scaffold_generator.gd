@@ -2,6 +2,9 @@ class_name LevelScaffoldGenerator
 extends RefCounted
 
 const REQUEST_SCRIPT := preload("res://tools/level_authoring/level_scaffold_request.gd")
+const LEVEL_DEFINITION_SCRIPT := preload("res://game/world/levels/level_definition.gd")
+const ROUTE_DEFINITION_SCRIPT := preload("res://game/world/routes/route_definition.gd")
+const ROUTE_VALIDATION_REGISTRY_VIEW := preload("res://tools/level_authoring/route_validation_registry_view.gd")
 const TEMPLATE_ROOT := "res://tools/level_authoring/templates"
 const GENERATOR_VERSION := 1
 
@@ -18,6 +21,9 @@ func generate(data: Dictionary) -> Dictionary:
 	if not bool(route_preflight.get("ok", false)):
 		return route_preflight
 	var rendered := _render_files(request, paths)
+	var route_contract := _validate_rendered_route_contract(request, paths, rendered)
+	if not bool(route_contract.get("ok", false)):
+		return route_contract
 	var preflight := _preflight(request, paths, rendered)
 	if not bool(preflight.get("ok", false)):
 		return preflight
@@ -30,6 +36,88 @@ func generate(data: Dictionary) -> Dictionary:
 			"registry_path": paths.registry,
 		}
 	return _commit(request, paths, rendered)
+
+
+func _validate_rendered_route_contract(
+	request: RefCounted,
+	paths: Dictionary,
+	rendered: Dictionary
+) -> Dictionary:
+	if not request.create_route and not request.append_to_route:
+		return {"ok": true}
+	var registry_view := ROUTE_VALIDATION_REGISTRY_VIEW.new()
+	var existing_result := _load_existing_level_definitions_for_validation(paths, registry_view)
+	if not bool(existing_result.get("ok", false)):
+		return existing_result
+	var route_registry_result := _validate_existing_route_registry_for_validation(paths)
+	if not bool(route_registry_result.get("ok", false)):
+		return route_registry_result
+	var staged_data: Variant = JSON.parse_string(str(rendered.get(paths.definition, "")))
+	if not (staged_data is Dictionary):
+		return _failure(["staged level definition did not parse"])
+	if str((staged_data as Dictionary).get("schema", "")) != "custodian.level_definition.v1":
+		return _failure(["staged level definition has invalid schema"])
+	var staged_definition := LEVEL_DEFINITION_SCRIPT.new()
+	staged_definition.call("configure_from_dictionary", staged_data)
+	var staged_errors: PackedStringArray = staged_definition.call("validate", false)
+	if not staged_errors.is_empty():
+		return _failure(staged_errors)
+	registry_view.add_level_definition(staged_definition)
+	var route_definition := ROUTE_DEFINITION_SCRIPT.new()
+	route_definition.call("configure_from_dictionary", request.route_data)
+	var route_errors: PackedStringArray = route_definition.call("validate", registry_view)
+	if not route_errors.is_empty():
+		return _failure(route_errors)
+	return {"ok": true}
+
+
+func _load_existing_level_definitions_for_validation(
+	paths: Dictionary,
+	registry_view: RefCounted
+) -> Dictionary:
+	if not FileAccess.file_exists(paths.registry):
+		return {"ok": true}
+	var registry_data := _read_json(paths.registry)
+	if str(registry_data.get("schema", "")) != "custodian.level_registry.v1":
+		return _failure(["invalid level registry schema: %s" % paths.registry])
+	var definitions_value: Variant = registry_data.get("definitions", [])
+	if not (definitions_value is Array):
+		return _failure(["invalid level registry definitions: expected array"])
+	for definition_reference: Variant in definitions_value:
+		var definition_path := _resolve_generated_reference(paths, str(definition_reference))
+		var definition_data := _read_json(definition_path)
+		if definition_data.is_empty():
+			return _failure(["level definition did not parse: %s" % definition_reference])
+		if str(definition_data.get("schema", "")) != "custodian.level_definition.v1":
+			return _failure(["invalid level definition schema: %s" % definition_reference])
+		var definition := LEVEL_DEFINITION_SCRIPT.new()
+		definition.call("configure_from_dictionary", definition_data)
+		var definition_errors: PackedStringArray = definition.call("validate")
+		if not definition_errors.is_empty():
+			return _failure(definition_errors)
+		registry_view.call("add_level_definition", definition)
+	return {"ok": true}
+
+
+func _validate_existing_route_registry_for_validation(paths: Dictionary) -> Dictionary:
+	if not FileAccess.file_exists(paths.route_registry):
+		return {"ok": true}
+	var registry_data := _read_json(paths.route_registry)
+	if str(registry_data.get("schema", "")) != "custodian.route_registry.v1":
+		return _failure(["invalid route registry schema: %s" % paths.route_registry])
+	if not (registry_data.get("definitions", []) is Array):
+		return _failure(["invalid route registry definitions: expected array"])
+	return {"ok": true}
+
+
+func _resolve_generated_reference(paths: Dictionary, reference: String) -> String:
+	if reference.begins_with("res://"):
+		return str(paths.project_root).path_join(reference.trim_prefix("res://"))
+	if reference.begins_with("user://"):
+		return ProjectSettings.globalize_path(reference)
+	if reference.is_absolute_path():
+		return reference
+	return str(paths.project_root).path_join(reference)
 
 
 func _resolve_output_root(requested: String) -> String:

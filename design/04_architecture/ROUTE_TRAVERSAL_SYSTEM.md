@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN
 **Status:** complete-v1
 **Runtime target:** Godot 4.x (`custodian/`)
-**Last updated:** 2026-07-21
+**Last updated:** 2026-07-23
 
 ## Purpose
 
@@ -36,7 +36,7 @@ An edge contains globally unique `edge_id`, `from_node_id`, local `exit_id`, `to
 
 ### Profile
 
-A profile names one entry edge and an explicit enabled-edge set. Exactly one enabled edge may resolve each `(from_node_id, exit_id)`. Every reachable production node must have a path to `@world_origin` unless `allow_no_exfil` is explicit.
+A profile names one entry edge and an explicit enabled-edge set. Exactly one enabled edge may resolve each `(from_node_id, exit_id)`. Every non-world node participating in an enabled edge must be reachable from the selected entry. Every reachable node must have a path to `@world_origin` unless `allow_no_exfil` is explicit; route nodes that do not participate in that profile are not required.
 
 ### Session
 
@@ -60,7 +60,7 @@ For node-to-node traversal:
 4. Disable the source, activate the target, restore target state, complete activation, and bind legal `LevelExit2D` nodes.
 5. Commit loader/session identity, apply the source cache policy, append history, unlock the actor, and emit success.
 
-Failure enters rollback: release or re-hide the incomplete target, restore source visibility/process/camera, restore actor position/process, keep loader/session identity, reset source exit locks, emit a structured failure, and return to `IDLE`. Two route nodes may never process gameplay simultaneously.
+Failure enters rollback: synchronously clear loader authority when a post-commit target owns it, release or re-hide the incomplete target, restore source visibility/process/camera and loader identity when a source exists, restore actor position/process, reset source exit locks, emit a structured failure, and return to `IDLE`. Initial-entry failure therefore leaves no active loader identity and can be retried in the same frame. Two route nodes may never process gameplay simultaneously.
 
 ## LevelLoader Boundary
 
@@ -78,6 +78,8 @@ Failure enters rollback: release or re-hide the incomplete target, restore sourc
 Adapters may isolate legacy Sundered roots only when those roots cannot expose the contract directly. They must not form a parallel loading architecture.
 
 `LevelExit2D` is a dumb `Area2D` request source. It owns only an `exit_id`, prompt, body-entry behavior, and duplicate-request lock. It contains no route, destination, scene, spawn, profile, cache, or loader authority.
+
+Production Sundered exits are authored `LevelExit2D` children in the Vista, Return Causeway, and Front Gate scenes. Their scripts may locate and position them from authored markers or tiles, but must not instantiate route exits.
 
 ## State Policies
 
@@ -112,6 +114,12 @@ front_gate → @world_origin
 
 `debug_direct_keep` resolves Vista `continue` directly to Front Gate. `causeway_only` enters Return Causeway and exfils for focused validation. Route data, not scene booleans, selects these edges.
 
+Front Gate uses `snapshot_and_unload` plus session state. Its scalar state, siege-objective dictionaries, and Great Hall ambush dictionary restore symmetrically into a new instance without replaying rewards, pickups, encounter completion, gate events, dialogue, or enemy spawning. Only coherent timer activity is resumed; live `Node` references are never serialized.
+
+## Generator Validation Boundary
+
+Route-aware scaffold generation renders the staged level definition in memory, loads existing generated level definitions through a validation-only registry view, configures the complete proposed `RouteDefinition`, and runs full route validation before overwrite preflight or any filesystem write. Invalid schemas, references, spawns, directions, duplicate mappings/IDs, second entry edges, disconnected enabled topology, and no-exfil topology fail without changing registries, route definitions, or level directories. Dry-run performs the same validation.
+
 ## Single-Level Compatibility
 
 Production ingress for a level-only destination calls `start_single_level_route`, which creates an in-memory `@world_origin → node → @world_origin` session using `return_world`. Direct `LevelLoader.enter_level()` and `AuthoredLevel2D.return_to_main()` remain compatibility bridges outside production registry ingress.
@@ -125,12 +133,12 @@ RouteSession and node/route state have serialization-safe dictionaries. Campaign
 - Registry schema/identity/reference/spawn/profile/connectivity failures.
 - Forward/back traversal with single active authority and cache reuse.
 - Profile-specific resolution of the same local exit.
-- Rollback for load, spawn, activation, camera, and state failures.
+- Rollback for load, spawn, activation, completion, camera, state, and exit-binding failures, including initial-entry failures after loader commit.
 - Exact world-origin restoration and route cleanup.
 - All cache and state policies.
 - Physics-driven `LevelExit2D` binding.
-- Real Sundered production/debug graphs and Keep state restoration.
-- Generator create/append transaction behavior and CI runner coverage.
+- Real Sundered production/debug graphs, authored exit nodes, physics-driven production traversal, and symmetric Keep state restoration.
+- Generator create/append transaction behavior, complete pre-write route validation, and CI runner coverage.
 - Static failure if active Sundered runtime regains direct transition authority.
 
 ## Non-Goals
@@ -144,4 +152,4 @@ RouteSession and node/route state have serialization-safe dictionaries. Campaign
 
 ## V1 Validation Record
 
-Completed 2026-07-21 with Godot 4.7. The project import, `tools/validation/run_route_pipeline_suite.sh`, the authored-level lifecycle matrix, Sundered ingress/approach/chain regressions, `architecture_ownership_smoke.py`, and the no-direct-transition-authority search all passed. The rollback smoke intentionally logs controlled target load, spawn, activation, camera, and state-preflight failures before reporting PASS.
+Completed V1 on 2026-07-21 and hardened on 2026-07-23 with Godot 4.7. The hardening adds synchronous loader-authority cleanup after post-commit entry failure, symmetric nested Front Gate state, disconnected-profile rejection, full generator route validation before writes, and authored production Sundered exits. The route runner, authored-level lifecycle matrix, focused Sundered state/graph/exit tests, generator immutability tests, and no-direct-transition-authority search are the acceptance boundary. Controlled failure tests intentionally log their rejected transitions before reporting PASS.

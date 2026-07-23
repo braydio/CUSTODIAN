@@ -149,24 +149,38 @@ func _validate_profile(profile: RefCounted, errors: PackedStringArray) -> void:
 		if exit_keys.has(key):
 			errors.append("profile %s has duplicate exit mapping %s" % [profile.profile_id, key])
 		exit_keys[key] = edge_id
-	if entry != null and not profile.allow_no_exfil:
+	if entry != null:
 		_validate_connectivity(profile, entry.to_node_id, errors)
 
 
 func _validate_connectivity(profile: RefCounted, entry_node_id: StringName, errors: PackedStringArray) -> void:
 	var adjacency: Dictionary = {}
+	var participating_nodes: Dictionary = {}
 	for edge_id: StringName in profile.enabled_edge_ids:
 		var edge := get_edge(edge_id)
-		if edge == null or edge.from_node_id == WORLD_ORIGIN:
+		if edge == null:
+			continue
+		if edge.from_node_id != WORLD_ORIGIN:
+			participating_nodes[edge.from_node_id] = true
+		if edge.to_node_id != WORLD_ORIGIN:
+			participating_nodes[edge.to_node_id] = true
+		if edge.from_node_id == WORLD_ORIGIN:
 			continue
 		if not adjacency.has(edge.from_node_id):
 			adjacency[edge.from_node_id] = []
 		(adjacency[edge.from_node_id] as Array).append(edge.to_node_id)
 	var reachable := _walk(entry_node_id, adjacency, false)
-	for node_id: Variant in reachable.keys():
+	for node_id_variant: Variant in participating_nodes.keys():
+		var node_id := node_id_variant as StringName
+		if not reachable.has(node_id):
+			errors.append("profile %s contains unreachable node %s" % [profile.profile_id, node_id])
+	if profile.allow_no_exfil:
+		return
+	for node_id_variant: Variant in reachable.keys():
+		var node_id := node_id_variant as StringName
 		if node_id == WORLD_ORIGIN:
 			continue
-		if not _can_reach_world(node_id as StringName, adjacency):
+		if not _can_reach_world(node_id, adjacency):
 			errors.append("profile %s node %s has no path to @world_origin" % [profile.profile_id, node_id])
 
 

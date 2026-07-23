@@ -1,6 +1,7 @@
 {
 	"manifest": "res://content/sprites/_pipeline/inbox/enemy_grunt__body__melee__special_inflight_01__e__6f__96.json",
 	"outputs": [
+		"res://content/sprites/enemies/enemy_grunt/runtime/body/melee/enemy_grunt__body__melee__special_inflight_01__e__6f__96.png",
 		"res://content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__melee__special_inflight_01__e__6f__96.png",
 		"res://content/sprites/enemies/enemy_grunt/enemy_grunt__body__melee__special_inflight_01__e__6f__96.png"
 	],
@@ -8,5 +9,5 @@
 		"enemy_runtime_import"
 	],
 	"source": "res://content/sprites/_pipeline/inbox/enemy_grunt__body__melee__special_inflight_01__e__6f__96.png",
-	"timestamp_utc": "2026-07-13 21:56:02"
+	"timestamp_utc": "2026-07-22 23:26:35"
 }

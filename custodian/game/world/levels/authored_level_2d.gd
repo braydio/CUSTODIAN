@@ -88,16 +88,16 @@ func capture_route_state() -> Dictionary:
 	return {}
 
 
-func restore_route_state(_state: Dictionary) -> void:
-	pass
+func restore_route_state(_state: Dictionary) -> bool:
+	return true
 
 
 func prepare_route_deactivation(_context: Dictionary) -> void:
 	pass
 
 
-func complete_route_activation(_context: Dictionary) -> void:
-	pass
+func complete_route_activation(_context: Dictionary) -> bool:
+	return true
 
 
 func refresh_route_camera(actor: Node) -> bool:

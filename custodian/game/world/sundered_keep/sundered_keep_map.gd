@@ -50,7 +50,6 @@ const SUNDERED_GATE_KEY_FLAVOR := "A corroded winch key stamped with the keep's 
 const SIDEARM_LOCKER_ITEM_NAME := "P-9 Field Sidearm"
 const SIDEARM_LOCKER_PICKUP_MESSAGE := "P-9 FIELD SIDEARM ACQUIRED"
 const SIDEARM_LOCKER_ITEM_ID := &"p9_sidearm"
-const LEVEL_EXIT_SCRIPT := preload("res://game/world/levels/level_exit_2d.gd")
 
 const WALL_ASSET_DIRS := [
 	"res://content/tiles/sundered_keep/entrance/causeway_walls",
@@ -267,12 +266,27 @@ func capture_route_state() -> Dictionary:
 	}
 
 
-func restore_route_state(state: Dictionary) -> void:
+func can_restore_route_state(state: Dictionary) -> bool:
+	if state.has("siege_objectives") \
+	and not (state.get("siege_objectives") is Dictionary):
+		return false
+	if state.has("great_hall_ambush") \
+	and not (state.get("great_hall_ambush") is Dictionary):
+		return false
+	return true
+
+
+func restore_route_state(state: Dictionary) -> bool:
+	if not can_restore_route_state(state):
+		return false
 	_has_sundered_gate_key = bool(state.get("has_sundered_gate_key", false))
 	_restore_main_gate_open_without_events(bool(state.get("main_gate_open", false)))
 	_return_mooring_created = bool(state.get("return_mooring_created", _return_mooring_created))
 	_set_return_mooring_active(_return_mooring_created)
-	_set_great_hall_door_open(bool(state.get("great_hall_door_open", false)))
+	_set_great_hall_door_open(
+		bool(state.get("great_hall_door_open", false)),
+		false
+	)
 	_sidearm_locker_opened = bool(state.get("sidearm_locker_opened", false))
 	_last_routekeeper_trace_recovered = bool(state.get("routekeeper_trace_recovered", false))
 	_siege_started = bool(state.get("siege_started", false))
@@ -286,6 +300,91 @@ func restore_route_state(state: Dictionary) -> void:
 	if _sidearm_locker_opened and _sidearm_locker_interaction != null and is_instance_valid(_sidearm_locker_interaction):
 		_sidearm_locker_interaction.remove_from_group("interactable")
 		_sidearm_locker_interaction.visible = false
+	if not _restore_siege_objective_states(
+		state.get("siege_objectives", {}) as Dictionary
+	):
+		return false
+	if not _restore_great_hall_ambush_state(
+		state.get("great_hall_ambush", {}) as Dictionary
+	):
+		return false
+	_restore_siege_runtime_after_route_load()
+	_refresh_hud_state()
+	return true
+
+
+func _restore_siege_objective_states(states: Dictionary) -> bool:
+	for objective_id_variant: Variant in states.keys():
+		var objective_id := StringName(str(objective_id_variant))
+		var objective: Node = _siege_objectives.get(String(objective_id)) as Node
+		if objective == null or not is_instance_valid(objective):
+			push_error(
+				"[SunderedKeep] Missing siege objective during route restore: %s"
+				% objective_id
+			)
+			return false
+		if not objective.has_method("restore_route_state"):
+			push_error(
+				"[SunderedKeep] Siege objective lacks route-state restoration: %s"
+				% objective_id
+			)
+			return false
+		var objective_state: Variant = states[objective_id_variant]
+		if not (objective_state is Dictionary):
+			return false
+		var restored: Variant = objective.call(
+			"restore_route_state",
+			objective_state as Dictionary
+		)
+		if restored is bool and not bool(restored):
+			return false
+	return true
+
+
+func _restore_great_hall_ambush_state(state: Dictionary) -> bool:
+	if state.is_empty():
+		return true
+	if _great_hall_marine_ambush == null \
+	or not is_instance_valid(_great_hall_marine_ambush):
+		push_error(
+			"[SunderedKeep] Great Hall ambush is unavailable during route restore"
+		)
+		return false
+	if not _great_hall_marine_ambush.has_method("restore_route_state"):
+		push_error(
+			"[SunderedKeep] Great Hall ambush lacks route-state restoration"
+		)
+		return false
+	var restored: Variant = _great_hall_marine_ambush.call(
+		"restore_route_state",
+		state
+	)
+	return not (restored is bool) or bool(restored)
+
+
+func _restore_siege_runtime_after_route_load() -> void:
+	_siege_live_enemies.clear()
+	_siege_required_enemy_ids.clear()
+	_siege_wave_spawning = false
+	if _siege_state == "active" and _siege_started:
+		_ensure_siege_timer()
+	if _siege_timer == null:
+		return
+	if _siege_game_over_triggered:
+		_siege_timer.stop()
+		return
+	match _siege_state:
+		"active":
+			if _siege_started \
+			and is_inside_tree() \
+			and _siege_timer.is_stopped():
+				_siege_timer.start()
+			elif not _siege_started:
+				_siege_timer.stop()
+		"secured", "collapsed", "dormant":
+			_siege_timer.stop()
+		_:
+			_siege_timer.stop()
 
 
 func _restore_main_gate_open_without_events(open: bool) -> void:
@@ -310,8 +409,9 @@ func prepare_route_deactivation(_context: Dictionary) -> void:
 	_set_hud_active(false)
 
 
-func complete_route_activation(_context: Dictionary) -> void:
+func complete_route_activation(_context: Dictionary) -> bool:
 	_set_hud_active(true)
+	return true
 
 
 func refresh_route_camera(actor: Node) -> bool:
@@ -1400,44 +1500,17 @@ func _add_return_gate() -> void:
 		entry_spawn.name = "EntrySpawn"
 		entry_spawn.position = _tile_center(entrance_tile)
 		add_child(entry_spawn)
-	var exits := get_node_or_null("Exits") as Node2D
-	if exits == null:
-		exits = Node2D.new()
-		exits.name = "Exits"
-		add_child(exits)
-	for child in exits.get_children():
-		child.free()
-	_route_backtrack_exit = _create_route_exit(exits, "Exit_Backtrack", &"backtrack", _tile_center(return_gate_tile))
-	_route_exfil_exit = _create_route_exit(
-		exits,
-		"Exit_Exfil",
-		&"exfil",
-		_tile_center(return_mooring_origin_tile + Vector2i(2, 2)),
-		false
-	)
+	_route_backtrack_exit = get_node_or_null("Exits/Exit_Backtrack") as LevelExit2D
+	_route_exfil_exit = get_node_or_null("Exits/Exit_Exfil") as LevelExit2D
+	if _route_backtrack_exit == null:
+		push_error("[SunderedKeep] Missing authored Exit_Backtrack")
+	else:
+		_route_backtrack_exit.position = _tile_center(return_gate_tile)
+	if _route_exfil_exit == null:
+		push_error("[SunderedKeep] Missing authored Exit_Exfil")
+	else:
+		_route_exfil_exit.position = _tile_center(return_mooring_origin_tile + Vector2i(2, 2))
 	_return_gate = _route_backtrack_exit
-
-
-func _create_route_exit(
-	parent: Node2D,
-	node_name: String,
-	exit_id: StringName,
-	exit_position: Vector2,
-	trigger_on_enter := true
-) -> LevelExit2D:
-	var route_exit := LEVEL_EXIT_SCRIPT.new() as LevelExit2D
-	route_exit.name = node_name
-	route_exit.exit_id = exit_id
-	route_exit.trigger_on_body_entered = trigger_on_enter
-	route_exit.position = exit_position
-	var collision := CollisionShape2D.new()
-	collision.name = "CollisionShape2D"
-	var rectangle := RectangleShape2D.new()
-	rectangle.size = Vector2(88.0, 88.0)
-	collision.shape = rectangle
-	route_exit.add_child(collision)
-	parent.add_child(route_exit)
-	return route_exit
 
 
 func _add_cliff_edges() -> void:
@@ -2141,6 +2214,14 @@ func _start_siege() -> void:
 	_siege_live_enemies.clear()
 	_siege_required_enemy_ids.clear()
 	_spawn_siege_wave()
+	_ensure_siege_timer()
+	_siege_timer.start()
+	_update_siege_debug_label()
+	_refresh_hud_state()
+	print("[SunderedKeep] Siege active: gatehouse objectives exposed, defensive turret online, enemy pressure started.")
+
+
+func _ensure_siege_timer() -> void:
 	if _siege_timer == null:
 		_siege_timer = Timer.new()
 		_siege_timer.name = "SiegePressureTimer"
@@ -2150,10 +2231,6 @@ func _start_siege() -> void:
 		add_child(_siege_timer)
 	else:
 		_siege_timer.wait_time = max(0.5, float(_siege_config.get("pressure_interval_seconds", 5.0)))
-	_siege_timer.start()
-	_update_siege_debug_label()
-	_refresh_hud_state()
-	print("[SunderedKeep] Siege active: gatehouse objectives exposed, defensive turret online, enemy pressure started.")
 
 
 func _on_siege_timer_timeout() -> void:
@@ -2297,11 +2374,15 @@ func _all_siege_objectives_destroyed() -> bool:
 	return true
 
 
-func _get_siege_objective_states() -> Array[Dictionary]:
-	var states: Array[Dictionary] = []
-	for objective in _siege_objectives.values():
-		if objective != null and is_instance_valid(objective) and objective.has_method("get_objective_status"):
-			states.append(objective.call("get_objective_status"))
+func _get_siege_objective_states() -> Dictionary:
+	var states: Dictionary = {}
+	for objective_id_variant: Variant in _siege_objectives.keys():
+		var objective_id := StringName(str(objective_id_variant))
+		var objective: Node = _siege_objectives.get(String(objective_id)) as Node
+		if objective != null \
+		and is_instance_valid(objective) \
+		and objective.has_method("capture_route_state"):
+			states[objective_id] = objective.call("capture_route_state")
 	return states
 
 
@@ -2316,7 +2397,7 @@ func _update_siege_debug_label() -> void:
 		"SUNDERED KEEP SIEGE: %s" % _siege_state.to_upper(),
 		"Wave %d | Pressure %d" % [_siege_wave_index, _siege_pressure_tick],
 	]
-	for objective_state in _get_siege_objective_states():
+	for objective_state in _get_siege_objective_states().values():
 		lines.append("%s: %d/%d %s" % [
 			str(objective_state.get("name", "Objective")),
 			int(round(float(objective_state.get("hp", 0.0)))),
@@ -2384,13 +2465,18 @@ func _try_open_great_hall_door() -> void:
 	_set_great_hall_door_open(true)
 
 
-func _set_great_hall_door_open(open: bool) -> void:
+func _set_great_hall_door_open(open: bool, play_animation := true) -> void:
 	_great_hall_door_open = open
 	if _great_hall_door_closed_sprite != null:
 		_great_hall_door_closed_sprite.visible = true
 		if open:
-			_great_hall_door_closed_sprite.frame = 0
-			_great_hall_door_closed_sprite.play("open")
+			if play_animation:
+				_great_hall_door_closed_sprite.frame = 0
+				_great_hall_door_closed_sprite.play("open")
+			else:
+				_great_hall_door_closed_sprite.stop()
+				var frame_count := _great_hall_door_closed_sprite.sprite_frames.get_frame_count("open")
+				_great_hall_door_closed_sprite.frame = maxi(0, frame_count - 1)
 		else:
 			_great_hall_door_closed_sprite.stop()
 			_great_hall_door_closed_sprite.frame = 0
@@ -2465,8 +2551,8 @@ func _get_great_hall_marine_ambush_state() -> Dictionary:
 			"dash_ready": false,
 			"dash_fx_ready": false,
 		}
-	if _great_hall_marine_ambush.has_method("get_debug_state"):
-		return _great_hall_marine_ambush.call("get_debug_state") as Dictionary
+	if _great_hall_marine_ambush.has_method("capture_route_state"):
+		return _great_hall_marine_ambush.call("capture_route_state") as Dictionary
 	return {
 		"exists": true,
 		"state": "unknown",

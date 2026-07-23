@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://cprrhrxscuqo4"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://bdm7krmj4h7vp"]
 
 [ext_resource type="Texture2D" uid="uid://8mkm2c62rk33" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/actions/sidearm/draw_sidearm_01/operator__modular_upper_body__sidearm__draw_sidearm_01__se__5f__96.png" id="1_8seld"]
 [ext_resource type="Texture2D" uid="uid://c64l5f5r10lwx" path="res://content/sprites/operator/runtime/modules/new_operator/upper_body/actions/unarmed/fast_attack/fast_strike_01/operator__modular_upper_body__unarmed__fast_strike_01__s__3f__96.png" id="1_fi43n"]

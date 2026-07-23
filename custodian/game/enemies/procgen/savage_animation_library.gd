@@ -3,32 +3,32 @@ class_name SavageAnimationLibrary
 
 const ANIMATION_SPECS := {
 	"idle_e": {
-		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/enemy_savage__body__locomotion__idle_01__e__9f__128.png",
+		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__e__9f__128.png",
 		"frame_size": Vector2i(128, 128),
 		"fps": 6.0,
 	},
 	"idle_n": {
-		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/enemy_savage__body__locomotion__idle_01__n__5f__96.png",
+		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__n__5f__96.png",
 		"frame_size": Vector2i(96, 96),
 		"fps": 6.0,
 	},
 	"idle_s": {
-		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/enemy_savage__body__locomotion__idle_01__s__9f__95.png",
+		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__s__9f__95.png",
 		"frame_size": Vector2i(95, 95),
 		"fps": 6.0,
 	},
 	"idle_se": {
-		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/enemy_savage__body__locomotion__idle_01__se__5f__96.png",
+		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__se__5f__96.png",
 		"frame_size": Vector2i(96, 96),
 		"fps": 6.0,
 	},
 	"idle_sw": {
-		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/enemy_savage__body__locomotion__idle_01__sw__4f__96.png",
+		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__sw__4f__96.png",
 		"frame_size": Vector2i(96, 96),
 		"fps": 6.0,
 	},
 	"idle_w": {
-		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/enemy_savage__body__locomotion__idle_01__w__9f__128.png",
+		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__w__9f__128.png",
 		"frame_size": Vector2i(128, 128),
 		"fps": 6.0,
 	},

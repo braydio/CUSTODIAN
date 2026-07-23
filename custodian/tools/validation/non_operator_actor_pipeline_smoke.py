@@ -47,11 +47,12 @@ def main() -> int:
         enemy_manifest = manifests._build_manifest(enemy)
         enemy_paths = [output["path"] for output in enemy_manifest["outputs"]]
         assert enemy_paths[0] == (
-            "enemy_savage/runtime/body/locomotion/"
+            "enemies/enemy_savage/runtime/body/locomotion/"
             "enemy_savage__body__locomotion__walk_01__e__8f__96.png"
         )
         assert "enemies/enemy_savage/runtime/body/" + enemy.name in enemy_paths
         assert "enemies/enemy_savage/" + enemy.name in enemy_paths
+        assert not any(path.startswith("enemy_savage/") for path in enemy_paths)
         assert enemy_manifest["post_process"] == ["enemy_runtime_import"]
 
         ally_manifest = manifests._build_manifest(ally)
@@ -65,8 +66,8 @@ def main() -> int:
             "actor_spriteframes:allies:allied_infantry_droid"
         ]
 
-        canonical_runtime = root / "enemy_savage" / "runtime"
-        legacy_runtime = root / "enemies" / "enemy_savage" / "runtime"
+        canonical_runtime = root / "enemies" / "enemy_savage" / "runtime"
+        legacy_runtime = root / "enemy_savage" / "runtime"
         canonical_walk = canonical_runtime / "body" / "locomotion" / enemy.name
         legacy_walk = legacy_runtime / "body" / enemy.name
         legacy_idle = legacy_runtime / "body" / (

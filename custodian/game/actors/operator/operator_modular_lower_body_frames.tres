@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://bfk3dfik6hn4s"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://njj1wod8xqpt"]
 
 [ext_resource type="Texture2D" uid="uid://etauk0q4f20s" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/actions/ranged_2h/aim_01/operator__modular_lower_body__ranged_2h__aim_01__e__5f__96.png" id="1_1bdxc"]
 [ext_resource type="Texture2D" uid="uid://doycbcyp4r1ot" path="res://content/sprites/operator/runtime/modules/new_operator/lower_body/locomotion/idle_01/operator__modular_lower_body__unarmed__idle_01__s__5f__96.png" id="1_ld52m"]

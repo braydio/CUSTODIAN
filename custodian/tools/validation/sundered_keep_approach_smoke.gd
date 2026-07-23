@@ -253,7 +253,7 @@ func _init() -> void:
 			errors.append("VistaController did not raise final gate veil near exit")
 
 	if scene.get_node_or_null("ExitTransitionTrigger") != null:
-		errors.append("Legacy duplicate ExitTransitionTrigger must not coexist with EventRuntime/LevelExitTrigger")
+		errors.append("Legacy duplicate ExitTransitionTrigger must not coexist with EventRuntimeRoot exits")
 	_check_event_markers(scene, errors)
 	await _check_reveal_director(scene, errors)
 
@@ -408,9 +408,9 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 	var markers := scene.get_node_or_null("EventMarkers")
 	if markers == null:
 		errors.append("EventMarkers root missing")
-	var runtime := scene.get_node_or_null("EventRuntime")
+	var runtime := scene.get_node_or_null("EventRuntimeRoot")
 	if runtime == null:
-		errors.append("EventRuntime root missing")
+		errors.append("EventRuntimeRoot root missing")
 	if not scene.has_method("get_authoring_marker_state"):
 		errors.append("Approach does not expose get_authoring_marker_state")
 		return
@@ -422,24 +422,24 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 		if markers.get_child_count() != 0:
 			errors.append("Vista Approach must not render authoring markers at runtime")
 	if runtime != null:
-		var level_exit := runtime.get_node_or_null("Exit_Continue") as LevelExit2D
-		var world_exit := runtime.get_node_or_null("Exit_ReturnWorld") as LevelExit2D
+		var level_exit := runtime.get_node_or_null("Exits/Exit_Continue") as LevelExit2D
+		var world_exit := runtime.get_node_or_null("Exits/Exit_ReturnWorld") as LevelExit2D
 		if level_exit == null or level_exit.exit_id != &"continue":
-			errors.append("EventRuntime/Exit_Continue generic exit missing")
+			errors.append("EventRuntimeRoot/Exits/Exit_Continue authored exit missing")
 		if world_exit == null or world_exit.exit_id != &"return_world":
-			errors.append("EventRuntime/Exit_ReturnWorld generic exit missing")
+			errors.append("EventRuntimeRoot/Exits/Exit_ReturnWorld authored exit missing")
 		var affordance := runtime.get_node_or_null("LevelExitAffordance")
 		if affordance == null:
-			errors.append("EventRuntime/LevelExitAffordance missing")
+			errors.append("EventRuntimeRoot/LevelExitAffordance missing")
 		else:
 			if affordance.get_node_or_null("WalkableThreshold") == null:
 				errors.append("LevelExitAffordance missing WalkableThreshold")
 			var prompt := affordance.get_node_or_null("DestinationPrompt") as Label
-			if prompt == null or not prompt.text.contains("ENTER SUNDERED KEEP"):
+			if prompt == null or not prompt.text.contains("RETURN CAUSEWAY"):
 				errors.append("LevelExitAffordance destination prompt is missing or unclear")
 		for forbidden_name in ["GatehouseKeyInteraction", "MainGateInteraction", "MainGateBlocker", "EnemySpawnWestSpawnNode", "EnemySpawnGateSpawnNode"]:
 			if runtime.get_node_or_null(forbidden_name) != null:
-				errors.append("EventRuntime/%s belongs in the Keep entrance, not Vista Approach" % forbidden_name)
+				errors.append("EventRuntimeRoot/%s belongs in the Keep entrance, not Vista Approach" % forbidden_name)
 
 
 func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
@@ -460,7 +460,7 @@ func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
 	var far_fog := scene.get_node_or_null("OcclusionRoot/ApproachFogStrip03") as CanvasItem
 	var near_fog_origin := near_fog.position if near_fog != null else Vector2.ZERO
 	var mid_fog_origin := mid_fog.position if mid_fog != null else Vector2.ZERO
-	var prompt := scene.get_node_or_null("EventRuntime/LevelExitAffordance") as CanvasItem
+	var prompt := scene.get_node_or_null("EventRuntimeRoot/LevelExitAffordance") as CanvasItem
 	if prompt == null:
 		errors.append("RevealDirector cannot validate delayed prompt without LevelExitAffordance")
 	elif prompt.modulate.a > 0.01:

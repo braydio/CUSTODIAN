@@ -30,7 +30,6 @@ const DISTANT_KEEP_TINT := Color(0.78, 0.82, 0.88, 0.76)
 const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
 const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
-const LEVEL_EXIT_SCRIPT := preload("res://game/world/levels/level_exit_2d.gd")
 
 # Music.
 const MUSIC_PATH := "res://content/audio/music/return_causeway/return_causeway_01.ogg"
@@ -145,20 +144,21 @@ func capture_route_state() -> Dictionary:
 	}
 
 
-func restore_route_state(state: Dictionary) -> void:
+func restore_route_state(state: Dictionary) -> bool:
 	_buried_terminal_activated = bool(state.get("buried_terminal_activated", false))
 	_gatehouse_unlocked = bool(state.get("gatehouse_unlocked", _buried_terminal_activated))
 	_set_gatehouse_gate_open(bool(state.get("gatehouse_opened", false)))
 	if _buried_terminal_overlay != null:
 		_buried_terminal_overlay.visible = _buried_terminal_activated
+	return true
 
 
 func prepare_route_deactivation(_context: Dictionary) -> void:
 	pass
 
 
-func complete_route_activation(_context: Dictionary) -> void:
-	pass
+func complete_route_activation(_context: Dictionary) -> bool:
+	return true
 
 
 func refresh_route_camera(actor: Node) -> bool:
@@ -680,34 +680,21 @@ func _build_gatehouse_gate() -> void:
 # -- Travel Gate ---------------------------------------------------------------
 
 func _add_travel_gate() -> void:
-	var exits := get_node_or_null("Exits") as Node2D
-	if exits == null:
-		exits = Node2D.new()
-		exits.name = "Exits"
-		add_child(exits)
 	var keep_return_spawn := find_child("KeepReturnSpawn", true, false) as Marker2D
 	if keep_return_spawn == null:
-		keep_return_spawn = Marker2D.new()
-		keep_return_spawn.name = "KeepReturnSpawn"
+		push_error("[ReturnCauseway] Missing authored KeepReturnSpawn")
+	else:
 		keep_return_spawn.position = _tile_center(TRANSITION_TILE + Vector2i(0, 2))
-		add_child(keep_return_spawn)
-	_continue_exit = _create_route_exit(exits, "Exit_Continue", &"continue", _tile_center(TRANSITION_TILE))
-	_backtrack_exit = _create_route_exit(exits, "Exit_Backtrack", &"backtrack", _tile_center(ENTRANCE_TILE + Vector2i(0, 2)))
-
-
-func _create_route_exit(parent: Node2D, node_name: String, exit_id: StringName, exit_position: Vector2) -> LevelExit2D:
-	var route_exit := LEVEL_EXIT_SCRIPT.new() as LevelExit2D
-	route_exit.name = node_name
-	route_exit.exit_id = exit_id
-	route_exit.position = exit_position
-	var collision := CollisionShape2D.new()
-	collision.name = "CollisionShape2D"
-	var rectangle := RectangleShape2D.new()
-	rectangle.size = Vector2(88.0, 88.0)
-	collision.shape = rectangle
-	route_exit.add_child(collision)
-	parent.add_child(route_exit)
-	return route_exit
+	_continue_exit = get_node_or_null("Exits/Exit_Continue") as LevelExit2D
+	_backtrack_exit = get_node_or_null("Exits/Exit_Backtrack") as LevelExit2D
+	if _continue_exit == null:
+		push_error("[ReturnCauseway] Missing authored Exit_Continue")
+	else:
+		_continue_exit.position = _tile_center(TRANSITION_TILE)
+	if _backtrack_exit == null:
+		push_error("[ReturnCauseway] Missing authored Exit_Backtrack")
+	else:
+		_backtrack_exit.position = _tile_center(ENTRANCE_TILE + Vector2i(0, 2))
 
 
 # -- Music --------------------------------------------------------------------

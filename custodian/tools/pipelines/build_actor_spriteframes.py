@@ -77,10 +77,11 @@ def main() -> int:
     args = parser.parse_args()
 
     layers = tuple(args.layer) if args.layer else DEFAULT_LAYERS
-    actor_runtime_dirs = [
-        CONTENT_SPRITES_DIR / args.owner / "runtime",
-        CONTENT_SPRITES_DIR / args.domain / args.owner / "runtime",
-    ]
+    actor_runtime_dirs = [CONTENT_SPRITES_DIR / args.domain / args.owner / "runtime"]
+    # Allied actors retain the owner-first migration layout. Enemy actors are
+    # domain-owned and must not fall back to loose content/sprites/<enemy>/ paths.
+    if args.domain != "enemies":
+        actor_runtime_dirs.append(CONTENT_SPRITES_DIR / args.owner / "runtime")
     actor_resource_dir = ACTORS_DIR / args.domain / args.owner
 
     if not any(path.exists() for path in actor_runtime_dirs):
@@ -130,8 +131,8 @@ def _collect_sheets(runtime_dirs: list[Path], owner: str, layer: str, fallback_f
         for path in sorted(search_root.rglob("*.png")):
             sheet = _parse_sheet(path, owner, layer, fallback_frame_size)
             if sheet is not None and sheet.animation_name not in sheets_by_animation:
-                # Canonical <actor>/runtime paths are searched first and win
-                # over domain-prefixed compatibility copies.
+                # The first configured runtime root is canonical and wins over
+                # any compatibility root that follows it.
                 sheets_by_animation[sheet.animation_name] = sheet
     return sorted(sheets_by_animation.values(), key=lambda item: item.animation_name)
 

@@ -54,6 +54,53 @@ func get_objective_status() -> Dictionary:
 	}
 
 
+func capture_route_state() -> Dictionary:
+	return {
+		"objective_id": objective_id,
+		"max_health": max_health,
+		"current_health": current_health,
+		"state": state,
+		"last_damage_source": last_damage_source,
+	}
+
+
+func can_restore_route_state(route_state: Dictionary) -> bool:
+	if route_state.has("objective_id") \
+	and not (route_state.get("objective_id") is String):
+		return false
+	if route_state.has("max_health") \
+	and not (route_state.get("max_health") is float or route_state.get("max_health") is int):
+		return false
+	if route_state.has("current_health") \
+	and not (route_state.get("current_health") is float or route_state.get("current_health") is int):
+		return false
+	if route_state.has("state") \
+	and not (route_state.get("state") is String):
+		return false
+	if route_state.has("last_damage_source") \
+	and not (route_state.get("last_damage_source") is String):
+		return false
+	var restored_id := str(route_state.get("objective_id", objective_id))
+	return restored_id.is_empty() or restored_id == objective_id
+
+
+func restore_route_state(route_state: Dictionary) -> bool:
+	if not can_restore_route_state(route_state):
+		return false
+	max_health = maxf(1.0, float(route_state.get("max_health", max_health)))
+	current_health = clampf(
+		float(route_state.get("current_health", current_health)),
+		0.0,
+		max_health
+	)
+	state = str(route_state.get("state", state))
+	last_damage_source = str(
+		route_state.get("last_damage_source", last_damage_source)
+	)
+	_refresh_visuals()
+	return true
+
+
 func _build_visuals() -> void:
 	_visual = ColorRect.new()
 	_visual.name = "ObjectiveMarker"

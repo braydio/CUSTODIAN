@@ -1,6 +1,6 @@
 # Asset Layout and Naming Convention
 
-Last updated: 2026-05-31
+Last updated: 2026-07-22
 
 ## Scope
 
@@ -29,6 +29,10 @@ content/
           runtime/
             body/
     enemies/
+      <enemy>/
+        runtime/
+          <layer>/
+            <action_group>/
     raw/
   tiles/
     <feature>/
@@ -122,7 +126,8 @@ are not moved — they belong to their respective packages.
 ## Naming Rules
 
 - New sprite sheets use `<owner>__<layer>__<action_group>__<variant>__<direction>__<frames>f__<frame_size>.png`.
-- Animated non-Operator actors use `sprites/<owner>/runtime/<layer>/<action_group>/<canonical_filename>.png`, matching the Operator's owner-first runtime layout. Older `sprites/enemies/<owner>/...` and `sprites/allies/<owner>/...` paths are compatibility surfaces during migration.
+- Enemy actors use `sprites/enemies/<owner>/runtime/<layer>/<action_group>/<canonical_filename>.png`; the enemy domain is part of the canonical path and enemy outputs must not be written loose under `sprites/<owner>/`.
+- Allied non-Operator actors currently use `sprites/<owner>/runtime/<layer>/<action_group>/<canonical_filename>.png`, with `sprites/allies/<owner>/...` retained as a compatibility surface during migration.
 - Use owner names such as `operator`, `enemy_grunt`, `drone`, `fallen_star_katana`, or `hit_spark`.
 - Use layer names such as `body`, `weapon`, `fx`, `shadow`, or `mask`.
 - Use action groups such as `locomotion`, `melee`, `defense`, `ranged`, `reaction`, `death`, `impact`, or `interaction`.

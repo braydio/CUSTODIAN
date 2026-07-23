@@ -22,6 +22,10 @@ func _init() -> void:
 
 
 func _run() -> void:
+	_assert_true(
+		not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path("res://content/sprites/enemy_savage")),
+		"savage assets should not exist in a loose content/sprites/enemy_savage tree"
+	)
 	var root := Node2D.new()
 	root.name = "SavageRuntimeSmokeRoot"
 	get_root().add_child(root)

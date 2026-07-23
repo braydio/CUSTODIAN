@@ -61,7 +61,7 @@ func get_entry_scene_path() -> String:
 	return target_scene_path
 
 
-func validate() -> PackedStringArray:
+func validate(validate_resource_paths := true) -> PackedStringArray:
 	var errors := PackedStringArray()
 	if level_id.is_empty():
 		errors.append("level_id is required")
@@ -69,15 +69,16 @@ func validate() -> PackedStringArray:
 		errors.append("display_name is required")
 	if get_entry_scene_path().is_empty():
 		errors.append("route_scene_path or target_scene_path is required")
-	elif not ResourceLoader.exists(get_entry_scene_path(), "PackedScene"):
+	elif validate_resource_paths and not ResourceLoader.exists(get_entry_scene_path(), "PackedScene"):
 		errors.append("entry scene does not exist: %s" % get_entry_scene_path())
-	if not target_scene_path.is_empty() and not ResourceLoader.exists(target_scene_path, "PackedScene"):
+	if validate_resource_paths and not target_scene_path.is_empty() and not ResourceLoader.exists(target_scene_path, "PackedScene"):
 		errors.append("target scene does not exist: %s" % target_scene_path)
-	if not authored_data_path.is_empty() and not FileAccess.file_exists(authored_data_path):
+	if validate_resource_paths and not authored_data_path.is_empty() and not FileAccess.file_exists(authored_data_path):
 		errors.append("authored data does not exist: %s" % authored_data_path)
-	_validate_optional_scene(playtest_scene_path, "playtest scene", errors)
-	_validate_optional_scene(authoring_scene_path, "authoring scene", errors)
-	if not design_doc_path.is_empty() and not _file_exists_project_relative(design_doc_path):
+	if validate_resource_paths:
+		_validate_optional_scene(playtest_scene_path, "playtest scene", errors)
+		_validate_optional_scene(authoring_scene_path, "authoring scene", errors)
+	if validate_resource_paths and not design_doc_path.is_empty() and not _file_exists_project_relative(design_doc_path):
 		errors.append("design doc does not exist: %s" % design_doc_path)
 	if not PRESENTATION_PROFILES.has(presentation_profile):
 		errors.append("presentation_profile is invalid: %s" % presentation_profile)

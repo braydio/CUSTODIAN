@@ -9,7 +9,7 @@ Use this when you need to answer:
 
 The existing sprite pipeline is the authority. Do not create a second asset tree. `_pipeline/` is intake,
 debug, archive, and request planning only; runtime scenes should consume files under the normal
-`content/sprites/<owner>/runtime/...` paths for animated actors and the documented specialized runtime domains for other sprite classes.
+`content/sprites/enemies/<owner>/runtime/...` paths for enemies, `content/sprites/<owner>/runtime/...` for allied actors, and the documented specialized runtime domains for other sprite classes.
 
 ## 1. Check What Assets Are Needed
 

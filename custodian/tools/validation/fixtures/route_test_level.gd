@@ -4,6 +4,7 @@ extends AuthoredLevel2D
 @export var fail_activation := false
 @export var fail_camera := false
 @export var fail_state_restore := false
+@export var fail_completion := false
 var test_state := 0
 var activation_count := 0
 
@@ -19,10 +20,11 @@ func capture_route_state() -> Dictionary:
 	return {"test_state": test_state}
 
 
-func restore_route_state(state: Dictionary) -> void:
+func restore_route_state(state: Dictionary) -> bool:
 	if fail_state_restore:
-		return
+		return false
 	test_state = int(state.get("test_state", 0))
+	return true
 
 
 func can_restore_route_state(_state: Dictionary) -> bool:
@@ -33,3 +35,10 @@ func refresh_route_camera(actor: Node) -> bool:
 	if fail_camera:
 		return false
 	return super.refresh_route_camera(actor)
+
+
+func complete_route_activation(context: Dictionary) -> bool:
+	if fail_completion:
+		return false
+	super.complete_route_activation(context)
+	return true

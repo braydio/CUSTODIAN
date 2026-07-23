@@ -1,7 +1,7 @@
 # Enemy Savage Runtime Wiring
 
 Status: active rushdown gameplay slice
-Last updated: 2026-07-13
+Last updated: 2026-07-22
 
 ## Summary
 
@@ -17,7 +17,7 @@ combat tempo, punish passive blocking, ignore theft, and expose themselves when 
 - Enemy type key: `savage`
 - Scene: `res://game/actors/enemies/enemy_savage.tscn`
 - Animation source: `res://game/enemies/procgen/savage_animation_library.gd`
-- Runtime art: `res://content/sprites/enemies/enemy_savage/runtime/body/`
+- Runtime art: `res://content/sprites/enemies/enemy_savage/runtime/{body,fx}/<action_group>/`
 - Debug spawn: `spawn_savage [x_offset y_offset]`
 - Wave cost/unlock: cost 3, available from wave 4
 - Behavior profile: `raider_savage`
@@ -51,6 +51,7 @@ playback delay. Missing production art is tracked only in root `REQUIRED_ASSETS.
 ## Acceptance
 
 - Full sprite ingest succeeds with superseded cleanup.
+- No loose `res://content/sprites/enemy_savage/` tree exists or is recreated by enemy ingest.
 - `enemy_savage.tscn` instantiates with six runtime idle animations.
 - `WaveManager`, `EnemyFactory`, `EnemyDirector`, and `scenes/game.tscn` resolve `savage`.
 - `spawn_savage` reaches the shared debug-spawn path.

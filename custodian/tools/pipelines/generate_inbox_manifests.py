@@ -421,7 +421,12 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
             return f"operator/runtime/weapon/{info.action_group}/{info.basename}"
         if info.layer == "fx":
             return f"operator/runtime/overlays/{info.action_group}/{info.basename}"
-    if _is_non_operator_actor_owner(info.owner):
+    if _is_enemy_actor_owner(info.owner):
+        return (
+            f"enemies/{info.owner}/runtime/{info.layer}/{info.action_group}/"
+            f"{info.basename}"
+        )
+    if _is_allied_actor_owner(info.owner):
         return (
             f"{info.owner}/runtime/{info.layer}/{info.action_group}/"
             f"{info.basename}"
@@ -447,16 +452,19 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
 
 def _compatibility_outputs(info: SheetInfo) -> list[dict]:
     outputs: list[dict] = []
-    domain = _legacy_actor_domain(info.owner)
-    if domain:
+    if _is_enemy_actor_owner(info.owner):
         outputs.append(_output_spec(
             info,
-            f"{domain}/{info.owner}/runtime/{info.layer}/{info.basename}",
+            f"enemies/{info.owner}/runtime/{info.layer}/{info.basename}",
         ))
-    if info.owner.startswith("enemy_") or info.owner == "drone":
         outputs.append(_output_spec(
             info,
             f"enemies/{info.owner}/{info.basename}",
+        ))
+    elif _is_allied_actor_owner(info.owner):
+        outputs.append(_output_spec(
+            info,
+            f"allies/{info.owner}/runtime/{info.layer}/{info.basename}",
         ))
     return outputs
 
@@ -565,20 +573,11 @@ def _is_allied_actor_owner(owner: str) -> bool:
 
 
 def _is_non_operator_actor_owner(owner: str) -> bool:
-    return (
-        owner == "enemy"
-        or owner == "drone"
-        or owner.startswith("enemy_")
-        or _is_allied_actor_owner(owner)
-    )
+    return _is_enemy_actor_owner(owner) or _is_allied_actor_owner(owner)
 
 
-def _legacy_actor_domain(owner: str) -> str:
-    if owner == "enemy" or owner == "drone" or owner.startswith("enemy_"):
-        return "enemies"
-    if _is_allied_actor_owner(owner):
-        return "allies"
-    return ""
+def _is_enemy_actor_owner(owner: str) -> bool:
+    return owner == "enemy" or owner == "drone" or owner.startswith("enemy_")
 
 
 def _find_superseded_outputs(manifest: dict) -> list[Path]:

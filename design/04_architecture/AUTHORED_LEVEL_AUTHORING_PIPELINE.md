@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-07-19  
 **Status:** complete-v1; lifecycle hardening complete; route traversal v1 complete
-**Last Updated:** 2026-07-21
+**Last Updated:** 2026-07-23
 
 ## Purpose
 
@@ -148,6 +148,8 @@ Definitions tagged `world_ingress` are eligible for procgen placement. Registry 
 
 Sundered Keep is a registered route with distinct Vista Approach, Return Causeway, and Front Gate levels. Its route definition owns world ingress and production/debug profiles; each scene exposes only generic exits. The Front Gate definition points to the real Keep scene. Generated definitions default to `gameplay`, while the Vista node explicitly selects `vista_approach`.
 
+The production Sundered scenes author their `LevelExit2D` children directly: Vista owns `continue` and `return_world`, Return Causeway owns `continue` and `backtrack`, and Front Gate owns `backtrack` and `exfil`. Runtime scripts locate and position these nodes but do not instantiate them.
+
 `WorldIngressSpawner` combines level-owned and route-owned ingress definitions deterministically and rejects duplicate ingress IDs. Production level-only ingress starts an internal one-node route. `LevelLoader` is the low-level staged-instance service and never owns graph/profile/history logic.
 
 ## Ingress Placement
@@ -172,11 +174,13 @@ Writes use a temporary sibling file, verify both authored constants in memory/on
 
 ## Scaffold Safety
 
-The CLI generator is stage-first:
+The CLI generator is stage-first and validates the complete proposed graph before any write:
 
 ```text
-preflight → normalize → collision checks → stage → parse/load validation
-→ commit generated files → update registry last → report
+normalize/request checks → prepare route mutation → render in memory
+→ parse staged and existing definitions → full RouteDefinition validation
+→ overwrite preflight → stage files → parse/load validation
+→ commit generated files → update registries last → report
 ```
 
 Rules:
@@ -187,6 +191,8 @@ Rules:
 - Registry mutation happens last and is atomic.
 - Alternate output roots support smoke validation without repository mutation.
 - No production art is generated; empty levels use a procedural authoring grid.
+- Create, append, and dry-run route requests use a validation-only level-registry view containing existing generated definitions plus the staged definition.
+- Invalid registry schemas, references, spawns, directions, duplicate IDs/mappings, second world-origin entries, disconnected enabled topology, or reachable nodes without exfil fail before overwrite preflight and leave all files byte-for-byte unchanged.
 
 ## Current Runtime Bridge
 
@@ -203,13 +209,14 @@ This pipeline improves that bridge without claiming the future manager exists.
 - Registry contract validates every registered definition, scene, spawn, mapper root, and declared companion path.
 - Named-spawn smoke proves success and atomic failure cleanup.
 - Mapper smoke proves generic configuration, dynamic markers, compatibility aliases, and non-mutating replacement helpers.
-- Generator smoke proves dry-run, creation, duplicates, managed overwrite, unmanaged rejection, sorting, and rollback.
+- Generator smoke proves dry-run, creation/append, managed overwrite, unmanaged rejection, sorting, complete route validation, and byte-for-byte immutability on failure.
 - Spawner smoke proves deterministic spacing and correct level identity.
 - Physics re-entry smoke proves real `Area2D.body_entered` activation can leave and re-enter the same ingress.
 - Single-authority return smoke proves the outgoing authored level is hidden and disabled before origin processing resumes.
 - Rejected-return and destroyed-origin smokes prove loader ownership cannot be bypassed and partial restoration does not commit.
 - Camera-rebind smoke proves runtime-map binding, transform, zoom, target zoom, and presentation framing restore exactly.
 - Existing Sundered ingress, mapper, approach, and chain smokes remain required regressions.
+- Sundered route graph/state/authored-exit smokes prove the production/reverse/profile graphs, nested Front Gate unload/revisit restoration without repeated side effects, and scene-owned generic exit nodes.
 
 ## Deferred Work
 

@@ -3,7 +3,6 @@ class_name SunderedKeepApproach
 
 const SOFT_RECT_FEATHER_SHADER := preload("res://game/world/approaches/sundered_keep/soft_rect_feather.gdshader")
 const REVEAL_DIRECTOR_SCRIPT := preload("res://game/world/approaches/sundered_keep/sundered_keep_reveal_director.gd")
-const LEVEL_EXIT_SCRIPT := preload("res://game/world/levels/level_exit_2d.gd")
 
 const USE_ROUTE_MASTER := true
 
@@ -238,7 +237,7 @@ func _ensure_roots() -> void:
 	collision_root = _ensure_plain_node2d("Collision")
 	markers_root = _ensure_plain_node2d("Markers")
 	event_markers_root = _ensure_plain_node2d("EventMarkers")
-	event_runtime_root = _ensure_plain_node2d("EventRuntime")
+	event_runtime_root = _ensure_plain_node2d("EventRuntimeRoot")
 
 	entry_spawn = _ensure_marker("EntrySpawn", _route_point(ENTRY_SPAWN_POS))
 	reveal_start = _ensure_marker("RevealStart", _route_point(REVEAL_START_POS))
@@ -542,13 +541,15 @@ func _build_event_markers() -> void:
 	if event_markers_root == null or event_runtime_root == null:
 		return
 	_clear_children(event_markers_root)
-	_clear_children(event_runtime_root)
+	for child: Node in event_runtime_root.get_children():
+		if child.name != &"Exits":
+			child.free()
 	_continue_exit = null
 	_return_world_exit = null
 	# This is the visual Vista Approach, not the Keep gatehouse/causeway level.
 	# Keep-specific key, gate, enemy-spawn, and authoring-marker runtime was
 	# previously placed here by mistake and made the vista route impassable.
-	_build_route_exits()
+	_bind_authored_route_exits()
 
 
 func _add_event_marker(marker_id: String, marker_data: Dictionary) -> Marker2D:
@@ -608,40 +609,20 @@ func _event_marker_color(kind: String) -> Color:
 			return Color(0.92, 0.92, 0.92, 0.85)
 
 
-func _build_route_exits() -> void:
-	_continue_exit = _create_route_exit(
-		"Exit_Continue", &"continue", "CONTINUE TO RETURN CAUSEWAY",
-		_route_point(_get_authoring_marker_position("level_exit", LEVEL_EXIT_POS)),
-		Vector2(72.0, 104.0)
+func _bind_authored_route_exits() -> void:
+	_continue_exit = get_node_or_null("EventRuntimeRoot/Exits/Exit_Continue") as LevelExit2D
+	_return_world_exit = get_node_or_null("EventRuntimeRoot/Exits/Exit_ReturnWorld") as LevelExit2D
+	if _continue_exit == null:
+		push_error("[SunderedKeepApproach] Missing authored Exit_Continue")
+		return
+	if _return_world_exit == null:
+		push_error("[SunderedKeepApproach] Missing authored Exit_ReturnWorld")
+		return
+	_continue_exit.position = _route_point(
+		_get_authoring_marker_position("level_exit", LEVEL_EXIT_POS)
 	)
-	_return_world_exit = _create_route_exit(
-		"Exit_ReturnWorld", &"return_world", "RETURN TO CAMPAIGN",
-		entry_spawn.position + Vector2(-48.0, 32.0),
-		Vector2(72.0, 88.0)
-	)
+	_return_world_exit.position = entry_spawn.position + Vector2(-48.0, 32.0)
 	_build_level_exit_affordance(_continue_exit.position)
-
-
-func _create_route_exit(
-	node_name: String,
-	exit_id: StringName,
-	prompt: String,
-	exit_position: Vector2,
-	shape_size: Vector2
-) -> LevelExit2D:
-	var route_exit := LEVEL_EXIT_SCRIPT.new() as LevelExit2D
-	route_exit.name = node_name
-	route_exit.exit_id = exit_id
-	route_exit.prompt_text = prompt
-	route_exit.position = exit_position
-	var collision := CollisionShape2D.new()
-	collision.name = "CollisionShape2D"
-	var rectangle := RectangleShape2D.new()
-	rectangle.size = shape_size
-	collision.shape = rectangle
-	route_exit.add_child(collision)
-	event_runtime_root.add_child(route_exit)
-	return route_exit
 
 
 func _build_level_exit_affordance(exit_position: Vector2) -> void:
@@ -671,7 +652,7 @@ func _build_level_exit_affordance(exit_position: Vector2) -> void:
 
 	var prompt := Label.new()
 	prompt.name = "DestinationPrompt"
-	prompt.text = "ENTER SUNDERED KEEP  >"
+	prompt.text = "CONTINUE TO RETURN CAUSEWAY  >"
 	prompt.position = Vector2(-82.0, -88.0)
 	prompt.size = Vector2(164.0, 24.0)
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -743,7 +724,7 @@ func _ensure_reveal_director() -> void:
 	reveal_director.far_fog_path = NodePath("../OcclusionRoot/ApproachFogStrip03")
 	reveal_director.edge_mist_path = NodePath("../OcclusionRoot/ApproachEdgeMistWrap")
 	reveal_director.reveal_light_path = NodePath("../OcclusionRoot/RevealMoonlightCue")
-	reveal_director.destination_prompt_path = NodePath("../EventRuntime/LevelExitAffordance")
+	reveal_director.destination_prompt_path = NodePath("../EventRuntimeRoot/LevelExitAffordance")
 	reveal_director.refresh_bindings()
 
 
@@ -790,16 +771,17 @@ func capture_route_state() -> Dictionary:
 	return {}
 
 
-func restore_route_state(_state: Dictionary) -> void:
-	pass
+func restore_route_state(_state: Dictionary) -> bool:
+	return true
 
 
 func prepare_route_deactivation(_context: Dictionary) -> void:
 	pass
 
 
-func complete_route_activation(_context: Dictionary) -> void:
+func complete_route_activation(_context: Dictionary) -> bool:
 	_enforce_presentation_isolation()
+	return true
 
 
 func refresh_route_camera(_actor: Node) -> bool:

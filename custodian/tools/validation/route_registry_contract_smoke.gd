@@ -33,6 +33,8 @@ func _run() -> void:
 	_expect_invalid(levels, unknown_level, "unknown_level", "unknown level_id", errors)
 	var unknown_node := source.duplicate(true); unknown_node.edges[2].to_node_id = "missing_node"
 	_expect_invalid(levels, unknown_node, "unknown_node", "unknown target node", errors)
+	var unknown_source := source.duplicate(true); unknown_source.edges[2].from_node_id = "missing_source"
+	_expect_invalid(levels, unknown_source, "unknown_source", "unknown source node", errors)
 	var unknown_edge := source.duplicate(true); unknown_edge.profiles[0].enabled_edge_ids.append("missing_edge")
 	_expect_invalid(levels, unknown_edge, "unknown_edge", "unknown edge", errors)
 	var bad_direction := source.duplicate(true); bad_direction.edges[2].direction = "sideways"
@@ -42,6 +44,10 @@ func _run() -> void:
 	var duplicate_exit := source.duplicate(true); var duplicate_edge: Dictionary = duplicate_exit.edges[2].duplicate(true)
 	duplicate_edge.edge_id = "duplicate_vista_exit"; duplicate_exit.edges.append(duplicate_edge); duplicate_exit.profiles[0].enabled_edge_ids.append("duplicate_vista_exit")
 	_expect_invalid(levels, duplicate_exit, "duplicate_exit", "duplicate exit mapping", errors)
+	var non_exfil_world := source.duplicate(true); non_exfil_world.edges[4].direction = "back"
+	_expect_invalid(levels, non_exfil_world, "non_exfil_world", "@world_origin target requires direction exfil", errors)
+	var extra_world_entry := source.duplicate(true); extra_world_entry.profiles[0].enabled_edge_ids.append("enter_causeway_debug")
+	_expect_invalid(levels, extra_world_entry, "extra_world_entry", "enables non-entry edge from @world_origin", errors)
 	var bad_entry := source.duplicate(true); bad_entry.profiles[0].entry_edge_id = "vista_to_causeway"
 	_expect_invalid(levels, bad_entry, "bad_entry", "entry edge must start", errors)
 	_expect_duplicate_route_id(levels, source, errors)

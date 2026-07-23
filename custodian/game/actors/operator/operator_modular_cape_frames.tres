@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://dg15ani6lrlrn"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://dndi37qaipqvw"]
 
 [ext_resource type="Texture2D" uid="uid://bygg5evsc3edq" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/run_01/operator__modular_wardrobe_cape__unarmed__run_01__n__5f__96.png" id="1_7an8j"]
 [ext_resource type="Texture2D" uid="uid://bju3s6tsqs843" path="res://content/sprites/operator/runtime/modules/new_operator/wardrobe_cape/actions/unarmed/dodge_fast_attack_01/operator__modular_wardrobe_cape__unarmed__dodge_fast_attack_01__w__11f__96.png" id="1_cqmhe"]

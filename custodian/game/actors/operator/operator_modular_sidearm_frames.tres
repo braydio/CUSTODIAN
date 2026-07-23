@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" format=3 uid="uid://gev4vvtwxx8o"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://b02gj7w0qggi1"]
 
 [ext_resource type="Texture2D" uid="uid://c72peu0faummh" path="res://content/sprites/operator/runtime/modules/new_operator/sidearm/actions/draw_sidearm_01/operator__modular_sidearm__sidearm__draw_sidearm_01__se__5f__96.png" id="1_2ob6c"]
 [ext_resource type="Texture2D" uid="uid://dknfyelkqrale" path="res://content/sprites/operator/runtime/modules/new_operator/ranged_weapon/actions/ranged_2h/stance_01/operator__modular_ranged_weapon__ranged_2h__stance_01__e__5f__96.png" id="1_aflv3"]

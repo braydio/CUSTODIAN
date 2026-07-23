@@ -20,7 +20,7 @@ content/sprites/_pipeline/
 - Every ingest job is a `PNG` plus a sidecar `JSON` manifest with the same basename.
 - Output paths are always relative to `res://content/sprites/`.
 - New sprite sheets should use `<owner>__<layer>__<action_group>__<variant>__<direction>__<frames>f__<frame_size>.png`.
-- The pipeline writes into the **live** runtime domains already used by the project. Animated actors use the owner-first canonical shape `<actor>/runtime/<layer>/<action_group>/`; domain-prefixed enemy/allied paths are emitted only for compatibility:
+- The pipeline writes into the **live** runtime domains already used by the project. Enemy actors use the domain-owned canonical shape `enemies/<actor>/runtime/<layer>/<action_group>/`; allied actors retain the owner-first shape `<actor>/runtime/<layer>/<action_group>/` with domain-prefixed allied paths emitted for compatibility:
   - `operator/...`
   - `weapons/...`
   - `enemies/...`
@@ -47,7 +47,7 @@ Operator composited combat reactions may use the authored `full_body_combat` and
   "frame_size": [96, 96],
   "outputs": [
     {
-      "path": "drone/runtime/body/locomotion/drone__body__locomotion__idle__s__4f__96.png",
+      "path": "enemies/drone/runtime/body/locomotion/drone__body__locomotion__idle__s__4f__96.png",
       "layout": "horizontal_strip",
       "select": { "type": "range", "start": 0, "count": 4 }
     },
@@ -373,7 +373,7 @@ res://content/sprites/allied_infantry_droid/runtime/body/<action_group>/
 res://content/sprites/allied_infantry_droid/runtime/fx/<action_group>/
 ```
 
-Until existing consumers migrate, the same ingest also writes compatibility copies to `res://content/sprites/allies/allied_infantry_droid/runtime/body|fx/`. Enemy and drone sheets likewise write compatibility copies under `res://content/sprites/enemies/<actor>/`.
+Until existing allied consumers migrate, the same ingest also writes compatibility copies to `res://content/sprites/allies/allied_infantry_droid/runtime/body|fx/`. Enemy and drone sheets are canonical under `res://content/sprites/enemies/<actor>/`; ingest may also write flat files inside that same actor-owned tree for legacy enemy consumers, but never writes a loose `res://content/sprites/<enemy>/` tree.
 
 Then it rebuilds:
 

@@ -1,6 +1,33 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://game/world/approaches/sundered_keep/sundered_keep_approach.gd" id="1_script"]
+[ext_resource type="Script" path="res://game/world/levels/level_exit_2d.gd" id="2_exit"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_continue"]
+size = Vector2(72, 104)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_return"]
+size = Vector2(72, 88)
 
 [node name="SunderedKeepApproach" type="Node2D"]
 script = ExtResource("1_script")
+
+[node name="EventRuntimeRoot" type="Node2D" parent="."]
+
+[node name="Exits" type="Node2D" parent="EventRuntimeRoot"]
+
+[node name="Exit_Continue" type="Area2D" parent="EventRuntimeRoot/Exits"]
+script = ExtResource("2_exit")
+exit_id = &"continue"
+prompt_text = "CONTINUE TO RETURN CAUSEWAY"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EventRuntimeRoot/Exits/Exit_Continue"]
+shape = SubResource("RectangleShape2D_continue")
+
+[node name="Exit_ReturnWorld" type="Area2D" parent="EventRuntimeRoot/Exits"]
+script = ExtResource("2_exit")
+exit_id = &"return_world"
+prompt_text = "RETURN TO CAMPAIGN"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EventRuntimeRoot/Exits/Exit_ReturnWorld"]
+shape = SubResource("RectangleShape2D_return")

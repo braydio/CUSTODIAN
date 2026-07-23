@@ -4,6 +4,7 @@ class_name SunderedKeepMarineAmbush
 enum State {
 	IDLE,
 	ACTIVE,
+	COMPLETE,
 }
 
 @export var trigger_radius: float = 300.0
@@ -12,24 +13,119 @@ enum State {
 var marine: CharacterBody2D = null
 var target: Node2D = null
 var state: int = State.IDLE
+var _last_marine_position := Vector2.ZERO
+var _last_marine_health := 0.0
 
 
 func configure(p_marine: CharacterBody2D, p_target: Node2D = null) -> void:
 	marine = p_marine
 	target = p_target
 	if marine != null:
+		_last_marine_position = marine.position
+		_last_marine_health = float(marine.get("health"))
 		marine.set_physics_process(false)
 		marine.set_process(false)
 		_set_marine_facing(Vector2.LEFT, false)
 
 
 func get_debug_state() -> Dictionary:
-	return {
-		"exists": marine != null and is_instance_valid(marine),
-		"state": _state_name(),
+	var result := capture_route_state()
+	result.merge({
 		"dash_ready": _has_animation("marine_dash_charge_e") and _has_animation("marine_dash_inflight_e") and _has_animation("marine_dash_recovery_e"),
 		"dash_fx_ready": _has_fx_animation("marine_dash_attack_fx_e"),
+	}, true)
+	return result
+
+
+func capture_route_state() -> Dictionary:
+	var marine_exists := marine != null and is_instance_valid(marine)
+	return {
+		"exists": marine_exists,
+		"state": _state_name(),
+		"marine_alive": marine_exists and not (
+			marine.has_method("is_dead") and bool(marine.call("is_dead"))
+		),
+		"marine_position": marine.position if marine_exists else _last_marine_position,
+		"marine_health": float(marine.get("health")) if marine_exists else _last_marine_health,
 	}
+
+
+func can_restore_route_state(route_state: Dictionary) -> bool:
+	if route_state.has("exists") and not (route_state.get("exists") is bool):
+		return false
+	if route_state.has("marine_alive") \
+	and not (route_state.get("marine_alive") is bool):
+		return false
+	if route_state.has("marine_position") \
+	and not (route_state.get("marine_position") is Vector2):
+		return false
+	if route_state.has("marine_health") \
+	and not (route_state.get("marine_health") is float or route_state.get("marine_health") is int):
+		return false
+	if route_state.has("state") and not (route_state.get("state") is String):
+		return false
+	return str(route_state.get("state", "idle")) in [
+		"idle",
+		"active",
+		"complete",
+	]
+
+
+func restore_route_state(route_state: Dictionary) -> bool:
+	if not can_restore_route_state(route_state):
+		return false
+	var should_exist := bool(route_state.get("exists", true))
+	var should_be_alive := bool(route_state.get("marine_alive", should_exist))
+	var restored_state := str(route_state.get("state", "idle"))
+	_last_marine_position = route_state.get(
+		"marine_position",
+		_last_marine_position
+	) as Vector2
+	_last_marine_health = float(
+		route_state.get("marine_health", _last_marine_health)
+	)
+	if not should_exist or not should_be_alive or restored_state == "complete":
+		state = State.COMPLETE
+		set_physics_process(false)
+		if marine != null and is_instance_valid(marine):
+			marine.set_process(false)
+			marine.set_physics_process(false)
+			marine.visible = false
+			marine.queue_free()
+		marine = null
+		return true
+	if marine == null or not is_instance_valid(marine):
+		return false
+	marine.position = route_state.get("marine_position", marine.position) as Vector2
+	marine.set(
+		"health",
+		clampf(
+			float(route_state.get("marine_health", marine.get("health"))),
+			0.0,
+			float(marine.get("max_health"))
+		)
+	)
+	_last_marine_position = marine.position
+	_last_marine_health = float(marine.get("health"))
+	marine.visible = true
+	marine.velocity = Vector2.ZERO
+	match restored_state:
+		"active":
+			state = State.ACTIVE
+			if target == null or not is_instance_valid(target):
+				target = _find_target()
+			marine.set("target", target)
+			marine.set("behavior_state_machine_enabled", false)
+			marine.set_process(true)
+			marine.set_physics_process(true)
+			set_physics_process(false)
+		_:
+			state = State.IDLE
+			marine.set_process(false)
+			marine.set_physics_process(false)
+			set_physics_process(true)
+			_set_marine_facing(Vector2.LEFT, false)
+	return true
 
 
 func force_wake() -> void:
@@ -59,6 +155,8 @@ func _physics_process(_delta: float) -> void:
 		State.IDLE:
 			_update_idle()
 		State.ACTIVE:
+			set_physics_process(false)
+		State.COMPLETE:
 			set_physics_process(false)
 
 
@@ -127,4 +225,6 @@ func _state_name() -> String:
 			return "idle"
 		State.ACTIVE:
 			return "active"
+		State.COMPLETE:
+			return "complete"
 	return "unknown"
