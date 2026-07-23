@@ -9,7 +9,7 @@ forbidden_pattern='^(auth\.json|internal_storage\.json|history\.jsonl|olddauth\.
 
 staged_paths=$(git diff --cached --name-only)
 if [ -n "$staged_paths" ]; then
-  forbidden_match=$(printf "%s\n" "$staged_paths" | grep -E "$forbidden_pattern" || true)
+  forbidden_match=$(printf '%s\n' "$staged_paths" | grep -E "$forbidden_pattern" || true)
   if [ -n "$forbidden_match" ]; then
     echo "Commit blocked: forbidden files or directories staged." >&2
     echo "Remove these paths from the commit:" >&2
@@ -28,10 +28,10 @@ if [ -d "custodian/content" ]; then
   content_aseprite_files=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '^custodian/content/.*\.(aseprite|ase)$' | grep -v '/_aseprite/' || true)
 
   if [ -n "$content_aseprite_files" ]; then
-    content_aseprite_count=$(printf "%s\n" "$content_aseprite_files" | wc -l | tr -d ' ')
+    content_aseprite_count=$(printf '%s\n' "$content_aseprite_files" | wc -l | tr -d ' ')
     echo "Warning: staged .aseprite/.ase source files are outside content/_aseprite/." >&2
     echo "Consider moving them after this commit if they are intended source assets. Showing first 25 of $content_aseprite_count:" >&2
-    printf "%s\n" "$content_aseprite_files" | sed -n '1,25p' >&2
+    printf '%s\n' "$content_aseprite_files" | sed -n '1,25p' >&2
   fi
 fi
 
@@ -46,6 +46,14 @@ if [ -n "$warn_dirs" ]; then
     echo "Consider adding them to .gitignore or removing them:" >&2
     echo "$untracked" >&2
   fi
+fi
+
+# ──────────────────────────────────────────────
+# 4. Validate Design Codex structure
+# ──────────────────────────────────────────────
+if printf '%s\n' "$staged_paths" | grep -Eq '^(design/90_codex/|tools/validate_design_codex.py|\.githooks/pre-commit|tools/install_git_hooks.sh)'; then
+  echo "[pre-commit] validating design codex..."
+  python tools/validate_design_codex.py
 fi
 
 exit 0

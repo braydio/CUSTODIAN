@@ -95,16 +95,16 @@ canvas_modulate_path = NodePath("../CanvasModulate")
 directional_light_path = NodePath("../DirectionalLight2D")
 default_profile = ExtResource("211_lighting_profile")
 
-[node name="DebugDraw" type="Node2D" parent="World" unique_id=1320630577]
+[node name="DebugDraw" type="Node2D" parent="World" unique_id=1320630577 groups=["world_origin_branch"]]
 script = ExtResource("31_debug_draw")
 
-[node name="InspectorProbe" type="Node2D" parent="World" unique_id=1619477561]
+[node name="InspectorProbe" type="Node2D" parent="World" unique_id=1619477561 groups=["world_origin_branch"]]
 script = ExtResource("32_inspector_probe")
 
-[node name="NavigationDebug" type="Node2D" parent="World" unique_id=1619477562]
+[node name="NavigationDebug" type="Node2D" parent="World" unique_id=1619477562 groups=["world_origin_branch"]]
 script = ExtResource("41_nav_debug")
 
-[node name="Sectors" type="Node2D" parent="World" unique_id=800988395]
+[node name="Sectors" type="Node2D" parent="World" unique_id=800988395 groups=["world_origin_branch"]]
 
 [node name="NORTH_TRANSIT" parent="World/Sectors" unique_id=1229477064 instance=ExtResource("4_sector")]
 position = Vector2(-312, -480)
@@ -175,9 +175,9 @@ sector_type = "TRANSIT"
 size_tiles = Vector2i(24, 16)
 door_sides = PackedStringArray("N", "W")
 
-[node name="Enemies" type="Node2D" parent="World" unique_id=1365669343]
+[node name="Enemies" type="Node2D" parent="World" unique_id=1365669343 groups=["world_origin_branch"]]
 
-[node name="SpawnNodes" type="Node2D" parent="World" unique_id=1079383596]
+[node name="SpawnNodes" type="Node2D" parent="World" unique_id=1079383596 groups=["world_origin_branch"]]
 
 [node name="NorthSpawn" type="Node2D" parent="World/SpawnNodes" unique_id=594161002]
 position = Vector2(700, -980)
@@ -199,11 +199,11 @@ position = Vector2(-1620, -120)
 script = ExtResource("13_spawn_node")
 lane = "west"
 
-[node name="Projectiles" type="Node2D" parent="World" unique_id=1418877711]
+[node name="Projectiles" type="Node2D" parent="World" unique_id=1418877711 groups=["world_origin_branch"]]
 
-[node name="Allies" type="Node2D" parent="World" unique_id=1418877712]
+[node name="Allies" type="Node2D" parent="World" unique_id=1418877712 groups=["world_origin_branch"]]
 
-[node name="Items" type="Node2D" parent="World" unique_id=1390419870]
+[node name="Items" type="Node2D" parent="World" unique_id=1390419870 groups=["world_origin_branch"]]
 
 [node name="AmmoCacheA" parent="World/Items" unique_id=1977245667 instance=ExtResource("10_cache")]
 position = Vector2(-920, -520)
@@ -222,7 +222,7 @@ heavy_ammo = 2
 [node name="AmmoCacheD" parent="World/Items" unique_id=655756500 instance=ExtResource("10_cache")]
 position = Vector2(40, -520)
 
-[node name="ContractMap" parent="World" unique_id=1103719919 instance=ExtResource("26_contract_map")]
+[node name="ContractMap" parent="World" unique_id=1103719919 groups=["world_origin_branch"] instance=ExtResource("26_contract_map")]
 visible = false
 
 [node name="Operator" parent="World" unique_id=2047803984 instance=ExtResource("2_operator")]
@@ -268,14 +268,14 @@ placeholder_melee_hitbox_radius = 22.0
 placeholder_healthbar_top = -54.0
 placeholder_healthbar_bottom = -48.0
 
-[node name="AmbientHostileCampEast" type="Node2D" parent="World" unique_id=1994972853]
+[node name="AmbientHostileCampEast" type="Node2D" parent="World" unique_id=1994972853 groups=["world_origin_branch"]]
 position = Vector2(1220, -500)
 script = ExtResource("207_ambient_camp")
 camp_id = &"east_road_watch"
 enemy_scene = ExtResource("18_grunt_enemy")
 enemy_count_max = 3
 
-[node name="AmbientHostileCampWest" type="Node2D" parent="World" unique_id=1275453240]
+[node name="AmbientHostileCampWest" type="Node2D" parent="World" unique_id=1275453240 groups=["world_origin_branch"]]
 position = Vector2(-220, -500)
 script = ExtResource("207_ambient_camp")
 camp_id = &"west_ruin_watch"
@@ -286,27 +286,27 @@ enemy_count_max = 3
 script = ExtResource("42_player_controller")
 operator_path = NodePath("../Operator")
 
-[node name="LightBuggy" parent="World" unique_id=2047803986 instance=ExtResource("43_light_buggy")]
+[node name="LightBuggy" parent="World" unique_id=2047803986 groups=["world_origin_branch"] instance=ExtResource("43_light_buggy")]
 position = Vector2(872, -486)
 
-[node name="WallPlacer" parent="World" unique_id=1022301411 instance=ExtResource("99_wall_placer")]
+[node name="WallPlacer" parent="World" unique_id=1022301411 groups=["world_origin_branch"] instance=ExtResource("99_wall_placer")]
 
-[node name="WallBuildSystem" parent="World" unique_id=1989965356 instance=ExtResource("99_wall_build_system")]
+[node name="WallBuildSystem" parent="World" unique_id=1989965356 groups=["world_origin_branch"] instance=ExtResource("99_wall_build_system")]
 
-[node name="TurretPlacement" type="Node" parent="World" unique_id=1022301412]
+[node name="TurretPlacement" type="Node" parent="World" unique_id=1022301412 groups=["world_origin_branch"]]
 script = ExtResource("100_turret_placement")
 
-[node name="TerminalDeployment" type="Node" parent="World" unique_id=1022301413]
+[node name="TerminalDeployment" type="Node" parent="World" unique_id=1022301413 groups=["world_origin_branch"]]
 script = ExtResource("101_terminal_deployment")
 
-[node name="DroneManager" type="Node" parent="World" unique_id=1022301414]
+[node name="DroneManager" type="Node" parent="World" unique_id=1022301414 groups=["world_origin_branch"]]
 script = ExtResource("206_drone_manager")
 drone_scene = ExtResource("209_allied_droid")
 
-[node name="CommandTerminal" parent="World" unique_id=2021499921 instance=ExtResource("27_command_terminal")]
+[node name="CommandTerminal" parent="World" unique_id=2021499921 groups=["world_origin_branch"] instance=ExtResource("27_command_terminal")]
 position = Vector2(804, -492)
 
-[node name="FieldFabricatorMk1" parent="World" instance=ExtResource("214_field_fabricator")]
+[node name="FieldFabricatorMk1" parent="World" groups=["world_origin_branch"] instance=ExtResource("214_field_fabricator")]
 position = Vector2(1120, -480)
 
 [node name="Camera2D" type="Camera2D" parent="World" unique_id=1332183342]

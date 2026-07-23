@@ -54,6 +54,10 @@ def main() -> int:
         _write_strip(legacy_collision, frames=4)
         rectangular = root / "operator__body__melee_1h__e__8f__156x96.png"
         Image.new("RGBA", (8 * 156, 96), (255, 255, 255, 255)).save(rectangular)
+        dodge_charge = root / "operator__body__full__dodge_charge_windup_01__s__5f__96.png"
+        dodge_chain = root / "operator__body__full__dodge_chain_link_01__s__4f__96.png"
+        _write_strip(dodge_charge, frames=5)
+        _write_strip(dodge_chain, frames=4)
 
         canonical_info = manifests._inspect_sheet(canonical)
         legacy_info = manifests._inspect_sheet(legacy)
@@ -101,6 +105,12 @@ def main() -> int:
         rectangular_manifest = manifests._build_manifest(rectangular)
         assert rectangular_manifest["frame_size"] == [156, 96]
         assert rectangular_manifest["outputs"][0]["select"]["count"] == 8
+        assert manifests._canonical_runtime_path(
+            manifests._inspect_sheet(dodge_charge)
+        ).startswith("operator/runtime/actions/dodge_charge/body/")
+        assert manifests._canonical_runtime_path(
+            manifests._inspect_sheet(dodge_chain)
+        ).startswith("operator/runtime/actions/dodge_chain/body/")
 
         module_root = root / "runtime"
         generated = builder._build_generic_action_modules(root, module_root, dry_run=True)

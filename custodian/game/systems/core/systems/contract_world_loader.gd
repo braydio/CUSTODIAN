@@ -49,6 +49,7 @@ const WORLD_INGRESS_SPAWNER_SCRIPT := preload("res://game/world/levels/world_ing
 const SUNDERED_KEEP_APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
 const SUNDERED_KEEP_TARGET_SCENE_PATH := "res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn"
 const SUNDERED_KEEP_LEVEL_ID := &"sundered_keep_front_gate"
+const WORLD_ORIGIN_BRANCH_GROUP := &"world_origin_branch"
 const SECTOR_TILE_PX := 24.0
 const PROCGEN_SECTOR_LAYOUT := {
 	"ARCHIVE": 0,
@@ -408,6 +409,8 @@ func _attach_procgen_map(map_instance: Node) -> void:
 		runtime_container.name = runtime_map_container_name
 		runtime_container.z_index = -100
 		world.add_child(runtime_container)
+
+	runtime_container.add_to_group(WORLD_ORIGIN_BRANCH_GROUP)
 
 	if map_instance.get_parent() != runtime_container:
 		map_instance.reparent(runtime_container)

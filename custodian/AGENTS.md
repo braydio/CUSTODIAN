@@ -205,6 +205,43 @@ Use this whenever you are restructuring docs, moving asset guidance, consolidati
 - Debug ImGui panels must consume read-only snapshots from `DebugBus`. Mutation must go through debug overrides or queued commands that gameplay systems drain at safe boundaries, never direct per-frame panel writes into deterministic systems.
 - New debug instrumentation should route through `DevObservatory` (`/root/DevObservatory`), not raw `print()` or ad-hoc labels. Use `log_event` for state transitions, `increment`/`set_counter` for counts, `set_gauge` for live values, and `mark_warning` for anomalies. Keep it observability-only — never let observatory state influence simulation, generation, AI, collision, navigation, combat, or saves. See `design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md` for the full pattern and examples.
 
+## Design Codex Governance
+
+`../design/90_codex/` is the project's idea inventory and design memory layer.
+
+Use it for:
+
+- preserving wanted features
+- comparing future-system candidates
+- maintaining long-term design continuity
+- deciding what should graduate next
+
+Do not treat codex cards as active implementation authority. Before building from a codex card, graduate the idea into the active design authority under `../design/02_features/`, `../design/04_architecture/`, or another appropriate active design location.
+
+Codex tracker:
+
+- `../design/90_codex/TRACKER.md`
+
+Codex validation:
+
+```bash
+python tools/validate_design_codex.py
+```
+
+Optional local hook install from repository root:
+
+```bash
+bash tools/install_git_hooks.sh
+```
+
+When touching `../design/90_codex/`, agents should:
+
+1. update `../design/90_codex/00_index.md`
+2. update `../design/90_codex/TRACKER.md` when governance, status semantics, or graduation rules change
+3. run `python tools/validate_design_codex.py`
+4. avoid implementing directly from codex cards unless explicitly instructed
+5. add active-spec/runtime links when a codex card graduates
+
 ## Migration Shortcut
 
 If the task is “where do I start?” or “what do I read first?”, the answer for `custodian/` work is:

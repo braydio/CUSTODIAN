@@ -65,3 +65,35 @@ Graduation should include:
 - acceptance checks and validation recipe
 - `Status: graduated`, `Graduated to:`, and any live `Runtime status:` / `Runtime path:` metadata on the original card
 - updates to `custodian/docs/ai_context/CURRENT_STATE.md` only when implementation changes live runtime state
+
+## Governance
+
+The Design Codex is idea inventory, not active implementation authority.
+
+Before using a codex card for implementation, graduate it into the active design system under `design/02_features/`, `design/04_architecture/`, or another appropriate active design location.
+
+Tracking lives in:
+
+- `design/90_codex/TRACKER.md`
+
+Validation:
+
+```bash
+python tools/validate_design_codex.py
+```
+
+Optional local pre-commit hook:
+
+```bash
+bash tools/install_git_hooks.sh
+```
+
+The hook validates codex structure only when codex files or codex validation tooling are staged.
+
+Validation checks:
+
+* canonical cards are listed in `00_index.md`
+* indexed card paths exist
+* required metadata fields exist
+* graduated/runtime-backed cards point to active specs or runtime paths
+* package-residue folders are reported

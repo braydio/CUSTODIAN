@@ -32,6 +32,12 @@ const DODGE_FULL_NORTH_BODY_SHEET := "res://content/sprites/operator/runtime/act
 const DODGE_FULL_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/actions/dodge/body/operator__body__full__dodge_01__s__9f__96.png"
 const DODGE_FULL_NORTH_FX_SHEET := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__n__9f__96.png"
 const DODGE_FULL_SOUTH_FX_SHEET := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__s__9f__96.png"
+const DODGE_CHARGE_WINDUP_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/actions/dodge_charge/body/operator__body__full__dodge_charge_windup_01__e__5f__96.png"
+const DODGE_CHARGE_WINDUP_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/actions/dodge_charge/body/operator__body__full__dodge_charge_windup_01__s__5f__96.png"
+const DODGE_CHARGE_WINDUP_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/actions/dodge_charge/body/operator__body__full__dodge_charge_windup_01__w__5f__96.png"
+const DODGE_CHAIN_LINK_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/actions/dodge_chain/body/operator__body__full__dodge_chain_link_01__e__4f__96.png"
+const DODGE_CHAIN_LINK_SOUTH_BODY_SHEET := "res://content/sprites/operator/runtime/actions/dodge_chain/body/operator__body__full__dodge_chain_link_01__s__4f__96.png"
+const DODGE_CHAIN_LINK_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/actions/dodge_chain/body/operator__body__full__dodge_chain_link_01__w__4f__96.png"
 const DODGE_FAST_ATTACK_EAST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__dodge_fast_attack_01__e__11f__96.png"
 const DODGE_FAST_ATTACK_WEST_BODY_SHEET := "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__dodge_fast_attack_01__w__11f__96.png"
 const DODGE_FAST_ATTACK_EAST_FX_SHEET := "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__dodge_fast_attack_01__e__11f__96.png"
@@ -240,6 +246,7 @@ func _init() -> void:
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_unarmed_block_entries("lower_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_unarmed_parry_entries("lower_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_field_patch_entries("lower_body", "field_patch_use_lower"))
+	_replace_animation_entries(modular_lower_body_frames, _build_modular_idle_hitreact_entries("lower_body", "unarmed"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_locomotion_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_fast_attack_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_sidearm_entries("upper_body", "sidearm_draw_upper", "draw_sidearm_01"))
@@ -247,6 +254,7 @@ func _init() -> void:
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_unarmed_block_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_unarmed_parry_entries("upper_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_field_patch_entries("upper_body", "field_patch_use_upper"))
+	_replace_animation_entries(modular_upper_body_frames, _build_modular_idle_hitreact_entries("upper_body", "unarmed"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_stance_entries("lower_body"))
 	_replace_animation_entries(modular_upper_body_frames, _build_modular_ranged_stance_entries("upper_body"))
 	_replace_animation_entries(modular_lower_body_frames, _build_modular_ranged_aim_entries("lower_body"))
@@ -271,6 +279,7 @@ func _init() -> void:
 	_replace_animation_entries(modular_cape_frames, _build_modular_cape_run_entries())
 	_replace_animation_entries(modular_cape_frames, _build_modular_cape_dodge_fast_attack_entries())
 	_replace_animation_entries(modular_head_frames, _build_modular_head_entries(&"hooded"))
+	_replace_animation_entries(modular_head_frames, _build_modular_idle_hitreact_entries("head", "hooded"))
 	_replace_animation_if_exists(body_frames, "unarmed_death", UNARMED_DEATH_BODY_SHEET, 6, 0, 96, 96, 7.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_arrival_down", UNARMED_ARRIVAL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 12.0, false)
@@ -284,6 +293,12 @@ func _init() -> void:
 	_replace_animation_if_exists(body_frames, "operator_dodge_backstep_recovery", DODGE_BACKSTEP_RECOVERY_BODY_SHEET, 4, 0, 96, 96, 18.0, false)
 	_replace_animation_if_exists(body_frames, "operator_dodge_full_north", DODGE_FULL_NORTH_BODY_SHEET, 9, 0, 96, 96, 25.0, false)
 	_replace_animation_if_exists(body_frames, "operator_dodge_full_south", DODGE_FULL_SOUTH_BODY_SHEET, 9, 0, 96, 96, 25.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_charge_windup_right", DODGE_CHARGE_WINDUP_EAST_BODY_SHEET, 5, 0, 96, 96, 10.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_charge_windup_down", DODGE_CHARGE_WINDUP_SOUTH_BODY_SHEET, 5, 0, 96, 96, 10.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_charge_windup_left", DODGE_CHARGE_WINDUP_WEST_BODY_SHEET, 5, 0, 96, 96, 10.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_chain_link_right", DODGE_CHAIN_LINK_EAST_BODY_SHEET, 4, 0, 96, 96, 20.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_chain_link_down", DODGE_CHAIN_LINK_SOUTH_BODY_SHEET, 4, 0, 96, 96, 20.0, false)
+	_replace_animation_if_exists(body_frames, "operator_dodge_chain_link_left", DODGE_CHAIN_LINK_WEST_BODY_SHEET, 4, 0, 96, 96, 20.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_dodge_fast_attack_right", DODGE_FAST_ATTACK_EAST_BODY_SHEET, 11, 0, 96, 96, 20.0, false)
 	_replace_animation_if_exists(body_frames, "unarmed_dodge_fast_attack_left", DODGE_FAST_ATTACK_WEST_BODY_SHEET, 11, 0, 96, 96, 20.0, false)
 	_replace_animation_if_exists(body_frames, "ranged_2h_reload", RELOAD_BODY_SHEET, 4, 0, 96, 96, 10.0, false)
@@ -856,6 +871,37 @@ func _build_modular_field_patch_entries(part: String, base: String) -> Array:
 		var directional_entry := entry.duplicate()
 		directional_entry["animation"] = "%s_%s" % [base, str(direction_spec["suffix"])]
 		entries.append(directional_entry)
+	return entries
+
+
+func _build_modular_idle_hitreact_entries(part: String, loadout: String) -> Array:
+	var root := "res://content/sprites/operator/runtime/modules/new_operator/%s/actions/%s" % [
+		part,
+		loadout,
+	]
+	var entries: Array = []
+	for direction_spec in [
+		{"dir": "n", "suffix": "up"},
+		{"dir": "s", "suffix": "down"},
+	]:
+		var sheet := _find_modular_action_sheet(
+			root,
+			part,
+			loadout,
+			"idle_hitreact_01",
+			str(direction_spec["dir"])
+		)
+		if sheet.is_empty():
+			continue
+		entries.append({
+			"animation": "operator_idle_hitreact_modular_%s" % str(direction_spec["suffix"]),
+			"path": str(sheet["path"]),
+			"frames": int(sheet["frames"]),
+			"frame_width": 96,
+			"frame_height": 96,
+			"fps": 22.73,
+			"loop": false,
+		})
 	return entries
 
 

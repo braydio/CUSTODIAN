@@ -8,11 +8,16 @@ on:
       - "custodian/game/world/approaches/sundered_keep/**"
       - "custodian/game/world/sundered_keep/**"
       - "custodian/game/world/routes/**"
+      - "custodian/game/systems/core/systems/contract_world_loader.gd"
+      - "custodian/scenes/game.tscn"
       - "custodian/content/levels/**"
       - "custodian/content/routes/**"
       - "custodian/tools/level_authoring/**"
       - "custodian/tools/validation/**"
       - "design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md"
+      - "design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md"
+      - "design/05_levels/SUNDERED_KEEP_ROUTE_STAGES.md"
+      - "custodian/docs/SCENE_HIERARCHY.md"
       - "custodian/docs/ai_context/**"
       - ".github/workflows/godot-level-pipeline.yml"
   push:
@@ -23,11 +28,16 @@ on:
       - "custodian/game/world/approaches/sundered_keep/**"
       - "custodian/game/world/sundered_keep/**"
       - "custodian/game/world/routes/**"
+      - "custodian/game/systems/core/systems/contract_world_loader.gd"
+      - "custodian/scenes/game.tscn"
       - "custodian/content/levels/**"
       - "custodian/content/routes/**"
       - "custodian/tools/level_authoring/**"
       - "custodian/tools/validation/**"
       - "design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md"
+      - "design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md"
+      - "design/05_levels/SUNDERED_KEEP_ROUTE_STAGES.md"
+      - "custodian/docs/SCENE_HIERARCHY.md"
       - "custodian/docs/ai_context/**"
       - ".github/workflows/godot-level-pipeline.yml"
   workflow_dispatch:
@@ -71,6 +81,7 @@ jobs:
             level_camera_rebind_smoke.gd
             level_named_spawn_smoke.gd
             level_registry_contract_smoke.gd
+            world_origin_branch_contract_smoke.gd
             sundered_keep_ingress_smoke.gd
             sundered_keep_level_chain_smoke.gd
           )

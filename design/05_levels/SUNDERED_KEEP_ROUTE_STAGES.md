@@ -7,7 +7,6 @@
 - **Stage scenes:** `custodian/game/world/routes/sundered_keep/stages/*.tscn`
 - **Base classes:** `custodian/game/world/routes/level_stage.gd`, `custodian/game/world/routes/level_route.gd`
 - **Validation:** `custodian/tools/validation/sundered_keep_approach_route_smoke.gd`, `custodian/tools/validation/sundered_keep_approach_route_visual_smoke.gd`
-- **Active configured ingress:** `custodian/content/levels/sundered_keep/front_gate.json` points `sundered_keep_front_gate` at `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn`
 
 ## Summary
 
@@ -113,7 +112,7 @@ front_gate (sundered_keep_map.tscn)
 
 ## Implementation Notes
 
-- The route is not connected through the level registry wrapper. `front_gate.json` points at the continuous approach scene because this route hard-swaps presentation stages.
+- The prototype is not connected to the live level/route registries. Production uses the independent registered Vista, Return Causeway, and Front Gate levels under `RouteTraversalManager`.
 - `SunderedKeepMap` is script-only (`.gd`). The route's `final_target_scene` expects a `PackedScene`, so `sundered_keep_map.tscn` wrapper was created.
 - Stage scenes should remain thin — all substantive logic lives in the `.gd` script, the `.tscn` is a minimal stub (script + EntrySpawn + CameraBounds).
 - The current route-stage flow remains visually discontinuous by design because substages are separate scenes. It is retired from production; do not reconnect it unless vista_one/pre_level/grand_vista/causeway_approach are redesigned as one continuous authored route.

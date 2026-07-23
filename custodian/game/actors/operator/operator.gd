@@ -12,6 +12,9 @@ signal dodge_chain_ended(count: int, flow: float, reason: StringName)
 signal dodge_flow_changed(value: float, direction: Vector2)
 
 const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
+const DirectionalAnimationFallback = preload(
+	"res://game/systems/presentation/directional_animation_fallback.gd"
+)
 const WeaponSocketLibrary = preload("res://game/actors/operator/animations/operator_weapon_socket_library.gd")
 const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
 const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
@@ -449,6 +452,11 @@ var _dodge_backstep_active: bool = false
 var _dodge_charge_active: bool = false
 var _dodge_charge_timer: float = 0.0
 var _dodge_charge_visual_compression: float = 0.0
+var _dodge_requested_presentation_sector: StringName = &"s"
+var _dodge_resolved_presentation_sector: StringName = &"s"
+var _dodge_charge_presentation_active: bool = false
+var _dodge_chain_presentation_active: bool = false
+var _dodge_presentation_animation: StringName = &""
 var _pending_dodge_direction: Vector2 = Vector2.ZERO
 var _active_dodge_profile: StringName = &"tap"
 var _active_dodge_speed: float = 0.0
@@ -506,6 +514,10 @@ var _modular_upper_fx_base_position := Vector2.ZERO
 var _melee_weapon_overlay_base_position := Vector2.ZERO
 var _melee_fx_overlay_base_position := Vector2.ZERO
 var _last_damage_reaction_direction := Vector2.DOWN
+var _modular_damage_reaction_active := false
+var _modular_damage_reaction_animation: StringName = &""
+var _modular_damage_reaction_head_animation: StringName = &""
+var _modular_damage_reaction_sector: StringName = &"s"
 var _production_body_frames: SpriteFrames = null
 var _knight_test_frames: SpriteFrames = null
 var _knight_test_skin_active: bool = false
@@ -623,6 +635,19 @@ const DODGE_FULL_SOUTH_FX_ANIMATION := &"operator_dodge_full_fx_south"
 const DODGE_FULL_NORTH_FX_SHEET_PATH := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__n__9f__96.png"
 const DODGE_FULL_SOUTH_FX_SHEET_PATH := "res://content/sprites/operator/runtime/actions/dodge/fx/operator__fx__full__dodge_01__s__9f__96.png"
 const DODGE_FULL_SEQUENCE_FPS := 25.0
+const DODGE_CHARGE_WINDUP_BASE := &"operator_dodge_charge_windup"
+const DODGE_CHAIN_LINK_BASE := &"operator_dodge_chain_link"
+const DODGE_CHAIN_LINK_FPS := 20.0
+const DODGE_PRESENTATION_SUFFIXES := {
+	&"n": "up",
+	&"ne": "up_right",
+	&"e": "right",
+	&"se": "down_right",
+	&"s": "down",
+	&"sw": "down_left",
+	&"w": "left",
+	&"nw": "up_left",
+}
 const DODGE_FX_BACK_ALPHA := 0.72
 const DODGE_FX_BACK_OFFSET_BY_DIRECTION := {
 	"up": Vector2(0, 14),
@@ -1315,6 +1340,8 @@ func _update_animation():
 	if animated_sprite.sprite_frames == null:
 		_hide_modular_locomotion_layers()
 		return
+	if _modular_damage_reaction_active:
+		return
 	if _is_primary_ranged_transition_presentation_active() or _is_primary_ranged_fire_presentation_active():
 		if _is_primary_ranged_fire_presentation_active():
 			var lower_base := _get_modular_lower_body_motion_base()
@@ -1347,7 +1374,8 @@ func _update_animation():
 	if _animation_state_machine != null and _animation_state_machine.current_state == "hit_recoil":
 		# Damage reaction playback owns the full body until its state duration
 		# completes; ordinary locomotion must not replace a knockdown mid-strip.
-		_hide_modular_locomotion_layers()
+		if not _modular_damage_reaction_active:
+			_hide_modular_locomotion_layers()
 		return
 
 	# Check if currently firing or attacking (lock to cursor)
@@ -5858,6 +5886,7 @@ func _handle_dodge_input(delta: float = 0.0) -> void:
 			_dodge_charge_timer + maxf(0.0, delta)
 		)
 		var ratio := _get_dodge_charge_ratio()
+		_update_dodge_charge_presentation(ratio)
 		dodge_charge_changed.emit(true, ratio, ratio >= 1.0)
 		return
 	if _is_action_just_pressed_any(["dodge"]):
@@ -5894,6 +5923,7 @@ func _begin_dodge_charge() -> bool:
 	_dodge_charge_timer = 0.0
 	_pending_dodge_direction = _resolve_dodge_direction()
 	_dodge_fast_attack_buffered = false
+	_begin_dodge_charge_presentation()
 	dodge_charge_changed.emit(true, 0.0, false)
 	_obs_increment(&"player_dodge_charge_started")
 	_obs_log(&"player_dodge_charge_started", {
@@ -5916,6 +5946,7 @@ func _release_dodge_charge() -> bool:
 	_dodge_charge_active = false
 	_dodge_charge_timer = 0.0
 	_pending_dodge_direction = Vector2.ZERO
+	_finish_dodge_charge_presentation()
 	dodge_charge_changed.emit(false, charge_ratio, charge_ratio >= 1.0)
 	var started := _try_start_dodge_with_profile(direction, profile, charge_ratio)
 	if started:
@@ -5939,6 +5970,7 @@ func _cancel_dodge_charge(reason: StringName = &"cancelled") -> void:
 	_dodge_charge_active = false
 	_dodge_charge_timer = 0.0
 	_pending_dodge_direction = Vector2.ZERO
+	_finish_dodge_charge_presentation()
 	dodge_charge_changed.emit(false, _get_dodge_charge_ratio_for_hold(hold_time), false)
 	dodge_charge_cancelled.emit(reason)
 	_obs_increment(&"player_dodge_charge_cancelled")
@@ -5946,6 +5978,113 @@ func _cancel_dodge_charge(reason: StringName = &"cancelled") -> void:
 		"reason": String(reason),
 		"hold_time": hold_time,
 	})
+
+
+func _begin_dodge_charge_presentation() -> bool:
+	var direction := _pending_dodge_direction
+	if direction.length_squared() <= 0.0001:
+		direction = _get_move_input_vector()
+	if direction.length_squared() <= 0.0001:
+		direction = visual_idle_direction
+	if direction.length_squared() <= 0.0001:
+		direction = Vector2.DOWN
+	var resolved := _resolve_dodge_presentation_animation(
+		DODGE_CHARGE_WINDUP_BASE,
+		direction
+	)
+	var animation_name: StringName = resolved.get("animation", &"")
+	if animation_name.is_empty():
+		_dodge_charge_presentation_active = false
+		return false
+	_dodge_charge_presentation_active = true
+	_dodge_chain_presentation_active = false
+	_dodge_presentation_animation = animation_name
+	_hide_modular_locomotion_layers()
+	_update_primary_weapon_visual(false)
+	_hide_dodge_fx()
+	animated_sprite.visible = true
+	animated_sprite.flip_h = false
+	animated_sprite.speed_scale = 1.0
+	animated_sprite.animation = animation_name
+	animated_sprite.stop()
+	_update_dodge_charge_presentation(0.0)
+	_obs_log(&"player_dodge_charge_presentation", resolved)
+	return true
+
+
+func _update_dodge_charge_presentation(charge_ratio: float) -> void:
+	if not _dodge_charge_presentation_active \
+	or animated_sprite == null \
+	or animated_sprite.sprite_frames == null \
+	or not _has_playable_sprite_animation(
+		animated_sprite.sprite_frames,
+		_dodge_presentation_animation
+	):
+		return
+	var frame_count: int = animated_sprite.sprite_frames.get_frame_count(
+		_dodge_presentation_animation
+	)
+	var selected_frame := clampi(
+		int(floor(clampf(charge_ratio, 0.0, 1.0) * float(frame_count))),
+		0,
+		frame_count - 1
+	)
+	animated_sprite.animation = _dodge_presentation_animation
+	animated_sprite.stop()
+	animated_sprite.set_frame_and_progress(selected_frame, 0.0)
+
+
+func _finish_dodge_charge_presentation() -> void:
+	if not _dodge_charge_presentation_active:
+		return
+	_dodge_charge_presentation_active = false
+	_dodge_presentation_animation = &""
+	if animated_sprite:
+		animated_sprite.stop()
+		animated_sprite.visible = true
+	_hide_modular_locomotion_layers()
+	if not _dodge_active and not _dodge_recovery_active:
+		_update_animation()
+
+
+func _resolve_dodge_presentation_animation(
+	base_animation: StringName,
+	direction: Vector2
+) -> Dictionary:
+	var requested_sector := DirectionalAnimationFallback.vector_to_sector(direction)
+	var available_sectors: Array[StringName] = []
+	if animated_sprite != null and animated_sprite.sprite_frames != null:
+		for sector: StringName in DirectionalAnimationFallback.SECTOR_ORDER:
+			var suffix := str(DODGE_PRESENTATION_SUFFIXES.get(sector, ""))
+			var candidate := StringName("%s_%s" % [String(base_animation), suffix])
+			if _has_playable_sprite_animation(
+				animated_sprite.sprite_frames,
+				candidate
+			):
+				available_sectors.append(sector)
+	var resolved_sector := DirectionalAnimationFallback.nearest_available_sector(
+		requested_sector,
+		available_sectors,
+		_dodge_resolved_presentation_sector
+	)
+	var animation_name := &""
+	if not resolved_sector.is_empty():
+		animation_name = StringName("%s_%s" % [
+			String(base_animation),
+			str(DODGE_PRESENTATION_SUFFIXES.get(resolved_sector, "")),
+		])
+	_dodge_requested_presentation_sector = requested_sector
+	if not resolved_sector.is_empty():
+		_dodge_resolved_presentation_sector = resolved_sector
+	return {
+		"animation": animation_name,
+		"requested_sector": requested_sector,
+		"resolved_sector": resolved_sector,
+		"fallback": (
+			not resolved_sector.is_empty()
+			and requested_sector != resolved_sector
+		),
+	}
 
 
 func _get_dodge_charge_ratio() -> float:
@@ -6170,7 +6309,12 @@ func _launch_buffered_dodge_chain() -> bool:
 	movement_direction = _dodge_direction
 	visual_idle_direction = _dodge_direction
 	var start_frame := _dodge_chain_animation_start_frame(turn_angle)
-	_play_dodge_animation(true, start_frame)
+	var used_link_presentation := false
+	if turn_angle <= 90.001:
+		used_link_presentation = _play_dodge_chain_link_presentation()
+	if not used_link_presentation:
+		_dodge_chain_presentation_active = false
+		_play_dodge_animation(true, start_frame)
 	var chain_audio := _play_combat_sfx(DODGE_ROLL_SOUND, global_position, -2.5)
 	if chain_audio != null:
 		chain_audio.pitch_scale = minf(1.08, 1.0 + float(_dodge_chain_index) * 0.025)
@@ -6187,10 +6331,50 @@ func _launch_buffered_dodge_chain() -> bool:
 		"speed": _active_dodge_speed,
 		"recovery_duration": _active_dodge_recovery_duration,
 		"animation_start_frame": start_frame,
+		"requested_presentation_sector": _dodge_requested_presentation_sector,
+		"resolved_body_sector": _dodge_resolved_presentation_sector,
+		"selected_animation": _dodge_presentation_animation,
+		"presentation_fallback": (
+			_dodge_requested_presentation_sector != _dodge_resolved_presentation_sector
+		),
 		"iframe_duration": _dodge_iframe_timer,
 		"stamina": stamina,
 	})
 	return true
+
+
+func _play_dodge_chain_link_presentation() -> bool:
+	if animated_sprite == null or animated_sprite.sprite_frames == null:
+		return false
+	var resolved := _resolve_dodge_presentation_animation(
+		DODGE_CHAIN_LINK_BASE,
+		_dodge_direction
+	)
+	var animation_name: StringName = resolved.get("animation", &"")
+	if animation_name.is_empty():
+		return false
+	_dodge_charge_presentation_active = false
+	_dodge_chain_presentation_active = true
+	_dodge_presentation_animation = animation_name
+	_hide_modular_locomotion_layers()
+	_update_primary_weapon_visual(false)
+	animated_sprite.visible = true
+	animated_sprite.flip_h = false
+	var source_fps: float = animated_sprite.sprite_frames.get_animation_speed(
+		animation_name
+	)
+	if source_fps <= 0.0:
+		source_fps = DODGE_CHAIN_LINK_FPS
+	animated_sprite.speed_scale = DODGE_CHAIN_LINK_FPS / source_fps
+	animated_sprite.play(animation_name)
+	animated_sprite.set_frame_and_progress(0, 0.0)
+	return true
+
+
+func _clear_dodge_body_presentation() -> void:
+	_dodge_charge_presentation_active = false
+	_dodge_chain_presentation_active = false
+	_dodge_presentation_animation = &""
 
 
 func _set_dodge_flow(value: float, direction: Vector2) -> void:
@@ -6273,6 +6457,12 @@ func get_dodge_flow_status() -> Dictionary:
 		"retention": _dodge_chain_last_retention,
 		"exit_velocity": _dodge_exit_velocity,
 		"exit_time_remaining": _dodge_exit_timer,
+		"requested_presentation_sector": _dodge_requested_presentation_sector,
+		"resolved_body_sector": _dodge_resolved_presentation_sector,
+		"presentation_animation": _dodge_presentation_animation,
+		"presentation_fallback": (
+			_dodge_requested_presentation_sector != _dodge_resolved_presentation_sector
+		),
 	}
 
 
@@ -6335,6 +6525,7 @@ func _start_dodge_recovery() -> void:
 	_dodge_iframe_timer = 0.0
 	if _dodge_chain_buffered and _launch_buffered_dodge_chain():
 		return
+	_dodge_chain_presentation_active = false
 	var recovery_duration := _active_dodge_recovery_duration \
 		if _active_dodge_duration > 0.0 else dodge_recovery_duration
 	_dodge_recovery_timer = maxf(0.0, recovery_duration)
@@ -6370,6 +6561,7 @@ func _cancel_dodge_recovery_for_fast_attack() -> void:
 	_dodge_recovery_timer = 0.0
 	_dodge_backstep_active = false
 	_active_dodge_profile = &"tap"
+	_clear_dodge_body_presentation()
 	_hide_dodge_fx()
 	_finish_dodge_flow_sequence(&"attack_cancel", false)
 	_set_dodge_flow(0.0, Vector2.ZERO)
@@ -6409,6 +6601,7 @@ func _cancel_dodge(reason: StringName = &"cancelled") -> void:
 	_active_dodge_speed = 0.0
 	_active_dodge_duration = 0.0
 	_active_dodge_recovery_duration = 0.0
+	_clear_dodge_body_presentation()
 	_hide_dodge_fx()
 	if had_flow_sequence:
 		_finish_dodge_flow_sequence(reason, false)
@@ -6455,11 +6648,15 @@ func _should_ignore_incoming_damage_for_dodge(source: String = "") -> bool:
 func _play_dodge_animation(force_restart: bool = false, start_frame: int = 0) -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
+	if _dodge_chain_presentation_active \
+	and animated_sprite.animation == _dodge_presentation_animation:
+		return
 	_hide_modular_locomotion_layers()
 	_update_primary_weapon_visual(false)
 	animated_sprite.flip_h = _is_facing_left(_dodge_direction)
 	animated_sprite.speed_scale = 1.0
 	var animation_name := _get_dodge_step_animation()
+	_dodge_presentation_animation = animation_name
 	if animated_sprite.sprite_frames.has_animation(animation_name):
 		if force_restart or animated_sprite.animation != animation_name or not animated_sprite.is_playing():
 			animated_sprite.play(animation_name)
@@ -9000,6 +9197,134 @@ func _request_damage_reaction(_amount: float, hit_strength: int = CombatConstant
 	_animation_state_machine.request("hit_recoil", 20)
 
 
+func begin_modular_damage_reaction(state_name: String) -> bool:
+	if state_name != "hit_recoil" \
+	or _damage_reaction_strength != CombatConstants.HitStrength.LIGHT \
+	or _is_dead \
+	or _paired_execution_active \
+	or _portal_transition_locked \
+	or _portal_arrival_animation_active:
+		return false
+	if modular_lower_body_sprite == null \
+	or modular_upper_body_sprite == null \
+	or modular_lower_body_sprite.sprite_frames == null \
+	or modular_upper_body_sprite.sprite_frames == null:
+		return false
+
+	var facing := visual_idle_direction
+	if facing.length_squared() <= 0.0001:
+		facing = movement_direction
+	if facing.length_squared() <= 0.0001:
+		facing = Vector2.DOWN
+	var requested_sector := DirectionalAnimationFallback.vector_to_sector(facing)
+	var resolved_sector := DirectionalAnimationFallback.nearest_available_sector(
+		requested_sector,
+		[&"n", &"s"],
+		_modular_damage_reaction_sector
+	)
+	var suffix := "up" if resolved_sector == &"n" else "down"
+	var animation_name := StringName(
+		"operator_idle_hitreact_modular_%s" % suffix
+	)
+
+	# Resolve every required layer before changing visibility. Missing body art
+	# must fall back atomically to the legacy full-body reaction.
+	if not _has_playable_sprite_animation(
+		modular_lower_body_sprite.sprite_frames,
+		animation_name
+	) or not _has_playable_sprite_animation(
+		modular_upper_body_sprite.sprite_frames,
+		animation_name
+	):
+		return false
+
+	var duration := maxf(
+		0.01,
+		get_damage_reaction_duration(state_name)
+	)
+	var target_fps := 5.0 / duration
+	_modular_damage_reaction_active = true
+	_modular_damage_reaction_animation = animation_name
+	_modular_damage_reaction_head_animation = &""
+	_modular_damage_reaction_sector = resolved_sector
+	_play_synchronized_modular_reaction_layer(
+		modular_lower_body_sprite,
+		animation_name,
+		target_fps
+	)
+	_play_synchronized_modular_reaction_layer(
+		modular_upper_body_sprite,
+		animation_name,
+		target_fps
+	)
+	if modular_head_sprite != null \
+	and modular_head_sprite.sprite_frames != null \
+	and _has_playable_sprite_animation(
+		modular_head_sprite.sprite_frames,
+		animation_name
+	):
+		_modular_damage_reaction_head_animation = animation_name
+		_play_synchronized_modular_reaction_layer(
+			modular_head_sprite,
+			animation_name,
+			target_fps
+		)
+	else:
+		_hide_modular_head_layer()
+
+	if animated_sprite:
+		animated_sprite.visible = false
+		animated_sprite.stop()
+	for sprite in [
+		modular_sidearm_sprite,
+		modular_upper_fx_sprite,
+		modular_cape_sprite,
+		melee_weapon_overlay_sprite,
+		melee_fx_overlay_sprite,
+		primary_weapon_sprite,
+		ranged_fx_overlay_sprite,
+	]:
+		if sprite != null:
+			sprite.visible = false
+			sprite.stop()
+	_obs_log(&"player_modular_idle_hitreact_started", {
+		"requested_sector": requested_sector,
+		"resolved_sector": resolved_sector,
+		"animation": animation_name,
+		"fallback": requested_sector != resolved_sector,
+		"head": not _modular_damage_reaction_head_animation.is_empty(),
+	})
+	return true
+
+
+func _play_synchronized_modular_reaction_layer(
+	sprite: AnimatedSprite2D,
+	animation_name: StringName,
+	target_fps: float
+) -> void:
+	var source_fps := sprite.sprite_frames.get_animation_speed(animation_name)
+	if source_fps <= 0.0:
+		source_fps = target_fps
+	sprite.visible = true
+	sprite.flip_h = false
+	sprite.speed_scale = target_fps / maxf(0.01, source_fps)
+	sprite.play(animation_name)
+	sprite.set_frame_and_progress(0, 0.0)
+
+
+func is_modular_damage_reaction_playing() -> bool:
+	if not _modular_damage_reaction_active \
+	or modular_lower_body_sprite == null \
+	or modular_upper_body_sprite == null:
+		return false
+	return modular_lower_body_sprite.visible \
+		and modular_upper_body_sprite.visible \
+		and modular_lower_body_sprite.animation == _modular_damage_reaction_animation \
+		and modular_upper_body_sprite.animation == _modular_damage_reaction_animation \
+		and modular_lower_body_sprite.is_playing() \
+		and modular_upper_body_sprite.is_playing()
+
+
 func get_damage_reaction_animation(_reaction_name: String) -> StringName:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return &""
@@ -9060,13 +9385,37 @@ func play_damage_reaction_fx(_animation_name: StringName) -> void:
 
 
 func finish_damage_reaction_presentation() -> void:
-	if melee_fx_overlay_sprite == null:
-		return
-	var animation_name := String(melee_fx_overlay_sprite.animation)
-	if animation_name.begins_with("unarmed_light_hitreact") or animation_name.begins_with("unarmed_bodyslam_knockdown"):
-		melee_fx_overlay_sprite.visible = false
-		melee_fx_overlay_sprite.stop()
-		melee_fx_overlay_sprite.frame = 0
+	var modular_was_active := _modular_damage_reaction_active
+	_modular_damage_reaction_active = false
+	_modular_damage_reaction_animation = &""
+	_modular_damage_reaction_head_animation = &""
+	if modular_was_active:
+		for sprite in [
+			modular_lower_body_sprite,
+			modular_upper_body_sprite,
+			modular_head_sprite,
+		]:
+			if sprite != null:
+				sprite.stop()
+				sprite.visible = false
+				sprite.frame = 0
+		if animated_sprite:
+			animated_sprite.visible = true
+	if melee_fx_overlay_sprite != null:
+		var animation_name := String(melee_fx_overlay_sprite.animation)
+		if animation_name.begins_with("unarmed_light_hitreact") or animation_name.begins_with("unarmed_bodyslam_knockdown"):
+			melee_fx_overlay_sprite.visible = false
+			melee_fx_overlay_sprite.stop()
+			melee_fx_overlay_sprite.frame = 0
+	if modular_was_active:
+		_update_primary_weapon_visual(false)
+		# AnimationStateMachine invokes this hook before it assigns the next
+		# state. Defer the locomotion resync so hit_recoil no longer suppresses
+		# the restored modular layers.
+		if is_inside_tree():
+			call_deferred("_update_animation")
+		else:
+			_update_animation()
 
 
 func _interrupt_active_combat_for_damage_reaction() -> void:

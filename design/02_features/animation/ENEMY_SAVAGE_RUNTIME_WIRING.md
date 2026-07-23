@@ -1,7 +1,7 @@
 # Enemy Savage Runtime Wiring
 
 Status: active rushdown gameplay slice
-Last updated: 2026-07-22
+Last updated: 2026-07-23
 
 ## Summary
 
@@ -40,28 +40,32 @@ and collapse under clean interruption instead of probing, kiting, or retreating 
 
 Both Savage commitments remain fixed-step simulation-owned in `Enemy`. Incoming damage cancels an active chain or
 pounce before recoil/stagger/critical reaction playback, preserving its intended flinch susceptibility. Animation
-selection remains presentation-only and currently falls back to directional idle.
+selection remains presentation-only. Authored E/W run strips now drive movement; missing movement directions use the
+shared nearest-sector fallback without changing velocity or AI direction.
 
 ## Current Art Limitation
 
-The current slice has no authored Savage movement, chain, pounce, reaction, FX, or death strips. The actor is fully
-functional, but idle clips are used as presentation fallback while moving and attacking, and death has no authored
-playback delay. Missing production art is tracked only in root `REQUIRED_ASSETS.md`.
+The current slice has authored E/W run strips wired as `move_e` and `move_w`. Missing movement directions resolve to
+the nearest of those authored sectors with previous-sector tie stability. If no movement clip is playable, runtime
+retains directional idle fallback. Authored E/W pounce body/FX strips are present but not yet wired; chain, reaction,
+and death presentation remain missing, and death has no authored playback delay. Remaining production gaps are
+tracked only in root `REQUIRED_ASSETS.md`.
 
 ## Acceptance
 
 - Full sprite ingest succeeds with superseded cleanup.
 - No loose `res://content/sprites/enemy_savage/` tree exists or is recreated by enemy ingest.
-- `enemy_savage.tscn` instantiates with six runtime idle animations.
+- `enemy_savage.tscn` instantiates with six runtime idle and two runtime movement animations.
 - `WaveManager`, `EnemyFactory`, `EnemyDirector`, and `scenes/game.tscn` resolve `savage`.
 - `spawn_savage` reaches the shared debug-spawn path.
-- `savage_runtime_smoke.gd` proves frame counts, direction selection, scene activation, and spawn-system wiring.
+- `savage_runtime_smoke.gd` proves idle/movement frame counts, nearest-direction selection, presentation priority,
+  scene activation, and spawn-system wiring.
 - `enemy_savage_smoke.gd` proves stats, profile identity, no-theft behavior, two chain hits with 10/22 guard costs,
   and one pounce hit in its active window.
 
 ## Next Agent Slice
 
-- Goal: replace idle substitution with authored Savage rushdown action playback.
+- Goal: add authored Savage chain, pounce, reaction, and death playback after the completed E/W movement slice.
 - Files: Savage runtime strips, `savage_animation_library.gd`, `enemy.gd`, `enemy_savage.tscn`, and focused smoke.
 - Constraints: preserve fixed-step gameplay authority in `Enemy`; animation selection remains presentation-only; do
   not rescale authored pixels without an explicit normalization contract.

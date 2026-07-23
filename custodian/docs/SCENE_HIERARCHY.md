@@ -19,6 +19,8 @@ Scale contract reference: `res://docs/WORLD_SCALE_CONTRACT.md`
 - `World/Items`
 - `World/ContractMap` (instance: `res://game/world/procgen/custodian_contract_map.tscn`)
 - `World/ProcGenRuntime` (created at runtime by `ContractWorldLoader`)
+- `World/LevelLoader` (persistent authored-level staging/activation service)
+- `World/RouteTraversalManager` (persistent directed-route/session authority)
 - `World/Operator`
 - `World/CommandTerminal` (instance: `res://game/actors/terminal/command_terminal.tscn`)
 - `World/Camera2D`
@@ -38,6 +40,10 @@ Scale contract reference: `res://docs/WORLD_SCALE_CONTRACT.md`
 - `ContractWorldLoader` owns promotion of the generated map into visible runtime world space.
 - `World/ProcGenRuntime` becomes the active traversed map container once contract generation completes.
 - `World/Sectors` currently remains as compatibility/runtime-support content and is hidden/deactivated during procgen play.
+- Direct base-world gameplay and presentation children use the `world_origin_branch` group. `WorldIngressSite` captures every grouped direct child of `World`, hides and processing-disables that exact set for the full authored-route session, and restores each branch's captured state only on route exfil.
+- Dynamically created `World/ProcGenRuntime` containers are always classified by `ContractWorldLoader`; `ConnectedMaps` remains a compatibility lookup until that retired container is removed.
+- `World/Operator`, `World/Camera2D`, shared lighting, `World/LevelLoader`, and `World/RouteTraversalManager` are intentionally outside `world_origin_branch` and remain active while Vista, Return Causeway, or Front Gate owns the route presentation.
+- Authored route instances are staged as temporary direct `World` children but are never classified as origin branches or pre-authored into `game.tscn`.
 
 ## Interaction Surfaces
 

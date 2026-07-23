@@ -191,7 +191,7 @@ func _ready() -> void:
 	_build_visuals()
 	_ensure_vista_controller()
 	_ensure_reveal_director()
-	_enforce_presentation_isolation()
+	_apply_vista_presentation_mode()
 	call_deferred("_finish_physics_setup")
 
 
@@ -199,7 +199,7 @@ func enter_from_main(p_actor: Node) -> void:
 	if p_actor is Node2D:
 		(p_actor as Node2D).global_position = get_entry_position()
 	_refresh_camera()
-	_enforce_presentation_isolation()
+	_apply_vista_presentation_mode()
 
 
 func get_entry_position() -> Vector2:
@@ -502,9 +502,7 @@ func _refresh_camera() -> void:
 		camera.call("set_runtime_map", self)
 
 
-func _enforce_presentation_isolation() -> void:
-	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ProcGenRuntime"), false)
-	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ConnectedMaps"), false)
+func _apply_vista_presentation_mode() -> void:
 	var ui := get_node_or_null("/root/GameRoot/UI")
 	if ui != null and ui.has_method("set_world_presentation_mode"):
 		ui.call("set_world_presentation_mode", &"vista_approach")
@@ -732,14 +730,6 @@ func _is_player_body(body: Node) -> bool:
 	return body.is_in_group("player") or body.is_in_group("operator") or String(body.name) == "Operator"
 
 
-func _set_world_branch_visible(branch: Node, value: bool) -> void:
-	if branch == null:
-		return
-	if branch is CanvasItem:
-		(branch as CanvasItem).visible = value
-	branch.process_mode = Node.PROCESS_MODE_INHERIT if value else Node.PROCESS_MODE_DISABLED
-
-
 func _get_authoring_marker_position(marker_id: String, fallback: Vector2) -> Vector2:
 	var marker_data: Variant = AUTHORING_MARKERS.get(marker_id, {})
 	if marker_data is Dictionary:
@@ -763,7 +753,7 @@ func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
 		return false
 	(actor as Node2D).global_position = get_spawn_position(spawn_id)
 	_refresh_camera()
-	_enforce_presentation_isolation()
+	_apply_vista_presentation_mode()
 	return true
 
 
@@ -780,7 +770,7 @@ func prepare_route_deactivation(_context: Dictionary) -> void:
 
 
 func complete_route_activation(_context: Dictionary) -> bool:
-	_enforce_presentation_isolation()
+	_apply_vista_presentation_mode()
 	return true
 
 

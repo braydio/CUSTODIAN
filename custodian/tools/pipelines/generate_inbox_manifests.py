@@ -416,6 +416,10 @@ def _canonical_runtime_path(info: SheetInfo) -> str:
         if _is_operator_modular_sheet(info):
             return f"operator/new_operator/modular/{_operator_modular_source_bucket(info)}/{info.basename}"
         if info.layer == "body":
+            if info.action_group == "full" and info.variant.startswith("dodge_charge_"):
+                return f"operator/runtime/actions/dodge_charge/body/{info.basename}"
+            if info.action_group == "full" and info.variant.startswith("dodge_chain_"):
+                return f"operator/runtime/actions/dodge_chain/body/{info.basename}"
             return f"operator/runtime/body/{info.action_group}/{info.basename}"
         if info.layer == "weapon":
             return f"operator/runtime/weapon/{info.action_group}/{info.basename}"

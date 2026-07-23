@@ -24,11 +24,33 @@ func create(tree: SceneTree, suffix: String, profile: StringName, target_spawn_i
 	game_root.add_child(ui)
 	var procgen := Node2D.new()
 	procgen.name = "ProcGenRuntime"
+	procgen.add_to_group(&"world_origin_branch")
 	procgen.process_mode = Node.PROCESS_MODE_ALWAYS
 	world.add_child(procgen)
 	var connected := Node2D.new()
 	connected.name = "ConnectedMaps"
+	connected.add_to_group(&"world_origin_branch")
 	world.add_child(connected)
+	var origin_sector_root := Node2D.new()
+	origin_sector_root.name = "Sectors"
+	origin_sector_root.add_to_group(&"world_origin_branch")
+	origin_sector_root.process_mode = Node.PROCESS_MODE_ALWAYS
+	world.add_child(origin_sector_root)
+	var floor := ColorRect.new()
+	floor.name = "LeakingSectorFloor"
+	floor.position = Vector2(-288.0, -192.0)
+	floor.size = Vector2(576.0, 384.0)
+	floor.color = Color(0.15, 0.4, 0.15, 1.0)
+	origin_sector_root.add_child(floor)
+	var body := StaticBody2D.new()
+	body.name = "LeakingSectorCollision"
+	origin_sector_root.add_child(body)
+	var shape := CollisionShape2D.new()
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = Vector2(576.0, 18.0)
+	shape.shape = rectangle
+	shape.position = Vector2(0.0, -192.0)
+	body.add_child(shape)
 	var camera := TEST_CAMERA_SCRIPT.new()
 	camera.name = "Camera2D"
 	camera.global_position = Vector2(18.0, 26.0)
@@ -59,6 +81,7 @@ func create(tree: SceneTree, suffix: String, profile: StringName, target_spawn_i
 		"ui": ui,
 		"procgen": procgen,
 		"connected": connected,
+		"origin_sector_root": origin_sector_root,
 		"camera": camera,
 		"actor": actor,
 		"loader": loader,

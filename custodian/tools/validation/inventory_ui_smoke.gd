@@ -55,6 +55,8 @@ func _initialize() -> void:
 	_assert(_find_node_named(inventory_ui, "LedgerButton") != null, "ledger tab button missing")
 	_assert(_find_node_named(inventory_ui, "EquipmentButton") != null, "equipment tab button missing")
 	_assert(status_page.visible, "inventory did not open to the status page")
+	_assert(_find_label_with_text(inventory_ui, "FIELD LEDGER") != null, "simplified Field Ledger title missing")
+	_assert(_find_label_with_text(inventory_ui, "CUSTODIAN FIELD LEDGER / RELIQUARY INVENTORY") == null, "redundant legacy inventory title remains")
 	_assert(_find_node_named(inventory_ui, "HistoryLog") != null, "history log control missing")
 	inventory_ui.call("set_location", "SUNDERED KEEP FRONT GATE")
 	inventory_ui.call("set_phase", "APPROACH")
@@ -80,13 +82,26 @@ func _initialize() -> void:
 	_assert(item_grid != null and not item_grid.get_children().is_empty(), "ledger item grid missing")
 	_assert(item_grid is GridContainer and (item_grid as GridContainer).columns >= 1 and (item_grid as GridContainer).columns <= 4, "ledger item grid columns should be responsive and clamped")
 	_assert(item_grid != null and item_grid.get_child(0).name == "Item_sundered_gate_key", "ledger should sort by class and display name")
+	var filter_button := _find_node_named(inventory_ui, "FilterButton") as Button
+	var sort_button := _find_node_named(inventory_ui, "SortButton") as Button
+	_assert(filter_button != null and filter_button.text.contains("FILTER · ALL"), "filter should be a truthful focusable control")
+	_assert(sort_button != null and sort_button.text.contains("CLASS / NAME"), "sort should be a truthful focusable control")
+	var all_category := _find_node_named(inventory_ui, "CategoryAllButton") as Button
+	var cognitive_category := _find_node_named(inventory_ui, "CategoryCognitiveButton") as Button
+	_assert(all_category != null and all_category.text.contains("4"), "All category should expose its current unit count")
+	_assert(cognitive_category != null and cognitive_category.text.contains("2"), "Cognitive category should expose its current unit count")
 	var detail_equip_button := _find_node_named(inventory_ui, "EquipButton")
-	_assert(detail_equip_button != null and _has_scroll_ancestor(detail_equip_button), "ledger inspection controls should live inside a ScrollContainer")
+	var description_scroll := _find_node_named(inventory_ui, "DescriptionScroll") as ScrollContainer
+	_assert(detail_equip_button != null and not _has_scroll_ancestor(detail_equip_button), "inspection action should be pinned outside scrolling content")
+	_assert(description_scroll != null, "inspection description should own the only detail scrollbar")
 	var key_quantity := (_find_node_named(inventory_ui, "Item_sundered_gate_key") as Button).get_node_or_null("ItemQuantity") as Label
 	_assert(key_quantity != null and not key_quantity.visible, "key-object cards should not display stack quantity")
-	var p9_name := (_find_node_named(inventory_ui, "Item_p9_sidearm") as Button).get_node_or_null("ItemName") as Label
+	var p9_card := _find_node_named(inventory_ui, "Item_p9_sidearm") as Button
+	var p9_name := p9_card.get_node_or_null("ItemName") as Label
 	_assert(p9_name != null and p9_name.text == "P-9 FIELD SIDEARM", "item card should keep its name in a dedicated text region")
-	var p9_icon := (_find_node_named(inventory_ui, "Item_p9_sidearm") as Button).get_node_or_null("ItemIcon") as TextureRect
+	_assert(p9_card.custom_minimum_size == Vector2(180, 190), "item cards should use the 180x190 reference footprint")
+	var p9_icon := p9_card.get_node_or_null("ItemIcon") as TextureRect
+	_assert(p9_icon != null and p9_icon.size.x >= 112.0, "item cards should use the normalized 112px icon viewport")
 	_assert(
 		p9_icon != null and p9_icon.texture != null and p9_icon.texture.resource_path.ends_with("p9_custodian_sidearm__portrait__inventory__default__omni__1f__512.png"),
 		"P-9 should resolve its production inventory portrait"
@@ -150,6 +165,10 @@ func _initialize() -> void:
 	inventory_ui.call("close")
 	await process_frame
 	_assert(not inventory_ui.visible, "inventory UI did not close")
+	inventory_ui.call("open")
+	await process_frame
+	_assert(history_page.visible, "inventory should preserve the last-open page during the play session")
+	inventory_ui.call("close")
 	print("[InventoryUISmoke] PASS")
 	quit(0)
 

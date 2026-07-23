@@ -1,36 +1,58 @@
 extends RefCounted
 class_name SavageAnimationLibrary
 
+const DIRECTIONAL_FALLBACK := preload(
+	"res://game/systems/presentation/directional_animation_fallback.gd"
+)
+
 const ANIMATION_SPECS := {
 	"idle_e": {
 		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__e__9f__128.png",
 		"frame_size": Vector2i(128, 128),
 		"fps": 6.0,
+		"loop": true,
 	},
 	"idle_n": {
 		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__n__5f__96.png",
 		"frame_size": Vector2i(96, 96),
 		"fps": 6.0,
+		"loop": true,
 	},
 	"idle_s": {
 		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__s__9f__95.png",
 		"frame_size": Vector2i(95, 95),
 		"fps": 6.0,
+		"loop": true,
 	},
 	"idle_se": {
 		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__se__5f__96.png",
 		"frame_size": Vector2i(96, 96),
 		"fps": 6.0,
+		"loop": true,
 	},
 	"idle_sw": {
 		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__sw__4f__96.png",
 		"frame_size": Vector2i(96, 96),
 		"fps": 6.0,
+		"loop": true,
 	},
 	"idle_w": {
 		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__idle_01__w__9f__128.png",
 		"frame_size": Vector2i(128, 128),
 		"fps": 6.0,
+		"loop": true,
+	},
+	"move_e": {
+		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__run_01__e__8f__96.png",
+		"frame_size": Vector2i(96, 96),
+		"fps": 10.0,
+		"loop": true,
+	},
+	"move_w": {
+		"path": "res://content/sprites/enemies/enemy_savage/runtime/body/locomotion/enemy_savage__body__locomotion__run_01__w__8f__96.png",
+		"frame_size": Vector2i(96, 96),
+		"fps": 10.0,
+		"loop": true,
 	},
 }
 
@@ -48,12 +70,33 @@ static func get_savage_sprite_frames() -> SpriteFrames:
 
 
 static func get_idle_animation(direction: Vector2) -> StringName:
-	var suffix := _get_direction_suffix(direction)
-	if suffix == &"ne":
-		return &"idle_n"
-	if suffix == &"nw":
-		return &"idle_n"
-	return StringName("idle_%s" % String(suffix))
+	var requested_sector := DIRECTIONAL_FALLBACK.vector_to_sector(direction)
+	var resolved_sector := DIRECTIONAL_FALLBACK.nearest_available_sector(
+		requested_sector,
+		_get_available_sectors("idle_")
+	)
+	return (
+		StringName("idle_%s" % String(resolved_sector))
+		if not resolved_sector.is_empty()
+		else &""
+	)
+
+
+static func get_movement_animation(
+	direction: Vector2,
+	previous_sector: StringName = &""
+) -> StringName:
+	var requested_sector := DIRECTIONAL_FALLBACK.vector_to_sector(direction)
+	var resolved_sector := DIRECTIONAL_FALLBACK.nearest_available_sector(
+		requested_sector,
+		_get_available_sectors("move_"),
+		previous_sector
+	)
+	return (
+		StringName("move_%s" % String(resolved_sector))
+		if not resolved_sector.is_empty()
+		else &""
+	)
 
 
 static func _add_strip_animation(frames: SpriteFrames, animation_name: String, spec: Dictionary) -> void:
@@ -71,7 +114,7 @@ static func _add_strip_animation(frames: SpriteFrames, animation_name: String, s
 		return
 	var frame_count := int(texture.get_width() / frame_size.x)
 	frames.add_animation(animation_name)
-	frames.set_animation_loop(animation_name, true)
+	frames.set_animation_loop(animation_name, bool(spec.get("loop", true)))
 	frames.set_animation_speed(animation_name, float(spec.get("fps", 6.0)))
 	for frame_index in range(frame_count):
 		var atlas := AtlasTexture.new()
@@ -79,11 +122,9 @@ static func _add_strip_animation(frames: SpriteFrames, animation_name: String, s
 		atlas.region = Rect2(float(frame_index * frame_size.x), 0.0, float(frame_size.x), float(frame_size.y))
 		frames.add_frame(animation_name, atlas)
 
-
-static func _get_direction_suffix(direction: Vector2) -> StringName:
-	if direction.length_squared() <= 0.0001:
-		return &"s"
-	var angle := wrapf(direction.angle(), 0.0, TAU)
-	var sector := int(round(angle / (PI / 4.0))) % 8
-	var angle_to_suffix := [&"e", &"se", &"s", &"sw", &"w", &"nw", &"n", &"ne"]
-	return angle_to_suffix[sector]
+static func _get_available_sectors(prefix: String) -> Array[StringName]:
+	var sectors: Array[StringName] = []
+	for sector: StringName in DIRECTIONAL_FALLBACK.SECTOR_ORDER:
+		if ANIMATION_SPECS.has("%s%s" % [prefix, String(sector)]):
+			sectors.append(sector)
+	return sectors

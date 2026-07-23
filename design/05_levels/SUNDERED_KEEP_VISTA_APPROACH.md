@@ -1,6 +1,6 @@
 # Sundered Keep Vista Approach
 
-- **Status:** route-master playable Sundered Keep slice implemented; direct-to-Keep sanity ingress is the default and the longer Return Causeway branch remains available behind an exported test switch
+- **Status:** route-master playable Sundered Keep Vista node implemented in the production directed route
 - **Owner:** authored level / rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Production runtime scene:** `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn`
@@ -16,20 +16,20 @@ A playable first Sundered Keep slice built from the former approach scene. The p
 
 ## Runtime Ingress Chain
 
-Normal contract-world access currently uses the shorter sanity route:
+Normal contract-world access uses the production directed route:
 
 ```
-Procgen world placement
-  -> WorldIngressSite
-  -> Vista Approach
-  -> Sundered Keep front-gate map
+@world_origin
+  -> vista_approach
+  -> return_causeway
+  -> front_gate
 ```
 
-`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn` remains the production entry scene. `BYPASS_RETURN_CAUSEWAY_FOR_KEEP_TESTING` defaults to `true`, so its endpoint instantiates `sundered_keep_map.gd` directly, retains `target_level_id = sundered_keep_front_gate`, places the Operator through `SunderedKeepMap.enter_from_main()` / `get_entry_position()`, and retires the Vista scene. Returning from this direct Keep branch reactivates the upstream procgen/contract map and restores the configured world return position.
+`ContractWorldLoader` owns placement of the procgen-side `WorldIngressSite`. `RouteTraversalManager` resolves the production graph in `content/routes/sundered_keep/sundered_keep_route.json`, while `LevelLoader` stages and activates the independent Vista, Return Causeway, and Front Gate level scenes. Route data, not a Vista scene switch or destination-loading trigger, selects production and debug profiles.
 
-The exported instance switch `bypass_return_causeway_for_keep_testing` may be set to `false` to test the longer Vista Approach -> Return Causeway -> Keep route. On that branch the Causeway displays a named entry affordance, its north gate enters the Keep, and Keep return reactivates the Causeway at its north anchor. `LevelLoader` tracks either handoff and `SunderedKeepTransitionTrigger` owns shared target instancing, entry setup, active-level adoption, and source retirement.
+`WorldIngressSite` captures every direct child of `World` assigned to `world_origin_branch`, then hides and processing-disables the captured branches for the full route session. The Operator, Camera2D, shared lighting, LevelLoader, and RouteTraversalManager remain persistent. Node-to-node traversal never restores origin content; exact captured branch visibility and process modes are restored only during route exfil to `@world_origin`.
 
-`WorldIngressSite` establishes the Vista presentation contract before it calls `LevelLoader.enter_level(...)`: `ProcGenRuntime` and `ConnectedMaps` are hidden and processing-disabled, the procgen HUD/minimap enters `vista_approach` mode, and Operator world-space health/target presentation is suppressed. A failed entry restores those branches and presentation state. The production approach reasserts the same contract when it becomes active, so procgen actors, resource/aspect markers, health bars, target rings, and minimap pips cannot bleed into the authored route.
+`SunderedKeepApproach` owns Vista presentation only: it selects `vista_approach` UI mode and suppresses Operator world-space health/target presentation while active. It does not capture, disable, or restore base-world branches. A failed ingress transaction restores the captured origin snapshot before the route is allowed to retry.
 
 Ingress transitions must be deferred out of `Area2D.body_entered` physics callbacks before instancing this scene. The approach also defers its dynamic `StaticBody2D` boundary rails and final exit `Area2D` setup by one frame so Godot does not register or toggle physics shapes while flushing queries.
 
@@ -60,7 +60,7 @@ The same mapper now has marker mode for event authoring:
 - `C`: copy the full `AUTHORING_MARKERS` block.
 - `Enter` / `U`: apply marker positions back to `sundered_keep_approach.gd`.
 
-`AUTHORING_MARKERS` is the stable authoring contract for Vista reference points. Keep key, gate, encounter, and siege markers belong to Return Causeway or the Sundered Keep map, not this presentation route. The runtime endpoint is positioned by `LEVEL_EXIT_POS` and selects either the direct Keep target or the optional Return Causeway target from the exported bypass switch.
+`AUTHORING_MARKERS` is the stable authoring contract for Vista reference points. Keep key, gate, encounter, and siege markers belong to Return Causeway or the Sundered Keep map, not this presentation route. The runtime endpoint is positioned by `LEVEL_EXIT_POS`; its authored `continue` exit resolves to Return Causeway in the production route profile.
 
 ## Scene Architecture
 
@@ -74,7 +74,7 @@ SunderedKeepApproach
 ├── Collision             — PathBoundaryCollision thick CapsuleShape2D rails
 ├── Markers               — EntrySpawn, RevealStart, RevealFull, MidGameplayStart, SecondVistaStart, SecondVistaFull, SecondVistaEnd, TraverseEnd, ReturnTopdown
 ├── EventMarkers          — retained Vista reference markers for spawn and Return Causeway
-├── EventRuntime          — switchable direct-Keep / Return-Causeway transition trigger
+├── EventRuntime          — authored route-exit affordances bound by RouteTraversalManager
 ├── VistaController       — drives vista, grand vista, fog, occlusion, and distant keep alpha
 ├── RevealDirector        — one-shot threshold choreography for camera, fog peel, moonlight cue, and delayed prompt
 ```
@@ -112,7 +112,7 @@ Crossing `Markers/RevealStart` now starts a discrete 0.81-second reveal event in
 
 `VistaRoot/FarKeepSilhouetteLayerA` and `LayerB` reuse the current horizon matte at darker, softer, offset scales behind the primary plate. These are runtime distance-separation scaffolds; the bespoke far-silhouette asset tracked in `REQUIRED_ASSETS.md` should replace them once authored.
 
-The endpoint remains an `Area2D`, but it is a narrow walkable threshold under `EventRuntime/LevelExitAffordance`, displays `ENTER SUNDERED KEEP`, accepts automatic crossing only from the authored approach side, raises the final veil, and then performs the existing fade/handoff.
+The endpoint remains an `Area2D`, but it is a narrow walkable threshold under `EventRuntime/LevelExitAffordance`, displays the Return Causeway destination prompt, accepts automatic crossing only from the authored approach side, raises the final veil, and requests the route-owned `continue` handoff.
 
 **Marker positions** (from builder):
 
@@ -383,5 +383,5 @@ Verify at each state:
   - In-editor visual review of the procgen ingress -> `sundered_keep_approach.tscn` playable-map flow
   - Replace the current ingress tile fallback with a specific coast/keep ingress reservation in the procgen intent graph
   - Expand `AUTHORING_MARKERS` into richer encounter scripting once enemy compositions are selected
-  - Rebuild/polish Return Causeway before changing the exported bypass default back to the longer route
+  - Continue Return Causeway presentation polish without changing the production route graph
 - **Constraint:** Art alpha remains non-authoritative; use mapper rails for collision and `AUTHORING_MARKERS` for semantic gameplay points.

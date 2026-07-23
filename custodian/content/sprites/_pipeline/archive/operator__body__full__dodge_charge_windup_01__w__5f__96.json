@@ -1,0 +1,23 @@
+{
+  "source": "operator__body__full__dodge_charge_windup_01__w__5f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/runtime/actions/dodge_charge/body/operator__body__full__dodge_charge_windup_01__w__5f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 5
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "operator_curated_resources"
+  ]
+}

@@ -12,6 +12,8 @@ const EXPECTED_FRAMES := {
 	"idle_se": 5,
 	"idle_sw": 4,
 	"idle_w": 9,
+	"move_e": 8,
+	"move_w": 8,
 }
 
 var _failed := false
@@ -37,6 +39,12 @@ func _run() -> void:
 		_assert_true(frames.get_frame_count(animation_name) == int(EXPECTED_FRAMES[animation_name]), "%s should have %d frames" % [animation_name, EXPECTED_FRAMES[animation_name]])
 	_assert_true(SAVAGE_ANIMATION_LIBRARY.get_idle_animation(Vector2(-1.0, 1.0)) == &"idle_sw", "southwest should select idle_sw")
 	_assert_true(SAVAGE_ANIMATION_LIBRARY.get_idle_animation(Vector2(1.0, -1.0)) == &"idle_n", "missing northeast art should fall back to idle_n")
+	_assert_true(SAVAGE_ANIMATION_LIBRARY.get_movement_animation(Vector2.RIGHT) == &"move_e", "east movement should select authored move_e")
+	_assert_true(SAVAGE_ANIMATION_LIBRARY.get_movement_animation(Vector2.LEFT) == &"move_w", "west movement should select authored move_w")
+	_assert_true(SAVAGE_ANIMATION_LIBRARY.get_movement_animation(Vector2.UP) == &"move_e", "missing north movement should use deterministic nearest art")
+	var gameplay_direction := Vector2.UP
+	SAVAGE_ANIMATION_LIBRARY.get_movement_animation(gameplay_direction)
+	_assert_true(gameplay_direction == Vector2.UP, "presentation fallback must not alter gameplay direction")
 
 	var savage := SAVAGE_SCENE.instantiate()
 	root.add_child(savage)
@@ -49,7 +57,36 @@ func _run() -> void:
 	_assert_true(float(savage.get("health_bar_vertical_offset")) <= -80.0, "savage health bar should clear the tall mixed-canvas art")
 	_assert_true(sprite != null and sprite.sprite_frames.has_animation("idle_e"), "savage scene should build runtime SpriteFrames")
 	savage.call("_update_custom_enemy_animation", Vector2.LEFT, true, false)
-	_assert_true(sprite != null and String(sprite.animation) == "idle_w", "savage left movement should play idle_w until movement art exists")
+	_assert_true(sprite != null and String(sprite.animation) == "move_w", "savage left movement should play authored move_w")
+	savage.call("_update_custom_enemy_animation", Vector2.RIGHT, true, false)
+	_assert_true(sprite != null and String(sprite.animation) == "move_e", "savage right movement should play authored move_e")
+	var fallback_frames := sprite.sprite_frames.duplicate() as SpriteFrames
+	fallback_frames.remove_animation(&"move_e")
+	fallback_frames.remove_animation(&"move_w")
+	sprite.sprite_frames = fallback_frames
+	savage.call("_update_custom_enemy_animation", Vector2.RIGHT, true, false)
+	_assert_true(String(sprite.animation) == "idle_e", "missing movement art should retain directional idle fallback")
+	sprite.sprite_frames = frames
+	for commitment in [&"windup", &"chain"]:
+		sprite.play(&"idle_s")
+		if commitment == &"windup":
+			savage.set("_savage_pounce_phase", commitment)
+		else:
+			savage.set("_savage_chain_phase", commitment)
+		savage.call("_update_custom_enemy_animation", Vector2.RIGHT, true, false)
+		_assert_true(String(sprite.animation) == "idle_s", "movement must not overwrite active %s presentation" % commitment)
+		savage.set("_savage_pounce_phase", &"")
+		savage.set("_savage_chain_phase", &"")
+	sprite.play(&"idle_n")
+	savage.set("_recoil_timer", 0.1)
+	savage.call("_update_custom_enemy_animation", Vector2.RIGHT, true, false)
+	_assert_true(String(sprite.animation) == "idle_n", "movement must not overwrite active reaction presentation")
+	savage.set("_recoil_timer", 0.0)
+	sprite.play(&"idle_sw")
+	savage.set("dead", true)
+	savage.call("_update_custom_enemy_animation", Vector2.RIGHT, true, false)
+	_assert_true(String(sprite.animation) == "idle_sw", "movement must not overwrite death presentation")
+	savage.set("dead", false)
 
 	var factory := ENEMY_FACTORY_SCRIPT.new()
 	factory.set("savage_scene", SAVAGE_SCENE)
@@ -70,7 +107,7 @@ func _run() -> void:
 		push_error("savage_runtime_smoke failed")
 		quit(1)
 		return
-	print("[SavageRuntimeSmoke] directional idle, actor, factory, and wave wiring resolved.")
+	print("[SavageRuntimeSmoke] directional idle/movement fallback, priority, actor, factory, and wave wiring resolved.")
 	quit(0)
 
 

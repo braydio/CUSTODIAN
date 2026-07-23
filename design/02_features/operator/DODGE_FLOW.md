@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Status:** implemented-v1  
 **Created:** 2026-07-21  
-**Last Updated:** 2026-07-21
+**Last Updated:** 2026-07-23
 
 ## Purpose
 
@@ -82,17 +82,19 @@ Every link costs the ordinary `16` stamina. V1 has no hard link cap and no fatig
 
 ## Animation Contract
 
-The existing non-looping nine-frame, 25 FPS full dodge animations remain the single atlas authority:
+Charged windup uses the dedicated non-looping five-frame
+`operator_dodge_charge_windup_*` body sheet. Runtime selects its frame directly from charge ratio, so short holds show
+early compression and maximum charge holds frame four without granting animation timing any gameplay authority.
 
-```text
-opener:      frames 0 → 7
-clean link:  frames 2 → 7
-90° link:    frames 1 → 7
-hard/pivot:  frames 0 → 7
-final exit:  frames 7 → 8
-```
+The existing non-looping nine-frame, 25 FPS full dodge atlas remains authoritative for the released opener, turns
+over 90 degrees, and final settle. Clean turns through 90 degrees use the dedicated four-frame
+`operator_dodge_chain_link_*` body sheet at 20 FPS, exactly one cycle over the unchanged 0.20-second link clock. Every
+successful link restarts at frame zero; it does not loop after gameplay stops launching links. Hard pivots retain the
+full-atlas plant frame, and the final settle continues through the existing dodge exit frames.
 
-Runtime changes the initial frame for a forced chain restart instead of duplicating animations in `operator_runtime_frames.tres`. Body and rear FX use the same entry frame. When no next link is buffered, the existing full animation continues through frames 7–8 as the final settle.
+Direction fallback is presentation-only. Body and FX independently select their nearest authored sector through the
+shared directional fallback helper; neither may modify `_dodge_direction`, `_dodge_flow_direction`, movement timing,
+or iframe timing.
 
 ## Exit Carry and Decay
 
@@ -117,7 +119,9 @@ signal dodge_chain_ended(count: int, flow: float, reason: StringName)
 signal dodge_flow_changed(value: float, direction: Vector2)
 ```
 
-`get_dodge_flow_status()` exposes Flow/direction, buffer state, chain index, last turn angle/retention, and exit carry without allowing consumers to mutate movement authority.
+`get_dodge_flow_status()` exposes Flow/direction, buffer state, chain index, last turn angle/retention, exit carry,
+requested/resolved presentation sectors, selected animation, and fallback status without allowing consumers to mutate
+movement authority.
 
 ## Observability
 
@@ -133,7 +137,7 @@ Runtime records buffered inputs, successful links, stamina rejection, final coun
 - same-direction then 90-degree chaining;
 - uncapped reverse pivot with Flow break;
 - fixed active/iframe clocks, peak speed, integrated travel, and recovery targets;
-- atlas entry frames `2`, `1`, and `0`;
+- dedicated four-frame clean/90-degree link playback and full-atlas hard-pivot entry;
 - late-grace recovery cancellation;
 - final-link cooldown ownership;
 - exit carry, delayed decay, stamina cost, and insufficient-stamina termination.

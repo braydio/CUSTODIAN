@@ -48,6 +48,15 @@ A profile names one entry edge and an explicit enabled-edge set. Exactly one ena
 
 Production ingress captures and isolates the origin before the entry edge activates. Exfil restores the exact origin branch, actor, camera, and UI snapshot transactionally, resets the ingress, releases all route instances, clears session state, and preserves runtime-persistent state.
 
+Origin isolation uses the explicit `world_origin_branch` group. `WorldIngressSite`
+collects only grouped direct children of `/root/GameRoot/World`, plus temporary
+compatibility lookups for `ProcGenRuntime` and `ConnectedMaps`; nested authored
+content, route instances, and persistent services are never swept into the
+snapshot. Captured branches remain hidden and processing-disabled across every
+node-to-node transition and recover their exact captured visibility/process
+states only during exfil. Operator, Camera2D, shared lighting, LevelLoader, and
+RouteTraversalManager remain active for the route session.
+
 ## Transition Transaction
 
 Phases are `IDLE`, `REQUESTED`, `VALIDATING`, `FREEZING_SOURCE`, `STAGING_TARGET`, `VALIDATING_TARGET`, `ACTIVATING_TARGET`, `DEACTIVATING_SOURCE`, `FINALIZING`, `COMPLETE`, `ROLLING_BACK`, and `FAILED`.

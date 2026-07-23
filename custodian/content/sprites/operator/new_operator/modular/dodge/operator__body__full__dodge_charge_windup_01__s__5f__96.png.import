@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://to6gimy84rth"
-path="res://.godot/imported/operator__modular_lower_body__unarmed__run_01__ne__5f__96.png-9fe3d6550ad1c04cab1ceb14c1bd36d1.ctex"
+uid="uid://bgtyl6qeptjt3"
+path="res://.godot/imported/operator__body__full__dodge_charge_windup_01__s__5f__96.png-7e1aa02cc7633f8d4625692e98ca91d7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/new_operator/modular/run/operator__modular_lower_body__unarmed__run_01__ne__5f__96.png"
-dest_files=["res://.godot/imported/operator__modular_lower_body__unarmed__run_01__ne__5f__96.png-9fe3d6550ad1c04cab1ceb14c1bd36d1.ctex"]
+source_file="res://content/sprites/operator/new_operator/modular/dodge/operator__body__full__dodge_charge_windup_01__s__5f__96.png"
+dest_files=["res://.godot/imported/operator__body__full__dodge_charge_windup_01__s__5f__96.png-7e1aa02cc7633f8d4625692e98ca91d7.ctex"]
 
 [params]
 

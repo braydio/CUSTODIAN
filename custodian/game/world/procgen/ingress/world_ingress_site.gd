@@ -1,6 +1,12 @@
 extends Area2D
 class_name WorldIngressSite
 
+const WORLD_ORIGIN_BRANCH_GROUP := &"world_origin_branch"
+const COMPAT_WORLD_ORIGIN_BRANCH_PATHS := [
+	NodePath("/root/GameRoot/World/ProcGenRuntime"),
+	NodePath("/root/GameRoot/World/ConnectedMaps"),
+]
+
 @export var ingress_id: StringName
 @export var level_id: StringName = &""
 @export var route_id: StringName = &""
@@ -22,6 +28,7 @@ var _awaiting_body_exit_after_return := false
 
 func _ready() -> void:
 	add_to_group("world_ingress_site")
+	add_to_group(WORLD_ORIGIN_BRANCH_GROUP)
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	_ensure_collision()
@@ -93,6 +100,15 @@ func _on_body_entered(body: Node) -> void:
 func _on_body_exited(body: Node) -> void:
 	if _awaiting_body_exit_after_return and _is_player_body(body):
 		_awaiting_body_exit_after_return = false
+
+
+func _physics_process(_delta: float) -> void:
+	if not _awaiting_body_exit_after_return or not monitoring:
+		return
+	for body: Node2D in get_overlapping_bodies():
+		if _is_player_body(body):
+			return
+	_awaiting_body_exit_after_return = false
 
 
 func _enter_approach_deferred(body: Node) -> void:
@@ -180,17 +196,21 @@ func _align_approach_entry_to_ingress(approach: Node) -> void:
 	approach_2d.global_position += global_position - entry_position
 
 
-func _set_procgen_world_visible(value: bool) -> void:
-	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ProcGenRuntime"), value)
-	_set_world_branch_visible(get_node_or_null("/root/GameRoot/World/ConnectedMaps"), value)
-
-
 func capture_world_origin(actor: Node) -> Dictionary:
 	return _capture_origin_state(actor)
 
 
 func isolate_world_origin(actor: Node, presentation_profile: StringName) -> void:
-	_set_procgen_world_visible(false)
+	for branch_state_variant: Variant in _entry_snapshot.get("branches", []):
+		if not (branch_state_variant is Dictionary):
+			continue
+		var branch_state := branch_state_variant as Dictionary
+		var branch := branch_state.get("node") as Node
+		if branch == null or not is_instance_valid(branch):
+			continue
+		if branch is CanvasItem:
+			(branch as CanvasItem).visible = false
+		branch.process_mode = Node.PROCESS_MODE_DISABLED
 	_set_world_presentation_profile(actor, presentation_profile)
 
 
@@ -274,8 +294,17 @@ func reset_after_level_return() -> void:
 	_approach_enter_deferred = false
 	_entry_snapshot.clear()
 	_awaiting_body_exit_after_return = true
-	monitoring = true
 	monitorable = true
+	# Rebuild the overlap set after this Area spent the route session inside a
+	# processing-disabled origin branch. Without the toggle, PhysicsServer may
+	# retain the entry overlap but never emit the leave needed to unlock re-entry.
+	monitoring = false
+	call_deferred("_resume_origin_monitoring_after_return")
+
+
+func _resume_origin_monitoring_after_return() -> void:
+	if is_inside_tree():
+		monitoring = true
 
 
 func is_triggered() -> bool:
@@ -284,16 +313,10 @@ func is_triggered() -> bool:
 
 func _capture_origin_state(actor: Node) -> Dictionary:
 	var branches: Array[Dictionary] = []
-	for branch_path in [
-		"/root/GameRoot/World/ProcGenRuntime",
-		"/root/GameRoot/World/ConnectedMaps",
-	]:
-		var branch := get_node_or_null(branch_path)
-		if branch == null:
-			continue
+	for branch: Node in _collect_world_origin_branches():
 		branches.append({
 			"node": branch,
-			"path": branch_path,
+			"path": String(branch.get_path()),
 			"visible": (branch as CanvasItem).visible if branch is CanvasItem else true,
 			"process_mode": branch.process_mode,
 		})
@@ -327,6 +350,44 @@ func _capture_origin_state(actor: Node) -> Dictionary:
 	return snapshot
 
 
+func _collect_world_origin_branches() -> Array[Node]:
+	var result: Array[Node] = []
+	var seen: Dictionary = {}
+	var world := get_node_or_null("/root/GameRoot/World")
+	if world == null:
+		return result
+
+	for candidate_variant: Variant in get_tree().get_nodes_in_group(
+		WORLD_ORIGIN_BRANCH_GROUP
+	):
+		if not (candidate_variant is Node):
+			continue
+		var candidate := candidate_variant as Node
+		if candidate.get_parent() != world:
+			continue
+		var instance_id := candidate.get_instance_id()
+		if seen.has(instance_id):
+			continue
+		seen[instance_id] = true
+		result.append(candidate)
+
+	for branch_path: NodePath in COMPAT_WORLD_ORIGIN_BRANCH_PATHS:
+		var branch := get_node_or_null(branch_path)
+		if branch == null or branch.get_parent() != world:
+			continue
+		var instance_id := branch.get_instance_id()
+		if seen.has(instance_id):
+			continue
+		seen[instance_id] = true
+		result.append(branch)
+
+	result.sort_custom(
+		func(a: Node, b: Node) -> bool:
+			return String(a.get_path()) < String(b.get_path())
+	)
+	return result
+
+
 func _restore_branch_state(branch_state: Dictionary) -> void:
 	var branch: Node = branch_state.get("node") as Node
 	if branch == null or not is_instance_valid(branch):
@@ -345,14 +406,6 @@ func _restore_failure(reason: String, missing_branches: Array[String] = []) -> D
 		"camera_bound": false,
 		"actor_placed": false,
 	}
-
-
-func _set_world_branch_visible(branch: Node, value: bool) -> void:
-	if branch == null:
-		return
-	if branch is CanvasItem:
-		(branch as CanvasItem).visible = value
-	branch.process_mode = Node.PROCESS_MODE_INHERIT if value else Node.PROCESS_MODE_DISABLED
 
 
 func _ensure_collision() -> void:

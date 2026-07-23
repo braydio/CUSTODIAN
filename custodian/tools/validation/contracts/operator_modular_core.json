@@ -74,7 +74,19 @@
       "required": false,
       "entries": [
         {"layer": "combined_body", "loadout": "full", "action": "dodge_01", "directions": ["n", "s"], "frames": 9, "pattern": "action_runtime"},
-        {"layer": "upper_fx", "loadout": "full", "action": "dodge_01", "directions": ["n", "s"], "frames": 9, "pattern": "action_runtime"}
+        {"layer": "upper_fx", "loadout": "full", "action": "dodge_01", "directions": ["n", "s"], "frames": 9, "pattern": "action_runtime"},
+        {"layer": "combined_body", "loadout": "full", "action": "dodge_charge_windup_01", "directions": ["e", "s", "w"], "frames": 5, "pattern": "action_runtime"},
+        {"layer": "combined_body", "loadout": "full", "action": "dodge_chain_link_01", "directions": ["e", "s", "w"], "frames": 4, "pattern": "action_runtime"}
+      ]
+    },
+    {
+      "id": "idle_hit_reaction",
+      "label": "Modular idle hit reaction",
+      "required": false,
+      "entries": [
+        {"layer": "lower_body", "loadout": "unarmed", "action": "idle_hitreact_01", "directions": ["n", "s"], "frames": 5},
+        {"layer": "upper_body", "loadout": "unarmed", "action": "idle_hitreact_01", "directions": ["n", "s"], "frames": 5},
+        {"layer": "head", "loadout": "hooded", "action": "idle_hitreact_01", "directions": ["n", "s"], "frames": 5}
       ]
     },
     {

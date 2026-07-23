@@ -1,0 +1,23 @@
+{
+  "source": "operator__body__full__dodge_chain_link_01__s__4f__96.png",
+  "mode": "strip",
+  "outputs": [
+    {
+      "path": "operator/runtime/actions/dodge_chain/body/operator__body__full__dodge_chain_link_01__s__4f__96.png",
+      "layout": "horizontal_strip",
+      "select": {
+        "type": "range",
+        "start": 0,
+        "count": 4
+      }
+    }
+  ],
+  "frame_size": [
+    96,
+    96
+  ],
+  "remove_superseded": true,
+  "post_process": [
+    "operator_curated_resources"
+  ]
+}

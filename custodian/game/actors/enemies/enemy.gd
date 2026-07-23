@@ -271,6 +271,7 @@ var _threat_highlight_enabled: bool = false
 var _threat_highlight_time: float = 0.0
 var _base_sprite_scale: Vector2 = Vector2.ONE
 var _last_move_direction: Vector2 = Vector2.DOWN
+var _custom_animation_presentation_sector: StringName = &"s"
 var _spawn_position: Vector2 = Vector2.ZERO
 var _passive_home_initialized: bool = false
 var _passive_target_position: Vector2 = Vector2.ZERO
@@ -3538,7 +3539,7 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return
 	if custom_enemy_animation_set == String(CUSTOM_ENEMY_SAVAGE):
-		_update_savage_enemy_animation(direction)
+		_update_savage_enemy_animation(direction, is_moving)
 		return
 	if custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
 		_update_marine_enemy_animation(direction, force_attack)
@@ -3620,9 +3621,28 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 	animated_sprite.set_frame_and_progress(0, 0.0)
 
 
-func _update_savage_enemy_animation(direction: Vector2) -> void:
+func _update_savage_enemy_animation(direction: Vector2, is_moving: bool) -> void:
 	var facing := direction if direction.length_squared() > 0.0001 else _last_move_direction
-	var animation_name := SAVAGE_ANIMATION_LIBRARY.get_idle_animation(facing)
+	# Savage action/reaction/death presentation has higher ownership than
+	# locomotion. Until those authored clips are present, preserve the current
+	# presentation rather than allowing movement/idle selection to overwrite it.
+	if dead \
+	or _parry_critical_phase != ParryCriticalPhase.NONE \
+	or _crit_timer > 0.0 \
+	or _crit_recovery_timer > 0.0 \
+	or _stagger_timer > 0.0 \
+	or _recoil_timer > 0.0 \
+	or not _savage_pounce_phase.is_empty() \
+	or not _savage_chain_phase.is_empty():
+		return
+	var animation_name := &""
+	if is_moving:
+		animation_name = SAVAGE_ANIMATION_LIBRARY.get_movement_animation(
+			facing,
+			_custom_animation_presentation_sector
+		)
+	if animation_name.is_empty() or not _has_animation(String(animation_name)):
+		animation_name = SAVAGE_ANIMATION_LIBRARY.get_idle_animation(facing)
 	if not _has_animation(String(animation_name)):
 		animation_name = &"idle_s"
 	if not _has_animation(String(animation_name)):
@@ -3631,6 +3651,12 @@ func _update_savage_enemy_animation(direction: Vector2) -> void:
 	_base_sprite_scale = animated_sprite.scale
 	animated_sprite.flip_h = false
 	_play_animation(String(animation_name), false)
+	var animation_text := String(animation_name)
+	var separator := animation_text.rfind("_")
+	if separator >= 0:
+		_custom_animation_presentation_sector = StringName(
+			animation_text.substr(separator + 1)
+		)
 
 
 func _get_grunt_stagger_animation() -> StringName:

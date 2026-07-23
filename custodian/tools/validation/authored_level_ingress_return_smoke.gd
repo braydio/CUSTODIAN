@@ -25,12 +25,23 @@ func _run() -> void:
 		var manager: Node = fixture.route_manager
 		errors.append("registered authored level did not activate (route=%s node=%s phase=%s)" % [manager.call("get_current_route_id"), manager.call("get_current_node_id"), manager.call("get_phase")])
 	else:
+		if fixture.origin_sector_root.visible:
+			errors.append("static origin sector remained visible during authored-level entry")
+		if fixture.origin_sector_root.process_mode != Node.PROCESS_MODE_DISABLED:
+			errors.append("static origin sector remained active during authored-level entry")
+		if not fixture.actor.visible or fixture.actor.process_mode == Node.PROCESS_MODE_DISABLED:
+			errors.append("persistent Operator was disabled with origin branches")
+		if fixture.camera.process_mode == Node.PROCESS_MODE_DISABLED:
+			errors.append("persistent Camera2D was disabled with origin branches")
 		level.call("return_to_main", actor)
 		await process_frame
 	if not fixture.procgen.visible or fixture.procgen.process_mode != Node.PROCESS_MODE_ALWAYS:
 		errors.append("ProcGenRuntime was not restored to its exact source state")
 	if not fixture.connected.visible or fixture.connected.process_mode != Node.PROCESS_MODE_INHERIT:
 		errors.append("ConnectedMaps was not restored")
+	if not fixture.origin_sector_root.visible \
+	or fixture.origin_sector_root.process_mode != Node.PROCESS_MODE_ALWAYS:
+		errors.append("static origin sector was not restored after authored-level return")
 	if not actor.global_position.is_equal_approx(origin_position):
 		errors.append("actor did not return to the captured world position")
 	if loader.call("get_active_level_instance") != null or not String(loader.call("get_active_level_id")).is_empty():

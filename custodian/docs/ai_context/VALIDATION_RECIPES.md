@@ -255,13 +255,14 @@ For the registered Sundered Keep ingress and active continuous approach:
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
+godot --headless --path . --script res://tools/validation/world_origin_branch_contract_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_level_chain_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_runtime_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_mapper_smoke.gd
 ```
 
-The ingress smoke proves registered route entry and procgen/connected branch isolation. The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker, its backdrop covers camera bounds plus framing slack, camera targets are wired, and its authored endpoint affordance points to Return Causeway. It also runs the first reveal at accelerated timings and asserts its threshold/controller bindings, one-shot completion, reveal camera target, lighting cue, and post-settle prompt release. The route graph smoke proves production Vista → Return Causeway → Front Gate traversal and the reverse graph, plus the explicit `debug_direct_keep` and `causeway_only` profiles, loader/cache/camera/spawn authority, disabled exits, and a real physics-driven authored exit. The state and authored-exit smokes prove Front Gate unload/revisit symmetry without replayed side effects and that all three production scenes own their generic exit nodes.
+The ingress smoke proves registered route entry, static-sector isolation across Vista → Return Causeway → Front Gate → Return Causeway → Vista, and exact restoration only at `@world_origin`. The scene-contract smoke inspects `game.tscn` without running it and proves every base-world branch is classified while Operator, Camera2D, shared lighting, LevelLoader, and RouteTraversalManager remain persistent. The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker, its backdrop covers camera bounds plus framing slack, camera targets are wired, and its authored endpoint affordance points to Return Causeway. It also runs the first reveal at accelerated timings and asserts its threshold/controller bindings, one-shot completion, reveal camera target, lighting cue, and post-settle prompt release. The route graph smoke proves production Vista → Return Causeway → Front Gate traversal and the reverse graph, plus the explicit `debug_direct_keep` and `causeway_only` profiles, loader/cache/camera/spawn authority, disabled exits, and a real physics-driven authored exit. The state and authored-exit smokes prove Front Gate unload/revisit symmetry without replayed side effects and that all three production scenes own their generic exit nodes.
 
 For the reusable authored-level scaffold and registry ingress pipeline:
 

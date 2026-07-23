@@ -16,6 +16,7 @@
     96,
     96
   ],
+  "remove_superseded": true,
   "post_process": [
     "operator_modular_runtime"
   ]
