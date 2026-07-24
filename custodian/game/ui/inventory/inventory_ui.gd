@@ -59,6 +59,16 @@ const CATEGORY_SORT_ORDER := {
 	"resources": 5,
 }
 
+const LEDGER_CARD_DESKTOP := Vector2(148, 152)
+const LEDGER_CARD_MEDIUM := Vector2(156, 158)
+const LEDGER_CARD_COMPACT := Vector2(164, 164)
+
+const LEDGER_ICON_DESKTOP := Vector2(88, 88)
+const LEDGER_ICON_MEDIUM := Vector2(92, 92)
+const LEDGER_ICON_COMPACT := Vector2(96, 96)
+
+const LEDGER_GAP := 8
+
 ## Maps equipment item_ids to their weapon definition resource paths.
 ## Add new entries here when adding new equippable weapons.
 const EQUIPMENT_WEAPON_DEFINITIONS := {
@@ -615,9 +625,9 @@ func _build_ledger_body() -> Control:
 	var body := HBoxContainer.new()
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	body.add_theme_constant_override("separation", 16)
+	body.add_theme_constant_override("separation", 12)
 
-	_ledger_category_panel = _section_panel(Vector2(170, 0))
+	_ledger_category_panel = _section_panel(Vector2(150, 0))
 	_ledger_category_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	_ledger_category_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var category_margin := MarginContainer.new()
@@ -680,8 +690,8 @@ func _build_ledger_body() -> Control:
 	_ledger_item_grid.name = "ItemGrid"
 	_ledger_item_grid.columns = 3
 	_ledger_item_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_ledger_item_grid.add_theme_constant_override("h_separation", 10)
-	_ledger_item_grid.add_theme_constant_override("v_separation", 10)
+	_ledger_item_grid.add_theme_constant_override("h_separation", LEDGER_GAP)
+	_ledger_item_grid.add_theme_constant_override("v_separation", LEDGER_GAP)
 	scroll.add_child(_ledger_item_grid)
 	_ledger_empty_label = _label("NO CARRIED OBJECTS RECORDED\n\nField ledger awaits recovered evidence.", Palette.MUTED_TEXT, 15)
 	_ledger_empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -710,7 +720,7 @@ func _build_ledger_body() -> Control:
 
 
 func _build_ledger_detail_panel() -> Control:
-	_ledger_detail_panel = _section_panel(Vector2(380, 0))
+	_ledger_detail_panel = _section_panel(Vector2(340, 0))
 	_ledger_detail_panel.size_flags_horizontal = Control.SIZE_SHRINK_END
 	_ledger_detail_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
@@ -731,31 +741,44 @@ func _build_ledger_detail_panel() -> Control:
 
 	stack.add_child(_label("INSPECTION", Palette.GOLD_TEXT, 15))
 
+	var identity_header := HBoxContainer.new()
+	identity_header.name = "InspectionIdentityHeader"
+	identity_header.add_theme_constant_override("separation", 12)
+	identity_header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stack.add_child(identity_header)
+
 	_ledger_detail_icon = TextureRect.new()
-	_ledger_detail_icon.custom_minimum_size = Vector2(144, 144)
+	_ledger_detail_icon.name = "InspectionIcon"
+	_ledger_detail_icon.custom_minimum_size = Vector2(112, 112)
 	_ledger_detail_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_ledger_detail_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_ledger_detail_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	stack.add_child(_ledger_detail_icon)
+	identity_header.add_child(_ledger_detail_icon)
 
-	_ledger_detail_name = _label("NO RECORD SELECTED", Palette.BODY_TEXT, 20)
+	var identity_text := VBoxContainer.new()
+	identity_text.name = "InspectionIdentityText"
+	identity_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	identity_text.add_theme_constant_override("separation", 5)
+	identity_header.add_child(identity_text)
+
+	_ledger_detail_name = _label("NO RECORD SELECTED", Palette.BODY_TEXT, 18)
 	_ledger_detail_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_ledger_detail_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	stack.add_child(_ledger_detail_name)
+	_ledger_detail_name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	identity_text.add_child(_ledger_detail_name)
 
 	var metadata := HBoxContainer.new()
 	metadata.add_theme_constant_override("separation", 8)
-	_ledger_detail_class = _label("CLASS: --", SYSTEM_TECH, 13)
+	_ledger_detail_class = _label("CLASS: --", SYSTEM_TECH, 12)
 	_ledger_detail_class.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_ledger_detail_class.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	metadata.add_child(_ledger_detail_class)
-	_ledger_detail_count = _label("×--", Palette.GOLD_TEXT, 13)
+	_ledger_detail_count = _label("×--", Palette.GOLD_TEXT, 12)
 	metadata.add_child(_ledger_detail_count)
-	stack.add_child(metadata)
+	identity_text.add_child(metadata)
 
-	_ledger_detail_use = _label("PRIMARY USE: UNKNOWN", Palette.MUTED_TEXT, 13)
+	_ledger_detail_use = _label("PRIMARY USE: UNKNOWN", Palette.MUTED_TEXT, 12)
 	_ledger_detail_use.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	stack.add_child(_ledger_detail_use)
+	identity_text.add_child(_ledger_detail_use)
 
 	stack.add_child(_build_divider())
 	var description_scroll := ScrollContainer.new()
@@ -769,7 +792,7 @@ func _build_ledger_detail_panel() -> Control:
 	description_stack.add_theme_constant_override("separation", 10)
 	description_scroll.add_child(description_stack)
 	description_stack.add_child(_label("DESCRIPTION", Palette.MUTED_TEXT, 12))
-	_ledger_detail_description = _label("Select a recovered object to inspect its ledger record.", Palette.BODY_TEXT, 16)
+	_ledger_detail_description = _label("Select a recovered object to inspect its ledger record.", Palette.BODY_TEXT, 15)
 	_ledger_detail_description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_ledger_detail_description.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	description_stack.add_child(_ledger_detail_description)
@@ -1279,22 +1302,63 @@ func _update_ledger_grid_columns() -> void:
 		return
 
 	var parent_control := _ledger_item_grid.get_parent_control()
-	if parent_control == null:
-		return
-
-	var available_width := parent_control.size.x
-	if available_width <= 0.0:
+	if parent_control == null or parent_control.size.x <= 0.0:
 		return
 
 	var viewport_width := get_viewport_rect().size.x
-	var responsive_cap := 4
-	if viewport_width < 1280.0:
-		responsive_cap = 2
-	elif viewport_width < 1600.0:
-		responsive_cap = 3
-	var card_stride := 190.0
-	var columns := int(floor((available_width + 10.0) / card_stride))
-	_ledger_item_grid.columns = clampi(columns, 1, responsive_cap)
+	var column_cap := 4
+	if viewport_width < 1152.0:
+		column_cap = 2
+	elif viewport_width < 1500.0:
+		column_cap = 3
+
+	var card_width := _ledger_card_size().x
+	var stride := card_width + LEDGER_GAP
+	var columns := int(floor(
+		(parent_control.size.x + LEDGER_GAP) / stride
+	))
+	_ledger_item_grid.columns = clampi(columns, 1, column_cap)
+
+
+func _ledger_card_size() -> Vector2:
+	var viewport_width := get_viewport_rect().size.x
+	if viewport_width >= 1500.0:
+		return LEDGER_CARD_DESKTOP
+	if viewport_width >= 1152.0:
+		return LEDGER_CARD_MEDIUM
+	return LEDGER_CARD_COMPACT
+
+
+func _ledger_icon_size() -> Vector2:
+	var viewport_width := get_viewport_rect().size.x
+	if viewport_width >= 1500.0:
+		return LEDGER_ICON_DESKTOP
+	if viewport_width >= 1152.0:
+		return LEDGER_ICON_MEDIUM
+	return LEDGER_ICON_COMPACT
+
+
+func _apply_ledger_card_dimensions(button: Button) -> void:
+	if button == null:
+		return
+
+	var card_size := _ledger_card_size()
+	var icon_size := _ledger_icon_size()
+	button.custom_minimum_size = card_size
+
+	var icon_center := button.get_node_or_null(
+		"ContentMargin/Content/IconViewport"
+	) as CenterContainer
+	if icon_center != null:
+		icon_center.custom_minimum_size = icon_size
+
+	var icon := button.find_child(
+		"ItemIcon",
+		true,
+		false
+	) as TextureRect
+	if icon != null:
+		icon.custom_minimum_size = icon_size
 
 
 func _update_responsive_layout() -> void:
@@ -1313,9 +1377,11 @@ func _update_responsive_layout() -> void:
 			else Vector2(480, 300)
 		)
 	if _ledger_category_panel != null:
-		_ledger_category_panel.custom_minimum_size.x = 150.0 if viewport_width <= 1280.0 else 170.0
+		_ledger_category_panel.custom_minimum_size.x = 150.0
 	if _ledger_detail_panel != null:
-		_ledger_detail_panel.custom_minimum_size.x = 340.0 if viewport_width <= 1280.0 else 380.0
+		_ledger_detail_panel.custom_minimum_size.x = 340.0
+	for button in _item_buttons:
+		_apply_ledger_card_dimensions(button)
 	call_deferred("_update_ledger_grid_columns")
 
 
@@ -1324,7 +1390,7 @@ func _create_item_button(entry: Dictionary) -> Button:
 	var item_id := str(entry["item_id"])
 	var button := Button.new()
 	button.name = "Item_%s" % item_id
-	button.custom_minimum_size = Vector2(180, 190)
+	button.custom_minimum_size = _ledger_card_size()
 	button.tooltip_text = str(definition.get("description", ""))
 	button.text = ""
 	button.set_meta("inventory_category", str(definition.get("category", "carried")))
@@ -1334,10 +1400,10 @@ func _create_item_button(entry: Dictionary) -> Button:
 	content_margin.name = "ContentMargin"
 	content_margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	content_margin.add_theme_constant_override("margin_left", 14)
-	content_margin.add_theme_constant_override("margin_top", 22)
-	content_margin.add_theme_constant_override("margin_right", 14)
-	content_margin.add_theme_constant_override("margin_bottom", 10)
+	content_margin.add_theme_constant_override("margin_left", 8)
+	content_margin.add_theme_constant_override("margin_top", 16)
+	content_margin.add_theme_constant_override("margin_right", 8)
+	content_margin.add_theme_constant_override("margin_bottom", 6)
 	button.add_child(content_margin)
 	var content := VBoxContainer.new()
 	content.name = "Content"
@@ -1348,13 +1414,13 @@ func _create_item_button(entry: Dictionary) -> Button:
 	content_margin.add_child(content)
 	var icon_center := CenterContainer.new()
 	icon_center.name = "IconViewport"
-	icon_center.custom_minimum_size = Vector2(118, 118)
+	icon_center.custom_minimum_size = _ledger_icon_size()
 	icon_center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	icon_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content.add_child(icon_center)
 	var icon := TextureRect.new()
 	icon.name = "ItemIcon"
-	icon.custom_minimum_size = Vector2(118, 118)
+	icon.custom_minimum_size = _ledger_icon_size()
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -1364,25 +1430,28 @@ func _create_item_button(entry: Dictionary) -> Button:
 	icon.resized.connect(_update_item_icon_pivot.bind(icon))
 	icon_center.add_child(icon)
 	var category := str(definition.get("category", "carried"))
-	var stamp := _label(_category_stamp(category), Palette.MUTED_TEXT, 11)
+	var stamp := _label(_category_stamp(category), Palette.MUTED_TEXT, 10)
 	stamp.name = "ItemStamp"
-	stamp.position = Vector2(10, 7)
+	stamp.position = Vector2(8, 6)
 	stamp.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stamp.visible = category in ["key", "relic", "cognitive", "equipment"]
 	button.add_child(stamp)
-	var name_label := _label(str(definition.get("display_name", entry["item_id"])).to_upper(), Palette.BODY_TEXT, 14)
+	var name_label := _label(str(definition.get("display_name", entry["item_id"])).to_upper(), Palette.BODY_TEXT, 13)
 	name_label.name = "ItemName"
-	name_label.custom_minimum_size = Vector2(0, 42)
+	name_label.custom_minimum_size = Vector2(0, 36)
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content.add_child(name_label)
-	var quantity := _label("×%d" % int(entry["quantity"]), Palette.GOLD_TEXT, 13)
+	var quantity := _label("×%d" % int(entry["quantity"]), Palette.GOLD_TEXT, 12)
 	quantity.name = "ItemQuantity"
-	quantity.position = Vector2(130, 8)
-	quantity.size = Vector2(40, 22)
+	quantity.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	quantity.offset_left = -48
+	quantity.offset_top = 6
+	quantity.offset_right = -8
+	quantity.offset_bottom = 26
 	quantity.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	quantity.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	quantity.visible = str(definition.get("category", "carried")) != "key"
@@ -1813,7 +1882,7 @@ func _apply_item_button_style(button: Button, category: String, selected := fals
 	var icon := button.find_child("ItemIcon", true, false) as TextureRect
 	if icon != null:
 		icon.pivot_offset = icon.size * 0.5
-		icon.scale = Vector2.ONE * (1.04 if selected else 1.0)
+		icon.scale = Vector2.ONE * (1.03 if selected else 1.0)
 
 
 func _panel(deep: bool, minimum_size: Vector2) -> PanelContainer:

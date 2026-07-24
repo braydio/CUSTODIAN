@@ -16,11 +16,21 @@ func _run() -> void:
 		inventory_manager.call("add_item", &"faint_recollection", 2)
 		inventory_manager.call("add_item", &"sundered_gate_key", 1)
 		inventory_manager.call("add_item", &"p9_sidearm", 1)
+		for index in range(5):
+			inventory_manager.call(
+				"add_item",
+				StringName("ledger_layout_record_%02d" % index),
+				1
+			)
 	await _assert_resolution(Vector2i(2048, 1152), 4)
 	await _assert_resolution(Vector2i(1920, 1080), 4)
 	await _assert_resolution(Vector2i(1600, 900), 4)
+	await _assert_resolution(Vector2i(1500, 900), 4)
+	await _assert_resolution(Vector2i(1499, 900), 3)
 	await _assert_resolution(Vector2i(1280, 720), 3)
-	await _assert_resolution(Vector2i(1152, 648), 2)
+	await _assert_resolution(Vector2i(1152, 648), 3)
+	await _assert_resolution(Vector2i(1151, 648), 2)
+	await _assert_resolution(Vector2i(1024, 648), 2)
 
 	var ui := INVENTORY_SCENE.instantiate()
 	root.add_child(ui)
@@ -69,7 +79,7 @@ func _run() -> void:
 		push_error("inventory_ui_responsive_smoke failed")
 		quit(1)
 		return
-	print("[InventoryUIResponsiveSmoke] 2048/1920/1600/1280/1152 layout and prompts passed.")
+	print("[InventoryUIResponsiveSmoke] desktop/medium/compact breakpoints and prompts passed.")
 	quit(0)
 
 
@@ -95,10 +105,34 @@ func _assert_resolution(resolution: Vector2i, expected_columns: int) -> void:
 			item_grid.get_parent_control().size if item_grid != null else Vector2.ZERO,
 		]
 	)
-	var detail_icon := _find_largest_texture_rect(ui)
+	var expected_card_size := Vector2(148, 152)
+	var expected_icon_size := Vector2(88, 88)
+	if resolution.x < 1152:
+		expected_card_size = Vector2(164, 164)
+		expected_icon_size = Vector2(96, 96)
+	elif resolution.x < 1500:
+		expected_card_size = Vector2(156, 158)
+		expected_icon_size = Vector2(92, 92)
+	var detail_icon := _find_node_named(
+		ui,
+		"InspectionIcon"
+	) as TextureRect
 	_assert(
-		detail_icon != null and detail_icon.custom_minimum_size.x >= 144.0,
-		"%s inspection art should retain its 144px viewport" % resolution
+		detail_icon != null
+		and detail_icon.custom_minimum_size == Vector2(112, 112),
+		"%s inspection art should use its compact 112px viewport" % resolution
+	)
+	var category_panel := ui.get("_ledger_category_panel") as PanelContainer
+	var detail_panel := ui.get("_ledger_detail_panel") as PanelContainer
+	_assert(
+		category_panel != null
+		and category_panel.custom_minimum_size.x == 150.0,
+		"%s Ledger category rail should be 150px" % resolution
+	)
+	_assert(
+		detail_panel != null
+		and detail_panel.custom_minimum_size.x == 340.0,
+		"%s Inspection panel should be 340px" % resolution
 	)
 	var records_panel := _find_node_named(ui, "LedgerRecordsPanel") as PanelContainer
 	var records_style := records_panel.get_theme_stylebox("panel") as StyleBoxFlat if records_panel != null else null
@@ -110,8 +144,41 @@ func _assert_resolution(resolution: Vector2i, expected_columns: int) -> void:
 		var card := child as Button
 		var icon := _find_node_named(card, "ItemIcon") as TextureRect
 		_assert(
+			card != null
+			and card.custom_minimum_size == expected_card_size,
+			"%s card did not use responsive size %s" % [
+				resolution,
+				expected_card_size,
+			]
+		)
+		_assert(
+			icon != null
+			and icon.custom_minimum_size == expected_icon_size,
+			"%s icon did not use responsive size %s for %s" % [
+				resolution,
+				expected_icon_size,
+				card.name,
+			]
+		)
+		_assert(
 			icon != null and _rect_contains(card.get_global_rect(), icon.get_global_rect()),
 			"%s item icon intersects card boundaries for %s" % [resolution, card.name]
+		)
+	if resolution == Vector2i(1600, 900):
+		var item_scroll := _find_node_named(ui, "ItemScroll") as ScrollContainer
+		var vertical_scrollbar := (
+			item_scroll.get_v_scroll_bar()
+			if item_scroll != null
+			else null
+		)
+		_assert(
+			item_grid.get_child_count() == 8,
+			"1600x900 Ledger fixture should contain eight records"
+		)
+		_assert(
+			vertical_scrollbar != null
+			and not vertical_scrollbar.visible,
+			"1600x900 should show eight Ledger records without register scrolling"
 		)
 
 	ui.call("_select_page", "status", false)

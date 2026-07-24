@@ -3,10 +3,15 @@ class_name SunderedKeepVistaDebugProbe
 
 const REFRESH_INTERVAL_SEC := 0.10
 const FIRST_TRIGGER_PATH := "SequenceTriggers/FirstVistaRevealTrigger"
+const RETURN_TRIGGER_PATH := "SequenceTriggers/ReturnToGameplayTrigger"
 const SECOND_TRIGGER_PATH := "SequenceTriggers/SecondVistaRevealTrigger"
 const FIRST_ANCHOR_PATH := "Markers/FirstRevealCameraAnchor"
+const CONTROL_START_PATH := "Markers/RevealControlStart"
+const CONTROL_END_PATH := "Markers/RevealControlEnd"
 const SECOND_ANCHOR_PATH := "Markers/SecondVistaCameraAnchor"
 const FIRST_COLOR := Color(0.20, 0.92, 1.0, 1.0)
+const CONTROL_COLOR := Color(0.98, 0.78, 0.26, 1.0)
+const RETURN_COLOR := Color(0.36, 1.0, 0.48, 1.0)
 const SECOND_COLOR := Color(1.0, 0.34, 0.82, 1.0)
 
 var _approach: Node2D
@@ -90,6 +95,24 @@ func _build_transition_indicators() -> void:
 		"FIRST CAMERA ANCHOR",
 		FIRST_COLOR,
 		false
+	)
+	_add_world_indicator(
+		CONTROL_START_PATH,
+		"REVEAL CONTROL START",
+		CONTROL_COLOR,
+		false
+	)
+	_add_world_indicator(
+		CONTROL_END_PATH,
+		"REVEAL CONTROL END",
+		CONTROL_COLOR,
+		false
+	)
+	_add_world_indicator(
+		RETURN_TRIGGER_PATH,
+		"RETURN TO GAMEPLAY",
+		RETURN_COLOR,
+		true
 	)
 	_add_world_indicator(
 		SECOND_TRIGGER_PATH,
@@ -239,6 +262,12 @@ func _refresh_readout() -> void:
 			str(reveal.get("running", false)),
 			str(reveal.get("complete", false)),
 		],
+		"first progress=%.2f ready_return=%s return_running=%s"
+		% [
+			float(choreography.get("first_progress_weight", 0.0)),
+			str(reveal.get("ready_for_return", false)),
+			str(reveal.get("return_running", false)),
+		],
 		"second played=%s running=%s complete=%s"
 		% [
 			str(reveal.get("second_played", false)),
@@ -284,6 +313,19 @@ func _update_phase_banner(
 		"FIRST_REVEAL_HOLD":
 			banner_text = "FIRST REVEAL — HOLD"
 			banner_color = FIRST_COLOR
+		"FIRST_PROGRESS_CONTROL":
+			banner_text = (
+				"FIRST REVEAL — ROUTE CONTROL %d%%"
+				% roundi(
+					float(
+						choreography.get(
+							"first_progress_weight",
+							0.0
+						)
+					) * 100.0
+				)
+			)
+			banner_color = CONTROL_COLOR
 		"RETURNING_TO_PLAY":
 			banner_text = "FIRST REVEAL — RETURN %d%%" % roundi(
 				float(choreography.get("return_weight", 0.0))
@@ -389,10 +431,16 @@ func _indicator_label(path: String, occupied: bool) -> String:
 	var prefix := ""
 	if path == FIRST_TRIGGER_PATH:
 		prefix = "FIRST REVEAL TRIGGER"
+	elif path == RETURN_TRIGGER_PATH:
+		prefix = "RETURN TO GAMEPLAY"
 	elif path == SECOND_TRIGGER_PATH:
 		prefix = "SECOND REVEAL TRIGGER"
 	elif path == FIRST_ANCHOR_PATH:
 		prefix = "FIRST CAMERA ANCHOR"
+	elif path == CONTROL_START_PATH:
+		prefix = "REVEAL CONTROL START"
+	elif path == CONTROL_END_PATH:
+		prefix = "REVEAL CONTROL END"
 	else:
 		prefix = "SECOND CAMERA ANCHOR"
 	return prefix + (" [OCCUPIED]" if occupied else "")
@@ -406,6 +454,9 @@ func _update_target_line(canvas_transform: Transform2D) -> void:
 	var color := FIRST_COLOR
 	if not bool(reveal.get("played", false)):
 		target_path = FIRST_TRIGGER_PATH
+	elif not bool(reveal.get("complete", false)):
+		target_path = RETURN_TRIGGER_PATH
+		color = RETURN_COLOR
 	elif not bool(reveal.get("second_played", false)):
 		target_path = SECOND_TRIGGER_PATH
 		color = SECOND_COLOR

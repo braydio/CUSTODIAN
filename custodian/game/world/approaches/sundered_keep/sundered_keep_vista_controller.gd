@@ -7,6 +7,8 @@ class_name SunderedKeepVistaController
 @export var start_marker_path: NodePath
 @export var reveal_full_marker_path: NodePath
 @export var mid_gameplay_marker_path: NodePath
+@export var reveal_control_start_marker_path: NodePath
+@export var reveal_control_end_marker_path: NodePath
 @export var end_marker_path: NodePath
 
 @export var vista_root_path: NodePath
@@ -50,6 +52,7 @@ enum FramingPhase {
 	INTRO_TIGHT,
 	FIRST_REVEAL,
 	FIRST_REVEAL_HOLD,
+	FIRST_PROGRESS_CONTROL,
 	RETURNING_TO_PLAY,
 	GAMEPLAY,
 	SECOND_REVEAL,
@@ -63,6 +66,8 @@ var _entry: Marker2D
 var _start: Node2D
 var _reveal_full: Node2D
 var _mid_gameplay: Marker2D
+var _reveal_control_start: Marker2D
+var _reveal_control_end: Marker2D
 var _end: Node2D
 var _vista_root: CanvasItem
 var _grand_vista_root: CanvasItem
@@ -86,7 +91,11 @@ var _camera_target_zoom := CAMERA_INTRO_TIGHT_ZOOM
 var _last_progress := 0.0
 var _framing_phase := FramingPhase.INTRO_TIGHT
 var _first_reveal_weight := 0.0
+var _first_progress_weight := 0.0
 var _return_to_play_weight := 0.0
+var _return_start_offset := CAMERA_FIRST_REVEAL_OFFSET
+var _return_start_zoom := CAMERA_FIRST_REVEAL_ZOOM
+var _return_anchor_start := Vector2.ZERO
 var _first_reveal_complete := false
 var _second_reveal_weight := 0.0
 var _second_return_to_play_weight := 0.0
@@ -112,6 +121,8 @@ func _process(_delta: float) -> void:
 
 	var along := (_player.global_position - _start.global_position).dot(progress_axis.normalized())
 	var t := clampf(along / total, 0.0, 1.0)
+	if _framing_phase == FramingPhase.FIRST_PROGRESS_CONTROL:
+		_update_first_progress_control()
 	_apply_progress(t)
 
 
@@ -155,6 +166,7 @@ func get_camera_target_state() -> Dictionary:
 func enter_intro_tight_mode() -> void:
 	_framing_phase = FramingPhase.INTRO_TIGHT
 	_first_reveal_weight = 0.0
+	_first_progress_weight = 0.0
 	_return_to_play_weight = 0.0
 	_first_reveal_complete = false
 	_second_reveal_weight = 0.0
@@ -191,9 +203,21 @@ func hold_first_reveal() -> void:
 	_apply_progress(_last_progress)
 
 
+func begin_first_progress_control() -> void:
+	_framing_phase = FramingPhase.FIRST_PROGRESS_CONTROL
+	_first_reveal_weight = 1.0
+	_first_progress_weight = 0.0
+	_update_first_progress_control()
+	_apply_progress(_last_progress)
+
+
 func begin_return_to_gameplay() -> void:
 	_framing_phase = FramingPhase.RETURNING_TO_PLAY
 	_return_to_play_weight = 0.0
+	_return_start_offset = _camera_target_offset
+	_return_start_zoom = _camera_target_zoom
+	if _presentation_anchor != null:
+		_return_anchor_start = _presentation_anchor.global_position
 	_apply_progress(_last_progress)
 
 
@@ -202,10 +226,9 @@ func set_return_to_gameplay_weight(weight: float) -> void:
 	if (
 		_presentation_anchor != null
 		and _player != null
-		and _first_reveal_camera_anchor != null
 	):
 		_presentation_anchor.global_position = (
-			_first_reveal_camera_anchor.global_position.lerp(
+			_return_anchor_start.lerp(
 				_player.global_position,
 				_return_to_play_weight
 			)
@@ -297,6 +320,7 @@ func get_reveal_choreography_state() -> Dictionary:
 		"active": _framing_phase in [
 			FramingPhase.FIRST_REVEAL,
 			FramingPhase.FIRST_REVEAL_HOLD,
+			FramingPhase.FIRST_PROGRESS_CONTROL,
 			FramingPhase.RETURNING_TO_PLAY,
 			FramingPhase.SECOND_REVEAL,
 			FramingPhase.SECOND_REVEAL_HOLD,
@@ -306,6 +330,7 @@ func get_reveal_choreography_state() -> Dictionary:
 		"progress_floor": 0.0,
 		"phase": FramingPhase.keys()[_framing_phase],
 		"first_reveal_complete": _first_reveal_complete,
+		"first_progress_weight": _first_progress_weight,
 		"second_reveal_complete": _second_reveal_complete,
 		"second_reveal_weight": _second_reveal_weight,
 		"second_return_weight": _second_return_to_play_weight,
@@ -324,6 +349,12 @@ func _resolve_nodes() -> void:
 	_start = get_node_or_null(start_marker_path) as Node2D
 	_reveal_full = get_node_or_null(reveal_full_marker_path) as Node2D
 	_mid_gameplay = get_node_or_null(mid_gameplay_marker_path) as Marker2D
+	_reveal_control_start = get_node_or_null(
+		reveal_control_start_marker_path
+	) as Marker2D
+	_reveal_control_end = get_node_or_null(
+		reveal_control_end_marker_path
+	) as Marker2D
 	_end = get_node_or_null(end_marker_path) as Node2D
 	_vista_root = get_node_or_null(vista_root_path) as CanvasItem
 	_grand_vista_root = get_node_or_null(grand_vista_root_path) as CanvasItem
@@ -364,6 +395,14 @@ func _resolve_nodes() -> void:
 		_reveal_full = approach_root.get_node_or_null("Markers/RevealFull") as Node2D
 	if _mid_gameplay == null:
 		_mid_gameplay = approach_root.get_node_or_null("Markers/MidGameplayStart") as Marker2D
+	if _reveal_control_start == null:
+		_reveal_control_start = approach_root.get_node_or_null(
+			"Markers/RevealControlStart"
+		) as Marker2D
+	if _reveal_control_end == null:
+		_reveal_control_end = approach_root.get_node_or_null(
+			"Markers/RevealControlEnd"
+		) as Marker2D
 	if _end == null:
 		_end = approach_root.get_node_or_null("Markers/ReturnTopdown") as Node2D
 	if _vista_root == null:
@@ -420,6 +459,7 @@ func _apply_progress(t: float) -> void:
 	elif _framing_phase in [
 		FramingPhase.FIRST_REVEAL,
 		FramingPhase.FIRST_REVEAL_HOLD,
+		FramingPhase.FIRST_PROGRESS_CONTROL,
 		FramingPhase.RETURNING_TO_PLAY,
 	]:
 		first_vista_alpha = _first_reveal_weight
@@ -479,13 +519,26 @@ func _apply_camera_progress(t: float) -> void:
 			)
 			return
 
-		FramingPhase.RETURNING_TO_PLAY:
+		FramingPhase.FIRST_PROGRESS_CONTROL:
 			_set_camera_target(
 				CAMERA_FIRST_REVEAL_OFFSET.lerp(
 					CAMERA_TRAVERSE_OFFSET,
-					_return_to_play_weight
+					_first_progress_weight
 				),
 				CAMERA_FIRST_REVEAL_ZOOM.lerp(
+					CAMERA_TRAVERSE_ZOOM,
+					_first_progress_weight
+				)
+			)
+			return
+
+		FramingPhase.RETURNING_TO_PLAY:
+			_set_camera_target(
+				_return_start_offset.lerp(
+					CAMERA_TRAVERSE_OFFSET,
+					_return_to_play_weight
+				),
+				_return_start_zoom.lerp(
 					CAMERA_TRAVERSE_ZOOM,
 					_return_to_play_weight
 				)
@@ -520,6 +573,44 @@ func _apply_camera_progress(t: float) -> void:
 
 		FramingPhase.GAMEPLAY:
 			_apply_gameplay_camera_progress(t)
+
+
+func _update_first_progress_control() -> void:
+	if (
+		_player == null
+		or _reveal_control_start == null
+		or _reveal_control_end == null
+	):
+		return
+
+	var route_segment := (
+		_reveal_control_end.global_position
+		- _reveal_control_start.global_position
+	)
+	var segment_length_squared := route_segment.length_squared()
+	if segment_length_squared <= 0.001:
+		_first_progress_weight = 1.0
+	else:
+		_first_progress_weight = clampf(
+			(
+				_player.global_position
+				- _reveal_control_start.global_position
+			).dot(route_segment) / segment_length_squared,
+			0.0,
+			1.0
+		)
+
+	if (
+		_presentation_anchor != null
+		and _first_reveal_camera_anchor != null
+		and _reveal_control_end != null
+	):
+		_presentation_anchor.global_position = (
+			_first_reveal_camera_anchor.global_position.lerp(
+				_reveal_control_end.global_position,
+				_first_progress_weight
+			)
+		)
 
 
 func _apply_gameplay_camera_progress(t: float) -> void:

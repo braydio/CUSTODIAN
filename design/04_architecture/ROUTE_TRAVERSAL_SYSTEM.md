@@ -64,10 +64,18 @@ Phases are `IDLE`, `REQUESTED`, `VALIDATING`, `FREEZING_SOURCE`, `STAGING_TARGET
 For node-to-node traversal:
 
 1. Reject concurrency and validate route/profile/actor/current-node/exit/edge.
-2. Capture actor and source activation state, lock the actor, capture route state, and call `prepare_route_deactivation`.
-3. Stage or retrieve the target and validate its named spawn before relinquishing source authority.
-4. Disable the source, activate the target, restore target state, complete activation, and bind legal `LevelExit2D` nodes.
-5. Commit loader/session identity, apply the source cache policy, append history, unlock the actor, and emit success.
+2. For a `fade` edge in a graphical runtime, lock the actor and fade a route-owned
+   full-screen veil to black. Headless validation retains the synchronous
+   transaction path.
+3. Capture actor and source activation state, lock the actor, capture route state, and call `prepare_route_deactivation`.
+4. Stage or retrieve the target and validate its named spawn before relinquishing source authority.
+5. Disable the source, explicitly clear the outgoing camera presentation override,
+   activate the target at its named spawn, restore target state, complete
+   activation, and bind legal `LevelExit2D` nodes. Runtime-map binding rebuilds
+   bounds and snaps the shared camera to the persistent actor while the veil is
+   opaque.
+6. Commit loader/session identity, apply the source cache policy, append history,
+   fade the veil clear, unlock the actor, and emit success.
 
 Failure enters rollback: synchronously clear loader authority when a post-commit target owns it, release or re-hide the incomplete target, restore source visibility/process/camera and loader identity when a source exists, restore actor position/process, reset source exit locks, emit a structured failure, and return to `IDLE`. Initial-entry failure therefore leaves no active loader identity and can be retried in the same frame. Two route nodes may never process gameplay simultaneously.
 
@@ -155,7 +163,7 @@ RouteSession and node/route state have serialization-safe dictionaries. Campaign
 - Disk/save-file serialization.
 - Major-context `WorldTransitionManager` implementation.
 - Editor route-graph UI.
-- Production transition-screen polish.
+- Transition-screen treatments beyond the route-owned black `fade` veil.
 - Conditional quest scripting beyond explicit profiles.
 - Additional campaign migrations.
 

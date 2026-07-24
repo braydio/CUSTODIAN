@@ -1,7 +1,7 @@
 # Inventory Pause Menu Refinement
 
 Status: implemented
-Last updated: 2026-07-23
+Last updated: 2026-07-24
 
 ## Summary
 
@@ -36,15 +36,19 @@ floating over the paused world.
 
 ## Layout Contract
 
-- Category rail: `170px`.
-- Inspection panel: `380px`.
-- Column gaps: `16px`.
-- Item cards: `180x190px`.
-- Item art viewport: fixed `118x118px`.
-- Inspection art viewport: `144x144px`.
-- Grid: four columns at widths of at least `1600px`, three from
-  `1280-1599px`, and two below `1280px`, subject to the available register
-  width.
+- Category rail: `150px`.
+- Inspection panel: `340px`.
+- Column gaps: `12px`; card gaps: `8px`.
+- Item cards: `148x152px` at widths of at least `1500px`, `156x158px` from
+  `1152-1499px`, and `164x164px` below `1152px`.
+- Item art viewport: `88x88px` desktop, `92x92px` medium, and `96x96px`
+  compact.
+- Inspection art viewport: `112x112px`, beside the title and metadata in a
+  compact horizontal identity header.
+- Grid: four columns at widths of at least `1500px`, three from
+  `1152-1499px`, and two below `1152px`, subject to the available register
+  width. At `1600x900`, eight ordinary records form two complete rows without
+  register scrolling.
 - The inspection action is pinned below content. Only description/provenance
   scroll when necessary.
 
@@ -57,7 +61,8 @@ positioning. Selection uses a persistent gold-black fill, full-intensity gold
 edge, gold registration mark, brighter name, and a four-percent internal art
 scale around the icon center. Keyboard or controller focus uses four
 technical-cyan corner marks. Focus never replaces the selected record's gold
-edge.
+edge. Selection applies a three-percent internal art scale around the icon
+center.
 
 ## Archive Glass
 
@@ -131,9 +136,11 @@ Run from the repository root:
 python custodian/tools/ui/normalize_inventory_icons.py --check
 ```
 
-The responsive smoke covers `2048x1152`, `1920x1080`, `1600x900`,
-`1280x720`, and the existing `1152x648` two-column guard. It validates card
-icon containment, register backing, Status/footer containment at supported
+The responsive smoke covers the exact `1500px` and `1152px` breakpoints plus
+representative `2048x1152`, `1920x1080`, `1600x900`, `1280x720`, and
+`1024x648` layouts. It validates responsive card/icon dimensions, the
+four-by-two desktop register without a vertical scrollbar, icon containment,
+register backing, compact Inspection, Status/footer containment at supported
 visual-check sizes, and keyboard/controller prompt modes. Graphical runs also
 write Status, Ledger, and Equipment captures under `user://`; headless runs
 skip capture because the dummy display has no viewport texture.

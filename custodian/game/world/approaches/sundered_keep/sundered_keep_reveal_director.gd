@@ -45,6 +45,8 @@ var _destination_prompt: CanvasItem
 var _reveal_played := false
 var _reveal_running := false
 var _reveal_finished := false
+var _reveal_ready_for_return := false
+var _first_return_running := false
 var _second_reveal_played := false
 var _second_reveal_running := false
 var _second_reveal_finished := false
@@ -153,6 +155,33 @@ func play_first_reveal() -> void:
 
 	_set_player_movement_multiplier(1.0)
 	if _vista_controller != null:
+		_vista_controller.begin_first_progress_control()
+	_reveal_ready_for_return = true
+
+	var settle := create_tween() \
+		.set_trans(Tween.TRANS_SINE) \
+		.set_ease(Tween.EASE_OUT)
+	if _far_fog != null:
+		settle.tween_property(
+			_far_fog,
+			"modulate:a",
+			maxf(_far_fog.modulate.a, 0.16),
+			atmosphere_settle_duration
+		)
+	await settle.finished
+
+
+func return_first_reveal_to_gameplay() -> void:
+	if (
+		not _reveal_played
+		or not _reveal_ready_for_return
+		or _first_return_running
+		or _reveal_finished
+	):
+		return
+
+	_first_return_running = true
+	if _vista_controller != null:
 		_vista_controller.begin_return_to_gameplay()
 
 	var return_tween := create_tween() \
@@ -176,23 +205,13 @@ func play_first_reveal() -> void:
 	if _vista_controller != null:
 		_vista_controller.complete_first_reveal()
 
-	var settle := create_tween() \
-		.set_trans(Tween.TRANS_SINE) \
-		.set_ease(Tween.EASE_OUT)
-	if _far_fog != null:
-		settle.tween_property(
-			_far_fog,
-			"modulate:a",
-			maxf(_far_fog.modulate.a, 0.16),
-			atmosphere_settle_duration
-		)
-	await settle.finished
-
 	_resolve_destination_prompt()
 	if _destination_prompt != null:
 		var prompt_tween := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		prompt_tween.tween_property(_destination_prompt, "modulate:a", 1.0, 0.18)
 		await prompt_tween.finished
+	_reveal_ready_for_return = false
+	_first_return_running = false
 	_reveal_running = false
 	_reveal_finished = true
 	reveal_completed.emit()
@@ -271,6 +290,8 @@ func get_reveal_state() -> Dictionary:
 		"played": _reveal_played,
 		"running": _reveal_running,
 		"complete": _reveal_finished,
+		"ready_for_return": _reveal_ready_for_return,
+		"return_running": _first_return_running,
 		"second_played": _second_reveal_played,
 		"second_running": _second_reveal_running,
 		"second_complete": _second_reveal_finished,

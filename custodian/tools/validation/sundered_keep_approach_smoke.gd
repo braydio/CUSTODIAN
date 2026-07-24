@@ -2,7 +2,7 @@ extends SceneTree
 
 const APPROACH_SCENE := preload("res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn")
 const REVEAL_DIRECTOR_SCRIPT := preload("res://game/world/approaches/sundered_keep/sundered_keep_reveal_director.gd")
-const EXPECTED_BOUNDARY_SEGMENTS := 57
+const EXPECTED_BOUNDARY_SEGMENTS := 42
 
 const EXPECTED_ROOTS := {
 	"ParallaxRoot": 0,
@@ -57,13 +57,15 @@ const EXPECTED_MARKERS := {
 	"RevealStart": Vector2(-40, 300),
 	"RevealFull": Vector2(-150, 5),
 	"MidGameplayStart": Vector2(50, -55),
+	"RevealControlStart": Vector2(-150, 5),
+	"RevealControlEnd": Vector2(50, -55),
 	"SecondVistaStart": Vector2(300, -125),
 	"SecondVistaFull": Vector2(590, -125),
 	"SecondVistaEnd": Vector2(830, -125),
 	"TraverseEnd": Vector2(915, -125),
 	"ReturnTopdown": Vector2(980, -125),
-	"FirstRevealCameraAnchor": Vector2(210, -120),
-	"SecondVistaCameraAnchor": Vector2(650, -240),
+	"FirstRevealCameraAnchor": Vector2(-135.9, -478.3),
+	"SecondVistaCameraAnchor": Vector2(664.5, -480),
 }
 
 
@@ -202,9 +204,9 @@ func _init() -> void:
 				segment_count += 1
 		if segment_count != EXPECTED_BOUNDARY_SEGMENTS:
 			errors.append("PathBoundaryCollision expected %d thick capsule rails, got %d" % [EXPECTED_BOUNDARY_SEGMENTS, segment_count])
-		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-214.3, 695.0), Vector2(-240.7, 600.5), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(-240.7, 600.5), Vector2(-245.7, 484.7), errors)
-		_check_boundary_segment(boundary, "BoundarySegment_057", Vector2(-342.6, 794.2), Vector2(-214.6, 696.6), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_001", Vector2(-215.0, 694.2), Vector2(-241.7, 598.6), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_002", Vector2(-241.7, 598.6), Vector2(-260.7, 492.3), errors)
+		_check_boundary_segment(boundary, "BoundarySegment_042", Vector2(-347.9, 771.7), Vector2(-213.8, 692.5), errors)
 
 	_collect_filled_collision_polygons(scene, errors)
 	_check_camera_bounds(scene, errors)
@@ -224,6 +226,18 @@ func _init() -> void:
 		_check_controller_path(controller, "entry_marker_path", NodePath("../Markers/EntrySpawn"), errors)
 		_check_controller_path(controller, "reveal_full_marker_path", NodePath("../Markers/RevealFull"), errors)
 		_check_controller_path(controller, "mid_gameplay_marker_path", NodePath("../Markers/MidGameplayStart"), errors)
+		_check_controller_path(
+			controller,
+			"reveal_control_start_marker_path",
+			NodePath("../Markers/RevealControlStart"),
+			errors
+		)
+		_check_controller_path(
+			controller,
+			"reveal_control_end_marker_path",
+			NodePath("../Markers/RevealControlEnd"),
+			errors
+		)
 		_check_controller_path(controller, "grand_vista_root_path", NodePath("../GrandVistaRoot"), errors)
 		_check_controller_path(controller, "vista_fog_band_path", NodePath("../VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil"), errors)
 		_check_controller_path(controller, "occlusion_root_path", NodePath("../OcclusionRoot"), errors)
@@ -487,6 +501,9 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 		"level_exit",
 		"first_reveal_trigger",
 		"first_reveal_camera_anchor",
+		"reveal_control_start",
+		"reveal_control_end",
+		"return_to_gameplay_trigger",
 		"second_reveal_trigger",
 		"second_reveal_camera_anchor",
 	]:
@@ -498,6 +515,15 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 		),
 		"first_reveal_camera_anchor": (
 			"Markers/FirstRevealCameraAnchor"
+		),
+		"reveal_control_start": (
+			"Markers/RevealControlStart"
+		),
+		"reveal_control_end": (
+			"Markers/RevealControlEnd"
+		),
+		"return_to_gameplay_trigger": (
+			"SequenceTriggers/ReturnToGameplayTrigger"
 		),
 		"second_reveal_trigger": (
 			"SequenceTriggers/SecondVistaRevealTrigger"
@@ -629,6 +655,33 @@ func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
 			)
 	if not director.has_played():
 		return
+	for unused in 20:
+		if bool(
+			director.get_reveal_state().get(
+				"ready_for_return",
+				false
+			)
+		):
+			break
+		await process_frame
+	var return_trigger := scene.get_node_or_null(
+		"SequenceTriggers/ReturnToGameplayTrigger"
+	) as Area2D
+	if return_trigger == null:
+		errors.append(
+			"SequenceTriggers/ReturnToGameplayTrigger missing"
+		)
+		return
+	operator.global_position = return_trigger.global_position
+	for unused in 8:
+		await physics_frame
+		if bool(
+			director.get_reveal_state().get(
+				"return_running",
+				false
+			)
+		):
+			break
 	if not bool(director.get_reveal_state().get("complete", false)):
 		await director.reveal_completed
 	var state: Dictionary = director.get_reveal_state()

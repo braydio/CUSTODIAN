@@ -31,6 +31,8 @@ const ROUTE_SESSION_SCRIPT := preload("res://game/world/routes/route_session.gd"
 const TRANSITION_CONTEXT_SCRIPT := preload("res://game/world/routes/route_transition_context.gd")
 const STATE_STORE_SCRIPT := preload("res://game/world/routes/route_state_store.gd")
 const LEVEL_LOADER_SCRIPT := preload("res://game/world/levels/level_loader.gd")
+const ROUTE_FADE_OUT_DURATION := 0.22
+const ROUTE_FADE_IN_DURATION := 0.28
 
 @export_file("*.json") var route_registry_index_path := "res://content/routes/routes.json"
 
@@ -40,11 +42,24 @@ var _active_session: RefCounted
 var _state_store: RefCounted = STATE_STORE_SCRIPT.new()
 var _level_loader: Node
 var _phase := TransitionPhase.IDLE
+var _visual_transition_active := false
+var _transition_veil_layer: CanvasLayer
+var _transition_veil: ColorRect
 
 
 func _ready() -> void:
 	add_to_group("route_traversal_manager")
 	_level_loader = _find_or_create_level_loader()
+
+
+func _exit_tree() -> void:
+	if (
+		_transition_veil_layer != null
+		and is_instance_valid(_transition_veil_layer)
+	):
+		_transition_veil_layer.queue_free()
+	_transition_veil_layer = null
+	_transition_veil = null
 
 
 func ensure_registry() -> bool:
@@ -114,7 +129,11 @@ func request_exit(exit_id: StringName, actor: Node) -> bool:
 
 
 func transition_via_edge(edge_id: StringName, actor: Node) -> bool:
-	if not has_active_route() or _phase != TransitionPhase.IDLE:
+	if (
+		not has_active_route()
+		or _phase != TransitionPhase.IDLE
+		or _visual_transition_active
+	):
 		return false
 	_set_phase(TransitionPhase.REQUESTED)
 	route_transition_started.emit(_active_session.route_id, edge_id)
@@ -128,6 +147,9 @@ func transition_via_edge(edge_id: StringName, actor: Node) -> bool:
 		return _transition_failure(edge_id, "edge source does not match current node")
 	if actor == null or actor != _active_session.actor:
 		return _transition_failure(edge_id, "actor does not match active route actor")
+	if _should_use_visual_fade(edge):
+		_run_faded_transition(edge, actor)
+		return true
 	if edge.to_node_id == WORLD_ORIGIN:
 		return _transition_to_world(edge, actor)
 	return _transition_to_node(edge, actor)
@@ -211,7 +233,11 @@ func _start_route_definition(route: RefCounted, actor: Node, context: Dictionary
 	return true
 
 
-func _transition_to_node(edge: RefCounted, actor: Node) -> bool:
+func _transition_to_node(
+	edge: RefCounted,
+	actor: Node,
+	prelocked_actor_mode: int = -1
+) -> bool:
 	var context: RefCounted = TRANSITION_CONTEXT_SCRIPT.new()
 	context.route_id = _active_session.route_id
 	context.profile_id = _active_session.profile_id
@@ -220,7 +246,11 @@ func _transition_to_node(edge: RefCounted, actor: Node) -> bool:
 	context.target_node_id = edge.to_node_id
 	context.direction = edge.direction
 	context.actor_position = (actor as Node2D).global_position if actor is Node2D else Vector2.ZERO
-	context.actor_process_mode = actor.process_mode
+	context.actor_process_mode = (
+		actor.process_mode
+		if prelocked_actor_mode < 0
+		else prelocked_actor_mode
+	)
 	var source: Node = _active_session.current_instance
 	var source_level_id: StringName = _active_session.current_level_id
 	var source_loader_context: Dictionary = _level_loader.call("get_active_level_context") if source != null else {}
@@ -228,7 +258,8 @@ func _transition_to_node(edge: RefCounted, actor: Node) -> bool:
 		context.source_activation_state = _level_loader.call("capture_instance_activation_state", source)
 		context.source_state = _capture_node_state(context.source_node_id, source)
 	_set_phase(TransitionPhase.FREEZING_SOURCE)
-	_lock_actor(actor)
+	if prelocked_actor_mode < 0:
+		_lock_actor(actor)
 	if source != null and source.has_method("prepare_route_deactivation"):
 		source.call("prepare_route_deactivation", context.call("to_dictionary"))
 	_disconnect_exits(source)
@@ -267,6 +298,7 @@ func _transition_to_node(edge: RefCounted, actor: Node) -> bool:
 	if target == null or not is_instance_valid(target):
 		return _rollback(context, target, not reused, source_level_id, source_loader_context, "target instance is unavailable")
 	_set_phase(TransitionPhase.ACTIVATING_TARGET)
+	_clear_camera_presentation_for_handoff()
 	var commit: Dictionary
 	if reused:
 		commit = _level_loader.call("activate_existing_level", target_node.level_id, target, actor, edge.target_spawn_id, target_runtime_context, source)
@@ -303,21 +335,31 @@ func _transition_to_node(edge: RefCounted, actor: Node) -> bool:
 	return true
 
 
-func _transition_to_world(edge: RefCounted, actor: Node) -> bool:
+func _transition_to_world(
+	edge: RefCounted,
+	actor: Node,
+	prelocked_actor_mode: int = -1
+) -> bool:
 	var source: Node = _active_session.current_instance
 	var ingress: Node = _active_session.origin_ingress
 	if source == null or ingress == null or not is_instance_valid(ingress) or _active_session.origin_snapshot.is_empty():
 		return _transition_failure(edge.edge_id, "world origin ingress or snapshot is unavailable")
 	var actor_position := (actor as Node2D).global_position if actor is Node2D else Vector2.ZERO
-	var actor_mode := actor.process_mode
+	var actor_mode := (
+		actor.process_mode
+		if prelocked_actor_mode < 0
+		else prelocked_actor_mode
+	)
 	var source_activation: Dictionary = _level_loader.call("capture_instance_activation_state", source)
 	_capture_node_state(_active_session.current_node_id, source)
 	_set_phase(TransitionPhase.FREEZING_SOURCE)
-	_lock_actor(actor)
+	if prelocked_actor_mode < 0:
+		_lock_actor(actor)
 	if source.has_method("prepare_route_deactivation"):
 		source.call("prepare_route_deactivation", {"edge_id": edge.edge_id, "direction": edge.direction})
 	_disconnect_exits(source)
 	_level_loader.call("deactivate_instance_immediately", source)
+	_clear_camera_presentation_for_handoff()
 	var result: Variant = ingress.call("restore_world_origin", actor, _active_session.origin_snapshot)
 	var restore_result := result as Dictionary if result is Dictionary else {"succeeded": false, "reason": "origin restore returned no result"}
 	if not bool(restore_result.get("succeeded", false)):
@@ -496,6 +538,121 @@ func _on_exit_requested(exit_id: StringName, actor: Node) -> void:
 	# Physics overlap callbacks may not mutate monitoring or process authority.
 	# Resolve the route transaction on the next idle turn.
 	call_deferred("request_exit", exit_id, actor)
+
+
+func _should_use_visual_fade(edge: RefCounted) -> bool:
+	return (
+		edge != null
+		and edge.transition_style == &"fade"
+		and DisplayServer.get_name() != "headless"
+	)
+
+
+func _run_faded_transition(
+	edge: RefCounted,
+	actor: Node
+) -> void:
+	_visual_transition_active = true
+	var actor_mode := actor.process_mode
+	_lock_actor(actor)
+	await _fade_transition_veil(
+		1.0,
+		ROUTE_FADE_OUT_DURATION
+	)
+
+	var succeeded := false
+	if actor != null and is_instance_valid(actor):
+		if edge.to_node_id == WORLD_ORIGIN:
+			succeeded = _transition_to_world(
+				edge,
+				actor,
+				actor_mode
+			)
+		else:
+			succeeded = _transition_to_node(
+				edge,
+				actor,
+				actor_mode
+			)
+	else:
+		_transition_failure(
+			edge.edge_id,
+			"actor became unavailable during route fade"
+		)
+
+	if succeeded and actor != null and is_instance_valid(actor):
+		_lock_actor(actor)
+	await _fade_transition_veil(
+		0.0,
+		ROUTE_FADE_IN_DURATION
+	)
+	if succeeded:
+		_unlock_actor(actor, actor_mode)
+	_visual_transition_active = false
+
+
+func _fade_transition_veil(
+	target_alpha: float,
+	duration: float
+) -> void:
+	_ensure_transition_veil()
+	if _transition_veil == null:
+		return
+
+	_transition_veil.visible = true
+	_transition_veil.mouse_filter = Control.MOUSE_FILTER_STOP
+	var tween := create_tween() \
+		.set_trans(Tween.TRANS_SINE) \
+		.set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(
+		_transition_veil,
+		"modulate:a",
+		clampf(target_alpha, 0.0, 1.0),
+		maxf(duration, 0.001)
+	)
+	await tween.finished
+	if target_alpha <= 0.0:
+		_transition_veil.visible = false
+		_transition_veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _ensure_transition_veil() -> void:
+	if (
+		_transition_veil != null
+		and is_instance_valid(_transition_veil)
+	):
+		return
+
+	_transition_veil_layer = CanvasLayer.new()
+	_transition_veil_layer.name = "RouteTransitionVeilLayer"
+	_transition_veil_layer.layer = 10000
+	_transition_veil_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	get_tree().root.add_child(_transition_veil_layer)
+
+	_transition_veil = ColorRect.new()
+	_transition_veil.name = "RouteTransitionVeil"
+	_transition_veil.set_anchors_and_offsets_preset(
+		Control.PRESET_FULL_RECT
+	)
+	_transition_veil.color = Color.BLACK
+	_transition_veil.modulate.a = 0.0
+	_transition_veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_transition_veil.visible = false
+	_transition_veil_layer.add_child(_transition_veil)
+
+
+func _clear_camera_presentation_for_handoff() -> void:
+	var camera := get_node_or_null(
+		"/root/GameRoot/World/Camera2D"
+	)
+	if (
+		camera != null
+		and camera.has_method("clear_presentation_framing")
+	):
+		camera.call(
+			"clear_presentation_framing",
+			true
+		)
 
 
 func _lock_actor(actor: Node) -> void:

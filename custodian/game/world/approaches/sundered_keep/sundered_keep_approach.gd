@@ -99,6 +99,10 @@ const LEVEL_EXIT_POS := Vector2(1240.0, -218.0)
 const FIRST_REVEAL_TRIGGER_POS := Vector2(-150.0, -175.0)
 const FIRST_REVEAL_CAMERA_ANCHOR_POS := Vector2(210.0, -300.0)
 const FIRST_REVEAL_TRIGGER_SIZE := Vector2(190.0, 120.0)
+const REVEAL_CONTROL_START_POS := REVEAL_FULL_POS
+const REVEAL_CONTROL_END_POS := MID_GAMEPLAY_START_POS
+const RETURN_TO_GAMEPLAY_TRIGGER_POS := MID_GAMEPLAY_START_POS
+const RETURN_TO_GAMEPLAY_TRIGGER_SIZE := Vector2(140.0, 120.0)
 const SECOND_REVEAL_TRIGGER_POS := SECOND_VISTA_START_POS
 const SECOND_REVEAL_CAMERA_ANCHOR_POS := Vector2(650.0, -420.0)
 const SECOND_REVEAL_TRIGGER_SIZE := Vector2(170.0, 140.0)
@@ -215,6 +219,24 @@ const AUTHORING_MARKERS := {
 		"kind": "camera_anchor",
 		"position": Vector2(-135.9, -658.3),
 	},
+	"reveal_control_start": {
+		"node_name": "RevealControlStart",
+		"label": "REVEAL CONTROL START",
+		"kind": "camera_control",
+		"position": REVEAL_CONTROL_START_POS,
+	},
+	"reveal_control_end": {
+		"node_name": "RevealControlEnd",
+		"label": "REVEAL CONTROL END",
+		"kind": "camera_control",
+		"position": REVEAL_CONTROL_END_POS,
+	},
+	"return_to_gameplay_trigger": {
+		"node_name": "ReturnToGameplayTrigger",
+		"label": "RETURN TO GAMEPLAY",
+		"kind": "presentation_trigger",
+		"position": RETURN_TO_GAMEPLAY_TRIGGER_POS,
+	},
 	"second_reveal_trigger": {
 		"node_name": "SecondVistaRevealTrigger",
 		"label": "SECOND REVEAL TRIGGER",
@@ -254,6 +276,8 @@ var entry_spawn: Marker2D = null
 var reveal_start: Marker2D = null
 var reveal_full: Marker2D = null
 var mid_gameplay_start: Marker2D = null
+var reveal_control_start: Marker2D = null
+var reveal_control_end: Marker2D = null
 var traverse_end: Marker2D = null
 var return_topdown: Marker2D = null
 var second_vista_start: Marker2D = null
@@ -262,6 +286,7 @@ var second_vista_end: Marker2D = null
 var vista_controller: SunderedKeepVistaController = null
 var reveal_director: Node = null
 var first_reveal_trigger: Area2D = null
+var return_to_gameplay_trigger: Area2D = null
 var first_reveal_camera_anchor: Marker2D = null
 var second_reveal_trigger: Area2D = null
 var second_reveal_camera_anchor: Marker2D = null
@@ -347,6 +372,24 @@ func _ensure_roots() -> void:
 	reveal_start = _ensure_marker("RevealStart", _route_point(REVEAL_START_POS))
 	reveal_full = _ensure_marker("RevealFull", _route_point(REVEAL_FULL_POS))
 	mid_gameplay_start = _ensure_marker("MidGameplayStart", _route_point(MID_GAMEPLAY_START_POS))
+	reveal_control_start = _ensure_marker(
+		"RevealControlStart",
+		_route_point(
+			_get_authoring_marker_position(
+				"reveal_control_start",
+				REVEAL_CONTROL_START_POS
+			)
+		)
+	)
+	reveal_control_end = _ensure_marker(
+		"RevealControlEnd",
+		_route_point(
+			_get_authoring_marker_position(
+				"reveal_control_end",
+				REVEAL_CONTROL_END_POS
+			)
+		)
+	)
 	second_vista_start = _ensure_marker("SecondVistaStart", _route_point(SECOND_VISTA_START_POS))
 	second_vista_full = _ensure_marker("SecondVistaFull", _route_point(SECOND_VISTA_FULL_POS))
 	second_vista_end = _ensure_marker("SecondVistaEnd", _route_point(SECOND_VISTA_END_POS))
@@ -979,6 +1022,34 @@ func _build_sequence_triggers() -> void:
 		_on_first_reveal_trigger_body_entered
 	)
 
+	return_to_gameplay_trigger = Area2D.new()
+	return_to_gameplay_trigger.name = "ReturnToGameplayTrigger"
+	return_to_gameplay_trigger.position = _route_point(
+		_get_authoring_marker_position(
+			"return_to_gameplay_trigger",
+			RETURN_TO_GAMEPLAY_TRIGGER_POS
+		)
+	)
+	return_to_gameplay_trigger.collision_layer = 0
+	return_to_gameplay_trigger.collision_mask = 1
+	return_to_gameplay_trigger.monitoring = true
+	return_to_gameplay_trigger.monitorable = false
+	sequence_triggers_root.add_child(
+		return_to_gameplay_trigger
+	)
+
+	var return_shape_node := CollisionShape2D.new()
+	return_shape_node.name = "CollisionShape2D"
+	var return_shape := RectangleShape2D.new()
+	return_shape.size = RETURN_TO_GAMEPLAY_TRIGGER_SIZE
+	return_shape_node.shape = return_shape
+	return_to_gameplay_trigger.add_child(
+		return_shape_node
+	)
+	return_to_gameplay_trigger.body_entered.connect(
+		_on_return_to_gameplay_trigger_body_entered
+	)
+
 	second_reveal_trigger = Area2D.new()
 	second_reveal_trigger.name = "SecondVistaRevealTrigger"
 	second_reveal_trigger.position = _route_point(
@@ -1018,6 +1089,18 @@ func _on_second_reveal_trigger_body_entered(body: Node) -> void:
 	if reveal_director == null:
 		return
 	reveal_director.call("play_second_reveal")
+
+
+func _on_return_to_gameplay_trigger_body_entered(
+	body: Node
+) -> void:
+	if not _is_player_body(body):
+		return
+	if reveal_director == null:
+		return
+	reveal_director.call(
+		"return_first_reveal_to_gameplay"
+	)
 
 
 func _build_event_markers() -> void:
@@ -1176,6 +1259,12 @@ func _ensure_vista_controller() -> void:
 	vista_controller.entry_marker_path = NodePath("../Markers/EntrySpawn")
 	vista_controller.reveal_full_marker_path = NodePath("../Markers/RevealFull")
 	vista_controller.mid_gameplay_marker_path = NodePath("../Markers/MidGameplayStart")
+	vista_controller.reveal_control_start_marker_path = NodePath(
+		"../Markers/RevealControlStart"
+	)
+	vista_controller.reveal_control_end_marker_path = NodePath(
+		"../Markers/RevealControlEnd"
+	)
 	vista_controller.vista_root_path = NodePath("../VistaRoot")
 	vista_controller.grand_vista_root_path = NodePath("../GrandVistaRoot")
 	vista_controller.vista_fog_band_path = NodePath(

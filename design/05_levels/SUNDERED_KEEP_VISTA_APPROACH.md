@@ -52,7 +52,8 @@ The same mapper now has marker mode for route and presentation authoring:
 
 - `M`: toggle collision/marker mode.
 - Marker mode exposes `spawn`, `return_causeway`, `level_exit`, both reveal
-  trigger centers, and both reveal camera anchors.
+  trigger centers, both reveal camera anchors, `reveal_control_start`,
+  `reveal_control_end`, and `return_to_gameplay_trigger`.
 - Left click in marker mode: place the selected marker.
 - Right click in marker mode: clear the selected marker.
 - `C`: copy the full `AUTHORING_MARKERS` block.
@@ -62,9 +63,11 @@ The same mapper now has marker mode for route and presentation authoring:
 
 For reveal tuning, place each trigger on the walkable point where the presentation
 should begin, then place its camera anchor on the composition's desired focal
-center. Trigger size, timing, zoom, and camera offset remain code-owned; the mapper
-owns only the four positions. Do not add extra `SecondVistaStart/Full/End` markers:
-the second reveal no longer uses a progress-only alpha window.
+center. For the first reveal, place the two control markers along the walkable
+route segment and the return trigger at the point where ordinary Operator follow
+should resume. Trigger size, timing, zoom, and camera offset remain code-owned.
+Do not add extra `SecondVistaStart/Full/End` authoring points: the second reveal
+does not use a progress-only alpha window.
 
 ## Scene Architecture
 
@@ -78,8 +81,8 @@ SunderedKeepApproach
 ├── OcclusionRoot         z=100   — edge mist, fog strips, final gate shadow veil
 ├── RoofOcclusionRoot     z=90    — route-master roof crops and player-only fade zones
 ├── Collision             — PathBoundaryCollision thick CapsuleShape2D rails
-├── Markers               — route-progress markers plus first/second reveal camera anchors
-├── SequenceTriggers      — physical FirstVistaRevealTrigger and SecondVistaRevealTrigger
+├── Markers               — route-progress/control markers plus first/second reveal camera anchors
+├── SequenceTriggers      — first/second reveal triggers plus ReturnToGameplayTrigger
 ├── EventMarkers          — retained Vista reference markers for spawn and Return Causeway
 ├── EventRuntime          — authored route-exit affordances bound by RouteTraversalManager
 ├── VistaController       — drives vista, grand vista, fog, occlusion, and distant keep alpha
@@ -113,7 +116,8 @@ progress-only alpha/camera blends. Approach flows **north (decreasing Y)** then
 |---|---|---|---|---|
 | 1 — Entry Route | intro offset `(0,-18)`, zoom `1.12` | 0.0 | Edge mist visible, final veil hidden | Player starts at EntrySpawn |
 | 2 — First Reveal | anchor offset `(0,0)`, zoom `0.84` | 0→1 by reveal tween | Edge mist peels, final veil hidden | Physical overlap at `FirstVistaRevealTrigger` |
-| 3 — Playable Traverse | offset `(0,-48)`, zoom `0.98` | 1.0 | Edge mist/fog strips visible, final veil hidden | Reveal returns to Operator follow |
+| 3 — Progress-controlled Traverse | reveal framing → offset `(0,-48)`, zoom `0.98` | 1.0 | Edge mist/fog strips visible, final veil hidden | Operator advances from RevealControlStart to RevealControlEnd |
+| 3b — Gameplay Return | smooth blend to Operator follow | 1.0 | Edge mist/fog strips visible, final veil hidden | Physical overlap at `ReturnToGameplayTrigger` |
 | 4 — Labyrinth Vista | anchor offset `(150,-115)`, zoom `0.84` | 1.0 | Grand Vista blends in; local roofs fade | Physical overlap at `SecondVistaRevealTrigger` |
 | 5 — Final Gate Veil | normal_offset, normal_zoom | 1.0 | Final gate shadow veil fades in | Player passes SecondVistaEnd toward ReturnTopdown |
 
@@ -126,9 +130,13 @@ before the incoming level establishes its own presentation.
 `FirstVistaRevealTrigger` is centered at runtime `(-150, 5)`, matching the authored
 overlook. `SunderedKeepRevealDirector` owns how the presentation plays, while the
 approach owns when it starts: 0.18 seconds of anticipation, a 0.80-second cubic
-blend to `FirstRevealCameraAnchor`, a 1.80-second hold, a 0.70-second return to
-Operator-follow traversal, and a 0.45-second atmosphere settle. Operator movement
-is limited to 25% during the blend and hold, then restored before the return. Near
+blend to `FirstRevealCameraAnchor`, and a 1.80-second minimum hold. Operator
+movement is limited to 25% during the blend and hold, then restored. After the
+hold, the presentation anchor and zoom advance according to the Operator's
+projection along the authored `RevealControlStart → RevealControlEnd` segment;
+elapsed time does not decide when gameplay framing resumes. Physical overlap with
+`ReturnToGameplayTrigger` begins the 0.70-second blend back to Operator follow.
+The 0.45-second atmosphere settle is independent of that physical return. Near
 and mid fog move away from the route on different vectors, the far strip remains
 as distance haze, and a soft radial `RevealMoonlightCue` briefly lifts the keep
 silhouette. Raw route progress cannot expose `VistaRoot` before this trigger and
@@ -151,7 +159,15 @@ The temporary `FarKeepSilhouetteLayerA/B` copies have been removed. The authored
 sharper `DistantSunderedKeepLandmark` under `ParallaxRoot/RevealDepth` supplies the
 focal Keep silhouette without enabling any review-blocked supplementary plates.
 
-The endpoint remains an `Area2D`, but it is a narrow walkable threshold under `EventRuntime/LevelExitAffordance`, displays the Return Causeway destination prompt, accepts automatic crossing only from the authored approach side, raises the final veil, and requests the route-owned `continue` handoff.
+The endpoint remains an `Area2D`, but it is a narrow walkable threshold under
+`EventRuntime/LevelExitAffordance`, displays the Return Causeway destination
+prompt, accepts automatic crossing only from the authored approach side, raises
+the final veil, and requests the route-owned `continue` handoff. Production uses
+the route's `fade` transition style: the route manager fades fully to black,
+clears Vista presentation framing, activates Return Causeway at its named spawn,
+rebinds and snaps the shared camera while obscured, then fades back in. The
+`debug_direct_keep` profile remains the only Vista exit that intentionally skips
+Return Causeway.
 
 **Marker positions** (from builder):
 

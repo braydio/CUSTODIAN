@@ -163,6 +163,89 @@ func _init() -> void:
 				"first reveal zoom",
 				errors
 			)
+		for unused in 40:
+			if bool(
+				director.get_reveal_state().get(
+					"ready_for_return",
+					false
+				)
+			):
+				break
+			await process_frame
+		var progress_state := (
+			controller.get_reveal_choreography_state()
+		)
+		if progress_state.get("phase", "") != "FIRST_PROGRESS_CONTROL":
+			errors.append(
+				"first reveal did not enter progress-driven framing"
+			)
+		var control_start := scene.get_node_or_null(
+			"Markers/RevealControlStart"
+		) as Marker2D
+		var control_end := scene.get_node_or_null(
+			"Markers/RevealControlEnd"
+		) as Marker2D
+		if control_start == null or control_end == null:
+			errors.append("reveal-control markers missing")
+		else:
+			actor.global_position = control_start.global_position.lerp(
+				control_end.global_position,
+				0.5
+			)
+			await process_frame
+			progress_state = (
+				controller.get_reveal_choreography_state()
+			)
+			var progress_weight := float(
+				progress_state.get(
+					"first_progress_weight",
+					-1.0
+				)
+			)
+			if progress_weight < 0.45 or progress_weight > 0.55:
+				errors.append(
+					"player position did not drive reveal framing progress"
+				)
+			var first_anchor := scene.get_node_or_null(
+				"Markers/FirstRevealCameraAnchor"
+			) as Marker2D
+			var presentation_anchor := controller.get_node_or_null(
+				"CameraPresentationAnchor"
+			) as Marker2D
+			if first_anchor == null or presentation_anchor == null:
+				errors.append(
+					"progress-controlled camera anchor is unavailable"
+				)
+			else:
+				var expected_anchor := (
+					first_anchor.global_position.lerp(
+						control_end.global_position,
+						0.5
+					)
+				)
+				if presentation_anchor.global_position.distance_to(
+					expected_anchor
+				) > 1.0:
+					errors.append(
+						"reveal progress did not interpolate "
+						+ "between authored camera endpoints"
+					)
+		var return_trigger := scene.get_node_or_null(
+			"SequenceTriggers/ReturnToGameplayTrigger"
+		) as Area2D
+		if return_trigger == null:
+			errors.append("ReturnToGameplayTrigger missing")
+		else:
+			actor.global_position = return_trigger.global_position
+			for unused in 8:
+				await physics_frame
+				if bool(
+					director.get_reveal_state().get(
+						"return_running",
+						false
+					)
+				):
+					break
 		if not director.is_reveal_complete():
 			await director.reveal_completed
 

@@ -150,13 +150,24 @@ func _initialize() -> void:
 	var p9_card := _find_node_named(inventory_ui, "Item_p9_sidearm") as Button
 	var p9_name := _find_node_named(p9_card, "ItemName") as Label
 	_assert(p9_name != null and p9_name.text == "P-9 FIELD SIDEARM", "item card should keep its name in a dedicated text region")
-	_assert(p9_card.custom_minimum_size == Vector2(180, 190), "item cards should use the 180x190 reference footprint")
+	var expected_card_size := inventory_ui.call(
+		"_ledger_card_size"
+	) as Vector2
+	var expected_icon_size := inventory_ui.call(
+		"_ledger_icon_size"
+	) as Vector2
+	_assert(
+		p9_card.custom_minimum_size == expected_card_size,
+		"item card should use the active compact responsive footprint"
+	)
 	var p9_icon := _find_node_named(p9_card, "ItemIcon") as TextureRect
 	var p9_icon_viewport := _find_node_named(p9_card, "IconViewport") as CenterContainer
 	_assert(
-		p9_icon != null and p9_icon.custom_minimum_size == Vector2(118, 118)
-		and p9_icon_viewport != null and p9_icon_viewport.custom_minimum_size == Vector2(118, 118),
-		"item cards should keep a fixed 118px icon viewport"
+		p9_icon != null
+		and p9_icon.custom_minimum_size == expected_icon_size
+		and p9_icon_viewport != null
+		and p9_icon_viewport.custom_minimum_size == expected_icon_size,
+		"item cards should use the active compact responsive icon viewport"
 	)
 	_assert(
 		p9_icon != null and _rect_contains(p9_card.get_global_rect(), p9_icon.get_global_rect()),
