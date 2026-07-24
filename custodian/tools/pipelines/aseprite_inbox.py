@@ -27,6 +27,11 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="Show planned moves without changing files.")
     parser.add_argument("--run-ingest", action="store_true", help="Run manifest generation and ingest after moves.")
     parser.add_argument("--skip-post", action="store_true", help="Forward --skip-post to manifest generation and ingest.")
+    parser.add_argument(
+        "--no-mirror",
+        action="store_true",
+        help="Suppress automatic horizontal direction counterparts during ingest.",
+    )
     parser.add_argument("--regen", action="store_true", help="Regenerate manifests even when they already exist.")
     parser.add_argument(
         "--limit",
@@ -79,7 +84,11 @@ def main() -> int:
         return 0
 
     if args.run_ingest:
-        return _run_manifest_and_ingest(args.skip_post, args.regen)
+        return _run_manifest_and_ingest(
+            args.skip_post,
+            args.regen,
+            args.no_mirror,
+        )
 
     return 0
 
@@ -168,12 +177,18 @@ def _split_canonical(name: str) -> dict[str, str]:
     }
 
 
-def _run_manifest_and_ingest(skip_post: bool, regen: bool) -> int:
+def _run_manifest_and_ingest(
+    skip_post: bool,
+    regen: bool,
+    no_mirror: bool,
+) -> int:
     manifest_args = [sys.executable, str(GENERATE_MANIFESTS)]
     if regen:
         manifest_args.append("--regen")
     if skip_post:
         manifest_args.append("--skip-post")
+    if no_mirror:
+        manifest_args.append("--no-mirror")
     result = subprocess.run(manifest_args, cwd=PROJECT_DIR, check=False)
     return result.returncode
 

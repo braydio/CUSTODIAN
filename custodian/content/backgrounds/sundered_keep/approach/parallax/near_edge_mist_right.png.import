@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bfhklk3jygkin"
-path="res://.godot/imported/operator__body__unarmed__critical_execution_01__e__8f__96.png-46f6dba4d876959d491b18bb8c879ba5.ctex"
+uid="uid://cqlel0bf12mu6"
+path="res://.godot/imported/near_edge_mist_right.png-738c2fcdf96198490431d5e12021f5cf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__8f__96.png"
-dest_files=["res://.godot/imported/operator__body__unarmed__critical_execution_01__e__8f__96.png-46f6dba4d876959d491b18bb8c879ba5.ctex"]
+source_file="res://content/backgrounds/sundered_keep/approach/parallax/near_edge_mist_right.png"
+dest_files=["res://.godot/imported/near_edge_mist_right.png-738c2fcdf96198490431d5e12021f5cf.ctex"]
 
 [params]
 

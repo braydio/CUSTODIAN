@@ -5,6 +5,7 @@ APPLY=0
 SKIP_INBOX=0
 NO_IMPORT=0
 NO_VALIDATE=0
+NO_MIRROR=0
 
 for arg in "$@"; do
   case "$arg" in
@@ -13,9 +14,10 @@ for arg in "$@"; do
     --skip-inbox) SKIP_INBOX=1 ;;
     --no-import) NO_IMPORT=1 ;;
     --no-validate) NO_VALIDATE=1 ;;
+    --no-mirror) NO_MIRROR=1 ;;
     -h|--help)
       cat <<'USAGE'
-Usage: tools/operator_ingest.sh [--dry-run|--apply] [--skip-inbox] [--no-import] [--no-validate]
+Usage: tools/operator_ingest.sh [--dry-run|--apply] [--skip-inbox] [--no-import] [--no-validate] [--no-mirror]
 
 Default is --dry-run.
 
@@ -23,6 +25,7 @@ Default is --dry-run.
 --skip-inbox  Skip shared inbox manifest generation; rebuild from existing operator modular source.
 --no-import   Skip Godot import.
 --no-validate Skip smoke/contract validation.
+--no-mirror   Do not generate horizontally mirrored direction counterparts.
 USAGE
       exit 0
       ;;
@@ -50,6 +53,7 @@ echo "Mode: $([[ "$APPLY" -eq 1 ]] && echo APPLY || echo DRY-RUN)"
 echo "Skip inbox: $SKIP_INBOX"
 echo "No import: $NO_IMPORT"
 echo "No validate: $NO_VALIDATE"
+echo "No mirror: $NO_MIRROR"
 echo "Report: $REPORT"
 echo ""
 
@@ -60,10 +64,16 @@ fi
 
 if [[ "$SKIP_INBOX" -eq 0 ]]; then
   echo "== Inbox manifest generation =="
+  MANIFEST_ARGS=(--regen --remove-superseded)
+  if [[ "$NO_MIRROR" -eq 1 ]]; then
+    MANIFEST_ARGS+=(--no-mirror)
+  fi
   if [[ "$APPLY" -eq 1 ]]; then
-    python3 custodian/tools/pipelines/generate_inbox_manifests.py --regen --remove-superseded
+    python3 custodian/tools/pipelines/generate_inbox_manifests.py "${MANIFEST_ARGS[@]}"
   else
-    python3 custodian/tools/pipelines/generate_inbox_manifests.py --regen --dry-run --remove-superseded
+    python3 custodian/tools/pipelines/generate_inbox_manifests.py \
+      "${MANIFEST_ARGS[@]}" \
+      --dry-run
   fi
   echo ""
 else

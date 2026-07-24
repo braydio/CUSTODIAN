@@ -190,7 +190,9 @@ death:
 Direction rule:
 
 - Prefer authored 8-direction body animation for `n`, `ne`, `e`, `se`, `s`, `sw`, `w`, and `nw`.
-- If only half the directions are authored, declare mirrored directions in the runtime/manifest metadata instead of hiding that assumption in filenames.
+- Ingest automatically writes horizontal counterparts for `e↔w`, `ne↔nw`, and `se↔sw`, flipping every selected frame independently. This applies across Operator, enemy, allied, vehicle, effect, prop, and other owner domains when the output filename carries a supported directional token.
+- A counterpart output explicitly declared anywhere in the selected ingest batch always wins and is never replaced by an automatic mirror, including when the two authored directions use separate manifests.
+- Use CLI `--no-mirror` for a selected ingest run or manifest-level `"auto_mirror": false` when a source must remain one-sided. `n`, `s`, and `omni` never generate counterparts.
 - Use `omni` only for non-directional effects.
 
 ## Current Implementation

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ble4e5kmbmhdu"
-path="res://.godot/imported/operator__fx__unarmed__critical_execution_01__s__8f__96.png-7fd03d227ae3db7a4f020fe42bf72959.ctex"
+uid="uid://bc635q2k4i6mb"
+path="res://.godot/imported/operator__modular_head__hooded__walk_01__sw__5f__96.png-35e7afa1ea07fe00be9c811c6b28d9b7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png"
-dest_files=["res://.godot/imported/operator__fx__unarmed__critical_execution_01__s__8f__96.png-7fd03d227ae3db7a4f020fe42bf72959.ctex"]
+source_file="res://content/sprites/operator/new_operator/modular/walk/operator__modular_head__hooded__walk_01__sw__5f__96.png"
+dest_files=["res://.godot/imported/operator__modular_head__hooded__walk_01__sw__5f__96.png-35e7afa1ea07fe00be9c811c6b28d9b7.ctex"]
 
 [params]
 

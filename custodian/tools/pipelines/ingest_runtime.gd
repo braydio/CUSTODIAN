@@ -6,6 +6,14 @@ const POST_PROCESS_OPERATOR_MODULAR_RUNTIME := "operator_modular_runtime"
 const POST_PROCESS_ENEMY_RUNTIME_IMPORT := "enemy_runtime_import"
 const POST_PROCESS_VEHICLE_RUNTIME_IMPORT := "vehicle_runtime_import"
 const POST_PROCESS_ACTOR_SPRITEFRAMES_PREFIX := "actor_spriteframes:"
+const MIRRORED_DIRECTIONS := {
+	"e": "w",
+	"w": "e",
+	"ne": "nw",
+	"nw": "ne",
+	"se": "sw",
+	"sw": "se",
+}
 
 var _project_root: String
 var _sprites_root: String
@@ -18,11 +26,13 @@ var _archive_dir: String
 var _dry_run := false
 var _skip_post := false
 var _remove_superseded := false
+var _auto_mirror := true
 var _manifest_paths: Array[String] = []
 var _had_error := false
 var _pending_post_process_steps: Array[String] = []
 var _pending_finalizations: Array[Dictionary] = []
 var _pending_cleanup_superseded := false
+var _batch_explicit_output_paths := {}
 
 
 func _init() -> void:
@@ -43,6 +53,7 @@ func _init() -> void:
 		quit()
 		return
 
+	_batch_explicit_output_paths = _collect_explicit_output_paths(manifests)
 	for manifest_path in manifests:
 		var result := _process_manifest(manifest_path)
 		if not result:
@@ -73,6 +84,8 @@ func _parse_args(args: PackedStringArray) -> void:
 				_skip_post = true
 			"--remove-superseded":
 				_remove_superseded = true
+			"--no-mirror":
+				_auto_mirror = false
 			"--manifest":
 				index += 1
 				if index >= args.size():
@@ -138,10 +151,15 @@ func _process_manifest(manifest_path: String) -> bool:
 	if not (outputs_data is Array) or outputs_data.is_empty():
 		push_error("%s: manifest must define a non-empty outputs array" % manifest_path.get_file())
 		return false
+	var output_specs := _expand_output_specs(
+		outputs_data,
+		_auto_mirror and bool(manifest.get("auto_mirror", true)),
+		_batch_explicit_output_paths
+	)
 
 	var output_paths: Array[String] = []
 	var cleanup_superseded := _remove_superseded or bool(manifest.get("remove_superseded", false))
-	for output_spec_variant in outputs_data:
+	for output_spec_variant in output_specs:
 		if not (output_spec_variant is Dictionary):
 			push_error("%s: output entries must be dictionaries" % manifest_path.get_file())
 			return false
@@ -290,7 +308,13 @@ func _write_output(
 		return selected_frames_result
 	var transformed_frames: Array = []
 	for frame_variant in selected_frames_result["frames"]:
-		transformed_frames.append(_apply_transform(frame_variant, output_spec.get("transform", null)))
+		var transformed_frame := _apply_transform(
+			frame_variant,
+			output_spec.get("transform", null)
+		)
+		if bool(output_spec.get("_auto_mirror_horizontal", false)):
+			_mirror_frame_horizontal(transformed_frame)
+		transformed_frames.append(transformed_frame)
 
 	var image_result := _encode_frames(transformed_frames, str(output_spec.get("layout", "horizontal_strip")))
 	if not image_result.get("ok", false):
@@ -299,7 +323,10 @@ func _write_output(
 	if _dry_run:
 		if cleanup_superseded:
 			_cleanup_superseded_outputs(output_path, manifest_name, true)
-		print("[DRY RUN] %s" % relative_path)
+		var mirror_label := " (auto-mirrored)" \
+			if bool(output_spec.get("_auto_mirror_horizontal", false)) \
+			else ""
+		print("[DRY RUN] %s%s" % [relative_path, mirror_label])
 		return {"ok": true, "path": output_path}
 
 	DirAccess.make_dir_recursive_absolute(output_path.get_base_dir())
@@ -308,7 +335,112 @@ func _write_output(
 	var save_error := (image_result["image"] as Image).save_png(output_path)
 	if save_error != OK:
 		return {"ok": false, "error": "failed to save output %s" % relative_path}
+	if bool(output_spec.get("_auto_mirror_horizontal", false)):
+		print("[AUTO MIRROR] %s" % relative_path)
 	return {"ok": true, "path": output_path}
+
+
+static func _expand_output_specs(
+	outputs_data: Array,
+	auto_mirror: bool,
+	batch_explicit_paths: Dictionary = {}
+) -> Array:
+	var result := outputs_data.duplicate(true)
+	if not auto_mirror:
+		return result
+
+	var reserved_paths := batch_explicit_paths.duplicate()
+	for output_variant in outputs_data:
+		if output_variant is Dictionary:
+			var explicit_path := str(
+				(output_variant as Dictionary).get("path", "")
+			)
+			if not explicit_path.is_empty():
+				reserved_paths[explicit_path] = true
+
+	for output_variant in outputs_data:
+		if not (output_variant is Dictionary):
+			continue
+		var output_spec := output_variant as Dictionary
+		var mirrored_path := _mirrored_output_path(
+			str(output_spec.get("path", ""))
+		)
+		if mirrored_path.is_empty() or reserved_paths.has(mirrored_path):
+			continue
+
+		var mirrored_spec := output_spec.duplicate(true)
+		mirrored_spec["path"] = mirrored_path
+		mirrored_spec["_auto_mirror_horizontal"] = true
+		result.append(mirrored_spec)
+		reserved_paths[mirrored_path] = true
+
+	return result
+
+
+func _collect_explicit_output_paths(
+	manifest_paths: Array[String]
+) -> Dictionary:
+	var result := {}
+	for manifest_path in manifest_paths:
+		var manifest_result := _load_manifest(manifest_path)
+		if not manifest_result.get("ok", false):
+			continue
+		var manifest := manifest_result.get("data", {}) as Dictionary
+		var outputs_data = manifest.get("outputs", [])
+		if not (outputs_data is Array):
+			continue
+		for output_variant in outputs_data:
+			if not (output_variant is Dictionary):
+				continue
+			var output_path := str(
+				(output_variant as Dictionary).get("path", "")
+			)
+			if not output_path.is_empty():
+				result[output_path] = true
+	return result
+
+
+static func _mirrored_output_path(relative_path: String) -> String:
+	if not relative_path.ends_with(".png"):
+		return ""
+
+	var filename := relative_path.get_file()
+	var parts := filename.trim_suffix(".png").split("__")
+	var direction_index := -1
+	if parts.size() >= 3 and MIRRORED_DIRECTIONS.has(parts[-1]):
+		direction_index = parts.size() - 1
+	elif (
+		parts.size() >= 5
+		and MIRRORED_DIRECTIONS.has(parts[-3])
+		and parts[-2].ends_with("f")
+		and parts[-2].trim_suffix("f").is_valid_int()
+		and _is_frame_size_token(parts[-1])
+	):
+		direction_index = parts.size() - 3
+
+	if direction_index < 0:
+		return ""
+
+	parts[direction_index] = MIRRORED_DIRECTIONS[parts[direction_index]]
+	var mirrored_filename := "__".join(parts) + ".png"
+	var base_dir := relative_path.get_base_dir()
+	if base_dir.is_empty() or base_dir == ".":
+		return mirrored_filename
+	return base_dir.path_join(mirrored_filename)
+
+
+static func _is_frame_size_token(token: String) -> bool:
+	var size_parts := token.to_lower().split("x")
+	if size_parts.size() < 1 or size_parts.size() > 2:
+		return false
+	for size_part in size_parts:
+		if not size_part.is_valid_int() or int(size_part) <= 0:
+			return false
+	return true
+
+
+static func _mirror_frame_horizontal(frame: Image) -> void:
+	frame.flip_x()
 
 
 func _cleanup_superseded_outputs(output_path: String, manifest_name: String, dry_run: bool) -> void:

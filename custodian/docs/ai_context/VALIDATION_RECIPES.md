@@ -257,12 +257,13 @@ cd custodian
 godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
 godot --headless --path . --script res://tools/validation/world_origin_branch_contract_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_vista_polish_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_level_chain_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_runtime_smoke.gd
 godot --headless --path . --script res://tools/validation/sundered_keep_approach_collision_mapper_smoke.gd
 ```
 
-The ingress smoke proves registered route entry, static-sector isolation across Vista → Return Causeway → Front Gate → Return Causeway → Vista, and exact restoration only at `@world_origin`. The scene-contract smoke inspects `game.tscn` without running it and proves every base-world branch is classified while Operator, Camera2D, shared lighting, LevelLoader, and RouteTraversalManager remain persistent. The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker, its backdrop covers camera bounds plus framing slack, camera targets are wired, and its authored endpoint affordance points to Return Causeway. It also runs the first reveal at accelerated timings and asserts its threshold/controller bindings, one-shot completion, reveal camera target, lighting cue, and post-settle prompt release. The route graph smoke proves production Vista → Return Causeway → Front Gate traversal and the reverse graph, plus the explicit `debug_direct_keep` and `causeway_only` profiles, loader/cache/camera/spawn authority, disabled exits, and a real physics-driven authored exit. The state and authored-exit smokes prove Front Gate unload/revisit symmetry without replayed side effects and that all three production scenes own their generic exit nodes.
+The ingress smoke proves registered route entry, static-sector isolation across Vista → Return Causeway → Front Gate → Return Causeway → Vista, and exact restoration only at `@world_origin`. The scene-contract smoke inspects `game.tscn` without running it and proves every base-world branch is classified while Operator, Camera2D, shared lighting, LevelLoader, and RouteTraversalManager remain persistent. The active approach smoke proves the Vista scene contains no misplaced Keep-specific runtime nodes/blocker, its backdrop covers camera bounds plus framing slack, the tight-entry and later gameplay camera targets are wired, raw progress cannot expose the first vista, and its authored endpoint affordance points to Return Causeway. The Vista polish smoke performs a real physics overlap with `FirstVistaRevealTrigger` and asserts the one-shot anchor reveal/hold/return sequence, Operator camera restoration, all five camera-relative layers, immobile playable/collision roots, Labyrinth depth lights, player-only roof fading/restoration, and final-fog coverage of the overscanned 1920×1080 exit view. The route graph smoke proves production Vista → Return Causeway → Front Gate traversal and the reverse graph, plus the explicit `debug_direct_keep` and `causeway_only` profiles, loader/cache/camera/spawn authority, disabled exits, and a real physics-driven authored exit. The state and authored-exit smokes prove Front Gate unload/revisit symmetry without replayed side effects and that all three production scenes own their generic exit nodes.
 
 For the reusable authored-level scaffold and registry ingress pipeline:
 
@@ -513,9 +514,14 @@ For modular Operator naming/routing and generic action module generation:
 python -m py_compile custodian/tools/pipelines/generate_inbox_manifests.py custodian/tools/pipelines/build_actor_spriteframes.py
 python custodian/tools/validation/non_operator_actor_pipeline_smoke.py
 python custodian/tools/validation/operator_modular_pipeline_smoke.py
+godot --headless --path custodian \
+  --script res://tools/validation/sprite_directional_mirror_pipeline_smoke.gd
 ```
 
-This smoke also covers modular-head inbox routing and the `head/actions/<profile>/<action>/` runtime module contract.
+The directional mirror smoke proves default `e↔w`, `ne↔nw`, and `se↔sw` path generation for Operator,
+enemy, allied/simple-character, and generic owner domains; authored counterpart precedence; the no-mirror
+opt-out; and per-frame horizontal pixel flipping. The other smokes cover modular-head inbox routing and the
+`head/actions/<profile>/<action>/` runtime module contract.
 After rebuilding curated resources, `operator_modular_layers_smoke.gd` verifies the hooded south-idle animation is
 registered, visible with modular unarmed idle, frame-synchronized to the upper body, and hidden when directional
 head coverage is unavailable.

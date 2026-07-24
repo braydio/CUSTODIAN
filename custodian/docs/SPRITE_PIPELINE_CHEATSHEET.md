@@ -146,6 +146,16 @@ Apply ingest:
 python custodian/tools/pipelines/ingest.py
 ```
 
+Directional `e↔w`, `ne↔nw`, and `se↔sw` outputs are mirrored frame-by-frame by default. Counterparts explicitly
+declared anywhere in the selected manifest batch take precedence, including pairs split across manifests. Use
+`--no-mirror` for a run, or `"auto_mirror": false` in a manifest, when a sheet must
+remain one-sided:
+
+```bash
+python custodian/tools/pipelines/ingest.py --dry-run --no-mirror
+python custodian/tools/pipelines/generate_inbox_manifests.py --no-mirror
+```
+
 Use superseded cleanup only when replacing the same semantic asset with a corrected frame count or frame size:
 
 ```bash

@@ -84,6 +84,8 @@ jobs:
             world_origin_branch_contract_smoke.gd
             sundered_keep_ingress_smoke.gd
             sundered_keep_level_chain_smoke.gd
+            sundered_keep_approach_smoke.gd
+            sundered_keep_vista_polish_smoke.gd
           )
 
           for test in "${tests[@]}"; do

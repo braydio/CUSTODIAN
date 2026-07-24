@@ -133,6 +133,7 @@ are not moved — they belong to their respective packages.
 - Use action groups such as `locomotion`, `melee`, `defense`, `ranged`, `reaction`, `death`, `impact`, or `interaction`.
 - For in-world props, use `environment/props/<prop_id>/runtime/<layer>/` and the `interaction` action group for open/close/activate/deactivate-style animations.
 - Use direction codes `n`, `ne`, `e`, `se`, `s`, `sw`, `w`, `nw`, or `omni`.
+- Shared sprite ingest automatically generates frame-flipped `e↔w`, `ne↔nw`, and `se↔sw` counterparts unless an authored counterpart exists. Use `--no-mirror` or manifest `"auto_mirror": false` for intentional one-sided assets.
 - Use zero-padded variants where order matters: `fast_01`, `fast_02`, `light_01`, `heavy_01`.
 - Use lowercase snake_case only.
 - Intake manifests in `_pipeline/inbox/` should match their PNG basename.

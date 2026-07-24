@@ -103,6 +103,12 @@ Output rules:
 - `select.type = "indices"` uses an explicit `indices` array
 - `transform` is optional and only used when a specific asset recipe really needs resize/canvas work
 
+Directional outputs are mirrored by default. Canonical `e↔w`, `ne↔nw`, and `se↔sw` output filenames gain a
+second strip with every selected frame flipped horizontally. Counterparts explicitly declared anywhere in the
+selected manifest batch are preserved, including pairs split across separate manifests.
+Use `--no-mirror` for a run or add `"auto_mirror": false` at the manifest root to opt one source out.
+`n`, `s`, `omni`, and non-directional filenames are unchanged.
+
 ## Canonical Naming
 
 New sprite sheets should use the canonical filename pattern:
@@ -228,6 +234,13 @@ Dry-run validation:
 python custodian/tools/pipelines/ingest.py --dry-run
 ```
 
+Opt out of automatic horizontal counterparts:
+
+```bash
+python custodian/tools/pipelines/ingest.py --dry-run --no-mirror
+python custodian/tools/pipelines/generate_inbox_manifests.py --no-mirror
+```
+
 Preview and apply cleanup of superseded canonical animation siblings:
 
 ```bash
@@ -298,6 +311,8 @@ Run pure-Python smoke checks for the new production tools:
 ```bash
 python custodian/tools/validation/operator_animation_contract_report_smoke.py
 python custodian/tools/validation/operator_action_preview_smoke.py
+godot --headless --path custodian \
+  --script res://tools/validation/sprite_directional_mirror_pipeline_smoke.gd
 python custodian/tools/validation/scaffold_character_contract_smoke.py
 ```
 

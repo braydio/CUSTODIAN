@@ -3,6 +3,15 @@ class_name SunderedKeepApproach
 
 const SOFT_RECT_FEATHER_SHADER := preload("res://game/world/approaches/sundered_keep/soft_rect_feather.gdshader")
 const REVEAL_DIRECTOR_SCRIPT := preload("res://game/world/approaches/sundered_keep/sundered_keep_reveal_director.gd")
+const PARALLAX_LAYER_SCRIPT := preload(
+	"res://game/world/approaches/sundered_keep/sundered_keep_parallax_layer.gd"
+)
+const ROOF_OCCLUDER_SCRIPT := preload(
+	"res://game/world/common/roof_occluder_2d.gd"
+)
+const ROUTE_MASTER_OCCLUSION_SHADER := preload(
+	"res://game/world/approaches/sundered_keep/route_master_occlusion_mask.gdshader"
+)
 
 const USE_ROUTE_MASTER := true
 
@@ -59,6 +68,10 @@ const RECT_GRAND_VISTA_HORIZON_SEAM_FOG := Rect2(Vector2(-1280.0, -460.0), Vecto
 const RECT_GRAND_VISTA_PATH_CONTACT_SHADOW := Rect2(Vector2(-1280.0, -160.0), Vector2(2560.0, 720.0))
 const RECT_GRAND_VISTA_EDGE_SPRAY_WRAP := Rect2(Vector2(-1280.0, -160.0), Vector2(2560.0, 720.0))
 const RECT_GRAND_VISTA_FOREGROUND_EDGE_MASK := Rect2(Vector2(-1280.0, 220.0), Vector2(2560.0, 420.0))
+const RECT_LABYRINTH_CONTACT_FOG := Rect2(
+	Vector2(430.0, -500.0),
+	Vector2(1250.0, 560.0)
+)
 
 const RECT_MAINLAND_APPROACH := Rect2(Vector2(-300.0, 120.0), Vector2(470.0, 400.0))
 const RECT_HILL_CLIMB := Rect2(Vector2(-190.0, -120.0), Vector2(400.0, 240.0))
@@ -76,6 +89,45 @@ const SECOND_VISTA_END_POS := Vector2(830.0, -305.0)
 const TRAVERSE_END_POS := Vector2(915.0, -305.0)
 const RETURN_TOPDOWN_POS := Vector2(980.0, -305.0)
 const LEVEL_EXIT_POS := Vector2(1240.0, -218.0)
+const FIRST_REVEAL_TRIGGER_POS := Vector2(-150.0, -175.0)
+const FIRST_REVEAL_CAMERA_ANCHOR_POS := Vector2(210.0, -300.0)
+const FIRST_REVEAL_TRIGGER_SIZE := Vector2(190.0, 120.0)
+const FINAL_FOG_OVERSCAN := Vector4(
+	384.0,
+	320.0,
+	896.0,
+	640.0
+)
+
+const LABYRINTH_ROOF_RECTS := {
+	"WestKeepRoof": Rect2(
+		Vector2(515.0, -445.0),
+		Vector2(460.0, 210.0)
+	),
+	"CentralKeepRoof": Rect2(
+		Vector2(900.0, -455.0),
+		Vector2(360.0, 235.0)
+	),
+	"ExitKeepRoof": Rect2(
+		Vector2(1120.0, -355.0),
+		Vector2(280.0, 260.0)
+	),
+}
+
+const LABYRINTH_OCCLUSION_ZONES := {
+	"WestKeepRoof": Rect2(
+		Vector2(565.0, -250.0),
+		Vector2(330.0, 190.0)
+	),
+	"CentralKeepRoof": Rect2(
+		Vector2(860.0, -235.0),
+		Vector2(300.0, 205.0)
+	),
+	"ExitKeepRoof": Rect2(
+		Vector2(1090.0, -220.0),
+		Vector2(250.0, 220.0)
+	),
+}
 
 const BOUNDARY_SEGMENTS := [
 	[Vector2(-214.3, 515.0), Vector2(-240.7, 420.5)],
@@ -167,6 +219,8 @@ var collision_root: Node2D = null
 var markers_root: Node2D = null
 var event_markers_root: Node2D = null
 var event_runtime_root: Node2D = null
+var sequence_triggers_root: Node2D = null
+var roof_occlusion_root: Node2D = null
 
 var entry_spawn: Marker2D = null
 var reveal_start: Marker2D = null
@@ -179,8 +233,11 @@ var second_vista_full: Marker2D = null
 var second_vista_end: Marker2D = null
 var vista_controller: SunderedKeepVistaController = null
 var reveal_director: Node = null
+var first_reveal_trigger: Area2D = null
+var first_reveal_camera_anchor: Marker2D = null
 var _continue_exit: LevelExit2D = null
 var _return_world_exit: LevelExit2D = null
+var _final_fog_coverage_rect := Rect2()
 
 
 func _ready() -> void:
@@ -199,6 +256,7 @@ func enter_from_main(p_actor: Node) -> void:
 	if p_actor is Node2D:
 		(p_actor as Node2D).global_position = get_entry_position()
 	_refresh_camera()
+	_apply_initial_camera_state()
 	_apply_vista_presentation_mode()
 
 
@@ -216,6 +274,7 @@ func _finish_physics_setup() -> void:
 		return
 	_build_collision()
 	_build_event_markers()
+	_build_sequence_triggers()
 	if reveal_director != null:
 		reveal_director.refresh_bindings()
 
@@ -238,6 +297,8 @@ func _ensure_roots() -> void:
 	markers_root = _ensure_plain_node2d("Markers")
 	event_markers_root = _ensure_plain_node2d("EventMarkers")
 	event_runtime_root = _ensure_plain_node2d("EventRuntimeRoot")
+	sequence_triggers_root = _ensure_plain_node2d("SequenceTriggers")
+	roof_occlusion_root = _ensure_node2d_root("RoofOcclusionRoot", 90)
 
 	entry_spawn = _ensure_marker("EntrySpawn", _route_point(ENTRY_SPAWN_POS))
 	reveal_start = _ensure_marker("RevealStart", _route_point(REVEAL_START_POS))
@@ -248,6 +309,10 @@ func _ensure_roots() -> void:
 	second_vista_end = _ensure_marker("SecondVistaEnd", _route_point(SECOND_VISTA_END_POS))
 	traverse_end = _ensure_marker("TraverseEnd", _route_point(TRAVERSE_END_POS))
 	return_topdown = _ensure_marker("ReturnTopdown", _route_point(RETURN_TOPDOWN_POS))
+	first_reveal_camera_anchor = _ensure_marker(
+		"FirstRevealCameraAnchor",
+		_route_point(FIRST_REVEAL_CAMERA_ANCHOR_POS)
+	)
 
 
 func _ensure_node2d_root(node_name: String, z: int) -> Node2D:
@@ -297,6 +362,7 @@ func _build_visuals() -> void:
 	_clear_children(_grand_vista_root)
 	_clear_children(playable_root)
 	_clear_children(occlusion_root)
+	_clear_children(roof_occlusion_root)
 	vista_root.modulate.a = 0.0
 	_grand_vista_root.modulate.a = 0.0
 	occlusion_root.modulate.a = 1.0
@@ -309,63 +375,104 @@ func _build_visuals() -> void:
 	)
 	_add_fitted_sprite(underlay_root, "ApproachRouteContactShadow", APPROACH_ROUTE_CONTACT_SHADOW, _route_rect(RECT_ROUTE_MASTER), -5, Color(1.0, 1.0, 1.0, 0.85))
 
+	var first_vista_far := _add_parallax_layer(
+		vista_root,
+		"FirstVistaFarParallax",
+		-20,
+		Vector2(0.18, 0.07)
+	)
+	var first_vista_mist := _add_parallax_layer(
+		vista_root,
+		"FirstVistaMistParallax",
+		10,
+		Vector2(0.10, 0.035),
+		Vector2(8.0, 3.0),
+		0.08
+	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(vista_root, "FarKeepSilhouetteLayerA", APPROACH_FIRST_VISTA_HORIZON, Rect2(-1120.0, -1040.0, 2840.0, 1540.0), -20, Color(0.30, 0.42, 0.52, 0.24)),
+		_add_fitted_sprite(first_vista_far, "FarKeepSilhouetteLayerA", APPROACH_FIRST_VISTA_HORIZON, Rect2(-1120.0, -1040.0, 2840.0, 1540.0), -20, Color(0.30, 0.42, 0.52, 0.24)),
 		Vector4(0.10, 0.10, 0.12, 0.22)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(vista_root, "FarKeepSilhouetteLayerB", APPROACH_FIRST_VISTA_HORIZON, Rect2(-1060.0, -1008.0, 2720.0, 1500.0), -10, Color(0.42, 0.53, 0.62, 0.32)),
+		_add_fitted_sprite(first_vista_far, "FarKeepSilhouetteLayerB", APPROACH_FIRST_VISTA_HORIZON, Rect2(-1060.0, -1008.0, 2720.0, 1500.0), -10, Color(0.42, 0.53, 0.62, 0.32)),
 		Vector4(0.08, 0.08, 0.10, 0.20)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(vista_root, "ApproachFirstVistaHorizon", APPROACH_FIRST_VISTA_HORIZON, RECT_FIRST_VISTA_HORIZON, 0, Color.WHITE),
+		_add_fitted_sprite(first_vista_far, "ApproachFirstVistaHorizon", APPROACH_FIRST_VISTA_HORIZON, RECT_FIRST_VISTA_HORIZON, 0, Color.WHITE),
 		Vector4(0.06, 0.06, 0.08, 0.18)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(vista_root, "ApproachFirstVistaFogVeil", APPROACH_FIRST_VISTA_FOG_VEIL, RECT_FIRST_VISTA_FOG_VEIL, 10, Color(1.0, 1.0, 1.0, 0.65)),
+		_add_fitted_sprite(first_vista_mist, "ApproachFirstVistaFogVeil", APPROACH_FIRST_VISTA_FOG_VEIL, RECT_FIRST_VISTA_FOG_VEIL, 10, Color(1.0, 1.0, 1.0, 0.65)),
 		Vector4(0.08, 0.08, 0.18, 0.24)
 	)
 
+	var labyrinth_far := _add_parallax_layer(
+		_grand_vista_root,
+		"LabyrinthFarParallax",
+		0,
+		Vector2(0.15, 0.05)
+	)
+	var labyrinth_mist := _add_parallax_layer(
+		_grand_vista_root,
+		"LabyrinthMistParallax",
+		10,
+		Vector2(0.08, 0.025),
+		Vector2(12.0, 4.0),
+		0.065
+	)
+	var labyrinth_near := _add_parallax_layer(
+		_grand_vista_root,
+		"LabyrinthNearRoot",
+		20,
+		Vector2(0.025, 0.01)
+	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(_grand_vista_root, "GrandVistaPanorama", GRAND_VISTA_PANORAMA, RECT_GRAND_VISTA_PANORAMA, 0, Color(0.88, 0.92, 1.0, 0.88)),
+		_add_fitted_sprite(labyrinth_far, "GrandVistaPanorama", GRAND_VISTA_PANORAMA, RECT_GRAND_VISTA_PANORAMA, 0, Color(0.72, 0.80, 0.92, 0.88)),
 		Vector4(0.08, 0.08, 0.10, 0.16)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(_grand_vista_root, "GrandVistaOceanSprayOverlay", GRAND_VISTA_SPRAY, RECT_GRAND_VISTA_SPRAY, 1, Color(1.0, 1.0, 1.0, 0.58)),
+		_add_fitted_sprite(labyrinth_mist, "GrandVistaOceanSprayOverlay", GRAND_VISTA_SPRAY, RECT_GRAND_VISTA_SPRAY, 1, Color(1.0, 1.0, 1.0, 0.58)),
 		Vector4(0.10, 0.10, 0.28, 0.34)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(_grand_vista_root, "GrandVistaFogOverlay", GRAND_VISTA_FOG, RECT_GRAND_VISTA_FOG, 2, Color(1.0, 1.0, 1.0, 0.48)),
+		_add_fitted_sprite(labyrinth_mist, "GrandVistaFogOverlay", GRAND_VISTA_FOG, RECT_GRAND_VISTA_FOG, 2, Color(1.0, 1.0, 1.0, 0.48)),
 		Vector4(0.10, 0.10, 0.34, 0.36)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(_grand_vista_root, "GrandVistaShadowVignette", GRAND_VISTA_VIGNETTE, RECT_GRAND_VISTA_VIGNETTE, 3, Color(1.0, 1.0, 1.0, 0.42)),
+		_add_fitted_sprite(labyrinth_far, "GrandVistaShadowVignette", GRAND_VISTA_VIGNETTE, RECT_GRAND_VISTA_VIGNETTE, 3, Color(1.0, 1.0, 1.0, 0.52)),
 		Vector4(0.08, 0.08, 0.08, 0.08)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(_grand_vista_root, "GrandVistaForegroundParapet", GRAND_VISTA_PARAPET, RECT_GRAND_VISTA_PARAPET, 20, Color(0.90, 0.94, 1.0, 0.92)),
+		_add_fitted_sprite(labyrinth_near, "GrandVistaForegroundParapet", GRAND_VISTA_PARAPET, RECT_GRAND_VISTA_PARAPET, 20, Color(0.90, 0.94, 1.0, 0.92)),
 		Vector4(0.08, 0.08, 0.18, 0.08)
 	)
-	var glue_root := _ensure_child_node2d_root(_grand_vista_root, "GrandVistaGlueRoot", 25)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(glue_root, "GrandVistaHorizonSeamFog", GRAND_VISTA_HORIZON_SEAM_FOG, RECT_GRAND_VISTA_HORIZON_SEAM_FOG, 30, Color(1.0, 1.0, 1.0, 0.45)),
+		_add_fitted_sprite(labyrinth_mist, "GrandVistaHorizonSeamFog", GRAND_VISTA_HORIZON_SEAM_FOG, RECT_GRAND_VISTA_HORIZON_SEAM_FOG, 30, Color(1.0, 1.0, 1.0, 0.45)),
 		Vector4(0.10, 0.10, 0.28, 0.30)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(glue_root, "GrandVistaPathContactShadow", GRAND_VISTA_PATH_CONTACT_SHADOW, RECT_GRAND_VISTA_PATH_CONTACT_SHADOW, 35, Color(1.0, 1.0, 1.0, 0.50)),
+		_add_fitted_sprite(labyrinth_near, "GrandVistaPathContactShadow", GRAND_VISTA_PATH_CONTACT_SHADOW, RECT_GRAND_VISTA_PATH_CONTACT_SHADOW, 35, Color(1.0, 1.0, 1.0, 0.50)),
 		Vector4(0.08, 0.08, 0.18, 0.26)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(glue_root, "GrandVistaEdgeSprayWrap", GRAND_VISTA_EDGE_SPRAY_WRAP, RECT_GRAND_VISTA_EDGE_SPRAY_WRAP, 40, Color(1.0, 1.0, 1.0, 0.35)),
+		_add_fitted_sprite(labyrinth_near, "GrandVistaEdgeSprayWrap", GRAND_VISTA_EDGE_SPRAY_WRAP, RECT_GRAND_VISTA_EDGE_SPRAY_WRAP, 40, Color(1.0, 1.0, 1.0, 0.35)),
 		Vector4(0.10, 0.10, 0.24, 0.30)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(glue_root, "GrandVistaForegroundEdgeMask", GRAND_VISTA_FOREGROUND_EDGE_MASK, RECT_GRAND_VISTA_FOREGROUND_EDGE_MASK, 80, Color(1.0, 1.0, 1.0, 0.55)),
+		_add_fitted_sprite(labyrinth_near, "GrandVistaForegroundEdgeMask", GRAND_VISTA_FOREGROUND_EDGE_MASK, RECT_GRAND_VISTA_FOREGROUND_EDGE_MASK, 80, Color(1.0, 1.0, 1.0, 0.55)),
 		Vector4(0.08, 0.08, 0.18, 0.08)
 	)
 
 	if USE_ROUTE_MASTER:
-		_add_fitted_sprite(playable_root, "ApproachRouteMaster", APPROACH_ROUTE_MASTER, _route_rect(RECT_ROUTE_MASTER), 0, Color.WHITE)
+		var route_master := _add_fitted_sprite(
+			playable_root,
+			"ApproachRouteMaster",
+			APPROACH_ROUTE_MASTER,
+			_route_rect(RECT_ROUTE_MASTER),
+			0,
+			Color.WHITE
+		)
+		_build_labyrinth_roof_occlusion(route_master)
 	else:
 		_build_legacy_path_chunks()
 
@@ -373,8 +480,233 @@ func _build_visuals() -> void:
 	_add_fitted_sprite(occlusion_root, "ApproachFogStrip01", APPROACH_FOG_STRIP_01, _route_rect(RECT_FOG_STRIP_01), 8, Color(1.0, 1.0, 1.0, 0.28))
 	_add_fitted_sprite(occlusion_root, "ApproachFogStrip02", APPROACH_FOG_STRIP_02, _route_rect(RECT_FOG_STRIP_02), 9, Color(1.0, 1.0, 1.0, 0.22))
 	_add_fitted_sprite(occlusion_root, "ApproachFogStrip03", APPROACH_FOG_STRIP_03, _route_rect(RECT_FOG_STRIP_03), 10, Color(1.0, 1.0, 1.0, 0.18))
+	_add_labyrinth_depth_pass()
 	_add_reveal_moonlight_cue()
-	_add_fitted_sprite(occlusion_root, "ApproachFinalGateShadowVeil", APPROACH_FINAL_GATE_SHADOW_VEIL, _route_rect(RECT_FINAL_GATE_SHADOW_VEIL), 20, Color(1.0, 1.0, 1.0, 0.0))
+	_final_fog_coverage_rect = _compute_final_fog_coverage_rect()
+	_add_fitted_sprite(
+		occlusion_root,
+		"ApproachFinalGateShadowVeil",
+		APPROACH_FINAL_GATE_SHADOW_VEIL,
+		_final_fog_coverage_rect,
+		20,
+		Color(1.0, 1.0, 1.0, 0.0)
+	)
+
+
+func _add_parallax_layer(
+	parent: Node2D,
+	node_name: String,
+	z: int,
+	follow_ratio: Vector2,
+	drift_amplitude := Vector2.ZERO,
+	drift_speed := 0.0
+) -> Node2D:
+	var layer := PARALLAX_LAYER_SCRIPT.new() as Node2D
+	layer.name = node_name
+	layer.z_as_relative = true
+	layer.z_index = z
+	layer.set("follow_ratio", follow_ratio)
+	layer.set("drift_amplitude", drift_amplitude)
+	layer.set("drift_speed", drift_speed)
+	parent.add_child(layer)
+	return layer
+
+
+func _add_labyrinth_depth_pass() -> void:
+	var fog := _add_fitted_sprite(
+		occlusion_root,
+		"LabyrinthContactFog",
+		GRAND_VISTA_HORIZON_SEAM_FOG,
+		_route_rect(RECT_LABYRINTH_CONTACT_FOG),
+		34,
+		Color(0.78, 0.88, 1.0, 0.22)
+	)
+	_apply_soft_rect_feather(
+		fog,
+		Vector4(0.14, 0.18, 0.30, 0.34)
+	)
+	_add_labyrinth_light(
+		"LabyrinthMoonRimLight",
+		_route_point(Vector2(760.0, -480.0)),
+		Color(0.50, 0.70, 1.0, 1.0),
+		0.24,
+		4.8
+	)
+	_add_labyrinth_light(
+		"LabyrinthGateLight",
+		_route_point(Vector2(1110.0, -290.0)),
+		Color(0.76, 0.64, 0.42, 1.0),
+		0.08,
+		1.8
+	)
+
+
+func _add_labyrinth_light(
+	node_name: String,
+	light_position: Vector2,
+	light_color: Color,
+	energy: float,
+	texture_scale: float
+) -> PointLight2D:
+	var light := PointLight2D.new()
+	light.name = node_name
+	light.position = light_position
+	light.color = light_color
+	light.energy = energy
+	light.texture_scale = texture_scale
+
+	var gradient := Gradient.new()
+	gradient.colors = PackedColorArray([
+		Color(1.0, 1.0, 1.0, 0.62),
+		Color(1.0, 1.0, 1.0, 0.0),
+	])
+	gradient.offsets = PackedFloat32Array([0.0, 1.0])
+
+	var texture := GradientTexture2D.new()
+	texture.width = 1024
+	texture.height = 1024
+	texture.fill = GradientTexture2D.FILL_RADIAL
+	texture.fill_from = Vector2(0.5, 0.5)
+	texture.fill_to = Vector2(1.0, 0.5)
+	texture.gradient = gradient
+
+	light.texture = texture
+	occlusion_root.add_child(light)
+	return light
+
+
+func _build_labyrinth_roof_occlusion(route_master: Sprite2D) -> void:
+	if route_master == null or route_master.texture == null:
+		return
+
+	var rendered_rect := _route_rect(RECT_ROUTE_MASTER)
+	var material := ShaderMaterial.new()
+	material.shader = ROUTE_MASTER_OCCLUSION_SHADER
+	var roof_names := LABYRINTH_ROOF_RECTS.keys()
+	for index in roof_names.size():
+		var roof_name := str(roof_names[index])
+		var roof_rect := LABYRINTH_ROOF_RECTS[roof_name] as Rect2
+		material.set_shader_parameter(
+			"cutout_%d" % index,
+			_runtime_rect_to_uv(roof_rect, rendered_rect)
+		)
+	route_master.material = material
+
+	var texture_size := route_master.texture.get_size()
+	for index in roof_names.size():
+		var roof_name := str(roof_names[index])
+		var roof_rect := LABYRINTH_ROOF_RECTS[roof_name] as Rect2
+		var source_region := _runtime_rect_to_source_region(
+			roof_rect,
+			rendered_rect,
+			texture_size
+		)
+		var roof_sprite := Sprite2D.new()
+		roof_sprite.name = roof_name
+		roof_sprite.texture = route_master.texture
+		roof_sprite.region_enabled = true
+		roof_sprite.region_rect = source_region
+		roof_sprite.centered = false
+		roof_sprite.position = roof_rect.position
+		roof_sprite.scale = Vector2(
+			roof_rect.size.x / source_region.size.x,
+			roof_rect.size.y / source_region.size.y
+		)
+		roof_sprite.z_as_relative = true
+		roof_sprite.z_index = 90 + index
+		roof_sprite.set_meta("coverage_rect", roof_rect)
+		roof_occlusion_root.add_child(roof_sprite)
+
+		var zone_rect := LABYRINTH_OCCLUSION_ZONES[roof_name] as Rect2
+		var occluder := ROOF_OCCLUDER_SCRIPT.new() as Area2D
+		occluder.name = "%sOccluder" % roof_name
+		occluder.position = zone_rect.get_center()
+		occluder.collision_layer = 0
+		occluder.collision_mask = 1
+		occluder.monitoring = true
+		occluder.monitorable = false
+		var shape_node := CollisionShape2D.new()
+		shape_node.name = "CollisionShape2D"
+		var shape := RectangleShape2D.new()
+		shape.size = zone_rect.size
+		shape_node.shape = shape
+		occluder.add_child(shape_node)
+		roof_occlusion_root.add_child(occluder)
+		occluder.call("configure", [roof_sprite] as Array[CanvasItem])
+
+
+func _runtime_rect_to_source_region(
+	runtime_rect: Rect2,
+	rendered_rect: Rect2,
+	texture_size: Vector2
+) -> Rect2:
+	var normalized_position := Vector2(
+		(runtime_rect.position.x - rendered_rect.position.x)
+			/ rendered_rect.size.x,
+		(runtime_rect.position.y - rendered_rect.position.y)
+			/ rendered_rect.size.y
+	)
+	var normalized_size := Vector2(
+		runtime_rect.size.x / rendered_rect.size.x,
+		runtime_rect.size.y / rendered_rect.size.y
+	)
+	return Rect2(
+		normalized_position * texture_size,
+		normalized_size * texture_size
+	)
+
+
+func _runtime_rect_to_uv(
+	runtime_rect: Rect2,
+	rendered_rect: Rect2
+) -> Vector4:
+	return Vector4(
+		(runtime_rect.position.x - rendered_rect.position.x)
+			/ rendered_rect.size.x,
+		(runtime_rect.position.y - rendered_rect.position.y)
+			/ rendered_rect.size.y,
+		runtime_rect.size.x / rendered_rect.size.x,
+		runtime_rect.size.y / rendered_rect.size.y
+	)
+
+
+func _compute_visual_coverage_rect() -> Rect2:
+	var result := Rect2()
+	var initialized := false
+	for root_node in [
+		underlay_root,
+		vista_root,
+		_grand_vista_root,
+		playable_root,
+	]:
+		for child in root_node.find_children("*"):
+			if not child.has_meta("coverage_rect"):
+				continue
+			var rect := child.get_meta("coverage_rect") as Rect2
+			if not initialized:
+				result = rect
+				initialized = true
+			else:
+				result = result.merge(rect)
+	if not initialized:
+		result = RECT_CAMERA_BOUNDS
+	return result
+
+
+func _compute_final_fog_coverage_rect() -> Rect2:
+	var combined := _compute_visual_coverage_rect().merge(
+		RECT_CAMERA_BOUNDS
+	)
+	return combined.grow_individual(
+		FINAL_FOG_OVERSCAN.x,
+		FINAL_FOG_OVERSCAN.y,
+		FINAL_FOG_OVERSCAN.z,
+		FINAL_FOG_OVERSCAN.w
+	)
+
+
+func get_final_fog_coverage_rect() -> Rect2:
+	return _final_fog_coverage_rect
 
 
 func _add_reveal_moonlight_cue() -> PointLight2D:
@@ -443,6 +775,7 @@ func _add_fitted_sprite(
 	sprite.z_as_relative = true
 	sprite.z_index = z
 	sprite.modulate = tint
+	sprite.set_meta("coverage_rect", rect)
 
 	var tex_size := texture.get_size()
 	if tex_size.x <= 0.0 or tex_size.y <= 0.0:
@@ -500,6 +833,19 @@ func _refresh_camera() -> void:
 	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
 	if camera != null and camera.has_method("set_runtime_map"):
 		camera.call("set_runtime_map", self)
+	for candidate in get_tree().get_nodes_in_group(
+		"sundered_keep_parallax_layer"
+	):
+		if candidate is Node and is_ancestor_of(candidate as Node):
+			(candidate as Node).call("rebase")
+
+
+func _apply_initial_camera_state() -> void:
+	if vista_controller == null:
+		return
+	var state := vista_controller.get_reveal_choreography_state()
+	if not bool(state.get("first_reveal_complete", false)):
+		vista_controller.enter_intro_tight_mode()
 
 
 func _apply_vista_presentation_mode() -> void:
@@ -533,6 +879,39 @@ func _build_collision() -> void:
 			_route_point(segment[1] as Vector2)
 		)
 		index += 1
+
+
+func _build_sequence_triggers() -> void:
+	_clear_children(sequence_triggers_root)
+
+	first_reveal_trigger = Area2D.new()
+	first_reveal_trigger.name = "FirstVistaRevealTrigger"
+	first_reveal_trigger.position = _route_point(
+		FIRST_REVEAL_TRIGGER_POS
+	)
+	first_reveal_trigger.collision_layer = 0
+	first_reveal_trigger.collision_mask = 1
+	first_reveal_trigger.monitoring = true
+	first_reveal_trigger.monitorable = false
+	sequence_triggers_root.add_child(first_reveal_trigger)
+
+	var shape_node := CollisionShape2D.new()
+	shape_node.name = "CollisionShape2D"
+	var shape := RectangleShape2D.new()
+	shape.size = FIRST_REVEAL_TRIGGER_SIZE
+	shape_node.shape = shape
+	first_reveal_trigger.add_child(shape_node)
+	first_reveal_trigger.body_entered.connect(
+		_on_first_reveal_trigger_body_entered
+	)
+
+
+func _on_first_reveal_trigger_body_entered(body: Node) -> void:
+	if not _is_player_body(body):
+		return
+	if reveal_director == null:
+		return
+	reveal_director.call("play_first_reveal")
 
 
 func _build_event_markers() -> void:
@@ -693,16 +1072,23 @@ func _ensure_vista_controller() -> void:
 	vista_controller.mid_gameplay_marker_path = NodePath("../Markers/MidGameplayStart")
 	vista_controller.vista_root_path = NodePath("../VistaRoot")
 	vista_controller.grand_vista_root_path = NodePath("../GrandVistaRoot")
-	vista_controller.vista_fog_band_path = NodePath("../VistaRoot/ApproachFirstVistaFogVeil")
+	vista_controller.vista_fog_band_path = NodePath(
+		"../VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil"
+	)
 	vista_controller.fog_underlay_path = NodePath("")
 	vista_controller.occlusion_root_path = NodePath("../OcclusionRoot")
 	vista_controller.cliff_occluder_path = NodePath("../OcclusionRoot/ApproachEdgeMistWrap")
 	vista_controller.wall_shadow_occluder_path = NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil")
 	vista_controller.final_gate_shadow_veil_path = NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil")
-	vista_controller.distant_keep_path = NodePath("../VistaRoot/ApproachFirstVistaHorizon")
+	vista_controller.distant_keep_path = NodePath(
+		"../VistaRoot/FirstVistaFarParallax/ApproachFirstVistaHorizon"
+	)
 	vista_controller.second_vista_start_marker_path = NodePath("../Markers/SecondVistaStart")
 	vista_controller.second_vista_full_marker_path = NodePath("../Markers/SecondVistaFull")
 	vista_controller.second_vista_end_marker_path = NodePath("../Markers/SecondVistaEnd")
+	vista_controller.first_reveal_camera_anchor_path = NodePath(
+		"../Markers/FirstRevealCameraAnchor"
+	)
 	vista_controller.refresh_bindings()
 	vista_controller.apply_progress(0.0)
 
@@ -753,6 +1139,7 @@ func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
 		return false
 	(actor as Node2D).global_position = get_spawn_position(spawn_id)
 	_refresh_camera()
+	_apply_initial_camera_state()
 	_apply_vista_presentation_mode()
 	return true
 
@@ -770,12 +1157,15 @@ func prepare_route_deactivation(_context: Dictionary) -> void:
 
 
 func complete_route_activation(_context: Dictionary) -> bool:
+	_refresh_camera()
+	_apply_initial_camera_state()
 	_apply_vista_presentation_mode()
 	return true
 
 
 func refresh_route_camera(_actor: Node) -> bool:
 	_refresh_camera()
+	_apply_initial_camera_state()
 	return true
 
 

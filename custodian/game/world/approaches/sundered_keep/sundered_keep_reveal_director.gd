@@ -15,9 +15,11 @@ signal reveal_completed
 @export var reveal_light_path := NodePath("../OcclusionRoot/RevealMoonlightCue")
 @export var destination_prompt_path := NodePath("../EventRuntimeRoot/LevelExitAffordance")
 
-@export_range(0.0, 0.25, 0.01) var anticipation_duration := 0.08
-@export_range(0.1, 0.6, 0.01) var peel_duration := 0.28
-@export_range(0.1, 0.8, 0.01) var settle_duration := 0.45
+@export_range(0.0, 0.4, 0.01) var anticipation_duration := 0.12
+@export_range(0.1, 1.2, 0.01) var reveal_in_duration := 0.55
+@export_range(0.2, 2.0, 0.05) var reveal_hold_duration := 1.05
+@export_range(0.1, 1.0, 0.01) var return_duration := 0.48
+@export_range(0.1, 1.0, 0.01) var atmosphere_settle_duration := 0.35
 
 const NEAR_FOG_TRAVEL := Vector2(-180.0, 58.0)
 const MID_FOG_TRAVEL := Vector2(170.0, 42.0)
@@ -47,17 +49,6 @@ func _ready() -> void:
 	_prepare_initial_state()
 
 
-func _process(_delta: float) -> void:
-	if _reveal_played:
-		return
-	if _player == null or not is_instance_valid(_player):
-		_player = get_node_or_null(player_path) as Node2D
-	if _player == null or _entry_marker == null or _threshold_marker == null:
-		return
-	if _has_crossed_threshold(_player.global_position):
-		play_reveal()
-
-
 func refresh_bindings() -> void:
 	_player = get_node_or_null(player_path) as Node2D
 	_entry_marker = get_node_or_null(entry_marker_path) as Node2D
@@ -79,7 +70,7 @@ func refresh_bindings() -> void:
 		_edge_mist_origin = (_edge_mist as Node2D).position
 
 
-func play_reveal() -> void:
+func play_first_reveal() -> void:
 	if _reveal_played:
 		return
 	_reveal_played = true
@@ -87,7 +78,7 @@ func play_reveal() -> void:
 	reveal_started.emit()
 	refresh_bindings()
 	if _vista_controller != null:
-		_vista_controller.begin_reveal_choreography()
+		_vista_controller.begin_first_reveal()
 
 	var anticipation := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	if _near_fog != null:
@@ -96,29 +87,94 @@ func play_reveal() -> void:
 		anticipation.parallel().tween_property(_mid_fog, "modulate:a", minf(_mid_fog.modulate.a + 0.08, 1.0), anticipation_duration)
 	await anticipation.finished
 
-	var peel := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	peel.tween_method(_set_camera_reveal_weight, 0.0, 1.0, peel_duration)
+	var reveal_in := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	reveal_in.tween_method(
+		_set_first_reveal_weight,
+		0.0,
+		1.0,
+		reveal_in_duration
+	)
 	if _near_fog is Node2D:
-		peel.parallel().tween_property(_near_fog, "position", _near_fog_origin + NEAR_FOG_TRAVEL, peel_duration)
-		peel.parallel().tween_property(_near_fog, "modulate:a", 0.04, peel_duration)
+		reveal_in.parallel().tween_property(
+			_near_fog,
+			"position",
+			_near_fog_origin + NEAR_FOG_TRAVEL,
+			reveal_in_duration
+		)
+		reveal_in.parallel().tween_property(
+			_near_fog,
+			"modulate:a",
+			0.04,
+			reveal_in_duration
+		)
 	if _mid_fog is Node2D:
-		peel.parallel().tween_property(_mid_fog, "position", _mid_fog_origin + MID_FOG_TRAVEL, peel_duration)
-		peel.parallel().tween_property(_mid_fog, "modulate:a", 0.08, peel_duration)
+		reveal_in.parallel().tween_property(
+			_mid_fog,
+			"position",
+			_mid_fog_origin + MID_FOG_TRAVEL,
+			reveal_in_duration
+		)
+		reveal_in.parallel().tween_property(
+			_mid_fog,
+			"modulate:a",
+			0.08,
+			reveal_in_duration
+		)
 	if _edge_mist is Node2D:
-		peel.parallel().tween_property(_edge_mist, "position", _edge_mist_origin + EDGE_MIST_TRAVEL, peel_duration)
-		peel.parallel().tween_property(_edge_mist, "modulate:a", 0.34, peel_duration)
+		reveal_in.parallel().tween_property(
+			_edge_mist,
+			"position",
+			_edge_mist_origin + EDGE_MIST_TRAVEL,
+			reveal_in_duration
+		)
 	if _reveal_light != null:
-		peel.parallel().tween_property(_reveal_light, "energy", REVEAL_LIGHT_PEAK, peel_duration * 0.72)
-	await peel.finished
+		reveal_in.parallel().tween_property(
+			_reveal_light,
+			"energy",
+			REVEAL_LIGHT_PEAK,
+			reveal_in_duration * 0.72
+		)
+	await reveal_in.finished
 
 	if _vista_controller != null:
-		_vista_controller.complete_reveal_choreography()
-	var settle := create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_vista_controller.hold_first_reveal()
+
+	await get_tree().create_timer(reveal_hold_duration).timeout
+
+	if _vista_controller != null:
+		_vista_controller.begin_return_to_gameplay()
+
+	var return_tween := create_tween() \
+		.set_trans(Tween.TRANS_SINE) \
+		.set_ease(Tween.EASE_IN_OUT)
+	return_tween.tween_method(
+		_set_return_to_gameplay_weight,
+		0.0,
+		1.0,
+		return_duration
+	)
 	if _reveal_light != null:
-		settle.parallel().tween_property(_reveal_light, "energy", 0.0, settle_duration)
+		return_tween.parallel().tween_property(
+			_reveal_light,
+			"energy",
+			0.0,
+			return_duration
+		)
+	await return_tween.finished
+
+	if _vista_controller != null:
+		_vista_controller.complete_first_reveal()
+
+	var settle := create_tween() \
+		.set_trans(Tween.TRANS_SINE) \
+		.set_ease(Tween.EASE_OUT)
 	if _far_fog != null:
-		# Far haze deliberately remains: only a small clarity lift separates the keep.
-		settle.parallel().tween_property(_far_fog, "modulate:a", maxf(_far_fog.modulate.a, 0.16), settle_duration)
+		settle.tween_property(
+			_far_fog,
+			"modulate:a",
+			maxf(_far_fog.modulate.a, 0.16),
+			atmosphere_settle_duration
+		)
 	await settle.finished
 
 	_resolve_destination_prompt()
@@ -129,6 +185,10 @@ func play_reveal() -> void:
 	_reveal_running = false
 	_reveal_finished = true
 	reveal_completed.emit()
+
+
+func play_reveal() -> void:
+	play_first_reveal()
 
 
 func has_played() -> bool:
@@ -163,13 +223,11 @@ func _resolve_destination_prompt() -> void:
 		_destination_prompt = get_node_or_null(destination_prompt_path) as CanvasItem
 
 
-func _set_camera_reveal_weight(weight: float) -> void:
+func _set_first_reveal_weight(weight: float) -> void:
 	if _vista_controller != null:
-		_vista_controller.set_reveal_choreography_weight(weight)
+		_vista_controller.set_first_reveal_weight(weight)
 
 
-func _has_crossed_threshold(world_position: Vector2) -> bool:
-	var axis := _threshold_marker.global_position - _entry_marker.global_position
-	if axis.length_squared() <= 0.01:
-		return false
-	return (world_position - _threshold_marker.global_position).dot(axis.normalized()) >= 0.0
+func _set_return_to_gameplay_weight(weight: float) -> void:
+	if _vista_controller != null:
+		_vista_controller.set_return_to_gameplay_weight(weight)

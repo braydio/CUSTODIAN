@@ -56,6 +56,11 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="Generate manifests only and run ingest in dry-run mode.")
     parser.add_argument("--skip-post", action="store_true", help="Forward --skip-post to ingest.py.")
     parser.add_argument(
+        "--no-mirror",
+        action="store_true",
+        help="Forward --no-mirror to ingest.py to suppress horizontal direction counterparts.",
+    )
+    parser.add_argument(
         "--remove-superseded",
         action="store_true",
         help="Remove older canonical sibling outputs with the same semantic animation identity.",
@@ -107,6 +112,8 @@ def main() -> int:
     ingest_args = [sys.executable, str(INGEST_SCRIPT)]
     if args.skip_post:
         ingest_args.append("--skip-post")
+    if args.no_mirror:
+        ingest_args.append("--no-mirror")
     if args.remove_superseded:
         ingest_args.append("--remove-superseded")
 

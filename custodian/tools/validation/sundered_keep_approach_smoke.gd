@@ -16,25 +16,24 @@ const EXPECTED_SPRITE_RECTS := {
 	"UnderlayRoot/ApproachOceanVoidUnderlay": Rect2(Vector2(-1536, -1236), Vector2(3392, 2718)),
 	"UnderlayRoot/ApproachCliffSpiresUnderlay": Rect2(Vector2(-1536, -1236), Vector2(3392, 2718)),
 	"UnderlayRoot/ApproachRouteContactShadow": Rect2(Vector2(-620, -480), Vector2(2048, 1706)),
-	"VistaRoot/ApproachFirstVistaHorizon": Rect2(Vector2(-1000, -980), Vector2(2600, 1460)),
-	"VistaRoot/FarKeepSilhouetteLayerA": Rect2(Vector2(-1120, -1040), Vector2(2840, 1540)),
-	"VistaRoot/FarKeepSilhouetteLayerB": Rect2(Vector2(-1060, -1008), Vector2(2720, 1500)),
-	"VistaRoot/ApproachFirstVistaFogVeil": Rect2(Vector2(-1000, -360), Vector2(2600, 720)),
-	"GrandVistaRoot/GrandVistaPanorama": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
-	"GrandVistaRoot/GrandVistaOceanSprayOverlay": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
-	"GrandVistaRoot/GrandVistaFogOverlay": Rect2(Vector2(-1280, -520), Vector2(2560, 480)),
-	"GrandVistaRoot/GrandVistaShadowVignette": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
-	"GrandVistaRoot/GrandVistaForegroundParapet": Rect2(Vector2(-1280, 260), Vector2(2560, 360)),
-	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaHorizonSeamFog": Rect2(Vector2(-1280, -460), Vector2(2560, 320)),
-	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaPathContactShadow": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
-	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaEdgeSprayWrap": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
-	"GrandVistaRoot/GrandVistaGlueRoot/GrandVistaForegroundEdgeMask": Rect2(Vector2(-1280, 220), Vector2(2560, 420)),
+	"VistaRoot/FirstVistaFarParallax/ApproachFirstVistaHorizon": Rect2(Vector2(-1000, -980), Vector2(2600, 1460)),
+	"VistaRoot/FirstVistaFarParallax/FarKeepSilhouetteLayerA": Rect2(Vector2(-1120, -1040), Vector2(2840, 1540)),
+	"VistaRoot/FirstVistaFarParallax/FarKeepSilhouetteLayerB": Rect2(Vector2(-1060, -1008), Vector2(2720, 1500)),
+	"VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil": Rect2(Vector2(-1000, -360), Vector2(2600, 720)),
+	"GrandVistaRoot/LabyrinthFarParallax/GrandVistaPanorama": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
+	"GrandVistaRoot/LabyrinthMistParallax/GrandVistaOceanSprayOverlay": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
+	"GrandVistaRoot/LabyrinthMistParallax/GrandVistaFogOverlay": Rect2(Vector2(-1280, -520), Vector2(2560, 480)),
+	"GrandVistaRoot/LabyrinthFarParallax/GrandVistaShadowVignette": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
+	"GrandVistaRoot/LabyrinthNearRoot/GrandVistaForegroundParapet": Rect2(Vector2(-1280, 260), Vector2(2560, 360)),
+	"GrandVistaRoot/LabyrinthMistParallax/GrandVistaHorizonSeamFog": Rect2(Vector2(-1280, -460), Vector2(2560, 320)),
+	"GrandVistaRoot/LabyrinthNearRoot/GrandVistaPathContactShadow": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
+	"GrandVistaRoot/LabyrinthNearRoot/GrandVistaEdgeSprayWrap": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
+	"GrandVistaRoot/LabyrinthNearRoot/GrandVistaForegroundEdgeMask": Rect2(Vector2(-1280, 220), Vector2(2560, 420)),
 	"PlayableRoot/ApproachRouteMaster": Rect2(Vector2(-620, -480), Vector2(2048, 1706)),
 	"OcclusionRoot/ApproachEdgeMistWrap": Rect2(Vector2(-620, -480), Vector2(2048, 1706)),
 	"OcclusionRoot/ApproachFogStrip01": Rect2(Vector2(-880, -250), Vector2(1500, 520)),
 	"OcclusionRoot/ApproachFogStrip02": Rect2(Vector2(-260, -240), Vector2(1500, 520)),
 	"OcclusionRoot/ApproachFogStrip03": Rect2(Vector2(320, -230), Vector2(1500, 520)),
-	"OcclusionRoot/ApproachFinalGateShadowVeil": Rect2(Vector2(-1000, -340), Vector2(2600, 900)),
 }
 
 const EXPECTED_SPRITE_Z := {
@@ -64,6 +63,7 @@ const EXPECTED_MARKERS := {
 	"SecondVistaEnd": Vector2(830, -125),
 	"TraverseEnd": Vector2(915, -125),
 	"ReturnTopdown": Vector2(980, -125),
+	"FirstRevealCameraAnchor": Vector2(210, -120),
 }
 
 
@@ -136,11 +136,13 @@ func _init() -> void:
 	if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 		errors.append("GrandVistaRoot should start hidden; alpha=%s" % (grand_vista_root.modulate.a if grand_vista_root else "missing"))
 	if grand_vista_root != null:
-		var glue_root := scene.get_node_or_null("GrandVistaRoot/GrandVistaGlueRoot") as Node2D
-		if glue_root == null:
-			errors.append("GrandVistaRoot/GrandVistaGlueRoot missing")
-		elif not glue_root.z_as_relative:
-			errors.append("GrandVistaRoot/GrandVistaGlueRoot should inherit GrandVistaRoot z ordering")
+		for layer_name in [
+			"LabyrinthFarParallax",
+			"LabyrinthMistParallax",
+			"LabyrinthNearRoot",
+		]:
+			if grand_vista_root.get_node_or_null(layer_name) == null:
+				errors.append("GrandVistaRoot/%s missing" % layer_name)
 		_collect_collision_nodes(grand_vista_root, "GrandVistaRoot must be visual-only", errors)
 	var occlusion_root := scene.get_node_or_null("OcclusionRoot") as CanvasItem
 	if occlusion_root == null or occlusion_root.modulate.a < 0.99:
@@ -198,12 +200,13 @@ func _init() -> void:
 		_check_controller_path(controller, "reveal_full_marker_path", NodePath("../Markers/RevealFull"), errors)
 		_check_controller_path(controller, "mid_gameplay_marker_path", NodePath("../Markers/MidGameplayStart"), errors)
 		_check_controller_path(controller, "grand_vista_root_path", NodePath("../GrandVistaRoot"), errors)
-		_check_controller_path(controller, "vista_fog_band_path", NodePath("../VistaRoot/ApproachFirstVistaFogVeil"), errors)
+		_check_controller_path(controller, "vista_fog_band_path", NodePath("../VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil"), errors)
 		_check_controller_path(controller, "occlusion_root_path", NodePath("../OcclusionRoot"), errors)
 		_check_controller_path(controller, "cliff_occluder_path", NodePath("../OcclusionRoot/ApproachEdgeMistWrap"), errors)
 		_check_controller_path(controller, "wall_shadow_occluder_path", NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil"), errors)
 		_check_controller_path(controller, "final_gate_shadow_veil_path", NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil"), errors)
-		_check_controller_path(controller, "distant_keep_path", NodePath("../VistaRoot/ApproachFirstVistaHorizon"), errors)
+		_check_controller_path(controller, "distant_keep_path", NodePath("../VistaRoot/FirstVistaFarParallax/ApproachFirstVistaHorizon"), errors)
+		_check_controller_path(controller, "first_reveal_camera_anchor_path", NodePath("../Markers/FirstRevealCameraAnchor"), errors)
 		_check_controller_path(controller, "second_vista_start_marker_path", NodePath("../Markers/SecondVistaStart"), errors)
 		_check_controller_path(controller, "second_vista_full_marker_path", NodePath("../Markers/SecondVistaFull"), errors)
 		_check_controller_path(controller, "second_vista_end_marker_path", NodePath("../Markers/SecondVistaEnd"), errors)
@@ -227,7 +230,7 @@ func _init() -> void:
 		)
 
 		controller.apply_progress(0.0)
-		_check_camera_target(controller, Vector2.ZERO, Vector2.ONE, "entry", errors)
+		_check_camera_target(controller, Vector2(0.0, -18.0), Vector2(1.12, 1.12), "entry", errors)
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController should keep GrandVistaRoot hidden before second vista")
 		if final_gate_veil == null or final_gate_veil.modulate.a > 0.01:
@@ -235,15 +238,17 @@ func _init() -> void:
 		controller.apply_progress(0.15)
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController should not reveal GrandVistaRoot during first approach reveal")
-		if vista_root == null or vista_root.modulate.a < 0.9:
-			errors.append("VistaController should reveal VistaRoot by early overlook progress")
+		if vista_root == null or vista_root.modulate.a > 0.01:
+			errors.append("VistaRoot must remain hidden until explicit reveal choreography begins")
+		controller.complete_first_reveal()
 		controller.apply_progress(maxf(reveal_full_progress, second_start_progress - 0.05))
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController should keep GrandVistaRoot hidden through the gameplay traversal gap")
 		controller.apply_progress(second_full_progress)
-		_check_camera_target(controller, Vector2(0.0, -48.0), Vector2(0.96, 0.96), "grand vista", errors)
 		if grand_vista_root == null or grand_vista_root.modulate.a < 0.85:
 			errors.append("VistaController did not reveal GrandVistaRoot at second vista full marker")
+		controller.apply_progress(second_end_progress)
+		_check_camera_target(controller, Vector2(18.0, -52.0), Vector2(0.97, 0.97), "labyrinth", errors)
 		controller.apply_progress(minf(1.0, second_end_progress + 0.05))
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController did not hide GrandVistaRoot after second vista marker window")
@@ -467,16 +472,26 @@ func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
 		errors.append("LevelExitAffordance must stay hidden until the reveal settles")
 
 	director.anticipation_duration = 0.001
-	director.peel_duration = 0.001
-	director.settle_duration = 0.001
+	director.reveal_in_duration = 0.001
+	director.reveal_hold_duration = 0.001
+	director.return_duration = 0.001
+	director.atmosphere_settle_duration = 0.001
 	var controller := scene.get_node_or_null("VistaController") as SunderedKeepVistaController
 	if controller != null:
 		controller.apply_progress(0.0)
 	var completion_count := [0]
 	director.reveal_completed.connect(func() -> void: completion_count[0] += 1)
-	var operator := Node2D.new()
+	var operator := CharacterBody2D.new()
 	operator.name = "Operator"
 	operator.add_to_group("operator")
+	operator.add_to_group("player")
+	operator.collision_layer = 1
+	operator.collision_mask = 1
+	var operator_shape := CollisionShape2D.new()
+	var operator_circle := CircleShape2D.new()
+	operator_circle.radius = 10.0
+	operator_shape.shape = operator_circle
+	operator.add_child(operator_shape)
 	var world := root.get_node_or_null("GameRoot/World")
 	world.add_child(operator)
 	var entry := scene.get_node_or_null("Markers/EntrySpawn") as Node2D
@@ -484,11 +499,28 @@ func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
 	var threshold_axis := (threshold.global_position - entry.global_position).normalized()
 	operator.global_position = threshold.global_position + threshold_axis
 	director.refresh_bindings()
-	await process_frame
+	await physics_frame
+	if director.has_played():
+		errors.append("RevealDirector fired from raw progress without the explicit trigger")
+	var trigger := scene.get_node_or_null(
+		"SequenceTriggers/FirstVistaRevealTrigger"
+	) as Area2D
+	if trigger == null:
+		errors.append("SequenceTriggers/FirstVistaRevealTrigger missing")
+	else:
+		operator.global_position = trigger.global_position
+		for unused in 8:
+			await physics_frame
+			if director.has_played():
+				break
+		if not director.has_played():
+			errors.append(
+				"FirstVistaRevealTrigger physical overlap did not start the reveal"
+			)
 	if not director.has_played():
-		errors.append("RevealDirector did not fire when the Operator crossed RevealStart")
-		director.play_reveal()
-	await director.reveal_completed
+		return
+	if not bool(director.get_reveal_state().get("complete", false)):
+		await director.reveal_completed
 	var state: Dictionary = director.get_reveal_state()
 	if not bool(state.get("played", false)) or not bool(state.get("complete", false)):
 		errors.append("RevealDirector did not complete its one-shot reveal")
@@ -506,7 +538,7 @@ func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
 	if reveal_light != null and reveal_light.energy > 0.01:
 		errors.append("RevealMoonlightCue did not settle back to zero energy")
 	if controller != null:
-		_check_camera_target(controller, Vector2(0.0, -140.0), Vector2(0.86, 0.86), "reveal event", errors)
+		_check_camera_target(controller, Vector2(0.0, -48.0), Vector2(0.98, 0.98), "reveal return", errors)
 	director.play_reveal()
 	await process_frame
 	if int(completion_count[0]) != 1:

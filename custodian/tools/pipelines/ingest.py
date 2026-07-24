@@ -16,6 +16,7 @@ Options:
   --manifest PATH             Process one manifest (repeatable).
   --dry-run                   Preview ingest and requested builds without writing.
   --skip-post                 Skip manifest post-process hooks.
+  --no-mirror                 Do not generate horizontal direction counterparts.
   --remove-superseded         Remove older canonical sibling outputs.
   --build-operator-runtime    Rebuild Operator modular runtime after successful ingest.
   -h, --help                  Show this help.

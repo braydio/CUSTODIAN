@@ -36,6 +36,13 @@ content/sprites/_pipeline/
 Direction codes are fixed: `n`, `ne`, `e`, `se`, `s`, `sw`, `w`, `nw`, and `omni` for non-directional effects.
 Compatibility copies to older runtime paths are allowed, but the source/intake asset should keep the canonical name.
 
+Ingest mirrors horizontal direction pairs by default: `e↔w`, `ne↔nw`, and `se↔sw`. Each selected frame is
+flipped independently and written beside the source direction for every canonical output path, including
+compatibility outputs. If any selected manifest explicitly supplies the counterpart, authored art wins even when
+the pair is split across separate manifests. Use
+`--no-mirror` for a selected run or set `"auto_mirror": false` at the manifest root for an asset-specific opt-out.
+`n`, `s`, and `omni` are never duplicated.
+
 Operator composited combat reactions may use the authored `full_body_combat` and `combat_fx` layer names. The manifest generator routes those sheets into `operator/runtime/body/<loadout>/` and `operator/runtime/overlays/<loadout>/`, then rebuilds the curated Operator `SpriteFrames` resources.
 
 ## Example Manifest
@@ -241,6 +248,7 @@ python custodian/tools/pipelines/aseprite_inbox.py --dry-run
 python custodian/tools/pipelines/aseprite_inbox.py --prompt
 python custodian/tools/pipelines/aseprite_inbox.py --yes
 python custodian/tools/pipelines/aseprite_inbox.py --run-ingest --skip-post
+python custodian/tools/pipelines/aseprite_inbox.py --run-ingest --no-mirror
 ```
 
 Generate missing inbox manifests with the Python generator, then run ingest:
@@ -256,6 +264,7 @@ python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run
 python custodian/tools/pipelines/generate_inbox_manifests.py --skip-post
 python custodian/tools/pipelines/generate_inbox_manifests.py --regen
 python custodian/tools/pipelines/generate_inbox_manifests.py --remove-superseded
+python custodian/tools/pipelines/generate_inbox_manifests.py --no-mirror
 ```
 
 Use `--remove-superseded` when a replacement changes frame count or frame size. It removes canonical sibling
