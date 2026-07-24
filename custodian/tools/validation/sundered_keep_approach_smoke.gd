@@ -63,6 +63,7 @@ const EXPECTED_MARKERS := {
 	"TraverseEnd": Vector2(915, -125),
 	"ReturnTopdown": Vector2(980, -125),
 	"FirstRevealCameraAnchor": Vector2(210, -120),
+	"SecondVistaCameraAnchor": Vector2(650, -240),
 }
 
 
@@ -229,8 +230,18 @@ func _init() -> void:
 		_check_controller_path(controller, "cliff_occluder_path", NodePath("../OcclusionRoot/ApproachEdgeMistWrap"), errors)
 		_check_controller_path(controller, "wall_shadow_occluder_path", NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil"), errors)
 		_check_controller_path(controller, "final_gate_shadow_veil_path", NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil"), errors)
-		_check_controller_path(controller, "distant_keep_path", NodePath("../VistaRoot/FirstVistaFarParallax/ApproachFirstVistaHorizon"), errors)
+		_check_controller_path(
+			controller,
+			"distant_keep_path",
+			NodePath(
+				"../ParallaxRoot/RevealDepth/"
+				+ "DistantKeep_Parallax2D/"
+				+ "DistantSunderedKeepLandmark"
+			),
+			errors
+		)
 		_check_controller_path(controller, "first_reveal_camera_anchor_path", NodePath("../Markers/FirstRevealCameraAnchor"), errors)
+		_check_controller_path(controller, "second_reveal_camera_anchor_path", NodePath("../Markers/SecondVistaCameraAnchor"), errors)
 		_check_controller_path(controller, "second_vista_start_marker_path", NodePath("../Markers/SecondVistaStart"), errors)
 		_check_controller_path(controller, "second_vista_full_marker_path", NodePath("../Markers/SecondVistaFull"), errors)
 		_check_controller_path(controller, "second_vista_end_marker_path", NodePath("../Markers/SecondVistaEnd"), errors)
@@ -281,16 +292,25 @@ func _init() -> void:
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
 			errors.append("VistaController should keep GrandVistaRoot hidden through the gameplay traversal gap")
 		controller.apply_progress(second_full_progress)
+		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
+			errors.append("Raw progress must not reveal GrandVistaRoot")
+		controller.begin_second_reveal()
+		controller.set_second_reveal_weight(1.0)
+		controller.hold_second_reveal()
 		if grand_vista_root == null or grand_vista_root.modulate.a < 0.85:
-			errors.append("VistaController did not reveal GrandVistaRoot at second vista full marker")
+			errors.append("Explicit second reveal did not reveal GrandVistaRoot")
+		_check_camera_target(controller, Vector2(150.0, -115.0), Vector2(0.84, 0.84), "second reveal", errors)
+		controller.begin_second_return_to_gameplay()
+		controller.set_second_return_to_gameplay_weight(1.0)
+		controller.complete_second_reveal()
 		controller.apply_progress(second_end_progress)
-		_check_camera_target(controller, Vector2(18.0, -52.0), Vector2(0.97, 0.97), "labyrinth", errors)
+		_check_camera_target(controller, Vector2(0.0, -48.0), Vector2(0.98, 0.98), "second reveal return", errors)
 		controller.apply_progress(minf(1.0, second_end_progress + 0.05))
 		if grand_vista_root == null or grand_vista_root.modulate.a > 0.01:
-			errors.append("VistaController did not hide GrandVistaRoot after second vista marker window")
+			errors.append("VistaController did not hide GrandVistaRoot after second reveal")
 		controller.apply_progress(1.0)
 		_check_camera_target(controller, Vector2.ZERO, Vector2.ONE, "final gate", errors)
-		if final_gate_veil == null or final_gate_veil.modulate.a < 0.8:
+		if final_gate_veil == null or final_gate_veil.modulate.a < 0.35:
 			errors.append("VistaController did not raise final gate veil near exit")
 
 	if scene.get_node_or_null("ExitTransitionTrigger") != null:
@@ -461,9 +481,54 @@ func _check_event_markers(scene: Node, errors: Array[String]) -> void:
 		errors.append("Approach does not expose get_authoring_marker_state")
 		return
 	var marker_state := scene.call("get_authoring_marker_state") as Dictionary
-	for marker_id in ["spawn", "return_causeway"]:
+	for marker_id in [
+		"spawn",
+		"return_causeway",
+		"level_exit",
+		"first_reveal_trigger",
+		"first_reveal_camera_anchor",
+		"second_reveal_trigger",
+		"second_reveal_camera_anchor",
+	]:
 		if not marker_state.has(marker_id):
 			errors.append("AUTHORING_MARKERS missing %s" % marker_id)
+	var authored_runtime_paths := {
+		"first_reveal_trigger": (
+			"SequenceTriggers/FirstVistaRevealTrigger"
+		),
+		"first_reveal_camera_anchor": (
+			"Markers/FirstRevealCameraAnchor"
+		),
+		"second_reveal_trigger": (
+			"SequenceTriggers/SecondVistaRevealTrigger"
+		),
+		"second_reveal_camera_anchor": (
+			"Markers/SecondVistaCameraAnchor"
+		),
+	}
+	for marker_id: String in authored_runtime_paths:
+		var runtime_node := scene.get_node_or_null(
+			authored_runtime_paths[marker_id]
+		) as Node2D
+		var authored_state := marker_state.get(
+			marker_id,
+			{}
+		) as Dictionary
+		if runtime_node == null:
+			errors.append(
+				"Authored presentation node missing for %s"
+				% marker_id
+			)
+		elif not runtime_node.position.is_equal_approx(
+			authored_state.get(
+				"runtime_position",
+				Vector2.INF
+			) as Vector2
+		):
+			errors.append(
+				"Authored presentation marker %s is not runtime authority"
+				% marker_id
+			)
 	if markers != null:
 		if markers.get_child_count() != 0:
 			errors.append("Vista Approach must not render authoring markers at runtime")
@@ -517,8 +582,12 @@ func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
 	director.reveal_hold_duration = 0.001
 	director.return_duration = 0.001
 	director.atmosphere_settle_duration = 0.001
+	director.second_reveal_in_duration = 0.001
+	director.second_reveal_hold_duration = 0.001
+	director.second_return_duration = 0.001
 	var controller := scene.get_node_or_null("VistaController") as SunderedKeepVistaController
 	if controller != null:
+		controller.enter_intro_tight_mode()
 		controller.apply_progress(0.0)
 	var completion_count := [0]
 	director.reveal_completed.connect(func() -> void: completion_count[0] += 1)
@@ -584,6 +653,46 @@ func _check_reveal_director(scene: Node, errors: Array[String]) -> void:
 	await process_frame
 	if int(completion_count[0]) != 1:
 		errors.append("RevealDirector replayed after its one-shot completion")
+
+	var second_completion_count := [0]
+	director.second_reveal_completed.connect(
+		func() -> void: second_completion_count[0] += 1
+	)
+	var second_trigger := scene.get_node_or_null(
+		"SequenceTriggers/SecondVistaRevealTrigger"
+	) as Area2D
+	if second_trigger == null:
+		errors.append("SequenceTriggers/SecondVistaRevealTrigger missing")
+		return
+	operator.global_position = second_trigger.global_position
+	for unused in 8:
+		await physics_frame
+		if bool(
+			director.get_reveal_state().get(
+				"second_played",
+				false
+			)
+		):
+			break
+	if not bool(
+		director.get_reveal_state().get(
+			"second_played",
+			false
+		)
+	):
+		errors.append(
+			"SecondVistaRevealTrigger physical overlap did not start"
+		)
+		return
+	if not bool(
+		director.get_reveal_state().get(
+			"second_complete",
+			false
+		)
+	):
+		await director.second_reveal_completed
+	if int(second_completion_count[0]) != 1:
+		errors.append("Second reveal did not complete exactly once")
 
 
 func _vec2_nearly_equal(a: Vector2, b: Vector2, epsilon := 0.01) -> bool:

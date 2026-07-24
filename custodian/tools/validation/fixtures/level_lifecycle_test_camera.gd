@@ -3,9 +3,12 @@ extends Camera2D
 var runtime_map: Node
 var presentation_framing := false
 var target_zoom := Vector2.ONE
+var follow_target: Node2D
 
 
 func set_runtime_map(map_instance: Node) -> void:
+	presentation_framing = false
+	follow_target = get_node_or_null("../Operator") as Node2D
 	runtime_map = map_instance
 
 

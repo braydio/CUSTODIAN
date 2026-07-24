@@ -3,6 +3,8 @@ class_name SunderedKeepRevealDirector
 
 signal reveal_started
 signal reveal_completed
+signal second_reveal_started
+signal second_reveal_completed
 
 @export var player_path := NodePath("/root/GameRoot/World/Operator")
 @export var entry_marker_path := NodePath("../Markers/EntrySpawn")
@@ -15,11 +17,15 @@ signal reveal_completed
 @export var reveal_light_path := NodePath("../OcclusionRoot/RevealMoonlightCue")
 @export var destination_prompt_path := NodePath("../EventRuntimeRoot/LevelExitAffordance")
 
-@export_range(0.0, 0.4, 0.01) var anticipation_duration := 0.12
-@export_range(0.1, 1.2, 0.01) var reveal_in_duration := 0.55
-@export_range(0.2, 2.0, 0.05) var reveal_hold_duration := 1.05
-@export_range(0.1, 1.0, 0.01) var return_duration := 0.48
-@export_range(0.1, 1.0, 0.01) var atmosphere_settle_duration := 0.35
+@export_range(0.0, 0.4, 0.01) var anticipation_duration := 0.18
+@export_range(0.1, 1.2, 0.01) var reveal_in_duration := 0.80
+@export_range(0.2, 2.5, 0.05) var reveal_hold_duration := 1.80
+@export_range(0.1, 1.0, 0.01) var return_duration := 0.70
+@export_range(0.1, 1.0, 0.01) var atmosphere_settle_duration := 0.45
+@export_range(0.1, 1.2, 0.01) var second_reveal_in_duration := 0.65
+@export_range(0.2, 2.0, 0.05) var second_reveal_hold_duration := 1.30
+@export_range(0.1, 1.0, 0.01) var second_return_duration := 0.55
+@export_range(0.0, 1.0, 0.05) var reveal_movement_multiplier := 0.25
 
 const NEAR_FOG_TRAVEL := Vector2(-180.0, 58.0)
 const MID_FOG_TRAVEL := Vector2(170.0, 42.0)
@@ -39,6 +45,9 @@ var _destination_prompt: CanvasItem
 var _reveal_played := false
 var _reveal_running := false
 var _reveal_finished := false
+var _second_reveal_played := false
+var _second_reveal_running := false
+var _second_reveal_finished := false
 var _near_fog_origin := Vector2.ZERO
 var _mid_fog_origin := Vector2.ZERO
 var _edge_mist_origin := Vector2.ZERO
@@ -77,6 +86,7 @@ func play_first_reveal() -> void:
 	_reveal_running = true
 	reveal_started.emit()
 	refresh_bindings()
+	_set_player_movement_multiplier(reveal_movement_multiplier)
 	if _vista_controller != null:
 		_vista_controller.begin_first_reveal()
 
@@ -141,6 +151,7 @@ func play_first_reveal() -> void:
 
 	await get_tree().create_timer(reveal_hold_duration).timeout
 
+	_set_player_movement_multiplier(1.0)
 	if _vista_controller != null:
 		_vista_controller.begin_return_to_gameplay()
 
@@ -187,6 +198,62 @@ func play_first_reveal() -> void:
 	reveal_completed.emit()
 
 
+func play_second_reveal() -> void:
+	if _second_reveal_played:
+		return
+	_second_reveal_played = true
+	if _reveal_running:
+		await reveal_completed
+	if not _reveal_finished:
+		_second_reveal_played = false
+		return
+
+	_second_reveal_running = true
+	second_reveal_started.emit()
+	refresh_bindings()
+	_set_player_movement_multiplier(reveal_movement_multiplier)
+	if _vista_controller != null:
+		_vista_controller.begin_second_reveal()
+
+	var reveal_in := create_tween() \
+		.set_trans(Tween.TRANS_CUBIC) \
+		.set_ease(Tween.EASE_OUT)
+	reveal_in.tween_method(
+		_set_second_reveal_weight,
+		0.0,
+		1.0,
+		second_reveal_in_duration
+	)
+	await reveal_in.finished
+
+	if _vista_controller != null:
+		_vista_controller.hold_second_reveal()
+	await get_tree().create_timer(
+		second_reveal_hold_duration
+	).timeout
+
+	_set_player_movement_multiplier(1.0)
+	if _vista_controller != null:
+		_vista_controller.begin_second_return_to_gameplay()
+
+	var return_tween := create_tween() \
+		.set_trans(Tween.TRANS_SINE) \
+		.set_ease(Tween.EASE_IN_OUT)
+	return_tween.tween_method(
+		_set_second_return_to_gameplay_weight,
+		0.0,
+		1.0,
+		second_return_duration
+	)
+	await return_tween.finished
+
+	if _vista_controller != null:
+		_vista_controller.complete_second_reveal()
+	_second_reveal_running = false
+	_second_reveal_finished = true
+	second_reveal_completed.emit()
+
+
 func play_reveal() -> void:
 	play_first_reveal()
 
@@ -204,6 +271,9 @@ func get_reveal_state() -> Dictionary:
 		"played": _reveal_played,
 		"running": _reveal_running,
 		"complete": _reveal_finished,
+		"second_played": _second_reveal_played,
+		"second_running": _second_reveal_running,
+		"second_complete": _second_reveal_finished,
 		"camera_bound": _vista_controller != null,
 		"threshold_bound": _threshold_marker != null,
 		"prompt_visible": _destination_prompt != null and _destination_prompt.modulate.a > 0.99,
@@ -231,3 +301,32 @@ func _set_first_reveal_weight(weight: float) -> void:
 func _set_return_to_gameplay_weight(weight: float) -> void:
 	if _vista_controller != null:
 		_vista_controller.set_return_to_gameplay_weight(weight)
+
+
+func _set_second_reveal_weight(weight: float) -> void:
+	if _vista_controller != null:
+		_vista_controller.set_second_reveal_weight(weight)
+
+
+func _set_second_return_to_gameplay_weight(weight: float) -> void:
+	if _vista_controller != null:
+		_vista_controller.set_second_return_to_gameplay_weight(weight)
+
+
+func release_presentation_constraints() -> void:
+	_set_player_movement_multiplier(1.0)
+
+
+func _set_player_movement_multiplier(multiplier: float) -> void:
+	if _player == null or not is_instance_valid(_player):
+		_player = get_node_or_null(player_path) as Node2D
+	if _player != null \
+			and _player.has_method("set_presentation_movement_multiplier"):
+		_player.call(
+			"set_presentation_movement_multiplier",
+			clampf(multiplier, 0.0, 1.0)
+		)
+
+
+func _exit_tree() -> void:
+	release_presentation_constraints()

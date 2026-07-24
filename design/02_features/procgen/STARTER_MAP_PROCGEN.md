@@ -26,8 +26,8 @@ The live contract map should also generate a modest functional road/path network
 ## Exact code files I would add
 
 ```txt
-design/features/implementation/PROCGEN_MAINTENANCE_COMPLEX.md
-design/features/implementation/PROCGEN_MAINTENANCE_COMPLEX_CODE.md
+design/02_features/procgen/PROCGEN_MAINTENANCE_COMPLEX.md
+design/02_features/procgen/PROCGEN_MAINTENANCE_COMPLEX_CODE.md
 ```
 
 Use these as the implementation spec and copy-ready code proposal. This matches the repo workflow instead of burying rules only in runtime scripts.
@@ -487,7 +487,7 @@ Run this from repo root:
 cd ~/Projects/CUSTODIAN
 
 mkdir -p \
-  design/features/implementation \
+  design/02_features/procgen \
   custodian/game/world/procgen/data \
   custodian/game/interactables/dataterminal \
   custodian/game/interactables/repair \
@@ -499,8 +499,8 @@ mkdir -p \
   custodian/content/props/interiors/runtime
 
 touch \
-  design/features/implementation/PROCGEN_MAINTENANCE_COMPLEX.md \
-  design/features/implementation/PROCGEN_MAINTENANCE_COMPLEX_CODE.md \
+  design/02_features/procgen/PROCGEN_MAINTENANCE_COMPLEX.md \
+  design/02_features/procgen/PROCGEN_MAINTENANCE_COMPLEX_CODE.md \
   custodian/game/world/procgen/data/maintenance_complex_profile.json \
   custodian/game/world/procgen/data/room_archetypes.json \
   custodian/game/world/procgen/procgen_types.gd \

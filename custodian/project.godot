@@ -49,6 +49,7 @@ WorldStateGraph="*res://game/systems/world/world_state_graph.gd"
 WorldHistory="*res://game/systems/world/world_history.gd"
 SimulationInterestManager="*res://game/systems/simulation/simulation_interest_manager.gd"
 SectorHeatmap="*res://game/systems/world/sector_heatmap.gd"
+MaterialIntelligence="*res://game/systems/world/material_intelligence.gd"
 ImGui="*uid://csvdmevoaejje"
 
 [custodian]

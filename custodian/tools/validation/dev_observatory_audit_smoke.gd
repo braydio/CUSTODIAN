@@ -66,6 +66,37 @@ func _run() -> void:
 		failures.append("ranged reason-specific counter missing")
 	if int(observatory.counters.get("player_ranged_fire_failure_empty", 0)) != 1:
 		failures.append("ranged category counter missing")
+	operator.call("_log_ranged_fire_failure", &"overheated")
+	var overheat_events: Array = observatory.get_recent_events(
+		2,
+		&"player_ranged_fire_failed"
+	)
+	if overheat_events.is_empty():
+		failures.append("overheat failure event missing")
+	else:
+		var overheat_data := (
+			(overheat_events[0] as Dictionary).get("data", {})
+			as Dictionary
+		)
+		for field_name in [
+			"heat",
+			"overheat_threshold",
+			"heat_decay_rate",
+			"heat_decay_delay_remaining",
+			"overheat_remaining",
+			"overheat_total",
+			"cooldown_remaining",
+			"loaded_ammo",
+			"reserve_ammo",
+			"trigger_held",
+			"trigger_just_pressed",
+			"trigger_mode",
+		]:
+			if not overheat_data.has(field_name):
+				failures.append(
+					"overheat failure payload missing %s"
+					% field_name
+				)
 
 	operator.current_health = operator.max_health
 	operator.start_field_patch()

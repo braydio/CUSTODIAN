@@ -160,40 +160,36 @@ design/
 
 ---
 
-## Active Focus (2026-05-27)
+## Active Focus (2026-07-24)
 
-**Priority 1 - Procgen Handoff Fixes:**
-- Camera bounds from procgen map (not legacy sectors)
-- Camera snap to procgen player spawn
-- Reposition terminal/ammo caches to procgen coords
-- Register camera to "camera" group for game feel
+**Priority 1 - Runtime Polish:**
+- Field patch system with audio feedback
+- Shrumb drop icon updates
+- Combat feel tuning (hit-stop, screen shake, knockback)
 
-**Priority 2 - Ash-Bell / Forlorn-Ritualant Encounter:**
-- Implementation of Forlorn-Ritualant encounter scene
-- Silence Pressure + Thread Tension mechanics (per DETAILED_SPEC)
-- Dry Fountain apparition and White Thread Knot pickup
-- NPC dialogue system with proximity triggers
-- Procgen rare-room injection
+**Priority 2 - Procgen Handoff Fixes:**
+- Mouse/world aim path validation against procgen camera
+- Shadow system integration with dynamic procgen updates
 
 **Priority 3 - Mission Flow:**
 - Mission state machine implementation
 - Free-roam pre-assault loop
-- Manual assault trigger via terminal
+- Compound sectors as real spawned entities
 
-**Priority 4 - Polish:**
-- Animation state machine completion
-- Shadow system integration
-- Weapon data system
+**Priority 4 - Campaign Architecture:**
+- ARRN relay network
+- World expansion & Hub system
+- Power & logistics gameplay
 
 ---
 
 ## Key Links
 
 - **Godot Project:** `custodian/`
-- **Assets:** `custodian/assets/`
+- **Content:** `custodian/content/`
 - **Scenes:** `custodian/scenes/`
-- **Scripts:** `custodian/scripts/`
-- **Runtime Procgen:** `custodian/procgen/`
+- **Scripts:** `custodian/game/`
+- **Runtime Procgen:** `custodian/game/world/procgen/`
 
 ---
 

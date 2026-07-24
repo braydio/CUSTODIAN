@@ -328,11 +328,25 @@ func _update_help() -> void:
 	_hud.text = "\n".join([
 		mapper_title,
 		"Mode: %s   M: toggle collision/marker   1-9: marker type   Selected: %s" % ["MARKER" if _marker_mode else "COLLISION", _selected_marker_id()],
+		"Marker keys: %s" % _marker_shortcuts_text(),
 		"Collision mode: Left click add rail point   Right click undo   C copy rails   Enter/U apply rails",
 		"Marker mode: Left click place selected marker   Right click clear selected marker   C copy markers   Enter/U apply markers",
 		"WASD/arrows: pan   Wheel/+/-: zoom   E: existing rails   V: draft   R: reset current mode   H: help",
 		"Mouse runtime: %s   Source: %s" % [_fmt_vec(_mouse_world), _fmt_vec(_to_source_point(_mouse_world))],
 	])
+
+
+func _marker_shortcuts_text() -> String:
+	var shortcuts: Array[String] = []
+	for index in range(mini(_marker_schema.size(), 9)):
+		shortcuts.append(
+			"%d=%s"
+			% [
+				index + 1,
+				str(_marker_schema[index].get("id", "")),
+			]
+		)
+	return "  ".join(shortcuts)
 
 
 func get_collision_mapper_state() -> Dictionary:

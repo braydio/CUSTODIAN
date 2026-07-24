@@ -511,7 +511,7 @@ custodian/docs/ARCHITECTURE.md
 custodian/docs/SCENE_HIERARCHY.md
 ```
 
-If the implementation spec lives under `design/features/implementation/`, update its status label from `draft` to `review` or `complete` according to actual implementation status.
+If the implementation spec lives under `design/02_features/`, update its status label from `draft` to `review` or `complete` according to actual implementation status.
 
 ### 17. One-Shot Codex Prompt
 

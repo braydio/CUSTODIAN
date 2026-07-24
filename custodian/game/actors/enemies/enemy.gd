@@ -1884,6 +1884,11 @@ func die():
 			"enemy": enemy_name,
 			"position": global_position,
 		})
+	_report_material_contact(
+		global_position,
+		&"enemy_death",
+		{"enemy": enemy_name}
+	)
 	var world_history := get_node_or_null("/root/WorldHistory")
 	if world_history != null:
 		world_history.call("record", "", "enemy_killed", global_position, {
@@ -1910,6 +1915,24 @@ func _get_dev_observatory() -> Node:
 	if not is_inside_tree():
 		return null
 	return get_node_or_null("/root/DevObservatory")
+
+
+func _report_material_contact(
+	position: Vector2,
+	contact_kind: StringName,
+	data: Dictionary = {}
+) -> void:
+	var material_intelligence := get_node_or_null(
+		"/root/MaterialIntelligence"
+	)
+	if material_intelligence != null \
+	and material_intelligence.has_method("report_contact"):
+		material_intelligence.call(
+			"report_contact",
+			position,
+			contact_kind,
+			data
+		)
 
 
 func _obs_log(kind: StringName, data: Dictionary = {}) -> void:

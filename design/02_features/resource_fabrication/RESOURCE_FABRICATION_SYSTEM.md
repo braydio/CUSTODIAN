@@ -190,7 +190,7 @@ This avoids the boring loop of "chop the same deadfall next to base forever" and
 | `custodian/game/resources/player_resource_harvester.gd` | Operator-side harvest detection |
 | `custodian/game/fabrication/fabricator_resource_bridge.gd` | Recipe cost checking + payment |
 | `custodian/content/resources/resource_defs.json` | Resource type metadata |
-| `design/features/implementation/RESOURCE_COLLECTION_SYSTEM.md` | Implementation tracking doc |
+| `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md` | Implementation tracking doc |
 
 ---
 

@@ -189,6 +189,9 @@ godot --headless --path . --script res://tools/validation/dev_observatory_direct
 godot --headless --path . --script res://tools/validation/operator_ammo_reconciliation_smoke.gd
 godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
 godot --headless --path . --script res://tools/validation/dev_mode_smoke.gd
+godot --headless --path . --script res://tools/validation/sector_heatmap_smoke.gd
+godot --headless --path . --script res://tools/validation/material_intelligence_smoke.gd
+godot --headless --path . --script res://tools/validation/power_grid_component_registration_smoke.gd
 ```
 
 This proves bounded telemetry storage, F9/F10 action registration, stable and timestamped JSON output, JSON-safe Variant
@@ -206,6 +209,11 @@ The DevMode smoke proves release-default-off, debug/feature/project/command-line
 resolution, explicit-only heavy diagnostics, negative overrides, load order
 before debug consumers, F6/F7/F8 playtest bindings, free-camera state
 restoration, and the Operator resource-override hook.
+The Material Intelligence smoke proves safe unknown fallback, typed profile
+lookup, explicit cell overrides, cumulative material-contact aggregation,
+low-weight Heatmap tagging, and Observatory export. The power-grid registration
+smoke additionally proves repeated stable allocations do not duplicate
+`infrastructure_power_tier_changed`.
 
 For modular visual-fit next-action reporting:
 

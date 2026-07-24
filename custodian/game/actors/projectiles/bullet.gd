@@ -266,6 +266,7 @@ func _spawn_impact(body: Node = null):
 func _spawn_impact_at(impact_position: Vector2, surface_normal: Vector2 = Vector2.ZERO) -> void:
 	if _impact_committed:
 		return
+	_report_material_contact(impact_position, false)
 	_impact_committed = true
 	_hide_or_stop_visual_before_impact()
 	if impact_scene == null:
@@ -295,6 +296,7 @@ func _spawn_block_impact(body: Node = null) -> void:
 func _spawn_block_impact_at(impact_position: Vector2) -> void:
 	if _impact_committed:
 		return
+	_report_material_contact(impact_position, true)
 	_impact_committed = true
 	_hide_or_stop_visual_before_impact()
 	if BLOCK_SPARK_SCENE == null:
@@ -310,6 +312,29 @@ func _spawn_block_impact_at(impact_position: Vector2) -> void:
 	else:
 		get_tree().current_scene.add_child(fx)
 	fx.global_position = impact_position
+
+
+func _report_material_contact(
+	impact_position: Vector2,
+	blocked: bool
+) -> void:
+	var material_intelligence := get_node_or_null(
+		"/root/MaterialIntelligence"
+	)
+	if material_intelligence == null \
+	or not material_intelligence.has_method("report_contact"):
+		return
+	material_intelligence.call(
+		"report_contact",
+		impact_position,
+		&"bullet_impact",
+		{
+			"team": team,
+			"damage": get_scaled_damage(),
+			"blocked": blocked,
+			"distance_traveled": _distance_traveled,
+		}
+	)
 
 
 func _extract_blocked_result(result_variant: Variant) -> bool:

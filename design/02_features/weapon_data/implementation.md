@@ -403,7 +403,7 @@ if weapon_def:
 ## Implementation Code Reference
 
 **Detailed implementation code (copy verbatim):**
-`design/features/implementation/WEAPON_DATA_INTEGRATION_CODE.md`
+`design/02_features/weapon_data/WEAPON_DATA_INTEGRATION_CODE.md`
 
 ---
 

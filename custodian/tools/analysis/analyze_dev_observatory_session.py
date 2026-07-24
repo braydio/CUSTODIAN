@@ -264,6 +264,28 @@ def _format_counter(values: Any) -> str:
     return ", ".join(f"{key}={_format_value(value)}" for key, value in rows)
 
 
+def _heatmap_cell_location(
+    key: str, entry: Mapping[str, Any], cell_size_px: float
+) -> str:
+    world = _mapping(entry.get("world"))
+    try:
+        cell_x_text, cell_y_text = key.split(",", maxsplit=1)
+        cell_x = int(cell_x_text)
+        cell_y = int(cell_y_text)
+    except (TypeError, ValueError):
+        cell_x = 0
+        cell_y = 0
+    origin_x = _number(world.get("x"), cell_x * cell_size_px)
+    origin_y = _number(world.get("y"), cell_y * cell_size_px)
+    end_x = origin_x + cell_size_px
+    end_y = origin_y + cell_size_px
+    return (
+        f"world=({_format_value(origin_x)},{_format_value(origin_y)}) "
+        f"bounds=({_format_value(origin_x)},{_format_value(origin_y)})"
+        f"-({_format_value(end_x)},{_format_value(end_y)})"
+    )
+
+
 def _append_heatmap_section(
     lines: list[str], payload: Mapping[str, Any], top: int
 ) -> None:
@@ -279,6 +301,7 @@ def _append_heatmap_section(
         f"  {'event types':<28} "
         f"{_format_counter(heatmap.get('event_type_counts'))}"
     )
+    cell_size_px = max(1.0, _number(heatmap.get("cell_size_px"), 64.0))
 
     cells = _mapping(heatmap.get("cells"))
     ranked: list[tuple[float, str, Mapping[str, Any]]] = []
@@ -315,7 +338,8 @@ def _append_heatmap_section(
         lines.append("    none")
     for total, key, entry in ranked[:top]:
         lines.append(
-            f"    {key:<12} total={total:<8.2f} "
+            f"    {key:<12} {_heatmap_cell_location(key, entry, cell_size_px)} "
+            f"total={total:<8.2f} "
             f"by_type={_format_counter(entry.get('by_type'))}"
         )
 
@@ -324,7 +348,8 @@ def _append_heatmap_section(
         lines.append("    none")
     for score, key, entry in danger[:top]:
         lines.append(
-            f"    {key:<12} danger={score:<8.2f} "
+            f"    {key:<12} {_heatmap_cell_location(key, entry, cell_size_px)} "
+            f"danger={score:<8.2f} "
             f"by_type={_format_counter(entry.get('by_type'))}"
         )
 
@@ -333,9 +358,100 @@ def _append_heatmap_section(
         lines.append("    none")
     for score, key, entry in combat[:top]:
         lines.append(
-            f"    {key:<12} combat={score:<8.2f} "
+            f"    {key:<12} {_heatmap_cell_location(key, entry, cell_size_px)} "
+            f"combat={score:<8.2f} "
             f"by_type={_format_counter(entry.get('by_type'))}"
         )
+
+
+def _append_material_intelligence_section(
+    lines: list[str],
+    payload: Mapping[str, Any],
+    events: Sequence[Mapping[str, Any]],
+    gauges: Mapping[str, Any],
+) -> None:
+    snapshot = _mapping(payload.get("material_intelligence"))
+    material_events = [
+        event
+        for event in events
+        if str(event.get("kind", "")) == "material_contact"
+    ]
+    contacts_by_material: Counter[str] = Counter()
+    contacts_by_kind: Counter[str] = Counter()
+    for event in material_events:
+        data = _event_data(event)
+        contacts_by_material[str(data.get("material_id", "unknown"))] += 1
+        contacts_by_kind[str(data.get("contact_kind", "unknown"))] += 1
+
+    lines.extend(["", "MATERIAL INTELLIGENCE", "-" * 48])
+    if not snapshot and not material_events and "player_material" not in gauges:
+        lines.append("  none")
+        return
+    lines.append(
+        f"  {'override cells':<28} "
+        f"{int(_number(snapshot.get('override_cell_count')))}"
+    )
+    lines.append(
+        f"  {'total contacts':<28} "
+        f"{int(_number(snapshot.get('total_contacts'), len(material_events)))}"
+    )
+    lines.append(
+        f"  {'material cells':<28} "
+        f"{_format_counter(snapshot.get('material_counts'))}"
+    )
+    lines.append(
+        f"  {'current player material':<28} "
+        f"{_format_value(gauges.get('player_material', 'unknown'))}"
+    )
+    lines.append(
+        f"  {'retained contact events':<28} {len(material_events)}"
+    )
+    lines.append(
+        f"  {'retained contacts/material':<28} "
+        f"{_format_counter(contacts_by_material)}"
+    )
+    lines.append(
+        f"  {'retained contacts/kind':<28} "
+        f"{_format_counter(contacts_by_kind)}"
+    )
+
+
+def _overheat_failure_summary(
+    events: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    failures = [
+        event
+        for event in events
+        if str(event.get("kind", "")) == "player_ranged_fire_failed"
+        and str(_event_data(event).get("reason", "")) == "overheated"
+    ]
+    heat_values = [
+        _number(_event_data(event).get("heat"))
+        for event in failures
+        if isinstance(_event_data(event).get("heat"), (int, float))
+    ]
+    longest_streak = 0
+    current_streak = 0
+    for event in events:
+        if str(event.get("kind", "")) != "player_ranged_fire_failed":
+            continue
+        if str(_event_data(event).get("reason", "")) == "overheated":
+            current_streak += 1
+            longest_streak = max(longest_streak, current_streak)
+        else:
+            current_streak = 0
+    first_time = (
+        _number(failures[0].get("uptime_sec"))
+        if failures
+        else None
+    )
+    return {
+        "retained_count": len(failures),
+        "average_heat": sum(heat_values) / len(heat_values) if heat_values else None,
+        "max_heat": max(heat_values) if heat_values else None,
+        "first_time_sec": first_time,
+        "longest_streak": longest_streak,
+    }
 
 
 def build_report(
@@ -344,6 +460,7 @@ def build_report(
     top: int,
     warning_limit: int,
     show_all: bool = False,
+    heatmap_top: int | None = None,
 ) -> str:
     session = _mapping(payload.get("session"))
     scene = _mapping(payload.get("scene"))
@@ -353,6 +470,7 @@ def build_report(
     events = _records(payload.get("events"))
     warnings = _records(payload.get("warnings"))
     kinds = _event_kinds(events)
+    overheat_summary = _overheat_failure_summary(events)
     attack_outcomes, attack_interruptions, attack_lifecycle = _enemy_attack_summary(events)
     if show_all:
         top = max(top, len(kinds), len(counters), len(gauges), len(events))
@@ -491,6 +609,36 @@ def build_report(
         f"  {'pending':<28} {ranged_pending}",
         f"  {'unaccounted':<28} {ranged_unaccounted}{'  <-- defect' if ranged_unaccounted else ''}",
     ])
+    overheat_failures = _count(
+        counters,
+        "player_ranged_fire_failure_overheated",
+        int(overheat_summary["retained_count"]),
+    )
+    average_heat_text = (
+        _format_value(overheat_summary["average_heat"])
+        if overheat_summary["average_heat"] is not None
+        else "unavailable (not retained)"
+    )
+    maximum_heat_text = (
+        _format_value(overheat_summary["max_heat"])
+        if overheat_summary["max_heat"] is not None
+        else "unavailable (not retained)"
+    )
+    first_overheat_text = (
+        f"{_format_value(overheat_summary['first_time_sec'])}s"
+        if overheat_summary["first_time_sec"] is not None
+        else "unavailable (not retained)"
+    )
+    lines.extend([
+        "",
+        "RANGED OVERHEAT DIAGNOSTICS",
+        f"  {'cumulative failures':<28} {overheat_failures}",
+        f"  {'retained detailed failures':<28} {overheat_summary['retained_count']}",
+        f"  {'average heat at failure':<28} {average_heat_text}",
+        f"  {'maximum heat at failure':<28} {maximum_heat_text}",
+        f"  {'first retained overheat':<28} {first_overheat_text}",
+        f"  {'longest retained streak':<28} {overheat_summary['longest_streak']}",
+    ])
     if bool(gauges.get("player_dead", False)):
         lines.append("")
         lines.append("NOTE: player was dead at export; current resource gauges reflect post-death state.")
@@ -522,7 +670,62 @@ def build_report(
         "  " + _ordered_counts(attack_lifecycle, ["started", "active", "terminal"]),
     ])
 
-    _append_heatmap_section(lines, payload, top)
+    _append_material_intelligence_section(lines, payload, events, gauges)
+    _append_heatmap_section(
+        lines,
+        payload,
+        heatmap_top if heatmap_top is not None else top,
+    )
+
+    signal_flags: list[str] = []
+    if event_buffer_saturated:
+        signal_flags.append(
+            f"Event buffer wrapped: {dropped_event_count} events dropped "
+            f"after {total_events_logged} logged."
+        )
+    if kinds and event_count > 0:
+        top_kind, top_count = kinds.most_common(1)[0]
+        top_share = top_count / event_count
+        if top_share >= 0.5:
+            signal_flags.append(
+                f"Retained events are dominated by {top_kind}: "
+                f"{top_count}/{event_count} ({top_share:.1%})."
+            )
+    cumulative_damage = _number(counters.get("player_damage_amount_total"))
+    if (cumulative_damage > 0.0 or deaths > 0) and incoming_results_total == 0:
+        signal_flags.append(
+            "Player damage/death exists, but incoming hit telemetry is zero."
+        )
+    enemy_attacks_resolved = _count(counters, "enemy_attacks_resolved")
+    enemy_attack_whiffs = _count(counters, "enemy_attack_whiffs")
+    if deaths > 0 and enemy_attacks_resolved + enemy_attack_whiffs == 0:
+        signal_flags.append(
+            "Player death exists, but enemy terminal attack telemetry is zero."
+        )
+    if ranged_failed > 0 and overheat_failures / ranged_failed >= 0.5:
+        signal_flags.append(
+            f"Overheat dominates ranged failures: "
+            f"{overheat_failures}/{ranged_failed} "
+            f"({overheat_failures / ranged_failed:.1%})."
+        )
+    dodges_started = _count(
+        counters, "player_dodges_started", kinds["player_dodge_started"]
+    )
+    iframe_avoids = _count(
+        counters,
+        "player_iframe_avoids",
+        kinds["player_damage_avoided_by_iframe"],
+    )
+    if dodges_started > 0 and iframe_avoids == 0:
+        signal_flags.append(
+            "Dodges were recorded, but no iframe avoids were observed."
+        )
+
+    lines.extend(["", "SIGNAL QUALITY FLAGS", "-" * 48])
+    if signal_flags:
+        lines.extend(f"  - {flag}" for flag in signal_flags)
+    else:
+        lines.append("  none")
 
     lines.extend(["", f"TOP EVENT TYPES ({min(top, len(kinds))})"])
     if kinds:
@@ -583,6 +786,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="show all events, counters, and gauges without truncation",
     )
     parser.add_argument(
+        "--heatmap-top",
+        type=int,
+        default=DEFAULT_TOP,
+        help=f"maximum rows in each heatmap ranking (default: {DEFAULT_TOP})",
+    )
+    parser.add_argument(
         "--warnings",
         type=int,
         default=DEFAULT_WARNING_LIMIT,
@@ -599,6 +808,8 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         parser.error("--top must be at least 1")
     if args.warnings < 1:
         parser.error("--warnings must be at least 1")
+    if args.heatmap_top < 1:
+        parser.error("--heatmap-top must be at least 1")
     return args
 
 
@@ -611,7 +822,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
 
-    report = build_report(payload, path, args.top, args.warnings, show_all=args.all)
+    report = build_report(
+        payload,
+        path,
+        args.top,
+        args.warnings,
+        show_all=args.all,
+        heatmap_top=args.heatmap_top,
+    )
 
     if args.output:
         out = Path(args.output)

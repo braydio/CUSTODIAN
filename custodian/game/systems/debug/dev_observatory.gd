@@ -342,6 +342,9 @@ func _build_export_payload(path: String) -> Dictionary:
 		"counters": _json_safe(counters),
 		"gauges": _json_safe(gauges),
 		"heatmap": _json_safe(_get_heatmap_snapshot()),
+		"material_intelligence": _json_safe(
+			_get_material_intelligence_snapshot()
+		),
 		"warnings": _json_safe(warnings),
 		"events": _json_safe(events),
 	}
@@ -353,6 +356,18 @@ func _get_heatmap_snapshot() -> Dictionary:
 		var snapshot: Variant = heatmap.call("export_snapshot")
 		if snapshot is Dictionary:
 			return snapshot as Dictionary
+	return {}
+
+
+func _get_material_intelligence_snapshot() -> Dictionary:
+	var material_intelligence := get_node_or_null(
+		"/root/MaterialIntelligence"
+	)
+	if material_intelligence != null \
+	and material_intelligence.has_method("get_summary"):
+		var summary: Variant = material_intelligence.call("get_summary")
+		if summary is Dictionary:
+			return summary as Dictionary
 	return {}
 
 
@@ -493,6 +508,27 @@ func _sample_player_gauges(tree: SceneTree) -> void:
 	if player is Node2D:
 		var p := player as Node2D
 		set_gauge(&"player_position", Vector2i(roundi(p.global_position.x), roundi(p.global_position.y)))
+		var material_intelligence := tree.root.get_node_or_null(
+			"/root/MaterialIntelligence"
+		)
+		if material_intelligence != null \
+		and material_intelligence.has_method("get_material_id_at"):
+			var material_id: Variant = material_intelligence.call(
+				"get_material_id_at",
+				p.global_position
+			)
+			set_gauge(&"player_material", String(material_id))
+			if material_intelligence.has_method("get_material_at"):
+				var profile: Variant = material_intelligence.call(
+					"get_material_at",
+					p.global_position
+				)
+				if profile != null \
+				and "footstep_noise_mult" in profile:
+					set_gauge(
+						&"player_material_footstep_noise_mult",
+						float(profile.get("footstep_noise_mult"))
+					)
 
 	if player.has_method("get_health"):
 		set_gauge(&"player_health", float(player.call("get_health")))

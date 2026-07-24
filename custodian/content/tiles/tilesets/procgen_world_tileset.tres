@@ -1026,16 +1026,7 @@ texture = ExtResource("10_uwn5h")
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ascent_lip_connector_32"]
 texture = ExtResource("80_ascent_ascent_lip_connector_32")
 texture_region_size = Vector2i(32, 32)
-1:0/size_in_atlas = Vector2i(2, 1)
-1:0/0 = 0
-0:0/size_in_atlas = Vector2i(1, 3)
 0:0/0 = 0
-3:0/size_in_atlas = Vector2i(1, 3)
-3:0/0 = 0
-0:3/size_in_atlas = Vector2i(4, 1)
-0:3/0 = 0
-1:1/size_in_atlas = Vector2i(2, 2)
-1:1/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ascent_ascent_threshold_32"]
 texture = ExtResource("81_ascent_ascent_threshold_32")

@@ -1,12 +1,16 @@
 # Material Intelligence System
 
-Status: candidate
+Status: graduated
 Category: world
 Priority: P0
 Maturity: system
 Cost: high
 Owner: Brayden
 Last reviewed: 2026-07-08
+
+Runtime status: runtime-seed
+Graduated to: `design/02_features/world/MATERIAL_INTELLIGENCE_SYSTEM.md`
+Runtime path: `custodian/game/systems/world/material_intelligence.gd`
 
 ## One-line pitch
 

@@ -15,6 +15,10 @@ const ROUTE_MASTER_OCCLUSION_SHADER := preload(
 const PARALLAX_RIG_SCRIPT := preload(
 	"res://game/world/sundered_keep/presentation/sundered_keep_parallax_rig.gd"
 )
+const VISTA_DEBUG_PROBE_SCRIPT := preload(
+	"res://game/world/approaches/sundered_keep/"
+	+ "sundered_keep_vista_debug_probe.gd"
+)
 
 const USE_ROUTE_MASTER := true
 
@@ -95,6 +99,9 @@ const LEVEL_EXIT_POS := Vector2(1240.0, -218.0)
 const FIRST_REVEAL_TRIGGER_POS := Vector2(-150.0, -175.0)
 const FIRST_REVEAL_CAMERA_ANCHOR_POS := Vector2(210.0, -300.0)
 const FIRST_REVEAL_TRIGGER_SIZE := Vector2(190.0, 120.0)
+const SECOND_REVEAL_TRIGGER_POS := SECOND_VISTA_START_POS
+const SECOND_REVEAL_CAMERA_ANCHOR_POS := Vector2(650.0, -420.0)
+const SECOND_REVEAL_TRIGGER_SIZE := Vector2(170.0, 140.0)
 const FINAL_FOG_OVERSCAN := Vector4(
 	384.0,
 	320.0,
@@ -133,63 +140,48 @@ const LABYRINTH_OCCLUSION_ZONES := {
 }
 
 const BOUNDARY_SEGMENTS := [
-	[Vector2(-214.3, 515.0), Vector2(-240.7, 420.5)],
-	[Vector2(-240.7, 420.5), Vector2(-245.7, 304.7)],
-	[Vector2(-245.7, 304.7), Vector2(-285.9, 247.3)],
-	[Vector2(-285.9, 247.3), Vector2(-210.5, 150.2)],
-	[Vector2(-210.5, 150.2), Vector2(-253.5, 85.0)],
-	[Vector2(-253.5, 85.0), Vector2(-236.5, 43.0)],
-	[Vector2(-236.5, 43.0), Vector2(-245.3, 1.8)],
-	[Vector2(-245.3, 1.8), Vector2(-276.9, -23.0)],
-	[Vector2(-276.9, -23.0), Vector2(-405.5, -197.8)],
-	[Vector2(-405.5, -197.8), Vector2(-438.9, -165.4)],
-	[Vector2(-438.9, -165.4), Vector2(-577.3, -251.2)],
-	[Vector2(-577.3, -251.2), Vector2(-543.5, -287.0)],
-	[Vector2(-543.5, -287.0), Vector2(-394.7, -320.4)],
-	[Vector2(-394.7, -320.4), Vector2(-330.0, -324.8)],
-	[Vector2(-330.0, -324.8), Vector2(-305.2, -314.4)],
-	[Vector2(-305.2, -314.4), Vector2(-207.5, -433.1)],
-	[Vector2(-207.5, -433.1), Vector2(-150.7, -441.1)],
-	[Vector2(-150.7, -441.1), Vector2(-94.5, -427.5)],
-	[Vector2(-94.5, -427.5), Vector2(-26.5, -432.7)],
-	[Vector2(-26.5, -432.7), Vector2(199.3, -421.9)],
-	[Vector2(199.3, -421.9), Vector2(503.8, -392.9)],
-	[Vector2(503.8, -392.9), Vector2(972.4, -509.4)],
-	[Vector2(972.4, -509.4), Vector2(997.5, -366.3)],
-	[Vector2(997.5, -366.3), Vector2(1086.9, -338.5)],
-	[Vector2(1086.9, -338.5), Vector2(1232.7, -300.2)],
-	[Vector2(1232.7, -300.2), Vector2(1223.1, -225.2)],
-	[Vector2(1223.1, -225.2), Vector2(983.3, -270.4)],
-	[Vector2(983.3, -270.4), Vector2(945.9, -314.2)],
-	[Vector2(945.9, -314.2), Vector2(901.7, -342.4)],
-	[Vector2(901.7, -342.4), Vector2(803.0, -311.4)],
-	[Vector2(803.0, -311.4), Vector2(479.7, -298.8)],
-	[Vector2(479.7, -298.8), Vector2(225.4, -312.0)],
-	[Vector2(225.4, -312.0), Vector2(-96.1, -338.8)],
-	[Vector2(-96.1, -338.8), Vector2(-194.4, -332.2)],
-	[Vector2(-194.4, -332.2), Vector2(-239.0, -286.0)],
-	[Vector2(-239.0, -286.0), Vector2(-241.8, -255.2)],
-	[Vector2(-241.8, -255.2), Vector2(-285.2, -202.2)],
-	[Vector2(-285.2, -202.2), Vector2(-320.4, -228.4)],
-	[Vector2(-320.4, -228.4), Vector2(-318.4, -180.0)],
-	[Vector2(-318.4, -180.0), Vector2(-155.5, -41.8)],
-	[Vector2(-155.5, -41.8), Vector2(-183.6, 30.4)],
-	[Vector2(-183.6, 30.4), Vector2(-139.2, 126.1)],
-	[Vector2(-139.2, 126.1), Vector2(-115.8, 138.7)],
-	[Vector2(-115.8, 138.7), Vector2(-150.8, 222.2)],
-	[Vector2(-150.8, 222.2), Vector2(-110.8, 244.0)],
-	[Vector2(-110.8, 244.0), Vector2(-132.6, 433.6)],
-	[Vector2(-132.6, 433.6), Vector2(-93.3, 532.6)],
-	[Vector2(-93.3, 532.6), Vector2(-4.3, 581.4)],
-	[Vector2(-4.3, 581.4), Vector2(98.3, 708.5)],
-	[Vector2(98.3, 708.5), Vector2(-3.7, 777.3)],
-	[Vector2(-3.7, 777.3), Vector2(-31.5, 810.9)],
-	[Vector2(-31.5, 810.9), Vector2(-156.5, 844.3)],
-	[Vector2(-156.5, 844.3), Vector2(-298.2, 790.1)],
-	[Vector2(-298.2, 790.1), Vector2(-371.0, 703.2)],
-	[Vector2(-371.0, 703.2), Vector2(-377.6, 664.5)],
-	[Vector2(-377.6, 664.5), Vector2(-342.6, 614.2)],
-	[Vector2(-342.6, 614.2), Vector2(-214.6, 516.6)],
+	[Vector2(-215.0, 514.2), Vector2(-241.7, 418.6)],
+	[Vector2(-241.7, 418.6), Vector2(-260.7, 312.3)],
+	[Vector2(-260.7, 312.3), Vector2(-299.7, 232.6)],
+	[Vector2(-299.7, 232.6), Vector2(-230.8, 138.7)],
+	[Vector2(-230.8, 138.7), Vector2(-263.6, 82.7)],
+	[Vector2(-263.6, 82.7), Vector2(-249.7, 8.2)],
+	[Vector2(-249.7, 8.2), Vector2(-398.7, -175.5)],
+	[Vector2(-398.7, -175.5), Vector2(-453.1, -166.1)],
+	[Vector2(-453.1, -166.1), Vector2(-597.5, -247.3)],
+	[Vector2(-597.5, -247.3), Vector2(-533.3, -306.9)],
+	[Vector2(-533.3, -306.9), Vector2(-373.8, -344.3)],
+	[Vector2(-373.8, -344.3), Vector2(-322.5, -331.1)],
+	[Vector2(-322.5, -331.1), Vector2(-187.4, -446.3)],
+	[Vector2(-187.4, -446.3), Vector2(243.0, -428.5)],
+	[Vector2(243.0, -428.5), Vector2(685.8, -501.0)],
+	[Vector2(685.8, -501.0), Vector2(782.3, -348.6)],
+	[Vector2(782.3, -348.6), Vector2(975.8, -323.9)],
+	[Vector2(975.8, -323.9), Vector2(1006.3, -240.4)],
+	[Vector2(1006.3, -240.4), Vector2(779.8, -196.4)],
+	[Vector2(779.8, -196.4), Vector2(723.0, -244.8)],
+	[Vector2(723.0, -244.8), Vector2(672.7, -283.3)],
+	[Vector2(672.7, -283.3), Vector2(446.0, -252.2)],
+	[Vector2(446.0, -252.2), Vector2(212.0, -292.4)],
+	[Vector2(212.0, -292.4), Vector2(-23.0, -316.8)],
+	[Vector2(-23.0, -316.8), Vector2(-184.9, -321.0)],
+	[Vector2(-184.9, -321.0), Vector2(-231.9, -286.4)],
+	[Vector2(-231.9, -286.4), Vector2(-275.8, -211.7)],
+	[Vector2(-275.8, -211.7), Vector2(-316.1, -180.4)],
+	[Vector2(-316.1, -180.4), Vector2(-146.0, -37.9)],
+	[Vector2(-146.0, -37.9), Vector2(-162.6, 23.7)],
+	[Vector2(-162.6, 23.7), Vector2(-124.0, 127.2)],
+	[Vector2(-124.0, 127.2), Vector2(-126.6, 218.0)],
+	[Vector2(-126.6, 218.0), Vector2(-107.6, 278.3)],
+	[Vector2(-107.6, 278.3), Vector2(-103.8, 418.4)],
+	[Vector2(-103.8, 418.4), Vector2(-68.8, 518.1)],
+	[Vector2(-68.8, 518.1), Vector2(12.0, 575.4)],
+	[Vector2(12.0, 575.4), Vector2(107.2, 711.8)],
+	[Vector2(107.2, 711.8), Vector2(-154.2, 870.8)],
+	[Vector2(-154.2, 870.8), Vector2(-330.4, 799.0)],
+	[Vector2(-330.4, 799.0), Vector2(-410.4, 692.8)],
+	[Vector2(-410.4, 692.8), Vector2(-347.9, 591.7)],
+	[Vector2(-347.9, 591.7), Vector2(-213.8, 512.5)],
 ]
 
 const AUTHORING_MARKERS := {
@@ -203,23 +195,47 @@ const AUTHORING_MARKERS := {
 		"node_name": "ReturnTopdown",
 		"label": "RETURN CAUSEWAY",
 		"kind": "return_causeway",
-		"position": Vector2(1132.7, -285.5),
+		"position": Vector2(751.4, -286.8),
 	},
 	"level_exit": {
 		"node_name": "LevelExit",
 		"label": "LEVEL EXIT",
 		"kind": "level_exit",
-		"position": Vector2(1131.7, -287.6),
+		"position": Vector2(914.9, -273.5),
+	},
+	"first_reveal_trigger": {
+		"node_name": "FirstVistaRevealTrigger",
+		"label": "FIRST REVEAL TRIGGER",
+		"kind": "presentation_trigger",
+		"position": Vector2(-284.4, -292.0),
+	},
+	"first_reveal_camera_anchor": {
+		"node_name": "FirstRevealCameraAnchor",
+		"label": "FIRST CAMERA ANCHOR",
+		"kind": "camera_anchor",
+		"position": Vector2(-135.9, -658.3),
+	},
+	"second_reveal_trigger": {
+		"node_name": "SecondVistaRevealTrigger",
+		"label": "SECOND REVEAL TRIGGER",
+		"kind": "presentation_trigger",
+		"position": Vector2(595.8, -375.9),
+	},
+	"second_reveal_camera_anchor": {
+		"node_name": "SecondVistaCameraAnchor",
+		"label": "SECOND CAMERA ANCHOR",
+		"kind": "camera_anchor",
+		"position": Vector2(664.5, -660.0),
 	},
 }
 
 @export_group("Shared Parallax Review Gates")
-@export var show_far_cliff_islands := true
-@export var show_causeway_far_arches := true
-@export var show_lower_cliff_depth := true
-@export var show_ocean_mist := true
-@export var show_near_edge_mist := true
-@export var show_foreground_ruined_arch := true
+@export var show_far_cliff_islands := false
+@export var show_causeway_far_arches := false
+@export var show_lower_cliff_depth := false
+@export var show_ocean_mist := false
+@export var show_near_edge_mist := false
+@export var show_foreground_ruined_arch := false
 
 var underlay_root: Node2D = null
 var parallax_root: SunderedKeepParallaxRig = null
@@ -247,6 +263,9 @@ var vista_controller: SunderedKeepVistaController = null
 var reveal_director: Node = null
 var first_reveal_trigger: Area2D = null
 var first_reveal_camera_anchor: Marker2D = null
+var second_reveal_trigger: Area2D = null
+var second_reveal_camera_anchor: Marker2D = null
+var vista_debug_probe: CanvasLayer = null
 var _continue_exit: LevelExit2D = null
 var _return_world_exit: LevelExit2D = null
 var _final_fog_coverage_rect := Rect2()
@@ -260,6 +279,7 @@ func _ready() -> void:
 	_build_visuals()
 	_ensure_vista_controller()
 	_ensure_reveal_director()
+	_ensure_debug_probe()
 	_apply_vista_presentation_mode()
 	call_deferred("_finish_physics_setup")
 
@@ -334,7 +354,21 @@ func _ensure_roots() -> void:
 	return_topdown = _ensure_marker("ReturnTopdown", _route_point(RETURN_TOPDOWN_POS))
 	first_reveal_camera_anchor = _ensure_marker(
 		"FirstRevealCameraAnchor",
-		_route_point(FIRST_REVEAL_CAMERA_ANCHOR_POS)
+		_route_point(
+			_get_authoring_marker_position(
+				"first_reveal_camera_anchor",
+				FIRST_REVEAL_CAMERA_ANCHOR_POS
+			)
+		)
+	)
+	second_reveal_camera_anchor = _ensure_marker(
+		"SecondVistaCameraAnchor",
+		_route_point(
+			_get_authoring_marker_position(
+				"second_reveal_camera_anchor",
+				SECOND_REVEAL_CAMERA_ANCHOR_POS
+			)
+		)
 	)
 
 
@@ -924,7 +958,10 @@ func _build_sequence_triggers() -> void:
 	first_reveal_trigger = Area2D.new()
 	first_reveal_trigger.name = "FirstVistaRevealTrigger"
 	first_reveal_trigger.position = _route_point(
-		FIRST_REVEAL_TRIGGER_POS
+		_get_authoring_marker_position(
+			"first_reveal_trigger",
+			FIRST_REVEAL_TRIGGER_POS
+		)
 	)
 	first_reveal_trigger.collision_layer = 0
 	first_reveal_trigger.collision_mask = 1
@@ -942,6 +979,30 @@ func _build_sequence_triggers() -> void:
 		_on_first_reveal_trigger_body_entered
 	)
 
+	second_reveal_trigger = Area2D.new()
+	second_reveal_trigger.name = "SecondVistaRevealTrigger"
+	second_reveal_trigger.position = _route_point(
+		_get_authoring_marker_position(
+			"second_reveal_trigger",
+			SECOND_REVEAL_TRIGGER_POS
+		)
+	)
+	second_reveal_trigger.collision_layer = 0
+	second_reveal_trigger.collision_mask = 1
+	second_reveal_trigger.monitoring = true
+	second_reveal_trigger.monitorable = false
+	sequence_triggers_root.add_child(second_reveal_trigger)
+
+	var second_shape_node := CollisionShape2D.new()
+	second_shape_node.name = "CollisionShape2D"
+	var second_shape := RectangleShape2D.new()
+	second_shape.size = SECOND_REVEAL_TRIGGER_SIZE
+	second_shape_node.shape = second_shape
+	second_reveal_trigger.add_child(second_shape_node)
+	second_reveal_trigger.body_entered.connect(
+		_on_second_reveal_trigger_body_entered
+	)
+
 
 func _on_first_reveal_trigger_body_entered(body: Node) -> void:
 	if not _is_player_body(body):
@@ -949,6 +1010,14 @@ func _on_first_reveal_trigger_body_entered(body: Node) -> void:
 	if reveal_director == null:
 		return
 	reveal_director.call("play_first_reveal")
+
+
+func _on_second_reveal_trigger_body_entered(body: Node) -> void:
+	if not _is_player_body(body):
+		return
+	if reveal_director == null:
+		return
+	reveal_director.call("play_second_reveal")
 
 
 func _build_event_markers() -> void:
@@ -1118,13 +1187,18 @@ func _ensure_vista_controller() -> void:
 	vista_controller.wall_shadow_occluder_path = NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil")
 	vista_controller.final_gate_shadow_veil_path = NodePath("../OcclusionRoot/ApproachFinalGateShadowVeil")
 	vista_controller.distant_keep_path = NodePath(
-		"../VistaRoot/FirstVistaFarParallax/ApproachFirstVistaHorizon"
+		"../ParallaxRoot/RevealDepth/"
+		+ "DistantKeep_Parallax2D/"
+		+ "DistantSunderedKeepLandmark"
 	)
 	vista_controller.second_vista_start_marker_path = NodePath("../Markers/SecondVistaStart")
 	vista_controller.second_vista_full_marker_path = NodePath("../Markers/SecondVistaFull")
 	vista_controller.second_vista_end_marker_path = NodePath("../Markers/SecondVistaEnd")
 	vista_controller.first_reveal_camera_anchor_path = NodePath(
 		"../Markers/FirstRevealCameraAnchor"
+	)
+	vista_controller.second_reveal_camera_anchor_path = NodePath(
+		"../Markers/SecondVistaCameraAnchor"
 	)
 	vista_controller.parallax_reveal_root_path = NodePath(
 		"../ParallaxRoot/RevealDepth"
@@ -1153,6 +1227,19 @@ func _ensure_reveal_director() -> void:
 	reveal_director.reveal_light_path = NodePath("../OcclusionRoot/RevealMoonlightCue")
 	reveal_director.destination_prompt_path = NodePath("../EventRuntimeRoot/LevelExitAffordance")
 	reveal_director.refresh_bindings()
+
+
+func _ensure_debug_probe() -> void:
+	var dev_mode := get_node_or_null("/root/DevMode")
+	if dev_mode == null or not bool(dev_mode.get("debug_ui_enabled")):
+		return
+	vista_debug_probe = get_node_or_null(
+		"VistaDebugProbe"
+	) as CanvasLayer
+	if vista_debug_probe == null:
+		vista_debug_probe = VISTA_DEBUG_PROBE_SCRIPT.new() as CanvasLayer
+		vista_debug_probe.name = "VistaDebugProbe"
+		add_child(vista_debug_probe)
 
 
 func _is_player_body(body: Node) -> bool:
@@ -1196,7 +1283,11 @@ func restore_route_state(_state: Dictionary) -> bool:
 
 
 func prepare_route_deactivation(_context: Dictionary) -> void:
-	pass
+	if reveal_director != null \
+			and reveal_director.has_method(
+				"release_presentation_constraints"
+			):
+		reveal_director.call("release_presentation_constraints")
 
 
 func complete_route_activation(_context: Dictionary) -> bool:

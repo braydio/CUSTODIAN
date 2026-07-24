@@ -27,7 +27,7 @@ design/02_features/vehicles/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md
 Optional implementation proposal file, to satisfy the older implementation-doc convention:
 
 ```text
-design/features/implementation/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM_CODE.md
+design/02_features/vehicles/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM_CODE.md
 ```
 
 Documentation note: The old `design/features/implementation/` convention has been consolidated. All implementation specs now live in the appropriate numbered directory under `design/` (e.g., `02_features/vehicles/` for vehicle features).

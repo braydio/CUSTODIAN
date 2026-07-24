@@ -74,7 +74,7 @@ func build(p_profile: int, world_rect: Rect2) -> void:
 	)
 	var foreground_root := _make_group(
 		"ForegroundDepth",
-		0.55 if p_profile == Profile.VISTA_APPROACH else 1.0
+		0.08 if p_profile == Profile.VISTA_APPROACH else 1.0
 	)
 
 	match p_profile:
@@ -146,6 +146,13 @@ func _build_vista_approach(
 		Vector2(padded.position.x, world_rect.position.y + 80.0),
 		Vector2(padded.size.x, 1100.0)
 	)
+	var keep_rect := Rect2(
+		Vector2(
+			world_rect.position.x + world_rect.size.x * 0.56,
+			world_rect.position.y + 115.0
+		),
+		Vector2(640.0, 296.0)
+	)
 	var arches_rect := Rect2(
 		Vector2(padded.position.x + 100.0, world_rect.position.y + 160.0),
 		Vector2(padded.size.x - 80.0, 1050.0)
@@ -179,6 +186,17 @@ func _build_vista_approach(
 			Color(0.58, 0.66, 0.74, 0.22),
 			Vector4(0.08, 0.08, 0.12, 0.18)
 		)
+	_add_single_layer(
+		reveal_root,
+		"DistantKeep_Parallax2D",
+		"DistantSunderedKeepLandmark",
+		DISTANT_KEEP_PATH,
+		keep_rect,
+		Vector2(0.12, 0.06),
+		-214,
+		Color(0.76, 0.82, 0.90, 0.68),
+		Vector4(0.12, 0.12, 0.16, 0.22)
+	)
 	if show_causeway_far_arches:
 		_add_single_layer(
 			reveal_root,

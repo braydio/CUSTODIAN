@@ -31,6 +31,13 @@ func _run() -> void:
 		errors.append("Help label missing")
 	elif not help.text.contains("Collision mode") or not help.text.contains("Marker mode"):
 		errors.append("Help label should describe both collision and marker authoring modes")
+	elif not help.text.contains("4=first_reveal_trigger") \
+			or not help.text.contains(
+				"7=second_reveal_camera_anchor"
+			):
+		errors.append(
+			"Help label should expose Vista presentation marker shortcuts"
+		)
 
 	if not scene.has_method("get_collision_mapper_state"):
 		errors.append("Mapper script does not expose get_collision_mapper_state()")
@@ -60,6 +67,17 @@ func _run() -> void:
 			errors.append("Mapper replacement helper left stale segment text behind")
 		if not state.has("draft_markers") or not state.has("selected_marker"):
 			errors.append("Mapper state does not expose marker authoring state")
+		var marker_kinds := state.get("marker_kinds", []) as Array
+		for marker_id in [
+			"first_reveal_trigger",
+			"first_reveal_camera_anchor",
+			"second_reveal_trigger",
+			"second_reveal_camera_anchor",
+		]:
+			if not marker_kinds.has(marker_id):
+				errors.append(
+					"Mapper marker schema missing %s" % marker_id
+				)
 		if not scene.has_method("_replace_authoring_markers_block") or not scene.has_method("_format_authoring_markers_const"):
 			errors.append("Mapper script does not expose marker replacement helpers")
 		else:

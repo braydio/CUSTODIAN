@@ -18,7 +18,9 @@ const REQUIRED_TEXTURE_PATHS := [
 	"res://content/backgrounds/sundered_keep/approach/parallax/foreground_ruined_arch.png",
 ]
 
-const VISTA_LAYERS := {}
+const VISTA_LAYERS := {
+	"RevealDepth/DistantKeep_Parallax2D": Vector2(0.12, 0.06),
+}
 
 const RETURN_LAYERS := {
 	"BaseDepth/DistantKeep_Parallax2D": Vector2(0.18, 0.12),
@@ -110,7 +112,7 @@ func _check_rig(
 		as CanvasItem
 	)
 	var expected_reveal_alpha := 0.0 if label == "Vista" else 1.0
-	var expected_foreground_alpha := 0.55 if label == "Vista" else 1.0
+	var expected_foreground_alpha := 0.08 if label == "Vista" else 1.0
 	if (
 		reveal_root != null
 		and not is_equal_approx(

@@ -543,6 +543,7 @@ var _active_weapon_socket: Dictionary = {}
 var _weapon_socket_error_key: String = ""
 var fake_elevation: float = 0.0
 var movement_surface_multiplier: float = 1.0
+var presentation_movement_multiplier: float = 1.0
 var _base_world_z_index: int = 2
 var _fake_elevation_visual_offset: Vector2 = Vector2.ZERO
 
@@ -1186,6 +1187,7 @@ func _physics_process(delta):
 		active_move_speed *= float(cognitive.call("get_move_speed_multiplier"))
 	set_movement_surface_multiplier(_query_movement_surface_multiplier("operator"))
 	active_move_speed *= max(0.0, movement_surface_multiplier)
+	active_move_speed *= maxf(0.0, presentation_movement_multiplier)
 	var target_velocity: Vector2 = input_direction * active_move_speed
 	if _dodge_exit_timer > 0.0:
 		var carry_ratio := clampf(_dodge_exit_timer / maxf(0.001, dodge_exit_carry_duration), 0.0, 1.0)
@@ -2964,6 +2966,24 @@ func _heatmap_add(
 		heatmap.call("add", position, event_type, weight)
 
 
+func _report_material_contact(
+	position: Vector2,
+	contact_kind: StringName,
+	data: Dictionary = {}
+) -> void:
+	var material_intelligence := get_node_or_null(
+		"/root/MaterialIntelligence"
+	)
+	if material_intelligence != null \
+	and material_intelligence.has_method("report_contact"):
+		material_intelligence.call(
+			"report_contact",
+			position,
+			contact_kind,
+			data
+		)
+
+
 func _obs_increment(counter_name: StringName, amount: int = 1) -> void:
 	var observatory := _get_dev_observatory()
 	if observatory != null and observatory.has_method("increment"):
@@ -3018,6 +3038,21 @@ func _regenerate_stamina(amount: float, cause: StringName = &"passive") -> float
 
 func _log_ranged_fire_failure(reason: StringName) -> void:
 	var category := _get_ranged_fire_failure_category(reason)
+	var weapon_status := get_weapon_status()
+	var weapon_definition := _get_active_ranged_weapon_definition()
+	var heat_decay_rate := 0.0
+	if weapon_definition != null:
+		heat_decay_rate = weapon_definition.get_heat_float(
+			"decay_per_sec",
+			weapon_definition.heat_decay_per_sec
+		) * weapon_definition.heat_decay_mult
+	var trigger_just_pressed := _is_attack_primary_just_pressed()
+	var trigger_held := _is_attack_primary_pressed()
+	var trigger_mode := "released"
+	if trigger_just_pressed:
+		trigger_mode = "tap"
+	elif trigger_held:
+		trigger_mode = "held"
 	_obs_increment(&"player_ranged_request_failed", 1)
 	_obs_increment(&"player_ranged_fire_failures", 1)
 	_obs_increment(StringName("player_ranged_fire_failure_%s" % String(reason)), 1)
@@ -3031,9 +3066,25 @@ func _log_ranged_fire_failure(reason: StringName) -> void:
 		"loaded_ammo": _get_current_loaded_ammo(),
 		"reserve_ammo": _get_current_reserve_ammo(),
 		"heat": weapon_heat_by_id.get(_get_active_weapon_state_key(), 0.0),
+		"overheat_threshold": float(
+			weapon_status.get("overheat_threshold", 0.0)
+		),
+		"heat_decay_rate": heat_decay_rate,
+		"heat_decay_delay_remaining": float(
+			weapon_status.get("heat_decay_delay_remaining", 0.0)
+		),
+		"overheat_remaining": float(
+			weapon_status.get("overheat_remaining", 0.0)
+		),
+		"overheat_total": float(
+			weapon_status.get("overheat_total", 0.0)
+		),
 		"reload_active": _reload_active,
 		"cooldown_remaining": fire_cooldown_remaining,
 		"weapon_equipped": _is_ranged_loadout_active(),
+		"trigger_held": trigger_held,
+		"trigger_just_pressed": trigger_just_pressed,
+		"trigger_mode": trigger_mode,
 	})
 
 
@@ -3249,6 +3300,15 @@ func _emit_pending_ranged_shot() -> void:
 			"loaded_ammo": _get_current_loaded_ammo(),
 			"reserve_ammo": _get_current_reserve_ammo(),
 		})
+		_report_material_contact(
+			muzzle_check.get("position", spawn_position) as Vector2,
+			&"bullet_impact",
+			{
+				"weapon": _get_active_weapon_state_key(),
+				"damage": float(profile.get("damage", 0.0)),
+				"blocked_at_muzzle": true,
+			}
+		)
 		_obs_gauge(&"player_loaded_ammo", _get_current_loaded_ammo())
 		_obs_gauge(&"player_reserve_ammo", _get_current_reserve_ammo())
 		return
@@ -4226,6 +4286,16 @@ func _apply_melee_hitbox_tick() -> void:
 		elif _active_melee_attack_profile != null and _active_melee_attack_profile.attack_kind == "heavy":
 			melee_hit_strength = CombatConstants.HitStrength.HEAVY
 		enemy.take_damage(_melee_damage_current, melee_hit_strength)
+		_report_material_contact(
+			impact_position,
+			&"melee_impact",
+			{
+				"weapon": String(_melee_attack_key),
+				"attack_kind": _melee_attack_kind,
+				"damage": _melee_damage_current,
+				"target": String(enemy.name),
+			}
+		)
 		_melee_hit_targets[enemy_id] = true
 		var knockback_dir := global_position.direction_to(enemy.global_position)
 		var knockback_force: float = _active_melee_attack_profile.knockback_force if _active_melee_attack_profile != null else (melee_fast_knockback_force if _melee_attack_kind == "fast" else melee_heavy_knockback_force)
@@ -7727,6 +7797,10 @@ func set_fake_elevation(value: float) -> void:
 
 func set_movement_surface_multiplier(value: float) -> void:
 	movement_surface_multiplier = max(0.0, value)
+
+
+func set_presentation_movement_multiplier(value: float) -> void:
+	presentation_movement_multiplier = clampf(value, 0.0, 1.0)
 
 
 func _query_movement_surface_multiplier(actor_kind: String) -> float:

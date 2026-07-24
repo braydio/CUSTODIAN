@@ -780,6 +780,7 @@ func reset_zoom():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 func set_runtime_map(map_instance: Node) -> void:
+	clear_presentation_framing(true)
 	if not is_in_group("camera"):
 		add_to_group("camera")
 	if operator_ref == null or not is_instance_valid(operator_ref):
@@ -791,6 +792,29 @@ func set_runtime_map(map_instance: Node) -> void:
 	on_sector_entry()
 	if follow_enabled and operator_ref:
 		snap_to_player_spawn(operator_ref.global_position)
+
+
+func clear_presentation_framing(
+	restore_operator_follow: bool = true
+) -> void:
+	_presentation_framing_active = false
+	_presentation_offset = Vector2.ZERO
+	_presentation_zoom = Vector2.ONE
+
+	if restore_operator_follow:
+		if operator_ref == null or not is_instance_valid(operator_ref):
+			operator_ref = get_node_or_null(
+				"/root/GameRoot/World/Operator"
+			)
+		set_follow_target(operator_ref)
+
+	_lookahead = Vector2.ZERO
+	_threat_offset = Vector2.ZERO
+	_threat_target_offset = Vector2.ZERO
+	_current_bob = 0.0
+	_target_bob = 0.0
+	_push_offset = Vector2.ZERO
+	_current_aim_camera_lead = Vector2.ZERO
 
 
 func get_runtime_map() -> Node:

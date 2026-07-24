@@ -13,6 +13,9 @@ func _init() -> void:
 
 func _run() -> void:
 	var registry := root.get_node("InfrastructureRegistry")
+	var observatory := root.get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("clear"):
+		observatory.call("clear")
 	registry.clear_runtime_state()
 	var game_root := Node.new()
 	game_root.name = "GameRoot"
@@ -40,6 +43,35 @@ func _run() -> void:
 	var consumers: Array = status.get("infrastructure_consumers", [])
 	_require(consumers.size() == 1, "Grid should expose exactly one registered infrastructure consumer.")
 	_require(str((consumers[0] as Dictionary).get("id", "")) == "field_fabricator_primary", "Consumer snapshot lost stable identity.")
+	var tier_events_before := _count_observatory_events(
+		observatory,
+		&"infrastructure_power_tier_changed"
+	)
+	var power_consumer := fabricator.get_node_or_null("PowerConsumer")
+	_require(
+		power_consumer != null,
+		"Field Fabricator PowerConsumer node is missing."
+	)
+	if power_consumer != null:
+		var stable_allocation := float(
+			power_consumer.get("allocated_power")
+		)
+		power_consumer.call(
+			"apply_power_allocation",
+			stable_allocation
+		)
+		power_consumer.call(
+			"apply_power_allocation",
+			stable_allocation
+		)
+	var tier_events_after := _count_observatory_events(
+		observatory,
+		&"infrastructure_power_tier_changed"
+	)
+	_require(
+		tier_events_after == tier_events_before,
+		"Stable power allocation emitted a duplicate tier-change event."
+	)
 	game_root.queue_free()
 	await process_frame
 	_finish()
@@ -50,6 +82,21 @@ func _require(condition: bool, message: String) -> void:
 		return
 	_failed = true
 	push_error("[PowerGridComponentRegistrationSmoke] %s" % message)
+
+
+func _count_observatory_events(
+	observatory: Node,
+	kind: StringName
+) -> int:
+	if observatory == null \
+	or not observatory.has_method("get_recent_events"):
+		return 0
+	var events := observatory.call(
+		"get_recent_events",
+		1000,
+		kind
+	) as Array
+	return events.size()
 
 
 func _finish() -> void:

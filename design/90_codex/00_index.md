@@ -46,7 +46,7 @@ This index tracks idea cards, including graduated cards retained as audit record
 | `tooling/developer_replay_system.md` | candidate | P1 | system | |
 | `tooling/performance_budget_manager.md` | candidate | P1 | system | |
 | `world/line_of_communication_graph.md` | candidate | P1 | system | |
-| `world/material_intelligence_system.md` | candidate | P0 | system | |
+| `world/material_intelligence_system.md` | graduated | P0 | system | `design/02_features/world/MATERIAL_INTELLIGENCE_SYSTEM.md` |
 | `world/procedural_ruin_generator.md` | candidate | P2 | system | |
 | `world/resource_economy_graph.md` | candidate | P1 | system | |
 | `world/world_event_timeline.md` | candidate | P1 | system | |

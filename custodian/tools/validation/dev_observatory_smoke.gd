@@ -94,7 +94,19 @@ func _run() -> void:
 		failures.append("export must emit observatory_session_exported")
 
 	var payload := _read_json(SMOKE_EXPORT_PATH)
-	for required_key in ["schema", "metadata", "engine", "session", "scene", "counters", "gauges", "warnings", "events"]:
+	for required_key in [
+		"schema",
+		"metadata",
+		"engine",
+		"session",
+		"scene",
+		"counters",
+		"gauges",
+		"heatmap",
+		"material_intelligence",
+		"warnings",
+		"events",
+	]:
 		if not payload.has(required_key):
 			failures.append("export payload missing %s" % required_key)
 	if String(payload.get("schema", "")) != "custodian.dev_observatory.session.v1":

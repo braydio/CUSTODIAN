@@ -31,7 +31,7 @@ custodian/game/resources/resource_node.gd
 custodian/game/resources/player_resource_harvester.gd
 custodian/game/fabrication/fabricator_resource_bridge.gd
 custodian/content/resources/resource_defs.json
-design/features/implementation/RESOURCE_COLLECTION_SYSTEM.md
+design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md
 ```
 
 The repo guidance says active runtime is `custodian/`, active docs are under `custodian/docs/`, and Godot runtime behavior changes should update `./design/` first.  The tree map also shows `custodian/autoload` and `custodian/content`, so those are reasonable places to add the ledger and resource data. 
@@ -468,7 +468,7 @@ mkdir -p \
   custodian/game/resources \
   custodian/game/fabrication \
   custodian/content/resources \
-  design/features/implementation
+  design/02_features/resource_fabrication
 
 cat > custodian/content/resources/resource_defs.json <<'EOF'
 {
@@ -491,7 +491,7 @@ cat > custodian/content/resources/resource_defs.json <<'EOF'
 }
 EOF
 
-cat > design/features/implementation/RESOURCE_COLLECTION_SYSTEM.md <<'EOF'
+cat > design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md <<'EOF'
 # RESOURCE COLLECTION SYSTEM
 
 Status: draft
@@ -561,7 +561,7 @@ Required files:
 - custodian/game/resources/player_resource_harvester.gd
 - custodian/game/fabrication/fabricator_resource_bridge.gd
 - custodian/content/resources/resource_defs.json
-- design/features/implementation/RESOURCE_COLLECTION_SYSTEM.md
+- design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md
 
 Integration:
 - Register ResourceLedger as an autoload.

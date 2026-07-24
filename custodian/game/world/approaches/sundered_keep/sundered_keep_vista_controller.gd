@@ -22,6 +22,7 @@ class_name SunderedKeepVistaController
 @export var second_vista_full_marker_path: NodePath
 @export var second_vista_end_marker_path: NodePath
 @export var first_reveal_camera_anchor_path: NodePath
+@export var second_reveal_camera_anchor_path: NodePath
 @export var parallax_reveal_root_path: NodePath
 @export var parallax_foreground_root_path: NodePath
 
@@ -31,7 +32,7 @@ class_name SunderedKeepVistaController
 @export_range(0.0, 1.0, 0.01) var fog_underlay_min_alpha := 0.28
 @export_range(0.0, 1.0, 0.01) var fog_underlay_max_alpha := 0.62
 @export_range(0.0, 1.0, 0.01) var cliff_max_alpha := 0.92
-@export_range(0.0, 1.0, 0.01) var shadow_max_alpha := 0.85
+@export_range(0.0, 1.0, 0.01) var shadow_max_alpha := 0.38
 @export_range(0.0, 1.0, 0.01) var keep_min_alpha := 0.40
 
 const CAMERA_INTRO_TIGHT_OFFSET := Vector2(0.0, -18.0)
@@ -40,8 +41,8 @@ const CAMERA_FIRST_REVEAL_OFFSET := Vector2.ZERO
 const CAMERA_FIRST_REVEAL_ZOOM := Vector2(0.84, 0.84)
 const CAMERA_TRAVERSE_OFFSET := Vector2(0.0, -48.0)
 const CAMERA_TRAVERSE_ZOOM := Vector2(0.98, 0.98)
-const CAMERA_LABYRINTH_OFFSET := Vector2(18.0, -52.0)
-const CAMERA_LABYRINTH_ZOOM := Vector2(0.97, 0.97)
+const CAMERA_SECOND_REVEAL_OFFSET := Vector2(150.0, -115.0)
+const CAMERA_SECOND_REVEAL_ZOOM := Vector2(0.84, 0.84)
 const CAMERA_FINAL_GATE_OFFSET := Vector2.ZERO
 const CAMERA_FINAL_GATE_ZOOM := Vector2.ONE
 
@@ -51,6 +52,9 @@ enum FramingPhase {
 	FIRST_REVEAL_HOLD,
 	RETURNING_TO_PLAY,
 	GAMEPLAY,
+	SECOND_REVEAL,
+	SECOND_REVEAL_HOLD,
+	SECOND_RETURNING_TO_PLAY,
 }
 
 var _player: Node2D
@@ -73,6 +77,7 @@ var _second_vista_start: Marker2D
 var _second_vista_full: Marker2D
 var _second_vista_end: Marker2D
 var _first_reveal_camera_anchor: Marker2D
+var _second_reveal_camera_anchor: Marker2D
 var _parallax_reveal_root: CanvasItem
 var _parallax_foreground_root: CanvasItem
 var _presentation_anchor: Marker2D
@@ -83,6 +88,9 @@ var _framing_phase := FramingPhase.INTRO_TIGHT
 var _first_reveal_weight := 0.0
 var _return_to_play_weight := 0.0
 var _first_reveal_complete := false
+var _second_reveal_weight := 0.0
+var _second_return_to_play_weight := 0.0
+var _second_reveal_complete := false
 
 
 func _ready() -> void:
@@ -149,6 +157,9 @@ func enter_intro_tight_mode() -> void:
 	_first_reveal_weight = 0.0
 	_return_to_play_weight = 0.0
 	_first_reveal_complete = false
+	_second_reveal_weight = 0.0
+	_second_return_to_play_weight = 0.0
+	_second_reveal_complete = false
 	_restore_operator_follow()
 	_set_camera_target(
 		CAMERA_INTRO_TIGHT_OFFSET,
@@ -211,6 +222,63 @@ func complete_first_reveal() -> void:
 	_apply_progress(_last_progress)
 
 
+func begin_second_reveal() -> void:
+	if not _first_reveal_complete or _second_reveal_complete:
+		return
+	_framing_phase = FramingPhase.SECOND_REVEAL
+	_second_reveal_weight = 0.0
+	_second_return_to_play_weight = 0.0
+	_ensure_presentation_anchor()
+	if _second_reveal_camera_anchor != null:
+		_presentation_anchor.global_position = (
+			_second_reveal_camera_anchor.global_position
+		)
+	_set_camera_follow_target(_presentation_anchor)
+	_apply_progress(_last_progress)
+
+
+func set_second_reveal_weight(weight: float) -> void:
+	_second_reveal_weight = clampf(weight, 0.0, 1.0)
+	_apply_progress(_last_progress)
+
+
+func hold_second_reveal() -> void:
+	_framing_phase = FramingPhase.SECOND_REVEAL_HOLD
+	_second_reveal_weight = 1.0
+	_apply_progress(_last_progress)
+
+
+func begin_second_return_to_gameplay() -> void:
+	_framing_phase = FramingPhase.SECOND_RETURNING_TO_PLAY
+	_second_return_to_play_weight = 0.0
+	_apply_progress(_last_progress)
+
+
+func set_second_return_to_gameplay_weight(weight: float) -> void:
+	_second_return_to_play_weight = clampf(weight, 0.0, 1.0)
+	if (
+		_presentation_anchor != null
+		and _player != null
+		and _second_reveal_camera_anchor != null
+	):
+		_presentation_anchor.global_position = (
+			_second_reveal_camera_anchor.global_position.lerp(
+				_player.global_position,
+				_second_return_to_play_weight
+			)
+		)
+	_apply_progress(_last_progress)
+
+
+func complete_second_reveal() -> void:
+	_second_reveal_complete = true
+	_framing_phase = FramingPhase.GAMEPLAY
+	_second_reveal_weight = 1.0
+	_second_return_to_play_weight = 1.0
+	_restore_operator_follow()
+	_apply_progress(_last_progress)
+
+
 # Compatibility with the former one-phase reveal API.
 func begin_reveal_choreography() -> void:
 	begin_first_reveal()
@@ -230,11 +298,17 @@ func get_reveal_choreography_state() -> Dictionary:
 			FramingPhase.FIRST_REVEAL,
 			FramingPhase.FIRST_REVEAL_HOLD,
 			FramingPhase.RETURNING_TO_PLAY,
+			FramingPhase.SECOND_REVEAL,
+			FramingPhase.SECOND_REVEAL_HOLD,
+			FramingPhase.SECOND_RETURNING_TO_PLAY,
 		],
 		"weight": _first_reveal_weight,
 		"progress_floor": 0.0,
 		"phase": FramingPhase.keys()[_framing_phase],
 		"first_reveal_complete": _first_reveal_complete,
+		"second_reveal_complete": _second_reveal_complete,
+		"second_reveal_weight": _second_reveal_weight,
+		"second_return_weight": _second_return_to_play_weight,
 		"return_weight": _return_to_play_weight,
 		"follow_target_is_operator": (
 			_camera != null
@@ -268,6 +342,9 @@ func _resolve_nodes() -> void:
 	_second_vista_end = get_node_or_null(second_vista_end_marker_path) as Marker2D
 	_first_reveal_camera_anchor = get_node_or_null(
 		first_reveal_camera_anchor_path
+	) as Marker2D
+	_second_reveal_camera_anchor = get_node_or_null(
+		second_reveal_camera_anchor_path
 	) as Marker2D
 	_parallax_reveal_root = get_node_or_null(
 		parallax_reveal_root_path
@@ -307,7 +384,9 @@ func _resolve_nodes() -> void:
 		_final_gate_shadow_veil = approach_root.get_node_or_null("OcclusionRoot/ApproachFinalGateShadowVeil") as CanvasItem
 	if _keep == null:
 		_keep = approach_root.get_node_or_null(
-			"VistaRoot/FirstVistaFarParallax/ApproachFirstVistaHorizon"
+			"ParallaxRoot/RevealDepth/"
+			+ "DistantKeep_Parallax2D/"
+			+ "DistantSunderedKeepLandmark"
 		) as CanvasItem
 	if _second_vista_start == null:
 		_second_vista_start = approach_root.get_node_or_null("Markers/SecondVistaStart") as Marker2D
@@ -318,6 +397,10 @@ func _resolve_nodes() -> void:
 	if _first_reveal_camera_anchor == null:
 		_first_reveal_camera_anchor = approach_root.get_node_or_null(
 			"Markers/FirstRevealCameraAnchor"
+		) as Marker2D
+	if _second_reveal_camera_anchor == null:
+		_second_reveal_camera_anchor = approach_root.get_node_or_null(
+			"Markers/SecondVistaCameraAnchor"
 		) as Marker2D
 	if _parallax_reveal_root == null:
 		_parallax_reveal_root = approach_root.get_node_or_null(
@@ -349,8 +432,8 @@ func _apply_progress(t: float) -> void:
 	if _parallax_foreground_root != null:
 		var foreground_t := smoothstep(0.58, 1.0, t)
 		_parallax_foreground_root.modulate.a = lerpf(
-			0.55,
-			1.0,
+			0.08,
+			0.24,
 			foreground_t
 		)
 	if _vista_root != null:
@@ -409,33 +492,42 @@ func _apply_camera_progress(t: float) -> void:
 			)
 			return
 
+		FramingPhase.SECOND_REVEAL, FramingPhase.SECOND_REVEAL_HOLD:
+			_set_camera_target(
+				CAMERA_TRAVERSE_OFFSET.lerp(
+					CAMERA_SECOND_REVEAL_OFFSET,
+					_second_reveal_weight
+				),
+				CAMERA_TRAVERSE_ZOOM.lerp(
+					CAMERA_SECOND_REVEAL_ZOOM,
+					_second_reveal_weight
+				)
+			)
+			return
+
+		FramingPhase.SECOND_RETURNING_TO_PLAY:
+			_set_camera_target(
+				CAMERA_SECOND_REVEAL_OFFSET.lerp(
+					CAMERA_TRAVERSE_OFFSET,
+					_second_return_to_play_weight
+				),
+				CAMERA_SECOND_REVEAL_ZOOM.lerp(
+					CAMERA_TRAVERSE_ZOOM,
+					_second_return_to_play_weight
+				)
+			)
+			return
+
 		FramingPhase.GAMEPLAY:
 			_apply_gameplay_camera_progress(t)
 
 
 func _apply_gameplay_camera_progress(t: float) -> void:
-	var second_start_progress := _marker_progress(_second_vista_start) if _second_vista_start != null else 0.60
 	var second_end_progress := _marker_progress(_second_vista_end) if _second_vista_end != null else 0.86
 	var end_progress := _marker_progress(_end) if _end != null else 1.0
 
-	if t < second_start_progress:
+	if not _second_reveal_complete or t <= second_end_progress:
 		_set_camera_target(CAMERA_TRAVERSE_OFFSET, CAMERA_TRAVERSE_ZOOM)
-	elif t <= second_end_progress:
-		var labyrinth_weight := smoothstep(
-			second_start_progress,
-			second_end_progress,
-			t
-		)
-		_set_camera_target(
-			CAMERA_TRAVERSE_OFFSET.lerp(
-				CAMERA_LABYRINTH_OFFSET,
-				labyrinth_weight
-			),
-			CAMERA_TRAVERSE_ZOOM.lerp(
-				CAMERA_LABYRINTH_ZOOM,
-				labyrinth_weight
-			)
-		)
 	else:
 		var final_weight := smoothstep(
 			second_end_progress,
@@ -443,11 +535,11 @@ func _apply_gameplay_camera_progress(t: float) -> void:
 			t
 		)
 		_set_camera_target(
-			CAMERA_LABYRINTH_OFFSET.lerp(
+			CAMERA_TRAVERSE_OFFSET.lerp(
 				CAMERA_FINAL_GATE_OFFSET,
 				final_weight
 			),
-			CAMERA_LABYRINTH_ZOOM.lerp(
+			CAMERA_TRAVERSE_ZOOM.lerp(
 				CAMERA_FINAL_GATE_ZOOM,
 				final_weight
 			)
@@ -487,24 +579,14 @@ func _set_camera_target(target_offset: Vector2, target_zoom: Vector2) -> void:
 		_camera.call("set_presentation_framing", true, target_offset, target_zoom)
 
 
-func _get_second_vista_alpha(t: float) -> float:
-	if _start == null or _end == null or _second_vista_start == null or _second_vista_full == null or _second_vista_end == null:
-		return 0.0
-
-	var start_progress := _marker_progress(_second_vista_start)
-	var full_progress := _marker_progress(_second_vista_full)
-	var end_progress := _marker_progress(_second_vista_end)
-
-	if not (start_progress < full_progress and full_progress < end_progress):
-		push_warning("[SunderedKeepVistaController] Second vista marker progress is invalid: start=%s full=%s end=%s" % [start_progress, full_progress, end_progress])
-		return 0.0
-
-	if t < start_progress:
-		return 0.0
-	if t <= full_progress:
-		return smoothstep(start_progress, full_progress, t)
-	if t <= end_progress:
-		return 1.0 - smoothstep(full_progress, end_progress, t)
+func _get_second_vista_alpha(_t: float) -> float:
+	if _framing_phase in [
+		FramingPhase.SECOND_REVEAL,
+		FramingPhase.SECOND_REVEAL_HOLD,
+	]:
+		return _second_reveal_weight
+	if _framing_phase == FramingPhase.SECOND_RETURNING_TO_PLAY:
+		return 1.0 - _second_return_to_play_weight
 	return 0.0
 
 

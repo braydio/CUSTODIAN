@@ -149,6 +149,10 @@ func get_current_route_id() -> StringName:
 	return _active_session.route_id if has_active_route() else &""
 
 
+func get_current_profile_id() -> StringName:
+	return _active_session.profile_id if has_active_route() else &""
+
+
 func get_phase() -> int:
 	return _phase
 

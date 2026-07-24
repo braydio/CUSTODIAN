@@ -12,8 +12,21 @@ var _current_path: String = ""
 
 func _ready() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
+	if DisplayServer.get_name() == "headless":
+		return
+
 	_ensure_player()
 	play_track(DEFAULT_MUSIC_PATH)
+
+
+func _exit_tree() -> void:
+	if _player == null:
+		return
+
+	_player.stop()
+	_player.stream = null
+	_player = null
+	_current_path = ""
 
 
 func _ensure_player() -> void:
@@ -28,6 +41,8 @@ func _ensure_player() -> void:
 func play_track(path: String) -> void:
 	if path.is_empty():
 		return
+
+	_ensure_player()
 	if path == _current_path and _player.playing:
 		return
 
@@ -46,11 +61,15 @@ func play_track(path: String) -> void:
 
 
 func stop_track() -> void:
+	if _player == null:
+		return
+
 	_player.stop()
 	_current_path = ""
 
 
 func set_volume_db(value: float) -> void:
+	_ensure_player()
 	_player.volume_db = value
 
 

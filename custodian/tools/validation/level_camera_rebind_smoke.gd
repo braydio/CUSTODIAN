@@ -34,8 +34,12 @@ func _run() -> void:
 		errors.append("camera zoom was not restored")
 	if not (camera.get("target_zoom") as Vector2).is_equal_approx(expected_target_zoom):
 		errors.append("camera target zoom was not restored")
-	if not bool(camera.call("has_presentation_framing")):
-		errors.append("camera presentation-framing state was not restored")
+	if bool(camera.call("has_presentation_framing")):
+		errors.append(
+			"runtime-map handoff retained stale presentation framing"
+		)
+	if camera.get("follow_target") != fixture.actor:
+		errors.append("runtime-map handoff did not restore Operator follow")
 	_finish(errors)
 
 

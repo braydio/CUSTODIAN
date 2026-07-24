@@ -81,7 +81,12 @@ Developer Observatory adds current cell/sample gauges and embeds a
 - Enemy kills and enemy attack outcomes create combat cells.
 - Developer Observatory export includes a `heatmap` object.
 - `custodian/tools/analysis/analyze_dev_observatory_session.py` prints a
-  `HEATMAP` section with top, danger, and combat cells.
+  `HEATMAP` section with top, danger, and combat cells, approximate world
+  origins, and pixel bounds.
+- `--heatmap-top N` controls the number of rows in each heatmap ranking
+  independently of the general report limit.
+- Material-contact events may add low-weight `material_<contact_kind>` samples;
+  these remain descriptive tags and never influence simulation.
 - No gameplay behavior changes.
 
 ## Validation

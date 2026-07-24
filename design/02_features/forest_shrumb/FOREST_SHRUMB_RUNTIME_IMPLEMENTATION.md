@@ -514,14 +514,14 @@ custodian/docs/ARCHITECTURE.md
 custodian/docs/SCENE_HIERARCHY.md
 ```
 
-If the implementation spec lives under `design/features/implementation/`, update its status label from `draft` to `review` or `complete` according to actual implementation status.
+If the implementation spec lives under `design/02_features/`, update its status label from `draft` to `review` or `complete` according to actual implementation status.
 
 ---
 
 ## 16. One-Shot Codex Prompt
 
 ```text
-Implement the Forest Shrumb runtime foundation from design/features/implementation/FOREST_SHRUMB_RUNTIME_IMPLEMENTATION_DELTA.md.
+Implement the Forest Shrumb runtime foundation from design/02_features/forest_shrumb/FOREST_SHRUMB_RUNTIME_IMPLEMENTATION.md.
 
 Assume the full Forest Shrumb lore/gameplay design already exists and should not be restated.
 

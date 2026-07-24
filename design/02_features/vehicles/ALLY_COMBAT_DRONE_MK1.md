@@ -20,7 +20,7 @@ Do not let them replace Command Center authority, power routing, or sector autop
 Create/update:
 
 - design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md
-- - design/features/implementation/AUTONOMOUS_COMBAT_DRONES_CODE.md
+- - design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES_CODE.md
 - - custodian/game/actors/allies/combat_drone.gd
 - - custodian/game/actors/allies/combat_drone.tscn
 - - custodian/game/systems/drone/drone_manager.gd

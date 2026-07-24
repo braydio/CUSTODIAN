@@ -141,7 +141,8 @@ Input:
 - default key: `F10`
 
 The payload includes its schema and export timestamp, project and engine metadata, current scene, uptime/session counts,
-events, counters, gauges, and warnings. Runtime Variants are converted into JSON-safe values without clearing or
+events, counters, gauges, Heatmap and Material Intelligence snapshots, and
+warnings. Runtime Variants are converted into JSON-safe values without clearing or
 mutating the bounded observatory buffers. Successful exports append `observatory_session_exported`; directory, open,
 or write failures append a warning through `mark_warning(...)`. Successful writes print their absolute filesystem path,
 and the F9 overlay retains the latest timestamped export path for immediate discovery.
@@ -165,8 +166,27 @@ latest discoverable export or pass an explicit session path and analyzer flags.
 
 When the path is omitted, the script looks for `latest_session.json` in the standard Godot user-data locations. The
 standard-library-only report summarizes session and scene metadata, top event kinds, recent warnings, nonzero counters,
-gauges, player damage/deaths, ranged fire, dodges/iframes, Field Patch outcomes, and enemy attack outcomes. It does not
+gauges, player damage/deaths, ranged fire, dodges/iframes, Field Patch outcomes,
+enemy attack outcomes, material contacts, and spatial heat cells. It also flags
+buffer wrapping, one-event-type domination, unexplained damage/death, dominant
+overheat failures, and dodges without observed iframe avoids. It does not
 write to the export or change runtime state.
+
+## Signal Quality Contract (2026-07-24)
+
+- State sampled repeatedly belongs in gauges. Discrete events belong in
+  `log_event`.
+- Infrastructure power-tier telemetry compares the previous and resolved tier
+  and emits only on an actual transition. Stable allocation recalculation must
+  not produce another `infrastructure_power_tier_changed` event.
+- Enemy-to-player damage and enemy attacks retain their existing shared-ID
+  incoming-hit and terminal-outcome telemetry. These signals are observational
+  mirrors of authoritative outcomes and do not alter combat.
+- Overheat failure events include heat, threshold, decay rate/delay, lockout
+  remaining/total, ammo, cooldown, and held/tapped trigger context. The values
+  explain failures; they do not tune the weapon.
+- The analyzer uses cumulative counters where possible because retained
+  detailed events remain a bounded tail when the event ring wraps.
 
 ## Follow-up Slices
 
