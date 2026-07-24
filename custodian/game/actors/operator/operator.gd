@@ -87,6 +87,7 @@ const MELEE_MISS_SOUND: AudioStream = preload("res://content/audio/sfx/combat/me
 const MELEE_GRAZE_SOUND: AudioStream = preload("res://content/audio/sfx/combat/melee_graze_01.wav")
 const DODGE_ROLL_SOUND: AudioStream = preload("res://content/audio/sfx/combat/dodge_roll_01.wav")
 const CRITICAL_WINDUP_SOUND: AudioStream = preload("res://content/audio/sfx/combat/critical_windup_01.wav")
+const FIELD_PATCH_SOUND: AudioStream = preload("res://content/audio/sfx/healing/field_patch_composite.wav")
 const DODGE_FAST_ATTACK_FRAME_COUNT := 11
 const DODGE_FAST_ATTACK_FPS := 20.0
 const DODGE_FAST_ATTACK_HIT_FRAME := 4
@@ -1083,6 +1084,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _physics_process(delta):
+	apply_debug_resource_overrides()
 	if _paired_execution_active:
 		if _is_dead:
 			_cleanup_paired_execution(false, &"operator_dead")
@@ -2900,6 +2902,66 @@ func _obs_log(kind: StringName, data: Dictionary = {}) -> void:
 	var observatory := _get_dev_observatory()
 	if observatory != null and observatory.has_method("log_event"):
 		observatory.call("log_event", String(kind), data)
+	_record_heatmap_event(kind, data)
+
+
+func _record_heatmap_event(kind: StringName, data: Dictionary) -> void:
+	var event_position := data.get("position", global_position) as Vector2
+	match kind:
+		&"player_ranged_shot":
+			_heatmap_add(
+				&"shot_fired",
+				1.0,
+				data.get("muzzle", event_position) as Vector2
+			)
+		&"player_ranged_shot_blocked":
+			_heatmap_add(
+				&"shot_blocked",
+				1.0,
+				data.get("impact", event_position) as Vector2
+			)
+		&"player_dodge_started":
+			_heatmap_add(&"dodge_started", 0.25, event_position)
+		&"player_damage_avoided_by_iframe":
+			_heatmap_add(&"iframe_avoid", 1.0, event_position)
+		&"field_patch_started":
+			_heatmap_add(&"field_patch_started", 0.5, event_position)
+		&"field_patch_cancelled":
+			_heatmap_add(&"field_patch_cancelled", 0.75, event_position)
+		&"field_patch_committed":
+			_heatmap_add(&"field_patch_committed", 1.0, event_position)
+		&"incoming_hit_result":
+			var result := StringName(str(data.get("result", "")))
+			var weight := 1.0
+			if result == &"damaged":
+				weight = maxf(
+					float(data.get("applied_damage", 0.0)),
+					1.0
+				)
+			if result in [&"damaged", &"blocked", &"parried", &"dodged"]:
+				_heatmap_add(
+					StringName("incoming_hit_%s" % String(result)),
+					weight,
+					event_position
+				)
+		&"player_damage":
+			_heatmap_add(
+				&"damage_taken",
+				float(data.get("damage_applied", data.get("amount", 0.0))),
+				event_position
+			)
+		&"player_death":
+			_heatmap_add(&"player_death", 10.0, event_position)
+
+
+func _heatmap_add(
+	event_type: StringName,
+	weight: float = 1.0,
+	position: Vector2 = global_position
+) -> void:
+	var heatmap := get_node_or_null("/root/SectorHeatmap")
+	if heatmap != null and heatmap.has_method("add"):
+		heatmap.call("add", position, event_type, weight)
 
 
 func _obs_increment(counter_name: StringName, amount: int = 1) -> void:
@@ -2927,6 +2989,10 @@ func _obs_warning(message: String, data: Dictionary = {}) -> void:
 
 
 func _spend_stamina(amount: float, cause: StringName) -> float:
+	if _is_debug_resource_override_enabled(&"infinite_stamina"):
+		stamina = stamina_max
+		_sprint_exhausted = false
+		return 0.0
 	var before := stamina
 	stamina = maxf(0.0, stamina - maxf(0.0, amount))
 	var spent := before - stamina
@@ -5694,6 +5760,7 @@ func start_field_patch() -> void:
 	_exit_ranged_ready()
 	_cancel_reload()
 	field_patch_state_changed.emit(true, false)
+	_play_combat_sfx(FIELD_PATCH_SOUND, global_position, -3.0)
 	_obs_increment(&"field_patch_started", 1)
 	_obs_log(&"field_patch_started", {
 		"position": global_position,
@@ -9074,6 +9141,13 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 
 	if _should_ignore_incoming_damage_for_dodge("take_damage"):
 		return
+	if _is_debug_resource_override_enabled(&"infinite_health"):
+		health = max_health
+		current_health = max_health
+		health_changed.emit(current_health, max_health)
+		_obs_increment(&"debug_infinite_health_hits_ignored")
+		_obs_gauge(&"player_health", current_health)
+		return
 
 	if amount > 0.0 and _field_patch_active and not _field_patch_committed:
 		cancel_field_patch(&"damage")
@@ -9112,10 +9186,6 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 	_obs_log(&"player_damage", damage_event)
 	_obs_gauge(&"player_health", health)
 
-	var heatmap := get_node_or_null("/root/SectorHeatmap")
-	if heatmap != null:
-		heatmap.call("add", global_position, "damage_taken", amount)
-
 	var world_history := get_node_or_null("/root/WorldHistory")
 	if world_history != null:
 		world_history.call("record", "", "player_damage", global_position, {
@@ -9145,6 +9215,34 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 		await get_tree().create_timer(0.1).timeout
 		if not _is_dead:
 			update_visuals()
+
+
+func apply_debug_resource_overrides() -> void:
+	if _is_dead:
+		return
+	if _is_debug_resource_override_enabled(&"infinite_health"):
+		if health != max_health or current_health != max_health:
+			health = max_health
+			current_health = max_health
+			health_changed.emit(current_health, max_health)
+	if _is_debug_resource_override_enabled(&"infinite_stamina"):
+		stamina = stamina_max
+		_sprint_exhausted = false
+
+
+func _is_debug_resource_override_enabled(
+	control: StringName
+) -> bool:
+	var dev_mode := get_node_or_null("/root/DevMode")
+	if dev_mode == null or not bool(dev_mode.get("debug_ui_enabled")):
+		return false
+	match control:
+		&"infinite_health":
+			return bool(dev_mode.get("infinite_health_enabled"))
+		&"infinite_stamina":
+			return bool(dev_mode.get("infinite_stamina_enabled"))
+		_:
+			return false
 
 
 func apply_enemy_dash_impact(direction: Vector2, knockback_px: float, victim_hitstop_sec: float) -> void:
@@ -9478,9 +9576,6 @@ func _handle_death() -> void:
 	_obs_gauge(&"player_last_live_loaded_ammo", int(last_live_weapon_status.get("loaded_ammo", 0)))
 	_obs_gauge(&"player_last_live_reserve_ammo", int(last_live_weapon_status.get("reserve_ammo", 0)))
 	_obs_gauge(&"player_last_live_stamina", stamina)
-	var heatmap := get_node_or_null("/root/SectorHeatmap")
-	if heatmap != null:
-		heatmap.call("add", global_position, "player_death", 1.0)
 	var world_history := get_node_or_null("/root/WorldHistory")
 	if world_history != null:
 		world_history.call("record", "", "player_death", global_position, {})

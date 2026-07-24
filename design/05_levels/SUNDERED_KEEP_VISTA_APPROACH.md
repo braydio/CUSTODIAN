@@ -111,7 +111,10 @@ These values are live camera targets. `SunderedKeepVistaController` interpolates
 
 `FirstVistaRevealTrigger` is centered at runtime `(-150, 5)`, matching the authored overlook. `SunderedKeepRevealDirector` owns how the presentation plays, while the approach owns when it starts: 0.12 seconds of anticipation, a 0.55-second cubic blend to `FirstRevealCameraAnchor`, a 1.05-second hold, a 0.48-second return to Operator-follow traversal, and a 0.35-second atmosphere settle. Near and mid fog move away from the route on different vectors, the far strip remains as distance haze, and a soft radial `RevealMoonlightCue` briefly lifts the keep silhouette. Raw route progress cannot expose `VistaRoot` before this trigger and the one-shot reveal cannot replay.
 
-`VistaRoot/FirstVistaFarParallax/FarKeepSilhouetteLayerA` and `LayerB` reuse the current horizon matte at darker, softer, offset scales behind the primary plate. These are runtime distance-separation scaffolds; the bespoke far-silhouette asset tracked in `REQUIRED_ASSETS.md` should replace them once authored.
+The temporary `FarKeepSilhouetteLayerA/B` copies have been removed. The authored
+`ApproachFirstVistaHorizon` is the only first-vista landmark plate while the shared
+supplementary assets remain review-gated, preventing repeated Keep silhouettes at
+incompatible scales.
 
 The endpoint remains an `Area2D`, but it is a narrow walkable threshold under `EventRuntime/LevelExitAffordance`, displays the Return Causeway destination prompt, accepts automatic crossing only from the authored approach side, raises the final veil, and requests the route-owned `continue` handoff.
 
@@ -152,30 +155,32 @@ These live under `content/` not `assets/`. Use `res://content/backgrounds/sunder
 ## Shared Painterly Parallax Depth
 
 Vista Approach and Return Causeway both build the presentation-only
-`SunderedKeepParallaxRig`. The Vista controller remains the sole reveal-alpha owner:
-`BaseDepth` is present on entry, `RevealDepth` follows the explicit first-vista
-choreography, and `ForegroundDepth` increases toward the exit. Return Causeway builds
-the same groups at full alpha and preserves
+`SunderedKeepParallaxRig`, but its supplementary painterly plates are review-gated
+off by default. The current source revisions contain baked checkerboard, mismatched
+mist halves, or compositionally unsafe foreground coverage. Until corrected plates
+pass the alpha/source-revision validator and visual review, Vista uses its existing
+authored first-vista composition as the sole background authority. Return Causeway
+preserves only
 `BaseDepth/DistantKeep_Parallax2D/DistantSunderedKeepLandmark` for compatibility.
 
-| Layer | Scroll scale contract |
-|---|---|
-| `BackdropVoid` / `StormOceanBackdrop` | Opaque safety fill; ordinary world presentation |
-| Distant Keep | `(0.18, 0.12)` on Return Causeway |
-| Far cliff islands | `(0.10, 0.05)` Vista; `(0.22, 0.12)` Causeway |
-| Causeway far arches | `(0.16, 0.09)` Vista; `(0.30, 0.18)` Causeway |
-| Lower cliff depth | `(0.28, 0.16)` Vista; `(0.36, 0.22)` Causeway |
-| Ocean mist | `(0.44, 0.24)` Vista; `(0.46, 0.28)` Causeway |
-| Playable terrain | Ordinary world transform; never parented to `ParallaxRoot` |
-| Foreground ruined arch | `(1.04, 1.02)` near occluder |
-| Near edge mist | `(0.82, 0.72)` atmospheric occluder |
+| Layer | Vista scroll scale | Review state |
+|---|---:|---|
+| `BackdropVoid` / `StormOceanBackdrop` | ordinary world presentation | active opaque safety fill |
+| Distant Keep | `(0.18, 0.12)` on Return Causeway | active |
+| Far cliff islands | `(0.08, 0.04)` | disabled pending clean alpha |
+| Causeway far arches | `(0.14, 0.07)` | disabled pending clean alpha and composition review |
+| Lower cliff depth | `(0.24, 0.13)` | disabled pending clean alpha |
+| Ocean mist | `(0.42, 0.24)` | disabled pending a coherent clean split pair |
+| Playable terrain | ordinary world transform | active; never parented to `ParallaxRoot` |
+| Foreground ruined arch | `(1.04, 1.02)` | disabled; alpha remains `0.0` |
+| Near edge mist | `(0.82, 0.72)` | disabled pending clean alpha |
 
-The ocean-mist and near-mist plates remain separate left/right runtime sprites with a
-96-pixel overlap; they are not stitched offline. Their `Parallax2D.scroll_offset`
-oscillates within fixed amplitudes, while `repeat_size` stays disabled because the
-plates are not guaranteed seamless. Every painterly Sprite2D explicitly uses linear
-filtering. `ParallaxRoot` may not contain collision or navigation nodes and may not
-become camera, traversal, combat, or simulation authority.
+The layer gates are exported on both `SunderedKeepApproach` and the shared rig.
+Disabled layers are not constructed and their textures are not loaded. When a layer
+is approved, ocean/near mist remain separate left/right runtime sprites with a
+96-pixel overlap; they are not stitched offline. Bounded `scroll_offset`, disabled
+repetition, explicit linear filtering, and the presentation-only node contract remain
+mandatory.
 
 Required plates live under
 `res://content/backgrounds/sundered_keep/approach/parallax/`. If edited in Aseprite,

@@ -38,7 +38,7 @@ This index tracks idea cards, including graduated cards retained as audit record
 | `world/landmark_hierarchy.md` | candidate | P1 | system | |
 | `world/spatial_compression.md` | candidate | P1 | mechanic | |
 | `simulation/interest_management.md` | graduated | P1 | system | live |
-| `simulation/navigation_combat_heatmaps.md` | graduated | P1 | system | live |
+| `simulation/navigation_combat_heatmaps.md` | graduated | P1 | system | runtime-seed |
 | `simulation/simulation_camera.md` | candidate | P2 | system | |
 | `ai/ai_morale_cohesion_system.md` | candidate | P2 | system | |
 | `ai/faction_knowledge_system.md` | candidate | P1 | system | |
@@ -59,7 +59,7 @@ Some initial cards now overlap with live implementation specs and runtime system
 - `design/01_systems/WORLD_STATE_GRAPH_SYSTEM.md`
 - `design/01_systems/WORLD_HISTORY_SYSTEM.md`
 - `design/01_systems/INTEREST_MANAGEMENT_SYSTEM.md`
-- `design/01_systems/SECTOR_HEATMAP_SYSTEM.md`
+- `design/02_features/debug_ui/NAVIGATION_COMBAT_HEATMAP_REPORTING.md`
 - `custodian/docs/ai_context/CURRENT_STATE.md`
 
 ## Wave History

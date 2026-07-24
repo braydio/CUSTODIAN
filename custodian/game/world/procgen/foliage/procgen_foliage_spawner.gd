@@ -124,6 +124,8 @@ func place_at(context: Dictionary, pos: Vector2i) -> bool:
 func _should_place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 	if float(context.get("foliage_density", 0.0)) <= 0.0:
 		return false
+	if _is_route_hard_clearance(context, pos):
+		return false
 	if _call_bool(context, "is_road_surface_tile", pos) or _call_bool(context, "is_parking_zone_tile", pos):
 		return false
 	if _call_bool(context, "is_indoor_tile", pos):
@@ -216,10 +218,12 @@ func _place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 	if texture == null:
 		return false
 
-	var sprite := Sprite2D.new()
-	sprite.texture = texture
 	var texture_size := texture.get_size()
 	var foliage_kind := _classify_foliage(texture_size)
+	if foliage_kind == "tree" and not _is_tree_allowed(context, pos):
+		return false
+	var sprite := Sprite2D.new()
+	sprite.texture = texture
 	sprite.modulate = _call_color(context, "get_planet_profile_color", "foliage_tint", Color.WHITE)
 	var world_pos := _call_vector2(context, "tile_to_world_position", pos) + _foliage_jitter(context, pos)
 	sprite.position = foliage_parent.to_local(world_pos)
@@ -348,12 +352,72 @@ func _would_place_foliage_at(context: Dictionary, pos: Vector2i) -> bool:
 	if _is_no_random_foliage_region_tile(context, pos):
 		return false
 	var density := float(context.get("foliage_density", 0.0))
+	density = minf(density, _route_foliage_density(context, pos))
 	if _is_inside_compound_zone(context, pos):
 		density *= float(context.get("foliage_compound_density_multiplier", 0.28))
 	if density <= 0.0:
 		return false
 	var prob := float(_tile_noise_hash(context, pos + Vector2i(13, 41)) % 1000) / 1000.0
 	return prob < density
+
+
+func _is_route_hard_clearance(
+	context: Dictionary,
+	pos: Vector2i
+) -> bool:
+	if not bool(context.get("route_playability_enabled", false)):
+		return false
+	var hard_clearance: Dictionary = context.get(
+		"route_hard_clearance_cells",
+		{}
+	)
+	return hard_clearance.has(pos)
+
+
+func _route_foliage_density(
+	context: Dictionary,
+	pos: Vector2i
+) -> float:
+	if not bool(context.get("route_playability_enabled", false)):
+		return float(context.get("foliage_density", 0.0))
+	var hard: Dictionary = context.get("route_hard_clearance_cells", {})
+	if hard.has(pos):
+		return 0.0
+	var shoulder: Dictionary = context.get("route_shoulder_cells", {})
+	if shoulder.has(pos):
+		return float(context.get("route_shoulder_foliage_density", 0.03))
+	var sparse: Dictionary = context.get(
+		"route_sparse_dressing_cells",
+		{}
+	)
+	if sparse.has(pos):
+		return float(context.get("route_sparse_foliage_density", 0.10))
+	return float(context.get("route_deep_foliage_density", 0.42))
+
+
+func _is_tree_allowed(
+	context: Dictionary,
+	pos: Vector2i
+) -> bool:
+	var centerline_distance: Dictionary = context.get(
+		"route_centerline_distance",
+		{}
+	)
+	if int(centerline_distance.get(pos, 999999)) < 5:
+		return false
+	var foliage_nodes: Dictionary = context.get("foliage_nodes", {})
+	for y in range(-4, 5):
+		for x in range(-4, 5):
+			if x == 0 and y == 0:
+				continue
+			var entry: Variant = foliage_nodes.get(
+				pos + Vector2i(x, y),
+				null
+			)
+			if entry is Dictionary \
+					and String((entry as Dictionary).get("kind", "")) == "tree":
+				return false
+	return true
 
 
 func _is_no_random_foliage_region_tile(context: Dictionary, pos: Vector2i) -> bool:

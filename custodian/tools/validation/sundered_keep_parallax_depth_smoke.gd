@@ -18,24 +18,20 @@ const REQUIRED_TEXTURE_PATHS := [
 	"res://content/backgrounds/sundered_keep/approach/parallax/foreground_ruined_arch.png",
 ]
 
-const VISTA_LAYERS := {
-	"BaseDepth/FarCliffIslands_Parallax2D": Vector2(0.10, 0.05),
-	"RevealDepth/CausewayFarArches_Parallax2D": Vector2(0.16, 0.09),
-	"BaseDepth/LowerCliffDepth_Parallax2D": Vector2(0.28, 0.16),
-	"BaseDepth/OceanMist_Parallax2D": Vector2(0.44, 0.24),
-	"ForegroundDepth/NearEdgeMist_Parallax2D": Vector2(0.82, 0.72),
-	"ForegroundDepth/ForegroundRuinedArch_Parallax2D": Vector2(1.04, 1.02),
-}
+const VISTA_LAYERS := {}
 
 const RETURN_LAYERS := {
 	"BaseDepth/DistantKeep_Parallax2D": Vector2(0.18, 0.12),
-	"BaseDepth/FarCliffIslands_Parallax2D": Vector2(0.22, 0.12),
-	"RevealDepth/CausewayFarArches_Parallax2D": Vector2(0.30, 0.18),
-	"BaseDepth/LowerCliffDepth_Parallax2D": Vector2(0.36, 0.22),
-	"BaseDepth/OceanMist_Parallax2D": Vector2(0.46, 0.28),
-	"ForegroundDepth/NearEdgeMist_Parallax2D": Vector2(0.82, 0.72),
-	"ForegroundDepth/ForegroundRuinedArch_Parallax2D": Vector2(1.04, 1.02),
 }
+
+const REVIEW_BLOCKED_LAYERS := [
+	"BaseDepth/FarCliffIslands_Parallax2D",
+	"RevealDepth/CausewayFarArches_Parallax2D",
+	"BaseDepth/LowerCliffDepth_Parallax2D",
+	"BaseDepth/OceanMist_Parallax2D",
+	"ForegroundDepth/NearEdgeMist_Parallax2D",
+	"ForegroundDepth/ForegroundRuinedArch_Parallax2D",
+]
 
 
 func _init() -> void:
@@ -90,6 +86,20 @@ func _check_rig(
 		errors.append("%s ParallaxRoot missing" % label)
 		return
 
+	var review_state: Variant = parallax_root.call(
+		"get_layer_review_state"
+	)
+	if not review_state is Dictionary:
+		errors.append("%s layer review state missing" % label)
+	else:
+		var review := review_state as Dictionary
+		for layer_name: String in review:
+			if bool(review[layer_name]):
+				errors.append(
+					"%s review-blocked layer enabled: %s"
+					% [label, layer_name]
+				)
+
 	for group_name in ["BaseDepth", "RevealDepth", "ForegroundDepth"]:
 		if parallax_root.get_node_or_null(group_name) == null:
 			errors.append("%s ParallaxRoot/%s missing" % [label, group_name])
@@ -138,6 +148,13 @@ func _check_rig(
 		if layer.repeat_size != Vector2.ZERO:
 			errors.append("%s %s must keep repeat_size disabled" % [label, layer_path])
 		_check_layer_sprites(layer, "%s %s" % [label, layer_path], errors)
+
+	for layer_path: String in REVIEW_BLOCKED_LAYERS:
+		if parallax_root.get_node_or_null(layer_path) != null:
+			errors.append(
+				"%s review-blocked layer was built: %s"
+				% [label, layer_path]
+			)
 
 	_check_presentation_only(parallax_root, label, errors)
 

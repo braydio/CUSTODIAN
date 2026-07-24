@@ -1,8 +1,12 @@
 # SECTOR HEATMAP SYSTEM
 
-Status: in_progress
+Status: superseded
 Owner: gameplay/tools
 Runtime target: Godot 4 (`custodian/`)
+Active successor: `design/02_features/debug_ui/NAVIGATION_COMBAT_HEATMAP_REPORTING.md`
+
+This document records the historical initial channel-grid slice. Use the active
+successor for current implementation and validation authority.
 
 ## Goal
 

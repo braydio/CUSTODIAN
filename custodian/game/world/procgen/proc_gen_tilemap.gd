@@ -23,6 +23,9 @@ const FACTION_SITE_PLACER_SCRIPT := preload("res://game/world/procgen/factions/f
 const STORY_ROOM_PLACER_SCRIPT := preload("res://game/world/procgen/story/story_room_placer.gd")
 const ASCENT_SPINE_BUILDER_SCRIPT := preload("res://game/world/procgen/intent/ascent_spine_builder.gd")
 const ASCENT_FIELD_BUILDER_SCRIPT := preload("res://game/world/procgen/intent/ascent_field_builder.gd")
+const ROUTE_PLAYABILITY_FIELD_SCRIPT := preload(
+	"res://game/world/procgen/playability/route_playability_field.gd"
+)
 const REGION_FOOTPRINT_RESERVER_SCRIPT := preload("res://game/world/procgen/intent/region_footprint_reserver.gd")
 const STORY_ROOM_GEOMETRY_STAMPER_SCRIPT := preload("res://game/world/procgen/story/story_room_geometry_stamper.gd")
 const FACTION_SITE_GEOMETRY_STAMPER_SCRIPT := preload("res://game/world/procgen/factions/faction_site_geometry_stamper.gd")
@@ -307,6 +310,15 @@ enum WorldShapeMode {
 @export var intent_decorate_compound_ingress: bool = true
 @export_group("", "")
 
+@export_group("Route Playability")
+@export var route_playability_enabled: bool = true
+@export var route_floor_cleanup_enabled: bool = true
+@export var route_presentation_enabled: bool = true
+@export_range(0.0, 1.0, 0.01) var route_shoulder_foliage_density := 0.03
+@export_range(0.0, 1.0, 0.01) var route_sparse_foliage_density := 0.10
+@export_range(0.0, 1.0, 0.01) var route_deep_foliage_density := 0.42
+@export_group("", "")
+
 @export_group("Constructed Interior Region", "interior_region")
 @export var interior_region_enabled: bool = true
 @export var interior_region_min_size: Vector2i = Vector2i(26, 18)
@@ -354,6 +366,7 @@ var _path_visual_tiles: Dictionary = {}
 var _compound_connector_centerline_tiles: Array[Vector2i] = []
 var _compound_connector_visual_candidates: Dictionary = {}
 var _parking_zone_tiles: Dictionary = {}
+var _parking_zone_center: Vector2i = Vector2i.ZERO
 var _region_tiles: Dictionary = {}
 var _wall_health: Dictionary = {}
 var _generated_floor_cells: Dictionary = {}
@@ -589,7 +602,10 @@ var _worldgen_reserved_regions: Array[Dictionary] = []
 var _worldgen_intent_floor_cells: Dictionary = {}
 var _ascent_field_summary: Dictionary = {}
 var _ascent_field_main_route_cells: Array[Vector2i] = []
+var _ascent_field_main_route_centerline_cells: Array[Vector2i] = []
 var _ascent_field_vista_cells: Array[Vector2i] = []
+var _route_playability_result: Dictionary = {}
+var _route_playability_audit: Dictionary = {}
 var _world_progress_marker_parent: Node2D = null
 var _debug_generation_id: int = 0
 var _runtime_wall_body_peak: int = 0
@@ -676,6 +692,7 @@ func _process_foliage_spawn_queue() -> void:
 			print("[ProcGenTilemap] foliage_deferred_spawn_complete elapsed=%dms" % (Time.get_ticks_msec() - _foliage_deferred_start_msec))
 		_foliage_deferred_start_msec = 0
 		validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
+		_run_route_playability_audit()
 
 
 func _is_attached_to_runtime_world() -> bool:
@@ -835,6 +852,8 @@ func _fill_tilemaps() -> void:
 
 	if intent_main_roads_enabled:
 		_carve_main_roads(map_size)
+	if route_presentation_enabled:
+		_stamp_ascent_route_presentation(map_size)
 	if use_cohesive_wall_visuals:
 		_apply_wall_visuals(map_size)
 	_protect_compound_ingress_tiles(map_size)
@@ -847,6 +866,7 @@ func _fill_tilemaps() -> void:
 
 	if elevation_metadata_enabled:
 		_apply_terrain_builder(map_size)
+		_enforce_route_playability_walkability(map_size)
 		_protect_compound_ingress_tiles(map_size)
 		_enforce_road_walkability(map_size)
 		_repair_road_surface_components(map_size, maxi(1, intent_main_road_half_width - 1))
@@ -865,15 +885,24 @@ func _fill_tilemaps() -> void:
 	if story_rooms_enabled:
 		_place_story_rooms(map_size)
 		_stamp_worldgen_story_room_geometry()
+	if _parking_zone_center != Vector2i.ZERO:
+		_stamp_parking_zone(_parking_zone_center, map_size)
+	_enforce_route_playability_walkability(map_size)
 	_marks["progress_faction_story"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 
 	if intent_main_roads_enabled:
+		if route_presentation_enabled:
+			_stamp_ascent_route_presentation(map_size)
 		_repair_road_surface_components(map_size, maxi(1, intent_main_road_half_width - 1))
 		_enforce_road_walkability(map_size)
+		_ensure_connected_parking_zone(map_size)
 		_prune_small_edge_road_components(map_size)
 		_refresh_road_path_visuals()
 		_refresh_compound_connector_pack_visuals(map_size)
+		_prune_small_disconnected_road_components(32)
+		_ensure_connected_parking_zone(map_size)
+		_refresh_road_path_visuals()
 		_capture_generated_tile_state(map_size)
 	_marks["roads_pass2"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
@@ -915,6 +944,9 @@ func _fill_tilemaps() -> void:
 		print("[ProcGenTilemap] props_foliage SKIP mode=EVAL_CANDIDATE")
 		_marks["props_foliage"] = 0
 		_marks["props_visual"] = 0
+	_last = Time.get_ticks_msec()
+	_run_route_playability_audit()
+	_marks["playability_audit"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 
 	if not generation_evaluation_mode and not enable_streaming_reveal:
@@ -1759,6 +1791,7 @@ func _carve_main_roads(map_size: Vector2i) -> void:
 	_compound_connector_centerline_tiles.clear()
 	_compound_connector_visual_candidates.clear()
 	_parking_zone_tiles.clear()
+	_parking_zone_center = Vector2i.ZERO
 	if procgen_node == null:
 		return
 
@@ -1794,6 +1827,61 @@ func _carve_main_roads(map_size: Vector2i) -> void:
 	_carve_main_road_path(spawn, parking_anchor, maxi(1, road_width - 1), map_size)
 	_stamp_parking_zone(parking_anchor, map_size)
 	_repair_road_surface_components(map_size, maxi(1, road_width - 1))
+
+
+func _stamp_ascent_route_presentation(map_size: Vector2i) -> void:
+	if world_shape_mode != WorldShapeMode.ASCENT_FIELD \
+			or _route_playability_result.is_empty():
+		return
+	var centerline_distance: Dictionary = _route_playability_result.get(
+		"centerline_distance",
+		{}
+	)
+	for cell in _ascent_field_main_route_cells:
+		if not _is_tile_inside_map(cell, map_size, 1) \
+				or _is_road_blocked_by_impassable_authority(cell):
+			continue
+		var distance := int(centerline_distance.get(cell, 999999))
+		if distance <= 2:
+			_main_road_tiles[cell] = true
+			if distance == 0:
+				_road_centerline_tiles[cell] = true
+			if _should_preserve_route_role_visual(cell):
+				continue
+			if distance == 0:
+				_road_visual_tiles[cell] = true
+			_set_road_path_tile(cell, "road")
+			if get_region_type_at_tile(cell) == "ascent_field_floor":
+				_set_region_tile(cell, "main_road", "travel")
+		elif distance <= 4:
+			if _should_preserve_route_role_visual(cell):
+				continue
+			_set_road_path_tile(cell, "path")
+			if get_region_type_at_tile(cell) == "ascent_field_floor":
+				_set_region_tile(cell, "soft_path", "route_shoulder")
+
+
+func _should_preserve_route_role_visual(cell: Vector2i) -> bool:
+	var region := get_region_data_at_tile(cell)
+	var region_type := String(region.get("region_type", ""))
+	var zone := String(region.get("zone", ""))
+	if zone == "authored_scene" \
+			or zone == "story_room" \
+			or zone == "faction_activity" \
+			or zone == "interior":
+		return true
+	if region_type.contains("authored") \
+			or region_type.contains("story_room") \
+			or region_type.contains("faction_site"):
+		return true
+	var traversal := String(
+		get_elevation_data_at_tile(cell).get(
+			"traversal_type",
+			ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE
+		)
+	)
+	return traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_RAMP \
+			or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_STAIR
 
 
 func _pick_primary_road_compound_anchor(spawn: Vector2i) -> Vector2i:
@@ -1899,6 +1987,21 @@ func _prune_small_edge_road_components(map_size: Vector2i) -> void:
 			_remove_road_piece_decal(tile)
 
 
+func _prune_small_disconnected_road_components(
+	minimum_size: int
+) -> void:
+	var spawn := get_player_spawn()
+	for component_variant in _collect_road_surface_components():
+		var component := component_variant as Array
+		if component.has(spawn) or component.size() >= minimum_size:
+			continue
+		for tile_variant in component:
+			if tile_variant is Vector2i:
+				_clear_procgen_road_authority_at(
+					tile_variant as Vector2i
+				)
+
+
 func _road_component_touches_edge(component: Array[Vector2i], map_size: Vector2i) -> bool:
 	for tile in component:
 		if tile.x <= 2 or tile.y <= 2 or tile.x >= map_size.x - 3 or tile.y >= map_size.y - 3:
@@ -1957,10 +2060,50 @@ func _pick_parking_anchor(spawn: Vector2i, primary_anchor: Vector2i, map_size: V
 		side = Vector2i.RIGHT
 	var offset_distance := intent_main_road_half_width + intent_parking_zone_half_extents_tiles.x + 1
 	var candidate := halfway + side * offset_distance
-	return Vector2i(
+	candidate = Vector2i(
 		clampi(candidate.x, 2 + intent_parking_zone_half_extents_tiles.x, map_size.x - 3 - intent_parking_zone_half_extents_tiles.x),
 		clampi(candidate.y, 2 + intent_parking_zone_half_extents_tiles.y, map_size.y - 3 - intent_parking_zone_half_extents_tiles.y)
 	)
+	return _find_clear_parking_anchor(candidate, map_size)
+
+
+func _find_clear_parking_anchor(
+	preferred: Vector2i,
+	map_size: Vector2i
+) -> Vector2i:
+	for radius in range(0, 25):
+		for y in range(-radius, radius + 1):
+			for x in range(-radius, radius + 1):
+				if radius > 0 and abs(x) != radius and abs(y) != radius:
+					continue
+				var candidate := preferred + Vector2i(x, y)
+				if _is_clear_parking_footprint(candidate, map_size):
+					return candidate
+	return preferred
+
+
+func _is_clear_parking_footprint(
+	center: Vector2i,
+	map_size: Vector2i
+) -> bool:
+	var half := Vector2i(
+		maxi(1, intent_parking_zone_half_extents_tiles.x),
+		maxi(1, intent_parking_zone_half_extents_tiles.y)
+	)
+	var rect := Rect2i(center - half, half * 2 + Vector2i.ONE)
+	for region in _worldgen_reserved_regions:
+		var reserved: Rect2i = region.get("rect", Rect2i())
+		if reserved.size.x > 0 and reserved.intersects(rect):
+			return false
+	for y in range(rect.position.y, rect.end.y):
+		for x in range(rect.position.x, rect.end.x):
+			var cell := Vector2i(x, y)
+			if not _is_tile_inside_map(cell, map_size, 1) \
+					or not _generated_floor_cells.has(cell) \
+					or is_indoor_tile(cell) \
+					or _is_road_blocked_by_impassable_authority(cell):
+				return false
+	return true
 
 
 func _int_sign(value: int) -> int:
@@ -2097,6 +2240,7 @@ func _protect_compound_ingress_tiles(map_size: Vector2i) -> void:
 
 
 func _stamp_parking_zone(center: Vector2i, map_size: Vector2i) -> void:
+	_parking_zone_center = center
 	var half := Vector2i(
 		maxi(1, intent_parking_zone_half_extents_tiles.x),
 		maxi(1, intent_parking_zone_half_extents_tiles.y)
@@ -2117,6 +2261,41 @@ func _stamp_parking_zone(center: Vector2i, map_size: Vector2i) -> void:
 			if x == 0 or y == 0 or (abs(x) % 3 == 0 and abs(y) % 2 == 0):
 				_road_centerline_tiles[tile] = true
 				_road_visual_tiles[tile] = true
+
+
+func _ensure_connected_parking_zone(map_size: Vector2i) -> void:
+	if _main_road_tiles.is_empty():
+		return
+	var spawn := get_player_spawn()
+	var connected := _collect_connected_road_tiles(spawn)
+	for tile_variant in _parking_zone_tiles.keys():
+		if connected.has(tile_variant):
+			return
+
+	if not _parking_zone_tiles.is_empty():
+		var old_root := _parking_zone_tiles.keys()[0] as Vector2i
+		var isolated := _collect_connected_road_tiles(old_root)
+		if not isolated.has(spawn):
+			for tile_variant in isolated.keys():
+				_clear_procgen_road_authority_at(tile_variant as Vector2i)
+	_parking_zone_tiles.clear()
+
+	var candidates: Array[Vector2i] = []
+	for tile_variant in connected.keys():
+		if tile_variant is Vector2i:
+			candidates.append(tile_variant as Vector2i)
+	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var a_distance := a.distance_squared_to(spawn)
+		var b_distance := b.distance_squared_to(spawn)
+		if a_distance == b_distance:
+			return a.y < b.y if a.x == b.x else a.x < b.x
+		return a_distance < b_distance
+	)
+	for candidate in candidates:
+		if not _is_clear_parking_footprint(candidate, map_size):
+			continue
+		_stamp_parking_zone(candidate, map_size)
+		return
 
 
 func _set_road_path_tile(pos: Vector2i, surface_kind: String = "road") -> void:
@@ -2290,7 +2469,9 @@ func _is_road_blocked_by_impassable_authority(tile: Vector2i) -> bool:
 
 func _should_preserve_road_floor_visual(tile: Vector2i) -> bool:
 	var region_type := get_region_type_at_tile(tile)
-	return region_type == "compound_connector_elevated_road" or region_type == "compound_connector_ramp"
+	return region_type == "compound_connector_elevated_road" \
+			or region_type == "compound_connector_ramp" \
+			or _should_preserve_route_role_visual(tile)
 
 
 func _apply_connector_region_visual(tile: Vector2i) -> void:
@@ -3218,12 +3399,73 @@ func _fill_ascent_field_substrate(map_size: Vector2i) -> void:
 		return
 	var builder := ASCENT_FIELD_BUILDER_SCRIPT.new()
 	var field: Dictionary = builder.call("build_field", _worldgen_intent_graph, map_size, procgen_node.seed if procgen_node != null else 0)
-	_worldgen_intent_floor_cells = field.get("floor_cells", {})
 	_worldgen_reserved_regions = field.get("reserved_regions", [])
 	_ascent_field_summary = field.get("debug_summary", {})
 	_ascent_field_main_route_cells = field.get("main_route_cells", [])
+	_ascent_field_main_route_centerline_cells = field.get(
+		"main_route_centerline_cells",
+		[]
+	)
 	_ascent_field_vista_cells = field.get("vista_cells", [])
+	_build_route_playability(field, map_size)
+	_worldgen_intent_floor_cells = field.get("floor_cells", {})
 	_apply_ascent_field_authority(field, map_size)
+
+
+func _build_route_playability(
+	field: Dictionary,
+	map_size: Vector2i
+) -> void:
+	_route_playability_result.clear()
+	_route_playability_audit.clear()
+	if not route_playability_enabled:
+		return
+
+	var playability := ROUTE_PLAYABILITY_FIELD_SCRIPT.new()
+	var floor_cells: Dictionary = field.get("floor_cells", {})
+	var provisional: Dictionary = playability.build(
+		floor_cells,
+		_ascent_field_main_route_cells,
+		_ascent_field_main_route_centerline_cells,
+		_worldgen_reserved_regions
+	)
+
+	if route_floor_cleanup_enabled:
+		var protected: Dictionary = provisional.get(
+			"protected_cells",
+			{}
+		).duplicate()
+		for cell in _ascent_field_main_route_cells:
+			protected[cell] = true
+		var cleanup: Dictionary = playability.cleanup_floor(
+			floor_cells,
+			protected,
+			map_size
+		)
+		floor_cells = cleanup.get("floor_cells", floor_cells)
+		field["floor_cells"] = floor_cells
+		_ascent_field_summary["cleanup_removed_tendrils"] = int(
+			cleanup.get("removed_tendrils", 0)
+		)
+		_ascent_field_summary["cleanup_filled_holes"] = int(
+			cleanup.get("filled_holes", 0)
+		)
+
+	_route_playability_result = playability.build(
+		floor_cells,
+		_ascent_field_main_route_cells,
+		_ascent_field_main_route_centerline_cells,
+		_worldgen_reserved_regions
+	)
+	_ascent_field_summary["playability_hard_clearance_cells"] = (
+		_route_playability_result.get(
+			"hard_clearance_cells",
+			{}
+		) as Dictionary
+	).size()
+	_ascent_field_summary["playability_pocket_count"] = (
+		_route_playability_result.get("pockets", []) as Array
+	).size()
 
 
 func _apply_ascent_field_authority(field: Dictionary, map_size: Vector2i) -> void:
@@ -3247,6 +3489,70 @@ func _apply_ascent_field_authority(field: Dictionary, map_size: Vector2i) -> voi
 		if _generated_floor_cells.has(tile):
 			continue
 		_set_ascent_field_wall_authority(tile)
+
+
+func _enforce_route_playability_walkability(
+	map_size: Vector2i
+) -> void:
+	if not route_playability_enabled \
+			or world_shape_mode != WorldShapeMode.ASCENT_FIELD \
+			or _route_playability_result.is_empty():
+		return
+	var hard_clearance: Dictionary = _route_playability_result.get(
+		"hard_clearance_cells",
+		{}
+	).duplicate()
+	for cell_variant in _main_road_tiles.keys():
+		if cell_variant is Vector2i:
+			hard_clearance[cell_variant] = true
+	for cell_variant in _parking_zone_tiles.keys():
+		if cell_variant is Vector2i:
+			hard_clearance[cell_variant] = true
+	var traversal_by_cell: Dictionary = _last_terrain_result.get(
+		"traversal_by_cell",
+		{}
+	)
+	var tile_by_cell: Dictionary = _last_terrain_result.get(
+		"tile_by_cell",
+		{}
+	)
+	for cell_variant in hard_clearance.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		if not _is_tile_inside_map(cell, map_size, 1):
+			continue
+		var traversal := String(
+			get_elevation_data_at_tile(cell).get(
+				"traversal_type",
+				ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE
+			)
+		)
+		if traversal != ELEVATION_MAP_SCRIPT.TRAVERSAL_BLOCKED \
+				and traversal != ELEVATION_MAP_SCRIPT.TRAVERSAL_LEDGE \
+				and traversal != ELEVATION_MAP_SCRIPT.TRAVERSAL_DROP:
+			continue
+		var height := int(
+			get_elevation_data_at_tile(cell).get("height", 0)
+		)
+		elevation_map.set_cell(
+			cell,
+			height,
+			ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE
+		)
+		traversal_by_cell[cell] = ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE
+		tile_by_cell[cell] = "rescue_walkable_ground"
+		_set_floor_tile_and_generated_state(
+			cell,
+			"route_clearance",
+			"travel"
+		)
+		_apply_terrain_tile_visual(
+			cell,
+			_deterministic_connector_repair_tile_id(cell)
+		)
+	_last_terrain_result["traversal_by_cell"] = traversal_by_cell
+	_last_terrain_result["tile_by_cell"] = tile_by_cell
 
 
 func _set_ascent_field_floor_authority(tile: Vector2i, region_type: String, zone: String) -> void:
@@ -3444,7 +3750,10 @@ func _clear_world_progression_runtime() -> void:
 	_worldgen_intent_floor_cells.clear()
 	_ascent_field_summary.clear()
 	_ascent_field_main_route_cells.clear()
+	_ascent_field_main_route_centerline_cells.clear()
 	_ascent_field_vista_cells.clear()
+	_route_playability_result.clear()
+	_route_playability_audit.clear()
 	_faction_activity_sites.clear()
 	_story_room_sites.clear()
 	_special_room_sites.clear()
@@ -3547,6 +3856,19 @@ func debug_get_generated_floor_cells() -> Dictionary:
 
 func debug_get_generated_wall_cells() -> Dictionary:
 	return _generated_wall_cells.duplicate(true)
+
+
+func debug_get_route_playability() -> Dictionary:
+	return _route_playability_result.duplicate(true)
+
+
+func debug_get_route_playability_audit() -> Dictionary:
+	return _route_playability_audit.duplicate(true)
+
+
+func debug_run_route_playability_audit() -> Dictionary:
+	_run_route_playability_audit()
+	return debug_get_route_playability_audit()
 
 
 func register_runtime_prop_blocker(
@@ -4920,6 +5242,30 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 		"foliage_deferred_spawn_enabled": foliage_deferred_spawn_enabled,
 		"foliage_spawn_batch_size": foliage_spawn_batch_size,
 		"foliage_density": foliage_density,
+		"route_playability_enabled": route_playability_enabled,
+		"route_distance": _route_playability_result.get(
+			"route_distance",
+			{}
+		),
+		"route_centerline_distance": _route_playability_result.get(
+			"centerline_distance",
+			{}
+		),
+		"route_hard_clearance_cells": _route_playability_result.get(
+			"hard_clearance_cells",
+			{}
+		),
+		"route_shoulder_cells": _route_playability_result.get(
+			"shoulder_cells",
+			{}
+		),
+		"route_sparse_dressing_cells": _route_playability_result.get(
+			"sparse_dressing_cells",
+			{}
+		),
+		"route_shoulder_foliage_density": route_shoulder_foliage_density,
+		"route_sparse_foliage_density": route_sparse_foliage_density,
+		"route_deep_foliage_density": route_deep_foliage_density,
 		"foliage_compound_density_multiplier": foliage_compound_density_multiplier,
 		"foliage_indoor_clearance_tiles": foliage_indoor_clearance_tiles,
 		"foliage_min_wall_distance": foliage_min_wall_distance,
@@ -5353,6 +5699,8 @@ func _should_place_ruin_prop(pos: Vector2i, map_size: Vector2i) -> bool:
 		return false
 	if _is_inside_combat_readability_spawn_clearance(pos, combat_readability_prop_clearance_tiles):
 		return false
+	if _is_route_hard_clearance_cell(pos):
+		return false
 	if _is_inside_required_route_clearance(pos, runtime_blocker_route_clearance_tiles):
 		return false
 	if _foliage_nodes.has(pos):
@@ -5383,6 +5731,8 @@ func _is_inside_ruin_prop_clearance(pos: Vector2i) -> bool:
 
 
 func _is_inside_tree_trunk_clearance(pos: Vector2i) -> bool:
+	if _is_route_hard_clearance_cell(pos):
+		return true
 	if _is_inside_required_route_clearance(pos, runtime_blocker_route_clearance_tiles):
 		return true
 	for building in _last_compound_buildings:
@@ -5396,6 +5746,8 @@ func _is_inside_tree_trunk_clearance(pos: Vector2i) -> bool:
 
 
 func _is_inside_required_route_clearance(pos: Vector2i, radius: int = 3) -> bool:
+	if _is_route_hard_clearance_cell(pos):
+		return true
 	var clearance := maxi(0, radius)
 	for y in range(-clearance, clearance + 1):
 		for x in range(-clearance, clearance + 1):
@@ -5407,6 +5759,60 @@ func _is_inside_required_route_clearance(pos: Vector2i, radius: int = 3) -> bool
 					or _compound_connector_centerline_tiles.has(tile):
 				return true
 	return false
+
+
+func _is_route_hard_clearance_cell(pos: Vector2i) -> bool:
+	var hard_clearance: Dictionary = _route_playability_result.get(
+		"hard_clearance_cells",
+		{}
+	)
+	return hard_clearance.has(pos)
+
+
+func _run_route_playability_audit() -> void:
+	_route_playability_audit.clear()
+	if not route_playability_enabled \
+			or world_shape_mode != WorldShapeMode.ASCENT_FIELD \
+			or _route_playability_result.is_empty():
+		return
+	var blockers := _generated_wall_cells.duplicate()
+	for source_variant in _runtime_prop_blocker_sources.values():
+		if not source_variant is Dictionary:
+			continue
+		var source := source_variant as Dictionary
+		var owner := source.get("owner", null) as ProceduralProp
+		if owner != null and _is_portal_prop(owner):
+			continue
+		for cell_variant in source.get("cells", []):
+			if cell_variant is Vector2i:
+				blockers[cell_variant] = true
+	var required_cells: Array[Vector2i] = [get_player_spawn()]
+	for cell_variant in _route_playability_result.get(
+		"required_centers",
+		[]
+	):
+		if cell_variant is Vector2i \
+				and not required_cells.has(cell_variant as Vector2i):
+			required_cells.append(cell_variant as Vector2i)
+
+	_route_playability_audit = ROUTE_PLAYABILITY_FIELD_SCRIPT.new().audit(
+		_generated_floor_cells,
+		blockers,
+		_ascent_field_main_route_cells,
+		_ascent_field_main_route_centerline_cells,
+		required_cells
+	)
+	_ascent_field_summary["post_dressing_minimum_route_width"] = int(
+		_route_playability_audit.get("minimum_route_width", 0)
+	)
+	_ascent_field_summary["post_dressing_audit_ok"] = bool(
+		_route_playability_audit.get("ok", false)
+	)
+	if not bool(_route_playability_audit.get("ok", false)):
+		_obs_log(
+			&"procgen_playability_audit_failed",
+			_route_playability_audit
+		)
 
 
 func _is_inside_combat_readability_spawn_clearance(pos: Vector2i, radius: int = -1) -> bool:
@@ -7556,6 +7962,33 @@ func get_random_floor_tiles_in_rooms(count: int = 10) -> Array[Vector2i]:
 
 ## Returns corridor endpoints (good for wave spawns)
 func get_corridor_spawn_points(count: int = 5) -> Array[Vector2i]:
+	if world_shape_mode == WorldShapeMode.ASCENT_FIELD \
+			and not _route_playability_result.is_empty():
+		var encounter_cells: Array[Vector2i] = []
+		var hard_clearance: Dictionary = _route_playability_result.get(
+			"hard_clearance_cells",
+			{}
+		)
+		for cell_variant in _route_playability_result.get(
+			"encounter_spawn_cells",
+			[]
+		):
+			if cell_variant is Vector2i \
+					and is_valid_spawn_cell(cell_variant as Vector2i) \
+					and not hard_clearance.has(cell_variant as Vector2i):
+				encounter_cells.append(cell_variant as Vector2i)
+		encounter_cells.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+			var a_distance := a.distance_squared_to(get_player_spawn())
+			var b_distance := b.distance_squared_to(get_player_spawn())
+			if a_distance == b_distance:
+				return a.y < b.y if a.x == b.x else a.x < b.x
+			return a_distance < b_distance
+		)
+		return encounter_cells.slice(
+			0,
+			mini(count, encounter_cells.size())
+		)
+
 	var corridors = procgen_node.get_corridor_areas()
 
 	# Find dead-ends (corridor tiles with only 1 neighbor)
@@ -7632,6 +8065,11 @@ func get_level_data() -> Dictionary:
 		"worldgen_intent_graph": _worldgen_intent_graph.to_dictionary() if _worldgen_intent_graph != null else {},
 		"ascent_field_summary": _ascent_field_summary.duplicate(true),
 		"main_route_cells": _ascent_field_main_route_cells.duplicate(),
+		"main_route_centerline_cells": (
+			_ascent_field_main_route_centerline_cells.duplicate()
+		),
+		"route_playability": _route_playability_result.duplicate(true),
+		"route_playability_audit": _route_playability_audit.duplicate(true),
 		"vista_cells": _ascent_field_vista_cells.duplicate(),
 		"worldgen_reserved_regions": _worldgen_reserved_regions.duplicate(true),
 		"faction_activity_sites": _faction_activity_sites.duplicate(true),

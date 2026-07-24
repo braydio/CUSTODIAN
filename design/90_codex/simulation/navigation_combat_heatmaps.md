@@ -7,9 +7,9 @@ Maturity: system
 Cost: medium
 Owner: Brayden
 Last reviewed: 2026-07-21
-Runtime status: live
+Runtime status: runtime-seed
 Runtime path: `custodian/game/systems/world/sector_heatmap.gd`
-Graduated to: `design/01_systems/SECTOR_HEATMAP_SYSTEM.md`
+Graduated to: `design/02_features/debug_ui/NAVIGATION_COMBAT_HEATMAP_REPORTING.md`
 
 ## One-line pitch
 
@@ -55,4 +55,4 @@ Graduate when playtesting starts or when level layouts need evidence-based tunin
 
 Related: Developer Observatory, Director Memory, Encounter Language, Interest Management.
 
-Active implementation authority: `design/01_systems/SECTOR_HEATMAP_SYSTEM.md` and `custodian/docs/ai_context/CURRENT_STATE.md`.
+Active implementation authority: `design/02_features/debug_ui/NAVIGATION_COMBAT_HEATMAP_REPORTING.md` and `custodian/docs/ai_context/CURRENT_STATE.md`.

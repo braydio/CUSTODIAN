@@ -35,6 +35,14 @@ const DISTANT_KEEP_PATH := \
 
 const STRIP_OVERLAP_PX := 96.0
 
+@export_group("Layer Review Gates")
+@export var show_far_cliff_islands := false
+@export var show_causeway_far_arches := false
+@export var show_lower_cliff_depth := false
+@export var show_ocean_mist := false
+@export var show_near_edge_mist := false
+@export var show_foreground_ruined_arch := false
+
 var _texture_cache: Dictionary = {}
 var _drift_layers: Array[Dictionary] = []
 var _drift_time := 0.0
@@ -57,6 +65,7 @@ func build(p_profile: int, world_rect: Rect2) -> void:
 	z_index = 0
 	set_meta("parallax_profile", p_profile)
 	set_meta("coverage_rect", world_rect)
+	set_meta("layer_review_state", get_layer_review_state())
 
 	var base_root := _make_group("BaseDepth", 1.0)
 	var reveal_root := _make_group(
@@ -91,6 +100,17 @@ func build(p_profile: int, world_rect: Rect2) -> void:
 
 func get_missing_asset_count() -> int:
 	return _missing_assets
+
+
+func get_layer_review_state() -> Dictionary:
+	return {
+		"far_cliff_islands": show_far_cliff_islands,
+		"causeway_far_arches": show_causeway_far_arches,
+		"lower_cliff_depth": show_lower_cliff_depth,
+		"ocean_mist": show_ocean_mist,
+		"near_edge_mist": show_near_edge_mist,
+		"foreground_ruined_arch": show_foreground_ruined_arch,
+	}
 
 
 func _process(delta: float) -> void:
@@ -147,76 +167,82 @@ func _build_vista_approach(
 		Vector2(980.0, 980.0)
 	)
 
-	_add_single_layer(
-		base_root,
-		"FarCliffIslands_Parallax2D",
-		"FarCliffIslands",
-		FAR_CLIFF_ISLANDS_PATH,
-		far_cliffs_rect,
-		Vector2(0.10, 0.05),
-		-218,
-		Color(0.58, 0.66, 0.74, 0.58),
-		Vector4(0.08, 0.08, 0.12, 0.18)
-	)
-	_add_single_layer(
-		reveal_root,
-		"CausewayFarArches_Parallax2D",
-		"CausewayFarArches",
-		CAUSEWAY_FAR_ARCHES_PATH,
-		arches_rect,
-		Vector2(0.16, 0.09),
-		-212,
-		Color(0.52, 0.60, 0.68, 0.70),
-		Vector4(0.08, 0.08, 0.12, 0.20)
-	)
-	_add_single_layer(
-		base_root,
-		"LowerCliffDepth_Parallax2D",
-		"LowerCliffDepth",
-		LOWER_CLIFF_DEPTH_PATH,
-		lower_cliffs_rect,
-		Vector2(0.28, 0.16),
-		-205,
-		Color(0.50, 0.56, 0.62, 0.72),
-		Vector4(0.08, 0.08, 0.10, 0.16)
-	)
-	_add_split_layer(
-		base_root,
-		"OceanMist_Parallax2D",
-		"OceanMist",
-		OCEAN_MIST_LEFT_PATH,
-		OCEAN_MIST_RIGHT_PATH,
-		ocean_mist_rect,
-		Vector2(0.44, 0.24),
-		-194,
-		Color(0.76, 0.82, 0.86, 0.42),
-		Vector2(8.0, 2.0),
-		Vector2(0.12, 0.09)
-	)
-	_add_split_layer(
-		foreground_root,
-		"NearEdgeMist_Parallax2D",
-		"NearEdgeMist",
-		NEAR_MIST_LEFT_PATH,
-		NEAR_MIST_RIGHT_PATH,
-		near_mist_rect,
-		Vector2(0.82, 0.72),
-		92,
-		Color(0.80, 0.84, 0.88, 0.24),
-		Vector2(14.0, 4.0),
-		Vector2(0.09, 0.07)
-	)
-	_add_single_layer(
-		foreground_root,
-		"ForegroundRuinedArch_Parallax2D",
-		"ForegroundRuinedArch",
-		FOREGROUND_ARCH_PATH,
-		foreground_arch_rect,
-		Vector2(1.04, 1.02),
-		118,
-		Color(0.82, 0.84, 0.88, 0.88),
-		Vector4.ZERO
-	)
+	if show_far_cliff_islands:
+		_add_single_layer(
+			base_root,
+			"FarCliffIslands_Parallax2D",
+			"FarCliffIslands",
+			FAR_CLIFF_ISLANDS_PATH,
+			far_cliffs_rect,
+			Vector2(0.08, 0.04),
+			-218,
+			Color(0.58, 0.66, 0.74, 0.22),
+			Vector4(0.08, 0.08, 0.12, 0.18)
+		)
+	if show_causeway_far_arches:
+		_add_single_layer(
+			reveal_root,
+			"CausewayFarArches_Parallax2D",
+			"CausewayFarArches",
+			CAUSEWAY_FAR_ARCHES_PATH,
+			arches_rect,
+			Vector2(0.14, 0.07),
+			-212,
+			Color(0.52, 0.60, 0.68, 0.16),
+			Vector4(0.08, 0.08, 0.12, 0.20)
+		)
+	if show_lower_cliff_depth:
+		_add_single_layer(
+			base_root,
+			"LowerCliffDepth_Parallax2D",
+			"LowerCliffDepth",
+			LOWER_CLIFF_DEPTH_PATH,
+			lower_cliffs_rect,
+			Vector2(0.24, 0.13),
+			-205,
+			Color(0.50, 0.56, 0.62, 0.28),
+			Vector4(0.08, 0.08, 0.10, 0.16)
+		)
+	if show_ocean_mist:
+		_add_split_layer(
+			base_root,
+			"OceanMist_Parallax2D",
+			"OceanMist",
+			OCEAN_MIST_LEFT_PATH,
+			OCEAN_MIST_RIGHT_PATH,
+			ocean_mist_rect,
+			Vector2(0.42, 0.24),
+			-194,
+			Color(0.76, 0.82, 0.86, 0.14),
+			Vector2(8.0, 2.0),
+			Vector2(0.12, 0.09)
+		)
+	if show_near_edge_mist:
+		_add_split_layer(
+			foreground_root,
+			"NearEdgeMist_Parallax2D",
+			"NearEdgeMist",
+			NEAR_MIST_LEFT_PATH,
+			NEAR_MIST_RIGHT_PATH,
+			near_mist_rect,
+			Vector2(0.82, 0.72),
+			92,
+			Color(0.80, 0.84, 0.88, 0.08),
+			Vector2(14.0, 4.0),
+			Vector2(0.09, 0.07)
+		)
+	if show_foreground_ruined_arch:
+		_add_single_layer(
+			foreground_root,
+			"ForegroundRuinedArch_Parallax2D",
+			"ForegroundRuinedArch",
+			FOREGROUND_ARCH_PATH,
+			foreground_arch_rect,
+			Vector2(1.04, 1.02),
+			118,
+			Color(0.82, 0.84, 0.88, 0.0),
+			Vector4.ZERO
+		)
 
 
 func _build_return_causeway(
@@ -268,76 +294,82 @@ func _build_return_causeway(
 		Color(0.78, 0.82, 0.88, 0.76),
 		Vector4(0.08, 0.08, 0.10, 0.16)
 	)
-	_add_single_layer(
-		base_root,
-		"FarCliffIslands_Parallax2D",
-		"FarCliffIslands",
-		FAR_CLIFF_ISLANDS_PATH,
-		far_cliffs_rect,
-		Vector2(0.22, 0.12),
-		-124,
-		Color(0.54, 0.61, 0.68, 0.66),
-		Vector4(0.08, 0.08, 0.12, 0.18)
-	)
-	_add_single_layer(
-		reveal_root,
-		"CausewayFarArches_Parallax2D",
-		"CausewayFarArches",
-		CAUSEWAY_FAR_ARCHES_PATH,
-		arches_rect,
-		Vector2(0.30, 0.18),
-		-120,
-		Color(0.48, 0.55, 0.62, 0.72),
-		Vector4(0.08, 0.08, 0.12, 0.18)
-	)
-	_add_single_layer(
-		base_root,
-		"LowerCliffDepth_Parallax2D",
-		"LowerCliffDepth",
-		LOWER_CLIFF_DEPTH_PATH,
-		lower_cliffs_rect,
-		Vector2(0.36, 0.22),
-		-116,
-		Color(0.46, 0.51, 0.57, 0.78),
-		Vector4(0.08, 0.08, 0.10, 0.16)
-	)
-	_add_split_layer(
-		base_root,
-		"OceanMist_Parallax2D",
-		"OceanMist",
-		OCEAN_MIST_LEFT_PATH,
-		OCEAN_MIST_RIGHT_PATH,
-		ocean_mist_rect,
-		Vector2(0.46, 0.28),
-		-110,
-		Color(0.74, 0.80, 0.84, 0.38),
-		Vector2(8.0, 2.0),
-		Vector2(0.12, 0.09)
-	)
-	_add_single_layer(
-		foreground_root,
-		"ForegroundRuinedArch_Parallax2D",
-		"ForegroundRuinedArch",
-		FOREGROUND_ARCH_PATH,
-		foreground_arch_rect,
-		Vector2(1.04, 1.02),
-		22,
-		Color(0.82, 0.84, 0.88, 0.82),
-		Vector4.ZERO
-	)
-	_add_split_layer(
-		foreground_root,
-		"NearEdgeMist_Parallax2D",
-		"NearEdgeMist",
-		NEAR_MIST_LEFT_PATH,
-		NEAR_MIST_RIGHT_PATH,
-		near_mist_rect,
-		Vector2(0.82, 0.72),
-		24,
-		Color(0.80, 0.84, 0.88, 0.20),
-		Vector2(14.0, 4.0),
-		Vector2(0.09, 0.07)
-	)
+	if show_far_cliff_islands:
+		_add_single_layer(
+			base_root,
+			"FarCliffIslands_Parallax2D",
+			"FarCliffIslands",
+			FAR_CLIFF_ISLANDS_PATH,
+			far_cliffs_rect,
+			Vector2(0.22, 0.12),
+			-124,
+			Color(0.54, 0.61, 0.68, 0.22),
+			Vector4(0.08, 0.08, 0.12, 0.18)
+		)
+	if show_causeway_far_arches:
+		_add_single_layer(
+			reveal_root,
+			"CausewayFarArches_Parallax2D",
+			"CausewayFarArches",
+			CAUSEWAY_FAR_ARCHES_PATH,
+			arches_rect,
+			Vector2(0.30, 0.18),
+			-120,
+			Color(0.48, 0.55, 0.62, 0.16),
+			Vector4(0.08, 0.08, 0.12, 0.18)
+		)
+	if show_lower_cliff_depth:
+		_add_single_layer(
+			base_root,
+			"LowerCliffDepth_Parallax2D",
+			"LowerCliffDepth",
+			LOWER_CLIFF_DEPTH_PATH,
+			lower_cliffs_rect,
+			Vector2(0.36, 0.22),
+			-116,
+			Color(0.46, 0.51, 0.57, 0.28),
+			Vector4(0.08, 0.08, 0.10, 0.16)
+		)
+	if show_ocean_mist:
+		_add_split_layer(
+			base_root,
+			"OceanMist_Parallax2D",
+			"OceanMist",
+			OCEAN_MIST_LEFT_PATH,
+			OCEAN_MIST_RIGHT_PATH,
+			ocean_mist_rect,
+			Vector2(0.46, 0.28),
+			-110,
+			Color(0.74, 0.80, 0.84, 0.14),
+			Vector2(8.0, 2.0),
+			Vector2(0.12, 0.09)
+		)
+	if show_foreground_ruined_arch:
+		_add_single_layer(
+			foreground_root,
+			"ForegroundRuinedArch_Parallax2D",
+			"ForegroundRuinedArch",
+			FOREGROUND_ARCH_PATH,
+			foreground_arch_rect,
+			Vector2(1.04, 1.02),
+			22,
+			Color(0.82, 0.84, 0.88, 0.0),
+			Vector4.ZERO
+		)
+	if show_near_edge_mist:
+		_add_split_layer(
+			foreground_root,
+			"NearEdgeMist_Parallax2D",
+			"NearEdgeMist",
+			NEAR_MIST_LEFT_PATH,
+			NEAR_MIST_RIGHT_PATH,
+			near_mist_rect,
+			Vector2(0.82, 0.72),
+			24,
+			Color(0.80, 0.84, 0.88, 0.08),
+			Vector2(14.0, 4.0),
+			Vector2(0.09, 0.07)
+		)
 
 
 func _add_single_layer(

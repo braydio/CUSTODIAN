@@ -18,8 +18,6 @@ const EXPECTED_SPRITE_RECTS := {
 	"UnderlayRoot/ApproachCliffSpiresUnderlay": Rect2(Vector2(-1536, -1236), Vector2(3392, 2718)),
 	"UnderlayRoot/ApproachRouteContactShadow": Rect2(Vector2(-620, -480), Vector2(2048, 1706)),
 	"VistaRoot/FirstVistaFarParallax/ApproachFirstVistaHorizon": Rect2(Vector2(-1000, -980), Vector2(2600, 1460)),
-	"VistaRoot/FirstVistaFarParallax/FarKeepSilhouetteLayerA": Rect2(Vector2(-1120, -1040), Vector2(2840, 1540)),
-	"VistaRoot/FirstVistaFarParallax/FarKeepSilhouetteLayerB": Rect2(Vector2(-1060, -1008), Vector2(2720, 1500)),
 	"VistaRoot/FirstVistaMistParallax/ApproachFirstVistaFogVeil": Rect2(Vector2(-1000, -360), Vector2(2600, 720)),
 	"GrandVistaRoot/LabyrinthFarParallax/GrandVistaPanorama": Rect2(Vector2(-1280, -920), Vector2(2560, 1440)),
 	"GrandVistaRoot/LabyrinthMistParallax/GrandVistaOceanSprayOverlay": Rect2(Vector2(-1280, -160), Vector2(2560, 720)),
@@ -130,6 +128,18 @@ func _init() -> void:
 			errors.append("%s z_index expected %d, got %d" % [node_path, int(EXPECTED_SPRITE_Z[node_path]), sprite.z_index])
 		_check_sprite_rect(node_path, sprite, EXPECTED_SPRITE_RECTS[node_path] as Rect2, errors)
 
+	for duplicate_name in [
+		"FarKeepSilhouetteLayerA",
+		"FarKeepSilhouetteLayerB",
+	]:
+		if scene.get_node_or_null(
+			"VistaRoot/FirstVistaFarParallax/%s" % duplicate_name
+		) != null:
+			errors.append(
+				"Duplicate first-vista landmark remains: %s"
+				% duplicate_name
+			)
+
 	var vista_root := scene.get_node_or_null("VistaRoot") as CanvasItem
 	if vista_root == null or vista_root.modulate.a > 0.01:
 		errors.append("VistaRoot should start hidden; alpha=%s" % (vista_root.modulate.a if vista_root else "missing"))
@@ -204,6 +214,10 @@ func _init() -> void:
 	else:
 		if not controller.has_camera_target():
 			errors.append("VistaController camera target is not bound")
+		if float(controller.get("vista_fog_max_alpha")) > 0.38:
+			errors.append(
+				"Vista reveal fog exceeds the 0.38 review budget"
+			)
 		_check_controller_path(controller, "vista_root_path", NodePath("../VistaRoot"), errors)
 		_check_controller_path(controller, "camera_path", NodePath("/root/GameRoot/World/Camera2D"), errors)
 		_check_controller_path(controller, "entry_marker_path", NodePath("../Markers/EntrySpawn"), errors)

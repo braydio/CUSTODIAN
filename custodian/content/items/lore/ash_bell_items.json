@@ -1,12 +1,12 @@
 {
   "items": [
     {
-      "id": "bell_clapper_without_bell",
-      "display_name": "Bell-Clapper Without a Bell",
+      "id": "ashen_colored_bell",
+      "display_name": "Ashen Colored Bell",
       "type": "lore_relic",
       "stackable": false,
       "tags": ["ash_bell", "ninth_bell", "continuity"],
-      "description": "A bronze clapper from a bell no archive admits was cast. When moved, it makes no sound. Nearby grief briefly arranges itself into memory.",
+      "description": "A small bell the color of cold ash. When moved, it makes no sound. ",
       "mechanical_effects": {
         "unlock_knowledge_node": "ash_bell_ninth_bell",
         "increase_ash_bell_weight": 0.05
@@ -18,7 +18,7 @@
       "type": "lore_relic",
       "stackable": true,
       "tags": ["ash_bell", "white_thread", "saint_orra"],
-      "description": "A funerary knot tied for those who had not yet arrived at their own death.",
+      "description": "A talisman, symbol, artifact of many origins. It has religious, military, civic, and other contexts.",
       "mechanical_effects": {
         "unlock_knowledge_node": "ash_bell_white_thread",
         "reduce_future_drifter_ambiguity": 0.05

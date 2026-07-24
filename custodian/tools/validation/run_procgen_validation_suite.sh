@@ -38,6 +38,8 @@ cd "$ROOT_DIR/custodian" || exit 1
 run_step terrain_builder_smoke godot --headless --path . --script res://tools/validation/terrain_builder_smoke.gd
 run_step terrain_ballistics_smoke godot --headless --path . --script res://tools/validation/terrain_ballistics_smoke.gd
 run_step procgen_terrain_required_cells_smoke godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
+run_step procgen_playability_smoke godot --headless --path . --script res://tools/validation/procgen_playability_smoke.gd
+run_step procgen_route_clearance_smoke godot --headless --path . --script res://tools/validation/procgen_route_clearance_smoke.gd
 run_step procgen_foliage_spawner_smoke godot --headless --path . --script res://tools/validation/procgen_foliage_spawner_smoke.gd
 run_step prop_collision_alignment_smoke godot --headless --path . --script res://tools/validation/prop_collision_alignment_smoke.gd
 run_step procgen_stuck_pocket_smoke godot --headless --path . --script res://tools/validation/procgen_stuck_pocket_smoke.gd

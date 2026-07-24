@@ -213,6 +213,14 @@ const AUTHORING_MARKERS := {
 	},
 }
 
+@export_group("Shared Parallax Review Gates")
+@export var show_far_cliff_islands := true
+@export var show_causeway_far_arches := true
+@export var show_lower_cliff_depth := true
+@export var show_ocean_mist := true
+@export var show_near_edge_mist := true
+@export var show_foreground_ruined_arch := true
+
 var underlay_root: Node2D = null
 var parallax_root: SunderedKeepParallaxRig = null
 var vista_root: Node2D = null
@@ -383,6 +391,22 @@ func _build_visuals() -> void:
 	occlusion_root.modulate.a = 1.0
 
 	if parallax_root != null:
+		parallax_root.show_far_cliff_islands = (
+			show_far_cliff_islands
+		)
+		parallax_root.show_causeway_far_arches = (
+			show_causeway_far_arches
+		)
+		parallax_root.show_lower_cliff_depth = (
+			show_lower_cliff_depth
+		)
+		parallax_root.show_ocean_mist = show_ocean_mist
+		parallax_root.show_near_edge_mist = (
+			show_near_edge_mist
+		)
+		parallax_root.show_foreground_ruined_arch = (
+			show_foreground_ruined_arch
+		)
 		parallax_root.build(
 			SunderedKeepParallaxRig.Profile.VISTA_APPROACH,
 			RECT_CAMERA_BOUNDS
@@ -391,7 +415,7 @@ func _build_visuals() -> void:
 	_add_backdrop_void_fill()
 	_add_fitted_sprite(underlay_root, "ApproachOceanVoidUnderlay", APPROACH_OCEAN_VOID_UNDERLAY, RECT_APPROACH_UNDERLAY, -30, Color.WHITE)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(underlay_root, "ApproachCliffSpiresUnderlay", APPROACH_CLIFF_SPIRES_UNDERLAY, RECT_APPROACH_UNDERLAY, -20, Color(1.0, 1.0, 1.0, 0.75)),
+		_add_fitted_sprite(underlay_root, "ApproachCliffSpiresUnderlay", APPROACH_CLIFF_SPIRES_UNDERLAY, RECT_APPROACH_UNDERLAY, -20, Color(1.0, 1.0, 1.0, 0.42)),
 		Vector4(0.12, 0.12, 0.14, 0.22)
 	)
 	_add_fitted_sprite(underlay_root, "ApproachRouteContactShadow", APPROACH_ROUTE_CONTACT_SHADOW, _route_rect(RECT_ROUTE_MASTER), -5, Color(1.0, 1.0, 1.0, 0.85))
@@ -411,19 +435,11 @@ func _build_visuals() -> void:
 		0.08
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(first_vista_far, "FarKeepSilhouetteLayerA", APPROACH_FIRST_VISTA_HORIZON, Rect2(-1120.0, -1040.0, 2840.0, 1540.0), -20, Color(0.30, 0.42, 0.52, 0.24)),
-		Vector4(0.10, 0.10, 0.12, 0.22)
-	)
-	_apply_soft_rect_feather(
-		_add_fitted_sprite(first_vista_far, "FarKeepSilhouetteLayerB", APPROACH_FIRST_VISTA_HORIZON, Rect2(-1060.0, -1008.0, 2720.0, 1500.0), -10, Color(0.42, 0.53, 0.62, 0.32)),
-		Vector4(0.08, 0.08, 0.10, 0.20)
-	)
-	_apply_soft_rect_feather(
 		_add_fitted_sprite(first_vista_far, "ApproachFirstVistaHorizon", APPROACH_FIRST_VISTA_HORIZON, RECT_FIRST_VISTA_HORIZON, 0, Color.WHITE),
 		Vector4(0.06, 0.06, 0.08, 0.18)
 	)
 	_apply_soft_rect_feather(
-		_add_fitted_sprite(first_vista_mist, "ApproachFirstVistaFogVeil", APPROACH_FIRST_VISTA_FOG_VEIL, RECT_FIRST_VISTA_FOG_VEIL, 10, Color(1.0, 1.0, 1.0, 0.65)),
+		_add_fitted_sprite(first_vista_mist, "ApproachFirstVistaFogVeil", APPROACH_FIRST_VISTA_FOG_VEIL, RECT_FIRST_VISTA_FOG_VEIL, 10, Color(1.0, 1.0, 1.0, 0.38)),
 		Vector4(0.08, 0.08, 0.18, 0.24)
 	)
 
@@ -497,10 +513,10 @@ func _build_visuals() -> void:
 	else:
 		_build_legacy_path_chunks()
 
-	_add_fitted_sprite(occlusion_root, "ApproachEdgeMistWrap", APPROACH_EDGE_MIST_WRAP, _route_rect(RECT_ROUTE_MASTER), 5, Color(1.0, 1.0, 1.0, 0.55))
-	_add_fitted_sprite(occlusion_root, "ApproachFogStrip01", APPROACH_FOG_STRIP_01, _route_rect(RECT_FOG_STRIP_01), 8, Color(1.0, 1.0, 1.0, 0.28))
-	_add_fitted_sprite(occlusion_root, "ApproachFogStrip02", APPROACH_FOG_STRIP_02, _route_rect(RECT_FOG_STRIP_02), 9, Color(1.0, 1.0, 1.0, 0.22))
-	_add_fitted_sprite(occlusion_root, "ApproachFogStrip03", APPROACH_FOG_STRIP_03, _route_rect(RECT_FOG_STRIP_03), 10, Color(1.0, 1.0, 1.0, 0.18))
+	_add_fitted_sprite(occlusion_root, "ApproachEdgeMistWrap", APPROACH_EDGE_MIST_WRAP, _route_rect(RECT_ROUTE_MASTER), 5, Color(1.0, 1.0, 1.0, 0.10))
+	_add_fitted_sprite(occlusion_root, "ApproachFogStrip01", APPROACH_FOG_STRIP_01, _route_rect(RECT_FOG_STRIP_01), 8, Color(1.0, 1.0, 1.0, 0.10))
+	_add_fitted_sprite(occlusion_root, "ApproachFogStrip02", APPROACH_FOG_STRIP_02, _route_rect(RECT_FOG_STRIP_02), 9, Color(1.0, 1.0, 1.0, 0.08))
+	_add_fitted_sprite(occlusion_root, "ApproachFogStrip03", APPROACH_FOG_STRIP_03, _route_rect(RECT_FOG_STRIP_03), 10, Color(1.0, 1.0, 1.0, 0.06))
 	_add_labyrinth_depth_pass()
 	_add_reveal_moonlight_cue()
 	_final_fog_coverage_rect = _compute_final_fog_coverage_rect()

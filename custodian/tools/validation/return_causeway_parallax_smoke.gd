@@ -4,6 +4,8 @@ const RETURN_CAUSEWAY_SCENE := preload("res://game/world/sundered_keep/return_ca
 const DISTANT_KEEP_TEXTURE_PATH := "res://content/backgrounds/sundered_keep/distant_sundered_keep.png"
 const REQUIRED_LAYER_PATHS := [
 	"BaseDepth/DistantKeep_Parallax2D",
+]
+const REVIEW_BLOCKED_LAYER_PATHS := [
 	"BaseDepth/FarCliffIslands_Parallax2D",
 	"RevealDepth/CausewayFarArches_Parallax2D",
 	"BaseDepth/LowerCliffDepth_Parallax2D",
@@ -30,6 +32,11 @@ func _init() -> void:
 	for layer_path: String in REQUIRED_LAYER_PATHS:
 		if parallax_root.get_node_or_null(layer_path) == null:
 			_fail("Missing parallax layer: %s" % layer_path)
+			return
+
+	for layer_path: String in REVIEW_BLOCKED_LAYER_PATHS:
+		if parallax_root.get_node_or_null(layer_path) != null:
+			_fail("Review-blocked parallax layer is active: %s" % layer_path)
 			return
 
 	var distant_layer := parallax_root.get_node_or_null(

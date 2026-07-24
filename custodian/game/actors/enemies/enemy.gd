@@ -1916,6 +1916,50 @@ func _obs_log(kind: StringName, data: Dictionary = {}) -> void:
 	var observatory := _get_dev_observatory()
 	if observatory != null and observatory.has_method("log_event"):
 		observatory.call("log_event", String(kind), data)
+	_record_heatmap_event(kind, data)
+
+
+func _record_heatmap_event(kind: StringName, data: Dictionary) -> void:
+	var event_position := data.get("position", global_position) as Vector2
+	if kind == &"enemy_killed":
+		_heatmap_add(&"enemy_killed", 3.0, event_position)
+		return
+
+	if kind == &"enemy_attack_whiff":
+		_heatmap_add(&"enemy_attack_whiff", 0.5, event_position)
+		return
+
+	if kind not in [
+		&"enemy_attack_resolved",
+		&"grunt_falcon_punch_hit_resolved",
+	]:
+		return
+
+	var result := StringName(str(data.get("result", "")))
+	if result == &"whiffed":
+		_heatmap_add(&"enemy_attack_whiff", 0.5, event_position)
+	elif result == &"damaged":
+		_heatmap_add(
+			&"enemy_attack_hit",
+			maxf(float(data.get("applied_damage", 0.0)), 1.0),
+			event_position
+		)
+	elif result in [&"blocked", &"parried", &"dodged"]:
+		_heatmap_add(
+			StringName("enemy_attack_%s" % String(result)),
+			1.0,
+			event_position
+		)
+
+
+func _heatmap_add(
+	event_type: StringName,
+	weight: float = 1.0,
+	position: Vector2 = global_position
+) -> void:
+	var heatmap := get_node_or_null("/root/SectorHeatmap")
+	if heatmap != null and heatmap.has_method("add"):
+		heatmap.call("add", position, event_type, weight)
 
 
 func _obs_increment(counter_name: StringName, amount: int = 1) -> void:

@@ -7,6 +7,9 @@ const BORDER_THICKNESS := 1
 const MIN_ROUTE_WIDTH := 9
 const MAX_ROUTE_WIDTH := 15
 const TERRACE_MIN_SIZE := Vector2i(18, 12)
+const SPAWN_PAD_SIZE := Vector2i(20, 16)
+const EXIT_PAD_SIZE := Vector2i(22, 16)
+const SAFE_PAD_SIZE := Vector2i(18, 14)
 
 
 func build_field(graph, map_size: Vector2i, seed: int = 0) -> Dictionary:
@@ -14,6 +17,9 @@ func build_field(graph, map_size: Vector2i, seed: int = 0) -> Dictionary:
 	var wall_cells: Dictionary = {}
 	var reserved_regions: Array[Dictionary] = []
 	var main_route_cells: Array[Vector2i] = []
+	var main_route_centerline_cells: Array[Vector2i] = []
+	var branch_route_cells: Array[Vector2i] = []
+	var branch_route_centerline_cells: Array[Vector2i] = []
 	var vista_cells: Array[Vector2i] = []
 	var route_widths: Array[int] = []
 	var terrace_count := 0
@@ -27,9 +33,25 @@ func build_field(graph, map_size: Vector2i, seed: int = 0) -> Dictionary:
 		if edge.kind == 0:
 			var width := _route_width_for_edge(edge, seed)
 			route_widths.append(width)
-			_carve_path(floor_cells, main_route_cells, from_node.cell, to_node.cell, width, map_size)
+			_carve_path(
+				floor_cells,
+				main_route_cells,
+				main_route_centerline_cells,
+				from_node.cell,
+				to_node.cell,
+				width,
+				map_size
+			)
 		else:
-			_carve_path(floor_cells, main_route_cells, from_node.cell, to_node.cell, 7, map_size)
+			_carve_path(
+				floor_cells,
+				branch_route_cells,
+				branch_route_centerline_cells,
+				from_node.cell,
+				to_node.cell,
+				7,
+				map_size
+			)
 
 	for node in graph.nodes:
 		var kind_name := IntentNodeScript.kind_to_string(node.kind)
@@ -41,8 +63,16 @@ func build_field(graph, map_size: Vector2i, seed: int = 0) -> Dictionary:
 			terrace_count += 1
 			if kind_name == "ascent_beat" and (node.ascent_rank % 3) == 0:
 				vista_cells.append(node.cell)
-		elif kind_name == "story_room" or kind_name == "faction_site" or kind_name == "resource_pocket" or kind_name == "vista":
-			var pocket_size := Vector2i(18 + int(abs(node.id.hash()) % 8), 12 + int(abs((node.id + "h").hash()) % 6))
+		elif kind_name == "story_room" \
+				or kind_name == "faction_site" \
+				or kind_name == "resource_pocket" \
+				or kind_name == "safe_pocket" \
+				or kind_name == "vista":
+			var pocket_size := SAFE_PAD_SIZE if kind_name == "safe_pocket" else Vector2i(
+				18 + int(abs(node.id.hash()) % 8),
+				(14 if kind_name == "faction_site" else 12)
+				+ int(abs((node.id + "h").hash()) % 6)
+			)
 			var pocket := _centered_rect(node.cell, pocket_size, map_size)
 			_carve_rect(floor_cells, pocket)
 			reserved_regions.append(_region_from_node(node, pocket, kind_name))
@@ -63,6 +93,12 @@ func build_field(graph, map_size: Vector2i, seed: int = 0) -> Dictionary:
 		"wall_cells": wall_cells,
 		"reserved_regions": reserved_regions,
 		"main_route_cells": _dict_keys_as_vector2i_array(_cell_lookup(main_route_cells)),
+		"main_route_centerline_cells": _dict_keys_as_vector2i_array(
+			_cell_lookup(main_route_centerline_cells)
+		),
+		"branch_route_cells": _dict_keys_as_vector2i_array(
+			_cell_lookup(branch_route_cells)
+		),
 		"vista_cells": vista_cells,
 		"debug_summary": {
 			"mode": "ascent_field",
@@ -84,8 +120,21 @@ func _route_width_for_edge(edge, seed: int) -> int:
 
 
 func _terrace_size_for_node(node, seed: int) -> Vector2i:
+	match node.kind:
+		IntentNodeScript.NodeKind.SPAWN:
+			return SPAWN_PAD_SIZE
+		IntentNodeScript.NodeKind.EXIT_GATE:
+			return EXIT_PAD_SIZE
+		IntentNodeScript.NodeKind.SAFE_POCKET:
+			return SAFE_PAD_SIZE
 	var basis := int(abs(("%s:%d:terrace" % [node.id, seed]).hash()))
-	return Vector2i(TERRACE_MIN_SIZE.x + basis % 9, TERRACE_MIN_SIZE.y + int(basis / 11) % 7)
+	var minimum_size := Vector2i(18, 14) \
+			if node.kind == IntentNodeScript.NodeKind.ASCENT_BEAT \
+			else TERRACE_MIN_SIZE
+	return Vector2i(
+		minimum_size.x + basis % 9,
+		minimum_size.y + int(basis / 11) % 7
+	)
 
 
 func _is_main_route_node(node) -> bool:
@@ -153,10 +202,20 @@ func _remove_wall_floor_overlaps(wall_cells: Dictionary, floor_cells: Dictionary
 		wall_cells.erase(cell)
 
 
-func _carve_path(floor_cells: Dictionary, route_cells: Array[Vector2i], from_cell: Vector2i, to_cell: Vector2i, width: int, map_size: Vector2i) -> void:
+func _carve_path(
+	floor_cells: Dictionary,
+	route_cells: Array[Vector2i],
+	centerline_cells: Array[Vector2i],
+	from_cell: Vector2i,
+	to_cell: Vector2i,
+	width: int,
+	map_size: Vector2i
+) -> void:
 	var points := _bresenham(from_cell, to_cell)
 	var radius := maxi(4, int(floor(float(width) * 0.5)))
 	for point in points:
+		if Rect2i(Vector2i.ZERO, map_size).has_point(point):
+			centerline_cells.append(point)
 		for dx in range(-radius, radius + 1):
 			for dy in range(-radius, radius + 1):
 				if Vector2i(dx, dy).length_squared() > radius * radius:

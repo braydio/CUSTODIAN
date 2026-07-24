@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bn22myy6sbetg"
-path="res://.godot/imported/ancient_bearing.png-29ca1e2fd08f29c8c282c415280bf9de.ctex"
+uid="uid://pp4mr474hvtc"
+path="res://.godot/imported/operator__modular_full_body__unarmed__walk_01__se__5f__96.png-863480e55478f274137b707dee531914.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/items/shrumb_drops/ancient_bearing.png"
-dest_files=["res://.godot/imported/ancient_bearing.png-29ca1e2fd08f29c8c282c415280bf9de.ctex"]
+source_file="res://content/sprites/operator/new_operator/modular/walk/operator__modular_full_body__unarmed__walk_01__se__5f__96.png"
+dest_files=["res://.godot/imported/operator__modular_full_body__unarmed__walk_01__se__5f__96.png-863480e55478f274137b707dee531914.ctex"]
 
 [params]
 

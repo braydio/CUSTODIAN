@@ -341,9 +341,19 @@ func _build_export_payload(path: String) -> Dictionary:
 		},
 		"counters": _json_safe(counters),
 		"gauges": _json_safe(gauges),
+		"heatmap": _json_safe(_get_heatmap_snapshot()),
 		"warnings": _json_safe(warnings),
 		"events": _json_safe(events),
 	}
+
+
+func _get_heatmap_snapshot() -> Dictionary:
+	var heatmap := get_node_or_null("/root/SectorHeatmap")
+	if heatmap != null and heatmap.has_method("export_snapshot"):
+		var snapshot: Variant = heatmap.call("export_snapshot")
+		if snapshot is Dictionary:
+			return snapshot as Dictionary
+	return {}
 
 
 func _json_safe(value: Variant) -> Variant:
@@ -431,6 +441,20 @@ func _sample_runtime_gauges() -> void:
 	var tree := get_tree()
 	if tree == null:
 		return
+
+	var heatmap := tree.root.get_node_or_null("/root/SectorHeatmap")
+	if heatmap != null and heatmap.has_method("get_summary"):
+		var heatmap_summary: Variant = heatmap.call("get_summary")
+		if heatmap_summary is Dictionary:
+			var summary := heatmap_summary as Dictionary
+			set_gauge(
+				&"heatmap_cells",
+				int(summary.get("cell_count", 0))
+			)
+			set_gauge(
+				&"heatmap_samples",
+				int(summary.get("total_samples", 0))
+			)
 
 	var node_stats := _collect_node_stats(tree.root)
 	_runtime_tree_scan_count += 1

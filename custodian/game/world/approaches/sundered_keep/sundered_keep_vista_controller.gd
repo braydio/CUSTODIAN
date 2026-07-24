@@ -27,7 +27,7 @@ class_name SunderedKeepVistaController
 
 @export_range(0.0, 1.0, 0.01) var vista_max_alpha := 1.0
 @export_range(0.0, 1.0, 0.01) var vista_min_lateral_alpha := 0.35
-@export_range(0.0, 1.0, 0.01) var vista_fog_max_alpha := 0.76
+@export_range(0.0, 1.0, 0.01) var vista_fog_max_alpha := 0.38
 @export_range(0.0, 1.0, 0.01) var fog_underlay_min_alpha := 0.28
 @export_range(0.0, 1.0, 0.01) var fog_underlay_max_alpha := 0.62
 @export_range(0.0, 1.0, 0.01) var cliff_max_alpha := 0.92

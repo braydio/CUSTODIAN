@@ -251,6 +251,93 @@ def _append_key_values(
         lines.append(f"  ... {remaining} more")
 
 
+def _format_counter(values: Any) -> str:
+    counter = _mapping(values)
+    rows = [
+        (str(key), _number(value))
+        for key, value in counter.items()
+        if _number(value) != 0.0
+    ]
+    rows.sort(key=lambda row: (-row[1], row[0]))
+    if not rows:
+        return "none"
+    return ", ".join(f"{key}={_format_value(value)}" for key, value in rows)
+
+
+def _append_heatmap_section(
+    lines: list[str], payload: Mapping[str, Any], top: int
+) -> None:
+    heatmap = _mapping(payload.get("heatmap"))
+    lines.extend(["", "HEATMAP", "-" * 48])
+    if not heatmap:
+        lines.append("  none")
+        return
+
+    lines.append(f"  {'cells':<28} {int(_number(heatmap.get('cell_count')))}")
+    lines.append(f"  {'samples':<28} {int(_number(heatmap.get('total_samples')))}")
+    lines.append(
+        f"  {'event types':<28} "
+        f"{_format_counter(heatmap.get('event_type_counts'))}"
+    )
+
+    cells = _mapping(heatmap.get("cells"))
+    ranked: list[tuple[float, str, Mapping[str, Any]]] = []
+    danger: list[tuple[float, str, Mapping[str, Any]]] = []
+    combat: list[tuple[float, str, Mapping[str, Any]]] = []
+    for key, raw_entry in cells.items():
+        entry = _mapping(raw_entry)
+        if not entry:
+            continue
+        by_type = _mapping(entry.get("by_type"))
+        total = _number(entry.get("total"))
+        ranked.append((total, str(key), entry))
+
+        danger_score = (
+            _number(by_type.get("player_death")) * 10.0
+            + _number(by_type.get("damage_taken"))
+        )
+        if danger_score > 0.0:
+            danger.append((danger_score, str(key), entry))
+
+        combat_score = sum(
+            _number(by_type.get(name))
+            for name in ("shot_fired", "enemy_killed", "enemy_attack_hit")
+        )
+        if combat_score > 0.0:
+            combat.append((combat_score, str(key), entry))
+
+    ranked.sort(key=lambda row: (-row[0], row[1]))
+    danger.sort(key=lambda row: (-row[0], row[1]))
+    combat.sort(key=lambda row: (-row[0], row[1]))
+
+    lines.extend(["", "  Top heat cells"])
+    if not ranked:
+        lines.append("    none")
+    for total, key, entry in ranked[:top]:
+        lines.append(
+            f"    {key:<12} total={total:<8.2f} "
+            f"by_type={_format_counter(entry.get('by_type'))}"
+        )
+
+    lines.extend(["", "  Danger cells"])
+    if not danger:
+        lines.append("    none")
+    for score, key, entry in danger[:top]:
+        lines.append(
+            f"    {key:<12} danger={score:<8.2f} "
+            f"by_type={_format_counter(entry.get('by_type'))}"
+        )
+
+    lines.extend(["", "  Combat cells"])
+    if not combat:
+        lines.append("    none")
+    for score, key, entry in combat[:top]:
+        lines.append(
+            f"    {key:<12} combat={score:<8.2f} "
+            f"by_type={_format_counter(entry.get('by_type'))}"
+        )
+
+
 def build_report(
     payload: Mapping[str, Any],
     source: Path,
@@ -434,6 +521,8 @@ def build_report(
         "ENEMY ATTACK LIFECYCLE (UNIQUE ATTACK IDs IN RETAINED EVENTS)",
         "  " + _ordered_counts(attack_lifecycle, ["started", "active", "terminal"]),
     ])
+
+    _append_heatmap_section(lines, payload, top)
 
     lines.extend(["", f"TOP EVENT TYPES ({min(top, len(kinds))})"])
     if kinds:

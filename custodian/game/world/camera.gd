@@ -96,6 +96,10 @@ class_name CameraController
 @export var max_zoom: Vector2 = Vector2(1.5, 1.5)
 @export var zoom_step: float = 1.1
 
+@export_group("Developer Camera")
+@export var debug_pan_speed: float = 900.0
+@export var debug_fast_pan_multiplier: float = 3.0
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # ENUMS
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -162,6 +166,8 @@ var _locked_zoom: Vector2 = base_zoom
 var _presentation_framing_active := false
 var _presentation_offset := Vector2.ZERO
 var _presentation_zoom := Vector2.ONE
+var _debug_free_camera_active := false
+var _debug_saved_state: Dictionary = {}
 
 # Input
 var dragging := false
@@ -192,6 +198,10 @@ func _ready():
 
 
 func _process(delta):
+	_sync_debug_free_camera_state()
+	if _debug_free_camera_active:
+		_update_debug_free_camera(delta)
+		return
 	if _presentation_framing_active:
 		_update_presentation_framing(delta)
 		_clamp_to_bounds()
@@ -265,7 +275,8 @@ func _unhandled_input(event):
 	
 	if event is InputEventMouseMotion and dragging:
 		var diff = drag_start - event.position
-		global_position += diff * 1.0
+		var drag_scale := 1.0 / maxf(zoom.x, min_zoom.x)
+		global_position += diff * drag_scale
 		drag_start = event.position
 	
 	# Scroll wheel - zoom
@@ -274,6 +285,88 @@ func _unhandled_input(event):
 			zoom_in()
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			zoom_out()
+
+
+func set_debug_free_camera_enabled(active: bool) -> void:
+	if active == _debug_free_camera_active:
+		return
+	_debug_free_camera_active = active
+	if active:
+		_debug_saved_state = {
+			"follow_enabled": follow_enabled,
+			"auto_zoom_enabled": auto_zoom_enabled,
+			"locked_zoom": _locked_zoom,
+			"presentation_active": _presentation_framing_active,
+			"presentation_offset": _presentation_offset,
+			"presentation_zoom": _presentation_zoom,
+		}
+		follow_enabled = false
+		auto_zoom_enabled = false
+		_presentation_framing_active = false
+		_locked_zoom = zoom
+		target_zoom = zoom
+		dragging = false
+	else:
+		follow_enabled = bool(
+			_debug_saved_state.get("follow_enabled", true)
+		)
+		auto_zoom_enabled = bool(
+			_debug_saved_state.get("auto_zoom_enabled", true)
+		)
+		_locked_zoom = _debug_saved_state.get(
+			"locked_zoom",
+			base_zoom
+		) as Vector2
+		_presentation_framing_active = bool(
+			_debug_saved_state.get("presentation_active", false)
+		)
+		_presentation_offset = _debug_saved_state.get(
+			"presentation_offset",
+			Vector2.ZERO
+		) as Vector2
+		_presentation_zoom = _debug_saved_state.get(
+			"presentation_zoom",
+			Vector2.ONE
+		) as Vector2
+		if auto_zoom_enabled:
+			target_zoom = base_zoom
+		else:
+			target_zoom = _locked_zoom
+		dragging = false
+		_debug_saved_state.clear()
+
+
+func is_debug_free_camera_enabled() -> bool:
+	return _debug_free_camera_active
+
+
+func _sync_debug_free_camera_state() -> void:
+	var dev_mode := get_node_or_null("/root/DevMode")
+	var should_enable := dev_mode != null \
+		and bool(dev_mode.get("debug_ui_enabled")) \
+		and bool(dev_mode.get("debug_free_camera_enabled"))
+	set_debug_free_camera_enabled(should_enable)
+
+
+func _update_debug_free_camera(delta: float) -> void:
+	var pan_direction := Vector2(
+		float(Input.is_key_pressed(KEY_RIGHT))
+			- float(Input.is_key_pressed(KEY_LEFT)),
+		float(Input.is_key_pressed(KEY_DOWN))
+			- float(Input.is_key_pressed(KEY_UP))
+	)
+	if pan_direction.length_squared() > 1.0:
+		pan_direction = pan_direction.normalized()
+	var fast_pan := Input.is_key_pressed(KEY_SHIFT)
+	var pan_multiplier := debug_fast_pan_multiplier if fast_pan else 1.0
+	var zoom_compensation := 1.0 / maxf(zoom.x, min_zoom.x)
+	global_position += pan_direction \
+		* debug_pan_speed \
+		* pan_multiplier \
+		* zoom_compensation \
+		* maxf(delta, 0.0)
+	target_zoom = _locked_zoom.clamp(min_zoom, max_zoom)
+	_update_zoom(delta)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

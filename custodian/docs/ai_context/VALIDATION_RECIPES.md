@@ -202,7 +202,10 @@ procgen stuck-pocket smoke checks structured remediation warning context. The am
 swap. The dodge smoke classifies 20 deliberate overlaps one-for-one across iframe, late-active, and recovery phases.
 The director-population smoke deliberately enables two profile-managed enemies beside one legacy enemy and reconciles
 the split population gauges plus the director behavior-sample surface.
-The DevMode smoke proves release-default-off, debug/feature/project/command-line resolution, explicit-only heavy diagnostics, negative overrides, and load order before debug consumers.
+The DevMode smoke proves release-default-off, debug/feature/project/command-line
+resolution, explicit-only heavy diagnostics, negative overrides, load order
+before debug consumers, F6/F7/F8 playtest bindings, free-camera state
+restoration, and the Operator resource-override hook.
 
 For modular visual-fit next-action reporting:
 
@@ -399,19 +402,18 @@ cd custodian
 godot --headless --script res://tools/validation/terrain_builder_smoke.gd
 godot --headless --script res://tools/validation/terrain_ballistics_smoke.gd
 godot --headless --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_playability_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_route_clearance_smoke.gd
 godot --headless --path . --script res://tools/validation/terrain_gameplay_art_usage_smoke.gd
 godot --headless --path . --script res://tools/validation/floor_value_clusters_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_combat_readability_smoke.gd
 ```
 
-The first command validates TerrainBuilder determinism and metadata behavior. The second validates deterministic projectile
-tile tracing, directional ledge fire, hard wall/drop blocking, ramp/stair exceptions, generated edge profiles, and preserved
-movement blocking. The third generates representative candidate-mode maps and verifies required-cell counts stay bounded
-while terrain connectivity remains enforced. The fourth validates all gameplay-pack runtime source mappings, representative
-TileMap paint paths, stable legacy mappings, and source-usage diagnostics. The fifth proves tile-value cluster determinism,
-different-seed variation, semantic skips, metadata preservation, and safe missing-variant behavior. The sixth validates
-combat/readability floor reporting, floor-cluster skips, and the combat foliage occlusion profile. These smokes are part of
-the default procgen suite.
+These commands validate TerrainBuilder determinism, ballistics/traversal
+metadata, bounded required-cell connectivity, playability distance/pocket
+classification, production route presentation and post-decoration clearance,
+gameplay-pack art mappings, floor-value clustering, and combat readability.
+They are part of the default procgen suite.
 For production-sized contract rescue diagnostics, use the slow suite mode from the repository root:
 
 ```bash

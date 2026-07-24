@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c5q34f4ee2ib8"
-path="res://.godot/imported/faint_recollection.png-ea5ddab9e439b6a6485b9878a4c0e4df.ctex"
+uid="uid://cmbvtrj8t1tc3"
+path="res://.godot/imported/ancient_bearing_legacy.png-f6db6941807a78732012605b0d8d81b9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/items/shrumb_drops/faint_recollection.png"
-dest_files=["res://.godot/imported/faint_recollection.png-ea5ddab9e439b6a6485b9878a4c0e4df.ctex"]
+source_file="res://content/sprites/items/shrumb_drops/ancient_bearing_legacy.png"
+dest_files=["res://.godot/imported/ancient_bearing_legacy.png-f6db6941807a78732012605b0d8d81b9.ctex"]
 
 [params]
 

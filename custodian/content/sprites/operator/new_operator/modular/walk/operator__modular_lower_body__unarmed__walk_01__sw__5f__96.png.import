@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cx26nmnatbp32"
-path="res://.godot/imported/residual_instinct.png-4b4bd2fe99ea82fcba77a54e4b89684c.ctex"
+uid="uid://dcyxbff7c7hib"
+path="res://.godot/imported/operator__modular_lower_body__unarmed__walk_01__sw__5f__96.png-527e21035086b8a4a51436f444cc957a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/items/shrumb_drops/residual_instinct.png"
-dest_files=["res://.godot/imported/residual_instinct.png-4b4bd2fe99ea82fcba77a54e4b89684c.ctex"]
+source_file="res://content/sprites/operator/new_operator/modular/walk/operator__modular_lower_body__unarmed__walk_01__sw__5f__96.png"
+dest_files=["res://.godot/imported/operator__modular_lower_body__unarmed__walk_01__sw__5f__96.png-527e21035086b8a4a51436f444cc957a.ctex"]
 
 [params]
 

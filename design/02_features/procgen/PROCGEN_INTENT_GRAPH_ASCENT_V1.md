@@ -10,11 +10,12 @@ Correct order:
 2. Intent graph
 3. Ascent spine
 4. Region reservations
-5. Terrain/elevation requests
-6. Floor/wall carving
-7. Faction/story/site stamping
-8. Props/actors/ambient anchors
-9. Debug export and validation
+5. Route playability field
+6. Terrain/elevation requests
+7. Floor/wall carving and route presentation
+8. Faction/story/site stamping
+9. Props/actors/ambient anchors
+10. Final blocker-aware validation
 
 Incorrect order:
 
@@ -36,6 +37,14 @@ Intent graph cells become floor authority, procgen wall authority is cleared thr
 Story and faction site geometry is still V1 reservation geometry, not final authored setpiece art. The stampers call `claim_procgen_floor_rect_for_authored_scene_tiles(...)` so reservation cleanup stays centralized.
 
 Road and foliage detail passes must respect those authority claims. Random foliage placement rejects authored-scene, story-room, faction-site, Ash-Bell, and Forlorn-Ritualant reservation metadata, including streaming reveal placement. Road stamping/enforcement may clear ordinary road-blocking procgen walls, but must not clear or overlap impassable ascent-field blockers, terrain blocked/drop/ledge cells, mountain-wall authority, or compound connector wall rails.
+
+`PROCGEN_PLAYABILITY_PASS_V1.md` now defines the downstream route-clearance
+contract. The primary route footprint and centerline drive visible road
+presentation, critical-pad and encounter-interior clearance, foliage-density
+bands, constrained exterior cleanup, and a final blocker-aware minimum-width
+audit. Terrain blockers inside the playability hard-clearance mask are repaired
+before final road presentation; authored role transitions and ramp/stair
+visuals remain authoritative.
 
 Elevation traversal query API is live; actor/enemy pathfinding enforcement is deferred.
 
