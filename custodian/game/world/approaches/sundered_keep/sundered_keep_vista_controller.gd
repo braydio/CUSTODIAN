@@ -22,6 +22,8 @@ class_name SunderedKeepVistaController
 @export var second_vista_full_marker_path: NodePath
 @export var second_vista_end_marker_path: NodePath
 @export var first_reveal_camera_anchor_path: NodePath
+@export var parallax_reveal_root_path: NodePath
+@export var parallax_foreground_root_path: NodePath
 
 @export_range(0.0, 1.0, 0.01) var vista_max_alpha := 1.0
 @export_range(0.0, 1.0, 0.01) var vista_min_lateral_alpha := 0.35
@@ -71,6 +73,8 @@ var _second_vista_start: Marker2D
 var _second_vista_full: Marker2D
 var _second_vista_end: Marker2D
 var _first_reveal_camera_anchor: Marker2D
+var _parallax_reveal_root: CanvasItem
+var _parallax_foreground_root: CanvasItem
 var _presentation_anchor: Marker2D
 var _camera_target_offset := CAMERA_INTRO_TIGHT_OFFSET
 var _camera_target_zoom := CAMERA_INTRO_TIGHT_ZOOM
@@ -265,6 +269,12 @@ func _resolve_nodes() -> void:
 	_first_reveal_camera_anchor = get_node_or_null(
 		first_reveal_camera_anchor_path
 	) as Marker2D
+	_parallax_reveal_root = get_node_or_null(
+		parallax_reveal_root_path
+	) as CanvasItem
+	_parallax_foreground_root = get_node_or_null(
+		parallax_foreground_root_path
+	) as CanvasItem
 
 	var approach_root := get_parent()
 	if approach_root == null:
@@ -309,6 +319,14 @@ func _resolve_nodes() -> void:
 		_first_reveal_camera_anchor = approach_root.get_node_or_null(
 			"Markers/FirstRevealCameraAnchor"
 		) as Marker2D
+	if _parallax_reveal_root == null:
+		_parallax_reveal_root = approach_root.get_node_or_null(
+			"ParallaxRoot/RevealDepth"
+		) as CanvasItem
+	if _parallax_foreground_root == null:
+		_parallax_foreground_root = approach_root.get_node_or_null(
+			"ParallaxRoot/ForegroundDepth"
+		) as CanvasItem
 
 
 func _apply_progress(t: float) -> void:
@@ -326,6 +344,15 @@ func _apply_progress(t: float) -> void:
 	var exit_shadow_alpha := _get_exit_shadow_alpha(t)
 	_apply_camera_progress(t)
 
+	if _parallax_reveal_root != null:
+		_parallax_reveal_root.modulate.a = first_vista_alpha
+	if _parallax_foreground_root != null:
+		var foreground_t := smoothstep(0.58, 1.0, t)
+		_parallax_foreground_root.modulate.a = lerpf(
+			0.55,
+			1.0,
+			foreground_t
+		)
 	if _vista_root != null:
 		_vista_root.modulate.a = first_vista_alpha * vista_max_alpha
 	if _grand_vista_root != null:

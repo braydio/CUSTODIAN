@@ -5,6 +5,7 @@ const REVEAL_DIRECTOR_SCRIPT := preload("res://game/world/approaches/sundered_ke
 const EXPECTED_BOUNDARY_SEGMENTS := 57
 
 const EXPECTED_ROOTS := {
+	"ParallaxRoot": 0,
 	"UnderlayRoot": -300,
 	"VistaRoot": -200,
 	"GrandVistaRoot": -220,
@@ -144,6 +145,15 @@ func _init() -> void:
 			if grand_vista_root.get_node_or_null(layer_name) == null:
 				errors.append("GrandVistaRoot/%s missing" % layer_name)
 		_collect_collision_nodes(grand_vista_root, "GrandVistaRoot must be visual-only", errors)
+	var parallax_root := scene.get_node_or_null("ParallaxRoot")
+	if parallax_root == null:
+		errors.append("ParallaxRoot missing")
+	else:
+		_collect_collision_nodes(
+			parallax_root,
+			"ParallaxRoot must be presentation-only",
+			errors
+		)
 	var occlusion_root := scene.get_node_or_null("OcclusionRoot") as CanvasItem
 	if occlusion_root == null or occlusion_root.modulate.a < 0.99:
 		errors.append("OcclusionRoot should stay visible for edge mist/fog; alpha=%s" % (occlusion_root.modulate.a if occlusion_root else "missing"))
@@ -210,6 +220,18 @@ func _init() -> void:
 		_check_controller_path(controller, "second_vista_start_marker_path", NodePath("../Markers/SecondVistaStart"), errors)
 		_check_controller_path(controller, "second_vista_full_marker_path", NodePath("../Markers/SecondVistaFull"), errors)
 		_check_controller_path(controller, "second_vista_end_marker_path", NodePath("../Markers/SecondVistaEnd"), errors)
+		_check_controller_path(
+			controller,
+			"parallax_reveal_root_path",
+			NodePath("../ParallaxRoot/RevealDepth"),
+			errors
+		)
+		_check_controller_path(
+			controller,
+			"parallax_foreground_root_path",
+			NodePath("../ParallaxRoot/ForegroundDepth"),
+			errors
+		)
 
 		var reveal_start_progress := _marker_progress(scene, "RevealStart", errors)
 		var reveal_full_progress := _marker_progress(scene, "RevealFull", errors)
@@ -403,7 +425,12 @@ func _collect_filled_collision_polygons(node: Node, errors: Array[String]) -> vo
 
 
 func _collect_collision_nodes(node: Node, context: String, errors: Array[String]) -> void:
-	if node is CollisionObject2D or node is CollisionShape2D or node is CollisionPolygon2D:
+	if (
+		node is CollisionObject2D
+		or node is CollisionShape2D
+		or node is CollisionPolygon2D
+		or node is NavigationRegion2D
+	):
 		errors.append("%s; found collision node %s" % [context, node.get_path()])
 	for child in node.get_children():
 		_collect_collision_nodes(child, context, errors)

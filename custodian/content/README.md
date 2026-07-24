@@ -16,6 +16,7 @@ content/
   ammo_types/       # data-only ammo definitions
   animations/       # animation metadata and authored sequence data
   audio/            # runtime audio organized by owning feature/event
+  backgrounds/      # authored painterly world backdrops and parallax plates by destination
   balance/          # deterministic balance scenario/configuration data
   dialogue/         # authored dialogue JSON
   doors/            # door assets and sidecars by set

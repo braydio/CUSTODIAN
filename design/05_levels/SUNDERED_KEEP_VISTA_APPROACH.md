@@ -4,9 +4,6 @@
 - **Owner:** authored level / rendering / camera
 - **Runtime:** `custodian/` Godot 4.x
 - **Production runtime scene:** `custodian/game/world/approaches/sundered_keep/sundered_keep_approach.tscn`
-- **Reference generator:** `custodian/tools/build_sundered_keep_approach_blockout.gd`
-- **Director:** `custodian/scripts/levels/sundered_keep/overlook_camera_director.gd`
-- **Generated scene:** `custodian/scenes/levels/sundered_keep/sundered_keep_approach_blockout.tscn`
 
 ## Summary
 
@@ -66,6 +63,7 @@ The same mapper now has marker mode for event authoring:
 
 ```
 SunderedKeepApproach
+├── ParallaxRoot          z=0     — shared painterly BaseDepth/RevealDepth/ForegroundDepth rig
 ├── UnderlayRoot          z=-300  — ocean void, cliff spires, route contact shadow
 ├── GrandVistaRoot        z=-220  — optional later hero overlook panorama/fog/spray/parapet, presentation-only
 ├── VistaRoot             z=-200  — first-vista horizon and fog veil
@@ -85,6 +83,7 @@ SunderedKeepApproach
 
 | Root | z_index | Notes |
 |------|---------|-------|
+| ParallaxRoot | 0 | Presentation-only shared depth rig; child `Parallax2D` layers use absolute z ordering |
 | UnderlayRoot | -300 | Behind everything |
 | GrandVistaRoot | -220 | Second-beat hero overlook panorama layer; starts hidden and is visual-only |
 | VistaRoot | -200 | First vista horizon/fog veil |
@@ -149,6 +148,40 @@ The following painterly matte/background assets already exist at `res://content/
 | `keep_horizon_wide.png` | 1689×787 | Reserve — wider keep matte if needed |
 
 These live under `content/` not `assets/`. Use `res://content/backgrounds/sundered_keep/` paths.
+
+## Shared Painterly Parallax Depth
+
+Vista Approach and Return Causeway both build the presentation-only
+`SunderedKeepParallaxRig`. The Vista controller remains the sole reveal-alpha owner:
+`BaseDepth` is present on entry, `RevealDepth` follows the explicit first-vista
+choreography, and `ForegroundDepth` increases toward the exit. Return Causeway builds
+the same groups at full alpha and preserves
+`BaseDepth/DistantKeep_Parallax2D/DistantSunderedKeepLandmark` for compatibility.
+
+| Layer | Scroll scale contract |
+|---|---|
+| `BackdropVoid` / `StormOceanBackdrop` | Opaque safety fill; ordinary world presentation |
+| Distant Keep | `(0.18, 0.12)` on Return Causeway |
+| Far cliff islands | `(0.10, 0.05)` Vista; `(0.22, 0.12)` Causeway |
+| Causeway far arches | `(0.16, 0.09)` Vista; `(0.30, 0.18)` Causeway |
+| Lower cliff depth | `(0.28, 0.16)` Vista; `(0.36, 0.22)` Causeway |
+| Ocean mist | `(0.44, 0.24)` Vista; `(0.46, 0.28)` Causeway |
+| Playable terrain | Ordinary world transform; never parented to `ParallaxRoot` |
+| Foreground ruined arch | `(1.04, 1.02)` near occluder |
+| Near edge mist | `(0.82, 0.72)` atmospheric occluder |
+
+The ocean-mist and near-mist plates remain separate left/right runtime sprites with a
+96-pixel overlap; they are not stitched offline. Their `Parallax2D.scroll_offset`
+oscillates within fixed amplitudes, while `repeat_size` stays disabled because the
+plates are not guaranteed seamless. Every painterly Sprite2D explicitly uses linear
+filtering. `ParallaxRoot` may not contain collision or navigation nodes and may not
+become camera, traversal, combat, or simulation authority.
+
+Required plates live under
+`res://content/backgrounds/sundered_keep/approach/parallax/`. If edited in Aseprite,
+their source files belong under
+`custodian/content/_aseprite/backgrounds/sundered_keep/approach/parallax/`; generated
+PNG plates do not require artificial Aseprite source files.
 
 ## Grand Vista Presentation Beat
 
@@ -223,9 +256,13 @@ The production route always continues from Vista to Return Causeway before Front
   -> front_gate
 ```
 
-`sundered_keep_approach_smoke.gd` validates the Vista scene and mapper-authored collision. `sundered_keep_vista_polish_smoke.gd` physically enters the reveal trigger and proves the tight-entry/reveal/hold/return camera sequence, one-shot ownership, five parallax roots, fixed playable/collision roots, Labyrinth depth pass, player-only roof fades, and computed final-fog enclosure. The production graph smoke validates forward and reverse traversal, active-level adoption, source cache behavior, and exact world-origin restoration only after route exfil. Direct Vista-to-Front-Gate traversal exists only in the explicit `debug_direct_keep` profile.
+`sundered_keep_approach_smoke.gd` validates the Vista scene and mapper-authored collision. `sundered_keep_vista_polish_smoke.gd` physically enters the reveal trigger and proves the tight-entry/reveal/hold/return camera sequence, one-shot ownership, five local parallax roots, fixed playable/collision roots, Labyrinth depth pass, player-only roof fades, and computed final-fog enclosure. `sundered_keep_parallax_depth_smoke.gd` instantiates Vista and Return Causeway together and validates the shared painterly rig's assets, groups, scales, linear filtering, compatibility paths, and presentation-only descendants. The production graph smoke validates forward and reverse traversal, active-level adoption, source cache behavior, and exact world-origin restoration only after route exfil. Direct Vista-to-Front-Gate traversal exists only in the explicit `debug_direct_keep` profile.
 
-## Reference Blockout Implementation
+## Historical Reference Blockout Implementation
+
+The generator, former camera director, and generated blockout scene described below
+are historical implementation notes and are not live production files. The dynamic
+production scene and scripts named at the top of this document are authoritative.
 
 ### Phase 1 — Add `_sprite_rect()` helper to builder
 
@@ -388,6 +425,7 @@ Verify at each state:
 - [x] Near/mid fog peel independently while far haze remains after the reveal
 - [x] Destination prompt remains hidden until the reveal settle completes
 - [x] Five parallax roots move independently while playable art and collision remain fixed
+- [x] Shared Vista/Return painterly depth rig preserves gameplay ownership and Return Causeway compatibility paths
 - [x] Three route-master roof crops fade only for Operator/player bodies and restore exactly
 - [x] Final fog coverage encloses the 1920×1080 exit view plus required safety margins
 

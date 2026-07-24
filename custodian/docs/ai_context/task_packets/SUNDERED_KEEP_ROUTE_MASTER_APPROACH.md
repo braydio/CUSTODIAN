@@ -1,9 +1,9 @@
 # SUNDERED KEEP ROUTE MASTER APPROACH
 
 - Status: `complete`
-- Authority: `design/features/implementation/SUNDERED_KEEP_VISTA_APPROACH.md`, `custodian/game/world/approaches/sundered_keep/`
+- Authority: `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md`, `custodian/game/world/approaches/sundered_keep/`
 - Goal: Implement the final Sundered Keep Approach as one authored scene using the route master as the only playable ground sprite and layered presentation assets around it.
-- Files: `sundered_keep_approach.gd`, `sundered_keep_approach.tscn`, `sundered_keep_vista_controller.gd`, `sundered_keep_approach_smoke.gd`, `sundered_keep_approach_asset_audit.py`, `CURRENT_STATE.md`, `FILE_INDEX.md`, `design/features/implementation/SUNDERED_KEEP_VISTA_APPROACH.md`, `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md`
+- Files: `sundered_keep_approach.gd`, `sundered_keep_approach.tscn`, `sundered_keep_vista_controller.gd`, `sundered_keep_approach_smoke.gd`, `sundered_keep_approach_asset_audit.py`, `CURRENT_STATE.md`, `FILE_INDEX.md`, `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md`
 - Constraints: Do not convert assets into a tileset. Do not create one scene per asset. Keep collision as segment rails separate from image alpha. Keep `GrandVistaRoot` hidden during first reveal.
 - Acceptance: Required assets exist at runtime paths; route master is the only active `PlayableRoot` ground sprite; support sprites are rooted correctly; marker order matches unified route; `VistaRoot`, `GrandVistaRoot`, and final gate veil alpha are driven by marker progress; collision uses mapper-authored thick capsule rails; asset audit and Godot smoke pass.
 - Completed: Pipeline warning added for future unsupported Operator modular melee block/hitreact loadouts. Inbox blocking hitreact filenames were made explicit as `unarmed`. The approach now uses `USE_ROUTE_MASTER = true`, renders `ApproachRouteMaster` as the only active `PlayableRoot` ground sprite, roots support sprites under underlay/vista/occlusion nodes, keeps `GrandVistaRoot` hidden until the second vista window, fades the final gate shadow veil near exit, updates unified-route markers, and uses mapper-authored segment boundary rails.

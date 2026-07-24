@@ -54,6 +54,7 @@ For the full content-root domain map, see `res://content/README.md`.
 - `_pipeline/` is ingest staging/history and should not be referenced by runtime scenes, resources, or scripts.
 - `unregistered/` is quarantine. Promote assets out of it only by assigning an owning runtime/source domain, updating references/manifests, and verifying Godot import paths.
 - `legacy/` folders are historical or compatibility surfaces. Keep them local to the feature they explain, and document why they are retained in a local README when possible.
+- Painterly world backdrops and parallax plates belong under `content/backgrounds/<destination>/`; if they have real Aseprite sources, those sources mirror that path under `content/_aseprite/backgrounds/<destination>/`. Do not create artificial `.aseprite` files for generated PNG plates.
 
 ## Persistent Runtime-Ready Drop
 
@@ -100,6 +101,7 @@ content/
     tiles/interiors/source/props_cables_01.aseprite
     ui/terminal/source/Icons_Tilesheet.aseprite
     props/ruins/portal_arrival.aseprite
+    backgrounds/sundered_keep/approach/parallax/far_cliff_islands.aseprite
 ```
 
 When you save a new `.aseprite` file anywhere under `content/`, it is automatically

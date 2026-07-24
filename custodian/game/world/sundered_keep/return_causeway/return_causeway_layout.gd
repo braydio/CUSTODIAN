@@ -21,15 +21,14 @@ class_name ReturnCausewayLayout
 const TILE_SIZE := 32.0
 const MAP_SIZE_TILES := Vector2i(96, 72)
 const ELEVATION_STEP_PX := 24.0
-const DISTANT_KEEP_BACKGROUND_PATH := "res://content/backgrounds/sundered_keep/distant_sundered_keep.png"
-const DISTANT_KEEP_SCROLL_SCALE := Vector2(0.18, 0.12)
-const FAR_MIST_SCROLL_SCALE := Vector2(0.28, 0.18)
-const DISTANT_KEEP_TINT := Color(0.78, 0.82, 0.88, 0.76)
 
 # Asset catalog.
 const SUNDERED_KEEP_ASSETS := preload("res://content/runtime/sundered_keep/sundered_keep_game32_assets.gd")
 const SUNDERED_KEEP_INTERACTABLE := preload("res://game/world/sundered_keep/sundered_keep_interactable.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
+const PARALLAX_RIG_SCRIPT := preload(
+	"res://game/world/sundered_keep/presentation/sundered_keep_parallax_rig.gd"
+)
 
 # Music.
 const MUSIC_PATH := "res://content/audio/music/return_causeway/return_causeway_01.ogg"
@@ -75,6 +74,7 @@ var _backtrack_exit: LevelExit2D = null
 var _return_mooring_active_overlay: Sprite2D = null
 var _buried_terminal_overlay: Sprite2D = null
 var _music_player: AudioStreamPlayer2D = null
+var _parallax_rig: SunderedKeepParallaxRig = null
 
 
 # -- Lifecycle ----------------------------------------------------------------
@@ -257,57 +257,30 @@ func _obs_log(kind: StringName, data: Dictionary = {}) -> void:
 # -- Sector Builders -----------------------------------------------------------
 
 func _build_parallax_backdrop() -> void:
-	var texture := _load_texture(DISTANT_KEEP_BACKGROUND_PATH)
-	if texture == null:
-		return
+	var existing := get_node_or_null("ParallaxRoot")
+	if existing != null:
+		remove_child(existing)
+		existing.free()
 
-	var map_pixel_size: Vector2 = Vector2(float(MAP_SIZE_TILES.x) * TILE_SIZE, float(MAP_SIZE_TILES.y) * TILE_SIZE)
+	_parallax_rig = (
+		PARALLAX_RIG_SCRIPT.new()
+		as SunderedKeepParallaxRig
+	)
+	_parallax_rig.name = "ParallaxRoot"
+	add_child(_parallax_rig)
 
-	var parallax_root := Node2D.new()
-	parallax_root.name = "ParallaxRoot"
-	parallax_root.z_as_relative = false
-	parallax_root.z_index = -128
-	add_child(parallax_root)
-
-	var distant_keep_layer := Parallax2D.new()
-	distant_keep_layer.name = "DistantKeep_Parallax2D"
-	distant_keep_layer.scroll_scale = DISTANT_KEEP_SCROLL_SCALE
-	distant_keep_layer.z_as_relative = false
-	distant_keep_layer.z_index = -126
-	parallax_root.add_child(distant_keep_layer)
-
-	var distant_keep := Sprite2D.new()
-	distant_keep.name = "DistantSunderedKeepLandmark"
-	distant_keep.texture = texture
-	distant_keep.centered = true
-	distant_keep.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	distant_keep.texture_repeat = CanvasItem.TEXTURE_REPEAT_DISABLED
-	distant_keep.modulate = DISTANT_KEEP_TINT
-	distant_keep.position = Vector2(map_pixel_size.x * 0.5, 520.0)
-	distant_keep.scale = Vector2.ONE
-	distant_keep.z_as_relative = false
-	distant_keep.z_index = -126
-	distant_keep_layer.add_child(distant_keep)
-
-	var mist_layer := Parallax2D.new()
-	mist_layer.name = "FarMist_Parallax2D"
-	mist_layer.scroll_scale = FAR_MIST_SCROLL_SCALE
-	mist_layer.z_as_relative = false
-	mist_layer.z_index = -112
-	parallax_root.add_child(mist_layer)
-
-	var mist_band := Polygon2D.new()
-	mist_band.name = "DistantKeepBaseMist"
-	mist_band.polygon = PackedVector2Array([
-		Vector2(-TILE_SIZE * 2.0, 765.0),
-		Vector2(map_pixel_size.x + TILE_SIZE * 2.0, 765.0),
-		Vector2(map_pixel_size.x + TILE_SIZE * 2.0, 960.0),
-		Vector2(-TILE_SIZE * 2.0, 960.0),
-	])
-	mist_band.color = Color(0.09, 0.12, 0.15, 0.58)
-	mist_band.z_as_relative = false
-	mist_band.z_index = -112
-	mist_layer.add_child(mist_band)
+	var map_pixel_size := Vector2(
+		float(MAP_SIZE_TILES.x) * TILE_SIZE,
+		float(MAP_SIZE_TILES.y) * TILE_SIZE
+	)
+	_parallax_rig.build(
+		SunderedKeepParallaxRig.Profile.RETURN_CAUSEWAY,
+		Rect2(Vector2.ZERO, map_pixel_size)
+	)
+	_stats["missing_assets"] = (
+		int(_stats["missing_assets"])
+		+ _parallax_rig.get_missing_asset_count()
+	)
 
 
 func _build_ocean_backdrop() -> void:

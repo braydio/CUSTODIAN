@@ -2,6 +2,15 @@ extends SceneTree
 
 const RETURN_CAUSEWAY_SCENE := preload("res://game/world/sundered_keep/return_causeway/ReturnCausewayApproach.tscn")
 const DISTANT_KEEP_TEXTURE_PATH := "res://content/backgrounds/sundered_keep/distant_sundered_keep.png"
+const REQUIRED_LAYER_PATHS := [
+	"BaseDepth/DistantKeep_Parallax2D",
+	"BaseDepth/FarCliffIslands_Parallax2D",
+	"RevealDepth/CausewayFarArches_Parallax2D",
+	"BaseDepth/LowerCliffDepth_Parallax2D",
+	"BaseDepth/OceanMist_Parallax2D",
+	"ForegroundDepth/NearEdgeMist_Parallax2D",
+	"ForegroundDepth/ForegroundRuinedArch_Parallax2D",
+]
 
 
 func _init() -> void:
@@ -18,7 +27,14 @@ func _init() -> void:
 		_fail("Missing ParallaxRoot")
 		return
 
-	var distant_layer := parallax_root.get_node_or_null("DistantKeep_Parallax2D") as Parallax2D
+	for layer_path: String in REQUIRED_LAYER_PATHS:
+		if parallax_root.get_node_or_null(layer_path) == null:
+			_fail("Missing parallax layer: %s" % layer_path)
+			return
+
+	var distant_layer := parallax_root.get_node_or_null(
+		"BaseDepth/DistantKeep_Parallax2D"
+	) as Parallax2D
 	if distant_layer == null:
 		_fail("Missing DistantKeep_Parallax2D")
 		return
@@ -36,13 +52,8 @@ func _init() -> void:
 	if keep_sprite.texture.resource_path != DISTANT_KEEP_TEXTURE_PATH:
 		_fail("Unexpected distant keep texture: %s" % keep_sprite.texture.resource_path)
 		return
-	if keep_sprite.texture_filter != CanvasItem.TEXTURE_FILTER_NEAREST:
-		_fail("Distant keep texture_filter is not nearest")
-		return
-
-	var mist_layer := parallax_root.get_node_or_null("FarMist_Parallax2D") as Parallax2D
-	if mist_layer == null:
-		_fail("Missing FarMist_Parallax2D")
+	if keep_sprite.texture_filter != CanvasItem.TEXTURE_FILTER_LINEAR:
+		_fail("Distant keep texture_filter is not linear")
 		return
 
 	if _contains_collision_or_navigation(parallax_root):

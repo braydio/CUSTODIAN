@@ -12,6 +12,7 @@ on:
       - "custodian/scenes/game.tscn"
       - "custodian/content/levels/**"
       - "custodian/content/routes/**"
+      - "custodian/content/backgrounds/sundered_keep/**"
       - "custodian/tools/level_authoring/**"
       - "custodian/tools/validation/**"
       - "design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md"
@@ -32,6 +33,7 @@ on:
       - "custodian/scenes/game.tscn"
       - "custodian/content/levels/**"
       - "custodian/content/routes/**"
+      - "custodian/content/backgrounds/sundered_keep/**"
       - "custodian/tools/level_authoring/**"
       - "custodian/tools/validation/**"
       - "design/04_architecture/ROUTE_TRAVERSAL_SYSTEM.md"
@@ -85,6 +87,7 @@ jobs:
             sundered_keep_ingress_smoke.gd
             sundered_keep_level_chain_smoke.gd
             sundered_keep_approach_smoke.gd
+            sundered_keep_parallax_depth_smoke.gd
             sundered_keep_vista_polish_smoke.gd
           )
 

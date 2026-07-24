@@ -12,6 +12,9 @@ const ROOF_OCCLUDER_SCRIPT := preload(
 const ROUTE_MASTER_OCCLUSION_SHADER := preload(
 	"res://game/world/approaches/sundered_keep/route_master_occlusion_mask.gdshader"
 )
+const PARALLAX_RIG_SCRIPT := preload(
+	"res://game/world/sundered_keep/presentation/sundered_keep_parallax_rig.gd"
+)
 
 const USE_ROUTE_MASTER := true
 
@@ -211,6 +214,7 @@ const AUTHORING_MARKERS := {
 }
 
 var underlay_root: Node2D = null
+var parallax_root: SunderedKeepParallaxRig = null
 var vista_root: Node2D = null
 var _grand_vista_root: Node2D = null
 var playable_root: Node2D = null
@@ -287,6 +291,17 @@ func _remove_stale_proxy_nodes() -> void:
 
 
 func _ensure_roots() -> void:
+	parallax_root = get_node_or_null(
+		"ParallaxRoot"
+	) as SunderedKeepParallaxRig
+	if parallax_root == null:
+		parallax_root = (
+			PARALLAX_RIG_SCRIPT.new()
+			as SunderedKeepParallaxRig
+		)
+		parallax_root.name = "ParallaxRoot"
+		add_child(parallax_root)
+
 	underlay_root = _ensure_node2d_root("UnderlayRoot", -300)
 	vista_root = _ensure_node2d_root("VistaRoot", -200)
 	_grand_vista_root = _ensure_node2d_root("GrandVistaRoot", -220)
@@ -366,6 +381,12 @@ func _build_visuals() -> void:
 	vista_root.modulate.a = 0.0
 	_grand_vista_root.modulate.a = 0.0
 	occlusion_root.modulate.a = 1.0
+
+	if parallax_root != null:
+		parallax_root.build(
+			SunderedKeepParallaxRig.Profile.VISTA_APPROACH,
+			RECT_CAMERA_BOUNDS
+		)
 
 	_add_backdrop_void_fill()
 	_add_fitted_sprite(underlay_root, "ApproachOceanVoidUnderlay", APPROACH_OCEAN_VOID_UNDERLAY, RECT_APPROACH_UNDERLAY, -30, Color.WHITE)
@@ -1088,6 +1109,12 @@ func _ensure_vista_controller() -> void:
 	vista_controller.second_vista_end_marker_path = NodePath("../Markers/SecondVistaEnd")
 	vista_controller.first_reveal_camera_anchor_path = NodePath(
 		"../Markers/FirstRevealCameraAnchor"
+	)
+	vista_controller.parallax_reveal_root_path = NodePath(
+		"../ParallaxRoot/RevealDepth"
+	)
+	vista_controller.parallax_foreground_root_path = NodePath(
+		"../ParallaxRoot/ForegroundDepth"
 	)
 	vista_controller.refresh_bindings()
 	vista_controller.apply_progress(0.0)
