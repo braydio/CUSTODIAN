@@ -167,7 +167,10 @@ the route's `fade` transition style: the route manager fades fully to black,
 clears Vista presentation framing, activates Return Causeway at its named spawn,
 rebinds and snaps the shared camera while obscured, then fades back in. The
 `debug_direct_keep` profile remains the only Vista exit that intentionally skips
-Return Causeway.
+Return Causeway. The production Causeway arrival places the Operator five tiles
+north of its reverse exit and keeps that backtrack trigger guarded until the
+Operator clears the 192 px arrival radius, preventing an immediate bounce to
+Vista.
 
 **Marker positions** (from builder):
 

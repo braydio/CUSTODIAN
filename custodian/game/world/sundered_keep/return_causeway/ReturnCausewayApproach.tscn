@@ -13,7 +13,7 @@ position = Vector2(33, 93)
 script = ExtResource("1_8j6p3")
 
 [node name="OperatorSpawn" type="Marker2D" parent="." unique_id=882317614]
-position = Vector2(1456, 2032)
+position = Vector2(1456, 1936)
 
 [node name="KeepReturnSpawn" type="Marker2D" parent="."]
 
@@ -29,6 +29,7 @@ shape = SubResource("RectangleShape2D_exit")
 [node name="Exit_Backtrack" type="Area2D" parent="Exits"]
 script = ExtResource("3_exit")
 exit_id = &"backtrack"
+arrival_guard_radius = 192.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_Backtrack"]
 shape = SubResource("RectangleShape2D_exit")

@@ -315,7 +315,11 @@ func _transition_to_node(
 			return _rollback(context, target, not reused, source_level_id, source_loader_context, "target completion hook rejected activation")
 	if target.has_method("refresh_route_camera") and not bool(target.call("refresh_route_camera", actor)):
 		return _rollback(context, target, not reused, source_level_id, source_loader_context, "target camera binding failed")
-	var bind_result := _bind_exits(target, edge.to_node_id)
+	var bind_result := _bind_exits(
+		target,
+		edge.to_node_id,
+		actor
+	)
 	if not bool(bind_result.get("succeeded", false)):
 		return _rollback(context, target, not reused, source_level_id, source_loader_context, str(bind_result.get("reason", "exit binding failed")))
 	_set_phase(TransitionPhase.DEACTIVATING_SOURCE)
@@ -490,7 +494,11 @@ func _rollback(
 	return _transition_failure(context.edge_id, reason)
 
 
-func _bind_exits(instance: Node, node_id: StringName = &"") -> Dictionary:
+func _bind_exits(
+	instance: Node,
+	node_id: StringName = &"",
+	arrival_actor: Node = null
+) -> Dictionary:
 	if instance == null:
 		return {"succeeded": false, "reason": "active route node is unavailable"}
 	var seen: Dictionary = {}
@@ -509,6 +517,8 @@ func _bind_exits(instance: Node, node_id: StringName = &"") -> Dictionary:
 			push_error("[RouteTraversalManager] disabled exit %s: active profile resolves %d legal edges" % [exit_id, matches.size()])
 		if enabled and not exit_node.transition_requested.is_connected(_on_exit_requested):
 			exit_node.transition_requested.connect(_on_exit_requested)
+		if enabled and arrival_actor != null:
+			exit_node.arm_arrival_guard(arrival_actor)
 	return {"succeeded": true}
 
 

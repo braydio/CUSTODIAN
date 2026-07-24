@@ -92,6 +92,35 @@ func _run_production_chain(errors: Array[String]) -> void:
 		await process_frame
 		return
 	_assert_active(runtime, &"return_causeway", &"OperatorSpawn", errors)
+	var arrival_backtrack := _find_exit(
+		loader.call("get_active_level_instance"),
+		&"backtrack"
+	)
+	if arrival_backtrack == null:
+		errors.append("Return Causeway arrival lacks backtrack exit")
+	elif not arrival_backtrack.is_actor_arrival_guarded(actor):
+		errors.append(
+			"Return Causeway backtrack exit lacks its arrival guard"
+		)
+	else:
+		for unused in 4:
+			await physics_frame
+		if manager.call("get_current_node_id") != &"return_causeway":
+			errors.append(
+				"Return Causeway arrival guard bounced back to Vista"
+			)
+		actor.global_position = (
+			arrival_backtrack.global_position
+			- Vector2(0.0, 224.0)
+		)
+		actor.force_update_transform()
+		await physics_frame
+		await physics_frame
+		if arrival_backtrack.is_actor_arrival_guarded(actor):
+			errors.append(
+				"Return Causeway arrival guard did not arm backtrack "
+				+ "after Operator cleared the staging radius"
+			)
 	await process_frame
 	if is_instance_valid(first_vista):
 		errors.append("Vista was retained after its forward destroy policy")
@@ -224,6 +253,12 @@ func _trigger_physics_exit(
 			counters.transition_requested += 1
 	)
 	var validation_collision_layer := 1 << 19
+	var original_actor_collision_layer := int(
+		runtime.actor.collision_layer
+	)
+	var original_actor_collision_mask := int(
+		runtime.actor.collision_mask
+	)
 	exit_node.collision_layer = 0
 	exit_node.collision_mask = validation_collision_layer
 	exit_node.call("reset_transition_lock")
@@ -240,6 +275,8 @@ func _trigger_physics_exit(
 		if int(counters.body_entered) > 0:
 			break
 	await process_frame
+	runtime.actor.collision_layer = original_actor_collision_layer
+	runtime.actor.collision_mask = original_actor_collision_mask
 	if int(counters.body_entered) == 0:
 		errors.append("authored %s exit did not receive body_entered" % exit_id)
 	if int(counters.transition_requested) == 0:

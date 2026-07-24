@@ -94,7 +94,12 @@ Failure enters rollback: synchronously clear loader authority when a post-commit
 
 Adapters may isolate legacy Sundered roots only when those roots cannot expose the contract directly. They must not form a parallel loading architecture.
 
-`LevelExit2D` is a dumb `Area2D` request source. It owns only an `exit_id`, prompt, body-entry behavior, and duplicate-request lock. It contains no route, destination, scene, spawn, profile, cache, or loader authority.
+`LevelExit2D` is a dumb `Area2D` request source. It owns only an `exit_id`,
+prompt, body-entry behavior, duplicate-request lock, and an optional
+arrival-clearance guard. A guarded exit rejects the persistent actor and
+disconnects automatic body-entry requests until that actor leaves its configured
+radius; it does not select a destination or add time-based route authority. It
+contains no route, destination, scene, spawn, profile, cache, or loader authority.
 
 Production Sundered exits are authored `LevelExit2D` children in the Vista, Return Causeway, and Front Gate scenes. Their scripts may locate and position them from authored markers or tiles, but must not instantiate route exits.
 
@@ -130,6 +135,12 @@ front_gate → @world_origin
 ```
 
 `debug_direct_keep` resolves Vista `continue` directly to Front Gate. `causeway_only` enters Return Causeway and exfils for focused validation. Route data, not scene booleans, selects these edges.
+
+Return Causeway places `OperatorSpawn` five tiles north of its southern
+`backtrack` exit. That reverse exit uses a 192 px arrival guard, so activating the
+Causeway cannot immediately re-enter Vista; the guard clears only after the
+Operator leaves the arrival radius, after which ordinary physical backtracking is
+available.
 
 Front Gate uses `snapshot_and_unload` plus session state. Its scalar state, siege-objective dictionaries, and Great Hall ambush dictionary restore symmetrically into a new instance without replaying rewards, pickups, encounter completion, gate events, dialogue, or enemy spawning. Only coherent timer activity is resumed; live `Node` references are never serialized.
 

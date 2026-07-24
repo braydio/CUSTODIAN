@@ -100,6 +100,9 @@ Last updated: 2026-07-24
 - Return Causeway now has a visual-only distant Sundered Keep parallax landmark using
   `res://content/backgrounds/sundered_keep/distant_sundered_keep.png`, plus a simple far-mist band. The layer has no
   collision, navigation, interactables, or TileMap authority and is covered by `return_causeway_parallax_smoke.gd`.
+  Its Vista-arrival spawn is five tiles north of the southern backtrack exit; the exit's 192 px arrival guard suppresses
+  automatic body-entry requests until the Operator clears the staging radius, eliminating the activation bounce while
+  preserving ordinary physical backtracking afterward.
 - Sundered Keep's route-owned production ingress enters the registered Vista Approach at
   `res://game/world/approaches/sundered_keep/sundered_keep_approach.tscn`, then resolves generic `continue` through Return Causeway to Front Gate. Profile data, not a scene switch, selects the debug direct-Keep path. `RouteTraversalManager` commits each handoff through `LevelLoader`, and only the active authored branch remains visible and processing. Route exfil restores the captured procgen/contract origin. The approach uses one authored
   `ApproachRouteMaster` sprite from `res://content/sprites/world/return_causeway/path/sundered_keep_approach_route_master.png`

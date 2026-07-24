@@ -37,7 +37,8 @@ const MUSIC_PATH := "res://content/audio/music/return_causeway/return_causeway_0
 # These define the key locations used throughout the level. All positions are
 # in tile coordinates (32×32 px grid).
 
-const ENTRANCE_TILE := Vector2i(45, 63)          # Player spawn
+const ENTRANCE_TILE := Vector2i(45, 60)          # Player spawn
+const BACKTRACK_EXIT_TILE := Vector2i(45, 65)
 const RETURN_MOORING_ORIGIN := Vector2i(43, 56)  # 5×5 mooring pad origin
 const BROKEN_GAP_CENTER := Vector2i(45, 46)      # Center of the broken bridge gap
 const SHORE_STAIRS_BOTTOM := Vector2i(49, 49)    # Bottom of stairs from shore to causeway
@@ -653,6 +654,15 @@ func _build_gatehouse_gate() -> void:
 # -- Travel Gate ---------------------------------------------------------------
 
 func _add_travel_gate() -> void:
+	var operator_spawn := find_child(
+		"OperatorSpawn",
+		true,
+		false
+	) as Marker2D
+	if operator_spawn == null:
+		push_error("[ReturnCauseway] Missing authored OperatorSpawn")
+	else:
+		operator_spawn.position = _tile_center(ENTRANCE_TILE)
 	var keep_return_spawn := find_child("KeepReturnSpawn", true, false) as Marker2D
 	if keep_return_spawn == null:
 		push_error("[ReturnCauseway] Missing authored KeepReturnSpawn")
@@ -667,7 +677,7 @@ func _add_travel_gate() -> void:
 	if _backtrack_exit == null:
 		push_error("[ReturnCauseway] Missing authored Exit_Backtrack")
 	else:
-		_backtrack_exit.position = _tile_center(ENTRANCE_TILE + Vector2i(0, 2))
+		_backtrack_exit.position = _tile_center(BACKTRACK_EXIT_TILE)
 
 
 # -- Music --------------------------------------------------------------------
