@@ -49,7 +49,17 @@ Ordinary hit reactions must not overwrite enter, hold, recover, or executing. Re
 
 ## Reservation And Execution API
 
-`can_receive_parry_critical_from(attacker)` is true only for a live enemy in enter or hold with an active opportunity, a valid attacker, and no execution owner.
+`can_receive_parry_critical_from(attacker)` is true only for a live enemy in
+enter or hold with an active opportunity, a valid attacker inside the enemy's
+capture range, and no execution owner. Once this validation succeeds,
+contextual primary input selects the nearest valid opportunity without applying
+the ordinary melee preview cone. Visible locomotion facing and stale
+mouse/controller aim therefore cannot reject an otherwise valid paired
+execution. If an enter/hold opportunity is present but invalid, the enemy
+reports a narrow rejection reason (`out_of_capture_range`, `already_reserved`,
+`window_expired`, or invalid/dead ownership), and the Operator records one
+structured `player_critical_attack_rejected` Observatory event before normal
+melee fallback.
 
 `reserve_parry_critical(attacker)` performs validation and consumption atomically. It switches to executing, stores the attacker, increments and returns an execution token, freezes the opportunity clock, clears BREACH/countdown, and returns anchor/facing/direction/shared-root data. The dominant horizontal approach selects `e` or `w`; vertical approaches deliberately use the authored `s` composition because no north pair exists. It never applies damage.
 
@@ -115,7 +125,7 @@ Enemy grunt art uses the repository's actual `melee__` naming (not `unarmed__`):
 | `operator_critical_execution_s` | `custodian/content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png` | 8 × 96×96 / 768×96 | 12 | no |
 | `operator_critical_execution_e` | `custodian/content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__12f__96.png` | 12 × 96×96 / 1152×96 | 12 | no |
 | `operator_critical_execution_w` | `custodian/content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__12f__96.png` | 12 × 96×96 / 1152×96 | 12 | no |
-| `operator_critical_execution_fx_s` | `custodian/content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png` | 8 × 96×96 / 768×96 | 12 | no |
+| `operator_critical_execution_fx_s` | `custodian/content/sprites/operator/runtime/fx/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png` | 8 × 96×96 / 768×96 | 12 | no |
 | `operator_critical_execution_fx_e` | `custodian/content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__12f__96.png` | 12 × 96×96 / 1152×96 | 12 | no |
 | `operator_critical_execution_fx_w` | `custodian/content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__12f__96.png` | 12 × 96×96 / 1152×96 | 12 | no |
 | `posture_break_flash` | `custodian/content/sprites/effects/combat/critical/posture_break_flash_01.png` | 7 × 128×128 / 896×128 | 24 | no |

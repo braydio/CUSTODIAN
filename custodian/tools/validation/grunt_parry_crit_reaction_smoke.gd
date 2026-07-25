@@ -20,7 +20,7 @@ const REQUIRED_ASSETS := [
 	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__s__8f__96.png",
 	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__e__12f__96.png",
 	"res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__12f__96.png",
-	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
+	"res://content/sprites/operator/runtime/fx/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
 	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__12f__96.png",
 	"res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__12f__96.png",
 ]
@@ -179,8 +179,24 @@ func _run() -> void:
 		root.add_child(directional_grunt)
 		await process_frame
 		directional_grunt.call("apply_parry_stagger", Vector2.DOWN, 0.55, 0.0)
-		directional_operator.call("_start_critical_attack", directional_grunt)
 		var direction: String = direction_case["direction"]
+		# Contextual execution selection is enemy-opportunity and capture-range
+		# driven. A stale mouse/controller aim vector must not reject a valid
+		# vulnerable enemy on either horizontal side.
+		directional_operator.aim_direction = (
+			Vector2.LEFT if direction == "e" else Vector2.RIGHT
+		)
+		var contextual_target := directional_operator.call(
+			"_find_valid_parry_critical_target"
+		) as Node2D
+		_assert_true(
+			contextual_target == directional_grunt,
+			"%s opportunity should ignore the ordinary melee preview cone"
+			% direction
+		)
+		directional_operator.call(
+			"_try_start_contextual_attack"
+		)
 		var directional_operator_body := directional_operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
 		var directional_operator_fx := directional_operator.get_node("ModularUpperFxSprite") as AnimatedSprite2D
 		var directional_grunt_body := directional_grunt.get_node("AnimatedSprite2D") as AnimatedSprite2D
@@ -191,6 +207,12 @@ func _run() -> void:
 		_assert_animation(directional_operator_body.sprite_frames, StringName("operator_critical_execution_%s" % direction), 12, 12.0, false)
 		_assert_animation(directional_operator_fx.sprite_frames, StringName("operator_critical_execution_fx_%s" % direction), 12, 12.0, false)
 		_assert_animation(directional_grunt_body.sprite_frames, StringName("critical_execution_victim_%s" % direction), 12, 12.0, false)
+		directional_operator.call("_apply_paired_execution_frame", 11)
+		_assert_true(
+			directional_grunt_body.frame == 11,
+			"%s victim should expose the complete 12-frame timeline"
+			% direction
+		)
 		directional_operator.call("_cleanup_paired_execution", false, &"directional_smoke")
 
 	var expiry_grunt := GRUNT_SCENE.instantiate()
@@ -213,6 +235,39 @@ func _run() -> void:
 	_assert_true(expire_effect != null and expire_effect.position.is_equal_approx(expiry_grunt.grunt_critical_window_ring_offset), "expiry effect should spawn at countdown-ring offset")
 	_assert_true(expiry_grunt.global_position.is_equal_approx(expiry_standalone_root), "expiry should not move the standalone enemy root")
 	_assert_true(bool(expiry_grunt.call("suppresses_normal_targeting_presentation")), "recover should keep the normal target ring suppressed")
+
+	var range_rejection_operator := OPERATOR_SCENE.instantiate()
+	range_rejection_operator.global_position = Vector2(500.0, 500.0)
+	root.add_child(range_rejection_operator)
+	var range_rejection_grunt := GRUNT_SCENE.instantiate()
+	range_rejection_grunt.global_position = Vector2(
+		500.0
+		+ float(
+			range_rejection_grunt.grunt_parry_critical_capture_range_px
+		)
+		+ 8.0,
+		500.0
+	)
+	root.add_child(range_rejection_grunt)
+	await process_frame
+	range_rejection_grunt.call(
+		"apply_parry_stagger",
+		Vector2.DOWN,
+		0.55,
+		0.0
+	)
+	_assert_true(
+		String(
+			range_rejection_grunt.call(
+				"get_parry_critical_rejection_reason",
+				range_rejection_operator
+			)
+		) == "out_of_capture_range",
+		"out-of-range critical opportunities should expose a rejection reason"
+	)
+	range_rejection_operator.call(
+		"_try_start_contextual_attack"
+	)
 	operator.set("_combat_target", expiry_grunt)
 	operator.call("_update_target_ring")
 	var normal_target_ring := operator.get("_target_ring") as Node2D
@@ -270,6 +325,7 @@ func _run() -> void:
 		_assert_true(int(counters.get("enemy_parry_vulnerable_expired", 0)) >= 1, "unused vulnerable window should count expiry")
 		_assert_true(int(counters.get("player_critical_attack_started", 0)) >= 1, "paired execution should count critical starts")
 		_assert_true(int(counters.get("player_critical_attack_hit", 0)) >= 1, "paired execution should count critical hits")
+		_assert_true(int(counters.get("player_critical_attack_rejected_out_of_capture_range", 0)) >= 1, "out-of-range contextual input should count its rejection reason")
 
 	if _failed:
 		push_error("grunt_parry_crit_reaction_smoke failed")

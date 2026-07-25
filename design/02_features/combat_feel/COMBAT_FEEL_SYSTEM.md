@@ -179,7 +179,14 @@ Parry / guard:
 - Releasing offhand secondary exits guard. If failed-parry recovery finishes while secondary is still held, the operator re-enters guard through `block_enter`; if secondary was released, the operator returns to normal stance. No parry path may snap directly into `block_hold`.
 - Failed parry is not a separate miss animation or VFX branch. When the active parry window expires without success, the Operator lets the original `parry_01` attempt finish, then returns to neutral or re-enters guard through `block_enter` if offhand secondary is still held.
 - A front-facing perfect parry cancels the incoming enemy hit, calls `apply_parry_stagger(...)` on the attacker when available, refunds stamina, opens the enemy-owned vulnerable/critical-open window where supported, and requires block release/repress before guard can be raised again.
-- Attack input after a successful parry resolves contextually: the Operator first looks for an enemy that validates `can_receive_parry_critical_from(self)`. Only then may it start the explicit critical branch; otherwise it falls back to the normal melee/unarmed attack path.
+- Attack input after a successful parry resolves contextually: the Operator
+  first selects the nearest enemy that validates
+  `can_receive_parry_critical_from(self)`. Enemy-owned capture range is the
+  complete spatial gate for this paired action; the ordinary melee preview cone
+  is not reapplied, so movement-facing and stale mouse/controller aim cannot
+  silently discard a valid critical opportunity. Only then may the Operator
+  start the explicit critical branch; otherwise input falls back to the normal
+  melee/unarmed attack path.
 - The previously misnamed 8-frame `operator__body__unarmed__parry_miss_01__{e,w}__8f__96.png` sheets are currently runtime-mapped as `operator_critical_1h_right/left` for the fast parry-critical attack. They are not parry miss assets.
 - Enemies own critical validation and consumption through `receive_parry_critical(...)`. Arbitrary `take_damage()` is normal damage and must not be the only critical-consumption path.
 - For `enemy_grunt`, parry critical-open and critical-hit presentation is exclusive: opening the window cancels any queued standard `flinch_fx_s`, and consuming the window plays `crit_s` plus `crit_fx_s` without the normal white body hit flash. Standard flinch/body-flash presentation remains available for non-critical damage.

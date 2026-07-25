@@ -54,7 +54,7 @@ const PAIRED_EXECUTION_BODY_SHEETS := {
 	&"w": "res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__12f__96.png",
 }
 const PAIRED_EXECUTION_FX_SHEETS := {
-	&"s": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
+	&"s": "res://content/sprites/operator/runtime/fx/unarmed/operator__fx__unarmed__critical_execution_01__s__8f__96.png",
 	&"e": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__e__12f__96.png",
 	&"w": "res://content/sprites/operator/runtime/overlays/unarmed/operator__fx__unarmed__critical_execution_01__w__12f__96.png",
 }
@@ -3500,6 +3500,7 @@ func _try_start_contextual_attack() -> void:
 	if critical_target != null:
 		_start_critical_attack(critical_target)
 		return
+	_log_nearest_parry_critical_rejection()
 	_request_current_profile_intent(true)
 
 
@@ -4738,13 +4739,56 @@ func _find_valid_parry_critical_target() -> Node2D:
 			continue
 		if not bool(enemy_node.call("can_receive_parry_critical_from", self)):
 			continue
-		if not _is_enemy_in_preview_strike_zone(enemy_node):
-			continue
 		var distance := global_position.distance_to(enemy_node.global_position)
 		if distance < best_distance:
 			best_distance = distance
 			best_target = enemy_node
 	return best_target
+
+
+func _log_nearest_parry_critical_rejection() -> void:
+	var nearest_enemy: Node2D = null
+	var nearest_reason: StringName = &""
+	var nearest_distance := INF
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if not (enemy is Node2D):
+			continue
+		var enemy_node := enemy as Node2D
+		if not enemy_node.has_method(
+			"get_parry_critical_rejection_reason"
+		):
+			continue
+		var reason := StringName(
+			enemy_node.call(
+				"get_parry_critical_rejection_reason",
+				self
+			)
+		)
+		if reason.is_empty():
+			continue
+		var distance := global_position.distance_to(
+			enemy_node.global_position
+		)
+		if distance >= nearest_distance:
+			continue
+		nearest_enemy = enemy_node
+		nearest_reason = reason
+		nearest_distance = distance
+
+	if nearest_enemy == null:
+		return
+	_obs_increment(&"player_critical_attack_rejected")
+	_obs_increment(
+		StringName(
+			"player_critical_attack_rejected_%s"
+			% String(nearest_reason)
+		)
+	)
+	_obs_log(&"player_critical_attack_rejected", {
+		"reason": String(nearest_reason),
+		"target_id": nearest_enemy.get_instance_id(),
+		"distance_px": nearest_distance,
+	})
 
 
 func _start_critical_attack(target: Node2D) -> void:

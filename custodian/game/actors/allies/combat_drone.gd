@@ -7,6 +7,7 @@ const STEP_SOUNDS: Array[AudioStream] = [
 	preload("res://content/audio/sfx/foley/step_mechanoid_01.wav"),
 	preload("res://content/audio/sfx/foley/step_mechanoid_02.wav"),
 	preload("res://content/audio/sfx/foley/step_mechanoid_03.wav"),
+	preload("res://content/audio/sfx/foley/step_mechanoid_04.wav"),
 ]
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 const DroneTargetingScript := preload("res://game/systems/drone/drone_targeting.gd")

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctgyj4hhmav5v"
-path="res://.godot/imported/operator__body__unarmed__critical_execution_01__w__8f__96.png-1e3178a4fcf380d17d61e2cd454a6ecf.ctex"
+uid="uid://dq1mef48vkn2a"
+path="res://.godot/imported/operator__body__unarmed__critical_execution_01__w__12f__96.png-0b6f24ef574f0cfd90178cf42b5014dc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__8f__96.png"
-dest_files=["res://.godot/imported/operator__body__unarmed__critical_execution_01__w__8f__96.png-1e3178a4fcf380d17d61e2cd454a6ecf.ctex"]
+source_file="res://content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__critical_execution_01__w__12f__96.png"
+dest_files=["res://.godot/imported/operator__body__unarmed__critical_execution_01__w__12f__96.png-0b6f24ef574f0cfd90178cf42b5014dc.ctex"]
 
 [params]
 

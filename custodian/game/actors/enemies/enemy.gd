@@ -2776,6 +2776,30 @@ func can_receive_parry_critical_from(attacker: Node2D) -> bool:
 	return global_position.distance_to(attacker.global_position) <= grunt_parry_critical_capture_range_px
 
 
+func get_parry_critical_rejection_reason(
+	attacker: Node2D
+) -> StringName:
+	if _parry_critical_phase not in [
+		ParryCriticalPhase.ENTER,
+		ParryCriticalPhase.HOLD,
+	]:
+		return &""
+	if dead:
+		return &"target_dead"
+	if _parry_critical_target != null:
+		return &"already_reserved"
+	if _parry_critical_window_timer <= 0.0:
+		return &"window_expired"
+	if attacker == null or not is_instance_valid(attacker):
+		return &"invalid_attacker"
+	if (
+		global_position.distance_to(attacker.global_position)
+		> grunt_parry_critical_capture_range_px
+	):
+		return &"out_of_capture_range"
+	return &""
+
+
 func reserve_parry_critical(attacker: Node2D) -> Dictionary:
 	if not can_receive_parry_critical_from(attacker):
 		return {}
@@ -2830,7 +2854,13 @@ func set_parry_critical_execution_frame(attacker: Node2D, token: int, frame_inde
 	if animated_sprite == null or animated_sprite.animation != String(_get_parry_critical_execution_animation()):
 		return false
 	animated_sprite.stop()
-	animated_sprite.set_frame_and_progress(clampi(frame_index, 0, 7), 0.0)
+	var frame_count: int = animated_sprite.sprite_frames.get_frame_count(
+		animated_sprite.animation
+	)
+	animated_sprite.set_frame_and_progress(
+		clampi(frame_index, 0, maxi(frame_count - 1, 0)),
+		0.0
+	)
 	return true
 
 
